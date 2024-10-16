@@ -192,7 +192,9 @@ class OpeningBalancesController
         $idsFromRequest = array_column($request->input(MoneyReceived::CASH_IN_SAFE, []), 'id') ;
 
         $elementsToDelete = array_diff($oldIdsFromDatabase, $idsFromRequest);
-        $elementsToUpdate = array_intersect($idsFromRequest, $oldIdsFromDatabase);
+		// $elementsToUpdate = array_diff($idsFromRequest, $elementsToDelete); // test 
+
+        $elementsToUpdate = array_intersect($idsFromRequest, $oldIdsFromDatabase); // origin one
 
         $openingBalance->cashInSafes()->whereIn('cash_in_safe_statements.id', $elementsToDelete)->delete();
         foreach ($elementsToUpdate as $id) {
@@ -218,23 +220,28 @@ class OpeningBalancesController
         $idsFromRequest = array_column($request->input(MoneyReceived::CHEQUE, []), 'id') ;
 
         $elementsToDelete = array_diff($oldIdsFromDatabase, $idsFromRequest);
-        $elementsToUpdate = array_intersect($idsFromRequest, $oldIdsFromDatabase);
+        // $elementsToUpdate = array_diff($idsFromRequest, $elementsToDelete); // test 
 
+        $elementsToUpdate = array_intersect($idsFromRequest, $oldIdsFromDatabase); // origin one
+	
         $openingBalance->chequeInSafe()->whereIn('money_received.id', $elementsToDelete)->delete();
         foreach ($elementsToUpdate as $id) {
             $dataToUpdate = findByKey($request->input(MoneyReceived::CHEQUE), 'id', $id);
+	
+		
             unset($dataToUpdate['id']);
             $pivotData = [
                 'due_date' => $dataToUpdate['due_date'],
                 'drawee_bank_id' => isset($dataToUpdate['drawee_bank_id']) ? $dataToUpdate['drawee_bank_id'] : null,
                 'cheque_number' => $dataToUpdate['cheque_number'],
-
+				'company_id'=>$company->id 
             ];
             unset($dataToUpdate['due_date'], $dataToUpdate['drawee_bank_id'], $dataToUpdate['cheque_number']);
 
             $dataToUpdate['customer_name'] = is_numeric($dataToUpdate['customer_id']) ? Partner::find($dataToUpdate['customer_id'])->getName() : $dataToUpdate['customer_id'] ;
 
             $openingBalance->chequeInSafe()->where('money_received.id', $id)->first()->update($dataToUpdate);
+
             $openingBalance->chequeInSafe()->where('money_received.id', $id)->first()->cheque->update($pivotData);
         }
         foreach ($request->get(MoneyReceived::CHEQUE, []) as $data) {
@@ -259,7 +266,7 @@ class OpeningBalancesController
         }
 
         /**
-         * * هنا تحديث الشيكات في الخزنة
+         * * هنا تحديث الشيكات اللي قيد التحصيل
          * * cheques under collection
          */
 
@@ -267,7 +274,9 @@ class OpeningBalancesController
         $idsFromRequest = array_column($request->input(MoneyReceived::CHEQUE_UNDER_COLLECTION, []), 'id') ;
 
         $elementsToDelete = array_diff($oldIdsFromDatabase, $idsFromRequest);
-        $elementsToUpdate = array_intersect($idsFromRequest, $oldIdsFromDatabase);
+		// $elementsToUpdate = array_diff($idsFromRequest, $elementsToDelete); // test 
+
+        $elementsToUpdate = array_intersect($idsFromRequest, $oldIdsFromDatabase); // origin one
         $openingBalance->chequeUnderCollections()->whereIn('money_received.id', $elementsToDelete)->delete();
 
 		
@@ -283,9 +292,13 @@ class OpeningBalancesController
                 'account_type' => $dataToUpdate['account_type'] ?: null,
                 'account_number' => $dataToUpdate['account_number'] ?: null,
                 'clearance_days' => $dataToUpdate['clearance_days'] ?: 0,
+				'company_id'=>$company->id 
             ];
+		
             foreach ($pivotData as $key => $val) {
-                unset($dataToUpdate[$key]);
+				if($key != 'company_id'){
+					unset($dataToUpdate[$key]);
+				}
             }
 
             $dataToUpdate['customer_name'] = is_numeric($dataToUpdate['customer_id']) ? Partner::find($dataToUpdate['customer_id'])->getName() : $dataToUpdate['customer_id'] ;
@@ -333,7 +346,9 @@ class OpeningBalancesController
 		 $idsFromRequest = array_column($request->input(MoneyPayment::PAYABLE_CHEQUE, []), 'id') ;
 		
 		 $elementsToDelete = array_diff($oldIdsFromDatabase, $idsFromRequest);
-		 $elementsToUpdate = array_intersect($idsFromRequest, $oldIdsFromDatabase);
+		//  $elementsToUpdate = array_diff($idsFromRequest, $elementsToDelete); // test 
+
+		 $elementsToUpdate = array_intersect($idsFromRequest, $oldIdsFromDatabase); // origin one
 		 $openingBalance->payableCheques()->whereIn('money_payments.id', $elementsToDelete)->delete();
  
 

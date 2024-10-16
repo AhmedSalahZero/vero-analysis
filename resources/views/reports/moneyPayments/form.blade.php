@@ -144,8 +144,8 @@ $selectedBanks = [];
                 $currentPaymentCurrency = null ;
                 @endphp
 
-                <div class="col-md-2" id="invoice-currency-div-id">
-                    <label>{{__('Invoice Currency')}} @include('star')</label>
+                <div class="col-md-1" id="invoice-currency-div-id">
+                    <label class="text-nowrap">{{__('Invoice Currency')}} @include('star')</label>
 @php
 	$selectedFound = false ;
 @endphp
@@ -208,7 +208,7 @@ $selectedBanks = [];
 					$selectedFound = false ;
 				@endphp
                 <div class="col-md-2">
-                    <label>{{__('Payment Currency')}} @include('star')</label>
+                    <label class="text-nowrap">{{__('Payment Currency')}} @include('star')</label>
                     <div class="kt-input-icon">
                         <div class="input-group date">
                             <select id="receiving-currency-id" when-change-trigger-account-type-change name="payment_currency" class="form-control

@@ -477,14 +477,14 @@ use App\Models\MoneyPayment ;
 
 
                                             <td>
-                                                <div class="kt-input-icon">
+                                                <div class="kt-input-icon width-15">
                                                     <div class="input-group">
                                                         <input name="received_amount" type="text" class="form-control " value="{{ number_format(isset($chequeInSafe) ? $chequeInSafe->getReceivedAmount() : old('amount',0)) }}">
                                                     </div>
                                                 </div>
                                             </td>
                                             <td>
-                                                <div class="kt-input-icon">
+                                                <div class="kt-input-icon width-15">
                                                     <div class="input-group">
                                                         <input name="cheque_number" type="text" class="form-control " value="{{ number_format(isset($chequeInSafe) ? $chequeInSafe->getChequeNumber() : old('cheuqe_number',0)) }}">
                                                     </div>
@@ -492,7 +492,7 @@ use App\Models\MoneyPayment ;
                                             </td>
                                             <td>
 
-                                                <div class="kt-input-icon">
+                                                <div class="kt-input-icon width-15">
                                                     <div class="input-group">
                                                         <input name="exchange_rate" type="text" class="form-control " value="{{ number_format(isset($chequeInSafe) ? $chequeInSafe->getExchangeRate() : old('amount',0)) }}">
                                                     </div>
@@ -704,7 +704,7 @@ use App\Models\MoneyPayment ;
                                                         <select data-live-search="true" data-actions-box="true" name="drawee_bank_id" class="form-control repeater-select select2-select	drawee-bank-class">
                                                             @foreach($selectedBanks as $bankId=>$bankName)
 
-                                                            <option value="{{ $bankId }}" {{ isset($chequeUnderCollection) && $chequeUnderCollection->cheque && $chequeUnderCollection->cheque->getDraweeBankId() == $bankId ? 'selected':'' }}>{{ $bankName }}</option>
+                                                            <option data-current-id="{{ $chequeUnderCollection->cheque->getDraweeBankId() }}" value="{{ $bankId }}" {{ isset($chequeUnderCollection) && $chequeUnderCollection->cheque && $chequeUnderCollection->cheque->getDraweeBankId() == $bankId ? 'selected':'' }}>{{ $bankName }}</option>
                                                             @endforeach
                                                         </select>
                                                         <button class="btn btn-sm btn-primary js-drawee-bank-class">{{ __('Add New Bank') }}</button>
@@ -750,7 +750,7 @@ use App\Models\MoneyPayment ;
                                                     <div class="input-group date ">
                                                         <select js-when-change-trigger-change-account-type data-financial-institution-id required name="drawl_bank_id" class="form-control js-drawl-bank">
                                                             @foreach($financialInstitutionBanks as $index=>$financialInstitutionBank)
-                                                            <option value="{{ $financialInstitutionBank->id }}" {{ isset($chequeUnderCollection) && $chequeUnderCollection && $chequeUnderCollection->getChequeDraweeBankId() == $financialInstitutionBank->id ? 'selected':'' }}>{{ $financialInstitutionBank->getName() }}</option>
+                                                            <option  value="{{ $financialInstitutionBank->id }}" {{ isset($chequeUnderCollection) && $chequeUnderCollection && $chequeUnderCollection->getChequeDrawlBankId() == $financialInstitutionBank->id ? 'selected':'' }}>{{ $financialInstitutionBank->getName() }}</option>
                                                             @endforeach
                                                         </select>
                                                     </div>
@@ -984,14 +984,14 @@ use App\Models\MoneyPayment ;
 
 
                                             <td>
-                                                <div class="kt-input-icon">
+                                                <div class="kt-input-icon width-15">
                                                     <div class="input-group">
                                                         <input name="paid_amount" type="text" class="form-control " value="{{ number_format(isset($payableCheques) ? $payableCheques->getPaidAmount() : old('paid_amount',0)) }}">
                                                     </div>
                                                 </div>
                                             </td>
                                             <td>
-                                                <div class="kt-input-icon">
+                                                <div class="kt-input-icon width-15">
                                                     <div class="input-group">
                                                         <input name="cheque_number" type="text" class="form-control " value="{{ isset($payableCheques) ? $payableCheques->getPayableChequeNumber() : old('cheuqe_number',0)}}">
                                                     </div>
@@ -999,7 +999,7 @@ use App\Models\MoneyPayment ;
                                             </td>
                                             <td>
 
-                                                <div class="kt-input-icon">
+                                                <div class="kt-input-icon width-15">
                                                     <div class="input-group">
                                                         <input name="exchange_rate" type="text" class="form-control " value="{{ number_format(isset($payableCheques) ? $payableCheques->getExchangeRate() : old('amount',0)) }}">
                                                     </div>
