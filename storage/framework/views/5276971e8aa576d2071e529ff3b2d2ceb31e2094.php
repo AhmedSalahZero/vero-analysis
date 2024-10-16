@@ -145,8 +145,8 @@ $selectedBanks = [];
                 $currentPaymentCurrency = null ;
                 ?>
 
-                <div class="col-md-2" id="invoice-currency-div-id">
-                    <label><?php echo e(__('Invoice Currency')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
+                <div class="col-md-1" id="invoice-currency-div-id">
+                    <label class="text-nowrap"><?php echo e(__('Invoice Currency')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
 <?php
 	$selectedFound = false ;
 ?>
@@ -209,7 +209,7 @@ $selectedBanks = [];
 					$selectedFound = false ;
 				?>
                 <div class="col-md-2">
-                    <label><?php echo e(__('Payment Currency')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
+                    <label class="text-nowrap"><?php echo e(__('Payment Currency')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
                     <div class="kt-input-icon">
                         <div class="input-group date">
                             <select id="receiving-currency-id" when-change-trigger-account-type-change name="payment_currency" class="form-control

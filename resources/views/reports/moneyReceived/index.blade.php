@@ -151,7 +151,7 @@ use App\Models\MoneyReceived;
                                     <td>
                                         <input style="max-height:25px;" id="cash-send-to-collection{{ $moneyReceived->id }}" type="checkbox" name="second_to_collection[]" value="{{ $moneyReceived->id }}" data-money-type="{{ MoneyReceived::CHEQUE }}" class="form-control checkbox js-send-to-collection">
                                     </td>
-                                    <td>{{ $moneyReceived->getMoneyTypeFormatted() }}</td>
+                                    <td class="text-wrap bank-max-width">{{ $moneyReceived->getMoneyTypeFormatted() }}</td>
                                     <td class="text-wrap bank-max-width">{{ $moneyReceived->getCustomerName() }}</td>
                                     <td class="text-nowrap">{{ $moneyReceived->getReceivingDateFormatted() }}</td>
                                     <td>{{ $moneyReceived->cheque->getChequeNumber() }}</td>
@@ -250,7 +250,7 @@ use App\Models\MoneyReceived;
                                     <td>
                                         <input style="max-height:25px;" id="cash-send-to-collection{{ $moneyReceived->id }}" type="checkbox" name="second_to_collection[]" value="{{ $moneyReceived->id }}" class="form-control checkbox js-send-to-collection" data-money-type="{{ MoneyReceived::CHEQUE_REJECTED }}">
                                     </td>
-									   <td>{{ $moneyReceived->getMoneyTypeFormatted() }}</td>
+									   <td class="text-wrap bank-max-width">{{ $moneyReceived->getMoneyTypeFormatted() }}</td>
                                     <td class="bank-max-width">{{ $moneyReceived->getCustomerName() }}</td>
                                     <td class="text-nowrap">{{ $moneyReceived->getReceivingDateFormatted() }}</td>
                                     <td>{{ $moneyReceived->cheque->getChequeNumber() }}</td>
@@ -345,7 +345,7 @@ use App\Models\MoneyReceived;
                             <tbody>
                                 @foreach($receivedChequesUnderCollection as $moneyReceived)
                                 <tr>
-  									 <td>{{ $moneyReceived->getMoneyTypeFormatted() }}</td>
+  									 <td class="text-wrap bank-max-width">{{ $moneyReceived->getMoneyTypeFormatted() }}</td>
                                     <td class="bank-max-width">{{ $moneyReceived->getCustomerName() }}</td>
                                     <td>{{ $moneyReceived->cheque->getChequeNumber() }}</td>
                                     <td>{{ $moneyReceived->getReceivedAmountFormatted() }}</td>
@@ -528,7 +528,7 @@ use App\Models\MoneyReceived;
                             <tbody>
                                 @foreach($collectedCheques as $moneyReceived)
                                 <tr>
- 									  <td >{{ $moneyReceived->getMoneyTypeFormatted() }}</td>
+ 									  <td class="text-wrap bank-max-width">{{ $moneyReceived->getMoneyTypeFormatted() }}</td>
                                     <td class="bank-max-width">{{ $moneyReceived->getCustomerName() }}</td>
                                     <td>{{ $moneyReceived->cheque->getChequeNumber() }}</td>
                                     <td>{{ $moneyReceived->getReceivedAmountFormatted() }}</td>
@@ -589,7 +589,7 @@ use App\Models\MoneyReceived;
                                 @foreach($receivedTransfer as $money)
 
                                 <tr>
-								   <td>{{ $money->getMoneyTypeFormatted() }}</td>
+								   <td class="text-wrap bank-max-width">{{ $money->getMoneyTypeFormatted() }}</td>
                                     <td class="bank-max-width">{{ $money->getCustomerName() }}</td>
                                     <td class="text-nowrap">{{ $money->getReceivingDateFormatted() }}</td>
                                     <td class="bank-max-width">{{ $money->getIncomingTransferReceivingBankName() }}</td>
@@ -678,7 +678,7 @@ use App\Models\MoneyReceived;
                                 @foreach($receivedCashesInSafe as $moneyReceived)
 
                                 <tr>
-                                    <td>{{ $moneyReceived->getMoneyTypeFormatted() }}</td>
+                                    <td class="text-wrap bank-max-width">{{ $moneyReceived->getMoneyTypeFormatted() }}</td>
                                     <td class="bank-max-width">{{ $moneyReceived->getCustomerName() }}</td>
                                     <td class="text-nowrap">{{ $moneyReceived->getReceivingDateFormatted() }}</td>
                                     <td>{{ $moneyReceived->getCashInSafeBranchName() }}</td>
@@ -775,7 +775,7 @@ use App\Models\MoneyReceived;
                                 @foreach($receivedCashesInBanks as $money)
 
                                 <tr>
-								   <td>{{ $money->getMoneyTypeFormatted() }}</td>
+								   <td class="text-wrap bank-max-width">{{ $money->getMoneyTypeFormatted() }}</td>
                                     <td>{{ $money->getCustomerName() }}</td>
                                     <td class="text-nowrap">{{ $money->getReceivingDateFormatted() }}</td>
                                     <td class="bank-max-width">{{ $money->getCashInBankReceivingBankName() }}</td>

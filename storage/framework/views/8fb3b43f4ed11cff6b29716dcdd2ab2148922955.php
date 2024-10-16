@@ -556,14 +556,14 @@ use App\Models\MoneyPayment ;
 
 
                                             <td>
-                                                <div class="kt-input-icon">
+                                                <div class="kt-input-icon width-15">
                                                     <div class="input-group">
                                                         <input name="received_amount" type="text" class="form-control " value="<?php echo e(number_format(isset($chequeInSafe) ? $chequeInSafe->getReceivedAmount() : old('amount',0))); ?>">
                                                     </div>
                                                 </div>
                                             </td>
                                             <td>
-                                                <div class="kt-input-icon">
+                                                <div class="kt-input-icon width-15">
                                                     <div class="input-group">
                                                         <input name="cheque_number" type="text" class="form-control " value="<?php echo e(number_format(isset($chequeInSafe) ? $chequeInSafe->getChequeNumber() : old('cheuqe_number',0))); ?>">
                                                     </div>
@@ -571,7 +571,7 @@ use App\Models\MoneyPayment ;
                                             </td>
                                             <td>
 
-                                                <div class="kt-input-icon">
+                                                <div class="kt-input-icon width-15">
                                                     <div class="input-group">
                                                         <input name="exchange_rate" type="text" class="form-control " value="<?php echo e(number_format(isset($chequeInSafe) ? $chequeInSafe->getExchangeRate() : old('amount',0))); ?>">
                                                     </div>
@@ -824,7 +824,7 @@ use App\Models\MoneyPayment ;
                                                         <select data-live-search="true" data-actions-box="true" name="drawee_bank_id" class="form-control repeater-select select2-select	drawee-bank-class">
                                                             <?php $__currentLoopData = $selectedBanks; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $bankId=>$bankName): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 
-                                                            <option value="<?php echo e($bankId); ?>" <?php echo e(isset($chequeUnderCollection) && $chequeUnderCollection->cheque && $chequeUnderCollection->cheque->getDraweeBankId() == $bankId ? 'selected':''); ?>><?php echo e($bankName); ?></option>
+                                                            <option data-current-id="<?php echo e($chequeUnderCollection->cheque->getDraweeBankId()); ?>" value="<?php echo e($bankId); ?>" <?php echo e(isset($chequeUnderCollection) && $chequeUnderCollection->cheque && $chequeUnderCollection->cheque->getDraweeBankId() == $bankId ? 'selected':''); ?>><?php echo e($bankName); ?></option>
                                                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                         </select>
                                                         <button class="btn btn-sm btn-primary js-drawee-bank-class"><?php echo e(__('Add New Bank')); ?></button>
@@ -880,7 +880,7 @@ use App\Models\MoneyPayment ;
                                                     <div class="input-group date ">
                                                         <select js-when-change-trigger-change-account-type data-financial-institution-id required name="drawl_bank_id" class="form-control js-drawl-bank">
                                                             <?php $__currentLoopData = $financialInstitutionBanks; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index=>$financialInstitutionBank): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                            <option value="<?php echo e($financialInstitutionBank->id); ?>" <?php echo e(isset($chequeUnderCollection) && $chequeUnderCollection && $chequeUnderCollection->getChequeDraweeBankId() == $financialInstitutionBank->id ? 'selected':''); ?>><?php echo e($financialInstitutionBank->getName()); ?></option>
+                                                            <option  value="<?php echo e($financialInstitutionBank->id); ?>" <?php echo e(isset($chequeUnderCollection) && $chequeUnderCollection && $chequeUnderCollection->getChequeDrawlBankId() == $financialInstitutionBank->id ? 'selected':''); ?>><?php echo e($financialInstitutionBank->getName()); ?></option>
                                                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                         </select>
                                                     </div>
@@ -1155,14 +1155,14 @@ use App\Models\MoneyPayment ;
 
 
                                             <td>
-                                                <div class="kt-input-icon">
+                                                <div class="kt-input-icon width-15">
                                                     <div class="input-group">
                                                         <input name="paid_amount" type="text" class="form-control " value="<?php echo e(number_format(isset($payableCheques) ? $payableCheques->getPaidAmount() : old('paid_amount',0))); ?>">
                                                     </div>
                                                 </div>
                                             </td>
                                             <td>
-                                                <div class="kt-input-icon">
+                                                <div class="kt-input-icon width-15">
                                                     <div class="input-group">
                                                         <input name="cheque_number" type="text" class="form-control " value="<?php echo e(isset($payableCheques) ? $payableCheques->getPayableChequeNumber() : old('cheuqe_number',0)); ?>">
                                                     </div>
@@ -1170,7 +1170,7 @@ use App\Models\MoneyPayment ;
                                             </td>
                                             <td>
 
-                                                <div class="kt-input-icon">
+                                                <div class="kt-input-icon width-15">
                                                     <div class="input-group">
                                                         <input name="exchange_rate" type="text" class="form-control " value="<?php echo e(number_format(isset($payableCheques) ? $payableCheques->getExchangeRate() : old('amount',0))); ?>">
                                                     </div>

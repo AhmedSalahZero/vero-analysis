@@ -147,9 +147,9 @@ trait HasPartnerStatement
 	public function generatePartnerDebitComment(string $bankNameOrBranchName , ?string $accountTypeName , ?string $accountNumber  )
 	{
 		if($accountTypeName){
-			return __('Paid In [ :bankName ] [ :accountType ] [ :accountNumber ]',['bankName'=>$bankNameOrBranchName,'accountType'=>$accountTypeName  , 'accountNumber'=>$accountNumber]);
+			return __('Paid From [ :bankName ] [ :accountType ] [ :accountNumber ]',['bankName'=>$bankNameOrBranchName,'accountType'=>$accountTypeName  , 'accountNumber'=>$accountNumber]);
 		}
-		return __('Paid In [ :bankName ]',['bankName'=>$bankNameOrBranchName]);
+		return __('Paid From [ :bankName ]',['bankName'=>$bankNameOrBranchName]);
 	}
 		
 	

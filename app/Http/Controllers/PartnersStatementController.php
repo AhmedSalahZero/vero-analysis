@@ -42,7 +42,7 @@ class PartnersStatementController
 		->where('partner_id',$partnerId)
 		->where('date','>=',$startDate)
 		->where('date','<=',$endDate)
-		->orderByRaw('date asc , created_at asc')
+		->orderByRaw('full_date asc , created_at asc')
 		->get();
 			if(!count($results)){
 				return redirect()

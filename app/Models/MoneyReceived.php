@@ -358,7 +358,11 @@ class MoneyReceived extends Model
 	public static function getDrawlBanksForCurrentCompany(int $companyId){
 
 		$cheques = self::where('company_id',$companyId)->has('cheque')->with('cheque')->get()->pluck('cheque.drawee_bank_id')->toArray();
+		$cheques=Cheque::where('company_id',$companyId)->pluck('drawee_bank_id')->toArray();
+		
+		
 		$banks = self::getUniqueBanks($cheques);
+	
 		$banksFormatted = [];
 		foreach($banks as $bankId){
 			$bank = Bank::find($bankId) ;
@@ -409,17 +413,14 @@ class MoneyReceived extends Model
 	**	البنك فا شرط يكون من البنوك بتاعتي علشان البنك بتاعي يتواصل مع بنك ال
 	**	drawee بعدين يحطلي الفلوس بتاعته في حسابي
 	*/		 
-	public function chequeDrawlBank()
+	
+	public function getChequeDrawlBankName()
 	{
-		return $this->belongsTo(Bank::class,'drawl_bank_id','id') ;
+		return $this->cheque ? $this->cheque->getDrawlBankName() : __('N/A') ;
 	}
-	public function chequeDrawlBankName()
+	public function getChequeDrawlBankId()
 	{
-		return $this->chequeDrawlBank ? $this->chequeDrawlBank->getName() : __('N/A') ;
-	}
-	public function chequeDrawlBankId()
-	{
-		return $this->drawl_bank_id ;
+		return $this->cheque ? $this->cheque->getDrawlBankId() : 0 ;
 	}
 	
 	public function getChequeAccountType()
