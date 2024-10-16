@@ -47,6 +47,7 @@ class OpeningBalancesController
 
     public function store(StoreOpeningBalanceRequest $request, Company $company)
     {
+		
         $openingBalanceDate = $request->get('date');
         $openingBalance = OpeningBalance::create([
             'date' => $openingBalanceDate,

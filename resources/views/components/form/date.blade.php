@@ -38,6 +38,8 @@
 										@if($readonly)
 										readonly
 										@endif
+										
+										
 										 @if($id)  id="{{ $id }}" @endif type="{{ $type }}" name="{{ $name }}" value="{{ isset($defaultValue) ? $defaultValue : ($model && $model->{$name} ? $model->{$name} : now()->format('Y-m-d') ) }}" class="form-control {{ $classes }}"  @if($placeholder) placeholder="{{ $placeholder }}" @endif />
 										
                                         <div class="input-group-append">
