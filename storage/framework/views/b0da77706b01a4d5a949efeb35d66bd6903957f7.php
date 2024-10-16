@@ -181,7 +181,7 @@ use App\Models\MoneyReceived;
                                     <td>
                                         <input style="max-height:25px;" id="cash-send-to-collection<?php echo e($moneyReceived->id); ?>" type="checkbox" name="second_to_collection[]" value="<?php echo e($moneyReceived->id); ?>" data-money-type="<?php echo e(MoneyReceived::CHEQUE); ?>" class="form-control checkbox js-send-to-collection">
                                     </td>
-                                    <td class="text-wrap"><?php echo e($moneyReceived->getMoneyTypeFormatted()); ?></td>
+                                    <td class="text-wrap bank-max-width"><?php echo e($moneyReceived->getMoneyTypeFormatted()); ?></td>
                                     <td class="text-wrap bank-max-width"><?php echo e($moneyReceived->getCustomerName()); ?></td>
                                     <td class="text-nowrap"><?php echo e($moneyReceived->getReceivingDateFormatted()); ?></td>
                                     <td><?php echo e($moneyReceived->cheque->getChequeNumber()); ?></td>
@@ -301,7 +301,7 @@ use App\Models\MoneyReceived;
                                     <td>
                                         <input style="max-height:25px;" id="cash-send-to-collection<?php echo e($moneyReceived->id); ?>" type="checkbox" name="second_to_collection[]" value="<?php echo e($moneyReceived->id); ?>" class="form-control checkbox js-send-to-collection" data-money-type="<?php echo e(MoneyReceived::CHEQUE_REJECTED); ?>">
                                     </td>
-									   <td class="text-wrap"><?php echo e($moneyReceived->getMoneyTypeFormatted()); ?></td>
+									   <td class="text-wrap bank-max-width"><?php echo e($moneyReceived->getMoneyTypeFormatted()); ?></td>
                                     <td class="bank-max-width"><?php echo e($moneyReceived->getCustomerName()); ?></td>
                                     <td class="text-nowrap"><?php echo e($moneyReceived->getReceivingDateFormatted()); ?></td>
                                     <td><?php echo e($moneyReceived->cheque->getChequeNumber()); ?></td>
@@ -417,7 +417,7 @@ use App\Models\MoneyReceived;
                             <tbody>
                                 <?php $__currentLoopData = $receivedChequesUnderCollection; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $moneyReceived): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                 <tr>
-  									 <td class="text-wrap"><?php echo e($moneyReceived->getMoneyTypeFormatted()); ?></td>
+  									 <td class="text-wrap bank-max-width"><?php echo e($moneyReceived->getMoneyTypeFormatted()); ?></td>
                                     <td class="bank-max-width"><?php echo e($moneyReceived->getCustomerName()); ?></td>
                                     <td><?php echo e($moneyReceived->cheque->getChequeNumber()); ?></td>
                                     <td><?php echo e($moneyReceived->getReceivedAmountFormatted()); ?></td>
@@ -619,7 +619,7 @@ use App\Models\MoneyReceived;
                             <tbody>
                                 <?php $__currentLoopData = $collectedCheques; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $moneyReceived): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                 <tr>
- 									  <td class="text-wrap"><?php echo e($moneyReceived->getMoneyTypeFormatted()); ?></td>
+ 									  <td class="text-wrap bank-max-width"><?php echo e($moneyReceived->getMoneyTypeFormatted()); ?></td>
                                     <td class="bank-max-width"><?php echo e($moneyReceived->getCustomerName()); ?></td>
                                     <td><?php echo e($moneyReceived->cheque->getChequeNumber()); ?></td>
                                     <td><?php echo e($moneyReceived->getReceivedAmountFormatted()); ?></td>
@@ -701,7 +701,7 @@ use App\Models\MoneyReceived;
                                 <?php $__currentLoopData = $receivedTransfer; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $money): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 
                                 <tr>
-								   <td class="text-wrap"><?php echo e($money->getMoneyTypeFormatted()); ?></td>
+								   <td class="text-wrap bank-max-width"><?php echo e($money->getMoneyTypeFormatted()); ?></td>
                                     <td class="bank-max-width"><?php echo e($money->getCustomerName()); ?></td>
                                     <td class="text-nowrap"><?php echo e($money->getReceivingDateFormatted()); ?></td>
                                     <td class="bank-max-width"><?php echo e($money->getIncomingTransferReceivingBankName()); ?></td>
@@ -811,7 +811,7 @@ use App\Models\MoneyReceived;
                                 <?php $__currentLoopData = $receivedCashesInSafe; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $moneyReceived): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 
                                 <tr>
-                                    <td class="text-wrap"><?php echo e($moneyReceived->getMoneyTypeFormatted()); ?></td>
+                                    <td class="text-wrap bank-max-width"><?php echo e($moneyReceived->getMoneyTypeFormatted()); ?></td>
                                     <td class="bank-max-width"><?php echo e($moneyReceived->getCustomerName()); ?></td>
                                     <td class="text-nowrap"><?php echo e($moneyReceived->getReceivingDateFormatted()); ?></td>
                                     <td><?php echo e($moneyReceived->getCashInSafeBranchName()); ?></td>
@@ -929,7 +929,7 @@ use App\Models\MoneyReceived;
                                 <?php $__currentLoopData = $receivedCashesInBanks; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $money): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 
                                 <tr>
-								   <td class="text-wrap"><?php echo e($money->getMoneyTypeFormatted()); ?></td>
+								   <td class="text-wrap bank-max-width"><?php echo e($money->getMoneyTypeFormatted()); ?></td>
                                     <td><?php echo e($money->getCustomerName()); ?></td>
                                     <td class="text-nowrap"><?php echo e($money->getReceivingDateFormatted()); ?></td>
                                     <td class="bank-max-width"><?php echo e($money->getCashInBankReceivingBankName()); ?></td>

@@ -1201,6 +1201,9 @@ $selectedBanks = [];
 	},500)
 })
 	</script>
+	<script>
+	$('select#partner_type').trigger('change')
+	</script>
 <?php endif; ?>
 <?php $__env->stopSection(); ?>
 

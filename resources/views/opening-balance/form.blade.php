@@ -1,6 +1,6 @@
 @php
-use App\Models\MoneyReceived ;
 use App\Models\MoneyPayment ;
+use App\Models\MoneyReceived ;
 @endphp
 @extends('layouts.dashboard')
 @section('css')
@@ -186,6 +186,7 @@ use App\Models\MoneyPayment ;
                                 <x-tables.repeater-table :repeater-with-select2="true" :parentClass="'show-class-js'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=true">
                                     <x-slot name="ths">
                                         @foreach([
+                                        __('Branch')=>'col-md-1',
                                         __('Amount')=>'col-md-1',
                                         __('Currency')=>'col-md-1',
                                         __('Exchange <br> Rate')=>'col-md-1'
@@ -195,7 +196,7 @@ use App\Models\MoneyPayment ;
                                     </x-slot>
                                     <x-slot name="trs">
                                         @php
-                                        $rows = isset($model) ? $model->cashInSafes :[-1] ;
+                                        $rows = isset($model) ? $model->cashInSafeStatements :[-1] ;
                                         @endphp
                                         @foreach( count($rows) ? $rows : [-1] as $cashInSafeStatement)
                                         @php
@@ -210,10 +211,21 @@ use App\Models\MoneyPayment ;
                                                     </i>
                                                 </div>
                                             </td>
+											<td>
+											  <div class="input-group">
+                                                    <select name="received_branch_id" class="form-control " >
+                                                        @foreach($selectedBranches as $branchId => $branchName )
+                                                        <option value="{{ $branchId }}" @if(isset($cashInSafeStatement) && $cashInSafeStatement->getBranchId() == $branchId )  selected @endif > {{ $branchName }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+												
+											</td>
                                             <td>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group">
-                                                        <input type="hidden" name="received_branch_id" value="{{ $company->getHeadOfficeId() }}">
+                                                        {{-- <input type="hidden" name="" value="{{ $company->getHeadOfficeId() }}"> --}}
+														
                                                         <input name="received_amount" type="text" class="form-control " value="{{ number_format(isset($cashInSafeStatement) ? $cashInSafeStatement->getDebitAmount() : old('amount',0)) }}">
                                                     </div>
                                                 </div>

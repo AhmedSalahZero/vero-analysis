@@ -1,6 +1,6 @@
 <?php
-use App\Models\MoneyReceived ;
 use App\Models\MoneyPayment ;
+use App\Models\MoneyReceived ;
 ?>
 
 <?php $__env->startSection('css'); ?>
@@ -214,6 +214,7 @@ use App\Models\MoneyPayment ;
 <?php $component->withAttributes(['repeater-with-select2' => true,'parentClass' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('show-class-js'),'tableName' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($tableId),'repeaterId' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($repeaterId),'relationName' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('food'),'isRepeater' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($isRepeater=true)]); ?>
                                      <?php $__env->slot('ths'); ?> 
                                         <?php $__currentLoopData = [
+                                        __('Branch')=>'col-md-1',
                                         __('Amount')=>'col-md-1',
                                         __('Currency')=>'col-md-1',
                                         __('Exchange <br> Rate')=>'col-md-1'
@@ -233,7 +234,7 @@ use App\Models\MoneyPayment ;
                                      <?php $__env->endSlot(); ?>
                                      <?php $__env->slot('trs'); ?> 
                                         <?php
-                                        $rows = isset($model) ? $model->cashInSafes :[-1] ;
+                                        $rows = isset($model) ? $model->cashInSafeStatements :[-1] ;
                                         ?>
                                         <?php $__currentLoopData = count($rows) ? $rows : [-1]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $cashInSafeStatement): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <?php
@@ -248,10 +249,21 @@ use App\Models\MoneyPayment ;
                                                     </i>
                                                 </div>
                                             </td>
+											<td>
+											  <div class="input-group">
+                                                    <select name="received_branch_id" class="form-control " >
+                                                        <?php $__currentLoopData = $selectedBranches; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $branchId => $branchName): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                        <option value="<?php echo e($branchId); ?>" <?php if(isset($cashInSafeStatement) && $cashInSafeStatement->getBranchId() == $branchId ): ?>  selected <?php endif; ?> > <?php echo e($branchName); ?></option>
+                                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                    </select>
+                                                </div>
+												
+											</td>
                                             <td>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group">
-                                                        <input type="hidden" name="received_branch_id" value="<?php echo e($company->getHeadOfficeId()); ?>">
+                                                        
+														
                                                         <input name="received_amount" type="text" class="form-control " value="<?php echo e(number_format(isset($cashInSafeStatement) ? $cashInSafeStatement->getDebitAmount() : old('amount',0))); ?>">
                                                     </div>
                                                 </div>
