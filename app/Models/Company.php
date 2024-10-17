@@ -365,6 +365,10 @@ class Company extends Model implements HasMedia
 	{
 		return $this->hasMany(Partner::class,'company_id','id')->where('is_subsidiary_company',1)->orderBy('name');
 	}
+	public function otherPartners()
+	{
+		return $this->hasMany(Partner::class,'company_id','id')->where('is_other_partner',1)->orderBy('name');
+	}
 	public function businessSectors()
 	{
 		return $this->hasMany(CashVeroBusinessSector::class,'company_id','id')->orderBy('name');

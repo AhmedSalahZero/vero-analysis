@@ -381,6 +381,14 @@ Route::middleware([])->group(function () {
 					Route::put('subsidiary-companies/{subsidiaryCompany}/update','SubsidiaryCompaniesController@update')->name('subsidiary.companies.update');
 					Route::delete('subsidiary-companies/{subsidiaryCompany}/delete','SubsidiaryCompaniesController@destroy')->name('subsidiary.companies.destroy');
 					
+					
+					Route::get('other-partners','OtherPartnersController@index')->name('other.partners.index');
+					Route::get('other-partners/create','OtherPartnersController@create')->name('other.partners.create');
+					Route::post('other-partners/store','OtherPartnersController@store')->name('other.partners.store');
+					Route::get('other-partners/{otherPartner}/edit','OtherPartnersController@edit')->name('other.partners.edit');
+					Route::put('other-partners/{otherPartner}/update','OtherPartnersController@update')->name('other.partners.update');
+					Route::delete('other-partners/{otherPartner}/delete','OtherPartnersController@destroy')->name('other.partners.destroy');
+					
 					Route::get('business-sectors','BusinessSectorsController@index')->name('business.sectors.index');
 					Route::get('business-sectors/create','BusinessSectorsController@create')->name('business.sectors.create');
 					Route::post('business-sectors/store','BusinessSectorsController@store')->name('business.sectors.store');
@@ -772,6 +780,7 @@ Route::middleware([])->group(function () {
 					Route::get('get-interest-rate-for-financial-institution-id','FinancialInstitutionController@getInterestRateForFinancialInstitution')->name('get.interest.rate.for.financial.institution.id');
 
 					// money payments
+					
 					Route::get('money-payment', 'MoneyPaymentController@index')->name('view.money.payment');
                     Route::get('money-payment/create/{model?}', 'MoneyPaymentController@create')->name('create.money.payment');
                     Route::post('money-payment/create', 'MoneyPaymentController@store')->name('store.money.payment');
@@ -784,6 +793,7 @@ Route::middleware([])->group(function () {
 					Route::post('mark-outgoing-transfer-as-paid', 'MoneyPaymentController@markOutgoingTransfersAsPaid')->name('outgoing.transfer.mark.as.paid');
 					Route::get('get-supplier-invoices','SupplierInvoicesController@getSupplierInvoicesForSupplier')->name('get.supplier.invoices');
 					Route::get('get-suppliers-based-on-currency/{currencyName}','MoneyPaymentController@getSuppliersBasedOnCurrency');
+					Route::get('get-current-end-balance-of-current-account','MoneyPaymentController@getCurrentAccountEndBalance')->name('get.current.end.balance.of.current.account');
 					// cash expense
 					Route::get('get-exchange-rate-for-date-and-currencies','ForeignExchangeRateController@getExchangeRate');
 					
@@ -797,7 +807,6 @@ Route::middleware([])->group(function () {
 					Route::post('cash-expense-mark-payable-cheques-as-paid', 'CashExpenseController@markChequesAsPaid')->name('cash.expense.payable.cheque.mark.as.paid');
 					Route::post('cash-expense-mark-outgoing-transfer-as-paid', 'CashExpenseController@markOutgoingTransfersAsPaid')->name('cash.expense.outgoing.transfer.mark.as.paid');
 
-					
 					
 					Route::post('adjust-customer-due-invoices','CashFlowReportController@adjustCustomerDueInvoices')->name('adjust.customer.dues.invoices');
 					

@@ -262,7 +262,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                                         <div class="kt-input-icon">
                                             <div class="kt-input-icon">
                                                 <div class="input-group date">
-                                                    <select data-current-selected="<?php echo e(isset($model) ? $model->getBeneficiaryId():0); ?>" js-update-contracts-based-on-customers data-live-search="true" data-actions-box="true" id="customer_name" name="partner_id" class="form-control select2-select">
+                                                    <select  required data-current-selected="<?php echo e(isset($model) ? $model->getBeneficiaryId():0); ?>" js-update-contracts-based-on-customers data-live-search="true" data-actions-box="true" id="customer_name" name="partner_id" class="form-control select2-select">
                                                         <option value="" selected><?php echo e(__('Select')); ?></option>
                                                         <?php $__currentLoopData = $beneficiaries; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $customer): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                         <option <?php if(isset($model) && $model->getBeneficiaryId() == $customer->getId() ): ?> selected <?php endif; ?> value="<?php echo e($customer->getId()); ?>"><?php echo e($customer->getName()); ?></option>
@@ -324,7 +324,7 @@ use App\Models\LetterOfGuaranteeIssuance;
 
                                     </div>
 
-                                    <div class="col-md-3 hidden hide-only-bond">
+                                    <div class="col-md-3 hidden hide-only-bond only-with-customer">
 
                                         <label> <?php echo e(__('Contract Reference')); ?>
 
@@ -339,7 +339,7 @@ use App\Models\LetterOfGuaranteeIssuance;
 
 
 
-                                    <div class="col-md-2 hidden hide-only-bond">
+                                    <div class="col-md-2 hidden hide-only-bond only-with-customer">
 
                                         <label> <?php echo e(__('Purchase Order')); ?>
 
@@ -351,7 +351,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                                         </select>
                                     </div>
 
-                                    <div class="col-md-2 hidden hide-only-bond">
+                                    <div class="col-md-2 hidden hide-only-bond only-with-customer">
 
                                          <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.date','data' => ['label' => __('Purchase Order Date'),'required' => true,'model' => $model??null,'name' => 'purchase_order_date','placeholder' => __('Select Purchase Order Date')]]); ?>
@@ -866,6 +866,12 @@ use App\Models\LetterOfGuaranteeIssuance;
                         , }
                         , type: "GET"
                         , success: function(res) {
+							var isCustomer = res.is_customer ;
+							if(!isCustomer){
+								$('.only-with-customer').addClass('hidden');
+							}else{
+								$('.only-with-customer').removeClass('hidden');
+							}
                             var contractsOptions = '';
                             var currentSelectedId = $('select#contract-id').attr('data-current-selected')
                             for (var contractId in res.contracts) {

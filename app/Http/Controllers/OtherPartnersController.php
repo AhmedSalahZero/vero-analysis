@@ -1,14 +1,14 @@
 <?php
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreSubsidiaryCompanyRequest;
+use App\Http\Requests\StoreOtherPartnerRequest;
 use App\Models\Company;
 use App\Models\Partner;
 use App\Traits\GeneralFunctions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
-class SubsidiaryCompaniesController
+class OtherPartnersController
 {
     use GeneralFunctions;
     protected function applyFilter(Request $request,Collection $collection):Collection{
@@ -44,10 +44,10 @@ class SubsidiaryCompaniesController
 	{
 		
 		$numberOfMonthsBetweenEndDateAndStartDate = 18 ;
-		$currentType = $request->get('active',Partner::SUBSIDIARY_COMPANIES);
+		$currentType = $request->get('active',Partner::OTHER_PARTNERS);
 		
 		$filterDates = [];
-		foreach([Partner::SUBSIDIARY_COMPANIES] as $type){
+		foreach([Partner::OTHER_PARTNERS] as $type){
 			$startDate = $request->has('startDate') ? $request->input('startDate.'.$type) : now()->subMonths($numberOfMonthsBetweenEndDateAndStartDate)->format('Y-m-d');
 			$endDate = $request->has('endDate') ? $request->input('endDate.'.$type) : now()->format('Y-m-d');
 			
@@ -60,42 +60,42 @@ class SubsidiaryCompaniesController
 		
 		 
 		  /**
-		 * * start of subsidiaryCompanies 
+		 * * start of otherPartners 
 		 */
 		
-		 $startDate = $filterDates[Partner::SUBSIDIARY_COMPANIES]['startDate'] ?? null ;
-		$endDate = $filterDates[Partner::SUBSIDIARY_COMPANIES]['endDate'] ?? null ;
-		$subsidiaryCompanies = $company->subsidiaryCompanies ;
-		$subsidiaryCompanies =  $subsidiaryCompanies->filterByCreatedAt($startDate,$endDate) ;
-		$subsidiaryCompanies =  $currentType == Partner::SUBSIDIARY_COMPANIES ? $this->applyFilter($request,$subsidiaryCompanies):$subsidiaryCompanies ;
+		 $startDate = $filterDates[Partner::OTHER_PARTNERS]['startDate'] ?? null ;
+		$endDate = $filterDates[Partner::OTHER_PARTNERS]['endDate'] ?? null ;
+		$otherPartners = $company->otherPartners ;
+		$otherPartners =  $otherPartners->filterByCreatedAt($startDate,$endDate) ;
+		$otherPartners =  $currentType == Partner::OTHER_PARTNERS ? $this->applyFilter($request,$otherPartners):$otherPartners ;
 
 		/**
-		 * * end of subsidiaryCompanies 
+		 * * end of otherPartners 
 		 */
 		 
 		
 		 $searchFields = [
-			Partner::SUBSIDIARY_COMPANIES=>[
+			Partner::OTHER_PARTNERS=>[
 				'created_at'=>__('Created At'),
 				'name'=>__('Name')
 			],
 		];
 	
 		$models = [
-			Partner::SUBSIDIARY_COMPANIES =>$subsidiaryCompanies ,
+			Partner::OTHER_PARTNERS =>$otherPartners ,
 		];
 
-        return view('subsidiaryCompanies.index', [
+        return view('otherPartners.index', [
 			'company'=>$company,
 			'searchFields'=>$searchFields,
 			'models'=>$models,
 			'filterDates'=>$filterDates,
-			'indexRouteName'=>'subsidiary.companies.index'
+			'indexRouteName'=>'other.partners.index'
 		]);
     }
 	public function create(Company $company)
 	{
-        return view('subsidiaryCompanies.form',$this->getCommonViewVars($company));
+        return view('otherPartners.form',$this->getCommonViewVars($company));
     }
 	public function getCommonViewVars(Company $company,$model = null)
 	{
@@ -105,46 +105,46 @@ class SubsidiaryCompaniesController
 		];
 	}
 	
-	public function store(Company $company   , StoreSubsidiaryCompanyRequest $request){
-		$type = Partner::SUBSIDIARY_COMPANIES;
-		$subsidiaryCompany = new Partner ;
-		$subsidiaryCompany->is_subsidiary_company = 1 ;
-		$subsidiaryCompany->storeBasicForm($request);
+	public function store(Company $company   , StoreOtherPartnerRequest $request){
+		$type = Partner::OTHER_PARTNERS;
+		$otherPartner = new Partner ;
+		$otherPartner->is_other_partner = 1 ;
+		$otherPartner->storeBasicForm($request);
 		$activeTab = $type ; 
 		return response()->json([
-			'redirectTo'=>route('subsidiary.companies.index',['company'=>$company->id,'active'=>$activeTab])
+			'redirectTo'=>route('other.partners.index',['company'=>$company->id,'active'=>$activeTab])
 		]);
 		
 	}
 
-	public function edit(Company $company,Partner $subsidiaryCompany)
+	public function edit(Company $company,Partner $otherPartner)
 	{
 
-        return view('subsidiaryCompanies.form' ,$this->getCommonViewVars($company,$subsidiaryCompany));
+        return view('otherPartners.form' ,$this->getCommonViewVars($company,$otherPartner));
     }
 	
-	public function update(Company $company, StoreSubsidiaryCompanyRequest $request , Partner $subsidiaryCompany){
+	public function update(Company $company, StoreOtherPartnerRequest $request , Partner $otherPartner){
 		
 		// $lcSettlementInternalTransfer->deleteRelations();
-		// $subsidiaryCompany->delete();
-		$oldName = $subsidiaryCompany->getName();
+		// $otherPartner->delete();
+		$oldName = $otherPartner->getName();
 		$newName = $request->get('name');
-		$subsidiaryCompany->update([
+		$otherPartner->update([
 			'name'=>$newName
 		]);
-		$subsidiaryCompany->updateNamesInAllTables(['customer_name','supplier_name'],$oldName,$newName,$company->id,['partner_type','=','is_subsidiary_company']);
-		$type = Partner::SUBSIDIARY_COMPANIES;
+		$otherPartner->updateNamesInAllTables(['customer_name','supplier_name'],$oldName,$newName,$company->id,['partner_type','=','is_other_partner']);
+		$type = Partner::OTHER_PARTNERS;
 		// $this->store($company,$request);
 		$activeTab = $type ;
 		return response()->json([
-			'redirectTo'=>route('subsidiary.companies.index',['company'=>$company->id,'active'=>$activeTab])
+			'redirectTo'=>route('other.partners.index',['company'=>$company->id,'active'=>$activeTab])
 		]);
 	}
 	
-	public function destroy(Company $company , Partner $subsidiaryCompany)
+	public function destroy(Company $company , Partner $otherPartner)
 	{
 		// $lcSettlementInternalTransfer->deleteRelations();
-		$subsidiaryCompany->delete();
+		$otherPartner->delete();
 		
 		return redirect()->back()->with('success',__('Item Has Been Delete Successfully'));
 	}

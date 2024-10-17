@@ -74,7 +74,6 @@
             {{-- Daily --}}
             <div class="col-md-6 col-lg-4 col-xl-4">
                 <!--begin::New Orders-->
-                {{-- @dd(get_defined_vars()) --}}
                 <div class="kt-widget24">
                     <div class="kt-widget24__details">
                         <div class="kt-widget24__info">
@@ -370,7 +369,6 @@
                                 @php array_shift($monthlyChartArr) @endphp
                                 @slot('table_body')
                                 @foreach ($monthlyChartArr as $title => $values)
-                                {{-- @dd( count($values) + 2 ) --}}
                                 @if(isset($values) && is_null($values[0]))
 
                                 <tr class="group-color  table-active text-lg-left  ">

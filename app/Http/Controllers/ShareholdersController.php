@@ -132,7 +132,8 @@ class ShareholdersController
 		$shareholder->update([
 			'name'=>$newName
 		]);
-		// $shareholder->updateNamesInAllTables('shareholder_name',$oldName,$newName,$company->id);
+
+		$shareholder->updateNamesInAllTables(['customer_name','supplier_name'],$oldName,$newName,$company->id,['partner_type','=','is_shareholder']);
 		$type = Partner::SHAREHOLDERS;
 		// $this->store($company,$request);
 		$activeTab = $type ;

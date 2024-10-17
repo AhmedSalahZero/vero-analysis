@@ -149,6 +149,7 @@ class LetterOfGuaranteeIssuanceController
 		$model = new LetterOfGuaranteeIssuance();
 		$lgCommissionAmount = $request->get('lg_commission_amount',0);
 		$minLgCommissionAmount = $request->get('min_lg_commission_fees',0);
+		
 		$model->storeBasicForm($request);
 		$transactionName = $request->get('transaction_name');
 		$lgType = $request->get('lg_type');

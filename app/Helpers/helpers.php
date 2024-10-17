@@ -3640,7 +3640,34 @@ function getPermissions(array $systemsNames  = []):array
 			'group'=>'business sectors',
 			'view-name'=>'delete'
         ],
-		
+		[
+            'name'=>'view other partners',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'other partners',
+			'view-name'=>'view'
+        ],
+		[
+            'name'=>'create other partners',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'other partners',
+			'view-name'=>'create'
+        ],
+		[
+            'name'=>'update other partners',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'other partners',
+			'view-name'=>'update'
+        ],
+		// [
+        //     'name'=>'delete other partners',
+		// 	'systems'=>[CASH_VERO],
+		// 	'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+		// 	'group'=>'other partners',
+		// 	'view-name'=>'delete'
+        // ],
 		
 		[
             'name'=>'view business units',
@@ -5620,6 +5647,7 @@ function getHeaderMenu($currentCompany = null)
 	$canViewCashExpenseCategories = $user->can('view cash expense categories');
 	$canViewCustomersSettings = $user->can('view customers');
 	$canViewSubsidiaryCompaniesSettings = $user->can('view subsidiary companies');
+	$canViewOtherPartnersSettings = $user->can('view other partners');
 	$canViewShareholdersSettings = $user->can('view shareholders');
 	$canViewEmployeesSettings = $user->can('view employees');
 	$canViewSuppliersSettings = $user->can('view suppliers');
@@ -5628,7 +5656,7 @@ function getHeaderMenu($currentCompany = null)
 	$canViewSalesChannelsSettings = $user->can('view sales channels');
 	$canViewSalesPersonsSettings = $user->can('view sales persons');
 	$canViewBranchesSettings = $user->can('view branches');
-	$canViewGeneralSetting = $canViewCustomersSettings || $canViewSubsidiaryCompaniesSettings || $canViewShareholdersSettings || $canViewEmployeesSettings || $canViewSuppliersSettings || $canViewBusinessSectorSettings || $canViewBusinessUnitSettings || $canViewSalesChannelsSettings || $canViewSalesPersonsSettings ||$canViewBranchesSettings || $canViewCashExpenseCategories;
+	$canViewGeneralSetting = $canViewCustomersSettings || $canViewSubsidiaryCompaniesSettings || $canViewOtherPartnersSettings || $canViewShareholdersSettings || $canViewEmployeesSettings || $canViewSuppliersSettings || $canViewBusinessSectorSettings || $canViewBusinessUnitSettings || $canViewSalesChannelsSettings || $canViewSalesPersonsSettings ||$canViewBranchesSettings || $canViewCashExpenseCategories;
 	$notificationsSubItems[]	= [
 		'title'=>__('Notification Settings'),
 	'link'=>route('notifications-settings.index', ['company'=>$companyId]),
@@ -5682,6 +5710,11 @@ function getHeaderMenu($currentCompany = null)
 				'title'=>__('Shareholders'),
 				'link'=>route('shareholders.index',['company'=>$companyId]),
 				'show'=>$canViewShareholdersSettings 
+			],
+			[
+				'title'=>__('Other Partners'),
+				'link'=>route('other.partners.index',['company'=>$companyId]),
+				'show'=>$canViewOtherPartnersSettings 
 			],
 			[
 				'title'=>__('Business Sectors'),

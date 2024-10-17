@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Branch extends Model
 {
@@ -33,5 +34,18 @@ class Branch extends Model
 			'company_id'=>$companyId,
 			'name'=>'Head Office'
 		]);
+	}
+	public function getCurrentEndBalance(int $companyId,string $currency ):float
+	{
+		$cashInSafeStatement = DB::table('cash_in_safe_statements')
+		->where('company_id',$companyId)
+		->where('currency',$currency)
+		->where('branch_id',$this->id)
+		->orderByRaw('full_date desc , created_at desc')
+		->first();
+		if(!$cashInSafeStatement){
+			return 0 ;
+		}
+		return $cashInSafeStatement->end_balance;
 	}
 }

@@ -17,6 +17,7 @@ class Partner extends Model
 	const EMPLOYEES = 'employees';
 	const SHAREHOLDERS = 'shareholders';
 	const SUBSIDIARY_COMPANIES = 'subsidiary-companies';
+	const OTHER_PARTNERS = 'other-partners';
 	use HasCreatedAt,HasBasicStoreRequest;
     protected $dates = [
     ];
@@ -63,6 +64,11 @@ class Partner extends Model
 			$q->where('is_customer',1);
 		});
 	}
+	public function scopeOnlyCustomersOrOtherPartners(Builder $query){
+		return $query->where(function($q){
+			$q->where('is_customer',1)->orWhere('is_other_partner',1);
+		});
+	}
 	public function scopeOnlySuppliers(Builder $query){
 		return $query->where(function($q){
 			$q->where('is_supplier',1);
@@ -81,6 +87,11 @@ class Partner extends Model
 	public function scopeOnlySubsidiaryCompanies(Builder $query){
 		return $query->where(function($q){
 			$q->where('is_subsidiary_company',1);
+		});
+	}
+	public function scopeOnlyOtherPartners(Builder $query){
+		return $query->where(function($q){
+			$q->where('is_other_partner',1);
 		});
 	}
 	public function unappliedAmounts()
@@ -108,7 +119,10 @@ class Partner extends Model
 	{
 		return $this->is_shareholder == 1 ;
 	}
-	
+	public function isOtherPartner()
+	{
+		return $this->is_other_partner == 1 ;
+	}
 	public function settlementForUnappliedAmounts()
 	{
 		if($this->isCustomer()){
@@ -135,21 +149,29 @@ class Partner extends Model
 		return $this->hasMany(SupplierInvoice::class,'supplier_id','id');
 	}
 	
-	public function updateNamesInAllTables(string $columnName , string $oldPartnerName,string $newPartnerName, int $companyId )
+	public function updateNamesInAllTables(array $columnNames , string $oldPartnerName,string $newPartnerName, int $companyId , array $additionalWhere = [])
 	{
 		// $columnName = 'customer_name' , 'supplier_name';
 		$tables = DB::connection()->getDoctrineSchemaManager()->listTableNames();
-
+// dd($tables);
 		foreach($tables as $tableName){
-			if(Schema::hasColumn($tableName,$columnName)){
-				if($tableName == 'sales_gathering'){
-					continue;
+			foreach($columnNames as $columnName){
+				if(Schema::hasColumn($tableName,$columnName)){
+					if($tableName == 'sales_gathering'){
+						continue;
+					}
+					$query = DB::table($tableName)->where('company_id',$companyId)
+					->where($columnName,$oldPartnerName);
+			
+					if($tableName == 'money_received' || $tableName == 'money_payments'){
+						
+						$query->where($additionalWhere[0] ,$additionalWhere[1]  , $additionalWhere[2] );
+					}
+					$query->update([$columnName=>$newPartnerName])
+					;
 				}
-				DB::table($tableName)->where('company_id',$companyId)
-				->where($columnName,$oldPartnerName)
-				->update([$columnName=>$newPartnerName])
-				;
 			}
+			
 		}
 	}
 	public static function getPartnerFromName(string $name , int $companyId):?self

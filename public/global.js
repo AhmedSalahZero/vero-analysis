@@ -100,6 +100,7 @@ $(document).on('change','.only-greater-than-zero-allowed',function(){
 
 $(document).on('change','.only-greater-than-or-equal-zero-allowed',function(){
     let val = number_unformat($(this).val()) ;
+
     if(! isGreaterThanOrEqualZero(val) && val  != '')
     {
         let currentLang = $('body').data('lang');
@@ -116,6 +117,31 @@ $(document).on('change','.only-greater-than-or-equal-zero-allowed',function(){
             }[currentLang],
         })
         $(this).val(0);
+    }
+});
+$(document).on('change','.only-smaller-than-or-equal-specific-number-allowed',function(){
+    let val = number_unformat($(this).val());
+	let greaterThan = parseFloat($(this).attr('data-can-not-be-greater-than'));
+	let currentValue = parseFloat($(this).attr('data-current-value'))
+	currentValue = currentValue ? currentValue : 0 ;
+	greaterThan = greaterThan + currentValue;
+	greaterThan = greaterThan ? greaterThan : 0 ;
+    if(! isLessThanOrEqual(val,greaterThan) && val  != '')
+    {
+        let currentLang = $('body').data('lang');
+		
+         Swal.fire({
+            icon: "warning",
+            title: {
+                "en":"Oops...",
+                "ar":""
+            }[currentLang],
+            text: {
+                "en":"The Value Must Be Less Than Or Equal " +greaterThan ,
+                "ar":""
+            }[currentLang],
+        })
+        $(this).val(0).trigger('change');
     }
 });
   function roundHalf(num) {
@@ -146,6 +172,10 @@ function isGreaterThanZero(number )
 function isGreaterThanOrEqualZero(number )
 {
     return  !isNaN(parseFloat(number)) && isFinite(number) && number >= 0 && number!='';
+}
+function isLessThanOrEqual(number,specificNumber )
+{
+    return  !isNaN(parseFloat(number)) && isFinite(number) && number <= specificNumber && number!='';
 }
 
 function getCurrentLang()

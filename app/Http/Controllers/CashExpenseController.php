@@ -327,14 +327,19 @@ class CashExpenseController
 		$deliveryBranchId = $relationData['delivery_branch_id'] ?? null ;
 		$cashExpense->handleCreditStatement($company->id , $bankId,$accountType,$accountNumber,$moneyType,$statementDate,$paidAmountInPayingCurrency,$deliveryBranchId,$currencyName);
 		$contracts = $request->get('contracts',[]) ;
+
 		if(count($contracts)){
 			foreach($contracts as $contractArr){
-				$currentContractId = $contractArr['contract_id'];
+				$currentContractId = $contractArr['contract_id'] ?? null ;
+			
 				$currentAmount = $contractArr['amount'] ?? 0 ;
-				$cashExpense->contracts()->attach(
-					$currentContractId,
-					['amount'=>$currentAmount],
-				);
+				if($currentContractId && $currentAmount > 0){
+					$cashExpense->contracts()->attach(
+						$currentContractId,
+						['amount'=>$currentAmount],
+					);
+				}
+				
 			} 
 			
 		}

@@ -134,7 +134,7 @@ class SuppliersController
 			'name'=>$newName
 		]);
 		if($oldName != $newName){
-			$supplier->updateNamesInAllTables('supplier_name',$oldName,$newName,$company->id);
+			$supplier->updateNamesInAllTables(['supplier_name'],$oldName,$newName,$company->id,['partner_type','=','is_supplier']);
 		}
 		$type = Partner::SUPPLIERS;
 		// $this->store($company,$request);

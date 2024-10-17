@@ -19,7 +19,8 @@ trait HasBasicStoreRequest
 				}
 			}
 			elseif($columnExist ){
-				$this->{$name} = $request->get($name);
+				$val = $request->get($name) == 'null' ? null :$request->get($name);
+				$this->{$name} = $val;
 			}
 		}
 		$this->save();

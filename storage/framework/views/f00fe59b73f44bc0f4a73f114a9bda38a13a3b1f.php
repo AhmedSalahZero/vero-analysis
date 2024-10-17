@@ -418,6 +418,14 @@ let pageLoaded = false ;
     
 
     <!--begin::Fonts -->
+	<script>
+	function toFixed(num,points = 2){
+	if(!num){
+		return 0;
+	}
+	return (Math.round(num * 100) / 100).toFixed(points);
+}
+	</script>
     <script src="<?php echo e(asset('custom/webfont.js')); ?>"></script>
     <script src="<?php echo e(asset('custom/helper.js')); ?>"></script>
     
@@ -1918,12 +1926,7 @@ function coverStringToValidClass(name) {
         return '__' + ('000' + c.toString(16)).slice(-4);
     });
 }
-function toFixed(num,points = 2){
-	if(!num){
-		return 0;
-	}
-	return (Math.round(num * 100) / 100).toFixed(points);
-}
+
 </script>
 <script>
 

@@ -348,7 +348,6 @@
                                 @php array_shift($monthlyChartArr) @endphp
                                 @slot('table_body')
                                 @foreach ($monthlyChartArr as $title => $values)
-                                {{-- @dd( count($values) + 2 ) --}}
                                 @if(isset($values) && is_null($values[0]))
 
                                 <tr class="group-color  table-active text-lg-left  ">

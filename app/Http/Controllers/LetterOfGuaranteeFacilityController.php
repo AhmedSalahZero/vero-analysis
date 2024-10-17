@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 use App\Enums\LgTypes;
+use App\Helpers\HArr;
 use App\Models\AccountType;
 use App\Models\Company;
 use App\Models\FinancialInstitution;
@@ -198,6 +199,10 @@ class LetterOfGuaranteeFacilityController
 		})
 		->pluck('name','id')
 		->toArray();
+		$otherPartnerArr = Partner::onlyOtherPartners()->onlyForCompany($company->id)
+		->pluck('name','id')
+		->toArray();
+		$customerOrOtherPartnersArr = HArr::mergeTwoAssocArr($customersArr,$otherPartnerArr);
 		$currentSource = $request->get('source');
 		
 		$currentLgOutstanding = 0 ;
@@ -244,7 +249,6 @@ class LetterOfGuaranteeFacilityController
 			$totalLastOutstandingBalanceOfFourTypes += $letterOfGuaranteeStatementEndBalance;
 		}
 		$limit = $letterOfGuaranteeFacility ? $letterOfGuaranteeFacility->getLimit() : 0;
-
 		return response()->json([
 			'limit'=>number_format($limit) ,
 			'total_lg_outstanding_balance'=>number_format(abs($totalLastOutstandingBalanceOfFourTypes)),
@@ -254,7 +258,7 @@ class LetterOfGuaranteeFacilityController
 			'lg_commission_rate'=>$lgCommissionRate , 
             'min_lg_cash_cover_rate_for_current_lg_type'=>$minLgCashCoverRateForCurrentLgType ,
             'min_lg_issuance_fees_for_current_lg_type'=>$minLgIssuanceFeesForCurrentLgType,
-			'customers'=>$customersArr
+			'customers'=>$customerOrOtherPartnersArr
 
 		]);
 	}
