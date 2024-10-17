@@ -267,9 +267,7 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
                 @csrf
 
 
-                @php
-                $grandTotal = $customerAgings['grand_total'] ??0
-                @endphp
+               
                 <div class="table-custom-container position-relative  ">
 
 
