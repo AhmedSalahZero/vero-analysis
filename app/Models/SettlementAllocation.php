@@ -32,7 +32,7 @@ class SettlementAllocation extends Model
 	{
 		return $this->allocation_amount ;
 	}
-	public static function getSettlementAllocationPerContractAndMoneyType(array &$result , array &$totalCashOutFlowArray  , string $moneyType,string $dateFieldName,int $contractId , int $customerId, string $startDate , string $endDate , string $currentWeekYear , ?string $chequeStatus = null ):void
+	public static function getSettlementAllocationPerContractAndMoneyType(array &$result , array &$totalCashOutFlowArray  , string $moneyType,string $dateFieldName,int $contractId , int $customerId, string $startDate , string $endDate , string $currentWeekYear,string $currencyName , ?string $chequeStatus = null  ):void
 	{
 		
 		$keyNameForCurrentType = [
@@ -47,6 +47,7 @@ class SettlementAllocation extends Model
 			->join('money_payments','settlement_allocations.money_payment_id','=','money_payments.id')
 			->where('money_payments.type',$moneyType)
 			->where('partner_id',$customerId)
+			->where('currency',$currencyName)
 			->whereBetween($dateFieldName,[$startDate,$endDate])
 			->when($chequeStatus , function(Builder $builder) use ($chequeStatus){
 				$builder->join('payable_cheques','payable_cheques.money_payment_id','=','money_payments.id')

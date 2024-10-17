@@ -344,7 +344,7 @@ class Contract extends Model
 		->withPivot(['amount','cash_expense_id'])
 		;
 	}
-	public function getCashExpensePerCategoryName(array &$result,array &$totalCashOutFlowArray,string $moneyType,string $dateFieldName,string $startDate , string $endDate ,string $currentWeekYear , ?string $chequeStatus = null ):void
+	public function getCashExpensePerCategoryName(array &$result,array &$totalCashOutFlowArray,string $moneyType,string $dateFieldName,string $startDate , string $endDate ,string $currentWeekYear , string $currencyName , ?string $chequeStatus = null ):void
 	{
 		foreach($this->cashExpenses as $cashExpense){
 			/**
@@ -354,6 +354,7 @@ class Contract extends Model
 			->where('contract_id',$this->id)
 			->join('cash_expenses','cash_expenses.id','=','cash_expense_contract.cash_expense_id')
 			->where('cash_expenses.type',$moneyType)
+			->where('currency',$currencyName)
 			// ->where('cash_expense_category_name_id',$cashExpense->getCashExpenseCategoryNameId())
 			->whereBetween($dateFieldName,[$startDate,$endDate])
 			->when($moneyType == CashExpense::PAYABLE_CHEQUE , function( $builder) use ($chequeStatus){

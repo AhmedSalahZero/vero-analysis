@@ -487,18 +487,7 @@
         }
     })
 
-    $(document).on('click', '#show-coming-due-detail', function() {
-        if (!currentTable) {
-            currentTable = $('.main-table-class').DataTable()
-        }
-        if (currentTable.column(13).visible()) {
-            $(this).html("{{ __('Show Details') }}")
-            currentTable.columns([13, 14, 15, 16, 17, 18, 19, 20, 21]).visible(false);
-        } else {
-            $(this).html("{{ __('Hide Details') }}")
-            currentTable.columns([13, 14, 15, 16, 17, 18, 19, 20, 21]).visible(true);
-        }
-    })
+   
 
 </script>
 

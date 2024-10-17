@@ -122,7 +122,7 @@ class FinancialInstitutionAccount extends Model
 	{
 		return $this->is_active;
 	}
-	public static function getAllCurrentAccountCurrenciesForCompany(int $companyId,array $exceptCurrenciesNames){
+	public static function getAllCurrentAccountCurrenciesForCompany(int $companyId,array $exceptCurrenciesNames = []){
 		return HArr::removeKeyFromArrayByValue(self::where('company_id',$companyId)->pluck('currency','currency')->toArray(),$exceptCurrenciesNames);
 	}
 	public static function getAllAccountNumberForCurrency($companyId , $currencyName,$financialInstitutionId , $onlyActiveAccounts = true ):array
