@@ -151,9 +151,7 @@ class Partner extends Model
 	
 	public function updateNamesInAllTables(array $columnNames , string $oldPartnerName,string $newPartnerName, int $companyId , array $additionalWhere = [])
 	{
-		// $columnName = 'customer_name' , 'supplier_name';
 		$tables = DB::connection()->getDoctrineSchemaManager()->listTableNames();
-// dd($tables);
 		foreach($tables as $tableName){
 			foreach($columnNames as $columnName){
 				if(Schema::hasColumn($tableName,$columnName)){

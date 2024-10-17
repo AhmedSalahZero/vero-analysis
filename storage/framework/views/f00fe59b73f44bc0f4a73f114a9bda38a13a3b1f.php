@@ -1344,8 +1344,6 @@ td{
         });
 
     </script>
-<?php echo e(dd(session()->has('fail'))); ?>
-
     <?php if(session()->has('fail')): ?>
     <script>
         toastr.error('<?php echo e(session()->get("fail")); ?>')

@@ -83,7 +83,7 @@ $selectedBanks = [];
 </style>
 @endsection
 @section('sub-header')
-{{ __('Supplier Payment Form') }}
+{{ __('Payment Form') }}
 @endsection
 @section('content')
 <div class="row">
@@ -189,7 +189,7 @@ $selectedBanks = [];
 
                 <div class="col-md-3">
 
-                    <label>{{__('Supplier Name')}} @include('star')</label>
+                    <label>{{__('Name')}} @include('star')</label>
                     <div class="kt-input-icon">
                         <div class="kt-input-icon">
                             <div class="input-group date">
