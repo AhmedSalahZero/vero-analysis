@@ -126,6 +126,7 @@ $(document).on('change','.only-smaller-than-or-equal-specific-number-allowed',fu
 	currentValue = currentValue ? currentValue : 0 ;
 	greaterThan = greaterThan + currentValue;
 	greaterThan = greaterThan ? greaterThan : 0 ;
+
     if(! isLessThanOrEqual(val,greaterThan) && val  != '')
     {
         let currentLang = $('body').data('lang');
@@ -144,6 +145,44 @@ $(document).on('change','.only-smaller-than-or-equal-specific-number-allowed',fu
         $(this).val(0).trigger('change');
     }
 });
+
+$(document).on('change','.only-less-than-or-equal-specific-number-allowed',function(){
+    let val = number_unformat($(this).val());
+	let type = $(this).attr('data-type')
+	let currentSelectedType = $('#type').val();
+	let currentNumber = $('select[name="account_number['+currentSelectedType+']"]').val()
+	console.log(currentSelectedType,currentNumber)
+	if(currentSelectedType != type || !currentNumber){
+		return ;
+	}
+	let greaterThanValueOrQuery = $(this).attr('data-can-not-be-greater-than').replaceAll("'",'"');
+	let greaterThan =  parseFloat(number_unformat($(greaterThanValueOrQuery).val()))
+	
+
+	let currentValue = parseFloat($(this).attr('data-current-value'))
+	console.log(currentValue,greaterThan)
+	currentValue = currentValue ? currentValue : 0 ;
+	greaterThan = greaterThan + currentValue;
+	greaterThan = greaterThan ? greaterThan : 0 ;
+    if(! isLessThanOrEqual(val,greaterThan) && val  != '')
+    {
+        let currentLang = $('body').data('lang');
+		
+         Swal.fire({
+            icon: "warning",
+            title: {
+                "en":"Oops...",
+                "ar":""
+            }[currentLang],
+            text: {
+                "en":"The Value Must Be Less Than Or Equal " +greaterThan ,
+                "ar":""
+            }[currentLang],
+        })
+        $(this).val(0).trigger('change');
+    }
+});
+
   function roundHalf(num) {
     return Math.round(num*2)/2;
 }
