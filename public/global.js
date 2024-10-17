@@ -104,7 +104,6 @@ $(document).on('change','.only-greater-than-or-equal-zero-allowed',function(){
     if(! isGreaterThanOrEqualZero(val) && val  != '')
     {
         let currentLang = $('body').data('lang');
-		console.log(this)
          Swal.fire({
             icon: "warning",
             title: {
@@ -151,7 +150,7 @@ $(document).on('change','.only-less-than-or-equal-specific-number-allowed',funct
 	let type = $(this).attr('data-type')
 	let currentSelectedType = $('#type').val();
 	let currentNumber = $('select[name="account_number['+currentSelectedType+']"]').val()
-	console.log(currentSelectedType,currentNumber)
+
 	if(currentSelectedType != type || !currentNumber){
 		return ;
 	}
@@ -160,7 +159,7 @@ $(document).on('change','.only-less-than-or-equal-specific-number-allowed',funct
 	
 
 	let currentValue = parseFloat($(this).attr('data-current-value'))
-	console.log(currentValue,greaterThan)
+
 	currentValue = currentValue ? currentValue : 0 ;
 	greaterThan = greaterThan + currentValue;
 	greaterThan = greaterThan ? greaterThan : 0 ;

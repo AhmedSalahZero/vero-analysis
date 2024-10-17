@@ -540,10 +540,31 @@ class MoneyPaymentController
 		$moneyPaymentIds = $request->get('cheques') ;
 		$moneyPaymentIds = is_array($moneyPaymentIds) ? $moneyPaymentIds :  explode(',',$moneyPaymentIds);
 		$data = $request->only(['actual_payment_date']);
+		$actualPaymentDate = $request->get('actual_payment_date');
 		$data['status'] = PayableCheque::PAID;
 		foreach($moneyPaymentIds as $moneyPaymentId){
+			/**
+			 * @var MoneyPayment $moneyPayment
+			 */
 			$moneyPayment = MoneyPayment::find($moneyPaymentId) ;
-			$chequeDueDate = $moneyPayment->payableCheque->due_date;
+			$currentPaidAmount = $moneyPayment->getAmount();
+			$balancesResultJsonResponse = ((new MoneyReceivedController())->updateNetBalanceBasedOnAccountNumber($request,$company,$moneyPayment->getPayableChequeAccountType(),$moneyPayment->getPayableChequeAccountNumber(),$moneyPayment->getPayableChequePaymentBankId(),$actualPaymentDate));
+			$netBalance = $balancesResultJsonResponse->getData()->net_balance;
+			$errMessage = __('Net Balance Less Than Paid Amount');
+			// if(true){
+			if($netBalance < $currentPaidAmount){
+				if($request->ajax()){
+			
+					return response()->json([
+						'status'=>false ,
+						'msg'=>$errMessage = __('Net Balance Less Than Paid Amount'),
+						'pageLink'=>route('view.money.payment',['company'=>$company->id,'active'=>MoneyPayment::PAYABLE_CHEQUE])
+					]);
+				}
+			
+				return redirect()->back()->with('fail',$errMessage);
+			}
+			// $chequeDueDate = $moneyPayment->payableCheque->due_date;
 			$moneyPayment->payableCheque->update($data);
 			if($moneyPayment->getCurrentStatement()){
 				$time = now()->format('H:i:s');

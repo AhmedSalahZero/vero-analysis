@@ -1357,7 +1357,7 @@ td{
         });
 
     </script>
-
+{{ dd(session()->has('fail')) }}
     @if(session()->has('fail'))
     <script>
         toastr.error('{{ session()->get("fail") }}')

@@ -739,13 +739,14 @@ class MoneyReceivedController
 			'currencyName'=>$currencyName
 		]);
 	}
-	public function updateNetBalanceBasedOnAccountNumber(Request $request , Company $company )
+	public function updateNetBalanceBasedOnAccountNumber(Request $request , Company $company , $accountTypeId = null , $accountNumber = null , $financialInstitutionId = null , $statementDate = null)
 	{
 		$netBalanceDate = '' ;
-		$accountTypeId = $request->get('accountType');
+		$accountTypeId = $request->get('accountType',$accountTypeId );
 		$accountType = AccountType::find($accountTypeId);
-		$accountNumber = $request->get('accountNumber');
-		$financialInstitutionId = $request->get('financialInstitutionId');
+		$statementDate = $statementDate ?: now() ;
+		$accountNumber = $request->get('accountNumber',$accountNumber);
+		$financialInstitutionId = $request->get('financialInstitutionId',$financialInstitutionId);
 	
 		if(!$accountType){
 			return response()->json([
@@ -772,7 +773,7 @@ class MoneyReceivedController
 		$statementTableName = (get_class($accountNumberModel)::getStatementTableName()) ;
 		$foreignKeyName = get_class($accountNumberModel)::getForeignKeyInStatementTable();
 		
-		$balanceRow = DB::table($statementTableName)->where($foreignKeyName,$accountNumberModel->id)->where('full_date','<=' , now())->orderByRaw('full_date desc')->first();
+		$balanceRow = DB::table($statementTableName)->where($foreignKeyName,$accountNumberModel->id)->where('full_date','<=' , $statementDate)->orderByRaw('full_date desc')->first();
 		$NetBalanceRow = DB::table($statementTableName)->where($foreignKeyName,$accountNumberModel->id)->orderByRaw('full_date desc')->first();
 		$balance = 0;
 		$balanceDate = '';
