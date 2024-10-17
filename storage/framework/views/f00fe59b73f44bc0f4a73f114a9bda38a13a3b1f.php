@@ -1344,6 +1344,7 @@ td{
         });
 
     </script>
+<?php echo e(dd(session()->has('fail'))); ?>
 
     <?php if(session()->has('fail')): ?>
     <script>

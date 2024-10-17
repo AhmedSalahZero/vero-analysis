@@ -1213,9 +1213,8 @@ $selectedBanks = [];
 	$(function(){
 
 	setTimeout(function(){
-		console.log($('select.ajax-get-invoice-numbers:eq(0)').length)
 		$('select.ajax-get-invoice-numbers:eq(0)').trigger('change')
-	},500)
+	},1500)
 })
 	</script>
 	<script>
