@@ -234,7 +234,7 @@ use App\Models\LetterOfGuaranteeIssuance;
 
                                     </div>
 
-                                    <div class="col-md-3 hidden hide-only-bond">
+                                    <div class="col-md-3 hidden hide-only-bond only-with-customer">
 
                                         <label> {{ __('Contract Reference') }}
                                             @include('star')
@@ -250,7 +250,7 @@ use App\Models\LetterOfGuaranteeIssuance;
 
 
 
-                                    <div class="col-md-2 hidden hide-only-bond">
+                                    <div class="col-md-2 hidden hide-only-bond only-with-customer">
 
                                         <label> {{ __('Purchase Order') }}
                                             @include('star')
@@ -263,7 +263,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                                         </select>
                                     </div>
 
-                                    <div class="col-md-2 hidden hide-only-bond">
+                                    <div class="col-md-2 hidden hide-only-bond only-with-customer">
 
                                         <x-form.date :label="__('Purchase Order Date')" :required="true" :model="$model??null" :name="'purchase_order_date'" :placeholder="__('Select Purchase Order Date')"></x-form.date>
                                     </div>
@@ -307,7 +307,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                                     </div>
 
                                     <div class="col-md-3">
-                                        <x-form.input :default-value="0" :model="$model??null" :label="__('LG Amount')" :type="'text'" :placeholder="__('LG Amount')" :name="'lg_amount'" :class="'only-greater-than-zero-allowed recalculate-cash-cover-amount-js recalculate-lg-commission-amount-js lg-amount-js'" :required="true"></x-form.input>
+                                        <x-form.input :data-current-value="isset($model) ? $model->getLgAmount():0" :default-value="0" :model="$model??null" :label="__('LG Amount')" :type="'text'" :placeholder="__('LG Amount')" :name="'lg_amount'" :class="'only-greater-than-or-equal-zero-allowed only-smaller-than-or-equal-specific-number-allowed recalculate-cash-cover-amount-js recalculate-lg-commission-amount-js lg-amount-js'" :required="true"></x-form.input>
                                     </div>
 
                                     <div class="col-md-3">
@@ -657,6 +657,8 @@ use App\Models\LetterOfGuaranteeIssuance;
                             $('#limit-id').val(res.limit).prop('disabled', true)
                             $('#total-lg-for-all-types-id').val(res.total_lg_outstanding_balance).prop('disabled', true)
                             $('#total-room-id').val(res.total_room).prop('disabled', true)
+								var totalRoom = number_unformat(res.total_room);
+							$('input[name="lg_amount"]').attr('data-can-not-be-greater-than',totalRoom);
                             $('#current-lg-type-outstanding-balance-id').val(res.current_lg_type_outstanding_balance).prop('disabled', true)
                             $('#min_lg_commission_fees_id').val(res.min_lg_commission_rate).trigger('change');
                             $('#lg_commission_rate-id').val(res.lg_commission_rate).trigger('change');
@@ -687,12 +689,21 @@ use App\Models\LetterOfGuaranteeIssuance;
                         , }
                         , type: "GET"
                         , success: function(res) {
+							var isCustomer = res.is_customer ;
+							if(!isCustomer){
+								$('.only-with-customer .required-label').addClass('visibility-hidden')
+							
+							}else{
+								$('.only-with-customer .required-label').removeClass('visibility-hidden')
+						
+							}
                             var contractsOptions = '';
                             var currentSelectedId = $('select#contract-id').attr('data-current-selected')
                             for (var contractId in res.contracts) {
                                 var contractName = res.contracts[contractId];
                                 contractsOptions += `<option ${currentSelectedId == contractId ? 'selected' : '' } value="${contractId}"> ${contractName}  </option> `;
                             }
+							$('select#purchase-order-id').empty().selectpicker("refresh");
                             $('select#contract-id').empty().append(contractsOptions).selectpicker("refresh");
                             $('select#contract-id').trigger('change')
                         }

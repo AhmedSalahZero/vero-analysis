@@ -418,6 +418,14 @@ let pageLoaded = false ;
     {{-- <meta name="csrf-token" content="{{ csrf_token() }}"> --}}
 
     <!--begin::Fonts -->
+	<script>
+	function toFixed(num,points = 2){
+	if(!num){
+		return 0;
+	}
+	return (Math.round(num * 100) / 100).toFixed(points);
+}
+	</script>
     <script src="{{ asset('custom/webfont.js') }}"></script>
     <script src="{{ asset('custom/helper.js') }}"></script>
     {{-- <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js"></script> --}}
@@ -1931,12 +1939,7 @@ function coverStringToValidClass(name) {
         return '__' + ('000' + c.toString(16)).slice(-4);
     });
 }
-function toFixed(num,points = 2){
-	if(!num){
-		return 0;
-	}
-	return (Math.round(num * 100) / 100).toFixed(points);
-}
+
 </script>
 <script>
 

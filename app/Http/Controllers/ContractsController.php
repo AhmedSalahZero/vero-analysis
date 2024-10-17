@@ -140,9 +140,16 @@ class ContractsController
 	}
 	public function updateContractsBasedOnCustomer(Request $request , Company $company ){
 		$customer = Partner::find($request->get('customerId'));
+		if(!$customer){
+			return response()->json([
+				'contracts'=>[]
+			]);
+		}
 		$contracts = $customer->contracts->pluck('name','id')->toArray();
+		$isCustomer = $customer->is_customer ;
 		return response()->json([
-			'contracts'=>$contracts
+			'contracts'=>$contracts,
+			'is_customer'=>$isCustomer
 		]);
 	}
 	public function updatePurchaseOrdersBasedOnContract(Request $request , Company $company ){

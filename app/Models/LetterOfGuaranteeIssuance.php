@@ -182,7 +182,7 @@ class LetterOfGuaranteeIssuance extends Model
 	}
 	public function purchaseOrder()
 	{
-		return $this->belongsTo(PurchaseOrder::class , 'purchase_order_id','id');
+		return $this->belongsTo(SalesOrder::class , 'purchase_order_id','id');
 	}
 	public function getPurchaseOrderName()
 	{

@@ -823,12 +823,7 @@ use App\Models\MoneyReceived ;
     })
 
 </script>
-<?php if(!$singleModel && !isset($model)): ?>
-<script>
 
-$('select#partner_type').trigger('change')
-</script>
-<?php endif; ?>
 <?php $__env->stopSection(); ?>
 
 <?php echo $__env->make('layouts.dashboard', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /media/salah/Software/projects/veroo/resources/views/reports/moneyReceived/form.blade.php ENDPATH**/ ?>

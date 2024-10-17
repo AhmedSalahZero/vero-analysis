@@ -133,7 +133,7 @@ class CustomersController
 		$customer->update([
 			'name'=>$newName
 		]);
-		$customer->updateNamesInAllTables('customer_name',$oldName,$newName,$company->id);
+		$customer->updateNamesInAllTables(['customer_name'],$oldName,$newName,$company->id,['partner_type','=','is_customer']);
 		$type = Partner::CUSTOMERS;
 		// $this->store($company,$request);
 		$activeTab = $type ;

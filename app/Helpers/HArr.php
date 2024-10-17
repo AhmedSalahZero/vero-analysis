@@ -176,4 +176,15 @@ class HArr
 		}
 		return $result;
 	}
+	public static function mergeTwoAssocArr(array $items1 , array $items2):array
+	{
+		$result = [];
+		foreach($items1 as $key => $val){
+			$result[$key] = $val ;
+		}
+		foreach($items2 as $key => $val){
+			$result[$key] = $val ;
+		}
+		return $result ;
+	}
 }

@@ -133,7 +133,7 @@ class EmployeesController
 		$employee->update([
 			'name'=>$newName
 		]);
-		// $employee->updateNamesInAllTables('employee_name',$oldName,$newName,$company->id);
+		$employee->updateNamesInAllTables(['customer_name','supplier_name'],$oldName,$newName,$company->id,['partner_type','=','is_employee']);
 		$type = Partner::EMPLOYEES;
 		// $this->store($company,$request);
 		$activeTab = $type ;

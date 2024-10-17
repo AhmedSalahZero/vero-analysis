@@ -612,5 +612,18 @@ class MoneyPaymentController
 			'supplierInvoices'=>SupplierInvoice::where('currency',$currencyName)->where('company_id',$company->id)->pluck('supplier_name','supplier_id')
 		]);
 	}
+	public function getCurrentAccountEndBalance(Request $request , Company $company){
+		$branchId = $request->get('branchId');
+		$currencyName = $request->get('currencyName');
+		/**
+		 * @var Branch $branch
+		 */
+		$branch = Branch::find($branchId);
+		$endBalance = $branch->getCurrentEndBalance($company->id,$currencyName);
+		return response()->json([
+			'end_balance'=>$endBalance
+		]);
+		
+	}
 	
 }

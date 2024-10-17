@@ -318,7 +318,7 @@ use App\Models\LetterOfGuaranteeIssuance;
 
                                     </div>
 
-                                    <div class="col-md-3 hidden hide-only-bond">
+                                    <div class="col-md-3 hidden hide-only-bond only-with-customer">
 
                                         <label> <?php echo e(__('Contract Reference')); ?>
 
@@ -333,7 +333,7 @@ use App\Models\LetterOfGuaranteeIssuance;
 
 
 
-                                    <div class="col-md-2 hidden hide-only-bond">
+                                    <div class="col-md-2 hidden hide-only-bond only-with-customer">
 
                                         <label> <?php echo e(__('Purchase Order')); ?>
 
@@ -345,7 +345,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                                         </select>
                                     </div>
 
-                                    <div class="col-md-2 hidden hide-only-bond">
+                                    <div class="col-md-2 hidden hide-only-bond only-with-customer">
 
                                          <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.date','data' => ['label' => __('Purchase Order Date'),'required' => true,'model' => $model??null,'name' => 'purchase_order_date','placeholder' => __('Select Purchase Order Date')]]); ?>
@@ -443,11 +443,11 @@ use App\Models\LetterOfGuaranteeIssuance;
 
                                     <div class="col-md-3">
                                          <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.input','data' => ['defaultValue' => 0,'model' => $model??null,'label' => __('LG Amount'),'type' => 'text','placeholder' => __('LG Amount'),'name' => 'lg_amount','class' => 'only-greater-than-zero-allowed recalculate-cash-cover-amount-js recalculate-lg-commission-amount-js lg-amount-js','required' => true]]); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.input','data' => ['dataCurrentValue' => isset($model) ? $model->getLgAmount():0,'model' => $model??null,'label' => __('LG Amount'),'type' => 'text','placeholder' => __('LG Amount'),'name' => 'lg_amount','class' => 'only-greater-than-or-equal-zero-allowed only-smaller-than-or-equal-specific-number-allowed recalculate-cash-cover-amount-js recalculate-lg-commission-amount-js lg-amount-js ','required' => true]]); ?>
 <?php $component->withName('form.input'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['default-value' => 0,'model' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($model??null),'label' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('LG Amount')),'type' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('text'),'placeholder' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('LG Amount')),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('lg_amount'),'class' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-zero-allowed recalculate-cash-cover-amount-js recalculate-lg-commission-amount-js lg-amount-js'),'required' => true]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['data-current-value' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(isset($model) ? $model->getLgAmount():0),'model' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($model??null),'label' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('LG Amount')),'type' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('text'),'placeholder' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('LG Amount')),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('lg_amount'),'class' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed only-smaller-than-or-equal-specific-number-allowed recalculate-cash-cover-amount-js recalculate-lg-commission-amount-js lg-amount-js '),'required' => true]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
@@ -914,6 +914,8 @@ use App\Models\LetterOfGuaranteeIssuance;
                             $('#limit-id').val(res.limit).prop('disabled', true)
                             $('#total-lg-for-all-types-id').val(res.total_lg_outstanding_balance).prop('disabled', true)
                             $('#total-room-id').val(res.total_room).prop('disabled', true)
+							var totalRoom = number_unformat(res.total_room);
+							$('input[name="lg_amount"]').attr('data-can-not-be-greater-than',totalRoom);
                             $('#current-lg-type-outstanding-balance-id').val(res.current_lg_type_outstanding_balance).prop('disabled', true)
                             $('#min_lg_commission_fees_id').val(res.min_lg_commission_rate).trigger('change');
                             $('#lg_commission_rate-id').val(res.lg_commission_rate).trigger('change');
@@ -934,6 +936,7 @@ use App\Models\LetterOfGuaranteeIssuance;
             <script>
                 $(document).on('change', '[js-update-contracts-based-on-customers]', function(e) {
                     const customerId = $('select#customer_name').val()
+					
                     if (!customerId) {
                         return;
                     }
@@ -944,12 +947,21 @@ use App\Models\LetterOfGuaranteeIssuance;
                         , }
                         , type: "GET"
                         , success: function(res) {
+							var isCustomer = res.is_customer ;
+							if(!isCustomer){
+								$('.only-with-customer .required-label').addClass('visibility-hidden')
+							
+							}else{
+								$('.only-with-customer .required-label').removeClass('visibility-hidden')
+						
+							}
                             var contractsOptions = '';
                             var currentSelectedId = $('select#contract-id').attr('data-current-selected')
                             for (var contractId in res.contracts) {
                                 var contractName = res.contracts[contractId];
                                 contractsOptions += `<option ${currentSelectedId == contractId ? 'selected' : '' } value="${contractId}"> ${contractName}  </option> `;
                             }
+							$('select#purchase-order-id').empty().selectpicker("refresh");
                             $('select#contract-id').empty().append(contractsOptions).selectpicker("refresh");
                             $('select#contract-id').trigger('change')
                         }
@@ -976,7 +988,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                         , }
                         , type: "GET"
                         , success: function(res) {
-                            var purchaseOrdersOptions = '';
+                            var purchaseOrdersOptions = '<option value="null"> <?php echo e(__("All")); ?> </option> ';
                             var currentSelectedId = $('select#purchase-order-id').attr('data-current-selected')
                             for (var purchaseOrderId in res.purchase_orders) {
                                 var contractName = res.purchase_orders[purchaseOrderId];
