@@ -12,10 +12,8 @@ use App\Models\MoneyReceived;
 use App\Models\Partner;
 use App\Models\PayableCheque;
 use App\Models\SettlementAllocation;
-use App\Models\SupplierInvoice;
 use App\Traits\GeneralFunctions;
 use Carbon\Carbon;
-use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -28,9 +26,6 @@ class ContractCashFlowReportController
         return view('reports.contract_cash_flow_form', compact('company','clientsWithContracts'));
     }
 	public function result(Company $company , Request $request , bool $returnResultAsArray = false ){
-	
-		
-
 		
 		$formStartDate =$request->get('start_date',$request->get('cash_start_date'));
 		 
