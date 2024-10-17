@@ -256,25 +256,7 @@ $selectedBanks = [];
 
 
 
-                    <div class="modal fade" id="js-choose-delivery-branch-id" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLongTitle"><?php echo e(__('Add Branch')); ?></h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body">
-                                    <input type="text" id="js-delivery-branch-names" class="form-control">
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal"><?php echo e(__('Close')); ?></button>
-                                    <button id="js-append-delivery-branch-name-if-not-exist" type="button" class="btn btn-primary"><?php echo e(__('Save')); ?></button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    
 
 
 
@@ -301,7 +283,7 @@ $selectedBanks = [];
                     <div class="col-md-3 mb-3">
                         <label><?php echo e(__('Balance')); ?> <span class="balance-date-js"></span> </label>
                         <div class="kt-input-icon">
-                            <input value="0" type="text" disabled class="form-control cash-balance-js" placeholder="<?php echo e(__('Account Balance')); ?>">
+                            <input value="0" type="text" disabled class="form-control cash-balance-js" data-type="<?php echo e(MoneyPayment::PAYABLE_CHEQUE); ?>" placeholder="<?php echo e(__('Account Balance')); ?>">
                         </div>
                     </div>
                    
@@ -317,19 +299,19 @@ $selectedBanks = [];
                         <div class="kt-input-icon">
                             <div class="input-group date">
                                 <select id="branch-id" name="delivery_branch_id" class="form-control">
-                                    <option value="-1"><?php echo e(__('Select Branch')); ?></option>
+                                    
                                     <?php $__currentLoopData = $selectedBranches; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $branchId=>$branchName): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                     <option value="<?php echo e($branchId); ?>" <?php echo e(isset($model) && $model->getCashPaymentBranchId() == $branchId ? 'selected' : ''); ?>><?php echo e($branchName); ?></option>
                                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 </select>
-                                <button id="js-delivery-branch" class="btn btn-sm btn-primary"><?php echo e(__('Add New Branch')); ?></button>
+                                
                             </div>
                         </div>
                     </div>
                     <div class="col-md-2">
                         <label><?php echo e(__('Paid Amount')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
                         <div class="kt-input-icon">
-                            <input data-max-cheque-value="0" type="text" value="<?php echo e(isset($model) ? $model->getPaidAmount() :0); ?>" name="paid_amount[<?php echo e(MoneyPayment::CASH_PAYMENT); ?>]" class="form-control only-greater-than-or-equal-zero-allowed <?php echo e('js-'. MoneyPayment::CASH_PAYMENT.'-paid-amount'); ?>  main-amount-class recalculate-amount-class" data-type="<?php echo e(MoneyPayment::CASH_PAYMENT); ?>" placeholder="<?php echo e(__('Paid Amount')); ?>">
+                            <input data-can-not-be-greater-than=".balance-js[data-type='<?php echo e(MoneyPayment::CASH_PAYMENT); ?>']" data-current-value="<?php echo e(isset($model) ? $model->getPaidAmount():0); ?>" data-max-cheque-value="0" type="text" value="<?php echo e(isset($model) ? $model->getPaidAmount() :0); ?>" name="paid_amount[<?php echo e(MoneyPayment::CASH_PAYMENT); ?>]" class="form-control only-greater-than-or-equal-zero-allowed only-less-than-or-equal-specific-number-allowed <?php echo e('js-'. MoneyPayment::CASH_PAYMENT.'-paid-amount'); ?>  main-amount-class recalculate-amount-class" data-type="<?php echo e(MoneyPayment::CASH_PAYMENT); ?>" placeholder="<?php echo e(__('Paid Amount')); ?>">
                              <?php if (isset($component)) { $__componentOriginalffdb2b47423986c543526403ae50ad342b26dbd3 = $component; } ?>
 <?php $component = $__env->getContainer()->make(App\View\Components\ToolTip::class, ['title' => ''.e(__('Kash Vero')).'']); ?>
 <?php $component->withName('tool-tip'); ?>
@@ -412,7 +394,7 @@ $selectedBanks = [];
                     <div class="col-md-3 mb-3">
                         <label><?php echo e(__('Balance')); ?> <span class="balance-date-js"></span> </label>
                         <div class="kt-input-icon">
-                            <input value="0" type="text" disabled class="form-control balance-js" placeholder="<?php echo e(__('Account Balance')); ?>">
+                            <input value="0" type="text" disabled class="form-control balance-js"  placeholder="<?php echo e(__('Account Balance')); ?>">
                         </div>
                     </div>
                     <div class="col-md-3 mb-3">
@@ -537,13 +519,13 @@ $selectedBanks = [];
                     <div class="col-md-3 mb-3">
                         <label><?php echo e(__('Balance')); ?> <span class="balance-date-js"></span> </label>
                         <div class="kt-input-icon">
-                            <input value="0" type="text" disabled class="form-control balance-js" placeholder="<?php echo e(__('Account Balance')); ?>">
+                            <input value="0" type="text" disabled class="form-control balance-js" data-type="<?php echo e(MoneyPayment::OUTGOING_TRANSFER); ?>" placeholder="<?php echo e(__('Account Balance')); ?>">
                         </div>
                     </div>
                     <div class="col-md-3 mb-3">
                         <label><?php echo e(__('Net Balance')); ?> <span class="net-balance-date-js"></span> </label>
                         <div class="kt-input-icon">
-                            <input value="0" type="text" disabled class="form-control net-balance-js" placeholder="<?php echo e(__('Net Balance')); ?>">
+                            <input value="0" type="text" disabled class="form-control net-balance-js"  placeholder="<?php echo e(__('Net Balance')); ?>">
                             
                         </div>
                     </div>
@@ -569,12 +551,7 @@ $selectedBanks = [];
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-2 max-w-11">
-                        <label> <?php echo __('Outgoing <br> Transfer Amount'); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
-                        <div class="kt-input-icon">
-                            <input data-max-cheque-value="0" type="text" value="<?php echo e(isset($model) ? $model->getPaidAmount():0); ?>" name="paid_amount[<?php echo e(MoneyPayment::OUTGOING_TRANSFER); ?>]" class="form-control greater-than-or-equal-zero-allowed <?php echo e('js-'. MoneyPayment::OUTGOING_TRANSFER .'-paid-amount'); ?>  main-amount-class recalculate-amount-class" data-type="<?php echo e(MoneyPayment::OUTGOING_TRANSFER); ?>" placeholder="<?php echo e(__('Insert Amount')); ?>">
-                        </div>
-                    </div>
+                   
 
 
 
@@ -602,6 +579,14 @@ $selectedBanks = [];
                             </div>
                         </div>
                     </div>
+					
+					 <div class="col-md-2 max-w-11">
+                        <label> <?php echo __('Outgoing <br> Transfer Amount'); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
+                        <div class="kt-input-icon">
+                            <input data-can-not-be-greater-than=".balance-js[data-type='<?php echo e(MoneyPayment::OUTGOING_TRANSFER); ?>']" data-current-value="<?php echo e(isset($model) ? $model->getPaidAmount():0); ?>" data-max-cheque-value="0" type="text" value="<?php echo e(isset($model) ? $model->getPaidAmount():0); ?>" name="paid_amount[<?php echo e(MoneyPayment::OUTGOING_TRANSFER); ?>]" class="form-control only-greater-than-or-equal-zero-allowed only-less-than-or-equal-specific-number-allowed <?php echo e('js-'. MoneyPayment::OUTGOING_TRANSFER .'-paid-amount'); ?>  main-amount-class recalculate-amount-class" data-type="<?php echo e(MoneyPayment::OUTGOING_TRANSFER); ?>" placeholder="<?php echo e(__('Insert Amount')); ?>">
+                        </div>
+                    </div>
+					
 
 
                     <div class="col-md-1 max-w-6">
