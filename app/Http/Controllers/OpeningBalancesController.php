@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreMoneyPaymentRequest;
 use App\Http\Requests\StoreOpeningBalanceRequest;
 use App\Models\AccountType;
 use App\Models\Bank;
@@ -157,8 +156,8 @@ class OpeningBalancesController
                     'cheque_number' => $payableChequeArr['cheque_number'] ?: null,
                     'delivery_bank_id' => isset($payableChequeArr['delivery_bank_id']) ? $payableChequeArr['delivery_bank_id'] : null,
                     'due_date' => $payableChequeArr['due_date'] ?: null,
-                    // 'delivery_date' => $chequeUnderCollection['delivery_date'] ?: null,
-                    // 'drawl_bank_id' => $chequeUnderCollection['drawl_bank_id'] ?: null,
+                    'delivery_date' => $payableChequeArr['delivery_date'] ?: null,// ???
+					'company_id'=>$company->id,
                     'account_type' => $payableChequeArr['account_type'] ?: null,
                     'account_number' => $payableChequeArr['account_number'] ?: null,
                 ]);
@@ -366,6 +365,7 @@ class OpeningBalancesController
 
 		 foreach ($elementsToUpdate as $id) {
 			 $dataToUpdate = findByKey($request->input(MoneyPayment::PAYABLE_CHEQUE), 'id', $id);
+			 $dataToUpdate['delivery_date'] = $dataToUpdate['due_date'] ; // ???
 			 unset($dataToUpdate['id']);
 			 $pivotData = [
 				 'due_date' => $dataToUpdate['due_date'],
@@ -379,12 +379,12 @@ class OpeningBalancesController
 			 }
  
 			 $dataToUpdate['supplier_name'] = is_numeric($dataToUpdate['supplier_id']) ? Partner::find($dataToUpdate['supplier_id'])->getName() : $dataToUpdate['supplier_id'] ;
- 
+			 $dataToUpdate['company_id'] = $company->id;
 			 $openingBalance->payableCheques()->where('money_payments.id', $id)->first()->update(array_merge($dataToUpdate,['updated_at'=>now()]));
 			 $openingBalance->payableCheques()->where('money_payments.id', $id)->first()->payableCheque->update(array_merge($pivotData,['updated_at'=>now()]));
 		 
 		 }
- 
+	
 		 foreach ($request->get(MoneyPayment::PAYABLE_CHEQUE, []) as $data) {
 			 if (!isset($data['id']) || (isset($data['id']) && $data['id'] == '0')  ) {
 				 unset($data['id']);
@@ -403,6 +403,8 @@ class OpeningBalancesController
 				 $moneyPayment = $openingBalance->payableCheques()->create(array_merge($data, [
 					 'type' => MoneyPayment::PAYABLE_CHEQUE,
 					 'user_id' => auth()->id(),
+					 'payment_currency'=>$data['currency'],
+					 'company_id'=>$company->id
 				 ]));
 				 $payableCheque = $moneyPayment->payableCheque()->create($pivotData);
 				 $payableCheque->update(['updated_at'=>now()]);

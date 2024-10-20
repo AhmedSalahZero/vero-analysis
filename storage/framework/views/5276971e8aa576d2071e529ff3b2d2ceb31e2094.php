@@ -82,7 +82,7 @@ $selectedBanks = [];
 </style>
 <?php $__env->stopSection(); ?>
 <?php $__env->startSection('sub-header'); ?>
-<?php echo e(__('Supplier Payment Form')); ?>
+<?php echo e(__('Payment Form')); ?>
 
 <?php $__env->stopSection(); ?>
 <?php $__env->startSection('content'); ?>
@@ -190,7 +190,7 @@ $selectedBanks = [];
 
                 <div class="col-md-3">
 
-                    <label><?php echo e(__('Supplier Name')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
+                    <label><?php echo e(__('Name')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
                     <div class="kt-input-icon">
                         <div class="kt-input-icon">
                             <div class="input-group date">

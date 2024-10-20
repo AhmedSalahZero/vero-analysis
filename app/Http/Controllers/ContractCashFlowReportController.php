@@ -33,8 +33,6 @@ class ContractCashFlowReportController
 		$formEndDate =$request->get('end_date',$request->get('cash_end_date'));
 		
 		$reportInterval =  $request->get('report_interval','weekly');
-		// $supplierIdAndNames = [];
-		//////////////////////////
 		$contractId = $request->get('contract_id')	 ;
 		$finalResult = [];
 		/////////////////////
@@ -63,12 +61,10 @@ class ContractCashFlowReportController
 		];
 		$pastDueCustomerInvoicesPerCurrency = [];
 		$customerDueInvoicesPerCurrency = [];
-		// $cashExpenseCategoryNamesArr = [];
 		$noRowHeaders =  $reportInterval == 'weekly' ? 3 : 1 ;
 		$months = generateDatesBetweenTwoDates(Carbon::make($formStartDate),Carbon::make($formEndDate)); 
 		$days = generateDatesBetweenTwoDates(Carbon::make($formStartDate),Carbon::make($formEndDate),'addDay'); 
 		$startDate = $request->get('start_date',$request->get('cash_start_date'));
-		// $currency = $contract ? $contract->getCurrency() : $company->getMainFunctionalCurrency();
 		$year = explode('-',$startDate)[0];
 		$endDate  = $request->get('end_date',$request->get('cash_end_date'));
 		$datesWithWeeks = [];
@@ -157,13 +153,7 @@ class ContractCashFlowReportController
 			$result['cash_expenses'][__('Net Cash (+/-)')]['total']['total_of_total'] = array_sum($netCash) ;
 			$result['cash_expenses'][__('Accumulated Net Cash (+/-)')]['total'] = $this->formatAccumulatedNetCash($netCash,$weeks);
 			$finalResult[$currencyName] = $result;
-			
-			
 		}
-	
-		
-		
-		
 		if($returnResultAsArray){
 			return [
 				'result'=>$result , 
@@ -218,20 +208,10 @@ class ContractCashFlowReportController
 				if($currentDate->greaterThanOrEqualTo($startDate)){
 					$newWeeks[$weekNumber.'-'.$year] = $weekNumber; 
 				}
-			
 		}
 		return $newWeeks;
 		
 	}
-
-	
-	
-
-	
-	
-	
-	
-	
 	public function getPastDueCustomerInvoices(string $invoiceType,string $currency , int $companyId , string $startDate,string $contractCode ){
 		$fullClassName = '\App\Models\\'.$invoiceType;
 		$items  = $fullClassName::where('company_id',$companyId)
@@ -244,52 +224,4 @@ class ContractCashFlowReportController
 		}
 		return $items;
 	}
-	
-	
-	
-	
-	
-	
-	// protected function getCashExpensesAtDates(int $companyId , string $startDate , string $endDate,string $currency,int $cashExpenseCategoryNameId) 
-	// {
-	// 	return DB::table('cash_expenses')->where('company_id',$companyId)->whereBetween('payment_date',[$startDate,$endDate])->where('currency',$currency)->where('cash_expense_category_name_id',$cashExpenseCategoryNameId)->sum('paid_amount');
-	// }
-	// public function adjustCustomerDueInvoices(Request $request,Company $company){
-	// 	$invoiceType = $request->get('invoiceType');
-	// 	foreach($request->get('customer_invoice_id',[]) as $customerInvoiceId){
-	// 		$weekStartDate = $request->input('week_start_date.'.$customerInvoiceId);
-	// 		$percentage = $request->input('percentage.'.$customerInvoiceId);
-	// 		$invoiceAmount = $request->input('invoice_amount.'.$customerInvoiceId);
-	// 		$amount = $percentage/100  * $invoiceAmount;
-	// 		$first = DB::table('weekly_cashflow_custom_due_invoices')
-	// 		->where('company_id',$company->id)
-	// 		->where('invoice_id',$customerInvoiceId)
-	// 		->where('invoice_type',$invoiceType)->first();
-	// 		$data = [
-	// 			'company_id'=>$company->id ,
-	// 			'invoice_id'=>$customerInvoiceId,
-	// 			'invoice_type'=>$invoiceType,
-	// 			'week_start_date'=>$weekStartDate,
-	// 			'percentage'=>$percentage,
-	// 			'amount'=>$amount,
-	// 			'company_id'=>$company->id 
-	// 		] ;
-	// 		if($first){
-	// 			DB::table('weekly_cashflow_custom_due_invoices')
-	// 			->where('company_id',$company->id)
-	// 			->where('invoice_id',$customerInvoiceId)
-	// 			->where('invoice_type',$invoiceType)->update($data);
-	// 		}else{
-	// 			DB::table('weekly_cashflow_custom_due_invoices')->insert($data);
-	// 		}
-			
-	// 	}
-	// 	return response()->json([
-	// 		'status'=>true ,
-	// 		'message'=>'',
-	// 		'reloadCurrentPage'=>true 
-	// 	]);
-	// }
-
-
 }

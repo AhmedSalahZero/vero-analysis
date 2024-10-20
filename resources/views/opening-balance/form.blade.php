@@ -716,7 +716,7 @@ use App\Models\MoneyReceived ;
                                                         <select data-live-search="true" data-actions-box="true" name="drawee_bank_id" class="form-control repeater-select select2-select	drawee-bank-class">
                                                             @foreach($selectedBanks as $bankId=>$bankName)
 
-                                                            <option data-current-id="{{ $chequeUnderCollection->cheque->getDraweeBankId() }}" value="{{ $bankId }}" {{ isset($chequeUnderCollection) && $chequeUnderCollection->cheque && $chequeUnderCollection->cheque->getDraweeBankId() == $bankId ? 'selected':'' }}>{{ $bankName }}</option>
+                                                            <option data-current-id="{{ isset($chequeUnderCollection) ? $chequeUnderCollection->cheque->getDraweeBankId() : 0 }}" value="{{ $bankId }}" {{ isset($chequeUnderCollection) && $chequeUnderCollection->cheque && $chequeUnderCollection->cheque->getDraweeBankId() == $bankId ? 'selected':'' }}>{{ $bankName }}</option>
                                                             @endforeach
                                                         </select>
                                                         <button class="btn btn-sm btn-primary js-drawee-bank-class">{{ __('Add New Bank') }}</button>

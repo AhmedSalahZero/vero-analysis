@@ -740,7 +740,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                         , }
                         , type: "GET"
                         , success: function(res) {
-                            var purchaseOrdersOptions = '';
+                            var purchaseOrdersOptions = '<option value="null"> {{ __("All") }} </option> ';
                             var currentSelectedId = $('select#purchase-order-id').attr('data-current-selected')
                             for (var purchaseOrderId in res.purchase_orders) {
                                 var contractName = res.purchase_orders[purchaseOrderId];
