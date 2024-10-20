@@ -111,6 +111,7 @@ class OpeningBalancesController
                     'customer_name' => $customer ? $customer->getName() : null,
                     'received_amount' => $currentAmount,
                     'currency' => $chequeUnderCollection['currency'],
+                    'receiving_currency' => $chequeUnderCollection['currency'],
                     'receiving_date' => $openingBalanceDate,
                     'company_id' => $company->id,
                     'user_id' => auth()->id(),
@@ -314,6 +315,8 @@ class OpeningBalancesController
 
             $dataToUpdate['customer_name'] = is_numeric($dataToUpdate['customer_id']) ? Partner::find($dataToUpdate['customer_id'])->getName() : $dataToUpdate['customer_id'] ;
 			$dataToUpdate['receiving_date'] = $openingBalanceDate;
+			$dataToUpdate['receiving_currency'] = $dataToUpdate['currency'];
+			$dataToUpdate['company_id']=$company->id;
             $openingBalance->chequeUnderCollections()->where('money_received.id', $id)->first()->update(array_merge($dataToUpdate,['updated_at'=>now()]));
             $openingBalance->chequeUnderCollections()->where('money_received.id', $id)->first()->cheque->update(array_merge($pivotData,['updated_at'=>now()]));
 		
@@ -338,6 +341,8 @@ class OpeningBalancesController
                 }
                 $data['customer_name'] = is_numeric($data['customer_id']) ? Partner::find($data['customer_id'])->getName() : $data['customer_id'] ;
 				$data['receiving_date']=$openingBalanceDate;
+				$data['receiving_currency']=$data['currency'];
+				$data['company_id']=$company->id;
                 $moneyReceived = $openingBalance->chequeUnderCollections()->create(array_merge($data, [
 					'type' => MoneyReceived::CHEQUE,
                     'user_id' => auth()->id()
