@@ -61,8 +61,10 @@ use App\Models\MoneyReceived ;
             <input type="hidden" name="current_cheque_id" value="{{ isset($model) && $model->cheque ? $model->cheque->id : 0 }}">
             <input type="hidden" name="current_branch" value="{{ isset($model) && $model->cashInSafe ? $model->cashInSafe->receiving_branch_id : 0 }}">
             <input id="js-money-received-id" type="hidden" name="money_received_id" value="{{ isset($model) ? $model->id : 0 }}">
-			<input type="hidden" id="js-down-payment-id" value="{{ isset($model) && $model->downPayment ? $model->downPayment->id : 0  }}">
+			{{-- <input type="hidden" id="js-down-payment-id" value="{{ isset($model) && $model->downPayment ? $model->downPayment->id : 0  }}"> --}}
             <input type="hidden" id="ajax-invoice-item" data-single-model="{{ $singleModel ? 1 : 0 }}" value="{{ $singleModel ? $invoiceNumber : 0 }}">
+            <input id="js-down-payment-id" type="hidden" name="down_payment_id" value="{{ isset($model) ? $model->id : 0 }}">
+			
             @csrf
             @if(isset($model))
             @method('put')
@@ -143,7 +145,7 @@ use App\Models\MoneyReceived ;
                             <div class="kt-input-icon">
                                 <div class="kt-input-icon">
                                     <div class="input-group date">
-                                        <select data-live-search="true" data-actions-box="true" id="customer_name" name="customer_id" class="form-control select2-select ajax-get-invoice-numbers  ajax-update-contracts customer-select">
+                                        <select data-current-selected="{{ isset($model) ? $model->getCustomerName() : '' }}" data-live-search="true" data-actions-box="true" id="customer_name" name="customer_id" class="form-control select2-select ajax-get-invoice-numbers  ajax-update-contracts customer-select">
                                             <option value="" selected>{{__('Select')}}</option>
                                             @foreach($customers as $customerId => $customerName)
                                             <option @if($singleModel) selected @endif @if(isset($model) && $model->getCustomerName() == $customerName ) selected @endif value="{{ $customerId }}">{{$customerName}}</option>
@@ -718,9 +720,7 @@ use App\Models\MoneyReceived ;
 </script>
 
 <script>
-    $(document).on('change', '.settlement-amount-class', function() {
 
-    })
 
     $(function() {
         $('#type').trigger('change');

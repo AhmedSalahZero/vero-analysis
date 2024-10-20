@@ -128,7 +128,7 @@ $selectedBanks = [];
     </div>
 
 <div class="col-md-2">
-                            <label>{{__('Select Invoice Currency')}} @include('star')</label>
+                            <label>{{__('Select Contract Currency')}} @include('star')</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
                                     <select id="invoice-currency-id"  name="currency" class="form-control 
@@ -213,7 +213,7 @@ $selectedBanks = [];
         <div class="kt-input-icon">
             <div class="kt-input-icon">
                 <div class="input-group date">
-                    <select id="contract-id" name="contract_id" class="form-control ajax-get-purchases-orders-for-contract">
+                    <select data-current-selected="{{ isset($model) ? $model->getContractId() : 0 }}" id="contract-id" name="contract_id" class="form-control ajax-get-purchases-orders-for-contract">
                         <option value="" selected>{{__('Select')}}</option>
                         @foreach($contracts as $index => $contract)
                         <option @if(isset($model) && $model->getContractId() == $contract->id ) selected @endif value="{{ $contract->id }}">{{$contract->getName()}}</option>
@@ -613,6 +613,7 @@ $selectedBanks = [];
         e.preventDefault()
         const supplierId = $('#supplier_name').val()
             const currency = $('select.currency-for-contracts').val()
+			const contractId = $('select#contract-id').attr('data-current-selected');
         if (supplierId && currency) {
             $.ajax({
                 url: "{{ route('get.contracts.for.supplier',['company'=>$company->id]) }}"
@@ -623,10 +624,10 @@ $selectedBanks = [];
                 , success: function(res) {
                     let options = '';
                     for (id in res.contracts) {
-                        options += `<option value="${id}">${res.contracts[id]}</option>`
+                        options += `<option value="${id}" ${contractId == id ? 'selected' : ''} >${res.contracts[id]}</option>`
                     }
-                    $('#contract-id').empty().append(options)
-                    $('#contract-id').trigger('change')
+                    $('select#contract-id').empty().append(options)
+                    $('select#contract-id').trigger('change')
                 }
             })
         }

@@ -358,11 +358,12 @@ $(function () {
 			url,
 			success:function(res){
 				let options = '';
+				let currentSelected = $('select#customer_name').val()
 				for(customerId in res.customerInvoices ){
 					var customerName = res.customerInvoices[customerId]
-					options +=` <option value="${customerId}">${customerName}</option>`
+					options +=` <option value="${customerId}" ${currentSelected == customerId ? 'selected' : ''}>${customerName}</option>`
 				}
-				$('#customer_name').empty().append(options).trigger('change')
+				$('select#customer_name').empty().append(options).trigger('change')
 			}
 		})
 	});
