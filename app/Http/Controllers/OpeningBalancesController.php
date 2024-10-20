@@ -156,7 +156,7 @@ class OpeningBalancesController
                     'cheque_number' => $payableChequeArr['cheque_number'] ?: null,
                     'delivery_bank_id' => isset($payableChequeArr['delivery_bank_id']) ? $payableChequeArr['delivery_bank_id'] : null,
                     'due_date' => $payableChequeArr['due_date'] ?: null,
-                    'delivery_date' => $payableChequeArr['delivery_date'] ?: null,// ???
+                    'delivery_date' => $openingBalanceDate ?: null,
 					'company_id'=>$company->id,
                     'account_type' => $payableChequeArr['account_type'] ?: null,
                     'account_number' => $payableChequeArr['account_number'] ?: null,
@@ -182,9 +182,9 @@ class OpeningBalancesController
     public function update(Company $company, Request $request, OpeningBalance $openingBalance)
     {
 
-		
+		$openingBalanceDate = $request->get('date') ;
         $openingBalance->update([
-            'date' => $request->get('date'),
+            'date' => $openingBalanceDate,
         ]);
 
         /**
@@ -313,7 +313,7 @@ class OpeningBalancesController
             }
 
             $dataToUpdate['customer_name'] = is_numeric($dataToUpdate['customer_id']) ? Partner::find($dataToUpdate['customer_id'])->getName() : $dataToUpdate['customer_id'] ;
-
+			$dataToUpdate['receiving_date'] = $openingBalanceDate;
             $openingBalance->chequeUnderCollections()->where('money_received.id', $id)->first()->update(array_merge($dataToUpdate,['updated_at'=>now()]));
             $openingBalance->chequeUnderCollections()->where('money_received.id', $id)->first()->cheque->update(array_merge($pivotData,['updated_at'=>now()]));
 		
@@ -337,6 +337,7 @@ class OpeningBalancesController
                     unset($data[$key]);
                 }
                 $data['customer_name'] = is_numeric($data['customer_id']) ? Partner::find($data['customer_id'])->getName() : $data['customer_id'] ;
+				$data['receiving_date']=$openingBalanceDate;
                 $moneyReceived = $openingBalance->chequeUnderCollections()->create(array_merge($data, [
 					'type' => MoneyReceived::CHEQUE,
                     'user_id' => auth()->id()
@@ -365,7 +366,7 @@ class OpeningBalancesController
 
 		 foreach ($elementsToUpdate as $id) {
 			 $dataToUpdate = findByKey($request->input(MoneyPayment::PAYABLE_CHEQUE), 'id', $id);
-			 $dataToUpdate['delivery_date'] = $dataToUpdate['due_date'] ; // ???
+			 $dataToUpdate['delivery_date'] = $openingBalanceDate ; 
 			 unset($dataToUpdate['id']);
 			 $pivotData = [
 				 'due_date' => $dataToUpdate['due_date'],
@@ -377,13 +378,10 @@ class OpeningBalancesController
 			 foreach ($pivotData as $key => $val) {
 				 unset($dataToUpdate[$key]);
 			 }
-			 
- 
 			 $dataToUpdate['supplier_name'] = is_numeric($dataToUpdate['supplier_id']) ? Partner::find($dataToUpdate['supplier_id'])->getName() : $dataToUpdate['supplier_id'] ;
 			 $dataToUpdate['company_id'] = $company->id;
 			 $openingBalance->payableCheques()->where('money_payments.id', $id)->first()->update(array_merge($dataToUpdate,['updated_at'=>now()]));
 			 $openingBalance->payableCheques()->where('money_payments.id', $id)->first()->payableCheque->update(array_merge($pivotData,['updated_at'=>now()]));
-		 
 		 }
 	
 		 foreach ($request->get(MoneyPayment::PAYABLE_CHEQUE, []) as $data) {
