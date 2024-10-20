@@ -535,6 +535,9 @@ class MoneyReceived extends Model
 		if($moneyType == 'money-received'){
 			$moneyType = 'invoice-settlement';
 		}
+		if($moneyType == 'money-received-with-down-payment'){
+			$moneyType = __('Money Received With Down Payment');
+		}
 		if($partnerType != 'is_customer'){
 			return __('Money Received From :name [ :partnerType ]',['name'=>$this->getName(),'partnerType'=>$this->getPartnerTypeFormatted()]);	
 		}
@@ -727,7 +730,25 @@ class MoneyReceived extends Model
 	{
 		return $this->cheque ? $this->cheque->getDraweeBankId() : 0 ;
 	}
-
+	public function storeNewSalesOrdersAmounts(array $salesOrdersAmounts,int $contractId,int $customerId,int $companyId)
+	{
+		
+		foreach($salesOrdersAmounts as $salesOrderReceivedAmountArr)
+		{
+			if(isset($salesOrderReceivedAmountArr['received_amount'])&&$salesOrderReceivedAmountArr['received_amount'] > 0){
+				$salesOrderReceivedAmountArr['company_id'] = $companyId;
+				$this->downPaymentSettlements()->create(array_merge(
+					$salesOrderReceivedAmountArr ,
+					[
+						// 'sales_order_id'=>$salesOrdersAmounts['sales_order_id'],
+						'contract_id'=>$contractId,
+						'customer_id'=>$customerId,
+						'down_payment_amount'=>$salesOrderReceivedAmountArr['received_amount']
+					]
+				));
+			}
+		}
+	}
 	
 	
 }

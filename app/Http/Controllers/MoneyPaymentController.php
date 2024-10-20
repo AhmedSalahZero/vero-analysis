@@ -359,7 +359,7 @@ class MoneyPaymentController
 	
 		// $data['paid_amount'] = $paidAmount ;
 		$data['paid_amount'] = $isDownPayment || ! $request->has('settlements') ?  $paidAmount  : array_sum(array_column($request->get('settlements'),'settlement_amount')); 
-		if($partnerType != 'is_supplier'){
+		if($partnerType && $partnerType != 'is_supplier'){
 			$data['paid_amount'] = $request->input('paid_amount.'.$moneyType ,0);
 		}
 		$deliveryBank = FinancialInstitution::find($bankId);

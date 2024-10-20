@@ -471,14 +471,15 @@ $(document).on('change','select.invoice-currency-class',function(){
 		url,
 		success:function(res){
 			let options = '';
+			let currentSelected = $('select#supplier_name').val()
 			for(supplierId in res.supplierInvoices ){
 				var supplierName = res.supplierInvoices[supplierId]
-				options +=` <option value="${supplierId}">${supplierName}</option>`
+				options +=` <option value="${supplierId}" ${currentSelected == supplierId ? 'selected' : ''} >${supplierName}</option>`
 			}
 			if($('#is-down-payment-id').val()){
-				$('#supplier_name').empty().append(options).trigger('change')
+				$('select#supplier_name').empty().append(options).trigger('change')
 			}else{
-				$('#supplier_name').empty().append(options)
+				$('select#supplier_name').empty().append(options)
 			}
 		}
 	})

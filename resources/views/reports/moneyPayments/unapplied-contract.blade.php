@@ -8,7 +8,7 @@
     <div class="col-md-4">
         <div class="form-group">
             <label for="contracts"> {{ __('Contracts') }} </label>
-            <select data-current-selected="{{ isset($model) && $model->downPayment ? $model->downPayment->getContractId():0 }}" name="contract_id" id="contract-id" class="form-control ajax-get-purchases-orders-for-contract">
+            <select data-current-selected="{{ isset($model) ? $model->getContractId():0 }}" name="contract_id" id="contract-id" class="form-control ajax-get-purchases-orders-for-contract">
             </select>
         </div>
     </div>

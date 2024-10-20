@@ -274,11 +274,17 @@ class MoneyReceivedController
 		$moneyReceived = MoneyReceived::find($downPaymentId);
 		$salesOrders = SalesOrder::where('contract_id',$contractId)->get();
 		$formattedSalesOrders = [];
+		// dd($salesOrders);
 		foreach($salesOrders as $index=>$salesOrder){
+			/**
+			 * @var SalesOrder $salesOrder 
+			 */
 			$receivedAmount = $moneyReceived ? $moneyReceived->downPaymentSettlements->where('sales_order_id',$salesOrder->id)->first() : null ;
 			$formattedSalesOrders[$index]['received_amount'] = $receivedAmount && $receivedAmount->down_payment_amount ? $receivedAmount->down_payment_amount : 0;
 			$formattedSalesOrders[$index]['so_number'] = $salesOrder->so_number;
 			$formattedSalesOrders[$index]['amount'] = $salesOrder->getAmount();
+			// dd($moneyReceived->downPaymentSettlements,$salesOrder);
+			// $formattedSalesOrders[$index]['allocated_amount'] =   // for edit form
 			$formattedSalesOrders[$index]['id'] = $salesOrder->id;
 		}
 			return response()->json([
@@ -336,7 +342,7 @@ class MoneyReceivedController
 		return CustomerInvoice::formatInvoices($invoices , $inEditMode);
 	}
 	
-	public function store(Company $company , StoreMoneyReceivedRequest $request , $moneyReceivedId = null){
+	public function store(Company $company , StoreMoneyReceivedRequest $request ){
 
 		$partnerType = $request->get('partner_type');
 		$moneyType = $request->get('type');
@@ -349,13 +355,15 @@ class MoneyReceivedController
 		$receivedBankName = $request->get('receiving_branch_id') ;
 		$data = $request->only(['type','receiving_date','currency','receiving_currency','partner_type']);
 		$currency = $data['currency'] ;
-		
+		$companyId = $company->id;
 		
 		
 		$receivingCurrency = $data['receiving_currency'] ; 
 		$isDownPayment = $request->get('is_down_payment') && $request->has('sales_orders_amounts');
-
+		$isDownPaymentFromMoneyReceived  = $request->get('unapplied_amount');
+		$isDownPaymentFromMoneyReceived = $request->get('unapplied_amount',0) > 0 ;
 		$data['money_type'] =  !$isDownPayment ? 'money-received' : 'down-payment';
+		$data['money_type'] = $isDownPaymentFromMoneyReceived ? 'money-received-with-down-payment' : $data['money_type'];
 		$data['customer_name'] = $customerName;
 		$data['customer_name'] = $customerName;
 		$data['user_id'] = auth()->user()->id ;
@@ -407,24 +415,25 @@ class MoneyReceivedController
 		$receivedBankName = $receivedBank ? $receivedBank->getName() : null;
 		$bankNameOrBranchName =  $moneyType == MoneyReceived::CASH_IN_SAFE ? Branch::find($relationData['receiving_branch_id'])->getName() : $receivedBankName ;
 		
-		$data['received_amount'] = $isDownPayment || ! $request->has('settlements') ?  $receivedAmount  : array_sum(array_column($request->get('settlements'),'settlement_amount')); 
-		if($partnerType != 'is_customer'){
-			$data['received_amount'] = $request->input('received_amount.'.$moneyType ,0);
-		}
+		// $data['received_amount'] = $isDownPayment || ! $request->has('settlements') ?  $receivedAmount  : array_sum(array_column($request->get('settlements'),'settlement_amount')); 
+		$data['received_amount'] =$receivedAmount; 
+		// if($partnerType != 'is_customer'){
+		// 	$data['received_amount'] = $request->input('received_amount.'.$moneyType ,0);
+		// }
 	
 		$data['amount_in_receiving_currency'] = $amountInReceivingCurrency ;
 		$data['exchange_rate'] =$exchangeRate ;
 	
-		$data['money_type'] = $isDownPayment ? 'down-payment' : 'money-received' ;
+		//$data['money_type'] = $isDownPayment ? 'down-payment' : 'money-received' ;
 		$data['contract_id'] = $contractId ;
-		$data['money_received_id'] = $moneyReceivedId;
+		// $data['money_received_id'] = $moneyReceivedId;
 		/**
 		 * @var MoneyReceived $moneyReceived ;
 		 */
 		$accountType = AccountType::find($request->input('account_type.'.$moneyType));
 		$accountNumber = $request->input('account_number.'.$moneyType) ;
 		
-		if(!$isDownPayment){
+		if(!$isDownPayment && !$isDownPaymentFromMoneyReceived){
 			unset($data['contract_id']);
 		}
 		$moneyReceived = MoneyReceived::create($data);
@@ -439,15 +448,11 @@ class MoneyReceivedController
 		 * @var MoneyReceived $moneyReceived
 		 */
 		$moneyReceived = $moneyReceived->refresh();
-		$moneyReceived->handleDebitStatement($financialInstitutionId,$accountType,$accountNumber,$moneyType,$statementDate,$amountInReceivingCurrency,$receivingCurrency,$receivingBranchId);
 		
-		
-		if($partnerType != 'is_customer'){
-			$moneyReceived->handlePartnerCreditStatement($partnerType,$partnerId,$moneyReceivedId ?: $moneyReceived->id,$company->id,$statementDate,$amountInReceivingCurrency,$receivingCurrency,$bankNameOrBranchName , $accountType , $accountNumber);
+			$moneyReceived->handleDebitStatement($financialInstitutionId,$accountType,$accountNumber,$moneyType,$statementDate,$amountInReceivingCurrency,$receivingCurrency,$receivingBranchId);
+		if($partnerType && $partnerType != 'is_customer' ){
+			$moneyReceived->handlePartnerCreditStatement($partnerType,$partnerId, $moneyReceived->id,$company->id,$statementDate,$amountInReceivingCurrency,$receivingCurrency,$bankNameOrBranchName , $accountType , $accountNumber);
 		}
-		
-		
-
 		/**
 		 * * For Money Received Only
 		 */
@@ -461,25 +466,13 @@ class MoneyReceivedController
 		 * * For Contract Only
 		 */
 		
-		 if(!$isDownPayment&&$request->get('unapplied_amount',0) > 0 && $partnerType == 'is_customer' ){
-			// start store unapplied amount as new down payment
-			return $this->store($company,$request->replace(array_merge($request->all(),['is_down_payment'=>true],['received_amount'=>[$moneyType=>$request->get('unapplied_amount')]],['settlements'=>[]])),$moneyReceived->id);
-		}
+
+		//  if(!$isDownPayment && !$isDownPaymentFromMoneyReceived && $request->get('unapplied_amount',0) > 0 && $partnerType == 'is_customer' ){
+		// 	// start store unapplied amount as new down payment
+		// 	return $this->store($company,$request->replace(array_merge($request->all(),['is_down_payment_from_money_received_page'=>true],['received_amount'=>[$moneyType=>$request->get('unapplied_amount')]],['settlements'=>[]])),$moneyReceived->id);
+		// }
+		$moneyReceived->storeNewSalesOrdersAmounts($request->get('sales_orders_amounts',[]),$contractId,$customerId,$companyId);
 		
-		foreach($request->get('sales_orders_amounts',[]) as $salesOrderReceivedAmountArr)
-		{
-			if(isset($salesOrderReceivedAmountArr['received_amount'])&&$salesOrderReceivedAmountArr['received_amount'] > 0){
-				$salesOrderReceivedAmountArr['company_id'] = $company->id ;
-				$moneyReceived->downPaymentSettlements()->create(array_merge(
-					$salesOrderReceivedAmountArr ,
-					[
-						'contract_id'=>$contractId,
-						'customer_id'=>$customerId,
-						'down_payment_amount'=>$salesOrderReceivedAmountArr['received_amount']
-					]
-				));
-			}
-		}
 		
 		
 		
@@ -494,7 +487,6 @@ class MoneyReceivedController
 				'redirectTo'=>route('view.money.receive',['company'=>$company->id,'active'=>$activeTab])
 			]);
 
-		// return redirect()->route('view.money.receive',['company'=>$company->id,'active'=>$activeTab])->with('success',__('Data Store Successfully'));
 		
 	}
 	protected function getActiveTab(string $moneyType)
@@ -568,7 +560,6 @@ class MoneyReceivedController
 		 return response()->json([
 			'redirectTo'=>route('view.money.receive',['company'=>$company->id,'active'=>$activeTab])
 		]);
-		// return redirect()->route('view.money.receive',['company'=>$company->id,'active'=>$activeTab])->with('success',__('Money Received Has Been Updated Successfully'));
 	}
 	
 	public function destroy(Company $company , MoneyReceived $moneyReceived)

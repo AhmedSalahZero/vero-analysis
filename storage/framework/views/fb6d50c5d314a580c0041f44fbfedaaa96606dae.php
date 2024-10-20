@@ -61,8 +61,10 @@ use App\Models\MoneyReceived ;
             <input type="hidden" name="current_cheque_id" value="<?php echo e(isset($model) && $model->cheque ? $model->cheque->id : 0); ?>">
             <input type="hidden" name="current_branch" value="<?php echo e(isset($model) && $model->cashInSafe ? $model->cashInSafe->receiving_branch_id : 0); ?>">
             <input id="js-money-received-id" type="hidden" name="money_received_id" value="<?php echo e(isset($model) ? $model->id : 0); ?>">
-			<input type="hidden" id="js-down-payment-id" value="<?php echo e(isset($model) && $model->downPayment ? $model->downPayment->id : 0); ?>">
+			
             <input type="hidden" id="ajax-invoice-item" data-single-model="<?php echo e($singleModel ? 1 : 0); ?>" value="<?php echo e($singleModel ? $invoiceNumber : 0); ?>">
+            <input id="js-down-payment-id" type="hidden" name="down_payment_id" value="<?php echo e(isset($model) ? $model->id : 0); ?>">
+			
             <?php echo csrf_field(); ?>
             <?php if(isset($model)): ?>
             <?php echo method_field('put'); ?>

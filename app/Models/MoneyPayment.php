@@ -451,6 +451,10 @@ class MoneyPayment extends Model
 		if($moneyType == 'money-payment'){
 			$moneyType = 'invoice-settlement';
 		}
+		
+		if($moneyType == 'money-payment-with-down-payment'){
+			$moneyType = __('Money Payment With Down Payment');
+		}
 		if($partnerType != 'is_supplier'){
 			return __('Money Paid To :name [ :partnerType ]',['name'=>$this->getName(),'partnerType'=>$this->getPartnerTypeFormatted()]);	
 		}
