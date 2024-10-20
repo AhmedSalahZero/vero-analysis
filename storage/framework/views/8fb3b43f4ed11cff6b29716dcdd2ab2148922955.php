@@ -207,11 +207,11 @@ use App\Models\MoneyReceived ;
                                 ?>
                                 <input type="hidden" name="tableIds[]" value="<?php echo e($tableId); ?>">
                                  <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.tables.repeater-table','data' => ['repeaterWithSelect2' => true,'parentClass' => 'show-class-js','tableName' => $tableId,'repeaterId' => $repeaterId,'relationName' => 'food','isRepeater' => $isRepeater=true]]); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.tables.repeater-table','data' => ['initEmpty' => !isset($model) || !$model->cashInSafeStatements->count(),'firstElementDeletable' => true,'repeaterWithSelect2' => true,'parentClass' => 'show-class-js','tableName' => $tableId,'repeaterId' => $repeaterId,'relationName' => 'food','isRepeater' => $isRepeater=true]]); ?>
 <?php $component->withName('tables.repeater-table'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['repeater-with-select2' => true,'parentClass' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('show-class-js'),'tableName' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($tableId),'repeaterId' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($repeaterId),'relationName' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('food'),'isRepeater' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($isRepeater=true)]); ?>
+<?php $component->withAttributes(['initEmpty' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(!isset($model) || !$model->cashInSafeStatements->count()),'firstElementDeletable' => true,'repeater-with-select2' => true,'parentClass' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('show-class-js'),'tableName' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($tableId),'repeaterId' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($repeaterId),'relationName' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('food'),'isRepeater' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($isRepeater=true)]); ?>
                                      <?php $__env->slot('ths'); ?> 
                                         <?php $__currentLoopData = [
                                         __('Branch')=>'col-md-1',
@@ -455,11 +455,11 @@ use App\Models\MoneyReceived ;
                                     </div>
                                 </div>
                                  <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.tables.repeater-table','data' => ['repeaterWithSelect2' => true,'parentClass' => 'show-class-js modal-parent--js is-customer-class','tableName' => $tableId,'repeaterId' => $repeaterId,'relationName' => 'food','isRepeater' => $isRepeater=true]]); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.tables.repeater-table','data' => ['initEmpty' => !isset($model->chequeInSafe) || !$model->chequeInSafe->count(),'firstElementDeletable' => true,'repeaterWithSelect2' => true,'parentClass' => 'show-class-js modal-parent--js is-customer-class','tableName' => $tableId,'repeaterId' => $repeaterId,'relationName' => 'food','isRepeater' => $isRepeater=true]]); ?>
 <?php $component->withName('tables.repeater-table'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['repeater-with-select2' => true,'parentClass' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('show-class-js modal-parent--js is-customer-class'),'tableName' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($tableId),'repeaterId' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($repeaterId),'relationName' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('food'),'isRepeater' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($isRepeater=true)]); ?>
+<?php $component->withAttributes(['initEmpty' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(!isset($model->chequeInSafe) || !$model->chequeInSafe->count()),'firstElementDeletable' => true,'repeater-with-select2' => true,'parentClass' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('show-class-js modal-parent--js is-customer-class'),'tableName' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($tableId),'repeaterId' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($repeaterId),'relationName' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('food'),'isRepeater' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($isRepeater=true)]); ?>
                                      <?php $__env->slot('ths'); ?> 
                                         <?php $__currentLoopData = [
                                         __('Customer <br> Name')=>'customer-name-width',
@@ -729,11 +729,11 @@ use App\Models\MoneyReceived ;
                                 ?>
                                 <input type="hidden" name="tableIds[]" value="<?php echo e($tableId); ?>">
                                  <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.tables.repeater-table','data' => ['repeaterWithSelect2' => true,'parentClass' => 'show-class-js modal-parent--js is-customer-class','tableName' => $tableId,'repeaterId' => $repeaterId,'relationName' => 'food','isRepeater' => $isRepeater=true]]); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.tables.repeater-table','data' => ['initEmpty' => !isset($model) || !$model->chequeUnderCollections->count(),'firstElementDeletable' => true,'repeaterWithSelect2' => true,'parentClass' => 'show-class-js modal-parent--js is-customer-class','tableName' => $tableId,'repeaterId' => $repeaterId,'relationName' => 'food','isRepeater' => $isRepeater=true]]); ?>
 <?php $component->withName('tables.repeater-table'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['repeater-with-select2' => true,'parentClass' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('show-class-js modal-parent--js is-customer-class'),'tableName' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($tableId),'repeaterId' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($repeaterId),'relationName' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('food'),'isRepeater' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($isRepeater=true)]); ?>
+<?php $component->withAttributes(['initEmpty' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(!isset($model) || !$model->chequeUnderCollections->count()),'firstElementDeletable' => true,'repeater-with-select2' => true,'parentClass' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('show-class-js modal-parent--js is-customer-class'),'tableName' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($tableId),'repeaterId' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($repeaterId),'relationName' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('food'),'isRepeater' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($isRepeater=true)]); ?>
                                      <?php $__env->slot('ths'); ?> 
                                         <?php $__currentLoopData = [
                                         __('Customer <br> Name')=>'customer-name-width',
@@ -773,7 +773,7 @@ use App\Models\MoneyReceived ;
                                         unset($chequeUnderCollection);
                                         }
                                         ?>
-                                        <tr <?php if($isRepeater): ?> data-repeater-item <?php endif; ?>>
+                                        <tr  <?php if($isRepeater): ?> data-repeater-item <?php endif; ?>>
                                             <td class="text-center">
                                                 <div class="">
                                                     <i data-repeater-delete="" class="btn-sm btn btn-danger m-btn m-btn--icon m-btn--pill trash_icon fas fa-times-circle">
@@ -1063,11 +1063,11 @@ use App\Models\MoneyReceived ;
                                 ?>
                                 <input type="hidden" name="tableIds[]" value="<?php echo e($tableId); ?>">
                                  <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.tables.repeater-table','data' => ['repeaterWithSelect2' => true,'parentClass' => 'show-class-js modal-parent--js is-supplier-class','tableName' => $tableId,'repeaterId' => $repeaterId,'relationName' => 'food','isRepeater' => $isRepeater=true]]); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.tables.repeater-table','data' => ['initEmpty' => !isset($model) || !$model->payableCheques->count(),'firstElementDeletable' => true,'repeaterWithSelect2' => true,'parentClass' => 'show-class-js modal-parent--js is-supplier-class','tableName' => $tableId,'repeaterId' => $repeaterId,'relationName' => 'food','isRepeater' => $isRepeater=true]]); ?>
 <?php $component->withName('tables.repeater-table'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['repeater-with-select2' => true,'parentClass' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('show-class-js modal-parent--js is-supplier-class'),'tableName' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($tableId),'repeaterId' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($repeaterId),'relationName' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('food'),'isRepeater' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($isRepeater=true)]); ?>
+<?php $component->withAttributes(['initEmpty' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(!isset($model) || !$model->payableCheques->count()),'firstElementDeletable' => true,'repeater-with-select2' => true,'parentClass' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('show-class-js modal-parent--js is-supplier-class'),'tableName' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($tableId),'repeaterId' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($repeaterId),'relationName' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('food'),'isRepeater' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($isRepeater=true)]); ?>
                                      <?php $__env->slot('ths'); ?> 
                                         <?php $__currentLoopData = [
                                         __('Supplier <br> Name')=>'customer-name-width',
@@ -1106,7 +1106,7 @@ use App\Models\MoneyReceived ;
                                         unset($payableCheques);
                                         }
                                         ?>
-                                        <tr <?php if($isRepeater): ?> data-repeater-item <?php endif; ?>>
+                                        <tr  <?php if($isRepeater): ?> data-repeater-item <?php endif; ?>>
                                             <td class="text-center">
                                                 <div class="">
                                                     <i data-repeater-delete="" class="btn-sm btn btn-danger m-btn m-btn--icon m-btn--pill trash_icon fas fa-times-circle">

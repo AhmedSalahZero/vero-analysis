@@ -56,7 +56,7 @@ class OpeningBalancesController
             'date' => $openingBalanceDate,
             'company_id' => $company->id
         ]);
-        foreach ($request->get('cash-in-safe') as $index => $cashInSafeArr) {
+        foreach ($request->get('cash-in-safe',[]) as $index => $cashInSafeArr) {
             /**
              * @var MoneyReceived $moneyReceived
              */
@@ -76,7 +76,7 @@ class OpeningBalancesController
             ]);
 			
         }
-        foreach ($request->get(MoneyReceived::CHEQUE) as $index => $cheque) {
+        foreach ($request->get(MoneyReceived::CHEQUE,[]) as $index => $cheque) {
             $customer = Partner::find($cheque['customer_id'] ?: null);
 
             $currentAmount = $cheque['received_amount'] ?: 0 ;
@@ -105,7 +105,7 @@ class OpeningBalancesController
 		
 		
 		
-        foreach ($request->get(MoneyReceived::CHEQUE_UNDER_COLLECTION) as $index => $chequeUnderCollection) {
+        foreach ($request->get(MoneyReceived::CHEQUE_UNDER_COLLECTION,[]) as $index => $chequeUnderCollection) {
             $customer = Partner::find($chequeUnderCollection['customer_id'] ?: null);
             $currentAmount = $chequeUnderCollection['received_amount'] ?: 0 ;
             if ($currentAmount > 0) {
@@ -142,7 +142,7 @@ class OpeningBalancesController
 		
 		
 		
-		foreach ($request->get(MoneyPayment::PAYABLE_CHEQUE) as $index => $payableChequeArr) {
+		foreach ($request->get(MoneyPayment::PAYABLE_CHEQUE,[]) as $index => $payableChequeArr) {
             $supplier = Partner::find($payableChequeArr['supplier_id'] ?: null);
             $currentAmount = $payableChequeArr['paid_amount'] ?: 0 ;
             if ($currentAmount > 0) {
@@ -185,9 +185,9 @@ class OpeningBalancesController
       
     }
 
-    public function update(Company $company, Request $request, OpeningBalance $openingBalance)
+    public function update(Company $company, StoreOpeningBalanceRequest $request, OpeningBalance $openingBalance)
     {
-
+		
 		$openingBalanceDate = $request->get('date') ;
         $openingBalance->update([
             'date' => $openingBalanceDate,
@@ -204,8 +204,12 @@ class OpeningBalancesController
 		// $elementsToUpdate = array_diff($idsFromRequest, $elementsToDelete); // test 
 
         $elementsToUpdate = array_intersect($idsFromRequest, $oldIdsFromDatabase); // origin one
-
-		CashInSafeStatement::deleteButTriggerChangeOnLastElement($openingBalance->cashInSafeStatements->whereIn('cash_in_safe_statements.id', $elementsToDelete));
+		
+// dump($elementsToDelete,$openingBalance->cashInSafeStatements,$openingBalance->cashInSafeStatements->whereIn('id', $elementsToDelete));
+		CashInSafeStatement::deleteButTriggerChangeOnLastElement($openingBalance->cashInSafeStatements->whereIn('id', $elementsToDelete));
+		
+		// dd($openingBalance->cashInSafeStatements->whereIn('cash_in_safe_statements.id', $elementsToDelete));
+		// dd($openingBalance->cashInSafeStatements->whereIn('cash_in_safe_statements.id', $elementsToDelete));
         foreach ($elementsToUpdate as $id) {
             $dataToUpdate = findByKey($request->input(MoneyReceived::CASH_IN_SAFE), 'id', $id);
             $openingBalance->cashInSafeStatements()->where('cash_in_safe_statements.id', $id)->first()->update(array_merge($dataToUpdate,[
@@ -219,7 +223,7 @@ class OpeningBalancesController
                 unset($data['id']);
                 $openingBalance->cashInSafeStatements()->create(array_merge($data, [
                     'company_id' => $company->id,
-                    'type' => MoneyReceived::CASH_IN_SAFE,
+                    'type' => OpeningBalance::OPEN_BALANCE,
                     'user_id' => auth()->id(),
 					'debit'=>number_unformat($data['received_amount']),
 					'branch_id'=>$data['received_branch_id'],
