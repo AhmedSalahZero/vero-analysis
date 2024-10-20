@@ -836,7 +836,7 @@ use App\Models\MoneyReceived ;
                                                         <select data-live-search="true" data-actions-box="true" name="drawee_bank_id" class="form-control repeater-select select2-select	drawee-bank-class">
                                                             <?php $__currentLoopData = $selectedBanks; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $bankId=>$bankName): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 
-                                                            <option data-current-id="<?php echo e($chequeUnderCollection->cheque->getDraweeBankId()); ?>" value="<?php echo e($bankId); ?>" <?php echo e(isset($chequeUnderCollection) && $chequeUnderCollection->cheque && $chequeUnderCollection->cheque->getDraweeBankId() == $bankId ? 'selected':''); ?>><?php echo e($bankName); ?></option>
+                                                            <option data-current-id="<?php echo e(isset($chequeUnderCollection) ? $chequeUnderCollection->cheque->getDraweeBankId() : 0); ?>" value="<?php echo e($bankId); ?>" <?php echo e(isset($chequeUnderCollection) && $chequeUnderCollection->cheque && $chequeUnderCollection->cheque->getDraweeBankId() == $bankId ? 'selected':''); ?>><?php echo e($bankName); ?></option>
                                                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                         </select>
                                                         <button class="btn btn-sm btn-primary js-drawee-bank-class"><?php echo e(__('Add New Bank')); ?></button>

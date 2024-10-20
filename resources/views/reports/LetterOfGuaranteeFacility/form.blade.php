@@ -139,7 +139,9 @@
 
 
                             <div class="col-md-2 hidden">
-                                <x-form.input :model="$model??null" :label="__('Outstanding Amount')" :type="'text'" :placeholder="__('Outstanding Amount')" :name="'outstanding_amount'" :class="'only-greater-than-or-equal-zero-allowed'" :required="true"></x-form.input>
+                                <x-form.input :model="$model??null" :label="__('Outstanding Amount')" :type="'text'" :placeholder="__('Outstanding Amount')" :name="'outstanding_amount'" :class="'only-greater-than-or-equal-zero-allowed'" 
+								{{-- :required="true" --}}
+								></x-form.input>
                             </div>
 
 
