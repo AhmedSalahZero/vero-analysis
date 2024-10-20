@@ -5,7 +5,9 @@
 'repeaterId'=>$repeaterId,
 'tableName'=>$tableName ?? '',
 'parentClass'=>$parentClass ?? '',
-'initialJs'=>true 
+'initialJs'=>true ,
+'initEmpty'=>false,
+'firstElementDeletable'=>false
 ]); ?>
 <?php foreach (array_filter(([
 	'repeater-with-select2'=>true,
@@ -14,7 +16,9 @@
 'repeaterId'=>$repeaterId,
 'tableName'=>$tableName ?? '',
 'parentClass'=>$parentClass ?? '',
-'initialJs'=>true 
+'initialJs'=>true ,
+'initEmpty'=>false,
+'firstElementDeletable'=>false
 ]), 'is_string', ARRAY_FILTER_USE_KEY) as $__key => $__value) {
     $$__key = $$__key ?? $__value;
 } ?>
@@ -100,17 +104,23 @@
 
     </table>
 </div>
+<input type="hidden" id="initi-empty-<?php echo e($repeaterId); ?>" value="<?php echo e($initEmpty); ?>">
+<input type="hidden" id="first-element-deleteable-<?php echo e($repeaterId); ?>" value="<?php echo e($firstElementDeletable); ?>">
 <?php if($initialJs): ?>
 <?php $__env->startPush('js_end'); ?>
 	<script>
+	var initEmpty = $("#initi-empty-<?php echo e($repeaterId); ?>").val() === "1" ? true : false;
+	var firstElementDeleteable = $("#first-element-deleteable-<?php echo e($repeaterId); ?>").val() === "1" ? true : false;
+
 	$('#'+"<?php echo e($repeaterId); ?>").repeater({            
-            initEmpty: false,
-              isFirstItemUndeletable: true,
+            initEmpty: initEmpty,
+              isFirstItemUndeletable: !firstElementDeleteable,
             defaultValues: {
                 'text-input': 'foo'
             },
              
             show: function() {
+				
 				var appendNewOptionsToAllSelects = function (currentRepeaterItem) {
 	
 		if ($('[data-modal-title]').length) {

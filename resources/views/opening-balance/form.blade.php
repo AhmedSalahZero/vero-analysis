@@ -183,7 +183,7 @@ use App\Models\MoneyReceived ;
                                 $repeaterId = 'm_repeater_6';
                                 @endphp
                                 <input type="hidden" name="tableIds[]" value="{{ $tableId }}">
-                                <x-tables.repeater-table :repeater-with-select2="true" :parentClass="'show-class-js'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=true">
+                                <x-tables.repeater-table :initEmpty="!isset($model) || !$model->cashInSafeStatements->count()" :firstElementDeletable="true" :repeater-with-select2="true" :parentClass="'show-class-js'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=true">
                                     <x-slot name="ths">
                                         @foreach([
                                         __('Branch')=>'col-md-1',
@@ -410,7 +410,7 @@ use App\Models\MoneyReceived ;
                                         </div>
                                     </div>
                                 </div>
-                                <x-tables.repeater-table :repeater-with-select2="true" :parentClass="'show-class-js modal-parent--js is-customer-class'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=true">
+                                <x-tables.repeater-table :initEmpty="!isset($model->chequeInSafe) || !$model->chequeInSafe->count()" :firstElementDeletable="true" :repeater-with-select2="true" :parentClass="'show-class-js modal-parent--js is-customer-class'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=true">
                                     <x-slot name="ths">
                                         @foreach([
                                         __('Customer <br> Name')=>'customer-name-width',
@@ -643,7 +643,7 @@ use App\Models\MoneyReceived ;
 
                                 @endphp
                                 <input type="hidden" name="tableIds[]" value="{{ $tableId }}">
-                                <x-tables.repeater-table :repeater-with-select2="true" :parentClass="'show-class-js modal-parent--js is-customer-class'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=true">
+                                <x-tables.repeater-table :initEmpty="!isset($model) || !$model->chequeUnderCollections->count()" :firstElementDeletable="true" :repeater-with-select2="true" :parentClass="'show-class-js modal-parent--js is-customer-class'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=true">
                                     <x-slot name="ths">
                                         @foreach([
                                         __('Customer <br> Name')=>'customer-name-width',
@@ -673,7 +673,7 @@ use App\Models\MoneyReceived ;
                                         unset($chequeUnderCollection);
                                         }
                                         @endphp
-                                        <tr @if($isRepeater) data-repeater-item @endif>
+                                        <tr  @if($isRepeater) data-repeater-item @endif>
                                             <td class="text-center">
                                                 <div class="">
                                                     <i data-repeater-delete="" class="btn-sm btn btn-danger m-btn m-btn--icon m-btn--pill trash_icon fas fa-times-circle">
@@ -926,7 +926,7 @@ use App\Models\MoneyReceived ;
 
                                 @endphp
                                 <input type="hidden" name="tableIds[]" value="{{ $tableId }}">
-                                <x-tables.repeater-table :repeater-with-select2="true" :parentClass="'show-class-js modal-parent--js is-supplier-class'"  :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=true">
+                                <x-tables.repeater-table :initEmpty="!isset($model) || !$model->payableCheques->count()" :firstElementDeletable="true" :repeater-with-select2="true" :parentClass="'show-class-js modal-parent--js is-supplier-class'"  :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=true">
                                     <x-slot name="ths">
                                         @foreach([
                                         __('Supplier <br> Name')=>'customer-name-width',
@@ -955,7 +955,7 @@ use App\Models\MoneyReceived ;
                                         unset($payableCheques);
                                         }
                                         @endphp
-                                        <tr @if($isRepeater) data-repeater-item @endif>
+                                        <tr  @if($isRepeater) data-repeater-item @endif>
                                             <td class="text-center">
                                                 <div class="">
                                                     <i data-repeater-delete="" class="btn-sm btn btn-danger m-btn m-btn--icon m-btn--pill trash_icon fas fa-times-circle">

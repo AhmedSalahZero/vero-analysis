@@ -5,7 +5,9 @@
 'repeaterId'=>$repeaterId,
 'tableName'=>$tableName ?? '',
 'parentClass'=>$parentClass ?? '',
-'initialJs'=>true 
+'initialJs'=>true ,
+'initEmpty'=>false,
+'firstElementDeletable'=>false
 ])
 <div class="col-md-12 {{ $parentClass }}  js-parent-to-table" style="display:none">
     <hr style="width:100%;">
@@ -52,17 +54,23 @@
 
     </table>
 </div>
+<input type="hidden" id="initi-empty-{{ $repeaterId }}" value="{{ $initEmpty }}">
+<input type="hidden" id="first-element-deleteable-{{ $repeaterId }}" value="{{ $firstElementDeletable }}">
 @if($initialJs)
 @push('js_end')
 	<script>
+	var initEmpty = $("#initi-empty-{{ $repeaterId }}").val() === "1" ? true : false;
+	var firstElementDeleteable = $("#first-element-deleteable-{{ $repeaterId }}").val() === "1" ? true : false;
+
 	$('#'+"{{ $repeaterId }}").repeater({            
-            initEmpty: false,
-              isFirstItemUndeletable: true,
+            initEmpty: initEmpty,
+              isFirstItemUndeletable: !firstElementDeleteable,
             defaultValues: {
                 'text-input': 'foo'
             },
              
             show: function() {
+				
 				var appendNewOptionsToAllSelects = function (currentRepeaterItem) {
 	
 		if ($('[data-modal-title]').length) {
