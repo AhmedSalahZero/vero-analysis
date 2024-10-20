@@ -377,6 +377,7 @@ class OpeningBalancesController
 			 foreach ($pivotData as $key => $val) {
 				 unset($dataToUpdate[$key]);
 			 }
+			 
  
 			 $dataToUpdate['supplier_name'] = is_numeric($dataToUpdate['supplier_id']) ? Partner::find($dataToUpdate['supplier_id'])->getName() : $dataToUpdate['supplier_id'] ;
 			 $dataToUpdate['company_id'] = $company->id;
