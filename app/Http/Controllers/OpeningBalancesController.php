@@ -85,6 +85,7 @@ class OpeningBalancesController
                     'customer_name' => $customer ? $customer->getName() : null,
                     'received_amount' => $currentAmount,
                     'currency' => $cheque['currency'],
+                    'receiving_currency' => $cheque['currency'],
                     'receiving_date' => $openingBalanceDate,
                     'company_id' => $company->id,
                     'user_id' => auth()->id(),
@@ -217,7 +218,7 @@ class OpeningBalancesController
                     'type' => MoneyReceived::CASH_IN_SAFE,
                     'user_id' => auth()->id(),
 					'debit'=>number_unformat($data['received_amount']),
-					'branch_id'=>$data['received_branch_id']
+					'branch_id'=>$data['received_branch_id'],
                 ]));
 				
 				
@@ -251,7 +252,9 @@ class OpeningBalancesController
             unset($dataToUpdate['due_date'], $dataToUpdate['drawee_bank_id'], $dataToUpdate['cheque_number']);
 
             $dataToUpdate['customer_name'] = is_numeric($dataToUpdate['customer_id']) ? Partner::find($dataToUpdate['customer_id'])->getName() : $dataToUpdate['customer_id'] ;
-
+            $dataToUpdate['receiving_date'] =  $openingBalanceDate ;
+            $dataToUpdate['company_id'] =  $company->id ;
+			$dataToUpdate['receiving_currency'] = $dataToUpdate['currency'] ;
             $openingBalance->chequeInSafe()->where('money_received.id', $id)->first()->update($dataToUpdate);
 
             $openingBalance->chequeInSafe()->where('money_received.id', $id)->first()->cheque->update($pivotData);
@@ -267,6 +270,9 @@ class OpeningBalancesController
                 unset($data['due_date'], $data['drawee_bank_id'], $data['cheque_number']);
 
                 $data['customer_name'] = is_numeric($data['customer_id']) ? Partner::find($data['customer_id'])->getName() : $data['customer_id'] ;
+                $data['receiving_date'] = $openingBalanceDate ;
+                $data['receiving_currency'] = $data['currency'] ;
+                $data['company_id'] = $company->id ;
 
                 $moneyReceived = $openingBalance->chequeInSafe()->create(array_merge($data, [
                     'type' => MoneyReceived::CHEQUE,
