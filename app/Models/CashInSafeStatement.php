@@ -3,12 +3,14 @@
 namespace App\Models;
 
 use App\Helpers\HDate;
+use App\Traits\Models\HasDeleteButTriggerChangeOnLastElement;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class CashInSafeStatement extends Model
 {
+	use HasDeleteButTriggerChangeOnLastElement ;
 	const MONEY_TRANSFER  = 'money-transfer';
 	
     protected $guarded = [

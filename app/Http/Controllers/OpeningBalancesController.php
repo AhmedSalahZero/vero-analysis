@@ -6,6 +6,7 @@ use App\Http\Requests\StoreOpeningBalanceRequest;
 use App\Models\AccountType;
 use App\Models\Bank;
 use App\Models\Branch;
+use App\Models\CashInSafeStatement;
 use App\Models\Cheque;
 use App\Models\Company;
 use App\Models\FinancialInstitution;
@@ -201,7 +202,7 @@ class OpeningBalancesController
 
         $elementsToUpdate = array_intersect($idsFromRequest, $oldIdsFromDatabase); // origin one
 
-        $openingBalance->cashInSafeStatements()->whereIn('cash_in_safe_statements.id', $elementsToDelete)->delete();
+		CashInSafeStatement::deleteButTriggerChangeOnLastElement($openingBalance->cashInSafeStatements->whereIn('cash_in_safe_statements.id', $elementsToDelete));
         foreach ($elementsToUpdate as $id) {
             $dataToUpdate = findByKey($request->input(MoneyReceived::CASH_IN_SAFE), 'id', $id);
             $openingBalance->cashInSafeStatements()->where('cash_in_safe_statements.id', $id)->first()->update(array_merge($dataToUpdate,[
