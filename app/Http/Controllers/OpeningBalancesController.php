@@ -79,7 +79,7 @@ class OpeningBalancesController
         foreach ($request->get(MoneyReceived::CHEQUE,[]) as $index => $cheque) {
             $customer = Partner::find($cheque['customer_id'] ?: null);
 
-            $currentAmount = $cheque['received_amount'] ?: 0 ;
+            $currentAmount = isset($cheque['received_amount']) ? number_unformat($cheque['received_amount']) : 0 ;
             if ($currentAmount > 0) {
                 $moneyReceived = $openingBalance->moneyReceived()->create([
                     'type' => MoneyReceived::CHEQUE,
@@ -107,7 +107,7 @@ class OpeningBalancesController
 		
         foreach ($request->get(MoneyReceived::CHEQUE_UNDER_COLLECTION,[]) as $index => $chequeUnderCollection) {
             $customer = Partner::find($chequeUnderCollection['customer_id'] ?: null);
-            $currentAmount = $chequeUnderCollection['received_amount'] ?: 0 ;
+            $currentAmount = isset($chequeUnderCollection['received_amount']) ? number_unformat($chequeUnderCollection['received_amount']) :  0 ;
             if ($currentAmount > 0) {
                 $moneyReceived = $openingBalance->moneyReceived()->create([
                     'type' => MoneyReceived::CHEQUE,

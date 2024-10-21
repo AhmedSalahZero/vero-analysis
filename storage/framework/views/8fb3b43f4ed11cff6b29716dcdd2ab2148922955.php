@@ -585,7 +585,7 @@ use App\Models\MoneyReceived ;
 
                                                 <div class="kt-input-icon width-15">
                                                     <div class="input-group">
-                                                        <input name="exchange_rate" type="text" class="form-control " value="<?php echo e(number_format(isset($chequeInSafe) ? $chequeInSafe->getExchangeRate() : old('exchange_rate',0))); ?>">
+                                                        <input name="exchange_rate" type="text" class="form-control " value="<?php echo e(isset($chequeInSafe) ? $chequeInSafe->getExchangeRate() : old('exchange_rate',0)); ?>">
                                                     </div>
                                                 </div>
 
@@ -865,7 +865,7 @@ use App\Models\MoneyReceived ;
 
                                                 <div class="kt-input-icon width-15" >
                                                     <div class="input-group">
-                                                        <input name="exchange_rate" type="text" class="form-control " value="<?php echo e(number_format(isset($chequeUnderCollection) ? $chequeUnderCollection->getExchangeRate() : old('exchange_rate',0))); ?>">
+                                                        <input name="exchange_rate" type="text" class="form-control " value="<?php echo e(isset($chequeUnderCollection) ? $chequeUnderCollection->getExchangeRate() : old('exchange_rate',0)); ?>">
                                                     </div>
                                                 </div>
 
@@ -1184,7 +1184,7 @@ use App\Models\MoneyReceived ;
 
                                                 <div class="kt-input-icon width-15">
                                                     <div class="input-group">
-                                                        <input name="exchange_rate" type="numeric"  class="form-control " value="<?php echo e(number_format(isset($payableCheques) ? $payableCheques->getExchangeRate() : old('exchange_rate',0))); ?>">
+                                                        <input name="exchange_rate" type="numeric"  class="form-control " value="<?php echo e(isset($payableCheques) ? $payableCheques->getExchangeRate() : old('exchange_rate',0)); ?>">
                                                     </div>
                                                 </div>
 
