@@ -30,17 +30,31 @@ class MoneyReceived extends Model
 	const CONTRACTS_WITH_DOWN_PAYMENTS = 'contracts-with-down-payments';
 	const UNAPPLIED_AMOUNTS = 'unapplied-amounts';
 	const DOWN_PAYMENT = 'down-payment';
-	public static function generateComment(self $moneyReceived,string $lang)
+	const INVOICE_SETTLEMENT_WITH_DOWN_PAYMENT = 'invoice-settlement-with-down-payment';
+	public static function generateComment(self $moneyReceived,string $lang,?string $invoiceNumbers = '',?string $customerName = null)
 	{
-		$settledInvoiceNumbers = getKeysWithSettlementAmount(Request()->get('settlements',[]),'settlement_amount');
 		
-		$customerName = $moneyReceived->getCustomerName();
+		$settledInvoiceNumbers = getKeysWithSettlementAmount(Request()->get('settlements',[]),'settlement_amount');
+		$settledInvoiceNumbers =  $settledInvoiceNumbers?: $invoiceNumbers;
+		$customerName = is_null($customerName) ?$moneyReceived->getCustomerName() : $customerName;
 		if($moneyReceived->isCheque()){
 			$chequeNumber = $moneyReceived->getChequeNumber()?:Request('cheque_number');
-			if($moneyReceived->getPartnerType()!='is_customer'){
-				return __('Cheque From :name [ :partnerType ] With Number [ :number ]',['name'=>$customerName,'number'=>$chequeNumber,'partnerType'=>$moneyReceived->getPartnerTypeFormatted()],$lang);
+			if($moneyReceived->isDownPayment()){
+				return __('Down Payment - Cheque :name [ :contractName ] [ :contractCode ] With Number [ :number ]',['name'=>$customerName,'contractName'=>$moneyReceived->getContractName(),'contractCode'=>$moneyReceived->getContractCode(),'number'=>$chequeNumber],$lang) ;
 			}
-			return __('Cheque From :name With Number [ :number ] Settled Invoices [ :numbers ]',['name'=>$customerName,'number'=>$chequeNumber,'numbers'=>$settledInvoiceNumbers],$lang) ;
+			if($moneyReceived->isInvoiceSettlementWithDownPayment()){
+				return __('Cheque :name With Number [ :number ] Settled Invoices [ :numbers ] [ :currency ] | Down Payment - [ :contractName ] [ :contractCode ]',[
+					'name'=>$customerName ,
+					'numbers'=>$settledInvoiceNumbers ,
+					'currency'=>$moneyReceived->getCurrency(),
+					'contractName'=>$moneyReceived->getContractName(),
+					'contractCode'=>$moneyReceived->getContractCode()
+				]);
+			}
+			if($moneyReceived->getPartnerType()!='is_customer'){
+				return __('Cheque :name [ :partnerType ] With Number [ :number ]',['name'=>$customerName,'number'=>$chequeNumber,'partnerType'=>$moneyReceived->getPartnerTypeFormatted()],$lang);
+			}
+			return __('Cheque :name With Number [ :number ] Settled Invoices [ :numbers ] [ :currency ]',['name'=>$customerName,'number'=>$chequeNumber,'numbers'=>$settledInvoiceNumbers,'currency'=>$moneyReceived->getCurrency()],$lang) ;
 		}
 		if($moneyReceived->isCashInSafe()){
 			if($moneyReceived->getPartnerType()!='is_customer'){
@@ -55,10 +69,24 @@ class MoneyReceived extends Model
 			return __('Bank Deposit From :name Settled Invoices [ :numbers ]',['name'=>$customerName,'numbers'=>$settledInvoiceNumbers],$lang) ;
 		}
 		if($moneyReceived->isIncomingTransfer()){
-			if($moneyReceived->getPartnerType()!='is_customer'){
-				return __('Incoming Transfer From :name [ :partnerType ]',['name'=>$customerName,'partnerType'=>$moneyReceived->getPartnerTypeFormatted()],$lang) ;
+			
+			if($moneyReceived->isDownPayment()){
+				return __('Down Payment - Incoming Transfer :name [ :contractName ] [ :contractCode ]',['name'=>$customerName,'contractName'=>$moneyReceived->getContractName(),'contractCode'=>$moneyReceived->getContractCode()],$lang) ;
 			}
-			return __('Incoming Transfer From :name Settled Invoices [ :numbers ]',['name'=>$customerName,'numbers'=>$settledInvoiceNumbers],$lang) ;
+			if($moneyReceived->isInvoiceSettlementWithDownPayment()){
+				return __('Incoming Transfer :name Settled Invoices [ :numbers ] [ :currency ] | Down Payment - [ :contractName ] [ :contractCode ]',[
+					'name'=>$customerName ,
+					'numbers'=>$settledInvoiceNumbers ,
+					'currency'=>$moneyReceived->getCurrency(),
+					'contractName'=>$moneyReceived->getContractName(),
+					'contractCode'=>$moneyReceived->getContractCode()
+				]);
+			}
+			
+			if($moneyReceived->getPartnerType()!='is_customer'){
+				return __('Incoming Transfer :name [ :partnerType ]',['name'=>$customerName,'partnerType'=>$moneyReceived->getPartnerTypeFormatted()],$lang) ;
+			}
+			return __('Incoming Transfer :name Settled Invoices [ :numbers ]',['name'=>$customerName,'numbers'=>$settledInvoiceNumbers],$lang) ;
 		}
 	}
 	protected static function booted()
@@ -524,6 +552,10 @@ class MoneyReceived extends Model
 	{
 		return $this->getMoneyType() == 'down-payment';
 	}
+	public function isInvoiceSettlementWithDownPayment()
+	{
+		return $this->getMoneyType() == self::INVOICE_SETTLEMENT_WITH_DOWN_PAYMENT;
+	}
 	public function getMoneyType()
 	{
 		return $this->money_type; 
@@ -535,8 +567,8 @@ class MoneyReceived extends Model
 		if($moneyType == 'money-received'){
 			$moneyType = 'invoice-settlement';
 		}
-		if($moneyType == 'money-received-with-down-payment'){
-			$moneyType = __('Money Received With Down Payment');
+		if($moneyType == self::INVOICE_SETTLEMENT_WITH_DOWN_PAYMENT){
+			$moneyType = __('Invoice Settlement & Down Payment');
 		}
 		if($partnerType != 'is_customer'){
 			return __('Money Received From :name [ :partnerType ]',['name'=>$this->getName(),'partnerType'=>$this->getPartnerTypeFormatted()]);	
@@ -551,6 +583,15 @@ class MoneyReceived extends Model
 	{
 		return $this->belongsTo(Contract::class,'contract_id','id');
 	}
+	public function getContractName()
+	{
+		return $this->contract ? $this->contract->getName() : __('N/A');
+	}
+	public function getContractCode()
+	{
+		return $this->contract ? $this->contract->getCode() : __('N/A');
+	}
+	
 	public function deleteRelations()
 	{
 		$oldType = $this->getType();

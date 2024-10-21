@@ -364,7 +364,7 @@ class MoneyReceivedController
 		$isDownPaymentFromMoneyReceived  = $request->get('unapplied_amount');
 		$isDownPaymentFromMoneyReceived = $request->get('unapplied_amount',0) > 0 ;
 		$data['money_type'] =  !$isDownPayment ? 'money-received' : 'down-payment';
-		$data['money_type'] = $isDownPaymentFromMoneyReceived ? 'money-received-with-down-payment' : $data['money_type'];
+		$data['money_type'] = $isDownPaymentFromMoneyReceived ? MoneyReceived::INVOICE_SETTLEMENT_WITH_DOWN_PAYMENT : $data['money_type'];
 		$data['customer_name'] = $customerName;
 		$data['customer_name'] = $customerName;
 		$data['user_id'] = auth()->user()->id ;

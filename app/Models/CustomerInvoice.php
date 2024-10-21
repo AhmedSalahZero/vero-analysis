@@ -169,6 +169,7 @@ class CustomerInvoice extends Model implements IInvoice
 			$index++ ;
 			$formattedData[$index]=$currentData;
 		}
+	
 		foreach($allMoneyReceived as $moneyReceived) {
 			$dateReceiving = $moneyReceived->getReceivingDateFormatted() ;
 			$moneyReceivedType = $moneyReceived->getType();
@@ -177,7 +178,9 @@ class CustomerInvoice extends Model implements IInvoice
 				$moneyReceivedAmount = $moneyReceived->getReceivedAmount() ;
 				if($moneyReceivedAmount){
 					$isDownPayment = $moneyReceived->isDownPayment() ;
-					$currentComment = $isDownPayment ?  __('Down Payment For Contract :contractName',['contractName'=>$moneyReceived->contract->getName()]) :__('Settlement For Invoice No.') . ' ' . implode('/',$moneyReceived->settlements->pluck('invoice_number')->toArray());
+					$invoiceNumbers = implode('/',$moneyReceived->settlements->pluck('invoice_number')->toArray());
+					$currentComment = MoneyReceived::generateComment($moneyReceived,app()->getLocale(),$invoiceNumbers,'');
+					// $currentComment = $isDownPayment ?  __('Down Payment For Contract :contractName',['contractName'=>$moneyReceived->contract->getName()]) :__('Settlement For Invoice No.') . ' ' . implode('/',$moneyReceived->settlements->pluck('invoice_number')->toArray());
 					$currentData = []; 
 					$currentData['date'] = $dateReceiving;
 					$currentData['document_type'] = $moneyReceivedType;
