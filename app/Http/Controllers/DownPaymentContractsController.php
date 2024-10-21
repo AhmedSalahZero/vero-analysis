@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreDownPaymentSettlementRequest;
 use App\Models\Company;
+use App\Models\Contract;
 use App\Models\MoneyReceived;
 use App\Models\Partner;
 use App\Traits\Models\HasBasicFilter;
@@ -21,7 +22,7 @@ class DownPaymentContractsController extends Controller
 		$contractsWithDownPayments = MoneyReceived::CONTRACTS_WITH_DOWN_PAYMENTS;
 		$numberOfMonthsBetweenEndDateAndStartDate = 18 ;
 		$currentType = $request->get('active',$contractsWithDownPayments);
-		
+
 		$filterDates = [];
 		foreach([$contractsWithDownPayments] as $type){
 			$startDate = $request->has('startDate') ? $request->input('startDate.'.$type) : now()->subMonths($numberOfMonthsBetweenEndDateAndStartDate)->format('Y-m-d');
@@ -41,8 +42,9 @@ class DownPaymentContractsController extends Controller
 		
 		$runningStartDate = $filterDates[$contractsWithDownPayments]['startDate'] ?? null ;
 		$runningEndDate = $filterDates[$contractsWithDownPayments]['endDate'] ?? null ;
-		$contractsWithDownPayment = $company->contracts()->has($moneyModelName)->with($moneyModelName)->get() ; // moneyReceived Here Is The Down payment
-		$contractsWithDownPayment =  $contractsWithDownPayment->filterByStartDate($runningStartDate,$runningEndDate) ;
+		$contractsWithDownPayment = $company->contracts()->has($moneyModelName)->with($moneyModelName)->where('status','!=',Contract::FINISHED)->get() ; // moneyReceived Here Is The Down payment
+		// $contractsWithDownPayment =  $contractsWithDownPayment->filterByStartDate($runningStartDate,$runningEndDate) ;
+		
 		$contractsWithDownPayment =  $currentType == $contractsWithDownPayments ? $this->applyFilter($request,$contractsWithDownPayment):$contractsWithDownPayment ;
 
 		/**
@@ -61,6 +63,7 @@ class DownPaymentContractsController extends Controller
 		$models = [
 			$contractsWithDownPayments =>$contractsWithDownPayment ,
 		];
+
 
         return view('contracts-down-payment.index', [
 			'company'=>$company,
