@@ -101,6 +101,7 @@ class OpeningBalancesController
                     'cheque_number' => $cheque['cheque_number'] ?: null,
                     'drawee_bank_id' => isset($cheque['drawee_bank_id']) ? $cheque['drawee_bank_id'] : null,
                     'due_date' => $cheque['due_date'] ?: null,
+					'company_id'=>$company->id
                 ]);
             }
         }
@@ -135,6 +136,7 @@ class OpeningBalancesController
                     'account_type' => $chequeUnderCollection['account_type'] ?: null,
                     'account_number' => $chequeUnderCollection['account_number'] ?: null,
                     'clearance_days' => $chequeUnderCollection['clearance_days'] ?: 0,
+					'company_id'=>$company->id 
                 ]);
 				$currentUnderCollectionCheque->update([
 					'updated_at'=>now()
@@ -280,6 +282,7 @@ class OpeningBalancesController
                     'due_date' => $data['due_date'],
                     'drawee_bank_id' => isset($data['drawee_bank_id']) ? $data['drawee_bank_id'] : null,
                     'cheque_number' => $data['cheque_number'],
+					'company_id'=>$company->id 
                 ];
                 unset($data['due_date'], $data['drawee_bank_id'], $data['cheque_number']);
 				$data['received_amount'] = isset($data['received_amount']) ? number_unformat($data['received_amount']) : 0;
@@ -356,6 +359,7 @@ class OpeningBalancesController
                     'account_type' => $data['account_type'] ?: null,
                     'account_number' => $data['account_number'] ?: null,
                     'clearance_days' => $data['clearance_days'] ?: 0,
+					'company_id'=>$company->id 
                 ];
                 foreach ($pivotData as $key => $val) {
                     unset($data[$key]);
@@ -367,7 +371,8 @@ class OpeningBalancesController
 				$data['received_amount'] = isset($data['received_amount']) ? number_unformat($data['received_amount']) : 0 ;
                 $moneyReceived = $openingBalance->chequeUnderCollections()->create(array_merge($data, [
 					'type' => MoneyReceived::CHEQUE,
-                    'user_id' => auth()->id()
+                    'user_id' => auth()->id(),
+					'company_id'=>$company->id 
                 ]));
                 $cheque = $moneyReceived->cheque()->create($pivotData);
 				$cheque->update(['updated_at'=>now()]);

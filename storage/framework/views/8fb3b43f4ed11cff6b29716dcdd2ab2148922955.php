@@ -552,6 +552,7 @@ use App\Models\MoneyReceived ;
                                             <td>
                                                 <div class="kt-input-icon drawee-bank-width">
                                                     <div class="input-group date">
+<?php echo e(dd($selectedBanks)); ?>
 
                                                         <select data-live-search="true" data-actions-box="true" name="drawee_bank_id" class="form-control repeater-select select2-select	drawee-bank-class">
                                                             <?php $__currentLoopData = $selectedBanks; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $bankId=>$bankName): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
