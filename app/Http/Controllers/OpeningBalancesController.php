@@ -63,7 +63,7 @@ class OpeningBalancesController
             $amount = number_unformat($cashInSafeArr['received_amount'] ?: 0) ;
             $receivingBranchId = $cashInSafeArr['received_branch_id'] ?: null ;
             $exchangeRate = isset($cashInSafeArr['exchange_rate']) ? $cashInSafeArr['exchange_rate'] : 1  ;
-			
+		
             $openingBalance->cashInSafeStatements()->create([
 				'type'=>OpeningBalance::OPEN_BALANCE,
                 'branch_id' => $receivingBranchId,
@@ -205,13 +205,11 @@ class OpeningBalancesController
 
         $elementsToUpdate = array_intersect($idsFromRequest, $oldIdsFromDatabase); // origin one
 		
-// dump($elementsToDelete,$openingBalance->cashInSafeStatements,$openingBalance->cashInSafeStatements->whereIn('id', $elementsToDelete));
 		CashInSafeStatement::deleteButTriggerChangeOnLastElement($openingBalance->cashInSafeStatements->whereIn('id', $elementsToDelete));
-		
-		// dd($openingBalance->cashInSafeStatements->whereIn('cash_in_safe_statements.id', $elementsToDelete));
-		// dd($openingBalance->cashInSafeStatements->whereIn('cash_in_safe_statements.id', $elementsToDelete));
+	
         foreach ($elementsToUpdate as $id) {
             $dataToUpdate = findByKey($request->input(MoneyReceived::CASH_IN_SAFE), 'id', $id);
+			
             $openingBalance->cashInSafeStatements()->where('cash_in_safe_statements.id', $id)->first()->update(array_merge($dataToUpdate,[
 				'debit'=>number_unformat($dataToUpdate['received_amount']),
 				'branch_id'=>$dataToUpdate['received_branch_id']
