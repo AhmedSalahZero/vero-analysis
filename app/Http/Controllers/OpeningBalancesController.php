@@ -17,6 +17,7 @@ use App\Models\Partner;
 use App\Models\PayableCheque;
 use App\Traits\GeneralFunctions;
 use App\Traits\Models\HasDebitStatements;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class OpeningBalancesController
@@ -52,10 +53,13 @@ class OpeningBalancesController
     {
 		
         $openingBalanceDate = $request->get('date');
+		$openingBalanceDate = Carbon::make($openingBalanceDate)->format('Y-m-d');
+
         $openingBalance = OpeningBalance::create([
             'date' => $openingBalanceDate,
             'company_id' => $company->id
         ]);
+		
         foreach ($request->get('cash-in-safe',[]) as $index => $cashInSafeArr) {
             /**
              * @var MoneyReceived $moneyReceived
@@ -189,6 +193,8 @@ class OpeningBalancesController
     {
 		
 		$openingBalanceDate = $request->get('date') ;
+		$openingBalanceDate = Carbon::make($openingBalanceDate)->format('Y-m-d');
+		
         $openingBalance->update([
             'date' => $openingBalanceDate,
         ]);
@@ -212,7 +218,8 @@ class OpeningBalancesController
 			
             $openingBalance->cashInSafeStatements()->where('cash_in_safe_statements.id', $id)->first()->update(array_merge($dataToUpdate,[
 				'debit'=>number_unformat($dataToUpdate['received_amount']),
-				'branch_id'=>$dataToUpdate['received_branch_id']
+				'branch_id'=>$dataToUpdate['received_branch_id'],
+				'date'=>$openingBalanceDate
 			]));
 			
         }
