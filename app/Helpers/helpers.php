@@ -5949,12 +5949,7 @@ function getHeaderMenu($currentCompany = null)
 							'show'=>$canViewSafeStatement,
 							'submenu'=>[]
 						],
-						[
-							'title'=>__('Partners Statement'),
-							'link'=>route('view.partners.statement',['company'=>$company->id]) ,
-							'show'=>$canViewPartnersStatement,
-							'submenu'=>[]
-						],
+						
 						[
 							'title'=>__('Bank Statement'),
 							'link'=>route('view.bank.statement',['company'=>$company->id]),
@@ -5964,6 +5959,12 @@ function getHeaderMenu($currentCompany = null)
 							'title'=>__('LG & LC Statement'),
 							'link'=>route('view.lg.lc.bank.statement',['company'=>$company->id]),
 							'show'=>$canViewBankStatement,
+							'submenu'=>[]
+						],
+						[
+							'title'=>__('Partners Statement'),
+							'link'=>route('view.partners.statement',['company'=>$company->id]) ,
+							'show'=>$canViewPartnersStatement,
 							'submenu'=>[]
 						],
 						[

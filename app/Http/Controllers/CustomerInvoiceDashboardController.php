@@ -748,7 +748,7 @@ class CustomerInvoiceDashboardController extends Controller
 		}
         $partnerName = $partner->getName() ;
         $invoicesWithItsReceivedMoney = ('App\Models\\' . $modelType)::formatForStatementReport($invoices, $partnerName, $startDate, $endDate, $currency);
-		
+
 		if($returnResult){
 			if(count($invoicesWithItsReceivedMoney) < 1){
 				return [];
