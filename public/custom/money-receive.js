@@ -94,6 +94,7 @@ $(document).on('change', '.ajax-get-sales-orders-for-contract', function () {
 	const companyId = $('body').attr('data-current-company-id')
 	const lang = $('body').attr('data-lang')
 	if(!contractId){
+		$('.js-append-down-payment-to').empty()
 		return ;
 	}
 	const url = '/' + lang + '/' + companyId + '/down-payments/get-sales-orders-for-contract/' + contractId + '/' + currency

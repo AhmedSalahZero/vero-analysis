@@ -93,6 +93,7 @@ $(document).on('change', '.ajax-get-purchases-orders-for-contract', function () 
 	currency = currency ? currency : $(this).closest('[data-repeater-item]').find('select.current-currency').val()
 	const companyId = $('body').attr('data-current-company-id')
 	const lang = $('body').attr('data-lang')
+	$('.js-append-down-payment-to').empty()
 	if(isNaN(contractId)){
 		return ;
 	}
