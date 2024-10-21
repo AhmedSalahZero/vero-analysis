@@ -24,6 +24,7 @@ class ContractCashFlowReportController
     public function index(Company $company)
 	{
 		$clientsWithContracts = Partner::onlyCompany($company->id)->onlyCustomers()->onlyThatHaveContracts()->get();
+	
         return view('reports.contract_cash_flow_form', compact('company','clientsWithContracts'));
     }
 	public function result(Company $company , Request $request , bool $returnResultAsArray = false ){
@@ -35,10 +36,7 @@ class ContractCashFlowReportController
 		$reportInterval =  $request->get('report_interval','weekly');
 		$contractId = $request->get('contract_id')	 ;
 		$finalResult = [];
-		/////////////////////
 		$contract = Contract::find($contractId);
-		
-		
 		/**
 		 * @var Contract $contract 
 		 */
