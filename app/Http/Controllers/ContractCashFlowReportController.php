@@ -23,10 +23,10 @@ class ContractCashFlowReportController
     use GeneralFunctions;
     public function index(Company $company)
 	{
-		$clientsWithContracts = Partner::onlyCompany($company->id)	->onlyCustomers()->onlyThatHaveContracts()->get();
+		$clientsWithContracts = Partner::onlyCompany($company->id)->onlyCustomers()->onlyThatHaveContracts()->get();
         return view('reports.contract_cash_flow_form', compact('company','clientsWithContracts'));
     }
-	public function result(Company $company , Request $request , bool $returnResultAsArray = false ,  ){
+	public function result(Company $company , Request $request , bool $returnResultAsArray = false ){
 		
 		$formStartDate =$request->get('start_date',$request->get('cash_start_date'));
 		 

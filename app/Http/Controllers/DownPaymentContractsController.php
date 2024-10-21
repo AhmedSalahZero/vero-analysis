@@ -20,7 +20,6 @@ class DownPaymentContractsController extends Controller
 		$partnerName = $partner->getName();
 		$contractsWithDownPayments = MoneyReceived::CONTRACTS_WITH_DOWN_PAYMENTS;
 		$numberOfMonthsBetweenEndDateAndStartDate = 18 ;
-		// $currentType = $request->get('active',MediumTermLoan::RUNNING);
 		$currentType = $request->get('active',$contractsWithDownPayments);
 		
 		$filterDates = [];
