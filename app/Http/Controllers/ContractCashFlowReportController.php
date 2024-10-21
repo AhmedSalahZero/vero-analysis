@@ -85,9 +85,12 @@ class ContractCashFlowReportController
 		$totalCashOutFlowArray = [];
 
 		$allCurrencies = FinancialInstitutionAccount::getAllCurrentAccountCurrenciesForCompany($company->id) ;
+		$nonEmptyCurrencies = [];
 		foreach($allCurrencies as $currencyName){
 			$result = [];
-			
+			$totalCashInFlowArray = [];
+			$totalCashOutFlowArray = [];
+			$rangedWeeks = [];
 			
 			foreach($weeks as $currentWeekYear=>$week){
 				$currentYear = explode('-',$currentWeekYear)[1];
@@ -150,11 +153,16 @@ class ContractCashFlowReportController
 					];
 			}
 			$totalCashInFlowArray = $this->mergeTotal($totalCashInFlowArray,$customerDueInvoices);
+			
 			$result['customers'][__('Total Cash Inflow')]['total'] = $totalCashInFlowArray ;
 			$result['customers'][__('Total Cash Inflow')]['total']['total_of_total'] = array_sum($totalCashInFlowArray);
 			$result['cash_expenses'][__('Total Cash Outflow')]['total'] = $totalCashOutFlowArray;
 			$result['cash_expenses'][__('Total Cash Outflow')]['total']['total_of_total'] = array_sum($totalCashOutFlowArray);
 			$netCash = HArr::subtractAtDates([$totalCashInFlowArray,$totalCashOutFlowArray] , array_merge(array_keys($totalCashInFlowArray),array_keys($totalCashOutFlowArray))) ;
+			if(HArr::twoArrayHasAtLeastNonZeroValue($totalCashInFlowArray,$totalCashOutFlowArray)){
+				$nonEmptyCurrencies[] = $currencyName; 
+			}
+			
 			$result['cash_expenses'][__('Net Cash (+/-)')]['total'] = $netCash;
 			$result['cash_expenses'][__('Net Cash (+/-)')]['total']['total_of_total'] = array_sum($netCash) ;
 			$result['cash_expenses'][__('Accumulated Net Cash (+/-)')]['total'] = $this->formatAccumulatedNetCash($netCash,$weeks);
@@ -166,7 +174,7 @@ class ContractCashFlowReportController
 				'dates'=>$dates,
 			] ;
 		}
-
+		$allCurrencies = $nonEmptyCurrencies ;
 		return view('admin.reports.contract-cash-flow-report',[
 			'weeks'=>$weeks,
 			// 'result'=>$result,

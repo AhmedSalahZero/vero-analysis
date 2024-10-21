@@ -344,7 +344,7 @@ class SupplierInvoice extends Model implements IInvoice
 		->where('currency',$currency)
 		->where('net_balance','>',0)
 		->whereBetween('invoice_due_date',[$startDate,$endDate])->get();
-		$sum = $items->sum('net_invoice_amount') ;
+		$sum = $items->sum('net_balance') ;
 		$invoiceNumber = $items->count() ? $items->first()->invoice_number : null ;
 		if($sum ){
 			$invoiceNumber = __('Invoice No.') . ' ' .  $invoiceNumber;

@@ -336,7 +336,7 @@ class CustomerInvoice extends Model implements IInvoice
 		->where('currency',$currency)
 		->where('net_balance','>',0)
 		->whereBetween('invoice_due_date',[$startDate,$endDate])->get();
-		$sum = $items->sum('net_invoice_amount') ;
+		$sum = $items->sum('net_balance') ;
 		$invoiceNumber = $items->count() ? $items->first()->invoice_number : null ;
 		if($sum ){
 			$invoiceNumber = __('Invoice No.') . ' ' .  $invoiceNumber;
@@ -348,15 +348,7 @@ class CustomerInvoice extends Model implements IInvoice
 			$result['customers'][$key]['total']['total_of_total']= isset($result['customers'][$key]['total']['total_of_total']) ? $result['customers'][$key]['total']['total_of_total'] +$sum :$sum ;
 		} 
 	}
-	public static function getCustomerInvoicesUnderCollectionAtDates(int $companyId , string $startDate , string $endDate,string $currency) 
-	{
 	
-		$items = self::where('company_id',$companyId)
-		->where('currency',$currency)
-		->where('net_balance','>',0)
-		->whereBetween('invoice_due_date',[$startDate,$endDate])->get();
-		return $items->sum('net_invoice_amount');
-	}
 	public static function getSettlementAmountUnderDateForSpecificType(array &$result , array &$totalCashInFlowArray , string $moneyType , string $dateColumnName , string $startDate , string $endDate, ?string $contractCode , string $currentWeekYear , ?string $chequeStatus = null  , $currency = null , $companyId = null):void
 	{
 		/**

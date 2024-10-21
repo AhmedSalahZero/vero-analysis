@@ -187,4 +187,22 @@ class HArr
 		}
 		return $result ;
 	}
+	public static function twoArrayHasAtLeastNonZeroValue(array $firstItems , array $secondItems):bool{
+		$hasAtLeastNonZeroValue = false ;
+		if(count($firstItems) == 0 && count($secondItems) == 0){
+			$hasAtLeastNonZeroValue = false ;
+		}
+		foreach($firstItems as $value){
+			if($value != 0){
+				$hasAtLeastNonZeroValue = true ;
+			}
+		}
+	
+		foreach($secondItems as $value){
+			if($value != 0){
+				$hasAtLeastNonZeroValue = true ;
+			}
+		}
+		return $hasAtLeastNonZeroValue ; 
+	}
 }
