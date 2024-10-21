@@ -22,6 +22,7 @@
 } ?>
 <?php unset($__defined_vars); ?>
 
+
 <div class="modal fade modal-item-js" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
         <form action="<?php echo e(route('adjust.customer.dues.invoices',['company'=>$company->id])); ?>" class="modal-content" method="post">

@@ -392,7 +392,19 @@ class CustomerInvoice extends Model implements IInvoice
 		})
 		->where('customer_invoices.company_id',$companyId)
 		->selectRaw('sum(settlement_amount) as current_sum,customer_invoices.invoice_number')->first();
-	
+
+		// if($startDate=='2024-05-01' && $moneyType == 'incoming-transfer'){
+		// 	dd($companyId);
+		// 	// dd($queryResultRaw);
+		// 	dd( DB::table('customer_invoices')
+		// 	->when($contractCode , function($query) use ($contractCode){
+		// 		$query->where('contract_code',$contractCode);
+		// 	})
+		// 	->where('money_received.company_id',$companyId)
+		// 	->join('settlements','settlements.invoice_number','=','customer_invoices.invoice_number')
+		// 	->select(['customer_invoices.*','settlements.money_received_id as qqq'])
+		// 	->join('money_received','money_received.id','=','settlements.money_received_id')->get());
+		// }
 		if($queryResultRaw->current_sum){
 			$invoiceNumber = __('Invoice No.') . ' ' .  $queryResultRaw->invoice_number ;
 			$sum = $queryResultRaw->current_sum;

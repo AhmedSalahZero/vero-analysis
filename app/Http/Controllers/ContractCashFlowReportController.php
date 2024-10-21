@@ -108,15 +108,23 @@ class ContractCashFlowReportController
 				
 					 CustomerInvoice::getSettlementAmountUnderDateForSpecificType($result,$totalCashInFlowArray ,MoneyReceived::CHEQUE,'expected_collection_date',$startDate , $endDate,$contractCode,$currentWeekYear,Cheque::UNDER_COLLECTION,$currencyName,$company->id) ;
 				// for customers 
+			
 					$pastDueCustomerInvoices = $this->getPastDueCustomerInvoices('CustomerInvoice',$currencyName,$company->id,$request->get('start_date',$request->get('cash_start_date')),$contractCode);
 					$excludeIds = $pastDueCustomerInvoices->where('net_balance_until_date','<=',0)->pluck('id')->toArray() ;
+				
 					$pastDueCustomerInvoicesPerCurrency[$currencyName] = $pastDueCustomerInvoices;
-					$customerDueInvoices=DB::table('weekly_cashflow_custom_due_invoices')->where('company_id',$company->id)
+					$customerDueInvoices=DB::table('weekly_cashflow_custom_due_invoices')
+					->where('customer_invoices.company_id',$company->id)
 					->where('invoice_type','CustomerInvoice')
 					->whereNotIn('invoice_id',$excludeIds)
+					->join('customer_invoices','customer_invoices.id','=','weekly_cashflow_custom_due_invoices.invoice_id')
+					->where('customer_invoices.contract_code',$contractCode)
+					
+					
 					->groupBy('week_start_date')->selectRaw('week_start_date,sum(amount) as amount')->get();
+					
 					$customerDueInvoicesPerCurrency[$currencyName] = $customerDueInvoices ;
-					CustomerInvoice::getSettlementAmountUnderDateForSpecificType($result ,$totalCashInFlowArray,MoneyReceived::INCOMING_TRANSFER,'receiving_date',$startDate , $endDate,$contractCode,$currentWeekYear,null,$currencyName);
+					CustomerInvoice::getSettlementAmountUnderDateForSpecificType($result ,$totalCashInFlowArray,MoneyReceived::INCOMING_TRANSFER,'receiving_date',$startDate , $endDate,$contractCode,$currentWeekYear,null,$currencyName,$company->id);
 				
 					 CustomerInvoice::getSettlementAmountUnderDateForSpecificType($result,$totalCashInFlowArray,MoneyReceived::CHEQUE,'actual_collection_date',$startDate , $endDate,$contractCode,$currentWeekYear,Cheque::COLLECTED,$currencyName,$company->id);
 					 CustomerInvoice::getCustomerInvoicesUnderCollectionAtDatesForContracts($result,$totalCashInFlowArray,$company->id,$startDate , $endDate,$currencyName,$contractCode,$currentWeekYear);
@@ -220,6 +228,7 @@ class ContractCashFlowReportController
 		foreach($items as $item){
 			$item->net_balance_until_date = $item->getNetBalanceUntil($startDate);
 		}
+		
 		return $items;
 	}
 }
