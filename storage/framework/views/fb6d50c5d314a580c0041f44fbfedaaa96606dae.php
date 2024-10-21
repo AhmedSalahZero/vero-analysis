@@ -146,7 +146,7 @@ use App\Models\MoneyReceived ;
                             <div class="kt-input-icon">
                                 <div class="kt-input-icon">
                                     <div class="input-group date">
-                                        <select data-live-search="true" data-actions-box="true" id="customer_name" name="customer_id" class="form-control select2-select ajax-get-invoice-numbers  ajax-update-contracts customer-select">
+                                        <select data-current-selected="<?php echo e(isset($model) ? $model->getCustomerName() : ''); ?>" data-live-search="true" data-actions-box="true" id="customer_name" name="customer_id" class="form-control select2-select ajax-get-invoice-numbers  ajax-update-contracts customer-select">
                                             <option value="" selected><?php echo e(__('Select')); ?></option>
                                             <?php $__currentLoopData = $customers; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $customerId => $customerName): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                             <option <?php if($singleModel): ?> selected <?php endif; ?> <?php if(isset($model) && $model->getCustomerName() == $customerName ): ?> selected <?php endif; ?> value="<?php echo e($customerId); ?>"><?php echo e($customerName); ?></option>
@@ -756,9 +756,7 @@ use App\Models\MoneyReceived ;
 </script>
 
 <script>
-    $(document).on('change', '.settlement-amount-class', function() {
 
-    })
 
     $(function() {
         $('#type').trigger('change');

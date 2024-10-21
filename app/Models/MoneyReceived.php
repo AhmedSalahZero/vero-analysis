@@ -730,7 +730,7 @@ class MoneyReceived extends Model
 	{
 		return $this->cheque ? $this->cheque->getDraweeBankId() : 0 ;
 	}
-	public function storeNewSalesOrdersAmounts(array $salesOrdersAmounts,int $contractId,int $customerId,int $companyId)
+	public function storeNewSalesOrdersAmounts(array $salesOrdersAmounts,?int $contractId,?int $customerId,int $companyId)
 	{
 		
 		foreach($salesOrdersAmounts as $salesOrderReceivedAmountArr)
@@ -740,7 +740,6 @@ class MoneyReceived extends Model
 				$this->downPaymentSettlements()->create(array_merge(
 					$salesOrderReceivedAmountArr ,
 					[
-						// 'sales_order_id'=>$salesOrdersAmounts['sales_order_id'],
 						'contract_id'=>$contractId,
 						'customer_id'=>$customerId,
 						'down_payment_amount'=>$salesOrderReceivedAmountArr['received_amount']

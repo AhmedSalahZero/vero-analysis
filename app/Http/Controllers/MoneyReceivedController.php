@@ -343,7 +343,8 @@ class MoneyReceivedController
 	}
 	
 	public function store(Company $company , StoreMoneyReceivedRequest $request ){
-
+		$hasUnappliedAmount = (bool)$request->get('unapplied_amount');
+		
 		$partnerType = $request->get('partner_type');
 		$moneyType = $request->get('type');
 		$contractId = $request->get('contract_id');
@@ -449,7 +450,7 @@ class MoneyReceivedController
 		 */
 		$moneyReceived = $moneyReceived->refresh();
 		
-			$moneyReceived->handleDebitStatement($financialInstitutionId,$accountType,$accountNumber,$moneyType,$statementDate,$amountInReceivingCurrency,$receivingCurrency,$receivingBranchId);
+		$moneyReceived->handleDebitStatement($financialInstitutionId,$accountType,$accountNumber,$moneyType,$statementDate,$amountInReceivingCurrency,$receivingCurrency,$receivingBranchId);
 		if($partnerType && $partnerType != 'is_customer' ){
 			$moneyReceived->handlePartnerCreditStatement($partnerType,$partnerId, $moneyReceived->id,$company->id,$statementDate,$amountInReceivingCurrency,$receivingCurrency,$bankNameOrBranchName , $accountType , $accountNumber);
 		}
@@ -471,10 +472,9 @@ class MoneyReceivedController
 		// 	// start store unapplied amount as new down payment
 		// 	return $this->store($company,$request->replace(array_merge($request->all(),['is_down_payment_from_money_received_page'=>true],['received_amount'=>[$moneyType=>$request->get('unapplied_amount')]],['settlements'=>[]])),$moneyReceived->id);
 		// }
-		$moneyReceived->storeNewSalesOrdersAmounts($request->get('sales_orders_amounts',[]),$contractId,$customerId,$companyId);
-		
-		
-		
+		if($hasUnappliedAmount){
+			$moneyReceived->storeNewSalesOrdersAmounts($request->get('sales_orders_amounts',[]),$contractId,$customerId,$companyId);
+		}
 		
 		/**
 		 * @var CustomerInvoice $customerInvoice

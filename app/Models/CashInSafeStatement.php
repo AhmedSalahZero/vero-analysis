@@ -173,6 +173,7 @@ class CashInSafeStatement extends Model
 	}
 	public function getExchangeRate()
 	{
+		
 		return $this->exchange_rate ?:1 ;
 	}
 	public function internalMoneyTransfer()
