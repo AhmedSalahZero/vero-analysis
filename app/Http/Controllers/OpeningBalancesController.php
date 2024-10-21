@@ -232,6 +232,7 @@ class OpeningBalancesController
                     'user_id' => auth()->id(),
 					'debit'=>number_unformat($data['received_amount']),
 					'branch_id'=>$data['received_branch_id'],
+					'date'=>$openingBalanceDate
                 ]));
 				
 				
