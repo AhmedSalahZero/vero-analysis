@@ -498,7 +498,7 @@ use App\Models\MoneyReceived ;
                                             <td>
                                                 <div class="kt-input-icon width-15">
                                                     <div class="input-group">
-                                                        <input name="cheque_number" type="text" class="form-control " value="{{ number_format(isset($chequeInSafe) ? $chequeInSafe->getChequeNumber() : old('cheuqe_number',0)) }}">
+                                                        <input name="cheque_number" type="text" class="form-control " value="{{ isset($chequeInSafe) ? $chequeInSafe->getChequeNumber() : old('cheuqe_number',0) }}">
                                                     </div>
                                                 </div>
                                             </td>
