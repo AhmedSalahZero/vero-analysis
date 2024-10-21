@@ -53,8 +53,8 @@ class OpeningBalancesController
     {
 		
         $openingBalanceDate = $request->get('date');
+		
 		$openingBalanceDate = Carbon::make($openingBalanceDate)->format('Y-m-d');
-
         $openingBalance = OpeningBalance::create([
             'date' => $openingBalanceDate,
             'company_id' => $company->id

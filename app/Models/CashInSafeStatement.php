@@ -46,11 +46,13 @@ class CashInSafeStatement extends Model
 		protected static function booted(): void
 		{
 			static::creating(function(CashInSafeStatement $model){
+	
 				$model->created_at = now();
 				$date = $model->date ;
 				$time  = now()->format('H:i:s');
-				
+			
 				$fullDateTime = date('Y-m-d H:i:s', strtotime("$date $time")) ;
+		
 				/**
 				 * * دي علشان لو ليهم نفس التاريخ والوقت بالظبط يزود ثانيه علي التاريخ القديم
 				 */
