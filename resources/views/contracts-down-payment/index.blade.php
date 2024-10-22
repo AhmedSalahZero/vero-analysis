@@ -97,12 +97,13 @@ use App\Models\MoneyReceived ;
                                 <tr>
                                     <td>
                                         {{ $index+1 }}
+										 {{-- -- {{ $moneyReceived->id }} --}}
                                     </td>
 
                                     <td class="text-nowrap">{{ $moneyReceived->getReceivingDateFormatted() }}</td>
-                                    <td>{{ $currentReceivedAmount=$moneyReceived->getReceivedAmountFormatted() }}</td>
-                                    <td>{{ $currentTotalSettlementAmount=$moneyReceived->getTotalSettlementAmountFormatted() }}</td>
-                                    <td>{{ number_format($moneyReceived->getTotalSettlementsNetBalance()) }}</td>
+                                    <td>{{ $moneyReceived->getDownPaymentAmountFormatted() }}</td>
+                                    <td>{{ $moneyReceived->getTotalSettlementAmountForDownPaymentFormatted() }}</td>
+                                    <td>{{ number_format($moneyReceived->getTotalSettlementsNetBalanceForDownPayment()) }}</td>
                                     <td>{{ $moneyReceived->getCurrency() }}</td>
                                     <td>{{ $model->getCode() }}</td>
                                     <td>{{ $model->getAmountFormatted() }}</td>

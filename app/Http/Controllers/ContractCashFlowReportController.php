@@ -175,6 +175,7 @@ class ContractCashFlowReportController
 			] ;
 		}
 		$allCurrencies = $nonEmptyCurrencies ;
+		
 		return view('admin.reports.contract-cash-flow-report',[
 			'weeks'=>$weeks,
 			// 'result'=>$result,

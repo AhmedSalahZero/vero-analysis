@@ -325,8 +325,8 @@ class MoneyReceivedController
 		
 		
 		foreach($invoices as $index=>$invoiceArr){
-			$invoices[$index]['settlement_amount'] = $moneyReceived ? $moneyReceived->getSettlementsForInvoiceNumberAmount($invoiceArr['invoice_number'],$customerName) : 0;
-			$invoices[$index]['withhold_amount'] = $moneyReceived ? $moneyReceived->getWithholdForInvoiceNumberAmount($invoiceArr['invoice_number'],$customerName) : 0;
+			$invoices[$index]['settlement_amount'] = $moneyReceived ? $moneyReceived->getSettlementsForInvoiceNumberAmount($invoiceArr['invoice_number'],$customerName,0) : 0;
+			$invoices[$index]['withhold_amount'] = $moneyReceived ? $moneyReceived->getWithholdForInvoiceNumberAmount($invoiceArr['invoice_number'],$customerName,0) : 0;
 		}
 	
 		$invoices = $this->formatInvoices($invoices,$inEditMode);
@@ -468,10 +468,7 @@ class MoneyReceivedController
 		 */
 		
 
-		//  if(!$isDownPayment && !$isDownPaymentFromMoneyReceived && $request->get('unapplied_amount',0) > 0 && $partnerType == 'is_customer' ){
-		// 	// start store unapplied amount as new down payment
-		// 	return $this->store($company,$request->replace(array_merge($request->all(),['is_down_payment_from_money_received_page'=>true],['received_amount'=>[$moneyType=>$request->get('unapplied_amount')]],['settlements'=>[]])),$moneyReceived->id);
-		// }
+		
 		if($hasUnappliedAmount){
 			$moneyReceived->storeNewSalesOrdersAmounts($request->get('sales_orders_amounts',[]),$contractId,$customerId,$companyId);
 		}

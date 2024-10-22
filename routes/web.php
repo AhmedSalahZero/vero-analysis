@@ -744,13 +744,10 @@ Route::middleware([])->group(function () {
 					Route::get('refresh-withdrawal-dues-report','WithdrawalsSettlementReportController@refreshReport')->name('refresh.withdrawal.report'); // ajax
 
 					
-					Route::get('down-payment-contracts/{partnerId}/{modelType}','DownPaymentContractsController@viewContractsWithDownPayments')->name('view.contracts.down.payments');
+					Route::get('down-payment-contracts/{partnerId}/{modelType}/{currency}','DownPaymentContractsController@viewContractsWithDownPayments')->name('view.contracts.down.payments');
 					Route::get('down-payment-contracts-settlements/{downPaymentId}/{modelType}','DownPaymentContractsController@downPaymentSettlements')->name('view.down.payment.settlement');
 					Route::post('store-down-payment-settlement/{downPaymentId}/{partnerId}/{modelType}','DownPaymentContractsController@storeDownPaymentSettlement')->name('store.down.payment.settlement');
 					
-					// Route::get('unapplied-amounts/{partnerId}/{modelType}','UnappliedAmountsController@index')->name('view.unapplied.amounts');
-					// Route::get('unapplied-amount-settlements/{unappliedAmountId}/{modelType}','MoneyReceivedController@downPaymentSettlements')->name('view.down.payment.settlement');
-					// Route::post('store-unapplied-amount-settlement/{unappliedAmountId}/{partnerId}/{modelType}','MoneyReceivedController@storeDownPaymentSettlement')->name('store.down.payment.settlement');
 					
 					
 					

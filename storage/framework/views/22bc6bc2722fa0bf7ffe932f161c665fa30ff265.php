@@ -104,12 +104,13 @@ use App\Models\MoneyReceived ;
                                     <td>
                                         <?php echo e($index+1); ?>
 
+										 
                                     </td>
 
                                     <td class="text-nowrap"><?php echo e($moneyReceived->getReceivingDateFormatted()); ?></td>
-                                    <td><?php echo e($currentReceivedAmount=$moneyReceived->getReceivedAmountFormatted()); ?></td>
-                                    <td><?php echo e($currentTotalSettlementAmount=$moneyReceived->getTotalSettlementAmountFormatted()); ?></td>
-                                    <td><?php echo e(number_format($moneyReceived->getTotalSettlementsNetBalance())); ?></td>
+                                    <td><?php echo e($moneyReceived->getDownPaymentAmountFormatted()); ?></td>
+                                    <td><?php echo e($moneyReceived->getTotalSettlementAmountForDownPaymentFormatted()); ?></td>
+                                    <td><?php echo e(number_format($moneyReceived->getTotalSettlementsNetBalanceForDownPayment())); ?></td>
                                     <td><?php echo e($moneyReceived->getCurrency()); ?></td>
                                     <td><?php echo e($model->getCode()); ?></td>
                                     <td><?php echo e($model->getAmountFormatted()); ?></td>

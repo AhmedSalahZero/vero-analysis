@@ -95,8 +95,10 @@ $selectedBanks = [];
     <input id="js-money-payment-id" type="hidden" name="money_payment_id" value="<?php echo e(isset($model) ? $model->id : 0); ?>">
 	<input type="hidden" name="current_cheque_id" value="<?php echo e(isset($model) && $model->payableCheque ? $model->payableCheque->id : 0); ?>">
 	<input type="hidden" name="current_branch" value="<?php echo e(isset($model) && $model->cashPayment ? $model->cashPayment->delivery_branch_id : 0); ?>">
-	<input type="hidden" id="js-down-payment-id" value="<?php echo e(isset($model) && $model->downPayment ? $model->downPayment->id : 0); ?>">
+	
     <input type="hidden" id="ajax-invoice-item" data-single-model="<?php echo e($singleModel ? 1 : 0); ?>" value="<?php echo e($singleModel ? $invoiceNumber : 0); ?>">
+            <input id="js-down-payment-id" type="hidden" name="down_payment_id" value="<?php echo e(isset($model) ? $model->id : 0); ?>">
+	
     <?php echo csrf_field(); ?>
     <?php if(isset($model)): ?>
     <?php echo method_field('put'); ?>
@@ -194,7 +196,7 @@ $selectedBanks = [];
                     <div class="kt-input-icon">
                         <div class="kt-input-icon">
                             <div class="input-group date">
-                                <select data-live-search="true" data-actions-box="true" id="supplier_name" name="supplier_id" class="form-control select2-select ajax-get-invoice-numbers ajax-update-contracts supplier-select supplier-js">
+                                <select data-current-selected="<?php echo e(isset($model) ? $model->getSupplierName() : ''); ?>" data-live-search="true" data-actions-box="true" id="supplier_name" name="supplier_id" class="form-control select2-select ajax-get-invoice-numbers ajax-update-contracts supplier-select supplier-js">
                                   
                                     <?php $__currentLoopData = $suppliers; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $supplierId => $supplierName): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                     <option <?php if($singleModel): ?> selected <?php endif; ?> <?php if(isset($model) && $model->getSupplierName() == $supplierName ): ?> selected <?php endif; ?> value="<?php echo e($supplierId); ?>"><?php echo e($supplierName); ?></option>

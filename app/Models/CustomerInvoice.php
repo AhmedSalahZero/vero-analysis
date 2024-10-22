@@ -385,17 +385,21 @@ class CustomerInvoice extends Model implements IInvoice
 		->where('customer_invoices.company_id',$companyId)
 		->selectRaw('sum(settlement_amount) as current_sum,customer_invoices.invoice_number')->first();
 
-		// if($startDate=='2024-05-01' && $moneyType == 'incoming-transfer'){
-		// 	dd($companyId);
-		// 	// dd($queryResultRaw);
-		// 	dd( DB::table('customer_invoices')
+		// if($startDate=='2024-10-01' && $moneyType == 'incoming-transfer'){
+		// 	dd(DB::table('customer_invoices')
 		// 	->when($contractCode , function($query) use ($contractCode){
 		// 		$query->where('contract_code',$contractCode);
 		// 	})
-		// 	->where('money_received.company_id',$companyId)
+		// 	->when($currency,function($builder) use ($currency){
+		// 		$builder->where('customer_invoices.currency',$currency);
+		// 	})
 		// 	->join('settlements','settlements.invoice_number','=','customer_invoices.invoice_number')
-		// 	->select(['customer_invoices.*','settlements.money_received_id as qqq'])
-		// 	->join('money_received','money_received.id','=','settlements.money_received_id')->get());
+		// 	->join('money_received','money_received.id','=','settlements.money_received_id')
+		// 	->where('money_received.type','=',$moneyType)
+		// 	->whereBetween($dateColumnName,[$startDate,$endDate])
+		// 	->when($chequeStatus , function( $builder) use ($chequeStatus){
+		// 		$builder->join('cheques','cheques.money_received_id','=','money_received.id')->where('cheques.status',$chequeStatus);
+		// 	})->get());
 		// }
 		if($queryResultRaw->current_sum){
 			$invoiceNumber = __('Invoice No.') . ' ' .  $queryResultRaw->invoice_number ;

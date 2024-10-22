@@ -105,7 +105,7 @@ use App\Models\SupplierInvoice;
 						 <div class="col-md-2">
                             <label>  {{ __('Down Payment Amount') }} </label>
 							<div class="form-group">
-							 <input data-max-cheque-value="0" disabled type="text" value="{{ $downPayment->getReceivedAmountFormatted()}}" name="received_amount" class="form-control only-greater-than-or-equal-zero-allowed   main-amount-class recalculate-amount-class" placeholder="{{__('Received Amount')}}">
+							 <input data-max-cheque-value="0" disabled type="text" value="{{ $downPaymentAmount}}" name="received_amount" class="form-control only-greater-than-or-equal-zero-allowed   main-amount-class recalculate-amount-class" placeholder="{{__('Received Amount')}}">
 							 
 							</div>
 
@@ -230,13 +230,13 @@ use App\Models\SupplierInvoice;
 				<div class="col-md-2 width-12">
 					<label> {{ __('Settlement Amount') }}  <span class="text-danger ">*</span> </label>
 					<div class="kt-input-icon">
-						<input value="{{ $downPayment->getSettlementsForInvoiceNumberAmount($invoice->getInvoiceNumber(),$partnerName) }}" name="settlements[{{$index}}][settlement_amount]" placeholder="{{ __("Settlement Amount") }}" type="text" class="form-control  only-greater-than-or-equal-zero-allowed settlement-amount-class">
+						<input value="{{ $downPayment->getSettlementsForInvoiceNumberAmount($invoice->getInvoiceNumber(),$partnerName,true) }}" name="settlements[{{$index}}][settlement_amount]" placeholder="{{ __("Settlement Amount") }}" type="text" class="form-control  only-greater-than-or-equal-zero-allowed settlement-amount-class">
 					</div>
 				</div>
 				<div class="col-md-2 width-12">
 					<label> {{ __('Withhold Amount') }} <span class="text-danger ">*</span> </label>
 					<div class="kt-input-icon">
-						<input value="{{ $downPayment->getWithholdForInvoiceNumberAmount($invoice->getInvoiceNumber(),$partnerName) }}" name="settlements[{{$index}}][withhold_amount]" placeholder="{{ __('Withhold Amount') }}" type="text" class="form-control  only-greater-than-or-equal-zero-allowed ">
+						<input value="{{ $downPayment->getWithholdForInvoiceNumberAmount($invoice->getInvoiceNumber(),$partnerName,true) }}" name="settlements[{{$index}}][withhold_amount]" placeholder="{{ __('Withhold Amount') }}" type="text" class="form-control  only-greater-than-or-equal-zero-allowed ">
 					</div>
 				</div>
 		

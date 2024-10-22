@@ -19,7 +19,7 @@ trait IsMoney
 	{
 		return $this->type ;
 	}
-	public function storeNewSettlement(array $settlements,string $customerName,int $companyId)
+	public function storeNewSettlement(array $settlements,string $customerName,int $companyId , bool $isFromDownPayment = false )
 	{
 		$totalWithholdAmount= 0 ;
 		foreach($settlements as $settlementArr)
@@ -28,6 +28,8 @@ trait IsMoney
 			if($settlementArr['settlement_amount'] > 0){
 				$settlementArr['company_id'] = $companyId ;
 				$settlementArr['customer_name'] = $customerName ;
+				$settlementArr['is_from_down_payment'] = $isFromDownPayment ;
+				
 				$withholdAmount = isset($settlementArr['withhold_amount']) ? unformat_number($settlementArr['withhold_amount']) : 0 ;
 				$settlementArr['withhold_amount'] = $withholdAmount ;
 				$totalWithholdAmount += $withholdAmount  ;
@@ -46,8 +48,26 @@ trait IsMoney
 	{
 		return number_format($this->getTotalSettlementAmount());
 	}
+	public function getTotalSettlementAmountForDownPayment()
+	{
+		if($this->isInvoiceSettlementWithDownPayment()){
+			return $this->settlementsForDownPaymentThatComeFromMoneyModel->sum('settlement_amount');
+		}
+		return $this->getTotalSettlementAmount();
+	}
+	public function getTotalSettlementAmountForDownPaymentFormatted()
+	{
+		return number_format($this->getTotalSettlementAmountForDownPayment());
+	}
 	public function getTotalSettlementsNetBalance()
 	{
+		return $this->getAmount()  - $this->getTotalSettlementAmount();
+	}
+	public function getTotalSettlementsNetBalanceForDownPayment()
+	{
+		if($this->isInvoiceSettlementWithDownPayment()){
+			return $this->getDownPaymentAmount()  - $this->getTotalSettlementAmountForDownPayment();
+		}
 		return $this->getReceivedAmount()  - $this->getTotalSettlementAmount();
 	}
 	public function setDownPaymentSettlementDateAttribute($value)
@@ -79,5 +99,19 @@ trait IsMoney
 	{
 		return $this->partner_type == $type; 
 	}
+	
+	public function getDownPaymentAmount()
+    {
+		if($this->isDownPayment()){
+			return $this->getAmount();
+		}elseif($this->isInvoiceSettlementWithDownPayment()){
+			return $this->downPaymentSettlements->sum('down_payment_amount') ;
+		}
+		throw new \Exception('Customer Exception .. Not Down Payment');
+    }
+	public function getDownPaymentAmountFormatted()
+    {
+		return number_format($this->getDownPaymentAmount());
+    }
 	
 }

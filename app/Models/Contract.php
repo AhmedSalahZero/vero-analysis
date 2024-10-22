@@ -383,7 +383,9 @@ class Contract extends Model
 	}
 	public function moneyReceived() // downpayments
 	{
-		return $this->hasMany(MoneyReceived::class,'contract_id','id')->where('money_type',MoneyReceived::DOWN_PAYMENT);
+		return $this->hasMany(MoneyReceived::class,'contract_id','id')->whereIn('money_type',[MoneyReceived::DOWN_PAYMENT
+		,MoneyReceived::INVOICE_SETTLEMENT_WITH_DOWN_PAYMENT
+	]);
 	}
 	public function MoneyPayment() // downpayments
 	{

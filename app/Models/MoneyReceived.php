@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-
 use App\Http\Controllers\MoneyReceivedController;
 use App\Models\OpeningBalance;
 use App\Traits\Models\HasCreditStatements;
@@ -31,6 +30,7 @@ class MoneyReceived extends Model
 	const UNAPPLIED_AMOUNTS = 'unapplied-amounts';
 	const DOWN_PAYMENT = 'down-payment';
 	const INVOICE_SETTLEMENT_WITH_DOWN_PAYMENT = 'invoice-settlement-with-down-payment';
+	
 	public static function generateComment(self $moneyReceived,string $lang,?string $invoiceNumbers = '',?string $customerName = null)
 	{
 		
@@ -91,6 +91,7 @@ class MoneyReceived extends Model
 	}
 	protected static function booted()
 	{
+	
 		self::creating(function (self $moneyReceived): void {
 			$moneyReceived->comment_en = self::generateComment($moneyReceived,'en');
 			$moneyReceived->comment_ar = self::generateComment($moneyReceived,'ar');
@@ -181,7 +182,7 @@ class MoneyReceived extends Model
     {
         return number_format($this->getReceivedAmount()) ;
     }
-   
+	
 	public function getCurrency()
 	{
 		return $this->currency;
@@ -320,9 +321,38 @@ class MoneyReceived extends Model
 	/**
 	 * * For Money Received Only
 	 */
+	/**
+	 * * كل كل ال settlements
+	 * * ودا بيشمل في حاله مثلا لو كان عندك
+	 * * money received with down payment
+	 * * فا هتجيب كل ال settlements
+	 * * سواء اللي اتعملت مع ال money received
+	 * * او اللي اتعملت مع ال down payment 
+	 * * الخاصه بيها 
+	 * * خلي بالك ان الاتنين مع بعض سواء ال 
+	 * * money received or its down payment
+	 * * وبالتالي الاتنين ليهم نفس الاي دي
+	 */
     public function settlements()
     {
         return $this->hasMany(Settlement::class, 'money_received_id', 'id');
+    }
+	/**
+	 * * هتفرق عن اللي فاتت بس في حاله ال
+	 * * money received with down payment
+	 * * دي هتجيب بس اللي اتعملت في ال 
+	 * * money received 
+	 * * نفسها
+	 * * اما في باقي ال
+	 * * types مش هتفرق لان مش بينزل معاهم داون بيمنت
+	 */
+	public function settlementsForMoneyReceived()
+    {
+        return $this->hasMany(Settlement::class, 'money_received_id', 'id')->where('is_from_down_payment',0);
+    }
+	public function settlementsForDownPaymentThatComeFromMoneyModel()
+    {
+        return $this->hasMany(Settlement::class, 'money_received_id', 'id')->where('is_from_down_payment',1);
     }
 	/**
 	 * * For Down Payment Only
@@ -341,15 +371,28 @@ class MoneyReceived extends Model
     {
         return $this->settlements->where('customer_name', $customerName) ;
     }
-    public function getSettlementsForInvoiceNumber($invoiceNumber, string $customerName):Collection
+	
+    public function getSettlementsForInvoiceNumber($invoiceNumber, string $customerName,bool $isFromDownPayment = null):Collection
     {
-        return $this->settlements->where('invoice_number', $invoiceNumber)->where('customer_name', $customerName) ;
+		$settlements = $this->settlements ;
+		if($isFromDownPayment == true){
+			$settlements = $this->settlementsForDownPaymentThatComeFromMoneyModel;
+		}
+	
+		if($isFromDownPayment == false){
+			$settlements = $this->settlementsForMoneyReceived;
+		}
+        return $settlements->where('invoice_number', $invoiceNumber)->where('customer_name', $customerName) ;
     }
-	public function getSettlementsForInvoiceNumberAmount($invoiceNumber, string $customerName):float{
-		return $this->getSettlementsForInvoiceNumber($invoiceNumber,$customerName)->sum('settlement_amount');
+	public function getSettlementsForInvoiceNumberAmount($invoiceNumber, string $customerName,bool $isFromDownPayment =null):float{
+	
+		return $this->getSettlementsForInvoiceNumber($invoiceNumber,$customerName,$isFromDownPayment)
+		->sum('settlement_amount');
+		
+		
 	}
-	public function getWithholdForInvoiceNumberAmount($invoiceNumber, string $customerName):float{
-		return $this->getSettlementsForInvoiceNumber($invoiceNumber,$customerName)->sum('withhold_amount');
+	public function getWithholdForInvoiceNumberAmount($invoiceNumber, string $customerName,bool $isFromDownPayment =null):float{
+		return $this->getSettlementsForInvoiceNumber($invoiceNumber,$customerName,$isFromDownPayment)->sum('withhold_amount');
 	}
     public function getReceivingDateFormatted()
     {
@@ -717,6 +760,7 @@ class MoneyReceived extends Model
 	public static function getBankDepositsUnderDates(int $companyId , string $startDate , string $endDate,string $currency) 
 	{
 		return  DB::table('money_received')
+	
 		->where('type',MoneyReceived::CASH_IN_BANK)
 		->where('money_received.currency',$currency)
 		->join('cash_in_banks','cash_in_banks.money_received_id','=','money_received.id')
