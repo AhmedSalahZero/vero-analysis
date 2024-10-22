@@ -15,6 +15,7 @@ use App\Models\CleanOverdraft;
 use App\Models\Company;
 use App\Models\FinancialInstitution;
 use App\Models\FinancialInstitutionAccount;
+use App\Models\ForeignExchangeRate;
 use App\Models\FullySecuredOverdraft;
 use App\Models\LetterOfCreditIssuance;
 use App\Models\LetterOfGuaranteeIssuance;
@@ -80,9 +81,13 @@ class CustomerInvoiceDashboardController extends Controller
 		
         $selectedCurrencies = $request->get('currencies', $allCurrencies) ;
         $reports = [];
-		
+		$mainFunctionalCurrency = $company->getMainFunctionalCurrency();
 		$totalCard = [];
+		$exchangeRates = [];
         foreach ($selectedCurrencies as $currencyName) {
+			if($mainFunctionalCurrency != $currencyName){
+				$exchangeRates[$currencyName] = ForeignExchangeRate::getExchangeRateForCurrencyAndClosestDate($currencyName,$mainFunctionalCurrency,$date,$company->id);
+			}
 			$loansForCurrentCurrency = MediumTermLoan::where('currency',$currencyName)->with(['loanSchedules'])->where('company_id',$company->id)->get() ;
 			$mediumTermLoansArr[$currencyName] = $loansForCurrentCurrency;
 			$currentAccountInBanks = 0 ;
@@ -328,9 +333,11 @@ class CustomerInvoiceDashboardController extends Controller
 			$totalCard[$currencyName] = $this->sumForTotalCard($totalCard[$currencyName]??[],[$cleanOverdraftCardData[$currencyName]??0 , $fullySecuredOverdraftCardData[$currencyName]??0 , $overdraftAgainstCommercialPaperCardData[$currencyName]??0]);
 		
 		}
-		
+		// dd($exchangeRates);
         return view('admin.dashboard.cash', [
 			'mediumTermLoansArr'=>$mediumTermLoansArr,
+			'exchangeRates'=>$exchangeRates,
+			'mainFunctionalCurrency'=>$mainFunctionalCurrency,
             'company' => $company,
             'financialInstitutionBanks' => $financialInstitutionBanks,
             'reports' => $reports,

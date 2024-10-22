@@ -58,6 +58,9 @@ class ForeignExchangeRate extends Model
 	{
 		return $this->to_currency; 
 	}
-	
+	public static function getExchangeRateForCurrencyAndClosestDate(string $fromCurrency , string $toCurrency , string $closestDate,int $companyId){
+		$exchangeRate = self::where('company_id',$companyId)->where('from_currency',$fromCurrency)->where('to_currency',$toCurrency)->where('date','<=',$closestDate)->first();
+		return $exchangeRate ? $exchangeRate->getExchangeRate() : 1 ;
+	}
 	
 }
