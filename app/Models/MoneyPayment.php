@@ -144,7 +144,7 @@ class MoneyPayment extends Model
     {
         return number_format($this->getPaidAmount()) ;
     }
-   
+
 	public function getCurrency()
 	{
 		return $this->currency;
@@ -256,10 +256,41 @@ class MoneyPayment extends Model
 	/**
 	 * * For Supplier Payment Only
 	 */
+	
+	/**
+	 * * كل كل ال settlements
+	 * * ودا بيشمل في حاله مثلا لو كان عندك
+	 * * money payment with down payment
+	 * * فا هتجيب كل ال settlements
+	 * * سواء اللي اتعملت مع ال money payment
+	 * * او اللي اتعملت مع ال down payment 
+	 * * الخاصه بيها 
+	 * * خلي بالك ان الاتنين مع بعض سواء ال 
+	 * * money payment or its down payment
+	 * * وبالتالي الاتنين ليهم نفس الاي دي
+	 */
     public function settlements()
     {
         return $this->hasMany(PaymentSettlement::class, 'money_payment_id', 'id');
     }
+	/**
+	 * * هتفرق عن اللي فاتت بس في حاله ال
+	 * * money received with down payment
+	 * * دي هتجيب بس اللي اتعملت في ال 
+	 * * money received 
+	 * * نفسها
+	 * * اما في باقي ال
+	 * * types مش هتفرق لان مش بينزل معاهم داون بيمنت
+	 */
+	public function settlementsForMoneyPayment()
+    {
+        return $this->hasMany(PaymentSettlement::class, 'money_payment_id', 'id')->where('is_from_down_payment',0);
+    }
+	public function settlementsForDownPaymentThatComeFromMoneyModel()
+    {
+        return $this->hasMany(PaymentSettlement::class, 'money_payment_id', 'id')->where('is_from_down_payment',1);
+    }
+	
 	/**
 	 * * For Down Payment Only
 	 */
@@ -276,15 +307,22 @@ class MoneyPayment extends Model
     {
         return $this->settlements->where('supplier_name', $supplierName) ;
     }
-    public function getSettlementsForInvoiceNumber($invoiceNumber, string $supplierName):Collection
+    public function getSettlementsForInvoiceNumber($invoiceNumber, string $supplierName,bool $isFromDownPayment = null):Collection
     {
-        return $this->settlements->where('invoice_number', $invoiceNumber)->where('supplier_name', $supplierName) ;
+		$settlements = $this->settlements ;
+		if($isFromDownPayment == true){
+			$settlements = $this->settlementsForDownPaymentThatComeFromMoneyModel;
+		}
+		if($isFromDownPayment == false){
+			$settlements = $this->settlementsForMoneyReceived;
+		}
+        return $settlements->where('invoice_number', $invoiceNumber)->where('supplier_name', $supplierName) ;
     }
-	public function getSettlementsForInvoiceNumberAmount($invoiceNumber, string $supplierName):float{
-		return $this->getSettlementsForInvoiceNumber($invoiceNumber,$supplierName)->sum('settlement_amount');
+	public function getSettlementsForInvoiceNumberAmount($invoiceNumber, string $supplierName,bool $isFromDownPayment =null):float{
+		return $this->getSettlementsForInvoiceNumber($invoiceNumber,$supplierName,$isFromDownPayment)->sum('settlement_amount');
 	}
-	public function getWithholdForInvoiceNumberAmount($invoiceNumber, string $supplierName):float{
-		return $this->getSettlementsForInvoiceNumber($invoiceNumber,$supplierName)->sum('withhold_amount');
+	public function getWithholdForInvoiceNumberAmount($invoiceNumber, string $supplierName,bool $isFromDownPayment =null):float{
+		return $this->getSettlementsForInvoiceNumber($invoiceNumber,$supplierName,$isFromDownPayment)->sum('withhold_amount');
 	}
     public function getDeliveryDateFormatted()
     {

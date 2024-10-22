@@ -300,7 +300,7 @@
 
                     
 
-                    <a href="<?php echo e(route('view.contracts.down.payments',['company'=>$company->id,'partnerId'=>$partnerId,'modelType'=>$modelType])); ?>"  class="btn active-style btn-icon-sm align-self-center">
+                    <a href="<?php echo e(route('view.contracts.down.payments',['company'=>$company->id,'partnerId'=>$partnerId,'modelType'=>$modelType,'currency'=>$currency])); ?>"  class="btn active-style btn-icon-sm align-self-center">
                         <i class="fas fa-money-bill"></i>
                         <?php echo e(__('Down Payment Amount Settlement')); ?>
 

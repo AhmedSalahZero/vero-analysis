@@ -13,10 +13,13 @@ use Illuminate\Http\Request;
 class DownPaymentContractsController extends Controller
 {
 	use HasBasicFilter;
-    public function viewContractsWithDownPayments(Company $company,Request $request,int $partnerId,string $modelType)
+    public function viewContractsWithDownPayments(Company $company,Request $request,int $partnerId,string $modelType,string $currency)
 	{
 		$fullModelType = 'App\Models\\'.$modelType;
+		$customerNameOrSupplierNameColumnName = $fullModelType::CLIENT_NAME_COLUMN_NAME;
+		
 		$moneyModelName = $fullModelType::MONEY_MODEL_NAME ;
+		
 		$partner = Partner::find($partnerId);
 		$partnerName = $partner->getName();
 		$contractsWithDownPayments = MoneyReceived::CONTRACTS_WITH_DOWN_PAYMENTS;
@@ -42,9 +45,17 @@ class DownPaymentContractsController extends Controller
 		
 		$runningStartDate = $filterDates[$contractsWithDownPayments]['startDate'] ?? null ;
 		$runningEndDate = $filterDates[$contractsWithDownPayments]['endDate'] ?? null ;
-		$contractsWithDownPayment = $company->contracts()->has($moneyModelName)->with($moneyModelName)->where('status','!=',Contract::FINISHED)->get() ; // moneyReceived Here Is The Down payment
+		$contractsWithDownPayment = $company->contracts()->whereHas($moneyModelName,function($builder)use($partnerName,$currency,$customerNameOrSupplierNameColumnName){
+			$builder->where($customerNameOrSupplierNameColumnName,$partnerName)
+					->where('currency',$currency)
+			;
+		} )
+		->
+		with($moneyModelName)
+		->where('status','!=',Contract::FINISHED)
+		->get() ; // moneyReceived Here Is The Down payment
 		// $contractsWithDownPayment =  $contractsWithDownPayment->filterByStartDate($runningStartDate,$runningEndDate) ;
-		
+	
 		$contractsWithDownPayment =  $currentType == $contractsWithDownPayments ? $this->applyFilter($request,$contractsWithDownPayment):$contractsWithDownPayment ;
 
 		/**
@@ -106,6 +117,7 @@ class DownPaymentContractsController extends Controller
 			$invoices->where('net_balance','>',0);
 		}
 		$invoices = $invoices->orderBy('invoice_date','asc')->get() ; 
+		$downPaymentAmount =  $downPayment->getDownPaymentAmount();
 
 		
 		return view('contracts-down-payment.settlement_form',[
@@ -123,7 +135,8 @@ class DownPaymentContractsController extends Controller
 			'customerNameColumnName'=>$clientNameColumnName,
 			'customerIdColumnName'=>$clientIdColumnName,
 			'partnerId'=>$partnerId ,
-			'partnerName'=>$partnerName
+			'partnerName'=>$partnerName,
+			'downPaymentAmount'=>$downPaymentAmount
 
 		]);
 	}
@@ -136,11 +149,19 @@ class DownPaymentContractsController extends Controller
 		$downPayment->update([
 			'down_payment_settlement_date'=>$request->get('settlement_date')
 		]);
-		$downPayment->settlements->each(function($settlement){
+		$settlements = $downPayment->settlements ; 
+		$isFromDownPayment = 0 ;
+		if($downPayment->isInvoiceSettlementWithDownPayment()){
+			$settlements = $downPayment->settlementsForDownPaymentThatComeFromMoneyModel;
+			$isFromDownPayment = 1 ;
+		}
+		
+		$settlements
+		->each(function($settlement){
 			$settlement->delete();
 		});
-		$downPayment->storeNewSettlement($request->get('settlements',[]),$downPayment->getName(),$company->id);
-		return redirect()->route('view.contracts.down.payments',['company'=>$company->id,'partnerId'=>$partnerId,'modelType'=>$modelType]);
+		$downPayment->storeNewSettlement($request->get('settlements',[]),$downPayment->getName(),$company->id,$isFromDownPayment);
+		return redirect()->route('view.contracts.down.payments',['company'=>$company->id,'partnerId'=>$partnerId,'modelType'=>$modelType,'currency'=>$downPayment->getCurrency()]);
 		
 	}
 }
