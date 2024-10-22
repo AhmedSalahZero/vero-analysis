@@ -18,9 +18,15 @@
 
 
                                 <th class="text-center w-40-percentage text-capitalize th-main-color"><?php echo e(__('Financial Institution')); ?></th>
-                                <th class="text-center w-20-percentage text-capitalize th-main-color"><?php echo e(__('Account Number')); ?></th>
-                                <th class="text-center w-20-percentage text-capitalize th-main-color"> <?php echo __('Amount'); ?> </th>
-                                <th class="text-center w-20-percentage text-capitalize th-main-color"> <?php echo __('Blocked Against'); ?> </th>
+                                <th class="text-center w-10-percentage text-capitalize th-main-color"><?php echo e(__('Account Number')); ?></th>
+                                <th class="text-center w-15-percentage text-capitalize th-main-color"> <?php echo __('Amount')  .' [ '.$currency . ' ]'; ?> </th>
+								
+								<?php if($currency != $mainFunctionalCurrency): ?>
+                                <th class="text-center w-10-percentage text-capitalize th-main-color"> <?php echo __('Exchange Rate'); ?> </th>
+                                <th class="text-center w-15-percentage text-capitalize th-main-color"> <?php echo __('Amount'). ' [ ' . $mainFunctionalCurrency . ' ]'; ?>  </th>
+								<?php endif; ?>
+								
+                                <th class="text-center w-10-percentage text-capitalize th-main-color"> <?php echo __('Blocked Against'); ?> </th>
 
 
 
@@ -30,7 +36,7 @@
 
                             <?php
                             $total = 0 ;
-
+$totalInMainFunctionalCurrency = 0 ;
 
                             ?>
                             <?php $__currentLoopData = $detailItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $detailItem): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
@@ -44,7 +50,7 @@
                                         </div>
                                     </div>
                                 </td>
-                                <td class="w-20-percentage">
+                                <td class="w-10-percentage">
                                     <div class="kt-input-icon ">
                                         <div class="input-group">
                                             <input disabled type="text" class="form-control text-center ignore-global-style" value="<?php echo e($detailItem['account_number']); ?>">
@@ -53,19 +59,42 @@
                                 </td>
 
 
-                                <td class="w-20-percentage">
+                                <td class="w-15-percentage">
                                     <div class="kt-input-icon ">
                                         <div class="input-group">
                                             <input disabled type="text" class="form-control text-center ignore-global-style" value="<?php echo e(number_format($detailItem['amount'])); ?>">
                                             <?php
                                             $total +=$detailItem['amount'];
+											if($mainFunctionalCurrency != $currency){
+													$totalInMainFunctionalCurrency  += ($exchangeRates[$currency] * $detailItem['amount']);
+												}
                                             ?>
                                         </div>
                                     </div>
                                 </td>
+								
+								
+								<?php if($currency != $mainFunctionalCurrency): ?>
+								  <td class="w-10-percentage">
+                                    <div class="kt-input-icon">
+                                        <div class="input-group">
+                                            <input disabled type="text" class="form-control text-center ignore-global-style" value="<?php echo e($exchangeRates[$currency]); ?>">
+                                        </div>
+                                    </div>
+                                </td>
+								
+								 <td class="w-15-percentage">
+                                    <div class="kt-input-icon">
+                                        <div class="input-group">
+                                            <input disabled type="text" class="form-control text-center ignore-global-style" value="<?php echo e(number_format($exchangeRates[$currency] * $detailItem['amount'])); ?>">
+                                        </div>
+                                    </div>
+                                </td>
+								<?php endif; ?> 
+								
 
 
-                                <td class="w-20-percentage">
+                                <td class="w-10-percentage">
                                     <div class="kt-input-icon ">
                                         <div class="input-group">
                                             <input disabled type="text" class="form-control text-center ignore-global-style" value="<?php echo e($detailItem['blocked'] ?? '-'); ?>">
@@ -99,6 +128,19 @@
                                     <?php echo e(number_format($total)); ?>
 
                                 </td>
+								
+								<?php if($mainFunctionalCurrency != $currency): ?>
+							<td class="text-center">
+							
+						
+							</td>	<td class="text-center">
+							
+							<?php echo e(number_format($totalInMainFunctionalCurrency)); ?>
+
+							</td>
+							<?php endif; ?>
+							
+							
                                 <td></td>
 
 

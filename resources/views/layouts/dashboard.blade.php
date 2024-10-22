@@ -47,15 +47,23 @@ let pageLoaded = false ;
 .w-50-percentage {
             width: 50% !important;
         }
+		.w-40-percentage {
+            width: 40% !important;
+        }
         .w-40-percentage {
             width: 40% !important;
         }
 
         .w-20-percentage {
             width: 20% !important;
+        }
+		.w-15-percentage {
+            width: 15% !important;
+        }
+ .w-10-percentage {
+            width: 10% !important;
 
         }
-
         .flex-tabs {
             display: flex;
             gap: 10px;
