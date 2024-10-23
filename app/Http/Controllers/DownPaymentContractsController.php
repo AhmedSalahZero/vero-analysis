@@ -120,7 +120,8 @@ class DownPaymentContractsController extends Controller
 	
 		$invoices = $invoices->orderBy('invoice_date','asc')->get() ; 
 		$downPaymentAmount =  $downPayment->getDownPaymentAmount();
-
+		$isDownPaymentFromMoneyPayment = $downPayment->isInvoiceSettlementWithDownPayment();
+		
 		return view('contracts-down-payment.settlement_form',[
 			'modelType'=>'MoneyReceived',
 			'customerNameText'=>__('Customer Name'),
@@ -137,7 +138,8 @@ class DownPaymentContractsController extends Controller
 			'customerIdColumnName'=>$clientIdColumnName,
 			'partnerId'=>$partnerId ,
 			'partnerName'=>$partnerName,
-			'downPaymentAmount'=>$downPaymentAmount
+			'downPaymentAmount'=>$downPaymentAmount,
+			'isDownPaymentFromMoneyPayment'=>$isDownPaymentFromMoneyPayment
 
 		]);
 	}
