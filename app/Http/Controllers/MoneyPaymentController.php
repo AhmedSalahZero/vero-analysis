@@ -470,6 +470,7 @@ class MoneyPaymentController
 		->pluck('name','id')->toArray();
 		
 		$contracts = Contract::where('company_id',$company->id)->get();
+		$warningMessage = count($moneyPayment->settlementsForDownPaymentThatComeFromMoneyModel) ? __('Warning, please take care incase you changed the paid amount, the invoices settled using this down payment will be deleted'):null;
 		
         return view($viewName,[
 			'banks'=>$banks,
@@ -483,7 +484,8 @@ class MoneyPaymentController
 			'singleModel'=>$supplierInvoiceId,
 			'currencies'=>$currencies,
 			'clientsWithContracts'=>$clientsWithContracts ,
-			'selectedCurrency'=>$selectedCurrency
+			'selectedCurrency'=>$selectedCurrency,
+			'warningMessage'=>$warningMessage
 		]);
 
 	}
