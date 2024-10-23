@@ -215,7 +215,9 @@ use App\Models\MoneyReceived ;
                             <div class="kt-input-icon">
                                 <div class="kt-input-icon">
                                     <div class="input-group date">
-                                        <select id="customer_name" data-live-search="true" data-actions-box="true" name="customer_id" class="form-control select2-select ajax-get-contracts-for-customer ajax-get-sales-orders-for-contract">
+                                        <select id="customer_name" data-live-search="true" data-actions-box="true"
+										data-current-selected="<?php echo e(isset($model) ? $model->getName() : ''); ?>"
+										 name="customer_id" class="form-control select2-select ajax-get-contracts-for-customer ajax-get-sales-orders-for-contract">
                                             
                                             <?php $__currentLoopData = $customers; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $customerId => $customerName): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                             <option <?php if($singleModel): ?> selected <?php endif; ?> <?php if(isset($model) && $model->getCustomerName() == $customerName ): ?> selected <?php endif; ?> value="<?php echo e($customerId); ?>"><?php echo e($customerName); ?></option>
@@ -729,8 +731,8 @@ use App\Models\MoneyReceived ;
                         <div class="col-md-1 width-8"></div>
                         <div class="col-md-1 width-12"></div>
                         <div class="col-md-2 width-12"></div>
-                        <div class="col-md-2 width-12"></div>
-                        <div class="col-md-2 width-12"></div>
+                        <div class="col-md-1 width-12"></div>
+                        <div class="col-md-1 width-12"></div>
                         <div class="col-md-2 width-12">
                             <label class="label"><?php echo e(__('Unapplied Amount')); ?></label>
                             <input id="remaining-settlement-js" class="form-control" placeholder="<?php echo e(__('Unapplied Amount')); ?>" type="text" name="unapplied_amount" value="0">
