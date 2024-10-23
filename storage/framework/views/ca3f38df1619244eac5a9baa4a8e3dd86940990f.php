@@ -2,7 +2,6 @@
 <?php
 use App\Models\CustomerInvoice;
 use App\Models\MoneyReceived ;
-use App\Models\SupplierInvoice;
 
 ?>
 <link href="<?php echo e(url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css')); ?>" rel="stylesheet" type="text/css" />
@@ -67,6 +66,7 @@ use App\Models\SupplierInvoice;
 			<input type="hidden" name="model_type" value="<?php echo e($modelType); ?>" > 
             <input id="js-in-edit-mode" type="hidden" name="in_edit_mode" value="<?php echo e(isset($downPayment) ? 1 : 0); ?>">
             <input id="js-money-received-id" type="hidden" name="down_payment_id" value="<?php echo e(isset($downPayment) ? $downPayment->id : 0); ?>">
+            <input id="js-money-payment-id" type="hidden" name="down_payment_id" value="<?php echo e(isset($downPayment) ? $downPayment->id : 0); ?>">
 			                           
 
             
@@ -170,7 +170,6 @@ use App\Models\SupplierInvoice;
                     <div class="js-template ">
 					     <div class="col-md-12 js-duplicate-node">
                           
-						  
 						  <?php $__currentLoopData = $invoices; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index=>$invoice): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 						  
 						  <div class=" kt-margin-b-10 border-class">

@@ -251,10 +251,13 @@ class MoneyPaymentController
 		$moneyPaymentId = $request->get('money_payment_id');
 		$moneyPayment = MoneyPayment::find($moneyPaymentId);
 		$partner = Partner::find($supplierInvoiceId);
+		$downPaymentContract = Contract::find($request->get('downPaymentContractId'));
 		$supplierName = $partner->getName() ;
 		$invoices = SupplierInvoice::where('supplier_name',$supplierName)->where('company_id',$company->id)
-		->where('net_invoice_amount','>',0);
-
+		->where('net_invoice_amount','>',0)
+		->when($downPaymentContract , function($q) use($downPaymentContract){
+			$q->where('contract_code',$downPaymentContract->getCode());
+		});
 		if(!$inEditMode){
 			$invoices->where('net_balance','>',0);
 		}
@@ -371,14 +374,14 @@ class MoneyPaymentController
 		
 		$data['amount_in_paying_currency'] = $paidAmountInPayingCurrency ;
 		$data['exchange_rate'] =$exchangeRate ;
-		$data['money_type'] = $isDownPayment ? 'down-payment' : 'money-payment' ;
+	//	$data['money_type'] = $isDownPayment ? 'down-payment' : 'money-payment' ;
 		$data['contract_id'] = $contractId ;
 		// $data['money_payment_id'] = $moneyPaymentId;
 
 		/**
 		 * @var MoneyPayment $moneyPayment ;
 		 */
-		if(!$isDownPayment){
+		if(!$isDownPayment && !$isDownPaymentFromMoneyPayment){
 			unset($data['contract_id']);
 		}
 		/**
@@ -396,7 +399,7 @@ class MoneyPaymentController
 		$deliveryBranchId = $relationData['delivery_branch_id'] ?? null ;
 		$moneyPayment->handleCreditStatement($company->id , $financialInstitutionId,$accountType,$accountNumber,$moneyType,$statementDate,$paidAmountInPayingCurrency,$deliveryBranchId,$paymentCurrency);
 		
-		if($partnerType != 'is_supplier'){
+		if($partnerType && $partnerType != 'is_supplier'){
 			$moneyPayment->handlePartnerDebitStatement($partnerType,$partnerId, $moneyPayment->id,$company->id,$statementDate,$paidAmountInPayingCurrency,$paymentCurrency,$bankNameOrBranchName , $accountType , $accountNumber);
 		}
 		/**
@@ -490,11 +493,11 @@ class MoneyPaymentController
 		$companyId = $company->id;
 		$newType = $request->get('type');
 		$moneyPayment->deleteRelations();
-		$moneyReceivedAmountHasChanged = $moneyPayment->getAmount() != $request->input('paid_amount.'.$newType);
+		$moneyPaidAmountHasChanged = $moneyPayment->getAmount() != $request->input('paid_amount.'.$newType);
 		$moneyPayment->delete();
-		$newMoneyReceived = $this->store($company,$request);
-		if(!$moneyReceivedAmountHasChanged){
-			$newMoneyReceived->storeNewSettlement($oldSettlementsForMoneyReceivedWithDownPayment->toArray(),$newMoneyReceived->getName(),$companyId,1);
+		$newMoneyPayment = $this->store($company,$request);
+		if(!$moneyPaidAmountHasChanged){
+			$newMoneyPayment->storeNewSettlement($oldSettlementsForMoneyReceivedWithDownPayment->toArray(),$newMoneyPayment->getName(),$companyId,1);
 		}
 		 $activeTab = $newType;
 		 if($request->ajax()){
