@@ -1,5 +1,4 @@
 
-
 $(document).on('click', '#js-drawee-bank', function (e) {
 	e.preventDefault()
 	$('#js-choose-bank-id').modal('show')

@@ -144,6 +144,7 @@ class DownPaymentContractsController extends Controller
 	{
 		$fullClassName = 'App\Models\\'.$modelType;
 		$downPaymentModelName=$fullClassName::MONEY_MODEL_NAME;
+		$customerNameOrSupplierNameColumnName = $downPaymentModelName == 'MoneyReceived' ? 'customer_name' :'supplier_name';
 		$downPaymentModelFullName = 'App\Models\\'.$downPaymentModelName ;   
 		$downPayment =$downPaymentModelFullName::find($downPaymentId);
 		$downPayment->update([

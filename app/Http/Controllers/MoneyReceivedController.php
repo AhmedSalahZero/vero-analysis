@@ -280,6 +280,7 @@ class MoneyReceivedController
 			 * @var SalesOrder $salesOrder 
 			 */
 			$receivedAmount = $moneyReceived ? $moneyReceived->downPaymentSettlements->where('sales_order_id',$salesOrder->id)->first() : null ;
+			// dd($moneyReceived , $moneyReceived->downPaymentSettlements);
 			$formattedSalesOrders[$index]['received_amount'] = $receivedAmount && $receivedAmount->down_payment_amount ? $receivedAmount->down_payment_amount : 0;
 			$formattedSalesOrders[$index]['so_number'] = $salesOrder->so_number;
 			$formattedSalesOrders[$index]['amount'] = $salesOrder->getAmount();
@@ -287,6 +288,7 @@ class MoneyReceivedController
 			// $formattedSalesOrders[$index]['allocated_amount'] =   // for edit form
 			$formattedSalesOrders[$index]['id'] = $salesOrder->id;
 		}
+		// dd($formattedSalesOrders);
 			return response()->json([
 				'status'=>true , 
 				'sales_orders'=>$formattedSalesOrders,
@@ -344,7 +346,6 @@ class MoneyReceivedController
 	
 	public function store(Company $company , StoreMoneyReceivedRequest $request ){
 		$hasUnappliedAmount = (bool)$request->get('unapplied_amount');
-		
 		$partnerType = $request->get('partner_type');
 		$moneyType = $request->get('type');
 		$contractId = $request->get('contract_id');
@@ -361,11 +362,9 @@ class MoneyReceivedController
 		
 		$receivingCurrency = $data['receiving_currency'] ; 
 		$isDownPayment = $request->get('is_down_payment') && $request->has('sales_orders_amounts');
-		$isDownPaymentFromMoneyReceived  = $request->get('unapplied_amount');
 		$isDownPaymentFromMoneyReceived = $request->get('unapplied_amount',0) > 0 ;
 		$data['money_type'] =  !$isDownPayment ? 'money-received' : 'down-payment';
 		$data['money_type'] = $isDownPaymentFromMoneyReceived ? MoneyReceived::INVOICE_SETTLEMENT_WITH_DOWN_PAYMENT : $data['money_type'];
-		$data['customer_name'] = $customerName;
 		$data['customer_name'] = $customerName;
 		$data['user_id'] = auth()->user()->id ;
 		$data['company_id'] = $company->id ;
@@ -468,8 +467,7 @@ class MoneyReceivedController
 		 */
 		
 
-		
-		if($hasUnappliedAmount){
+		if($hasUnappliedAmount || $isDownPayment){
 			$moneyReceived->storeNewSalesOrdersAmounts($request->get('sales_orders_amounts',[]),$contractId,$customerId,$companyId);
 		}
 		
