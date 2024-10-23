@@ -293,7 +293,7 @@ class MoneyPaymentController
 		return SupplierInvoice::formatInvoices($invoices,$inEditMode,$moneyPayment);
 	}
 
-	public function store(Company $company , StoreMoneyPaymentRequest $request , $moneyPaymentId = null){
+	public function store(Company $company , StoreMoneyPaymentRequest $request  , $returnModel = false){
 		$hasUnappliedAmount = (bool)$request->get('unapplied_amount');
 		$partnerType = $request->get('partner_type');
 		$moneyType = $request->get('type');
@@ -373,7 +373,7 @@ class MoneyPaymentController
 		$data['exchange_rate'] =$exchangeRate ;
 		$data['money_type'] = $isDownPayment ? 'down-payment' : 'money-payment' ;
 		$data['contract_id'] = $contractId ;
-		$data['money_payment_id'] = $moneyPaymentId;
+		// $data['money_payment_id'] = $moneyPaymentId;
 
 		/**
 		 * @var MoneyPayment $moneyPayment ;
@@ -425,6 +425,9 @@ class MoneyPaymentController
 		 * @var SupplierInvoice $supplierInvoice
 		 */
 		$activeTab = $moneyType;
+		if($returnModel){
+			return $moneyPayment;
+		}
 		if($request->ajax()){
 			return response()->json([
 				'redirectTo'=>route('view.money.payment',['company'=>$company->id,'active'=>$activeTab])
@@ -483,11 +486,16 @@ class MoneyPaymentController
 	}
 
 	public function update(Company $company , StoreMoneyPaymentRequest $request , moneyPayment $moneyPayment){
-
+		$oldSettlementsForMoneyReceivedWithDownPayment  = $moneyPayment->settlementsForDownPaymentThatComeFromMoneyModel ;
+		$companyId = $company->id;
 		$newType = $request->get('type');
 		$moneyPayment->deleteRelations();
+		$moneyReceivedAmountHasChanged = $moneyPayment->getAmount() != $request->input('received_amount.'.$newType);
 		$moneyPayment->delete();
-		$this->store($company,$request);
+		$newMoneyReceived = $this->store($company,$request);
+		if(!$moneyReceivedAmountHasChanged){
+			$newMoneyReceived->storeNewSettlement($oldSettlementsForMoneyReceivedWithDownPayment->toArray(),$newMoneyReceived->getName(),$companyId,1);
+		}
 		 $activeTab = $newType;
 		 if($request->ajax()){
 			return response()->json([
