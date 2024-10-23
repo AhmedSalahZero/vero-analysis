@@ -315,7 +315,7 @@ class MoneyPayment extends Model
 			$settlements = $this->settlementsForDownPaymentThatComeFromMoneyModel;
 		}
 		if($isFromDownPayment == false){
-			$settlements = $this->settlementsForMoneyReceived;
+			$settlements = $this->settlementsForMoneyPayment;
 		}
         return $settlements->where('invoice_number', $invoiceNumber)->where('supplier_name', $supplierName) ;
     }
