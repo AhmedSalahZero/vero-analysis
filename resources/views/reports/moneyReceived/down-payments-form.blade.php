@@ -1,6 +1,7 @@
 @extends('layouts.dashboard')
 @section('css')
 @php
+use App\Models\CustomerInvoice;
 use App\Models\MoneyReceived ;
 @endphp
 <link href="{{ url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css') }}" rel="stylesheet" type="text/css" />
@@ -59,6 +60,7 @@ use App\Models\MoneyReceived ;
 			<input type="hidden" name="current_cheque_id" value="{{ isset($model) && $model->cheque ? $model->cheque->id : 0 }}">
 			<input type="hidden" name="is_down_payment" value="1">
             <input id="js-down-payment-id" type="hidden" name="down_payment_id" value="{{ isset($model) ? $model->id : 0 }}">
+            <input id="js-money-received-id" type="hidden" name="money_received_id" value="{{ isset($model) ? $model->id : 0 }}">
             <input type="hidden" id="ajax-sales-order-item" data-single-model="{{ $singleModel ? 1 : 0 }}" value="{{ $singleModel ? $salesOrderId : 0 }}">
             @csrf
             @if(isset($model))
@@ -188,7 +190,8 @@ use App\Models\MoneyReceived ;
 							
 							ajax-get-contracts-for-customer  ajax-get-sales-orders-for-contract
 							current-invoice-currency
-							 {{-- ajax-get-invoice-numbers --}}
+							 ajax-get-invoice-numbers
+							 
 							 
 							 ">
 
@@ -233,8 +236,8 @@ use App\Models\MoneyReceived ;
 							current-currency
 							currency-class
 							receiving-currency-class
-							{{-- 
-							 ajax-get-invoice-numbers --}}
+
+							 ajax-get-invoice-numbers 
 							">
                                         {{-- <option value="" selected>{{__('Select')}}</option> --}}
                                         @foreach(isset($currencies) ? $currencies : getBanksCurrencies () as $currencyId=>$currentName)
@@ -249,7 +252,6 @@ use App\Models\MoneyReceived ;
                             </div>
                         </div>
 
-
                         <div class="col-md-3">
                             <label>{{__('Contract Name')}}
                                 @include('star')
@@ -257,7 +259,9 @@ use App\Models\MoneyReceived ;
                             <div class="kt-input-icon">
                                 <div class="kt-input-icon">
                                     <div class="input-group date">
-                                        <select data-current-selected="{{ isset($model) ? $model->getContractId() : 0 }}" id="contract-id" name="contract_id" class="form-control ajax-get-sales-orders-for-contract">
+                                        <select data-current-selected="{{ isset($model) ? $model->getContractId() : 0 }}" id="contract-id" name="contract_id" class="form-control down-payment-contract-class 
+										ajax-get-invoice-numbers
+										 ajax-get-sales-orders-for-contract">
                                             <option value="" selected>{{__('Select')}}</option>
                                             @foreach($contracts as $index => $contract)
                                             <option @if(isset($model) && $model->getContractId() == $contract->id ) selected @endif value="{{ $contract->id }}">{{$contract->getName()}}</option>
@@ -346,6 +350,8 @@ use App\Models\MoneyReceived ;
 
             {{-- Bank Deposit Information--}}
             {{-- Incoming Transfer Information--}}
+
+			
             <div class="kt-portlet js-section-parent hidden" id="{{ MoneyReceived::CASH_IN_BANK }}">
                 <div class="kt-portlet__head">
                     <div class="kt-portlet__head-label">
@@ -429,6 +435,7 @@ use App\Models\MoneyReceived ;
 
                 </div>
             </div>
+		
 
 
 
@@ -652,6 +659,60 @@ use App\Models\MoneyReceived ;
 
                 </div>
             </div>
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			@if(isset($model))
+			 <div class="kt-portlet" id="settlement-card-id">
+                <div class="kt-portlet__head">
+                    <div class="kt-portlet__head-label">
+                        <h3 class="kt-portlet__head-title head-title text-primary">
+                            {{__('Settlement Information')}}
+                        </h3>
+                    </div>
+                </div>
+                <div class="kt-portlet__body">
+
+
+                    <div class="js-append-to">
+                    </div>
+                    <div class="js-template hidden">
+                        <div class="col-md-12 js-duplicate-node">
+                            {!! CustomerInvoice::getSettlementsTemplate() !!}
+                        </div>
+                    </div>
+
+                    <hr>
+                    {{-- @include('reports.moneyReceived.unapplied-contract') --}}
+					
+					
+					
+                    <div class="row">
+                        <div class="col-md-1 width-10"></div>
+                        <div class="col-md-1 width-8"></div>
+                        <div class="col-md-1 width-8"></div>
+                        <div class="col-md-1 width-8"></div>
+                        <div class="col-md-1 width-12"></div>
+                        <div class="col-md-2 width-12"></div>
+                        <div class="col-md-2 width-12"></div>
+                        <div class="col-md-2 width-12"></div>
+                        <div class="col-md-2 width-12">
+                            <label class="label">{{ __('Unapplied Amount') }}</label>
+                            <input id="remaining-settlement-js" class="form-control" placeholder="{{ __('Unapplied Amount') }}" type="text" name="unapplied_amount" value="0">
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+			@endif
+			
+			
 
            <x-submitting-by-ajax />
 
