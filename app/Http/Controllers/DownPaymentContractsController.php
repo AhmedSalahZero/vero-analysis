@@ -55,7 +55,6 @@ class DownPaymentContractsController extends Controller
 		with($moneyModelName)
 		->where('status','!=',Contract::FINISHED)
 		->get() ; // moneyReceived Here Is The Down payment
-		// dd($contractsWithDownPayment);
 		// $contractsWithDownPayment =  $contractsWithDownPayment->filterByStartDate($runningStartDate,$runningEndDate) ;
 	
 		$contractsWithDownPayment =  $currentType == $contractsWithDownPayments ? $this->applyFilter($request,$contractsWithDownPayment):$contractsWithDownPayment ;

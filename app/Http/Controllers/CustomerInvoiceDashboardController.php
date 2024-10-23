@@ -333,7 +333,6 @@ class CustomerInvoiceDashboardController extends Controller
 			$totalCard[$currencyName] = $this->sumForTotalCard($totalCard[$currencyName]??[],[$cleanOverdraftCardData[$currencyName]??0 , $fullySecuredOverdraftCardData[$currencyName]??0 , $overdraftAgainstCommercialPaperCardData[$currencyName]??0]);
 		
 		}
-		// dd($exchangeRates);
         return view('admin.dashboard.cash', [
 			'mediumTermLoansArr'=>$mediumTermLoansArr,
 			'exchangeRates'=>$exchangeRates,
