@@ -300,14 +300,17 @@ class MoneyReceivedController
 	{
 		$inEditMode = $request->get('inEditMode');
 		$moneyReceivedId = $request->get('money_received_id');
+		
 		$moneyReceived = MoneyReceived::find($moneyReceivedId);
 		$partner = Partner::find($customerId);
-
+		$downPaymentContract = Contract::find($request->get('downPaymentContractId'));
 		$customerName = $partner->getName() ;
 		$invoices = CustomerInvoice::where('customer_name',$customerName)
 		->where('company_id',$company->id)
-		->where('net_invoice_amount','>',0);
-	
+		->where('net_invoice_amount','>',0)
+		->when($downPaymentContract , function($q) use($downPaymentContract){
+			$q->where('contract_code',$downPaymentContract->getCode());
+		});
 		if(!$inEditMode){
 			$invoices->where('net_balance','>',0);
 		}
@@ -362,7 +365,7 @@ class MoneyReceivedController
 		
 		$receivingCurrency = $data['receiving_currency'] ; 
 		$isDownPayment = $request->get('is_down_payment') && $request->has('sales_orders_amounts');
-		$isDownPaymentFromMoneyReceived = $request->get('unapplied_amount',0) > 0 ;
+		$isDownPaymentFromMoneyReceived = $request->get('unapplied_amount',0) > 0 && !$request->get('is_down_payment') ;
 		$data['money_type'] =  !$isDownPayment ? 'money-received' : 'down-payment';
 		$data['money_type'] = $isDownPaymentFromMoneyReceived ? MoneyReceived::INVOICE_SETTLEMENT_WITH_DOWN_PAYMENT : $data['money_type'];
 		$data['customer_name'] = $customerName;

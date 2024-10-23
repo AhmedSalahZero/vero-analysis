@@ -1,5 +1,6 @@
 <?php $__env->startSection('css'); ?>
 <?php
+use App\Models\CustomerInvoice;
 use App\Models\MoneyReceived ;
 ?>
 <link href="<?php echo e(url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css')); ?>" rel="stylesheet" type="text/css" />
@@ -59,6 +60,7 @@ use App\Models\MoneyReceived ;
 			<input type="hidden" name="current_cheque_id" value="<?php echo e(isset($model) && $model->cheque ? $model->cheque->id : 0); ?>">
 			<input type="hidden" name="is_down_payment" value="1">
             <input id="js-down-payment-id" type="hidden" name="down_payment_id" value="<?php echo e(isset($model) ? $model->id : 0); ?>">
+            <input id="js-money-received-id" type="hidden" name="money_received_id" value="<?php echo e(isset($model) ? $model->id : 0); ?>">
             <input type="hidden" id="ajax-sales-order-item" data-single-model="<?php echo e($singleModel ? 1 : 0); ?>" value="<?php echo e($singleModel ? $salesOrderId : 0); ?>">
             <?php echo csrf_field(); ?>
             <?php if(isset($model)): ?>
@@ -189,6 +191,7 @@ use App\Models\MoneyReceived ;
 							
 							ajax-get-contracts-for-customer  ajax-get-sales-orders-for-contract
 							current-invoice-currency
+							 ajax-get-invoice-numbers
 							 
 							 
 							 ">
@@ -235,7 +238,8 @@ use App\Models\MoneyReceived ;
 							current-currency
 							currency-class
 							receiving-currency-class
-							
+
+							 ajax-get-invoice-numbers 
 							">
                                         
                                         <?php $__currentLoopData = isset($currencies) ? $currencies : getBanksCurrencies (); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $currencyId=>$currentName): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
@@ -250,7 +254,6 @@ use App\Models\MoneyReceived ;
                             </div>
                         </div>
 
-
                         <div class="col-md-3">
                             <label><?php echo e(__('Contract Name')); ?>
 
@@ -259,7 +262,9 @@ use App\Models\MoneyReceived ;
                             <div class="kt-input-icon">
                                 <div class="kt-input-icon">
                                     <div class="input-group date">
-                                        <select data-current-selected="<?php echo e(isset($model) ? $model->getContractId() : 0); ?>" id="contract-id" name="contract_id" class="form-control ajax-get-sales-orders-for-contract">
+                                        <select data-current-selected="<?php echo e(isset($model) ? $model->getContractId() : 0); ?>" id="contract-id" name="contract_id" class="form-control down-payment-contract-class 
+										ajax-get-invoice-numbers
+										 ajax-get-sales-orders-for-contract">
                                             <option value="" selected><?php echo e(__('Select')); ?></option>
                                             <?php $__currentLoopData = $contracts; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $contract): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                             <option <?php if(isset($model) && $model->getContractId() == $contract->id ): ?> selected <?php endif; ?> value="<?php echo e($contract->id); ?>"><?php echo e($contract->getName()); ?></option>
@@ -371,6 +376,8 @@ use App\Models\MoneyReceived ;
 
             
             
+
+			
             <div class="kt-portlet js-section-parent hidden" id="<?php echo e(MoneyReceived::CASH_IN_BANK); ?>">
                 <div class="kt-portlet__head">
                     <div class="kt-portlet__head-label">
@@ -455,6 +462,7 @@ use App\Models\MoneyReceived ;
 
                 </div>
             </div>
+		
 
 
 
@@ -678,6 +686,62 @@ use App\Models\MoneyReceived ;
 
                 </div>
             </div>
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			<?php if(isset($model)): ?>
+			 <div class="kt-portlet" id="settlement-card-id">
+                <div class="kt-portlet__head">
+                    <div class="kt-portlet__head-label">
+                        <h3 class="kt-portlet__head-title head-title text-primary">
+                            <?php echo e(__('Settlement Information')); ?>
+
+                        </h3>
+                    </div>
+                </div>
+                <div class="kt-portlet__body">
+
+
+                    <div class="js-append-to">
+                    </div>
+                    <div class="js-template hidden">
+                        <div class="col-md-12 js-duplicate-node">
+                            <?php echo CustomerInvoice::getSettlementsTemplate(); ?>
+
+                        </div>
+                    </div>
+
+                    <hr>
+                    
+					
+					
+					
+                    <div class="row">
+                        <div class="col-md-1 width-10"></div>
+                        <div class="col-md-1 width-8"></div>
+                        <div class="col-md-1 width-8"></div>
+                        <div class="col-md-1 width-8"></div>
+                        <div class="col-md-1 width-12"></div>
+                        <div class="col-md-2 width-12"></div>
+                        <div class="col-md-2 width-12"></div>
+                        <div class="col-md-2 width-12"></div>
+                        <div class="col-md-2 width-12">
+                            <label class="label"><?php echo e(__('Unapplied Amount')); ?></label>
+                            <input id="remaining-settlement-js" class="form-control" placeholder="<?php echo e(__('Unapplied Amount')); ?>" type="text" name="unapplied_amount" value="0">
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+			<?php endif; ?>
+			
+			
 
             <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.submitting-by-ajax','data' => []]); ?>

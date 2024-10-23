@@ -164,7 +164,7 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 	let currency = $('select.current-invoice-currency').val()
 	currency =currency ? currency : $('select.current-currency').val()
 	currency = currency ? currency : $(this).closest('[data-repeater-item]').find('select.current-currency').val()
-
+	let downPaymentContractId = $('select.down-payment-contract-class').val()
 	const companyId = $('body').attr('data-current-company-id')
 	const lang = $('body').attr('data-lang')
 	const url = '/' + lang + '/' + companyId + '/money-received/get-invoice-numbers/' + customerInvoiceId + '/' + currency
@@ -174,7 +174,8 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 			url,
 			data: {
 				inEditMode
-				, money_received_id: moneyReceivedId
+				, money_received_id: moneyReceivedId,
+				downPaymentContractId
 			}
 		}).then(function (res) {
 			// first append currencies 
