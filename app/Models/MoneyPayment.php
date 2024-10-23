@@ -676,5 +676,23 @@ class MoneyPayment extends Model
 	{
 		return 'money_payment_id';
 	}  
+	public function storeNewPurchaseOrders(array $purchaseOrders,int $companyId , ?int $contractId,?int $supplierId)
+	{
+		foreach($purchaseOrders as $salesOrderReceivedAmountArr)
+		{
+			if(isset($salesOrderReceivedAmountArr['paid_amount'])&&$salesOrderReceivedAmountArr['paid_amount'] > 0){
+				$salesOrderReceivedAmountArr['company_id'] = $companyId ;
+				$this->downPaymentSettlements()->create(array_merge(
+					$salesOrderReceivedAmountArr ,
+					[
+						'contract_id'=>$contractId,
+						'supplier_id'=>$supplierId,
+						'down_payment_amount'=>$salesOrderReceivedAmountArr['paid_amount']
+						]
+					));
+			}
+		}
+	}
+	
 
 }

@@ -1,6 +1,7 @@
 <?php
 namespace App\Traits\Models;
 
+use App\Models\MoneyReceived;
 use Carbon\Carbon;
 
 
@@ -19,15 +20,16 @@ trait IsMoney
 	{
 		return $this->type ;
 	}
-	public function storeNewSettlement(array $settlements,string $customerName,int $companyId , bool $isFromDownPayment = false )
+	public function storeNewSettlement(array $settlements,string $customerOrSupplierName,int $companyId , bool $isFromDownPayment = false )
 	{
+		$customerOrSupplierColumnName = $this instanceof MoneyReceived ?'customer_name' : 'supplier_name';
 		$totalWithholdAmount= 0 ;
 		foreach($settlements as $settlementArr)
 		{
 			$settlementArr['settlement_amount'] = isset($settlementArr['settlement_amount']) ?  unformat_number($settlementArr['settlement_amount']) :  0 ;  
 			if($settlementArr['settlement_amount'] > 0){
 				$settlementArr['company_id'] = $companyId ;
-				$settlementArr['customer_name'] = $customerName ;
+				$settlementArr[$customerOrSupplierColumnName] = $customerOrSupplierName ;
 				$settlementArr['is_from_down_payment'] = $isFromDownPayment ;
 				
 				$withholdAmount = isset($settlementArr['withhold_amount']) ? unformat_number($settlementArr['withhold_amount']) : 0 ;
