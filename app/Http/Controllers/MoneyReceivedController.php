@@ -347,7 +347,7 @@ class MoneyReceivedController
 		return CustomerInvoice::formatInvoices($invoices , $inEditMode);
 	}
 	
-	public function store(Company $company , StoreMoneyReceivedRequest $request ){
+	public function store(Company $company , StoreMoneyReceivedRequest $request , $returnModel = false){
 		$hasUnappliedAmount = (bool)$request->get('unapplied_amount');
 		$partnerType = $request->get('partner_type');
 		$moneyType = $request->get('type');
@@ -479,7 +479,9 @@ class MoneyReceivedController
 		 */
 
 		$activeTab = $moneyType;
-		
+		if($returnModel){
+			return $moneyReceived;
+		}
 
 			return response()->json([
 				'redirectTo'=>route('view.money.receive',['company'=>$company->id,'active'=>$activeTab])
@@ -549,10 +551,17 @@ class MoneyReceivedController
 	}
 	
 	public function update(Company $company , StoreMoneyReceivedRequest $request , moneyReceived $moneyReceived){
+		$oldSettlementsForMoneyReceivedWithDownPayment  = $moneyReceived->settlementsForDownPaymentThatComeFromMoneyModel ;
+		$companyId = $company->id ;
 		$newType = $request->get('type');
+		$moneyReceivedAmountHasChanged = $moneyReceived->getAmount() != $request->input('received_amount.'.$newType);
+
 		$moneyReceived->deleteRelations();
 		$moneyReceived->delete();
-		$this->store($company,$request);
+		$newMoneyReceived = $this->store($company,$request,true);
+		if(!$moneyReceivedAmountHasChanged){
+			$newMoneyReceived->storeNewSettlement($oldSettlementsForMoneyReceivedWithDownPayment->toArray(),$newMoneyReceived->getName(),$companyId,1);
+		}
 		 $activeTab = $newType;
 
 		 return response()->json([
