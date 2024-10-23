@@ -30,7 +30,7 @@ class StoreDownPaymentSettlementRequest extends FormRequest
 		$downPaymentModelName=$fullClassName::MONEY_MODEL_NAME;
 		$downPaymentModelFullName = 'App\Models\\'.$downPaymentModelName ;   
 		$downPayment =$downPaymentModelFullName::find($downPaymentId);
-		$receivingDate  = $downPayment->getReceivingDate();
+		$receivingDate  = $downPayment->getDate();
 		$settlementDate = Request('settlement_date');
         return [
             'settlement_date'=> ['required',new DateMustBeGreaterThanOrEqualDate($settlementDate,$receivingDate,__('Settlement Date Must Be Greater Or Equal Down Payment Receiving Date'))]

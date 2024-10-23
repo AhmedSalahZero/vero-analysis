@@ -325,6 +325,10 @@ class MoneyPayment extends Model
 	public function getWithholdForInvoiceNumberAmount($invoiceNumber, string $supplierName,bool $isFromDownPayment =null):float{
 		return $this->getSettlementsForInvoiceNumber($invoiceNumber,$supplierName,$isFromDownPayment)->sum('withhold_amount');
 	}
+	public function getDate()
+	{
+		return $this->getDeliveryDate();
+	}
     public function getDeliveryDateFormatted()
     {
         $date = $this->getDeliveryDate() ;

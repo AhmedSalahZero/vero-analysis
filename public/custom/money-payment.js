@@ -162,7 +162,6 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 	const companyId = $('body').attr('data-current-company-id')
 	const lang = $('body').attr('data-lang')
 	const url = '/' + lang + '/' + companyId + '/money-payment/get-invoice-numbers/' + supplierInvoiceId + '/' + currency
-	
 	if (supplierInvoiceId) {
 		$.ajax({
 			url,

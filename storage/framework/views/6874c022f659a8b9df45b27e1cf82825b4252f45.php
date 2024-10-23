@@ -24,7 +24,7 @@ use App\Models\MoneyReceived ;
 
     .width-12 {
         max-width: initial !important;
-        width: 13.5% !important;
+        width: 12.5% !important;
         flex: initial !important;
     }
 

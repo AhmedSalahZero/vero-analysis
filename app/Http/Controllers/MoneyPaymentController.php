@@ -253,6 +253,7 @@ class MoneyPaymentController
 		$partner = Partner::find($supplierInvoiceId);
 		$downPaymentContract = Contract::find($request->get('downPaymentContractId'));
 		$supplierName = $partner->getName() ;
+		
 		$invoices = SupplierInvoice::where('supplier_name',$supplierName)->where('company_id',$company->id)
 		->where('net_invoice_amount','>',0)
 		->when($downPaymentContract , function($q) use($downPaymentContract){
@@ -261,7 +262,6 @@ class MoneyPaymentController
 		if(!$inEditMode){
 			$invoices->where('net_balance','>',0);
 		}
-
 		$allCurrencies =$invoices->where('company_id',$company->id)->pluck('currency','currency')->mapWithKeys(function($value,$key){
 			return [
 				$key=>$value

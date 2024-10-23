@@ -154,6 +154,10 @@ class MoneyReceived extends Model
     {
     	return $this->getCustomerName();
     }
+	public function getDate()
+	{
+		return $this->getReceivingDate();
+	}
     public function getReceivingDate()
     {
         return $this->receiving_date;
@@ -163,6 +167,7 @@ class MoneyReceived extends Model
 		$cashInSafe = $this->cashInSafe ;
         return  $cashInSafe ? $cashInSafe->getReceivingBranchId() :0;
     }
+	
     public function getReceivedAmount()
     {
         return  $this->received_amount?:0 ;

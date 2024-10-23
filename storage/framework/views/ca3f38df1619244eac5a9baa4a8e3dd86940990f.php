@@ -231,13 +231,13 @@ use App\Models\MoneyReceived ;
 				<div class="col-md-2 width-12">
 					<label> <?php echo e(__('Settlement Amount')); ?>  <span class="text-danger ">*</span> </label>
 					<div class="kt-input-icon">
-						<input value="<?php echo e($downPayment->getSettlementsForInvoiceNumberAmount($invoice->getInvoiceNumber(),$partnerName,true)); ?>" name="settlements[<?php echo e($index); ?>][settlement_amount]" placeholder="<?php echo e(__("Settlement Amount")); ?>" type="text" class="form-control  only-greater-than-or-equal-zero-allowed settlement-amount-class">
+						<input value="<?php echo e($downPayment->getSettlementsForInvoiceNumberAmount($invoice->getInvoiceNumber(),$partnerName,$isDownPaymentFromMoneyPayment)); ?>" name="settlements[<?php echo e($index); ?>][settlement_amount]" placeholder="<?php echo e(__("Settlement Amount")); ?>" type="text" class="form-control  only-greater-than-or-equal-zero-allowed settlement-amount-class">
 					</div>
 				</div>
 				<div class="col-md-2 width-12">
 					<label> <?php echo e(__('Withhold Amount')); ?> <span class="text-danger ">*</span> </label>
 					<div class="kt-input-icon">
-						<input value="<?php echo e($downPayment->getWithholdForInvoiceNumberAmount($invoice->getInvoiceNumber(),$partnerName,true)); ?>" name="settlements[<?php echo e($index); ?>][withhold_amount]" placeholder="<?php echo e(__('Withhold Amount')); ?>" type="text" class="form-control  only-greater-than-or-equal-zero-allowed ">
+						<input value="<?php echo e($downPayment->getWithholdForInvoiceNumberAmount($invoice->getInvoiceNumber(),$partnerName,$isDownPaymentFromMoneyPayment)); ?>" name="settlements[<?php echo e($index); ?>][withhold_amount]" placeholder="<?php echo e(__('Withhold Amount')); ?>" type="text" class="form-control  only-greater-than-or-equal-zero-allowed ">
 					</div>
 				</div>
 		
