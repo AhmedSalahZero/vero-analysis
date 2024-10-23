@@ -534,6 +534,8 @@ class MoneyReceivedController
 				
 			]); 
 		}
+		$warningMessage = count($moneyReceived->settlementsForDownPaymentThatComeFromMoneyModel) ? __('Warning, please take care incase you changed the received amount, the invoices settled using this down payment will be deleted'):null;
+		
         return view($viewName,[
 			'banks'=>$banks,
 			'customers'=>$customers,
@@ -545,7 +547,8 @@ class MoneyReceivedController
 			'selectedBanks'=>$selectedBanks,
 			'model'=>$moneyReceived,
 			'singleModel'=>$customerInvoiceId,
-			'currencies'=>$customerInvoiceCurrencies
+			'currencies'=>$customerInvoiceCurrencies,
+			'warningMessage'=>$warningMessage
 		]);
 		
 	}

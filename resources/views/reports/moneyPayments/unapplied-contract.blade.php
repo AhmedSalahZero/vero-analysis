@@ -12,6 +12,10 @@
             </select>
         </div>
     </div>
+	@if(isset($warningMessage) && $warningMessage)
+	@include('_warning__message')
+	@endif
+	
 	<div class="col-md-12">
 		
 
