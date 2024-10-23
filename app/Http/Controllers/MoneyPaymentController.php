@@ -490,7 +490,7 @@ class MoneyPaymentController
 		$companyId = $company->id;
 		$newType = $request->get('type');
 		$moneyPayment->deleteRelations();
-		$moneyReceivedAmountHasChanged = $moneyPayment->getAmount() != $request->input('received_amount.'.$newType);
+		$moneyReceivedAmountHasChanged = $moneyPayment->getAmount() != $request->input('paid_amount.'.$newType);
 		$moneyPayment->delete();
 		$newMoneyReceived = $this->store($company,$request);
 		if(!$moneyReceivedAmountHasChanged){
