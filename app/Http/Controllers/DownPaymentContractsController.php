@@ -45,6 +45,7 @@ class DownPaymentContractsController extends Controller
 		
 		$runningStartDate = $filterDates[$contractsWithDownPayments]['startDate'] ?? null ;
 		$runningEndDate = $filterDates[$contractsWithDownPayments]['endDate'] ?? null ;
+	
 		$contractsWithDownPayment = $company->contracts()->whereHas($moneyModelName,function($builder)use($partnerName,$currency,$customerNameOrSupplierNameColumnName){
 			$builder->where($customerNameOrSupplierNameColumnName,$partnerName)
 					->where('currency',$currency)
@@ -54,6 +55,7 @@ class DownPaymentContractsController extends Controller
 		with($moneyModelName)
 		->where('status','!=',Contract::FINISHED)
 		->get() ; // moneyReceived Here Is The Down payment
+		// dd($contractsWithDownPayment);
 		// $contractsWithDownPayment =  $contractsWithDownPayment->filterByStartDate($runningStartDate,$runningEndDate) ;
 	
 		$contractsWithDownPayment =  $currentType == $contractsWithDownPayments ? $this->applyFilter($request,$contractsWithDownPayment):$contractsWithDownPayment ;
@@ -109,17 +111,17 @@ class DownPaymentContractsController extends Controller
 			return $item == $contractCurrency;
 		});
 		$invoices =  $fullClassName::where('contract_code',$contract->getCode())
-		->where('customer_name',$partnerName)
+		->where($clientNameColumnName,$partnerName)
 		->where('currency','=',$contractCurrency)
 		->where('company_id',$company->id)
 		->where('net_invoice_amount','>',0);
 		if(!$inEditMode){
 			$invoices->where('net_balance','>',0);
 		}
+	
 		$invoices = $invoices->orderBy('invoice_date','asc')->get() ; 
 		$downPaymentAmount =  $downPayment->getDownPaymentAmount();
 
-		
 		return view('contracts-down-payment.settlement_form',[
 			'modelType'=>'MoneyReceived',
 			'customerNameText'=>__('Customer Name'),

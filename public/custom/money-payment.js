@@ -128,7 +128,7 @@ $(document).on('change', '.ajax-get-purchases-orders-for-contract', function () 
 					var domPaidAmount = $(lastNode).find('.js-paid-amount')
 					domPaidAmount.val(paidAmount)
 					domPaidAmount.attr('name', 'purchases_orders_amounts[' + salesOrderId + '][paid_amount]')
-					console.log(lastNode,'--')
+					
 					$('.js-append-down-payment-to').append(lastNode)
 					var lastNode = $('.js-down-payment-template .js-duplicate-node').clone(true)
 				}
@@ -145,7 +145,7 @@ $(document).on('change', '.ajax-get-purchases-orders-for-contract', function () 
 })
 
 $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
-	// console.log('trigger change')
+
 	let inEditMode = +$('#js-in-edit-mode').val()
 	inEditMode = inEditMode ? inEditMode : 0
 	let onlyOneInvoiceNumber = +$('#ajax-invoice-item').attr('data-single-model')
@@ -157,6 +157,8 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 	 currency =currency ? currency :  $('.current-currency').val()
 	currency = currency ? currency : $(this).closest('[data-repeater-item]').find('select.current-currency').val()
 
+	let downPaymentContractId = $('select.down-payment-contract-class').val()
+	
 	const companyId = $('body').attr('data-current-company-id')
 	const lang = $('body').attr('data-lang')
 	const url = '/' + lang + '/' + companyId + '/money-payment/get-invoice-numbers/' + supplierInvoiceId + '/' + currency
@@ -166,7 +168,8 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 			url,
 			data: {
 				inEditMode
-				, money_payment_id: moneyPaymentId
+				, money_payment_id: moneyPaymentId,
+				downPaymentContractId
 			}
 		}).then(function (res) {
 			// first append currencies 
@@ -184,7 +187,7 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 			
 			$('.js-append-to').empty()
 			for (var i in res.invoices) {
-			//	console.log('--------------------')
+			
 				var invoiceNumber = res.invoices[i].invoice_number
 				if($(lastNode).find('[data-target]').attr('data-target')){
 					lastNode.find('[data-target]').attr('data-target',$(lastNode).find('[data-target]').attr('data-target').replace('--0',coverStringToValidClass(invoiceNumber)));

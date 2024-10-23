@@ -45,8 +45,8 @@ use App\Models\MoneyReceived;
 
                         <input type="hidden" class="current-currency" value="{{ $model->getCurrency() }}">
                         @foreach([
-                        'customer_name'=>['title'=>__('Customer Name'),'value'=>$model->getCustomerName() , 'class'=>'col-md-5'],
-                        'cheque_amount'=>['title'=>__('Cheque Amount'),'value'=>$model->getReceivedAmount() , 'class'=>'col-md-3'],
+                        'customer_name'=>['title'=>__('Customer Name'),'value'=>$model->getName() , 'class'=>'col-md-5'],
+                        'cheque_amount'=>['title'=>__('Cheque Amount'),'value'=>$model->getPaidAmount() , 'class'=>'col-md-3'],
                         'currency'=>['title'=>__('Currency'),'value'=>$model->getCurrency() , 'class'=>'col-md-2'],
                         'cheque_number'=>['title'=>__('Cheque Number'),'value'=>$model->cheque->getChequeNumber() , 'class'=>'col-md-2'],
                         ] as $uniqueName => $field)
@@ -180,7 +180,7 @@ use App\Models\MoneyReceived;
                             <div class="col-md-2">
                                 <label>{{__('Cheque Amount')}} @include('star')</label>
                                 <div class="kt-input-icon">
-                                    <input data-max-cheque-value="0" value="{{ isset($model) ? $model->getReceivedAmount() : 0 }}" placeholder="{{ __('Please insert the cheque amount') }}" type="text" name="cheque_amount" class="form-control only-greater-than-or-equal-zero-allowed js-cheque-received-amount">
+                                    <input data-max-cheque-value="0" value="{{ isset($model) ? $model->getPaidAmount() : 0 }}" placeholder="{{ __('Please insert the cheque amount') }}" type="text" name="cheque_amount" class="form-control only-greater-than-or-equal-zero-allowed js-cheque-received-amount">
                                     <x-tool-tip title="{{__('Please insert the cheque amount')}}" />
                                 </div>
                             </div>

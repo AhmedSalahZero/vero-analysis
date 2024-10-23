@@ -107,7 +107,7 @@ use App\Models\MoneyReceived ;
 										 
                                     </td>
 
-                                    <td class="text-nowrap"><?php echo e($moneyReceived->getReceivingDateFormatted()); ?></td>
+                                    <td class="text-nowrap"><?php echo e($moneyReceived->getReceivingOrPaymentMoneyFormatted()); ?></td>
                                     <td><?php echo e($moneyReceived->getDownPaymentAmountFormatted()); ?></td>
                                     <td><?php echo e($moneyReceived->getTotalSettlementAmountForDownPaymentFormatted()); ?></td>
                                     <td><?php echo e(number_format($moneyReceived->getTotalSettlementsNetBalanceForDownPayment())); ?></td>

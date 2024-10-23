@@ -2,6 +2,7 @@
 @section('css')
 @php
 use App\Models\MoneyPayment ;
+use App\Models\SupplierInvoice;
 $banks =[];
 $selectedBanks = [];
 @endphp
@@ -71,6 +72,7 @@ $selectedBanks = [];
 	<input type="hidden" name="current_cheque_id" value="{{ isset($model) && $model->payableCheque ? $model->payableCheque->id : 0 }}">
 	<input id="js-money-payment-id" type="hidden" name="money_received_id" value="{{ isset($model) ? $model->id : 0 }}">
     <input type="hidden" id="ajax-invoice-item" data-single-model="{{ $singleModel ? 1 : 0 }}" value="{{ $singleModel ? $invoiceNumber : 0 }}">
+	<input id="js-down-payment-id" type="hidden" name="down_payment_id" value="{{ isset($model) ? $model->id : 0 }}">
     @csrf
     @if(isset($model))
     @method('put')
@@ -139,7 +141,7 @@ $selectedBanks = [];
 							
 							ajax-get-contracts-for-supplier  ajax-get-purchases-orders-for-contract
 							current-invoice-currency
-							 {{-- ajax-get-invoice-numbers --}}
+							 ajax-get-invoice-numbers
 							 
 							 ">
                                      
@@ -161,8 +163,12 @@ $selectedBanks = [];
         <div class="kt-input-icon">
             <div class="kt-input-icon">
                 <div class="input-group date">
-                    <select data-live-search="true" data-actions-box="true" id="supplier_name" name="supplier_id" class="form-control select2-select  
-					{{-- ajax-get-invoice-numbers --}}
+                    <select
+					
+					data-current-selected="{{ isset($model) ? $model->getName() : '' }}"
+					
+					 data-live-search="true" data-actions-box="true" id="supplier_name" name="supplier_id" class="form-control select2-select  
+					ajax-get-invoice-numbers
 					
 					 ajax-get-contracts-for-supplier ajax-get-purchases-orders-for-contract">
                         <option value="" selected>{{__('Select')}}</option>
@@ -179,7 +185,7 @@ $selectedBanks = [];
 
 
   <div class="col-md-2 ">
-                            <label>{{__('Select Receiving Currency')}} @include('star')</label>
+                            <label>{{__('Select Payment Currency')}} @include('star')</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
                                     <select id="receiving-currency-id" when-change-trigger-account-type-change name="payment_currency" class="form-control 
@@ -193,7 +199,7 @@ $selectedBanks = [];
                             
                                         @foreach(isset($currencies) ? $currencies : getBanksCurrencies () as $currencyId=>$currentName)
                                         @php
-                                        $selected = isset($model) ? $model->getReceivingCurrency() == $currencyId : $currentName == $company->getMainFunctionalCurrency() ;
+                                        $selected = isset($model) ? $model->getPaymentCurrency() == $currencyId : $currentName == $company->getMainFunctionalCurrency() ;
                                         $selected = $selected ? 'selected':'';
                                         @endphp
                                         <option {{ $selected }} value="{{ $currencyId }}">{{ touppercase($currentName) }}</option>
@@ -213,7 +219,7 @@ $selectedBanks = [];
         <div class="kt-input-icon">
             <div class="kt-input-icon">
                 <div class="input-group date">
-                    <select data-current-selected="{{ isset($model) ? $model->getContractId() : 0 }}" id="contract-id" name="contract_id" class="form-control ajax-get-purchases-orders-for-contract">
+                    <select data-current-selected="{{ isset($model) ? $model->getContractId() : 0 }}" id="contract-id" name="contract_id" class="form-control down-payment-contract-class ajax-get-invoice-numbers ajax-get-purchases-orders-for-contract">
                         <option value="" selected>{{__('Select')}}</option>
                         @foreach($contracts as $index => $contract)
                         <option @if(isset($model) && $model->getContractId() == $contract->id ) selected @endif value="{{ $contract->id }}">{{$contract->getName()}}</option>
@@ -525,6 +531,56 @@ $selectedBanks = [];
          
     </div>
     </div>
+	
+	
+	
+	
+	
+	
+	
+		@if(isset($model))
+			 <div class="kt-portlet" id="settlement-card-id">
+                <div class="kt-portlet__head">
+                    <div class="kt-portlet__head-label">
+                        <h3 class="kt-portlet__head-title head-title text-primary">
+                            {{__('Settlement Information')}}
+                        </h3>
+                    </div>
+                </div>
+                <div class="kt-portlet__body">
+
+
+                    <div class="js-append-to">
+                    </div>
+                    <div class="js-template hidden">
+                        <div class="col-md-12 js-duplicate-node">
+                            {!! SupplierInvoice::getSettlementsTemplate() !!}
+                        </div>
+                    </div>
+
+                    <hr>
+					
+					
+					
+                    <div class="row">
+                        <div class="col-md-1 width-10"></div>
+                        <div class="col-md-1 width-8"></div>
+                        <div class="col-md-1 width-8"></div>
+                        <div class="col-md-1 width-8"></div>
+                        <div class="col-md-1 width-12"></div>
+                        <div class="col-md-2 width-12"></div>
+                        <div class="col-md-2 width-12"></div>
+                        <div class="col-md-2 width-12"></div>
+                        <div class="col-md-2 width-12">
+                            <label class="label">{{ __('Unapplied Amount') }}</label>
+                            <input id="remaining-settlement-js" class="form-control" placeholder="{{ __('Unapplied Amount') }}" type="text" name="unapplied_amount" value="0">
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+			@endif
+			
 
     <x-submitting-by-ajax />
 
@@ -635,10 +691,10 @@ $selectedBanks = [];
 
 </script>
 <script>
-    $('select#supplier_name').trigger('change')
 $(function(){
-		$('select.currency-class').trigger('change')
-			$('.recalculate-amount-class').trigger('change')
+    $('select#supplier_name').trigger('change')
+			//$('select.currency-class').trigger('change')
+			//$('.recalculate-amount-class').trigger('change')
 	})
 	$()
 </script>

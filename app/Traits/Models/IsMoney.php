@@ -1,6 +1,7 @@
 <?php
 namespace App\Traits\Models;
 
+use App\Models\MoneyPayment;
 use App\Models\MoneyReceived;
 use Carbon\Carbon;
 
@@ -70,7 +71,7 @@ trait IsMoney
 		if($this->isInvoiceSettlementWithDownPayment()){
 			return $this->getDownPaymentAmount()  - $this->getTotalSettlementAmountForDownPayment();
 		}
-		return $this->getReceivedAmount()  - $this->getTotalSettlementAmount();
+		return $this->getAmount()  - $this->getTotalSettlementAmount();
 	}
 	public function setDownPaymentSettlementDateAttribute($value)
     {
@@ -115,5 +116,14 @@ trait IsMoney
     {
 		return number_format($this->getDownPaymentAmount());
     }
-	
+	public function getReceivingOrPaymentMoneyFormatted():string
+	{
+		if($this instanceof MoneyReceived){
+			return $this->getReceivingDateFormatted();
+		}
+		if($this instanceof MoneyPayment){
+			return $this->getDeliveryDateFormatted();
+		}
+		throw new \Exception('Customer Exception Invalid Money Type');
+	}
 }

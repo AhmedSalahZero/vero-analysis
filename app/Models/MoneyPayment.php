@@ -22,6 +22,7 @@ class MoneyPayment extends Model
 	const PAYABLE_CHEQUE  = 'payable_cheque';
 	const OUTGOING_TRANSFER  = 'outgoing-transfer';
 	const INVOICE_SETTLEMENT_WITH_DOWN_PAYMENT = 'invoice-settlement-with-down-payment';
+	const DOWN_PAYMENT = 'down-payment';
 	
 	public static function generateComment(self $moneyPayment,string $lang)
 	{

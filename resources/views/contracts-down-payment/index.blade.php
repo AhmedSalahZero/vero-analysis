@@ -100,7 +100,7 @@ use App\Models\MoneyReceived ;
 										 {{-- -- {{ $moneyReceived->id }} --}}
                                     </td>
 
-                                    <td class="text-nowrap">{{ $moneyReceived->getReceivingDateFormatted() }}</td>
+                                    <td class="text-nowrap">{{ $moneyReceived->getReceivingOrPaymentMoneyFormatted() }}</td>
                                     <td>{{ $moneyReceived->getDownPaymentAmountFormatted() }}</td>
                                     <td>{{ $moneyReceived->getTotalSettlementAmountForDownPaymentFormatted() }}</td>
                                     <td>{{ number_format($moneyReceived->getTotalSettlementsNetBalanceForDownPayment()) }}</td>

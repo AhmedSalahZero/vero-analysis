@@ -213,7 +213,9 @@ use App\Models\MoneyReceived ;
                             <div class="kt-input-icon">
                                 <div class="kt-input-icon">
                                     <div class="input-group date">
-                                        <select id="customer_name" data-live-search="true" data-actions-box="true" name="customer_id" class="form-control select2-select ajax-get-contracts-for-customer ajax-get-sales-orders-for-contract">
+                                        <select id="customer_name" data-live-search="true" data-actions-box="true"
+										data-current-selected="{{ isset($model) ? $model->getName() : '' }}"
+										 name="customer_id" class="form-control select2-select ajax-get-contracts-for-customer ajax-get-sales-orders-for-contract">
                                             {{-- <option value="" selected>{{__('Select')}}</option> --}}
                                             @foreach($customers as $customerId => $customerName)
                                             <option @if($singleModel) selected @endif @if(isset($model) && $model->getCustomerName() == $customerName ) selected @endif value="{{ $customerId }}">{{$customerName}}</option>

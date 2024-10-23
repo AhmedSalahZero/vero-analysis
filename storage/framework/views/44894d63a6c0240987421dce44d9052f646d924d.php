@@ -1,6 +1,7 @@
 <?php $__env->startSection('css'); ?>
 <?php
 use App\Models\MoneyPayment ;
+use App\Models\SupplierInvoice;
 $banks =[];
 $selectedBanks = [];
 ?>
@@ -63,6 +64,7 @@ $selectedBanks = [];
 	<input type="hidden" name="current_cheque_id" value="<?php echo e(isset($model) && $model->payableCheque ? $model->payableCheque->id : 0); ?>">
 	<input id="js-money-payment-id" type="hidden" name="money_received_id" value="<?php echo e(isset($model) ? $model->id : 0); ?>">
     <input type="hidden" id="ajax-invoice-item" data-single-model="<?php echo e($singleModel ? 1 : 0); ?>" value="<?php echo e($singleModel ? $invoiceNumber : 0); ?>">
+	<input id="js-down-payment-id" type="hidden" name="down_payment_id" value="<?php echo e(isset($model) ? $model->id : 0); ?>">
     <?php echo csrf_field(); ?>
     <?php if(isset($model)): ?>
     <?php echo method_field('put'); ?>
@@ -132,7 +134,7 @@ $selectedBanks = [];
 							
 							ajax-get-contracts-for-supplier  ajax-get-purchases-orders-for-contract
 							current-invoice-currency
-							 
+							 ajax-get-invoice-numbers
 							 
 							 ">
                                      
@@ -154,8 +156,12 @@ $selectedBanks = [];
         <div class="kt-input-icon">
             <div class="kt-input-icon">
                 <div class="input-group date">
-                    <select data-live-search="true" data-actions-box="true" id="supplier_name" name="supplier_id" class="form-control select2-select  
+                    <select
 					
+					data-current-selected="<?php echo e(isset($model) ? $model->getName() : ''); ?>"
+					
+					 data-live-search="true" data-actions-box="true" id="supplier_name" name="supplier_id" class="form-control select2-select  
+					ajax-get-invoice-numbers
 					
 					 ajax-get-contracts-for-supplier ajax-get-purchases-orders-for-contract">
                         <option value="" selected><?php echo e(__('Select')); ?></option>
@@ -172,7 +178,7 @@ $selectedBanks = [];
 
 
   <div class="col-md-2 ">
-                            <label><?php echo e(__('Select Receiving Currency')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
+                            <label><?php echo e(__('Select Payment Currency')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
                                     <select id="receiving-currency-id" when-change-trigger-account-type-change name="payment_currency" class="form-control 
@@ -186,7 +192,7 @@ $selectedBanks = [];
                             
                                         <?php $__currentLoopData = isset($currencies) ? $currencies : getBanksCurrencies (); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $currencyId=>$currentName): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <?php
-                                        $selected = isset($model) ? $model->getReceivingCurrency() == $currencyId : $currentName == $company->getMainFunctionalCurrency() ;
+                                        $selected = isset($model) ? $model->getPaymentCurrency() == $currencyId : $currentName == $company->getMainFunctionalCurrency() ;
                                         $selected = $selected ? 'selected':'';
                                         ?>
                                         <option <?php echo e($selected); ?> value="<?php echo e($currencyId); ?>"><?php echo e(touppercase($currentName)); ?></option>
@@ -207,7 +213,7 @@ $selectedBanks = [];
         <div class="kt-input-icon">
             <div class="kt-input-icon">
                 <div class="input-group date">
-                    <select data-current-selected="<?php echo e(isset($model) ? $model->getContractId() : 0); ?>" id="contract-id" name="contract_id" class="form-control ajax-get-purchases-orders-for-contract">
+                    <select data-current-selected="<?php echo e(isset($model) ? $model->getContractId() : 0); ?>" id="contract-id" name="contract_id" class="form-control down-payment-contract-class ajax-get-invoice-numbers ajax-get-purchases-orders-for-contract">
                         <option value="" selected><?php echo e(__('Select')); ?></option>
                         <?php $__currentLoopData = $contracts; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $contract): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                         <option <?php if(isset($model) && $model->getContractId() == $contract->id ): ?> selected <?php endif; ?> value="<?php echo e($contract->id); ?>"><?php echo e($contract->getName()); ?></option>
@@ -545,6 +551,58 @@ $selectedBanks = [];
          
     </div>
     </div>
+	
+	
+	
+	
+	
+	
+	
+		<?php if(isset($model)): ?>
+			 <div class="kt-portlet" id="settlement-card-id">
+                <div class="kt-portlet__head">
+                    <div class="kt-portlet__head-label">
+                        <h3 class="kt-portlet__head-title head-title text-primary">
+                            <?php echo e(__('Settlement Information')); ?>
+
+                        </h3>
+                    </div>
+                </div>
+                <div class="kt-portlet__body">
+
+
+                    <div class="js-append-to">
+                    </div>
+                    <div class="js-template hidden">
+                        <div class="col-md-12 js-duplicate-node">
+                            <?php echo SupplierInvoice::getSettlementsTemplate(); ?>
+
+                        </div>
+                    </div>
+
+                    <hr>
+					
+					
+					
+                    <div class="row">
+                        <div class="col-md-1 width-10"></div>
+                        <div class="col-md-1 width-8"></div>
+                        <div class="col-md-1 width-8"></div>
+                        <div class="col-md-1 width-8"></div>
+                        <div class="col-md-1 width-12"></div>
+                        <div class="col-md-2 width-12"></div>
+                        <div class="col-md-2 width-12"></div>
+                        <div class="col-md-2 width-12"></div>
+                        <div class="col-md-2 width-12">
+                            <label class="label"><?php echo e(__('Unapplied Amount')); ?></label>
+                            <input id="remaining-settlement-js" class="form-control" placeholder="<?php echo e(__('Unapplied Amount')); ?>" type="text" name="unapplied_amount" value="0">
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+			<?php endif; ?>
+			
 
      <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.submitting-by-ajax','data' => []]); ?>
@@ -666,10 +724,10 @@ $selectedBanks = [];
 
 </script>
 <script>
-    $('select#supplier_name').trigger('change')
 $(function(){
-		$('select.currency-class').trigger('change')
-			$('.recalculate-amount-class').trigger('change')
+    $('select#supplier_name').trigger('change')
+			//$('select.currency-class').trigger('change')
+			//$('.recalculate-amount-class').trigger('change')
 	})
 	$()
 </script>

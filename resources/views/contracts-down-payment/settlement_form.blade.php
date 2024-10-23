@@ -3,7 +3,6 @@
 @php
 use App\Models\CustomerInvoice;
 use App\Models\MoneyReceived ;
-use App\Models\SupplierInvoice;
 
 @endphp
 <link href="{{ url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css') }}" rel="stylesheet" type="text/css" />
@@ -67,6 +66,7 @@ use App\Models\SupplierInvoice;
 			<input type="hidden" name="model_type" value="{{ $modelType }}" > 
             <input id="js-in-edit-mode" type="hidden" name="in_edit_mode" value="{{ isset($downPayment) ? 1 : 0 }}">
             <input id="js-money-received-id" type="hidden" name="down_payment_id" value="{{ isset($downPayment) ? $downPayment->id : 0 }}">
+            <input id="js-money-payment-id" type="hidden" name="down_payment_id" value="{{ isset($downPayment) ? $downPayment->id : 0 }}">
 			                           
 
             {{-- <input type="hidden" id="ajax-invoice-item" data-single-model="{{ 1 }}" value="{{ $invoiceNumber }}"> --}}
@@ -168,7 +168,6 @@ use App\Models\SupplierInvoice;
                     <div class="js-template ">
 					     <div class="col-md-12 js-duplicate-node">
                           {{-- {!! $fullClassName::getSettlementsTemplate() !!} --}}
-						  
 						  @foreach($invoices as $index=>$invoice)
 						  
 						  <div class=" kt-margin-b-10 border-class">

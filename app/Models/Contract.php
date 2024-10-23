@@ -389,7 +389,10 @@ class Contract extends Model
 	}
 	public function MoneyPayment() // downpayments
 	{
-		return $this->hasMany(MoneyPayment::class,'contract_id','id')->where('money_type',MoneyReceived::DOWN_PAYMENT);
+		return $this->hasMany(MoneyPayment::class,'contract_id','id')->whereIn('money_type',[
+			MoneyPayment::DOWN_PAYMENT,
+			MoneyPayment::INVOICE_SETTLEMENT_WITH_DOWN_PAYMENT
+		]);
 	}
 	public static function generateRandomContract(int $companyId , string $partnerName,string $startDate , string $modelType):string 
 	{
