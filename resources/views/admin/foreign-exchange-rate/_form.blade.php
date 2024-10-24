@@ -23,10 +23,10 @@
                                                 @include('star')
                                             </label>
                                             <div class="input-group">
-                                                <select name="from_currency" id="from-currency" class="form-control js-change-currency">
+                                                <select name="from_currency" id="from-currency-{{ $existingCurrency }}" class="form-control js-change-currency">
                                                     {{-- <option selected>{{__('Select')}}</option> --}}
                                                     @foreach(getCurrencies() as $currencyName => $currencyValue )
-                                                    <option value="{{ $currencyName }}" @if(isset($model) && $model->getFromCurrency() == $currencyName ) selected @elseif($currencyName == 'USD' ) selected @endif > {{ $currencyValue }}</option>
+                                                    <option value="{{ $currencyName }}" @if(isset($model) && $model->getFromCurrency() == $currencyName ) selected @elseif($currencyName == $existingCurrency ) selected @endif > {{ $currencyValue }}</option>
                                                     @endforeach
                                                 </select>
                                             </div>

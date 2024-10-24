@@ -95,10 +95,10 @@ class LetterOfGuaranteeFacilityController
 		/**
 		 * @var LetterOfGuaranteeFacility $letterOfGuaranteeFacility
 		 */
+
 		$letterOfGuaranteeFacility = $financialInstitution->LetterOfGuaranteeFacilities()->create($data);
 		$currencyName = $letterOfGuaranteeFacility->getCurrency();
 		$source = LetterOfGuaranteeIssuance::LG_FACILITY;
-
 		foreach($termAndConditions as $termAndConditionArr){
 			$termAndConditionArr['company_id'] = $company->id ;
 			$termAndConditionArr['outstanding_date'] = $request->get('outstanding_date');
@@ -106,17 +106,17 @@ class LetterOfGuaranteeFacilityController
 			$currentCashCover = $termAndConditionArr['cash_cover_rate'];
 			
 			$currentLgType = $termAndConditionArr['lg_type'] ;
-			if($currentOutstandingBalance){
+			// if($currentOutstandingBalance){
 				$letterOfGuaranteeFacility->termAndConditions()->create(array_merge($termAndConditionArr , [
 				]));
-			}
-			if($currentOutstandingBalance > 0){
-				$letterOfGuaranteeFacility->handleLetterOfGuaranteeStatement($financialInstitution->id,$source,$letterOfGuaranteeFacility->id,$currentLgType,$company->id,$termAndConditionArr['outstanding_date'],0,0,$currentOutstandingBalance,$currencyName,0,0,LetterOfGuaranteeIssuance::LG_FACILITY_BEGINNING_BALANCE);
-			}
-			$cashCoverOpeningBalance = $currentCashCover / 100 * $currentOutstandingBalance ;
-			if( $cashCoverOpeningBalance > 0 ){
-				$letterOfGuaranteeFacility->handleLetterOfGuaranteeCashCoverStatement($financialInstitution->id,$source,$letterOfGuaranteeFacility->id,$currentLgType,$company->id,$termAndConditionArr['outstanding_date'],0,$cashCoverOpeningBalance,0,$currencyName,0,LetterOfGuaranteeIssuance::LG_FACILITY_BEGINNING_BALANCE);
-			}
+			// }
+			// if($currentOutstandingBalance > 0){
+			// 	$letterOfGuaranteeFacility->handleLetterOfGuaranteeStatement($financialInstitution->id,$source,$letterOfGuaranteeFacility->id,$currentLgType,$company->id,$termAndConditionArr['outstanding_date'],0,0,$currentOutstandingBalance,$currencyName,0,0,LetterOfGuaranteeIssuance::LG_FACILITY_BEGINNING_BALANCE);
+			// }
+			// $cashCoverOpeningBalance = $currentCashCover / 100 * $currentOutstandingBalance ;
+			// if( $cashCoverOpeningBalance > 0 ){
+			// 	$letterOfGuaranteeFacility->handleLetterOfGuaranteeCashCoverStatement($financialInstitution->id,$source,$letterOfGuaranteeFacility->id,$currentLgType,$company->id,$termAndConditionArr['outstanding_date'],0,$cashCoverOpeningBalance,0,$currencyName,0,LetterOfGuaranteeIssuance::LG_FACILITY_BEGINNING_BALANCE);
+			// }
 
 		}
 		$type = $request->get('type','letter-of-guarantee-facilities');
@@ -160,12 +160,12 @@ class LetterOfGuaranteeFacilityController
 			$currentCashCoverRate = $termAndConditionArr['cash_cover_rate'] / 100  ;
 			$currentCashCoverBeginningBalance  = $currentOutstandingBalance * $currentCashCoverRate ; 
 			$currentLgType = $termAndConditionArr['lg_type'] ;
-			if($currentOutstandingBalance > 0 ){
-				$letterOfGuaranteeFacility->handleLetterOfGuaranteeStatement($financialInstitution->id,$source,$letterOfGuaranteeFacility->id,$currentLgType,$company->id,$termAndConditionArr['outstanding_date'],0,0,$currentOutstandingBalance,$currencyName,0,0,LetterOfGuaranteeIssuance::LG_FACILITY_BEGINNING_BALANCE);
-			}
-			if($currentCashCoverBeginningBalance > 0){
-				$letterOfGuaranteeFacility->handleLetterOfGuaranteeCashCoverStatement($financialInstitution->id,$source,$letterOfGuaranteeFacility->id,$currentLgType,$company->id,$termAndConditionArr['outstanding_date'],0,$currentCashCoverBeginningBalance,0,$currencyName,0,LetterOfGuaranteeIssuance::LG_FACILITY_BEGINNING_BALANCE);
-			}
+			// if($currentOutstandingBalance > 0 ){
+			// 	$letterOfGuaranteeFacility->handleLetterOfGuaranteeStatement($financialInstitution->id,$source,$letterOfGuaranteeFacility->id,$currentLgType,$company->id,$termAndConditionArr['outstanding_date'],0,0,$currentOutstandingBalance,$currencyName,0,0,LetterOfGuaranteeIssuance::LG_FACILITY_BEGINNING_BALANCE);
+			// }
+			// if($currentCashCoverBeginningBalance > 0){
+			// 	$letterOfGuaranteeFacility->handleLetterOfGuaranteeCashCoverStatement($financialInstitution->id,$source,$letterOfGuaranteeFacility->id,$currentLgType,$company->id,$termAndConditionArr['outstanding_date'],0,$currentCashCoverBeginningBalance,0,$currencyName,0,LetterOfGuaranteeIssuance::LG_FACILITY_BEGINNING_BALANCE);
+			// }
 			
 
 		}
