@@ -28,6 +28,7 @@ use App\Models\FinancialInstitutionAccount;
 use App\Models\IncomeStatement;
 use App\Models\IncomeStatementItem;
 use App\Models\IncomeStatementSubItem;
+use App\Models\LabelingItem;
 use App\Models\ModifiedSeasonality;
 use App\Models\ModifiedTarget;
 use App\Models\NewProductAllocationBase;

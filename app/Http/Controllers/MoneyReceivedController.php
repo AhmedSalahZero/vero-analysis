@@ -573,7 +573,7 @@ class MoneyReceivedController
 		]);
 	}
 	
-	public function destroy(Company $company , MoneyReceived $moneyReceived)
+	public function destroy(Company $company , MoneyReceived $moneyReceived,DeleteMoneyReceivedRequest $request)
 	{
 		$moneyReceived->deleteRelations();
 		$activeTab = $moneyReceived->getType();

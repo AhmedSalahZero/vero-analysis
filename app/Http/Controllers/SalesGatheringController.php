@@ -385,11 +385,19 @@ class SalesGatheringController extends Controller
 				
 			]);
 		}
+		function removeAllNoneEmpty($collection)
+{
+	return  $collection->map(function ($item) use ($collection) {
 		
+		return new LabelingItem(collect($item)->filter(function ($value, $key) use ($collection) {
+			return $collection->pluck($key)->filter()->isNotEmpty();
+		})->toArray());
+	});
+}
 		public function exportLabelingItems(Company $company , Request $request ,string $type){
 			if($type == 'excel'){
 				$items = LabelingItem::where('company_id',$company->id )->get() ;
-		
+				$items = $this->removeAllNoneEmpty($items);
 				return (new LabelingItemExport($items))->download('Labeling Item.XLSX','Xlsx');
 			}
 			if($type == 'pdf'){
