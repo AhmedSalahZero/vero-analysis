@@ -838,6 +838,31 @@ class MoneyReceived extends Model
 			}
 		}
 	}
-	
+	public function getAccountTypeId()
+	{
+		if($this->isIncomingTransfer()){
+			return $this->incomingTransfer->getAccountTypeId();
+		}
+		if($this->isCheque()){
+			return $this->cheque->getAccountTypeId();
+		}
+		if($this->isCashInBank()){
+			return $this->cashInBank->getAccountTypeId();
+		}
+		throw new \Exception('Custom Exception .. getAccountTypeId .. This Method Is Only For Incoming Transfer Or Payable Cheque');
+	}
+	public function getAccountNumber()
+	{
+		if($this->isIncomingTransfer()){
+			return $this->incomingTransfer->getAccountNumber();
+		}
+		if($this->isCheque()){
+			return $this->cheque->getAccountNumber();
+		}
+		if($this->isCashInBank()){
+			return $this->cashInBank->getAccountNumber();
+		}
+		throw new \Exception('Custom Exception .. getAccountNumber .. This Method Is Only For Incoming Transfer Or Payable Cheque');
+	}	
 	
 }
