@@ -206,7 +206,6 @@ class MoneyPayment extends Model
 		if($this->isOutgoingTransfer()){
 			return $this->getOutgoingTransferAccountNumber();
 		}
-		
 	}
 	
 
@@ -423,6 +422,36 @@ class MoneyPayment extends Model
 	public function getTotalWithholdAmount():float 
 	{
 		return $this->total_withhold_amount ?: 0 ;
+	}
+	public function getAccountTypeId()
+	{
+		if($this->isOutgoingTransfer()){
+			return $this->outgoingTransfer->getAccountTypeId();
+		}
+		if($this->isPayableCheque()){
+			return $this->payableCheque->getAccountTypeId();
+		}
+		throw new \Exception('Custom Exception .. getAccountTypeId .. This Method Is Only For Outgoing Transfer Or Payable Cheque');
+	}
+	public function getAccountNumber()
+	{
+		if($this->isOutgoingTransfer()){
+			return $this->outgoingTransfer->getAccountNumber();
+		}
+		if($this->isPayableCheque()){
+			return $this->payableCheque->getAccountNumber();
+		}
+		throw new \Exception('Custom Exception .. getAccountNumber .. This Method Is Only For Outgoing Transfer Or Payable Cheque');
+	}
+	public function getFinancialInstitutionId()
+	{
+		if($this->isOutgoingTransfer()){
+			return $this->getOutgoingTransferDeliveryBankId();
+		}
+		if($this->isPayableCheque()){
+			return $this->getPayableChequePaymentBankId();
+		}
+		throw new \Exception('Custom Exception .. getFinancialInstitutionId .. This Method Is Only For Outgoing Transfer Or Payable Cheque');
 	}
 	public function getOutgoingTransferAccountTypeId(){
 		$outgoingTransfer = $this->outgoingTransfer;

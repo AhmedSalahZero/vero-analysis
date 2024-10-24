@@ -570,7 +570,6 @@ $selectedBanks = [];
                 </div>
                 <div class="kt-portlet__body">
 
-
                     <div class="js-append-to">
                     </div>
                     <div class="js-template hidden">
