@@ -142,7 +142,6 @@
                         </thead>
                         <tbody>
 						
-							
                             @foreach($letterOfGuaranteeFacility->termAndConditions as $termAndCondition)
 
                             <tr>

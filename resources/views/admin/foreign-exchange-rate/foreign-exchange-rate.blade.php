@@ -54,7 +54,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                 @endphp
                 @foreach($existingCurrencies as $currentCurrencyName)
                 <li class="nav-item">
-                    <a class="nav-link {{ !Request('active',$currentActiveTab) && $index==0 || (!in_array($mainFunctionalCurrency,$existingCurrencies) && $currentCurrencyName == array_key_first($existingCurrencies) && !$currentActiveTab ) || Request('active',$currentActiveTab) == $currentCurrencyName ?'active':'' }}" data-toggle="tab" href="#{{ $currentCurrencyName }}" role="tab">
+                    <a data-currency="{{$currentCurrencyName}}" class="nav-link currency-change-js {{ !Request('active',$currentActiveTab) && $index==0 || (!in_array($mainFunctionalCurrency,$existingCurrencies) && $currentCurrencyName == array_key_first($existingCurrencies) && !$currentActiveTab ) || Request('active',$currentActiveTab) == $currentCurrencyName ?'active':'' }}" data-toggle="tab" href="#{{ $currentCurrencyName }}" role="tab">
                         <i class="fa fa-money-check-alt"></i> {{$currentCurrencyName .' '. __('Table') }}
                     </a>
                 </li>
@@ -166,7 +166,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                                         <div class="modal-dialog">
                                                             <div class="modal-content">
                                                                 <div class="modal-header">
-                                                                    <h4 class="modal-title">{{ __('Delete Due Date History ' .$foreignExchangeRate->getDateFormatted()) }}</h4>
+                                                                    <h4 class="modal-title">{{ __('Delete Foreign Exchange ' .$foreignExchangeRate->getDateFormatted()) }}</h4>
                                                                 </div>
                                                                 <div class="modal-body">
                                                                     <h3>{{ __('Are You Sure To Delete This Item ? ') }}</h3>
