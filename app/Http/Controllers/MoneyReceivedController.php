@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ApplyCollectionToChequeRequest;
+use App\Http\Requests\DeleteMoneyReceivedRequest;
 use App\Http\Requests\SendToUnderCollectionChequeRequest;
 use App\Http\Requests\StoreMoneyReceivedRequest;
 use App\Models\AccountType;

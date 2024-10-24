@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Http\Requests\DeleteMoneyPaymentRequest;
 use App\Http\Requests\StoreMoneyPaymentRequest;
 use App\Models\AccountType;
 use App\Models\Bank;
@@ -510,8 +511,9 @@ class MoneyPaymentController
 		return redirect()->route('view.money.payment',['company'=>$company->id,'active'=>$activeTab])->with('success',__('Money Received Has Been Updated Successfully'));
 	}
 
-	public function destroy(Company $company , MoneyPayment $moneyPayment)
+	public function destroy(Company $company , MoneyPayment $moneyPayment , DeleteMoneyPaymentRequest $request)
 	{
+		dd('good');
 		$moneyPayment->deleteRelations();
 		$activeTab = $moneyPayment->getType();
 		$moneyPayment->delete();
@@ -626,9 +628,9 @@ class MoneyPaymentController
 			'supplierInvoices'=>SupplierInvoice::where('currency',$currencyName)->where('company_id',$company->id)->pluck('supplier_name','supplier_id')
 		]);
 	}
-	public function getCurrentAccountEndBalance(Request $request , Company $company){
-		$branchId = $request->get('branchId');
-		$currencyName = $request->get('currencyName');
+	public function getCurrentAccountEndBalance(Request $request , Company $company , int $branchId = null , string $currencyName = null){
+		$branchId = $request->get('branchId',$branchId);
+		$currencyName = $request->get('currencyName',$currencyName);
 		/**
 		 * @var Branch $branch
 		 */

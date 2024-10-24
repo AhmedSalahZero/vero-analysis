@@ -1,11 +1,10 @@
-@extends('layouts.dashboard')
-@section('css')
-<link href="{{url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css')}}" rel="stylesheet" type="text/css" />
-<link href="{{url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css')}}" rel="stylesheet" type="text/css" />
+<?php $__env->startSection('css'); ?>
+<link href="<?php echo e(url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css')); ?>" rel="stylesheet" type="text/css" />
+<link href="<?php echo e(url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css')); ?>" rel="stylesheet" type="text/css" />
 
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('dash_nav')
+<?php $__env->startSection('dash_nav'); ?>
 <style>
     .chartdiv_two_lines {
         width: 100%;
@@ -30,11 +29,11 @@
 
 </style>
 
-@endsection
-@section('css')
-<link href="{{ url('assets/vendors/custom/datatables/datatables.bundle.css') }}" rel="stylesheet" type="text/css" />
-<link href="{{url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css')}}" rel="stylesheet" type="text/css" />
-<link href="{{url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css')}}" rel="stylesheet" type="text/css" />
+<?php $__env->stopSection(); ?>
+<?php $__env->startSection('css'); ?>
+<link href="<?php echo e(url('assets/vendors/custom/datatables/datatables.bundle.css')); ?>" rel="stylesheet" type="text/css" />
+<link href="<?php echo e(url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css')); ?>" rel="stylesheet" type="text/css" />
+<link href="<?php echo e(url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css')); ?>" rel="stylesheet" type="text/css" />
 <style>
     table {
         white-space: nowrap;
@@ -43,30 +42,32 @@
     /* .dataTables_wrapper{max-width: 100%;  padding-bottom: 50px !important;overflow-x: overlay;max-height: 4000px;} */
 
 </style>
-@endsection
-@section('content')
+<?php $__env->stopSection(); ?>
+<?php $__env->startSection('content'); ?>
 <div class="kt-portlet">
 
-    <form action="{{ route('view.customer.invoice.dashboard.cash',['company'=>$company->id]) }}" class="kt-portlet__head w-full sky-border" style="">
+    <form action="<?php echo e(route('view.customer.invoice.dashboard.cash',['company'=>$company->id])); ?>" class="kt-portlet__head w-full sky-border" style="">
         <div class="kt-portlet__head-label w-full">
             <h3 class="kt-portlet__head-title head-title text-primary w-full">
 
 
                 <div class="row mb-3">
                     <div class="col-md-2">
-                        <label class="visibility-hidden"> {{__('Currency')}}
-                            @include('star')
+                        <label class="visibility-hidden"> <?php echo e(__('Currency')); ?>
+
+                            <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                         </label>
-                        <h3 class="font-weight-bold text-black form-label kt-subheader__title small-caps mr-5 text-nowrap" style=""> {{ __('Dashboard Results') }}</h3>
+                        <h3 class="font-weight-bold text-black form-label kt-subheader__title small-caps mr-5 text-nowrap" style=""> <?php echo e(__('Dashboard Results')); ?></h3>
 
                     </div>
                     <div class="col-md-2">
-                        <label class="visibility-hidden"> {{__('Currency')}}
-                            @include('star')
+                        <label class="visibility-hidden"> <?php echo e(__('Currency')); ?>
+
+                            <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                         </label>
                         <div class="kt-input-icon">
                             <div class="input-group date">
-                                <input id="js-date" type="date" value="{{ isset($date) ? $date: date('Y-m-d') }}" name="date" class="form-control"  placeholder="Select date" id="kt_datepicker_2" />
+                                <input id="js-date" type="date" value="<?php echo e(isset($date) ? $date: date('Y-m-d')); ?>" name="date" class="form-control"  placeholder="Select date" id="kt_datepicker_2" />
                                 <div class="input-group-append">
                                     <span class="input-group-text">
                                         <i class="la la-calendar-check-o"></i>
@@ -78,12 +79,13 @@
 
                     <div class="col-md-3 kt-align-right">
 
-                        <label class="visibility-hidden"> {{__('Currency')}}
-                            @include('star')
+                        <label class="visibility-hidden"> <?php echo e(__('Currency')); ?>
+
+                            <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                         </label>
 
                         <div class="input-group">
-                            <button type="submit" class="btn active-style save-form">{{__('Save')}}</button>
+                            <button type="submit" class="btn active-style save-form"><?php echo e(__('Save')); ?></button>
                         </div>
                     </div>
 
@@ -97,38 +99,38 @@
 
     <div class="kt-portlet__body" style="padding-bottom:0 !important;">
         <ul style="margin-bottom:0 ;" class="nav nav-tabs nav-tabs-space-lg nav-tabs-line nav-tabs-bold nav-tabs-line-3x nav-tabs-line-brand" role="tablist">
-            @php
+            <?php
             $index = 0 ;
-            @endphp
-            @foreach($selectedCurrencies as $currencyUpper=>$currency)
+            ?>
+            <?php $__currentLoopData = $selectedCurrencies; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $currencyUpper=>$currency): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 
-            <li class="nav-item @if($index ==0 ) active @endif">
-                <a class="nav-link @if($index ==0 ) active @endif" data-toggle="tab" href="#kt_apps_contacts_view_tab_main{{ $index }}" role="tab">
+            <li class="nav-item <?php if($index ==0 ): ?> active <?php endif; ?>">
+                <a class="nav-link <?php if($index ==0 ): ?> active <?php endif; ?>" data-toggle="tab" href="#kt_apps_contacts_view_tab_main<?php echo e($index); ?>" role="tab">
                     <i class="flaticon2-checking icon-lg"></i>
-                    <span style="font-size:18px !important;">{{ $currency }}</span>
+                    <span style="font-size:18px !important;"><?php echo e($currency); ?></span>
                 </a>
             </li>
 
-            @php
+            <?php
             $index++;
-            @endphp
-            @endforeach
+            ?>
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
         </ul>
     </div>
 </div>
 
 <div class="tab-content  kt-margin-t-20">
-    @php
+    <?php
     $index = 0 ;
-    @endphp
+    ?>
 
-    @foreach($selectedCurrencies as $name=>$currency)
+    <?php $__currentLoopData = $selectedCurrencies; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $name=>$currency): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 
-    <div class="tab-pane  @if($index == 0) active @endif" id="kt_apps_contacts_view_tab_main{{ $index }}" role="tabpanel">
+    <div class="tab-pane  <?php if($index == 0): ?> active <?php endif; ?>" id="kt_apps_contacts_view_tab_main<?php echo e($index); ?>" role="tabpanel">
         <div class="kt-portlet">
             <div class="kt-portlet__head sky-border">
                 <div class="kt-portlet__head-label">
-                    <h3 class="font-weight-bold text-black form-label kt-subheader__title small-caps mr-5 text-primary text-nowrap" style=""> {{__('Current Cash Position')}}</h3>
+                    <h3 class="font-weight-bold text-black form-label kt-subheader__title small-caps mr-5 text-primary text-nowrap" style=""> <?php echo e(__('Current Cash Position')); ?></h3>
 
 
                 </div>
@@ -143,19 +145,21 @@
                             <div class="kt-widget24__details">
                                 <div class="kt-widget24__info w-100">
                                     <h4 class="kt-widget24__title font-size text-uppercase d-flex justify-content-between align-items-center">
-                                        {{ __('Cash & Banks' )  . ' [ ' . $currency . ' ]' }}
-										@php
+                                        <?php echo e(__('Cash & Banks' )  . ' [ ' . $currency . ' ]'); ?>
+
+										<?php
 											$currentModalId = 'safe';
-										@endphp
-										<button class="btn btn-sm btn-brand btn-elevate btn-pill text-white" data-toggle="modal" data-target="#{{ $currentModalId.$currency }}">{{ __('Details') }}</button>
-										@include('admin.dashboard.details_cash_in_safe_modal',['detailItems'=> array_merge($details[$name]['current_account'],$details[$name]['cash_in_safe'] ?? [])  , 'modalId'=>$currentModalId ,'title'=>__('Cash  Details')])
+										?>
+										<button class="btn btn-sm btn-brand btn-elevate btn-pill text-white" data-toggle="modal" data-target="#<?php echo e($currentModalId.$currency); ?>"><?php echo e(__('Details')); ?></button>
+										<?php echo $__env->make('admin.dashboard.details_cash_in_safe_modal',['detailItems'=> array_merge($details[$name]['current_account'],$details[$name]['cash_in_safe'] ?? [])  , 'modalId'=>$currentModalId ,'title'=>__('Cash  Details')], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                     </h4>
 
                                 </div>
                             </div>
                             <div class="kt-widget24__details">
                                 <span class="kt-widget24__stats kt-font-brand">
-                                    {{ number_format($reports['cash_and_banks'][$currency] ?? 0 ) }}
+                                    <?php echo e(number_format($reports['cash_and_banks'][$currency] ?? 0 )); ?>
+
                                 </span>
                             </div>
 
@@ -173,13 +177,14 @@
                             <div class="kt-widget24__details">
                                 <div class="kt-widget24__info w-100">
                                     <h4 class="kt-widget24__title font-size  text-uppercase d-flex justify-content-between align-items-center">
-                                        {{ __('Time Deposit') . ' [ ' . $currency . ' ]' }}
-										@php
+                                        <?php echo e(__('Time Deposit') . ' [ ' . $currency . ' ]'); ?>
+
+										<?php
 											$currentModalId = 'time_of_deposits_details';
-										@endphp
-										<button class="btn btn-sm btn-brand btn-elevate btn-pill text-white" data-toggle="modal" data-target="#{{ $currentModalId.$currency }}">{{ __('Details') }}</button>
+										?>
+										<button class="btn btn-sm btn-brand btn-elevate btn-pill text-white" data-toggle="modal" data-target="#<?php echo e($currentModalId.$currency); ?>"><?php echo e(__('Details')); ?></button>
 										
-										@include('admin.dashboard.details_modal',['detailItems'=>$details[$name]['time_of_deposits'] ?? [] , 'modalId'=>$currentModalId ,'title'=>__('Time Of Deposits Details')])
+										<?php echo $__env->make('admin.dashboard.details_modal',['detailItems'=>$details[$name]['time_of_deposits'] ?? [] , 'modalId'=>$currentModalId ,'title'=>__('Time Of Deposits Details')], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 										
 										
 										
@@ -189,7 +194,8 @@
                             </div>
                             <div class="kt-widget24__details">
                                 <span class="kt-widget24__stats kt-font-warning text-uppercase">
-                                    {{ number_format($reports['time_deposits'][$currency] ?? 0 ) }}
+                                    <?php echo e(number_format($reports['time_deposits'][$currency] ?? 0 )); ?>
+
 									
 									
                                 </span>
@@ -209,13 +215,14 @@
                             <div class="kt-widget24__details">
                                 <div class="kt-widget24__info w-100">
                                     <h4 class="kt-widget24__title font-size text-uppercase d-flex justify-content-between align-items-center">
-                                        {{ __('Certificate Of Deposit') . ' [ ' . $currency . ' ] ' }}
-										@php
+                                        <?php echo e(__('Certificate Of Deposit') . ' [ ' . $currency . ' ] '); ?>
+
+										<?php
 											$currentModalId = 'certificate_of_deposits_details';
-										@endphp
-										<button class="btn btn-sm btn-brand btn-elevate btn-pill text-white" data-toggle="modal" data-target="#{{ $currentModalId.$currency }}">{{ __('Details') }}</button>
+										?>
+										<button class="btn btn-sm btn-brand btn-elevate btn-pill text-white" data-toggle="modal" data-target="#<?php echo e($currentModalId.$currency); ?>"><?php echo e(__('Details')); ?></button>
 										
-										@include('admin.dashboard.details_modal',['detailItems'=>$details[$name]['certificate_of_deposits'] ?? [] , 'modalId'=>$currentModalId ,'title'=>__('Certificate Of Deposits Details')])
+										<?php echo $__env->make('admin.dashboard.details_modal',['detailItems'=>$details[$name]['certificate_of_deposits'] ?? [] , 'modalId'=>$currentModalId ,'title'=>__('Certificate Of Deposits Details')], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 									
 										
                                     </h4>
@@ -224,7 +231,8 @@
                             </div>
                             <div class="kt-widget24__details">
                                 <span class="kt-widget24__stats kt-font-danger text-uppercase">
-                                    {{ number_format($reports['certificate_of_deposits'][$currency] ?? 0 ) }}
+                                    <?php echo e(number_format($reports['certificate_of_deposits'][$currency] ?? 0 )); ?>
+
                                 </span>
                             </div>
                             <div class="progress progress--sm">
@@ -242,17 +250,18 @@
                             <div class="kt-widget24__details">
                                 <div class="kt-widget24__info">
                                     <h4 class="kt-widget24__title font-size">
-                                        {{ __('Total')  . ' [ ' . $currency . ' ]' }} 
+                                        <?php echo e(__('Total')  . ' [ ' . $currency . ' ]'); ?> 
 										<button class="visibility-hidden btn btn-sm btn-brand btn-elevate btn-pill text-white ml-5" 
-										{{-- data-toggle="modal" data-target="#{{ $currency }}-past-due-modal" --}}
-										>{{ __('Details') }}</button>
+										
+										><?php echo e(__('Details')); ?></button>
                                     </h4>
 
                                 </div>
                             </div>
                             <div class="kt-widget24__details">
                                 <span class="kt-widget24__stats kt-font-success text-uppercase">
-                                    {{ number_format($reports['total'][$currency] ?? 0 ) }}
+                                    <?php echo e(number_format($reports['total'][$currency] ?? 0 )); ?>
+
                                 </span>
                             </div>
                             <div class="progress progress--sm">
@@ -275,7 +284,7 @@
                 <div class="kt-portlet ">
                     <div class="kt-portlet__head">
                         <div class="kt-portlet__head-label">
-						   <h3 class="font-weight-bold text-black form-label kt-subheader__title small-caps mr-5 text-primary text-nowrap" style=""> {{ __('Short Term Cash Facilities Position') }} </h3>
+						   <h3 class="font-weight-bold text-black form-label kt-subheader__title small-caps mr-5 text-primary text-nowrap" style=""> <?php echo e(__('Short Term Cash Facilities Position')); ?> </h3>
                             
                         </div>
                     </div>
@@ -288,7 +297,7 @@
             <div class="kt-portlet__head">
                 <div class="kt-portlet__head-label">
                
-						   <h3 class="font-weight-bold text-black form-label kt-subheader__title small-caps mr-5 text-primary text-nowrap" style=""> {{ __('Total Cash Facilities') }} </h3>
+						   <h3 class="font-weight-bold text-black form-label kt-subheader__title small-caps mr-5 text-primary text-nowrap" style=""> <?php echo e(__('Total Cash Facilities')); ?> </h3>
                    
                 </div>
             </div>
@@ -301,14 +310,16 @@
                             <div class="kt-widget24__details">
                                 <div class="kt-widget24__info">
                                     <h4 class="kt-widget24__title font-size">
-                                        {{ __('Limit') }}
+                                        <?php echo e(__('Limit')); ?>
+
                                     </h4>
 
                                 </div>
                             </div>
                             <div class="kt-widget24__details">
                                 <span class="kt-widget24__stats kt-font-brand">
-                                    {{ number_format($totalCard[$currency]['limit'] ?? 0,0) }}
+                                    <?php echo e(number_format($totalCard[$currency]['limit'] ?? 0,0)); ?>
+
                                 </span>
                             </div>
 
@@ -324,13 +335,15 @@
                             <div class="kt-widget24__details">
                                 <div class="kt-widget24__info">
                                     <h4 class="kt-widget24__title font-size">
-                                        {{ __('Outstanding') }}
+                                        <?php echo e(__('Outstanding')); ?>
+
                                     </h4>
                                 </div>
                             </div>
                             <div class="kt-widget24__details">
                                 <span class="kt-widget24__stats kt-font-warning">
-                                    {{ number_format($totalCard[$currency]['outstanding']??0,0) }}
+                                    <?php echo e(number_format($totalCard[$currency]['outstanding']??0,0)); ?>
+
                                 </span>
                             </div>
 
@@ -345,14 +358,16 @@
                             <div class="kt-widget24__details">
                                 <div class="kt-widget24__info">
                                     <h4 class="kt-widget24__title font-size">
-                                        {{ __('Available') }}
+                                        <?php echo e(__('Available')); ?>
+
                                     </h4>
 
                                 </div>
                             </div>
                             <div class="kt-widget24__details">
                                 <span class="kt-widget24__stats kt-font-danger">
-                                    {{ number_format($totalCard[$currency]['room']??0,0) }}
+                                    <?php echo e(number_format($totalCard[$currency]['room']??0,0)); ?>
+
                                 </span>
                             </div>
                         </div>
@@ -366,14 +381,16 @@
                             <div class="kt-widget24__details">
                                 <div class="kt-widget24__info">
                                     <h4 class="kt-widget24__title font-size">
-                                     {{ __('Interest') }}
+                                     <?php echo e(__('Interest')); ?>
+
                                     </h4>
 
                                 </div>
                             </div>
                             <div class="kt-widget24__details">
                                 <span class="kt-widget24__stats kt-font-success">
-                                   {{ number_format($totalCard[$currency]['interest_amount']??0,0) }}
+                                   <?php echo e(number_format($totalCard[$currency]['interest_amount']??0,0)); ?>
+
                                 </span>
                             </div>
                         </div>
@@ -384,102 +401,16 @@
             </div>
         </div>
 		
-        {{-- <div class="row">
-            <div class="col-md-4">
-                <div class="kt-portlet ">
-                    <div class="kt-portlet__head">
-                        <div class="kt-portlet__head-label col-8">
-                            <h3 class="kt-portlet__head-title head-title text-primary">
-                                {{ __('Total Cash Facilities') }}
-                            </h3>
-                        </div>
-
-                    </div>
-                    <div class="kt-portlet__body">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="kt-portlet kt-iconbox kt-iconbox--brand kt-iconbox--animate-slower">
-                                    <div class="kt-portlet__body">
-                                        <div class="kt-iconbox__body">
-                                            <div class="kt-iconbox__desc">
-                                                <h3 class="kt-iconbox__title">
-                                                    <a class="kt-link" onclick="return false" href="#">{{ __('Limit') }}</a>
-                                                </h3>
-                                                <div class="kt-iconbox__content text-primary  ">
-                                                    <h4>{{ number_format($totalCard[$currency]['limit'] ?? 0,0) }}</h4>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="kt-portlet kt-iconbox kt-iconbox--brand kt-iconbox--animate-slower">
-                                    <div class="kt-portlet__body">
-                                        <div class="kt-iconbox__body">
-                                            <div class="kt-iconbox__desc">
-                                                <h3 class="kt-iconbox__title">
-                                                    <a class="kt-link" onclick="return false" href="#">{{ __('Outstanding') }}</a>
-                                                </h3>
-                                                <div class="kt-iconbox__content text-primary  ">
-                                                    <h4> {{ number_format($totalCard[$currency]['outstanding']??0,0) }} </h4>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="kt-portlet kt-iconbox kt-iconbox--brand kt-iconbox--animate-slower">
-                                    <div class="kt-portlet__body">
-                                        <div class="kt-iconbox__body">
-                                            <div class="kt-iconbox__desc">
-                                                <h3 class="kt-iconbox__title">
-                                                    <a class="kt-link" onclick="return false" href="#">{{ __('Available') }}</a>
-                                                </h3>
-                                                <div class="kt-iconbox__content text-primary  ">
-                                                    <h4>{{ number_format($totalCard[$currency]['room']??0,0) }}</h4>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-
-                            <div class="col-md-6">
-                                <div class="kt-portlet kt-iconbox kt-iconbox--brand kt-iconbox--animate-slower">
-                                    <div class="kt-portlet__body">
-                                        <div class="kt-iconbox__body">
-                                            <div class="kt-iconbox__desc">
-                                                <h3 class="kt-iconbox__title">
-                                                    <a class="kt-link" onclick="return false" href="#">{{ __('Interest') }}</a>
-                                                </h3>
-                                                <div class="kt-iconbox__content text-primary  ">
-                                                    <h4>{{ number_format($totalCard[$currency]['interest_amount']??0,0) }}</h4>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-        </div> --}}
+        
         <div class="row">
 
-            {{-- Fully Secured Overdraft  --}}
-            @if($hasFullySecuredOverdraft[$currency]??false)
+            
+            <?php if($hasFullySecuredOverdraft[$currency]??false): ?>
             <div class="col-md-4">
                 <div class="kt-portlet ">
                     <div class="kt-portlet__head">
                         <div class="kt-portlet__head-label col-8">
-                            <h3 class="font-weight-bold text-black form-label kt-subheader__title small-caps mr-5 text-primary text-nowrap" style=""> {{ __('Fully Secured Overdraft') }} </h3>
+                            <h3 class="font-weight-bold text-black form-label kt-subheader__title small-caps mr-5 text-primary text-nowrap" style=""> <?php echo e(__('Fully Secured Overdraft')); ?> </h3>
 
                         </div>
 
@@ -492,10 +423,10 @@
                                         <div class="kt-iconbox__body">
                                             <div class="kt-iconbox__desc">
                                                 <h3 class="kt-iconbox__title">
-                                                    <a class="kt-link" onclick="return false" href="#">{{ __('Limit') }}</a>
+                                                    <a class="kt-link" onclick="return false" href="#"><?php echo e(__('Limit')); ?></a>
                                                 </h3>
                                                 <div class="kt-iconbox__content text-primary  ">
-                                                    <h4>{{ number_format($fullySecuredOverdraftCardData[$currency]['limit'] ?? 0,0) }}</h4>
+                                                    <h4><?php echo e(number_format($fullySecuredOverdraftCardData[$currency]['limit'] ?? 0,0)); ?></h4>
                                                 </div>
                                             </div>
                                         </div>
@@ -508,10 +439,10 @@
                                         <div class="kt-iconbox__body">
                                             <div class="kt-iconbox__desc">
                                                 <h3 class="kt-iconbox__title">
-                                                    <a class="kt-link" onclick="return false" href="#">{{ __('Outstanding') }}</a>
+                                                    <a class="kt-link" onclick="return false" href="#"><?php echo e(__('Outstanding')); ?></a>
                                                 </h3>
                                                 <div class="kt-iconbox__content text-primary  ">
-                                                    <h4> {{ number_format($fullySecuredOverdraftCardData[$currency]['outstanding']??0,0) }} </h4>
+                                                    <h4> <?php echo e(number_format($fullySecuredOverdraftCardData[$currency]['outstanding']??0,0)); ?> </h4>
                                                 </div>
                                             </div>
                                         </div>
@@ -526,10 +457,10 @@
                                         <div class="kt-iconbox__body">
                                             <div class="kt-iconbox__desc">
                                                 <h3 class="kt-iconbox__title">
-                                                    <a class="kt-link" onclick="return false" href="#">{{ __('Available') }}</a>
+                                                    <a class="kt-link" onclick="return false" href="#"><?php echo e(__('Available')); ?></a>
                                                 </h3>
                                                 <div class="kt-iconbox__content text-primary  ">
-                                                    <h4>{{ number_format($fullySecuredOverdraftCardData[$currency]['room']??0,0) }}</h4>
+                                                    <h4><?php echo e(number_format($fullySecuredOverdraftCardData[$currency]['room']??0,0)); ?></h4>
                                                 </div>
                                             </div>
                                         </div>
@@ -542,10 +473,10 @@
                                         <div class="kt-iconbox__body">
                                             <div class="kt-iconbox__desc">
                                                 <h3 class="kt-iconbox__title">
-                                                    <a class="kt-link" onclick="return false" href="#">{{ __('Interest') }}</a>
+                                                    <a class="kt-link" onclick="return false" href="#"><?php echo e(__('Interest')); ?></a>
                                                 </h3>
                                                 <div class="kt-iconbox__content text-primary  ">
-                                                    <h4>{{ number_format($fullySecuredOverdraftCardData[$currency]['interest_amount']??0,0) }}</h4>
+                                                    <h4><?php echo e(number_format($fullySecuredOverdraftCardData[$currency]['interest_amount']??0,0)); ?></h4>
                                                 </div>
                                             </div>
                                         </div>
@@ -553,36 +484,32 @@
                                 </div>
                             </div>
                         </div>
-                        {{-- Chart --}}
-                        {{-- <div class="row">
-                            <div class="col-md-12">
-                                <div class="chartdiv" id="chartdiv2"></div>
-                            </div>
-                        </div> --}}
+                        
+                        
                     </div>
                 </div>
             </div>
 
-            {{-- Fully Secured Overdraft  Chart --}}
+            
             <div class="col-md-8">
                 <div class="kt-portlet kt-portlet--tabs">
                     <div class="kt-portlet__head">
                         <div class="kt-portlet__head-toolbar w-full">
                             <ul class="w-full nav nav-tabs nav-tabs-space-lg nav-tabs-line nav-tabs-bold nav-tabs-line-3x nav-tabs-line-brand" role="tablist">
                                 <li class="nav-item">
-                                    <a class="nav-link active" data-toggle="tab" href="#FullySecuredOverdraftchartkt_apps_contacts_view_tab_1_{{$currency}}" role="tab">
+                                    <a class="nav-link active" data-toggle="tab" href="#FullySecuredOverdraftchartkt_apps_contacts_view_tab_1_<?php echo e($currency); ?>" role="tab">
                                         <i class="flaticon-line-graph"></i> &nbsp; Charts
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link " data-toggle="tab" href="#FullySecuredOverdraftkt_apps_contacts_view_tab_2_{{$currency}}" role="tab">
+                                    <a class="nav-link " data-toggle="tab" href="#FullySecuredOverdraftkt_apps_contacts_view_tab_2_<?php echo e($currency); ?>" role="tab">
                                         <i class="flaticon2-checking"></i>Reports Table
                                     </a>
                                 </li>
                                 <li class="nav-item ml-auto">
                                     <div class="kt-portlet__head-label ">
                                         <div class="kt-align-right">
-                                            <a href="{{ route('view.bank.statement',['company'=>$company->id,'accountType'=>'FullySecuredOverdraft','currency'=>$currency]) }}" type="button" class="btn btn-sm btn-brand btn-elevate btn-pill text-white"><i class="fa fa-chart-line"></i> {{ __('Bank Statement Report') }} </a>
+                                            <a href="<?php echo e(route('view.bank.statement',['company'=>$company->id,'accountType'=>'FullySecuredOverdraft','currency'=>$currency])); ?>" type="button" class="btn btn-sm btn-brand btn-elevate btn-pill text-white"><i class="fa fa-chart-line"></i> <?php echo e(__('Bank Statement Report')); ?> </a>
                                         </div>
                                     </div>
                                 </li>
@@ -590,7 +517,7 @@
                                 <li class="nav-item">
                                     <div class="kt-portlet__head-label ">
                                         <div class="kt-align-right">
-                                            <a href="{{ route('view.withdrawals.settlement.report',['company'=>$company->id,'accountType'=>'FullySecuredOverdraft','currency'=>$currency]) }}" type="button" class="btn btn-sm btn-brand btn-elevate btn-pill text-white"><i class="fa fa-chart-line"></i> {{ __('Withdrawal Report') }} </a>
+                                            <a href="<?php echo e(route('view.withdrawals.settlement.report',['company'=>$company->id,'accountType'=>'FullySecuredOverdraft','currency'=>$currency])); ?>" type="button" class="btn btn-sm btn-brand btn-elevate btn-pill text-white"><i class="fa fa-chart-line"></i> <?php echo e(__('Withdrawal Report')); ?> </a>
                                         </div>
                                     </div>
                                 </li>
@@ -600,19 +527,19 @@
                     </div>
                     <div class="kt-portlet__body pt-0">
                         <select class="current-currency hidden">
-                            <option value="{{ $currency }}"></option>
+                            <option value="<?php echo e($currency); ?>"></option>
                         </select>
 
                         <div class="tab-content  kt-margin-t-20">
 
-                            <div class="tab-pane active" id="FullySecuredOverdraftchartkt_apps_contacts_view_tab_1_{{$currency}}" role="tabpanel">
+                            <div class="tab-pane active" id="FullySecuredOverdraftchartkt_apps_contacts_view_tab_1_<?php echo e($currency); ?>" role="tabpanel">
 
-                                {{-- Monthly Chart --}}
+                                
                                 <div class="row">
                                     <div class="col-md-4">
 
-                                        <h4> {{ __('Available Room') }} </h4>
-                                        <div id="FullySecuredOverdraftchartdiv_available_room_{{$currency}}" class="chartDiv"></div>
+                                        <h4> <?php echo e(__('Available Room')); ?> </h4>
+                                        <div id="FullySecuredOverdraftchartdiv_available_room_<?php echo e($currency); ?>" class="chartDiv"></div>
                                     </div>
 
 
@@ -621,42 +548,42 @@
 
                                         <div class="row">
                                             <div class="col-12">
-                                                <h4> {{ __('Bank Movement') }} </h4>
+                                                <h4> <?php echo e(__('Bank Movement')); ?> </h4>
                                             </div>
                                             <div class="col-md-9">
-                                                <select data-financial-institution-id js-when-change-trigger-change-account-type data-currency="{{ $currency }}" data-table="FullySecuredOverdraft" js-refresh-limits-chart class="form-control bank-id-js">
-                                                    @foreach($allFullySecuredOverdraftBanks as $bank)
-                                                    <option value="{{ $bank->id }}"> {{ $bank->getName() }} </option>
-                                                    @endforeach
+                                                <select data-financial-institution-id js-when-change-trigger-change-account-type data-currency="<?php echo e($currency); ?>" data-table="FullySecuredOverdraft" js-refresh-limits-chart class="form-control bank-id-js">
+                                                    <?php $__currentLoopData = $allFullySecuredOverdraftBanks; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $bank): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                    <option value="<?php echo e($bank->id); ?>"> <?php echo e($bank->getName()); ?> </option>
+                                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                 </select>
                                             </div>
                                             <div class="col-md-3 hidden">
-                                                <label>{{__('Account Type')}} @include('star')</label>
+                                                <label><?php echo e(__('Account Type')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group date">
                                                         <select class="form-control js-update-account-number-based-on-account-type">
-                                                            @foreach($fullySecuredOverdraftAccountTypes as $index => $accountType)
-                                                            <option selected value="{{ $accountType->id }}" @if(isset($model) && $model->getCashInBankAccountTypeId() == $accountType->id) selected @endif>{{ $accountType->getName() }}</option>
-                                                            @endforeach
+                                                            <?php $__currentLoopData = $fullySecuredOverdraftAccountTypes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $accountType): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                            <option selected value="<?php echo e($accountType->id); ?>" <?php if(isset($model) && $model->getCashInBankAccountTypeId() == $accountType->id): ?> selected <?php endif; ?>><?php echo e($accountType->getName()); ?></option>
+                                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                         </select>
                                                     </div>
                                                 </div>
                                             </div>
 
                                             <div class="col-md-3">
-                                                <select data-currency="{{ $currency }}" data-table="FullySecuredOverdraft" js-refresh-limits-chart class="form-control js-account-number">
+                                                <select data-currency="<?php echo e($currency); ?>" data-table="FullySecuredOverdraft" js-refresh-limits-chart class="form-control js-account-number">
 
                                                 </select>
                                             </div>
 
                                         </div>
-                                        <div class="chartdiv_two_lines" id="FullySecuredOverdraftchartdiv_two_lines_{{ $currency }}"></div>
+                                        <div class="chartdiv_two_lines" id="FullySecuredOverdraftchartdiv_two_lines_<?php echo e($currency); ?>"></div>
                                     </div>
                                 </div>
 
                             </div>
 
-                            <div class="tab-pane" id="FullySecuredOverdraftkt_apps_contacts_view_tab_2_{{$currency}}" role="tabpanel">
+                            <div class="tab-pane" id="FullySecuredOverdraftkt_apps_contacts_view_tab_2_<?php echo e($currency); ?>" role="tabpanel">
                                 <div class="col-md-12">
                                     <div class="kt-portlet kt-portlet--mobile">
 
@@ -670,52 +597,62 @@
                                                 $endBalanceTotal = array_sum(array_column(($totalRoomForEachFullySecuredOverdraftId[$currency]??[]),'end_balance'));$key=0;
                                             ?>
 
-                                            <x-table :tableClass="'kt_table_with_no_pagination_no_scroll_no_entries'">
-                                                @slot('table_header')
+                                             <?php if (isset($component)) { $__componentOriginale53a9d2e6d6c51019138cc2fcd3ba8ac893391c6 = $component; } ?>
+<?php $component = $__env->getContainer()->make(App\View\Components\Table::class, ['tableClass' => 'kt_table_with_no_pagination_no_scroll_no_entries']); ?>
+<?php $component->withName('table'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php $component->withAttributes([]); ?>
+                                                <?php $__env->slot('table_header'); ?>
                                                 <tr class="table-active text-center">
-                                                    <th class="text-center max-w-300">{{ __('Bank Name') }}</th>
-                                                    <th class="text-center ">{{ __('Limit') }}</th>
-                                                    <th class="text-center ">{{ __('Outstanding') }}</th>
-                                                    <th class="text-center ">{{ __('Room') }}</th>
+                                                    <th class="text-center max-w-300"><?php echo e(__('Bank Name')); ?></th>
+                                                    <th class="text-center "><?php echo e(__('Limit')); ?></th>
+                                                    <th class="text-center "><?php echo e(__('Outstanding')); ?></th>
+                                                    <th class="text-center "><?php echo e(__('Room')); ?></th>
                                                 </tr>
-                                                @endslot
-                                                @slot('table_body')
+                                                <?php $__env->endSlot(); ?>
+                                                <?php $__env->slot('table_body'); ?>
 
 
-                                                @foreach ($totalRoomForEachFullySecuredOverdraftId[$currency] ??[] as $key => $item)
+                                                <?php $__currentLoopData = $totalRoomForEachFullySecuredOverdraftId[$currency] ??[]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                 <tr>
 
-                                                    <td class=" max-w-300">{{$item['item']?? '-'}}</td>
-                                                    <td class="text-center">{{number_format($item['limit']??0)}}</td>
-                                                    <td class="text-center">{{number_format($item['end_balance']??0)}}</td>
-                                                    <td class="text-center">{{number_format($item['available_room']??0)}}</td>
+                                                    <td class=" max-w-300"><?php echo e($item['item']?? '-'); ?></td>
+                                                    <td class="text-center"><?php echo e(number_format($item['limit']??0)); ?></td>
+                                                    <td class="text-center"><?php echo e(number_format($item['end_balance']??0)); ?></td>
+                                                    <td class="text-center"><?php echo e(number_format($item['available_room']??0)); ?></td>
                                                 </tr>
-                                                @endforeach
+                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
                                                 <tr class="table-active text-center">
-                                                    <td>{{__('Total')}}</td>
-                                                    <td>{{number_format($limitTotal)}}</td>
-                                                    <td>{{number_format($endBalanceTotal)}}</td>
-                                                    <td>{{number_format($availableRoomTotal)}}</td>
+                                                    <td><?php echo e(__('Total')); ?></td>
+                                                    <td><?php echo e(number_format($limitTotal)); ?></td>
+                                                    <td><?php echo e(number_format($endBalanceTotal)); ?></td>
+                                                    <td><?php echo e(number_format($availableRoomTotal)); ?></td>
 
                                                 </tr>
-                                                @endslot
-                                            </x-table>
+                                                <?php $__env->endSlot(); ?>
+                                             <?php if (isset($__componentOriginale53a9d2e6d6c51019138cc2fcd3ba8ac893391c6)): ?>
+<?php $component = $__componentOriginale53a9d2e6d6c51019138cc2fcd3ba8ac893391c6; ?>
+<?php unset($__componentOriginale53a9d2e6d6c51019138cc2fcd3ba8ac893391c6); ?>
+<?php endif; ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?> 
 
                                             <!--end: Datatable -->
                                         </div>
                                     </div>
                                 </div>
 
-                                <input type="hidden" id="FullySecuredOverdrafttotal_available_room_{{$currency}}" data-total="{{ json_encode($totalRoomForEachFullySecuredOverdraftId[$currency] ?? [] ) }}">
+                                <input type="hidden" id="FullySecuredOverdrafttotal_available_room_<?php echo e($currency); ?>" data-total="<?php echo e(json_encode($totalRoomForEachFullySecuredOverdraftId[$currency] ?? [] )); ?>">
                             </div>
                         </div>
                     </div>
                 </div>
 
             </div>
-            @endif
-            {{-- End Fully Secured Overdraft --}}
+            <?php endif; ?>
+            
 
 
 
@@ -724,13 +661,13 @@
 
 
 
-            {{-- start Clean Overdraft --}}
-            @if($hasCleanOverdraft[$currency] ?? false )
+            
+            <?php if($hasCleanOverdraft[$currency] ?? false ): ?>
             <div class="col-md-4">
                 <div class="kt-portlet ">
                     <div class="kt-portlet__head">
                         <div class="kt-portlet__head-label col-8">
-                            <h3 class="font-weight-bold text-black form-label kt-subheader__title small-caps mr-5 text-primary text-nowrap" style=""> {{ __('Clean Overdraft') }} </h3>
+                            <h3 class="font-weight-bold text-black form-label kt-subheader__title small-caps mr-5 text-primary text-nowrap" style=""> <?php echo e(__('Clean Overdraft')); ?> </h3>
 
                         </div>
 
@@ -743,10 +680,10 @@
                                         <div class="kt-iconbox__body">
                                             <div class="kt-iconbox__desc">
                                                 <h3 class="kt-iconbox__title">
-                                                    <a class="kt-link" onclick="return false" href="#">{{ __('Limit') }}</a>
+                                                    <a class="kt-link" onclick="return false" href="#"><?php echo e(__('Limit')); ?></a>
                                                 </h3>
                                                 <div class="kt-iconbox__content text-primary  ">
-                                                    <h4>{{ number_format($cleanOverdraftCardData[$currency]['limit'] ?? 0,0) }}</h4>
+                                                    <h4><?php echo e(number_format($cleanOverdraftCardData[$currency]['limit'] ?? 0,0)); ?></h4>
                                                 </div>
                                             </div>
                                         </div>
@@ -759,10 +696,10 @@
                                         <div class="kt-iconbox__body">
                                             <div class="kt-iconbox__desc">
                                                 <h3 class="kt-iconbox__title">
-                                                    <a class="kt-link" onclick="return false" href="#">{{ __('Outstanding') }}</a>
+                                                    <a class="kt-link" onclick="return false" href="#"><?php echo e(__('Outstanding')); ?></a>
                                                 </h3>
                                                 <div class="kt-iconbox__content text-primary  ">
-                                                    <h4> {{ number_format($cleanOverdraftCardData[$currency]['outstanding']??0,0) }} </h4>
+                                                    <h4> <?php echo e(number_format($cleanOverdraftCardData[$currency]['outstanding']??0,0)); ?> </h4>
                                                 </div>
                                             </div>
                                         </div>
@@ -777,10 +714,10 @@
                                         <div class="kt-iconbox__body">
                                             <div class="kt-iconbox__desc">
                                                 <h3 class="kt-iconbox__title">
-                                                    <a class="kt-link" onclick="return false" href="#">{{ __('Available') }}</a>
+                                                    <a class="kt-link" onclick="return false" href="#"><?php echo e(__('Available')); ?></a>
                                                 </h3>
                                                 <div class="kt-iconbox__content text-primary  ">
-                                                    <h4>{{ number_format($cleanOverdraftCardData[$currency]['room']??0,0) }}</h4>
+                                                    <h4><?php echo e(number_format($cleanOverdraftCardData[$currency]['room']??0,0)); ?></h4>
                                                 </div>
                                             </div>
                                         </div>
@@ -793,10 +730,10 @@
                                         <div class="kt-iconbox__body">
                                             <div class="kt-iconbox__desc">
                                                 <h3 class="kt-iconbox__title">
-                                                    <a class="kt-link" onclick="return false" href="#">{{ __('Interest') }}</a>
+                                                    <a class="kt-link" onclick="return false" href="#"><?php echo e(__('Interest')); ?></a>
                                                 </h3>
                                                 <div class="kt-iconbox__content text-primary  ">
-                                                    <h4>{{ number_format($cleanOverdraftCardData[$currency]['interest_amount']??0,0) }}</h4>
+                                                    <h4><?php echo e(number_format($cleanOverdraftCardData[$currency]['interest_amount']??0,0)); ?></h4>
                                                 </div>
                                             </div>
                                         </div>
@@ -804,36 +741,32 @@
                                 </div>
                             </div>
                         </div>
-                        {{-- Chart --}}
-                        {{-- <div class="row">
-                            <div class="col-md-12">
-                                <div class="chartdiv" id="chartdiv2"></div>
-                            </div>
-                        </div> --}}
+                        
+                        
                     </div>
                 </div>
             </div>
 
-            {{-- Cleanoverdraft Chart --}}
+            
             <div class="col-md-8">
                 <div class="kt-portlet kt-portlet--tabs">
                     <div class="kt-portlet__head">
                         <div class="kt-portlet__head-toolbar w-full">
                             <ul class="w-full nav nav-tabs nav-tabs-space-lg nav-tabs-line nav-tabs-bold nav-tabs-line-3x nav-tabs-line-brand" role="tablist">
                                 <li class="nav-item">
-                                    <a class="nav-link active" data-toggle="tab" href="#CleanOverdraftkt_apps_contacts_view_tab_1_{{$currency}}" role="tab">
+                                    <a class="nav-link active" data-toggle="tab" href="#CleanOverdraftkt_apps_contacts_view_tab_1_<?php echo e($currency); ?>" role="tab">
                                         <i class="flaticon-line-graph"></i> &nbsp; Charts
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link " data-toggle="tab" href="#CleanOverdraftkt_apps_contacts_view_tab_2_{{$currency}}" role="tab">
+                                    <a class="nav-link " data-toggle="tab" href="#CleanOverdraftkt_apps_contacts_view_tab_2_<?php echo e($currency); ?>" role="tab">
                                         <i class="flaticon2-checking"></i>Reports Table
                                     </a>
                                 </li>
                                 <li class="nav-item ml-auto">
                                     <div class="kt-portlet__head-label ">
                                         <div class="kt-align-right">
-                                            <a href="{{ route('view.bank.statement',['company'=>$company->id,'accountType'=>'CleanOverdraft','currency'=>$currency]) }}" type="button" class="btn btn-sm btn-brand btn-elevate btn-pill text-white"><i class="fa fa-chart-line"></i> {{ __('Bank Statement Report') }} </a>
+                                            <a href="<?php echo e(route('view.bank.statement',['company'=>$company->id,'accountType'=>'CleanOverdraft','currency'=>$currency])); ?>" type="button" class="btn btn-sm btn-brand btn-elevate btn-pill text-white"><i class="fa fa-chart-line"></i> <?php echo e(__('Bank Statement Report')); ?> </a>
                                         </div>
                                     </div>
                                 </li>
@@ -841,7 +774,7 @@
                                 <li class="nav-item">
                                     <div class="kt-portlet__head-label ">
                                         <div class="kt-align-right">
-                                            <a href="{{ route('view.withdrawals.settlement.report',['company'=>$company->id,'accountType'=>'CleanOverdraft','currency'=>$currency]) }}" type="button" class="btn btn-sm btn-brand btn-elevate btn-pill text-white"><i class="fa fa-chart-line"></i> {{ __('Withdrawal Report') }} </a>
+                                            <a href="<?php echo e(route('view.withdrawals.settlement.report',['company'=>$company->id,'accountType'=>'CleanOverdraft','currency'=>$currency])); ?>" type="button" class="btn btn-sm btn-brand btn-elevate btn-pill text-white"><i class="fa fa-chart-line"></i> <?php echo e(__('Withdrawal Report')); ?> </a>
                                         </div>
                                     </div>
                                 </li>
@@ -851,19 +784,19 @@
                     </div>
                     <div class="kt-portlet__body pt-0">
                         <select class="current-currency hidden">
-                            <option value="{{ $currency }}"></option>
+                            <option value="<?php echo e($currency); ?>"></option>
                         </select>
 
                         <div class="tab-content  kt-margin-t-20">
 
-                            <div class="tab-pane active" id="CleanOverdraftkt_apps_contacts_view_tab_1_{{$currency}}" role="tabpanel">
+                            <div class="tab-pane active" id="CleanOverdraftkt_apps_contacts_view_tab_1_<?php echo e($currency); ?>" role="tabpanel">
 
-                                {{-- Monthly Chart --}}
+                                
                                 <div class="row">
                                     <div class="col-md-4">
 
-                                        <h4> {{ __('Available Room') }} </h4>
-                                        <div id="CleanOverdraftchartdiv_available_room_{{$currency}}" class="chartDiv"></div>
+                                        <h4> <?php echo e(__('Available Room')); ?> </h4>
+                                        <div id="CleanOverdraftchartdiv_available_room_<?php echo e($currency); ?>" class="chartDiv"></div>
                                     </div>
 
 
@@ -872,42 +805,42 @@
 
                                         <div class="row">
                                             <div class="col-12">
-                                                <h4> {{ __('Bank Movement') }} </h4>
+                                                <h4> <?php echo e(__('Bank Movement')); ?> </h4>
                                             </div>
                                             <div class="col-md-9">
-                                                <select data-financial-institution-id js-when-change-trigger-change-account-type data-currency="{{ $currency }}" data-table="CleanOverdraft" js-refresh-limits-chart class="form-control bank-id-js">
-                                                    @foreach($allCleanOverdraftBanks as $bank)
-                                                    <option value="{{ $bank->id }}"> {{ $bank->getName() }} </option>
-                                                    @endforeach
+                                                <select data-financial-institution-id js-when-change-trigger-change-account-type data-currency="<?php echo e($currency); ?>" data-table="CleanOverdraft" js-refresh-limits-chart class="form-control bank-id-js">
+                                                    <?php $__currentLoopData = $allCleanOverdraftBanks; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $bank): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                    <option value="<?php echo e($bank->id); ?>"> <?php echo e($bank->getName()); ?> </option>
+                                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                 </select>
                                             </div>
                                             <div class="col-md-3 hidden">
-                                                <label>{{__('Account Type')}} @include('star')</label>
+                                                <label><?php echo e(__('Account Type')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group date">
                                                         <select class="form-control js-update-account-number-based-on-account-type">
-                                                            @foreach($cleanOverdraftAccountTypes as $index => $accountType)
-                                                            <option selected value="{{ $accountType->id }}" @if(isset($model) && $model->getCashInBankAccountTypeId() == $accountType->id) selected @endif>{{ $accountType->getName() }}</option>
-                                                            @endforeach
+                                                            <?php $__currentLoopData = $cleanOverdraftAccountTypes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $accountType): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                            <option selected value="<?php echo e($accountType->id); ?>" <?php if(isset($model) && $model->getCashInBankAccountTypeId() == $accountType->id): ?> selected <?php endif; ?>><?php echo e($accountType->getName()); ?></option>
+                                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                         </select>
                                                     </div>
                                                 </div>
                                             </div>
 
                                             <div class="col-md-3">
-                                                <select data-currency="{{ $currency }}" data-table="CleanOverdraft" js-refresh-limits-chart class="form-control js-account-number">
+                                                <select data-currency="<?php echo e($currency); ?>" data-table="CleanOverdraft" js-refresh-limits-chart class="form-control js-account-number">
 
                                                 </select>
                                             </div>
 
                                         </div>
-                                        <div class="chartdiv_two_lines" id="CleanOverdraftchartdiv_two_lines_{{ $currency }}"></div>
+                                        <div class="chartdiv_two_lines" id="CleanOverdraftchartdiv_two_lines_<?php echo e($currency); ?>"></div>
                                     </div>
                                 </div>
 
                             </div>
 
-                            <div class="tab-pane" id="CleanOverdraftkt_apps_contacts_view_tab_2_{{$currency}}" role="tabpanel">
+                            <div class="tab-pane" id="CleanOverdraftkt_apps_contacts_view_tab_2_<?php echo e($currency); ?>" role="tabpanel">
                                 <div class="col-md-12">
                                     <div class="kt-portlet kt-portlet--mobile">
 
@@ -921,52 +854,62 @@
                                                 $endBalanceTotal = array_sum(array_column(($totalRoomForEachCleanOverdraftId[$currency]??[]),'end_balance'));$key=0;
                                             ?>
 
-                                            <x-table :tableClass="'kt_table_with_no_pagination_no_scroll_no_entries'">
-                                                @slot('table_header')
+                                             <?php if (isset($component)) { $__componentOriginale53a9d2e6d6c51019138cc2fcd3ba8ac893391c6 = $component; } ?>
+<?php $component = $__env->getContainer()->make(App\View\Components\Table::class, ['tableClass' => 'kt_table_with_no_pagination_no_scroll_no_entries']); ?>
+<?php $component->withName('table'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php $component->withAttributes([]); ?>
+                                                <?php $__env->slot('table_header'); ?>
                                                 <tr class="table-active text-center">
-                                                    <th class="text-center max-w-300">{{ __('Bank Name') }}</th>
-                                                    <th class="text-center ">{{ __('Limit') }}</th>
-                                                    <th class="text-center ">{{ __('Outstanding') }}</th>
-                                                    <th class="text-center ">{{ __('Room') }}</th>
+                                                    <th class="text-center max-w-300"><?php echo e(__('Bank Name')); ?></th>
+                                                    <th class="text-center "><?php echo e(__('Limit')); ?></th>
+                                                    <th class="text-center "><?php echo e(__('Outstanding')); ?></th>
+                                                    <th class="text-center "><?php echo e(__('Room')); ?></th>
                                                 </tr>
-                                                @endslot
-                                                @slot('table_body')
+                                                <?php $__env->endSlot(); ?>
+                                                <?php $__env->slot('table_body'); ?>
 
 
-                                                @foreach ($totalRoomForEachCleanOverdraftId[$currency] ??[] as $key => $item)
+                                                <?php $__currentLoopData = $totalRoomForEachCleanOverdraftId[$currency] ??[]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                 <tr>
 
-                                                    <td class=" max-w-300">{{$item['item']?? '-'}}</td>
-                                                    <td class="text-center">{{number_format($item['limit']??0)}}</td>
-                                                    <td class="text-center">{{number_format($item['end_balance']??0)}}</td>
-                                                    <td class="text-center">{{number_format($item['available_room']??0)}}</td>
+                                                    <td class=" max-w-300"><?php echo e($item['item']?? '-'); ?></td>
+                                                    <td class="text-center"><?php echo e(number_format($item['limit']??0)); ?></td>
+                                                    <td class="text-center"><?php echo e(number_format($item['end_balance']??0)); ?></td>
+                                                    <td class="text-center"><?php echo e(number_format($item['available_room']??0)); ?></td>
                                                 </tr>
-                                                @endforeach
+                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
                                                 <tr class="table-active text-center">
-                                                    <td>{{__('Total')}}</td>
-                                                    <td>{{number_format($limitTotal)}}</td>
-                                                    <td>{{number_format($endBalanceTotal)}}</td>
-                                                    <td>{{number_format($availableRoomTotal)}}</td>
+                                                    <td><?php echo e(__('Total')); ?></td>
+                                                    <td><?php echo e(number_format($limitTotal)); ?></td>
+                                                    <td><?php echo e(number_format($endBalanceTotal)); ?></td>
+                                                    <td><?php echo e(number_format($availableRoomTotal)); ?></td>
 
                                                 </tr>
-                                                @endslot
-                                            </x-table>
+                                                <?php $__env->endSlot(); ?>
+                                             <?php if (isset($__componentOriginale53a9d2e6d6c51019138cc2fcd3ba8ac893391c6)): ?>
+<?php $component = $__componentOriginale53a9d2e6d6c51019138cc2fcd3ba8ac893391c6; ?>
+<?php unset($__componentOriginale53a9d2e6d6c51019138cc2fcd3ba8ac893391c6); ?>
+<?php endif; ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?> 
 
                                             <!--end: Datatable -->
                                         </div>
                                     </div>
                                 </div>
 
-                                <input type="hidden" id="CleanOverdrafttotal_available_room_{{$currency}}" data-total="{{ json_encode($totalRoomForEachCleanOverdraftId[$currency] ?? [] ) }}">
+                                <input type="hidden" id="CleanOverdrafttotal_available_room_<?php echo e($currency); ?>" data-total="<?php echo e(json_encode($totalRoomForEachCleanOverdraftId[$currency] ?? [] )); ?>">
                             </div>
                         </div>
                     </div>
                 </div>
 
             </div>
-            @endif
-            {{-- End Clean Overdraft --}}
+            <?php endif; ?>
+            
 
 
 
@@ -974,13 +917,13 @@
 
 
 
-            {{-- start Overdraft Against Commercial Paper --}}
-            @if($hasOverdraftAgainstCommercialPaper[$currency] ?? false )
+            
+            <?php if($hasOverdraftAgainstCommercialPaper[$currency] ?? false ): ?>
             <div class="col-md-4">
                 <div class="kt-portlet ">
                     <div class="kt-portlet__head">
                         <div class="kt-portlet__head-label col-8">
-                            <h3 class="font-weight-bold text-black form-label kt-subheader__title small-caps mr-5 text-primary text-nowrap" style=""> {{ __('Overdraft Against Commercial Paper') }} </h3>
+                            <h3 class="font-weight-bold text-black form-label kt-subheader__title small-caps mr-5 text-primary text-nowrap" style=""> <?php echo e(__('Overdraft Against Commercial Paper')); ?> </h3>
                         </div>
 
                     </div>
@@ -992,10 +935,10 @@
                                         <div class="kt-iconbox__body">
                                             <div class="kt-iconbox__desc">
                                                 <h3 class="kt-iconbox__title">
-                                                    <a class="kt-link" onclick="return false" href="#">{{ __('Limit') }}</a>
+                                                    <a class="kt-link" onclick="return false" href="#"><?php echo e(__('Limit')); ?></a>
                                                 </h3>
                                                 <div class="kt-iconbox__content text-primary  ">
-                                                    <h4>{{ number_format($overdraftAgainstCommercialPaperCardData[$currency]['limit'] ?? 0,0) }}</h4>
+                                                    <h4><?php echo e(number_format($overdraftAgainstCommercialPaperCardData[$currency]['limit'] ?? 0,0)); ?></h4>
                                                 </div>
                                             </div>
                                         </div>
@@ -1008,10 +951,10 @@
                                         <div class="kt-iconbox__body">
                                             <div class="kt-iconbox__desc">
                                                 <h3 class="kt-iconbox__title">
-                                                    <a class="kt-link" onclick="return false" href="#">{{ __('Outstanding') }}</a>
+                                                    <a class="kt-link" onclick="return false" href="#"><?php echo e(__('Outstanding')); ?></a>
                                                 </h3>
                                                 <div class="kt-iconbox__content text-primary  ">
-                                                    <h4> {{ number_format($overdraftAgainstCommercialPaperCardData[$currency]['outstanding']??0,0) }} </h4>
+                                                    <h4> <?php echo e(number_format($overdraftAgainstCommercialPaperCardData[$currency]['outstanding']??0,0)); ?> </h4>
                                                 </div>
                                             </div>
                                         </div>
@@ -1026,10 +969,10 @@
                                         <div class="kt-iconbox__body">
                                             <div class="kt-iconbox__desc">
                                                 <h3 class="kt-iconbox__title">
-                                                    <a class="kt-link" onclick="return false" href="#">{{ __('Available') }}</a>
+                                                    <a class="kt-link" onclick="return false" href="#"><?php echo e(__('Available')); ?></a>
                                                 </h3>
                                                 <div class="kt-iconbox__content text-primary  ">
-                                                    <h4>{{ number_format($overdraftAgainstCommercialPaperCardData[$currency]['room']??0,0) }}</h4>
+                                                    <h4><?php echo e(number_format($overdraftAgainstCommercialPaperCardData[$currency]['room']??0,0)); ?></h4>
                                                 </div>
                                             </div>
                                         </div>
@@ -1042,10 +985,10 @@
                                         <div class="kt-iconbox__body">
                                             <div class="kt-iconbox__desc">
                                                 <h3 class="kt-iconbox__title">
-                                                    <a class="kt-link" onclick="return false" href="#">{{ __('Interest') }}</a>
+                                                    <a class="kt-link" onclick="return false" href="#"><?php echo e(__('Interest')); ?></a>
                                                 </h3>
                                                 <div class="kt-iconbox__content text-primary  ">
-                                                    <h4>{{ number_format($overdraftAgainstCommercialPaperCardData[$currency]['interest_amount']??0,0) }}</h4>
+                                                    <h4><?php echo e(number_format($overdraftAgainstCommercialPaperCardData[$currency]['interest_amount']??0,0)); ?></h4>
                                                 </div>
                                             </div>
                                         </div>
@@ -1058,26 +1001,26 @@
                 </div>
             </div>
 
-            {{-- Overdraft Against Commercial Paper Chart --}}
+            
             <div class="col-md-8">
                 <div class="kt-portlet kt-portlet--tabs">
                     <div class="kt-portlet__head">
                         <div class="kt-portlet__head-toolbar w-full">
                             <ul class="w-full nav nav-tabs nav-tabs-space-lg nav-tabs-line nav-tabs-bold nav-tabs-line-3x nav-tabs-line-brand" role="tablist">
                                 <li class="nav-item">
-                                    <a class="nav-link active" data-toggle="tab" href="#OverdraftAgainstCommercialPaperkt_apps_contacts_view_tab_1_{{$currency}}" role="tab">
+                                    <a class="nav-link active" data-toggle="tab" href="#OverdraftAgainstCommercialPaperkt_apps_contacts_view_tab_1_<?php echo e($currency); ?>" role="tab">
                                         <i class="flaticon-line-graph"></i> &nbsp; Charts
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link " data-toggle="tab" href="#OverdraftAgainstCommercialPaperkt_apps_contacts_view_tab_2_{{$currency}}" role="tab">
+                                    <a class="nav-link " data-toggle="tab" href="#OverdraftAgainstCommercialPaperkt_apps_contacts_view_tab_2_<?php echo e($currency); ?>" role="tab">
                                         <i class="flaticon2-checking"></i>Reports Table
                                     </a>
                                 </li>
                                 <li class="nav-item ml-auto">
                                     <div class="kt-portlet__head-label ">
                                         <div class="kt-align-right">
-                                            <a href="{{ route('view.bank.statement',['company'=>$company->id,'accountType'=>'OverdraftAgainstCommercialPaper','currency'=>$currency]) }}" type="button" class="btn btn-sm btn-brand btn-elevate btn-pill text-white"><i class="fa fa-chart-line"></i> {{ __('Bank Statement Report') }} </a>
+                                            <a href="<?php echo e(route('view.bank.statement',['company'=>$company->id,'accountType'=>'OverdraftAgainstCommercialPaper','currency'=>$currency])); ?>" type="button" class="btn btn-sm btn-brand btn-elevate btn-pill text-white"><i class="fa fa-chart-line"></i> <?php echo e(__('Bank Statement Report')); ?> </a>
                                         </div>
                                     </div>
                                 </li>
@@ -1085,7 +1028,7 @@
                                 <li class="nav-item">
                                     <div class="kt-portlet__head-label ">
                                         <div class="kt-align-right">
-                                            <a href="{{ route('view.withdrawals.settlement.report',['company'=>$company->id,'accountType'=>'OverdraftAgainstCommercialPaper','currency'=>$currency]) }}" type="button" class="btn btn-sm btn-brand btn-elevate btn-pill text-white"><i class="fa fa-chart-line"></i> {{ __('Withdrawal Report') }} </a>
+                                            <a href="<?php echo e(route('view.withdrawals.settlement.report',['company'=>$company->id,'accountType'=>'OverdraftAgainstCommercialPaper','currency'=>$currency])); ?>" type="button" class="btn btn-sm btn-brand btn-elevate btn-pill text-white"><i class="fa fa-chart-line"></i> <?php echo e(__('Withdrawal Report')); ?> </a>
                                         </div>
                                     </div>
                                 </li>
@@ -1095,19 +1038,19 @@
                     </div>
                     <div class="kt-portlet__body pt-0">
                         <select class="current-currency hidden">
-                            <option value="{{ $currency }}"></option>
+                            <option value="<?php echo e($currency); ?>"></option>
                         </select>
 
                         <div class="tab-content  kt-margin-t-20">
 
-                            <div class="tab-pane active" id="OverdraftAgainstCommercialPaperkt_apps_contacts_view_tab_1_{{$currency}}" role="tabpanel">
+                            <div class="tab-pane active" id="OverdraftAgainstCommercialPaperkt_apps_contacts_view_tab_1_<?php echo e($currency); ?>" role="tabpanel">
 
-                                {{-- Monthly Chart --}}
+                                
                                 <div class="row">
                                     <div class="col-md-4">
 
-                                        <h4> {{ __('Available Room') }} </h4>
-                                        <div id="OverdraftAgainstCommercialPaperchartdiv_available_room_{{$currency}}" class="chartDiv"></div>
+                                        <h4> <?php echo e(__('Available Room')); ?> </h4>
+                                        <div id="OverdraftAgainstCommercialPaperchartdiv_available_room_<?php echo e($currency); ?>" class="chartDiv"></div>
                                     </div>
 
 
@@ -1116,42 +1059,42 @@
 
                                         <div class="row">
                                             <div class="col-12">
-                                                <h4> {{ __('Bank Movement') }} </h4>
+                                                <h4> <?php echo e(__('Bank Movement')); ?> </h4>
                                             </div>
                                             <div class="col-md-9">
-                                                <select data-financial-institution-id js-when-change-trigger-change-account-type data-currency="{{ $currency }}" data-table="OverdraftAgainstCommercialPaper" js-refresh-limits-chart class="form-control bank-id-js">
-                                                    @foreach($allOverdraftAgainstCommercialPaperBanks as $bank)
-                                                    <option value="{{ $bank->id }}"> {{ $bank->getName() }} </option>
-                                                    @endforeach
+                                                <select data-financial-institution-id js-when-change-trigger-change-account-type data-currency="<?php echo e($currency); ?>" data-table="OverdraftAgainstCommercialPaper" js-refresh-limits-chart class="form-control bank-id-js">
+                                                    <?php $__currentLoopData = $allOverdraftAgainstCommercialPaperBanks; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $bank): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                    <option value="<?php echo e($bank->id); ?>"> <?php echo e($bank->getName()); ?> </option>
+                                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                 </select>
                                             </div>
                                             <div class="col-md-3 hidden">
-                                                <label>{{__('Account Type')}} @include('star')</label>
+                                                <label><?php echo e(__('Account Type')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group date">
                                                         <select class="form-control js-update-account-number-based-on-account-type">
-                                                            @foreach($overdraftAgainstCommercialPaperAccountTypes as $index => $accountType)
-                                                            <option selected value="{{ $accountType->id }}" @if(isset($model) && $model->getCashInBankAccountTypeId() == $accountType->id) selected @endif>{{ $accountType->getName() }}</option>
-                                                            @endforeach
+                                                            <?php $__currentLoopData = $overdraftAgainstCommercialPaperAccountTypes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $accountType): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                            <option selected value="<?php echo e($accountType->id); ?>" <?php if(isset($model) && $model->getCashInBankAccountTypeId() == $accountType->id): ?> selected <?php endif; ?>><?php echo e($accountType->getName()); ?></option>
+                                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                         </select>
                                                     </div>
                                                 </div>
                                             </div>
 
                                             <div class="col-md-3">
-                                                <select data-currency="{{ $currency }}" data-table="OverdraftAgainstCommercialPaper" js-refresh-limits-chart class="form-control js-account-number">
+                                                <select data-currency="<?php echo e($currency); ?>" data-table="OverdraftAgainstCommercialPaper" js-refresh-limits-chart class="form-control js-account-number">
 
                                                 </select>
                                             </div>
 
                                         </div>
-                                        <div class="chartdiv_two_lines" id="OverdraftAgainstCommercialPaperchartdiv_two_lines_{{ $currency }}"></div>
+                                        <div class="chartdiv_two_lines" id="OverdraftAgainstCommercialPaperchartdiv_two_lines_<?php echo e($currency); ?>"></div>
                                     </div>
                                 </div>
 
                             </div>
 
-                            <div class="tab-pane" id="OverdraftAgainstCommercialPaperkt_apps_contacts_view_tab_2_{{$currency}}" role="tabpanel">
+                            <div class="tab-pane" id="OverdraftAgainstCommercialPaperkt_apps_contacts_view_tab_2_<?php echo e($currency); ?>" role="tabpanel">
                                 <div class="col-md-12">
                                     <div class="kt-portlet kt-portlet--mobile">
 
@@ -1165,52 +1108,62 @@
                                                 $endBalanceTotal = array_sum(array_column(($totalRoomForEachOverdraftAgainstCommercialPaperId[$currency]??[]),'end_balance'));$key=0;
                                             ?>
 
-                                            <x-table :tableClass="'kt_table_with_no_pagination_no_scroll_no_entries'">
-                                                @slot('table_header')
+                                             <?php if (isset($component)) { $__componentOriginale53a9d2e6d6c51019138cc2fcd3ba8ac893391c6 = $component; } ?>
+<?php $component = $__env->getContainer()->make(App\View\Components\Table::class, ['tableClass' => 'kt_table_with_no_pagination_no_scroll_no_entries']); ?>
+<?php $component->withName('table'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php $component->withAttributes([]); ?>
+                                                <?php $__env->slot('table_header'); ?>
                                                 <tr class="table-active text-center">
-                                                    <th class="text-center max-w-300">{{ __('Bank Name') }}</th>
-                                                    <th class="text-center ">{{ __('Limit') }}</th>
-                                                    <th class="text-center ">{{ __('Outstanding') }}</th>
-                                                    <th class="text-center ">{{ __('Room') }}</th>
+                                                    <th class="text-center max-w-300"><?php echo e(__('Bank Name')); ?></th>
+                                                    <th class="text-center "><?php echo e(__('Limit')); ?></th>
+                                                    <th class="text-center "><?php echo e(__('Outstanding')); ?></th>
+                                                    <th class="text-center "><?php echo e(__('Room')); ?></th>
                                                 </tr>
-                                                @endslot
-                                                @slot('table_body')
+                                                <?php $__env->endSlot(); ?>
+                                                <?php $__env->slot('table_body'); ?>
 
 
-                                                @foreach ($totalRoomForEachOverdraftAgainstCommercialPaperId[$currency] ??[] as $key => $item)
+                                                <?php $__currentLoopData = $totalRoomForEachOverdraftAgainstCommercialPaperId[$currency] ??[]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                 <tr>
 
-                                                    <td class=" max-w-300">{{$item['item']?? '-'}}</td>
-                                                    <td class="text-center">{{number_format($item['limit']??0)}}</td>
-                                                    <td class="text-center">{{number_format($item['end_balance']??0)}}</td>
-                                                    <td class="text-center">{{number_format($item['available_room']??0)}}</td>
+                                                    <td class=" max-w-300"><?php echo e($item['item']?? '-'); ?></td>
+                                                    <td class="text-center"><?php echo e(number_format($item['limit']??0)); ?></td>
+                                                    <td class="text-center"><?php echo e(number_format($item['end_balance']??0)); ?></td>
+                                                    <td class="text-center"><?php echo e(number_format($item['available_room']??0)); ?></td>
                                                 </tr>
-                                                @endforeach
+                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
                                                 <tr class="table-active text-center">
-                                                    <td>{{__('Total')}}</td>
-                                                    <td>{{number_format($limitTotal)}}</td>
-                                                    <td>{{number_format($endBalanceTotal)}}</td>
-                                                    <td>{{number_format($availableRoomTotal)}}</td>
+                                                    <td><?php echo e(__('Total')); ?></td>
+                                                    <td><?php echo e(number_format($limitTotal)); ?></td>
+                                                    <td><?php echo e(number_format($endBalanceTotal)); ?></td>
+                                                    <td><?php echo e(number_format($availableRoomTotal)); ?></td>
 
                                                 </tr>
-                                                @endslot
-                                            </x-table>
+                                                <?php $__env->endSlot(); ?>
+                                             <?php if (isset($__componentOriginale53a9d2e6d6c51019138cc2fcd3ba8ac893391c6)): ?>
+<?php $component = $__componentOriginale53a9d2e6d6c51019138cc2fcd3ba8ac893391c6; ?>
+<?php unset($__componentOriginale53a9d2e6d6c51019138cc2fcd3ba8ac893391c6); ?>
+<?php endif; ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?> 
 
                                             <!--end: Datatable -->
                                         </div>
                                     </div>
                                 </div>
 
-                                <input type="hidden" id="OverdraftAgainstCommercialPapertotal_available_room_{{$currency}}" data-total="{{ json_encode($totalRoomForEachOverdraftAgainstCommercialPaperId[$currency] ?? [] ) }}">
+                                <input type="hidden" id="OverdraftAgainstCommercialPapertotal_available_room_<?php echo e($currency); ?>" data-total="<?php echo e(json_encode($totalRoomForEachOverdraftAgainstCommercialPaperId[$currency] ?? [] )); ?>">
                             </div>
                         </div>
                     </div>
                 </div>
 
             </div>
-            @endif
-            {{-- End Overdraft Against Commercial Paper --}}
+            <?php endif; ?>
+            
 
 
 
@@ -1221,14 +1174,15 @@
 
 
         </div>
-        {{-- Title --}}
+        
         <div class="row">
             <div class="col-md-12">
                 <div class="kt-portlet ">
                     <div class="kt-portlet__head">
                         <div class="kt-portlet__head-label">
                             <h3 class="font-weight-bold text-black form-label kt-subheader__title small-caps mr-5 text-primary text-nowrap">
-                                {{ __('Long Term Cash Facilities Position') }}
+                                <?php echo e(__('Long Term Cash Facilities Position')); ?>
+
                             </h3>
                         </div>
                     </div>
@@ -1236,14 +1190,15 @@
             </div>
         </div>
         <!--begin:: Widgets/Stats-->
-		@foreach($mediumTermLoansArr[$currency] ?? [] as $mediumTermLoan)
+		<?php $__currentLoopData = $mediumTermLoansArr[$currency] ?? []; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $mediumTermLoan): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
         <div class="kt-portlet">
             <div class="kt-portlet__head">
                 <div class="kt-portlet__head-label">
                     <h3 class="kt-portlet__head-title head-title text-primary">
-                        {{ __('Loans Position') }}
-					[ 	{{ $mediumTermLoan->getFinancialInstitutionName() }} ] 
-					[ {{ $mediumTermLoan->getName() }} ]
+                        <?php echo e(__('Loans Position')); ?>
+
+					[ 	<?php echo e($mediumTermLoan->getFinancialInstitutionName()); ?> ] 
+					[ <?php echo e($mediumTermLoan->getName()); ?> ]
                     </h3>
                 </div>
             </div>
@@ -1259,14 +1214,16 @@
                             <div class="kt-widget24__details">
                                 <div class="kt-widget24__info">
                                     <h4 class="kt-widget24__title font-size">
-                                        {{ __('Limit') }}
+                                        <?php echo e(__('Limit')); ?>
+
                                     </h4>
 
                                 </div>
                             </div>
                             <div class="kt-widget24__details">
                                 <span class="kt-widget24__stats kt-font-brand">
-								{{ $mediumTermLoan->getLimitFormatted() }}
+								<?php echo e($mediumTermLoan->getLimitFormatted()); ?>
+
                                 </span>
                             </div>
 
@@ -1282,13 +1239,15 @@
                             <div class="kt-widget24__details">
                                 <div class="kt-widget24__info">
                                     <h4 class="kt-widget24__title font-size">
-                                        {{ __('Outstanding') }}
+                                        <?php echo e(__('Outstanding')); ?>
+
                                     </h4>
                                 </div>
                             </div>
                             <div class="kt-widget24__details">
                                 <span class="kt-widget24__stats kt-font-warning">
-                                    {{ $mediumTermLoan->getLoanOutstandingFormatted() }}
+                                    <?php echo e($mediumTermLoan->getLoanOutstandingFormatted()); ?>
+
                                 </span>
                             </div>
 
@@ -1303,23 +1262,24 @@
                             <div class="kt-widget24__details">
                                 <div class="kt-widget24__info">
                                     <h4 class="kt-widget24__title font-size">
-                                        {{ __('Next Installment') }}
+                                        <?php echo e(__('Next Installment')); ?>
+
                                     </h4>
 
                                 </div>
                             </div>
-							@php
+							<?php
 								$nextInstallment = $mediumTermLoan->getNextInstallmentDateAndAmount($date) ;
 								$nextInstallmentAmountFormatted = $nextInstallment['amount_formatted'];
 								$nextInstallmentDateFormatted = $nextInstallment['date_formatted'];
-							@endphp
+							?>
                             <div class="kt-widget24__details">
                                 <span class="kt-widget24__stats kt-font-success">
-									@if($nextInstallmentDateFormatted)
-                                  {{ $nextInstallmentAmountFormatted }} [{{ $nextInstallmentDateFormatted }}]
-									@else 
+									<?php if($nextInstallmentDateFormatted): ?>
+                                  <?php echo e($nextInstallmentAmountFormatted); ?> [<?php echo e($nextInstallmentDateFormatted); ?>]
+									<?php else: ?> 
 									-
-									@endif 
+									<?php endif; ?> 
                                 </span>
                             </div>
                         </div>
@@ -1333,16 +1293,18 @@
                             <div class="kt-widget24__details">
                                 <div class="kt-widget24__info">
                                     <h4 class="kt-widget24__title font-size">
-                                        {{ __('Past Dues') }}
+                                        <?php echo e(__('Past Dues')); ?>
+
                                     </h4>
 
                                 </div>
                             </div>
                             <div class="kt-widget24__details">
                                 <span class="kt-widget24__stats kt-font-danger">
-                                  {{ $mediumTermLoan->getTotalPastDueRemainingFormatted() }}
-										<button class="btn btn-sm btn-brand btn-elevate btn-pill text-white ml-5" data-toggle="modal" data-target="#{{ $currency }}-past-due-modal">{{ __('Details') }}</button>
-										@include('admin.dashboard.details-loan-past-dues-modal',['detailItems'=> $mediumTermLoan->getLoanPastDuesDetailsArray()   ,'title'=>__('Loan Past Dues')])
+                                  <?php echo e($mediumTermLoan->getTotalPastDueRemainingFormatted()); ?>
+
+										<button class="btn btn-sm btn-brand btn-elevate btn-pill text-white ml-5" data-toggle="modal" data-target="#<?php echo e($currency); ?>-past-due-modal"><?php echo e(__('Details')); ?></button>
+										<?php echo $__env->make('admin.dashboard.details-loan-past-dues-modal',['detailItems'=> $mediumTermLoan->getLoanPastDuesDetailsArray()   ,'title'=>__('Loan Past Dues')], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                 </span>
                             </div>
                         </div>
@@ -1352,121 +1314,23 @@
                 </div>
             </div>
         </div>
-			@endforeach
+			<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
         <!--end:: Widgets/Stats-->
 
         <!--begin:: Widgets/Stats-->
-        {{-- <div class="kt-portlet">
-            <div class="kt-portlet__head">
-                <div class="kt-portlet__head-label">
-                    <h3 class="kt-portlet__head-title head-title text-primary">
-                        {{ __('Leasing Facilitiess Position') }}
-                    </h3>
-                </div>
-            </div>
-            <div class="kt-portlet__body  kt-portlet__body--fit">
-                <div class="row row-no-padding row-col-separator-xl">
-                    <div class="col-md-6 col-lg-3 col-xl-3">
-
-                        <!--begin::Total Profit-->
-                        <div class="kt-widget24 text-center">
-                            <div class="kt-widget24__details">
-                                <div class="kt-widget24__info">
-                                    <h4 class="kt-widget24__title font-size">
-                                        {{ __('Limit') }}
-                                    </h4>
-
-                                </div>
-                            </div>
-                            <div class="kt-widget24__details">
-                                <span class="kt-widget24__stats kt-font-brand">
-                                    50,000,000
-                                </span>
-                            </div>
-
-
-                        </div>
-
-                        <!--end::Total Profit-->
-                    </div>
-                    <div class="col-md-6 col-lg-3 col-xl-3">
-
-                        <!--begin::New Feedbacks-->
-                        <div class="kt-widget24">
-                            <div class="kt-widget24__details">
-                                <div class="kt-widget24__info">
-                                    <h4 class="kt-widget24__title font-size">
-                                        {{ __('Outstanding') }}
-                                    </h4>
-                                </div>
-                            </div>
-                            <div class="kt-widget24__details">
-                                <span class="kt-widget24__stats kt-font-warning">
-                                    42,500,000
-                                </span>
-                            </div>
-
-                        </div>
-
-                        <!--end::New Feedbacks-->
-                    </div>
-                    <div class="col-md-6 col-lg-3 col-xl-3">
-
-                        <!--begin::New Orders-->
-                        <div class="kt-widget24">
-                            <div class="kt-widget24__details">
-                                <div class="kt-widget24__info">
-                                    <h4 class="kt-widget24__title font-size">
-                                        {{ __('Next Due Amount') }}
-                                    </h4>
-
-                                </div>
-                            </div>
-                            <div class="kt-widget24__details">
-                                <span class="kt-widget24__stats kt-font-danger">
-                                    1,250,000
-                                </span>
-                            </div>
-                        </div>
-
-                        <!--end::New Orders-->
-                    </div>
-                    <div class="col-md-6 col-lg-3 col-xl-3">
-
-                        <!--begin::New Users-->
-                        <div class="kt-widget24">
-                            <div class="kt-widget24__details">
-                                <div class="kt-widget24__info">
-                                    <h4 class="kt-widget24__title font-size">
-                                        {{ __('Date') }}
-                                    </h4>
-
-                                </div>
-                            </div>
-                            <div class="kt-widget24__details">
-                                <span class="kt-widget24__stats kt-font-success">
-                                    01-June-2024
-                                </span>
-                            </div>
-                        </div>
-
-                        <!--end::New Users-->
-                    </div>
-                </div>
-            </div>
-        </div> --}}
+        
 
     </div>
 
-    @php
+    <?php
     $index++;
-    @endphp
-    @endforeach
+    ?>
+    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 </div>
-@endsection
-@section('js')
-<script src="{{ url('assets/js/demo1/pages/crud/datatables/basic/paginations.js') }}" type="text/javascript"></script>
-<script src="{{ url('assets/vendors/custom/datatables/datatables.bundle.js') }}" type="text/javascript"></script>
+<?php $__env->stopSection(); ?>
+<?php $__env->startSection('js'); ?>
+<script src="<?php echo e(url('assets/js/demo1/pages/crud/datatables/basic/paginations.js')); ?>" type="text/javascript"></script>
+<script src="<?php echo e(url('assets/vendors/custom/datatables/datatables.bundle.js')); ?>" type="text/javascript"></script>
 <!-- Resources -->
 <script src="https://cdn.amcharts.com/lib/4/core.js"></script>
 <script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
@@ -1480,17 +1344,17 @@
 
 
 <!--begin::Page Scripts(used by this page) -->
-<script src="{{url('assets/vendors/general/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js')}}" type="text/javascript"></script>
-<script src="{{url('assets/vendors/custom/js/vendors/bootstrap-datepicker.init.js')}}" type="text/javascript"></script>
-<script src="{{url('assets/js/demo1/pages/crud/forms/widgets/bootstrap-datepicker.js')}}" type="text/javascript"></script>
-<script src="{{url('assets/vendors/general/bootstrap-select/dist/js/bootstrap-select.js')}}" type="text/javascript"></script>
-<script src="{{url('assets/js/demo1/pages/crud/forms/widgets/bootstrap-select.js')}}" type="text/javascript"></script>
-<script src="{{url('assets/vendors/general/jquery.repeater/src/lib.js')}}" type="text/javascript"></script>
-<script src="{{url('assets/vendors/general/jquery.repeater/src/jquery.input.js')}}" type="text/javascript"></script>
-<script src="{{url('assets/vendors/general/jquery.repeater/src/repeater.js')}}" type="text/javascript"></script>
-<script src="{{url('assets/js/demo1/pages/crud/forms/widgets/form-repeater.js')}}" type="text/javascript"></script>
-@foreach(['FullySecuredOverdraft','CleanOverdraft','OverdraftAgainstCommercialPaper' ,'OverdraftAgainstAssignmentOfContract'] as $overdraftType)
-@foreach($selectedCurrencies as $currencyUpper=>$currency)
+<script src="<?php echo e(url('assets/vendors/general/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js')); ?>" type="text/javascript"></script>
+<script src="<?php echo e(url('assets/vendors/custom/js/vendors/bootstrap-datepicker.init.js')); ?>" type="text/javascript"></script>
+<script src="<?php echo e(url('assets/js/demo1/pages/crud/forms/widgets/bootstrap-datepicker.js')); ?>" type="text/javascript"></script>
+<script src="<?php echo e(url('assets/vendors/general/bootstrap-select/dist/js/bootstrap-select.js')); ?>" type="text/javascript"></script>
+<script src="<?php echo e(url('assets/js/demo1/pages/crud/forms/widgets/bootstrap-select.js')); ?>" type="text/javascript"></script>
+<script src="<?php echo e(url('assets/vendors/general/jquery.repeater/src/lib.js')); ?>" type="text/javascript"></script>
+<script src="<?php echo e(url('assets/vendors/general/jquery.repeater/src/jquery.input.js')); ?>" type="text/javascript"></script>
+<script src="<?php echo e(url('assets/vendors/general/jquery.repeater/src/repeater.js')); ?>" type="text/javascript"></script>
+<script src="<?php echo e(url('assets/js/demo1/pages/crud/forms/widgets/form-repeater.js')); ?>" type="text/javascript"></script>
+<?php $__currentLoopData = ['FullySecuredOverdraft','CleanOverdraft','OverdraftAgainstCommercialPaper' ,'OverdraftAgainstAssignmentOfContract']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $overdraftType): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+<?php $__currentLoopData = $selectedCurrencies; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $currencyUpper=>$currency): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 <script>
     am4core.ready(function() {
 
@@ -1499,10 +1363,10 @@
         // Themes end
 
         // Create chart instance
-        var chart = am4core.create("{{ $overdraftType }}" + "chartdiv_available_room_" + "{{$currency}}", am4charts.PieChart);
+        var chart = am4core.create("<?php echo e($overdraftType); ?>" + "chartdiv_available_room_" + "<?php echo e($currency); ?>", am4charts.PieChart);
 
         // Add data
-        chart.data = $('#' + "{{ $overdraftType }}" + 'total_available_room_' + "{{$currency}}").data('total');
+        chart.data = $('#' + "<?php echo e($overdraftType); ?>" + 'total_available_room_' + "<?php echo e($currency); ?>").data('total');
 
         // Add and configure Series
         var pieSeries = chart.series.push(new am4charts.PieSeries());
@@ -1538,7 +1402,7 @@
         // Themes end
 
         // Create chart instance
-        var chart = am4core.create("{{ $overdraftType }}chartdiv_two_lines_{{$currency  }}", am4charts.XYChart);
+        var chart = am4core.create("<?php echo e($overdraftType); ?>chartdiv_two_lines_<?php echo e($currency); ?>", am4charts.XYChart);
 
         //
 
@@ -1613,9 +1477,9 @@
             valueAxis.renderer.opposite = opposite;
         }
 
-        createAxisAndSeries("debit", "{{ __('Cash In') }}", false, "circle");
-        createAxisAndSeries("credit", "{{ __('Cash Out') }}", true, "triangle");
-        createAxisAndSeries("end_balance", "{{ __('End Balance') }}", true, "rectangle");
+        createAxisAndSeries("debit", "<?php echo e(__('Cash In')); ?>", false, "circle");
+        createAxisAndSeries("credit", "<?php echo e(__('Cash Out')); ?>", true, "triangle");
+        createAxisAndSeries("end_balance", "<?php echo e(__('End Balance')); ?>", true, "rectangle");
 
         // Add legend
         chart.legend = new am4charts.Legend();
@@ -1629,8 +1493,8 @@
 
 </script>
 
-@endforeach
-@endforeach
+<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
 
 
@@ -1646,7 +1510,7 @@
             return;
         }
         $.ajax({
-            url: "{{ route('refresh.chart.limits.data',['company'=>$company->id]) }}"
+            url: "<?php echo e(route('refresh.chart.limits.data',['company'=>$company->id])); ?>"
             , data: {
                 modelName
                 , currencyName
@@ -1672,8 +1536,10 @@
 </script>
 <script src="/custom/money-receive.js"></script>
 
-{{-- <script src="{{url('assets/js/demo1/pages/crud/forms/validation/form-widgets.js')}}" type="text/javascript"></script> --}}
+
 
 <!--end::Page Scripts -->
 
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.dashboard', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /media/salah/Software/projects/veroo/resources/views/admin/dashboard/cash.blade.php ENDPATH**/ ?>
