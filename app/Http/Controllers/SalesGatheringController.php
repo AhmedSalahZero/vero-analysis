@@ -402,6 +402,7 @@ class SalesGatheringController extends Controller
 			}
 			if($type == 'pdf'){
 				$items = LabelingItem::where('company_id',$company->id )->get() ;
+				$items = $this->removeAllNoneEmpty($items);
 				return (new LabelingItemExport($items))->download('Labeling Item.XLSX','Xlsx');
 			}
 			
