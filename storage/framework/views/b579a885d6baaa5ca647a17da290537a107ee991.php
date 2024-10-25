@@ -10,12 +10,13 @@
 	<?php if(hasAuthFor('create financial institutions')): ?>
         <a class="dropdown-item" href="<?php echo e(route('financial.institution.add.account',['company'=>$company->id,'financialInstitution'=>$financialInstitutionBank->id])); ?>"><?php echo e(__('Add Current Account')); ?></a>
 		<?php endif; ?> 
+			<?php if(hasAuthFor('view time of deposit')): ?>
+        <a class="dropdown-item" href="<?php echo e(route('view.time.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitutionBank->id])); ?>"><?php echo e(__('Time Deposit "TDs"')); ?></a>
+		<?php endif; ?> 
 		<?php if(hasAuthFor('view certificate of deposit')): ?>
         <a class="dropdown-item" href="<?php echo e(route('view.certificates.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitutionBank->id])); ?>"><?php echo e(__('Certificate Of Deposit "CDs"')); ?></a>
 		<?php endif; ?> 
-				<?php if(hasAuthFor('view time of deposit')): ?>
-        <a class="dropdown-item" href="<?php echo e(route('view.time.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitutionBank->id])); ?>"><?php echo e(__('Time Deposit "TDs"')); ?></a>
-		<?php endif; ?> 
+			
     </div>
 </div>
 

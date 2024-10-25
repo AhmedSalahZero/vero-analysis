@@ -9,12 +9,13 @@
 	@if(hasAuthFor('create financial institutions'))
         <a class="dropdown-item" href="{{ route('financial.institution.add.account',['company'=>$company->id,'financialInstitution'=>$financialInstitutionBank->id]) }}">{{__('Add Current Account')}}</a>
 		@endif 
+			@if(hasAuthFor('view time of deposit'))
+        <a class="dropdown-item" href="{{ route('view.time.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitutionBank->id]) }}">{{__('Time Deposit "TDs"')}}</a>
+		@endif 
 		@if(hasAuthFor('view certificate of deposit'))
         <a class="dropdown-item" href="{{ route('view.certificates.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitutionBank->id]) }}">{{__('Certificate Of Deposit "CDs"')}}</a>
 		@endif 
-				@if(hasAuthFor('view time of deposit'))
-        <a class="dropdown-item" href="{{ route('view.time.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitutionBank->id]) }}">{{__('Time Deposit "TDs"')}}</a>
-		@endif 
+			
     </div>
 </div>
 

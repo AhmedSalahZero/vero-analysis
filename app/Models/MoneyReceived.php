@@ -30,6 +30,7 @@ class MoneyReceived extends Model
 	const UNAPPLIED_AMOUNTS = 'unapplied-amounts';
 	const DOWN_PAYMENT = 'down-payment';
 	const INVOICE_SETTLEMENT_WITH_DOWN_PAYMENT = 'invoice-settlement-with-down-payment';
+	const CLIENT_NAME ='customer_name';
 	
 	public static function generateComment(self $moneyReceived,string $lang,?string $invoiceNumbers = '',?string $customerName = null)
 	{
@@ -39,6 +40,9 @@ class MoneyReceived extends Model
 		$customerName = is_null($customerName) ?$moneyReceived->getCustomerName() : $customerName;
 		if($moneyReceived->isCheque()){
 			$chequeNumber = $moneyReceived->getChequeNumber()?:Request('cheque_number');
+			if($moneyReceived->isOpenBalance()){
+				return __('Opening Balance Cheque From [ :customerName ]' , ['customerName'=>$customerName],$lang);
+			}
 			if($moneyReceived->isDownPayment()){
 				return __('Down Payment - Cheque :name [ :contractName ] [ :contractCode ] With Number [ :number ]',['name'=>$customerName,'contractName'=>$moneyReceived->getContractName(),'contractCode'=>$moneyReceived->getContractCode(),'number'=>$chequeNumber],$lang) ;
 			}
@@ -57,12 +61,33 @@ class MoneyReceived extends Model
 			return __('Cheque :name With Number [ :number ] Settled Invoices [ :numbers ] [ :currency ]',['name'=>$customerName,'number'=>$chequeNumber,'numbers'=>$settledInvoiceNumbers,'currency'=>$moneyReceived->getCurrency()],$lang) ;
 		}
 		if($moneyReceived->isCashInSafe()){
+			if($moneyReceived->isOpenBalance()){
+				return __('Beginning Balance',[],$lang);
+			}
+			if($moneyReceived->isInvoiceSettlementWithDownPayment()){
+				return __('Cash From :name Settled Invoices [ :numbers ] [ :currency ] | Down Payment - [ :contractName ] [ :contractCode ]',[
+					'name'=>$customerName ,
+					'numbers'=>$settledInvoiceNumbers ,
+					'currency'=>$moneyReceived->getCurrency(),
+					'contractName'=>$moneyReceived->getContractName(),
+					'contractCode'=>$moneyReceived->getContractCode()
+				]);
+			}
 			if($moneyReceived->getPartnerType()!='is_customer'){
 				return __('Cash In Safe From :name [ :partnerType ]',['name'=>$customerName,'partnerType'=>$moneyReceived->getPartnerTypeFormatted()],$lang) ;
 			}
 			return __('Cash In Safe From :name Settled Invoices [ :numbers ]',['name'=>$customerName,'numbers'=>$settledInvoiceNumbers],$lang) ;
 		}
 		if($moneyReceived->isCashInBank()){
+			if($moneyReceived->isInvoiceSettlementWithDownPayment()){
+				return __('Bank Deposit From :name Settled Invoices [ :numbers ] [ :currency ] | Down Payment - [ :contractName ] [ :contractCode ]',[
+					'name'=>$customerName ,
+					'numbers'=>$settledInvoiceNumbers ,
+					'currency'=>$moneyReceived->getCurrency(),
+					'contractName'=>$moneyReceived->getContractName(),
+					'contractCode'=>$moneyReceived->getContractCode()
+				]);
+			}
 			if($moneyReceived->getPartnerType()!='is_customer'){
 				return __('Bank Deposit From :name [ :partnerType ]',['name'=>$customerName,'partnerType'=>$moneyReceived->getPartnerTypeFormatted()],$lang) ;
 			}

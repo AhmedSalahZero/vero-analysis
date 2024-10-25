@@ -250,7 +250,6 @@ class CustomerInvoiceDashboardController extends Controller
 				
 				
 				
-				
 
 				$timeDepositsForCurrentFinancialInstitution = DB::table('time_of_deposits')
 				->where('time_of_deposits.company_id', $company->id)
@@ -270,8 +269,9 @@ class CustomerInvoiceDashboardController extends Controller
 				// ->leftJoin('letter_of_credit_issuances',function($q) use($tdAccountTypeId) {
 				// 	$q->on('letter_of_credit_issuances.cd_or_td_account_number','=','time_of_deposits.account_number')->where('letter_of_credit_issuances.cd_or_td_account_type_id',$tdAccountTypeId);
 				// })
+				/// issue here
 				->orderBy('time_of_deposits.end_date', 'desc')
-				->selectRaw(' "'. $financialInstitutionName .'" as financial_institution_name , time_of_deposits.account_number as account_number,time_of_deposits.amount as amount, case 
+				->selectRaw(' "'. $financialInstitutionName .'" as financial_institution_name  , time_of_deposits.account_number as account_number,time_of_deposits.amount as amount, case 
 				when letter_of_guarantee_issuances.cash_cover_deducted_from_account_type = '.$tdAccountTypeId .' then "' .  __('LG') 
 				.'" when letter_of_guarantee_issuances.cd_or_td_account_type_id = '.$tdAccountTypeId .' then "' .  __('LG') 
 				.'" when fully_secured_overdrafts.cd_or_td_account_type_id = '.$tdAccountTypeId .' then "'.  __('Overdraft') 
@@ -285,7 +285,7 @@ class CustomerInvoiceDashboardController extends Controller
 				'"  else "'. __('Free To Use') .'" end as blocked')
 				->get();
 				;	
-			
+			dd($timeDepositsForCurrentFinancialInstitution);
 				foreach($timeDepositsForCurrentFinancialInstitution as $timeDepositsForCurrentFinancialInstitutionDetail){
 					$details[$currencyName]['time_of_deposits'][] = (array)$timeDepositsForCurrentFinancialInstitutionDetail ;
 				}
@@ -463,7 +463,10 @@ class CustomerInvoiceDashboardController extends Controller
 		$allCurrencies = getCurrenciesForSuppliersAndCustomers($company->id) ;
 		// $financialInstitutionsThatHaveMediumTermLoans = FinancialInstitution::onlyCompany($company->id)->onlyHasMediumTermLoans()->get();
 		$dashboardResult = [];
-		
+		$moneyReceivedOrPaymentModelNameMap = [
+			'CustomerInvoice'=>'MoneyReceived',
+			'SupplierInvoice'=>'MoneyPayment'
+		];
 		$cashFlowReportResult = null ;
 		$cashFlowReport = [];
 		if($request->has('contract_id')){
@@ -498,24 +501,30 @@ class CustomerInvoiceDashboardController extends Controller
 		foreach($selectedCurrencies as $currencyName)
 		{
 			foreach ($invoiceTypesModels as $modelType) {
-				$clientNames = ('\App\Models\\' . $modelType)::getAllUniqueCustomerNames($company->id,$currencyName);
+				$moneyReceivedOrPaymentModelName  = $moneyReceivedOrPaymentModelNameMap[$modelType];
+				$clientNamesForInvoices = ('\App\Models\\' . $modelType)::getAllUniqueCustomerNames($company->id,$currencyName);
+				$clientNamesForCheques = ('\App\Models\\' . $moneyReceivedOrPaymentModelName)::getAllUniqueCustomerNamesForCheques($company->id,$currencyName);
+
 				/**
 				 * * Customers Invoices Aging & Supplier Invoices Aging
 				 */
 				$invoiceAgingService = new InvoiceAgingService($company->id, $agingDate,$currencyName);
 				$chequeAgingService = new ChequeAgingService($company->id, $agingDate,$currencyName);
 		
-				$agingsForInvoices = $invoiceAgingService->__execute($clientNames, $modelType) ;
+				$agingsForInvoices = $invoiceAgingService->__execute($clientNamesForInvoices, $modelType) ;
 				$agingsForInvoices = $invoiceAgingService->formatForDashboard($agingsForInvoices,$modelType);
 				/**
 				 * * Customers Cheques Aging & Supplier Cheques Aging
 				 */
-				$agingsForCheques = $chequeAgingService->__execute($clientNames, $modelType) ;
+				$agingsForChequesWithChart = $chequeAgingService->__execute($clientNamesForCheques, $modelType) ;
+				$agingsForCheques = $agingsForChequesWithChart['result_for_table'];
+				$agingsForChequesCharts = $agingsForChequesWithChart['result_for_chart'];
+				
 				$agingsForCheques = $chequeAgingService->formatForDashboard($agingsForCheques,$modelType);
 	
 				$dashboardResult['invoices_aging'][$modelType][$currencyName] = $agingsForInvoices ;
-				
-				$dashboardResult['cheques_aging'][$modelType][$currencyName] = $agingsForCheques ;
+				$dashboardResult['cheques_aging_for_table'][$modelType][$currencyName] = $agingsForCheques ;
+				$dashboardResult['cheques_aging_for_chart'][$modelType][$currencyName] = $agingsForChequesCharts ;
 				
 			}
 		}

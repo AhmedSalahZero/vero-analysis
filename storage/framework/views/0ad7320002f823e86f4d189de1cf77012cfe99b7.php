@@ -1,5 +1,5 @@
-@extends('layouts.dashboard')
-@section('dash_nav')
+
+<?php $__env->startSection('dash_nav'); ?>
 <style>
     .chartdiv {
         width: 100%;
@@ -18,27 +18,28 @@
 
 </style>
 
-@endsection
-@section('css')
-<link href="{{ url('assets/vendors/custom/datatables/datatables.bundle.css') }}" rel="stylesheet" type="text/css" />
-<link href="{{url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css')}}" rel="stylesheet" type="text/css" />
-<link href="{{url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css')}}" rel="stylesheet" type="text/css" />
+<?php $__env->stopSection(); ?>
+<?php $__env->startSection('css'); ?>
+<link href="<?php echo e(url('assets/vendors/custom/datatables/datatables.bundle.css')); ?>" rel="stylesheet" type="text/css" />
+<link href="<?php echo e(url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css')); ?>" rel="stylesheet" type="text/css" />
+<link href="<?php echo e(url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css')); ?>" rel="stylesheet" type="text/css" />
 <style>
     table {
         white-space: nowrap;
     }
 
 </style>
-@endsection
-@section('content')
+<?php $__env->stopSection(); ?>
+<?php $__env->startSection('content'); ?>
 
-{{-- Title --}}
+
 <div class="row">
     <div class="kt-portlet ">
         <div class="kt-portlet__head">
             <div class="kt-portlet__head-label">
                 <h3 class="kt-portlet__head-title head-title text-primary">
-                    {{ __('Cash Flow') }}
+                    <?php echo e(__('Cash Flow')); ?>
+
                 </h3>
 
 
@@ -53,15 +54,15 @@
                 <div class="row ">
 				
 				<div class="col-md-2 mb-3">
-                            <label>{{__('Report Interval')}} @include('star')</label>
+                            <label><?php echo e(__('Report Interval')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
 
                             <div class="kt-input-icon">
                                 <div class="input-group date">
                                     <select name="report_interval" class="form-control " required>
-									     <option value="">{{ __('Select') }}</option>
-                                        <option value="daily" @if($selectedReportInterval == 'daily' )  selected @endif>{{__('Daily')}}</option>
-                                        <option value="weekly"  @if($selectedReportInterval == 'weekly' )  selected @endif>{{__('Weekly')}}</option>
-                                        <option value="monthly" @if($selectedReportInterval == 'monthly' )  selected @endif>{{__('Monthly')}}</option>
+									     <option value=""><?php echo e(__('Select')); ?></option>
+                                        <option value="daily" <?php if($selectedReportInterval == 'daily' ): ?>  selected <?php endif; ?>><?php echo e(__('Daily')); ?></option>
+                                        <option value="weekly"  <?php if($selectedReportInterval == 'weekly' ): ?>  selected <?php endif; ?>><?php echo e(__('Weekly')); ?></option>
+                                        <option value="monthly" <?php if($selectedReportInterval == 'monthly' ): ?>  selected <?php endif; ?>><?php echo e(__('Monthly')); ?></option>
                                     </select>
                                 </div>
                             </div>
@@ -70,51 +71,72 @@
 
 
                         <div class="col-md-3">
-                            <x-form.select :required="true" :label="__('Select')" :pleaseSelect="false" :selectedValue="$selectedPartnerId" :options="array_merge([['title'=>__('Company Cash Flow'),'value'=>'0']],formatOptionsForSelect($clientsWithContracts))" :add-new="false" class="select2-select suppliers-or-customers-js repeater-select  " data-filter-type="{{ 'create' }}" :all="false" name="partner_id"></x-form.select>
+                             <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.select','data' => ['required' => true,'label' => __('Select'),'pleaseSelect' => false,'selectedValue' => $selectedPartnerId,'options' => array_merge([['title'=>__('Company Cash Flow'),'value'=>'0']],formatOptionsForSelect($clientsWithContracts)),'addNew' => false,'class' => 'select2-select suppliers-or-customers-js repeater-select  ','dataFilterType' => ''.e('create').'','all' => false,'name' => 'partner_id']]); ?>
+<?php $component->withName('form.select'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php $component->withAttributes(['required' => true,'label' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Select')),'pleaseSelect' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'selectedValue' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($selectedPartnerId),'options' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(array_merge([['title'=>__('Company Cash Flow'),'value'=>'0']],formatOptionsForSelect($clientsWithContracts))),'add-new' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'class' => 'select2-select suppliers-or-customers-js repeater-select  ','data-filter-type' => ''.e('create').'','all' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'name' => 'partner_id']); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
+<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
+<?php endif; ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?> 
                         </div>
                         <div class="col-md-3">
-                            <x-form.select :required="false" :label="__('Contract')" :pleaseSelect="false" data-current-selected="{{ $selectedContractId }}" :selectedValue="$selectedContractId" :options="[]" :add-new="false" class="select2-select  contracts-js repeater-select  " data-filter-type="{{ 'create' }}" :all="false" name="contract_id"></x-form.select>
+                             <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.select','data' => ['required' => false,'label' => __('Contract'),'pleaseSelect' => false,'dataCurrentSelected' => ''.e($selectedContractId).'','selectedValue' => $selectedContractId,'options' => [],'addNew' => false,'class' => 'select2-select  contracts-js repeater-select  ','dataFilterType' => ''.e('create').'','all' => false,'name' => 'contract_id']]); ?>
+<?php $component->withName('form.select'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php $component->withAttributes(['required' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'label' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Contract')),'pleaseSelect' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'data-current-selected' => ''.e($selectedContractId).'','selectedValue' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($selectedContractId),'options' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute([]),'add-new' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'class' => 'select2-select  contracts-js repeater-select  ','data-filter-type' => ''.e('create').'','all' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'name' => 'contract_id']); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
+<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
+<?php endif; ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?> 
                         </div>
 
 
 
                         <div class="col-md-2">
-                            <label>{{__('Contract Code')}} @include('star')</label>
+                            <label><?php echo e(__('Contract Code')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
                             <div class="input-group">
                                 <input disabled type="text" class="form-control contract-code" value="">
                             </div>
                         </div>
 
                         <div class="col-md-2">
-                            <label>{{__('Contract Amount')}} @include('star')</label>
+                            <label><?php echo e(__('Contract Amount')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
                             <div class="input-group">
                                 <input disabled type="text" class="form-control contract-amount" value="0">
                             </div>
                         </div>
 						
                     <div class="col-md-2 ">
-                        <label>{{ __('Start Date') }} <span class="multi_selection"></span> </label>
+                        <label><?php echo e(__('Start Date')); ?> <span class="multi_selection"></span> </label>
                         <div class="kt-input-icon">
                             <div class="input-group date">
-                                <input required type="date" class="form-control" name="cash_start_date" value="{{ $cashStartDate }}">
+                                <input required type="date" class="form-control" name="cash_start_date" value="<?php echo e($cashStartDate); ?>">
                             </div>
                         </div>
                     </div>
 
                     <div class="col-md-2">
-                        <label>{{ __('End Date') }} <span class="multi_selection"></span> </label>
+                        <label><?php echo e(__('End Date')); ?> <span class="multi_selection"></span> </label>
                         <div class="kt-input-icon">
                             <div class="input-group date">
-                                <input required type="date" class="form-control" name="cash_end_date" value="{{ $cashEndDate }}">
+                                <input required type="date" class="form-control" name="cash_end_date" value="<?php echo e($cashEndDate); ?>">
                             </div>
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <label class="visibility-hidden"> {{__('dd')}}
-                            @include('star')
+                        <label class="visibility-hidden"> <?php echo e(__('dd')); ?>
+
+                            <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                         </label>
                         <div class="input-group">
-                            <button type="submit" class="btn active-style save-form">{{__('Save')}}</button>
+                            <button type="submit" class="btn active-style save-form"><?php echo e(__('Save')); ?></button>
                         </div>
                     </div>
 
@@ -124,163 +146,167 @@
 
             <div class="kt-portlet__body" style="padding-bottom:0 !important;">
                 <ul style="margin-bottom:0 ;" class="nav nav-tabs nav-tabs-space-lg nav-tabs-line nav-tabs-bold nav-tabs-line-3x nav-tabs-line-brand" role="tablist">
-                    @php
+                    <?php
                     $index = 0 ;
                     // $selectedCurrencies = ['USD'=>'USD'];
-                    @endphp
+                    ?>
 
 
-                    @foreach($selectedCurrencies as $currencyUpper=>$currency)
+                    <?php $__currentLoopData = $selectedCurrencies; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $currencyUpper=>$currency): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 
-                    <li class="nav-item @if($index ==0 ) active @endif">
-                        <a class="nav-link @if($index ==0 ) active @endif" data-toggle="tab" href="#kt_apps_contacts_view_tab_main{{ $index }}" role="tab">
+                    <li class="nav-item <?php if($index ==0 ): ?> active <?php endif; ?>">
+                        <a class="nav-link <?php if($index ==0 ): ?> active <?php endif; ?>" data-toggle="tab" href="#kt_apps_contacts_view_tab_main<?php echo e($index); ?>" role="tab">
                             <i class="flaticon2-checking icon-lg"></i>
-                            <span style="font-size:18px !important;">{{ $currency }}</span>
+                            <span style="font-size:18px !important;"><?php echo e($currency); ?></span>
                         </a>
                     </li>
 
-                    @php
+                    <?php
                     $index++;
-                    @endphp
-                    @endforeach
+                    ?>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </ul>
             </div>
 
         </div>
     </div>
 </div>
-{{-- Multi Line Chart --}}
+
 
 <div class="tab-content  kt-margin-t-20">
-    @php
+    <?php
     $index = 0 ;
-    @endphp
-    @foreach($selectedCurrencies as $name=>$currency)
-    <div class="tab-pane  @if($index == 0) active @endif" id="kt_apps_contacts_view_tab_main{{ $index }}" role="tabpanel">
+    ?>
+    <?php $__currentLoopData = $selectedCurrencies; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $name=>$currency): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+    <div class="tab-pane  <?php if($index == 0): ?> active <?php endif; ?>" id="kt_apps_contacts_view_tab_main<?php echo e($index); ?>" role="tabpanel">
 
         <div class="row">
             <div class="kt-portlet ">
                 <div class="kt-portlet__head">
                     <div class="kt-portlet__head-label">
                         <h3 class="kt-portlet__head-title head-title text-primary">
-                            {{ __('Monthly Cash Flow') }}
+                            <?php echo e(__('Monthly Cash Flow')); ?>
+
                         </h3>
                     </div>
                     <div class="kt-portlet__head-label ">
                         <div class="kt-align-right">
-                            <button type="button" class="btn btn-sm btn-brand btn-elevate btn-pill"><i class="fa fa-chart-line"></i> {{ __('Report') }} </button>
+                            <button type="button" class="btn btn-sm btn-brand btn-elevate btn-pill"><i class="fa fa-chart-line"></i> <?php echo e(__('Report')); ?> </button>
                         </div>
                     </div>
                 </div>
                 <div class="kt-portlet__body">
                     <div class="row">
                         <div class="col-md-12">
-                            <div class="chartdivchart" id="chartdivmulti{{ $currency }}"></div>
+                            <div class="chartdivchart" id="chartdivmulti<?php echo e($currency); ?>"></div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        {{-- Single Line Chart --}}
+        
         <div class="row">
             <div class="kt-portlet ">
                 <div class="kt-portlet__head">
                     <div class="kt-portlet__head-label">
                         <h3 class="kt-portlet__head-title head-title text-primary">
-                            {{ __('Accumulated Cash Flow') }}
+                            <?php echo e(__('Accumulated Cash Flow')); ?>
+
                         </h3>
                     </div>
                     <div class="kt-portlet__head-label ">
                         <div class="kt-align-right">
-                            <button type="button" class="btn btn-sm btn-brand btn-elevate btn-pill"><i class="fa fa-chart-line"></i> {{ __('Report') }} </button>
+                            <button type="button" class="btn btn-sm btn-brand btn-elevate btn-pill"><i class="fa fa-chart-line"></i> <?php echo e(__('Report')); ?> </button>
                         </div>
                     </div>
                 </div>
                 <div class="kt-portlet__body">
-                    {{-- Chart --}}
+                    
                     <div class="row">
                         <div class="col-md-12">
-                            <div class="chartdivchart" id="chartdivline1{{ $currency }}"></div>
+                            <div class="chartdivchart" id="chartdivline1<?php echo e($currency); ?>"></div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        {{-- Title --}}
+        
         <div class="row">
             <div class="kt-portlet ">
                 <div class="kt-portlet__head">
                     <div class="kt-portlet__head-label">
                         <h3 class="kt-portlet__head-title head-title text-primary">
-                            {{ __("Receivables & Payables Aging ") }}
-							{{ __('Date As Of ') }} [ {{ now()->format('d-m-Y') }} ] 
+                            <?php echo e(__("Receivables & Payables Aging ")); ?>
+
+							<?php echo e(__('Date As Of ')); ?> [ <?php echo e(now()->format('d-m-Y')); ?> ] 
                         </h3>
                     </div>
                 </div>
             </div>
         </div>
 
-        {{-- Customers Invoices Aging --}}
+        
 
-        @foreach($invoiceTypesModels as $modelType)
-		@php
+        <?php $__currentLoopData = $invoiceTypesModels; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $modelType): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+		<?php
 			$modelTypeAsText = [
 				'SupplierInvoice'=>__('Suppliers Invoices'),
 				'CustomerInvoice'=>__('Customers Invoices')
 			][$modelType] ;
-		@endphp
+		?>
         <div class="row">
             <div class="kt-portlet ">
                 <div class="kt-portlet__head">
                     <div class="kt-portlet__head-label">
                         <h3 class="kt-portlet__head-title head-title text-primary">
-                            {{$modelTypeAsText. __(' Aging') }}
+                            <?php echo e($modelTypeAsText. __(' Aging')); ?>
+
                         </h3>
                     </div>
                     <div class="kt-portlet__head-label ">
                         <div class="kt-align-right">
-                            <button type="button" class="btn btn-sm btn-brand btn-elevate btn-pill"><i class="fa fa-chart-line"></i> {{ __('Report') }} </button>
+                            <button type="button" class="btn btn-sm btn-brand btn-elevate btn-pill"><i class="fa fa-chart-line"></i> <?php echo e(__('Report')); ?> </button>
                         </div>
                     </div>
                 </div>
                 <div class="kt-portlet__body">
-                    {{-- Chart --}}
+                    
                     <div class="row">
                         <div class="col-md-4">
                             <table class="table table-sm table-striped table-head-bg-brand ">
                                 <thead class="thead-inverse">
                                     <tr>
-                                        <th>{{ __('Invoices Aging') }}</th>
-                                        <th class="text-center">{{ __('Invoices Amount') }}</th>
+                                        <th><?php echo e(__('Invoices Aging')); ?></th>
+                                        <th class="text-center"><?php echo e(__('Invoices Amount')); ?></th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @php
+                                    <?php
                                     $total = 0 ;
-                                    @endphp
-                                    @foreach ($dashboardResult['invoices_aging'][$modelType][$currency]['table'] ?? [] as $dueType => $dueWithValue)
-                                    @foreach($dueWithValue as $daysInternal => $totalForDaysInterval)
+                                    ?>
+                                    <?php $__currentLoopData = $dashboardResult['invoices_aging'][$modelType][$currency]['table'] ?? []; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $dueType => $dueWithValue): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <?php $__currentLoopData = $dueWithValue; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $daysInternal => $totalForDaysInterval): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                     <tr>
-                                        <td>{{ camelizeWithSpace($dueType,'_') }} {{ $daysInternal }} {{ __('Days') }} </td>
-                                        <td class="text-center">{{ number_format($totalForDaysInterval,0) }}</td>
+                                        <td><?php echo e(camelizeWithSpace($dueType,'_')); ?> <?php echo e($daysInternal); ?> <?php echo e(__('Days')); ?> </td>
+                                        <td class="text-center"><?php echo e(number_format($totalForDaysInterval,0)); ?></td>
                                     </tr>
-                                    @php
+                                    <?php
                                     $total += $totalForDaysInterval ;
-                                    @endphp
-                                    @endforeach
-                                    @endforeach
+                                    ?>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
                                     <tr>
-                                        <td>{{ __('Total') }}</td>
-                                        <td class="text-center">{{ number_format($total,0) }}</td>
+                                        <td><?php echo e(__('Total')); ?></td>
+                                        <td class="text-center"><?php echo e(number_format($total,0)); ?></td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
                         <div class="col-md-8">
-                            <div class="chartdivchart" id="chartdiv__{{ $modelType.$currency }}"></div>
+                            <div class="chartdivchart" id="chartdiv__<?php echo e($modelType.$currency); ?>"></div>
                         </div>
                     </div>
                 </div>
@@ -288,71 +314,73 @@
         </div>
 
 
-        {{-- Customers Cheques Aging --}}
+        
         <div class="row">
             <div class="kt-portlet ">
                 <div class="kt-portlet__head">
                     <div class="kt-portlet__head-label">
                         <h3 class="kt-portlet__head-title head-title text-primary">
-                            @if($modelType == 'CustomerInvoice')
-                            {{ __('Customers Cheques Aging') }}
-                            @else
-                            {{ __('Suppliers Cheques Aging') }}
-                            @endif
+                            <?php if($modelType == 'CustomerInvoice'): ?>
+                            <?php echo e(__('Customers Cheques Aging')); ?>
+
+                            <?php else: ?>
+                            <?php echo e(__('Suppliers Cheques Aging')); ?>
+
+                            <?php endif; ?>
                         </h3>
                     </div>
                     <div class="kt-portlet__head-label ">
                         <div class="kt-align-right">
-                            <button type="button" class="btn btn-sm btn-brand btn-elevate btn-pill"><i class="fa fa-chart-line"></i> {{ __('Report') }} </button>
-                            <button type="button" class="btn btn-sm btn-pill color-rose"><i class="fa fa-chart-line"></i> {{ __('Rejected Cheques Report') }} </button>
+                            <button type="button" class="btn btn-sm btn-brand btn-elevate btn-pill"><i class="fa fa-chart-line"></i> <?php echo e(__('Report')); ?> </button>
+                            <button type="button" class="btn btn-sm btn-pill color-rose"><i class="fa fa-chart-line"></i> <?php echo e(__('Rejected Cheques Report')); ?> </button>
                         </div>
                     </div>
                 </div>
                 <div class="kt-portlet__body">
-                    {{-- Chart --}}
+                    
                     <div class="row">
                         <div class="col-md-4">
                             <table class="table table-sm table-striped table-head-bg-brand ">
                                 <thead class="thead-inverse">
                                     <tr>
-                                        <th>{{ __('Cheques Aging') }}</th>
-                                        <th class="text-center">{{ __('Cheques Amount') }}</th>
+                                        <th><?php echo e(__('Cheques Aging')); ?></th>
+                                        <th class="text-center"><?php echo e(__('Cheques Amount')); ?></th>
 
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @php
+                                    <?php
                                     $total = 0 ;
-                                    @endphp
-                                    @foreach ($dashboardResult['cheques_aging_for_table'][$modelType][$currency]['table'] ?? [] as $dueType => $dueWithValue)
-                                    @if($dueType == 'coming_due' || $dueType =='current_due')
-                                    @foreach($dueWithValue as $daysInternal => $totalForDaysInterval)
+                                    ?>
+                                    <?php $__currentLoopData = $dashboardResult['cheques_aging_for_table'][$modelType][$currency]['table'] ?? []; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $dueType => $dueWithValue): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <?php if($dueType == 'coming_due' || $dueType =='current_due'): ?>
+                                    <?php $__currentLoopData = $dueWithValue; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $daysInternal => $totalForDaysInterval): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                     <tr>
-                                        <td>{{ camelizeWithSpace($dueType,'_') }} {{ $daysInternal }} {{ __('Days') }} </td>
-                                        <td class="text-center">{{ number_format($totalForDaysInterval,0) }}</td>
+                                        <td><?php echo e(camelizeWithSpace($dueType,'_')); ?> <?php echo e($daysInternal); ?> <?php echo e(__('Days')); ?> </td>
+                                        <td class="text-center"><?php echo e(number_format($totalForDaysInterval,0)); ?></td>
                                     </tr>
-                                    @php
+                                    <?php
                                     $total += $totalForDaysInterval ;
-                                    @endphp
-                                    @endforeach
-                                    @endif
-                                    @endforeach
+                                    ?>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                    <?php endif; ?>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                     <tr>
-                                        <td>{{ __('Total') }}</td>
-                                        <td class="text-center">{{ number_format($total) }}</td>
+                                        <td><?php echo e(__('Total')); ?></td>
+                                        <td class="text-center"><?php echo e(number_format($total)); ?></td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
                         <div class="col-md-8">
-                            <div class="chartdivchart" id="chartdivline2_{{ $modelType.$currency }}"></div>
+                            <div class="chartdivchart" id="chartdivline2_<?php echo e($modelType.$currency); ?>"></div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        @endforeach
+        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
 
 
@@ -367,52 +395,54 @@
 
 
 
-        {{-- Title --}}
+        
         <div class="row">
             <div class="kt-portlet ">
                 <div class="kt-portlet__head">
                     <div class="kt-portlet__head-label">
                         <h3 class="kt-portlet__head-title head-title text-primary">
-                            {{ __("Long & Short Term Facilities Comming Dues ") }}
+                            <?php echo e(__("Long & Short Term Facilities Comming Dues ")); ?>
+
                         </h3>
                     </div>
                 </div>
             </div>
         </div>
 
-        <form method="post" action="{{ route('result.withdrawals.settlement.report',['company'=>$company->id ]) }}">
+        <form method="post" action="<?php echo e(route('result.withdrawals.settlement.report',['company'=>$company->id ])); ?>">
             <div class="row">
-                {{-- Withdrawal dues --}}
+                
                 <div class="col-md-6">
                     <div class="kt-portlet ">
                         <div class="kt-portlet__head">
                             <div class="kt-portlet__head-label">
                                 <h3 class="kt-portlet__head-title head-title text-primary">
-                                    {{ __('Withdrawal dues') }}
+                                    <?php echo e(__('Withdrawal dues')); ?>
+
                                 </h3>
 								
                             </div>
 							<div class="kt-portlet__head-label" style="gap:25px;margin-top:10px;">
 									<div class="form-group">
-										<label for="" class="label">{{ __('Start') }}</label>
-										<input js-refresh-withdrawal-due-data-and-chart type="date" data-currency="{{ $currency }}" class="form-control withdrawal-start-date" name="withdrawal_start_date" value="{{ $withdrawalStartDate }}">
+										<label for="" class="label"><?php echo e(__('Start')); ?></label>
+										<input js-refresh-withdrawal-due-data-and-chart type="date" data-currency="<?php echo e($currency); ?>" class="form-control withdrawal-start-date" name="withdrawal_start_date" value="<?php echo e($withdrawalStartDate); ?>">
 									</div>
 									<div class="form-group">
-										<label for="" class="label">{{ __('End') }}</label>
-                                    <input js-refresh-withdrawal-due-data-and-chart type="date" data-currency="{{ $currency }}" class="form-control withdrawal-end-date" name="withdrawal_end_date" value="{{ $withdrawalEndDate }}">
+										<label for="" class="label"><?php echo e(__('End')); ?></label>
+                                    <input js-refresh-withdrawal-due-data-and-chart type="date" data-currency="<?php echo e($currency); ?>" class="form-control withdrawal-end-date" name="withdrawal_end_date" value="<?php echo e($withdrawalEndDate); ?>">
 									</div>
 								</div>
                             <div class="kt-portlet__head-label ">
                                 <div class="kt-align-right">
 
-                                    @csrf
+                                    <?php echo csrf_field(); ?>
 	
-                                    <input type="hidden" name="currency" value="{{ $currency }}">
-                                    @foreach($allFinancialInstitutionIds as $allFinancialInstitutionId)
-                                    <input type="hidden" name="financial_institution_ids[]" value="{{ $allFinancialInstitutionId }}">
-                                    @endforeach
+                                    <input type="hidden" name="currency" value="<?php echo e($currency); ?>">
+                                    <?php $__currentLoopData = $allFinancialInstitutionIds; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $allFinancialInstitutionId): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <input type="hidden" name="financial_institution_ids[]" value="<?php echo e($allFinancialInstitutionId); ?>">
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
-                                    <button type="submit" class="btn btn-sm btn-brand btn-elevate btn-pill"><i class="fa fa-chart-line"></i> {{ __('Report') }} </button>
+                                    <button type="submit" class="btn btn-sm btn-brand btn-elevate btn-pill"><i class="fa fa-chart-line"></i> <?php echo e(__('Report')); ?> </button>
 
                                 </div>
 
@@ -425,13 +455,13 @@
 
 
                         <div class="kt-portlet__body">
-                            {{-- Chart --}}
+                            
                             <div class="row">
                                 <div class="col-md-10 mb-3">
-                                    <select name="account_type" data-currency="{{ $currency }}" js-refresh-withdrawal-due-data-and-chart class="form-control withdrawal-account-type-js">
-                                        @foreach($overdraftAccountTypes as $overdraftAccountType)
-                                        <option @if($overdraftAccountType->isCleanOverdraftAccount() ) selected @endif value="{{ $overdraftAccountType->id }}">{{ $overdraftAccountType->getName() }}</option>
-                                        @endforeach
+                                    <select name="account_type" data-currency="<?php echo e($currency); ?>" js-refresh-withdrawal-due-data-and-chart class="form-control withdrawal-account-type-js">
+                                        <?php $__currentLoopData = $overdraftAccountTypes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $overdraftAccountType): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <option <?php if($overdraftAccountType->isCleanOverdraftAccount() ): ?> selected <?php endif; ?> value="<?php echo e($overdraftAccountType->id); ?>"><?php echo e($overdraftAccountType->getName()); ?></option>
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                     </select>
                                 </div>
                                 <div class="col-md-12">
@@ -440,18 +470,18 @@
                                             <table class="table table-sm table-striped table-head-bg-brand ">
                                                 <thead class="thead-inverse">
                                                     <tr>
-                                                        <th>{{ __('Date') }}</th>
-                                                        <th class="text-center">{{ __('Amount') }}</th>
+                                                        <th><?php echo e(__('Date')); ?></th>
+                                                        <th class="text-center"><?php echo e(__('Amount')); ?></th>
                                                     </tr>
                                                 </thead>
-                                                <tbody id="append-withdrawal-due-{{ $currency }}">
+                                                <tbody id="append-withdrawal-due-<?php echo e($currency); ?>">
                                                     
                                                 </tbody>
                                             </table>
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="chartdivchart" id="withdrawal-dues-chart-{{ $currency }}"></div>
+                                        <div class="chartdivchart" id="withdrawal-dues-chart-<?php echo e($currency); ?>"></div>
                                     </div>
                                 </div>
                             </div>
@@ -460,47 +490,48 @@
 
                     </div>
                 </div>
-                {{-- Long Term Facilities Comming Dues --}}
+                
                 <div class="col-md-6">
                     <div class="kt-portlet ">
                         <div class="kt-portlet__head">
                             <div class="kt-portlet__head-label">
                                 <h3 class="kt-portlet__head-title head-title text-primary">
-                                    {{ __('Long Term Facilities Comming Dues') }}
+                                    <?php echo e(__('Long Term Facilities Comming Dues')); ?>
+
                                 </h3>
                             </div>
 							<div class="kt-portlet__head-label" style="gap:25px;margin-top:10px;">
 									<div class="form-group">
-										<label for="" class="label">{{ __('Start') }}</label>
-										<input data-currency="{{ $currency }}" js-refresh-medium-term-loan-chart type="date" class="form-control loan-start-date" name="loan_start_date" value="{{ $loanStartDate }}">
+										<label for="" class="label"><?php echo e(__('Start')); ?></label>
+										<input data-currency="<?php echo e($currency); ?>" js-refresh-medium-term-loan-chart type="date" class="form-control loan-start-date" name="loan_start_date" value="<?php echo e($loanStartDate); ?>">
 									</div>
 									<div class="form-group">
-										<label for="" class="label">{{ __('End') }}</label>
-                                    <input data-currency="{{ $currency }}" type="date" js-refresh-medium-term-loan-chart class="form-control loan-end-date" name="loan_end_date" value="{{ $loanEndDate }}">
+										<label for="" class="label"><?php echo e(__('End')); ?></label>
+                                    <input data-currency="<?php echo e($currency); ?>" type="date" js-refresh-medium-term-loan-chart class="form-control loan-end-date" name="loan_end_date" value="<?php echo e($loanEndDate); ?>">
 									</div>
 								</div>
 								
                             <div class="kt-portlet__head-label ">
                                 <div class="kt-align-right">
-                                    <button type="button" class="btn btn-sm btn-brand btn-elevate btn-pill"><i class="fa fa-chart-line"></i> {{ __('Report') }} </button>
+                                    <button type="button" class="btn btn-sm btn-brand btn-elevate btn-pill"><i class="fa fa-chart-line"></i> <?php echo e(__('Report')); ?> </button>
                                 </div>
                             </div>
                         </div>
                         <div class="kt-portlet__body">
-                            {{-- Chart --}}
+                            
                             <div class="row">
  								<div class="col-md-8 mb-3">
-                                    <select name="financial_institution_id" data-currency="{{ $currency }}" js-refresh-medium-term-loan-chart class="form-control financial-instutiton-js">
-									<option value="0"> {{ __('All') }} </option>
-                                        @foreach(\App\Models\FinancialInstitution::onlyCompany($company->id)->onlyHasMediumTermLoans($currency)->get() as $financialInstitutionsThatHaveMediumTermLoan)
-                                        <option value="{{ $financialInstitutionsThatHaveMediumTermLoan->id }}">{{ $financialInstitutionsThatHaveMediumTermLoan->getName() }}</option>
-                                        @endforeach
+                                    <select name="financial_institution_id" data-currency="<?php echo e($currency); ?>" js-refresh-medium-term-loan-chart class="form-control financial-instutiton-js">
+									<option value="0"> <?php echo e(__('All')); ?> </option>
+                                        <?php $__currentLoopData = \App\Models\FinancialInstitution::onlyCompany($company->id)->onlyHasMediumTermLoans($currency)->get(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $financialInstitutionsThatHaveMediumTermLoan): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <option value="<?php echo e($financialInstitutionsThatHaveMediumTermLoan->id); ?>"><?php echo e($financialInstitutionsThatHaveMediumTermLoan->getName()); ?></option>
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                     </select>
                                 </div>
 								
 								 <div class="col-md-4 mb-3">
-                                    <select name="medium_term_loan_id" data-currency="{{ $currency }}" js-refresh-medium-term-loan-chart class="form-control medium-term-loan-js">
-									<option value="0"> {{ __('All') }} </option>
+                                    <select name="medium_term_loan_id" data-currency="<?php echo e($currency); ?>" js-refresh-medium-term-loan-chart class="form-control medium-term-loan-js">
+									<option value="0"> <?php echo e(__('All')); ?> </option>
                                     </select>
                                 </div>
 								
@@ -510,117 +541,44 @@
                                             <table class="table table-sm table-striped table-head-bg-brand ">
                                                 <thead class="thead-inverse">
                                                     <tr>
-                                                        <th>{{ __('Date') }}</th>
-                                                        <th class="text-center">{{ __('Amount') }}</th>
+                                                        <th><?php echo e(__('Date')); ?></th>
+                                                        <th class="text-center"><?php echo e(__('Amount')); ?></th>
 
                                                     </tr>
                                                 </thead>
-                                                <tbody id="append-loan-{{ $currency }}">
-                                                    {{-- <tr>
-                                                        <td>Date 1</td>
-                                                        <td class="text-center">600,000</td>
-                                                    </tr> --}}
-                                                    {{-- <tr>
-                                                        <td>Date 2</td>
-                                                        <td class="text-center">600,000</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Date 3</td>
-                                                        <td class="text-center">600,000</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Date 4</td>
-                                                        <td class="text-center">600,000</td>
-                                                    </tr> --}}
+                                                <tbody id="append-loan-<?php echo e($currency); ?>">
+                                                    
+                                                    
 
                                                 </tbody>
                                             </table>
                                         </div>
                                     </div>
                                     <div class="row">
-									{{-- <div class="chartdivchart" id="withdrawal-dues-chart-{{ $currency }}"></div> --}}
-                                        <div class="chartdivchart" id="loan-chart-{{ $currency }}"></div>
+									
+                                        <div class="chartdivchart" id="loan-chart-<?php echo e($currency); ?>"></div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                {{-- Leasing Facilities Comming Dues --}}
-                {{-- <div class="col-md-4">
-                    <div class="kt-portlet ">
-                        <div class="kt-portlet__head">
-                            <div class="kt-portlet__head-label">
-                                <h3 class="kt-portlet__head-title head-title text-primary">
-                                    {{ __('Leasing Facilities Comming Dues') }}
-                                </h3>
-                            </div>
-                            <div class="kt-portlet__head-label ">
-                                <div class="kt-align-right">
-                                    <button type="button" class="btn btn-sm btn-brand btn-elevate btn-pill"><i class="fa fa-chart-line"></i> {{ __('Report') }} </button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="kt-portlet__body">
-                            <div class="row">
-
-
-                                <div class="col-md-12">
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <table class="table table-sm table-striped table-head-bg-brand ">
-                                                <thead class="thead-inverse">
-                                                    <tr>
-                                                        <th>{{ __('Date') }}</th>
-                                                        <th class="text-center">{{ __('Amount') }}</th>
-
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr>
-                                                        <td>Date 1</td>
-                                                        <td class="text-center">600,000</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Date 2</td>
-                                                        <td class="text-center">600,000</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Date 3</td>
-                                                        <td class="text-center">600,000</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Date 4</td>
-                                                        <td class="text-center">600,000</td>
-                                                    </tr>
-
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="chartdivchart" id="chartdivline6{{ $currency }}"></div>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                </div> --}}
+                
+                
             </div>
         </form>
     </div>
 
-    @php
+    <?php
     $index++;
-    @endphp
-    @endforeach
+    ?>
+    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
 </div>
-@endsection
-@section('js')
-<script src="{{ url('assets/js/demo1/pages/crud/datatables/basic/paginations.js') }}" type="text/javascript"></script>
-<script src="{{ url('assets/vendors/custom/datatables/datatables.bundle.js') }}" type="text/javascript"></script>
+<?php $__env->stopSection(); ?>
+<?php $__env->startSection('js'); ?>
+<script src="<?php echo e(url('assets/js/demo1/pages/crud/datatables/basic/paginations.js')); ?>" type="text/javascript"></script>
+<script src="<?php echo e(url('assets/vendors/custom/datatables/datatables.bundle.js')); ?>" type="text/javascript"></script>
 <!-- Resources -->
 <script src="https://cdn.amcharts.com/lib/4/core.js"></script>
 <script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
@@ -723,17 +681,17 @@
     }];
 
 </script>
-@foreach($selectedCurrencies as $currencyUpper=>$currency)
-@foreach($invoiceTypesModels as $modelType)
+<?php $__currentLoopData = $selectedCurrencies; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $currencyUpper=>$currency): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+<?php $__currentLoopData = $invoiceTypesModels; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $modelType): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 <!-- Chart code -->
 <script>
     am4core.ready(function() {
         am4core.useTheme(am4themes_animated);
-        var chart = am4core.create("chartdiv__{{ $modelType.$currency }}", am4charts.XYChart);
+        var chart = am4core.create("chartdiv__<?php echo e($modelType.$currency); ?>", am4charts.XYChart);
 
 
 
-        chartData = @json(($dashboardResult['invoices_aging'][$modelType][$currency]['chart'] ?? []));
+        chartData = <?php echo json_encode(($dashboardResult['invoices_aging'][$modelType][$currency]['chart'] ?? []), 15, 512) ?>;
         chartData = chartData.reverse()
 
         chart.data = chartData;
@@ -813,13 +771,13 @@
 
         for (var i = 0; i < groups.length; i++) {
             var color = '#000';
-            if (groups[i].name == "{{ __('Coming Due') }}") { // coming due 
+            if (groups[i].name == "<?php echo e(__('Coming Due')); ?>") { // coming due 
                 color = '#1D9D23';
             }
-            if (groups[i].name == "{{ __('Current Due') }}") {
+            if (groups[i].name == "<?php echo e(__('Current Due')); ?>") {
                 color = '#000';
             }
-            if (groups[i].name == "{{ __('Past Due') }}") {
+            if (groups[i].name == "<?php echo e(__('Past Due')); ?>") {
                 color = '#C70039'
             }
 
@@ -850,11 +808,11 @@
         // Themes end
 
         // Create chart instance
-        var chart = am4core.create("chartdivline2_{{ $modelType.$currency }}", am4charts.XYChart);
+        var chart = am4core.create("chartdivline2_<?php echo e($modelType.$currency); ?>", am4charts.XYChart);
 
         // Add data
 
-        var chartData = @json(($dashboardResult['cheques_aging_for_chart'][$modelType][$currency] ?? []));
+        var chartData = <?php echo json_encode(($dashboardResult['cheques_aging_for_chart'][$modelType][$currency] ?? []), 15, 512) ?>;
         chart.data = chartData;
         // Set input format for the dates
         chart.dateFormatter.inputDateFormat = "yyyy-MM-dd";
@@ -914,7 +872,7 @@
 
 
 
-@endforeach
+<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
 
 
@@ -926,10 +884,10 @@
         // Themes end
 
         // Create chart instance
-        var chart = am4core.create("chartdivline1{{ $currency }}", am4charts.XYChart);
+        var chart = am4core.create("chartdivline1<?php echo e($currency); ?>", am4charts.XYChart);
 
         // Add data
-        chart.data =  @json($cashFlowReport['accumulated_net_cash'] ?? []);;
+        chart.data =  <?php echo json_encode($cashFlowReport['accumulated_net_cash'] ?? [], 15, 512) ?>;;
 
         // Set input format for the dates
         chart.dateFormatter.inputDateFormat = "yyyy-MM-dd";
@@ -997,7 +955,7 @@
         // Themes end
 
         // Create chart instance
-        var chart = am4core.create("withdrawal-dues-chart-{{ $currency }}", am4charts.XYChart);
+        var chart = am4core.create("withdrawal-dues-chart-<?php echo e($currency); ?>", am4charts.XYChart);
 
         // Add data
         chart.data = [];
@@ -1067,7 +1025,7 @@
         // Themes end
 
         // Create chart instance
-        var chart = am4core.create("loan-chart-{{ $currency }}", am4charts.XYChart);
+        var chart = am4core.create("loan-chart-<?php echo e($currency); ?>", am4charts.XYChart);
 
         // Add data
         chart.data = [];
@@ -1141,7 +1099,7 @@
         // Themes end
 
         // Create chart instance
-        var chart = am4core.create("chartdivmulti{{ $currency }}", am4charts.XYChart);
+        var chart = am4core.create("chartdivmulti<?php echo e($currency); ?>", am4charts.XYChart);
 
         //
 
@@ -1149,7 +1107,7 @@
         chart.colors.step = 2;
 
         // Add data
-        chart.data = @json($cashFlowReport['total_cash_in_out_flow'] ?? []);
+        chart.data = <?php echo json_encode($cashFlowReport['total_cash_in_out_flow'] ?? [], 15, 512) ?>;
 		
 
         // Create axes
@@ -1232,14 +1190,14 @@
 
 
     }); 
-    $(document).on('change', '[js-refresh-withdrawal-due-data-and-chart][data-currency="{{ $currency }}"]', function() {
+    $(document).on('change', '[js-refresh-withdrawal-due-data-and-chart][data-currency="<?php echo e($currency); ?>"]', function() {
         const currencyName = $(this).attr('data-currency')
         const currentChartId = 'withdrawal-dues-chart-' + currencyName;
         const accountTypeId = $('select.withdrawal-account-type-js[data-currency="'+currencyName+'"]').val()
 		const withdrawalStartDate = $('.withdrawal-start-date[data-currency="'+currencyName+'"]').val()
 		const withdrawalEndDate = $('.withdrawal-end-date[data-currency="'+currencyName+'"]').val()
         $.ajax({
-            url: "{{ route('refresh.withdrawal.report',['company'=>$company->id]) }}"
+            url: "<?php echo e(route('refresh.withdrawal.report',['company'=>$company->id])); ?>"
             , data: {
                 accountTypeId
                 , currencyName,
@@ -1270,7 +1228,7 @@
 	
 	
 	
-	 $(document).on('change', '[js-refresh-medium-term-loan-chart][data-currency="{{ $currency }}"]', function() {
+	 $(document).on('change', '[js-refresh-medium-term-loan-chart][data-currency="<?php echo e($currency); ?>"]', function() {
         const currencyName = $(this).attr('data-currency')
         const currentChartId = 'loan-chart-' + currencyName;
         const financialInstitutionId = $('select.financial-instutiton-js[data-currency="'+currencyName+'"]').val()
@@ -1278,7 +1236,7 @@
 		const loanStartDate = $('.loan-start-date[data-currency="'+currencyName+'"]').val()
 		const loanEndDate = $('.loan-end-date[data-currency="'+currencyName+'"]').val()
         $.ajax({
-            url: "{{ route('refresh.medium.term.loan.report',['company'=>$company->id]) }}"
+            url: "<?php echo e(route('refresh.medium.term.loan.report',['company'=>$company->id])); ?>"
             , data: {
                 financialInstitutionId,
                 mediumTermLoanId
@@ -1309,7 +1267,7 @@
 	
 
 </script>
-@endforeach
+<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
 <script>
    
@@ -1351,7 +1309,7 @@
 		const currency = $(this).attr('data-currency');
 
         $.ajax({
-            url: "{{ route('get.medium.term.loan.for.financial.institution',['company'=>$company->id]) }}"
+            url: "<?php echo e(route('get.medium.term.loan.for.financial.institution',['company'=>$company->id])); ?>"
             , data: {
                 financialInstitutionId
                 , currency
@@ -1359,7 +1317,7 @@
             }
             , type: "get"
             , success: function(res) {
-                let loans = '<option value="0">{{ __("All") }}</option>';
+                let loans = '<option value="0"><?php echo e(__("All")); ?></option>';
                 const currentSelected = 0
                 // const currentSelected = $(parent).find('select.contracts-js').data('current-selected')
                 for (var loan of res.loans) {
@@ -1377,7 +1335,7 @@
         let inEditMode = 0;
 
         $.ajax({
-            url: "{{ route('get.contracts.for.customer.or.supplier',['company'=>$company->id]) }}"
+            url: "<?php echo e(route('get.contracts.for.customer.or.supplier',['company'=>$company->id])); ?>"
             , data: {
                 partnerId
                 , model
@@ -1400,4 +1358,6 @@
         $('select.financial-instutiton-js').trigger('change')
     })
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.dashboard', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /media/salah/Software/projects/veroo/resources/views/admin/dashboard/forecast.blade.php ENDPATH**/ ?>

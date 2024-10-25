@@ -43,19 +43,21 @@ class ChequeAgingService
 		 $chequeTypesForSafe = ('\App\Models\\'.$chequeModelName)::getChequeTypesForAging() ;
 	
         $result = [];
+		$chequesResultForChart = [];
 		/**
 		 * * هنا شرط الديو ديت اكبر من او يساوي
 		 */
+		
         $invoices = ('\App\Models\\'.$chequeModelName)
 		::whereIn('status',$chequeTypesForSafe)
 		->where('due_date', '>=', $this->aging_date)
 		->where('currency',$this->currency)
 		->join($moneyReceivedOrPaymentTableName,$moneyReceivedOrPaymentTableName.'.id','=',$chequesTableName.'.'.$moneyReceivedOrPaymentTableForeignName)
 		->has($modelModelName)
-		->where($chequesTableName.'.company_id', $this->company_id)
-		;
+		->where($chequesTableName.'.company_id', $this->company_id);
         if (count($clientNames)) {
             $invoices->whereHas($modelModelName,function($q) use($clientNames,$clientNameColumnName){
+			
                 $q->whereIn($clientNameColumnName,$clientNames);
             });
         }
@@ -70,10 +72,12 @@ class ChequeAgingService
             $clientName = $invoice->{$modelModelName}->getName() ;
             $invoiceNumber = $invoice->getNumber();
             $invoiceDueDate = $invoice->getDueDate();
+		
             $netBalance = $invoice->{$modelModelName}->getAmount() ;
             if (!$netBalance) {
                 continue;
             }
+			$chequesResultForChart[$invoiceDueDate] = isset($chequesResultForChart[$invoiceDueDate]) ? $chequesResultForChart[$invoiceDueDate] +$netBalance  : $netBalance ;
             $dueNameWithDiffDays = $this->getDueNameWithDiffInDays($invoiceDueDate, $this->aging_date);
             $dueName = array_key_first($dueNameWithDiffDays);
             $diffInDays = $dueNameWithDiffDays[$dueName];
@@ -97,7 +101,6 @@ class ChequeAgingService
                 $result['invoice_count'][$dueName][$dayInterval] = isset($result['invoice_count'][$dueName][$dayInterval]) ? $result['invoice_count'][$dueName][$dayInterval] + 1 : 1 ;
                 $result['invoice_count'][$dueName]['clients'][$dayInterval][$clientName] = $clientName;
             }
-
             $result['grand_total'] = isset($result['grand_total']) ? $result['grand_total'] + $netBalance : $netBalance ;
             if ($netBalance) {
                 $result['grand_clients_total'][$clientName] = $clientName ;
@@ -144,9 +147,25 @@ class ChequeAgingService
                 }
             }
         }
-
-        return $result ;
+		
+		$chequesResultForChart = $this->formatChart($chequesResultForChart);
+        return [
+			'result_for_table'=>$result ,
+			'result_for_chart'=>$chequesResultForChart
+		] ;
     }
+	public function formatChart(array $chequesResultForChart){
+		$result = [];
+		ksort($chequesResultForChart);
+		
+		foreach($chequesResultForChart as $date=>$value){
+			$result[] = [
+				'date'=>$date,
+				'value'=>$value
+			];
+		}
+		return $result ;
+	}
 
 	
 	public function formatForDashboard(array $agings,string $modelType)
