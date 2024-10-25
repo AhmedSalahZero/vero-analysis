@@ -690,10 +690,10 @@ class MoneyPayment extends Model
 	 * * money payment
 	 * * اللي تم انشائها معاها
 	 */
-	public function moneyPayment()
-	{
-		return $this->belongsTo(MoneyPayment::class,'money_payment_id','id');
-	}
+	// public function moneyPayment()
+	// {
+	// 	return $this->belongsTo(MoneyPayment::class,'money_payment_id','id');
+	// }
 	/**
 	 * * هنا لو معاك 
 	 * * money payment
