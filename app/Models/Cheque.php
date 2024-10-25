@@ -296,6 +296,11 @@ class Cheque extends Model
 	{
 		return $this->belongsTo(AccountType::class,'account_type','id');
 	}
+	public function getAccountTypeId()
+	{
+		$accountType = $this->accountType; 
+		return $accountType ? $accountType->id : 0 ; 
+	}
 	public function getAccountTypeName()
 	{
 		$accountType = $this->accountType; 
