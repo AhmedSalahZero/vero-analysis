@@ -273,7 +273,6 @@ class OpeningBalancesController
 			$dataToUpdate['receiving_currency'] = $dataToUpdate['currency'] ;
 			$currentChequeInSafe = $openingBalance->chequeInSafe()->where('money_received.id', $id)->first() ;
             $currentChequeInSafe->update($dataToUpdate);
-			$pivotData['money_received_id'] = $currentChequeInSafe->id ;
             $openingBalance->chequeInSafe()->where('money_received.id', $id)->first()->cheque->update($pivotData);
         }
         foreach ($request->get(MoneyReceived::CHEQUE, []) as $data) {
@@ -296,7 +295,6 @@ class OpeningBalancesController
                     'type' => MoneyReceived::CHEQUE,
                     'user_id' => auth()->id()
                 ]));
-				$pivotData['money_received_id'] = $moneyReceived->id ;
                 $moneyReceived->cheque()->create($pivotData);
             }
         }

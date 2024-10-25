@@ -798,10 +798,10 @@ class MoneyReceived extends Model
 	 * * ماني ريسيفد 
 	 * * اللي تم انشائها معاها
 	 */
-	public function moneyReceived()
-	{
-		return $this->belongsTo(MoneyReceived::class,'money_received_id','id');
-	}
+	// public function moneyReceived()
+	// {
+	// 	return $this->belongsTo(MoneyReceived::class,'money_received_id','id');
+	// }
 	/**
 	 * * هنا لو معاك 
 	 * * ماني ريسيفد وعايز تعرف ال
