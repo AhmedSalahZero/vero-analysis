@@ -23,7 +23,7 @@ class MoneyPayment extends Model
 	const OUTGOING_TRANSFER  = 'outgoing-transfer';
 	const INVOICE_SETTLEMENT_WITH_DOWN_PAYMENT = 'invoice-settlement-with-down-payment';
 	const DOWN_PAYMENT = 'down-payment';
-	
+	const CLIENT_NAME ='supplier_name';
 	public static function generateComment(self $moneyPayment,string $lang)
 	{
 		$supplierName = $moneyPayment->getSupplierName();
@@ -31,6 +31,9 @@ class MoneyPayment extends Model
 		
 		if($moneyPayment->isPayableCheque()){
 			$chequeNumber = $moneyPayment->getPayableChequeNumber()?:Request('cheque_number');
+			if($moneyPayment->isOpenBalance()){
+				return __('Opening Balance Payable Cheque To [ :supplierName ]' , ['supplierName'=>$supplierName],$lang);
+			}
 			if($moneyPayment->isDownPayment()){
 				return __('Down Payment - Cheque From :name [ :contractName ] [ :contractCode ] With Number [ :number ]',['name'=>$supplierName,'contractName'=>$moneyPayment->getContractName(),'contractCode'=>$moneyPayment->getContractCode(),'number'=>$chequeNumber],$lang) ;
 			}
@@ -49,6 +52,16 @@ class MoneyPayment extends Model
 			return __('Payable Cheque To :name With Number [:number ] Paid Invoices [ :numbers ] [ :currency ]',['name'=>$supplierName,'number'=>$chequeNumber,'numbers'=>$paidInvoiceNumbers,'currency'=>$moneyPayment->getCurrency()],$lang) ;
 		}
 		if($moneyPayment->isCashPayment()){
+			
+			if($moneyPayment->isInvoiceSettlementWithDownPayment()){
+				return __('Cash To :name Settled Invoices [ :numbers ] [ :currency ] | Down Payment - [ :contractName ] [ :contractCode ]',[
+					'name'=>$supplierName ,
+					'numbers'=>$paidInvoiceNumbers ,
+					'currency'=>$moneyPayment->getCurrency(),
+					'contractName'=>$moneyPayment->getContractName(),
+					'contractCode'=>$moneyPayment->getContractCode()
+				]);
+			}
 			if($moneyPayment->getPartnerType()!='is_supplier'){
 				return __('Cash Payment To :name [ :partnerType ]',['name'=>$supplierName,'partnerType'=>$moneyPayment->getPartnerTypeFormatted()],$lang);
 			}

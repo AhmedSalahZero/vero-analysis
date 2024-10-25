@@ -170,6 +170,7 @@ trait IsInvoice
 		->where('currency',$currencyName)
 		->get()->pluck(self::CLIENT_NAME_COLUMN_NAME,self::CLIENT_NAME_COLUMN_NAME)->toArray();
 	}
+	
 	public static function getTotalInvoicesPlusVatAmountUntilDate( string $currencyName, string $customerName,string $startDate , string $endDate):float
 	{
 

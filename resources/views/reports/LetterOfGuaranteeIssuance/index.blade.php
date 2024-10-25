@@ -117,6 +117,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                 <tr class="table-standard-color">
                                     <th class="text-center align-middle">{{ __('#') }}</th>
                                     <th class="text-center align-middle"> {!! __('Transaction <br> Name') !!} </th>
+                                    <th class="text-center align-middle"> {!! __('Beneficiary <br> Name') !!} </th>
                                     <th class="text-center align-middle"> {!! __('Source') !!} </th>
                                     <th class="text-center align-middle"> {!! __('Status') !!} </th>
 									
@@ -140,6 +141,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                         {{ $index+1 }}
                                     </td>
                                     <td>{{ $model->getTransactionName() }}</td>
+                                    <td>{{ $model->getBeneficiaryName() }}</td>
                                     <td class="text-transform">{{ $model->getSourceFormatted() }}</td>
                                     <td class="text-transform
 									
@@ -233,6 +235,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                 <tr class="table-standard-color">
                                     <th class="text-center align-middle">{{ __('#') }}</th>
                                     <th class="text-center align-middle"> {!! __('Transaction <br> Name') !!} </th>
+                                    <th class="text-center align-middle"> {!! __('Beneficiary <br> Name') !!} </th>
                                     <th class="text-center align-middle"> {!! __('Source') !!} </th>
                                     <th class="text-center align-middle"> {!! __('Status') !!} </th>
                                     <th class="text-center align-middle">{{ __('Bank Name') }}</th>
@@ -255,6 +258,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                         {{ $index+1 }}
                                     </td>
                                     <td>{{ $model->getTransactionName() }}</td>
+									 <td>{{ $model->getBeneficiaryName() }}</td>
                                     <td>{{ $model->getSourceFormatted() }}</td>
                                     <td class="
 									@if($model->isExpired())
@@ -338,6 +342,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                 <tr class="table-standard-color">
                                     <th class="text-center align-middle">{{ __('#') }}</th>
                                     <th class="text-center align-middle"> {!! __('Transaction <br> Name') !!} </th>
+                                    <th class="text-center align-middle"> {!! __('Beneficiary <br> Name') !!} </th>
                                     <th class="text-center align-middle"> {!! __('Source') !!} </th>
                                     <th class="text-center align-middle"> {!! __('Status') !!} </th>
                                     <th class="text-center align-middle">{{ __('Bank Name') }}</th>
@@ -360,6 +365,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                         {{ $index+1 }}
                                     </td>
                                     <td>{{ $model->getTransactionName() }}</td>
+									<td>{{ $model->getBeneficiaryName() }}</td>
 									<td>{{ $model->getSourceFormatted() }}</td>
 									<td class="
 									@if($model->isExpired())
@@ -450,6 +456,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                 <tr class="table-standard-color">
                                     <th class="text-center align-middle">{{ __('#') }}</th>
                                     <th class="text-center align-middle"> {!! __('Transaction <br> Name') !!} </th>
+                                    <th class="text-center align-middle"> {!! __('Beneficiary <br> Name') !!} </th>
                                     <th class="text-center align-middle"> {!! __('Source') !!} </th>
                                     <th class="text-center align-middle"> {!! __('Status') !!} </th>
                                     <th class="text-center align-middle">{{ __('Bank Name') }}</th>
@@ -471,6 +478,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                         {{ $index+1 }}
                                     </td>
                                     <td>{{ $model->getTransactionName() }}</td>
+									<td>{{ $model->getBeneficiaryName() }}</td>
                                     <td>{{ $model->getSourceFormatted() }}</td>
                                     <td class="
 									@if($model->isExpired())

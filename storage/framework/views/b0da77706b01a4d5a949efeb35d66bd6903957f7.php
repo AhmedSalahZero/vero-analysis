@@ -420,7 +420,7 @@ use App\Models\MoneyReceived;
   									 <td class="text-wrap bank-max-width"><?php echo e($moneyReceived->getMoneyTypeFormatted()); ?></td>
                                     <td class="bank-max-width"><?php echo e($moneyReceived->getCustomerName()); ?></td>
                                     <td><?php echo e($moneyReceived->cheque->getChequeNumber()); ?></td>
-                                    <td><?php echo e($moneyReceived->getReceivedAmountFormatted()); ?></td>
+                                    <td><?php echo e($moneyReceived->getReceivedAmountFormatted() . ' '  . $moneyReceived->getCurrency()); ?></td>
                                     <td class="text-nowrap"> <?php echo e($moneyReceived->cheque->getDepositDateFormatted()); ?> </td>
                                     <td class="bank-max-width"><?php echo e($moneyReceived->cheque->getDrawlBankName()); ?></td>
                                     <td class="bank-max-width"><?php echo e($moneyReceived->cheque->getAccountTypeName()); ?></td>
@@ -622,7 +622,7 @@ use App\Models\MoneyReceived;
  									  <td class="text-wrap bank-max-width"><?php echo e($moneyReceived->getMoneyTypeFormatted()); ?></td>
                                     <td class="bank-max-width"><?php echo e($moneyReceived->getCustomerName()); ?></td>
                                     <td><?php echo e($moneyReceived->cheque->getChequeNumber()); ?></td>
-                                    <td><?php echo e($moneyReceived->getReceivedAmountFormatted()); ?></td>
+                                    <td><?php echo e($moneyReceived->getReceivedAmountFormatted() . ' ' . $moneyReceived->getCurrency()); ?></td>
                                     <td class="text-nowrap"> <?php echo e($moneyReceived->cheque->getDueDateFormatted()); ?> </td>
                                     <td class="text-nowrap"> <?php echo e($moneyReceived->cheque->getDepositDateFormatted()); ?> </td>
                                     <td class="bank-max-width"><?php echo e($moneyReceived->cheque->getDrawlBankName()); ?></td>

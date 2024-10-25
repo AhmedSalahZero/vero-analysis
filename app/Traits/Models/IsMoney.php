@@ -126,4 +126,11 @@ trait IsMoney
 		}
 		throw new \Exception('Customer Exception Invalid Money Type');
 	}
+	public static function getAllUniqueCustomerNamesForCheques(int $companyId , $currencyName)
+	{
+		return self::where('company_id',$companyId)
+		->where('type','cheque')
+		->where('currency',$currencyName)
+		->get()->pluck(self::CLIENT_NAME,self::CLIENT_NAME)->toArray();
+	}
 }
