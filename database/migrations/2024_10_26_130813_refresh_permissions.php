@@ -16,13 +16,8 @@ class RefreshPermissions extends Migration
         Artisan::call('refresh:permissions');
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
-        //
+      
     }
 }

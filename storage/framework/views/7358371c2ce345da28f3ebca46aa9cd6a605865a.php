@@ -200,8 +200,12 @@ td{
                                         <span style="overflow: visible; position: relative; width: 110px;">
 											<?php if(auth()->user()->can('update supplier payment')): ?>
 											<?php echo $__env->make('reports._review_modal',['model'=>$moneyPayment], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+											<?php if(!$moneyPayment->isOpenBalance()): ?>
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="<?php echo e(route('edit.money.payment',['company'=>$company->id,'moneyPayment'=>$moneyPayment->id])); ?>"><i class="fa fa-pen-alt"></i></a>
-                                            <a data-id="<?php echo e($moneyPayment->id); ?>" data-type="single" data-currency="<?php echo e($moneyPayment->getCurrency()); ?>" data-money-type="<?php echo e(MoneyPayment::PAYABLE_CHEQUE); ?>" data-toggle="modal" data-target="#send-to-under-collection-modal<?php echo e(MoneyPayment::PAYABLE_CHEQUE); ?>" type="button" class="btn js-can-trigger-cheque-under-collection-modal btn-secondary btn-outline-hover-primary btn-icon" title="<?php echo e(__('Mark As Paid')); ?>" href=""><i class="fa fa-money-bill"></i></a>
+											<?php endif; ?>
+											<?php if($moneyPayment->getIsPayableChequeDue()): ?>
+                                            <a data-id="<?php echo e($moneyPayment->id); ?>" data-type="single" data-currency="<?php echo e($moneyPayment->getCurrency()); ?>" data-money-type="<?php echo e(MoneyPayment::PAYABLE_CHEQUE); ?>" data-toggle="modal" data-target="#send-to-under-collection-modal<?php echo e(MoneyPayment::PAYABLE_CHEQUE); ?>" type="button" class="btn js-can-trigger-cheque-under-collection-modal btn-secondary btn-outline-hover-primary btn-icon"  href=""><i class="fa fa-money-bill"></i></a>
+											<?php endif; ?>
 											<?php endif; ?> 
 								
 											<?php if(!$moneyPayment->isOpenBalance()): ?>

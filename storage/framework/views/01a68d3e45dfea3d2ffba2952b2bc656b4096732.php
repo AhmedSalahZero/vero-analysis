@@ -367,13 +367,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
 
 <?php $__env->stopSection(); ?>
 <?php $__env->startPush('js'); ?>
-<script>
-$(document).on('click','.currency-change-js',function(){
-	let currentCurrency = $(this).attr('data-currency');
-	console.log(currentCurrency)
-	$('#from-currency').val(currentCurrency).trigger('change');
-})
-</script>
+
 <?php $__env->stopPush(); ?>
 
 <?php echo $__env->make('layouts.dashboard', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /media/salah/Software/projects/veroo/resources/views/admin/foreign-exchange-rate/foreign-exchange-rate.blade.php ENDPATH**/ ?>
