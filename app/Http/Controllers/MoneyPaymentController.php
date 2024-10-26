@@ -513,7 +513,6 @@ class MoneyPaymentController
 
 	public function destroy(Company $company , MoneyPayment $moneyPayment , DeleteMoneyPaymentRequest $request)
 	{
-		dd('good');
 		$moneyPayment->deleteRelations();
 		$activeTab = $moneyPayment->getType();
 		$moneyPayment->delete();
