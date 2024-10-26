@@ -296,11 +296,13 @@ class LetterOfGuaranteeIssuanceController
 		$commentAr = LetterOfGuaranteeStatement::generateCancelComment('ar',$partnerName,$transactionName,$lgCode);
 		$letterOfGuaranteeIssuance->handleLetterOfGuaranteeStatement($financialInstitutionId,$source,$letterOfGuaranteeFacilityId,$lgType,$company->id,$cancellationDate,0,$amount , 0,$letterOfGuaranteeIssuance->getLgCurrency(),0,$letterOfGuaranteeIssuance->getCdOrTdId(),LetterOfGuaranteeIssuance::FOR_CANCELLATION,$commentEn,$commentAr);
 		$letterOfGuaranteeIssuance->handleLetterOfGuaranteeCashCoverStatement($financialInstitutionId,$source,$letterOfGuaranteeFacilityId,$lgType,$company->id,$cancellationDate,0,0 , $cashCoverAmount ,$letterOfGuaranteeIssuance->getLgCurrency(),0,LetterOfGuaranteeIssuance::FOR_CANCELLATION);
-		$financialInstitutionAccountId = FinancialInstitutionAccount::findByAccountNumber($letterOfGuaranteeIssuance->getCashCoverDeductedFromAccountNumber(),$company->id , $financialInstitutionId)->id;
-		$debitCommentEn = CurrentAccountBankStatement::generateReturnLgCashCoverComment('en',$partnerName,$transactionName,$lgCode); ;
-		$debitCommentAr = CurrentAccountBankStatement::generateReturnLgCashCoverComment('ar',$partnerName,$transactionName,$lgCode); ;
-		$letterOfGuaranteeIssuance->storeCurrentAccountDebitBankStatement($cancellationDate,$cashCoverAmount , $financialInstitutionAccountId,0,$letterOfGuaranteeIssuance->id,$debitCommentEn , $debitCommentAr);
-			
+		$financialInstitutionAccount = FinancialInstitutionAccount::findByAccountNumber($letterOfGuaranteeIssuance->getCashCoverDeductedFromAccountNumber(),$company->id , $financialInstitutionId);
+		if($financialInstitutionAccount){
+			$financialInstitutionAccountId = $financialInstitutionAccount->id;
+			$debitCommentEn = CurrentAccountBankStatement::generateReturnLgCashCoverComment('en',$partnerName,$transactionName,$lgCode); ;
+			$debitCommentAr = CurrentAccountBankStatement::generateReturnLgCashCoverComment('ar',$partnerName,$transactionName,$lgCode); ;
+			$letterOfGuaranteeIssuance->storeCurrentAccountDebitBankStatement($cancellationDate,$cashCoverAmount , $financialInstitutionAccountId,0,$letterOfGuaranteeIssuance->id,$debitCommentEn , $debitCommentAr);
+		}
 		return redirect()->route('view.letter.of.guarantee.issuance',['company'=>$company->id,'active'=>$request->get('lg_type')])->with('success',__('Data Store Successfully'));
 	}
 	
@@ -424,9 +426,7 @@ class LetterOfGuaranteeIssuanceController
 		
 		
 		$letterOfGuaranteeIssuance->deleteAllRelations();
-		
 		$lgType = $letterOfGuaranteeIssuance->getLgType();
-
 		$letterOfGuaranteeIssuance->delete();
 		return redirect()->route('view.letter.of.guarantee.issuance',['company'=>$company->id,'active'=>$lgType]);
 	}

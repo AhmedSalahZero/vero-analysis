@@ -39,7 +39,7 @@ class ForeignExchangeRateController
 		->when($filterStartDate , function($collection) use ($filterStartDate,$filterEndDate){
 			return $collection->filterByDate($filterStartDate,$filterEndDate);
 		})
-		->sortByDesc('id')->values();
+		->sortByDesc('date')->values();
 
 		return $collection;
 	}

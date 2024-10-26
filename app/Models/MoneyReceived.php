@@ -49,6 +49,7 @@ class MoneyReceived extends Model
 			if($moneyReceived->isInvoiceSettlementWithDownPayment()){
 				return __('Cheque :name With Number [ :number ] Settled Invoices [ :numbers ] [ :currency ] | Down Payment - [ :contractName ] [ :contractCode ]',[
 					'name'=>$customerName ,
+					'number'=>$chequeNumber,
 					'numbers'=>$settledInvoiceNumbers ,
 					'currency'=>$moneyReceived->getCurrency(),
 					'contractName'=>$moneyReceived->getContractName(),

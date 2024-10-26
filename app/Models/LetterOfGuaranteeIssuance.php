@@ -428,7 +428,6 @@ class LetterOfGuaranteeIssuance extends Model
 	
 	public function deleteAllRelations():self
 	{
-		// currentAccountCreditBankStatement
 		LetterOfGuaranteeIssuanceAdvancedPaymentHistory::deleteButTriggerChangeOnLastElement($this->advancedPaymentHistories);
 		CurrentAccountBankStatement::deleteButTriggerChangeOnLastElement($this->currentAccountDebitBankStatements);
 		CurrentAccountBankStatement::deleteButTriggerChangeOnLastElement($this->currentAccountCreditBankStatements);

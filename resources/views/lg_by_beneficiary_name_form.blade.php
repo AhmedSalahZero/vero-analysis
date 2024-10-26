@@ -23,7 +23,7 @@
             <div class="kt-portlet" style="overflow-x:hidden">
                 <div class="kt-portlet__body">
                     <div class="form-group row">
-                        <div class="col-md-3 mb-4">
+                        <div class="col-md-2 mb-4">
                             <label>{{ __('Start Date') }}</span> </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
@@ -32,7 +32,7 @@
                             </div>
                         </div>
 
-                        <div class="col-md-3 mb-4">
+                        <div class="col-md-2 mb-4">
                             <label>{{ __('End Date') }}  </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
@@ -45,7 +45,7 @@
 
 
 
-                        <div class="col-md-3 mb-4">
+                        <div class="col-md-2 mb-4">
                             <label>{{ __('Select Currency') }} </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
@@ -58,12 +58,12 @@
                             </div>
                         </div>
 
-                        <div class="col-md-5 width-45">
+                        <div class="col-md-4">
                             <label>{{__('Benefiniciary')}} @include('star')</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
 
-                                    <select id="beneficiary-id"  name="beneficiary_id" class="form-control ">
+                                    <select data-live-search="true" data-actions-box="true" id="beneficiary-id"  name="beneficiary_id" class="form-control select2-select">
                                        
                                     </select>
 
@@ -74,7 +74,7 @@
 
                         
 
-                        <div class="col-md-2 width-12">
+                        <div class="col-md-2">
                             <label>{{__('Status')}} @include('star')</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">

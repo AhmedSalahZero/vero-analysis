@@ -40,6 +40,7 @@ class MoneyPayment extends Model
 			if($moneyPayment->isInvoiceSettlementWithDownPayment()){
 				return __('Cheque From :name With Number [ :number ] Settled Invoices [ :numbers ] [ :currency ] | Down Payment - [ :contractName ] [ :contractCode ]',[
 					'name'=>$supplierName ,
+					'number'=>$chequeNumber,
 					'numbers'=>$paidInvoiceNumbers ,
 					'currency'=>$moneyPayment->getCurrency(),
 					'contractName'=>$moneyPayment->getContractName(),
@@ -146,6 +147,10 @@ class MoneyPayment extends Model
 	
 	public function getPayableChequeDueDate(){
 		return $this->payableCheque ? $this->payableCheque->getDueDate(): null;
+	}
+	public function getIsPayableChequeDue():bool
+	{
+		return $this->payableCheque ? $this->payableCheque->getDueStatus() : false ;
 	}
 	public function getOutgoingTransferDueDate(){
 		return $this->outgoingTransfer ? $this->outgoingTransfer->actualPaymentDate(): null;

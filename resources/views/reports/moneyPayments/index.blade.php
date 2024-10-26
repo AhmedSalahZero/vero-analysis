@@ -189,8 +189,14 @@ td{
                                         <span style="overflow: visible; position: relative; width: 110px;">
 											@if(auth()->user()->can('update supplier payment'))
 											@include('reports._review_modal',['model'=>$moneyPayment])
+											@if(!$moneyPayment->isOpenBalance())
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.money.payment',['company'=>$company->id,'moneyPayment'=>$moneyPayment->id]) }}"><i class="fa fa-pen-alt"></i></a>
-                                            <a data-id="{{ $moneyPayment->id }}" data-type="single" data-currency="{{ $moneyPayment->getCurrency() }}" data-money-type="{{ MoneyPayment::PAYABLE_CHEQUE }}" data-toggle="modal" data-target="#send-to-under-collection-modal{{ MoneyPayment::PAYABLE_CHEQUE }}" type="button" class="btn js-can-trigger-cheque-under-collection-modal btn-secondary btn-outline-hover-primary btn-icon" title="{{ __('Mark As Paid') }}" href=""><i class="fa fa-money-bill"></i></a>
+											@endif
+											
+											@if($moneyPayment->getIsPayableChequeDue())
+                                            <a data-id="{{ $moneyPayment->id }}" data-type="single" data-currency="{{ $moneyPayment->getCurrency() }}" data-money-type="{{ MoneyPayment::PAYABLE_CHEQUE }}" data-toggle="modal" data-target="#send-to-under-collection-modal{{ MoneyPayment::PAYABLE_CHEQUE }}" type="button" class="btn js-can-trigger-cheque-under-collection-modal btn-secondary btn-outline-hover-primary btn-icon"  href=""><i class="fa fa-money-bill"></i></a>
+											@endif
+											
 											@endif 
 								
 											@if(!$moneyPayment->isOpenBalance())
