@@ -34,7 +34,7 @@
                                 <td>
                                     <div class="kt-input-icon">
                                         <div class="input-group">
-                                            <input name="execution_percentage_{{ $i }}" type="numeric" step="0.1" class="form-control execution-percentage-js" value="{{ isset($salesOrder) ? $salesOrder->getExecutionPercentage($i) : old('salesOrders.execution_percentage_'.$i,0) }}">
+                                            <input name="execution_percentage_{{ $i }}" type="numeric" step="0.1" class="form-control execution-percentage-js must-not-exceed-100" data-parent-query=".customize-elements" value="{{ isset($salesOrder) ? $salesOrder->getExecutionPercentage($i) : old('salesOrders.execution_percentage_'.$i,0) }}">
                                         </div>
                                     </div>
                                 </td>
@@ -46,7 +46,7 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <x-form.date :type="'text'" :classes="'datepicker-input recalc-end-date-2 start-date-2'" :default-value="formatDateForDatePicker(isset($salesOrder)  ? $salesOrder->getStartDate($i) : now())" :model="$salesOrder??null" :label="''" :type="'text'" :placeholder="__('')" :name="'start_date_'.$i" :required="true"></x-form.date>
+                                    <x-form.date :type="'text'" :classes="'datepicker-input recalc-end-date-2 start-date-2 recheck-start-date-rule-js'" :default-value="formatDateForDatePicker(isset($salesOrder)  ? $salesOrder->getStartDate($i) : now())" :model="$salesOrder??null" :label="''" :type="'text'" :placeholder="__('')" :name="'start_date_'.$i" :required="true"></x-form.date>
                                 </td>
 
                                 <td>
@@ -57,7 +57,7 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <x-form.date :type="'text'" :classes="'datepicker-input  end-date-2'" :default-value="formatDateForDatePicker(isset($salesOrder)  ? $salesOrder->getEndDate($i) : now())" :model="$salesOrder??null" :label="''" :type="'text'" :placeholder="__('')" :name="'end_date_'.$i" :required="true"></x-form.date>
+                                    <x-form.date :type="'text'" :classes="'datepicker-input recheck-start-date-rule-js  end-date-2'" :default-value="formatDateForDatePicker(isset($salesOrder)  ? $salesOrder->getEndDate($i) : now())" :model="$salesOrder??null" :label="''" :type="'text'" :placeholder="__('')" :name="'end_date_'.$i" :required="true"></x-form.date>
                                 </td>
                                 <td>
                                     <div class="kt-input-icon">

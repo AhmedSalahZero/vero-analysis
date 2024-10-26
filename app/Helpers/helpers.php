@@ -3969,6 +3969,12 @@ function getPermissions(array $systemsNames  = []):array
 			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
 				'group'=>'reports',
 			'view-name'=>'bank statement'
+		],[
+			'name'=>'view lg by beneficiary name report',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+				'group'=>'reports',
+			'view-name'=>'lg by beneficiary name report'
 		],
 		[
 			'name'=>'view lc & lg statement report',
@@ -5639,6 +5645,7 @@ function getHeaderMenu($currentCompany = null)
 	$canViewSafeStatement = $user->can('view safe statement report');
 	$canViewPartnersStatement = $user->can('view partners statement report');
 	$canViewBankStatement = $user->can('view bank statement report') ;
+	$canViewLgByBeneficiaryNameReport = $user->can('view lg by beneficiary name report') ;
 	$canViewLgLcStatement = $user->can('view lc & lg statement report') ;
 	$canViewCashFlow = $user->can('view cash flow report');
 	$canViewContractCashFlow = $user->can('view contract cash flow report');
@@ -5942,7 +5949,7 @@ function getHeaderMenu($currentCompany = null)
 				[
 					'title'=>__('Statement Reports'),
 					'link'=>'#',
-					'show'=>$canViewCashFlow || $canViewContractCashFlow ||  $canViewSafeStatement || $canViewPartnersStatement || $canViewBankStatement|| $canViewLgLcStatement || $canViewWithdrawalsSettlementReport ,
+					'show'=>$canViewCashFlow || $canViewContractCashFlow ||  $canViewSafeStatement || $canViewPartnersStatement || $canViewBankStatement|| $canViewLgByBeneficiaryNameReport || $canViewLgLcStatement || $canViewWithdrawalsSettlementReport ,
 					'submenu'=>[
 						[
 							'title'=>__('Safe Statement'),
@@ -5956,7 +5963,14 @@ function getHeaderMenu($currentCompany = null)
 							'link'=>route('view.bank.statement',['company'=>$company->id]),
 							'show'=>$canViewBankStatement,
 							'submenu'=>[]
-						],[
+						],
+						[
+							'title'=>__('LG By Beneficiary Name Report'),
+							'link'=>route('view.lg.by.beneficiary.name.report',['company'=>$company->id]),
+							'show'=>$canViewLgByBeneficiaryNameReport,
+							'submenu'=>[]
+						]
+						,[
 							'title'=>__('LG & LC Statement'),
 							'link'=>route('view.lg.lc.bank.statement',['company'=>$company->id]),
 							'show'=>$canViewBankStatement,

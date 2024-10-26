@@ -171,7 +171,7 @@ use App\Models\MoneyReceived ;
                                 </div>
 
                                 <div class="col-md-2 ">
-                                    <x-form.date :type="'text'" :classes="'datepicker-input recalc-end-date start-date regenerate-code-ajax'" :default-value="formatDateForDatePicker(old('start_date') ?: (isset($model)  ? $model->getStartDate() : now()) )" :model="$model??null" :label="__('Start Date')" :type="'text'" :id="'start-date-id'" :placeholder="__('')" :name="'start_date'" :required="true"></x-form.date>
+                                    <x-form.date :type="'text'" :classes="'datepicker-input recalc-end-date start-date regenerate-code-ajax '" :default-value="formatDateForDatePicker(old('start_date') ?: (isset($model)  ? $model->getStartDate() : now()) )" :model="$model??null" :label="__('Start Date')" :type="'text'" :id="'start-date-id'" :placeholder="__('')" :name="'start_date'" :required="true"></x-form.date>
                                 </div>
                                 <div class="col-md-2 ">
                                     <label> {{ __('Duration (Months)') }}
@@ -189,7 +189,7 @@ use App\Models\MoneyReceived ;
                                     </label>
                                     <div class="kt-input-icon">
                                         <div class="input-group">
-                                            <input id="end-date" disabled name="end_date" type="text" class="form-control datepicker-input" value="{{ old('end_date',isset($model) ? $model->getEndDate() : null )   }}">
+                                            <input id="end-date" disabled name="end_date" type="text" class="form-control datepicker-input end-date" value="{{ old('end_date',isset($model) ? $model->getEndDate() : null )   }}">
                                         </div>
                                     </div>
                                 </div>
@@ -740,7 +740,7 @@ use App\Models\MoneyReceived ;
 
     });
 
-    
+    $('.must-not-exceed-100').trigger('change')
 
 </script>
 
@@ -875,7 +875,103 @@ use App\Models\MoneyReceived ;
 	
 </script>
 
+<script>
+$(document).on('change','.recheck-start-date-rule-js',function(){
+	
+	let originContractStartDate = $('.start-date').val() ;
+	let contractStartDate = new Date(originContractStartDate)
+	let originContractEndDate = $('.end-date').val() ;
+	let contractEndDate = new Date(originContractEndDate)
+	let value = new Date($(this).val())
+	if(value < contractStartDate ){
+		let lang = $('body').data('lang');
+	title = "Oops..." ;
+	message = "Execution Start Date Can Not Be Less Than Contract Start Date" ;
+	if(lang === 'ar'){
+		title = 'خطأ'  ;
+		message = "تاريخ بدايه التنفيذ لا يمكن ان يكون اصغر من تاريخ بدايه العقد"
+	}
+	Swal.fire({
+            icon: "warning",
+            title,
+            text: message,
+        })
+		
+		$(this).datepicker('update',originContractStartDate)
+		
+	}
+	else if(value > contractEndDate ){
+		let lang = $('body').data('lang');
+	title = "Oops..." ;
+	message = "Execution Start Date Can Not Be Greater Than Contract End Date" ;
+	if(lang === 'ar'){
+		title = 'خطأ'  ;
+		message = "تاريخ بدايه التنفيذ لا يمكن ان يكون اكبر من تاريخ نهاية العقد"
+	}
+	Swal.fire({
+            icon: "warning",
+            title,
+            text: message,
+        })
+		
+		$(this).datepicker('update',originContractEndDate)
+		
+	}
 
+	
+	
+	
+})
+
+$(document).on('change','.recheck-end-date-rule-js',function(){
+	
+	let originContractStartDate = $('.start-date').val() ;
+	let contractStartDate = new Date(originContractStartDate)
+	let originContractEndDate = $('.end-date').val() ;
+	let contractEndDate = new Date(originContractEndDate)
+	let value = new Date($(this).val())
+	if(value < contractStartDate ){
+		let lang = $('body').data('lang');
+	title = "Oops..." ;
+	message = "Execution Date Can Not Be Less Than Contract Start Date" ;
+	if(lang === 'ar'){
+		title = 'خطأ'  ;
+		message = "تاريخ التنفيذ لا يمكن ان يكون اصغر من تاريخ بدايه العقد"
+	}
+	Swal.fire({
+            icon: "warning",
+            title,
+            text: message,
+        })
+		
+		$(this).datepicker('update',originContractStartDate)
+		
+	}
+	else if(value > contractEndDate ){
+		let lang = $('body').data('lang');
+	title = "Oops..." ;
+	message = "Execution Date Can Not Be Greater Than Contract End Date" ;
+	if(lang === 'ar'){
+		title = 'خطأ'  ;
+		message = "تاريخ التنفيذ لا يمكن ان يكون اكبر من تاريخ نهاية العقد"
+	}
+	Swal.fire({
+            icon: "warning",
+            title,
+            text: message,
+        })
+		
+		$(this).datepicker('update',originContractEndDate)
+		
+	}
+
+	
+	
+	
+})
+
+$('.recheck-start-date-rule-js').trigger('change')
+</script>
 @if(!isset($model))
 <script>
 	$('.regenerate-code-ajax:eq(0)').trigger('change')

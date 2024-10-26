@@ -718,6 +718,9 @@ Route::middleware([])->group(function () {
 					Route::get('show-bank-statement', 'BankStatementController@index')->name('view.bank.statement');
                     Route::get('bank-statement', 'BankStatementController@result')->name('result.bank.statement');
 					
+					Route::get('show-lg-by-beneficiary-name-report', 'LgByBeneficiaryNameReportController@index')->name('view.lg.by.beneficiary.name.report');
+                    Route::get('lg-by-beneficiary-name-report', 'LgByBeneficiaryNameReportController@result')->name('result.lg.by.beneficiary.name.report');
+					
 					Route::get('lg-lc-bank-statement', 'LGLCSBanktatementController@index')->name('view.lg.lc.bank.statement');
                     Route::post('lg-lc-bank-statement', 'LGLCSBanktatementController@result')->name('result.lg.lc.bank.statement');
 					Route::get('get-lg-lc-types','LGLCSBanktatementController@getLgOrLcType')->name('get.lc.or.lg.types');
@@ -764,6 +767,7 @@ Route::middleware([])->group(function () {
 					Route::get('money-received/get-account-amount-based-on-account-number/{accountType}/{accountNumber}/{financialInstitutionId}', 'MoneyReceivedController@getAccountAmountForAccountNumber')->name('get.account.amount.based.on.account.number'); // ajax request
 					Route::get('get-customers-based-on-currency/{currencyName}','MoneyReceivedController@getCustomersBasedOnCurrency');
 					Route::get('get-partners-based-on-type/{currencyName}','MoneyReceivedController@getPartnersBasedOnCurrency');
+					Route::get('get-beneficiary-name-from-lg-issuance-based-on-currency','LetterOfGuaranteeIssuanceController@getBeneficiaryNameByCurrency')->name('get.beneficiary.name.by.currency');
 					 Route::post('confirmed-reviewed/{model}','MoneyReceivedController@markAsConfirmed')->name('confirmed.review');
 
 					Route::get('money-received', 'MoneyReceivedController@index')->name('view.money.receive');
