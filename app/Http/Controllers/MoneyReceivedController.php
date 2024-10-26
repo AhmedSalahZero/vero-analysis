@@ -275,21 +275,17 @@ class MoneyReceivedController
 		$moneyReceived = MoneyReceived::find($downPaymentId);
 		$salesOrders = SalesOrder::where('contract_id',$contractId)->get();
 		$formattedSalesOrders = [];
-		// dd($salesOrders);
 		foreach($salesOrders as $index=>$salesOrder){
 			/**
 			 * @var SalesOrder $salesOrder 
 			 */
 			$receivedAmount = $moneyReceived ? $moneyReceived->downPaymentSettlements->where('sales_order_id',$salesOrder->id)->first() : null ;
-			// dd($moneyReceived , $moneyReceived->downPaymentSettlements);
 			$formattedSalesOrders[$index]['received_amount'] = $receivedAmount && $receivedAmount->down_payment_amount ? $receivedAmount->down_payment_amount : 0;
 			$formattedSalesOrders[$index]['so_number'] = $salesOrder->so_number;
 			$formattedSalesOrders[$index]['amount'] = $salesOrder->getAmount();
-			// dd($moneyReceived->downPaymentSettlements,$salesOrder);
 			// $formattedSalesOrders[$index]['allocated_amount'] =   // for edit form
 			$formattedSalesOrders[$index]['id'] = $salesOrder->id;
 		}
-		// dd($formattedSalesOrders);
 			return response()->json([
 				'status'=>true , 
 				'sales_orders'=>$formattedSalesOrders,
