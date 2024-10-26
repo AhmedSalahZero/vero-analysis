@@ -431,6 +431,13 @@ class LetterOfGuaranteeIssuanceController
 		return redirect()->route('view.letter.of.guarantee.issuance',['company'=>$company->id,'active'=>$lgType]);
 	}
 	
+	public function getBeneficiaryNameByCurrency(Request $request , Company $company ){
+		$currencyName = $request->get('currencyName');
+		$beneficiaries = $company->letterOfGuaranteeIssuances->where('lg_currency',$currencyName)->load('beneficiary')->pluck('beneficiary.name','beneficiary.id')->toArray() ;
+		return response()->json([
+			'beneficiaries'=>$beneficiaries
+		]);
+	}
 
 
 }

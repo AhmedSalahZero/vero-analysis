@@ -259,8 +259,11 @@ class CustomerInvoiceDashboardController extends Controller
 				->leftJoin('fully_secured_overdrafts',function($q) use($tdAccountTypeId) {
 					$q->on('fully_secured_overdrafts.cd_or_td_account_id','=','time_of_deposits.account_number')->where('fully_secured_overdrafts.cd_or_td_account_type_id',$tdAccountTypeId);
 				})
-				->leftJoin('letter_of_guarantee_issuances',function($q) use($tdAccountTypeId) {
-					$q->on('letter_of_guarantee_issuances.cd_or_td_account_number','=','time_of_deposits.account_number')->where('letter_of_guarantee_issuances.cd_or_td_account_type_id',$tdAccountTypeId);
+				->leftJoin('letter_of_guarantee_issuances as lg_cd',function($q) use($tdAccountTypeId) {
+					$q->on('lg_cd.cd_or_td_account_number','=','time_of_deposits.account_number')->where('lg_cd.cd_or_td_account_type_id',$tdAccountTypeId);
+				})
+				->leftJoin('letter_of_guarantee_issuances as lg_cash',function($q) use($tdAccountTypeId) {
+					$q->on('lg_cash.cash_cover_deducted_from_account_number','=','time_of_deposits.account_number')->where('lg_cash.cash_cover_deducted_from_account_type',$tdAccountTypeId);
 				})
 				/**
 				 * ! مؤجلة لحين الانتهاء من جدول ال 
@@ -271,9 +274,10 @@ class CustomerInvoiceDashboardController extends Controller
 				// })
 				/// issue here
 				->orderBy('time_of_deposits.end_date', 'desc')
-				->selectRaw(' "'. $financialInstitutionName .'" as financial_institution_name  , time_of_deposits.account_number as account_number,time_of_deposits.amount as amount, case 
-				when letter_of_guarantee_issuances.cash_cover_deducted_from_account_type = '.$tdAccountTypeId .' then "' .  __('LG') 
-				.'" when letter_of_guarantee_issuances.cd_or_td_account_type_id = '.$tdAccountTypeId .' then "' .  __('LG') 
+				->selectRaw(' "'. $financialInstitutionName .'" as financial_institution_name  , time_of_deposits.account_number as account_number,time_of_deposits.amount as amount, 
+				case 
+				when lg_cash.cash_cover_deducted_from_account_type = '.$tdAccountTypeId .' then "' .  __('LG') 
+				.'" when lg_cd.cd_or_td_account_type_id = '.$tdAccountTypeId .' then "' .  __('LG') 
 				.'" when fully_secured_overdrafts.cd_or_td_account_type_id = '.$tdAccountTypeId .' then "'.  __('Overdraft') 
 				
 				/**
@@ -285,7 +289,7 @@ class CustomerInvoiceDashboardController extends Controller
 				'"  else "'. __('Free To Use') .'" end as blocked')
 				->get();
 				;	
-			dd($timeDepositsForCurrentFinancialInstitution);
+		
 				foreach($timeDepositsForCurrentFinancialInstitution as $timeDepositsForCurrentFinancialInstitutionDetail){
 					$details[$currencyName]['time_of_deposits'][] = (array)$timeDepositsForCurrentFinancialInstitutionDetail ;
 				}
