@@ -49,11 +49,12 @@ class LabelingItemExport implements
 	public function __construct( $items )
 	{
 		$this->writerType = 'Xlsx';
-		$this->fileName =   'testtt.Xlsx';
+		$this->fileName =   'labeling.Xlsx';
 		$this->exportData = $items;
 		$this->maxRows = count($items) ;
 		$this->startQrcodeFromRowNumber = 6 ;
 		$this->headers =LabelingItem::getHeaderFromElement($items->first())  ;
+
 		$this->maxColsCount = count($this->headers)  ;
 		
 	}
@@ -85,6 +86,7 @@ class LabelingItemExport implements
 			 ]
 
 		];
+	
 		return array_merge($header,[$this->headers]);
 	}
 	
@@ -117,30 +119,15 @@ public function drawings()
 		$data= [];
 		foreach($this->headers as $index=>$headerName){
 			if($index == 0){ // barcode
-				$data[$index] = '';
+				$data[$index] = $row->{$headerName};
+				// $data[$index] = '';
 				continue ;
 			}
 			$data[$index] = str_replace('//','// ',$row->{$headerName}) ;
 		}
 		return $data ;
 		
-		// return [
-		// 	'',
-		// 	$row->
-		// ];
-		// return $row;
-
-		//    return [
-		//        $row->getId(),
-		//        $row->getRevenueBusinessLineName(),
-		//        $row->getServiceCategoryName(),
-		//        $row->getServiceItemName(),
-		//        $row->getDeliveryDays(),
-		//        $row->getTotalRecommendPriceWithoutVatFormatted(),
-		//        $row->getTotalRecommendPriceWithVatFormatted(),
-		//        $row->getTotalNetProfitAfterTaxesFormatted(),
-
-		//    ];
+	
 	}
 
 	public function registerEvents(): array

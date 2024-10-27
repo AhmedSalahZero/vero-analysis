@@ -4673,7 +4673,7 @@ function number_unformat($number, $force_number = true, $dec_point = '.', $thous
 }
 function hasUploadData($company_id)
 {
-    return SalesGathering::where('company_id', $company_id)->first() != null;
+    return Schema::hasTable('sales_gathering') ? SalesGathering::where('company_id', $company_id)->first() != null : false;
 }
 function getEndYearBasedOnDataUploaded(Company $company, int $minusFromYear = 0)
 {
