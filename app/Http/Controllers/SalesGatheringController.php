@@ -397,7 +397,9 @@ class SalesGatheringController extends Controller
 		public function exportLabelingItems(Company $company , Request $request ,string $type){
 			if($type == 'excel'){
 				$items = LabelingItem::where('company_id',$company->id )->get() ;
+		
 				$items = $this->removeAllNoneEmpty($items);
+		
 				return (new LabelingItemExport($items))->download('Labeling Item.XLSX','Xlsx');
 			}
 			if($type == 'pdf'){
