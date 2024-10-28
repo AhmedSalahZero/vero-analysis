@@ -120,7 +120,6 @@ class Notification extends Model
 		$formattedItems = [];
 
 		foreach(self::getAllTypesFormatted() as $mainTypeId => $detailArray ){
-			// dd($company->notifications , $mainTypeId);
 			$mainCount = 0 ;
 			
 			$mainArr = [

@@ -186,6 +186,7 @@ class FinancialInstitutionController
 		}
 		$data['balance_date'] = $request->get('balance_date') ? Carbon::make($request->get('balance_date'))->format('Y-m-d'):null;
 		$financialInstitution->update($data);
+		// $financialInstitution->getMainAccount();
 		 $activeTab = $this->getActiveTab($type);
 		return redirect()->route('view.financial.institutions',['company'=>$company->id,'active'=>$activeTab])->with('success',__('Item Has Been Updated Successfully'));
 	}

@@ -133,8 +133,10 @@
 
 
 
-                                    <?php if(!$model->isMainAccount()): ?>
-                                    <div class="col-md-3">
+                                    
+									<input type="hidden" value="<?php echo e($model->getCurrency()); ?>" name="old_currency">
+                                 
+								    <div class="col-md-3">
                                         <label><?php echo e(__('Select Currency')); ?> </label>
                                         <div class="input-group">
                                             <select name="currency" class="form-control repeater-select">
@@ -145,7 +147,7 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <?php endif; ?>
+                                    
 
 
                                     <div class="col-2">

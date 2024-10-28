@@ -85,15 +85,15 @@ class FinancialInstitutionAccount extends Model
 	/**
 	 * * هو اول حساب بيدخلة اليوزر وبيكون دايما مصري لان ما ينفعش تنشئ حساب دولاري مثلا من غير الحساب المصري
 	 */
-    public function isMainAccount():bool
-	{
-		return (bool)$this->is_main_account;
-	}
+    // public function isMainAccount():bool
+	// {
+	// 	return (bool)$this->is_main_account;
+	// }
 	
-	public function isMainAccountFormatted():string 
-	{
-		return $this->isMainAccount() ? __('Yes') : __('No');
-	}
+	// public function isMainAccountFormatted():string 
+	// {
+	// 	return $this->isMainAccount() ? __('Yes') : __('No');
+	// }
 	
 	public function getCertificatesOfDeposits():HasMany
 	{

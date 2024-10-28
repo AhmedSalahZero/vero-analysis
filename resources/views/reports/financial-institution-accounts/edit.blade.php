@@ -111,8 +111,10 @@
 
 
 
-                                    @if(!$model->isMainAccount())
-                                    <div class="col-md-3">
+                                    {{-- @if(!$model->isMainAccount()) --}}
+									<input type="hidden" value="{{ $model->getCurrency() }}" name="old_currency">
+                                 
+								    <div class="col-md-3">
                                         <label>{{__('Select Currency')}} </label>
                                         <div class="input-group">
                                             <select name="currency" class="form-control repeater-select">
@@ -123,7 +125,7 @@
                                             </select>
                                         </div>
                                     </div>
-                                    @endif
+                                    {{-- @endif --}}
 
 
                                     <div class="col-2">

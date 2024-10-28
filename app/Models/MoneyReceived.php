@@ -157,7 +157,10 @@ class MoneyReceived extends Model
     {
         return $this->getType() ==self::CHEQUE;
     }
-  
+	public function isChequeInSafe()
+	{
+		return $this->isCheque() && $this->cheque->isInSafe();
+	}
     public function isIncomingTransfer()
     {
         return $this->getType() ==self::INCOMING_TRANSFER;

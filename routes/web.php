@@ -936,12 +936,9 @@ Route::middleware([])->group(function () {
                     // For [Zone , Sales Channels , Categories , Products , Product Items , Branches , Business Sectors ,Sales Persons]
                     $routesDefinition = (new RoutesDefinition());
                     $saleTrendRoutes = $routesDefinition->salesTrendAnalysisRoutes();
-                    // dd($saleTrendRoutes);
                     foreach ($saleTrendRoutes as $nameOfMainItem => $info) {
                         if (isset($info['class_path'])) {
-                            // 						if($nameOfMainItem == 'Products'){
-                            // dd($info['name'] . '.sales.analysis',!isset($info['analysis_view']));
-                            // 						}
+                          
 
                             // Not All Reports Contains Analysis Reports
                             !isset($info['analysis_view']) ?: Route::get('/' . $nameOfMainItem . 'SalesAnalysis/View', $info['class_path'] . '@' . $info['analysis_view'])->name($info['name'] . '.sales.analysis');
@@ -979,14 +976,10 @@ Route::middleware([])->group(function () {
                     //########### Two Dimensional Ranking ############
                     $twoDimentionsRoutes = $routesDefinition->twoDimensionalRankingsRoutes();
                     foreach ($twoDimentionsRoutes as $nameOfMainItem => $info) {
-                        // dd($nameOfMainItem , $info['sub_items']);
 
                         foreach ($info['sub_items'] as $viewName => $sub_item) {
                             if (isset($info['is_provider']) && $info['is_provider'] === true) {
-                                // dd($viewName);
-                                // Route::get('/' .$nameOfMainItem.'VS' .$viewName. '/View', 'Analysis\SalesGathering\ProvidersTwodimensionalSalesBreakdownAgainstAnalysisReport@index')->name( $info['name'].'.vs.'.$sub_item.'.view');
                             } else {
-                                // dd($info['name'].'.vs.'.$sub_item.'Ranking'.'.view');
                                 Route::get('/' . $nameOfMainItem . 'VS' . $viewName . 'Ranking' . '/View', 'Analysis\SalesGathering\TwodimensionalSalesBreakdownAgainstRankingAnalysisReport@index')->name($info['name'] . '.vs.' . $sub_item . 'Ranking' . '.view');
                             }
                         }
@@ -1154,15 +1147,4 @@ Route::get('removeSessionForRedirect', function () {
             'url' => $url
         ]);
     }
-});
-Route::get('testing', function (Request $request) {
-    // foreach()
-    $test = Test::find(1);
-    $test->delete();
-    // $test->update([
-    // 	'debit'=>0,
-    // 	'updated_at'=>now()
-    // ]);
-    dd('updated2....');
-    // foreach(Test::first() as $test){}
 });
