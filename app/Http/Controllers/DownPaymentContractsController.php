@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreDownPaymentSettlementRequest;
 use App\Models\Company;
 use App\Models\Contract;
+use App\Models\CustomerInvoice;
 use App\Models\MoneyReceived;
 use App\Models\Partner;
 use App\Traits\Models\HasBasicFilter;
@@ -121,10 +122,12 @@ class DownPaymentContractsController extends Controller
 		$invoices = $invoices->orderBy('invoice_date','asc')->get() ; 
 		$downPaymentAmount =  $downPayment->getDownPaymentAmount();
 		$isDownPaymentFromMoneyPayment = $downPayment->isInvoiceSettlementWithDownPayment();
+		$hasProjectNameColumn = CustomerInvoice::hasProjectNameColumn();
 		
 		return view('contracts-down-payment.settlement_form',[
 			'modelType'=>'MoneyReceived',
 			'customerNameText'=>__('Customer Name'),
+			'hasProjectNameColumn'=>$hasProjectNameColumn,
 			'invoices'=>$invoices ,
 			'downPayment'=>$downPayment,
 			'currencies'=>$currencies,

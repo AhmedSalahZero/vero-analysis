@@ -332,7 +332,7 @@
                                             {{ __('Cash Cover') }}
                                         </th>
 										<th class="view-table-th     header-th  align-middle text-center">
-                                            {{ __('Commission Rate %') }}
+                                           {!! __('Commission <br> Rate %') !!}
                                         </th>
 
                                     

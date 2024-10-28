@@ -28,7 +28,11 @@ use App\Models\MoneyReceived ;
         width: 12.5% !important;
         flex: initial !important;
     }
-
+.width-17{
+        max-width: initial !important;
+        width: 17% !important;
+        flex: initial !important;
+    }
     .width-45 {
         max-width: initial !important;
         width: 45% !important;
@@ -361,7 +365,7 @@ use App\Models\MoneyReceived ;
                                 </div>
                             </div>
 
-                            <div class="col-md-1 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden">
+                            <div class="col-md-2 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden">
                                 <label><?php echo e(__('Amount')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
                                 <div class="kt-input-icon">
                                     <input readonly value="<?php echo e(0); ?>" type="text" name="amount_in_receiving_currency[<?php echo e(MoneyReceived::CASH_IN_SAFE); ?>]" class="form-control only-greater-than-or-equal-zero-allowed amount-after-exchange-rate-class" data-type="<?php echo e(MoneyReceived::CASH_IN_SAFE); ?>">
@@ -446,7 +450,7 @@ use App\Models\MoneyReceived ;
                                 </div>
                             </div>
 
-                            <div class="col-md-1 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden">
+                            <div class="col-md-2 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden">
                                 <label><?php echo e(__('Amount')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
                                 <div class="kt-input-icon">
                                     <input readonly value="<?php echo e(0); ?>" type="text" name="amount_in_receiving_currency[<?php echo e(MoneyReceived::CASH_IN_BANK); ?>]" class="form-control only-greater-than-or-equal-zero-allowed amount-after-exchange-rate-class" data-type="<?php echo e(MoneyReceived::CASH_IN_BANK); ?>">
@@ -549,7 +553,7 @@ use App\Models\MoneyReceived ;
                                 </div>
                             </div>
 
-                            <div class="col-md-1 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden">
+                            <div class="col-md-2 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden">
                                 <label><?php echo e(__('Amount')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
                                 <div class="kt-input-icon">
                                     <input readonly value="<?php echo e(0); ?>" type="text" name="amount_in_receiving_currency[<?php echo e(MoneyReceived::CHEQUE); ?>]" class="form-control only-greater-than-or-equal-zero-allowed amount-after-exchange-rate-class" data-type="<?php echo e(MoneyReceived::CHEQUE); ?>">
@@ -632,7 +636,7 @@ use App\Models\MoneyReceived ;
                                 </div>
                             </div>
 
-                            <div class="col-md-1 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden">
+                            <div class="col-md-2 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden">
                                 <label><?php echo e(__('Amount')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
                                 <div class="kt-input-icon">
                                     <input readonly value="<?php echo e(0); ?>" type="text" name="amount_in_receiving_currency[<?php echo e(MoneyReceived::INCOMING_TRANSFER); ?>]" class="form-control only-greater-than-or-equal-zero-allowed amount-after-exchange-rate-class" data-type="<?php echo e(MoneyReceived::INCOMING_TRANSFER); ?>">

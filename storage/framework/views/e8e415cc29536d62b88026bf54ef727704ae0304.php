@@ -142,7 +142,7 @@
 <?php $component->withName('main-form-title'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['id' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('main-form-title'),'class' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('')]); ?><?php echo e(__('LG Report By Beneficiary Name ['  ) . $beneficiaryName . ' ] [' . $startDate . ' ] [ ' . $endDate . ' ] [ ' . __(touppercase($currency)) . ' ]'); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['id' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('main-form-title'),'class' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('')]); ?><?php echo e(__('LG Report By Bank Name ['  ) . $bankName . ' ] [' . $startDate . ' ] [ ' . $endDate . ' ] [ ' . __(touppercase($currency)) . ' ]'); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
@@ -320,16 +320,19 @@
 
                                         </th>
 
-                                        <th class="view-table-th   header-th  align-middle text-center">
-                                            <?php echo e(__('Beneficiary Name')); ?>
+                               <th class="view-table-th     header-th  align-middle text-center">
+                                            <?php echo e(__('Bank Name')); ?>
 
-                                        </th>
+                                        </th> 
                                      
                                         <th class="view-table-th     header-th  align-middle text-center">
                                             <?php echo e(__('LG Type')); ?>
 
                                         </th>
-                                       
+                                            <th class="view-table-th   header-th  align-middle text-center">
+                                            <?php echo e(__('Beneficiary Name')); ?>
+
+                                        </th>
                                         <th class="view-table-th     header-th  align-middle text-center">
                                             <?php echo e(__('Transaction Name')); ?>
 
@@ -345,10 +348,8 @@
                                             <?php echo e(__('Source')); ?>
 
                                         </th>
-                                        <th class="view-table-th     header-th  align-middle text-center">
-                                            <?php echo e(__('Bank Name')); ?>
-
-                                        </th> 
+										     
+                                       
 										<th class="view-table-th     header-th  align-middle text-center">
                                             <?php echo e(__('Amount')); ?>
 
@@ -361,7 +362,7 @@
 
                                         </th>
 										<th class="view-table-th     header-th  align-middle text-center">
-                                           <?php echo __('Commission <br> Rate %'); ?>
+                                            <?php echo e(__('Commission Rate %')); ?>
 
                                         </th>
 
@@ -387,12 +388,15 @@
                                     <?php $__currentLoopData = $results; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index=>$modelAsStdClass): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                     <tr class=" parent-tr reset-table-width text-nowrap  cursor-pointer sub-text-bg text-capitalize is-close   ">
                                         <td class="sub-text-bg  "><?php echo e($index+1); ?></td>
-                                        <td class="sub-text-bg  text-center "><?php echo e($modelAsStdClass->partner_name); ?></td>
+                                        <td class="sub-text-bg  text-center "><?php echo e($modelAsStdClass->financial_institution_name); ?></td>
+										
+
                                         <td class="sub-text-bg  text-center "><?php echo e($modelAsStdClass->lg_type); ?></td>
+										                                        <td class="sub-text-bg  text-center "><?php echo e($modelAsStdClass->partner_name); ?></td>
+										
                                         <td class="sub-text-bg  text-center "><?php echo e($modelAsStdClass->transaction_name); ?></td>
                                         <td class="sub-text-bg  text-center "><?php echo e($modelAsStdClass->lg_code); ?></td>
                                         <td class="sub-text-bg  text-center "><?php echo e($modelAsStdClass->source); ?></td>
-                                        <td class="sub-text-bg  text-center "><?php echo e($modelAsStdClass->financial_institution_name); ?></td>
                                         <td class="sub-text-bg  text-center "><?php echo e(number_format($modelAsStdClass->lg_amount)); ?></td>
                                         <td class="sub-text-bg  text-center "><?php echo e($modelAsStdClass->renewal_date); ?></td>
                                         <td class="sub-text-bg  text-center "><?php echo e(number_format($modelAsStdClass->cash_cover_amount)); ?></td>
@@ -526,4 +530,4 @@
   
     <?php $__env->stopSection(); ?>
 
-<?php echo $__env->make('layouts.dashboard', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /media/salah/Software/projects/veroo/resources/views/lg_by_beneficiary_name_result.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('layouts.dashboard', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /media/salah/Software/projects/veroo/resources/views/lg_by_bank_name_result.blade.php ENDPATH**/ ?>

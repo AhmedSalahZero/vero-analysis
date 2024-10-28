@@ -226,6 +226,7 @@ class CustomerInvoice extends Model implements IInvoice
 			$result[$index]['invoice_number'] = $invoiceArr['invoice_number'];
 			$result[$index]['currency'] = $invoiceArr['currency'];
 			$result[$index]['net_invoice_amount'] = $invoiceArr['net_invoice_amount'];
+			$result[$index]['project_name'] = $invoiceArr['project_name'];
 
 			$result[$index]['collected_amount'] = $inEditMode 	?  (double)$invoiceArr['collected_amount'] - (double) $invoiceArr['settlement_amount']  : (double)$invoiceArr['collected_amount'];
 			$result[$index]['net_balance'] = $inEditMode ? $invoiceArr['net_balance'] +  $invoiceArr['settlement_amount']  + (double) $invoiceArr['withhold_amount'] : $invoiceArr['net_balance']  ;
@@ -236,11 +237,36 @@ class CustomerInvoice extends Model implements IInvoice
 		}
 		return $result;
 	}
+	public static function hasProjectNameColumn()
+	{
+		return DB::table('customer_invoices')->where('company_id',getCurrentCompanyId())->where('project_name','!=',null)->count();
+	}
+	public function getProjectName()
+	{
+		return $this->project_name ?: '--';
+	}
 	public static function getSettlementsTemplate(string $invoiceNumber = null , string $dueDateFormatted = null , string $invoiceDueDateFormatted = null , string $invoiceCurrency = null , $netInvoiceAmountFormatted = 0 , $collectedAmountFormatted = 0,$netBalanceFormatted = 0 , $settlementAmount = 0 ,$withholdAmount = 0 )
 	{
+		$projectDiv = "";
+		$hasProjectNameColumn = self::hasProjectNameColumn();
+		if($hasProjectNameColumn){
+			$projectDiv = '<div class="col-md-1 width-17">
+					<label>'. __('Project Name') .'</label>
+					<div class="kt-input-icon">
+						<div class="kt-input-icon">
+							<div class="input-group date">
+								<input readonly class="form-control js-project-name" name="settlements['.$invoiceNumber.'][project_name]" value="">
+							</div>
+						</div>
+					</div>
+				</div>';
+		}
 		return  '
 		<div class=" kt-margin-b-10 border-class">
 			<div class="form-group row align-items-end">
+			
+			'. $projectDiv .'
+				
 				<div class="col-md-1 width-10">
 					<label>'. __('Invoice Number') .'</label>
 					<div class="kt-input-icon">
@@ -267,14 +293,9 @@ class CustomerInvoice extends Model implements IInvoice
 						</div>
 					</div>
 				</div>
-				<div class="col-md-1 width-8">
-					<label> '. __('Currency') .' </label>
-					<div class="kt-input-icon">
-						<input name="settlements['.$invoiceNumber.'][currency]" type="text" value="'. $invoiceCurrency .'" disabled class="form-control js-currency">
-					</div>
-				</div>
-				<div class="col-md-1 width-12">
-					<label> '. __('Net Invoice Amount') .' </label>
+				
+				<div class="col-md-1 width-12 common-parent-js">
+					<label> '. __('Invoice Amount')  .' [ '. '<span class="currency-span"></span>' .' ] ' .' </label>
 					<div class="kt-input-icon">
 						<input name="settlements['.$invoiceNumber.'][net_invoice_amount]" value="'.$netInvoiceAmountFormatted.'" type="text" disabled class="form-control js-net-invoice-amount">
 					</div>

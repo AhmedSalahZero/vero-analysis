@@ -7,6 +7,12 @@ use App\Models\MoneyReceived ;
 <link href="<?php echo e(url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css')); ?>" rel="stylesheet" type="text/css" />
 <link href="<?php echo e(url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css')); ?>" rel="stylesheet" type="text/css" />
 <style>
+.width-17{
+        max-width: initial !important;
+        width: 17% !important;
+        flex: initial !important;
+    }
+	
     label {
         text-align: left !important;
     }
@@ -174,7 +180,21 @@ use App\Models\MoneyReceived ;
 						  
 						  <div class=" kt-margin-b-10 border-class">
 			<div class="form-group row align-items-end">
-				<div class="col-md-1 width-10">
+			
+				<?php if($hasProjectNameColumn): ?>
+				<div class="col-md-1 width-17 ">
+					<label> <?php echo e(__('Project Name')); ?> </label>
+					<div class="kt-input-icon">
+						<div class="kt-input-icon">
+							<div class="input-group date">
+								<input readonly class="form-control js-project-name" name="settlements['.$invoiceNumber.'][project_name]" value="<?php echo e($invoice->getProjectName()); ?>">
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<?php endif; ?>
+				<div class="col-md-1 width-10 ">
 					<label> <?php echo e(__('Invoice Number')); ?> </label>
 					<div class="kt-input-icon">
 						<div class="kt-input-icon">
@@ -184,7 +204,7 @@ use App\Models\MoneyReceived ;
 						</div>
 					</div>
 				</div>
-				<div class="col-md-1 width-9">
+				<div class="col-md-1 width-9 ">
 					<label><?php echo e(__('Invoice Date')); ?></label>
 					<div class="kt-input-icon">
 						<div class="input-group date">
@@ -192,7 +212,7 @@ use App\Models\MoneyReceived ;
 						</div>
 					</div>
 				</div>
-				<div class="col-md-1 width-9">
+				<div class="col-md-1 width-9 ">
 					<label><?php echo e(__('Due Date')); ?></label>
 					<div class="kt-input-icon">
 						<div class="input-group date">
@@ -201,40 +221,35 @@ use App\Models\MoneyReceived ;
 					</div>
 				</div>
 				
-				<div class="col-md-1 width-8">
-					<label> <?php echo e(__('Currency')); ?> </label>
-					<div class="kt-input-icon">
-						<input name="settlements[<?php echo e($index); ?>][currency]" type="text" disabled class="form-control" value="<?php echo e($invoice->getCurrency()); ?>">
-					</div>
-				</div>
 				
-				<div class="col-md-2 width-12">
-					<label> <?php echo e(__('Net Invoice Amount')); ?> </label>
+				
+				<div class="col-md-2 width-12 ">
+					<label> <?php echo e(__('Invoice Amount') . ' [ ' . $invoice->getCurrency() .' ]'); ?> </label>
 					<div class="kt-input-icon">
 						<input name="settlements[<?php echo e($index); ?>][net_invoice_amount]" type="text" disabled class="form-control" value="<?php echo e($invoice->getNetInvoiceAmountFormatted()); ?>">
 					</div>
 				</div>
 				
-				<div class="col-md-2 width-12">
+				<div class="col-md-2 width-12 ">
 					<label> <?php echo e(__('Collected Amount')); ?> </label>
 					<div class="kt-input-icon">
 						<input name="settlements[<?php echo e($index); ?>][collected_amount]" type="text" disabled class="form-control" value="<?php echo e(number_format($invoice->collected_amount,0)); ?>">
 					</div>
 				</div>
 		
-				<div class="col-md-2 width-12">
+				<div class="col-md-2 width-12 ">
 					<label> <?php echo e(__('Net Balance')); ?> </label>
 					<div class="kt-input-icon">
 						<input name="settlements[<?php echo e($index); ?>][net_balance]" type="text" disabled class="form-control " value="<?php echo e($invoice->getNetBalanceFormatted()); ?>">
 					</div>
 				</div>
-				<div class="col-md-2 width-12">
+				<div class="col-md-1 width-9.5 ">
 					<label> <?php echo e(__('Settlement Amount')); ?>  <span class="text-danger ">*</span> </label>
 					<div class="kt-input-icon">
 						<input value="<?php echo e($downPayment->getSettlementsForInvoiceNumberAmount($invoice->getInvoiceNumber(),$partnerName,$isDownPaymentFromMoneyPayment)); ?>" name="settlements[<?php echo e($index); ?>][settlement_amount]" placeholder="<?php echo e(__("Settlement Amount")); ?>" type="text" class="form-control  only-greater-than-or-equal-zero-allowed settlement-amount-class">
 					</div>
 				</div>
-				<div class="col-md-2 width-12">
+				<div class="col-md-1 width-9.5 ">
 					<label> <?php echo e(__('Withhold Amount')); ?> <span class="text-danger ">*</span> </label>
 					<div class="kt-input-icon">
 						<input value="<?php echo e($downPayment->getWithholdForInvoiceNumberAmount($invoice->getInvoiceNumber(),$partnerName,$isDownPaymentFromMoneyPayment)); ?>" name="settlements[<?php echo e($index); ?>][withhold_amount]" placeholder="<?php echo e(__('Withhold Amount')); ?>" type="text" class="form-control  only-greater-than-or-equal-zero-allowed ">

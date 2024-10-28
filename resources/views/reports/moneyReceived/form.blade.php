@@ -29,7 +29,11 @@ use App\Models\MoneyReceived ;
         width: 12.5% !important;
         flex: initial !important;
     }
-
+.width-17{
+        max-width: initial !important;
+        width: 17% !important;
+        flex: initial !important;
+    }
     .width-45 {
         max-width: initial !important;
         width: 45% !important;
@@ -338,7 +342,7 @@ use App\Models\MoneyReceived ;
                                 </div>
                             </div>
 
-                            <div class="col-md-1 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden">
+                            <div class="col-md-2 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden">
                                 <label>{{__('Amount')}} @include('star')</label>
                                 <div class="kt-input-icon">
                                     <input readonly value="{{ 0 }}" type="text" name="amount_in_receiving_currency[{{ MoneyReceived::CASH_IN_SAFE }}]" class="form-control only-greater-than-or-equal-zero-allowed amount-after-exchange-rate-class" data-type="{{ MoneyReceived::CASH_IN_SAFE }}">
@@ -422,7 +426,7 @@ use App\Models\MoneyReceived ;
                                 </div>
                             </div>
 
-                            <div class="col-md-1 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden">
+                            <div class="col-md-2 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden">
                                 <label>{{__('Amount')}} @include('star')</label>
                                 <div class="kt-input-icon">
                                     <input readonly value="{{ 0 }}" type="text" name="amount_in_receiving_currency[{{ MoneyReceived::CASH_IN_BANK }}]" class="form-control only-greater-than-or-equal-zero-allowed amount-after-exchange-rate-class" data-type="{{ MoneyReceived::CASH_IN_BANK }}">
@@ -527,7 +531,7 @@ use App\Models\MoneyReceived ;
                                 </div>
                             </div>
 
-                            <div class="col-md-1 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden">
+                            <div class="col-md-2 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden">
                                 <label>{{__('Amount')}} @include('star')</label>
                                 <div class="kt-input-icon">
                                     <input readonly value="{{ 0 }}" type="text" name="amount_in_receiving_currency[{{ MoneyReceived::CHEQUE }}]" class="form-control only-greater-than-or-equal-zero-allowed amount-after-exchange-rate-class" data-type="{{ MoneyReceived::CHEQUE }}">
@@ -609,7 +613,7 @@ use App\Models\MoneyReceived ;
                                 </div>
                             </div>
 
-                            <div class="col-md-1 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden">
+                            <div class="col-md-2 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden">
                                 <label>{{__('Amount')}} @include('star')</label>
                                 <div class="kt-input-icon">
                                     <input readonly value="{{ 0 }}" type="text" name="amount_in_receiving_currency[{{ MoneyReceived::INCOMING_TRANSFER }}]" class="form-control only-greater-than-or-equal-zero-allowed amount-after-exchange-rate-class" data-type="{{ MoneyReceived::INCOMING_TRANSFER }}">
