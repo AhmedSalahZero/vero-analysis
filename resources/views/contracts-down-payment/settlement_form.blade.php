@@ -8,6 +8,12 @@ use App\Models\MoneyReceived ;
 <link href="{{ url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css') }}" rel="stylesheet" type="text/css" />
 <style>
+.width-17{
+        max-width: initial !important;
+        width: 17% !important;
+        flex: initial !important;
+    }
+	
     label {
         text-align: left !important;
     }
@@ -172,7 +178,21 @@ use App\Models\MoneyReceived ;
 						  
 						  <div class=" kt-margin-b-10 border-class">
 			<div class="form-group row align-items-end">
-				<div class="col-md-1 width-10">
+			
+				@if($hasProjectNameColumn)
+				<div class="col-md-1 width-17 ">
+					<label> {{ __('Project Name') }} </label>
+					<div class="kt-input-icon">
+						<div class="kt-input-icon">
+							<div class="input-group date">
+								<input readonly class="form-control js-project-name" name="settlements['.$invoiceNumber.'][project_name]" value="{{ $invoice->getProjectName() }}">
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				@endif
+				<div class="col-md-1 width-10 ">
 					<label> {{ __('Invoice Number') }} </label>
 					<div class="kt-input-icon">
 						<div class="kt-input-icon">
@@ -182,7 +202,7 @@ use App\Models\MoneyReceived ;
 						</div>
 					</div>
 				</div>
-				<div class="col-md-1 width-9">
+				<div class="col-md-1 width-9 ">
 					<label>{{ __('Invoice Date') }}</label>
 					<div class="kt-input-icon">
 						<div class="input-group date">
@@ -190,7 +210,7 @@ use App\Models\MoneyReceived ;
 						</div>
 					</div>
 				</div>
-				<div class="col-md-1 width-9">
+				<div class="col-md-1 width-9 ">
 					<label>{{ __('Due Date') }}</label>
 					<div class="kt-input-icon">
 						<div class="input-group date">
@@ -199,40 +219,40 @@ use App\Models\MoneyReceived ;
 					</div>
 				</div>
 				
-				<div class="col-md-1 width-8">
+				{{-- <div class="col-md-1 width-8">
 					<label> {{ __('Currency') }} </label>
 					<div class="kt-input-icon">
 						<input name="settlements[{{$index}}][currency]" type="text" disabled class="form-control" value="{{ $invoice->getCurrency() }}">
 					</div>
-				</div>
+				</div> --}}
 				
-				<div class="col-md-2 width-12">
-					<label> {{ __('Net Invoice Amount') }} </label>
+				<div class="col-md-2 width-12 ">
+					<label> {{ __('Invoice Amount') . ' [ ' . $invoice->getCurrency() .' ]' }} </label>
 					<div class="kt-input-icon">
 						<input name="settlements[{{$index}}][net_invoice_amount]" type="text" disabled class="form-control" value="{{ $invoice->getNetInvoiceAmountFormatted() }}">
 					</div>
 				</div>
 				
-				<div class="col-md-2 width-12">
+				<div class="col-md-2 width-12 ">
 					<label> {{ __('Collected Amount') }} </label>
 					<div class="kt-input-icon">
 						<input name="settlements[{{$index}}][collected_amount]" type="text" disabled class="form-control" value="{{ number_format($invoice->collected_amount,0) }}">
 					</div>
 				</div>
 		
-				<div class="col-md-2 width-12">
+				<div class="col-md-2 width-12 ">
 					<label> {{ __('Net Balance') }} </label>
 					<div class="kt-input-icon">
 						<input name="settlements[{{$index}}][net_balance]" type="text" disabled class="form-control " value="{{ $invoice->getNetBalanceFormatted() }}">
 					</div>
 				</div>
-				<div class="col-md-2 width-12">
+				<div class="col-md-1 width-9.5 ">
 					<label> {{ __('Settlement Amount') }}  <span class="text-danger ">*</span> </label>
 					<div class="kt-input-icon">
 						<input value="{{ $downPayment->getSettlementsForInvoiceNumberAmount($invoice->getInvoiceNumber(),$partnerName,$isDownPaymentFromMoneyPayment) }}" name="settlements[{{$index}}][settlement_amount]" placeholder="{{ __("Settlement Amount") }}" type="text" class="form-control  only-greater-than-or-equal-zero-allowed settlement-amount-class">
 					</div>
 				</div>
-				<div class="col-md-2 width-12">
+				<div class="col-md-1 width-9.5 ">
 					<label> {{ __('Withhold Amount') }} <span class="text-danger ">*</span> </label>
 					<div class="kt-input-icon">
 						<input value="{{ $downPayment->getWithholdForInvoiceNumberAmount($invoice->getInvoiceNumber(),$partnerName,$isDownPaymentFromMoneyPayment) }}" name="settlements[{{$index}}][withhold_amount]" placeholder="{{ __('Withhold Amount') }}" type="text" class="form-control  only-greater-than-or-equal-zero-allowed ">

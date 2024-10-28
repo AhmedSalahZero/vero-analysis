@@ -1,15 +1,6 @@
-<?php $__env->startSection('css'); ?>
- <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.styles.commons','data' => []]); ?>
-<?php $component->withName('styles.commons'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes([]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
-<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
-<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
-<?php endif; ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?> 
+@extends('layouts.dashboard')
+@section('css')
+<x-styles.commons></x-styles.commons>
 <style>
 .max-w-comment{
 	width:700px !important;
@@ -135,22 +126,12 @@
     }
 
 </style>
-<?php $__env->stopSection(); ?>
-<?php $__env->startSection('sub-header'); ?>
- <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.main-form-title','data' => ['id' => 'main-form-title','class' => '']]); ?>
-<?php $component->withName('main-form-title'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['id' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('main-form-title'),'class' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('')]); ?><?php echo e(__('LG Report By Beneficiary Name ['  ) . $beneficiaryName . ' ] [' . $startDate . ' ] [ ' . $endDate . ' ] [ ' . __(touppercase($currency)) . ' ]'); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
-<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
-<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
-<?php endif; ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?> 
+@endsection
+@section('sub-header')
+<x-main-form-title :id="'main-form-title'" :class="''">{{ __('LG Report By Bank Name ['  ) . $bankName . ' ] [' . $startDate . ' ] [ ' . $endDate . ' ] [ ' . __(touppercase($currency)) . ' ]' }}</x-main-form-title>
 
-<?php $__env->stopSection(); ?>
-<?php $__env->startSection('content'); ?>
+@endsection
+@section('content')
 
 <div class="row">
     <div class="col-md-12">
@@ -160,10 +141,10 @@
 
             <div class="kt-portlet__body">
 
-                <?php
+                @php
 
                 $tableId = 'kt_table_1';
-                ?>
+                @endphp
 
 
                 <style>
@@ -300,7 +281,7 @@
                     }
 
                 </style>
-                <?php echo csrf_field(); ?>
+                @csrf
 
 
                 <div class="table-custom-container position-relative  ">
@@ -316,53 +297,43 @@
                                     <tr class="header-tr ">
 
                                         <th class="view-table-th  header-th  align-middle text-center">
-                                            <?php echo e(__('#')); ?>
-
+                                            {{ __('#') }}
                                         </th>
 
-                                        <th class="view-table-th   header-th  align-middle text-center">
-                                            <?php echo e(__('Beneficiary Name')); ?>
-
-                                        </th>
+                               <th class="view-table-th     header-th  align-middle text-center">
+                                            {{ __('Bank Name') }}
+                                        </th> 
                                      
                                         <th class="view-table-th     header-th  align-middle text-center">
-                                            <?php echo e(__('LG Type')); ?>
-
+                                            {{ __('LG Type') }}
                                         </th>
+                                            <th class="view-table-th   header-th  align-middle text-center">
+                                            {{ __('Beneficiary Name') }}
+                                        </th>
+                                        <th class="view-table-th     header-th  align-middle text-center">
+                                            {{ __('Transaction Name') }}
+                                        </th>
+
+
+                                        <th class="view-table-th     header-th  align-middle text-center">
+                                            {{ __('LG Code') }}
+                                        </th>
+
+                                        <th class="view-table-th     header-th  align-middle text-center">
+                                            {{ __('Source') }}
+                                        </th>
+										     
                                        
-                                        <th class="view-table-th     header-th  align-middle text-center">
-                                            <?php echo e(__('Transaction Name')); ?>
-
-                                        </th>
-
-
-                                        <th class="view-table-th     header-th  align-middle text-center">
-                                            <?php echo e(__('LG Code')); ?>
-
-                                        </th>
-
-                                        <th class="view-table-th     header-th  align-middle text-center">
-                                            <?php echo e(__('Source')); ?>
-
-                                        </th>
-                                        <th class="view-table-th     header-th  align-middle text-center">
-                                            <?php echo e(__('Bank Name')); ?>
-
-                                        </th> 
 										<th class="view-table-th     header-th  align-middle text-center">
-                                            <?php echo e(__('Amount')); ?>
-
+                                            {{ __('Amount') }}
                                         </th>	
 										<th class="view-table-th     header-th  align-middle text-center">
-                                            <?php echo e(__('Renewal Date')); ?>
-
+                                            {{ __('Renewal Date') }}
                                         </th><th class="view-table-th     header-th  align-middle text-center">
-                                            <?php echo e(__('Cash Cover')); ?>
-
+                                            {{ __('Cash Cover') }}
                                         </th>
 										<th class="view-table-th     header-th  align-middle text-center">
-                                           <?php echo __('Commission <br> Rate %'); ?>
-
+                                            {!! __('Commission <br> Rate %') !!}
                                         </th>
 
                                     
@@ -379,43 +350,46 @@
                                         let currentTable = null;
 
                                     </script>
-									<?php
+									@php
 										$lgAmountTotal =  0 ;
 										$cashCoverAmountTotal =  0 ;
 										
-									?>
-                                    <?php $__currentLoopData = $results; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index=>$modelAsStdClass): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+									@endphp
+                                    @foreach($results as $index=>$modelAsStdClass)
                                     <tr class=" parent-tr reset-table-width text-nowrap  cursor-pointer sub-text-bg text-capitalize is-close   ">
-                                        <td class="sub-text-bg  "><?php echo e($index+1); ?></td>
-                                        <td class="sub-text-bg  text-center "><?php echo e($modelAsStdClass->partner_name); ?></td>
-                                        <td class="sub-text-bg  text-center "><?php echo e($modelAsStdClass->lg_type); ?></td>
-                                        <td class="sub-text-bg  text-center "><?php echo e($modelAsStdClass->transaction_name); ?></td>
-                                        <td class="sub-text-bg  text-center "><?php echo e($modelAsStdClass->lg_code); ?></td>
-                                        <td class="sub-text-bg  text-center "><?php echo e($modelAsStdClass->source); ?></td>
-                                        <td class="sub-text-bg  text-center "><?php echo e($modelAsStdClass->financial_institution_name); ?></td>
-                                        <td class="sub-text-bg  text-center "><?php echo e(number_format($modelAsStdClass->lg_amount)); ?></td>
-                                        <td class="sub-text-bg  text-center "><?php echo e($modelAsStdClass->renewal_date); ?></td>
-                                        <td class="sub-text-bg  text-center "><?php echo e(number_format($modelAsStdClass->cash_cover_amount)); ?></td>
-                                        <td class="sub-text-bg  text-center "><?php echo e($modelAsStdClass->lg_commission_rate); ?></td>
+                                        <td class="sub-text-bg  ">{{ $index+1 }}</td>
+                                        <td class="sub-text-bg  text-center ">{{ $modelAsStdClass->financial_institution_name }}</td>
+										
+
+                                        <td class="sub-text-bg  text-center ">{{ $modelAsStdClass->lg_type }}</td>
+										                                        <td class="sub-text-bg  text-center ">{{ $modelAsStdClass->partner_name }}</td>
+										
+                                        <td class="sub-text-bg  text-center ">{{ $modelAsStdClass->transaction_name }}</td>
+                                        <td class="sub-text-bg  text-center ">{{ $modelAsStdClass->lg_code }}</td>
+                                        <td class="sub-text-bg  text-center ">{{ $modelAsStdClass->source }}</td>
+                                        <td class="sub-text-bg  text-center ">{{ number_format($modelAsStdClass->lg_amount) }}</td>
+                                        <td class="sub-text-bg  text-center ">{{ $modelAsStdClass->renewal_date }}</td>
+                                        <td class="sub-text-bg  text-center ">{{ number_format($modelAsStdClass->cash_cover_amount) }}</td>
+                                        <td class="sub-text-bg  text-center ">{{ $modelAsStdClass->lg_commission_rate }}</td>
 
                                     </tr>
-									<?php
+									@php
 										$lgAmountTotal += $modelAsStdClass->lg_amount ;
 										$cashCoverAmountTotal += $modelAsStdClass->cash_cover_amount ;
-									?>
-                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+									@endphp
+                                    @endforeach
 									
 									 <tr class=" parent-tr reset-table-width text-nowrap  cursor-pointer sub-text-bg text-capitalize is-close   ">
                                         <td class="sub-text-bg  ">-</td>
-                                        <td class="sub-text-bg  text-center "><?php echo e(__('Total')); ?></td>
+                                        <td class="sub-text-bg  text-center ">{{ __('Total') }}</td>
                                         <td class="sub-text-bg  text-center ">-</td>
                                         <td class="sub-text-bg  text-center ">-</td>
                                         <td class="sub-text-bg  text-center ">-</td>
                                         <td class="sub-text-bg  text-center ">-</td>
                                         <td class="sub-text-bg  text-center ">-</td>
-                                        <td class="sub-text-bg  text-center "><?php echo e(number_format($lgAmountTotal)); ?></td>
+                                        <td class="sub-text-bg  text-center ">{{ number_format($lgAmountTotal) }}</td>
                                         <td class="sub-text-bg  text-center ">-</td>
-                                        <td class="sub-text-bg  text-center "><?php echo e(number_format($cashCoverAmountTotal)); ?></td>
+                                        <td class="sub-text-bg  text-center ">{{ number_format($cashCoverAmountTotal) }}</td>
                                         <td class="sub-text-bg  text-center ">-</td>
 
                                     </tr>
@@ -430,12 +404,11 @@
                                 </tbody>
 								
                             </table>
-<?php echo e($results->appends(Request()->all())->links()); ?>
-
+{{ $results->appends(Request()->all())->links() }}
                         </div>
                     </div>
 
-                    <?php $__env->startPush('js'); ?>
+                    @push('js')
                     <script>
                         var table = $(".kt_table_with_no_pagination_no_collapse");
 
@@ -483,25 +456,15 @@
                         )
 
                     </script>
-                    <?php $__env->stopPush(); ?>
+                    @endpush
 
                 </div>
             </div>
         </div>
     </div>
-    <?php $__env->stopSection(); ?>
-    <?php $__env->startSection('js'); ?>
-     <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.js.commons','data' => []]); ?>
-<?php $component->withName('js.commons'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes([]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
-<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
-<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
-<?php endif; ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?> 
+    @endsection
+    @section('js')
+    <x-js.commons></x-js.commons>
 
     <script src="https://cdn.amcharts.com/lib/4/core.js"></script>
     <script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
@@ -524,6 +487,4 @@
 
     </script>
   
-    <?php $__env->stopSection(); ?>
-
-<?php echo $__env->make('layouts.dashboard', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /media/salah/Software/projects/veroo/resources/views/lg_by_beneficiary_name_result.blade.php ENDPATH**/ ?>
+    @endsection

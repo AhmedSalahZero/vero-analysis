@@ -3977,6 +3977,13 @@ function getPermissions(array $systemsNames  = []):array
 			'view-name'=>'lg by beneficiary name report'
 		],
 		[
+			'name'=>'view lg by bank name report',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+				'group'=>'reports',
+			'view-name'=>'lg by bank name report'
+		],
+		[
 			'name'=>'view lc & lg statement report',
 			'systems'=>[CASH_VERO],
 			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
@@ -5646,6 +5653,7 @@ function getHeaderMenu($currentCompany = null)
 	$canViewPartnersStatement = $user->can('view partners statement report');
 	$canViewBankStatement = $user->can('view bank statement report') ;
 	$canViewLgByBeneficiaryNameReport = $user->can('view lg by beneficiary name report') ;
+	$canViewLgByBankNameReport = $user->can('view lg by bank name report') ;
 	$canViewLgLcStatement = $user->can('view lc & lg statement report') ;
 	$canViewCashFlow = $user->can('view cash flow report');
 	$canViewContractCashFlow = $user->can('view contract cash flow report');
@@ -5807,7 +5815,7 @@ function getHeaderMenu($currentCompany = null)
 		
 		'reports'=>[
 			'title'=>__('Reports'),
-			'show'=>$canViewCashFlow || $canViewContractCashFlow ||  $canViewSafeStatement || $canViewPartnersStatement || $canViewBankStatement|| $canViewLgByBeneficiaryNameReport || $canViewLgLcStatement || $canViewWithdrawalsSettlementReport ,
+			'show'=>$canViewCashFlow || $canViewContractCashFlow ||  $canViewSafeStatement || $canViewPartnersStatement || $canViewBankStatement|| $canViewLgByBeneficiaryNameReport || $canViewLgByBankNameReport || $canViewLgLcStatement || $canViewWithdrawalsSettlementReport ,
 			'link'=>'#',
 			'submenu'=>
 			[
@@ -5829,6 +5837,11 @@ function getHeaderMenu($currentCompany = null)
 					'title'=>__('LG By Beneficiary Name Report'),
 					'link'=>route('view.lg.by.beneficiary.name.report',['company'=>$company->id]),
 					'show'=>$canViewLgByBeneficiaryNameReport,
+					'submenu'=>[]
+				],[
+					'title'=>__('LG By Bank Name Report'),
+					'link'=>route('view.lg.by.bank.name.report',['company'=>$company->id]),
+					'show'=>$canViewLgByBankNameReport,
 					'submenu'=>[]
 				]
 				,[
@@ -6024,18 +6037,7 @@ function getHeaderMenu($currentCompany = null)
 							'link'=>route('opening-balance.index', ['company'=>$companyId]),
 							'show'=>$canUpdateCashAndChequesOpeningBalances,
 						],
-					// 	[
-
-					// 'title'=>__('LGs Opening Balances'),
-					// 'link'=>route('lg-opening-balance.index',['company'=>$companyId]),
-					// 'show'=>$canUpdateLgOpeningBalances
-					// 	],
-						// [
-
-						// 	'title'=>__('LCs Opening Balances'),
-						// 	'link'=>route('lc-opening-balance.index',['company'=>$companyId]),
-						// 	'show'=>$canUpdateLcOpeningBalances
-						// 		]
+		
 					]
 						],
 						

@@ -20,6 +20,9 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
     input[type="checkbox"] {
         cursor: pointer;
     }
+	.max-w-control{
+		max-width:100px !important;
+	}
 .bg-expired{
 	background-color:red;
 	color:white !important;
@@ -36,7 +39,8 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
     }
 
     .bank-max-width {
-        max-width: 200px !important;
+        max-width: 250px !important;
+		text-wrap:normal !important;
     }
 
     .kt-portlet {
@@ -121,14 +125,14 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <th class="text-center align-middle"> {!! __('Source') !!} </th>
                                     <th class="text-center align-middle"> {!! __('Status') !!} </th>
 									
-                                    <th class="text-center align-middle">{{ __('Bank Name') }}</th>
+                                    <th class="text-center align-middle bank-max-width">{{ __('Bank Name') }}</th>
                                     <th class="text-center align-middle">{{ __('LG Code') }}</th>
                                     <th class="text-center align-middle"> {!! __('Transaction <br> Reference') !!} </th>
                                     <th class="text-center align-middle">{{ __('LG Amount') }}</th>
                                     <th class="text-center align-middle"> {!! __('Transaction <br> Order Date') !!} </th>
                                     <th class="text-center align-middle">{{ __('Issuance Date') }}</th>
                                     <th class="text-center align-middle">{{ __('Renewal Date') }}</th>
-                                    <th class="text-center align-middle">{{ __('Control') }}</th>
+                                    <th class="text-center align-middle max-w-control">{{ __('Control') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -153,7 +157,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
 									@endif 
 									
 									">{{ $model->getStatusFormatted() }}</td>
-                                    <td class="text-nowrap">{{ $model->getFinancialInstitutionBankName() }}</td>
+                                    <td class="bank-max-width">{{ $model->getFinancialInstitutionBankName() }}</td>
                                     <td class="text-uppercase">{{ $model->getLgCode() }}</td>
                                     <td class="text-transform">{{ $model->getTransactionReference() }}</td>
                                     <td class="text-transform">{{ $model->getLgAmountFormatted() }} <br> {{ $model->getLgCurrency() }} </td>
@@ -161,7 +165,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <td class="text-transform text-nowrap">{{ $model->getIssuanceDateFormatted() }}</td>
                                     <td class="text-transform text-nowrap">{{ $model->getRenewalDateFormatted() }}</td>
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
-                                        <span style="overflow: visible; position: relative; width: 110px;">
+                                        <span style="overflow: visible; position: relative; " class="max-w-control">
                                           @include('reports.LetterOfGuaranteeIssuance.actions')
                                           @include('reports.LetterOfGuaranteeIssuance.renewal-date._renew_modal')
 										@if(!$model->isCancelled())
@@ -238,14 +242,14 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <th class="text-center align-middle"> {!! __('Beneficiary <br> Name') !!} </th>
                                     <th class="text-center align-middle"> {!! __('Source') !!} </th>
                                     <th class="text-center align-middle"> {!! __('Status') !!} </th>
-                                    <th class="text-center align-middle">{{ __('Bank Name') }}</th>
+                                    <th class="text-center align-middle bank-max-width">{{ __('Bank Name') }}</th>
                                     <th class="text-center align-middle">{{ __('LG Code') }}</th>
                                     <th class="text-center align-middle">{{ __('LG Amount') }}</th>
 							
                                     <th class="text-center align-middle"> {!! __('Purchase <br> Order Date') !!} </th>
                                     <th class="text-center align-middle">{{ __('Issuance Date') }}</th>
                                     <th class="text-center align-middle">{{ __('Renewal Date') }}</th>
-                                    <th class="text-center align-middle">{{ __('Control') }}</th>
+                                    <th class="text-center align-middle max-w-control">{{ __('Control') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -268,14 +272,14 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
 									@endif 
 									
 									"> {{ $model->getStatusFormatted() }}</td>
-                                    <td class="text-nowrap">{{ $model->getFinancialInstitutionBankName() }}</td>
+                                    <td class="bank-max-width">{{ $model->getFinancialInstitutionBankName() }}</td>
                                     <td class="text-uppercase">{{ $model->getLgCode() }}</td>
                                     <td class="text-transform">{{ $model->getLgAmountFormatted() }}  <br> {{ $model->getLgCurrency() }} </td>
                                     <td class="text-transform text-nowrap">{{ $model->getPurchaseOrderDateFormatted() }}</td>
                                     <td class="text-transform text-nowrap">{{ $model->getIssuanceDateFormatted() }}</td>
                                     <td class="text-transform text-nowrap">{{ $model->getRenewalDateFormatted() }}</td>
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
-                                        <span style="overflow: visible; position: relative; width: 110px;">
+                                        <span style="overflow: visible; position: relative" class="max-w-control">
                                           @include('reports.LetterOfGuaranteeIssuance.actions')
 										  @include('reports.LetterOfGuaranteeIssuance.renewal-date._renew_modal')
 											@if(!$model->isCancelled())
@@ -345,14 +349,14 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <th class="text-center align-middle"> {!! __('Beneficiary <br> Name') !!} </th>
                                     <th class="text-center align-middle"> {!! __('Source') !!} </th>
                                     <th class="text-center align-middle"> {!! __('Status') !!} </th>
-                                    <th class="text-center align-middle">{{ __('Bank Name') }}</th>
+                                    <th class="text-center align-middle bank-max-width">{{ __('Bank Name') }}</th>
                                     <th class="text-center align-middle">{{ __('LG Code') }}</th>
                                     <th class="text-center align-middle">{{ __('LG Amount') }}</th>
                                     <th class="text-center align-middle">{{ __('LG Current Amount') }}</th>
                                     <th class="text-center align-middle"> {!! __('Purchase <br> Order Date') !!} </th>
                                     <th class="text-center align-middle">{{ __('Issuance Date') }}</th>
                                     <th class="text-center align-middle">{{ __('Renewal Date') }}</th>
-                                    <th class="text-center align-middle">{{ __('Control') }}</th>
+                                    <th class="text-center align-middle max-w-control">{{ __('Control') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -375,7 +379,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
 									@endif 
 									
 									">{{ $model->getStatusFormatted() }}</td>
-                                    <td class="text-nowrap">{{ $model->getFinancialInstitutionBankName() }}</td>
+                                    <td class="bank-max-width">{{ $model->getFinancialInstitutionBankName() }}</td>
                                     <td class="text-uppercase">{{ $model->getLgCode() }}</td>
                                     <td class="text-transform">{{ $model->getLgAmountFormatted() }}  <br> {{ $model->getLgCurrency() }} </td>
                                     <td class="text-transform">{{ $model->getLgCurrentAmountFormatted() }} <br> {{ $model->getLgCurrency() }} </td>
@@ -383,7 +387,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <td class="text-transform text-nowrap">{{ $model->getIssuanceDateFormatted() }}</td>
                                     <td class="text-transform text-nowrap">{{ $model->getRenewalDateFormatted() }}</td>
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
-                                        <span style="overflow: visible; position: relative; width: 110px;">
+                                        <span style="overflow: visible; position: relative; " class="max-w-control">
                                         	  @include('reports.LetterOfGuaranteeIssuance.actions')
 											  @include('reports.LetterOfGuaranteeIssuance.renewal-date._renew_modal')
 											  
@@ -459,13 +463,13 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <th class="text-center align-middle"> {!! __('Beneficiary <br> Name') !!} </th>
                                     <th class="text-center align-middle"> {!! __('Source') !!} </th>
                                     <th class="text-center align-middle"> {!! __('Status') !!} </th>
-                                    <th class="text-center align-middle">{{ __('Bank Name') }}</th>
+                                    <th class="text-center align-middle bank-max-width">{{ __('Bank Name') }}</th>
                                     <th class="text-center align-middle">{{ __('LG Code') }}</th>
                                     <th class="text-center align-middle">{{ __('LG Amount') }}</th>
                                     <th class="text-center align-middle">{!! __('Purchase <br> Order Date') !!} </th>
                                     <th class="text-center align-middle">{{ __('Issuance Date') }}</th>
                                     <th class="text-center align-middle">{{ __('Renewal Date') }}</th>
-                                    <th class="text-center align-middle">{{ __('Control') }}</th>
+                                    <th class="text-center align-middle max-w-control">{{ __('Control') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -488,7 +492,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
 									@endif 
 									
 									">{{ $model->getStatusFormatted() }}</td>
-                                    <td class="text-nowrap">{{ $model->getFinancialInstitutionBankName() }}</td>
+                                    <td class="bank-max-width">{{ $model->getFinancialInstitutionBankName() }}</td>
                                     <td class="text-uppercase">{{ $model->getLgCode() }}</td>
                                     <td class="text-transform">{{ $model->getLgAmountFormatted() }}  <br> {{ $model->getLgCurrency() }} </td>
 
@@ -496,7 +500,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <td class="text-transform text-nowrap">{{ $model->getIssuanceDateFormatted() }}</td>
                                     <td class="text-transform text-nowrap">{{ $model->getRenewalDateFormatted() }}</td>
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
-                                        <span style="overflow: visible; position: relative; width: 110px;">
+                                        <span style="overflow: visible; position: relative;" class="max-w-control">
                                           @include('reports.LetterOfGuaranteeIssuance.actions')
 										  @include('reports.LetterOfGuaranteeIssuance.renewal-date._renew_modal')
 

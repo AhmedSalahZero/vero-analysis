@@ -19,6 +19,9 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
     input[type="checkbox"] {
         cursor: pointer;
     }
+	.max-w-control{
+		max-width:100px !important;
+	}
 .bg-expired{
 	background-color:red;
 	color:white !important;
@@ -35,7 +38,8 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
     }
 
     .bank-max-width {
-        max-width: 200px !important;
+        max-width: 250px !important;
+		text-wrap:normal !important;
     }
 
     .kt-portlet {
@@ -147,14 +151,14 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <th class="text-center align-middle"> <?php echo __('Source'); ?> </th>
                                     <th class="text-center align-middle"> <?php echo __('Status'); ?> </th>
 									
-                                    <th class="text-center align-middle"><?php echo e(__('Bank Name')); ?></th>
+                                    <th class="text-center align-middle bank-max-width"><?php echo e(__('Bank Name')); ?></th>
                                     <th class="text-center align-middle"><?php echo e(__('LG Code')); ?></th>
                                     <th class="text-center align-middle"> <?php echo __('Transaction <br> Reference'); ?> </th>
                                     <th class="text-center align-middle"><?php echo e(__('LG Amount')); ?></th>
                                     <th class="text-center align-middle"> <?php echo __('Transaction <br> Order Date'); ?> </th>
                                     <th class="text-center align-middle"><?php echo e(__('Issuance Date')); ?></th>
                                     <th class="text-center align-middle"><?php echo e(__('Renewal Date')); ?></th>
-                                    <th class="text-center align-middle"><?php echo e(__('Control')); ?></th>
+                                    <th class="text-center align-middle max-w-control"><?php echo e(__('Control')); ?></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -180,7 +184,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
 									<?php endif; ?> 
 									
 									"><?php echo e($model->getStatusFormatted()); ?></td>
-                                    <td class="text-nowrap"><?php echo e($model->getFinancialInstitutionBankName()); ?></td>
+                                    <td class="bank-max-width"><?php echo e($model->getFinancialInstitutionBankName()); ?></td>
                                     <td class="text-uppercase"><?php echo e($model->getLgCode()); ?></td>
                                     <td class="text-transform"><?php echo e($model->getTransactionReference()); ?></td>
                                     <td class="text-transform"><?php echo e($model->getLgAmountFormatted()); ?> <br> <?php echo e($model->getLgCurrency()); ?> </td>
@@ -188,7 +192,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <td class="text-transform text-nowrap"><?php echo e($model->getIssuanceDateFormatted()); ?></td>
                                     <td class="text-transform text-nowrap"><?php echo e($model->getRenewalDateFormatted()); ?></td>
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
-                                        <span style="overflow: visible; position: relative; width: 110px;">
+                                        <span style="overflow: visible; position: relative; " class="max-w-control">
                                           <?php echo $__env->make('reports.LetterOfGuaranteeIssuance.actions', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                           <?php echo $__env->make('reports.LetterOfGuaranteeIssuance.renewal-date._renew_modal', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 										<?php if(!$model->isCancelled()): ?>
@@ -286,14 +290,14 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <th class="text-center align-middle"> <?php echo __('Beneficiary <br> Name'); ?> </th>
                                     <th class="text-center align-middle"> <?php echo __('Source'); ?> </th>
                                     <th class="text-center align-middle"> <?php echo __('Status'); ?> </th>
-                                    <th class="text-center align-middle"><?php echo e(__('Bank Name')); ?></th>
+                                    <th class="text-center align-middle bank-max-width"><?php echo e(__('Bank Name')); ?></th>
                                     <th class="text-center align-middle"><?php echo e(__('LG Code')); ?></th>
                                     <th class="text-center align-middle"><?php echo e(__('LG Amount')); ?></th>
 							
                                     <th class="text-center align-middle"> <?php echo __('Purchase <br> Order Date'); ?> </th>
                                     <th class="text-center align-middle"><?php echo e(__('Issuance Date')); ?></th>
                                     <th class="text-center align-middle"><?php echo e(__('Renewal Date')); ?></th>
-                                    <th class="text-center align-middle"><?php echo e(__('Control')); ?></th>
+                                    <th class="text-center align-middle max-w-control"><?php echo e(__('Control')); ?></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -317,14 +321,14 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
 									<?php endif; ?> 
 									
 									"> <?php echo e($model->getStatusFormatted()); ?></td>
-                                    <td class="text-nowrap"><?php echo e($model->getFinancialInstitutionBankName()); ?></td>
+                                    <td class="bank-max-width"><?php echo e($model->getFinancialInstitutionBankName()); ?></td>
                                     <td class="text-uppercase"><?php echo e($model->getLgCode()); ?></td>
                                     <td class="text-transform"><?php echo e($model->getLgAmountFormatted()); ?>  <br> <?php echo e($model->getLgCurrency()); ?> </td>
                                     <td class="text-transform text-nowrap"><?php echo e($model->getPurchaseOrderDateFormatted()); ?></td>
                                     <td class="text-transform text-nowrap"><?php echo e($model->getIssuanceDateFormatted()); ?></td>
                                     <td class="text-transform text-nowrap"><?php echo e($model->getRenewalDateFormatted()); ?></td>
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
-                                        <span style="overflow: visible; position: relative; width: 110px;">
+                                        <span style="overflow: visible; position: relative" class="max-w-control">
                                           <?php echo $__env->make('reports.LetterOfGuaranteeIssuance.actions', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 										  <?php echo $__env->make('reports.LetterOfGuaranteeIssuance.renewal-date._renew_modal', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 											<?php if(!$model->isCancelled()): ?>
@@ -415,14 +419,14 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <th class="text-center align-middle"> <?php echo __('Beneficiary <br> Name'); ?> </th>
                                     <th class="text-center align-middle"> <?php echo __('Source'); ?> </th>
                                     <th class="text-center align-middle"> <?php echo __('Status'); ?> </th>
-                                    <th class="text-center align-middle"><?php echo e(__('Bank Name')); ?></th>
+                                    <th class="text-center align-middle bank-max-width"><?php echo e(__('Bank Name')); ?></th>
                                     <th class="text-center align-middle"><?php echo e(__('LG Code')); ?></th>
                                     <th class="text-center align-middle"><?php echo e(__('LG Amount')); ?></th>
                                     <th class="text-center align-middle"><?php echo e(__('LG Current Amount')); ?></th>
                                     <th class="text-center align-middle"> <?php echo __('Purchase <br> Order Date'); ?> </th>
                                     <th class="text-center align-middle"><?php echo e(__('Issuance Date')); ?></th>
                                     <th class="text-center align-middle"><?php echo e(__('Renewal Date')); ?></th>
-                                    <th class="text-center align-middle"><?php echo e(__('Control')); ?></th>
+                                    <th class="text-center align-middle max-w-control"><?php echo e(__('Control')); ?></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -446,7 +450,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
 									<?php endif; ?> 
 									
 									"><?php echo e($model->getStatusFormatted()); ?></td>
-                                    <td class="text-nowrap"><?php echo e($model->getFinancialInstitutionBankName()); ?></td>
+                                    <td class="bank-max-width"><?php echo e($model->getFinancialInstitutionBankName()); ?></td>
                                     <td class="text-uppercase"><?php echo e($model->getLgCode()); ?></td>
                                     <td class="text-transform"><?php echo e($model->getLgAmountFormatted()); ?>  <br> <?php echo e($model->getLgCurrency()); ?> </td>
                                     <td class="text-transform"><?php echo e($model->getLgCurrentAmountFormatted()); ?> <br> <?php echo e($model->getLgCurrency()); ?> </td>
@@ -454,7 +458,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <td class="text-transform text-nowrap"><?php echo e($model->getIssuanceDateFormatted()); ?></td>
                                     <td class="text-transform text-nowrap"><?php echo e($model->getRenewalDateFormatted()); ?></td>
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
-                                        <span style="overflow: visible; position: relative; width: 110px;">
+                                        <span style="overflow: visible; position: relative; " class="max-w-control">
                                         	  <?php echo $__env->make('reports.LetterOfGuaranteeIssuance.actions', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 											  <?php echo $__env->make('reports.LetterOfGuaranteeIssuance.renewal-date._renew_modal', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 											  
@@ -551,13 +555,13 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <th class="text-center align-middle"> <?php echo __('Beneficiary <br> Name'); ?> </th>
                                     <th class="text-center align-middle"> <?php echo __('Source'); ?> </th>
                                     <th class="text-center align-middle"> <?php echo __('Status'); ?> </th>
-                                    <th class="text-center align-middle"><?php echo e(__('Bank Name')); ?></th>
+                                    <th class="text-center align-middle bank-max-width"><?php echo e(__('Bank Name')); ?></th>
                                     <th class="text-center align-middle"><?php echo e(__('LG Code')); ?></th>
                                     <th class="text-center align-middle"><?php echo e(__('LG Amount')); ?></th>
                                     <th class="text-center align-middle"><?php echo __('Purchase <br> Order Date'); ?> </th>
                                     <th class="text-center align-middle"><?php echo e(__('Issuance Date')); ?></th>
                                     <th class="text-center align-middle"><?php echo e(__('Renewal Date')); ?></th>
-                                    <th class="text-center align-middle"><?php echo e(__('Control')); ?></th>
+                                    <th class="text-center align-middle max-w-control"><?php echo e(__('Control')); ?></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -581,7 +585,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
 									<?php endif; ?> 
 									
 									"><?php echo e($model->getStatusFormatted()); ?></td>
-                                    <td class="text-nowrap"><?php echo e($model->getFinancialInstitutionBankName()); ?></td>
+                                    <td class="bank-max-width"><?php echo e($model->getFinancialInstitutionBankName()); ?></td>
                                     <td class="text-uppercase"><?php echo e($model->getLgCode()); ?></td>
                                     <td class="text-transform"><?php echo e($model->getLgAmountFormatted()); ?>  <br> <?php echo e($model->getLgCurrency()); ?> </td>
 
@@ -589,7 +593,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <td class="text-transform text-nowrap"><?php echo e($model->getIssuanceDateFormatted()); ?></td>
                                     <td class="text-transform text-nowrap"><?php echo e($model->getRenewalDateFormatted()); ?></td>
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
-                                        <span style="overflow: visible; position: relative; width: 110px;">
+                                        <span style="overflow: visible; position: relative;" class="max-w-control">
                                           <?php echo $__env->make('reports.LetterOfGuaranteeIssuance.actions', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 										  <?php echo $__env->make('reports.LetterOfGuaranteeIssuance.renewal-date._renew_modal', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 

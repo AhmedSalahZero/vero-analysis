@@ -203,6 +203,9 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 				var netBalance = res.invoices[i].net_balance
 				var collectedAmount = res.invoices[i].collected_amount
 				var invoiceDate = res.invoices[i].invoice_date
+				
+				var projectName = res.invoices[i].project_name
+				projectName = projectName ? projectName : '--';
 				var invoiceDueDate = res.invoices[i].invoice_due_date
 				
 				var settlementAmount = res.invoices[i].settlement_amount
@@ -213,6 +216,7 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 				var domInvoiceDueDate = $(lastNode).find('.js-invoice-due-date')
 				var domCurrency = $(lastNode).find('.js-currency')
 				var domNetInvoiceAmount = $(lastNode).find('.js-net-invoice-amount')
+				var domProjectName = $(lastNode).find('.js-project-name')
 				var domCollectedAmount = $(lastNode).find('.js-collected-amount')
 				var domNetBalance = $(lastNode).find('.js-net-balance')
 				domInvoiceNumber.val(invoiceNumber)
@@ -220,11 +224,15 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 				domInvoiceDate.attr('name', 'settlements[' + invoiceNumber + '][invoice_date]')
 				domInvoiceDueDate.attr('name', 'settlements[' + invoiceNumber + '][invoice_due_date]')
 				domCurrency.attr('name', 'settlements[' + invoiceNumber + '][currency]')
+				domProjectName.attr('name', 'settlements[' + invoiceNumber + '][project_name]')
 				domNetInvoiceAmount.attr('name', 'settlements[' + invoiceNumber + '][net_invoice_amount]')
+			
+				domNetInvoiceAmount.closest('.common-parent-js').find('.currency-span').html(currency);
 				domCollectedAmount.attr('name', 'settlements[' + invoiceNumber + '][collected_amount]')
 				domNetBalance.attr('name', 'settlements[' + invoiceNumber + '][net_balance]')
 				if (!onlyOneInvoiceNumber || (onlyOneInvoiceNumber && invoiceNumber == specificInvoiceNumber)) {
 					$(lastNode).find('.js-invoice-date').val(invoiceDate)
+					$(lastNode).find('.js-project-name').val(projectName)
 					$(lastNode).find('.js-invoice-due-date').val(invoiceDueDate)
 					$(lastNode).find('.js-net-invoice-amount').val(number_format(netInvoiceAmount, 2))
 					$(lastNode).find('.js-currency').val(currency)
@@ -300,8 +308,15 @@ $(document).on('change', '.js-update-account-number-based-on-account-type', func
 	const parent = repeaterParentIfExists.length ? repeaterParentIfExists : $(this).closest('.kt-portlet__body')
 	const moneyType = $(this).closest('form').attr('data-money-type')
 	let currency = $(this).closest('form').find('select.current-currency').val()
+	console.log(currency)
+	console.log('ee1	')
 	currency = currency ? currency : $('input[type="hidden"].current-currency').val();	 
+	console.log(currency)
+	console.log('ee2')
+	
 	currency = currency ? currency : $('.js-send-to-collection[data-money-type="' + moneyType + '"]').closest('tr').find('[data-currency]').attr('data-currency')
+	console.log(currency)
+	console.log('ee3')
 	currency = currency ? currency : $(this).closest('.kt-portlet__body').find('.current-currency').val();
 	currency = currency ? currency : $(this).closest('[data-repeater-item]').find('.select-for-currency').val();
 	let financialInstitutionBankId = parent.find('[data-financial-institution-id]').val()
