@@ -14,6 +14,8 @@
 	
 
 @endphp
+
+
 <div class="modal fade notification-modal {{ $notificationMainType }}-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
         <form action="#" class="modal-content" method="post">
@@ -43,7 +45,6 @@
                             <tr>
 							
 								@foreach($notificationHeaders as $notificationHeader)
-							
                                 <td>
                                     <div class="kt-input-icon">
                                         <div class="input-group">
@@ -64,9 +65,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary 
-				{{-- submit-form-btn --}}
-				" data-dismiss="modal">{{ __('Close') }}</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal">{{ __('Close') }}</button>
             </div>
         </form>
     </div>

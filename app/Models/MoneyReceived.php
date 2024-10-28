@@ -670,7 +670,7 @@ class MoneyReceived extends Model
 	{
 		$oldType = $this->getType();
 
-		$this->downPayment ? (new MoneyReceivedController())->destroy(getCurrentCompany(),$this->downPayment) : null ;
+		// $this->downPayment ? (new MoneyReceivedController())->destroy(getCurrentCompany(),$this->downPayment) : null ;
 		// $oldTypeRelationName = dashesToCamelCase($oldType);
 		$this->incomingTransfer ? $this->incomingTransfer->delete() :null ;
 		$this->cashInBank ? $this->cashInBank->delete() :null ;
@@ -834,10 +834,10 @@ class MoneyReceived extends Model
 	 * * down payment
 	 * * اللي تم انشائها معاها
 	 */
-	public function downPayment()
-	{
-		return $this->hasOne(MoneyReceived::class,'money_received_id','id');
-	}
+	// public function downPayment()
+	// {
+	// 	return $this->hasOne(MoneyReceived::class,'money_received_id','id');
+	// }
 	public  function getForeignKeyName()
 	{
 		return 'money_received_id';

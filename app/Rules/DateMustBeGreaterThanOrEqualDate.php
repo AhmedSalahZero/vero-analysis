@@ -14,7 +14,7 @@ class DateMustBeGreaterThanOrEqualDate implements Rule
      */
 	public $largerOrEqualDate , $date ,$failedMessage ; 
 	
-    public function __construct(string $largerOrEqualDate , string $date,string $failedMessage)
+    public function __construct(?string $largerOrEqualDate , string $date,string $failedMessage)
     {
         $this->largerOrEqualDate = $largerOrEqualDate;
         $this->date = $date;
@@ -31,6 +31,9 @@ class DateMustBeGreaterThanOrEqualDate implements Rule
      */
     public function passes($attribute, $value)
     {
+		if(is_null($this->largerOrEqualDate)){
+			$this->largerOrEqualDate = $value;
+		}
         return Carbon::make($this->largerOrEqualDate)->greaterThanOrEqualTo(Carbon::make($this->date));
     }
 

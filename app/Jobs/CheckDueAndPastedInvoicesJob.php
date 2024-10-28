@@ -50,7 +50,14 @@ class CheckDueAndPastedInvoicesJob implements ShouldQueue
             $customerInvoiceExportables = getExportableFieldsForModel($companyId, 'CustomerInvoice') ;
             $supplierInvoiceExportables = getExportableFieldsForModel($companyId, 'SupplierInvoice') ;
             if (count($customerInvoiceExportables)) {
-                $customerInvoicePastDueDays = $company->getCustomerComingDuesInvoicesNotificationsDays()  ;
+                // $customerInvoicePastDueDays = 500 ;
+                // $customerInvoiceComingDueDays = 500 ;
+				
+				// $chequesPastDueDays = 500 ;
+				// $chequesUnderCollectionDays = 500 ;
+				
+				
+				$customerInvoicePastDueDays = $company->getCustomerComingDuesInvoicesNotificationsDays()  ;
                 $customerInvoiceComingDueDays = $company->getCustomerPastDuesInvoicesNotificationsDays() ;
 				
 				$chequesPastDueDays = $company->getChequesInSafeNotificationDays() ;

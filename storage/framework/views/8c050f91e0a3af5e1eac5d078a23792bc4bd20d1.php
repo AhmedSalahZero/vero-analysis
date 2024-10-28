@@ -22,7 +22,9 @@
 					
 						
 						</span> 	
-						
+						<?php if(isset($menuArr['count'] ) ): ?>
+							<?php echo $__env->make('red-notification',['count'=>$menuArr['count']], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+						<?php endif; ?> 
 						</a> </li>
                     <?php endif; ?>
 <?php /**PATH /media/salah/Software/projects/veroo/resources/views/components/nav-menu/single-submenu.blade.php ENDPATH**/ ?>

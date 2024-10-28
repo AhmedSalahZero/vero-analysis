@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests;
 
+use App\Models\FinancialInstitutionAccount;
+use App\Rules\DateMustBeGreaterThanOrEqualDate;
 use App\Rules\UniqueAccountNumberRule;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -24,8 +26,12 @@ class StoreCertificateOfDepositRequest extends FormRequest
      */
     public function rules(array $excludeAccountNumbers = [])
     {
+		$financialInstitutionAccount = FinancialInstitutionAccount::find(Request()->get('maturity_amount_added_to_account_id'));
+		$financialInstitutionBalanceDate = $financialInstitutionAccount->getOpeningBalanceDate() ;
         return [
-            'account_number'=>new UniqueAccountNumberRule($excludeAccountNumbers)
+            'account_number'=>new UniqueAccountNumberRule($excludeAccountNumbers),
+			'end_date'=>['required',new DateMustBeGreaterThanOrEqualDate(null,$financialInstitutionBalanceDate,__('End Date Must Be Greater Than Or Equal Account Opening Balance Date'))]
+			
         ];
     }
 }

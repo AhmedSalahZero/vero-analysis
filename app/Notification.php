@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Helpers\HArr;
+use App\Models\Company;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 
@@ -114,26 +115,35 @@ class Notification extends Model
 		}
 		return $items ; 
 	}
-	public static function formatForMenuItem():array 
+	public static function formatForMenuItem(Company $company):array 
 	{
 		$formattedItems = [];
-	
+
 		foreach(self::getAllTypesFormatted() as $mainTypeId => $detailArray ){
+			// dd($company->notifications , $mainTypeId);
+			$mainCount = 0 ;
+			
 			$mainArr = [
 				'title'=>$detailArray['title'],
 				'link'=>'#',
 				'show'=>true ,
 			];
 			$subItems = [];
+			
 			foreach($detailArray['subitems'] as $subItemId){
+				$customerPastDues = $company->notifications->where('data.type',$subItemId);
+				$subCount = count($customerPastDues) ;
+				$mainCount+=$subCount;
 				$subItemTitle = self::getAllMainTypes()[$subItemId] ;
 				$subItems[] = [
 					'title'=>$subItemTitle,
 					'show'=>true ,
 					'data-show-notification-modal'=>$subItemId,
+					'count'=>$subCount,
 					'link'=>'#'
 				];
 			}
+			$mainArr['count']=$mainCount;
 			$mainArr['submenu'] = $subItems ;
 			$formattedItems[] = $mainArr;
 		}

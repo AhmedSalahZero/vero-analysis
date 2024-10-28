@@ -32,13 +32,18 @@ let pageLoaded = false ;
             background-color: red;
 
         }
+		
 .notification-span{
-	background: #ff0000ab;
-    color: white;
     font-family: 'Poppins';
     font-weight: bold;
-    padding: 1px;
+    padding: 2px 7px;
+	background:#0b29ffab;
+		    color: white;
 }
+.notification-bg{
+				background: #ff0000ab;
+			
+		}
     </style>
     <style>
         .w-60-percentage {
@@ -1065,6 +1070,7 @@ td{
                 @include('layouts.topbar')
 				@if(isset($company))
 				@foreach(\App\Notification::getAllMainTypes() as $notificationMainType => $notificationMainTitle)
+		
 				@include('notifications.popup',['notificationMainType'=>$notificationMainType,'notificationMainTitle'=>$notificationMainTitle])
 				@endforeach
 				@endif 

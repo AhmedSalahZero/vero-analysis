@@ -20,7 +20,17 @@
 
 <li
 
- class="kt-menu__item  kt-menu__item--submenu" data-ktmenu-submenu-toggle="hover" aria-haspopup="true"><a href="#" class="kt-menu__link kt-menu__toggle"><i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i><span class="kt-menu__link-text"><?php echo e($menuArr['title']); ?></span><i class="kt-menu__hor-arrow la la-angle-right"></i><i class="kt-menu__ver-arrow la la-angle-right"></i></a>
+ class="kt-menu__item  kt-menu__item--submenu " data-ktmenu-submenu-toggle="hover" aria-haspopup="true"><a href="#" class="kt-menu__link kt-menu__toggle"><i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i><span class="kt-menu__link-text">
+ <?php echo e($menuArr['title']); ?>
+
+	<?php if(isset($menuArr['count'])): ?>
+	<div class="ml-3">
+<?php echo $__env->make('red-notification',['count'=>$menuArr['count']], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>	
+	
+	</div>
+	<?php endif; ?>
+ 
+ </span><i class="kt-menu__hor-arrow la la-angle-right"></i><i class="kt-menu__ver-arrow la la-angle-right"></i></a>
     <div class="kt-menu__submenu kt-menu__submenu--classic kt-menu__submenu--right">
         <ul class="kt-menu__subnav">
              <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
@@ -39,6 +49,7 @@
 </li>
 <?php endif; ?> 
 <?php else: ?>
+
  <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.nav-menu.single-submenu','data' => ['menuArr' => $menuArr]]); ?>
 <?php $component->withName('nav-menu.single-submenu'); ?>

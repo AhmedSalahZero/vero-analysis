@@ -12,9 +12,7 @@ use App\Models\FinancialInstitution;
 use App\Models\LetterOfCreditFacility;
 use App\Models\MoneyReceived;
 use App\Traits\GeneralFunctions;
-use Arr;
 use Carbon\Carbon;
-use Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 

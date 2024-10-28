@@ -424,7 +424,6 @@ class LetterOfGuaranteeIssuanceController
 	public function destroy(Company $company ,  LetterOfGuaranteeIssuance $letterOfGuaranteeIssuance)
 	{
 		
-		
 		$letterOfGuaranteeIssuance->deleteAllRelations();
 		$lgType = $letterOfGuaranteeIssuance->getLgType();
 		$letterOfGuaranteeIssuance->delete();

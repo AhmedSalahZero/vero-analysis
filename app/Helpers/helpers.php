@@ -5650,7 +5650,7 @@ function getHeaderMenu($currentCompany = null)
 	$canViewCashFlow = $user->can('view cash flow report');
 	$canViewContractCashFlow = $user->can('view contract cash flow report');
 	$canViewWithdrawalsSettlementReport = $user->can('view withdrawals settlement report');
-	$notificationsSubItems = \App\Notification::formatForMenuItem();
+	$notificationsSubItems = \App\Notification::formatForMenuItem($company);
 	$canViewNotificationSetting = $user->can('view notification settings');
 	$canViewCashExpenseCategories = $user->can('view cash expense categories');
 	$canViewCustomersSettings = $user->can('view customers');
@@ -5804,6 +5804,66 @@ function getHeaderMenu($currentCompany = null)
 
 		]
 		,
+		
+		'reports'=>[
+			'title'=>__('Reports'),
+			'show'=>$canViewCashFlow || $canViewContractCashFlow ||  $canViewSafeStatement || $canViewPartnersStatement || $canViewBankStatement|| $canViewLgByBeneficiaryNameReport || $canViewLgLcStatement || $canViewWithdrawalsSettlementReport ,
+			'link'=>'#',
+			'submenu'=>
+			[
+		
+				[
+					'title'=>__('Safe Statement'),
+					'link'=>route('view.safe.statement',['company'=>$company->id]) ,
+					'show'=>$canViewSafeStatement,
+					'submenu'=>[]
+				],
+				
+				[
+					'title'=>__('Bank Statement'),
+					'link'=>route('view.bank.statement',['company'=>$company->id]),
+					'show'=>$canViewBankStatement,
+					'submenu'=>[]
+				],
+				[
+					'title'=>__('LG By Beneficiary Name Report'),
+					'link'=>route('view.lg.by.beneficiary.name.report',['company'=>$company->id]),
+					'show'=>$canViewLgByBeneficiaryNameReport,
+					'submenu'=>[]
+				]
+				,[
+					'title'=>__('LG & LC Statement'),
+					'link'=>route('view.lg.lc.bank.statement',['company'=>$company->id]),
+					'show'=>$canViewBankStatement,
+					'submenu'=>[]
+				],
+				[
+					'title'=>__('Partners Statement'),
+					'link'=>route('view.partners.statement',['company'=>$company->id]) ,
+					'show'=>$canViewPartnersStatement,
+					'submenu'=>[]
+				],
+				[
+					'title'=>__('Cash Flow Report'),
+					'link'=>route('view.cashflow.report', ['company'=>$companyId]),
+					'show'=>$canViewCashFlow ,
+					'submenu'=>[]
+				],
+				[
+					'title'=>__('Contract Cash Flow Report'),
+					'link'=>route('view.contract.cashflow.report', ['company'=>$companyId]),
+					'show'=>$canViewContractCashFlow ,
+					'submenu'=>[]
+				],
+				[
+					'title'=>__('Withdrawals Settlement Report'),
+					'link'=>route('view.withdrawals.settlement.report',['company'=>$companyId]),
+					'show'=>$canViewWithdrawalsSettlementReport ,
+					'submenu'=>[]
+				]
+				
+					],	
+		],
 
 		'financial-institution'=>[
 			'title'=>__('Financial Institutions'),
@@ -5898,6 +5958,7 @@ function getHeaderMenu($currentCompany = null)
 
 			]
 		],
+		
 		'money-transactions'=>[
 			'title'=>__('Money Transactions'),
 			'link'=>'#',
@@ -5946,62 +6007,7 @@ function getHeaderMenu($currentCompany = null)
 					'show'=>$user->can('view foreign exchange rate'),
 					'submenu'=>[]
 				],
-				[
-					'title'=>__('Statement Reports'),
-					'link'=>'#',
-					'show'=>$canViewCashFlow || $canViewContractCashFlow ||  $canViewSafeStatement || $canViewPartnersStatement || $canViewBankStatement|| $canViewLgByBeneficiaryNameReport || $canViewLgLcStatement || $canViewWithdrawalsSettlementReport ,
-					'submenu'=>[
-						[
-							'title'=>__('Safe Statement'),
-							'link'=>route('view.safe.statement',['company'=>$company->id]) ,
-							'show'=>$canViewSafeStatement,
-							'submenu'=>[]
-						],
-						
-						[
-							'title'=>__('Bank Statement'),
-							'link'=>route('view.bank.statement',['company'=>$company->id]),
-							'show'=>$canViewBankStatement,
-							'submenu'=>[]
-						],
-						[
-							'title'=>__('LG By Beneficiary Name Report'),
-							'link'=>route('view.lg.by.beneficiary.name.report',['company'=>$company->id]),
-							'show'=>$canViewLgByBeneficiaryNameReport,
-							'submenu'=>[]
-						]
-						,[
-							'title'=>__('LG & LC Statement'),
-							'link'=>route('view.lg.lc.bank.statement',['company'=>$company->id]),
-							'show'=>$canViewBankStatement,
-							'submenu'=>[]
-						],
-						[
-							'title'=>__('Partners Statement'),
-							'link'=>route('view.partners.statement',['company'=>$company->id]) ,
-							'show'=>$canViewPartnersStatement,
-							'submenu'=>[]
-						],
-						[
-							'title'=>__('Cash Flow Report'),
-							'link'=>route('view.cashflow.report', ['company'=>$companyId]),
-							'show'=>$canViewCashFlow ,
-							'submenu'=>[]
-						],
-						[
-							'title'=>__('Contract Cash Flow Report'),
-							'link'=>route('view.contract.cashflow.report', ['company'=>$companyId]),
-							'show'=>$canViewContractCashFlow ,
-							'submenu'=>[]
-						],
-						[
-							'title'=>__('Withdrawals Settlement Report'),
-							'link'=>route('view.withdrawals.settlement.report',['company'=>$companyId]),
-							'show'=>$canViewWithdrawalsSettlementReport ,
-							'submenu'=>[]
-						]
-					]
-						],
+				
 						
 						
 						
