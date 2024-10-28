@@ -24,9 +24,9 @@ class StoreFinancialInstitutionRequest extends FormRequest
      */
     public function rules()
     {
-
+		
         return [
-            'accounts'=>['required',new AccountMustHaveAtLeastOneMainCurrencyRule(getCurrentCompany())]
+            'accounts'=>['sometimes','required',new AccountMustHaveAtLeastOneMainCurrencyRule(getCurrentCompany())]
         ];
     }
 }

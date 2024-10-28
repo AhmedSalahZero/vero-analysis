@@ -14,6 +14,8 @@
 	
 
 ?>
+
+
 <div class="modal fade notification-modal <?php echo e($notificationMainType); ?>-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
         <form action="#" class="modal-content" method="post">
@@ -43,7 +45,6 @@
                             <tr>
 							
 								<?php $__currentLoopData = $notificationHeaders; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $notificationHeader): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-							
                                 <td>
                                     <div class="kt-input-icon">
                                         <div class="input-group">
@@ -64,9 +65,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary 
-				
-				" data-dismiss="modal"><?php echo e(__('Close')); ?></button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal"><?php echo e(__('Close')); ?></button>
             </div>
         </form>
     </div>

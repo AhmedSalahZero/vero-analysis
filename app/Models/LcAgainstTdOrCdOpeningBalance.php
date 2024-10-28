@@ -51,10 +51,10 @@ class LcAgainstTdOrCdOpeningBalance extends Model
 		return $this->belongsTo(Company::class , 'company_id','id');
 	}
 
-	public function lcOpeningBalance()
-	{
-		return $this->hasMany(LcOpeningBalance::class , 'lc_opening_balance_id','id');
-	}
+	// public function lcOpeningBalance()
+	// {
+	// 	return $this->hasMany(LcOpeningBalance::class , 'lc_opening_balance_id','id');
+	// }
 	public function setLcEndDateAttribute($value)
 	{
 		$date = explode('/',$value);

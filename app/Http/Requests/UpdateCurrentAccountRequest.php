@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Models\FinancialInstitutionAccount;
+use App\Rules\DateMustBeGreaterThanOrEqualDate;
 use App\Rules\UniqueAccountNumberRule;
 
 
@@ -29,10 +30,12 @@ class UpdateCurrentAccountRequest extends StoreCurrentAccountRequest
 		/**
 		 * @var FinancialInstitutionAccount $financialInstitutionAccount 
 		 */
-
 		$excludeAccountNumbers = (array)$financialInstitutionAccount->getAccountNumber();
+		$balanceDate = $financialInstitutionAccount->financialInstitution->getBalanceDate() ;
         return [
-			'account_number'=>new UniqueAccountNumberRule($excludeAccountNumbers)
+			
+			'account_number'=>new UniqueAccountNumberRule($excludeAccountNumbers),
+			'account_interests.*.start_date'=>['required',new DateMustBeGreaterThanOrEqualDate(null,$balanceDate,__('Interest Date Must Be Greater Than Or Equal Beginning Balance Date'))]
 		];
     }
 }

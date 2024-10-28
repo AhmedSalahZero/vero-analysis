@@ -32,13 +32,18 @@ let pageLoaded = false ;
             background-color: red;
 
         }
+		
 .notification-span{
-	background: #ff0000ab;
-    color: white;
     font-family: 'Poppins';
     font-weight: bold;
-    padding: 1px;
+    padding: 2px 7px;
+	background:#0b29ffab;
+		    color: white;
 }
+.notification-bg{
+				background: #ff0000ab;
+			
+		}
     </style>
     <style>
         .w-60-percentage {
@@ -1053,6 +1058,7 @@ td{
                 <?php echo $__env->make('layouts.topbar', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 				<?php if(isset($company)): ?>
 				<?php $__currentLoopData = \App\Notification::getAllMainTypes(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $notificationMainType => $notificationMainTitle): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+		
 				<?php echo $__env->make('notifications.popup',['notificationMainType'=>$notificationMainType,'notificationMainTitle'=>$notificationMainTitle], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 				<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 				<?php endif; ?> 

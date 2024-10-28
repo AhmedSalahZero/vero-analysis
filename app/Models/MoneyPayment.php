@@ -606,9 +606,9 @@ class MoneyPayment extends Model
 	public function deleteRelations()
 	{
 		$oldType = $this->getType();
-		$this->downPayment ? (new MoneyPaymentController())->destroy(getCurrentCompany(),$this->downPayment) : null ;
+		// $this->downPayment ? (new MoneyPaymentController())->destroy(getCurrentCompany(),$this->downPayment) : null ;
 		$oldTypeRelationName = dashesToCamelCase($oldType);
-		$this->downPayment? $this->downPayment->delete():null;
+		// $this->downPayment? $this->downPayment->delete():null;
 		$this->$oldTypeRelationName ? $this->$oldTypeRelationName->delete() : null;
 		$this->settlements->each(function($settlement){
 			$settlement->delete();
@@ -719,10 +719,10 @@ class MoneyPayment extends Model
 	 * * down payment
 	 * * اللي تم انشائها معاها
 	 */
-	public function downPayment()
-	{
-		return $this->hasOne(MoneyPayment::class,'money_payment_id','id');
-	}
+	// public function downPayment()
+	// {
+	// 	return $this->hasOne(MoneyPayment::class,'money_payment_id','id');
+	// }
 	
 	public  function getForeignKeyName()
 	{

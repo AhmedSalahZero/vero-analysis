@@ -48,10 +48,10 @@ class LgHundredPercentageCashCoverOpeningBalance extends Model
 		return $this->belongsTo(Company::class , 'company_id','id');
 	}
 
-	public function lgOpeningBalance()
-	{
-		return $this->hasMany(LgOpeningBalance::class , 'lg_opening_balance_id','id');
-	}
+	// public function lgOpeningBalance()
+	// {
+	// 	return $this->hasMany(LgOpeningBalance::class , 'lg_opening_balance_id','id');
+	// }
 	public function setLgExpiryDateAttribute($value)
 	{
 		$date = explode('/',$value);
