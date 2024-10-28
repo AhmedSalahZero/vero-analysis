@@ -34,6 +34,9 @@ class MoneyReceivedCanBeDeletedRule implements ImplicitRule
     {
 		$balance = null ;
 		$receivedAmount = $this->moneyReceived->getReceivedAmount();
+		if($this->moneyReceived->isChequeInSafe()){
+			return true ;
+		}
 		if($this->moneyReceived->isIncomingTransfer() || $this->moneyReceived->isCheque() || $this->moneyReceived->isCashInBank() ){
 			$response = (new MoneyReceivedController)->updateNetBalanceBasedOnAccountNumber(Request(),$this->company,$this->moneyReceived->getAccountTypeId(),$this->moneyReceived->getAccountNumber(),$this->moneyReceived->getFinancialInstitutionId());
 			$balance = $response->getData(true)['balance'] ;
@@ -56,7 +59,6 @@ class MoneyReceivedCanBeDeletedRule implements ImplicitRule
      */
     public function message()
     {
-		
         return __('This Money Received Can Not Be Deleted .. There Is No Enough Balance');
     }
 }

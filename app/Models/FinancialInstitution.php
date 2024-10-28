@@ -205,16 +205,15 @@ class FinancialInstitution extends Model
 	{
 		foreach($accounts as $index=>$accountArr){
 			$balanceAmount = $accountArr['balance_amount'] ?? 0 ;
-			$isMainAccount = $inAddAdditionalAccountForm ? false : $index == 0 ;
+
 			$account = $this->accounts()->create([
 				'account_number'=>$accountArr['account_number'],
 				'balance_amount'=>$balanceAmount ,
 				// 'account_type_id'=>,
 				'exchange_rate'=>$accountArr['exchange_rate'],
-				'currency'=>$isMainAccount ?'EGP': $accountArr['currency'],
+				'currency'=> $accountArr['currency'],
 				'iban'=>$accountArr['iban'],
 				'company_id'=>getCurrentCompanyId(),
-				'is_main_account'=>$isMainAccount // الحساب المصري
 			]);
 			/**
 			 * * لو ال
@@ -247,6 +246,10 @@ class FinancialInstitution extends Model
 			]);
 		}
 	}
+	// public function updateBeginningBalanceDebitBankStatementDate()
+	// {
+	// 	// $this->accounts()->
+	// }
 	public function runningCertificatesOfDeposits()
 	{
 		return $this->hasMany(CertificatesOfDeposit::class , 'financial_institution_id','id')

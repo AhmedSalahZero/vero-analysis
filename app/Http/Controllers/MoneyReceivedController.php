@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ApplyCollectionToChequeRequest;
+use App\Http\Requests\BackToUnderCollectionChequeRequest;
 use App\Http\Requests\DeleteMoneyReceivedRequest;
 use App\Http\Requests\SendToUnderCollectionChequeRequest;
 use App\Http\Requests\StoreMoneyReceivedRequest;
@@ -662,7 +663,7 @@ class MoneyReceivedController
 		return redirect()->route('view.money.receive',['company'=>$company->id,'active'=>MoneyReceived::CHEQUE_COLLECTED])->with('success',__('Cheque Is Returned To Safe'));
 	}
 	
-	public function sendToUnderCollection(Company $company,Request $request,MoneyReceived $moneyReceived)
+	public function sendToUnderCollection(Company $company,BackToUnderCollectionChequeRequest $request,MoneyReceived $moneyReceived)
 	{
 		$moneyReceived->cheque->update([
 			'status'=>Cheque::UNDER_COLLECTION,
@@ -748,11 +749,9 @@ class MoneyReceivedController
 	
 		if(!$accountType){
 			return response()->json([
-				[
-					'status'=>true ,
-					'balance'=>0,
-					'net_balance'=>0 ,
-				]
+				'status'=>true ,
+				'balance'=>0,
+				'net_balance'=>0 ,
 			]);
 		}
 	

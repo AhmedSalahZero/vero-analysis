@@ -1,5 +1,6 @@
 <?php
 namespace App\Http\Controllers;
+use App\Http\Requests\DeleteCurrentAccountRequest;
 use App\Http\Requests\UpdateCurrentAccountRequest;
 use App\Models\Branch;
 use App\Models\Company;
@@ -67,7 +68,7 @@ class FinancialInstitutionAccountController
 		
 	}
 	
-	public function destroy(Company $company , FinancialInstitutionAccount $financialInstitutionAccount)
+	public function destroy(Company $company , FinancialInstitutionAccount $financialInstitutionAccount,DeleteCurrentAccountRequest $request)
 	{
 		$financialInstitutionAccount->delete();
 		return redirect()->back()->with('success',__('Item Has Been Delete Successfully'));
