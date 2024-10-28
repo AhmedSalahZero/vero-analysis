@@ -372,7 +372,7 @@ $(function () {
 		$.ajax({
 			url,
 			success:function(res){
-				let options = '';
+				let options = '<option value="">Select</option>';
 				let currentSelected = $('select#customer_name').val()
 				for(customerId in res.customerInvoices ){
 					var customerName = res.customerInvoices[customerId]

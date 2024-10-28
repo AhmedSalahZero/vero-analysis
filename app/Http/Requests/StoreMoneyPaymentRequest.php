@@ -34,6 +34,7 @@ class StoreMoneyPaymentRequest extends FormRequest
 		$paidAmount = $this->{'paid_amount.'.$type };
 		$partnerType = $this->partner_type;
         return [
+			'supplier_id'=>'required',
 			'type'=>'required',
 			'delivery_branch_id'=>$type == MoneyPayment::CASH_PAYMENT  ? ['required','not_in:-1'] : [],
 			'account_type.'.$type => $type == MoneyPayment::OUTGOING_TRANSFER || $type == MoneyPayment::PAYABLE_CHEQUE ? 'required' : 'sometimes',

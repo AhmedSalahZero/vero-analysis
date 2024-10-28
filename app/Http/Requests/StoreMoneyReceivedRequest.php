@@ -5,9 +5,6 @@ namespace App\Http\Requests;
 use App\Models\MoneyReceived;
 use App\Rules\AtLeaseOneSettlementMustBeExist;
 use App\Rules\ContractAmountWithUnappliedAmountRule;
-use App\Rules\DateMustBeGreaterThanDate;
-use App\Rules\DateMustBeLessThanOrEqualDate;
-use App\Rules\ReceivingDateRule;
 use App\Rules\SettlementPlusWithoutCanNotBeGreaterNetBalance;
 use App\Rules\UnappliedAmountForContractAsDownPaymentRule;
 use App\Rules\UniqueChequeNumberForCustomerRule;
@@ -40,6 +37,7 @@ class StoreMoneyReceivedRequest extends FormRequest
 	
 			
         return [
+			'customer_id'=>'required',
 			'type'=>'required',
 			'receiving_branch_id'=>$type == MoneyReceived::CASH_IN_SAFE  ? ['required','not_in:-1'] : [],
 			// 'receiving_date'=>['required',new ReceivingDateRule($type , $this->receiving_date,)],

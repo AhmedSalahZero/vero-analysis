@@ -473,7 +473,7 @@ $(document).on('change','select.invoice-currency-class',function(){
 	$.ajax({
 		url,
 		success:function(res){
-			let options = '';
+			let options = '<option value="">Select</option>';
 			let currentSelected = $('select#supplier_name').val()
 			for(supplierId in res.supplierInvoices ){
 				var supplierName = res.supplierInvoices[supplierId]
