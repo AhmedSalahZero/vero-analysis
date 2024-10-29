@@ -24,25 +24,29 @@ class FinancialInstitutionAccountController
 		]);
 	}
 	public function update(Company $company , UpdateCurrentAccountRequest $request ,FinancialInstitution $financialInstitution , FinancialInstitutionAccount $financialInstitutionAccount){
-
+	
 		$currency = $request->get('currency',$financialInstitutionAccount->getCurrency());
-		
+		$balanceDate = Carbon::make($request->get('balance_date'))->format('Y-m-d');
 		$financialInstitutionAccount->update([
 			'account_number'=>$request->get('account_number'),
 			'currency'=>$currency ,
 			'balance_amount'=>$request->get('balance_amount'),
+			'balance_date'=>$balanceDate,
 			'iban'=>$request->get('iban'),
 			'exchange_rate'=>$request->get('exchange_rate')
 		]);
 		$currentAccountBeginningBalance = $financialInstitutionAccount->getOpeningBalanceFromCurrentAccountBankStatement() ;
+
 		if($currentAccountBeginningBalance){
+	
 			$currentAccountBeginningBalance->update([
-				'balance_amount'=>$request->get('balance_amount'),
+				'date'=>$balanceDate,
+				'debit'=>$request->get('balance_amount'),
 				'comment_en'=>__('Beginning Balance',[],'en'),
 				'comment_ar'=>__('Beginning Balance',[],'ar'),
 			]);
 		}
-		
+	
 		$oldAccountInterestsIds = $financialInstitutionAccount->accountInterests->pluck('id')->toArray();
 		$AccountInterestsIdsFromRequest =array_column($request->get('account_interests',[]),'id') ;
 		$elementsToDelete = array_diff($oldAccountInterestsIds,$AccountInterestsIdsFromRequest);

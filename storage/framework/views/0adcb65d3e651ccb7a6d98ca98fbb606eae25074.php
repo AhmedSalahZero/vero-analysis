@@ -106,11 +106,7 @@
                                     <th class="bank-max-width"><?php echo e(__('Bank')); ?></th>
                                     <th><?php echo e(__('Branch Name')); ?></th>
                                     <th><?php echo e(__('Company Account Number')); ?></th>
-                                    
-                                    
-                                    
-                                    
-                                    
+                              
                                     <th><?php echo e(__('Control')); ?></th>
                                     <th><?php echo e(__('Actions')); ?></th>
                                 </tr>
@@ -125,11 +121,7 @@
                                     <td class="bank-max-width"><?php echo e($financialInstitutionBank->getBankName()); ?></td>
                                     <td class="text-nowrap"><?php echo e($financialInstitutionBank->getBranchName()); ?></td>
                                     <td><?php echo e($financialInstitutionBank->getCompanyAccountNumber()); ?></td>
-                                    
-                                    
-                                    
-                                    
-                                    
+    
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                      
 

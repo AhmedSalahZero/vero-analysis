@@ -96,9 +96,7 @@
                                             <div id="m_repeater_0" class="cash-and-banks-repeater">
                                                 <div class="form-group  m-form__group row  ">
                                                     <div data-repeater-list="accounts" class="col-lg-12">
-                                                        @include('reports.financial-institution.repeater' , [
-															'addStartDate'=>true 
-                                                        ])
+                                                        @include('reports.financial-institution.repeater' )
                                                     </div>
                                                 </div>
                                                 <div class="m-form__group form-group row">

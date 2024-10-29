@@ -94,6 +94,18 @@
                                             <input type="text" value="{{ isset($model) ? $model->getAccountNumber() : old('account_number') }}" name="account_number" class="form-control" placeholder="{{__('Account Number')}}">
                                         </div>
                                     </div>
+									
+									
+									 <div class="col-2">
+                                        <label class="form-label font-weight-bold">{{ __('IBAN') }}
+                                        </label>
+                                        <div class="kt-input-icon">
+                                            <div class="input-group">
+                                                <input name="iban" type="text" class="form-control " value="{{ isset($model) ? $model->getIban() : old('iban',0) }}">
+                                            </div>
+                                        </div>
+                                    </div>
+									
 
 
                                     <div class="col-2">
@@ -106,16 +118,20 @@
                                             </div>
                                         </div>
                                     </div>
+									
+									<div class="col-md-2">
+                     			   <x-calendar :classes="'balance-date-js'" :value="$model->getBalanceDateForSelect()" :label="__('Balance Date')" :id="'balance_date'" name="balance_date"></x-calendar>
+                 				   </div>
+					
 
 
 
 
 
-                                    {{-- @if(!$model->isMainAccount()) --}}
 									<input type="hidden" value="{{ $model->getCurrency() }}" name="old_currency">
                                  
-								    <div class="col-md-3">
-                                        <label>{{__('Select Currency')}} </label>
+								    <div class="col-md-2">
+                                        <label>{{__('Currency')}} </label>
                                         <div class="input-group">
                                             <select name="currency" class="form-control repeater-select">
                                                 <option selected>{{__('Select')}}</option>
@@ -125,18 +141,9 @@
                                             </select>
                                         </div>
                                     </div>
-                                    {{-- @endif --}}
 
 
-                                    <div class="col-2">
-                                        <label class="form-label font-weight-bold">{{ __('IBAN') }}
-                                        </label>
-                                        <div class="kt-input-icon">
-                                            <div class="input-group">
-                                                <input name="iban" type="text" class="form-control " value="{{ isset($model) ? $model->getIban() : old('iban',0) }}">
-                                            </div>
-                                        </div>
-                                    </div>
+                                   
 
                                     <div class="col-2">
                                         <label class="form-label font-weight-bold">{{ __('Exhange Rate') }}
@@ -168,10 +175,10 @@
                                             <div class="form-group  m-form__group row  ">
                                                 <div data-repeater-list="account_interests" class="col-lg-12">
                                                     @if(isset($model) )
-                                                    @foreach($model->accountInterests as $accountInterest)
+                                                    @foreach($model->accountInterests as $index=>$accountInterest)
                                                     @include('reports.financial-institution-account.repeater' , [
-                                                    'accountInterest'=>$accountInterest,
-
+                                                  	  'accountInterest'=>$accountInterest,
+													  'index'=>$index
                                                     ])
 
                                                     @endforeach
@@ -336,5 +343,14 @@
         }
     })
 
+</script>
+<script>
+const firstInterestRateDateField = $('.first-interest-rate-js').attr('readonly','readonly').css('pointer-events','none') ;
+
+$(document).on('change','.balance-date-js',function(e){
+	const balanceDate = $(this).val()
+	$('.first-interest-rate-js:eq(0)').datepicker('update',balanceDate)	
+})
+$('.balance-date-js').trigger('change');
 </script>
 @endsection

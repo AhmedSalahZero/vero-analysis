@@ -104,11 +104,7 @@
                                     <th class="bank-max-width">{{ __('Bank') }}</th>
                                     <th>{{ __('Branch Name') }}</th>
                                     <th>{{ __('Company Account Number') }}</th>
-                                    {{-- <th>{{ __('Swift Code') }}</th> --}}
-                                    {{-- <th>{{ __('IBAN Code') }}</th> --}}
-                                    {{-- <th>{{ __('Current Account Number') }}</th> --}}
-                                    {{-- <th>{{ __('Balance Amount') }}</th> --}}
-                                    {{-- <th>{{ __('Balance Date') }}</th> --}}
+                              
                                     <th>{{ __('Control') }}</th>
                                     <th>{{ __('Actions') }}</th>
                                 </tr>
@@ -122,11 +118,7 @@
                                     <td class="bank-max-width">{{ $financialInstitutionBank->getBankName() }}</td>
                                     <td class="text-nowrap">{{ $financialInstitutionBank->getBranchName() }}</td>
                                     <td>{{ $financialInstitutionBank->getCompanyAccountNumber() }}</td>
-                                    {{-- <td>{{ $financialInstitutionBank->getSwiftCode() }}</td> --}}
-                                    {{-- <td class="text-transform">{{ $financialInstitutionBank->getIbanCode() }}</td> --}}
-                                    {{-- <td >{{ $financialInstitutionBank->getCurrentAccountNumber() }}</td> --}}
-                                    {{-- <td class="text-nowrap">{{ $financialInstitutionBank->getBalanceAmountFormatted() }}</td> --}}
-                                    {{-- <td>{{ $financialInstitutionBank->getBalanceDateFormatted() }}</td> --}}
+    
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                      
 
