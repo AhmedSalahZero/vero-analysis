@@ -190,19 +190,7 @@
 
 
 
-                                <div class="col-lg-3">
-                                    <label><?php echo e(__('Balance Date')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
-                                    <div class="kt-input-icon">
-                                        <div class="input-group date">
-                                            <input type="text" name="balance_date" value="<?php echo e(old('balance_date', isset($model) && $model->balance_date ? formatDateForDatePicker($model->getBalanceDate()) : formatDateForDatePicker(now()) )); ?>" class="form-control" readonly placeholder="<?php echo e(__('Select Balance Date')); ?>" id="kt_datepicker_2" />
-                                            <div class="input-group-append">
-                                                <span class="input-group-text">
-                                                    <i class="la la-calendar-check-o"></i>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                
 
 
                             </div>

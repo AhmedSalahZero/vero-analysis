@@ -42,6 +42,7 @@
                     </div>
 
 
+
                     <div class="col-2">
                         <label class="form-label font-weight-bold">{{ __('Balance Amount') }}
 						@include('star')
@@ -53,18 +54,18 @@
                             </div>
                         </div>
                     </div>
-
-
-                    <div
-					@if(isset($addStartDate) && $addStartDate)
 					
-					 class="col-1"
-					 
-					 @else
-					 
-					 class="col-2"
-					 @endif 
-					 >
+					<div class="col-md-1">
+                        <x-calendar :value="isset($model) ? $model->getBalanceDate() : null" :label="__('Balance Date')"  :id="'balance_date'" name="balance_date"></x-calendar>
+                    </div>
+					
+					
+					
+		
+								
+
+
+                    <div class="col-1">
                         <label>{{__('Currency')}} @include('star') </label>
                         <div class="input-group">
                             <select required @if($isRepeater) name="currency" @else name="accounts[0][currency]" @endif class="form-control repeater-select">
@@ -116,11 +117,9 @@
                         </div>
                     </div>
 					
-					 @if(isset($addStartDate) && $addStartDate)
-                    <div class="col-md-1">
-                        <x-calendar :label="__('Start Date')"  :id="'start_date'" name="start_date"></x-calendar>
-                    </div>
-                    @endif
+					
+                    
+                    
 
 
                     @if($isRepeater)

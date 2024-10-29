@@ -36,12 +36,13 @@ class UpdateCurrentAccountRequest extends StoreCurrentAccountRequest
 		 */
 
 		$excludeAccountNumbers = (array)$financialInstitutionAccount->getAccountNumber();
-		$balanceDate = $financialInstitutionAccount->financialInstitution->getBalanceDate() ;
+		// $balanceDate = $financialInstitutionAccount->getBalanceDate() ;
+		$balanceDate = Request('balance_date');
 		$financialInstitutionId = $financialInstitutionAccount->getFinancialInstitutionId();
         return [
 			
 			'account_number'=>new UniqueAccountNumberRule($excludeAccountNumbers),
-			'account_interests.*.start_date'=>['required',new DateMustBeGreaterThanOrEqualDate(null,$balanceDate,__('Interest Date Must Be Greater Than Or Equal Beginning Balance Date'))],
+			'account_interests.*.start_date'=>['required',new DateMustBeGreaterThanOrEqualDate(null,$balanceDate,__('Interest Date Must Be Greater Than Or Equal Beginning Balance Date'),true)],
 			'currency'=>['required',new AtLeastOneMainFunctionalCurrencyExistAtAccountRule($this->old_currency,$mainFunctionalCurrency,$financialInstitutionId)]
 		];
     }

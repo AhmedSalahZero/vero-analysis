@@ -115,6 +115,19 @@
                                             <input type="text" value="<?php echo e(isset($model) ? $model->getAccountNumber() : old('account_number')); ?>" name="account_number" class="form-control" placeholder="<?php echo e(__('Account Number')); ?>">
                                         </div>
                                     </div>
+									
+									
+									 <div class="col-2">
+                                        <label class="form-label font-weight-bold"><?php echo e(__('IBAN')); ?>
+
+                                        </label>
+                                        <div class="kt-input-icon">
+                                            <div class="input-group">
+                                                <input name="iban" type="text" class="form-control " value="<?php echo e(isset($model) ? $model->getIban() : old('iban',0)); ?>">
+                                            </div>
+                                        </div>
+                                    </div>
+									
 
 
                                     <div class="col-2">
@@ -128,16 +141,30 @@
                                             </div>
                                         </div>
                                     </div>
+									
+									<div class="col-md-2">
+                     			    <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.calendar','data' => ['classes' => 'balance-date-js','value' => $model->getBalanceDateForSelect(),'label' => __('Balance Date'),'id' => 'balance_date','name' => 'balance_date']]); ?>
+<?php $component->withName('calendar'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php $component->withAttributes(['classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('balance-date-js'),'value' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($model->getBalanceDateForSelect()),'label' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Balance Date')),'id' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('balance_date'),'name' => 'balance_date']); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
+<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
+<?php endif; ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?> 
+                 				   </div>
+					
 
 
 
 
 
-                                    
 									<input type="hidden" value="<?php echo e($model->getCurrency()); ?>" name="old_currency">
                                  
-								    <div class="col-md-3">
-                                        <label><?php echo e(__('Select Currency')); ?> </label>
+								    <div class="col-md-2">
+                                        <label><?php echo e(__('Currency')); ?> </label>
                                         <div class="input-group">
                                             <select name="currency" class="form-control repeater-select">
                                                 <option selected><?php echo e(__('Select')); ?></option>
@@ -147,19 +174,9 @@
                                             </select>
                                         </div>
                                     </div>
-                                    
 
 
-                                    <div class="col-2">
-                                        <label class="form-label font-weight-bold"><?php echo e(__('IBAN')); ?>
-
-                                        </label>
-                                        <div class="kt-input-icon">
-                                            <div class="input-group">
-                                                <input name="iban" type="text" class="form-control " value="<?php echo e(isset($model) ? $model->getIban() : old('iban',0)); ?>">
-                                            </div>
-                                        </div>
-                                    </div>
+                                   
 
                                     <div class="col-2">
                                         <label class="form-label font-weight-bold"><?php echo e(__('Exhange Rate')); ?>
@@ -192,10 +209,10 @@
                                             <div class="form-group  m-form__group row  ">
                                                 <div data-repeater-list="account_interests" class="col-lg-12">
                                                     <?php if(isset($model) ): ?>
-                                                    <?php $__currentLoopData = $model->accountInterests; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $accountInterest): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                    <?php $__currentLoopData = $model->accountInterests; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index=>$accountInterest): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                     <?php echo $__env->make('reports.financial-institution-account.repeater' , [
-                                                    'accountInterest'=>$accountInterest,
-
+                                                  	  'accountInterest'=>$accountInterest,
+													  'index'=>$index
                                                     ], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 
                                                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -372,6 +389,15 @@
         }
     })
 
+</script>
+<script>
+const firstInterestRateDateField = $('.first-interest-rate-js').attr('readonly','readonly').css('pointer-events','none') ;
+
+$(document).on('change','.balance-date-js',function(e){
+	const balanceDate = $(this).val()
+	$('.first-interest-rate-js:eq(0)').datepicker('update',balanceDate)	
+})
+$('.balance-date-js').trigger('change');
 </script>
 <?php $__env->stopSection(); ?>
 

@@ -137,12 +137,12 @@ class FinancialInstitutionController
 		foreach($additionalData as $name){
 			$data[$name] = $request->get($name);
 		}
-		$data['balance_date'] = $request->get('balance_date') ? Carbon::make($request->get('balance_date'))->format('Y-m-d'):null;
+		// $data['balance_date'] = $request->get('balance_date') ? Carbon::make($request->get('balance_date'))->format('Y-m-d'):null;
 		/**
 		 * @var FinancialInstitution $financialInstitution
 		 */
 		$financialInstitution = FinancialInstitution::create($data);
-		$financialInstitution->storeNewAccounts($accounts,$data['balance_date']);
+		$financialInstitution->storeNewAccounts($accounts);
 		$activeTab = $this->getActiveTab($type);
 		return redirect()->route('view.financial.institutions',['company'=>$company->id,'active'=>$activeTab])->with('success',__('Data Store Successfully'));
 		
@@ -184,7 +184,7 @@ class FinancialInstitutionController
 		foreach($additionalData as $name){
 			$data[$name] = $request->get($name);
 		}
-		$data['balance_date'] = $request->get('balance_date') ? Carbon::make($request->get('balance_date'))->format('Y-m-d'):null;
+		// $data['balance_date'] = $request->get('balance_date') ? Carbon::make($request->get('balance_date'))->format('Y-m-d'):null;
 		$financialInstitution->update($data);
 		// $financialInstitution->getMainAccount();
 		 $activeTab = $this->getActiveTab($type);
@@ -213,7 +213,7 @@ class FinancialInstitutionController
 	public function storeAccount(Company $company , StoreCurrentAccountRequest $request , FinancialInstitution $financialInstitution)
 	{
 		$accounts = $request->get('accounts',[]) ;
-		$financialInstitution->storeNewAccounts($accounts,null,true);
+		$financialInstitution->storeNewAccounts($accounts);
 		return redirect()->route('view.all.bank.accounts',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id ])->with('success',__('Item Has Been Delete Successfully'));
 		
 	}

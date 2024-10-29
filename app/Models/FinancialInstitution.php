@@ -118,15 +118,15 @@ class FinancialInstitution extends Model
 	/**
 	 * * تاريخ المبالغ الماليه اللي معايا في حساباتي في المؤسسة المالية دي
 	 */
-	public function getBalanceDate()
-	{
-		return $this->balance_date ;
-	}
-	public function getBalanceDateFormatted()
-	{
-		$balanceDate = $this->getBalanceDate();
-		return $balanceDate ? Carbon::make($balanceDate)->format('d-m-Y') : null;
-	}
+	// public function getBalanceDate()
+	// {
+	// 	return $this->balance_date ;
+	// }
+	// public function getBalanceDateFormatted()
+	// {
+	// 	$balanceDate = $this->getBalanceDate();
+	// 	return $balanceDate ? Carbon::make($balanceDate)->format('d-m-Y') : null;
+	// }
 	public function getBankId()
     {
         return $this->bank_id ;
@@ -201,18 +201,18 @@ class FinancialInstitution extends Model
 	}
 	
 	
-	public function storeNewAccounts(array $accounts,string $startDate = null,$inAddAdditionalAccountForm = false)
+	public function storeNewAccounts(array $accounts)
 	{
 		foreach($accounts as $index=>$accountArr){
 			$balanceAmount = $accountArr['balance_amount'] ?? 0 ;
-
+			$currentBalanceDate = Carbon::make($accountArr['balance_date'])->format('Y-m-d');
 			$account = $this->accounts()->create([
 				'account_number'=>$accountArr['account_number'],
 				'balance_amount'=>$balanceAmount ,
-				// 'account_type_id'=>,
 				'exchange_rate'=>$accountArr['exchange_rate'],
 				'currency'=> $accountArr['currency'],
 				'iban'=>$accountArr['iban'],
+				'balance_date'=>$currentBalanceDate,
 				'company_id'=>getCurrentCompanyId(),
 			]);
 			/**
@@ -221,8 +221,8 @@ class FinancialInstitution extends Model
 			 * * هنضفله قيمة في ال
 			 * * current account bank Statement
 			 */
-			$startDate = isset($accountArr['start_date']) && $accountArr['start_date'] ? Carbon::make($accountArr['start_date'])->format('Y-m-d') : $startDate;
-			if($startDate){
+			// $startDate = isset($accountArr['start_date']) && $accountArr['start_date'] ? Carbon::make($accountArr['start_date'])->format('Y-m-d') : $startDate;
+			if($currentBalanceDate){
 				$account->currentAccountBankStatements()->create([
 					'company_id'=>getCurrentCompanyId() ,
 					'beginning_balance'=>0,
@@ -230,7 +230,7 @@ class FinancialInstitution extends Model
 					'debit'=>$balanceAmount,
 					'is_debit'=>$isDebit =$balanceAmount >= 0 ,
 					'is_credit' => !$isDebit,
-					'date'=>$startDate ,
+					'date'=>$currentBalanceDate ,
 					'comment_en'=>__('Beginning Balance',[],'en'),
 					'comment_ar'=>__('Beginning Balance',[],'ar'),
 				]);
@@ -242,7 +242,7 @@ class FinancialInstitution extends Model
 			$account->accountInterests()->create([
 				'interest_rate'=>$accountArr['interest_rate'],
 				'min_balance'=>$accountArr['min_balance'],
-				'start_date'=>$startDate
+				'start_date'=>$currentBalanceDate
 			]);
 		}
 	}

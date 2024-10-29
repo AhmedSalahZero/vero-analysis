@@ -44,6 +44,7 @@
                     </div>
 
 
+
                     <div class="col-2">
                         <label class="form-label font-weight-bold"><?php echo e(__('Balance Amount')); ?>
 
@@ -56,18 +57,28 @@
                             </div>
                         </div>
                     </div>
-
-
-                    <div
-					<?php if(isset($addStartDate) && $addStartDate): ?>
 					
-					 class="col-1"
-					 
-					 <?php else: ?>
-					 
-					 class="col-2"
-					 <?php endif; ?> 
-					 >
+					<div class="col-md-1">
+                         <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.calendar','data' => ['value' => isset($model) ? $model->getBalanceDate() : null,'label' => __('Balance Date'),'id' => 'balance_date','name' => 'balance_date']]); ?>
+<?php $component->withName('calendar'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php $component->withAttributes(['value' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(isset($model) ? $model->getBalanceDate() : null),'label' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Balance Date')),'id' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('balance_date'),'name' => 'balance_date']); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
+<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
+<?php endif; ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?> 
+                    </div>
+					
+					
+					
+		
+								
+
+
+                    <div class="col-1">
                         <label><?php echo e(__('Currency')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?> </label>
                         <div class="input-group">
                             <select required <?php if($isRepeater): ?> name="currency" <?php else: ?> name="accounts[0][currency]" <?php endif; ?> class="form-control repeater-select">
@@ -122,21 +133,9 @@
                         </div>
                     </div>
 					
-					 <?php if(isset($addStartDate) && $addStartDate): ?>
-                    <div class="col-md-1">
-                         <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.calendar','data' => ['label' => __('Start Date'),'id' => 'start_date','name' => 'start_date']]); ?>
-<?php $component->withName('calendar'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['label' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Start Date')),'id' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('start_date'),'name' => 'start_date']); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
-<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
-<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
-<?php endif; ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?> 
-                    </div>
-                    <?php endif; ?>
+					
+                    
+                    
 
 
                     <?php if($isRepeater): ?>

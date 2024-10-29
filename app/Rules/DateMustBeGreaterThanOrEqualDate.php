@@ -13,12 +13,13 @@ class DateMustBeGreaterThanOrEqualDate implements Rule
      * @return void
      */
 	public $largerOrEqualDate , $date ,$failedMessage ; 
-	
-    public function __construct(?string $largerOrEqualDate , string $date,string $failedMessage)
+	public bool $isMultiValueRule = false ;
+    public function __construct(?string $largerOrEqualDate , string $date,string $failedMessage , $isMultiValueRule = false)
     {
         $this->largerOrEqualDate = $largerOrEqualDate;
         $this->date = $date;
 		$this->failedMessage = $failedMessage;
+		$this->isMultiValueRule = $isMultiValueRule;
 		
     }
 
@@ -31,10 +32,16 @@ class DateMustBeGreaterThanOrEqualDate implements Rule
      */
     public function passes($attribute, $value)
     {
-		if(is_null($this->largerOrEqualDate)){
+		
+		if($this->isMultiValueRule || is_null($this->largerOrEqualDate)){
 			$this->largerOrEqualDate = $value;
 		}
-        return Carbon::make($this->largerOrEqualDate)->greaterThanOrEqualTo(Carbon::make($this->date));
+		// if($attribute != 'account_interests.0.start_date'){
+		// 	// dd($attribute,$this->isMultiValueRule,$this->largerOrEqualDate,$this->date,Carbon::make($this->largerOrEqualDate)->greaterThanOrEqualTo(Carbon::make($this->date)));
+		// }
+		$boolean = Carbon::make($this->largerOrEqualDate)->greaterThanOrEqualTo(Carbon::make($this->date));
+		
+        return $boolean;
     }
 
     /**

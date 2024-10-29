@@ -22,8 +22,8 @@
 
 
 
-   <div class="col-md-2">
-                        <x-calendar :value="$accountInterest->getStartDateForSelect()" :label="__('Interest Calculation Start Date')" :id="'start_date'" name="start_date"></x-calendar>
+  					 <div class="col-md-2">
+                        <x-calendar :classes="$index == 0 ? 'first-interest-rate-js':''" :value="$accountInterest->getStartDateForSelect()" :label="__('Interest Calculation Start Date')" :id="'start_date'" name="start_date"></x-calendar>
                     </div>
 
 

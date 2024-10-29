@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Helpers\HArr;
 use App\Models\AccountInterest;
 use App\Traits\HasLastStatementAmount;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -56,7 +57,20 @@ class FinancialInstitutionAccount extends Model
     {
         return $this->main_currency ;
     }
-
+	public function getBalanceDate()
+	{
+		return $this->balance_date;
+	}
+	public function getBalanceDateFormatted()
+	{
+		$balanceDate = $this->getBalanceDate();
+		return $balanceDate ? Carbon::make($balanceDate)->format('d-m-Y') : null;
+	}
+	public function getBalanceDateForSelect()
+	{
+		$balanceDate = $this->getBalanceDate();
+		return $balanceDate ? Carbon::make($balanceDate)->format('m/d/Y'):$balanceDate;
+	}
 	/**
 	 * * اجمالي الفلوس اللي معايا في الحساب دا
 	 */

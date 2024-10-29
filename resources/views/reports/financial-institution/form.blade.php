@@ -160,19 +160,11 @@
 
 
 
-                                <div class="col-lg-3">
-                                    <label>{{__('Balance Date')}} @include('star')</label>
-                                    <div class="kt-input-icon">
-                                        <div class="input-group date">
-                                            <input type="text" name="balance_date" value="{{ old('balance_date', isset($model) && $model->balance_date ? formatDateForDatePicker($model->getBalanceDate()) : formatDateForDatePicker(now()) )  }}" class="form-control" readonly placeholder="{{ __('Select Balance Date') }}" id="kt_datepicker_2" />
-                                            <div class="input-group-append">
-                                                <span class="input-group-text">
-                                                    <i class="la la-calendar-check-o"></i>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                {{-- 
+								
+								
+								
+								--}}
 
 
                             </div>
