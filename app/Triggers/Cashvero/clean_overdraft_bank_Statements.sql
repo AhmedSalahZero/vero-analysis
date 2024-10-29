@@ -8,7 +8,6 @@
 						declare _interest_rate decimal(5,2) default 0 ;
 						declare _min_interest_rate decimal(5,2) default 0 ; 
 						declare _count_all_rows integer default 0 ; 
-						declare _last_delete_id integer default 0 ; 
 						declare interest_type_text varchar(100) default 'interest';
 						declare highest_debit_balance_text varchar(100) default 'highest_debit_balance';
 					
@@ -162,11 +161,12 @@
 					
 					
 
-					set @dayCounts = 0 ;
-					set @interestAmount = 0 ; 
+				
 					
 						-- هنبدا نحسب الفوائد اللي عليه 
 						
+							set @dayCounts = 0 ;
+					set @interestAmount = 0 ; 
 					select min_interest_rate , interest_rate into _min_interest_rate, _interest_rate from clean_overdraft_rates where clean_overdraft_id = new.clean_overdraft_id and date <= new.date order by date desc , id desc limit 1 ;
 					set _min_interest_rate = ifnull(_min_interest_rate,0);
 					set _interest_rate = ifnull(_interest_rate,0);
@@ -371,7 +371,6 @@
 				create procedure recalculate_end_of_month_clean_overdraft_interests()
 				begin 
 					declare current_id integer default 0 ;
-					declare _clean_overdraft_bank_statement_id integer default 0 ;
 					declare _clean_overdraft_id integer default 0 ;
 					declare _company_id integer default 0 ;
 					declare _limit decimal(14,2) default 0;

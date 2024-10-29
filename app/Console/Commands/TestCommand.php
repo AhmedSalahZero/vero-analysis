@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 
 use App\Models\Branch;
 use App\Models\Company;
+use App\Models\CurrentAccountBankStatement;
 use App\Models\LetterOfGuaranteeIssuance;
 use App\Models\LetterOfGuaranteeStatement;
 use App\Models\TimeOfDeposit;
@@ -46,5 +47,10 @@ class TestCommand extends Command
 	public function handle()
 	{
 
+		CurrentAccountBankStatement::orderBy('full_date','asc')->get()->each(function(CurrentAccountBankStatement $currentAccountBankStatement){
+			$currentAccountBankStatement->update([
+				'updated_at'=>now()
+			]);
+		});
 	}
 }
