@@ -96,5 +96,8 @@ class OutgoingTransfer extends Model
 		$year = $date[2];
 		$this->attributes['actual_payment_date'] = $year.'-'.$month.'-'.$day;
 	}
-	
+	public function isBankCharges():bool 
+	{
+		return (bool) $this->is_bank_charges;
+	}	
 }

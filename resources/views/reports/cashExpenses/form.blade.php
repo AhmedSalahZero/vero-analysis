@@ -123,9 +123,9 @@ $selectedBanks = [];
             <x-form.select :add-new-modal="true" :add-new-modal-modal-type="''" :add-new-modal-modal-name="'CashExpenseCategoryName'" :add-new-modal-modal-title="__('Expense Name')" :previous-select-name-in-dB="'cash_expense_category_id'" :previous-select-must-be-selected="true"  :previous-select-selector="'select.expense_category'" :previous-select-title="__('Expense Name')" :options="[]" :add-new="false" :label="__('Expense Name')" class="select2-select category_name  " data-filter-type="{{ 'create' }}" :all="false" name="cash_expense_category_name_id" id="{{'cash_expense_category_name_id' }}" :selected-value="isset($model) ? $model->getCashExpenseCategoryNameId() : 0" data-current-selected="{{ isset($model) ? $model->getCashExpenseCategoryNameId() : 0 }}"></x-form.select>
         </div>
 
-        <div class="col-md-2">
+        <div class="col-md-1">
 			<input type="hidden" class="to-currency" value="{{ $company->getMainFunctionalCurrency() }}">
-            <label>{{__('Select Currency')}} @include('star')</label>
+            <label>{{__('Currency')}} @include('star')</label>
 
             <div class="kt-input-icon">
                 <div class="input-group date">
@@ -150,7 +150,7 @@ $selectedBanks = [];
 
 
         <div class="col-md-2">
-            <label>{{__('Select Payment Type')}} @include('star')</label>
+            <label>{{__('Payment Type')}} @include('star')</label>
             <div class="kt-input-icon">
                 <div class="input-group date">
                     <select required name="type" id="type" class="form-control">
@@ -161,6 +161,9 @@ $selectedBanks = [];
                     </select>
                 </div>
             </div>
+			
+		
+
 
 
 
@@ -189,7 +192,25 @@ $selectedBanks = [];
 
         </div>
 
-
+	<div class="col-md-2" id="bank-charges-id">
+			    <label class="mb-2 d-inline-block">{{__('Is Bank Charges ?')}} 
+				
+				<div class="kt-input-icon mt-3">
+                <div class="input-group date">
+			<input style="max-height:25px;"  type="checkbox" name="is_bank_charges" value="1"  class="form-control checkbox "
+			
+			@if(isset($model) && $model->isOutgoingTransferBankCharges())
+			checked
+			@endif 
+			>
+			</div>
+			</div>
+			
+				</label>
+				
+				    
+			
+			</div>
 
 
     </div>
@@ -752,10 +773,15 @@ $selectedBanks = [];
 <script>
     $('#type').change(function() {
         selected = $(this).val();
+		if(selected == 'outgoing-transfer'){
+			$('#bank-charges-id').show()
+		}else{
+			$('#bank-charges-id').hide()
+			
+		}
         $('.js-section-parent').addClass('hidden');
         if (selected) {
             $('#' + selected).removeClass('hidden');
-
         }
 
 

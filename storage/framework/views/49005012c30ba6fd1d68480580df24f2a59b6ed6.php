@@ -144,9 +144,9 @@ $selectedBanks = [];
 <?php endif; ?> 
         </div>
 
-        <div class="col-md-2">
+        <div class="col-md-1">
 			<input type="hidden" class="to-currency" value="<?php echo e($company->getMainFunctionalCurrency()); ?>">
-            <label><?php echo e(__('Select Currency')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
+            <label><?php echo e(__('Currency')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
 
             <div class="kt-input-icon">
                 <div class="input-group date">
@@ -171,7 +171,7 @@ $selectedBanks = [];
 
 
         <div class="col-md-2">
-            <label><?php echo e(__('Select Payment Type')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
+            <label><?php echo e(__('Payment Type')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
             <div class="kt-input-icon">
                 <div class="input-group date">
                     <select required name="type" id="type" class="form-control">
@@ -182,6 +182,9 @@ $selectedBanks = [];
                     </select>
                 </div>
             </div>
+			
+		
+
 
 
 
@@ -210,7 +213,25 @@ $selectedBanks = [];
 
         </div>
 
-
+	<div class="col-md-2" id="bank-charges-id">
+			    <label class="mb-2 d-inline-block"><?php echo e(__('Is Bank Charges ?')); ?> 
+				
+				<div class="kt-input-icon mt-3">
+                <div class="input-group date">
+			<input style="max-height:25px;"  type="checkbox" name="is_bank_charges" value="1"  class="form-control checkbox "
+			
+			<?php if(isset($model) && $model->isOutgoingTransferBankCharges()): ?>
+			checked
+			<?php endif; ?> 
+			>
+			</div>
+			</div>
+			
+				</label>
+				
+				    
+			
+			</div>
 
 
     </div>
@@ -837,10 +858,15 @@ $selectedBanks = [];
 <script>
     $('#type').change(function() {
         selected = $(this).val();
+		if(selected == 'outgoing-transfer'){
+			$('#bank-charges-id').show()
+		}else{
+			$('#bank-charges-id').hide()
+			
+		}
         $('.js-section-parent').addClass('hidden');
         if (selected) {
             $('#' + selected).removeClass('hidden');
-
         }
 
 

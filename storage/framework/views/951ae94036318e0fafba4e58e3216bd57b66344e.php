@@ -12,8 +12,7 @@
 <?php endif; ?> 
 <style>
 .max-w-comment{
-	width:700px !important;
-	max-width:700px !important;
+
 	min-width:700px !important;
 	text-wrap:wrap !important;
 	
@@ -381,6 +380,11 @@
                                             <?php echo e(__('Reviewed')); ?>
 
                                         </th>
+										
+										 <th class="view-table-th   header-th  align-middle text-center">
+                                            <?php echo e(__('Actions')); ?>
+
+                                        </th>
                                         <th class="view-table-th   header-th  align-middle text-center max-w-comment">
                                             <?php echo e(__('Comment')); ?>
 
@@ -424,6 +428,16 @@
 										?>
 								
                                         <td class="sub-text-bg text-left "><?php echo e($reviewedText); ?></td>
+                                        <td class="sub-text-bg text-left ">
+											<?php if($modelAsStdClass->is_commission_fees): ?>
+												
+												<?php echo $__env->make('modals.edit-commissions-fees',[
+													'currentStatementId'=>$modelAsStdClass->id,
+													'currentCredit'=>$modelAsStdClass->credit
+													,'currentDate'=>$modelAsStdClass->date ], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+																					
+											<?php endif; ?>
+										</td>
                                         <td class="sub-text-bg text-left max-w-comment"><?php echo e($comment?: getBankStatementComment($modelAsStdClass)); ?></td>
 
                                  
