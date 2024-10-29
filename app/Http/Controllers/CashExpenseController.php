@@ -8,21 +8,15 @@ use App\Models\Branch;
 use App\Models\CashExpense;
 use App\Models\CashExpenseCategory;
 use App\Models\Company;
-use App\Models\Contract;
-use App\Models\CustomerInvoice;
 use App\Models\FinancialInstitution;
 use App\Models\OutgoingTransfer;
 use App\Models\Partner;
 use App\Models\PayableCheque;
 use App\Models\SupplierInvoice;
-use App\Models\User;
 use App\Traits\GeneralFunctions;
 use App\Traits\Models\HasCreditStatements;
-use Arr;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 
 class CashExpenseController
 {
@@ -287,7 +281,8 @@ class CashExpenseController
 				'delivery_bank_id'=>$bankId,
 				'actual_payment_date'=>$data['payment_date'],
 				'account_number'=>$request->input('account_number.'.CashExpense::OUTGOING_TRANSFER),
-				'account_type'=>$request->input('account_type.'.CashExpense::OUTGOING_TRANSFER)
+				'account_type'=>$request->input('account_type.'.CashExpense::OUTGOING_TRANSFER),
+				'is_bank_charges'=>$request->boolean('is_bank_charges')
 			];
 		}
 

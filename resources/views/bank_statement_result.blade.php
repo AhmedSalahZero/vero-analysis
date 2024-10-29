@@ -3,8 +3,7 @@
 <x-styles.commons></x-styles.commons>
 <style>
 .max-w-comment{
-	width:700px !important;
-	max-width:700px !important;
+
 	min-width:700px !important;
 	text-wrap:wrap !important;
 	
@@ -350,6 +349,10 @@
                                         <th class="view-table-th   header-th  align-middle text-center">
                                             {{ __('Reviewed') }}
                                         </th>
+										
+										 <th class="view-table-th   header-th  align-middle text-center">
+                                            {{ __('Actions') }}
+                                        </th>
                                         <th class="view-table-th   header-th  align-middle text-center max-w-comment">
                                             {{ __('Comment') }}
                                         </th>
@@ -392,6 +395,16 @@
 										@endphp
 								
                                         <td class="sub-text-bg text-left ">{{   $reviewedText   }}</td>
+                                        <td class="sub-text-bg text-left ">
+											@if($modelAsStdClass->is_commission_fees)
+												
+												@include('modals.edit-commissions-fees',[
+													'currentStatementId'=>$modelAsStdClass->id,
+													'currentCredit'=>$modelAsStdClass->credit
+													,'currentDate'=>$modelAsStdClass->date ])
+																					
+											@endif
+										</td>
                                         <td class="sub-text-bg text-left max-w-comment">{{ $comment?: getBankStatementComment($modelAsStdClass)   }}</td>
 
                                  

@@ -718,6 +718,8 @@ Route::middleware([])->group(function () {
 					Route::get('show-bank-statement', 'BankStatementController@index')->name('view.bank.statement');
                     Route::get('bank-statement', 'BankStatementController@result')->name('result.bank.statement');
 					
+					Route::post('update-commission-fees','BankStatementController@updateCommissionFees')->name('update.commission.fees');
+					
 					Route::get('show-lg-by-beneficiary-name-report', 'LgByBeneficiaryNameReportController@index')->name('view.lg.by.beneficiary.name.report');
                     Route::get('lg-by-beneficiary-name-report', 'LgByBeneficiaryNameReportController@result')->name('result.lg.by.beneficiary.name.report');
 					

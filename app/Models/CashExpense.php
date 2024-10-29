@@ -30,6 +30,9 @@ class CashExpense extends Model
 			return __('Cash Payment To Pay [:expenseName - :expenseNameName]',['expenseName'=>$cashExpense->getExpenseCategoryName(),'expenseNameName'=>$cashExpense->getExpenseName()],$lang) ;
 		}
 		if($cashExpense->isOutgoingTransfer()){
+			if($cashExpense->isOutgoingTransferBankCharges()){
+				return  __('To Pay [:expenseName - :expenseNameName]',['expenseName'=>$cashExpense->getExpenseCategoryName(),'expenseNameName'=>$cashExpense->getExpenseName()],$lang) ;
+			}
 			return __('Outgoing Transfer To Pay [:expenseName - :expenseNameName]',['expenseName'=>$cashExpense->getExpenseCategoryName(),'expenseNameName'=>$cashExpense->getExpenseName()],$lang) ;
 		}
 	}
@@ -546,5 +549,17 @@ class CashExpense extends Model
 			$totalCashOutFlowArray[$currentWeekYear] = isset($totalCashOutFlowArray[$currentWeekYear]) ? $totalCashOutFlowArray[$currentWeekYear] +   $currentTotal : $currentTotal ;
 		}
 	
+	}
+	
+	public function isOutgoingTransferBankCharges():bool
+	{
+	
+		if(!$this->isOutgoingTransfer()){
+			return false ; 
+		}
+		return (
+			$this->outgoingTransfer && $this->outgoingTransfer->isBankCharges() )
+	         ||
+			 Request()->boolean('is_bank_charges');
 	}
 }

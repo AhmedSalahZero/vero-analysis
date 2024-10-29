@@ -1202,6 +1202,7 @@
 "Commission Fees [ :lcType ] Transaction Name [ :transactionName ]":"عمولة [ :lcType ] عن العملية [ :transactionName ]",
 "Cash Payment To Pay [:expenseName - :expenseNameName]":"دفع ندقي للمصروف [:expenseName - :expenseNameName] ",
 "Outgoing Transfer To Pay [:expenseName - :expenseNameName]":"تحويل بنكي للمصروف [:expenseName - :expenseNameName]",
+"To Pay [:expenseName - :expenseNameName]":" عميله دفع للمصروف [:expenseName - :expenseNameName]",
 "Payable Cheque To Pay [:expenseName - :expenseNameName] [ :chequeNumber ]":"صرف شيك للمصروف [:expenseName - :expenseNameName] [ :chequeNumber ]",
 "Down Payment For Contract :contractName":"دفعة مقدمة للتعاقد :contractName",
 "Beginning Balance":"رصيد اول المدة",
