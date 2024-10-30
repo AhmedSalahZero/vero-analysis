@@ -288,7 +288,7 @@ class TimeOfDeposit extends Model
 		$amount = $this->getAmount();
 		return  $newInterestRate / 100 / 365 *  $diffBetweenTwoDatesInDays * $amount;
 	}
-	public function storeRenewalDebitCurrentAccount(string $expiryDate , string $renewalDate , $newInterestRate)
+	public function storeRenewalDebitCurrentAccount(string $expiryDate , string $renewalDate , $newInterestRate,$commentEn , $commentAr)
 	{
 		$financialInstitution = $this->financialInstitution;
 		// $accountType = AccountType::where('slug',AccountType::CURRENT_ACCOUNT)->first() ;
@@ -298,7 +298,7 @@ class TimeOfDeposit extends Model
 		$financialInstitutionId = $financialInstitution->id ; 
 		$interestAmount = $this->calculateInterestAmount($expiryDate,$renewalDate,$newInterestRate);
 		$financialInstitutionAccount = FinancialInstitutionAccount::findByAccountNumber($accountNumber,getCurrentCompanyId(),$financialInstitutionId);
-		$this->storeCurrentAccountDebitBankStatement($statementDate,$interestAmount,$financialInstitutionAccount->id,true);
+		$this->storeCurrentAccountDebitBankStatement($statementDate,$interestAmount,$financialInstitutionAccount->id,true,$commentEn , $commentAr);
 		return $interestAmount; 
 	}
 }

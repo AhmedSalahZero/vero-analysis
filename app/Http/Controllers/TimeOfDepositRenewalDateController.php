@@ -67,7 +67,10 @@ class TimeOfDepositRenewalDateController
 		// if(Carbon::make($expiryDate)->greaterThanOrEqualTo(Carbon::make($financialInstitutionAccountOpeningBalance))){
 		// 	$timeOfDeposit->storeCurrentAccountCreditBankStatement($expiryDate,$renewalFeesAmount , $financialInstitutionAccount->id,0,1,__('Renewal Fees [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'en'),'transactionName'=>$transactionName],'en') , __('Renewal Fees [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'ar'),'transactionName'=>$transactionName],'ar'),true);
 		// }
-		$interestAmount = $timeOfDeposit->storeRenewalDebitCurrentAccount($expiryDate,$renewalDate,$newInterestRate);
+		$commentEn = __('Renewal For Time Deposit',[],'en');
+		$commentAr = __('Renewal For Time Deposit',[],'ar');
+		
+		$interestAmount = $timeOfDeposit->storeRenewalDebitCurrentAccount($expiryDate,$renewalDate,$newInterestRate,$commentEn,$commentAr);
 		$timeOfDeposit->update([
 			'end_date'=>$renewalDate,
 			'start_date'=>$expiryDate,
