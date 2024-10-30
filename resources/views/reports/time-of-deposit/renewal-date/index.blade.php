@@ -299,14 +299,14 @@ use Carbon\Carbon;
 
 
 
-                @if(isset($model) || $letterOfGuaranteeIssuance->isExpired())
+                @if(isset($model) || $timeOfDeposit->isExpired())
                 <div class="row">
                     <div class="col-md-12">
                         <!--begin::Portlet-->
 
 
                         <!--begin::Form-->
-                        <form method="post" action="{{ isset($model) ? route('update.letter.of.issuance.renewal.date',['company'=>$company->id, 'letterOfGuaranteeIssuance'=>$letterOfGuaranteeIssuance->id , 'LgRenewalDateHistory'=>$model->id]) :route('store.letter.of.issuance.renewal.date',['company'=>$company->id , 'letterOfGuaranteeIssuance'=>$letterOfGuaranteeIssuance->id]) }}" class="kt-form kt-form--label-right">
+                        <form method="post" action="{{ isset($model) ? route('update.time.of.deposit.renewal.date',['company'=>$company->id, 'timeOfDeposit'=>$timeOfDeposit->id , 'TdRenewalDateHistory'=>$model->id]) :route('store.time.of.deposit.renewal.date',['company'=>$company->id , 'timeOfDeposit'=>$timeOfDeposit->id]) }}" class="kt-form kt-form--label-right">
                             @csrf
                             @if(isset($model))
                             @method('patch')
@@ -323,33 +323,50 @@ use Carbon\Carbon;
                                 <div class="kt-portlet__body">
                                     <div class="form-group row">
                                         <div class="col-md-4 mb-4">
-                                            <label> {{ __('Transaction Name') }} </label>
-                                            <input type="text" class="form-control" disabled value="{{ $letterOfGuaranteeIssuance->getTransactionName() }}">
+                                            <label> {{ __('Financial Institution') }} </label>
+                                            <input type="text" class="form-control" disabled value="{{ $timeOfDeposit->getFinancialInstitutionName() }}">
                                         </div>
-                                        <div class="col-md-4 mb-4">
-                                            <label>{{__('Source')}} </label>
-                                            <input type="text" class="form-control" disabled value="{{ $letterOfGuaranteeIssuance->getSourceFormatted() }}">
+                                        <div class="col-md-2 mb-4">
+                                            <label>{{__('Account Number')}} </label>
+                                            <input type="text" class="form-control" disabled value="{{ $timeOfDeposit->getAccountNumber() }}">
                                         </div>
-                                        <div class="col-md-4 mb-4">
-                                            <label>{{__('LG Code')}} </label>
-                                            <input type="text" class="form-control" disabled value="{{ $letterOfGuaranteeIssuance->getLgCode() }}">
+                                        <div class="col-md-1 mb-4">
+                                            <label>{{__('Currency')}} </label>
+                                            <input type="text" class="form-control" disabled value="{{ $timeOfDeposit->getCurrency() }}">
                                         </div>
 										
-										     <div class="col-md-3 mb-4">
-                                            <label>{{__('Issuance Date')}} </label>
-                                            <input type="text" class="form-control" disabled value="{{ $letterOfGuaranteeIssuance->getIssuanceDateFormatted() }}">
+										     <div class="col-md-1 mb-4">
+                                            <label>{{__('Interest Rate')}} </label>
+                                            <input type="text" class="form-control" disabled value="{{ $timeOfDeposit->getInterestRateFormatted() }}">
                                         </div>
-                                        <div class="col-md-3 mb-4">
+										
+										  <div class="col-md-2 mb-4">
+                                            <label>{{__('Interest Amount')}} </label>
+                                            <input type="text" class="form-control" disabled value="{{ $timeOfDeposit->getInterestAmountFormatted() }}">
+                                        </div>
+										
+                                        <div class="col-md-2 mb-4">
                                             <label>{{__('Expiry Date')}} </label>
-											<input type="hidden" name="expiry_date" value="{{ isset($model)  ? $letterOfGuaranteeIssuance->getRenewalDateBefore($letterOfGuaranteeIssuance->getRenewalDate()) :$letterOfGuaranteeIssuance->getRenewalDate() }}">
-                                            <input type="text" class="form-control" disabled  value="{{ isset($model)  ? $letterOfGuaranteeIssuance->getRenewalDateBefore($letterOfGuaranteeIssuance->getRenewalDate()) :$letterOfGuaranteeIssuance->getRenewalDate() }}">
+											<input type="hidden" name="expiry_date" value="{{ isset($model)  ? $timeOfDeposit->getRenewalDateBefore($timeOfDeposit->getRenewalDate()) :$timeOfDeposit->getRenewalDate() }}">
+                                            <input type="text" class="form-control" disabled  value="{{ isset($model)  ? $timeOfDeposit->getRenewalDateBefore($timeOfDeposit->getRenewalDate()) :$timeOfDeposit->getRenewalDate() }}">
                                         </div>
 										
-										  <div class="col-md-3">
+										{{-- <div class="col-md-2 mb-4">
+                                            <label>{{__('Duration (Days)')}} </label>
+                                            <input type="numeric" class="form-control" name="duration"  value="{{ isset($model)  ? $model->getDuration() : $timeOfDeposit->getDiffBetweenEndDateAndStartDate()  }}">
+                                        </div> --}}
+										
+										 <div class="col-md-1 mb-4">
+                                            <label>{{__('Interest Rate')}} % </label>
+                                            <input type="text" class="form-control" name="interest_rate" value="{{ isset($model)  ? $model->getInterestRate() : $timeOfDeposit->getInterestRate() }}">
+                                        </div>
+										
+										
+										  <div class="col-md-2">
                                             <label>{{__('New Expiry Date')}} @include('star') </label>
                                             <div class="kt-input-icon">
                                                 <div class="input-group date">
-                                                    <input required type="text" name="renewal_date" value="{{ isset($model) ? $model->getRenewalDateFormattedForDatePicker() : null }}" id="kt_datepicker_2" class="form-control" readonly placeholder="{{ __('Select date') }}" />
+                                                    <input required readonly type="text" name="renewal_date" value="{{ isset($model) ? $model->getRenewalDateFormattedForDatePicker() : null }}" id="kt_datepicker_2" class="form-control"   />
                                                     <div class="input-group-append">
                                                         <span class="input-group-text">
                                                             <i class="la la-calendar-check-o"></i>
@@ -359,11 +376,14 @@ use Carbon\Carbon;
                                             </div>
                                         </div>
 										
-                                    <div class="col-md-3 mb-4">
+										
+										
+										
+										
+                                    {{-- <div class="col-md-3 mb-4">
                                             <label>{{__('Renewal Fees')}} </label>
                                             <input type="text" class="form-control only-greater-than-or-equal-zero-allowed" name="fees_amount" value="{{ isset($model)  ? $model->getFeesAmount() : 0 }}">
-                                        </div>
-                                       
+                                        </div> --}}
                                       
                                     </div>
                                 </div>
@@ -406,9 +426,9 @@ use Carbon\Carbon;
                                                     {{ __('Days Count') }}
                                                 </th>
 
-                                                <th class="view-table-th max-w-name  max-w-counts header-th  align-middle text-center">
+                                                {{-- <th class="view-table-th max-w-name  max-w-counts header-th  align-middle text-center">
                                                     {{ __('Fees Amount') }}
-                                                </th>
+                                                </th> --}}
 
 
                                                 <th class="view-table-th max-w-name max-w-action  header-th  align-middle text-center">
@@ -436,10 +456,10 @@ use Carbon\Carbon;
                                                 @php
                                                 $previousDate = $renewalDateHistory->getRenewalDate();
                                                 @endphp
-                                                <td class="sub-text-bg  text-center max-w-counts ">{{ $renewalDateHistory->getFeesAmountFormatted() }}</td>
+                                                {{-- <td class="sub-text-bg  text-center max-w-counts ">{{ $renewalDateHistory->getFeesAmountFormatted() }}</td> --}}
                                                 <td class="sub-text-bg  text-center max-w-action   ">
                                                     @if($loop->last)
-                                                    <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{route('edit.letter.of.issuance.renewal.date',[$company,$letterOfGuaranteeIssuance->id,$renewalDateHistory->id])}}"><i class="fa fa-pen-alt"></i></a>
+                                                    <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{route('edit.time.of.deposit.renewal.date',[$company,$timeOfDeposit->id,$renewalDateHistory->id])}}"><i class="fa fa-pen-alt"></i></a>
 
 
                                                     <a class="btn btn-secondary btn-outline-hover-danger btn-icon  " href="#" data-toggle="modal" data-target="#modal-delete-{{ $renewalDateHistory['id']}}" title="Delete"><i class="fa fa-trash-alt"></i>
@@ -455,7 +475,7 @@ use Carbon\Carbon;
                                                                 <div class="modal-body">
                                                                     <h3>{{ __('Are You Sure To Delete This Item ? ') }}</h3>
                                                                 </div>
-                                                                <form action="{{ route('delete.letter.of.issuance.renewal.date',[$company,$letterOfGuaranteeIssuance->id,$renewalDateHistory->id]) }}" method="post" id="delete_form">
+                                                                <form action="{{ route('delete.time.of.deposit.renewal.date',[$company,$timeOfDeposit->id,$renewalDateHistory->id]) }}" method="post" id="delete_form">
                                                                     {{ csrf_field() }}
                                                                     {{ method_field('DELETE') }}
                                                                     <div class="modal-footer">

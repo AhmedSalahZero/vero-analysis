@@ -10,6 +10,7 @@ use App\Traits\Models\HasDebitStatements;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 
 /**
@@ -191,8 +192,10 @@ class TimeOfDeposit extends Model
 	{
 		return $this->belongsTo(FinancialInstitution::class , 'financial_institution_id','id');
 	}
-
-
+	public function getFinancialInstitutionName():string 
+	{
+		return $this->financialInstitution ? $this->financialInstitution->getName() : __('N/A');
+	}
 	public function currentAccountDebitBankStatement()
 	{
 		return $this->hasOne(CurrentAccountBankStatement::class,'time_of_deposit_id','id')->where('is_debit',1);
@@ -256,5 +259,23 @@ class TimeOfDeposit extends Model
 		return $this->hasOne(LetterOfGuaranteeIssuance::class,'cash_cover_deducted_from_account_number','account_number')
 		->where('cash_cover_deducted_from_account_type',$tdAccount->id);
 	}
-	
+	public function renewalDateHistories():HasMany
+	{
+		return $this->hasMany(TdRenewalDateHistory::class,'time_of_deposit_id','id');
+	}	
+	public function getRenewalDateBefore(string $date):string{
+		return  $this->renewalDateHistories->where('renewal_date','<',$date)->sortByDesc('renewal_date')->first()->renewal_date;
+	}
+	public function getRenewalDate()
+	{
+		return $this->getEndDate();
+	}
+	public function getDiffBetweenEndDateAndStartDate():int
+	{
+		return Carbon::make($this->getEndDate())->diffInDays(Carbon::make($this->getStartDate()));
+	}
+	public function isExpired():bool
+	{
+		return Carbon::make($this->getEndDate())->lessThanOrEqualTo(now());
+	}
 }

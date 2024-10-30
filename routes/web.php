@@ -432,6 +432,14 @@ Route::middleware([])->group(function () {
 					Route::delete('branches/{branch}/delete','BranchesController@destroy')->name('branches.destroy');
 					
 					
+					Route::get('deductions','DeductionsController@index')->name('deductions.index');
+					Route::get('deductions/create','DeductionsController@create')->name('deductions.create');
+					Route::post('deductions/store','DeductionsController@store')->name('deductions.store');
+					Route::get('deductions/{deduction}/edit','DeductionsController@edit')->name('deductions.edit');
+					Route::put('deductions/{deduction}/update','DeductionsController@update')->name('deductions.update');
+					Route::delete('deductions/{deduction}/delete','DeductionsController@destroy')->name('deductions.destroy');
+					
+					
 				 });
 				 
 				 
@@ -630,6 +638,16 @@ Route::middleware([])->group(function () {
 					 Route::post('financial-institutions/{financialInstitution}/time-of-deposit/reverse-deposit/{timeOfDeposit}', 'TimeOfDepositsController@reverseDeposit')->name('reverse.deposit.to.time.of.deposit');
 					 Route::post('financial-institutions/{financialInstitution}/time-of-deposit/reverse-broken/{timeOfDeposit}', 'TimeOfDepositsController@reverseBroken')->name('reverse.broken.to.time.of.deposit');
 
+					 
+					 
+					 
+					 Route::get('time-of-deposit-renewal-date/{timeOfDeposit}', 'TimeOfDepositRenewalDateController@index')->name('time.of.deposit.renewal.date');
+					 Route::post('time-of-deposit-renewal-date/{timeOfDeposit}', 'TimeOfDepositRenewalDateController@store')->name('store.time.of.deposit.renewal.date');
+					 Route::get('time-of-deposit-renewal-date/edit/{timeOfDeposit}/{TdRenewalDateHistory}', 'TimeOfDepositRenewalDateController@edit')->name('edit.time.of.deposit.renewal.date');
+					 Route::patch('time-of-deposit-renewal-date/edit/{timeOfDeposit}/{TdRenewalDateHistory}', 'TimeOfDepositRenewalDateController@update')->name('update.time.of.deposit.renewal.date');
+					 Route::delete('delete-time-of-deposit-renewal-date/{timeOfDeposit}/{TdRenewalDateHistory}', 'TimeOfDepositRenewalDateController@destroy')->name('delete.time.of.deposit.renewal.date');
+					 
+					 
 					 /**
 					  * * end time of deposit
 					  */

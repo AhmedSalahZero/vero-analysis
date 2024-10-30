@@ -39,7 +39,7 @@ class CurrentAccountBankStatement extends Model  implements IHaveStatement
 	public static function updateNextRows(CurrentAccountBankStatement $model):string 
 	{
 		$minDate  = $model->full_date ;
-	
+		
 		
 		/**
 		 * * ليه بنستخدم ال 

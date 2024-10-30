@@ -97,7 +97,7 @@ $selectedBanks = [];
         </div>
         <div class="kt-portlet__body">
             <div class="form-group row">
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <label>{{__('Payment Date')}}</label>
                     <div class="kt-input-icon">
                         <div class="input-group date">
@@ -149,7 +149,7 @@ $selectedBanks = [];
         </div>
 
 
-        <div class="col-md-2">
+        <div class="col-md-3">
             <label>{{__('Payment Type')}} @include('star')</label>
             <div class="kt-input-icon">
                 <div class="input-group date">
@@ -157,7 +157,7 @@ $selectedBanks = [];
                         <option value="" selected>{{__('Select')}}</option>
                         <option @if(isset($model) && $model->isCashPayment() ) selected @endif value="{{ CashExpense::CASH_PAYMENT }}">{{__('Cash Payment')}}</option>
                         <option @if(isset($model) && $model->isPayableCheque() ) selected @endif value="{{ CashExpense::PAYABLE_CHEQUE }}">{{__('Payable Cheques')}}</option>
-                        <option @if(isset($model) && $model->isOutgoingTransfer()) selected @endif value="{{ CashExpense::OUTGOING_TRANSFER }}">{{__('Outgoing Transfer')}}</option>
+                        <option @if(isset($model) && $model->isOutgoingTransfer()) selected @endif value="{{ CashExpense::OUTGOING_TRANSFER }}">{{__('Outgoing Transfer / Bank Charges')}}</option>
                     </select>
                 </div>
             </div>

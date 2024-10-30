@@ -148,6 +148,7 @@ use \App\Models\TimeOfDeposit;
 
                                         <span style="overflow: visible; position: relative; width: 110px;">
 											<?php if(hasAuthFor('create time of deposit')): ?>
+											<?php echo $__env->make('reports.time-of-deposit.renewal-date._renew_modal', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                             <a
 											
 											 data-toggle="modal" data-target="#apply-deposit-modal-<?php echo e($model->id); ?>" type="button" class="btn 
@@ -419,6 +420,7 @@ use \App\Models\TimeOfDeposit;
 
 
                                         <span style="overflow: visible; position: relative; width: 110px;">
+										<?php echo $__env->make('reports.time-of-deposit.renewal-date._renew_modal', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                             <a data-toggle="modal" data-target="#reverse-deposit-modal-<?php echo e($model->id); ?>" type="button" class="btn  btn-secondary btn-outline-hover-success   btn-icon" title="<?php echo e(__('Reverse Deposit')); ?>" href="#"><i class="fa fa-undo"></i></a>
                                             <div class="modal fade" id="reverse-deposit-modal-<?php echo e($model->id); ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
@@ -544,6 +546,7 @@ use \App\Models\TimeOfDeposit;
 
 
                                         <span style="overflow: visible; position: relative; width: 110px;">
+										<?php echo $__env->make('reports.time-of-deposit.renewal-date._renew_modal', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                             <a data-toggle="modal" data-target="#reverse-broken-modal-<?php echo e($model->id); ?>" type="button" class="btn  btn-secondary btn-outline-hover-success   btn-icon" title="<?php echo e(__('Reverse Broken')); ?>" href="#"><i class="fa fa-undo"></i></a>
                                             <div class="modal fade" id="reverse-broken-modal-<?php echo e($model->id); ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-lg modal-dialog-centered" role="document">

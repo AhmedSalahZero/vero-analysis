@@ -1,10 +1,19 @@
-@extends('layouts.dashboard')
-@php
+<?php
 use Carbon\Carbon;
-@endphp
+?>
 
-@section('css')
-<x-styles.commons></x-styles.commons>
+<?php $__env->startSection('css'); ?>
+ <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.styles.commons','data' => []]); ?>
+<?php $component->withName('styles.commons'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php $component->withAttributes([]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
+<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
+<?php endif; ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?> 
 <style>
     .max-w-invoice-date {
         width: 25% !important;
@@ -137,11 +146,21 @@ use Carbon\Carbon;
     }
 
 </style>
-@endsection
-@section('sub-header')
-<x-main-form-title :id="'main-form-title'" :class="''">{{ __('Adjusted Renewal Date') }}</x-main-form-title>
-@endsection
-@section('content')
+<?php $__env->stopSection(); ?>
+<?php $__env->startSection('sub-header'); ?>
+ <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.main-form-title','data' => ['id' => 'main-form-title','class' => '']]); ?>
+<?php $component->withName('main-form-title'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php $component->withAttributes(['id' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('main-form-title'),'class' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('')]); ?><?php echo e(__('Adjusted Renewal Date')); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
+<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
+<?php endif; ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?> 
+<?php $__env->stopSection(); ?>
+<?php $__env->startSection('content'); ?>
 
 <div class="row">
     <div class="col-md-12">
@@ -151,10 +170,10 @@ use Carbon\Carbon;
 
             <div class="kt-portlet__body">
 
-                @php
+                <?php
 
                 $tableId = 'kt_table_1';
-                @endphp
+                ?>
 
 
                 <style>
@@ -291,7 +310,7 @@ use Carbon\Carbon;
                     }
 
                 </style>
-                @csrf
+                <?php echo csrf_field(); ?>
 
 
 
@@ -299,57 +318,58 @@ use Carbon\Carbon;
 
 
 
-                @if(isset($model) || $letterOfGuaranteeIssuance->isExpired())
+                <?php if(isset($model) || $letterOfGuaranteeIssuance->isExpired()): ?>
                 <div class="row">
                     <div class="col-md-12">
                         <!--begin::Portlet-->
 
 
                         <!--begin::Form-->
-                        <form method="post" action="{{ isset($model) ? route('update.letter.of.issuance.renewal.date',['company'=>$company->id, 'letterOfGuaranteeIssuance'=>$letterOfGuaranteeIssuance->id , 'LgRenewalDateHistory'=>$model->id]) :route('store.letter.of.issuance.renewal.date',['company'=>$company->id , 'letterOfGuaranteeIssuance'=>$letterOfGuaranteeIssuance->id]) }}" class="kt-form kt-form--label-right">
-                            @csrf
-                            @if(isset($model))
-                            @method('patch')
-                            @endif
+                        <form method="post" action="<?php echo e(isset($model) ? route('update.letter.of.issuance.renewal.date',['company'=>$company->id, 'letterOfGuaranteeIssuance'=>$letterOfGuaranteeIssuance->id , 'LgRenewalDateHistory'=>$model->id]) :route('store.letter.of.issuance.renewal.date',['company'=>$company->id , 'letterOfGuaranteeIssuance'=>$letterOfGuaranteeIssuance->id])); ?>" class="kt-form kt-form--label-right">
+                            <?php echo csrf_field(); ?>
+                            <?php if(isset($model)): ?>
+                            <?php echo method_field('patch'); ?>
+                            <?php endif; ?>
 							
                             <div class="kt-portlet">
                                 <div class="kt-portlet__head">
                                     <div class="kt-portlet__head-label">
                                         <h3 class="kt-portlet__head-title head-title text-primary">
-                                            {{__('Adjusted Renewal Date Section')}}
+                                            <?php echo e(__('Adjusted Collection Date Section')); ?>
+
                                         </h3>
                                     </div>
                                 </div>
                                 <div class="kt-portlet__body">
                                     <div class="form-group row">
                                         <div class="col-md-4 mb-4">
-                                            <label> {{ __('Transaction Name') }} </label>
-                                            <input type="text" class="form-control" disabled value="{{ $letterOfGuaranteeIssuance->getTransactionName() }}">
+                                            <label> <?php echo e(__('Transaction Name')); ?> </label>
+                                            <input type="text" class="form-control" disabled value="<?php echo e($letterOfGuaranteeIssuance->getTransactionName()); ?>">
                                         </div>
                                         <div class="col-md-4 mb-4">
-                                            <label>{{__('Source')}} </label>
-                                            <input type="text" class="form-control" disabled value="{{ $letterOfGuaranteeIssuance->getSourceFormatted() }}">
+                                            <label><?php echo e(__('Source')); ?> </label>
+                                            <input type="text" class="form-control" disabled value="<?php echo e($letterOfGuaranteeIssuance->getSourceFormatted()); ?>">
                                         </div>
                                         <div class="col-md-4 mb-4">
-                                            <label>{{__('LG Code')}} </label>
-                                            <input type="text" class="form-control" disabled value="{{ $letterOfGuaranteeIssuance->getLgCode() }}">
+                                            <label><?php echo e(__('LG Code')); ?> </label>
+                                            <input type="text" class="form-control" disabled value="<?php echo e($letterOfGuaranteeIssuance->getLgCode()); ?>">
                                         </div>
 										
 										     <div class="col-md-3 mb-4">
-                                            <label>{{__('Issuance Date')}} </label>
-                                            <input type="text" class="form-control" disabled value="{{ $letterOfGuaranteeIssuance->getIssuanceDateFormatted() }}">
+                                            <label><?php echo e(__('Issuance Date')); ?> </label>
+                                            <input type="text" class="form-control" disabled value="<?php echo e($letterOfGuaranteeIssuance->getIssuanceDateFormatted()); ?>">
                                         </div>
                                         <div class="col-md-3 mb-4">
-                                            <label>{{__('Expiry Date')}} </label>
-											<input type="hidden" name="expiry_date" value="{{ isset($model)  ? $letterOfGuaranteeIssuance->getRenewalDateBefore($letterOfGuaranteeIssuance->getRenewalDate()) :$letterOfGuaranteeIssuance->getRenewalDate() }}">
-                                            <input type="text" class="form-control" disabled  value="{{ isset($model)  ? $letterOfGuaranteeIssuance->getRenewalDateBefore($letterOfGuaranteeIssuance->getRenewalDate()) :$letterOfGuaranteeIssuance->getRenewalDate() }}">
+                                            <label><?php echo e(__('Expiry Date')); ?> </label>
+											<input type="hidden" name="expiry_date" value="<?php echo e(isset($model)  ? $letterOfGuaranteeIssuance->getRenewalDateBefore($letterOfGuaranteeIssuance->getRenewalDate()) :$letterOfGuaranteeIssuance->getRenewalDate()); ?>">
+                                            <input type="text" class="form-control" disabled  value="<?php echo e(isset($model)  ? $letterOfGuaranteeIssuance->getRenewalDateBefore($letterOfGuaranteeIssuance->getRenewalDate()) :$letterOfGuaranteeIssuance->getRenewalDate()); ?>">
                                         </div>
 										
 										  <div class="col-md-3">
-                                            <label>{{__('New Expiry Date')}} @include('star') </label>
+                                            <label><?php echo e(__('New Expiry Date')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?> </label>
                                             <div class="kt-input-icon">
                                                 <div class="input-group date">
-                                                    <input required type="text" name="renewal_date" value="{{ isset($model) ? $model->getRenewalDateFormattedForDatePicker() : null }}" id="kt_datepicker_2" class="form-control" readonly placeholder="{{ __('Select date') }}" />
+                                                    <input required type="text" name="renewal_date" value="<?php echo e(isset($model) ? $model->getRenewalDateFormattedForDatePicker() : null); ?>" id="kt_datepicker_2" class="form-control" readonly placeholder="<?php echo e(__('Select date')); ?>" />
                                                     <div class="input-group-append">
                                                         <span class="input-group-text">
                                                             <i class="la la-calendar-check-o"></i>
@@ -360,8 +380,8 @@ use Carbon\Carbon;
                                         </div>
 										
                                     <div class="col-md-3 mb-4">
-                                            <label>{{__('Renewal Fees')}} </label>
-                                            <input type="text" class="form-control only-greater-than-or-equal-zero-allowed" name="fees_amount" value="{{ isset($model)  ? $model->getFeesAmount() : 0 }}">
+                                            <label><?php echo e(__('Renewal Fees')); ?> </label>
+                                            <input type="text" class="form-control only-greater-than-or-equal-zero-allowed" name="fees_amount" value="<?php echo e(isset($model)  ? $model->getFeesAmount() : 0); ?>">
                                         </div>
                                        
                                       
@@ -369,12 +389,23 @@ use Carbon\Carbon;
                                 </div>
                             </div>
 
-                            <x-submitting />
+                             <?php if (isset($component)) { $__componentOriginal49acb4be531871427e6da8fc4bf301f11a96ee34 = $component; } ?>
+<?php $component = $__env->getContainer()->make(App\View\Components\Submitting::class, []); ?>
+<?php $component->withName('submitting'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php $component->withAttributes([]); ?>
+<?php if (isset($__componentOriginal49acb4be531871427e6da8fc4bf301f11a96ee34)): ?>
+<?php $component = $__componentOriginal49acb4be531871427e6da8fc4bf301f11a96ee34; ?>
+<?php unset($__componentOriginal49acb4be531871427e6da8fc4bf301f11a96ee34); ?>
+<?php endif; ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?> 
 
                         </form>
                     </div>
                 </div>
-				@endif
+				<?php endif; ?>
 
                 <div class="kt-portlet">
 
@@ -395,24 +426,29 @@ use Carbon\Carbon;
                                             <tr class="header-tr ">
 
                                                 <th class="view-table-th max-w-serial  header-th  align-middle text-center">
-                                                    {{ __('#') }}
+                                                    <?php echo e(__('#')); ?>
+
                                                 </th>
 
                                                 <th class="view-table-th max-w-name  max-w-invoice-date header-th  align-middle text-center">
-                                                    {{ __('Date') }}
+                                                    <?php echo e(__('Date')); ?>
+
                                                 </th>
 
                                                 <th class="view-table-th max-w-name  max-w-counts header-th  align-middle text-center">
-                                                    {{ __('Days Count') }}
+                                                    <?php echo e(__('Days Count')); ?>
+
                                                 </th>
 
                                                 <th class="view-table-th max-w-name  max-w-counts header-th  align-middle text-center">
-                                                    {{ __('Fees Amount') }}
+                                                    <?php echo e(__('Fees Amount')); ?>
+
                                                 </th>
 
 
                                                 <th class="view-table-th max-w-name max-w-action  header-th  align-middle text-center">
-                                                    {{ __('Actions') }}
+                                                    <?php echo e(__('Actions')); ?>
+
                                                 </th>
 
 
@@ -425,45 +461,49 @@ use Carbon\Carbon;
 
                                         </thead>
                                         <tbody>
-                                            @php
+                                            <?php
                                             $previousDate = null ;
-                                            @endphp
-                                            @foreach($renewalDateHistories as $index => $renewalDateHistory)
+                                            ?>
+                                            <?php $__currentLoopData = $renewalDateHistories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $renewalDateHistory): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                             <tr class=" parent-tr reset-table-width text-nowrap  cursor-pointer sub-text-bg text-capitalize is-close   ">
-                                                <td class="sub-text-bg max-w-serial text-center   ">{{ ++$index }}</td>
-                                                <td class="sub-text-bg max-w-invoice-date  text-center   ">{{ $currentRenewalDate = $renewalDateHistory->getRenewalDateFormatted() }} {{ is_null($previousDate) ? __(' (Original Renewal Date) ') : '' }} </td>
-                                                <td class="sub-text-bg  text-center  max-w-counts ">{{ $previousDate ? getDiffBetweenTwoDatesInDays(Carbon::make($previousDate),Carbon::make($currentRenewalDate)) : '-' }}</td>
-                                                @php
+                                                <td class="sub-text-bg max-w-serial text-center   "><?php echo e(++$index); ?></td>
+                                                <td class="sub-text-bg max-w-invoice-date  text-center   "><?php echo e($currentRenewalDate = $renewalDateHistory->getRenewalDateFormatted()); ?> <?php echo e(is_null($previousDate) ? __(' (Original Renewal Date) ') : ''); ?> </td>
+                                                <td class="sub-text-bg  text-center  max-w-counts "><?php echo e($previousDate ? getDiffBetweenTwoDatesInDays(Carbon::make($previousDate),Carbon::make($currentRenewalDate)) : '-'); ?></td>
+                                                <?php
                                                 $previousDate = $renewalDateHistory->getRenewalDate();
-                                                @endphp
-                                                <td class="sub-text-bg  text-center max-w-counts ">{{ $renewalDateHistory->getFeesAmountFormatted() }}</td>
+                                                ?>
+                                                <td class="sub-text-bg  text-center max-w-counts "><?php echo e($renewalDateHistory->getFeesAmountFormatted()); ?></td>
                                                 <td class="sub-text-bg  text-center max-w-action   ">
-                                                    @if($loop->last)
-                                                    <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{route('edit.letter.of.issuance.renewal.date',[$company,$letterOfGuaranteeIssuance->id,$renewalDateHistory->id])}}"><i class="fa fa-pen-alt"></i></a>
+                                                    <?php if($loop->last): ?>
+                                                    <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="<?php echo e(route('edit.letter.of.issuance.renewal.date',[$company,$letterOfGuaranteeIssuance->id,$renewalDateHistory->id])); ?>"><i class="fa fa-pen-alt"></i></a>
 
 
-                                                    <a class="btn btn-secondary btn-outline-hover-danger btn-icon  " href="#" data-toggle="modal" data-target="#modal-delete-{{ $renewalDateHistory['id']}}" title="Delete"><i class="fa fa-trash-alt"></i>
+                                                    <a class="btn btn-secondary btn-outline-hover-danger btn-icon  " href="#" data-toggle="modal" data-target="#modal-delete-<?php echo e($renewalDateHistory['id']); ?>" title="Delete"><i class="fa fa-trash-alt"></i>
                                                     </a>
-                                                    @endif
+                                                    <?php endif; ?>
 
-                                                    <div id="modal-delete-{{ $renewalDateHistory['id'] }}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
+                                                    <div id="modal-delete-<?php echo e($renewalDateHistory['id']); ?>" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
                                                         <div class="modal-dialog">
                                                             <div class="modal-content">
                                                                 <div class="modal-header">
-                                                                    <h4 class="modal-title">{{ __('Delete Renewal Date History ' .$renewalDateHistory->getRenewalDateFormatted()) }}</h4>
+                                                                    <h4 class="modal-title"><?php echo e(__('Delete Renewal Date History ' .$renewalDateHistory->getRenewalDateFormatted())); ?></h4>
                                                                 </div>
                                                                 <div class="modal-body">
-                                                                    <h3>{{ __('Are You Sure To Delete This Item ? ') }}</h3>
+                                                                    <h3><?php echo e(__('Are You Sure To Delete This Item ? ')); ?></h3>
                                                                 </div>
-                                                                <form action="{{ route('delete.letter.of.issuance.renewal.date',[$company,$letterOfGuaranteeIssuance->id,$renewalDateHistory->id]) }}" method="post" id="delete_form">
-                                                                    {{ csrf_field() }}
-                                                                    {{ method_field('DELETE') }}
+                                                                <form action="<?php echo e(route('delete.letter.of.issuance.renewal.date',[$company,$letterOfGuaranteeIssuance->id,$renewalDateHistory->id])); ?>" method="post" id="delete_form">
+                                                                    <?php echo e(csrf_field()); ?>
+
+                                                                    <?php echo e(method_field('DELETE')); ?>
+
                                                                     <div class="modal-footer">
                                                                         <button class="btn btn-danger">
-                                                                            {{ __('Delete') }}
+                                                                            <?php echo e(__('Delete')); ?>
+
                                                                         </button>
                                                                         <button class="btn btn-secondary" data-dismiss="modal" aria-hidden="true">
-                                                                            {{ __('Close') }}
+                                                                            <?php echo e(__('Close')); ?>
+
                                                                         </button>
                                                                     </div>
                                                                 </form>
@@ -473,14 +513,14 @@ use Carbon\Carbon;
 
                                                 </td>
                                             </tr>
-                                            @endforeach
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                         </tbody>
                                     </table>
                                 </div>
 
                             </div>
 
-                            @push('js')
+                            <?php $__env->startPush('js'); ?>
                             <script>
                                 $('.table-for-currency').DataTable({
                                         dom: 'Bfrtip'
@@ -509,7 +549,7 @@ use Carbon\Carbon;
                                 )
 
                             </script>
-                            @endpush
+                            <?php $__env->stopPush(); ?>
 
                         </div>
 
@@ -527,9 +567,19 @@ use Carbon\Carbon;
             </div>
         </div>
     </div>
-    @endsection
-    @section('js')
-    <x-js.commons></x-js.commons>
+    <?php $__env->stopSection(); ?>
+    <?php $__env->startSection('js'); ?>
+     <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.js.commons','data' => []]); ?>
+<?php $component->withName('js.commons'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php $component->withAttributes([]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
+<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
+<?php endif; ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?> 
 
     <script src="https://cdn.amcharts.com/lib/4/core.js"></script>
     <script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
@@ -557,4 +607,6 @@ use Carbon\Carbon;
 
     </script>
 
-    @endsection
+    <?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.dashboard', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /media/salah/Software/projects/veroo/resources/views/reports/LetterOfGuaranteeIssuance/renewal-date/index.blade.php ENDPATH**/ ?>
