@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Models\MoneyPayment;
 use App\Rules\MoneyPaymentCanBeDeletedRule;
 use Illuminate\Foundation\Http\FormRequest;
-use App\Models\MoneyPayment;
 
 class DeleteMoneyPaymentRequest extends FormRequest
 {
@@ -32,7 +32,7 @@ class DeleteMoneyPaymentRequest extends FormRequest
 		$company = Request()->route('company');
 	
         return [
-            'net_balance'=>[new MoneyPaymentCanBeDeletedRule($moneyPayment ,$company )]
+            // 'net_balance'=>[new MoneyPaymentCanBeDeletedRule($moneyPayment ,$company )]
         ];
     }
 }

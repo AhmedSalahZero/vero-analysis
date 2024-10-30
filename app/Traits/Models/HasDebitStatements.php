@@ -111,14 +111,15 @@ trait HasDebitStatements
 			'date'=>$date,
 		]);
 	}	
-	public function storeCurrentAccountDebitBankStatement(string $date , $debit , int $financialInstitutionAccountId)
+	public function storeCurrentAccountDebitBankStatement(string $date , $debit , int $financialInstitutionAccountId , bool $isTdRenewal = false )
 	{
 		return $this->currentAccountDebitBankStatement()->create([
 			'financial_institution_account_id'=>$financialInstitutionAccountId,
 			'company_id'=>$this->company_id ,
 			'credit'=>0,
 			'debit'=>$debit,
-			'date'=>$date
+			'date'=>$date,
+			'is_td_renewal'=>$isTdRenewal
 		]);
 	}	
 	

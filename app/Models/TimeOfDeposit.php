@@ -278,4 +278,27 @@ class TimeOfDeposit extends Model
 	{
 		return Carbon::make($this->getEndDate())->lessThanOrEqualTo(now());
 	}
+	public function renewalDebitCurrentAccount(string $date)
+	{
+		return $this->hasOne(CurrentAccountBankStatement::class,'time_of_deposit_id','id')->where('is_debit',1)->where('is_td_renewal',1)->where('date',$date)->first();
+	}
+	public function calculateInterestAmount(string $expiryDate , string $renewalDate , $newInterestRate)
+	{
+		$diffBetweenTwoDatesInDays = Carbon::make($renewalDate)->diffInDays(Carbon::make($expiryDate));
+		$amount = $this->getAmount();
+		return  $newInterestRate / 100 / 365 *  $diffBetweenTwoDatesInDays * $amount;
+	}
+	public function storeRenewalDebitCurrentAccount(string $expiryDate , string $renewalDate , $newInterestRate)
+	{
+		$financialInstitution = $this->financialInstitution;
+		// $accountType = AccountType::where('slug',AccountType::CURRENT_ACCOUNT)->first() ;
+		$statementDate = $expiryDate ;
+		
+		$accountNumber= $this->getMaturityAmountAddedToAccountNumber() ;
+		$financialInstitutionId = $financialInstitution->id ; 
+		$interestAmount = $this->calculateInterestAmount($expiryDate,$renewalDate,$newInterestRate);
+		$financialInstitutionAccount = FinancialInstitutionAccount::findByAccountNumber($accountNumber,getCurrentCompanyId(),$financialInstitutionId);
+		$this->storeCurrentAccountDebitBankStatement($statementDate,$interestAmount,$financialInstitutionAccount->id,true);
+		return $interestAmount; 
+	}
 }
