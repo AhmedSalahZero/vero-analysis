@@ -139,7 +139,7 @@ use Carbon\Carbon;
 </style>
 @endsection
 @section('sub-header')
-<x-main-form-title :id="'main-form-title'" :class="''">{{ __('Adjusted Renewal Date') }}</x-main-form-title>
+<x-main-form-title :id="'main-form-title'" :class="''">{{ __('Renewal Date') }}</x-main-form-title>
 @endsection
 @section('content')
 

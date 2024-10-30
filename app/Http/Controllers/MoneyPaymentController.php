@@ -16,13 +16,11 @@ use App\Models\Partner;
 use App\Models\PayableCheque;
 use App\Models\PurchaseOrder;
 use App\Models\SupplierInvoice;
-use App\Models\User;
 use App\Traits\GeneralFunctions;
 use App\Traits\Models\HasCreditStatements;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 
 class MoneyPaymentController
 {

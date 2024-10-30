@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 use App\Http\Requests\StoreTdRenewalDateRequest;
+use App\Models\AccountType;
 use App\Models\Company;
 use App\Models\CurrentAccountBankStatement;
 use App\Models\FinancialInstitutionAccount;
@@ -66,35 +67,19 @@ class TimeOfDepositRenewalDateController
 		// if(Carbon::make($expiryDate)->greaterThanOrEqualTo(Carbon::make($financialInstitutionAccountOpeningBalance))){
 		// 	$timeOfDeposit->storeCurrentAccountCreditBankStatement($expiryDate,$renewalFeesAmount , $financialInstitutionAccount->id,0,1,__('Renewal Fees [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'en'),'transactionName'=>$transactionName],'en') , __('Renewal Fees [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'ar'),'transactionName'=>$transactionName],'ar'),true);
 		// }
-		
+		$interestAmount = $timeOfDeposit->storeRenewalDebitCurrentAccount($expiryDate,$renewalDate,$newInterestRate);
 		$timeOfDeposit->update([
 			'end_date'=>$renewalDate,
 			'start_date'=>$expiryDate,
-			'interest_rate'=>$newInterestRate
+			'interest_rate'=>$newInterestRate,
+			'interest_amount'=>$interestAmount,
+			'actual_interest_amount'=>$interestAmount
 		]);
 		
 		
 		return redirect()->route('time.of.deposit.renewal.date',['company'=>$company->id,'timeOfDeposit'=>$timeOfDeposit->id]);
 	}
-	// protected function storeCommissionToCreditCurrentAccountBankStatement(TdRenewalDateHistory $tdRenewalDateHistory , TimeOfDeposit $timeOfDeposit,Company $company,string $expiryDate , string $renewalDate,string $transactionName, string $lgType )
-	// {
-	// 	$tdRenewalDateHistoryId = $tdRenewalDateHistory->id;
-	// 	$lgCommissionInterval = $timeOfDeposit->getLgCommissionInterval();
-	// 	$lgDurationMonths = Carbon::make($expiryDate)->diffInMonths(Carbon::make($renewalDate));
 	
-	// 	$numberOfIterationsForQuarter = ceil($lgDurationMonths / 3); 
-	// 	$issuanceDate = $expiryDate;
-	// 	$minLgCommissionAmount = $timeOfDeposit->getMinLgCommissionFees();
-	// 	$lgCommissionAmount = $timeOfDeposit->getLgCommissionAmount();
-	// 	$maxLgCommissionAmount = max($minLgCommissionAmount ,$lgCommissionAmount );
-	// 	$financialInstitutionId = $timeOfDeposit->getFinancialInstitutionBankId();
-	// 	$financialInstitutionAccountForFeesAndCommission = FinancialInstitutionAccount::findByAccountNumber($timeOfDeposit->getLgFeesAndCommissionAccountNumber(),$company->id , $financialInstitutionId);
-	// 	$financialInstitutionAccountIdForFeesAndCommission = $financialInstitutionAccountForFeesAndCommission->id;
-	// 	$openingBalanceDateOfCurrentAccount = $financialInstitutionAccountForFeesAndCommission->getOpeningBalanceDate();
-	// 	$isOpeningBalance = $timeOfDeposit->isOpeningBalance();
-	// 	$timeOfDeposit->storeCommissionAmountCreditBankStatement( $lgCommissionInterval ,  $numberOfIterationsForQuarter ,  $issuanceDate, $openingBalanceDateOfCurrentAccount,$maxLgCommissionAmount, $financialInstitutionAccountIdForFeesAndCommission, $transactionName, $lgType, $isOpeningBalance,$tdRenewalDateHistoryId);
-		
-	// }
 	public function edit(Request $request , Company $company ,  TimeOfDeposit $timeOfDeposit , TdRenewalDateHistory $TdRenewalDateHistory){
 		$renewalDateHistories = $timeOfDeposit->renewalDateHistories;
         return view('reports.time-of-deposit.renewal-date.index', [
@@ -115,61 +100,43 @@ class TimeOfDepositRenewalDateController
 		$renewalDate = $year.'-'.$month.'-'.$day ;
 		$expiryDate = $request->get('expiry_date');
 		// dd($renewalDate,$expiryDate);
-		// $renewalFeesCurrentAccountBankStatement = $timeOfDeposit->renewalFeesCurrentAccountBankStatement($expiryDate) ;
-	
+		$renewalFeesCurrentAccountBankStatement = $timeOfDeposit->renewalDebitCurrentAccount($expiryDate) ;
+	// dd($renewalFeesCurrentAccountBankStatement->financial_institution_account_id,$renewalFeesCurrentAccountBankStatement);
 		// dd($renewalFeesCurrentAccountBankStatement);
 		// $financialInstitution = $timeOfDeposit->financialInstitution;
-		// $financialInstitutionAccountOpeningBalance = 
-		// $time  = now()->format('H:i:s');
-		// $fullDateTime = date('Y-m-d H:i:s', strtotime("$renewalDate $time")) ;
 		
-		// dd($expiryDate,$renewalFeesCurrentAccountBankStatement);
-		// CurrentAccountBankStatement::deleteButTriggerChangeOnLastElement($TdRenewalDateHistory->commissionCurrentBankStatements()->withoutGlobalScope('only_active')->get());
-		// $transactionName = $timeOfDeposit->getTransactionName();
-		// $lgType = $timeOfDeposit->getLgType();
+	
 		// $financialInstitutionAccount = FinancialInstitutionAccount::findByAccountNumber($timeOfDeposit->lg_fees_and_commission_account_number,$company->id , $financialInstitution->id);
 		// $financialInstitutionAccountOpeningBalance = $financialInstitutionAccount->getOpeningBalanceDate();
-		// $this->storeCommissionToCreditCurrentAccountBankStatement($TdRenewalDateHistory,$timeOfDeposit,$company,$expiryDate,$renewalDate,$transactionName,$lgType);
 		// if($renewalFeesCurrentAccountBankStatement){
 			
 			
-		// 	$currentFullDate =$renewalFeesCurrentAccountBankStatement->full_date ; 
-		// 	$time  = Carbon::make($currentFullDate)->format('H:i:s');
-		// 	$newFullDateTime = date('Y-m-d H:i:s', strtotime("$expiryDate $time")) ;
-		// 	$minDateTime = min($currentFullDate ,$newFullDateTime );
-		// 	DB::table('current_account_bank_statements')->where('id',$renewalFeesCurrentAccountBankStatement->id)->update([
-		// 		'date'=>$expiryDate,
-		// 		'full_date'=>$newFullDateTime ,
-		// 		'credit'=>$renewalFeesAmount
-		// 	]);
-		// 	CurrentAccountBankStatement::where('full_date','>=',$minDateTime)
-		// 	->where('financial_institution_account_id',$renewalFeesCurrentAccountBankStatement->financial_institution_account_id)
-		// 	->orderByRaw('full_date asc, id asc')
-		// 	->first()
-		// 	->update([
-		// 		'updated_at'=>now()
-		// 	]);
+			$currentFullDate =$renewalFeesCurrentAccountBankStatement->full_date ; 
+			$time  = Carbon::make($currentFullDate)->format('H:i:s');
+			$newFullDateTime = date('Y-m-d H:i:s', strtotime("$expiryDate $time")) ;
+			$minDateTime = min($currentFullDate ,$newFullDateTime );
+			$interestAmount = $timeOfDeposit->calculateInterestAmount($expiryDate,$renewalDate,$newInterestRate);
+			DB::table('current_account_bank_statements')->where('id',$renewalFeesCurrentAccountBankStatement->id)->update([
+				'date'=>$expiryDate,
+				'full_date'=>$newFullDateTime ,
+				'debit'=>$interestAmount
+			]);
+			CurrentAccountBankStatement::where('full_date','>=',$minDateTime)
+			->where('financial_institution_account_id',$renewalFeesCurrentAccountBankStatement->financial_institution_account_id)
+			->orderByRaw('full_date asc, id asc')
+			->first()
+			->update([
+				'updated_at'=>now()
+			]);
 			
-		//  /**
-		//   * ! عايزين نعملها بطريق
-		//   * DB::Table()
-		//   */
-		//   /**
-		//    * ! خلي بالك انها ممكن ما تبقاش موجودة وبالتالي لازم الاول نشوف لو حصل 
-		//    * 
-		//    */
-		// 	// $renewalFeesCurrentAccountBankStatement->update([
-		// 	// 	'date'=>$renewalDate,
-		// 	// 	'full_date'=>$fullDateTime,
-		// 	// 	'credit'=>$renewalFeesAmount
-		// 	// ]);
+	
 			
 		// }
-		// else{
-		// 	if(Carbon::make($expiryDate)->greaterThanOrEqualTo(Carbon::make($financialInstitutionAccountOpeningBalance))){
-		// 		$timeOfDeposit->storeCurrentAccountCreditBankStatement($expiryDate,$renewalFeesAmount , $financialInstitutionAccount->id,0,1,__('Renewal Fees [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'en'),'transactionName'=>$transactionName],'en') , __('Renewal Fees [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'ar'),'transactionName'=>$transactionName],'ar'),true);
-		// 	}
-		// }
+		
+		
+		
+		
+		
 		$TdRenewalDateHistory->update([
 			'renewal_date'=>$renewalDate ,
 			'expiry_date'=>$expiryDate,
@@ -178,7 +145,9 @@ class TimeOfDepositRenewalDateController
 		$timeOfDeposit->update([
 			'end_date'=>$renewalDate,
 			'start_date'=>$expiryDate,
-			'interest_rate'=>$newInterestRate
+			'interest_rate'=>$newInterestRate,
+			'interest_amount'=>$interestAmount,
+			'actual_interest_amount'=>$interestAmount
 		]);
 		
 
@@ -188,23 +157,19 @@ class TimeOfDepositRenewalDateController
 	public function destroy(Request $request , Company $company ,  TimeOfDeposit $timeOfDeposit , TdRenewalDateHistory $TdRenewalDateHistory)
 	{
 		
-		// CurrentAccountBankStatement::deleteButTriggerChangeOnLastElement($TdRenewalDateHistory->commissionCurrentBankStatements()->withoutGlobalScope('only_active')->get());
-		// $oldRenewalDate = $timeOfDeposit->getRenewalDate();
-		// $expiryDate = $timeOfDeposit->getRenewalDateBefore($oldRenewalDate);
-		// dd($oldRenewalDate,$expiryDate);
-		// $renewalFeesCurrentAccountBankStatement = $timeOfDeposit->renewalFeesCurrentAccountBankStatement($expiryDate) ;
-		// if($renewalFeesCurrentAccountBankStatement){
-		// 	$renewalFeesCurrentAccountBankStatement->delete();
-		// }
-	
 		$TdRenewalDateHistory->delete();
 		$timeOfDeposit = $timeOfDeposit->refresh();
 		$lastHistory = $timeOfDeposit->renewalDateHistories->last();
-		
+		$expiryDate = $lastHistory->expiry_date ;
+		$renewalDate = $lastHistory->renewal_date ;
+		$interestRate = $lastHistory->interest_rate ;
+		$interestAmount = $timeOfDeposit->calculateInterestAmount($expiryDate,$renewalDate,$interestRate);
 		$timeOfDeposit->update([
-			'end_date'=>$lastHistory->renewal_date ,
-			'start_date'=>$lastHistory->expiry_date,
-			'interest_rate'=>$lastHistory->interest_rate
+			'end_date'=>$renewalDate ,
+			'start_date'=>$expiryDate,
+			'interest_rate'=>$interestRate,
+			'interest_amount'=>$interestAmount,
+			'actual_interest_amount'=>$interestAmount
 			]) ; 
 			/**
 			 * * لو معدش فاضل غيرها دا معناه انه حذف تاني عنصر وبالتالي العنصر الاول اللي معتش فاضل غيره هو الديو ديت الاصلي ففي الحاله
