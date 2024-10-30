@@ -123,6 +123,7 @@ use \App\Models\TimeOfDeposit;
 
                                         <span style="overflow: visible; position: relative; width: 110px;">
 											@if(hasAuthFor('create time of deposit'))
+											@include('reports.time-of-deposit.renewal-date._renew_modal')
                                             <a
 											
 											 data-toggle="modal" data-target="#apply-deposit-modal-{{ $model->id }}" type="button" class="btn 
@@ -372,6 +373,7 @@ use \App\Models\TimeOfDeposit;
 
 
                                         <span style="overflow: visible; position: relative; width: 110px;">
+										@include('reports.time-of-deposit.renewal-date._renew_modal')
                                             <a data-toggle="modal" data-target="#reverse-deposit-modal-{{ $model->id }}" type="button" class="btn  btn-secondary btn-outline-hover-success   btn-icon" title="{{ __('Reverse Deposit') }}" href="#"><i class="fa fa-undo"></i></a>
                                             <div class="modal fade" id="reverse-deposit-modal-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
@@ -526,6 +528,7 @@ use \App\Models\TimeOfDeposit;
 
 
                                         <span style="overflow: visible; position: relative; width: 110px;">
+										@include('reports.time-of-deposit.renewal-date._renew_modal')
                                             <a data-toggle="modal" data-target="#reverse-broken-modal-{{ $model->id }}" type="button" class="btn  btn-secondary btn-outline-hover-success   btn-icon" title="{{ __('Reverse Broken') }}" href="#"><i class="fa fa-undo"></i></a>
                                             <div class="modal fade" id="reverse-broken-modal-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-lg modal-dialog-centered" role="document">

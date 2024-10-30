@@ -461,5 +461,9 @@ class Company extends Model implements HasMedia
 		// ->where('company_id',getCurrentCompanyId())
 		;
 	}
+	public function deductions()
+	{
+		return $this->hasMany(Deduction::class,'company_id','id');
+	}
 	
 }

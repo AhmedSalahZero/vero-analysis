@@ -98,7 +98,7 @@ $selectedBanks = [];
         </div>
         <div class="kt-portlet__body">
             <div class="form-group row">
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <label><?php echo e(__('Payment Date')); ?></label>
                     <div class="kt-input-icon">
                         <div class="input-group date">
@@ -170,7 +170,7 @@ $selectedBanks = [];
         </div>
 
 
-        <div class="col-md-2">
+        <div class="col-md-3">
             <label><?php echo e(__('Payment Type')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
             <div class="kt-input-icon">
                 <div class="input-group date">
@@ -178,7 +178,7 @@ $selectedBanks = [];
                         <option value="" selected><?php echo e(__('Select')); ?></option>
                         <option <?php if(isset($model) && $model->isCashPayment() ): ?> selected <?php endif; ?> value="<?php echo e(CashExpense::CASH_PAYMENT); ?>"><?php echo e(__('Cash Payment')); ?></option>
                         <option <?php if(isset($model) && $model->isPayableCheque() ): ?> selected <?php endif; ?> value="<?php echo e(CashExpense::PAYABLE_CHEQUE); ?>"><?php echo e(__('Payable Cheques')); ?></option>
-                        <option <?php if(isset($model) && $model->isOutgoingTransfer()): ?> selected <?php endif; ?> value="<?php echo e(CashExpense::OUTGOING_TRANSFER); ?>"><?php echo e(__('Outgoing Transfer')); ?></option>
+                        <option <?php if(isset($model) && $model->isOutgoingTransfer()): ?> selected <?php endif; ?> value="<?php echo e(CashExpense::OUTGOING_TRANSFER); ?>"><?php echo e(__('Outgoing Transfer / Bank Charges')); ?></option>
                     </select>
                 </div>
             </div>

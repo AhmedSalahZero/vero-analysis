@@ -192,7 +192,9 @@ class FinancialInstitutionAccount extends Model
 	}
 	public function getOpeningBalanceDate():string
 	{
-		return $this->accountInterests->sortBy('start_date')->first()->start_date;
+		return $this->balance_date;
+		// return $this->accountInterests->sortBy('start_date')->first()->start_date;
+		// return $this->accountInterests->sortBy('start_date')->first()->start_date;
 	}
 	public function getAmount(string $currencyName , string $accountNumber,int $financialInstitutionId , int $companyId)
 	{

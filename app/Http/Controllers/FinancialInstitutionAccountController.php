@@ -4,11 +4,13 @@ use App\Http\Requests\DeleteCurrentAccountRequest;
 use App\Http\Requests\UpdateCurrentAccountRequest;
 use App\Models\Branch;
 use App\Models\Company;
+use App\Models\CurrentAccountBankStatement;
 use App\Models\FinancialInstitution;
 use App\Models\FinancialInstitutionAccount;
 use App\Traits\GeneralFunctions;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class FinancialInstitutionAccountController
 {
@@ -38,12 +40,23 @@ class FinancialInstitutionAccountController
 		$currentAccountBeginningBalance = $financialInstitutionAccount->getOpeningBalanceFromCurrentAccountBankStatement() ;
 
 		if($currentAccountBeginningBalance){
-	
-			$currentAccountBeginningBalance->update([
+			$currentFullDate =$currentAccountBeginningBalance->full_date ; 
+			$time  = Carbon::make($currentFullDate)->format('H:i:s');
+			$newFullDateTime = date('Y-m-d H:i:s', strtotime("$balanceDate $time")) ;
+			$minDateTime = min($currentFullDate ,$newFullDateTime );
+			DB::table('current_account_bank_statements')->where('id',$currentAccountBeginningBalance->id)->update([
 				'date'=>$balanceDate,
+				'full_date'=>$newFullDateTime ,
 				'debit'=>$request->get('balance_amount'),
 				'comment_en'=>__('Beginning Balance',[],'en'),
 				'comment_ar'=>__('Beginning Balance',[],'ar'),
+			]);
+			CurrentAccountBankStatement::where('full_date','>=',$minDateTime)
+			->where('financial_institution_account_id',$currentAccountBeginningBalance->financial_institution_account_id)
+			->orderByRaw('full_date asc, id asc')
+			->first()
+			->update([
+				'updated_at'=>now()
 			]);
 		}
 	
