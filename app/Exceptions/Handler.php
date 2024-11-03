@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use App\Mail\SendExceptionMail;
+use Http;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -24,6 +25,8 @@ class Handler extends ExceptionHandler
 
 	public function report(Throwable $exception)
 	{
+
+		
 		if ($this->shouldReport($exception) && env('APP_ENV') != 'local') {
 			$this->sendEmail($exception);
 		}

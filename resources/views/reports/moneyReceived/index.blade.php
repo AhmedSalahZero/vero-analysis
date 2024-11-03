@@ -156,7 +156,7 @@ use App\Models\MoneyReceived;
                                     <td class="text-nowrap">{{ $moneyReceived->getReceivingDateFormatted() }}</td>
                                     <td>{{ $moneyReceived->cheque->getChequeNumber() }}</td>
                                     <td>{{ $moneyReceived->getReceivedAmountFormatted() }}</td>
-                                    <td class="text-transform" data-currency="{{ $moneyReceived->getCurrency() }}">{{ $moneyReceived->getCurrencyToReceivingCurrencyFormatted() }}</td>
+                                    <td class="text-transform" data-currency="{{ $moneyReceived->getReceivingCurrency() }}">{{ $moneyReceived->getCurrencyToReceivingCurrencyFormatted() }}</td>
                                     <td class="bank-max-width">{{ $moneyReceived->cheque->getDraweeBankName() }}</td>
                                     <td class="text-nowrap">{{ $moneyReceived->cheque->getDueDateFormatted() }}</td>
                                     <td>{{ $moneyReceived->cheque->getDueAfterDays() }}</td>
@@ -255,7 +255,7 @@ use App\Models\MoneyReceived;
                                     <td class="text-nowrap">{{ $moneyReceived->getReceivingDateFormatted() }}</td>
                                     <td>{{ $moneyReceived->cheque->getChequeNumber() }}</td>
                                     <td>{{ $moneyReceived->getReceivedAmountFormatted() }}</td>
-                                    <td class="text-transform" data-currency="{{ $moneyReceived->getCurrency() }}">{{ $moneyReceived->getCurrencyToReceivingCurrencyFormatted() }}</td>
+                                    <td class="text-transform" data-currency="{{ $moneyReceived->getReceivingCurrency() }}">{{ $moneyReceived->getCurrencyToReceivingCurrencyFormatted() }}</td>
                                     <td class="bank-max-width">{{ $moneyReceived->cheque->getDraweeBankName() }}</td>
                                     <td class="text-nowrap">{{ $moneyReceived->cheque->getDueDateFormatted() }}</td>
                                     <td> {{ $moneyReceived->cheque->getStatusFormatted() }} </td>
@@ -348,7 +348,7 @@ use App\Models\MoneyReceived;
   									 <td class="text-wrap bank-max-width">{{ $moneyReceived->getMoneyTypeFormatted() }}</td>
                                     <td class="bank-max-width">{{ $moneyReceived->getCustomerName() }}</td>
                                     <td>{{ $moneyReceived->cheque->getChequeNumber() }}</td>
-                                    <td>{{ $moneyReceived->getReceivedAmountFormatted() . ' '  . $moneyReceived->getCurrency() }}</td>
+                                    <td>{{ $moneyReceived->getReceivedAmountFormatted() . ' '  . $moneyReceived->getReceivingCurrency() }}</td>
                                     <td class="text-nowrap"> {{$moneyReceived->cheque->getDepositDateFormatted()}} </td>
                                     <td class="bank-max-width">{{ $moneyReceived->cheque->getDrawlBankName() }}</td>
                                     <td class="bank-max-width">{{ $moneyReceived->cheque->getAccountTypeName() }}</td>
@@ -531,7 +531,7 @@ use App\Models\MoneyReceived;
  									  <td class="text-wrap bank-max-width">{{ $moneyReceived->getMoneyTypeFormatted() }}</td>
                                     <td class="bank-max-width">{{ $moneyReceived->getCustomerName() }}</td>
                                     <td>{{ $moneyReceived->cheque->getChequeNumber() }}</td>
-                                    <td>{{ $moneyReceived->getReceivedAmountFormatted() . ' ' . $moneyReceived->getCurrency() }}</td>
+                                    <td>{{ $moneyReceived->getReceivedAmountFormatted() . ' ' . $moneyReceived->getReceivingCurrency() }}</td>
                                     <td class="text-nowrap"> {{$moneyReceived->cheque->getDueDateFormatted()}} </td>
                                     <td class="text-nowrap"> {{$moneyReceived->cheque->getDepositDateFormatted()}} </td>
                                     <td class="bank-max-width">{{ $moneyReceived->cheque->getDrawlBankName() }}</td>
@@ -594,7 +594,7 @@ use App\Models\MoneyReceived;
                                     <td class="text-nowrap">{{ $money->getReceivingDateFormatted() }}</td>
                                     <td class="bank-max-width">{{ $money->getIncomingTransferReceivingBankName() }}</td>
                                     <td>{{ $money->getReceivedAmountFormatted() }}</td>
-                                    <td data-currency="{{ $money->getCurrency() }}"> {{ $money->getCurrencyToReceivingCurrencyFormatted() }}</td>
+                                    <td data-currency="{{ $money->getReceivingCurrency() }}"> {{ $money->getCurrencyToReceivingCurrencyFormatted() }}</td>
                                     <td class="bank-max-width">{{ $money->getIncomingTransferAccountTypeName() }}</td>
                                     <td>{{ $money->getIncomingTransferAccountNumber() }}</td>
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
@@ -683,7 +683,7 @@ use App\Models\MoneyReceived;
                                     <td class="text-nowrap">{{ $moneyReceived->getReceivingDateFormatted() }}</td>
                                     <td>{{ $moneyReceived->getCashInSafeBranchName() }}</td>
                                     <td>{{ $moneyReceived->getReceivedAmountFormatted() }}</td>
-                                    <td data-currency="{{ $moneyReceived->getCurrency() }}">{{ $moneyReceived->getCurrencyToReceivingCurrencyFormatted() }}</td>
+                                    <td data-currency="{{ $moneyReceived->getReceivingCurrency() }}">{{ $moneyReceived->getCurrencyToReceivingCurrencyFormatted() }}</td>
                                     <td>{{ $moneyReceived->getCashInSafeReceiptNumber() }}</td>
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
@@ -780,7 +780,7 @@ use App\Models\MoneyReceived;
                                     <td class="text-nowrap">{{ $money->getReceivingDateFormatted() }}</td>
                                     <td class="bank-max-width">{{ $money->getCashInBankReceivingBankName() }}</td>
                                     <td>{{ $money->getReceivedAmountFormatted() }}</td>
-                                    <td data-currency="{{ $money->getCurrency() }}"> {{ $money->getCurrencyToReceivingCurrencyFormatted() }}</td>
+                                    <td data-currency="{{ $money->getReceivingCurrency() }}"> {{ $money->getCurrencyToReceivingCurrencyFormatted() }}</td>
                                     <td class="bank-max-width">{{ $money->getCashInBankAccountTypeName() }}</td>
                                     <td>{{ $money->getCashInBankAccountNumber() }}</td>
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">

@@ -12,13 +12,14 @@ class DateMustBeLessThanOrEqualDate implements ImplicitRule
      *
      * @return void
      */
-	public $lessOrEqualDate , $date ,$failedMessage ; 
+	public $lessOrEqualDate , $date ,$failedMessage,$isMultiValueRule ; 
 	
-    public function __construct(string $lessOrEqualDate , string $date,string $failedMessage)
+    public function __construct(?string $lessOrEqualDate , string $date,string $failedMessage, $isMultiValueRule = false)
     {
         $this->lessOrEqualDate = $lessOrEqualDate;
         $this->date = $date;
 		$this->failedMessage = $failedMessage;
+		$this->isMultiValueRule = $isMultiValueRule;
 		
     }
 
@@ -31,6 +32,9 @@ class DateMustBeLessThanOrEqualDate implements ImplicitRule
      */
     public function passes($attribute, $value)
     {
+		if($this->isMultiValueRule || is_null($this->lessOrEqualDate)){
+			$this->lessOrEqualDate = $value;
+		}
         return Carbon::make($this->lessOrEqualDate)->lessThanOrEqualTo(Carbon::make($this->date));
     }
 

@@ -287,23 +287,7 @@
                                 </td>
 
 								
-								 	{{-- <td>
-                                <input type="hidden" name="id" value="1">
-								<div>
-                                    <x-form.select-with-modal-abb data-name-id="{{ $subItemsCount['main_field_name'] ?? '' }}" :label-class="'visibility-hidden'" :add-new-modal="true" class="text-center repeater-select" :add-new-modal-modal-type="''" :add-new-modal-modal-name="'RevenueBusinessLine'" :add-new-modal-modal-title="$subItemsCount['main_field_name'] ?? '' " :options="getTestFfeArray()" :add-new="false" :label="$subItemsCount['main_field_name'] ?? '' " class="select2-select main_item_js  " data-filter-type="{{ __('create') }}" :all="false" name="revenue_business_line_id" id="{{'revenue_business_line_id' }}" :selected-value="1"></x-form.select-with-modal-abb>
-								
-								</div>
-
-                                    </td>
-
-                                    <td>
-                                        <label class="form-label font-weight-bold visibility-hidden">Abb</label>
-                                        <input data-name-id="{{ $subItemsCount['main_field_name'] ?? '' }}" type="text" value="" class="form-control abb-js max-w-abb" @if($isRepeater) name="{{ 'name' }}" @else name="{{ $tableId }}[0][{{ 'name' }}]" @endif>
-                                    </td>
-                                    <td>
-                                        <label class="form-label font-weight-bold visibility-hidden">Code</label>
-                                        <input data-name-id="{{ $subItemsCount['main_field_name'] ?? '' }}" type="text" value="" class="form-control code-js max-w-code" @if($isRepeater) name="{{ 'name' }}" @else name="{{ $tableId }}[0][{{ 'name' }}]" @endif>
-                                    </td> --}}
+								 
 							
 									@foreach($subItemsNames as $index=>$subItemName)
 									

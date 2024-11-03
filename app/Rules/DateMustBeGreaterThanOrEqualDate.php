@@ -36,9 +36,6 @@ class DateMustBeGreaterThanOrEqualDate implements Rule
 		if($this->isMultiValueRule || is_null($this->largerOrEqualDate)){
 			$this->largerOrEqualDate = $value;
 		}
-		// if($attribute != 'account_interests.0.start_date'){
-		// 	// dd($attribute,$this->isMultiValueRule,$this->largerOrEqualDate,$this->date,Carbon::make($this->largerOrEqualDate)->greaterThanOrEqualTo(Carbon::make($this->date)));
-		// }
 		$boolean = Carbon::make($this->largerOrEqualDate)->greaterThanOrEqualTo(Carbon::make($this->date));
 		
         return $boolean;

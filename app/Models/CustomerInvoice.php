@@ -155,7 +155,7 @@ class CustomerInvoice extends Model implements IInvoice
 			->where('currency',$currency)
 			->where(self::CLIENT_NAME_COLUMN_NAME,$customerName)
 			->get() ; 
-		
+		// dd($customerInvoices);
 		foreach($customerInvoices as $customerInvoice){
 			$currentData = [];
 			$invoiceDate = $customerInvoice->getInvoiceDateFormatted() ;
@@ -168,6 +168,18 @@ class CustomerInvoice extends Model implements IInvoice
 			$currentData['comment'] =null;
 			$index++ ;
 			$formattedData[$index]=$currentData;
+	
+			foreach($customerInvoice->deductions as $deductionWithPivot){
+				$currentData['date'] = Carbon::make($deductionWithPivot->pivot->date)->format('d-m-Y');
+				$currentData['document_type'] = 'Deduction';
+				$currentData['document_no'] = $invoiceNumber;
+				$currentData['debit'] = 0;
+				$currentData['credit'] =$deductionWithPivot->pivot->amount;
+				$currentData['comment'] =$deductionWithPivot->getName() . ' [ '  . $invoiceNumber .' ] ' ;
+				$index++ ;
+				$formattedData[$index]=$currentData;
+			}
+			
 		}
 	
 		foreach($allMoneyReceived as $moneyReceived) {
@@ -175,7 +187,7 @@ class CustomerInvoice extends Model implements IInvoice
 			$moneyReceivedType = $moneyReceived->getType();
 			$bankName = $moneyReceived->getBankName();
 			$docNumber = $moneyReceived->getNumber();
-				$moneyReceivedAmount = $moneyReceived->getReceivedAmount() ;
+				$moneyReceivedAmount = $moneyReceived->getAmountInInvoiceCurrency() ;
 				if($moneyReceivedAmount){
 					$isDownPayment = $moneyReceived->isDownPayment() ;
 					$invoiceNumbers = implode('/',$moneyReceived->settlements->pluck('invoice_number')->toArray());

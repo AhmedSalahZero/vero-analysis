@@ -12,7 +12,7 @@ CREATE TRIGGER `insert_net_invoice_amount_for_suppliers` BEFORE INSERT
 	set new.net_invoice_amount = ( @totalInvoiceAmount  - ifnull(new.withhold_amount,0));
 	set new.invoice_amount_in_main_currency = (new.invoice_amount * new.exchange_rate);	
 	set new.discount_amount_in_main_currency = (new.discount_amount * new.exchange_rate);	
-	set new.net_balance = round(new.net_invoice_amount - ifnull(new.paid_amount,0),2);
+	set new.net_balance = round(new.net_invoice_amount - ifnull(new.paid_amount,0) - new.total_deductions,0);
 	set new.net_balance_in_main_currency = (new.net_balance * new.exchange_rate);
 		
 	IF (NEW.net_balance = 0 ) THEN
@@ -47,7 +47,7 @@ UPDATE
 	set new.net_invoice_amount = ( @totalInvoiceAmount );
 	set new.net_invoice_amount_in_main_currency = (new.net_invoice_amount * new.exchange_rate);
 	set new.invoice_amount_in_main_currency = (new.invoice_amount * new.exchange_rate);
-	set new.net_balance = round(@totalInvoiceAmount - ifnull(new.withhold_amount,0) - ifnull(new.paid_amount,0),2);
+	set new.net_balance = round(@totalInvoiceAmount - ifnull(new.withhold_amount,0) - ifnull(new.paid_amount,0) - new.total_deductions,0);
 	set new.net_balance_in_main_currency = (new.net_balance * new.exchange_rate);
 	set new.discount_amount_in_main_currency = (new.discount_amount * new.exchange_rate);	
 	

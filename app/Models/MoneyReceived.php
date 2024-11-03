@@ -196,7 +196,10 @@ class MoneyReceived extends Model
 		$cashInSafe = $this->cashInSafe ;
         return  $cashInSafe ? $cashInSafe->getReceivingBranchId() :0;
     }
-	
+	public function getAmountInInvoiceCurrency()
+    {
+        return  $this->amount_in_invoice_currency?:0 ;
+    }
     public function getReceivedAmount()
     {
         return  $this->received_amount?:0 ;
@@ -233,7 +236,7 @@ class MoneyReceived extends Model
 		if($currency == $receivingCurrency || is_null($receivingCurrency)){
 			return $this->getCurrencyFormatted();
 		}
-		return $this->getCurrencyFormatted().'/'.$this->getReceivingCurrencyFormatted();
+		return $this->getReceivingCurrencyFormatted().'/'.$this->getCurrencyFormatted();
 		
 	}
 	public function getReceivingCurrency()
