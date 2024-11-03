@@ -360,7 +360,6 @@ class MoneyReceivedController
 		$currency = $data['currency'] ;
 		$companyId = $company->id;
 		
-		
 		$receivingCurrency = $data['receiving_currency'] ; 
 		$isDownPayment = $request->get('is_down_payment') && $request->has('sales_orders_amounts');
 		$isDownPaymentFromMoneyReceived = $request->get('unapplied_amount',0) > 0 && !$request->get('is_down_payment') ;
@@ -374,11 +373,11 @@ class MoneyReceivedController
 		$relationName = null ;
 		$exchangeRate = $currency == $receivingCurrency ? 1 : $request->input('exchange_rate.'.$moneyType,1) ;
 	
-		$receivedAmount = $request->input('received_amount.'.$moneyType ,0) ;
+		$amountInReceivingCurrency = $request->input('received_amount.'.$moneyType ,0) ;
 		
-		$receivedAmount = unformat_number($receivedAmount);
+		$amountInReceivingCurrency = unformat_number($amountInReceivingCurrency);
 		
-		$amountInReceivingCurrency = $receivedAmount *  $exchangeRate ;
+		$invoiceCurrencyAmount = $amountInReceivingCurrency /  $exchangeRate ;
 
 		
 		if($moneyType == MoneyReceived::CASH_IN_SAFE){
@@ -416,13 +415,10 @@ class MoneyReceivedController
 		$receivedBankName = $receivedBank ? $receivedBank->getName() : null;
 		$bankNameOrBranchName =  $moneyType == MoneyReceived::CASH_IN_SAFE ? Branch::find($relationData['receiving_branch_id'])->getName() : $receivedBankName ;
 		
-		// $data['received_amount'] = $isDownPayment || ! $request->has('settlements') ?  $receivedAmount  : array_sum(array_column($request->get('settlements'),'settlement_amount')); 
-		$data['received_amount'] =$receivedAmount; 
-		// if($partnerType != 'is_customer'){
-		// 	$data['received_amount'] = $request->input('received_amount.'.$moneyType ,0);
-		// }
+		$data['received_amount'] =$amountInReceivingCurrency ; 
+
 	
-		$data['amount_in_receiving_currency'] = $amountInReceivingCurrency ;
+		$data['amount_in_invoice_currency'] = $invoiceCurrencyAmount ;
 		$data['exchange_rate'] =$exchangeRate ;
 	
 		//$data['money_type'] = $isDownPayment ? 'down-payment' : 'money-received' ;

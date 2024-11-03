@@ -1,10 +1,8 @@
 <?php
 namespace App\Http\Controllers;
 use App\Http\Requests\StoreTdRenewalDateRequest;
-use App\Models\AccountType;
 use App\Models\Company;
 use App\Models\CurrentAccountBankStatement;
-use App\Models\FinancialInstitutionAccount;
 use App\Models\TdRenewalDateHistory;
 use App\Models\TimeOfDeposit;
 use App\Traits\GeneralFunctions;

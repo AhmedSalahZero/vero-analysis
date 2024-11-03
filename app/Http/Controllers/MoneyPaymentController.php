@@ -371,7 +371,7 @@ class MoneyPaymentController
 		$deliveryBankName = $deliveryBank ? $deliveryBank->getName() : null;
 		$bankNameOrBranchName =  $moneyType == MoneyPayment::CASH_PAYMENT ? Branch::find($relationData['delivery_branch_id'])->getName() : $deliveryBankName ;
 		
-		$data['amount_in_paying_currency'] = $paidAmountInPayingCurrency ;
+		$data['amount_in_invoice_currency'] = $paidAmountInPayingCurrency ;
 		$data['exchange_rate'] =$exchangeRate ;
 	//	$data['money_type'] = $isDownPayment ? 'down-payment' : 'money-payment' ;
 		$data['contract_id'] = $contractId ;
@@ -414,12 +414,7 @@ class MoneyPaymentController
 		 */
 		$moneyPayment->storeNewAllocation($request->get('allocations',[]));
 		
-		
-		// if(!$isDownPayment&&$request->get('unapplied_amount',0) > 0 && $partnerType == 'is_supplier' ){
-		// 	// start store unapplied amount as new down payment
-		// 	return $this->store($company,$request->replace(array_merge($request->all(),['is_down_payment'=>true],['received_amount'=>[$moneyType=>$request->get('unapplied_amount')]],['settlements'=>[]],['allocations'=>[]])),$moneyPayment->id);
-			
-		// }
+	
 		if($hasUnappliedAmount || $isDownPayment){
 			$moneyPayment->storeNewPurchaseOrders($request->get('purchases_orders_amounts',[]),$company->id,$contractId,$supplierId);
 		}

@@ -13,6 +13,8 @@ use App\Models\CashInSafeStatement;
 use App\Models\CertificatesOfDeposit;
 use App\Models\CleanOverdraft;
 use App\Models\Company;
+use App\Models\CustomerInvoice;
+use App\Models\Deduction;
 use App\Models\FinancialInstitution;
 use App\Models\FinancialInstitutionAccount;
 use App\Models\ForeignExchangeRate;
@@ -567,6 +569,9 @@ class CustomerInvoiceDashboardController extends Controller
         $isCollectedOrPaid = $fullClassName::COLLETED_OR_PAID ;
         $moneyReceivedOrPaidText = (new $fullClassName())->getMoneyReceivedOrPaidText();
         $moneyReceivedOrPaidUrlName = (new $fullClassName())->getMoneyReceivedOrPaidUrlName();
+		
+		$deductions = Deduction::onlyForCompany($company->id)->get();
+
         $invoices = ('App\Models\\' . $modelType)::where('company_id', $company->id)
         ->where($clientIdColumnName, $partnerId)
         ->where('currency', $currency)
@@ -577,7 +582,8 @@ class CustomerInvoiceDashboardController extends Controller
         if (!count($invoices)) {
             return  redirect()->back()->with('fail', __('No Data Found'));
         }
-
+		$hasProjectNameColumn = $modelType == 'CustomerInvoice'?  CustomerInvoice::hasProjectNameColumn() : false;
+		
         return view('admin.reports.invoice-report', [
             'invoices' => $invoices,
             'partnerName' => $customer->getName(),
@@ -587,7 +593,9 @@ class CustomerInvoiceDashboardController extends Controller
             'moneyReceivedOrPaidText' => $moneyReceivedOrPaidText,
             'moneyReceivedOrPaidUrlName' => $moneyReceivedOrPaidUrlName,
 			'modelType'=>$modelType,
-			'clientIdColumnName'=>$clientIdColumnName
+			'clientIdColumnName'=>$clientIdColumnName,
+			'deductions'=>$deductions,
+			'hasProjectNameColumn'=>$hasProjectNameColumn
         ]);
     }
 
@@ -777,6 +785,7 @@ class CustomerInvoiceDashboardController extends Controller
         if (count($invoicesWithItsReceivedMoney) < 1) {
             return  redirect()->back()->with('fail', __('No Data Found'));
         }
+		// dD($invoicesWithItsReceivedMoney);
         return view('admin.reports.customer-statement-report', [
             'invoicesWithItsReceivedMoney' => $invoicesWithItsReceivedMoney,
             'partnerName' => $partnerName,

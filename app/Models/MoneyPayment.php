@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Http\Controllers\MoneyPaymentController;
 use App\Models\OpeningBalance;
 use App\Models\OutgoingTransfer;
 use App\Traits\Models\HasCreditStatements;
@@ -181,7 +180,7 @@ class MoneyPayment extends Model
 		if($currency == $paymentCurrency || is_null($paymentCurrency)){
 			return $this->getCurrencyFormatted();
 		}
-		return $this->getCurrencyFormatted().'/'.$this->getPaymentCurrencyFormatted();
+		return $this->getPaymentCurrencyFormatted() . '/'.$this->getCurrencyFormatted();
 		
 	}
 	

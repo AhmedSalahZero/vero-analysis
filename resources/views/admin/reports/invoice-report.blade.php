@@ -2,6 +2,13 @@
 @section('css')
 <x-styles.commons></x-styles.commons>
 <style>
+.custom-w-25{
+	width:23% !important;
+}
+.custom-w-50{
+	width:50% !important;
+}
+
     .max-w-name {
         width: 45% !important;
         min-width: 45% !important;
@@ -281,13 +288,13 @@
 
                     {{-- <a 
 					href="{{ route('view.unapplied.amounts',['company'=>$company->id,'partnerId'=>$partnerId,'modelType'=>$modelType]) }}"
-					
-					 class="btn  active-style btn-icon-sm align-self-center">
-                        <i class="fas fa-money-bill"></i>
-                        {{ __('Unapplied Amount Settlement') }}
+
+                    class="btn active-style btn-icon-sm align-self-center">
+                    <i class="fas fa-money-bill"></i>
+                    {{ __('Unapplied Amount Settlement') }}
                     </a> --}}
 
-                    <a href="{{ route('view.contracts.down.payments',['company'=>$company->id,'partnerId'=>$partnerId,'modelType'=>$modelType,'currency'=>$currency]) }}"  class="btn active-style btn-icon-sm align-self-center">
+                    <a href="{{ route('view.contracts.down.payments',['company'=>$company->id,'partnerId'=>$partnerId,'modelType'=>$modelType,'currency'=>$currency]) }}" class="btn active-style btn-icon-sm align-self-center">
                         <i class="fas fa-money-bill"></i>
                         {{ __('Down Payment Amount Settlement') }}
                     </a>
@@ -311,6 +318,12 @@
                                         <th class="view-table-th max-w-serial bg-lighter header-th  align-middle text-center">
                                             {{ __('#') }}
                                         </th>
+										
+																				@if($hasProjectNameColumn)
+																				<th class="view-table-th   bg-lighter header-th  align-middle text-center">
+                                            {{ __('Project Name') }}
+                                        </th>
+																				@endif
 
                                         <th class="view-table-th   bg-lighter header-th  align-middle text-center">
                                             {{ __('Invoice Date') }}
@@ -323,11 +336,25 @@
                                         <th class="view-table-th   bg-lighter header-th  align-middle text-center">
                                             {{ __('Net Invoice Amount') }}
                                         </th>
+										
+										<th class="view-table-th   bg-lighter header-th  align-middle text-center">
+                                            {{ __('Withhold Amount') }}
+                                        </th>
+										
+										<th class="view-table-th   bg-lighter header-th  align-middle text-center">
+                                            {{ __('Total Deductions') }}
+                                        </th>	
+										<th class="view-table-th   bg-lighter header-th  align-middle text-center">
+                                            {{ __('Total Collection') }}
+                                        </th>
+										
+										
 
                                         <th class="view-table-th   bg-lighter header-th  align-middle text-center">
                                             {{ __('Invoice Due Date') }}
                                         </th>
-
+										
+										
 
                                         <th class="view-table-th   bg-lighter  header-th  align-middle text-center">
                                             {{ __('Net Balance') }}
@@ -342,6 +369,10 @@
 
                                         <th class="view-table-th   bg-lighter  header-th  align-middle text-center">
                                             {{ __('Adjust Due Date') }}
+                                        </th>
+
+                                        <th class="view-table-th   bg-lighter  header-th  align-middle text-center">
+                                            {{ __('Deductions') }}
                                         </th>
 
 
@@ -362,18 +393,24 @@
                                         let currentTable = null;
 
                                     </script>
-                                    @php
-                                    @endphp
-									
+                          
+
                                     @foreach($invoices as $index=>$invoice)
                                     <tr class=" parent-tr reset-table-width text-nowrap  cursor-pointer sub-text-bg text-capitalize is-close   ">
                                         <td class="sub-text-bg max-w-serial   ">{{ $index+1 }}</td>
-                                        <td class="sub-text-bg text-center  is-name-cell ">{{ $invoice->getInvoiceDateFormatted() }}</td>
-                                        <td class="sub-text-bg text-center  is-name-cell ">{{ $invoice->getInvoiceNumber() }}</td>
-                                        <td class="sub-text-bg text-center  is-name-cell ">{{ $invoice->getNetInvoiceAmountFormatted() }}</td>
-                                        <td class="sub-text-bg text-center  is-name-cell ">{{ $invoice->getDueDateFormatted() }}</td>
-                                        <td class="sub-text-bg text-center ">{{ $invoice->getNetBalanceFormatted() }}</td>
-                                        <td class="sub-text-bg text-center">{{ $invoice->getStatusFormatted() }}</td>
+										@if($hasProjectNameColumn)
+                                        <td class="sub-text-bg text-center  text-nowrap ">{{ $invoice->getProjectName() }}</td>
+										@endif
+                                        <td class="sub-text-bg text-center  text-nowrap ">{{ $invoice->getInvoiceDateFormatted() }}</td>
+										
+                                        <td class="sub-text-bg text-center  text-nowrap ">{{ $invoice->getInvoiceNumber() }}</td>
+                                        <td class="sub-text-bg text-center  text-nowrap ">{{ $invoice->getNetInvoiceAmountFormatted() }}</td>
+                                        <td class="sub-text-bg text-center  text-nowrap ">{{ $invoice->getWithholdAmountFormatted() }}</td>
+                                        <td class="sub-text-bg text-center  text-nowrap ">{{ $invoice->getTotalDeductionFormatted() }}</td>
+                                        <td class="sub-text-bg text-center  text-nowrap ">{{ $invoice->getTotalCollectedFormatted() }}</td>
+                                        <td class="sub-text-bg text-center  text-nowrap ">{{ $invoice->getDueDateFormatted() }}</td>
+                                        <td class="sub-text-bg text-center text-nowrap">{{ $invoice->getNetBalanceFormatted() }}</td>
+                                        <td class="sub-text-bg text-center text-wrap">{{ $invoice->getStatusFormatted() }}</td>
                                         <td class="sub-text-bg  text-center">
                                             {{ $invoice->getAging() }}
                                         </td>
@@ -388,140 +425,326 @@
                                             @endif
                                         </td>
                                         <td class="sub-text-bg  text-center">
-                                            @if(!$invoice->$isCollectedOrPaid())
-                                            <a href="{{ route($moneyReceivedOrPaidUrlName,['company'=>$company->id,'model'=>$invoice->id ]) }}" title="{{ $moneyReceivedOrPaidText }}" class="btn btn-sm btn-primary">{{ $moneyReceivedOrPaidText }}</a>
-                                            @endif
-                                        </td>
-										
-										
-                                        {{-- <td class="sub-text-bg  text-center">
-                                            @if(!$invoice->$isCollectedOrPaid())
-                                            <a href="{{ route('create.settlement.by.unapplied.amounts',['company'=>$company->id,'customerInvoiceId'=>$invoice->id,'modelType'=>$modelType ]) }}" title="{{ __('Settlement') }}" class="btn  btn-sm btn-primary">{{ __('Settlement') }}</a>
-                                            @endif
-                                        </td> --}}
-										
-                                        {{-- <td class="  sub-numeric-bg text-center editable-date"></td> --}}
+                                            {{-- @if(!$invoice->getNetBalance() > 0) --}}
+                                            <button type="button" class="add-new btn btn-primary d-block" data-toggle="modal" data-target="#add-new-customer-modal-{{ $invoice->id }}">
+                                                {{ __('Deduct') }}
+                                            </button>
+                                            <div class="modal fade modal-class-js allocate-modal-class" id="add-new-customer-modal-{{ $invoice->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog modal-lg" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="exampleModalLabel">{{ __('Deduct') }}</h5>
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
 
+                                                        <form action="{{ route('update.invoice.deductions',['company'=>$company->id,'modelId'=>$invoice->id , 'modelType'=>$modelType]) }}" method="post">
+														@method('patch')
+														@csrf
+														    <div class="form-group row justify-content-center">
+                                                                @php
+                                                                $index = 0 ;
+                                                                @endphp
 
-                                        {{-- <td class="  sub-numeric-bg text-center editable-date">{{ number_format($result[$customerName]['total'][$year] ?? 0 ) }}</td> --}}
+                                                                {{-- start of fixed monthly repeating amount --}}
+                                                                @php
+                                                                $tableId = 'deductions';
 
-                                    </tr>
+                                                                $repeaterId = 'model_repeater';
 
+                                                                @endphp
+                                                                {{-- <input type="hidden" name="tableIds[]" value="{{ $tableId }}"> --}}
+                                                                <x-tables.repeater-table :initialJs="false" :repeater-with-select2="true" :parentClass="'show-class-js'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=true">
+                                                                    <x-slot name="ths">
+                                                                        @foreach([
+                                                                        __('Deduction')=>'th-main-color custom-w-50',
+                                                                        __('Date')=>'th-main-color custom-w-25',
+                                                                        __('Deduction Amount')=>'th-main-color custom-w-25',
+                                                                        ] as $title=>$classes)
+                                                                        <x-tables.repeater-table-th class="{{ $classes }}" :title="$title"></x-tables.repeater-table-th>
+                                                                        @endforeach
+                                                                    </x-slot>
+                                                                    <x-slot name="trs">
+                                                                        @php
+                                                                     	 $rows = isset($invoice) ? $invoice->deductions :[-1] ;
 
+                                                                        @endphp
+                                                                        @foreach( count($rows) ? $rows : [-1] as $deductionWithPivot)
+                                                                        @php
+                                                                        $fullPath = new \App\Models\Deduction;
+                                                                        if( !($deductionWithPivot instanceof $fullPath) ){
+                                                                        unset($deductionWithPivot);
+                                                                        }
+                                                                        @endphp
+																	
+																						<tr @if($isRepeater) data-repeater-item @endif>
 
+																							<td class="text-center">
+																								<input type="hidden" name="company_id" value="{{ $company->id }}">
+																								<div class="custom-w-50">
+																									<i data-repeater-delete="" class="btn-sm btn btn-danger m-btn m-btn--icon m-btn--pill trash_icon fas fa-times-circle">
+																									</i>
+																								</div>
+																							</td>
+																							<td>
 
-
-
-
-
-
-                                    @endforeach
-
-                                </tbody>
-                            </table>
-                        </div>
-
-                    </div>
-
-                    @push('js')
-                    <script>
-                        var table = $(".kt_table_with_no_pagination_no_collapse");
-
-                        table.DataTable({
-
-
-
-
-                                dom: 'Bfrtip'
-
-                                , "processing": false
-                                , "scrollX": true
-                                , "scrollY": true
-                                , "ordering": false
-                                , 'paging': false
-                                , "fixedColumns": {
-                                    left: 2
-                                }
-                                , "fixedHeader": {
-                                    headerOffset: 60
-                                }
-                                , "serverSide": false
-                                , "responsive": false
-                                , "pageLength": 25
-                                , drawCallback: function(setting) {
-                                    if (!currentTable) {
-                                        currentTable = $('.main-table-class').DataTable();
-                                    }
-                                    $('.buttons-html5').addClass('btn border-parent btn-border-export btn-secondary btn-bold  ml-2 flex-1 flex-grow-0 btn-border-radius do-not-close-when-click-away')
-                                    $('.buttons-print').addClass('btn border-parent top-0 btn-border-export btn-secondary btn-bold  ml-2 flex-1 flex-grow-0 btn-border-radius do-not-close-when-click-away')
-                                },
-
-
+																								<x-form.select :insideModalWithJs="false" :selectedValue="isset($deductionWithPivot) && $deductionWithPivot->pivot->deduction_id ? $deductionWithPivot->pivot->deduction_id : ''" :options="formatOptionsForSelect($deductions)" :add-new="false" class="select2-select repeater-select form-control custom-w-100" data-filter-type="{{ 'create' }}" :all="false" name="deduction_id"></x-form.select>
+																							</td>
 
 
 
-                            }
+																							<td>
+																							
+																								<div class="kt-input-icon ">
+																									<div class="input-group date custom-w-100">
+																										<input type="text" name="date" value="{{ isset($deductionWithPivot) ? formatDateForDatePicker($deductionWithPivot->pivot->date) : formatDateForDatePicker(now()->format('Y-m-d')) }}" class="form-control is-date-css refresh-datepicker-js  kt_datepicker_max_date_is_today" readonly placeholder="Select date"  />
+																										<div class="input-group-append">
+																											<span class="input-group-text">
+																												<i class="la la-calendar-check-o"></i>
+																											</span>
+																										</div>
+																									</div>
+																								</div>
+																							</td>
 
-                        )
 
-                    </script>
-                    @endpush
 
+																							<td>
+																								<div class="kt-input-icon custom-w-100">
+																									<div class="input-group">
+																										<input type="text" name="amount" class="form-control only-greater-than-or-equal-zero-allowed" value="{{ isset($deductionWithPivot) ? $deductionWithPivot->pivot->amount: 0 }}">
+																									</div>
+																								</div>
+																							</td>
+
+
+																						</tr>
+
+
+
+																						@endforeach
+
+																						</x-slot>
+
+
+
+
+																						</x-tables.repeater-table>
+																						{{-- end of fixed monthly repeating amount --}}
+
+
+                       										 </div>
+															 	<div class="modal-footer">
+									<button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close') }}</button>
+									<button type="submit" class="btn btn-primary submit-form-btn ">{{ __('Save') }}</button>
+								</div>
+														</form>
+               				     </div>
+							
                 </div>
             </div>
         </div>
+
+        {{-- @endif --}}
+        </td>
+
+        <td class="sub-text-bg  text-center">
+            @if(!$invoice->$isCollectedOrPaid())
+            <a href="{{ route($moneyReceivedOrPaidUrlName,['company'=>$company->id,'model'=>$invoice->id ]) }}" title="{{ $moneyReceivedOrPaidText }}" class="btn btn-sm btn-primary">{{ $moneyReceivedOrPaidText }}</a>
+            @endif
+        </td>
+
+
+        {{-- <td class="sub-text-bg  text-center">
+                                            @if(!$invoice->$isCollectedOrPaid())
+                                            <a href="{{ route('create.settlement.by.unapplied.amounts',['company'=>$company->id,'customerInvoiceId'=>$invoice->id,'modelType'=>$modelType ]) }}" title="{{ __('Settlement') }}" class="btn btn-sm btn-primary">{{ __('Settlement') }}</a>
+        @endif
+        </td> --}}
+
+        {{-- <td class="  sub-numeric-bg text-center editable-date"></td> --}}
+
+
+        {{-- <td class="  sub-numeric-bg text-center editable-date">{{ number_format($result[$customerName]['total'][$year] ?? 0 ) }}</td> --}}
+
+        </tr>
+
+
+
+
+
+
+@push('js_end')
+<script>
+$(function(){
+	$('.kt_datepicker_max_date_is_today').datepicker({
+ autoclose: true,
+ todayHighlight: true,
+   orientation: "bottom left",
+// format: 'mm/dd/yyyy',
+ endDate: new Date(), 
+
+ rtl:false
+});
+})
+</script>
+	
+@endpush
+
+
+        @endforeach
+
+        </tbody>
+        </table>
     </div>
-    @endsection
-    @section('js')
-    <x-js.commons></x-js.commons>
 
-    <script src="https://cdn.amcharts.com/lib/4/core.js"></script>
-    <script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
-    <script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script>
+</div>
 
-    <script>
-        function getDateFormatted(yourDate) {
-            const offset = yourDate.getTimezoneOffset()
-            yourDate = new Date(yourDate.getTime() - (offset * 60 * 1000))
-            return yourDate.toISOString().split('T')[0]
+@push('js')
+<script>
+    var table = $(".kt_table_with_no_pagination_no_collapse");
+
+    table.DataTable({
+
+
+
+
+            dom: 'Bfrtip'
+
+            , "processing": false
+            , "scrollX": true
+            , "scrollY": true
+            , "ordering": false
+            , 'paging': false
+            , "fixedColumns": {
+                left: 2
+            }
+            , "fixedHeader": {
+                headerOffset: 60
+            }
+            , "serverSide": false
+            , "responsive": false
+            , "pageLength": 25
+            , drawCallback: function(setting) {
+                if (!currentTable) {
+                    currentTable = $('.main-table-class').DataTable();
+                }
+                $('.buttons-html5').addClass('btn border-parent btn-border-export btn-secondary btn-bold  ml-2 flex-1 flex-grow-0 btn-border-radius do-not-close-when-click-away')
+                $('.buttons-print').addClass('btn border-parent top-0 btn-border-export btn-secondary btn-bold  ml-2 flex-1 flex-grow-0 btn-border-radius do-not-close-when-click-away')
+            },
+
+
+
+
+
         }
 
-        am4core.ready(function() {
+    )
 
-            // Themes begin
+</script>
+@endpush
+
+</div>
+</div>
+</div>
+</div>
+@endsection
+@section('js')
+<x-js.commons></x-js.commons>
+
+<script src="https://cdn.amcharts.com/lib/4/core.js"></script>
+<script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
+<script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script>
+
+<script>
+    function getDateFormatted(yourDate) {
+        const offset = yourDate.getTimezoneOffset()
+        yourDate = new Date(yourDate.getTime() - (offset * 60 * 1000))
+        return yourDate.toISOString().split('T')[0]
+    }
+
+    am4core.ready(function() {
+
+        // Themes begin
 
 
 
-        }); // end am4core.ready()
+    }); // end am4core.ready()
 
-    </script>
-    <script>
-        $(document).on('click', '#show-past-due-detail', function() {
-            if (!currentTable) {
-                currentTable = $('.main-table-class').DataTable()
-            }
-            if (currentTable.column(2).visible()) {
-                $(this).html("{{ __('Show Details') }}")
-                currentTable.columns([2, 3, 4, 5, 6, 7, 8, 9, 10]).visible(false);
+</script>
+<script>
+    $(document).on('click', '#show-past-due-detail', function() {
+        if (!currentTable) {
+            currentTable = $('.main-table-class').DataTable()
+        }
+        if (currentTable.column(2).visible()) {
+            $(this).html("{{ __('Show Details') }}")
+            currentTable.columns([2, 3, 4, 5, 6, 7, 8, 9, 10]).visible(false);
+        } else {
+            $(this).html("{{ __('Hide Details') }}")
+            currentTable.columns([2, 3, 4, 5, 6, 7, 8, 9, 10]).visible(true);
+        }
+    })
+
+    $(document).on('click', '#show-coming-due-detail', function() {
+        if (!currentTable) {
+            currentTable = $('.main-table-class').DataTable()
+        }
+        if (currentTable.column(13).visible()) {
+            $(this).html("{{ __('Show Details') }}")
+            currentTable.columns([13, 14, 15, 16, 17, 18, 19, 20, 21]).visible(false);
+        } else {
+            $(this).html("{{ __('Hide Details') }}")
+            currentTable.columns([13, 14, 15, 16, 17, 18, 19, 20, 21]).visible(true);
+        }
+    })
+
+</script>
+<script>
+    $('.model_repeater').repeater({
+        initEmpty: false,
+		initEmpty:false
+        , isFirstItemUndeletable: false
+        , defaultValues: {
+            'text-input': 'foo'
+        },
+
+        show: function() {
+            $(this).slideDown();
+            $('input.trigger-change-repeater').trigger('change')
+            $(document).find('.datepicker-input').datepicker({
+                dateFormat: 'mm-dd-yy'
+                , autoclose: true
+            })
+            $(this).find('.only-month-year-picker').each(function(index, dateInput) {
+                reinitalizeMonthYearInput(dateInput)
+            });
+            $('input:not([type="hidden"])').trigger('change');
+            $(this).find('.dropdown-toggle').remove();
+            $(this).find('select.repeater-select').selectpicker("refresh");
+            $(this).find('.refresh-datepicker-js').datepicker('update', '{{ now()->format("m/d/Y") }}')
+        },
+
+        hide: function(deleteElement) {
+            if ($('#first-loading').length) {
+                $(this).slideUp(deleteElement, function() {
+
+                    deleteElement();
+                    //   $('select.main-service-item').trigger('change');
+                });
             } else {
-                $(this).html("{{ __('Hide Details') }}")
-                currentTable.columns([2, 3, 4, 5, 6, 7, 8, 9, 10]).visible(true);
-            }
-        })
+                if (confirm('Are you sure you want to delete this element?')) {
+                    $(this).slideUp(deleteElement, function() {
 
-        $(document).on('click', '#show-coming-due-detail', function() {
-            if (!currentTable) {
-                currentTable = $('.main-table-class').DataTable()
-            }
-            if (currentTable.column(13).visible()) {
-                $(this).html("{{ __('Show Details') }}")
-                currentTable.columns([13, 14, 15, 16, 17, 18, 19, 20, 21]).visible(false);
-            } else {
-                $(this).html("{{ __('Hide Details') }}")
-                currentTable.columns([13, 14, 15, 16, 17, 18, 19, 20, 21]).visible(true);
-            }
-        })
+                        deleteElement();
+                        $('input.trigger-change-repeater').trigger('change')
 
-    </script>
+                    });
+                }
+            }
+        }
+    });
 
-    @endsection
+</script>
+@endsection

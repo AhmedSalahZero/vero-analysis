@@ -301,7 +301,7 @@ class CashExpenseController
 			];
 		}
 		$data['paid_amount'] = $paidAmount ;
-		$data['amount_in_paying_currency'] = $paidAmountInPayingCurrency ;
+		$data['amount_in_invoice_currency'] = $paidAmountInPayingCurrency ;
 		$data['exchange_rate'] =$exchangeRate ;
 		/**
 		 * @var CashExpense $cashExpense ;

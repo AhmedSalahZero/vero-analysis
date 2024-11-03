@@ -1,9 +1,12 @@
 <?php
 namespace App\Traits\Models;
 
+use App\Models\Deduction;
 use App\Models\DueDateHistory;
+use App\Models\InvoiceDeduction;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
 /**
  * * للميسود المشترك بين
@@ -100,6 +103,26 @@ trait IsInvoice
 	public function getWithholdAmount()
 	{
 		return (float)$this->withhold_amount ; 
+	}
+	public function getWithholdAmountFormatted()
+	{
+		return number_format($this->getWithholdAmount());
+	}
+	public function getTotalDeduction()
+	{
+		return (float)$this->total_deductions ; 
+	}
+	public function getTotalDeductionFormatted()
+	{
+		return number_format($this->getTotalDeduction());
+	}
+	public function getTotalCollected()
+	{
+		return (float)$this->collected_amount ; 
+	}
+	public function getTotalCollectedFormatted()
+	{
+		return number_format($this->getTotalCollected());
 	}
 	public function getNetInvoiceAmount()
     {
@@ -207,4 +230,20 @@ trait IsInvoice
 	{
 		return self::where('company_id',$companyId)->where('invoice_number',$invoiceNumber)->first();
 	}
+	public function deductions()
+	{
+		return $this->belongsToMany(Deduction::class,'invoice_deductions','invoice_id','deduction_id')->where('invoice_type',getModelNameWithoutNamespace($this))
+		->withPivot([
+			'invoice_id',
+			'invoice_type',
+			'amount',
+			'date'
+		])
+		;
+	}
+	
+	// public function invoiceDeductions():HasMany
+	// {
+	// 	return $this->hasMany(InvoiceDeduction::class,'invoice_id','id')->where('invoice_type',getModelNameWithoutNamespace($this));
+	// }
 }

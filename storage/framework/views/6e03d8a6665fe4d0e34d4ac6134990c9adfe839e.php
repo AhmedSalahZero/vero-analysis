@@ -11,6 +11,13 @@
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
 <style>
+.custom-w-25{
+	width:23% !important;
+}
+.custom-w-50{
+	width:50% !important;
+}
+
     .max-w-name {
         width: 45% !important;
         min-width: 45% !important;
@@ -300,7 +307,7 @@
 
                     
 
-                    <a href="<?php echo e(route('view.contracts.down.payments',['company'=>$company->id,'partnerId'=>$partnerId,'modelType'=>$modelType,'currency'=>$currency])); ?>"  class="btn active-style btn-icon-sm align-self-center">
+                    <a href="<?php echo e(route('view.contracts.down.payments',['company'=>$company->id,'partnerId'=>$partnerId,'modelType'=>$modelType,'currency'=>$currency])); ?>" class="btn active-style btn-icon-sm align-self-center">
                         <i class="fas fa-money-bill"></i>
                         <?php echo e(__('Down Payment Amount Settlement')); ?>
 
@@ -326,6 +333,13 @@
                                             <?php echo e(__('#')); ?>
 
                                         </th>
+										
+																				<?php if($hasProjectNameColumn): ?>
+																				<th class="view-table-th   bg-lighter header-th  align-middle text-center">
+                                            <?php echo e(__('Project Name')); ?>
+
+                                        </th>
+																				<?php endif; ?>
 
                                         <th class="view-table-th   bg-lighter header-th  align-middle text-center">
                                             <?php echo e(__('Invoice Date')); ?>
@@ -341,12 +355,29 @@
                                             <?php echo e(__('Net Invoice Amount')); ?>
 
                                         </th>
+										
+										<th class="view-table-th   bg-lighter header-th  align-middle text-center">
+                                            <?php echo e(__('Withhold Amount')); ?>
+
+                                        </th>
+										
+										<th class="view-table-th   bg-lighter header-th  align-middle text-center">
+                                            <?php echo e(__('Total Deductions')); ?>
+
+                                        </th>	
+										<th class="view-table-th   bg-lighter header-th  align-middle text-center">
+                                            <?php echo e(__('Total Collection')); ?>
+
+                                        </th>
+										
+										
 
                                         <th class="view-table-th   bg-lighter header-th  align-middle text-center">
                                             <?php echo e(__('Invoice Due Date')); ?>
 
                                         </th>
-
+										
+										
 
                                         <th class="view-table-th   bg-lighter  header-th  align-middle text-center">
                                             <?php echo e(__('Net Balance')); ?>
@@ -367,6 +398,11 @@
 
                                         </th>
 
+                                        <th class="view-table-th   bg-lighter  header-th  align-middle text-center">
+                                            <?php echo e(__('Deductions')); ?>
+
+                                        </th>
+
 
                                         <th class="view-table-th   bg-lighter  header-th  align-middle text-center">
                                             <?php echo e(__('Actions')); ?>
@@ -382,18 +418,24 @@
                                         let currentTable = null;
 
                                     </script>
-                                    <?php
-                                    ?>
-									
+                          
+
                                     <?php $__currentLoopData = $invoices; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index=>$invoice): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                     <tr class=" parent-tr reset-table-width text-nowrap  cursor-pointer sub-text-bg text-capitalize is-close   ">
                                         <td class="sub-text-bg max-w-serial   "><?php echo e($index+1); ?></td>
-                                        <td class="sub-text-bg text-center  is-name-cell "><?php echo e($invoice->getInvoiceDateFormatted()); ?></td>
-                                        <td class="sub-text-bg text-center  is-name-cell "><?php echo e($invoice->getInvoiceNumber()); ?></td>
-                                        <td class="sub-text-bg text-center  is-name-cell "><?php echo e($invoice->getNetInvoiceAmountFormatted()); ?></td>
-                                        <td class="sub-text-bg text-center  is-name-cell "><?php echo e($invoice->getDueDateFormatted()); ?></td>
-                                        <td class="sub-text-bg text-center "><?php echo e($invoice->getNetBalanceFormatted()); ?></td>
-                                        <td class="sub-text-bg text-center"><?php echo e($invoice->getStatusFormatted()); ?></td>
+										<?php if($hasProjectNameColumn): ?>
+                                        <td class="sub-text-bg text-center  text-nowrap "><?php echo e($invoice->getProjectName()); ?></td>
+										<?php endif; ?>
+                                        <td class="sub-text-bg text-center  text-nowrap "><?php echo e($invoice->getInvoiceDateFormatted()); ?></td>
+										
+                                        <td class="sub-text-bg text-center  text-nowrap "><?php echo e($invoice->getInvoiceNumber()); ?></td>
+                                        <td class="sub-text-bg text-center  text-nowrap "><?php echo e($invoice->getNetInvoiceAmountFormatted()); ?></td>
+                                        <td class="sub-text-bg text-center  text-nowrap "><?php echo e($invoice->getWithholdAmountFormatted()); ?></td>
+                                        <td class="sub-text-bg text-center  text-nowrap "><?php echo e($invoice->getTotalDeductionFormatted()); ?></td>
+                                        <td class="sub-text-bg text-center  text-nowrap "><?php echo e($invoice->getTotalCollectedFormatted()); ?></td>
+                                        <td class="sub-text-bg text-center  text-nowrap "><?php echo e($invoice->getDueDateFormatted()); ?></td>
+                                        <td class="sub-text-bg text-center text-nowrap"><?php echo e($invoice->getNetBalanceFormatted()); ?></td>
+                                        <td class="sub-text-bg text-center text-wrap"><?php echo e($invoice->getStatusFormatted()); ?></td>
                                         <td class="sub-text-bg  text-center">
                                             <?php echo e($invoice->getAging()); ?>
 
@@ -409,88 +451,260 @@
                                             <?php endif; ?>
                                         </td>
                                         <td class="sub-text-bg  text-center">
-                                            <?php if(!$invoice->$isCollectedOrPaid()): ?>
-                                            <a href="<?php echo e(route($moneyReceivedOrPaidUrlName,['company'=>$company->id,'model'=>$invoice->id ])); ?>" title="<?php echo e($moneyReceivedOrPaidText); ?>" class="btn btn-sm btn-primary"><?php echo e($moneyReceivedOrPaidText); ?></a>
-                                            <?php endif; ?>
-                                        </td>
-										
-										
-                                        
-										
-                                        
+                                            
+                                            <button type="button" class="add-new btn btn-primary d-block" data-toggle="modal" data-target="#add-new-customer-modal-<?php echo e($invoice->id); ?>">
+                                                <?php echo e(__('Deduct')); ?>
+
+                                            </button>
+                                            <div class="modal fade modal-class-js allocate-modal-class" id="add-new-customer-modal-<?php echo e($invoice->id); ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog modal-lg" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="exampleModalLabel"><?php echo e(__('Deduct')); ?></h5>
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+
+                                                        <form action="<?php echo e(route('update.invoice.deductions',['company'=>$company->id,'modelId'=>$invoice->id , 'modelType'=>$modelType])); ?>" method="post">
+														<?php echo method_field('patch'); ?>
+														<?php echo csrf_field(); ?>
+														    <div class="form-group row justify-content-center">
+                                                                <?php
+                                                                $index = 0 ;
+                                                                ?>
+
+                                                                
+                                                                <?php
+                                                                $tableId = 'deductions';
+
+                                                                $repeaterId = 'model_repeater';
+
+                                                                ?>
+                                                                
+                                                                 <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.tables.repeater-table','data' => ['initialJs' => false,'repeaterWithSelect2' => true,'parentClass' => 'show-class-js','tableName' => $tableId,'repeaterId' => $repeaterId,'relationName' => 'food','isRepeater' => $isRepeater=true]]); ?>
+<?php $component->withName('tables.repeater-table'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php $component->withAttributes(['initialJs' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'repeater-with-select2' => true,'parentClass' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('show-class-js'),'tableName' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($tableId),'repeaterId' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($repeaterId),'relationName' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('food'),'isRepeater' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($isRepeater=true)]); ?>
+                                                                     <?php $__env->slot('ths'); ?> 
+                                                                        <?php $__currentLoopData = [
+                                                                        __('Deduction')=>'th-main-color custom-w-50',
+                                                                        __('Date')=>'th-main-color custom-w-25',
+                                                                        __('Deduction Amount')=>'th-main-color custom-w-25',
+                                                                        ]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $title=>$classes): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                                         <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.tables.repeater-table-th','data' => ['class' => ''.e($classes).'','title' => $title]]); ?>
+<?php $component->withName('tables.repeater-table-th'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php $component->withAttributes(['class' => ''.e($classes).'','title' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($title)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
+<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
+<?php endif; ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?> 
+                                                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                                     <?php $__env->endSlot(); ?>
+                                                                     <?php $__env->slot('trs'); ?> 
+                                                                        <?php
+                                                                     	 $rows = isset($invoice) ? $invoice->deductions :[-1] ;
+
+                                                                        ?>
+                                                                        <?php $__currentLoopData = count($rows) ? $rows : [-1]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $deductionWithPivot): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                                        <?php
+                                                                        $fullPath = new \App\Models\Deduction;
+                                                                        if( !($deductionWithPivot instanceof $fullPath) ){
+                                                                        unset($deductionWithPivot);
+                                                                        }
+                                                                        ?>
+																	
+																						<tr <?php if($isRepeater): ?> data-repeater-item <?php endif; ?>>
+
+																							<td class="text-center">
+																								<input type="hidden" name="company_id" value="<?php echo e($company->id); ?>">
+																								<div class="custom-w-50">
+																									<i data-repeater-delete="" class="btn-sm btn btn-danger m-btn m-btn--icon m-btn--pill trash_icon fas fa-times-circle">
+																									</i>
+																								</div>
+																							</td>
+																							<td>
+
+																								 <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.select','data' => ['insideModalWithJs' => false,'selectedValue' => isset($deductionWithPivot) && $deductionWithPivot->pivot->deduction_id ? $deductionWithPivot->pivot->deduction_id : '','options' => formatOptionsForSelect($deductions),'addNew' => false,'class' => 'select2-select repeater-select form-control custom-w-100','dataFilterType' => ''.e('create').'','all' => false,'name' => 'deduction_id']]); ?>
+<?php $component->withName('form.select'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php $component->withAttributes(['insideModalWithJs' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'selectedValue' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(isset($deductionWithPivot) && $deductionWithPivot->pivot->deduction_id ? $deductionWithPivot->pivot->deduction_id : ''),'options' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(formatOptionsForSelect($deductions)),'add-new' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'class' => 'select2-select repeater-select form-control custom-w-100','data-filter-type' => ''.e('create').'','all' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'name' => 'deduction_id']); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
+<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
+<?php endif; ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?> 
+																							</td>
 
 
-                                        
 
-                                    </tr>
-
-
-
-
-
-
-
-
-
-                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-
-                                </tbody>
-                            </table>
-                        </div>
-
-                    </div>
-
-                    <?php $__env->startPush('js'); ?>
-                    <script>
-                        var table = $(".kt_table_with_no_pagination_no_collapse");
-
-                        table.DataTable({
+																							<td>
+																							
+																								<div class="kt-input-icon ">
+																									<div class="input-group date custom-w-100">
+																										<input type="text" name="date" value="<?php echo e(isset($deductionWithPivot) ? formatDateForDatePicker($deductionWithPivot->pivot->date) : formatDateForDatePicker(now()->format('Y-m-d'))); ?>" class="form-control is-date-css refresh-datepicker-js  kt_datepicker_max_date_is_today" readonly placeholder="Select date"  />
+																										<div class="input-group-append">
+																											<span class="input-group-text">
+																												<i class="la la-calendar-check-o"></i>
+																											</span>
+																										</div>
+																									</div>
+																								</div>
+																							</td>
 
 
 
+																							<td>
+																								<div class="kt-input-icon custom-w-100">
+																									<div class="input-group">
+																										<input type="text" name="amount" class="form-control only-greater-than-or-equal-zero-allowed" value="<?php echo e(isset($deductionWithPivot) ? $deductionWithPivot->pivot->amount: 0); ?>">
+																									</div>
+																								</div>
+																							</td>
 
-                                dom: 'Bfrtip'
 
-                                , "processing": false
-                                , "scrollX": true
-                                , "scrollY": true
-                                , "ordering": false
-                                , 'paging': false
-                                , "fixedColumns": {
-                                    left: 2
-                                }
-                                , "fixedHeader": {
-                                    headerOffset: 60
-                                }
-                                , "serverSide": false
-                                , "responsive": false
-                                , "pageLength": 25
-                                , drawCallback: function(setting) {
-                                    if (!currentTable) {
-                                        currentTable = $('.main-table-class').DataTable();
-                                    }
-                                    $('.buttons-html5').addClass('btn border-parent btn-border-export btn-secondary btn-bold  ml-2 flex-1 flex-grow-0 btn-border-radius do-not-close-when-click-away')
-                                    $('.buttons-print').addClass('btn border-parent top-0 btn-border-export btn-secondary btn-bold  ml-2 flex-1 flex-grow-0 btn-border-radius do-not-close-when-click-away')
-                                },
+																						</tr>
+
+
+
+																						<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+
+																						 <?php $__env->endSlot(); ?>
 
 
 
 
+																						 <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
+<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
+<?php endif; ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?> 
+																						
 
-                            }
 
-                        )
-
-                    </script>
-                    <?php $__env->stopPush(); ?>
-
+                       										 </div>
+															 	<div class="modal-footer">
+									<button type="button" class="btn btn-secondary" data-dismiss="modal"><?php echo e(__('Close')); ?></button>
+									<button type="submit" class="btn btn-primary submit-form-btn "><?php echo e(__('Save')); ?></button>
+								</div>
+														</form>
+               				     </div>
+							
                 </div>
             </div>
         </div>
+
+        
+        </td>
+
+        <td class="sub-text-bg  text-center">
+            <?php if(!$invoice->$isCollectedOrPaid()): ?>
+            <a href="<?php echo e(route($moneyReceivedOrPaidUrlName,['company'=>$company->id,'model'=>$invoice->id ])); ?>" title="<?php echo e($moneyReceivedOrPaidText); ?>" class="btn btn-sm btn-primary"><?php echo e($moneyReceivedOrPaidText); ?></a>
+            <?php endif; ?>
+        </td>
+
+
+        
+
+        
+
+
+        
+
+        </tr>
+
+
+
+
+
+
+<?php $__env->startPush('js_end'); ?>
+<script>
+$(function(){
+	$('.kt_datepicker_max_date_is_today').datepicker({
+ autoclose: true,
+ todayHighlight: true,
+   orientation: "bottom left",
+// format: 'mm/dd/yyyy',
+ endDate: new Date(), 
+
+ rtl:false
+});
+})
+</script>
+	
+<?php $__env->stopPush(); ?>
+
+
+        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+
+        </tbody>
+        </table>
     </div>
-    <?php $__env->stopSection(); ?>
-    <?php $__env->startSection('js'); ?>
-     <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+
+</div>
+
+<?php $__env->startPush('js'); ?>
+<script>
+    var table = $(".kt_table_with_no_pagination_no_collapse");
+
+    table.DataTable({
+
+
+
+
+            dom: 'Bfrtip'
+
+            , "processing": false
+            , "scrollX": true
+            , "scrollY": true
+            , "ordering": false
+            , 'paging': false
+            , "fixedColumns": {
+                left: 2
+            }
+            , "fixedHeader": {
+                headerOffset: 60
+            }
+            , "serverSide": false
+            , "responsive": false
+            , "pageLength": 25
+            , drawCallback: function(setting) {
+                if (!currentTable) {
+                    currentTable = $('.main-table-class').DataTable();
+                }
+                $('.buttons-html5').addClass('btn border-parent btn-border-export btn-secondary btn-bold  ml-2 flex-1 flex-grow-0 btn-border-radius do-not-close-when-click-away')
+                $('.buttons-print').addClass('btn border-parent top-0 btn-border-export btn-secondary btn-bold  ml-2 flex-1 flex-grow-0 btn-border-radius do-not-close-when-click-away')
+            },
+
+
+
+
+
+        }
+
+    )
+
+</script>
+<?php $__env->stopPush(); ?>
+
+</div>
+</div>
+</div>
+</div>
+<?php $__env->stopSection(); ?>
+<?php $__env->startSection('js'); ?>
+ <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.js.commons','data' => []]); ?>
 <?php $component->withName('js.commons'); ?>
 <?php if ($component->shouldRender()): ?>
@@ -502,55 +716,100 @@
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
 
-    <script src="https://cdn.amcharts.com/lib/4/core.js"></script>
-    <script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
-    <script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script>
+<script src="https://cdn.amcharts.com/lib/4/core.js"></script>
+<script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
+<script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script>
 
-    <script>
-        function getDateFormatted(yourDate) {
-            const offset = yourDate.getTimezoneOffset()
-            yourDate = new Date(yourDate.getTime() - (offset * 60 * 1000))
-            return yourDate.toISOString().split('T')[0]
+<script>
+    function getDateFormatted(yourDate) {
+        const offset = yourDate.getTimezoneOffset()
+        yourDate = new Date(yourDate.getTime() - (offset * 60 * 1000))
+        return yourDate.toISOString().split('T')[0]
+    }
+
+    am4core.ready(function() {
+
+        // Themes begin
+
+
+
+    }); // end am4core.ready()
+
+</script>
+<script>
+    $(document).on('click', '#show-past-due-detail', function() {
+        if (!currentTable) {
+            currentTable = $('.main-table-class').DataTable()
         }
+        if (currentTable.column(2).visible()) {
+            $(this).html("<?php echo e(__('Show Details')); ?>")
+            currentTable.columns([2, 3, 4, 5, 6, 7, 8, 9, 10]).visible(false);
+        } else {
+            $(this).html("<?php echo e(__('Hide Details')); ?>")
+            currentTable.columns([2, 3, 4, 5, 6, 7, 8, 9, 10]).visible(true);
+        }
+    })
 
-        am4core.ready(function() {
+    $(document).on('click', '#show-coming-due-detail', function() {
+        if (!currentTable) {
+            currentTable = $('.main-table-class').DataTable()
+        }
+        if (currentTable.column(13).visible()) {
+            $(this).html("<?php echo e(__('Show Details')); ?>")
+            currentTable.columns([13, 14, 15, 16, 17, 18, 19, 20, 21]).visible(false);
+        } else {
+            $(this).html("<?php echo e(__('Hide Details')); ?>")
+            currentTable.columns([13, 14, 15, 16, 17, 18, 19, 20, 21]).visible(true);
+        }
+    })
 
-            // Themes begin
+</script>
+<script>
+    $('.model_repeater').repeater({
+        initEmpty: false,
+		initEmpty:false
+        , isFirstItemUndeletable: false
+        , defaultValues: {
+            'text-input': 'foo'
+        },
 
+        show: function() {
+            $(this).slideDown();
+            $('input.trigger-change-repeater').trigger('change')
+            $(document).find('.datepicker-input').datepicker({
+                dateFormat: 'mm-dd-yy'
+                , autoclose: true
+            })
+            $(this).find('.only-month-year-picker').each(function(index, dateInput) {
+                reinitalizeMonthYearInput(dateInput)
+            });
+            $('input:not([type="hidden"])').trigger('change');
+            $(this).find('.dropdown-toggle').remove();
+            $(this).find('select.repeater-select').selectpicker("refresh");
+            $(this).find('.refresh-datepicker-js').datepicker('update', '<?php echo e(now()->format("m/d/Y")); ?>')
+        },
 
+        hide: function(deleteElement) {
+            if ($('#first-loading').length) {
+                $(this).slideUp(deleteElement, function() {
 
-        }); // end am4core.ready()
-
-    </script>
-    <script>
-        $(document).on('click', '#show-past-due-detail', function() {
-            if (!currentTable) {
-                currentTable = $('.main-table-class').DataTable()
-            }
-            if (currentTable.column(2).visible()) {
-                $(this).html("<?php echo e(__('Show Details')); ?>")
-                currentTable.columns([2, 3, 4, 5, 6, 7, 8, 9, 10]).visible(false);
+                    deleteElement();
+                    //   $('select.main-service-item').trigger('change');
+                });
             } else {
-                $(this).html("<?php echo e(__('Hide Details')); ?>")
-                currentTable.columns([2, 3, 4, 5, 6, 7, 8, 9, 10]).visible(true);
-            }
-        })
+                if (confirm('Are you sure you want to delete this element?')) {
+                    $(this).slideUp(deleteElement, function() {
 
-        $(document).on('click', '#show-coming-due-detail', function() {
-            if (!currentTable) {
-                currentTable = $('.main-table-class').DataTable()
-            }
-            if (currentTable.column(13).visible()) {
-                $(this).html("<?php echo e(__('Show Details')); ?>")
-                currentTable.columns([13, 14, 15, 16, 17, 18, 19, 20, 21]).visible(false);
-            } else {
-                $(this).html("<?php echo e(__('Hide Details')); ?>")
-                currentTable.columns([13, 14, 15, 16, 17, 18, 19, 20, 21]).visible(true);
-            }
-        })
+                        deleteElement();
+                        $('input.trigger-change-repeater').trigger('change')
 
-    </script>
+                    });
+                }
+            }
+        }
+    });
 
-    <?php $__env->stopSection(); ?>
+</script>
+<?php $__env->stopSection(); ?>
 
 <?php echo $__env->make('layouts.dashboard', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /media/salah/Software/projects/veroo/resources/views/admin/reports/invoice-report.blade.php ENDPATH**/ ?>

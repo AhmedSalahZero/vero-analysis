@@ -1700,10 +1700,15 @@ $(document).on('change','.update-exchange-rate',function(){
                 e.preventDefault();
 
                 // Validate form before submit
+		
                 form = $(this).closest('form')[0]
 
                 var formData = new FormData(form);
-
+		
+				if($(form).attr('action') == undefined){
+					alert('not action attr for this form');
+					return ;
+				}
               //  this.disabled = true;
                 $.ajax({
                     type: "POST"
@@ -1758,7 +1763,15 @@ $(document).on('change','.update-exchange-rate',function(){
                                     })
 
                                 })
-                            } else {
+                            } 
+							else if(res.errorMessage){
+								Swal.fire({
+                                icon: 'error'
+                                , title: res.errorMessage,
+
+                            })
+							}
+							else {
                                 $('.submit-form.btn').prop('disabled', false);
                                 window.location.href = "<?php echo e(route('admin.view.revenue.business.line',getCurrentCompany() ? getCurrentCompany()->getIdentifier( ) : 0 )); ?>"
                             }
@@ -1949,8 +1962,10 @@ $('#kt_datepicker_max_date_is_today').datepicker({
    orientation: "bottom left",
 // format: 'mm/dd/yyyy',
  endDate: new Date(),
+
  rtl:false
 });
+
 
 </script>
 <script>

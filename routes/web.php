@@ -517,6 +517,13 @@ Route::middleware([])->group(function () {
 				 Route::delete('delete-adjust-due-dates/edit/{modelId}/{modelType}/{dueDateHistory}', 'AdjustedDueDateHistoriesController@destroy')->name('delete.adjust.due.dates');
 				 
 				 
+				 
+				//  Route::get('adjust-due-dates/{modelId}/{modelType}', 'AdjustedDueDateHistoriesController@index')->name('adjust.due.dates');
+				//  Route::post('adjust-due-dates/{modelId}/{modelType}', 'AdjustedDueDateHistoriesController@store')->name('store.adjust.due.dates');
+				//  Route::get('adjust-due-dates/edit/{modelId}/{modelType}/{dueDateHistory}', 'AdjustedDueDateHistoriesController@edit')->name('edit.adjust.due.dates');
+				 Route::patch('invoice-deductions/edit/{modelId}/{modelType}', 'InvoiceDeductionsController@update')->name('update.invoice.deductions');
+				//  Route::delete('delete-invoice-deductions/edit/{modelId}/{modelType}', 'InvoiceDeductionsController@destroy')->name('delete.invoice.deductions');
+				 
 
 				 
 

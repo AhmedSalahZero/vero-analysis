@@ -273,7 +273,7 @@ $(document).on('change', '.js-settlement-amount,[data-max-cheque-value]', functi
 		total += parseFloat(currentVal)
 	})
 	const currentType = $('#type').val()
-	const receivedAmount = $('.js-' + currentType + '-received-amount').val()
+	const receivedAmount = $('.amount-after-exchange-rate-class[data-type="'+currentType+'"]').val()
 	
 	let totalRemaining = receivedAmount - total
 	totalRemaining = totalRemaining ? totalRemaining : 0

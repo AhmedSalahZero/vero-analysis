@@ -186,7 +186,7 @@ use App\Models\MoneyReceived;
                                     <td class="text-nowrap"><?php echo e($moneyReceived->getReceivingDateFormatted()); ?></td>
                                     <td><?php echo e($moneyReceived->cheque->getChequeNumber()); ?></td>
                                     <td><?php echo e($moneyReceived->getReceivedAmountFormatted()); ?></td>
-                                    <td class="text-transform" data-currency="<?php echo e($moneyReceived->getCurrency()); ?>"><?php echo e($moneyReceived->getCurrencyToReceivingCurrencyFormatted()); ?></td>
+                                    <td class="text-transform" data-currency="<?php echo e($moneyReceived->getReceivingCurrency()); ?>"><?php echo e($moneyReceived->getCurrencyToReceivingCurrencyFormatted()); ?></td>
                                     <td class="bank-max-width"><?php echo e($moneyReceived->cheque->getDraweeBankName()); ?></td>
                                     <td class="text-nowrap"><?php echo e($moneyReceived->cheque->getDueDateFormatted()); ?></td>
                                     <td><?php echo e($moneyReceived->cheque->getDueAfterDays()); ?></td>
@@ -306,7 +306,7 @@ use App\Models\MoneyReceived;
                                     <td class="text-nowrap"><?php echo e($moneyReceived->getReceivingDateFormatted()); ?></td>
                                     <td><?php echo e($moneyReceived->cheque->getChequeNumber()); ?></td>
                                     <td><?php echo e($moneyReceived->getReceivedAmountFormatted()); ?></td>
-                                    <td class="text-transform" data-currency="<?php echo e($moneyReceived->getCurrency()); ?>"><?php echo e($moneyReceived->getCurrencyToReceivingCurrencyFormatted()); ?></td>
+                                    <td class="text-transform" data-currency="<?php echo e($moneyReceived->getReceivingCurrency()); ?>"><?php echo e($moneyReceived->getCurrencyToReceivingCurrencyFormatted()); ?></td>
                                     <td class="bank-max-width"><?php echo e($moneyReceived->cheque->getDraweeBankName()); ?></td>
                                     <td class="text-nowrap"><?php echo e($moneyReceived->cheque->getDueDateFormatted()); ?></td>
                                     <td> <?php echo e($moneyReceived->cheque->getStatusFormatted()); ?> </td>
@@ -420,7 +420,7 @@ use App\Models\MoneyReceived;
   									 <td class="text-wrap bank-max-width"><?php echo e($moneyReceived->getMoneyTypeFormatted()); ?></td>
                                     <td class="bank-max-width"><?php echo e($moneyReceived->getCustomerName()); ?></td>
                                     <td><?php echo e($moneyReceived->cheque->getChequeNumber()); ?></td>
-                                    <td><?php echo e($moneyReceived->getReceivedAmountFormatted() . ' '  . $moneyReceived->getCurrency()); ?></td>
+                                    <td><?php echo e($moneyReceived->getReceivedAmountFormatted() . ' '  . $moneyReceived->getReceivingCurrency()); ?></td>
                                     <td class="text-nowrap"> <?php echo e($moneyReceived->cheque->getDepositDateFormatted()); ?> </td>
                                     <td class="bank-max-width"><?php echo e($moneyReceived->cheque->getDrawlBankName()); ?></td>
                                     <td class="bank-max-width"><?php echo e($moneyReceived->cheque->getAccountTypeName()); ?></td>
@@ -622,7 +622,7 @@ use App\Models\MoneyReceived;
  									  <td class="text-wrap bank-max-width"><?php echo e($moneyReceived->getMoneyTypeFormatted()); ?></td>
                                     <td class="bank-max-width"><?php echo e($moneyReceived->getCustomerName()); ?></td>
                                     <td><?php echo e($moneyReceived->cheque->getChequeNumber()); ?></td>
-                                    <td><?php echo e($moneyReceived->getReceivedAmountFormatted() . ' ' . $moneyReceived->getCurrency()); ?></td>
+                                    <td><?php echo e($moneyReceived->getReceivedAmountFormatted() . ' ' . $moneyReceived->getReceivingCurrency()); ?></td>
                                     <td class="text-nowrap"> <?php echo e($moneyReceived->cheque->getDueDateFormatted()); ?> </td>
                                     <td class="text-nowrap"> <?php echo e($moneyReceived->cheque->getDepositDateFormatted()); ?> </td>
                                     <td class="bank-max-width"><?php echo e($moneyReceived->cheque->getDrawlBankName()); ?></td>
@@ -706,7 +706,7 @@ use App\Models\MoneyReceived;
                                     <td class="text-nowrap"><?php echo e($money->getReceivingDateFormatted()); ?></td>
                                     <td class="bank-max-width"><?php echo e($money->getIncomingTransferReceivingBankName()); ?></td>
                                     <td><?php echo e($money->getReceivedAmountFormatted()); ?></td>
-                                    <td data-currency="<?php echo e($money->getCurrency()); ?>"> <?php echo e($money->getCurrencyToReceivingCurrencyFormatted()); ?></td>
+                                    <td data-currency="<?php echo e($money->getReceivingCurrency()); ?>"> <?php echo e($money->getCurrencyToReceivingCurrencyFormatted()); ?></td>
                                     <td class="bank-max-width"><?php echo e($money->getIncomingTransferAccountTypeName()); ?></td>
                                     <td><?php echo e($money->getIncomingTransferAccountNumber()); ?></td>
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
@@ -816,7 +816,7 @@ use App\Models\MoneyReceived;
                                     <td class="text-nowrap"><?php echo e($moneyReceived->getReceivingDateFormatted()); ?></td>
                                     <td><?php echo e($moneyReceived->getCashInSafeBranchName()); ?></td>
                                     <td><?php echo e($moneyReceived->getReceivedAmountFormatted()); ?></td>
-                                    <td data-currency="<?php echo e($moneyReceived->getCurrency()); ?>"><?php echo e($moneyReceived->getCurrencyToReceivingCurrencyFormatted()); ?></td>
+                                    <td data-currency="<?php echo e($moneyReceived->getReceivingCurrency()); ?>"><?php echo e($moneyReceived->getCurrencyToReceivingCurrencyFormatted()); ?></td>
                                     <td><?php echo e($moneyReceived->getCashInSafeReceiptNumber()); ?></td>
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
@@ -934,7 +934,7 @@ use App\Models\MoneyReceived;
                                     <td class="text-nowrap"><?php echo e($money->getReceivingDateFormatted()); ?></td>
                                     <td class="bank-max-width"><?php echo e($money->getCashInBankReceivingBankName()); ?></td>
                                     <td><?php echo e($money->getReceivedAmountFormatted()); ?></td>
-                                    <td data-currency="<?php echo e($money->getCurrency()); ?>"> <?php echo e($money->getCurrencyToReceivingCurrencyFormatted()); ?></td>
+                                    <td data-currency="<?php echo e($money->getReceivingCurrency()); ?>"> <?php echo e($money->getCurrencyToReceivingCurrencyFormatted()); ?></td>
                                     <td class="bank-max-width"><?php echo e($money->getCashInBankAccountTypeName()); ?></td>
                                     <td><?php echo e($money->getCashInBankAccountNumber()); ?></td>
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
