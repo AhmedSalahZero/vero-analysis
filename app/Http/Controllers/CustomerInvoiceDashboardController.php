@@ -583,7 +583,7 @@ class CustomerInvoiceDashboardController extends Controller
             return  redirect()->back()->with('fail', __('No Data Found'));
         }
 		$hasProjectNameColumn = $modelType == 'CustomerInvoice'?  CustomerInvoice::hasProjectNameColumn() : false;
-		
+		$totalCollectionOrPaidText  = $modelType == 'CustomerInvoice' ? __('Total Collections') : __('Total Payments');
         return view('admin.reports.invoice-report', [
             'invoices' => $invoices,
             'partnerName' => $customer->getName(),
@@ -595,7 +595,8 @@ class CustomerInvoiceDashboardController extends Controller
 			'modelType'=>$modelType,
 			'clientIdColumnName'=>$clientIdColumnName,
 			'deductions'=>$deductions,
-			'hasProjectNameColumn'=>$hasProjectNameColumn
+			'hasProjectNameColumn'=>$hasProjectNameColumn,
+			'totalCollectionOrPaidText'=>$totalCollectionOrPaidText
         ]);
     }
 
@@ -737,6 +738,7 @@ class CustomerInvoiceDashboardController extends Controller
 
     public function showCustomerInvoiceStatementReport(Company $company, Request $request, int $partnerId, string $currency, string $modelType , string $startDate = null , string $endDate = null , bool $returnResult = false)
     {
+		
 		$showAllPartner = $request->boolean('all_partners');
 		$partnerId = $request->has('partner_id') ? $request->get('partner_id') : $partnerId;
         $fullClassName = ('\App\Models\\' . $modelType) ;
@@ -785,7 +787,7 @@ class CustomerInvoiceDashboardController extends Controller
         if (count($invoicesWithItsReceivedMoney) < 1) {
             return  redirect()->back()->with('fail', __('No Data Found'));
         }
-		// dD($invoicesWithItsReceivedMoney);
+
         return view('admin.reports.customer-statement-report', [
             'invoicesWithItsReceivedMoney' => $invoicesWithItsReceivedMoney,
             'partnerName' => $partnerName,

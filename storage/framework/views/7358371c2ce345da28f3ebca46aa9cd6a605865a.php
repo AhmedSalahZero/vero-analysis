@@ -545,7 +545,7 @@ td{
         let form = document.getElementById('ajax-send-cheques-to-collection-id' + moneyType);
         let formData = new FormData(form);
         formData.append('cheques', checkedItems);
-        $('button').prop('disabled', true)
+        //$('button').prop('disabled', true)
         $.ajax({
             cache: false
             , contentType: false
@@ -554,6 +554,7 @@ td{
             , data: formData
             , type: "post"
         }).then(function(res) {
+			
 			if(res.status === false){
 				 Swal.fire({
                 text: res.msg
@@ -572,7 +573,19 @@ td{
               window.location.href = res.pageLink;
             });
 		   }
-        })
+        }).catch(res=>{
+			title ="<?php echo e(__('Error !')); ?>";
+			message = "<?php echo e(__('Something went Wrong')); ?>";
+			if (res.responseJSON && res.responseJSON.errors) {
+                            message = res.responseJSON.errors[Object.keys(res.responseJSON.errors)[0]][0]
+            }
+			 Swal.fire({
+                            icon: 'error'
+                            , title: title
+                            , text: message
+
+                        })
+		})
     });
 
 </script>

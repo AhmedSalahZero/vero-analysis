@@ -117,7 +117,7 @@ use App\Models\MoneyReceived ;
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="<?php echo e(__('Start Settlement')); ?>" href="<?php echo e(route('view.down.payment.settlement',['company'=>$company->id,'downPaymentId'=>$moneyReceived->id,'modelType'=>$modelType])); ?>"><i class="fa fa-dollar-sign"></i></a>
-                                            
+                                        
                                         </span>
                                     </td>
                                 </tr>

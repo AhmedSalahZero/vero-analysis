@@ -26,9 +26,9 @@ $selectedBanks = [];
         flex: initial !important;
     }
 
-    .max-w-11 {
+    .max-w-15 {
         max-width: initial !important;
-        width: 11% !important;
+        width: 15% !important;
         flex: initial !important;
     }
 
@@ -50,9 +50,9 @@ $selectedBanks = [];
         flex: initial !important;
     }
 
-    .width-45 {
+    .width-40 {
         max-width: initial !important;
-        width: 45% !important;
+        width: 40% !important;
         flex: initial !important;
     }
 
@@ -251,7 +251,7 @@ $selectedBanks = [];
         <div class="kt-portlet__body">
             <div class="form-group">
                 <div class="row">
-                    <div class="col-md-5 width-45 ">
+                    <div class="col-md-5 width-40 ">
                         <label><?php echo e(__('Paying Branch')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
                         <div class="kt-input-icon">
                             <div class="input-group date">
@@ -301,7 +301,7 @@ $selectedBanks = [];
 <?php endif; ?> 
                         </div>
                     </div>
-                    <div class="col-md-3 width-12">
+                    <div class="col-md-3 width-12 show-only-when-invoice-currency-not-equal-receiving-currency">
                         <label><?php echo e(__('Exchange Rate')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
                         <div class="kt-input-icon">
                             <input value="<?php echo e(isset($model) ? $model->getExchangeRate() : 1); ?>" placeholder="<?php echo e(__('Exchange Rate')); ?>" type="text" name="exchange_rate[<?php echo e(CashExpense::CASH_PAYMENT); ?>]" class="form-control only-greater-than-or-equal-zero-allowed exchange-rate-class recalculate-amount-class" data-type="<?php echo e(CashExpense::CASH_PAYMENT); ?>">
@@ -440,7 +440,7 @@ $selectedBanks = [];
                         </div>
                     </div>
 
-                    <div class="col-md-2 width-12">
+                    <div class="col-md-2 width-12 show-only-when-invoice-currency-not-equal-receiving-currency">
                         <label><?php echo e(__('Exchange Rate')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
                         <div class="kt-input-icon">
                             <input value="<?php echo e(isset($model) ? $model->getExchangeRate() : 1); ?>" placeholder="<?php echo e(__('Exchange Rate')); ?>" type="text" name="exchange_rate[<?php echo e(CashExpense::PAYABLE_CHEQUE); ?>]" class="form-control only-greater-than-or-equal-zero-allowed exchange-rate-class recalculate-amount-class" data-type="<?php echo e(CashExpense::PAYABLE_CHEQUE); ?>">
@@ -494,7 +494,7 @@ $selectedBanks = [];
         <div class="kt-portlet__body">
             <div class="form-group">
                 <div class="row">
-                    <div class="col-md-5 width-45">
+                    <div class="col-md-5 width-40">
                         <label> <?php echo __('Payment <br> Bank'); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
                         <div class="kt-input-icon">
                             <div class="input-group date">
@@ -508,7 +508,7 @@ $selectedBanks = [];
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-2 max-w-11">
+                    <div class="col-md-2 max-w-15">
                         <label> <?php echo __('Outgoing <br> Transfer Amount'); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
                         <div class="kt-input-icon">
                             <input data-max-cheque-value="0" type="text" value="<?php echo e(isset($model) ? $model->getPaidAmount():0); ?>" name="paid_amount[<?php echo e(CashExpense::OUTGOING_TRANSFER); ?>]" class="form-control greater-than-or-equal-zero-allowed <?php echo e('js-'. CashExpense::OUTGOING_TRANSFER .'-paid-amount'); ?>  main-amount-class recalculate-amount-class" data-type="<?php echo e(CashExpense::OUTGOING_TRANSFER); ?>" placeholder="<?php echo e(__('Insert Amount')); ?>">
@@ -543,7 +543,7 @@ $selectedBanks = [];
                     </div>
 
 
-                    <div class="col-md-1 max-w-6">
+                    <div class="col-md-1 max-w-6 show-only-when-invoice-currency-not-equal-receiving-currency">
                         <label><?php echo __('Exchange <br> Rate'); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
                         <div class="kt-input-icon">
                             <input value="<?php echo e(isset($model) ? $model->getExchangeRate() : 1); ?>" placeholder="<?php echo e(__('Exchange Rate')); ?>" type="text" name="exchange_rate[<?php echo e(CashExpense::OUTGOING_TRANSFER); ?>]" class="form-control only-greater-than-or-equal-zero-allowed exchange-rate-class recalculate-amount-class" data-type="<?php echo e(CashExpense::OUTGOING_TRANSFER); ?>">
@@ -902,8 +902,8 @@ $selectedBanks = [];
     })
     $(document).on('change', '.recalculate-amount-class', function() {
         const moneyType = $(this).attr('data-type')
-        const amount = $('.main-amount-class[data-type="' + moneyType + '"]').val();
-        const exchangeRate = $('.exchange-rate-class[data-type="' + moneyType + '"]').val();
+        const amount = number_unformat($('.main-amount-class[data-type="' + moneyType + '"]').val());
+        const exchangeRate = number_unformat($('.exchange-rate-class[data-type="' + moneyType + '"]').val());
         const amountAfterExchangeRate = amount * exchangeRate;
         $('.amount-after-exchange-rate-class[data-type="' + moneyType + '"]').val(number_format(amountAfterExchangeRate)).trigger('change')
         $('.js-settlement-amount:eq(0)').trigger('change')
@@ -1056,7 +1056,7 @@ $(document).on('change', 'select.contracts-js', function() {
 			$(parent).find('.contract-code').val(code)
 			$(parent).find('.contract-amount').val(number_format(amount) + ' '  + currency )
 		}
-        // $(parent).find('.contract-currency').val(currency)
+
 
     })
    $(document).on('change', 'select.suppliers-or-customers-js', function() {

@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\DeleteMoneyPaymentRequest;
+use App\Http\Requests\MarkChequeAsPaidRequest;
 use App\Http\Requests\StoreMoneyPaymentRequest;
 use App\Models\AccountType;
 use App\Models\Bank;
@@ -322,13 +323,13 @@ class MoneyPaymentController
 
 		$relationData = [];
 		$relationName = null ;
-		$exchangeRate = $currencyName == $paymentCurrency ? 1 : $request->input('exchange_rate.'.$moneyType,1) ;
+		$exchangeRate = $currencyName == $paymentCurrency ? 1 : number_unformat($request->input('exchange_rate.'.$moneyType,1)) ;
 		
-		$paidAmount = $request->input('paid_amount.'.$moneyType ,0) ;
-		$paidAmount = unformat_number($paidAmount);
+		$amountInPaymentCurrency = $request->input('paid_amount.'.$moneyType ,0) ;
+		$amountInPaymentCurrency = unformat_number($amountInPaymentCurrency);
 		
 
-		$paidAmountInPayingCurrency = $paidAmount * $exchangeRate ;
+		$invoiceCurrencyAmount = $amountInPaymentCurrency / $exchangeRate ;
 		
 		if($moneyType == MoneyPayment::CASH_PAYMENT){
 			$relationData = $request->only(['receipt_number']) ;
@@ -363,16 +364,17 @@ class MoneyPaymentController
 		}
 	
 		// $data['paid_amount'] = $paidAmount ;
-		$data['paid_amount'] = $isDownPayment || ! $request->has('settlements') ?  $paidAmount  : array_sum(array_column($request->get('settlements'),'settlement_amount')); 
+		// $data['paid_amount'] = $isDownPayment || ! $request->has('settlements') ?  $amountInPaymentCurrency  : array_sum(array_column($request->get('settlements'),'settlement_amount')); 
 		if($partnerType && $partnerType != 'is_supplier'){
 			$data['paid_amount'] = $request->input('paid_amount.'.$moneyType ,0);
 		}
 		$deliveryBank = FinancialInstitution::find($financialInstitutionId);
 		$deliveryBankName = $deliveryBank ? $deliveryBank->getName() : null;
 		$bankNameOrBranchName =  $moneyType == MoneyPayment::CASH_PAYMENT ? Branch::find($relationData['delivery_branch_id'])->getName() : $deliveryBankName ;
-		
-		$data['amount_in_invoice_currency'] = $paidAmountInPayingCurrency ;
+		$data['paid_amount'] =$amountInPaymentCurrency ; 
+		$data['amount_in_invoice_currency'] = $invoiceCurrencyAmount ;
 		$data['exchange_rate'] =$exchangeRate ;
+		
 	//	$data['money_type'] = $isDownPayment ? 'down-payment' : 'money-payment' ;
 		$data['contract_id'] = $contractId ;
 		// $data['money_payment_id'] = $moneyPaymentId;
@@ -396,13 +398,13 @@ class MoneyPaymentController
 		$accountType = AccountType::find($request->input('account_type.'.$moneyType));
 		$accountNumber = $request->input('account_number.'.$moneyType) ;
 		$deliveryBranchId = $relationData['delivery_branch_id'] ?? null ;
-		$moneyPayment->handleCreditStatement($company->id , $financialInstitutionId,$accountType,$accountNumber,$moneyType,$statementDate,$paidAmountInPayingCurrency,$deliveryBranchId,$paymentCurrency);
+		$moneyPayment->handleCreditStatement($company->id , $financialInstitutionId,$accountType,$accountNumber,$moneyType,$statementDate,$amountInPaymentCurrency,$deliveryBranchId,$paymentCurrency);
 		
 		if($partnerType && $partnerType != 'is_supplier'){
-			$moneyPayment->handlePartnerDebitStatement($partnerType,$partnerId, $moneyPayment->id,$company->id,$statementDate,$paidAmountInPayingCurrency,$paymentCurrency,$bankNameOrBranchName , $accountType , $accountNumber);
+			$moneyPayment->handlePartnerDebitStatement($partnerType,$partnerId, $moneyPayment->id,$company->id,$statementDate,$invoiceCurrencyAmount,$paymentCurrency,$bankNameOrBranchName , $accountType , $accountNumber);
 		}
 		/**
-		 * * For Money Received Only
+		 * * For Money Payment Only
 		 */
 		$totalWithholdAmount= 0 ;
 		$moneyPayment->storeNewSettlement($request->get('settlements',[]),$supplierName,$company->id);
@@ -522,7 +524,7 @@ class MoneyPaymentController
 			}
 			return $branch->id ;
 	}
-	public function markChequesAsPaid(Company $company,Request $request)
+	public function markChequesAsPaid(Company $company,MarkChequeAsPaidRequest $request)
 	{
 		$moneyPaymentIds = $request->get('cheques') ;
 		$moneyPaymentIds = is_array($moneyPaymentIds) ? $moneyPaymentIds :  explode(',',$moneyPaymentIds);

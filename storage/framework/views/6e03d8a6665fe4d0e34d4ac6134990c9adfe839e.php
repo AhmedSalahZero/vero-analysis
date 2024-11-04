@@ -31,9 +31,9 @@
     }
 
     .max-w-serial {
-        width: 5% !important;
-        min-width: 5% !important;
-        max-width: 5% !important;
+        width: 3% !important;
+        min-width: 3% !important;
+        max-width: 3% !important;
     }
 
     .max-w-amount {
@@ -366,7 +366,7 @@
 
                                         </th>	
 										<th class="view-table-th   bg-lighter header-th  align-middle text-center">
-                                            <?php echo e(__('Total Collection')); ?>
+                                            <?php echo e($totalCollectionOrPaidText); ?>
 
                                         </th>
 										
@@ -432,7 +432,7 @@
                                         <td class="sub-text-bg text-center  text-nowrap "><?php echo e($invoice->getNetInvoiceAmountFormatted()); ?></td>
                                         <td class="sub-text-bg text-center  text-nowrap "><?php echo e($invoice->getWithholdAmountFormatted()); ?></td>
                                         <td class="sub-text-bg text-center  text-nowrap "><?php echo e($invoice->getTotalDeductionFormatted()); ?></td>
-                                        <td class="sub-text-bg text-center  text-nowrap "><?php echo e($invoice->getTotalCollectedFormatted()); ?></td>
+                                        <td class="sub-text-bg text-center  text-nowrap "><?php echo e($invoice->getTotalCollectedOrPaidFormatted()); ?></td>
                                         <td class="sub-text-bg text-center  text-nowrap "><?php echo e($invoice->getDueDateFormatted()); ?></td>
                                         <td class="sub-text-bg text-center text-nowrap"><?php echo e($invoice->getNetBalanceFormatted()); ?></td>
                                         <td class="sub-text-bg text-center text-wrap"><?php echo e($invoice->getStatusFormatted()); ?></td>

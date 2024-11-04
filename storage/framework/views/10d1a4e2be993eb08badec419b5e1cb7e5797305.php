@@ -780,10 +780,10 @@ $(document).on('change','.recheck-end-date-rule-js',function(){
 	if(value < contractStartDate ){
 		let lang = $('body').data('lang');
 	title = "Oops..." ;
-	message = "Execution Start Date Can Not Be Less Than Contract Start Date" ;
+	message = "Execution Date Can Not Be Less Than Contract Start Date" ;
 	if(lang === 'ar'){
 		title = 'خطأ'  ;
-		message = "تاريخ بدايه التنفيذ لا يمكن ان يكون اصغر من تاريخ بدايه العقد"
+		message = "تاريخ التنفيذ لا يمكن ان يكون اصغر من تاريخ بدايه العقد"
 	}
 	Swal.fire({
             icon: "warning",
@@ -797,10 +797,10 @@ $(document).on('change','.recheck-end-date-rule-js',function(){
 	else if(value > contractEndDate ){
 		let lang = $('body').data('lang');
 	title = "Oops..." ;
-	message = "Execution Start Date Can Not Be Greater Than Contract End Date" ;
+	message = "Execution Date Can Not Be Greater Than Contract End Date" ;
 	if(lang === 'ar'){
 		title = 'خطأ'  ;
-		message = "تاريخ بدايه التنفيذ لا يمكن ان يكون اكبر من تاريخ نهاية العقد"
+		message = "تاريخ التنفيذ لا يمكن ان يكون اكبر من تاريخ نهاية العقد"
 	}
 	Swal.fire({
             icon: "warning",

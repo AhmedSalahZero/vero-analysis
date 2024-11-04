@@ -1,9 +1,11 @@
 <?php
 namespace App\Traits\Models;
 
+use App\Models\CustomerInvoice;
 use App\Models\Deduction;
 use App\Models\DueDateHistory;
 use App\Models\InvoiceDeduction;
+use App\Models\SupplierInvoice;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -123,6 +125,21 @@ trait IsInvoice
 	public function getTotalCollectedFormatted()
 	{
 		return number_format($this->getTotalCollected());
+	}
+	public function getTotalCollectedOrPaid()
+	{
+		if($this instanceof CustomerInvoice){
+			return (float)$this->collected_amount ; 
+		}
+		if($this instanceof SupplierInvoice){
+			return (float)$this->paid_amount ; 
+		}
+		throw new \Exception('Custom Exception .. Only Instance Customer Invoice Or Supplier Invoice Allowed');
+		
+	}
+	public function getTotalCollectedOrPaidFormatted()
+	{
+		return number_format($this->getTotalCollectedOrPaid());
 	}
 	public function getNetInvoiceAmount()
     {

@@ -1,6 +1,7 @@
 <?php
 namespace App\Traits\Models;
 
+use App\Models\FinancialInstitution;
 use App\Models\MoneyPayment;
 use App\Models\MoneyReceived;
 use Carbon\Carbon;
@@ -71,7 +72,7 @@ trait IsMoney
 		if($this->isInvoiceSettlementWithDownPayment()){
 			return $this->getDownPaymentAmount()  - $this->getTotalSettlementAmountForDownPayment();
 		}
-		return $this->getAmount()  - $this->getTotalSettlementAmount();
+		return $this->getAmountInInvoiceCurrency()  - $this->getTotalSettlementAmount();
 	}
 	public function setDownPaymentSettlementDateAttribute($value)
     {
@@ -106,7 +107,7 @@ trait IsMoney
 	public function getDownPaymentAmount()
     {
 		if($this->isDownPayment()){
-			return $this->getAmount();
+			return $this->getAmountInInvoiceCurrency();
 		}elseif($this->isInvoiceSettlementWithDownPayment()){
 			return $this->downPaymentSettlements->sum('down_payment_amount') ;
 		}
@@ -133,4 +134,9 @@ trait IsMoney
 		->where('currency',$currencyName)
 		->get()->pluck(self::CLIENT_NAME,self::CLIENT_NAME)->toArray();
 	}
+	public function getFinancialInstitution()
+	{
+		return FinancialInstitution::find($this->getFinancialInstitutionId());
+	}
+	
 }

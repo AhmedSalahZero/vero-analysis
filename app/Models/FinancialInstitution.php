@@ -312,5 +312,25 @@ class FinancialInstitution extends Model
 	{
 		return $this->hasMany(MediumTermLoan::class,'financial_institution_id','id');
 	}
+	public  function getOpeningBalanceForAccount( int $accountTypeId , string $accountNumber
+	// ,string $currencyName
+	 ){
+		/**
+		 * @var AccountType $accountType 
+		 */
+		$accountType = AccountType::find($accountTypeId);
+		$accountTypeModelName = $accountType->getModelName();
+		/**
+		 * @var CleanOverdraft|FinancialInstitutionAccount $accountModel 
+		 */
+		$fullModelName = 'App\Models\\'.$accountTypeModelName ;
+	
+		$accountModel = $fullModelName::where([
+			['financial_institution_id','=',$this->id],
+			['account_number','=',$accountNumber],
+			// ['currency','=',$currencyName]
+		])->first();
+		return $accountModel instanceof FinancialInstitutionAccount ? $accountModel->getOpeningBalanceDate() : $accountModel->getContractStartDate();
+	}
 	
 }

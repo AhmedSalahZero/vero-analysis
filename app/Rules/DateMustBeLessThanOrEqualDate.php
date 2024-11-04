@@ -35,6 +35,7 @@ class DateMustBeLessThanOrEqualDate implements ImplicitRule
 		if($this->isMultiValueRule || is_null($this->lessOrEqualDate)){
 			$this->lessOrEqualDate = $value;
 		}
+		
         return Carbon::make($this->lessOrEqualDate)->lessThanOrEqualTo(Carbon::make($this->date));
     }
 

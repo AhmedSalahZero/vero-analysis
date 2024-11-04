@@ -128,6 +128,7 @@ $(document).on('change', '.ajax-get-sales-orders-for-contract', function () {
 
 				var domSalesOrder = $(lastNode).find('.js-sales-order-name')
 				domSalesOrder.val(salesOrderNumber)
+				$(lastNode).find('.contract-currency').html('[ ' + currency +' ]')
 				domSalesOrder.attr('name', 'sales_orders_amounts[' + salesOrderId + '][sales_order_name]').val(salesOrderNumber)
 
 				
@@ -215,6 +216,7 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 				var domInvoiceDate = $(lastNode).find('.js-invoice-date')
 				var domInvoiceDueDate = $(lastNode).find('.js-invoice-due-date')
 				var domCurrency = $(lastNode).find('.js-currency')
+				
 				var domNetInvoiceAmount = $(lastNode).find('.js-net-invoice-amount')
 				var domProjectName = $(lastNode).find('.js-project-name')
 				var domCollectedAmount = $(lastNode).find('.js-collected-amount')
@@ -226,7 +228,8 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 				domCurrency.attr('name', 'settlements[' + invoiceNumber + '][currency]')
 				domProjectName.attr('name', 'settlements[' + invoiceNumber + '][project_name]')
 				domNetInvoiceAmount.attr('name', 'settlements[' + invoiceNumber + '][net_invoice_amount]')
-			
+		
+
 				domNetInvoiceAmount.closest('.common-parent-js').find('.currency-span').html(currency);
 				domCollectedAmount.attr('name', 'settlements[' + invoiceNumber + '][collected_amount]')
 				domNetBalance.attr('name', 'settlements[' + invoiceNumber + '][net_balance]')
@@ -269,12 +272,12 @@ $('select.ajax-get-sales-orders-for-contract').trigger('change')
 $(document).on('change', '.js-settlement-amount,[data-max-cheque-value]', function () {
 	let total = 0
 	$('.js-settlement-amount').each(function (index, input) {
-		var currentVal = $(input).val() ? $(input).val() : 0  ;
+		var currentVal = $(input).val() ? number_unformat($(input).val()) : 0  ;
 		total += parseFloat(currentVal)
 	})
 	const currentType = $('#type').val()
-	const receivedAmount = $('.amount-after-exchange-rate-class[data-type="'+currentType+'"]').val()
-	
+	const receivedAmount = number_unformat($('.amount-after-exchange-rate-class[data-type="'+currentType+'"]').val())
+
 	let totalRemaining = receivedAmount - total
 	totalRemaining = totalRemaining ? totalRemaining : 0
 	if(totalRemaining > 0){
@@ -308,15 +311,8 @@ $(document).on('change', '.js-update-account-number-based-on-account-type', func
 	const parent = repeaterParentIfExists.length ? repeaterParentIfExists : $(this).closest('.kt-portlet__body')
 	const moneyType = $(this).closest('form').attr('data-money-type')
 	let currency = $(this).closest('form').find('select.current-currency').val()
-	console.log(currency)
-	console.log('ee1	')
 	currency = currency ? currency : $('input[type="hidden"].current-currency').val();	 
-	console.log(currency)
-	console.log('ee2')
-	
 	currency = currency ? currency : $('.js-send-to-collection[data-money-type="' + moneyType + '"]').closest('tr').find('[data-currency]').attr('data-currency')
-	console.log(currency)
-	console.log('ee3')
 	currency = currency ? currency : $(this).closest('.kt-portlet__body').find('.current-currency').val();
 	currency = currency ? currency : $(this).closest('[data-repeater-item]').find('.select-for-currency').val();
 	let financialInstitutionBankId = parent.find('[data-financial-institution-id]').val()

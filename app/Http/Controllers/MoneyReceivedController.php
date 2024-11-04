@@ -371,7 +371,7 @@ class MoneyReceivedController
 		
 		$relationData = [];
 		$relationName = null ;
-		$exchangeRate = $currency == $receivingCurrency ? 1 : $request->input('exchange_rate.'.$moneyType,1) ;
+		$exchangeRate = $currency == $receivingCurrency ? 1 : number_unformat($request->input('exchange_rate.'.$moneyType,1)) ;
 	
 		$amountInReceivingCurrency = $request->input('received_amount.'.$moneyType ,0) ;
 		
@@ -445,7 +445,7 @@ class MoneyReceivedController
 		 * @var MoneyReceived $moneyReceived
 		 */
 		$moneyReceived = $moneyReceived->refresh();
-		
+			
 		$moneyReceived->handleDebitStatement($financialInstitutionId,$accountType,$accountNumber,$moneyType,$statementDate,$amountInReceivingCurrency,$receivingCurrency,$receivingBranchId);
 		if($partnerType && $partnerType != 'is_customer' ){
 			$moneyReceived->handlePartnerCreditStatement($partnerType,$partnerId, $moneyReceived->id,$company->id,$statementDate,$amountInReceivingCurrency,$receivingCurrency,$bankNameOrBranchName , $accountType , $accountNumber);
@@ -586,6 +586,7 @@ class MoneyReceivedController
 	}
 	public function sendToCollection(Company $company,SendToUnderCollectionChequeRequest $request)
 	{
+		
 		$moneyReceivedIds = $request->get('cheques') ;
 		$moneyReceivedIds = is_array($moneyReceivedIds) ? $moneyReceivedIds :  explode(',',$moneyReceivedIds);
 		$data = $request->only(['deposit_date','drawl_bank_id','account_type','account_number','account_balance','clearance_days']);

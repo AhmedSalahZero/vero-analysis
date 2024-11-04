@@ -553,7 +553,7 @@ td{
         let formData = new FormData(form);
         formData.append('cheques', checkedItems);
         $('button').prop('disabled', true)
-        $.ajax({
+         $.ajax({
             cache: false
             , contentType: false
             , processData: false
@@ -561,13 +561,24 @@ td{
             , data: formData
             , type: "post"
         }).then(function(res) {
-            Swal.fire({
+			if(res.status === false){
+				 Swal.fire({
+                text: res.msg
+                , icon: 'error'
+                , timer: 2000
+            }).then(function() {
+              window.location.href = res.pageLink;
+            });
+			}
+           else{
+			 Swal.fire({
                 text: 'Done'
                 , icon: 'success'
                 , timer: 2000
             }).then(function() {
-                window.location.href = res.pageLink;
+              window.location.href = res.pageLink;
             });
+		   }
         })
     });
 

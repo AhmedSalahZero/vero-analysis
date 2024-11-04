@@ -77,7 +77,121 @@ use App\Models\MoneyReceived ;
                 </div>
                 <div class="kt-portlet__body">
                     <div class="form-group row">
+					
+					 <div class="col-md-2 ">
+                            <label>{{__('Receiving Date')}}</label>
+                            <div class="kt-input-icon">
+                                <div class="input-group date">
+                                    <input type="text" name="receiving_date" value="{{ isset($model) ? formatDateForDatePicker($model->getReceivingDate()) : formatDateForDatePicker(now()->format('Y-m-d')) }}" class="form-control is-date-css exchange-rate-date update-exchange-rate" readonly placeholder="Select date" id="kt_datepicker_max_date_is_today" />
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">
+                                            <i class="la la-calendar-check-o"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+						
+						
+                     
                         <div class="col-md-2">
+                            <label>{{__('Contract Currency')}} @include('star')</label>
+                            <div class="kt-input-icon">
+                                <div class="input-group date">
+                                    <select id="invoice-currency-id" name="currency" class="form-control 
+							currency-class
+							currency-for-contracts
+							invoice-currency-class
+					
+							
+							ajax-get-contracts-for-customer  ajax-get-sales-orders-for-contract
+							current-invoice-currency
+							 ajax-get-invoice-numbers
+							 update-exchange-rate
+							 
+							 ">
+
+                                        @foreach(isset($currencies) ? $currencies : getBanksCurrencies () as $currencyId=>$currentName)
+                                        @php
+                                        $selected = isset($model) ? $model->getCurrency() == $currencyId : $currentName == $company->getMainFunctionalCurrency() ;
+                                        $selected = $selected ? 'selected':'';
+                                        @endphp
+                                        <option {{ $selected }} value="{{ $currencyId }}">{{ touppercase($currentName) }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <label>{{__('Customer Name')}}
+                                @include('star')
+                            </label>
+                            <div class="kt-input-icon">
+                                <div class="kt-input-icon">
+                                    <div class="input-group date">
+                                        <select id="customer_name" data-live-search="true" data-actions-box="true"
+										data-current-selected="{{ isset($model) ? $model->getName() : '' }}"
+										 name="customer_id" class="form-control select2-select ajax-get-contracts-for-customer ajax-get-sales-orders-for-contract">
+                                            {{-- <option value="" selected>{{__('Select')}}</option> --}}
+                                            @foreach($customers as $customerId => $customerName)
+                                            <option @if($singleModel) selected @endif @if(isset($model) && $model->getCustomerName() == $customerName ) selected @endif value="{{ $customerId }}">{{$customerName}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+
+
+                        <div class="col-md-2 ">
+                            <label>{{__('Receiving Currency')}} @include('star')</label>
+                            <div class="kt-input-icon">
+                                <div class="input-group date">
+                                    <select id="receiving-currency-id" when-change-trigger-account-type-change name="receiving_currency" class="form-control 
+							current-currency
+							currency-class
+							receiving-currency-class
+
+							 ajax-get-invoice-numbers 
+							 update-exchange-rate	
+							">
+                                        {{-- <option value="" selected>{{__('Select')}}</option> --}}
+                                        @foreach(isset($currencies) ? $currencies : getBanksCurrencies () as $currencyId=>$currentName)
+                                        @php
+                                        $selected = isset($model) ? $model->getReceivingCurrency() == $currencyId : $currentName == $company->getMainFunctionalCurrency() ;
+                                        $selected = $selected ? 'selected':'';
+                                        @endphp
+                                        <option {{ $selected }} value="{{ $currencyId }}">{{ touppercase($currentName) }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label>{{__('Contract Name')}}
+                                @include('star')
+                            </label>
+                            <div class="kt-input-icon">
+                                <div class="kt-input-icon">
+                                    <div class="input-group date">
+                                        <select data-current-selected="{{ isset($model) ? $model->getContractId() : 0 }}" id="contract-id" name="contract_id" class="form-control down-payment-contract-class 
+										ajax-get-invoice-numbers
+										 ajax-get-sales-orders-for-contract">
+                                            <option value="" selected>{{__('Select')}}</option>
+                                            @foreach($contracts as $index => $contract)
+                                            <option @if(isset($model) && $model->getContractId() == $contract->id ) selected @endif value="{{ $contract->id }}">{{$contract->getName()}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                          <div class="col-md-2 mt-4">
                             <label>{{__('Select Money Type')}} @include('star')</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
@@ -178,115 +292,6 @@ use App\Models\MoneyReceived ;
 
 
                         </div>
-                        <div class="col-md-2">
-                            <label>{{__('Select Contract Currency')}} @include('star')</label>
-                            <div class="kt-input-icon">
-                                <div class="input-group date">
-                                    <select id="invoice-currency-id" name="currency" class="form-control 
-							currency-class
-							currency-for-contracts
-							invoice-currency-class
-					
-							
-							ajax-get-contracts-for-customer  ajax-get-sales-orders-for-contract
-							current-invoice-currency
-							 ajax-get-invoice-numbers
-							 
-							 
-							 ">
-
-                                        @foreach(isset($currencies) ? $currencies : getBanksCurrencies () as $currencyId=>$currentName)
-                                        @php
-                                        $selected = isset($model) ? $model->getCurrency() == $currencyId : $currentName == $company->getMainFunctionalCurrency() ;
-                                        $selected = $selected ? 'selected':'';
-                                        @endphp
-                                        <option {{ $selected }} value="{{ $currencyId }}">{{ touppercase($currentName) }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <label>{{__('Customer Name')}}
-                                @include('star')
-                            </label>
-                            <div class="kt-input-icon">
-                                <div class="kt-input-icon">
-                                    <div class="input-group date">
-                                        <select id="customer_name" data-live-search="true" data-actions-box="true"
-										data-current-selected="{{ isset($model) ? $model->getName() : '' }}"
-										 name="customer_id" class="form-control select2-select ajax-get-contracts-for-customer ajax-get-sales-orders-for-contract">
-                                            {{-- <option value="" selected>{{__('Select')}}</option> --}}
-                                            @foreach($customers as $customerId => $customerName)
-                                            <option @if($singleModel) selected @endif @if(isset($model) && $model->getCustomerName() == $customerName ) selected @endif value="{{ $customerId }}">{{$customerName}}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-
-
-
-
-                        <div class="col-md-2 ">
-                            <label>{{__('Select Receiving Currency')}} @include('star')</label>
-                            <div class="kt-input-icon">
-                                <div class="input-group date">
-                                    <select id="receiving-currency-id" when-change-trigger-account-type-change name="receiving_currency" class="form-control 
-							current-currency
-							currency-class
-							receiving-currency-class
-
-							 ajax-get-invoice-numbers 
-							">
-                                        {{-- <option value="" selected>{{__('Select')}}</option> --}}
-                                        @foreach(isset($currencies) ? $currencies : getBanksCurrencies () as $currencyId=>$currentName)
-                                        @php
-                                        $selected = isset($model) ? $model->getReceivingCurrency() == $currencyId : $currentName == $company->getMainFunctionalCurrency() ;
-                                        $selected = $selected ? 'selected':'';
-                                        @endphp
-                                        <option {{ $selected }} value="{{ $currencyId }}">{{ touppercase($currentName) }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-md-3">
-                            <label>{{__('Contract Name')}}
-                                @include('star')
-                            </label>
-                            <div class="kt-input-icon">
-                                <div class="kt-input-icon">
-                                    <div class="input-group date">
-                                        <select data-current-selected="{{ isset($model) ? $model->getContractId() : 0 }}" id="contract-id" name="contract_id" class="form-control down-payment-contract-class 
-										ajax-get-invoice-numbers
-										 ajax-get-sales-orders-for-contract">
-                                            <option value="" selected>{{__('Select')}}</option>
-                                            @foreach($contracts as $index => $contract)
-                                            <option @if(isset($model) && $model->getContractId() == $contract->id ) selected @endif value="{{ $contract->id }}">{{$contract->getName()}}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-md-2 mt-4">
-                            <label>{{__('Receiving Date')}}</label>
-                            <div class="kt-input-icon">
-                                <div class="input-group date">
-                                    <input type="text" name="receiving_date" value="{{ isset($model) ? formatDateForDatePicker($model->getReceivingDate()) : formatDateForDatePicker(now()->format('Y-m-d')) }}" class="form-control is-date-css" readonly placeholder="Select date" id="kt_datepicker_2" />
-                                    <div class="input-group-append">
-                                        <span class="input-group-text">
-                                            <i class="la la-calendar-check-o"></i>
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -317,8 +322,8 @@ use App\Models\MoneyReceived ;
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-3">
-                                <label>{{__('Received Amount')}} @include('star')</label>
+                            <div class="col-md-3 closest-parent">
+                                <label>{{__('Received Amount')}} <span class="currency-span"></span> @include('star')</label>
                                 <div class="kt-input-icon">
                                     <input data-max-cheque-value="0" type="text" value="{{ isset($model) ? $model->getReceivedAmount() :0 }}" name="received_amount[{{ MoneyReceived::CASH_IN_SAFE }}]" class="form-control only-greater-than-or-equal-zero-allowed {{ 'js-'. MoneyReceived::CASH_IN_SAFE .'-received-amount' }}  main-amount-class recalculate-amount-class" data-type="{{ MoneyReceived::CASH_IN_SAFE }}" placeholder="{{__('Received Amount')}}">
                                     <x-tool-tip title="{{__('Kash Vero')}}" />
@@ -331,15 +336,15 @@ use App\Models\MoneyReceived ;
                                     <x-tool-tip title="{{__('Kash Vero')}}" />
                                 </div>
                             </div>
-                            <div class="col-md-3 width-12">
+                            <div class="col-md-3 mt-4 width-12 show-only-when-invoice-currency-not-equal-receiving-currency">
                                 <label>{{__('Exchange Rate')}} @include('star')</label>
                                 <div class="kt-input-icon">
                                     <input value="{{ isset($model) ? $model->getExchangeRate() : 1}}" placeholder="{{ __('Exchange Rate') }}" type="text" name="exchange_rate[{{ MoneyReceived::CASH_IN_SAFE }}]" class="form-control only-greater-than-or-equal-zero-allowed exchange-rate-class recalculate-amount-class" data-type="{{ MoneyReceived::CASH_IN_SAFE }}">
                                 </div>
                             </div>
 
-                            <div class="col-md-1 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden">
-                                <label>{{__('Amount')}} @include('star')</label>
+                            <div class="col-md-3 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden closest-parent">
+                                <label>{{__('Amount In Contract Currency')}} <span class="currency-span"></span> @include('star')</label>
                                 <div class="kt-input-icon">
                                     <input readonly value="{{ 0 }}" type="text" name="amount_in_invoice_currency[{{ MoneyReceived::CASH_IN_SAFE }}]" class="form-control only-greater-than-or-equal-zero-allowed amount-after-exchange-rate-class" data-type="{{ MoneyReceived::CASH_IN_SAFE }}">
                                 </div>
@@ -380,8 +385,8 @@ use App\Models\MoneyReceived ;
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-2 ">
-                                <label>{{__('Deposit Amount')}} @include('star')</label>
+                            <div class="col-md-2 closest-parent">
+                                <label>{{__('Deposit Amount')}} <span class="currency-span"></span> @include('star')</label>
                                 <div class="kt-input-icon">
                                     <input data-max-cheque-value="0" type="text" value="{{ isset($model) ? $model->getReceivedAmount():0 }}" name="received_amount[{{ MoneyReceived::CASH_IN_BANK }}]" class="form-control greater-than-or-equal-zero-allowed {{ 'js-'. MoneyReceived::CASH_IN_BANK .'-received-amount' }}  main-amount-class recalculate-amount-class" data-type="{{ MoneyReceived::CASH_IN_BANK }}" placeholder="{{__('Insert Amount')}}">
                                 </div>
@@ -389,7 +394,7 @@ use App\Models\MoneyReceived ;
 
 
 
-                            <div class="col-md-2 width-12">
+                            <div class="col-md-3 ">
                                 <label>{{__('Account Type')}} @include('star')</label>
                                 <div class="kt-input-icon">
                                     <div class="input-group date">
@@ -415,15 +420,15 @@ use App\Models\MoneyReceived ;
                             </div>
 
 
-                            <div class="col-md-1">
+                            <div class="col-md-3 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency">
                                 <label>{{__('Exchange Rate')}} @include('star')</label>
                                 <div class="kt-input-icon">
                                     <input value="{{ isset($model) ? $model->getExchangeRate() : 1}}" placeholder="{{ __('Exchange Rate') }}" type="text" name="exchange_rate[{{ MoneyReceived::CASH_IN_BANK }}]" class="form-control only-greater-than-or-equal-zero-allowed exchange-rate-class recalculate-amount-class" data-type="{{ MoneyReceived::CASH_IN_BANK }}">
                                 </div>
                             </div>
 
-                            <div class="col-md-1 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden">
-                                <label>{{__('Amount')}} @include('star')</label>
+                            <div class="col-md-3 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden closest-parent">
+                                <label>{{__('Amount In Contract Currency')}} <span class="currency-span"></span> @include('star')</label>
                                 <div class="kt-input-icon">
                                     <input readonly value="{{ 0 }}" type="text" name="amount_in_invoice_currency[{{ MoneyReceived::CASH_IN_BANK }}]" class="form-control only-greater-than-or-equal-zero-allowed amount-after-exchange-rate-class" data-type="{{ MoneyReceived::CASH_IN_BANK }}">
                                 </div>
@@ -489,8 +494,8 @@ use App\Models\MoneyReceived ;
                                 </div>
                             </div>
 
-                            <div class="col-md-2 width-12">
-                                <label>{{__('Cheque Amount')}} @include('star')</label>
+                            <div class="col-md-2 width-12 closest-parent">
+                                <label>{{__('Cheque Amount')}} <span class="currency-span"></span> @include('star')</label>
                                 <div class="kt-input-icon">
                                     <input data-max-cheque-value="0" value="{{ isset($model) ? $model->getReceivedAmount() : 0 }}" placeholder="{{ __('Please insert the cheque amount') }}" type="text" name="received_amount[{{ MoneyReceived::CHEQUE }}]" class="form-control only-greater-than-or-equal-zero-allowed {{ 'js-'. MoneyReceived::CHEQUE .'-received-amount' }}  main-amount-class recalculate-amount-class" data-type="{{ MoneyReceived::CHEQUE }}">
                                 </div>
@@ -521,15 +526,15 @@ use App\Models\MoneyReceived ;
                                 </div>
                             </div>
 
-                            <div class="col-md-2 width-12">
+                            <div class="col-md-3 width-12 show-only-when-invoice-currency-not-equal-receiving-currency">
                                 <label>{{__('Exchange Rate')}} @include('star')</label>
                                 <div class="kt-input-icon">
                                     <input value="{{ isset($model) ? $model->getExchangeRate() : 1}}" placeholder="{{ __('Exchange Rate') }}" type="text" name="exchange_rate[{{ MoneyReceived::CHEQUE }}]" class="form-control only-greater-than-or-equal-zero-allowed exchange-rate-class recalculate-amount-class" data-type="{{ MoneyReceived::CHEQUE }}">
                                 </div>
                             </div>
 
-                            <div class="col-md-1 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden">
-                                <label>{{__('Amount')}} @include('star')</label>
+                            <div class="col-md-3 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden closest-parent">
+                                <label>{{__('Amount In Contract Currency')}} <span class="currency-span"></span> @include('star')</label>
                                 <div class="kt-input-icon">
                                     <input readonly value="{{ 0 }}" type="text" name="amount_in_invoice_currency[{{ MoneyReceived::CHEQUE }}]" class="form-control only-greater-than-or-equal-zero-allowed amount-after-exchange-rate-class" data-type="{{ MoneyReceived::CHEQUE }}">
                                 </div>
@@ -572,8 +577,8 @@ use App\Models\MoneyReceived ;
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-2 ">
-                                <label>{{__('Incoming Transfer Amount')}} @include('star')</label>
+                            <div class="col-md-2 closest-parent">
+                                <label>{{__('Incoming Transfer Amount')}} <span class="currency-span"></span> @include('star')</label>
                                 <div class="kt-input-icon">
                                     <input data-max-cheque-value="0" type="text" value="{{ isset($model) ? $model->getReceivedAmount():0 }}" name="received_amount[{{ MoneyReceived::INCOMING_TRANSFER }}]" class="form-control greater-than-or-equal-zero-allowed {{ 'js-'. MoneyReceived::INCOMING_TRANSFER .'-received-amount' }}  main-amount-class recalculate-amount-class" data-type="{{ MoneyReceived::INCOMING_TRANSFER }}" placeholder="{{__('Insert Amount')}}">
                                 </div>
@@ -581,7 +586,7 @@ use App\Models\MoneyReceived ;
 
 
 
-                            <div class="col-md-2 width-12">
+                            <div class="col-md-3">
                                 <label>{{__('Account Type')}} @include('star')</label>
                                 <div class="kt-input-icon">
                                     <div class="input-group date">
@@ -607,15 +612,15 @@ use App\Models\MoneyReceived ;
                             </div>
 
 
-                            <div class="col-md-1">
+                            <div class="col-md-3 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency">
                                 <label>{{__('Exchange Rate')}} @include('star')</label>
                                 <div class="kt-input-icon">
                                     <input value="{{ isset($model) ? $model->getExchangeRate() : 1}}" placeholder="{{ __('Exchange Rate') }}" type="text" name="exchange_rate[{{ MoneyReceived::INCOMING_TRANSFER }}]" class="form-control only-greater-than-or-equal-zero-allowed exchange-rate-class recalculate-amount-class" data-type="{{ MoneyReceived::INCOMING_TRANSFER }}">
                                 </div>
                             </div>
 
-                            <div class="col-md-1 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden">
-                                <label>{{__('Amount')}} @include('star')</label>
+                            <div class="col-md-3 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden closest-parent">
+                                <label>{{__('Amount In Contract Currency')}} <span class="currency-span"></span> @include('star')</label>
                                 <div class="kt-input-icon">
                                     <input readonly value="{{ 0 }}" type="text" name="amount_in_invoice_currency[{{ MoneyReceived::INCOMING_TRANSFER }}]" class="form-control only-greater-than-or-equal-zero-allowed amount-after-exchange-rate-class" data-type="{{ MoneyReceived::INCOMING_TRANSFER }}">
                                 </div>
@@ -778,8 +783,10 @@ use App\Models\MoneyReceived ;
         const receivingCurrency = $('select#receiving-currency-id').val();
         const moneyType = $('select#type').val();
 		
-		const partnerType = $('select#partner_type').val();
+
 		
+		$('.main-amount-class').closest('.closest-parent').find('.currency-span').html(" [ " + receivingCurrency +" ]")
+		$('.amount-after-exchange-rate-class').closest('.closest-parent').find('.currency-span').html(" [ " + invoiceCurrency +" ]")
 		
         if (invoiceCurrency != receivingCurrency && invoiceCurrency && receivingCurrency) {
             $('.show-only-when-invoice-currency-not-equal-receiving-currency').removeClass('hidden')
@@ -793,8 +800,8 @@ use App\Models\MoneyReceived ;
     })
     $(document).on('change', '.recalculate-amount-class', function() {
         const moneyType = $(this).attr('data-type')
-        const amount = $('.main-amount-class[data-type="' + moneyType + '"]').val();
-        const exchangeRate = $('.exchange-rate-class[data-type="' + moneyType + '"]').val();
+        const amount = number_unformat($('.main-amount-class[data-type="' + moneyType + '"]').val());
+        const exchangeRate = number_unformat($('.exchange-rate-class[data-type="' + moneyType + '"]').val());
         const amountAfterExchangeRate = amount / exchangeRate;
         $('.amount-after-exchange-rate-class[data-type="' + moneyType + '"]').val(number_format(amountAfterExchangeRate)).trigger('change')
         $('.js-settlement-amount:eq(0)').trigger('change')

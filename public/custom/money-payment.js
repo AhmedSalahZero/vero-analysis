@@ -117,8 +117,8 @@ $(document).on('change', '.ajax-get-purchases-orders-for-contract', function () 
 				var paidAmount = res.purchases_orders[i].paid_amount
 				var domSalesOrder = $(lastNode).find('.js-purchases-order-number')
 				domSalesOrder.val(salesOrderId)
+				$(lastNode).find('.contract-currency').html('[ ' + currency +' ]')
 				domSalesOrder.attr('name', 'purchases_orders_amounts[' + salesOrderId + '][purchases_order_id]').val(salesOrderId)
-				
 				var domSalesOrder = $(lastNode).find('.js-purchases-order-name')
 				//domSalesOrder.val(salesOrderId)'
 				domSalesOrder.attr('name', 'purchases_orders_amounts[' + salesOrderId + '][purchases_order_name]').val(salesOrderNumber)
@@ -381,11 +381,11 @@ return rows ;
 $(document).on('change', '.js-settlement-amount,[data-max-cheque-value]', function () {
 	let total = 0
 	$('.js-settlement-amount').each(function (index, input) {
-		var currentVal = $(input).val() ? $(input).val() : 0  ;
+		var currentVal = $(input).val() ? number_unformat($(input).val()) : 0  ;
 		total += parseFloat(currentVal)
 	})
 	const currentType = $('#type').val()
-	const paidAmount = $('.amount-after-exchange-rate-class[data-type="'+currentType+'"]').val()
+	const paidAmount = number_unformat($('.amount-after-exchange-rate-class[data-type="'+currentType+'"]').val())
 	let totalRemaining = paidAmount - total
 	totalRemaining = totalRemaining ? totalRemaining : 0
 	

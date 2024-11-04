@@ -135,6 +135,10 @@ class MoneyPayment extends Model
 		$cashPayment = $this->cashPayment ;
         return  $cashPayment ? $cashPayment->getDeliveryBranchId() :0;
     }
+	public function getAmountInInvoiceCurrency()
+    {
+        return  $this->amount_in_invoice_currency?:0 ;
+    }
     public function getPaidAmount()
     {
         return  $this->paid_amount?:0 ;
