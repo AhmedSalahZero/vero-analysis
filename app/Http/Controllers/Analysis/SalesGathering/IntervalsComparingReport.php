@@ -44,7 +44,7 @@ class IntervalsComparingReport
         }
         elseif (request()->route()->named('intervalComparing.products.analysis')) {
             $type = 'product_or_service';
-            $view_name = 'Products / Services Sales Interval Comparing Analysis' ;
+            $view_name = 'Sub Categories Sales Interval Comparing Analysis' ;
         }
         elseif (request()->route()->named('intervalComparing.Items.analysis')) {
             $type = 'product_item';

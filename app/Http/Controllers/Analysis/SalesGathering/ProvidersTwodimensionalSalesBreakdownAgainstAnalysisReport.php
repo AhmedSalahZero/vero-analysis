@@ -28,7 +28,7 @@ class ProvidersTwodimensionalSalesBreakdownAgainstAnalysisReport
         }elseif (request()->route()->named('serviceProviders.vs.products.view')) {
             $main_type = 'service_provider_name';
             $type = 'product_or_service';
-            $view_name = 'Service Provider Versus Products / Services' ;
+            $view_name = 'Service Provider Versus Sub Categories' ;
         }
 
         //serviceProvidersType
@@ -51,7 +51,7 @@ class ProvidersTwodimensionalSalesBreakdownAgainstAnalysisReport
         }elseif (request()->route()->named('serviceProvidersType.vs.products.view')) {
             $type = 'service_provider_type';
             $main_type = 'product_or_service';
-            $view_name = 'Service Provider Type Versus Products / Services' ;
+            $view_name = 'Service Provider Type Versus Sub Categories' ;
         }
 
         //serviceProvidersBirthYear
@@ -70,7 +70,7 @@ class ProvidersTwodimensionalSalesBreakdownAgainstAnalysisReport
         }elseif (request()->route()->named('serviceProvidersBirthYear.vs.products.view')) {
             $main_type = 'product_or_service';
             $type = 'service_provider_birth_year';
-            $view_name = 'Service Provider Age Range Versus Products / Services' ;
+            $view_name = 'Service Provider Age Range Versus Sub Categories' ;
         }
 
 

@@ -29,7 +29,7 @@ class SalesChannelsAgainstAnalysisReport
             $view_name = 'Sales Channels Against Categories Trend Analysis' ;
         }elseif (request()->route()->named('salesChannels.products.analysis')) {
             $type  = 'product_or_service';
-            $view_name = 'Sales Channels Against Products / Services Trend Analysis' ;
+            $view_name = 'Sales Channels Against Sub Categories Trend Analysis' ;
         }elseif (request()->route()->named('salesChannels.principles.analysis')) {
             $type  = 'principle';
             $view_name = 'Sales Channels Against Principles Trend Analysis' ;
@@ -53,7 +53,7 @@ class SalesChannelsAgainstAnalysisReport
             $view_name = 'Sales Channels Against Branches Trend Analysis' ;
         }elseif (request()->route()->named('salesChannels.products.averagePrices')) {
             $type  = 'averagePrices';
-            $view_name = 'Sales Channels Products / Services Average Prices' ;
+            $view_name = 'Sales Channels Sub Categories Average Prices' ;
         }elseif (request()->route()->named('salesChannels.Items.averagePrices')) {
             $type  = 'averagePricesProductItems';
             $view_name = 'Sales Channels Items Average Prices' ;
@@ -66,14 +66,14 @@ class SalesChannelsAgainstAnalysisReport
 
         $name_of_selector_label = str_replace(['Sales Channels Against ' ,' Trend Analysis'],'',$view_name);
         if ($type == 'averagePrices') {
-            $name_of_selector_label = 'Products / Services';
+            $name_of_selector_label = 'Sub Categories';
         } elseif($type  == 'averagePricesProductItems') {
             $name_of_selector_label = 'Products Items';
         }elseif($type == 'country'){
             $name_of_selector_label = 'Countries';
 		}
 
-        // $name_of_selector_label = ($type == 'averagePrices') ? 'Products / Services' : str_replace(['Sales Channels Against ' ,' Trend Analysis'],'',$view_name);
+        // $name_of_selector_label = ($type == 'averagePrices') ? 'Sub Categories' : str_replace(['Sales Channels Against ' ,' Trend Analysis'],'',$view_name);
         return view('client_view.reports.sales_gathering_analysis.salesChannels_analysis_form', compact('company','name_of_selector_label','type','view_name'));
     }
     public function SalesChannelsSalesAnalysisIndex(Company $company)

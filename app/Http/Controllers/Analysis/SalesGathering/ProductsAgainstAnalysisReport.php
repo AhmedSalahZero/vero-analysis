@@ -361,7 +361,7 @@ class ProductsAgainstAnalysisReport
 		$dates = array_keys($report_data['Total']);
 		// $dates = formatDateVariable($dates, $request->start_date, $request->end_date);
 
-		$type_name = 'Products / Services';
+		$type_name = 'Sub Categories';
 		return view('client_view.reports.sales_gathering_analysis.sales_discounts_analysis_report', compact('company', 'view_name', 'zones_names', 'dates', 'report_data', 'type_name'));
 	}
 	public function growthRate($data)

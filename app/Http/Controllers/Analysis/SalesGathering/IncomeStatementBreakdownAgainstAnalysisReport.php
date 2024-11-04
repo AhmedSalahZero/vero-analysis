@@ -42,7 +42,7 @@ class IncomeStatementBreakdownAgainstAnalysisReport
 			$view_name = 'Categories Sales Breakdown Analysis';
 		} elseif (request()->route()->named('salesBreakdown.products.analysis')) {
 			$type = 'product_or_service';
-			$view_name = 'Products / Services Sales Breakdown Analysis';
+			$view_name = 'Sub Categories Sales Breakdown Analysis';
 		} elseif (request()->route()->named('salesBreakdown.Items.analysis')) {
 			$type = 'product_item';
 			$view_name = 'Products Items Sales Breakdown Analysis';

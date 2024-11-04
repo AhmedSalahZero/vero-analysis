@@ -66,7 +66,7 @@ use App\Traits\GeneralFunctions;
             $end_date = date('Y-m-t',strtotime($dates[11]));
             // One Dimention Report
             //
-            // Products / Services Sales Breakdown Analysis
+            // Sub Categories Sales Breakdown Analysis
             // Products Items Sales Breakdown Analysis
             return view('client_view.forecast.sales_forecast',
                         compact('company',
@@ -83,4 +83,3 @@ use App\Traits\GeneralFunctions;
         }
 
     }
-

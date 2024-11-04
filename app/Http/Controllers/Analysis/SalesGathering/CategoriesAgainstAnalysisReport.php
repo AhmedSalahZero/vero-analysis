@@ -28,7 +28,7 @@ class CategoriesAgainstAnalysisReport
             $view_name = 'Categories Against Sales Channels Trend Analysis' ;
         }elseif (request()->route()->named('categories.products.analysis')) {
             $type  = 'product_or_service';
-            $view_name = 'Categories Against Products / Services Trend Analysis' ;
+            $view_name = 'Categories Against Sub Categories Trend Analysis' ;
         } 
 		elseif (request()->route()->named('categories.countries.analysis')) {
             $type  = 'country';
@@ -56,7 +56,7 @@ class CategoriesAgainstAnalysisReport
         }
         elseif (request()->route()->named('categories.products.averagePrices')) {
             $type  = 'averagePrices';
-            $view_name = 'Categories Products / Services Average Prices' ;
+            $view_name = 'Categories Sub Categories Average Prices' ;
         }
 		
 
