@@ -882,7 +882,7 @@ function isCustomerExceptionalCase($type, $name_of_selector_label)
 
 function isCustomerExceptionalForProducts($type, $name_of_selector_label)
 {
-    $conditionTwo = ($type == 'product_or_service' && ($name_of_selector_label == 'Customers Against Products' ||  $name_of_selector_label == 'Products'));
+    $conditionTwo = ($type == 'sub_category' && ($name_of_selector_label == 'Customers Against Products' ||  $name_of_selector_label == 'Products'));
 
     return $conditionTwo;
 }
@@ -1040,7 +1040,7 @@ function getAllColumnsTypesForCaching($companyId)
 {
     $exportables = array_keys(getExportableFields($companyId));
     $cacheablesFields = [
-        'country', 'branch', 'sales_person', 'customer_name', 'business_sector', 'zone', 'sales_channel', 'category', 'product_or_service', 'product_item'
+        'country', 'branch', 'sales_person', 'customer_name', 'business_sector', 'zone', 'sales_channel', 'category', 'sub_category', 'product_item'
     ];
 
     return array_intersect($exportables, $cacheablesFields);
@@ -1283,7 +1283,7 @@ function formatInvoiceForEachInterval(array $array, $selectedType)
 }
 function getFieldsForTakeawayForType(string $type)
 {
-    $commonFields = ['customer_name' => __('Customers Count'), 'category' => __('Categories Count'), 'product_or_service' => __('Products/Service Count'), 'product_item' => __('Products Item Count'), 'sales_person' => __('Salesperson Count'), 'branch' => __('Branch Count'), 'invoice_count' => __('Invoices Count'), 'product_item_avg_count' => __('Avg Products Item Per Invoice'), 'avg_invoice_value' => __('Avg Invoice Values')];
+    $commonFields = ['customer_name' => __('Customers Count'), 'category' => __('Categories Count'), 'sub_category' => __('Products/Service Count'), 'product_item' => __('Products Item Count'), 'sales_person' => __('Salesperson Count'), 'branch' => __('Branch Count'), 'invoice_count' => __('Invoices Count'), 'product_item_avg_count' => __('Avg Products Item Per Invoice'), 'avg_invoice_value' => __('Avg Invoice Values')];
 
     return [
         'business_sector' => array_merge($commonFields, []),
@@ -1304,13 +1304,13 @@ function getFieldsForTakeawayForType(string $type)
         'zone' => array_merge($commonFields, [
             'sales_channel' => __('Sales Channel Count'),
         ]),
-        'product_or_service' => array_merge(Arr::except($commonFields, ['category', 'product_or_service']), [
+        'sub_category' => array_merge(Arr::except($commonFields, ['category', 'sub_category']), [
             'business_sector' => __('Business Sectors Count'),
             'sales_channel' => __('Sales Channel Count'),
             'zone' => __('Zone Count')
         ]),
 
-        'product_item' => array_merge(Arr::except($commonFields, ['category', 'product_or_service', 'product_item']), [
+        'product_item' => array_merge(Arr::except($commonFields, ['category', 'sub_category', 'product_item']), [
             'business_sector' => __('Business Sectors Count'),
             'sales_channel' => __('Sales Channel Count'),
             'zone' => __('Zone Count')
@@ -1348,7 +1348,7 @@ function orderStdClassBy($stdObjArray, $orderKey, $direction = 'desc')
 function hasTopAndBottom($type)
 {
     $allowedTypes = [
-        'zone', 'product_or_service', 'product_item', 'customer_name', 'business_sector', 'category', 'sales_channel', 'sales_person', 'branch'
+        'zone', 'sub_category', 'product_item', 'customer_name', 'business_sector', 'category', 'sales_channel', 'sales_person', 'branch'
     ];
 
     return in_array($type, $allowedTypes);
@@ -1562,7 +1562,7 @@ function getComparingReportForAnalysis($request, $report_data, $secondReport, $c
         } elseif ($modelType == 'category') {
             $secondReportDataResult = (new CategoriesAgainstAnalysisReport())->result($request, $company, 'view', false);
             $type = __('Categories');
-        } elseif ($modelType == 'product_or_service') {
+        } elseif ($modelType == 'sub_category') {
             $secondReportDataResult = (new ProductsAgainstAnalysisReport())->result($request, $company, 'view', false);
             $type = __('Products Or Services');
         } elseif ($modelType == 'branch') {

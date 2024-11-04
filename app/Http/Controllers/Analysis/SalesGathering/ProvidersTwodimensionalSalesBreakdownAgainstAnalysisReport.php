@@ -27,7 +27,7 @@ class ProvidersTwodimensionalSalesBreakdownAgainstAnalysisReport
             $view_name = 'Service Provider Versus Sales Channels' ;
         }elseif (request()->route()->named('serviceProviders.vs.products.view')) {
             $main_type = 'service_provider_name';
-            $type = 'product_or_service';
+            $type = 'sub_category';
             $view_name = 'Service Provider Versus Sub Categories' ;
         }
 
@@ -50,7 +50,7 @@ class ProvidersTwodimensionalSalesBreakdownAgainstAnalysisReport
             $view_name = 'Service Provider Type Versus Sales Channels' ;
         }elseif (request()->route()->named('serviceProvidersType.vs.products.view')) {
             $type = 'service_provider_type';
-            $main_type = 'product_or_service';
+            $main_type = 'sub_category';
             $view_name = 'Service Provider Type Versus Sub Categories' ;
         }
 
@@ -68,7 +68,7 @@ class ProvidersTwodimensionalSalesBreakdownAgainstAnalysisReport
             $main_type = 'sales_channel';
             $view_name = 'Service Provider Age Range Versus Sales Channels' ;
         }elseif (request()->route()->named('serviceProvidersBirthYear.vs.products.view')) {
-            $main_type = 'product_or_service';
+            $main_type = 'sub_category';
             $type = 'service_provider_birth_year';
             $view_name = 'Service Provider Age Range Versus Sub Categories' ;
         }

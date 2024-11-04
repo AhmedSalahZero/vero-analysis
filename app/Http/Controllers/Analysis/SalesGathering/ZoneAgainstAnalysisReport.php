@@ -31,7 +31,7 @@ class ZoneAgainstAnalysisReport
 			$type  = 'category';
 			$view_name = 'Zones Against Categories Trend Analysis';
 		} elseif (request()->route()->named('zone.products.analysis')) {
-			$type  = 'product_or_service';
+			$type  = 'sub_category';
 			$view_name = 'Zones Against Sub Categories Trend Analysis';
 		} elseif (request()->route()->named('zone.principles.analysis')) {
 			$type  = 'principle';

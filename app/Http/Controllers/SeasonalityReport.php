@@ -23,7 +23,7 @@ class SeasonalityReport
         $sales_forecast = SalesForecast::company()->first();
         $products_seasonality = ProductSeasonality::company()->get();
         $has_product_item = (new SalesForecastReport)->fields($company);
-        $type = ($has_product_item===true) ?'product_item' : 'product_or_service';
+        $type = ($has_product_item===true) ?'product_item' : 'sub_category';
 
         $monthly_dates = [];
         $counter = 1;

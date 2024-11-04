@@ -21,11 +21,11 @@ class TwodimensionalSalesBreakdownAgainstAnalysisReport
             $type = 'zone';
             $view_name = 'Sales Channels Versus Zones' ;
         }elseif (request()->route()->named('products.vs.zones.view')) {
-            $main_type = 'product_or_service';
+            $main_type = 'sub_category';
             $type = 'zone';
             $view_name = 'Products Versus Zones' ;
         }elseif (request()->route()->named('products.vs.salesChannels.view')) {
-            $main_type = 'product_or_service';
+            $main_type = 'sub_category';
             $type = 'sales_channel';
             $view_name = 'Products Versus Sales Channels' ;
         }elseif (request()->route()->named('Items.vs.salesChannels.view')) {
@@ -50,7 +50,7 @@ class TwodimensionalSalesBreakdownAgainstAnalysisReport
             $type = 'business_sector';
             $view_name = 'Products Items Versus Business Sectors' ;
         }elseif (request()->route()->named('products.vs.businessSectors.view')) {
-            $main_type = 'product_or_service';
+            $main_type = 'sub_category';
             $type = 'business_sector';
             $view_name = 'Products Versus Business Sectors' ;
         }
@@ -69,7 +69,7 @@ class TwodimensionalSalesBreakdownAgainstAnalysisReport
             $type = 'business_unit';
             $view_name = 'Products Items Versus Business Units' ;
         }elseif (request()->route()->named('products.vs.businessUnits.view')) {
-            $main_type = 'product_or_service';
+            $main_type = 'sub_category';
             $type = 'business_unit';
             $view_name = 'Products Versus Business Units' ;
         }
@@ -95,7 +95,7 @@ class TwodimensionalSalesBreakdownAgainstAnalysisReport
         }
 
          elseif (request()->route()->named('products.vs.branches.view')) {
-            $main_type = 'product_or_service';
+            $main_type = 'sub_category';
             $type = 'branch';
             $view_name = 'Products Versus Branches' ;
         }

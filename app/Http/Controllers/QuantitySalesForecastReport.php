@@ -537,11 +537,11 @@ class QuantitySalesForecastReport
 				$sales_gathering_products = SalesGathering::company()
 					->whereNotNull('category')
 					->where('category', '!=', '')
-					->whereNotNull('product_or_service')
-					->where('product_or_service', '!=', '')
-					->groupBy('product_or_service')
+					->whereNotNull('sub_category')
+					->where('sub_category', '!=', '')
+					->groupBy('sub_category')
 					->get()
-					->pluck('category', 'product_or_service')->toArray();
+					->pluck('category', 'sub_category')->toArray();
 
 				foreach ($sales_gathering_products as $product => $cat) {
 					$category = QuantityCategory::company()->where('name', $cat)->first();
@@ -688,7 +688,7 @@ class QuantitySalesForecastReport
 		$product_seasonality = QuantityProductSeasonality::company()->get();
 		$modified_targets = QuantityModifiedTarget::company()->first();
 		$has_product_item = $this->fields($company);
-		$type = ($has_product_item === true) ? 'product_item' : 'product_or_service';
+		$type = ($has_product_item === true) ? 'product_item' : 'sub_category';
 		$request['type'] = $type;
 
 		$request['start_date'] = $sales_forecast->previous_year . '-01-01';
@@ -835,7 +835,7 @@ class QuantitySalesForecastReport
 	public function productsAllocations(Company $company, Request $request, $result = 'view', $noReturn = false)
 	{
 		$has_product_item = $this->fields($company);
-		$type = ($has_product_item === true) ? 'product_item' : 'product_or_service';
+		$type = ($has_product_item === true) ? 'product_item' : 'sub_category';
 		if ($request->isMethod('POST') && $result == 'view') {
 			if ($noReturn) {
 				return;

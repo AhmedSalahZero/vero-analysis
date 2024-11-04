@@ -30,7 +30,7 @@ class CountriesAgainstAnalysisReport
 			$type  = 'category';
 			$view_name = 'Countries Against Categories Trend Analysis';
 		} elseif (request()->route()->named('country.products.analysis')) {
-			$type  = 'product_or_service';
+			$type  = 'sub_category';
 			$view_name = 'Countries Against Sub Categories Trend Analysis';
 		} elseif (request()->route()->named('country.principles.analysis')) {
 			$type  = 'principle';

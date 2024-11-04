@@ -184,20 +184,13 @@
                                 </div>
                             @endif
 
+                            
+
                             @if (false !== $found = array_search('sub_category',$db_names))
                                 <div class="form-group  col-md-6">
                                     <label>{{__($exportableFields['sub_category'])}}</label>
                                     <div class="kt-input-icon">
                                         <input type="text" name="sub_category" value="{{$salesGatheringTest->sub_category}}" class="form-control" placeholder="{{__($exportableFields['sub_category'])}}">
-                                    </div>
-                                </div>
-                            @endif
-
-                            @if (false !== $found = array_search('product_or_service',$db_names))
-                                <div class="form-group  col-md-6">
-                                    <label>{{__($exportableFields['product_or_service'])}}</label>
-                                    <div class="kt-input-icon">
-                                        <input type="text" name="product_or_service" value="{{$salesGatheringTest->product_or_service}}" class="form-control" placeholder="{{__($exportableFields['product_or_service'])}}">
                                     </div>
                                 </div>
                             @endif
