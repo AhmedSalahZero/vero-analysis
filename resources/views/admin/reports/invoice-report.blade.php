@@ -22,9 +22,9 @@
     }
 
     .max-w-serial {
-        width: 5% !important;
-        min-width: 5% !important;
-        max-width: 5% !important;
+        width: 3% !important;
+        min-width: 3% !important;
+        max-width: 3% !important;
     }
 
     .max-w-amount {
@@ -345,7 +345,7 @@
                                             {{ __('Total Deductions') }}
                                         </th>	
 										<th class="view-table-th   bg-lighter header-th  align-middle text-center">
-                                            {{ __('Total Collection') }}
+                                            {{ $totalCollectionOrPaidText }}
                                         </th>
 										
 										
@@ -407,7 +407,7 @@
                                         <td class="sub-text-bg text-center  text-nowrap ">{{ $invoice->getNetInvoiceAmountFormatted() }}</td>
                                         <td class="sub-text-bg text-center  text-nowrap ">{{ $invoice->getWithholdAmountFormatted() }}</td>
                                         <td class="sub-text-bg text-center  text-nowrap ">{{ $invoice->getTotalDeductionFormatted() }}</td>
-                                        <td class="sub-text-bg text-center  text-nowrap ">{{ $invoice->getTotalCollectedFormatted() }}</td>
+                                        <td class="sub-text-bg text-center  text-nowrap ">{{ $invoice->getTotalCollectedOrPaidFormatted() }}</td>
                                         <td class="sub-text-bg text-center  text-nowrap ">{{ $invoice->getDueDateFormatted() }}</td>
                                         <td class="sub-text-bg text-center text-nowrap">{{ $invoice->getNetBalanceFormatted() }}</td>
                                         <td class="sub-text-bg text-center text-wrap">{{ $invoice->getStatusFormatted() }}</td>

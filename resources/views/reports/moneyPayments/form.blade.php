@@ -36,9 +36,9 @@ $selectedBanks = [];
         flex: initial !important;
     }
 
-    .max-w-11 {
+    .max-w-15 {
         max-width: initial !important;
-        width: 11% !important;
+        width: 15% !important;
         flex: initial !important;
     }
 
@@ -64,9 +64,10 @@ $selectedBanks = [];
         flex: initial !important;
     }
 
-    .width-45 {
+    
+	 .width-40 {
         max-width: initial !important;
-        width: 45% !important;
+        width: 40% !important;
         flex: initial !important;
     }
 
@@ -155,7 +156,9 @@ $selectedBanks = [];
                     <div class="kt-input-icon">
                         <div class="input-group date">
                             <select id="invoice-currency-id" name="currency" class="form-control
-							contract-currency currency-class ajax-update-contracts
+							 
+							currency-class
+							 
 							@if(!$singleModel && !isset($model) )
 							invoice-currency-class 
 							@endif
@@ -214,7 +217,8 @@ $selectedBanks = [];
                     <div class="kt-input-icon">
                         <div class="input-group date">
                             <select id="receiving-currency-id" when-change-trigger-account-type-change name="payment_currency" class="form-control
-							
+							contract-currency
+							ajax-update-contracts
 							currency-class
 							receiving-currency-class
 							update-exchange-rate
@@ -294,7 +298,7 @@ $selectedBanks = [];
         <div class="kt-portlet__body">
             <div class="form-group">
                 <div class="row">
-                    <div class="col-md-5 width-45 ">
+                    <div class="col-md-5 width-40 ">
                         <label>{{__('Paying Branch')}} @include('star')</label>
                         <div class="kt-input-icon">
                             <div class="input-group date">
@@ -322,14 +326,14 @@ $selectedBanks = [];
                             <x-tool-tip title="{{__('Kash Vero')}}" />
                         </div>
                     </div>
-                    <div class="col-md-3 width-12">
+                    <div class="col-md-2 width-12 show-only-when-invoice-currency-not-equal-receiving-currency">
                         <label>{{__('Exchange Rate')}} @include('star')</label>
                         <div class="kt-input-icon">
                             <input data-current-value="{{ isset($model) ? $model->getExchangeRate() : 1 }}" value="{{ isset($model) ? $model->getExchangeRate() : 1}}" placeholder="{{ __('Exchange Rate') }}" type="text" name="exchange_rate[{{ MoneyPayment::CASH_PAYMENT }}]" class="form-control only-greater-than-or-equal-zero-allowed exchange-rate-class recalculate-amount-class" data-type="{{ MoneyPayment::CASH_PAYMENT }}">
                         </div>
                     </div>
 
-                    <div class="col-md-1 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden">
+                    <div class="col-md-3 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden">
                         <label>{{__('Amount In Invoice Currency')}} @include('star')</label>
                         <div class="kt-input-icon">
                             <input readonly value="{{ 0 }}" type="text" name="amount_in_invoice_currency[{{ MoneyPayment::CASH_PAYMENT }}]" class="form-control  amount-after-exchange-rate-class" data-type="{{ MoneyPayment::CASH_PAYMENT }}">
@@ -460,15 +464,15 @@ $selectedBanks = [];
                         </div>
                     </div>
 
-                    <div class="col-md-2 width-12">
+                    <div class="col-md-2 width-12 show-only-when-invoice-currency-not-equal-receiving-currency">
                         <label>{{__('Exchange Rate')}} @include('star')</label>
                         <div class="kt-input-icon">
                             <input data-current-value="{{ isset($model) ? $model->getExchangeRate() : 1 }}" value="{{ isset($model) ? $model->getExchangeRate() : 1}}" placeholder="{{ __('Exchange Rate') }}" type="text" name="exchange_rate[{{ MoneyPayment::PAYABLE_CHEQUE }}]" class="form-control only-greater-than-or-equal-zero-allowed exchange-rate-class recalculate-amount-class" data-type="{{ MoneyPayment::PAYABLE_CHEQUE }}">
                         </div>
                     </div>
 
-                    <div class="col-md-1 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden closest-parent">
-                        <label>{{__('Amount')}}  <span class="currency-span"></span>  @include('star')</label>
+                    <div class="col-md-3 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden closest-parent">
+                        <label>{{__('Amount In Invoice Currency')}}  <span class="currency-span"></span>  @include('star')</label>
                         <div class="kt-input-icon">
                             <input readonly value="{{ 0 }}" type="text" name="amount_in_invoice_currency[{{ MoneyPayment::PAYABLE_CHEQUE }}]" class="form-control amount-after-exchange-rate-class" data-type="{{ MoneyPayment::PAYABLE_CHEQUE }}">
                         </div>
@@ -526,7 +530,7 @@ $selectedBanks = [];
         <div class="kt-portlet__body">
             <div class="form-group">
                 <div class="row">
-                    <div class="col-md-5 width-45">
+                    <div class="col-md-5 width-40">
                         <label> {!! __('Payment <br> Bank') !!} @include('star')</label>
                         <div class="kt-input-icon">
                             <div class="input-group date">
@@ -569,7 +573,7 @@ $selectedBanks = [];
                         </div>
                     </div>
 					
-					 <div class="col-md-2 max-w-11 closest-parent ">
+					 <div class="col-md-2 max-w-15 closest-parent ">
                         <label> {!! __('Outgoing <br> Transfer Amount') !!}  <span class="currency-span"></span>  @include('star')</label>
                         <div class="kt-input-icon">
                             <input data-can-not-be-greater-than=".balance-js[data-type='{{ MoneyPayment::OUTGOING_TRANSFER }}']" data-current-value="{{ isset($model) ? $model->getPaidAmount():0 }}" data-max-cheque-value="0" type="text" value="{{ isset($model) ? $model->getPaidAmount():0 }}" name="paid_amount[{{ MoneyPayment::OUTGOING_TRANSFER }}]" class="form-control only-greater-than-or-equal-zero-allowed only-less-than-or-equal-specific-number-allowed {{ 'js-'. MoneyPayment::OUTGOING_TRANSFER .'-paid-amount' }}  main-amount-class recalculate-amount-class" data-type="{{ MoneyPayment::OUTGOING_TRANSFER }}" placeholder="{{__('Insert Amount')}}">
@@ -578,15 +582,15 @@ $selectedBanks = [];
 					
 
 
-                    <div class="col-md-1 max-w-6">
-                        <label>{!! __('Exchange <br> Rate') !!} @include('star')</label>
+                    <div class="col-md-3 mt-4  show-only-when-invoice-currency-not-equal-receiving-currency">
+                        <label>{!! __('Exchange Rate') !!} @include('star')</label>
                         <div class="kt-input-icon">
                             <input data-current-value="{{ isset($model) ? $model->getExchangeRate() : 1 }}" value="{{ isset($model) ? $model->getExchangeRate() : 1}}" placeholder="{{ __('Exchange Rate') }}" type="text" name="exchange_rate[{{ MoneyPayment::OUTGOING_TRANSFER }}]" class="form-control only-greater-than-or-equal-zero-allowed exchange-rate-class recalculate-amount-class" data-type="{{ MoneyPayment::OUTGOING_TRANSFER }}">
                         </div>
                     </div>
 
-                    <div class="col-md-1 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden">
-                        <label>{{__('Amount')}} @include('star')</label>
+                    <div class="col-md-3 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden">
+                        <label>{{__('Amount In Invoice Currency')}} @include('star')</label>
                         <div class="kt-input-icon">
                             <input readonly value="{{ 0 }}" type="text" name="amount_in_invoice_currency[{{ MoneyPayment::OUTGOING_TRANSFER }}]" class="form-control  amount-after-exchange-rate-class" data-type="{{ MoneyPayment::OUTGOING_TRANSFER }}">
                         </div>
@@ -956,11 +960,13 @@ $selectedBanks = [];
     })
     $(document).on('change', '.recalculate-amount-class', function() {
         const moneyType = $(this).attr('data-type')
-        const amount = $('.main-amount-class[data-type="' + moneyType + '"]').val();
-        const exchangeRate = $('.exchange-rate-class[data-type="' + moneyType + '"]').val();
+        const amount = number_unformat($('.main-amount-class[data-type="' + moneyType + '"]').val());
+        const exchangeRate = number_unformat($('.exchange-rate-class[data-type="' + moneyType + '"]').val());
         const amountAfterExchangeRate = amount / exchangeRate;
         $('.amount-after-exchange-rate-class[data-type="' + moneyType + '"]').val(number_format(amountAfterExchangeRate)).trigger('change')
         $('.js-settlement-amount:eq(0)').trigger('change')
+		
+		
     })
     $(document).on('change', 'select[when-change-trigger-account-type-change]', function(e) {
         $('select.js-update-account-number-based-on-account-type').trigger('change')

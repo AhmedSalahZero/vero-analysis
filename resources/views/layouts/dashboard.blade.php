@@ -1522,7 +1522,7 @@ $(document).on('change','.update-exchange-rate',function(){
 		$('.exchange-rate-class').val(1).trigger('change')
 		return 
 	}
-
+console.log(fromCurrency,toCurrency,date)
 	$.ajax({
 		url,
 		data:{

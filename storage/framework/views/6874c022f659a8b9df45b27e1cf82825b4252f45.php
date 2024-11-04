@@ -78,7 +78,123 @@ use App\Models\MoneyReceived ;
                 </div>
                 <div class="kt-portlet__body">
                     <div class="form-group row">
+					
+					 <div class="col-md-2 ">
+                            <label><?php echo e(__('Receiving Date')); ?></label>
+                            <div class="kt-input-icon">
+                                <div class="input-group date">
+                                    <input type="text" name="receiving_date" value="<?php echo e(isset($model) ? formatDateForDatePicker($model->getReceivingDate()) : formatDateForDatePicker(now()->format('Y-m-d'))); ?>" class="form-control is-date-css exchange-rate-date update-exchange-rate" readonly placeholder="Select date" id="kt_datepicker_max_date_is_today" />
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">
+                                            <i class="la la-calendar-check-o"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+						
+						
+                     
                         <div class="col-md-2">
+                            <label><?php echo e(__('Contract Currency')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
+                            <div class="kt-input-icon">
+                                <div class="input-group date">
+                                    <select id="invoice-currency-id" name="currency" class="form-control 
+							currency-class
+							currency-for-contracts
+							invoice-currency-class
+					
+							
+							ajax-get-contracts-for-customer  ajax-get-sales-orders-for-contract
+							current-invoice-currency
+							 ajax-get-invoice-numbers
+							 update-exchange-rate
+							 
+							 ">
+
+                                        <?php $__currentLoopData = isset($currencies) ? $currencies : getBanksCurrencies (); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $currencyId=>$currentName): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <?php
+                                        $selected = isset($model) ? $model->getCurrency() == $currencyId : $currentName == $company->getMainFunctionalCurrency() ;
+                                        $selected = $selected ? 'selected':'';
+                                        ?>
+                                        <option <?php echo e($selected); ?> value="<?php echo e($currencyId); ?>"><?php echo e(touppercase($currentName)); ?></option>
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <label><?php echo e(__('Customer Name')); ?>
+
+                                <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+                            </label>
+                            <div class="kt-input-icon">
+                                <div class="kt-input-icon">
+                                    <div class="input-group date">
+                                        <select id="customer_name" data-live-search="true" data-actions-box="true"
+										data-current-selected="<?php echo e(isset($model) ? $model->getName() : ''); ?>"
+										 name="customer_id" class="form-control select2-select ajax-get-contracts-for-customer ajax-get-sales-orders-for-contract">
+                                            
+                                            <?php $__currentLoopData = $customers; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $customerId => $customerName): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <option <?php if($singleModel): ?> selected <?php endif; ?> <?php if(isset($model) && $model->getCustomerName() == $customerName ): ?> selected <?php endif; ?> value="<?php echo e($customerId); ?>"><?php echo e($customerName); ?></option>
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+
+
+                        <div class="col-md-2 ">
+                            <label><?php echo e(__('Receiving Currency')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
+                            <div class="kt-input-icon">
+                                <div class="input-group date">
+                                    <select id="receiving-currency-id" when-change-trigger-account-type-change name="receiving_currency" class="form-control 
+							current-currency
+							currency-class
+							receiving-currency-class
+
+							 ajax-get-invoice-numbers 
+							 update-exchange-rate	
+							">
+                                        
+                                        <?php $__currentLoopData = isset($currencies) ? $currencies : getBanksCurrencies (); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $currencyId=>$currentName): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <?php
+                                        $selected = isset($model) ? $model->getReceivingCurrency() == $currencyId : $currentName == $company->getMainFunctionalCurrency() ;
+                                        $selected = $selected ? 'selected':'';
+                                        ?>
+                                        <option <?php echo e($selected); ?> value="<?php echo e($currencyId); ?>"><?php echo e(touppercase($currentName)); ?></option>
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label><?php echo e(__('Contract Name')); ?>
+
+                                <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+                            </label>
+                            <div class="kt-input-icon">
+                                <div class="kt-input-icon">
+                                    <div class="input-group date">
+                                        <select data-current-selected="<?php echo e(isset($model) ? $model->getContractId() : 0); ?>" id="contract-id" name="contract_id" class="form-control down-payment-contract-class 
+										ajax-get-invoice-numbers
+										 ajax-get-sales-orders-for-contract">
+                                            <option value="" selected><?php echo e(__('Select')); ?></option>
+                                            <?php $__currentLoopData = $contracts; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $contract): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <option <?php if(isset($model) && $model->getContractId() == $contract->id ): ?> selected <?php endif; ?> value="<?php echo e($contract->id); ?>"><?php echo e($contract->getName()); ?></option>
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                          <div class="col-md-2 mt-4">
                             <label><?php echo e(__('Select Money Type')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
@@ -179,117 +295,6 @@ use App\Models\MoneyReceived ;
 
 
                         </div>
-                        <div class="col-md-2">
-                            <label><?php echo e(__('Select Contract Currency')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
-                            <div class="kt-input-icon">
-                                <div class="input-group date">
-                                    <select id="invoice-currency-id" name="currency" class="form-control 
-							currency-class
-							currency-for-contracts
-							invoice-currency-class
-					
-							
-							ajax-get-contracts-for-customer  ajax-get-sales-orders-for-contract
-							current-invoice-currency
-							 ajax-get-invoice-numbers
-							 
-							 
-							 ">
-
-                                        <?php $__currentLoopData = isset($currencies) ? $currencies : getBanksCurrencies (); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $currencyId=>$currentName): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                        <?php
-                                        $selected = isset($model) ? $model->getCurrency() == $currencyId : $currentName == $company->getMainFunctionalCurrency() ;
-                                        $selected = $selected ? 'selected':'';
-                                        ?>
-                                        <option <?php echo e($selected); ?> value="<?php echo e($currencyId); ?>"><?php echo e(touppercase($currentName)); ?></option>
-                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <label><?php echo e(__('Customer Name')); ?>
-
-                                <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
-                            </label>
-                            <div class="kt-input-icon">
-                                <div class="kt-input-icon">
-                                    <div class="input-group date">
-                                        <select id="customer_name" data-live-search="true" data-actions-box="true"
-										data-current-selected="<?php echo e(isset($model) ? $model->getName() : ''); ?>"
-										 name="customer_id" class="form-control select2-select ajax-get-contracts-for-customer ajax-get-sales-orders-for-contract">
-                                            
-                                            <?php $__currentLoopData = $customers; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $customerId => $customerName): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                            <option <?php if($singleModel): ?> selected <?php endif; ?> <?php if(isset($model) && $model->getCustomerName() == $customerName ): ?> selected <?php endif; ?> value="<?php echo e($customerId); ?>"><?php echo e($customerName); ?></option>
-                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-
-
-
-
-                        <div class="col-md-2 ">
-                            <label><?php echo e(__('Select Receiving Currency')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
-                            <div class="kt-input-icon">
-                                <div class="input-group date">
-                                    <select id="receiving-currency-id" when-change-trigger-account-type-change name="receiving_currency" class="form-control 
-							current-currency
-							currency-class
-							receiving-currency-class
-
-							 ajax-get-invoice-numbers 
-							">
-                                        
-                                        <?php $__currentLoopData = isset($currencies) ? $currencies : getBanksCurrencies (); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $currencyId=>$currentName): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                        <?php
-                                        $selected = isset($model) ? $model->getReceivingCurrency() == $currencyId : $currentName == $company->getMainFunctionalCurrency() ;
-                                        $selected = $selected ? 'selected':'';
-                                        ?>
-                                        <option <?php echo e($selected); ?> value="<?php echo e($currencyId); ?>"><?php echo e(touppercase($currentName)); ?></option>
-                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-md-3">
-                            <label><?php echo e(__('Contract Name')); ?>
-
-                                <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
-                            </label>
-                            <div class="kt-input-icon">
-                                <div class="kt-input-icon">
-                                    <div class="input-group date">
-                                        <select data-current-selected="<?php echo e(isset($model) ? $model->getContractId() : 0); ?>" id="contract-id" name="contract_id" class="form-control down-payment-contract-class 
-										ajax-get-invoice-numbers
-										 ajax-get-sales-orders-for-contract">
-                                            <option value="" selected><?php echo e(__('Select')); ?></option>
-                                            <?php $__currentLoopData = $contracts; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $contract): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                            <option <?php if(isset($model) && $model->getContractId() == $contract->id ): ?> selected <?php endif; ?> value="<?php echo e($contract->id); ?>"><?php echo e($contract->getName()); ?></option>
-                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-md-2 mt-4">
-                            <label><?php echo e(__('Receiving Date')); ?></label>
-                            <div class="kt-input-icon">
-                                <div class="input-group date">
-                                    <input type="text" name="receiving_date" value="<?php echo e(isset($model) ? formatDateForDatePicker($model->getReceivingDate()) : formatDateForDatePicker(now()->format('Y-m-d'))); ?>" class="form-control is-date-css" readonly placeholder="Select date" id="kt_datepicker_2" />
-                                    <div class="input-group-append">
-                                        <span class="input-group-text">
-                                            <i class="la la-calendar-check-o"></i>
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -321,8 +326,8 @@ use App\Models\MoneyReceived ;
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-3">
-                                <label><?php echo e(__('Received Amount')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
+                            <div class="col-md-3 closest-parent">
+                                <label><?php echo e(__('Received Amount')); ?> <span class="currency-span"></span> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
                                 <div class="kt-input-icon">
                                     <input data-max-cheque-value="0" type="text" value="<?php echo e(isset($model) ? $model->getReceivedAmount() :0); ?>" name="received_amount[<?php echo e(MoneyReceived::CASH_IN_SAFE); ?>]" class="form-control only-greater-than-or-equal-zero-allowed <?php echo e('js-'. MoneyReceived::CASH_IN_SAFE .'-received-amount'); ?>  main-amount-class recalculate-amount-class" data-type="<?php echo e(MoneyReceived::CASH_IN_SAFE); ?>" placeholder="<?php echo e(__('Received Amount')); ?>">
                                      <?php if (isset($component)) { $__componentOriginalffdb2b47423986c543526403ae50ad342b26dbd3 = $component; } ?>
@@ -357,17 +362,17 @@ use App\Models\MoneyReceived ;
 <?php endif; ?> 
                                 </div>
                             </div>
-                            <div class="col-md-3 width-12">
+                            <div class="col-md-2 mt-4 width-12 show-only-when-invoice-currency-not-equal-receiving-currency">
                                 <label><?php echo e(__('Exchange Rate')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
                                 <div class="kt-input-icon">
                                     <input value="<?php echo e(isset($model) ? $model->getExchangeRate() : 1); ?>" placeholder="<?php echo e(__('Exchange Rate')); ?>" type="text" name="exchange_rate[<?php echo e(MoneyReceived::CASH_IN_SAFE); ?>]" class="form-control only-greater-than-or-equal-zero-allowed exchange-rate-class recalculate-amount-class" data-type="<?php echo e(MoneyReceived::CASH_IN_SAFE); ?>">
                                 </div>
                             </div>
 
-                            <div class="col-md-1 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden">
-                                <label><?php echo e(__('Amount')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
+                            <div class="col-md-3 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden closest-parent">
+                                <label><?php echo e(__('Amount In Contract Currency')); ?> <span class="currency-span"></span> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
                                 <div class="kt-input-icon">
-                                    <input readonly value="<?php echo e(0); ?>" type="text" name="amount_in_receiving_currency[<?php echo e(MoneyReceived::CASH_IN_SAFE); ?>]" class="form-control only-greater-than-or-equal-zero-allowed amount-after-exchange-rate-class" data-type="<?php echo e(MoneyReceived::CASH_IN_SAFE); ?>">
+                                    <input readonly value="<?php echo e(0); ?>" type="text" name="amount_in_invoice_currency[<?php echo e(MoneyReceived::CASH_IN_SAFE); ?>]" class="form-control only-greater-than-or-equal-zero-allowed amount-after-exchange-rate-class" data-type="<?php echo e(MoneyReceived::CASH_IN_SAFE); ?>">
                                 </div>
                             </div>
                         </div>
@@ -407,8 +412,8 @@ use App\Models\MoneyReceived ;
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-2 ">
-                                <label><?php echo e(__('Deposit Amount')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
+                            <div class="col-md-2 closest-parent">
+                                <label><?php echo e(__('Deposit Amount')); ?> <span class="currency-span"></span> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
                                 <div class="kt-input-icon">
                                     <input data-max-cheque-value="0" type="text" value="<?php echo e(isset($model) ? $model->getReceivedAmount():0); ?>" name="received_amount[<?php echo e(MoneyReceived::CASH_IN_BANK); ?>]" class="form-control greater-than-or-equal-zero-allowed <?php echo e('js-'. MoneyReceived::CASH_IN_BANK .'-received-amount'); ?>  main-amount-class recalculate-amount-class" data-type="<?php echo e(MoneyReceived::CASH_IN_BANK); ?>" placeholder="<?php echo e(__('Insert Amount')); ?>">
                                 </div>
@@ -416,7 +421,7 @@ use App\Models\MoneyReceived ;
 
 
 
-                            <div class="col-md-2 width-12">
+                            <div class="col-md-3 ">
                                 <label><?php echo e(__('Account Type')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
                                 <div class="kt-input-icon">
                                     <div class="input-group date">
@@ -442,17 +447,17 @@ use App\Models\MoneyReceived ;
                             </div>
 
 
-                            <div class="col-md-1">
+                            <div class="col-md-1 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency">
                                 <label><?php echo e(__('Exchange Rate')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
                                 <div class="kt-input-icon">
                                     <input value="<?php echo e(isset($model) ? $model->getExchangeRate() : 1); ?>" placeholder="<?php echo e(__('Exchange Rate')); ?>" type="text" name="exchange_rate[<?php echo e(MoneyReceived::CASH_IN_BANK); ?>]" class="form-control only-greater-than-or-equal-zero-allowed exchange-rate-class recalculate-amount-class" data-type="<?php echo e(MoneyReceived::CASH_IN_BANK); ?>">
                                 </div>
                             </div>
 
-                            <div class="col-md-1 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden">
-                                <label><?php echo e(__('Amount')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
+                            <div class="col-md-3 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden closest-parent">
+                                <label><?php echo e(__('Amount In Contract Currency')); ?> <span class="currency-span"></span> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
                                 <div class="kt-input-icon">
-                                    <input readonly value="<?php echo e(0); ?>" type="text" name="amount_in_receiving_currency[<?php echo e(MoneyReceived::CASH_IN_BANK); ?>]" class="form-control only-greater-than-or-equal-zero-allowed amount-after-exchange-rate-class" data-type="<?php echo e(MoneyReceived::CASH_IN_BANK); ?>">
+                                    <input readonly value="<?php echo e(0); ?>" type="text" name="amount_in_invoice_currency[<?php echo e(MoneyReceived::CASH_IN_BANK); ?>]" class="form-control only-greater-than-or-equal-zero-allowed amount-after-exchange-rate-class" data-type="<?php echo e(MoneyReceived::CASH_IN_BANK); ?>">
                                 </div>
                             </div>
 
@@ -514,8 +519,8 @@ use App\Models\MoneyReceived ;
                                 </div>
                             </div>
 
-                            <div class="col-md-2 width-12">
-                                <label><?php echo e(__('Cheque Amount')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
+                            <div class="col-md-2 width-12 closest-parent">
+                                <label><?php echo e(__('Cheque Amount')); ?> <span class="currency-span"></span> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
                                 <div class="kt-input-icon">
                                     <input data-max-cheque-value="0" value="<?php echo e(isset($model) ? $model->getReceivedAmount() : 0); ?>" placeholder="<?php echo e(__('Please insert the cheque amount')); ?>" type="text" name="received_amount[<?php echo e(MoneyReceived::CHEQUE); ?>]" class="form-control only-greater-than-or-equal-zero-allowed <?php echo e('js-'. MoneyReceived::CHEQUE .'-received-amount'); ?>  main-amount-class recalculate-amount-class" data-type="<?php echo e(MoneyReceived::CHEQUE); ?>">
                                 </div>
@@ -546,17 +551,17 @@ use App\Models\MoneyReceived ;
                                 </div>
                             </div>
 
-                            <div class="col-md-2 width-12">
+                            <div class="col-md-2 width-12 show-only-when-invoice-currency-not-equal-receiving-currency">
                                 <label><?php echo e(__('Exchange Rate')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
                                 <div class="kt-input-icon">
                                     <input value="<?php echo e(isset($model) ? $model->getExchangeRate() : 1); ?>" placeholder="<?php echo e(__('Exchange Rate')); ?>" type="text" name="exchange_rate[<?php echo e(MoneyReceived::CHEQUE); ?>]" class="form-control only-greater-than-or-equal-zero-allowed exchange-rate-class recalculate-amount-class" data-type="<?php echo e(MoneyReceived::CHEQUE); ?>">
                                 </div>
                             </div>
 
-                            <div class="col-md-1 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden">
-                                <label><?php echo e(__('Amount')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
+                            <div class="col-md-3 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden closest-parent">
+                                <label><?php echo e(__('Amount In Contract Currency')); ?> <span class="currency-span"></span> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
                                 <div class="kt-input-icon">
-                                    <input readonly value="<?php echo e(0); ?>" type="text" name="amount_in_receiving_currency[<?php echo e(MoneyReceived::CHEQUE); ?>]" class="form-control only-greater-than-or-equal-zero-allowed amount-after-exchange-rate-class" data-type="<?php echo e(MoneyReceived::CHEQUE); ?>">
+                                    <input readonly value="<?php echo e(0); ?>" type="text" name="amount_in_invoice_currency[<?php echo e(MoneyReceived::CHEQUE); ?>]" class="form-control only-greater-than-or-equal-zero-allowed amount-after-exchange-rate-class" data-type="<?php echo e(MoneyReceived::CHEQUE); ?>">
                                 </div>
                             </div>
 
@@ -598,8 +603,8 @@ use App\Models\MoneyReceived ;
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-2 ">
-                                <label><?php echo e(__('Incoming Transfer Amount')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
+                            <div class="col-md-2 closest-parent">
+                                <label><?php echo e(__('Incoming Transfer Amount')); ?> <span class="currency-span"></span> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
                                 <div class="kt-input-icon">
                                     <input data-max-cheque-value="0" type="text" value="<?php echo e(isset($model) ? $model->getReceivedAmount():0); ?>" name="received_amount[<?php echo e(MoneyReceived::INCOMING_TRANSFER); ?>]" class="form-control greater-than-or-equal-zero-allowed <?php echo e('js-'. MoneyReceived::INCOMING_TRANSFER .'-received-amount'); ?>  main-amount-class recalculate-amount-class" data-type="<?php echo e(MoneyReceived::INCOMING_TRANSFER); ?>" placeholder="<?php echo e(__('Insert Amount')); ?>">
                                 </div>
@@ -607,7 +612,7 @@ use App\Models\MoneyReceived ;
 
 
 
-                            <div class="col-md-2 width-12">
+                            <div class="col-md-3">
                                 <label><?php echo e(__('Account Type')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
                                 <div class="kt-input-icon">
                                     <div class="input-group date">
@@ -633,17 +638,17 @@ use App\Models\MoneyReceived ;
                             </div>
 
 
-                            <div class="col-md-1">
+                            <div class="col-md-2 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency">
                                 <label><?php echo e(__('Exchange Rate')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
                                 <div class="kt-input-icon">
                                     <input value="<?php echo e(isset($model) ? $model->getExchangeRate() : 1); ?>" placeholder="<?php echo e(__('Exchange Rate')); ?>" type="text" name="exchange_rate[<?php echo e(MoneyReceived::INCOMING_TRANSFER); ?>]" class="form-control only-greater-than-or-equal-zero-allowed exchange-rate-class recalculate-amount-class" data-type="<?php echo e(MoneyReceived::INCOMING_TRANSFER); ?>">
                                 </div>
                             </div>
 
-                            <div class="col-md-1 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden">
-                                <label><?php echo e(__('Amount')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
+                            <div class="col-md-3 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden closest-parent">
+                                <label><?php echo e(__('Amount In Contract Currency')); ?> <span class="currency-span"></span> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
                                 <div class="kt-input-icon">
-                                    <input readonly value="<?php echo e(0); ?>" type="text" name="amount_in_receiving_currency[<?php echo e(MoneyReceived::INCOMING_TRANSFER); ?>]" class="form-control only-greater-than-or-equal-zero-allowed amount-after-exchange-rate-class" data-type="<?php echo e(MoneyReceived::INCOMING_TRANSFER); ?>">
+                                    <input readonly value="<?php echo e(0); ?>" type="text" name="amount_in_invoice_currency[<?php echo e(MoneyReceived::INCOMING_TRANSFER); ?>]" class="form-control only-greater-than-or-equal-zero-allowed amount-after-exchange-rate-class" data-type="<?php echo e(MoneyReceived::INCOMING_TRANSFER); ?>">
                                 </div>
                             </div>
 
@@ -820,6 +825,8 @@ use App\Models\MoneyReceived ;
 		
 		const partnerType = $('select#partner_type').val();
 		
+		$('.main-amount-class').closest('.closest-parent').find('.currency-span').html(" [ " + receivingCurrency +" ]")
+		$('.amount-after-exchange-rate-class').closest('.closest-parent').find('.currency-span').html(" [ " + invoiceCurrency +" ]")
 		
         if (invoiceCurrency != receivingCurrency && invoiceCurrency && receivingCurrency) {
             $('.show-only-when-invoice-currency-not-equal-receiving-currency').removeClass('hidden')
@@ -833,10 +840,10 @@ use App\Models\MoneyReceived ;
     })
     $(document).on('change', '.recalculate-amount-class', function() {
         const moneyType = $(this).attr('data-type')
-        const amount = $('.main-amount-class[data-type="' + moneyType + '"]').val();
-        const exchangeRate = $('.exchange-rate-class[data-type="' + moneyType + '"]').val();
-        const amountAfterExchangeRate = amount * exchangeRate;
-        $('.amount-after-exchange-rate-class[data-type="' + moneyType + '"]').val(amountAfterExchangeRate).trigger('change')
+        const amount = number_unformat($('.main-amount-class[data-type="' + moneyType + '"]').val());
+        const exchangeRate = number_unformat($('.exchange-rate-class[data-type="' + moneyType + '"]').val());
+        const amountAfterExchangeRate = amount / exchangeRate;
+        $('.amount-after-exchange-rate-class[data-type="' + moneyType + '"]').val(number_format(amountAfterExchangeRate)).trigger('change')
         $('.js-settlement-amount:eq(0)').trigger('change')
     })
     $(document).on('change', 'select[when-change-trigger-account-type-change]', function(e) {

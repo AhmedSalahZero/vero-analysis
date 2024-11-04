@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use App\Models\MoneyReceived;
 use App\Rules\AtLeaseOneSettlementMustBeExist;
 use App\Rules\ContractAmountWithUnappliedAmountRule;
+use App\Rules\ReceivingOrPaymentDateRule;
 use App\Rules\SettlementPlusWithoutCanNotBeGreaterNetBalance;
 use App\Rules\UnappliedAmountForContractAsDownPaymentRule;
 use App\Rules\UniqueChequeNumberForCustomerRule;
@@ -13,6 +14,7 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StoreMoneyReceivedRequest extends FormRequest 
 {
+
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -22,6 +24,19 @@ class StoreMoneyReceivedRequest extends FormRequest
     {
         return true;
     }
+	
+	protected function prepareForValidation()
+	{
+		$receivedAmounts = $this->received_amount ;
+		$receivedAmounts = collect($receivedAmounts)->map(function($item){
+			return number_unformat($item);
+		})->toArray();
+		
+		$this->merge([
+			'received_amount'=>$receivedAmounts
+		]);
+	}
+
 
     /**
      * Get the validation rules that apply to the request.
@@ -30,19 +45,23 @@ class StoreMoneyReceivedRequest extends FormRequest
      */
     public function rules()
     {
-
+		$companyId = getCurrentCompanyId();
 		$type = $this->type ; 
 		$partnerType = $this->partner_type;
 		$receivedAmount = $this->{'received_amount.'.$type };
-	
+		$financialInstitutionId = $this->input('receiving_bank_id.'.$type);
+		
+		$accountTypeId = $this->input('account_type.'.$type);
+		$accountNumber = $this->input('account_number.'.$type);
+		
 			
         return [
 			'customer_id'=>'required',
 			'type'=>'required',
 			'receiving_branch_id'=>$type == MoneyReceived::CASH_IN_SAFE  ? ['required','not_in:-1'] : [],
-			// 'receiving_date'=>['required',new ReceivingDateRule($type , $this->receiving_date,)],
 			'received_amount.'.$type => ['required','gt:0'],
 			'account_type.'.$type => $type == MoneyReceived::INCOMING_TRANSFER || $type == MoneyReceived::CASH_IN_BANK ? 'required' : 'sometimes',
+			'receiving_date'=>['required',new ReceivingOrPaymentDateRule($companyId,$type,[MoneyReceived::CASH_IN_BANK,MoneyReceived::INCOMING_TRANSFER],[MoneyReceived::CASH_IN_SAFE],$financialInstitutionId,$accountTypeId,$accountNumber)],
 			'unapplied_amount'=>['sometimes','gte:0'],
 			'contract_id'=>[new ContractAmountWithUnappliedAmountRule($this->get('unapplied_amount',0),$this->get('contract_id',0))],
 			'net_balance_rules'=>new SettlementPlusWithoutCanNotBeGreaterNetBalance($this->get('settlements',[])),
@@ -53,6 +72,7 @@ class StoreMoneyReceivedRequest extends FormRequest
 		
         ];
     }
+	
 	public function messages()
 	{
 		$type = $this->type ; 

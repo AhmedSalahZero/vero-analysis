@@ -167,13 +167,26 @@ class SupplierInvoice extends Model implements IInvoice
 			$currentData['comment'] =null;
 			$index++ ;
 			$formattedData[$index]=$currentData;
+			
+			
+			foreach($supplierInvoice->deductions as $deductionWithPivot){
+				$currentData['date'] = Carbon::make($deductionWithPivot->pivot->date)->format('d-m-Y');
+				$currentData['document_type'] = 'Deduction';
+				$currentData['document_no'] = $invoiceNumber;
+				$currentData['debit'] = 0;
+				$currentData['credit'] =$deductionWithPivot->pivot->amount;
+				$currentData['comment'] =$deductionWithPivot->getName() . ' [ '  . $invoiceNumber .' ] ' ;
+				$index++ ;
+				$formattedData[$index]=$currentData;
+			}
+			
 		}
 		foreach($allMoneyPayments as $moneyPayment) {
 			$deliveryDate = $moneyPayment->getDeliveryDateFormatted() ;
 			$moneyPaymentType = $moneyPayment->getType();
 			$bankName = $moneyPayment->getBankName();
 			$docNumber = $moneyPayment->getNumber();
-				$moneyPaymentAmount = $moneyPayment->getPaidAmount() ;
+				$moneyPaymentAmount = $moneyPayment->getAmountInInvoiceCurrency() ;
 				if($moneyPaymentAmount){
 					$currentData = []; 
 					$currentData['date'] = $deliveryDate;

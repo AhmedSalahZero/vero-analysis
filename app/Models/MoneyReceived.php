@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Http\Controllers\MoneyReceivedController;
 use App\Models\OpeningBalance;
 use App\Traits\Models\HasCreditStatements;
 use App\Traits\Models\HasDebitStatements;
@@ -208,6 +207,7 @@ class MoneyReceived extends Model
 	{
 		return $this->getReceivedAmount();
 	}
+
 	public function getChequeDueDate(){
 		return $this->cheque ? $this->cheque->getDueDate(): null;
 	}
@@ -354,6 +354,7 @@ class MoneyReceived extends Model
 			return $this->cheque ? $this->cheque->getDrawlBankId() : 0;
 		}
 	}
+	
 	
 	/**
 	 * * For Money Received Only
@@ -512,6 +513,10 @@ class MoneyReceived extends Model
 	{
 		$date = $this->getChequeDepositDate();
 		return $date ? Carbon::make($date)->format('d-m-Y') : null;
+	}
+	public function getChequeFinancialInstitutionOpeningBalanceDate()
+	{
+		// return $this->cheque && $this->cheque->drawlBank 
 	}
 	
 	

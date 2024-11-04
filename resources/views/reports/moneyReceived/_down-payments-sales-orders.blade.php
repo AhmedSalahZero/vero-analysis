@@ -8,8 +8,8 @@
         </div>
     </div>
 
-    <div class="col-md-2">
-        <label>{{__('Amount')}} </label>
+    <div class="col-md-2 closest-parent">
+        <label>{{__('Amount')}} <span class="contract-currency"></span> </label>
         <div class="kt-input-icon">
             <input name="sales_orders_amounts[][net_invoice_amount]" type="text" disabled class="form-control js-amount">
         </div>

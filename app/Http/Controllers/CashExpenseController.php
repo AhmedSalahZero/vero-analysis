@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Http\Requests\MarkChequeAsPaidRequest;
 use App\Http\Requests\StoreCashExpenseRequest;
 use App\Models\AccountType;
 use App\Models\Bank;
@@ -261,13 +262,13 @@ class CashExpenseController
 
 		$relationData = [];
 		$relationName = null ;
-		$exchangeRate =  $request->input('exchange_rate.'.$moneyType,1) ;
+		$exchangeRate =  number_unformat($request->input('exchange_rate.'.$moneyType,1)) ;
 		
 		$paidAmount = $request->input('paid_amount.'.$moneyType ,0) ;
 		$paidAmount = unformat_number($paidAmount);
 		
 
-		$paidAmountInPayingCurrency = $paidAmount * $exchangeRate ;
+		$paidAmountInPayingCurrency = $paidAmount / $exchangeRate ;
 		
 		if($moneyType == CashExpense::CASH_PAYMENT){
 			$relationData = $request->only(['receipt_number']) ;
@@ -320,7 +321,7 @@ class CashExpenseController
 		$accountType = AccountType::find($request->input('account_type.'.$moneyType));
 		$accountNumber = $request->input('account_number.'.$moneyType) ;
 		$deliveryBranchId = $relationData['delivery_branch_id'] ?? null ;
-		$cashExpense->handleCreditStatement($company->id , $bankId,$accountType,$accountNumber,$moneyType,$statementDate,$paidAmountInPayingCurrency,$deliveryBranchId,$currencyName);
+		$cashExpense->handleCreditStatement($company->id , $bankId,$accountType,$accountNumber,$moneyType,$statementDate,$paidAmount,$deliveryBranchId,$currencyName);
 		$contracts = $request->get('contracts',[]) ;
 
 		if(count($contracts)){
@@ -338,63 +339,7 @@ class CashExpenseController
 			} 
 			
 		}
-		/**
-		 * * For Money Received Only
-		 */
-		// if($request->get('unapplied_amount',0) > 0 ){
-		// 	$cashExpense->unappliedAmounts()->create([
-		// 		'amount'=>$request->get('unapplied_amount'),
-		// 		'partner_id'=>$supplier->id,
-		// 		'settlement_date'=>$request->get('payment_date'),
-		// 		'company_id'=>$company->id,
-		// 		'net_balance_until_date'=>0,
-		// 		'model_id'=>$cashExpense->id,
-		// 		'model_type'=>HHelpers::getClassNameWithoutNameSpace($cashExpense),
-		// 		'currency'=>$currencyName
-		// 	]);
-		// }
-		/**
-		 * * For Money Received Only
-		 */
-		// $totalWithholdAmount= 0 ;
-		// foreach($request->get('settlements',[]) as $settlementArr)
-		// {
-		// 	$settlementArr['settlement_amount']  = isset($settlementArr['settlement_amount']) ? unformat_number($settlementArr['settlement_amount']) : 0 ;
-		// 	if($settlementArr['settlement_amount'] > 0){
-		// 		$settlementArr['company_id'] = $company->id ;
-		// 		$settlementArr['supplier_name'] = $supplierName ;
-		// 		$withholdAmount = isset($settlementArr['withhold_amount']) ? unformat_number($settlementArr['withhold_amount']) : 0;
-		// 		$settlementArr['withhold_amount'] = $withholdAmount ;
-		// 		$totalWithholdAmount +=   $withholdAmount;
-		// 		unset($settlementArr['net_balance']);
-		// 		$cashExpense->settlements()->create($settlementArr);
-		// 	}
-		// }
-		/**
-		 * * For Contract Only
-		 */
-		// foreach($request->get('purchases_orders_amounts',[]) as $salesOrderReceivedAmountArr)
-		// {
-		// 	if(isset($salesOrderReceivedAmountArr['paid_amount'])&&$salesOrderReceivedAmountArr['paid_amount'] > 0){
-		// 		$salesOrderReceivedAmountArr['company_id'] = $company->id ;
-		// 		$cashExpense->downPaymentSettlements()->create(array_merge(
-		// 			$salesOrderReceivedAmountArr ,
-		// 			[
-		// 				'contract_id'=>$contractId,
-		// 				'supplier_id'=>$supplierId,
-		// 				'down_payment_amount'=>$salesOrderReceivedAmountArr['paid_amount']
-		// 				]
-		// 			));
-		// 	}
-		// }
-
-
-		// $cashExpense->update([
-		// 	'total_withhold_amount'=>$totalWithholdAmount
-		// ]);
-		/**
-		 * @var SupplierInvoice $supplierInvoice
-		 */
+		
 		$activeTab = $moneyType;
 		return response()->json([
 			'redirectTo'=>route('view.cash.expense',['company'=>$company->id,'active'=>$activeTab])
@@ -503,7 +448,7 @@ class CashExpenseController
 			}
 			return $branch->id ;
 	}
-	public function markChequesAsPaid(Company $company,Request $request)
+	public function markChequesAsPaid(Company $company,MarkChequeAsPaidRequest $request)
 	{
 		$cashExpenseIds = $request->get('cheques') ;
 		$cashExpenseIds = is_array($cashExpenseIds) ? $cashExpenseIds :  explode(',',$cashExpenseIds);
