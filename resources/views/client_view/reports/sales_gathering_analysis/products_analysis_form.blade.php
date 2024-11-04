@@ -25,15 +25,15 @@
             <div class="kt-portlet">
                 <?php 
                     // $productsData = App\Models\SalesGathering::company()
-                    //     ->whereNotNull('product_or_service')
-                    //     ->where('product_or_service','!=','')
-                    //     ->groupBy('product_or_service')
-                    //     ->selectRaw('product_or_service')
+                    //     ->whereNotNull('sub_category')
+                    //     ->where('sub_category','!=','')
+                    //     ->groupBy('sub_category')
+                    //     ->selectRaw('sub_category')
                     //     ->get()
-                    //     ->pluck('product_or_service')
+                    //     ->pluck('sub_category')
                     //     ->toArray();
 
-                    $productsData = getTypeFor('product_or_service',$company->id , false);
+                    $productsData = getTypeFor('sub_category',$company->id , false);
                     
                         if ($name_of_selector_label == 'Products Items') {
                             $column =  3 ;
@@ -145,7 +145,7 @@
                         @endif
                     </div>
 			
-                    <input type="hidden" name="main_type" value="product_or_service">
+                    <input type="hidden" name="main_type" value="sub_category">
                     <input type="hidden" id="append-to" value="productsData">
 
                     <div class="form-group row">
@@ -310,7 +310,7 @@
 
             categories = $(this).val();
 
-            getProducts(productsData, categories, 'product_or_service', type_of_data)
+            getProducts(productsData, categories, 'sub_category', type_of_data)
 
         }, getNumberOfMillSeconds());
 
@@ -357,7 +357,7 @@
             type: 'POST'
             , data: {
                 'main_data': productsData
-                , 'main_field': 'product_or_service'
+                , 'main_field': 'sub_category'
                 , 'field': type_of_data
                 , 'start_date': $('input[name="start_date"]').val()
                 , 'end_date': $('input[name="end_date"]').val()
@@ -448,7 +448,7 @@
 
 
 
-            if (type == 'product_or_service') {
+            if (type == 'sub_category') {
 
                 row = '<select data-live-search="true" data-actions-box="true" name="sales_channels[]" class="select2-select form-control kt-bootstrap-select kt_bootstrap_select"  ' + data_type + '  required >\n';
                 // if($('#data_type').val()  !== 'value'){
@@ -490,7 +490,7 @@
                 'main_data': productsData
                 , 'main_field': 'category'
                 , 'third_main_data': products
-                , 'third_main_field': 'product_or_service'
+                , 'third_main_field': 'sub_category'
                 , 'field': type_of_data
                 , 'start_date': $('input[name="start_date"]').val()
                 , 'end_date': $('input[name="end_date"]').val()

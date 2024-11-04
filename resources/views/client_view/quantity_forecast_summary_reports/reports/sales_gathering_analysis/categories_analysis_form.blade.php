@@ -19,7 +19,7 @@
                 @if ($type == 'averagePrices')
                 <input type="hidden" name="type_of_report" value="categories_products_avg">
                 <?php
-                            $type = 'product_or_service'  ;
+                            $type = 'sub_category'  ;
                         ?>
                 @endif
 
@@ -348,7 +348,7 @@
             }
             type_of_data = "{{$type}}";
             if ("{{$name_of_selector_label}}" == 'Sub Categories' || "{{$name_of_selector_label}}" == 'Products Items') {
-                getProducts(categoriesData, 'product_or_service', type_of_data);
+                getProducts(categoriesData, 'sub_category', type_of_data);
             } else {
 
 
@@ -357,7 +357,7 @@
                     getCategories(categoriesData, 'category');
                 } else if ("{{ isCustomerExceptionalForProducts($type , $name_of_selector_label) }}") {
                     // alert('else if')
-                    getProductsForCustomers(categoriesData, 'product_or_service', 'product_or_service');
+                    getProductsForCustomers(categoriesData, 'sub_category', 'sub_category');
                 } else if ("{{ isCustomerExceptionalForProductsItems($type , $name_of_selector_label) }}") {
                     // alert('else if')
                     getProductItemsForCustomers(categoriesData, 'product_item');
@@ -388,7 +388,7 @@
 
             categories = $(this).val();
 
-            getProducts(categoriesData, categories, 'product_or_service', type_of_data)
+            getProducts(categoriesData, categories, 'sub_category', type_of_data)
 
         }, getNumberOfMillSeconds());
 
@@ -516,7 +516,7 @@
             //     var data_type = '';
             // }
 
-            if (type == 'product_or_service') {
+            if (type == 'sub_category') {
 
                 row = '<select data-live-search="true" data-actions-box="true" name="sales_channels[]" class="form-control select2-select kt-bootstrap-select kt_bootstrap_select"  ' + data_type + '  required >\n';
                 // if($('#data_type').val()  !== 'value'){
@@ -575,7 +575,7 @@
             //     var data_type = '';
             // }
             // alert(type);
-            if (type == 'product_or_service') {
+            if (type == 'sub_category') {
 
                 row = '<select data-live-search="true" data-actions-box="true" name="sales_channels[]" class="form-control select2-select kt-bootstrap-select kt_bootstrap_select"  ' + data_type + '  required >\n';
                 // if($('#data_type').val()  !== 'value'){
@@ -617,7 +617,7 @@
                 'main_data': categoriesData
                 , 'main_field': 'category'
                 , 'third_main_data': products
-                , 'third_main_field': 'product_or_service'
+                , 'third_main_field': 'sub_category'
                 , 'field': type_of_data
                 , 'start_date': $('input[name="start_date"]').val()
                 , 'end_date': $('input[name="end_date"]').val()

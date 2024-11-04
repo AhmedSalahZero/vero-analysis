@@ -271,7 +271,7 @@
                 salesPersonsData = $(this).val();
             }
             type_of_data = "{{$type}}";
-            if (type_of_data == 'product_item' || type_of_data == 'product_or_service') {
+            if (type_of_data == 'product_item' || type_of_data == 'sub_category') {
                 type_of_data = 'category';
             }
             getCategories(salesPersonsData, type_of_data);
@@ -293,7 +293,7 @@
             type_of_data = "{{$type}}";
 
             categories = $(this).val();
-            getProducts(salesPersonsData, categories, 'product_or_service', type_of_data)
+            getProducts(salesPersonsData, categories, 'sub_category', type_of_data)
         }, getNumberOfMillSeconds());
 
 
@@ -428,7 +428,7 @@
                 , 'second_main_data': categories
                 , 'sub_main_field': 'category'
                     // , 'third_main_data': products
-                    // , 'third_main_field': 'product_or_service'
+                    // , 'third_main_field': 'sub_category'
                 , 'field': type_of_data
                 , 'start_date': $('input[name="start_date"]').val()
                 , 'end_date': $('input[name="end_date"]').val()
@@ -440,7 +440,7 @@
 
             var data_type = 'multiple';
 
-            if (type == 'sales_person' || type == 'product_or_service'
+            if (type == 'sales_person' || type == 'sub_category'
                 // || type == 'product_item'
             ) {
                 row = '<select data-live-search="true" data-actions-box="true" name="sales_channels[]" class="form-control select2-select kt-bootstrap-select kt_bootstrap_select"  ' + data_type + '  required >\n';
@@ -501,7 +501,7 @@
                 , 'second_main_data': categories
                 , 'sub_main_field': 'category'
                 , 'third_main_data': products
-                , 'third_main_field': 'product_or_service'
+                , 'third_main_field': 'sub_category'
                 , 'field': 'product_item'
                 , 'start_date': $('input[name="start_date"]').val()
                 , 'end_date': $('input[name="end_date"]').val()

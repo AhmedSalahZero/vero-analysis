@@ -18,7 +18,7 @@
             <div class="kt-portlet">
                 <?php
                 //  $categories =  App\Models\SalesGathering::company()->whereNotNull('category')->where('category','!=','')->groupBy('category')->selectRaw('category')->get()->pluck('category')->toArray();
-                $categories = getTypeFor('product_or_service' , $company->id , true );
+                $categories = getTypeFor('sub_category' , $company->id , true );
                 ?>
 
                 <div class="kt-portlet__body">
@@ -121,8 +121,8 @@
         clearTimeout(wto);
         wto = setTimeout(() => {
             var branches = ['all'];
-            var type_of_data = "product_or_service";
-            var getColumnName = 'product_or_service';
+            var type_of_data = "sub_category";
+            var getColumnName = 'sub_category';
             var appendToSelector = '#append-main-select';
             getAnotherSelectValues(branches, type_of_data, getColumnName, appendToSelector);
         }, getNumberOfMillSeconds())

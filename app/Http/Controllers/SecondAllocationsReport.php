@@ -326,7 +326,7 @@ class SecondAllocationsReport
             return redirect()->route('collection.settings', $company);
         }
         $has_product_item = $this->fields($company);
-        $type = ($has_product_item === true) ? 'product_item' : 'product_or_service';
+        $type = ($has_product_item === true) ? 'product_item' : 'sub_category';
 
         $new_products_allocations = SecondNewProductAllocationBase::company()->first();
         $products_seasonality = ProductSeasonality::company()->get();

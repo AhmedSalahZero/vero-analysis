@@ -20,7 +20,7 @@
             @if ($type == 'averagePrices')
             <input type="hidden" name="type_of_report" value="businessSectors_products_avg">
             <?php
-                        $type = 'product_or_service'  ;
+                        $type = 'sub_category'  ;
                     ?>
             @elseif ($type == 'averagePricesProductItems')
             <input type="hidden" name="type_of_report" value="businessSectors_Items_avg">
@@ -292,7 +292,7 @@
 
             categories = $(this).val();
 
-            getProducts(businessSectors, categories, 'product_or_service', type_of_data)
+            getProducts(businessSectors, categories, 'sub_category', type_of_data)
 
 
         }, getNumberOfMillSeconds());
@@ -431,7 +431,7 @@
             //     var data_type = '';
             // }
 
-            if (type == 'product_or_service') {
+            if (type == 'sub_category') {
 
                 row = '<select data-live-search="true" data-actions-box="true" name="sales_channels[]" class="select2-select form-control kt-bootstrap-select kt_bootstrap_select"  ' + data_type + '  required >\n';
                 // if($('#data_type').val()  !== 'value'){
@@ -475,7 +475,7 @@
                 , 'second_main_data': categories
                 , 'sub_main_field': 'category'
                 , 'third_main_data': products
-                , 'third_main_field': 'product_or_service'
+                , 'third_main_field': 'sub_category'
                 , 'field': type_of_data
                 , 'start_date': $('input[name="start_date"]').val()
                 , 'end_date': $('input[name="end_date"]').val()

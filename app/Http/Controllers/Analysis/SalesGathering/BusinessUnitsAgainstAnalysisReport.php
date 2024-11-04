@@ -33,7 +33,7 @@ class BusinessUnitsAgainstAnalysisReport
             $type  = 'category';
             $view_name = 'Business Units Against Categories Trend Analysis' ;
         }elseif (request()->route()->named('businessUnits.products.analysis')) {
-            $type  = 'product_or_service';
+            $type  = 'sub_category';
             $view_name = 'Business Units Against Sub Categories Trend Analysis' ;
         }elseif (request()->route()->named('businessUnits.principles.analysis')) {
             $type  = 'principle';

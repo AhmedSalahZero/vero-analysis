@@ -33,7 +33,7 @@ class BusinessSectorsAgainstAnalysisReport
             $type  = 'category';
             $view_name = 'Business Sectors Against Categories Trend Analysis' ;
         }elseif (request()->route()->named('businessSectors.products.analysis')) {
-            $type  = 'product_or_service';
+            $type  = 'sub_category';
             $view_name = 'Business Sectors Against Sub Categories Trend Analysis' ;
         }elseif (request()->route()->named('businessSectors.principles.analysis')) {
             $type  = 'principle';

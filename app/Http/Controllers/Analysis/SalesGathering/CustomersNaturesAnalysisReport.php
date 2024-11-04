@@ -131,7 +131,7 @@ class CustomersNaturesAnalysisReport
 			$type = 'category';
 			$view_name = 'Categories Versus Customers Natures Analysis';
 		} elseif (request()->route()->named('products.vs.customersNatures')) {
-			$type = 'product_or_service';
+			$type = 'sub_category';
 			$view_name = 'Products Versus Customers Natures Analysis';
 		} elseif (request()->route()->named('Items.vs.customersNatures')) {
 			$type = 'product_item';

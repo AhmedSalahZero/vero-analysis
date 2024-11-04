@@ -28,7 +28,7 @@ class SalesChannelsAgainstAnalysisReport
             $type  = 'category';
             $view_name = 'Sales Channels Against Categories Trend Analysis' ;
         }elseif (request()->route()->named('salesChannels.products.analysis')) {
-            $type  = 'product_or_service';
+            $type  = 'sub_category';
             $view_name = 'Sales Channels Against Sub Categories Trend Analysis' ;
         }elseif (request()->route()->named('salesChannels.principles.analysis')) {
             $type  = 'principle';
@@ -120,7 +120,7 @@ class SalesChannelsAgainstAnalysisReport
                         $query->whereIn('product_item',$request->get('sales_channels'));
                     })
                     ->when($request->has('products') , function($query) use ($request){
-                        $query->whereIn('product_or_service',$request->get('products'));
+                        $query->whereIn('sub_category',$request->get('products'));
                     })
                        ->when($request->has('salesChannels') , function($query) use ($request , $salesChannelName){
                         $query->whereIn('sales_channel',[$salesChannelName]);
@@ -149,7 +149,7 @@ class SalesChannelsAgainstAnalysisReport
                         $query->whereIn('product_item',$request->get('sales_channels'));
                     })
                     ->when($request->has('products') , function($query) use ($request){
-                        $query->whereIn('product_or_service',$request->get('products'));
+                        $query->whereIn('sub_category',$request->get('products'));
                     })
                        ->when($request->has('salesChannels') , function($query) use ($request,$salesChannelName){
                         $query->whereIn('sales_channel',[$salesChannelName]);

@@ -246,9 +246,9 @@ $exportableFieldsValues[] = 'avg_invoice_value';
                                                     <button style="background-color:#086691 ; color:#fff" class="btn  btn-sm text-white ranged-button-ajax" data-direction="bottom" data-type="{{ $type }}" data-column="product_item"> {{ __('Bottom 50') }}</button>
                                                     @endif
 
-                                                    @if($id == 'product_or_service')
-                                                    <button style="background-color:#086691 ; color:#fff" class="btn  btn-sm mr-1 ml-5 ranged-button-ajax" data-direction="top" data-type="{{ $type }}" data-column="product_or_service"> {{ __('Top 50') }}</button>
-                                                    <button style="background-color:#086691 ; color:#fff" class="btn  btn-sm text-white ranged-button-ajax" data-direction="bottom" data-type="{{ $type }}" data-column="product_or_service"> {{ __('Bottom 50') }}</button>
+                                                    @if($id == 'sub_category')
+                                                    <button style="background-color:#086691 ; color:#fff" class="btn  btn-sm mr-1 ml-5 ranged-button-ajax" data-direction="top" data-type="{{ $type }}" data-column="sub_category"> {{ __('Top 50') }}</button>
+                                                    <button style="background-color:#086691 ; color:#fff" class="btn  btn-sm text-white ranged-button-ajax" data-direction="bottom" data-type="{{ $type }}" data-column="sub_category"> {{ __('Bottom 50') }}</button>
                                                     @endif
 
                                                     @if($id == 'zone')

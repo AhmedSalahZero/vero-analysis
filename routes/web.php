@@ -288,10 +288,10 @@ Route::middleware([])->group(function () {
                 Route::delete('delete-model', [DeleteSingleRecordController::class, '__invoke'])->name('delete.model');
 
                 //########### Inventory Links ############
-                Route::prefix('/Inventory')->group(function () {
-                    Route::get('/EndBalanceAnalysis/View', 'Analysis\Inventory\EndBalanceAnalysisReport@index')->name('end.balance.analysis');
-                    Route::post('/EndBalanceAnalysis/Result', 'Analysis\Inventory\EndBalanceAnalysisReport@result')->name('end.balance.analysis.result');
-                });
+                // Route::prefix('/Inventory')->group(function () {
+                //     Route::get('/EndBalanceAnalysis/View', 'Analysis\Inventory\EndBalanceAnalysisReport@index')->name('end.balance.analysis');
+                //     Route::post('/EndBalanceAnalysis/Result', 'Analysis\Inventory\EndBalanceAnalysisReport@result')->name('end.balance.analysis.result');
+                // });
 
                 Route::delete('delete-multi-rows', [HelpersController::class, 'deleteMulti'])->name('delete.multi');
                 Route::post('store-new-model', [HelpersController::class, 'storeNewModal'])->name('admin.store.new.modal');
