@@ -71,7 +71,6 @@ class RoutesDefinition
                     'has_break_down' => true,
                 ],
                 // 3 => Categories
-				
                 'Categories' => [
                     'name' =>  'categories',
                     'class_path' => 'Analysis\SalesGathering\CategoriesAgainstAnalysisReport',
