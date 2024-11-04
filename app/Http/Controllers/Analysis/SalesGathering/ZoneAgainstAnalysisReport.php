@@ -32,7 +32,7 @@ class ZoneAgainstAnalysisReport
 			$view_name = 'Zones Against Categories Trend Analysis';
 		} elseif (request()->route()->named('zone.products.analysis')) {
 			$type  = 'product_or_service';
-			$view_name = 'Zones Against Products / Services Trend Analysis';
+			$view_name = 'Zones Against Sub Categories Trend Analysis';
 		} elseif (request()->route()->named('zone.principles.analysis')) {
 			$type  = 'principle';
 			$view_name = 'Zones Against Principles Trend Analysis';
@@ -72,10 +72,10 @@ class ZoneAgainstAnalysisReport
 		
 		 elseif (request()->route()->named('zone.products.averagePrices')) {
 			$type  = 'averagePrices';
-			$view_name = 'Zones Products / Services Average Prices';
+			$view_name = 'Zones Sub Categories Average Prices';
 		} elseif (request()->route()->named('branch.products.averagePrices')) {
 			$type  = 'averagePrices';
-			$view_name = 'Branches Products / Services Average Prices';
+			$view_name = 'Branches Sub Categories Average Prices';
 		} elseif (request()->route()->named('zone.Items.averagePrices')) {
 			$type  = 'averagePricesProductItems';
 			$view_name = 'Zones Products Items Average Prices';
@@ -84,7 +84,7 @@ class ZoneAgainstAnalysisReport
 		$name_of_selector_label = str_replace(['Zones Against ', ' Trend Analysis'], '', $view_name);
 
 		if ($type == 'averagePrices') {
-			$name_of_selector_label = 'Products / Services';
+			$name_of_selector_label = 'Sub Categories';
 		} elseif ($type  == 'averagePricesProductItems') {
 			$name_of_selector_label = 'Products Items';
 		}

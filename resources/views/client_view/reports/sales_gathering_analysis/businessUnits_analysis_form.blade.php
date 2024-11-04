@@ -44,7 +44,7 @@
                         if ($name_of_selector_label == 'Products Items') {
                             $column =  3 ;
                             $data_type_selector = '';
-                        }elseif ($name_of_selector_label == 'Products / Services') {
+                        }elseif ($name_of_selector_label == 'Sub Categories') {
                             $column =  4 ;
                             $data_type_selector = '';
                         }else {
@@ -134,7 +134,7 @@
                             </div>
                         </div>
 
-                        @if ($name_of_selector_label == 'Products / Services' || $name_of_selector_label == 'Products Items')
+                        @if ($name_of_selector_label == 'Sub Categories' || $name_of_selector_label == 'Products Items')
 
                         <div class="col-md-{{$column}}">
                             <label>{{ __('Select Categories ') }} <span class="multi_selection"></span> @include('max-option-span') </label>
@@ -271,7 +271,7 @@
             }
             type_of_data = "{{$type}}";
 
-            if ("{{$name_of_selector_label}}" == 'Products / Services' || "{{$name_of_selector_label}}" == 'Products Items') {
+            if ("{{$name_of_selector_label}}" == 'Sub Categories' || "{{$name_of_selector_label}}" == 'Products Items') {
                 getCategories(businessUnits, 'category');
             } else {
                 getSalesChannales(businessUnits, type_of_data);

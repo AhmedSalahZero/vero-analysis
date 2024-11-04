@@ -41,7 +41,7 @@
                         if ($name_of_selector_label == 'Products Items') {
                             $column =  3 ;
                             $data_type_selector = '';
-                        }elseif ($name_of_selector_label == 'Products / Services') {
+                        }elseif ($name_of_selector_label == 'Sub Categories') {
                             $column =  4 ;
                             $data_type_selector = '';
                         }else {
@@ -53,7 +53,7 @@
                             $column =  4 ;
                         }
 
-                        if($name_of_selector_label == 'Products / Services')
+                        if($name_of_selector_label == 'Sub Categories')
                         {
                             $column = 6 ; 
                         }
@@ -347,7 +347,7 @@
                 categoriesData = $(this).val();
             }
             type_of_data = "{{$type}}";
-            if ("{{$name_of_selector_label}}" == 'Products / Services' || "{{$name_of_selector_label}}" == 'Products Items') {
+            if ("{{$name_of_selector_label}}" == 'Sub Categories' || "{{$name_of_selector_label}}" == 'Products Items') {
                 getProducts(categoriesData, 'product_or_service', type_of_data);
             } else {
 
