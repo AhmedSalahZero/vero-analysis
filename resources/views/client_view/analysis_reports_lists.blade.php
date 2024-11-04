@@ -75,7 +75,7 @@
                         <?php $name = $mainSubSection->name['en'] ;
 
                         if ($mainSubSection->name['en'] == "Sub Categories") {
-                            $name = "Sub Category";
+                            $name = "Sub Categories";
                         }   ?>
                     @endif
                     @if ($section->name['en'] == 'Sales Breakdown Analysis Report' ||  (false !== $found =  array_search(\Str::singular($name),$viewing_names) || $mainSubSection->name['en'] == "Average Prices" )
