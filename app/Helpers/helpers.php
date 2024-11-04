@@ -4577,7 +4577,7 @@ function getPermissions(array $systemsNames  = []):array
 		]
     ];
 
-    foreach (Arr::except(reportNames(), ['product items', 'products / service'])  as $reportName) {
+    foreach (Arr::except(reportNames(), ['product items', 'sub categories'])  as $reportName) {
         $permissions[] = [
             'name'=>generateReportName($reportName),
 			'systems'=>[VERO],
@@ -4618,8 +4618,8 @@ function generateReportName($reportName)
     if ($reportName === 'product items') {
         $reportName ='products items';
     }
-    if ($reportName =='products / service') {
-        $reportName ='products / services';
+    if ($reportName =='sub categories') {
+        $reportName ='sub categories';
     }
 
     return 'view ' . $reportName . ' report';
@@ -4635,8 +4635,8 @@ function reportNames()
         'branch'=>'branch',
         'category'=>'category', // here
         'principle'=>'principle',
-        'products / services'=>'products / services', //here
-        'products / service'=>'products / service', //here
+        'sub categories'=>'sub categories', //here
+        'sub categories'=>'sub categories', //here
         'products items'=>'products items', // here
         'product items'=>'product items', // here
         'average prices'=>'average prices', // here
