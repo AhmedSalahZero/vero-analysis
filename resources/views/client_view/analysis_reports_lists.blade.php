@@ -31,7 +31,7 @@
 
                             <?php $name = $subSection->name['en'] ;
                             if ($subSection->name['en'] == "Products / Services") {
-                                $name = "Product Or Service Name";
+                                $name = "Sub Category";
                             }   ?>
                         @endif
                        
@@ -75,7 +75,7 @@
                         <?php $name = $mainSubSection->name['en'] ;
 
                         if ($mainSubSection->name['en'] == "Products / Services") {
-                            $name = "Product Or Service Name";
+                            $name = "Sub Category";
                         }   ?>
                     @endif
                     @if ($section->name['en'] == 'Sales Breakdown Analysis Report' ||  (false !== $found =  array_search(\Str::singular($name),$viewing_names) || $mainSubSection->name['en'] == "Average Prices" )
@@ -106,7 +106,7 @@
                                         @if ($section->name['en'] !== 'Sales Breakdown Analysis Report' && $mainSubSection->name['en'] !== "Average Prices" )
 										
                                             @if ($name_of_section == "Products / Services")
-                                                @php  $name_of_section = "Product Or Service Names" @endphp
+                                                @php  $name_of_section = "Sub Category" @endphp
                                             @elseif($name_of_section == "Products Items")
                                                 @php  $name_of_section = "Product Items" @endphp
                                             @endif
@@ -230,11 +230,11 @@
  
                                                     @endif
                                                     @if ($name_of_section == "Products / Services" )
-                                                        @php $name_of_section = "Product Or Service Names"; @endphp 
+                                                        @php $name_of_section = "Sub Category"; @endphp 
                                                     @endif
                                                     
                                                     @if (isset($name_of_first_section) && $name_of_first_section == "Products / Services" )
-                                                        @php $name_of_first_section = "Product Or Service Names"; @endphp 
+                                                        @php $name_of_first_section = "Sub Category"; @endphp 
                                                     @endif
 
                                                     @if (isset($name_of_first_section) && $name_of_first_section == "Products / Services" )
