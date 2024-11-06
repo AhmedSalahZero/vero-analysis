@@ -94,8 +94,7 @@ begin
 					set @interestAmount = 0 ; 
 
 					select min_balance , interest_rate into _min_interest_balance, _interest_rate from account_interests where financial_institution_account_id = new.financial_institution_account_id and start_date <= new.date order by start_date desc , id desc limit 1 ;
-					insert into debugging (message) values (concat('ee'));
-					insert into debugging (message) values (concat(_min_interest_balance));
+	
 					set _interest_rate = ifnull(_interest_rate,0);
 					
 				

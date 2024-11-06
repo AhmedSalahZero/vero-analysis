@@ -7,6 +7,7 @@ use App\Models\Partner;
 use App\Traits\GeneralFunctions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class SuppliersController
 {
@@ -134,7 +135,9 @@ class SuppliersController
 			'name'=>$newName
 		]);
 		if($oldName != $newName){
-			$supplier->updateNamesInAllTables(['supplier_name'],$oldName,$newName,$company->id,['partner_type','=','is_supplier']);
+			DB::table('supplier_invoices')->where('supplier_id',$supplier->id)->update([
+				'supplier_name'=>$newName
+			]);
 		}
 		$type = Partner::SUPPLIERS;
 		// $this->store($company,$request);

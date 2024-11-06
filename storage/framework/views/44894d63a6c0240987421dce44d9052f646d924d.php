@@ -312,7 +312,7 @@ $selectedBanks = [];
                         </div>
                     </div>
 
-                    <div class="col-md-1 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden closest-parent">
+                    <div class="col-md-3 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden closest-parent">
                         <label><?php echo e(__('Amount In Contract Currency')); ?> <span class="currency-span"></span> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
                         <div class="kt-input-icon">
                             <input readonly value="<?php echo e(0); ?>" type="text" name="amount_in_invoice_currency[<?php echo e(MoneyPayment::CASH_PAYMENT); ?>]" class="form-control  amount-after-exchange-rate-class" data-type="<?php echo e(MoneyPayment::CASH_PAYMENT); ?>">
@@ -416,7 +416,7 @@ $selectedBanks = [];
                         </div>
                     </div>
 
-                    <div class="col-md-1 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden closest-parent">
+                    <div class="col-md-3 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden closest-parent">
                         <label><?php echo e(__('Amount In Contract Currency')); ?> <span class="currency-span"></span> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
                         <div class="kt-input-icon">
                             <input readonly value="<?php echo e(0); ?>" type="text" name="amount_in_invoice_currency[<?php echo e(MoneyPayment::PAYABLE_CHEQUE); ?>]" class="form-control  amount-after-exchange-rate-class" data-type="<?php echo e(MoneyPayment::PAYABLE_CHEQUE); ?>">
@@ -501,7 +501,7 @@ $selectedBanks = [];
                         </div>
                     </div>
 
-                    <div class="col-md-2 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden closest-parent">
+                    <div class="col-md-3 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden closest-parent">
                         <label><?php echo e(__('Amount In Contract Currency')); ?> <span class="currency-span"></span> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
                         <div class="kt-input-icon">
                             <input readonly value="<?php echo e(0); ?>" type="text" name="amount_in_invoice_currency[<?php echo e(MoneyPayment::OUTGOING_TRANSFER); ?>]" class="form-control  amount-after-exchange-rate-class" data-type="<?php echo e(MoneyPayment::OUTGOING_TRANSFER); ?>">

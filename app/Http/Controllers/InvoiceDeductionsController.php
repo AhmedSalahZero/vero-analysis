@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdateInvoiceDeductionRequest;
 use App\Models\Company;
+use App\Models\Deduction;
 use App\Models\InvoiceDeduction;
 use App\Traits\GeneralFunctions;
 
@@ -15,12 +16,9 @@ class InvoiceDeductionsController
 		$totalDeductions = array_sum(array_column($request->input('deductions',[]),'amount'));
 
 		$invoice = ('App\Models\\'.$invoiceModelName)::find($InvoiceId);
-		// dd($invoice->net_balance,$invoice->deductions->sum('pivot.amount'));
 		$currentBalance  =$invoice->net_balance + $invoice->deductions->sum('pivot.amount');
-		// dd($currentBalance);
 		$invoice->net_balance = $currentBalance - $totalDeductions;
 		
-		// if(true ){
 		if($invoice->net_balance < 0 ){
 			return response()->json([
 				'status'=>true,
@@ -32,8 +30,14 @@ class InvoiceDeductionsController
 		$invoice->update([
 			'total_deductions'=>0
 		]);
+		$invoiceExchangeRate = $invoice->getExchangeRate();
 		foreach($request->get('deductions',[]) as $deductionArr){
-			InvoiceDeduction::create(array_merge($deductionArr,['invoice_type'=>$invoiceModelName,'invoice_id'=>$invoice->id,'company_id'=>$company->id]));
+			$deductionArr = array_merge($deductionArr,['invoice_type'=>$invoiceModelName,'invoice_id'=>$invoice->id,'company_id'=>$company->id]);
+			$currentAmountInMainAndCurrencyCurrencyArr = Deduction::calculateAmountInMainCurrency($deductionArr['amount'],$deductionArr['date'],$invoice->getCurrency(),$invoiceExchangeRate,$company);
+			$deductionArr['amount_in_main_currency'] = $currentAmountInMainAndCurrencyCurrencyArr['amount_in_main_currency'];
+			$deductionArr['amount_in_invoice_exchange_rate'] = $currentAmountInMainAndCurrencyCurrencyArr['amount_in_invoice_exchange_rate'];
+			$deductionArr['foreign_gain_or_loss'] = $deductionArr['amount_in_main_currency'] - $deductionArr['amount_in_invoice_exchange_rate'] ;
+			InvoiceDeduction::create($deductionArr);
 		}
 		$invoice->update([
 			'total_deductions'=>$totalDeductions

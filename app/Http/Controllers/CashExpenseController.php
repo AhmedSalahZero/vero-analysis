@@ -136,7 +136,7 @@ class CashExpenseController
 
 
 		$payableChequesTableSearchFields = [
-			// 'supplier_name'=>__('Supplier Name'),
+			'partner_id'=>__('Supplier Name'),
 			'payment_date'=>__('Payment Date'),
 			'cheque_number'=>__('Cheque Number'),
 			'currency'=>__('Currency'),
@@ -146,33 +146,7 @@ class CashExpenseController
 		];
 
 
-		// $chequesRejectedTableSearchFields = [
-		// 	'supplier_name'=>__('Supplier Name'),
-		// 	'payment_date'=>__('Delivery Date'),
-		// 	'cheque_number'=>__('Cheque Number'),
-		// 	'currency'=>__('Currency'),
-		// 	'delivery_bank_id'=>__('Delivery Bank'),
-		// 	'due_date'=>__('Due Date'),
-		// 	'cheque_status'=>__('Status')
-		// ];
-
-		// $chequesUnderCollectionTableSearchFields = [
-		// 	'supplier_name'=>__('Supplier Name'),
-		// 	'cheque_number'=>__('Cheque Number'),
-		// 	'paid_amount'=>__('Cheque Amount'),
-		// 	'payment_date'=>__('Deposit Date'),
-		// 	'delivery_bank_id'=>__('Delivery Bank'),
-		// 	'clearance_days'=>'Clearance Days'
-		// ];
-
-		// $collectedChequesTableSearchFields = [
-		// 	'supplier_name'=>__('Supplier Name'),
-		// 	'cheque_number'=>__('Cheque Number'),
-		// 	'paid_amount'=>__('Cheque Amount'),
-		// 	'payment_date'=>__('Deposit Date'),
-		// 	'delivery_bank_id'=>__('Delivery Bank'),
-		// 	'clearance_days'=>'Clearance Days'
-		// ];
+	
 
 		$outgoingTransferTableSearchFields = [
 			// 'supplier_name'=>__('Supplier Name'),
@@ -371,43 +345,14 @@ class CashExpenseController
 		$viewName =  'reports.cashExpenses.form';
 		$banks = Bank::pluck('view_name','id');
 		$selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
-		// $supplierInvoices = SupplierInvoice::where('company_id',$company->id)->pluck('supplier_name','id')->unique()->toArray();
 		$accountTypes = AccountType::onlyCashAccounts()->get();
 		$financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
-		// $suppliers =  $supplierInvoiceId ?  Partner::where('id',CustomerInvoice::find($supplierInvoiceId)->supplier_id )->where('company_id',$company->id)->has('contracts')->pluck('name','id')->toArray() :Partner::where('is_supplier',1)->where('company_id',$company->id)->has('contracts')->pluck('name','id')->toArray();
-		/**
-		 * * for contracts
-		 */
-		// $suppliers =  $supplierInvoiceId ?  Partner::where('id',SupplierInvoice::find($supplierInvoiceId)->supplier_id )
-		// ->when($isDownPayment,function(Builder $q){
-		// 	$q->has('contracts');
-		// })
-		// ->where('company_id',$company->id)->pluck('name','id')->toArray() :Partner::where('is_supplier',1)->where('company_id',$company->id)
-		// ->when($isDownPayment,function(Builder $q){
-		// 	$q->has('contracts');
-		// })
-		// ->pluck('name','id')->toArray();
-		
-		// $contracts = Contract::where('company_id',$company->id)->get();
-		// if($cashExpense->isChequeUnderCollection()){
-		// 	return view('reports.cashExpenses.edit-cheque-under-collection',[
-		// 		'banks'=>$banks,
-		// 		'supplierInvoices'=>$supplierInvoices ,
-		// 		'selectedBranches'=>$selectedBranches,
-		// 		'model'=>$cashExpense,
-		// 		'singleModel'=>$singleModel,
-		// 		'accountTypes'=>$accountTypes,
-		// 		'financialInstitutionBanks'=>$financialInstitutionBanks
-		// 	]);
-		// }
+
         return view($viewName,[
 			'banks'=>$banks,
 			'clientsWithContracts'=>$clientsWithContracts,
 			'contractsRelationName'=>$contractsRelationName,
 			'cashExpenseCategories'=>$cashExpenseCategories,
-			// 'suppliers'=>$suppliers,
-			// 'contracts'=>$contracts,
-			// 'supplierInvoices'=>$supplierInvoices ,
 			'selectedBranches'=>$selectedBranches,
 			'accountTypes'=>$accountTypes,
 			'financialInstitutionBanks'=>$financialInstitutionBanks,

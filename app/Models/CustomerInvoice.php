@@ -90,7 +90,7 @@ class CustomerInvoice extends Model implements IInvoice
 	// do not use this directly use 
     public function moneyReceived()
     {
-        return $this->hasMany(MoneyReceived::class, self::CLIENT_NAME_COLUMN_NAME, self::CLIENT_NAME_COLUMN_NAME)->where('company_id',getCurrentCompanyId());
+        return $this->hasMany(MoneyReceived::class, 'customer_id', 'partner_id');
     }
 	public function getCollectedAmountAttribute($val)
     {
@@ -112,13 +112,13 @@ class CustomerInvoice extends Model implements IInvoice
 	public function getNetBalanceUntil(string $date)
 	{
 		$invoiceNumber = $this->getInvoiceNumber();
-		$customerName = $this->getName();
+		$partnerId = $this->getCustomerId();
 		$netInvoiceAmount = $this->getNetInvoiceAmount();
 		$totalWithhold = $this->getWithholdAmount();
 		$totalCollected = 0 ;
 		$moneyReceives = $this->moneyReceived->where(self::RECEIVING_OR_PAYMENT_DATE_COLUMN_NAME,'<=',$date) ;
 		foreach($moneyReceives as $moneyReceived) {
-			foreach($moneyReceived->getSettlementsForInvoiceNumber($invoiceNumber, $customerName)  as $settlement) {
+			foreach($moneyReceived->getSettlementsForInvoiceNumber($invoiceNumber, $partnerId)  as $settlement) {
 				$totalCollected += $settlement->getAmount();
 			}
 		}
@@ -130,15 +130,17 @@ class CustomerInvoice extends Model implements IInvoice
 
 	
 
-	public static function formatForStatementReport(Collection $customerInvoices,string $customerName,string $startDate,string $endDate,string $currency){
+	public static function formatForStatementReport(Collection $customerInvoices,int $partnerId,string $startDate,string $endDate,string $currency){
+			$isMainCurrency = $currency == 'main_currency' ;
 			$startDateFormatted = Carbon::make($startDate)->format('d-m-Y');
 			$index = -1 ;
 			/**
 			 * @var CustomerInvoice $firstCustomerInvoice
 			 */
 			$oneDayBeforeStartDate = Carbon::make($startDate)->subDays(1000)->format('Y-m-d');
+		
 			$startDateMinusOne = Carbon::make($startDate)->subDay()->format('Y-m-d');
-			$beginningBalance = self::getBeginningBalanceUntil($currency,$customerName,$oneDayBeforeStartDate,$startDateMinusOne) ; 
+			$beginningBalance = self::getBeginningBalanceUntil($currency,$partnerId,$oneDayBeforeStartDate,$startDateMinusOne) ; 
 			$formattedData = [];
 			$currentData['date'] = $startDateFormatted;
 			$currentData['document_type'] = 'Beginning Balance';
@@ -149,47 +151,53 @@ class CustomerInvoice extends Model implements IInvoice
 			$currentData['comment'] =null;
 			$index++ ;
 			$formattedData[$index] = $currentData;
-			$allMoneyReceived =  MoneyReceived::
-			where('company_id',getCurrentCompanyId())
-			->whereBetween(self::RECEIVING_OR_PAYMENT_DATE_COLUMN_NAME,[$startDate,$endDate])
-			->where('currency',$currency)
-			->where(self::CLIENT_NAME_COLUMN_NAME,$customerName)
-			->get() ; 
-		// dd($customerInvoices);
+		
 		foreach($customerInvoices as $customerInvoice){
+			$invoiceExchangeRate = $customerInvoice->getExchangeRate();
 			$currentData = [];
 			$invoiceDate = $customerInvoice->getInvoiceDateFormatted() ;
-			$invoiceNumber  = $customerInvoice->getInvoiceNumber($customerName) ;
+			$invoiceNumber  = $customerInvoice->getInvoiceNumber() ;
 			$currentData['date'] = $invoiceDate;
 			$currentData['document_type'] = 'Invoice';
 			$currentData['document_no'] = $invoiceNumber;
-			$currentData['debit'] = $customerInvoice->getNetInvoiceAmount();
+			$currentData['debit'] = $isMainCurrency ?  $customerInvoice->getNetInvoiceInMainCurrencyAmount() : $customerInvoice->getNetInvoiceAmount()  ;
 			$currentData['credit'] =0;
 			$currentData['comment'] =null;
 			$index++ ;
 			$formattedData[$index]=$currentData;
-	
+			
 			foreach($customerInvoice->deductions as $deductionWithPivot){
+				$deductionAmount = $deductionWithPivot->pivot->amount ;
 				$currentData['date'] = Carbon::make($deductionWithPivot->pivot->date)->format('d-m-Y');
 				$currentData['document_type'] = 'Deduction';
 				$currentData['document_no'] = $invoiceNumber;
 				$currentData['debit'] = 0;
-				$currentData['credit'] =$deductionWithPivot->pivot->amount;
+				$currentData['credit'] = $isMainCurrency ? $invoiceExchangeRate * $deductionAmount : $deductionAmount;
 				$currentData['comment'] =$deductionWithPivot->getName() . ' [ '  . $invoiceNumber .' ] ' ;
 				$index++ ;
 				$formattedData[$index]=$currentData;
 			}
 			
 		}
-	
+		
+		
+		$allMoneyReceived =  MoneyReceived::
+		where('company_id',getCurrentCompanyId())
+		->whereBetween(self::RECEIVING_OR_PAYMENT_DATE_COLUMN_NAME,[$startDate,$endDate])
+		->when(!$isMainCurrency , function($q) use ($currency){
+			$q->where('currency',$currency);
+		})
+		->where('partner_id',$partnerId)
+		->get() ; 
+		
 		foreach($allMoneyReceived as $moneyReceived) {
 			$dateReceiving = $moneyReceived->getReceivingDateFormatted() ;
 			$moneyReceivedType = $moneyReceived->getType();
 			$bankName = $moneyReceived->getBankName();
 			$docNumber = $moneyReceived->getNumber();
-				$moneyReceivedAmount = $moneyReceived->getAmountInInvoiceCurrency() ;
+				$moneyReceivedAmount = $isMainCurrency ? $moneyReceived->getAmountForMainCurrency() :$moneyReceived->getAmountInInvoiceCurrency() ;
 				if($moneyReceivedAmount){
-					$isDownPayment = $moneyReceived->isDownPayment() ;
+					// $isDownPayment = $moneyReceived->isDownPayment() ;
 					$invoiceNumbers = implode('/',$moneyReceived->settlements->pluck('invoice_number')->toArray());
 					$currentComment = MoneyReceived::generateComment($moneyReceived,app()->getLocale(),$invoiceNumbers,'');
 					// $currentComment = $isDownPayment ?  __('Down Payment For Contract :contractName',['contractName'=>$moneyReceived->contract->getName()]) :__('Settlement For Invoice No.') . ' ' . implode('/',$moneyReceived->settlements->pluck('invoice_number')->toArray());
@@ -202,7 +210,7 @@ class CustomerInvoice extends Model implements IInvoice
 					$currentData['comment'] = $currentComment ;
 					$index++;
 					$formattedData[] = $currentData ;
-					$totalWithholdAmount = $moneyReceived->getTotalWithholdAmount();
+					$totalWithholdAmount = $isMainCurrency ? $moneyReceived->getTotalWithholdInInvoiceExchangeRate() : $moneyReceived->getTotalWithholdAmount();
 					
 					if($totalWithholdAmount){
 						$currentData = []; 

@@ -30,11 +30,10 @@ class ChequeAgingService
         $this->currency = $currency ;
     }
 
-	public function __execute(array $clientNames, string $modelType)
+	public function __execute(array $partnerIds, string $modelType)
     {
 
         $fullModelName = ("\App\Models\\" . $modelType) ;
-        $clientNameColumnName = $fullModelName::CLIENT_NAME_COLUMN_NAME ;
         $modelModelName = $fullModelName::MONEY_MODEL_NAME ;
 		$chequeModelName = $fullModelName::AGING_CHEQUE_MODEL_NAME;
 		$moneyReceivedOrPaymentTableName = $fullModelName::MONEY_RECEIVED_OR_PAYMENT_TABLE_NAME;
@@ -55,10 +54,9 @@ class ChequeAgingService
 		->join($moneyReceivedOrPaymentTableName,$moneyReceivedOrPaymentTableName.'.id','=',$chequesTableName.'.'.$moneyReceivedOrPaymentTableForeignName)
 		->has($modelModelName)
 		->where($chequesTableName.'.company_id', $this->company_id);
-        if (count($clientNames)) {
-            $invoices->whereHas($modelModelName,function($q) use($clientNames,$clientNameColumnName){
-			
-                $q->whereIn($clientNameColumnName,$clientNames);
+        if (count($partnerIds)) {
+            $invoices->whereHas($modelModelName,function($q) use($partnerIds){
+                $q->whereIn('partner_id',$partnerIds);
             });
         }
         $invoices = $invoices->get();

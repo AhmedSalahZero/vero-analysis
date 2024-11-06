@@ -136,7 +136,7 @@ $date = now()->format('d-m-Y')
 			<div class="col-md-3">
                 <div class="form-group">
                     <label for="label-table">
-                        {{ __('Generate Code From ') }}
+                        {{ __('Generate Code From') }}
                     </label>
                     <select  multiple name="generate_labeling_code_fields[]" class="form-control select2-select" id="labeling-code" data-live-search="true">
 						@foreach($exportables as $exportableName=> $exportableTitle)

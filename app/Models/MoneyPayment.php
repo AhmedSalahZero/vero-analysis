@@ -110,21 +110,29 @@ class MoneyPayment extends Model
     {
         return $this->getType() ==self::OUTGOING_TRANSFER;
     }
+	public function getPartnerName()
+	{
+		return $this->partner ? $this->partner->getName() : __('N/A') ;
+	}
     public function getSupplierName()
     {
-        return $this->supplier_name;
+        return $this->getPartnerName();
     }
 	public function supplier()
 	{
-		return $this->belongsTo(Partner::class,'supplier_name','name')->where('is_supplier',1)->where('company_id',getCurrentCompanyId());
+		return $this->belongsTo(Partner::class,'partner_id','id');
+	}
+	public function getPartnerId()
+	{
+		return $this->partner ? $this->partner->id : 0 ;
 	}
 	public function getSupplierId()
 	{
-		return $this->supplier ? $this->supplier->id : 0 ;
+		return $this->getPartnerName();
 	}
 	public function getName()
 	{
-		return $this->getSupplierName();
+		return $this->getPartnerName();
 	}
     public function getDeliveryDate()
     {
@@ -166,7 +174,10 @@ class MoneyPayment extends Model
     {
         return number_format($this->getPaidAmount()) ;
     }
-
+	public function getInvoiceCurrency()
+	{
+		return $this->getCurrency();
+	}
 	public function getCurrency()
 	{
 		return $this->currency;
@@ -319,16 +330,13 @@ class MoneyPayment extends Model
     {
         return $this->hasMany(DownPaymentMoneyPaymentSettlement::class, 'money_payment_id', 'id');
     }
-    public function supplierInvoice()
+    public function supplierInvoices()
     {
-        return $this->belongsTo(SupplierInvoice::class, 'supplier_name', 'supplier_name');
+        return $this->hasMany(SupplierInvoice::class, 'partner_id', 'supplier_id');
     }
 
-	public function getSettlementsForCustomerName( string $supplierName):Collection
-    {
-        return $this->settlements->where('supplier_name', $supplierName) ;
-    }
-    public function getSettlementsForInvoiceNumber($invoiceNumber, string $supplierName,bool $isFromDownPayment = null):Collection
+	
+    public function getSettlementsForInvoiceNumber($invoiceNumber, int $partnerId,bool $isFromDownPayment = null):Collection
     {
 		$settlements = $this->settlements ;
 		if($isFromDownPayment == true){
@@ -337,13 +345,13 @@ class MoneyPayment extends Model
 		if($isFromDownPayment == false){
 			$settlements = $this->settlementsForMoneyPayment;
 		}
-        return $settlements->where('invoice_number', $invoiceNumber)->where('supplier_name', $supplierName) ;
+        return $settlements->where('invoice_number', $invoiceNumber)->where('partner_id', $partnerId) ;
     }
-	public function getSettlementsForInvoiceNumberAmount($invoiceNumber, string $supplierName,bool $isFromDownPayment =null):float{
-		return $this->getSettlementsForInvoiceNumber($invoiceNumber,$supplierName,$isFromDownPayment)->sum('settlement_amount');
+	public function getSettlementsForInvoiceNumberAmount($invoiceNumber, int $partnerId,bool $isFromDownPayment =null):float{
+		return $this->getSettlementsForInvoiceNumber($invoiceNumber,$partnerId,$isFromDownPayment)->sum('settlement_amount');
 	}
-	public function getWithholdForInvoiceNumberAmount($invoiceNumber, string $supplierName,bool $isFromDownPayment =null):float{
-		return $this->getSettlementsForInvoiceNumber($invoiceNumber,$supplierName,$isFromDownPayment)->sum('withhold_amount');
+	public function getWithholdForInvoiceNumberAmount($invoiceNumber, int $partnerId,bool $isFromDownPayment =null):float{
+		return $this->getSettlementsForInvoiceNumber($invoiceNumber,$partnerId,$isFromDownPayment)->sum('withhold_amount');
 	}
 	public function getDate()
 	{
@@ -686,10 +694,11 @@ class MoneyPayment extends Model
 						->when($chequeStatus , function(Builder $builder) use ($chequeStatus){
 							$builder->where('payable_cheques.status',$chequeStatus);
 						})
-						->groupBy('supplier_name')
-						->selectRaw('supplier_name,sum(paid_amount) as paid_amount')->get();
+						->groupBy('partner_id')
+						->selectRaw('partner_id,sum(paid_amount) as paid_amount')->get();
 		foreach($supplierNamesWithPaidAmount as $supplierNameAndPaidAmount){
-			$supplierName = $supplierNameAndPaidAmount->supplier_name;
+			$partner = Partner::find($supplierNameAndPaidAmount->partner_id);
+			$supplierName = $partner->getName();
 			$currentPaidAmount = $supplierNameAndPaidAmount->paid_amount ;
 			$result['suppliers'][$supplierName][$keyNameForCurrentType]['weeks'][$currentWeekYear] = isset($result['suppliers'][$supplierName][$keyNameForCurrentType]['weeks'][$currentWeekYear]) ? $result['suppliers'][$supplierName][$keyNameForCurrentType]['weeks'][$currentWeekYear] + $currentPaidAmount :  $currentPaidAmount;
 			$result['suppliers'][$supplierName][$keyNameForCurrentType]['total'] = isset($result['suppliers'][$supplierName][$keyNameForCurrentType]['total']) ? $result['suppliers'][$supplierName][$keyNameForCurrentType]['total']  + $currentPaidAmount : $currentPaidAmount;
@@ -703,29 +712,6 @@ class MoneyPayment extends Model
 	
 	}
 	
-	
-	/**
-	 * * هنا لو معاك 
-	 * * down payment
-	 * * وعايز تعرف ال
-	 * * money payment
-	 * * اللي تم انشائها معاها
-	 */
-	// public function moneyPayment()
-	// {
-	// 	return $this->belongsTo(MoneyPayment::class,'money_payment_id','id');
-	// }
-	/**
-	 * * هنا لو معاك 
-	 * * money payment
-	 * * وعايز تعرف ال
-	 * * down payment
-	 * * اللي تم انشائها معاها
-	 */
-	// public function downPayment()
-	// {
-	// 	return $this->hasOne(MoneyPayment::class,'money_payment_id','id');
-	// }
 	
 	public  function getForeignKeyName()
 	{

@@ -63,7 +63,7 @@ class StoreMoneyReceivedRequest extends FormRequest
 			'account_type.'.$type => $type == MoneyReceived::INCOMING_TRANSFER || $type == MoneyReceived::CASH_IN_BANK ? 'required' : 'sometimes',
 			'receiving_date'=>['required',new ReceivingOrPaymentDateRule($companyId,$type,[MoneyReceived::CASH_IN_BANK,MoneyReceived::INCOMING_TRANSFER],[MoneyReceived::CASH_IN_SAFE],$financialInstitutionId,$accountTypeId,$accountNumber)],
 			'unapplied_amount'=>['sometimes','gte:0'],
-			'contract_id'=>[new ContractAmountWithUnappliedAmountRule($this->get('unapplied_amount',0),$this->get('contract_id',0))],
+			'contract_id'=>$partnerType == 'is_customer'?[new ContractAmountWithUnappliedAmountRule($this->get('unapplied_amount',0),$this->get('contract_id',0))]:[],
 			'net_balance_rules'=>new SettlementPlusWithoutCanNotBeGreaterNetBalance($this->get('settlements',[])),
 			'settlements'=>$partnerType =='is_customer' ? new AtLeaseOneSettlementMustBeExist($this->get('settlements',[])) : [],
 			'cheque_number'=>$type == MoneyReceived::CHEQUE  ? ['required',new UniqueChequeNumberForCustomerRule(Request()->get('drawee_bank_id'),Request('current_cheque_id'),__('Cheque Number Already Exist'))] : [],

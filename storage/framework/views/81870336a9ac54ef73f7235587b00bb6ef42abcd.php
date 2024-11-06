@@ -1,8 +1,10 @@
 <?php $attributes = $attributes->exceptProps([
-'currencyName','total','color','customerName','showReport','invoiceType'
+'currencyName','total','color','customerName','showReport','invoiceType',
+'mainFunctionalCurrency'
 ]); ?>
 <?php foreach (array_filter(([
-'currencyName','total','color','customerName','showReport','invoiceType'
+'currencyName','total','color','customerName','showReport','invoiceType',
+'mainFunctionalCurrency'
 ]), 'is_string', ARRAY_FILTER_USE_KEY) as $__key => $__value) {
     $$__key = $$__key ?? $__value;
 } ?>
@@ -11,7 +13,8 @@
     if (array_key_exists($__key, $__defined_vars)) unset($$__key);
 } ?>
 <?php unset($__defined_vars); ?>
-<?php if (! $__env->hasRenderedOnce('cb4e6a57-daf2-4f6f-8589-c692cb14256e')): $__env->markAsRenderedOnce('cb4e6a57-daf2-4f6f-8589-c692cb14256e'); ?>
+<?php if (! $__env->hasRenderedOnce('b340b652-cf4c-4ca9-af8d-1458b5e3c41d')): $__env->markAsRenderedOnce('b340b652-cf4c-4ca9-af8d-1458b5e3c41d'); ?>
+
 <style>
     .report-flex {
         display: flex;
@@ -33,12 +36,18 @@
         <div class="kt-widget24__details">
             <div class="kt-widget24__info">
                 <h4 class="kt-widget24__title font-size text-nowrap black-card-title-css">
+					<?php if($currencyName == 'main_currency'): ?>
+                    <?php echo e(__('Total Balance In Main Currency ' . $mainFunctionalCurrency )); ?>
+
+					<?php else: ?>
                     <?php echo e(__('Total Balance In ' . $currencyName )); ?>
 
+					<?php endif; ?>
                 </h4>
 
             </div>
             <?php if($showReport && $currencyName): ?>
+					<?php if($currencyName!= 'main_currency'): ?>
             <div class="report-flex">
                 <div class="kt-align-right ">
                     <a href="<?php echo e(route('show.total.net.balance.in',['company'=>$company->id , 'currency'=>$currencyName ,'modelType'=>$invoiceType   ])); ?>" type="button" class="d-flex ml-3 btn btn-sm btn-brand btn-elevate btn-pill"><i class="fa fa-chart-line"></i> <?php echo e(__('All Invoices Report')); ?> </a>
@@ -48,6 +57,7 @@
                     <a href="<?php echo e(route('show.total.net.balance.in',['company'=>$company->id , 'currency'=>$currencyName ,'modelType'=>$invoiceType,'only'=>'past_due'   ])); ?>" type="button" class="d-flex ml-3 btn btn-sm btn-brand btn-elevate btn-pill"><i class="fa fa-chart-line"></i> <?php echo e(__('Past Dues Report')); ?> </a>
                 </div>
             </div>
+			<?php endif; ?>
 			
 			<?php else: ?> 
 

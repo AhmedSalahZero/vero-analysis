@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Company;
+use App\Models\Partner;
 use App\Models\User;
-use App\ReadyFunctions\InvoiceAgingService;
 use App\Traits\GeneralFunctions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -16,17 +16,21 @@ class BalancesController
 	{
 		
 		$total = [];
+
+		$id = 0 ;
 		foreach($items as $item){
-			$id = $item->id ;
 			$currencyName = $item->currency ;
 			$customerName = $item->{$clientNameColumnName} ;
 			$currentValueForCurrency = $item->net_balance;
 			$currentValueForMainCurrency= $item->net_balance_in_main_currency;
 			$total['currencies'][$currencyName] = isset($total['currencies'][$currencyName]) ? $total['currencies'][$currencyName] + $currentValueForCurrency   :  $currentValueForCurrency;
-			$total['main_currency'][$mainCurrency] = isset($total['main_currency'][$mainCurrency]) ? $total['main_currency'][$mainCurrency] + $currentValueForMainCurrency  : $currentValueForMainCurrency;
+			// $total['main_currency'][$mainCurrency] = isset($total['main_currency'][$mainCurrency]) ? $total['main_currency'][$mainCurrency] + $currentValueForMainCurrency  : $currentValueForMainCurrency;
 			$total['customers_per_currency'][$mainCurrency][$customerName][$id] =   $currentValueForCurrency;
 			$total['customers_per_main_currency'][$mainCurrency][$customerName][$id] =   $currentValueForMainCurrency;
+			$id++;
+			
 		}
+		
 		$valueAtMainCurrency = $total['currencies'][$mainCurrency] ?? 0;
 		unset($total['currencies'][$mainCurrency]);
 		$totalOfCurrency  = $total['currencies'] ?? [];
@@ -45,19 +49,44 @@ class BalancesController
 		$user =User::where('id',$request->user()->id)->get();
 		$mainCurrency = $company->getMainFunctionalCurrency();
 		$invoicesBalances =DB::select(DB::raw('select id, '. $clientNameColumnName .' , '. $clientIdColumnName .' , currency , sum(net_balance) as net_balance , sum(net_balance_in_main_currency) as net_balance_in_main_currency from '. $tableName .' where company_id = '. $company->id .'  group by '. $clientNameColumnName .' , currency order by net_balance desc;'));
+		$invoicesBalancesForMainFunctionalCurrency = $this->addMainCurrency($invoicesBalances,$clientNameColumnName,$clientIdColumnName);
+		$invoicesBalances = array_merge($invoicesBalances , $invoicesBalancesForMainFunctionalCurrency);
 		$cardNetBalances = $this->sumNetBalancePerCurrency($invoicesBalances,$mainCurrency,$clientNameColumnName);
-		
-        return view('admin.reports.balances_form', compact('company','title','invoicesBalances','cardNetBalances','mainCurrency','modelType','clientNameColumnName','clientIdColumnName','customersOrSupplierStatementText'));
+		// dd($cardNetBalances);
+		$hasMoreThanCurrency = isset($cardNetBalances['currencies']) && count($cardNetBalances['currencies']) >1 ; 
+		// dd($invoicesBalances,$invoicesBalancesForMainFunctionalCurrency);
+		// dd($invoicesBalances,$invoicesBalancesForMainFunctionalCurrency);
+		$mainFunctionalCurrency = $company->getMainFunctionalCurrency(); 
+        return view('admin.reports.balances_form', compact('company','mainFunctionalCurrency','hasMoreThanCurrency','title','invoicesBalances','cardNetBalances','mainCurrency','modelType','clientNameColumnName','clientIdColumnName','customersOrSupplierStatementText'));
     }
-	// public function result(Company $company , Request $request,string $modelType){
 		
-	// 	$aginDate = $request->get('again_date');
-	// 	$customerNames = $request->get('customers');
-	// 	$invoiceAgingService = new InvoiceAgingService($company->id ,$aginDate);
-	// 	$customerAgings  = $invoiceAgingService->__execute($customerNames,$modelType) ;
-	// 	$weeksDates = formatWeeksDatesFromStartDate($aginDate);
-	// 	return view('admin.reports.customer-invoices-aging',['customerAgings'=>$customerAgings,'aginDate'=>$aginDate,'weeksDates'=>$weeksDates]);
-	// }
+		protected function addMainCurrency(array $items,string $clientNameColumnName,string $clientIdColumnName ){
+			$formattedResult = [];
+			$partnerNames = [];
+			$totalPerCustomerForMainCurrency = [];
+			foreach($items as $stdClass ){
+				$partnerId = $stdClass->{$clientIdColumnName} ;
+				$partnerName = $stdClass->{$clientNameColumnName} ;
+				$partnerNames[$partnerId] = $partnerName;
+				$totalPerCustomerForMainCurrency[$partnerId] = isset($totalPerCustomerForMainCurrency[$partnerId]) ? $totalPerCustomerForMainCurrency[$partnerId] + $stdClass->net_balance_in_main_currency :  $stdClass->net_balance_in_main_currency;
+			}
+			foreach($totalPerCustomerForMainCurrency as $partnerId => $total){
+				
+				$formattedResult[] = json_decode(json_encode([
+					'customer_id'=>$partnerId,
+					'customer_name'=>$partnerNames[$partnerId],
+					'currency'=>'main_currency',
+					'net_balance'=>$total,
+					'net_balance_in_main_currency'=>$total 
+				]));
+			}
+			return $formattedResult;
+		
+			
+		
+		return $result;
+	}
+	
 	public function showTotalNetBalanceDetailsReport(Request $request,Company $company , string $currency , string $modelType)
 	{
 		$onlyPasted = $request->has('only') ;

@@ -11,6 +11,7 @@ use App\Models\Company;
 use App\Models\Contract;
 use App\Models\CustomerInvoice;
 use App\Models\FinancialInstitution;
+use App\Models\ForeignExchangeRate;
 use App\Models\MoneyPayment;
 use App\Models\OutgoingTransfer;
 use App\Models\Partner;
@@ -19,6 +20,7 @@ use App\Models\PurchaseOrder;
 use App\Models\SupplierInvoice;
 use App\Traits\GeneralFunctions;
 use App\Traits\Models\HasCreditStatements;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -120,7 +122,7 @@ class MoneyPaymentController
 
 
 		$payableChequesTableSearchFields = [
-			'supplier_name'=>__('Supplier Name'),
+			'partner_id'=>__('Supplier Name'),
 			'delivery_date'=>__('Payment Date'),
 			'cheque_number'=>__('Cheque Number'),
 			'currency'=>__('Currency'),
@@ -133,7 +135,7 @@ class MoneyPaymentController
 		
 
 		$outgoingTransferTableSearchFields = [
-			'supplier_name'=>__('Supplier Name'),
+			'partner_id'=>__('Supplier Name'),
 			'delivery_date'=>__('Payment Date'),
 			'delivery_bank_id'=>__('Payment Bank'),
 			'paid_amount'=>__('Transfer Amount'),
@@ -142,7 +144,7 @@ class MoneyPaymentController
 		];
 
 		$payableCashTableSearchFields = [
-			'supplier_name'=>__('Supplier Name'),
+			'partner_id'=>__('Supplier Name'),
 			'delivery_date'=>__('Payment Date'),
 			'delivery_branch_id'=>__('Branch'),
 			'paid_amount'=>__('Paid Amount'),
@@ -180,7 +182,6 @@ class MoneyPaymentController
 		$financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
 		$selectedCurrency = $supplierInvoiceId ? SupplierInvoice::where('id',$supplierInvoiceId)->first()->getCurrency() : null;
 
-		// $supplierInvoices =  $singleModel ?  SupplierInvoice::where('id',$singleModel)->pluck('supplier_name','id') :SupplierInvoice::where('company_id',$company->id)->pluck('supplier_name','id')->unique()->toArray();
 		$invoiceNumber = $supplierInvoiceId ? SupplierInvoice::where('id',$supplierInvoiceId)->first()->getInvoiceNumber():null;
 		/**
 		 * * for contracts
@@ -252,9 +253,9 @@ class MoneyPaymentController
 		$moneyPayment = MoneyPayment::find($moneyPaymentId);
 		$partner = Partner::find($supplierInvoiceId);
 		$downPaymentContract = Contract::find($request->get('downPaymentContractId'));
-		$supplierName = $partner->getName() ;
+		$partnerId = $partner->id ;
 		
-		$invoices = SupplierInvoice::where('supplier_name',$supplierName)->where('company_id',$company->id)
+		$invoices = SupplierInvoice::where('supplier_id',$partnerId)->where('company_id',$company->id)
 		->where('net_invoice_amount','>',0)
 		->when($downPaymentContract , function($q) use($downPaymentContract){
 			$q->where('contract_code',$downPaymentContract->getCode());
@@ -276,8 +277,8 @@ class MoneyPaymentController
 
 
 		foreach($invoices as $index=>$invoiceArr){
-			$invoices[$index]['settlement_amount'] = $moneyPayment ? $moneyPayment->getSettlementsForInvoiceNumberAmount($invoiceArr['invoice_number'],$supplierName,0) : 0;
-			$invoices[$index]['withhold_amount'] = $moneyPayment ? $moneyPayment->getWithholdForInvoiceNumberAmount($invoiceArr['invoice_number'],$supplierName,0) : 0;
+			$invoices[$index]['settlement_amount'] = $moneyPayment ? $moneyPayment->getSettlementsForInvoiceNumberAmount($invoiceArr['invoice_number'],$partnerId,0) : 0;
+			$invoices[$index]['withhold_amount'] = $moneyPayment ? $moneyPayment->getWithholdForInvoiceNumberAmount($invoiceArr['invoice_number'],$partnerId,0) : 0;
 		}
 
 		$invoices = $this->formatInvoices($invoices,$inEditMode,$moneyPayment);
@@ -308,11 +309,11 @@ class MoneyPaymentController
 		$supplierName = $supplier->getName();
 		$supplierId = $supplier->id;
 		$paymentBranchName = $request->get('delivery_branch_id') ;
-		$data = $request->only(['type','delivery_date','currency','payment_currency','partner_type']);
+		$data = $request->only(['type','delivery_date','currency','payment_currency']);
 		$currencyName = $data['currency'];
 		$paymentCurrency = $data['payment_currency'];
 		
-		$data['supplier_name'] = $supplierName;
+		$data['partner_id'] = $supplierId;
 		$data['user_id'] = auth()->user()->id ;
 		$data['company_id'] = $company->id ;
 		$isDownPayment =  $request->get('is_down_payment') && $request->has('purchases_orders_amounts');
@@ -388,6 +389,11 @@ class MoneyPaymentController
 		/**
 		 * @var MoneyPayment $moneyPayment
 		 */
+		$mainFunctionCurrency = $company->getMainFunctionalCurrency();
+		$paymentDate = $data['delivery_date'];
+		$paymentDate = Carbon::make($paymentDate)->format('Y-m-d');
+		$foreignExchangeRate = ForeignExchangeRate::getExchangeRateForCurrencyAndClosestDate($currencyName,$mainFunctionCurrency,$paymentDate,$company->id);
+		
 		 $moneyPayment = MoneyPayment::create($data);
 
 		 $relationData['company_id'] = $company->id ;
@@ -407,7 +413,7 @@ class MoneyPaymentController
 		 * * For Money Payment Only
 		 */
 		$totalWithholdAmount= 0 ;
-		$moneyPayment->storeNewSettlement($request->get('settlements',[]),$supplierName,$company->id);
+		$moneyPayment->storeNewSettlement($paymentCurrency,$currencyName,$exchangeRate,$foreignExchangeRate,$request->get('settlements',[]),$partnerId,$company->id);
 		$moneyPayment->update([
 			'total_withhold_amount'=>$totalWithholdAmount
 		]);
@@ -448,9 +454,9 @@ class MoneyPaymentController
 		$viewName = $isDownPayment  ?  'reports.moneyPayments.down-payments-form' : 'reports.moneyPayments.form';
 		$banks = Bank::pluck('view_name','id');
 		$selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
-		// $supplierInvoices = SupplierInvoice::where('company_id',$company->id)->pluck('supplier_name','id')->unique()->toArray();
 		$accountTypes = AccountType::onlyCashAccounts()->get();
 		$financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
+		$partnerType = $moneyPayment->partner->getType();
 		$suppliers =  $supplierInvoiceId ?  Partner::where('id',CustomerInvoice::find($supplierInvoiceId)->supplier_id )->where('company_id',$company->id)->has('contracts')->pluck('name','id')->toArray() :Partner::where('is_supplier',1)->where('company_id',$company->id)->has('contracts')->pluck('name','id')->toArray();
 		/**
 		 * * for contracts
@@ -459,7 +465,7 @@ class MoneyPaymentController
 		->when($isDownPayment,function(Builder $q){
 			$q->has('contracts');
 		})
-		->where('company_id',$company->id)->pluck('name','id')->toArray() :Partner::where('is_supplier',1)->where('company_id',$company->id)
+		->where('company_id',$company->id)->pluck('name','id')->toArray() :Partner::where($partnerType,1)->where('company_id',$company->id)
 		->when($isDownPayment,function(Builder $q){
 			$q->has('contracts');
 		})
@@ -491,11 +497,17 @@ class MoneyPaymentController
 		$companyId = $company->id;
 		$newType = $request->get('type');
 		$moneyPayment->deleteRelations();
+		$paymentCurrency = $moneyPayment->getPaymentCurrency();
+		$currencyName = $moneyPayment->getInvoiceCurrency();
+		$exchangeRate = $moneyPayment->getExchangeRate();
 		$moneyPaidAmountHasChanged = $moneyPayment->getAmount() != $request->input('paid_amount.'.$newType);
 		$moneyPayment->delete();
 		$newMoneyPayment = $this->store($company,$request,true);
 		if(!$moneyPaidAmountHasChanged){
-			$newMoneyPayment->storeNewSettlement($oldSettlementsForMoneyReceivedWithDownPayment->toArray(),$newMoneyPayment->getName(),$companyId,1);
+			$paymentDate = $moneyPayment->getDeliveryDate();
+			$mainFunctionCurrency = $company->getMainFunctionalCurrency();
+			$foreignExchangeRate = ForeignExchangeRate::getExchangeRateForCurrencyAndClosestDate($currencyName,$mainFunctionCurrency,$paymentDate,$company->id);
+			$newMoneyPayment->storeNewSettlement($paymentCurrency,$currencyName,$exchangeRate,$foreignExchangeRate,$oldSettlementsForMoneyReceivedWithDownPayment->toArray(),$newMoneyPayment->getPartnerId(),$companyId,1);
 		}
 		 $activeTab = $newType;
 		 if($request->ajax()){

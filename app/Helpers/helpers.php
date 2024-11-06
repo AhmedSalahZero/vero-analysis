@@ -1578,8 +1578,7 @@ function getComparingReportForAnalysis($request, $report_data, $secondReport, $c
             $secondReportDataResult = (new ExportAgainstAnalysisReport())->result($request, $company, 'view', false);
             $type = __($modelType);
         } else {
-            dd('not supported type');
-
+            throw new \Exception('custom exception .. not supported type');
         }
 
 
@@ -6945,7 +6944,7 @@ function getReviewPermissionName($modelName):string{
 	if($modelName=='MoneyPayment'){
 		return 'review supplier payments';
 	}
-	dd('please add permission name here');
+	 throw new \Exception('custom exception .. please add permission name here');
 }
 function AtLeastOnKeyIsTrue(array $items , string $key){
 	$show = false ;
@@ -6955,4 +6954,14 @@ function AtLeastOnKeyIsTrue(array $items , string $key){
 		}
 	}
 	return $show ;
+}
+function getAllPartnerTypesForSuppliers():array 
+{
+	return ['is_supplier'=>__('Supplier'),'is_subsidiary_company'=>__('Subsidiary Company') , 'is_shareholder'=>__('Shareholder') , 'is_employee'=>__('Employee')];
+	
+}
+function getAllPartnerTypesForCustomers():array 
+{
+	return ['is_customer'=>__('Customer'),'is_subsidiary_company'=>__('Subsidiary Company') , 'is_shareholder'=>__('Shareholder') , 'is_employee'=>__('Employee')];
+	
 }

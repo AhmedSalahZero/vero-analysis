@@ -94,7 +94,7 @@ class SupplierInvoice extends Model implements IInvoice
 	// do not use this directly use 
     public function moneyPayment()
     {
-        return $this->hasMany(MoneyPayment::class, self::CLIENT_NAME_COLUMN_NAME, self::CLIENT_NAME_COLUMN_NAME)->where('company_id',getCurrentCompanyId());
+        return $this->hasMany(MoneyPayment::class, 'supplier_id', 'partner_id');
     }
 	public function getPaidAmountAttribute($val)
     {
@@ -116,13 +116,13 @@ class SupplierInvoice extends Model implements IInvoice
 	public function getNetBalanceUntil(string $date)
 	{
 		$invoiceNumber = $this->getInvoiceNumber();
-		$supplierName = $this->getName();
+		$partnerId = $this->getSupplierId();
 		$netInvoiceAmount = $this->getNetInvoiceAmount();
 		$totalWithhold = $this->getWithholdAmount();
 		$totalPaid = 0 ;
 		$payments = $this->moneyPayment->where(self::RECEIVING_OR_PAYMENT_DATE_COLUMN_NAME,'<=',$date) ;
 		foreach($payments as $moneyPayment) {
-			foreach($moneyPayment->getSettlementsForInvoiceNumber($invoiceNumber, $supplierName)  as $settlement) {
+			foreach($moneyPayment->getSettlementsForInvoiceNumber($invoiceNumber, $partnerId)  as $settlement) {
 				$totalPaid += $settlement->getAmount();
 			}
 		}
@@ -133,12 +133,12 @@ class SupplierInvoice extends Model implements IInvoice
 
 
 
-	public static function formatForStatementReport(Collection $supplierInvoices,string $supplierName,string $startDate,string $endDate,string $currency){
+	public static function formatForStatementReport(Collection $supplierInvoices,int $partnerId,string $startDate,string $endDate,string $currency){
 			$startDateFormatted = Carbon::make($startDate)->format('d-m-Y');
 			$index = -1 ;
 			$oneDayBeforeStartDate = Carbon::make($startDate)->subDays(1000)->format('Y-m-d');
 			$startDateMinusOne = Carbon::make($startDate)->subDay()->format('Y-m-d');
-			$beginningBalance = self::getBeginningBalanceUntil($currency,$supplierName,$oneDayBeforeStartDate,$startDateMinusOne) ;
+			$beginningBalance = self::getBeginningBalanceUntil($currency,$partnerId,$oneDayBeforeStartDate,$startDateMinusOne) ;
 			$formattedData = [];
 			$currentData['date'] = $startDateFormatted;
 			$currentData['document_type'] = 'Beginning Balance';
@@ -153,12 +153,12 @@ class SupplierInvoice extends Model implements IInvoice
 			where('company_id',getCurrentCompanyId())
 			->whereBetween(self::RECEIVING_OR_PAYMENT_DATE_COLUMN_NAME,[$startDate,$endDate])
 			->where('currency',$currency)
-			->where(self::CLIENT_NAME_COLUMN_NAME,$supplierName)
+			->where('partner_id',$partnerId)
 			->get() ; 
 		foreach($supplierInvoices as $supplierInvoice){
 			$currentData = [];
 			$invoiceDate = $supplierInvoice->getInvoiceDateFormatted() ;
-			$invoiceNumber  = $supplierInvoice->getInvoiceNumber($supplierName) ;
+			$invoiceNumber  = $supplierInvoice->getInvoiceNumber() ;
 			$currentData['date'] = $invoiceDate;
 			$currentData['document_type'] = 'Invoice';
 			$currentData['document_no'] = $invoiceNumber;

@@ -165,18 +165,25 @@ class MoneyReceived extends Model
         return $this->getType() ==self::INCOMING_TRANSFER;
     }
     
-	
+	public function getPartnerName()
+	{
+		return $this->partner ? $this->partner->getName() : __('N/A') ;
+	}
     public function getCustomerName()
     {
-        return $this->customer_name;
+		return $this->getPartnerName();
     }
 	public function customer()
 	{
-		return $this->belongsTo(Partner::class,'customer_name','name')->where('is_customer',1)->where('company_id',getCurrentCompanyId());
+		return $this->belongsTo(Partner::class,'partner_id','id');
+	}
+	public function getPartnerId()
+	{
+		return $this->partner ? $this->partner->id : 0 ;
 	}
 	public function getCustomerId()
 	{
-		return $this->customer ? $this->customer->id : 0 ;
+		return $this->getPartnerId();
 	}
     public function getName()
     {
@@ -199,6 +206,35 @@ class MoneyReceived extends Model
     {
         return  $this->amount_in_invoice_currency?:0 ;
     }
+	public function getAmountForMainCurrency()
+	{
+
+		
+		$totalSettlement = 0 ;
+		$totalDownPaymentSettlement = 0 ;
+		foreach($this->settlements as $settlement ){
+			$invoiceExchangeRate = $settlement->customerInvoice->getExchangeRate();
+			$totalSettlement+= $settlement->getAmount() * $invoiceExchangeRate;
+		}
+		foreach($this->downPaymentSettlements as $downPaymentSettlement){
+			$moneyReceived = $downPaymentSettlement->moneyReceived ;
+			$receivingCurrency = $moneyReceived->getReceivingCurrency();
+			$mainFunctionalCurrency = $moneyReceived->company->getMainFunctionalCurrency();
+			$receivingDate = $moneyReceived->getReceivingDate();
+			$foreignExchangeRate = ForeignExchangeRate::getExchangeRateForCurrencyAndClosestDate($receivingCurrency,$mainFunctionalCurrency,$receivingDate,$moneyReceived->company->id);
+			$totalDownPaymentSettlement += $downPaymentSettlement->down_payment_amount * $foreignExchangeRate;
+		}
+		return $totalSettlement + $totalDownPaymentSettlement  ;
+	}
+	public function getTotalWithholdInInvoiceExchangeRate()
+	{
+		$totalWithhold = 0 ;
+		foreach($this->settlements as $settlement ){
+			$invoiceExchangeRate = $settlement->customerInvoice->getExchangeRate();
+			$totalWithhold+= $settlement->getWithhold() * $invoiceExchangeRate;
+		}
+		return $totalWithhold;
+	}
     public function getReceivedAmount()
     {
         return  $this->received_amount?:0 ;
@@ -219,6 +255,10 @@ class MoneyReceived extends Model
     {
         return number_format($this->getReceivedAmount()) ;
     }
+	public function getInvoiceCurrency()
+	{
+		return $this->getCurrency();
+	}
 	
 	public function getCurrency()
 	{
@@ -399,18 +439,15 @@ class MoneyReceived extends Model
     {
         return $this->hasMany(DownPaymentSettlement::class, 'money_received_id', 'id');
     }
-    public function customerInvoice()
+    public function customerInvoices()
     {
-        return $this->belongsTo(CustomerInvoice::class, 'customer_name', 'customer_name');
+        return $this->hasMany(CustomerInvoice::class, 'partner_id', 'customer_id');
     }
    
 
-	public function getSettlementsForCustomerName( string $customerName):Collection
-    {
-        return $this->settlements->where('customer_name', $customerName) ;
-    }
+
 	
-    public function getSettlementsForInvoiceNumber($invoiceNumber, string $customerName,bool $isFromDownPayment = null):Collection
+    public function getSettlementsForInvoiceNumber($invoiceNumber, int $partnerId,bool $isFromDownPayment = null):Collection
     {
 		$settlements = $this->settlements ;
 		if($isFromDownPayment == true){
@@ -420,17 +457,17 @@ class MoneyReceived extends Model
 		if($isFromDownPayment == false){
 			$settlements = $this->settlementsForMoneyReceived;
 		}
-        return $settlements->where('invoice_number', $invoiceNumber)->where('customer_name', $customerName) ;
+        return $settlements->where('invoice_number', $invoiceNumber)->where('partner_id', $partnerId) ;
     }
-	public function getSettlementsForInvoiceNumberAmount($invoiceNumber, string $customerName,bool $isFromDownPayment =null):float{
+	public function getSettlementsForInvoiceNumberAmount($invoiceNumber, int $partnerId,bool $isFromDownPayment =null):float{
 	
-		return $this->getSettlementsForInvoiceNumber($invoiceNumber,$customerName,$isFromDownPayment)
+		return $this->getSettlementsForInvoiceNumber($invoiceNumber,$partnerId,$isFromDownPayment)
 		->sum('settlement_amount');
 		
 		
 	}
-	public function getWithholdForInvoiceNumberAmount($invoiceNumber, string $customerName,bool $isFromDownPayment =null):float{
-		return $this->getSettlementsForInvoiceNumber($invoiceNumber,$customerName,$isFromDownPayment)->sum('withhold_amount');
+	public function getWithholdForInvoiceNumberAmount($invoiceNumber, int $partnerId,bool $isFromDownPayment =null):float{
+		return $this->getSettlementsForInvoiceNumber($invoiceNumber,$partnerId,$isFromDownPayment)->sum('withhold_amount');
 	}
     public function getReceivingDateFormatted()
     {
@@ -787,9 +824,8 @@ class MoneyReceived extends Model
 		->join('incoming_transfers','incoming_transfers.money_received_id','=','money_received.id')
 		->where('money_received.company_id',$companyId)
 		->whereBetween('money_received.receiving_date',[$startDate,$endDate])
-		->when($isContract , function(Builder $builder) use ($customerName,$contractCode){
-			$builder->join('customer_invoices','customer_invoices.customer_name' ,'=','money_received.customer_name')
-			// ->where('customer_invoices.customer_name',$customerName)
+		->when($isContract , function(Builder $builder) use ($contractCode){
+			$builder->join('customer_invoices','customer_invoices.customer_id' ,'=','money_received.partner_id')
 			->where('customer_invoices.contract_code',$contractCode)
 			->join('settlements',function(Builder $builder){
 				$builder->on('money_received.id','=','settlements.money_received_id')
@@ -808,13 +844,6 @@ class MoneyReceived extends Model
 		->join('cash_in_banks','cash_in_banks.money_received_id','=','money_received.id')
 		->where('money_received.company_id',$companyId)
 		->whereBetween('money_received.receiving_date',[$startDate,$endDate])
-		// ->when($customerName && $contractCode , function(Builder $builder) use ($customerName,$contractCode){
-		// 	$builder->join('customer_invoices','customer_invoices.customer_name' ,'=','money_received.customer_name')
-		// 	->where('customer_invoices.customer_name',$customerName)
-		// 	->where('customer_invoices.contract_code',$contractCode)
-		// 	;
-			
-		// })
 		->sum('received_amount');
 	}
 	public static function getCashInSafeUnderDates(int $companyId , string $startDate , string $endDate,string $currency) 

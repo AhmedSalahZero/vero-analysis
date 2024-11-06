@@ -287,14 +287,16 @@
                     @php
                     $index = 0 ;
                     @endphp
+					{{-- {{ dd($cardNetBalances['currencies']) }} --}}
                     @foreach($cardNetBalances['currencies'] ?? [] as $currencyName=>$total)
-                    <x-money-card :invoiceType="$modelType" :show-report="1" :color="getColorFromIndex($index)" :currencyName="$currencyName" :total="$total"></x-money-card>
+                    <x-money-card :main-functional-currency="$mainFunctionalCurrency" :invoiceType="$modelType" :show-report="1" :color="getColorFromIndex($index)" :currencyName="$currencyName" :total="$total"></x-money-card>
+		
                     @php
                     $index++;
                     @endphp
-                    @if($loop->last && isset($cardNetBalances['main_currency']))
+                    {{-- @if($loop->last && isset($cardNetBalances['main_currency']))
                     <x-money-card :invoiceType="$modelType" :show-report="0" :color="'success'" :currencyName="'Main Currency ' .'['. array_key_first($cardNetBalances['main_currency'] ) . ']'" :total="$cardNetBalances['main_currency'][$mainCurrency] ?? 0"></x-money-card>
-                    @endif
+                    @endif --}}
                     @endforeach
 
 
@@ -312,7 +314,13 @@
                         @foreach($cardNetBalances['currencies']??[] as $currencyName=>$total)
                         <li class="nav-item">
                             <a class="nav-link {{ $loop->first ? 'active':'' }}" onclick="return false;" data-toggle="tab" href="#{{ $currencyName.'report__table' }}" role="tab">
+								@if($currencyName == 'main_currency')
+                                <i class="flaticon2-checking"></i> &nbsp; {{ __('Balance In Main Currency ').' ' .__($mainFunctionalCurrency) }}
+								
+								@else
                                 <i class="flaticon2-checking"></i> &nbsp; {{ __('Balance In').' ' .__($currencyName) }}
+								
+								@endif 
                             </a>
                         </li>
                         @endforeach
@@ -363,10 +371,11 @@
                                                 <th class="view-table-th max-w-report-btn    header-th  align-middle text-center">
                                                     {{ __('Statement Report') }}
                                                 </th>
+												@if($currencyName != "main_currency")
                                                 <th class="view-table-th max-w-report-btn    header-th  align-middle text-center">
                                                     {{ __('Invoice Report') }}
                                                 </th>
-
+@endif
 
 
                                             </tr>
@@ -384,21 +393,35 @@
                                             <tr class=" parent-tr reset-table-width text-nowrap  cursor-pointer sub-text-bg text-capitalize is-close   ">
                                                 <td class="sub-text-bg max-w-serial   ">{{ $index+1 }}</td>
                                                 <td class="sub-text-bg  max-w-name is-name-cell ">{{ $invoicesBalancesAsStdClass->{$clientNameColumnName} }}</td>
+													@if($currencyName == 'main_currency')
+                                                <td class="sub-text-bg text-center max-w-currency">{{ $mainFunctionalCurrency }}</td>
+												@else
                                                 <td class="sub-text-bg text-center max-w-currency">{{ $currencyName }}</td>
+												
+												@endif
                                                 <td class="sub-text-bg text-center max-w-amount">{{ number_format($invoicesBalancesAsStdClass->net_balance) }}</td>
                                                 <td class="sub-text-bg max-w-report-btn text-center">
                                                     @if($currencyName && $invoicesBalancesAsStdClass->{$clientNameColumnName})
                                                     <a href="{{ route('view.invoice.statement.report',['company'=>$company->id ,'partnerId'=>$invoicesBalancesAsStdClass->{$clientIdColumnName},'currency'=>$invoicesBalancesAsStdClass->currency,'modelType'=>$modelType]) }}" class="btn btn-sm btn-primary" style="border-radius: 20px !important">{{ $customersOrSupplierStatementText }}</a>
                                                     @endif
                                                 </td>
+													@if($currencyName != "main_currency")
                                                 <td class="sub-text-bg max-w-report-btn text-center">
                                                     @if($invoicesBalancesAsStdClass->{$clientNameColumnName} && $invoicesBalancesAsStdClass->currency)
                                                     <a href="{{ route('view.invoice.report',['company'=>$company->id ,'partnerId'=>$invoicesBalancesAsStdClass->{$clientIdColumnName},'currency'=>$invoicesBalancesAsStdClass->currency,'modelType'=>$modelType]) }}" class="btn btn-sm btn-success" style="border-radius: 20px !important">{{ __('Invoices Report') }}</a>
-                                                    @endif
+													@endif
                                                 </td>
+                                                    @endif
                                             </tr>
                                             @endif
                                             @endforeach
+											
+											
+											{{-- for main currencues  --}}
+											
+										
+											
+											
                                         </tbody>
                                     </table>
                                 </div>
@@ -488,11 +511,12 @@
 
 </script>
 @foreach($cardNetBalances['currencies'] ?? [] as $currencyName=>$total)
+
 <script>
 
 $(function(){
 
-	$('#{{$currencyName}}report__table .dt-buttons.btn-group').prepend('<a href="{{ route("view.invoice.statement.report",["company"=>$company->id ,"currency"=>$currencyName,"modelType"=>$modelType,"partnerId"=>0,"all_partners"=>1 ]) }}" class="btn btn-primary buttons-copy buttons-html5 border-parent btn-border-export btn-bold ml-2 flex-1 flex-grow-0 btn-border-radius do-not-close-when-click-away"> {{ $currencyName }} {{ $customersOrSupplierStatementText . ' '. __("Report") }} </a>')
+	$('#{{$currencyName}}report__table .dt-buttons.btn-group').prepend('<a href="{{ route("view.invoice.statement.report",["company"=>$company->id ,"currency"=>$currencyName,"modelType"=>$modelType,"partnerId"=>0,"all_partners"=>1 ]) }}" class="btn btn-primary buttons-copy buttons-html5 border-parent btn-border-export btn-bold ml-2 flex-1 flex-grow-0 btn-border-radius do-not-close-when-click-away"> {{ $currencyName == "main_currency" ? __("Main Currency") . ' ' . $mainFunctionalCurrency : $currencyName }} {{ $customersOrSupplierStatementText . ' '. __("Report") }} </a>')
 })
 
 </script>

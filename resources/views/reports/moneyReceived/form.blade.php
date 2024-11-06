@@ -104,7 +104,7 @@ use App\Models\MoneyReceived ;
                             <div class="kt-input-icon">
                                 <div class="input-group date">
                                     <select required name="partner_type" id="partner_type" class="form-control">
-										@foreach(['is_customer'=>__('Customer'),'is_subsidiary_company'=>__('Subsidiary Company') , 'is_shareholder'=>__('Shareholder') , 'is_employee'=>__('Employee')] as $type =>$title)
+										@foreach(getAllPartnerTypesForCustomers() as $type =>$title)
                                  	       <option  @if(isset($model) && $model->isUserType($type) ) selected @endif value="{{ $type }}">{{$title}}</option>
 										@endforeach 
                                     </select>
@@ -144,15 +144,14 @@ use App\Models\MoneyReceived ;
 
 
                         <div class="col-md-3">
-
                             <label>{{__('Name')}} @include('star')</label>
                             <div class="kt-input-icon">
                                 <div class="kt-input-icon">
                                     <div class="input-group date">
                                         <select data-current-selected="{{ isset($model) ? $model->getCustomerName() : '' }}" data-live-search="true" data-actions-box="true" id="customer_name" name="customer_id" class="form-control select2-select ajax-get-invoice-numbers  ajax-update-contracts customer-select">
                                             <option value="" selected>{{__('Select')}}</option>
-                                            @foreach($customers as $customerId => $customerName)
-                                            <option @if($singleModel) selected @endif @if(isset($model) && $model->getCustomerName() == $customerName ) selected @endif value="{{ $customerId }}">{{$customerName}}</option>
+                                            @foreach($customers as $customerId => $partnerName)
+                                            <option @if($singleModel) selected @endif @if(isset($model) && $model->getPartnerName() == $partnerName ) selected @endif value="{{ $customerId }}">{{$partnerName}}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -636,6 +635,8 @@ use App\Models\MoneyReceived ;
 
 
             {{-- Settlement Information "Commen Card" --}}
+			
+			@if(!isset($model) || isset($model) && $model->partner->getType() == 'is_customer')
             <div class="kt-portlet" id="settlement-card-id">
                 <div class="kt-portlet__head">
                     <div class="kt-portlet__head-label">
@@ -644,6 +645,7 @@ use App\Models\MoneyReceived ;
                         </h3>
                     </div>
                 </div>
+		
                 <div class="kt-portlet__body">
 
 
@@ -677,6 +679,7 @@ use App\Models\MoneyReceived ;
                     </div>
                 </div>
             </div>
+			@endif
 
             <x-submitting-by-ajax />
             {{-- <x-submitting /> --}}

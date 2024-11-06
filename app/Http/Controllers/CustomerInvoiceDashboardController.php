@@ -508,8 +508,8 @@ class CustomerInvoiceDashboardController extends Controller
 		{
 			foreach ($invoiceTypesModels as $modelType) {
 				$moneyReceivedOrPaymentModelName  = $moneyReceivedOrPaymentModelNameMap[$modelType];
-				$clientNamesForInvoices = ('\App\Models\\' . $modelType)::getAllUniqueCustomerNames($company->id,$currencyName);
-				$clientNamesForCheques = ('\App\Models\\' . $moneyReceivedOrPaymentModelName)::getAllUniqueCustomerNamesForCheques($company->id,$currencyName);
+				$clientIdsForInvoices = ('\App\Models\\' . $modelType)::getAllUniquePartnerIds($company->id,$currencyName);
+				$clientIdsForCheques = ('\App\Models\\' . $moneyReceivedOrPaymentModelName)::getAllUniquePartnerIdsForCheques($company->id,$currencyName);
 
 				/**
 				 * * Customers Invoices Aging & Supplier Invoices Aging
@@ -517,12 +517,12 @@ class CustomerInvoiceDashboardController extends Controller
 				$invoiceAgingService = new InvoiceAgingService($company->id, $agingDate,$currencyName);
 				$chequeAgingService = new ChequeAgingService($company->id, $agingDate,$currencyName);
 		
-				$agingsForInvoices = $invoiceAgingService->__execute($clientNamesForInvoices, $modelType) ;
+				$agingsForInvoices = $invoiceAgingService->__execute($clientIdsForInvoices, $modelType) ;
 				$agingsForInvoices = $invoiceAgingService->formatForDashboard($agingsForInvoices,$modelType);
 				/**
 				 * * Customers Cheques Aging & Supplier Cheques Aging
 				 */
-				$agingsForChequesWithChart = $chequeAgingService->__execute($clientNamesForCheques, $modelType) ;
+				$agingsForChequesWithChart = $chequeAgingService->__execute($clientIdsForCheques, $modelType) ;
 				$agingsForCheques = $agingsForChequesWithChart['result_for_table'];
 				$agingsForChequesCharts = $agingsForChequesWithChart['result_for_chart'];
 				
@@ -748,17 +748,21 @@ class CustomerInvoiceDashboardController extends Controller
 		$partners = Partner::when($partnerId && !$showAllPartner ,function(Builder $builder) use ($partnerId,$isSupplier,$isCustomer){
 			$builder->whereIn('id',(array) $partnerId )->where('is_customer',$isCustomer)->where('is_supplier',$isSupplier);
 		})->whereHas($modelType,function(Builder $builder) use($currency){
-			$builder->where('currency',$currency);
+			if($currency != 'main_currency'){
+				$builder->where('currency',$currency);
+			}
 		})
 		->where('company_id',$company->id)
 		->pluck('name','id')->toArray();
 
         $clientIdColumnName = $fullClassName::CLIENT_ID_COLUMN_NAME ;
         $customerStatementText = (new $fullClassName())->getCustomerOrSupplierStatementText();
-        $startDate = $startDate ?: $request->get('start_date', now()->subMonths(4)->format('Y-m-d'));
+        $startDate = $startDate ?: $request->get('start_date', now()->subMonths(12)->format('Y-m-d'));
         $endDate = $endDate?: $request->get('end_date', now()->format('Y-m-d'));
         $invoices = ('\App\Models\\' . $modelType)::where('company_id', $company->id)
-        ->where('currency', $currency)
+		->when($currency != 'main_currency',function($query)use($currency){
+			$query->where('currency', $currency);
+		})
         ->whereBetween('invoice_date', [$startDate, $endDate])
         ->where($clientIdColumnName, '=', $partnerId)->get();
         $partner = Partner::find($partnerId);
@@ -776,7 +780,7 @@ class CustomerInvoiceDashboardController extends Controller
 			]);
 		}
         $partnerName = $partner->getName() ;
-        $invoicesWithItsReceivedMoney = ('App\Models\\' . $modelType)::formatForStatementReport($invoices, $partnerName, $startDate, $endDate, $currency);
+        $invoicesWithItsReceivedMoney = ('App\Models\\' . $modelType)::formatForStatementReport($invoices, $partnerId, $startDate, $endDate, $currency);
 
 		if($returnResult){
 			if(count($invoicesWithItsReceivedMoney) < 1){

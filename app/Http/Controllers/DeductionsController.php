@@ -133,9 +133,7 @@ class DeductionsController
 			'name'=>$newName
 		]);
 
-		// $deduction->updateNamesInAllTables(['customer_name','supplier_name'],$oldName,$newName,$company->id,['partner_type','=','is_deduction']);
 		$type = Deduction::DEDUCTIONS;
-		// $this->store($company,$request);
 		$activeTab = $type ;
 		return response()->json([
 			'redirectTo'=>route('deductions.index',['company'=>$company->id,'active'=>$activeTab])

@@ -35,6 +35,7 @@ class MoneyReceivedCanBackToUnderCollectionRule implements ImplicitRule
 		$balance = $response->getData(true)['balance'] ;
 		$moneyReceived = Request()->route('moneyReceived');
 		$receivedAmount = $moneyReceived->getAmount();
+		
 		if($balance - $receivedAmount < 0){
 			return false ;
 		}

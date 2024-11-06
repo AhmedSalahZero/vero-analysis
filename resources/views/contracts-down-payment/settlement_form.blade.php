@@ -249,13 +249,13 @@ use App\Models\MoneyReceived ;
 				<div class="col-md-1 width-9.5 ">
 					<label> {{ __('Settlement Amount') }}  <span class="text-danger ">*</span> </label>
 					<div class="kt-input-icon">
-						<input value="{{ $downPayment->getSettlementsForInvoiceNumberAmount($invoice->getInvoiceNumber(),$partnerName,$isDownPaymentFromMoneyPayment) }}" name="settlements[{{$index}}][settlement_amount]" placeholder="{{ __("Settlement Amount") }}" type="text" class="form-control  only-greater-than-or-equal-zero-allowed settlement-amount-class">
+						<input value="{{ $downPayment->getSettlementsForInvoiceNumberAmount($invoice->getInvoiceNumber(),$partnerId,$isDownPaymentFromMoneyPayment) }}" name="settlements[{{$index}}][settlement_amount]" placeholder="{{ __("Settlement Amount") }}" type="text" class="form-control  only-greater-than-or-equal-zero-allowed settlement-amount-class">
 					</div>
 				</div>
 				<div class="col-md-1 width-9.5 ">
 					<label> {{ __('Withhold Amount') }} <span class="text-danger ">*</span> </label>
 					<div class="kt-input-icon">
-						<input value="{{ $downPayment->getWithholdForInvoiceNumberAmount($invoice->getInvoiceNumber(),$partnerName,$isDownPaymentFromMoneyPayment) }}" name="settlements[{{$index}}][withhold_amount]" placeholder="{{ __('Withhold Amount') }}" type="text" class="form-control  only-greater-than-or-equal-zero-allowed ">
+						<input value="{{ $downPayment->getWithholdForInvoiceNumberAmount($invoice->getInvoiceNumber(),$partnerId,$isDownPaymentFromMoneyPayment) }}" name="settlements[{{$index}}][withhold_amount]" placeholder="{{ __('Withhold Amount') }}" type="text" class="form-control  only-greater-than-or-equal-zero-allowed ">
 					</div>
 				</div>
 		

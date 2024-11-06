@@ -10,6 +10,7 @@ use App\Models\FinancialInstitution;
 use App\Models\LetterOfGuaranteeIssuance;
 use App\Models\LetterOfGuaranteeStatement;
 use App\Models\TimeOfDeposit;
+use Http;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 
@@ -47,8 +48,5 @@ class TestCommand extends Command
 	 */
 	public function handle()
 	{
-
-		// $financialInstitution = FinancialInstitution::find(17);
-		// dd($financialInstitution->getOpeningBalanceForAccount(31,151515,'EGP'));
 	}
 }

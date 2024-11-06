@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\HArr;
 use App\Helpers\HDate;
 use App\Models\Company;
 use App\Models\Partner;
@@ -47,6 +46,7 @@ class CollectionEffectivenessIndexController
 		->selectRaw('currency')->get()->pluck('currency')->unique()->values()->toArray();
 		
 		$invoices = ('\App\Models\\'.$modelType)::where($clientNameColumnName,'!=',null)->where($clientNameColumnName,'!=','')->onlyCompany($company->id)->get();
+		
 		$invoices = $invoices->unique('customer_name')->values() ;
         return view('admin.reports.collection-effectiveness-index.form', [
 			'businessUnits'=>$businessUnits,
@@ -135,51 +135,7 @@ class CollectionEffectivenessIndexController
 		]);
 	}
 
-	// public function getCustomersFromBusinessUnitsAndCurrencies(Company $company ,Request $request,string $modelType)
-	// {
-	// 	$invoiceTableName = getUploadParamsFromType($modelType)['dbName'];
-	// 	$fullClassName = 'App\Models\\'.$modelType ;
-	// 	$customer_or_supplier_name=$fullClassName::CLIENT_NAME_COLUMN_NAME;
-	// 	$currency = $request->get('currencies');
-	// 	$businessUnits = $request->get('business_units',[]);
-	// 	$salesPersons = $request->get('sales_persons',[]);
-	// 	$businessSectors = $request->get('business_sectors',[]);
-	// 	$query = DB::table($invoiceTableName)->select($customer_or_supplier_name,'currency')
-	// 	->where('currency',$currency)->where('company_id',$company->id)
-	// 	->where('net_balance','>',0);
-	// 	if(count($businessUnits)){
-	// 		$query = $query->whereIn('business_unit',$businessUnits);
-	// 	}
-	// 	if(count($salesPersons)){
-	// 		$query = $query->whereIn('sales_person',$salesPersons);
-	// 	}
-	// 	if(count($businessSectors)){
-	// 		$query = $query->whereIn('business_sector',$businessSectors);
-	// 	}
-
-	// 	$data = $query->get();
-	// 	/**
-	// 	 * @var Collection $data ;
-	// 	 */
-	// 	$customers = $data->unique($customer_or_supplier_name)->pluck($customer_or_supplier_name);
-	// 	$currencies = DB::table($invoiceTableName)->select($customer_or_supplier_name,'currency')
-	// 	->where('company_id',$company->id)
-	// 	->where('net_balance','>',0)
-	// 	->get()
-	// 	->unique('currency')->pluck('currency');
-		
 	
-		
-	// 	return response()->json([
-	// 		'status'=>true ,
-	// 		'message'=>__('Success'),
-	// 		'data'=>[
-	// 			'customer_names'=>$customers,
-	// 			'currencies_names'=>$currencies,
-	// 		]
-	// 	]);
-		
-	// }
 
 
 }

@@ -306,34 +306,24 @@
                     <?php
                     $index = 0 ;
                     ?>
+					
                     <?php $__currentLoopData = $cardNetBalances['currencies'] ?? []; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $currencyName=>$total): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                      <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.money-card','data' => ['invoiceType' => $modelType,'showReport' => 1,'color' => getColorFromIndex($index),'currencyName' => $currencyName,'total' => $total]]); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.money-card','data' => ['mainFunctionalCurrency' => $mainFunctionalCurrency,'invoiceType' => $modelType,'showReport' => 1,'color' => getColorFromIndex($index),'currencyName' => $currencyName,'total' => $total]]); ?>
 <?php $component->withName('money-card'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['invoiceType' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($modelType),'show-report' => 1,'color' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(getColorFromIndex($index)),'currencyName' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($currencyName),'total' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($total)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['main-functional-currency' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($mainFunctionalCurrency),'invoiceType' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($modelType),'show-report' => 1,'color' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(getColorFromIndex($index)),'currencyName' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($currencyName),'total' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($total)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
+		
                     <?php
                     $index++;
                     ?>
-                    <?php if($loop->last && isset($cardNetBalances['main_currency'])): ?>
-                     <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.money-card','data' => ['invoiceType' => $modelType,'showReport' => 0,'color' => 'success','currencyName' => 'Main Currency ' .'['. array_key_first($cardNetBalances['main_currency'] ) . ']','total' => $cardNetBalances['main_currency'][$mainCurrency] ?? 0]]); ?>
-<?php $component->withName('money-card'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['invoiceType' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($modelType),'show-report' => 0,'color' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('success'),'currencyName' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('Main Currency ' .'['. array_key_first($cardNetBalances['main_currency'] ) . ']'),'total' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($cardNetBalances['main_currency'][$mainCurrency] ?? 0)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
-<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
-<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
-<?php endif; ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?> 
-                    <?php endif; ?>
+                    
                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
 
@@ -351,8 +341,15 @@
                         <?php $__currentLoopData = $cardNetBalances['currencies']??[]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $currencyName=>$total): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                         <li class="nav-item">
                             <a class="nav-link <?php echo e($loop->first ? 'active':''); ?>" onclick="return false;" data-toggle="tab" href="#<?php echo e($currencyName.'report__table'); ?>" role="tab">
+								<?php if($currencyName == 'main_currency'): ?>
+                                <i class="flaticon2-checking"></i> &nbsp; <?php echo e(__('Balance In Main Currency ').' ' .__($mainFunctionalCurrency)); ?>
+
+								
+								<?php else: ?>
                                 <i class="flaticon2-checking"></i> &nbsp; <?php echo e(__('Balance In').' ' .__($currencyName)); ?>
 
+								
+								<?php endif; ?> 
                             </a>
                         </li>
                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -408,11 +405,12 @@
                                                     <?php echo e(__('Statement Report')); ?>
 
                                                 </th>
+												<?php if($currencyName != "main_currency"): ?>
                                                 <th class="view-table-th max-w-report-btn    header-th  align-middle text-center">
                                                     <?php echo e(__('Invoice Report')); ?>
 
                                                 </th>
-
+<?php endif; ?>
 
 
                                             </tr>
@@ -430,21 +428,35 @@
                                             <tr class=" parent-tr reset-table-width text-nowrap  cursor-pointer sub-text-bg text-capitalize is-close   ">
                                                 <td class="sub-text-bg max-w-serial   "><?php echo e($index+1); ?></td>
                                                 <td class="sub-text-bg  max-w-name is-name-cell "><?php echo e($invoicesBalancesAsStdClass->{$clientNameColumnName}); ?></td>
+													<?php if($currencyName == 'main_currency'): ?>
+                                                <td class="sub-text-bg text-center max-w-currency"><?php echo e($mainFunctionalCurrency); ?></td>
+												<?php else: ?>
                                                 <td class="sub-text-bg text-center max-w-currency"><?php echo e($currencyName); ?></td>
+												
+												<?php endif; ?>
                                                 <td class="sub-text-bg text-center max-w-amount"><?php echo e(number_format($invoicesBalancesAsStdClass->net_balance)); ?></td>
                                                 <td class="sub-text-bg max-w-report-btn text-center">
                                                     <?php if($currencyName && $invoicesBalancesAsStdClass->{$clientNameColumnName}): ?>
                                                     <a href="<?php echo e(route('view.invoice.statement.report',['company'=>$company->id ,'partnerId'=>$invoicesBalancesAsStdClass->{$clientIdColumnName},'currency'=>$invoicesBalancesAsStdClass->currency,'modelType'=>$modelType])); ?>" class="btn btn-sm btn-primary" style="border-radius: 20px !important"><?php echo e($customersOrSupplierStatementText); ?></a>
                                                     <?php endif; ?>
                                                 </td>
+													<?php if($currencyName != "main_currency"): ?>
                                                 <td class="sub-text-bg max-w-report-btn text-center">
                                                     <?php if($invoicesBalancesAsStdClass->{$clientNameColumnName} && $invoicesBalancesAsStdClass->currency): ?>
                                                     <a href="<?php echo e(route('view.invoice.report',['company'=>$company->id ,'partnerId'=>$invoicesBalancesAsStdClass->{$clientIdColumnName},'currency'=>$invoicesBalancesAsStdClass->currency,'modelType'=>$modelType])); ?>" class="btn btn-sm btn-success" style="border-radius: 20px !important"><?php echo e(__('Invoices Report')); ?></a>
-                                                    <?php endif; ?>
+													<?php endif; ?>
                                                 </td>
+                                                    <?php endif; ?>
                                             </tr>
                                             <?php endif; ?>
                                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+											
+											
+											
+											
+										
+											
+											
                                         </tbody>
                                     </table>
                                 </div>
@@ -544,11 +556,12 @@
 
 </script>
 <?php $__currentLoopData = $cardNetBalances['currencies'] ?? []; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $currencyName=>$total): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+
 <script>
 
 $(function(){
 
-	$('#<?php echo e($currencyName); ?>report__table .dt-buttons.btn-group').prepend('<a href="<?php echo e(route("view.invoice.statement.report",["company"=>$company->id ,"currency"=>$currencyName,"modelType"=>$modelType,"partnerId"=>0,"all_partners"=>1 ])); ?>" class="btn btn-primary buttons-copy buttons-html5 border-parent btn-border-export btn-bold ml-2 flex-1 flex-grow-0 btn-border-radius do-not-close-when-click-away"> <?php echo e($currencyName); ?> <?php echo e($customersOrSupplierStatementText . ' '. __("Report")); ?> </a>')
+	$('#<?php echo e($currencyName); ?>report__table .dt-buttons.btn-group').prepend('<a href="<?php echo e(route("view.invoice.statement.report",["company"=>$company->id ,"currency"=>$currencyName,"modelType"=>$modelType,"partnerId"=>0,"all_partners"=>1 ])); ?>" class="btn btn-primary buttons-copy buttons-html5 border-parent btn-border-export btn-bold ml-2 flex-1 flex-grow-0 btn-border-radius do-not-close-when-click-away"> <?php echo e($currencyName == "main_currency" ? __("Main Currency") . ' ' . $mainFunctionalCurrency : $currencyName); ?> <?php echo e($customersOrSupplierStatementText . ' '. __("Report")); ?> </a>')
 })
 
 </script>

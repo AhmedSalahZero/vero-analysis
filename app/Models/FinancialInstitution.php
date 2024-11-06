@@ -40,8 +40,7 @@ class FinancialInstitution extends Model
 			return $builder->has('LetterOfCreditFacilities');
 		}
 		
-
-		dd('invalid source for financial insiutution');
+		throw new \Exception('custom exception .. invalid source for financial institution');
 	}
 
 	public function scopeOnlyBanks(Builder $builder)

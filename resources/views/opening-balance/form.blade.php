@@ -447,7 +447,7 @@ use App\Models\MoneyReceived ;
                                             <input type="hidden" name="id" value="{{ isset($chequeInSafe) ? $chequeInSafe->id : 0 }}">
                                             <td>
                                                 <div class="input-group css-fix-plus-direction name-class">
-                                                    <x-form.select :add-new-modal="true" :add-new-modal-modal-type="'Customer'" :add-new-modal-modal-name="'Partner'" :add-new-modal-modal-title="__('Customer Name')" :options="$customersFormatted" :add-new="false" :label="' '" class="customer_name_class repeater-select" data-filter-type="{{ 'create' }}" :all="false" name="customer_id" :selected-value="isset($chequeInSafe) ? $chequeInSafe->getCustomerId() : 0"></x-form.select>
+                                                    <x-form.select :add-new-modal="true" :add-new-modal-modal-type="'Customer'" :add-new-modal-modal-name="'Partner'" :add-new-modal-modal-title="__('Customer Name')" :options="$customersFormatted" :add-new="false" :label="' '" class="customer_name_class repeater-select" data-filter-type="{{ 'create' }}" :all="false" name="customer_id" :selected-value="isset($chequeInSafe) ? $chequeInSafe->getPartnerId() : 0"></x-form.select>
                                                 </div>
 
                                             </td>
