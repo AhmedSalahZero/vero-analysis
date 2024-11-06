@@ -213,8 +213,14 @@ class MoneyReceived extends Model
 		$totalSettlement = 0 ;
 		$totalDownPaymentSettlement = 0 ;
 		foreach($this->settlements as $settlement ){
+			$mainFunctionalCurrency = $settlement->customerInvoice->company->getMainFunctionalCurrency();
+			
+			// $currentReceivingCurrency = $settlement->customerInvoice->getReceivingCurrency() ;
 			$invoiceExchangeRate = $settlement->customerInvoice->getExchangeRate();
-			$totalSettlement+= $settlement->getAmount() * $invoiceExchangeRate;
+			// if($currentReceivingCurrency == $mainFunctionalCurrency ){
+				
+			// }else
+			$totalSettlement+= ($settlement->getAmount() * $invoiceExchangeRate);
 		}
 		foreach($this->downPaymentSettlements as $downPaymentSettlement){
 			$moneyReceived = $downPaymentSettlement->moneyReceived ;

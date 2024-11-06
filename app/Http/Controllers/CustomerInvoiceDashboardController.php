@@ -577,7 +577,6 @@ class CustomerInvoiceDashboardController extends Controller
         ->where('currency', $currency)
 		->orderByRaw('invoice_date asc , invoice_due_date desc , net_balance desc')
         ->get();
-		
         $customer = Partner::find($partnerId);
         if (!count($invoices)) {
             return  redirect()->back()->with('fail', __('No Data Found'));
