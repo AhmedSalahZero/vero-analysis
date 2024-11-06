@@ -132,7 +132,7 @@ class OtherPartnersController
 		$otherPartner->update([
 			'name'=>$newName
 		]);
-		$otherPartner->updateNamesInAllTables(['customer_name','supplier_name'],$oldName,$newName,$company->id,['partner_type','=','is_other_partner']);
+		
 		$type = Partner::OTHER_PARTNERS;
 		// $this->store($company,$request);
 		$activeTab = $type ;

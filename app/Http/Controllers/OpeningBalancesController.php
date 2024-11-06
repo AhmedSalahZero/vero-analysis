@@ -87,7 +87,7 @@ class OpeningBalancesController
             if ($currentAmount > 0) {
                 $moneyReceived = $openingBalance->moneyReceived()->create([
                     'type' => MoneyReceived::CHEQUE,
-                    'customer_name' => $customer ? $customer->getName() : null,
+                    'partner_id' => $customer ? $customer->id : null,
                     'received_amount' => $currentAmount,
                     'amount_in_invoice_currency' => $currentAmount,
                     'currency' => $cheque['currency'],
@@ -116,7 +116,7 @@ class OpeningBalancesController
             if ($currentAmount > 0) {
                 $moneyReceived = $openingBalance->moneyReceived()->create([
                     'type' => MoneyReceived::CHEQUE,
-                    'customer_name' => $customer ? $customer->getName() : null,
+                    'partner_id' => $customer ? $customer->id : null,
                     'received_amount' => $currentAmount,
 					'amount_in_invoice_currency' => $currentAmount,
                     'currency' => $chequeUnderCollection['currency'],
@@ -154,7 +154,7 @@ class OpeningBalancesController
             if ($currentAmount > 0) {
                 $moneyPayment = $openingBalance->moneyPayments()->create([
                     'type' => MoneyPayment::PAYABLE_CHEQUE,
-                    'supplier_name' => $supplier ? $supplier->getName() : null,
+                    'partner_id' => $supplier ? $supplier->id : null,
                     'paid_amount' => $currentAmount,
 					'amount_in_invoice_currency' => $currentAmount,
                     'currency' => $payableChequeArr['currency'],
@@ -267,7 +267,7 @@ class OpeningBalancesController
             ];
             unset($dataToUpdate['due_date'], $dataToUpdate['drawee_bank_id'], $dataToUpdate['cheque_number']);
 			$dataToUpdate['received_amount'] = isset($dataToUpdate['received_amount']) ? number_unformat($dataToUpdate['received_amount']) : 0;
-            $dataToUpdate['customer_name'] = is_numeric($dataToUpdate['customer_id']) ? Partner::find($dataToUpdate['customer_id'])->getName() : $dataToUpdate['customer_id'] ;
+            $dataToUpdate['partner_id'] = is_numeric($dataToUpdate['customer_id']) ? Partner::find()->getName() : Partner::where('is_customer',1)->where('name',$dataToUpdate['customer_id'])->first()->id ;
             $dataToUpdate['receiving_date'] =  $openingBalanceDate ;
             $dataToUpdate['company_id'] =  $company->id ;
 			$dataToUpdate['receiving_currency'] = $dataToUpdate['currency'] ;
@@ -286,7 +286,7 @@ class OpeningBalancesController
                 ];
                 unset($data['due_date'], $data['drawee_bank_id'], $data['cheque_number']);
 				$data['received_amount'] = isset($data['received_amount']) ? number_unformat($data['received_amount']) : 0;
-                $data['customer_name'] = is_numeric($data['customer_id']) ? Partner::find($data['customer_id'])->getName() : $data['customer_id'] ;
+                $data['partner_id'] = is_numeric($data['customer_id']) ? Partner::find($data['customer_id'])->id : Partner::where('is_customer',1)->where('name',$data['customer_id'])->first()->id ;
                 $data['receiving_date'] = $openingBalanceDate ;
                 $data['receiving_currency'] = $data['currency'] ;
                 $data['company_id'] = $company->id ;
@@ -336,7 +336,7 @@ class OpeningBalancesController
 				}
             }
 
-            $dataToUpdate['customer_name'] = is_numeric($dataToUpdate['customer_id']) ? Partner::find($dataToUpdate['customer_id'])->getName() : $dataToUpdate['customer_id'] ;
+            $dataToUpdate['partner_id'] = is_numeric($dataToUpdate['customer_id']) ? Partner::find($dataToUpdate['customer_id'])->getName() : Partner::where('is_customer',1)->where('name',$dataToUpdate['customer_id'])->first()->id ;
 			$dataToUpdate['receiving_date'] = $openingBalanceDate;
 			$dataToUpdate['receiving_currency'] = $dataToUpdate['currency'];
 			$dataToUpdate['company_id']=$company->id;
@@ -363,7 +363,7 @@ class OpeningBalancesController
                 foreach ($pivotData as $key => $val) {
                     unset($data[$key]);
                 }
-                $data['customer_name'] = is_numeric($data['customer_id']) ? Partner::find($data['customer_id'])->getName() : $data['customer_id'] ;
+                $data['partner_id'] = is_numeric($data['customer_id']) ? Partner::find($data['customer_id'])->getName() : Partner::where('is_customer',1)->where('name',$data['customer_id'])->first()->id ;
 				$data['receiving_date']=$openingBalanceDate;
 				$data['receiving_currency']=$data['currency'];
 				$data['company_id']=$company->id;
@@ -410,7 +410,7 @@ class OpeningBalancesController
 			 foreach ($pivotData as $key => $val) {
 				 unset($dataToUpdate[$key]);
 			 }
-			 $dataToUpdate['supplier_name'] = is_numeric($dataToUpdate['supplier_id']) ? Partner::find($dataToUpdate['supplier_id'])->getName() : $dataToUpdate['supplier_id'] ;
+			 $dataToUpdate['partner_id'] = is_numeric($dataToUpdate['supplier_id']) ? Partner::find($dataToUpdate['supplier_id'])->id : Partner::where('is_supplier',1)->where('name',$dataToUpdate['supplier_id'])->first()->id ;
 			 $dataToUpdate['company_id'] = $company->id;
 			 
 			 $dataToUpdate['payment_currency'] = $dataToUpdate['currency'];
@@ -433,7 +433,7 @@ class OpeningBalancesController
 					foreach ($pivotData as $key => $val) {
 						unset($data[$key]);
 					}
-					$data['supplier_name'] = is_numeric($data['supplier_id']) ? Partner::find($data['supplier_id'])->getName() : $data['supplier_id'] ;
+					$data['partner_id'] = is_numeric($data['supplier_id']) ? Partner::find($data['supplier_id'])->id : Partner::where('is_supplier',1)->where('name',$dataToUpdate['supplier_id'])->first()->id ;
 					$data['paid_amount'] = isset($data['paid_amount']) ? number_unformat($data['paid_amount']) : 0 ;
 					$data['amount_in_invoice_currency'] = $data['paid_amount'];
 				 $moneyPayment = $openingBalance->payableCheques()->create(array_merge($data, [

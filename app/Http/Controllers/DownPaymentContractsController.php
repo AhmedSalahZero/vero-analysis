@@ -17,12 +17,11 @@ class DownPaymentContractsController extends Controller
     public function viewContractsWithDownPayments(Company $company,Request $request,int $partnerId,string $modelType,string $currency)
 	{
 		$fullModelType = 'App\Models\\'.$modelType;
-		$customerNameOrSupplierNameColumnName = $fullModelType::CLIENT_NAME_COLUMN_NAME;
 		
 		$moneyModelName = $fullModelType::MONEY_MODEL_NAME ;
 		
 		$partner = Partner::find($partnerId);
-		$partnerName = $partner->getName();
+		$partnerId = $partner->id;
 		$contractsWithDownPayments = MoneyReceived::CONTRACTS_WITH_DOWN_PAYMENTS;
 		$numberOfMonthsBetweenEndDateAndStartDate = 18 ;
 		$currentType = $request->get('active',$contractsWithDownPayments);
@@ -47,8 +46,8 @@ class DownPaymentContractsController extends Controller
 		$runningStartDate = $filterDates[$contractsWithDownPayments]['startDate'] ?? null ;
 		$runningEndDate = $filterDates[$contractsWithDownPayments]['endDate'] ?? null ;
 	
-		$contractsWithDownPayment = $company->contracts()->whereHas($moneyModelName,function($builder)use($partnerName,$currency,$customerNameOrSupplierNameColumnName){
-			$builder->where($customerNameOrSupplierNameColumnName,$partnerName)
+		$contractsWithDownPayment = $company->contracts()->whereHas($moneyModelName,function($builder)use($partnerId,$currency,$customerNameOrSupplierNameColumnName){
+			$builder->where('partner_id',$partnerId)
 					->where('currency',$currency)
 			;
 		} )
@@ -148,9 +147,11 @@ class DownPaymentContractsController extends Controller
 	}
 	public function storeDownPaymentSettlement(StoreDownPaymentSettlementRequest $request,Company $company,int $downPaymentId,int $partnerId,string $modelType)
 	{
+		/**
+		 * @var MoneyReceived $downPayment
+		 */
 		$fullClassName = 'App\Models\\'.$modelType;
 		$downPaymentModelName=$fullClassName::MONEY_MODEL_NAME;
-		$customerNameOrSupplierNameColumnName = $downPaymentModelName == 'MoneyReceived' ? 'customer_name' :'supplier_name';
 		$downPaymentModelFullName = 'App\Models\\'.$downPaymentModelName ;   
 		$downPayment =$downPaymentModelFullName::find($downPaymentId);
 		$downPayment->update([
@@ -167,7 +168,7 @@ class DownPaymentContractsController extends Controller
 		->each(function($settlement){
 			$settlement->delete();
 		});
-		$downPayment->storeNewSettlement($request->get('settlements',[]),$downPayment->getName(),$company->id,$isFromDownPayment);
+		$downPayment->storeNewSettlement($request->get('settlements',[]),$downPayment->getPartnerId(),$company->id,$isFromDownPayment);
 		return redirect()->route('view.contracts.down.payments',['company'=>$company->id,'partnerId'=>$partnerId,'modelType'=>$modelType,'currency'=>$downPayment->getCurrency()]);
 		
 	}

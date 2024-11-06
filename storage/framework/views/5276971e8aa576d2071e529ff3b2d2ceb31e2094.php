@@ -136,7 +136,7 @@ $selectedBanks = [];
                             <div class="kt-input-icon">
                                 <div class="input-group date">
                                     <select required name="partner_type" id="partner_type" class="form-control">
-										<?php $__currentLoopData = ['is_supplier'=>__('Supplier'),'is_subsidiary_company'=>__('Subsidiary Company') , 'is_shareholder'=>__('Shareholder') , 'is_employee'=>__('Employee')]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $type =>$title): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+										<?php $__currentLoopData = getAllPartnerTypesForSuppliers(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $type => $title): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                  	       <option  <?php if(isset($model) && $model->isUserType($type) ): ?> selected <?php endif; ?> value="<?php echo e($type); ?>"><?php echo e($title); ?></option>
 										<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?> 
                                     </select>
@@ -622,6 +622,7 @@ $selectedBanks = [];
 
 
     
+		<?php if(!isset($model) || isset($model) && $model->partner->getType() == 'is_supplier'): ?>
     <div class="kt-portlet" id="settlement-card-id">
         <div class="kt-portlet__head">
             <div class="kt-portlet__head-label">
@@ -912,6 +913,7 @@ $selectedBanks = [];
             </div>
         </div>
     </div>
+	<?php endif; ?>
 
     
      <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>

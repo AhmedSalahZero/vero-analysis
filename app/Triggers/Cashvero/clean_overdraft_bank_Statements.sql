@@ -222,7 +222,6 @@
 						--	delete from clean_overdraft_settlements where clean_overdraft_bank_statement_id = _last_id;
 						-- علشان نعيد الحسابات من اصفر تاريخ في حساب الاوفر دارفت دا
 				--		if(_origin_update_row_is_debit > 0 ) then 
-				insert into debugging (message) values ('from 1 ');
 							call reverse_clean_overdraft_settlements(_start_update_from_date_time,new.clean_overdraft_id);	
 							call resettlement_clean_overdraft_from(new.type,_start_update_from_date_time,new.clean_overdraft_id,new.company_id);
 				--			elseif  _origin_update_row_is_debit > 0 and _current_debit < 0  then 
@@ -358,7 +357,6 @@
 					
 					end if  ;
 					if new.is_credit > 0 then
-					insert into debugging (message) values ('from 2 ');
 					
 						call start_settlement_process_clean_overdraft(new.type,new.id , new.clean_overdraft_id , new.debit  , new.credit , new.company_id ,_date_for_settlement);
 					end if;

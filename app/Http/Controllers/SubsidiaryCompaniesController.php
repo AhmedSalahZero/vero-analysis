@@ -132,7 +132,6 @@ class SubsidiaryCompaniesController
 		$subsidiaryCompany->update([
 			'name'=>$newName
 		]);
-		$subsidiaryCompany->updateNamesInAllTables(['customer_name','supplier_name'],$oldName,$newName,$company->id,['partner_type','=','is_subsidiary_company']);
 		$type = Partner::SUBSIDIARY_COMPANIES;
 		// $this->store($company,$request);
 		$activeTab = $type ;

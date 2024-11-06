@@ -105,7 +105,7 @@ use App\Models\MoneyReceived ;
                             <div class="kt-input-icon">
                                 <div class="input-group date">
                                     <select required name="partner_type" id="partner_type" class="form-control">
-										<?php $__currentLoopData = ['is_customer'=>__('Customer'),'is_subsidiary_company'=>__('Subsidiary Company') , 'is_shareholder'=>__('Shareholder') , 'is_employee'=>__('Employee')]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $type =>$title): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+										<?php $__currentLoopData = getAllPartnerTypes(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $type =>$title): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                  	       <option  <?php if(isset($model) && $model->isUserType($type) ): ?> selected <?php endif; ?> value="<?php echo e($type); ?>"><?php echo e($title); ?></option>
 										<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?> 
                                     </select>
@@ -145,15 +145,14 @@ use App\Models\MoneyReceived ;
 
 
                         <div class="col-md-3">
-
                             <label><?php echo e(__('Name')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
                             <div class="kt-input-icon">
                                 <div class="kt-input-icon">
                                     <div class="input-group date">
                                         <select data-current-selected="<?php echo e(isset($model) ? $model->getCustomerName() : ''); ?>" data-live-search="true" data-actions-box="true" id="customer_name" name="customer_id" class="form-control select2-select ajax-get-invoice-numbers  ajax-update-contracts customer-select">
                                             <option value="" selected><?php echo e(__('Select')); ?></option>
-                                            <?php $__currentLoopData = $customers; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $customerId => $customerName): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                            <option <?php if($singleModel): ?> selected <?php endif; ?> <?php if(isset($model) && $model->getCustomerName() == $customerName ): ?> selected <?php endif; ?> value="<?php echo e($customerId); ?>"><?php echo e($customerName); ?></option>
+                                            <?php $__currentLoopData = $customers; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $customerId => $partnerName): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <option <?php if($singleModel): ?> selected <?php endif; ?> <?php if(isset($model) && $model->getPartnerName() == $partnerName ): ?> selected <?php endif; ?> value="<?php echo e($customerId); ?>"><?php echo e($partnerName); ?></option>
                                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                         </select>
                                     </div>
@@ -659,6 +658,8 @@ use App\Models\MoneyReceived ;
 
 
             
+			
+			<?php if(isset($model) && $model->partner->getType() == 'is_customer'): ?>
             <div class="kt-portlet" id="settlement-card-id">
                 <div class="kt-portlet__head">
                     <div class="kt-portlet__head-label">
@@ -668,6 +669,7 @@ use App\Models\MoneyReceived ;
                         </h3>
                     </div>
                 </div>
+		
                 <div class="kt-portlet__body">
 
 
@@ -702,6 +704,7 @@ use App\Models\MoneyReceived ;
                     </div>
                 </div>
             </div>
+			<?php endif; ?>
 
              <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.submitting-by-ajax','data' => []]); ?>

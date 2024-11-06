@@ -221,39 +221,6 @@ class CashExpense extends Model
 	}
 	
 	
-	/**
-	 * * For Supplier Payment Only
-	 */
-    public function settlements()
-    {
-        return $this->hasMany(PaymentSettlement::class, 'cash_expense_id', 'id');
-    }
-	/**
-	 * * For Down Payment Only
-	 */
-    public function downPaymentSettlements()
-    {
-        return $this->hasMany(DownPaymentMoneyPaymentSettlement::class, 'cash_expense_id', 'id');
-    }
-    public function supplierInvoice()
-    {
-        return $this->belongsTo(SupplierInvoice::class, 'supplier_name', 'supplier_name');
-    }
-
-	public function getSettlementsForCustomerName( string $supplierName):Collection
-    {
-        return $this->settlements->where('supplier_name', $supplierName) ;
-    }
-    public function getSettlementsForInvoiceNumber($invoiceNumber, string $supplierName):Collection
-    {
-        return $this->settlements->where('invoice_number', $invoiceNumber)->where('supplier_name', $supplierName) ;
-    }
-	public function getSettlementsForInvoiceNumberAmount($invoiceNumber, string $supplierName):float{
-		return $this->getSettlementsForInvoiceNumber($invoiceNumber,$supplierName)->sum('settlement_amount');
-	}
-	public function getWithholdForInvoiceNumberAmount($invoiceNumber, string $supplierName):float{
-		return $this->getSettlementsForInvoiceNumber($invoiceNumber,$supplierName)->sum('withhold_amount');
-	}
     public function getPaymentDateFormatted()
     {
         $date = $this->getPaymentDate() ;
@@ -329,11 +296,6 @@ class CashExpense extends Model
 		return $payableCheque ? $payableCheque->getAccountType() : null ;
 	}
 	
-	// public function getPayableChequeAccountNumber()
-	// {
-	// 	$payableCheque = $this->payableCheque ;
-	// 	return $payableCheque ? $payableCheque->getAccountNumber() : null ;
-	// }
 	
 	public function cashPayment()
 	{

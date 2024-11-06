@@ -69,7 +69,6 @@ Route::middleware([])->group(function () {
 			Route::get('user/{user}/edit/{company?}','UserController@edit')->middleware('isCashManagement')->name('user.edit');
 			Route::put('user/{user}/{company?}','UserController@update')->middleware('isCashManagement')->name('user.update');
 			Route::delete('user/{user}/{company?}','UserController@destroy')->middleware('isCashManagement')->name('user.destroy');
-            // Route::resource('deduction', 'DeductionController');
             Route::resource('toolTipData', 'ToolTipDataController');
 
 			

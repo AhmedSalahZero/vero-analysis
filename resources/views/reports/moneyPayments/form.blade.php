@@ -135,7 +135,7 @@ $selectedBanks = [];
                             <div class="kt-input-icon">
                                 <div class="input-group date">
                                     <select required name="partner_type" id="partner_type" class="form-control">
-										@foreach(['is_supplier'=>__('Supplier'),'is_subsidiary_company'=>__('Subsidiary Company') , 'is_shareholder'=>__('Shareholder') , 'is_employee'=>__('Employee')] as $type =>$title)
+										@foreach( getAllPartnerTypesForSuppliers() as $type => $title)
                                  	       <option  @if(isset($model) && $model->isUserType($type) ) selected @endif value="{{ $type }}">{{$title}}</option>
 										@endforeach 
                                     </select>
@@ -609,6 +609,7 @@ $selectedBanks = [];
 
 
     {{-- Settlement Information "Commen Card" --}}
+		@if(!isset($model) || isset($model) && $model->partner->getType() == 'is_supplier')
     <div class="kt-portlet" id="settlement-card-id">
         <div class="kt-portlet__head">
             <div class="kt-portlet__head-label">
@@ -857,6 +858,7 @@ $selectedBanks = [];
             </div>
         </div>
     </div>
+	@endif
 
     {{-- <x-submitting /> --}}
     <x-submitting-by-ajax />

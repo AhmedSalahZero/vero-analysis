@@ -14,6 +14,7 @@ use App\Models\Company;
 use App\Models\Contract;
 use App\Models\CustomerInvoice;
 use App\Models\FinancialInstitution;
+use App\Models\ForeignExchangeRate;
 use App\Models\MoneyReceived;
 use App\Models\Partner;
 use App\Models\SalesOrder;
@@ -25,6 +26,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use PhpParser\Node\Expr\Cast;
 
 class MoneyReceivedController
 {
@@ -113,7 +115,7 @@ class MoneyReceivedController
 		
 		$selectedBanks = MoneyReceived::getDrawlBanksForCurrentCompany($company->id) ;
 		$chequesReceivedTableSearchFields = [
-			'customer_name'=>__('Customer Name'),
+			'partner_id'=>__('Customer Name'),
 			'receiving_date'=>__('Receiving Date'),
 			'cheque_number'=>__('Cheque Number'),
 			'currency'=>__('Currency'),
@@ -124,7 +126,7 @@ class MoneyReceivedController
 		
 		
 		$chequesRejectedTableSearchFields = [
-			'customer_name'=>__('Customer Name'),
+			'partner_id'=>__('Customer Name'),
 			'receiving_date'=>__('Receiving Date'),
 			'cheque_number'=>__('Cheque Number'),
 			'currency'=>__('Currency'),
@@ -134,7 +136,7 @@ class MoneyReceivedController
 		];
 		
 		$chequesUnderCollectionTableSearchFields = [
-			'customer_name'=>__('Customer Name'),
+			'partner_id'=>__('Customer Name'),
 			'cheque_number'=>__('Cheque Number'),
 			'received_amount'=>__('Cheque Amount'),
 			'deposit_date'=>__('Deposit Date'),
@@ -144,7 +146,7 @@ class MoneyReceivedController
 		];
 		
 		$collectedChequesTableSearchFields = [
-			'customer_name'=>__('Customer Name'),
+			'partner_id'=>__('Customer Name'),
 			'cheque_number'=>__('Cheque Number'),
 			'received_amount'=>__('Cheque Amount'),
 			'deposit_date'=>__('Deposit Date'),
@@ -153,7 +155,7 @@ class MoneyReceivedController
 		];
 		
 		$incomingTransferTableSearchFields = [
-			'customer_name'=>__('Customer Name'),
+			'partner_id'=>__('Customer Name'),
 			'receiving_date'=>__('Receiving Date'),
 			'receiving_bank_id'=>__('Receiving Bank'),
 			'received_amount'=>__('Transfer Amount'),
@@ -162,7 +164,7 @@ class MoneyReceivedController
 		];
 		
 		$cashInBankTableSearchFields = [
-			'customer_name'=>__('Customer Name'),
+			'partner_id'=>__('Customer Name'),
 			'receiving_date'=>__('Receiving Date'),
 			'receiving_bank_id'=>__('Receiving Bank'),
 			'received_amount'=>__('Deposit Amount'),
@@ -171,7 +173,7 @@ class MoneyReceivedController
 		];
 		
 		$cashInSafeReceivedTableSearchFields = [
-			'customer_name'=>__('Customer Name'),
+			'partner_id'=>__('Customer Name'),
 			'receiving_date'=>__('Receiving Date'),
 			'receiving_branch_id'=>__('Branch'),
 			'received_amount'=>__('Received Amount'),
@@ -302,8 +304,8 @@ class MoneyReceivedController
 		$moneyReceived = MoneyReceived::find($moneyReceivedId);
 		$partner = Partner::find($customerId);
 		$downPaymentContract = Contract::find($request->get('downPaymentContractId'));
-		$customerName = $partner->getName() ;
-		$invoices = CustomerInvoice::where('customer_name',$customerName)
+		$partnerId = $partner->id;
+		$invoices = CustomerInvoice::where('customer_id',$partnerId)
 		->where('company_id',$company->id)
 		->where('net_invoice_amount','>',0)
 		->when($downPaymentContract , function($q) use($downPaymentContract){
@@ -322,16 +324,17 @@ class MoneyReceivedController
 		if($selectedCurrency){
 			$invoices = $invoices->where('currency','=',$selectedCurrency);	
 		}
+
 		$invoices = $invoices->orderBy('invoice_date','asc')
 		->get(['invoice_number','project_name','invoice_date','invoice_due_date','net_invoice_amount','collected_amount','net_balance','currency'])
 		->toArray();
 		
 		
 		foreach($invoices as $index=>$invoiceArr){
-			$invoices[$index]['settlement_amount'] = $moneyReceived ? $moneyReceived->getSettlementsForInvoiceNumberAmount($invoiceArr['invoice_number'],$customerName,0) : 0;
-			$invoices[$index]['withhold_amount'] = $moneyReceived ? $moneyReceived->getWithholdForInvoiceNumberAmount($invoiceArr['invoice_number'],$customerName,0) : 0;
+			$invoices[$index]['settlement_amount'] = $moneyReceived ? $moneyReceived->getSettlementsForInvoiceNumberAmount($invoiceArr['invoice_number'],$partnerId,0) : 0;
+			$invoices[$index]['withhold_amount'] = $moneyReceived ? $moneyReceived->getWithholdForInvoiceNumberAmount($invoiceArr['invoice_number'],$partnerId,0) : 0;
 		}
-	
+
 		$invoices = $this->formatInvoices($invoices,$inEditMode);
 			return response()->json([
 				'status'=>true , 
@@ -356,16 +359,18 @@ class MoneyReceivedController
 		$customerName = $customer->getName();
 		$customerId = $customer->id;
 		$receivedBankName = $request->get('receiving_branch_id') ;
-		$data = $request->only(['type','receiving_date','currency','receiving_currency','partner_type']);
+		$data = $request->only(['type','receiving_date','currency','receiving_currency','customer_id']);
+		$receivingDate = $data['receiving_date'];
 		$currency = $data['currency'] ;
-		$companyId = $company->id;
 		
+		
+		$companyId = $company->id;
 		$receivingCurrency = $data['receiving_currency'] ; 
 		$isDownPayment = $request->get('is_down_payment') && $request->has('sales_orders_amounts');
 		$isDownPaymentFromMoneyReceived = $request->get('unapplied_amount',0) > 0 && !$request->get('is_down_payment') ;
 		$data['money_type'] =  !$isDownPayment ? 'money-received' : 'down-payment';
 		$data['money_type'] = $isDownPaymentFromMoneyReceived ? MoneyReceived::INVOICE_SETTLEMENT_WITH_DOWN_PAYMENT : $data['money_type'];
-		$data['customer_name'] = $customerName;
+		$data['partner_id'] = $partnerId;
 		$data['user_id'] = auth()->user()->id ;
 		$data['company_id'] = $company->id ;
 		
@@ -415,6 +420,8 @@ class MoneyReceivedController
 		$receivedBankName = $receivedBank ? $receivedBank->getName() : null;
 		$bankNameOrBranchName =  $moneyType == MoneyReceived::CASH_IN_SAFE ? Branch::find($relationData['receiving_branch_id'])->getName() : $receivedBankName ;
 		
+		// $mainFunctionalCurrency = $company->getMainFunctionalCurrency();
+		// $invoiceExchangeRate = $customer
 		$data['received_amount'] =$amountInReceivingCurrency ; 
 
 	
@@ -429,7 +436,9 @@ class MoneyReceivedController
 		 */
 		$accountType = AccountType::find($request->input('account_type.'.$moneyType));
 		$accountNumber = $request->input('account_number.'.$moneyType) ;
-		
+		$mainFunctionCurrency = $company->getMainFunctionalCurrency();
+		$receivingDate = Carbon::make($receivingDate)->format('Y-m-d');
+		$foreignExchangeRate = ForeignExchangeRate::getExchangeRateForCurrencyAndClosestDate($currency,$mainFunctionCurrency,$receivingDate,$company->id);
 		if(!$isDownPayment && !$isDownPaymentFromMoneyReceived){
 			unset($data['contract_id']);
 		}
@@ -453,7 +462,7 @@ class MoneyReceivedController
 		/**
 		 * * For Money Received Only
 		 */
-		$totalWithholdAmount = $moneyReceived->storeNewSettlement($request->get('settlements',[]),$customerName,$company->id);
+		$totalWithholdAmount = $moneyReceived->storeNewSettlement($receivingCurrency,$currency,$exchangeRate,$foreignExchangeRate,$request->get('settlements',[]),$partnerId,$company->id);
 		
 		$moneyReceived->update([
 			'total_withhold_amount'=>$totalWithholdAmount
@@ -491,6 +500,8 @@ class MoneyReceivedController
 	public function edit(Company $company , Request $request ,  MoneyReceived $moneyReceived ,$customerInvoiceId = null){
 		
 		$isDownPayment = $moneyReceived->isDownPayment();
+		$partnerType = $moneyReceived->partner->getType();
+	
 		$customerInvoiceCurrencies = CustomerInvoice::getCurrencies($customerInvoiceId);
 		
 		
@@ -498,7 +509,6 @@ class MoneyReceivedController
 		$banks = Bank::pluck('view_name','id');
 		$selectedBanks = MoneyReceived::getDrawlBanksForCurrentCompany($company->id) ;
 		$selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
-		// $customerInvoices = CustomerInvoice::where('company_id',$company->id)->pluck('customer_name','id')->unique()->toArray(); 
 		$accountTypes = AccountType::onlyCashAccounts()->get();		
 		$financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
 		$selectedBanks = MoneyReceived::getDrawlBanksForCurrentCompany($company->id) ;
@@ -509,7 +519,7 @@ class MoneyReceivedController
 		->when($isDownPayment,function(Builder $q){
 			$q->has('contracts');
 		})
-		->pluck('name','id')->toArray() : Partner::where('is_customer',1)->where('company_id',$company->id)->when($isDownPayment,function(Builder $q){
+		->pluck('name','id')->toArray() : Partner::where($partnerType,1)->where('company_id',$company->id)->when($isDownPayment,function(Builder $q){
 			$q->has('contracts');
 		})->pluck('name','id')->toArray(); 
 		
@@ -552,12 +562,17 @@ class MoneyReceivedController
 		$companyId = $company->id ;
 		$newType = $request->get('type');
 		$moneyReceivedAmountHasChanged = $moneyReceived->getAmount() != $request->input('received_amount.'.$newType);
-
+		$mainFunctionCurrency = $company->getMainFunctionalCurrency();
+		$currency = $moneyReceived->getCurrency();
+		$receivingDate = $moneyReceived->getReceivingDate();
+		$foreignExchangeRate = ForeignExchangeRate::getExchangeRateForCurrencyAndClosestDate($currency,$mainFunctionCurrency,$receivingDate,$company->id);
+		$receivingCurrency = $moneyReceived->getReceivingCurrency();
+		$exchangeRate = $moneyReceived->getExchangeRate();
 		$moneyReceived->deleteRelations();
 		$moneyReceived->delete();
 		$newMoneyReceived = $this->store($company,$request,true);
 		if(!$moneyReceivedAmountHasChanged){
-			$newMoneyReceived->storeNewSettlement($oldSettlementsForMoneyReceivedWithDownPayment->toArray(),$newMoneyReceived->getName(),$companyId,1);
+			$newMoneyReceived->storeNewSettlement($receivingCurrency,$currency,$exchangeRate,$foreignExchangeRate,$oldSettlementsForMoneyReceivedWithDownPayment->toArray(),$newMoneyReceived->getPartnerId(),$companyId,1);
 		}
 		 $activeTab = $newType;
 
@@ -743,7 +758,6 @@ class MoneyReceivedController
 		$statementDate = $statementDate ?: now() ;
 		$accountNumber = $request->get('accountNumber',$accountNumber);
 		$financialInstitutionId = $request->get('financialInstitutionId',$financialInstitutionId);
-	
 		if(!$accountType){
 			return response()->json([
 				'status'=>true ,
@@ -766,7 +780,6 @@ class MoneyReceivedController
 		}
 		$statementTableName = (get_class($accountNumberModel)::getStatementTableName()) ;
 		$foreignKeyName = get_class($accountNumberModel)::getForeignKeyInStatementTable();
-		
 		$balanceRow = DB::table($statementTableName)->where($foreignKeyName,$accountNumberModel->id)->where('full_date','<=' , $statementDate)->orderByRaw('full_date desc')->first();
 		$NetBalanceRow = DB::table($statementTableName)->where($foreignKeyName,$accountNumberModel->id)->orderByRaw('full_date desc')->first();
 		$balance = 0;
@@ -815,12 +828,11 @@ class MoneyReceivedController
 	}
 	public function getPartnersBasedOnCurrency(Request $request , Company $company , string $currencyName){
 		$partnerColumnName = $request->get('partnerColumnName');
+
 		if($partnerColumnName == 'is_customer'){
 			$partners = CustomerInvoice::where('currency',$currencyName)->where('company_id',$company->id)->pluck('customer_name','customer_id');
-			
 		}else{
 			$partners = Partner::where('company_id',$company->id)->where($partnerColumnName,1)->pluck('name','id')->toArray();
-			
 		}
 		return response()->json([
 			'partners'=>$partners

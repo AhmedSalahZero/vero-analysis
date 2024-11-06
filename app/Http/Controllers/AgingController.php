@@ -43,8 +43,8 @@ class AgingController
 		->where('company_id',$company->id)->where('currency','!=',null)->where('currency','!=','')
 		->selectRaw('currency')->get()->pluck('currency')->unique()->values()->toArray();
 		
-		$invoices = ('\App\Models\\'.$modelType)::where($clientNameColumnName,'!=',null)->where($clientNameColumnName,'!=','')->onlyCompany($company->id)->get();
-		$invoices = $invoices->unique('customer_name')->values() ;
+		$invoices = ('\App\Models\\'.$modelType)::onlyCompany($company->id)->get();
+		$invoices = $invoices->unique($clientNameColumnName)->values() ;
         return view('reports.aging_form', [
 			'businessUnits'=>$businessUnits,
 			'company'=>$company,

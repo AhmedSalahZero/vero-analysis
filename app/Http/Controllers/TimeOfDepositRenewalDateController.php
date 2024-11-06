@@ -100,16 +100,7 @@ class TimeOfDepositRenewalDateController
 		$year = $date[2];
 		$renewalDate = $year.'-'.$month.'-'.$day ;
 		$expiryDate = $request->get('expiry_date');
-		// dd($renewalDate,$expiryDate);
 		$renewalFeesCurrentAccountBankStatement = $timeOfDeposit->renewalDebitCurrentAccount($expiryDate) ;
-	// dd($renewalFeesCurrentAccountBankStatement->financial_institution_account_id,$renewalFeesCurrentAccountBankStatement);
-		// dd($renewalFeesCurrentAccountBankStatement);
-		// $financialInstitution = $timeOfDeposit->financialInstitution;
-		
-	
-		// $financialInstitutionAccount = FinancialInstitutionAccount::findByAccountNumber($timeOfDeposit->lg_fees_and_commission_account_number,$company->id , $financialInstitution->id);
-		// $financialInstitutionAccountOpeningBalance = $financialInstitutionAccount->getOpeningBalanceDate();
-		// if($renewalFeesCurrentAccountBankStatement){
 			
 			
 			$currentFullDate =$renewalFeesCurrentAccountBankStatement->full_date ; 

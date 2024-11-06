@@ -1,9 +1,11 @@
 <?php
 namespace App\Traits\Models;
 
+use App\Models\Company;
 use App\Models\FinancialInstitution;
 use App\Models\MoneyPayment;
 use App\Models\MoneyReceived;
+use App\Models\Partner;
 use Carbon\Carbon;
 
 
@@ -22,22 +24,61 @@ trait IsMoney
 	{
 		return $this->type ;
 	}
-	public function storeNewSettlement(array $settlements,string $customerOrSupplierName,int $companyId , bool $isFromDownPayment = false )
+	public function getSettlementAndWithholdAmountInMainCurrency($receivingCurrencyOrPaymentCurrency,$invoiceCurrency,$exchangeRate,$foreignExchangeRate,$invoiceExchangeRate,$settlementAmountInInvoiceCurrency,$withholdAmountInInvoiceCurrency):array 
 	{
-		$customerOrSupplierColumnName = $this instanceof MoneyReceived ?'customer_name' : 'supplier_name';
+		$mainFunctionCurrency = getCurrentCompany()->getMainFunctionalCurrency();
+		if($receivingCurrencyOrPaymentCurrency == $mainFunctionCurrency && $mainFunctionCurrency ==  $invoiceCurrency  ){
+			return [
+				'settlement_amount_in_main_currency'=>$settlementAmountInInvoiceCurrency ,
+				'withhold_amount_in_main_currency'=>$withholdAmountInInvoiceCurrency,
+				'settlement_in_invoice_exchange_rate'=>$settlementAmountInInvoiceCurrency
+			] ;
+		}
+		if($receivingCurrencyOrPaymentCurrency != $invoiceCurrency && $receivingCurrencyOrPaymentCurrency == $mainFunctionCurrency ){
+			return [
+				'settlement_amount_in_main_currency'=>$settlementAmountInInvoiceCurrency * $exchangeRate ,
+				'withhold_amount_in_main_currency'=>$withholdAmountInInvoiceCurrency* $invoiceExchangeRate,
+				'settlement_in_invoice_exchange_rate'=>$settlementAmountInInvoiceCurrency*$invoiceExchangeRate
+			]  ;
+		}
+		if($receivingCurrencyOrPaymentCurrency ==$invoiceCurrency && $receivingCurrencyOrPaymentCurrency != $mainFunctionCurrency
+			|| 
+			$receivingCurrencyOrPaymentCurrency != $invoiceCurrency && $receivingCurrencyOrPaymentCurrency != $mainFunctionCurrency
+		){
+			return [
+				'settlement_amount_in_main_currency'=>$settlementAmountInInvoiceCurrency * $foreignExchangeRate ,
+				'withhold_amount_in_main_currency'=>$withholdAmountInInvoiceCurrency* $invoiceExchangeRate,
+				'settlement_in_invoice_exchange_rate'=>$settlementAmountInInvoiceCurrency*$invoiceExchangeRate
+			] ;
+		}
+		return [
+			'settlement_amount_in_main_currency'=>-8 ,
+			'withhold_amount_in_main_currency'=>-8,
+			'settlement_in_invoice_exchange_rate'=>-8
+		];
+	}
+	public function storeNewSettlement(string $receivingCurrencyOrPaymentCurrency,string $invoiceCurrency , $exchangeRate ,$foreignExchangeRate,array $settlements,int $partnerId,int $companyId , bool $isFromDownPayment = false )
+	{
+		$fullInvoiceModelName = $this instanceof MoneyReceived ?'App\Models\CustomerInvoice' : 'App\Models\SupplierInvoice';
+		
 		$totalWithholdAmount= 0 ;
 		foreach($settlements as $settlementArr)
 		{
 			$settlementArr['settlement_amount'] = isset($settlementArr['settlement_amount']) ?  unformat_number($settlementArr['settlement_amount']) :  0 ;  
 			if($settlementArr['settlement_amount'] > 0){
 				$settlementArr['company_id'] = $companyId ;
-				$settlementArr[$customerOrSupplierColumnName] = $customerOrSupplierName ;
+				$settlementArr['partner_id'] = $partnerId;
 				$settlementArr['is_from_down_payment'] = $isFromDownPayment ;
-				
 				$withholdAmount = isset($settlementArr['withhold_amount']) ? unformat_number($settlementArr['withhold_amount']) : 0 ;
 				$settlementArr['withhold_amount'] = $withholdAmount ;
 				$totalWithholdAmount += $withholdAmount  ;
 				unset($settlementArr['net_balance']);
+				$invoiceExchangeRate = $fullInvoiceModelName::where('company_id',$companyId)->where('invoice_number',$settlementArr['invoice_number'])->first()->getExchangeRate();
+				$settlementAmountAndWithholdInMainCurrencyArr = $this->getSettlementAndWithholdAmountInMainCurrency($receivingCurrencyOrPaymentCurrency,$invoiceCurrency,$exchangeRate,$foreignExchangeRate,$invoiceExchangeRate,$settlementArr['settlement_amount'],$withholdAmount);
+				$settlementArr['settlement_amount_in_main_currency'] = $settlementAmountAndWithholdInMainCurrencyArr['settlement_amount_in_main_currency'];
+				$settlementArr['withhold_amount_in_main_currency'] = $settlementAmountAndWithholdInMainCurrencyArr['withhold_amount_in_main_currency'];
+				$settlementArr['settlement_in_invoice_exchange_rate'] = $settlementAmountAndWithholdInMainCurrencyArr['settlement_in_invoice_exchange_rate'];
+				$settlementArr['foreign_gain_or_loss'] = $settlementAmountAndWithholdInMainCurrencyArr['settlement_amount_in_main_currency']-$settlementAmountAndWithholdInMainCurrencyArr['settlement_in_invoice_exchange_rate'];
 				$this->settlements()->create($settlementArr);
 			}
 		}
@@ -101,7 +142,9 @@ trait IsMoney
     }
 	public function isUserType(string $type):bool
 	{
-		return $this->partner_type == $type; 
+		// is_supplier
+		return $this->partner->{$type} == 1 ;
+	
 	}
 	
 	public function getDownPaymentAmount()
@@ -127,16 +170,24 @@ trait IsMoney
 		}
 		throw new \Exception('Customer Exception Invalid Money Type');
 	}
-	public static function getAllUniqueCustomerNamesForCheques(int $companyId , $currencyName)
+	public static function getAllUniquePartnerIdsForCheques(int $companyId , $currencyName)
 	{
 		return self::where('company_id',$companyId)
 		->where('type','cheque')
 		->where('currency',$currencyName)
-		->get()->pluck(self::CLIENT_NAME,self::CLIENT_NAME)->toArray();
+		->get()->pluck('partner_id','partner_id')->toArray();
 	}
 	public function getFinancialInstitution()
 	{
 		return FinancialInstitution::find($this->getFinancialInstitutionId());
+	}
+	public function company()
+	{
+		return $this->belongsTo(Company::class,'company_id','id');
+	}
+	public function partner()
+	{
+		return $this->belongsTo(Partner::class,'partner_id','id');
 	}
 	
 }

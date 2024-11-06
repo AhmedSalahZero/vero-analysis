@@ -7,6 +7,7 @@ use App\Models\Partner;
 use App\Traits\GeneralFunctions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class CustomersController
 {
@@ -133,7 +134,9 @@ class CustomersController
 		$customer->update([
 			'name'=>$newName
 		]);
-		$customer->updateNamesInAllTables(['customer_name'],$oldName,$newName,$company->id,['partner_type','=','is_customer']);
+		DB::table('customer_invoices')->where('customer_id',$customer->id)->update([
+			'customer_name'=>$newName
+		]);
 		$type = Partner::CUSTOMERS;
 		// $this->store($company,$request);
 		$activeTab = $type ;

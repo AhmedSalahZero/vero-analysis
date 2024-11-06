@@ -125,12 +125,7 @@ class Partner extends Model
 	}
 	public function settlementForUnappliedAmounts()
 	{
-		if($this->isCustomer()){
-			return $this->hasMany(Settlement::class,'customer_name','name')->whereNotNull('unapplied_amount_id');
-		}
-		if($this->isSupplier()){
-			return $this->hasMany(PaymentSettlement::class,'supplier_name','name')->whereNotNull('unapplied_amount_id');
-		}
+		return $this->hasMany(Settlement::class,'partner_id','id')->whereNotNull('unapplied_amount_id');
 	}
 	public function getSettlementForUnappliedAmounts(string $startDate , string $endDate)
 	{
@@ -176,4 +171,14 @@ class Partner extends Model
 	{
 		return self::where('name',$name)->where('company_id',$companyId)->first();
 	}
+	public function getType()
+	{
+		foreach($this->toArray() as $columnName => $colValue){
+			if(in_array($columnName,array_merge(array_keys(getAllPartnerTypesForSuppliers()),array_keys(getAllPartnerTypesForCustomers()))) && $colValue == 1){
+				return $columnName;
+			}
+		}
+		throw new \Exception('Custom Exception .. No Available Partner Type');
+	}
+	
 }

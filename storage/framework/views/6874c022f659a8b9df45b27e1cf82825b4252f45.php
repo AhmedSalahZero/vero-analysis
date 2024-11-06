@@ -362,7 +362,7 @@ use App\Models\MoneyReceived ;
 <?php endif; ?> 
                                 </div>
                             </div>
-                            <div class="col-md-2 mt-4 width-12 show-only-when-invoice-currency-not-equal-receiving-currency">
+                            <div class="col-md-3 mt-4 width-12 show-only-when-invoice-currency-not-equal-receiving-currency">
                                 <label><?php echo e(__('Exchange Rate')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
                                 <div class="kt-input-icon">
                                     <input value="<?php echo e(isset($model) ? $model->getExchangeRate() : 1); ?>" placeholder="<?php echo e(__('Exchange Rate')); ?>" type="text" name="exchange_rate[<?php echo e(MoneyReceived::CASH_IN_SAFE); ?>]" class="form-control only-greater-than-or-equal-zero-allowed exchange-rate-class recalculate-amount-class" data-type="<?php echo e(MoneyReceived::CASH_IN_SAFE); ?>">
@@ -447,7 +447,7 @@ use App\Models\MoneyReceived ;
                             </div>
 
 
-                            <div class="col-md-1 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency">
+                            <div class="col-md-3 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency">
                                 <label><?php echo e(__('Exchange Rate')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
                                 <div class="kt-input-icon">
                                     <input value="<?php echo e(isset($model) ? $model->getExchangeRate() : 1); ?>" placeholder="<?php echo e(__('Exchange Rate')); ?>" type="text" name="exchange_rate[<?php echo e(MoneyReceived::CASH_IN_BANK); ?>]" class="form-control only-greater-than-or-equal-zero-allowed exchange-rate-class recalculate-amount-class" data-type="<?php echo e(MoneyReceived::CASH_IN_BANK); ?>">
@@ -551,7 +551,7 @@ use App\Models\MoneyReceived ;
                                 </div>
                             </div>
 
-                            <div class="col-md-2 width-12 show-only-when-invoice-currency-not-equal-receiving-currency">
+                            <div class="col-md-3 width-12 show-only-when-invoice-currency-not-equal-receiving-currency">
                                 <label><?php echo e(__('Exchange Rate')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
                                 <div class="kt-input-icon">
                                     <input value="<?php echo e(isset($model) ? $model->getExchangeRate() : 1); ?>" placeholder="<?php echo e(__('Exchange Rate')); ?>" type="text" name="exchange_rate[<?php echo e(MoneyReceived::CHEQUE); ?>]" class="form-control only-greater-than-or-equal-zero-allowed exchange-rate-class recalculate-amount-class" data-type="<?php echo e(MoneyReceived::CHEQUE); ?>">
@@ -638,7 +638,7 @@ use App\Models\MoneyReceived ;
                             </div>
 
 
-                            <div class="col-md-2 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency">
+                            <div class="col-md-3 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency">
                                 <label><?php echo e(__('Exchange Rate')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
                                 <div class="kt-input-icon">
                                     <input value="<?php echo e(isset($model) ? $model->getExchangeRate() : 1); ?>" placeholder="<?php echo e(__('Exchange Rate')); ?>" type="text" name="exchange_rate[<?php echo e(MoneyReceived::INCOMING_TRANSFER); ?>]" class="form-control only-greater-than-or-equal-zero-allowed exchange-rate-class recalculate-amount-class" data-type="<?php echo e(MoneyReceived::INCOMING_TRANSFER); ?>">
@@ -823,7 +823,7 @@ use App\Models\MoneyReceived ;
         const receivingCurrency = $('select#receiving-currency-id').val();
         const moneyType = $('select#type').val();
 		
-		const partnerType = $('select#partner_type').val();
+
 		
 		$('.main-amount-class').closest('.closest-parent').find('.currency-span').html(" [ " + receivingCurrency +" ]")
 		$('.amount-after-exchange-rate-class').closest('.closest-parent').find('.currency-span').html(" [ " + invoiceCurrency +" ]")

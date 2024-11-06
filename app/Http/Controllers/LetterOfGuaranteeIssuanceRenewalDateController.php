@@ -106,16 +106,8 @@ class LetterOfGuaranteeIssuanceRenewalDateController
 		$year = $date[2];
 		$renewalDate = $year.'-'.$month.'-'.$day ;
 		$expiryDate = $request->get('expiry_date');
-		// dd($renewalDate,$expiryDate);
 		$renewalFeesCurrentAccountBankStatement = $letterOfGuaranteeIssuance->renewalFeesCurrentAccountBankStatement($expiryDate) ;
-	
-		// dd($renewalFeesCurrentAccountBankStatement);
 		$financialInstitution = $letterOfGuaranteeIssuance->financialInstitutionBank;
-		// $financialInstitutionAccountOpeningBalance = 
-		// $time  = now()->format('H:i:s');
-		// $fullDateTime = date('Y-m-d H:i:s', strtotime("$renewalDate $time")) ;
-		
-		// dd($expiryDate,$renewalFeesCurrentAccountBankStatement);
 		CurrentAccountBankStatement::deleteButTriggerChangeOnLastElement($LgRenewalDateHistory->commissionCurrentBankStatements()->withoutGlobalScope('only_active')->get());
 		$transactionName = $letterOfGuaranteeIssuance->getTransactionName();
 		$lgType = $letterOfGuaranteeIssuance->getLgType();
