@@ -9,6 +9,7 @@ use App\Models\CurrentAccountBankStatement;
 use App\Models\FinancialInstitution;
 use App\Models\LetterOfGuaranteeIssuance;
 use App\Models\LetterOfGuaranteeStatement;
+use App\Models\MoneyReceived;
 use App\Models\Settlement;
 use App\Models\TimeOfDeposit;
 use Http;
@@ -49,7 +50,5 @@ class TestCommand extends Command
 	 */
 	public function handle()
 	{
-		$settlement = Settlement::find(219);
-		dd($settlement->customerInvoice);
 	}
 }

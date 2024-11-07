@@ -3,6 +3,7 @@
 namespace App\ReadyFunctions;
 
 use App\Helpers\HArr;
+use App\Models\Cheque;
 use App\Models\CustomerInvoice;
 use App\Traits\Services\IsAgingService;
 use Exception;
@@ -61,11 +62,11 @@ class ChequeAgingService
         }
         $invoices = $invoices->get();
 
-        /**
-         * @var CustomerInvoice[] $invoices
-         */
 
         foreach ($invoices as $index => $invoice) {
+			/**
+			 * @var Cheque $invoice
+			 */
 			
             $clientName = $invoice->{$modelModelName}->getName() ;
             $invoiceNumber = $invoice->getNumber();

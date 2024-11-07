@@ -16,6 +16,8 @@ use Carbon\Carbon;
  */
 trait IsMoney 
 {
+
+
 	public function getId()
 	{
 		return $this->id ;
@@ -184,6 +186,18 @@ trait IsMoney
 	public function partner()
 	{
 		return $this->belongsTo(Partner::class,'partner_id','id');
+	}
+	public function getDownPaymentType()
+	{
+		return $this->down_payment_type ;
+	}
+	public function isDownPaymentOverContract()
+	{
+		return $this->getDownPaymentType() == self::DOWN_PAYMENT_OVER_CONTRACT;
+	}
+	public function isFreeDownPayment()
+	{
+		return $this->getDownPaymentType() == self::DOWN_PAYMENT_FREE;
 	}
 	
 }

@@ -111,14 +111,14 @@ class CustomerInvoice extends Model implements IInvoice
 	
 	public function getNetBalanceUntil(string $date)
 	{
-		$invoiceNumber = $this->getInvoiceNumber();
+		$invoiceId = $this->getId();
 		$partnerId = $this->getCustomerId();
 		$netInvoiceAmount = $this->getNetInvoiceAmount();
 		$totalWithhold = $this->getWithholdAmount();
 		$totalCollected = 0 ;
 		$moneyReceives = $this->moneyReceived->where(self::RECEIVING_OR_PAYMENT_DATE_COLUMN_NAME,'<=',$date) ;
 		foreach($moneyReceives as $moneyReceived) {
-			foreach($moneyReceived->getSettlementsForInvoiceNumber($invoiceNumber, $partnerId)  as $settlement) {
+			foreach($moneyReceived->getSettlementsForInvoiceNumber($invoiceId, $partnerId)  as $settlement) {
 				$totalCollected += $settlement->getAmount();
 			}
 		}
@@ -141,7 +141,6 @@ class CustomerInvoice extends Model implements IInvoice
 		
 			$startDateMinusOne = Carbon::make($startDate)->subDay()->format('Y-m-d');
 			$beginningBalance = self::getBeginningBalanceUntil($currency,$partnerId,$oneDayBeforeStartDate,$startDateMinusOne) ; 
-			// dd($beginningBalance);
 			$formattedData = [];
 			$currentData['date'] = $startDateFormatted;
 			$currentData['document_type'] = 'Beginning Balance';
@@ -198,10 +197,8 @@ class CustomerInvoice extends Model implements IInvoice
 			$docNumber = $moneyReceived->getNumber();
 				$moneyReceivedAmount = $isMainCurrency ? $moneyReceived->getAmountForMainCurrency() :$moneyReceived->getAmountInInvoiceCurrency() ;
 				if($moneyReceivedAmount){
-					// $isDownPayment = $moneyReceived->isDownPayment() ;
-					$invoiceNumbers = implode('/',$moneyReceived->settlements->pluck('invoice_number')->toArray());
+					$invoiceNumbers = implode('/',$moneyReceived->settlements->pluck('invoice.invoice_number')->toArray());
 					$currentComment = MoneyReceived::generateComment($moneyReceived,app()->getLocale(),$invoiceNumbers,'');
-					// $currentComment = $isDownPayment ?  __('Down Payment For Contract :contractName',['contractName'=>$moneyReceived->contract->getName()]) :__('Settlement For Invoice No.') . ' ' . implode('/',$moneyReceived->settlements->pluck('invoice_number')->toArray());
 					$currentData = []; 
 					$currentData['date'] = $dateReceiving;
 					$currentData['document_type'] = $moneyReceivedType;
@@ -221,7 +218,7 @@ class CustomerInvoice extends Model implements IInvoice
 					$currentData['debit'] = 0;
 					$currentData['credit'] =$totalWithholdAmount;
 					$currentData['comment'] =$bankName;
-					$currentData['comment'] =__('Withhold Taxes For Invoice No.') . ' ' . implode('/',$moneyReceived->settlements->where('withhold_amount','>',0)->pluck('invoice_number')->toArray());
+					$currentData['comment'] =__('Withhold Taxes For Invoice No.') . ' ' . implode('/',$moneyReceived->settlements->where('withhold_amount','>',0)->pluck('invoice.invoice_number')->toArray());
 					$index++;
 					$formattedData[] = $currentData ;
 					}
@@ -244,6 +241,7 @@ class CustomerInvoice extends Model implements IInvoice
 				continue ;
 			}
 			
+			$result[$index]['id'] = $invoiceArr['id'];
 			$result[$index]['invoice_number'] = $invoiceArr['invoice_number'];
 			$result[$index]['currency'] = $invoiceArr['currency'];
 			$result[$index]['net_invoice_amount'] = $invoiceArr['net_invoice_amount'];
@@ -293,7 +291,8 @@ class CustomerInvoice extends Model implements IInvoice
 					<div class="kt-input-icon">
 						<div class="kt-input-icon">
 							<div class="input-group date">
-								<input readonly class="form-control js-invoice-number" name="settlements['.$invoiceNumber.'][invoice_number]" value="'. $invoiceNumber .'">
+								<input type="hidden" name="settlements['.$invoiceNumber.'][invoice_id]" value="0" class="js-invoice-id">
+								<input readonly class="form-control js-invoice-number" data-invoice-id="0" name="settlements['.$invoiceNumber.'][invoice_number]" value="'. $invoiceNumber .'">
 							</div>
 						</div>
 					</div>
@@ -417,7 +416,7 @@ class CustomerInvoice extends Model implements IInvoice
 		->when($currency,function($builder) use ($currency){
 			$builder->where('customer_invoices.currency',$currency);
 		})
-		->join('settlements','settlements.invoice_number','=','customer_invoices.invoice_number')
+		->join('settlements','settlements.invoice_id','=','customer_invoices.id')
 		->join('money_received','money_received.id','=','settlements.money_received_id')
 		->where('money_received.type','=',$moneyType)
 		->whereBetween($dateColumnName,[$startDate,$endDate])

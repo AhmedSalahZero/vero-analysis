@@ -17,7 +17,7 @@ class Settlement extends Model
 	
 	public function customerInvoice()
 	{
-		return $this->belongsTo(CustomerInvoice::class , 'invoice_number','invoice_number')->where('customer_id',$this->partner_id);
+		return $this->belongsTo(CustomerInvoice::class , 'invoice_id','id');
 	}
 	public function invoice():BelongsTo
 	{

@@ -286,7 +286,6 @@ class MoneyReceivedController
 			$formattedSalesOrders[$index]['received_amount'] = $receivedAmount && $receivedAmount->down_payment_amount ? $receivedAmount->down_payment_amount : 0;
 			$formattedSalesOrders[$index]['so_number'] = $salesOrder->so_number;
 			$formattedSalesOrders[$index]['amount'] = $salesOrder->getAmount();
-			// $formattedSalesOrders[$index]['allocated_amount'] =   // for edit form
 			$formattedSalesOrders[$index]['id'] = $salesOrder->id;
 		}
 			return response()->json([
@@ -326,13 +325,13 @@ class MoneyReceivedController
 		}
 
 		$invoices = $invoices->orderBy('invoice_date','asc')
-		->get(['invoice_number','project_name','invoice_date','invoice_due_date','net_invoice_amount','collected_amount','net_balance','currency'])
+		->get(['id','invoice_number','project_name','invoice_date','invoice_due_date','net_invoice_amount','collected_amount','net_balance','currency'])
 		->toArray();
 		
 		
 		foreach($invoices as $index=>$invoiceArr){
-			$invoices[$index]['settlement_amount'] = $moneyReceived ? $moneyReceived->getSettlementsForInvoiceNumberAmount($invoiceArr['invoice_number'],$partnerId,0) : 0;
-			$invoices[$index]['withhold_amount'] = $moneyReceived ? $moneyReceived->getWithholdForInvoiceNumberAmount($invoiceArr['invoice_number'],$partnerId,0) : 0;
+			$invoices[$index]['settlement_amount'] = $moneyReceived ? $moneyReceived->sumSettlementsForInvoice($invoiceArr['id'],$partnerId,0) : 0;
+			$invoices[$index]['withhold_amount'] = $moneyReceived ? $moneyReceived->sumWithholdAmountForInvoice($invoiceArr['id'],$partnerId,0) : 0;
 		}
 
 		$invoices = $this->formatInvoices($invoices,$inEditMode);
@@ -356,10 +355,10 @@ class MoneyReceivedController
 		$financialInstitutionId = null;
 		$partnerId = $request->get('customer_id');
 		$customer = Partner::find($partnerId);
-		$customerName = $customer->getName();
+		// $customerName = $customer->getName();
 		$customerId = $customer->id;
 		$receivedBankName = $request->get('receiving_branch_id') ;
-		$data = $request->only(['type','receiving_date','currency','receiving_currency','customer_id']);
+		$data = $request->only(['type','receiving_date','currency','receiving_currency','customer_id','down_payment_type']);
 		$receivingDate = $data['receiving_date'];
 		$currency = $data['currency'] ;
 		

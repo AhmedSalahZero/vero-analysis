@@ -170,8 +170,22 @@ use App\Models\MoneyReceived ;
                                 </div>
                             </div>
                         </div>
+						
+					
+							<div class="col-md-2 ">
+                    <label>{{__('Down Payment Type')}} @include('star')</label>
+                    <div class="kt-input-icon">
+                        <div class="input-group date">
+                            <select required name="down_payment_type" id="down_payment_type" class="form-control">
+                                <option @if(isset($model) && $model->isDownPaymentOverContract() ) selected @endif value="{{ MoneyReceived::DOWN_PAYMENT_OVER_CONTRACT }}">{{__('Over Contract')}}</option>
+                                <option @if(isset($model) && $model->isFreeDownPayment() ) selected @endif value="{{ MoneyReceived::DOWN_PAYMENT_FREE }}">{{__('Free')}}</option>
+                            </select>
+                        </div>
+                    </div>
 
-                        <div class="col-md-3">
+                </div>
+
+                        <div class="col-md-3 contract-id-div mt-4"  >
                             <label>{{__('Contract Name')}}
                                 @include('star')
                             </label>
@@ -639,7 +653,7 @@ use App\Models\MoneyReceived ;
 
 
             {{-- Settlement Information "Commen Card" --}}
-            <div class="kt-portlet">
+            <div class="kt-portlet down-payment-id">
                 <div class="kt-portlet__head">
                     <div class="kt-portlet__head-label">
                         <h3 class="kt-portlet__head-title head-title text-primary">
@@ -674,8 +688,7 @@ use App\Models\MoneyReceived ;
 			
 			
 			
-			
-			@if(isset($model))
+			@if(isset($model) && $model->getDownPaymentType() != MoneyReceived::DOWN_PAYMENT_FREE)
 			 <div class="kt-portlet" id="settlement-card-id">
                 <div class="kt-portlet__head">
                     <div class="kt-portlet__head-label">
@@ -844,7 +857,19 @@ use App\Models\MoneyReceived ;
         $('select.currency-class').trigger('change')
         $('.recalculate-amount-class').trigger('change')
     })
-
+$(document).on('change','#down_payment_type',function(){
+	const val = $(this).val();
+	if(val != 'over_contract'){
+		$('.contract-id-div').hide();
+		$('.down-payment-id').hide();
+		$('#settlement-card-id').hide();
+	}else{
+		$('.contract-id-div').show();
+			$('.down-payment-id').show();
+		$('#settlement-card-id').show();
+	}
+})
+$('#down_payment_type').trigger('change')
 </script>
 
 @endsection

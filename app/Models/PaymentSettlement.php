@@ -17,14 +17,14 @@ class PaymentSettlement extends Model
 		return $this->belongsTo(MoneyReceived::class , 'money_payment_id','id');
 	}
 	
-	// public function supplierInvoice()
-	// {
-	// 	return $this->belongsTo(MoneyPayment::class , 'money_payment_id','id');
-	// }
-	// public function invoice():BelongsTo
-	// {
-	// 	return $this->supplierInvoice();
-	// }
+	public function supplierInvoice()
+	{
+		return $this->belongsTo(SupplierInvoice::class , 'invoice_id','id');
+	}
+	public function invoice():BelongsTo
+	{
+		return $this->supplierInvoice();
+	}
 	public function getAmount()
 	{
 		return $this->settlement_amount ;

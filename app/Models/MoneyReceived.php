@@ -30,6 +30,9 @@ class MoneyReceived extends Model
 	const DOWN_PAYMENT = 'down-payment';
 	const INVOICE_SETTLEMENT_WITH_DOWN_PAYMENT = 'invoice-settlement-with-down-payment';
 	const CLIENT_NAME ='customer_name';
+	const DOWN_PAYMENT_OVER_CONTRACT = 'over_contract' ;
+	const DOWN_PAYMENT_FREE = 'free' ;
+	
 	
 	public static function generateComment(self $moneyReceived,string $lang,?string $invoiceNumbers = '',?string $customerName = null)
 	{
@@ -450,7 +453,7 @@ class MoneyReceived extends Model
         return $this->hasMany(CustomerInvoice::class, 'partner_id', 'customer_id');
     }
 	
-    public function getSettlementsForInvoiceNumber($invoiceId, int $partnerId,bool $isFromDownPayment = null):Collection
+    public function getSettlementsForInvoiceNumber(int $invoiceId, int $partnerId,bool $isFromDownPayment = null):Collection
     {
 		$settlements = $this->settlements ;
 		if($isFromDownPayment == true){
@@ -460,17 +463,17 @@ class MoneyReceived extends Model
 		if($isFromDownPayment == false){
 			$settlements = $this->settlementsForMoneyReceived;
 		}
-        return $settlements->where('invoice_number', $invoiceNumber)->where('partner_id', $partnerId) ;
+        return $settlements->where('invoice_id', $invoiceId)->where('partner_id', $partnerId) ;
     }
-	public function getSettlementsForInvoiceNumberAmount($invoiceNumber, int $partnerId,bool $isFromDownPayment =null):float{
+	public function sumSettlementsForInvoice(int $invoiceId, int $partnerId,bool $isFromDownPayment =null):float{
 	
-		return $this->getSettlementsForInvoiceNumber($invoiceNumber,$partnerId,$isFromDownPayment)
+		return $this->getSettlementsForInvoiceNumber($invoiceId,$partnerId,$isFromDownPayment)
 		->sum('settlement_amount');
 		
 		
 	}
-	public function getWithholdForInvoiceNumberAmount($invoiceNumber, int $partnerId,bool $isFromDownPayment =null):float{
-		return $this->getSettlementsForInvoiceNumber($invoiceNumber,$partnerId,$isFromDownPayment)->sum('withhold_amount');
+	public function sumWithholdAmountForInvoice($invoiceId, int $partnerId,bool $isFromDownPayment =null):float{
+		return $this->getSettlementsForInvoiceNumber($invoiceId,$partnerId,$isFromDownPayment)->sum('withhold_amount');
 	}
     public function getReceivingDateFormatted()
     {
@@ -832,7 +835,7 @@ class MoneyReceived extends Model
 			->where('customer_invoices.contract_code',$contractCode)
 			->join('settlements',function(Builder $builder){
 				$builder->on('money_received.id','=','settlements.money_received_id')
-				->on('settlements.invoice_number','customer_invoices.invoice_number');
+				->on('settlements.invoice_id','customer_invoices.id');
 			})
 			;
 		})

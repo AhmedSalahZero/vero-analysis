@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddInvoiceIdToSettlementsTable extends Migration
+class AddInvoiceIdToPaymentSettlementsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,16 +13,16 @@ class AddInvoiceIdToSettlementsTable extends Migration
      */
     public function up()
     {
-        Schema::table('settlements', function (Blueprint $table) {
+        Schema::table('payment_settlements', function (Blueprint $table) {
             $table->unsignedBigInteger('invoice_id')->nullable()->after('invoice_number');
         });
-		DB::table('settlements')->get()->each(function($settlementStd){
-			$invoice = DB::table('customer_invoices')->where('invoice_number',$settlementStd->invoice_number)->first();
-			DB::table('settlements')->where('id',$settlementStd->id)->update([
+		DB::table('payment_settlements')->get()->each(function($settlementStd){
+			$invoice = DB::table('supplier_invoices')->where('invoice_number',$settlementStd->invoice_number)->first();
+			DB::table('payment_settlements')->where('id',$settlementStd->id)->update([
 				'invoice_id'=>$invoice ? $invoice->id : null
 			]);
 		});
-		Schema::table('settlements', function (Blueprint $table) {
+		Schema::table('payment_settlements', function (Blueprint $table) {
             $table->dropColumn('invoice_number');
         });
     }

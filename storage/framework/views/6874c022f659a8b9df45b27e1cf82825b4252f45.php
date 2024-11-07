@@ -172,8 +172,22 @@ use App\Models\MoneyReceived ;
                                 </div>
                             </div>
                         </div>
+						
+					
+							<div class="col-md-2 ">
+                    <label><?php echo e(__('Down Payment Type')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
+                    <div class="kt-input-icon">
+                        <div class="input-group date">
+                            <select required name="down_payment_type" id="down_payment_type" class="form-control">
+                                <option <?php if(isset($model) && $model->isDownPaymentOverContract() ): ?> selected <?php endif; ?> value="<?php echo e(MoneyReceived::DOWN_PAYMENT_OVER_CONTRACT); ?>"><?php echo e(__('Over Contract')); ?></option>
+                                <option <?php if(isset($model) && $model->isFreeDownPayment() ): ?> selected <?php endif; ?> value="<?php echo e(MoneyReceived::DOWN_PAYMENT_FREE); ?>"><?php echo e(__('Free')); ?></option>
+                            </select>
+                        </div>
+                    </div>
 
-                        <div class="col-md-3">
+                </div>
+
+                        <div class="col-md-3 contract-id-div mt-4"  >
                             <label><?php echo e(__('Contract Name')); ?>
 
                                 <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
@@ -665,7 +679,7 @@ use App\Models\MoneyReceived ;
 
 
             
-            <div class="kt-portlet">
+            <div class="kt-portlet down-payment-id">
                 <div class="kt-portlet__head">
                     <div class="kt-portlet__head-label">
                         <h3 class="kt-portlet__head-title head-title text-primary">
@@ -701,8 +715,7 @@ use App\Models\MoneyReceived ;
 			
 			
 			
-			
-			<?php if(isset($model)): ?>
+			<?php if(isset($model) && $model->getDownPaymentType() != MoneyReceived::DOWN_PAYMENT_FREE): ?>
 			 <div class="kt-portlet" id="settlement-card-id">
                 <div class="kt-portlet__head">
                     <div class="kt-portlet__head-label">
@@ -884,7 +897,19 @@ use App\Models\MoneyReceived ;
         $('select.currency-class').trigger('change')
         $('.recalculate-amount-class').trigger('change')
     })
-
+$(document).on('change','#down_payment_type',function(){
+	const val = $(this).val();
+	if(val != 'over_contract'){
+		$('.contract-id-div').hide();
+		$('.down-payment-id').hide();
+		$('#settlement-card-id').hide();
+	}else{
+		$('.contract-id-div').show();
+			$('.down-payment-id').show();
+		$('#settlement-card-id').show();
+	}
+})
+$('#down_payment_type').trigger('change')
 </script>
 
 <?php $__env->stopSection(); ?>

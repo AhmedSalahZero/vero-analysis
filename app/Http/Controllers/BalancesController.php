@@ -52,10 +52,7 @@ class BalancesController
 		$invoicesBalancesForMainFunctionalCurrency = $this->addMainCurrency($invoicesBalances,$clientNameColumnName,$clientIdColumnName);
 		$invoicesBalances = array_merge($invoicesBalances , $invoicesBalancesForMainFunctionalCurrency);
 		$cardNetBalances = $this->sumNetBalancePerCurrency($invoicesBalances,$mainCurrency,$clientNameColumnName);
-		// dd($cardNetBalances);
 		$hasMoreThanCurrency = isset($cardNetBalances['currencies']) && count($cardNetBalances['currencies']) >1 ; 
-		// dd($invoicesBalances,$invoicesBalancesForMainFunctionalCurrency);
-		// dd($invoicesBalances,$invoicesBalancesForMainFunctionalCurrency);
 		$mainFunctionalCurrency = $company->getMainFunctionalCurrency(); 
         return view('admin.reports.balances_form', compact('company','mainFunctionalCurrency','hasMoreThanCurrency','title','invoicesBalances','cardNetBalances','mainCurrency','modelType','clientNameColumnName','clientIdColumnName','customersOrSupplierStatementText'));
     }

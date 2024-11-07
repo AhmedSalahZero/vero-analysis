@@ -272,13 +272,13 @@ class MoneyPaymentController
 			$invoices = $invoices->where('currency','=',$selectedCurrency);
 		}
 		$invoices = $invoices->orderBy('invoice_date','asc')
-		->get(['invoice_number','invoice_date','invoice_due_date','net_invoice_amount','paid_amount','net_balance','currency'])
+		->get(['id','invoice_number','invoice_date','invoice_due_date','net_invoice_amount','paid_amount','net_balance','currency'])
 		->toArray();
 
 
 		foreach($invoices as $index=>$invoiceArr){
-			$invoices[$index]['settlement_amount'] = $moneyPayment ? $moneyPayment->getSettlementsForInvoiceNumberAmount($invoiceArr['invoice_number'],$partnerId,0) : 0;
-			$invoices[$index]['withhold_amount'] = $moneyPayment ? $moneyPayment->getWithholdForInvoiceNumberAmount($invoiceArr['invoice_number'],$partnerId,0) : 0;
+			$invoices[$index]['settlement_amount'] = $moneyPayment ? $moneyPayment->sumSettlementsForInvoice($invoiceArr['id'],$partnerId,0) : 0;
+			$invoices[$index]['withhold_amount'] = $moneyPayment ? $moneyPayment->sumSettlementsForInvoice($invoiceArr['id'],$partnerId,0) : 0;
 		}
 
 		$invoices = $this->formatInvoices($invoices,$inEditMode,$moneyPayment);
@@ -309,7 +309,7 @@ class MoneyPaymentController
 		$supplierName = $supplier->getName();
 		$supplierId = $supplier->id;
 		$paymentBranchName = $request->get('delivery_branch_id') ;
-		$data = $request->only(['type','delivery_date','currency','payment_currency']);
+		$data = $request->only(['type','delivery_date','currency','payment_currency','down_payment_type']);
 		$currencyName = $data['currency'];
 		$paymentCurrency = $data['payment_currency'];
 		

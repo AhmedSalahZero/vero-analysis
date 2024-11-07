@@ -68,7 +68,7 @@ class StoreCashExpenseRequest extends FormRequest
 			'due_date'=>$type == CashExpense::PAYABLE_CHEQUE ? ['required',new DateMustBeGreaterThanOrEqualDate(null,$openingBalanceDate , __('Cheque Due Date Must Be Greater Than Or Equal Account Opening Date') )]:[],
 			
 			'cheque_number'=>$type == CashExpense::PAYABLE_CHEQUE ? ['required',new UniqueChequeNumberRule(Request()->input('delivery_bank_id.payable_cheque'),Request()->get('current_cheque_id'),__('Cheque Number Already Exist'))] : [],
-			'receipt_number'=>$type== CashExpense::CASH_PAYMENT ? ['required',new UniqueReceiptNumberForReceivingBranchRule('cash_payments',$this->delivery_branch_id?:0,$this->current_branch,__('Receipt Number For This Branch Already Exist'))] : []
+			'receipt_number'=>$type== CashExpense::CASH_PAYMENT ? ['required',new UniqueReceiptNumberForReceivingBranchRule('cash_payments',$this->delivery_branch_id?:0,$this->cash_id,__('Receipt Number For This Branch Already Exist'))] : []
         ];
     }
 	public function messages()

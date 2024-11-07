@@ -24,9 +24,13 @@ class SettlementAllocation extends Model
 	{
 		return $this->belongsTo(Contract::class,'contract_id','id');
 	}
+	public function supplierInvoice()
+	{
+		return $this->belongsTo(SupplierInvoice::class,'invoice_id','id');
+	}
 	public function getInvoiceNumber()
 	{
-		return $this->invoice_number;
+		return $this->supplierInvoice ? $this->supplierInvoice->getInvoiceNumber() : __('N/A') ;
 	}
 	public function getAmount()
 	{
@@ -53,11 +57,12 @@ class SettlementAllocation extends Model
 				$builder->join('payable_cheques','payable_cheques.money_payment_id','=','money_payments.id')
 				->where('payable_cheques.status',$chequeStatus);
 			})
-			->get(['settlement_allocations.contract_id','invoice_number','settlement_allocations.money_payment_id','allocation_amount']);
+			->get(['settlement_allocations.contract_id','invoice_id','settlement_allocations.money_payment_id','allocation_amount']);
 			
 			foreach($settlementAllocations as $settlementAllocation){
 				$supplier = $settlementAllocation->moneyPayment->supplier ;
-				$invoiceNumber = $settlementAllocation->invoice_number ; 
+				$invoiceId = $settlementAllocation->invoice_id ; 
+				$invoiceNumber=SupplierInvoice::find($invoiceId)->getInvoiceNumber();
 				$keyNameForCurrentType = $keyNameForCurrentType.' - '. __('Invoice No') .' ' .$invoiceNumber ;
 				$currentAmountAllocationAmount = $settlementAllocation->allocation_amount ;
 				$supplierName = $supplier->getName();
@@ -80,10 +85,11 @@ class SettlementAllocation extends Model
 			->join('letter_of_credit_issuances','settlement_allocations.letter_of_credit_issuance_id','=','letter_of_credit_issuances.id')
 			->where('settlement_allocations.partner_id',$customerId)
 			->whereBetween($dateFieldName,[$startDate,$endDate])
-			->get(['settlement_allocations.contract_id','invoice_number','settlement_allocations.letter_of_credit_issuance_id','allocation_amount']);
+			->get(['settlement_allocations.contract_id','invoice_id','settlement_allocations.letter_of_credit_issuance_id','allocation_amount']);
 			foreach($settlementAllocations as $settlementAllocation){
 				$supplier = $settlementAllocation->letterOfCreditIssuance->supplier ;
-				$invoiceNumber = $settlementAllocation->invoice_number ; 
+				$invoiceId = $settlementAllocation->invoice_id ; 
+				$invoiceNumber = SupplierInvoice::find($invoiceId)->getInvoiceId() ; 
 				$keyNameForCurrentType = $keyNameForCurrentType.' - '. __('Invoice No') .' ' .$invoiceNumber ;
 				$currentAmountAllocationAmount = $settlementAllocation->allocation_amount ;
 				$supplierName = $supplier->getName();
