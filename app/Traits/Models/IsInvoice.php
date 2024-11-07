@@ -4,11 +4,9 @@ namespace App\Traits\Models;
 use App\Models\CustomerInvoice;
 use App\Models\Deduction;
 use App\Models\DueDateHistory;
-use App\Models\InvoiceDeduction;
 use App\Models\SupplierInvoice;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
 /**
  * * للميسود المشترك بين
@@ -214,12 +212,19 @@ trait IsInvoice
 	
 	public static function getTotalInvoicesPlusVatAmountUntilDate( string $currencyName, int $partnerId,string $startDate , string $endDate):float
 	{
+		$isMainCurrency  = $currencyName == 'main_currency';
+		$invoiceAmountColumnName = $isMainCurrency ? 'invoice_amount_in_main_currency':'invoice_amount';
+		$vatAmountColumnName = $isMainCurrency ? 'vat_amount_in_main_currency':'vat_amount';
+		$totalDeductionColumn = $isMainCurrency ? 'total_deductions_in_main_currency':'total_deductions';
+		
 		return DB::table(self::TABLE_NAME)
 		->where('company_id',getCurrentCompanyId())
 		->where(self::CLIENT_ID_COLUMN_NAME,$partnerId)
-		->where('currency',$currencyName)
+		->when(!$isMainCurrency,function( $q) use($currencyName){
+			$q->where('currency',$currencyName);
+		})
 		->whereBetween('invoice_date',[$startDate,$endDate])
-		->sum(DB::raw('invoice_amount + vat_amount'));
+		->sum(DB::raw($invoiceAmountColumnName.' + '.$vatAmountColumnName . '-'.$totalDeductionColumn));
 
 	}
 	public function dueDateHistories()
@@ -231,22 +236,41 @@ trait IsInvoice
 	{
 		$totalInvoicesPlusVatAmount  = self::getTotalInvoicesPlusVatAmountUntilDate($currencyName,$partnerId,$startDate,$endDate);
 		$totalMoneyReceivedAmountPlusWithhold = self::getTotalMoneyAmountPlusWithhold($currencyName,$partnerId,$startDate  , $endDate);
+
 		return $totalInvoicesPlusVatAmount - $totalMoneyReceivedAmountPlusWithhold;
 	}
 	public static function getTotalMoneyAmountPlusWithhold( string $currencyName, int $partnerId,string $startDate , string $endDate)
 	{
+		$isMainCurrency = $currencyName == 'main_currency' ;
+		$fullMoneyModelName = '\App\Models\\'.self::MONEY_MODEL_NAME;
+		$moneyReceivedOrPayments = $fullMoneyModelName::where('company_id',getCurrentCompanyId())
+		->where('partner_id',$partnerId)
+		->where('currency',$currencyName)
+		->where('opening_balance_id',null)
+		->with(['settlements.invoice'])
+		->whereBetween(self::RECEIVING_OR_PAYMENT_DATE_COLUMN_NAME,[$startDate,$endDate])->get() ;
+		$totalSettlementAmounts = 0 ;
+		$totalSettlementWithholdAmounts = 0 ;
+		foreach($moneyReceivedOrPayments as $moneyReceivedOrPayment){
+			dd($moneyReceivedOrPayment);
+			foreach($moneyReceivedOrPayment->settlements as $settlement){
+				$totalSettlementAmounts += $settlement->settlement_amount ;
+				$totalSettlementWithholdAmounts += $settlement->withhold_amount ;
+			}
+		}
+		return $totalSettlementAmounts + $totalSettlementWithholdAmounts ;
+		
+		
 		return DB::table(self::MONEY_RECEIVED_OR_PAYMENT_TABLE_NAME)
 		->where('company_id',getCurrentCompanyId())
 		->where('partner_id',$partnerId)
 		->where('currency',$currencyName)
 		->where('opening_balance_id',null)
-		->whereBetween(self::RECEIVING_OR_PAYMENT_DATE_COLUMN_NAME,[$startDate,$endDate])
-		->sum(DB::raw('total_withhold_amount + '.self::RECEIVED_OR_PAYMENT_AMOUNT));
+		->whereBetween(self::RECEIVING_OR_PAYMENT_DATE_COLUMN_NAME,[$startDate,$endDate]);
+		
+		// ->sum(DB::raw('total_withhold_amount + '.self::RECEIVED_OR_PAYMENT_AMOUNT));
 	}
-	public static function findByInvoiceNumber(int $companyId,string $invoiceNumber):?self
-	{
-		return self::where('company_id',$companyId)->where('invoice_number',$invoiceNumber)->first();
-	}
+	
 	public function deductions()
 	{
 		return $this->belongsToMany(Deduction::class,'invoice_deductions','invoice_id','deduction_id')->where('invoice_type',getModelNameWithoutNamespace($this))
@@ -259,8 +283,5 @@ trait IsInvoice
 		;
 	}
 	
-	// public function invoiceDeductions():HasMany
-	// {
-	// 	return $this->hasMany(InvoiceDeduction::class,'invoice_id','id')->where('invoice_type',getModelNameWithoutNamespace($this));
-	// }
+
 }

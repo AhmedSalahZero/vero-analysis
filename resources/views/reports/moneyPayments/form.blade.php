@@ -95,9 +95,9 @@ $selectedBanks = [];
     <input id="js-in-edit-mode" type="hidden" name="in_edit_mode" value="{{ isset($model) ? 1 : 0 }}">
     <input id="js-money-payment-id" type="hidden" name="money_payment_id" value="{{ isset($model) ? $model->id : 0 }}">
 	<input type="hidden" name="current_cheque_id" value="{{ isset($model) && $model->payableCheque ? $model->payableCheque->id : 0 }}">
-	<input type="hidden" name="current_branch" value="{{ isset($model) && $model->cashPayment ? $model->cashPayment->delivery_branch_id : 0 }}">
+	<input type="hidden" name="cash_id" value="{{ isset($model) && $model->cashPayment ? $model->cashPayment->id : 0 }}">
 	{{-- <input type="hidden" id="js-down-payment-id" value="{{ isset($model) && $model->downPayment ? $model->downPayment->id : 0  }}"> --}}
-    <input type="hidden" id="ajax-invoice-item" data-single-model="{{ $singleModel ? 1 : 0 }}" value="{{ $singleModel ? $invoiceNumber : 0 }}">
+    <input type="hidden" id="ajax-invoice-item" data-single-model="{{ $singleModel ? 1 : 0 }}" value="{{ $singleModel ? $singleModel : 0 }}">
             <input id="js-down-payment-id" type="hidden" name="down_payment_id" value="{{ isset($model) ? $model->id : 0 }}">
 	
     @csrf
@@ -638,7 +638,8 @@ $selectedBanks = [];
                                 <div class="kt-input-icon">
                                     <div class="kt-input-icon">
                                         <div class="input-group date">
-                                            <input readonly class="form-control js-invoice-number" name="settlements[][invoice_number]" value="0">
+											<input type="hidden" name="settlements[][invoice_id]" value="0" class="js-invoice-id">
+                                            <input readonly class="form-control js-invoice-number" data-invoice-id="0" name="settlements[][invoice_number]" value="0">
                                         </div>
                                     </div>
                                 </div>

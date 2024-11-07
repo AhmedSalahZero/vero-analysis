@@ -272,13 +272,13 @@ class MoneyPaymentController
 			$invoices = $invoices->where('currency','=',$selectedCurrency);
 		}
 		$invoices = $invoices->orderBy('invoice_date','asc')
-		->get(['invoice_number','invoice_date','invoice_due_date','net_invoice_amount','paid_amount','net_balance','currency'])
+		->get(['id','invoice_number','invoice_date','invoice_due_date','net_invoice_amount','paid_amount','net_balance','currency'])
 		->toArray();
 
 
 		foreach($invoices as $index=>$invoiceArr){
-			$invoices[$index]['settlement_amount'] = $moneyPayment ? $moneyPayment->getSettlementsForInvoiceNumberAmount($invoiceArr['invoice_number'],$partnerId,0) : 0;
-			$invoices[$index]['withhold_amount'] = $moneyPayment ? $moneyPayment->getWithholdForInvoiceNumberAmount($invoiceArr['invoice_number'],$partnerId,0) : 0;
+			$invoices[$index]['settlement_amount'] = $moneyPayment ? $moneyPayment->sumSettlementsForInvoice($invoiceArr['id'],$partnerId,0) : 0;
+			$invoices[$index]['withhold_amount'] = $moneyPayment ? $moneyPayment->sumSettlementsForInvoice($invoiceArr['id'],$partnerId,0) : 0;
 		}
 
 		$invoices = $this->formatInvoices($invoices,$inEditMode,$moneyPayment);
@@ -309,7 +309,7 @@ class MoneyPaymentController
 		$supplierName = $supplier->getName();
 		$supplierId = $supplier->id;
 		$paymentBranchName = $request->get('delivery_branch_id') ;
-		$data = $request->only(['type','delivery_date','currency','payment_currency']);
+		$data = $request->only(['type','delivery_date','currency','payment_currency','down_payment_type']);
 		$currencyName = $data['currency'];
 		$paymentCurrency = $data['payment_currency'];
 		
@@ -413,7 +413,9 @@ class MoneyPaymentController
 		 * * For Money Payment Only
 		 */
 		$totalWithholdAmount= 0 ;
-		$moneyPayment->storeNewSettlement($paymentCurrency,$currencyName,$exchangeRate,$foreignExchangeRate,$request->get('settlements',[]),$partnerId,$company->id);
+		$moneyPayment->storeNewSettlement(
+			// $paymentCurrency,$currencyName,$exchangeRate,$foreignExchangeRate,
+			$request->get('settlements',[]),$partnerId,$company->id);
 		$moneyPayment->update([
 			'total_withhold_amount'=>$totalWithholdAmount
 		]);
@@ -507,7 +509,9 @@ class MoneyPaymentController
 			$paymentDate = $moneyPayment->getDeliveryDate();
 			$mainFunctionCurrency = $company->getMainFunctionalCurrency();
 			$foreignExchangeRate = ForeignExchangeRate::getExchangeRateForCurrencyAndClosestDate($currencyName,$mainFunctionCurrency,$paymentDate,$company->id);
-			$newMoneyPayment->storeNewSettlement($paymentCurrency,$currencyName,$exchangeRate,$foreignExchangeRate,$oldSettlementsForMoneyReceivedWithDownPayment->toArray(),$newMoneyPayment->getPartnerId(),$companyId,1);
+			$newMoneyPayment->storeNewSettlement(
+				// $paymentCurrency,$currencyName,$exchangeRate,$foreignExchangeRate,
+				$oldSettlementsForMoneyReceivedWithDownPayment->toArray(),$newMoneyPayment->getPartnerId(),$companyId,1);
 		}
 		 $activeTab = $newType;
 		 if($request->ajax()){

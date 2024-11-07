@@ -33,9 +33,20 @@ class StoreMoneyPaymentRequest extends FormRequest
 			return number_unformat($item);
 		})->toArray();
 		
-		$this->merge([
+		
+		$additionalData = [];
+		if($this->down_payment_type == MoneyPayment::DOWN_PAYMENT_FREE){
+			$additionalData = [
+				'contract_id'=>null,
+				'purchases_orders_amounts'=>[],
+				'settlements'=>[],
+			];
+		}
+		$this->merge(array_merge([
 			'paid_amount'=>$paidAmounts
-		]);
+		] , $additionalData));
+		
+		
 	}
 	
 
@@ -62,7 +73,6 @@ class StoreMoneyPaymentRequest extends FormRequest
 			$openingBalanceDate =$financialInstitution->getOpeningBalanceForAccount($accountTypeId,$accountNumber); 
 		}
 	
-		
         return [
 			'supplier_id'=>'required',
 			'type'=>'required',
@@ -75,7 +85,7 @@ class StoreMoneyPaymentRequest extends FormRequest
 			'settlements'=>$partnerType =='is_supplier' ? new AtLeaseOneSettlementMustBeExist($this->get('settlements',[])) : [],
 			'cheque_number'=>$type == MoneyPayment::PAYABLE_CHEQUE ? ['required',new UniqueChequeNumberRule(Request()->input('delivery_bank_id.payable_cheque'),Request()->get('current_cheque_id'),__('Cheque Number Already Exist'))] : [],
 			'due_date'=>$type == MoneyPayment::PAYABLE_CHEQUE ? ['required',new DateMustBeGreaterThanOrEqualDate(null,$openingBalanceDate , __('Cheque Due Date Must Be Greater Than Or Equal Account Opening Date') )]:[],
-			'receipt_number'=>$type== MoneyPayment::CASH_PAYMENT ? ['required',new UniqueReceiptNumberForReceivingBranchRule('cash_payments',$this->delivery_branch_id?:0,$this->current_branch,__('Receipt Number For This Branch Already Exist'))] : [],
+			'receipt_number'=>$type== MoneyPayment::CASH_PAYMENT ? ['required',new UniqueReceiptNumberForReceivingBranchRule('cash_payments',$this->delivery_branch_id?:0,$this->cash_id,__('Receipt Number For This Branch Already Exist'))] : [],
 			'purchases_orders_amounts'=>$partnerType =='is_supplier' ? [new UnappliedAmountForContractAsDownPaymentRule($this->unapplied_amount?:0,$this->is_down_payment,$paidAmount)] : [], 
 			'allocations'=>[new ValidAllocationsRule()],
         ];

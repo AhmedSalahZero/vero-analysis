@@ -16,9 +16,9 @@ class AddPartnerIdToPaymentSettlementsTable extends Migration
      */
     public function up()
     {
-        // Schema::table('payment_settlements', function (Blueprint $table) {
-        //     $table->unsignedBigInteger('partner_id')->after('supplier_name')->default(0);
-        // });
+        Schema::table('payment_settlements', function (Blueprint $table) {
+            $table->unsignedBigInteger('partner_id')->after('supplier_name')->default(0);
+        });
 		foreach(PaymentSettlement::get() as $settlement){
 			DB::table('payment_settlements')->where('id',$settlement->id)->update([
 				'partner_id'=>DB::table('partners')->where('is_supplier',1)

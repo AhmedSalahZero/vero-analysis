@@ -63,7 +63,7 @@ $selectedBanks = [];
     <input id="is-down-payment-id" type="hidden" name="is_down_payment" value="1">
     <input type="hidden" name="current_cheque_id" value="<?php echo e(isset($model) && $model->payableCheque ? $model->payableCheque->id : 0); ?>">
     <input id="js-money-payment-id" type="hidden" name="money_received_id" value="<?php echo e(isset($model) ? $model->id : 0); ?>">
-    <input type="hidden" id="ajax-invoice-item" data-single-model="<?php echo e($singleModel ? 1 : 0); ?>" value="<?php echo e($singleModel ? $invoiceNumber : 0); ?>">
+    <input type="hidden" id="ajax-invoice-item" data-single-model="<?php echo e($singleModel ? 1 : 0); ?>" value="<?php echo e($singleModel ? $singleModel : 0); ?>">
     <input id="js-down-payment-id" type="hidden" name="down_payment_id" value="<?php echo e(isset($model) ? $model->id : 0); ?>">
     <?php echo csrf_field(); ?>
     <?php if(isset($model)): ?>

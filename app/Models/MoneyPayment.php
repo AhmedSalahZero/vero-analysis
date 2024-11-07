@@ -23,6 +23,9 @@ class MoneyPayment extends Model
 	const INVOICE_SETTLEMENT_WITH_DOWN_PAYMENT = 'invoice-settlement-with-down-payment';
 	const DOWN_PAYMENT = 'down-payment';
 	const CLIENT_NAME ='supplier_name';
+	const DOWN_PAYMENT_OVER_CONTRACT = 'over_contract' ;
+	const DOWN_PAYMENT_FREE = 'free' ;
+	
 	public static function generateComment(self $moneyPayment,string $lang)
 	{
 		$supplierName = $moneyPayment->getSupplierName();
@@ -336,7 +339,7 @@ class MoneyPayment extends Model
     }
 
 	
-    public function getSettlementsForInvoiceNumber($invoiceNumber, int $partnerId,bool $isFromDownPayment = null):Collection
+    public function getSettlementsForInvoiceNumber(int $invoiceId, int $partnerId,bool $isFromDownPayment = null):Collection
     {
 		$settlements = $this->settlements ;
 		if($isFromDownPayment == true){
@@ -345,13 +348,13 @@ class MoneyPayment extends Model
 		if($isFromDownPayment == false){
 			$settlements = $this->settlementsForMoneyPayment;
 		}
-        return $settlements->where('invoice_number', $invoiceNumber)->where('partner_id', $partnerId) ;
+        return $settlements->where('invoice_id', $invoiceId)->where('partner_id', $partnerId) ;
     }
-	public function getSettlementsForInvoiceNumberAmount($invoiceNumber, int $partnerId,bool $isFromDownPayment =null):float{
-		return $this->getSettlementsForInvoiceNumber($invoiceNumber,$partnerId,$isFromDownPayment)->sum('settlement_amount');
+	public function sumSettlementsForInvoice(int $invoiceId, int $partnerId,bool $isFromDownPayment =null):float{
+		return $this->getSettlementsForInvoiceNumber( $invoiceId,$partnerId,$isFromDownPayment)->sum('settlement_amount');
 	}
-	public function getWithholdForInvoiceNumberAmount($invoiceNumber, int $partnerId,bool $isFromDownPayment =null):float{
-		return $this->getSettlementsForInvoiceNumber($invoiceNumber,$partnerId,$isFromDownPayment)->sum('withhold_amount');
+	public function sumWithholdAmountForInvoice(int $invoiceId, int $partnerId,bool $isFromDownPayment =null):float{
+		return $this->getSettlementsForInvoiceNumber( $invoiceId,$partnerId,$isFromDownPayment)->sum('withhold_amount');
 	}
 	public function getDate()
 	{
@@ -653,7 +656,7 @@ class MoneyPayment extends Model
 	}
 	public function storeNewAllocation(array $allocations)
 	{
-		foreach($allocations as $invoiceNumber => $allocationsArr){
+		foreach($allocations as $invoiceId => $allocationsArr){
 			foreach($allocationsArr as $index => $allocationArr){
 				$partnerId = $allocationArr['partner_id'] ?? 0 ;
 				$contractId = $allocationArr['contract_id'] ?? 0 ;
@@ -663,7 +666,7 @@ class MoneyPayment extends Model
 						'allocation_amount'=>$allocationAmount,
 						'contract_id'=>$contractId,
 						'partner_id'=>$partnerId ,
-						'invoice_number'=>$invoiceNumber
+						'invoice_id'=>$invoiceId
 					]);
 				}
 			}

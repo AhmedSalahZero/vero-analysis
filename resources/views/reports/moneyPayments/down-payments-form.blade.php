@@ -71,7 +71,7 @@ $selectedBanks = [];
     <input id="is-down-payment-id" type="hidden" name="is_down_payment" value="1">
     <input type="hidden" name="current_cheque_id" value="{{ isset($model) && $model->payableCheque ? $model->payableCheque->id : 0 }}">
     <input id="js-money-payment-id" type="hidden" name="money_received_id" value="{{ isset($model) ? $model->id : 0 }}">
-    <input type="hidden" id="ajax-invoice-item" data-single-model="{{ $singleModel ? 1 : 0 }}" value="{{ $singleModel ? $invoiceNumber : 0 }}">
+    <input type="hidden" id="ajax-invoice-item" data-single-model="{{ $singleModel ? 1 : 0 }}" value="{{ $singleModel ? $singleModel : 0 }}">
     <input id="js-down-payment-id" type="hidden" name="down_payment_id" value="{{ isset($model) ? $model->id : 0 }}">
     @csrf
     @if(isset($model))
@@ -181,9 +181,20 @@ $selectedBanks = [];
                 </div>
 
 
+				<div class="col-md-2 ">
+                    <label>{{__('Down Payment Type')}} @include('star')</label>
+                    <div class="kt-input-icon">
+                        <div class="input-group date">
+                            <select required name="down_payment_type" id="down_payment_type" class="form-control">
+                                <option @if(isset($model) && $model->isDownPaymentOverContract() ) selected @endif value="{{ MoneyPayment::DOWN_PAYMENT_OVER_CONTRACT }}">{{__('Over Contract')}}</option>
+                                <option @if(isset($model) && $model->isFreeDownPayment() ) selected @endif value="{{ MoneyPayment::DOWN_PAYMENT_FREE }}">{{__('Free')}}</option>
+                            </select>
+                        </div>
+                    </div>
 
+                </div>
 
-                <div class="col-md-3">
+                <div class="col-md-3 contract-id-div mt-4">
                     <label>{{__('Contract Name')}}
                         @include('star')
                     </label>
@@ -201,7 +212,7 @@ $selectedBanks = [];
                     </div>
                 </div>
 
-<div class="col-md-2 mt-4">
+				<div class="col-md-2 mt-4">
                     <label>{{__('Money Type')}} @include('star')</label>
                     <div class="kt-input-icon">
                         <div class="input-group date">
@@ -242,6 +253,12 @@ $selectedBanks = [];
 
 
                 </div>
+				
+				
+				
+				
+				
+					
 				
              
             </div>
@@ -502,7 +519,7 @@ $selectedBanks = [];
 
 
     {{-- Settlement Information "Commen Card" --}}
-    <div class="kt-portlet">
+    <div class="kt-portlet down-payment-id">
         <div class="kt-portlet__head">
             <div class="kt-portlet__head-label">
                 <h3 class="kt-portlet__head-title head-title text-primary">
@@ -539,7 +556,7 @@ $selectedBanks = [];
 
 
 
-    @if(isset($model))
+    @if(isset($model) && $model->getDownPaymentType() != MoneyPayment::DOWN_PAYMENT_FREE )
     <div class="kt-portlet" id="settlement-card-id">
         <div class="kt-portlet__head">
             <div class="kt-portlet__head-label">
@@ -702,7 +719,22 @@ $selectedBanks = [];
         //$('select.currency-class').trigger('change')
         //$('.recalculate-amount-class').trigger('change')
     })
-    $()
+    
+	
+$(document).on('change','#down_payment_type',function(){
+	const val = $(this).val();
+	if(val != 'over_contract'){
+		$('.contract-id-div').hide();
+		$('.down-payment-id').hide();
+		$('#settlement-card-id').hide();
+	}else{
+		$('.contract-id-div').show();
+			$('.down-payment-id').show();
+		$('#settlement-card-id').show();
+	}
+})
+$('#down_payment_type').trigger('change')
+
 
 </script>
 @endsection

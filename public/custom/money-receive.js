@@ -158,7 +158,7 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 	let inEditMode = +$('#js-in-edit-mode').val()
 	inEditMode = inEditMode ? inEditMode : 0
 	let onlyOneInvoiceNumber = +$('#ajax-invoice-item').attr('data-single-model')
-	let specificInvoiceNumber = $('#ajax-invoice-item').val()
+	let specificInvoiceId = $('#ajax-invoice-item').val()
 	const moneyReceivedId = +$('#js-money-received-id').val()
 	let customerInvoiceId = $('#customer_name').val()
 	customerInvoiceId = customerInvoiceId ? customerInvoiceId : $(this).closest('[data-repeater-item]').find('select.customer-name-js').val()
@@ -198,6 +198,7 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 			$('.js-append-to').empty()
 
 			for (var i in res.invoices) {
+				var invoiceId = res.invoices[i].id
 				var invoiceNumber = res.invoices[i].invoice_number
 				var currency = res.invoices[i].currency
 				var netInvoiceAmount = res.invoices[i].net_invoice_amount
@@ -213,6 +214,7 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 				
 				var withholdAmount = res.invoices[i].withhold_amount
 				var domInvoiceNumber = $(lastNode).find('.js-invoice-number')
+				var domInvoiceId = $(lastNode).find('.js-invoice-id')
 				var domInvoiceDate = $(lastNode).find('.js-invoice-date')
 				var domInvoiceDueDate = $(lastNode).find('.js-invoice-due-date')
 				var domCurrency = $(lastNode).find('.js-currency')
@@ -222,18 +224,23 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 				var domCollectedAmount = $(lastNode).find('.js-collected-amount')
 				var domNetBalance = $(lastNode).find('.js-net-balance')
 				domInvoiceNumber.val(invoiceNumber)
-				domInvoiceNumber.attr('name', 'settlements[' + invoiceNumber + '][invoice_number]')
-				domInvoiceDate.attr('name', 'settlements[' + invoiceNumber + '][invoice_date]')
-				domInvoiceDueDate.attr('name', 'settlements[' + invoiceNumber + '][invoice_due_date]')
-				domCurrency.attr('name', 'settlements[' + invoiceNumber + '][currency]')
-				domProjectName.attr('name', 'settlements[' + invoiceNumber + '][project_name]')
-				domNetInvoiceAmount.attr('name', 'settlements[' + invoiceNumber + '][net_invoice_amount]')
+				domInvoiceNumber.attr('name', 'settlements[' + invoiceId + '][invoice_number]')
+				domInvoiceNumber.attr('data-invoice-id',invoiceId)
+			
+				domInvoiceId.val(invoiceId)
+				domInvoiceId.attr('name', 'settlements[' + invoiceId + '][invoice_id]')
+				
+				domInvoiceDate.attr('name', 'settlements[' + invoiceId + '][invoice_date]')
+				domInvoiceDueDate.attr('name', 'settlements[' + invoiceId + '][invoice_due_date]')
+				domCurrency.attr('name', 'settlements[' + invoiceId + '][currency]')
+				domProjectName.attr('name', 'settlements[' + invoiceId + '][project_name]')
+				domNetInvoiceAmount.attr('name', 'settlements[' + invoiceId + '][net_invoice_amount]')
 		
 
 				domNetInvoiceAmount.closest('.common-parent-js').find('.currency-span').html(currency);
-				domCollectedAmount.attr('name', 'settlements[' + invoiceNumber + '][collected_amount]')
-				domNetBalance.attr('name', 'settlements[' + invoiceNumber + '][net_balance]')
-				if (!onlyOneInvoiceNumber || (onlyOneInvoiceNumber && invoiceNumber == specificInvoiceNumber)) {
+				domCollectedAmount.attr('name', 'settlements[' + invoiceId + '][collected_amount]')
+				domNetBalance.attr('name', 'settlements[' + invoiceId + '][net_balance]')
+				if (!onlyOneInvoiceNumber || (onlyOneInvoiceNumber && invoiceId == specificInvoiceId)) {
 					$(lastNode).find('.js-invoice-date').val(invoiceDate)
 					$(lastNode).find('.js-project-name').val(projectName)
 					$(lastNode).find('.js-invoice-due-date').val(invoiceDueDate)
@@ -247,9 +254,9 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 					var domNetBalanceAmount = $(lastNode).find('.js-net-balance')
 					domSettlementAmount.val(settlementAmount)
 					domWithholdAmount.val(withholdAmount)
-					domSettlementAmount.attr('name', 'settlements[' + invoiceNumber + '][settlement_amount]')
-					domWithholdAmount.attr('name', 'settlements[' + invoiceNumber + '][withhold_amount]')
-					domNetBalanceAmount.attr('name', 'settlements[' + invoiceNumber + '][net_balance]')
+					domSettlementAmount.attr('name', 'settlements[' + invoiceId + '][settlement_amount]')
+					domWithholdAmount.attr('name', 'settlements[' + invoiceId + '][withhold_amount]')
+					domNetBalanceAmount.attr('name', 'settlements[' + invoiceId + '][net_balance]')
 		
 					$('.js-append-to').append(lastNode)
 					var lastNode = $('.js-template .js-duplicate-node').clone(true)

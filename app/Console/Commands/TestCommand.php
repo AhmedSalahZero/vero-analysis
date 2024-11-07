@@ -9,11 +9,13 @@ use App\Models\CurrentAccountBankStatement;
 use App\Models\FinancialInstitution;
 use App\Models\LetterOfGuaranteeIssuance;
 use App\Models\LetterOfGuaranteeStatement;
+use App\Models\MoneyReceived;
+use App\Models\Settlement;
 use App\Models\TimeOfDeposit;
 use Http;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
-
+use KitLoong\MigrationsGenerator\Setting;
 
 class TestCommand extends Command
 {

@@ -115,14 +115,14 @@ class SupplierInvoice extends Model implements IInvoice
 	
 	public function getNetBalanceUntil(string $date)
 	{
-		$invoiceNumber = $this->getInvoiceNumber();
+		$invoiceId = $this->getId();
 		$partnerId = $this->getSupplierId();
 		$netInvoiceAmount = $this->getNetInvoiceAmount();
 		$totalWithhold = $this->getWithholdAmount();
 		$totalPaid = 0 ;
 		$payments = $this->moneyPayment->where(self::RECEIVING_OR_PAYMENT_DATE_COLUMN_NAME,'<=',$date) ;
 		foreach($payments as $moneyPayment) {
-			foreach($moneyPayment->getSettlementsForInvoiceNumber($invoiceNumber, $partnerId)  as $settlement) {
+			foreach($moneyPayment->getSettlementsForInvoiceNumber($invoiceId, $partnerId)  as $settlement) {
 				$totalPaid += $settlement->getAmount();
 			}
 		}
@@ -154,8 +154,12 @@ class SupplierInvoice extends Model implements IInvoice
 			->whereBetween(self::RECEIVING_OR_PAYMENT_DATE_COLUMN_NAME,[$startDate,$endDate])
 			->where('currency',$currency)
 			->where('partner_id',$partnerId)
-			->get() ; 
+			->get() ;
+			/**
+			 * @var SupplierInvoice $supplierInvoice 
+			 * */ 
 		foreach($supplierInvoices as $supplierInvoice){
+			
 			$currentData = [];
 			$invoiceDate = $supplierInvoice->getInvoiceDateFormatted() ;
 			$invoiceNumber  = $supplierInvoice->getInvoiceNumber() ;
@@ -194,7 +198,7 @@ class SupplierInvoice extends Model implements IInvoice
 					$currentData['document_no'] = $docNumber  ;
 					$currentData['debit'] = $moneyPaymentAmount ;
 					$currentData['credit'] = 0;
-					$currentData['comment'] =__('Settlement For Invoice No.') . ' ' . implode('/',$moneyPayment->settlements->pluck('invoice_number')->toArray()); ;
+					$currentData['comment'] =__('Settlement For Invoice No.') . ' ' . implode('/',$moneyPayment->settlements->pluck('invoice.invoice_number')->toArray()); ;
 					$index++;
 					$formattedData[] = $currentData ;
 					$totalWithholdAmount = $moneyPayment->getTotalWithholdAmount();
@@ -207,7 +211,7 @@ class SupplierInvoice extends Model implements IInvoice
 					$currentData['debit'] = $totalWithholdAmount;
 					$currentData['credit'] =0;
 					$currentData['comment'] =$bankName;
-					$currentData['comment'] =__('Withhold Taxes For Invoice No.') . ' ' . implode('/',$moneyPayment->settlements->where('withhold_amount','>',0)->pluck('invoice_number')->toArray());
+					$currentData['comment'] =__('Withhold Taxes For Invoice No.') . ' ' . implode('/',$moneyPayment->settlements->where('withhold_amount','>',0)->pluck('invoice.invoice_number')->toArray());
 					$index++;
 					$formattedData[] = $currentData ;
 					}
@@ -228,6 +232,7 @@ class SupplierInvoice extends Model implements IInvoice
 			if($inEditMode && $invoiceArr['settlement_amount'] == 0 && $invoiceArr['net_balance'] == 0 ){
 				continue ;
 			}
+			$result[$index]['id'] = $invoiceArr['id'];
 			$result[$index]['invoice_number'] = $invoiceArr['invoice_number'];
 			$result[$index]['currency'] = $invoiceArr['currency'];
 			$result[$index]['net_invoice_amount'] = $invoiceArr['net_invoice_amount'];
@@ -239,7 +244,7 @@ class SupplierInvoice extends Model implements IInvoice
 			$result[$index]['withhold_amount'] = $inEditMode ? $invoiceArr['withhold_amount'] : 0;
 			$result[$index]['invoice_date'] = Carbon::make($invoiceArr['invoice_date'])->format('d-m-Y');
 			$result[$index]['invoice_due_date'] = Carbon::make($invoiceArr['invoice_due_date'])->format('d-m-Y');
-			$result[$index]['settlement_allocations'] = $inEditMode ? $moneyPayment->settlementAllocations->where('invoice_number',$invoiceArr['invoice_number'])->map(function(SettlementAllocation $settlementAllocation){
+			$result[$index]['settlement_allocations'] = $inEditMode ? $moneyPayment->settlementAllocations->where('invoice_id',$invoiceArr['id'])->map(function(SettlementAllocation $settlementAllocation){
 				$settlementAllocation->contract_code = $settlementAllocation->contract->getCode();
 				$settlementAllocation->contract_amount = $settlementAllocation->contract->getAmountWithCurrency();
 				return $settlementAllocation;
@@ -261,7 +266,8 @@ class SupplierInvoice extends Model implements IInvoice
 				<div class="kt-input-icon">
 					<div class="kt-input-icon">
 						<div class="input-group date">
-							<input readonly class="form-control js-invoice-number" name="settlements[][invoice_number]" value="0">
+							<input type="hidden" name="settlements[][invoice_id]" value="0" class="js-invoice-id">
+							<input readonly class="form-control js-invoice-number" data-invoice-id="0" name="settlements[][invoice_number]" value="0">
 						</div>
 					</div>
 				</div>
@@ -369,4 +375,5 @@ class SupplierInvoice extends Model implements IInvoice
 			$result['suppliers'][$key]['total']['total_of_total']= isset($result['suppliers'][$key]['total']['total_of_total']) ? $result['suppliers'][$key]['total']['total_of_total'] +$sum :$sum ;
 		} 
 	}
+	
 }

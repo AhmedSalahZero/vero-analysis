@@ -18,10 +18,7 @@ class DownPaymentSettlement extends Model
 	{
 		return $this->belongsTo(MoneyReceived::class , 'money_received_id','id');
 	}
-	public static  function getSettlementAmountByInvoiceNumber(string $invoiceNumber,int $companyId)
-	{
-		return Settlement::where('company_id',$companyId)->where('invoice_number',$invoiceNumber)->sum('settlement_amount');
-	}	
+
 
 	public function getAmount()
 	{

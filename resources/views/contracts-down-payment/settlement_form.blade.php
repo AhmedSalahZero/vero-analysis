@@ -197,6 +197,7 @@ use App\Models\MoneyReceived ;
 					<div class="kt-input-icon">
 						<div class="kt-input-icon">
 							<div class="input-group date">
+								<input type="hidden" name="settlements[{{$index}}][invoice_id]" value="{{ $invoice->id }}" class="js-invoice-id">
 								<input readonly class="form-control" name="settlements[{{$index}}][invoice_number]" value="{{ $invoice->getInvoiceNumber() }}">
 							</div>
 						</div>
@@ -249,13 +250,13 @@ use App\Models\MoneyReceived ;
 				<div class="col-md-1 width-9.5 ">
 					<label> {{ __('Settlement Amount') }}  <span class="text-danger ">*</span> </label>
 					<div class="kt-input-icon">
-						<input value="{{ $downPayment->getSettlementsForInvoiceNumberAmount($invoice->getInvoiceNumber(),$partnerId,$isDownPaymentFromMoneyPayment) }}" name="settlements[{{$index}}][settlement_amount]" placeholder="{{ __("Settlement Amount") }}" type="text" class="form-control  only-greater-than-or-equal-zero-allowed settlement-amount-class">
+						<input value="{{ $downPayment->sumSettlementsForInvoice($invoice->id,$partnerId,$isDownPaymentFromMoneyPayment) }}" name="settlements[{{$index}}][settlement_amount]" placeholder="{{ __("Settlement Amount") }}" type="text" class="form-control  only-greater-than-or-equal-zero-allowed settlement-amount-class">
 					</div>
 				</div>
 				<div class="col-md-1 width-9.5 ">
 					<label> {{ __('Withhold Amount') }} <span class="text-danger ">*</span> </label>
 					<div class="kt-input-icon">
-						<input value="{{ $downPayment->getWithholdForInvoiceNumberAmount($invoice->getInvoiceNumber(),$partnerId,$isDownPaymentFromMoneyPayment) }}" name="settlements[{{$index}}][withhold_amount]" placeholder="{{ __('Withhold Amount') }}" type="text" class="form-control  only-greater-than-or-equal-zero-allowed ">
+						<input value="{{ $downPayment->sumWithholdAmountForInvoice($invoice->id,$partnerId,$isDownPaymentFromMoneyPayment) }}" name="settlements[{{$index}}][withhold_amount]" placeholder="{{ __('Withhold Amount') }}" type="text" class="form-control  only-greater-than-or-equal-zero-allowed ">
 					</div>
 				</div>
 		
