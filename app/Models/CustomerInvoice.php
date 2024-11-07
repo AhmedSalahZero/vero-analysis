@@ -141,6 +141,7 @@ class CustomerInvoice extends Model implements IInvoice
 		
 			$startDateMinusOne = Carbon::make($startDate)->subDay()->format('Y-m-d');
 			$beginningBalance = self::getBeginningBalanceUntil($currency,$partnerId,$oneDayBeforeStartDate,$startDateMinusOne) ; 
+			// dd($beginningBalance);
 			$formattedData = [];
 			$currentData['date'] = $startDateFormatted;
 			$currentData['document_type'] = 'Beginning Balance';

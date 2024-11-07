@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Settlement extends Model
 {
@@ -13,13 +14,14 @@ class Settlement extends Model
 	{
 		return $this->belongsTo(MoneyReceived::class , 'money_received_id','id');
 	}
-	public static  function getSettlementAmountByInvoiceNumber(string $invoiceNumber,int $companyId)
-	{
-		return Settlement::where('company_id',$companyId)->where('invoice_number',$invoiceNumber)->sum('settlement_amount');
-	}	
+	
 	public function customerInvoice()
 	{
-		return $this->belongsTo(MoneyReceived::class , 'money_received_id','id');
+		return $this->belongsTo(CustomerInvoice::class , 'invoice_number','invoice_number')->where('customer_id',$this->partner_id);
+	}
+	public function invoice():BelongsTo
+	{
+		return $this->customerInvoice();
 	}
 	public function getInvoiceNumber():string 
 	{

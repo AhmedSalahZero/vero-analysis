@@ -57,9 +57,11 @@ trait IsMoney
 			'settlement_in_invoice_exchange_rate'=>-8
 		];
 	}
-	public function storeNewSettlement(string $receivingCurrencyOrPaymentCurrency,string $invoiceCurrency , $exchangeRate ,$foreignExchangeRate,array $settlements,int $partnerId,int $companyId , bool $isFromDownPayment = false )
+	public function storeNewSettlement(
+		// string $receivingCurrencyOrPaymentCurrency,string $invoiceCurrency , $exchangeRate ,$foreignExchangeRate,
+	array $settlements,int $partnerId,int $companyId , bool $isFromDownPayment = false )
 	{
-		$fullInvoiceModelName = $this instanceof MoneyReceived ?'App\Models\CustomerInvoice' : 'App\Models\SupplierInvoice';
+		// $fullInvoiceModelName = $this instanceof MoneyReceived ?'App\Models\CustomerInvoice' : 'App\Models\SupplierInvoice';
 		
 		$totalWithholdAmount= 0 ;
 		foreach($settlements as $settlementArr)
@@ -73,12 +75,6 @@ trait IsMoney
 				$settlementArr['withhold_amount'] = $withholdAmount ;
 				$totalWithholdAmount += $withholdAmount  ;
 				unset($settlementArr['net_balance']);
-				$invoiceExchangeRate = $fullInvoiceModelName::where('company_id',$companyId)->where('invoice_number',$settlementArr['invoice_number'])->first()->getExchangeRate();
-				$settlementAmountAndWithholdInMainCurrencyArr = $this->getSettlementAndWithholdAmountInMainCurrency($receivingCurrencyOrPaymentCurrency,$invoiceCurrency,$exchangeRate,$foreignExchangeRate,$invoiceExchangeRate,$settlementArr['settlement_amount'],$withholdAmount);
-				$settlementArr['settlement_amount_in_main_currency'] = $settlementAmountAndWithholdInMainCurrencyArr['settlement_amount_in_main_currency'];
-				$settlementArr['withhold_amount_in_main_currency'] = $settlementAmountAndWithholdInMainCurrencyArr['withhold_amount_in_main_currency'];
-				$settlementArr['settlement_in_invoice_exchange_rate'] = $settlementAmountAndWithholdInMainCurrencyArr['settlement_in_invoice_exchange_rate'];
-				$settlementArr['foreign_gain_or_loss'] = $settlementAmountAndWithholdInMainCurrencyArr['settlement_amount_in_main_currency']-$settlementAmountAndWithholdInMainCurrencyArr['settlement_in_invoice_exchange_rate'];
 				$this->settlements()->create($settlementArr);
 			}
 		}

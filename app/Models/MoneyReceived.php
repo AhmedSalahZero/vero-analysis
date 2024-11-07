@@ -449,11 +449,8 @@ class MoneyReceived extends Model
     {
         return $this->hasMany(CustomerInvoice::class, 'partner_id', 'customer_id');
     }
-   
-
-
 	
-    public function getSettlementsForInvoiceNumber($invoiceNumber, int $partnerId,bool $isFromDownPayment = null):Collection
+    public function getSettlementsForInvoiceNumber($invoiceId, int $partnerId,bool $isFromDownPayment = null):Collection
     {
 		$settlements = $this->settlements ;
 		if($isFromDownPayment == true){

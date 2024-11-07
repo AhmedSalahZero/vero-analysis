@@ -462,7 +462,9 @@ class MoneyReceivedController
 		/**
 		 * * For Money Received Only
 		 */
-		$totalWithholdAmount = $moneyReceived->storeNewSettlement($receivingCurrency,$currency,$exchangeRate,$foreignExchangeRate,$request->get('settlements',[]),$partnerId,$company->id);
+		$totalWithholdAmount = $moneyReceived->storeNewSettlement(
+			// $receivingCurrency,$currency,$exchangeRate,$foreignExchangeRate,
+			$request->get('settlements',[]),$partnerId,$company->id);
 		
 		$moneyReceived->update([
 			'total_withhold_amount'=>$totalWithholdAmount
@@ -572,7 +574,9 @@ class MoneyReceivedController
 		$moneyReceived->delete();
 		$newMoneyReceived = $this->store($company,$request,true);
 		if(!$moneyReceivedAmountHasChanged){
-			$newMoneyReceived->storeNewSettlement($receivingCurrency,$currency,$exchangeRate,$foreignExchangeRate,$oldSettlementsForMoneyReceivedWithDownPayment->toArray(),$newMoneyReceived->getPartnerId(),$companyId,1);
+			$newMoneyReceived->storeNewSettlement(
+				// $receivingCurrency,$currency,$exchangeRate,$foreignExchangeRate,
+				$oldSettlementsForMoneyReceivedWithDownPayment->toArray(),$newMoneyReceived->getPartnerId(),$companyId,1);
 		}
 		 $activeTab = $newType;
 

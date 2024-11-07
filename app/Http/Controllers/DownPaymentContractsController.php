@@ -22,6 +22,7 @@ class DownPaymentContractsController extends Controller
 		
 		$partner = Partner::find($partnerId);
 		$partnerId = $partner->id;
+		$partnerName = $partner->getName();
 		$contractsWithDownPayments = MoneyReceived::CONTRACTS_WITH_DOWN_PAYMENTS;
 		$numberOfMonthsBetweenEndDateAndStartDate = 18 ;
 		$currentType = $request->get('active',$contractsWithDownPayments);
@@ -46,7 +47,7 @@ class DownPaymentContractsController extends Controller
 		$runningStartDate = $filterDates[$contractsWithDownPayments]['startDate'] ?? null ;
 		$runningEndDate = $filterDates[$contractsWithDownPayments]['endDate'] ?? null ;
 	
-		$contractsWithDownPayment = $company->contracts()->whereHas($moneyModelName,function($builder)use($partnerId,$currency,$customerNameOrSupplierNameColumnName){
+		$contractsWithDownPayment = $company->contracts()->whereHas($moneyModelName,function($builder)use($partnerId,$currency){
 			$builder->where('partner_id',$partnerId)
 					->where('currency',$currency)
 			;

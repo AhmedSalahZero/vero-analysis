@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Traits\Models\HasDeleteButTriggerChangeOnLastElement;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PaymentSettlement extends Model
 {
@@ -15,14 +16,15 @@ class PaymentSettlement extends Model
 	{
 		return $this->belongsTo(MoneyReceived::class , 'money_payment_id','id');
 	}
-	public static  function getSettlementAmountByInvoiceNumber(string $invoiceNumber,int $companyId)
-	{
-		return self::where('company_id',$companyId)->where('invoice_number',$invoiceNumber)->sum('settlement_amount');
-	}	
-	public function supplierInvoice()
-	{
-		return $this->belongsTo(MoneyPayment::class , 'money_payment_id','id');
-	}
+	
+	// public function supplierInvoice()
+	// {
+	// 	return $this->belongsTo(MoneyPayment::class , 'money_payment_id','id');
+	// }
+	// public function invoice():BelongsTo
+	// {
+	// 	return $this->supplierInvoice();
+	// }
 	public function getAmount()
 	{
 		return $this->settlement_amount ;
