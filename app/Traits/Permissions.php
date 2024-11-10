@@ -13,7 +13,6 @@ trait StaticBoot
         });
 
         static::creating(function ($model) {
-            // $model->company_id = request()->company_id;
             $model->created_by = Auth::user()->id;
         });
 

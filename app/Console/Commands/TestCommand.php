@@ -16,6 +16,7 @@ use Http;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use KitLoong\MigrationsGenerator\Setting;
+use Schema;
 
 class TestCommand extends Command
 {
@@ -50,5 +51,13 @@ class TestCommand extends Command
 	 */
 	public function handle()
 	{
+		$x = [];
+		$tables = DB::connection()->getDoctrineSchemaManager()->listTableNames();
+		foreach($tables as $tableName){
+			if(Schema::hasColumn($tableName,'contract_id')){
+				$x[] = $tableName;
+			}
+		}
+		dd($x);	
 	}
 }

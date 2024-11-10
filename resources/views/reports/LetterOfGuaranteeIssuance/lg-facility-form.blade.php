@@ -315,7 +315,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                                     </div>
 
                                     <div class="col-md-3">
-                                        <x-form.input  :data-current-value="isset($model) ? $model->getLgAmount():0" :data-current-value="isset($model) ? $model->getLgAmount():0" :model="$model??null" :label="__('LG Amount')" :type="'text'" :placeholder="__('LG Amount')" :name="'lg_amount'" :class="'only-greater-than-or-equal-zero-allowed only-smaller-than-or-equal-specific-number-allowed recalculate-cash-cover-amount-js recalculate-lg-commission-amount-js lg-amount-js '" :required="true"></x-form.input>
+                                        <x-form.input  :data-current-value="isset($model) ? $model->getLgAmount():0" :data-current-value="isset($model) ? $model->getLgAmount():0" :model="$model??null" :label="__('LG Amount')" :type="'text'" :placeholder="__('LG Amount')" :name="'lg_amount'" :class="'only-greater-than-or-equal-zero-allowed recalculate-cash-cover-amount-js recalculate-lg-commission-amount-js lg-amount-js '" :required="true"></x-form.input>
                                     </div>
 
                                     <div class="col-md-3">

@@ -85,10 +85,10 @@ drop trigger if exists remove_customer_after_delete_its_invoice ;
 delimiter //
 create trigger remove_customer_after_delete_its_invoice  after delete 	ON `customer_invoices` FOR EACH ROW
 begin 
-	declare _length integer default 0 ;
-	select count(*) into _length from `customer_invoices` where customer_id=old.customer_id   ;
-	if _length = 0  
-	then 
-	delete from `partners` where  id = old.customer_id; 
-	end if ;
+	-- declare _length integer default 0 ;
+	-- select count(*) into _length from `customer_invoices` where customer_id=old.customer_id   ;
+	-- if _length = 0  
+	-- then 
+	-- delete from `partners` where  id = old.customer_id; 
+	-- end if ;
 end //  

@@ -444,7 +444,7 @@ $date = now()->format('d-m-Y')
                 <span class="d-flex justify-content-center" style="overflow: visible; position: relative; width: 110px;">
 					
                     {{-- <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{route('salesGathering.edit',[$company,$item])}}"><i class="fa fa-pen-alt"></i></a> --}}
-                    <form class="kt-portlet__body" method="post" action="{{route('salesGathering.destroy',[$company,$item->id])}}" style="display: inline">
+                    <form class="kt-portlet__body" method="post" action="{{route('salesGathering.destroy',[$company,$item->id,'modelType'=>$modelName])}}" style="display: inline">
 					
 						@if($modelName == 'LoanSchedule')
 						<a href="{{ route('view.loan.schedule.settlements',['company'=>$company->id , 'loanSchedule'=>$item->id]) }}" class="btn btn-secondary btn-outline-hover-primary btn-icon">

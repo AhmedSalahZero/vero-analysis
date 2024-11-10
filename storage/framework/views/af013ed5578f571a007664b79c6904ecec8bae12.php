@@ -505,7 +505,7 @@ $date = now()->format('d-m-Y')
                 <span class="d-flex justify-content-center" style="overflow: visible; position: relative; width: 110px;">
 					
                     
-                    <form class="kt-portlet__body" method="post" action="<?php echo e(route('salesGathering.destroy',[$company,$item->id])); ?>" style="display: inline">
+                    <form class="kt-portlet__body" method="post" action="<?php echo e(route('salesGathering.destroy',[$company,$item->id,'modelType'=>$modelName])); ?>" style="display: inline">
 					
 						<?php if($modelName == 'LoanSchedule'): ?>
 						<a href="<?php echo e(route('view.loan.schedule.settlements',['company'=>$company->id , 'loanSchedule'=>$item->id])); ?>" class="btn btn-secondary btn-outline-hover-primary btn-icon">

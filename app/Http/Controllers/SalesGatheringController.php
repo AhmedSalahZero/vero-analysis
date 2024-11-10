@@ -168,10 +168,13 @@ class SalesGatheringController extends Controller
      * @param  \App\SalesGathering  $salesGathering
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Company $company, SalesGathering $salesGathering)
+    public function destroy(Company $company,Request $request, $modelId)
     {
+		$modelType  = $request->get('modelType');
+		$fullModelName = 'App\Models\\'.$modelType ;
+		$model = $fullModelName::find($modelId);
         toastr()->error('Deleted Successfully');
-        $salesGathering->delete();
+        $model->delete();
         return redirect()->back();
     }
     public function export(Company $company, string $modelName)
