@@ -192,6 +192,10 @@ use App\Models\MoneyReceived ;
 				</div>
 				
 				@endif
+				@php
+					$totalSettlementAmount  = $downPayment->sumSettlementsForInvoice($invoice->id,$partnerId,$isDownPaymentFromMoneyPayment);
+					$totalWithholdAmount = $downPayment->sumWithholdAmountForInvoice($invoice->id,$partnerId,$isDownPaymentFromMoneyPayment);
+				@endphp
 				<div class="col-md-1 width-10 ">
 					<label> {{ __('Invoice Number') }} </label>
 					<div class="kt-input-icon">
@@ -237,26 +241,26 @@ use App\Models\MoneyReceived ;
 				<div class="col-md-2 width-12 ">
 					<label> {{ __('Collected Amount') }} </label>
 					<div class="kt-input-icon">
-						<input name="settlements[{{$index}}][collected_amount]" type="text" disabled class="form-control" value="{{ number_format($invoice->collected_amount,0) }}">
+						<input name="settlements[{{$index}}][collected_amount]" type="text" disabled class="form-control" value="{{ number_format($invoice->getCollectedOrPaidInEditModeForDownPayment(true,$totalSettlementAmount) ,0) }}">
 					</div>
 				</div>
 		
 				<div class="col-md-2 width-12 ">
 					<label> {{ __('Net Balance') }} </label>
 					<div class="kt-input-icon">
-						<input name="settlements[{{$index}}][net_balance]" type="text" disabled class="form-control " value="{{ $invoice->getNetBalanceFormatted() }}">
+						<input name="settlements[{{$index}}][net_balance]" type="text" disabled class="form-control " value="{{ number_format($invoice->calculateNetBalanceInEditMode(true,$totalSettlementAmount , $totalWithholdAmount) ,0) }}">
 					</div>
 				</div>
 				<div class="col-md-1 width-9.5 ">
 					<label> {{ __('Settlement Amount') }}  <span class="text-danger ">*</span> </label>
 					<div class="kt-input-icon">
-						<input value="{{ $downPayment->sumSettlementsForInvoice($invoice->id,$partnerId,$isDownPaymentFromMoneyPayment) }}" name="settlements[{{$index}}][settlement_amount]" placeholder="{{ __("Settlement Amount") }}" type="text" class="form-control  only-greater-than-or-equal-zero-allowed settlement-amount-class">
+						<input value="{{ $totalSettlementAmount }}" name="settlements[{{$index}}][settlement_amount]" placeholder="{{ __("Settlement Amount") }}" type="text" class="form-control  only-greater-than-or-equal-zero-allowed settlement-amount-class">
 					</div>
 				</div>
 				<div class="col-md-1 width-9.5 ">
 					<label> {{ __('Withhold Amount') }} <span class="text-danger ">*</span> </label>
 					<div class="kt-input-icon">
-						<input value="{{ $downPayment->sumWithholdAmountForInvoice($invoice->id,$partnerId,$isDownPaymentFromMoneyPayment) }}" name="settlements[{{$index}}][withhold_amount]" placeholder="{{ __('Withhold Amount') }}" type="text" class="form-control  only-greater-than-or-equal-zero-allowed ">
+						<input value="{{ $totalWithholdAmount  }}" name="settlements[{{$index}}][withhold_amount]" placeholder="{{ __('Withhold Amount') }}" type="text" class="form-control  only-greater-than-or-equal-zero-allowed ">
 					</div>
 				</div>
 		

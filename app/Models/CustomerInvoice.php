@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Helpers\HArr;
+use App\Helpers\HDate;
 use App\Interfaces\Models\IInvoice;
 use App\Traits\Models\IsInvoice;
 use App\Traits\StaticBoot;
@@ -92,6 +93,11 @@ class CustomerInvoice extends Model implements IInvoice
     {
         return $this->hasMany(MoneyReceived::class, 'customer_id', 'partner_id');
     }
+	public function getPartnerId():int
+	{
+		return $this->customer_id;
+	}
+	
 	public function getCollectedAmountAttribute($val)
     {
         return $val ;
@@ -130,7 +136,7 @@ class CustomerInvoice extends Model implements IInvoice
 
 	
 
-	public static function formatForStatementReport(Collection $customerInvoices,int $partnerId,string $startDate,string $endDate,string $currency){
+	public static function formatForStatementReport(Collection $customerInvoices,int $partnerId,string $startDate,string $endDate,string $currency,string $modelType){
 			$isMainCurrency = $currency == 'main_currency' ;
 			$startDateFormatted = Carbon::make($startDate)->format('d-m-Y');
 			$index = -1 ;
@@ -140,8 +146,17 @@ class CustomerInvoice extends Model implements IInvoice
 			$oneDayBeforeStartDate = Carbon::make($startDate)->subDays(1000)->format('Y-m-d');
 		
 			$startDateMinusOne = Carbon::make($startDate)->subDay()->format('Y-m-d');
-			$beginningBalance = self::getBeginningBalanceUntil($currency,$partnerId,$oneDayBeforeStartDate,$startDateMinusOne) ; 
+			$fullClassName = ('\App\Models\\' . $modelType) ;
+			$clientIdColumnName = $fullClassName::CLIENT_ID_COLUMN_NAME ;
+			
+			$clientInvoiceIds = $fullClassName::getForPartner($partnerId,$currency,$isMainCurrency);
+			$invoicesForBeginningBalance = $fullClassName::getInvoicesForInvoiceStartAndEndDate( $clientIdColumnName, $partnerId, getCurrentCompany() ,  $currency ,  $oneDayBeforeStartDate,$startDateMinusOne );
 			$formattedData = [];
+			$beginningBalance = 
+			// $isMainCurrency ? 
+			self::appendBalances($isMainCurrency , $currency,$invoicesForBeginningBalance, $index, $formattedData, $partnerId, $oneDayBeforeStartDate,$startDateMinusOne,$clientInvoiceIds,$modelType,false) ;
+			// : self::getBeginningBalanceUntil($currency,$partnerId,$oneDayBeforeStartDate,$startDateMinusOne) ; 
+			$index = 0 ;
 			$currentData['date'] = $startDateFormatted;
 			$currentData['document_type'] = 'Beginning Balance';
 			$currentData['document_no'] = null;
@@ -151,7 +166,29 @@ class CustomerInvoice extends Model implements IInvoice
 			$currentData['comment'] =null;
 			$index++ ;
 			$formattedData[$index] = $currentData;
+	
+			
+			// $currentData['date'] = $startDateFormatted;
+			// $currentData['document_type'] = 'Beginning Balance';
+			// $currentData['document_no'] = null;
+			// $currentData['debit'] = 0;
+			// $currentData['credit'] =0;
+			// $currentData['end_balance'] =0;
+			// $currentData['comment'] =null;
+			// $index++ ;
+			// $formattedData[$index] = $currentData;
+			
+			
+	
+			self::appendBalances($isMainCurrency , $currency,$customerInvoices, $index, $formattedData, $partnerId, $startDate, $endDate,$clientInvoiceIds,$modelType,true);
 		
+			
+		return HArr::sortBasedOnKey($formattedData,'date');
+	}
+	public static function appendBalances($isMainCurrency ,string $currency,$customerInvoices,int &$index,array &$formattedData,int $partnerId,string $startDate,string $endDate , array $clientInvoiceIds , string $modelType , bool $isNotBegBalance = true )
+	{
+		$tempArr = [];
+	
 		foreach($customerInvoices as $customerInvoice){
 			$invoiceExchangeRate = $customerInvoice->getExchangeRate();
 			$currentData = [];
@@ -163,22 +200,39 @@ class CustomerInvoice extends Model implements IInvoice
 			$currentData['debit'] = $isMainCurrency ?  $customerInvoice->getNetInvoiceInMainCurrencyAmount() : $customerInvoice->getNetInvoiceAmount()  ;
 			$currentData['credit'] =0;
 			$currentData['comment'] =null;
-			$index++ ;
-			$formattedData[$index]=$currentData;
-			
-			foreach($customerInvoice->deductions as $deductionWithPivot){
-				$deductionAmount = $deductionWithPivot->pivot->amount ;
-				$currentData['date'] = Carbon::make($deductionWithPivot->pivot->date)->format('d-m-Y');
-				$currentData['document_type'] = 'Deduction';
-				$currentData['document_no'] = $invoiceNumber;
-				$currentData['debit'] = 0;
-				$currentData['credit'] = $isMainCurrency ? $invoiceExchangeRate * $deductionAmount : $deductionAmount;
-				$currentData['comment'] =$deductionWithPivot->getName() . ' [ '  . $invoiceNumber .' ] ' ;
+			if($isNotBegBalance){
 				$index++ ;
 				$formattedData[$index]=$currentData;
+			}else{
+				$index++ ;
+				$tempArr[$index] = $currentData ;
+				
 			}
 			
+			
+			
 		}
+		foreach(InvoiceDeduction::getForInvoices($clientInvoiceIds,$modelType,$startDate,$endDate) as $invoiceDeduction){
+			$invoice = $invoiceDeduction->getInvoice();
+			$invoiceExchangeRate = $invoice->getExchangeRate();
+			$currentInvoiceNumber = $invoice->getInvoiceNumber();
+			$deductionAmount = $invoiceDeduction->getAmount() ;
+			$deductionDate = $invoiceDeduction->getDate() ;
+			$currentData['date'] = Carbon::make($deductionDate)->format('d-m-Y');
+			$currentData['document_type'] = 'Deduction';
+			$currentData['document_no'] = $currentInvoiceNumber;
+			$currentData['debit'] = 0;
+			$currentData['credit'] = $isMainCurrency ? $invoiceExchangeRate * $deductionAmount : $deductionAmount;
+			$currentData['comment'] =$invoiceDeduction->getDeductionName() . ' [ '  . $currentInvoiceNumber .' ] ' ;
+			if($isNotBegBalance){
+				$index++ ;
+				$formattedData[$index]=$currentData;
+			}else{
+				$index++ ;
+				$tempArr[$index] = $currentData ;
+			}
+		}
+		
 		
 		
 		$allMoneyReceived =  MoneyReceived::
@@ -189,11 +243,9 @@ class CustomerInvoice extends Model implements IInvoice
 		})
 		->where('partner_id',$partnerId)
 		->get() ; 
-		
 		foreach($allMoneyReceived as $moneyReceived) {
 			$dateReceiving = $moneyReceived->getReceivingDateFormatted() ;
 			$moneyReceivedType = $moneyReceived->getType();
-			$bankName = $moneyReceived->getBankName();
 			$docNumber = $moneyReceived->getNumber();
 				$moneyReceivedAmount = $isMainCurrency ? $moneyReceived->getAmountForMainCurrency() :$moneyReceived->getAmountInInvoiceCurrency() ;
 				if($moneyReceivedAmount){
@@ -206,25 +258,44 @@ class CustomerInvoice extends Model implements IInvoice
 					$currentData['debit'] = 0;
 					$currentData['credit'] =$moneyReceivedAmount;
 					$currentData['comment'] = $currentComment ;
-					$index++;
-					$formattedData[] = $currentData ;
+					if($isNotBegBalance){
+						$index++ ;
+						$formattedData[] = $currentData ;
+					}else{
+						$index++ ;
+						$tempArr[] = $currentData ;
+					}
 					$totalWithholdAmount = $isMainCurrency ? $moneyReceived->getTotalWithholdInInvoiceExchangeRate() : $moneyReceived->getTotalWithholdAmount();
+					if($isNotBegBalance){
+						$isMainCurrency  ? $moneyReceived->appendForeignExchangeGainOrLoss($formattedData,$index) : null ; 
+					}else{
+						$isMainCurrency  ? $moneyReceived->appendForeignExchangeGainOrLoss($tempArr,$index) : null ; 
 					
+					}
 					if($totalWithholdAmount){
 						$currentData = []; 
-					$currentData['date'] = $dateReceiving;
-					$currentData['document_type'] = __('Withhold Taxes');
-					$currentData['document_no'] =  $docNumber ;
-					$currentData['debit'] = 0;
-					$currentData['credit'] =$totalWithholdAmount;
-					$currentData['comment'] =$bankName;
-					$currentData['comment'] =__('Withhold Taxes For Invoice No.') . ' ' . implode('/',$moneyReceived->settlements->where('withhold_amount','>',0)->pluck('invoice.invoice_number')->toArray());
-					$index++;
-					$formattedData[] = $currentData ;
+						$currentData['date'] = $dateReceiving;
+						$currentData['document_type'] = __('Withhold Taxes');
+						$currentData['document_no'] =  $docNumber ;
+						$currentData['debit'] = 0;
+						$currentData['credit'] =$totalWithholdAmount;
+						// $currentData['comment'] =$bankName;
+						$currentData['comment'] =__('Withhold Taxes For Invoice No.') . ' ' . implode('/',$moneyReceived->settlements->where('withhold_amount','>',0)->pluck('invoice.invoice_number')->toArray());
+						if($isNotBegBalance){
+							$index++ ;
+							$formattedData[] = $currentData ;
+						}
+						else{
+							$index++ ;
+							$tempArr[] = $currentData ;
+						}
 					}
 				}
 		}
-		return HArr::sortBasedOnKey($formattedData,'date');
+		if(!$isNotBegBalance){
+			return array_sum(array_column($tempArr,'debit')) - array_sum(array_column($tempArr,'credit'));
+		}
+		return $formattedData;
 	}
 	
 	
@@ -247,7 +318,8 @@ class CustomerInvoice extends Model implements IInvoice
 			$result[$index]['net_invoice_amount'] = $invoiceArr['net_invoice_amount'];
 			$result[$index]['project_name'] = $invoiceArr['project_name'];
 
-			$result[$index]['collected_amount'] = $inEditMode 	?  (double)$invoiceArr['collected_amount'] - (double) $invoiceArr['settlement_amount']  : (double)$invoiceArr['collected_amount'];
+			// $result[$index]['collected_amount'] = $inEditMode 	?  (double)$invoiceArr['collected_amount'] - (double) $invoiceArr['settlement_amount']  : (double)$invoiceArr['collected_amount'];
+			$result[$index]['collected_amount'] =  $inEditMode 	?  (double)$invoiceArr['collected_amount'] - (double) $invoiceArr['settlement_amount']  : (double)$invoiceArr['collected_amount'];
 			$result[$index]['net_balance'] = $inEditMode ? $invoiceArr['net_balance'] +  $invoiceArr['settlement_amount']  + (double) $invoiceArr['withhold_amount'] : $invoiceArr['net_balance']  ;
 			$result[$index]['settlement_amount'] = $inEditMode ? $invoiceArr['settlement_amount'] : 0;
 			$result[$index]['withhold_amount'] = $inEditMode ? $invoiceArr['withhold_amount'] : 0;
@@ -440,5 +512,6 @@ class CustomerInvoice extends Model implements IInvoice
 		}
 	
 	}
+	
 	
 }

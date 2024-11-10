@@ -194,11 +194,16 @@ use App\Models\MoneyReceived ;
 				</div>
 				
 				<?php endif; ?>
+				<?php
+					$totalSettlementAmount  = $downPayment->sumSettlementsForInvoice($invoice->id,$partnerId,$isDownPaymentFromMoneyPayment);
+					$totalWithholdAmount = $downPayment->sumWithholdAmountForInvoice($invoice->id,$partnerId,$isDownPaymentFromMoneyPayment);
+				?>
 				<div class="col-md-1 width-10 ">
 					<label> <?php echo e(__('Invoice Number')); ?> </label>
 					<div class="kt-input-icon">
 						<div class="kt-input-icon">
 							<div class="input-group date">
+								<input type="hidden" name="settlements[<?php echo e($index); ?>][invoice_id]" value="<?php echo e($invoice->id); ?>" class="js-invoice-id">
 								<input readonly class="form-control" name="settlements[<?php echo e($index); ?>][invoice_number]" value="<?php echo e($invoice->getInvoiceNumber()); ?>">
 							</div>
 						</div>
@@ -233,26 +238,26 @@ use App\Models\MoneyReceived ;
 				<div class="col-md-2 width-12 ">
 					<label> <?php echo e(__('Collected Amount')); ?> </label>
 					<div class="kt-input-icon">
-						<input name="settlements[<?php echo e($index); ?>][collected_amount]" type="text" disabled class="form-control" value="<?php echo e(number_format($invoice->collected_amount,0)); ?>">
+						<input name="settlements[<?php echo e($index); ?>][collected_amount]" type="text" disabled class="form-control" value="<?php echo e(number_format($invoice->getCollectedOrPaidInEditModeForDownPayment(true,$totalSettlementAmount) ,0)); ?>">
 					</div>
 				</div>
 		
 				<div class="col-md-2 width-12 ">
 					<label> <?php echo e(__('Net Balance')); ?> </label>
 					<div class="kt-input-icon">
-						<input name="settlements[<?php echo e($index); ?>][net_balance]" type="text" disabled class="form-control " value="<?php echo e($invoice->getNetBalanceFormatted()); ?>">
+						<input name="settlements[<?php echo e($index); ?>][net_balance]" type="text" disabled class="form-control " value="<?php echo e(number_format($invoice->calculateNetBalanceInEditMode(true,$totalSettlementAmount , $totalWithholdAmount) ,0)); ?>">
 					</div>
 				</div>
 				<div class="col-md-1 width-9.5 ">
 					<label> <?php echo e(__('Settlement Amount')); ?>  <span class="text-danger ">*</span> </label>
 					<div class="kt-input-icon">
-						<input value="<?php echo e($downPayment->getSettlementsForInvoiceNumberAmount($invoice->getInvoiceNumber(),$partnerId,$isDownPaymentFromMoneyPayment)); ?>" name="settlements[<?php echo e($index); ?>][settlement_amount]" placeholder="<?php echo e(__("Settlement Amount")); ?>" type="text" class="form-control  only-greater-than-or-equal-zero-allowed settlement-amount-class">
+						<input value="<?php echo e($totalSettlementAmount); ?>" name="settlements[<?php echo e($index); ?>][settlement_amount]" placeholder="<?php echo e(__("Settlement Amount")); ?>" type="text" class="form-control  only-greater-than-or-equal-zero-allowed settlement-amount-class">
 					</div>
 				</div>
 				<div class="col-md-1 width-9.5 ">
 					<label> <?php echo e(__('Withhold Amount')); ?> <span class="text-danger ">*</span> </label>
 					<div class="kt-input-icon">
-						<input value="<?php echo e($downPayment->getWithholdForInvoiceNumberAmount($invoice->getInvoiceNumber(),$partnerId,$isDownPaymentFromMoneyPayment)); ?>" name="settlements[<?php echo e($index); ?>][withhold_amount]" placeholder="<?php echo e(__('Withhold Amount')); ?>" type="text" class="form-control  only-greater-than-or-equal-zero-allowed ">
+						<input value="<?php echo e($totalWithholdAmount); ?>" name="settlements[<?php echo e($index); ?>][withhold_amount]" placeholder="<?php echo e(__('Withhold Amount')); ?>" type="text" class="form-control  only-greater-than-or-equal-zero-allowed ">
 					</div>
 				</div>
 		

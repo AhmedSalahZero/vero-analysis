@@ -63,7 +63,7 @@ use App\Models\MoneyReceived ;
         <form method="post" action="<?php echo e(isset($model) ?  route('update.money.receive',['company'=>$company->id,'moneyReceived'=>$model->id]) :route('store.money.receive',['company'=>$company->id])); ?>" class="kt-form kt-form--label-right">
             <input id="js-in-edit-mode" type="hidden" name="in_edit_mode" value="<?php echo e(isset($model) ? 1 : 0); ?>">
             <input type="hidden" name="current_cheque_id" value="<?php echo e(isset($model) && $model->cheque ? $model->cheque->id : 0); ?>">
-            <input type="hidden" name="current_branch" value="<?php echo e(isset($model) && $model->cashInSafe ? $model->cashInSafe->receiving_branch_id : 0); ?>">
+            <input type="hidden" name="cash_id" value="<?php echo e(isset($model) && $model->cashInSafe ? $model->cashInSafe->receiving_branch_id : 0); ?>">
             <input id="js-money-received-id" type="hidden" name="money_received_id" value="<?php echo e(isset($model) ? $model->id : 0); ?>">
 			
             <input type="hidden" id="ajax-invoice-item" data-single-model="<?php echo e($singleModel ? 1 : 0); ?>" value="<?php echo e($singleModel ? $singleModel : 0); ?>">

@@ -289,8 +289,7 @@
                     @endphp
 					{{-- {{ dd($cardNetBalances['currencies']) }} --}}
                     @foreach($cardNetBalances['currencies'] ?? [] as $currencyName=>$total)
-                    <x-money-card :main-functional-currency="$mainFunctionalCurrency" :invoiceType="$modelType" :show-report="1" :color="getColorFromIndex($index)" :currencyName="$currencyName" :total="$total"></x-money-card>
-		
+                 	   <x-money-card :main-functional-currency="$mainFunctionalCurrency" :invoiceType="$modelType" :show-report="1" :color="getColorFromIndex($index)" :currencyName="$currencyName" :total="$total"></x-money-card>
                     @php
                     $index++;
                     @endphp
@@ -364,6 +363,7 @@
                                                 <th class="view-table-th  max-w-currency    header-th  align-middle text-center">
                                                     {{ __('Currency') }}
                                                 </th>
+												
                                                 <th class="view-table-th max-w-amount    header-th  align-middle text-center">
                                                     {{ __('Net Balance') }}
                                                 </th>

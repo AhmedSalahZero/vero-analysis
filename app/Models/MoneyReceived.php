@@ -211,29 +211,26 @@ class MoneyReceived extends Model
     }
 	public function getAmountForMainCurrency()
 	{
+		$company =$this->company ;
+		$mainFunctionalCurrency = $company->getMainFunctionalCurrency() ;
+		$receivingCurrency=  $this->getReceivingCurrency();
+		$receivingDate = $this->getReceivingDate();
+		$foreignExchangeRate = ForeignExchangeRate::getExchangeRateForCurrencyAndClosestDate($receivingCurrency,$mainFunctionalCurrency,$receivingDate,$company->id);
+		$amount  = $this->getAmount();
+		if($mainFunctionalCurrency == $receivingCurrency){
+			return $amount ;
+		}
+		return $amount * $foreignExchangeRate;
+		// $totalSettlement = 0 ;
+		// $totalDownPaymentSettlement = 0 ;
+		// foreach($this->settlements as $settlement ){
+		// 	$totalSettlement+= ($settlement->getAmount() * $foreignExchangeRate);
+		// }
+		// foreach($this->downPaymentSettlements as $downPaymentSettlement){
 
-		
-		$totalSettlement = 0 ;
-		$totalDownPaymentSettlement = 0 ;
-		foreach($this->settlements as $settlement ){
-			$mainFunctionalCurrency = $settlement->customerInvoice->company->getMainFunctionalCurrency();
-			
-			// $currentReceivingCurrency = $settlement->customerInvoice->getReceivingCurrency() ;
-			$invoiceExchangeRate = $settlement->customerInvoice->getExchangeRate();
-			// if($currentReceivingCurrency == $mainFunctionalCurrency ){
-				
-			// }else
-			$totalSettlement+= ($settlement->getAmount() * $invoiceExchangeRate);
-		}
-		foreach($this->downPaymentSettlements as $downPaymentSettlement){
-			$moneyReceived = $downPaymentSettlement->moneyReceived ;
-			$receivingCurrency = $moneyReceived->getReceivingCurrency();
-			$mainFunctionalCurrency = $moneyReceived->company->getMainFunctionalCurrency();
-			$receivingDate = $moneyReceived->getReceivingDate();
-			$foreignExchangeRate = ForeignExchangeRate::getExchangeRateForCurrencyAndClosestDate($receivingCurrency,$mainFunctionalCurrency,$receivingDate,$moneyReceived->company->id);
-			$totalDownPaymentSettlement += $downPaymentSettlement->down_payment_amount * $foreignExchangeRate;
-		}
-		return $totalSettlement + $totalDownPaymentSettlement  ;
+		// 	$totalDownPaymentSettlement += $downPaymentSettlement->down_payment_amount * $foreignExchangeRate;
+		// }
+		// return $totalSettlement + $totalDownPaymentSettlement  ;
 	}
 	public function getTotalWithholdInInvoiceExchangeRate()
 	{
@@ -633,10 +630,7 @@ class MoneyReceived extends Model
 		$cashInBank = $this->cashInBank;
 		return $cashInBank ? $cashInBank->getAccountNumber() : 0 ;
 	}
-	// public function unappliedAmounts()
-	// {
-	// 	return $this->hasMany(UnappliedAmount::class ,'model_id','id')->where('model_type',HHelpers::getClassNameWithoutNameSpace($this));	
-	// }
+
 	public function cleanOverdraftDebitBankStatement()
 	{
 		return $this->hasOne(CleanOverdraftBankStatement::class,'money_received_id','id');
@@ -936,5 +930,6 @@ class MoneyReceived extends Model
 		}
 		throw new \Exception('Custom Exception .. getAccountNumber .. This Method Is Only For Incoming Transfer Or Payable Cheque');
 	}	
+	
 	
 }

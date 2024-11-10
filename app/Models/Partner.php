@@ -94,10 +94,7 @@ class Partner extends Model
 			$q->where('is_other_partner',1);
 		});
 	}
-	public function unappliedAmounts()
-	{
-		return $this->hasMany(UnappliedAmount::class ,'partner_id','id');	
-	}
+
 	public function isCustomer()
 	{
 		return $this->is_customer == 1 ;
@@ -122,18 +119,6 @@ class Partner extends Model
 	public function isOtherPartner()
 	{
 		return $this->is_other_partner == 1 ;
-	}
-	public function settlementForUnappliedAmounts()
-	{
-		return $this->hasMany(Settlement::class,'partner_id','id')->whereNotNull('unapplied_amount_id');
-	}
-	public function getSettlementForUnappliedAmounts(string $startDate , string $endDate)
-	{
-		return $this->settlementForUnappliedAmounts()
-		->whereHas('unappliedAmount',function(Builder $q) use ($startDate,$endDate){
-			$q->where('settlement_date','>=',$startDate)->where('settlement_date','<=',$endDate);
-		})
-		->get();
 	}
 	public function CustomerInvoice()
 	{
