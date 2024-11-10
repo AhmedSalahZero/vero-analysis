@@ -58,7 +58,6 @@
         <form method="post" action="<?php echo e(route('update.financial.institutions.account',['company'=>$company->id ,'financialInstitution'=>$financialInstitution->id , 'financialInstitutionAccount'=>$model->id])); ?>" class="kt-form kt-form--label-right">
             <input id="js-in-edit-mode" type="hidden" name="in_edit_mode" value="<?php echo e(isset($model) ? 1 : 0); ?>">
             <input id="js-money-received-id" type="hidden" name="id" value="<?php echo e(isset($model) ? $model->id : 0); ?>">
-            
             <?php echo csrf_field(); ?>
             <?php if(isset($model)): ?>
             <?php echo method_field('put'); ?>

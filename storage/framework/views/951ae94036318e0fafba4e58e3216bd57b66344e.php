@@ -1,43 +1,48 @@
-@extends('layouts.dashboard')
-@section('css')
-<x-styles.commons></x-styles.commons>
+<?php $__env->startSection('css'); ?>
+ <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.styles.commons','data' => []]); ?>
+<?php $component->withName('styles.commons'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php $component->withAttributes([]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
+<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
+<?php endif; ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?> 
 <style>
+.max-w-comment{
 
-
-    .max-w-name {
-        width: 45% !important;
-        min-width: 45% !important;
-        max-width: 45% !important;
-    }
-	.max-w-comment {
-        width: 40% !important;
-        min-width: 40% !important;
-        max-width: 40% !important;
-    }
-
-    .max-w-currency {
-        width: 5% !important;
-        min-width: 5% !important;
-        max-width: 5% !important;
-    }
-
+	min-width:700px !important;
+	text-wrap:wrap !important;
+	
+}
+#DataTables_Table_0_info{
+	margin-bottom:20px;
+}
     .max-w-serial {
         width: 5% !important;
         min-width: 5% !important;
         max-width: 5% !important;
+
     }
 
-    .max-w-amount {
-        width: 15% !important;
-        min-width: 15% !important;
-        max-width: 15% !important;
+    .z-index-6 {
+        position: relative;
+        z-index: 1;
     }
 
-    .max-w-report-btn {
-        width: 15% !important;
-        min-width: 15% !important;
-        max-width: 15% !important;
+    .mt--30 {
+        margin-top: -30px;
     }
+
+
+
+
+
+
+
+
 
     .is-sub-row.is-total-row td.sub-numeric-bg,
     .is-sub-row.is-total-row td.sub-text-bg {
@@ -45,7 +50,7 @@
         color: white !important;
     }
 
-    .is-name-cell {
+    . {
         white-space: normal !important;
     }
 
@@ -129,28 +134,35 @@
     }
 
 </style>
-@endsection
-@section('sub-header')
-@if($partnerName)
-<x-main-form-title :id="'main-form-title'" :class="''">{{ $customerStatementText . ' '.__('Table') . '[ '. $partnerName .' ] '.'[ '. $currency .' ]' }}</x-main-form-title>
-@else
-<x-main-form-title :id="'main-form-title'" :class="''">{{ $customerStatementText . ' '.__('Table') . ' [ '. $currency .' ]' }}</x-main-form-title>
-@endif 
-@endsection
-@section('content')
+<?php $__env->stopSection(); ?>
+<?php $__env->startSection('sub-header'); ?>
+ <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.main-form-title','data' => ['id' => 'main-form-title','class' => '']]); ?>
+<?php $component->withName('main-form-title'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php $component->withAttributes(['id' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('main-form-title'),'class' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('')]); ?><?php echo e(__('Bank Statement ['  ) . $financialInstitutionName . ' ] [' . $accountTypeName . ' ] [ ' . $accountNumber . ' ] [ ' . __(touppercase($currency)) . ' ]'); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
+<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
+<?php endif; ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?> 
+
+<?php $__env->stopSection(); ?>
+<?php $__env->startSection('content'); ?>
 
 <div class="row">
     <div class="col-md-12">
 
-        <div class="kt-portlet mb-0">
+        <div class="kt-portlet">
 
 
             <div class="kt-portlet__body">
 
-                @php
+                <?php
 
                 $tableId = 'kt_table_1';
-                @endphp
+                ?>
 
 
                 <style>
@@ -287,113 +299,95 @@
                     }
 
                 </style>
-                @csrf
-				
-				
-					 <div class="kt-portlet mb-0">
-        <div class="kt-portlet__head">
-            <div class="kt-portlet__head-label">
-                <h3 class="kt-portlet__head-title head-title text-primary">
-                    {{ $customerStatementText }}
-                </h3>
-            </div>
-        </div>
-        <div class="kt-portlet__body  kt-portlet__body--fit">
-            <div class="row row-no-padding row-col-separator-xl">
-				<form class="w-full mt-3 ml-3">
-				<input type="hidden" name="all_partners" value="{{ $showAllPartner??0 }}">
-					<div class="row align-items-center">
-					
-					      <div class="col-md-4">
-
-                    <label>{{__('Name')}} @include('star')</label>
-                    <div class="kt-input-icon">
-                        <div class="kt-input-icon">
-                            <div class="input-group date">
-                                <select data-live-search="true" data-actions-box="true" id="partner_id" name="partner_id" class="form-control select2-select 
-								{{-- ajax-get-invoice-numbers --}}
-								">
-                                    {{-- <option value="" selected>{{__('Select')}}</option> --}}
-                                    @foreach($partners as $currentPartnerId => $customerName)
-                                    <option @if($partnerId == $currentPartnerId)  selected @endif @if(isset($model) && $model->getCustomerName() == $customerName ) selected @endif value="{{ $currentPartnerId }}">{{$customerName}}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-				
-						<div class="col-md-3">
-							<label for="start_date">{{ __('Start Date') }}</label>
-							<input id="start_date" type="date" value="{{ $startDate }}" class="form-control" name="start_date" >
-						</div>
-						
-						<div class="col-md-3">
-							<label for="end_date">{{ __('End Date') }}</label>
-							<input id="end_date" type="date" value="{{ $endDate }}" class="form-control" name="end_date" >
-						</div>
-						<div class="col-md-1">
-							<label for="button"></label>
-							<button type="submit" class="btn block form-control btn-primary btn-sm "> {{ __('Submit') }}</button>
-						
-						</div>	
-						
-						
-					</div>
-				</form>
-              
-                
-            </div>
-        </div>
-    </div>
-				
+                <?php echo csrf_field(); ?>
 
 
                 <div class="table-custom-container position-relative  ">
+                    <?php if(!$isCurrentAccount): ?>
+                    <div class="d-flex z-index-6" style="justify-content:right">
+                        <a href="<?php echo e(route('view.withdrawals.settlement.report',['company'=>$company->id ])); ?>" class="btn active-style btn-icon-sm align-self-center">
+                            <i class="fas fa-book"></i>
+                            <?php echo e(__('Withdrawals Settlement Report')); ?>
 
+                        </a>
+                    </div>
+                    <?php endif; ?>
 
                     <div>
-                        
 
 
-
-                        <div class="responsive">
+                        <div class="responsive mt--30">
                             <table class="table kt_table_with_no_pagination_no_collapse table-striped- table-bordered table-hover table-checkable position-relative table-with-two-subrows main-table-class dataTable no-footer">
                                 <thead>
 
                                     <tr class="header-tr ">
 
-                                        <th class="view-table-th max-w-serial  header-th  align-middle text-center">
-                                            {{ __('#') }}
+                                        <th class="view-table-th  header-th  align-middle text-center">
+                                            <?php echo e(__('#')); ?>
+
                                         </th>
 
-                                        <th class="view-table-th    header-th  align-middle text-center">
-                                            {{ __('Date') }}
+                                        <th class="view-table-th   header-th  align-middle text-center">
+                                            <?php echo e(__('Date')); ?>
+
                                         </th>
-										
-										  <th class="view-table-th    header-th  align-middle text-center">
-                                            {{ __('Document Type') }}
+                                        <?php if(! $isCurrentAccount): ?>
+                                        <th class="view-table-th     header-th  align-middle text-center">
+                                            <?php echo e(__('Limit')); ?>
+
                                         </th>
-										
-										  <th class="view-table-th    header-th  align-middle text-center">
-                                            {{ __('Document No') }}
+                                        <?php endif; ?>
+                                        <?php if($isAgainstCommercialPaper || $isAgainstAssignmentOfContract): ?>
+                                        <th class="view-table-th     header-th  align-middle text-center">
+                                            <?php echo e(__('Actual Limit')); ?>
+
+                                        </th>
+                                        <?php endif; ?>
+                                        <th class="view-table-th     header-th  align-middle text-center">
+                                            <?php echo e(__('Beginning Balance')); ?>
+
                                         </th>
 
-                                       
+
                                         <th class="view-table-th     header-th  align-middle text-center">
-                                            {{ __('Debit') }}
+                                            <?php echo e(__('Debit')); ?>
+
                                         </th>
 
                                         <th class="view-table-th     header-th  align-middle text-center">
-                                            {{ __('Credit') }}
+                                            <?php echo e(__('Credit')); ?>
+
                                         </th>
                                         <th class="view-table-th     header-th  align-middle text-center">
-                                            {{ __('End Balance') }}
+                                            <?php echo e(__('End Balance')); ?>
+
+                                        </th>
+
+                                        <?php if(! $isCurrentAccount): ?>
+                                        <th class="view-table-th     header-th  align-middle text-center">
+                                            <?php echo e(__('Room')); ?>
+
+                                        </th>
+                                        <th class="view-table-th     header-th  align-middle text-center">
+                                            <?php echo __('Calculated <br> Interest'); ?>
+
+                                        </th>
+
+
+                                        <?php endif; ?>
+
+                                        <th class="view-table-th   header-th  align-middle text-center">
+                                            <?php echo e(__('Reviewed')); ?>
+
                                         </th>
 										
-										 <th class="view-table-th   max-w-comment   header-th  align-middle text-center">
-                                            {{ __('Comment') }}
+										 <th class="view-table-th   header-th  align-middle text-center">
+                                            <?php echo e(__('Actions')); ?>
+
+                                        </th>
+                                        <th class="view-table-th   header-th  align-middle text-center max-w-comment">
+                                            <?php echo e(__('Comment')); ?>
+
                                         </th>
 
 
@@ -406,35 +400,52 @@
                                         let currentTable = null;
 
                                     </script>
-                                    @php
-                                    @endphp
-									@php
-										$balances = [];
-									@endphp
-								
-                                    @foreach($invoicesWithItsReceivedMoney as $index=>$item)
+                                    <?php $__currentLoopData = $results; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index=>$modelAsStdClass): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                     <tr class=" parent-tr reset-table-width text-nowrap  cursor-pointer sub-text-bg text-capitalize is-close   ">
-                                        {{-- <td class="red reset-table-width text-nowrap trigger-child-row-1 cursor-pointer sub-text-bg text-capitalize main-tr is-close"> @if($hasSubRows) + @endif</td> --}}
-                                        <td class="sub-text-bg max-w-serial   ">{{ $index+1 }}</td>
-                                        <td class="sub-text-bg text-center  is-name-cell ">{{ $item['date'] }}</td>
-                                        <td class="sub-text-bg   is-name-cell ">{{ $item['document_type'] }}</td>
-										   <td class="sub-text-bg  text-center">{{ $item['document_no'] }}</td>
-                                        <td class="sub-text-bg text-center  is-name-cell ">{{ number_format($item['debit']) }}</td>
-                                        <td class="sub-text-bg text-center ">{{ number_format($item['credit']) }}</td>
-										@php
-											if($index == 0 ){
-												$balances[$index] = $item['end_balance']  ;
-											}else{
-												$balances[$index] = $balances[$index-1] + $invoicesWithItsReceivedMoney[$index]['debit'] - $invoicesWithItsReceivedMoney[$index]['credit'];
-											}
-										@endphp
-                                        <td class="sub-text-bg text-center">{{ number_format($balances[$index]  ) }}</td>
-                                        <td class="sub-text-bg  max-w-comment text-wrap">{{ $item['comment'] }}</td>
-										
-                                     
-                 
+                                        <td class="sub-text-bg  "><?php echo e($index+1); ?></td>
+                                        <td class="sub-text-bg  text-center "><?php echo e(\Carbon\Carbon::make($modelAsStdClass->date)->format('d-m-Y')); ?></td>
+                                        <?php if(! $isCurrentAccount): ?>
+                                        <td class="sub-text-bg text-center "><?php echo e(number_format($modelAsStdClass->limit)); ?></td>
+                                        <?php if($isAgainstCommercialPaper || $isAgainstAssignmentOfContract): ?>
+                                        <td class="sub-text-bg text-center "><?php echo e(number_format($modelAsStdClass->statement_limit)); ?></td>
+                                        <?php endif; ?>
+                                        <?php endif; ?>
+                                        <td class="sub-text-bg text-center "><?php echo e(number_format($modelAsStdClass->beginning_balance)); ?></td>
+                                        <td class="sub-text-bg text-center "><?php echo e(number_format($modelAsStdClass->debit)); ?></td>
+                                        <td class="sub-text-bg text-center "><?php echo e(number_format($modelAsStdClass->credit)); ?></td>
+                                        <td class="sub-text-bg text-center "><?php echo e(number_format($modelAsStdClass->end_balance)); ?></td>
+                                        <?php if(! $isCurrentAccount): ?>
+                                        <td class="sub-text-bg text-center "><?php echo e(number_format($modelAsStdClass->room)); ?></td>
+                                        <td class="sub-text-bg text-center "><?php echo e(number_format($modelAsStdClass->interest_amount)); ?></td>
+                                        <?php endif; ?>
+										<?php
+								
+											 $comment = isset($modelAsStdClass->{'comment_'.$lang}) ? $modelAsStdClass->{'comment_'.$lang} : null ;
+											
+											$reviewedArr = getBankStatementReviewed($modelAsStdClass) ;
+											$reviewedText = getReviewedText($reviewedArr);
+											
+										?>
+								
+                                        <td class="sub-text-bg text-left "><?php echo e($reviewedText); ?></td>
+                                        <td class="sub-text-bg text-left ">
+											<?php if($modelAsStdClass->is_commission_fees): ?>
+												
+												<?php echo $__env->make('modals.edit-commissions-fees',[
+													'currentStatementId'=>$modelAsStdClass->id,
+													'currentCredit'=>$modelAsStdClass->credit
+													,'currentDate'=>$modelAsStdClass->date ], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+																					
+											<?php endif; ?>
+										</td>
+                                        <td class="sub-text-bg text-left max-w-comment"><?php echo e($comment?: getBankStatementComment($modelAsStdClass)); ?></td>
+
+                                 
+
+
                                     </tr>
 
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
 
 
@@ -442,16 +453,16 @@
 
 
 
-
-                                    @endforeach
 
                                 </tbody>
+								
                             </table>
-                        </div>
+<?php echo e($results->appends(Request()->all())->links()); ?>
 
+                        </div>
                     </div>
 
-                    @push('js')
+                    <?php $__env->startPush('js'); ?>
                     <script>
                         var table = $(".kt_table_with_no_pagination_no_collapse");
 
@@ -499,15 +510,25 @@
                         )
 
                     </script>
-                    @endpush
+                    <?php $__env->stopPush(); ?>
 
                 </div>
             </div>
         </div>
     </div>
-    @endsection
-    @section('js')
-    <x-js.commons></x-js.commons>
+    <?php $__env->stopSection(); ?>
+    <?php $__env->startSection('js'); ?>
+     <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.js.commons','data' => []]); ?>
+<?php $component->withName('js.commons'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php $component->withAttributes([]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
+<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
+<?php endif; ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?> 
 
     <script src="https://cdn.amcharts.com/lib/4/core.js"></script>
     <script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
@@ -535,10 +556,10 @@
                 currentTable = $('.main-table-class').DataTable()
             }
             if (currentTable.column(2).visible()) {
-                $(this).html("{{ __('Show Details') }}")
+                $(this).html("<?php echo e(__('Show Details')); ?>")
                 currentTable.columns([2, 3, 4, 5, 6, 7, 8, 9, 10]).visible(false);
             } else {
-                $(this).html("{{ __('Hide Details') }}")
+                $(this).html("<?php echo e(__('Hide Details')); ?>")
                 currentTable.columns([2, 3, 4, 5, 6, 7, 8, 9, 10]).visible(true);
             }
         })
@@ -548,14 +569,16 @@
                 currentTable = $('.main-table-class').DataTable()
             }
             if (currentTable.column(13).visible()) {
-                $(this).html("{{ __('Show Details') }}")
+                $(this).html("<?php echo e(__('Show Details')); ?>")
                 currentTable.columns([13, 14, 15, 16, 17, 18, 19, 20, 21]).visible(false);
             } else {
-                $(this).html("{{ __('Hide Details') }}")
+                $(this).html("<?php echo e(__('Hide Details')); ?>")
                 currentTable.columns([13, 14, 15, 16, 17, 18, 19, 20, 21]).visible(true);
             }
         })
 
     </script>
 
-    @endsection
+    <?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.dashboard', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /media/salah/Software/projects/veroo/resources/views/bank_statement_result.blade.php ENDPATH**/ ?>

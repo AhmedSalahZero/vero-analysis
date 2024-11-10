@@ -3,6 +3,7 @@ namespace App\Traits\Models;
 
 use App\Models\Company;
 use App\Models\FinancialInstitution;
+use App\Models\ForeignExchangeRate;
 use App\Models\MoneyPayment;
 use App\Models\MoneyReceived;
 use App\Models\Partner;
@@ -199,5 +200,51 @@ trait IsMoney
 	{
 		return $this->getDownPaymentType() == self::DOWN_PAYMENT_FREE;
 	}
+	public function appendForeignExchangeGainOrLoss(array &$formattedData,int &$index):array 
+	{
+		$invoiceCurrency = $this->getInvoiceCurrency();
+		$receivingCurrency = $this->getReceivingCurrency();
+		$company = $this->company;
+		$mainFunctionalCurrency = $company->getMainFunctionalCurrency();
+		$receivingOrPaymentDate = $this->getDate();
+		$receivingOrPaymentExchangeRate = $this->getExchangeRate();
+			if($invoiceCurrency ==$receivingCurrency && $receivingCurrency ==  $mainFunctionalCurrency){
+				return $formattedData ;
+			}
+		
+			foreach($this->settlements as $settlement){
+				$fxGainOrLossAmount = 0 ;
+				$settlementAmount = $settlement->getAmount() ;
+				$invoiceExchangeRate = $settlement->getInvoiceExchangeRate();
+				$foreignExchangeRate = ForeignExchangeRate::getExchangeRateForCurrencyAndClosestDate($receivingCurrency,$mainFunctionalCurrency,$receivingOrPaymentDate,$company->id);
+				if($invoiceCurrency ==$receivingCurrency && $receivingCurrency !=  $mainFunctionalCurrency){
+					$fxGainOrLossAmount = $settlementAmount * ($foreignExchangeRate - $invoiceExchangeRate);
+				}elseif($invoiceCurrency !=$receivingCurrency && $receivingCurrency ==  $mainFunctionalCurrency){
+					$fxGainOrLossAmount = $settlementAmount * ($receivingOrPaymentExchangeRate - $invoiceExchangeRate);
+				}
+				elseif($invoiceCurrency != $receivingCurrency && $receivingCurrency !=  $mainFunctionalCurrency){
+					$fxGainOrLossAmount = $settlementAmount * (($receivingOrPaymentExchangeRate * $foreignExchangeRate) - $invoiceExchangeRate);
+				}
+				$currentInvoiceNumber = $settlement->getInvoiceNumber();
+				$isGain = $fxGainOrLossAmount > 0 ;
+				if($fxGainOrLossAmount == 0){
+					continue;
+				}
+				$currentData = []; 
+				$currentData['date'] = Carbon::make($receivingOrPaymentDate)->format('d-m-Y');
+				$currentData['document_type'] = __('FX Gain Or Loss') ;
+				$currentData['document_no'] =  $currentInvoiceNumber ;
+				$currentData['debit'] = $isGain ? $fxGainOrLossAmount  : 0;
+				$currentData['credit'] =!$isGain ? $fxGainOrLossAmount * -1  : 0;
+				$currentData['comment'] = $isGain > 0 ? __('Foreign Exchange Gain') :__('Foreign Exchange Loss') ;
+				$index++;
+				$formattedData[] = $currentData ;
+				
+			}
+	
+		
+		return $formattedData ; 
+	}
+	
 	
 }

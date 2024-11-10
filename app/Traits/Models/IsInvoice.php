@@ -1,9 +1,11 @@
 <?php
 namespace App\Traits\Models;
 
+use App\Models\Company;
 use App\Models\CustomerInvoice;
 use App\Models\Deduction;
 use App\Models\DueDateHistory;
+use App\Models\MoneyReceived;
 use App\Models\SupplierInvoice;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
@@ -212,20 +214,23 @@ trait IsInvoice
 	
 	public static function getTotalInvoicesPlusVatAmountUntilDate( string $currencyName, int $partnerId,string $startDate , string $endDate):float
 	{
-		$isMainCurrency  = $currencyName == 'main_currency';
-		$invoiceAmountColumnName = $isMainCurrency ? 'invoice_amount_in_main_currency':'invoice_amount';
-		$vatAmountColumnName = $isMainCurrency ? 'vat_amount_in_main_currency':'vat_amount';
-		$totalDeductionColumn = $isMainCurrency ? 'total_deductions_in_main_currency':'total_deductions';
 		
 		return DB::table(self::TABLE_NAME)
 		->where('company_id',getCurrentCompanyId())
 		->where(self::CLIENT_ID_COLUMN_NAME,$partnerId)
-		->when(!$isMainCurrency,function( $q) use($currencyName){
-			$q->where('currency',$currencyName);
-		})
+		->where('currency',$currencyName)
 		->whereBetween('invoice_date',[$startDate,$endDate])
-		->sum(DB::raw($invoiceAmountColumnName.' + '.$vatAmountColumnName . '-'.$totalDeductionColumn));
+		->sum(DB::raw( 'invoice_amount + vat_amount - total_deductions'));
 
+	}
+	public static function getForPartner(int $partnerId,string $currencyName,$isMainCurrency):array 
+	{
+		return self::where(self::CLIENT_ID_COLUMN_NAME,$partnerId)
+		
+		->when(!$isMainCurrency,function($q) use ($currencyName){
+			$q->where('currency',$currencyName)
+		;})
+		->pluck('id','id')->toArray();
 	}
 	public function dueDateHistories()
 	{
@@ -241,7 +246,7 @@ trait IsInvoice
 	}
 	public static function getTotalMoneyAmountPlusWithhold( string $currencyName, int $partnerId,string $startDate , string $endDate)
 	{
-		$isMainCurrency = $currencyName == 'main_currency' ;
+
 		$fullMoneyModelName = '\App\Models\\'.self::MONEY_MODEL_NAME;
 		$moneyReceivedOrPayments = $fullMoneyModelName::where('company_id',getCurrentCompanyId())
 		->where('partner_id',$partnerId)
@@ -252,7 +257,6 @@ trait IsInvoice
 		$totalSettlementAmounts = 0 ;
 		$totalSettlementWithholdAmounts = 0 ;
 		foreach($moneyReceivedOrPayments as $moneyReceivedOrPayment){
-			dd($moneyReceivedOrPayment);
 			foreach($moneyReceivedOrPayment->settlements as $settlement){
 				$totalSettlementAmounts += $settlement->settlement_amount ;
 				$totalSettlementWithholdAmounts += $settlement->withhold_amount ;
@@ -282,6 +286,54 @@ trait IsInvoice
 		])
 		;
 	}
+	public function calculateCollectedOrPaidAmountInEditMode(bool $inEditMode,$collectedOrPaidAmount , $settlementAmount )
+	{
+		if(!$inEditMode){
+			return $collectedOrPaidAmount;
+		}
+		return $collectedOrPaidAmount - $settlementAmount ;
+	}
+	public function getCollectedOrPaidInEditModeForDownPayment($inEditMode,$totalSettlementAmount)
+	{
+		$collectedOrPaidAmount= $this->getCollectedOrPaidAmount();
+		return $this->calculateCollectedOrPaidAmountInEditMode($inEditMode,$collectedOrPaidAmount,$totalSettlementAmount);
+	}
+	public function calculateNetBalanceInEditMode(bool $inEditMode , $totalSettlementAmount,$totalWithholdAmount )
+	{
+		$netBalance = $this->getNetBalance();
+		if(!$inEditMode){
+			return $netBalance;
+		}
+		return $netBalance + $totalSettlementAmount +  $totalWithholdAmount ;
+	}
+	public function getNetBalanceInEditModeForDownPayment($inEditMode,$downPayment,$isDownPaymentFromMoneyModel)
+	{
+		
+		
 	
+		$inEditMode = !is_null($downPayment);
+		$totalSettlements = $downPayment ? $downPayment->sumSettlementsForInvoice($this->id,$this->getPartnerId(),$isDownPaymentFromMoneyModel) : 0 ;
+		return $this->calculateNetBalanceInEditMode($inEditMode,$netBalance , $settlementAmount , $withholdAmount);
+	}
+	
+	public function getCollectedOrPaidAmount()
+	{
+		if($this instanceof CustomerInvoice){
+			return $this->collected_amount ;
+		}
+		if($this instanceof SupplierInvoice){
+			return $this->paid_amount ;
+		}
+		throw new \Exception('Custom Exception .. Not Allowed Money Type');
+	}
+	public static function getInvoicesForInvoiceStartAndEndDate(string $clientIdColumnName,int $partnerId,Company $company , string $currency , string $startDate , string $endDate)
+	{
+		return self::where('company_id', $company->id)
+		->when($currency != 'main_currency',function($query)use($currency){
+			$query->where('currency', $currency);
+		})
+        ->whereBetween('invoice_date', [$startDate, $endDate])
+        ->where($clientIdColumnName, '=', $partnerId)->get();
+	}
 
 }

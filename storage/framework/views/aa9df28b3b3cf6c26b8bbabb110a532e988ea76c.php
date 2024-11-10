@@ -308,7 +308,7 @@
                     ?>
 					
                     <?php $__currentLoopData = $cardNetBalances['currencies'] ?? []; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $currencyName=>$total): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                     <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+                 	    <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.money-card','data' => ['mainFunctionalCurrency' => $mainFunctionalCurrency,'invoiceType' => $modelType,'showReport' => 1,'color' => getColorFromIndex($index),'currencyName' => $currencyName,'total' => $total]]); ?>
 <?php $component->withName('money-card'); ?>
 <?php if ($component->shouldRender()): ?>
@@ -319,7 +319,6 @@
 <?php endif; ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
-		
                     <?php
                     $index++;
                     ?>
@@ -396,6 +395,7 @@
                                                     <?php echo e(__('Currency')); ?>
 
                                                 </th>
+												
                                                 <th class="view-table-th max-w-amount    header-th  align-middle text-center">
                                                     <?php echo e(__('Net Balance')); ?>
 

@@ -512,12 +512,7 @@ class MoneyPayment extends Model
 		return $payableCheque ? $payableCheque->getAccountNumber() : 0 ;
 	}
 	
-	
-	
-	// public function unappliedAmounts()
-	// {
-	// 	return $this->hasMany(UnappliedAmount::class ,'model_id','id')->where('model_type',HHelpers::getClassNameWithoutNameSpace($this));	
-	// }
+
 	public function cleanOverdraftCreditBankStatement()
 	{
 		return $this->hasOne(CleanOverdraftBankStatement::class,'money_payment_id','id');
@@ -628,7 +623,6 @@ class MoneyPayment extends Model
 			$settlement->delete();
 		});
 		$this->settlementAllocations()->delete();
-		//$this->unappliedAmounts()->delete();
 		$currentStatement = $this->getCurrentStatement() ;
 		if($currentStatement){
 			$currentStatement->delete();

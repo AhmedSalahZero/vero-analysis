@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Helpers\HArr;
 use App\Http\Requests\StoreCurrentAccountRequest;
 use App\Http\Requests\StoreFinancialInstitutionRequest;
+use App\Http\Requests\StoreNewAccountRequest;
 use App\Models\Bank;
 use App\Models\Branch;
 use App\Models\CertificatesOfDeposit;

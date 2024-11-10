@@ -133,7 +133,7 @@ class SupplierInvoice extends Model implements IInvoice
 
 
 
-	public static function formatForStatementReport(Collection $supplierInvoices,int $partnerId,string $startDate,string $endDate,string $currency){
+	public static function formatForStatementReport(Collection $supplierInvoices,int $partnerId,string $startDate,string $endDate,string $currency,string $modelType){
 			$startDateFormatted = Carbon::make($startDate)->format('d-m-Y');
 			$index = -1 ;
 			$oneDayBeforeStartDate = Carbon::make($startDate)->subDays(1000)->format('Y-m-d');
@@ -224,7 +224,10 @@ class SupplierInvoice extends Model implements IInvoice
 	{
 		return $this->belongsTo(Partner::class,self::CLIENT_ID_COLUMN_NAME,'id');
 	}
-	
+	public function getPartnerId():int
+	{
+		return $this->supplier_id;
+	}	
 	public static function formatInvoices(array $invoices,int $inEditMode,$moneyPayment):array 
 	{
 		$result = [];

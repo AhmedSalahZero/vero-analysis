@@ -338,12 +338,7 @@ class CashExpense extends Model
 		return $payableCheque ? $payableCheque->getAccountNumber() : 0 ;
 	}
 	
-	
-	
-	// public function unappliedAmounts()
-	// {
-	// 	return $this->hasMany(UnappliedAmount::class ,'model_id','id')->where('model_type',HHelpers::getClassNameWithoutNameSpace($this));	
-	// }
+
 	public function cleanOverdraftCreditBankStatement()
 	{
 		return $this->hasOne(CleanOverdraftBankStatement::class,'cash_expense_id','id');
@@ -425,10 +420,7 @@ class CashExpense extends Model
 		$oldTypeRelationName = dashesToCamelCase($oldType);
 		$this->$oldTypeRelationName ? $this->$oldTypeRelationName->delete() : null;
 		$this->contracts()->detach();
-		// $this->settlements->each(function($settlement){
-		// 	$settlement->delete();
-		// });
-		// $this->unappliedAmounts()->delete();
+
 		$currentStatement = $this->getCurrentStatement() ;
 		if($currentStatement){
 			$currentStatement->delete();

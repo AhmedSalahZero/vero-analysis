@@ -758,12 +758,7 @@ class CustomerInvoiceDashboardController extends Controller
         $customerStatementText = (new $fullClassName())->getCustomerOrSupplierStatementText();
         $startDate = $startDate ?: $request->get('start_date', now()->subMonths(12)->format('Y-m-d'));
         $endDate = $endDate?: $request->get('end_date', now()->format('Y-m-d'));
-        $invoices = ('\App\Models\\' . $modelType)::where('company_id', $company->id)
-		->when($currency != 'main_currency',function($query)use($currency){
-			$query->where('currency', $currency);
-		})
-        ->whereBetween('invoice_date', [$startDate, $endDate])
-        ->where($clientIdColumnName, '=', $partnerId)->get();
+        $invoices = ('\App\Models\\' . $modelType)::getInvoicesForInvoiceStartAndEndDate( $clientIdColumnName, $partnerId, $company ,  $currency ,  $startDate ,  $endDate);
         $partner = Partner::find($partnerId);
 		if(!$partner){
 			return view('admin.reports.customer-statement-report', [
@@ -779,8 +774,7 @@ class CustomerInvoiceDashboardController extends Controller
 			]);
 		}
         $partnerName = $partner->getName() ;
-        $invoicesWithItsReceivedMoney = ('App\Models\\' . $modelType)::formatForStatementReport($invoices, $partnerId, $startDate, $endDate, $currency);
-
+        $invoicesWithItsReceivedMoney = ('App\Models\\' . $modelType)::formatForStatementReport($invoices, $partnerId, $startDate, $endDate, $currency,$modelType);
 		if($returnResult){
 			if(count($invoicesWithItsReceivedMoney) < 1){
 				return [];
@@ -790,7 +784,6 @@ class CustomerInvoiceDashboardController extends Controller
         if (count($invoicesWithItsReceivedMoney) < 1) {
             return  redirect()->back()->with('fail', __('No Data Found'));
         }
-
         return view('admin.reports.customer-statement-report', [
             'invoicesWithItsReceivedMoney' => $invoicesWithItsReceivedMoney,
             'partnerName' => $partnerName,

@@ -45,4 +45,5 @@ class Deduction extends Model
 			'amount_in_invoice_exchange_rate'=> $amount * $invoiceExchangeRate
 		] ;
 	}
+
 }

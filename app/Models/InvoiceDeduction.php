@@ -16,11 +16,23 @@ class InvoiceDeduction extends Model
 	}
 	public function customerInvoice()
 	{
-		return $this->belongsTo(CustomerInvoice::class,'model_id','id')->where('model_type','CustomerInvoice');
+		return $this->belongsTo(CustomerInvoice::class,'invoice_id','id');
 	}
 	public function supplierInvoice()
 	{
-		return $this->belongsTo(SupplierInvoice::class,'customer_invoice_id','id')->where('model_type','SupplierInvoice');
+		return $this->belongsTo(SupplierInvoice::class,'invoice_id','id');
+	}
+	public function getInvoice()
+	{
+		if($this->invoice_type == 'CustomerInvoice'){
+
+			return $this->customerInvoice;
+		}
+		if($this->invoice_type == 'SupplierInvoice'){
+			return $this->supplierInvoice;
+		}
+		throw new \Exception('custom exception .. invalid invoice_type');
+		
 	}
 	public function getDate()
     {
@@ -58,5 +70,15 @@ class InvoiceDeduction extends Model
 		$amount = $this->getAmount();
 		return number_format($amount) ;
 	}
-	
+	public static function getForInvoices(array $invoiceIds , string $modelType ,string $startDate , string $endDate ){
+		return self::whereIn('invoice_id',$invoiceIds)->where('invoice_type',$modelType)->whereBetween('date',[$startDate,$endDate])->get();
+	}
+	public function deduction()
+	{
+		return $this->belongsTo(Deduction::class,'deduction_id');
+	}
+	public function getDeductionName()
+	{
+		return $this->deduction ? $this->deduction->getName() : __('N/A');
+	}
 }
