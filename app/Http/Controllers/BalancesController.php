@@ -70,8 +70,8 @@ class BalancesController
 			foreach($totalPerCustomerForMainCurrency as $partnerId => $total){
 				
 				$formattedResult[] = json_decode(json_encode([
-					'customer_id'=>$partnerId,
-					'customer_name'=>$partnerNames[$partnerId],
+					$clientIdColumnName=>$partnerId,
+					$clientNameColumnName=>$partnerNames[$partnerId],
 					'currency'=>'main_currency',
 					'net_balance'=>$total,
 					'net_balance_in_main_currency'=>$total 

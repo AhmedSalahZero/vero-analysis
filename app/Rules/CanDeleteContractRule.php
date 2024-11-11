@@ -30,27 +30,32 @@ class CanDeleteContractRule implements ImplicitRule
     {
 	
 		if($this->contract->moneyReceived->count()){
-			$this->failedMessage = __('This Contract Related To Money Received .. You Have To Delete Or Edit It First');
+			$this->failedMessage = __('This Contract Is Related To Money Received .. You Have To Delete Or Edit It First');
 			return false ;
 		}
 		if($this->contract->MoneyPayment->count()){
-			$this->failedMessage = __('This Contract Related To Money Payment .. You Have To Delete Or Edit It First');
+			$this->failedMessage = __('This Contract Is Related To Money Payment .. You Have To Delete Or Edit It First');
 			return false ;
 		}
+		
 		if($this->contract->letterOfGuaranteeIssuances->count()){
-			$this->failedMessage = __('This Contract Related To Letter Of Guarantee Issuance .. You Have To Delete Or Edit It First');
+			$this->failedMessage = __('This Contract Is Related To Letter Of Guarantee Issuance .. You Have To Delete Or Edit It First');
 			return false ;
 		}
 		if(count($this->contract->cashExpenses)){
-			$this->failedMessage = __('This Contract Related To Cash Expense .. You Have To Delete Or Edit It First');
+			$this->failedMessage = __('This Contract Is Related To Cash Expense .. You Have To Delete Or Edit It First');
 			return false ;
 		}
 		if($this->contract->overdraftAgainstAssignmentOfContract){
-			$this->failedMessage = __('This Contract Related To Overdraft Against Assignment Of Contract .. You Have To Delete Or Edit It First');
+			$this->failedMessage = __('This Contract Is Related To Overdraft Against Assignment Of Contract .. You Have To Delete Or Edit It First');
+			return false ;
+		}
+		if($this->contract->customerInvoices->count()){
+			$this->failedMessage = __('This Contract Is Related To Customer Invoices .. You Have To Delete Or Edit It First');
 			return false ;
 		}
 		if($this->contract->lendingInformationForAgainstAssignmentContract){
-			$this->failedMessage = __('This Contract Related To Lending Information Of Against Assignment Contract .. You Have To Delete Or Edit It First');
+			$this->failedMessage = __('This Contract Is Related To Lending Information Of Against Assignment Contract .. You Have To Delete Or Edit It First');
 			return false ;
 		}
 		return true ;

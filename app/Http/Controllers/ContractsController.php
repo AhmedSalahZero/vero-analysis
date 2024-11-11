@@ -111,7 +111,6 @@ class ContractsController
 	public function store(StoreContractRequest $request, Company $company,string $type){
 			$contract = new Contract ;
 			$contract->storeBasicForm($request);
-			// $contract->relateWithContracts($request->get('contracts',[]));
 			return redirect()->route('contracts.index',['company'=>$company->id,'type'=>$type]);
 	}
 	public function edit(Request $request,Company $company,Contract $contract,string $type)

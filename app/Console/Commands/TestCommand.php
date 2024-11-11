@@ -52,7 +52,10 @@ class TestCommand extends Command
 	 */
 	public function handle()
 	{
-		$this->refreshStatement('CurrentAccountBankStatement','full_date');
+		$code =Contract::generateRandomContract(92,'ahmed salah','2010-04-01','2011-04-01');
+		
+		
+		// $this->refreshStatement('CurrentAccountBankStatement','full_date');
 	}
 	public function refreshStatement($statementModelName,$dateColumnName = 'full_date'){
 		$fullModelName ='App\Models\\'.$statementModelName;
