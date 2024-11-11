@@ -31,6 +31,7 @@ class TwoNumericsAreEqual implements ImplicitRule
      */
     public function passes($attribute, $value)
     {
+	
         return $this->firstNo == $this->secondNo;
     }
 

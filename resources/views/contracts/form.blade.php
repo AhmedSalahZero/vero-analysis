@@ -108,14 +108,18 @@ use App\Models\MoneyReceived ;
                                     </div>
                                 </div>
 
-
+								
                                 <div class="col-md-2 ">
                                     <label> {{ __('Code') }}
                                         @include('star')
                                     </label>
                                     <div class="kt-input-icon">
                                         <div class="input-group">
-                                            <input required name="code" id="contract-code" type="text" class="form-control " value="{{ old('code',isset($model) ? $model->getCode() : null)   }}">
+                                            <input
+											@if(isset($model))
+											readonly
+											@endif 
+											 required name="code" id="contract-code" type="text" class="form-control " value="{{ old('code',isset($model) ? $model->getCode() : null)   }}">
                                         </div>
                                     </div>
                                 </div>
@@ -718,7 +722,7 @@ use App\Models\MoneyReceived ;
 
 <script>
     $(document).on('change', '.js-recalculate-amounts-in-popup', function() {
-        let amount = $(this).val()
+        let amount = number_unformat($(this).val())
         amount = amount ? amount : 0;
         const parent = $(this).closest('[data-repeater-item]');
 
@@ -734,7 +738,7 @@ use App\Models\MoneyReceived ;
         executionPercentage = executionPercentage ? executionPercentage : 0;
         executionPercentage = executionPercentage / 100;
         const parent = $(this).closest('[data-repeater-item]');
-        let amount = $(parent).find('.js-recalculate-amounts-in-popup').val()
+        let amount = number_unformat($(parent).find('.js-recalculate-amounts-in-popup').val());
         amount = amount ? amount : 0;
         $(this).closest('tr').find('.amount-js').val(executionPercentage * amount)
 

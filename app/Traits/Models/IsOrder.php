@@ -18,7 +18,7 @@ trait IsOrder {
 	}
 	public function getAmount()
 	{
-		return $this->amount ?:0;
+		return $this->amount;
 	}
 	public function getAmountFormatted()
 	{
@@ -28,6 +28,7 @@ trait IsOrder {
 		return $this['execution_percentage_'.$index];
 	}
 	public function getActualAmount(int $index){
+	
 		return $this->getExecutionPercentage($index) / 100 * $this->getAmount();
 	}
 	public function getExecutionDays(int $index){

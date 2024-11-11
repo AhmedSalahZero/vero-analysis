@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Helpers\HHelpers;
+use App\Helpers\HStr;
 use App\Models\Partner;
 use App\Traits\HasBasicStoreRequest;
 use Carbon\Carbon;
@@ -404,12 +405,17 @@ class Contract extends Model
 		$randomNumbers = HHelpers::generateCodeOfLength(4,true);
 		$partnerNameChar = '';
 		foreach($partnerNameItems as $partnerNameItem){
-			$partnerNameChar.=substr($partnerNameItem, 0, 1);
+			$partnerNameChar.=mb_substr($partnerNameItem, 0, 1, 'utf8') ;
 		}
+		$partnerNameChar = HStr::replaceSpecialCharacters($partnerNameChar);
 		$code = $prefix . $startDateMonth.'-'.$startDateYear.'-'.$partnerNameChar.'-'.$randomNumbers ;
 		if(Contract::where('code',$code)->where('company_id',$companyId)->exists()){
 			return self::generateRandomContract($companyId,$partnerName,$startDate,$modelType);
 		}
 		return $code ;
+	}
+	public function customerInvoices()
+	{
+		return $this->hasMany(CustomerInvoice::class,'contract_code','code')->where('company_id',$this->company_id);
 	}
 }
