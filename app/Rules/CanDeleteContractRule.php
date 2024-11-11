@@ -13,6 +13,7 @@ class CanDeleteContractRule implements ImplicitRule
      * @return void
      */
 	protected Contract $contract ;
+	protected string $failedMessage ;
     public function __construct(Contract $contract)
     {
         $this->contract = $contract ;
@@ -27,7 +28,32 @@ class CanDeleteContractRule implements ImplicitRule
      */
     public function passes($attribute, $value)
     {
-		dd($value,$this->contract);
+	
+		if($this->contract->moneyReceived->count()){
+			$this->failedMessage = __('This Contract Related To Money Received .. You Have To Delete Or Edit It First');
+			return false ;
+		}
+		if($this->contract->MoneyPayment->count()){
+			$this->failedMessage = __('This Contract Related To Money Payment .. You Have To Delete Or Edit It First');
+			return false ;
+		}
+		if($this->contract->letterOfGuaranteeIssuances->count()){
+			$this->failedMessage = __('This Contract Related To Letter Of Guarantee Issuance .. You Have To Delete Or Edit It First');
+			return false ;
+		}
+		if(count($this->contract->cashExpenses)){
+			$this->failedMessage = __('This Contract Related To Cash Expense .. You Have To Delete Or Edit It First');
+			return false ;
+		}
+		if($this->contract->overdraftAgainstAssignmentOfContract){
+			$this->failedMessage = __('This Contract Related To Overdraft Against Assignment Of Contract .. You Have To Delete Or Edit It First');
+			return false ;
+		}
+		if($this->contract->lendingInformationForAgainstAssignmentContract){
+			$this->failedMessage = __('This Contract Related To Lending Information Of Against Assignment Contract .. You Have To Delete Or Edit It First');
+			return false ;
+		}
+		return true ;
     }
 
     /**
@@ -37,6 +63,6 @@ class CanDeleteContractRule implements ImplicitRule
      */
     public function message()
     {
-        return 'The validation error message.';
+        return $this->failedMessage;
     }
 }

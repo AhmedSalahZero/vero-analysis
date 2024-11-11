@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 
 use App\Models\Branch;
 use App\Models\Company;
+use App\Models\Contract;
 use App\Models\CurrentAccountBankStatement;
 use App\Models\FinancialInstitution;
 use App\Models\LetterOfGuaranteeIssuance;
@@ -51,13 +52,14 @@ class TestCommand extends Command
 	 */
 	public function handle()
 	{
-		$x = [];
-		$tables = DB::connection()->getDoctrineSchemaManager()->listTableNames();
-		foreach($tables as $tableName){
-			if(Schema::hasColumn($tableName,'contract_id')){
-				$x[] = $tableName;
-			}
-		}
-		dd($x);	
+		$this->refreshStatement('CurrentAccountBankStatement','full_date');
+	}
+	public function refreshStatement($statementModelName,$dateColumnName = 'full_date'){
+		$fullModelName ='App\Models\\'.$statementModelName;
+		$fullModelName::orderBy($dateColumnName)->get()->each(function($statementRaw){
+			$statementRaw->update([
+				'updated_at'=>now()
+			]);
+		});
 	}
 }
