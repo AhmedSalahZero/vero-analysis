@@ -59,7 +59,7 @@ class LetterOfGuaranteeIssuanceController
 	public function index(Company $company,Request $request)
 	{
 
-		$numberOfMonthsBetweenEndDateAndStartDate = 18 ;
+		$numberOfMonthsBetweenEndDateAndStartDate = 60 ;
 		$activeLgType = $request->get('active',LgTypes::BID_BOND) ;
 		$filterDates = [];
 		$searchFields = [];

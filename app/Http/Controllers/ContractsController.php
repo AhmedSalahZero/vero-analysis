@@ -1,5 +1,6 @@
 <?php
 namespace App\Http\Controllers;
+use App\Http\Requests\DeleteContractRequest;
 use App\Http\Requests\StoreContractRequest;
 use App\Models\Company;
 use App\Models\Contract;
@@ -8,7 +9,6 @@ use App\Models\PurchaseOrder;
 use App\Models\SalesOrder;
 use App\Traits\GeneralFunctions;
 use Illuminate\Http\Request;
-use App\Http\Requests\DeleteContractRequest;
 
 /**
  *  * 
@@ -124,7 +124,6 @@ class ContractsController
 			return redirect()->route('contracts.index',['company'=>$company->id,'type'=>$type]);
 	}
 	public function destroy(Company $company , Request $request , DeleteContractRequest $contract,string $type){
-		
 		$contract->delete();
 		return redirect()->route('contracts.index',['company'=>$company->id,'type'=>$type]);  
 	}	
