@@ -419,10 +419,7 @@
                                         <tbody>
                                             <script>
                                                 window['currentTable<?php echo e($currencyName); ?>'] = null;
-
                                             </script>
-                                            <?php
-                                            ?>
                                             <?php $__currentLoopData = $invoicesBalances; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index=>$invoicesBalancesAsStdClass): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                             <?php if( $currencyName == $invoicesBalancesAsStdClass->currency): ?>
                                             <tr class=" parent-tr reset-table-width text-nowrap  cursor-pointer sub-text-bg text-capitalize is-close   ">

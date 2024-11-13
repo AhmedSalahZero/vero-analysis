@@ -5,7 +5,6 @@ namespace App\Models;
 use App\Traits\HasBasicStoreRequest;
 use App\Traits\HasCreatedAt;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -165,5 +164,13 @@ class Partner extends Model
 		}
 		throw new \Exception('Custom Exception .. No Available Partner Type');
 	}
+	public static function getCustomersForCompany(int $companyId){
+		return Partner::where('company_id',$companyId)
+		->where('is_customer',1)->orderBy('name')->pluck('name','id');
+	} 
+	
+	public static function getSuppliersForCompany(int $companyId){
+		return Partner::where('company_id',$companyId)->where('is_supplier',1)->orderBy('name')->pluck('name','id');
+	} 
 	
 }

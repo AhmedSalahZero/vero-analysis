@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Company;
+use App\Models\Partner;
 use App\ReadyFunctions\InvoiceAgingService;
 use App\Traits\GeneralFunctions;
 use Illuminate\Http\Request;
@@ -22,7 +23,7 @@ class AgingController
 		$fullClassName = ('\App\Models\\'.$modelType) ;
 		$customersOrSupplierText = (new $fullClassName)->getClientDisplayName();
 		$title = (new $fullClassName)->getAgingTitle();
-		$clientNameColumnName = $fullClassName::CLIENT_NAME_COLUMN_NAME ;
+		// $clientNameColumnName = $fullClassName::CLIENT_NAME_COLUMN_NAME ;
 		$invoiceTableName = getUploadParamsFromType($modelType)['dbName'];
 		$exportables = getExportableFieldsForModel($company->id,$modelType) ; 
 		$salesPersons = [];
@@ -41,14 +42,17 @@ class AgingController
 		$currencies = DB::table($invoiceTableName)
 		
 		->where('company_id',$company->id)->where('currency','!=',null)->where('currency','!=','')
+		->orderBy('currency')
 		->selectRaw('currency')->get()->pluck('currency')->unique()->values()->toArray();
 		
-		$invoices = ('\App\Models\\'.$modelType)::onlyCompany($company->id)->get();
-		$invoices = $invoices->unique($clientNameColumnName)->values() ;
+		// $partners = $modelType == 'CustomerInvoice' ?  Partner::getCustomersWitAtLeastOneInvoiceWithNetBalanceGreaterThanZeroForCompany($company->id) : Partner::getSuppliersForCompany($company->id);
+		// $invoices = ('\App\Models\\'.$modelType)::onlyCompany($company->id)->get();
+		// $invoices = $invoices->unique($clientNameColumnName)->values() ;
+		
         return view('reports.aging_form', [
 			'businessUnits'=>$businessUnits,
 			'company'=>$company,
-			'invoices'=>$invoices ,
+			// 'invoices'=>$invoices ,
 			'salesPersons'=>$salesPersons,
 			'businessSectors'=>$businessSectors,
 			'currencies'=>$currencies,
@@ -61,12 +65,23 @@ class AgingController
 		
 		$fullClassName = ('\App\Models\\'.$modelType) ;
 		$customersOrSupplierAgingText = (new $fullClassName)->getCustomerOrSupplierAgingText();
-		
-		$aginDate = $request->get('again_date',$request->get('end_date'));
+		$aginDate = $request->get('again_date',$request->get('end_date',now()->format('Y-m-d')));
 		$currency = $request->get('currency');
-		$clientNames = $request->get('clients');
+		$invoiceTableName = getUploadParamsFromType($modelType)['dbName'];
+		$fullClassName = 'App\Models\\'.$modelType ;
+		$customer_or_supplier_name=$fullClassName::CLIENT_NAME_COLUMN_NAME;
+		$customer_or_supplier_id=$fullClassName::CLIENT_ID_COLUMN_NAME;
+		$businessUnits = $request->get('business_units',[]);
+		$salesPersons = $request->get('sales_persons',[]);
+		$businessSectors = $request->get('business_sectors',[]);
+		
+		// dd();
+		// dd($this->getCustomersOrSuppliers($invoiceTableName ,$currency, $customer_or_supplier_id,$customer_or_supplier_name,$company,$businessUnits,$salesPersons,$businessSectors));
+		$clientIds = $request->get('client_ids',array_keys($this->getCustomersOrSuppliers($invoiceTableName ,$currency, $customer_or_supplier_id,$customer_or_supplier_name,$company,$businessUnits,$salesPersons,$businessSectors)->toArray()));
+		// dd($clientIds);
+		// dd($modelType,$customersOrSupplierAgingText,$clientIds);
 		$invoiceAgingService = new InvoiceAgingService($company->id ,$aginDate,$currency);
-		$agings  = $invoiceAgingService->__execute($clientNames,$modelType) ;
+		$agings  = $invoiceAgingService->__execute($clientIds,$modelType) ;
 		$weeksDates =formatWeeksDatesFromStartDate($aginDate);
 		
 		if($returnResult){
@@ -77,18 +92,11 @@ class AgingController
 		
 		return view('admin.reports.invoices-aging',['agings'=>$agings,'aginDate'=>$aginDate,'weeksDates'=>$weeksDates,'customersOrSupplierAgingText'=>$customersOrSupplierAgingText]);
 	}
-
-	public function getCustomersFromBusinessUnitsAndCurrencies(Company $company ,Request $request,string $modelType)
+	protected function getCustomersOrSuppliers($invoiceTableName ,$currency, $customer_or_supplier_id,$customer_or_supplier_name,$company,$businessUnits,$salesPersons,$businessSectors)
 	{
-		$invoiceTableName = getUploadParamsFromType($modelType)['dbName'];
-		$fullClassName = 'App\Models\\'.$modelType ;
-		$customer_or_supplier_name=$fullClassName::CLIENT_NAME_COLUMN_NAME;
-		$currency = $request->get('currencies');
-		$businessUnits = $request->get('business_units',[]);
-		$salesPersons = $request->get('sales_persons',[]);
-		$businessSectors = $request->get('business_sectors',[]);
-		$query = DB::table($invoiceTableName)->select($customer_or_supplier_name,'currency')
-		->where('currency',$currency)->where('company_id',$company->id)
+		$query = DB::table($invoiceTableName)->select($customer_or_supplier_name,$customer_or_supplier_id,'currency')
+		->where('currency',$currency)->where($invoiceTableName.'.company_id',$company->id)
+		->join('partners','partners.id','=',$invoiceTableName.'.'.$customer_or_supplier_id)
 		->where('net_balance','>',0);
 		if(count($businessUnits)){
 			$query = $query->whereIn('business_unit',$businessUnits);
@@ -104,10 +112,29 @@ class AgingController
 		/**
 		 * @var Collection $data ;
 		 */
-		$customers = $data->unique($customer_or_supplier_name)->pluck($customer_or_supplier_name);
+		return  $data->unique($customer_or_supplier_id)->pluck($customer_or_supplier_name,$customer_or_supplier_id);
+		
+	}
+	public function getCustomersFromBusinessUnitsAndCurrencies(Company $company ,Request $request,string $modelType)
+	{
+		$invoiceTableName = getUploadParamsFromType($modelType)['dbName'];
+		$fullClassName = 'App\Models\\'.$modelType ;
+		$customer_or_supplier_name=$fullClassName::CLIENT_NAME_COLUMN_NAME;
+		$customer_or_supplier_id=$fullClassName::CLIENT_ID_COLUMN_NAME;
+		$currency = $request->get('currencies');
+		$businessUnits = $request->get('business_units',[]);
+		$salesPersons = $request->get('sales_persons',[]);
+		$businessSectors = $request->get('business_sectors',[]);
+        // $partners = $modelType == 'CustomerInvoice' ?  
+		
+		// Partner::getCustomersForCompany($company->id,$currency,$businessUnits,$salesPersons,$businessSectors) : Partner::getSuppliersForCompany($company->id);
+
+		$customers = $this->getCustomersOrSuppliers($invoiceTableName ,$currency, $customer_or_supplier_id,$customer_or_supplier_name,$company,$businessUnits,$salesPersons,$businessSectors);
+		
 		$currencies = DB::table($invoiceTableName)->select($customer_or_supplier_name,'currency')
 		->where('company_id',$company->id)
 		->where('net_balance','>',0)
+		->orderBy('currency')
 		->get()
 		->unique('currency')->pluck('currency');
 		

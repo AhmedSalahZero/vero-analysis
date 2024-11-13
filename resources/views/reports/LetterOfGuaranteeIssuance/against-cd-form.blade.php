@@ -156,7 +156,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                                     <div class="col-md-4 ">
 
 
-                                        <x-form.input :id="'cd-or-td-amount-id'" :readonly="true" :default-value="0" :model="$model??null" :label="__('Amount')" :type="'text'" :placeholder="''" :name="'test__name'" :class="''" :required="true"></x-form.input>
+                                        <x-form.input :id="'cd-or-td-amount-id'" :readonly="true" :default-value="0" :model="$model??null" :label="__('Amount')" :type="'text'" :placeholder="''" :name="'amount'" :class="''" :required="true"></x-form.input>
 
                                     </div>
                                   
@@ -761,12 +761,12 @@ use App\Models\LetterOfGuaranteeIssuance;
 							$('select#customer_name').empty().append(customerOptions).trigger('change');
 							
 							
-                            $('#limit-id').val(res.limit).prop('disabled', true)
-                            $('#total-lg-for-all-types-id').val(res.total_lg_outstanding_balance).prop('disabled', true)
-                            $('#total-room-id').val(res.total_room).prop('disabled', true)
+                            $('#limit-id').val(res.limit).prop('readonly', true)
+                            $('#total-lg-for-all-types-id').val(res.total_lg_outstanding_balance).prop('readonly', true)
+                            $('#total-room-id').val(res.total_room).prop('readonly', true)
 							var totalRoom = number_unformat(res.total_room);
 							$('input[name="lg_amount"]').attr('data-can-not-be-greater-than',totalRoom);
-                            $('#current-lg-type-outstanding-balance-id').val(res.current_lg_type_outstanding_balance).prop('disabled', true)
+                            $('#current-lg-type-outstanding-balance-id').val(res.current_lg_type_outstanding_balance).prop('readonly', true)
                             $('#min_lg_commission_fees_id').val(res.min_lg_commission_rate).trigger('change');
                     //        $('#lg_commission_rate-id').val(res.lg_commission_rate).trigger('change');
                             $('#issuance_fees_id').val(res.min_lg_issuance_fees_for_current_lg_type).trigger('change');

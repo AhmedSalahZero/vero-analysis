@@ -17,6 +17,17 @@ use Illuminate\Support\Facades\DB;
 class MoneyReceived extends Model
 {
 	use IsMoney ,HasDebitStatements,HasCreditStatements,HasPartnerStatement,HasReviewedBy;
+	// protected $appends = [
+	// 	'foreign_exchange_rate_at_date'
+    // ];
+	// public function getForeignExchangeRateAtDateAttribute(){
+	// 	return 5;
+	// }
+	// public function getNpsAttribute() {
+    //     return 5;
+    // }
+
+
 	const CASH_IN_SAFE  = 'cash-in-safe';
 	const CASH_IN_BANK  = 'cash-in-bank';
 	const INCOMING_TRANSFER  = 'incoming-transfer';
@@ -31,7 +42,7 @@ class MoneyReceived extends Model
 	const INVOICE_SETTLEMENT_WITH_DOWN_PAYMENT = 'invoice-settlement-with-down-payment';
 	const CLIENT_NAME ='customer_name';
 	const DOWN_PAYMENT_OVER_CONTRACT = 'over_contract' ;
-	const DOWN_PAYMENT_FREE = 'free' ;
+	const DOWN_PAYMENT_GENERAL = 'general' ;
 	
 	
 	public static function generateComment(self $moneyReceived,string $lang,?string $invoiceNumbers = '',?string $customerName = null)
@@ -45,7 +56,10 @@ class MoneyReceived extends Model
 			if($moneyReceived->isOpenBalance()){
 				return __('Opening Balance Cheque From [ :customerName ]' , ['customerName'=>$customerName],$lang);
 			}
-			if($moneyReceived->isDownPayment()){
+			if($moneyReceived->isGeneralDownPayment()){
+				return __('General Down Payment - Cheque :name With Number [ :number ]',['name'=>$customerName,'number'=>$chequeNumber],$lang) ;
+			}
+			if($moneyReceived->isOverContractDownPayment()){
 				return __('Down Payment - Cheque :name [ :contractName ] [ :contractCode ] With Number [ :number ]',['name'=>$customerName,'contractName'=>$moneyReceived->getContractName(),'contractCode'=>$moneyReceived->getContractCode(),'number'=>$chequeNumber],$lang) ;
 			}
 			if($moneyReceived->isInvoiceSettlementWithDownPayment()){
@@ -98,7 +112,10 @@ class MoneyReceived extends Model
 		}
 		if($moneyReceived->isIncomingTransfer()){
 			
-			if($moneyReceived->isDownPayment()){
+			if($moneyReceived->isGeneralDownPayment()){
+				return __('General Down Payment - Incoming Transfer :name',['name'=>$customerName],$lang) ;
+			}
+			if($moneyReceived->isOverContractDownPayment()){
 				return __('Down Payment - Incoming Transfer :name [ :contractName ] [ :contractCode ]',['name'=>$customerName,'contractName'=>$moneyReceived->getContractName(),'contractCode'=>$moneyReceived->getContractCode()],$lang) ;
 			}
 			if($moneyReceived->isInvoiceSettlementWithDownPayment()){
@@ -163,6 +180,10 @@ class MoneyReceived extends Model
 	{
 		return $this->isCheque() && $this->cheque->isInSafe();
 	}
+	public function isRejectedCheque()
+	{
+		return $this->isCheque() && $this->cheque->isRejected();
+	}
     public function isIncomingTransfer()
     {
         return $this->getType() ==self::INCOMING_TRANSFER;
@@ -221,16 +242,7 @@ class MoneyReceived extends Model
 			return $amount ;
 		}
 		return $amount * $foreignExchangeRate;
-		// $totalSettlement = 0 ;
-		// $totalDownPaymentSettlement = 0 ;
-		// foreach($this->settlements as $settlement ){
-		// 	$totalSettlement+= ($settlement->getAmount() * $foreignExchangeRate);
-		// }
-		// foreach($this->downPaymentSettlements as $downPaymentSettlement){
-
-		// 	$totalDownPaymentSettlement += $downPaymentSettlement->down_payment_amount * $foreignExchangeRate;
-		// }
-		// return $totalSettlement + $totalDownPaymentSettlement  ;
+	
 	}
 	public function getTotalWithholdInInvoiceExchangeRate()
 	{
@@ -670,10 +682,7 @@ class MoneyReceived extends Model
 	{
 		return $this->cheque ? $this->cheque->clearance_days : 0 ;
 	}
-	public function isDownPayment()
-	{
-		return $this->getMoneyType() == 'down-payment';
-	}
+	
 	public function isInvoiceSettlementWithDownPayment()
 	{
 		return $this->getMoneyType() == self::INVOICE_SETTLEMENT_WITH_DOWN_PAYMENT;
@@ -707,11 +716,11 @@ class MoneyReceived extends Model
 	}
 	public function getContractName()
 	{
-		return $this->contract ? $this->contract->getName() : __('N/A');
+		return $this->contract ? $this->contract->getName() : __('General');
 	}
 	public function getContractCode()
 	{
-		return $this->contract ? $this->contract->getCode() : __('N/A');
+		return $this->contract ? $this->contract->getCode() : '-';
 	}
 	
 	public function deleteRelations()
@@ -886,21 +895,37 @@ class MoneyReceived extends Model
 	{
 		return $this->cheque ? $this->cheque->getDraweeBankId() : 0 ;
 	}
-	public function storeNewSalesOrdersAmounts(array $salesOrdersAmounts,?int $contractId,?int $customerId,int $companyId)
+	public function storeNewSalesOrdersAmounts(array $salesOrdersAmounts,?int $contractId,?int $customerId,int $companyId,$receivedAmount = null)
 	{
-		
+		if(!count($salesOrdersAmounts)){
+			$salesOrdersAmounts[] = [
+				'received_amount'=>$receivedAmount,
+				'company_id'=>$companyId,
+				'contract_id'=>null ,
+				'down_payment_amount'=>$receivedAmount,
+				'currency'=>$this->getReceivingCurrency(),
+				'sales_order_id'=>null
+			];
+		}
 		foreach($salesOrdersAmounts as $salesOrderReceivedAmountArr)
 		{
 			if(isset($salesOrderReceivedAmountArr['received_amount'])&&$salesOrderReceivedAmountArr['received_amount'] > 0){
+				$downPaymentAmount = $salesOrderReceivedAmountArr['received_amount'];
 				$salesOrderReceivedAmountArr['company_id'] = $companyId;
-				$this->downPaymentSettlements()->create(array_merge(
+				$dataArr = array_merge(
 					$salesOrderReceivedAmountArr ,
 					[
 						'contract_id'=>$contractId,
 						'customer_id'=>$customerId,
-						'down_payment_amount'=>$salesOrderReceivedAmountArr['received_amount']
+						'down_payment_amount'=>$downPaymentAmount,
+						'currency'=>$this->getReceivingCurrency()
+					],
+					[
+						'sales_order_id'=>$salesOrderReceivedAmountArr['sales_order_id'] == -1 ? null : $salesOrderReceivedAmountArr['sales_order_id'],
+						'down_payment_balance'=>$downPaymentAmount
 					]
-				));
+				) ;
+				$this->downPaymentSettlements()->create($dataArr);
 			}
 		}
 	}
@@ -930,6 +955,6 @@ class MoneyReceived extends Model
 		}
 		throw new \Exception('Custom Exception .. getAccountNumber .. This Method Is Only For Incoming Transfer Or Payable Cheque');
 	}	
-	
+		
 	
 }

@@ -3,22 +3,22 @@
     <div class="col-md-4">
         <label><?php echo e(__('SO Number')); ?> </label>
         <div class="kt-input-icon">
-            <input name="sales_orders_amounts[][sales_order_name]" type="text" readonly class="form-control js-sales-order-name">
-            <input name="sales_orders_amounts[][sales_order_id]" type="hidden" readonly class="form-control js-sales-order-number">
+            <input name="sales_orders_amounts[0][sales_order_name]" type="text" readonly class="form-control js-sales-order-name">
+            <input name="sales_orders_amounts[0][sales_order_id]" type="hidden" readonly class="form-control js-sales-order-number">
         </div>
     </div>
 
     <div class="col-md-2 closest-parent">
         <label><?php echo e(__('Amount')); ?> <span class="contract-currency"></span> </label>
         <div class="kt-input-icon">
-            <input name="sales_orders_amounts[][net_invoice_amount]" type="text" disabled class="form-control js-amount">
+            <input name="sales_orders_amounts[0][net_invoice_amount]" type="text" disabled class="form-control js-amount">
         </div>
     </div>
 
     <div class="col-md-2">
         <label><?php echo e(__('Received Amount')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
         <div class="kt-input-icon">
-            <input name="sales_orders_amounts[][received_amounts]" placeholder="<?php echo e(__('Received Amount')); ?>" type="text" class="form-control js-received-amount only-greater-than-or-equal-zero-allowed settlement-amount-class">
+            <input name="sales_orders_amounts[0][received_amount]" placeholder="<?php echo e(__('Received Amount')); ?>" value="0" type="text" class="form-control js-received-amount only-greater-than-or-equal-zero-allowed settlement-amount-class">
         </div>
     </div>
 

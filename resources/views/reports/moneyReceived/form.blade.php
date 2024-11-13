@@ -790,7 +790,7 @@ use App\Models\MoneyReceived ;
                     , currency
                 }
                 , success: function(res) {
-                    let options = '';
+					let options = '<option value="general-down">{{ __("General Down Payment") }}</option>';
                     let selectedContractId = $('#contract-id').attr('data-current-selected')
                     for (id in res.contracts) {
                         options += `<option ${selectedContractId == id ? 'selected' :''} value="${id}">${res.contracts[id]}</option>`

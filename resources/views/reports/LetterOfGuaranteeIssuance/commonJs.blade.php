@@ -41,4 +41,5 @@ $('input:not([type="hidden"]),select').each(function(index,element){
 
 })
 </script>
+
 @endif 

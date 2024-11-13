@@ -89,7 +89,7 @@ use App\Models\MoneyReceived ;
                                     <th><?php echo e(__('Settlement Amount')); ?></th>
                                     <th><?php echo e(__('Net Amount')); ?></th>
                                     <th><?php echo e(__('Currency')); ?></th>
-                                    <th><?php echo e(__('Contract Code')); ?></th>
+                                    <th><?php echo e(__('Contract Name')); ?></th>
                                     <th><?php echo e(__('Contract Amount')); ?></th>
                                     <th><?php echo e(__('Control')); ?></th>
                                 </tr>
@@ -98,8 +98,7 @@ use App\Models\MoneyReceived ;
 							<?php
 								$index = 0 ;
 							?>
-                                <?php $__currentLoopData = $models[$currentType]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $model): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-								<?php $__currentLoopData = $model->{$moneyModelName}; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $moneyReceived): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <?php $__currentLoopData = $models[$currentType]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $moneyModel): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                 <tr>
                                     <td>
                                         <?php echo e($index+1); ?>
@@ -107,16 +106,16 @@ use App\Models\MoneyReceived ;
 										 
                                     </td>
 
-                                    <td class="text-nowrap"><?php echo e($moneyReceived->getReceivingOrPaymentMoneyFormatted()); ?></td>
-                                    <td><?php echo e($moneyReceived->getDownPaymentAmountFormatted()); ?></td>
-                                    <td><?php echo e($moneyReceived->getTotalSettlementAmountForDownPaymentFormatted()); ?></td>
-                                    <td><?php echo e(number_format($moneyReceived->getTotalSettlementsNetBalanceForDownPayment())); ?></td>
-                                    <td><?php echo e($moneyReceived->getCurrency()); ?></td>
-                                    <td><?php echo e($model->getCode()); ?></td>
-                                    <td><?php echo e($model->getAmountFormatted()); ?></td>
+                                    <td class="text-nowrap"><?php echo e($moneyModel->getReceivingOrPaymentMoneyDateFormatted()); ?></td>
+                                    <td><?php echo e($moneyModel->getDownPaymentAmountFormatted()); ?></td>
+                                    <td><?php echo e($moneyModel->getTotalSettlementAmountForDownPaymentFormatted()); ?></td>
+                                    <td><?php echo e(number_format($moneyModel->getTotalSettlementsNetBalanceForDownPayment())); ?></td>
+                                    <td><?php echo e($moneyModel->getReceivingOrPaymentCurrency()); ?></td>
+                                    <td><?php echo e($moneyModel->getContractName()); ?></td>
+                                    <td><?php echo e($moneyModel->getContractAmountFormatted()); ?></td>
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
-                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="<?php echo e(__('Start Settlement')); ?>" href="<?php echo e(route('view.down.payment.settlement',['company'=>$company->id,'downPaymentId'=>$moneyReceived->id,'modelType'=>$modelType])); ?>"><i class="fa fa-dollar-sign"></i></a>
+                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="<?php echo e(__('Start Settlement')); ?>" href="<?php echo e(route('view.down.payment.settlement',['company'=>$company->id,'downPaymentId'=>$moneyModel->id,'modelType'=>$modelType])); ?>"><i class="fa fa-dollar-sign"></i></a>
                                         
                                         </span>
                                     </td>
@@ -124,7 +123,6 @@ use App\Models\MoneyReceived ;
 								<?php
 									$index++;
 								?>
-                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </tbody>
                         </table>

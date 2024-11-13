@@ -205,4 +205,5 @@ class HArr
 		}
 		return $hasAtLeastNonZeroValue ; 
 	}
+
 }

@@ -656,7 +656,7 @@ use App\Models\LetterOfGuaranteeIssuance;
 							
                             $('#limit-id').val(res.limit).prop('disabled', true)
                             $('#total-lg-for-all-types-id').val(res.total_lg_outstanding_balance).prop('disabled', true)
-                            $('#total-room-id').val(res.total_room).prop('disabled', true)
+                            $('#total-room-id').val(res.total_room).prop('readonly', true)
 								var totalRoom = number_unformat(res.total_room);
 							$('input[name="lg_amount"]').attr('data-can-not-be-greater-than',totalRoom);
                             $('#current-lg-type-outstanding-balance-id').val(res.current_lg_type_outstanding_balance).prop('disabled', true)

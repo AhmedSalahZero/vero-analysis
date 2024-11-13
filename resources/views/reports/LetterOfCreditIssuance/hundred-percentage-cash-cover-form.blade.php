@@ -606,10 +606,10 @@ use App\Models\LetterOfCreditIssuance;
                         }
                         , type: "GET"
                         , success: function(res) {
-                            $('#limit-id').val(res.limit).prop('disabled', true)
-                            $('#total-lc-for-all-types-id').val(res.total_lc_outstanding_balance).prop('disabled', true)
-                            $('#total-room-id').val(res.total_room).prop('disabled', true)
-                            $('#current-lc-type-outstanding-balance-id').val(res.current_lc_type_outstanding_balance).prop('disabled', true)
+                            $('#limit-id').val(res.limit).prop('readonly', true)
+                            $('#total-lc-for-all-types-id').val(res.total_lc_outstanding_balance).prop('readonly', true)
+                            $('#total-room-id').val(res.total_room).prop('readonly', true)
+                            $('#current-lc-type-outstanding-balance-id').val(res.current_lc_type_outstanding_balance).prop('readonly', true)
                             $('#min_lc_commission_fees_id').val(res.min_lc_commission_rate).trigger('change');
                             $('#lc_commission_rate-id').val(res.lc_commission_rate).trigger('change');
                             $('#issuance_fees_id').val(res.min_lc_issuance_fees_for_current_lc_type).trigger('change');

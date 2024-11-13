@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\HArr;
 use App\Models\Company;
-use App\Models\Partner;
+use App\Models\DownPaymentSettlement;
+use App\Models\MoneyReceived;
 use App\Models\User;
 use App\Traits\GeneralFunctions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+
 
 class BalancesController
 {
@@ -20,6 +23,9 @@ class BalancesController
 		$id = 0 ;
 		foreach($items as $item){
 			$currencyName = $item->currency ;
+			if(!$currencyName){
+				continue;
+			}
 			$customerName = $item->{$clientNameColumnName} ;
 			$currentValueForCurrency = $item->net_balance;
 			$currentValueForMainCurrency= $item->net_balance_in_main_currency;
@@ -45,19 +51,106 @@ class BalancesController
 		$customersOrSupplierStatementText = (new $fullClassName)->getCustomerOrSupplierStatementText();
 		$clientNameColumnName = $fullClassName::CLIENT_NAME_COLUMN_NAME ;
 		$clientIdColumnName = $fullClassName::CLIENT_ID_COLUMN_NAME ;
+		$isCustomerOrSupplierColumnName = $fullClassName::IS_CUSTOMER_OR_SUPPLIER;
 		$tableName = $fullClassName::TABLE_NAME ; 
 		$user =User::where('id',$request->user()->id)->get();
 		$mainCurrency = $company->getMainFunctionalCurrency();
-		$invoicesBalances =DB::select(DB::raw('select id, '. $clientNameColumnName .' , '. $clientIdColumnName .' , currency , sum(net_balance) as net_balance , sum(net_balance_in_main_currency) as net_balance_in_main_currency from '. $tableName .' where company_id = '. $company->id .' group by '. $clientNameColumnName .' , currency order by net_balance desc;'));
-		$invoicesBalancesForMainFunctionalCurrency = $this->addMainCurrency($invoicesBalances,$clientNameColumnName,$clientIdColumnName);
+		$mainFunctionalCurrency = $company->getMainFunctionalCurrency();
+		$downPaymentTableName = $fullClassName::DOWN_PAYMENT_SETTLEMENT_TABLE_NAME;
+		$downPaymentSettlementModelName=$fullClassName::DOWN_PAYMENT_SETTLEMENT_MODEL_NAME;
+		$moneyModelName=$fullClassName::MONEY_MODEL_NAME;
+		$invoiceNetBalanceSqlQuery = 'select partners.id as '. $clientIdColumnName .' , partners.name as '.$clientNameColumnName.' , currency , ifnull(sum(net_balance),0) as net_balance , ifnull(sum(net_balance_in_main_currency),0) as net_balance_in_main_currency from partners left join  '. $tableName .' on partners.id = '.$tableName.'.'.$clientIdColumnName.' where '.$isCustomerOrSupplierColumnName.'=1 and partners.company_id = '. $company->id .' group by '.$clientNameColumnName.' , currency order by net_balance desc;';
+		$downPaymentSqlQuery =  'select  '.  $clientIdColumnName .' , currency , sum(down_payment_balance) as down_payment_balance from '. $downPaymentTableName .' where   company_id = '. $company->id .' group by '. $clientIdColumnName .' , currency order by down_payment_balance desc;';
+		$invoicesBalances =DB::select(DB::raw($invoiceNetBalanceSqlQuery));
+		$partnerIds = collect($invoicesBalances)->pluck($clientIdColumnName,$clientIdColumnName)->toArray() ;
+		$downPaymentsInMainCurrency = $this->getDownPaymentInMainCurrency($partnerIds,$mainFunctionalCurrency,$clientIdColumnName,$downPaymentSettlementModelName,$moneyModelName);
+		
+		$downPayments =DB::select(DB::raw($downPaymentSqlQuery));
+		$invoicesBalancesWithPartnersWithoutInvoices = $this->subtractQuery($invoicesBalances,$downPayments,$clientIdColumnName,$clientNameColumnName);
+		$invoicesBalances = $invoicesBalancesWithPartnersWithoutInvoices['data'] ?? [];
+		$partnersWithoutInvoices = $invoicesBalancesWithPartnersWithoutInvoices['partners_without_invoices'];
+		$invoicesBalancesForMainFunctionalCurrency = $this->addMainCurrency($invoicesBalances,$downPaymentsInMainCurrency,$partnersWithoutInvoices,$clientNameColumnName,$clientIdColumnName);
 		$invoicesBalances = array_merge($invoicesBalances , $invoicesBalancesForMainFunctionalCurrency);
-		$cardNetBalances = $this->sumNetBalancePerCurrency($invoicesBalances,$mainCurrency,$clientNameColumnName);
+		$cardNetBalances = $this->sumNetBalancePerCurrency($invoicesBalances,$mainFunctionalCurrency,$clientNameColumnName);
 		$hasMoreThanCurrency = isset($cardNetBalances['currencies']) && count($cardNetBalances['currencies']) >1 ; 
-		$mainFunctionalCurrency = $company->getMainFunctionalCurrency(); 
+		
+		
         return view('admin.reports.balances_form', compact('company','mainFunctionalCurrency','hasMoreThanCurrency','title','invoicesBalances','cardNetBalances','mainCurrency','modelType','clientNameColumnName','clientIdColumnName','customersOrSupplierStatementText'));
     }
+	protected function getDownPaymentInMainCurrency(array $partnerIds,string $mainFunctionalCurrency,string $clientIdColumnName,string $downPaymentSettlementModelName , string $moneyModelName):array{
+		$result = [];
+		$fullDownPaymentModelName = 'App\Models\\'.$downPaymentSettlementModelName;
+		$downPaymentSettlements = $fullDownPaymentModelName::
+		where('down_payment_balance','!=',0)
+		->whereIn($clientIdColumnName,$partnerIds)
+		->with([$moneyModelName])
+		->get();
+		foreach($downPaymentSettlements as $downPaymentSettlement){
+			$moneyReceived = $downPaymentSettlement->moneyReceived ;
+			$partnerId = $downPaymentSettlement->{$clientIdColumnName};
+			$downPaymentCurrency = $downPaymentSettlement->currency ;
+			$foreignExchangeRateAtDate =$moneyReceived->getForeignExchangeRateAtDate();
+			$downPaymentBalance = $downPaymentSettlement->down_payment_balance  ;
+			$downPaymentBalanceInMainCurrency = $downPaymentBalance * $foreignExchangeRateAtDate;
+			if($mainFunctionalCurrency != $downPaymentCurrency){
+				$result[$partnerId] = isset($result[$partnerId]) ? $result[$partnerId] + $downPaymentBalanceInMainCurrency : $downPaymentBalanceInMainCurrency;
+			}else{
+				$result[$partnerId] = isset($result[$partnerId]) ? $result[$partnerId] + $downPaymentBalance : $downPaymentBalance;
+			}
+
+		}
+		return $result ;
 		
-		protected function addMainCurrency(array $items,string $clientNameColumnName,string $clientIdColumnName ){
+		
+	}
+	protected function subtractQuery($invoicesBalances,$downPayments,$clientIdColumnName,$clientNameColumnName){
+	$newRecords = [];
+	$partnersWithoutInvoices = [];
+		foreach($invoicesBalances as $invoiceBalanceStdClass ){
+			$addNewRecord = false ;
+			$invoicePartnerId =$invoiceBalanceStdClass->{$clientIdColumnName};
+			$invoicePartnerName =$invoiceBalanceStdClass->{$clientNameColumnName};
+			$invoiceCurrency = $invoiceBalanceStdClass->currency;
+
+			foreach($downPayments as $downPaymentStdClass){
+				
+				
+				$downPaymentPartnerId = $downPaymentStdClass->{$clientIdColumnName} ;
+				$downPaymentCurrency = $downPaymentStdClass->currency ;
+				
+			
+				
+				if($downPaymentCurrency == $invoiceCurrency && $downPaymentPartnerId == $invoicePartnerId
+				){
+					$invoiceBalanceStdClass->net_balance = $invoiceBalanceStdClass->net_balance - $downPaymentStdClass->down_payment_balance;
+					continue;
+				}
+				if(is_null($invoiceCurrency) && $downPaymentPartnerId == $invoicePartnerId ){
+					$partnersWithoutInvoices[$invoicePartnerId] = $invoicePartnerId;
+					if(!$addNewRecord){
+						$invoiceBalanceStdClass->currency = $downPaymentCurrency ;
+						$invoiceBalanceStdClass->net_balance = 0 - $downPaymentStdClass->down_payment_balance;
+						$addNewRecord = true;
+					}else{
+						$newRecords[] = json_decode(json_encode([
+							$clientIdColumnName=>$invoicePartnerId,
+							$clientNameColumnName=>$invoicePartnerName,
+							'currency'=>$downPaymentCurrency,
+							'net_balance'=>0 - $downPaymentStdClass->down_payment_balance,
+							'net_balance_in_main_currency'=>0 - $downPaymentStdClass->down_payment_balance
+						]));
+					}
+				}
+			}
+		}
+			return [
+				'partners_without_invoices'=>$partnersWithoutInvoices ,
+				'data'=>array_merge($invoicesBalances,$newRecords)
+			] ;
+	}
+		
+		protected function addMainCurrency(array $items,array $downPaymentsInMainCurrency,array $partnersWithoutInvoices,string $clientNameColumnName,string $clientIdColumnName ){
+	
 			$formattedResult = [];
 			$partnerNames = [];
 			$totalPerCustomerForMainCurrency = [];
@@ -68,7 +161,8 @@ class BalancesController
 				$totalPerCustomerForMainCurrency[$partnerId] = isset($totalPerCustomerForMainCurrency[$partnerId]) ? $totalPerCustomerForMainCurrency[$partnerId] + $stdClass->net_balance_in_main_currency :  $stdClass->net_balance_in_main_currency;
 			}
 			foreach($totalPerCustomerForMainCurrency as $partnerId => $total){
-				
+				$downPaymentForPartner = $downPaymentsInMainCurrency[$partnerId] ?? 0 ;
+				$total = in_array($partnerId,$partnersWithoutInvoices) ? -1*$downPaymentForPartner : $total-$downPaymentForPartner  ;
 				$formattedResult[] = json_decode(json_encode([
 					$clientIdColumnName=>$partnerId,
 					$clientNameColumnName=>$partnerNames[$partnerId],

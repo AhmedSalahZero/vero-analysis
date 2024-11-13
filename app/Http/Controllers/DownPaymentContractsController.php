@@ -19,6 +19,7 @@ class DownPaymentContractsController extends Controller
 		$fullModelType = 'App\Models\\'.$modelType;
 		
 		$moneyModelName = $fullModelType::MONEY_MODEL_NAME ;
+		$fullMoneyModelName = 'App\Models\\'.$fullModelType::MONEY_MODEL_NAME ;
 		
 		$partner = Partner::find($partnerId);
 		$partnerId = $partner->id;
@@ -26,7 +27,6 @@ class DownPaymentContractsController extends Controller
 		$contractsWithDownPayments = MoneyReceived::CONTRACTS_WITH_DOWN_PAYMENTS;
 		$numberOfMonthsBetweenEndDateAndStartDate = 18 ;
 		$currentType = $request->get('active',$contractsWithDownPayments);
-
 		$filterDates = [];
 		foreach([$contractsWithDownPayments] as $type){
 			$startDate = $request->has('startDate') ? $request->input('startDate.'.$type) : now()->subMonths($numberOfMonthsBetweenEndDateAndStartDate)->format('Y-m-d');
@@ -44,26 +44,23 @@ class DownPaymentContractsController extends Controller
 		 * * start of bank to safe internal money transfer 
 		 */
 		
-		$runningStartDate = $filterDates[$contractsWithDownPayments]['startDate'] ?? null ;
-		$runningEndDate = $filterDates[$contractsWithDownPayments]['endDate'] ?? null ;
-	
-		$contractsWithDownPayment = $company->contracts()->whereHas($moneyModelName,function($builder)use($partnerId,$currency){
-			$builder->where('partner_id',$partnerId)
-					->where('currency',$currency)
-			;
-		} )
-		->
-		with($moneyModelName)
-		->where('status','!=',Contract::FINISHED)
-		->get() ; // moneyReceived Here Is The Down payment
-		// $contractsWithDownPayment =  $contractsWithDownPayment->filterByStartDate($runningStartDate,$runningEndDate) ;
-	
-		$contractsWithDownPayment =  $currentType == $contractsWithDownPayments ? $this->applyFilter($request,$contractsWithDownPayment):$contractsWithDownPayment ;
+		// $runningStartDate = $filterDates[$contractsWithDownPayments]['startDate'] ?? null ;
+		// $runningEndDate = $filterDates[$contractsWithDownPayments]['endDate'] ?? null ;
+		$moneyModels = $fullMoneyModelName::whereIn('money_type',[
+			MoneyReceived::DOWN_PAYMENT
+			,MoneyReceived::INVOICE_SETTLEMENT_WITH_DOWN_PAYMENT
+		])
+		->where('money_received.company_id',$company->id)
+		->where('money_received.partner_id',$partnerId)
+		->where('money_received.receiving_currency',$currency)
+		->leftJoin('contracts','contracts.id','=','contract_id')
+		->where(function($q){
+			$q->where('contract_id','=',null)->orWhere('contracts.status','!=',Contract::FINISHED);
+		})
+		->with('contract')
+		->selectRaw('money_received.*,contracts.id as contractId')
+		->get();
 
-		/**
-		 * * end of bank to safe internal money transfer 
-		 */
-		 
 		
 		 $searchFields = [
 			$contractsWithDownPayments=>[
@@ -74,7 +71,7 @@ class DownPaymentContractsController extends Controller
 		];
 	
 		$models = [
-			$contractsWithDownPayments =>$contractsWithDownPayment ,
+			$contractsWithDownPayments =>$moneyModels ,
 		];
 
 
@@ -96,21 +93,25 @@ class DownPaymentContractsController extends Controller
 		$downPaymentModelName=$fullClassName::MONEY_MODEL_NAME;
 		$downPaymentModelFullName = 'App\Models\\'.$downPaymentModelName ;   
 		$downPayment =$downPaymentModelFullName::find($downPaymentId);
+		
 		$contract = $downPayment->contract;
-		$partnerId = $contract->getClientId();
-		$partnerName = $contract->getClientName();
+		$partnerId = $downPayment->getPartnerId();
+		$partnerName = $downPayment->getPartnerName();
 		$inEditMode = false ;
 		$fullClassName = ('\App\Models\\' . $modelType) ;
         $clientIdColumnName = $fullClassName::CLIENT_ID_COLUMN_NAME ;
         $clientNameColumnName = $fullClassName::CLIENT_NAME_COLUMN_NAME ;
 		$customerNameText = (new $fullClassName)->getClientNameText();
         $jsFile = $fullClassName::JS_FILE ;
-		$contractCurrency = $contract->getCurrency();
+		$contractCurrency = $downPayment->getCurrency();
 		$currencies = $fullClassName::getCurrencies();
 		$currencies = array_filter($currencies,function($item) use ($contractCurrency){
 			return $item == $contractCurrency;
 		});
-		$invoices =  $fullClassName::where('contract_code',$contract->getCode())
+		$invoices =  $fullClassName::
+		when($contract,function($q) use ($contract){
+			$q->where('contract_code',$contract->getCode());
+		})
 		->where($clientNameColumnName,$partnerName)
 		->where('currency','=',$contractCurrency)
 		->where('company_id',$company->id)
@@ -132,7 +133,7 @@ class DownPaymentContractsController extends Controller
 			'downPayment'=>$downPayment,
 			'currencies'=>$currencies,
 			'contract'=>$contract,
-			'model'=>$contract->moneyReceived,
+			'model'=>$downPayment,
 			'company'=>$company,
 			'jsFile'=>$jsFile,
 			'modelType'=>$modelType,

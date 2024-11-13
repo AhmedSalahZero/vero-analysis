@@ -25,6 +25,7 @@ use App\Models\MediumTermLoan;
 use App\Models\OverdraftAgainstCommercialPaper;
 use App\Models\Partner;
 use App\Models\TimeOfDeposit;
+use App\Models\Traits\Controllers\HasBalances;
 use App\ReadyFunctions\ChequeAgingService;
 use App\ReadyFunctions\InvoiceAgingService;
 use Carbon\Carbon;
@@ -35,6 +36,7 @@ use Illuminate\Support\Facades\DB;
 
 class CustomerInvoiceDashboardController extends Controller
 {
+	use HasBalances;
     public function viewCashDashboard(Company $company, Request $request)
     {
 			// start fully SecuredOverdraft
@@ -516,7 +518,6 @@ class CustomerInvoiceDashboardController extends Controller
 				 */
 				$invoiceAgingService = new InvoiceAgingService($company->id, $agingDate,$currencyName);
 				$chequeAgingService = new ChequeAgingService($company->id, $agingDate,$currencyName);
-		
 				$agingsForInvoices = $invoiceAgingService->__execute($clientIdsForInvoices, $modelType) ;
 				$agingsForInvoices = $invoiceAgingService->formatForDashboard($agingsForInvoices,$modelType);
 				/**
@@ -774,7 +775,7 @@ class CustomerInvoiceDashboardController extends Controller
 			]);
 		}
         $partnerName = $partner->getName() ;
-        $invoicesWithItsReceivedMoney = ('App\Models\\' . $modelType)::formatForStatementReport($invoices, $partnerId, $startDate, $endDate, $currency,$modelType);
+        $invoicesWithItsReceivedMoney = $this->formatForStatementReport($invoices, $partnerId, $startDate, $endDate, $currency,$modelType);
 		if($returnResult){
 			if(count($invoicesWithItsReceivedMoney) < 1){
 				return [];

@@ -36,9 +36,11 @@ class SupplierInvoice extends Model implements IInvoice
 	const COLLETED_OR_PAID = 'paid';
 	const PARTIALLY_COLLECTED_OR_PAID_AND_PAST_DUE = 'partially_paid_and_past_due';
 	const MONEY_MODEL_NAME = 'MoneyPayment';
+	const IS_CUSTOMER_OR_SUPPLIER = 'is_supplier';
 	const AGING_CHEQUE_MODEL_NAME = 'PayableCheque';
 	const AGING_CHEQUE_TABLE_NAME = 'payable_cheques';
-
+	const DOWN_PAYMENT_SETTLEMENT_MODEL_NAME ='DownPaymentMoneyPaymentSettlement';
+	const DOWN_PAYMENT_SETTLEMENT_TABLE_NAME ='down_payment_money_payment_settlements';
     protected $guarded = [];
 	
 	public function getClientDisplayName()
@@ -131,94 +133,6 @@ class SupplierInvoice extends Model implements IInvoice
 	
 
 
-
-
-	public static function formatForStatementReport(Collection $supplierInvoices,int $partnerId,string $startDate,string $endDate,string $currency,string $modelType){
-			$startDateFormatted = Carbon::make($startDate)->format('d-m-Y');
-			$index = -1 ;
-			$oneDayBeforeStartDate = Carbon::make($startDate)->subDays(1000)->format('Y-m-d');
-			$startDateMinusOne = Carbon::make($startDate)->subDay()->format('Y-m-d');
-			$beginningBalance = self::getBeginningBalanceUntil($currency,$partnerId,$oneDayBeforeStartDate,$startDateMinusOne) ;
-			$formattedData = [];
-			$currentData['date'] = $startDateFormatted;
-			$currentData['document_type'] = 'Beginning Balance';
-			$currentData['document_no'] = null;
-			$currentData['debit'] =$debit  = $beginningBalance < 0 ? $beginningBalance * -1 : 0 ;
-			$currentData['credit'] = $credit = $beginningBalance >= 0 ? $beginningBalance : 0 ;
-			$currentData['end_balance'] =$debit - $credit;
-			$currentData['comment'] =null;
-			$index++ ;
-			$formattedData[$index] = $currentData;
-			$allMoneyPayments =  MoneyPayment::
-			where('company_id',getCurrentCompanyId())
-			->whereBetween(self::RECEIVING_OR_PAYMENT_DATE_COLUMN_NAME,[$startDate,$endDate])
-			->where('currency',$currency)
-			->where('partner_id',$partnerId)
-			->get() ;
-			/**
-			 * @var SupplierInvoice $supplierInvoice 
-			 * */ 
-		foreach($supplierInvoices as $supplierInvoice){
-			
-			$currentData = [];
-			$invoiceDate = $supplierInvoice->getInvoiceDateFormatted() ;
-			$invoiceNumber  = $supplierInvoice->getInvoiceNumber() ;
-			$currentData['date'] = $invoiceDate;
-			$currentData['document_type'] = 'Invoice';
-			$currentData['document_no'] = $invoiceNumber;
-			$currentData['debit'] =0 ;
-			$currentData['credit'] = $supplierInvoice->getNetInvoiceAmount() ;
-			$currentData['comment'] =null;
-			$index++ ;
-			$formattedData[$index]=$currentData;
-			
-			
-			foreach($supplierInvoice->deductions as $deductionWithPivot){
-				$currentData['date'] = Carbon::make($deductionWithPivot->pivot->date)->format('d-m-Y');
-				$currentData['document_type'] = 'Deduction';
-				$currentData['document_no'] = $invoiceNumber;
-				$currentData['debit'] = 0;
-				$currentData['credit'] =$deductionWithPivot->pivot->amount;
-				$currentData['comment'] =$deductionWithPivot->getName() . ' [ '  . $invoiceNumber .' ] ' ;
-				$index++ ;
-				$formattedData[$index]=$currentData;
-			}
-			
-		}
-		foreach($allMoneyPayments as $moneyPayment) {
-			$deliveryDate = $moneyPayment->getDeliveryDateFormatted() ;
-			$moneyPaymentType = $moneyPayment->getType();
-			$bankName = $moneyPayment->getBankName();
-			$docNumber = $moneyPayment->getNumber();
-				$moneyPaymentAmount = $moneyPayment->getAmountInInvoiceCurrency() ;
-				if($moneyPaymentAmount){
-					$currentData = []; 
-					$currentData['date'] = $deliveryDate;
-					$currentData['document_type'] = $moneyPaymentType;
-					$currentData['document_no'] = $docNumber  ;
-					$currentData['debit'] = $moneyPaymentAmount ;
-					$currentData['credit'] = 0;
-					$currentData['comment'] =__('Settlement For Invoice No.') . ' ' . implode('/',$moneyPayment->settlements->pluck('invoice.invoice_number')->toArray()); ;
-					$index++;
-					$formattedData[] = $currentData ;
-					$totalWithholdAmount = $moneyPayment->getTotalWithholdAmount();
-					
-					if($totalWithholdAmount){
-						$currentData = []; 
-					$currentData['date'] = $deliveryDate;
-					$currentData['document_type'] = __('Withhold Taxes');
-					$currentData['document_no'] =  $docNumber ;
-					$currentData['debit'] = $totalWithholdAmount;
-					$currentData['credit'] =0;
-					$currentData['comment'] =$bankName;
-					$currentData['comment'] =__('Withhold Taxes For Invoice No.') . ' ' . implode('/',$moneyPayment->settlements->where('withhold_amount','>',0)->pluck('invoice.invoice_number')->toArray());
-					$index++;
-					$formattedData[] = $currentData ;
-					}
-				}
-		}
-		return HArr::sortBasedOnKey($formattedData,'date');
-	}
 	
 	public function supplier()
 	{

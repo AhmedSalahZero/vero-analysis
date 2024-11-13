@@ -83,7 +83,7 @@ use App\Models\MoneyReceived ;
                                     <th>{{ __('Settlement Amount') }}</th>
                                     <th>{{ __('Net Amount') }}</th>
                                     <th>{{ __('Currency') }}</th>
-                                    <th>{{ __('Contract Code') }}</th>
+                                    <th>{{ __('Contract Name') }}</th>
                                     <th>{{ __('Contract Amount') }}</th>
                                     <th>{{ __('Control') }}</th>
                                 </tr>
@@ -92,24 +92,23 @@ use App\Models\MoneyReceived ;
 							@php
 								$index = 0 ;
 							@endphp
-                                @foreach($models[$currentType] as $model)
-								@foreach($model->{$moneyModelName} as $moneyReceived)
+                                @foreach($models[$currentType] as $moneyModel)
                                 <tr>
                                     <td>
                                         {{ $index+1 }}
-										 {{-- -- {{ $moneyReceived->id }} --}}
+										 {{-- -- {{ $moneyModel->id }} --}}
                                     </td>
 
-                                    <td class="text-nowrap">{{ $moneyReceived->getReceivingOrPaymentMoneyFormatted() }}</td>
-                                    <td>{{ $moneyReceived->getDownPaymentAmountFormatted() }}</td>
-                                    <td>{{ $moneyReceived->getTotalSettlementAmountForDownPaymentFormatted() }}</td>
-                                    <td>{{ number_format($moneyReceived->getTotalSettlementsNetBalanceForDownPayment()) }}</td>
-                                    <td>{{ $moneyReceived->getCurrency() }}</td>
-                                    <td>{{ $model->getCode() }}</td>
-                                    <td>{{ $model->getAmountFormatted() }}</td>
+                                    <td class="text-nowrap">{{ $moneyModel->getReceivingOrPaymentMoneyDateFormatted() }}</td>
+                                    <td>{{ $moneyModel->getDownPaymentAmountFormatted() }}</td>
+                                    <td>{{ $moneyModel->getTotalSettlementAmountForDownPaymentFormatted() }}</td>
+                                    <td>{{ number_format($moneyModel->getTotalSettlementsNetBalanceForDownPayment()) }}</td>
+                                    <td>{{ $moneyModel->getReceivingOrPaymentCurrency() }}</td>
+                                    <td>{{ $moneyModel->getContractName() }}</td>
+                                    <td>{{ $moneyModel->getContractAmountFormatted() }}</td>
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
-                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="{{ __('Start Settlement') }}" href="{{ route('view.down.payment.settlement',['company'=>$company->id,'downPaymentId'=>$moneyReceived->id,'modelType'=>$modelType]) }}"><i class="fa fa-dollar-sign"></i></a>
+                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="{{ __('Start Settlement') }}" href="{{ route('view.down.payment.settlement',['company'=>$company->id,'downPaymentId'=>$moneyModel->id,'modelType'=>$modelType]) }}"><i class="fa fa-dollar-sign"></i></a>
                                         
                                         </span>
                                     </td>
@@ -117,7 +116,6 @@ use App\Models\MoneyReceived ;
 								@php
 									$index++;
 								@endphp
-                                @endforeach
                                 @endforeach
                             </tbody>
                         </table>

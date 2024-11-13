@@ -41,5 +41,6 @@ $('input:not([type="hidden"]),select').each(function(index,element){
 
 })
 </script>
+
 <?php endif; ?> 
 <?php /**PATH /media/salah/Software/projects/veroo/resources/views/reports/LetterOfGuaranteeIssuance/commonJs.blade.php ENDPATH**/ ?>

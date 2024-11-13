@@ -384,10 +384,7 @@
                                         <tbody>
                                             <script>
                                                 window['currentTable{{ $currencyName }}'] = null;
-
                                             </script>
-                                            @php
-                                            @endphp
                                             @foreach($invoicesBalances as $index=>$invoicesBalancesAsStdClass)
                                             @if( $currencyName == $invoicesBalancesAsStdClass->currency)
                                             <tr class=" parent-tr reset-table-width text-nowrap  cursor-pointer sub-text-bg text-capitalize is-close   ">

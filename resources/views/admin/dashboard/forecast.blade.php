@@ -241,7 +241,12 @@
                     </div>
                     <div class="kt-portlet__head-label ">
                         <div class="kt-align-right">
-                            <button type="button" class="btn btn-sm btn-brand btn-elevate btn-pill"><i class="fa fa-chart-line"></i> {{ __('Report') }} </button>
+							<form action="{{ route('result.aging.analysis',['company'=>$company->id ,'modelType'=>$modelType ]) }}" method="post">
+								@csrf
+								<input type="hidden" name="currency" value="{{  $currency }}" >
+								
+	                           	 <button target="_blank" type="submit" class="btn btn-sm btn-brand btn-elevate btn-pill"><i class="fa fa-chart-line"></i> {{ __('Report') }} </button>
+							</form>
                         </div>
                     </div>
                 </div>
@@ -289,6 +294,10 @@
 
 
         {{-- Customers Cheques Aging --}}
+		@php
+			$currentItems = $dashboardResult['cheques_aging_for_table'][$modelType][$currency]['table'] ?? [];
+		@endphp
+		@if(count($currentItems))
         <div class="row">
             <div class="kt-portlet ">
                 <div class="kt-portlet__head">
@@ -324,7 +333,8 @@
                                     @php
                                     $total = 0 ;
                                     @endphp
-                                    @foreach ($dashboardResult['cheques_aging_for_table'][$modelType][$currency]['table'] ?? [] as $dueType => $dueWithValue)
+									
+                                    @foreach ($currentItems as $dueType => $dueWithValue)
                                     @if($dueType == 'coming_due' || $dueType =='current_due')
                                     @foreach($dueWithValue as $daysInternal => $totalForDaysInterval)
                                     <tr>
@@ -351,6 +361,7 @@
                 </div>
             </div>
         </div>
+		@endif
 
         @endforeach
 

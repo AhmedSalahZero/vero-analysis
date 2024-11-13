@@ -34,7 +34,9 @@ class UnappliedAmountForContractAsDownPaymentRule implements ImplicitRule
     {
 		$isMoneyReceivedForm = Request()->has('received_amount');
 		$receivedAmountOrPaidAmountKeyName = $isMoneyReceivedForm ? 'received_amount' : 'paid_amount';
+		$receivingOrPaymentCurrencyName = $isMoneyReceivedForm ? 'receiving_currency':'payment_currency';
 		$totalPaidAmountForContract = array_sum(array_column($value,$receivedAmountOrPaidAmountKeyName));
+		
 		if($this->is_down_payment){
 			$this->failed_message  = __('Total Paid Amount Must Equal To Total Down Payment');
 			return $this->paid_amount == $totalPaidAmountForContract;
@@ -42,8 +44,12 @@ class UnappliedAmountForContractAsDownPaymentRule implements ImplicitRule
 		if($this->total_unapplied_amount <= 0 ){
 			return true ;
 		}
+		$currency = Request()->get('currency') ;
+		$receivingOrPaymentCurrency = Request()->get($receivingOrPaymentCurrencyName);
+		$moneyType = Request()->get('type');
+		$exchangeRate = $currency == $receivingOrPaymentCurrency ? 1 : number_unformat(Request()->input('exchange_rate.'.$moneyType,1)) ;
 		$this->failed_message = __('Total Paid Amount For Contract Not Equal To Unapplied Amount');
-		return $totalPaidAmountForContract == $this->total_unapplied_amount;
+		return $totalPaidAmountForContract / $exchangeRate == $this->total_unapplied_amount ;
     }
 
     /**

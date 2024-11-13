@@ -18,7 +18,6 @@ use App\Models\ForeignExchangeRate;
 use App\Models\MoneyReceived;
 use App\Models\Partner;
 use App\Models\SalesOrder;
-use App\Models\User;
 use App\Traits\GeneralFunctions;
 use App\Traits\Models\HasBasicFilter;
 use App\Traits\Models\HasDebitStatements;
@@ -26,7 +25,6 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use PhpParser\Node\Expr\Cast;
 
 class MoneyReceivedController
 {
@@ -272,7 +270,7 @@ class MoneyReceivedController
 			'contracts'=>$contracts
 		]);
 	}
-	public function getSalesOrdersForContract(Company $company ,  Request $request , int $contractId = 0,?string $selectedCurrency=null)
+	public function getSalesOrdersForContract(Company $company ,  Request $request ,  $contractId = 0,?string $selectedCurrency=null)
 	{
 		$downPaymentId = $request->get('down_payment_id');
 		$moneyReceived = MoneyReceived::find($downPaymentId);
@@ -288,6 +286,14 @@ class MoneyReceivedController
 			$formattedSalesOrders[$index]['amount'] = $salesOrder->getAmount();
 			$formattedSalesOrders[$index]['id'] = $salesOrder->id;
 		}
+			if(!count($salesOrders)){
+				$index = 0;
+				$receivedAmount = $moneyReceived ? $moneyReceived->downPaymentSettlements->where('contract_id',null)->first() : null ;
+				$formattedSalesOrders[$index]['received_amount'] = $receivedAmount && $receivedAmount->down_payment_amount ? $receivedAmount->down_payment_amount : 0;
+				$formattedSalesOrders[$index]['so_number'] = 'General';
+				$formattedSalesOrders[$index]['amount'] =0;
+				$formattedSalesOrders[$index]['id'] = -1;
+			}
 			return response()->json([
 				'status'=>true , 
 				'sales_orders'=>$formattedSalesOrders,
@@ -319,7 +325,7 @@ class MoneyReceivedController
 				$key=>$value 
 			];
 		});	
-	
+
 		if($selectedCurrency){
 			$invoices = $invoices->where('currency','=',$selectedCurrency);	
 		}
@@ -349,9 +355,11 @@ class MoneyReceivedController
 	
 	public function store(Company $company , StoreMoneyReceivedRequest $request , $returnModel = false){
 		$hasUnappliedAmount = (bool)$request->get('unapplied_amount');
+		$isGeneralDownPayment = $request->get('down_payment_type') == MoneyReceived::DOWN_PAYMENT_GENERAL;
 		$partnerType = $request->get('partner_type');
 		$moneyType = $request->get('type');
 		$contractId = $request->get('contract_id');
+		$contractId = is_numeric($contractId) ? $contractId : null;
 		$financialInstitutionId = null;
 		$partnerId = $request->get('customer_id');
 		$customer = Partner::find($partnerId);
@@ -359,6 +367,7 @@ class MoneyReceivedController
 		$customerId = $customer->id;
 		$receivedBankName = $request->get('receiving_branch_id') ;
 		$data = $request->only(['type','receiving_date','currency','receiving_currency','customer_id','down_payment_type']);
+		$data['currency'] = $isGeneralDownPayment ? $data['receiving_currency'] : $data['currency'];
 		$receivingDate = $data['receiving_date'];
 		$currency = $data['currency'] ;
 		
@@ -375,14 +384,15 @@ class MoneyReceivedController
 		
 		$relationData = [];
 		$relationName = null ;
-		$exchangeRate = $currency == $receivingCurrency ? 1 : number_unformat($request->input('exchange_rate.'.$moneyType,1)) ;
+		$isTheSameCurrency = $currency == $receivingCurrency ;
+		$exchangeRate = $isTheSameCurrency ? 1 : number_unformat($request->input('exchange_rate.'.$moneyType,1)) ;
 	
 		$amountInReceivingCurrency = $request->input('received_amount.'.$moneyType ,0) ;
 		
 		$amountInReceivingCurrency = unformat_number($amountInReceivingCurrency);
-		
-		$invoiceCurrencyAmount = $amountInReceivingCurrency /  $exchangeRate ;
-
+		$totalSettlements = array_sum(array_column($request->get('settlements'),'settlement_amount'));
+		$invoiceCurrencyAmount =  $isTheSameCurrency ? $amountInReceivingCurrency  : $totalSettlements  ;
+		// $totalSalesOrderAmount = $isTheSameCurrency ? 0 : array_sum(array_column($request->get('sales_orders_amounts'),'received_amount'));
 		
 		if($moneyType == MoneyReceived::CASH_IN_SAFE){
 			$relationData = $request->only(['receipt_number']) ;
@@ -475,8 +485,11 @@ class MoneyReceivedController
 		
 
 		if($hasUnappliedAmount || $isDownPayment){
-			$moneyReceived->storeNewSalesOrdersAmounts($request->get('sales_orders_amounts',[]),$contractId,$customerId,$companyId);
+			$moneyReceived->storeNewSalesOrdersAmounts($request->get('sales_orders_amounts',[]),$contractId,$customerId,$companyId,$amountInReceivingCurrency);
 		}
+		// if(!$isTheSameCurrency && $totalSalesOrderAmount > 0){
+			
+		// }
 		
 		/**
 		 * @var CustomerInvoice $customerInvoice
@@ -563,12 +576,12 @@ class MoneyReceivedController
 		$companyId = $company->id ;
 		$newType = $request->get('type');
 		$moneyReceivedAmountHasChanged = $moneyReceived->getAmount() != $request->input('received_amount.'.$newType);
-		$mainFunctionCurrency = $company->getMainFunctionalCurrency();
-		$currency = $moneyReceived->getCurrency();
-		$receivingDate = $moneyReceived->getReceivingDate();
-		$foreignExchangeRate = ForeignExchangeRate::getExchangeRateForCurrencyAndClosestDate($currency,$mainFunctionCurrency,$receivingDate,$company->id);
-		$receivingCurrency = $moneyReceived->getReceivingCurrency();
-		$exchangeRate = $moneyReceived->getExchangeRate();
+		// $mainFunctionCurrency = $company->getMainFunctionalCurrency();
+		// $currency = $moneyReceived->getCurrency();
+		// $receivingDate = $moneyReceived->getReceivingDate();
+		// $foreignExchangeRate = ForeignExchangeRate::getExchangeRateForCurrencyAndClosestDate($currency,$mainFunctionCurrency,$receivingDate,$company->id);
+		// $receivingCurrency = $moneyReceived->getReceivingCurrency();
+		// $exchangeRate = $moneyReceived->getExchangeRate();
 		$moneyReceived->deleteRelations();
 		$moneyReceived->delete();
 		$newMoneyReceived = $this->store($company,$request,true);
@@ -825,8 +838,13 @@ class MoneyReceivedController
 	
 	
 	public function getCustomersBasedOnCurrency(Request $request , Company $company , string $currencyName){
+
+	
 		return response()->json([
-			'customerInvoices'=>CustomerInvoice::where('currency',$currencyName)->where('company_id',$company->id)->pluck('customer_name','customer_id')
+			'customerInvoices' => CustomerInvoice::
+			where('currency',$currencyName)
+			->where('company_id',$company->id)->pluck('customer_name','customer_id')
+			
 		]);
 	}
 	public function getPartnersBasedOnCurrency(Request $request , Company $company , string $currencyName){

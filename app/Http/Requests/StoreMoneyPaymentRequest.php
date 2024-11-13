@@ -35,7 +35,7 @@ class StoreMoneyPaymentRequest extends FormRequest
 		
 		
 		$additionalData = [];
-		if($this->down_payment_type == MoneyPayment::DOWN_PAYMENT_FREE){
+		if($this->down_payment_type == MoneyPayment::DOWN_PAYMENT_GENERAL){
 			$additionalData = [
 				'contract_id'=>null,
 				'purchases_orders_amounts'=>[],
