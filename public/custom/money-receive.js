@@ -92,9 +92,14 @@ $(document).on('change', '.ajax-get-sales-orders-for-contract', function () {
 	currency = currency ? currency : $(this).closest('[data-repeater-item]').find('select.current-currency').val()
 	const companyId = $('body').attr('data-current-company-id')
 	const lang = $('body').attr('data-lang')
+
 	if(!contractId){
-		$('.js-append-down-payment-to').empty()
+		$('.js-append-down-payment-to').empty().hide()
+
 		return ;
+	}else{
+		$('.js-append-down-payment-to').show()
+		
 	}
 	const url = '/' + lang + '/' + companyId + '/down-payments/get-sales-orders-for-contract/' + contractId + '/' + currency
 
@@ -111,17 +116,20 @@ $(document).on('change', '.ajax-get-sales-orders-for-contract', function () {
 			var lastNode = $('.js-down-payment-template .js-duplicate-node').clone(true)
 			
 			$('.js-append-down-payment-to').empty()
-		
+			if(res.sales_orders.length == 0){
+				res.sales_orders[0] = {
+					id:-1,
+					so_number:"General",
+					received_amount:0,
+					amount:0,
+				}
+			}
 			for (var i = 0; i < res.sales_orders.length; i++) {
 				 var salesOrderId = res.sales_orders[i].id
 				 var salesOrderNumber = res.sales_orders[i].so_number
 
-				// var currency = res.invoices[i].currency
 				var amount = res.sales_orders[i].amount
-			//	var netBalance = res.invoices[i].net_balance
-			//	var invoiceDate = res.invoices[i].invoice_date
 				var receivedAmount = res.sales_orders[i].received_amount
-			//	var withholdAmount = res.invoices[i].withhold_amount
 				var domSalesOrder = $(lastNode).find('.js-sales-order-number')
 				domSalesOrder.val(salesOrderId)
 				domSalesOrder.attr('name', 'sales_orders_amounts[' + salesOrderId + '][sales_order_id]').val(salesOrderId)
@@ -169,7 +177,6 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 	const companyId = $('body').attr('data-current-company-id')
 	const lang = $('body').attr('data-lang')
 	const url = '/' + lang + '/' + companyId + '/money-received/get-invoice-numbers/' + customerInvoiceId + '/' + currency
-
 	if (customerInvoiceId) {
 		$.ajax({
 			url,
@@ -332,6 +339,7 @@ $(document).on('change', '.js-update-account-number-based-on-account-type', func
 		url,
 		data:{allAccounts:window.location.href.split('/').includes('bank-statement')},
 		success: function (res) {
+			
 			options = ''
 			var selectToAppendInto = $(parent).find(appendTo)
 
@@ -372,6 +380,10 @@ $(function () {
 		const companyId = $('body').data('current-company-id')
 		const lang = $('body').data('lang')
 		const url = '/' + lang + '/' + companyId + '/get-customers-based-on-currency/'+currencyName
+		const isDownPaymentForm = $('#is-down-payment-id').val()
+		if(isDownPaymentForm){
+			return ;
+		}
 		$.ajax({
 			url,
 			success:function(res){

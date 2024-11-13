@@ -32,7 +32,8 @@ class StoreMoneyReceivedRequest extends FormRequest
 			return number_unformat($item);
 		})->toArray();
 		$additionalData = [];
-		if($this->down_payment_type == MoneyReceived::DOWN_PAYMENT_FREE){
+		
+		if($this->down_payment_type == MoneyReceived::DOWN_PAYMENT_GENERAL){
 			$additionalData = [
 				'contract_id'=>null,
 				'sales_orders_amounts'=>[],

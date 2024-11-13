@@ -267,7 +267,12 @@
                     </div>
                     <div class="kt-portlet__head-label ">
                         <div class="kt-align-right">
-                            <button type="button" class="btn btn-sm btn-brand btn-elevate btn-pill"><i class="fa fa-chart-line"></i> <?php echo e(__('Report')); ?> </button>
+							<form action="<?php echo e(route('result.aging.analysis',['company'=>$company->id ,'modelType'=>$modelType ])); ?>" method="post">
+								<?php echo csrf_field(); ?>
+								<input type="hidden" name="currency" value="<?php echo e($currency); ?>" >
+								
+	                           	 <button target="_blank" type="submit" class="btn btn-sm btn-brand btn-elevate btn-pill"><i class="fa fa-chart-line"></i> <?php echo e(__('Report')); ?> </button>
+							</form>
                         </div>
                     </div>
                 </div>
@@ -315,6 +320,10 @@
 
 
         
+		<?php
+			$currentItems = $dashboardResult['cheques_aging_for_table'][$modelType][$currency]['table'] ?? [];
+		?>
+		<?php if(count($currentItems)): ?>
         <div class="row">
             <div class="kt-portlet ">
                 <div class="kt-portlet__head">
@@ -352,7 +361,8 @@
                                     <?php
                                     $total = 0 ;
                                     ?>
-                                    <?php $__currentLoopData = $dashboardResult['cheques_aging_for_table'][$modelType][$currency]['table'] ?? []; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $dueType => $dueWithValue): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+									
+                                    <?php $__currentLoopData = $currentItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $dueType => $dueWithValue): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                     <?php if($dueType == 'coming_due' || $dueType =='current_due'): ?>
                                     <?php $__currentLoopData = $dueWithValue; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $daysInternal => $totalForDaysInterval): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                     <tr>
@@ -379,6 +389,7 @@
                 </div>
             </div>
         </div>
+		<?php endif; ?>
 
         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 

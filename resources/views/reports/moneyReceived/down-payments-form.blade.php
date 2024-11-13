@@ -3,6 +3,7 @@
 @php
 use App\Models\CustomerInvoice;
 use App\Models\MoneyReceived ;
+use App\Models\Partner;
 @endphp
 <link href="{{ url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css') }}" rel="stylesheet" type="text/css" />
@@ -57,28 +58,29 @@ use App\Models\MoneyReceived ;
 
         <form method="post" action="{{ isset($model) ?  route('update.money.receive',['company'=>$company->id,'moneyReceived'=>$model->id]) :route('store.money.receive',['company'=>$company->id]) }}" class="kt-form kt-form--label-right">
             <input id="js-in-edit-mode" type="hidden" name="in_edit_mode" value="{{ isset($model) ? 1 : 0 }}">
-			<input type="hidden" name="current_cheque_id" value="{{ isset($model) && $model->cheque ? $model->cheque->id : 0 }}">
-			<input type="hidden" name="is_down_payment" value="1">
+            <input type="hidden" name="current_cheque_id" value="{{ isset($model) && $model->cheque ? $model->cheque->id : 0 }}">
+            <input type="hidden" name="is_down_payment" id="is-down-payment-id" value="1">
             <input id="js-down-payment-id" type="hidden" name="down_payment_id" value="{{ isset($model) ? $model->id : 0 }}">
             <input id="js-money-received-id" type="hidden" name="money_received_id" value="{{ isset($model) ? $model->id : 0 }}">
             <input type="hidden" id="ajax-sales-order-item" data-single-model="{{ $singleModel ? 1 : 0 }}" value="{{ $singleModel ? $salesOrderId : 0 }}">
+
             @csrf
             @if(isset($model))
             @method('put')
             @endif
 
             <div class="kt-portlet">
-                <div class="kt-portlet__head">
+                {{-- <div class="kt-portlet__head">
                     <div class="kt-portlet__head-label">
                         <h3 class="kt-portlet__head-title head-title text-primary">
                             {{__('Down Payment')}}
                         </h3>
                     </div>
-                </div>
+                </div> --}}
                 <div class="kt-portlet__body">
                     <div class="form-group row">
-					
-					 <div class="col-md-2 ">
+
+                        <div class="col-md-2 ">
                             <label>{{__('Receiving Date')}}</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
@@ -91,11 +93,22 @@ use App\Models\MoneyReceived ;
                                 </div>
                             </div>
                         </div>
-						
-						
-                     
-                        <div class="col-md-2">
-                            <label>{{__('Contract Currency')}} @include('star')</label>
+                        <div class="col-md-2 ">
+                            <label>{{__('Down Payment Type')}} @include('star')</label>
+                            <div class="kt-input-icon">
+                                <div class="input-group date">
+                                    <select required name="down_payment_type" id="down_payment_type" class="form-control ">
+                                        <option @if(isset($model) && $model->isDownPaymentOverContract() ) selected @endif value="{{ MoneyReceived::DOWN_PAYMENT_OVER_CONTRACT }}">{{__('Contract Down Payment')}}</option>
+                                        <option @if(isset($model) && $model->isFreeDownPayment() ) selected @endif value="{{ MoneyReceived::DOWN_PAYMENT_GENERAL }}">{{__('General Down Payment')}}</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-2 " id="invoice-currency-div">
+                            <label >{{__('Contract Currency')}} @include('star')</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
                                     <select id="invoice-currency-id" name="currency" class="form-control 
@@ -122,18 +135,16 @@ use App\Models\MoneyReceived ;
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-4 ">
                             <label>{{__('Customer Name')}}
                                 @include('star')
                             </label>
                             <div class="kt-input-icon">
                                 <div class="kt-input-icon">
                                     <div class="input-group date">
-                                        <select id="customer_name" data-live-search="true" data-actions-box="true"
-										data-current-selected="{{ isset($model) ? $model->getName() : '' }}"
-										 name="customer_id" class="form-control select2-select ajax-get-contracts-for-customer ajax-get-sales-orders-for-contract">
-                                            {{-- <option value="" selected>{{__('Select')}}</option> --}}
-                                            @foreach($customers as $customerId => $customerName)
+                                        <select id="customer_name" data-live-search="true" data-actions-box="true" data-current-selected="{{ isset($model) ? $model->getName() : '' }}" name="customer_id" class="form-control select2-select ajax-get-contracts-for-customer ajax-get-sales-orders-for-contract">
+                                            <option value="" selected>{{__('Select')}}</option>
+                                            @foreach(Partner::getCustomersForCompany($company->id) as $customerId => $customerName)
                                             <option @if($singleModel) selected @endif @if(isset($model) && $model->getCustomerName() == $customerName ) selected @endif value="{{ $customerId }}">{{$customerName}}</option>
                                             @endforeach
                                         </select>
@@ -170,22 +181,11 @@ use App\Models\MoneyReceived ;
                                 </div>
                             </div>
                         </div>
-						
-					
-							<div class="col-md-2 ">
-                    <label>{{__('Down Payment Type')}} @include('star')</label>
-                    <div class="kt-input-icon">
-                        <div class="input-group date">
-                            <select required name="down_payment_type" id="down_payment_type" class="form-control">
-                                <option @if(isset($model) && $model->isDownPaymentOverContract() ) selected @endif value="{{ MoneyReceived::DOWN_PAYMENT_OVER_CONTRACT }}">{{__('Over Contract')}}</option>
-                                <option @if(isset($model) && $model->isFreeDownPayment() ) selected @endif value="{{ MoneyReceived::DOWN_PAYMENT_FREE }}">{{__('Free')}}</option>
-                            </select>
-                        </div>
-                    </div>
 
-                </div>
 
-                        <div class="col-md-3 contract-id-div mt-4"  >
+
+
+                        <div class="col-md-4 contract-id-div mt-4">
                             <label>{{__('Contract Name')}}
                                 @include('star')
                             </label>
@@ -205,7 +205,7 @@ use App\Models\MoneyReceived ;
                             </div>
                         </div>
 
-                          <div class="col-md-2 mt-4">
+                        <div class="col-md-3 mt-4">
                             <label>{{__('Select Money Type')}} @include('star')</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
@@ -372,7 +372,7 @@ use App\Models\MoneyReceived ;
             {{-- Bank Deposit Information--}}
             {{-- Incoming Transfer Information--}}
 
-			
+
             <div class="kt-portlet js-section-parent hidden" id="{{ MoneyReceived::CASH_IN_BANK }}">
                 <div class="kt-portlet__head">
                     <div class="kt-portlet__head-label">
@@ -456,7 +456,7 @@ use App\Models\MoneyReceived ;
 
                 </div>
             </div>
-		
+
 
 
 
@@ -680,16 +680,16 @@ use App\Models\MoneyReceived ;
 
                 </div>
             </div>
-			
-			
-			
-			
-			
-			
-			
-			
-			@if(isset($model) && $model->getDownPaymentType() != MoneyReceived::DOWN_PAYMENT_FREE)
-			 <div class="kt-portlet" id="settlement-card-id">
+
+
+
+
+
+
+
+
+            @if(isset($model) && $model->getDownPaymentType() != MoneyReceived::DOWN_PAYMENT_GENERAL)
+            <div class="kt-portlet" id="settlement-card-id">
                 <div class="kt-portlet__head">
                     <div class="kt-portlet__head-label">
                         <h3 class="kt-portlet__head-title head-title text-primary">
@@ -710,9 +710,9 @@ use App\Models\MoneyReceived ;
 
                     <hr>
                     {{-- @include('reports.moneyReceived.unapplied-contract') --}}
-					
-					
-					
+
+
+
                     <div class="row">
                         <div class="col-md-1 width-10"></div>
                         <div class="col-md-1 width-8"></div>
@@ -730,11 +730,11 @@ use App\Models\MoneyReceived ;
                     </div>
                 </div>
             </div>
-			@endif
-			
-			
+            @endif
 
-           <x-submitting-by-ajax />
+
+
+            <x-submitting-by-ajax />
 
         </form>
         <!--end::Form-->
@@ -781,9 +781,6 @@ use App\Models\MoneyReceived ;
 </script>
 
 <script>
-    $(document).on('change', '.settlement-amount-class', function() {
-
-    })
     $(function() {
         $('#type').trigger('change');
     })
@@ -791,16 +788,16 @@ use App\Models\MoneyReceived ;
 
 
     $(document).on('change', 'select.currency-class', function() {
-		
+
         const invoiceCurrency = $('select#invoice-currency-id').val();
         const receivingCurrency = $('select#receiving-currency-id').val();
         const moneyType = $('select#type').val();
-		
 
-		
-		$('.main-amount-class').closest('.closest-parent').find('.currency-span').html(" [ " + receivingCurrency +" ]")
-		$('.amount-after-exchange-rate-class').closest('.closest-parent').find('.currency-span').html(" [ " + invoiceCurrency +" ]")
-		
+
+
+        $('.main-amount-class').closest('.closest-parent').find('.currency-span').html(" [ " + receivingCurrency + " ]")
+        $('.amount-after-exchange-rate-class').closest('.closest-parent').find('.currency-span').html(" [ " + invoiceCurrency + " ]")
+
         if (invoiceCurrency != receivingCurrency && invoiceCurrency && receivingCurrency) {
             $('.show-only-when-invoice-currency-not-equal-receiving-currency').removeClass('hidden')
 
@@ -829,7 +826,7 @@ use App\Models\MoneyReceived ;
         e.preventDefault()
         const customerId = $('select#customer_name').val()
         const currency = $('select.currency-for-contracts').val()
-		const contractId = $('select#contract-id').attr('data-current-selected');
+        const contractId = $('select#contract-id').attr('data-current-selected');
         if (customerId && currency) {
             $.ajax({
                 url: "{{ route('get.contracts.for.customer',['company'=>$company->id]) }}"
@@ -839,14 +836,19 @@ use App\Models\MoneyReceived ;
                 }
                 , success: function(res) {
                     let options = '';
+
                     for (id in res.contracts) {
                         options += `<option value="${id}"  ${contractId == id ? 'selected' : ''} >${res.contracts[id]}</option>`
                     }
+
                     $('select#contract-id').empty().append(options);
                     $('select#contract-id').trigger('change')
                 }
             })
-        }
+        }else{
+			 $('select#contract-id').empty().append("")
+                    $('select#contract-id').trigger('change')
+		}
     })
 
 </script>
@@ -857,19 +859,23 @@ use App\Models\MoneyReceived ;
         $('select.currency-class').trigger('change')
         $('.recalculate-amount-class').trigger('change')
     })
-$(document).on('change','#down_payment_type',function(){
-	const val = $(this).val();
-	if(val != 'over_contract'){
-		$('.contract-id-div').hide();
-		$('.down-payment-id').hide();
-		$('#settlement-card-id').hide();
-	}else{
-		$('.contract-id-div').show();
-			$('.down-payment-id').show();
-		$('#settlement-card-id').show();
-	}
-})
-$('#down_payment_type').trigger('change')
+    $(document).on('change', '#down_payment_type', function() {
+        const val = $(this).val();
+        if (val != 'over_contract') {
+            $('.contract-id-div').hide();
+            $('.down-payment-id').hide();
+            $('#settlement-card-id').hide();
+            $('#invoice-currency-div').hide();
+        } else {
+            $('.contract-id-div').show();
+            $('.down-payment-id').show();
+            $('#settlement-card-id').show();
+            $('#invoice-currency-div').show();
+        }
+	$('select.invoice-currency-class').trigger('change')
+    })
+    $('#down_payment_type').trigger('change')
+
 </script>
 
 @endsection

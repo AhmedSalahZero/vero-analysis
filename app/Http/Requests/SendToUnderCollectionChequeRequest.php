@@ -37,8 +37,8 @@ class SendToUnderCollectionChequeRequest extends FormRequest
         return [
             'deposit_date'=>['required'
 			,new DateMustBeLessThanOrEqualDate(null,now(),__('Dates Must Be Less Than Or Equal To Today'))
-			, new DateMustBeGreaterThanOrEqualDate(null,$greatestReceivingDate , __('Deposit Date Must Be Greater Than Or Equal Receiving Date')),
-			, new DateMustBeGreaterThanOrEqualDate(null,$openingBalanceDate , __('Deposit Date Must Be Greater Than Or Equal Account Opening Balance Date')),
+			, new DateMustBeGreaterThanOrEqualDate(null,$greatestReceivingDate , __('Deposit Date Must Be Greater Than Or Equal Receiving Date'))
+			, new DateMustBeGreaterThanOrEqualDate(null,$openingBalanceDate , __('Deposit Date Must Be Greater Than Or Equal Account Opening Balance Date'))
 			
 		],
 			'account_type'=>['required'],

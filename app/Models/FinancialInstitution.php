@@ -178,6 +178,12 @@ class FinancialInstitution extends Model
 	{
 		return $this->hasMany(LetterOfGuaranteeFacility::class , 'financial_institution_id','id');
 	}
+	public function scopeOnlyHasLgFacility($builder)
+	{
+		return $builder->whereHas('LetterOfGuaranteeFacilities',function($builder){
+			$builder->where('contract_end_date','>=',now());
+		});
+	}
 	public function getCurrentAvailableLetterOfGuaranteeFacility():?LetterOfGuaranteeFacility
 	{
 		return $this->LetterOfGuaranteeFacilities()->where('contract_end_date','>=',now())->orderByRaw('contract_end_date desc')->first();
@@ -235,8 +241,6 @@ class FinancialInstitution extends Model
 				]);
 
 			}
-
-
 
 			$account->accountInterests()->create([
 				'interest_rate'=>$accountArr['interest_rate'],

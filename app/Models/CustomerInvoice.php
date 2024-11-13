@@ -9,7 +9,6 @@ use App\Traits\Models\IsInvoice;
 use App\Traits\StaticBoot;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class CustomerInvoice extends Model implements IInvoice
@@ -35,8 +34,11 @@ class CustomerInvoice extends Model implements IInvoice
 	const COLLETED_OR_PAID = 'collected';
 	const PARTIALLY_COLLECTED_OR_PAID_AND_PAST_DUE = 'partially_collected_and_past_due';
 	const MONEY_MODEL_NAME = 'MoneyReceived';
+	const IS_CUSTOMER_OR_SUPPLIER = 'is_customer';
 	const AGING_CHEQUE_MODEL_NAME = 'Cheque';
 	const AGING_CHEQUE_TABLE_NAME = 'cheques';
+	const DOWN_PAYMENT_SETTLEMENT_MODEL_NAME ='DownPaymentSettlement';
+	const DOWN_PAYMENT_SETTLEMENT_TABLE_NAME ='down_payment_settlements';
     protected $guarded = [];
 
 	public function getClientDisplayName()
@@ -132,171 +134,7 @@ class CustomerInvoice extends Model implements IInvoice
 	}
 	
 
-
-
 	
-
-	public static function formatForStatementReport(Collection $customerInvoices,int $partnerId,string $startDate,string $endDate,string $currency,string $modelType){
-			$isMainCurrency = $currency == 'main_currency' ;
-			$startDateFormatted = Carbon::make($startDate)->format('d-m-Y');
-			$index = -1 ;
-			/**
-			 * @var CustomerInvoice $firstCustomerInvoice
-			 */
-			$oneDayBeforeStartDate = Carbon::make($startDate)->subDays(1000)->format('Y-m-d');
-		
-			$startDateMinusOne = Carbon::make($startDate)->subDay()->format('Y-m-d');
-			$fullClassName = ('\App\Models\\' . $modelType) ;
-			$clientIdColumnName = $fullClassName::CLIENT_ID_COLUMN_NAME ;
-			
-			$clientInvoiceIds = $fullClassName::getForPartner($partnerId,$currency,$isMainCurrency);
-			$invoicesForBeginningBalance = $fullClassName::getInvoicesForInvoiceStartAndEndDate( $clientIdColumnName, $partnerId, getCurrentCompany() ,  $currency ,  $oneDayBeforeStartDate,$startDateMinusOne );
-			$formattedData = [];
-			$beginningBalance = 
-			// $isMainCurrency ? 
-			self::appendBalances($isMainCurrency , $currency,$invoicesForBeginningBalance, $index, $formattedData, $partnerId, $oneDayBeforeStartDate,$startDateMinusOne,$clientInvoiceIds,$modelType,false) ;
-			// : self::getBeginningBalanceUntil($currency,$partnerId,$oneDayBeforeStartDate,$startDateMinusOne) ; 
-			$index = 0 ;
-			$currentData['date'] = $startDateFormatted;
-			$currentData['document_type'] = 'Beginning Balance';
-			$currentData['document_no'] = null;
-			$currentData['debit'] = $debit = $beginningBalance >= 0 ? $beginningBalance : 0;
-			$currentData['credit'] = $credit = $beginningBalance < 0 ? $beginningBalance * -1 : 0 ;
-			$currentData['end_balance'] =$debit - $credit;
-			$currentData['comment'] =null;
-			$index++ ;
-			$formattedData[$index] = $currentData;
-	
-			
-			// $currentData['date'] = $startDateFormatted;
-			// $currentData['document_type'] = 'Beginning Balance';
-			// $currentData['document_no'] = null;
-			// $currentData['debit'] = 0;
-			// $currentData['credit'] =0;
-			// $currentData['end_balance'] =0;
-			// $currentData['comment'] =null;
-			// $index++ ;
-			// $formattedData[$index] = $currentData;
-			
-			
-	
-			self::appendBalances($isMainCurrency , $currency,$customerInvoices, $index, $formattedData, $partnerId, $startDate, $endDate,$clientInvoiceIds,$modelType,true);
-		
-			
-		return HArr::sortBasedOnKey($formattedData,'date');
-	}
-	public static function appendBalances($isMainCurrency ,string $currency,$customerInvoices,int &$index,array &$formattedData,int $partnerId,string $startDate,string $endDate , array $clientInvoiceIds , string $modelType , bool $isNotBegBalance = true )
-	{
-		$tempArr = [];
-	
-		foreach($customerInvoices as $customerInvoice){
-			$invoiceExchangeRate = $customerInvoice->getExchangeRate();
-			$currentData = [];
-			$invoiceDate = $customerInvoice->getInvoiceDateFormatted() ;
-			$invoiceNumber  = $customerInvoice->getInvoiceNumber() ;
-			$currentData['date'] = $invoiceDate;
-			$currentData['document_type'] = 'Invoice';
-			$currentData['document_no'] = $invoiceNumber;
-			$currentData['debit'] = $isMainCurrency ?  $customerInvoice->getNetInvoiceInMainCurrencyAmount() : $customerInvoice->getNetInvoiceAmount()  ;
-			$currentData['credit'] =0;
-			$currentData['comment'] =null;
-			if($isNotBegBalance){
-				$index++ ;
-				$formattedData[$index]=$currentData;
-			}else{
-				$index++ ;
-				$tempArr[$index] = $currentData ;
-				
-			}
-			
-			
-			
-		}
-		foreach(InvoiceDeduction::getForInvoices($clientInvoiceIds,$modelType,$startDate,$endDate) as $invoiceDeduction){
-			$invoice = $invoiceDeduction->getInvoice();
-			$invoiceExchangeRate = $invoice->getExchangeRate();
-			$currentInvoiceNumber = $invoice->getInvoiceNumber();
-			$deductionAmount = $invoiceDeduction->getAmount() ;
-			$deductionDate = $invoiceDeduction->getDate() ;
-			$currentData['date'] = Carbon::make($deductionDate)->format('d-m-Y');
-			$currentData['document_type'] = 'Deduction';
-			$currentData['document_no'] = $currentInvoiceNumber;
-			$currentData['debit'] = 0;
-			$currentData['credit'] = $isMainCurrency ? $invoiceExchangeRate * $deductionAmount : $deductionAmount;
-			$currentData['comment'] =$invoiceDeduction->getDeductionName() . ' [ '  . $currentInvoiceNumber .' ] ' ;
-			if($isNotBegBalance){
-				$index++ ;
-				$formattedData[$index]=$currentData;
-			}else{
-				$index++ ;
-				$tempArr[$index] = $currentData ;
-			}
-		}
-		
-		
-		
-		$allMoneyReceived =  MoneyReceived::
-		where('company_id',getCurrentCompanyId())
-		->whereBetween(self::RECEIVING_OR_PAYMENT_DATE_COLUMN_NAME,[$startDate,$endDate])
-		->when(!$isMainCurrency , function($q) use ($currency){
-			$q->where('currency',$currency);
-		})
-		->where('partner_id',$partnerId)
-		->get() ; 
-		foreach($allMoneyReceived as $moneyReceived) {
-			$dateReceiving = $moneyReceived->getReceivingDateFormatted() ;
-			$moneyReceivedType = $moneyReceived->getType();
-			$docNumber = $moneyReceived->getNumber();
-				$moneyReceivedAmount = $isMainCurrency ? $moneyReceived->getAmountForMainCurrency() :$moneyReceived->getAmountInInvoiceCurrency() ;
-				if($moneyReceivedAmount){
-					$invoiceNumbers = implode('/',$moneyReceived->settlements->pluck('invoice.invoice_number')->toArray());
-					$currentComment = MoneyReceived::generateComment($moneyReceived,app()->getLocale(),$invoiceNumbers,'');
-					$currentData = []; 
-					$currentData['date'] = $dateReceiving;
-					$currentData['document_type'] = $moneyReceivedType;
-					$currentData['document_no'] = $docNumber  ;
-					$currentData['debit'] = 0;
-					$currentData['credit'] =$moneyReceivedAmount;
-					$currentData['comment'] = $currentComment ;
-					if($isNotBegBalance){
-						$index++ ;
-						$formattedData[] = $currentData ;
-					}else{
-						$index++ ;
-						$tempArr[] = $currentData ;
-					}
-					$totalWithholdAmount = $isMainCurrency ? $moneyReceived->getTotalWithholdInInvoiceExchangeRate() : $moneyReceived->getTotalWithholdAmount();
-					if($isNotBegBalance){
-						$isMainCurrency  ? $moneyReceived->appendForeignExchangeGainOrLoss($formattedData,$index) : null ; 
-					}else{
-						$isMainCurrency  ? $moneyReceived->appendForeignExchangeGainOrLoss($tempArr,$index) : null ; 
-					
-					}
-					if($totalWithholdAmount){
-						$currentData = []; 
-						$currentData['date'] = $dateReceiving;
-						$currentData['document_type'] = __('Withhold Taxes');
-						$currentData['document_no'] =  $docNumber ;
-						$currentData['debit'] = 0;
-						$currentData['credit'] =$totalWithholdAmount;
-						// $currentData['comment'] =$bankName;
-						$currentData['comment'] =__('Withhold Taxes For Invoice No.') . ' ' . implode('/',$moneyReceived->settlements->where('withhold_amount','>',0)->pluck('invoice.invoice_number')->toArray());
-						if($isNotBegBalance){
-							$index++ ;
-							$formattedData[] = $currentData ;
-						}
-						else{
-							$index++ ;
-							$tempArr[] = $currentData ;
-						}
-					}
-				}
-		}
-		if(!$isNotBegBalance){
-			return array_sum(array_column($tempArr,'debit')) - array_sum(array_column($tempArr,'credit'));
-		}
-		return $formattedData;
-	}
 	
 	
 	public function customer()

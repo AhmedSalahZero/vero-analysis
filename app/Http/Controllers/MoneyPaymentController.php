@@ -225,7 +225,7 @@ class MoneyPaymentController
 			'contracts'=>$contracts
 		]);
 	}
-	public function getSalesOrdersForContract(Company $company ,  Request $request , int $contractId  = 0,?string $selectedCurrency=null)
+	public function getSalesOrdersForContract(Company $company ,  Request $request ,  $contractId  = 0,?string $selectedCurrency=null)
 	{
 		$downPaymentId = $request->get('down_payment_id');
 		$moneyPayment = MoneyPayment::find($downPaymentId);
@@ -237,6 +237,14 @@ class MoneyPaymentController
 			$formattedSalesOrders[$index]['po_number'] = $purchaseOrder->po_number;
 			$formattedSalesOrders[$index]['amount'] = $purchaseOrder->getAmount();
 			$formattedSalesOrders[$index]['id'] = $purchaseOrder->id;
+		}
+		if(!count($purchaseOrders)){
+			$index = 0;
+			$paidAmount = $moneyPayment ? $moneyPayment->downPaymentSettlements->where('contract_id',null)->first() : null ;
+			$formattedSalesOrders[$index]['paid_amount'] = $paidAmount && $moneyPayment->down_payment_amount ? $moneyPayment->down_payment_amount : 0;
+			$formattedSalesOrders[$index]['po_number'] = 'General';
+			$formattedSalesOrders[$index]['amount'] =0;
+			$formattedSalesOrders[$index]['id'] = -1;
 		}
 	
 			return response()->json([
@@ -301,7 +309,7 @@ class MoneyPaymentController
 		$hasUnappliedAmount = (bool)$request->get('unapplied_amount');
 		$partnerType = $request->get('partner_type');
 		$moneyType = $request->get('type');
-		
+		$isGeneralDownPayment = $request->get('down_payment_type') == MoneyPayment::DOWN_PAYMENT_GENERAL;
 		$financialInstitutionId = null;
 		$contractId = $request->get('contract_id');
 		$partnerId = $request->get('supplier_id');
@@ -310,6 +318,7 @@ class MoneyPaymentController
 		$supplierId = $supplier->id;
 		$paymentBranchName = $request->get('delivery_branch_id') ;
 		$data = $request->only(['type','delivery_date','currency','payment_currency','down_payment_type']);
+		$data['currency'] = $isGeneralDownPayment ? $data['payment_currency'] : $data['currency'];
 		$currencyName = $data['currency'];
 		$paymentCurrency = $data['payment_currency'];
 		
@@ -426,7 +435,7 @@ class MoneyPaymentController
 		
 	
 		if($hasUnappliedAmount || $isDownPayment){
-			$moneyPayment->storeNewPurchaseOrders($request->get('purchases_orders_amounts',[]),$company->id,$contractId,$supplierId);
+			$moneyPayment->storeNewPurchaseOrders($request->get('purchases_orders_amounts',[]),$company->id,$contractId,$supplierId,$amountInPaymentCurrency);
 		}
 		/**
 		 * @var SupplierInvoice $supplierInvoice

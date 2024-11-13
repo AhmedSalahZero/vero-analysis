@@ -13,7 +13,10 @@ class LetterOfGuaranteeFacility extends Model
 	use HasLetterOfGuaranteeStatements , HasLetterOfGuaranteeCashCoverStatements;
     
 	protected $guarded = ['id'];
-	
+	public function getName()
+	{
+		return $this->name;
+	}	
 	public function getContractStartDate()
 	{
 		return $this->contract_start_date;

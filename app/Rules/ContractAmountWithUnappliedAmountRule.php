@@ -30,6 +30,7 @@ class ContractAmountWithUnappliedAmountRule implements ImplicitRule
 		if($this->unapplied_amount <= 0){
 			return true ;
 		}
+		
         return  $this->contract_id;
 		
     }

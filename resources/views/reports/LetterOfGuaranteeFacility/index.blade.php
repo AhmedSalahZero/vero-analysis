@@ -50,10 +50,7 @@
                 <i class="fas fa-plus"></i>
                 {{ __('New Record') }}
             </a>
-            {{-- <a href="" class="btn  active-style btn-icon-sm  align-self-center ">
-				<i class="fas fa-plus"></i>
-				<span>{{ __('New Record') }}</span>
-            </a> --}}
+            
 		  </div>
         </div>
     </div>
@@ -82,6 +79,7 @@
                             <thead>
                                 <tr class="table-standard-color">
                                     <th>{{ __('#') }}</th>
+                                    <th >{{ __('Name') }}</th>
                                     <th >{{ __('Start Date') }}</th>
                                     <th >{{ __('End Date') }}</th>
                                     <th>{{ __('Currency') }}</th>
@@ -97,6 +95,7 @@
                                     <td>
                                         {{ $index+1 }}
                                     </td>
+                                    <td class="text-nowrap">{{ $letterOfGuaranteeFacility->getName() }}</td>
                                     <td class="text-nowrap">{{ $letterOfGuaranteeFacility->getContractStartDateFormatted() }}</td>
                                     <td class="text-nowrap">{{ $letterOfGuaranteeFacility->getContractEndDateFormatted() }}</td>
                                     <td class="text-uppercase">{{ $letterOfGuaranteeFacility->getCurrency() }}</td>

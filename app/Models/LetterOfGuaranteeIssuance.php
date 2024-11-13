@@ -471,6 +471,17 @@ class LetterOfGuaranteeIssuance extends Model
 	public function getRenewalDateBefore(string $date):string{
 		return  $this->renewalDateHistories->where('renewal_date','<',$date)->sortByDesc('renewal_date')->first()->renewal_date;
 	}
+	public function letterOfGuaranteeFacility()
+	{
+		return $this->belongsTo(LetterOfGuaranteeFacility::class,'lg_facility_id','id');
+	}	
+	public function getLgFacilityId()
+	{
+		return $this->letterOfGuaranteeFacility ? $this->letterOfGuaranteeFacility->id:0;
+	}
+	public function getLgFacilityName()
+	{
+		return $this->letterOfGuaranteeFacility ? $this->letterOfGuaranteeFacility->getName(): __('N/A');
+	}
 	
-
 }

@@ -31,27 +31,28 @@ class InvoiceAgingService
 
 
 	
-    public function __execute(array $clientNames, string $modelType)
+    public function __execute(array $clientIds, string $modelType)
     {
         $fullModelName = ("\App\Models\\" . $modelType) ;
+        $clientIdColumnName = $fullModelName::CLIENT_ID_COLUMN_NAME ;
         $clientNameColumnName = $fullModelName::CLIENT_NAME_COLUMN_NAME ;
         $result = [];
         $invoices = $fullModelName::where('invoice_date', '<=', $this->aging_date)
-		->orderBy('invoice_due_date','asc')
+		// ->orderBy('invoice_due_date','asc')
 		->where('net_balance','>',0) 
 		->where('currency',$this->currency)
 		->where('company_id', $this->company_id);
-        if (count($clientNames)) {
-            $invoices->whereIn($clientNameColumnName, $clientNames);
+        if (count($clientIds)) {
+            $invoices->whereIn($clientIdColumnName, $clientIds);
         }
-        $invoices = $invoices->get();
-        /**
+        $invoices = $invoices
+		->orderBy($clientNameColumnName)->get();
+		/**
          * @var CustomerInvoice[] $invoices
          */
-
+		
         foreach ($invoices as $index => $invoice) {
-            $clientName = $invoice[$clientNameColumnName] ;
-
+            $clientName = $invoice->getName() ;
             $invoiceNumber = $invoice->invoice_number;
             $invoiceDueDate = $invoice->invoice_due_date;
             $netBalance = $invoice->getNetBalanceUntil($this->aging_date) ;

@@ -993,9 +993,7 @@ $selectedBanks = [];
 			})
 		}
 	})
-    $(document).on('change', '.settlement-amount-class', function() {
-
-    })
+  
     $(function() {
         $('#type').trigger('change');
     })
@@ -1129,7 +1127,7 @@ $selectedBanks = [];
                     , currency
                 }
                 , success: function(res) {
-                    let options = '';
+                    let options = '<option value="general-down"><?php echo e(__("General Down Payment")); ?></option>';
 					let selectedContractId=$('#contracts').attr('data-current-selected')
                     for (id in res.contracts) {
                         options += `<option ${selectedContractId == id ? 'selected' :''} value="${id}">${res.contracts[id]}</option>`

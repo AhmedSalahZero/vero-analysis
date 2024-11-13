@@ -98,12 +98,13 @@ use App\Models\LetterOfGuaranteeIssuance;
 
                                 <div class="form-group row">
 								
-									 <div class="col-md-2">
+									 <div class="col-md-3">
                                         <label>{{__('Category Name')}}
                                             @include('star')
                                         </label>
                                         <div class="input-group">
-                                            <select name="category_name" class="form-control repeater-select">
+                                            <select name="category_name" required class="form-control repeater-select">
+												<option value="">{{ __('Select') }}</option>
                                                 @foreach(LetterOfGuaranteeIssuance::getCategories() as $key => $title )
                                                 <option value="{{ $key }}" @if(isset($model) && $model->getLgCategoryName() == $key ) selected @endif > {{ $title }}</option>
                                                 @endforeach
@@ -115,47 +116,66 @@ use App\Models\LetterOfGuaranteeIssuance;
                                     <div class="col-md-4">
                                         <x-form.input :model="$model??null" :label="__('Transaction Name')" :type="'text'" :placeholder="__('Transaction Name')" :name="'transaction_name'" :class="''" :required="true"></x-form.input>
                                     </div>
-                                     <div class="col-md-6">
+                                     <div class="col-md-5">
                                         <label> {{ __('Bank') }}
                                             @include('star')
                                         </label>
-                                        <select js-when-change-trigger-change-account-type change-financial-instutition-js id="financial-instutition-id" js-update-outstanding-balance-and-limits js-when-change-trigger-change-account-type data-financial-institution-id required name="financial_institution_id" class="form-control">
+                                        <select required js-when-change-trigger-change-account-type change-financial-instutition-js id="financial-instutition-id" js-get-lg-facility-based-on-financial-institution js-get-lg-facility-based-on-financial-institution js-when-change-trigger-change-account-type data-financial-institution-id required name="financial_institution_id" class="form-control">
+											<option value="">{{ __('Select') }}</option>
                                             @foreach($financialInstitutionBanks as $index=>$financialInstitutionBank)
                                             <option value="{{ $financialInstitutionBank->id }}" {{ isset($model) && $model->getFinancialInstitutionBankId() == $financialInstitutionBank->id ? 'selected':'' }}>{{ $financialInstitutionBank->getName() }}</option>
                                             @endforeach
                                         </select>
                                     </div>
 									
+									
+									
+									  <div class="col-md-3">
+                                        <label>{{__('LG Facility')}}
+                                            @include('star')
+                                        </label>
+                                        <div class="kt-input-icon">
+                                            <div class="input-group date">
+                                                <select required js-update-outstanding-balance-and-limits data-current-selected="{{ isset($model) ? $model->getLgFacilityId() : 0 }}" id="lg-facility-id" name="lg_facility_id" class="form-control 
+												
+												">
+                                                    
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+									
+									
 
 									
 									
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <x-form.input :id="'limit-id'" :default-value="0" :model="$model??null" :label="__('LG Limit')" :type="'text'" :placeholder="__('LG Limit')" :name="'limit'" :class="'only-greater-than-zero-allowed'" :required="true"></x-form.input>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <x-form.input :id="'total-lg-for-all-types-id'" :default-value="0" :model="$model??null" :label="__('Total LGs Outstanding Balance')" :type="'text'" :name="'total_lg_outstanding_balance'" :class="'only-greater-than-zero-allowed'" :required="true"></x-form.input>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <x-form.input :id="'total-room-id'" :default-value="0" :model="$model??null" :label="__('Total LGs Room')" :type="'text'" :placeholder="__('Total LGs Room')" :name="'total_lg_outstanding_balance'" :class="'only-greater-than-zero-allowed'" :required="true"></x-form.input>
                                     </div>
 
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <label> {{ __('LG Type') }}
                                             @include('star')
                                         </label>
 
-                                        <select js-update-outstanding-balance-and-limits id="lg-type" name="lg_type" class="form-control js-toggle-bond">
-                                            {{-- <option selected>{{__('Select')}}</option> --}}
+                                        <select required js-update-outstanding-balance-and-limits id="lg-type" name="lg_type" class="form-control js-toggle-bond">
+                                            <option value="">{{__('Select')}}</option>
                                             @foreach(getLgTypes() as $name => $nameFormatted )
                                             <option value="{{ $name  }}" @if(isset($model) && $model->getLgType() == $name ) selected @endif > {{ $nameFormatted }}</option>
                                             @endforeach
                                         </select>
                                     </div>
 
-                                    <div class="col-md-4 ">
+                                    <div class="col-md-3 ">
                                         <x-form.input :id="'current-lg-type-outstanding-balance-id'" :default-value="0" :model="$model??null" :label="__('LG Type Outstanding Balance')" :type="'text'" :placeholder="__('LG Type Outstanding Balance')" :name="'lg_type_outstanding_balance'" :class="'only-greater-than-zero-allowed'" :required="true"></x-form.input>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <x-form.input :model="$model??null" :label="__('LG Code')" :type="'text'" :placeholder="__('LG Code')" :name="'lg_code'" :class="''" :required="true"></x-form.input>
                                     </div>
 
@@ -315,7 +335,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                                     </div>
 
                                     <div class="col-md-3">
-                                        <x-form.input  :data-current-value="isset($model) ? $model->getLgAmount():0" :data-current-value="isset($model) ? $model->getLgAmount():0" :model="$model??null" :label="__('LG Amount')" :type="'text'" :placeholder="__('LG Amount')" :name="'lg_amount'" :class="'only-greater-than-or-equal-zero-allowed recalculate-cash-cover-amount-js recalculate-lg-commission-amount-js lg-amount-js '" :required="true"></x-form.input>
+                                        <x-form.input  :data-current-value="isset($model) ? $model->getLgAmount():0" :data-current-value="isset($model) ? $model->getLgAmount():0" :model="$model??null" :label="__('LG Amount')" :type="'text'" :placeholder="__('LG Amount')" :name="'lg_amount'" :class="'only-greater-than-or-equal-zero-allowed only-smaller-than-or-equal-specific-number-allowed recalculate-cash-cover-amount-js recalculate-lg-commission-amount-js lg-amount-js '"  :required="true"></x-form.input>
                                     </div>
 
                                     <div class="col-md-3">
@@ -407,7 +427,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                                     </div>
 
                                     <div class="col-md-3 ">
-                                        <x-form.input :id="'cd-or-td-amount-id'" :readonly="true" :default-value="0" :model="$model??null" :label="__('Amount')" :type="'text'" :placeholder="''" :name="'test__name'" :class="''" :required="true"></x-form.input>
+                                        <x-form.input :id="'cd-or-td-amount-id'" :readonly="true" :default-value="0" :model="$model??null" :label="__('Amount')" :type="'text'" :placeholder="''" :name="'amount'" :class="''" :required="true"></x-form.input>
                                     </div>
 									
 
@@ -671,12 +691,14 @@ use App\Models\LetterOfGuaranteeIssuance;
                     const financialInstitutionId = $('select#financial-instutition-id').val()
                     const lgType = $('select#lg-type').val()
 						const source = "{{ $source }}"
+						const letterOfGuaranteeFacilityId = $('select#lg-facility-id').val();
                     $.ajax({
                         url: "{{ route('update.letter.of.guarantee.outstanding.balance.and.limit',['company'=>$company->id]) }}"
                         , data: {
                             financialInstitutionId
                             , lgType,
-							source
+							source,
+							letterOfGuaranteeFacilityId
                         }
                         , type: "GET"
                         , success: function(res) {
@@ -691,12 +713,12 @@ use App\Models\LetterOfGuaranteeIssuance;
 							$('select#customer_name').empty().append(customerOptions).trigger('change');
 							
 							
-                            $('#limit-id').val(res.limit).prop('disabled', true)
-                            $('#total-lg-for-all-types-id').val(res.total_lg_outstanding_balance).prop('disabled', true)
-                            $('#total-room-id').val(res.total_room).prop('disabled', true)
+                            $('#limit-id').val(res.limit).prop('readonly', true)
+                            $('#total-lg-for-all-types-id').val(res.total_lg_outstanding_balance).prop('readonly', true)
+                            $('#total-room-id').val(res.total_room).prop('readonly', true)
 							var totalRoom = number_unformat(res.total_room);
 							$('input[name="lg_amount"]').attr('data-can-not-be-greater-than',totalRoom);
-                            $('#current-lg-type-outstanding-balance-id').val(res.current_lg_type_outstanding_balance).prop('disabled', true)
+                            $('#current-lg-type-outstanding-balance-id').val(res.current_lg_type_outstanding_balance).prop('readonly', true)
                             $('#min_lg_commission_fees_id').val(res.min_lg_commission_rate).trigger('change');
                             $('#lg_commission_rate-id').val(res.lg_commission_rate).trigger('change');
                             $('#issuance_fees_id').val(res.min_lg_issuance_fees_for_current_lg_type).trigger('change');
@@ -807,6 +829,32 @@ use App\Models\LetterOfGuaranteeIssuance;
                 })
 
             </script>
+
+
+
+<script>
+
+$(document).on('change','select[js-get-lg-facility-based-on-financial-institution]',function(){
+	const financialInstitutionId = $('#financial-instutition-id').val();
+	const currentSelected = $('select#lg-facility-id').attr('data-current-selected');
+	$.ajax({
+		url:"{{ route('get.lg.facility.based.on.financial.institution',['company'=>$company->id]) }}",
+		data:{
+			financialInstitutionId
+		},
+		success:function(res){
+			const lgFacilities = res.letterOfGuaranteeFacilities ;
+			let options='<option value="">{{ __("Select") }}</option>';
+			for(id in lgFacilities){
+				var name =lgFacilities[id]; 
+				options+=`<option ${currentSelected == id ? 'selected' : '' } value="${id}"  >${name}</option>`
+			}
+			$('select#lg-facility-id').empty().append(options).trigger('change')
+		}
+	})
+})
+$('select[js-get-lg-facility-based-on-financial-institution]').trigger('change')
+</script>
 			
                @include('reports.LetterOfGuaranteeIssuance.commonJs')
             @endsection

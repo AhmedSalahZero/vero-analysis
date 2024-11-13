@@ -60,8 +60,14 @@ use App\Models\MoneyReceived ;
 </style>
 @endsection
 @section('sub-header')
+@if($contract)
+
  {{__('Settlement Using Contract Down Payment')}}
 							[{{ $contract->getName() }}]
+							@else
+ {{__('Settlement Using Down Payment')}}
+							
+							@endif
 @endsection
 @section('content')
 <div class="row">
@@ -83,8 +89,13 @@ use App\Models\MoneyReceived ;
                 <div class="kt-portlet__head">
                     <div class="kt-portlet__head-label">
                         <h3 class="kt-portlet__head-title head-title text-primary">
+						@if($contract)
                             {{__('Settlement Using Contract Down Payment')}}
 							[{{ $contract->getName() }}]
+							@else
+                            {{__('Settlement Using Down Payment')}}
+							
+							@endif 
                         </h3>
                     </div>
                 </div>

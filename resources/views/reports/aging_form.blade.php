@@ -77,7 +77,7 @@
 						
 					
 						 <div class="col-md-3 mb-4">
-                            <label>{{ __('Select Currency') }}   </label>
+                            <label>{{ __('Currency') }}   </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date" >
                                     <select  data-live-search="true" data-actions-box="true" name="currency" required class="form-control currency-js kt-bootstrap-select select2-select kt_bootstrap_select ajax-currency-name ajax-refresh-customers" >
@@ -89,14 +89,15 @@
                             </div>
                         </div>
 
+
                         <div class="col-md-3 mb-4">
                             <label>{{ $customersOrSupplierText }} <span class="multi_selection"></span>  </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date" >
-                                    <select  data-live-search="true" data-actions-box="true" name="clients[]" required class="form-control customers-js kt-bootstrap-select select2-select kt_bootstrap_select ajax-customer-name" multiple>
-									@foreach($invoices as $invoice)
-									<option value="{{ $invoice->getName() }}">{{ $invoice->getName() }}</option>
-									@endforeach 
+                                    <select  data-live-search="true" data-actions-box="true" name="client_ids[]" required class="form-control customers-js kt-bootstrap-select select2-select kt_bootstrap_select ajax-customer-name" multiple>
+									{{-- @foreach($partners as $partner)
+									<option value="{{ $partner->id }}">{{ $partner->getName() }}</option>
+									@endforeach  --}}
                                     </select>
                                 </div>
                             </div>
@@ -174,8 +175,9 @@
 			}
 			let customersOptions = '';
 	
-			for (var customerName of res.data.customer_names){
-				customersOptions += ` <option value="${customerName}">${customerName}</option> `
+			for (var customerId in res.data.customer_names){
+				var customerName = res.data.customer_names[customerId];
+				customersOptions += ` <option value="${customerId}">${customerName}</option> `
 			}
 			$('select.currency-js').selectpicker('destroy');
 			$('select.currency-js').empty().append(currenciesOptions)

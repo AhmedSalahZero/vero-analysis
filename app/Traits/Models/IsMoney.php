@@ -159,7 +159,37 @@ trait IsMoney
     {
 		return number_format($this->getDownPaymentAmount());
     }
-	public function getReceivingOrPaymentMoneyFormatted():string
+	public function getReceivingOrPaidAmount():string
+	{
+		if($this instanceof MoneyReceived){
+			return $this->getReceivingAmount();
+		}
+		if($this instanceof MoneyPayment){
+			return $this->getPaymentCurrency();
+		}
+		throw new \Exception('Customer Exception Invalid Money Type');
+	}
+	public function getReceivingOrPaymentCurrency():string
+	{
+		if($this instanceof MoneyReceived){
+			return $this->getReceivingCurrency();
+		}
+		if($this instanceof MoneyPayment){
+			return $this->getPaymentCurrency();
+		}
+		throw new \Exception('Customer Exception Invalid Money Type');
+	}
+	public function getReceivingOrPaymentMoneyDate():string
+	{
+		if($this instanceof MoneyReceived){
+			return $this->getReceivingDate();
+		}
+		if($this instanceof MoneyPayment){
+			return $this->getDeliveryDate();
+		}
+		throw new \Exception('Customer Exception Invalid Money Type');
+	}
+	public function getReceivingOrPaymentMoneyDateFormatted():string
 	{
 		if($this instanceof MoneyReceived){
 			return $this->getReceivingDateFormatted();
@@ -198,12 +228,12 @@ trait IsMoney
 	}
 	public function isFreeDownPayment()
 	{
-		return $this->getDownPaymentType() == self::DOWN_PAYMENT_FREE;
+		return $this->getDownPaymentType() == self::DOWN_PAYMENT_GENERAL;
 	}
 	public function appendForeignExchangeGainOrLoss(array &$formattedData,int &$index):array 
 	{
 		$invoiceCurrency = $this->getInvoiceCurrency();
-		$receivingCurrency = $this->getReceivingCurrency();
+		$receivingCurrency = $this->getReceivingOrPaymentCurrency();
 		$company = $this->company;
 		$mainFunctionalCurrency = $company->getMainFunctionalCurrency();
 		$receivingOrPaymentDate = $this->getDate();
@@ -236,7 +266,7 @@ trait IsMoney
 				$currentData['document_no'] =  $currentInvoiceNumber ;
 				$currentData['debit'] = $isGain ? $fxGainOrLossAmount  : 0;
 				$currentData['credit'] =!$isGain ? $fxGainOrLossAmount * -1  : 0;
-				$currentData['comment'] = $isGain > 0 ? __('Foreign Exchange Gain') :__('Foreign Exchange Loss') ;
+				$currentData['comment'] = $isGain > 0 ? __('Foreign Exchange Gain [ :invoiceNumber ]',['invoiceNumber'=>$currentInvoiceNumber]) :__('Foreign Exchange Loss [ :invoiceNumber ]',['invoiceNumber'=>$currentInvoiceNumber]) ;
 				$index++;
 				$formattedData[] = $currentData ;
 				
@@ -245,6 +275,38 @@ trait IsMoney
 		
 		return $formattedData ; 
 	}
+	public function getContractName()
+	{
+		return $this->contract ? $this->contract->getName() : '-';
+	}
+	public function getContractCode()
+	{
+		return $this->contract ? $this->contract->getCode() : '-';
+	}
+		public function getContractAmount()
+	{
+		return $this->contract ? $this->contract->getAmount() : 0;
+	}
+		public function getContractAmountFormatted()
+	{
+		return $this->contract ? $this->contract->getAmountFormatted() : 0;
+	}
+	public function isDownPayment()
+	{
+		return $this->getMoneyType() == 'down-payment';
+	}
+	public function isGeneralDownPayment()
+	{
+		return $this->isDownPayment() && $this->getDownPaymentType() == self::DOWN_PAYMENT_GENERAL;
+	}
+	public function isOverContractDownPayment()
+	{
+		return $this->isDownPayment() && $this->getDownPaymentType() == self::DOWN_PAYMENT_OVER_CONTRACT;
+	}
+	public function getForeignExchangeRateAtDate(){
+		return ForeignExchangeRate::getExchangeRateForCurrencyAndClosestDate($this->getReceivingOrPaymentCurrency(),$this->company->getMainFunctionalCurrency(),$this->getDate(),$this->company->id);
+	}
+			
 	
 	
 }

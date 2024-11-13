@@ -5,7 +5,6 @@ use App\Models\Company;
 use App\Models\CustomerInvoice;
 use App\Models\Deduction;
 use App\Models\DueDateHistory;
-use App\Models\MoneyReceived;
 use App\Models\SupplierInvoice;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
@@ -55,7 +54,12 @@ trait IsInvoice
     
 	public function getName()
     {
-        return $this->customer_name ;
+		if($this instanceof CustomerInvoice){
+			return $this->customer_name ; 
+		}
+		if($this instanceof SupplierInvoice){
+			return $this->supplier_name ; 
+		}
     }
 	public function getRemainingChequeAmount():float
     {
@@ -306,15 +310,7 @@ trait IsInvoice
 		}
 		return $netBalance + $totalSettlementAmount +  $totalWithholdAmount ;
 	}
-	public function getNetBalanceInEditModeForDownPayment($inEditMode,$downPayment,$isDownPaymentFromMoneyModel)
-	{
-		
-		
 	
-		$inEditMode = !is_null($downPayment);
-		$totalSettlements = $downPayment ? $downPayment->sumSettlementsForInvoice($this->id,$this->getPartnerId(),$isDownPaymentFromMoneyModel) : 0 ;
-		return $this->calculateNetBalanceInEditMode($inEditMode,$netBalance , $settlementAmount , $withholdAmount);
-	}
 	
 	public function getCollectedOrPaidAmount()
 	{

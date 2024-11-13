@@ -1514,15 +1514,23 @@ $(document).on('change','.update-exchange-rate',function(){
 	const fromCurrency = $('select.current-invoice-currency').val()
 	let toCurrency = $('input[type="hidden"].to-currency').val() 
 	toCurrency = toCurrency ? toCurrency : $('select.receiving-currency-class').val();
+	let isGeneralDownPayment = $('select#down_payment_type').val() == 'general';
 	const date = $('.exchange-rate-date').val()
 	const companyId = $('body').data('current-company-id')
 	const lang = $('body').data('lang')
 	const url = '/' + lang + '/' + companyId + '/get-exchange-rate-for-date-and-currencies/'
-	if(fromCurrency == toCurrency  ){
+	if(isGeneralDownPayment){
+		$('.show-only-when-invoice-currency-not-equal-receiving-currency').hide();
+		return ;
+	}else{
+	}
+	if(fromCurrency == toCurrency   ){
+	
 		$('.exchange-rate-class').val(1).trigger('change')
 		return 
 	}
-console.log(fromCurrency,toCurrency,date)
+	$('.show-only-when-invoice-currency-not-equal-receiving-currency').show();
+	
 	$.ajax({
 		url,
 		data:{

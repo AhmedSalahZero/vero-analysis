@@ -206,7 +206,6 @@ use App\Models\MoneyReceived;
 											<?php endif; ?> 
                                             <a data-id="<?php echo e($moneyReceived->id); ?>" data-type="single" data-currency="<?php echo e($moneyReceived->getReceivingCurrency()); ?>" data-money-type="<?php echo e(MoneyReceived::CHEQUE); ?>" data-toggle="modal" data-target="#send-to-under-collection-modal<?php echo e(MoneyReceived::CHEQUE); ?>" type="button" class="btn js-can-trigger-cheque-under-collection-modal btn-secondary btn-outline-hover-primary btn-icon" title="<?php echo e(__('Send Under Collection')); ?>" href=""><i class="fa fa-money-bill"></i></a>
 											<?php endif; ?> 
-											
 											<?php if(auth()->user()->can('delete money received')): ?>
                                             <a data-toggle="modal" data-target="#delete-cheque-id-<?php echo e($moneyReceived->id); ?>" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
                                             <div class="modal fade" id="delete-cheque-id-<?php echo e($moneyReceived->id); ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -231,7 +230,6 @@ use App\Models\MoneyReceived;
                                                 </div>
                                             </div>
 											<?php endif; ?> 
-											
                                         </span>
                                     </td>
                                 </tr>
@@ -312,10 +310,10 @@ use App\Models\MoneyReceived;
                                     <td> <?php echo e($moneyReceived->cheque->getStatusFormatted()); ?> </td>
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
-											<?php if(!$moneyReceived->isOpenBalance()): ?>
-											<?php if(auth()->user()->can('update money received')): ?>
+											<?php if(!$moneyReceived->isOpenBalance() ): ?>
+											<?php if(auth()->user()->can('update money received')  ): ?>
 											<?php echo $__env->make('reports._review_modal',['model'=>$moneyReceived], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
-                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="<?php echo e(route('edit.money.receive',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id])); ?>"><i class="fa fa-pen-alt"></i></a>
+                                            
 											<?php endif; ?> 
 											<?php endif; ?> 
                                             <a data-id="<?php echo e($moneyReceived->id); ?>" data-type="single" data-currency="<?php echo e($moneyReceived->getReceivingCurrency()); ?>" data-id="<?php echo e($moneyReceived->id); ?>" data-money-type="<?php echo e(MoneyReceived::CHEQUE_REJECTED); ?>" data-toggle="modal" data-target="#send-to-under-collection-modal<?php echo e(MoneyReceived::CHEQUE_REJECTED); ?>" type="button" class="btn js-can-trigger-cheque-under-collection-modal btn-secondary btn-outline-hover-primary btn-icon" title="<?php echo e(__('Send Under Collection')); ?>" href=""><i class="fa fa-money-bill"></i></a>
@@ -436,8 +434,8 @@ use App\Models\MoneyReceived;
 
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
-										<?php if(!$moneyReceived->isOpenBalance()): ?>
-										<?php if(auth()->user()->can('update money received')): ?>
+										<?php if(!$moneyReceived->isOpenBalance()  ): ?>
+										<?php if(auth()->user()->can('update money received') ): ?>
 										
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="<?php echo e(route('edit.money.receive',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id])); ?>"><i class="fa fa-pen-alt"></i></a>
 											<?php endif; ?> 
@@ -711,8 +709,8 @@ use App\Models\MoneyReceived;
                                     <td><?php echo e($money->getIncomingTransferAccountNumber()); ?></td>
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
-										<?php if(!$money->isOpenBalance()): ?>
-										<?php if(auth()->user()->can('update money received')): ?>
+										<?php if(!$money->isOpenBalance()  ): ?>
+										<?php if(auth()->user()->can('update money received') ): ?>
 										<?php echo $__env->make('reports._review_modal',['model'=>$money], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="<?php echo e(route('edit.money.receive',['company'=>$company->id,'moneyReceived'=>$money->id])); ?>"><i class="fa fa-pen-alt"></i></a>
 											<?php endif; ?> 
@@ -820,9 +818,9 @@ use App\Models\MoneyReceived;
                                     <td><?php echo e($moneyReceived->getCashInSafeReceiptNumber()); ?></td>
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
-										<?php if(!$moneyReceived->isOpenBalance()): ?>
+										<?php if(!$moneyReceived->isOpenBalance() ): ?>
 										
-											<?php if(auth()->user()->can('update money received')): ?>
+											<?php if(auth()->user()->can('update money received') ): ?>
 											<?php echo $__env->make('reports._review_modal',['model'=>$moneyReceived], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="<?php echo e(route('edit.money.receive',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id])); ?>"><i class="fa fa-pen-alt"></i></a>
 											<?php endif; ?> 
@@ -941,7 +939,7 @@ use App\Models\MoneyReceived;
                                         <span style="overflow: visible; position: relative; width: 110px;">
 										<?php if(!$money->isOpenBalance()): ?>
 										<?php echo $__env->make('reports._review_modal',['model'=>$money], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
-										<?php if(auth()->user()->can('update money received')): ?>
+										<?php if(auth()->user()->can('update money received')  ): ?>
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="<?php echo e(route('edit.money.receive',['company'=>$company->id,'moneyReceived'=>$money->id])); ?>"><i class="fa fa-pen-alt"></i></a>
 											<?php endif; ?> 
 											<?php if(auth()->user()->can('delete money received')): ?>

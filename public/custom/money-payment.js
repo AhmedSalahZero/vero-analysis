@@ -93,9 +93,11 @@ $(document).on('change', '.ajax-get-purchases-orders-for-contract', function () 
 	currency = currency ? currency : $(this).closest('[data-repeater-item]').find('select.current-currency').val()
 	const companyId = $('body').attr('data-current-company-id')
 	const lang = $('body').attr('data-lang')
-	$('.js-append-down-payment-to').empty()
 	if(isNaN(contractId)){
+		$('.js-append-down-payment-to').empty().hide()
 		return ;
+	}else{
+		$('.js-append-down-payment-to').show()
 	}
 	const url = '/' + lang + '/' + companyId + '/down-payments/get-purchases-orders-for-contract/' + contractId + '/' + currency
 
@@ -109,25 +111,32 @@ $(document).on('change', '.ajax-get-purchases-orders-for-contract', function () 
 		}).then(function (res) {
 			var lastNode = $('.js-down-payment-template .js-duplicate-node').clone(true)
 			$('.js-append-down-payment-to').empty()
-			
+			if(res.purchases_orders.length == 0){
+				res.purchases_orders[0] = {
+					id:-1,
+					po_number:"General",
+					paid_amount:0,
+					amount:0,
+				}
+			}
 			for (var i = 0; i < res.purchases_orders.length; i++) {
-				 var salesOrderId = res.purchases_orders[i].id
+				 var purchaseOrderId = res.purchases_orders[i].id
 				 var salesOrderNumber = res.purchases_orders[i].po_number
 				var amount = res.purchases_orders[i].amount
 				var paidAmount = res.purchases_orders[i].paid_amount
 				var domSalesOrder = $(lastNode).find('.js-purchases-order-number')
-				domSalesOrder.val(salesOrderId)
+				domSalesOrder.val(purchaseOrderId)
 				$(lastNode).find('.contract-currency').html('[ ' + currency +' ]')
-				domSalesOrder.attr('name', 'purchases_orders_amounts[' + salesOrderId + '][purchases_order_id]').val(salesOrderId)
+				domSalesOrder.attr('name', 'purchases_orders_amounts[' + purchaseOrderId + '][purchases_order_id]').val(purchaseOrderId)
 				var domSalesOrder = $(lastNode).find('.js-purchases-order-name')
-				//domSalesOrder.val(salesOrderId)'
-				domSalesOrder.attr('name', 'purchases_orders_amounts[' + salesOrderId + '][purchases_order_name]').val(salesOrderNumber)
+				//domSalesOrder.val(purchaseOrderId)'
+				domSalesOrder.attr('name', 'purchases_orders_amounts[' + purchaseOrderId + '][purchases_order_name]').val(salesOrderNumber)
 				
-				if (!onlyOneSalesOrder || (onlyOneSalesOrder && salesOrderId == specificSalesOrder)) {
+				if (!onlyOneSalesOrder || (onlyOneSalesOrder && purchaseOrderId == specificSalesOrder)) {
 					$(lastNode).find('.js-amount').val(number_format(amount, 2))
 					var domPaidAmount = $(lastNode).find('.js-paid-amount')
 					domPaidAmount.val(paidAmount)
-					domPaidAmount.attr('name', 'purchases_orders_amounts[' + salesOrderId + '][paid_amount]')
+					domPaidAmount.attr('name', 'purchases_orders_amounts[' + purchaseOrderId + '][paid_amount]')
 					
 					$('.js-append-down-payment-to').append(lastNode)
 					var lastNode = $('.js-down-payment-template .js-duplicate-node').clone(true)
@@ -475,6 +484,11 @@ $(document).on('change','select.invoice-currency-class',function(){
 	const companyId = $('body').data('current-company-id')
 	const lang = $('body').data('lang')
 	const url = '/' + lang + '/' + companyId + '/get-suppliers-based-on-currency/'+currencyName
+	const isDownPaymentForm = $('#is-down-payment-id').val()
+		if(isDownPaymentForm){
+			return ;
+		}
+		
 	$.ajax({
 		url,
 		success:function(res){

@@ -130,6 +130,7 @@ $(document).on('change','.only-smaller-than-or-equal-specific-number-allowed',fu
     {
         let currentLang = $('body').data('lang');
 		
+				
          Swal.fire({
             icon: "warning",
             title: {
@@ -137,8 +138,8 @@ $(document).on('change','.only-smaller-than-or-equal-specific-number-allowed',fu
                 "ar":""
             }[currentLang],
             text: {
-                "en":"The Value Must Be Less Than Or Equal " +greaterThan ,
-                "ar":""
+                "en":"LG Amount Must Be Less Than Or Equal To LG Room",
+                "ar":"LG Amount Must Be Less Than Or Equal To LG Room"
             }[currentLang],
         })
         $(this).val(0).trigger('change');

@@ -81,7 +81,7 @@ class LetterOfGuaranteeFacilityController
     }
 	public function getCommonDataArr():array
 	{
-		return ['contract_start_date','contract_end_date','outstanding_date','currency','limit','outstanding_amount'];
+		return ['name','contract_start_date','contract_end_date','outstanding_date','currency','limit','outstanding_amount'];
 	}
 	public function store(Company $company  ,FinancialInstitution $financialInstitution, Request $request){
 		$data = $request->only( $this->getCommonDataArr());
@@ -210,18 +210,32 @@ class LetterOfGuaranteeFacilityController
 		if(!$financialInstitution){
 			return ;
 		}
-        $letterOfGuaranteeFacility = $financialInstitution->getCurrentAvailableLetterOfGuaranteeFacility();
-		
-        $minLgCommissionRateForCurrentLgType  = $letterOfGuaranteeFacility  && $letterOfGuaranteeFacility->termAndConditionForLgType($selectedLgType) ? $letterOfGuaranteeFacility->termAndConditionForLgType($selectedLgType)->min_commission_fees : 0;
-        $lgCommissionRate  = $letterOfGuaranteeFacility  && $letterOfGuaranteeFacility->termAndConditionForLgType($selectedLgType) ? $letterOfGuaranteeFacility->termAndConditionForLgType($selectedLgType)->commission_rate : 0;
-        $minLgCashCoverRateForCurrentLgType  = $letterOfGuaranteeFacility  && $letterOfGuaranteeFacility->termAndConditionForLgType($selectedLgType) ? $letterOfGuaranteeFacility->termAndConditionForLgType($selectedLgType)->cash_cover_rate : 0;
-        $minLgIssuanceFeesForCurrentLgType  = $letterOfGuaranteeFacility  && $letterOfGuaranteeFacility->termAndConditionForLgType($selectedLgType) ? $letterOfGuaranteeFacility->termAndConditionForLgType($selectedLgType)->issuance_fees : 0;
+
+		$letterOfGuaranteeFacility = $request->has('letterOfGuaranteeFacilityId') ? LetterOfGuaranteeFacility::find($request->get('letterOfGuaranteeFacilityId')) :$financialInstitution->getCurrentAvailableLetterOfGuaranteeFacility() ;
+		if(is_null($letterOfGuaranteeFacility)){
+			return response()->json([
+				'limit'=>0 ,
+				'total_lg_outstanding_balance'=>0,
+				'total_room'=>0,
+				'current_lg_type_outstanding_balance'=>0,
+				'min_lg_commission_rate'=>0,
+				'lg_commission_rate'=>0 , 
+				'min_lg_cash_cover_rate_for_current_lg_type'=>0 ,
+				'min_lg_issuance_fees_for_current_lg_type'=>0,
+				'customers'=>[]
+	
+			]);
+		}
+        $minLgCommissionRateForCurrentLgType  = $letterOfGuaranteeFacility  && $selectedLgType && $letterOfGuaranteeFacility->termAndConditionForLgType($selectedLgType) ? $letterOfGuaranteeFacility->termAndConditionForLgType($selectedLgType)->min_commission_fees : 0;
+        $lgCommissionRate  = $letterOfGuaranteeFacility && $selectedLgType  && $letterOfGuaranteeFacility->termAndConditionForLgType($selectedLgType) ? $letterOfGuaranteeFacility->termAndConditionForLgType($selectedLgType)->commission_rate : 0;
+        $minLgCashCoverRateForCurrentLgType  = $letterOfGuaranteeFacility && $selectedLgType  && $letterOfGuaranteeFacility->termAndConditionForLgType($selectedLgType) ? $letterOfGuaranteeFacility->termAndConditionForLgType($selectedLgType)->cash_cover_rate : 0;
+        $minLgIssuanceFeesForCurrentLgType  = $letterOfGuaranteeFacility && $selectedLgType  && $letterOfGuaranteeFacility->termAndConditionForLgType($selectedLgType) ? $letterOfGuaranteeFacility->termAndConditionForLgType($selectedLgType)->issuance_fees : 0;
 
 
 		/**
 		 * @var LetterOfGuaranteeFacility $letterOfGuaranteeFacility
 		 */
-		$letterOfGuaranteeFacility = $financialInstitution->getCurrentAvailableLetterOfGuaranteeFacility();
+	//	$letterOfGuaranteeFacility = $financialInstitution->getCurrentAvailableLetterOfGuaranteeFacility();
 		$totalLastOutstandingBalanceOfFourTypes = 0 ;
 		foreach(LgTypes::getAll() as $lgTypeId => $lgTypeNameFormatted){
 			$accountTypeId = $request->get('accountTypeId');
@@ -262,7 +276,17 @@ class LetterOfGuaranteeFacilityController
 
 		]);
 	}
-
+	public function getLgFacilityBasedOnFinancialInstitution(Request $request){
+		$financialInstitutionId = $request->get('financialInstitutionId');
+		$financialInstitution = FinancialInstitution::find($financialInstitutionId);
+		$letterOfGuaranteeFacilities = $financialInstitution ? $financialInstitution->LetterOfGuaranteeFacilities
+		->where('contract_end_date', '>=', now())
+		->pluck('name','id')->toArray() : [];
+		return response()->json([
+			'letterOfGuaranteeFacilities'=>$letterOfGuaranteeFacilities
+		]);
+		
+	}
 
 
 }

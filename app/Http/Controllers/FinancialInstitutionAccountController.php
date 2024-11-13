@@ -38,7 +38,6 @@ class FinancialInstitutionAccountController
 			'exchange_rate'=>$request->get('exchange_rate')
 		]);
 		$currentAccountBeginningBalance = $financialInstitutionAccount->getOpeningBalanceFromCurrentAccountBankStatement() ;
-
 		if($currentAccountBeginningBalance){
 			$currentFullDate =$currentAccountBeginningBalance->full_date ; 
 			$time  = Carbon::make($currentFullDate)->format('H:i:s');

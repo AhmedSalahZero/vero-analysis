@@ -1165,6 +1165,7 @@
 "Deposit Date - Max Date Of Today":"تاريخ الايداع (بحد اقصى تاريخ اليوم)",
 "Account Type":"نوع الحساب",
 "Down Payment - Incoming Transfer From :name [ :contractName ] [ :contractCode ]":"Down Payment - Incoming Transfer From :name [ :contractName ] [ :contractCode ]",
+"General Down Payment - Incoming Transfer From :name":"General Down Payment - Incoming Transfer From :name",
 "Incoming Transfer From :name Settled Invoices [ :numbers ] [ :currency ] | Down Payment - [ :contractName ] [ :contractCode ]":"Incoming Transfer From :name Settled Invoices [ :numbers ] [ :currency ] | Down Payment - [ :contractName ] [ :contractCode ]",
 "Payable Cheque To :name With Number [:number ] Paid Invoices [ :numbers ] [ :currency ]":"شيك الي :name يحمل الرقم :number لدفع الفواتير [ :numbers ]",
 "Payable Cheque To :name With Number [:number ] [ :partnerType ]":"شيك الي :name يحمل الرقم [ :number ] [ :partnerType ]",
@@ -1172,7 +1173,8 @@
 "Cheque From :name With Number [ :number ] Settled Invoices [ :numbers ] [ :currency ]":"شيك من :name يحمل الرقم :number لتسديد الفواتير رقم [ :numbers ]",
 "Cheque From :name With Number [ :number ] Settled Invoices [ :numbers ] [ :currency ] | Down Payment - [ :contractName ] [ :contractCode ]":"Cheque From :name With Number [ :number ] Settled Invoices [ :numbers ] [ :currency ] | Down Payment - [ :contractName ] [ :contractCode ]",
 "Cheque From :name [ :partnerType ] With Number [ :number ]":"شيك من :name :[ :partnerType ] يحمل الرقم :number",
-"Down Payment - Cheque From :name [ :contractName ] [ :contractCode ] With Number [ :number ]":"Cheque From :name [ :contractName ] [ :contractCode ] With Number [ :number ]",
+"Down Payment - Cheque From :name [ :contractName ] [ :contractCode ] With Number [ :number ]":"Down Payment - Cheque From :name [ :contractName ] [ :contractCode ] With Number [ :number ]",
+"General Down Payment - Cheque From :name With Number [ :number ]":"General Down Payment - Cheque From :name With Number [ :number ]",
 
 
 "Cash In Safe From :name Settled Invoices [ :numbers ]":"كاش من :name لتسديد الفواتير رقم [ :numbers ]",

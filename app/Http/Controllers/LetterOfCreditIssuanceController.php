@@ -139,10 +139,7 @@ class LetterOfCreditIssuanceController
 			]
 		));
     }
-	// public function getCommonDataArr():array
-	// {
-	// 	return ['contract_start_date','contract_end_date','currency','limit'];
-	// }
+
 	public function store(Company $company  , Request $request , string $source){
 
 		$financialInstitutionId = $request->get('financial_institution_id') ;

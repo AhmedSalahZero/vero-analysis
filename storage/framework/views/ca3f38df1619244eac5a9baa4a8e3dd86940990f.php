@@ -59,9 +59,16 @@ use App\Models\MoneyReceived ;
 </style>
 <?php $__env->stopSection(); ?>
 <?php $__env->startSection('sub-header'); ?>
+<?php if($contract): ?>
+
  <?php echo e(__('Settlement Using Contract Down Payment')); ?>
 
 							[<?php echo e($contract->getName()); ?>]
+							<?php else: ?>
+ <?php echo e(__('Settlement Using Down Payment')); ?>
+
+							
+							<?php endif; ?>
 <?php $__env->stopSection(); ?>
 <?php $__env->startSection('content'); ?>
 <div class="row">
@@ -83,9 +90,15 @@ use App\Models\MoneyReceived ;
                 <div class="kt-portlet__head">
                     <div class="kt-portlet__head-label">
                         <h3 class="kt-portlet__head-title head-title text-primary">
+						<?php if($contract): ?>
                             <?php echo e(__('Settlement Using Contract Down Payment')); ?>
 
 							[<?php echo e($contract->getName()); ?>]
+							<?php else: ?>
+                            <?php echo e(__('Settlement Using Down Payment')); ?>
+
+							
+							<?php endif; ?> 
                         </h3>
                     </div>
                 </div>

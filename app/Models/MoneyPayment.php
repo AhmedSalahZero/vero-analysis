@@ -24,7 +24,7 @@ class MoneyPayment extends Model
 	const DOWN_PAYMENT = 'down-payment';
 	const CLIENT_NAME ='supplier_name';
 	const DOWN_PAYMENT_OVER_CONTRACT = 'over_contract' ;
-	const DOWN_PAYMENT_FREE = 'free' ;
+	const DOWN_PAYMENT_GENERAL = 'general' ;
 	
 	public static function generateComment(self $moneyPayment,string $lang)
 	{
@@ -36,8 +36,11 @@ class MoneyPayment extends Model
 			if($moneyPayment->isOpenBalance()){
 				return __('Opening Balance Payable Cheque To [ :supplierName ]' , ['supplierName'=>$supplierName],$lang);
 			}
-			if($moneyPayment->isDownPayment()){
-				return __('Down Payment - Cheque From :name [ :contractName ] [ :contractCode ] With Number [ :number ]',['name'=>$supplierName,'contractName'=>$moneyPayment->getContractName(),'contractCode'=>$moneyPayment->getContractCode(),'number'=>$chequeNumber],$lang) ;
+			if($moneyPayment->isGeneralDownPayment()){
+				return __('General Down Payment - Cheque :name With Number [ :number ]',['name'=>$supplierName,'number'=>$chequeNumber],$lang) ;
+			}
+			if($moneyPayment->isOverContractDownPayment()){
+				return __('Down Payment - Cheque :name [ :contractName ] [ :contractCode ] With Number [ :number ]',['name'=>$supplierName,'contractName'=>$moneyPayment->getContractName(),'contractCode'=>$moneyPayment->getContractCode(),'number'=>$chequeNumber],$lang) ;
 			}
 			if($moneyPayment->isInvoiceSettlementWithDownPayment()){
 				return __('Cheque From :name With Number [ :number ] Settled Invoices [ :numbers ] [ :currency ] | Down Payment - [ :contractName ] [ :contractCode ]',[
@@ -74,6 +77,14 @@ class MoneyPayment extends Model
 			if($moneyPayment->getPartnerType()!='is_supplier'){
 				return __('Outgoing Transfer To :name [ :partnerType ]',['name'=>$supplierName,'partnerType'=>$moneyPayment->getPartnerTypeFormatted()],$lang);
 			}
+			
+			if($moneyPayment->isGeneralDownPayment()){
+				return __('General Down Payment - Outgoing Transfer :name',['name'=>$supplierName],$lang) ;
+			}
+			if($moneyPayment->isOverContractDownPayment()){
+				return __('Down Payment - Outgoing Transfer :name [ :contractName ] [ :contractCode ]',['name'=>$supplierName,'contractName'=>$moneyPayment->getContractName(),'contractCode'=>$moneyPayment->getContractCode()],$lang) ;
+			}
+			
 			return __('Outgoing Transfer To :name Paid Invoices [ :numbers ]',['name'=>$supplierName,'numbers'=>$paidInvoiceNumbers],$lang) ;
 		}
 	}
@@ -547,10 +558,6 @@ class MoneyPayment extends Model
 		return $this->opening_balance_id !== null ;
 	}
 	
-	public function isDownPayment()
-	{
-		return $this->getMoneyType() == 'down-payment';
-	}
 	public function isInvoiceSettlementWithDownPayment()
 	{
 		return $this->getMoneyType() == self::INVOICE_SETTLEMENT_WITH_DOWN_PAYMENT;
@@ -714,19 +721,36 @@ class MoneyPayment extends Model
 	{
 		return 'money_payment_id';
 	}  
-	public function storeNewPurchaseOrders(array $purchaseOrders,int $companyId , ?int $contractId,?int $supplierId)
+	public function storeNewPurchaseOrders(array $purchaseOrders,int $companyId , ?int $contractId,?int $supplierId,$paidAmount)
 	{
-		foreach($purchaseOrders as $salesOrderReceivedAmountArr)
+		if(!count($purchaseOrders)){
+			$purchaseOrders[] = [
+				'paid_amount'=>$paidAmount,
+				'company_id'=>$companyId,
+				'contract_id'=>null ,
+				'down_payment_amount'=>$paidAmount,
+				'currency'=>$this->getPaymentCurrency(),
+				'purchases_order_id'=>null
+			];
+		}
+		
+		foreach($purchaseOrders as $purchaseOrderArr)
 		{
-			if(isset($salesOrderReceivedAmountArr['paid_amount'])&&$salesOrderReceivedAmountArr['paid_amount'] > 0){
-				$salesOrderReceivedAmountArr['company_id'] = $companyId ;
+			if(isset($purchaseOrderArr['paid_amount'])&&$purchaseOrderArr['paid_amount'] > 0){
+				$downPaymentAmount = $purchaseOrderArr['paid_amount'];
+				$purchaseOrderArr['company_id'] = $companyId ;
 				$this->downPaymentSettlements()->create(array_merge(
-					$salesOrderReceivedAmountArr ,
+					$purchaseOrderArr ,
 					[
 						'contract_id'=>$contractId,
 						'supplier_id'=>$supplierId,
-						'down_payment_amount'=>$salesOrderReceivedAmountArr['paid_amount']
-						]
+						'down_payment_amount'=>$downPaymentAmount,
+						'currency'=>$this->getPaymentCurrency()
+					],
+					[
+						'purchases_order_id'=>$purchaseOrderArr['purchases_order_id'] == -1 ? null : $purchaseOrderArr['purchases_order_id'],
+						'down_payment_balance'=>$downPaymentAmount
+					]
 					));
 			}
 		}

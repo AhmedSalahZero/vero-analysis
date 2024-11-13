@@ -108,6 +108,11 @@
                                     <input disabled value="{{ $financialInstitution->getName()  }}" type="text" class="form-control" placeholder="{{__('Financial Institution Name')}}">
                                 </div>
                             </div>
+							
+							   <div class="col-md-4 ">
+                                <x-form.input :model="$model??null" :label="__('Name')" :type="'text'" :placeholder="__('Name')" :name="'name'" :class="''" :required="true"></x-form.input>
+                            </div>
+							
                             <div class="col-md-2">
 
                                 <x-form.date :label="__('Contract Start Date')" :required="true" :model="$model??null" :name="'contract_start_date'" :placeholder="__('Select Contract Start Date')"></x-form.date>

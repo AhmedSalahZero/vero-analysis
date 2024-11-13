@@ -176,7 +176,6 @@ use App\Models\MoneyReceived;
 											@endif 
                                             <a data-id="{{ $moneyReceived->id }}" data-type="single" data-currency="{{ $moneyReceived->getReceivingCurrency() }}" data-money-type="{{ MoneyReceived::CHEQUE }}" data-toggle="modal" data-target="#send-to-under-collection-modal{{ MoneyReceived::CHEQUE }}" type="button" class="btn js-can-trigger-cheque-under-collection-modal btn-secondary btn-outline-hover-primary btn-icon" title="{{ __('Send Under Collection') }}" href=""><i class="fa fa-money-bill"></i></a>
 											@endif 
-											{{-- @if(!$moneyReceived->isOpenBalance()) --}}
 											@if(auth()->user()->can('delete money received'))
                                             <a data-toggle="modal" data-target="#delete-cheque-id-{{ $moneyReceived->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
                                             <div class="modal fade" id="delete-cheque-id-{{ $moneyReceived->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -201,7 +200,6 @@ use App\Models\MoneyReceived;
                                                 </div>
                                             </div>
 											@endif 
-											{{-- @endif  --}}
                                         </span>
                                     </td>
                                 </tr>
@@ -261,10 +259,10 @@ use App\Models\MoneyReceived;
                                     <td> {{ $moneyReceived->cheque->getStatusFormatted() }} </td>
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
-											@if(!$moneyReceived->isOpenBalance())
-											@if(auth()->user()->can('update money received'))
+											@if(!$moneyReceived->isOpenBalance() )
+											@if(auth()->user()->can('update money received')  )
 											@include('reports._review_modal',['model'=>$moneyReceived])
-                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.money.receive',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id]) }}"><i class="fa fa-pen-alt"></i></a>
+                                            {{-- <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.money.receive',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id]) }}"><i class="fa fa-pen-alt"></i></a> --}}
 											@endif 
 											@endif 
                                             <a data-id="{{ $moneyReceived->id }}" data-type="single" data-currency="{{ $moneyReceived->getReceivingCurrency() }}" data-id="{{ $moneyReceived->id }}" data-money-type="{{ MoneyReceived::CHEQUE_REJECTED }}" data-toggle="modal" data-target="#send-to-under-collection-modal{{ MoneyReceived::CHEQUE_REJECTED }}" type="button" class="btn js-can-trigger-cheque-under-collection-modal btn-secondary btn-outline-hover-primary btn-icon" title="{{ __('Send Under Collection') }}" href=""><i class="fa fa-money-bill"></i></a>
@@ -364,8 +362,8 @@ use App\Models\MoneyReceived;
 
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
-										@if(!$moneyReceived->isOpenBalance())
-										@if(auth()->user()->can('update money received'))
+										@if(!$moneyReceived->isOpenBalance()  )
+										@if(auth()->user()->can('update money received') )
 										
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.money.receive',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id]) }}"><i class="fa fa-pen-alt"></i></a>
 											@endif 
@@ -599,8 +597,8 @@ use App\Models\MoneyReceived;
                                     <td>{{ $money->getIncomingTransferAccountNumber() }}</td>
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
-										@if(!$money->isOpenBalance())
-										@if(auth()->user()->can('update money received'))
+										@if(!$money->isOpenBalance()  )
+										@if(auth()->user()->can('update money received') )
 										@include('reports._review_modal',['model'=>$money])
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.money.receive',['company'=>$company->id,'moneyReceived'=>$money->id]) }}"><i class="fa fa-pen-alt"></i></a>
 											@endif 
@@ -687,9 +685,9 @@ use App\Models\MoneyReceived;
                                     <td>{{ $moneyReceived->getCashInSafeReceiptNumber() }}</td>
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
-										@if(!$moneyReceived->isOpenBalance())
+										@if(!$moneyReceived->isOpenBalance() )
 										
-											@if(auth()->user()->can('update money received'))
+											@if(auth()->user()->can('update money received') )
 											@include('reports._review_modal',['model'=>$moneyReceived])
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.money.receive',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id]) }}"><i class="fa fa-pen-alt"></i></a>
 											@endif 
@@ -787,7 +785,7 @@ use App\Models\MoneyReceived;
                                         <span style="overflow: visible; position: relative; width: 110px;">
 										@if(!$money->isOpenBalance())
 										@include('reports._review_modal',['model'=>$money])
-										@if(auth()->user()->can('update money received'))
+										@if(auth()->user()->can('update money received')  )
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.money.receive',['company'=>$company->id,'moneyReceived'=>$money->id]) }}"><i class="fa fa-pen-alt"></i></a>
 											@endif 
 											@if(auth()->user()->can('delete money received'))

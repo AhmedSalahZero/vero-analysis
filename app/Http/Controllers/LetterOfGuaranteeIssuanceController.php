@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\LgTypes;
+use App\Http\Requests\StoreLetterOfGuaranteeIssuanceRequest;
 use App\Models\AccountType;
 use App\Models\CertificatesOfDeposit;
 use App\Models\Company;
@@ -21,6 +22,7 @@ use App\Traits\GeneralFunctions;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use App\Http\Requests\UpdateLetterOfGuaranteeIssuanceRequest;
 
 class LetterOfGuaranteeIssuanceController
 {
@@ -103,8 +105,10 @@ class LetterOfGuaranteeIssuanceController
 		elseif($source == LetterOfGuaranteeIssuance::AGAINST_TD){
 			$cdOrTdAccountTypes = AccountType::onlyTdAccounts()->get();
 		}
+		$financialInstitutionBanks = FinancialInstitution::with('letterOfGuaranteeFacilities')->onlyForCompany($company->id)->onlyBanks()->onlyForSource($source)->onlyHasLgFacility()->get();
+
 		return [
-			'financialInstitutionBanks'=> FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->onlyForSource($source)->get(),
+			'financialInstitutionBanks'=>$financialInstitutionBanks  ,
 			'beneficiaries'=>[],
 			// 'beneficiaries'=>Partner::onlyCustomers()->onlyForCompany($company->id)->get(),
 			'contracts'=>Contract::onlyForCompany($company->id)->get(),
@@ -132,7 +136,7 @@ class LetterOfGuaranteeIssuanceController
 	{
 		return ['contract_start_date','contract_end_date','currency','limit'];
 	}
-	public function store(Company $company  , Request $request , string $source){
+	public function store(Company $company  , StoreLetterOfGuaranteeIssuanceRequest $request , string $source){
 		$partner = Partner::find($request->get('partner_id'));
 		$customerName = $partner->getName() ;
 		$lgCode = $request->get('lg_code');
@@ -214,7 +218,7 @@ class LetterOfGuaranteeIssuanceController
 
 	}
 
-	public function update(Company $company , Request $request , LetterOfGuaranteeIssuance $letterOfGuaranteeIssuance,string $source){
+	public function update(Company $company , UpdateLetterOfGuaranteeIssuanceRequest $request , LetterOfGuaranteeIssuance $letterOfGuaranteeIssuance,string $source){
 		if($letterOfGuaranteeIssuance->renewalDateHistories->count()  > 1){
 		return redirect()->route('view.letter.of.guarantee.issuance',['company'=>$company->id,'active'=>$request->get('lg_type')])->with('success',__('Data Store Successfully'));
 			
