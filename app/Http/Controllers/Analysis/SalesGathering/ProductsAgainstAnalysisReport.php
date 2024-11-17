@@ -69,6 +69,22 @@ class ProductsAgainstAnalysisReport
 	public function result(Request $request, Company $company, $result = "view", $secondReport = true)
 	{
 
+		if($request->report_type =='comparing' && $secondReport == true ){
+			$firstReportStartDate = $request->get('start_date_second');
+			$firstReportEndDate = $request->get('end_date_second');
+			$startDate = $request->get('start_date');
+			$endDate = $request->get('end_date');
+			if(Carbon::make($firstReportEndDate)->lessThan(Carbon::make($endDate))){
+				$request->merge([
+					'start_date'=>$firstReportStartDate,
+					'end_date'=>$firstReportEndDate,
+					'start_date_second'=>$startDate,
+					'end_date_second'=>$endDate
+				]);
+				
+			}
+		}
+		
 		$report_data = [];
 		$growth_rate_data = [];
 		$final_report_total = [];
