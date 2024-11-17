@@ -6807,7 +6807,7 @@ if (!function_exists('getFixedLoanTypes')) {
 		$result = [];
 		foreach($items as $key => $arr){
 			if(isset($arr[$keyName]) && $arr[$keyName] > 0){
-				$result[] = $key ;
+					$result[] = $key ;
 			}
 		}
 		return implode(',',$result) ;
@@ -6964,4 +6964,14 @@ function getAllPartnerTypesForCustomers():array
 {
 	return ['is_customer'=>__('Customer'),'is_subsidiary_company'=>__('Subsidiary Company') , 'is_shareholder'=>__('Shareholder') , 'is_employee'=>__('Employee')];
 	
+}
+function hasExport(array $fields,int $companyId,$modelName='SalesGathering')
+{
+	$exportableFields = CustomizedFieldsExportation::where('company_id',$companyId)->where('model_name',$modelName)->first()->fields;
+	foreach($fields as $field){
+		if(!in_array($field,$exportableFields)){
+			return false ;
+		}
+	}
+	return true ;
 }

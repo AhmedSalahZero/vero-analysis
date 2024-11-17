@@ -88,21 +88,13 @@
                         <div class="tab-pane {{$section_key == 0 ? 'active' : ''}}" id="kt_widget2_tab1_content_{{$mainSubSection->id}}">
                             <div class="kt-widget2">
                                 <div class="row">
-                                    
-{{-- {{ logger() }} --}}
                                     @foreach ($mainSubSection->subSections as $sub_section)
-
-
-              
                                         @php $name_of_section = substr($sub_section->name['en'], strpos($sub_section->name['en'] , "Against")+8 ); @endphp 
                                                 @if($name_of_section == 'Products')
                                                 @php
                                                     $name_of_section ='Products / Services';
                                                 @endphp
                                                 @endif 
-												
-												
-
                                         @if ($section->name['en'] !== 'Sales Breakdown Analysis Report' && $mainSubSection->name['en'] !== "Average Prices" )
 										
                                             @if ($name_of_section == "Products / Services")

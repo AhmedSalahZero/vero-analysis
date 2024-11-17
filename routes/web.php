@@ -943,6 +943,7 @@ Route::middleware([])->group(function () {
 
                 Route::prefix('/SalesGathering')->group(function () {
                     Route::get('SalesTrendAnalysis', 'AnalysisReports@salesAnalysisReports')->name('sales.trend.analysis');
+                    Route::get('SalesTrendAnalysis2', 'AnalysisReports@salesAnalysisReports2')->name('sales.trend.analysis2');
                     Route::get('SalesExportAnalysis', 'AnalysisReports@exportAnalysisReports')->name('sales.export.analysis');
                     Route::get('SalesBreakdownAnalysis', 'AnalysisReports@salesAnalysisReports')->name('sales.breakdown.analysis');
 

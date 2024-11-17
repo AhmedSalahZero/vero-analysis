@@ -194,6 +194,7 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 			var lastNode = $('.js-template .js-duplicate-node').clone(true)
 			
 			$('.js-append-to').empty()
+	
 			for (var i in res.invoices) {
 			
 				var invoiceId = res.invoices[i].id
@@ -392,7 +393,7 @@ return rows ;
 	
 
 }
-$(document).on('change', '.js-settlement-amount,[data-max-cheque-value]', function () {
+$(document).on('change', '.js-settlement-amount,.settlement-amount-class,[data-max-cheque-value]', function () {
 	let total = 0
 	$('.js-settlement-amount').each(function (index, input) {
 		var currentVal = $(input).val() ? number_unformat($(input).val()) : 0  ;
@@ -400,6 +401,12 @@ $(document).on('change', '.js-settlement-amount,[data-max-cheque-value]', functi
 	})
 	const currentType = $('#type').val()
 	const paidAmount = number_unformat($('.amount-after-exchange-rate-class[data-type="'+currentType+'"]').val())
+	
+	var exchangeRate = $('.exchange-rate-class[data-type="'+currentType+'"]').val()
+	let totalOrdersAmount = 0 ;
+	$('.js-append-down-payment-to .settlement-amount-class').each(function(index,element){
+		totalOrdersAmount += parseFloat(number_unformat($(element).val()));
+	})
 	let totalRemaining = paidAmount - total
 	totalRemaining = totalRemaining ? totalRemaining : 0
 	
@@ -409,7 +416,10 @@ $(document).on('change', '.js-settlement-amount,[data-max-cheque-value]', functi
 		$('#contract-row-id').hide()
 	}
 	
-	$('#remaining-settlement-js').val(totalRemaining)
+	$('#remaining-settlement-js').val(number_format(totalRemaining))
+
+	var totalRemainingInRecCurrency = totalRemaining * exchangeRate-  totalOrdersAmount;
+	$('#remaining-settlement-taking-js').val(number_format(totalRemainingInRecCurrency))
 
 })
 $('.js-send-to-collection').on('change', function () {
@@ -484,7 +494,9 @@ $(document).on('change','select.invoice-currency-class',function(){
 	const companyId = $('body').data('current-company-id')
 	const lang = $('body').data('lang')
 	const url = '/' + lang + '/' + companyId + '/get-suppliers-based-on-currency/'+currencyName
-	const isDownPaymentForm = $('#is-down-payment-id').val()
+	const isDownPaymentForm = $('#is-down-payment-id').val();
+	$('#remaining-settlement-js').closest('.closest-parent').find('.invoice-currency-span').html('[ ' +  currencyName +' ]');
+	
 		if(isDownPaymentForm){
 			return ;
 		}
@@ -492,8 +504,9 @@ $(document).on('change','select.invoice-currency-class',function(){
 	$.ajax({
 		url,
 		success:function(res){
-			let options = '<option value="">Select</option>';
+			let options = '<option selected value="">Select</option>';
 			let currentSelected = $('select#supplier_name').val()
+			// let currentSelected = $('select#supplier_name').attr('data-current-selected')
 			for(supplierId in res.supplierInvoices ){
 				var supplierName = res.supplierInvoices[supplierId]
 				options +=` <option value="${supplierId}" ${currentSelected == supplierId ? 'selected' : ''} >${supplierName}</option>`

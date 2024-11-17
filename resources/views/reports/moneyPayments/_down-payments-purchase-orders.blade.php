@@ -16,8 +16,10 @@
       </div>
 
 
-      <div class="col-md-2">
-          <label>{{__('Paid Amount')}} @include('star')</label>
+      <div class="col-md-2 closest-parent">
+          <label>{{__('Paid Amount')}} 
+		  <span class="contract-currency"> </label>
+		  @include('star')</label>
           <div class="kt-input-icon">
               <input name="purchases_orders_amounts[][paid_amounts]" placeholder="{{ __('Paid Amount') }}" type="text" class="form-control js-paid-amount only-greater-than-or-equal-zero-allowed settlement-amount-class">
           </div>

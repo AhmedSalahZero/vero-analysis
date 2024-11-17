@@ -74,12 +74,7 @@ class AgingController
 		$businessUnits = $request->get('business_units',[]);
 		$salesPersons = $request->get('sales_persons',[]);
 		$businessSectors = $request->get('business_sectors',[]);
-		
-		// dd();
-		// dd($this->getCustomersOrSuppliers($invoiceTableName ,$currency, $customer_or_supplier_id,$customer_or_supplier_name,$company,$businessUnits,$salesPersons,$businessSectors));
 		$clientIds = $request->get('client_ids',array_keys($this->getCustomersOrSuppliers($invoiceTableName ,$currency, $customer_or_supplier_id,$customer_or_supplier_name,$company,$businessUnits,$salesPersons,$businessSectors)->toArray()));
-		// dd($clientIds);
-		// dd($modelType,$customersOrSupplierAgingText,$clientIds);
 		$invoiceAgingService = new InvoiceAgingService($company->id ,$aginDate,$currency);
 		$agings  = $invoiceAgingService->__execute($clientIds,$modelType) ;
 		$weeksDates =formatWeeksDatesFromStartDate($aginDate);

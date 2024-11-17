@@ -32,4 +32,39 @@ class SalesGathering extends Model
     {
         return $query->where('company_id', request()->company->id?? Request('company_id') );
     }
+	public static function getTrendAnalysisTabs(int $companyId)
+	{
+		$trendTabs = TablesField::where('is_sales_trend',1)->pluck('field_name','view_name')->toArray();
+		dd($trendTabs);
+		
+		return [
+			$mainReportName = 'zone'=>[
+				'view_name'=>__('Zones'),
+				'show'=>hasExport([$mainReportName],$companyId),
+				'icon'=>'fa fa-crosshairs',
+				'subTabs'=>[
+					[
+						'first_col'=>$mainReportName,
+						'show'=>true ,
+						'view_name'=>__('Zones Sales Analysis'),
+						'route'=>route('view.single.trend.analysis',[$companyId,$mainReportName])
+					],
+					[
+						'first_col'=>$mainReportName,
+						'second_col'=>$secondColumn = 'sales_channel',
+						'view_name'=>__('Zone Against Sales Channels'),
+						'route'=>route('view.against.trend.analysis',[$companyId,$mainReportName,$secondColumn])
+					],
+					[
+						'first_col'=>$mainReportName,
+						'second_col'=>$secondColumn = 'sales_channel',
+						'view_name'=>__('Zone Against Sales Channels'),
+						'route'=>route('view.against.trend.analysis',[$companyId,$mainReportName,$secondColumn])
+					],
+				]
+				],
+				
+		];
+	}
+	
 }

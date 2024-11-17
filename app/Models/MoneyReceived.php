@@ -10,6 +10,7 @@ use App\Traits\Models\HasReviewedBy;
 use App\Traits\Models\IsMoney;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -230,29 +231,8 @@ class MoneyReceived extends Model
     {
         return  $this->amount_in_invoice_currency?:0 ;
     }
-	public function getAmountForMainCurrency()
-	{
-		$company =$this->company ;
-		$mainFunctionalCurrency = $company->getMainFunctionalCurrency() ;
-		$receivingCurrency=  $this->getReceivingCurrency();
-		$receivingDate = $this->getReceivingDate();
-		$foreignExchangeRate = ForeignExchangeRate::getExchangeRateForCurrencyAndClosestDate($receivingCurrency,$mainFunctionalCurrency,$receivingDate,$company->id);
-		$amount  = $this->getAmount();
-		if($mainFunctionalCurrency == $receivingCurrency){
-			return $amount ;
-		}
-		return $amount * $foreignExchangeRate;
 	
-	}
-	public function getTotalWithholdInInvoiceExchangeRate()
-	{
-		$totalWithhold = 0 ;
-		foreach($this->settlements as $settlement ){
-			$invoiceExchangeRate = $settlement->customerInvoice->getExchangeRate();
-			$totalWithhold+= $settlement->getWithhold() * $invoiceExchangeRate;
-		}
-		return $totalWithhold;
-	}
+	
     public function getReceivedAmount()
     {
         return  $this->received_amount?:0 ;
@@ -665,6 +645,13 @@ class MoneyReceived extends Model
 	{
 		return $this->hasOne(CashInSafeStatement::class,'money_received_id','id');
 	}
+	
+	
+	
+	
+	
+	
+	
 	public function currentAccountDebitBankStatement()
 	{
 		return $this->hasOne(CurrentAccountBankStatement::class,'money_received_id','id');
@@ -701,8 +688,9 @@ class MoneyReceived extends Model
 		if($moneyType == self::INVOICE_SETTLEMENT_WITH_DOWN_PAYMENT){
 			$moneyType = __('Invoice Settlement & Down Payment');
 		}
+
 		if($partnerType != 'is_customer'){
-			return __('Money Received From :name [ :partnerType ]',['name'=>$this->getName(),'partnerType'=>$this->getPartnerTypeFormatted()]);	
+			return __('Money Received From [ :partnerType ]',['partnerType'=>$this->getPartnerTypeFormatted()]);	
 		}
 		return camelizeWithSpace($moneyType) ;
 	}
@@ -750,6 +738,11 @@ class MoneyReceived extends Model
 		$this->downPaymentSettlements->each(function($downPaymentSettlement){
 			$downPaymentSettlement->delete();
 		});
+		// money_received_id
+		// $this->subsidiaryCompanyStatement ? $this->subsidiaryCompanyStatement->delete() : null;
+		// $this->shareholderStatement ? $this->shareholderStatement->delete() : null;
+		// $this->employeeStatement ? $this->employeeStatement->delete() : null;
+		// $this->cleanOverdraftDebitBankStatement ? $this->cleanOverdraftDebitBankStatement->delete() :null ;
 		
 		$this->deletePartnerStatement();
 	}

@@ -140,7 +140,7 @@
 </style>
 @endsection
 @section('sub-header')
-<x-main-form-title :id="'main-form-title'" :class="''">{{ __('Total Balance In '  ) . ' ' . __($currency) }}</x-main-form-title>
+<x-main-form-title :id="'main-form-title'" :class="''">{{ __('Balance In '  ) . ' ' . __($currency) }}</x-main-form-title>
 @endsection
 @section('content')
 

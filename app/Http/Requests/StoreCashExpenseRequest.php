@@ -30,7 +30,8 @@ class StoreCashExpenseRequest extends FormRequest
 		})->toArray();
 		
 		$this->merge([
-			'paid_amount'=>$paidAmounts
+			'paid_amount'=>$paidAmounts,
+			'unapplied_amount'=>number_unformat($this->get('unapplied_amount'))
 		]);
 	}
 	

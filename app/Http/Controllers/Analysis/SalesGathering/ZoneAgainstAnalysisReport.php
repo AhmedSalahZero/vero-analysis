@@ -20,7 +20,6 @@ class ZoneAgainstAnalysisReport
 	use GeneralFunctions;
 	public function index(Company $company)
 	{
-
 		if (request()->route()->named('zone.salesChannels.analysis')) {
 			$type = 'sales_channel';
 			$view_name = 'Zones Against Sales Channels Trend Analysis';
@@ -88,7 +87,6 @@ class ZoneAgainstAnalysisReport
 		} elseif ($type  == 'averagePricesProductItems') {
 			$name_of_selector_label = 'Products Items';
 		}
-
 		return view('client_view.reports.sales_gathering_analysis.zone_analysis_form', compact('company', 'name_of_selector_label', 'type', 'view_name'));
 	}
 	public function ZoneSalesAnalysisIndex(Company $company)
@@ -328,50 +326,13 @@ class ZoneAgainstAnalysisReport
 					return $sub_item->sum($sales_discount_field);
 				})->toArray();
 
-
-
-
-				// $sales_gatherings = SalesGathering::company()
-				//     ->where('zone', $zone)
-				//     ->whereBetween('date', [$request->start_date, $request->end_date])
-				//     ->selectRaw('DATE_FORMAT(date,"%d-%m-%Y") as date,sales_value,zone,' . $sales_discount_field)
-				//     ->get()
-				//     ->toArray();
-
-				// $zones_sales_values_per_month = [];
 				$zones_sales_values = [];
-				// $zones_discount_per_month = [];
 				$zones_per_month = [];
 				$zones_data = [];
 				$discount_years = [];
-				// $sales_values_per_zone =[];
-
-				// $sales_gatherings_per_channel = $sales_gatherings;
-				// $first_key_of_array = array_key_first($sales_gatherings_per_channel);
+		
 				if (@count($zones_discount) > 0) {
 
-					// $dt = Carbon::parse($sales_gatherings_per_channel[$first_key_of_array]['date']);
-					// $month = $dt->endOfMonth()->format('d-m-Y');
-
-
-
-					// foreach ($sales_gatherings_per_channel as $key => $row) {
-
-					//     $dt = Carbon::parse($row['date']);
-					//     $current_month = $dt->endOfMonth()->format('d-m-Y');
-					//     if ($current_month == $month) {
-					//         // $zones_sales_values_per_month[$current_month][] = $row['sales_value'];
-					//         $zones_discount_per_month[$current_month][] = $row[$sales_discount_field];
-					//     } else {
-					//         $month = $current_month;
-					//         // $zones_sales_values_per_month[$current_month][] = $row['sales_value'];
-					//         $zones_discount_per_month[$current_month][] = $row[$sales_discount_field];
-					//     }
-
-					//     // $zones_sales_values[$month] = array_sum($zones_sales_values_per_month[$month]);
-					//     $zones_discount[$month] = array_sum($zones_discount_per_month[$month]);
-					// }
-					// Data & Growth Rate Per Sales Channel
 
 
 					array_walk($zones_discount, function ($val, $date) use (&$discount_years) {
@@ -386,8 +347,6 @@ class ZoneAgainstAnalysisReport
 
 
 
-
-					// $sales_values_per_zone[$zone] = $zones_sales_values;
 
 					$interval_data = Intervals::intervalsWithoutDouble($request->get('end_date'),$sales_values_per_zone, $sales_years, $request->interval);
 

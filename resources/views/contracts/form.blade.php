@@ -824,7 +824,6 @@ use App\Models\MoneyReceived ;
         const currency = $(this).find('option:selected').data('currency').toUpperCase()
         $(parent).find('.contract-code').val(code)
         $(parent).find('.contract-amount').val(number_format(amount) + ' '  + currency )
-        // $(parent).find('.contract-currency').val(currency)
 
     })
     $(document).on('change', 'select.suppliers-or-customers-js', function() {

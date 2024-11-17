@@ -93,6 +93,7 @@ class SalesGatheringController extends Controller
 		$firstIndexElementInLabeling = $salesGatherings->first() ? $salesGatherings->first()->id : 0;
 		$lastIndexElementInLabeling = $salesGatherings->last() ? $salesGatherings->last()->id : 0;
         $navigators =$this->getUploadingPageExportNavigation($modelName,$uploadPermissionName,$exportPermissionName,$deletePermissionName,$firstIndexElementInLabeling,$lastIndexElementInLabeling);
+		
         return view('client_view.sales_gathering.index', compact('navigators','loan','hasLabelingItemCodeField','hasCodeColumnForLabelingItem','labelingUniqueItemsPerColumn', 'salesGatherings', 'company', 'viewing_names', 'db_names', 'uploadPermissionName', 'exportPermissionName', 'deletePermissionName', 'modelName', 'notPeriodClosedCustomerInvoices'));
     }
     
@@ -173,7 +174,7 @@ class SalesGatheringController extends Controller
 		$modelType  = $request->get('modelType');
 		$fullModelName = 'App\Models\\'.$modelType ;
 		$model = $fullModelName::find($modelId);
-        toastr()->error('Deleted Successfully');
+		toastr()->error('Deleted Successfully');
         $model->delete();
         return redirect()->back();
     }

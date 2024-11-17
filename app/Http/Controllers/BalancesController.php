@@ -2,10 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\HArr;
 use App\Models\Company;
-use App\Models\DownPaymentSettlement;
-use App\Models\MoneyReceived;
 use App\Models\User;
 use App\Traits\GeneralFunctions;
 use Illuminate\Http\Request;
@@ -15,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 class BalancesController
 {
     use GeneralFunctions;
-	protected function sumNetBalancePerCurrency(array $items , string $mainCurrency,string $clientNameColumnName ):array 
+	protected function sumNetBalancePerCurrency(array $items, string $mainCurrency,string $clientNameColumnName ):array 
 	{
 		
 		$total = [];
@@ -28,7 +25,7 @@ class BalancesController
 			}
 			$customerName = $item->{$clientNameColumnName} ;
 			$currentValueForCurrency = $item->net_balance;
-			$currentValueForMainCurrency= $item->net_balance_in_main_currency;
+			$currentValueForMainCurrency= $item->net_balance_in_main_currency  ;
 			$total['currencies'][$currencyName] = isset($total['currencies'][$currencyName]) ? $total['currencies'][$currencyName] + $currentValueForCurrency   :  $currentValueForCurrency;
 			// $total['main_currency'][$mainCurrency] = isset($total['main_currency'][$mainCurrency]) ? $total['main_currency'][$mainCurrency] + $currentValueForMainCurrency  : $currentValueForMainCurrency;
 			$total['customers_per_currency'][$mainCurrency][$customerName][$id] =   $currentValueForCurrency;
@@ -36,7 +33,6 @@ class BalancesController
 			$id++;
 			
 		}
-		
 		$valueAtMainCurrency = $total['currencies'][$mainCurrency] ?? 0;
 		unset($total['currencies'][$mainCurrency]);
 		$totalOfCurrency  = $total['currencies'] ?? [];
@@ -86,7 +82,7 @@ class BalancesController
 		->with([$moneyModelName])
 		->get();
 		foreach($downPaymentSettlements as $downPaymentSettlement){
-			$moneyReceived = $downPaymentSettlement->moneyReceived ;
+			$moneyReceived = $downPaymentSettlement->{$moneyModelName} ;
 			$partnerId = $downPaymentSettlement->{$clientIdColumnName};
 			$downPaymentCurrency = $downPaymentSettlement->currency ;
 			$foreignExchangeRateAtDate =$moneyReceived->getForeignExchangeRateAtDate();

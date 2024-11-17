@@ -1,6 +1,7 @@
 @props([
 'currencyName','total','color','customerName','showReport','invoiceType',
-'mainFunctionalCurrency'
+'mainFunctionalCurrency',
+'downPayment'
 ])
 @once
 
@@ -26,16 +27,22 @@
             <div class="kt-widget24__info">
                 <h4 class="kt-widget24__title font-size text-nowrap black-card-title-css">
 					@if($currencyName == 'main_currency')
-                    {{ __('Total Balance In Main Currency ' . $mainFunctionalCurrency ) }}
+                    {{ __('Balance In Main Currency ' . $mainFunctionalCurrency ) }}
 					@else
-                    {{ __('Total Balance In ' . $currencyName ) }}
+                    {{ __('Balance In ' . $currencyName ) }}
 					@endif
+					
                 </h4>
 
             </div>
             @if($showReport && $currencyName)
-					@if($currencyName!= 'main_currency')
-            <div class="report-flex">
+					
+            <div class="report-flex
+			@if($currencyName== 'main_currency')
+			visibility-hidden
+			@endif
+			"
+			>
                 <div class="kt-align-right ">
                     <a href="{{ route('show.total.net.balance.in',['company'=>$company->id , 'currency'=>$currencyName ,'modelType'=>$invoiceType   ]) }}" type="button" class="d-flex ml-3 btn btn-sm btn-brand btn-elevate btn-pill"><i class="fa fa-chart-line"></i> {{ __('All Invoices Report') }} </a>
                 </div>
@@ -44,7 +51,7 @@
                     <a href="{{ route('show.total.net.balance.in',['company'=>$company->id , 'currency'=>$currencyName ,'modelType'=>$invoiceType,'only'=>'past_due'   ]) }}" type="button" class="d-flex ml-3 btn btn-sm btn-brand btn-elevate btn-pill"><i class="fa fa-chart-line"></i> {{ __('Past Dues Report') }} </a>
                 </div>
             </div>
-			@endif
+			
 			
 			@else 
 

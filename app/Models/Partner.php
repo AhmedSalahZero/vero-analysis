@@ -127,7 +127,6 @@ class Partner extends Model
 	{
 		return $this->hasMany(SupplierInvoice::class,'supplier_id','id');
 	}
-	
 	public function updateNamesInAllTables(array $columnNames , string $oldPartnerName,string $newPartnerName, int $companyId , array $additionalWhere = [])
 	{
 		$tables = DB::connection()->getDoctrineSchemaManager()->listTableNames();

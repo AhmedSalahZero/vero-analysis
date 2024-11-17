@@ -813,6 +813,14 @@ $selectedBanks = [];
 
             $('.show-only-when-invoice-currency-not-equal-receiving-currency').addClass('hidden')
         }
+		
+			if(receivingCurrency != invoiceCurrency){
+		$('#remaining-settlement-taking-js').closest('.closest-parent').removeClass('visibility-hidden');	
+		$('#remaining-settlement-taking-js').closest('.closest-parent').find('.taking-currency-span').html('[ ' +  receivingCurrency +' ]')
+		}else{
+		$('#remaining-settlement-taking-js').closest('.closest-parent').addClass('visibility-hidden');	
+		}
+		
 
     })
     $(document).on('change', '.recalculate-amount-class', function() {
