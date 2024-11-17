@@ -81,7 +81,22 @@ class BusinessSectorsAgainstAnalysisReport
     public function result(Request $request, Company $company,$result='view' , $secondReport = true )
     {
         
-
+		if($request->report_type =='comparing' && $secondReport == true ){
+			$firstReportStartDate = $request->get('start_date_second');
+			$firstReportEndDate = $request->get('end_date_second');
+			$startDate = $request->get('start_date');
+			$endDate = $request->get('end_date');
+			if(Carbon::make($firstReportEndDate)->lessThan(Carbon::make($endDate))){
+				$request->merge([
+					'start_date'=>$firstReportStartDate,
+					'end_date'=>$firstReportEndDate,
+					'start_date_second'=>$startDate,
+					'end_date_second'=>$endDate
+				]);
+				
+			}
+		}
+		// dd($request->all());
         $report_data =[];
         $report_data_quantity =[];
         $growth_rate_data =[];
@@ -418,7 +433,6 @@ class BusinessSectorsAgainstAnalysisReport
     public function BusinessSectorsSalesAnalysisResult(Request $request, Company $company , $array = false )
     {
         $dimension = $request->report_type;
-
         $report_data =[];
         $growth_rate_data =[];
         $businessSectors = is_array(json_decode(($request->businessSectors[0]))) ? json_decode(($request->businessSectors[0])) :$request->businessSectors ;
