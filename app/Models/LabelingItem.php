@@ -87,8 +87,10 @@ class LabelingItem extends Model
 		$row = $this->getAttributes() ;
 		$previousRowLastQuantity = $this->getPreviousRowsQuantities();
 		$textPart = '';
-		$numericParent = '//'.$serial;
+		$numericParent = '';
+		// $numericParent = '//'.$serial;
 		$quantityStartFrom = $this->quantityStartFrom() ;
+		// dd($row);
 		foreach($row as $key=>$val){
 			if(!in_array($key , (array)$company->generate_labeling_code_fields ))
 			{
@@ -97,15 +99,15 @@ class LabelingItem extends Model
 			
 			if(strtolower($key) == 'qty' || strtolower($key) == 'quantity' ){
 			
-				$sumPrev = $quantityStartFrom + ($previousRowLastQuantity == 0 ? 1 : $previousRowLastQuantity) ; 
-				$sumPrevQ = $quantityStartFrom + $previousRowLastQuantity ; 
-				$toQuantity = $sumPrevQ+ $val ;
-				$fromQuantity = $previousRowLastQuantity ? $sumPrev +1 : $sumPrev ;
-				$quantityExpression =  $fromQuantity !=   $toQuantity ? $fromQuantity  . 'To' .  $toQuantity : '';
-				if($returnQuantityString){
-					return $quantityExpression ;
-				}
-				$numericParent .= $quantityExpression ;
+				// $sumPrev = $quantityStartFrom + ($previousRowLastQuantity == 0 ? 1 : $previousRowLastQuantity) ; 
+				// $sumPrevQ = $quantityStartFrom + $previousRowLastQuantity ; 
+				// $toQuantity = $sumPrevQ+ $val ;
+				// $fromQuantity = $previousRowLastQuantity ? $sumPrev +1 : $sumPrev ;
+				// $quantityExpression =  $fromQuantity !=   $toQuantity ? $fromQuantity  . 'To' .  $toQuantity : '';
+				// if($returnQuantityString){
+				// 	return $quantityExpression ;
+				// }
+				// $numericParent .= $quantityExpression ;
 			}
 			elseif(is_numeric($val)){
 				$numericParent.= $val;

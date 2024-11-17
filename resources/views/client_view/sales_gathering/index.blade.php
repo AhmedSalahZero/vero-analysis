@@ -248,7 +248,6 @@ $date = now()->format('d-m-Y')
 
             <div class="form-group row" style="flex:1;">
                 <div class="col-md-12 mt-3">
-
                     <form method="get" action="{{ route('view.uploading',['company'=>$company->id,'model'=>'LabelingItem']) }}" class="row align-items-center">
                         <input type="hidden" name="filter_labeling" value="1">
 
