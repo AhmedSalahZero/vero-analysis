@@ -46,7 +46,8 @@ class TestCommand extends Command
 	 */
 	public function handle()
 	{
-		dd(hasExport(['date','country','q'],40));
+		
+		// dd(hasExport(['date','country','q'],40));
 		
 		///////////////////////////
 		$url = 'itechs-testing.odoo.com';
@@ -63,8 +64,9 @@ class TestCommand extends Command
 		$models = ripcord::client("$url/xmlrpc/2/object");
 		
 		$ids=$models->execute_kw($db, $uid, $password, 'res.partner', 'search',array(array(array('is_company', '=', true))), array('limit' => 10));
-		$records = $models->execute_kw($db, $uid, $password, 'account.move', 'read', array($ids));
-		// $records = $models->execute_kw($db, $uid, $password, 'res.partner', 'read', array($ids));
+		// $records = $models->execute_kw($db, $uid, $password, 'account.move', 'read', array($ids));
+		$records = $models->execute_kw($db, $uid, $password, 'res.partner', 'read', array($ids));
+		// dd($records);
 
 		// dd($records[0]);
 		// $this->refreshStatement('CustomerInvoice','created_at');
