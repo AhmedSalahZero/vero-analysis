@@ -41,7 +41,8 @@ class StoreMoneyReceivedRequest extends FormRequest
 			];
 		}
 		$this->merge(array_merge([
-			'received_amount'=>$receivedAmounts
+			'received_amount'=>$receivedAmounts,
+			'unapplied_amount'=>number_unformat($this->get('unapplied_amount'))
 		] , $additionalData));
 	}
 

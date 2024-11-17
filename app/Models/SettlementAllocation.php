@@ -45,12 +45,10 @@ class SettlementAllocation extends Model
 			MoneyPayment::PAYABLE_CHEQUE => $chequeStatus == PayableCheque::PAID ? __('Paid Payable Cheques') : __('Under Payment Payable Cheques')
 		][$moneyType];
 		
-		
-	
 		$settlementAllocations  =  self::where('settlement_allocations.contract_id',$contractId)->with(['moneyPayment','moneyPayment.supplier'])
 			->join('money_payments','settlement_allocations.money_payment_id','=','money_payments.id')
 			->where('money_payments.type',$moneyType)
-			->where('partner_id',$customerId)
+			->where('settlement_allocations.partner_id',$customerId)
 			->where('currency',$currencyName)
 			->whereBetween($dateFieldName,[$startDate,$endDate])
 			->when($chequeStatus , function(Builder $builder) use ($chequeStatus){

@@ -286,7 +286,7 @@ class MoneyPaymentController
 
 		foreach($invoices as $index=>$invoiceArr){
 			$invoices[$index]['settlement_amount'] = $moneyPayment ? $moneyPayment->sumSettlementsForInvoice($invoiceArr['id'],$partnerId,0) : 0;
-			$invoices[$index]['withhold_amount'] = $moneyPayment ? $moneyPayment->sumSettlementsForInvoice($invoiceArr['id'],$partnerId,0) : 0;
+			$invoices[$index]['withhold_amount'] = $moneyPayment ? $moneyPayment->sumWithholdAmountForInvoice($invoiceArr['id'],$partnerId,0) : 0;
 		}
 
 		$invoices = $this->formatInvoices($invoices,$inEditMode,$moneyPayment);
@@ -317,7 +317,7 @@ class MoneyPaymentController
 		$supplierName = $supplier->getName();
 		$supplierId = $supplier->id;
 		$paymentBranchName = $request->get('delivery_branch_id') ;
-		$data = $request->only(['type','delivery_date','currency','payment_currency','down_payment_type']);
+		$data = $request->only(['type','delivery_date','currency','payment_currency','down_payment_type','partner_type']);
 		$data['currency'] = $isGeneralDownPayment ? $data['payment_currency'] : $data['currency'];
 		$currencyName = $data['currency'];
 		$paymentCurrency = $data['payment_currency'];
@@ -329,17 +329,19 @@ class MoneyPaymentController
 		$isDownPaymentFromMoneyPayment = $request->get('unapplied_amount',0) > 0 && !$request->get('is_down_payment') ;
 		$data['money_type'] =  !$isDownPayment ? 'money-payment' : 'down-payment';
 		$data['money_type'] = $isDownPaymentFromMoneyPayment ? MoneyPayment::INVOICE_SETTLEMENT_WITH_DOWN_PAYMENT : $data['money_type'];
-
+		$currency = $data['currency'] ;
 
 		$relationData = [];
 		$relationName = null ;
+		$isTheSameCurrency = $currency == $paymentCurrency ;
 		$exchangeRate = $currencyName == $paymentCurrency ? 1 : number_unformat($request->input('exchange_rate.'.$moneyType,1)) ;
 		
 		$amountInPaymentCurrency = $request->input('paid_amount.'.$moneyType ,0) ;
 		$amountInPaymentCurrency = unformat_number($amountInPaymentCurrency);
 		
-
-		$invoiceCurrencyAmount = $amountInPaymentCurrency / $exchangeRate ;
+		$totalSettlements = array_sum(array_column($request->get('settlements',[]),'settlement_amount'));
+		$invoiceCurrencyAmount =  $isTheSameCurrency ? $amountInPaymentCurrency  : $totalSettlements  ;
+		// $invoiceCurrencyAmount = $amountInPaymentCurrency / $exchangeRate ;
 		
 		if($moneyType == MoneyPayment::CASH_PAYMENT){
 			$relationData = $request->only(['receipt_number']) ;
@@ -414,15 +416,14 @@ class MoneyPaymentController
 		$accountNumber = $request->input('account_number.'.$moneyType) ;
 		$deliveryBranchId = $relationData['delivery_branch_id'] ?? null ;
 		$moneyPayment->handleCreditStatement($company->id , $financialInstitutionId,$accountType,$accountNumber,$moneyType,$statementDate,$amountInPaymentCurrency,$deliveryBranchId,$paymentCurrency);
-		
+		$isSupplier = $partnerType == 'is_supplier';
 		if($partnerType && $partnerType != 'is_supplier'){
 			$moneyPayment->handlePartnerDebitStatement($partnerType,$partnerId, $moneyPayment->id,$company->id,$statementDate,$invoiceCurrencyAmount,$paymentCurrency,$bankNameOrBranchName , $accountType , $accountNumber);
 		}
 		/**
 		 * * For Money Payment Only
 		 */
-		$totalWithholdAmount= 0 ;
-		$moneyPayment->storeNewSettlement(
+		$totalWithholdAmount = $moneyPayment->storeNewSettlement(
 			// $paymentCurrency,$currencyName,$exchangeRate,$foreignExchangeRate,
 			$request->get('settlements',[]),$partnerId,$company->id);
 		$moneyPayment->update([
@@ -435,7 +436,7 @@ class MoneyPaymentController
 		
 	
 		if($hasUnappliedAmount || $isDownPayment){
-			$moneyPayment->storeNewPurchaseOrders($request->get('purchases_orders_amounts',[]),$company->id,$contractId,$supplierId,$amountInPaymentCurrency);
+			$moneyPayment->storeNewPurchaseOrders($request->get('purchases_orders_amounts',[]),$contractId,$supplierId,$company->id,$amountInPaymentCurrency);
 		}
 		/**
 		 * @var SupplierInvoice $supplierInvoice

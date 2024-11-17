@@ -17,14 +17,14 @@ class DownPaymentContractsController extends Controller
     public function viewContractsWithDownPayments(Company $company,Request $request,int $partnerId,string $modelType,string $currency)
 	{
 		$fullModelType = 'App\Models\\'.$modelType;
-		
 		$moneyModelName = $fullModelType::MONEY_MODEL_NAME ;
 		$fullMoneyModelName = 'App\Models\\'.$fullModelType::MONEY_MODEL_NAME ;
-		
+		$moneyTableName = $fullModelType::MONEY_RECEIVED_OR_PAYMENT_TABLE_NAME ;
+		$receivingOrPaymentCurrencyColumnName = $fullMoneyModelName::RECEIVING_OR_PAYMENT_CURRENCY_COLUMN_NAME;
 		$partner = Partner::find($partnerId);
 		$partnerId = $partner->id;
 		$partnerName = $partner->getName();
-		$contractsWithDownPayments = MoneyReceived::CONTRACTS_WITH_DOWN_PAYMENTS;
+		$contractsWithDownPayments = $fullMoneyModelName::CONTRACTS_WITH_DOWN_PAYMENTS;
 		$numberOfMonthsBetweenEndDateAndStartDate = 18 ;
 		$currentType = $request->get('active',$contractsWithDownPayments);
 		$filterDates = [];
@@ -43,22 +43,20 @@ class DownPaymentContractsController extends Controller
 		  /**
 		 * * start of bank to safe internal money transfer 
 		 */
-		
-		// $runningStartDate = $filterDates[$contractsWithDownPayments]['startDate'] ?? null ;
-		// $runningEndDate = $filterDates[$contractsWithDownPayments]['endDate'] ?? null ;
+
 		$moneyModels = $fullMoneyModelName::whereIn('money_type',[
-			MoneyReceived::DOWN_PAYMENT
-			,MoneyReceived::INVOICE_SETTLEMENT_WITH_DOWN_PAYMENT
+			$fullMoneyModelName::DOWN_PAYMENT
+			,$fullMoneyModelName::INVOICE_SETTLEMENT_WITH_DOWN_PAYMENT
 		])
-		->where('money_received.company_id',$company->id)
-		->where('money_received.partner_id',$partnerId)
-		->where('money_received.receiving_currency',$currency)
+		->where($moneyTableName.'.company_id',$company->id)
+		->where($moneyTableName.'.partner_id',$partnerId)
+		->where($moneyTableName.'.'.$receivingOrPaymentCurrencyColumnName,$currency)
 		->leftJoin('contracts','contracts.id','=','contract_id')
 		->where(function($q){
 			$q->where('contract_id','=',null)->orWhere('contracts.status','!=',Contract::FINISHED);
 		})
 		->with('contract')
-		->selectRaw('money_received.*,contracts.id as contractId')
+		->selectRaw($moneyTableName.'.*,contracts.id as contractId')
 		->get();
 
 		
@@ -93,7 +91,6 @@ class DownPaymentContractsController extends Controller
 		$downPaymentModelName=$fullClassName::MONEY_MODEL_NAME;
 		$downPaymentModelFullName = 'App\Models\\'.$downPaymentModelName ;   
 		$downPayment =$downPaymentModelFullName::find($downPaymentId);
-		
 		$contract = $downPayment->contract;
 		$partnerId = $downPayment->getPartnerId();
 		$partnerName = $downPayment->getPartnerName();
@@ -123,11 +120,11 @@ class DownPaymentContractsController extends Controller
 		$invoices = $invoices->orderBy('invoice_date','asc')->get() ; 
 		$downPaymentAmount =  $downPayment->getDownPaymentAmount();
 		$isDownPaymentFromMoneyPayment = $downPayment->isInvoiceSettlementWithDownPayment();
-		$hasProjectNameColumn = CustomerInvoice::hasProjectNameColumn();
-		
+		$hasProjectNameColumn = $fullClassName::hasProjectNameColumn();
+		$clientName = (new $fullClassName)->getClientNameText();
 		return view('contracts-down-payment.settlement_form',[
-			'modelType'=>'MoneyReceived',
-			'customerNameText'=>__('Customer Name'),
+			'modelType'=>$downPaymentModelName,
+			'customerNameText'=>$clientName,
 			'hasProjectNameColumn'=>$hasProjectNameColumn,
 			'invoices'=>$invoices ,
 			'downPayment'=>$downPayment,

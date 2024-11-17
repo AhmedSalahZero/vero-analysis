@@ -1214,7 +1214,7 @@
 "Return LG Cash Cover [ :customerName ] [ :transactionName ] [ :lgCode ]":"رد الغطاء النقدي لخطاب ضمان [ :customerName ] [ :transactionName ] [ :lgCode ]",
 "Received In [ :bankName ] [ :accountType ] [ :accountNumber ]":"Received In [ :bankName ] [ :accountType ] [ :accountNumber ]",
 "Received In [ :bankName ]":"Received In [ :bankName ]",
-"Money Received From :name [ :partnerType ]":"Money Received From :name - :partnerType",
+"Money Received From [ :partnerType ]":"Money Received From - :partnerType",
 "At Least There Must Be One Current Account in :currencyName":"علي الاقل يجب ان يكون هناك حساب جاري بعملة :currencyName"
 
 

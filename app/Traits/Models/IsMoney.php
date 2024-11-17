@@ -55,16 +55,14 @@ trait IsMoney
 			] ;
 		}
 		return [
-			'settlement_amount_in_main_currency'=>-8 ,
-			'withhold_amount_in_main_currency'=>-8,
-			'settlement_in_invoice_exchange_rate'=>-8
+			'settlement_amount_in_main_currency'=>0,
+			'withhold_amount_in_main_currency'=>0,
+			'settlement_in_invoice_exchange_rate'=>0
 		];
 	}
 	public function storeNewSettlement(
-		// string $receivingCurrencyOrPaymentCurrency,string $invoiceCurrency , $exchangeRate ,$foreignExchangeRate,
 	array $settlements,int $partnerId,int $companyId , bool $isFromDownPayment = false )
 	{
-		// $fullInvoiceModelName = $this instanceof MoneyReceived ?'App\Models\CustomerInvoice' : 'App\Models\SupplierInvoice';
 		
 		$totalWithholdAmount= 0 ;
 		foreach($settlements as $settlementArr)
@@ -141,10 +139,9 @@ trait IsMoney
     }
 	public function isUserType(string $type):bool
 	{
-		// is_supplier
 		return $this->partner->{$type} == 1 ;
-	
 	}
+	
 	
 	public function getDownPaymentAmount()
     {
@@ -232,6 +229,8 @@ trait IsMoney
 	}
 	public function appendForeignExchangeGainOrLoss(array &$formattedData,int &$index):array 
 	{
+		$isCustomer = $this instanceof MoneyReceived;
+		$isSupplier = $this instanceof MoneyPayment;
 		$invoiceCurrency = $this->getInvoiceCurrency();
 		$receivingCurrency = $this->getReceivingOrPaymentCurrency();
 		$company = $this->company;
@@ -256,7 +255,6 @@ trait IsMoney
 					$fxGainOrLossAmount = $settlementAmount * (($receivingOrPaymentExchangeRate * $foreignExchangeRate) - $invoiceExchangeRate);
 				}
 				$currentInvoiceNumber = $settlement->getInvoiceNumber();
-				$isGain = $fxGainOrLossAmount > 0 ;
 				if($fxGainOrLossAmount == 0){
 					continue;
 				}
@@ -264,9 +262,17 @@ trait IsMoney
 				$currentData['date'] = Carbon::make($receivingOrPaymentDate)->format('d-m-Y');
 				$currentData['document_type'] = __('FX Gain Or Loss') ;
 				$currentData['document_no'] =  $currentInvoiceNumber ;
-				$currentData['debit'] = $isGain ? $fxGainOrLossAmount  : 0;
-				$currentData['credit'] =!$isGain ? $fxGainOrLossAmount * -1  : 0;
-				$currentData['comment'] = $isGain > 0 ? __('Foreign Exchange Gain [ :invoiceNumber ]',['invoiceNumber'=>$currentInvoiceNumber]) :__('Foreign Exchange Loss [ :invoiceNumber ]',['invoiceNumber'=>$currentInvoiceNumber]) ;
+				if($isCustomer){
+					$isGain = $fxGainOrLossAmount > 0 ;
+					$currentData['debit'] = $isGain ? $fxGainOrLossAmount  : 0;
+					$currentData['credit'] =!$isGain ? $fxGainOrLossAmount * -1  : 0;
+					$currentData['comment'] = $isGain ? __('Foreign Exchange Gain [ :invoiceNumber ]',['invoiceNumber'=>$currentInvoiceNumber]) :__('Foreign Exchange Loss [ :invoiceNumber ]',['invoiceNumber'=>$currentInvoiceNumber]) ;
+				}elseif($isSupplier){
+					$isGain = $fxGainOrLossAmount < 0 ;
+					$currentData['debit'] = $isGain ? $fxGainOrLossAmount* -1  : 0;
+					$currentData['credit'] =!$isGain ? $fxGainOrLossAmount   : 0;
+					$currentData['comment'] = $isGain ? __('Foreign Exchange Gain [ :invoiceNumber ]',['invoiceNumber'=>$currentInvoiceNumber]) :__('Foreign Exchange Loss [ :invoiceNumber ]',['invoiceNumber'=>$currentInvoiceNumber]) ;
+				}
 				$index++;
 				$formattedData[] = $currentData ;
 				
@@ -306,7 +312,29 @@ trait IsMoney
 	public function getForeignExchangeRateAtDate(){
 		return ForeignExchangeRate::getExchangeRateForCurrencyAndClosestDate($this->getReceivingOrPaymentCurrency(),$this->company->getMainFunctionalCurrency(),$this->getDate(),$this->company->id);
 	}
-			
+	public function getAmountForMainCurrency()
+	{
+		$company =$this->company ;
+		$mainFunctionalCurrency = $company->getMainFunctionalCurrency() ;
+		$receivingCurrency=  $this->getReceivingOrPaymentCurrency();
+		$receivingDate = $this->getReceivingOrPaymentMoneyDate();
+		$foreignExchangeRate = ForeignExchangeRate::getExchangeRateForCurrencyAndClosestDate($receivingCurrency,$mainFunctionalCurrency,$receivingDate,$company->id);
+		$amount  = $this->getAmount();
+		if($mainFunctionalCurrency == $receivingCurrency){
+			return $amount ;
+		}
+		return $amount * $foreignExchangeRate;
+	
+	}
+	public function getTotalWithholdInInvoiceExchangeRate()
+	{
+		$totalWithhold = 0 ;
+		foreach($this->settlements as $settlement ){
+			$invoiceExchangeRate = $settlement->invoice->getExchangeRate();
+			$totalWithhold+= $settlement->getWithhold() * $invoiceExchangeRate;
+		}
+		return $totalWithhold;
+	}			
 	
 	
 }

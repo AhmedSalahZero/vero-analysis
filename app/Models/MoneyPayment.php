@@ -10,6 +10,7 @@ use App\Traits\Models\HasReviewedBy;
 use App\Traits\Models\IsMoney;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -25,12 +26,15 @@ class MoneyPayment extends Model
 	const CLIENT_NAME ='supplier_name';
 	const DOWN_PAYMENT_OVER_CONTRACT = 'over_contract' ;
 	const DOWN_PAYMENT_GENERAL = 'general' ;
+	const SUPPLIER_INVOICE = 'supplierINo' ;
+	const CONTRACTS_WITH_DOWN_PAYMENTS = 'contracts-with-down-payments';
+	const RECEIVING_OR_PAYMENT_CURRENCY_COLUMN_NAME='payment_currency';
 	
-	public static function generateComment(self $moneyPayment,string $lang)
+	public static function generateComment(self $moneyPayment,string $lang,?string $invoiceNumbers = '',?string $supplierName = null)
 	{
-		$supplierName = $moneyPayment->getSupplierName();
 		$paidInvoiceNumbers = getKeysWithSettlementAmount(Request()->get('settlements',[]),'settlement_amount');
-		
+		$paidInvoiceNumbers =  $paidInvoiceNumbers?: $invoiceNumbers;
+		$supplierName = is_null($supplierName) ?$moneyPayment->getSupplierName() : $supplierName;
 		if($moneyPayment->isPayableCheque()){
 			$chequeNumber = $moneyPayment->getPayableChequeNumber()?:Request('cheque_number');
 			if($moneyPayment->isOpenBalance()){
@@ -578,7 +582,7 @@ class MoneyPayment extends Model
 			$moneyType = __('Invoice Settlement & Down Payment');
 		}
 		if($partnerType != 'is_supplier'){
-			return __('Money Paid To :name [ :partnerType ]',['name'=>$this->getName(),'partnerType'=>$this->getPartnerTypeFormatted()]);	
+			return __('Money Paid To [ :partnerType ]',['partnerType'=>$this->getPartnerTypeFormatted()]);	
 		}
 		return camelizeWithSpace($moneyType) ;
 	}
@@ -721,7 +725,7 @@ class MoneyPayment extends Model
 	{
 		return 'money_payment_id';
 	}  
-	public function storeNewPurchaseOrders(array $purchaseOrders,int $companyId , ?int $contractId,?int $supplierId,$paidAmount)
+	public function storeNewPurchaseOrders(array $purchaseOrders , ?int $contractId,?int $supplierId,int $companyId,$paidAmount)
 	{
 		if(!count($purchaseOrders)){
 			$purchaseOrders[] = [
@@ -739,7 +743,7 @@ class MoneyPayment extends Model
 			if(isset($purchaseOrderArr['paid_amount'])&&$purchaseOrderArr['paid_amount'] > 0){
 				$downPaymentAmount = $purchaseOrderArr['paid_amount'];
 				$purchaseOrderArr['company_id'] = $companyId ;
-				$this->downPaymentSettlements()->create(array_merge(
+				$dataArr = array_merge(
 					$purchaseOrderArr ,
 					[
 						'contract_id'=>$contractId,
@@ -751,9 +755,24 @@ class MoneyPayment extends Model
 						'purchases_order_id'=>$purchaseOrderArr['purchases_order_id'] == -1 ? null : $purchaseOrderArr['purchases_order_id'],
 						'down_payment_balance'=>$downPaymentAmount
 					]
-					));
+					);
+			
+					$this->downPaymentSettlements()->create($dataArr);
 			}
 		}
+	}
+	
+	public function subsidiaryCompanyStatement(): HasOne
+	{
+		return $this->hasOne(SubsidiaryCompanyStatement::class,'money_received_id','id');
+	}
+	public function shareholderStatement(): HasOne
+	{
+		return $this->hasOne(ShareholderStatement::class,'money_received_id','id');
+	}
+	public function employeeStatement(): HasOne
+	{
+		return $this->hasOne(EmployeeStatement::class,'money_received_id','id');
 	}
 	
 

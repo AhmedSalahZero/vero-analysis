@@ -193,7 +193,6 @@ use App\Models\MoneyReceived ;
 						  
 						  <div class=" kt-margin-b-10 border-class">
 			<div class="form-group row align-items-end">
-			
 				<?php if($hasProjectNameColumn): ?>
 				<div class="col-md-1 width-17 ">
 					<label> <?php echo e(__('Project Name')); ?> </label>

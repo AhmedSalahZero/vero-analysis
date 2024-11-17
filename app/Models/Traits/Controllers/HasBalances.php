@@ -126,6 +126,7 @@ trait HasBalances
 			// $q->where('currency',$currency);
 		})
 		->get() ; 
+	
 		foreach($allMoneyModels as $moneyModel) {
 		
 			$dateReceivingFormatted = $moneyModel->getReceivingOrPaymentMoneyDateFormatted() ;
@@ -193,7 +194,7 @@ trait HasBalances
 					}
 					
 					
-					elseif($moneyModel->getReceivingCurrency() == $currency || $isMainCurrency){
+					elseif($moneyModel->getReceivingOrPaymentCurrency() == $currency || $isMainCurrency){
 						
 						  // start down payment from receiving currency 
 				

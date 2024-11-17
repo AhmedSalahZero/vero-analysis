@@ -32,6 +32,7 @@ trait HasPartnerStatement
 	}
 	public function getPartnerType()
 	{
+
 		$partnerType = $this->partner_type ;
 		if(!$partnerType){
 			if($this instanceof MoneyReceived){
@@ -61,6 +62,7 @@ trait HasPartnerStatement
 		if($partnerType == 'is_subsidiary_company'){
 			return __('Subsidiary Company');
 		}
+		
 		throw new \Exception('Custom Exception .. This Partner Type Not Allowed [ ' . $partnerType .' ]');
 	}
 	public function isEmployee()

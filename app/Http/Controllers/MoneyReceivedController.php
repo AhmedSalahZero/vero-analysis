@@ -366,7 +366,7 @@ class MoneyReceivedController
 		// $customerName = $customer->getName();
 		$customerId = $customer->id;
 		$receivedBankName = $request->get('receiving_branch_id') ;
-		$data = $request->only(['type','receiving_date','currency','receiving_currency','customer_id','down_payment_type']);
+		$data = $request->only(['type','receiving_date','currency','receiving_currency','customer_id','down_payment_type','partner_type']);
 		$data['currency'] = $isGeneralDownPayment ? $data['receiving_currency'] : $data['currency'];
 		$receivingDate = $data['receiving_date'];
 		$currency = $data['currency'] ;
@@ -390,7 +390,7 @@ class MoneyReceivedController
 		$amountInReceivingCurrency = $request->input('received_amount.'.$moneyType ,0) ;
 		
 		$amountInReceivingCurrency = unformat_number($amountInReceivingCurrency);
-		$totalSettlements = array_sum(array_column($request->get('settlements'),'settlement_amount'));
+		$totalSettlements = array_sum(array_column($request->get('settlements',[]),'settlement_amount'));
 		$invoiceCurrencyAmount =  $isTheSameCurrency ? $amountInReceivingCurrency  : $totalSettlements  ;
 		// $totalSalesOrderAmount = $isTheSameCurrency ? 0 : array_sum(array_column($request->get('sales_orders_amounts'),'received_amount'));
 		
@@ -445,9 +445,9 @@ class MoneyReceivedController
 		 */
 		$accountType = AccountType::find($request->input('account_type.'.$moneyType));
 		$accountNumber = $request->input('account_number.'.$moneyType) ;
-		$mainFunctionCurrency = $company->getMainFunctionalCurrency();
+		// $mainFunctionCurrency = $company->getMainFunctionalCurrency();
 		$receivingDate = Carbon::make($receivingDate)->format('Y-m-d');
-		$foreignExchangeRate = ForeignExchangeRate::getExchangeRateForCurrencyAndClosestDate($currency,$mainFunctionCurrency,$receivingDate,$company->id);
+		// $foreignExchangeRate = ForeignExchangeRate::getExchangeRateForCurrencyAndClosestDate($currency,$mainFunctionCurrency,$receivingDate,$company->id);
 		if(!$isDownPayment && !$isDownPaymentFromMoneyReceived){
 			unset($data['contract_id']);
 		}
@@ -463,7 +463,7 @@ class MoneyReceivedController
 		 * @var MoneyReceived $moneyReceived
 		 */
 		$moneyReceived = $moneyReceived->refresh();
-			
+		$isCustomer = $partnerType == 'is_customer'; 
 		$moneyReceived->handleDebitStatement($financialInstitutionId,$accountType,$accountNumber,$moneyType,$statementDate,$amountInReceivingCurrency,$receivingCurrency,$receivingBranchId);
 		if($partnerType && $partnerType != 'is_customer' ){
 			$moneyReceived->handlePartnerCreditStatement($partnerType,$partnerId, $moneyReceived->id,$company->id,$statementDate,$amountInReceivingCurrency,$receivingCurrency,$bankNameOrBranchName , $accountType , $accountNumber);
@@ -484,7 +484,7 @@ class MoneyReceivedController
 		 */
 		
 
-		if($hasUnappliedAmount || $isDownPayment){
+		if( $hasUnappliedAmount || $isDownPayment){
 			$moneyReceived->storeNewSalesOrdersAmounts($request->get('sales_orders_amounts',[]),$contractId,$customerId,$companyId,$amountInReceivingCurrency);
 		}
 		// if(!$isTheSameCurrency && $totalSalesOrderAmount > 0){

@@ -444,7 +444,7 @@ $date = now()->format('d-m-Y')
                 <span class="d-flex justify-content-center" style="overflow: visible; position: relative; width: 110px;">
 					
                     {{-- <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{route('salesGathering.edit',[$company,$item])}}"><i class="fa fa-pen-alt"></i></a> --}}
-                    <form class="kt-portlet__body" method="post" action="{{route('salesGathering.destroy',[$company,$item->id,'modelType'=>$modelName])}}" style="display: inline">
+                    <form class="kt-portlet__body" method="post" action="{{route('salesGathering.destroy',[$company->id,$item->id,$modelName])}}" style="display: inline">
 					
 						@if($modelName == 'LoanSchedule')
 						<a href="{{ route('view.loan.schedule.settlements',['company'=>$company->id , 'loanSchedule'=>$item->id]) }}" class="btn btn-secondary btn-outline-hover-primary btn-icon">
@@ -453,7 +453,7 @@ $date = now()->format('d-m-Y')
 						@endif 
                         @method('DELETE')
                         @csrf
-					
+						<input type="hidden" name="modelType" value="{{ $modelName }}">
                         <a class="btn btn-secondary btn-outline-hover-primary btn-icon" title="Edit" href="{{route('edit.sales.form',['company'=>$company->id,'model'=>$modelName , 'modelId'=>$item->id])}}"><i class="fa fa-edit"></i></a>
                         <button type="submit" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href=""><i class="fa fa-trash-alt"></i></button>
                     </form>

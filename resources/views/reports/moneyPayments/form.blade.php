@@ -136,7 +136,7 @@ $selectedBanks = [];
                                 <div class="input-group date">
                                     <select required name="partner_type" id="partner_type" class="form-control">
 										@foreach( getAllPartnerTypesForSuppliers() as $type => $title)
-                                 	       <option  @if(isset($model) && $model->isUserType($type) ) selected @endif value="{{ $type }}">{{$title}}</option>
+                                 	       <option  @if(isset($model) && $model->getPartnerType()==$type ) selected @endif value="{{ $type }}">{{$title}}</option>
 										@endforeach 
                                     </select>
                                 </div>
@@ -851,10 +851,18 @@ $selectedBanks = [];
                 <div class="col-md-1 width-12"></div>
                 <div class="col-md-2 width-12"></div>
                 <div class="col-md-2 width-12"></div>
-                <div class="col-md-2 width-12"></div>
-                <div class="col-md-2 width-12">
-                    <label class="label">{{ __('Unapplied Amount') }}</label>
-                    <input id="remaining-settlement-js" class="form-control" placeholder="{{ __('Unapplied Amount') }}" type="text" name="unapplied_amount" value="0">
+                  <div class="col-md-2 width-12 closest-parent">
+                            <label class="label text-nowrap">{{ __('Unapplied Amount') }}
+								<span class="taking-currency-span"></span>
+							</label>
+                            <input readonly id="remaining-settlement-taking-js" class="form-control" placeholder="{{ __('Unapplied Amount') }}" type="text" value="0">
+                        </div>
+                <div class="col-md-2 width-12 closest-parent">
+                    <label class="label">{{ __('Unapplied Amount') }}
+					
+					<span class="invoice-currency-span"></span>
+					</label>
+                    <input readonly id="remaining-settlement-js" class="form-control" placeholder="{{ __('Unapplied Amount') }}" type="text" name="unapplied_amount" value="0">
                 </div>
             </div>
         </div>
@@ -957,6 +965,13 @@ $selectedBanks = [];
 
             $('.show-only-when-invoice-currency-not-equal-receiving-currency').addClass('hidden')
         }
+		
+			if(receivingCurrency != invoiceCurrency){
+		$('#remaining-settlement-taking-js').closest('.closest-parent').removeClass('visibility-hidden');	
+		$('#remaining-settlement-taking-js').closest('.closest-parent').find('.taking-currency-span').html('[ ' +  receivingCurrency +' ]')
+		}else{
+		$('#remaining-settlement-taking-js').closest('.closest-parent').addClass('visibility-hidden');	
+		}
 
     })
     $(document).on('change', '.recalculate-amount-class', function() {
