@@ -113,8 +113,11 @@ class SupplierInvoice extends Model implements IInvoice
 		return $this->getStatus() === self::COLLETED_OR_PAID; 
  	}
 	
-	
-	
+	 public static function hasProjectNameColumn()
+	 {
+		 return DB::table('supplier_invoices')->where('company_id',getCurrentCompanyId())->where('project_name','!=',null)->count();
+	 }
+
 	public function getNetBalanceUntil(string $date)
 	{
 		$invoiceId = $this->getId();

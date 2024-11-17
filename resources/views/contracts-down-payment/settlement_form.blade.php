@@ -189,7 +189,6 @@ use App\Models\MoneyReceived ;
 						  
 						  <div class=" kt-margin-b-10 border-class">
 			<div class="form-group row align-items-end">
-			
 				@if($hasProjectNameColumn)
 				<div class="col-md-1 width-17 ">
 					<label> {{ __('Project Name') }} </label>

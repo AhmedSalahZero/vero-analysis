@@ -10,7 +10,6 @@ use App\Traits\Models\HasReviewedBy;
 use App\Traits\Models\IsMoney;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -44,7 +43,7 @@ class MoneyReceived extends Model
 	const CLIENT_NAME ='customer_name';
 	const DOWN_PAYMENT_OVER_CONTRACT = 'over_contract' ;
 	const DOWN_PAYMENT_GENERAL = 'general' ;
-	
+	const RECEIVING_OR_PAYMENT_CURRENCY_COLUMN_NAME='receiving_currency';
 	
 	public static function generateComment(self $moneyReceived,string $lang,?string $invoiceNumbers = '',?string $customerName = null)
 	{

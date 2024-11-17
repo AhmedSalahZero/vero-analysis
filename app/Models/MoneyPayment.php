@@ -27,6 +27,8 @@ class MoneyPayment extends Model
 	const DOWN_PAYMENT_OVER_CONTRACT = 'over_contract' ;
 	const DOWN_PAYMENT_GENERAL = 'general' ;
 	const SUPPLIER_INVOICE = 'supplierINo' ;
+	const CONTRACTS_WITH_DOWN_PAYMENTS = 'contracts-with-down-payments';
+	const RECEIVING_OR_PAYMENT_CURRENCY_COLUMN_NAME='payment_currency';
 	
 	public static function generateComment(self $moneyPayment,string $lang,?string $invoiceNumbers = '',?string $supplierName = null)
 	{
