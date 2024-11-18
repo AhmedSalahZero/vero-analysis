@@ -10,15 +10,14 @@ use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
-class ZoneAgainstAnalysisReport
+class DayAgainstAnalysisReport
 {
 	use GeneralFunctions;
 	public function index(Company $company)
 	{
+
 		if (request()->route()->named('zone.salesChannels.analysis')) {
 			$type = 'sales_channel';
 			$view_name = 'Zones Against Sales Channels Trend Analysis';
@@ -88,7 +87,7 @@ class ZoneAgainstAnalysisReport
 		}
 		return view('client_view.reports.sales_gathering_analysis.zone_analysis_form', compact('company', 'name_of_selector_label', 'type', 'view_name'));
 	}
-	public function ZoneSalesAnalysisIndex(Company $company)
+	public function DaySalesAnalysisIndex(Company $company)
 	{
 
 		// Get The Selected exportable fields returns a pair of ['field_name' => 'viewing name']
@@ -413,7 +412,7 @@ class ZoneAgainstAnalysisReport
 		return view('client_view.reports.sales_gathering_analysis.sales_discounts_analysis_report', compact('company', 'view_name', 'zones_names', 'dates', 'report_data', 'type_name'));
 	}
 
-	public function ZoneSalesAnalysisResult(Request $request, Company $company)
+	public function DaySalesAnalysisResult(Request $request, Company $company)
 	{
 		$dimension = $request->report_type;
 
@@ -497,9 +496,8 @@ class ZoneAgainstAnalysisReport
 
 		$start_date = $request->get('start_date');
 		$end_date = $request->get('end_date');
-		
+
 		if (false !== $found = array_search('all', (array)$request->main_data)) {
-			$orderByRaw = $request->field == 'day_name'  ? "ORDER BY FIELD(`day_name`, 'Friday', 'Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday')" :'net_sales_value desc';
 			$selectRow = (($request->field) . (' , net_sales_value '));
 			$data = SalesGathering::company()
 				->whereNotNull($request->field)
@@ -513,7 +511,7 @@ class ZoneAgainstAnalysisReport
 				})
 				->groupBy($request->field)
 				->selectRaw($selectRow)
-				->orderByRaw($orderByRaw)
+				->orderBy('net_sales_value', 'desc')
 				->where(function ($query) use ($request) {
 					if (($request->second_main_data) !== null) {
 						$query->whereNotNull($request->sub_main_field)
@@ -521,14 +519,13 @@ class ZoneAgainstAnalysisReport
 					}
 					if (($request->third_main_data) !== null) {
 						$query->whereNotNull($request->third_main_field)
-						->whereIn($request->third_main_field, (is_array($request->third_main_data)) ? ($request->third_main_data ?? []) : [$request->third_main_data]);
+							->whereIn($request->third_main_field, (is_array($request->third_main_data)) ? ($request->third_main_data ?? []) : [$request->third_main_data]);
 					}
 				})
 				->get()
 				->pluck($request->field)
 				->toArray();
 		} else {
-			$orderByRaw = $request->field == 'day_name'  ? "FIELD(`day_name`, 'Friday', 'Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday')" :'sum(net_sales_value) desc';
 			$selectRow = (($request->field ?: 'product_item ') . (' , sum(net_sales_value) '));
 			$data = SalesGathering::company()
 				->when($start_date && !$end_date, function (Builder $builder) use ($start_date) {
@@ -544,7 +541,7 @@ class ZoneAgainstAnalysisReport
 				->whereNotNull($request->field ?: 'product_item')
 				->groupBy($request->field ?: 'product_item')
 				->selectRaw($selectRow)
-				->orderByRaw($orderByRaw)
+				->orderByRaw('sum(net_sales_value) desc')
 				->where(function ($query) use ($request) {
 					if (($request->second_main_data) !== null) {
 						$query->whereNotNull($request->sub_main_field)->whereIn($request->sub_main_field, (is_array($request->second_main_data)) ? ($request->second_main_data ?? []) : [$request->second_main_data]);

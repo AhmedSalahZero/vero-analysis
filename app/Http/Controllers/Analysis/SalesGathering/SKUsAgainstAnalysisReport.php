@@ -55,6 +55,9 @@ class SKUsAgainstAnalysisReport
 		elseif (request()->route()->named('Items.principles.analysis')) {
             $type  = 'principle';
             $view_name = 'Products Items Against Principle Trend Analysis';
+        }elseif (request()->route()->named('Items.day.analysis')) {
+            $type  = 'day_name';
+            $view_name = 'Products Items Against Days Trend Analysis';
         }
         $name_of_selector_label = str_replace(['Products Items Against ', ' Trend Analysis'], '', $view_name);
         return view('client_view.reports.sales_gathering_analysis.skus_analysis_form', compact('company', 'name_of_selector_label', 'type', 'view_name'));
@@ -215,12 +218,11 @@ class SKUsAgainstAnalysisReport
         $dates = array_keys($report_data['Total']);
         // $dates = formatDateVariable($dates , $request->start_date  , $request->end_date);
         $report_view = getComparingReportForAnalysis($request , $report_data , $secondReport , $company , $dates , $view_name , $Items_names , 'product_item' );
-
         if($report_view instanceof View)
         {
             return $report_view ; 
         }
-        
+      
         if($request->report_type =='comparing')
         {
              return [
@@ -229,7 +231,7 @@ class SKUsAgainstAnalysisReport
                  'full_date' =>Carbon::make($request->start_date)->format('d M Y') .' '.__('To').' '.Carbon::make($request->end_date)->format('d M Y') 
              ];
         }
-        return view('client_view.reports.sales_gathering_analysis.skus_analysis_report', compact('company', 'view_name', 'Items_names', 'dates', 'report_data',));
+        return view('client_view.reports.sales_gathering_analysis.skus_analysis_report', compact('company','type', 'view_name', 'Items_names', 'dates', 'report_data',));
     }
     public function resultForSalesDiscount(Request $request, Company $company)
     {

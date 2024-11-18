@@ -205,5 +205,41 @@ class HArr
 		}
 		return $hasAtLeastNonZeroValue ; 
 	}
+	public static function orderByDayNameForTwoDimension(array $items){
+
+		$days = [
+			'Friday',
+			'Saturday',
+			'Sunday',
+			'Monday',
+			'Tuesday',
+			'Wednesday',
+			'Thursday'
+		];
+		usort($items, function ($a, $b) use ($days) {
+			$posA = array_search($a['item'], $days);
+			$posB = array_search($b['item'], $days);
+			return $posA <=> $posB;
+		});
+		return $items ;
+	}
+	public static function orderByDayNameForOneDimension(array $items){
+
+		$days = [
+			'Friday',
+			'Saturday',
+			'Sunday',
+			'Monday',
+			'Tuesday',
+			'Wednesday',
+			'Thursday'
+		];
+		uksort($items, function ($a, $b) use ($days) {
+			$posA = array_search($a, $days);
+			$posB = array_search($b, $days);
+			return $posA <=> $posB;
+		});
+		return $items ;
+	}
 
 }

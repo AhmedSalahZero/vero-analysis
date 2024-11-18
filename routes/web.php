@@ -976,6 +976,7 @@ Route::middleware([])->group(function () {
                             !isset($info['analysis_result']) ?: Route::post('/' . $nameOfMainItem . 'SalesAnalysis/Result', $info['class_path'] . '@' . $info['analysis_result'])->name($info['name'] . '.sales.analysis.result');
                             Route::post('/' . $nameOfMainItem . 'AgainstAnalysis/Result', $info['class_path'] . '@' . $info['against_result'])->name($info['name'] . '.analysis.result');
                             // Against Reports
+							
                             foreach ($info['sub_items'] as $viewName => $sub_item) {
                                 Route::get('/' . $nameOfMainItem . 'Against' . $viewName . 'Analysis/View', $info['class_path'] . '@' . $info['against_view'])->name($info['name'] . '.' . $sub_item . '.analysis');
                             }
@@ -989,6 +990,7 @@ Route::middleware([])->group(function () {
                         }
                         // Discounts
                         ($info['has_discount'] === false) ?: Route::get('/' . $nameOfMainItem . 'VSDiscounts/View', 'Analysis\SalesGathering\DiscountsAnalysisReport@index')->name($info['name'] . '.vs.discounts.view');
+						
                         ($info['has_break_down'] === false) ?: Route::get('/' . $nameOfMainItem . 'SalesBreakdownAnalysis/View', 'Analysis\SalesGathering\SalesBreakdownAgainstAnalysisReport@salesBreakdownAnalysisIndex')->name('salesBreakdown.' . $info['name'] . '.analysis');
                     }
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exports\HeadersExport;
+use App\Helpers\HArr;
 use App\Models\Company;
 use App\Models\CustomizedFieldsExportation;
 use App\Models\LoanSchedule;
@@ -28,7 +29,6 @@ class ExportTable extends Controller
 		$model_name = 'App\\Models\\' . $model;
 		$model_obj = new $model_name;
 		$columns  = Schema::getColumnListing($model_obj->getTable());
-		
 		$modelExportableFields = CustomizedFieldsExportation::where('model_name', $model)
 		->where('company_id', $company->id)->first();
 		$selected_fields = ($modelExportableFields !== null) ? $modelExportableFields->fields : [];
@@ -41,11 +41,19 @@ class ExportTable extends Controller
 			}
 			return  $this->columnsFiltration($model, $company, $view, $selected_fields);
 		}
+	
 		$columnsWithViewingNames =  $this->columnsFiltration($model, $company, $view, $selected_fields);
 		if($model == 'LoanSchedule'){
 			 $columnsWithViewingNames = $loanScheduleExportables;
 		}
 		$modelName = $model;
+		if($modelName == 'CustomerInvoice'){
+			unset($columnsWithViewingNames['collected_amount']);
+		}
+		if($modelName == 'SupplierInvoice'){
+			unset($columnsWithViewingNames['paid_amount']);
+		}
+		if($modelName)
 		return view('client_view.Exportation.fieldsSelectionToBeExported', compact('columnsWithViewingNames', 'company', 'model', 'view', 'selected_fields','modelName'));
 	}
 	/**
@@ -140,13 +148,14 @@ class ExportTable extends Controller
 			$columnsWithViewingNames = TablesField::where('model_name', $model_name)
 				->whereIn('field_name', $selected_fields)
 				->pluck('view_name', 'field_name')
+				// ->whereNotIn('field_name',['collected_amount'])
 				->toArray();
-		} else {
-			$columnsWithViewingNames = TablesField::where('model_name', $model_name)
+			} else {
+				$columnsWithViewingNames = TablesField::where('model_name', $model_name)
 				->pluck('view_name', 'field_name')
 				->toArray();
-		}
-
+			}
+			
 		return $columnsWithViewingNames;
 	}
 	/**

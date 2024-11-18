@@ -62,7 +62,10 @@ class SalesChannelsAgainstAnalysisReport
 			$type  = 'country';
 			$view_name = 'Sales Channel Against Countries Trend Analysis';
 		}
-		
+		elseif (request()->route()->named('salesChannels.day.analysis')) {
+			$type  = 'day_name';
+			$view_name = 'Sales Channel Against Days Trend Analysis';
+		}
 
         $name_of_selector_label = str_replace(['Sales Channels Against ' ,' Trend Analysis'],'',$view_name);
         if ($type == 'averagePrices') {
@@ -330,7 +333,7 @@ class SalesChannelsAgainstAnalysisReport
         
 		
         if ($result =='view') {
-			return view('client_view.reports.sales_gathering_analysis.salesChannels_analysis_report',compact('company','name_of_report_item','view_name','sales_channels_names','dates','report_data',));
+			return view('client_view.reports.sales_gathering_analysis.salesChannels_analysis_report',compact('company','type','name_of_report_item','view_name','sales_channels_names','dates','report_data',));
         }else {
             return [ 'report_data'=>$report_data,'view_name'=>$view_name,'names'=> $sales_channels_names];
         }

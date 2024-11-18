@@ -9,8 +9,7 @@ class FilterMainTypeBasedOnDatesController extends Controller
 {
     public function __invoke(Request $request , Company $company )
     {
-        $mainTypeArray = getTypeFor($request->get('mainType'),$company->id,true,true,$request->get('startDate')  , $request->get('endDate'));
-    //    array_pop($mainTypeArray);
+        $mainTypeArray = getTypeFor($request->get('mainType',$request->get('subType')),$company->id,true,true,$request->get('startDate')  , $request->get('endDate'));
         return response()->json([
             'status'=>true ,
             'data'=>$mainTypeArray ,

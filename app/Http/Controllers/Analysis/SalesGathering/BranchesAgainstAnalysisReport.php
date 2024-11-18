@@ -57,6 +57,10 @@ class BranchesAgainstAnalysisReport
             $type  = 'country';
             $view_name = 'Branches Against Countries Trend Analysis' ;
         }
+		elseif (request()->route()->named('branches.day.analysis')) {
+            $type  = 'day_name';
+            $view_name = 'Branches Against Day Name Trend Analysis' ;
+        }
         $name_of_selector_label = str_replace(['Branches Against ' ,' Trend Analysis'],'',$view_name);
         return view('client_view.reports.sales_gathering_analysis.branches_analysis_form', compact('company','name_of_selector_label','type','view_name'));
     }
@@ -94,13 +98,6 @@ class BranchesAgainstAnalysisReport
         $data_type = ($request->data_type === null || $request->data_type == 'value')? 'net_sales_value' : 'quantity';
         foreach ($branches as  $branchName) {
 
-            // $sales_gatherings = SalesGathering::company()
-            //         ->where('branch',$branchName)
-            //         ->whereNotNull($type)
-            //         ->whereBetween('date', [$request->start_date, $request->end_date])
-            //         ->selectRaw('DATE_FORMAT(date,"%d-%m-%Y") as date,net_sales_value,branch,'.$type)
-            //         ->get()
-            //         ->toArray();
             $branches_data =collect(DB::select(DB::raw("
                 SELECT DATE_FORMAT(LAST_DAY(date),'%d-%m-%Y') as gr_date  , ".$data_type." ,branch," . $type ."
                 FROM sales_gathering
@@ -141,7 +138,6 @@ class BranchesAgainstAnalysisReport
             $report_data[$branchName]['Growth Rate %'] =  $this->growthRate(($report_data[$branchName]['Total']??[]));
             $branches_names[] = (str_replace( ' ','_', $branchName));
         }
-
         // Total Sales Channel & Growth Rate
 
         $report_data['Total'] = $final_report_total;
@@ -150,12 +146,10 @@ class BranchesAgainstAnalysisReport
 		
         //  $dates = formatDateVariable($dates , $request->start_date  , $request->end_date);
 
-
          
  
 		$Items_names = $branches_names ;
          $report_view = getComparingReportForAnalysis($request , $report_data , $secondReport , $company , $dates , $view_name , $Items_names , 'branch' );
-
         if($report_view instanceof View)
         {
             return $report_view ; 
@@ -169,9 +163,7 @@ class BranchesAgainstAnalysisReport
                  'full_date' =>Carbon::make($request->start_date)->format('d M Y') .' '.__('To').' '.Carbon::make($request->end_date)->format('d M Y') 
              ];
         }
-
-
-        return view('client_view.reports.sales_gathering_analysis.branches_analysis_report',compact('company','view_name','branches_names','dates','report_data',));
+        return view('client_view.reports.sales_gathering_analysis.branches_analysis_report',compact('company','view_name','branches_names','dates','report_data','type'));
 
     }
 

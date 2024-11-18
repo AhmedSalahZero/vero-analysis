@@ -60,6 +60,7 @@ class RoutesDefinition
                         'BusinessSectors' => 'businessSectors', 'BusinessUnits' => 'businessUnits',
                         'Branches' => 'branches',
                         'SalesDiscount' => 'salesDiscount',
+						'day'=>'day'
                     ],
                     'avg_items' => [
                         'Products' => 'products',
@@ -89,6 +90,7 @@ class RoutesDefinition
                         'Branches' => 'branches',
                         'SalesDiscount' => 'salesDiscount',
 						'Principles' => 'principles',
+						'day'=>'day'
                     ],
                     'avg_items' => [
                         'Products' => 'products'
@@ -143,6 +145,7 @@ class RoutesDefinition
                         'SalesDiscount' => 'salesDiscount',
                         'Countries' => 'countries',
 						'Principles' => 'principles',
+						'day'=>'day'
                     ],
                     'has_discount' => true,
                     'has_break_down' => true,
@@ -168,6 +171,7 @@ class RoutesDefinition
                         'BusinessSectors' => 'businessSectors', 'BusinessUnits' => 'businessUnits',
                         'SalesDiscount' => 'salesDiscount',
                         'Countries' => 'countries',
+						'day'=>'day'
 						
                     ],
                       'avg_items' => [
@@ -370,6 +374,37 @@ class RoutesDefinition
                     'has_discount' => true,
                     'has_break_down' => true,
                 ],
+				// main record here
+				'day' => [
+                    'name' =>  'day',
+                    'class_path' => 'Analysis\SalesGathering\DayAgainstAnalysisReport',
+                    'analysis_view' => 'DaySalesAnalysisIndex',
+                    'analysis_result' => 'DaySalesAnalysisResult',
+                    'against_view'  => 'index',
+                    'against_result'  => 'result',
+                    'discount_result'  => 'resultForSalesDiscount',
+                    'sub_items' => [
+						'Zones' => 'zones',
+                        'SalesChannels' => 'salesChannels',
+                        'Customers' => 'customers',
+                        'Countries' => 'countries',
+                        'Categories' => 'categories',
+                        'Products' => 'products',
+                        'Principles' => 'principles',
+                        'ProductsItems' => 'Items',
+                        'SalesPersons' => 'salesPersons',
+                        'BusinessSectors' => 'businessSectors', 'BusinessUnits' => 'businessUnits',
+                        'Branches' => 'branches',
+                        'SalesDiscount' => 'salesDiscount',
+                    ],
+                    'avg_items' => [
+                        'Products' => 'products',
+                        'ProductsItems' => 'Items',
+                    ],
+                    'has_discount' => true,
+                    'has_break_down' => true,
+                ],
+				
 
             ];
     }
@@ -411,6 +446,8 @@ class RoutesDefinition
                 'is_provider' => false,
                 'sub_items' => [
                     'Zones' => 'zones',
+					'day'=>'day'
+							
                 ]
             ],
             // 3 => Products
@@ -421,7 +458,7 @@ class RoutesDefinition
                     'Zones' => 'zones',
                     'SalesChannels' => 'salesChannels',
                     'BusinessSectors' => 'businessSectors', 'BusinessUnits' => 'businessUnits',
-                'branches' => 'branches',
+          		      'branches' => 'branches',
                 ]
             ],
             // 4 => ProductItems
@@ -432,7 +469,8 @@ class RoutesDefinition
                     'Zones' => 'zones',
                     'SalesChannels' => 'salesChannels',
                     'BusinessSectors' => 'businessSectors', 'BusinessUnits' => 'businessUnits',
-                    'Branches'=>'branches'
+                    'Branches'=>'branches',
+					'day'=>'day'
                 ]
             ],
             // 5 => Categories
@@ -444,7 +482,8 @@ class RoutesDefinition
                     'SalesChannels' => 'salesChannels',
                     'BusinessSectors' => 'businessSectors', 'BusinessUnits' => 'businessUnits',
                     'Branches' => 'branches',
-                ]
+					'day'=>'day'
+					]
             ],
             // 6 => Customers
             'Customers' => [
@@ -462,6 +501,7 @@ class RoutesDefinition
                 'is_provider' => false,
                 'sub_items' => [
                     'SalesChannels' => 'salesChannels',
+					'day'=>'day'
                     // 'productI' => 'businessSectors',
                 ]
             ],
@@ -508,6 +548,7 @@ class RoutesDefinition
                     'ProductsItems' => 'Items',
                 ]
             ],
+			
         ];
     }
 

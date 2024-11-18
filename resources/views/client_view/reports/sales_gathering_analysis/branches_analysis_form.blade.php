@@ -79,6 +79,9 @@
                                 </div>
                             </div>
                         </div>
+		    <input type="hidden" name="main_type" value="branch">
+                        <input type="hidden" id="append-to" value="branches">
+						
                         <div class="col-md-4">
                             <label>{{ __('Select Interval') }} </label>
                             <div class="kt-input-icon">
@@ -103,6 +106,7 @@
                                 @include('max-option-span')
 
                             </label>
+									
                             <div class="kt-input-icon">
                                 <div class="input-group date">
                                     <select data-live-search="true" data-actions-box="true" name="branches[]" required class="select2-select form-control kt-bootstrap-select kt_bootstrap_select" id="branches" multiple>

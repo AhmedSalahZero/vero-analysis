@@ -90,7 +90,6 @@ class LabelingItem extends Model
 		$numericParent = '';
 		// $numericParent = '//'.$serial;
 		$quantityStartFrom = $this->quantityStartFrom() ;
-		// dd($row);
 		foreach($row as $key=>$val){
 			if(!in_array($key , (array)$company->generate_labeling_code_fields ))
 			{
