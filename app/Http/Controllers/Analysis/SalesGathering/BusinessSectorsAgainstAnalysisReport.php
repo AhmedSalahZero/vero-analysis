@@ -96,7 +96,6 @@ class BusinessSectorsAgainstAnalysisReport
 				
 			}
 		}
-		// dd($request->all());
         $report_data =[];
         $report_data_quantity =[];
         $growth_rate_data =[];

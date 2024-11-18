@@ -50,22 +50,50 @@ class TestCommand extends Command
 		// dd(hasExport(['date','country','q'],40));
 		
 		///////////////////////////
-		$url = 'itechs-testing.odoo.com';
-		$db = 'ahmednabil1975-itechs-project-testing-15573994';
+		$url = 'https://itechs-training.odoo.com';
+		$db = 'ahmednabil1975-itechs-project-newtest-16243928';
+		// $username = "test@test.com";
+		// $password = "1234567";
+		// require_once(public_path('apis/ripcord.php'));
+		
+		// $url = 'itechs-testing.odoo.com';
+		// $db = 'ahmednabil1975-itechs-project-testing-15573994';
 		$username = "test@test.com";
 		$password = "1234567";
 		require_once(public_path('apis/ripcord.php'));
-		$info = ripcord::client('https://demo.odoo.com/start')->start();
-		$res = list($url, $db, $username, $password) = array($info['host'], $info['database'], $info['user'], $info['password']);
+		// $info = ripcord::client('https://demo.odoo.com/start')->start();
+		// $info = ripcord::client('https://demo.odoo.com/start')->start();
+		// $res = list($url, $db, $username, $password) = array($info['host'], $info['database'], $info['user'], $info['password']);
 		
 		$common = ripcord::client("$url/xmlrpc/2/common");
-		$res=$common->version();
+		// $res=$common->version();
 		$uid = $common->authenticate($db, $username, $password, array());
 		$models = ripcord::client("$url/xmlrpc/2/object");
 		
-		$ids=$models->execute_kw($db, $uid, $password, 'res.partner', 'search',array(array(array('is_company', '=', true))), array('limit' => 10));
-		// $records = $models->execute_kw($db, $uid, $password, 'account.move', 'read', array($ids));
-		$records = $models->execute_kw($db, $uid, $password, 'res.partner', 'read', array($ids));
+		$fields = [
+			'partner_id',
+'id',
+'invoice_date',
+'name',
+'move_type',
+'currency_id',
+'amount_total',
+'amount_residual',
+'amount_total_signed',
+'amount_tax',
+'invoice_date_due',
+		];
+		$filter = array(array(array('move_type', 'in', [
+			'in_invoice'
+		,
+		'out_invoice'
+	]),array('state', '=', 'posted')));
+		$ids=$models->execute_kw($db, $uid, $password, 'account.move', 'search',$filter, array('limit' => 10));
+		$records = $models->execute_kw($db, $uid, $password, 'account.move', 'read', array($ids),[
+			'fields'=>$fields
+		]);
+		dd($records);
+		
 		// dd($records);
 
 		// dd($records[0]);

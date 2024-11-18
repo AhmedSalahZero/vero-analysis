@@ -79,6 +79,7 @@
                                 </div>
                             </div>
                         </div>
+						
                         <input type="hidden" name="main_type" value="branch">
                         <input type="hidden" id="append-to" value="branches">
 

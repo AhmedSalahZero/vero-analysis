@@ -567,8 +567,12 @@ function sortReportForTotals(&$report_data)
     );
 }
 
-function sortSubItems(&$sales_channel_channels_data)
+function sortSubItems(&$sales_channel_channels_data,$type = null)
 {
+	if($type == 'day_name'){
+		HArr::orderByDayNameForOneDimension($sales_channel_channels_data);
+		return ;
+	}
     (
         uasort(
             $sales_channel_channels_data,
@@ -679,7 +683,6 @@ function getTypeFor($type, $companyId, $formatted = false, $date = false, $start
         $data = array_filter($data, function ($item) {
             return $item;
         });
-
         return $data;
     }
 }
@@ -1450,7 +1453,6 @@ function getTotalsOfTotal($reportArray)
 {
     $totalForEachItem = [];
     foreach ($reportArray  as $itemName => $data) {
-        // sortSubItems($data);
         foreach ($data as $reportKey => $valueArr) {
             if ($reportKey != 'Growth Rate %' && $reportKey != 'Total' && $itemName != 'Total' && $itemName != 'Growth Rate %') {
                 $totalForEachItem[$itemName][$reportKey] = 0;
@@ -1587,10 +1589,13 @@ function getComparingReportForAnalysis($request, $report_data, $secondReport, $c
         $report_data = getTotalsOfTotal($report_data);
         $secondReportData['report_data'] = getTotalsOfTotal($secondReportDataResult['report_data']);
         $secondItemsName = getLopeItemsFromEachReport($report_data, $secondReportData['report_data']);
+		$isDayNameReport=$request->get('type') == 'day_name';
+		$secondItemsName = $isDayNameReport ? HArr::orderByDayNameForOneDimension($secondItemsName) : $secondItemsName;
         $secondReportData['report_data']  = addFirstReportKeysToSendReport($secondItemsName, $secondReportData['report_data']);
         $mainItems = getMainItemsNameFromEachInterval($report_data, $secondReportData['report_data']);
-
-        return view('client_view.reports.sales_gathering_analysis.second_comparing_analysis', compact('company', 'view_name', 'firstReportData', 'Items_names', 'dates', 'report_data', 'secondReportData', 'secondItemsName', 'mainItems', 'type'));
+		// dd(get_defined_vars());
+		
+        return view('client_view.reports.sales_gathering_analysis.second_comparing_analysis', compact('company','isDayNameReport', 'view_name', 'firstReportData', 'Items_names', 'dates', 'report_data', 'secondReportData', 'secondItemsName', 'mainItems', 'type'));
     }
 }
 function addFirstReportKeysToSendReport($keys, $secondReport)

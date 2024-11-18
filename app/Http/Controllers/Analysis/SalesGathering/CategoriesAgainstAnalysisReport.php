@@ -85,6 +85,10 @@ class CategoriesAgainstAnalysisReport
             $type  = 'principle';
             $view_name = 'Customers Against Principle' ;
         }
+		elseif (request()->route()->named('categories.day.analysis')) {
+            $type  = 'day_name';
+            $view_name = 'Categories Against Days' ;
+        }
         $name_of_selector_label = str_replace(['Categories Against ' ,' Trend Analysis'],'',$view_name);
         return view('client_view.reports.sales_gathering_analysis.categories_analysis_form', compact('company','name_of_selector_label','type','view_name'));
     }
@@ -313,7 +317,7 @@ class CategoriesAgainstAnalysisReport
         
         if ($result=='view') {
             
-            return view('client_view.reports.sales_gathering_analysis.categories_analysis_report',compact('company','name_of_report_item','view_name','categories_names','dates','report_data'));
+            return view('client_view.reports.sales_gathering_analysis.categories_analysis_report',compact('company','type','name_of_report_item','view_name','categories_names','dates','report_data'));
         }else {
             return [ 'report_data'=>$report_data,'view_name'=>$view_name,'names'=> $categories_names];
         }

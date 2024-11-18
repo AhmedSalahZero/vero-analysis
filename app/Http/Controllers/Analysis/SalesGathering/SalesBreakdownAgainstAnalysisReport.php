@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Analysis\SalesGathering;
 
+use App\Helpers\HArr;
 use App\Http\Controllers\ExportTable;
 use App\Models\Company;
 use App\Models\SalesGathering;
@@ -14,9 +15,12 @@ use Illuminate\Support\Facades\DB;
 class SalesBreakdownAgainstAnalysisReport
 {
 	use GeneralFunctions;
+	/**
+	 * * خاصة بال 
+	 * * one dim
+	 */
 	public function salesBreakdownAnalysisIndex(Company $company)
 	{
-
 
 		if (request()->route()->named('salesBreakdown.zone.analysis')) {
 			$type = 'zone';
@@ -67,6 +71,11 @@ class SalesBreakdownAgainstAnalysisReport
 			$type = 'country';
 			$view_name = 'Countries Sales Breakdown Analysis';
 		}
+		elseif (request()->route()->named('salesBreakdown.day.analysis')) {
+			$type = 'day';
+			$view_name = 'Days Sales Breakdown Analysis';
+		}
+		
 		return view('client_view.reports.sales_gathering_analysis.breakdown.sales_form', compact('company', 'view_name', 'type'));
 	}
 
@@ -78,8 +87,11 @@ class SalesBreakdownAgainstAnalysisReport
 		$growth_rate_data = [];
 		$report_count_data = [];
 
+		$request->merge([
+			'type'=>$request->get('type') == 'day' ? 'day_name':$request->get('type')
+		]);
 		$type = $request->type;
-
+		
 		$dates = [
 			'start_date' => date('d-M-Y', strtotime($request->start_date)),
 			'end_date' => date('d-M-Y', strtotime($request->end_date))
@@ -93,12 +105,13 @@ class SalesBreakdownAgainstAnalysisReport
 			"
                 SELECT DATE_FORMAT(LAST_DAY(date),'%d-%m-%Y') as gr_date  , net_sales_value,service_provider_name," . $type . "
                 FROM sales_gathering
-                force index (sales_channel_index)
+             --   force index (sales_channel_index)
                 WHERE ( company_id = '" . $company->id . "'AND " . $type . " IS NOT NULL  AND date between '" . $request->start_date . "' and '" . $request->end_date . "')
 
                 ORDER BY id "
 		)));
 
+	
 		if ($type == 'service_provider_birth_year' || $type == 'service_provider_type') {
 			$data = $report_data->groupBy($type)->map(function ($item, $year) {
 				return  $item->groupBy('service_provider_name')->flatMap(function ($sub_item, $name) use ($item, $year) {
@@ -183,6 +196,9 @@ class SalesBreakdownAgainstAnalysisReport
 					'Sales Value' => $item->sum('net_sales_value')
 				]];
 			})->toArray();
+			
+			
+
 		}
 
 		if ((count($report_data) > 0) && ($type !== 'service_provider_birth_year') && $result !== "withOthers") {
@@ -224,7 +240,10 @@ class SalesBreakdownAgainstAnalysisReport
 			// Last Date
 			$last_date = DB::table('sales_gathering')->where('company_id', $company->id)->latest('date')->first()->date;
 			$last_date = date('d-M-Y', strtotime($last_date));
-			
+		
+			if($type =='day_name'){
+				$report_view_data = HArr::orderByDayNameForTwoDimension($report_view_data);
+			}
 			return view('client_view.reports.sales_gathering_analysis.breakdown.sales_report', compact('last_date', 'report_count_data', 'type', 'view_name', 'dates', 'company', 'report_view_data'));
 		} elseif ($result == "withOthers") {
 			return $report_data;
@@ -337,7 +356,7 @@ class SalesBreakdownAgainstAnalysisReport
              SELECT "' . $selectedType . '" as selected_type_name , "' . $modal_id . '" as modal_id , FORMAT(sum(net_sales_value) , 0) as total_sales_value , count(DISTINCT(customer_name)) as customer_name , count(DISTINCT(category)) as category , count(DISTINCT(sub_category)) as sub_category , count(DISTINCT(product_item)) as product_item, count(DISTINCT(sales_person)) as sales_person ,
               count(DISTINCT(business_sector)) as business_sector, count(DISTINCT(sales_channel)) as sales_channel, count(DISTINCT(zone)) as zone, count(DISTINCT(branch)) as branch
                 FROM sales_gathering
-                force index (sales_channel_index)
+              --  force index (sales_channel_index)
                 WHERE ( company_id = ' . $companyId  . ' AND ' . $type .  ' =  "'  . $selectedType .  '" AND date between "' . $start_date . '" and "' . $end_date . '"  )
                 ORDER BY id '
 		));
@@ -376,7 +395,7 @@ class SalesBreakdownAgainstAnalysisReport
 			'
              SELECT "' . $selectedType . '" as selected_type_name , "' . $modal_id . '" as modal_id , sum(net_sales_value)  as total_sales_value ,  ' . $column . ' as customer_name
                 FROM sales_gathering
-                force index (sales_channel_index)
+            --    force index (sales_channel_index)
                 WHERE ( company_id = ' . $companyId  . ' AND ' . $type .  ' =  "'  . $selectedType .  '" AND date between "' . $start_date . '" and "' . $end_date . '"  )
                  group by ' . $column . '
                  ORDER BY total_sales_value ' . ($direction == 'top' ? 'DESC limit 50' : 'ASC limit 50')

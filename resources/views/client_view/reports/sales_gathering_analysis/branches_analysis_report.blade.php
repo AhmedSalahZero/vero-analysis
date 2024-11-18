@@ -99,25 +99,7 @@
                     array_push($branches_names, 'Total');
                     array_push($branches_names, 'Branch_Sales_Percentages');
                     ?>
-            {{-- <div class="tab-pane " id="kt_apps_contacts_view_tab_1" role="tabpanel">
-                    @foreach ($branches_names as $name_of_zone)
-
-                        <div class="col-xl-12">
-                            <div class="kt-portlet kt-portlet--height-fluid">
-                                <div class="kt-portlet__body kt-portlet__body--fluid">
-                                    <div class="kt-widget12">
-                                        <div class="kt-widget12__chart">
-                                            <!-- HTML -->
-                                            <h4>{{ str_replace('_', ' ', $name_of_zone) . ($name_of_zone == 'Branch_Sales_Percentages' ? ' Against Total Sales' : ' Sales Trend Analysis Chart') }}
-            </h4>
-            <div id="{{ $name_of_zone }}_count_chartdiv" class="chartdashboard"></div>
-        </div>
-    </div>
-</div>
-</div>
-</div>
-@endforeach
-</div> --}}
+         
 <!--End:: Tab  EGP FX Rate Table -->
 <!--Begin:: Tab USD FX Rate Table -->
 <div class="tab-pane active" id="kt_apps_contacts_view_tab_2" role="tabpanel">
@@ -134,24 +116,7 @@
         @slot('table_body')
         @php
 
-        sortReportForTotals($report_data)
-        // (uasort($report_data, function($a,$b) use($report_data){
-
-        // if(isset($b['Total']) && $a['Total']){
-        // $a = array_sum($a['Total']);
-        // $b = array_sum($b['Total']);
-
-        // if ($a == $b) {
-        // return 0;
-        // }
-        // return ($a > $b) ? -1 : 1;
-        // }
-        // return ;
-        // }
-
-        // )
-        // );
-
+        sortReportForTotals($report_data);
 
         @endphp
         <?php $id =1 ;?>
@@ -184,9 +149,8 @@
             <td class="text-center white-text">{{number_format(array_sum($total_per_zone??[]),0)}}</td>
         </tr>
 
-
         @php
-        sortSubItems($data)
+        sortSubItems($data,$type)
         @endphp
         @foreach ($data as $channel_name => $channel_section)
 

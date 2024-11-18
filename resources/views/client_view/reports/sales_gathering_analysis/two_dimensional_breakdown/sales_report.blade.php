@@ -209,7 +209,7 @@
         @endif
     </tr>
 
-
+{{-- {{ dd($all_items) }} --}}
     {{-- Percentages --}}
     <tr class="secondary-row-color ">
         <th> {{ __($main_type_item_name) .' %' }} </th>

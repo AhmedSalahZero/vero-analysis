@@ -48,7 +48,6 @@
                                         <i
                                         class="kt-menu__ver-arrow {{ $subSection->icon }}"></i><span class="kt-menu__link-text">
                                             {{__($subSection->name[lang()])}}
-											
 											{{-- {{ $subSection->name['en'] }} --}}
                                             </span>
 
@@ -66,6 +65,7 @@
         <div class="kt-portlet__body">
             <div class="tab-content">
                 <?php $section_key = 0;?>
+				
                 @foreach ($section->subSections as $key=> $mainSubSection)
              
                 
@@ -88,6 +88,7 @@
                         <div class="tab-pane {{$section_key == 0 ? 'active' : ''}}" id="kt_widget2_tab1_content_{{$mainSubSection->id}}">
                             <div class="kt-widget2">
                                 <div class="row">
+								
                                     @foreach ($mainSubSection->subSections as $sub_section)
                                         @php $name_of_section = substr($sub_section->name['en'], strpos($sub_section->name['en'] , "Against")+8 ); @endphp 
                                                 @if($name_of_section == 'Products')
@@ -106,7 +107,13 @@
 											
 											
 
-                                            @if ( ( false !== $found =  array_search(\Str::singular($name_of_section),$viewing_names)) || 
+                                            @if (
+												$sub_section->id == 337||
+												$sub_section->id == 338||
+												$sub_section->id == 339||
+												$sub_section->id == 340||
+												
+												 ( false !== $found =  array_search(\Str::singular($name_of_section),$viewing_names)) || 
                                             
 
 
@@ -202,22 +209,13 @@
                                                             $name_of_first_section = str_replace( $name_of_second_section,'',  $sub_section->name['en']     );
 
                                                          if($name_of_section == "Products Items"){
-                                                 $name_of_section = "Product Items" ;
+                                              				   $name_of_section = "Product Items" ;
 
-                                                         }
-                                            if($name_of_section === 'Products Items Ranking'){
-                                                 $name_of_section = "Product Items"; 
+                                                  	       }
+														if($name_of_section === 'Products Items Ranking'){
+															$name_of_section = "Product Items"; 
+														}
 
-                                            }
-
-                                                  
-
-                                                            if($name_of_section === 'Product Items Ranking'){
-
-                                            }
-
-                                            
-                                                            
                                                         @endphp
  
                                                     @endif
@@ -244,11 +242,17 @@
                                                         // ||  $sub_section->name['en'] == 'Business Sectors Versus Customers Natures Analysis'
                                                         || ($mainSubSection->name['en'] == "Service Providers") 
                                                         || ($name_of_section == "Product Items Ranking" && isset($exportables['product_item'] )  && /* not sure salah */  isset($exportables['branch'] ) ) 
-                                                        || ($name_of_section == "Customers" &&  (isset($exportables['customer_name']) ))  
+                                                        || ($name_of_section == "Customers" &&  (isset($exportables['customer_name']) )
+														|| $name_of_section == "Days" 
+														
+														// first if statement
+														)  
 
                                                    
                                                         )
-														@if($user->canViewReport($sub_section->name['en']))
+														@if($user->canViewReport($sub_section->name['en'])
+														|| ($name_of_section == "Days" && $name == "One Dimension") // second if statement
+														)
                                                         <div class="col-md-4">
                                                             <div class="kt-widget2__item kt-widget2__item--primary">
                                                                 <div class="kt-widget2__checkbox">
@@ -260,7 +264,7 @@
 
                                                                 <div class="kt-widget2__info">
                                                                     <a href="{{  route(@$sub_section->route, $company) }}" class="kt-widget2__title">
-                                                                      
+	
                                                                         {{ __($sub_section->name[lang()]) }}  
                                                                     </a>
 

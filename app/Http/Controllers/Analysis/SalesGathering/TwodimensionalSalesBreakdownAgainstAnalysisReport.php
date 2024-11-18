@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers\Analysis\SalesGathering;
 
+use App\Helpers\HArr;
 use App\Models\Company;
 use App\Models\SalesGathering;
 use App\Traits\GeneralFunctions;
@@ -156,11 +157,30 @@ class TwodimensionalSalesBreakdownAgainstAnalysisReport
             $type = 'product_item';
             $view_name = 'Countries Versus Products Items' ;
         }
+		elseif (request()->route()->named('branches.vs.day.view')) {
+            $main_type = 'branch';
+            $type = 'day_name';
+            $view_name = 'Branches Versus Day Name Sales' ;
+        }
+		elseif (request()->route()->named('salesChannels.vs.day.view')) {
+            $main_type = 'sales_channel';
+            $type = 'day_name';
+            $view_name = 'Sales Channels Versus Day Name Sales' ;
+        }
+		elseif (request()->route()->named('categories.vs.day.view')) {
+            $main_type = 'category';
+            $type = 'day_name';
+            $view_name = 'Categories Versus Day Name Sales' ;
+        }
+		elseif (request()->route()->named('Items.vs.day.view')) {
+            $main_type = 'product_item';
+            $type = 'day_name';
+            $view_name = 'Product Items Versus Day Name Sales' ;
+        }
         return view('client_view.reports.sales_gathering_analysis.two_dimensional_breakdown.sales_form', compact('company', 'view_name','type','main_type'));
     }
     public function result(Request $request, Company $company)
     {
-
         $report_data =[];
         $main_type = $request->main_type;
         $type = $request->type;
@@ -176,12 +196,12 @@ class TwodimensionalSalesBreakdownAgainstAnalysisReport
         $main_type_items_totals = [];
 
 
-
+		// $orderByStatement = $type =='day_name'?"ORDER BY FIELD(`day_name`, 'Friday', 'Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday')":'ORDER BY id';
         $report_data =collect(DB::select(DB::raw("
             SELECT DATE_FORMAT(date,'%d-%m-%Y') as date, net_sales_value ,sales_value,".$type.",".$main_type ."
             FROM sales_gathering
             WHERE ( company_id = '".$company->id."' AND ".$type." IS NOT NULL AND ".$main_type." IS NOT NULL  AND date between '".$request->start_date."' and '".$request->end_date."')
-            ORDER BY id "
+             ORDER BY id "
             )))->groupBy($main_type)->map(function($item) use($type){
                 return $item->groupBy($type)->map(function($sub_item){
                     return $sub_item->sum('net_sales_value');
@@ -189,13 +209,13 @@ class TwodimensionalSalesBreakdownAgainstAnalysisReport
             })->toArray();
 
 
-
         $main_type_items = array_keys(($report_data??[]));
         foreach ($report_data as  $main_type_item_name => $sales_gathering_data) {
             $main_type_items_totals[$main_type_item_name] = array_sum($report_data[$main_type_item_name]??[]);
         }
-
+	
         $items_totals = $this->finalTotal([$report_data]);
+		$items_totals = $type =='day_name' ? HArr::orderByDayNameForOneDimension($items_totals) : $items_totals;
         $all_items =   array_keys($items_totals);
         arsort($main_type_items_totals);
 
@@ -223,7 +243,6 @@ class TwodimensionalSalesBreakdownAgainstAnalysisReport
         $last_date = SalesGathering::company()->latest('date')->first()->date ?? null;
         $last_date = date('d-M-Y',strtotime($last_date));
         $all_items = array_unique($all_items);
-
         return view('client_view.reports.sales_gathering_analysis.two_dimensional_breakdown.sales_report',compact('company','view_name', 'main_type','type', 'all_items','main_type_items','report_data','last_date','dates','items_totals','main_type_items_totals'));
 
     }

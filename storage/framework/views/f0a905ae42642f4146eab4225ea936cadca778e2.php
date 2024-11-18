@@ -1,5 +1,5 @@
-@extends('layouts.dashboard')
-@section('css')
+
+<?php $__env->startSection('css'); ?>
 
 <style>
 
@@ -78,20 +78,20 @@
 
 </style>
 
-{{-- <link href="{{ url('assets/vendors/custom/datatables/datatables.bundle.css') }}" rel="stylesheet" type="text/css" /> --}}
-@endsection
 
-@section('content')
+<?php $__env->stopSection(); ?>
+
+<?php $__env->startSection('content'); ?>
 
 <div class="row">
     <div class="col-lg-12">
-        @if (session('warning'))
+        <?php if(session('warning')): ?>
         <div class="alert alert-warning">
             <ul>
-                <li>{{ session('warning') }}</li>
+                <li><?php echo e(session('warning')); ?></li>
             </ul>
         </div>
-        @endif
+        <?php endif; ?>
     </div>
 </div>
 
@@ -110,159 +110,117 @@
 
             <!--Begin:: Tab USD FX Rate Table -->
             <div class="tab-pane active" id="kt_apps_contacts_view_tab_2" role="tabpanel">
-                <x-table :tableTitle="__($view_name.' Report')" :tableClass="'kt_table_with_no_pagination'">
-                    @slot('table_header')
+                 <?php if (isset($component)) { $__componentOriginale53a9d2e6d6c51019138cc2fcd3ba8ac893391c6 = $component; } ?>
+<?php $component = $__env->getContainer()->make(App\View\Components\Table::class, ['tableTitle' => __($view_name.' Report'),'tableClass' => 'kt_table_with_no_pagination']); ?>
+<?php $component->withName('table'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php $component->withAttributes([]); ?>
+                    <?php $__env->slot('table_header'); ?>
                     <tr class="table-active text-center">
-                        <th class="text-center absorbing-column">{{ __('Product Item') }}</th>
-                        @foreach ($dates as $date)
-                        <th>{{ date('d-M-Y', strtotime($date)) }}</th>
-                        @endforeach
-                        <th>{{ __('Total') }}</th>
+                        <th class="text-center absorbing-column"><?php echo e(__('Product Item')); ?></th>
+                        <?php $__currentLoopData = $dates; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $date): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <th><?php echo e(date('d-M-Y', strtotime($date))); ?></th>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        <th><?php echo e(__('Total')); ?></th>
                     </tr>
-                    @endslot
-                    @slot('table_body')
-                    @php
+                    <?php $__env->endSlot(); ?>
+                    <?php $__env->slot('table_body'); ?>
+                    <?php
                     sortReportForTotals($report_data)
-                    @endphp
+                    ?>
                     <?php $id =1 ;?>
-                    @foreach ($report_data as $sales_channel_name => $sales_channel_channels_data)
+                    <?php $__currentLoopData = $report_data; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $sales_channel_name => $sales_channel_channels_data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 
                     <?php $chart_data = [];?>
 
-                    @if ($sales_channel_name != 'Total' && $sales_channel_name != 'Growth Rate %')
+                    <?php if($sales_channel_name != 'Total' && $sales_channel_name != 'Growth Rate %'): ?>
                     <?php
                                     ?>
 
                     <tr class="group-color ">
 
-                        <td class="white-text" style="cursor: pointer;" onclick="toggleRow('{{ $id }}')">
-                            <i class="row_icon{{ $id }} flaticon2-up white-text"></i>
-                            <b>{{ __($sales_channel_name) }}</b>
+                        <td class="white-text" style="cursor: pointer;" onclick="toggleRow('<?php echo e($id); ?>')">
+                            <i class="row_icon<?php echo e($id); ?> flaticon2-up white-text"></i>
+                            <b><?php echo e(__($sales_channel_name)); ?></b>
                         </td>
-                        {{-- Total --}}
+                        
                         <?php $total_per_sales_channel = $sales_channel_channels_data['Total'] ?? [];
                                         unset($sales_channel_channels_data['Total']); ?>
-                        {{-- Growth Rate % --}}
+                        
                         <?php $growth_rate_per_sales_channel = $sales_channel_channels_data['Growth Rate %'] ?? [];
                                         unset($sales_channel_channels_data['Growth Rate %']); ?>
 
-                        @foreach ($dates as $date)
-                        <td class="text-center white-text">{{ number_format($total_per_sales_channel[$date] ?? 0) . '  [ GR '.number_format($growth_rate_per_sales_channel[$date] ?? 0) . ' % ]'}}
+                        <?php $__currentLoopData = $dates; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $date): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <td class="text-center white-text"><?php echo e(number_format($total_per_sales_channel[$date] ?? 0) . '  [ GR '.number_format($growth_rate_per_sales_channel[$date] ?? 0) . ' % ]'); ?>
+
                         </td>
-                        @endforeach
-                        <td class="text-center white-text">{{number_format(array_sum($total_per_sales_channel??[]),0)}}</td>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        <td class="text-center white-text"><?php echo e(number_format(array_sum($total_per_sales_channel??[]),0)); ?></td>
                     </tr>
-                    {{-- <tr class="row{{ $id }} secondary-row-color text-center" style="display: none">
-                    <td></td>
-                    <td class="text-center"><b>{{__($sales_channel_name.' - Growth Rate %')}}</b></td>
-                    @foreach ($dates as $date)
-
-                    <td class="text-center">
-                        {{ number_format($growth_rate_per_sales_channel[$date] ?? 0) . ' %'}}</td>
-                    @endforeach
-                    </tr> --}}
+                    
 
 
 
 
-                    @php
+                    <?php
                     sortSubItems($sales_channel_channels_data,$type	)
-                    @endphp
+                    ?>
 
-                    @foreach ($sales_channel_channels_data as $channel_name => $channel_section)
+                    <?php $__currentLoopData = $sales_channel_channels_data; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $channel_name => $channel_section): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 
-                    <tr class="row{{ $id }}  text-center" style="display: none">
-                        {{-- <td></td> --}}
-                        <td class="text-left"><b>{{ $channel_name  }}</b></td>
+                    <tr class="row<?php echo e($id); ?>  text-center" style="display: none">
+                        
+                        <td class="text-left"><b><?php echo e($channel_name); ?></b></td>
 
-                        @foreach ($dates as $date)
+                        <?php $__currentLoopData = $dates; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $date): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                         <td class="text-center">
-                            {{ number_format(($channel_section['Sales Values'][$date] ?? 0),0)   }}
-                            <span class="active-text-color color-{{ getPercentageColor($channel_section['Growth Rate %'][$date]??0) }}"><b> {{ ' [ '.number_format(($channel_section['Growth Rate %'][$date]??0), 1) . ' %  ]' }}</b></span>
+                            <?php echo e(number_format(($channel_section['Sales Values'][$date] ?? 0),0)); ?>
+
+                            <span class="active-text-color color-<?php echo e(getPercentageColor($channel_section['Growth Rate %'][$date]??0)); ?>"><b> <?php echo e(' [ '.number_format(($channel_section['Growth Rate %'][$date]??0), 1) . ' %  ]'); ?></b></span>
                         </td>
-                        @endforeach
-                        <td>{{number_format(array_sum($channel_section['Sales Values']??[]),0)}}</td>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        <td><?php echo e(number_format(array_sum($channel_section['Sales Values']??[]),0)); ?></td>
                     </tr>
 
-                    @endforeach
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
 
-                    @elseif ($sales_channel_name == 'Total' || $sales_channel_name == 'Growth Rate %')
+                    <?php elseif($sales_channel_name == 'Total' || $sales_channel_name == 'Growth Rate %'): ?>
                     <tr class="active-style text-center">
-                        <td class="active-style text-center"><b>{{ __($sales_channel_name) }}</b></td>
-                        {{-- <td class="hidden"></td> --}}
+                        <td class="active-style text-center"><b><?php echo e(__($sales_channel_name)); ?></b></td>
+                        
                         <?php $decimals = $sales_channel_name == 'Growth Rate %' ? 2 : 0; ?>
-                        @foreach ($dates as $date)
+                        <?php $__currentLoopData = $dates; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $date): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 
                         <td class="text-center active-style">
-                            {{ number_format($sales_channel_channels_data[$date] ?? 0,$decimals) . ($decimals == 0 ? '' : ' %')}}</td>
-                        @endforeach
-                        <td class="text-center active-style">{{$sales_channel_name == 'Growth Rate %' ? "-" : number_format(array_sum($sales_channel_channels_data  ?? []),0)}}</td>
+                            <?php echo e(number_format($sales_channel_channels_data[$date] ?? 0,$decimals) . ($decimals == 0 ? '' : ' %')); ?></td>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        <td class="text-center active-style"><?php echo e($sales_channel_name == 'Growth Rate %' ? "-" : number_format(array_sum($sales_channel_channels_data  ?? []),0)); ?></td>
                     </tr>
-                    @endif
+                    <?php endif; ?>
                     <?php $id++;?>
-                    @endforeach
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
 
-                    @endslot
-                </x-table>
+                    <?php $__env->endSlot(); ?>
+                 <?php if (isset($__componentOriginale53a9d2e6d6c51019138cc2fcd3ba8ac893391c6)): ?>
+<?php $component = $__componentOriginale53a9d2e6d6c51019138cc2fcd3ba8ac893391c6; ?>
+<?php unset($__componentOriginale53a9d2e6d6c51019138cc2fcd3ba8ac893391c6); ?>
+<?php endif; ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?> 
 
-                {{-- <x-table :tableTitle="__('Sales Channel Sales Percentage (%) Against Total Sales')"
-                        :tableClass="'kt_table_with_no_pagination'">
-                        @slot('table_header')
-                            <tr class="table-active">
-                                <th>{{ __('Sales Channel') }}</th>
-
-
-                @foreach ($total_sales_channels as $date => $total)
-                <th>{{ date('d-M-Y', strtotime($date)) }}</th>
-                @endforeach
-                </tr>
-                @endslot
-                @slot('table_body')
-                <?php $chart_data = []; ?>
-                @foreach ($final_report_data as $sales_channel_name => $sales_channel_data)
-                <tr class="group-color  text-lg-left  ">
-                    <td colspan="{{ count($total_sales_channels) + 1 }}"><b class="white-text">{{ __($sales_channel_name) }}</b></td>
-                    @foreach ($total_sales_channels as $date => $total)
-                    <td class="hidden"> </td>
-                    @endforeach
-                </tr>
-                <tr>
-                    <th>{{ __('Percent %') }}</th>
-                    @foreach ($total_sales_channels as $date => $total)
-                    <?php
-                                        $percentage = $total == 0 ? 0 : number_format(($sales_channel_data['Sales Values'][$date] ?? 0) / ($total ?? 0), 2);
-                                        $chart_data[$date][$sales_channel_name] = [$sales_channel_name . ' %' => $percentage];
-                                        ?>
-
-                    <td class="text-center">
-                        {{ $percentage . ' %' }}
-                    </td>
-                    @endforeach
-                </tr>
-
-                @endforeach
-                <?php
-                            $return = [];
-                            array_walk($chart_data, function ($values, $date) use (&$return) {
-                                $return[] = array_merge(['date' => date('d-M-Y', strtotime($date))], array_merge(...array_values($values)));
-                            });
-                            ?>
-                <input type="hidden" id="Sales_Channel_Sales_Percentages_data" data-total="{{ json_encode($return) }}">
-
-
-                @endslot
-                </x-table> --}}
+                
             </div>
             <!--End:: Tab USD FX Rate Table -->
         </div>
     </div>
 </div>
 
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('js')
+<?php $__env->startSection('js'); ?>
 <!-- Resources -->
 <script src="https://cdn.amcharts.com/lib/4/core.js"></script>
 <script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
@@ -271,11 +229,11 @@
 
 
 
-@include('js_datatable')
+<?php echo $__env->make('js_datatable', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 
 
-{{-- <script src="{{ url('assets/vendors/custom/datatables/datatables.bundle.js') }}" type="text/javascript"></script> --}}
-<script src="{{ url('assets/js/demo1/pages/crud/datatables/basic/paginations.js') }}" type="text/javascript">
+
+<script src="<?php echo e(url('assets/js/demo1/pages/crud/datatables/basic/paginations.js')); ?>" type="text/javascript">
 </script>
 <script>
     function toggleRow(rowNum) {
@@ -284,7 +242,7 @@
     }
 
 </script>
-@foreach ($Items_names as $name_of_sales_channel)
+<?php $__currentLoopData = $Items_names; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $name_of_sales_channel): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 <script>
     am4core.ready(function() {
 
@@ -294,12 +252,12 @@
 
         // Create chart instance
 
-        var chart = am4core.create("{{ convertStringToClass($name_of_sales_channel) }}_count_chartdiv", am4charts.XYChart);
+        var chart = am4core.create("<?php echo e(convertStringToClass($name_of_sales_channel)); ?>_count_chartdiv", am4charts.XYChart);
 
         // Increase contrast by taking evey second color
         chart.colors.step = 2;
         // Add data
-        chart.data = $('#{{ convertStringToClass($name_of_sales_channel) }}_data').data('total');
+        chart.data = $('#<?php echo e(convertStringToClass($name_of_sales_channel)); ?>_data').data('total');
 
         chart.dateFormatter.inputDateFormat = "yyyy-MM-dd";
         // Create axes
@@ -384,5 +342,7 @@
     }); // end am4core.ready()
 
 </script>
-@endforeach
-@endsection
+<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.dashboard', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /media/salah/Software/projects/veroo/resources/views/client_view/reports/sales_gathering_analysis/skus_analysis_report.blade.php ENDPATH**/ ?>
