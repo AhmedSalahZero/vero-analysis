@@ -132,7 +132,6 @@
                             @endphp
                             {{ number_format($secondTotal) }}
                         </td>
-
                         <td class="text-center white-text">{{$firstTotal ? number_format(    ($secondTotal - $firstTotal) / $firstTotal *100    , 2 ) . ' %' : __('NA')  }} </td>
                     </tr>
 			
