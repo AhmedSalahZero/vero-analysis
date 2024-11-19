@@ -2,23 +2,30 @@
 @section('dash_nav')
 @include('client_view.home_dashboard.main_navs',['active'=>'breadkdown_dashboard'])
 
-{{-- <ul class="kt-menu__nav ">
-    <li class="kt-menu__item  kt-menu__item" aria-haspopup="true"><a href="{{route('dashboard',$company)}}" class="kt-menu__link "><span class="kt-menu__link-text">{{__('Sales Dashboard')}}</span></a></li>
-<li class="kt-menu__item  kt-menu__item " aria-haspopup="true"><a href="{{route('dashboard.breakdown',$company)}}" class="kt-menu__link active-button"><span class="kt-menu__link-text active-text">{{__("Breakdown Dashboard")}}</span></a></li>
-<li class="kt-menu__item  kt-menu__item " aria-haspopup="true"><a href="{{route('dashboard.customers',$company)}}" class="kt-menu__link "><span class="kt-menu__link-text">{{__("Customers Dashboard")}}</span></a></li>
-<li class="kt-menu__item  kt-menu__item " aria-haspopup="true"><a href="{{ route('dashboard.salesPerson', $company) }}" class="kt-menu__link "><span class="kt-menu__link-text">{{__("Sales Person Dashboard")}}</span></a>
-</li>
-<li class="kt-menu__item  kt-menu__item " aria-haspopup="true"><a href="{{ route('dashboard.salesDiscount', $company) }}" class="kt-menu__link "><span class="kt-menu__link-text">{{__("Sales Discount Dashboard")}}</span></a>
-</li>
-<li class="kt-menu__item  kt-menu__item " aria-haspopup="true"><a href="{{ route('dashboard.intervalComparing', $company) }}" class="kt-menu__link "><span class="kt-menu__link-text">{{__("Interval Comparing Dashboard")}}</span></a>
-</li>
-</ul> --}}
 @endsection
 @section('css')
 <link href="{{ url('assets/vendors/custom/datatables/datatables.bundle.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css')}}" rel="stylesheet" type="text/css" />
 <link href="{{url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css')}}" rel="stylesheet" type="text/css" />
 <style>
+	.break-down-bg-success{
+		background-color:green !important;
+	}
+	.break-down-bg-brand{
+		background-color:blue !important;
+	}
+	.break-down-bg-danger{
+		background-color:red !important;
+	}
+	.break-down-color-success{
+		color:green !important;
+	}
+	.break-down-color-brand{
+		color:blue !important;
+	}
+	.break-down-color-danger{
+		color:red !important;
+	}
     .max-w-300 {
         max-width: 300px !important;
         width: 300px !important;
@@ -162,15 +169,9 @@ $exportableFieldsValues[] = 'avg_invoice_value';
 
                                     <span>{{ __('Top') . ' ' .  __(ucwords(str_replace('_',' ',$type)))  }}</span>
                                     <p>
-
-                                        <button type="button" class="btn text-white btn-small btn-{{ $color }}" data-toggle="modal" data-target="#modal_for_{{ convertStringToClass($type) }}">
+                                        <button type="button" class="btn btn-small text-white break-down-bg-{{ $color }}" data-toggle="modal" data-target="#modal_for_{{ convertStringToClass($type) }}">
                                             {{ __('Take Away') }}
                                         </button>
-
-
-
-
-                                        {{-- <button type="button" data-bs-toggle="modal" data-bs-target="#test_{{ $type }}" class="btn btn-{{ $color }} btn-sm text-white">{{ __('Tip') }}</button> --}}
                                     </p>
                                 </h4>
                             </div>
@@ -235,34 +236,6 @@ $exportableFieldsValues[] = 'avg_invoice_value';
                                                         <button style="background-color:#086691 ; color:#fff" class="btn  btn-sm text-white ranged-button-ajax" data-direction="bottom" data-type="{{ $type }}" data-column="{{ $id }}">{{ __('Bottom 50') }}</button>
                                                     </div>
                                                     @endif
-                                                    {{-- @if($id == 'customer_name')
-                        <button style="background-color:#086691 ; color:#fff" class="btn  btn-sm ml-5 mr-1 ranged-button-ajax"  data-direction="top" data-type="{{ $type }}" data-column="customer_name">{{ __('Top 50') }}</button>
-                                                    <button style="background-color:#086691 ; color:#fff" class="btn  btn-sm text-white ranged-button-ajax" data-direction="bottom" data-type="{{ $type }}" data-column="customer_name">{{ __('Bottom 50') }}</button>
-                                                    @endif --}}
-
-                                                    {{-- @if($id == 'product_item')
-                  <button style="background-color:#086691 ; color:#fff" class="btn  btn-sm mr-1 ml-5 ranged-button-ajax" data-direction="top" data-type="{{ $type }}" data-column="product_item"> {{ __('Top 50') }}</button>
-                                                    <button style="background-color:#086691 ; color:#fff" class="btn  btn-sm text-white ranged-button-ajax" data-direction="bottom" data-type="{{ $type }}" data-column="product_item"> {{ __('Bottom 50') }}</button>
-                                                    @endif
-
-                                                    @if($id == 'product_or_service')
-                                                    <button style="background-color:#086691 ; color:#fff" class="btn  btn-sm mr-1 ml-5 ranged-button-ajax" data-direction="top" data-type="{{ $type }}" data-column="product_or_service"> {{ __('Top 50') }}</button>
-                                                    <button style="background-color:#086691 ; color:#fff" class="btn  btn-sm text-white ranged-button-ajax" data-direction="bottom" data-type="{{ $type }}" data-column="product_or_service"> {{ __('Bottom 50') }}</button>
-                                                    @endif
-
-                                                    @if($id == 'zone')
-                                                    <button style="background-color:#086691 ; color:#fff" class="btn  btn-sm mr-1 ml-5 ranged-button-ajax" data-direction="top" data-type="{{ $type }}" data-column="zone"> {{ __('Top 50') }}</button>
-                                                    <button style="background-color:#086691 ; color:#fff" class="btn  btn-sm text-white ranged-button-ajax" data-direction="bottom" data-type="{{ $type }}" data-column="zone"> {{ __('Bottom 50') }}</button>
-                                                    @endif
-
-
-
-                                                    @if($id == 'business_sector')
-                                                    <button style="background-color:#086691 ; color:#fff" class="btn  btn-sm mr-1 ml-5 ranged-button-ajax" data-direction="top" data-type="{{ $type }}" data-column="business_sector"> {{ __('Top 50') }}</button>
-                                                    <button style="background-color:#086691 ; color:#fff" class="btn  btn-sm text-white ranged-button-ajax" data-direction="bottom" data-type="{{ $type }}" data-column="business_sector"> {{ __('Bottom 50') }}</button>
-                                                    @endif --}}
-
-
                                                 </td>
                                                 <td id="{{ $id }}">-</td>
                                             </tr>
@@ -275,21 +248,13 @@ $exportableFieldsValues[] = 'avg_invoice_value';
 
                                         </table>
                                         <div class="row ">
-                                            {{-- <div class="col-12 my-5 ">
-                       <button style="background-color:#086691 ; color:#fff" class="btn  btn-sm mr-5 ranged-button-ajax"  data-direction="top" data-type="{{ $type }}" data-column="customer_name">{{ __('Top 50 Customers') }}</button>
-                                            <button style="background-color:#086691 ; color:#fff" class="btn  btn-sm text-white ranged-button-ajax" data-direction="bottom" data-type="{{ $type }}" data-column="customer_name">{{ __('Bottom 50 Customers') }}</button>
-                                        </div> --}}
-                                        {{-- <div class="col-12 pb-2">
-                  <button style="background-color:#086691 ; color:#fff" class="btn  btn-sm mr-5 ranged-button-ajax" data-direction="top" data-type="{{ $type }}" data-column="product_item"> {{ __('Top 50 Products Item') }}</button>
-                                        <button style="background-color:#086691 ; color:#fff" class="btn  btn-sm text-white ranged-button-ajax" data-direction="bottom" data-type="{{ $type }}" data-column="product_item"> {{ __('Bottom 50 Products Item') }}</button>
-                                    </div> --}}
+                                    
                                 </div>
 
 
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close') }}</button>
-                                {{-- <button id="recalc_modal" type="button" class="btn btn-primary">{{ __('Run') }}</button> --}}
                             </div>
                         </div>
                     </div>
@@ -299,13 +264,13 @@ $exportableFieldsValues[] = 'avg_invoice_value';
 
 
                 <div class="kt-widget24__details">
-                    <span class="kt-widget24__stats kt-font-{{$color}}" style="font-size:1.4rem">
+                    <span class="kt-widget24__stats break-down-color-{{$color}}" style="font-size:1.4rem">
                         {{ __( '[ ' .($top_data[$type]['item'] ?? ' - ')) .' ]  ' .number_format(($top_data[$type]['Sales Value']??0)) }}
                 </div>
                 <input type="hidden" id="top_for_{{ $type }}" value="{{ $top_data[$type]['item'] ?? '' }}">
                 <input type="hidden" id="value_for_{{ $type }}" value="{{ number_format(($top_data[$type]['Sales Value']??0)) }}">
                 <div class="progress progress--sm">
-                    <div class="progress-bar kt-bg-{{$color}}" role="progressbar" style="width: 100%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                    <div class="progress-bar break-down-bg-{{$color}}" role="progressbar" style="width: 100%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
                 <div class="kt-widget24__action">
                     <span class="kt-widget24__change">

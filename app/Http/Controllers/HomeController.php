@@ -315,15 +315,14 @@ class HomeController extends Controller
 	{
 		$newTypes = [];
 		$firstClass = 'brand';
+
 		
 		$previousColor = null ;
 		foreach($types as $type => $oldColor){
 			$color = [
 				$firstClass=>'success',
 				'success'=>'danger',
-				// 'success'=>'danger bg-red-progress text-white',
 				'danger'=>$firstClass,
-				// 'danger bg-red-progress text-white'=>$firstClass,
 				null=>$firstClass
 			][$previousColor] ;
 			if(!is_null($previousColor)){

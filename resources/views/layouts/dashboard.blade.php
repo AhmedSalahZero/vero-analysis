@@ -24,9 +24,6 @@ let pageLoaded = false ;
         width: 9% !important;
         flex: initial !important;
     }
-	html body .bg-red-progress{
-		background-color:#8d0834 !important  ;
-	}
 	.flex-1{
 		flex:1;
 	}
@@ -44,8 +41,7 @@ let pageLoaded = false ;
 		    color: white;
 }
 .notification-bg{
-				background: #ff0000ab;
-			
+				background: #ff0000ab;		
 		}
     </style>
     <style>

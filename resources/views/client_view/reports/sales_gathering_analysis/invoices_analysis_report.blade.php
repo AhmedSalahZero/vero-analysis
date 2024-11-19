@@ -98,10 +98,7 @@
         <div class="tab-content  kt-margin-t-20">
 
             <!--Begin:: Tab  EGP FX Rate Table -->
-            <?php
-                    // array_push($branches_names, 'Total');
-                    // array_push($branches_names, 'Branch_Sales_Percentages');
-                    ?>
+         
             <div class="tab-pane active" id="kt_apps_contacts_view_tab_2" role="tabpanel">
                 <x-table :tableTitle="__($view_name.' Report')" :tableClass="'kt_table_with_no_pagination'">
                     @slot('table_header')
@@ -119,8 +116,7 @@
                         @endforeach
 
                         @endforeach
-                        {{-- <th>{{ date('d-M-Y', strtotime($date)) }}</th> --}}
-                        {{-- <th>{{ __('Total') }}</th> --}}
+                  
                     </tr>
                     @endslot
                     @slot('table_body')
@@ -219,7 +215,7 @@
                                     $salesValue = $reportSalesValues[$zone_name][$intervalFormatted] ?? 0 ;
                                     $avg_invoice_value = $invoiceNumber ? number_format($salesValue / $invoiceNumber) : 0;
                                     @endphp
-                                    {{-- // ; --}}
+                                 
                                     {{
                                                           $avg_invoice_value
                                                         }}

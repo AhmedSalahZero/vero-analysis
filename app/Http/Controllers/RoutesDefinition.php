@@ -435,6 +435,7 @@ class RoutesDefinition
                 'is_provider' => false,
                 'sub_items' => [
                     'SalesChannels' => 'salesChannels',
+					'day'=>'day'
                 ]
 				
             ],

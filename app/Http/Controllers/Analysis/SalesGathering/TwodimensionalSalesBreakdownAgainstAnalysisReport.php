@@ -177,6 +177,11 @@ class TwodimensionalSalesBreakdownAgainstAnalysisReport
             $type = 'day_name';
             $view_name = 'Product Items Versus Day Name Sales' ;
         }
+		elseif (request()->route()->named('businessUnits.vs.day.view')) {
+            $main_type = 'business_unit';
+            $type = 'day_name';
+            $view_name = 'Business Unit Versus Day Name Sales' ;
+        }
         return view('client_view.reports.sales_gathering_analysis.two_dimensional_breakdown.sales_form', compact('company', 'view_name','type','main_type'));
     }
     public function result(Request $request, Company $company)
