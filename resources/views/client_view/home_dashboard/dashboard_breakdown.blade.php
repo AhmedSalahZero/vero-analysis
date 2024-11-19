@@ -149,7 +149,6 @@ $exportableFieldsValues[] = 'avg_invoice_value';
         </div>
         <div class="kt-portlet__body  kt-portlet__body--fit">
             <div class="row row-no-padding row-col-separator-xl">
-
                 @foreach ($types as $type => $color)
 
 
@@ -305,7 +304,6 @@ $exportableFieldsValues[] = 'avg_invoice_value';
                 </div>
                 <input type="hidden" id="top_for_{{ $type }}" value="{{ $top_data[$type]['item'] ?? '' }}">
                 <input type="hidden" id="value_for_{{ $type }}" value="{{ number_format(($top_data[$type]['Sales Value']??0)) }}">
-
                 <div class="progress progress--sm">
                     <div class="progress-bar kt-bg-{{$color}}" role="progressbar" style="width: 100%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
                 </div>

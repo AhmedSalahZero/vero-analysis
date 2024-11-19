@@ -105,7 +105,7 @@ class SalesBreakdownAgainstAnalysisReport
 			"
                 SELECT DATE_FORMAT(LAST_DAY(date),'%d-%m-%Y') as gr_date  , net_sales_value,service_provider_name," . $type . "
                 FROM sales_gathering
-             --   force index (sales_channel_index)
+             --  force index (sales_channel_index)
                 WHERE ( company_id = '" . $company->id . "'AND " . $type . " IS NOT NULL  AND date between '" . $request->start_date . "' and '" . $request->end_date . "')
 
                 ORDER BY id "
@@ -356,7 +356,7 @@ class SalesBreakdownAgainstAnalysisReport
              SELECT "' . $selectedType . '" as selected_type_name , "' . $modal_id . '" as modal_id , FORMAT(sum(net_sales_value) , 0) as total_sales_value , count(DISTINCT(customer_name)) as customer_name , count(DISTINCT(category)) as category , count(DISTINCT(product_or_service)) as product_or_service , count(DISTINCT(product_item)) as product_item, count(DISTINCT(sales_person)) as sales_person ,
               count(DISTINCT(business_sector)) as business_sector, count(DISTINCT(sales_channel)) as sales_channel, count(DISTINCT(zone)) as zone, count(DISTINCT(branch)) as branch
                 FROM sales_gathering
-              --  force index (sales_channel_index)
+              -- force index (sales_channel_index)
                 WHERE ( company_id = ' . $companyId  . ' AND ' . $type .  ' =  "'  . $selectedType .  '" AND date between "' . $start_date . '" and "' . $end_date . '"  )
                 ORDER BY id '
 		));
@@ -395,7 +395,7 @@ class SalesBreakdownAgainstAnalysisReport
 			'
              SELECT "' . $selectedType . '" as selected_type_name , "' . $modal_id . '" as modal_id , sum(net_sales_value)  as total_sales_value ,  ' . $column . ' as customer_name
                 FROM sales_gathering
-            --    force index (sales_channel_index)
+          --   force index (sales_channel_index)
                 WHERE ( company_id = ' . $companyId  . ' AND ' . $type .  ' =  "'  . $selectedType .  '" AND date between "' . $start_date . '" and "' . $end_date . '"  )
                  group by ' . $column . '
                  ORDER BY total_sales_value ' . ($direction == 'top' ? 'DESC limit 50' : 'ASC limit 50')
