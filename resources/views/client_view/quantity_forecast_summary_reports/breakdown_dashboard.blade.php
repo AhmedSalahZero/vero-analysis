@@ -62,7 +62,6 @@
                                         <span class="kt-widget24__stats kt-font-{{$color}}">
                                             {{ __( '[ ' .($top_data[$type]['item'] ?? ' - ')) .' ]  ' .number_format(($top_data[$type]['Sales Value']??0)) }}
                                     </div>
-
                                     <div class="progress progress--sm">
                                         <div class="progress-bar kt-bg-{{$color}}" role="progressbar" style="width: 100%;" aria-valuenow="50"
                                             aria-valuemin="0" aria-valuemax="100"></div>

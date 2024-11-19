@@ -311,10 +311,34 @@ class HomeController extends Controller
 			'formattedDataForChart' => $formattedDataForChart
 		];
 	}
+	protected function setBarColorsForTypes(array $types)
+	{
+		$newTypes = [];
+		$firstClass = 'brand';
+		
+		$previousColor = null ;
+		foreach($types as $type => $oldColor){
+			$color = [
+				$firstClass=>'success',
+				'success'=>'danger',
+				// 'success'=>'danger bg-red-progress text-white',
+				'danger'=>$firstClass,
+				// 'danger bg-red-progress text-white'=>$firstClass,
+				null=>$firstClass
+			][$previousColor] ;
+			if(!is_null($previousColor)){
+			}
+			
+			$newTypes[$type]=$color;
+			$previousColor = $color ;
+		}
+		return $newTypes;
+		
+	}
 	public function dashboardBreakdownAnalysis(Request $request, Company $company)
 	{
 		if($company->isCachingNow()){
-			return redirect()->route('viewHomePage',['company'=>$company->id ])->with('fail',__('Please Wait Until Breakdown Dashboard Recalculate'));
+			// return redirect()->route('viewHomePage',['company'=>$company->id ])->with('fail',__('Please Wait Until Breakdown Dashboard Recalculate'));
 		}
 		
 		$initialDates = getEndYearBasedOnDataUploaded($company);
@@ -377,7 +401,7 @@ class HomeController extends Controller
 				unset($types[$type]);
 			}
 		}
-	
+		$types = $this->setBarColorsForTypes($types);
 
 		return view('client_view.home_dashboard.dashboard_breakdown', compact(
 			'company',
