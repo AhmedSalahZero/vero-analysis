@@ -41,8 +41,8 @@ class SalesPersonsAgainstAnalysisReport
             $type  = 'principle';
             $view_name = 'Sales Persons Against Principles Trend Analysis';
         } elseif (request()->route()->named('salesPersons.products.analysis')) {
-            $type  = 'product_or_service';
-            $view_name = 'Sales Persons Against Products / Services Trend Analysis';
+            $type  = 'sub_category';
+            $view_name = 'Sales Persons Against Sub Categories Trend Analysis';
         } elseif (request()->route()->named('salesPersons.Items.analysis')) {
             $type  = 'product_item';
             $view_name = 'Sales Persons Against Products Items Trend Analysis';

@@ -30,8 +30,8 @@ class CountriesAgainstAnalysisReport
 			$type  = 'category';
 			$view_name = 'Countries Against Categories Trend Analysis';
 		} elseif (request()->route()->named('country.products.analysis')) {
-			$type  = 'product_or_service';
-			$view_name = 'Countries Against Products / Services Trend Analysis';
+			$type  = 'sub_category';
+			$view_name = 'Countries Against Sub Categories Trend Analysis';
 		} elseif (request()->route()->named('country.principles.analysis')) {
 			$type  = 'principle';
 			$view_name = 'Countries Against Principles Trend Analysis';
@@ -55,7 +55,7 @@ class CountriesAgainstAnalysisReport
 			$view_name = 'Countries Against Branches Trend Analysis';
 		} elseif (request()->route()->named('country.products.averagePrices')) {
 			$type  = 'averagePrices';
-			$view_name = 'Countries Products / Services Average Prices';
+			$view_name = 'Countries Sub Categories Average Prices';
 		} elseif (request()->route()->named('country.Items.averagePrices')) {
 			$type  = 'averagePricesProductItems';
 			$view_name = 'Countries Products Items Average Prices';
@@ -64,7 +64,7 @@ class CountriesAgainstAnalysisReport
 		$name_of_selector_label = str_replace(['Countries Against ', ' Trend Analysis'], '', $view_name);
 
 		if ($type == 'averagePrices') {
-			$name_of_selector_label = 'Products / Services';
+			$name_of_selector_label = 'Sub Categories';
 		} elseif ($type  == 'averagePricesProductItems') {
 			$name_of_selector_label = 'Products Items';
 		}

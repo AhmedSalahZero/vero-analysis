@@ -29,7 +29,7 @@
 
                         if ($name_of_selector_label == 'Products Items') {
                             $column =  3 ;
-                        }elseif ($name_of_selector_label == 'Products / Services') {
+                        }elseif ($name_of_selector_label == 'Sub Categories') {
                             $column =  4 ;
                         }else {
                             $column =  6 ;
@@ -113,7 +113,7 @@
                             </div>
                         </div>
 
-                        {{-- @if ($name_of_selector_label == 'Products / Services' || $name_of_selector_label == 'Products Items')
+                        {{-- @if ($name_of_selector_label == 'Sub Categories' || $name_of_selector_label == 'Products Items')
 
                                 <div class="col-md-{{$column}}">
                         <label>{{ __('Select Categories ( Multi Selection )') }} </label>

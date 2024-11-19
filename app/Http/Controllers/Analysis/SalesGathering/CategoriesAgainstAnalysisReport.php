@@ -27,8 +27,8 @@ class CategoriesAgainstAnalysisReport
             $type  = 'sales_channel';
             $view_name = 'Categories Against Sales Channels Trend Analysis' ;
         }elseif (request()->route()->named('categories.products.analysis')) {
-            $type  = 'product_or_service';
-            $view_name = 'Categories Against Products / Services Trend Analysis' ;
+            $type  = 'sub_category';
+            $view_name = 'Categories Against Sub Categories Trend Analysis' ;
         } 
 		elseif (request()->route()->named('categories.countries.analysis')) {
             $type  = 'country';
@@ -56,7 +56,7 @@ class CategoriesAgainstAnalysisReport
         }
         elseif (request()->route()->named('categories.products.averagePrices')) {
             $type  = 'averagePrices';
-            $view_name = 'Categories Products / Services Average Prices' ;
+            $view_name = 'Categories Sub Categories Average Prices' ;
         }
 		
 
@@ -69,7 +69,7 @@ class CategoriesAgainstAnalysisReport
 
         elseif (request()->route()->named('customers.products.analysis')) {
             // by salah
-            $type  = 'product_or_service';
+            $type  = 'sub_category';
             $view_name = Customers_Against_Products_Trend_Analysis ;
         }
 
@@ -131,7 +131,7 @@ class CategoriesAgainstAnalysisReport
             if ($result == 'view') {
                 $mainField = 'category';
                 if(($type == 'category' && $view_name ==Customers_Against_Categories_Trend_Analysis) 
-                || ($type == 'product_or_service' && $view_name == Customers_Against_Products_Trend_Analysis)
+                || ($type == 'sub_category' && $view_name == Customers_Against_Products_Trend_Analysis)
                 || ($type == 'product_item' && $view_name == Customers_Against_Products_ITEMS_Trend_Analysis)
                 
                 )

@@ -340,7 +340,7 @@ class QuantityAllocationsReport
             return redirect()->route('second.allocations.quantity', $company);
         }
         $has_product_item = $this->fields($company);
-        $type = ($has_product_item === true) ? 'product_item' : 'product_or_service';
+        $type = ($has_product_item === true) ? 'product_item' : 'sub_category';
         $new_products_allocations = QuantityNewProductAllocationBase::company()->first();
         $products_seasonality = QuantityProductSeasonality::company()->get();
         $sales_forecast = QuantitySalesForecast::company()->first();

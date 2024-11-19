@@ -236,6 +236,7 @@ $exportableFieldsValues[] = 'avg_invoice_value';
                                                         <button style="background-color:#086691 ; color:#fff" class="btn  btn-sm text-white ranged-button-ajax" data-direction="bottom" data-type="{{ $type }}" data-column="{{ $id }}">{{ __('Bottom 50') }}</button>
                                                     </div>
                                                     @endif
+
                                                 </td>
                                                 <td id="{{ $id }}">-</td>
                                             </tr>

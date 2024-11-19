@@ -30,8 +30,8 @@
                         @if ($section != 'SalesBreakdownAnalysis')
 
                             <?php $name = $subSection->name['en'] ;
-                            if ($subSection->name['en'] == "Products / Services") {
-                                $name = "Product Or Service Name";
+                            if ($subSection->name['en'] == "Sub Categories") {
+                                $name = "Sub Category";
                             }   ?>
                         @endif
                        
@@ -74,8 +74,8 @@
 
                         <?php $name = $mainSubSection->name['en'] ;
 
-                        if ($mainSubSection->name['en'] == "Products / Services") {
-                            $name = "Product Or Service Name";
+                        if ($mainSubSection->name['en'] == "Sub Categories") {
+                            $name = "Sub Category";
                         }   ?>
                     @endif
                     @if ($section->name['en'] == 'Sales Breakdown Analysis Report' ||  (false !== $found =  array_search(\Str::singular($name),$viewing_names) || $mainSubSection->name['en'] == "Average Prices" )
@@ -93,13 +93,13 @@
                                         @php $name_of_section = substr($sub_section->name['en'], strpos($sub_section->name['en'] , "Against")+8 ); @endphp 
                                                 @if($name_of_section == 'Products')
                                                 @php
-                                                    $name_of_section ='Products / Services';
+                                                    $name_of_section ='Sub Categories';
                                                 @endphp
                                                 @endif 
                                         @if ($section->name['en'] !== 'Sales Breakdown Analysis Report' && $mainSubSection->name['en'] !== "Average Prices" )
 										
-                                            @if ($name_of_section == "Products / Services")
-                                                @php  $name_of_section = "Product Or Service Names" @endphp
+                                            @if ($name_of_section == "Sub Categories")
+                                                @php  $name_of_section = "Sub Category" @endphp
                                             @elseif($name_of_section == "Products Items")
                                                 @php  $name_of_section = "Product Items" @endphp
                                             @endif
@@ -219,15 +219,15 @@
                                                         @endphp
  
                                                     @endif
-                                                    @if ($name_of_section == "Products / Services" )
-                                                        @php $name_of_section = "Product Or Service Names"; @endphp 
+                                                    @if ($name_of_section == "Sub Categories" )
+                                                        @php $name_of_section = "Sub Category"; @endphp 
                                                     @endif
                                                     
-                                                    @if (isset($name_of_first_section) && $name_of_first_section == "Products / Services" )
-                                                        @php $name_of_first_section = "Product Or Service Names"; @endphp 
+                                                    @if (isset($name_of_first_section) && $name_of_first_section == "Sub Categories" )
+                                                        @php $name_of_first_section = "Sub Category"; @endphp 
                                                     @endif
 
-                                                    @if (isset($name_of_first_section) && $name_of_first_section == "Products / Services" )
+                                                    @if (isset($name_of_first_section) && $name_of_first_section == "Sub Categories" )
                                                         @php $name_of_first_section = "Branch"; @endphp 
                                                     @endif
 

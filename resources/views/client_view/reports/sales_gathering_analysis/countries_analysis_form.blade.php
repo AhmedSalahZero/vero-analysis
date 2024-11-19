@@ -22,7 +22,7 @@
                 @if ($type == 'averagePrices')
                 <input type="hidden" name="type_of_report" value="countries_products_avg">
                 <?php
-                            $type = 'product_or_service'  ;
+                            $type = 'sub_category'  ;
                         ?>
                 @elseif ($type == 'averagePricesProductItems')
                 <input type="hidden" name="type_of_report" value="countries_Items_avg">
@@ -42,7 +42,7 @@
                         if ($name_of_selector_label == 'Products Items') {
                             $column =  3 ;
                             $data_type_selector = '';
-                        }elseif ($name_of_selector_label == 'Products / Services') {
+                        }elseif ($name_of_selector_label == 'Sub Categories') {
                             $column =  4 ;
                             $data_type_selector = '';
                         }else {
@@ -125,7 +125,7 @@
                                 </div>
                             </div>
                         </div>
-                        @if ($name_of_selector_label == 'Products / Services' || $name_of_selector_label == 'Products Items')
+                        @if ($name_of_selector_label == 'Sub Categories' || $name_of_selector_label == 'Products Items')
 
                         <div class="col-md-{{$column}}">
                             <label>{{ __('Select Categories ') }} <span class="multi_selection"></span> @include('max-option-span') </label>
@@ -260,7 +260,7 @@
                 countries = $(this).val();
             }
             type_of_data = "{{$type}}";
-            if ("{{$name_of_selector_label}}" == 'Products / Services' || "{{$name_of_selector_label}}" == 'Products Items') {
+            if ("{{$name_of_selector_label}}" == 'Sub Categories' || "{{$name_of_selector_label}}" == 'Products Items') {
                 getCategories(countries, 'category');
             } else {
                 getSalesChannales(countries, type_of_data);
@@ -283,7 +283,7 @@
 
             categories = $(this).val();
 
-            getProducts(countries, categories, 'product_or_service', type_of_data)
+            getProducts(countries, categories, 'sub_category', type_of_data)
 
         }, getNumberOfMillSeconds());
 
@@ -418,7 +418,7 @@
             // else{
             //     var data_type = '';
             // }
-            if (type == 'product_or_service') {
+            if (type == 'sub_category') {
 
                 row = '<select data-live-search="true" data-actions-box="true" name="sales_channels[]" class="select2-select form-control kt-bootstrap-select kt_bootstrap_select"  ' + data_type + '  required >\n';
                 // if($('#data_type').val()  !== 'value'){
@@ -460,7 +460,7 @@
                 , 'second_main_data': categories
                 , 'sub_main_field': 'category'
                 , 'third_main_data': products
-                , 'third_main_field': 'product_or_service'
+                , 'third_main_field': 'sub_category'
                 , 'field': type_of_data
                 , 'start_date': $('input[name="start_date"]').val()
                 , 'end_date': $('input[name="end_date"]').val()

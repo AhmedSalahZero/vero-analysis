@@ -28,8 +28,8 @@ class BranchesAgainstAnalysisReport
             $type  = 'category';
             $view_name = 'Branches Against Categories Trend Analysis' ;
         }elseif (request()->route()->named('branches.products.analysis')) {
-            $type  = 'product_or_service';
-            $view_name = 'Branches Against Products / Services Trend Analysis' ;
+            $type  = 'sub_category';
+            $view_name = 'Branches Against Sub Categories Trend Analysis' ;
         }elseif (request()->route()->named('branches.principles.analysis')) {
             $type  = 'principle';
             $view_name = 'Branches Against Principles Trend Analysis' ;

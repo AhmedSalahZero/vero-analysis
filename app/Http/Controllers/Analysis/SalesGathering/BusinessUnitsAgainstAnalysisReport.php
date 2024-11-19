@@ -33,8 +33,8 @@ class BusinessUnitsAgainstAnalysisReport
             $type  = 'category';
             $view_name = 'Business Units Against Categories Trend Analysis' ;
         }elseif (request()->route()->named('businessUnits.products.analysis')) {
-            $type  = 'product_or_service';
-            $view_name = 'Business Units Against Products / Services Trend Analysis' ;
+            $type  = 'sub_category';
+            $view_name = 'Business Units Against Sub Categories Trend Analysis' ;
         }elseif (request()->route()->named('businessUnits.principles.analysis')) {
             $type  = 'principle';
             $view_name = 'Business Units Against Principles Trend Analysis' ;
@@ -55,7 +55,7 @@ class BusinessUnitsAgainstAnalysisReport
             $view_name = 'Business Units Against Sales Channels Trend Analysis' ;
         }elseif (request()->route()->named('businessUnits.products.averagePrices')) {
             $type  = 'averagePrices';
-            $view_name = 'Business Units Products / Services Average Prices' ;
+            $view_name = 'Business Units Sub Categories Average Prices' ;
         }
         elseif (request()->route()->named('businessUnits.Items.averagePrices')) {
             $type  = 'averagePricesProductItems';
@@ -65,11 +65,11 @@ class BusinessUnitsAgainstAnalysisReport
         $name_of_selector_label = str_replace(['Business Units Against ' ,' Trend Analysis'],'',$view_name);
 
         if ($type == 'averagePrices') {
-            $name_of_selector_label = 'Products / Services';
+            $name_of_selector_label = 'Sub Categories';
         } elseif($type  == 'averagePricesProductItems') {
             $name_of_selector_label = 'Products Items';
         }
-        // $name_of_selector_label = ($type == 'averagePrices') ? 'Products / Services' : str_replace(['Business Units Against ' ,' Trend Analysis'],'',$view_name);
+        // $name_of_selector_label = ($type == 'averagePrices') ? 'Sub Categories' : str_replace(['Business Units Against ' ,' Trend Analysis'],'',$view_name);
         return view('client_view.reports.sales_gathering_analysis.businessUnits_analysis_form', compact('company','name_of_selector_label','type','view_name'));
     }
     public function BusinessUnitsSalesAnalysisIndex(Company $company)

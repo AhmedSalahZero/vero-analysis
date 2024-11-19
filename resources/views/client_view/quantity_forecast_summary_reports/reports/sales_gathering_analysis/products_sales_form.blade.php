@@ -147,7 +147,7 @@
             categoriesData = $(this).val();
         }
 
-        getProducts(categoriesData, 'product_or_service');
+        getProducts(categoriesData, 'sub_category');
 
     });
     // Sub Categories

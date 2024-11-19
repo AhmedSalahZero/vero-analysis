@@ -18,7 +18,7 @@ class ProductsAgainstAnalysisReport
 	public function index(Company $company)
 	{
 		if (request()->route()->named('products.sales.analysis')) {
-			$type = 'product_or_service';
+			$type = 'sub_category';
 			$view_name = 'Products Trend Analysis';
 		} elseif (request()->route()->named('products.zones.analysis')) {
 			$type = 'zone';
@@ -99,9 +99,9 @@ class ProductsAgainstAnalysisReport
 				$main_row = str_replace("'", "''", $main_row);
 				$mainData_data = collect(DB::select(DB::raw(
 					"
-                    SELECT DATE_FORMAT(LAST_DAY(date),'%d-%m-%Y') as gr_date  , " . $data_type . " ,product_or_service," . $type . "
+                    SELECT DATE_FORMAT(LAST_DAY(date),'%d-%m-%Y') as gr_date  , " . $data_type . " ,sub_category," . $type . "
                     FROM sales_gathering 
-                    WHERE ( company_id = '" . $company->id . "'AND product_or_service = '" .  $main_row . "'AND date between '" . $request->start_date . "' and '" . $request->end_date . "')
+                    WHERE ( company_id = '" . $company->id . "'AND sub_category = '" .  $main_row . "'AND date between '" . $request->start_date . "' and '" . $request->end_date . "')
                     ORDER BY id "
 				)))->groupBy($type)->map(function ($item) use ($data_type) {
 					return $item->groupBy('gr_date')->map(function ($sub_item) use ($data_type) {
@@ -113,11 +113,11 @@ class ProductsAgainstAnalysisReport
 
 				$mainData_data = DB::table('sales_gathering')
 					->where('company_id', $company->id)
-					->where('product_or_service', $main_row)
+					->where('sub_category', $main_row)
 					->whereNotNull($type)
 					->whereBetween('date', [$request->start_date, $request->end_date])
 					->selectRaw('DATE_FORMAT(LAST_DAY(date),"%d-%m-%Y") as gr_date ,
-                    (IFNULL(' . $data_type . ',0) ) as ' . $data_type . ' ,product_or_service,' . $type)
+                    (IFNULL(' . $data_type . ',0) ) as ' . $data_type . ' ,sub_category,' . $type)
 					->get()
 					->groupBy($type)->map(function ($item) use ($data_type) {
 						return $item->groupBy('gr_date')->map(function ($sub_item) use ($data_type) {
@@ -126,11 +126,11 @@ class ProductsAgainstAnalysisReport
 					})->toArray();
 				$report_data_quantity = DB::table('sales_gathering')
 					->where('company_id', $company->id)
-					->where('product_or_service', $main_row)
+					->where('sub_category', $main_row)
 					->whereNotNull($type)
 					->whereBetween('date', [$request->start_date, $request->end_date])
 					->selectRaw('DATE_FORMAT(LAST_DAY(date),"%d-%m-%Y") as gr_date ,
-                    (IFNULL(' . $data_type . ',0) ) as ' . $data_type . ' ,IFNULL(quantity_bonus,0) quantity_bonus , IFNULL(quantity,0) quantity , product_or_service,' . $type)
+                    (IFNULL(' . $data_type . ',0) ) as ' . $data_type . ' ,IFNULL(quantity_bonus,0) quantity_bonus , IFNULL(quantity,0) quantity , sub_category,' . $type)
 					->get()
 					->groupBy($type)->map(function ($item) use ($data_type) {
 						return $item->groupBy('gr_date')->map(function ($sub_item) use ($data_type) {
@@ -251,7 +251,7 @@ class ProductsAgainstAnalysisReport
 
 
 		$Items_names = $products_names;
-		$report_view = getComparingReportForAnalysis($request, $report_data, $secondReport, $company, $dates, $view_name, $Items_names, 'product_or_service');
+		$report_view = getComparingReportForAnalysis($request, $report_data, $secondReport, $company, $dates, $view_name, $Items_names, 'sub_category');
 
 		if ($report_view instanceof View) {
 			return $report_view;
@@ -298,9 +298,9 @@ class ProductsAgainstAnalysisReport
 
 			$sales = collect(DB::select(DB::raw(
 				"
-                SELECT DATE_FORMAT(LAST_DAY(date),'%d-%m-%Y') as gr_date  , sales_value ," . $fields . " product_or_service
+                SELECT DATE_FORMAT(LAST_DAY(date),'%d-%m-%Y') as gr_date  , sales_value ," . $fields . " sub_category
                 FROM sales_gathering
-                WHERE ( company_id = '" . $company->id . "'AND product_or_service = '" . $zone . "' AND date between '" . $request->start_date . "' and '" . $request->end_date . "')
+                WHERE ( company_id = '" . $company->id . "'AND sub_category = '" . $zone . "' AND date between '" . $request->start_date . "' and '" . $request->end_date . "')
                 ORDER BY id"
 			)))->groupBy('gr_date');
 			$sales_values_per_zone[$zone] = $sales->map(function ($sub_item) {
@@ -377,7 +377,7 @@ class ProductsAgainstAnalysisReport
 		$dates = array_keys($report_data['Total']);
 		// $dates = formatDateVariable($dates, $request->start_date, $request->end_date);
 
-		$type_name = 'Products / Services';
+		$type_name = 'Sub Categories';
 		return view('client_view.reports.sales_gathering_analysis.sales_discounts_analysis_report', compact('company', 'view_name', 'zones_names', 'dates', 'report_data', 'type_name'));
 	}
 	public function growthRate($data)
@@ -421,9 +421,9 @@ class ProductsAgainstAnalysisReport
         foreach ($branches as  $branch) {
 
                 $branches_data =collect(DB::select(DB::raw("
-                SELECT DATE_FORMAT(LAST_DAY(date),'%d-%m-%Y') as gr_date  , net_sales_value ,product_or_service
+                SELECT DATE_FORMAT(LAST_DAY(date),'%d-%m-%Y') as gr_date  , net_sales_value ,sub_category
                 FROM sales_gathering
-                WHERE ( company_id = '".$company->id."'AND product_or_service = '".$branch."' AND date between '".$request->start_date."' and '".$request->end_date."')
+                WHERE ( company_id = '".$company->id."'AND sub_category = '".$branch."' AND date between '".$request->start_date."' and '".$request->end_date."')
                 ORDER BY id "
                 )))->groupBy('gr_date')->map(function($item){
                     return $item->sum('net_sales_value');

@@ -28,7 +28,7 @@ class DiscountsAnalysisReport
             $view_name = 'Categories Versus Discounts' ;
         }
         elseif (request()->route()->named('products.vs.discounts.view')) {
-            $main_type = 'product_or_service';
+            $main_type = 'sub_category';
             $type = 'discounts';
             $view_name = 'Products Versus Discounts' ;
         }

@@ -24,6 +24,7 @@ class RoutesDefinition
                         'Customers' => 'customers',
                         'Countries' => 'countries',
                         'Categories' => 'categories',
+                        'Sub Categories' => 'subcategories',
                         'Products' => 'products',
                         'Principles' => 'principles',
                         'ProductsItems' => 'Items',
@@ -53,6 +54,7 @@ class RoutesDefinition
                         'Customers' => 'customers',
                         'Countries' => 'countries',
                         'Categories' => 'categories',
+                        'Sub Categories' => 'subcategories',
                         'Products' => 'products',
                         'Principles' => 'principles',
                         'ProductsItems' => 'Items',
@@ -83,6 +85,7 @@ class RoutesDefinition
                         'Customers' => 'customers',
                         'Countries' => 'countries',
                         'SalesChannels' => 'salesChannels',
+                        'Sub Categories' => 'subcategories',
                         'Products' => 'products',
                         'ProductsItems' => 'Items',
                         'SalesPersons' => 'salesPersons',
@@ -164,6 +167,7 @@ class RoutesDefinition
                         'SalesChannels' => 'salesChannels',
                         'Customers' => 'customers',
                         'Categories' => 'categories',
+                        'Sub Categories' => 'subcategories',
                         'Products' => 'products',
                         'Principles' => 'principles',
                         'ProductsItems' => 'Items',
@@ -195,6 +199,7 @@ class RoutesDefinition
                         'SalesChannels' => 'salesChannels',
                         'Customers' => 'customers',
                         'Categories' => 'categories',
+                        'Sub Categories' => 'subcategories',
                         'Products' => 'products',
                         'Principles' => 'principles',
                         'ProductsItems' => 'Items',
@@ -359,6 +364,7 @@ class RoutesDefinition
                         'SalesChannels' => 'salesChannels',
                         'Customers' => 'customers',
                         'Categories' => 'categories',
+                        'SubCategories' => 'subcategories',
                         'Products' => 'products',
                         'Principles' => 'principles',
                         'ProductsItems' => 'Items',
@@ -462,6 +468,16 @@ class RoutesDefinition
           		      'branches' => 'branches',
                 ]
             ],
+			'Sub Categories' => [
+                'name' =>  'subcategories',
+                'is_provider' => false,
+                'sub_items' => [
+                    'Zones' => 'zones',
+                    'SalesChannels' => 'salesChannels',
+                    'BusinessSectors' => 'businessSectors', 'BusinessUnits' => 'businessUnits',
+                'branches' => 'branches',
+                ]
+            ],
             // 4 => ProductItems
             'ProductItems' => [
                 'name' =>  'Items',
@@ -485,6 +501,16 @@ class RoutesDefinition
                     'Branches' => 'branches',
 					'day'=>'day'
 					]
+            ],
+			'Sub Categories' => [
+                'name' =>  'subcategories',
+                'is_provider' => false,
+                'sub_items' => [
+                    'Zones' => 'zones',
+                    'SalesChannels' => 'salesChannels',
+                    'BusinessSectors' => 'businessSectors', 'BusinessUnits' => 'businessUnits',
+                    'Branches' => 'branches',
+                ]
             ],
             // 6 => Customers
             'Customers' => [
