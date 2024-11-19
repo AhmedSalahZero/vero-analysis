@@ -500,10 +500,7 @@ class SalesChannelsAgainstAnalysisReport
         if($array)
         {
             
-            return [
-				'report_data'=>$report_data ,
-				'dates'=> array_keys($total_sales_channels ?? [])
-			] ;
+            return $report_data;
         }
 		$dates = array_keys($total_sales_channels ?? []) ;
 	

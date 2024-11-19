@@ -435,6 +435,7 @@ class RoutesDefinition
                 'is_provider' => false,
                 'sub_items' => [
                     'SalesChannels' => 'salesChannels',
+					 'day'=>'day'
                 ]
 				
             ],
@@ -459,6 +460,7 @@ class RoutesDefinition
                     'SalesChannels' => 'salesChannels',
                     'BusinessSectors' => 'businessSectors', 'BusinessUnits' => 'businessUnits',
           		      'branches' => 'branches',
+					  'day'=>'day'
                 ]
             ],
             // 4 => ProductItems

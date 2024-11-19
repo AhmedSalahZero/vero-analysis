@@ -8,6 +8,26 @@
 <link href="<?php echo e(url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css')); ?>" rel="stylesheet" type="text/css" />
 <link href="<?php echo e(url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css')); ?>" rel="stylesheet" type="text/css" />
 <style>
+
+.break-down-bg-success{
+		background-color:green !important;
+	}
+	.break-down-bg-brand{
+		background-color:blue !important;
+	}
+	.break-down-bg-danger{
+		background-color:red !important;
+	}
+	.break-down-color-success{
+		color:green !important;
+	}
+	.break-down-color-brand{
+		color:blue !important;
+	}
+	.break-down-color-danger{
+		color:red !important;
+	}
+	
     .max-w-300 {
         max-width: 300px !important;
         width: 300px !important;
@@ -153,7 +173,7 @@ $exportableFieldsValues[] = 'avg_invoice_value';
                                     <span><?php echo e(__('Top') . ' ' .  __(ucwords(str_replace('_',' ',$type)))); ?></span>
                                     <p>
 
-                                        <button type="button" class="btn text-white btn-small btn-<?php echo e($color); ?>" data-toggle="modal" data-target="#modal_for_<?php echo e(convertStringToClass($type)); ?>">
+                                         <button type="button" class="btn btn-small text-white break-down-bg-<?php echo e($color); ?>" data-toggle="modal" data-target="#modal_for_<?php echo e(convertStringToClass($type)); ?>">
                                             <?php echo e(__('Take Away')); ?>
 
                                         </button>
@@ -263,14 +283,14 @@ $exportableFieldsValues[] = 'avg_invoice_value';
 
 
                 <div class="kt-widget24__details">
-                    <span class="kt-widget24__stats kt-font-<?php echo e($color); ?>" style="font-size:1.4rem">
+                    <span class="kt-widget24__stats break-down-color-<?php echo e($color); ?>" style="font-size:1.4rem">
                         <?php echo e(__( '[ ' .($top_data[$type]['item'] ?? ' - ')) .' ]  ' .number_format(($top_data[$type]['Sales Value']??0))); ?>
 
                 </div>
                 <input type="hidden" id="top_for_<?php echo e($type); ?>" value="<?php echo e($top_data[$type]['item'] ?? ''); ?>">
                 <input type="hidden" id="value_for_<?php echo e($type); ?>" value="<?php echo e(number_format(($top_data[$type]['Sales Value']??0))); ?>">
-                <div class="progress progress--sm">
-                    <div class="progress-bar kt-bg-<?php echo e($color); ?>" role="progressbar" style="width: 100%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+               <div class="progress progress--sm">
+                    <div class="progress-bar break-down-bg-<?php echo e($color); ?>" role="progressbar" style="width: 100%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
                 <div class="kt-widget24__action">
                     <span class="kt-widget24__change">

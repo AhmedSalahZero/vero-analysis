@@ -250,6 +250,20 @@
 
                                                    
                                                         )
+														
+														
+														@if($name_of_section == "Days" && isset($name_of_first_section) &&
+															array_search(\Str::singular($name_of_first_section),$viewing_names) === false
+													 )
+@if($name_of_first_section != 'Product Items' && $name_of_first_section !='Business Unit')
+{{ dd(\Str::singular($name_of_first_section),$viewing_names) }}	
+@endif
+														@continue
+													@endif
+														
+														
+														
+														
 														@if($user->canViewReport($sub_section->name['en'])
 														|| ($name_of_section == "Days" && $name == "One Dimension") // second if statement
 														)
