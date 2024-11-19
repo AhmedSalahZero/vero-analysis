@@ -354,7 +354,7 @@ class HomeController extends Controller
 			$end_date = $request['end_date'];
 		}
 		$exportableFields  = (new ExportTable)->customizedTableField($company, 'SalesGathering', 'selected_fields');
-		
+		// dd($exportableFields);
 		$db_names = array_keys($exportableFields);
 
 		$types =  [
@@ -363,6 +363,7 @@ class HomeController extends Controller
 			'branch' => 'danger',
 			'category' => 'success',
 			'sub_category' => 'brand',
+			'product_or_service' => 'warning',
 			'product_item' => 'warning',
 			'business_sector' => 'brand',
 			'business_unit' => 'success',

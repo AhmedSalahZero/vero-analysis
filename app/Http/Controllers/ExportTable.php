@@ -39,6 +39,7 @@ class ExportTable extends Controller
 			if($model == 'LoanSchedule'){
 				return $loanScheduleExportables;
 			}
+			
 			return  $this->columnsFiltration($model, $company, $view, $selected_fields);
 		}
 	
@@ -53,7 +54,6 @@ class ExportTable extends Controller
 		if($modelName == 'SupplierInvoice'){
 			unset($columnsWithViewingNames['paid_amount']);
 		}
-		if($modelName)
 		return view('client_view.Exportation.fieldsSelectionToBeExported', compact('columnsWithViewingNames', 'company', 'model', 'view', 'selected_fields','modelName'));
 	}
 	/**

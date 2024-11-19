@@ -35,13 +35,20 @@
                             }   ?>
                         @endif
                        
+					   												 @if($subSection->id == 127)
+																	 {{-- {{ dd($user->canViewReport(generateReportName($subSection->name['en']))) }} --}}
+																	 {{-- {{ dd(\Str::singular($name),$viewing_names,array_search(\Str::singular($name),       $viewing_names)) }} --}}
+																	 {{-- {{ dd($viewing_names,$subSection->name['en'],$user->canViewReport(generateReportName($subSection->name['en']))) }} ; --}}
+			
+			 @endif  
+			 
                         @if (($section->name['en'] == 'Sales Breakdown Analysis Report' && $subSection->name['en'] !== "Customers Nature" && $subSection->name['en'] !== "Service Providers" && $subSection->name['en'] !== 'Sales Discounts') ||
                         ($subSection->name['en'] == "Customers Nature" && (false !== $found =  array_search('Customer Name',$viewing_names))) ||
                             ($subSection->name['en'] == "Service Providers" && ( @count(array_intersect(['Service Provider Type','Service Provider Name','Service Provider Birth Year'],$viewing_names)) > 0 ) ||
                             ($subSection->name['en'] == 'Sales Discounts' && (count(array_intersect(['Quantity Discount','Cash Discount','Special Discount'],$viewing_names)) > 0) )) || 
                             ($subSection->name['en'] == INVOICES && (count(array_intersect(['Document Type','Document Number'],$viewing_names)) > 0) )
                         ||(false !== $found = array_search(\Str::singular($name),       $viewing_names) || $subSection->name['en'] == "Average Prices" ))
-								@if($user->canViewReport(generateReportName($subSection->name['en'])) || $subSection->name['en']=='One Dimension'||$subSection->name['en']=='Two Dimension' ||$subSection->name['en']=='Interval Comparing'  )
+								@if(true||$user->canViewReport(generateReportName($subSection->name['en'])) || $subSection->name['en']=='One Dimension'||$subSection->name['en']=='Two Dimension' ||$subSection->name['en']=='Interval Comparing'  )
                                 <li class="nav-item">
 
                                     <a class="nav-link {{$section_key == 0 ? 'active' : ''}}" onclick="return false" data-toggle="tab" href="#kt_widget2_tab1_content_{{$subSection->id}}" role="tab">
@@ -65,9 +72,8 @@
         <div class="kt-portlet__body">
             <div class="tab-content">
                 <?php $section_key = 0;?>
-				
                 @foreach ($section->subSections as $key=> $mainSubSection)
-             
+            
                 
                     @if ($section != 'SalesBreakdownAnalysis')
 
@@ -78,11 +84,13 @@
                             $name = "Sub Category";
                         }   ?>
                     @endif
+					{{-- {{ dd($viewing_names) }} --}}
+					  
                     @if ($section->name['en'] == 'Sales Breakdown Analysis Report' ||  (false !== $found =  array_search(\Str::singular($name),$viewing_names) || $mainSubSection->name['en'] == "Average Prices" )
                     || $mainSubSection->name['en'] == 'Invoices'
                     
                     )
-                        
+                      
 
                      
                         <div class="tab-pane {{$section_key == 0 ? 'active' : ''}}" id="kt_widget2_tab1_content_{{$mainSubSection->id}}">
@@ -105,8 +113,7 @@
                                             @endif
 											
 											
-											
-
+								
                                             @if (
 												$sub_section->id == 337||
 												$sub_section->id == 338||
@@ -131,6 +138,9 @@
                                             )
                                             ||
                                              ($name_of_section == 'Sales Discounts' && (count(array_intersect(['Quantity Discount','Cash Discount','Special Discount','zones'],$viewing_names)) > 0) ) )
+											 
+							
+
                                                 <div class="col-md-4">
                                                     <div class="kt-widget2__item kt-widget2__item--primary">
                                                         <div class="kt-widget2__checkbox">
@@ -138,12 +148,12 @@
                                                         @php 
                                                             $route = isset($sub_section->route) && $sub_section->route !== null ? explode('.', $sub_section->route) : null;
                                                         @endphp 
-														
+						
                                                         <div class="kt-widget2__info">
                                                             <a href="{{  route(@$sub_section->route, $company) }}" class="kt-widget2__title">
 																{{ __($sub_section->name[lang()]) }}
-																
-                                                            </a>
+                        
+						                                    </a>
 
                                                         </div>
                                                         <div class="kt-widget2__actions">
@@ -156,6 +166,10 @@
                                             @php $name_of_section = substr($sub_section->name['en'], strpos($sub_section->name['en'] , "Average Prices Per ")+19  );
                                             @endphp 
                                             @if (false !== $found =  array_search(\Str::singular($name_of_section),$viewing_names) )
+											
+							
+{{-- {{ dd() }} --}}
+
 												@if($user->canViewReport($sub_section->name['en']))
                                                 <div class="col-md-4">
                                                     <div class="kt-widget2__item kt-widget2__item--primary">
@@ -178,7 +192,7 @@
 												@endif 
                                             @endif
                                         @elseif ( $section->name['en'] == 'Sales Breakdown Analysis Report')
-
+	
                                                 @if ($mainSubSection->name['en'] !== "Customers Nature" ||
                                                 ($mainSubSection->name['en'] == "Customers Nature" && false !== $found =  array_search('Customer Name',$viewing_names)) ||
                                                 ($mainSubSection->name['en'] == "Service Providers"  && (count(array_intersect(['Service Provider Type','Service Provider Name','Service Provider Birth Year'],$viewing_names)) >0))  )
@@ -199,7 +213,7 @@
                                                             @php  $name_of_section = "Service Provider Birth Year";  @endphp
 
                                                         @endif
-
+						 		
 
                                                     @elseif ($mainSubSection->name['en'] == 'Two Dimension')
                                                         @php
@@ -234,7 +248,8 @@
                                                     @if ($name_of_section == "Product Items Ranking" )
                                                         @php $name_of_section = "Product Items Ranking"; @endphp 
                                                     @endif
-
+				 
+					
                                                     @if ((!isset($name_of_first_section) &&  false !== $found =  array_search(\Str::singular($name_of_section),$viewing_names)) ||
                                                         ( isset($name_of_first_section) && (false !== $found =  array_search(\Str::singular($name_of_section),$viewing_names)) && (false !== $found =  array_search(\Str::singular($name_of_first_section),$viewing_names)) ) || ($sub_section->name['en'] =="Discounts Breakdown Analysis") ||
                                                         ($sub_section->name['en'] == "Customers Natures Analysis") || (  ($sub_section->name['en'] == "Discounts Sales Interval Comparing Analysis") && (count(array_intersect(['Quantity Discount','Cash Discount','Special Discount'],$viewing_names)) > 0)) 
@@ -253,6 +268,7 @@
 														@if($user->canViewReport($sub_section->name['en'])
 														|| ($name_of_section == "Days" && $name == "One Dimension") // second if statement
 														)
+														
                                                         <div class="col-md-4">
                                                             <div class="kt-widget2__item kt-widget2__item--primary">
                                                                 <div class="kt-widget2__checkbox">

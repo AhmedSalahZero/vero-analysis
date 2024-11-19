@@ -16,7 +16,7 @@
             <?php if($type == 'averagePrices'): ?>
             <input type="hidden" name="type_of_report" value="salesChannels_products_avg">
             <?php
-                        $type = 'product_or_service'  ;
+                        $type = 'sub_category'  ;
                     ?>
             <?php elseif($type == 'averagePricesProductItems'): ?>
             <input type="hidden" name="type_of_report" value="salesChannels_Items_avg">
@@ -34,7 +34,7 @@
                         if ($name_of_selector_label == 'Products Items') {
                             $column =  3 ;
                             $data_type_selector = '';
-                        }elseif ($name_of_selector_label == 'Products / Services') {
+                        }elseif ($name_of_selector_label == 'Sub Categories') {
                             $column =  4 ;
                             $data_type_selector = '';
                         }else {
@@ -130,7 +130,7 @@
                             </div>
                         </div>
 
-                        <?php if($name_of_selector_label == 'Products / Services' || $name_of_selector_label == 'Products Items'): ?>
+                        <?php if($name_of_selector_label == 'Sub Categories' || $name_of_selector_label == 'Products Items'): ?>
 
                         <div class="col-md-<?php echo e($column); ?>">
                             <label><?php echo e(__('Select Categories ')); ?> <span class="multi_selection"></span> <?php echo $__env->make('max-option-span', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?> </label>
@@ -274,7 +274,7 @@
                 salesChannels = $(this).val();
             }
             type_of_data = "<?php echo e($type); ?>";
-            if ("<?php echo e($name_of_selector_label); ?>" == 'Products / Services' || "<?php echo e($name_of_selector_label); ?>" == 'Products Items') {
+            if ("<?php echo e($name_of_selector_label); ?>" == 'Sub Categories' || "<?php echo e($name_of_selector_label); ?>" == 'Products Items') {
                 getCategories(salesChannels, 'category');
             } else {
                 getSalesChannales(salesChannels, type_of_data);
@@ -300,7 +300,7 @@
 
             categories = $(this).val();
 
-            getProducts(salesChannels, categories, 'product_or_service', type_of_data)
+            getProducts(salesChannels, categories, 'sub_category', type_of_data)
 
         }, getNumberOfMillSeconds());
 
@@ -445,7 +445,7 @@
 
 
 
-            if (type == 'product_or_service') {
+            if (type == 'sub_category') {
 
                 row = '<select data-live-search="true" data-actions-box="true" name="sales_channels[]" class="form-control select2-select kt-bootstrap-select kt_bootstrap_select"  ' + data_type + '  required >\n';
                 // if($('#data_type').val()  !== 'value'){
@@ -489,7 +489,7 @@
                 , 'second_main_data': categories
                 , 'sub_main_field': 'category'
                 , 'third_main_data': products
-                , 'third_main_field': 'product_or_service'
+                , 'third_main_field': 'sub_category'
                 , 'field': type_of_data
                 , 'start_date': $('input[name="start_date"]').val()
                 , 'end_date': $('input[name="end_date"]').val()

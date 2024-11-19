@@ -30,18 +30,25 @@
                         <?php if($section != 'SalesBreakdownAnalysis'): ?>
 
                             <?php $name = $subSection->name['en'] ;
-                            if ($subSection->name['en'] == "Products / Services") {
-                                $name = "Product Or Service Name";
+                            if ($subSection->name['en'] == "Sub Categories") {
+                                $name = "Sub Category";
                             }   ?>
                         <?php endif; ?>
                        
+					   												 <?php if($subSection->id == 127): ?>
+																	 
+																	 
+																	 
+			
+			 <?php endif; ?>  
+			 
                         <?php if(($section->name['en'] == 'Sales Breakdown Analysis Report' && $subSection->name['en'] !== "Customers Nature" && $subSection->name['en'] !== "Service Providers" && $subSection->name['en'] !== 'Sales Discounts') ||
                         ($subSection->name['en'] == "Customers Nature" && (false !== $found =  array_search('Customer Name',$viewing_names))) ||
                             ($subSection->name['en'] == "Service Providers" && ( @count(array_intersect(['Service Provider Type','Service Provider Name','Service Provider Birth Year'],$viewing_names)) > 0 ) ||
                             ($subSection->name['en'] == 'Sales Discounts' && (count(array_intersect(['Quantity Discount','Cash Discount','Special Discount'],$viewing_names)) > 0) )) || 
                             ($subSection->name['en'] == INVOICES && (count(array_intersect(['Document Type','Document Number'],$viewing_names)) > 0) )
                         ||(false !== $found = array_search(\Str::singular($name),       $viewing_names) || $subSection->name['en'] == "Average Prices" )): ?>
-								<?php if($user->canViewReport(generateReportName($subSection->name['en'])) || $subSection->name['en']=='One Dimension'||$subSection->name['en']=='Two Dimension' ||$subSection->name['en']=='Interval Comparing'  ): ?>
+								<?php if(true||$user->canViewReport(generateReportName($subSection->name['en'])) || $subSection->name['en']=='One Dimension'||$subSection->name['en']=='Two Dimension' ||$subSection->name['en']=='Interval Comparing'  ): ?>
                                 <li class="nav-item">
 
                                     <a class="nav-link <?php echo e($section_key == 0 ? 'active' : ''); ?>" onclick="return false" data-toggle="tab" href="#kt_widget2_tab1_content_<?php echo e($subSection->id); ?>" role="tab">
@@ -66,24 +73,25 @@
         <div class="kt-portlet__body">
             <div class="tab-content">
                 <?php $section_key = 0;?>
-				
                 <?php $__currentLoopData = $section->subSections; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key=> $mainSubSection): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-             
+            
                 
                     <?php if($section != 'SalesBreakdownAnalysis'): ?>
 
 
                         <?php $name = $mainSubSection->name['en'] ;
 
-                        if ($mainSubSection->name['en'] == "Products / Services") {
-                            $name = "Product Or Service Name";
+                        if ($mainSubSection->name['en'] == "Sub Categories") {
+                            $name = "Sub Category";
                         }   ?>
                     <?php endif; ?>
+					
+					  
                     <?php if($section->name['en'] == 'Sales Breakdown Analysis Report' ||  (false !== $found =  array_search(\Str::singular($name),$viewing_names) || $mainSubSection->name['en'] == "Average Prices" )
                     || $mainSubSection->name['en'] == 'Invoices'
                     
                     ): ?>
-                        
+                      
 
                      
                         <div class="tab-pane <?php echo e($section_key == 0 ? 'active' : ''); ?>" id="kt_widget2_tab1_content_<?php echo e($mainSubSection->id); ?>">
@@ -94,20 +102,19 @@
                                         <?php $name_of_section = substr($sub_section->name['en'], strpos($sub_section->name['en'] , "Against")+8 ); ?> 
                                                 <?php if($name_of_section == 'Products'): ?>
                                                 <?php
-                                                    $name_of_section ='Products / Services';
+                                                    $name_of_section ='Sub Categories';
                                                 ?>
                                                 <?php endif; ?> 
                                         <?php if($section->name['en'] !== 'Sales Breakdown Analysis Report' && $mainSubSection->name['en'] !== "Average Prices" ): ?>
 										
-                                            <?php if($name_of_section == "Products / Services"): ?>
-                                                <?php  $name_of_section = "Product Or Service Names" ?>
+                                            <?php if($name_of_section == "Sub Categories"): ?>
+                                                <?php  $name_of_section = "Sub Category" ?>
                                             <?php elseif($name_of_section == "Products Items"): ?>
                                                 <?php  $name_of_section = "Product Items" ?>
                                             <?php endif; ?>
 											
 											
-											
-
+								
                                             <?php if(
 												$sub_section->id == 337||
 												$sub_section->id == 338||
@@ -132,6 +139,9 @@
                                             )
                                             ||
                                              ($name_of_section == 'Sales Discounts' && (count(array_intersect(['Quantity Discount','Cash Discount','Special Discount','zones'],$viewing_names)) > 0) ) ): ?>
+											 
+							
+
                                                 <div class="col-md-4">
                                                     <div class="kt-widget2__item kt-widget2__item--primary">
                                                         <div class="kt-widget2__checkbox">
@@ -139,13 +149,13 @@
                                                         <?php 
                                                             $route = isset($sub_section->route) && $sub_section->route !== null ? explode('.', $sub_section->route) : null;
                                                         ?> 
-														
+						
                                                         <div class="kt-widget2__info">
                                                             <a href="<?php echo e(route(@$sub_section->route, $company)); ?>" class="kt-widget2__title">
 																<?php echo e(__($sub_section->name[lang()])); ?>
 
-																
-                                                            </a>
+                        
+						                                    </a>
 
                                                         </div>
                                                         <div class="kt-widget2__actions">
@@ -158,6 +168,10 @@
                                             <?php $name_of_section = substr($sub_section->name['en'], strpos($sub_section->name['en'] , "Average Prices Per ")+19  );
                                             ?> 
                                             <?php if(false !== $found =  array_search(\Str::singular($name_of_section),$viewing_names) ): ?>
+											
+							
+
+
 												<?php if($user->canViewReport($sub_section->name['en'])): ?>
                                                 <div class="col-md-4">
                                                     <div class="kt-widget2__item kt-widget2__item--primary">
@@ -181,7 +195,7 @@
 												<?php endif; ?> 
                                             <?php endif; ?>
                                         <?php elseif( $section->name['en'] == 'Sales Breakdown Analysis Report'): ?>
-
+	
                                                 <?php if($mainSubSection->name['en'] !== "Customers Nature" ||
                                                 ($mainSubSection->name['en'] == "Customers Nature" && false !== $found =  array_search('Customer Name',$viewing_names)) ||
                                                 ($mainSubSection->name['en'] == "Service Providers"  && (count(array_intersect(['Service Provider Type','Service Provider Name','Service Provider Birth Year'],$viewing_names)) >0))  ): ?>
@@ -202,7 +216,7 @@
                                                             <?php  $name_of_section = "Service Provider Birth Year";  ?>
 
                                                         <?php endif; ?>
-
+						 		
 
                                                     <?php elseif($mainSubSection->name['en'] == 'Two Dimension'): ?>
                                                         <?php
@@ -222,22 +236,23 @@
                                                         ?>
  
                                                     <?php endif; ?>
-                                                    <?php if($name_of_section == "Products / Services" ): ?>
-                                                        <?php $name_of_section = "Product Or Service Names"; ?> 
+                                                    <?php if($name_of_section == "Sub Categories" ): ?>
+                                                        <?php $name_of_section = "Sub Category"; ?> 
                                                     <?php endif; ?>
                                                     
-                                                    <?php if(isset($name_of_first_section) && $name_of_first_section == "Products / Services" ): ?>
-                                                        <?php $name_of_first_section = "Product Or Service Names"; ?> 
+                                                    <?php if(isset($name_of_first_section) && $name_of_first_section == "Sub Categories" ): ?>
+                                                        <?php $name_of_first_section = "Sub Category"; ?> 
                                                     <?php endif; ?>
 
-                                                    <?php if(isset($name_of_first_section) && $name_of_first_section == "Products / Services" ): ?>
+                                                    <?php if(isset($name_of_first_section) && $name_of_first_section == "Sub Categories" ): ?>
                                                         <?php $name_of_first_section = "Branch"; ?> 
                                                     <?php endif; ?>
 
                                                     <?php if($name_of_section == "Product Items Ranking" ): ?>
                                                         <?php $name_of_section = "Product Items Ranking"; ?> 
                                                     <?php endif; ?>
-
+				 
+					
                                                     <?php if((!isset($name_of_first_section) &&  false !== $found =  array_search(\Str::singular($name_of_section),$viewing_names)) ||
                                                         ( isset($name_of_first_section) && (false !== $found =  array_search(\Str::singular($name_of_section),$viewing_names)) && (false !== $found =  array_search(\Str::singular($name_of_first_section),$viewing_names)) ) || ($sub_section->name['en'] =="Discounts Breakdown Analysis") ||
                                                         ($sub_section->name['en'] == "Customers Natures Analysis") || (  ($sub_section->name['en'] == "Discounts Sales Interval Comparing Analysis") && (count(array_intersect(['Quantity Discount','Cash Discount','Special Discount'],$viewing_names)) > 0)) 
@@ -256,6 +271,7 @@
 														<?php if($user->canViewReport($sub_section->name['en'])
 														|| ($name_of_section == "Days" && $name == "One Dimension") // second if statement
 														): ?>
+														
                                                         <div class="col-md-4">
                                                             <div class="kt-widget2__item kt-widget2__item--primary">
                                                                 <div class="kt-widget2__checkbox">

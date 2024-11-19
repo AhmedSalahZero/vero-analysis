@@ -4625,6 +4625,9 @@ function generateReportName($reportName)
     if ($reportName =='sub categories') {
         $reportName ='sub categories';
     }
+	if($reportName == 'Products / Services'){
+		$reportName ='Products / Service';
+	}
 
     return 'view ' . $reportName . ' report';
 }

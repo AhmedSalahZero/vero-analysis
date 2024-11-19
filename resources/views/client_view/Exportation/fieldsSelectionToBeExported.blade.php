@@ -87,6 +87,11 @@
                         <div class="col-md-12">
                             <div class="row">
                                 @foreach ($columnsWithViewingNames as $fieldName => $displayName)
+								@if($fieldName == 'product_or_service')
+								@php
+								$displayName = __('Product Or Service Name'); 
+								@endphp
+								@endif 
                                 @if(!hideExportField($fieldName , $columnsWithViewingNames))
                                 <?php
                                             $status_disanbeled_fields = $fieldName == 'net_sales_value' ||  $fieldName == 'invoice_status' || 

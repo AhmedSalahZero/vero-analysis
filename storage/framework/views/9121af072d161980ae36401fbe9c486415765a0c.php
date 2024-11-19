@@ -239,6 +239,7 @@ $exportableFieldsValues[] = 'avg_invoice_value';
                                                         <button style="background-color:#086691 ; color:#fff" class="btn  btn-sm text-white ranged-button-ajax" data-direction="bottom" data-type="<?php echo e($type); ?>" data-column="<?php echo e($id); ?>"><?php echo e(__('Bottom 50')); ?></button>
                                                     </div>
                                                     <?php endif; ?>
+
                                                 </td>
                                                 <td id="<?php echo e($id); ?>">-</td>
                                             </tr>
