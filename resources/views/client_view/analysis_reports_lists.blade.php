@@ -256,7 +256,7 @@
 															array_search(\Str::singular($name_of_first_section),$viewing_names) === false
 													 )
 @if($name_of_first_section != 'Product Items' && $name_of_first_section !='Business Unit')
-{{ dd(\Str::singular($name_of_first_section),$viewing_names) }}	
+{{-- {{ dd(\Str::singular($name_of_first_section),$viewing_names) }}	 --}}
 @endif
 														@continue
 													@endif

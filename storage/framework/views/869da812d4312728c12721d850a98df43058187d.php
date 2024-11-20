@@ -259,7 +259,7 @@
 															array_search(\Str::singular($name_of_first_section),$viewing_names) === false
 													 ): ?>
 <?php if($name_of_first_section != 'Product Items' && $name_of_first_section !='Business Unit'): ?>
-<?php echo e(dd(\Str::singular($name_of_first_section),$viewing_names)); ?>	
+
 <?php endif; ?>
 														<?php continue; ?>
 													<?php endif; ?>

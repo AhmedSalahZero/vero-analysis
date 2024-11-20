@@ -207,7 +207,7 @@ $date = now()->format('d-m-Y')
             <div class="col-md-2">
                 <div class="form-group">
                     <label style="visibility:hidden;display:block" for="label-height">{{ __('submit form') }}</label>
-                    <button class="active-btn btn btn-primary mx-auto submit-form-btn js-save-labeling-info">{{ __('Save') }}</button>
+                    <button class="active-btn btn btn-primary mx-auto submit-form-btn js-save-labeling-info">{{ __('Save & Generate QR Code') }}</button>
                 </div>
             </div>
         </form>
@@ -321,7 +321,7 @@ $date = now()->format('d-m-Y')
 
             </th>
             @endif
-            @if($modelName == 'LabelingItem')
+            @if($modelName == 'LabelingItem' && count((array)$company->generate_labeling_code_fields))
             <th class="select-to-delete">{{ __('No.') }}</th>
             <th data-css-col-name="qrcode">
                 @if($company->labeling_type == 'qrcode')
@@ -341,7 +341,7 @@ $date = now()->format('d-m-Y')
 
             @if($modelName == 'LabelingItem' && ! $hasCodeColumnForLabelingItem)
 			
-            <th data-css-col-name="id">{{ __('ID') }}</th>
+            {{-- <th data-css-col-name="id">{{ __('ID') }}</th> --}}
 
             @endif
 			
@@ -385,11 +385,12 @@ $date = now()->format('d-m-Y')
             <td>
              {{ $serial }}
             </td>
+			@if(count((array)$company->generate_labeling_code_fields))
             <td class="text-center" data-css-col-name="{{ 'qrcode' }}">
                 @php
                 $generateCode = $item->getCode($serial)  ;
                 @endphp
-                @if($company->labeling_type == 'barcode')
+                @if($company->labeling_type == 'barcode' )
 
                 {!! DNS1D::getBarcodeHTML($generateCode, 'C39',3,33 ) !!}
                 @else
@@ -398,6 +399,7 @@ $date = now()->format('d-m-Y')
 
                 @endif
             </td>
+			@endif
 
             @endif
 
@@ -419,9 +421,9 @@ $date = now()->format('d-m-Y')
 
 
                 @if($modelName == 'LabelingItem' && !$hasCodeColumnForLabelingItem)
-					<td data-css-col-name="{{ $name??'' }}">
+					{{-- <td data-css-col-name="{{ $name??'' }}">
 						{{ qrcodeSpacing($item->getCode($serial)) }}
-					</td>
+					</td> --}}
 				
             @endif
 			

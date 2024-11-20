@@ -1,4 +1,3 @@
-
 <?php $__env->startSection('css'); ?>
 <link href="<?php echo e(url('assets/vendors/custom/datatables/datatables.bundle.css')); ?>" rel="stylesheet" type="text/css" />
 <link href="<?php echo e(url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css')); ?>" rel="stylesheet" type="text/css" />
@@ -95,7 +94,6 @@
                             
                         </span>
                     </div>
-
                     <div class="progress progress--sm">
                         <div class="progress-bar kt-bg-dark" role="progressbar" style="width: 100%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
                     </div>

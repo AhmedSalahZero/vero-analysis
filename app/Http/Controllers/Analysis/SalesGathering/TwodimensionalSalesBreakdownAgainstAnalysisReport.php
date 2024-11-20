@@ -180,9 +180,13 @@ class TwodimensionalSalesBreakdownAgainstAnalysisReport
 		elseif (request()->route()->named('businessUnits.vs.day.view')) {
             $main_type = 'business_unit';
             $type = 'day_name';
-            $view_name = 'Product Items Versus Day Name Sales' ;
+            $view_name = 'Business Units Versus Day Name Sales' ;
         }
-		// dd(Request()->route()->getName());
+		elseif (request()->route()->named('products.vs.day.view')) {
+            $main_type = 'product_or_service';
+            $type = 'day_name';
+            $view_name = 'Product / Services Versus Day Name Sales' ;
+        }
         return view('client_view.reports.sales_gathering_analysis.two_dimensional_breakdown.sales_form', compact('company', 'view_name','type','main_type'));
     }
     public function result(Request $request, Company $company)

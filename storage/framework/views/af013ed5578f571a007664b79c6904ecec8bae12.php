@@ -239,7 +239,7 @@ $date = now()->format('d-m-Y')
             <div class="col-md-2">
                 <div class="form-group">
                     <label style="visibility:hidden;display:block" for="label-height"><?php echo e(__('submit form')); ?></label>
-                    <button class="active-btn btn btn-primary mx-auto submit-form-btn js-save-labeling-info"><?php echo e(__('Save')); ?></button>
+                    <button class="active-btn btn btn-primary mx-auto submit-form-btn js-save-labeling-info"><?php echo e(__('Save & Generate Qr Code')); ?></button>
                 </div>
             </div>
         </form>
@@ -374,7 +374,7 @@ $date = now()->format('d-m-Y')
 
             </th>
             <?php endif; ?>
-            <?php if($modelName == 'LabelingItem'): ?>
+            <?php if($modelName == 'LabelingItem' && count((array)$company->generate_labeling_code_fields)): ?>
             <th class="select-to-delete"><?php echo e(__('No.')); ?></th>
             <th data-css-col-name="qrcode">
                 <?php if($company->labeling_type == 'qrcode'): ?>
@@ -396,7 +396,7 @@ $date = now()->format('d-m-Y')
 
             <?php if($modelName == 'LabelingItem' && ! $hasCodeColumnForLabelingItem): ?>
 			
-            <th data-css-col-name="id"><?php echo e(__('ID')); ?></th>
+            
 
             <?php endif; ?>
 			
@@ -441,11 +441,12 @@ $date = now()->format('d-m-Y')
              <?php echo e($serial); ?>
 
             </td>
+			<?php if(count((array)$company->generate_labeling_code_fields)): ?>
             <td class="text-center" data-css-col-name="<?php echo e('qrcode'); ?>">
                 <?php
                 $generateCode = $item->getCode($serial)  ;
                 ?>
-                <?php if($company->labeling_type == 'barcode'): ?>
+                <?php if($company->labeling_type == 'barcode' ): ?>
 
                 <?php echo DNS1D::getBarcodeHTML($generateCode, 'C39',3,33 ); ?>
 
@@ -455,6 +456,7 @@ $date = now()->format('d-m-Y')
 
                 <?php endif; ?>
             </td>
+			<?php endif; ?>
 
             <?php endif; ?>
 
@@ -477,10 +479,7 @@ $date = now()->format('d-m-Y')
 
 
                 <?php if($modelName == 'LabelingItem' && !$hasCodeColumnForLabelingItem): ?>
-					<td data-css-col-name="<?php echo e($name??''); ?>">
-						<?php echo e(qrcodeSpacing($item->getCode($serial))); ?>
-
-					</td>
+					
 				
             <?php endif; ?>
 			

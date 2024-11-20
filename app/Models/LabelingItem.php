@@ -80,7 +80,9 @@ class LabelingItem extends Model
 		// return $start?: $defaultStartNumber ; 
 }
 	
-	public  function generateCodeForRow($serial,$returnQuantityString = false )
+	public  function generateCodeForRow(
+		// $serial,$returnQuantityString = false
+		 )
 	{
 		
 		$company= getCurrentCompany();
@@ -96,25 +98,30 @@ class LabelingItem extends Model
 				continue;	
 			}
 			
-			if(strtolower($key) == 'qty' || strtolower($key) == 'quantity' ){
+			// if(strtolower($key) == 'qty' || strtolower($key) == 'quantity' ){
 			
-				// $sumPrev = $quantityStartFrom + ($previousRowLastQuantity == 0 ? 1 : $previousRowLastQuantity) ; 
-				// $sumPrevQ = $quantityStartFrom + $previousRowLastQuantity ; 
-				// $toQuantity = $sumPrevQ+ $val ;
-				// $fromQuantity = $previousRowLastQuantity ? $sumPrev +1 : $sumPrev ;
-				// $quantityExpression =  $fromQuantity !=   $toQuantity ? $fromQuantity  . 'To' .  $toQuantity : '';
-				// if($returnQuantityString){
-				// 	return $quantityExpression ;
-				// }
-				// $numericParent .= $quantityExpression ;
-			}
-			elseif(is_numeric($val)){
+			// 	$sumPrev = $quantityStartFrom + ($previousRowLastQuantity == 0 ? 1 : $previousRowLastQuantity) ; 
+			// 	$sumPrevQ = $quantityStartFrom + $previousRowLastQuantity ; 
+			// 	$toQuantity = $sumPrevQ+ $val ;
+			// 	$fromQuantity = $previousRowLastQuantity ? $sumPrev +1 : $sumPrev ;
+			// 	$quantityExpression =  $fromQuantity !=   $toQuantity ? $fromQuantity  . 'To' .  $toQuantity : '';
+			// 	if($returnQuantityString){
+			// 		return $quantityExpression ;
+			// 	}
+			// 	$numericParent .= $quantityExpression ;
+			// }
+			if(is_numeric($val)){
 				$numericParent.= $val;
 			}else{
 				$textPart.= '/'.$val;
 			}
 		}
-		return trim($textPart . $numericParent,'/');
+		$text = trim($textPart . $numericParent,'/') ;
+		
+		if($text != ''){
+			return trim($textPart . $numericParent,'/');
+		}
+		return '-';
 	}
 	public static function getHeaderFromElement(? LabelingItem $item){
 		if(! $item){

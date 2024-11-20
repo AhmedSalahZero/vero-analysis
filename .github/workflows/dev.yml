@@ -7,14 +7,61 @@ jobs:
   FTP-Deploy-Action:
     name: FTP-Deploy-Action
     runs-on: ubuntu-latest
+    env:
+       DB_HOST: veroanalysis.com
+       DB_DATABASE: veroanalysis_db
+       DB_USERNAME: veroanalysis_production
+       DB_PASSWORD: ho_OQYRjSqGB
+       BROADCAST_DRIVER: log
+    services:
+           mysql:
+            image: mysql:5.7
+            env:
+                MYSQL_ALLOW_EMPTY_PASSWORD: false
+                MYSQL_ROOT_PASSWORD: ho_OQYRjSqGB
+                MYSQL_DATABASE: veroanalysis_db
+            ports:
+                   - 3306/tcp
+            options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
     - uses: actions/checkout@v2.1.0
       with:
         fetch-depth: 2
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+         php-version: 7.4.33
+         extensions: mbstring, dom, fileinfo, mysql
+    - name: Start mysql service
+      run: sudo /etc/init.d/mysql start 
+    - name: Get composer cache directory 
+      id: composer-cache
+      run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+    - name: Cache composer dependencies
+      uses: actions/cache@v3
+      with:
+           path: ${{ steps.composer-cache.outputs.dir }}
+           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+           restore-keys: ${{ runner.os }}-composer-
+    - name: Install Composer dependencies
+      run: composer update 
+    - name: Storage link
+      run: php artisan storage:link 
+    - name: run migration
+      run: php artisan migrate --force   
+    - name: run sql file
+      run: php artisan run:sql  
+    - name: cache clear
+      run: php artisan optimize:clear  
     - name: FTP-Deploy-Action
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
       with:
-        server: 147.182.239.201
-        server-dir: public_html/veroanalysis.dev.evoqas.org/
-        username: devnewevoqasorg
-        password: Aa@112233@aA
+         server: 147.182.239.201
+         server-dir: public_html/system.veroanalysis.com/
+         username: veroanalysis
+         password: Aa@112233@aA
+         exclude: |
+            **/node_modules/**
+            **/storage/**
+    
+    
