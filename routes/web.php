@@ -978,6 +978,7 @@ Route::middleware([])->group(function () {
                             // Against Reports
 							
                             foreach ($info['sub_items'] as $viewName => $sub_item) {
+								
                                 Route::get('/' . $nameOfMainItem . 'Against' . $viewName . 'Analysis/View', $info['class_path'] . '@' . $info['against_view'])->name($info['name'] . '.' . $sub_item . '.analysis');
                             }
                             Route::post('/' . $nameOfMainItem . 'AgainstSalesDiscountAnalysis/Result', $info['class_path'] . '@' . $info['discount_result'])->name($info['name'] . '.salesDiscount.analysis.result');

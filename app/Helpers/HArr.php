@@ -241,5 +241,22 @@ class HArr
 		});
 		return $items ;
 	}
+	public static function getKeysSortedDescByKey(array $items,$keyName = 'Sales Values'):array
+	{
+		$values = [];
+		$result= [];
+		foreach($items as $categoryName => $itemArr ){
+		
+			$sumSalesValue = array_sum($itemArr[$keyName]);
+			$values[$categoryName] = $sumSalesValue;
+		}
+		
+		arsort($values);
+		$sortedKeys = array_keys($values);
+		foreach($sortedKeys as $key){
+			$result[$key] = $items[$key];
+		}
+		return $result;
+	}
 
 }

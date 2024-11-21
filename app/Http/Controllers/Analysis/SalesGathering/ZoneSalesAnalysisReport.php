@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Analysis\SalesGathering;
 
+use App\Helpers\HArr;
 use App\Http\Controllers\ExportTable;
 use App\Models\Company;
 use App\Models\SalesGathering;
@@ -9,6 +10,7 @@ use App\Traits\GeneralFunctions;
 use App\Traits\Intervals;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+
 class ZoneSalesAnalysisReport
 {
     use GeneralFunctions;
@@ -51,7 +53,6 @@ class ZoneSalesAnalysisReport
                 $current_month = $dt->endOfMonth()->format('d-m-Y');
                 if($current_month == $month){
                     $zones_per_month[$current_month][] = $row['net_sales_value'];
-
                 }else{
                     $month = $current_month;
                     $zones_per_month[$current_month][] = $row['net_sales_value'];
@@ -79,7 +80,7 @@ class ZoneSalesAnalysisReport
         {
             return $report_data ;
         }
-
+		$final_report_data = HArr::getKeysSortedDescByKey($final_report_data,'Sales Values');
         return view('client_view.reports.sales_gathering_analysis.zone_sales_report',compact('company','zones_names','total_zones_growth_rates','final_report_data','total_zones'));
 
     }

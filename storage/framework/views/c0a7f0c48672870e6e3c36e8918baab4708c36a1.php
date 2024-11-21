@@ -1,5 +1,4 @@
-@extends('layouts.dashboard')
-@section('css')
+<?php $__env->startSection('css'); ?>
 
 <style>
 
@@ -78,19 +77,19 @@
 </style>
 
 
-{{-- <link href="{{ url('assets/vendors/custom/datatables/datatables.bundle.css') }}" rel="stylesheet" type="text/css" /> --}}
-@endsection
 
-@section('content')
+<?php $__env->stopSection(); ?>
+
+<?php $__env->startSection('content'); ?>
 <div class="row">
     <div class="col-lg-12">
-        @if (session('warning'))
+        <?php if(session('warning')): ?>
         <div class="alert alert-warning">
             <ul>
-                <li>{{ session('warning') }}</li>
+                <li><?php echo e(session('warning')); ?></li>
             </ul>
         </div>
-        @endif
+        <?php endif; ?>
     </div>
 </div>
 
@@ -104,90 +103,80 @@
                     array_push($products_names, 'Total');
                     array_push($products_names, 'Sales_Channel_Sales_Percentages');
                     ?>
-            {{-- <div class="tab-pane " id="kt_apps_contacts_view_tab_1" role="tabpanel">
-                    @foreach ($products_names as $name_of_sales_channel)
-                        <div class="col-xl-12">
-                            <div class="kt-portlet kt-portlet--height-fluid">
-                                <div class="kt-portlet__body kt-portlet__body--fluid">
-                                    <div class="kt-widget12">
-                                        <div class="kt-widget12__chart">
-                                            <!-- HTML -->
-                                            <h4>{{ str_replace('_', ' ', $name_of_sales_channel) . ($name_of_sales_channel == 'Sales_Channel_Sales_Percentages' ? ' Against Total Sales' : ' Sales Trend Analysis Chart') }}
-            </h4>
-            <div id="{{ $name_of_sales_channel }}_count_chartdiv" class="chartdashboard"></div>
-        </div>
-    </div>
-</div>
-</div>
-</div>
-@endforeach
-</div> --}}
+            
 <!--End:: Tab  EGP FX Rate Table -->
 
 <!--Begin:: Tab USD FX Rate Table -->
 <div class="tab-pane active" id="kt_apps_contacts_view_tab_2" role="tabpanel">
-    <x-table :tableTitle="__($view_name.' Report')" :tableClass="'kt_table_with_no_pagination'">
-        @slot('table_header')
+     <?php if (isset($component)) { $__componentOriginale53a9d2e6d6c51019138cc2fcd3ba8ac893391c6 = $component; } ?>
+<?php $component = $__env->getContainer()->make(App\View\Components\Table::class, ['tableTitle' => __($view_name.' Report'),'tableClass' => 'kt_table_with_no_pagination']); ?>
+<?php $component->withName('table'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php $component->withAttributes([]); ?>
+        <?php $__env->slot('table_header'); ?>
         <tr class="table-active text-center">
-            <th class="text-center absorbing-column">{{ __('Products') }}</th>
-            @foreach ($dates as $date)
-            <th>{{ date('d-M-Y', strtotime($date)) }}</th>
-            @endforeach
-            <th>{{ __('Total') }}</th>
+            <th class="text-center absorbing-column"><?php echo e(__('Products')); ?></th>
+            <?php $__currentLoopData = $dates; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $date): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+            <th><?php echo e(date('d-M-Y', strtotime($date))); ?></th>
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+            <th><?php echo e(__('Total')); ?></th>
         </tr>
-        @endslot
-        @slot('table_body')
+        <?php $__env->endSlot(); ?>
+        <?php $__env->slot('table_body'); ?>
 
         <?php $id =1 ;?>
-        @php
+        <?php
         sortReportForTotals($report_data)
 
-        @endphp
-        @foreach ($report_data as $sales_channel_name => $sales_channel_channels_data)
+        ?>
+        <?php $__currentLoopData = $report_data; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $sales_channel_name => $sales_channel_channels_data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 
         <?php $chart_data = [];?>
 
-        @if ($sales_channel_name != 'Total' && $sales_channel_name != 'Growth Rate %')
+        <?php if($sales_channel_name != 'Total' && $sales_channel_name != 'Growth Rate %'): ?>
 
 
         <tr class="group-color ">
-            <td class="white-text" style="cursor: pointer;" onclick="toggleRow('{{ $id }}')">
-                <i class="row_icon{{ $id }} flaticon2-up white-text"></i>
-                <b>{{ __($sales_channel_name) }}</b>
+            <td class="white-text" style="cursor: pointer;" onclick="toggleRow('<?php echo e($id); ?>')">
+                <i class="row_icon<?php echo e($id); ?> flaticon2-up white-text"></i>
+                <b><?php echo e(__($sales_channel_name)); ?></b>
             </td>
-            {{-- Total --}}
+            
             <?php $total_per_sales_channel = $sales_channel_channels_data['Total'] ?? [];
                                         unset($sales_channel_channels_data['Total']); ?>
-            {{-- Growth Rate % --}}
+            
             <?php $growth_rate_per_sales_channel = $sales_channel_channels_data['Growth Rate %'] ?? [];
                                         unset($sales_channel_channels_data['Growth Rate %']); ?>
 
-            @foreach ($dates as $date)
-            <td class="text-center white-text">{{ number_format($total_per_sales_channel[$date] ?? 0) . '  [ GR '.number_format($growth_rate_per_sales_channel[$date] ?? 0) . ' % ]'}}
+            <?php $__currentLoopData = $dates; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $date): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+            <td class="text-center white-text"><?php echo e(number_format($total_per_sales_channel[$date] ?? 0) . '  [ GR '.number_format($growth_rate_per_sales_channel[$date] ?? 0) . ' % ]'); ?>
+
             </td>
-            @endforeach
-            <td class="text-center white-text">{{number_format(array_sum($total_per_sales_channel??[]),0)}}</td>
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+            <td class="text-center white-text"><?php echo e(number_format(array_sum($total_per_sales_channel??[]),0)); ?></td>
         </tr>
-        @php
+        <?php
         sortSubItems($sales_channel_channels_data,$type)
-        @endphp
+        ?>
 
-        @foreach ($sales_channel_channels_data as $channel_name => $channel_section)
+        <?php $__currentLoopData = $sales_channel_channels_data; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $channel_name => $channel_section): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 
-        <tr class="row{{ $id }}  text-center" style="display: none">
+        <tr class="row<?php echo e($id); ?>  text-center" style="display: none">
 
-            <td class="text-left"><b>{{ $channel_name  }}</b></td>
+            <td class="text-left"><b><?php echo e($channel_name); ?></b></td>
 
-            @foreach ($dates as $date)
+            <?php $__currentLoopData = $dates; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $date): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
             <td class="text-center">
-                {{ number_format(($channel_section[$name_of_report_item][$date] ?? 0),0)   }}
-                <span class="active-text-color color-{{ getPercentageColor($channel_section['Growth Rate %'][$date] ?? 0, 1) }}"><b> {{ ' [ '.number_format(($channel_section['Growth Rate %'][$date]??0), 1) . ' %  ]' }}</b></span>
+                <?php echo e(number_format(($channel_section[$name_of_report_item][$date] ?? 0),0)); ?>
+
+                <span class="active-text-color color-<?php echo e(getPercentageColor($channel_section['Growth Rate %'][$date] ?? 0, 1)); ?>"><b> <?php echo e(' [ '.number_format(($channel_section['Growth Rate %'][$date]??0), 1) . ' %  ]'); ?></b></span>
             </td>
-            @endforeach
-            <td>{{number_format(array_sum($channel_section[$name_of_report_item]??[]),0)}}</td>
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+            <td><?php echo e(number_format(array_sum($channel_section[$name_of_report_item]??[]),0)); ?></td>
         </tr>
 
-        @endforeach
+        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
 
 
@@ -196,24 +185,29 @@
 
 
 
-        @elseif ($sales_channel_name == 'Total' || $sales_channel_name == 'Growth Rate %')
+        <?php elseif($sales_channel_name == 'Total' || $sales_channel_name == 'Growth Rate %'): ?>
         <tr class="active-style text-center">
-            <td class="active-style text-center"><b>{{ __($sales_channel_name) }}</b></td>
+            <td class="active-style text-center"><b><?php echo e(__($sales_channel_name)); ?></b></td>
 
             <?php $decimals = $sales_channel_name == 'Growth Rate %' ? 2 : 0; ?>
-            @foreach ($dates as $date)
+            <?php $__currentLoopData = $dates; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $date): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
             <td class="text-center active-style">
-                {{ number_format($sales_channel_channels_data[$date] ?? 0,$decimals) . ($decimals == 0 ? '' : ' %')}}</td>
-            @endforeach
-            <td class="text-center active-style">{{$sales_channel_name == 'Growth Rate %' ? "-" : number_format(array_sum($sales_channel_channels_data  ?? []),0)}}</td>
+                <?php echo e(number_format($sales_channel_channels_data[$date] ?? 0,$decimals) . ($decimals == 0 ? '' : ' %')); ?></td>
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+            <td class="text-center active-style"><?php echo e($sales_channel_name == 'Growth Rate %' ? "-" : number_format(array_sum($sales_channel_channels_data  ?? []),0)); ?></td>
         </tr>
-        @endif
+        <?php endif; ?>
         <?php $id++;?>
-        @endforeach
+        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
 
-        @endslot
-    </x-table>
+        <?php $__env->endSlot(); ?>
+     <?php if (isset($__componentOriginale53a9d2e6d6c51019138cc2fcd3ba8ac893391c6)): ?>
+<?php $component = $__componentOriginale53a9d2e6d6c51019138cc2fcd3ba8ac893391c6; ?>
+<?php unset($__componentOriginale53a9d2e6d6c51019138cc2fcd3ba8ac893391c6); ?>
+<?php endif; ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?> 
 
 
 </div>
@@ -222,18 +216,18 @@
 </div>
 </div>
 
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('js')
+<?php $__env->startSection('js'); ?>
 <!-- Resources -->
 <script src="https://cdn.amcharts.com/lib/4/core.js"></script>
 <script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
 <script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script>
 
-@include('js_datatable')
+<?php echo $__env->make('js_datatable', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 
-{{-- <script src="{{ url('assets/vendors/custom/datatables/datatables.bundle.js') }}" type="text/javascript"></script> --}}
-<script src="{{ url('assets/js/demo1/pages/crud/datatables/basic/paginations.js') }}" type="text/javascript">
+
+<script src="<?php echo e(url('assets/js/demo1/pages/crud/datatables/basic/paginations.js')); ?>" type="text/javascript">
 </script>
 <script>
     function toggleRow(rowNum) {
@@ -242,7 +236,7 @@
     }
 
 </script>
-@foreach ($products_names as $name_of_sales_channel)
+<?php $__currentLoopData = $products_names; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $name_of_sales_channel): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 <script>
     am4core.ready(function() {
 
@@ -252,13 +246,13 @@
 
         // Create chart instance
 
-        var chart = am4core.create("{{ $name_of_sales_channel }}_count_chartdiv", am4charts.XYChart);
+        var chart = am4core.create("<?php echo e($name_of_sales_channel); ?>_count_chartdiv", am4charts.XYChart);
 
         // Increase contrast by taking evey second color
         chart.colors.step = 2;
 
         // Add data
-        chart.data = $('#{{ $name_of_sales_channel }}_data').data('total');
+        chart.data = $('#<?php echo e($name_of_sales_channel); ?>_data').data('total');
 
         chart.dateFormatter.inputDateFormat = "yyyy-MM-dd";
         // Create axes
@@ -343,5 +337,7 @@
     }); // end am4core.ready()
 
 </script>
-@endforeach
-@endsection
+<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.dashboard', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /media/salah/Software/projects/veroo/resources/views/client_view/reports/sales_gathering_analysis/products_analysis_report.blade.php ENDPATH**/ ?>

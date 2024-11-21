@@ -112,6 +112,7 @@
 												$sub_section->id == 338||
 												$sub_section->id == 339||
 												$sub_section->id == 340||
+												$sub_section->id == 343||
 												
 												 ( false !== $found =  array_search(\Str::singular($name_of_section),$viewing_names)) || 
                                             

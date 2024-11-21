@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Analysis\SalesGathering;
 
+use App\Helpers\HArr;
 use App\Http\Controllers\ExportTable;
 use App\Models\Company;
 use App\Models\SalesGathering;
@@ -364,7 +365,7 @@ class SalesPersonsAgainstAnalysisReport
     //     {
     //         return $report_data;
     //     }
-
+	// $final_report_data = HArr::getKeysSortedDescByKey($final_report_data,'Sales Values');
     //     return view('client_view.reports.sales_gathering_analysis.salesPersons_sales_report',compact('company','salesPersons_names','total_salesPersons_growth_rates','final_report_data','total_salesPersons'));
 
     // }

@@ -118,7 +118,7 @@ class RoutesDefinition
                         'SalesDiscount' => 'salesDiscount',
                         'Countries' => 'countries',
                         'Principles' => 'principles',
-						
+						'day'=>'day'
                     ],
                     'avg_items' => [
                         'ProductsItems' => 'Items',

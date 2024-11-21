@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Analysis\SalesGathering;
 
+use App\Helpers\HArr;
 use App\Http\Controllers\ExportTable;
 use App\Models\Company;
 use App\Models\SalesGathering;
@@ -484,7 +485,7 @@ class BusinessUnitsAgainstAnalysisReport
 		
 		$dates = array_keys($total_businessUnits ?? []); 
 		
-		
+		$final_report_data = HArr::getKeysSortedDescByKey($final_report_data,'Sales Values');
 
         return view('client_view.reports.sales_gathering_analysis.businessUnits_sales_report',compact('company','businessUnits_names','total_businessUnits_growth_rates','final_report_data','total_businessUnits','dates'));
 

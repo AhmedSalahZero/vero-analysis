@@ -132,9 +132,11 @@
                     <input type="hidden" id="{{ str_replace(' ', '_', $category_name) }}_data" data-total="{{ json_encode($chart_data) }}">
                     @endforeach
                      <?php $sumOfTotalsOfCategorySales = 0 ?>
+				
                     <tr>
                         <th class="active-style text-center">{{ __('TOTAL') }}</th>
                         @foreach ($dates as $date )
+						
                         <td class="text-center active-style">{{ number_format($total_categories[$date] ?? 0) }}</td>
 						<?php $sumOfTotalsOfCategorySales += ($total_categories[$date] ?? 0) ?>
 						   @if($loop->last)

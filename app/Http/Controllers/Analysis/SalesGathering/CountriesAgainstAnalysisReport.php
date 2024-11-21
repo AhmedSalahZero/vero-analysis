@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Analysis\SalesGathering;
 
+use App\Helpers\HArr;
 use App\Http\Controllers\ExportTable;
 use App\Models\Company;
 use App\Models\SalesGathering;
@@ -408,7 +409,7 @@ class CountriesAgainstAnalysisReport
 		}
 		
 		$dates = array_keys( $total_countries ?? []); 
-		
+		$final_report_data = HArr::getKeysSortedDescByKey($final_report_data,'Sales Values');
 
 		return view('client_view.reports.sales_gathering_analysis.countries_sales_report', compact('company', 'countries_names', 'total_countries_growth_rates', 'final_report_data', 'total_countries','dates'));
 	}

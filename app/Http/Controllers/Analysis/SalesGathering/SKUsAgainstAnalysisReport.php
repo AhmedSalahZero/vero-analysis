@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Analysis\SalesGathering;
 
+use App\Helpers\HArr;
 use App\Http\Controllers\ExportTable;
 use App\Models\Company;
 use App\Models\SalesGathering;
@@ -125,7 +126,7 @@ class SKUsAgainstAnalysisReport
             return $report_data;
         }
 		$dates = array_keys($total_branches ?? []); 
-		
+		$final_report_data = HArr::getKeysSortedDescByKey($final_report_data,'Sales Values');
         return view('client_view.reports.sales_gathering_analysis.products_items_sales_report',compact('company','branches_names','total_branches_growth_rates','final_report_data','total_branches','dates'));
 
     }

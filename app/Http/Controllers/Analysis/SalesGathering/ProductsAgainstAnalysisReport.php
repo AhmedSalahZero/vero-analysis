@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Analysis\SalesGathering;
 
+use App\Helpers\HArr;
 use App\Http\Controllers\ExportTable;
 use App\Models\Company;
 use App\Models\SalesGathering;
@@ -62,6 +63,10 @@ class ProductsAgainstAnalysisReport
 		elseif (request()->route()->named('products.principles.analysis')) {
 			 $type  = 'principle';;
 			$view_name = 'Products Against Principle';
+		}	
+		elseif (request()->route()->named('products.day.analysis')) {
+			 $type  = 'day_name';
+			$view_name = 'Products Against Days';
 		}	
 		$name_of_selector_label = ($type == 'averagePricesProductItems') ? 'Products Items' : str_replace(['Products Against ', ' Trend Analysis'], '', $view_name);
 		return view('client_view.reports.sales_gathering_analysis.products_analysis_form', compact('company', 'name_of_selector_label', 'type', 'view_name'));
@@ -185,7 +190,6 @@ class ProductsAgainstAnalysisReport
 				}
 
 
-				// if( == '')
 
 				foreach ($report_data as $reportType => $dates) {
 					// Baby 20
@@ -267,7 +271,7 @@ class ProductsAgainstAnalysisReport
 
 
 		if ($result == 'view') {
-			return view('client_view.reports.sales_gathering_analysis.products_analysis_report', compact('company', 'name_of_report_item', 'view_name', 'products_names', 'dates', 'report_data',));
+			return view('client_view.reports.sales_gathering_analysis.products_analysis_report', compact('company','type', 'name_of_report_item', 'view_name', 'products_names', 'dates', 'report_data',));
 		} else {
 			return ['report_data' => $report_data, 'view_name' => $view_name, 'names' => $products_names];
 		}
@@ -462,7 +466,7 @@ class ProductsAgainstAnalysisReport
             return $report_data;
         }
 		$dates = array_keys( $total_branches ?? []); 
-		
+		$final_report_data = HArr::getKeysSortedDescByKey($final_report_data,'Sales Values');
 		
         return view('client_view.reports.sales_gathering_analysis.product_sales_report',compact('company','branches_names','total_branches_growth_rates','final_report_data','total_branches','dates'));
 

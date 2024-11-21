@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Analysis\SalesGathering;
 
+use App\Helpers\HArr;
 use App\Http\Controllers\ExportTable;
 use App\Models\Company;
 use App\Models\SalesGathering;
@@ -288,13 +289,7 @@ class BranchesAgainstAnalysisReport
 
         foreach ($branches as  $branch) {
 
-            // $branches_data = SalesGathering::company()
-            //     ->where('branch', $branch)
-            //     ->whereBetween('date', [$request->start_date, $request->end_date])
-            //     ->selectRaw('DATE_FORMAT(LAST_DAY(date),"%d-%m-%Y") as gr_date,DATE_FORMAT(date,"%d-%m-%Y") as date,net_sales_value,branch')
-            //     ->get()->groupBy('gr_date')->map(function($item){
-            //         return $item->sum('net_sales_value');
-            //     })->toArray();
+        
 			
                 $branches_data =collect(DB::select(DB::raw("
                 SELECT DATE_FORMAT(LAST_DAY(date),'%d-%m-%Y') as gr_date  , net_sales_value ,branch
@@ -338,7 +333,7 @@ class BranchesAgainstAnalysisReport
         }
 		
 		$dates = array_keys($total_branches ?? []); 
-	
+		$final_report_data = HArr::getKeysSortedDescByKey($final_report_data,'Sales Values');
         return view('client_view.reports.sales_gathering_analysis.branches_sales_report',compact('company','branches_names','total_branches_growth_rates','final_report_data','total_branches','dates'));
 
     }

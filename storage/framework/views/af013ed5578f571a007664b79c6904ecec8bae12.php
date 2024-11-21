@@ -239,7 +239,7 @@ $date = now()->format('d-m-Y')
             <div class="col-md-2">
                 <div class="form-group">
                     <label style="visibility:hidden;display:block" for="label-height"><?php echo e(__('submit form')); ?></label>
-                    <button class="active-btn btn btn-primary mx-auto submit-form-btn js-save-labeling-info"><?php echo e(__('Save & Generate Qr Code')); ?></button>
+                    <button class="active-btn btn btn-primary mx-auto submit-form-btn js-save-labeling-info"><?php echo e(__('Save & Generate QR Code')); ?></button>
                 </div>
             </div>
         </form>
