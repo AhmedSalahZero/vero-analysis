@@ -19,7 +19,12 @@
 <link href="{{url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css')}}" rel="stylesheet" type="text/css" />
 <link href="{{url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css')}}" rel="stylesheet" type="text/css" />
 <style>
-
+.btn-to-l{
+	width: 100%;
+    display: flex;
+    justify-content: end;
+    gap: 10px;
+}
 .break-down-bg-success{
 		background-color:green !important;
 	}
@@ -116,7 +121,7 @@ $exportableFieldsValues[] = 'product_item_avg_count';
 $exportableFieldsValues[] = 'avg_invoice_value';
 }
 @endphp
-
+{{-- {{ dd($simpleLinearRegression) }} --}}
 <div class="kt-portlet">
     <div class="kt-portlet__head">
         <div class="kt-portlet__head-label">
@@ -180,12 +185,17 @@ $exportableFieldsValues[] = 'avg_invoice_value';
                             <div class="kt-widget24__info w-100">
                                 <h4 class="kt-widget24__title font-size justify-content-between">
 
-                                    <span>{{ __('Top') . ' ' .  __(ucwords(str_replace('_',' ',$type)))  }}</span>
-                                    <p>
+                                    <span class="text-nowrap">{{ __('Top') . ' ' .  __(ucwords(str_replace('_',' ',$type)))  }}</span>
+                                    <p class="btn-to-l">
 
                                          <button type="button" class="btn btn-small text-white break-down-bg-{{ $color }}" data-toggle="modal" data-target="#modal_for_{{ convertStringToClass($type) }}">
                                             {{ __('Take Away') }}
                                         </button>
+										<button type="button" class="btn btn-small text-white break-down-bg-{{ $color }}" data-toggle="modal" data-target="#forecast-{{ convertStringToClass($type) }}">
+                                            {{ __('Forecast') }}
+                                        </button>
+										{{-- {{ dd(get_defined_vars()) }} --}}
+										@include('client_view.home_dashboard._forecast-modal',[])
 
 
 
@@ -255,32 +265,7 @@ $exportableFieldsValues[] = 'avg_invoice_value';
                                                         <button style="background-color:#086691 ; color:#fff" class="btn  btn-sm text-white ranged-button-ajax" data-direction="bottom" data-type="{{ $type }}" data-column="{{ $id }}">{{ __('Bottom 50') }}</button>
                                                     </div>
                                                     @endif
-                                                    {{-- @if($id == 'customer_name')
-                        <button style="background-color:#086691 ; color:#fff" class="btn  btn-sm ml-5 mr-1 ranged-button-ajax"  data-direction="top" data-type="{{ $type }}" data-column="customer_name">{{ __('Top 50') }}</button>
-                                                    <button style="background-color:#086691 ; color:#fff" class="btn  btn-sm text-white ranged-button-ajax" data-direction="bottom" data-type="{{ $type }}" data-column="customer_name">{{ __('Bottom 50') }}</button>
-                                                    @endif --}}
-
-                                                    {{-- @if($id == 'product_item')
-                  <button style="background-color:#086691 ; color:#fff" class="btn  btn-sm mr-1 ml-5 ranged-button-ajax" data-direction="top" data-type="{{ $type }}" data-column="product_item"> {{ __('Top 50') }}</button>
-                                                    <button style="background-color:#086691 ; color:#fff" class="btn  btn-sm text-white ranged-button-ajax" data-direction="bottom" data-type="{{ $type }}" data-column="product_item"> {{ __('Bottom 50') }}</button>
-                                                    @endif
-
-                                                    @if($id == 'product_or_service')
-                                                    <button style="background-color:#086691 ; color:#fff" class="btn  btn-sm mr-1 ml-5 ranged-button-ajax" data-direction="top" data-type="{{ $type }}" data-column="product_or_service"> {{ __('Top 50') }}</button>
-                                                    <button style="background-color:#086691 ; color:#fff" class="btn  btn-sm text-white ranged-button-ajax" data-direction="bottom" data-type="{{ $type }}" data-column="product_or_service"> {{ __('Bottom 50') }}</button>
-                                                    @endif
-
-                                                    @if($id == 'zone')
-                                                    <button style="background-color:#086691 ; color:#fff" class="btn  btn-sm mr-1 ml-5 ranged-button-ajax" data-direction="top" data-type="{{ $type }}" data-column="zone"> {{ __('Top 50') }}</button>
-                                                    <button style="background-color:#086691 ; color:#fff" class="btn  btn-sm text-white ranged-button-ajax" data-direction="bottom" data-type="{{ $type }}" data-column="zone"> {{ __('Bottom 50') }}</button>
-                                                    @endif
-
-
-
-                                                    @if($id == 'business_sector')
-                                                    <button style="background-color:#086691 ; color:#fff" class="btn  btn-sm mr-1 ml-5 ranged-button-ajax" data-direction="top" data-type="{{ $type }}" data-column="business_sector"> {{ __('Top 50') }}</button>
-                                                    <button style="background-color:#086691 ; color:#fff" class="btn  btn-sm text-white ranged-button-ajax" data-direction="bottom" data-type="{{ $type }}" data-column="business_sector"> {{ __('Bottom 50') }}</button>
-                                                    @endif --}}
+                                               
 
 
                                                 </td>
@@ -295,14 +280,7 @@ $exportableFieldsValues[] = 'avg_invoice_value';
 
                                         </table>
                                         <div class="row ">
-                                            {{-- <div class="col-12 my-5 ">
-                       <button style="background-color:#086691 ; color:#fff" class="btn  btn-sm mr-5 ranged-button-ajax"  data-direction="top" data-type="{{ $type }}" data-column="customer_name">{{ __('Top 50 Customers') }}</button>
-                                            <button style="background-color:#086691 ; color:#fff" class="btn  btn-sm text-white ranged-button-ajax" data-direction="bottom" data-type="{{ $type }}" data-column="customer_name">{{ __('Bottom 50 Customers') }}</button>
-                                        </div> --}}
-                                        {{-- <div class="col-12 pb-2">
-                  <button style="background-color:#086691 ; color:#fff" class="btn  btn-sm mr-5 ranged-button-ajax" data-direction="top" data-type="{{ $type }}" data-column="product_item"> {{ __('Top 50 Products Item') }}</button>
-                                        <button style="background-color:#086691 ; color:#fff" class="btn  btn-sm text-white ranged-button-ajax" data-direction="bottom" data-type="{{ $type }}" data-column="product_item"> {{ __('Bottom 50 Products Item') }}</button>
-                                    </div> --}}
+                                           
                                 </div>
 
 

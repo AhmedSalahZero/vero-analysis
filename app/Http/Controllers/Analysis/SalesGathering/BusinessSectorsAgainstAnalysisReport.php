@@ -62,6 +62,7 @@ class BusinessSectorsAgainstAnalysisReport
             $type  = 'averagePricesProductItems';
             $view_name = 'Business SectorsItems Average Prices' ;
         }
+		
 
         $name_of_selector_label = str_replace(['Business Sectors Against ' ,' Trend Analysis'],'',$view_name);
 

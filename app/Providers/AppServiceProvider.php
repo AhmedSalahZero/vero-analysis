@@ -43,17 +43,11 @@ class AppServiceProvider extends ServiceProvider
 	
 	public function boot()
 	{
+
+
 		ini_set('max_execution_time', 6000); //300 seconds = 5 minutes
 
 	
-		// logger('start app service');
-		// app()->make(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
-		// app()->make(\Spatie\Permission\PermissionRegistrar::class)->clearClassPermissions();
-		// DB::table('permissions')->delete();
-		// DB::table('model_has_permissions')->delete();
-		// DB::table('role_has_permissions')->delete();
-		// app()->make(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
-		// app()->make(\Spatie\Permission\PermissionRegistrar::class)->clearClassPermissions();
 		\PhpOffice\PhpSpreadsheet\Shared\Font::setAutoSizeMethod(Font::AUTOSIZE_METHOD_EXACT);
 		require_once storage_path('dompdf/vendor/autoload.php');
 		require_once app_path('Helpers/HArr.php');

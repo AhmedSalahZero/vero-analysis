@@ -337,7 +337,7 @@ class HomeController extends Controller
 	public function dashboardBreakdownAnalysis(Request $request, Company $company)
 	{
 		if($company->isCachingNow()){
-			// return redirect()->route('viewHomePage',['company'=>$company->id ])->with('fail',__('Please Wait Until Breakdown Dashboard Recalculate'));
+			return redirect()->route('viewHomePage',['company'=>$company->id ])->with('fail',__('Please Wait Until Breakdown Dashboard Recalculate'));
 		}
 		
 		$initialDates = getEndYearBasedOnDataUploaded($company);
@@ -379,13 +379,23 @@ class HomeController extends Controller
 			if (false !== $found = array_search($type, $db_names)) {
 				$request['type'] = $type;
 				$cacheKeyName = getBreakdownCacheNameForCompanyAndDatesAndType($company,$start_date,$end_date, $type);
+				$cacheForSimpleLinearRegressionKeyName = getBreakdownSimpleLinearRegressionCacheNameForCompanyAndDatesAndType($company,$start_date,$end_date, $type);
+				$cacheForSimpleLinearRegressionDatesKeyName = getBreakdownSimpleLinearRegressionDatesCacheNameForCompanyAndDatesAndType($company,$start_date,$end_date, $type);
 				if (!Cache::has($cacheKeyName)) {
-					$breakdown_data = (new SalesBreakdownAgainstAnalysisReport)->salesBreakdownAnalysisResult($request, $company, 'array');
+					$breakdown_data_with_simple_linear_regression = (new SalesBreakdownAgainstAnalysisReport)->salesBreakdownAnalysisResult($request, $company, 'array_with_ai');
+					$breakdown_data = $breakdown_data_with_simple_linear_regression['report_view_data'];
+					$simpleLinearRegression = $breakdown_data_with_simple_linear_regression['simple_linear_regression'];
+					$simpleLinearRegressionDates = $breakdown_data_with_simple_linear_regression['simple_linear_regression_dates'];
 					Cache::forever($cacheKeyName, $breakdown_data);
+					Cache::forever($cacheForSimpleLinearRegressionKeyName, $simpleLinearRegression);
+					Cache::forever($cacheForSimpleLinearRegressionDatesKeyName, $simpleLinearRegressionDates);
 				} else {
 					$breakdown_data = Cache::get($cacheKeyName);
+					$simpleLinearRegression = Cache::get($cacheForSimpleLinearRegressionKeyName);
+					$simpleLinearRegressionDates = Cache::get($cacheForSimpleLinearRegressionDatesKeyName);
 				}
-				
+			
+
 				if ($type == 'service_provider_birth_year' || $type == 'service_provider_type') {
 					$first_item = collect($breakdown_data['report_view_data'])->sortByDesc(function ($data, $key) {
 						return [$data['Sales Value']];
@@ -396,15 +406,20 @@ class HomeController extends Controller
 					$top_data[$type] = $breakdown_data[0] ?? '-';
 				}
 				$reports_data[$type] = $breakdown_data;
+				$simpleLinearRegressionForAllTypes[$type]= $simpleLinearRegression;
+				$simpleLinearRegressionDatesForAllTypes[$type]= $simpleLinearRegressionDates;
 			} else {
 				unset($types[$type]);
 			}
 		}
+	
 		$types = $this->setBarColorsForTypes($types);
 
 		return view('client_view.home_dashboard.dashboard_breakdown', compact(
 			'company',
 			'reports_data',
+			'simpleLinearRegressionForAllTypes',
+			'simpleLinearRegressionDatesForAllTypes',
 			'types',
 			'top_data',
 			'start_date',

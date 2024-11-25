@@ -128,14 +128,7 @@
                     </tr>
                     @endslot
                     @slot('table_body')
-                    <?php 
-
-                              (uasort($final_report_data, function($a, $b) {
-                                return (int)($a['Sales Values'] < $b['Sales Values']);
-
-}));
-
-                        ?>
+                 
 
                     @foreach ($final_report_data as $zone_name => $zoone_data)
 

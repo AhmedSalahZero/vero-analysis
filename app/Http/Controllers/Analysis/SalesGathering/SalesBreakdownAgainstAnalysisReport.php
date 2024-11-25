@@ -3,14 +3,17 @@
 namespace App\Http\Controllers\Analysis\SalesGathering;
 
 use App\Helpers\HArr;
+use App\Helpers\HDate;
 use App\Http\Controllers\ExportTable;
 use App\Models\Company;
 use App\Models\SalesGathering;
+use App\Services\AI\SimpleLinearRegression;
 use App\Traits\GeneralFunctions;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
+use stdClass;
 
 class SalesBreakdownAgainstAnalysisReport
 {
@@ -78,10 +81,43 @@ class SalesBreakdownAgainstAnalysisReport
 		
 		return view('client_view.reports.sales_gathering_analysis.breakdown.sales_form', compact('company', 'view_name', 'type'));
 	}
-
+	public function filterDataByDate($items , $startDate){
+		$startDateAsCarbon = Carbon::make($startDate)->format('Y-m-d');
+		$newItems = collect([]);
+		foreach($items as $item){
+			$date =$item->gr_date;
+			if(Carbon::make($date)->greaterThanOrEqualTo($startDateAsCarbon)){
+				$newItems->add($item);				
+			}
+		}
+		return $newItems ;
+	}
+	public function formatDataForSimpleLinearRegression($items,$type,$dateIntervals){
+		$simpleLinearRegressionData = [];
+		foreach($items as $stdClass){
+			$dateAsMonthAndYear = Carbon::make($stdClass->gr_date)->endOfMonth()->format('Y-m-d');
+			$currentType = $stdClass->{$type} ;
+			$currentValue = $stdClass->net_sales_value;
+			$simpleLinearRegressionData[$currentType][$dateAsMonthAndYear] = isset($simpleLinearRegressionData[$currentType][$dateAsMonthAndYear]) ? $simpleLinearRegressionData[$currentType][$dateAsMonthAndYear] + $currentValue : $currentValue;
+		}
+		return HArr::fillMissingKeyWith($simpleLinearRegressionData,$dateIntervals);
+		// return $simpleLinearRegressionData;
+	}
 	public function salesBreakdownAnalysisResult(Request $request, Company $company, $result = 'view', $calculated_report_data = null,string $reportType =null )
 	{
-		// $dimension = $request->report_type;
+		$simpleLinearRegressionData =[];
+		$predictionArr = [];
+		$breakdownStartDate = $request->start_date ;
+		$breakdownEndDate = $request->end_date ;
+		$simpleLinearRegressionStartDate = Carbon::make($breakdownEndDate)->subMonthNoOverflow(11)->format('Y-m-d') ;
+		$predictionDates = [
+			Carbon::make($breakdownEndDate)->addMonthsNoOverflow(0)->format('Y-m-d'),	
+			Carbon::make($breakdownEndDate)->addMonthsNoOverflow(1)->format('Y-m-d'),
+			Carbon::make($breakdownEndDate)->addMonthsNoOverflow(2)->format('Y-m-d'),
+			Carbon::make($breakdownEndDate)->addMonthsNoOverflow(3)->format('Y-m-d'),
+		];
+		
+		$predictionForMonthArr =[];
 		$report_data = [];
 		$report_view_data = [];
 		$growth_rate_data = [];
@@ -98,18 +134,22 @@ class SalesBreakdownAgainstAnalysisReport
 		];
 
 
-
 		$view_name = $request->view_name;
-
 		$report_data = isset($calculated_report_data) ? $calculated_report_data :  collect(DB::select(DB::raw(
 			"
                 SELECT DATE_FORMAT(LAST_DAY(date),'%d-%m-%Y') as gr_date  , net_sales_value,service_provider_name," . $type . "
                 FROM sales_gathering
               force index (sales_channel_index)
-                WHERE ( company_id = '" . $company->id . "'AND " . $type . " IS NOT NULL  AND date between '" . $request->start_date . "' and '" . $request->end_date . "')
-
+                WHERE ( company_id = '" . $company->id . "'AND " . $type . " IS NOT NULL  AND date between '" . $simpleLinearRegressionStartDate . "' and '" . $breakdownEndDate . "')
                 ORDER BY id "
 		)));
+		$simpleLinearRegressionDataItemForCurrentType = isset($calculated_report_data) ? [] : $report_data;
+		$endOfMonthsIntervalDates = HDate::generateEndOfMonthsDatesBetweenTwoDates(Carbon::make($simpleLinearRegressionStartDate),Carbon::make($breakdownEndDate));
+		
+		$simpleLinearRegressionDataItemForCurrentType=  $this->formatDataForSimpleLinearRegression($simpleLinearRegressionDataItemForCurrentType,$type,$endOfMonthsIntervalDates);
+		$simpleLinearRegressionData = SimpleLinearRegression::predict($simpleLinearRegressionDataItemForCurrentType,$predictionDates,$breakdownEndDate,$type);
+		$report_data = isset($calculated_report_data) ? $calculated_report_data : $this->filterDataByDate($report_data,$breakdownStartDate,$breakdownEndDate);
+		
 
 	
 		if ($type == 'service_provider_birth_year' || $type == 'service_provider_type') {
@@ -178,31 +218,33 @@ class SalesBreakdownAgainstAnalysisReport
 			} else {
 				$key = 0;
 				$report_data = [];
+			
 				foreach ($data as $type_name => $data_per_year) {
 					$report_data[$key]['item'] = $type_name;
 					$report_data[$key]['Sales Value'] = ($report_data[$key]['Sales Value'] ?? 0) + array_sum(($data_per_year ?? []));
 					$report_count_data[$key]['item'] = $type_name;
 					$report_count_data[$key]['Count'] = ($report_count_data[$key]['Count'] ?? 0) + count(($data_per_year ?? []));
+					
 					$key++;
 				}
 			}
 		} else {
-
+			
 			$key_num = 0;
 			$others = 0;
-			$report_data = $report_data->groupBy($type)->flatMap(function ($item, $name) {
+			$report_data = $report_data->groupBy($type)->flatMap(function ($item, $name)  {
+			
 				return   [[
 					'item' => $name,
 					'Sales Value' => $item->sum('net_sales_value')
-				]];
-			})->toArray();
+					]];
+				})->toArray();
 			
 			
 
 		}
 
 		if ((count($report_data) > 0) && ($type !== 'service_provider_birth_year') && $result !== "withOthers") {
-
 			$key_num = 0;
 			$report_data =  collect($report_data)->sortByDesc(function ($data, $key) use ($key_num) {
 				return [($data['Sales Value'])];
@@ -246,19 +288,21 @@ class SalesBreakdownAgainstAnalysisReport
 			}
 			return view('client_view.reports.sales_gathering_analysis.breakdown.sales_report', compact('last_date', 'report_count_data', 'type', 'view_name', 'dates', 'company', 'report_view_data'));
 		} elseif ($result == "withOthers") {
+			
 			return $report_data;
 		} else {
-
 			if ($type == 'service_provider_birth_year' || $type == 'service_provider_type') {
 				return   [
 					'report_count_data' => $report_count_data,
 					'report_view_data' => $report_view_data
 				];
-			} else {
-
-
-
-
+			} elseif($result == 'array_with_ai') {
+				return [
+					'report_view_data'=>$report_view_data,
+					'simple_linear_regression'=>$simpleLinearRegressionData,
+					'simple_linear_regression_dates'=>$predictionDates
+				];
+			}else{
 				return $report_view_data;
 			}
 		}

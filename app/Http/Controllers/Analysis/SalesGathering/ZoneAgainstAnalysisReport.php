@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Analysis\SalesGathering;
 
+use App\Helpers\HArr;
 use App\Models\Company;
 use App\Models\SalesGathering;
 use App\Traits\GeneralFunctions;
@@ -466,8 +467,7 @@ class ZoneAgainstAnalysisReport
 		}
 		
 		$dates = array_keys( $total_zones ?? []); 
-		
-
+		$final_report_data = HArr::getKeysSortedDescByKey($final_report_data,'Sales Values');
 		return view('client_view.reports.sales_gathering_analysis.zone_sales_report', compact('company', 'zones_names', 'total_zones_growth_rates', 'final_report_data', 'total_zones','dates'));
 	}
 	public function growthRate($data)

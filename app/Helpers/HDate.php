@@ -55,6 +55,7 @@ class HDate
 		return true ;
 	}
 	public static function generateStartDateAndEndDateBetween(string $startDate , string $endDate):array{
+		
 		$result  = [];
 		$dates = generateDatesBetweenTwoDates(Carbon::make($startDate),Carbon::make($endDate));
 		$currentStartDate = null;
@@ -70,5 +71,21 @@ class HDate
 		return $result;
 		
 	}
+	public static function generateEndOfMonthsDatesBetweenTwoDates(Carbon $startDate , Carbon $endDate)
+	{
+		$startDate = $startDate->endOfMonth();
+		$endDate = $endDate->endOfMonth();
+		$currentDate = $startDate;
+		$intervalDates = [
+			$currentDate->format('Y-m-d')
+		];
+		
+		while ($endDate->greaterThan($currentDate)){
+			$intervalDates[] = $currentDate->addMonthWithNoOverflow()->endOfMonth()->format('Y-m-d');
+		}
+		return $intervalDates;
+
+	}
+	
 	
 }

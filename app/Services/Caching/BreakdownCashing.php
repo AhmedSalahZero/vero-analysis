@@ -44,11 +44,17 @@ class BreakdownCashing
 				$request['type']  = $typeToCache ;
 				
 				$cacheKeyName = getBreakdownCacheNameForCompanyAndDatesAndType($this->company,$this->current_start_date,$this->current_end_date, $typeToCache);
+				$cacheSimpleLinearRegressionKeyName = getBreakdownSimpleLinearRegressionCacheNameForCompanyAndDatesAndType($this->company,$this->current_start_date,$this->current_end_date, $typeToCache);
+				$cacheSimpleLinearRegressionDatesKeyName = getBreakdownSimpleLinearRegressionDatesCacheNameForCompanyAndDatesAndType($this->company,$this->current_start_date,$this->current_end_date, $typeToCache);
 				if (!Cache::has($cacheKeyName)) {
 					// $possibleIndexName = '';
-					$breakdown_data = (new SalesBreakdownAgainstAnalysisReport)->salesBreakdownAnalysisResult($request, $this->company, 'array');
-					// $forceIndex = \indexIsExistIn($possibleIndexName, 'sales_gathering') ? "force index (" . $possibleIndexName . ")" : '';
+					$breakdown_data_with_simple_linear_regression = (new SalesBreakdownAgainstAnalysisReport)->salesBreakdownAnalysisResult($request, $this->company, 'array_with_ai');
+					$breakdown_data = $breakdown_data_with_simple_linear_regression['report_view_data'] ?? [];
+					$simpleLinearRegression = $breakdown_data_with_simple_linear_regression['simple_linear_regression'] ?? [];
+					$simpleLinearRegressionDates = $breakdown_data_with_simple_linear_regression['simple_linear_regression_dates'] ?? [];
 					Cache::forever($cacheKeyName, $breakdown_data);
+					Cache::forever($cacheSimpleLinearRegressionKeyName, $simpleLinearRegression);
+					Cache::forever($cacheSimpleLinearRegressionDatesKeyName, $simpleLinearRegressionDates);
 				} else {
 					$breakdown_data = Cache::get($cacheKeyName);
 				}
@@ -84,6 +90,7 @@ class BreakdownCashing
 	{
 		foreach ($this->typesOfCaching as $typeToCache) {
 			Cache::forget(getBreakdownCacheNameForCompanyAndDatesAndType($this->company,$this->current_start_date,$this->current_end_date, $typeToCache));
+			Cache::forget(getBreakdownSimpleLinearRegressionCacheNameForCompanyAndDatesAndType($this->company,$this->current_start_date,$this->current_end_date, $typeToCache));
 		}
 	}
 }

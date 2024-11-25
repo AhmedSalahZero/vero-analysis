@@ -234,6 +234,7 @@ class RoutesDefinition
                         'Branches' => 'branches',
                         'SalesDiscount' => 'salesDiscount',
                         'Countries' => 'countries',
+                        'day' => 'day',
 						
                     ],
                     'avg_items' => [

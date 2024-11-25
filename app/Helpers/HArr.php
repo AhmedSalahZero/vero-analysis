@@ -246,7 +246,6 @@ class HArr
 		$values = [];
 		$result= [];
 		foreach($items as $categoryName => $itemArr ){
-		
 			$sumSalesValue = array_sum($itemArr[$keyName]);
 			$values[$categoryName] = $sumSalesValue;
 		}
@@ -257,6 +256,23 @@ class HArr
 			$result[$key] = $items[$key];
 		}
 		return $result;
+	}
+	public static function fillMissingKeyWith(array $items , array $dates)
+	{
+
+		$allItems = [];
+
+		foreach($items as $cate=>$keyAndVal){
+			foreach($dates as $date){
+				if(isset($keyAndVal[$date])){
+					$allItems[$cate][$date] = $keyAndVal[$date];
+				}else{
+					$allItems[$cate][$date] = 0;
+				}
+			}
+				
+			}
+		return $allItems;
 	}
 
 }

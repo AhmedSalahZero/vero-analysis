@@ -428,6 +428,14 @@ function getBreakdownCacheNameForCompanyAndDatesAndType(Company $companyId, stri
 {
     return 'breakdown_start_date'. $start_date .'end_date' . $endDate . 'company_id'. $companyId->id . 'for_type_' . $type;
 }
+function getBreakdownSimpleLinearRegressionCacheNameForCompanyAndDatesAndType(Company $companyId, string $start_date, string $endDate, string $type)
+{
+    return 'breakdown_simple_linear_regression_start_date'. $start_date .'end_date' . $endDate . 'company_id'. $companyId->id . 'for_type_' . $type;
+}
+function getBreakdownSimpleLinearRegressionDatesCacheNameForCompanyAndDatesAndType(Company $companyId, string $start_date, string $endDate, string $type)
+{
+    return 'breakdown_simple_linear_regression_dates_start_date'. $start_date .'end_date' . $endDate . 'company_id'. $companyId->id . 'for_type_' . $type;
+}
 
 function getTotalCustomersCacheNameForCompanyInYearForType(Company $companyId, string $year, $type)
 {
@@ -1593,8 +1601,6 @@ function getComparingReportForAnalysis($request, $report_data, $secondReport, $c
 		$secondItemsName = $isDayNameReport ? HArr::orderByDayNameForOneDimension($secondItemsName) : $secondItemsName;
         $secondReportData['report_data']  = addFirstReportKeysToSendReport($secondItemsName, $secondReportData['report_data']);
         $mainItems = getMainItemsNameFromEachInterval($report_data, $secondReportData['report_data']);
-		// dd(get_defined_vars());
-		
         return view('client_view.reports.sales_gathering_analysis.second_comparing_analysis', compact('company','isDayNameReport', 'view_name', 'firstReportData', 'Items_names', 'dates', 'report_data', 'secondReportData', 'secondItemsName', 'mainItems', 'type'));
     }
 }
@@ -1663,6 +1669,18 @@ function getModelNamespace()
 }
 
 function generateDatesBetweenTwoDates(Carbon $start_date, Carbon $end_date, $method = 'addMonth', $format = 'Y-m-d', $indexedArray = true, $indexFormat = 'Y-m-d')
+{
+    $dates = [];
+    for ($date = $start_date->copy(); $date->lte($end_date); $date->{$method}()->setTime(0, 0)) {
+        if ($indexedArray) {
+            $dates[] = $date->format($format);
+        } else {
+            $dates[$date->format($indexFormat)] = $date->format($format);
+        }
+    }
+    return $dates;
+}
+function generateDatesBetweenTwoDatesWithoutOverflow(Carbon $start_date, Carbon $end_date, $method = 'addMonthNoOverflow', $format = 'Y-m-d', $indexedArray = true, $indexFormat = 'Y-m-d')
 {
     $dates = [];
     for ($date = $start_date->copy(); $date->lte($end_date); $date->{$method}()->setTime(0, 0)) {

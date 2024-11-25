@@ -62,7 +62,10 @@ class BusinessUnitsAgainstAnalysisReport
             $type  = 'averagePricesProductItems';
             $view_name = 'Business Units Items Average Prices' ;
         }
-
+		elseif (request()->route()->named('businessUnits.day.analysis')) {
+            $type  = 'day_name';
+            $view_name = 'Business Units Against Days Trend Analysis' ;
+		}
         $name_of_selector_label = str_replace(['Business Units Against ' ,' Trend Analysis'],'',$view_name);
 
         if ($type == 'averagePrices') {

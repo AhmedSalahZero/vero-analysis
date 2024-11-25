@@ -490,6 +490,7 @@ class CategoriesAgainstAnalysisReport
         }
 		$dates = array_keys($total_categories ?? []); 
 		$final_report_data = HArr::getKeysSortedDescByKey($final_report_data,'Sales Values');
+		
         return view('client_view.reports.sales_gathering_analysis.categories_sales_report',compact('company','categories_names','total_categories_growth_rates','final_report_data','total_categories','dates'));
 
     }

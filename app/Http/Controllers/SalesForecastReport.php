@@ -524,7 +524,6 @@ $sales_forecast['previous_year_seasonality'] = $previousYearSeasonality;
 		if (($request->submit == 'Show') || (count(($modified_targets->others_target ?? [])) > 0) || (($request->isMethod('GET')) && isset($modified_targets) && $modified_targets !== null)) {
 
 
-			// $product_item_breakdown_data = (new SalesBreakdownAgainstAnalysisReport)->salesBreakdownAnalysisResult($request, $company, 'withOthers');
 			$product_item_breakdown_data = (new SalesBreakdownAgainstAnalysisReport)->salesBreakdownAnalysisResult($request, $company, 'withOthers', $products_data);
 			$product_item_breakdown_data = $this->addingOthersToData($product_item_breakdown_data, $modified_targets->others_target);
 			// modified_targets
@@ -566,7 +565,6 @@ $sales_forecast['previous_year_seasonality'] = $previousYearSeasonality;
 
 		if ($request->isMethod('GET')) {
 
-			// $product_item_breakdown_data = (new SalesBreakdownAgainstAnalysisReport)->salesBreakdownAnalysisResult($request, $company, 'array');
 			$product_item_breakdown_data = (new SalesBreakdownAgainstAnalysisReport)->salesBreakdownAnalysisResult($request, $company, 'array', $products_data);
 			$products_used = array_column($product_item_breakdown_data, 'item');
 			$selector_products = SalesGathering::company()

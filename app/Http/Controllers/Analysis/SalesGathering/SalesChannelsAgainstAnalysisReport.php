@@ -506,6 +506,7 @@ class SalesChannelsAgainstAnalysisReport
 		$dates = array_keys($total_sales_channels ?? []) ;
 	
 		$final_report_data = HArr::getKeysSortedDescByKey($final_report_data,'Sales Values');
+		
         return view('client_view.reports.sales_gathering_analysis.salesChannels_sales_report',compact('company','sales_channels_names','total_sales_channels_growth_rates','final_report_data','total_sales_channels','dates'));
 
     }

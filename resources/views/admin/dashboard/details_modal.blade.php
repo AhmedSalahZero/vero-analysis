@@ -36,7 +36,7 @@
 
                             @php
                             $total = 0 ;
-$totalInMainFunctionalCurrency = 0 ;
+							$totalInMainFunctionalCurrency = 0 ;
 
                             @endphp
                             @foreach($detailItems as $detailItem)
@@ -102,13 +102,6 @@ $totalInMainFunctionalCurrency = 0 ;
                                         </div>
                                     </div>
                                 </td>
-
-
-
-
-
-
-
 
 
                             </tr>
