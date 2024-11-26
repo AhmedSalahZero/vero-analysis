@@ -47,7 +47,6 @@ class AppServiceProvider extends ServiceProvider
 
 		ini_set('max_execution_time', 6000); //300 seconds = 5 minutes
 
-	
 		\PhpOffice\PhpSpreadsheet\Shared\Font::setAutoSizeMethod(Font::AUTOSIZE_METHOD_EXACT);
 		require_once storage_path('dompdf/vendor/autoload.php');
 		require_once app_path('Helpers/HArr.php');
