@@ -1014,6 +1014,7 @@ Route::middleware([])->group(function () {
                         foreach ($info['sub_items'] as $viewName => $sub_item) {
                             if (isset($info['is_provider']) && $info['is_provider'] === true) {
                             } else {
+								
                                 Route::get('/' . $nameOfMainItem . 'VS' . $viewName . 'Ranking' . '/View', 'Analysis\SalesGathering\TwodimensionalSalesBreakdownAgainstRankingAnalysisReport@index')->name($info['name'] . '.vs.' . $sub_item . 'Ranking' . '.view');
                             }
                         }

@@ -82,11 +82,12 @@ class SalesBreakdownAgainstAnalysisReport
 		return view('client_view.reports.sales_gathering_analysis.breakdown.sales_form', compact('company', 'view_name', 'type'));
 	}
 	public function filterDataByDate($items , $startDate){
-		$startDateAsCarbon = Carbon::make($startDate)->format('Y-m-d');
+		$startDateAsCarbon = Carbon::make($startDate)->setTime(0,0)->format('Y-m-d');
 		$newItems = collect([]);
 		foreach($items as $item){
 			$date =$item->gr_date;
-			if(Carbon::make($date)->greaterThanOrEqualTo($startDateAsCarbon)){
+			$date = Carbon::make($date)->format('Y-m-d');
+			if(Carbon::make($date)->setTime(0,0)->greaterThanOrEqualTo($startDateAsCarbon)){
 				$newItems->add($item);				
 			}
 		}
@@ -109,7 +110,7 @@ class SalesBreakdownAgainstAnalysisReport
 		$predictionArr = [];
 		$breakdownStartDate = $request->start_date ;
 		$breakdownEndDate = $request->end_date ;
-		$simpleLinearRegressionStartDate = Carbon::make($breakdownEndDate)->subMonthNoOverflow(11)->format('Y-m-d') ;
+		$simpleLinearRegressionStartDate = Carbon::make($breakdownEndDate)->subMonthNoOverflow(23)->startOfMonth()->format('Y-m-d') ;
 		$predictionDates = [
 			Carbon::make($breakdownEndDate)->addMonthsNoOverflow(0)->format('Y-m-d'),	
 			Carbon::make($breakdownEndDate)->addMonthsNoOverflow(1)->format('Y-m-d'),
@@ -135,6 +136,14 @@ class SalesBreakdownAgainstAnalysisReport
 
 
 		$view_name = $request->view_name;
+		// $report_data = isset($calculated_report_data) ? $calculated_report_data :  collect(DB::select(DB::raw(
+		// 	"
+        //         SELECT DATE_FORMAT(LAST_DAY(date),'%d-%m-%Y') as gr_date  , net_sales_value,service_provider_name," . $type . "
+        //         FROM sales_gathering
+        //       force index (sales_channel_index)
+        //         WHERE ( company_id = '" . $company->id . "'AND " . $type . " IS NOT NULL  AND date between '" . $breakdownStartDate . "' and '" . $breakdownEndDate . "')
+        //         ORDER BY id "
+		// )));
 		$report_data = isset($calculated_report_data) ? $calculated_report_data :  collect(DB::select(DB::raw(
 			"
                 SELECT DATE_FORMAT(LAST_DAY(date),'%d-%m-%Y') as gr_date  , net_sales_value,service_provider_name," . $type . "
@@ -239,7 +248,6 @@ class SalesBreakdownAgainstAnalysisReport
 					'Sales Value' => $item->sum('net_sales_value')
 					]];
 				})->toArray();
-			
 			
 
 		}

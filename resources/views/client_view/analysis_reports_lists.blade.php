@@ -216,6 +216,10 @@
 														if($name_of_section === 'Products Items Ranking'){
 															$name_of_section = "Product Items"; 
 														}
+														if($name_of_section === 'Products Ranking'){
+															$name_of_section = "Product"; 
+														}
+													 
 
                                                         @endphp
  
@@ -235,6 +239,11 @@
                                                     @if ($name_of_section == "Product Items Ranking" )
                                                         @php $name_of_section = "Product Items Ranking"; @endphp 
                                                     @endif
+													
+													@if ($name_of_section == "Product Ranking" )
+                                                        @php $name_of_section = "Product Ranking"; @endphp 
+                                                    @endif
+													
 
                                                     @if ((!isset($name_of_first_section) &&  false !== $found =  array_search(\Str::singular($name_of_section),$viewing_names)) ||
                                                         ( isset($name_of_first_section) && (false !== $found =  array_search(\Str::singular($name_of_section),$viewing_names)) && (false !== $found =  array_search(\Str::singular($name_of_first_section),$viewing_names)) ) || ($sub_section->name['en'] =="Discounts Breakdown Analysis") ||
@@ -243,6 +252,7 @@
                                                         // ||  $sub_section->name['en'] == 'Business Sectors Versus Customers Natures Analysis'
                                                         || ($mainSubSection->name['en'] == "Service Providers") 
                                                         || ($name_of_section == "Product Items Ranking" && isset($exportables['product_item'] )  && /* not sure salah */  isset($exportables['branch'] ) ) 
+                                                        || ($name_of_section == "Product Ranking" && isset($exportables['product_or_service'] )  && /* not sure salah */  isset($exportables['branch'] ) ) 
                                                         || ($name_of_section == "Customers" &&  (isset($exportables['customer_name']) )
 														|| $name_of_section == "Days" 
 														

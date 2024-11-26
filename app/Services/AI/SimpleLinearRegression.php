@@ -9,7 +9,6 @@ class SimpleLinearRegression
 {
 	public static function predict(array $trainingSet , array $predictionDates,string $breakdownEndDate,$type)
 	{
-	
 		$predictedSales = [];
 		foreach($trainingSet as $nameForType => $itemsAsDateAndValue){
 			$index = 0 ;
@@ -24,7 +23,6 @@ class SimpleLinearRegression
 			// Extract timestamps and sales values
 			$timestamps = array_column($salesData, 'timestamp');
 			$sales = array_column($salesData, 'total_sales');
-		
 			
 
 			// Train the regression model
@@ -50,6 +48,7 @@ class SimpleLinearRegression
 		
 	
 	}
+		
 		return self::orderByFirstDate($predictedSales,$breakdownEndDate,$predictionDates);
 		
 	}

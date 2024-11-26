@@ -18,6 +18,11 @@ class TwodimensionalSalesBreakdownAgainstRankingAnalysisReport
             $type = 'product_item';
             $view_name = 'Branches Vs Product Items Ranking'  ;
         }
+		elseif (request()->route()->named('branches.vs.ProductsRanking.view')) {
+            $main_type = 'branch';
+            $type = 'product_or_service';
+            $view_name = 'Branches Vs Products / Service Ranking'  ;
+        }
 		$dates = getEndYearBasedOnDataUploaded($company);
 		$start_date =$dates['jan'];
 		$end_date=$dates['dec'];

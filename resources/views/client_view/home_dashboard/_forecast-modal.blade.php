@@ -23,7 +23,7 @@
 								@php
 									$index = 0 ;
 								@endphp
-								@foreach($simpleLinearRegressionDatesForAllTypes[$type] as $simpleLinearRegressionDate )
+								@foreach($simpleLinearRegressionDatesForAllTypes[$type]??[] as $simpleLinearRegressionDate )
                                 <th class="text-center w-15-percentage text-capitalize th-main-color"> {{ \Carbon\Carbon::make($simpleLinearRegressionDate)->format('d-m-Y') }} 
 								<br>
 								@if($index==0)

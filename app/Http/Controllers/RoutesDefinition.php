@@ -565,6 +565,7 @@ class RoutesDefinition
                 'is_provider' => false,
                 'sub_items' => [
                     'ProductsItems' => 'Items',
+                    'Products' => 'Products',
                 ]
             ],
 
