@@ -97,7 +97,10 @@ class SalesGatheringTestJob implements ShouldQueue
 					
 					foreach(['sales_person'=>'cash_vero_sales_persons','business_unit'=>'cash_vero_business_units','business_sector'=>'cash_vero_business_sectors'] as $columnName=>$tableName){
 						$currentIds[$columnName] = 0 ;
-						$currentColValue = $value[$columnName] ;
+						$currentColValue = $value[$columnName]??null ;
+						if(is_null($currentColValue)){
+							continue;
+						}
 					$isFound[$columnName] = $currentIds[$columnName] ? true : DB::table($tableName)->where('company_id',$this->company_id)->where('name',$currentColValue)->exists();
 					if($isFound[$columnName]){
 						$currentIds[$columnName] = DB::table($tableName)->where('company_id',$this->company_id)->where('name',$currentColValue)->first()->id;

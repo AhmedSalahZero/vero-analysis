@@ -38,14 +38,18 @@ class LgTermAmountRule implements ImplicitRule
      */
     public function passes($attribute, $value)
     {
-		$accountType = AccountType::find($this->account_type_id);
+		$accountTypeId = $this->account_type_id ;
+		if(is_null($accountTypeId)){
+			return true ;
+		}
+		$accountType = AccountType::find($accountTypeId);
 		if(!$accountType->isCurrentAccount()){
 			return true ; 
 		}
 		if($this->category_name == LetterOfGuaranteeIssuance::OPENING_BALANCE){
 			return true ;
 		}
-		$accountNumber = $this->account_number;
+		$accountNumber = $this->account_number ;
 		$statementDate = $this->issuance_date;
 		$accountNumberModel =  ('\App\Models\\'.$accountType->getModelName())::findByAccountNumber($accountNumber,$this->company_id,$this->financial_institution_id);
 		$statementTableName = (get_class($accountNumberModel)::getStatementTableName()) ;
