@@ -340,6 +340,7 @@ class HomeController extends Controller
 			return redirect()->route('viewHomePage',['company'=>$company->id ])->with('fail',__('Please Wait Until Breakdown Dashboard Recalculate'));
 		}
 		$simpleLinearRegressionForAllTypes=[];
+		$simpleLinearRegressionDatesForAllTypes=[];
 		$initialDates = getEndYearBasedOnDataUploaded($company);
 		$start_date = $initialDates['jan'];
 		$end_date   = $initialDates['dec'];
