@@ -331,5 +331,24 @@ trait IsInvoice
         ->whereBetween('invoice_date', [$startDate, $endDate])
         ->where($clientIdColumnName, '=', $partnerId)->get();
 	}
+	public static function createForOddo(int $invoiceId,int $partnerId,string $partnerName,string $invoiceDate,string $invoiceDueDate,string $invoiceNumber,string $invoiceCurrency,$invoiceAmount,$vatAmount,$withholdAmount,int $companyId):void{
+		$isExist = self::where('oddo_id',$invoiceId)->where('company_id',$companyId)->exists();
+		if($isExist){
+			return ;
+		}
+		self::create([
+			'oddo_id'=>$invoiceId,
+			'company_id'=>$companyId , 
+			self::CLIENT_ID_COLUMN_NAME=>$partnerId,
+			self::CLIENT_NAME_COLUMN_NAME=>$partnerName ,
+			'invoice_date'=>$invoiceDate,
+			'invoice_number'=>$invoiceNumber ,
+			'invoice_amount'=>$invoiceAmount ,
+			'currency'=>$invoiceCurrency,
+			'vat_amount'=>$vatAmount,
+			'withhold_amount'=>$withholdAmount,
+			'invoice_due_date'=>$invoiceDueDate,
+		]);
+	}
 
 }

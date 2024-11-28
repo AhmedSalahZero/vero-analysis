@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use App\Http\Controllers\CompanyController;
 use App\Traits\HasBasicStoreRequest;
 use App\Traits\HasCreatedAt;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
@@ -169,7 +171,36 @@ class Partner extends Model
 	} 
 	
 	public static function getSuppliersForCompany(int $companyId){
-		return Partner::where('company_id',$companyId)->where('is_supplier',1)->orderBy('name')->pluck('name','id');
+		return self::where('company_id',$companyId)->where('is_supplier',1)->orderBy('name')->pluck('name','id');
 	} 
+	public static function findByOddoId(int $id){
+		return self::where('oddo_id',$id)->first();
+	}
+	public static function createNewForOddo(int $id,string $partnerName,int $companyId,int $isCustomer,int $isSupplier){
+		// $companyRequest = (new Request())->merge([
+		// 	'is_api'=>1 ,
+		// 	'name'=>[
+		// 		'en'=>$partnerName,
+		// 		'ar'=>$partnerName
+		// 	],
+		// 	'systems'=>[
+		// 		CASH_VERO
+		// 	],
+		// 	'main_functional_currency'=>$invoiceCurrency,
 	
+		// ]);
+		// $company = (new CompanyController)->store($companyRequest);
+		/**
+		 * @var Company $company 
+		 */
+		$partner = Partner::create([
+			'oddo_id'=>$id ,
+			'is_customer'=>$isCustomer ,
+			'is_supplier'=>$isSupplier,
+			'company_id'=>$companyId ,
+			// 'company_id'=>$company->id ,
+			'name'=>$partnerName
+		]);
+		return $partner;
+	}
 }

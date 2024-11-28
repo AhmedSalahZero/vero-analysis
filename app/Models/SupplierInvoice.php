@@ -2,13 +2,11 @@
 
 namespace App\Models;
 
-use App\Helpers\HArr;
 use App\Interfaces\Models\IInvoice;
 use App\Traits\Models\IsInvoice;
 use App\Traits\StaticBoot;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class SupplierInvoice extends Model implements IInvoice
@@ -29,11 +27,13 @@ class SupplierInvoice extends Model implements IInvoice
 	const CLIENT_ID_COLUMN_NAME = 'supplier_id';
 	const JS_FILE = 'money-payment.js';
 	const RECEIVED_OR_PAYMENT_AMOUNT = 'paid_amount';
+	
 	const RECEIVING_OR_PAYMENT_DATE_COLUMN_NAME = 'delivery_date';
 	const MONEY_RECEIVED_OR_PAYMENT_TABLE_NAME = 'money_payments';
 	const MONEY_RECEIVED_OR_PAYMENT_TABLE_FOREIGN_NAME = 'money_payment_id';
 	const TABLE_NAME = 'supplier_invoices';
 	const COLLETED_OR_PAID = 'paid';
+	const COLLETED_OR_PAID_AMOUNT = 'paid_amount';
 	const PARTIALLY_COLLECTED_OR_PAID_AND_PAST_DUE = 'partially_paid_and_past_due';
 	const MONEY_MODEL_NAME = 'MoneyPayment';
 	const IS_CUSTOMER_OR_SUPPLIER = 'is_supplier';

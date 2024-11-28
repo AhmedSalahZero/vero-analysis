@@ -30,6 +30,7 @@ class CustomerInvoice extends Model implements IInvoice
 	const TABLE_NAME = 'customer_invoices';
 	const JS_FILE = 'money-receive.js';
 	const COLLETED_OR_PAID = 'collected';
+	const COLLETED_OR_PAID_AMOUNT = 'collected_amount';
 	const PARTIALLY_COLLECTED_OR_PAID_AND_PAST_DUE = 'partially_collected_and_past_due';
 	const MONEY_MODEL_NAME = 'MoneyReceived';
 	const IS_CUSTOMER_OR_SUPPLIER = 'is_customer';

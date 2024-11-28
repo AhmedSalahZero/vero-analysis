@@ -42,12 +42,15 @@ class CompanyController extends Controller
     public function store(Request $request)
     {
         toastr()->success('Created Successfully');
-        $companySection = Company::create($request->except(['image','systems']));
+        $companySection = Company::create($request->except(['image','systems','is_api']));
 		Branch::storeHeadOffice($companySection->id);
 		foreach($request->get('systems') as $systemName){
 			$companySection->systems()->create([
 				'system_name'=>$systemName
 			]);
+		}
+		if($request->has('is_api')){
+			return $companySection;
 		}
         ImageSave::saveIfExist('image',$companySection);
         return redirect()->back();
