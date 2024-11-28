@@ -344,6 +344,7 @@ class HomeController extends Controller
 		$start_date = $initialDates['jan'];
 		$end_date   = $initialDates['dec'];
 		
+		$simpleLinearRegressionForAllTypes = [];
 
 		if ($request->isMethod('GET')) {
 			Log::storeNewLogRecord('enterSection',null,__('Breakdown Dashboard'));
