@@ -47,8 +47,6 @@ jobs:
       run: composer update 
     - name: Storage link
       run: php artisan storage:link    
-    - name: Fix Permission
-      run: php artisan permissions:set 
     - name: run migration
       run: php artisan migrate --force   
     - name: run sql file
