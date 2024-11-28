@@ -339,7 +339,7 @@ class HomeController extends Controller
 		if($company->isCachingNow()){
 			return redirect()->route('viewHomePage',['company'=>$company->id ])->with('fail',__('Please Wait Until Breakdown Dashboard Recalculate'));
 		}
-		
+		$simpleLinearRegressionForAllTypes=[];
 		$initialDates = getEndYearBasedOnDataUploaded($company);
 		$start_date = $initialDates['jan'];
 		$end_date   = $initialDates['dec'];
@@ -375,7 +375,7 @@ class HomeController extends Controller
 		];
 		$reports_data = [];
 		$top_data = [];
-		$simpleLinearRegressionDatesForAllTypes=[];
+		
 		$breakdown_data = [];
 		foreach ($types as  $type => $color) {
 			if (false !== $found = array_search($type, $db_names)) {
