@@ -379,7 +379,7 @@ class HomeController extends Controller
 			if (false !== $found = array_search($type, $db_names)) {
 				$request['type'] = $type;
 				$cacheKeyName = getBreakdownCacheNameForCompanyAndDatesAndType($company,$start_date,$end_date, $type);
-				$cacheForSimpleLinearRegressionKeyName = getBreakdownSimpleLinearRegressionCacheNameForCompanyAndDatesAndType($company,$start_date,$end_date, $type);
+				$cacheForSimpleLinearRegressionKeyName = \getBreakdownSimpleLinearRegressionCacheNameForCompanyAndDatesAndType($company,$start_date,$end_date, $type);
 				$cacheForSimpleLinearRegressionDatesKeyName = getBreakdownSimpleLinearRegressionDatesCacheNameForCompanyAndDatesAndType($company,$start_date,$end_date, $type);
 				if (!Cache::has($cacheKeyName)) {
 					$breakdown_data_with_simple_linear_regression = (new SalesBreakdownAgainstAnalysisReport)->salesBreakdownAnalysisResult($request, $company, 'array_with_ai');
