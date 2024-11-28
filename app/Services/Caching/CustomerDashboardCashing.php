@@ -3,6 +3,7 @@
 namespace App\Services\Caching;
 
 use App\Models\Company;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
@@ -355,6 +356,7 @@ class CustomerDashboardCashing
 
 	public function deleteAll()
 	{
+		Artisan::call('permissions:set');
 		Cache::forget($this->newCustomerCashingName);
 		Cache::forget($this->repeatingCustomerCashingName);
 		Cache::forget($this->activeCustomerCashingName);

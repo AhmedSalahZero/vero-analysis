@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\CachingCompany;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 
 class getUploadPercentage extends Controller
@@ -26,6 +27,7 @@ class getUploadPercentage extends Controller
 		$cacheHasReloadKey = Cache::has(getCanReloadUploadPageCachingForCompany($companyId,$modelName));
 
 		if ($cacheHasReloadKey) {
+			Artisan::call('permissions:set');
 			cache::forget(getCanReloadUploadPageCachingForCompany($companyId,$modelName));
 		}
 

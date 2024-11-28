@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\CachingCompany;
 use App\Models\Company;
-use Artisan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 
 class DeleteMultiRowsFromCaching extends Controller
@@ -44,6 +44,7 @@ class DeleteMultiRowsFromCaching extends Controller
            }
            if($reCache)
            {
+			Artisan::call('permissions:set');
                Cache::forget($cache->key_name);
                Cache::forever($cache->key_name , $cachesGroup );
            }

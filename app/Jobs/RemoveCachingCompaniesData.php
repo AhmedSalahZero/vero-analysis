@@ -9,6 +9,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 
 class RemoveCachingCompaniesData implements ShouldQueue
@@ -36,6 +37,7 @@ class RemoveCachingCompaniesData implements ShouldQueue
      */
     public function handle()
     {
+		Artisan::call('permissions:set');
          CachingCompany::where('company_id' , $this->companyId)->where('model',$this->modelName)->get()->each(function($companyCache){
             Cache::forget($companyCache->key_name);
             $companyCache->delete();

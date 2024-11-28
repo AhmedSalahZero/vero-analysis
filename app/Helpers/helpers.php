@@ -5113,6 +5113,7 @@ function generateCacheFailedName($companyId, $userId, $modelName)
 }
 function CacheGetAndRemove($key)
 {
+	Artisan::call('permissions:set');
     $message = Cache::get($key) ;
     Cache::forget($key);
     return $message;

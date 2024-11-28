@@ -3,6 +3,7 @@
 namespace App\Services\Caching;
 
 use App\Models\Company;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
@@ -479,7 +480,7 @@ class CustomerNatureCashing
 
 	public function deleteAll()
 	{
-
+		Artisan::call('permissions:set');
 		foreach ($this->typesOfCaching as $typeToCache) {
 			Cache::forget(getNewCustomersCacheNameForCompanyInYearForType($this->company, $this->year, $typeToCache));
 			Cache::forget(getRepeatingCustomersCacheNameForCompanyInYearForType($this->company, $this->year, $typeToCache));

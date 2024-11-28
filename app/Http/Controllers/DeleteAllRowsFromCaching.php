@@ -5,9 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\CachingCompany;
 use App\Models\Company;
 use App\Services\Caching\CashingService;
-use function React\Promise\reduce;
+
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 
 class DeleteAllRowsFromCaching extends Controller
@@ -20,6 +21,7 @@ class DeleteAllRowsFromCaching extends Controller
 	 */
 	public function __invoke(Request $request, Company $company,$modelName)
 	{
+		Artisan::call('permissions:set');
 		if($modelName == 'SalesGathering'){
 			(new CashingService($company))->removeAll();
 		}

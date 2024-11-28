@@ -41,6 +41,7 @@ class SalesGatheringTestController extends Controller
 
 	public function import(Company $company,string $modelName = 'SalesGathering')
 	{
+		Artisan::call('permissions:set');
 		$uploadParamsType = getUploadParamsFromType($modelName);
 		$importHeaderText = $uploadParamsType['importHeaderText'];
 		$company_id = $company->id;
@@ -119,7 +120,7 @@ class SalesGatheringTestController extends Controller
 	}
 	public function insertToMainTable(Company $company , string $modelName)
 	{
-		
+		Artisan::call('permissions:set');
 		$loanId = Request('medium_term_loan_id');
 		$active_job = ActiveJob::where('company_id',  $company->id)->where('model',$modelName)->where('status', 'save_to_table')->where('model_name', 'SalesGatheringTest')->first();
 		if ($active_job === null) {

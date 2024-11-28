@@ -4,6 +4,7 @@ namespace App\Services\Caching;
 use App\Models\Company;
 use App\Services\Caching\BreakdownCashing;
 use App\Services\Caching\CustomerDashboardCashing;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
@@ -59,6 +60,7 @@ class CashingService
     }
     public function removeAll()
     {
+			Artisan::call('permissions:set');
             // add the following code in class for generic items
             Cache::forget(getIntervalYearsFormCompanyCacheNameForCompany($this->company));
             
@@ -76,6 +78,7 @@ class CashingService
 
     public function removeIntervalYearsCaching()
     {
+		Artisan::call('permissions:set');
         Cache::forget(getIntervalYearsFormCompanyCacheNameForCompany($this->company));
     }
     

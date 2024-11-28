@@ -51,8 +51,6 @@ jobs:
       run: php artisan migrate --force   
     - name: run sql file
       run: php artisan run:sql  
-    - name: set permission
-      run: php artisan permissions:set  
     - name: cache clear
       run: php artisan optimize:clear  
     - name: FTP-Deploy-Action

@@ -5,6 +5,7 @@ namespace App\Services\Caching;
 use App\Http\Controllers\Analysis\SalesGathering\SalesBreakdownAgainstAnalysisReport;
 use App\Models\Company;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
@@ -88,6 +89,7 @@ class BreakdownCashing
 
 	public function deleteAll()
 	{
+		Artisan::call('permissions:set');
 		foreach ($this->typesOfCaching as $typeToCache) {
 			Cache::forget(\getBreakdownCacheNameForCompanyAndDatesAndType($this->company,$this->current_start_date,$this->current_end_date, $typeToCache));
 			Cache::forget(\getBreakdownSimpleLinearRegressionCacheNameForCompanyAndDatesAndType($this->company,$this->current_start_date,$this->current_end_date, $typeToCache));
