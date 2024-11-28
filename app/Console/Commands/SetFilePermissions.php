@@ -17,8 +17,8 @@ class SetFilePermissions extends Command
         ];
 
         foreach ($paths as $path) {
-            exec("chmod -R 775 $path");
-            exec("chown -R veroanalysis:veroanalysis $path");
+            exec("sudo chmod -R 775 $path");
+            exec("sudo chown -R veroanalysis:veroanalysis $path");
         }
 
         $this->info('Permissions updated successfully!');

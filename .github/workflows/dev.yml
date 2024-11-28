@@ -46,7 +46,7 @@ jobs:
     - name: Install Composer dependencies
       run: composer update 
     - name: Storage link
-      run: php artisan storage:link    
+      run: php artisan storage:link 
     - name: run migration
       run: php artisan migrate --force   
     - name: run sql file
@@ -56,10 +56,10 @@ jobs:
     - name: FTP-Deploy-Action
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
       with:
-         server: 147.182.239
+         server: 147.182.239.201
          server-dir: public_html/system.veroanalysis.com/
-         username: root
-         password: SSAGO378119@@
+         username: veroanalysis
+         password: Aa@112233@aA
          exclude: |
             **/node_modules/**
             **/storage/**
