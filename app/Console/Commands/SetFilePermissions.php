@@ -1,4 +1,4 @@
-<?
+<?php
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
@@ -8,6 +8,11 @@ class SetFilePermissions extends Command
     protected $signature = 'permissions:set';
     protected $description = 'Set default file and directory permissions';
 
+	public function __construct()
+    {
+        parent::__construct();
+    }
+	
     public function handle()
     {
         $paths = [
