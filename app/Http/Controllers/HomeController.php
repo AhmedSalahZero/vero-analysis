@@ -344,7 +344,7 @@ class HomeController extends Controller
 		$start_date = $initialDates['jan'];
 		$end_date   = $initialDates['dec'];
 		
-		$simpleLinearRegressionForAllTypes = [];
+		
 
 		if ($request->isMethod('GET')) {
 			Log::storeNewLogRecord('enterSection',null,__('Breakdown Dashboard'));
@@ -375,6 +375,7 @@ class HomeController extends Controller
 		];
 		$reports_data = [];
 		$top_data = [];
+		$simpleLinearRegressionDatesForAllTypes=[];
 		$breakdown_data = [];
 		foreach ($types as  $type => $color) {
 			if (false !== $found = array_search($type, $db_names)) {
