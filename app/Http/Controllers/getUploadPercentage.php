@@ -32,7 +32,6 @@ class getUploadPercentage extends Controller
 		return response()->json([
 			'totalCacheNo' => $totalCachedItems,
 			'totalPercentage' => $currentPercentage,
-			// 'job'=>$jobId,
 			'company_id' => $companyId,
 			'currentUploaded' => $currentUploadedNumber,
 			'reloadPage' => $jobId == 0 || $cacheHasReloadKey || ($currentPercentage == 0 && CachingCompany::where('company_id', $companyId)->where('model',$modelName)->count() == 0)

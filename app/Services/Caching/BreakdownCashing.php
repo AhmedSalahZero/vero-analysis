@@ -43,9 +43,9 @@ class BreakdownCashing
 				$request['end_date'] = $this->current_end_date;
 				$request['type']  = $typeToCache ;
 				
-				$cacheKeyName = getBreakdownCacheNameForCompanyAndDatesAndType($this->company,$this->current_start_date,$this->current_end_date, $typeToCache);
-				$cacheSimpleLinearRegressionKeyName = getBreakdownSimpleLinearRegressionCacheNameForCompanyAndDatesAndType($this->company,$this->current_start_date,$this->current_end_date, $typeToCache);
-				$cacheSimpleLinearRegressionDatesKeyName = getBreakdownSimpleLinearRegressionDatesCacheNameForCompanyAndDatesAndType($this->company,$this->current_start_date,$this->current_end_date, $typeToCache);
+				$cacheKeyName = \getBreakdownCacheNameForCompanyAndDatesAndType($this->company,$this->current_start_date,$this->current_end_date, $typeToCache);
+				$cacheSimpleLinearRegressionKeyName = \getBreakdownSimpleLinearRegressionCacheNameForCompanyAndDatesAndType($this->company,$this->current_start_date,$this->current_end_date, $typeToCache);
+				$cacheSimpleLinearRegressionDatesKeyName = \getBreakdownSimpleLinearRegressionDatesCacheNameForCompanyAndDatesAndType($this->company,$this->current_start_date,$this->current_end_date, $typeToCache);
 				if (!Cache::has($cacheKeyName)) {
 					// $possibleIndexName = '';
 					$breakdown_data_with_simple_linear_regression = (new SalesBreakdownAgainstAnalysisReport)->salesBreakdownAnalysisResult($request, $this->company, 'array_with_ai');
@@ -89,8 +89,8 @@ class BreakdownCashing
 	public function deleteAll()
 	{
 		foreach ($this->typesOfCaching as $typeToCache) {
-			Cache::forget(getBreakdownCacheNameForCompanyAndDatesAndType($this->company,$this->current_start_date,$this->current_end_date, $typeToCache));
-			Cache::forget(getBreakdownSimpleLinearRegressionCacheNameForCompanyAndDatesAndType($this->company,$this->current_start_date,$this->current_end_date, $typeToCache));
+			Cache::forget(\getBreakdownCacheNameForCompanyAndDatesAndType($this->company,$this->current_start_date,$this->current_end_date, $typeToCache));
+			Cache::forget(\getBreakdownSimpleLinearRegressionCacheNameForCompanyAndDatesAndType($this->company,$this->current_start_date,$this->current_end_date, $typeToCache));
 		}
 	}
 }
