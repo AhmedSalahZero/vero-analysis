@@ -44,7 +44,7 @@ class TestCommand extends Command
 		foreach($companies as $company){
 			if($company->hasOddoIntegrationCredentials()){
 				$oddo = new OddoService($company->getOddoDBUrl(),$company->getOddoDBName(),$company->getOddoDBUserName(),$company->getOddoDBPassword(),$company->getId());
-				$importDate = now()->format('Y-m-d') ; ;
+				$importDate = now()->subDay()->format('Y-m-d') ; ;
 				$oddo->startImport($importDate);
 			}
 		}

@@ -3,11 +3,13 @@
 namespace App\Console;
 
 use App\Jobs\CheckDueAndPastedInvoicesJob;
+use App\Jobs\ImportInvoicesJob;
 use App\Models\Company;
 use App\Models\CurrentAccountBankStatement;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Illuminate\Support\Facades\DB;
+use App\Jobs\ImportOddoInvoicesJob;
 
 
 class Kernel extends ConsoleKernel
@@ -29,8 +31,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-
-		$schedule->job(new CheckDueAndPastedInvoicesJob)->name('check_due_date')->everyMinute()->withoutOverlapping();
+		
+		$schedule->job(new CheckDueAndPastedInvoicesJob)->name('check_due_date')->everyFiveMinutes()->withoutOverlapping();
+		$schedule->job(new ImportOddoInvoicesJob)->name('import_odd_invoices')->dailyAt('00:02')->withoutOverlapping();
 		foreach(Company::all() as $company){
 			$firstRaw = CurrentAccountBankStatement::
 			where('company_id',$company->id)
