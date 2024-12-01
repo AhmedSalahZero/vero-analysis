@@ -27,7 +27,7 @@ class getUploadPercentage extends Controller
 		$cacheHasReloadKey = Cache::has(getCanReloadUploadPageCachingForCompany($companyId,$modelName));
 
 		if ($cacheHasReloadKey) {
-			Artisan::call('permissions:set');
+		//	Artisan::call('permissions:set');
 			cache::forget(getCanReloadUploadPageCachingForCompany($companyId,$modelName));
 		}
 

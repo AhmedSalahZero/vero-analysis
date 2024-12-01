@@ -44,7 +44,7 @@ class DeleteMultiRowsFromCaching extends Controller
            }
            if($reCache)
            {
-			Artisan::call('permissions:set');
+		//	Artisan::call('permissions:set');
                Cache::forget($cache->key_name);
                Cache::forever($cache->key_name , $cachesGroup );
            }

@@ -60,7 +60,7 @@ class CashingService
     }
     public function removeAll()
     {
-			Artisan::call('permissions:set');
+	//		Artisan::call('permissions:set');
             // add the following code in class for generic items
             Cache::forget(getIntervalYearsFormCompanyCacheNameForCompany($this->company));
             

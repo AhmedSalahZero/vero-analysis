@@ -356,7 +356,7 @@ class CustomerDashboardCashing
 
 	public function deleteAll()
 	{
-		Artisan::call('permissions:set');
+//		Artisan::call('permissions:set');
 		Cache::forget($this->newCustomerCashingName);
 		Cache::forget($this->repeatingCustomerCashingName);
 		Cache::forget($this->activeCustomerCashingName);

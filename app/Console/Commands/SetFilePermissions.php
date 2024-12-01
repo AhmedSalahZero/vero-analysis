@@ -15,6 +15,10 @@ class SetFilePermissions extends Command
 	
     public function handle()
     {
+		return ;
+		if(env('APP_ENV') == 'local'){
+			return ;
+		}
         $paths = [
             storage_path('framework'),
             storage_path('logs'),

@@ -21,7 +21,7 @@ class DeleteAllRowsFromCaching extends Controller
 	 */
 	public function __invoke(Request $request, Company $company,$modelName)
 	{
-		Artisan::call('permissions:set');
+	//	Artisan::call('permissions:set');
 		if($modelName == 'SalesGathering'){
 			(new CashingService($company))->removeAll();
 		}

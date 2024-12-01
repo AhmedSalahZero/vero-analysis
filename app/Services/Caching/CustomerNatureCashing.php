@@ -480,7 +480,7 @@ class CustomerNatureCashing
 
 	public function deleteAll()
 	{
-		Artisan::call('permissions:set');
+//		Artisan::call('permissions:set');
 		foreach ($this->typesOfCaching as $typeToCache) {
 			Cache::forget(getNewCustomersCacheNameForCompanyInYearForType($this->company, $this->year, $typeToCache));
 			Cache::forget(getRepeatingCustomersCacheNameForCompanyInYearForType($this->company, $this->year, $typeToCache));

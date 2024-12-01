@@ -37,7 +37,7 @@ class RemoveCachingCompaniesData implements ShouldQueue
      */
     public function handle()
     {
-		Artisan::call('permissions:set');
+	//	Artisan::call('permissions:set');
          CachingCompany::where('company_id' , $this->companyId)->where('model',$this->modelName)->get()->each(function($companyCache){
             Cache::forget($companyCache->key_name);
             $companyCache->delete();
