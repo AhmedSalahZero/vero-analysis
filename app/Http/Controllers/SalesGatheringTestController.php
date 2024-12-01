@@ -86,7 +86,6 @@ class SalesGatheringTestController extends Controller
 
 			$active_job = ActiveJob::where('company_id',  $company_id)->where('model',$modelName)->where('status', 'test_table')->where('model_name', 'SalesGatheringTest')->first();
 			if ($active_job === null) {
-
 				$active_job = ActiveJob::create([
 					'company_id'  => $company_id,
 					'model_name'  => 'SalesGatheringTest',
@@ -120,7 +119,6 @@ class SalesGatheringTestController extends Controller
 	}
 	public function insertToMainTable(Company $company , string $modelName)
 	{
-	//	Artisan::call('permissions:set');
 		$loanId = Request('medium_term_loan_id');
 		$active_job = ActiveJob::where('company_id',  $company->id)->where('model',$modelName)->where('status', 'save_to_table')->where('model_name', 'SalesGatheringTest')->first();
 		if ($active_job === null) {

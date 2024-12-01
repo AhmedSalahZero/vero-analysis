@@ -131,7 +131,7 @@ class HomeController extends Controller
 
 		$previous_month_sales = $perviousMonthSales[0]->previous_month_sales;
 
-		$percentage = $previous_month_sales ? ((($currentMonthSales - $previous_month_sales) / $previous_month_sales) * 100)   : 0;
+		$percentage = $previous_month_sales && $previous_month_sales != 0 ? ((($currentMonthSales - $previous_month_sales) / $previous_month_sales) * 100)   : 0;
 		$first = microtime(true);
 		$monthlyChart = $this->formatMonthlyChars($company, $start_date, $end_date);
 		$monthlyChartArr =  $monthlyChart['formattedData'];
@@ -232,7 +232,7 @@ class HomeController extends Controller
 
 		$previous_month_sales = $perviousMonthSales[0]->previous_month_sales;
 
-		$percentage = $previous_month_sales ? ((($currentMonthSales - $previous_month_sales) / $previous_month_sales) * 100)   : 0;
+		$percentage = $previous_month_sales && $previous_month_sales!=0 ? ((($currentMonthSales - $previous_month_sales) / $previous_month_sales) * 100)   : 0;
 		$first = microtime(true);
 		$monthlyChart = $this->formatMonthlyChars($company, $start_date, $end_date);
 		$monthlyChartArr =  $monthlyChart['formattedData'];

@@ -466,4 +466,24 @@ class Company extends Model implements HasMedia
 		return $this->hasMany(Deduction::class,'company_id','id');
 	}
 	
+	public function getOddoDBUrl()
+	{
+		return $this->oddo_db_url;
+	}
+	public function getOddoDBName()
+	{
+		return $this->oddo_db_name;
+	}
+	public function getOddoDBUserName()
+	{
+		return $this->oddo_username;
+	}
+	public function getOddoDBPassword()
+	{
+		return $this->oddo_db_password;
+	}
+	public function hasOddoIntegrationCredentials():bool
+	{
+		return $this->getOddoDBUrl() && $this->getOddoDBName() && $this->getOddoDBUserName() && $this->getOddoDBPassword();
+	}
 }

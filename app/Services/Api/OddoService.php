@@ -14,12 +14,14 @@ class OddoService
 	protected string $password ; 
 	protected \Ripcord_Client $models;
 	protected int $uid;
-	public function __construct()
+	protected int $company_id;
+	public function __construct($url , $db , $userName , $password,$companyId)
 	{
-		$this->url = env('ODDO_DB_URL');
-		$this->db = env('ODDO_DB_NAME');
-		$this->username = env('ODDO_DB_USERNAME');
-		$this->password = env('ODDO_DB_PASSWORD');
+		$this->url = $url;
+		$this->db = $db;
+		$this->username =$userName;
+		$this->password = $password;
+		$this->company_id = $companyId ;
 		require_once(public_path('apis/ripcord.php'));
 		$common = ripcord::client("$this->url/xmlrpc/2/common");
 		$uid = $common->authenticate($this->db, $this->username, $this->password, array());
@@ -27,9 +29,11 @@ class OddoService
 		$this->models = $models;
 		$this->uid = $uid;
 	}
-	public function startImport():void
+	public function startImport($importDate):void
 	{
-		$invoices = $this->getInvoices();
+		
+		$invoices = $this->getInvoices($importDate);
+	
 		foreach($invoices as $invoice){
 			$invoiceId = $invoice['id'];
 			$invoiceDate = $invoice['invoice_date'];
@@ -38,7 +42,7 @@ class OddoService
 			$vatAmount = $amountTax;
 			$invoiceAmount = $invoice['amount_residual'] - $amountTax;
 			$withholdAmount = 0 ;
-			$companyId = 31;
+			$companyId = $this->company_id;
 			$invoiceNumber = $invoice['name'];
 			$oddoPartnerId = $invoice['partner_id'][0];
 			$oddoPartnerName = $invoice['partner_id'][1];
@@ -59,10 +63,10 @@ class OddoService
 		}
 		
 	}
-	protected function getInvoices()
+	protected function getInvoices($importDate)
 	{
 		$fields = $this->getInvoicesFieldNames();
-		$filter = array(array(array('move_type', 'in', ['in_invoice','out_invoice']),array('state', '=', 'posted')));
+		$filter = array(array(array('move_type', 'in', ['in_invoice','out_invoice']),array('state', '=', 'posted'),array('date', '=', $importDate)));
 		$ids=$this->models->execute_kw($this->db, $this->uid, $this->password, 'account.move', 'search',$filter, array('limit' => 10));
 		return $this->models->execute_kw($this->db, $this->uid, $this->password, 'account.move', 'read', array($ids),[
 			'fields'=>$fields
@@ -86,6 +90,7 @@ class OddoService
 			'amount_total_signed',
 			'amount_tax',
 			'invoice_date_due',
+			'date'
 		];
 	}
 }

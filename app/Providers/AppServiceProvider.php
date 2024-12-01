@@ -44,9 +44,7 @@ class AppServiceProvider extends ServiceProvider
 	public function boot()
 	{
 
-
 		ini_set('max_execution_time', 6000); //300 seconds = 5 minutes
-
 		\PhpOffice\PhpSpreadsheet\Shared\Font::setAutoSizeMethod(Font::AUTOSIZE_METHOD_EXACT);
 		require_once storage_path('dompdf/vendor/autoload.php');
 		require_once app_path('Helpers/HArr.php');
@@ -207,12 +205,6 @@ class AppServiceProvider extends ServiceProvider
 			
 		}
 		if ($currentCompany) {
-			
-			
-			
-			
-			
-			
 			$excelType ='SalesGathering';
 			if(in_array('uploading',Request()->segments())){
 				$excelType = Request()->segment(4);
