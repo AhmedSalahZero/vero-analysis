@@ -6,7 +6,6 @@ use App\Models\FinancialInstitutionAccount;
 use App\Models\TimeOfDeposit;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schema;
 
 class RenameCashCoverDeductedFromAccountNumberTable extends Migration

@@ -32,9 +32,9 @@
                          </div>
 						 
                          <div class="col-md-2 mb-4">
-                             <label>{{__('LG Amount')}} </label>
+                             <label>{{__('LG Current Amount')}} </label>
                              <div class="kt-input-icon">
-                                 <input disabled value="{{  $model->getLgAmountFormatted()  }}" type="text" class="form-control text-center only-greater-than-or-equal-zero-allowed">
+                                 <input disabled value="{{  $model->getLgCurrentAmountFormatted()  }}" type="text" class="form-control text-center ">
                              </div>
                          </div>
 

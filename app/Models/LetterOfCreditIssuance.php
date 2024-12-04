@@ -290,7 +290,7 @@ class LetterOfCreditIssuance extends Model
 		return number_format($this->getLcCurrentAmount());
 	}
 	
-	public function getCasCoverRate()
+	public function getCashCoverRate()
 	{
 		return $this->cash_cover_rate?:0;
 	}

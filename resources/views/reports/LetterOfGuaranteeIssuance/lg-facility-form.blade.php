@@ -378,7 +378,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                                     </div>
 									
                                     <div class="col-md-3">
-                                        <x-form.input :id="'issuance_fees_id'" :default-value="0" :readonly="true" :model="$model??null" :label="__('Issuance Fees')" :type="'text'" :placeholder="__('Issuance Fees')" :name="'issuance_fees'" :class="'only-greater-than-or-equal-zero-allowed '" :required="true"></x-form.input>
+                                        <x-form.input :id="'issuance_fees_id'" :default-value="0" :readonly="false" :model="$model??null" :label="__('Issuance Fees')" :type="'text'" :placeholder="__('Issuance Fees')" :name="'issuance_fees'" :class="'only-greater-than-or-equal-zero-allowed '" :required="true"></x-form.input>
                                     </div>
 
 

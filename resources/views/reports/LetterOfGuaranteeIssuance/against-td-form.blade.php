@@ -170,19 +170,25 @@ use App\Models\LetterOfGuaranteeIssuance;
 
 
 
-                                    <div class="col-md-3 ">
+                                    <div class="col-md-2 ">
 
 
                                         <x-form.input :id="'cd-or-td-amount-id'" :readonly="true" :default-value="0" :model="$model??null" :label="__('Amount')" :type="'text'" :placeholder="''" :name="'amount'" :class="''" :required="true"></x-form.input>
 
                                     </div>
 									
-									<div class="col-md-3 ">
+									<div class="col-md-2 ">
                                         <x-form.input :id="'current-lg-outstanding-balance-id'" :default-value="0" :model="$model??null" :label="__('LG Outstanding Balance')" :type="'text'" :placeholder="__('LG Outstanding Balance')"  :class="'recalculate-cd-or-td-free-to-use'" :required="true"></x-form.input>
                                     </div>
-									                                  
-
-                                    <div class="col-md-3">
+									
+									 <div class="col-md-2 ">
+                                        <x-form.input :id="'against-cash-cover-amount-id'" :default-value="0" :model="$model??null" :label="__('Against Cash Cover')" :type="'text'" :placeholder="__('Against Cash Cover')"  :class="'recalculate-cd-or-td-free-to-use'" :required="false"></x-form.input>
+                                    </div>
+									<div class="col-md-3 ">
+                                        <x-form.input :id="'cd-or-td-free-to-use-amount-id'" :default-value="0" :model="$model??null" :label="__('TD Free To Use')" :type="'text'" :placeholder="__('')"  :class="''" :required="false"></x-form.input>
+                                    </div>
+									
+									 <div class="col-md-3">
                                         <label> {{ __('LG Type') }}
                                             @include('star')
                                         </label>
@@ -195,14 +201,24 @@ use App\Models\LetterOfGuaranteeIssuance;
                                             @endforeach
                                         </select>
                                     </div>
-
+									
                                     <div class="col-md-3 ">
                                         <x-form.input :id="'current-lg-type-outstanding-balance-id'" :default-value="0" :model="$model??null" :label="__('LG Type Outstanding Balance')" :type="'text'" :placeholder="__('LG Type Outstanding Balance')" :name="'lg_type_outstanding_balance'" :class="'only-greater-than-zero-allowed'" :required="true"></x-form.input>
                                     </div>
 									
-										<div class="col-md-3 ">
-                                        <x-form.input :id="'cd-or-td-free-to-use-amount-id'" :default-value="0" :model="$model??null" :label="__('TD Free To Use')" :type="'text'" :placeholder="__('')"  :class="''" :required="false"></x-form.input>
-                                    </div>
+									
+									
+									
+                                  
+
+									
+									
+									
+									
+									
+									
+									
+										
 									
                                     <div class="col-md-3">
                                         <x-form.input :model="$model??null" :label="__('LG Code')" :type="'text'" :placeholder="__('LG Code')" :name="'lg_code'" :class="''" :required="true"></x-form.input>
@@ -689,6 +705,7 @@ use App\Models\LetterOfGuaranteeIssuance;
 							var totalRoom = number_unformat(res.total_room);
 						//	$('input[name="lg_amount"]').attr('data-can-not-be-greater-than',totalRoom);
                             $('#current-lg-outstanding-balance-id').val(res.total_lg_outstanding_balance).prop('readonly', true).trigger('change')
+                            $('#against-cash-cover-amount-id').val(res.total_cash_cover_statement_debit).prop('readonly', true).trigger('change')
                             $('#current-lg-type-outstanding-balance-id').val(res.current_lg_type_outstanding_balance).prop('readonly', true)
                             $('#min_lg_commission_fees_id').val(res.min_lg_commission_rate).trigger('change');
                     //        $('#lg_commission_rate-id').val(res.lg_commission_rate).trigger('change');

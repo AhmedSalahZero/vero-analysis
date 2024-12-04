@@ -69,6 +69,11 @@ class LetterOfGuaranteeIssuanceAdvancedPaymentHistory extends Model
 	{
 		return $this->hasMany(CurrentAccountBankStatement::class,'lg_advanced_payment_history_id','id')->where('is_debit',1)->orderBy('full_date','desc');
 	}
-
+	public function deleteAllRelations():void
+	{
+		LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($this->letterOfGuaranteeStatements);
+		LetterOfGuaranteeCashCoverStatement::deleteButTriggerChangeOnLastElement($this->letterOfGuaranteeCashCoverStatements);
+		CurrentAccountBankStatement::deleteButTriggerChangeOnLastElement($this->currentAccountBankStatements);
+	}
 	
 }

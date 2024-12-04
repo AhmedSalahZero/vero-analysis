@@ -3255,6 +3255,13 @@ function getPermissions(array $systemsNames  = []):array
 			'view-name'=>'view suppliers'
         ],
 		
+		[
+            'name'=>'view letter of guarantee facility',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'letter of guarantee facility',
+			'view-name'=>'view'
+        ],
 		
 		[
             'name'=>'create letter of guarantee facility',

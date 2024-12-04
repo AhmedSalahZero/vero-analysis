@@ -187,12 +187,12 @@ class LetterOfGuaranteeIssuanceController
 		
 		
 		$isCdOrTdCashCoverAccount = in_array($request->get('cash_cover_deducted_from_account_id',[]),[28,29]);
-		
+		$customerName = $model->getBeneficiaryName();
 		if(!$isOpeningBalance && !$isCdOrTdCashCoverAccount ){
-			$model->storeCurrentAccountCreditBankStatement($issuanceDate,$cashCoverAmount , $financialInstitutionAccountIdForCashCover,0,1,__('Cash Cover [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'en'),'transactionName'=>$transactionName],'en') , __('Cash Cover [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'ar'),'transactionName'=>$transactionName],'ar') );
+			$model->storeCurrentAccountCreditBankStatement($issuanceDate,$cashCoverAmount , $financialInstitutionAccountIdForCashCover,0,1,__('Cash Cover [ :customerName ] [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'en'),'customerName'=>$customerName,'transactionName'=>$transactionName],'en') , __('Cash Cover [ :customerName ] [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'ar'),'customerName'=>$customerName,'transactionName'=>$transactionName],'ar') );
 		}
 		if(!$isOpeningBalance){
-			$model->storeCurrentAccountCreditBankStatement($issuanceDate,$issuanceFees , $financialInstitutionAccountIdForFeesAndCommission,0,1,__('Issuance Fees [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'en'),'transactionName'=>$transactionName],'en') , __('Issuance Fees [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'ar'),'transactionName'=>$transactionName],'ar'));
+			$model->storeCurrentAccountCreditBankStatement($issuanceDate,$issuanceFees , $financialInstitutionAccountIdForFeesAndCommission,0,1,__('Issuance Fees [ :customerName ] [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'en'),'customerName'=>$customerName,'transactionName'=>$transactionName],'en') , __('Issuance Fees [ :customerName ] [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'ar'),'customerName'=>$customerName,'transactionName'=>$transactionName],'ar'));
 		}
 		
 		$letterOfGuaranteeStatementCommentEn = LetterOfGuaranteeStatement::generateIssuanceComment('en',$customerName,$transactionName,$lgCode); ;
@@ -223,7 +223,7 @@ class LetterOfGuaranteeIssuanceController
 
 	public function update(Company $company , UpdateLetterOfGuaranteeIssuanceRequest $request , LetterOfGuaranteeIssuance $letterOfGuaranteeIssuance,string $source){
 		if($letterOfGuaranteeIssuance->renewalDateHistories->count()  > 1){
-		return redirect()->route('view.letter.of.guarantee.issuance',['company'=>$company->id,'active'=>$request->get('lg_type')])->with('success',__('Data Store Successfully'));
+		return redirect()->route('view.letter.of.guarantee.issuance',['company'=>$company->id,'active'=>$request->get('lg_type',$letterOfGuaranteeIssuance->getLgType())])->with('success',__('Data Store Successfully'));
 			
 		}
 
@@ -240,6 +240,7 @@ class LetterOfGuaranteeIssuanceController
 	 */
 	public function backToRunningStatus(Company $company,Request $request,LetterOfGuaranteeIssuance $letterOfGuaranteeIssuance,string $source)
 	{
+		
 		$letterOfGuaranteeIssuanceStatus = LetterOfGuaranteeIssuance::RUNNING ;
 		/**
 		 * * هنشيل قيم ال
@@ -267,7 +268,7 @@ class LetterOfGuaranteeIssuanceController
 		$letterOfGuaranteeFacilityId = $letterOfGuaranteeFacility ? $letterOfGuaranteeFacility->id : null ;
 		
 		$letterOfGuaranteeIssuance->handleLetterOfGuaranteeCashCoverStatement($financialInstitutionId,$source,$letterOfGuaranteeFacilityId , $lgType,$company->id , $issuanceDate ,0 ,$cashCoverAmount,0,$currency,0,'debit-lg-amount');
-		return redirect()->route('view.letter.of.guarantee.issuance',['company'=>$company->id,'active'=>$request->get('lg_type')])->with('success',__('Data Store Successfully'));
+		return redirect()->route('view.letter.of.guarantee.issuance',['company'=>$company->id,'active'=>$request->get('lg_type',$letterOfGuaranteeIssuance->getLgType())])->with('success',__('Data Store Successfully'));
 	}
 	
 	
@@ -277,6 +278,9 @@ class LetterOfGuaranteeIssuanceController
 	 */
 	public function cancel(Company $company,Request $request,LetterOfGuaranteeIssuance $letterOfGuaranteeIssuance,string $source)
 	{
+		/**
+		 * @var LetterOfGuaranteeIssuance $letterOfGuaranteeIssuance
+		 */
 		$letterOfGuaranteeIssuanceStatus = LetterOfGuaranteeIssuance::CANCELLED ;
 
 		/**
@@ -292,25 +296,27 @@ class LetterOfGuaranteeIssuanceController
 		]);
 		$letterOfGuaranteeFacility = $letterOfGuaranteeIssuance->letterOfGuaranteeFacility;
 		$lgType = $letterOfGuaranteeIssuance->getLgType();
-		$amount = $letterOfGuaranteeIssuance->getLgAmount();
-		$cashCoverAmount = $letterOfGuaranteeIssuance->getCashCoverAmount();
+		$isAdvancedPayment =  $letterOfGuaranteeIssuance->isAdvancedPayment() ;
+		$cashCoverRate = $letterOfGuaranteeIssuance->getCashCoverRate() / 100;
+		$amount = $isAdvancedPayment ? $letterOfGuaranteeIssuance->getLgCurrentAmount() :  $letterOfGuaranteeIssuance->getLgAmount();
+		$cashCoverAmount = $isAdvancedPayment ? $amount *$cashCoverRate  : $letterOfGuaranteeIssuance->getCashCoverAmount();
 		
 		$letterOfGuaranteeFacilityId = $letterOfGuaranteeFacility ? $letterOfGuaranteeFacility->id : null ;
 		$partnerName = $letterOfGuaranteeIssuance->getBeneficiaryName();
 		$transactionName = $letterOfGuaranteeIssuance->getTransactionName();
 		$lgCode = $letterOfGuaranteeIssuance->getLgCode();
-		$commentEn = LetterOfGuaranteeStatement::generateCancelComment('en',$partnerName,$transactionName,$lgCode);
-		$commentAr = LetterOfGuaranteeStatement::generateCancelComment('ar',$partnerName,$transactionName,$lgCode);
+		$commentEn = LetterOfGuaranteeStatement::generateCancelComment('en',$lgType,$partnerName,$transactionName,$lgCode);
+		$commentAr = LetterOfGuaranteeStatement::generateCancelComment('ar',$lgType,$partnerName,$transactionName,$lgCode);
 		$letterOfGuaranteeIssuance->handleLetterOfGuaranteeStatement($financialInstitutionId,$source,$letterOfGuaranteeFacilityId,$lgType,$company->id,$cancellationDate,0,$amount , 0,$letterOfGuaranteeIssuance->getLgCurrency(),0,$letterOfGuaranteeIssuance->getCdOrTdId(),LetterOfGuaranteeIssuance::FOR_CANCELLATION,$commentEn,$commentAr);
 		$letterOfGuaranteeIssuance->handleLetterOfGuaranteeCashCoverStatement($financialInstitutionId,$source,$letterOfGuaranteeFacilityId,$lgType,$company->id,$cancellationDate,0,0 , $cashCoverAmount ,$letterOfGuaranteeIssuance->getLgCurrency(),0,LetterOfGuaranteeIssuance::FOR_CANCELLATION);
 		$financialInstitutionAccount = FinancialInstitutionAccount::find($letterOfGuaranteeIssuance->getCashCoverDeductedFromAccountId());
 		if($financialInstitutionAccount){
 			$financialInstitutionAccountId = $financialInstitutionAccount->id;
-			$debitCommentEn = CurrentAccountBankStatement::generateReturnLgCashCoverComment('en',$partnerName,$transactionName,$lgCode); ;
-			$debitCommentAr = CurrentAccountBankStatement::generateReturnLgCashCoverComment('ar',$partnerName,$transactionName,$lgCode); ;
+			$debitCommentEn = CurrentAccountBankStatement::generateRefundLgCashCoverComment('en',$partnerName,$transactionName,$lgCode); ;
+			$debitCommentAr = CurrentAccountBankStatement::generateRefundLgCashCoverComment('ar',$partnerName,$transactionName,$lgCode); ;
 			$letterOfGuaranteeIssuance->storeCurrentAccountDebitBankStatement($cancellationDate,$cashCoverAmount , $financialInstitutionAccountId,0,$letterOfGuaranteeIssuance->id,$debitCommentEn , $debitCommentAr);
 		}
-		return redirect()->route('view.letter.of.guarantee.issuance',['company'=>$company->id,'active'=>$request->get('lg_type')])->with('success',__('Data Store Successfully'));
+		return redirect()->route('view.letter.of.guarantee.issuance',['company'=>$company->id,'active'=>$request->get('lg_type',$letterOfGuaranteeIssuance->getLgType())])->with('success',__('Data Store Successfully'));
 	}
 	
 	
@@ -335,8 +341,8 @@ class LetterOfGuaranteeIssuanceController
 		$decreaseDate = $request->get('date',now()->format('Y-m-d')) ;
 		$decreaseDate = Carbon::make($decreaseDate)->format('Y-m-d');
 		$decreaseAmount = $request->get('amount',0);
-		
-		$cashCoverAmount = $letterOfGuaranteeIssuance->getCasCoverRate() /100  * $decreaseAmount ;
+		$customerName  = $letterOfGuaranteeIssuance->getBeneficiaryName();
+		$cashCoverAmount = $letterOfGuaranteeIssuance->getCashCoverRate() /100  * $decreaseAmount ;
 		$letterOfGuaranteeFacility = $source == LetterOfGuaranteeIssuance::LG_FACILITY  ? $letterOfGuaranteeIssuance->letterOfGuaranteeFacility : null;
 		$letterOfGuaranteeFacilityId =  null ; 
 		$lgType =$letterOfGuaranteeIssuance->getLgType();
@@ -363,13 +369,15 @@ class LetterOfGuaranteeIssuanceController
 		$commentAr = LetterOfGuaranteeStatement::generateAdvancedPaymentLgComment('ar',$partnerName,$transactionName,$lgCode);
 		$letterOfGuaranteeIssuanceAdvancedPaymentHistory->handleLetterOfGuaranteeStatement($financialInstitutionId,$source,$letterOfGuaranteeFacilityId , $lgType,$company->id , $decreaseDate ,0 ,$decreaseAmount,0,$currency,$letterOfGuaranteeIssuanceAdvancedPaymentHistory->id,$cdOrTdId,LetterOfGuaranteeIssuance::AMOUNT_TO_BE_DECREASED,$commentEn,$commentAr);
 		$letterOfGuaranteeIssuanceAdvancedPaymentHistory->handleLetterOfGuaranteeCashCoverStatement($financialInstitutionId,$source,$letterOfGuaranteeFacilityId,$lgType,$company->id,$decreaseDate,0,0 , $cashCoverAmount ,$currency,$letterOfGuaranteeIssuanceAdvancedPaymentHistory->id,LetterOfGuaranteeIssuance::AMOUNT_TO_BE_DECREASED);
-		$letterOfGuaranteeIssuanceAdvancedPaymentHistory->storeCurrentAccountDebitBankStatement($decreaseDate,$cashCoverAmount , $financialInstitutionAccountId,$letterOfGuaranteeIssuanceAdvancedPaymentHistory->id,$letterOfGuaranteeIssuance->id);
+		$commentEn = __('Refund Cash Cover [ :customerName ] [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'en'),'customerName'=>$customerName,'transactionName'=>$transactionName],'en') ;
+		$commentAr = __('Refund Cash Cover [ :customerName ] [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'en'),'customerName'=>$customerName,'transactionName'=>$transactionName],'ar') ;
+		$letterOfGuaranteeIssuanceAdvancedPaymentHistory->storeCurrentAccountDebitBankStatement($decreaseDate,$cashCoverAmount , $financialInstitutionAccountId,$letterOfGuaranteeIssuanceAdvancedPaymentHistory->id,$letterOfGuaranteeIssuance->id,$commentEn,$commentAr);
 		return redirect()->route('view.letter.of.guarantee.issuance',['company'=>$company->id,'active'=>$letterOfGuaranteeIssuance->getLgType()])->with('success',__('Data Store Successfully'));
 	}
 	
 	public function editAmountToBeDecreased(Company $company,Request $request,LetterOfGuaranteeIssuanceAdvancedPaymentHistory $lgAdvancedPaymentHistory,string $source)
 	{
-		$decreaseDate = Carbon::make($request->get('decrease_date',now()->format('Y-m-d')));
+		$decreaseDate = Carbon::make($request->get('decrease_date',now()->format('Y-m-d')))->format('Y-m-d');
 		$decreaseAmount = $request->get('amount_to_be_decreased',0);
 		$lgAdvancedPaymentHistory->update([
 			'amount'=>$decreaseAmount , 
@@ -381,28 +389,32 @@ class LetterOfGuaranteeIssuanceController
 		 * @var LetterOfGuaranteeIssuanceAdvancedPaymentHistory $lgAdvancedPaymentHistory
 		 */
 
-		$cashCoverAmount = $letterOfGuaranteeIssuance->getCasCoverRate() /100  * $decreaseAmount ;
+		$cashCoverAmount = $letterOfGuaranteeIssuance->getCashCoverRate() /100  * $decreaseAmount ;
 	
 		$letterOfGuaranteeFacility = $source == LetterOfGuaranteeIssuance::LG_FACILITY  ?$letterOfGuaranteeIssuance->letterOfGuaranteeFacility : null;
 
 		if($source == LetterOfGuaranteeIssuance::LG_FACILITY && is_null($letterOfGuaranteeFacility)){
 			return redirect()->back()->with('fail',__('No Available Letter Of Guarantee Facility Found !'));
 		}
-		
-		
-		
-		$lgAdvancedPaymentHistory->letterOfGuaranteeStatements->where('type',LetterOfGuaranteeIssuance::AMOUNT_TO_BE_DECREASED)->first()->update([
-			'date'=>$decreaseDate,
-			'debit'=>$decreaseAmount
-		]);
-		$lgAdvancedPaymentHistory->letterOfGuaranteeCashCoverStatements->where('type',LetterOfGuaranteeIssuance::AMOUNT_TO_BE_DECREASED)->first()->update([
-			'credit'=>$cashCoverAmount,
-			'date'=>$decreaseDate 
-		]);
-		$lgAdvancedPaymentHistory->currentAccountDebitBankStatement->update([
-			'debit'=>$cashCoverAmount,
-			'date'=>$decreaseDate
-		]);
+		$letterOfGuaranteeStatement = $lgAdvancedPaymentHistory->letterOfGuaranteeStatements->where('type',LetterOfGuaranteeIssuance::AMOUNT_TO_BE_DECREASED)->first();
+
+		$letterOfGuaranteeStatement->handleFullDateAfterDateEdit($decreaseDate,$decreaseAmount,0);
+		// ->update([
+		// 	'date'=>$decreaseDate,
+		// 	'debit'=>$decreaseAmount
+		// ]);
+		$letterOfGuaranteeCashCoverStatement =  $lgAdvancedPaymentHistory->letterOfGuaranteeCashCoverStatements->where('type',LetterOfGuaranteeIssuance::AMOUNT_TO_BE_DECREASED)->first();
+		$letterOfGuaranteeCashCoverStatement->handleFullDateAfterDateEdit($decreaseDate,0,$cashCoverAmount);
+		// ->update([
+		// 	'credit'=>$cashCoverAmount,
+		// 	'date'=>$decreaseDate 
+		// ]);
+		$currentAccountDebitBankStatement = $lgAdvancedPaymentHistory->currentAccountDebitBankStatement;
+		$currentAccountDebitBankStatement->handleFullDateAfterDateEdit($decreaseDate,$cashCoverAmount,0);
+		// ->update([
+		// 	'debit'=>$cashCoverAmount,
+		// 	'date'=>$decreaseDate
+		// ]);
 
 		return response()->json([
 			'status'=>true ,
@@ -417,9 +429,7 @@ class LetterOfGuaranteeIssuanceController
 	 */
 	public function deleteAdvancedPayment(Company $company,Request $request,LetterOfGuaranteeIssuanceAdvancedPaymentHistory $lgAdvancedPaymentHistory)
 	{
-		LetterOfGuaranteeStatement::deleteButTriggerChangeOnLastElement($lgAdvancedPaymentHistory->letterOfGuaranteeStatements);
-		LetterOfGuaranteeCashCoverStatement::deleteButTriggerChangeOnLastElement($lgAdvancedPaymentHistory->letterOfGuaranteeCashCoverStatements);
-		CurrentAccountBankStatement::deleteButTriggerChangeOnLastElement($lgAdvancedPaymentHistory->currentAccountBankStatements);
+		$lgAdvancedPaymentHistory->deleteAllRelations();
 		$lgAdvancedPaymentHistory->delete();
 		return redirect()->route('view.letter.of.guarantee.issuance',['company'=>$company->id,'active'=>$lgAdvancedPaymentHistory->letterOfGuaranteeIssuance->getLgType()])->with('success',__('Data Store Successfully'));
 	

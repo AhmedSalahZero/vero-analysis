@@ -23,11 +23,11 @@ class LetterOfGuaranteeStatement extends Model
 		$lgCode = is_null($lgCode) ? '-' : $lgCode ;
 		return __('Issuance [ :customerName ] [ :transactionName ] [ :lgCode ]',['customerName'=>$customerName ,'transactionName'=>$transactionName ,'lgCode'=>$lgCode],$lang);
 	}
-	public static function generateCancelComment(string $lang,string $customerName,?string $transactionName,?string $lgCode)
+	public static function generateCancelComment(string $lang,string $lgType,string $customerName,?string $transactionName,?string $lgCode)
 	{
 		$transactionName = is_null($transactionName) ? '-' : $transactionName ;
 		$lgCode = is_null($lgCode) ? '-' : $lgCode ;
-		return __('Canceled [ :customerName ] [ :transactionName ] [ :lgCode ]',['customerName'=>$customerName ,'transactionName'=>$transactionName ,'lgCode'=>$lgCode],$lang);
+		return __('Canceled [ :customerName ] [ :lgType ] [ :transactionName ] [ :lgCode ]',['customerName'=>$customerName ,'lgType'=>$lgType ,'transactionName'=>$transactionName ,'lgCode'=>$lgCode],$lang);
 	}
 	public static function generateAdvancedPaymentLgComment(string $lang,string $customerName,?string $transactionName,?string $lgCode)
 	{

@@ -57,6 +57,7 @@ class LgTermAmountRule implements ImplicitRule
 		$balanceRow = DB::table($statementTableName)->where($foreignKeyName,$accountNumberModel->id)->whereDate('full_date','<=' , $statementDate)->orderByRaw('full_date desc')->first();
 		$currentAccountBalanceAtIssuanceDate = $balanceRow ? $balanceRow->end_balance : 0 ;
         $maxBetweenCommissionAmountAndFees = max($this->lg_commission_amount , $this->min_lg_commission_fees);
+		// dd($this->lg_cash_cover_amount,$maxBetweenCommissionAmountAndFees,$this->issuance_fees,$currentAccountBalanceAtIssuanceDate);
 		return $this->lg_cash_cover_amount + $maxBetweenCommissionAmountAndFees  + $this->issuance_fees <= $currentAccountBalanceAtIssuanceDate;
     }
 
