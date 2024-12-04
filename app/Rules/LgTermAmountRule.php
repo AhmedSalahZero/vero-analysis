@@ -14,8 +14,8 @@ class LgTermAmountRule implements ImplicitRule
      *
      * @return void
      */
-	protected $category_name, $lg_cash_cover_amount , $lg_commission_amount ,$issuance_date, $min_lg_commission_fees,$issuance_fees ,$account_type_id,$account_number,$company_id,$financial_institution_id;
-    public function __construct($categoryName ,$accountTypeId,$accountNumber ,$issuanceDate,$lgCashCoverAmount,$lgCommissionAmount,$minLgCommissionFees,$issuanceFees,$companyId,$financialInstitutionId)
+	protected $category_name, $lg_cash_cover_amount , $lg_commission_amount ,$issuance_date, $min_lg_commission_fees,$issuance_fees ,$account_type_id,$account_id,$company_id,$financial_institution_id;
+    public function __construct($categoryName ,$accountTypeId,$accountId ,$issuanceDate,$lgCashCoverAmount,$lgCommissionAmount,$minLgCommissionFees,$issuanceFees,$companyId,$financialInstitutionId)
     {
 		$this->category_name = $categoryName;
 		$this->account_type_id = $accountTypeId;
@@ -23,7 +23,7 @@ class LgTermAmountRule implements ImplicitRule
 		$this->lg_commission_amount = number_unformat($lgCommissionAmount);
 		$this->min_lg_commission_fees = number_unformat($minLgCommissionFees);
 		$this->issuance_fees = number_unformat($issuanceFees);
-		$this->account_number = $accountNumber;
+		$this->account_id = $accountId;
 		$this->company_id = $companyId;
 		$this->financial_institution_id = $financialInstitutionId;
 		$this->issuance_date = $issuanceDate;
@@ -49,12 +49,12 @@ class LgTermAmountRule implements ImplicitRule
 		if($this->category_name == LetterOfGuaranteeIssuance::OPENING_BALANCE){
 			return true ;
 		}
-		$accountNumber = $this->account_number ;
+		$accountId = $this->account_id ;
 		$statementDate = $this->issuance_date;
-		$accountNumberModel =  ('\App\Models\\'.$accountType->getModelName())::findByAccountNumber($accountNumber,$this->company_id,$this->financial_institution_id);
+		$accountNumberModel =  ('\App\Models\\'.$accountType->getModelName())::find($accountId);
 		$statementTableName = (get_class($accountNumberModel)::getStatementTableName()) ;
 		$foreignKeyName = get_class($accountNumberModel)::getForeignKeyInStatementTable();
-		$balanceRow = DB::table($statementTableName)->where($foreignKeyName,$accountNumberModel->id)->where('full_date','<=' , $statementDate)->orderByRaw('full_date desc')->first();
+		$balanceRow = DB::table($statementTableName)->where($foreignKeyName,$accountNumberModel->id)->whereDate('full_date','<=' , $statementDate)->orderByRaw('full_date desc')->first();
 		$currentAccountBalanceAtIssuanceDate = $balanceRow ? $balanceRow->end_balance : 0 ;
         $maxBetweenCommissionAmountAndFees = max($this->lg_commission_amount , $this->min_lg_commission_fees);
 		return $this->lg_cash_cover_amount + $maxBetweenCommissionAmountAndFees  + $this->issuance_fees <= $currentAccountBalanceAtIssuanceDate;

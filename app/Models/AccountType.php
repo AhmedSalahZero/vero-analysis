@@ -20,6 +20,8 @@ class AccountType extends Model
 	const LETTER_OF_CREDIT_LCS = 'letter-of-credit-lcs';
 	CONST CERTIFICATE_OF_DEPOSIT= 'certificate-of-deposit-cd';
 	CONST TIME_OF_DEPOSIT= 'time-of-deposit-td';
+	CONST  OVERDRAFT_ACCOUNT_SLUGS = [self::FULLY_SECURED_OVERDRAFT,self::CLEAN_OVERDRAFT,self::OVERDRAFT_AGAINST_COMMERCIAL_PAPER,self::OVERDRAFT_AGAINST_ASSIGNMENT_OF_CONTRACTS];
+	
 	protected $guarded =[
 		'id'
 	];
@@ -33,8 +35,12 @@ class AccountType extends Model
 	}
 	public function scopeOnlyOverdraftsAccounts(Builder $builder)
 	{
-		return $builder->onlySlugs([self::FULLY_SECURED_OVERDRAFT,self::CLEAN_OVERDRAFT,self::OVERDRAFT_AGAINST_COMMERCIAL_PAPER,self::OVERDRAFT_AGAINST_ASSIGNMENT_OF_CONTRACTS]);
+		return $builder->onlySlugs(self::OVERDRAFT_ACCOUNT_SLUGS);
 	}
+	public function isOverdraftAccount()
+	{
+		return in_array($this->getSlug() , SELF::OVERDRAFT_ACCOUNT_SLUGS);
+ 	}
 	public function scopeOnlyCurrentAccount(Builder $builder)
 	{
 		return $builder->onlySlugs([self::CURRENT_ACCOUNT]);

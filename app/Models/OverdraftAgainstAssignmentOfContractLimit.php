@@ -3,12 +3,14 @@
 namespace App\Models;
 
 use App\Helpers\HDate;
+use App\Traits\IsBankStatement;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
 
 class OverdraftAgainstAssignmentOfContractLimit extends Model
 {
+	use IsBankStatement;
 	protected $table ='overdraft_against_assignment_of_contract_limits';
 	
 	protected $guarded =[
@@ -16,10 +18,6 @@ class OverdraftAgainstAssignmentOfContractLimit extends Model
 	];
 	public $oldFullDate = null;
 	
-	// public function cheque():BelongsTo
-	// {
-	// 	return $this->belongsTo(Cheque::class , 'cheque_id','id');
-	// }
 	public static function updateNextRows(self $model):string {
 		$minDate  =min($model->full_date,$model->getRawOriginal('full_date')) ?: $model->full_date ;
 		;
@@ -180,6 +178,11 @@ class OverdraftAgainstAssignmentOfContractLimit extends Model
 	{
 		return $this->id ;
 	}
-	
+	public function getForeignKeyNamesThatUsedInFilter():array 
+	{
+		return [
+			'overdraft_against_assignment_of_contract_id',
+		];
+	}	
 	
 }

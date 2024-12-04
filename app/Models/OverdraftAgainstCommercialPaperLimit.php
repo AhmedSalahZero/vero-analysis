@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Helpers\HDate;
+use App\Traits\IsBankStatement;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\DB;
@@ -10,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 
 class OverdraftAgainstCommercialPaperLimit extends Model
 {
+	use IsBankStatement;
 	protected $table ='overdraft_against_commercial_paper_limits';
 	
 	protected $guarded =[
@@ -174,6 +176,11 @@ class OverdraftAgainstCommercialPaperLimit extends Model
 	{
 		return $this->id ;
 	}
-	
+	public function getForeignKeyNamesThatUsedInFilter():array 
+	{
+		return [
+			'overdraft_against_commercial_paper_id',
+		];
+	}	
 	
 }

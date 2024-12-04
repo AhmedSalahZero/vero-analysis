@@ -581,13 +581,15 @@ class MoneyPaymentController
 			}
 			// $chequeDueDate = $moneyPayment->payableCheque->due_date;
 			$moneyPayment->payableCheque->update($data);
-			if($moneyPayment->getCurrentStatement()){
-				$time = now()->format('H:i:s');
-				$moneyPayment->getCurrentStatement()->update([
-					'date'=>$actualPaymentDate = $data['actual_payment_date'],
-					'full_date' =>date('Y-m-d H:i:s', strtotime("$actualPaymentDate $time")),
-					'updated_at'=>now()
-				]);
+			if($currentStatement = $moneyPayment->getCurrentStatement()){
+				// dd($data['actual_payment_date']);
+				$currentStatement->handleFullDateAfterDateEdit(Carbon::make($data['actual_payment_date'])->format('Y-m-d'),$currentStatement->debit,$currentStatement->credit);
+				// $time = now()->format('H:i:s');
+				// $moneyPayment->getCurrentStatement()->update([
+				// 	'date'=>$actualPaymentDate = $data['actual_payment_date'],
+				// 	'full_date' =>date('Y-m-d H:i:s', strtotime("$actualPaymentDate $time")),
+				// 	'updated_at'=>now()
+				// ]);
 
 			}
 
@@ -648,14 +650,14 @@ class MoneyPaymentController
 			'supplierInvoices'=>SupplierInvoice::where('currency',$currencyName)->where('company_id',$company->id)->pluck('supplier_name','supplier_id')
 		]);
 	}
-	public function getCurrentAccountEndBalance(Request $request , Company $company , int $branchId = null , string $currencyName = null){
+	public function getCashInSafeStatementEndBalance(Request $request , Company $company , int $branchId = null , string $currencyName = null , string $deliveryDate = null){
 		$branchId = $request->get('branchId',$branchId);
 		$currencyName = $request->get('currencyName',$currencyName);
 		/**
 		 * @var Branch $branch
 		 */
 		$branch = Branch::find($branchId);
-		$endBalance = $branch->getCurrentEndBalance($company->id,$currencyName);
+		$endBalance = $branch->getCurrentEndBalance($company->id,$currencyName,$deliveryDate);
 		return response()->json([
 			'end_balance'=>$endBalance
 		]);

@@ -245,6 +245,7 @@
 
 					if new.id and (new.type = interest_type_text or new.type = highest_debit_balance_text ) then 
 								select  sum(interest_amount) , max(end_balance) into _current_interest_amount,_largest_end_balance from  fully_secured_overdraft_bank_statements where `type` != interest_type_text and `type` != highest_debit_balance_text and fully_secured_overdraft_id = new.fully_secured_overdraft_id and EXTRACT(MONTH from date) = EXTRACT(MONTH from new.date ) and  EXTRACT(YEAR from date) = EXTRACT(YEAR from new.date) ;
+								set _current_interest_amount = ifnull(_current_interest_amount,0);
 								select highest_debt_balance_rate into _highest_debt_balance_rate from fully_secured_overdrafts where id = new.fully_secured_overdraft_id  ;
 								if new.type = interest_type_text then 
 								-- للفايدة الخاصة باخر الشهر

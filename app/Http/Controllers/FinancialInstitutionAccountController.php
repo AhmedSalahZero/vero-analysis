@@ -38,6 +38,7 @@ class FinancialInstitutionAccountController
 			'exchange_rate'=>$request->get('exchange_rate')
 		]);
 		$currentAccountBeginningBalance = $financialInstitutionAccount->getOpeningBalanceFromCurrentAccountBankStatement() ;
+	
 		if($currentAccountBeginningBalance){
 			$currentFullDate =$currentAccountBeginningBalance->full_date ; 
 			$time  = Carbon::make($currentFullDate)->format('H:i:s');
@@ -77,9 +78,9 @@ class FinancialInstitutionAccountController
 				$financialInstitutionAccount->accountInterests()->create($accountInterestArr);
 			}
 		}
-		
-		 $activeTab = 'bank';
-		return redirect()->route('view.financial.institutions',['company'=>$company->id,'active'=>$activeTab])->with('success',__('Item Has Been Updated Successfully'));
+		return redirect()->route('view.all.bank.accounts',['company'=>$company->id ,'financialInstitution'=>$financialInstitution->id])->with('success',__('Item Has Been Updated Successfully'));
+		// $activeTab = 'bank';
+		// return redirect()->route('view.financial.institutions',['company'=>$company->id,'active'=>$activeTab])->with('success',__('Item Has Been Updated Successfully'));
 		
 		
 	}

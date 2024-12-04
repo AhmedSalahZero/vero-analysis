@@ -57,6 +57,7 @@
 @endsection
 @section('sub-header')
 {{ __('Certificates Of Deposit Form') }}
+[{{ $financialInstitution->getName() }} ]
 @endsection
 @section('content')
 <div class="row">

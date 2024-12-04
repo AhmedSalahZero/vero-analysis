@@ -34,26 +34,8 @@
 @section('content')
 
 <div class="kt-portlet kt-portlet--tabs">
-    <div class="kt-portlet__head">
-        <div class="kt-portlet__head-toolbar justify-content-between flex-grow-1">
-            <ul class="nav nav-tabs nav-tabs-space-lg nav-tabs-line nav-tabs-bold nav-tabs-line-3x nav-tabs-line-brand" role="tablist">
-                <li class="nav-item">
-                    <a class="nav-link {{ !Request('active') || Request('active') == 'letter-of-guarantee-facilities' ?'active':'' }}" data-toggle="tab" href="#letter-of-guarantee-facilities" role="tab">
-                        <i class="fa fa-money-check-alt"></i> {{ __('Letter Of Guarantee Facility Table') }}
-                    </a>
-                </li>
-                
-            </ul>
-
-          <div class="flex-tabs">
-		    <a href="{{ route('create.letter.of.guarantee.facility',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id]) }}" class="btn  active-style btn-icon-sm align-self-center">
-                <i class="fas fa-plus"></i>
-                {{ __('New Record') }}
-            </a>
-            
-		  </div>
-        </div>
-    </div>
+   <x-back-to-bank-header-btn :create-permission-name="'create letter of guarantee facility'" :create-route="route('create.letter.of.guarantee.facility',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id])"></x-back-to-bank-header-btn>
+   
     <div class="kt-portlet__body">
         <div class="tab-content  kt-margin-t-20">
 

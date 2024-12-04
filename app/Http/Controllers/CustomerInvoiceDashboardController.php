@@ -177,7 +177,7 @@ class CustomerInvoiceDashboardController extends Controller
                 /**
                  * * حساب ال current account
                  */
-				$allAccountNumbersForThisCurrencyAndFinancialInstitution = FinancialInstitutionAccount::getAllAccountNumberForCurrency($company->id,$currencyName,$financialInstitutionBankId,true);
+				$allAccountNumbersForThisCurrencyAndFinancialInstitution = FinancialInstitutionAccount::getAllAccountNumberForCurrency($company->id,$currencyName,$financialInstitutionBankId,'account_number',true);
 				foreach($allAccountNumbersForThisCurrencyAndFinancialInstitution as $currentAccountNumber){
 					$currentAccountEndBalanceForCurrency = DB::table('current_account_bank_statements')
                 ->join('financial_institution_accounts', 'financial_institution_account_id', '=', 'financial_institution_accounts.id')
@@ -214,17 +214,19 @@ class CustomerInvoiceDashboardController extends Controller
 				->where('certificates_of_deposits.currency', $currencyName)
 				
 				->leftJoin('fully_secured_overdrafts',function($q) use($cdAccountTypeId) {
-					$q->on('fully_secured_overdrafts.cd_or_td_account_id','=','certificates_of_deposits.account_number')->where('fully_secured_overdrafts.cd_or_td_account_type_id',$cdAccountTypeId);
+					$q->on('fully_secured_overdrafts.cd_or_td_account_id','=','certificates_of_deposits.id')->where('fully_secured_overdrafts.cd_or_td_account_type_id',$cdAccountTypeId);
 				})
 				->leftJoin('letter_of_guarantee_issuances',function($q) use($cdAccountTypeId) {
-					$q->on('letter_of_guarantee_issuances.cd_or_td_account_number','=','certificates_of_deposits.account_number')->where('letter_of_guarantee_issuances.cd_or_td_account_type_id',$cdAccountTypeId);
-				})
+					$q->on('letter_of_guarantee_issuances.cd_or_td_id','=','certificates_of_deposits.id')->where('letter_of_guarantee_issuances.cd_or_td_account_type_id',$cdAccountTypeId)
+					->where('letter_of_guarantee_issuances.status','running')
+					;
+				})	
 				/**
 				 * ! مؤجلة لحين الانتهاء من جدول ال 
 				 * ! credit issuance
 				 */
 				// ->leftJoin('letter_of_credit_issuances',function($q) use($cdAccountTypeId) {
-				// 	$q->on('letter_of_credit_issuances.cd_or_td_account_number','=','certificates_of_deposits.account_number')->where('letter_of_credit_issuances.cd_or_td_account_type_id',$cdAccountTypeId);
+				// 	$q->on('letter_of_credit_issuances.cd_or_td_id','=','certificates_of_deposits.id')->where('letter_of_credit_issuances.cd_or_td_account_type_id',$cdAccountTypeId);
 				// })
 				
 				->orderBy('certificates_of_deposits.end_date', 'desc')
@@ -241,8 +243,9 @@ class CustomerInvoiceDashboardController extends Controller
 				// .'" when letter_of_credit_issuances.cd_or_td_account_type_id = '.$tdAccountTypeId .' then "' .  __('LC') 
 				.
 				'"  else "'. __('Free To Use') .'" end as blocked')
+				
 				->get();
-				// $certificateOfDepositsForCurrentFinancialInstitutionDetails = $this->getKeysFromStdClass($certificateOfDepositsForCurrentFinancialInstitution,['account_number','amount'],['financial_institution_name'=>$currentFinancialInstitution->getName()]);
+				$certificateOfDepositsForCurrentFinancialInstitution = collect(HArr::filterByUnique($certificateOfDepositsForCurrentFinancialInstitution->toArray(),['financial_institution_name','account_number','blocked']));
 				foreach($certificateOfDepositsForCurrentFinancialInstitution as $certificateOfDepositsForCurrentFinancialInstitutionDetail){
 					$details[$currencyName]['certificate_of_deposits'][] = (array)$certificateOfDepositsForCurrentFinancialInstitutionDetail ;
 				}
@@ -261,20 +264,23 @@ class CustomerInvoiceDashboardController extends Controller
 				->where('time_of_deposits.financial_institution_id', $financialInstitutionBankId)
 				->where('time_of_deposits.currency', $currencyName)
 				->leftJoin('fully_secured_overdrafts',function($q) use($tdAccountTypeId) {
-					$q->on('fully_secured_overdrafts.cd_or_td_account_id','=','time_of_deposits.account_number')->where('fully_secured_overdrafts.cd_or_td_account_type_id',$tdAccountTypeId);
+					$q->on('fully_secured_overdrafts.cd_or_td_account_id','=','time_of_deposits.id')->where('fully_secured_overdrafts.cd_or_td_account_type_id',$tdAccountTypeId);
 				})
 				->leftJoin('letter_of_guarantee_issuances as lg_cd',function($q) use($tdAccountTypeId) {
-					$q->on('lg_cd.cd_or_td_account_number','=','time_of_deposits.account_number')->where('lg_cd.cd_or_td_account_type_id',$tdAccountTypeId);
+					$q->on('lg_cd.cd_or_td_id','=','time_of_deposits.id')->where('lg_cd.cd_or_td_account_type_id',$tdAccountTypeId)
+					->where('lg_cd.status','running');
 				})
 				->leftJoin('letter_of_guarantee_issuances as lg_cash',function($q) use($tdAccountTypeId) {
-					$q->on('lg_cash.cash_cover_deducted_from_account_number','=','time_of_deposits.account_number')->where('lg_cash.cash_cover_deducted_from_account_type',$tdAccountTypeId);
+					$q->on('lg_cash.cash_cover_deducted_from_account_id','=','time_of_deposits.id')->where('lg_cash.cash_cover_deducted_from_account_type',$tdAccountTypeId)
+					->where('lg_cash.status','running');
 				})
+				
 				/**
 				 * ! مؤجلة لحين الانتهاء من جدول ال 
 				 * ! credit issuance
 				 */
 				// ->leftJoin('letter_of_credit_issuances',function($q) use($tdAccountTypeId) {
-				// 	$q->on('letter_of_credit_issuances.cd_or_td_account_number','=','time_of_deposits.account_number')->where('letter_of_credit_issuances.cd_or_td_account_type_id',$tdAccountTypeId);
+				// 	$q->on('letter_of_credit_issuances.cd_or_td_id','=','time_of_deposits.id')->where('letter_of_credit_issuances.cd_or_td_account_type_id',$tdAccountTypeId);
 				// })
 				/// issue here
 				->orderBy('time_of_deposits.end_date', 'desc')
@@ -291,9 +297,11 @@ class CustomerInvoiceDashboardController extends Controller
 				// .'" when letter_of_credit_issuances.cd_or_td_account_type_id = '.$tdAccountTypeId .' then "' .  __('LC') 
 				.
 				'"  else "'. __('Free To Use') .'" end as blocked')
+				
 				->get();
 				;	
-		
+				$timeDepositsForCurrentFinancialInstitution = collect(HArr::filterByUnique($timeDepositsForCurrentFinancialInstitution->toArray(),['financial_institution_name','account_number','blocked']));
+
 				foreach($timeDepositsForCurrentFinancialInstitution as $timeDepositsForCurrentFinancialInstitutionDetail){
 					$details[$currencyName]['time_of_deposits'][] = (array)$timeDepositsForCurrentFinancialInstitutionDetail ;
 				}

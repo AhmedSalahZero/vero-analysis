@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Helpers\HDate;
+use App\Traits\IsBankStatement;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -10,7 +11,7 @@ use Illuminate\Support\Facades\DB;
 
 class OverdraftAgainstAssignmentOfContractBankStatement extends Model
 {
-	
+	use IsBankStatement;
 	protected $guarded =[
 		'id'
 	];
@@ -165,5 +166,10 @@ class OverdraftAgainstAssignmentOfContractBankStatement extends Model
 	{
 		return $this->belongsTo(InternalMoneyTransfer::class,'internal_money_transfer_id','id');
 	}
-	
+	public function getForeignKeyNamesThatUsedInFilter():array 
+	{
+		return [
+			'overdraft_against_assignment_of_contract_id',
+		];
+	}	
 }

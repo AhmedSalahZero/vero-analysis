@@ -184,10 +184,10 @@ class FinancialInstitution extends Model
 			$builder->where('contract_end_date','>=',now());
 		});
 	}
-	public function getCurrentAvailableLetterOfGuaranteeFacility():?LetterOfGuaranteeFacility
-	{
-		return $this->LetterOfGuaranteeFacilities()->where('contract_end_date','>=',now())->orderByRaw('contract_end_date desc')->first();
-	}
+	// public function getCurrentAvailableLetterOfGuaranteeFacility():?LetterOfGuaranteeFacility
+	// {
+	// 	return $this->LetterOfGuaranteeFacilities()->where('contract_end_date','>=',now())->orderByRaw('contract_end_date desc')->first();
+	// }
 	// public function getCurrentAvailableLetterOfGuaranteeFacilities():?Collection
 	// {
 	// 	return $this->LetterOfGuaranteeFacilities()->where('contract_end_date','>=',now())->orderByRaw('contract_end_date desc')->get();

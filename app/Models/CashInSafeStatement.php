@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Helpers\HDate;
+use App\Traits\IsBankStatement;
 use App\Traits\Models\HasDeleteButTriggerChangeOnLastElement;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
@@ -10,7 +11,7 @@ use Illuminate\Support\Facades\DB;
 
 class CashInSafeStatement extends Model
 {
-	use HasDeleteButTriggerChangeOnLastElement ;
+	use HasDeleteButTriggerChangeOnLastElement,IsBankStatement ;
 	const MONEY_TRANSFER  = 'money-transfer';
 	
     protected $guarded = [
@@ -190,5 +191,15 @@ class CashInSafeStatement extends Model
 	public function getBranchId():int 
 	{
 		return $this->branch_id?:0 ;
+	}
+	/**
+	 * * دول اسماء العواميد اللي بنفرق باستخدامهم بين كل رو والتاني في الحسابات في التريجر
+	 * * يعني مثلا لما اجي اجيب العنصر اللي قبلي هجيبه بناء علي انهي شروط 
+	 */
+	public function getForeignKeyNamesThatUsedInFilter():array 
+	{
+		return [
+			'financial_institution_account_id'
+		];
 	}
 }

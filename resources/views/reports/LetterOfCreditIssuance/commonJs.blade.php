@@ -1,13 +1,16 @@
     <script>
                 $(document).on('change', '[change-financial-instutition-js]', function() {
                     const parent = $(this).closest('.kt-portlet__body');
-                    const accountType = $('.js-update-account-number-based-on-account-type').val()
-                    const accountNumber = $('[js-cd-or-td-account-number]').val();
+                    const accountType = $('.js-update-account-id-based-on-account-type').val()
+                    const accountId = $('[js-cd-or-td-account-number]').val();
+					if(!accountId){
+						return ;
+					}
                     let financialInstitutionId = $('#financial-instutition-id').val();
                     financialInstitutionId = financialInstitutionId ? financialInstitutionId : $('[name="financial_institution_id"]').val();
-                    let url = "{{ route('update.balance.and.net.balance.based.on.account.number.ajax',['company'=>$company->id , 'accountType'=>'replace_account_type' , 'accountNumber'=>'replace_account_number','financialInstitutionId'=>'replace_financial_institution_id' ]) }}";
+                    let url = "{{ route('update.balance.and.net.balance.based.on.account.id.ajax',['company'=>$company->id , 'accountType'=>'replace_account_type' , 'accountId'=>'replace_account_id','financialInstitutionId'=>'replace_financial_institution_id' ]) }}";
                     url = url.replace('replace_account_type', accountType);
-                    url = url.replace('replace_account_number', accountNumber);
+                    url = url.replace('replace_account_id', accountId);
                     url = url.replace('replace_financial_institution_id', financialInstitutionId);
 
                     $.ajax({

@@ -315,7 +315,7 @@ $selectedBanks = [];
                     <div class="col-md-2 closest-parent">
                         <label>{{__('Paid Amount')}} <span class="currency-span"></span> @include('star')</label>
                         <div class="kt-input-icon">
-                            <input data-can-not-be-greater-than=".balance-js[data-type='{{ MoneyPayment::CASH_PAYMENT }}']" data-current-value="{{ isset($model) ? $model->getPaidAmount():0 }}" data-max-cheque-value="0" type="text" value="{{ isset($model) ? $model->getPaidAmount() :0 }}" name="paid_amount[{{ MoneyPayment::CASH_PAYMENT}}]" class="form-control only-greater-than-or-equal-zero-allowed only-less-than-or-equal-specific-number-allowed {{ 'js-'. MoneyPayment::CASH_PAYMENT.'-paid-amount' }}  main-amount-class recalculate-amount-class" data-type="{{ MoneyPayment::CASH_PAYMENT }}" placeholder="{{__('Paid Amount')}}">
+                            <input data-current-value="{{ isset($model) ? $model->getPaidAmount():0 }}" data-max-cheque-value="0" type="text" value="{{ isset($model) ? $model->getPaidAmount() :0 }}" name="paid_amount[{{ MoneyPayment::CASH_PAYMENT}}]" class="form-control only-greater-than-or-equal-zero-allowed  {{ 'js-'. MoneyPayment::CASH_PAYMENT.'-paid-amount' }}  main-amount-class recalculate-amount-class" data-type="{{ MoneyPayment::CASH_PAYMENT }}" placeholder="{{__('Paid Amount')}}">
                             <x-tool-tip title="{{__('Kash Vero')}}" />
                         </div>
                     </div>
@@ -576,7 +576,7 @@ $selectedBanks = [];
 					 <div class="col-md-2 max-w-15 closest-parent ">
                         <label> {!! __('Outgoing <br> Transfer Amount') !!}  <span class="currency-span"></span>  @include('star')</label>
                         <div class="kt-input-icon">
-                            <input data-can-not-be-greater-than=".balance-js[data-type='{{ MoneyPayment::OUTGOING_TRANSFER }}']" data-current-value="{{ isset($model) ? $model->getPaidAmount():0 }}" data-max-cheque-value="0" type="text" value="{{ isset($model) ? $model->getPaidAmount():0 }}" name="paid_amount[{{ MoneyPayment::OUTGOING_TRANSFER }}]" class="form-control only-greater-than-or-equal-zero-allowed only-less-than-or-equal-specific-number-allowed {{ 'js-'. MoneyPayment::OUTGOING_TRANSFER .'-paid-amount' }}  main-amount-class recalculate-amount-class" data-type="{{ MoneyPayment::OUTGOING_TRANSFER }}" placeholder="{{__('Insert Amount')}}">
+                            <input  data-current-value="{{ isset($model) ? $model->getPaidAmount():0 }}" data-max-cheque-value="0" type="text" value="{{ isset($model) ? $model->getPaidAmount():0 }}" name="paid_amount[{{ MoneyPayment::OUTGOING_TRANSFER }}]" class="form-control only-greater-than-or-equal-zero-allowed  {{ 'js-'. MoneyPayment::OUTGOING_TRANSFER .'-paid-amount' }}  main-amount-class recalculate-amount-class" data-type="{{ MoneyPayment::OUTGOING_TRANSFER }}" placeholder="{{__('Insert Amount')}}">
                         </div>
                     </div>
 					
@@ -923,7 +923,7 @@ $selectedBanks = [];
 		const currencyName = $('select#receiving-currency-id').val();
 		if(branchId != '-1'){
 			$.ajax({
-				url:"{{ route('get.current.end.balance.of.current.account',['company'=>$company->id]) }}",
+				url:"{{ route('get.current.end.balance.of.cash.in.safe.statement',['company'=>$company->id]) }}",
 				data:{
 					branchId,
 					currencyName

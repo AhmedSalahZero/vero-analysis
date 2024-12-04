@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Helpers\HDate;
 use App\Traits\HasLastStatementAmount;
+use App\Traits\IsBankStatement;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -11,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 
 class OverdraftAgainstCommercialPaperBankStatement extends Model
 {
-		
+	use IsBankStatement;		
 	protected $guarded =[
 		'id'
 	];
@@ -166,6 +167,11 @@ class OverdraftAgainstCommercialPaperBankStatement extends Model
 	{
 		return $this->belongsTo(InternalMoneyTransfer::class,'internal_money_transfer_id','id');
 	}
-
+	public function getForeignKeyNamesThatUsedInFilter():array 
+	{
+		return [
+			'overdraft_against_commercial_paper_id',
+		];
+	}	
 		
 }

@@ -5,7 +5,8 @@
 'accountTypes',
 'popupTitle'=>'',
 'routeAction'=>'#',
-'routeRedirect'=>route('view.money.payment',['company'=>$company->id])
+'routeRedirect'=>route('view.money.payment',['company'=>$company->id]),
+'dueDate'=>null
 ])
 @php
 use App\Models\MoneyPayment ;
@@ -98,10 +99,11 @@ use App\Models\MoneyPayment ;
                             <div class="modal-body">
                                 <div class="row mb-3">
                                     <div class="col-md-12">
+									
                                         <label>{{__('Actual Payment Date')}}</label>
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
-                                                <input required type="text" name="actual_payment_date" value="{{ formatDateForDatePicker(now()->format('Y-m-d')) }}" class="form-control" readonly placeholder="Select date" id="kt_datepicker_2" />
+                                                <input required type="text" name="actual_payment_date" value="{{ formatDateForDatePicker(isset($dueDate) ? $dueDate : now()->format('Y-m-d') ) }}" class="form-control" readonly placeholder="Select date" id="kt_datepicker_2" />
                                                 <div class="input-group-append">
                                                     <span class="input-group-text">
                                                         <i class="la la-calendar-check-o"></i>

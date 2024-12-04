@@ -253,6 +253,7 @@
 
 					if new.id and (new.type = interest_type_text or new.type = highest_debit_balance_text ) then 
 								select  sum(interest_amount) , max(end_balance) into _current_interest_amount,_largest_end_balance from  overdraft_against_commercial_paper_bank_statements where `type` != interest_type_text and `type` != highest_debit_balance_text and overdraft_against_commercial_paper_id = new.overdraft_against_commercial_paper_id and EXTRACT(MONTH from date) = EXTRACT(MONTH from new.date ) and  EXTRACT(YEAR from date) = EXTRACT(YEAR from new.date) ;
+								set _current_interest_amount = ifnull(_current_interest_amount,0);
 								select highest_debt_balance_rate into _highest_debt_balance_rate from overdraft_against_commercial_papers where id = new.overdraft_against_commercial_paper_id  ;
 								if new.type = interest_type_text then 
 								-- للفايدة الخاصة باخر الشهر

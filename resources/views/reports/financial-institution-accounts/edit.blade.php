@@ -106,13 +106,12 @@
                                     </div>
 									
 
-
                                     <div class="col-2">
                                         <label class="form-label font-weight-bold">{{ __('Balance Amount') }}
                                         </label>
                                         <div class="kt-input-icon">
                                             <div class="input-group">
-                                                <input type="text" class="form-control only-greater-than-or-equal-zero-allowed trigger-change-repeater" value="{{ number_format(isset($model) ? $model->getBalanceAmount() : old('balance_amount',0)) }}">
+                                                <input type="text" class="form-control only-numeric-allowed trigger-change-repeater" value="{{ number_format(isset($model) ? $model->getBalanceAmount() : old('balance_amount',0),2) }}">
                                                 <input type="hidden" value="{{ (isset($model) ? $model->getBalanceAmount() : old('balance_amount',0)) }}" name="balance_amount">
                                             </div>
                                         </div>
@@ -149,7 +148,7 @@
                                         </label>
                                         <div class="kt-input-icon">
                                             <div class="input-group">
-                                                <input type="text" class="form-control only-greater-than-or-equal-zero-allowed trigger-change-repeater" value="{{ number_format(isset($model) ? $model->getExchangeRate() : old('exchange_rate',0)) }}">
+                                                <input type="text" class="form-control only-greater-than-or-equal-zero-allowed trigger-change-repeater" value="{{ number_format(isset($model) ? $model->getExchangeRate() : old('exchange_rate',0),4) }}">
                                                 <input type="hidden" value="{{ (isset($model) ? $model->getExchangeRate() : old('exchange_rate',0)) }}" name="exchange_rate">
                                             </div>
                                         </div>

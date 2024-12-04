@@ -482,12 +482,8 @@ use App\Models\LetterOfGuaranteeIssuance;
                                             <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                         </label>
                                         <div class="input-group">
-                                            <select name="lg_currency" class="form-control current-currency" js-when-change-trigger-change-account-type>
-                                                <option selected><?php echo e(__('Select')); ?></option>
-                                                <?php $__currentLoopData = getCurrencies(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $currencyName => $currencyValue): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                <option value="<?php echo e($currencyName); ?>" <?php if(isset($model) && $model->getLgCurrency() == $currencyName ): ?> selected <?php elseif($currencyName == 'EGP' ): ?> selected <?php endif; ?> > <?php echo e($currencyValue); ?></option>
-                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                            </select>
+										<input type="text" class="form-control current-currency-input" name="lg_currency" id="lg-currency-id" value="" readonly js-when-change-trigger-change-account-type >
+                                            
                                         </div>
                                     </div>
 							
@@ -606,7 +602,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                                         <label><?php echo e(__('Cash Cover From Account Type')); ?> <span class=""></span> </label>
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
-                                                <select id="account_type_id" name="cash_cover_deducted_from_account_type" class="form-control js-update-account-number-based-on-account-type">
+                                                <select id="account_type_id" name="cash_cover_deducted_from_account_type" class="form-control js-update-account-id-based-on-account-type">
                                                     <?php $__currentLoopData = $cashCoverAccountTypes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $accountType): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                     <option <?php if(isset($model) && ($accountType->id == $model->getCashCoverDeductedFromAccountTypeId()) ): ?> selected <?php endif; ?> value="<?php echo e($accountType->id); ?>"><?php echo e($accountType->getName()); ?></option>
                                                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -619,7 +615,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                                         <label><?php echo e(__('Account Number')); ?> <span class=""></span> </label>
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
-                                                <select js-cd-or-td-account-number data-current-selected="<?php echo e(isset($model) ? $model->getCashCoverDeductedFromAccountNumber(): 0); ?>" name="cash_cover_deducted_from_account_number" class="form-control js-account-number">
+                                                <select js-cd-or-td-account-number data-current-selected="<?php echo e(isset($model) ? $model->getCashCoverDeductedFromAccountId(): 0); ?>" name="cash_cover_deducted_from_account_id" class="form-control js-account-number">
                                                     <option value="" selected><?php echo e(__('Select')); ?></option>
                                                 </select>
                                             </div>
@@ -648,8 +644,8 @@ use App\Models\LetterOfGuaranteeIssuance;
                                         </label>
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
-                                                <select data-append-to-query=".js-account-number-2" name="lg_fees_and_commission_account_type" class="form-control 
-												js-update-account-number-based-on-account-type
+                                                <select data-append-to-query=".js-account-id-2" name="lg_fees_and_commission_account_type" class="form-control 
+												js-update-account-id-based-on-account-type
 												">
                                                     
                                                     <?php $__currentLoopData = $accountTypes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $accountType): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
@@ -667,7 +663,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                                         </label>
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
-                                                <select data-current-selected="<?php echo e(isset($model) ? $model->getLgFeesAndCommissionAccountNumber(): 0); ?>" name="lg_fees_and_commission_account_number" class="form-control js-account-number-2">
+                                                <select data-current-selected="<?php echo e(isset($model) ? $model->getLgFeesAndCommissionAccountId(): 0); ?>" name="lg_fees_and_commission_account_id" class="form-control js-account-id-2">
                                                     <option value="" selected><?php echo e(__('Select')); ?></option>
                                                 </select>
                                             </div>
@@ -690,7 +686,6 @@ use App\Models\LetterOfGuaranteeIssuance;
 
 
 
-                                    
 
 
                                 </div>
@@ -911,11 +906,13 @@ use App\Models\LetterOfGuaranteeIssuance;
                     e.preventDefault()
                     const financialInstitutionId = $('select#financial-instutition-id').val()
                     const lgType = $('select#lg-type').val()
-						const source = "<?php echo e($source); ?>"
+							const source = "<?php echo e($source); ?>"
 						const letterOfGuaranteeFacilityId = $('select#lg-facility-id').val();
+						const lgIssuanceId = "<?php echo e(isset($model) ? $model->id : 0); ?>" 
                     $.ajax({
                         url: "<?php echo e(route('update.letter.of.guarantee.outstanding.balance.and.limit',['company'=>$company->id])); ?>"
                         , data: {
+							lgIssuanceId,
                             financialInstitutionId
                             , lgType,
 							source,
@@ -940,6 +937,7 @@ use App\Models\LetterOfGuaranteeIssuance;
 							var totalRoom = number_unformat(res.total_room);
 							$('input[name="lg_amount"]').attr('data-can-not-be-greater-than',totalRoom);
                             $('#current-lg-type-outstanding-balance-id').val(res.current_lg_type_outstanding_balance).prop('readonly', true)
+							$('#lg-currency-id').val(res.currency_name).trigger('change');
                             $('#min_lg_commission_fees_id').val(res.min_lg_commission_rate).trigger('change');
                             $('#lg_commission_rate-id').val(res.lg_commission_rate).trigger('change');
                             $('#issuance_fees_id').val(res.min_lg_issuance_fees_for_current_lg_type).trigger('change');
@@ -953,7 +951,6 @@ use App\Models\LetterOfGuaranteeIssuance;
             <?php if(!isset($model)): ?>
             <script>
                 $('[js-update-outstanding-balance-and-limits]').trigger('change')
-
             </script>
             <?php endif; ?>
             <script>
@@ -1032,19 +1029,22 @@ use App\Models\LetterOfGuaranteeIssuance;
                     const parent = $(this).closest('.kt-portlet__body');
 					const financialInstitutionId = $('select#financial-instutition-id').val();
 			
-                    const accountType = parent.find('.js-update-account-number-based-on-account-type').val()
-                    const accountNumber = parent.find('[js-cd-or-td-account-number]').val();
-                    let url = "<?php echo e(route('get.account.amount.based.on.account.number',['company'=>$company->id , 'accountType'=>'replace_account_type' , 'accountNumber'=>'replace_account_number','financialInstitutionId'=>'replace_financial_institution_id' ])); ?>";
+                    const accountType = parent.find('.js-update-account-id-based-on-account-type').val()
+                    const accountId = parent.find('[js-cd-or-td-account-number]').val();
+                    let url = "<?php echo e(route('get.account.amount.based.on.account.id',['company'=>$company->id , 'accountType'=>'replace_account_type' , 'accountId'=>'replace_account_id','financialInstitutionId'=>'replace_financial_institution_id' ])); ?>";
                     url = url.replace('replace_account_type', accountType);
-                    url = url.replace('replace_account_number', accountNumber);
+                    url = url.replace('replace_account_id', accountId);
                     url = url.replace('replace_financial_institution_id', financialInstitutionId);
-					if(accountType &&accountNumber &&financialInstitutionId){
+					if(accountType &&accountId &&financialInstitutionId){
 						$.ajax({
 							url
 							, success: function(res) {
-								parent.find('#cd-or-td-amount-id').val(number_format(res.amount) + ' ' + res.currencyName )
+								parent.find('#cd-or-td-amount-id').attr('data-value',res.amount).val(number_format(res.amount) + ' ' + res.currencyName ).trigger('change')
 							}
 						});
+						
+					}else{
+								parent.find('#cd-or-td-amount-id').attr('data-value',0).val(0).trigger('change')
 						
 					}
                 })

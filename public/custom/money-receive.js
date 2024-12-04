@@ -358,6 +358,51 @@ $(document).on('change', '.js-update-account-number-based-on-account-type', func
 				
 			}
 	
+	
+			selectToAppendInto.empty().append(options).trigger('change')
+		}
+	})
+
+})
+
+
+
+$(document).on('change', '.js-update-account-id-based-on-account-type', function () {
+	const val = $(this).val()
+	let appendTo = $(this).attr('data-append-to-query');
+	appendTo = appendTo ? appendTo : '.js-account-number';
+	const lang = $('body').attr('data-lang')
+	const companyId = $('body').attr('data-current-company-id')
+	const repeaterParentIfExists = $(this).closest('[data-repeater-item]')
+	const parent = repeaterParentIfExists.length ? repeaterParentIfExists : $(this).closest('.kt-portlet__body')
+	const moneyType = $(this).closest('form').attr('data-money-type')
+	let currency = $(this).closest('form').find('select.current-currency').val()
+	currency = currency ? currency : $('input[type="hidden"].current-currency').val();	 
+	currency = currency ? currency : $('.js-send-to-collection[data-money-type="' + moneyType + '"]').closest('tr').find('[data-currency]').attr('data-currency')
+	currency = currency ? currency : $(this).closest('.kt-portlet__body').find('.current-currency').val();
+	currency = currency ? currency : $(this).closest('[data-repeater-item]').find('.select-for-currency').val();
+	currency = currency ? currency : $('input.current-currency-input').val();	 
+	let financialInstitutionBankId = parent.find('[data-financial-institution-id]').val()
+	financialInstitutionBankId = typeof financialInstitutionBankId !== 'undefined' ? financialInstitutionBankId : $('[data-financial-institution-id]').val()
+	if (!val || !currency || !financialInstitutionBankId) {
+		return
+	}
+	const url = '/' + lang + '/' + companyId + '/money-received/get-account-ids-based-on-account-type/' + val + '/' + currency + '/' + financialInstitutionBankId
+	$.ajax({
+		url,
+		data:{allAccounts:window.location.href.split('/').includes('bank-statement')},
+		success: function (res) {
+			
+			options = ''
+			var selectToAppendInto = $(parent).find(appendTo)
+
+			for (id in res.data) {
+				var val = res.data[id]
+				var selected = $(selectToAppendInto).attr('data-current-selected') == id ? 'selected' : ''
+				options += '<option ' + selected + '  value="' + id + '">' + val + '</option>'
+				
+			}
+
 			selectToAppendInto.empty().append(options).trigger('change')
 		}
 	})
@@ -373,10 +418,19 @@ $(document).on('change', '[js-when-change-trigger-change-account-type]', functio
 		parent.trigger('change')
 	}
 	
+	 parent = $(this).closest('.kt-portlet__body').find('.js-update-account-id-based-on-account-type') ;
+	
+	 $('.js-update-account-id-based-on-account-type').trigger('change')
+	if(parseInt(parent)){
+		parent.trigger('change')
+	}
+	
 })
 $(function () {
 
 	$('.js-update-account-number-based-on-account-type').trigger('change')
+
+	$('.js-update-account-id-based-on-account-type').trigger('change')
 	setTimeout(function () {
 		$('.js-send-to-collection').trigger('change')
 	}, 1000)
@@ -398,13 +452,11 @@ $(function () {
 			success:function(res){
 				let options = '<option selected value="">Select</option>';
 				let currentSelected = $('select#customer_name').val()
-			//	let currentSelected = $('select#customer_name').attr('data-current-selected')
 				
 				for(customerId in res.customerInvoices ){
 					var customerName = res.customerInvoices[customerId]
 					options +=` <option value="${customerId}" ${currentSelected == customerId ? 'selected' : ''}>${customerName}</option>`
 				}
-				console.log(options)
 				$('select#customer_name').empty().append(options).trigger('change')
 			}
 		})
@@ -443,5 +495,3 @@ $(document).on('change','select#partner_type',function(){
 	
 })		
 $('select#partner_type').trigger('change');
-
-		//$('select.invoice-currency-class').trigger('change')

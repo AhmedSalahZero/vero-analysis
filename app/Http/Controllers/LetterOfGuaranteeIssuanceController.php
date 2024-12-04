@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\LgTypes;
 use App\Http\Requests\StoreLetterOfGuaranteeIssuanceRequest;
+use App\Http\Requests\UpdateLetterOfGuaranteeIssuanceRequest;
 use App\Models\AccountType;
 use App\Models\CertificatesOfDeposit;
 use App\Models\Company;
@@ -22,7 +23,6 @@ use App\Traits\GeneralFunctions;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-use App\Http\Requests\UpdateLetterOfGuaranteeIssuanceRequest;
 
 class LetterOfGuaranteeIssuanceController
 {
@@ -142,8 +142,9 @@ class LetterOfGuaranteeIssuanceController
 		$lgCode = $request->get('lg_code');
 		$isOpeningBalance = $request->get('category_name') == LetterOfGuaranteeIssuance::OPENING_BALANCE;
 		$financialInstitutionId = $request->get('financial_institution_id') ;
-		$letterOfGuaranteeFacility = $source == LetterOfGuaranteeIssuance::LG_FACILITY  ? FinancialInstitution::find($financialInstitutionId)->getCurrentAvailableLetterOfGuaranteeFacility() : null;
-		$letterOfGuaranteeFacilityId =  null ; 
+		$letterOfGuaranteeFacilityId =  $request->get('lg_facility_id') ; 
+		
+		$letterOfGuaranteeFacility = $source == LetterOfGuaranteeIssuance::LG_FACILITY  ? LetterOfGuaranteeFacility::find($letterOfGuaranteeFacilityId) : null;
 		if($source == LetterOfGuaranteeIssuance::LG_FACILITY && is_null($letterOfGuaranteeFacility)){
 			return redirect()->back()->with('fail',__('No Available Letter Of Guarantee Facility Found !'));
 		}
@@ -160,38 +161,40 @@ class LetterOfGuaranteeIssuanceController
 		$issuanceDate = $request->get('issuance_date');
 		$lgAmount = $request->get('lg_amount',0);
 		$currency = $request->get('lg_currency',0);
-		$cdOrTdAccountNumber = $request->get('cd_or_td_account_number');
+		$cdOrTdId = $request->get('cd_or_td_id',0);
 		$cdOrTdAccountTypeId = $request->get('cd_or_td_account_type_id');
 	
 		$accountType = AccountType::find($cdOrTdAccountTypeId);
-		$cdOrTdId = 0 ;
+	
 		if($accountType && $accountType->isCertificateOfDeposit()){
-			$cdOrTdId = CertificatesOfDeposit::findByAccountNumber($cdOrTdAccountNumber , $company->id )->id;
+			$cdOrTdId = CertificatesOfDeposit::find($cdOrTdId)->id;
 		}
 		elseif($accountType && $accountType->isTimeOfDeposit()){
-			$cdOrTdId = TimeOfDeposit::findByAccountNumber($cdOrTdAccountNumber,$company->id )->id;
+			$cdOrTdId = TimeOfDeposit::find($cdOrTdId)->id;
 		}
 		$cashCoverAmount = $request->get('cash_cover_amount',0);
 		$issuanceFees = $request->get('issuance_fees',0);
 	
 		$maxLgCommissionAmount = max($minLgCommissionAmount ,$lgCommissionAmount );
-		$lgFeesAndCommissionAccountNumber = $request->get('lg_fees_and_commission_account_number') ;
-		$financialInstitutionAccountForFeesAndCommission = FinancialInstitutionAccount::findByAccountNumber($lgFeesAndCommissionAccountNumber,$company->id , $financialInstitutionId);
-		$financialInstitutionAccountForCashCover = FinancialInstitutionAccount::findByAccountNumber($request->get('cash_cover_deducted_from_account_number',$lgFeesAndCommissionAccountNumber),$company->id , $financialInstitutionId);
+		$lgFeesAndCommissionAccountId = $request->get('lg_fees_and_commission_account_id') ;
+		$financialInstitutionAccountForFeesAndCommission = FinancialInstitutionAccount::find($lgFeesAndCommissionAccountId);
+		$financialInstitutionAccountForCashCover = FinancialInstitutionAccount::find($request->get('cash_cover_deducted_from_account_id',$lgFeesAndCommissionAccountId));
+	
 		$financialInstitutionAccountIdForFeesAndCommission = $financialInstitutionAccountForFeesAndCommission->id;
 		$openingBalanceDateOfCurrentAccount = $financialInstitutionAccountForFeesAndCommission->getOpeningBalanceDate();
 		
 		$financialInstitutionAccountIdForCashCover = $financialInstitutionAccountForCashCover->id ?? 0;
 		
 		
-
-		$isCdOrTdCashCoverAccount = in_array($request->get('cash_cover_deducted_from_account_number',[]),[28,29]);
+		$isCdOrTdCashCoverAccount = in_array($request->get('cash_cover_deducted_from_account_id',[]),[28,29]);
+		
 		if(!$isOpeningBalance && !$isCdOrTdCashCoverAccount ){
 			$model->storeCurrentAccountCreditBankStatement($issuanceDate,$cashCoverAmount , $financialInstitutionAccountIdForCashCover,0,1,__('Cash Cover [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'en'),'transactionName'=>$transactionName],'en') , __('Cash Cover [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'ar'),'transactionName'=>$transactionName],'ar') );
 		}
 		if(!$isOpeningBalance){
 			$model->storeCurrentAccountCreditBankStatement($issuanceDate,$issuanceFees , $financialInstitutionAccountIdForFeesAndCommission,0,1,__('Issuance Fees [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'en'),'transactionName'=>$transactionName],'en') , __('Issuance Fees [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'ar'),'transactionName'=>$transactionName],'ar'));
 		}
+		
 		$letterOfGuaranteeStatementCommentEn = LetterOfGuaranteeStatement::generateIssuanceComment('en',$customerName,$transactionName,$lgCode); ;
 		$letterOfGuaranteeStatementCommentAr = LetterOfGuaranteeStatement::generateIssuanceComment('ar',$customerName,$transactionName,$lgCode); ;
 		$model->handleLetterOfGuaranteeStatement($financialInstitutionId,$source,$letterOfGuaranteeFacilityId , $lgType,$company->id , $issuanceDate ,0 ,0,$lgAmount,$currency,0,$cdOrTdId,'credit-lg-amount',$letterOfGuaranteeStatementCommentEn,$letterOfGuaranteeStatementCommentAr);
@@ -254,7 +257,7 @@ class LetterOfGuaranteeIssuanceController
 		LetterOfGuaranteeCashCoverStatement::deleteButTriggerChangeOnLastElement($letterOfGuaranteeIssuance->letterOfGuaranteeCashCoverStatements->where('type',LetterOfGuaranteeIssuance::FOR_CANCELLATION));
 		CurrentAccountBankStatement::deleteButTriggerChangeOnLastElement($letterOfGuaranteeIssuance->currentAccountBankStatements->where('is_debit',1));
 		
-		$letterOfGuaranteeFacility = FinancialInstitution::find($financialInstitutionId)->getCurrentAvailableLetterOfGuaranteeFacility();
+		$letterOfGuaranteeFacility = $letterOfGuaranteeIssuance->letterOfGuaranteeFacility;
 		$lgType = $letterOfGuaranteeIssuance->getLgType();
 		// $amount = $letterOfGuaranteeIssuance->getLgAmount();
 		$currency = $letterOfGuaranteeIssuance->getLgCurrency();
@@ -287,7 +290,7 @@ class LetterOfGuaranteeIssuanceController
 			'status' => $letterOfGuaranteeIssuanceStatus,
 			'cancellation_date'=>$cancellationDate
 		]);
-		$letterOfGuaranteeFacility = FinancialInstitution::find($financialInstitutionId)->getCurrentAvailableLetterOfGuaranteeFacility();
+		$letterOfGuaranteeFacility = $letterOfGuaranteeIssuance->letterOfGuaranteeFacility;
 		$lgType = $letterOfGuaranteeIssuance->getLgType();
 		$amount = $letterOfGuaranteeIssuance->getLgAmount();
 		$cashCoverAmount = $letterOfGuaranteeIssuance->getCashCoverAmount();
@@ -300,7 +303,7 @@ class LetterOfGuaranteeIssuanceController
 		$commentAr = LetterOfGuaranteeStatement::generateCancelComment('ar',$partnerName,$transactionName,$lgCode);
 		$letterOfGuaranteeIssuance->handleLetterOfGuaranteeStatement($financialInstitutionId,$source,$letterOfGuaranteeFacilityId,$lgType,$company->id,$cancellationDate,0,$amount , 0,$letterOfGuaranteeIssuance->getLgCurrency(),0,$letterOfGuaranteeIssuance->getCdOrTdId(),LetterOfGuaranteeIssuance::FOR_CANCELLATION,$commentEn,$commentAr);
 		$letterOfGuaranteeIssuance->handleLetterOfGuaranteeCashCoverStatement($financialInstitutionId,$source,$letterOfGuaranteeFacilityId,$lgType,$company->id,$cancellationDate,0,0 , $cashCoverAmount ,$letterOfGuaranteeIssuance->getLgCurrency(),0,LetterOfGuaranteeIssuance::FOR_CANCELLATION);
-		$financialInstitutionAccount = FinancialInstitutionAccount::findByAccountNumber($letterOfGuaranteeIssuance->getCashCoverDeductedFromAccountNumber(),$company->id , $financialInstitutionId);
+		$financialInstitutionAccount = FinancialInstitutionAccount::find($letterOfGuaranteeIssuance->getCashCoverDeductedFromAccountId());
 		if($financialInstitutionAccount){
 			$financialInstitutionAccountId = $financialInstitutionAccount->id;
 			$debitCommentEn = CurrentAccountBankStatement::generateReturnLgCashCoverComment('en',$partnerName,$transactionName,$lgCode); ;
@@ -334,12 +337,12 @@ class LetterOfGuaranteeIssuanceController
 		$decreaseAmount = $request->get('amount',0);
 		
 		$cashCoverAmount = $letterOfGuaranteeIssuance->getCasCoverRate() /100  * $decreaseAmount ;
-		$letterOfGuaranteeFacility = $source == LetterOfGuaranteeIssuance::LG_FACILITY  ? FinancialInstitution::find($financialInstitutionId)->getCurrentAvailableLetterOfGuaranteeFacility() : null;
+		$letterOfGuaranteeFacility = $source == LetterOfGuaranteeIssuance::LG_FACILITY  ? $letterOfGuaranteeIssuance->letterOfGuaranteeFacility : null;
 		$letterOfGuaranteeFacilityId =  null ; 
 		$lgType =$letterOfGuaranteeIssuance->getLgType();
 		$currency = $letterOfGuaranteeIssuance->getLgCurrency();
 		$cdOrTdId = $letterOfGuaranteeIssuance->getCdOrTdId() ;
-		$financialInstitutionAccountId = FinancialInstitutionAccount::findByAccountNumber($letterOfGuaranteeIssuance->getCashCoverDeductedFromAccountNumber(),$company->id , $financialInstitutionId)->id;
+		$financialInstitutionAccountId = FinancialInstitutionAccount::find($letterOfGuaranteeIssuance->getCashCoverDeductedFromAccountId())->id;
 		
 		if($source == LetterOfGuaranteeIssuance::LG_FACILITY && is_null($letterOfGuaranteeFacility)){
 			return redirect()->back()->with('fail',__('No Available Letter Of Guarantee Facility Found !'));
@@ -380,7 +383,7 @@ class LetterOfGuaranteeIssuanceController
 
 		$cashCoverAmount = $letterOfGuaranteeIssuance->getCasCoverRate() /100  * $decreaseAmount ;
 	
-		$letterOfGuaranteeFacility = $source == LetterOfGuaranteeIssuance::LG_FACILITY  ? FinancialInstitution::find($financialInstitutionId)->getCurrentAvailableLetterOfGuaranteeFacility() : null;
+		$letterOfGuaranteeFacility = $source == LetterOfGuaranteeIssuance::LG_FACILITY  ?$letterOfGuaranteeIssuance->letterOfGuaranteeFacility : null;
 
 		if($source == LetterOfGuaranteeIssuance::LG_FACILITY && is_null($letterOfGuaranteeFacility)){
 			return redirect()->back()->with('fail',__('No Available Letter Of Guarantee Facility Found !'));

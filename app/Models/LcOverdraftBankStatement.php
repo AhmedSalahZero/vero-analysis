@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Helpers\HDate;
 use App\Models\LcSettlementInternalMoneyTransfer;
+use App\Traits\IsBankStatement;
 use App\Traits\Models\HasDeleteButTriggerChangeOnLastElement;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
@@ -12,7 +13,7 @@ use Illuminate\Support\Facades\DB;
 
 class LcOverdraftBankStatement extends Model
 {
-	use HasDeleteButTriggerChangeOnLastElement ;
+	use HasDeleteButTriggerChangeOnLastElement,IsBankStatement ;
 	protected $guarded =[
 		'id'
 	];
@@ -168,7 +169,12 @@ class LcOverdraftBankStatement extends Model
 		return $this->hasOne(LcOverdraftBankStatement::class,'money_payment_id','lc_issuance_id');
 	}
 
-	
+	public function getForeignKeyNamesThatUsedInFilter():array 
+	{
+		return [
+			'lc_issuance_id'
+		];
+	}	
 	
 	
 }

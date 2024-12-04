@@ -34,34 +34,16 @@
 @section('content')
 
 <div class="kt-portlet kt-portlet--tabs">
-    <div class="kt-portlet__head">
-        <div class="kt-portlet__head-toolbar justify-content-between flex-grow-1">
-            <ul class="nav nav-tabs nav-tabs-space-lg nav-tabs-line nav-tabs-bold nav-tabs-line-3x nav-tabs-line-brand" role="tablist">
-                <li class="nav-item">
-                    <a class="nav-link {{ !Request('active') || Request('active') == 'bank-accounts' ?'active':'' }}" 
-					{{-- data-toggle="tab" href="#bank-accounts" --}}
-					 href="{{ route('view.financial.institutions',['company'=>$company->id]) }}"
-					
-					 role="tab">
-                        <i class="fa fa-arrow-left"></i> {{ __('Back To Banks Table') }}
-                    </a>
-                </li>
-
-            </ul>
-            {{--
-            <a href="{{ route('create.certificates.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id]) }}" class="btn active-style btn-icon-sm align-self-center">
-            <i class="fas fa-plus"></i>
-            {{ __('New Record') }}
-            </a> --}}
-        </div>
-    </div>
+    <x-back-to-bank-header-btn
+	:create-permission-name="''" :create-route="''"
+	></x-back-to-bank-header-btn>
     <div style="padding-top:0 !important " class="kt-portlet__body">
         <div class="tab-content  kt-margin-t-20">
 
             <!--Begin:: Tab Content-->
             <div class="tab-pane {{ !Request('active') || Request('active') == 'bank-accounts' ?'active':'' }}" id="bank" role="tabpanel">
                 <div class="kt-portlet kt-portlet--mobile">
-					<x-table-title.with-one-date :filterDate="$filterDate"></x-table-title.with-one-date>
+                    <x-table-title.with-one-date :filterDate="$filterDate"></x-table-title.with-one-date>
                     <div class="kt-portlet__body">
 
                         <!--begin: Datatable -->
@@ -78,7 +60,7 @@
                             </thead>
                             <tbody>
                                 @foreach($allBankAccounts as $index=>$bankAccounts)
-								@foreach($bankAccounts as $bankAccount)
+                                @foreach($bankAccounts as $bankAccount)
                                 <tr>
                                     <td>
                                         {{ $index+1 }}
@@ -92,11 +74,11 @@
 
                                         <span style="overflow: visible; position: relative; width: 110px;">
                                             @if($bankAccount instanceof \App\Models\FinancialInstitutionAccount)
-											<a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.financial.institutions.account',['company'=>$company->id , 'financialInstitutionAccount'=>$bankAccount->id ]) }}"><i class="fa fa-pen-alt"></i></a>
-                                            
-											<a data-toggle="modal" data-target="#lock-or-unlock-financial-institution-bank-id-{{ $bankAccount->id }}" type="button" class="btn btn-secondary @if(!$bankAccount->isActive()) btn-outline-danger @else btn-outline-success @endif btn-icon" title="{{ $bankAccount->isActive() ? __('Lock') : __('Unlock') }}" href="#"><i class="fa @if(!$bankAccount->isActive()) fa-lock @else fa-unlock @endif"></i></a>
+                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.financial.institutions.account',['company'=>$company->id , 'financialInstitutionAccount'=>$bankAccount->id ]) }}"><i class="fa fa-pen-alt"></i></a>
+
+                                            <a data-toggle="modal" data-target="#lock-or-unlock-financial-institution-bank-id-{{ $bankAccount->id }}" type="button" class="btn btn-secondary @if(!$bankAccount->isActive()) btn-outline-danger @else btn-outline-success @endif btn-icon" title="{{ $bankAccount->isActive() ? __('Lock') : __('Unlock') }}" href="#"><i class="fa @if(!$bankAccount->isActive()) fa-lock @else fa-unlock @endif"></i></a>
                                             <a data-toggle="modal" data-target="#delete-financial-institution-bank-id-{{ $bankAccount->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
-                                             <div class="modal fade" id="lock-or-unlock-financial-institution-bank-id-{{ $bankAccount->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                            <div class="modal fade" id="lock-or-unlock-financial-institution-bank-id-{{ $bankAccount->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                                     <div class="modal-content">
                                                         <form action="{{ route('lock.or.unlock.financial.institutions.account',['company'=>$company->id,'financialInstitutionAccount'=>$bankAccount->id]) }}" method="post">
@@ -117,9 +99,9 @@
                                                     </div>
                                                 </div>
                                             </div>
-											@endif
-											
-											<div class="modal fade" id="delete-financial-institution-bank-id-{{ $bankAccount->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                            @endif
+
+                                            <div class="modal fade" id="delete-financial-institution-bank-id-{{ $bankAccount->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                                     <div class="modal-content">
                                                         <form action="{{ route('delete.financial.institutions.account',['company'=>$company->id,'financialInstitutionAccount'=>$bankAccount->id]) }}" method="post">

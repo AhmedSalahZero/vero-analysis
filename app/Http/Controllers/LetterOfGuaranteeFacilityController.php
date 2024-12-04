@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 use App\Enums\LgTypes;
 use App\Helpers\HArr;
 use App\Models\AccountType;
+use App\Models\CertificatesOfDeposit;
 use App\Models\Company;
 use App\Models\FinancialInstitution;
 use App\Models\LetterOfGuaranteeCashCoverStatement;
@@ -10,6 +11,7 @@ use App\Models\LetterOfGuaranteeFacility;
 use App\Models\LetterOfGuaranteeIssuance;
 use App\Models\LetterOfGuaranteeStatement;
 use App\Models\Partner;
+use App\Models\TimeOfDeposit;
 use App\Traits\GeneralFunctions;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
@@ -190,90 +192,161 @@ class LetterOfGuaranteeFacilityController
 		return redirect()->back()->with('success',__('Item Has Been Delete Successfully'));
 	}
 	public function updateOutstandingBalanceAndLimits(Request $request , Company $company ){
+		$lgIssuanceId =  $request->get('lgIssuanceId');
+		$letterOfGuaranteeIssuance = LetterOfGuaranteeIssuance::find($lgIssuanceId);
 		$financialInstitutionId = $request->get('financialInstitutionId') ;
 		$selectedLgType = $request->get('lgType');
 		$isBidBond = $selectedLgType == 'bid-bond'  ;
+		$cdOrTdFreeToUseAmount = 0 ;
+		// $totalCashCoverStatementEndBalance = 0 ;
+		$currencyName = null ;
 		$customersArr =   Partner::onlyCustomers()->onlyForCompany($company->id)
 		->when(!$isBidBond,function(Builder $builder){
 			$builder->onlyThatHaveContracts();
 		})
 		->pluck('name','id')
 		->toArray();
+	
 		$otherPartnerArr = Partner::onlyOtherPartners()->onlyForCompany($company->id)
 		->pluck('name','id')
 		->toArray();
 		$customerOrOtherPartnersArr = HArr::mergeTwoAssocArr($customersArr,$otherPartnerArr);
+		// $accountTypeId = $request->get('accountTypeId');
 		$currentSource = $request->get('source');
+		$cdOrTdAccountId = $request->get('cdOrTdAccountId');
+		$isLGFacilitySource = $currentSource == LetterOfGuaranteeIssuance::LG_FACILITY;
+		$isHundredPercentageSource = $currentSource == LetterOfGuaranteeIssuance::HUNDRED_PERCENTAGE_CASH_COVER;
+		$isCdSource = $currentSource == LetterOfGuaranteeIssuance::AGAINST_CD;
+		$isTdSource = $currentSource ==  LetterOfGuaranteeIssuance::AGAINST_TD;
+		$isCdOrTdSource = $currentSource == LetterOfGuaranteeIssuance::AGAINST_CD||$currentSource == LetterOfGuaranteeIssuance::AGAINST_TD;
+		$letterOfGuaranteeFacility = $request->has('letterOfGuaranteeFacilityId') ? LetterOfGuaranteeFacility::find($request->get('letterOfGuaranteeFacilityId')) : null;
+		$letterOfGuaranteeFacilityId = $letterOfGuaranteeFacility ? $letterOfGuaranteeFacility->id : 0 ;
 		
-		$currentLgOutstanding = 0 ;
+		// $accountType = AccountType::find($accountTypeId);
+		// $cdOrTdAccount = null;
+		if($isLGFacilitySource && $letterOfGuaranteeFacility){
+			$currencyName = $letterOfGuaranteeFacility->getCurrency();
+		}
+		if( $isCdSource && $cdOrTdAccountId){
+			
+		//	$currentSource = LetterOfGuaranteeIssuance::AGAINST_CD;
+			$certificateOfDeposit = CertificatesOfDeposit::find($cdOrTdAccountId);
+	
+			$currencyName = $certificateOfDeposit->getCurrency();
+			// $cdOrTdFreeToUseAmount = DB::table();
+		}
+		if( $isTdSource && $cdOrTdAccountId){
+		//	$currentSource = LetterOfGuaranteeIssuance::AGAINST_TD;
+			$timeOfDeposit = TimeOfDeposit::find($cdOrTdAccountId);
+			$currencyName = $timeOfDeposit->getCurrency();
+			// $cdOrTdFreeToUseAmount = 
+		}
+		if($isHundredPercentageSource){
+			$currencyName = $request->get('lgCurrency');
+		}
+		// dd($letterOfGuaranteeIssuance);
+		$currentLgTypeOutstanding = 0 ;
 		$financialInstitution = FinancialInstitution::find($financialInstitutionId);
 		if(!$financialInstitution){
 			return ;
 		}
 
-		$letterOfGuaranteeFacility = $request->has('letterOfGuaranteeFacilityId') ? LetterOfGuaranteeFacility::find($request->get('letterOfGuaranteeFacilityId')) :$financialInstitution->getCurrentAvailableLetterOfGuaranteeFacility() ;
-		if(is_null($letterOfGuaranteeFacility)){
-			return response()->json([
-				'limit'=>0 ,
-				'total_lg_outstanding_balance'=>0,
-				'total_room'=>0,
-				'current_lg_type_outstanding_balance'=>0,
-				'min_lg_commission_rate'=>0,
-				'lg_commission_rate'=>0 , 
-				'min_lg_cash_cover_rate_for_current_lg_type'=>0 ,
-				'min_lg_issuance_fees_for_current_lg_type'=>0,
-				'customers'=>[]
+		
+		// $financialInstitution->getCurrentAvailableLetterOfGuaranteeFacility() 
+		// if(is_null($letterOfGuaranteeFacility)){
+		// 	return response()->json([
+		// 		'limit'=>0 ,
+		// 		'total_lg_outstanding_balance'=>0,
+		// 		'total_room'=>0,
+		// 		'current_lg_type_outstanding_balance'=>0,
+		// 		'min_lg_commission_rate'=>0,
+		// 		'lg_commission_rate'=>0 , 
+		// 		'min_lg_cash_cover_rate_for_current_lg_type'=>0 ,
+		// 		'min_lg_issuance_fees_for_current_lg_type'=>0,
+		// 		'customers'=>[]
 	
-			]);
-		}
+		// 	]);
+		// }
+		
         $minLgCommissionRateForCurrentLgType  = $letterOfGuaranteeFacility  && $selectedLgType && $letterOfGuaranteeFacility->termAndConditionForLgType($selectedLgType) ? $letterOfGuaranteeFacility->termAndConditionForLgType($selectedLgType)->min_commission_fees : 0;
+		
         $lgCommissionRate  = $letterOfGuaranteeFacility && $selectedLgType  && $letterOfGuaranteeFacility->termAndConditionForLgType($selectedLgType) ? $letterOfGuaranteeFacility->termAndConditionForLgType($selectedLgType)->commission_rate : 0;
         $minLgCashCoverRateForCurrentLgType  = $letterOfGuaranteeFacility && $selectedLgType  && $letterOfGuaranteeFacility->termAndConditionForLgType($selectedLgType) ? $letterOfGuaranteeFacility->termAndConditionForLgType($selectedLgType)->cash_cover_rate : 0;
+		if($letterOfGuaranteeIssuance){
+			$minLgCashCoverRateForCurrentLgType = $letterOfGuaranteeIssuance->getCasCoverRate();
+			$lgCommissionRate = $letterOfGuaranteeIssuance->getLgCommissionRate();
+		}
         $minLgIssuanceFeesForCurrentLgType  = $letterOfGuaranteeFacility && $selectedLgType  && $letterOfGuaranteeFacility->termAndConditionForLgType($selectedLgType) ? $letterOfGuaranteeFacility->termAndConditionForLgType($selectedLgType)->issuance_fees : 0;
+		
 
-
-		/**
-		 * @var LetterOfGuaranteeFacility $letterOfGuaranteeFacility
-		 */
-	//	$letterOfGuaranteeFacility = $financialInstitution->getCurrentAvailableLetterOfGuaranteeFacility();
 		$totalLastOutstandingBalanceOfFourTypes = 0 ;
 		foreach(LgTypes::getAll() as $lgTypeId => $lgTypeNameFormatted){
-			$accountTypeId = $request->get('accountTypeId');
+		
+		
 			$letterOfGuaranteeStatement = DB::table('letter_of_guarantee_statements')
 			->where('company_id',$company->id)
-			->where('currency',getCurrentCompany()->getMainFunctionalCurrency())
+			->where('currency',$currencyName)
 			->where('financial_institution_id',$financialInstitutionId)
-			->where('lg_type',$lgTypeId)
-			->when($request->has('accountTypeId'),function( $builder) use ($request,$accountTypeId){
-				$accountType = AccountType::find($accountTypeId);
-				$currentSource = LetterOfGuaranteeIssuance::AGAINST_TD;
-				if($accountType->isCertificateOfDeposit()){
-					$currentSource = LetterOfGuaranteeIssuance::AGAINST_CD;
-				}
-				
+			->when($currentSource == LetterOfGuaranteeIssuance::LG_FACILITY , function( $query) use ($letterOfGuaranteeFacilityId){
+				$query->where('lg_facility_id',$letterOfGuaranteeFacilityId);
 			})
+			->when($isCdOrTdSource,function($query) use ($cdOrTdAccountId){
+				$query->where('cd_or_td_id',$cdOrTdAccountId);
+			})
+			->where('lg_type',$lgTypeId)
 			->where('source',$currentSource)
 			->orderByRaw('full_date desc')
 			->first();
-	
-			$letterOfGuaranteeStatementEndBalance = $letterOfGuaranteeStatement ? $letterOfGuaranteeStatement->end_balance : 0 ;
-			if($lgTypeId == $selectedLgType ){
-				$currentLgOutstanding = $letterOfGuaranteeStatementEndBalance;
+			
+			if($isCdOrTdSource){
+
+				// $cashCoverStatementForCdOrTdRaw = DB::table('letter_of_guarantee_cash_cover_statements')
+				// ->where('letter_of_guarantee_cash_cover_statements.source',LetterOfGuaranteeIssuance::LG_FACILITY)
+				// ->where('letter_of_guarantee_cash_cover_statements.company_id',$company->id)
+				// ->where('letter_of_guarantee_cash_cover_statements.currency',$currencyName)
+				// ->where('letter_of_guarantee_cash_cover_statements.lg_type',$lgTypeId)
+				// ->where('letter_of_guarantee_cash_cover_statements.financial_institution_id',$financialInstitutionId)
+				// ->join('letter_of_guarantee_issuances','letter_of_guarantee_issuances.id','=','letter_of_guarantee_cash_cover_statements.letter_of_guarantee_issuance_id')
+				// ->where('letter_of_guarantee_issuances.cash_cover_deducted_from_account_id',$cdOrTdAccountId)
+				// ->where('cash_cover_deducted_from_account_type',$accountTypeId)
+				// ->orderByRaw('full_date desc')
+				// ->select('letter_of_guarantee_cash_cover_statements.end_balance as cash_cover_statement_end_balance')
+				// ->get()
+				// ;
+				// if($lgTypeId == 'final-lgs'){
+				// 	dd($cashCoverStatementForCdOrTdRaw,$currencyName  , $lgTypeId,$financialInstitutionId,$cdOrTdAccountId,$accountTypeId);
+				// }
+				// $cashCoverStatementEndBalance = $cashCoverStatementForCdOrTdRaw ? $cashCoverStatementForCdOrTdRaw->end_balance : 0 ;
+				// $totalCashCoverStatementEndBalance += $cashCoverStatementEndBalance ;
 			}
+
+			$letterOfGuaranteeStatementEndBalance = $letterOfGuaranteeStatement ? $letterOfGuaranteeStatement->end_balance : 0 ;
+			
+			if($lgTypeId == $selectedLgType ){
+				$currentLgTypeOutstanding = $letterOfGuaranteeStatementEndBalance;
+			}
+			//$currentLgOutstanding = $letterOfGuaranteeStatementEndBalance;
+			
 			$totalLastOutstandingBalanceOfFourTypes += $letterOfGuaranteeStatementEndBalance;
 		}
+		
 		$limit = $letterOfGuaranteeFacility ? $letterOfGuaranteeFacility->getLimit() : 0;
+		// dd('total',$totalCashCoverStatementEndBalance);
+	
 		return response()->json([
 			'limit'=>number_format($limit) ,
 			'total_lg_outstanding_balance'=>number_format(abs($totalLastOutstandingBalanceOfFourTypes)),
 			'total_room'=>number_format($limit - abs($totalLastOutstandingBalanceOfFourTypes)),
-			'current_lg_type_outstanding_balance'=>number_format(abs($currentLgOutstanding)),
+			'currency_name'=>$currencyName,
+			// 'total_cash_cover_against_cd_or_td'=>$totalCashCoverStatementEndBalance,
+		//	'current_lg_outstanding_balance'=>number_format(abs($totalLastOutstandingBalanceOfFourTypes)),
+			'current_lg_type_outstanding_balance'=>number_format(abs($currentLgTypeOutstanding)),
             'min_lg_commission_rate'=>$minLgCommissionRateForCurrentLgType,
 			'lg_commission_rate'=>$lgCommissionRate , 
             'min_lg_cash_cover_rate_for_current_lg_type'=>$minLgCashCoverRateForCurrentLgType ,
             'min_lg_issuance_fees_for_current_lg_type'=>$minLgIssuanceFeesForCurrentLgType,
-			'customers'=>$customerOrOtherPartnersArr
-
+			'customers'=>$customerOrOtherPartnersArr,
+			'cd_or_td_free_to_use_amount'=>$cdOrTdFreeToUseAmount
 		]);
 	}
 	public function getLgFacilityBasedOnFinancialInstitution(Request $request){

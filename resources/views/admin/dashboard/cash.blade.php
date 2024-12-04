@@ -214,7 +214,7 @@
 											$currentModalId = 'certificate_of_deposits_details';
 										@endphp
 										<button class="btn btn-sm btn-brand btn-elevate btn-pill text-white" data-toggle="modal" data-target="#{{ $currentModalId.$currency }}">{{ __('Details') }}</button>
-										
+
 										@include('admin.dashboard.details_modal',['detailItems'=>$details[$name]['certificate_of_deposits'] ?? [] , 'modalId'=>$currentModalId ,'title'=>__('Certificate Of Deposits Details')])
 									
 										

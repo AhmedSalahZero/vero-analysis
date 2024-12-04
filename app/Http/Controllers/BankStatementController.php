@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\HHelpers;
 use App\Models\AccountType;
 use App\Models\CleanOverdraft;
 use App\Models\Company;
@@ -185,10 +186,8 @@ public function updateCommissionFees(Company $company,Request $request){
 	$credit = number_unformat($request->get('credit'));
 	$date = Carbon::make($request->get('date'))->format('Y-m-d');
 	$fullModelClass = 'App\Models\\'.$statementModelName;
-	$fullModelClass::find($statementId)->update([
-		'date'=>$date,
-		'credit'=>$credit
-	]);
+	$bankStatementRecord = $fullModelClass::find($statementId) ;
+	$bankStatementRecord->handleFullDateAfterDateEdit($date,0,$credit);
 	return redirect()->back()->with('success',__('Data Updated Successfully'));
 }
 }

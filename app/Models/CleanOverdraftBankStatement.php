@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Helpers\HDate;
+use App\Traits\IsBankStatement;
+use App\Traits\Models\HasDeleteButTriggerChangeOnLastElement;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -10,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 
 class CleanOverdraftBankStatement extends Model
 {
-	
+	use IsBankStatement,HasDeleteButTriggerChangeOnLastElement;
 	protected $guarded =[
 		'id'
 	];
@@ -164,5 +166,14 @@ class CleanOverdraftBankStatement extends Model
 	{
 		return $this->belongsTo(InternalMoneyTransfer::class,'internal_money_transfer_id','id');
 	}
-	
+	/**
+	 * * دول اسماء العواميد اللي بنفرق باستخدامهم بين كل رو والتاني في الحسابات في التريجر
+	 * * يعني مثلا لما اجي اجيب العنصر اللي قبلي هجيبه بناء علي انهي شروط 
+	 */
+	public function getForeignKeyNamesThatUsedInFilter():array 
+	{
+		return [
+			'clean_overdraft_id'
+		];
+	}
 }

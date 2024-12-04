@@ -104,14 +104,14 @@ class LetterOfCreditIssuanceController
 		if($source == LetterOfCreditIssuance::AGAINST_CD){
 			$cdOrTdAccountTypes = AccountType::onlyCdAccounts()->get();
 			if($letterOfCreditIssuance){
-				$currentCertificateOfDeposit = CertificatesOfDeposit::findByAccountNumber($letterOfCreditIssuance->cd_or_td_account_number,$company->id);
+				$currentCertificateOfDeposit = CertificatesOfDeposit::find($letterOfCreditIssuance->cd_or_td_id);
 				$tdOrCdCurrencyName = $currentCertificateOfDeposit->getCurrency();
 			}
 		}
 		elseif($source == LetterOfCreditIssuance::AGAINST_TD){
 			$cdOrTdAccountTypes = AccountType::onlyTdAccounts()->get();
 			if($letterOfCreditIssuance){
-				$currentTimeOfDeposit = TimeOfDeposit::findByAccountNumber($letterOfCreditIssuance->cd_or_td_account_number,$company->id);
+				$currentTimeOfDeposit = TimeOfDeposit::find($letterOfCreditIssuance->cd_or_td_id);
 				$tdOrCdCurrencyName = $currentTimeOfDeposit->getCurrency();
 				
 			}
@@ -160,17 +160,17 @@ class LetterOfCreditIssuanceController
 		$issuanceDate = $request->get('issuance_date');
 		$lcAmount = $request->get('lc_amount',0);
 		$currency = $request->get('lc_currency',0);
-		$cdOrTdAccountNumber = $request->get('cd_or_td_account_number');
+		$cdOrTdId = $request->get('cd_or_td_id');
 		$cdOrTdAccountTypeId = $request->get('cd_or_td_account_type_id');
 		$accountType = AccountType::find($cdOrTdAccountTypeId);
 		$cdOrTdId = 0 ;
 		$cdOrTdAccount = null ;
 		if($accountType && $accountType->isCertificateOfDeposit()){
-			$cdOrTdAccount = CertificatesOfDeposit::findByAccountNumber($cdOrTdAccountNumber , $company->id ) ;
+			$cdOrTdAccount = CertificatesOfDeposit::find($cdOrTdId ) ;
 			$cdOrTdId = $cdOrTdAccount->id;
 		}
 		elseif($accountType && $accountType->isTimeOfDeposit()){
-			$cdOrTdAccount = TimeOfDeposit::findByAccountNumber($cdOrTdAccountNumber,$company->id ) ;
+			$cdOrTdAccount = TimeOfDeposit::find($cdOrTdId ) ;
 			$cdOrTdId = $cdOrTdAccount->id;
 		}
 		$lcCashCoverOrCdOrTdCurrency = $model->getLcCashCoverCurrency() ?: $cdOrTdAccount->getCurrency();
@@ -179,7 +179,7 @@ class LetterOfCreditIssuanceController
 		$issuanceFees = $request->get('issuance_fees',0);
 		$lcAmountInMainCurrency = $model->getLcAmountInMainCurrency();
 		$maxLcCommissionAmount = max($minLcCommissionAmount ,$lcCommissionAmount );
-		$financialInstitutionAccountId = FinancialInstitutionAccount::findByAccountNumber($request->get('cash_cover_deducted_from_account_number'),$company->id , $financialInstitutionId)->id;
+		$financialInstitutionAccountId = FinancialInstitutionAccount::find($request->get('cash_cover_deducted_from_account_id'))->id;
 		$model->storeCurrentAccountCreditBankStatement($issuanceDate,$cashCoverAmount , $financialInstitutionAccountId,0,1,__('Cash Cover [ :lcType ] Transaction Name [ :transactionName ]'  ,['lcType'=>__($lcType,[],'en'),'transactionName'=>$transactionName],'en') , __('Cash Cover [ :lcType ] Transaction Name [ :transactionName ]'  ,['lcType'=>__($lcType,[],'ar'),'transactionName'=>$transactionName],'ar'));
 		$model->storeCurrentAccountCreditBankStatement($issuanceDate,$issuanceFees , $financialInstitutionAccountId,0,1,__('Issuance Fees [ :lcType ] Transaction Name [ :transactionName ]'  ,['lcType'=>__($lcType,[],'en'),'transactionName'=>$transactionName],'en') , __('Issuance Fees [ :lcType ] Transaction Name [ :transactionName ]'  ,['lcType'=>__($lcType,[],'ar'),'transactionName'=>$transactionName],'ar'));
 		$model->handleLetterOfCreditStatement($financialInstitutionId,$source,$letterOfCreditFacilityId , $lcType,$company->id , $issuanceDate ,0 ,0,$lcAmountInMainCurrency,$lcCashCoverOrCdOrTdCurrency,0,$cdOrTdId,'credit-lc-amount');
@@ -287,7 +287,6 @@ class LetterOfCreditIssuanceController
 		$letterOfCreditCurrency = $source == LetterOfCreditIssuance::AGAINST_TD || $source == LetterOfCreditIssuance::AGAINST_CD ? $letterOfCreditIssuance->getTdOrCdCurrency($source,$company->id) : $letterOfCreditIssuance->getLcCashCoverCurrency() ;
 		$letterOfCreditIssuance->handleLetterOfCreditStatement($financialInstitutionId,$source,$letterOfCreditFacilityId,$lcType,$company->id,$paymentDate,0,$lcAmountInMainCurrency , 0,$letterOfCreditCurrency,0,$letterOfCreditIssuance->getCdOrTdId(),LetterOfCreditIssuance::FOR_PAID);
 		$letterOfCreditIssuance->handleLetterOfCreditCashCoverStatement($financialInstitutionId,$source,$letterOfCreditFacilityId,$lcType,$company->id,$paymentDate,0,0 , $cashCoverAmount ,$letterOfCreditIssuance->getLcCurrency(),0,LetterOfCreditIssuance::FOR_PAID);
-		// $financialInstitutionAccountId = FinancialInstitutionAccount::findByAccountNumber($letterOfCreditIssuance->getCashCoverDeductedFromAccountNumber(),$company->id , $financialInstitutionId)->id;
 		if($source != LetterOfCreditIssuance::HUNDRED_PERCENTAGE_CASH_COVER){
 			$letterOfCreditIssuance->handleLcCreditBankStatement('credit',$paymentDate,$diffBetweenLcAmountAndCashCover,$source);
 		}
@@ -344,9 +343,9 @@ class LetterOfCreditIssuanceController
 		 */
 		$date = Carbon::make($request->input('date.'.$type))->format('Y-m-d') ;
 		$amount = $request->input('amount.'.$type,0);
-		$accountNumber = $letterOfCreditIssuance->getCashCoverDeductedFromAccountNumber();
+		$accountId = $letterOfCreditIssuance->getCashCoverDeductedFromAccountId();
 		$financialInstitutionId = $letterOfCreditIssuance->getFinancialInstitutionId() ;
-		$financialInstitutionAccount = FinancialInstitutionAccount::findByAccountNumber($accountNumber , $company->id , $financialInstitutionId);
+		$financialInstitutionAccount = FinancialInstitutionAccount::find($accountId);
 		$financialInstitutionAccountId =$financialInstitutionAccount->id ; 
 		
 		$lcIssuanceExpense = $letterOfCreditIssuance->expenses()->create($this->getLcIssuanceExpenseData($request,$company,$type));

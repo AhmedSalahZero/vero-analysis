@@ -3254,6 +3254,32 @@ function getPermissions(array $systemsNames  = []):array
 			'group'=>'balance report',
 			'view-name'=>'view suppliers'
         ],
+		
+		
+		[
+            'name'=>'create letter of guarantee facility',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'letter of guarantee facility',
+			'view-name'=>'create'
+        ],
+		[
+            'name'=>'update letter of guarantee facility',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'letter of guarantee facility',
+			'view-name'=>'update'
+        ],
+		
+		[
+            'name'=>'delete letter of guarantee facility',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'letter of guarantee facility',
+			'view-name'=>'delete'
+        ],
+		
+		
 		[
             'name'=>'view letter of guarantee issuance',
 			'systems'=>[CASH_VERO],

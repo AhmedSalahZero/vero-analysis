@@ -34,27 +34,8 @@
 @section('content')
 
 <div class="kt-portlet kt-portlet--tabs">
-    <div class="kt-portlet__head">
-        <div class="kt-portlet__head-toolbar justify-content-between flex-grow-1">
-            <ul class="nav nav-tabs nav-tabs-space-lg nav-tabs-line nav-tabs-bold nav-tabs-line-3x nav-tabs-line-brand" role="tablist">
-                <li class="nav-item">
-                    <a class="nav-link {{ !Request('active') || Request('active') == 'fully-secured-over-draft' ?'active':'' }}" data-toggle="tab" href="#fully-secured-over-draft" role="tab">
-                        <i class="fa fa-money-check-alt"></i> {{ __('Fully Secured Overdraft Table') }}
-                    </a>
-                </li>
-                
-            </ul>
-			@if(hasAuthFor('create fully secured overdraft'))
-           <div class="flex-tabs">
-		    <a href="{{ route('create.fully.secured.overdraft',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id]) }}" class="btn  active-style btn-icon-sm align-self-center">
-                <i class="fas fa-plus"></i>
-                {{ __('New Record') }}
-            </a>
-		   </div>
-		   @endif 
-     
-        </div>
-    </div>
+<x-back-to-bank-header-btn :create-permission-name="'create fully secured overdraft'" :create-route="route('create.fully.secured.overdraft',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id])"></x-back-to-bank-header-btn>
+	
     <div class="kt-portlet__body">
         <div class="tab-content  kt-margin-t-20">
 

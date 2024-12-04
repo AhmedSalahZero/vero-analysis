@@ -34,27 +34,7 @@
 @section('content')
 
 <div class="kt-portlet kt-portlet--tabs">
-    <div class="kt-portlet__head">
-        <div class="kt-portlet__head-toolbar justify-content-between flex-grow-1">
-            <ul class="nav nav-tabs nav-tabs-space-lg nav-tabs-line nav-tabs-bold nav-tabs-line-3x nav-tabs-line-brand" role="tablist">
-                <li class="nav-item">
-                    <a class="nav-link {{ !Request('active') || Request('active') == 'overdraft-against-commercial-paper' ?'active':'' }}" data-toggle="tab" href="#overdraft-against-commercial-paper" role="tab">
-                        <i class="fa fa-money-check-alt"></i> {{ __('Overdraft Against Commercial Paper Table') }}
-                    </a>
-                </li>
-                
-            </ul>
-		@if(hasAuthFor('view overdraft against commercial paper'))
-            <div class="flex-tabs">
-			<a href="{{ route('create.overdraft.against.commercial.paper',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id]) }}" class="btn  active-style btn-icon-sm align-self-center">
-                <i class="fas fa-plus"></i>
-                {{ __('New Record') }}
-            </a>
-           
-			</div>
-			@endif 
-        </div>
-    </div>
+  <x-back-to-bank-header-btn :create-permission-name="'view overdraft against commercial paper'" :create-route="route('create.overdraft.against.commercial.paper',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id])"></x-back-to-bank-header-btn>
     <div class="kt-portlet__body">
         <div class="tab-content  kt-margin-t-20">
 

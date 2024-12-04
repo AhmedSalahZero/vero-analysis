@@ -4,17 +4,15 @@ namespace App\Providers;
 
 
 use App\Http\Controllers\ExportTable;
+use App\Models\CleanOverdraftBankStatement;
 use App\Models\Company;
+use App\Models\FullySecuredOverdraft;
 use App\Models\Section;
+use App\Models\TimeOfDeposit;
 use App\Models\User;
-use Artisan;
 use Auth;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Pagination\Paginator;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use PhpOffice\PhpSpreadsheet\Shared\Font;
@@ -34,6 +32,8 @@ class AppServiceProvider extends ServiceProvider
 	public function register()
 	{
 	
+		
+	
 		if ($this->app->isLocal()) {
 			$this->app->register(\Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class);
 		}
@@ -43,7 +43,7 @@ class AppServiceProvider extends ServiceProvider
 	
 	public function boot()
 	{
-
+		
 		ini_set('max_execution_time', 6000); //300 seconds = 5 minutes
 		\PhpOffice\PhpSpreadsheet\Shared\Font::setAutoSizeMethod(Font::AUTOSIZE_METHOD_EXACT);
 		require_once storage_path('dompdf/vendor/autoload.php');

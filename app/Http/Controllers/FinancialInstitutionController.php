@@ -239,7 +239,6 @@ class FinancialInstitutionController
 			'company'=>$company,
 			'filterDate'=>now()->format('Y-m-d'),
 		]);
-		// return view();
 	}
 
 	public function getInterestRateForFinancialInstitution(Company $company , Request $request)

@@ -139,7 +139,7 @@ class FinancialInstitutionAccount extends Model
 	public static function getAllCurrentAccountCurrenciesForCompany(int $companyId,array $exceptCurrenciesNames = []){
 		return HArr::removeKeyFromArrayByValue(self::where('company_id',$companyId)->pluck('currency','currency')->toArray(),$exceptCurrenciesNames);
 	}
-	public static function getAllAccountNumberForCurrency($companyId , $currencyName,$financialInstitutionId , $onlyActiveAccounts = true ):array
+	public static function getAllAccountNumberForCurrency($companyId , $currencyName,$financialInstitutionId , string $keyName = 'account_number' , $onlyActiveAccounts = true ):array
 	{
 		$allAccounts = Request()->has('allAccounts') &&  Request()->get('allAccounts') === 'true' ;
 		return self::where('company_id',$companyId)
@@ -147,7 +147,7 @@ class FinancialInstitutionAccount extends Model
 			$builder->where('financial_institution_accounts.is_active',$onlyActiveAccounts);
 		})
 		->where('financial_institution_id',$financialInstitutionId)
-		->where('currency',$currencyName)->pluck('account_number','account_number')->toArray();		
+		->where('currency',$currencyName)->pluck('account_number',$keyName)->toArray();		
 	}
 	
 	public static function findByAccountNumber($accountNumber,int $companyId,int $financialInstitutionId)
@@ -170,7 +170,6 @@ class FinancialInstitutionAccount extends Model
  
 	public static function getLastAmountFormatted(int $companyId , string $currencyName , int $financialInstitutionId , $accountNumber ) 
 	{
-		
 		$row = 	DB::table(self::getBankStatementTableName())
                 ->join('financial_institution_accounts', 'financial_institution_account_id', '=', 'financial_institution_accounts.id')
                 ->where('financial_institution_accounts.company_id', $companyId)
@@ -180,7 +179,7 @@ class FinancialInstitutionAccount extends Model
                 ->orderBy(self::getBankStatementTableName().'.full_date', 'desc')
                 ->limit(1)
                 ->first();
-		return $row ? number_format($row->end_balance) : 0;
+		return $row ? number_format($row->end_balance,2) : 0;
 	}	
 	public static function getBankStatementTableName()
 	{

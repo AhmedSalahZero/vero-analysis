@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\LcTypes;
 use App\Helpers\HDate;
+use App\Traits\IsBankStatement;
 use App\Traits\Models\HasDeleteButTriggerChangeOnLastElement;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder;
@@ -12,7 +13,7 @@ use Illuminate\Support\Facades\DB;
 
 class LetterOfCreditStatement extends Model
 {
-	use HasDeleteButTriggerChangeOnLastElement;
+	use HasDeleteButTriggerChangeOnLastElement,IsBankStatement;
     protected $guarded = [
         'id'
     ];
@@ -339,5 +340,15 @@ class LetterOfCreditStatement extends Model
 		}
 		return abs($totalLastCashCoverOfFourTypes) ; 
 	}
+	public function getForeignKeyNamesThatUsedInFilter():array 
+	{
+		return [
+			'lc_facility_id',
+			'cd_or_td_id',
+			'financial_institution_id',
+			'source',
+			'lc_type'
+		];
+	}		
 	
 }

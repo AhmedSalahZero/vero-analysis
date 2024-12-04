@@ -39,6 +39,8 @@
 							$totalInMainFunctionalCurrency = 0 ;
 
                             @endphp
+							
+						
                             @foreach($detailItems as $detailItem)
 
 

@@ -32,6 +32,7 @@ trait HasLetterOfGuaranteeStatements
 	 */
 	public function handleLetterOfGuaranteeStatement(int $financialInstitutionId , string $source  , ?int $lgFacilityId,string $lgType,$companyId,string $date,$beginningBalance,$debit , $credit,string $currencyName , $lgAdvancedPaymentId = 0 , $cdOrTdId = 0 , $type =null,$commentEn = null, $commentAr=null)
 	{
+		$cdOrTdId = is_null($cdOrTdId) ? 0 : $cdOrTdId;
 		$data = $this->generateLetterOfGuaranteeData($financialInstitutionId , $source  , $lgFacilityId, $lgType,$companyId,$date,$beginningBalance,$debit , $credit,$currencyName ,$lgAdvancedPaymentId, $cdOrTdId , $type,$commentEn,$commentAr) ;
 		$this->letterOfGuaranteeStatements()->create($data);
 

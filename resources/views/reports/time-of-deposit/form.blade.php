@@ -56,7 +56,9 @@
 </style>
 @endsection
 @section('sub-header')
-{{ __('Time Of Deposit Form') }}
+
+{{ __('Time Of Deposit Form') }} 
+[{{ $financialInstitution->getName() }} ]
 @endsection
 @section('content')
 <div class="row">

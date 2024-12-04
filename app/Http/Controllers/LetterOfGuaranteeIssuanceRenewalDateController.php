@@ -36,7 +36,7 @@ class LetterOfGuaranteeIssuanceRenewalDateController
 		$financialInstitution = $letterOfGuaranteeIssuance->financialInstitutionBank;
 		$lgType = $letterOfGuaranteeIssuance->getLgType();
 		$transactionName = $letterOfGuaranteeIssuance->getTransactionName();
-		$financialInstitutionAccount = FinancialInstitutionAccount::findByAccountNumber($letterOfGuaranteeIssuance->lg_fees_and_commission_account_number,$company->id , $financialInstitution->id);
+		$financialInstitutionAccount = FinancialInstitutionAccount::find($letterOfGuaranteeIssuance->lg_fees_and_commission_account_id);
 	
 		if(!$letterOfGuaranteeIssuance->renewalDateHistories->count()){
 			/**
@@ -80,7 +80,7 @@ class LetterOfGuaranteeIssuanceRenewalDateController
 		$lgCommissionAmount = $letterOfGuaranteeIssuance->getLgCommissionAmount();
 		$maxLgCommissionAmount = max($minLgCommissionAmount ,$lgCommissionAmount );
 		$financialInstitutionId = $letterOfGuaranteeIssuance->getFinancialInstitutionBankId();
-		$financialInstitutionAccountForFeesAndCommission = FinancialInstitutionAccount::findByAccountNumber($letterOfGuaranteeIssuance->getLgFeesAndCommissionAccountNumber(),$company->id , $financialInstitutionId);
+		$financialInstitutionAccountForFeesAndCommission = FinancialInstitutionAccount::find($letterOfGuaranteeIssuance->getLgFeesAndCommissionAccountId());
 		$financialInstitutionAccountIdForFeesAndCommission = $financialInstitutionAccountForFeesAndCommission->id;
 		$openingBalanceDateOfCurrentAccount = $financialInstitutionAccountForFeesAndCommission->getOpeningBalanceDate();
 		$isOpeningBalance = $letterOfGuaranteeIssuance->isOpeningBalance();
@@ -111,7 +111,7 @@ class LetterOfGuaranteeIssuanceRenewalDateController
 		CurrentAccountBankStatement::deleteButTriggerChangeOnLastElement($LgRenewalDateHistory->commissionCurrentBankStatements()->withoutGlobalScope('only_active')->get());
 		$transactionName = $letterOfGuaranteeIssuance->getTransactionName();
 		$lgType = $letterOfGuaranteeIssuance->getLgType();
-		$financialInstitutionAccount = FinancialInstitutionAccount::findByAccountNumber($letterOfGuaranteeIssuance->lg_fees_and_commission_account_number,$company->id , $financialInstitution->id);
+		$financialInstitutionAccount = FinancialInstitutionAccount::find($letterOfGuaranteeIssuance->lg_fees_and_commission_account_id);
 		$financialInstitutionAccountOpeningBalance = $financialInstitutionAccount->getOpeningBalanceDate();
 		$this->storeCommissionToCreditCurrentAccountBankStatement($LgRenewalDateHistory,$letterOfGuaranteeIssuance,$company,$expiryDate,$renewalDate,$transactionName,$lgType);
 		if($renewalFeesCurrentAccountBankStatement){

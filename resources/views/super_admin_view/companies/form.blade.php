@@ -107,7 +107,7 @@
                     <div class="form-group row col-12">
                  
 
-  <div class="col-3">
+ 					 <div class="col-3">
                             <label>{{__('Database URL')  }}</label>
                             <div class="kt-input-icon">
                                 <input type="text" name="oddo_db_url" value="{{@$row['oddo_db_url']}}" class="form-control" placeholder="{{__('Oddo  Database URL')}}" >

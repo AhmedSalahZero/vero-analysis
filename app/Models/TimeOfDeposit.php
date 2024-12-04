@@ -226,20 +226,23 @@ class TimeOfDeposit extends Model
 		$endDate = $this->getEndDate() ;
 		return  $endDate && Carbon::make($endDate)->greaterThanOrEqualTo(now());
 	}
-    public static function getAllAccountNumberForCurrency($companyId , $currencyName,$financialInstitutionId):array
+    public static function getAllAccountNumberForCurrency($companyId , $currencyName,$financialInstitutionId,$keyName='account_number'):array
 	{
 		return self::where('company_id',$companyId)->where('currency',$currencyName)
 		->where('financial_institution_id',$financialInstitutionId)
 		->where('status',TimeOfDeposit::RUNNING)
-		->pluck('account_number','account_number')->toArray();
+		->pluck('account_number',$keyName)->toArray();
 	}
+	
 	public static function findByAccountNumber( string $accountNumber,int $companyId)
 	{
 		return self::where('company_id',$companyId)->where('account_number',$accountNumber)->first();
 	} 
 	public function fullySecuredCleanOverdraft()
 	{
-		return $this->hasOne(FullySecuredOverdraft::class,'account_number','cd_or_td_account_id');
+		$tdAccount = AccountType::onlyTdAccounts()->first();
+		return $this->hasOne(FullySecuredOverdraft::class,'cd_or_td_account_id','id')
+		->where('cd_or_td_account_type_id',$tdAccount->id);
 	}
 	public function getType()
 	{
@@ -256,7 +259,7 @@ class TimeOfDeposit extends Model
 	public function letterOfGuaranteeIssuance()
 	{
 		$tdAccount = AccountType::onlyTdAccounts()->first();
-		return $this->hasOne(LetterOfGuaranteeIssuance::class,'cash_cover_deducted_from_account_number','account_number')
+		return $this->hasOne(LetterOfGuaranteeIssuance::class,'cash_cover_deducted_from_account_id','id')
 		->where('cash_cover_deducted_from_account_type',$tdAccount->id);
 	}
 	public function renewalDateHistories():HasMany

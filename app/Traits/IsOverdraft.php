@@ -92,13 +92,19 @@ trait IsOverdraft
 	{
 		return $this->hasMany(LendingInformation::class , 'overdraft_against_commercial_paper_id','id');
 	}
-	public static function getAllAccountNumberForCurrency($companyId , $currencyName,$financialInstitutionId):array
+	public static function getAllAccountNumberForCurrency($companyId , $currencyName,$financialInstitutionId,$keyName='account_number'):array
 	{
 		return self::where('company_id',$companyId)->where('currency',$currencyName)
 		->where('financial_institution_id',$financialInstitutionId)
-		->pluck('account_number','account_number')->toArray();		
+		->pluck('account_number',$keyName)->toArray();		
 	}
 	
+	public static function getAllAccountIdForCurrency($companyId , $currencyName,$financialInstitutionId):array
+	{
+		return self::where('company_id',$companyId)->where('currency',$currencyName)
+		->where('financial_institution_id',$financialInstitutionId)
+		->pluck('account_number','id')->toArray();		
+	}
 	public static function findByAccountNumber($accountNumber,int $companyId,int $financialInstitutionId)
 	{
 		return self::where('company_id',$companyId)

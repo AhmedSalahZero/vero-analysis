@@ -35,12 +35,15 @@ class Branch extends Model
 			'name'=>'Head Office'
 		]);
 	}
-	public function getCurrentEndBalance(int $companyId,string $currency ):float
+	public function getCurrentEndBalance(int $companyId,string $currency,$deliveryDate = null ):float
 	{
 		$cashInSafeStatement = DB::table('cash_in_safe_statements')
 		->where('company_id',$companyId)
 		->where('currency',$currency)
 		->where('branch_id',$this->id)
+		->when($deliveryDate , function($q) use($deliveryDate){
+			$q->where('date','<=',$deliveryDate);
+		})
 		->orderByRaw('full_date desc , created_at desc')
 		->first();
 		if(!$cashInSafeStatement){

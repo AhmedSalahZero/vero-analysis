@@ -3,7 +3,7 @@
 <?php $attributes = $attributes->exceptProps([
 	'label',
 	'type' ,
-	'name',
+	'name'=>null,
 	'required'=>$required??false ,
 	'model'=>$model,
 	'readonly'=>false,
@@ -17,7 +17,7 @@
 <?php foreach (array_filter(([
 	'label',
 	'type' ,
-	'name',
+	'name'=>null,
 	'required'=>$required??false ,
 	'model'=>$model,
 	'readonly'=>false,
@@ -53,6 +53,10 @@
 									<?php if($required): ?>
 									required
 									<?php endif; ?>
-									 <?php if($readonly): ?> readonly <?php endif; ?> <?php if($id): ?> id="<?php echo e($id); ?>" <?php endif; ?> name="<?php echo e($name); ?>"  value="<?php echo e($value); ?>" type="<?php echo e($type); ?>" class="form-control <?php echo e($class); ?>" placeholder="<?php echo e($placeholder); ?>">
+									 <?php if($readonly): ?> readonly <?php endif; ?> <?php if($id): ?> id="<?php echo e($id); ?>" <?php endif; ?> 
+									 <?php if($name): ?>
+									 name="<?php echo e($name); ?>"
+									 <?php endif; ?>
+									   value="<?php echo e($value); ?>" type="<?php echo e($type); ?>" class="form-control <?php echo e($class); ?>" placeholder="<?php echo e($placeholder); ?>">
                                 </div>
 <?php /**PATH /media/salah/Software/projects/veroo/resources/views/components/form/input.blade.php ENDPATH**/ ?>

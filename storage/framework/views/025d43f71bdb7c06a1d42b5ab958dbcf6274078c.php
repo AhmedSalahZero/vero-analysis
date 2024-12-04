@@ -106,7 +106,8 @@ use App\Models\LetterOfGuaranteeIssuance;
                                         </label>
 		
                                         <div class="input-group">
-                                            <select name="category_name" class="form-control repeater-select">
+                                            <select name="category_name" required class="form-control repeater-select">
+											<option value=""><?php echo e(__('Select')); ?></option>
                                                 <?php $__currentLoopData = LetterOfGuaranteeIssuance::getCategories(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $title): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                 <option value="<?php echo e($key); ?>" <?php if(isset($model) && $model->getLgCategoryName() == $key ): ?> selected <?php endif; ?> > <?php echo e($title); ?></option>
                                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -135,29 +136,43 @@ use App\Models\LetterOfGuaranteeIssuance;
 
                                             <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                         </label>
-                                        <select js-when-change-trigger-change-account-type change-financial-instutition-js id="financial-instutition-id" js-update-outstanding-balance-and-limits js-when-change-trigger-change-account-type data-financial-institution-id required name="financial_institution_id" class="form-control">
+                                        <select required js-when-change-trigger-change-account-type change-financial-instutition-js id="financial-instutition-id" js-update-outstanding-balance-and-limits js-when-change-trigger-change-account-type data-financial-institution-id required name="financial_institution_id" class="form-control">
+										<option value=""><?php echo e(__('Select')); ?></option>
                                             <?php $__currentLoopData = $financialInstitutionBanks; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index=>$financialInstitutionBank): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                             <option value="<?php echo e($financialInstitutionBank->id); ?>" <?php echo e(isset($model) && $model->getFinancialInstitutionBankId() == $financialInstitutionBank->id ? 'selected':''); ?>><?php echo e($financialInstitutionBank->getName()); ?></option>
                                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                         </select>
                                     </div>
 
+  <div class="col-md-3">
+                                        <label><?php echo e(__('LG Currency')); ?>
 
-                                    <div class="col-md-4">
+                                            <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+                                        </label>
+                                        <div class="input-group">
+                                            <select name="lg_currency" class="form-control current-currency" js-when-change-trigger-change-account-type>
+                                                <option selected><?php echo e(__('Select')); ?></option>
+                                                <?php $__currentLoopData = getCurrencies(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $currencyName => $currencyValue): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                <option value="<?php echo e($currencyName); ?>" <?php if(isset($model) && $model->getLgCurrency() == $currencyName ): ?> selected <?php elseif($currencyName == 'EGP' ): ?> selected <?php endif; ?> > <?php echo e($currencyValue); ?></option>
+                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
                                         <label> <?php echo e(__('LG Type')); ?>
 
                                             <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                         </label>
 
-                                        <select js-update-outstanding-balance-and-limits id="lg-type" name="lg_type" class="form-control js-toggle-bond">
-                                            
+                                        <select js-update-outstanding-balance-and-limits required id="lg-type" name="lg_type" class="form-control js-toggle-bond">
+										<option value=""><?php echo e(__('Select')); ?></option>
                                             <?php $__currentLoopData = getLgTypes(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $name => $nameFormatted): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                             <option value="<?php echo e($name); ?>" <?php if(isset($model) && $model->getLgType() == $name ): ?> selected <?php endif; ?> > <?php echo e($nameFormatted); ?></option>
                                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                         </select>
                                     </div>
 
-                                    <div class="col-md-4 ">
+                                    <div class="col-md-3 ">
                                          <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.input','data' => ['id' => 'current-lg-type-outstanding-balance-id','defaultValue' => 0,'model' => $model??null,'label' => __('LG Type Outstanding Balance'),'type' => 'text','placeholder' => __('LG Type Outstanding Balance'),'name' => 'lg_type_outstanding_balance','class' => 'only-greater-than-zero-allowed','required' => true]]); ?>
 <?php $component->withName('form.input'); ?>
@@ -170,7 +185,7 @@ use App\Models\LetterOfGuaranteeIssuance;
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                          <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.input','data' => ['model' => $model??null,'label' => __('LG Code'),'type' => 'text','placeholder' => __('LG Code'),'name' => 'lg_code','class' => '','required' => true]]); ?>
 <?php $component->withName('form.input'); ?>
@@ -416,20 +431,7 @@ use App\Models\LetterOfGuaranteeIssuance;
 <?php endif; ?> 
                                     </div>
 
-                                    <div class="col-md-3">
-                                        <label><?php echo e(__('LG Currency')); ?>
-
-                                            <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
-                                        </label>
-                                        <div class="input-group">
-                                            <select name="lg_currency" class="form-control current-currency" js-when-change-trigger-change-account-type>
-                                                <option selected><?php echo e(__('Select')); ?></option>
-                                                <?php $__currentLoopData = getCurrencies(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $currencyName => $currencyValue): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                <option value="<?php echo e($currencyName); ?>" <?php if(isset($model) && $model->getLgCurrency() == $currencyName ): ?> selected <?php elseif($currencyName == 'EGP' ): ?> selected <?php endif; ?> > <?php echo e($currencyValue); ?></option>
-                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                            </select>
-                                        </div>
-                                    </div>
+                                  
 
                                     <div class="col-md-3">
                                          <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
@@ -546,7 +548,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                                         </label>
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
-                                                <select name="lg_fees_and_commission_account_type" class="form-control js-update-account-number-based-on-account-type ">
+                                                <select name="lg_fees_and_commission_account_type" class="form-control js-update-account-id-based-on-account-type ">
                                                     
                                                     <?php $__currentLoopData = $accountTypes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $accountType): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                     <option value="<?php echo e($accountType->id); ?>" <?php if(isset($model) && $model->getLgFeesAndCommissionAccountTypeId() == $accountType->id): ?> selected <?php endif; ?>><?php echo e($accountType->getName()); ?></option>
@@ -563,7 +565,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                                         </label>
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
-                                                <select change-financial-instutition-js js-cd-or-td-account-number data-current-selected="<?php echo e(isset($model) ? $model->getLgFeesAndCommissionAccountNumber(): 0); ?>" name="lg_fees_and_commission_account_number" class="form-control js-account-number">
+                                                <select change-financial-instutition-js js-cd-or-td-account-number data-current-selected="<?php echo e(isset($model) ? $model->getLgFeesAndCommissionAccountId(): 0); ?>" name="lg_fees_and_commission_account_id" class="form-control js-account-number">
                                                     <option value="" selected><?php echo e(__('Select')); ?></option>
                                                 </select>
                                             </div>
@@ -808,16 +810,19 @@ use App\Models\LetterOfGuaranteeIssuance;
             <script>
                 $(document).on('change', '[js-update-outstanding-balance-and-limits]', function(e) {
                     e.preventDefault()
-			
+					const lgCurrency = $('select[name="lg_currency"]').val()
                     const financialInstitutionId = $('select#financial-instutition-id').val()
                     const lgType = $('select#lg-type').val()
+					const lgIssuanceId = "<?php echo e(isset($model) ? $model->id : 0); ?>" 
 					const source = "<?php echo e($source); ?>"
                     $.ajax({
                         url: "<?php echo e(route('update.letter.of.guarantee.outstanding.balance.and.limit',['company'=>$company->id])); ?>"
                         , data: {
+							lgIssuanceId,
                             financialInstitutionId
                             , lgType,
-							source
+							source,
+							lgCurrency
                         }
                         , type: "GET"
                         , success: function(res) {
@@ -839,7 +844,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                             $('#total-lg-for-all-types-id').val(res.total_lg_outstanding_balance).prop('disabled', true)
                             $('#total-room-id').val(res.total_room).prop('readonly', true)
 								var totalRoom = number_unformat(res.total_room);
-							$('input[name="lg_amount"]').attr('data-can-not-be-greater-than',totalRoom);
+					//		$('input[name="lg_amount"]').attr('data-can-not-be-greater-than',totalRoom);
                             $('#current-lg-type-outstanding-balance-id').val(res.current_lg_type_outstanding_balance).prop('disabled', true)
                             $('#min_lg_commission_fees_id').val(res.min_lg_commission_rate).trigger('change');
                             $('#lg_commission_rate-id').val(res.lg_commission_rate).trigger('change');

@@ -42,7 +42,7 @@ class MoneyReceivedCanBeDeletedRule implements ImplicitRule
 			$balance = $response->getData(true)['balance'] ;
 		}
 		if($this->moneyReceived->isCashInSafe()){
-			$response = (new MoneyPaymentController)->getCurrentAccountEndBalance(Request(),$this->company,$this->moneyReceived->getCashInSafeReceivingBranchId(),$this->moneyReceived->getReceivingCurrency());
+			$response = (new MoneyPaymentController)->getCashInSafeStatementEndBalance(Request(),$this->company,$this->moneyReceived->getCashInSafeReceivingBranchId(),$this->moneyReceived->getReceivingCurrency());
 			$balance = $response->getData(true)['end_balance'];
 			
 		}

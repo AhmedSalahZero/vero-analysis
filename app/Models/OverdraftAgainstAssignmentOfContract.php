@@ -114,7 +114,7 @@ class OverdraftAgainstAssignmentOfContract extends Model implements IHaveStateme
 		
 	});
 	}
-	public static function getAllAccountNumberForCurrency($companyId , $currencyName,$financialInstitutionId):array
+	public static function getAllAccountNumberForCurrency($companyId , $currencyName,$financialInstitutionId,$keyName='account_number'):array
 	{
 		$accounts = [];
 		$overdraftAgainstAssignmentOfContracts = self::where('company_id',$companyId)->where('currency',$currencyName)
@@ -122,7 +122,7 @@ class OverdraftAgainstAssignmentOfContract extends Model implements IHaveStateme
 		foreach($overdraftAgainstAssignmentOfContracts as $overdraftAgainstAssignmentOfContract){
 			$limitStatement = $overdraftAgainstAssignmentOfContract->overdraftAgainstAssignmentOfContractBankLimits->sortByDesc('full_date')->first() ;
 			if(($limitStatement && $limitStatement->accumulated_limit >0) || in_array('bank-statement',Request()->segments())){
-				$accounts[$overdraftAgainstAssignmentOfContract->account_number] = $overdraftAgainstAssignmentOfContract->account_number;
+				$accounts[$overdraftAgainstAssignmentOfContract->{$keyName}] = $overdraftAgainstAssignmentOfContract->account_number;
 			}
 		}
 		

@@ -396,7 +396,8 @@
 								
                                         <td class="sub-text-bg text-left ">{{   $reviewedText   }}</td>
                                         <td class="sub-text-bg text-left ">
-											@if($modelAsStdClass->is_commission_fees)
+									
+											@if(isset($modelAsStdClass->is_commission_fees) && $modelAsStdClass->is_commission_fees)
 												
 												@include('modals.edit-commissions-fees',[
 													'currentStatementId'=>$modelAsStdClass->id,

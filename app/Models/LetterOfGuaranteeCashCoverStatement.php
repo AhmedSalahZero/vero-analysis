@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Helpers\HDate;
+use App\Traits\IsBankStatement;
 use App\Traits\Models\HasDeleteButTriggerChangeOnLastElement;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
@@ -10,7 +11,7 @@ use Illuminate\Support\Facades\DB;
 
 class LetterOfGuaranteeCashCoverStatement extends Model
 {
-	use HasDeleteButTriggerChangeOnLastElement;
+	use HasDeleteButTriggerChangeOnLastElement,IsBankStatement;
     protected $guarded = [
         'id'
     ];
@@ -77,8 +78,6 @@ class LetterOfGuaranteeCashCoverStatement extends Model
 				$financialInstitutionIsChanged = $model->isDirty('financial_institution_id') ;
 				$sourceIsChanged = $model->isDirty('source') ;
 				$lgTypeIsChange = $model->isDirty('lg_type') ;
-		// 		->where('financial_institution_id',$model->financial_institution_id)
-		// ->where('source',$model->source)
 		
 				/**
 				 * * دي علشان لو غيرت ال
@@ -194,5 +193,13 @@ class LetterOfGuaranteeCashCoverStatement extends Model
 		return $this->belongsTo(LetterOfGuaranteeIssuance::class,'lg_facility_id','id');
 	} 
 	
-	
+	public function getForeignKeyNamesThatUsedInFilter():array 
+	{
+		return [
+			'lg_facility_id',
+			'financial_institution_id',
+			'source',
+			'lg_type'
+		];
+	}	
 }

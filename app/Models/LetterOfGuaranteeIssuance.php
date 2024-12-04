@@ -327,20 +327,23 @@ class LetterOfGuaranteeIssuance extends Model
 	{
 		return $this->cash_cover_deducted_from_account_type;
 	}
-	public function getCashCoverDeductedFromAccountNumber()
+	public function getCashCoverDeductedFromAccountId()
 	{
-		return $this->cash_cover_deducted_from_account_number ?: $this->lg_fees_and_commission_account_number;
+		return $this->cash_cover_deducted_from_account_id ?: $this->lg_fees_and_commission_account_id;
 	}
 	
 	public function getLgFeesAndCommissionAccountTypeId()
 	{
 		return $this->lg_fees_and_commission_account_type;
 	}
-	public function getLgFeesAndCommissionAccountNumber()
+	public function lgFeesAndCommissionAccount()
 	{
-		return $this->lg_fees_and_commission_account_number;
+		return $this->belongsTo(FinancialInstitutionAccount::class,'lg_fees_and_commission_account_id','id');
 	}
-
+	public function getLgFeesAndCommissionAccountId():int
+	{
+		return $this->lgFeesAndCommissionAccount ? $this->lgFeesAndCommissionAccount->id : 0 ;
+	}
 	public function getLgCommissionRate()
 	{
 		return $this->lg_commission_rate ?: 0;
@@ -398,20 +401,18 @@ class LetterOfGuaranteeIssuance extends Model
 	{
 		return $this->cd_or_td_account_type_id ?:0 ;
 	}
-	public function getCdOrTdAccountNumber()
-	{
-		return $this->cd_or_td_account_number ?: 0;
-	}
+	
 	public function getCdOrTdId()
 	{
-		$account = AccountType::find($this->getCdOrTdAccountTypeId());
-		if($account && $account->isCertificateOfDeposit() ){
-			return CertificatesOfDeposit::findByAccountNumber( $this->getCdOrTdAccountNumber(),$this->company_id)->id;
-		}
-		if($account && $account->isTimeOfDeposit() ){
-			return TimeOfDeposit::findByAccountNumber( $this->getCdOrTdAccountNumber(),$this->company_id )->id;
-		}
-		return 0 ;
+		return $this->cd_or_td_id;
+		// $account = AccountType::find($this->getCdOrTdAccountTypeId());
+		// if($account && $account->isCertificateOfDeposit() ){
+		// 	return CertificatesOfDeposit::findByAccountNumber( $this->getCdOrTdAccountNumber(),$this->company_id)->id;
+		// }
+		// if($account && $account->isTimeOfDeposit() ){
+		// 	return TimeOfDeposit::findByAccountNumber( $this->getCdOrTdAccountNumber(),$this->company_id )->id;
+		// }
+		// return 0 ;
 	}
 	public function advancedPaymentHistories():HasMany
 	{

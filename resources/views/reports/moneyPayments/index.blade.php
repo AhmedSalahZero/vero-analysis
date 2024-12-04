@@ -194,7 +194,7 @@ td{
 											@endif
 											
 											@if($moneyPayment->getIsPayableChequeDue())
-                                            <a data-id="{{ $moneyPayment->id }}" data-type="single" data-currency="{{ $moneyPayment->getCurrency() }}" data-money-type="{{ MoneyPayment::PAYABLE_CHEQUE }}" data-toggle="modal" data-target="#send-to-under-collection-modal{{ MoneyPayment::PAYABLE_CHEQUE }}" type="button" class="btn js-can-trigger-cheque-under-collection-modal btn-secondary btn-outline-hover-primary btn-icon"  href=""><i class="fa fa-money-bill"></i></a>
+                                            <a data-id="{{ $moneyPayment->id }}" data-type="single" data-currency="{{ $moneyPayment->getCurrency() }}" data-due-date="{{ formatDateForDatePicker($moneyPayment->getPayableChequeDueDate()) }}" data-money-type="{{ MoneyPayment::PAYABLE_CHEQUE }}" data-toggle="modal" data-target="#send-to-under-collection-modal{{ MoneyPayment::PAYABLE_CHEQUE }}" type="button" class="btn js-can-trigger-cheque-under-collection-modal btn-secondary btn-outline-hover-primary btn-icon"  href=""><i class="fa fa-money-bill"></i></a>
 											@endif
 											
 											@endif 
@@ -475,7 +475,11 @@ td{
         if (type == 'single') {
             $('#current-single-item' + moneyType).val($(this).attr('data-id'));
             $('#current-currency' + moneyType).val($(this).attr('data-currency'));
-        }
+			console.log($(this).attr('data-due-date'))
+			$('input[name="actual_payment_date"]').val($(this).attr('data-due-date'));
+        }else{
+			$('input[name="actual_payment_date"]').val("{{ now()->format('m/d/Y') }}");
+		}
     })
     $(document).on('submit', '.ajax-send-cheques-to-collection', function(e) {
         e.preventDefault();

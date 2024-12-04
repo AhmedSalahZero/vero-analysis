@@ -274,5 +274,15 @@ class HArr
 			}
 		return $allItems;
 	}
+	public static function filterByUnique(array $items , array $uniqueKeys):array 
+	{
+		return  collect($items)->unique(function ($item) use ($uniqueKeys)  {
+			$uniqueKey = '';
+			foreach($uniqueKeys as $key){
+				$uniqueKey.= $item->{$key};
+			}
+			return $uniqueKey;
+		})->values()->toArray();
+	}
 
 }

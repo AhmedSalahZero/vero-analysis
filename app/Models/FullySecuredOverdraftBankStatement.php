@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Helpers\HDate;
+use App\Traits\IsBankStatement;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -10,7 +11,7 @@ use Illuminate\Support\Facades\DB;
 
 class FullySecuredOverdraftBankStatement extends Model
 {
-	
+	use IsBankStatement;
 	protected $guarded =[
 		'id'
 	];
@@ -161,7 +162,11 @@ class FullySecuredOverdraftBankStatement extends Model
 		
 		$this->attributes['date'] = $year.'-'.$month.'-'.$day;
 	}
-		
-		
+	public function getForeignKeyNamesThatUsedInFilter():array 
+	{
+		return [
+			'fully_secured_overdraft_id'
+		];
+	}		
 	
 }

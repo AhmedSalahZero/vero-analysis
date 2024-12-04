@@ -66,7 +66,7 @@ class FullySecuredOverdraft extends Model implements IHaveStatement
 		return $this->cdOrTdAccountType ? $this->cdOrTdAccountType->id : 0 ; 
 	}
 	
-	public function getCdOrTdAccountNumber()
+	public function getCdOrTdId()
 	{
 		return $this->cd_or_td_account_id;
 	}

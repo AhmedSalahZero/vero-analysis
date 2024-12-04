@@ -49,7 +49,7 @@
                         </label>
                         <div class="kt-input-icon">
                             <div class="input-group">
-                                <input type="text" class="form-control only-greater-than-or-equal-zero-allowed trigger-change-repeater" value="{{ number_format(isset($account) ? $account->getBalanceAmount() : old('balance_amount',0)) }}">
+                                <input type="text" class="form-control only-numeric-allowed trigger-change-repeater" value="{{ number_format(isset($account) ? $account->getBalanceAmount() : old('balance_amount',0)) }}">
                                 <input type="hidden" value="{{ (isset($account) ? $account->getBalanceAmount() : old('balance_amount',0)) }}" @if($isRepeater) name="balance_amount" @else name="accounts[0][balance_amount]" @endif>
                             </div>
                         </div>

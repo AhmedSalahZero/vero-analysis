@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Helpers\HDate;
 use App\Interfaces\Models\Interfaces\IHaveStatement;
+use App\Traits\IsBankStatement;
 use App\Traits\Models\HasDeleteButTriggerChangeOnLastElement;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
@@ -13,7 +14,7 @@ use Illuminate\Support\Facades\DB;
 
 class CurrentAccountBankStatement extends Model  implements IHaveStatement
 {
-	use HasDeleteButTriggerChangeOnLastElement;
+	use HasDeleteButTriggerChangeOnLastElement,IsBankStatement;
     protected $guarded = [
         'id'
     ];
@@ -251,5 +252,14 @@ class CurrentAccountBankStatement extends Model  implements IHaveStatement
 		$lgCode = is_null($lgCode) ? '-' : $lgCode ;
 		return __('Return LG Cash Cover [ :customerName ] [ :transactionName ] [ :lgCode ]',['customerName'=>$customerName,'transactionName'=>$transactionName,'lgCode'=>$lgCode],$lang) ;
 	}	
-	
+	/**
+	 * * دول اسماء العواميد اللي بنفرق باستخدامهم بين كل رو والتاني في الحسابات في التريجر
+	 * * يعني مثلا لما اجي اجيب العنصر اللي قبلي هجيبه بناء علي انهي شروط 
+	 */
+	public function getForeignKeyNamesThatUsedInFilter():array 
+	{
+		return [
+			'financial_institution_account_id'
+		];
+	}
 }

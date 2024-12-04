@@ -310,9 +310,9 @@ class LetterOfCreditIssuance extends Model
 	{
 		return $this->cash_cover_deducted_from_account_type;
 	}
-	public function getCashCoverDeductedFromAccountNumber()
+	public function getCashCoverDeductedFromAccountId()
 	{
-		return $this->cash_cover_deducted_from_account_number;
+		return $this->cash_cover_deducted_from_account_id;
 	}
 	public function getInterestRate()
 	{
@@ -406,20 +406,18 @@ class LetterOfCreditIssuance extends Model
 	{
 		return $this->cd_or_td_account_type_id ?:0 ;
 	}
-	public function getCdOrTdAccountNumber()
-	{
-		return $this->cd_or_td_account_number ?: 0;
-	}
+	
 	public function getCdOrTdId()
 	{
-		$account = AccountType::find($this->getCdOrTdAccountTypeId());
-		if($account && $account->isCertificateOfDeposit() ){
-			return CertificatesOfDeposit::findByAccountNumber($this->getCdOrTdAccountNumber(),$this->company_id )->id;
-		}
-		if($account && $account->isTimeOfDeposit() ){
-			return TimeOfDeposit::findByAccountNumber($this->getCdOrTdAccountNumber(),$this->company_id )->id;
-		}
-		return 0 ;
+		return $this->cd_or_td_id;
+		// $account = AccountType::find($this->getCdOrTdAccountTypeId());
+		// if($account && $account->isCertificateOfDeposit() ){
+		// 	return CertificatesOfDeposit::find($this->getCdOrTdAccountNumber() )->id;
+		// }
+		// if($account && $account->isTimeOfDeposit() ){
+		// 	return TimeOfDeposit::findByAccountNumber($this->getCdOrTdAccountNumber(),$this->company_id )->id;
+		// }
+		// return 0 ;
 	}
 	
 	public function deleteAllRelations():self
@@ -468,11 +466,11 @@ class LetterOfCreditIssuance extends Model
 	{
 		$tdOrCdCurrencyName = null ;
 		if($source == LetterOfCreditIssuance::AGAINST_CD){
-				$currentCertificateOfDeposit = CertificatesOfDeposit::findByAccountNumber($this->cd_or_td_account_number,$companyId);
+				$currentCertificateOfDeposit = CertificatesOfDeposit::find($this->cd_or_td_id);
 				$tdOrCdCurrencyName = $currentCertificateOfDeposit->getCurrency();
 		}
 		elseif($source == LetterOfCreditIssuance::AGAINST_TD){
-				$currentTimeOfDeposit = TimeOfDeposit::findByAccountNumber($this->cd_or_td_account_number,$companyId);
+				$currentTimeOfDeposit = TimeOfDeposit::find($this->cd_or_td_id);
 				$tdOrCdCurrencyName = $currentTimeOfDeposit->getCurrency();
 		}
 		return $tdOrCdCurrencyName;

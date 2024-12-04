@@ -193,7 +193,7 @@ td{
 											@include('reports._review_modal',['model'=>$cashExpense])
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.cash.expense',['company'=>$company->id,'cashExpense'=>$cashExpense->id]) }}"><i class="fa fa-pen-alt"></i></a>
 									@endif 
-                                            <a data-id="{{ $cashExpense->id }}" data-type="single" data-currency="{{ $cashExpense->getCurrency() }}" data-money-type="{{ CashExpense::PAYABLE_CHEQUE }}" data-toggle="modal" data-target="#send-to-under-collection-modal{{ CashExpense::PAYABLE_CHEQUE }}" type="button" class="btn js-can-trigger-cheque-under-collection-modal btn-secondary btn-outline-hover-primary btn-icon" title="{{ __('Mark As Paid') }}" href=""><i class="fa fa-money-bill"></i></a>
+                                            <a data-id="{{ $cashExpense->id }}" data-type="single" data-currency="{{ $cashExpense->getCurrency() }}" data-due-date="{{ formatDateForDatePicker($cashExpense->getPayableChequeDueDate()) }}" data-money-type="{{ CashExpense::PAYABLE_CHEQUE }}" data-toggle="modal"  data-target="#send-to-under-collection-modal{{ CashExpense::PAYABLE_CHEQUE }}" type="button" class="btn js-can-trigger-cheque-under-collection-modal btn-secondary btn-outline-hover-primary btn-icon" title="{{ __('Mark As Paid') }}" href=""><i class="fa fa-money-bill"></i></a>
 								
 											@if(!$cashExpense->isOpenBalance())
                                             <a data-toggle="modal" data-target="#delete-cheque-id-{{ $cashExpense->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
@@ -483,7 +483,10 @@ td{
         if (type == 'single') {
             $('#current-single-item' + moneyType).val($(this).attr('data-id'));
             $('#current-currency' + moneyType).val($(this).attr('data-currency'));
-        }
+			$('input[name="actual_payment_date"]').val($(this).attr('data-due-date'));
+        }else{
+			$('input[name="actual_payment_date"]').val("{{ now()->format('m/d/Y') }}");
+		}
     })
     $(document).on('submit', '.ajax-send-cheques-to-collection', function(e) {
         e.preventDefault();

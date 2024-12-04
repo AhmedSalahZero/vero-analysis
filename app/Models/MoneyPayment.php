@@ -472,6 +472,7 @@ class MoneyPayment extends Model
 	}
 	public function getAccountTypeId()
 	{
+	
 		if($this->isOutgoingTransfer()){
 			return $this->outgoingTransfer->getAccountTypeId();
 		}

@@ -37,30 +37,10 @@ use App\Models\MediumTermLoan ;
 @section('content')
 
 <div class="kt-portlet kt-portlet--tabs">
-    <div class="kt-portlet__head">
-        <div class="kt-portlet__head-toolbar justify-content-between flex-grow-1">
-            <ul class="nav nav-tabs nav-tabs-space-lg nav-tabs-line nav-tabs-bold nav-tabs-line-3x nav-tabs-line-brand" role="tablist">
-                <li class="nav-item">
-                    <a class="nav-link {{ !Request('active') || Request('active') == MediumTermLoan::RUNNING ?'active':'' }}" data-toggle="tab" href="#{{MediumTermLoan::RUNNING  }}" role="tab">
-                        <i class="fa fa-money-check-alt"></i> {{ __('Medium Term Loan Table') }}
-                    </a>
-                </li>
-
-
-
-
-            </ul>
-			@if(hasAuthFor('create medium term loan'))
-            <div class="flex-tabs">
-                <a href="{{ route('loans.create',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,MediumTermLoan::RUNNING]) }}" class="btn  active-style btn-icon-sm align-self-center">
-                    <i class="fas fa-plus"></i>
-                    {{ __('Create') }}
-                </a>
-            </div>
-			@endif 
-        </div>
-    </div>
-    <div class="kt-portlet__body">
+    <x-back-to-bank-header-btn :create-permission-name="'create medium term loan'" :create-route="route('loans.create',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,MediumTermLoan::RUNNING])"></x-back-to-bank-header-btn>
+	
+	
+	<div class="kt-portlet__body">
         <div class="tab-content  kt-margin-t-20">
 
             @php

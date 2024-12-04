@@ -388,7 +388,7 @@ use App\Models\LetterOfCreditIssuance;
                                         </label>
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
-                                                <select change-financial-instutition-js js-cd-or-td-account-number data-current-selected="{{ isset($model) ? $model->getCashCoverDeductedFromAccountNumber(): 0 }}" name="cash_cover_deducted_from_account_number" class="form-control js-account-number">
+                                                <select change-financial-instutition-js js-cd-or-td-account-number data-current-selected="{{ isset($model) ? $model->getCashCoverDeductedFromAccountId(): 0 }}" name="cash_cover_deducted_from_account_id" class="form-control js-account-number">
                                                     <option value="" selected>{{__('Select')}}</option>
                                                 </select>
                                             </div>

@@ -104,7 +104,8 @@ use App\Models\LetterOfGuaranteeIssuance;
                                         </label>
 		
                                         <div class="input-group">
-                                            <select name="category_name" class="form-control repeater-select">
+                                            <select name="category_name" required class="form-control repeater-select">
+											<option value="">{{ __('Select') }}</option>
                                                 @foreach(LetterOfGuaranteeIssuance::getCategories() as $key => $title )
                                                 <option value="{{ $key }}" @if(isset($model) && $model->getLgCategoryName() == $key ) selected @endif > {{ $title }}</option>
                                                 @endforeach
@@ -122,31 +123,44 @@ use App\Models\LetterOfGuaranteeIssuance;
                                         <label> {{ __('Bank') }}
                                             @include('star')
                                         </label>
-                                        <select js-when-change-trigger-change-account-type change-financial-instutition-js id="financial-instutition-id" js-update-outstanding-balance-and-limits js-when-change-trigger-change-account-type data-financial-institution-id required name="financial_institution_id" class="form-control">
+                                        <select required js-when-change-trigger-change-account-type change-financial-instutition-js id="financial-instutition-id" js-update-outstanding-balance-and-limits js-when-change-trigger-change-account-type data-financial-institution-id required name="financial_institution_id" class="form-control">
+										<option value="">{{ __('Select') }}</option>
                                             @foreach($financialInstitutionBanks as $index=>$financialInstitutionBank)
                                             <option value="{{ $financialInstitutionBank->id }}" {{ isset($model) && $model->getFinancialInstitutionBankId() == $financialInstitutionBank->id ? 'selected':'' }}>{{ $financialInstitutionBank->getName() }}</option>
                                             @endforeach
                                         </select>
                                     </div>
 
-
-                                    <div class="col-md-4">
+  <div class="col-md-3">
+                                        <label>{{__('LG Currency')}}
+                                            @include('star')
+                                        </label>
+                                        <div class="input-group">
+                                            <select name="lg_currency" class="form-control current-currency" js-when-change-trigger-change-account-type>
+                                                <option selected>{{__('Select')}}</option>
+                                                @foreach(getCurrencies() as $currencyName => $currencyValue )
+                                                <option value="{{ $currencyName }}" @if(isset($model) && $model->getLgCurrency() == $currencyName ) selected @elseif($currencyName == 'EGP' ) selected @endif > {{ $currencyValue }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
                                         <label> {{ __('LG Type') }}
                                             @include('star')
                                         </label>
 
-                                        <select js-update-outstanding-balance-and-limits id="lg-type" name="lg_type" class="form-control js-toggle-bond">
-                                            {{-- <option selected>{{__('Select')}}</option> --}}
+                                        <select js-update-outstanding-balance-and-limits required id="lg-type" name="lg_type" class="form-control js-toggle-bond">
+										<option value="">{{__('Select')}}</option>
                                             @foreach(getLgTypes() as $name => $nameFormatted )
                                             <option value="{{ $name  }}" @if(isset($model) && $model->getLgType() == $name ) selected @endif > {{ $nameFormatted }}</option>
                                             @endforeach
                                         </select>
                                     </div>
 
-                                    <div class="col-md-4 ">
+                                    <div class="col-md-3 ">
                                         <x-form.input :id="'current-lg-type-outstanding-balance-id'" :default-value="0" :model="$model??null" :label="__('LG Type Outstanding Balance')" :type="'text'" :placeholder="__('LG Type Outstanding Balance')" :name="'lg_type_outstanding_balance'" :class="'only-greater-than-zero-allowed'" :required="true"></x-form.input>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <x-form.input :model="$model??null" :label="__('LG Code')" :type="'text'" :placeholder="__('LG Code')" :name="'lg_code'" :class="''" :required="true"></x-form.input>
                                     </div>
 
@@ -240,9 +254,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                                             @include('star')
                                         </label>
                                         <select js-update-purchase-orders-based-on-contract id="contract-id" data-current-selected="{{ isset($model) ?  $model->getContractId() : 0 }}" name="contract_id" data-live-search="true" class="form-control kt-bootstrap-select select2-select kt_bootstrap_select">
-                                            {{-- @foreach($contracts as $contract)
-                                            <option @if(isset($model) && $model->getContractId() == $contract->id ) selected @endif value="{{ $contract->getId() }}">{{ $contract->getName() }}</option>
-                                            @endforeach --}}
+                                            
                                         </select>
                                     </div>
 
@@ -257,9 +269,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                                         </label>
 
                                         <select id="purchase-order-id" data-current-selected="{{ isset($model) ? $model->getPurchaseOrderId() : 0 }}" name="purchase_order_id" data-live-search="true" class="form-control kt-bootstrap-select select2-select kt_bootstrap_select">
-                                            {{-- @foreach($purchaseOrders as $purchaseOrder)
-                                            <option @if(isset($model) && $model->getPurchaseOrderId() == $purchaseOrder->getId() ) selected @endif value="{{ $purchaseOrder->getId() }}">{{ $purchaseOrder->getName() }}</option>
-                                            @endforeach --}}
+                                            
                                         </select>
                                     </div>
 
@@ -310,19 +320,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                                         <x-form.input :data-current-value="isset($model) ? $model->getLgAmount():0" :default-value="0" :model="$model??null" :label="__('LG Amount')" :type="'text'" :placeholder="__('LG Amount')" :name="'lg_amount'" :class="'only-greater-than-or-equal-zero-allowed  recalculate-cash-cover-amount-js recalculate-lg-commission-amount-js lg-amount-js'" :required="true"></x-form.input>
                                     </div>
 
-                                    <div class="col-md-3">
-                                        <label>{{__('LG Currency')}}
-                                            @include('star')
-                                        </label>
-                                        <div class="input-group">
-                                            <select name="lg_currency" class="form-control current-currency" js-when-change-trigger-change-account-type>
-                                                <option selected>{{__('Select')}}</option>
-                                                @foreach(getCurrencies() as $currencyName => $currencyValue )
-                                                <option value="{{ $currencyName }}" @if(isset($model) && $model->getLgCurrency() == $currencyName ) selected @elseif($currencyName == 'EGP' ) selected @endif > {{ $currencyValue }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    </div>
+                                  
 
                                     <div class="col-md-3">
                                         <x-form.input :id="$source != LetterOfGuaranteeIssuance::HUNDRED_PERCENTAGE_CASH_COVER ?  'cash-cover-rate-id' : 'cash-cover-rate-id2'" :default-value="$source == LetterOfGuaranteeIssuance::HUNDRED_PERCENTAGE_CASH_COVER ? 100 : 0 " :readonly="false" :model="$model??null" :label="__('Cash Cover Rate %')" :type="'text'" :placeholder="__('Cash Cover Rate %')" :name="'cash_cover_rate'" :class="'only-greater-than-or-equal-zero-allowed recalculate-cash-cover-amount-js cash-cover-rate-js'" :required="true"></x-form.input>
@@ -377,7 +375,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                                         </label>
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
-                                                <select name="lg_fees_and_commission_account_type" class="form-control js-update-account-number-based-on-account-type ">
+                                                <select name="lg_fees_and_commission_account_type" class="form-control js-update-account-id-based-on-account-type ">
                                                     {{-- <option value="" selected>{{__('Select')}}</option> --}}
                                                     @foreach($accountTypes as $index => $accountType)
                                                     <option value="{{ $accountType->id }}" @if(isset($model) && $model->getLgFeesAndCommissionAccountTypeId() == $accountType->id) selected @endif>{{ $accountType->getName() }}</option>
@@ -393,7 +391,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                                         </label>
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
-                                                <select change-financial-instutition-js js-cd-or-td-account-number data-current-selected="{{ isset($model) ? $model->getLgFeesAndCommissionAccountNumber(): 0 }}" name="lg_fees_and_commission_account_number" class="form-control js-account-number">
+                                                <select change-financial-instutition-js js-cd-or-td-account-number data-current-selected="{{ isset($model) ? $model->getLgFeesAndCommissionAccountId(): 0 }}" name="lg_fees_and_commission_account_id" class="form-control js-account-number">
                                                     <option value="" selected>{{__('Select')}}</option>
                                                 </select>
                                             </div>
@@ -627,16 +625,19 @@ use App\Models\LetterOfGuaranteeIssuance;
             <script>
                 $(document).on('change', '[js-update-outstanding-balance-and-limits]', function(e) {
                     e.preventDefault()
-			
+					const lgCurrency = $('select[name="lg_currency"]').val()
                     const financialInstitutionId = $('select#financial-instutition-id').val()
                     const lgType = $('select#lg-type').val()
+					const lgIssuanceId = "{{ isset($model) ? $model->id : 0 }}" 
 					const source = "{{ $source }}"
                     $.ajax({
                         url: "{{ route('update.letter.of.guarantee.outstanding.balance.and.limit',['company'=>$company->id]) }}"
                         , data: {
+							lgIssuanceId,
                             financialInstitutionId
                             , lgType,
-							source
+							source,
+							lgCurrency
                         }
                         , type: "GET"
                         , success: function(res) {
@@ -658,7 +659,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                             $('#total-lg-for-all-types-id').val(res.total_lg_outstanding_balance).prop('disabled', true)
                             $('#total-room-id').val(res.total_room).prop('readonly', true)
 								var totalRoom = number_unformat(res.total_room);
-							$('input[name="lg_amount"]').attr('data-can-not-be-greater-than',totalRoom);
+					//		$('input[name="lg_amount"]').attr('data-can-not-be-greater-than',totalRoom);
                             $('#current-lg-type-outstanding-balance-id').val(res.current_lg_type_outstanding_balance).prop('disabled', true)
                             $('#min_lg_commission_fees_id').val(res.min_lg_commission_rate).trigger('change');
                             $('#lg_commission_rate-id').val(res.lg_commission_rate).trigger('change');

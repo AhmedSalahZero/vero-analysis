@@ -791,9 +791,10 @@ Route::middleware([])->group(function () {
                     Route::delete('money-received/delete/{moneyReceived}', 'MoneyReceivedController@destroy')->name('delete.money.receive');
 					Route::get('money-received/get-invoice-numbers/{customer_name}/{currency?}', 'MoneyReceivedController@getInvoiceNumber'); // ajax request
 					Route::get('money-received/get-account-numbers-based-on-account-type/{accountType}/{currency}/{financialInstitutionId}', 'MoneyReceivedController@getAccountNumbersForAccountType'); // ajax request
+					Route::get('money-received/get-account-ids-based-on-account-type/{accountType}/{currency}/{financialInstitutionId}', 'MoneyReceivedController@getAccountIdsForAccountType'); // ajax request
 					Route::get('money-received/get-net-balance-based-on-account-number', 'MoneyReceivedController@updateNetBalanceBasedOnAccountNumber')->name('update.balance.and.net.balance.based.on.account.number');
-					Route::get('money-received/get-net-balance-based-on-account-number-by-ajax/{accountType}/{accountNumber}/{financialInstitutionId}', 'MoneyReceivedController@updateNetBalanceBasedOnAccountNumberByAjax')->name('update.balance.and.net.balance.based.on.account.number.ajax');
-					Route::get('money-received/get-account-amount-based-on-account-number/{accountType}/{accountNumber}/{financialInstitutionId}', 'MoneyReceivedController@getAccountAmountForAccountNumber')->name('get.account.amount.based.on.account.number'); // ajax request
+					Route::get('money-received/get-net-balance-based-on-account-id-by-ajax/{accountType}/{accountId}/{financialInstitutionId}', 'MoneyReceivedController@updateNetBalanceBasedOnAccountIdByAjax')->name('update.balance.and.net.balance.based.on.account.id.ajax');
+					Route::get('money-received/get-account-amount-based-on-account-id/{accountType}/{accountId}/{financialInstitutionId}', 'MoneyReceivedController@getAccountAmountForAccountId')->name('get.account.amount.based.on.account.id'); // ajax request
 					Route::get('get-customers-based-on-currency/{currencyName}','MoneyReceivedController@getCustomersBasedOnCurrency');
 					Route::get('get-partners-based-on-type/{currencyName}','MoneyReceivedController@getPartnersBasedOnCurrency');
 					Route::get('get-beneficiary-name-from-lg-issuance-based-on-currency','LetterOfGuaranteeIssuanceController@getBeneficiaryNameByCurrency')->name('get.beneficiary.name.by.currency');
@@ -824,7 +825,7 @@ Route::middleware([])->group(function () {
 					Route::post('mark-outgoing-transfer-as-paid', 'MoneyPaymentController@markOutgoingTransfersAsPaid')->name('outgoing.transfer.mark.as.paid');
 					Route::get('get-supplier-invoices','SupplierInvoicesController@getSupplierInvoicesForSupplier')->name('get.supplier.invoices');
 					Route::get('get-suppliers-based-on-currency/{currencyName}','MoneyPaymentController@getSuppliersBasedOnCurrency');
-					Route::get('get-current-end-balance-of-current-account','MoneyPaymentController@getCurrentAccountEndBalance')->name('get.current.end.balance.of.current.account');
+					Route::get('get-current-end-balance-of-current-account','MoneyPaymentController@getCashInSafeStatementEndBalance')->name('get.current.end.balance.of.cash.in.safe.statement');
 					// cash expense
 					Route::get('get-exchange-rate-for-date-and-currencies','ForeignExchangeRateController@getExchangeRate');
 					

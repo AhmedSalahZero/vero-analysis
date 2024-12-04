@@ -40,7 +40,7 @@ class MoneyPaymentCanBeDeletedRule implements ImplicitRule
 		}
 		if($this->moneyPayment->isCashPayment()){
 			// code here
-			$response = (new MoneyPaymentController)->getCurrentAccountEndBalance(Request(),$this->company,$this->moneyPayment->getCashPaymentBranchId(),$this->moneyPayment->getPaymentCurrency());
+			$response = (new MoneyPaymentController)->getCashInSafeStatementEndBalance(Request(),$this->company,$this->moneyPayment->getCashPaymentBranchId(),$this->moneyPayment->getPaymentCurrency());
 			$balance = $response->getData(true)['end_balance'];
 			
 		}

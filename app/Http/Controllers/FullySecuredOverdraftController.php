@@ -86,7 +86,7 @@ class FullySecuredOverdraftController
     }
 	public function getCommonDataArr():array 
 	{
-		return ['contract_start_date','account_number','contract_end_date','currency','limit','outstanding_balance','balance_date','borrowing_rate','bank_margin_rate','interest_rate','min_interest_rate','highest_debt_balance_rate','admin_fees_rate','to_be_setteled_max_within_days','cd_or_td_account_type_id','cd_or_td_account_number','cd_or_td_lending_percentage'];
+		return ['contract_start_date','account_number','contract_end_date','currency','limit','outstanding_balance','balance_date','borrowing_rate','bank_margin_rate','interest_rate','min_interest_rate','highest_debt_balance_rate','admin_fees_rate','to_be_setteled_max_within_days','cd_or_td_account_type_id','cd_or_td_id','cd_or_td_lending_percentage'];
 	}
 	public function store(Company $company  ,FinancialInstitution $financialInstitution, StoreFullySecuredOverdraftRequest $request){
 
@@ -96,7 +96,7 @@ class FullySecuredOverdraftController
 		}
 		$data['created_by'] = auth()->user()->id ;
 		$data['company_id'] = $company->id ;
-		$data['cd_or_td_account_id'] = $request->get('cd_or_td_account_number');
+		$data['cd_or_td_account_id'] = $request->get('cd_or_td_id');
 		/**
 		 * @var FullySecuredOverdraft $fullySecuredOverdraft 
 		 */

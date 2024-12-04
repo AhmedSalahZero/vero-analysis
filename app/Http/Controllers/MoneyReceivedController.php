@@ -363,7 +363,6 @@ class MoneyReceivedController
 		$financialInstitutionId = null;
 		$partnerId = $request->get('customer_id');
 		$customer = Partner::find($partnerId);
-		// $customerName = $customer->getName();
 		$customerId = $customer->id;
 		$receivedBankName = $request->get('receiving_branch_id') ;
 		$data = $request->only(['type','receiving_date','currency','receiving_currency','customer_id','down_payment_type','partner_type']);
@@ -463,7 +462,7 @@ class MoneyReceivedController
 		 * @var MoneyReceived $moneyReceived
 		 */
 		$moneyReceived = $moneyReceived->refresh();
-		$isCustomer = $partnerType == 'is_customer'; 
+		// $isCustomer = $partnerType == 'is_customer'; 
 		$moneyReceived->handleDebitStatement($financialInstitutionId,$accountType,$accountNumber,$moneyType,$statementDate,$amountInReceivingCurrency,$receivingCurrency,$receivingBranchId);
 		if($partnerType && $partnerType != 'is_customer' ){
 			$moneyReceived->handlePartnerCreditStatement($partnerType,$partnerId, $moneyReceived->id,$company->id,$statementDate,$amountInReceivingCurrency,$receivingCurrency,$bankNameOrBranchName , $accountType , $accountNumber);
@@ -751,12 +750,22 @@ class MoneyReceivedController
 			
 		]);
 	}
-	public function getAccountAmountForAccountNumber(Company $company ,  Request $request ,  string $accountTypeId , string $accountNumber  , int $financialInstitutionId ){
+	public function getAccountIdsForAccountType(Company $company ,  Request $request ,  string $accountType,?string $selectedCurrency=null , ?int $financialInstitutionId = 0){
+		$accountType = AccountType::find($accountType);
+		$modelName = $accountType->getModelName() ;
+		$accountNumberModel =  ('\App\Models\\'.$modelName)::getAllAccountNumberForCurrency($company->id , $selectedCurrency,$financialInstitutionId,'id');
+		return response()->json([
+			'status'=>true , 
+			'data'=>$accountNumberModel
+			
+		]);
+	}
+	public function getAccountAmountForAccountId(Company $company ,  Request $request ,  string $accountTypeId , int $accountId  , int $financialInstitutionId ){
 	
 		
-	
 		$accountType = AccountType::find($accountTypeId);
-		$accountNumberModel =  ('\App\Models\\'.$accountType->getModelName())::findByAccountNumber($accountNumber,$company->id,$financialInstitutionId);
+		$accountNumberModel =  ('\App\Models\\'.$accountType->getModelName())::find($accountId);
+		$accountNumber = $accountNumberModel ? $accountNumberModel->account_number : '';
 		$currencyName = $accountNumberModel ? $accountNumberModel->currency : '';
 	
 		return response()->json([
@@ -774,6 +783,7 @@ class MoneyReceivedController
 		$statementDate = $statementDate ?: now() ;
 		$accountNumber = $request->get('accountNumber',$accountNumber);
 		$financialInstitutionId = $request->get('financialInstitutionId',$financialInstitutionId);
+
 		if(!$accountType){
 			return response()->json([
 				'status'=>true ,
@@ -798,16 +808,17 @@ class MoneyReceivedController
 		$foreignKeyName = get_class($accountNumberModel)::getForeignKeyInStatementTable();
 		$balanceRow = DB::table($statementTableName)->where($foreignKeyName,$accountNumberModel->id)->where('full_date','<=' , $statementDate)->orderByRaw('full_date desc')->first();
 		$NetBalanceRow = DB::table($statementTableName)->where($foreignKeyName,$accountNumberModel->id)->orderByRaw('full_date desc')->first();
+		$column = $accountType->isOverdraftAccount() ? 'room' : 'end_balance';
 		$balance = 0;
 		$balanceDate = '';
 		
 		$netBalance = 0;
 		if($balanceRow){
-			$balance = $balanceRow->end_balance ; 
+			$balance = $balanceRow->{$column} ; 
 			$balanceDate = Carbon::make($balanceRow->date)->format('d-m-Y') ;
 		}
 		if($NetBalanceRow){
-			$netBalance =$NetBalanceRow->end_balance ; 
+			$netBalance =$NetBalanceRow->{$column} ; 
 			$netBalanceDate =Carbon::make($NetBalanceRow->date)->format('d-m-Y') ; 
 		}
 		
@@ -817,25 +828,23 @@ class MoneyReceivedController
 			'balance_date'=>$balanceDate,
 			'net_balance'=>$netBalance ,
 			'net_balance_date'=>$netBalanceDate ,
-			
 		]);
 
 	}
 	
-	public function updateNetBalanceBasedOnAccountNumberByAjax(Request $request , Company $company , $accountType , $accountNumber , $financialInstitutionId )
+	public function updateNetBalanceBasedOnAccountIdByAjax(Request $request , Company $company , $accountType , $accountId , $financialInstitutionId )
 	{
-
+		$accountTypeId = $accountType ;
+		$account = AccountType::find($accountTypeId);
+		$fullModelName = 'App\Models\\'.$account->getModelName() ;
+		$accountNumber = $fullModelName::find($accountId)->account_number;
+		
 		return $this->updateNetBalanceBasedOnAccountNumber((new Request())->replace([
-			'accountType'=>$accountType,
+			'accountType'=>$accountTypeId,
 			'accountNumber'=>$accountNumber , 
 			'financialInstitutionId'=>$financialInstitutionId
 		]),$company);
 	}
-	
-	
-	
-	
-	
 	
 	public function getCustomersBasedOnCurrency(Request $request , Company $company , string $currencyName){
 

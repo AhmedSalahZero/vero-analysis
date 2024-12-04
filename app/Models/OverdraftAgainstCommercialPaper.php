@@ -142,7 +142,7 @@ public function overdraftAgainstCommercialPaperBankLimits()
 {
 	return $this->hasMany(OverdraftAgainstCommercialPaperLimit::class,'overdraft_against_commercial_paper_id','id');
 }
-public static function getAllAccountNumberForCurrency($companyId , $currencyName,$financialInstitutionId):array
+	public static function getAllAccountNumberForCurrency($companyId , $currencyName,$financialInstitutionId,$keyName = 'account_number'):array
 	{
 		$accounts = [];
 		$overdraftAgainstCommercialPapers = self::where('company_id',$companyId)->where('currency',$currencyName)
@@ -151,12 +151,12 @@ public static function getAllAccountNumberForCurrency($companyId , $currencyName
 			/**
 			 * * هنا استثناء في حاله الماني ريسيفد
 			 */
-			return $overdraftAgainstCommercialPapers->pluck('account_number','account_number')->toArray();
+			return $overdraftAgainstCommercialPapers->pluck('account_number',$keyName)->toArray();
 		}
 		foreach($overdraftAgainstCommercialPapers as $overdraftAgainstCommercialPaper){
 			$limitStatement = $overdraftAgainstCommercialPaper->overdraftAgainstCommercialPaperBankLimits->sortByDesc('full_date')->first() ;
 			if(($limitStatement && $limitStatement->accumulated_limit >0 ) || in_array('bank-statement',Request()->segments()) ){
-				$accounts[$overdraftAgainstCommercialPaper->account_number] = $overdraftAgainstCommercialPaper->account_number;
+				$accounts[$overdraftAgainstCommercialPaper->{$keyName}] = $overdraftAgainstCommercialPaper->account_number;
 			}
 		}
 		

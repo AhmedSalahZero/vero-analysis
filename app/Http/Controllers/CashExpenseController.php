@@ -401,15 +401,16 @@ class CashExpenseController
 		$data['status'] = PayableCheque::PAID;
 		foreach($cashExpenseIds as $cashExpenseId){
 			$cashExpense = CashExpense::find($cashExpenseId) ;
-			$chequeDueDate = $cashExpense->payableCheque->due_date;
+			// $chequeDueDate = $cashExpense->payableCheque->due_date;
 			$cashExpense->payableCheque->update($data);
-			if($cashExpense->getCurrentStatement()){
-				$time = now()->format('H:i:s');
-				$cashExpense->getCurrentStatement()->update([
-					'date'=>$actualPaymentDate = $data['actual_payment_date'],
-					'full_date' =>date('Y-m-d H:i:s', strtotime("$actualPaymentDate $time")),
-					'updated_at'=>now()
-				]);
+			if($currentStatement = $cashExpense->getCurrentStatement()){
+				$currentStatement->handleFullDateAfterDateEdit($data['actual_payment_date'],$currentStatement->debit,$currentStatement->credit);
+				// $time = now()->format('H:i:s');
+				// $cashExpense->getCurrentStatement()->update([
+				// 	'date'=>$actualPaymentDate = $data['actual_payment_date'],
+				// 	'full_date' =>date('Y-m-d H:i:s', strtotime("$actualPaymentDate $time")),
+				// 	'updated_at'=>now()
+				// ]);
 
 			}
 

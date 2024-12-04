@@ -4,13 +4,14 @@ namespace App\Models;
 
 use App\Helpers\HDate;
 use App\Interfaces\Models\Interfaces\IHaveStatement;
+use App\Traits\IsBankStatement;
 use App\Traits\Models\HasDeleteButTriggerChangeOnLastElement;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
 class SubsidiaryCompanyStatement extends Model  implements IHaveStatement
 {
-	use HasDeleteButTriggerChangeOnLastElement;
+	use HasDeleteButTriggerChangeOnLastElement,IsBankStatement;
     protected $guarded = [
         'id'
     ];
@@ -187,55 +188,13 @@ class SubsidiaryCompanyStatement extends Model  implements IHaveStatement
 
         $this->attributes['date'] = $year . '-' . $month . '-' . $day;
     }
-	// public function financialInstitutionAccount()
-	// {
-	// 	return $this->belongsTo(self::class,'financial_institution_account_id','id');
-	// }
-	// public function internalMoneyTransfer()
-	// {
-	// 	return $this->belongsTo(InternalMoneyTransfer::class,'internal_money_transfer_id','id');
-	// }
-	// public function letterOfGuaranteeAdvancedPaymentHistory():BelongsTo
-	// {
-	// 	return $this->belongsTo(LetterOfGuaranteeIssuanceAdvancedPaymentHistory::class,'lg_advanced_payment_history_id','id');
-	// }	
-	// public function lcIssuanceExpense():BelongsTo
-	// {
-	// 	return $this->belongsTo(LcIssuanceExpense::class,'lc_issuance_expense_id','id');
-	// }	
-	// public static function updateNonActiveDaily(Company $company)
-	// {
-	// 	// logger('first row here loooo');
-	// 	DB::table('subsidiary_company_statements')
-	// 	->where('company_id',$company->id)
-	// 	->where('is_active',0)
-	// 	->where('full_date','<=',now())
-	// 	->orderByRaw('full_date asc , id asc')
-	// 	->each(function($subsidiaryCompanyStatementRow){
-	// 		$letterOfGuaranteeIssuanceId = $subsidiaryCompanyStatementRow->letter_of_guarantee_issuance_id;
-			
-	// 		$letterOfGuaranteeIssuance = DB::table('letter_of_guarantee_issuances')
-	// 		->where('id',$letterOfGuaranteeIssuanceId)
-	// 		->first();
-			
-	// 		$commissionRate = $letterOfGuaranteeIssuance->lg_commission_rate; 
-			
-	// 		$totalPaid = DB::table('lg_issuance_advanced_payment_histories')
-	// 		->where('letter_of_guarantee_issuance_id',$letterOfGuaranteeIssuanceId)
-	// 		->where('date' ,'<=' , $subsidiaryCompanyStatementRow->full_date)
-	// 		->sum('amount');
-			
-	// 		DB::table('subsidiary_company_statements')->where('id',$subsidiaryCompanyStatementRow->id)
-	// 		->update([
-	// 			'is_active'=>1 ,
-	// 			'credit'=> ($letterOfGuaranteeIssuance->lg_amount - $totalPaid) * $commissionRate
-	// 		]);
-	// 		/**
-	// 	 * * هنبدا نعمل ابديت من اول الرو اللي تاريخه اصغر حاجه في اللي كانوا محتاجين يتعدلوا
-	// 	 * * وبالتالي هيتعدل هو وكل اللي تحتة
-	// 	 */
-	// 		self::updateNextRows(self::find($subsidiaryCompanyStatementRow->id));
-			
-	// 	});
-	// }
+
+	public function getForeignKeyNamesThatUsedInFilter():array 
+	{
+		return [
+			'currency_name',
+			'partner_id'
+		];
+	}
+	
 }

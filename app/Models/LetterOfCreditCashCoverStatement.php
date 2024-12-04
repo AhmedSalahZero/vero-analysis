@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Helpers\HDate;
+use App\Traits\IsBankStatement;
 use App\Traits\Models\HasDeleteButTriggerChangeOnLastElement;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
@@ -10,7 +11,7 @@ use Illuminate\Support\Facades\DB;
 
 class LetterOfCreditCashCoverStatement extends Model
 {
-	use HasDeleteButTriggerChangeOnLastElement;
+	use HasDeleteButTriggerChangeOnLastElement,IsBankStatement;
     protected $guarded = [
         'id'
     ];
@@ -193,6 +194,14 @@ public function cashExpense()
 	{
 		return $this->belongsTo(LetterOfCreditIssuance::class,'lc_facility_id','id');
 	} 
-	
+	public function getForeignKeyNamesThatUsedInFilter():array 
+	{
+		return [
+			'lc_facility_id',
+			'financial_institution_id',
+			'source',
+			'lc_type'
+		];
+	}		
 	
 }

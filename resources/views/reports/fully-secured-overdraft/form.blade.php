@@ -159,7 +159,7 @@
                                         <label>{{ __('Account Type') }} <span class=""></span> </label>
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
-                                                <select id="account_type_id" name="cd_or_td_account_type_id" class="form-control js-update-account-number-based-on-account-type">
+                                                <select id="account_type_id" name="cd_or_td_account_type_id" class="form-control js-update-account-id-based-on-account-type">
                                                     @foreach($cdOrTdAccountTypes as $index => $accountType)
                                                     <option @if(isset($model) && ($accountType->id == $model->getCdOrTdAccountTypeId()) ) selected @endif value="{{ $accountType->id }}">{{ $accountType->getName() }}</option>
                                                     @endforeach
@@ -172,7 +172,7 @@
                                         <label>{{ __('Account Number') }} <span class=""></span> </label>
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
-                                                <select js-cd-or-td-account-number data-current-selected="{{ isset($model) ? $model->getCdOrTdAccountNumber(): 0 }}" name="cd_or_td_account_number" class="form-control js-account-number">
+                                                <select js-cd-or-td-account-number data-current-selected="{{ isset($model) ? $model->getCdOrTdId(): 0 }}" name="cd_or_td_id" class="form-control js-account-number">
                                                     <option value="" selected>{{__('Select')}}</option>
                                                 </select>
                                             </div>
@@ -447,16 +447,16 @@
         <script>
             $(document).on('change', '[js-cd-or-td-account-number]', function() {
                 const parent = $(this).closest('.kt-portlet__body');
-                const accountType = parent.find('.js-update-account-number-based-on-account-type').val()
-                const accountNumber = parent.find('[js-cd-or-td-account-number]').val();
+                const accountType = parent.find('.js-update-account-id-based-on-account-type').val()
+                const accountId = parent.find('[js-cd-or-td-account-number]').val();
                	const financialInstitutionId = "{{ $financialInstitution->id }}";
-                    let url = "{{ route('get.account.amount.based.on.account.number',['company'=>$company->id , 'accountType'=>'replace_account_type' , 'accountNumber'=>'replace_account_number','financialInstitutionId'=>'replace_financial_institution_id' ]) }}";
+                    let url = "{{ route('get.account.amount.based.on.account.id',['company'=>$company->id , 'accountType'=>'replace_account_type' , 'accountId'=>'replace_account_id','financialInstitutionId'=>'replace_financial_institution_id' ]) }}";
 					
                     url = url.replace('replace_account_type', accountType);
-                    url = url.replace('replace_account_number', accountNumber);
+                    url = url.replace('replace_account_id', accountId);
 					url = url.replace('replace_financial_institution_id', financialInstitutionId);
 					
-					if(accountType &&accountNumber &&financialInstitutionId){
+					if(accountType &&accountId &&financialInstitutionId){
 						$.ajax({
                     url
                     , success: function(res) {

@@ -13,7 +13,10 @@ class LetterOfCreditFacility extends Model
 	use HasLetterOfCreditStatements , HasLetterOfCreditCashCoverStatements;
     
 	protected $guarded = ['id'];
-	
+	public function getName()
+	{
+		return $this->name ?: __('N/A');
+	}
 	public function getContractStartDate()
 	{
 		return $this->contract_start_date;

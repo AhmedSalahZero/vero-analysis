@@ -3,7 +3,7 @@
 @props([
 	'label',
 	'type' ,
-	'name',
+	'name'=>null,
 	'required'=>$required??false ,
 	'model'=>$model,
 	'readonly'=>false,
@@ -31,5 +31,9 @@
 									@if($required)
 									required
 									@endif
-									 @if($readonly) readonly @endif @if($id) id="{{ $id }}" @endif name="{{ $name }}"  value="{{ $value  }}" type="{{ $type }}" class="form-control {{ $class }}" placeholder="{{$placeholder}}">
+									 @if($readonly) readonly @endif @if($id) id="{{ $id }}" @endif 
+									 @if($name)
+									 name="{{ $name }}"
+									 @endif
+									   value="{{ $value  }}" type="{{ $type }}" class="form-control {{ $class }}" placeholder="{{$placeholder}}">
                                 </div>

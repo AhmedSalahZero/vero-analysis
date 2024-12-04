@@ -232,6 +232,7 @@
 
 					if new.id and (new.type = interest_type_text or new.type = highest_debit_balance_text ) then 
 								select  sum(interest_amount) , max(end_balance) into _current_interest_amount,_largest_end_balance from  lc_overdraft_bank_statements where `type` != interest_type_text and `type` != highest_debit_balance_text and lc_issuance_id = new.lc_issuance_id and source = new.source and EXTRACT(MONTH from date) = EXTRACT(MONTH from new.date ) and  EXTRACT(YEAR from date) = EXTRACT(YEAR from new.date) ;
+								set _current_interest_amount = ifnull(_current_interest_amount,0);
 								select highest_debt_balance_rate into _highest_debt_balance_rate from letter_of_credit_issuances where id = new.lc_issuance_id  ;
 								if new.type = interest_type_text then 
 								-- للفايدة الخاصة باخر الشهر
