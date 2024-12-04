@@ -100,7 +100,7 @@ use App\Models\LetterOfGuaranteeIssuance;
 								
 								
 								 <div class="col-md-2">
-                                        <label>{{__('Category Name')}}
+                                        <label>{{__('Issuance Type')}}
                                             @include('star')
                                         </label>
                                         <div class="input-group">
