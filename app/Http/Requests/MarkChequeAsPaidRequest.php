@@ -39,8 +39,6 @@ class MarkChequeAsPaidRequest extends FormRequest
 		->first() ;
 		$dueDate = $row->due_date ;
 		
-		
-		// dd();
         return [
 			'actual_payment_date'=>['required',new DateMustBeGreaterThanOrEqualDate(null,$dueDate,__('Payment Date Must Be Greater Than Or Equal Cheque Due Date'))],
 			'amount_can_not_be_greater_than_end_balance_at_payment_date'=>new AmountCanNotBeGreaterThanEndBalanceAtPaymentDate('ACTUAL_PAYMENT_DATE',$row->getAmount(),$row->company,$row->getAccountTypeId(),$row->getAccountNumber(),$row->getFinancialInstitutionId(),$this->actual_payment_date,null),

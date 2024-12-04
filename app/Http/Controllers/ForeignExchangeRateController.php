@@ -1,13 +1,15 @@
 <?php
 namespace App\Http\Controllers;
+
+use App\Models\CashInSafeStatement;
 use App\Models\Company;
 use App\Models\FinancialInstitutionAccount;
 use App\Models\ForeignExchangeRate;
 use App\Traits\GeneralFunctions;
-use Arr;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 
 class ForeignExchangeRateController
 {
@@ -52,8 +54,9 @@ class ForeignExchangeRateController
 		$filterDates = [];
 		$searchFields = [];
 		$models = [];
-		$existingCurrencies =ForeignExchangeRate::where('company_id',$company->id)->pluck('from_currency','from_currency')->toArray();
+		// $existingCurrencies =ForeignExchangeRate::where('company_id',$company->id)->pluck('from_currency','from_currency')->toArray();
 		$existingCurrencies =FinancialInstitutionAccount::getAllCurrentAccountCurrenciesForCompany($company->id,[$mainFunctionalCurrency]);
+		$existingCurrencies = array_values(array_unique(array_merge($existingCurrencies , CashInSafeStatement::getCurrencies($company->id,[$mainFunctionalCurrency]))));
 
 		
 		$isMainFunctionCurrencyExistInHisCurrency = in_array($mainFunctionalCurrency,$existingCurrencies );

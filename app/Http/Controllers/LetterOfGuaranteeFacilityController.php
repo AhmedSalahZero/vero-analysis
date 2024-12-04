@@ -244,7 +244,6 @@ class LetterOfGuaranteeFacilityController
 		if($isHundredPercentageSource){
 			$currencyName = $request->get('lgCurrency');
 		}
-		// dd($letterOfGuaranteeIssuance);
 		$currentLgTypeOutstanding = 0 ;
 		$financialInstitution = FinancialInstitution::find($financialInstitutionId);
 		if(!$financialInstitution){

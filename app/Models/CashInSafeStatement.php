@@ -202,4 +202,8 @@ class CashInSafeStatement extends Model
 			'financial_institution_account_id'
 		];
 	}
+	public static function getCurrencies(int $companyId,array $exceptArr):array 
+	{
+		return self::where('company_id',$companyId)->whereNotIn('currency',$exceptArr)->pluck('currency')->toArray();
+	}
 }

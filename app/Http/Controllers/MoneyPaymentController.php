@@ -582,7 +582,6 @@ class MoneyPaymentController
 			// $chequeDueDate = $moneyPayment->payableCheque->due_date;
 			$moneyPayment->payableCheque->update($data);
 			if($currentStatement = $moneyPayment->getCurrentStatement()){
-				// dd($data['actual_payment_date']);
 				$currentStatement->handleFullDateAfterDateEdit(Carbon::make($data['actual_payment_date'])->format('Y-m-d'),$currentStatement->debit,$currentStatement->credit);
 				// $time = now()->format('H:i:s');
 				// $moneyPayment->getCurrentStatement()->update([
