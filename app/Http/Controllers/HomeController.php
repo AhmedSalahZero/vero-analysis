@@ -284,7 +284,7 @@ class HomeController extends Controller
 			$monthSales = $totalSums  ? number_format((($months[$i]->{'Sales Values'} / $totalSums) * 100), 1) : 0;
 			$growthRate = 0 ;
 			
-			$previousMonthSalesValue = $months[$i - 1]->{'Sales Values'} ;
+			$previousMonthSalesValue = isset($months[$i - 1]) ?  $months[$i - 1]->{'Sales Values'} : 0 ;
 			$growthRate =  $isFirstMonth || !$months[$i]->{'Sales Values'} || $previousMonthSalesValue==0 ? 0 : number_format((($months[$i]->{'Sales Values'} - $previousMonthSalesValue) / $previousMonthSalesValue) * 100, 1);
 			$accumulatedSalesValue = $isFirstMonth ? $months[$i]->{'Sales Values'} : $months[$i]->{'Sales Values'} + $cumulative[$i - 1]['price'];
 
