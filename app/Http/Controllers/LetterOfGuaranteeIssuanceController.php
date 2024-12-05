@@ -399,22 +399,13 @@ class LetterOfGuaranteeIssuanceController
 		$letterOfGuaranteeStatement = $lgAdvancedPaymentHistory->letterOfGuaranteeStatements->where('type',LetterOfGuaranteeIssuance::AMOUNT_TO_BE_DECREASED)->first();
 
 		$letterOfGuaranteeStatement->handleFullDateAfterDateEdit($decreaseDate,$decreaseAmount,0);
-		// ->update([
-		// 	'date'=>$decreaseDate,
-		// 	'debit'=>$decreaseAmount
-		// ]);
+	
 		$letterOfGuaranteeCashCoverStatement =  $lgAdvancedPaymentHistory->letterOfGuaranteeCashCoverStatements->where('type',LetterOfGuaranteeIssuance::AMOUNT_TO_BE_DECREASED)->first();
 		$letterOfGuaranteeCashCoverStatement->handleFullDateAfterDateEdit($decreaseDate,0,$cashCoverAmount);
-		// ->update([
-		// 	'credit'=>$cashCoverAmount,
-		// 	'date'=>$decreaseDate 
-		// ]);
+		
 		$currentAccountDebitBankStatement = $lgAdvancedPaymentHistory->currentAccountDebitBankStatement;
 		$currentAccountDebitBankStatement->handleFullDateAfterDateEdit($decreaseDate,$cashCoverAmount,0);
-		// ->update([
-		// 	'debit'=>$cashCoverAmount,
-		// 	'date'=>$decreaseDate
-		// ]);
+	
 
 		return response()->json([
 			'status'=>true ,

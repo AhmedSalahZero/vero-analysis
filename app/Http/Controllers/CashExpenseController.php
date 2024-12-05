@@ -16,6 +16,7 @@ use App\Models\PayableCheque;
 use App\Models\SupplierInvoice;
 use App\Traits\GeneralFunctions;
 use App\Traits\Models\HasCreditStatements;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
@@ -405,12 +406,7 @@ class CashExpenseController
 			$cashExpense->payableCheque->update($data);
 			if($currentStatement = $cashExpense->getCurrentStatement()){
 				$currentStatement->handleFullDateAfterDateEdit($data['actual_payment_date'],$currentStatement->debit,$currentStatement->credit);
-				// $time = now()->format('H:i:s');
-				// $cashExpense->getCurrentStatement()->update([
-				// 	'date'=>$actualPaymentDate = $data['actual_payment_date'],
-				// 	'full_date' =>date('Y-m-d H:i:s', strtotime("$actualPaymentDate $time")),
-				// 	'updated_at'=>now()
-				// ]);
+			
 
 			}
 
@@ -433,15 +429,9 @@ class CashExpenseController
 		$data['status'] = OutgoingTransfer::PAID;
 		foreach($cashExpenseIds as $cashExpenseId){
 			$cashExpense = CashExpense::find($cashExpenseId) ;
-			// $chequeDueDate = $cashExpense->outgoingTransfer->due_date;
 			$cashExpense->outgoingTransfer->update($data);
-			if($cashExpense->getCurrentStatement()){
-				$time = now()->format('H:i:s');
-				$cashExpense->getCurrentStatement()->update([
-					'date'=>$actualPaymentDate = $data['actual_payment_date'],
-					'full_date' =>date('Y-m-d H:i:s', strtotime("$actualPaymentDate $time")),
-					'updated_at'=>now()
-				]);
+			if($currentStatement=$cashExpense->getCurrentStatement()){
+				$currentStatement->handleFullDateAfterDateEdit(Carbon::make($data['actual_payment_date'])->format('Y-m-d'),$currentStatement->debit,$currentStatement->credit);
 
 			}
 

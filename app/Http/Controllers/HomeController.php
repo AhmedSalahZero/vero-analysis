@@ -279,10 +279,14 @@ class HomeController extends Controller
 
 
 		for ($i = 0; $i < count($months); $i++) {
+			$isFirstMonth = $i == 0 ;
 			// for($i = 0 ; $i<count($months) ; $i++){
 			$monthSales = $totalSums  ? number_format((($months[$i]->{'Sales Values'} / $totalSums) * 100), 1) : 0;
-			$growthRate =  $i == 0 || !$months[$i]->{'Sales Values'} ? 0 : number_format((($months[$i]->{'Sales Values'} - $months[$i - 1]->{'Sales Values'}) / $months[$i - 1]->{'Sales Values'}) * 100, 1);
-			$accumulatedSalesValue = $i ==  0 ? $months[$i]->{'Sales Values'} : $months[$i]->{'Sales Values'} + $cumulative[$i - 1]['price'];
+			$growthRate = 0 ;
+			
+			$previousMonthSalesValue = $months[$i - 1]->{'Sales Values'} ;
+			$growthRate =  $isFirstMonth || !$months[$i]->{'Sales Values'} || $previousMonthSalesValue==0 ? 0 : number_format((($months[$i]->{'Sales Values'} - $previousMonthSalesValue) / $previousMonthSalesValue) * 100, 1);
+			$accumulatedSalesValue = $isFirstMonth ? $months[$i]->{'Sales Values'} : $months[$i]->{'Sales Values'} + $cumulative[$i - 1]['price'];
 
 			$formattedDataForChart[$i]['Sales Values'] = $months[$i]->{'Sales Values'};
 			$formattedDataForChart[$i]['date'] = $months[$i]->date;

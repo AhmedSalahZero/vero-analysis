@@ -8,6 +8,7 @@ trait IsBankStatement
 {
 	public function handleFullDateAfterDateEdit(string $date,$debit,$credit)
 	{ 
+			$date = Carbon::make($date)->format('Y-m-d');
 			$modelName = get_class($this);
 			$currentFullDate =$this->full_date ; 
 			$time  = Carbon::make($currentFullDate)->format('H:i:s');

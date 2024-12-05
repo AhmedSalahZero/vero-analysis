@@ -100,34 +100,11 @@ class TimeOfDepositRenewalDateController
 		$year = $date[2];
 		$renewalDate = $year.'-'.$month.'-'.$day ;
 		$expiryDate = $request->get('expiry_date');
+		
 		$renewalFeesCurrentAccountBankStatement = $timeOfDeposit->renewalDebitCurrentAccount($expiryDate) ;
+		$interestAmount = $timeOfDeposit->calculateInterestAmount($expiryDate,$renewalDate,$newInterestRate);
+		$renewalFeesCurrentAccountBankStatement->handleFullDateAfterDateEdit($expiryDate,$interestAmount,0);
 			
-			
-			$currentFullDate =$renewalFeesCurrentAccountBankStatement->full_date ; 
-			$time  = Carbon::make($currentFullDate)->format('H:i:s');
-			$newFullDateTime = date('Y-m-d H:i:s', strtotime("$expiryDate $time")) ;
-			$minDateTime = min($currentFullDate ,$newFullDateTime );
-			$interestAmount = $timeOfDeposit->calculateInterestAmount($expiryDate,$renewalDate,$newInterestRate);
-			DB::table('current_account_bank_statements')->where('id',$renewalFeesCurrentAccountBankStatement->id)->update([
-				'date'=>$expiryDate,
-				'full_date'=>$newFullDateTime ,
-				'debit'=>$interestAmount
-			]);
-			CurrentAccountBankStatement::where('full_date','>=',$minDateTime)
-			->where('financial_institution_account_id',$renewalFeesCurrentAccountBankStatement->financial_institution_account_id)
-			->orderByRaw('full_date asc, id asc')
-			->first()
-			->update([
-				'updated_at'=>now()
-			]);
-			
-	
-			
-		// }
-		
-		
-		
-		
 		
 		$TdRenewalDateHistory->update([
 			'renewal_date'=>$renewalDate ,

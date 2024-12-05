@@ -6,6 +6,7 @@ use App\Models\CleanOverdraftBankStatement;
 use App\Models\Company;
 
 use App\Services\Api\OddoService;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Schema;
@@ -43,18 +44,6 @@ class TestCommand extends Command
 	 */
 	public function handle()
 	{
-		CleanOverdraftBankStatement::deleteButTriggerChangeOnLastElement(CleanOverdraftBankStatement::where('clean_overdraft_id',37)->get());
-		dd('good');
-		dd($this->getTableNamesThatHasColumn('cd_or_td_account_number'));
-		// $companies = Company::all();
-		// foreach($companies as $company){
-		// 	if($company->hasOddoIntegrationCredentials()){
-		// 		$oddo = new OddoService($company->getOddoDBUrl(),$company->getOddoDBName(),$company->getOddoDBUserName(),$company->getOddoDBPassword(),$company->getId());
-		// 		$importDate = now()->subDay()->format('Y-m-d') ; ;
-		// 		$oddo->startImport($importDate);
-		// 	}
-		// }
-		
 
 	}
 	public function refreshStatement($statementModelName,$dateColumnName = 'full_date'){

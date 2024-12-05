@@ -106,6 +106,7 @@ class LetterOfGuaranteeIssuanceRenewalDateController
 		$year = $date[2];
 		$renewalDate = $year.'-'.$month.'-'.$day ;
 		$expiryDate = $request->get('expiry_date');
+
 		$renewalFeesCurrentAccountBankStatement = $letterOfGuaranteeIssuance->renewalFeesCurrentAccountBankStatement($expiryDate) ;
 		$financialInstitution = $letterOfGuaranteeIssuance->financialInstitutionBank;
 		CurrentAccountBankStatement::deleteButTriggerChangeOnLastElement($LgRenewalDateHistory->commissionCurrentBankStatements()->withoutGlobalScope('only_active')->get());
@@ -115,27 +116,7 @@ class LetterOfGuaranteeIssuanceRenewalDateController
 		$financialInstitutionAccountOpeningBalance = $financialInstitutionAccount->getOpeningBalanceDate();
 		$this->storeCommissionToCreditCurrentAccountBankStatement($LgRenewalDateHistory,$letterOfGuaranteeIssuance,$company,$expiryDate,$renewalDate,$transactionName,$lgType);
 		if($renewalFeesCurrentAccountBankStatement){
-			
-			
-			$currentFullDate =$renewalFeesCurrentAccountBankStatement->full_date ; 
-			$time  = Carbon::make($currentFullDate)->format('H:i:s');
-			$newFullDateTime = date('Y-m-d H:i:s', strtotime("$expiryDate $time")) ;
-			$minDateTime = min($currentFullDate ,$newFullDateTime );
-			DB::table('current_account_bank_statements')->where('id',$renewalFeesCurrentAccountBankStatement->id)->update([
-				'date'=>$expiryDate,
-				'full_date'=>$newFullDateTime ,
-				'credit'=>$renewalFeesAmount
-			]);
-			CurrentAccountBankStatement::where('full_date','>=',$minDateTime)
-			->where('financial_institution_account_id',$renewalFeesCurrentAccountBankStatement->financial_institution_account_id)
-			->orderByRaw('full_date asc, id asc')
-			->first()
-			->update([
-				'updated_at'=>now()
-			]);
-			
-		
-			
+			$renewalFeesCurrentAccountBankStatement->handleFullDateAfterDateEdit($expiryDate,0,$renewalFeesAmount);
 		}
 		else{
 			if(Carbon::make($expiryDate)->greaterThanOrEqualTo(Carbon::make($financialInstitutionAccountOpeningBalance))){

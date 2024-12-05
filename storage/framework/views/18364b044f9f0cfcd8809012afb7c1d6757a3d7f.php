@@ -101,7 +101,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                                 <div class="form-group row">
 								
 									 <div class="col-md-3">
-                                        <label><?php echo e(__('Category Name')); ?>
+                                        <label><?php echo e(__('Issuance Type')); ?>
 
                                             <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                         </label>

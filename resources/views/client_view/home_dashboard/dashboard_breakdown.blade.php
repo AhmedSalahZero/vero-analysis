@@ -121,7 +121,6 @@ $exportableFieldsValues[] = 'product_item_avg_count';
 $exportableFieldsValues[] = 'avg_invoice_value';
 }
 @endphp
-{{-- {{ dd($simpleLinearRegression) }} --}}
 <div class="kt-portlet">
     <div class="kt-portlet__head">
         <div class="kt-portlet__head-label">
@@ -194,7 +193,6 @@ $exportableFieldsValues[] = 'avg_invoice_value';
 										<button type="button" class="btn btn-small text-white break-down-bg-{{ $color }}" data-toggle="modal" data-target="#forecast-{{ convertStringToClass($type) }}">
                                             {{ __('Forecast') }}
                                         </button>
-										{{-- {{ dd(get_defined_vars()) }} --}}
 										@include('client_view.home_dashboard._forecast-modal',[])
 
 
