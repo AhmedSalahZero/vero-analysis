@@ -66,7 +66,7 @@
                                     <th>{{ __('End Date') }}</th>
                                     <th>{{ __('Currency') }}</th>
                                     <th>{{ __('Limit') }}</th>
-                                    <th>{{ __('Outstanding Amount') }}</th>
+                                    {{-- <th>{{ __('Outstanding Amount') }}</th> --}}
                                     <th>{{ __('Terms') }}</th>
                                     <th>{{ __('Control') }}</th>
                                 </tr>
@@ -82,7 +82,7 @@
                                     <td class="text-nowrap">{{ $letterOfCreditFacility->getContractEndDateFormatted() }}</td>
                                     <td class="text-uppercase">{{ $letterOfCreditFacility->getCurrency() }}</td>
                                     <td class="text-transform">{{ $letterOfCreditFacility->getLimitFormatted() }}</td>
-                                    <td class="text-transform">{{ $letterOfCreditFacility->getOutstandingAmountFormatted() }}
+                                    {{-- <td class="text-transform">{{ $letterOfCreditFacility->getOutstandingAmountFormatted() }} --}}
 
 
                                     </td>

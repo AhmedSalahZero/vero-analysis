@@ -170,34 +170,10 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-2">
-                                 <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.date','data' => ['label' => __('Outstanding Date'),'required' => true,'model' => $model??null,'name' => 'outstanding_date','placeholder' => __('Select Outstanding Date')]]); ?>
-<?php $component->withName('form.date'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['label' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Outstanding Date')),'required' => true,'model' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($model??null),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('outstanding_date'),'placeholder' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Select Outstanding Date'))]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
-<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
-<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
-<?php endif; ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?> 
-                            </div>
+                            
 
 
-                            <div class="col-md-2 ">
-                                 <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.input','data' => ['model' => $model??null,'label' => __('Outstanding Amount'),'type' => 'text','placeholder' => __('Outstanding Amount'),'name' => 'outstanding_amount','class' => 'only-greater-than-or-equal-zero-allowed','required' => true]]); ?>
-<?php $component->withName('form.input'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['model' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($model??null),'label' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Outstanding Amount')),'type' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('text'),'placeholder' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Outstanding Amount')),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('outstanding_amount'),'class' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed'),'required' => true]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
-<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
-<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
-<?php endif; ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?> 
-                            </div>
+                            
 
 
 
@@ -227,7 +203,7 @@
                         ?>
                         <div class="form-group row" style="flex:1;">
 
-                            <div class="col-md-2">
+                            <div class="col-md-4">
                                 <label class="label"><?php echo __('LC  <br> Type'); ?></label>
                                 <input class="form-control" type="hidden" readonly value="<?php echo e($name); ?>" name="termAndConditions[<?php echo e($index); ?>][lc_type]">
                                 <input class="form-control" type="text" readonly value="<?php echo e($nameFormatted); ?>">
@@ -235,17 +211,7 @@
 
 
 
-                            <div class="col-2">
-                                <label class="form-label font-weight-bold ">
-								<?php echo __('Outstanding  <br> Balance'); ?>
-
-                                </label>
-                                <div class="kt-input-icon">
-                                    <div class="input-group">
-                                        <input placeholder="<?php echo e(__('Outstanding Balance')); ?>" type="text" class="form-control only-greater-than-zero-allowed" name="termAndConditions[<?php echo e($index); ?>][outstanding_balance]" value="<?php echo e(isset($termAndCondition) ? $termAndCondition->getOutstandingBalance() : old('outstanding_balance',0)); ?>">
-                                    </div>
-                                </div>
-                            </div>
+                            
 
 
 
@@ -343,7 +309,7 @@
                         <div class="form-group row">
                            
 							
-                            <div class="col-md-4 ">
+                            <div class="col-md-2 ">
                                  <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.input','data' => ['model' => $model??null,'class' => 'only-percentage-allowed','label' => __('Borrowing Rate (%)'),'type' => 'text','placeholder' => __('Borrowing Rate (%)'),'name' => 'borrowing_rate','required' => true]]); ?>
 <?php $component->withName('form.input'); ?>
@@ -357,7 +323,7 @@
 <?php endif; ?> 
                             </div>
 
-                            <div class="col-md-4 ">
+                            <div class="col-md-2 ">
                                  <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.input','data' => ['model' => $model??null,'class' => 'only-percentage-allowed','label' => __('Bank Margin Rate (%)'),'placeholder' => __('Bank Margin Rate (%)'),'name' => 'bank_margin_rate','required' => true,'type' => 'text']]); ?>
 <?php $component->withName('form.input'); ?>
@@ -371,7 +337,7 @@
 <?php endif; ?> 
                             </div>
 
-                            <div class="col-md-4 ">
+                            <div class="col-md-2 ">
                                  <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.input','data' => ['model' => $model??null,'class' => 'only-percentage-allowed','label' => __('Interest Rate (%)'),'placeholder' => __('Interest Rate (%)'),'name' => 'interest_rate','required' => true,'type' => 'text']]); ?>
 <?php $component->withName('form.input'); ?>
@@ -385,7 +351,7 @@
 <?php endif; ?> 
                             </div>
 
-                            <div class="col-md-4 ">
+                            <div class="col-md-2 ">
                                  <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.input','data' => ['model' => $model??null,'class' => 'only-percentage-allowed','label' => __('Min Intrest Rate (%)'),'placeholder' => __('Min Intrest Rate (%)'),'name' => 'min_interest_rate','required' => true,'type' => 'text']]); ?>
 <?php $component->withName('form.input'); ?>
@@ -398,7 +364,7 @@
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
                             </div>
-                            <div class="col-md-4 ">
+                            <div class="col-md-2 ">
                                  <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.input','data' => ['model' => $model??null,'class' => 'only-percentage-allowed','label' => __('Highest Debt Balance Rate (%)'),'placeholder' => __('Highest Debt Balance Rate (%)'),'name' => 'highest_debt_balance_rate','required' => true,'type' => 'text']]); ?>
 <?php $component->withName('form.input'); ?>
@@ -547,7 +513,21 @@
             }
         })
 
+
+
     </script>
+<script>
+    $('input[name="borrowing_rate"],input[name="bank_margin_rate"]').on('change', function() {
+        let borrowingRate = $('input[name="borrowing_rate"]').val();
+        borrowingRate = borrowingRate ? parseFloat(borrowingRate) : 0;
+        let bankMaringRate = $('input[name="bank_margin_rate"]').val();
+        bankMaringRate = bankMaringRate ? parseFloat(bankMaringRate) : 0;
+        const interestRate = borrowingRate + bankMaringRate;
+        $('input[name="interest_rate"]').attr('readonly', true).val(interestRate);
+    })
+    $('input[name="borrowing_rate"]').trigger('change');
+</script>	
+	
     <?php $__env->stopSection(); ?>
 
 <?php echo $__env->make('layouts.dashboard', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /media/salah/Software/projects/veroo/resources/views/reports/LetterOfCreditFacility/form.blade.php ENDPATH**/ ?>

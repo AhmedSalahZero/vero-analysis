@@ -305,7 +305,7 @@ class LetterOfCreditIssuance extends Model
 		$this->attributes['due_date'] = $year.'-'.$month.'-'.$day;
 	}
 
-	public function getLcAmount()
+	public function getLcAmount():float
 	{
 		return $this->lc_amount ?: 0 ;
 	}
@@ -400,7 +400,8 @@ class LetterOfCreditIssuance extends Model
 	{
 		return $this->hasMany(LcOverdraftBankStatement::class,'lc_issuance_id','id')->orderBy('full_date','desc');
 	}
-	public function handleLcCreditBankStatement(string $moneyType  , string $date , $paidAmount,$source)
+	
+	public function handleLcCreditBankStatement(string $moneyType ,$limit , string $date , $paidAmount,$source)
 	{
 		return $this->lcOverdraftBankStatements()->create([
 			'source'=>$source,
@@ -408,7 +409,7 @@ class LetterOfCreditIssuance extends Model
 			'lc_issuance_id'=>$this->id ,
 			'company_id'=>$this->company_id ,
 			'date'=>$date,
-			'limit'=>$this->getLimit(),
+			'limit'=>$limit,
 			'beginning_balance'=>0 ,
 			'debit'=>0,
 			'credit'=>$paidAmount
@@ -516,6 +517,8 @@ class LetterOfCreditIssuance extends Model
 		});
 		$this->settlements()->create([
 			'invoice_number'=>$supplierInvoice->getInvoiceNumber(),
+			'invoice_id'=>$supplierInvoice->id,
+			'partner_id'=>$supplierInvoice->getPartnerId(),
 			'supplier_name'=>$supplierInvoice->getSupplierName(),
 			'withhold_amount'=>0,
 			'company_id'=>$company->id ,
@@ -546,5 +549,44 @@ class LetterOfCreditIssuance extends Model
 		return $this->issuance_fees ;
 	}	
 	
-	
+	public function getNewPoNumber()
+	{
+		return $this->purchaseOrder ? $this->purchaseOrder->getNumber() :'';
+	}
+	public function getContractType()
+	{
+		return $this->contract_type ;
+	}
+	public function getPaymentDate()
+	{
+		return $this->payment_date;
+	}
+	public function getReceivingOrPaymentMoneyDateFormatted()
+	{
+		return Carbon::make($this->getPaymentDate())->format('d-m-Y');
+	}
+	public function getType()
+	{
+		return 'lc-settlement';
+	}
+	public function getNumber()
+	{
+		return $this->getLcCode();
+	}
+	public function getAmountInInvoiceCurrency()
+	{
+		return $this->getLcAmount();
+	}
+	public function getInvoiceCurrency()
+	{
+		return $this->getLcCurrency();
+	}
+	public function getReceivingOrPaymentCurrency()
+	{
+		return $this->getLcCurrency();
+	}
+	public function getTotalWithholdAmount()
+	{
+		return 0;
+	}
 }

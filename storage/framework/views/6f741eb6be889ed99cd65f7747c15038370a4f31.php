@@ -59,7 +59,13 @@
 						 
 									<?php
 										$lcAmount = $model->getLcAmount();
-										$invoices = \App\Models\SupplierInvoice::onlyCompany($company->id)->onlyForPartner($model->getBeneficiaryId())->where('net_balance','>=',$lcAmount)->onlyCurrency($model->getLcCurrency())->get();
+										$invoices = \App\Models\SupplierInvoice::onlyCompany($company->id)->onlyForPartner($model->getBeneficiaryId())
+										->where('net_balance','>=',$lcAmount)
+										->onlyCurrency($model->getLcCurrency())
+										->get();
+										// dd($model,$company->id,$model->getBeneficiaryId(),$lcAmount,$model->getLcCurrency());
+										
+								
 									?>
 									
 									  <div class="col-md-3">
@@ -98,7 +104,9 @@
 										
 										
 										
-										
+										     <div class="modal-header">
+											                     <h5 class="modal-title" id="exampleModalLongTitle"><?php echo e(__('Allocate Payment To Customer Contract')); ?></h5>
+										</div>
 										
 										
 										

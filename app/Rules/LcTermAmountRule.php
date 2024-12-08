@@ -3,7 +3,7 @@
 namespace App\Rules;
 
 use App\Models\AccountType;
-use App\Models\LetterOfGuaranteeIssuance;
+use App\Models\LetterOfCreditIssuance;
 use Illuminate\Contracts\Validation\ImplicitRule;
 use Illuminate\Support\Facades\DB;
 
@@ -15,13 +15,13 @@ class LcTermAmountRule implements ImplicitRule
      * @return void
      */
 	protected $category_name, $lc_cash_cover_amount , $lc_commission_amount ,$issuance_date, $min_lc_commission_fees,$issuance_fees ,$account_type_id,$account_id,$company_id,$financial_institution_id;
-    public function __construct($categoryName ,$accountTypeId,$accountId ,$issuanceDate,$lcCashCoverAmount,$lcCommissionAmount,$minLgCommissionFees,$issuanceFees,$companyId,$financialInstitutionId)
+    public function __construct($categoryName ,$accountTypeId,$accountId ,$issuanceDate,$lcCashCoverAmount,$lcCommissionAmount,$minLcCommissionFees,$issuanceFees,$companyId,$financialInstitutionId)
     {
 		$this->category_name = $categoryName;
 		$this->account_type_id = $accountTypeId;
 		$this->lc_cash_cover_amount = number_unformat($lcCashCoverAmount);
 		$this->lc_commission_amount = number_unformat($lcCommissionAmount);
-		$this->min_lc_commission_fees = number_unformat($minLgCommissionFees);
+		$this->min_lc_commission_fees = number_unformat($minLcCommissionFees);
 		$this->issuance_fees = number_unformat($issuanceFees);
 		$this->account_id = $accountId;
 		$this->company_id = $companyId;
@@ -46,7 +46,7 @@ class LcTermAmountRule implements ImplicitRule
 		if(!$accountType->isCurrentAccount()){
 			return true ; 
 		}
-		if($this->category_name == LetterOfGuaranteeIssuance::OPENING_BALANCE){
+		if($this->category_name == LetterOfCreditIssuance::OPENING_BALANCE){
 			return true ;
 		}
 		$accountId = $this->account_id ;
@@ -67,6 +67,6 @@ class LcTermAmountRule implements ImplicitRule
      */
     public function message()
     {
-        return __('There Is No Enough Balance In Current Account To Apply LG Cash Cover And Commission');
+        return __('There Is No Enough Balance In Current Account To Apply LC Cash Cover And Commission');
     }
 }

@@ -193,7 +193,7 @@ use App\Models\LetterOfCreditIssuance;
                                         <label><?php echo e(__('Account Number')); ?> <span class=""></span> </label>
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
-                                                <select js-cd-or-td-account-number data-current-selected="<?php echo e(isset($model) ? $model->getCdOrTdId(): 0); ?>" name="cd_or_td_id" class="form-control js-account-number">
+                                                <select js-cd-or-td-account-number js-update-outstanding-balance-and-limits data-current-selected="<?php echo e(isset($model) ? $model->getCdOrTdId(): 0); ?>" name="cd_or_td_id" class="form-control js-account-number">
                                                     <option value="" selected><?php echo e(__('Select')); ?></option>
                                                 </select>
                                             </div>
@@ -909,12 +909,14 @@ use App\Models\LetterOfCreditIssuance;
         const accountTypeId = $('select#account_type_id').val()
         const accountId = $('[js-cd-or-td-account-number]').val()
 		const lcIssuanceId = "<?php echo e(isset($model) ? $model->id : 0); ?>" 
+		const cdOrTdAccountId = $('select[name="cd_or_td_id"]').val()
 		const source = "<?php echo e($source); ?>"
         $.ajax({
             url: "<?php echo e(route('update.letter.of.credit.outstanding.balance.and.limit',['company'=>$company->id])); ?>"
             , data: {
                 financialInstitutionId,
-				lcIssuanceId
+				lcIssuanceId,
+				cdOrTdAccountId
                 , lcType,
 				source
                 , accountTypeId

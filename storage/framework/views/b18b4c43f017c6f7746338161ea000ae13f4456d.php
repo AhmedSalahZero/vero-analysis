@@ -88,7 +88,7 @@
                                     <th><?php echo e(__('End Date')); ?></th>
                                     <th><?php echo e(__('Currency')); ?></th>
                                     <th><?php echo e(__('Limit')); ?></th>
-                                    <th><?php echo e(__('Outstanding Amount')); ?></th>
+                                    
                                     <th><?php echo e(__('Terms')); ?></th>
                                     <th><?php echo e(__('Control')); ?></th>
                                 </tr>
@@ -105,8 +105,7 @@
                                     <td class="text-nowrap"><?php echo e($letterOfCreditFacility->getContractEndDateFormatted()); ?></td>
                                     <td class="text-uppercase"><?php echo e($letterOfCreditFacility->getCurrency()); ?></td>
                                     <td class="text-transform"><?php echo e($letterOfCreditFacility->getLimitFormatted()); ?></td>
-                                    <td class="text-transform"><?php echo e($letterOfCreditFacility->getOutstandingAmountFormatted()); ?>
-
+                                    
 
 
                                     </td>

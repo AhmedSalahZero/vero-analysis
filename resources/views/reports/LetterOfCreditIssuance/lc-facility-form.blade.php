@@ -256,35 +256,8 @@ use App\Models\LetterOfCreditIssuance;
 
                                     </div>
 
-                                    <div class="col-md-3 hidden hide-only-bond">
-
-                                        <label> {{ __('Contract Reference') }}
-                                            @include('star')
-                                        </label>
-                                        <select js-update-purchase-orders-based-on-contract id="contract-id" data-current-selected="{{ isset($model) ?  $model->getContractId() : 0 }}" name="contract_id" data-live-search="true" class="form-control kt-bootstrap-select select2-select kt_bootstrap_select">
-                                           
-                                        </select>
-                                    </div>
-
-
-
-
-
-                                    <div class="col-md-2 hidden hide-only-bond">
-
-                                        <label> {{ __('Purchase Order') }}
-                                            @include('star')
-                                        </label>
-
-                                        <select id="purchase-order-id" data-current-selected="{{ isset($model) ? $model->getPurchaseOrderId() : 0 }}" name="purchase_order_id" data-live-search="true" class="form-control kt-bootstrap-select select2-select kt_bootstrap_select">
-                                          
-                                        </select>
-                                    </div>
-
-                                    <div class="col-md-2 hidden hide-only-bond">
-
-                                        <x-form.date :label="__('Purchase Order Date')" :required="true" :model="$model??null" :name="'purchase_order_date'" :placeholder="__('Select Purchase Order Date')"></x-form.date>
-                                    </div>
+                                    @include('reports/LetterOfCreditIssuance/_contract-inputs')
+									
                                     <div class="col-md-3 hidden show-only-bond">
 
                                         <x-form.date :label="__('Transaction Date')" :required="true" :model="$model??null" :name="'transaction_date'" :placeholder="__('Select Transaction Date')"></x-form.date>
@@ -328,7 +301,7 @@ use App\Models\LetterOfCreditIssuance;
                                         <x-form.input :default-value="0" :model="$model??null" :label="__('LC Amount')" :type="'text'" :placeholder="__('LC Amount')" :name="'lc_amount'" :class="'only-greater-than-zero-allowed amount-js  recalculate-amount-in-main-currency recalculate-cash-cover-amount-js recalculate-lc-commission-amount-js lc-amount-js'" :required="true"></x-form.input>
                                     </div>
 									
-									 <div class="col-md-3">
+									 {{-- <div class="col-md-3">
                                         <label>{{__('LC Currency')}}
                                             @include('star')
                                         </label>
@@ -336,9 +309,9 @@ use App\Models\LetterOfCreditIssuance;
 										<input type="text" class="form-control current-currency-input" name="lc_currency" id="lc-currency-id" value="" readonly js-when-change-trigger-change-account-type >
                                         
                                         </div>
-                                    </div>
+                                    </div> --}}
 
-                                    {{-- <div class="col-md-3">
+                                    <div class="col-md-3">
                                         <label>{{__('LC Currency')}}
                                             @include('star')
                                         </label>
@@ -350,7 +323,7 @@ use App\Models\LetterOfCreditIssuance;
                                                 @endforeach
                                             </select>
                                         </div>
-                                    </div> --}}
+                                    </div>
                                     <div class="col-md-3">
                                         <x-form.input :readonly="false" :default-value="1" :model="$model??null" :label="__('Exchange Rate')" :type="'text'" :placeholder="__('Exchange Rate')" :name="'exchange_rate'" :class="'exchange-rate-class recalculate-amount-in-main-currency exchange-rate-js only-greater-than-or-equal-zero-allowed'" :required="true"></x-form.input>
                                     </div>
@@ -724,30 +697,7 @@ use App\Models\LetterOfCreditIssuance;
 </script>
 @endif
 <script>
-    $(document).on('change', '[js-update-contracts-based-on-customers]', function(e) {
-        const customerId = $('select#customer_name').val()
-        if (!customerId) {
-            return;
-        }
-        $.ajax({
-            url: "{{route('update.contracts.based.on.customer',['company'=>$company->id])}}"
-            , data: {
-                customerId
-            , }
-            , type: "GET"
-            , success: function(res) {
-                var contractsOptions = '';
-                var currentSelectedId = $('select#contract-id').attr('data-current-selected')
-                for (var contractId in res.contracts) {
-                    var contractName = res.contracts[contractId];
-                    contractsOptions += `<option ${currentSelectedId == contractId ? 'selected' : '' } value="${contractId}"> ${contractName}  </option> `;
-                }
-                $('select#contract-id').empty().append(contractsOptions).selectpicker("refresh");
-                $('select#contract-id').trigger('change')
-            }
-        })
-    })
-    $('[js-update-contracts-based-on-customers]').trigger('change')
+   
 
 </script>
 
@@ -755,32 +705,7 @@ use App\Models\LetterOfCreditIssuance;
 
 
 
-<script>
-    $(document).on('change', '[js-update-purchase-orders-based-on-contract]', function(e) {
-        const contractId = $('select#contract-id').val()
-        if (!contractId) {
-            return
-        }
-        $.ajax({
-            url: "{{route('update.purchase.orders.based.on.contract',['company'=>$company->id])}}"
-            , data: {
-                contractId
-            , }
-            , type: "GET"
-            , success: function(res) {
-                var purchaseOrdersOptions = '';
-                var currentSelectedId = $('select#purchase-order-id').attr('data-current-selected')
-                for (var purchaseOrderId in res.purchase_orders) {
-                    var contractName = res.purchase_orders[purchaseOrderId];
-                    purchaseOrdersOptions += `<option ${currentSelectedId == purchaseOrderId ? 'selected' : '' } value="${purchaseOrderId}"> ${contractName}  </option> `;
-                }
-                $('select#purchase-order-id').empty().append(purchaseOrdersOptions).selectpicker("refresh");
-            }
-        })
-    })
-    $('[js-update-purchase-orders-based-on-contract]').trigger('change')
 
-</script>
 @include('reports.LetterOfCreditIssuance.commonJs')
 
 <script>

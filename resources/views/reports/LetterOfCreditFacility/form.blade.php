@@ -136,14 +136,14 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-2">
+                            {{-- <div class="col-md-2">
                                 <x-form.date :label="__('Outstanding Date')" :required="true" :model="$model??null" :name="'outstanding_date'" :placeholder="__('Select Outstanding Date')"></x-form.date>
-                            </div>
+                            </div> --}}
 
 
-                            <div class="col-md-2 ">
+                            {{-- <div class="col-md-2 ">
                                 <x-form.input :model="$model??null" :label="__('Outstanding Amount')" :type="'text'" :placeholder="__('Outstanding Amount')" :name="'outstanding_amount'" :class="'only-greater-than-or-equal-zero-allowed'" :required="true"></x-form.input>
-                            </div>
+                            </div> --}}
 
 
 
@@ -172,7 +172,7 @@
                         @endphp
                         <div class="form-group row" style="flex:1;">
 
-                            <div class="col-md-2">
+                            <div class="col-md-4">
                                 <label class="label">{!! __('LC  <br> Type') !!}</label>
                                 <input class="form-control" type="hidden" readonly value="{{ $name }}" name="termAndConditions[{{ $index }}][lc_type]">
                                 <input class="form-control" type="text" readonly value="{{ $nameFormatted }}">
@@ -180,7 +180,7 @@
 
 
 
-                            <div class="col-2">
+                            {{-- <div class="col-2">
                                 <label class="form-label font-weight-bold ">
 								{!! __('Outstanding  <br> Balance') !!}
                                 </label>
@@ -189,7 +189,7 @@
                                         <input placeholder="{{ __('Outstanding Balance') }}" type="text" class="form-control only-greater-than-zero-allowed" name="termAndConditions[{{ $index }}][outstanding_balance]" value="{{ isset($termAndCondition) ? $termAndCondition->getOutstandingBalance() : old('outstanding_balance',0) }}">
                                     </div>
                                 </div>
-                            </div>
+                            </div> --}}
 
 
 
@@ -282,22 +282,22 @@
                         <div class="form-group row">
                            
 							
-                            <div class="col-md-4 ">
+                            <div class="col-md-2 ">
                                 <x-form.input :model="$model??null" :class="'only-percentage-allowed'" :label="__('Borrowing Rate (%)')" :type="'text'" :placeholder="__('Borrowing Rate (%)')" :name="'borrowing_rate'" :required="true"></x-form.input>
                             </div>
 
-                            <div class="col-md-4 ">
+                            <div class="col-md-2 ">
                                 <x-form.input :model="$model??null" :class="'only-percentage-allowed'" :label="__('Bank Margin Rate (%)')" :placeholder="__('Bank Margin Rate (%)')" :name="'bank_margin_rate'" :required="true" :type="'text'"></x-form.input>
                             </div>
 
-                            <div class="col-md-4 ">
+                            <div class="col-md-2 ">
                                 <x-form.input :model="$model??null" :class="'only-percentage-allowed'" :label="__('Interest Rate (%)')" :placeholder="__('Interest Rate (%)')" :name="'interest_rate'" :required="true" :type="'text'"></x-form.input>
                             </div>
 
-                            <div class="col-md-4 ">
+                            <div class="col-md-2 ">
                                 <x-form.input :model="$model??null" :class="'only-percentage-allowed'" :label="__('Min Intrest Rate (%)')" :placeholder="__('Min Intrest Rate (%)')" :name="'min_interest_rate'" :required="true" :type="'text'"></x-form.input>
                             </div>
-                            <div class="col-md-4 ">
+                            <div class="col-md-2 ">
                                 <x-form.input :model="$model??null" :class="'only-percentage-allowed'" :label="__('Highest Debt Balance Rate (%)')" :placeholder="__('Highest Debt Balance Rate (%)')" :name="'highest_debt_balance_rate'" :required="true" :type="'text'"></x-form.input>
                             </div>
                             {{-- <div class="col-md-4 ">
@@ -427,5 +427,19 @@
             }
         })
 
+
+
     </script>
+<script>
+    $('input[name="borrowing_rate"],input[name="bank_margin_rate"]').on('change', function() {
+        let borrowingRate = $('input[name="borrowing_rate"]').val();
+        borrowingRate = borrowingRate ? parseFloat(borrowingRate) : 0;
+        let bankMaringRate = $('input[name="bank_margin_rate"]').val();
+        bankMaringRate = bankMaringRate ? parseFloat(bankMaringRate) : 0;
+        const interestRate = borrowingRate + bankMaringRate;
+        $('input[name="interest_rate"]').attr('readonly', true).val(interestRate);
+    })
+    $('input[name="borrowing_rate"]').trigger('change');
+</script>	
+	
     @endsection

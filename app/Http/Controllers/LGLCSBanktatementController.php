@@ -47,14 +47,17 @@ class LGLCSBanktatementController
         $currencyName = $request->get('currency');
 		$results = [];
 		$reportType = $request->get('report_type');
+	
 		$statementTableName = [
 			'LetterOfCreditIssuance'=>'letter_of_credit_statements',
 			'LetterOfGuaranteeIssuance'=>'letter_of_guarantee_statements',
+			'LCOverdraft'=>'lc_overdraft_bank_statements'
 		][$reportType];
 		$lcTypeOrLgTypeColumnName = [
 			'LetterOfCreditIssuance'=>'lc_type',
 			'LetterOfGuaranteeIssuance'=>'lg_type',
-		][$reportType];
+		][$reportType] ?? null;
+
 		$source = $request->get('source');
 		$type = $request->get('type');
 		
@@ -68,12 +71,16 @@ class LGLCSBanktatementController
 				 ->where('date', '<=', $endDate)
 				 ->where('currency',$currencyName)
 				 ->where('financial_institution_id',$financialInstitutionId)
-				 ->where('source',$source)
-				 ->where($lcTypeOrLgTypeColumnName,$type)
+				 ->when($source,function($q) use ($source){
+					 $q->where('source',$source);
+				 })
+				 ->when($lcTypeOrLgTypeColumnName , function($q) use ($lcTypeOrLgTypeColumnName,$type){
+					 $q->where($lcTypeOrLgTypeColumnName,$type);
+				 })
 				 ->orderByRaw('full_date desc')
 				 ->get();
 				 
-
+dd($results);
         if (!count($results)) {
             return redirect()->back()->with('fail', __('No Data Found'));
         }
@@ -100,16 +107,19 @@ class LGLCSBanktatementController
         ]);
     }
 	public function getLgOrLcType(Request $request , Company $company){
+	
 		$modelName = $request->get('lcOrLg');
 	
 		$types = [
 			'LetterOfCreditIssuance'=>LcTypes::getAll(),
-			'LetterOfGuaranteeIssuance'=>LgTypes::getAll() 
+			'LetterOfGuaranteeIssuance'=>LgTypes::getAll() ,
+			'LCOverdraft'=>[]
 		][$modelName];
 		
 		$sources = [
 			'LetterOfCreditIssuance'=>LetterOfCreditIssuance::lcSources(),
-			'LetterOfGuaranteeIssuance'=>LetterOfGuaranteeIssuance::lgSources() 
+			'LetterOfGuaranteeIssuance'=>LetterOfGuaranteeIssuance::lgSources() ,
+			'LCOverdraft'=>[]
 		][$modelName];
 		return response()->json([
 			'types'=>$types ,

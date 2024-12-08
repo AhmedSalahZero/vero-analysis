@@ -98,7 +98,7 @@ class CollectionEffectivenessIndexController
 			
 				$currentPartner = Partner::getPartnerFromName($partnerName,$companyId);
 				$currentPartnerId = $currentPartner->id; 
-				$currentInvoiceStatementReportResult = (new CustomerInvoiceDashboardController())->showCustomerInvoiceStatementReport($company,$request,$currentPartnerId,$currency,$modelType,$currentStartDate,$currentEndDate,true);
+				$currentInvoiceStatementReportResult = (new CustomerInvoiceDashboardController())->showInvoiceStatementReport($company,$request,$currentPartnerId,$currency,$modelType,$currentStartDate,$currentEndDate,true);
 				if(!count($currentInvoiceStatementReportResult)){
 					continue ; 
 				}

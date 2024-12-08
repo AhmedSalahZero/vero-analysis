@@ -11,38 +11,42 @@
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
 <style>
-.max-w-comment{
 
-	min-width:700px !important;
-	text-wrap:wrap !important;
-	
-}
-#DataTables_Table_0_info{
-	margin-bottom:20px;
-}
+
+    .max-w-name {
+        width: 45% !important;
+        min-width: 45% !important;
+        max-width: 45% !important;
+    }
+	.max-w-comment {
+        width: 40% !important;
+        min-width: 40% !important;
+        max-width: 40% !important;
+    }
+
+    .max-w-currency {
+        width: 5% !important;
+        min-width: 5% !important;
+        max-width: 5% !important;
+    }
+
     .max-w-serial {
         width: 5% !important;
         min-width: 5% !important;
         max-width: 5% !important;
-
     }
 
-    .z-index-6 {
-        position: relative;
-        z-index: 1;
+    .max-w-amount {
+        width: 15% !important;
+        min-width: 15% !important;
+        max-width: 15% !important;
     }
 
-    .mt--30 {
-        margin-top: -30px;
+    .max-w-report-btn {
+        width: 15% !important;
+        min-width: 15% !important;
+        max-width: 15% !important;
     }
-
-
-
-
-
-
-
-
 
     .is-sub-row.is-total-row td.sub-numeric-bg,
     .is-sub-row.is-total-row td.sub-text-bg {
@@ -50,7 +54,7 @@
         color: white !important;
     }
 
-    . {
+    .is-name-cell {
         white-space: normal !important;
     }
 
@@ -136,25 +140,38 @@
 </style>
 <?php $__env->stopSection(); ?>
 <?php $__env->startSection('sub-header'); ?>
+<?php if($partnerName): ?>
  <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.main-form-title','data' => ['id' => 'main-form-title','class' => '']]); ?>
 <?php $component->withName('main-form-title'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['id' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('main-form-title'),'class' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('')]); ?><?php echo e(__('Bank Statement ['  ) . $financialInstitutionName . ' ] [' . $accountTypeName . ' ] [ ' . $accountNumber . ' ] [ ' . __(touppercase($currency)) . ' ]'); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['id' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('main-form-title'),'class' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('')]); ?><?php echo e($customerStatementText . ' '.__('Table') . '[ '. $partnerName .' ] '.'[ '. $currency .' ]'); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
-
+<?php else: ?>
+ <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.main-form-title','data' => ['id' => 'main-form-title','class' => '']]); ?>
+<?php $component->withName('main-form-title'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php $component->withAttributes(['id' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('main-form-title'),'class' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('')]); ?><?php echo e($customerStatementText . ' '.__('Table') . ' [ '. $currency .' ]'); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
+<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
+<?php endif; ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?> 
+<?php endif; ?> 
 <?php $__env->stopSection(); ?>
 <?php $__env->startSection('content'); ?>
 
 <div class="row">
     <div class="col-md-12">
 
-        <div class="kt-portlet">
+        <div class="kt-portlet mb-0">
 
 
             <div class="kt-portlet__body">
@@ -300,55 +317,104 @@
 
                 </style>
                 <?php echo csrf_field(); ?>
+				
+				
+					 <div class="kt-portlet mb-0">
+        <div class="kt-portlet__head">
+            <div class="kt-portlet__head-label">
+                <h3 class="kt-portlet__head-title head-title text-primary">
+                    <?php echo e($customerStatementText); ?>
+
+                </h3>
+            </div>
+        </div>
+        <div class="kt-portlet__body  kt-portlet__body--fit">
+            <div class="row row-no-padding row-col-separator-xl">
+				<form class="w-full mt-3 ml-3">
+				<input type="hidden" name="all_partners" value="<?php echo e($showAllPartner??0); ?>">
+					<div class="row align-items-center">
+					
+					      <div class="col-md-4">
+
+                    <label><?php echo e(__('Name')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
+                    <div class="kt-input-icon">
+                        <div class="kt-input-icon">
+                            <div class="input-group date">
+                                <select data-live-search="true" data-actions-box="true" id="partner_id" name="partner_id" class="form-control select2-select 
+								
+								">
+                                    
+                                    <?php $__currentLoopData = $partners; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $currentPartnerId => $customerName): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <option <?php if($partnerId == $currentPartnerId): ?>  selected <?php endif; ?> <?php if(isset($model) && $model->getCustomerName() == $customerName ): ?> selected <?php endif; ?> value="<?php echo e($currentPartnerId); ?>"><?php echo e($customerName); ?></option>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+				
+						<div class="col-md-3">
+							<label for="start_date"><?php echo e(__('Start Date')); ?></label>
+							<input id="start_date" type="date" value="<?php echo e($startDate); ?>" class="form-control" name="start_date" >
+						</div>
+						
+						<div class="col-md-3">
+							<label for="end_date"><?php echo e(__('End Date')); ?></label>
+							<input id="end_date" type="date" value="<?php echo e($endDate); ?>" class="form-control" name="end_date" >
+						</div>
+						<div class="col-md-1">
+							<label for="button"></label>
+							<button type="submit" class="btn block form-control btn-primary btn-sm "> <?php echo e(__('Submit')); ?></button>
+						
+						</div>	
+						
+						
+					</div>
+				</form>
+              
+                
+            </div>
+        </div>
+    </div>
+				
 
 
                 <div class="table-custom-container position-relative  ">
-                    <?php if(!$isCurrentAccount): ?>
-                    <div class="d-flex z-index-6" style="justify-content:right">
-                        <a href="<?php echo e(route('view.withdrawals.settlement.report',['company'=>$company->id ])); ?>" class="btn active-style btn-icon-sm align-self-center">
-                            <i class="fas fa-book"></i>
-                            <?php echo e(__('Withdrawals Settlement Report')); ?>
 
-                        </a>
-                    </div>
-                    <?php endif; ?>
 
                     <div>
+                        
 
 
-                        <div class="responsive mt--30">
+
+                        <div class="responsive">
                             <table class="table kt_table_with_no_pagination_no_collapse table-striped- table-bordered table-hover table-checkable position-relative table-with-two-subrows main-table-class dataTable no-footer">
                                 <thead>
 
                                     <tr class="header-tr ">
 
-                                        <th class="view-table-th  header-th  align-middle text-center">
+                                        <th class="view-table-th max-w-serial  header-th  align-middle text-center">
                                             <?php echo e(__('#')); ?>
 
                                         </th>
 
-                                        <th class="view-table-th   header-th  align-middle text-center">
+                                        <th class="view-table-th    header-th  align-middle text-center">
                                             <?php echo e(__('Date')); ?>
 
                                         </th>
-                                        <?php if(! $isCurrentAccount): ?>
-                                        <th class="view-table-th     header-th  align-middle text-center">
-                                            <?php echo e(__('Limit')); ?>
+										
+										  <th class="view-table-th    header-th  align-middle text-center">
+                                            <?php echo e(__('Document Type')); ?>
 
                                         </th>
-                                        <?php endif; ?>
-                                        <?php if($isAgainstCommercialPaper || $isAgainstAssignmentOfContract): ?>
-                                        <th class="view-table-th     header-th  align-middle text-center">
-                                            <?php echo e(__('Actual Limit')); ?>
-
-                                        </th>
-                                        <?php endif; ?>
-                                        <th class="view-table-th     header-th  align-middle text-center">
-                                            <?php echo e(__('Beginning Balance')); ?>
+										
+										  <th class="view-table-th    header-th  align-middle text-center">
+                                            <?php echo e(__('Document No')); ?>
 
                                         </th>
 
-
+                                       
                                         <th class="view-table-th     header-th  align-middle text-center">
                                             <?php echo e(__('Debit')); ?>
 
@@ -362,30 +428,8 @@
                                             <?php echo e(__('End Balance')); ?>
 
                                         </th>
-
-                                        <?php if(! $isCurrentAccount): ?>
-                                        <th class="view-table-th     header-th  align-middle text-center">
-                                            <?php echo e(__('Room')); ?>
-
-                                        </th>
-                                        <th class="view-table-th     header-th  align-middle text-center">
-                                            <?php echo __('Calculated <br> Interest'); ?>
-
-                                        </th>
-
-
-                                        <?php endif; ?>
-
-                                        <th class="view-table-th   header-th  align-middle text-center">
-                                            <?php echo e(__('Reviewed')); ?>
-
-                                        </th>
 										
-										 <th class="view-table-th   header-th  align-middle text-center">
-                                            <?php echo e(__('Actions')); ?>
-
-                                        </th>
-                                        <th class="view-table-th   header-th  align-middle text-center max-w-comment">
+										 <th class="view-table-th   max-w-comment   header-th  align-middle text-center">
                                             <?php echo e(__('Comment')); ?>
 
                                         </th>
@@ -400,67 +444,49 @@
                                         let currentTable = null;
 
                                     </script>
-                                    <?php $__currentLoopData = $results; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index=>$modelAsStdClass): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <?php
+                                    ?>
+									<?php
+										$balances = [];
+									?>
+								
+                                    <?php $__currentLoopData = $invoicesWithItsReceivedMoney; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index=>$item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                     <tr class=" parent-tr reset-table-width text-nowrap  cursor-pointer sub-text-bg text-capitalize is-close   ">
-                                        <td class="sub-text-bg  "><?php echo e($index+1); ?></td>
-                                        <td class="sub-text-bg  text-center "><?php echo e(\Carbon\Carbon::make($modelAsStdClass->date)->format('d-m-Y')); ?></td>
-                                        <?php if(! $isCurrentAccount): ?>
-                                        <td class="sub-text-bg text-center "><?php echo e(number_format($modelAsStdClass->limit)); ?></td>
-                                        <?php if($isAgainstCommercialPaper || $isAgainstAssignmentOfContract): ?>
-                                        <td class="sub-text-bg text-center "><?php echo e(number_format($modelAsStdClass->statement_limit)); ?></td>
-                                        <?php endif; ?>
-                                        <?php endif; ?>
-                                        <td class="sub-text-bg text-center "><?php echo e(number_format($modelAsStdClass->beginning_balance)); ?></td>
-                                        <td class="sub-text-bg text-center "><?php echo e(number_format($modelAsStdClass->debit)); ?></td>
-                                        <td class="sub-text-bg text-center "><?php echo e(number_format($modelAsStdClass->credit)); ?></td>
-                                        <td class="sub-text-bg text-center "><?php echo e(number_format($modelAsStdClass->end_balance)); ?></td>
-                                        <?php if(! $isCurrentAccount): ?>
-                                        <td class="sub-text-bg text-center "><?php echo e(number_format($modelAsStdClass->room)); ?></td>
-                                        <td class="sub-text-bg text-center "><?php echo e(number_format($modelAsStdClass->interest_amount)); ?></td>
-                                        <?php endif; ?>
+                                        
+                                        <td class="sub-text-bg max-w-serial   "><?php echo e($index+1); ?></td>
+                                        <td class="sub-text-bg text-center  is-name-cell "><?php echo e($item['date']); ?></td>
+                                        <td class="sub-text-bg   is-name-cell "><?php echo e($item['document_type']); ?></td>
+										   <td class="sub-text-bg  text-center"><?php echo e($item['document_no']); ?></td>
+                                        <td class="sub-text-bg text-center  is-name-cell "><?php echo e(number_format($item['debit'])); ?></td>
+                                        <td class="sub-text-bg text-center "><?php echo e(number_format($item['credit'])); ?></td>
 										<?php
-								
-											 $comment = isset($modelAsStdClass->{'comment_'.$lang}) ? $modelAsStdClass->{'comment_'.$lang} : null ;
-											
-											$reviewedArr = getBankStatementReviewed($modelAsStdClass) ;
-											$reviewedText = getReviewedText($reviewedArr);
-											
+											if($index == 0 ){
+												$balances[$index] = $item['end_balance']  ;
+											}else{
+												$balances[$index] = $balances[$index-1] + $invoicesWithItsReceivedMoney[$index]['debit'] - $invoicesWithItsReceivedMoney[$index]['credit'];
+											}
 										?>
-								
-                                        <td class="sub-text-bg text-left "><?php echo e($reviewedText); ?></td>
-                                        <td class="sub-text-bg text-left ">
-								
-											<?php if(isset($modelAsStdClass->is_commission_fees) && $modelAsStdClass->is_commission_fees): ?>
-												
-												<?php echo $__env->make('modals.edit-commissions-fees',[
-													'currentStatementId'=>$modelAsStdClass->id,
-													'currentCredit'=>$modelAsStdClass->credit
-													,'currentDate'=>$modelAsStdClass->date ], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
-																					
-											<?php endif; ?>
-										</td>
-                                        <td class="sub-text-bg text-left max-w-comment"><?php echo e($comment?: getBankStatementComment($modelAsStdClass)); ?></td>
-
-                                 
-
-
+                                        <td class="sub-text-bg text-center"><?php echo e(number_format($balances[$index]  )); ?></td>
+                                        <td class="sub-text-bg  max-w-comment text-wrap"><?php echo e($item['comment']); ?></td>
+										
+                                     
+                 
                                     </tr>
+
+
+
+
+
+
+
+
 
                                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
-
-
-
-
-
-
-
                                 </tbody>
-								
                             </table>
-<?php echo e($results->appends(Request()->all())->links()); ?>
-
                         </div>
+
                     </div>
 
                     <?php $__env->startPush('js'); ?>
@@ -582,4 +608,4 @@
 
     <?php $__env->stopSection(); ?>
 
-<?php echo $__env->make('layouts.dashboard', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /media/salah/Software/projects/veroo/resources/views/bank_statement_result.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('layouts.dashboard', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /media/salah/Software/projects/veroo/resources/views/admin/reports/customer-statement-report.blade.php ENDPATH**/ ?>

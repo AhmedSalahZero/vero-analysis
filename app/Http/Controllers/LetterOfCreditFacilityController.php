@@ -81,17 +81,17 @@ class LetterOfCreditFacilityController
     }
 	public function getCommonDataArr():array 
 	{
-		return ['name','contract_start_date','contract_end_date','currency','limit','borrowing_rate','bank_margin_rate','interest_rate','min_interest_rate','highest_debt_balance_rate','admin_fees_rate','outstanding_amount'];
+		return ['name','contract_start_date','contract_end_date','currency','limit','borrowing_rate','bank_margin_rate','interest_rate','min_interest_rate','highest_debt_balance_rate','admin_fees_rate'];
 	}
 	public function store(Company $company  ,FinancialInstitution $financialInstitution, Request $request){
 		$data = $request->only( $this->getCommonDataArr());
-		foreach(['contract_start_date','contract_end_date','outstanding_date'] as $dateField){
+		foreach(['contract_start_date','contract_end_date'] as $dateField){
 			$data[$dateField] = $request->get($dateField) ? Carbon::make($request->get($dateField))->format('Y-m-d'):null;
 		}
 		$termAndConditions = $request->get('termAndConditions',[]) ;
 		$data['created_by'] = auth()->user()->id ;
 		$data['company_id'] = $company->id ;
-		$data['outstanding_amount'] = $data['outstanding_amount'] ? $data['outstanding_amount']: 0; 
+		// $data['outstanding_amount'] = $data['outstanding_amount'] ? $data['outstanding_amount']: 0; 
 		/**
 		 * @var LetterOfCreditFacility $letterOfCreditFacility
 		 */
@@ -101,7 +101,7 @@ class LetterOfCreditFacilityController
 
 		foreach($termAndConditions as $termAndConditionArr){
 			$termAndConditionArr['company_id'] = $company->id ;
-			$termAndConditionArr['outstanding_date'] = $request->get('outstanding_date');
+			// $termAndConditionArr['outstanding_date'] = $request->get('outstanding_date');
 			$currentOutstandingBalance = $termAndConditionArr['outstanding_balance'] ;
 			$currentCashCover = $termAndConditionArr['cash_cover_rate'];
 			
@@ -110,14 +110,14 @@ class LetterOfCreditFacilityController
 				$letterOfCreditFacility->termAndConditions()->create(array_merge($termAndConditionArr , [
 				]));
 			// }
-			if($currentOutstandingBalance > 0){
-				$letterOfCreditFacility->handleLetterOfCreditStatement($financialInstitution->id,$source,$letterOfCreditFacility->id,$currentLcType,$company->id,$termAndConditionArr['outstanding_date'],0,0,$currentOutstandingBalance,$currencyName,0,0,LetterOfCreditIssuance::LC_FACILITY_BEGINNING_BALANCE);
+			// if($currentOutstandingBalance > 0){
+			// 	$letterOfCreditFacility->handleLetterOfCreditStatement($financialInstitution->id,$source,$letterOfCreditFacility->id,$currentLcType,$company->id,$termAndConditionArr['outstanding_date'],0,0,$currentOutstandingBalance,$currencyName,0,0,LetterOfCreditIssuance::LC_FACILITY_BEGINNING_BALANCE);
 				
-			}
-			$cashCoverOpeningBalance = $currentCashCover / 100 * $currentOutstandingBalance ;
-			if( $cashCoverOpeningBalance > 0 ){
-				$letterOfCreditFacility->handleLetterOfCreditCashCoverStatement($financialInstitution->id,$source,$letterOfCreditFacility->id,$currentLcType,$company->id,$termAndConditionArr['outstanding_date'],0,$cashCoverOpeningBalance,0,$currencyName,0,LetterOfCreditIssuance::LC_FACILITY_BEGINNING_BALANCE);
-			}
+			// }
+			// $cashCoverOpeningBalance = $currentCashCover / 100 * $currentOutstandingBalance ;
+			// if( $cashCoverOpeningBalance > 0 ){
+			// 	$letterOfCreditFacility->handleLetterOfCreditCashCoverStatement($financialInstitution->id,$source,$letterOfCreditFacility->id,$currentLcType,$company->id,$termAndConditionArr['outstanding_date'],0,$cashCoverOpeningBalance,0,$currencyName,0,LetterOfCreditIssuance::LC_FACILITY_BEGINNING_BALANCE);
+			// }
 
 		}
 		$type = $request->get('type','letter-of-credit-facilities');
@@ -141,7 +141,7 @@ class LetterOfCreditFacilityController
         $source = LetterOfCreditIssuance::LC_FACILITY;
 		$data['updated_by'] = auth()->user()->id ;
 		$data = $request->only($this->getCommonDataArr());
-		foreach(['contract_start_date','contract_end_date','outstanding_date'] as $dateField){
+		foreach(['contract_start_date','contract_end_date'] as $dateField){
 			$data[$dateField] = $request->get($dateField) ? Carbon::make($request->get($dateField))->format('Y-m-d'):null;
 		}
 
@@ -156,7 +156,7 @@ class LetterOfCreditFacilityController
 		foreach($termAndConditions as $termAndConditionArr){
 			$letterOfCreditFacility->termAndConditions()->create(array_merge($termAndConditionArr , [
 			]));
-            $termAndConditionArr['outstanding_date'] = $request->get('outstanding_date');
+            // $termAndConditionArr['outstanding_date'] = $request->get('outstanding_date');
 			$currentOutstandingBalance = $termAndConditionArr['outstanding_balance'] ;
 			$currentCashCoverRate = $termAndConditionArr['cash_cover_rate'] / 100  ;
 			$currentCashCoverBeginningBalance  = $currentOutstandingBalance * $currentCashCoverRate ; 

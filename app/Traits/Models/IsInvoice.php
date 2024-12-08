@@ -324,12 +324,14 @@ trait IsInvoice
 	}
 	public static function getInvoicesForInvoiceStartAndEndDate(string $clientIdColumnName,int $partnerId,Company $company , string $currency , string $startDate , string $endDate)
 	{
+
 		return self::where('company_id', $company->id)
 		->when($currency != 'main_currency',function($query)use($currency){
 			$query->where('currency', $currency);
 		})
         ->whereBetween('invoice_date', [$startDate, $endDate])
         ->where($clientIdColumnName, '=', $partnerId)->get();
+	
 	}
 	public static function createForOddo(int $invoiceId,int $partnerId,string $partnerName,string $invoiceDate,string $invoiceDueDate,string $invoiceNumber,string $invoiceCurrency,$invoiceAmount,$vatAmount,$withholdAmount,int $companyId):void{
 		$isExist = self::where('oddo_id',$invoiceId)->where('company_id',$companyId)->exists();

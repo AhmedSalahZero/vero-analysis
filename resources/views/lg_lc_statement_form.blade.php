@@ -93,7 +93,7 @@
                             </div>
                         </div>
 
-                        <div class="col-md-3 width-12">
+                        <div class="col-md-3 width-12" id="source-div-js">
                             <label>{{__('Source')}} @include('star')</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
@@ -108,7 +108,7 @@
 
 
 
-                        <div class="col-md-3 width-12">
+                        <div class="col-md-3 width-12" id="type-div-js">
                             <label>{{__('Type')}} @include('star')</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
@@ -180,7 +180,9 @@
 					lcOrLg
 				},
 				success:function(res){
+					
 					var options = ''
+					
 					for(var id in res.types){
 						options += `<option value="${id}">${res.types[id]}</option> `
 					}
@@ -192,6 +194,24 @@
 						options += `<option value="${id}">${res.sources[id]}</option> `
 					}
 					$('select.sources-js').empty().append(options).trigger('change')
+					
+					
+					if(!Object.keys(res.sources).length){
+						$('#source-div-js').hide();
+						$('#source-div-js select').prop('required',false);
+					}else{
+						$('#source-div-js').show()
+						$('#source-div-js select').prop('required',true);
+					
+					}
+					if(!Object.keys(res.types).length){
+						$('#type-div-js').hide();
+						$('#type-div-js select').prop('required',false);
+					}else{
+			
+						$('#type-div-js').show()
+						$('#type-div-js select').prop('required',true);
+					}
 					
 				}
 			})

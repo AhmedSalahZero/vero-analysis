@@ -4,7 +4,8 @@ namespace App\Console\Commands;
 
 use App\Models\CleanOverdraftBankStatement;
 use App\Models\Company;
-
+use App\Models\LetterOfCreditIssuance;
+use App\Models\PurchaseOrder;
 use App\Services\Api\OddoService;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
@@ -44,7 +45,16 @@ class TestCommand extends Command
 	 */
 	public function handle()
 	{
-
+		// $lcAmount = 4100.0; 
+		$currency = 'USD';
+		$letterOfCreditIssuance = LetterOfCreditIssuance::find(23);
+		$lcAmount = $letterOfCreditIssuance->getLcAmount();
+		$invoices = \App\Models\SupplierInvoice::onlyCompany(92)->onlyForPartner(262)
+										->where('net_balance','>=',$lcAmount)
+										->onlyCurrency($currency)
+										->get();
+										dd($invoices);
+		// dd('5000.0' < 10000000);
 	}
 	public function refreshStatement($statementModelName,$dateColumnName = 'full_date'){
 		$fullModelName ='App\Models\\'.$statementModelName;

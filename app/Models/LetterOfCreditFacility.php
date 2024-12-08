@@ -36,19 +36,19 @@ class LetterOfCreditFacility extends Model
 		return $contractEndDate ? Carbon::make($contractEndDate)->format('d-m-Y'):null ;
 	}
 
-	public function getOutstandingDate()
-	{
-		return $this->outstanding_date;
-	}
+	// public function getOutstandingDate()
+	// {
+	// 	return $this->outstanding_date;
+	// }
 	public function getBorrowingRate()
 	{
-		return $this->borrowing_rate ;
+		 return $this->borrowing_rate ;
 	}
-	public function getOutstandingDateFormatted()
-	{
-		$outstandingDate = $this->getOutstandingDate() ;
-		return $outstandingDate ? Carbon::make($outstandingDate)->format('d-m-Y'):null ;
-	}
+	// public function getOutstandingDateFormatted()
+	// {
+	// 	$outstandingDate = $this->getOutstandingDate() ;
+	// 	return $outstandingDate ? Carbon::make($outstandingDate)->format('d-m-Y'):null ;
+	// }
 
 	public function getLimit()
 	{
@@ -59,15 +59,15 @@ class LetterOfCreditFacility extends Model
 	{
 		return number_format($this->getLimit()) ;
 	}
-	public function getOutstandingAmount()
-	{
-		return $this->outstanding_amount ?: 0 ;
-	}
+	// public function getOutstandingAmount()
+	// {
+	// 	return $this->outstanding_amount ?: 0 ;
+	// }
 
-	public function getOutstandingAmountFormatted()
-	{
-		return number_format($this->getOutstandingAmount()) ;
-	}
+	// public function getOutstandingAmountFormatted()
+	// {
+	// 	return number_format($this->getOutstandingAmount()) ;
+	// }
 
 	public function getCurrency()
 	{

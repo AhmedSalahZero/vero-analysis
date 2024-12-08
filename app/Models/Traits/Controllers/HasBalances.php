@@ -3,6 +3,7 @@ namespace App\Models\Traits\Controllers;
 
 use App\Helpers\HArr;
 use App\Models\InvoiceDeduction;
+use App\Models\LetterOfCreditIssuance;
 use App\Models\MoneyReceived;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
@@ -28,9 +29,7 @@ trait HasBalances
 		$invoicesForBeginningBalance = $fullClassName::getInvoicesForInvoiceStartAndEndDate( $clientIdColumnName, $partnerId, getCurrentCompany() ,  $currency ,  $oneDayBeforeStartDate,$startDateMinusOne );
 		$formattedData = [];
 		$beginningBalance = 
-		// $isMainCurrency ? 
 		self::appendBalances($isMainCurrency , $currency,$invoicesForBeginningBalance, $index, $formattedData, $partnerId, $oneDayBeforeStartDate,$startDateMinusOne,$clientInvoiceIds,$modelType,false) ;
-		// : self::getBeginningBalanceUntil($currency,$partnerId,$oneDayBeforeStartDate,$startDateMinusOne) ; 
 		$index = 0 ;
 		$currentData['date'] = $startDateFormatted;
 		$currentData['document_type'] = 'Beginning Balance';
@@ -42,18 +41,6 @@ trait HasBalances
 		$index++ ;
 		$formattedData[$index] = $currentData;
 
-		
-		// $currentData['date'] = $startDateFormatted;
-		// $currentData['document_type'] = 'Beginning Balance';
-		// $currentData['document_no'] = null;
-		// $currentData['debit'] = 0;
-		// $currentData['credit'] =0;
-		// $currentData['end_balance'] =0;
-		// $currentData['comment'] =null;
-		// $index++ ;
-		// $formattedData[$index] = $currentData;
-		
-		
 
 		self::appendBalances($isMainCurrency , $currency,$invoices, $index, $formattedData, $partnerId, $startDate, $endDate,$clientInvoiceIds,$modelType,true);
 	
@@ -118,6 +105,9 @@ trait HasBalances
 			}
 		}
 		
+		
+		
+	
 		$allMoneyModels =  $fullMoneyModelName::
 		where('company_id',getCurrentCompanyId())
 		->whereBetween($dateColumnName,[$startDate,$endDate])
@@ -126,6 +116,12 @@ trait HasBalances
 			// $q->where('currency',$currency);
 		})
 		->get() ; 
+		if($modelType == 'SupplierInvoice'){
+			$letterOfCreditIssuance  = LetterOfCreditIssuance::where('company_id',getCurrentCompanyId())
+			->whereBetween('payment_date',[$startDate,$endDate])
+			->where('partner_id',$partnerId)->has('settlements')->get();
+			$allMoneyModels = $allMoneyModels->merge($letterOfCreditIssuance);
+		}
 	
 		foreach($allMoneyModels as $moneyModel) {
 		
@@ -139,7 +135,8 @@ trait HasBalances
 						$currentDebit = $isCustomer ? 0 : $currentAmount;
 						$currentCredit = $isCustomer ? $currentAmount : 0 ;
 						$invoiceNumbers = implode('/',$moneyModel->settlements->pluck('invoice.invoice_number')->toArray());
-						$currentComment = $fullMoneyModelName::generateComment($moneyModel,app()->getLocale(),$invoiceNumbers,'');
+						
+						$currentComment = method_exists($fullMoneyModelName,'generate_comment')  ? $fullMoneyModelName::generateComment($moneyModel,app()->getLocale(),$invoiceNumbers,'') : __('LC Settlement Paid Invoices [ :numbers ]',['numbers'=>$invoiceNumbers],app()->getLocale());
 						$currentData = []; 
 						$currentData['date'] = $dateReceivingFormatted;
 						$currentData['document_type'] = $moneyModelType;
@@ -230,13 +227,6 @@ trait HasBalances
 					
 					
 				}
-			
-				
-				
-				
-				
-				
-				
 		}
 		if(!$isNotBegBalance){
 			return array_sum(array_column($tempArr,'debit')) - array_sum(array_column($tempArr,'credit'));

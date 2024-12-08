@@ -160,7 +160,22 @@ class ContractsController
 		]);
 	}
 	public function updatePurchaseOrdersBasedOnContract(Request $request , Company $company ){
-		$contract = Contract::find($request->get('contractId'));
+		$contractId = $request->get('contractId') ;
+		if($contractId == -1){ // no po
+			return response()->json([
+				'status'=>true ,
+				'showTextInputForNewPO'=>true 
+			]);
+		}
+		if($contractId == -2){ // existing po
+			$currentPoNumber = $request->get('currentNewPurchaseOrder');
+			return response()->json([
+				'status'=>true ,
+				'purchase_orders'=>PurchaseOrder::where('company_id',$company->id)->where('po_number','!=',$currentPoNumber)->where('contract_id',null)->pluck('po_number','id')
+			]);
+		}
+		$contract = Contract::find($contractId);
+		
 		$purchaseOrders = $contract->purchasesOrders->pluck('po_number','id')->toArray();
 		return response()->json([
 			'purchase_orders'=>$purchaseOrders

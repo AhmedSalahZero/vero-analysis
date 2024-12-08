@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\HHelpers;
 use App\Models\AccountType;
 use App\Models\CleanOverdraft;
 use App\Models\Company;
@@ -53,6 +52,7 @@ class BankStatementController
         $currencyName = $request->get('currency');
 		$results = [];
 		$accountType = AccountType::find($accountTypeId);
+		
 		/**
 		 * @var AccountType $accountType
 		 */

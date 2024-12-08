@@ -19,6 +19,9 @@
 let pageLoaded = false ;
 </script>
     <style>
+	html body .form-element-hidden{
+		display:none !important;
+	}
 	.width-9 {
         max-width: initial !important;
         width: 9% !important;

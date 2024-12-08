@@ -744,7 +744,7 @@ class CustomerInvoiceDashboardController extends Controller
     }
 
 
-    public function showCustomerInvoiceStatementReport(Company $company, Request $request, int $partnerId, string $currency, string $modelType , string $startDate = null , string $endDate = null , bool $returnResult = false)
+    public function showInvoiceStatementReport(Company $company, Request $request, int $partnerId, string $currency, string $modelType , string $startDate = null , string $endDate = null , bool $returnResult = false)
     {
 		
 		$showAllPartner = $request->boolean('all_partners');
