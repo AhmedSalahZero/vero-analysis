@@ -106,7 +106,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                                             <select name="category_name" required class="form-control repeater-select">
 											<option value="">{{ __('Select') }}</option>
                                                 @foreach(LetterOfGuaranteeIssuance::getCategories() as $key => $title )
-                                                <option value="{{ $key }}" @if(isset($model) && $model->getLgCategoryName() == $key ) selected @endif > {{ $title }}</option>
+                                                <option value="{{ $key }}" @if(isset($model) && $model->getCategoryName() == $key ) selected @endif > {{ $title }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -415,7 +415,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                                                 <select name="lg_fees_and_commission_account_type" class="form-control js-update-account-id-based-on-account-type">
                                                     {{-- <option value="" selected>{{__('Select')}}</option> --}}
                                                     @foreach($accountTypes as $index => $accountType)
-                                                    <option value="{{ $accountType->id }}" @if(isset($model) && $model->getLgFeesAndCommissionAccountTypeId() == $accountType->id) selected @endif>{{ $accountType->getName() }}</option>
+                                                    <option value="{{ $accountType->id }}" @if(isset($model) && $model->getFeesAndCommissionAccountTypeId() == $accountType->id) selected @endif>{{ $accountType->getName() }}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
@@ -428,7 +428,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                                         </label>
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
-                                                <select data-current-selected="{{ isset($model) ? $model->getLgFeesAndCommissionAccountId(): 0 }}" name="lg_fees_and_commission_account_id" class="form-control js-account-number">
+                                                <select data-current-selected="{{ isset($model) ? $model->getFeesAndCommissionAccountId(): 0 }}" name="lg_fees_and_commission_account_id" class="form-control js-account-number">
                                                     <option value="" selected>{{__('Select')}}</option>
                                                 </select>
                                             </div>
@@ -694,7 +694,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                         return
                     }
                     $.ajax({
-                        url: "{{route('update.purchase.orders.based.on.contract',['company'=>$company->id])}}"
+                        url: "{{route('update.sales.orders.based.on.contract',['company'=>$company->id])}}"
                         , data: {
                             contractId
                         , }
@@ -778,13 +778,10 @@ use App\Models\LetterOfGuaranteeIssuance;
 								customerOptions += '<option '+ isSelected +' value="'+customerId+'">'+ customerName +'</option> ';
 							}
 							$('select#customer_name').empty().append(customerOptions).trigger('change');
-//							const cdOrTdFreeToUseAmount  = res.total_cash_cover_against_cd_or_td ;
                             $('#limit-id').val(res.limit).prop('readonly', true)
                             $('#total-lg-for-all-types-id').val(res.total_lg_outstanding_balance).prop('readonly', true)
                             $('#total-room-id').val(res.total_room).prop('readonly', true)
-							var totalRoom = number_unformat(res.total_room);
 							$('#input[name="lg_currency"]').val(res.currency_name)
-							//$('input[name="lg_amount"]').attr('data-can-not-be-greater-than',totalRoom);
                             $('#current-lg-outstanding-balance-id').val(res.total_lg_outstanding_balance).prop('readonly', true).trigger('change')
                             $('#against-cash-cover-amount-id').val(res.total_cash_cover_statement_debit).prop('readonly', true).trigger('change')
                            // $('#cd-or-td-free-to-use-amount-id').val(cdOrTdFreeToUseAmount).prop('readonly', true)

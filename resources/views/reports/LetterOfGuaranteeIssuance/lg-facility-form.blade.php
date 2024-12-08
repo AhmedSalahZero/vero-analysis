@@ -106,7 +106,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                                             <select name="category_name" required class="form-control repeater-select">
 												<option value="">{{ __('Select') }}</option>
                                                 @foreach(LetterOfGuaranteeIssuance::getCategories() as $key => $title )
-                                                <option value="{{ $key }}" @if(isset($model) && $model->getLgCategoryName() == $key ) selected @endif > {{ $title }}</option>
+                                                <option value="{{ $key }}" @if(isset($model) && $model->getCategoryName() == $key ) selected @endif > {{ $title }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -120,7 +120,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                                         <label> {{ __('Bank') }}
                                             @include('star')
                                         </label>
-                                        <select required js-when-change-trigger-change-account-type change-financial-instutition-js id="financial-instutition-id" js-get-lg-facility-based-on-financial-institution js-get-lg-facility-based-on-financial-institution js-when-change-trigger-change-account-type data-financial-institution-id required name="financial_institution_id" class="form-control">
+                                        <select required js-when-change-trigger-change-account-type change-financial-instutition-js id="financial-instutition-id" js-get-lg-facility-based-on-financial-institution js-when-change-trigger-change-account-type data-financial-institution-id required name="financial_institution_id" class="form-control">
 											<option value="">{{ __('Select') }}</option>
                                             @foreach($financialInstitutionBanks as $index=>$financialInstitutionBank)
                                             <option value="{{ $financialInstitutionBank->id }}" {{ isset($model) && $model->getFinancialInstitutionBankId() == $financialInstitutionBank->id ? 'selected':'' }}>{{ $financialInstitutionBank->getName() }}</option>
@@ -136,9 +136,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                                         </label>
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
-                                                <select required js-update-outstanding-balance-and-limits data-current-selected="{{ isset($model) ? $model->getLgFacilityId() : 0 }}" id="lg-facility-id" name="lg_facility_id" class="form-control 
-												
-												">
+                                                <select required js-update-outstanding-balance-and-limits data-current-selected="{{ isset($model) ? $model->getLgFacilityId() : 0 }}" id="lg-facility-id" name="lg_facility_id" class="form-control">
                                                     
                                                 </select>
                                             </div>
@@ -342,12 +340,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                                         </label>
                                         <div class="input-group">
 										<input type="text" class="form-control current-currency-input" name="lg_currency" id="lg-currency-id" value="" readonly js-when-change-trigger-change-account-type >
-                                            {{-- <select name="lg_currency" class="form-control current-currency" js-when-change-trigger-change-account-type>
-                                                <option selected>{{__('Select')}}</option>
-                                                @foreach(getCurrencies() as $currencyName => $currencyValue )
-                                                <option value="{{ $currencyName }}" @if(isset($model) && $model->getLgCurrency() == $currencyName ) selected @elseif($currencyName == 'EGP' ) selected @endif > {{ $currencyValue }}</option>
-                                                @endforeach
-                                            </select> --}}
+                                        
                                         </div>
                                     </div>
 							
@@ -441,7 +434,7 @@ use App\Models\LetterOfGuaranteeIssuance;
 												">
                                                     {{-- <option value="" selected>{{__('Select')}}</option> --}}
                                                     @foreach($accountTypes as $index => $accountType)
-                                                    <option value="{{ $accountType->id }}" @if(isset($model) && $model->getLgFeesAndCommissionAccountTypeId() == $accountType->id) selected @endif>{{ $accountType->getName() }}</option>
+                                                    <option value="{{ $accountType->id }}" @if(isset($model) && $model->getFeesAndCommissionAccountTypeId() == $accountType->id) selected @endif>{{ $accountType->getName() }}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
@@ -454,31 +447,12 @@ use App\Models\LetterOfGuaranteeIssuance;
                                         </label>
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
-                                                <select data-current-selected="{{ isset($model) ? $model->getLgFeesAndCommissionAccountId(): 0 }}" name="lg_fees_and_commission_account_id" class="form-control js-account-id-2">
+                                                <select data-current-selected="{{ isset($model) ? $model->getFeesAndCommissionAccountId(): 0 }}" name="lg_fees_and_commission_account_id" class="form-control js-account-id-2">
                                                     <option value="" selected>{{__('Select')}}</option>
                                                 </select>
                                             </div>
                                         </div>
                                     </div>
-									
-									
-									
-									
-									
-									
-									
-									
-									
-								
-									
-									
-									
-									
-
-
-
-
-
                                 </div>
                             </div>
                         </div>
@@ -782,7 +756,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                         return
                     }
                     $.ajax({
-                        url: "{{route('update.purchase.orders.based.on.contract',['company'=>$company->id])}}"
+                        url: "{{route('update.sales.orders.based.on.contract',['company'=>$company->id])}}"
                         , data: {
                             contractId
                         , }

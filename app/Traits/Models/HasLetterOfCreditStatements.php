@@ -27,9 +27,10 @@ trait HasLetterOfCreditStatements
 	 * * هنا لو اليوزر ضاف فلوس في الحساب
 	 * * بنحطها في الاستيت منت
 	 * * سواء كانت كاش استيتمنت او بانك استيتمنت علي حسب نوع الحساب او الحركة يعني
-	 */
+	 */	
 	public function handleLetterOfCreditStatement(int $financialInstitutionId , string $source  , int $lcFacilityId,string $lcType,$companyId,string $date,$beginningBalance,$debit , $credit,string $currencyName , $lcAdvancedPaymentId = 0 , $cdOrTdId = 0 , $type =null)
 	{
+		$cdOrTdId = is_null($cdOrTdId) ? 0 : $cdOrTdId;
 		$data = $this->generateLetterOfCreditData($financialInstitutionId , $source  , $lcFacilityId, $lcType,$companyId,$date,$beginningBalance,$debit , $credit,$currencyName ,$lcAdvancedPaymentId, $cdOrTdId , $type) ;
 		$this->letterOfCreditStatements()->create($data);
 

@@ -23,6 +23,8 @@ use App\Traits\GeneralFunctions;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use App\Http\Requests\StoreLetterOfCreditIssuanceRequest;
+use App\Http\Requests\UpdateLetterOfCreditIssuanceRequest;
 
 class LetterOfCreditIssuanceController
 {
@@ -121,6 +123,7 @@ class LetterOfCreditIssuanceController
 			'beneficiaries'=>Partner::onlySuppliers()->onlyForCompany($company->id)->get(),
 			'contracts'=>Contract::onlyForCompany($company->id)->get(),
 			'purchaseOrders'=>PurchaseOrder::onlyForCompany($company->id)->get(),
+			'cashCoverAccountTypes'=>AccountType::onlyCashCoverAccounts()->get(),
 			'accountTypes'=> AccountType::onlyCurrentAccount()->get(),
 			'source'=>$source,
 			'cdOrTdAccountTypes'=>$cdOrTdAccountTypes,
@@ -140,10 +143,11 @@ class LetterOfCreditIssuanceController
 		));
     }
 
-	public function store(Company $company  , Request $request , string $source){
+	public function store(Company $company  , StoreLetterOfCreditIssuanceRequest $request , string $source){
 
 		$financialInstitutionId = $request->get('financial_institution_id') ;
-		$letterOfCreditFacility = $source == LetterOfCreditIssuance::LC_FACILITY  ? FinancialInstitution::find($financialInstitutionId)->getCurrentAvailableLetterOfCreditFacility() : null;
+		$letterOfCreditFacilityId =  $request->get('lc_facility_id') ; 
+		$letterOfCreditFacility = $source == LetterOfCreditIssuance::LC_FACILITY  ? LetterOfCreditFacility::find($letterOfCreditFacilityId) : null;
 		$letterOfCreditFacilityId =  0 ; 
 		if($source == LetterOfCreditIssuance::LC_FACILITY && is_null($letterOfCreditFacility)){
 			return redirect()->back()->with('fail',__('No Available Letter Of Credit Facility Found !'));
@@ -161,9 +165,11 @@ class LetterOfCreditIssuanceController
 		$lcAmount = $request->get('lc_amount',0);
 		$currency = $request->get('lc_currency',0);
 		$cdOrTdId = $request->get('cd_or_td_id');
+		
+		
+		
 		$cdOrTdAccountTypeId = $request->get('cd_or_td_account_type_id');
 		$accountType = AccountType::find($cdOrTdAccountTypeId);
-		$cdOrTdId = 0 ;
 		$cdOrTdAccount = null ;
 		if($accountType && $accountType->isCertificateOfDeposit()){
 			$cdOrTdAccount = CertificatesOfDeposit::find($cdOrTdId ) ;
@@ -174,29 +180,40 @@ class LetterOfCreditIssuanceController
 			$cdOrTdId = $cdOrTdAccount->id;
 		}
 		$lcCashCoverOrCdOrTdCurrency = $model->getLcCashCoverCurrency() ?: $cdOrTdAccount->getCurrency();
-
+		$isOpeningBalance = $request->get('category_name') == LetterOfCreditIssuance::OPENING_BALANCE;
 		$cashCoverAmount = $request->get('cash_cover_amount',0);
 		$issuanceFees = $request->get('issuance_fees',0);
 		$lcAmountInMainCurrency = $model->getLcAmountInMainCurrency();
 		$maxLcCommissionAmount = max($minLcCommissionAmount ,$lcCommissionAmount );
-		$financialInstitutionAccountId = FinancialInstitutionAccount::find($request->get('cash_cover_deducted_from_account_id'))->id;
-		$model->storeCurrentAccountCreditBankStatement($issuanceDate,$cashCoverAmount , $financialInstitutionAccountId,0,1,__('Cash Cover [ :lcType ] Transaction Name [ :transactionName ]'  ,['lcType'=>__($lcType,[],'en'),'transactionName'=>$transactionName],'en') , __('Cash Cover [ :lcType ] Transaction Name [ :transactionName ]'  ,['lcType'=>__($lcType,[],'ar'),'transactionName'=>$transactionName],'ar'));
-		$model->storeCurrentAccountCreditBankStatement($issuanceDate,$issuanceFees , $financialInstitutionAccountId,0,1,__('Issuance Fees [ :lcType ] Transaction Name [ :transactionName ]'  ,['lcType'=>__($lcType,[],'en'),'transactionName'=>$transactionName],'en') , __('Issuance Fees [ :lcType ] Transaction Name [ :transactionName ]'  ,['lcType'=>__($lcType,[],'ar'),'transactionName'=>$transactionName],'ar'));
+		$lcFeesAndCommissionAccountId = $request->get('lc_fees_and_commission_account_id') ;
+	
+		$financialInstitutionAccountForFeesAndCommission = FinancialInstitutionAccount::find($lcFeesAndCommissionAccountId);
+		$financialInstitutionAccountForCashCover = FinancialInstitutionAccount::find($request->get('cash_cover_deducted_from_account_id',$lcFeesAndCommissionAccountId));
+	
+		$financialInstitutionAccountIdForFeesAndCommission = $financialInstitutionAccountForFeesAndCommission->id;
+		$openingBalanceDateOfCurrentAccount = $financialInstitutionAccountForFeesAndCommission->getOpeningBalanceDate();
+		
+		$financialInstitutionAccountIdForCashCover = $financialInstitutionAccountForCashCover->id ?? 0;
+		
+		$isCdOrTdCashCoverAccount = in_array($request->get('cash_cover_deducted_from_account_id',[]),[28,29]);
+		$customerName = $model->getBeneficiaryName();
+		if(!$isOpeningBalance && !$isCdOrTdCashCoverAccount ){
+			$model->storeCurrentAccountCreditBankStatement($issuanceDate,$cashCoverAmount , $financialInstitutionAccountIdForCashCover,0,1,__('Cash Cover [ :customerName ] [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lcType,[],'en'),'customerName'=>$customerName,'transactionName'=>$transactionName],'en') , __('Cash Cover [ :customerName ] [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lcType,[],'ar'),'customerName'=>$customerName,'transactionName'=>$transactionName],'ar') );
+		}
+		if(!$isOpeningBalance){
+			$model->storeCurrentAccountCreditBankStatement($issuanceDate,$issuanceFees , $financialInstitutionAccountIdForFeesAndCommission,0,1,__('Issuance Fees [ :customerName ] [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lcType,[],'en'),'customerName'=>$customerName,'transactionName'=>$transactionName],'en') , __('Issuance Fees [ :customerName ] [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lcType,[],'ar'),'customerName'=>$customerName,'transactionName'=>$transactionName],'ar'));
+		}
+		
+		// $model->storeCurrentAccountCreditBankStatement($issuanceDate,$cashCoverAmount , $financialInstitutionAccountId,0,1,__('Cash Cover [ :lcType ] Transaction Name [ :transactionName ]'  ,['lcType'=>__($lcType,[],'en'),'transactionName'=>$transactionName],'en') , __('Cash Cover [ :lcType ] Transaction Name [ :transactionName ]'  ,['lcType'=>__($lcType,[],'ar'),'transactionName'=>$transactionName],'ar'));
+		// $model->storeCurrentAccountCreditBankStatement($issuanceDate,$issuanceFees , $financialInstitutionAccountId,0,1,__('Issuance Fees [ :lcType ] Transaction Name [ :transactionName ]'  ,['lcType'=>__($lcType,[],'en'),'transactionName'=>$transactionName],'en') , __('Issuance Fees [ :lcType ] Transaction Name [ :transactionName ]'  ,['lcType'=>__($lcType,[],'ar'),'transactionName'=>$transactionName],'ar'));
 		$model->handleLetterOfCreditStatement($financialInstitutionId,$source,$letterOfCreditFacilityId , $lcType,$company->id , $issuanceDate ,0 ,0,$lcAmountInMainCurrency,$lcCashCoverOrCdOrTdCurrency,0,$cdOrTdId,'credit-lc-amount');
 		$model->handleLetterOfCreditCashCoverStatement($financialInstitutionId,$source,$letterOfCreditFacilityId , $lcType,$company->id , $issuanceDate ,0 ,$cashCoverAmount,0,$currency,0,'credit-lc-amount');
 		
-		// $lcDurationMonths = $request->get('lc_duration_months',1);
-		// $numberOfIterationsForQuarter = ceil($lcDurationMonths / 3); 
-		// $lcCommissionInterval = $request->get('lc_commission_interval');
-		// if($lcCommissionInterval == 'quarterly'){
-		// 	for($i = 0 ; $i< (int)$numberOfIterationsForQuarter ; $i++ ){
-		// 		$currentDate = Carbon::make($issuanceDate)->addMonth($i * 3)->format('Y-m-d');
-		// 		$isActive = now()->greaterThanOrEqualTo($currentDate);
-		// 		$model->storeCurrentAccountCreditBankStatement($currentDate,$maxLcCommissionAmount , $financialInstitutionAccountId,0,$isActive);
-		// 	}
-		// }else{
-		// }
-		$model->storeCurrentAccountCreditBankStatement($issuanceDate,$maxLcCommissionAmount , $financialInstitutionAccountId,0,1,__('Commission Fees [ :lcType ] Transaction Name [ :transactionName ]'  ,['lcType'=>__($lcType,[],'en'),'transactionName'=>$transactionName],'en') , __('Commission Fees [ :lcType ] Transaction Name [ :transactionName ]'  ,['lcType'=>__($lcType,[],'ar'),'transactionName'=>$transactionName],'ar'));
+		$lcDurationMonths = $request->get('lc_duration_months',1);
+		$numberOfIterationsForQuarter = ceil($lcDurationMonths / 3); 
+		$lcCommissionInterval = $request->get('lc_commission_interval','monthly');
+		$model->storeCommissionAmountCreditBankStatement( $lcCommissionInterval ,  $numberOfIterationsForQuarter ,  $issuanceDate, $openingBalanceDateOfCurrentAccount,$maxLcCommissionAmount, $financialInstitutionAccountIdForFeesAndCommission, $transactionName, $lcType, $isOpeningBalance);
+		// $model->storeCurrentAccountCreditBankStatement($issuanceDate,$maxLcCommissionAmount , $financialInstitutionAccountId,0,1,__('Commission Fees [ :lcType ] Transaction Name [ :transactionName ]'  ,['lcType'=>__($lcType,[],'en'),'transactionName'=>$transactionName],'en') , __('Commission Fees [ :lcType ] Transaction Name [ :transactionName ]'  ,['lcType'=>__($lcType,[],'ar'),'transactionName'=>$transactionName],'ar'));
 		return redirect()->route('view.letter.of.credit.issuance',['company'=>$company->id,'active'=>$request->get('lc_type')])->with('success',__('Data Store Successfully'));
 
 	}
@@ -213,7 +230,7 @@ class LetterOfCreditIssuanceController
 
 	}
 
-	public function update(Company $company , Request $request , LetterOfCreditIssuance $letterOfCreditIssuance,string $source){
+	public function update(Company $company , UpdateLetterOfCreditIssuanceRequest $request , LetterOfCreditIssuance $letterOfCreditIssuance,string $source){
 		$letterOfCreditIssuance->deleteAllRelations();
 		$letterOfCreditIssuance->delete();
 		$this->store($company,$request,$source);
@@ -272,7 +289,7 @@ class LetterOfCreditIssuanceController
 			'status' => $letterOfCreditIssuanceStatus,
 			'payment_date'=>$paymentDate
 		]);
-		$letterOfCreditFacility = FinancialInstitution::find($financialInstitutionId)->getCurrentAvailableLetterOfCreditFacility();
+		$letterOfCreditFacility = $letterOfCreditIssuance->letterOfCreditFacility;
 		$lcType = $letterOfCreditIssuance->getLcType();
 		$lcAmount = $letterOfCreditIssuance->getLcAmount();
 		$lcAmountInMainCurrency = $letterOfCreditIssuance->getLcAmountInMainCurrency();
@@ -304,11 +321,6 @@ class LetterOfCreditIssuanceController
 		return redirect()->route('view.letter.of.credit.issuance',['company'=>$company->id,'active'=>$lcType])->with('success',__('Data Store Successfully'));
 	}
 	
-	
-	
-	
-
-
 	public function destroy(Company $company ,  LetterOfCreditIssuance $letterOfCreditIssuance)
 	{
 		

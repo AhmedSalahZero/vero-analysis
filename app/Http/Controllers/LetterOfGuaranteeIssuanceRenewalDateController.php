@@ -80,7 +80,7 @@ class LetterOfGuaranteeIssuanceRenewalDateController
 		$lgCommissionAmount = $letterOfGuaranteeIssuance->getLgCommissionAmount();
 		$maxLgCommissionAmount = max($minLgCommissionAmount ,$lgCommissionAmount );
 		$financialInstitutionId = $letterOfGuaranteeIssuance->getFinancialInstitutionBankId();
-		$financialInstitutionAccountForFeesAndCommission = FinancialInstitutionAccount::find($letterOfGuaranteeIssuance->getLgFeesAndCommissionAccountId());
+		$financialInstitutionAccountForFeesAndCommission = FinancialInstitutionAccount::find($letterOfGuaranteeIssuance->getFeesAndCommissionAccountId());
 		$financialInstitutionAccountIdForFeesAndCommission = $financialInstitutionAccountForFeesAndCommission->id;
 		$openingBalanceDateOfCurrentAccount = $financialInstitutionAccountForFeesAndCommission->getOpeningBalanceDate();
 		$isOpeningBalance = $letterOfGuaranteeIssuance->isOpeningBalance();

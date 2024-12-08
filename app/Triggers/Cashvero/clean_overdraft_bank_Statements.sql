@@ -12,7 +12,7 @@
 			declare interest_type_text varchar(100) default 'interest';
 			declare highest_debit_balance_text varchar(100) default 'highest_debit_balance';
 		
-		insert into debugging (message) values('from create');
+	--	insert into debugging (message) values('from create');
 			-- في حالة الانشاء
 			set new.created_at = CURRENT_TIMESTAMP;
 			select date , end_balance  into _previous_date,_last_end_balance  from clean_overdraft_bank_statements where  clean_overdraft_id = new.clean_overdraft_id and full_date < new.full_date order by full_date desc , id desc limit 1 ; -- رتبت بالاي دي الاكبر علشان  لو كانوا متساوين في التاريخ بالظبط (ودا احتمال ضعيف ) ياخد اللي ال اي دي بتاعه اكبر
@@ -70,7 +70,7 @@
 		select sum(debit) into _current_debit from clean_overdraft_bank_statements where clean_overdraft_id = _clean_overdraft_id and is_debit > 0    ;
 		select sum(settlement_amount) into _total_settlements from clean_overdraft_withdrawals where clean_overdraft_id =  _clean_overdraft_id ;
 		set _current_debit = _current_debit - _total_settlements ;
-			insert into debugging (message) values('from ddda');
+		--	insert into debugging (message) values('from ddda');
 				call start_settlement_process_clean_overdraft(_type,0 , _clean_overdraft_id , _current_debit  ,0 , _current_company_id , CURRENT_TIMESTAMP);
 		
 		
@@ -413,7 +413,8 @@ insert into debugging (message) values(concat('_current_interest_rate',_current_
 	STARTS '2022-03-31 23:59:00'
 	ON COMPLETION PRESERVE
 	DO BEGIN
-	call recalculate_end_of_month_clean_overdraft_interests();
+	 -- do noting
+	-- call recalculate_end_of_month_clean_overdraft_interests();
 	END$$
 	DELIMITER ;
 	drop event if exists `refresh_customer_invoices_status_event`;

@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\AddNewCustomerController;
 use App\Http\Controllers\Analysis\SalesGathering\SalesBreakdownAgainstAnalysisReport;
 use App\Http\Controllers\BalanceSheetController;
 use App\Http\Controllers\CashFlowStatementController;
@@ -491,6 +490,7 @@ Route::middleware([])->group(function () {
 				 Route::get('get-contracts-for-customer-or-supplier','ContractsController@getContractsForCustomerOrSupplier')->name('get.contracts.for.customer.or.supplier');
 				 Route::get('generate-contract-code/{type}','ContractsController@generateRandomCode')->name('generate.unique.rondom.contract.code');
 				 Route::get('financial-institutions/js-update-contracts-based-on-customer', 'ContractsController@updateContractsBasedOnCustomer')->name('update.contracts.based.on.customer');
+				 Route::get('financial-institutions/js-update-sales-orders-based-on-contract', 'ContractsController@updateSalesOrdersBasedOnContract')->name('update.sales.orders.based.on.contract');
 				 Route::get('financial-institutions/js-update-purchase-orders-based-on-contract', 'ContractsController@updatePurchaseOrdersBasedOnContract')->name('update.purchase.orders.based.on.contract');
 				 Route::get('financial-institutions/get-lc-issuance-based-of-financial-institution', 'FinancialInstitutionController@getLcIssuanceBasedOnFinancialInstitution')->name('update.lc.issuance.based.on.financial.institution');
 				 
@@ -704,6 +704,8 @@ Route::middleware([])->group(function () {
                     // Route::get('letter-of-credit-issuance/delete-advanced-payment/{lcAdvancedPaymentHistory}', 'LetterOfCreditIssuanceController@deleteAdvancedPayment')->name('delete.lc.advanced.payment');
                     Route::post('letter-of-credit-issuance/back-to-running/{letterOfCreditIssuance}/{source}', 'LetterOfCreditIssuanceController@backToRunningStatus')->name('back.to.running.letter.of.credit.issuance');
 					Route::get('financial-institutions/update-outstanding-balance-and-limits-for-lc', 'LetterOfCreditFacilityController@updateOutstandingBalanceAndLimits')->name('update.letter.of.credit.outstanding.balance.and.limit');
+					Route::get('get-lc-facility-based-on-financial-institution','LetterOfCreditFacilityController@getLcFacilityBasedOnFinancialInstitution')->name('get.lc.facility.based.on.financial.institution');
+
 					Route::post('letter-of-credit-issuance/apply-expense/{letterOfCreditIssuance}','LetterOfCreditIssuanceController@applyExpense')->name('apply.lc.issuance.expense');
 					Route::post('letter-of-credit-issuance/update-expense/{expense}','LetterOfCreditIssuanceController@updateExpense')->name('update.lc.issuance.expense');
 					Route::get('letter-of-credit-issuance/delete-expense/{expense}','LetterOfCreditIssuanceController@deleteExpense')->name('delete.lc.issuance.expense');

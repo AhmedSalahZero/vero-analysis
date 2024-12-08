@@ -100,7 +100,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                                 <div class="form-group row">
 								
 								 <div class="col-md-2">
-                                        <label><?php echo e(__('Category Name')); ?>
+                                        <label><?php echo e(__('Issuance Type')); ?>
 
                                             <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                         </label>
@@ -109,7 +109,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                                             <select name="category_name" required class="form-control repeater-select">
 											<option value=""><?php echo e(__('Select')); ?></option>
                                                 <?php $__currentLoopData = LetterOfGuaranteeIssuance::getCategories(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $title): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                <option value="<?php echo e($key); ?>" <?php if(isset($model) && $model->getLgCategoryName() == $key ): ?> selected <?php endif; ?> > <?php echo e($title); ?></option>
+                                                <option value="<?php echo e($key); ?>" <?php if(isset($model) && $model->getCategoryName() == $key ): ?> selected <?php endif; ?> > <?php echo e($title); ?></option>
                                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                             </select>
                                         </div>
@@ -551,7 +551,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                                                 <select name="lg_fees_and_commission_account_type" class="form-control js-update-account-id-based-on-account-type ">
                                                     
                                                     <?php $__currentLoopData = $accountTypes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $accountType): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                    <option value="<?php echo e($accountType->id); ?>" <?php if(isset($model) && $model->getLgFeesAndCommissionAccountTypeId() == $accountType->id): ?> selected <?php endif; ?>><?php echo e($accountType->getName()); ?></option>
+                                                    <option value="<?php echo e($accountType->id); ?>" <?php if(isset($model) && $model->getFeesAndCommissionAccountTypeId() == $accountType->id): ?> selected <?php endif; ?>><?php echo e($accountType->getName()); ?></option>
                                                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                 </select>
                                             </div>
@@ -565,7 +565,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                                         </label>
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
-                                                <select change-financial-instutition-js js-cd-or-td-account-number data-current-selected="<?php echo e(isset($model) ? $model->getLgFeesAndCommissionAccountId(): 0); ?>" name="lg_fees_and_commission_account_id" class="form-control js-account-number">
+                                                <select change-financial-instutition-js js-cd-or-td-account-number data-current-selected="<?php echo e(isset($model) ? $model->getFeesAndCommissionAccountId(): 0); ?>" name="lg_fees_and_commission_account_id" class="form-control js-account-number">
                                                     <option value="" selected><?php echo e(__('Select')); ?></option>
                                                 </select>
                                             </div>
@@ -910,7 +910,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                         return
                     }
                     $.ajax({
-                        url: "<?php echo e(route('update.purchase.orders.based.on.contract',['company'=>$company->id])); ?>"
+                        url: "<?php echo e(route('update.sales.orders.based.on.contract',['company'=>$company->id])); ?>"
                         , data: {
                             contractId
                         , }

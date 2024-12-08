@@ -107,7 +107,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                                             <select name="category_name" required class="form-control repeater-select">
 											<option value="">{{ __('Select') }}</option>
                                                 @foreach(LetterOfGuaranteeIssuance::getCategories() as $key => $title )
-                                                <option value="{{ $key }}" @if(isset($model) && $model->getLgCategoryName() == $key ) selected @endif > {{ $title }}</option>
+                                                <option value="{{ $key }}" @if(isset($model) && $model->getCategoryName() == $key ) selected @endif > {{ $title }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -378,7 +378,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                                                 <select name="lg_fees_and_commission_account_type" class="form-control js-update-account-id-based-on-account-type ">
                                                     {{-- <option value="" selected>{{__('Select')}}</option> --}}
                                                     @foreach($accountTypes as $index => $accountType)
-                                                    <option value="{{ $accountType->id }}" @if(isset($model) && $model->getLgFeesAndCommissionAccountTypeId() == $accountType->id) selected @endif>{{ $accountType->getName() }}</option>
+                                                    <option value="{{ $accountType->id }}" @if(isset($model) && $model->getFeesAndCommissionAccountTypeId() == $accountType->id) selected @endif>{{ $accountType->getName() }}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
@@ -391,7 +391,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                                         </label>
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
-                                                <select change-financial-instutition-js js-cd-or-td-account-number data-current-selected="{{ isset($model) ? $model->getLgFeesAndCommissionAccountId(): 0 }}" name="lg_fees_and_commission_account_id" class="form-control js-account-number">
+                                                <select change-financial-instutition-js js-cd-or-td-account-number data-current-selected="{{ isset($model) ? $model->getFeesAndCommissionAccountId(): 0 }}" name="lg_fees_and_commission_account_id" class="form-control js-account-number">
                                                     <option value="" selected>{{__('Select')}}</option>
                                                 </select>
                                             </div>
@@ -725,7 +725,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                         return
                     }
                     $.ajax({
-                        url: "{{route('update.purchase.orders.based.on.contract',['company'=>$company->id])}}"
+                        url: "{{route('update.sales.orders.based.on.contract',['company'=>$company->id])}}"
                         , data: {
                             contractId
                         , }

@@ -2,12 +2,14 @@
 namespace App\Http\Controllers;
 use App\Enums\LcTypes;
 use App\Models\AccountType;
+use App\Models\CertificatesOfDeposit;
 use App\Models\Company;
 use App\Models\FinancialInstitution;
 use App\Models\LetterOfCreditCashCoverStatement;
 use App\Models\LetterOfCreditFacility;
 use App\Models\LetterOfCreditIssuance;
 use App\Models\LetterOfCreditStatement;
+use App\Models\TimeOfDeposit;
 use App\Traits\GeneralFunctions;
 use Carbon\Carbon;
 use Illuminate\Database\Query\Builder;
@@ -189,44 +191,83 @@ class LetterOfCreditFacilityController
 		return redirect()->back()->with('success',__('Item Has Been Delete Successfully'));
 	}
 	public function updateOutstandingBalanceAndLimits(Request $request , Company $company  ){
-	
+		$lcIssuanceId =  $request->get('lcIssuanceId');
+		$letterOfCreditIssuance = LetterOfCreditIssuance::find($lcIssuanceId);
+		$cdOrTdAccountId = $request->get('cdOrTdAccountId');
+		$selectedLcType = $request->get('lcType');
+		$currentSource = $request->get('source');
+		$isLCFacilitySource = $currentSource == LetterOfCreditIssuance::LC_FACILITY;
+		$isHundredPercentageSource = $currentSource == LetterOfCreditIssuance::HUNDRED_PERCENTAGE_CASH_COVER;
+		$isCdSource = $currentSource == LetterOfCreditIssuance::AGAINST_CD;
+		$isTdSource = $currentSource ==  LetterOfCreditIssuance::AGAINST_TD;
+		
+		$letterOfCreditFacility = $request->has('letterOfCreditFacilityId') ? LetterOfCreditFacility::find($request->get('letterOfCreditFacilityId')) : null;
+		$letterOfCreditFacilityId = $letterOfCreditFacility ? $letterOfCreditFacility->id : 0 ;
 		$financialInstitutionId = $request->get('financialInstitutionId') ;
 		if(!$financialInstitutionId){
 			return ;
 		}
-		$selectedLcType = $request->get('lcType');
-		
+		$totalCashCoverStatementDebit = 0 ;
+	
+		$currencyName = null ;
+		$accountTypeId = $request->get('accountTypeId');
+		$isCdOrTdSource = $currentSource == LetterOfCreditIssuance::AGAINST_CD||$currentSource == LetterOfCreditIssuance::AGAINST_TD;
 		$currentLcOutstanding = 0 ;
 		$financialInstitution = FinancialInstitution::find($financialInstitutionId);
-        $letterOfCreditFacility = $financialInstitution->getCurrentAvailableLetterOfCreditFacility();
+		$letterOfCreditFacility = $request->has('letterOfCreditFacilityId') ? LetterOfCreditFacility::find($request->get('letterOfCreditFacilityId')) : null;
         $minLcCommissionRateForCurrentLcType  = $letterOfCreditFacility  && $letterOfCreditFacility->termAndConditionForLcType($selectedLcType)  ? $letterOfCreditFacility->termAndConditionForLcType($selectedLcType)->min_commission_fees : 0;
         $lcCommissionRate  = $letterOfCreditFacility  && $letterOfCreditFacility->termAndConditionForLcType($selectedLcType) ? $letterOfCreditFacility->termAndConditionForLcType($selectedLcType)->commission_rate : 0;
         $minLcCashCoverRateForCurrentLcType  = $letterOfCreditFacility && $letterOfCreditFacility->termAndConditionForLcType($selectedLcType)  ? $letterOfCreditFacility->termAndConditionForLcType($selectedLcType)->cash_cover_rate : 0;
         $minLcIssuanceFeesForCurrentLcType  = $letterOfCreditFacility  && $letterOfCreditFacility->termAndConditionForLcType($selectedLcType) ? $letterOfCreditFacility->termAndConditionForLcType($selectedLcType)->issuance_fees : 0;
 
-		$source = $request->get('source');
-		/**
-		 * @var LetterOfCreditFacility $letterOfCreditFacility
-		 */
-		$letterOfCreditFacility = $financialInstitution->getCurrentAvailableLetterOfCreditFacility();
+		if($isLCFacilitySource && $letterOfCreditFacility){
+			$currencyName = $letterOfCreditFacility->getCurrency();
+		}
+		if( $isCdSource && $cdOrTdAccountId){
+			$certificateOfDeposit = CertificatesOfDeposit::find($cdOrTdAccountId);
+			$currencyName = $certificateOfDeposit->getCurrency();
+		}
+		if( $isTdSource && $cdOrTdAccountId){
+			$timeOfDeposit = TimeOfDeposit::find($cdOrTdAccountId);
+			$currencyName = $timeOfDeposit->getCurrency();
+		}
+		if($isHundredPercentageSource){
+			$currencyName = $request->get('lcCurrency');
+		}
+		if($letterOfCreditIssuance){
+			$minLcCashCoverRateForCurrentLcType = $letterOfCreditIssuance->getCashCoverRate();
+			$lcCommissionRate = $letterOfCreditIssuance->getLcCommissionRate();
+			$minLcIssuanceFeesForCurrentLcType = $letterOfCreditIssuance->getIssuanceFees();
+		}
+		if($isCdOrTdSource){
+			$totalCashCoverStatementDebit = DB::table('letter_of_credit_issuances')
+			->where('letter_of_credit_issuances.cash_cover_deducted_from_account_id',$cdOrTdAccountId)
+			->where('cash_cover_deducted_from_account_type',$accountTypeId)
+			->where('letter_of_credit_cash_cover_statements.company_id',$company->id)
+			->where('letter_of_credit_issuances.status',LetterOfCreditIssuance::RUNNING)
+			->where('letter_of_credit_cash_cover_statements.source',LetterOfCreditIssuance::LC_FACILITY)
+			->where('letter_of_credit_cash_cover_statements.currency',$currencyName)
+			->where('letter_of_credit_cash_cover_statements.financial_institution_id',$financialInstitutionId)
+			->join('letter_of_credit_cash_cover_statements','letter_of_credit_issuances.id','=','letter_of_credit_cash_cover_statements.letter_of_credit_issuance_id')
+			->orderByRaw('full_date desc')
+			->sum('letter_of_credit_cash_cover_statements.debit');
+		}
+		
 		$totalLastOutstandingBalanceOfFourTypes = 0 ;
 		foreach(LcTypes::getAll() as $lcTypeId => $lcTypeNameFormatted){
 			$accountTypeId = $request->get('accountTypeId');
 			$letterOfCreditStatement = DB::table('letter_of_credit_statements')
 			->where('company_id',$company->id)
+			->where('currency',$currencyName)
 			->where('financial_institution_id',$financialInstitutionId)
+			->when($currentSource == LetterOfCreditIssuance::LC_FACILITY , function( $query) use ($letterOfCreditFacilityId){
+				$query->where('lc_facility_id',$letterOfCreditFacilityId);
+			})
+			->when($isCdOrTdSource,function($query) use ($cdOrTdAccountId){
+				$query->where('cd_or_td_id',$cdOrTdAccountId);
+			})
 			->where('lc_type',$lcTypeId)
-			->when (! $request->has('accountTypeId'),function(Builder $builder) use($source) {
-				$builder->where('source',$source);
-			})
-			->when($request->has('accountTypeId'),function(Builder $builder) use ($request,$accountTypeId){
-				$accountType = AccountType::find($accountTypeId);
-				$currentSource = LetterOfCreditIssuance::AGAINST_TD;
-				if($accountType->isCertificateOfDeposit()){
-					$currentSource = LetterOfCreditIssuance::AGAINST_CD;
-				}
-				$builder->where('source',$currentSource);
-			})
+			->where('source',$currentSource)
 			->orderByRaw('full_date desc')
 			->first();
 			$letterOfCreditStatementEndBalance = $letterOfCreditStatement ? $letterOfCreditStatement->end_balance : 0 ;
@@ -243,11 +284,24 @@ class LetterOfCreditFacilityController
 			'current_lc_type_outstanding_balance'=>number_format(abs($currentLcOutstanding)),
             'min_lc_commission_rate'=>$minLcCommissionRateForCurrentLcType,
 			'lc_commission_rate'=>$lcCommissionRate , 
+			'currency_name'=>$currencyName,
             'min_lc_cash_cover_rate_for_current_lc_type'=>$minLcCashCoverRateForCurrentLcType ,
-            'min_lc_issuance_fees_for_current_lc_type'=>$minLcIssuanceFeesForCurrentLcType
+            'min_lc_issuance_fees_for_current_lc_type'=>$minLcIssuanceFeesForCurrentLcType,
+			// 'customers'=>$customerOrOtherPartnersArr,
+			'total_cash_cover_statement_debit'=>$totalCashCoverStatementDebit	
 		]);
 	}
-
+	public function getLcFacilityBasedOnFinancialInstitution(Request $request){
+		$financialInstitutionId = $request->get('financialInstitutionId');
+		$financialInstitution = FinancialInstitution::find($financialInstitutionId);
+		$letterOfCreditFacilities = $financialInstitution ? $financialInstitution->LetterOfCreditFacilities
+		->where('contract_end_date', '>=', now())
+		->pluck('name','id')->toArray() : [];
+		return response()->json([
+			'letterOfCreditFacilities'=>$letterOfCreditFacilities
+		]);
+		
+	}
 	
 
 }

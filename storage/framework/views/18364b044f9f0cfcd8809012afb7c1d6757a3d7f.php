@@ -134,7 +134,7 @@ use App\Models\LetterOfGuaranteeIssuance;
 
                                             <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                         </label>
-                                        <select required js-when-change-trigger-change-account-type change-financial-instutition-js id="financial-instutition-id" js-get-lg-facility-based-on-financial-institution js-get-lg-facility-based-on-financial-institution js-when-change-trigger-change-account-type data-financial-institution-id required name="financial_institution_id" class="form-control">
+                                        <select required js-when-change-trigger-change-account-type change-financial-instutition-js id="financial-instutition-id" js-get-lg-facility-based-on-financial-institution js-when-change-trigger-change-account-type data-financial-institution-id required name="financial_institution_id" class="form-control">
 											<option value=""><?php echo e(__('Select')); ?></option>
                                             <?php $__currentLoopData = $financialInstitutionBanks; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index=>$financialInstitutionBank): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                             <option value="<?php echo e($financialInstitutionBank->id); ?>" <?php echo e(isset($model) && $model->getFinancialInstitutionBankId() == $financialInstitutionBank->id ? 'selected':''); ?>><?php echo e($financialInstitutionBank->getName()); ?></option>
@@ -151,9 +151,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                                         </label>
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
-                                                <select required js-update-outstanding-balance-and-limits data-current-selected="<?php echo e(isset($model) ? $model->getLgFacilityId() : 0); ?>" id="lg-facility-id" name="lg_facility_id" class="form-control 
-												
-												">
+                                                <select required js-update-outstanding-balance-and-limits data-current-selected="<?php echo e(isset($model) ? $model->getLgFacilityId() : 0); ?>" id="lg-facility-id" name="lg_facility_id" class="form-control">
                                                     
                                                 </select>
                                             </div>

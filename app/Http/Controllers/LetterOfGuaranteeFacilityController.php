@@ -197,7 +197,6 @@ class LetterOfGuaranteeFacilityController
 		$financialInstitutionId = $request->get('financialInstitutionId') ;
 		$selectedLgType = $request->get('lgType');
 		$isBidBond = $selectedLgType == 'bid-bond'  ;
-		$cdOrTdFreeToUseAmount = 0 ;
 		$totalCashCoverStatementDebit = 0 ;
 		$currencyName = null ;
 		$customersArr =   Partner::onlyCustomers()->onlyForCompany($company->id)
@@ -222,24 +221,17 @@ class LetterOfGuaranteeFacilityController
 		$letterOfGuaranteeFacility = $request->has('letterOfGuaranteeFacilityId') ? LetterOfGuaranteeFacility::find($request->get('letterOfGuaranteeFacilityId')) : null;
 		$letterOfGuaranteeFacilityId = $letterOfGuaranteeFacility ? $letterOfGuaranteeFacility->id : 0 ;
 		
-		// $accountType = AccountType::find($accountTypeId);
-		// $cdOrTdAccount = null;
+		
 		if($isLGFacilitySource && $letterOfGuaranteeFacility){
 			$currencyName = $letterOfGuaranteeFacility->getCurrency();
 		}
 		if( $isCdSource && $cdOrTdAccountId){
-			
-		//	$currentSource = LetterOfGuaranteeIssuance::AGAINST_CD;
 			$certificateOfDeposit = CertificatesOfDeposit::find($cdOrTdAccountId);
-	
 			$currencyName = $certificateOfDeposit->getCurrency();
-			// $cdOrTdFreeToUseAmount = DB::table();
 		}
 		if( $isTdSource && $cdOrTdAccountId){
-		//	$currentSource = LetterOfGuaranteeIssuance::AGAINST_TD;
 			$timeOfDeposit = TimeOfDeposit::find($cdOrTdAccountId);
 			$currencyName = $timeOfDeposit->getCurrency();
-			// $cdOrTdFreeToUseAmount = 
 		}
 		if($isHundredPercentageSource){
 			$currencyName = $request->get('lgCurrency');
@@ -249,24 +241,6 @@ class LetterOfGuaranteeFacilityController
 		if(!$financialInstitution){
 			return ;
 		}
-
-		
-		// $financialInstitution->getCurrentAvailableLetterOfGuaranteeFacility() 
-		// if(is_null($letterOfGuaranteeFacility)){
-		// 	return response()->json([
-		// 		'limit'=>0 ,
-		// 		'total_lg_outstanding_balance'=>0,
-		// 		'total_room'=>0,
-		// 		'current_lg_type_outstanding_balance'=>0,
-		// 		'min_lg_commission_rate'=>0,
-		// 		'lg_commission_rate'=>0 , 
-		// 		'min_lg_cash_cover_rate_for_current_lg_type'=>0 ,
-		// 		'min_lg_issuance_fees_for_current_lg_type'=>0,
-		// 		'customers'=>[]
-	
-		// 	]);
-		// }
-		
         $minLgCommissionRateForCurrentLgType  = $letterOfGuaranteeFacility  && $selectedLgType && $letterOfGuaranteeFacility->termAndConditionForLgType($selectedLgType) ? $letterOfGuaranteeFacility->termAndConditionForLgType($selectedLgType)->min_commission_fees : 0;
 		
         $lgCommissionRate  = $letterOfGuaranteeFacility && $selectedLgType  && $letterOfGuaranteeFacility->termAndConditionForLgType($selectedLgType) ? $letterOfGuaranteeFacility->termAndConditionForLgType($selectedLgType)->commission_rate : 0;
@@ -342,7 +316,6 @@ class LetterOfGuaranteeFacilityController
             'min_lg_cash_cover_rate_for_current_lg_type'=>$minLgCashCoverRateForCurrentLgType ,
             'min_lg_issuance_fees_for_current_lg_type'=>$minLgIssuanceFeesForCurrentLgType,
 			'customers'=>$customerOrOtherPartnersArr,
-			'cd_or_td_free_to_use_amount'=>$cdOrTdFreeToUseAmount,
 			'total_cash_cover_statement_debit'=>$totalCashCoverStatementDebit
 		]);
 	}

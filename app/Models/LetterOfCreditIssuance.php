@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use App\Enums\LcTypes;
 use App\Traits\HasBasicStoreRequest;
+use App\Traits\Models\HasCommissionStatements;
 use App\Traits\Models\HasDeleteButTriggerChangeOnLastElement;
 use App\Traits\Models\HasLetterOfCreditCashCoverStatements;
 use App\Traits\Models\HasLetterOfCreditStatements;
@@ -13,13 +13,15 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class LetterOfCreditIssuance extends Model
 {
-	use HasBasicStoreRequest,HasLetterOfCreditStatements,HasLetterOfCreditCashCoverStatements,HasDeleteButTriggerChangeOnLastElement;
+	use HasBasicStoreRequest,HasCommissionStatements,HasLetterOfCreditStatements,HasLetterOfCreditCashCoverStatements,HasDeleteButTriggerChangeOnLastElement;
 	const LC_FACILITY = 'lc-facility';
 	const AGAINST_TD ='against-td';
 	const AGAINST_CD ='against-cd';
 	const HUNDRED_PERCENTAGE_CASH_COVER ='hundred-percentage-cash-cover';
 	const RUNNING = 'running';
 	const PAID = 'paid';
+	const OPENING_BALANCE = 'opening-balance';
+	const NEW_ISSUANCE = 'new-issuance';
     const LC_FACILITY_BEGINNING_BALANCE = 'lc-facility-beginning-balance';
     const HUNDRED_PERCENTAGE_CASH_COVER_BEGINNING_BALANCE = 'hundred-percentage-cash-cover-beginning-balance';
     const AGAINST_CD_BEGINNING_BALANCE = 'against-cd-beginning-balance';
@@ -27,6 +29,34 @@ class LetterOfCreditIssuance extends Model
 	const FOR_PAID ='for-paid'; // هي الفلوس اللي انت حيطتها بسبب انه عمل تاكيد انه دفع
 	const AMOUNT_TO_BE_DECREASED ='amount-to-be-decreased'; // 
     protected $guarded = ['id'];
+	
+	public function getCategoryName():string 
+	{
+		return $this->category_name;
+	}
+	public function isOpeningBalance():bool
+	{
+		return $this->getCategoryName() == self::OPENING_BALANCE;
+	}
+	public function lcFeesAndCommissionAccount()
+	{
+		return $this->belongsTo(FinancialInstitutionAccount::class,'lc_fees_and_commission_account_id','id');
+	}
+	public function getFeesAndCommissionAccountId():int
+	{
+		return $this->lcFeesAndCommissionAccount ? $this->lcFeesAndCommissionAccount->id : 0 ;
+	}
+	public function getFeesAndCommissionAccountTypeId()
+	{
+		return $this->lc_fees_and_commission_account_type;
+	}
+	public static function getCategories():array 
+	{
+		return [
+			self::NEW_ISSUANCE=>__('New Issuance'),
+			self::OPENING_BALANCE=>__('Opening Balance')
+		];
+	}
 	public static function lcSources()
 	{
 		return [
@@ -91,6 +121,18 @@ class LetterOfCreditIssuance extends Model
 	public function getLcType()
 	{
 		return $this->lc_type;
+	}
+	public function letterOfCreditFacility()
+	{
+		return $this->belongsTo(LetterOfCreditFacility::class,'lc_facility_id','id');
+	}	
+	public function getLcFacilityId()
+	{
+		return $this->letterOfCreditFacility ? $this->letterOfCreditFacility->id:0;
+	}
+	public function getLcFacilityName()
+	{
+		return $this->letterOfCreditFacility ? $this->letterOfCreditFacility->getName(): __('N/A');
 	}
 	public function getTotalLcOutstandingBalance()
 	{
@@ -275,15 +317,17 @@ class LetterOfCreditIssuance extends Model
 	{
 		return $this->lc_currency ;
 	}
+	public function getCdOrTdCurrencyCurrency()
+	{
+		return $this->cd_or_td_currency;
+	}
 	public function getLcCashCoverCurrency()
 	{
 		return $this->lc_cash_cover_currency ;
 	}
 	public function getLcCurrentAmount()
 	{
-		return $this->getLcAmount() 
-		// - $this->advancedPaymentHistories->sum('amount')
-		;
+		return $this->getLcAmount();
 	}
 	public function getLcCurrentAmountFormatted()
 	{
@@ -312,21 +356,13 @@ class LetterOfCreditIssuance extends Model
 	}
 	public function getCashCoverDeductedFromAccountId()
 	{
-		return $this->cash_cover_deducted_from_account_id;
+		return $this->cash_cover_deducted_from_account_id ?: $this->lc_fees_and_commission_account_id;
 	}
 	public function getInterestRate()
 	{
 		return $this->interest_rate ?: 0;
 	}
-	public function getLimit()
-	{
 
-		$financialInstitutionId = $this->financial_institution_id;
-		$financialInstitution = FinancialInstitution::find($financialInstitutionId);
-        $letterOfCreditFacility = $financialInstitution->getCurrentAvailableLetterOfCreditFacility();
-		$letterOfCreditFacility = $financialInstitution->getCurrentAvailableLetterOfCreditFacility();
-		return  $letterOfCreditFacility ? $letterOfCreditFacility->getLimit() : 0;
-	}
 	public function getLcCommissionRate()
 	{
 		return $this->lc_commission_rate ?: 0;
@@ -343,6 +379,7 @@ class LetterOfCreditIssuance extends Model
 	{
 		return number_format($this->getLcCommissionAmount());
 	}
+	
 	// public function getLcCommissionInterval()
 	// {
 	// 	return $this->lc_commission_interval ;
@@ -410,14 +447,6 @@ class LetterOfCreditIssuance extends Model
 	public function getCdOrTdId()
 	{
 		return $this->cd_or_td_id;
-		// $account = AccountType::find($this->getCdOrTdAccountTypeId());
-		// if($account && $account->isCertificateOfDeposit() ){
-		// 	return CertificatesOfDeposit::find($this->getCdOrTdAccountNumber() )->id;
-		// }
-		// if($account && $account->isTimeOfDeposit() ){
-		// 	return TimeOfDeposit::findByAccountNumber($this->getCdOrTdAccountNumber(),$this->company_id )->id;
-		// }
-		// return 0 ;
 	}
 	
 	public function deleteAllRelations():self
@@ -512,5 +541,10 @@ class LetterOfCreditIssuance extends Model
 			}
 		}
 	}
+	public function getIssuanceFees()
+	{
+		return $this->issuance_fees ;
+	}	
+	
 	
 }

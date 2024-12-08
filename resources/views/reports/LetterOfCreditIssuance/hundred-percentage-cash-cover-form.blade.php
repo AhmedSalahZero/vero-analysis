@@ -97,7 +97,24 @@ use App\Models\LetterOfCreditIssuance;
 
 
                                 <div class="form-group row">
-                                    <div class="col-md-6">
+								
+								 <div class="col-md-2">
+                                        <label>{{__('Issuance Type')}}
+                                            @include('star')
+                                        </label>
+		
+                                        <div class="input-group">
+                                            <select name="category_name" required class="form-control repeater-select">
+											<option value="">{{ __('Select') }}</option>
+                                                @foreach(LetterOfCreditIssuance::getCategories() as $key => $title )
+                                                <option value="{{ $key }}" @if(isset($model) && $model->getCategoryName() == $key ) selected @endif > {{ $title }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+
+                                    </div>
+									
+                                    <div class="col-md-4">
                                         <x-form.input :model="$model??null" :label="__('Transaction Name')" :type="'text'" :placeholder="__('Transaction Name')" :name="'transaction_name'" :class="''" :required="true"></x-form.input>
                                     </div>
 
@@ -111,9 +128,24 @@ use App\Models\LetterOfCreditIssuance;
                                             @endforeach
                                         </select>
                                     </div>
+									
+									
+									<div class="col-md-3">
+                                        <label>{{__('LC Currency')}}
+                                            @include('star')
+                                        </label>
+                                        <div class="input-group">
+                                            <select name="lc_currency" class="form-control current-currency" js-when-change-trigger-change-account-type>
+                                                <option selected>{{__('Select')}}</option>
+                                                @foreach(getCurrencies() as $currencyName => $currencyValue )
+                                                <option value="{{ $currencyName }}" @if(isset($model) && $model->getLcCurrency() == $currencyName ) selected @elseif($currencyName == 'EGP' ) selected @endif > {{ $currencyValue }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
 
 
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <label> {{ __('LC Type') }}
                                             @include('star')
                                         </label>
@@ -126,10 +158,10 @@ use App\Models\LetterOfCreditIssuance;
                                         </select>
                                     </div>
 
-                                    <div class="col-md-4 ">
+                                    <div class="col-md-3 ">
                                         <x-form.input :id="'current-lc-type-outstanding-balance-id'" :default-value="0" :model="$model??null" :label="__('LC Type Outstanding Balance')" :type="'text'" :placeholder="__('LC Type Outstanding Balance')" :name="'lc_type_outstanding_balance'" :class="'only-greater-than-zero-allowed'" :required="true"></x-form.input>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <x-form.input :model="$model??null" :label="__('LC Code')" :type="'text'" :placeholder="__('LC Code')" :name="'lc_code'" :class="''" :required="true"></x-form.input>
                                     </div>
 
@@ -223,9 +255,7 @@ use App\Models\LetterOfCreditIssuance;
                                             @include('star')
                                         </label>
                                         <select js-update-purchase-orders-based-on-contract id="contract-id" data-current-selected="{{ isset($model) ?  $model->getContractId() : 0 }}" name="contract_id" data-live-search="true" class="form-control kt-bootstrap-select select2-select kt_bootstrap_select">
-                                            {{-- @foreach($contracts as $contract)
-                                            <option @if(isset($model) && $model->getContractId() == $contract->id ) selected @endif value="{{ $contract->getId() }}">{{ $contract->getName() }}</option>
-                                            @endforeach --}}
+                                         
                                         </select>
                                     </div>
 
@@ -286,19 +316,7 @@ use App\Models\LetterOfCreditIssuance;
                                     <div class="col-md-3">
                                         <x-form.input :default-value="0" :model="$model??null" :label="__('LC Amount')" :type="'text'" :placeholder="__('LC Amount')" :name="'lc_amount'" :class="'only-greater-than-zero-allowed amount-js  recalculate-amount-in-main-currency  recalculate-lc-commission-amount-js lc-amount-js'" :required="true"></x-form.input>
                                     </div>
-                                    <div class="col-md-3">
-                                        <label>{{__('LC Currency')}}
-                                            @include('star')
-                                        </label>
-                                        <div class="input-group">
-                                            <select name="lc_currency" class="form-control current-invoice-currency update-exchange-rate" >
-                                                <option selected>{{__('Select')}}</option>
-                                                @foreach(getCurrencies() as $currencyName => $currencyValue )
-                                                <option value="{{ $currencyName }}" @if(isset($model) && $model->getLcCurrency() == $currencyName ) selected @elseif($currencyName == 'USD' ) selected @endif > {{ $currencyValue }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    </div>
+                                   
 									  <div class="col-md-3">
                                         <x-form.input :readonly="false" :default-value="1" :model="$model??null" :label="__('Exchange Rate')" :type="'text'" :placeholder="__('Exchange Rate')" :name="'exchange_rate'" :class="'recalculate-amount-in-main-currency recalculate-cash-cover-amount-js exchange-rate-js only-greater-than-or-equal-zero-allowed exchange-rate-class'" :required="true"></x-form.input>
                                     </div>
@@ -372,7 +390,7 @@ use App\Models\LetterOfCreditIssuance;
                                         </label>
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
-                                                <select name="cash_cover_deducted_from_account_type" class="form-control js-update-account-number-based-on-account-type ">
+                                                <select name="cash_cover_deducted_from_account_type" class="form-control js-update-account-id-based-on-account-type ">
                                                     {{-- <option value="" selected>{{__('Select')}}</option> --}}
                                                     @foreach($accountTypes as $index => $accountType)
                                                     <option value="{{ $accountType->id }}" @if(isset($model) && $model->getCashCoverDeductedFromAccountTypeId() == $accountType->id) selected @endif>{{ $accountType->getName() }}</option>
@@ -388,7 +406,7 @@ use App\Models\LetterOfCreditIssuance;
                                         </label>
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
-                                                <select change-financial-instutition-js js-cd-or-td-account-number data-current-selected="{{ isset($model) ? $model->getCashCoverDeductedFromAccountId(): 0 }}" name="cash_cover_deducted_from_account_id" class="form-control js-account-number">
+                                                <select change-financial-instutition-js js-cd-or-td-account-number data-current-selected="{{ isset($model) ? $model->getFeesAndCommissionAccountId(): 0 }}" name="lc_fees_and_commission_account_id" class="form-control js-account-number">
                                                     <option value="" selected>{{__('Select')}}</option>
                                                 </select>
                                             </div>
@@ -597,10 +615,13 @@ use App\Models\LetterOfCreditIssuance;
 					const source =  "{{ $source }}"
                     const financialInstitutionId = $('select#financial-instutition-id').val()
                     const lcType = $('select#lc-type').val()
+				
+							const lcIssuanceId = "{{ isset($model) ? $model->id : 0 }}" 
                     $.ajax({
                         url: "{{ route('update.letter.of.credit.outstanding.balance.and.limit',['company'=>$company->id]) }}"
                         , data: {
-                            financialInstitutionId
+                            financialInstitutionId,
+							lcIssuanceId
                             , lcType,
 							source 
                         }

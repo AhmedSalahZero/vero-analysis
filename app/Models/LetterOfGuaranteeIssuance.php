@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\LgTypes;
 use App\Models\LgRenewalDateHistory;
 use App\Traits\HasBasicStoreRequest;
+use App\Traits\Models\HasCommissionStatements;
 use App\Traits\Models\HasLetterOfGuaranteeCashCoverStatements;
 use App\Traits\Models\HasLetterOfGuaranteeStatements;
 use Carbon\Carbon;
@@ -13,7 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class LetterOfGuaranteeIssuance extends Model
 {
-	use HasBasicStoreRequest,HasLetterOfGuaranteeStatements,HasLetterOfGuaranteeCashCoverStatements;
+	use HasBasicStoreRequest,HasCommissionStatements,HasLetterOfGuaranteeStatements,HasLetterOfGuaranteeCashCoverStatements;
 	const OPENING_BALANCE = 'opening-balance';
 	const NEW_ISSUANCE = 'new-issuance';
 	const LG_FACILITY = 'lg-facility';
@@ -50,13 +51,13 @@ class LetterOfGuaranteeIssuance extends Model
 	/**
 	 * * هل هو opening balance or new issuance 
 	 */
-	public function getLgCategoryName():string 
+	public function getCategoryName():string 
 	{
 		return $this->category_name;
 	}
 	public function isOpeningBalance():bool
 	{
-		return $this->getLgCategoryName() == self::OPENING_BALANCE;
+		return $this->getCategoryName() == self::OPENING_BALANCE;
 	}
 	public function isRunning()
 	{
@@ -332,7 +333,7 @@ class LetterOfGuaranteeIssuance extends Model
 		return $this->cash_cover_deducted_from_account_id ?: $this->lg_fees_and_commission_account_id;
 	}
 	
-	public function getLgFeesAndCommissionAccountTypeId()
+	public function getFeesAndCommissionAccountTypeId()
 	{
 		return $this->lg_fees_and_commission_account_type;
 	}
@@ -340,7 +341,7 @@ class LetterOfGuaranteeIssuance extends Model
 	{
 		return $this->belongsTo(FinancialInstitutionAccount::class,'lg_fees_and_commission_account_id','id');
 	}
-	public function getLgFeesAndCommissionAccountId():int
+	public function getFeesAndCommissionAccountId():int
 	{
 		return $this->lgFeesAndCommissionAccount ? $this->lgFeesAndCommissionAccount->id : 0 ;
 	}
@@ -453,25 +454,7 @@ class LetterOfGuaranteeIssuance extends Model
 		return $this->hasOne(CurrentAccountBankStatement::class,'letter_of_guarantee_issuance_id','id')->withoutGlobalScope('only_active')->where('date',$renewalDate)->where('is_renewal_fees',1)->first();
 	}
 
-	public function storeCommissionAmountCreditBankStatement(string $lgCommissionInterval , int $numberOfIterationsForQuarter , string $issuanceDate,string $openingBalanceDateOfCurrentAccount,$maxLgCommissionAmount,int $financialInstitutionAccountIdForFeesAndCommission,string $transactionName,string $lgType,bool $isOpeningBalance , int $lgRenewalDateHistoryId = null):void
-	{
-		$customerName =  $this->getBeneficiaryName();
-		if($lgCommissionInterval == 'quarterly'){
-			for($i = 0 ; $i< (int)$numberOfIterationsForQuarter ; $i++ ){
-				$currentDate = Carbon::make($issuanceDate)->addMonth($i * 3)->format('Y-m-d');
-				$isActive = now()->greaterThanOrEqualTo($currentDate);
-				
-				if(!$isOpeningBalance ||  Carbon::make($currentDate)->greaterThanOrEqualTo($openingBalanceDateOfCurrentAccount) ){
-					$this->storeCurrentAccountCreditBankStatement($currentDate,$maxLgCommissionAmount , $financialInstitutionAccountIdForFeesAndCommission,0,$isActive,__('Commission Fees [ :customerName ] [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'en'),'customerName'=>$customerName,'transactionName'=>$transactionName],'en'),__('Commission Fees [ :customerName ] [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'ar'),'customerName'=>$customerName,'transactionName'=>$transactionName],'ar'),false,true,$lgRenewalDateHistoryId);
-				}
-			}
-		}else{
-			$currentDate = Carbon::make($issuanceDate)->format('Y-m-d');
-			if(!$isOpeningBalance ||  Carbon::make($currentDate)->greaterThanOrEqualTo($openingBalanceDateOfCurrentAccount) ){
-				$this->storeCurrentAccountCreditBankStatement($issuanceDate,$maxLgCommissionAmount , $financialInstitutionAccountIdForFeesAndCommission,0,1, __('Commission Fees [ :customerName ] [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'en'),'customerName'=>$customerName,'transactionName'=>$transactionName],'en'),__('Commission Fees [ :customerName ] [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'ar'),'customerName'=>$customerName,'transactionName'=>$transactionName],'ar'),false,true,$lgRenewalDateHistoryId);
-			}
-		}
-	}
+	
 	public function getMinLgCommissionFees():float
 	{
 		return $this->min_lg_commission_fees;

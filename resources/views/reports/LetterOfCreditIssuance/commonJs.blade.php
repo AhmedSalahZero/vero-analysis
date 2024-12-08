@@ -35,7 +35,14 @@
 					$('.js-update-account-number-based-on-account-type').trigger('change')
 					})
 
-
+					$(document).on('change','.recalculate-cd-or-td-free-to-use',function(){
+						const cdOrTdAmount = $('#cd-or-td-amount-id').attr('data-value')
+						const currentLgOutstandBalance  = parseFloat(number_unformat($('#current-lc-outstanding-balance-id').val()))
+						const againstCashCoverAmount  = parseFloat(number_unformat($('#against-cash-cover-amount-id').val()))
+						const amount = cdOrTdAmount-currentLgOutstandBalance-againstCashCoverAmount ;
+						$('#cd-or-td-free-to-use-amount-id').val(number_format(amount)).prop('readonly', true)
+						$('input[name="lc_amount"]').attr('data-can-not-be-greater-than',amount);
+					})
 
 	
             </script>

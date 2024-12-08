@@ -97,9 +97,40 @@ use App\Models\LetterOfCreditIssuance;
 
 
                                 <div class="form-group row">
-                                    <div class="col-md-4">
+								
+								 <div class="col-md-2">
+                                        <label>{{__('Issuance Type')}}
+                                            @include('star')
+                                        </label>
+                                        <div class="input-group">
+                                            <select name="category_name" required class="form-control repeater-select">
+												<option value="">{{ __('Select') }}</option>
+                                                @foreach(LetterOfCreditIssuance::getCategories() as $key => $title )
+                                                <option value="{{ $key }}" @if(isset($model) && $model->getCategoryName() == $key ) selected @endif > {{ $title }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+
+                                    </div>
+									
+                                    <div class="col-md-3">
                                         <x-form.input :model="$model??null" :label="__('Transaction Name')" :type="'text'" :placeholder="__('Transaction Name')" :name="'transaction_name'" :class="''" :required="true"></x-form.input>
                                     </div>
+									
+									 <div class="col-md-1">
+                                        <label>{{__('LC Currency')}}
+                                            @include('star')
+                                        </label>
+                                        <div class="input-group">
+                                            <select name="lc_currency" class="form-control current-currency" js-when-change-trigger-change-account-type>
+                                                <option selected>{{__('Select')}}</option>
+                                                @foreach(getCurrencies() as $currencyName => $currencyValue )
+                                                <option value="{{ $currencyName }}" @if(isset($model) && $model->getLcCurrency() == $currencyName ) selected @elseif($currencyName == 'EGP' ) selected @endif > {{ $currencyValue }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+									
 
                                     <div class="col-md-6">
                                         <label> {{ __('Financial Bank') }}
@@ -128,7 +159,7 @@ use App\Models\LetterOfCreditIssuance;
                                     </div>
 
 
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <label>{{ __('Account Type') }} <span class=""></span> </label>
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
@@ -143,11 +174,11 @@ use App\Models\LetterOfCreditIssuance;
 									
 									
 
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <label>{{ __('Account Number') }} <span class=""></span> </label>
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
-                                                <select js-cd-or-td-account-number data-current-selected="{{ isset($model) ? $model->getCdOrTdId(): 0 }}" name="cd_or_td_id" class="form-control js-account-number">
+                                                <select js-cd-or-td-account-number js-update-outstanding-balance-and-limits data-current-selected="{{ isset($model) ? $model->getCdOrTdId(): 0 }}" name="cd_or_td_id" class="form-control js-account-number">
                                                     <option value="" selected>{{__('Select')}}</option>
                                                 </select>
                                             </div>
@@ -156,15 +187,32 @@ use App\Models\LetterOfCreditIssuance;
 
 
 
-                                    <div class="col-md-4 ">
+                                    <div class="col-md-2 ">
 
 
                                         <x-form.input :id="'cd-or-td-amount-id'" :readonly="true" :default-value="0" :model="$model??null" :label="__('Amount')" :type="'text'" :placeholder="''" :name="'amount'" :class="''" :required="true"></x-form.input>
 
                                     </div>
+									
+									
+									<div class="col-md-2 ">
+                                        <x-form.input :id="'current-lc-outstanding-balance-id'" :default-value="0" :model="$model??null" :label="__('LC Outstanding Balance')" :type="'text'" :placeholder="__('LC Outstanding Balance')"  :class="'recalculate-cd-or-td-free-to-use'" :required="false"></x-form.input>
+                                    </div>
+
+									
+									
+									
+									 <div class="col-md-2 ">
+                                        <x-form.input :id="'against-cash-cover-amount-id'" :default-value="0" :model="$model??null" :label="__('Against Cash Cover')" :type="'text'" :placeholder="__('Against Cash Cover')"  :class="'recalculate-cd-or-td-free-to-use'" :required="false"></x-form.input>
+                                    </div>
+									
+									<div class="col-md-3 ">
+                                        <x-form.input :id="'cd-or-td-free-to-use-amount-id'" :default-value="0" :model="$model??null" :label="__('CD Free To Use')" :type="'text'" :placeholder="__('')"  :class="''" :required="false"></x-form.input>
+                                    </div>
+									
 
 
-                                    <div class="col-md-4">
+                                    <div class="col-md-2">
                                         <label> {{ __('LC Type') }}
                                             @include('star')
                                         </label>
@@ -177,10 +225,10 @@ use App\Models\LetterOfCreditIssuance;
                                         </select>
                                     </div>
 
-                                    <div class="col-md-4 ">
+                                    <div class="col-md-2 ">
                                         <x-form.input :id="'current-lc-type-outstanding-balance-id'" :default-value="0" :model="$model??null" :label="__('LC Type Outstanding Balance')" :type="'text'" :placeholder="__('LC Type Outstanding Balance')" :name="'lc_type_outstanding_balance'" :class="'only-greater-than-zero-allowed'" :required="true"></x-form.input>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-2">
                                         <x-form.input :model="$model??null" :label="__('LC Code')" :type="'text'" :placeholder="__('LC Code')" :name="'lc_code'" :class="''" :required="true"></x-form.input>
                                     </div>
 
@@ -343,20 +391,8 @@ use App\Models\LetterOfCreditIssuance;
                                      <div class="col-md-3">
                                         <x-form.input :default-value="0" :model="$model??null" :label="__('LC Amount')" :type="'text'" :placeholder="__('LC Amount')" :name="'lc_amount'" :class="'only-greater-than-zero-allowed amount-js  recalculate-amount-in-main-currency recalculate-cash-cover-amount-js recalculate-lc-commission-amount-js lc-amount-js'" :required="true"></x-form.input>
                                     </div>
-						<input type="hidden" value="{{ $company->getMainFunctionalCurrency() }}" class="to-currency">
-                                    <div class="col-md-3">
-                                        <label>{{__('LC Currency')}}
-                                            @include('star')
-                                        </label>
-                                        <div class="input-group">
-                                            <select name="lc_currency" class="form-control current-currency update-exchange-rate current-invoice-currency " js-when-change-trigger-change-account-type>
-                                                <option selected>{{__('Select')}}</option>
-                                                @foreach(getCurrencies() as $currencyName => $currencyValue )
-                                                <option value="{{ $currencyName }}" @if(isset($model) && $model->getLcCurrency() == $currencyName ) selected @elseif($currencyName == 'USD' ) selected @endif > {{ $currencyValue }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    </div>
+										<input type="hidden" value="{{ $company->getMainFunctionalCurrency() }}" class="to-currency">
+                                  
 
 
                                     <div class="col-md-3">
@@ -422,7 +458,7 @@ use App\Models\LetterOfCreditIssuance;
                                     </label>
                                     <div class="kt-input-icon">
                                         <div class="input-group date">
-                                            <select data-current-selected="{{ isset($model) ? $model->getCashCoverDeductedFromAccountId(): 0 }}" name="cash_cover_deducted_from_account_id" class="form-control js-account-number">
+                                            <select data-current-selected="{{ isset($model) ? $model->getFeesAndCommissionAccountId(): 0 }}" name="lc_fees_and_commission_account_id" class="form-control js-account-number">
                                                 <option value="" selected>{{__('Select')}}</option>
                                             </select>
                                         </div>
@@ -647,6 +683,7 @@ use App\Models\LetterOfCreditIssuance;
 				})
 
 </script>
+@include('reports.LetterOfCreditIssuance.commonJs')			
 <script>
     $(document).on('change', '[js-update-outstanding-balance-and-limits]', function(e) {
         e.preventDefault()
@@ -654,22 +691,32 @@ use App\Models\LetterOfCreditIssuance;
         const lcType = $('select#lc-type').val()
         const accountTypeId = $('select#account_type_id').val()
         const accountId = $('[js-cd-or-td-account-number]').val()
-
+		const lcIssuanceId = "{{ isset($model) ? $model->id : 0 }}" 
+		const cdOrTdAccountId = $('select[name="cd_or_td_id"]').val()
+		const source = "{{ $source }}"
         $.ajax({
             url: "{{ route('update.letter.of.credit.outstanding.balance.and.limit',['company'=>$company->id]) }}"
             , data: {
-                financialInstitutionId
-                , lcType
+                financialInstitutionId,
+				lcIssuanceId,
+				cdOrTdAccountId
+                , lcType,
+				source
                 , accountTypeId
                 , accountId
             }
             , type: "GET"
             , success: function(res) {
+								$('#input[name="lc_currency"]').val(res.currency_name)
+
                 $('#limit-id').val(res.limit).prop('readonly', true)
                 $('#total-lc-for-all-types-id').val(res.total_lc_outstanding_balance).prop('readonly', true)
                 $('#total-room-id').val(res.total_room).prop('readonly', true)
+								$('#current-lc-outstanding-balance-id').val(res.total_lc_outstanding_balance).prop('readonly', true).trigger('change')
                 $('#current-lc-type-outstanding-balance-id').val(res.current_lc_type_outstanding_balance).prop('readonly', true)
                 $('#min_lc_commission_fees_id').val(res.min_lc_commission_rate).trigger('change');
+								$('#against-cash-cover-amount-id').val(res.total_cash_cover_statement_debit).prop('readonly', true).trigger('change')
+
                 //        $('#lc_commission_rate-id').val(res.lc_commission_rate).trigger('change');
                 $('#issuance_fees_id').val(res.min_lc_issuance_fees_for_current_lc_type).trigger('change');
                 $('#cash-cover-rate-id').val(res.min_lc_cash_cover_rate_for_current_lc_type).trigger('change');

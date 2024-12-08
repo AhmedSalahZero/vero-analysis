@@ -398,6 +398,7 @@
 				STARTS '2022-03-31 23:59:00'
 				ON COMPLETION PRESERVE
 				DO BEGIN
-				call recalculate_end_of_month_lc_overdraft_interests();
+				-- do nothing
+				-- call recalculate_end_of_month_lc_overdraft_interests();
 				END$$
 				

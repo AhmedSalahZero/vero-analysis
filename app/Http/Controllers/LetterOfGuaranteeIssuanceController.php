@@ -126,10 +126,7 @@ class LetterOfGuaranteeIssuanceController
 		$formName = $source.'-form';
 		
         return view('reports.LetterOfGuaranteeIssuance.'.$formName,array_merge(
-			$this->commonViewVars($company,$source) ,
-			[
-
-			]
+			$this->commonViewVars($company,$source) ,[]
 		));
     }
 	public function getCommonDataArr():array
