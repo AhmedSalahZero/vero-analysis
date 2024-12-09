@@ -419,10 +419,16 @@
                                             <script>
                                                 window['currentTable<?php echo e($currencyName); ?>'] = null;
                                             </script>
+											<?php
+												$indexKey = 0 ;
+											?>
                                             <?php $__currentLoopData = $invoicesBalances; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index=>$invoicesBalancesAsStdClass): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                             <?php if( $currencyName == $invoicesBalancesAsStdClass->currency): ?>
+											<?php
+												$indexKey ++ ;
+											?>
                                             <tr class=" parent-tr reset-table-width text-nowrap  cursor-pointer sub-text-bg text-capitalize is-close   ">
-                                                <td class="sub-text-bg max-w-serial   "><?php echo e($index+1); ?></td>
+                                                <td class="sub-text-bg max-w-serial   "><?php echo e($indexKey); ?></td>
                                                 <td class="sub-text-bg  max-w-name is-name-cell "><?php echo e($invoicesBalancesAsStdClass->{$clientNameColumnName}); ?></td>
 													<?php if($currencyName == 'main_currency'): ?>
                                                 <td class="sub-text-bg text-center max-w-currency"><?php echo e($mainFunctionalCurrency); ?></td>

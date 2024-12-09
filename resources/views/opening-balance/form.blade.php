@@ -176,7 +176,6 @@ use App\Models\MoneyReceived ;
                                 @endphp
 
 
-
                                 {{-- start of fixed monthly repeating amount --}}
                                 @php
                                 $tableId = MoneyReceived::CASH_IN_SAFE;

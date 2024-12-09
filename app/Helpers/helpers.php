@@ -5497,6 +5497,14 @@ function getFieldTypeAndClassFromTitle(string $title):array
             'default_value'=>0
         ];
     }
+	if(Str::contains($title, getNumericWithNegativeAllowedExportFields())) {
+        return [
+            'type'=>'numeric',
+            'class'=>'only-numeric-allowed',
+            'default_value'=>0
+        ];
+    }
+	
     return [
         'type'=>'text',
         'class'=>'',
@@ -5505,7 +5513,14 @@ function getFieldTypeAndClassFromTitle(string $title):array
 }
 function getNumericExportFields():array
 {
-    return ['Quantity' , __('Quantity') , 'Quantity Discount' , __('Quantity Discount') , 'Cash Discount' , __('Cash Discount') , 'Special Discount' , __('Special Discount') , __('Other Discounts') , 'Net Sales Value' , __('Net Sales Value'),'Price Per Unit' , __('Price Per Unit') , __('Sales Value') , __('Sales Value'),'Invoice Amount',__('Invoice Amount'),'Collected Amount',__('Collection Amount'),'Collected Amount',__('Collected Amount'),'Expected Collection Days',__('Expected Collection Days'),'Contracted Collection Days',__('Contracted Collection Days'),'Net Invoice Amount',__('Net Invoice Amount'),'Withhold Amount',__('Withhold Amount'),'Invoice Amount'=>__('Invoice Amount'),'Net Balance',__('Net Balance') , 'Vat Amount',__('Vat Amount'),'Withhold Amount',__('Withhold Amount'),'VAT Amount'];
+    return ['Quantity' , __('Quantity') , 'Quantity Discount' , __('Quantity Discount') , 'Cash Discount' , __('Cash Discount') , 'Special Discount' , __('Special Discount') , __('Other Discounts') , 'Net Sales Value' , __('Net Sales Value'),'Price Per Unit' , __('Price Per Unit') , __('Sales Value') , __('Sales Value'),'Collected Amount',__('Collection Amount'),'Collected Amount',__('Collected Amount'),'Expected Collection Days',__('Expected Collection Days'),'Contracted Collection Days',__('Contracted Collection Days'),'Net Invoice Amount',__('Net Invoice Amount'),'Withhold Amount',__('Withhold Amount'),'Net Balance',__('Net Balance') , 'Vat Amount',__('Vat Amount'),'Withhold Amount',__('Withhold Amount'),'VAT Amount'];
+}
+function getNumericWithNegativeAllowedExportFields():array
+{
+    return [
+		'Invoice Amount',__('Invoice Amount'),
+		'Invoice Amount'=>__('Invoice Amount')
+];
 }
 function convertModelToTableName(string $modelName)
 {

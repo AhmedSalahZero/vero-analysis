@@ -219,7 +219,7 @@ class ImportData implements
 				];
 			}	
 		}
-		if(in_array($key , getNumericExportFields() )){
+		if(in_array($key , array_merge(getNumericExportFields() , getNumericWithNegativeAllowedExportFields()) )){
 			if (!is_numeric($value) && !is_null($value) && $value != '') {
 				$allValidations[$key] =  [
 					'message'=>__('Invalid Numeric Value'),
@@ -264,6 +264,9 @@ class ImportData implements
 					} else {
 						$item = str_replace('\\', '', $row_with_no_spaces[$row_name]);
 						$data[$field_name] = trim(preg_replace('/\s+/', ' ', $item));
+						if($field_name == 'currency' && $item == 'EUR'){
+							$data[$field_name] = 'EURO';
+						}
 					}
 				} else {
 					$data[$field_name] = null;

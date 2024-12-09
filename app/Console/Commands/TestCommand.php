@@ -45,6 +45,7 @@ class TestCommand extends Command
 	 */
 	public function handle()
 	{
+	
 		// $lcAmount = 4100.0; 
 		$currency = 'USD';
 		$letterOfCreditIssuance = LetterOfCreditIssuance::find(23);

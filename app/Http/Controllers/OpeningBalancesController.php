@@ -35,7 +35,6 @@ class OpeningBalancesController
 		$selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
 
         $banks = Bank::pluck('view_name', 'id');
-
         return view('opening-balance.form', [
             'company' => $company,
             'model' => $company->openingBalance,

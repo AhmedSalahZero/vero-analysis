@@ -384,10 +384,16 @@
                                             <script>
                                                 window['currentTable{{ $currencyName }}'] = null;
                                             </script>
+											@php
+												$indexKey = 0 ;
+											@endphp
                                             @foreach($invoicesBalances as $index=>$invoicesBalancesAsStdClass)
                                             @if( $currencyName == $invoicesBalancesAsStdClass->currency)
+											@php
+												$indexKey ++ ;
+											@endphp
                                             <tr class=" parent-tr reset-table-width text-nowrap  cursor-pointer sub-text-bg text-capitalize is-close   ">
-                                                <td class="sub-text-bg max-w-serial   ">{{ $index+1 }}</td>
+                                                <td class="sub-text-bg max-w-serial   ">{{ $indexKey }}</td>
                                                 <td class="sub-text-bg  max-w-name is-name-cell ">{{ $invoicesBalancesAsStdClass->{$clientNameColumnName} }}</td>
 													@if($currencyName == 'main_currency')
                                                 <td class="sub-text-bg text-center max-w-currency">{{ $mainFunctionalCurrency }}</td>
