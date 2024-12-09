@@ -299,4 +299,8 @@ class SupplierInvoice extends Model implements IInvoice
 	{
 		return $this->hasOne(PaymentSettlement::class,'invoice_id','id')->where('letter_of_credit_issuance_id','!=',null);
 	}
+	public function getDeleteByDateColumnName()
+	{
+		return 'invoice_date';
+	}
 }

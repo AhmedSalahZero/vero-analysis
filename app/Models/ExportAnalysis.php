@@ -105,4 +105,8 @@ class ExportAnalysis extends Model
 				
 		];
 	}
+	public function getDeleteByDateColumnName()
+	{
+		return 'purchase_order_date';
+	}
 }

@@ -349,6 +349,9 @@ class CustomerInvoice extends Model implements IInvoice
 		}
 	
 	}
-	
+	public function getDeleteByDateColumnName()
+	{
+		return 'invoice_date';
+	}
 	
 }

@@ -66,5 +66,9 @@ class SalesGathering extends Model
 				
 		];
 	}
+	public function getDeleteByDateColumnName()
+	{
+		return 'date';
+	}
 	
 }

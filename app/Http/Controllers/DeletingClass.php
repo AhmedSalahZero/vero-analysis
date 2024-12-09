@@ -38,9 +38,11 @@ class DeletingClass
 
         $model_name = 'App\\Models\\' . $model;
         $model_obj = new $model_name();
+		// dD($model_obj);
         $all_model_data = null ;
         if ($request->has('delete_date_from')) {
-            $all_model_data = $model_obj->company()->whereBetween('date', [$request->get('delete_date_from'), $request->get('delete_date_to')])->get();
+			$deleteColumnName = method_exists($model_obj,'getDeleteByDateColumnName') ?  $model_obj->getDeleteByDateColumnName() : 'date';
+            $all_model_data = $model_obj->company()->whereBetween($deleteColumnName, [$request->get('delete_date_from'), $request->get('delete_date_to')])->get();
         } elseif ($request->has('delete_serial_from')) {
             $all_model_data = $model_obj->company()->get()->filter(function ($element, $index) use ($request) {
                 return $index + 1 >= $request->get('delete_serial_from') && $index + 1 <= $request->get('delete_serial_to') ;
