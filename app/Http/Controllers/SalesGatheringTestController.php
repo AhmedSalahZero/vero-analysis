@@ -191,10 +191,9 @@ class SalesGatheringTestController extends Controller
 		return ($row === null) ? 0 :  1;
 	}
 	public function lastUploadFailed($companyId,$modelName){
-		$rows = Cache::get(generateCacheKeyForValidationRow($companyId,$modelName));
+		$rows = Cache::get(generateCacheKeyForValidationRow($companyId,$modelName),[]);
 		$headers = exportableFields($companyId,$modelName)->fields ;
 		$headers = convertIdsToNames($headers);
-		ksort($rows);
 		return view('client_view.sales_gathering.failed',[
 			'rows'=>$rows,
 			'headers'=>$headers

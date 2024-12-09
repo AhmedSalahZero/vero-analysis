@@ -41,12 +41,28 @@
         <form class="kt-form kt-form--label-right" action="#" enctype="multipart/form-data">
             <div class="kt-portlet">
                 <div class="kt-portlet__head">
-                    <div class="kt-portlet__head-label">
-                        <h3 class="kt-portlet__head-title head-title text-primary">
+                    <div class="kt-portlet__head-label w-full "> 
+                        <h3 class="kt-portlet__head-title head-title text-primary w-full">
                             {{ __('Failed Rows') }} <br>
-							{{ __('Review and Correct mentioned errors and please reupload your excel') }}
+							<span style="display: block;
+
+    text-align: center;
+    color: red;">
+							 {{ 					 __('Review and Correct mentioned errors in your excel and please upload your excel again') }}
+							 
+							</span>
                         </h3>
+						
+				{{-- <h3 class="kt-portlet__head-title head-title text-primary">
+                            {{ 					 __('Review and Correct mentioned errors and please reupload your excel') }}<br>
+
+                        </h3> --}}
+						
+						<br>
+						<h3 class="d-block"></h3>
+						
                     </div>
+					
                 </div>
                   <div class="kt-portlet__body">
 

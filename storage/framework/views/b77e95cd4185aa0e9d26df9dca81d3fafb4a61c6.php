@@ -41,12 +41,26 @@
         <form class="kt-form kt-form--label-right" action="#" enctype="multipart/form-data">
             <div class="kt-portlet">
                 <div class="kt-portlet__head">
-                    <div class="kt-portlet__head-label">
-                        <h3 class="kt-portlet__head-title head-title text-primary">
-                            <?php echo e(__('Failed Rows')); ?>
+                    <div class="kt-portlet__head-label w-full "> 
+                        <h3 class="kt-portlet__head-title head-title text-primary w-full">
+                            <?php echo e(__('Failed Rows')); ?> <br>
+							<span style="display: block;
 
+    text-align: center;
+    color: red;">
+							 <?php echo e(__('Review and Correct mentioned errors and please reupload your excel')); ?>
+
+							 
+							</span>
                         </h3>
+						
+				
+						
+						<br>
+						<h3 class="d-block"></h3>
+						
                     </div>
+					
                 </div>
                   <div class="kt-portlet__body">
 
