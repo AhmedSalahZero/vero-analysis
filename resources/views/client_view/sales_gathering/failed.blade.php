@@ -43,7 +43,8 @@
                 <div class="kt-portlet__head">
                     <div class="kt-portlet__head-label">
                         <h3 class="kt-portlet__head-title head-title text-primary">
-                            {{ __('Failed Rows') }}
+                            {{ __('Failed Rows') }} <br>
+							{{ __('Review and Correct mentioned errors and please reupload your excel') }}
                         </h3>
                     </div>
                 </div>
