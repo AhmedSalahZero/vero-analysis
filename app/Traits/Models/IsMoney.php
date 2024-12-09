@@ -227,60 +227,7 @@ trait IsMoney
 	{
 		return $this->getDownPaymentType() == self::DOWN_PAYMENT_GENERAL;
 	}
-	public function appendForeignExchangeGainOrLoss(array &$formattedData,int &$index):array 
-	{
-		$isCustomer = $this instanceof MoneyReceived;
-		$isSupplier = $this instanceof MoneyPayment;
-		$invoiceCurrency = $this->getInvoiceCurrency();
-		$receivingCurrency = $this->getReceivingOrPaymentCurrency();
-		$company = $this->company;
-		$mainFunctionalCurrency = $company->getMainFunctionalCurrency();
-		$receivingOrPaymentDate = $this->getDate();
-		$receivingOrPaymentExchangeRate = $this->getExchangeRate();
-			if($invoiceCurrency ==$receivingCurrency && $receivingCurrency ==  $mainFunctionalCurrency){
-				return $formattedData ;
-			}
-		
-			foreach($this->settlements as $settlement){
-				$fxGainOrLossAmount = 0 ;
-				$settlementAmount = $settlement->getAmount() ;
-				$invoiceExchangeRate = $settlement->getInvoiceExchangeRate();
-				$foreignExchangeRate = ForeignExchangeRate::getExchangeRateForCurrencyAndClosestDate($receivingCurrency,$mainFunctionalCurrency,$receivingOrPaymentDate,$company->id);
-				if($invoiceCurrency ==$receivingCurrency && $receivingCurrency !=  $mainFunctionalCurrency){
-					$fxGainOrLossAmount = $settlementAmount * ($foreignExchangeRate - $invoiceExchangeRate);
-				}elseif($invoiceCurrency !=$receivingCurrency && $receivingCurrency ==  $mainFunctionalCurrency){
-					$fxGainOrLossAmount = $settlementAmount * ($receivingOrPaymentExchangeRate - $invoiceExchangeRate);
-				}
-				elseif($invoiceCurrency != $receivingCurrency && $receivingCurrency !=  $mainFunctionalCurrency){
-					$fxGainOrLossAmount = $settlementAmount * (($receivingOrPaymentExchangeRate * $foreignExchangeRate) - $invoiceExchangeRate);
-				}
-				$currentInvoiceNumber = $settlement->getInvoiceNumber();
-				if($fxGainOrLossAmount == 0){
-					continue;
-				}
-				$currentData = []; 
-				$currentData['date'] = Carbon::make($receivingOrPaymentDate)->format('d-m-Y');
-				$currentData['document_type'] = __('FX Gain Or Loss') ;
-				$currentData['document_no'] =  $currentInvoiceNumber ;
-				if($isCustomer){
-					$isGain = $fxGainOrLossAmount > 0 ;
-					$currentData['debit'] = $isGain ? $fxGainOrLossAmount  : 0;
-					$currentData['credit'] =!$isGain ? $fxGainOrLossAmount * -1  : 0;
-					$currentData['comment'] = $isGain ? __('Foreign Exchange Gain [ :invoiceNumber ]',['invoiceNumber'=>$currentInvoiceNumber]) :__('Foreign Exchange Loss [ :invoiceNumber ]',['invoiceNumber'=>$currentInvoiceNumber]) ;
-				}elseif($isSupplier){
-					$isGain = $fxGainOrLossAmount < 0 ;
-					$currentData['debit'] = $isGain ? $fxGainOrLossAmount* -1  : 0;
-					$currentData['credit'] =!$isGain ? $fxGainOrLossAmount   : 0;
-					$currentData['comment'] = $isGain ? __('Foreign Exchange Gain [ :invoiceNumber ]',['invoiceNumber'=>$currentInvoiceNumber]) :__('Foreign Exchange Loss [ :invoiceNumber ]',['invoiceNumber'=>$currentInvoiceNumber]) ;
-				}
-				$index++;
-				$formattedData[] = $currentData ;
-				
-			}
 	
-		
-		return $formattedData ; 
-	}
 	public function getContractName()
 	{
 		return $this->contract ? $this->contract->getName() : '-';

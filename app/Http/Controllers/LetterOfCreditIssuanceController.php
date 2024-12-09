@@ -25,6 +25,7 @@ use App\Traits\GeneralFunctions;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use App\Http\Requests\StoreNewSettlementWithLcIssuanceRequest;
 
 class LetterOfCreditIssuanceController
 {
@@ -316,9 +317,13 @@ class LetterOfCreditIssuanceController
 	* * هنا هو بيحدد ان الخطاب الاعتماد دا انتهى وبالتالي هنبعت للبائع مثلا او للموريد اللي في امريكا مثلا الفلوس علي حسابة
 	 * * letter of credit statements
 	 */
-	public function markAsPaid(Company $company,Request $request,LetterOfCreditIssuance $letterOfCreditIssuance,string $source)
+	public function markAsPaid(Company $company,StoreNewSettlementWithLcIssuanceRequest $request,LetterOfCreditIssuance $letterOfCreditIssuance,string $source)
 	{
 
+		
+		
+		$supplierInvoiceId = $request->get('supplier_invoice_id');
+		$supplierInvoice = SupplierInvoice::find($supplierInvoiceId);
 		
 		$letterOfCreditIssuanceStatus = LetterOfCreditIssuance::PAID ;
 		$lcType = $request->get('lc_type') ;
@@ -359,10 +364,11 @@ class LetterOfCreditIssuanceController
 		
 		// Money Payment 
 		// $supplierId = $request->get('supplier_id');
-		$supplierInvoiceId = $request->get('supplier_invoice_id');
-		$supplierInvoice = SupplierInvoice::find($supplierInvoiceId);
-		$letterOfCreditIssuance->storeNewSettlementAfterDeleteOldOne($supplierInvoice,$company);
-		$letterOfCreditIssuance->storeNewAllocationAfterDeleteOldOne($request->get('allocations',[]));
+		
+		if($supplierInvoice){
+			$letterOfCreditIssuance->storeNewSettlementAfterDeleteOldOne($supplierInvoice,$company);
+			$letterOfCreditIssuance->storeNewAllocationAfterDeleteOldOne($request->get('allocations',[]));
+		}
 		return redirect()->route('view.letter.of.credit.issuance',['company'=>$company->id,'active'=>$lcType])->with('success',__('Data Store Successfully'));
 	}
 	

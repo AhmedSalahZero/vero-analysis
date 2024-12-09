@@ -1,4 +1,4 @@
-@extends('layouts.dashboard')
+{{-- @extends('layouts.dashboard')
 @section('css')
 @php
 use App\Models\LetterOfCreditIssuance;
@@ -73,7 +73,6 @@ use App\Models\LetterOfCreditIssuance;
 
             <div class="row">
                 <div class="col-md-12">
-                    <!--begin::Portlet-->
                     <div class="kt-portlet">
                         <div class="kt-portlet__head">
                             <div class="kt-portlet__head-label">
@@ -83,7 +82,6 @@ use App\Models\LetterOfCreditIssuance;
                             </div>
                         </div>
                     </div>
-                    <!--begin::Form-->
                     <form class="kt-form kt-form--label-right">
                         <div class="kt-portlet">
                             <div class="kt-portlet__head">
@@ -218,7 +216,6 @@ use App\Models\LetterOfCreditIssuance;
                                         </label>
 
                                         <select js-update-outstanding-balance-and-limits id="lc-type" name="lc_type" class="form-control js-toggle-bond">
-                                            {{-- <option selected>{{__('Select')}}</option> --}}
                                             @foreach(getLcTypes() as $name => $nameFormatted )
                                             <option value="{{ $name  }}" @if(isset($model) && $model->getLcType() == $name ) selected @endif > {{ $nameFormatted }}</option>
                                             @endforeach
@@ -266,7 +263,6 @@ use App\Models\LetterOfCreditIssuance;
                                             <div class="kt-input-icon">
                                                 <div class="input-group date">
                                                     <select required data-current-selected="{{ isset($model) ? $model->getBeneficiaryId():0 }}" js-update-contracts-based-on-customers data-live-search="true" data-actions-box="true" id="customer_name" name="partner_id" class="form-control select2-select">
-                                                        {{-- <option value="" selected>{{__('Select')}}</option> --}}
                                                         @foreach($beneficiaries as $customer)
                                                         <option @if(isset($model) && $model->getBeneficiaryId() == $customer->getId() ) selected @endif value="{{ $customer->getId() }}">{{ $customer->getName() }}</option>
                                                         @endforeach
@@ -389,19 +385,7 @@ use App\Models\LetterOfCreditIssuance;
 
 
 
-                                    {{-- <div class="col-md-3">
-                                        <label>{{__('LC Commission Interval')}}
-                                    @include('star')
-                                    </label>
-                                    <div class="input-group">
-                                        <select name="lc_commission_interval" class="form-control repeater-select">
-                                            @foreach(getCommissionInterval() as $key => $title )
-                                            <option value="{{ $key }}" @if(isset($model) && $model->getLcCommissionInterval() == $key ) selected @endif > {{ $title }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-
-                                </div> --}}
+                                    
 
 
 
@@ -412,7 +396,6 @@ use App\Models\LetterOfCreditIssuance;
                                     <div class="kt-input-icon">
                                         <div class="input-group date">
                                             <select name="cash_cover_deducted_from_account_type" class="form-control js-update-account-id-based-on-account-type">
-                                                {{-- <option value="" selected>{{__('Select')}}</option> --}}
                                                 @foreach($accountTypes as $index => $accountType)
                                                 <option value="{{ $accountType->id }}" @if(isset($model) && $model->getCashCoverDeductedFromAccountTypeId() == $accountType->id) selected @endif>{{ $accountType->getName() }}</option>
                                                 @endforeach
@@ -435,12 +418,9 @@ use App\Models\LetterOfCreditIssuance;
                                 </div>
 
                                 <div class="col-md-3 ">
-                                    <x-form.input :model="$model??null" :label="__('Financing Duration')" :type="'text'" :placeholder="__('Financing Duration')" :name="'financing_duration'" :class="'only-greater-than-zero-allowed'" :required="true"></x-form.input>
+                                    <x-form.input :model="$model??null" :label="__('Financing Duration')" :type="'text'" :placeholder="__('Financing Duration')" :name="'financing_duration'" :class="'only-greater-than-or-equal-zero-allowed'" :required="true"></x-form.input>
                                 </div>
 
-                                {{-- <div class="col-md-3">
-                                        <x-form.input :default-value="1" :model="$model??null" :label="__('Cash Cover Account Number')" :type="'numeric'" :placeholder="__('Cash Cover Account Naumber')" :name="'cash_cover_account_number'" :class="''" :required="true"></x-form.input>
-                                    </div> --}}
 
 
                             </div>
@@ -459,15 +439,11 @@ use App\Models\LetterOfCreditIssuance;
                 <x-submitting />
         </form>
 
-        <!--end::Form-->
-
-        <!--end::Portlet-->
     </div>
 </div>
 
 @endsection
 @section('js')
-<!--begin::Page Scripts(used by this page) -->
 <script src="{{ url('assets/vendors/general/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}" type="text/javascript"></script>
 <script src="{{ url('assets/vendors/custom/js/vendors/bootstrap-datepicker.init.js') }}" type="text/javascript">
 </script>
@@ -517,9 +493,7 @@ use App\Models\LetterOfCreditIssuance;
         hide: function(deleteElement) {
             if ($('#first-loading').length) {
                 $(this).slideUp(deleteElement, function() {
-
                     deleteElement();
-                    //   $('select.main-service-item').trigger('change');
                 });
             } else {
                 if (confirm('Are you sure you want to delete this element?')) {
@@ -686,7 +660,6 @@ use App\Models\LetterOfCreditIssuance;
                 $('#min_lc_commission_fees_id').val(res.min_lc_commission_rate).trigger('change');
 								$('#against-cash-cover-amount-id').val(res.total_cash_cover_statement_debit).prop('readonly', true).trigger('change')
 
-                //        $('#lc_commission_rate-id').val(res.lc_commission_rate).trigger('change');
                 $('#issuance_fees_id').val(res.min_lc_issuance_fees_for_current_lc_type).trigger('change');
                 $('#cash-cover-rate-id').val(res.min_lc_cash_cover_rate_for_current_lc_type).trigger('change');
                 $('[js-update-contracts-based-on-customers]').trigger('change')
@@ -737,4 +710,4 @@ use App\Models\LetterOfCreditIssuance;
 
 
 </script>
-@endsection
+@endsection --}}

@@ -1,4 +1,4 @@
-@extends('layouts.dashboard')
+{{-- @extends('layouts.dashboard')
 @section('css')
 @php
 use App\Models\LetterOfCreditIssuance;
@@ -398,7 +398,6 @@ use App\Models\LetterOfCreditIssuance;
                                     <div class="kt-input-icon">
                                         <div class="input-group date">
                                             <select name="cash_cover_deducted_from_account_type" class="form-control js-update-account-id-based-on-account-type">
-                                                {{-- <option value="" selected>{{__('Select')}}</option> --}}
                                                 @foreach($accountTypes as $index => $accountType)
                                                 <option value="{{ $accountType->id }}" @if(isset($model) && $model->getCashCoverDeductedFromAccountTypeId() == $accountType->id) selected @endif>{{ $accountType->getName() }}</option>
                                                 @endforeach
@@ -422,11 +421,9 @@ use App\Models\LetterOfCreditIssuance;
 
 
                                 <div class="col-md-3 ">
-                                    <x-form.input :model="$model??null" :label="__('Financing Duration')" :type="'text'" :placeholder="__('Financing Duration')" :name="'financing_duration'" :class="'only-greater-than-zero-allowed'" :required="true"></x-form.input>
+                                    <x-form.input :model="$model??null" :label="__('Financing Duration')" :type="'text'" :placeholder="__('Financing Duration')" :name="'financing_duration'" :class="'only-greater-than-or-equal-zero-allowed'" :required="true"></x-form.input>
                                 </div>
-                                {{-- <div class="col-md-3">
-                                        <x-form.input :default-value="1" :model="$model??null" :label="__('Cash Cover Account Number')" :type="'numeric'" :placeholder="__('Cash Cover Account Naumber')" :name="'cash_cover_account_number'" :class="''" :required="true"></x-form.input>
-                                    </div> --}}
+                                
 
 
                             </div>
@@ -505,7 +502,6 @@ use App\Models\LetterOfCreditIssuance;
                 $(this).slideUp(deleteElement, function() {
 
                     deleteElement();
-                    //   $('select.main-service-item').trigger('change');
                 });
             } else {
                 if (confirm('Are you sure you want to delete this element?')) {
@@ -727,4 +723,4 @@ use App\Models\LetterOfCreditIssuance;
 
 </script>
 @endif
-@endsection
+@endsection --}}

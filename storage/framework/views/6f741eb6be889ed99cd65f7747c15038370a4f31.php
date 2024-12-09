@@ -60,10 +60,15 @@
 									<?php
 										$lcAmount = $model->getLcAmount();
 										$invoices = \App\Models\SupplierInvoice::onlyCompany($company->id)->onlyForPartner($model->getBeneficiaryId())
-										->where('net_balance','>=',$lcAmount)
+										->where(function($q) use($lcAmount){
+											$q->orHas('letterOfCreditIssuancePaymentSettlements')
+											->orWhere('net_balance','>=',$lcAmount)
+											;
+										})
+									//	->where('net_balance','>=',$lcAmount)
 										->onlyCurrency($model->getLcCurrency())
 										->get();
-										// dd($model,$company->id,$model->getBeneficiaryId(),$lcAmount,$model->getLcCurrency());
+										
 										
 								
 									?>

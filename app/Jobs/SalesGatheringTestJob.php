@@ -4,14 +4,12 @@ namespace App\Jobs;
 
 use App\Models\CachingCompany;
 use App\Models\Contract;
-use App\Models\Customer;
 use App\Models\Partner;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
@@ -83,13 +81,16 @@ class SalesGatheringTestJob implements ShouldQueue
 					if($customerFound){
 						$customerId = DB::table('partners')->where('company_id',$this->company_id)->where('is_customer',1)->where('name',$customerName)->first()->id;
 					}else{
-						$customer = Partner::create([
-							'name'=>$customerName,
-							'company_id'=>$this->company_id,
-							'is_customer'=>1 ,
-							'is_supplier'=>0 
-						]);
-						$customerId = $customer->id ;
+						if($customerName){
+							$customer = Partner::create([
+								'name'=>$customerName,
+								'company_id'=>$this->company_id,
+								'is_customer'=>1 ,
+								'is_supplier'=>0 
+							]);
+							$customerId = $customer->id ;
+						}
+						
 					}
 					/**
 					 * * insert sales person , business unit , business sector
@@ -165,13 +166,16 @@ class SalesGatheringTestJob implements ShouldQueue
 					if($supplierFound){
 						$supplierId = DB::table('partners')->where('company_id',$this->company_id)->where('is_supplier',1)->where('name',$supplierName)->first()->id;
 					}else{
-						$supplier = Partner::create([
-							'name'=>$supplierName,
-							'company_id'=>$this->company_id,
-							'is_customer'=>0 ,
-							'is_supplier'=>1 
-						]);
-						$supplierId = $supplier->id ;
+						if($supplierName){
+							$supplier = Partner::create([
+								'name'=>$supplierName,
+								'company_id'=>$this->company_id,
+								'is_customer'=>0 ,
+								'is_supplier'=>1 
+							]);
+							$supplierId = $supplier->id ;
+						}
+						
 					}
 					;
 				}

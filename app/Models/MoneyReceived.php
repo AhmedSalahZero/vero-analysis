@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\OpeningBalance;
 use App\Traits\Models\HasCreditStatements;
 use App\Traits\Models\HasDebitStatements;
+use App\Traits\Models\HasForeignExchangeGainOrLoss;
 use App\Traits\Models\HasPartnerStatement;
 use App\Traits\Models\HasReviewedBy;
 use App\Traits\Models\IsMoney;
@@ -16,7 +17,7 @@ use Illuminate\Support\Facades\DB;
 
 class MoneyReceived extends Model
 {
-	use IsMoney ,HasDebitStatements,HasCreditStatements,HasPartnerStatement,HasReviewedBy;
+	use IsMoney,HasForeignExchangeGainOrLoss ,HasDebitStatements,HasCreditStatements,HasPartnerStatement,HasReviewedBy;
 	// protected $appends = [
 	// 	'foreign_exchange_rate_at_date'
     // ];

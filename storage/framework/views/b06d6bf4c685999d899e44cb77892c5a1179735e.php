@@ -66,6 +66,8 @@ use App\Models\LetterOfCreditIssuance;
             <input type="hidden" name="created_by" value="<?php echo e(auth()->user()->id); ?>">
             <input type="hidden" name="company_id" value="<?php echo e($company->id); ?>">
             <input type="hidden" name="source" value="<?php echo e($source); ?>">
+			
+			<input type="hidden" name="to-currency" class="update-exchange-rate to-currency" value="">
             <?php echo csrf_field(); ?>
             <?php if(isset($model)): ?>
             <?php echo method_field('put'); ?>
@@ -449,11 +451,11 @@ use App\Models\LetterOfCreditIssuance;
                                     </div>
                                     <div class="col-md-3">
                                          <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.input','data' => ['readonly' => false,'defaultValue' => 1,'model' => $model??null,'label' => __('Exchange Rate'),'type' => 'text','placeholder' => __('Exchange Rate'),'name' => 'exchange_rate','class' => 'exchange-rate-class recalculate-amount-in-main-currency exchange-rate-js only-greater-than-or-equal-zero-allowed','required' => true]]); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.input','data' => ['readonly' => false,'defaultValue' => 1,'model' => $model??null,'label' => __('Exchange Rate'),'type' => 'text','placeholder' => __('Exchange Rate'),'name' => 'exchange_rate','class' => 'exchange-rate-class  recalculate-amount-in-main-currency exchange-rate-js only-greater-than-or-equal-zero-allowed','required' => true]]); ?>
 <?php $component->withName('form.input'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['readonly' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'default-value' => 1,'model' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($model??null),'label' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Exchange Rate')),'type' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('text'),'placeholder' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Exchange Rate')),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('exchange_rate'),'class' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('exchange-rate-class recalculate-amount-in-main-currency exchange-rate-js only-greater-than-or-equal-zero-allowed'),'required' => true]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['readonly' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'default-value' => 1,'model' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($model??null),'label' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Exchange Rate')),'type' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('text'),'placeholder' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Exchange Rate')),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('exchange_rate'),'class' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('exchange-rate-class  recalculate-amount-in-main-currency exchange-rate-js only-greater-than-or-equal-zero-allowed'),'required' => true]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
@@ -656,11 +658,11 @@ use App\Models\LetterOfCreditIssuance;
 
                                 <div class="col-md-3 ">
                                      <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.input','data' => ['model' => $model??null,'label' => __('Financing Duration'),'type' => 'text','placeholder' => __('Financing Duration'),'name' => 'financing_duration','class' => 'only-greater-than-zero-allowed','required' => true]]); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.input','data' => ['model' => $model??null,'label' => __('Financing Duration'),'type' => 'text','placeholder' => __('Financing Duration'),'name' => 'financing_duration','class' => 'only-greater-than-or-equal-zero-allowed','required' => true]]); ?>
 <?php $component->withName('form.input'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['model' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($model??null),'label' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Financing Duration')),'type' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('text'),'placeholder' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Financing Duration')),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('financing_duration'),'class' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-zero-allowed'),'required' => true]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['model' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($model??null),'label' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Financing Duration')),'type' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('text'),'placeholder' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Financing Duration')),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('financing_duration'),'class' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed'),'required' => true]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
@@ -921,6 +923,8 @@ use App\Models\LetterOfCreditIssuance;
                 $('#lc_commission_rate-id').val(res.lc_commission_rate).trigger('change');
                 $('#issuance_fees_id').val(res.min_lc_issuance_fees_for_current_lc_type).trigger('change');
                 $('#cash-cover-rate-id').val(res.min_lc_cash_cover_rate_for_current_lc_type).trigger('change');
+				
+				$('input[type="hidden"].to-currency').val(res.currency_name).trigger('change')
                 $('[js-update-contracts-based-on-customers]').trigger('change')
             }
         })

@@ -287,7 +287,6 @@ use App\Models\LetterOfCreditIssuance;
                                     <div class="col-md-3">
                                         <x-form.input :default-value="0" :model="$model??null" :label="__('LC Amount')" :type="'text'" :placeholder="__('LC Amount')" :name="'lc_amount'" :class="'only-greater-than-zero-allowed amount-js  recalculate-amount-in-main-currency  recalculate-lc-commission-amount-js lc-amount-js'" :required="true"></x-form.input>
                                     </div>
-                                   
 									  <div class="col-md-3">
                                         <x-form.input :readonly="false" :default-value="1" :model="$model??null" :label="__('Exchange Rate')" :type="'text'" :placeholder="__('Exchange Rate')" :name="'exchange_rate'" :class="'recalculate-amount-in-main-currency recalculate-cash-cover-amount-js exchange-rate-js only-greater-than-or-equal-zero-allowed exchange-rate-class'" :required="true"></x-form.input>
                                     </div>

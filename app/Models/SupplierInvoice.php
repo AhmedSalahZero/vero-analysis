@@ -295,5 +295,8 @@ class SupplierInvoice extends Model implements IInvoice
 			$result['suppliers'][$key]['total']['total_of_total']= isset($result['suppliers'][$key]['total']['total_of_total']) ? $result['suppliers'][$key]['total']['total_of_total'] +$sum :$sum ;
 		} 
 	}
-	
+	public function letterOfCreditIssuancePaymentSettlements()
+	{
+		return $this->hasOne(PaymentSettlement::class,'invoice_id','id')->where('letter_of_credit_issuance_id','!=',null);
+	}
 }

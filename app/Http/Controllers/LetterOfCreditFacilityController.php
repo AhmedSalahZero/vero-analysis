@@ -12,10 +12,10 @@ use App\Models\LetterOfCreditStatement;
 use App\Models\TimeOfDeposit;
 use App\Traits\GeneralFunctions;
 use Carbon\Carbon;
-use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use App\Http\Requests\StoreLetterOfCreditFacilityRequest;
 
 class LetterOfCreditFacilityController
 {
@@ -77,13 +77,31 @@ class LetterOfCreditFacilityController
 	{
         return view('reports.LetterOfCreditFacility.form',[
 			'financialInstitution'=>$financialInstitution,
+			'letterOfCreditFacilitiesTypes'=>LetterOfCreditFacility::getTypes(),
+			'cdOrTdAccountTypes' =>AccountType::onlyCdOrTdAccounts()->get()
 		]);
     }
 	public function getCommonDataArr():array 
 	{
-		return ['name','contract_start_date','contract_end_date','currency','limit','borrowing_rate','bank_margin_rate','interest_rate','min_interest_rate','highest_debt_balance_rate','admin_fees_rate'];
+		return ['name','cd_or_td_currency','cd_or_td_account_type_id','cd_or_td_id','cd_or_td_amount','cd_or_td_interest','cd_or_td_lending_percentage','type','contract_start_date','contract_end_date','currency','limit','borrowing_rate','bank_margin_rate','interest_rate','min_interest_rate','highest_debt_balance_rate','admin_fees_rate'];
 	}
-	public function store(Company $company  ,FinancialInstitution $financialInstitution, Request $request){
+	protected function mergeConditionalValuesToRequest($request):void
+	{
+		$type = $request->get('type');
+		$isFullySecured = $type == LetterOfCreditFacility::FULLY_SECURED;
+		$request->merge([
+			'limit'=>$isFullySecured ? $request->get('cd_or_td_limit',0) : $request->get('limit'),
+			'cd_or_td_currency'=>$isFullySecured ? $request->get('cd_or_td_currency'):null,
+			'cd_or_td_account_type_id'=>$isFullySecured ? $request->get('cd_or_td_account_type_id'):null,
+			'cd_or_td_id'=>$isFullySecured ? $request->get('cd_or_td_id'):null,
+			'cd_or_td_amount'=>$isFullySecured ? $request->get('cd_or_td_amount'):null,
+			'cd_or_td_interest'=>$isFullySecured ? $request->get('cd_or_td_interest'):null,
+			'cd_or_td_lending_percentage'=>$isFullySecured ? $request->get('cd_or_td_lending_percentage'):null,
+		]);
+	}
+	public function store(Company $company  ,FinancialInstitution $financialInstitution, StoreLetterOfCreditFacilityRequest $request){
+		
+		$this->mergeConditionalValuesToRequest($request);
 		$data = $request->only( $this->getCommonDataArr());
 		foreach(['contract_start_date','contract_end_date'] as $dateField){
 			$data[$dateField] = $request->get($dateField) ? Carbon::make($request->get($dateField))->format('Y-m-d'):null;
@@ -102,10 +120,10 @@ class LetterOfCreditFacilityController
 		foreach($termAndConditions as $termAndConditionArr){
 			$termAndConditionArr['company_id'] = $company->id ;
 			// $termAndConditionArr['outstanding_date'] = $request->get('outstanding_date');
-			$currentOutstandingBalance = $termAndConditionArr['outstanding_balance'] ;
-			$currentCashCover = $termAndConditionArr['cash_cover_rate'];
+			// $currentOutstandingBalance = $termAndConditionArr['outstanding_balance'] ;
+			// $currentCashCover = $termAndConditionArr['cash_cover_rate'];
 			
-			$currentLcType = $termAndConditionArr['lc_type'] ;
+		//	$currentLcType = $termAndConditionArr['lc_type'] ;
 			// if($currentOutstandingBalance){
 				$letterOfCreditFacility->termAndConditions()->create(array_merge($termAndConditionArr , [
 				]));
@@ -120,8 +138,10 @@ class LetterOfCreditFacilityController
 			// }
 
 		}
-		$type = $request->get('type','letter-of-credit-facilities');
-		$activeTab = $type ;
+		// $type = $request->get('type','letter-of-credit-facilities');
+		// $activeTab = $type ;
+		
+		$activeTab = 'letter-of-credit-facilities' ;
 
 		return redirect()->route('view.letter.of.credit.facility',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'active'=>$activeTab])->with('success',__('Data Store Successfully'));
 
@@ -131,12 +151,15 @@ class LetterOfCreditFacilityController
 
         return view('reports.LetterOfCreditFacility.form',[
 			'financialInstitution'=>$financialInstitution,
-			'model'=>$letterOfCreditFacility
+			'model'=>$letterOfCreditFacility,
+			'letterOfCreditFacilitiesTypes'=>LetterOfCreditFacility::getTypes(),
+			'cdOrTdAccountTypes' =>AccountType::onlyCdOrTdAccounts()->get()
 		]);
 
 	}
 
-	public function update(Company $company , Request $request , FinancialInstitution $financialInstitution,LetterOfCreditFacility $letterOfCreditFacility){
+	public function update(Company $company , StoreLetterOfCreditFacilityRequest $request , FinancialInstitution $financialInstitution,LetterOfCreditFacility $letterOfCreditFacility){
+		$this->mergeConditionalValuesToRequest($request);
 		$termAndConditions =  $request->get('termAndConditions',[]) ;
         $source = LetterOfCreditIssuance::LC_FACILITY;
 		$data['updated_by'] = auth()->user()->id ;
@@ -157,21 +180,23 @@ class LetterOfCreditFacilityController
 			$letterOfCreditFacility->termAndConditions()->create(array_merge($termAndConditionArr , [
 			]));
             // $termAndConditionArr['outstanding_date'] = $request->get('outstanding_date');
-			$currentOutstandingBalance = $termAndConditionArr['outstanding_balance'] ;
+			// $currentOutstandingBalance = $termAndConditionArr['outstanding_balance'] ;
 			$currentCashCoverRate = $termAndConditionArr['cash_cover_rate'] / 100  ;
-			$currentCashCoverBeginningBalance  = $currentOutstandingBalance * $currentCashCoverRate ; 
+			// $currentCashCoverBeginningBalance  = $currentOutstandingBalance * $currentCashCoverRate ; 
 			$currentLcType = $termAndConditionArr['lc_type'] ;
-			if($currentOutstandingBalance > 0 ){
-				$letterOfCreditFacility->handleLetterOfCreditStatement($financialInstitution->id,$source,$letterOfCreditFacility->id,$currentLcType,$company->id,$termAndConditionArr['outstanding_date'],0,0,$currentOutstandingBalance,$currencyName,0,0,LetterOfCreditIssuance::LC_FACILITY_BEGINNING_BALANCE);
-			}
-			if($currentCashCoverBeginningBalance > 0){
-				$letterOfCreditFacility->handleLetterOfCreditCashCoverStatement($financialInstitution->id,$source,$letterOfCreditFacility->id,$currentLcType,$company->id,$termAndConditionArr['outstanding_date'],0,$currentCashCoverBeginningBalance,0,$currencyName,0,LetterOfCreditIssuance::LC_FACILITY_BEGINNING_BALANCE);
-			}
+			// if($currentOutstandingBalance > 0 ){
+			// 	$letterOfCreditFacility->handleLetterOfCreditStatement($financialInstitution->id,$source,$letterOfCreditFacility->id,$currentLcType,$company->id,$termAndConditionArr['outstanding_date'],0,0,$currentOutstandingBalance,$currencyName,0,0,LetterOfCreditIssuance::LC_FACILITY_BEGINNING_BALANCE);
+			// }
+			// if($currentCashCoverBeginningBalance > 0){
+			// 	$letterOfCreditFacility->handleLetterOfCreditCashCoverStatement($financialInstitution->id,$source,$letterOfCreditFacility->id,$currentLcType,$company->id,$termAndConditionArr['outstanding_date'],0,$currentCashCoverBeginningBalance,0,$currencyName,0,LetterOfCreditIssuance::LC_FACILITY_BEGINNING_BALANCE);
+			// }
 			
 
 		}
-		$type = $request->get('type','letter-of-credit-facilities');
-		$activeTab = $type ;
+		// $type = $request->get('type','letter-of-credit-facilities');
+		
+		// $activeTab = $type ;
+		$activeTab = 'letter-of-credit-facilities' ;
 		return redirect()->route('view.letter.of.credit.facility',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'active'=>$activeTab])->with('success',__('Item Has Been Updated Successfully'));
 
 

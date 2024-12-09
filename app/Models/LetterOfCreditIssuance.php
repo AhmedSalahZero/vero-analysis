@@ -3,8 +3,10 @@
 namespace App\Models;
 
 use App\Traits\HasBasicStoreRequest;
+use App\Traits\HasCompany;
 use App\Traits\Models\HasCommissionStatements;
 use App\Traits\Models\HasDeleteButTriggerChangeOnLastElement;
+use App\Traits\Models\HasForeignExchangeGainOrLoss;
 use App\Traits\Models\HasLetterOfCreditCashCoverStatements;
 use App\Traits\Models\HasLetterOfCreditStatements;
 use Carbon\Carbon;
@@ -13,7 +15,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class LetterOfCreditIssuance extends Model
 {
-	use HasBasicStoreRequest,HasCommissionStatements,HasLetterOfCreditStatements,HasLetterOfCreditCashCoverStatements,HasDeleteButTriggerChangeOnLastElement;
+	use HasBasicStoreRequest,HasCompany,HasForeignExchangeGainOrLoss,HasCommissionStatements,HasLetterOfCreditStatements,HasLetterOfCreditCashCoverStatements,HasDeleteButTriggerChangeOnLastElement;
 	const LC_FACILITY = 'lc-facility';
 	const AGAINST_TD ='against-td';
 	const AGAINST_CD ='against-cd';
@@ -561,6 +563,10 @@ class LetterOfCreditIssuance extends Model
 	{
 		return $this->payment_date;
 	}
+	public function getDate()
+	{
+		return $this->getPaymentDate();
+	}
 	public function getReceivingOrPaymentMoneyDateFormatted()
 	{
 		return Carbon::make($this->getPaymentDate())->format('d-m-Y');
@@ -589,4 +595,13 @@ class LetterOfCreditIssuance extends Model
 	{
 		return 0;
 	}
+	public function getTotalWithholdInInvoiceExchangeRate()
+	{
+		return 0;
+	}
+	public function getAmountForMainCurrency()
+	{
+		return $this->getLcAmount() * $this->getExchangeRate();
+	}
+	
 }

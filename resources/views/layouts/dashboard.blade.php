@@ -1514,12 +1514,15 @@ td{
 		
 $(document).on('change','.update-exchange-rate',function(){
 
+
 	if(!pageLoaded){
 		return 
 	}
-	const fromCurrency = $('select.current-invoice-currency').val()
+	let fromCurrency = $('select.current-invoice-currency').val()
+	fromCurrency = fromCurrency ? fromCurrency : $('input[type="hidden"].from-currency').val();
 	let toCurrency = $('input[type="hidden"].to-currency').val() 
 	toCurrency = toCurrency ? toCurrency : $('select.receiving-currency-class').val();
+
 	let isGeneralDownPayment = $('select#down_payment_type').val() == 'general';
 	const date = $('.exchange-rate-date').val()
 	const companyId = $('body').data('current-company-id')

@@ -13,6 +13,9 @@ class LetterOfCreditFacility extends Model
 	use HasLetterOfCreditStatements , HasLetterOfCreditCashCoverStatements;
     
 	protected $guarded = ['id'];
+	CONST UNSECURED ='unsecured';
+	CONST FULLY_SECURED ='fully-secured';
+	
 	public function getName()
 	{
 		return $this->name ?: __('N/A');
@@ -92,5 +95,31 @@ class LetterOfCreditFacility extends Model
 	{
 		return $this->hasMany(LetterOfCreditCashCoverStatement::class,'lc_facility_id','id');
 	}
-	
+	public function getType()
+	{
+		return $this->type;
+	}
+	public static function getTypes()
+	{
+		return [
+			self::UNSECURED=>__('Unsecured'),
+			self::FULLY_SECURED=>__('Fully Secured'),
+		];
+	}
+	public function isUnsecured()
+	{
+		return $this->type == self::UNSECURED;
+	}
+	public function isFullySecured()
+	{
+		return $this->type == self::FULLY_SECURED;
+	}
+	public function getCdOrTdAccountTypeId()
+	{
+		return $this->cd_or_td_account_type_id; 
+	}
+	public function getCdOrTdId()
+	{
+		return $this->cd_or_td_id;
+	}
 }
