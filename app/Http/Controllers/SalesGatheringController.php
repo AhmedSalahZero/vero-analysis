@@ -149,7 +149,7 @@ class SalesGatheringController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the spec  ified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\SalesGathering  $salesGathering
@@ -157,7 +157,6 @@ class SalesGatheringController extends Controller
      */
     public function update(Request $request, Company $company, SalesGathering $salesGathering)
     {
-
         $salesGathering->update($request->all());
         toastr()->success('Updated Successfully');
         return (new SalesGatheringViewModel($company, $salesGathering))->view('client_view.sales_gathering.form');

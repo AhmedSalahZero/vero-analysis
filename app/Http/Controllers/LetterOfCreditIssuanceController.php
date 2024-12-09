@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\LcTypes;
 use App\Http\Requests\StoreLetterOfCreditIssuanceRequest;
+use App\Http\Requests\StoreNewSettlementWithLcIssuanceRequest;
 use App\Http\Requests\UpdateLetterOfCreditIssuanceRequest;
 use App\Models\AccountType;
 use App\Models\CertificatesOfDeposit;
@@ -25,7 +26,6 @@ use App\Traits\GeneralFunctions;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-use App\Http\Requests\StoreNewSettlementWithLcIssuanceRequest;
 
 class LetterOfCreditIssuanceController
 {
@@ -320,11 +320,8 @@ class LetterOfCreditIssuanceController
 	public function markAsPaid(Company $company,StoreNewSettlementWithLcIssuanceRequest $request,LetterOfCreditIssuance $letterOfCreditIssuance,string $source)
 	{
 
-		
-		
 		$supplierInvoiceId = $request->get('supplier_invoice_id');
 		$supplierInvoice = SupplierInvoice::find($supplierInvoiceId);
-		
 		$letterOfCreditIssuanceStatus = LetterOfCreditIssuance::PAID ;
 		$lcType = $request->get('lc_type') ;
 		/**
@@ -355,7 +352,7 @@ class LetterOfCreditIssuanceController
 		$letterOfCreditIssuance->handleLetterOfCreditStatement($financialInstitutionId,$source,$letterOfCreditFacilityId,$lcType,$company->id,$paymentDate,0,$lcAmountInMainCurrency , 0,$letterOfCreditCurrency,0,$letterOfCreditIssuance->getCdOrTdId(),LetterOfCreditIssuance::FOR_PAID);
 		$letterOfCreditIssuance->handleLetterOfCreditCashCoverStatement($financialInstitutionId,$source,$letterOfCreditFacilityId,$lcType,$company->id,$paymentDate,0,0 , $cashCoverAmount ,$letterOfCreditIssuance->getLcCurrency(),0,LetterOfCreditIssuance::FOR_PAID);
 		if($source != LetterOfCreditIssuance::HUNDRED_PERCENTAGE_CASH_COVER){
-			$letterOfCreditIssuance->handleLcCreditBankStatement('credit',$lcFacilityLimit,$paymentDate,$diffBetweenLcAmountAndCashCover,$source);
+			$letterOfCreditIssuance->handleLcCreditBankStatement($letterOfCreditFacilityId,'credit',$lcFacilityLimit,$paymentDate,$diffBetweenLcAmountAndCashCover,$source);
 		}
 		// lc_overdraft 
 		// credit 

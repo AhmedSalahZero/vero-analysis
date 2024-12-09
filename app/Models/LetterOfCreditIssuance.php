@@ -403,12 +403,13 @@ class LetterOfCreditIssuance extends Model
 		return $this->hasMany(LcOverdraftBankStatement::class,'lc_issuance_id','id')->orderBy('full_date','desc');
 	}
 	
-	public function handleLcCreditBankStatement(string $moneyType ,$limit , string $date , $paidAmount,$source)
+	public function handleLcCreditBankStatement(int $lcFacilityId,string $moneyType ,$limit , string $date , $paidAmount,$source)
 	{
 		return $this->lcOverdraftBankStatements()->create([
 			'source'=>$source,
 			'type'=>$moneyType ,
 			'lc_issuance_id'=>$this->id ,
+			'lc_facility_id'=>$lcFacilityId,
 			'company_id'=>$this->company_id ,
 			'date'=>$date,
 			'limit'=>$limit,

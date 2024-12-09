@@ -541,7 +541,7 @@ $date = now()->format('d-m-Y')
     </div>
 </div>
 <?php endif; ?>
-<?php if($user->can('upload sales gathering data')): ?>
+
 <div class="modal fade" id="kt_modal_2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
@@ -576,7 +576,7 @@ $date = now()->format('d-m-Y')
         </div>
     </div>
 </div>
-<?php endif; ?>
+
 
 <?php $__env->stopSection(); ?>
 

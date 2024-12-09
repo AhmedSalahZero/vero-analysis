@@ -13,8 +13,8 @@
 					
 						-- في حالة الانشاء
 						set new.created_at = CURRENT_TIMESTAMP;
-						select date , end_balance  into _previous_date,_last_end_balance  from lc_overdraft_bank_statements where  source = new.source and lc_issuance_id = new.lc_issuance_id  and full_date < new.full_date order by full_date desc , id desc limit 1 ; -- رتبت بالاي دي الاكبر علشان  لو كانوا متساوين في التاريخ بالظبط (ودا احتمال ضعيف ) ياخد اللي ال اي دي بتاعه اكبر
-						select  count(*) into _count_all_rows from lc_overdraft_bank_statements where  source = new.source and lc_issuance_id = new.lc_issuance_id and full_date < new.full_date ;
+						select date , end_balance  into _previous_date,_last_end_balance  from lc_overdraft_bank_statements where  source = new.source and lc_facility_id = new.lc_facility_id  and full_date < new.full_date order by full_date desc , id desc limit 1 ; -- رتبت بالاي دي الاكبر علشان  لو كانوا متساوين في التاريخ بالظبط (ودا احتمال ضعيف ) ياخد اللي ال اي دي بتاعه اكبر
+						select  count(*) into _count_all_rows from lc_overdraft_bank_statements where  source = new.source and lc_facility_id = new.lc_facility_id and full_date < new.full_date ;
 
 					set new.beginning_balance = if(_count_all_rows,_last_end_balance,ifnull(new.beginning_balance,0)); 
 					
@@ -146,7 +146,7 @@
 						
 						
 					-- end if;
-						select date,end_balance,id into _previous_date, _last_end_balance,_last_id  from lc_overdraft_bank_statements where  lc_issuance_id = new.lc_issuance_id and source = new.source and full_date < new.full_date order by full_date desc , id desc  limit 1 ; -- رتبت بالاي دي الاكبر علشان  لو كانوا متساوين في التاريخ بالظبط (ودا احتمال ضعيف ) ياخد اللي ال اي دي بتاعه اكبر
+						select date,end_balance,id into _previous_date, _last_end_balance,_last_id  from lc_overdraft_bank_statements where  lc_facility_id = new.lc_facility_id and source = new.source and full_date < new.full_date order by full_date desc , id desc  limit 1 ; -- رتبت بالاي دي الاكبر علشان  لو كانوا متساوين في التاريخ بالظبط (ودا احتمال ضعيف ) ياخد اللي ال اي دي بتاعه اكبر
 						set _count_all_rows =1 ;
 					set new.beginning_balance = if(_count_all_rows,_last_end_balance,ifnull(new.beginning_balance,0)) ;
 					
@@ -231,7 +231,7 @@
 					-- اعادة حساب فايدة نهاية كل شهر (في حالة التعديل مش الانشاء)
 
 					if new.id and (new.type = interest_type_text or new.type = highest_debit_balance_text ) then 
-								select  sum(interest_amount) , max(end_balance) into _current_interest_amount,_largest_end_balance from  lc_overdraft_bank_statements where `type` != interest_type_text and `type` != highest_debit_balance_text and lc_issuance_id = new.lc_issuance_id and source = new.source and EXTRACT(MONTH from date) = EXTRACT(MONTH from new.date ) and  EXTRACT(YEAR from date) = EXTRACT(YEAR from new.date) ;
+								select  sum(interest_amount) , max(end_balance) into _current_interest_amount,_largest_end_balance from  lc_overdraft_bank_statements where `type` != interest_type_text and `type` != highest_debit_balance_text and lc_facility_id = new.lc_facility_id and source = new.source and EXTRACT(MONTH from date) = EXTRACT(MONTH from new.date ) and  EXTRACT(YEAR from date) = EXTRACT(YEAR from new.date) ;
 								set _current_interest_amount = ifnull(_current_interest_amount,0);
 								select highest_debt_balance_rate into _highest_debt_balance_rate from letter_of_credit_issuances where id = new.lc_issuance_id  ;
 								if new.type = interest_type_text then 

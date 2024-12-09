@@ -122,4 +122,13 @@ class LetterOfCreditFacility extends Model
 	{
 		return $this->cd_or_td_id;
 	}
+	public function lcOverdraftCreditBankStatement()
+	{
+		return $this->hasOne(LcOverdraftBankStatement::class,'lc_facility_id','id')->where('is_credit',1)->orderBy('full_date','desc');
+	}
+	public function lcOverdraftBankStatements()
+	{
+		return $this->hasMany(LcOverdraftBankStatement::class,'lc_facility_id','id')->orderBy('full_date','desc');
+	}
+	
 }

@@ -991,7 +991,7 @@ $selectedBanks = [];
 		const currencyName = $('select#receiving-currency-id').val();
 		if(branchId != '-1'){
 			$.ajax({
-				url:"<?php echo e(route('get.current.end.balance.of.current.account',['company'=>$company->id])); ?>",
+				url:"<?php echo e(route('get.current.end.balance.of.cash.in.safe.statement',['company'=>$company->id])); ?>",
 				data:{
 					branchId,
 					currencyName

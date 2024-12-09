@@ -1,10 +1,12 @@
 <?php
 namespace App\Http\Controllers;
 use App\Enums\LcTypes;
+use App\Http\Requests\StoreLetterOfCreditFacilityRequest;
 use App\Models\AccountType;
 use App\Models\CertificatesOfDeposit;
 use App\Models\Company;
 use App\Models\FinancialInstitution;
+use App\Models\LcOverdraftBankStatement;
 use App\Models\LetterOfCreditCashCoverStatement;
 use App\Models\LetterOfCreditFacility;
 use App\Models\LetterOfCreditIssuance;
@@ -15,7 +17,6 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use App\Http\Requests\StoreLetterOfCreditFacilityRequest;
 
 class LetterOfCreditFacilityController
 {
@@ -207,6 +208,7 @@ class LetterOfCreditFacilityController
 
          LetterOfCreditStatement::deleteButTriggerChangeOnLastElement($letterOfCreditFacility->letterOfCreditStatements->where('type',LetterOfCreditIssuance::LC_FACILITY_BEGINNING_BALANCE));
          LetterOfCreditCashCoverStatement::deleteButTriggerChangeOnLastElement($letterOfCreditFacility->letterOfCreditCashCoverStatements->where('type',LetterOfCreditIssuance::LC_FACILITY_BEGINNING_BALANCE));
+		 LcOverdraftBankStatement::deleteButTriggerChangeOnLastElement($letterOfCreditFacility->lcOverdraftBankStatements);
 
 		$letterOfCreditFacility->termAndConditions->each(function($termAndCondition){
             $termAndCondition->delete();
