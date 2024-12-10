@@ -98,10 +98,6 @@
         <div class="tab-content  kt-margin-t-20">
 
             <!--Begin:: Tab  EGP FX Rate Table -->
-            <?php
-                    // array_push($branches_names, 'Total');
-                    // array_push($branches_names, 'Branch_Sales_Percentages');
-                    ?>
             <div class="tab-pane active" id="kt_apps_contacts_view_tab_2" role="tabpanel">
                 <x-table :tableTitle="__($view_name.' Report')" :tableClass="'kt_table_with_no_pagination'">
                     @slot('table_header')
@@ -208,21 +204,25 @@
 
 
                         @foreach (getLongestArray($sumForEachInterval) as $year => $d )
+						@php
+							$index = -1 ;
+						@endphp
                         @foreach ($d as $interval=>$q)
-
-
+						@php
+							$index++;
+						@endphp
                         <td class="text-center">
                             <span class="white-text"><b>
                                     @php
-                                    $intervalFormatted=\Carbon\Carbon::parse($year.'-'.$interval)->endOfMonth()->format('d-m-Y');
+                                 
                                     $invoiceNumber = ($sumForEachInterval[$zone_name][$year][$interval]['invoice_number']) ?? 0 ;
-                                    $salesValue = $reportSalesValues[$zone_name][$intervalFormatted] ?? 0 ;
+                                    $salesValue = array_values($reportSalesValues[$zone_name])[$index] ?? 0 ;
+									
+									
                                     $avg_invoice_value = $invoiceNumber ? number_format($salesValue / $invoiceNumber) : 0;
                                     @endphp
-                                    {{-- // ; --}}
-                                    {{
-                                                          $avg_invoice_value
-                                                        }}
+                          
+                                    {{$avg_invoice_value}}
                                 </b></span>
                         </td>
                         @endforeach

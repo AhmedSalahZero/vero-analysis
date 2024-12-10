@@ -8,6 +8,7 @@
 {{ __('Invoices Against ') . __(spaceAfterCapitalLetters(camelize($type))) . __(' Sales Analysis')  }}
 @endsection
 @section('content')
+
 <div class="row">
     <div class="col-md-12">
 
@@ -35,11 +36,16 @@
                                 </div>
                             </div>
                         </div>
+						
                         <div class="col-md-3">
                             <label>{{__('End Date')}}</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
-                                    <input type="date" name="end_date" required value="{{ getEndYearBasedOnDataUploaded($company)['dec'] }}" max="{{date('Y-m-d')}}" class="form-control" placeholder="Select date" />
+								
+						
+			 {{-- {{ dd(getEndYearBasedOnDataUploaded($company)['dec'] ) }} --}}
+                                    <input  type="date" name="end_date" required value="{{ getEndYearBasedOnDataUploaded($company)['dec'] }}" max="{{getEndYearBasedOnDataUploaded($company)['dec']}}" class="form-control" />
+									
                                 </div>
                             </div>
                         </div>

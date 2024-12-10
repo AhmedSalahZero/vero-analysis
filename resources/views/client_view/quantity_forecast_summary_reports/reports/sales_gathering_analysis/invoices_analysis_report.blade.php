@@ -117,8 +117,7 @@
                         @endforeach
 
                         @endforeach
-                        {{-- <th>{{ date('d-M-Y', strtotime($date)) }}</th> --}}
-                        {{-- <th>{{ __('Total') }}</th> --}}
+                        
                     </tr>
                     @endslot
                     @slot('table_body')
@@ -206,15 +205,24 @@
 
 
                         @foreach (getLongestArray($sumForEachInterval) as $year => $d )
+						
+						@php
+							$index = -1 ;
+						@endphp
                         @foreach ($d as $interval=>$q)
+						@php
+							$index++;
+						@endphp
+						
+                    
 
 
                         <td class="text-center">
                             <span class="white-text"><b>
                                     @php
-                                    $intervalFormatted=\Carbon\Carbon::parse($year.'-'.$interval)->endOfMonth()->format('d-m-Y');
+                                 
                                     $invoiceNumber = ($sumForEachInterval[$zone_name][$year][$interval]['invoice_number']) ?? 0 ;
-                                    $salesValue = $reportSalesValues[$zone_name][$intervalFormatted] ?? 0 ;
+                                    $salesValue = array_values($reportSalesValues[$zone_name])[$index] ?? 0 ;
                                     $avg_invoice_value = $invoiceNumber ? number_format($salesValue / $invoiceNumber) : 0;
                                     @endphp
                                     {{-- // ; --}}

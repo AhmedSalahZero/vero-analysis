@@ -92,8 +92,8 @@ class InvoicesAgainstAnalysisReport
             AND date between '".$request->start_date."' and '".$request->end_date."'
             order by year , month"));
             $queryResult = $queryResult->groupBy($type) ;
-
             $formattedResultForPeriod = $this->formatResultForInterval($queryResult , $request->interval , $type);
+		
             $sumForEachInterval  = $this->sumForEachInterval($formattedResultForPeriod);
             $secondTypesArray = $queryResult->pluck($type)->unique()->toArray();
             $reportSalesValues = [];
@@ -131,7 +131,6 @@ class InvoicesAgainstAnalysisReport
             {
                  $reportSalesValues  =getTypeSalesAnalysisData($request , $company , $type);
             }
-            
           array_sort_multi_levels($sumForEachInterval);
           if($array)
           {
@@ -141,7 +140,8 @@ class InvoicesAgainstAnalysisReport
               ] ;
               
           }
-        return view('client_view.reports.sales_gathering_analysis.invoices_analysis_report',compact('company','view_name','type','secondTypesArray','sumForEachInterval','reportSalesValues'));
+
+		  return view('client_view.reports.sales_gathering_analysis.invoices_analysis_report',compact('company','view_name','type','secondTypesArray','sumForEachInterval','reportSalesValues'));
 
 
         
@@ -312,8 +312,10 @@ class InvoicesAgainstAnalysisReport
        {
             for( $startYear ; $startYear <=$endYear ; $startYear++)
             {
+			
             foreach(getPeriods($interval) as $periodName => $period)
             {
+				
                   foreach($queryResult[$branch] as $result)
                   {
                       $result =  json_decode(json_encode($result), true);
