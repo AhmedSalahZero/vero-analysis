@@ -45,7 +45,7 @@ class TestCommand extends Command
 	 */
 	public function handle()
 	{
-	// dd(number_unformat('salah'),is_numeric('15,000'));
+		
 		// $lcAmount = 4100.0; 
 		$currency = 'USD';
 		$letterOfCreditIssuance = LetterOfCreditIssuance::find(23);

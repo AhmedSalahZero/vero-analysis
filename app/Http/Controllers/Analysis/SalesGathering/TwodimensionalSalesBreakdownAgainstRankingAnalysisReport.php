@@ -12,7 +12,6 @@ class TwodimensionalSalesBreakdownAgainstRankingAnalysisReport
     use GeneralFunctions;
     public function index(Request $request, Company $company)
     {
-        
         if (request()->route()->named('branches.vs.ItemsRanking.view')) {
             $main_type = 'branch';
             $type = 'product_item';
@@ -47,11 +46,10 @@ class TwodimensionalSalesBreakdownAgainstRankingAnalysisReport
         // $main_type_items_totals = [];
 
         
-
         $report_data =collect(DB::select(DB::raw("
             SELECT DATE_FORMAT(date,'%d-%m-%Y') as date, net_sales_value ,sales_value,".$type.",".$main_type ."
             FROM sales_gathering
-            WHERE ( company_id = '".$company->id."' AND ".$type." IS NOT NULL AND ".$main_type." IS NOT NULL  AND date between '".$request->start_date."' and '".$request->end_date."')
+            WHERE ( company_id = '".$company->id."' AND ".$type." IS NOT NULL AND ".$main_type." IS NOT NULL  AND date between '".$request->start_date."' and '".$request->end_date. " and net_sales_value != 0')
             ORDER BY id "
             )))->groupBy($type)->map(function($item) use($main_type){
                 return $item->groupBy($main_type)->map(function($sub_item){

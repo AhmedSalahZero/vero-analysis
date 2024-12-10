@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Analysis\SalesGathering;
 use App\Helpers\HArr;
 use App\Http\Controllers\ExportTable;
 use App\Models\Company;
-use App\Models\SalesGathering;
 use App\Traits\GeneralFunctions;
 use App\Traits\Intervals;
 use Carbon\Carbon;
@@ -73,7 +72,6 @@ class ProductsAgainstAnalysisReport
 	}
 	public function result(Request $request, Company $company, $result = "view", $secondReport = true)
 	{
-
 		if($request->report_type =='comparing' && $secondReport == true ){
 			$firstReportStartDate = $request->get('start_date_second');
 			$firstReportEndDate = $request->get('end_date_second');
