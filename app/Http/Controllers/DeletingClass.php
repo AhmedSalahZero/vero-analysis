@@ -38,7 +38,6 @@ class DeletingClass
 
         $model_name = 'App\\Models\\' . $model;
         $model_obj = new $model_name();
-		// dD($model_obj);
         $all_model_data = null ;
         if ($request->has('delete_date_from')) {
 			$deleteColumnName = method_exists($model_obj,'getDeleteByDateColumnName') ?  $model_obj->getDeleteByDateColumnName() : 'date';

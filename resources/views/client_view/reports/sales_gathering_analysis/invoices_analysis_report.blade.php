@@ -106,19 +106,14 @@
                         @php
                         $colsSpans = arrayCountAllLongest($sumForEachInterval) + 1 ;
                         @endphp
-						{{-- {{ dd() }}
-                        @foreach (getLongestArray($sumForEachInterval) as $year => $d )
-                        @foreach ($d as $month=>$value ) --}}
+					
 						@foreach(getLongestArray($reportSalesValues) as $date => $value)
                         <th>
 						{{ \Carbon\Carbon::make($date)->format('d-M-Y') }}
-						{{-- 22 --}}
-                            {{-- {{ $endOfMonth=\Carbon\Carbon::parse($year.'-'.$month)->endOfMonth()->format('d-M-Y') }} --}}
+
                         </th>
 						@endforeach 
-                        {{-- @endforeach
-
-                        @endforeach --}}
+                  
                        
                     </tr>
                     @endslot

@@ -91,29 +91,6 @@
 				end //
 				
 				delimiter ; 
-				drop procedure if exists reverse_fully_secured_overdraft_settlements_by_specific_debit ;
-				delimiter // 
-				create procedure reverse_fully_secured_overdraft_settlements_by_specific_debit(in _start_update_from_date_time date  , in _fully_secured_overdraft_id integer , in _current_debit decimal(14,2) )
-				begin 
-					-- هنا لو الدبت بالسالب هنجيب السحوبات اللي اتسددت ونشيل منها القيم دي من تحت لفوق
-					declare i INTEGER DEFAULT 0 ;
-					declare _fully_secured_overdraft_withdrawal_id integer default 0 ;
-					declare _current_settlement decimal(14,2) default 0 ; -- دي قيمه ال settlement من السحوبات وهي عباره عن القيمة اللي اتسددت  
-					declare _settlement_amount decimal(14,2) default 0 ; -- دي القيمة اللي هنعكس بيها السداد وهي عباره عن القيمة الاصفر ما بين ال settlement and _current_debit
-					set _current_debit = abs(_current_debit);
-				-- هنجيب كل السحوبات اللي تاريخها اكبر من تاريخ الاغلاق لان اللي تاريخها اصغر من او يساوي تاريخ الاغلاق مش هنقدر نيجي يمها
-					
-					
-					repeat 
-						select id , settlement_amount into _fully_secured_overdraft_withdrawal_id , _current_settlement from fully_secured_overdraft_withdrawals where 
-					-- due_date > _start_update_from_date_time and
-					fully_secured_overdraft_id = _fully_secured_overdraft_id  and settlement_amount > 0 order by due_date desc , id desc limit 1 ;
-					set _settlement_amount = IIF(_current_settlement >_current_debit, _current_debit, _current_settlement) ;
-					update fully_secured_overdraft_withdrawals set net_balance = net_balance + _settlement_amount , settlement_amount = settlement_amount - _settlement_amount where id =  _fully_secured_overdraft_withdrawal_id ;
-					set _current_debit = _current_debit - _settlement_amount  ; 
-					until _current_debit <= 0 end repeat ;
-					-- update fully_secured_overdraft_withdrawals set net_balance = net_balance + settlement_amount , settlement_amount = 0 where due_date > _start_update_from_date_time  and fully_secured_overdraft_id = _fully_secured_overdraft_id ;
-				end //
 
 				create trigger refresh_calculation_before_update_fully_secured_overdraft before update on `fully_secured_overdraft_bank_statements` for each row 
 				begin 
@@ -221,17 +198,10 @@
 						set _current_debit = _current_debit - _total_settlements ;
 						
 					
-					-- if(new.full_date > _start_update_from_date_time ) then 		 -- دي في حالة لو انت اشتغلت علي موضوع ال closing date 
-						--	delete from fully_secured_overdraft_settlements where fully_secured_overdraft_bank_statement_id = _last_id;
-						-- علشان نعيد الحسابات من اصفر تاريخ في حساب الاوفر دارفت دا
-				--		if(_origin_update_row_is_debit > 0 ) then 
+				
 							call reverse_fully_secured_overdraft_settlements(_start_update_from_date_time,new.fully_secured_overdraft_id);	
 							call resettlement_fully_secured_overdraft_from(new.type,_start_update_from_date_time,new.fully_secured_overdraft_id,new.company_id);
-				--			elseif  _origin_update_row_is_debit > 0 and _current_debit < 0  then 
-				--			call reverse_fully_secured_overdraft_settlements_by_specific_debit(_start_update_from_date_time,new.fully_secured_overdraft_id,_current_debit);	
-				--		else 
-				--			call resettlement_fully_secured_overdraft_from(_start_update_from_date_time,new.fully_secured_overdraft_id,new.company_id);
-				--		end if;
+				
 					end if;
 					
 					

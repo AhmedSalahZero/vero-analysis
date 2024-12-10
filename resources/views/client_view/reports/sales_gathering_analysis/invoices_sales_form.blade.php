@@ -43,7 +43,6 @@
                                 <div class="input-group date">
 								
 						
-			 {{-- {{ dd(getEndYearBasedOnDataUploaded($company)['dec'] ) }} --}}
                                     <input  type="date" name="end_date" required value="{{ getEndYearBasedOnDataUploaded($company)['dec'] }}" max="{{getEndYearBasedOnDataUploaded($company)['dec']}}" class="form-control" />
 									
                                 </div>

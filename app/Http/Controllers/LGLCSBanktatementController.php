@@ -41,6 +41,7 @@ class LGLCSBanktatementController
         $endDate = $request->get('end_date');
         $financialInstitutionId = $request->get('financial_institution_id');
 		$financialInstitution = FinancialInstitution::find($financialInstitutionId);
+		$lcFacilityId=  $request->get('lc_facility_id');
 		$financialInstitutionName = $financialInstitution->getName();
  
 		
@@ -53,6 +54,7 @@ class LGLCSBanktatementController
 			'LetterOfGuaranteeIssuance'=>'letter_of_guarantee_statements',
 			'LCOverdraft'=>'lc_overdraft_bank_statements'
 		][$reportType];
+		$isLcOverdraftBankStatement = $statementTableName == 'lc_overdraft_bank_statements';
 		$lcTypeOrLgTypeColumnName = [
 			'LetterOfCreditIssuance'=>'lc_type',
 			'LetterOfGuaranteeIssuance'=>'lg_type',
@@ -69,10 +71,17 @@ class LGLCSBanktatementController
 				 ->where($statementTableName.'.company_id',$company->id)
 				 ->where('date', '>=', $startDate)
 				 ->where('date', '<=', $endDate)
-				 ->where('currency',$currencyName)
-				 ->where('financial_institution_id',$financialInstitutionId)
+				 ->when(!$isLcOverdraftBankStatement,function($q) use($currencyName){
+					 $q->where('currency',$currencyName);
+				 })
+				 ->when(!$isLcOverdraftBankStatement,function($q) use($financialInstitutionId){
+					 $q->where('financial_institution_id',$financialInstitutionId);
+				 })
 				 ->when($source,function($q) use ($source){
 					 $q->where('source',$source);
+				 })
+				 ->when($isLcOverdraftBankStatement,function($q) use($lcFacilityId){
+					$q->where('lc_facility_id',$lcFacilityId);
 				 })
 				 ->when($lcTypeOrLgTypeColumnName , function($q) use ($lcTypeOrLgTypeColumnName,$type){
 					 $q->where($lcTypeOrLgTypeColumnName,$type);
@@ -80,7 +89,6 @@ class LGLCSBanktatementController
 				 ->orderByRaw('full_date desc')
 				 ->get();
 				 
-dd($results);
         if (!count($results)) {
             return redirect()->back()->with('fail', __('No Data Found'));
         }
@@ -90,20 +98,20 @@ dd($results);
 			'LetterOfCreditIssuance'=>LetterOfCreditIssuance::lcSources(),
 			'LetterOfGuaranteeIssuance'=>LetterOfGuaranteeIssuance::lgSources() ,
 			'LCOverdraft'=>LcOverdraftBankStatement::getSources()
-		][$reportType][$request->get('source')];
+		][$reportType][$source] ?? null;
 		
 		$type = [
 			'LetterOfCreditIssuance'=>LcTypes::getAll(),
 			'LetterOfGuaranteeIssuance'=>LgTypes::getAll(),
-			
-		][$reportType][$request->get('type')];
+		][$reportType][$request->get('type')]??null;
 		
         return view('lc_lg_bank_statement_result', [
             'results' => $results,
             'currency' => $currencyName,
 			'financialInstitutionName'=>$financialInstitutionName,
 			'type'=>$type,
-			'source'=>$source
+			'source'=>$source,
+			'isLcOverdraftBankStatement'=>$isLcOverdraftBankStatement
         ]);
     }
 	public function getLgOrLcType(Request $request , Company $company){

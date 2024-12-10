@@ -244,10 +244,11 @@ class FinancialInstitutionController
 	public function getInterestRateForFinancialInstitution(Company $company , Request $request)
 	{
 		$financialInstitutionId = $request->get('financialInstitutionId');
-		if(!$financialInstitutionId){
+		$letterOfCreditFacilityId = $request->get('letterOfCreditFacilityId');
+		if(!$financialInstitutionId || !$letterOfCreditFacilityId){
 			return ;
 		}
-		$letterOfCreditFacility = FinancialInstitution::find($financialInstitutionId)->getCurrentAvailableLetterOfCreditFacility() ;
+		$letterOfCreditFacility = LetterOfCreditFacility::find($letterOfCreditFacilityId); ;
 		$interestRate =  0 ; 
 		if($letterOfCreditFacility instanceof LetterOfCreditFacility){
 			$interestRate = $letterOfCreditFacility->interest_rate ;

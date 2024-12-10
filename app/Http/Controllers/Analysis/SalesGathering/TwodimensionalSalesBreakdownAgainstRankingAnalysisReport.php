@@ -64,7 +64,6 @@ class TwodimensionalSalesBreakdownAgainstRankingAnalysisReport
 					$data[$branchName][getOrderMaxForBranch($branchName , $branchValues)][$productName] = [
 						'total'=>$total ,
 					] ;    
-					
 				}
                }
             }

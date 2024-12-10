@@ -434,7 +434,6 @@ let pageLoaded = false ;
 
     </style>
 
-    {{-- <meta name="csrf-token" content="{{ csrf_token() }}"> --}}
 
     <!--begin::Fonts -->
 	<script>

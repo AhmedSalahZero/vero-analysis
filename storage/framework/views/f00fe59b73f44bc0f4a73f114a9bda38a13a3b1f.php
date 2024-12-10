@@ -434,7 +434,6 @@ let pageLoaded = false ;
 
     </style>
 
-    
 
     <!--begin::Fonts -->
 	<script>

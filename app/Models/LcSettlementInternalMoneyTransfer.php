@@ -219,27 +219,28 @@ class LcSettlementInternalMoneyTransfer extends Model
 	/**
 	 * * دي هتستخدم في الحالتين سواء من او الى
 	 */
-	public function handleLetterOfCreditTransfer(int $companyId, string $date ,  $debitAmount , $creditAmount , LetterOfCreditIssuance $letterOfCreditIssuance )
+	public function handleLetterOfCreditTransfer(int $companyId,int $lcFacilityId , $lcFacilityLimit, string $date ,  $debitAmount , $creditAmount , LetterOfCreditIssuance $letterOfCreditIssuance )
 	{
 	
 				return $this->LcOverdraftBankStatements()->create([
 					'lc_issuance_id'=>$letterOfCreditIssuance->id  ,
+					'lc_facility_id'=>$lcFacilityId,
 					'lc_settlement_internal_money_transfer_id'=>$this->id ,
 					'source'=>$letterOfCreditIssuance->getSource(),
 					'type'=>LcOverdraftBankStatement::LC_OVERDRAFT_MONEY_TRANSFER ,
 					'company_id'=>$companyId,
 					'date'=>$date,
-					'limit'=>$letterOfCreditIssuance->getLimit(),
+					'limit'=>$lcFacilityLimit,
 					'beginning_balance'=>0 ,
 					'debit'=>$debitAmount,
 					'credit'=>$creditAmount
 				]);
 	}
 	
-	public function handleBankToLetterOfCreditTransfer( int $companyId , AccountType $fromAccountType , string $fromAccountNumber , int $fromFinancialInstitutionId , LetterOfCreditIssuance $letterOfCreditIssuance , string $transferDate , $transferAmount)
+	public function handleBankToLetterOfCreditTransfer( int $companyId ,int $lcFacilityId,$lcFacilityLimit, AccountType $fromAccountType , string $fromAccountNumber , int $fromFinancialInstitutionId , LetterOfCreditIssuance $letterOfCreditIssuance , string $transferDate , $transferAmount)
 	{
 		$this->handleBankTransfer($companyId , $fromFinancialInstitutionId ,  $fromAccountType , $fromAccountNumber , $transferDate ,0, $transferAmount);
-		$this->handleLetterOfCreditTransfer($companyId,$transferDate,$transferAmount,0,$letterOfCreditIssuance);
+		$this->handleLetterOfCreditTransfer($companyId,$lcFacilityId,$lcFacilityLimit,$transferDate,$transferAmount,0,$letterOfCreditIssuance);
 	}
 	public function letterOfCreditIssuance()
 	{

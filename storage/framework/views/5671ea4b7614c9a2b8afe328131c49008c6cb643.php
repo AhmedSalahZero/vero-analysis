@@ -314,8 +314,13 @@
                                             <?php echo e(__('Date')); ?>
 
                                         </th>
-                           
-                                        
+										<?php if($isLcOverdraftBankStatement): ?>
+                                        <th class="view-table-th max-w-invoice-number    header-th  align-middle text-center">
+                                            <?php echo e(__('Limit')); ?>
+
+                                        </th>
+									
+										<?php endif; ?> 
                                    
                                       
                                         <th class="view-table-th max-w-invoice-number    header-th  align-middle text-center">
@@ -338,7 +343,13 @@
 
                                         </th>
 
-                                        
+                                        	<?php if($isLcOverdraftBankStatement): ?>
+                                       
+										<th class="view-table-th max-w-invoice-number    header-th  align-middle text-center">
+                                            <?php echo e(__('Room')); ?>
+
+                                        </th>
+										<?php endif; ?> 
                                       
 
                                         <th class="view-table-th max-w-invoice-date max-w-report-btn    header-th  align-middle text-center">
@@ -360,11 +371,18 @@
                                     <tr class=" parent-tr reset-table-width text-nowrap  cursor-pointer sub-text-bg text-capitalize is-close   ">
                                         <td class="sub-text-bg max-w-serial   "><?php echo e($index+1); ?></td>
                                         <td class="sub-text-bg  text-center "><?php echo e(\Carbon\Carbon::make($modelAsStdClass->date)->format('d-m-Y')); ?></td>
-                                        
+										<?php if($isLcOverdraftBankStatement): ?>
+                                        <td class="sub-text-bg text-center max-w-amount"><?php echo e(number_format($modelAsStdClass->limit)); ?></td>
+										<?php endif; ?> 
                                         <td class="sub-text-bg text-center max-w-invoice-number"><?php echo e(number_format($modelAsStdClass->beginning_balance)); ?></td>
                                         <td class="sub-text-bg text-center max-w-invoice-date"><?php echo e(number_format($modelAsStdClass->debit)); ?></td>
                                         <td class="sub-text-bg text-center max-w-currency"><?php echo e(number_format($modelAsStdClass->credit)); ?></td>
                                         <td class="sub-text-bg text-center max-w-amount"><?php echo e(number_format($modelAsStdClass->end_balance)); ?></td>
+										
+										<?php if($isLcOverdraftBankStatement): ?>
+                                        <td class="sub-text-bg text-center max-w-amount"><?php echo e(number_format($modelAsStdClass->room)); ?></td>
+										<?php endif; ?> 
+										
                                         
 										<?php
 											

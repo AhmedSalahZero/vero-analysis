@@ -118,6 +118,8 @@ class LcSettlementInternalMoneyTransferController
 		$internalMoneyTransfer = new LcSettlementInternalMoneyTransfer ;
 		$companyId = $company->id ;
 		$letterOfCreditIssuance = LetterOfCreditIssuance::find($request->get('to_letter_of_credit_issuance_id'));
+		$letterOfCreditFacilityId = $letterOfCreditIssuance->getLcFacilityId();
+		$lcFacilityLimit = $letterOfCreditIssuance->getLcFacilityLimit();
 		$transferDate = $request->get('transfer_date') ;
 		// $receivingDate = Carbon::make($transferDate)->addDay($request->get('transfer_days',0))->format('Y-m-d');
 		$transferAmount = $request->get('amount') ;
@@ -136,7 +138,7 @@ class LcSettlementInternalMoneyTransferController
 		// $toAccountType = AccountType::find($toAccountTypeId);
 	
 		if($type === LcSettlementInternalMoneyTransfer::BANK_TO_LETTER_OF_CREDIT ){
-			$internalMoneyTransfer->handleBankToLetterOfCreditTransfer(  $companyId ,  $fromAccountType ,  $fromAccountNumber ,  $fromFinancialInstitutionId ,  $letterOfCreditIssuance ,  $transferDate , $transferAmount);
+			$internalMoneyTransfer->handleBankToLetterOfCreditTransfer(  $companyId ,$letterOfCreditFacilityId,$lcFacilityLimit,  $fromAccountType ,  $fromAccountNumber ,  $fromFinancialInstitutionId ,  $letterOfCreditIssuance ,  $transferDate , $transferAmount);
 		}
 	
 		

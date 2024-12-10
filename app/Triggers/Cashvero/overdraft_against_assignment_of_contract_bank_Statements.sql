@@ -101,29 +101,7 @@
 				end //
 				
 				delimiter ; 
-				drop procedure if exists reverse_overdraft_against_contract_by_specific_debit ;
-				delimiter // 
-				create procedure reverse_overdraft_against_contract_by_specific_debit(in _start_update_from_date_time date  , in _overdraft_against_assignment_of_contract_id integer , in _current_debit decimal(14,2) )
-				begin 
-					-- هنا لو الدبت بالسالب هنجيب السحوبات اللي اتسددت ونشيل منها القيم دي من تحت لفوق
-					declare i INTEGER DEFAULT 0 ;
-					declare _overdraft_against_assignment_of_contract_withdrawal_id integer default 0 ;
-					declare _current_settlement decimal(14,2) default 0 ; -- دي قيمه ال settlement من السحوبات وهي عباره عن القيمة اللي اتسددت  
-					declare _settlement_amount decimal(14,2) default 0 ; -- دي القيمة اللي هنعكس بيها السداد وهي عباره عن القيمة الاصفر ما بين ال settlement and _current_debit
-					set _current_debit = abs(_current_debit);
-				-- هنجيب كل السحوبات اللي تاريخها اكبر من تاريخ الاغلاق لان اللي تاريخها اصغر من او يساوي تاريخ الاغلاق مش هنقدر نيجي يمها
-					
-					
-					repeat 
-						select id , settlement_amount into _overdraft_against_assignment_of_contract_withdrawal_id , _current_settlement from overdraft_against_assignment_of_contract_withdrawals where 
-					-- due_date > _start_update_from_date_time and
-					overdraft_against_assignment_of_contract_id = _overdraft_against_assignment_of_contract_id  and settlement_amount > 0 order by due_date desc , id desc limit 1 ;
-					set _settlement_amount = IIF(_current_settlement >_current_debit, _current_debit, _current_settlement) ;
-					update overdraft_against_assignment_of_contract_withdrawals set net_balance = net_balance + _settlement_amount , settlement_amount = settlement_amount - _settlement_amount where id =  _overdraft_against_assignment_of_contract_withdrawal_id ;
-					set _current_debit = _current_debit - _settlement_amount  ; 
-					until _current_debit <= 0 end repeat ;
-					-- update overdraft_against_assignment_of_contract_withdrawals set net_balance = net_balance + settlement_amount , settlement_amount = 0 where due_date > _start_update_from_date_time  and overdraft_against_assignment_of_contract_id = _overdraft_against_assignment_of_contract_id ;
-				end //
+				
 
 				create trigger before_update_overdraft_against_assignment_of_contract before update on `overdraft_against_assignment_of_contract_bank_statements` for each row 
 				begin 
@@ -241,17 +219,10 @@
 						set _current_debit = _current_debit - _total_settlements ;
 						
 					
-					-- if(new.full_date > _start_update_from_date_time ) then 		 -- دي في حالة لو انت اشتغلت علي موضوع ال closing date 
-						--	delete from overdraft_against_assignment_of_contract_settlements where overdraft_against_assignment_of_contract_bank_statement_id = _last_id;
-						-- علشان نعيد الحسابات من اصفر تاريخ في حساب الاوفر دارفت دا
-				--		if(_origin_update_row_is_debit > 0 ) then 
+				
 							call reverse_overdraft_against_contract(_start_update_from_date_time,new.overdraft_against_assignment_of_contract_id);	
 							call resettlement_overdraft_against_assignment_of_contract_from(new.type,_start_update_from_date_time,new.overdraft_against_assignment_of_contract_id,new.company_id);
-				--			elseif  _origin_update_row_is_debit > 0 and _current_debit < 0  then 
-				--			call reverse_overdraft_against_contract_by_specific_debit(_start_update_from_date_time,new.overdraft_against_assignment_of_contract_id,_current_debit);	
-				--		else 
-				--			call resettlement_overdraft_against_assignment_of_contract_from(_start_update_from_date_time,new.overdraft_against_assignment_of_contract_id,new.company_id);
-				--		end if;
+			
 					end if;
 					
 					

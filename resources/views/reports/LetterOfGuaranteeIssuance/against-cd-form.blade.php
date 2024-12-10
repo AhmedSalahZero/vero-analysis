@@ -580,7 +580,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                     if (!$(this).hasClass('exclude-text')) {
                         let val = $(this).val()
                         val = number_unformat(val)
-                        $(this).parent().find('input[type="hidden"]').val(val)
+                        $(this).parent().find('input[type="hidden"]:not([name="_token"])').val(val)
 
                     }
                 })

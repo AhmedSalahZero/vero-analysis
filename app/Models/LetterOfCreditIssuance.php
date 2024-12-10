@@ -128,6 +128,10 @@ class LetterOfCreditIssuance extends Model
 	{
 		return $this->belongsTo(LetterOfCreditFacility::class,'lc_facility_id','id');
 	}	
+	public function getLcFacilityLimit()
+	{
+		return $this->letterOfCreditFacility ? $this->letterOfCreditFacility->getLimit():0;
+	}
 	public function getLcFacilityId()
 	{
 		return $this->letterOfCreditFacility ? $this->letterOfCreditFacility->id:0;

@@ -29,9 +29,8 @@ class LcOverdraftBankStatement extends Model
 	public static function updateNextRows(self $model):string 
 	{
 		$minDate  = $model->full_date ;
-		DB::table('letter_of_credit_issuances')->where('id',$model->lc_issuance_id)->update([
+		DB::table('letter_of_credit_facilities')->where('id',$model->lc_facility_id)->update([
 			'oldest_full_date'=>$minDate,
-			// 'origin_update_row_is_debit'=>$model->is_debit  
 		]);
 		
 		/**
@@ -45,7 +44,7 @@ class LcOverdraftBankStatement extends Model
 		 DB::table($tableName)
 		->where('full_date','>=',$minDate)
 		->orderByRaw('full_date asc , priority asc , id asc')
-		->where('lc_issuance_id',$model->lc_issuance_id)
+		->where('lc_facility_id',$model->lc_facility_id)
 		->each(function($lcOverdraftBankStatement) use($tableName){
 			DB::table($tableName)->where('id',$lcOverdraftBankStatement->id)->update([
 				'updated_at'=>now()
@@ -67,7 +66,7 @@ class LcOverdraftBankStatement extends Model
 				 */
 				$fullDateTime = HDate::generateUniqueDateTimeForModel(self::class,'full_date',$fullDateTime,[
 					[
-						'lc_issuance_id','=',$model->lc_issuance_id ,
+						'lc_facility_id','=',$model->lc_facility_id ,
 					]
 				]) ;
 				$model->full_date = $fullDateTime;
@@ -81,27 +80,27 @@ class LcOverdraftBankStatement extends Model
 				$tableName = (new self)->getTable();
 				$minDate = self::updateNextRows($model);
 				
-				
-				$isChanged = $model->isDirty('lc_issuance_id') ;
+			
+				$isChanged = $model->isDirty('lc_facility_id') ;
 				/**
 				 * * دي علشان لو غيرت ال
-				 * * lc_issuance_id
+				 * * lc_facility_id
 				 * * بمعني انه نقل السحبة مثلا من حساب الي حساب اخر .. يبقي هنحتاج نشغل الترجرز علشان الحساب القديم علشان يوزع تاني
 				 */
 				if($isChanged){
-					$oldLcOverdraftId=$model->getRawOriginal('lc_issuance_id');
+					$oldLcOverdraftId=$model->getRawOriginal('lc_facility_id');
 					$oldBankStatementId=$model->getRawOriginal('id');
 					// لو ما لقناش اول واحد فوقه هندور علي اول واحد بعدة					
-					$firstBankStatementForOldLcOverdraft = self::where('lc_issuance_id',$oldLcOverdraftId)->where('id','!=',$oldBankStatementId)->orderBy('id')->first()  ;
+					$firstBankStatementForOldLcOverdraft = self::where('lc_facility_id',$oldLcOverdraftId)->where('id','!=',$oldBankStatementId)->orderBy('id')->first()  ;
 					// لو كانت القديمة دي قبل ما تتغير هي الاستيتم الوحيده بعد كدا انت غيرتها بالتالي الحساب القديم دا معتش ليه لزمة فا هنحذف كل السحبات و التسديدات بتاعته
 					if(!$firstBankStatementForOldLcOverdraft){
-						LcOverdraftWithdrawal::where('lc_issuance_id',$oldLcOverdraftId)->delete();
+						LcOverdraftWithdrawal::where('lc_facility_id',$oldLcOverdraftId)->delete();
 						// وتلقائي هيحذف السحوبات settlements
 					}else{
 						DB::table($tableName)
 						->where('full_date','>=',$minDate)
 						->orderByRaw('full_date asc , priority asc , id asc')
-						->where('lc_issuance_id',$model->lc_issuance_id)->update([
+						->where('lc_facility_id',$model->lc_facility_id)->update([
 							'updated_at'=>now()
 						]);
 						
@@ -120,7 +119,7 @@ class LcOverdraftBankStatement extends Model
 						$currentDate = $lcOverdraftBankStatement->full_date ;
 						$lcOverdraftBankStatement->full_date = min($oldDate,$currentDate);
 				}
-				DB::table('letter_of_credit_issuances')->where('id',$lcOverdraftBankStatement->lc_issuance_id)->update([
+				DB::table('letter_of_credit_facilities')->where('id',$lcOverdraftBankStatement->lc_facility_id)->update([
 					'oldest_full_date'=>$lcOverdraftBankStatement->full_date,
 					// 'origin_update_row_is_debit'=>$lcOverdraftBankStatement->is_debit
 				]);
@@ -172,7 +171,7 @@ class LcOverdraftBankStatement extends Model
 	public function getForeignKeyNamesThatUsedInFilter():array 
 	{
 		return [
-			'lc_issuance_id'
+			'lc_facility_id'
 		];
 	}	
 	

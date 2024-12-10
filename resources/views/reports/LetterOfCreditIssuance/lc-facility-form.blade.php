@@ -62,13 +62,13 @@ use App\Models\LetterOfCreditIssuance;
     <div class="col-md-12">
 
         <form method="post" action="{{ isset($model) ?  route('update.letter.of.credit.issuance',['company'=>$company->id,'letterOfCreditIssuance'=>$model->id,'source'=>$source]) :route('store.letter.of.credit.issuance',['company'=>$company->id,'source'=>$source]) }}" class="kt-form kt-form--label-right">
+          
             <input type="hidden" name="id" value="{{ isset($model) ? $model->id : 0 }}">
             <input type="hidden" name="created_by" value="{{ auth()->user()->id }}">
             <input type="hidden" name="company_id" value="{{ $company->id }}">
             <input type="hidden" name="source" value="{{ $source }}">
-			{{-- <input type="hidden" name="from-currency" class="update-exchange-rate" value=""> --}}
 			<input type="hidden" name="to-currency" class="update-exchange-rate to-currency" value="">
-            @csrf
+				@csrf
             @if(isset($model))
             @method('put')
             @endif
@@ -120,7 +120,7 @@ use App\Models\LetterOfCreditIssuance;
                                         <label> {{ __('Bank') }}
                                             @include('star')
                                         </label>
-                                        <select js-when-change-trigger-change-account-type change-financial-instutition-js id="financial-instutition-id" js-get-lc-facility-based-on-financial-institution  js-when-change-trigger-change-account-type data-financial-institution-id required name="financial_institution_id" class="form-control">
+                                        <select js-update-interest-rate js-when-change-trigger-change-account-type change-financial-instutition-js id="financial-instutition-id" js-get-lc-facility-based-on-financial-institution  js-when-change-trigger-change-account-type data-financial-institution-id required name="financial_institution_id" class="form-control">
                                             @foreach($financialInstitutionBanks as $index=>$financialInstitutionBank)
                                             <option value="{{ $financialInstitutionBank->id }}" {{ isset($model) && $model->getFinancialInstitutionBankId() == $financialInstitutionBank->id ? 'selected':'' }}>{{ $financialInstitutionBank->getName() }}</option>
                                             @endforeach
@@ -134,7 +134,7 @@ use App\Models\LetterOfCreditIssuance;
                                         </label>
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
-                                                <select required js-update-outstanding-balance-and-limits data-current-selected="{{ isset($model) ? $model->getLcFacilityId() : 0 }}" id="lc-facility-id" name="lc_facility_id" class="form-control">
+                                                <select js-update-interest-rate required js-update-outstanding-balance-and-limits data-current-selected="{{ isset($model) ? $model->getLcFacilityId() : 0 }}" id="lc-facility-id" name="lc_facility_id" class="form-control">
                                                 </select>
                                             </div>
                                         </div>
@@ -583,8 +583,7 @@ use App\Models\LetterOfCreditIssuance;
         if (!$(this).hasClass('exclude-text')) {
             let val = $(this).val()
             val = number_unformat(val)
-            $(this).parent().find('input[type="hidden"]').val(val)
-
+            $(this).parent().find('input[type="hidden"]:not([name="_token"])').val(val)
         }
     })
 
@@ -713,12 +712,17 @@ use App\Models\LetterOfCreditIssuance;
 @include('reports.LetterOfCreditIssuance.commonJs')
 
 <script>
-    $(document).on('change', 'select#financial-instutition-id', function() {
-        const financialInstitutionId = $(this).val();
+    $(document).on('change', '[js-update-interest-rate]', function() {
+        const financialInstitutionId = $('select#financial-instutition-id').val();
+		const letterOfCreditFacilityId = $('select#lc-facility-id').val();
+		if(!financialInstitutionId || !letterOfCreditFacilityId){
+			return ;
+		}
         $.ajax({
             url: "{{ route('get.interest.rate.for.financial.institution.id',['company'=>$company->id]) }}"
             , data: {
-                financialInstitutionId
+                financialInstitutionId,
+				letterOfCreditFacilityId
             }
             , success: function(res) {
                // $('#interest-rate-id').val(res.interest_rate)
@@ -741,12 +745,10 @@ $(document).on('change','select[js-get-lc-facility-based-on-financial-institutio
 		success:function(res){
 			const lcFacilities = res.letterOfCreditFacilities ;
 			let options='<option value="">{{ __("Select") }}</option>';
-			console.log(lcFacilities)
 			for(id in lcFacilities){
 				var name =lcFacilities[id]; 
 				options+=`<option ${currentSelected == id ? 'selected' : '' } value="${id}"  >${name}</option>`
 			}
-			console.log(options)
 			$('select#lc-facility-id').empty().append(options).trigger('change')
 		}
 	})

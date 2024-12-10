@@ -28,7 +28,7 @@
 					
 						-- هنبدا نحسب الفوائد اللي عليه 
 						
-					select  interest_rate into  _interest_rate from letter_of_credit_issuances where id = new.lc_issuance_id ;
+					select  interest_rate into  _interest_rate from letter_of_credit_facilities where id = new.lc_facility_id ;
 			
 					set _interest_rate = ifnull(_interest_rate,0);
 						set _current_interest_rate = _interest_rate ;
@@ -57,16 +57,16 @@
 				drop trigger if exists  refresh_calculation_before_update_lc_overdraft ;
 				drop procedure if exists resettlement_lc_overdraft_from ;
 				delimiter // 
-				create procedure resettlement_lc_overdraft_from(in _type varchar(255),in _start_update_from_date_time date , in _lc_issuance_id integer , in _current_company_id integer , in _source varchar(255) )
+				create procedure resettlement_lc_overdraft_from(in _type varchar(255),in _start_update_from_date_time date , in _lc_issuance_id integer,in _lc_facility_id integer , in _current_company_id integer , in _source varchar(255) )
 				begin 
 					declare _current_debit decimal(14,2) default 0 ;
 					declare _total_settlements decimal(14,2) default 0 ;
 
-					select sum(debit) into _current_debit from lc_overdraft_bank_statements where lc_issuance_id = _lc_issuance_id and is_debit > 0 and source = _source ;
-					select sum(settlement_amount) into _total_settlements from lc_overdraft_withdrawals where lc_issuance_id =  _lc_issuance_id ;
+					select sum(debit) into _current_debit from lc_overdraft_bank_statements where lc_facility_id = _lc_facility_id and is_debit > 0 and source = _source ;
+					select sum(settlement_amount) into _total_settlements from lc_overdraft_withdrawals where lc_facility_id =  _lc_facility_id ;
 					set _current_debit = _current_debit - _total_settlements ;
 					
-							call start_settlement_process_lc_overdraft(_type,0 , _lc_issuance_id , _current_debit  ,0 , _current_company_id , CURRENT_TIMESTAMP,_source);
+					call start_settlement_process_lc_overdraft(_type,0 , _lc_issuance_id,_lc_facility_id , _current_debit  ,0 , _current_company_id , CURRENT_TIMESTAMP,_source);
 					
 					
 				end //
@@ -74,39 +74,17 @@
 				delimiter ;
 				drop procedure if exists reverse_lc_overdraft_settlements ;
 				delimiter // 
-				create procedure reverse_lc_overdraft_settlements(in _start_update_from_date_time date  , in _lc_issuance_id integer )
+				create procedure reverse_lc_overdraft_settlements(in _start_update_from_date_time date  , in _lc_facility_id integer )
 				begin 
 				
 					-- declare i INTEGER DEFAULT 0 ;
 				--	declare _lc_overdraft_withdrawal_id integer default 0 ;
 				-- هنجيب كل السحوبات اللي تاريخها اكبر من تاريخ الاغلاق لان اللي تاريخها اصغر من او يساوي تاريخ الاغلاق مش هنقدر نيجي يمها
-					update lc_overdraft_withdrawals set net_balance = net_balance + settlement_amount , settlement_amount = 0 where due_date > _start_update_from_date_time  and lc_issuance_id = _lc_issuance_id ;
+					update lc_overdraft_withdrawals set net_balance = net_balance + settlement_amount , settlement_amount = 0 where due_date > _start_update_from_date_time  and lc_facility_id = _lc_facility_id ;
 				end //
 				
 				delimiter ; 
-				drop procedure if exists reverse_lc_overdraft_settlements_by_specific_debit ;
-				delimiter // 
-				create procedure reverse_lc_overdraft_settlements_by_specific_debit(in _start_update_from_date_time date  , in _lc_issuance_id integer , in _current_debit decimal(14,2) )
-				begin 
-					-- هنا لو الدبت بالسالب هنجيب السحوبات اللي اتسددت ونشيل منها القيم دي من تحت لفوق
-					declare i INTEGER DEFAULT 0 ;
-					declare _lc_overdraft_withdrawal_id integer default 0 ;
-					declare _current_settlement decimal(14,2) default 0 ; -- دي قيمه ال settlement من السحوبات وهي عباره عن القيمة اللي اتسددت  
-					declare _settlement_amount decimal(14,2) default 0 ; -- دي القيمة اللي هنعكس بيها السداد وهي عباره عن القيمة الاصفر ما بين ال settlement and _current_debit
-					set _current_debit = abs(_current_debit);
-				-- هنجيب كل السحوبات اللي تاريخها اكبر من تاريخ الاغلاق لان اللي تاريخها اصغر من او يساوي تاريخ الاغلاق مش هنقدر نيجي يمها
-					
-					
-					repeat 
-						select id , settlement_amount into _lc_overdraft_withdrawal_id , _current_settlement from lc_overdraft_withdrawals where 
-					-- due_date > _start_update_from_date_time and
-					lc_issuance_id = _lc_issuance_id  and settlement_amount > 0 order by due_date desc , id desc limit 1 ;
-					set _settlement_amount = IIF(_current_settlement >_current_debit, _current_debit, _current_settlement) ;
-					update lc_overdraft_withdrawals set net_balance = net_balance + _settlement_amount , settlement_amount = settlement_amount - _settlement_amount where id =  _lc_overdraft_withdrawal_id ;
-					set _current_debit = _current_debit - _settlement_amount  ; 
-					until _current_debit <= 0 end repeat ;
-					-- update lc_overdraft_withdrawals set net_balance = net_balance + settlement_amount , settlement_amount = 0 where due_date > _start_update_from_date_time  and lc_issuance_id = _lc_issuance_id ;
-				end //
+				
 
 				create trigger refresh_calculation_before_update_lc_overdraft before update on `lc_overdraft_bank_statements` for each row 
 				begin 
@@ -136,16 +114,6 @@
 							declare highest_debit_balance_text varchar(100) default 'highest_debit_balance';
 
 
-					-- if(new.type = 'payable_cheque') then
-					-- 	select to_be_setteled_max_within_days into _lc_overdraft_to_be_settled_after from letter_of_credit_issuances where id = new.lc_issuance_id ;
-					-- 	update lc_overdraft_withdrawals set due_date =  ADDDATE(new.date,_lc_overdraft_to_be_settled_after) where lc_overdraft_bank_statement_id = new.id ;
-						
-					-- elseif (new.type = 'outgoing-transfer') then
-					-- select to_be_setteled_max_within_days into _lc_overdraft_to_be_settled_after from letter_of_credit_issuances where id = new.lc_issuance_id ;
-					-- 	update lc_overdraft_withdrawals set due_date =  ADDDATE(new.date,_lc_overdraft_to_be_settled_after) where lc_overdraft_bank_statement_id = new.id ;
-						
-						
-					-- end if;
 						select date,end_balance,id into _previous_date, _last_end_balance,_last_id  from lc_overdraft_bank_statements where  lc_facility_id = new.lc_facility_id and source = new.source and full_date < new.full_date order by full_date desc , id desc  limit 1 ; -- رتبت بالاي دي الاكبر علشان  لو كانوا متساوين في التاريخ بالظبط (ودا احتمال ضعيف ) ياخد اللي ال اي دي بتاعه اكبر
 						set _count_all_rows =1 ;
 					set new.beginning_balance = if(_count_all_rows,_last_end_balance,ifnull(new.beginning_balance,0)) ;
@@ -161,7 +129,7 @@
 					
 						-- هنبدا نحسب الفوائد اللي عليه 
 						
-					select  interest_rate into  _interest_rate from letter_of_credit_issuances where id = new.lc_issuance_id ;
+					select  interest_rate into  _interest_rate from letter_of_credit_facilities where id = new.lc_facility_id ;
 					set _interest_rate = ifnull(_interest_rate,0);
 					
 						set _current_interest_rate = _interest_rate ;
@@ -192,33 +160,20 @@
 					
 					-- هنجيب اخر اي دي للحساب دا لان من عندة هنبدا نسدد من اول وجديد 
 					-- هنجيب اللي الدبت اكبر من الصفر علشان احنا هنسدد وبالتالي عايزين القيم اللي فيها دبنت
-					-- select date into _last_bank_statement_date from lc_overdraft_bank_statements where lc_issuance_id = new.lc_issuance_id and debit > 0 order by date desc , created_at desc limit 1 ;
-					-- select full_date into _last_bank_statement_date from lc_overdraft_bank_statements where lc_issuance_id = new.lc_issuance_id and debit > 0 order by full_date desc limit 1 ;
 						-- لو العنصر دا اللي بنحدث حاليا هو اخر عنصر هنبدا ال السايكل بتاعت اعادة توزيع التسديدات لكل العناصر من اول عنصر اتغير 
-							-- select full_date  into _last_bank_statement_date_to_start_settlement_from from lc_overdraft_bank_statements where lc_issuance_id = new.lc_issuance_id order by full_date desc , priority asc limit 1 ;
-							select full_date into _last_bank_statement_date_to_start_settlement_from from lc_overdraft_bank_statements where lc_issuance_id = new.lc_issuance_id order by full_date desc , priority asc , id asc limit 1 ; 
-							select oldest_full_date into _start_update_from_date_time from letter_of_credit_issuances where id = new.lc_issuance_id  ; 
-			--				select start_settlement_from_bank_statement_date into _last_bank_statement_date_to_start_settlement_from from letter_of_credit_issuances where id = new.lc_issuance_id ; 
+							select full_date into _last_bank_statement_date_to_start_settlement_from from lc_overdraft_bank_statements where lc_facility_id = new.lc_facility_id order by full_date desc , priority asc , id asc limit 1 ; 
+							select oldest_full_date into _start_update_from_date_time from letter_of_credit_facilities where id = new.lc_facility_id  ; 
 							-- عايزين بدل السطر اللي فوق نجيب ال closing date 
 						
 					if(_last_bank_statement_date_to_start_settlement_from = new.full_date) then 		
 					
-						select sum(debit) into _current_debit from lc_overdraft_bank_statements where lc_issuance_id = new.lc_issuance_id and is_debit > 0  and source = new.source   ;
-						select sum(settlement_amount) into _total_settlements from lc_overdraft_withdrawals where lc_issuance_id =  new.lc_issuance_id ;
+						select sum(debit) into _current_debit from lc_overdraft_bank_statements where lc_facility_id = new.lc_facility_id and is_debit > 0  and source = new.source   ;
+						select sum(settlement_amount) into _total_settlements from lc_overdraft_withdrawals where lc_facility_id =  new.lc_facility_id ;
 						set _current_debit = _current_debit - _total_settlements ;
 						
 					
-					-- if(new.full_date > _start_update_from_date_time ) then 		 -- دي في حالة لو انت اشتغلت علي موضوع ال closing date 
-						--	delete from lc_overdraft_settlements where lc_overdraft_bank_statement_id = _last_id;
-						-- علشان نعيد الحسابات من اصفر تاريخ في حساب الاوفر دارفت دا
-				--		if(_origin_update_row_is_debit > 0 ) then 
-							call reverse_lc_overdraft_settlements(_start_update_from_date_time,new.lc_issuance_id);	
-							call resettlement_lc_overdraft_from(new.type,_start_update_from_date_time,new.lc_issuance_id,new.company_id,new.source);
-				--			elseif  _origin_update_row_is_debit > 0 and _current_debit < 0  then 
-				--			call reverse_lc_overdraft_settlements_by_specific_debit(_start_update_from_date_time,new.lc_issuance_id,_current_debit);	
-				--		else 
-				--			call resettlement_lc_overdraft_from(_start_update_from_date_time,new.lc_issuance_id,new.company_id);
-				--		end if;
+							call reverse_lc_overdraft_settlements(_start_update_from_date_time,new.lc_facility_id);	
+							call resettlement_lc_overdraft_from(new.type,_start_update_from_date_time,new.lc_issuance_id,new.lc_facility_id,new.company_id,new.source);
 					end if;
 					
 					
@@ -233,7 +188,7 @@
 					if new.id and (new.type = interest_type_text or new.type = highest_debit_balance_text ) then 
 								select  sum(interest_amount) , max(end_balance) into _current_interest_amount,_largest_end_balance from  lc_overdraft_bank_statements where `type` != interest_type_text and `type` != highest_debit_balance_text and lc_facility_id = new.lc_facility_id and source = new.source and EXTRACT(MONTH from date) = EXTRACT(MONTH from new.date ) and  EXTRACT(YEAR from date) = EXTRACT(YEAR from new.date) ;
 								set _current_interest_amount = ifnull(_current_interest_amount,0);
-								select highest_debt_balance_rate into _highest_debt_balance_rate from letter_of_credit_issuances where id = new.lc_issuance_id  ;
+								select highest_debt_balance_rate into _highest_debt_balance_rate from letter_of_credit_facilities where id = new.lc_facility_id  ;
 								if new.type = interest_type_text then 
 								-- للفايدة الخاصة باخر الشهر
 									set new.credit = _current_interest_amount ;
@@ -253,8 +208,7 @@
 				drop procedure if exists start_settlement_process_lc_overdraft;
 				delimiter //
 				-- هنا هنبدا نضيف سحبة جديدة لو البنك استيت منت كان كريدت اما لو كان دبت (يعني) الدبت اكبر من الصفر وقتها هنبدا نسدد 
-				create procedure start_settlement_process_lc_overdraft(in _type varchar(255) ,in _bank_statement_id integer , in _lc_issuance_id integer , in _debit decimal , in _credit decimal , in _company_id integer , in _date_for_settlement date , in _source varchar(255))
-				-- new.id , new.lc_issuance_id , new.debit  , new.credit , new.company_id , new.date
+				create procedure start_settlement_process_lc_overdraft(in _type varchar(255) ,in _bank_statement_id integer ,in _lc_issuance_id integer, in _lc_facility_id integer , in _debit decimal , in _credit decimal , in _company_id integer , in _date_for_settlement date , in _source varchar(255))
 				begin 
 					declare _lc_overdraft_to_be_settled_after integer default 0 ;
 					declare _due_date date default null ;
@@ -273,11 +227,11 @@
 
 					-- 
 					if  _lc_overdraft_to_be_settled_after > 0 and _credit > 0 and _type != 'interest' and _type != 'highest_debit_balance' and _type != 'fees'  then  -- في الحاله دي هنسجل سحبه جديدة
-						insert into lc_overdraft_withdrawals (lc_overdraft_bank_statement_id,lc_issuance_id , company_id  , max_settlement_days , due_date , settlement_amount , net_balance,created_at) values(_bank_statement_id,_lc_issuance_id,_company_id,_lc_overdraft_to_be_settled_after,_due_date,0,_credit,CURRENT_TIMESTAMP);
+						insert into lc_overdraft_withdrawals (lc_overdraft_bank_statement_id,lc_facility_id , company_id  , max_settlement_days , due_date , settlement_amount , net_balance,created_at) values(_bank_statement_id,_lc_facility_id,_company_id,_lc_overdraft_to_be_settled_after,_due_date,0,_credit,CURRENT_TIMESTAMP);
 					end if ; 
 					if _lc_overdraft_to_be_settled_after > 0 then  -- في الحاله دي هنضيف القيم في جداول lc_overdraft_settlements + lc_overdraft_withdrawals
 					
-						select count(*) into _total_number_or_rows_to_be_settled from lc_overdraft_withdrawals where lc_issuance_id = _lc_issuance_id and net_balance > 0;
+						select count(*) into _total_number_or_rows_to_be_settled from lc_overdraft_withdrawals where lc_facility_id = _lc_facility_id and net_balance > 0;
 						set _total_number_or_rows_to_be_settled = ifnull(_total_number_or_rows_to_be_settled , 0);
 						
 					
@@ -291,7 +245,7 @@
 							where lc_overdraft_bank_statements.company_id =_company_id  
 							and source = _source
 							and lc_overdraft_bank_statements.credit > 0  -- علشان نجيب التسديدات فقط
-							and lc_overdraft_bank_statements.lc_issuance_id = _lc_issuance_id  -- لحساب الاوفر درافت دا
+							and lc_overdraft_bank_statements.lc_facility_id = lc_facility_id  -- لحساب الاوفر درافت دا
 							and lc_overdraft_withdrawals.net_balance > 0 -- اي متبقي عليها فلوس 
 							order by  lc_overdraft_withdrawals.due_date asc , lc_overdraft_bank_statements.priority asc , lc_overdraft_bank_statements.id asc  limit 1  ; --  بنرتب علي حس الاولويه علشان الفؤايد ليها الالويه ولو تساو في الاولويه هناخد الاقدم يعني اللي الاي دي بتاعه اصغر 
 						
@@ -303,14 +257,7 @@
 							end if ;
 							set _first_item_to_be_settled_amount = ifnull(_first_item_to_be_settled_amount , 0);
 							set _first_item_to_be_settled_net_balance = ifnull(_first_item_to_be_settled_net_balance , 0);
-							-- لو فيه عنصر قديم في التسديدات قيمة ال
-							-- settlement_amount 
-							-- بتاعته بصفر لهذا العنصر وقتها حدثه .. ودا بيحصل لما بنعمل 
-							-- resettlement ب
-							-- اي بعد التحديث .. ولو مش موجود يبقي احنا في حاله الانشاء يبقي ضيف عنصر جديد
 						
-							-- insert into lc_overdraft_settlements (lc_overdraft_bank_statement_id,lc_overdraft_withdrawal_id,lc_issuance_id , company_id   , settlement_amount,created_at) values(0,_lc_overdraft_withdrawal_id,_lc_issuance_id,_company_id,_current_settlement_amount,CURRENT_TIMESTAMP);
-					
 							
 
 								
@@ -320,7 +267,7 @@
 							
 							set current_available_debit = current_available_debit - _current_settlement_amount ;
 							
-							select count(*) into _total_number_or_rows_to_be_settled from lc_overdraft_withdrawals where lc_issuance_id = _lc_issuance_id and net_balance > 0;
+							select count(*) into _total_number_or_rows_to_be_settled from lc_overdraft_withdrawals where lc_facility_id = _lc_facility_id and net_balance > 0;
 							set _total_number_or_rows_to_be_settled = ifnull(_total_number_or_rows_to_be_settled , 0);
 						end while ;
 					
@@ -349,7 +296,7 @@
 					
 					-- end if  ;
 					if new.is_credit > 0 then
-						call start_settlement_process_lc_overdraft(new.type,new.id , new.lc_issuance_id , new.debit  , new.credit , new.company_id ,_date_for_settlement,new.source);
+						call start_settlement_process_lc_overdraft(new.type,new.id , new.lc_issuance_id,new.lc_facility_id , new.debit  , new.credit , new.company_id ,_date_for_settlement,new.source);
 					end if;
 				end //
 
@@ -361,7 +308,7 @@
 				begin 
 					declare current_id integer default 0 ;
 					declare _lc_overdraft_bank_statement_id integer default 0 ;
-					declare _lc_issuance_id integer default 0 ;
+					declare _lc_facility_id integer default 0 ;
 					declare _company_id integer default 0 ;
 					declare _limit decimal(14,2) default 0;
 					declare _largest_end_balance decimal(14,2) default 0;
@@ -371,20 +318,20 @@
 					declare _highest_debt_balance_rate decimal(5,2) default 0 ;
 					declare i INTEGER DEFAULT 0 ;
 					set _highest_debt_balance_rate = ifnull(_highest_debt_balance_rate,0);
-					select count(distinct(lc_issuance_id)) into @n from  lc_overdraft_bank_statements where `type` != interest_type_text and `type` != highest_debit_balance_text  and EXTRACT(MONTH from date) = EXTRACT(MONTH from current_date()) and  EXTRACT(YEAR from date) = EXTRACT(YEAR from current_date()) group by lc_issuance_id;
+					select count(distinct(lc_facility_id)) into @n from  lc_overdraft_bank_statements where `type` != interest_type_text and `type` != highest_debit_balance_text  and EXTRACT(MONTH from date) = EXTRACT(MONTH from current_date()) and  EXTRACT(YEAR from date) = EXTRACT(YEAR from current_date()) group by lc_facility_id;
 					set @n = ifnull(@n,0);
 					if @n > 0 then 
 					
 					repeat 
 								-- حساب الفايدة نهاية كل شهر
-								select lc_issuance_id , sum(interest_amount) , max(end_balance) into _lc_issuance_id,_current_interest_amount,_largest_end_balance from  lc_overdraft_bank_statements where `type` != interest_type_text  and `type` != highest_debit_balance_text and EXTRACT(MONTH from date) = EXTRACT(MONTH from current_date()) and  EXTRACT(YEAR from date) = EXTRACT(YEAR from current_date()) group by lc_issuance_id limit i , 1;
+								select lc_facility_id , sum(interest_amount) , max(end_balance) into _lc_facility_id,_current_interest_amount,_largest_end_balance from  lc_overdraft_bank_statements where `type` != interest_type_text  and `type` != highest_debit_balance_text and EXTRACT(MONTH from date) = EXTRACT(MONTH from current_date()) and  EXTRACT(YEAR from date) = EXTRACT(YEAR from current_date()) group by lc_facility_id limit i , 1;
 								set _current_interest_amount = ifnull(_current_interest_amount , 0);
 								set _largest_end_balance = ifnull(_largest_end_balance,0);
-								select company_id,`limit`,highest_debt_balance_rate into _company_id,_limit,_highest_debt_balance_rate from letter_of_credit_issuances where id = _lc_issuance_id  ;
-								insert into lc_overdraft_bank_statements (type ,priority,lc_issuance_id,money_received_id,company_id,date,`limit`,credit,interest_type,full_date) values(interest_type_text,1,_lc_issuance_id,0,_company_id,current_date(),_limit,_current_interest_amount,'end_of_month',NOW());
+								select company_id,`limit`,highest_debt_balance_rate into _company_id,_limit,_highest_debt_balance_rate from letter_of_credit_facilities where id = _lc_facility_id  ;
+								insert into lc_overdraft_bank_statements (type ,priority,lc_facility_id,money_received_id,company_id,date,`limit`,credit,interest_type,full_date) values(interest_type_text,1,_lc_facility_id,0,_company_id,current_date(),_limit,_current_interest_amount,'end_of_month',NOW());
 								-- حساب ال highest debit balance
 								set _current_interest_amount = _highest_debt_balance_rate / 100 * _largest_end_balance ; 
-								insert into lc_overdraft_bank_statements (type,priority ,lc_issuance_id,money_received_id,company_id,date,`limit`,credit,interest_type,full_date) values(highest_debit_balance_text,1,_lc_issuance_id,0,_company_id,current_date(),_limit,_current_interest_amount,'end_of_month',NOW());
+								insert into lc_overdraft_bank_statements (type,priority ,lc_facility_id,money_received_id,company_id,date,`limit`,credit,interest_type,full_date) values(highest_debit_balance_text,1,_lc_facility_id,0,_company_id,current_date(),_limit,_current_interest_amount,'end_of_month',NOW());
 							set i = i +1 ; 
 							UNTIL i >= @n  end repeat ;
 					end if ;
