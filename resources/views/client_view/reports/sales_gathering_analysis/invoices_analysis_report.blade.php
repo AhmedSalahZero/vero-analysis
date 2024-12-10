@@ -106,17 +106,20 @@
                         @php
                         $colsSpans = arrayCountAllLongest($sumForEachInterval) + 1 ;
                         @endphp
+						{{-- {{ dd() }}
                         @foreach (getLongestArray($sumForEachInterval) as $year => $d )
-                        @foreach ($d as $month=>$value )
+                        @foreach ($d as $month=>$value ) --}}
+						@foreach(getLongestArray($reportSalesValues) as $date => $value)
                         <th>
-                            {{ $endOfMonth=\Carbon\Carbon::parse($year.'-'.$month)->endOfMonth()->format('d-M-Y') }}
-
+						{{ \Carbon\Carbon::make($date)->format('d-M-Y') }}
+						{{-- 22 --}}
+                            {{-- {{ $endOfMonth=\Carbon\Carbon::parse($year.'-'.$month)->endOfMonth()->format('d-M-Y') }} --}}
                         </th>
-                        @endforeach
+						@endforeach 
+                        {{-- @endforeach
 
-                        @endforeach
-                        {{-- <th>{{ date('d-M-Y', strtotime($date)) }}</th> --}}
-                        {{-- <th>{{ __('Total') }}</th> --}}
+                        @endforeach --}}
+                       
                     </tr>
                     @endslot
                     @slot('table_body')
@@ -214,7 +217,7 @@
                         <td class="text-center">
                             <span class="white-text"><b>
                                     @php
-                                 
+                               
                                     $invoiceNumber = ($sumForEachInterval[$zone_name][$year][$interval]['invoice_number']) ?? 0 ;
                                     $salesValue = array_values($reportSalesValues[$zone_name])[$index] ?? 0 ;
 									

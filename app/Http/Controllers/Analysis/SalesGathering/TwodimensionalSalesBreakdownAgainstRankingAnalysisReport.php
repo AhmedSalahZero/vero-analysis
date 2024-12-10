@@ -49,7 +49,7 @@ class TwodimensionalSalesBreakdownAgainstRankingAnalysisReport
         $report_data =collect(DB::select(DB::raw("
             SELECT DATE_FORMAT(date,'%d-%m-%Y') as date, net_sales_value ,sales_value,".$type.",".$main_type ."
             FROM sales_gathering
-            WHERE ( company_id = '".$company->id."' AND ".$type." IS NOT NULL AND ".$main_type." IS NOT NULL  AND date between '".$request->start_date."' and '".$request->end_date. " and net_sales_value != 0')
+            WHERE ( company_id = '".$company->id."' AND ".$type." IS NOT NULL AND ".$main_type." IS NOT NULL  AND date between '".$request->start_date."' and '".$request->end_date. " ')
             ORDER BY id "
             )))->groupBy($type)->map(function($item) use($main_type){
                 return $item->groupBy($main_type)->map(function($sub_item){
@@ -58,12 +58,14 @@ class TwodimensionalSalesBreakdownAgainstRankingAnalysisReport
             })->toArray();
 
             $data = [];
-           
             foreach($report_data as $productName => $branchValues){
                foreach($branchValues as $branchName => $total){
-                   $data[$branchName][getOrderMaxForBranch($branchName , $branchValues)][$productName] = [
-                       'total'=>$total ,
-                   ] ;    
+				if($total != 0){
+					$data[$branchName][getOrderMaxForBranch($branchName , $branchValues)][$productName] = [
+						'total'=>$total ,
+					] ;    
+					
+				}
                }
             }
           

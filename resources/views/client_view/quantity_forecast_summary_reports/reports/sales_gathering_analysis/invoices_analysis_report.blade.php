@@ -225,10 +225,8 @@
                                     $salesValue = array_values($reportSalesValues[$zone_name])[$index] ?? 0 ;
                                     $avg_invoice_value = $invoiceNumber ? number_format($salesValue / $invoiceNumber) : 0;
                                     @endphp
-                                    {{-- // ; --}}
-                                    {{
-                                                          $avg_invoice_value
-                                                        }}
+                               
+                                    {{$avg_invoice_value}}
                                 </b></span>
                         </td>
                         @endforeach
