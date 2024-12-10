@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\HArr;
 use App\Imports\ImportData;
 use App\Jobs\Caches\HandleBreakdownDashboardCashingJob;
 use App\Jobs\Caches\HandleCustomerDashboardCashingJob;
@@ -193,6 +194,9 @@ class SalesGatheringTestController extends Controller
 	public function lastUploadFailed($companyId,$modelName){
 		$rows = Cache::get(generateCacheKeyForValidationRow($companyId,$modelName),[]);
 		$headers = exportableFields($companyId,$modelName)->fields ;
+		if($modelName != 'SalesGathering'){
+			$headers = HArr::removeKeyFromArrayByValue($headers,['net_sales_value']);
+		}
 		$headers = convertIdsToNames($headers);
 		return view('client_view.sales_gathering.failed',[
 			'rows'=>$rows,

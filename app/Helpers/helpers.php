@@ -5511,6 +5511,22 @@ function getFieldTypeAndClassFromTitle(string $title):array
         'default_value'=>''
     ];
 }
+function getNonEmptyFields():array
+{
+    return [
+		'Supplier Name' , __('Supplier Name'),
+		'Invoice Date' , __('Invoice Date'),
+		'Invoice Number',__('Invoice Number'),
+		'Currency',__('Currency'),
+		'Exchange Rate',__('Exchange Rate'),
+		'Invoice Amount',__('Invoice Amount'),
+		'Total Invoice Amount',__('Total Invoice Amount'),
+		'Net Invoice Amount',__('Net Invoice Amount'),
+		'Contracted Payment Days',__('Contracted Payment Days'),
+		'Contracted Collection Days',__('Contracted Collection Days'),
+		'Invoice Due Date',__('Invoice Due Date')
+	];
+}
 function getNumericExportFields():array
 {
     return ['Quantity' , __('Quantity') , 'Quantity Discount' , __('Quantity Discount') , 'Cash Discount' , __('Cash Discount') , 'Special Discount' , __('Special Discount') , __('Other Discounts') , 'Net Sales Value' , __('Net Sales Value'),'Price Per Unit' , __('Price Per Unit') , __('Sales Value') , __('Sales Value'),'Collected Amount',__('Collection Amount'),'Collected Amount',__('Collected Amount'),'Expected Collection Days',__('Expected Collection Days'),'Contracted Collection Days',__('Contracted Collection Days'),'Net Invoice Amount',__('Net Invoice Amount'),'Withhold Amount',__('Withhold Amount'),'Net Balance',__('Net Balance') , 'Vat Amount',__('Vat Amount'),'Withhold Amount',__('Withhold Amount'),'VAT Amount'];

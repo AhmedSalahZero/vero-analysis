@@ -80,7 +80,6 @@
                                                 @slot('table_body')
 
 
-
                                                     @foreach ($rows as $rowNumber => $items)
 													@php
 													@endphp

@@ -48,7 +48,7 @@
 
     text-align: center;
     color: red;">
-							 <?php echo e(__('Review and Correct mentioned errors and please reupload your excel')); ?>
+							 <?php echo e(__('Review and Correct mentioned errors in your excel and please upload your excel again')); ?>
 
 							 
 							</span>
@@ -81,7 +81,6 @@
                                                     </tr>
                                                 <?php $__env->endSlot(); ?>
                                                 <?php $__env->slot('table_body'); ?>
-
 
 
                                                     <?php $__currentLoopData = $rows; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $rowNumber => $items): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>

@@ -220,9 +220,18 @@ class ImportData implements
 			}	
 		}
 		if(in_array($key , array_merge(getNumericExportFields() , getNumericWithNegativeAllowedExportFields()) )){
+			
 			if (!is_numeric($value) && !is_null($value) && $value != '') {
 				$allValidations[$key] =  [
 					'message'=>__('Invalid Numeric Value'),
+					'value'=>$value
+				];
+			}
+		}
+		if(in_array($key , getNonEmptyFields())){
+			if ( is_null($value) || $value == '') {
+				$allValidations[$key] =  [
+					'message'=>__('Empty Value Not Allowed'),
 					'value'=>$value
 				];
 			}

@@ -652,8 +652,6 @@
 			let limit = amount * lendingPercentage / 100 ;
 			$('#limit-id').val(limit)
 			$('#limit-formatted-id').val(number_format(limit))
-			
-			
 		})
 		$('.recalculate-limit-js:eq(0)').trigger('change')
 		</script>

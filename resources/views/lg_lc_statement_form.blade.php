@@ -63,7 +63,7 @@
                             <div class="kt-input-icon">
                                 <div class="input-group date">
 
-                                    <select required js-when-change-trigger-change-account-type data-financial-institution-id name="financial_institution_id" class="form-control ">
+                                    <select required js-when-change-trigger-change-account-type data-financial-institution-id name="financial_institution_id" js-get-lc-facility-based-on-financial-institution id="financial-instutition-id" class="form-control ">
                                         @foreach($financialInstitutionBanks as $index=>$financialInstitutionBank)
                                         <option value="{{ $financialInstitutionBank->id }}" {{ isset($model) && $model->getCashInBankReceivingBankId() == $financialInstitutionBank->id ? 'selected' : '' }}>{{ $financialInstitutionBank->getName() }}</option>
                                         @endforeach
@@ -119,6 +119,20 @@
                             </div>
                         </div>
 						
+						
+						 <div class="col-md-3" id="lc-facility-div-id" style="display:none">
+                                        <label>{{__('LC Facility')}}
+                                            @include('star')
+                                        </label>
+                                        <div class="kt-input-icon">
+                                            <div class="input-group date">
+                                                <select required js-update-outstanding-balance-and-limits data-current-selected="{{ isset($model) ? $model->getLcFacilityId() : 0 }}" id="lc-facility-id" name="lc_facility_id" class="form-control">
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+									
+						
 
 
 
@@ -173,6 +187,12 @@
 <script>
 	$(document).on('change','select.update-lc-or-lg-type',function(){
 		const lcOrLg = $(this).val();
+		if(lcOrLg == 'LCOverdraft'){
+			$('#lc-facility-div-id').show()
+		}else{
+			$('#lc-facility-div-id').hide()
+			
+		}
 		if(lcOrLg){
 			$.ajax({
 				url:"{{ route('get.lc.or.lg.types',['company'=>$company->id]) }}",
@@ -217,5 +237,31 @@
 			})
 		}
 	})
+	
+$(document).on('change','select[js-get-lc-facility-based-on-financial-institution]',function(){
+	const financialInstitutionId = $('#financial-instutition-id').val();
+	const currentSelected = $('select#lc-facility-id').attr('data-current-selected');
+
+	$.ajax({
+		url:"{{ route('get.lc.facility.based.on.financial.institution',['company'=>$company->id]) }}",
+		data:{
+			financialInstitutionId
+		},
+		success:function(res){
+			const lcFacilities = res.letterOfCreditFacilities ;
+			let options='<option value="">{{ __("Select") }}</option>';
+		
+			for(id in lcFacilities){
+				var name =lcFacilities[id]; 
+				options+=`<option ${currentSelected == id ? 'selected' : '' } value="${id}"  >${name}</option>`
+			}
+			console.log(options)
+			$('select#lc-facility-id').empty().append(options).trigger('change')
+		}
+	})
+})
+
+$('select[js-get-lc-facility-based-on-financial-institution]').trigger('change')
+
 </script>
 @endsection
