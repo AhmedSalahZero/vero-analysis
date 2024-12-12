@@ -82,6 +82,7 @@ class SalesBreakdownAgainstAnalysisReport
 		return view('client_view.reports.sales_gathering_analysis.breakdown.sales_form', compact('company', 'view_name', 'type'));
 	}
 	public function filterDataByDate($items , $startDate){
+		
 		$startDateAsCarbon = Carbon::make($startDate)->setTime(0,0)->format('Y-m-d');
 		$newItems = collect([]);
 		foreach($items as $item){
@@ -91,6 +92,8 @@ class SalesBreakdownAgainstAnalysisReport
 				$newItems->add($item);				
 			}
 		}
+	
+
 		return $newItems ;
 	}
 	public function formatDataForSimpleLinearRegression($items,$type,$dateIntervals){
@@ -144,6 +147,7 @@ class SalesBreakdownAgainstAnalysisReport
         //         WHERE ( company_id = '" . $company->id . "'AND " . $type . " IS NOT NULL  AND date between '" . $breakdownStartDate . "' and '" . $breakdownEndDate . "')
         //         ORDER BY id "
 		// )));
+
 		$report_data = isset($calculated_report_data) ? $calculated_report_data :  collect(DB::select(DB::raw(
 			"
                 SELECT DATE_FORMAT(LAST_DAY(date),'%d-%m-%Y') as gr_date  , net_sales_value,service_provider_name," . $type . "
@@ -153,6 +157,8 @@ class SalesBreakdownAgainstAnalysisReport
                 ORDER BY id "
 		)));
 		$isAI = $result == 'array_with_ai';
+		
+		$timeStart = microtime(true);
 		$simpleLinearRegressionData = 0; // or [] not sure 
 		if($isAI){
 				$simpleLinearRegressionDataItemForCurrentType = isset($calculated_report_data) ? [] : $report_data;
@@ -161,9 +167,11 @@ class SalesBreakdownAgainstAnalysisReport
 				$simpleLinearRegressionData = SimpleLinearRegression::predict($simpleLinearRegressionDataItemForCurrentType,$predictionDates,$breakdownEndDate,$type);
 			
 		}
-		$report_data = isset($calculated_report_data) ? $calculated_report_data : $this->filterDataByDate($report_data,$breakdownStartDate,$breakdownEndDate);
+		$report_data = isset($calculated_report_data) && $isAI ? $calculated_report_data : $this->filterDataByDate($report_data,$breakdownStartDate,$breakdownEndDate);
 		
-
+		$diff = microtime(true) - $timeStart;
+		$sec = intval($diff);
+		dd($sec);
 	
 		if ($type == 'service_provider_birth_year' || $type == 'service_provider_type') {
 			$data = $report_data->groupBy($type)->map(function ($item, $year) {
