@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Http\Controllers\Analysis\SalesGathering\salesReport;
 use App\Models\CleanOverdraftBankStatement;
 use App\Models\Company;
 use App\Models\LetterOfCreditIssuance;
@@ -9,6 +10,7 @@ use App\Models\PurchaseOrder;
 use App\Services\Api\OddoService;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Schema;
 
@@ -45,17 +47,17 @@ class TestCommand extends Command
 	 */
 	public function handle()
 	{
-		dd($this->getTableNamesThatHasColumn('lc_facility_id'));
-		// $lcAmount = 4100.0; 
-		// $currency = 'USD';
-		// $letterOfCreditIssuance = LetterOfCreditIssuance::find(23);
-		// $lcAmount = $letterOfCreditIssuance->getLcAmount();
-		// $invoices = \App\Models\SupplierInvoice::onlyCompany(92)->onlyForPartner(262)
-		// 								->where('net_balance','>=',$lcAmount)
-		// 								->onlyCurrency($currency)
-		// 								->get();
-		// 								dd($invoices);
-		// dd('5000.0' < 10000000);
+		$request = new Request;
+		$company = Company::find(105);
+		$request->merge([
+			'start_date'=>'2022-11-01',
+			'end_date'=>'2024-11-30',
+			'report_type'=>'comparing',
+			'company_id'=>$company->id
+		]); 
+		$salesReport = new salesReport;
+	
+		$predict = $salesReport->predictSales($request,$company,'branch','array');
 	}
 	public function refreshStatement($statementModelName,$dateColumnName = 'full_date'){
 		$fullModelName ='App\Models\\'.$statementModelName;

@@ -7,6 +7,7 @@ use App\Helpers\HDate;
 use App\Http\Controllers\ExportTable;
 use App\Models\Company;
 use App\Models\SalesGathering;
+use App\Models\SalesOrder;
 use App\Services\AI\SimpleLinearRegression;
 use App\Traits\GeneralFunctions;
 use Carbon\Carbon;
@@ -152,28 +153,32 @@ class SalesBreakdownAgainstAnalysisReport
 			"
                 SELECT DATE_FORMAT(LAST_DAY(date),'%d-%m-%Y') as gr_date  , net_sales_value,service_provider_name," . $type . "
                 FROM sales_gathering
-              force index (sales_channel_index)
+             	 force index (sales_channel_index)
                 WHERE ( company_id = '" . $company->id . "'AND " . $type . " IS NOT NULL  AND date between '" . $simpleLinearRegressionStartDate . "' and '" . $breakdownEndDate . "')
                 ORDER BY id "
 		)));
+		
 		$isAI = $result == 'array_with_ai';
 		
-		$timeStart = microtime(true);
-		$simpleLinearRegressionData = 0; // or [] not sure 
+		$simpleLinearRegressionData = []; 
 		if($isAI){
 				$simpleLinearRegressionDataItemForCurrentType = isset($calculated_report_data) ? [] : $report_data;
 				$endOfMonthsIntervalDates = HDate::generateEndOfMonthsDatesBetweenTwoDates(Carbon::make($simpleLinearRegressionStartDate),Carbon::make($breakdownEndDate));
-				$simpleLinearRegressionDataItemForCurrentType=  $this->formatDataForSimpleLinearRegression($simpleLinearRegressionDataItemForCurrentType,$type,$endOfMonthsIntervalDates);
-				$simpleLinearRegressionData = SimpleLinearRegression::predict($simpleLinearRegressionDataItemForCurrentType,$predictionDates,$breakdownEndDate,$type);
-			
+				// $simpleLinearRegressionDataItemForCurrentType=  $this->formatDataForSimpleLinearRegression($simpleLinearRegressionDataItemForCurrentType,$type,$endOfMonthsIntervalDates);
+				$simpleLinearRegressionData = (new salesReport())->predictSales($request,$company,$type,$breakdownEndDate);
+				foreach($simpleLinearRegressionData as $name => $item){
+					$simpleLinearRegressionData[$name][$predictionDates[0]] = $item['next0ForecastForType'];
+					$simpleLinearRegressionData[$name][$predictionDates[1]] = $item['next1ForecastForType'];
+					$simpleLinearRegressionData[$name][$predictionDates[2]] = $item['next2ForecastForType'];
+					$simpleLinearRegressionData[$name][$predictionDates[3]] = $item['next3ForecastForType'];
+				}
+			 
 		}
 		$report_data = isset($calculated_report_data) ? $calculated_report_data : $report_data;
 		if($isAI){
 	    	$report_data =     $this->filterDataByDate($report_data,$breakdownStartDate,$breakdownEndDate);
 		}
 		
-			//dd(isset($calculated_report_data) && $isAI);
-		$diff = microtime(true) - $timeStart;
 	
 
 	

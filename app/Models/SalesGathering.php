@@ -28,9 +28,9 @@ class SalesGathering extends Model
      * @var string
      */
     protected $table = 'sales_gathering';
-    public function scopeCompany($query)
+    public function scopeCompany($query,$request = null )
     {
-        return $query->where('company_id', request()->company->id?? Request('company_id') );
+        return $query->where('company_id', request()->company->id?? Request('company_id',$request? $request->get('company_id'):null) );
     }
 	public static function getTrendAnalysisTabs(int $companyId)
 	{

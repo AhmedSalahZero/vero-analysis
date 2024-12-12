@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Analysis\SalesGathering;
 
+use App\Helpers\HArr;
 use App\Models\Company;
 use App\Models\Log;
 use App\Models\SalesGathering;
@@ -18,9 +19,123 @@ class salesReport
 		
         return view('client_view.reports.sales_gathering_analysis.sales_report.sales_form', compact('company'));
     }
+	protected function getLastAndGrowthRate(array $totalsPerDates,string $startDate,string $endDate  , $grForCompany = null ):array 
+	{
+		// Get the last 12 keys
+		$last12Items = HArr::sliceWithDates($totalsPerDates , $endDate);
+		$slicedItems = $totalsPerDates ;
+		foreach($last12Items as $key => $value){
+			unset($slicedItems[$key]);
+		}
+		$previousOfPrevious12Items = HArr::sliceWithDates($slicedItems , $endDate,23) ;
+		$last12ItemsCounter = count($last12Items);
+		$previousOfPrevious12ItemsCounter = count($previousOfPrevious12Items);
+		$last12ItemsAvg = $last12ItemsCounter ? array_sum($last12Items) / $last12ItemsCounter : 0;
+		$previousOfPrevious12ItemsAvg =$previousOfPrevious12ItemsCounter ? array_sum($previousOfPrevious12Items) /  $previousOfPrevious12ItemsCounter : 0;
+		$growthRateForCompany = $previousOfPrevious12ItemsAvg ? ($last12ItemsAvg / $previousOfPrevious12ItemsAvg) - 1 : 0 ;
+		$next1Month = Carbon::make($endDate)->addMonthsNoOverflow(1)->format('Y-m-d');
+		$next2Month = Carbon::make($endDate)->addMonthsNoOverflow(2)->format('Y-m-d');
+		$next3Month = Carbon::make($endDate)->addMonthsNoOverflow(3)->format('Y-m-d');
+		
+		$valueOfMonth = HArr::getValueFromMonthAndYear($last12Items,Carbon::make($endDate)->format('m'),Carbon::make($endDate)->format('Y')) ;
+		
+		$next1MonthPercentageValueAtMonth = HArr::getValueFromMonth($last12Items,Carbon::make($next1Month)->format('m'));
+		$next1MonthPercentage = array_sum($last12Items) ? $next1MonthPercentageValueAtMonth / array_sum($last12Items) : 0;
+		
+		$next2MonthPercentageValueAtMonth = HArr::getValueFromMonth($last12Items,Carbon::make($next2Month)->format('m'));
+		$next2MonthPercentage = array_sum($last12Items) ? $next2MonthPercentageValueAtMonth / array_sum($last12Items) : 0;
+		
+		$next3MonthPercentageValueAtMonth = HArr::getValueFromMonth($last12Items,Carbon::make($next3Month)->format('m'));
+		$next3MonthPercentage = array_sum($last12Items) ? $next3MonthPercentageValueAtMonth / array_sum($last12Items) : 0;
+		
+		$next1ForecastForCompany = ($last12ItemsAvg*12) * (1+$growthRateForCompany) * $next1MonthPercentage;
+		$next2ForecastForCompany = ($last12ItemsAvg*12) * (1+$growthRateForCompany) * $next2MonthPercentage;
+		$next3ForecastForCompany = ($last12ItemsAvg*12) * (1+$growthRateForCompany) * $next3MonthPercentage;
+		
+		
+		$next1ForecastForCompany = ($last12ItemsAvg*12) * (1+$growthRateForCompany) * $next1MonthPercentage;
+		$next2ForecastForCompany = ($last12ItemsAvg*12) * (1+$growthRateForCompany) * $next2MonthPercentage;
+		$next3ForecastForCompany = ($last12ItemsAvg*12) * (1+$growthRateForCompany) * $next3MonthPercentage;
+		$next1ForecastForType = 0 ;
+		$next2ForecastForType = 0;
+		$next3ForecastForType = 0;
+		$forecastMonthGrRate = 0 ;
+		if(!is_null($grForCompany)){
+			$forecastMonthGrRate = $grForCompany < $growthRateForCompany  ? ($grForCompany + $growthRateForCompany) / 2 : $growthRateForCompany ;
+			if(array_sum($last12Items) == 0 ){
+				$next1ForecastForType = 0 ;
+				$next2ForecastForType  = 0 ;
+				$next3ForecastForType= 0;
+			}else{
+				$next1ForecastForType = ($last12ItemsAvg*12) * (1+$forecastMonthGrRate) * $next1MonthPercentage;
+				$next1ForecastForType = $next1ForecastForType < 0 ? 0 : $next1ForecastForType ;
+				$next2ForecastForType = ($last12ItemsAvg*12) * (1+$forecastMonthGrRate) * $next2MonthPercentage;
+				$next2ForecastForType = $next2ForecastForType < 0 ? 0 : $next2ForecastForType ;
+				$next3ForecastForType = ($last12ItemsAvg*12) * (1+$forecastMonthGrRate) * $next3MonthPercentage;
+				$next3ForecastForType = $next3ForecastForType < 0 ? 0 : $next3ForecastForType ;
+			}
+	
+		}
+		return [
+			'last_12_avg'=>$last12ItemsAvg ,
+			'last_24_avg'=>$previousOfPrevious12ItemsAvg ,
+			'growth_rate'=>$growthRateForCompany,
+			'next1MonthPercentage'=>$next1MonthPercentage,
+			'next2MonthPercentage'=>$next2MonthPercentage,
+			'next3MonthPercentage'=>$next3MonthPercentage,
+			'next1ForecastForCompany'=>$next1ForecastForCompany,
+			'next2ForecastForCompany'=>$next2ForecastForCompany,
+			'next3ForecastForCompany'=>$next3ForecastForCompany,
+			'next0ForecastForType'=>$valueOfMonth,
+			'next1ForecastForType'=>$next1ForecastForType,
+			'next2ForecastForType'=>$next2ForecastForType,
+			'next3ForecastForType'=>$next3ForecastForType,
+			
+			
+		];
+	}
+	public function predictSales(Request $request, Company $company,$type,$endDate)
+    {
+        // enhanced in sales dashboard // salah
+  
+		$startDate = Carbon::make($endDate)->startOfMonth()->subMonthNoOverflow(24)->format('Y-m-d') ;
+	
+        $data = [];
+        $main_data = SalesGathering::company($request)
+                                    ->whereBetween('date', [$startDate, $endDate])
+									// ->where($type,'!=',null)
+                                    // ->limit(10)
+                                    ->selectRaw('DATE_FORMAT(LAST_DAY(date),"%d-%m-%Y") as gr_date,DATE_FORMAT(date,"%Y") as year,net_sales_value,'.$type)->orderBy('date')
+                                    ->get();
+									
+									$totalsPerDates = $main_data->groupBy('gr_date')->map(function($sub_item){
+										return $sub_item->sum('net_sales_value');
+										return $year->groupBy('gr_date');
+									})->toArray() ;
+									
+									$lastAndGrowthRateForCompanyArr = $this->getLastAndGrowthRate($totalsPerDates,$startDate,$endDate );
+									$last12AvgForCompany = $lastAndGrowthRateForCompanyArr['last_12_avg'];
+									$last24AvgForCompany = $lastAndGrowthRateForCompanyArr['last_24_avg'];
+									$growthRateForCompany = $lastAndGrowthRateForCompanyArr['growth_rate'];
+									
+									
+									$lastAndGrowthRateForItems = [];
+          
+         		   $data = $main_data->groupBy($type)->map(function($year){
+                            return $year->groupBy('gr_date')->map(function($sub_item){
+                                return $sub_item->sum('net_sales_value');
+                            });
+                        })->toArray();
+						
+						
+       foreach($data as $name => $dataItem){
+			$lastAndGrowthRateForItems[$name]=$this->getLastAndGrowthRate($dataItem,$startDate,$endDate,$growthRateForCompany);
+	   }
+	   return $lastAndGrowthRateForItems;
+       
+    }
     public function result(Request $request, Company $company,$result='view')
     {
-
         // enhanced in sales dashboard // salah
         $report_data = [];
         $growth_rate_data = [];

@@ -401,7 +401,6 @@ class HomeController extends Controller
 					$simpleLinearRegression = Cache::get($cacheForSimpleLinearRegressionKeyName);
 					$simpleLinearRegressionDates = Cache::get($cacheForSimpleLinearRegressionDatesKeyName);
 				}
-			
 
 				if ($type == 'service_provider_birth_year' || $type == 'service_provider_type') {
 					$first_item = collect($breakdown_data['report_view_data'])->sortByDesc(function ($data, $key) {

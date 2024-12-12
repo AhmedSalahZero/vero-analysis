@@ -284,5 +284,32 @@ class HArr
 			return $uniqueKey;
 		})->values()->toArray();
 	}
-
+	public static function getValueFromMonth(array $items, string $month)
+	{
+		foreach($items as $date => $value){
+			if(Carbon::make($date)->format('m')== $month){
+				return $value ;
+			}
+		}
+		return 0 ;
+	}
+	public static function getValueFromMonthAndYear(array $items, string $month,string $year)
+	{
+		foreach($items as $date => $value){
+			if(Carbon::make($date)->format('m')== $month && $year == Carbon::make($date)->format('Y')){
+				return $value ;
+			}
+		}
+		return 0 ;
+	}
+	public static function sliceWithDates($items , $endDate,$offsite = 11 ){
+		$result = [];
+		$startDate = Carbon::make($endDate)->subMonths($offsite)->format('Y-m-d');
+		foreach($items as $date => $value){
+			if(Carbon::make($date)->between(Carbon::make($startDate) , Carbon::make($endDate))){
+				$result[$date] = $value ;
+			}
+		}
+		return $result;
+	}
 }
