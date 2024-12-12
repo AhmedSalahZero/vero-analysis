@@ -131,7 +131,10 @@ class salesReport
        foreach($data as $name => $dataItem){
 			$lastAndGrowthRateForItems[$name]=$this->getLastAndGrowthRate($dataItem,$startDate,$endDate,$growthRateForCompany);
 	   }
-	   return $lastAndGrowthRateForItems;
+	   uasort($lastAndGrowthRateForItems, function ($a, $b) {
+		return $b['next0ForecastForType'] <=> $a['next0ForecastForType'];
+		});
+		return $lastAndGrowthRateForItems;
        
     }
     public function result(Request $request, Company $company,$result='view')
