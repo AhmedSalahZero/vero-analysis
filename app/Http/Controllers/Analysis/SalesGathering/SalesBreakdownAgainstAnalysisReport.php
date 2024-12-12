@@ -167,11 +167,15 @@ class SalesBreakdownAgainstAnalysisReport
 				$simpleLinearRegressionData = SimpleLinearRegression::predict($simpleLinearRegressionDataItemForCurrentType,$predictionDates,$breakdownEndDate,$type);
 			
 		}
-		$report_data = isset($calculated_report_data) && $isAI ? $calculated_report_data : $this->filterDataByDate($report_data,$breakdownStartDate,$breakdownEndDate);
+		$report_data = isset($calculated_report_data) ? $calculated_report_data : $report_data;
+		if($isAI){
+	    	$report_data =     $this->filterDataByDate($report_data,$breakdownStartDate,$breakdownEndDate);
+		}
 		
+			//dd(isset($calculated_report_data) && $isAI);
 		$diff = microtime(true) - $timeStart;
-		$sec = intval($diff);
-		dd($sec);
+	
+
 	
 		if ($type == 'service_provider_birth_year' || $type == 'service_provider_type') {
 			$data = $report_data->groupBy($type)->map(function ($item, $year) {

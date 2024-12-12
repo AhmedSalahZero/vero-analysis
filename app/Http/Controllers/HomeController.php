@@ -630,11 +630,12 @@ class HomeController extends Controller
 			
 			$keys = array_keys($permittedTypes);
 			$firstKey = $keys[0] ?? 0;
-			$secondKey = $keys[1] ?? 0;
+			// $secondKey = $keys[1] ?? 0;
 			// $thirdKey = $keys[2] ?? 0;
 
 			$request['types'] = [
-				$firstKey, $secondKey
+				$firstKey
+				// , $secondKey
 				// ,$thirdKey 
 			];
 			$request['start_date_one'] = $start_date_0;
