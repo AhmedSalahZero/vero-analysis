@@ -149,7 +149,7 @@ use App\Models\LetterOfCreditIssuance;
                                             <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                         </label>
                                         <div class="input-group">
-                                            <select name="lc_currency" class="form-control current-currency" js-when-change-trigger-change-account-type>
+                                            <select name="lc_currency" class="form-control lc-currency current-currency" js-when-change-trigger-change-account-type>
                                                 <option selected><?php echo e(__('Select')); ?></option>
                                                 <?php $__currentLoopData = getCurrencies(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $currencyName => $currencyValue): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                 <option value="<?php echo e($currencyName); ?>" <?php if(isset($model) && $model->getLcCurrency() == $currencyName ): ?> selected <?php elseif($currencyName == 'EGP' ): ?> selected <?php endif; ?> > <?php echo e($currencyValue); ?></option>
@@ -682,7 +682,7 @@ use App\Models\LetterOfCreditIssuance;
                     if (!$(this).hasClass('exclude-text')) {
                         let val = $(this).val()
                         val = number_unformat(val)
-                        $(this).parent().find('input[type="hidden"]').val(val)
+                        $(this).parent().find('input[type="hidden"]:not([name="_token"])').val(val)
 
                     }
                 })

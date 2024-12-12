@@ -135,7 +135,7 @@ use App\Models\LetterOfCreditIssuance;
                                             @include('star')
                                         </label>
                                         <div class="input-group">
-                                            <select name="lc_currency" class="form-control current-currency" js-when-change-trigger-change-account-type>
+                                            <select name="lc_currency" class="form-control lc-currency current-currency" js-when-change-trigger-change-account-type>
                                                 <option selected>{{__('Select')}}</option>
                                                 @foreach(getCurrencies() as $currencyName => $currencyValue )
                                                 <option value="{{ $currencyName }}" @if(isset($model) && $model->getLcCurrency() == $currencyName ) selected @elseif($currencyName == 'EGP' ) selected @endif > {{ $currencyValue }}</option>
@@ -279,7 +279,7 @@ use App\Models\LetterOfCreditIssuance;
                                         <x-form.date :classes="'update-exchange-rate exchange-rate-date recalc-due-date issuance-date-js'" :label="__('Issuance Date')" :required="true" :model="$model??null" :name="'issuance_date'" :placeholder="__('Select Purchase Order Date')"></x-form.date>
                                     </div>
                                     <div class="col-md-3">
-                                        <x-form.input :default-value="1" :model="$model??null" :label="__('LC Duration Months')" :type="'numeric'" :placeholder="__('LC Duration Months')" :name="'lc_duration_months'" :class="'recalc-due-date lc-duration-months-js'" :required="true"></x-form.input>
+                                        <x-form.input :default-value="1" :model="$model??null" :label="__('LC Duration (Days)')" :type="'numeric'" :placeholder="__('LC Duration (Days)')" :name="'lc_duration_days'" :class="'recalc-due-date lc-duration-days-js'" :required="true"></x-form.input>
                                     </div>
                                     <div class="col-md-3">
                                         <x-form.date :classes="'due-date-js'" :readonly="true" :label="__('Due Date')" :required="true" :model="$model??null" :name="'due_date'" :placeholder="__('Select Due Date')"></x-form.date>
@@ -533,11 +533,11 @@ use App\Models\LetterOfCreditIssuance;
                     date = date.replaceAll('-', '/')
 
                     const issuanceDate = new Date(date);
-                    const duration = $('.lc-duration-months-js').val();
+                    const duration = parseInt($('.lc-duration-days-js').val());
                     if (issuanceDate || duration == '0') {
-                        const numberOfMonths = duration
+                        const numberOfDays = duration
 
-                        let dueDate = issuanceDate.addMonths(numberOfMonths)
+                        let dueDate = issuanceDate.addDays(numberOfDays)
 
                         dueDate = formatDateForSelect2(dueDate)
                         $('.due-date-js').val(dueDate).trigger('change')

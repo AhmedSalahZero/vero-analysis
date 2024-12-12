@@ -21,8 +21,7 @@ class LcOverdraftBankStatement extends Model
 	public static function getSources()
 	{
 		return [
-			'lc-facility'=>__('LC Facility'),
-			''
+			'lc-facility'=>__('LC Facility')
 		];
 	}
 	public $oldFullDate = null;
@@ -32,7 +31,6 @@ class LcOverdraftBankStatement extends Model
 		DB::table('letter_of_credit_facilities')->where('id',$model->lc_facility_id)->update([
 			'oldest_full_date'=>$minDate,
 		]);
-		
 		/**
 		 * * ليه بنستخدم ال 
 		 * * min date
@@ -44,7 +42,7 @@ class LcOverdraftBankStatement extends Model
 		 DB::table($tableName)
 		->where('full_date','>=',$minDate)
 		->orderByRaw('full_date asc , priority asc , id asc')
-		->where('lc_facility_id',$model->lc_facility_id)
+		->where($tableName.'.lc_facility_id',$model->lc_facility_id)
 		->each(function($lcOverdraftBankStatement) use($tableName){
 			DB::table($tableName)->where('id',$lcOverdraftBankStatement->id)->update([
 				'updated_at'=>now()
@@ -79,8 +77,6 @@ class LcOverdraftBankStatement extends Model
 			static::updated(function (self $model) {
 				$tableName = (new self)->getTable();
 				$minDate = self::updateNextRows($model);
-				
-			
 				$isChanged = $model->isDirty('lc_facility_id') ;
 				/**
 				 * * دي علشان لو غيرت ال
@@ -112,6 +108,8 @@ class LcOverdraftBankStatement extends Model
 			
 			static::deleting(function(self $lcOverdraftBankStatement){
 				$oldDate = null ;
+
+				
 				if($lcOverdraftBankStatement->is_debit && Request('receiving_date')||$lcOverdraftBankStatement->is_credit && Request('delivery_date')){
 						$oldDate = Carbon::make(Request('receiving_date',Request('delivery_date')))->format('Y-m-d');
 						$time  = now()->format('H:i:s');
@@ -126,6 +124,7 @@ class LcOverdraftBankStatement extends Model
 				
 				$lcOverdraftBankStatement->debit = 0;
 				$lcOverdraftBankStatement->credit = 0;
+				
 				$lcOverdraftBankStatement->save();
 				
 			});

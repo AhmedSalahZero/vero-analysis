@@ -206,8 +206,12 @@ class LetterOfCreditFacilityController
 	public function destroy(Company $company , FinancialInstitution $financialInstitution , LetterOfCreditFacility $letterOfCreditFacility)
 	{
 
-         LetterOfCreditStatement::deleteButTriggerChangeOnLastElement($letterOfCreditFacility->letterOfCreditStatements->where('type',LetterOfCreditIssuance::LC_FACILITY_BEGINNING_BALANCE));
-         LetterOfCreditCashCoverStatement::deleteButTriggerChangeOnLastElement($letterOfCreditFacility->letterOfCreditCashCoverStatements->where('type',LetterOfCreditIssuance::LC_FACILITY_BEGINNING_BALANCE));
+         LetterOfCreditStatement::deleteButTriggerChangeOnLastElement($letterOfCreditFacility->letterOfCreditStatements
+		//  ->where('type',LetterOfCreditIssuance::LC_FACILITY_BEGINNING_BALANCE)
+		);
+         LetterOfCreditCashCoverStatement::deleteButTriggerChangeOnLastElement($letterOfCreditFacility->letterOfCreditCashCoverStatements
+		//  ->where('type',LetterOfCreditIssuance::LC_FACILITY_BEGINNING_BALANCE)
+		);
 		 LcOverdraftBankStatement::deleteButTriggerChangeOnLastElement($letterOfCreditFacility->lcOverdraftBankStatements);
 
 		$letterOfCreditFacility->termAndConditions->each(function($termAndCondition){

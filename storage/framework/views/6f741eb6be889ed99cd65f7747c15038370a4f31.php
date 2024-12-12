@@ -11,37 +11,96 @@
                      </button>
                  </div>
 
-
-                 <div class="modal-body">
+                 <div class="modal-body closest-parent">
                      <div class="row mb-3">
 
                          <div class="col-md-6 mb-4">
                              <label><?php echo e(__('Bank Name')); ?> </label>
                              <div class="kt-input-icon">
-                                 <input disabled value="<?php echo e($model->getFinancialInstitutionBankName()); ?>" type="text" class="form-control">
+							 <input type="hidden" name="financial_institution_id" value="<?php echo e($model->getFinancialInstitutionBankId()); ?>">
+                                 <input  disabled value="<?php echo e($model->getFinancialInstitutionBankName()); ?>" type="text" class="form-control">
                              </div>
                          </div>
 
                          <div class="col-md-2 mb-4">
                              <label><?php echo e(__('LC Amount')); ?> </label>
                              <div class="kt-input-icon">
-                                 <input disabled value="<?php echo e(number_format($model->getLcAmount() ) . ' ' . $model->getLcCurrency()); ?>" type="text" class="form-control text-center">
+                                 <input data-value="<?php echo e($model->getLcAmount()); ?>" disabled value="<?php echo e(number_format($model->getLcAmount() ) . ' ' . $model->getLcCurrency()); ?>" type="text" class="form-control lc-amount text-center">
                              </div>
                          </div>
+						 
+						
 						 
 						 <div class="col-md-2 mb-4">
                              <label><?php echo e(__('Exchange Rate')); ?> </label>
                              <div class="kt-input-icon">
-                                 <input disabled value="<?php echo e(number_format($model->getExchangeRate(),2 )); ?>" type="text" class="form-control text-center">
+                                 <input disabled value="<?php echo e(number_format($model->getExchangeRate(),2 )); ?>" type="text" class="form-control  text-center">
                              </div>
                          </div>
 						 
 						 <div class="col-md-2 mb-4">
                              <label><?php echo e(__('Amount In Main Currency')); ?> </label>
                              <div class="kt-input-icon">
-                                 <input disabled value="<?php echo e($model->getAmountInMainCurrencyFormatted()); ?>" type="text" class="form-control text-center">
+                                 <input data-value="<?php echo e($model->getLcAmountInMainCurrency()); ?>" disabled value="<?php echo e($model->getAmountInMainCurrencyFormatted()); ?>" type="text" class="form-control lc-amount-in-main-currency text-center">
                              </div>
                          </div>
+						 
+						 
+						 
+						 
+						 
+						 
+						 
+						 
+						 
+						 
+						 
+						 <input type="hidden" class="cash-cover-rate" value="<?php echo e($model->getCashCoverRate()); ?>">
+						 
+						    <div class="col-md-6 mb-4">
+                             <label><?php echo e(__('Cash Cover')); ?> </label>
+                             <div class="kt-input-icon">
+                                 <input disabled value="<?php echo e(__('Cash Cover')); ?>" type="text" class="form-control">
+                             </div>
+                         </div>
+						 <?php
+							$cashCoverAmount = $model->getCashCoverAmount();
+						 ?>
+                         <div class="col-md-2 mb-4">
+                             <label><?php echo e(__('Amount')); ?> </label>
+                             <div class="kt-input-icon">
+                                 <input disabled value="<?php echo e($model->getCashCoverAmountFormatted() . ' ' . $model->getLcCashCoverCurrency()); ?>" type="text" class="form-control text-center">
+                             </div>
+                         </div>
+						 
+						 <?php
+							$exchangeRate = $model->getLcCashCoverCurrency() == $company->getMainFunctionalCurrency() ? 1 :  $model->getExchangeRate();
+						 ?>
+						  <div class="col-md-2 mb-4">
+                             <label><?php echo e(__('Exchange Rate')); ?> </label>
+                             <div class="kt-input-icon">
+                                 <input disabled value="<?php echo e(number_format($exchangeRate,2)); ?>" type="text" class="form-control text-center">
+                             </div>
+                         </div>
+						 
+						 <div class="col-md-2 mb-4">
+                             <label><?php echo e(__('Amount In Main Currency')); ?> </label>
+                             <div class="kt-input-icon">
+                                 <input disabled value="<?php echo e(number_format($cashCoverAmount * $exchangeRate)); ?>" type="text" class="form-control text-center">
+                             </div>
+                         </div>
+						 
+						 
+						 
+						 
+						 
+						 
+						 
+						 
+						 
+						 
+						 
+						 
 						 
                          <div class="col-md-3 mb-4">
                              <label><?php echo e(__('Date')); ?></label>
@@ -79,7 +138,11 @@
                                             <div class="input-group date">
                                                 <select  name="supplier_invoice_id" class="form-control update-net-balance-inputs">
                                                     <?php $__currentLoopData = $invoices; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $invoice): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                    <option data-currency="<?php echo e($invoice->getCurrency()); ?>" data-invoice-net-balance="<?php echo e($invoice->getNetBalance()); ?>" data-exchange-rate="<?php echo e($invoice->getExchangeRate()); ?>" data-invoice-net-balance-in-main-currency="<?php echo e($invoice->getNetBalanceInMainCurrency()); ?>"   value="<?php echo e($invoice->id); ?>"><?php echo e($invoice->getInvoiceNumber()); ?></option>
+                                                    <option 
+													<?php if($model->getSupplierInvoiceId() == $invoice->id ): ?>
+													selected
+													<?php endif; ?> 
+													data-current-select="<?php echo e($model->getSupplierInvoiceId()); ?>" data-currency="<?php echo e($invoice->getCurrency()); ?>" data-invoice-net-balance="<?php echo e($invoice->getNetBalance()); ?>" data-exchange-rate="<?php echo e($invoice->getExchangeRate()); ?>" data-invoice-net-balance-in-main-currency="<?php echo e($invoice->getNetBalanceInMainCurrency()); ?>"   value="<?php echo e($invoice->id); ?>"><?php echo e($invoice->getInvoiceNumber()); ?></option>
                                                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                 </select>
                                             </div>
@@ -87,7 +150,7 @@
                                     </div>
 									
 										 <div class="col-md-2 mb-4">
-											<label><?php echo e(__('Net Balance')); ?> </label>
+											<label><?php echo e(__('Invoice Net Balance')); ?> </label>
 											<div class="kt-input-icon">
 												<input disabled value="0" type="text" class="form-control net-balance text-center">
 											</div>
@@ -106,6 +169,76 @@
 												<input disabled value="0" type="text" class="form-control net-balance-in-main-currency text-center">
 											</div>
 										</div>
+										
+										
+										
+										
+										
+										
+										
+										<?php if($model->isFinancedBySelf()): ?>
+										
+										
+								
+									<div class="col-md-3">
+                                        <label><?php echo e(__('Currency')); ?>
+
+                                            <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+                                        </label>
+                                        <div class="input-group">
+                                            <select name="payment_currency" class="form-control update-remaining-class current-currency" js-when-change-trigger-change-account-type>
+                                                <option selected><?php echo e(__('Select')); ?></option>
+                                                <?php $__currentLoopData = [$company->getMainFunctionalCurrency()=>$company->getMainFunctionalCurrency() , $model->getLcCurrency()=>$model->getLcCurrency() ]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $currencyName => $currencyValue): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                <option value="<?php echo e($currencyName); ?>" <?php if(isset($model) && $model->getPaymentCurrency() == $currencyName ): ?> selected <?php elseif($currencyName == $company->getMainFunctionalCurrency() ): ?> selected <?php endif; ?> > <?php echo e($currencyValue); ?></option>
+                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                            </select>
+                                        </div>
+                                    </div>
+									
+									
+									
+									 <div class="col-md-3 mb-4">
+											<label><?php echo e(__('LC Remaining Amount')); ?> </label>
+											<div class="kt-input-icon">
+												<input readonly name="lc_remaining_amount" value="0" type="text" class="form-control lc-remaining-amount-class text-center">
+											</div>
+										</div>
+										
+									
+
+                       				<div class="col-md-3">
+                                        <label><?php echo e(__('Account Type')); ?> <span class=""></span> </label>
+                                        <div class="kt-input-icon">
+                                            <div class="input-group date">
+                                                <select id="account_type_id" name="payment_account_type_id" class="form-control  js-update-account-id-based-on-account-type">
+                                                    <?php $__currentLoopData = $currentAccounts; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $accountType): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                    <option value="<?php echo e($accountType->id); ?>"
+													<?php if($accountType->id == $model->getPaymentAccountTypeId()): ?>
+													selected 
+													<?php endif; ?> 
+													><?php echo e($accountType->getName()); ?></option>
+                                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label><?php echo e(__('Account Number')); ?> <span class=""></span> </label>
+                                        <div class="kt-input-icon">
+                                            <div class="input-group date">
+                                                <select js-cd-or-td-account-number data-current-selected="<?php echo e(isset($model) ? $model->getPaymentAccountNumberId(): 0); ?>" name="payment_account_number_id" class="form-control js-account-number">
+                                                    <option value="" selected><?php echo e(__('Select')); ?></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+									
+						 
+										
+										<?php endif; ?> 
+										
+										
 										
 										
 										

@@ -126,7 +126,7 @@
                                         </label>
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
-                                                <select required js-update-outstanding-balance-and-limits data-current-selected="{{ isset($model) ? $model->getLcFacilityId() : 0 }}" id="lc-facility-id" name="lc_facility_id" class="form-control">
+                                                <select  js-update-outstanding-balance-and-limits data-current-selected="{{ isset($model) ? $model->getLcFacilityId() : 0 }}" id="lc-facility-id" name="lc_facility_id" class="form-control">
                                                 </select>
                                             </div>
                                         </div>

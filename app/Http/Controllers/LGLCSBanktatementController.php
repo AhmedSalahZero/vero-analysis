@@ -8,6 +8,7 @@ use App\Models\AccountType;
 use App\Models\Company;
 use App\Models\FinancialInstitution;
 use App\Models\LcOverdraftBankStatement;
+use App\Models\LetterOfCreditFacility;
 use App\Models\LetterOfCreditIssuance;
 use App\Models\LetterOfGuaranteeIssuance;
 use App\Traits\GeneralFunctions;
@@ -43,8 +44,9 @@ class LGLCSBanktatementController
 		$financialInstitution = FinancialInstitution::find($financialInstitutionId);
 		$lcFacilityId=  $request->get('lc_facility_id');
 		$financialInstitutionName = $financialInstitution->getName();
- 
-		
+
+		$letterOfCreditFacility = LetterOfCreditFacility::find($lcFacilityId);
+		$letterOfCreditFacilityName = $letterOfCreditFacility ? $letterOfCreditFacility->getName() : null; 
         $currencyName = $request->get('currency');
 		$results = [];
 		$reportType = $request->get('report_type');
@@ -62,9 +64,6 @@ class LGLCSBanktatementController
 
 		$source = $request->get('source');
 		$type = $request->get('type');
-		
-		
-		
 		
 		
 		$results = DB::table($statementTableName)
@@ -111,7 +110,8 @@ class LGLCSBanktatementController
 			'financialInstitutionName'=>$financialInstitutionName,
 			'type'=>$type,
 			'source'=>$source,
-			'isLcOverdraftBankStatement'=>$isLcOverdraftBankStatement
+			'isLcOverdraftBankStatement'=>$isLcOverdraftBankStatement,
+			'letterOfCreditFacilityName'=>$letterOfCreditFacilityName
         ]);
     }
 	public function getLgOrLcType(Request $request , Company $company){

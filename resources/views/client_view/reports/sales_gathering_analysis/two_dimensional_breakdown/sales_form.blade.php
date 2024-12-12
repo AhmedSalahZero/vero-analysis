@@ -35,7 +35,6 @@
                                 </div>
                             </div>
                         </div>
-
                         <div class="col-md-3">
                             <label>{{__('Select Top 50 Or Bottom 50')}} </label>
                             <div class="kt-input-icon">

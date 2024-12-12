@@ -384,6 +384,8 @@ $(document).on('change', '.js-update-account-id-based-on-account-type', function
 	currency = currency ? currency : $('input.current-currency-input').val();	 
 	let financialInstitutionBankId = parent.find('[data-financial-institution-id]').val()
 	financialInstitutionBankId = typeof financialInstitutionBankId !== 'undefined' ? financialInstitutionBankId : $('[data-financial-institution-id]').val()
+	financialInstitutionBankId = typeof financialInstitutionBankId !== 'undefined' ? financialInstitutionBankId : $(this).closest('.closest-parent').find('input[name="financial_institution_id"]').val()
+	console.log(val,currency,financialInstitutionBankId)
 	if (!val || !currency || !financialInstitutionBankId) {
 		return
 	}

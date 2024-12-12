@@ -118,7 +118,17 @@
 </style>
 @endsection
 @section('sub-header')
-<x-main-form-title :id="'main-form-title'" :class="''">{{ __('Bank Statement ['  ) . $financialInstitutionName . ' ] [' . $source . ' ] [ ' . $type . ' ] [ ' . __(touppercase($currency)) . ' ]' }}</x-main-form-title>
+@php
+	$title = __('Bank Statement ['  ) . $financialInstitutionName . ' ]  [ ' . __(touppercase($currency)) . ' ]' ;
+	if($source &&$type ){
+	$title = __('Bank Statement ['  ) . $financialInstitutionName . ' ] [' . $source . ' ] [ ' . $type . ' ] [ ' . __(touppercase($currency)) . ' ]' ;
+		
+	}
+	if($letterOfCreditFacilityName){
+			$title = __('Bank Statement ['  ) . $financialInstitutionName . ' ] [' . $letterOfCreditFacilityName . ' ] [ ' . __(touppercase($currency)) . ' ]' ;
+	}
+@endphp
+<x-main-form-title :id="'main-form-title'" :class="''">{{$title }}</x-main-form-title>
 
 @endsection
 @section('content')

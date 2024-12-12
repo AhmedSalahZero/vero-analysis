@@ -429,7 +429,7 @@
 								
                                         <td class="sub-text-bg text-left "><?php echo e($reviewedText); ?></td>
                                         <td class="sub-text-bg text-left ">
-								
+							
 											<?php if(isset($modelAsStdClass->is_commission_fees) && $modelAsStdClass->is_commission_fees): ?>
 												
 												<?php echo $__env->make('modals.edit-commissions-fees',[

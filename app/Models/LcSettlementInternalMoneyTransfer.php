@@ -6,6 +6,7 @@ use App\Models\FullySecuredOverdraft;
 use App\Traits\HasBasicStoreRequest;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 /**
  * * هنا عميلة تحويل الاموال من حساب بنك الي حساب خاص بال
@@ -175,7 +176,6 @@ class LcSettlementInternalMoneyTransfer extends Model
   
     public function deleteRelations()
     {
-       
 		$this->currentAccountBankStatements->each(function (CurrentAccountBankStatement $currentAccountBankStatement) {
 			$currentAccountBankStatement->delete();
 		});		
@@ -190,7 +190,7 @@ class LcSettlementInternalMoneyTransfer extends Model
 	/**
 	 * * هنا لما بنحول من بنك او الى بنك بغض النظر عن نوع الحساب
 	 */
-	public function handleBankTransfer(int $companyId , int $fromFinancialInstitutionId , AccountType $fromAccountType , string $fromAccountNumber ,string $transferDate  , $debitAmount , $creditAmount)
+	public function handleBankTransfer(int $companyId , int $fromFinancialInstitutionId , AccountType $fromAccountType , string $fromAccountNumber ,string $transferDate  , $debitAmount , $creditAmount , $commentEn , $commentAr)
 	{
 		if($fromAccountType && $fromAccountType->isCurrentAccount()){
 			/**
@@ -203,7 +203,9 @@ class LcSettlementInternalMoneyTransfer extends Model
 				'company_id'=>$companyId ,
 				'date' => $transferDate , 
 				'credit'=>$creditAmount,
-				'debit'=>$debitAmount
+				'debit'=>$debitAmount,
+				'comment_en'=>$commentEn , 
+				'comment_ar'=>$commentAr
 			]);
 		}
 		
@@ -219,10 +221,11 @@ class LcSettlementInternalMoneyTransfer extends Model
 	/**
 	 * * دي هتستخدم في الحالتين سواء من او الى
 	 */
-	public function handleLetterOfCreditTransfer(int $companyId,int $lcFacilityId , $lcFacilityLimit, string $date ,  $debitAmount , $creditAmount , LetterOfCreditIssuance $letterOfCreditIssuance )
+	public function handleLetterOfCreditTransfer(int $companyId,int $lcFacilityId , $lcFacilityLimit, string $date ,  $debitAmount , $creditAmount , LetterOfCreditIssuance $letterOfCreditIssuance , string $commentEn , string $commentAr )
 	{
 	
-				return $this->LcOverdraftBankStatements()->create([
+
+				 return $this->LcOverdraftBankStatements()->create([
 					'lc_issuance_id'=>$letterOfCreditIssuance->id  ,
 					'lc_facility_id'=>$lcFacilityId,
 					'lc_settlement_internal_money_transfer_id'=>$this->id ,
@@ -233,14 +236,19 @@ class LcSettlementInternalMoneyTransfer extends Model
 					'limit'=>$lcFacilityLimit,
 					'beginning_balance'=>0 ,
 					'debit'=>$debitAmount,
-					'credit'=>$creditAmount
+					'credit'=>$creditAmount,
+					'comment_en'=>$commentEn,
+					'comment_ar'=>$commentAr
 				]);
+		
+
 	}
 	
-	public function handleBankToLetterOfCreditTransfer( int $companyId ,int $lcFacilityId,$lcFacilityLimit, AccountType $fromAccountType , string $fromAccountNumber , int $fromFinancialInstitutionId , LetterOfCreditIssuance $letterOfCreditIssuance , string $transferDate , $transferAmount)
+	public function handleBankToLetterOfCreditTransfer( int $companyId ,int $lcFacilityId,$lcFacilityLimit, AccountType $fromAccountType , string $fromAccountNumber , int $fromFinancialInstitutionId , LetterOfCreditIssuance $letterOfCreditIssuance , string $transferDate , $transferAmount , string $commentEn , string $commentAr)
 	{
-		$this->handleBankTransfer($companyId , $fromFinancialInstitutionId ,  $fromAccountType , $fromAccountNumber , $transferDate ,0, $transferAmount);
-		$this->handleLetterOfCreditTransfer($companyId,$lcFacilityId,$lcFacilityLimit,$transferDate,$transferAmount,0,$letterOfCreditIssuance);
+	
+		$this->handleBankTransfer($companyId , $fromFinancialInstitutionId ,  $fromAccountType , $fromAccountNumber , $transferDate ,0, $transferAmount,$commentEn,$commentAr);
+		$this->handleLetterOfCreditTransfer($companyId,$lcFacilityId,$lcFacilityLimit,$transferDate,$transferAmount,0,$letterOfCreditIssuance,$commentEn,$commentAr);
 	}
 	public function letterOfCreditIssuance()
 	{

@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Analysis\SalesGathering;
 use App\Helpers\HArr;
 use App\Http\Controllers\ExportTable;
 use App\Models\Company;
-use App\Models\SalesGathering;
 use App\Traits\GeneralFunctions;
 use App\Traits\Intervals;
 use Carbon\Carbon;
@@ -18,7 +17,6 @@ class BranchesAgainstAnalysisReport
     use GeneralFunctions;
     public function index(Company $company)
     {
-
         if (request()->route()->named('branches.zones.analysis')) {
             $type = 'zone';
             $view_name = 'Branches Against Zones Trend Analysis' ;

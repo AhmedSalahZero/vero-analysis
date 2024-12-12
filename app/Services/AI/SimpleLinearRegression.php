@@ -36,7 +36,8 @@ class SimpleLinearRegression
 				if($index == 0){
 					$predictedSales[$nameForType][$breakdownEndDate] = $trainingSet[$nameForType][$breakdownEndDate] ?? 0;
 				}else{
-					$predictedSales[$nameForType][$predictionDate] = round($regression->predict([$futureTimestamp]));
+					$predictedValue = $regression->predict([$futureTimestamp]) ;
+					$predictedSales[$nameForType][$predictionDate] = $predictedValue < 0 ? 0 : round($predictedValue);
 				}
 				$index ++ ;
 				}

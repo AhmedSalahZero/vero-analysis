@@ -12,6 +12,7 @@ use App\Traits\Models\HasLetterOfCreditStatements;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\DB;
 
 class LetterOfCreditIssuance extends Model
 {
@@ -118,7 +119,7 @@ class LetterOfCreditIssuance extends Model
 
 	public function getFinancialInstitutionBankId()
 	{
-		return $this->financialInstitutionBank ? $this->financialInstitutionBank->getName() : __('N/A') ;
+		return $this->financialInstitutionBank ? $this->financialInstitutionBank->id : 0 ;
 	}
 	public function getLcType()
 	{
@@ -283,9 +284,9 @@ class LetterOfCreditIssuance extends Model
 		$this->attributes['issuance_date'] = $year.'-'.$month.'-'.$day;
 	}
 
-	public function getLcDurationMonths()
+	public function getLcDurationDays()
 	{
-		return $this->lc_duration_months;
+		return $this->lc_duration_days;
 	}
 
 	public function getDueDate()
@@ -407,9 +408,10 @@ class LetterOfCreditIssuance extends Model
 		return $this->hasMany(LcOverdraftBankStatement::class,'lc_issuance_id','id')->orderBy('full_date','desc');
 	}
 	
-	public function handleLcCreditBankStatement(int $lcFacilityId,string $moneyType ,$limit , string $date , $paidAmount,$source)
+	public function handleLcCreditBankStatement(int $lcFacilityId,string $moneyType ,$limit , string $date , $paidAmount,$source,string $commentEn , string $commentAr)
 	{
-		return $this->lcOverdraftBankStatements()->create([
+	
+	 	return  $this->lcOverdraftBankStatements()->create([
 			'source'=>$source,
 			'type'=>$moneyType ,
 			'lc_issuance_id'=>$this->id ,
@@ -419,17 +421,32 @@ class LetterOfCreditIssuance extends Model
 			'limit'=>$limit,
 			'beginning_balance'=>0 ,
 			'debit'=>0,
-			'credit'=>$paidAmount
+			'credit'=>$paidAmount,
+			'comment_en'=>$commentEn ,
+			'comment_ar'=>$commentAr
 		]);
+	
+
+		
+
 	}
 
 	public function currentAccountCreditBankStatement()
 	{
-		return $this->hasOne(CurrentAccountBankStatement::class,'letter_of_Credit_issuance_id','id')->where('is_credit',1);
+		return $this->hasOne(CurrentAccountBankStatement::class,'letter_of_credit_issuance_id','id')->where('is_credit',1);
 	}
 	public function currentAccountCreditBankStatements()
 	{
-		return $this->hasMany(CurrentAccountBankStatement::class,'letter_of_Credit_issuance_id','id')->where('is_credit',1)->orderBy('full_date','desc');
+		return $this->hasMany(CurrentAccountBankStatement::class,'letter_of_credit_issuance_id','id')->where('is_credit',1)->orderBy('full_date','desc');
+	}
+	
+	public function currentAccountPaymentCreditBankStatement()
+	{
+		return $this->hasOne(CurrentAccountBankStatement::class,'letter_of_credit_issuance_id','id')->where('is_credit',1)->where('type','payment');
+	}
+	public function currentAccountPaymentCreditBankStatements()
+	{
+		return $this->hasMany(CurrentAccountBankStatement::class,'letter_of_credit_issuance_id','id')->where('type','payment')->where('is_credit',1)->orderBy('full_date','desc');
 	}
 	
 	public function currentAccountDebitBankStatement()
@@ -608,5 +625,55 @@ class LetterOfCreditIssuance extends Model
 	{
 		return $this->getLcAmount() * $this->getExchangeRate();
 	}
+	public function getFinancialDuration()
+	{
+		return $this->financing_duration; 
+	}
+	public function getSupplierInvoiceId()
+	{
+		return $this->supplier_invoice_id ;
+	}
+	public function getFinancedBy()
+	{
+		return $this->financed_by_bank_or_self;
+	}
+	public function isFinancedByBank()
+	{
+		return $this->getFinancedBy() == 'bank';
+	}
+	public function isFinancedBySelf()
+	{
+		return $this->getFinancedBy() == 'self';
+	}
+	public function getPaymentAccountNumberId()
+	{
+		return $this->payment_account_number_id;
+	}
+	public function getPaymentAccountTypeId()
+	{
+		return $this->payment_account_type_id;
+	}
+	public function getPaymentCurrency()
+	{
+		return $this->payment_currency;
+	}
+	
+	public function storeCurrentAccountPaymentCreditBankStatement(string $date , $credit , int $financialInstitutionAccountId , int $lcAdvancedPaymentHistoryId = 0 ,  $isActive = 1 , ?string $commentEn = null, ?string $commentAr = null , bool $isRenewalFees = false, bool $isCommissionFees = false , int $lcRenewalDateHistoryId = null)
+	{
+		return $this->currentAccountPaymentCreditBankStatement()->create([
+			'type'=>'payment',
+			'financial_institution_account_id'=>$financialInstitutionAccountId,
+			'company_id'=>$this->company_id ,
+			'lc_advanced_payment_history_id'=>$lcAdvancedPaymentHistoryId,
+			'is_active'=>$isActive , // is active خاصة بجزئيه ال commission فقط
+			'credit'=>$credit,
+			'debit'=>0,
+			'date'=>$date,
+			'comment_en'=>$commentEn,
+			'comment_ar'=>$commentAr,
+			'is_commission_fees'=>$isCommissionFees
+		]);
+	}
+	
 	
 }

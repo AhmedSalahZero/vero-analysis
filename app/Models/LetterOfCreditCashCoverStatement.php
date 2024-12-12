@@ -28,7 +28,6 @@ class LetterOfCreditCashCoverStatement extends Model
 		 * * مع انهم كان مفروض يتعدلوا بس انت قولتله عدلي العناصر اللي التاريخ بتاعها اكبر من او يساوي التاريخ الجديد
 		 * * ودا غلط مفروض التاريخ الاقل ما بين التاريخ الجديد و القديم للعنصر بحيث دايما يبدا يحدث من عنده
 		 */
-
 		 DB::table('letter_of_credit_cash_cover_statements')
 		->where('full_date','>=',$minDate)
 		->orderByRaw('full_date asc , id asc')
@@ -72,7 +71,6 @@ class LetterOfCreditCashCoverStatement extends Model
 			static::updated(function (LetterOfCreditCashCoverStatement $model) {
 				
 				$minDate = self::updateNextRows($model);
-				
 				
 				$lcFacilityIsChanged = $model->isDirty('lc_facility_id') ;
 				$financialInstitutionIsChanged = $model->isDirty('financial_institution_id') ;

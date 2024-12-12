@@ -344,7 +344,7 @@ use App\Models\LetterOfCreditIssuance;
                                     </div>
 
                                     <div class="col-md-3">
-                                        <x-form.input :default-value="1" :model="$model??null" :label="__('LC Duration Months')" :type="'numeric'" :placeholder="__('LC Duration Months')" :name="'lc_duration_months'" :class="'recalc-due-date lc-duration-months-js'" :required="true"></x-form.input>
+                                        <x-form.input :default-value="1" :model="$model??null" :label="__('LC Duration ( Days )')" :type="'numeric'" :placeholder="__('LC Duration ( Days )')" :name="'lc_duration_days'" :class="'recalc-due-date lc-duration-days-js'" :required="true"></x-form.input>
                                     </div>
 
 
@@ -585,11 +585,11 @@ use App\Models\LetterOfCreditIssuance;
         date = date.replaceAll('-', '/')
 
         const issuanceDate = new Date(date);
-        const duration = $('.lc-duration-months-js').val();
+        const duration = parseInt($('.lc-duration-days-js').val());
         if (issuanceDate || duration == '0') {
-            const numberOfMonths = duration
+            const numberOfDays = duration
 
-            let dueDate = issuanceDate.addMonths(numberOfMonths)
+            let dueDate = issuanceDate.addDays(numberOfDays)
 
             dueDate = formatDateForSelect2(dueDate)
             $('.due-date-js').val(dueDate).trigger('change')

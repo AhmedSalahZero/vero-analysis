@@ -67,7 +67,7 @@ use App\Models\LetterOfCreditIssuance;
             <input type="hidden" name="created_by" value="{{ auth()->user()->id }}">
             <input type="hidden" name="company_id" value="{{ $company->id }}">
             <input type="hidden" name="source" value="{{ $source }}">
-			<input type="hidden" name="to-currency" class="update-exchange-rate to-currency" value="">
+			
 				@csrf
             @if(isset($model))
             @method('put')
@@ -98,6 +98,7 @@ use App\Models\LetterOfCreditIssuance;
                             <div class="kt-portlet__body">
 
                                 <div class="form-group row">
+								<input type="hidden" name="to-currency" class="update-exchange-rate to-currency" value="">
 								 <div class="col-md-3">
                                         <label>{{__('Issuance Type')}}
                                             @include('star')
@@ -290,7 +291,7 @@ use App\Models\LetterOfCreditIssuance;
                                     </div>
 
                                     <div class="col-md-3">
-                                        <x-form.input :default-value="1" :model="$model??null" :label="__('LC Duration Months')" :type="'numeric'" :placeholder="__('LC Duration Months')" :name="'lc_duration_months'" :class="'recalc-due-date lc-duration-months-js'" :required="true"></x-form.input>
+                                        <x-form.input :default-value="1" :model="$model??null" :label="__('LC Duration (Days)')" :type="'numeric'" :placeholder="__('LC Duration (Days)')" :name="'lc_duration_days'" :class="'recalc-due-date lc-duration-days-js'" :required="true"></x-form.input>
                                     </div>
 
 
@@ -317,8 +318,8 @@ use App\Models\LetterOfCreditIssuance;
                                         <label>{{__('LC Currency')}}
                                             @include('star')
                                         </label>
-                                        <div class="input-group">
-                                            <select name="lc_currency" class="form-control update-exchange-rate current-invoice-currency">
+                                        <div class="input-group"> 
+                                            <select name="lc_currency" class="form-control lc-currency update-exchange-rate current-invoice-currency">
                                                 <option selected>{{__('Select')}}</option>
                                                 @foreach(getCurrencies() as $currencyName => $currencyValue )
                                                 <option value="{{ $currencyName }}" @if(isset($model) && $model->getLcCurrency() == $currencyName ) selected @elseif($currencyName == 'USD' ) selected @endif > {{ $currencyValue }}</option>
@@ -342,7 +343,7 @@ use App\Models\LetterOfCreditIssuance;
                                             @include('star')
                                         </label>
                                         <div class="input-group">
-                                            <select name="lc_cash_cover_currency" class="form-control update-exchange-rate current-currency receiving-currency-class" js-when-change-trigger-change-account-type>
+                                            <select data-current-selected="{{ isset($model) ? $model->getLcCashCoverCurrency() : ''  }}" name="lc_cash_cover_currency" class="form-control update-exchange-rate current-currency receiving-currency-class" js-when-change-trigger-change-account-type>
                                                 <option selected>{{__('Select')}}</option>
                                                 @foreach(getCurrencies() as $currencyName => $currencyValue )
                                                 <option value="{{ $currencyName }}" @if(isset($model) && $model->getLcCashCoverCurrency() == $currencyName ) selected @elseif($currencyName == 'EGP' ) selected @endif > {{ $currencyValue }}</option>
@@ -438,10 +439,28 @@ use App\Models\LetterOfCreditIssuance;
                                             </div>
                                         </div>
                                     </div>
+									
+									
+									   <div class="col-md-3">
+                                        <label>{{__('Financed By Bank Or Self')}}
+                                            @include('star')
+                                        </label>
+                                        <div class="kt-input-icon">
+                                            <div class="input-group date">
+                                                <select  name="financed_by_bank_or_self" id="financed-by-bank-or-self-select-id" class="form-control ">
+                                                    {{-- <option value="" selected>{{__('Select')}}</option> --}}
+                                                    @foreach(['bank'=>__('By Bank') , 'self'=>__('Self')] as $key => $title)
+                                                    <option value="{{ $key }}" @if(isset($model) && $model->getFinancedBy() == $key) selected @endif>{{ $title }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+									
 
 
-                                <div class="col-md-3 ">
-                                    <x-form.input :model="$model??null" :label="__('Financing Duration')" :type="'text'" :placeholder="__('Financing Duration')" :name="'financing_duration'" :class="'only-greater-than-or-equal-zero-allowed'" :required="true"></x-form.input>
+                                <div class="col-md-3 " id="financing-duration-div-id">
+                                    <x-form.input :id="'financing-duration-id'" :model="$model??null" :label="__('Financing Duration (Days)')" :type="'text'" :placeholder="__('Financing Duration (Days)')" :name="'financing_duration'" :class="'only-greater-than-or-equal-zero-allowed'" :required="true"></x-form.input>
                                 </div>
                                
 
@@ -583,6 +602,8 @@ use App\Models\LetterOfCreditIssuance;
         if (!$(this).hasClass('exclude-text')) {
             let val = $(this).val()
             val = number_unformat(val)
+			var parentTag = $(this).parent().prop("tagName");
+			console.log(this,$(this).parent(),parentTag,'------------------------')
             $(this).parent().find('input[type="hidden"]:not([name="_token"])').val(val)
         }
     })
@@ -611,12 +632,10 @@ use App\Models\LetterOfCreditIssuance;
         date = date.replaceAll('-', '/')
 
         const issuanceDate = new Date(date);
-        const duration = $('.lc-duration-months-js').val();
+        const duration = parseInt($('.lc-duration-days-js').val());
         if (issuanceDate || duration == '0') {
-            const numberOfMonths = duration
-
-            let dueDate = issuanceDate.addMonths(numberOfMonths)
-
+            const numberOfDays = duration
+            let dueDate = issuanceDate.addDays(numberOfDays)
             dueDate = formatDateForSelect2(dueDate)
             $('.due-date-js').val(dueDate).trigger('change')
         }
@@ -783,6 +802,18 @@ $('select[js-get-lc-facility-based-on-financial-institution]').trigger('change')
                 })
 
             </script>
+			<script>
+			$(document).on('change','select#financed-by-bank-or-self-select-id',function(e){
+				const value = $(this).val();
+				if(value == 'bank'){
+					$('#financing-duration-div-id').show();
+				}else{
+					$('#financing-duration-id').val(0).trigger('change');
+					$('#financing-duration-div-id').hide();
+				}
+			})
+			$('select#financed-by-bank-or-self-select-id').trigger('change');
+			</script>
 
 
 @endsection

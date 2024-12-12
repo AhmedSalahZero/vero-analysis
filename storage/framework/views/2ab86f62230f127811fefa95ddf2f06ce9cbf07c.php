@@ -633,7 +633,28 @@ $("button[data-dismiss=modal2]").click(function(){
     })
 
 </script>
-
+<script src="/custom/money-receive.js"></script>
+<script>
+$(document).on('change','select.update-remaining-class',function(){
+	const parent = $(this).closest('.closest-parent');
+	const mainFunctionalCurrency = "<?php echo e($company->getMainFunctionalCurrency()); ?>"
+	const paymentCurrency = parent.find('select[name="payment_currency"]').val();
+	const lcAmountInMainCurrency = parent.find('.lc-amount-in-main-currency').attr('data-value');
+	const lcAmount = parent.find('.lc-amount').attr('data-value');
+	const cashCoverRate = parseFloat(parent.find('.cash-cover-rate').val() / 100) ;
+	let amount = 0;
+	console.log(parent)
+	if(paymentCurrency == mainFunctionalCurrency){
+		amount = lcAmountInMainCurrency;
+	}else{
+		amount = lcAmount;
+	}
+	const remaining = amount * (1-cashCoverRate);
+	$(parent).find('.lc-remaining-amount-class').val(number_format(remaining));
+	
+})
+$('select.update-remaining-class').trigger('change')
+</script>
 <?php $__env->stopSection(); ?>
 <?php $__env->startPush('js'); ?>
 

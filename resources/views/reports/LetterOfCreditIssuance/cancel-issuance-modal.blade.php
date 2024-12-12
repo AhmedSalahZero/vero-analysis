@@ -11,37 +11,96 @@
                      </button>
                  </div>
 
-
-                 <div class="modal-body">
+                 <div class="modal-body closest-parent">
                      <div class="row mb-3">
 
                          <div class="col-md-6 mb-4">
                              <label>{{__('Bank Name')}} </label>
                              <div class="kt-input-icon">
-                                 <input disabled value="{{  $model->getFinancialInstitutionBankName()  }}" type="text" class="form-control">
+							 <input type="hidden" name="financial_institution_id" value="{{  $model->getFinancialInstitutionBankId()}}">
+                                 <input  disabled value="{{  $model->getFinancialInstitutionBankName()  }}" type="text" class="form-control">
                              </div>
                          </div>
 
                          <div class="col-md-2 mb-4">
                              <label>{{__('LC Amount')}} </label>
                              <div class="kt-input-icon">
-                                 <input disabled value="{{  number_format($model->getLcAmount() ) . ' ' . $model->getLcCurrency()  }}" type="text" class="form-control text-center">
+                                 <input data-value="{{ $model->getLcAmount() }}" disabled value="{{  number_format($model->getLcAmount() ) . ' ' . $model->getLcCurrency()  }}" type="text" class="form-control lc-amount text-center">
                              </div>
                          </div>
+						 
+						
 						 
 						 <div class="col-md-2 mb-4">
                              <label>{{__('Exchange Rate')}} </label>
                              <div class="kt-input-icon">
-                                 <input disabled value="{{  number_format($model->getExchangeRate(),2 )  }}" type="text" class="form-control text-center">
+                                 <input disabled value="{{  number_format($model->getExchangeRate(),2 )  }}" type="text" class="form-control  text-center">
                              </div>
                          </div>
 						 
 						 <div class="col-md-2 mb-4">
                              <label>{{__('Amount In Main Currency')}} </label>
                              <div class="kt-input-icon">
-                                 <input disabled value="{{  $model->getAmountInMainCurrencyFormatted()  }}" type="text" class="form-control text-center">
+                                 <input data-value="{{ $model->getLcAmountInMainCurrency() }}" disabled value="{{  $model->getAmountInMainCurrencyFormatted()  }}" type="text" class="form-control lc-amount-in-main-currency text-center">
                              </div>
                          </div>
+						 
+						 
+						 
+						 
+						 
+						 
+						 
+						 
+						 
+						 
+						 
+						 <input type="hidden" class="cash-cover-rate" value="{{ $model->getCashCoverRate() }}">
+						 
+						    <div class="col-md-6 mb-4">
+                             <label>{{__('Cash Cover')}} </label>
+                             <div class="kt-input-icon">
+                                 <input disabled value="{{  __('Cash Cover') }}" type="text" class="form-control">
+                             </div>
+                         </div>
+						 @php
+							$cashCoverAmount = $model->getCashCoverAmount();
+						 @endphp
+                         <div class="col-md-2 mb-4">
+                             <label>{{__('Amount')}} </label>
+                             <div class="kt-input-icon">
+                                 <input disabled value="{{  $model->getCashCoverAmountFormatted() . ' ' . $model->getLcCashCoverCurrency()  }}" type="text" class="form-control text-center">
+                             </div>
+                         </div>
+						 
+						 @php
+							$exchangeRate = $model->getLcCashCoverCurrency() == $company->getMainFunctionalCurrency() ? 1 :  $model->getExchangeRate();
+						 @endphp
+						  <div class="col-md-2 mb-4">
+                             <label>{{__('Exchange Rate')}} </label>
+                             <div class="kt-input-icon">
+                                 <input disabled value="{{ number_format($exchangeRate,2)  }}" type="text" class="form-control text-center">
+                             </div>
+                         </div>
+						 
+						 <div class="col-md-2 mb-4">
+                             <label>{{__('Amount In Main Currency')}} </label>
+                             <div class="kt-input-icon">
+                                 <input disabled value="{{  number_format($cashCoverAmount * $exchangeRate)  }}" type="text" class="form-control text-center">
+                             </div>
+                         </div>
+						 
+						 
+						 
+						 
+						 
+						 
+						 
+						 
+						 
+						 
+						 
+						 
 						 
                          <div class="col-md-3 mb-4">
                              <label>{{__('Date')}}</label>
@@ -79,7 +138,11 @@
                                             <div class="input-group date">
                                                 <select  name="supplier_invoice_id" class="form-control update-net-balance-inputs">
                                                     @foreach($invoices as  $invoice)
-                                                    <option data-currency="{{ $invoice->getCurrency() }}" data-invoice-net-balance="{{ $invoice->getNetBalance() }}" data-exchange-rate="{{ $invoice->getExchangeRate() }}" data-invoice-net-balance-in-main-currency="{{ $invoice->getNetBalanceInMainCurrency() }}"   value="{{ $invoice->id }}">{{ $invoice->getInvoiceNumber() }}</option>
+                                                    <option 
+													@if($model->getSupplierInvoiceId() == $invoice->id )
+													selected
+													@endif 
+													data-current-select="{{ $model->getSupplierInvoiceId() }}" data-currency="{{ $invoice->getCurrency() }}" data-invoice-net-balance="{{ $invoice->getNetBalance() }}" data-exchange-rate="{{ $invoice->getExchangeRate() }}" data-invoice-net-balance-in-main-currency="{{ $invoice->getNetBalanceInMainCurrency() }}"   value="{{ $invoice->id }}">{{ $invoice->getInvoiceNumber() }}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
@@ -87,7 +150,7 @@
                                     </div>
 									
 										 <div class="col-md-2 mb-4">
-											<label>{{__('Net Balance')}} </label>
+											<label>{{__('Invoice Net Balance')}} </label>
 											<div class="kt-input-icon">
 												<input disabled value="0" type="text" class="form-control net-balance text-center">
 											</div>
@@ -106,6 +169,75 @@
 												<input disabled value="0" type="text" class="form-control net-balance-in-main-currency text-center">
 											</div>
 										</div>
+										
+										
+										
+										
+										
+										
+										
+										@if($model->isFinancedBySelf())
+										{{-- @if($model->isFinancedBySelf()) --}}
+										
+								
+									<div class="col-md-3">
+                                        <label>{{__('Currency')}}
+                                            @include('star')
+                                        </label>
+                                        <div class="input-group">
+                                            <select name="payment_currency" class="form-control update-remaining-class current-currency" js-when-change-trigger-change-account-type>
+                                                <option selected>{{__('Select')}}</option>
+                                                @foreach([$company->getMainFunctionalCurrency()=>$company->getMainFunctionalCurrency() , $model->getLcCurrency()=>$model->getLcCurrency() ] as $currencyName => $currencyValue )
+                                                <option value="{{ $currencyName }}" @if(isset($model) && $model->getPaymentCurrency() == $currencyName ) selected @elseif($currencyName == $company->getMainFunctionalCurrency() ) selected @endif > {{ $currencyValue }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+									
+									
+									
+									 <div class="col-md-3 mb-4">
+											<label>{{__('LC Remaining Amount')}} </label>
+											<div class="kt-input-icon">
+												<input readonly name="lc_remaining_amount" value="0" type="text" class="form-control lc-remaining-amount-class text-center">
+											</div>
+										</div>
+										
+									
+
+                       				<div class="col-md-3">
+                                        <label>{{ __('Account Type') }} <span class=""></span> </label>
+                                        <div class="kt-input-icon">
+                                            <div class="input-group date">
+                                                <select id="account_type_id" name="payment_account_type_id" class="form-control  js-update-account-id-based-on-account-type">
+                                                    @foreach($currentAccounts as $index => $accountType)
+                                                    <option value="{{ $accountType->id }}"
+													@if($accountType->id == $model->getPaymentAccountTypeId())
+													selected 
+													@endif 
+													>{{ $accountType->getName() }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label>{{ __('Account Number') }} <span class=""></span> </label>
+                                        <div class="kt-input-icon">
+                                            <div class="input-group date">
+                                                <select js-cd-or-td-account-number data-current-selected="{{ isset($model) ? $model->getPaymentAccountNumberId(): 0 }}" name="payment_account_number_id" class="form-control js-account-number">
+                                                    <option value="" selected>{{__('Select')}}</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+									
+						 
+										
+										@endif 
+										
+										
 										
 										
 										

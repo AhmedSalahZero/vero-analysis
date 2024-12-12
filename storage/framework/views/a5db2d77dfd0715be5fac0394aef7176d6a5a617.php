@@ -44,6 +44,18 @@
 						$('input[name="lc_amount"]').attr('data-can-not-be-greater-than',amount);
 					})
 
+$(document).on('change','select.lc-currency',function(){
+	var lcCashCoverSelect = $('select[name="lc_cash_cover_currency"]') ;
+	var currentSelected = lcCashCoverSelect.attr('data-current-selected');
+	const currentCurrency = $(this).val();
+	const mainFunctionalCurrency = "<?php echo e($company->getMainFunctionalCurrency()); ?>"
+	let cashCoverCurrencies =  `<option ${currentSelected == mainFunctionalCurrency ? 'selected' : ''} value="${mainFunctionalCurrency}">${mainFunctionalCurrency}</option>`;
 	
+	if(currentCurrency != mainFunctionalCurrency ){
+		cashCoverCurrencies+= `<option ${currentCurrency == currentSelected ? 'selected' : ''} value="${currentCurrency}">${currentCurrency}</option>`
+	}
+	lcCashCoverSelect.empty().append(cashCoverCurrencies).trigger('change');
+})	
+$('select.lc-currency').trigger('change')
             </script>
 <?php /**PATH /media/salah/Software/projects/veroo/resources/views/reports/LetterOfCreditIssuance/commonJs.blade.php ENDPATH**/ ?>

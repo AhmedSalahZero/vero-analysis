@@ -12,7 +12,6 @@
 			declare interest_type_text varchar(100) default 'interest';
 			declare highest_debit_balance_text varchar(100) default 'highest_debit_balance';
 		
-	--	insert into debugging (message) values('from create');
 			-- في حالة الانشاء
 			set new.created_at = CURRENT_TIMESTAMP;
 			select date , end_balance  into _previous_date,_last_end_balance  from clean_overdraft_bank_statements where  clean_overdraft_id = new.clean_overdraft_id and full_date < new.full_date order by full_date desc , id desc limit 1 ; -- رتبت بالاي دي الاكبر علشان  لو كانوا متساوين في التاريخ بالظبط (ودا احتمال ضعيف ) ياخد اللي ال اي دي بتاعه اكبر
@@ -54,7 +53,6 @@
 		set new.interest_amount = @interestAmount;
 		-- نهاية حسبة الفوائد
 		
-			insert into debugging (message) values('from vvvvvv');
 
 
 	end //
@@ -70,7 +68,6 @@
 		select sum(debit) into _current_debit from clean_overdraft_bank_statements where clean_overdraft_id = _clean_overdraft_id and is_debit > 0    ;
 		select sum(settlement_amount) into _total_settlements from clean_overdraft_withdrawals where clean_overdraft_id =  _clean_overdraft_id ;
 		set _current_debit = _current_debit - _total_settlements ;
-		--	insert into debugging (message) values('from ddda');
 				call start_settlement_process_clean_overdraft(_type,0 , _clean_overdraft_id , _current_debit  ,0 , _current_company_id , CURRENT_TIMESTAMP);
 		
 		
@@ -81,7 +78,6 @@
 	delimiter // 
 	create procedure reverse_clean_overdraft_settlements(in _start_update_from_date_time date  , in _clean_overdraft_id integer )
 	begin 
-		insert into debugging (message) values('from ddd');
 		-- declare i INTEGER DEFAULT 0 ;
 	--	declare _clean_overdraft_withdrawal_id integer default 0 ;
 	-- هنجيب كل السحوبات اللي تاريخها اكبر من تاريخ الاغلاق لان اللي تاريخها اصغر من او يساوي تاريخ الاغلاق مش هنقدر نيجي يمها
@@ -138,8 +134,6 @@
 		
 		set new.limit = ifnull(new.limit,0);
 		set new.end_balance = new.beginning_balance + new.debit - new.credit ; 
-		insert into debugging (message) values(concat('limit',new.limit));
-		insert into debugging (message) values(concat('end_balance',new.end_balance));
 		set new.room = new.limit +  new.end_balance ;
 		
 		
@@ -161,8 +155,6 @@
 		end if ;
 		set _current_interest_rate = ifnull(_current_interest_rate / 100,0) ;
 
-insert into debugging (message) values(concat('_current_interest_rate',_current_interest_rate));
-		insert into debugging (message) values(concat('_last_end_balance',_last_end_balance));
 		
 		set @dailyInterestRate = _current_interest_rate/365 ;
 		if _previous_date then 

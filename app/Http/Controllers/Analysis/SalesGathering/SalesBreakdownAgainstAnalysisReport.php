@@ -152,11 +152,15 @@ class SalesBreakdownAgainstAnalysisReport
                 WHERE ( company_id = '" . $company->id . "'AND " . $type . " IS NOT NULL  AND date between '" . $simpleLinearRegressionStartDate . "' and '" . $breakdownEndDate . "')
                 ORDER BY id "
 		)));
-		$simpleLinearRegressionDataItemForCurrentType = isset($calculated_report_data) ? [] : $report_data;
-		$endOfMonthsIntervalDates = HDate::generateEndOfMonthsDatesBetweenTwoDates(Carbon::make($simpleLinearRegressionStartDate),Carbon::make($breakdownEndDate));
-		
-		$simpleLinearRegressionDataItemForCurrentType=  $this->formatDataForSimpleLinearRegression($simpleLinearRegressionDataItemForCurrentType,$type,$endOfMonthsIntervalDates);
-		$simpleLinearRegressionData = SimpleLinearRegression::predict($simpleLinearRegressionDataItemForCurrentType,$predictionDates,$breakdownEndDate,$type);
+		$isAI = $result == 'array_with_ai';
+		$simpleLinearRegressionData = 0; // or [] not sure 
+		if($isAI){
+				$simpleLinearRegressionDataItemForCurrentType = isset($calculated_report_data) ? [] : $report_data;
+				$endOfMonthsIntervalDates = HDate::generateEndOfMonthsDatesBetweenTwoDates(Carbon::make($simpleLinearRegressionStartDate),Carbon::make($breakdownEndDate));
+				$simpleLinearRegressionDataItemForCurrentType=  $this->formatDataForSimpleLinearRegression($simpleLinearRegressionDataItemForCurrentType,$type,$endOfMonthsIntervalDates);
+				$simpleLinearRegressionData = SimpleLinearRegression::predict($simpleLinearRegressionDataItemForCurrentType,$predictionDates,$breakdownEndDate,$type);
+			
+		}
 		$report_data = isset($calculated_report_data) ? $calculated_report_data : $this->filterDataByDate($report_data,$breakdownStartDate,$breakdownEndDate);
 		
 

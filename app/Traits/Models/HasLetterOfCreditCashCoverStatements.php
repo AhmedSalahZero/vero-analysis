@@ -63,4 +63,5 @@ trait HasLetterOfCreditCashCoverStatements
 			'is_commission_fees'=>$isCommissionFees
 		]);
 	}
+	
 }

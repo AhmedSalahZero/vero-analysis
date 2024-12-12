@@ -67,7 +67,7 @@ use App\Models\LetterOfCreditIssuance;
             <input type="hidden" name="created_by" value="<?php echo e(auth()->user()->id); ?>">
             <input type="hidden" name="company_id" value="<?php echo e($company->id); ?>">
             <input type="hidden" name="source" value="<?php echo e($source); ?>">
-			<input type="hidden" name="to-currency" class="update-exchange-rate to-currency" value="">
+			
 				<?php echo csrf_field(); ?>
             <?php if(isset($model)): ?>
             <?php echo method_field('put'); ?>
@@ -100,6 +100,7 @@ use App\Models\LetterOfCreditIssuance;
                             <div class="kt-portlet__body">
 
                                 <div class="form-group row">
+								<input type="hidden" name="to-currency" class="update-exchange-rate to-currency" value="">
 								 <div class="col-md-3">
                                         <label><?php echo e(__('Issuance Type')); ?>
 
@@ -391,11 +392,11 @@ use App\Models\LetterOfCreditIssuance;
 
                                     <div class="col-md-3">
                                          <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.input','data' => ['defaultValue' => 1,'model' => $model??null,'label' => __('LC Duration Months'),'type' => 'numeric','placeholder' => __('LC Duration Months'),'name' => 'lc_duration_months','class' => 'recalc-due-date lc-duration-months-js','required' => true]]); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.input','data' => ['defaultValue' => 1,'model' => $model??null,'label' => __('LC Duration (Days)'),'type' => 'numeric','placeholder' => __('LC Duration (Days)'),'name' => 'lc_duration_days','class' => 'recalc-due-date lc-duration-days-js','required' => true]]); ?>
 <?php $component->withName('form.input'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['default-value' => 1,'model' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($model??null),'label' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('LC Duration Months')),'type' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('numeric'),'placeholder' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('LC Duration Months')),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('lc_duration_months'),'class' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('recalc-due-date lc-duration-months-js'),'required' => true]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['default-value' => 1,'model' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($model??null),'label' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('LC Duration (Days)')),'type' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('numeric'),'placeholder' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('LC Duration (Days)')),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('lc_duration_days'),'class' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('recalc-due-date lc-duration-days-js'),'required' => true]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
@@ -440,8 +441,8 @@ use App\Models\LetterOfCreditIssuance;
 
                                             <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                         </label>
-                                        <div class="input-group">
-                                            <select name="lc_currency" class="form-control update-exchange-rate current-invoice-currency">
+                                        <div class="input-group"> 
+                                            <select name="lc_currency" class="form-control lc-currency update-exchange-rate current-invoice-currency">
                                                 <option selected><?php echo e(__('Select')); ?></option>
                                                 <?php $__currentLoopData = getCurrencies(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $currencyName => $currencyValue): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                 <option value="<?php echo e($currencyName); ?>" <?php if(isset($model) && $model->getLcCurrency() == $currencyName ): ?> selected <?php elseif($currencyName == 'USD' ): ?> selected <?php endif; ?> > <?php echo e($currencyValue); ?></option>
@@ -496,7 +497,7 @@ use App\Models\LetterOfCreditIssuance;
                                             <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                         </label>
                                         <div class="input-group">
-                                            <select name="lc_cash_cover_currency" class="form-control update-exchange-rate current-currency receiving-currency-class" js-when-change-trigger-change-account-type>
+                                            <select data-current-selected="<?php echo e(isset($model) ? $model->getLcCashCoverCurrency() : ''); ?>" name="lc_cash_cover_currency" class="form-control update-exchange-rate current-currency receiving-currency-class" js-when-change-trigger-change-account-type>
                                                 <option selected><?php echo e(__('Select')); ?></option>
                                                 <?php $__currentLoopData = getCurrencies(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $currencyName => $currencyValue): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                 <option value="<?php echo e($currencyName); ?>" <?php if(isset($model) && $model->getLcCashCoverCurrency() == $currencyName ): ?> selected <?php elseif($currencyName == 'EGP' ): ?> selected <?php endif; ?> > <?php echo e($currencyValue); ?></option>
@@ -654,15 +655,34 @@ use App\Models\LetterOfCreditIssuance;
                                             </div>
                                         </div>
                                     </div>
+									
+									
+									   <div class="col-md-3">
+                                        <label><?php echo e(__('Financed By Bank Or Self')); ?>
+
+                                            <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+                                        </label>
+                                        <div class="kt-input-icon">
+                                            <div class="input-group date">
+                                                <select  name="financed_by_bank_or_self" id="financed-by-bank-or-self-select-id" class="form-control ">
+                                                    
+                                                    <?php $__currentLoopData = ['bank'=>__('By Bank') , 'self'=>__('Self')]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $title): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                    <option value="<?php echo e($key); ?>" <?php if(isset($model) && $model->getFinancedBy() == $key): ?> selected <?php endif; ?>><?php echo e($title); ?></option>
+                                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+									
 
 
-                                <div class="col-md-3 ">
+                                <div class="col-md-3 " id="financing-duration-div-id">
                                      <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.input','data' => ['model' => $model??null,'label' => __('Financing Duration'),'type' => 'text','placeholder' => __('Financing Duration'),'name' => 'financing_duration','class' => 'only-greater-than-or-equal-zero-allowed','required' => true]]); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.input','data' => ['id' => 'financing-duration-id','model' => $model??null,'label' => __('Financing Duration (Days)'),'type' => 'text','placeholder' => __('Financing Duration (Days)'),'name' => 'financing_duration','class' => 'only-greater-than-or-equal-zero-allowed','required' => true]]); ?>
 <?php $component->withName('form.input'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['model' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($model??null),'label' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Financing Duration')),'type' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('text'),'placeholder' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Financing Duration')),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('financing_duration'),'class' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed'),'required' => true]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['id' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('financing-duration-id'),'model' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($model??null),'label' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Financing Duration (Days)')),'type' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('text'),'placeholder' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Financing Duration (Days)')),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('financing_duration'),'class' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed'),'required' => true]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
@@ -820,6 +840,8 @@ use App\Models\LetterOfCreditIssuance;
         if (!$(this).hasClass('exclude-text')) {
             let val = $(this).val()
             val = number_unformat(val)
+			var parentTag = $(this).parent().prop("tagName");
+			console.log(this,$(this).parent(),parentTag,'------------------------')
             $(this).parent().find('input[type="hidden"]:not([name="_token"])').val(val)
         }
     })
@@ -848,12 +870,10 @@ use App\Models\LetterOfCreditIssuance;
         date = date.replaceAll('-', '/')
 
         const issuanceDate = new Date(date);
-        const duration = $('.lc-duration-months-js').val();
+        const duration = parseInt($('.lc-duration-days-js').val());
         if (issuanceDate || duration == '0') {
-            const numberOfMonths = duration
-
-            let dueDate = issuanceDate.addMonths(numberOfMonths)
-
+            const numberOfDays = duration
+            let dueDate = issuanceDate.addDays(numberOfDays)
             dueDate = formatDateForSelect2(dueDate)
             $('.due-date-js').val(dueDate).trigger('change')
         }
@@ -1020,6 +1040,18 @@ $('select[js-get-lc-facility-based-on-financial-institution]').trigger('change')
                 })
 
             </script>
+			<script>
+			$(document).on('change','select#financed-by-bank-or-self-select-id',function(e){
+				const value = $(this).val();
+				if(value == 'bank'){
+					$('#financing-duration-div-id').show();
+				}else{
+					$('#financing-duration-id').val(0).trigger('change');
+					$('#financing-duration-div-id').hide();
+				}
+			})
+			$('select#financed-by-bank-or-self-select-id').trigger('change');
+			</script>
 
 
 <?php $__env->stopSection(); ?>

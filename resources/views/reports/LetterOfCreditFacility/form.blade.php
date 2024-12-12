@@ -221,7 +221,7 @@
                                     </div>
 
                                     <div class="col-md-2 ">
-                                        <x-form.input :id="'cd-or-td-lending-percentage-id'" :readonly="false" :default-value="0" :model="$model??null" :label="__('CD Or TD Lending Percentage')" :type="'text'" :placeholder="''" :name="'cd_or_td_lending_percentage'" :class="'only-percentage-allowed recalculate-limit-js'" :required="true"></x-form.input>
+                                        <x-form.input :id="'cd-or-td-lending-percentage-id'" :readonly="false" :default-value="0" :model="$model??null" :label="__('CD Or TD Lending Percentage')" :type="'text'" :placeholder="''" :name="'cd_or_td_lending_percentage'" :class="'only-percentage-allowed recalculate-limit-js'" :required="false"></x-form.input>
                                     </div>
 									
 									<div class="col-md-2 ">	
