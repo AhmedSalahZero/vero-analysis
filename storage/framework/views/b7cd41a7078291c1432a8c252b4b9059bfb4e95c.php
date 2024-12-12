@@ -90,6 +90,7 @@
 								<?php echo e(__('Total')); ?>
 
                                 </td>
+
 							<?php $__currentLoopData = $simpleLinearRegressionDatesForAllTypes[$type]??[]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $date): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                 <td>
 								<?php echo e(number_format($simpleLinearRegressionForAllTypes[$type]['total'][$date]??0)); ?>

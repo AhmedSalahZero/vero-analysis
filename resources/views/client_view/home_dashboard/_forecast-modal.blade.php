@@ -87,6 +87,7 @@
                                 <td>
 								{{ __('Total') }}
                                 </td>
+
 							@foreach($simpleLinearRegressionDatesForAllTypes[$type]??[] as $date)
                                 <td>
 								{{ number_format($simpleLinearRegressionForAllTypes[$type]['total'][$date]??0) }}

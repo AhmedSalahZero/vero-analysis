@@ -413,12 +413,16 @@ class HomeController extends Controller
 				}
 				$reports_data[$type] = $breakdown_data;
 				$simpleLinearRegressionForAllTypes[$type]= $simpleLinearRegression;
+				foreach($simpleLinearRegressionDates as $date){
+					$simpleLinearRegressionForAllTypes[$type]['total'][$date] = $this->getTotal($simpleLinearRegression,$date);
+				}
 				$simpleLinearRegressionDatesForAllTypes[$type]= $simpleLinearRegressionDates;
 			} else {
 				unset($types[$type]);
 			}
 		}
-	
+		
+
 		$types = $this->setBarColorsForTypes($types);
 
 		return view('client_view.home_dashboard.dashboard_breakdown', compact(
@@ -433,7 +437,14 @@ class HomeController extends Controller
 			// ,'fullReport','topes'
 		));
 	}
-
+	protected function getTotal(array $items , string $date){
+		$total = 0 ;
+		foreach($items as $item){
+			$current = isset($item[$date]) ? $item[$date] : 0;
+			$total += $current;
+		}
+		return $total;
+	}
 
 	public function dashboardBreakdownIncomeStatementAnalysis(Request $request, Company $company, $incomeStatementID = null)
 	{
