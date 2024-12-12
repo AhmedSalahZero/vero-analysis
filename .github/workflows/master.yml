@@ -63,5 +63,6 @@ jobs:
          exclude: |
             **/node_modules/**
             **/storage/**
+            **/vendor/**
     
     
