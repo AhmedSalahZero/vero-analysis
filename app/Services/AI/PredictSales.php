@@ -141,6 +141,7 @@ class PredictSales
 	
 		$forecastMonthGrRate = 0 ;
 		if($grForCompany < $growthRateForItem){
+			
 			$forecastMonthGrRate = ($grForCompany + $growthRateForItem) / 2 ; 
 		}elseif($growthRateForItem == 0){
 			$forecastMonthGrRate = $grForCompany ; 
@@ -161,9 +162,10 @@ class PredictSales
 				// if($type =='product_or_service'){
 					// dd($last12Items,$currentItemName);
 				// }
-				// if($type =='product_or_service' && $currentItemName == 'Asada Steak Burrito'){
-					// dd($last12Items,$sumOfLast6Months,$next1ForecastForItem,$next2ForecastForItem,$next3ForecastForItem);
-				// }
+				if($type =='category' && $currentItemName == 'Public Relations'){
+					dd($last12Items,$previousOfPrevious12Items,$grForCompany,$growthRateForItem,$forecastMonthGrRate);
+					// dd($last12Items,$sumOfLast6Months,$last12ItemsAvg,$next1ForecastForItem,$next2ForecastForItem,$next3ForecastForItem);
+				}
 		// dd('good');
 		return [
 			// 'last_12_avg'=>$last12ItemsAvg ,

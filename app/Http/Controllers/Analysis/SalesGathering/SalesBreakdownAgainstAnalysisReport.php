@@ -149,19 +149,23 @@ class SalesBreakdownAgainstAnalysisReport
         //         WHERE ( company_id = '" . $company->id . "'AND " . $type . " IS NOT NULL  AND date between '" . $breakdownStartDate . "' and '" . $breakdownEndDate . "')
         //         ORDER BY id "
 		// )));
-
+		$isAI = $result == 'array_with_ai';
+		$simpleLinearRegressionStartDate = $isAI ? $simpleLinearRegressionStartDate  : $breakdownStartDate;
 		$report_data = isset($calculated_report_data) ? $calculated_report_data :  collect(DB::select(DB::raw(
 			"
                 SELECT DATE_FORMAT(LAST_DAY(date),'%d-%m-%Y') as gr_date  , net_sales_value,service_provider_name," . $type . "
                 FROM sales_gathering
              	 force index (sales_channel_index)
-                WHERE ( company_id = '" . $company->id . "'AND " . $type . " IS NOT NULL  AND date between '" . $simpleLinearRegressionStartDate . "' and '" . $breakdownEndDate . "')
+				
+                WHERE ( company_id = '" . $company->id . "'AND " . $type . " IS NOT NULL  AND date between '" . $simpleLinearRegressionStartDate . "' and '" . $breakdownEndDate . " ')
                 ORDER BY id "
 		)));
+		// dd($report_data[0]);
 		
-		$isAI = $result == 'array_with_ai';
-		
+
 		$simpleLinearRegressionData = []; 
+
+		
 		if($isAI){
 				$simpleLinearRegressionDataItemForCurrentType = isset($calculated_report_data) ? [] : $report_data;
 				$endOfMonthsIntervalDates = HDate::generateEndOfMonthsDatesBetweenTwoDates(Carbon::make($simpleLinearRegressionStartDate),Carbon::make($breakdownEndDate));
@@ -178,7 +182,7 @@ class SalesBreakdownAgainstAnalysisReport
 		}
 		$report_data = isset($calculated_report_data) ? $calculated_report_data : $report_data;
 		if($isAI){
-	    	$report_data =     $this->filterDataByDate($report_data,$breakdownStartDate,$breakdownEndDate);
+			$report_data =     $this->filterDataByDate($report_data,$breakdownStartDate,$breakdownEndDate);
 		}
 		
 	

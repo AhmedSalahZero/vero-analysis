@@ -108,10 +108,8 @@ class IntervalsComparingReport
         // First_interval
         $request['start_date']=$start_date_one;
         $request['end_date']=$end_date_one;
-
         $result_for_interval_one = (new SalesBreakdownAgainstAnalysisReport)->salesBreakdownAnalysisResult($request,$company,'array');
 
-         
         if (isset($result_for_interval_one['report_count_data'])) {
 
             $count_result_for_interval_one = $result_for_interval_one['report_count_data'];
