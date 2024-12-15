@@ -45,7 +45,6 @@
                 <input type="hidden" name="view_name" value="{{$view_name}}">
                 <input type="hidden" name="main_type" value="sales_channel">
                 <input type="hidden" id="append-to" value="salesChannels">
-
                 <div class="kt-portlet__body">
                     <div class="form-group row">
                         @if (! in_array('SalesChannelsProductsAveragePricesView',Request()->segments() ) && !in_array('SalesChannelsProductsItemsAveragePricesView',Request()->segments()))

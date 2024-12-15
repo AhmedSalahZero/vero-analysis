@@ -11,6 +11,7 @@ class PredictSales
 {
 	public function execute(Request $request, Company $company,$type,$endDate)
     {
+		
         // enhanced in sales dashboard // salah
   
 		$startDate = Carbon::make($endDate)->startOfMonth()->subMonthNoOverflow(24)->format('Y-m-d') ;
@@ -45,8 +46,13 @@ class PredictSales
 						
 						
        foreach($data as $name => $dataItem){
-			$lastAndGrowthRateForItems[$name]=$this->getLastAndGrowthRateForItem($dataItem,$endDate,$growthRateForCompany);
+		$currentResult = $this->getLastAndGrowthRateForItem($dataItem,$endDate,$growthRateForCompany,$type,$name) ;
+		if(!is_null($currentResult)){
+			$lastAndGrowthRateForItems[$name]=$currentResult;
+			
+		}
 	   }
+	  
 	 	  uasort($lastAndGrowthRateForItems, function ($a, $b) {
 				return $b['next0ForecastForItem'] <=> $a['next0ForecastForItem'];
 		});
@@ -98,7 +104,7 @@ class PredictSales
 		];
 	}
 	
-	protected function getLastAndGrowthRateForItem(array $totalsPerDates,string $endDate  ,$grForCompany):array 
+	protected function getLastAndGrowthRateForItem(array $totalsPerDates,string $endDate  ,$grForCompany ,$type , $currentItemName):?array 
 	{
 		// Get the last 12 keys
 		$last12Items = HArr::sliceWithDates($totalsPerDates , $endDate,11);
@@ -109,7 +115,9 @@ class PredictSales
 		$previousOfPrevious12Items = HArr::sliceWithDates($slicedItems , $endDate,23) ;
 		$last12ItemsCounter = count($last12Items);
 		$sumOfLast6Months = array_sum(HArr::sliceWithDates($last12Items , $endDate,5));
-		
+		if($sumOfLast6Months == 0){
+			return null;
+		}
 		$previousOfPrevious12ItemsCounter = count($previousOfPrevious12Items);
 		$last12ItemsAvg = $last12ItemsCounter ? array_sum($last12Items) / $last12ItemsCounter : 0;
 		$previousOfPrevious12ItemsAvg =$previousOfPrevious12ItemsCounter ? array_sum($previousOfPrevious12Items) /  $previousOfPrevious12ItemsCounter : 0;
@@ -140,6 +148,8 @@ class PredictSales
 		else{
 			$forecastMonthGrRate = $growthRateForItem;
 		}
+		
+		
 				// $forecastMonthGrRate = $grForCompany < $growthRateForItem  ? ($grForCompany + $growthRateForItem) / 2 : $growthRateForItem ;
 			
 				$next1ForecastForItem = ($last12ItemsAvg*12) * (1+$forecastMonthGrRate) * $next1MonthPercentage;
@@ -148,8 +158,12 @@ class PredictSales
 				$next2ForecastForItem = $next2ForecastForItem < 0 ? 0 : $next2ForecastForItem ;
 				$next3ForecastForItem = ($last12ItemsAvg*12) * (1+$forecastMonthGrRate) * $next3MonthPercentage;
 				$next3ForecastForItem = $next3ForecastForItem < 0 ? 0 : $next3ForecastForItem ;
-	
-		
+				// if($type =='product_or_service'){
+					// dd($last12Items,$currentItemName);
+				// }
+				// if($type =='product_or_service' && $currentItemName == 'Asada Steak Burrito'){
+					// dd($last12Items,$sumOfLast6Months,$next1ForecastForItem,$next2ForecastForItem,$next3ForecastForItem);
+				// }
 		// dd('good');
 		return [
 			// 'last_12_avg'=>$last12ItemsAvg ,

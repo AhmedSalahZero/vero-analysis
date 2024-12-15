@@ -18,7 +18,6 @@ class SalesChannelsAgainstAnalysisReport
     use GeneralFunctions;
     public function index(Company $company)
     {
-
         if (request()->route()->named('salesChannels.zones.analysis')) {
             $type = 'zone';
             $view_name = 'Sales Channels Against Zones Trend Analysis' ;
@@ -104,7 +103,7 @@ class SalesChannelsAgainstAnalysisReport
 				
 			}
 		}
-		
+		$report_data_quantity=[];
         $report_data =[];
         $growth_rate_data =[];
         $final_report_total =[];
@@ -115,7 +114,6 @@ class SalesChannelsAgainstAnalysisReport
         $name_of_report_item  = ($result=='view') ? 'Sales Values' : 'Avg. Prices';
         $data_type = ($request->data_type === null || $request->data_type == 'value')? 'net_sales_value' : 'quantity';
         foreach ($salesChannels as  $salesChannelName) {
-
             if ($result == 'view') {
                    $salesChannels_data =collect(DB::select(DB::raw("
                     SELECT DATE_FORMAT(LAST_DAY(date),'%d-%m-%Y') as gr_date  , ".$data_type." ,sales_channel," . $type ."
@@ -131,19 +129,25 @@ class SalesChannelsAgainstAnalysisReport
                
             }else{
               
+// dd($company->id,$request->has('sales_channels') , $request->has('products'),$request->has('salesChannels'),$request->has('categories')
+// ,
+// $request->get('categories'),
+// $request->get('salesChannels'),
+// $request->get('products'),
 
-
+// );
                      
                                      $salesChannels_data = DB::table('sales_gathering')
                     ->where('company_id',$company->id)
                       ->when($request->has('sales_channels') , function($query) use ($request){
+                        // $query->whereIn('product_or_service',$request->get('sales_channels'));
                         $query->whereIn('product_item',$request->get('sales_channels'));
                     })
                     ->when($request->has('products') , function($query) use ($request){
                         $query->whereIn('product_or_service',$request->get('products'));
                     })
                        ->when($request->has('salesChannels') , function($query) use ($request , $salesChannelName){
-                        $query->whereIn('sales_channel',[$salesChannelName]);
+                        $query->whereIn('sales_channel',(array)$salesChannelName);
                     })
                     ->when($request->has('categories') , function($query) use ($request){
                         $query->whereIn('category' , $request->get('categories'));
@@ -155,14 +159,14 @@ class SalesChannelsAgainstAnalysisReport
                      sales_channel,' . $type)
                     
                      ->get() 
+					 
                     ->groupBy($type)->map(function($item)use($data_type){
                         return $item->groupBy('gr_date')->map(function($sub_item)use($data_type,$item){
                             return 
                             $sub_item->sum('net_sales_value'); 
                         });
                     })->toArray();
-           
-
+// dd($salesChannels_data);
                            $qq = DB::table('sales_gathering')
                     ->where('company_id',$company->id)
                       ->when($request->has('sales_channels') , function($query) use ($request){
@@ -256,7 +260,7 @@ class SalesChannelsAgainstAnalysisReport
                         if($itemKey == 'Avg. Prices'){
                             foreach($values as $datee => $dateVal){
                             $report_data[$reportType][$dateName][$itemKey][$datee] =  
-                            $report_data_quantity[$reportType][$dateName][$itemKey][$datee] ?
+                            isset($report_data_quantity[$reportType][$dateName][$itemKey][$datee]) && $report_data_quantity[$reportType][$dateName][$itemKey][$datee] ?
                             $report_data[$reportType][$dateName][$itemKey][$datee] / $report_data_quantity[$reportType][$dateName][$itemKey][$datee]
                             : 0 ; 
 

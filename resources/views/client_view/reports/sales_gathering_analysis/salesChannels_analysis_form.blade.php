@@ -144,7 +144,6 @@
                         </div>
 
                         @endif
-
                         @if ( $name_of_selector_label == 'Products Items')
 
                         <div class="col-md-{{$column}}">
@@ -175,8 +174,20 @@
                                 </div>
                             </div>
                         </div>
+						@elseif($type == 'product_or_service')
+						   <div class="col-md-{{$column}}">
+                            <label>{{ __('Select Products ') }} <span class="multi_selection"></span> @include('max-option-span') </label>
+                            <div class="kt-input-icon">
+                                <div class="input-group date" id="products">
+                                    <select data-live-search="true" data-actions-box="true" name="products[]" required class="form-control kt-bootstrap-select select2-select kt_bootstrap_select" multiple>
 
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+						
                         @else
+						
                         <div class="col-md-{{$column}}">
                             <label>{{ __('Select '.$name_of_selector_label.' ') }}<span class="multi_selection"></span> @include('max-option-span') </label>
                             <div class="kt-input-icon">
@@ -246,6 +257,7 @@
         $('#categories').html('');
         row = '<select data-live-search="true" data-actions-box="true" name="categories[]" class="form-control select2-select kt-bootstrap-select kt_bootstrap_select" ' + data_type + '  required multiple></select>';
         $('#categories').append(row);
+		console.log(row);
         $('#products').html('');
         row = '<select data-live-search="true" data-actions-box="true" name="products[]" class="form-control select2-select kt-bootstrap-select kt_bootstrap_select"  ' + data_type + '  required  multiple></select>';
         $('#products').append(row);
@@ -411,6 +423,7 @@
     }
     // Sub Categories
     function getProducts(salesChannels, categories, type_of_data, type) {
+		console.log(type_of_data,type)
         $.ajax({
             type: 'POST'
             , data: {
@@ -435,13 +448,8 @@
 
 
 
-            if (type == 'product_or_service') {
-
+            if (type_of_data == 'product_or_service' && false) {
                 row = '<select data-live-search="true" data-actions-box="true" name="sales_channels[]" class="form-control select2-select kt-bootstrap-select kt_bootstrap_select"  ' + data_type + '  required >\n';
-                // if($('#data_type').val()  !== 'value'){
-                //     row += '<option value="">Select</option>\n' ;
-                // }
-
                 $.each(data, function(key, val) {
                     row += '<option value*="' + val + '">' + val + '</option>\n';
 
@@ -451,7 +459,8 @@
                 $('#sales_channels').html('');
                 $('#sales_channels').append(row);
                 reinitializeSelect2();
-            } else {
+            } 
+			else {
                 row = '<select data-live-search="true" data-actions-box="true" name="products[]" class="form-control select2-select kt-bootstrap-select kt_bootstrap_select"  ' + data_type + '  required  >\n';
                 // if($('#data_type').val()  !== 'value'){
                 //     row += '<option value="">Select</option>\n' ;

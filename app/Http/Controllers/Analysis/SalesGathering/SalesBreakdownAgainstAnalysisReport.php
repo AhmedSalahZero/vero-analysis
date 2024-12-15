@@ -173,6 +173,7 @@ class SalesBreakdownAgainstAnalysisReport
 					$simpleLinearRegressionData[$name][$predictionDates[2]] = $item['next2ForecastForItem'];
 					$simpleLinearRegressionData[$name][$predictionDates[3]] = $item['next3ForecastForItem'];
 				}
+				
 			 
 		}
 		$report_data = isset($calculated_report_data) ? $calculated_report_data : $report_data;

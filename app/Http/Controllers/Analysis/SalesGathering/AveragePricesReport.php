@@ -15,7 +15,6 @@ class AveragePricesReport
 		$view_name = '';
 		$names = [];
 
-
 		if ($request->type_of_report == "categories_products_avg") {
 			$full_report_data = (new CategoriesAgainstAnalysisReport)->result($request, $company, 'array');
 			$type = 'Categories / Products';

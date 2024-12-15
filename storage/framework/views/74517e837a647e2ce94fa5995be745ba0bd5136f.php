@@ -8,28 +8,38 @@
 <?php $__env->stopSection(); ?>
 <?php $__env->startSection('content'); ?>
 <div class="row">
-
     <div class="col-md-12">
+
+
+
         <!--begin::Form-->
-        <form class="kt-form kt-form--label-right" method="POST" action=<?php if($name_of_selector_label=='Sales Discount' ): ?> <?php echo e(route('salesChannels.salesDiscount.analysis.result', $company)); ?> <?php elseif($type=='averagePrices' || ($type=='averagePricesProductItems' ) ): ?> <?php echo e(route('averagePrices.result', $company)); ?> <?php else: ?> <?php echo e(route('salesChannels.analysis.result', $company)); ?> <?php endif; ?> enctype="multipart/form-data">
+        <form class="kt-form kt-form--label-right" method="POST" action=<?php if($name_of_selector_label=='Sales Discount' ): ?> <?php echo e(route('businessUnits.salesDiscount.analysis.result', $company)); ?> <?php elseif(($type=='averagePrices' ) || ($type=='averagePricesProductItems' )): ?> <?php echo e(route('averagePrices.result', $company)); ?> <?php else: ?> <?php echo e(route('businessUnits.analysis.result', $company)); ?> <?php endif; ?> enctype="multipart/form-data">
             <?php echo csrf_field(); ?>
+
+
             <?php if($type == 'averagePrices'): ?>
-            <input type="hidden" name="type_of_report" value="salesChannels_products_avg">
+            <input type="hidden" name="type_of_report" value="businessUnits_products_avg">
             <?php
                         $type = 'product_or_service'  ;
                     ?>
             <?php elseif($type == 'averagePricesProductItems'): ?>
-            <input type="hidden" name="type_of_report" value="salesChannels_Items_avg">
+            <input type="hidden" name="type_of_report" value="businessUnits_Items_avg">
             <?php
                         $type = 'product_item'  ;
                     ?>
             <?php endif; ?>
             <div class="kt-portlet">
                 <?php 
-                 
-                        $salesChannels = getTypeFor('sales_channel',$company->id,true);
+                    // $businessUnits = App\Models\SalesGathering::company()
+                    //     ->whereNotNull('business_unit')
+                    //     ->where('business_unit','!=','')
+                    //     ->groupBy('business_unit')
+                    //     ->selectRaw('business_unit')
+                    //     ->get()
+                    //     ->pluck('business_unit')
+                    //     ->toArray();
 
-
+                               $businessUnits = getTypeFor('business_unit',$company->id,false);
 
                         if ($name_of_selector_label == 'Products Items') {
                             $column =  3 ;
@@ -44,12 +54,9 @@
                     ?>
                 <input type="hidden" name="type" value="<?php echo e($type); ?>">
                 <input type="hidden" name="view_name" value="<?php echo e($view_name); ?>">
-                <input type="hidden" name="main_type" value="sales_channel">
-                <input type="hidden" id="append-to" value="salesChannels">
-
                 <div class="kt-portlet__body">
+                    <?php if(!in_array('BusinessUnitsProductsAveragePricesView',Request()->segments()) && !in_array('BusinessUnitsProductsItemsAveragePricesView',Request()->segments())): ?>
                     <div class="form-group row">
-                        <?php if(! in_array('SalesChannelsProductsAveragePricesView',Request()->segments() ) && !in_array('SalesChannelsProductsItemsAveragePricesView',Request()->segments())): ?>
                         <div class="col-md-6">
                             <label><?php echo e(__('Data Type')); ?> </label>
                             <div class="kt-input-icon">
@@ -62,17 +69,12 @@
                                 </div>
                             </div>
                         </div>
-
-
                         <?php echo $__env->make('comparing_type_selector', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 
-                        <?php else: ?>
-                        <input type="hidden" name="data_type" value="value" id="data_type" <?php echo e($data_type_selector); ?>>
-                        <?php endif; ?>
-
                     </div>
-					
-
+                    <?php else: ?>
+                    <input type="hidden" name="data_type" id="data_type" <?php echo e($data_type_selector); ?> value="value">
+                    <?php endif; ?>
                     <div class="form-group row">
 					<?php if(isset(get_defined_vars()['__data']['type']) && get_defined_vars()['__data']['type'] !='averagePrices' &&get_defined_vars()['__data']['type']!='averagePricesProductItems'): ?>
 					 <div class="col-md-4  first-interval">
@@ -80,13 +82,12 @@
                             <div class="flex-center "><label class="first-interval"><?php echo e(__('First Interval')); ?></label></div>
                         
                         </div>
-						<?php endif; ?> 
-
+<?php endif; ?>
                         <div class="col-md-4">
                             <label><?php echo e(__('Start Date')); ?></label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
-                                    <input type="date" required value="<?php echo e(getEndYearBasedOnDataUploaded($company)['jan']); ?>" name="start_date" class="form-control trigger-update-select-js" placeholder="Select date" />
+                                    <input type="date" name="start_date" value="<?php echo e(getEndYearBasedOnDataUploaded($company)['jan']); ?>" required class="form-control trigger-update-select-js" placeholder="Select date" />
                                 </div>
                             </div>
                         </div>
@@ -113,17 +114,20 @@
                                 </div>
                             </div>
                         </div>
-
                     </div>
+
+                    <input type="hidden" name="main_type" value="business_unit">
+                    <input type="hidden" id="append-to" value="businessUnits">
 
                     <div class="form-group row">
                         <div class="col-md-<?php echo e($column); ?>">
-                            <label><?php echo e(__('Select Sales Channels')); ?> <?php echo $__env->make('max-option-span', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?> </label>
+                            <label><?php echo e(__('Select Business Units')); ?> <?php echo $__env->make('max-option-span', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?> </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
-                                    <select name="salesChannels[]" data-live-search="true" data-actions-box="true" required class="form-control select2-select kt-bootstrap-select kt_bootstrap_select" id="salesChannels" multiple>
-                                        <?php $__currentLoopData = $salesChannels; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $sales_channel): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                        <option value="<?php echo e($sales_channel); ?>"> <?php echo e(__($sales_channel)); ?></option>
+                                    <select data-live-search="true" data-actions-box="true" name="businessUnits[]" required class="select2-select form-control kt-bootstrap-select kt_bootstrap_select" id="businessUnits" multiple>
+                                        
+                                        <?php $__currentLoopData = $businessUnits; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $business_unit): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <option value="<?php echo e($business_unit); ?>"> <?php echo e(__($business_unit)); ?></option>
                                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                     </select>
                                 </div>
@@ -136,7 +140,7 @@
                             <label><?php echo e(__('Select Categories ')); ?> <span class="multi_selection"></span> <?php echo $__env->make('max-option-span', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?> </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date" id="categories">
-                                    <select data-live-search="true" data-actions-box="true" name="categories[]" required class="form-control select2-select kt-bootstrap-select kt_bootstrap_select" multiple>
+                                    <select data-live-search="true" data-actions-box="true" name="categories[]" required class="select2-select form-control kt-bootstrap-select kt_bootstrap_select" multiple>
 
                                     </select>
                                 </div>
@@ -144,13 +148,14 @@
                         </div>
 
                         <?php endif; ?>
+
                         <?php if( $name_of_selector_label == 'Products Items'): ?>
 
                         <div class="col-md-<?php echo e($column); ?>">
                             <label><?php echo e(__('Select Products ')); ?> <span class="multi_selection"></span> <?php echo $__env->make('max-option-span', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?> </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date" id="products">
-                                    <select data-live-search="true" data-actions-box="true" name="products[]" required class="form-control kt-bootstrap-select select2-select kt_bootstrap_select" multiple>
+                                    <select data-live-search="true" data-actions-box="true" name="products[]" required class="select2-select form-control kt-bootstrap-select kt_bootstrap_select" multiple>
 
                                     </select>
                                 </div>
@@ -164,7 +169,7 @@
                             <label><?php echo e(__('Select '.$name_of_selector_label)); ?> </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
-                                    <select data-live-search="true" data-actions-box="true" name="sales_discounts_fields[]" required class="form-control kt-bootstrap-select select2-select kt_bootstrap_select" id="sales_discounts_fields" multiple>
+                                    <select data-live-search="true" data-actions-box="true" name="sales_discounts_fields[]" required class="select2-select form-control kt-bootstrap-select kt_bootstrap_select" id="sales_discounts_fields" multiple>
                                         <option value="quantity_discount"><?php echo e(__('Quantity Discount')); ?></option>
                                         <option value="cash_discount"><?php echo e(__('Cash Discount')); ?></option>
                                         <option value="special_discount"><?php echo e(__('Special Discount')); ?></option>
@@ -174,25 +179,13 @@
                                 </div>
                             </div>
                         </div>
-						<?php elseif($type == 'product_or_service'): ?>
-						   <div class="col-md-<?php echo e($column); ?>">
-                            <label><?php echo e(__('Select Products ')); ?> <span class="multi_selection"></span> <?php echo $__env->make('max-option-span', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?> </label>
-                            <div class="kt-input-icon">
-                                <div class="input-group date" id="products">
-                                    <select data-live-search="true" data-actions-box="true" name="products[]" required class="form-control kt-bootstrap-select select2-select kt_bootstrap_select" multiple>
 
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-						
                         <?php else: ?>
-						
                         <div class="col-md-<?php echo e($column); ?>">
-                            <label><?php echo e(__('Select '.$name_of_selector_label.' ')); ?><span class="multi_selection"></span> <?php echo $__env->make('max-option-span', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?> </label>
+                            <label><?php echo e(__('Select '.$name_of_selector_label.' ')); ?> <span class="multi_selection"></span> <?php echo $__env->make('max-option-span', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?> </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date" id="sales_channels">
-                                    <select data-live-search="true" data-actions-box="true" name="sales_channels[]" required class="form-control select2-select kt-bootstrap-select kt_bootstrap_select" multiple>
+                                    <select data-live-search="true" data-actions-box="true" name="sales_channels[]" required class="select2-select form-control kt-bootstrap-select kt_bootstrap_select" multiple>
 
                                     </select>
                                 </div>
@@ -249,6 +242,8 @@
 <!--end::Page Scripts -->
 <script>
     $('#data_type').change(function(e) {
+
+
         // if($('#data_type').val()  == 'value'){
         var data_type = 'multiple';
         // $('.multi_selection').html("<?php echo e(__('( Multi Selection )')); ?>");
@@ -258,43 +253,41 @@
         //     var data_type = '';
         //     $('.multi_selection').html("");
         // }
-        $('#salesChannels option:selected').prop('selected', false);
+        $('#businessUnits option:selected').prop('selected', false);
 
         $('.filter-option-inner-inner').html('Nothing selected');
         $('#sales_channels').html('');
-        row = '<select data-live-search="true" data-actions-box="true"  name="sales_channels[]" class="form-control select2-select kt-bootstrap-select kt_bootstrap_select" required ' + data_type + ' ></select>';
+        row = '<select data-live-search="true" data-actions-box="true" name="sales_channels[]" class="select2-select form-control kt-bootstrap-select kt_bootstrap_select" required ' + data_type + ' ></select>';
         $('#sales_channels').append(row)
         $('#categories').html('');
-        row = '<select data-live-search="true" data-actions-box="true" name="categories[]" class="form-control select2-select kt-bootstrap-select kt_bootstrap_select" ' + data_type + '  required multiple></select>';
+        row = '<select data-live-search="true" data-actions-box="true" name="categories[]" class="select2-select form-control kt-bootstrap-select kt_bootstrap_select" ' + data_type + '  required ></select>';
         $('#categories').append(row);
-		console.log(row);
         $('#products').html('');
-        row = '<select data-live-search="true" data-actions-box="true" name="products[]" class="form-control select2-select kt-bootstrap-select kt_bootstrap_select"  ' + data_type + '  required  multiple></select>';
+        row = '<select data-live-search="true" data-actions-box="true" name="products[]" class="select2-select form-control kt-bootstrap-select kt_bootstrap_select"  ' + data_type + '  required  ></select>';
         $('#products').append(row);
         reinitializeSelect2();
+
     });
-
-
-    $(document).on('change', '#salesChannels', function() {
+    $(document).on('change', '#businessUnits', function() {
 
 
         clearTimeout(wto);
         wto = setTimeout(() => {
+
             if (tryParseJSONObject($(this).val()[0])) {
-                salesChannels = JSON.parse($(this).val()[0]);
+                businessUnits = JSON.parse($(this).val()[0]);
             } else {
-                salesChannels = $(this).val();
+                businessUnits = $(this).val();
             }
             type_of_data = "<?php echo e($type); ?>";
+
             if ("<?php echo e($name_of_selector_label); ?>" == 'Products / Services' || "<?php echo e($name_of_selector_label); ?>" == 'Products Items') {
-                getCategories(salesChannels, 'category');
+                getCategories(businessUnits, 'category');
             } else {
-                getSalesChannales(salesChannels, type_of_data);
+                getSalesChannales(businessUnits, type_of_data);
             }
-            reinitializeSelect2();
 
         }, getNumberOfMillSeconds());
-
 
 
     });
@@ -303,19 +296,20 @@
         clearTimeout(wto);
         wto = setTimeout(() => {
 
-            if (tryParseJSONObject($('#salesChannels').val()[0])) {
-                salesChannels = JSON.parse($('#salesChannels').val()[0]);
+
+            if (tryParseJSONObject($('#businessUnits').val()[0])) {
+                businessUnits = JSON.parse($('#businessUnits').val()[0]);
             } else {
-                salesChannels = $('#salesChannels').val();
+                businessUnits = $('#businessUnits').val();
             }
             type_of_data = "<?php echo e($type); ?>";
 
             categories = $(this).val();
 
-            getProducts(salesChannels, categories, 'product_or_service', type_of_data)
+            getProducts(businessUnits, categories, 'product_or_service', type_of_data)
+
 
         }, getNumberOfMillSeconds());
-
 
     });
     $(document).on('change', '[name="products[]"]', function() {
@@ -323,19 +317,20 @@
         clearTimeout(wto);
         wto = setTimeout(() => {
 
-            if (tryParseJSONObject($('#salesChannels').val()[0])) {
-                salesChannels = JSON.parse($('#salesChannels').val()[0]);
+
+            if (tryParseJSONObject($('#businessUnits').val()[0])) {
+                businessUnits = JSON.parse($('#businessUnits').val()[0]);
             } else {
-                salesChannels = $('#salesChannels').val();
+                businessUnits = $('#businessUnits').val();
             }
             categories = $('[name="categories[]"]').val();
             products = $(this).val();
 
             type_of_data = "<?php echo e($type); ?>";
-            getProductItems(salesChannels, categories, products, type_of_data)
+            getProductItems(businessUnits, categories, products, type_of_data)
+
 
         }, getNumberOfMillSeconds());
-
 
 
     });
@@ -352,52 +347,12 @@
     };
 
     // Sales Channales
-    function getSalesChannales(salesChannels, type_of_data) {
+    function getSalesChannales(businessUnits, type_of_data) {
         $.ajax({
             type: 'POST'
             , data: {
-                'main_data': salesChannels
-                , 'main_field': 'sales_channel'
-                , 'field': type_of_data
-                , 'start_date': $('input[name="start_date"]').val()
-                , 'end_date': $('input[name="end_date"]').val()
-            }
-            , url: "<?php echo e(route('get.zones.data',$company)); ?>"
-            , dataType: 'json'
-            , accepts: 'application/json'
-        }).done(function(data) {
-
-            // if($('#data_type').val()  == 'value'){
-            var data_type = 'multiple';
-            // }
-            // else{
-            // var data_type = '';
-            // }
-            row = '<select data-live-search="true" data-actions-box="true" name="sales_channels[]" class="form-control select2-select kt-bootstrap-select kt_bootstrap_select" required ' + data_type + '  >\n';
-            // if($('#data_type').val()  !== 'value'){
-            //     row += '<option value="">Select</option>\n' ;
-            // }
-
-
-            $.each(data, function(key, val) {
-                row += '<option value*="' + val + '">' + val + '</option>\n';
-
-            });
-            row += '</select>';
-
-            $('#sales_channels').html('');
-            $('#sales_channels').append(row);
-            reinitializeSelect2();
-        });
-    }
-
-    // Categories
-    function getCategories(salesChannels, type_of_data) {
-        $.ajax({
-            type: 'POST'
-            , data: {
-                'main_data': salesChannels
-                , 'main_field': 'sales_channel'
+                'main_data': businessUnits
+                , 'main_field': 'business_unit'
                 , 'field': type_of_data
                 , 'start_date': $('input[name="start_date"]').val()
                 , 'end_date': $('input[name="end_date"]').val()
@@ -413,11 +368,10 @@
             // else{
             //     var data_type = '';
             // }
-            row = '<select data-live-search="true" data-actions-box="true" name="categories[]" class="form-control select2-select kt-bootstrap-select kt_bootstrap_select" ' + data_type + '  required >\n';
+            row = '<select data-live-search="true" data-actions-box="true" name="sales_channels[]" class="select2-select form-control kt-bootstrap-select kt_bootstrap_select" required ' + data_type + '  >\n';
             // if($('#data_type').val()  !== 'value'){
             //     row += '<option value="">Select</option>\n' ;
             // }
-
 
             $.each(data, function(key, val) {
                 row += '<option value*="' + val + '">' + val + '</option>\n';
@@ -425,20 +379,55 @@
             });
             row += '</select>';
 
-            $('#categories').html('');
-            $('#categories').append(row);
+            $('#sales_channels').html('');
+            $('#sales_channels').append(row);
             reinitializeSelect2();
-
         });
     }
-    // Sub Categories
-    function getProducts(salesChannels, categories, type_of_data, type) {
-		console.log(type_of_data,type)
+
+    // Categories
+    function getCategories(businessUnits, type_of_data) {
         $.ajax({
             type: 'POST'
             , data: {
-                'main_data': salesChannels
-                , 'main_field': 'sales_channel'
+                'main_data': businessUnits
+                , 'main_field': 'business_unit'
+                , 'field': type_of_data
+                , 'start_date': $('input[name="start_date"]').val()
+                , 'end_date': $('input[name="end_date"]').val()
+            }
+            , url: "<?php echo e(route('get.zones.data',$company)); ?>"
+            , dataType: 'json'
+            , accepts: 'application/json'
+        }).done(function(data) {
+            // if($('#data_type').val()  == 'value'){
+            var data_type = 'multiple';
+            // }
+            // else{
+            //     var data_type = '';
+            // }
+            row = '<select data-live-search="true" data-actions-box="true" name="categories[]" class="select2-select form-control kt-bootstrap-select kt_bootstrap_select" ' + data_type + '  required >\n';
+            // if($('#data_type').val()  !== 'value'){
+            //     row += '<option value="">Select</option>\n' ;
+            // }
+
+            $.each(data, function(key, val) {
+                row += '<option value*="' + val + '">' + val + '</option>\n';
+
+            });
+            row += '</select>';
+            $('#categories').html('');
+            $('#categories').append(row);
+            reinitializeSelect2();
+        });
+    }
+    // Sub Categories
+    function getProducts(businessUnits, categories, type_of_data, type) {
+        $.ajax({
+            type: 'POST'
+            , data: {
+                'main_data': businessUnits
+                , 'main_field': 'business_unit'
                 , 'second_main_data': categories
                 , 'sub_main_field': 'category'
                 , 'field': type_of_data
@@ -456,10 +445,13 @@
             //     var data_type = '';
             // }
 
+            if (type == 'product_or_service') {
 
+                row = '<select data-live-search="true" data-actions-box="true" name="sales_channels[]" class="select2-select form-control kt-bootstrap-select kt_bootstrap_select"  ' + data_type + '  required >\n';
+                // if($('#data_type').val()  !== 'value'){
+                //     row += '<option value="">Select</option>\n' ;
+                // }
 
-            if (type_of_data == 'product_or_service' && false) {
-                row = '<select data-live-search="true" data-actions-box="true" name="sales_channels[]" class="form-control select2-select kt-bootstrap-select kt_bootstrap_select"  ' + data_type + '  required >\n';
                 $.each(data, function(key, val) {
                     row += '<option value*="' + val + '">' + val + '</option>\n';
 
@@ -469,9 +461,8 @@
                 $('#sales_channels').html('');
                 $('#sales_channels').append(row);
                 reinitializeSelect2();
-            } 
-			else {
-                row = '<select data-live-search="true" data-actions-box="true" name="products[]" class="form-control select2-select kt-bootstrap-select kt_bootstrap_select"  ' + data_type + '  required  >\n';
+            } else {
+                row = '<select data-live-search="true" data-actions-box="true" name="products[]" class="select2-select form-control kt-bootstrap-select kt_bootstrap_select"  ' + data_type + '  required  >\n';
                 // if($('#data_type').val()  !== 'value'){
                 //     row += '<option value="">Select</option>\n' ;
                 // }
@@ -489,12 +480,12 @@
         });
     }
     // Product Or Services
-    function getProductItems(salesChannels, categories, products, type_of_data) {
+    function getProductItems(businessUnits, categories, products, type_of_data) {
         $.ajax({
             type: 'POST'
             , data: {
-                'main_data': salesChannels
-                , 'main_field': 'sales_channel'
+                'main_data': businessUnits
+                , 'main_field': 'business_unit'
                 , 'second_main_data': categories
                 , 'sub_main_field': 'category'
                 , 'third_main_data': products
@@ -513,26 +504,25 @@
             // else{
             //     var data_type = '';
             // }
-            row = '<select data-live-search="true" data-actions-box="true" name="sales_channels[]" class="form-control select2-select kt-bootstrap-select kt_bootstrap_select"  ' + data_type + '  required  >\n';
+            row = '<select data-live-search="true" data-actions-box="true" name="sales_channels[]" class="select2-select form-control kt-bootstrap-select kt_bootstrap_select"  ' + data_type + '  required  >\n';
             // if($('#data_type').val()  !== 'value'){
             //     row += '<option value="">Select</option>\n' ;
             // }
-
 
             $.each(data, function(key, val) {
                 row += '<option value*="' + val + '">' + val + '</option>\n';
 
             });
             row += '</select>';
+
             $('#sales_channels').html('');
             $('#sales_channels').append(row);
-            reinitializeSelect2();
 
+            reinitializeSelect2();
         });
     }
-    $('#salesChannels').trigger('change');
 
 </script>
 <?php $__env->stopSection(); ?>
 
-<?php echo $__env->make('layouts.dashboard', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /media/salah/Software/projects/veroo/resources/views/client_view/reports/sales_gathering_analysis/salesChannels_analysis_form.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('layouts.dashboard', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /media/salah/Software/projects/veroo/resources/views/client_view/reports/sales_gathering_analysis/businessUnits_analysis_form.blade.php ENDPATH**/ ?>
