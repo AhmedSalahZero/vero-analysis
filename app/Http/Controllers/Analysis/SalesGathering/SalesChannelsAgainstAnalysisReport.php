@@ -166,6 +166,7 @@ class SalesChannelsAgainstAnalysisReport
                             $sub_item->sum('net_sales_value'); 
                         });
                     })->toArray();
+					// dd($salesChannels_data);
 // dd($salesChannels_data);
                            $qq = DB::table('sales_gathering')
                     ->where('company_id',$company->id)
