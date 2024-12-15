@@ -43,6 +43,8 @@ class AppServiceProvider extends ServiceProvider
 	
 	public function boot()
 	{
+		//dd(get_loaded_extensions());
+
 		
 		ini_set('max_execution_time', 6000); //300 seconds = 5 minutes
 		\PhpOffice\PhpSpreadsheet\Shared\Font::setAutoSizeMethod(Font::AUTOSIZE_METHOD_EXACT);

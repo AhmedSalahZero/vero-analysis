@@ -49,7 +49,6 @@ $additionalArray = $modelName == 'LoanSchedule' ? ['medium_term_loan_id'=>Reques
 </style>
 @endsection
 @section('content')
-
 <div class="row">
     <div class="col-md-12">
         <!--begin::Portlet-->
@@ -71,6 +70,9 @@ $additionalArray = $modelName == 'LoanSchedule' ? ['medium_term_loan_id'=>Reques
                     <div class="kt-portlet__head-label">
                         <h3 class="kt-portlet__head-title head-title text-primary">
                             {{ camelToTitle($modelName) . ' ' . __('Import') }}
+							<span class="text-red">
+								(Maximum uploaded rows at a time 50,000 rows)
+							</span>
                         </h3>
                     </div>
                 </div>

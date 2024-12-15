@@ -302,7 +302,7 @@ class HArr
 		}
 		return 0 ;
 	}
-	public static function sliceWithDates($items , $endDate,$offsite = 11 ){
+	public static function sliceWithDates($items , $endDate,$offsite = 11 ):array{
 		$result = [];
 		$startDate = Carbon::make($endDate)->subMonths($offsite)->format('Y-m-d');
 		foreach($items as $date => $value){
@@ -311,5 +311,11 @@ class HArr
 			}
 		}
 		return $result;
+	}
+	public static function checkIfMonthNumberExistOrNot(array $items, array $dates){
+		$result = [];
+		foreach($dates as $date){
+			// ee
+		}
 	}
 }

@@ -8,6 +8,7 @@ use App\Http\Controllers\ExportTable;
 use App\Models\Company;
 use App\Models\SalesGathering;
 use App\Models\SalesOrder;
+use App\Services\AI\PredictSales;
 use App\Services\AI\SimpleLinearRegression;
 use App\Traits\GeneralFunctions;
 use Carbon\Carbon;
@@ -165,12 +166,12 @@ class SalesBreakdownAgainstAnalysisReport
 				$simpleLinearRegressionDataItemForCurrentType = isset($calculated_report_data) ? [] : $report_data;
 				$endOfMonthsIntervalDates = HDate::generateEndOfMonthsDatesBetweenTwoDates(Carbon::make($simpleLinearRegressionStartDate),Carbon::make($breakdownEndDate));
 				// $simpleLinearRegressionDataItemForCurrentType=  $this->formatDataForSimpleLinearRegression($simpleLinearRegressionDataItemForCurrentType,$type,$endOfMonthsIntervalDates);
-				$simpleLinearRegressionData = (new salesReport())->predictSales($request,$company,$type,$breakdownEndDate);
+				$simpleLinearRegressionData = (new PredictSales())->execute($request,$company,$type,$breakdownEndDate);
 				foreach($simpleLinearRegressionData as $name => $item){
-					$simpleLinearRegressionData[$name][$predictionDates[0]] = $item['next0ForecastForType'];
-					$simpleLinearRegressionData[$name][$predictionDates[1]] = $item['next1ForecastForType'];
-					$simpleLinearRegressionData[$name][$predictionDates[2]] = $item['next2ForecastForType'];
-					$simpleLinearRegressionData[$name][$predictionDates[3]] = $item['next3ForecastForType'];
+					$simpleLinearRegressionData[$name][$predictionDates[0]] = $item['next0ForecastForItem'];
+					$simpleLinearRegressionData[$name][$predictionDates[1]] = $item['next1ForecastForItem'];
+					$simpleLinearRegressionData[$name][$predictionDates[2]] = $item['next2ForecastForItem'];
+					$simpleLinearRegressionData[$name][$predictionDates[3]] = $item['next3ForecastForItem'];
 				}
 			 
 		}

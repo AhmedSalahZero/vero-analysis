@@ -47,17 +47,23 @@ class TestCommand extends Command
 	 */
 	public function handle()
 	{
-		$request = new Request;
-		$company = Company::find(105);
+		$request = new Request();
 		$request->merge([
-			'start_date'=>'2022-11-01',
-			'end_date'=>'2024-11-30',
-			'report_type'=>'comparing',
-			'company_id'=>$company->id
-		]); 
-		$salesReport = new salesReport;
+			'name'=>'ahmed'
+		]);
+		Request()->merge(['name'=>'ali']);
+		dd($request->name,Request('name'));
+		// $request = new Request;
+		// $company = Company::find(105);
+		// $request->merge([
+		// 	'start_date'=>'2022-11-01',
+		// 	'end_date'=>'2024-11-30',
+		// 	'report_type'=>'comparing',
+		// 	'company_id'=>$company->id
+		// ]); 
+		// $salesReport = new salesReport;
 	
-		$predict = $salesReport->predictSales($request,$company,'branch','array');
+		// $predict = $salesReport->predictSales($request,$company,'branch','array');
 	}
 	public function refreshStatement($statementModelName,$dateColumnName = 'full_date'){
 		$fullModelName ='App\Models\\'.$statementModelName;

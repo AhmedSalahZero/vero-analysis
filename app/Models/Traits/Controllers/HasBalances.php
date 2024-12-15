@@ -136,7 +136,7 @@ trait HasBalances
 						$currentCredit = $isCustomer ? $currentAmount : 0 ;
 						$invoiceNumbers = implode('/',$moneyModel->settlements->pluck('invoice.invoice_number')->toArray());
 						
-						$currentComment = method_exists($fullMoneyModelName,'generate_comment')  ? $fullMoneyModelName::generateComment($moneyModel,app()->getLocale(),$invoiceNumbers,'') : __('LC Settlement Paid Invoices [ :numbers ]',['numbers'=>$invoiceNumbers],app()->getLocale());
+						$currentComment = method_exists($fullMoneyModelName,'generateComment')  ? $fullMoneyModelName::generateComment($moneyModel,app()->getLocale(),$invoiceNumbers,'') : __('LC Settlement Paid Invoices [ :numbers ]',['numbers'=>$invoiceNumbers],app()->getLocale());
 						$currentData = []; 
 						$currentData['date'] = $dateReceivingFormatted;
 						$currentData['document_type'] = $moneyModelType;

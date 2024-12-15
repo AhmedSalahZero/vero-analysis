@@ -49,7 +49,6 @@ $additionalArray = $modelName == 'LoanSchedule' ? ['medium_term_loan_id'=>Reques
 </style>
 <?php $__env->stopSection(); ?>
 <?php $__env->startSection('content'); ?>
-
 <div class="row">
     <div class="col-md-12">
         <!--begin::Portlet-->
@@ -73,6 +72,9 @@ $additionalArray = $modelName == 'LoanSchedule' ? ['medium_term_loan_id'=>Reques
                         <h3 class="kt-portlet__head-title head-title text-primary">
                             <?php echo e(camelToTitle($modelName) . ' ' . __('Import')); ?>
 
+							<span class="text-red">
+								(Maximum uploaded rows at a time 50,000 rows)
+							</span>
                         </h3>
                     </div>
                 </div>
