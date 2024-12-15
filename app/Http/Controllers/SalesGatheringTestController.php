@@ -15,6 +15,7 @@ use App\Jobs\ShowCompletedMessageForSuccessJob;
 use App\Models\ActiveJob;
 use App\Models\CachingCompany;
 use App\Models\Company;
+use App\Models\LastUploadFileName;
 use App\Models\SalesGatheringTest;
 use Auth;
 use Illuminate\Http\Request;
@@ -84,14 +85,17 @@ class SalesGatheringTestController extends Controller
 			}
 			$salesGathering_fields['company_id'] = $company_id;
 			$salesGathering_fields['created_by'] = $user_id;
-
+			$company->deleteAllOldLastUploadFileNamesFor($modelName,LastUploadFileName::CURRENT);
+			$fileName = request()->file('excel_file') ? request()->file('excel_file')->getClientOriginalName() : __('N/A') ;
+			$company->addNewFileUploadFileNameFor($fileName,$modelName);
 			$active_job = ActiveJob::where('company_id',  $company_id)->where('model',$modelName)->where('status', 'test_table')->where('model_name', 'SalesGatheringTest')->first();
 			if ($active_job === null) {
 				$active_job = ActiveJob::create([
 					'company_id'  => $company_id,
 					'model_name'  => 'SalesGatheringTest',
 					'status'  => 'test_table',
-					'model'=>$modelName
+					'model'=>$modelName,
+					
 				]);
 			}
 			$validationCacheKey = generateCacheKeyForValidationRow($company_id,$modelName);
@@ -102,7 +106,7 @@ class SalesGatheringTestController extends Controller
 			
 			
 			
-		
+			
 			$fileUpload = new  ImportData($company_id, request()->format, 'SalesGatheringTest', $salesGathering_fields, $active_job->id,auth()->user()->id,$modelName);
 				Excel::queueImport($fileUpload, request()->file('excel_file'))->chain([
 					new NotifyUserOfCompletedImport(request()->user(), $active_job->id,$company_id,$modelName),
@@ -134,6 +138,7 @@ class SalesGatheringTestController extends Controller
 		$validationCacheKey = generateCacheKeyForValidationRow($company->id,$modelName);
 		Cache::forget($validationCacheKey);
 		Cache::forget(getShowCompletedTestMessageCacheKey($company->id,$modelName));
+		$company->updateLastUploadFileNameStatus($modelName);
 		if($modelName == 'SalesGathering'){
 			SalesGatheringTestJob::withChain([
 				new RemoveIntervalYearCashingJob($company),

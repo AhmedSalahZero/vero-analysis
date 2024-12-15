@@ -486,4 +486,55 @@ class Company extends Model implements HasMedia
 	{
 		return $this->getOddoDBUrl() && $this->getOddoDBName() && $this->getOddoDBUserName() && $this->getOddoDBPassword();
 	}
+	public function lastUploadFileNames()
+	{
+		return $this->hasMany(LastUploadFileName::class,'company_id');
+	}
+	public function addNewFileUploadFileNameFor(string $fileName,string $modelName):LastUploadFileName{
+		return $this->lastUploadFileNames()->create([
+			'name'=>$fileName,
+			'status'=>LastUploadFileName::CURRENT,
+			'company_id'=>$this->id,
+			'model_name'=>$modelName,
+		]);
+	}
+	public function updateLastUploadFileNameStatus(string $modelName){
+		return $this->lastUploadFileNames->where('status',LastUploadFileName::CURRENT)
+		->where('model_name',$modelName)
+		->last()->update([
+			'status'=>LastUploadFileName::SUCCESS
+		]);
+		
+	}
+	public function getCurrentLastFileNameForModel(string $modelName){
+		$lastFile = $this->lastUploadFileNames->where('status',LastUploadFileName::CURRENT)
+		->where('model_name',$modelName)
+		->last();
+		return $lastFile ? $lastFile->name : __('N/A');
+	}
+	public function getSuccessLastFileNameForModel(string $modelName){
+		$lastFile = $this->lastUploadFileNames->where('status',LastUploadFileName::SUCCESS)
+		->where('model_name',$modelName)
+		->last();
+		return $lastFile ? $lastFile->name : __('N/A');
+	}
+	public function hasLastSuccessfullyUploadFileForModel(string $modelName){
+		return  $this->lastUploadFileNames()->where('status',LastUploadFileName::SUCCESS)
+		->where('model_name',$modelName)
+		->exists();
+	}
+	public function hasLastCurrentUploadFileForModel(string $modelName){
+		return  $this->lastUploadFileNames()->where('status',LastUploadFileName::CURRENT)
+		->where('model_name',$modelName)
+		->exists();
+	}
+	
+	public function deleteAllOldLastUploadFileNamesFor(string $modelName,string $status):void{
+		$this->lastUploadFileNames->where('model_name',$modelName)
+		->where('status',$status)
+		->each(function($lastUploadFileName){
+			$lastUploadFileName->delete();
+		});
+	}
+	
 }

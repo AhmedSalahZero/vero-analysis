@@ -5,6 +5,8 @@ namespace App\Imports;
 use App\Helpers\HArr;
 use App\Models\ActiveJob;
 use App\Models\CachingCompany;
+use App\Models\Company;
+use App\Models\LastUploadFileName;
 use App\Models\TablesField;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Schema\Blueprint;
@@ -134,6 +136,7 @@ class ImportData implements
 				
 				DB::table('caching_company')->where('job_id', $this->job_id)->delete();
 				$cachingKey = generateCacheKeyForValidationRow($this->companyId,$this->uploadModelName);
+				// Company::find($this->companyId)->deleteAllOldLastUploadFileNamesFor($this->uploadModelName,LastUploadFileName::CURRENT);
 				$validationRows = $validationRow;
 				if (Cache::has($cachingKey)) {
 					$validationRows = arrayMergeTwoDimArray($validationRows,Cache::get($cachingKey, []));
@@ -228,7 +231,7 @@ class ImportData implements
 				];
 			}
 		}
-		if(in_array($key , getNonEmptyFields())){
+		if(in_array($key , \getNonEmptyFields())){
 			if ( is_null($value) || $value == '') {
 				$allValidations[$key] =  [
 					'message'=>__('Empty Value Not Allowed'),

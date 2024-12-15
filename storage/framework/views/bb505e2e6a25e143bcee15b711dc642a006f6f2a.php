@@ -143,8 +143,16 @@ $additionalArray = $modelName == 'LoanSchedule' ? ['medium_term_loan_id'=>Reques
                     use Illuminate\Support\Facades\Cache;
                     $canViewPleaseReviewMessage = !hasFailedRow($company->id,$modelName)&&hasCachingCompany($company->id,$modelName) && ! $active_job_for_saving && Cache::get(getShowCompletedTestMessageCacheKey($company->id,$modelName)) && ! (bool)Cache::get(getCanReloadUploadPageCachingForCompany($company->id,$modelName) );
                     ?>
+					<?php if($company->hasLastCurrentUploadFileForModel($modelName)): ?>
+					<h4><?php echo e(__('Current File Name :') . $company->getCurrentLastFileNameForModel($modelName)); ?></h4>
+					<?php elseif(hasFailedRow($company->id,$modelName)): ?>
+					<h4><?php echo e(__('Current Failed File Name :') . $company->getCurrentLastFileNameForModel($modelName)); ?></h4>
+					<?php elseif($company->hasLastSuccessfullyUploadFileForModel($modelName)): ?>
+					<h4><?php echo e(__('Last Successfully Uploaded File Name :') . $company->getSuccessLastFileNameForModel($modelName)); ?></h4>
+					<?php endif; ?> 
                     <?php if($canViewPleaseReviewMessage): ?>
                     <h4 id="please-review-and-click-save" class="text-center alert alert-info " style="text-transform:capitalize;justify-content:center"><?php echo e(__('Please review And Click Save')); ?></h4>
+					
                     <?php endif; ?>
                     <?php if($active_job): ?>
                     <div class="kt-section__content uploading_div">
