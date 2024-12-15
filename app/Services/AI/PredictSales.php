@@ -163,7 +163,7 @@ class PredictSales
 					// dd($last12Items,$currentItemName);
 				// }
 				if($type =='category' && $currentItemName == 'Public Relations'){
-					dd($last12Items,$previousOfPrevious12Items,$grForCompany,$growthRateForItem,$forecastMonthGrRate);
+					// dd($last12Items,$previousOfPrevious12Items,$grForCompany,$growthRateForItem,$forecastMonthGrRate);
 					// dd($last12Items,$sumOfLast6Months,$last12ItemsAvg,$next1ForecastForItem,$next2ForecastForItem,$next3ForecastForItem);
 				}
 		// dd('good');
