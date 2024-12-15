@@ -129,27 +129,20 @@ class SalesChannelsAgainstAnalysisReport
                
             }else{
               
-// dd($company->id,$request->has('sales_channels') , $request->has('products'),$request->has('salesChannels'),$request->has('categories')
-// ,
-// $request->get('categories'),
-// $request->get('salesChannels'),
-// $request->get('products'),
 
-// );
                      
                                      $salesChannels_data = DB::table('sales_gathering')
                     ->where('company_id',$company->id)
                       ->when($request->has('sales_channels') , function($query) use ($request){
-                        // $query->whereIn('product_or_service',$request->get('sales_channels'));
                         $query->whereIn('product_item',$request->get('sales_channels'));
                     })
                     ->when($request->has('products') , function($query) use ($request){
                         $query->whereIn('product_or_service',$request->get('products'));
                     })
-                       ->when($request->has('salesChannels') , function($query) use ($request , $salesChannelName){
-                        $query->whereIn('sales_channel',(array)$salesChannelName);
-                    })
-                    ->when($request->has('categories') , function($query) use ($request){
+					->when($request->has('salesChannels') , function($query) use ($request , $salesChannelName){
+						   $query->whereIn('sales_channel',(array)$salesChannelName);
+						})
+						->when($request->has('categories') , function($query) use ($request){
                         $query->whereIn('category' , $request->get('categories'));
                     })
                     // ->where('sales_channel', $salesChannelName)
@@ -166,8 +159,7 @@ class SalesChannelsAgainstAnalysisReport
                             $sub_item->sum('net_sales_value'); 
                         });
                     })->toArray();
-					// dd($salesChannels_data);
-// dd($salesChannels_data);
+		
                            $qq = DB::table('sales_gathering')
                     ->where('company_id',$company->id)
                       ->when($request->has('sales_channels') , function($query) use ($request){
@@ -202,8 +194,7 @@ class SalesChannelsAgainstAnalysisReport
 
             
 
-
-            foreach (($request->sales_channels??[]) as $sales_channel_key => $sales_channel) {
+            foreach (($request->get('sales_channels',$request->get('products',[]))) as $sales_channel_key => $sales_channel) {
                 $years = [];
                 $data_per_main_item = $salesChannels_data[$sales_channel]??[];
                 if (count(($data_per_main_item))>0 ) {
@@ -224,7 +215,7 @@ class SalesChannelsAgainstAnalysisReport
             
 
             if($result == 'array'){
-                 foreach (($request->sales_channels??[]) as $sales_channel_key => $sales_channel) {
+                 foreach (($request->get('sales_channels',$request->get('products',[]))??[]) as $sales_channel_key => $sales_channel) {
                 $years_quantity = [];
 
                 $data_per_main_item_quantity = $qq[$sales_channel]??[];
@@ -247,7 +238,6 @@ class SalesChannelsAgainstAnalysisReport
                 
                 
                 }
-
                  foreach($report_data as $reportType=>$dates){
 
                      
