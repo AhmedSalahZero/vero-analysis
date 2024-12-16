@@ -112,7 +112,7 @@
 												$sub_section->id == 339||
 												$sub_section->id == 340||
 												$sub_section->id == 343||
-												$sub_section->id == 344||
+												$sub_section->id == 352||
 												
 												 ( false !== $found =  array_search(\Str::singular($name_of_section),$viewing_names)) || 
                                             
@@ -243,9 +243,7 @@
                                                         @php $name_of_section = "Product Ranking"; @endphp 
                                                     @endif
 													
-{{-- @if($sub_section->id == 344)
-{{ dd($sub_section,$name_of_section) }}
-@endif  --}}
+
                                                     @if ((!isset($name_of_first_section) &&  false !== $found =  array_search(\Str::singular($name_of_section),$viewing_names)) ||
                                                         ( isset($name_of_first_section) && (false !== $found =  array_search(\Str::singular($name_of_section),$viewing_names)) && (false !== $found =  array_search(\Str::singular($name_of_first_section),$viewing_names)) ) || ($sub_section->name['en'] =="Discounts Breakdown Analysis") ||
                                                         ($sub_section->name['en'] == "Customers Natures Analysis") || (  ($sub_section->name['en'] == "Discounts Sales Interval Comparing Analysis") && (count(array_intersect(['Quantity Discount','Cash Discount','Special Discount'],$viewing_names)) > 0)) 
@@ -256,7 +254,7 @@
                                                         || ($name_of_section == "Product Ranking" && isset($exportables['product_or_service'] )  && /* not sure salah */  isset($exportables['branch'] ) ) 
                                                         || ($name_of_section == "Customers" &&  (isset($exportables['customer_name']) )
 														|| $name_of_section == "Days" 
-														|| $sub_section->id == 344 
+														|| $sub_section->id == 352 
 														
 														// first if statement
 														)  

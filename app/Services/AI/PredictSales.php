@@ -30,9 +30,6 @@ class PredictSales
 							
 									
 									$lastAndGrowthRateForCompanyArr = $this->getLastAndGrowthRateForCompany($totalsPerDates,$endDate );
-									// dd($lastAndGrowthRateForCompanyArr);
-									// $last12AvgForCompany = $lastAndGrowthRateForCompanyArr['last_12_avg'];
-									// $last24AvgForCompany = $lastAndGrowthRateForCompanyArr['last_24_avg'];
 									$growthRateForCompany = $lastAndGrowthRateForCompanyArr['growth_rate']??0;
 									$next0ForecastForCompany = $lastAndGrowthRateForCompanyArr['next0ForecastForCompany']??0;
 									$next1ForecastForCompany = $lastAndGrowthRateForCompanyArr['next1ForecastForCompany']??0;

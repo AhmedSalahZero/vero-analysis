@@ -160,7 +160,6 @@ class SalesBreakdownAgainstAnalysisReport
                 WHERE ( company_id = '" . $company->id . "'AND " . $type . " IS NOT NULL  AND date between '" . $simpleLinearRegressionStartDate . "' and '" . $breakdownEndDate . " ')
                 ORDER BY id "
 		)));
-		// dd($report_data[0]);
 		
 
 		$simpleLinearRegressionData = []; 

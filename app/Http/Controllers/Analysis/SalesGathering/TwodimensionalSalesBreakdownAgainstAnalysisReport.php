@@ -211,7 +211,6 @@ class TwodimensionalSalesBreakdownAgainstAnalysisReport
 			
 
 			foreach($top50 as $searchItemName){
-				// dd($report_data);
 			
 				foreach($report_data as $documentNumber=>$subData){
 					if(in_array($searchItemName,array_column($subData,'product_or_service'))){
