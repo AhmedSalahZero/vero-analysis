@@ -408,6 +408,7 @@ $exportableFieldsValues[] = 'avg_invoice_value';
                                 <th class="text-center max-w-300">{{ __(ucwords(str_replace('_',' ',$type))) }}</th>
                                 <th class="text-center">{{ __('Sales Values') }}</th>
                                 <th class="text-center">{{ __('%') }}</th>
+                                <th class="text-center">{{ __('ACC %') }}</th>
                                 @if (isset($report_count_data) && count($report_count_data) > 0)
                                 <th class="text-center">{{ __('Count') }}</th>
                                 <th class="text-center">{{ __('Count %') }}</th>
@@ -417,7 +418,9 @@ $exportableFieldsValues[] = 'avg_invoice_value';
                             @slot('table_body')
 
 
-
+@php
+	$acc = 0;
+@endphp
                             @foreach ($report_data as $key => $item)
 
                             <tr>
@@ -425,7 +428,12 @@ $exportableFieldsValues[] = 'avg_invoice_value';
                                 {{-- <th>{{($key??0)+1}}</th> --}}
                                 <td class=" max-w-300">{{$item['item']?? '-'}}</td>
                                 <td class="text-center">{{number_format($item['Sales Value']??0)}}</td>
+								@php
+									$acc += $total == 0 ? 0 : (($item['Sales Value']/$total)*100)  ;
+								@endphp
+                                {{-- <td class="text-center">{{ . ' %'}}</td> --}}
                                 <td class="text-center">{{$total == 0 ? 0 : number_format((($item['Sales Value']/$total)*100) , 1) . ' %'}}</td>
+                                <td class="text-center">{{number_format($acc,1). ' %'}}</td>
                                 @if (isset($report_count_data) && count($report_count_data) > 0)
                                 <td class="text-center">{{ $report_count_data[$key]['Count'] }}</td>
                                 <td class="text-center">{{$total == 0 ? 0 : number_format((($report_count_data[$key]['Count'] /$total_count)*100) , 1) . ' %'}}</td>
@@ -438,9 +446,11 @@ $exportableFieldsValues[] = 'avg_invoice_value';
                                 {{-- <td class="hidden"></td> --}}
                                 <td>{{number_format($total)}}</td>
                                 <td>100 %</td>
+                                <td></td>
                                 @if (isset($report_count_data) && count($report_count_data) > 0)
                                 <td>{{ $total_count  }}</td>
                                 <td>100 %</td>
+                               
                                 @endif
                             </tr>
                             @endslot

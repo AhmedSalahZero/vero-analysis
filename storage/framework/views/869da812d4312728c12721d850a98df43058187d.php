@@ -34,7 +34,6 @@
                                 $name = "Product Or Service Name";
                             }   ?>
                         <?php endif; ?>
-                       
                         <?php if(($section->name['en'] == 'Sales Breakdown Analysis Report' && $subSection->name['en'] !== "Customers Nature" && $subSection->name['en'] !== "Service Providers" && $subSection->name['en'] !== 'Sales Discounts') ||
                         ($subSection->name['en'] == "Customers Nature" && (false !== $found =  array_search('Customer Name',$viewing_names))) ||
                             ($subSection->name['en'] == "Service Providers" && ( @count(array_intersect(['Service Provider Type','Service Provider Name','Service Provider Birth Year'],$viewing_names)) > 0 ) ||
@@ -114,6 +113,7 @@
 												$sub_section->id == 339||
 												$sub_section->id == 340||
 												$sub_section->id == 343||
+												$sub_section->id == 344||
 												
 												 ( false !== $found =  array_search(\Str::singular($name_of_section),$viewing_names)) || 
                                             
@@ -145,7 +145,7 @@
                                                             <a href="<?php echo e(route(@$sub_section->route, $company)); ?>" class="kt-widget2__title">
 																<?php echo e(__($sub_section->name[lang()])); ?>
 
-																
+														
                                                             </a>
 
                                                         </div>
@@ -159,7 +159,7 @@
                                             <?php $name_of_section = substr($sub_section->name['en'], strpos($sub_section->name['en'] , "Average Prices Per ")+19  );
                                             ?> 
                                             <?php if(false !== $found =  array_search(\Str::singular($name_of_section),$viewing_names) ): ?>
-												<?php if($user->canViewReport($sub_section->name['en'])): ?>
+												<?php if($user->canViewReport($sub_section->name['en']) && $sub_section->isExportable($exportables) ): ?>
                                                 <div class="col-md-4">
                                                     <div class="kt-widget2__item kt-widget2__item--primary">
                                                         <div class="kt-widget2__checkbox">
@@ -182,7 +182,6 @@
 												<?php endif; ?> 
                                             <?php endif; ?>
                                         <?php elseif( $section->name['en'] == 'Sales Breakdown Analysis Report'): ?>
-
                                                 <?php if($mainSubSection->name['en'] !== "Customers Nature" ||
                                                 ($mainSubSection->name['en'] == "Customers Nature" && false !== $found =  array_search('Customer Name',$viewing_names)) ||
                                                 ($mainSubSection->name['en'] == "Service Providers"  && (count(array_intersect(['Service Provider Type','Service Provider Name','Service Provider Birth Year'],$viewing_names)) >0))  ): ?>
@@ -207,7 +206,7 @@
 
                                                     <?php elseif($mainSubSection->name['en'] == 'Two Dimension'): ?>
                                                         <?php
-                                                            $name_of_section = substr($sub_section->name['en'], strpos($sub_section->name['en'] , "Versus ")+7  );
+                                                            $name_of_section = substr($sub_section->name['en'], strpos($sub_section->name['en'] , "Versus ")+7   );
                                                             
                                                             $name_of_second_section = substr($sub_section->name['en'], strpos($sub_section->name['en'] , " Versus ")   );
                                                             $name_of_first_section = str_replace( $name_of_second_section,'',  $sub_section->name['en']     );
@@ -258,6 +257,7 @@
                                                         || ($name_of_section == "Product Ranking" && isset($exportables['product_or_service'] )  && /* not sure salah */  isset($exportables['branch'] ) ) 
                                                         || ($name_of_section == "Customers" &&  (isset($exportables['customer_name']) )
 														|| $name_of_section == "Days" 
+														|| $sub_section->id == 344 
 														
 														// first if statement
 														)  
@@ -273,7 +273,8 @@
 														<?php continue; ?>
 													<?php endif; ?>
 														
-														
+														<?php echo e(logger($sub_section->id )); ?>
+
 														
 														
 														<?php if($user->canViewReport($sub_section->name['en'])
@@ -290,7 +291,7 @@
 
                                                                 <div class="kt-widget2__info">
                                                                     <a href="<?php echo e(route(@$sub_section->route, $company)); ?>" class="kt-widget2__title">
-	
+
                                                                         <?php echo e(__($sub_section->name[lang()])); ?>  
                                                                     </a>
 

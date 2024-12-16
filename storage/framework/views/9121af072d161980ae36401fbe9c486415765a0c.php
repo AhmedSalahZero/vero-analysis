@@ -393,6 +393,7 @@ $exportableFieldsValues[] = 'avg_invoice_value';
                                 <th class="text-center max-w-300"><?php echo e(__(ucwords(str_replace('_',' ',$type)))); ?></th>
                                 <th class="text-center"><?php echo e(__('Sales Values')); ?></th>
                                 <th class="text-center"><?php echo e(__('%')); ?></th>
+                                <th class="text-center"><?php echo e(__('ACC %')); ?></th>
                                 <?php if(isset($report_count_data) && count($report_count_data) > 0): ?>
                                 <th class="text-center"><?php echo e(__('Count')); ?></th>
                                 <th class="text-center"><?php echo e(__('Count %')); ?></th>
@@ -402,7 +403,9 @@ $exportableFieldsValues[] = 'avg_invoice_value';
                             <?php $__env->slot('table_body'); ?>
 
 
-
+<?php
+	$acc = 0;
+?>
                             <?php $__currentLoopData = $report_data; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 
                             <tr>
@@ -410,7 +413,12 @@ $exportableFieldsValues[] = 'avg_invoice_value';
                                 
                                 <td class=" max-w-300"><?php echo e($item['item']?? '-'); ?></td>
                                 <td class="text-center"><?php echo e(number_format($item['Sales Value']??0)); ?></td>
+								<?php
+									$acc += $total == 0 ? 0 : (($item['Sales Value']/$total)*100)  ;
+								?>
+                                
                                 <td class="text-center"><?php echo e($total == 0 ? 0 : number_format((($item['Sales Value']/$total)*100) , 1) . ' %'); ?></td>
+                                <td class="text-center"><?php echo e(number_format($acc,1). ' %'); ?></td>
                                 <?php if(isset($report_count_data) && count($report_count_data) > 0): ?>
                                 <td class="text-center"><?php echo e($report_count_data[$key]['Count']); ?></td>
                                 <td class="text-center"><?php echo e($total == 0 ? 0 : number_format((($report_count_data[$key]['Count'] /$total_count)*100) , 1) . ' %'); ?></td>
@@ -423,9 +431,11 @@ $exportableFieldsValues[] = 'avg_invoice_value';
                                 
                                 <td><?php echo e(number_format($total)); ?></td>
                                 <td>100 %</td>
+                                <td></td>
                                 <?php if(isset($report_count_data) && count($report_count_data) > 0): ?>
                                 <td><?php echo e($total_count); ?></td>
                                 <td>100 %</td>
+                               
                                 <?php endif; ?>
                             </tr>
                             <?php $__env->endSlot(); ?>

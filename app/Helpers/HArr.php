@@ -2,6 +2,7 @@
 
 namespace App\Helpers;
 
+use Arr;
 use Carbon\Carbon;
 use Exception;
 
@@ -317,5 +318,31 @@ class HArr
 		foreach($dates as $date){
 			// ee
 		}
+	}
+	public static function sumTwoDimArrAtKey(array $items , string $searchKey)
+	{
+		$quantity  = 0 ;
+		foreach($items as $item){
+			if(
+				$item->t1_document_number == '68146'&&
+				$item->main_name == 'Chicken Burrito' && $item->sub_item_name=='Chicken Burrito' ){
+				$quantity+=$item->quantity_main ;
+			}
+		}
+		dd($quantity);
+		// foreach()
+		$total = 0 ;
+		foreach($items as $item){
+				$item = collect($item)->filter(function($q){
+					return $q->main_name == $q->sub_item_name;
+				})->first();
+				// if($item->t1_document_number == '67931'){
+				if($item->t1_document_number == '68146'){
+					$total+= $item->quantity_main;
+				}
+				else{
+				}
+		}
+		dd($total);
 	}
 }

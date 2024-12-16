@@ -177,10 +177,10 @@
         @foreach ($all_items as $item)
         <th>{{ __($item) }}</th>
         @endforeach
-        <td>{{ __('Total '.($type ==  'discounts' ? 'Discounts' : 'Sales')) }}</td>
-        @if (isset($totals_sales_per_main_type))
+        <td>{{ __('Total') }}</td>
+        {{-- @if (isset($totals_sales_per_main_type))
         <td>{{ __((  'Discounts %'  )) }}</td>
-        @endif
+        @endif --}}
 
     </tr>
     @endslot
@@ -205,27 +205,39 @@
         @if (isset($totals_sales_per_main_type))
         <td class="text-center">
             {{ ($totals_sales_per_main_type[$main_type_item_name]??0) ==0 ?  0  : number_format((($main_item_total/$totals_sales_per_main_type[$main_type_item_name] )*100) , 1) .' %' }}
+			
         </td>
         @endif
     </tr>
 
     {{-- Percentages --}}
     <tr class="secondary-row-color ">
-        <th> {{ __($main_type_item_name) .' %' }} </th>
-
+        <th> {{ 'Bundle Product %' }} </th>
+{{-- $items_totals[$main_type_item_name] --}}
+	@if($main_type_item_name == 'Grilled Chicken Taco')
+		{{-- {{ dd($value,$items_totals) }} --}}
+		@endif
         @foreach ($all_items as $item)
         <?php $value = $report_data[$main_type_item_name][$item] ?? 0;
-                        $percentage_per_value = $main_item_total == 0 ? 0 : ($value / $main_item_total) * 100; ?>
+	$percentage_per_value = 0 ;
+	if(isset($items_totals[$item]) && $items_totals[$item] != 0){
+                        $percentage_per_value = $items_totals[$item] == 0 ? 0 : ($value / $items_totals[$item]) * 100; 
+	}
+						?>
         <td class="text-center">
 
-            <span><b class="color-{{ getPercentageColor($percentage_per_value) }}"> {{ number_format($percentage_per_value, 1) . ' %  ' }}</b></span>
+            <span><b class="color-{{ getPercentageColor($percentage_per_value) }}"> {{ number_format($percentage_per_value, 1) . ' %  ' }}
+			</b></span>
 
 
         </td>
         @endforeach
+		{{-- $items_totals[$main_type_item_name] --}}
         <?php $total_percentage = $final_total == 0 ? 0 : ($main_item_total / $final_total) * 100; ?>
         <td class="text-center">
-            <span><b> {{ number_format($total_percentage, 1) . ' %  ' }}</b></span>
+            {{-- <span><b> {{ number_format($total_percentage, 1) . ' %  ' }}</b></span> --}}
+			-
+		
         </td>
         @if (isset($totals_sales_per_main_type))
         <td class="text-center">-</td>
@@ -253,12 +265,15 @@
     </tr>
 
 
-    <tr class="table-active text-center">
+    {{-- <tr class="table-active text-center">
         <th class="text-center"> {{ __(ucwords(str_replace('_', ' ', $type))) . ' % / ' . __('Total '.($type ==  'discounts' ? 'Discounts' : 'Sales')) }} </th>
         @foreach ($all_items as $item_name)
         <?php $items_percentage = $final_total == 0 ? 0 : (($items_totals[$item_name] ?? 0) / $final_total) * 100; ?>
         <td class="text-center">
-            <b> {{ number_format($items_percentage, 1) . ' %' }}</b>
+            <b> {{ number_format($items_percentage, 1) . ' %' }}
+		
+			
+			</b>
         </td>
         @endforeach
 
@@ -267,7 +282,7 @@
         <td>-</td>
         @endif
 
-    </tr>
+    </tr> --}}
     @if (isset($totals_sales_per_main_type))
     <tr class="table-active text-center">
         <th class="text-center"> {{ __(ucwords(str_replace('_', ' ', $type))) . ' % / Sales'   }} </th>

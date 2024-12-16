@@ -189,26 +189,98 @@ class TwodimensionalSalesBreakdownAgainstAnalysisReport
         }
         return view('client_view.reports.sales_gathering_analysis.two_dimensional_breakdown.sales_form', compact('company', 'view_name','type','main_type'));
     }
+	public function getBundlingData(Request $request  ,Company $company,$main_type)
+	{
+		$allNames = [];
+			$report_data =collect(DB::select(DB::raw("
+            SELECT  document_number ,sum(quantity) as group_quantity,sum(net_sales_value) as group_net_sales_value , ".$main_type."
+            FROM sales_gathering 
+			where  company_id = '".$company->id."'   AND date between '".$request->start_date."' and '".$request->end_date."'
+			group by product_or_service , document_number
+			
+			"
+            )))
+			->groupBy(['document_number'])
+			->toArray();
+			$quantity = 0 ;
+			$items = [];
+			$top50 = (new SalesBreakdownAgainstAnalysisReport)->salesBreakdownAnalysisResult($request,$company,'array') ;
+			unset($top50[50]);
+			$top50 = array_column($top50,'item');
+
+			
+
+			foreach($top50 as $searchItemName){
+				// dd($report_data);
+			
+				foreach($report_data as $documentNumber=>$subData){
+					if(in_array($searchItemName,array_column($subData,'product_or_service'))){
+						$item = collect($subData)->where('product_or_service',$searchItemName)->first();
+						$itemName = $item->product_or_service ;
+						$allNames[$itemName] = $itemName;
+						$items[] = [
+							'document_number'=>$item->document_number,
+							'product_or_service'=>$itemName,
+							'quantity'=>$item->group_quantity ,
+							'net_sales_value'=>$item->group_net_sales_value ,
+						];
+					}
+				}
+			}
+			$finalResult = [];
+				foreach($items as $item){
+					$mainName = $item['product_or_service'] ;
+					foreach($items as $item2){
+						$subName = $item2['product_or_service'] ;
+						if( $subName != $mainName 
+						&& $item2['document_number'] == $item['document_number']  
+						){
+							// $finalResult[$mainName][$subName]['quantity'] = isset($finalResult[$mainName][$subName]['quantity']) ? $finalResult[$mainName][$subName]['quantity'] + $item['quantity'] : $item['quantity'];
+							// $finalResult[$mainName][$subName]['net_sales_value'] = isset($finalResult[$mainName][$subName]['net_sales_value']) ? $finalResult[$mainName][$subName]['net_sales_value'] + $item['net_sales_value'] : $item['net_sales_value'];
+							$finalResult[$mainName][$subName] = isset($finalResult[$mainName][$subName]) ? $finalResult[$mainName][$subName] + $item['net_sales_value'] : $item['net_sales_value'];
+						}
+					}
+					
+				}
+				return $finalResult;
+	}
     public function result(Request $request, Company $company)
     {
         $report_data =[];
         $main_type = $request->main_type;
         $type = $request->type;
         $view_name = $request->view_name;
-
-        $last_date = null;
+		$last_date = SalesGathering::company()->latest('date')->first()->date ?? null;
+        $last_date = date('d-M-Y',strtotime($last_date));
         $dates = [
             'start_date' => date('d-M-Y',strtotime($request->start_date)),
             'end_date' => date('d-M-Y',strtotime($request->end_date))
         ];
+		
+		if($main_type == $type){
+			$report_data = $this->getBundlingData($request,$company,$main_type);
+			$all_items =array_keys($report_data); 
+			$main_type_items = $all_items;
+			$items_totals = $this->finalTotal([$report_data]);
+			$main_type_items_totals = [];
+			foreach ($report_data as  $main_type_item_name => $sales_gathering_data) {
+				$main_type_items_totals[$main_type_item_name] = array_sum($report_data[$main_type_item_name]??[]);
+			}
+			return view('client_view.reports.sales_gathering_analysis.two_dimensional_breakdown.bundling_report',compact('company','view_name', 'main_type','type', 'all_items','main_type_items','report_data','last_date','dates','items_totals','main_type_items_totals'));
+					
+		}
+       
         $all_items = [];
 
         $main_type_items_totals = [];
+		
+		//////////////////////////////////////////
+		
+		
+		
 
-
-		// $orderByStatement = $type =='day_name'?"ORDER BY FIELD(`day_name`, 'Friday', 'Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday')":'ORDER BY id';
-        $report_data =collect(DB::select(DB::raw("
-            SELECT DATE_FORMAT(date,'%d-%m-%Y') as date, net_sales_value ,sales_value,".$type.",".$main_type ."
+			$report_data =collect(DB::select(DB::raw("
+            SELECT DATE_FORMAT(date,'%d-%m-%Y') as date, net_sales_value ,sales_value,document_number,".$type.",".$main_type ."
             FROM sales_gathering
             WHERE ( company_id = '".$company->id."' AND ".$type." IS NOT NULL AND ".$main_type." IS NOT NULL  AND date between '".$request->start_date."' and '".$request->end_date."')
              ORDER BY id "
@@ -218,16 +290,16 @@ class TwodimensionalSalesBreakdownAgainstAnalysisReport
                 });
             })->toArray();
 
-
         $main_type_items = array_keys(($report_data??[]));
+	
         foreach ($report_data as  $main_type_item_name => $sales_gathering_data) {
             $main_type_items_totals[$main_type_item_name] = array_sum($report_data[$main_type_item_name]??[]);
         }
+        arsort($main_type_items_totals);
 	
         $items_totals = $this->finalTotal([$report_data]);
 		$items_totals = $type =='day_name' ? HArr::orderByDayNameForOneDimension($items_totals) : $items_totals;
         $all_items =   array_keys($items_totals);
-        arsort($main_type_items_totals);
 
 
         if(count($main_type_items_totals) > 50){
@@ -250,8 +322,7 @@ class TwodimensionalSalesBreakdownAgainstAnalysisReport
         $main_type_items_totals = \array_reverse($main_type_items_totals , true );
         
         }
-        $last_date = SalesGathering::company()->latest('date')->first()->date ?? null;
-        $last_date = date('d-M-Y',strtotime($last_date));
+      
         $all_items = array_unique($all_items);
         return view('client_view.reports.sales_gathering_analysis.two_dimensional_breakdown.sales_report',compact('company','view_name', 'main_type','type', 'all_items','main_type_items','report_data','last_date','dates','items_totals','main_type_items_totals'));
 

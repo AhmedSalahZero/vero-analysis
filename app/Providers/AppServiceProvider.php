@@ -4,6 +4,7 @@ namespace App\Providers;
 
 
 use App\Http\Controllers\ExportTable;
+use App\Jobs\DeleteJob;
 use App\Models\CleanOverdraftBankStatement;
 use App\Models\Company;
 use App\Models\FullySecuredOverdraft;
@@ -43,8 +44,8 @@ class AppServiceProvider extends ServiceProvider
 	
 	public function boot()
 	{
-		//dd(get_loaded_extensions());
-
+		// User::join();
+		// DB::table('users')->get();
 		
 		ini_set('max_execution_time', 6000); //300 seconds = 5 minutes
 		\PhpOffice\PhpSpreadsheet\Shared\Font::setAutoSizeMethod(Font::AUTOSIZE_METHOD_EXACT);

@@ -33,10 +33,14 @@ class PredictSales
 									// dd($lastAndGrowthRateForCompanyArr);
 									// $last12AvgForCompany = $lastAndGrowthRateForCompanyArr['last_12_avg'];
 									// $last24AvgForCompany = $lastAndGrowthRateForCompanyArr['last_24_avg'];
-									$growthRateForCompany = $lastAndGrowthRateForCompanyArr['growth_rate'];
+									$growthRateForCompany = $lastAndGrowthRateForCompanyArr['growth_rate']??0;
+									$next0ForecastForCompany = $lastAndGrowthRateForCompanyArr['next0ForecastForCompany']??0;
+									$next1ForecastForCompany = $lastAndGrowthRateForCompanyArr['next1ForecastForCompany']??0;
+									$next2ForecastForCompany = $lastAndGrowthRateForCompanyArr['next2ForecastForCompany']??0;
+									$next3ForecastForCompany = $lastAndGrowthRateForCompanyArr['next3ForecastForCompany']??0;
 									
 									
-									$lastAndGrowthRateForItems = [];
+						
           
          		   $data = $main_data->groupBy($type)->map(function($year){
                             return $year->groupBy('gr_date')->map(function($sub_item){
@@ -57,7 +61,15 @@ class PredictSales
 				return $b['next0ForecastForItem'] <=> $a['next0ForecastForItem'];
 		});
 		
-		return $lastAndGrowthRateForItems;
+		return [
+			'for_item'=>$lastAndGrowthRateForItems,
+			'for_company'=>[
+				'next0ForecastForCompany'=>$next0ForecastForCompany,
+				'next1ForecastForCompany'=>$next1ForecastForCompany,
+				'next2ForecastForCompany'=>$next2ForecastForCompany,
+				'next3ForecastForCompany'=>$next3ForecastForCompany,
+			]
+		];
        
     }
 	
@@ -114,6 +126,9 @@ class PredictSales
 		}
 		$previousOfPrevious12Items = HArr::sliceWithDates($slicedItems , $endDate,23) ;
 		$last12ItemsCounter = count($last12Items);
+		if($last12ItemsCounter < 12){
+			return null;
+		}
 		$sumOfLast6Months = array_sum(HArr::sliceWithDates($last12Items , $endDate,5));
 		if($sumOfLast6Months == 0){
 			return null;
@@ -159,14 +174,9 @@ class PredictSales
 				$next2ForecastForItem = $next2ForecastForItem < 0 ? 0 : $next2ForecastForItem ;
 				$next3ForecastForItem = ($last12ItemsAvg*12) * (1+$forecastMonthGrRate) * $next3MonthPercentage;
 				$next3ForecastForItem = $next3ForecastForItem < 0 ? 0 : $next3ForecastForItem ;
-				// if($type =='product_or_service'){
-					// dd($last12Items,$currentItemName);
-				// }
-				if($type =='category' && $currentItemName == 'Public Relations'){
-					// dd($last12Items,$previousOfPrevious12Items,$grForCompany,$growthRateForItem,$forecastMonthGrRate);
-					// dd($last12Items,$sumOfLast6Months,$last12ItemsAvg,$next1ForecastForItem,$next2ForecastForItem,$next3ForecastForItem);
-				}
-		// dd('good');
+				
+			
+	
 		return [
 			// 'last_12_avg'=>$last12ItemsAvg ,
 			// 'last_24_avg'=>$previousOfPrevious12ItemsAvg ,

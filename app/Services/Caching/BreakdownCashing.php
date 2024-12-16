@@ -46,15 +46,18 @@ class BreakdownCashing
 				
 				$cacheKeyName = \getBreakdownCacheNameForCompanyAndDatesAndType($this->company,$this->current_start_date,$this->current_end_date, $typeToCache);
 				$cacheSimpleLinearRegressionKeyName = \getBreakdownSimpleLinearRegressionCacheNameForCompanyAndDatesAndType($this->company,$this->current_start_date,$this->current_end_date, $typeToCache);
+				$cacheSimpleLinearRegressionForCompanyKeyName = \getBreakdownSimpleLinearRegressionCacheNameFor2CompanyAndDatesAndType($this->company,$this->current_start_date,$this->current_end_date, $typeToCache);
 				$cacheSimpleLinearRegressionDatesKeyName = \getBreakdownSimpleLinearRegressionDatesCacheNameForCompanyAndDatesAndType($this->company,$this->current_start_date,$this->current_end_date, $typeToCache);
 				if (!Cache::has($cacheKeyName)) {
 					// $possibleIndexName = '';
 					$breakdown_data_with_simple_linear_regression = (new SalesBreakdownAgainstAnalysisReport)->salesBreakdownAnalysisResult($request, $this->company, 'array_with_ai');
 					$breakdown_data = $breakdown_data_with_simple_linear_regression['report_view_data'] ?? [];
 					$simpleLinearRegression = $breakdown_data_with_simple_linear_regression['simple_linear_regression'] ?? [];
+					$aiForCompany = $breakdown_data_with_simple_linear_regression['ai_for_company'] ?? [];
 					$simpleLinearRegressionDates = $breakdown_data_with_simple_linear_regression['simple_linear_regression_dates'] ?? [];
 					Cache::forever($cacheKeyName, $breakdown_data);
 					Cache::forever($cacheSimpleLinearRegressionKeyName, $simpleLinearRegression);
+					Cache::forever($cacheSimpleLinearRegressionForCompanyKeyName, $aiForCompany);
 					Cache::forever($cacheSimpleLinearRegressionDatesKeyName, $simpleLinearRegressionDates);
 				} else {
 					$breakdown_data = Cache::get($cacheKeyName);

@@ -19,11 +19,15 @@
 
 
                                 <th class="text-center w-40-percentage text-capitalize th-main-color"><?php echo e(__('Item Name')); ?></th>
-                                
+                             
 								<?php
 									$index = 0 ;
 								?>
 								<?php $__currentLoopData = $simpleLinearRegressionDatesForAllTypes[$type]??[]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $simpleLinearRegressionDate): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+								<?php
+								$totalAtDate =[];
+							?>
+							
                                 <th class="text-center w-15-percentage text-capitalize th-main-color"> <?php echo e(\Carbon\Carbon::make($simpleLinearRegressionDate)->format('d-m-Y')); ?> 
 								<br>
 								<?php if($index==0): ?>
@@ -53,6 +57,7 @@
 							$totalInMainFunctionalCurrency = 0 ;
 
                             ?>
+							
                             <?php $__currentLoopData = $simpleLinearRegressionForAllTypes[$type]??[]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $name => $nameAndValues): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 							<?php if($name != 'total'): ?>
                             <tr>
@@ -64,14 +69,15 @@
                                     </div>
                                 </td>
 							
+						
 							<?php $__currentLoopData = $simpleLinearRegressionDatesForAllTypes[$type]??[]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $date): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 							<?php
 								$value = $simpleLinearRegressionForAllTypes[$type][$name][$date] ?? 0 ;
+								
 							?>
                                 <td class="w-10-percentage">
                                     <div class="kt-input-icon ">
                                         <div class="input-group">
-										
                                             <input disabled type="text" class="form-control text-center ignore-global-style" value="<?php echo e(is_numeric($value) ?  number_format($value) : $value); ?>">
                                         </div>
                                     </div>
@@ -84,29 +90,51 @@
                             </tr>
 							<?php endif; ?>
                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?> 
+							
+							
+							<tr>
+                                 <td class="w-40-percentage">
+                                    <div class="kt-input-icon ">
+                                        <div class="input-group">
+                                            <input disabled type="text" step="0.1" class="form-control ignore-global-style" value="<?php echo e(__('Others')); ?>">
+                                        </div>
+                                    </div>
+                                </td>
+								<?php
+									$index=0;
+								?>
+							<?php $__currentLoopData = $simpleLinearRegressionDatesForAllTypes[$type]??[]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $date): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+							<?php
+							$value = $simpleLinearRegressionForAllTypes[$type][$name][$date] ?? 0 ;
+							$forecastForCompany =$simpleLinearRegressionForCompany['next'.$index.'ForecastForCompany']; 
+							$index++;
+							$currentVal = $forecastForCompany-$value;
+							$simpleLinearRegressionForAllTypes[$type]['total'][$date] = isset($simpleLinearRegressionForAllTypes[$type]['total'][$date]) ? $simpleLinearRegressionForAllTypes[$type]['total'][$date] + $currentVal :$currentVal;
+							 
+							?> 
+                                <td class="w-10-percentage">
+                                    <div class="kt-input-icon ">
+                                        <div class="input-group">
+                                            <input disabled type="text" class="form-control text-center ignore-global-style" value="<?php echo e(number_format($currentVal)); ?>">
+                                        </div>
+                                    </div>
+                                </td>
+								<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                            </tr>
+							
+							
 					
                         <tr>
                                 <td>
 								<?php echo e(__('Total')); ?>
 
                                 </td>
-
 							<?php $__currentLoopData = $simpleLinearRegressionDatesForAllTypes[$type]??[]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $date): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                 <td>
 								<?php echo e(number_format($simpleLinearRegressionForAllTypes[$type]['total'][$date]??0)); ?>
 
                                 </td>
-								
 								<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-
-
-								
-								
-							
-							
-                              
-
-
                             </tr>
                         </tbody>
                     </table>

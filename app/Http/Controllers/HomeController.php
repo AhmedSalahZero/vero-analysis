@@ -380,25 +380,29 @@ class HomeController extends Controller
 		];
 		$reports_data = [];
 		$top_data = [];
-		
+		$simpleLinearRegressionForCompany = [];
 		$breakdown_data = [];
 		foreach ($types as  $type => $color) {
 			if (false !== $found = array_search($type, $db_names)) {
 				$request['type'] = $type;
 				$cacheKeyName = getBreakdownCacheNameForCompanyAndDatesAndType($company,$start_date,$end_date, $type);
 				$cacheForSimpleLinearRegressionKeyName = \getBreakdownSimpleLinearRegressionCacheNameForCompanyAndDatesAndType($company,$start_date,$end_date, $type);
+				$cacheForSimpleLinearRegressionForCompanyKeyName = \getBreakdownSimpleLinearRegressionCacheNameFor2CompanyAndDatesAndType($company,$start_date,$end_date, $type);
 				$cacheForSimpleLinearRegressionDatesKeyName = getBreakdownSimpleLinearRegressionDatesCacheNameForCompanyAndDatesAndType($company,$start_date,$end_date, $type);
 				if (!Cache::has($cacheKeyName)) {
 					$breakdown_data_with_simple_linear_regression = (new SalesBreakdownAgainstAnalysisReport)->salesBreakdownAnalysisResult($request, $company, 'array_with_ai');
 					$breakdown_data = $breakdown_data_with_simple_linear_regression['report_view_data'];
 					$simpleLinearRegression = $breakdown_data_with_simple_linear_regression['simple_linear_regression'];
+					$simpleLinearRegressionForCompany = $breakdown_data_with_simple_linear_regression['ai_for_company'];
 					$simpleLinearRegressionDates = $breakdown_data_with_simple_linear_regression['simple_linear_regression_dates'];
 					Cache::forever($cacheKeyName, $breakdown_data);
 					Cache::forever($cacheForSimpleLinearRegressionKeyName, $simpleLinearRegression);
+					Cache::forever($cacheForSimpleLinearRegressionForCompanyKeyName, $simpleLinearRegressionForCompany);
 					Cache::forever($cacheForSimpleLinearRegressionDatesKeyName, $simpleLinearRegressionDates);
 				} else {
 					$breakdown_data = Cache::get($cacheKeyName);
 					$simpleLinearRegression = Cache::get($cacheForSimpleLinearRegressionKeyName);
+					$simpleLinearRegressionForCompany = Cache::get($cacheForSimpleLinearRegressionForCompanyKeyName);
 					$simpleLinearRegressionDates = Cache::get($cacheForSimpleLinearRegressionDatesKeyName);
 				}
 
@@ -422,7 +426,6 @@ class HomeController extends Controller
 			}
 		}
 		
-
 		$types = $this->setBarColorsForTypes($types);
 
 		return view('client_view.home_dashboard.dashboard_breakdown', compact(
@@ -430,6 +433,7 @@ class HomeController extends Controller
 			'reports_data',
 			'simpleLinearRegressionForAllTypes',
 			'simpleLinearRegressionDatesForAllTypes',
+			'simpleLinearRegressionForCompany',
 			'types',
 			'top_data',
 			'start_date',

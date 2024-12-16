@@ -36,7 +36,6 @@ class ProductsAgainstAnalysisReport
 			$type  = 'country';
 			$view_name = 'Products Against Countries Trend Analysis';
 		}
-	
 		elseif (request()->route()->named('products.Items.analysis')) {
 			$type  = 'product_item';
 			$view_name = 'Products Against Products Items Trend Analysis';
@@ -102,7 +101,7 @@ class ProductsAgainstAnalysisReport
 				$main_row = str_replace("'", "''", $main_row);
 				$mainData_data = collect(DB::select(DB::raw(
 					"
-                    SELECT DATE_FORMAT(LAST_DAY(date),'%d-%m-%Y') as gr_date  , " . $data_type . " ,product_or_service," . $type . "
+                    SELECT DATE_FORMAT(LAST_DAY(date),'%d-%m-%Y') as gr_date  , " . $data_type . " ,product_or_service" . $type . "
                     FROM sales_gathering 
                     WHERE ( company_id = '" . $company->id . "'AND product_or_service = '" .  $main_row . "'AND date between '" . $request->start_date . "' and '" . $request->end_date . "')
                     ORDER BY id "
@@ -274,7 +273,12 @@ class ProductsAgainstAnalysisReport
 			return ['report_data' => $report_data, 'view_name' => $view_name, 'names' => $products_names];
 		}
 	}
-
+	public function viewBundlingReport(Request $request , Company $company)
+	{
+            $main_type = 'product_or_service';
+            $type = 'product_or_service';
+            $view_name = 'Bundled Product / Services' ;
+        return view('client_view.reports.sales_gathering_analysis.two_dimensional_breakdown.sales_form', compact('company', 'view_name','type','main_type'));}
 	public function resultForSalesDiscount(Request $request, Company $company)
 	{
 

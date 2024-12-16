@@ -64,4 +64,13 @@ class Section extends Model
     {
         return $this->belongsToMany(Branch::class, 'branches_sections');
     }
+	public function isExportable(array $exportables)
+	{
+		if(str_contains($this->route,'.products.') && in_array('product_or_service',array_keys($exportables))){
+			return true ;
+		}if(str_contains($this->route,'.Items.') && in_array('product_item',array_keys($exportables))){
+			return true ;
+		}
+		return false;
+	}
 }

@@ -432,6 +432,10 @@ function getBreakdownSimpleLinearRegressionCacheNameForCompanyAndDatesAndType(Co
 {
     return 'breakdown_simple_linear_regression_start_date'. $start_date .'end_date' . $endDate . 'company_id'. $companyId->id . 'for_type_' . $type;
 }
+function getBreakdownSimpleLinearRegressionCacheNameFor2CompanyAndDatesAndType(Company $companyId, string $start_date, string $endDate, string $type)
+{
+    return 'breakdown_simple_linear_regression2_start_date'. $start_date .'end_date' . $endDate . 'company_id'. $companyId->id . 'for_type_' . $type;
+}
 function getBreakdownSimpleLinearRegressionDatesCacheNameForCompanyAndDatesAndType(Company $companyId, string $start_date, string $endDate, string $type)
 {
     return 'breakdown_simple_linear_regression_dates_start_date'. $start_date .'end_date' . $endDate . 'company_id'. $companyId->id . 'for_type_' . $type;
@@ -670,8 +674,7 @@ function getTypeFor($type, $companyId, $formatted = false, $date = false, $start
             ->groupBy($type)
             ->distinct()
             ->select($type)
-            // ->orderByRaw('sum(net_sales_value) desc')
-            // ->orderBy($type)
+             ->orderByRaw('sum(net_sales_value) desc')
             ->get()->pluck($type, $type)->toArray();
         ;
     } else {

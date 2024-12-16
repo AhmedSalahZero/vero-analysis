@@ -11,7 +11,6 @@
     <div class="col-md-12">
 
 
-
         <!--begin::Form-->
         <form class="kt-form kt-form--label-right" method="POST" action={{ route('businessSectors.sales.analysis.result',$company) }}   enctype="multipart/form-data">
             @csrf

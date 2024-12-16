@@ -19,11 +19,15 @@
 
 
                                 <th class="text-center w-40-percentage text-capitalize th-main-color">{{ __('Item Name') }}</th>
-                                {{-- <th class="text-center w-10-percentage text-capitalize th-main-color">{{ __('Current Month') }}</th> --}}
+                             
 								@php
 									$index = 0 ;
 								@endphp
 								@foreach($simpleLinearRegressionDatesForAllTypes[$type]??[] as $simpleLinearRegressionDate )
+								@php
+								$totalAtDate =[];
+							@endphp
+							
                                 <th class="text-center w-15-percentage text-capitalize th-main-color"> {{ \Carbon\Carbon::make($simpleLinearRegressionDate)->format('d-m-Y') }} 
 								<br>
 								@if($index==0)
@@ -51,6 +55,7 @@
 							$totalInMainFunctionalCurrency = 0 ;
 
                             @endphp
+							
                             @foreach($simpleLinearRegressionForAllTypes[$type]??[] as $name => $nameAndValues )
 							@if($name != 'total')
                             <tr>
@@ -62,14 +67,15 @@
                                     </div>
                                 </td>
 							
+						
 							@foreach($simpleLinearRegressionDatesForAllTypes[$type]??[]  as $date )
 							@php
 								$value = $simpleLinearRegressionForAllTypes[$type][$name][$date] ?? 0 ;
+								
 							@endphp
                                 <td class="w-10-percentage">
                                     <div class="kt-input-icon ">
                                         <div class="input-group">
-										
                                             <input disabled type="text" class="form-control text-center ignore-global-style" value="{{ is_numeric($value) ?  number_format($value) : $value }}">
                                         </div>
                                     </div>
@@ -82,27 +88,49 @@
                             </tr>
 							@endif
                             @endforeach 
+							
+							
+							<tr>
+                                 <td class="w-40-percentage">
+                                    <div class="kt-input-icon ">
+                                        <div class="input-group">
+                                            <input disabled type="text" step="0.1" class="form-control ignore-global-style" value="{{ __('Others') }}">
+                                        </div>
+                                    </div>
+                                </td>
+								@php
+									$index=0;
+								@endphp
+							@foreach($simpleLinearRegressionDatesForAllTypes[$type]??[] as $date)
+							@php
+							$value = $simpleLinearRegressionForAllTypes[$type][$name][$date] ?? 0 ;
+							$forecastForCompany =$simpleLinearRegressionForCompany['next'.$index.'ForecastForCompany']; 
+							$index++;
+							$currentVal = $forecastForCompany-$value;
+							$simpleLinearRegressionForAllTypes[$type]['total'][$date] = isset($simpleLinearRegressionForAllTypes[$type]['total'][$date]) ? $simpleLinearRegressionForAllTypes[$type]['total'][$date] + $currentVal :$currentVal;
+							 
+							@endphp 
+                                <td class="w-10-percentage">
+                                    <div class="kt-input-icon ">
+                                        <div class="input-group">
+                                            <input disabled type="text" class="form-control text-center ignore-global-style" value="{{ number_format($currentVal)  }}">
+                                        </div>
+                                    </div>
+                                </td>
+								@endforeach
+                            </tr>
+							
+							
 					
                         <tr>
                                 <td>
 								{{ __('Total') }}
                                 </td>
-
 							@foreach($simpleLinearRegressionDatesForAllTypes[$type]??[] as $date)
                                 <td>
 								{{ number_format($simpleLinearRegressionForAllTypes[$type]['total'][$date]??0) }}
                                 </td>
-								
 								@endforeach
-
-
-								
-								
-							
-							
-                              
-
-
                             </tr>
                         </tbody>
                     </table>

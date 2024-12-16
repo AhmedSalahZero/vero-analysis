@@ -171,6 +171,8 @@ class SalesBreakdownAgainstAnalysisReport
 				$endOfMonthsIntervalDates = HDate::generateEndOfMonthsDatesBetweenTwoDates(Carbon::make($simpleLinearRegressionStartDate),Carbon::make($breakdownEndDate));
 				// $simpleLinearRegressionDataItemForCurrentType=  $this->formatDataForSimpleLinearRegression($simpleLinearRegressionDataItemForCurrentType,$type,$endOfMonthsIntervalDates);
 				$simpleLinearRegressionData = (new PredictSales())->execute($request,$company,$type,$breakdownEndDate);
+				$regressionForCompany = $simpleLinearRegressionData['for_company'];
+				$simpleLinearRegressionData = $simpleLinearRegressionData['for_item'];
 				foreach($simpleLinearRegressionData as $name => $item){
 					$simpleLinearRegressionData[$name][$predictionDates[0]] = $item['next0ForecastForItem'];
 					$simpleLinearRegressionData[$name][$predictionDates[1]] = $item['next1ForecastForItem'];
@@ -335,7 +337,8 @@ class SalesBreakdownAgainstAnalysisReport
 				return [
 					'report_view_data'=>$report_view_data,
 					'simple_linear_regression'=>$simpleLinearRegressionData,
-					'simple_linear_regression_dates'=>$predictionDates
+					'simple_linear_regression_dates'=>$predictionDates,
+					'ai_for_company'=>$regressionForCompany
 				];
 			}else{
 				return $report_view_data;
