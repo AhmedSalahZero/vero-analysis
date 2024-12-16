@@ -44,7 +44,7 @@ class PredictSales
                                 return $sub_item->sum('net_sales_value');
                             });
                         })->toArray();
-						
+						$lastAndGrowthRateForItems = [];	
 						
        foreach($data as $name => $dataItem){
 		$currentResult = $this->getLastAndGrowthRateForItem($dataItem,$endDate,$growthRateForCompany,$type,$name) ;
