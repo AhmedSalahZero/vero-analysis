@@ -104,6 +104,14 @@ class IntervalsComparingReport
             //  'start_date_three' => date('d-M-Y',strtotime($start_date_three)),
             // 'end_date_three' => date('d-M-Y',strtotime($end_date_three))
         ];
+		$latestReport = null ;
+		if(Carbon::make($end_date_two)->greaterThan(Carbon::make($end_date_one))){
+			$latestReport =    '_two' ;
+		}elseif(Carbon::make($end_date_one)->greaterThan(Carbon::make($end_date_two))){
+			$latestReport =    '_one' ;
+		}
+		
+		
 
         // First_interval
         $request['start_date']=$start_date_one;
@@ -111,7 +119,6 @@ class IntervalsComparingReport
         $result_for_interval_one = (new SalesBreakdownAgainstAnalysisReport)->salesBreakdownAnalysisResult($request,$company,'array');
 
         if (isset($result_for_interval_one['report_count_data'])) {
-
             $count_result_for_interval_one = $result_for_interval_one['report_count_data'];
             $result_for_interval_one = $result_for_interval_one['report_view_data'];
         }
@@ -124,6 +131,7 @@ class IntervalsComparingReport
             $count_result_for_interval_two = $result_for_interval_two['report_count_data'];
             $result_for_interval_two = $result_for_interval_two['report_view_data'];
         }
+		
 // third interval
 
         //   $request['start_date']=$start_date_three;
@@ -152,7 +160,7 @@ class IntervalsComparingReport
             
             return view('client_view.reports.sales_gathering_analysis.interval_comparing.sales_report',compact('last_date','type','view_name','dates','company','result_for_interval_one','result_for_interval_two',
             // 'result_for_interval_three',
-            'count_result_for_interval_one','count_result_for_interval_two'
+            'count_result_for_interval_one','count_result_for_interval_two','latestReport'
             // ,'count_result_for_interval_three'
             ));
         }else{

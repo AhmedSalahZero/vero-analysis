@@ -389,11 +389,11 @@ $exportableFieldsValues[] = 'avg_invoice_value';
 <?php $component->withAttributes([]); ?>
                             <?php $__env->slot('table_header'); ?>
                             <tr class="table-active text-center">
-                                
+                                <th>#</th>
                                 <th class="text-center max-w-300"><?php echo e(__(ucwords(str_replace('_',' ',$type)))); ?></th>
                                 <th class="text-center"><?php echo e(__('Sales Values')); ?></th>
                                 <th class="text-center"><?php echo e(__('%')); ?></th>
-                                <th class="text-center"><?php echo e(__('ACC %')); ?></th>
+                                <th class="text-center"><?php echo __('ACC %'); ?></th>
                                 <?php if(isset($report_count_data) && count($report_count_data) > 0): ?>
                                 <th class="text-center"><?php echo e(__('Count')); ?></th>
                                 <th class="text-center"><?php echo e(__('Count %')); ?></th>
@@ -410,7 +410,7 @@ $exportableFieldsValues[] = 'avg_invoice_value';
 
                             <tr>
 
-                                
+                                <th><?php echo e(($key??0)+1); ?></th>
                                 <td class=" max-w-300"><?php echo e($item['item']?? '-'); ?></td>
                                 <td class="text-center"><?php echo e(number_format($item['Sales Value']??0)); ?></td>
 								<?php
@@ -427,6 +427,7 @@ $exportableFieldsValues[] = 'avg_invoice_value';
                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
                             <tr class="table-active text-center">
+                                <td class=""></td>
                                 <td><?php echo e(__('Total')); ?></td>
                                 
                                 <td><?php echo e(number_format($total)); ?></td>

@@ -404,11 +404,11 @@ $exportableFieldsValues[] = 'avg_invoice_value';
                         <x-table :tableClass="'kt_table_with_no_pagination_no_scroll'">
                             @slot('table_header')
                             <tr class="table-active text-center">
-                                {{-- <th>#</th> --}}
+                                <th>#</th>
                                 <th class="text-center max-w-300">{{ __(ucwords(str_replace('_',' ',$type))) }}</th>
                                 <th class="text-center">{{ __('Sales Values') }}</th>
                                 <th class="text-center">{{ __('%') }}</th>
-                                <th class="text-center">{{ __('ACC %') }}</th>
+                                <th class="text-center">{!! __('ACC %') !!}</th>
                                 @if (isset($report_count_data) && count($report_count_data) > 0)
                                 <th class="text-center">{{ __('Count') }}</th>
                                 <th class="text-center">{{ __('Count %') }}</th>
@@ -425,7 +425,7 @@ $exportableFieldsValues[] = 'avg_invoice_value';
 
                             <tr>
 
-                                {{-- <th>{{($key??0)+1}}</th> --}}
+                                <th>{{($key??0)+1}}</th>
                                 <td class=" max-w-300">{{$item['item']?? '-'}}</td>
                                 <td class="text-center">{{number_format($item['Sales Value']??0)}}</td>
 								@php
@@ -442,6 +442,7 @@ $exportableFieldsValues[] = 'avg_invoice_value';
                             @endforeach
 
                             <tr class="table-active text-center">
+                                <td class=""></td>
                                 <td>{{__('Total')}}</td>
                                 {{-- <td class="hidden"></td> --}}
                                 <td>{{number_format($total)}}</td>

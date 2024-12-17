@@ -11,9 +11,7 @@ use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 class ZoneAgainstAnalysisReport
 {
@@ -56,7 +54,6 @@ class ZoneAgainstAnalysisReport
 			$view_name = 'Zones Against Business Units Trend Analysis';
 		} 
 		elseif (request()->route()->named('zone.branches.analysis')) {
-		
 			$type  = 'branch';
 			$view_name = 'Zones Against Branches Trend Analysis';
 		}
@@ -64,11 +61,6 @@ class ZoneAgainstAnalysisReport
 			$type  = 'country';
 			$view_name = 'Zones Against Countries Trend Analysis';
 		}
-		// elseif (request()->route()->named('salesChannels.countries.analysis')) {
-		// 	$type  = 'country';
-		// 	$view_name = 'Sales Channel Against Countries Trend Analysis';
-		// }
-		
 		 elseif (request()->route()->named('zone.products.averagePrices')) {
 			$type  = 'averagePrices';
 			$view_name = 'Zones Products / Services Average Prices';
@@ -499,9 +491,11 @@ class ZoneAgainstAnalysisReport
 		$end_date = $request->get('end_date');
 		
 		if (false !== $found = array_search('all', (array)$request->main_data)) {
-			$orderByRaw = $request->field == 'day_name'  ? "ORDER BY FIELD(`day_name`, 'Friday', 'Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday')" :'net_sales_value desc';
+			$orderByRaw = $request->field == 'day_name'  ? "ORDER BY FIELD(`day_name`, 'Friday', 'Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday')" :'sum(net_sales_value) desc';
+	
 			$selectRow = (($request->field) . (' , net_sales_value '));
 			$data = SalesGathering::company()
+				->orderByRaw($orderByRaw)
 				->whereNotNull($request->field)
 				->when($start_date && !$end_date, function (Builder $builder) use ($start_date) {
 					$builder->where('date', '>=', $start_date);
@@ -513,7 +507,6 @@ class ZoneAgainstAnalysisReport
 				})
 				->groupBy($request->field)
 				->selectRaw($selectRow)
-				->orderByRaw($orderByRaw)
 				->where(function ($query) use ($request) {
 					if (($request->second_main_data) !== null) {
 						$query->whereNotNull($request->sub_main_field)
@@ -527,6 +520,7 @@ class ZoneAgainstAnalysisReport
 				->get()
 				->pluck($request->field)
 				->toArray();
+			
 		} else {
 			$orderByRaw = $request->field == 'day_name'  ? "FIELD(`day_name`, 'Friday', 'Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday')" :'sum(net_sales_value) desc';
 			$selectRow = (($request->field ?: 'product_item ') . (' , sum(net_sales_value) '));

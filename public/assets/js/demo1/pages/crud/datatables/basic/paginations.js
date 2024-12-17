@@ -230,6 +230,26 @@ var KTDatatablesBasicPaginations = (function () {
             buttons: ["print", "copyHtml5", getExportKey(), "pdfHtml5"],
         });
     };
+	
+	var initTableWithNoPaginationNoScrollNoSearchNoInfo = function () {
+        var table = $(".kt_table_with_no_pagination_no_scroll_no_search_no_info");
+
+        // begin first table
+        table.DataTable({
+            deferRender: true,
+            // responsive: true,
+            paging: false,
+            ordering: false,
+			info:false,
+            searching: false,
+            dom: `<'row'<'col-sm-6 text-left'f><'col-sm-6 text-right'B>>
+			<'row'<'col-sm-12'tr>>
+			<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7 dataTables_pager'lp>>`,
+
+            buttons: ["print", "copyHtml5", getExportKey(), "pdfHtml5"],
+        });
+    };
+	
 
     return {
         //main function to initiate the module
@@ -241,6 +261,7 @@ var KTDatatablesBasicPaginations = (function () {
             initTableWithNoPaginationNoSearch();
             initTableWithNoPaginationNoCollapse();
             initTableWithNoPaginationNoScrollNoSearch();
+            initTableWithNoPaginationNoScrollNoSearchNoInfo();
             initTableWithNoPaginationNoScrollNoInfo();
             initTableWithNoPaginationNoScrollWithoutPdf();
             initTableWithNoPaginationNoFixedRight();

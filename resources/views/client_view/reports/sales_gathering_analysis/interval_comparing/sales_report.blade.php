@@ -1,4 +1,7 @@
 @extends('layouts.dashboard')
+@php
+	use App\Helpers\HArr;
+@endphp
 @section('css')
 <link href="{{ url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css') }}" rel="stylesheet" type="text/css" />
@@ -84,13 +87,16 @@
                 <!--begin: Datatable -->
 
 
-                <x-table :tableClass="'kt_table_with_no_pagination_no_scroll_no_search'">
+                <x-table :tableClass="'kt_table_with_no_pagination_no_scroll_no_search_no_info	'">
                     @slot('table_header')
                     <tr class="table-active text-center">
                         <th>#</th>
                         <th class="text-center">{{ __(ucwords(str_replace('_',' ',$type))) }}</th>
                         <th class="text-center">{{ __('Sales Values') }}</th>
                         <th class="text-center">{{ __('Sales %') }}</th>
+						@if($name == $latestReport)
+                        <th class="text-center">{{ __('GR %') }}</th>
+						@endif 
                         @if (isset($$report_count_data) && count($$report_count_data) > 0)
                         <th class="text-center">{{ __('Count') }}</th>
                         <th class="text-center">{{ __('Count %') }}</th>
@@ -98,14 +104,25 @@
                     </tr>
                     @endslot
                     @slot('table_body')
+					
                     <?php $total = array_sum(array_column($$report_name,'Sales Value'));
+					$totals[$name] = $total ;
                                     $total_count = (isset($$report_count_data) && count($$report_count_data) > 0) ? array_sum(array_column($$report_count_data,'Count')) : 0; ?>
                     @foreach ($$report_name as $key => $item)
                     <tr>
                         <th>{{$key+1}}</th>
+				
                         <th>{{$item['item']?? '-'}}</th>
                         <td class="text-center">{{number_format($item['Sales Value']??0)}}</td>
                         <td class="text-center">{{$total == 0 ? 0 : number_format((($item['Sales Value']/$total)*100) , 1) . ' %'}}</td>
+						@if($name == $latestReport)
+						@php
+							$otherIntervalCurrentValue = $latestReport == '_two' ? HArr::searchForCorrespondingItem($result_for_interval_one,$item['item']) :HArr::searchForCorrespondingItem($result_for_interval_two,$item['item']); 
+							$currentItemValue = $item['Sales Value'] ?? 0 ;
+						@endphp
+                        <td class="text-center">{{$otherIntervalCurrentValue ? number_format(($currentItemValue /$otherIntervalCurrentValue  -1) *100,2) .' %' : 0 }}</td>
+						@endif
+				
                         @if (isset($$report_count_data) && count($$report_count_data) > 0)
                         <td class="text-center">{{ $$report_count_data[$key]['Count'] }}</td>
                         <td class="text-center">{{$total == 0 ? 0 : number_format((($$report_count_data[$key]['Count'] /$total_count)*100) , 1) . ' %'}}</td>
@@ -117,6 +134,21 @@
                         <td class="hidden"></td>
                         <td>{{number_format($total)}}</td>
                         <td>100 %</td>
+						@if($name == $latestReport)
+						@php
+						$currentTotal = 0 ;
+							$totalForOne = array_sum(array_column($result_for_interval_one,'Sales Value')) ;
+							$totalForTwo = array_sum(array_column($result_for_interval_two,'Sales Value')) ;
+						if($latestReport == '_two'){
+							$currentTotal =  $totalForOne ? ($totalForTwo /$totalForOne - 1) * 100 : 0 ;
+						}
+						if($latestReport == '_one'){
+						
+							$currentTotal =  $totalForTwo ? ($totalForOne /$totalForTwo - 1) * 100 : 0 ;
+						}		
+						@endphp
+                        <td>{{ number_format($currentTotal,2) . ' %' }}</td>
+						@endif
                         @if (isset($$report_count_data) && count($$report_count_data) > 0)
                         <th>{{ $total_count  }}</th>
                         <td>100 %</td>

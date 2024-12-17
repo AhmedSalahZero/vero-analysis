@@ -113,6 +113,12 @@
 </style>
 
 <style>
+.th-class{
+		width:200px !important;
+		min-width:200px !important;
+		max-width:200px !important;
+		white-space:wrap;
+	}
     .odd:not(.table-active) .dtfc-fixed-left:first-of-type,
     .odd:not(.table-active) .dtfc-fixed-right:last-of-type {
         background-color: white !important;
@@ -173,9 +179,9 @@
     @slot('table_header')
     <tr class="table-active text-center">
         <?php $main_type_name = ucwords(str_replace('_', ' ', $main_type)); ?>
-        <th>{{ __($main_type_name) . ' / ' . __(ucwords(str_replace('_', ' ', $type))) }}</th>
+        <th class="th-class">{{ __($main_type_name) . ' / ' . __(ucwords(str_replace('_', ' ', $type))) }}</th>
         @foreach ($all_items as $item)
-        <th>{{ __($item) }}</th>
+        <th class="th-class">{{ __($item) }}</th>
         @endforeach
         <td>{{ __('Total '.($type ==  'discounts' ? 'Discounts' : 'Sales')) }}</td>
         @if (isset($totals_sales_per_main_type))

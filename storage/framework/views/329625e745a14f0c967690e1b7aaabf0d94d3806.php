@@ -4,6 +4,12 @@
     table {
         white-space: nowrap;
     }
+	.th-class{
+		width:200px !important;
+		min-width:200px !important;
+		max-width:200px !important;
+		white-space:nowrap;
+	}
 
 </style>
 <?php if(in_array('TwoDimensionalBreakdown',Request()->segments())): ?>
@@ -180,9 +186,9 @@
     <?php $__env->slot('table_header'); ?>
     <tr class="table-active text-center">
         <?php $main_type_name = ucwords(str_replace('_', ' ', $main_type)); ?>
-        <th><?php echo e(__($main_type_name) . ' / ' . __(ucwords(str_replace('_', ' ', $type)))); ?></th>
+        <th class="th-class"><?php echo e(__($main_type_name) . ' / ' . __(ucwords(str_replace('_', ' ', $type)))); ?></th>
         <?php $__currentLoopData = $all_items; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-        <th><?php echo e(__($item)); ?></th>
+        <th class="th-class"><?php echo e(__($item)); ?></th>
         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
         <td><?php echo e(__('Total')); ?></td>
         
@@ -222,9 +228,7 @@
     <tr class="secondary-row-color ">
         <th> <?php echo e('Bundle Product %'); ?> </th>
 
-	<?php if($main_type_item_name == 'Grilled Chicken Taco'): ?>
-		
-		<?php endif; ?>
+	
         <?php $__currentLoopData = $all_items; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
         <?php $value = $report_data[$main_type_item_name][$item] ?? 0;
 	$percentage_per_value = 0 ;

@@ -1,4 +1,7 @@
 
+<?php
+	use App\Helpers\HArr;
+?>
 <?php $__env->startSection('css'); ?>
 <link href="<?php echo e(url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css')); ?>" rel="stylesheet" type="text/css" />
 <link href="<?php echo e(url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css')); ?>" rel="stylesheet" type="text/css" />
@@ -90,7 +93,7 @@
 
 
                  <?php if (isset($component)) { $__componentOriginale53a9d2e6d6c51019138cc2fcd3ba8ac893391c6 = $component; } ?>
-<?php $component = $__env->getContainer()->make(App\View\Components\Table::class, ['tableClass' => 'kt_table_with_no_pagination_no_scroll_no_search']); ?>
+<?php $component = $__env->getContainer()->make(App\View\Components\Table::class, ['tableClass' => 'kt_table_with_no_pagination_no_scroll_no_search_no_info	']); ?>
 <?php $component->withName('table'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
@@ -101,6 +104,9 @@
                         <th class="text-center"><?php echo e(__(ucwords(str_replace('_',' ',$type)))); ?></th>
                         <th class="text-center"><?php echo e(__('Sales Values')); ?></th>
                         <th class="text-center"><?php echo e(__('Sales %')); ?></th>
+						<?php if($name == $latestReport): ?>
+                        <th class="text-center"><?php echo e(__('GR %')); ?></th>
+						<?php endif; ?> 
                         <?php if(isset($$report_count_data) && count($$report_count_data) > 0): ?>
                         <th class="text-center"><?php echo e(__('Count')); ?></th>
                         <th class="text-center"><?php echo e(__('Count %')); ?></th>
@@ -108,14 +114,25 @@
                     </tr>
                     <?php $__env->endSlot(); ?>
                     <?php $__env->slot('table_body'); ?>
+					
                     <?php $total = array_sum(array_column($$report_name,'Sales Value'));
+					$totals[$name] = $total ;
                                     $total_count = (isset($$report_count_data) && count($$report_count_data) > 0) ? array_sum(array_column($$report_count_data,'Count')) : 0; ?>
                     <?php $__currentLoopData = $$report_name; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                     <tr>
                         <th><?php echo e($key+1); ?></th>
+				
                         <th><?php echo e($item['item']?? '-'); ?></th>
                         <td class="text-center"><?php echo e(number_format($item['Sales Value']??0)); ?></td>
                         <td class="text-center"><?php echo e($total == 0 ? 0 : number_format((($item['Sales Value']/$total)*100) , 1) . ' %'); ?></td>
+						<?php if($name == $latestReport): ?>
+						<?php
+							$otherIntervalCurrentValue = $latestReport == '_two' ? HArr::searchForCorrespondingItem($result_for_interval_one,$item['item']) :HArr::searchForCorrespondingItem($result_for_interval_two,$item['item']); 
+							$currentItemValue = $item['Sales Value'] ?? 0 ;
+						?>
+                        <td class="text-center"><?php echo e($otherIntervalCurrentValue ? number_format(($currentItemValue /$otherIntervalCurrentValue  -1) *100,2) .' %' : 0); ?></td>
+						<?php endif; ?>
+				
                         <?php if(isset($$report_count_data) && count($$report_count_data) > 0): ?>
                         <td class="text-center"><?php echo e($$report_count_data[$key]['Count']); ?></td>
                         <td class="text-center"><?php echo e($total == 0 ? 0 : number_format((($$report_count_data[$key]['Count'] /$total_count)*100) , 1) . ' %'); ?></td>
@@ -127,6 +144,21 @@
                         <td class="hidden"></td>
                         <td><?php echo e(number_format($total)); ?></td>
                         <td>100 %</td>
+						<?php if($name == $latestReport): ?>
+						<?php
+						$currentTotal = 0 ;
+							$totalForOne = array_sum(array_column($result_for_interval_one,'Sales Value')) ;
+							$totalForTwo = array_sum(array_column($result_for_interval_two,'Sales Value')) ;
+						if($latestReport == '_two'){
+							$currentTotal =  $totalForOne ? ($totalForTwo /$totalForOne - 1) * 100 : 0 ;
+						}
+						if($latestReport == '_one'){
+						
+							$currentTotal =  $totalForTwo ? ($totalForOne /$totalForTwo - 1) * 100 : 0 ;
+						}		
+						?>
+                        <td><?php echo e(number_format($currentTotal,2) . ' %'); ?></td>
+						<?php endif; ?>
                         <?php if(isset($$report_count_data) && count($$report_count_data) > 0): ?>
                         <th><?php echo e($total_count); ?></th>
                         <td>100 %</td>
