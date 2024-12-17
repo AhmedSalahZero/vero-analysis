@@ -687,7 +687,7 @@ function getTypeFor($type, $companyId, $formatted = false, $date = false, $start
             })
             ->groupBy($type)
             ->select($type)
-            // ->orderByRaw('sum(net_sales_value) desc')
+             ->orderByRaw('sum(net_sales_value) desc')
             ->distinct()
             ->get()->pluck($type)->toArray();
 
