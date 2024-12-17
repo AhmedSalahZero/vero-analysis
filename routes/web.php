@@ -969,6 +969,7 @@ Route::middleware([])->group(function () {
                     //########### Sales Trend Analysis Links +   Average Prices +  Breakdown ############
                     // For [Zone , Sales Channels , Categories , Products , Product Items , Branches , Business Sectors ,Sales Persons]
 					Route::get('products-bundling','Analysis\SalesGathering\ProductsAgainstAnalysisReport@viewBundlingReport')->name('view.products.bundling');
+					Route::get('product-items-bundling','Analysis\SalesGathering\SKUsAgainstAnalysisReport@viewBundlingReport')->name('view.productItems.bundling');
                     $routesDefinition = (new RoutesDefinition());
                     $saleTrendRoutes = $routesDefinition->salesTrendAnalysisRoutes();
                     foreach ($saleTrendRoutes as $nameOfMainItem => $info) {

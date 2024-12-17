@@ -9,7 +9,6 @@
 <?php $__env->startSection('content'); ?>
 <div class="row">
     <div class="col-md-12">
-
         <!--begin::Form-->
         <form class="kt-form kt-form--label-right" method="POST" action="<?php echo e($type == 'discounts' ?  route('discounts.analysis.result',$company) : route('TwoDimensionalBreakdown.result',$company)); ?>" enctype="multipart/form-data">
             <?php echo csrf_field(); ?>

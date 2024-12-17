@@ -76,9 +76,7 @@
                                                 </span>
 
                                             </span>
-                                            {{-- <span class="kt-option__body">
-                                                    {{ __('This Section Will Be Added In The Client Side') }}
-                                        </span> --}}
+                                           
                                         </span>
                                     </label>
                                 </div>
@@ -181,5 +179,17 @@
     $('#date').prop('checked', true)
 
 </script>
-
+<script>
+$('#product_or_service').on('change',function(){
+	const val = $(this).val() ;
+	const isChecked = $(this).is(":checked")
+	if(isChecked){
+		$('#product_item').prop('disabled',false)
+	}
+	else{
+		$('#product_item').prop('checked',false).prop('disabled',true)
+	}
+})
+$('#product_or_service').trigger('change')
+</script>
 @endsection

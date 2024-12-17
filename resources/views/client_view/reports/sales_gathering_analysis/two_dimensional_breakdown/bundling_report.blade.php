@@ -128,7 +128,6 @@
     }
 
 </style>
-
 @if(in_array('TwoDimensionalBreakdown' , Request()->segments()))
 
 @endif
@@ -269,24 +268,7 @@
     </tr>
 
 
-    {{-- <tr class="table-active text-center">
-        <th class="text-center"> {{ __(ucwords(str_replace('_', ' ', $type))) . ' % / ' . __('Total '.($type ==  'discounts' ? 'Discounts' : 'Sales')) }} </th>
-        @foreach ($all_items as $item_name)
-        <?php $items_percentage = $final_total == 0 ? 0 : (($items_totals[$item_name] ?? 0) / $final_total) * 100; ?>
-        <td class="text-center">
-            <b> {{ number_format($items_percentage, 1) . ' %' }}
-		
-			
-			</b>
-        </td>
-        @endforeach
-
-        <td><b>{{ number_format($final_percentage, 1) . ' %' }}</b></td>
-        @if (isset($totals_sales_per_main_type))
-        <td>-</td>
-        @endif
-
-    </tr> --}}
+    
     @if (isset($totals_sales_per_main_type))
     <tr class="table-active text-center">
         <th class="text-center"> {{ __(ucwords(str_replace('_', ' ', $type))) . ' % / Sales'   }} </th>

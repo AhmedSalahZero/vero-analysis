@@ -61,7 +61,7 @@ class ExportTable extends Controller
 	 */
 	public  function customizedTableFieldSave(Request $request, Company $company, $model, $modelName)
 	{
-		
+
 		$this->validation($request);
 
 		$request['company_id'] = $company->id;

@@ -196,7 +196,7 @@ class TwodimensionalSalesBreakdownAgainstAnalysisReport
             SELECT  document_number ,sum(quantity) as group_quantity,sum(net_sales_value) as group_net_sales_value , ".$main_type."
             FROM sales_gathering 
 			where  company_id = '".$company->id."'   AND date between '".$request->start_date."' and '".$request->end_date."'
-			group by product_or_service , document_number
+			group by ".$main_type." , document_number
 			
 			"
             )))
@@ -213,13 +213,13 @@ class TwodimensionalSalesBreakdownAgainstAnalysisReport
 			foreach($top50 as $searchItemName){
 			
 				foreach($report_data as $documentNumber=>$subData){
-					if(in_array($searchItemName,array_column($subData,'product_or_service'))){
-						$item = collect($subData)->where('product_or_service',$searchItemName)->first();
-						$itemName = $item->product_or_service ;
+					if(in_array($searchItemName,array_column($subData,$main_type))){
+						$item = collect($subData)->where($main_type,$searchItemName)->first();
+						$itemName = $item->{$main_type} ;
 						$allNames[$itemName] = $itemName;
 						$items[] = [
 							'document_number'=>$item->document_number,
-							'product_or_service'=>$itemName,
+							$main_type=>$itemName,
 							'quantity'=>$item->group_quantity ,
 							'net_sales_value'=>$item->group_net_sales_value ,
 						];
@@ -228,9 +228,9 @@ class TwodimensionalSalesBreakdownAgainstAnalysisReport
 			}
 			$finalResult = [];
 				foreach($items as $item){
-					$mainName = $item['product_or_service'] ;
+					$mainName = $item[$main_type] ;
 					foreach($items as $item2){
-						$subName = $item2['product_or_service'] ;
+						$subName = $item2[$main_type] ;
 						if( $subName != $mainName 
 						&& $item2['document_number'] == $item['document_number']  
 						){
@@ -255,7 +255,6 @@ class TwodimensionalSalesBreakdownAgainstAnalysisReport
             'start_date' => date('d-M-Y',strtotime($request->start_date)),
             'end_date' => date('d-M-Y',strtotime($request->end_date))
         ];
-		
 		if($main_type == $type){
 			$report_data = $this->getBundlingData($request,$company,$main_type);
 			$all_items =array_keys($report_data); 

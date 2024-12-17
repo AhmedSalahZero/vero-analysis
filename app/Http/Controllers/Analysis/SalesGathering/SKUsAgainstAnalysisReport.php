@@ -63,8 +63,14 @@ class SKUsAgainstAnalysisReport
         $name_of_selector_label = str_replace(['Products Items Against ', ' Trend Analysis'], '', $view_name);
         return view('client_view.reports.sales_gathering_analysis.skus_analysis_form', compact('company', 'name_of_selector_label', 'type', 'view_name'));
     }
-
-
+	public function viewBundlingReport(Request $request , Company $company)
+	{
+            $main_type = 'product_item';
+            $type = 'product_item';
+            $view_name = 'Bundled Product Items' ;
+        return view('client_view.reports.sales_gathering_analysis.two_dimensional_breakdown.sales_form', compact('company', 'view_name','type','main_type'));
+	}
+	
      public function CategoriesSalesAnalysisIndex(Company $company)
     {
         // Get The Selected exportable fields returns a pair of ['field_name' => 'viewing name']

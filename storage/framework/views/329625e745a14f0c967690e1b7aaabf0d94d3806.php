@@ -8,7 +8,7 @@
 		width:200px !important;
 		min-width:200px !important;
 		max-width:200px !important;
-		white-space:nowrap;
+		white-space:wrap;
 	}
 
 </style>
@@ -127,7 +127,6 @@
     }
 
 </style>
-
 <?php if(in_array('TwoDimensionalBreakdown' , Request()->segments())): ?>
 
 <?php endif; ?>

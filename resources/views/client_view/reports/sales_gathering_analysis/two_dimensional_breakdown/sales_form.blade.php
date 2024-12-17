@@ -9,7 +9,6 @@
 @section('content')
 <div class="row">
     <div class="col-md-12">
-
         <!--begin::Form-->
         <form class="kt-form kt-form--label-right" method="POST" action="{{  $type == 'discounts' ?  route('discounts.analysis.result',$company) : route('TwoDimensionalBreakdown.result',$company)}}" enctype="multipart/form-data">
             @csrf

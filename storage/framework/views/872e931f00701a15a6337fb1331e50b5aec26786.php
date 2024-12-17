@@ -78,7 +78,7 @@
                                                 </span>
 
                                             </span>
-                                            
+                                           
                                         </span>
                                     </label>
                                 </div>
@@ -193,7 +193,18 @@
     $('#date').prop('checked', true)
 
 </script>
-
+<script>
+$('#product_or_service').on('change',function(){
+	const val = $(this).val() ;
+	const isChecked = $(this).is(":checked")
+	if(isChecked){
+		$('#product_item').prop('disabled',false)
+	}
+	else{
+		$('#product_item').prop('checked',false).prop('disabled',true)
+	}
+})
+</script>
 <?php $__env->stopSection(); ?>
 
 <?php echo $__env->make('layouts.dashboard', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /media/salah/Software/projects/veroo/resources/views/client_view/Exportation/fieldsSelectionToBeExported.blade.php ENDPATH**/ ?>
