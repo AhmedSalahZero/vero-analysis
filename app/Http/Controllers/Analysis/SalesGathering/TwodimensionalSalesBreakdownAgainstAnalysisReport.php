@@ -204,7 +204,7 @@ class TwodimensionalSalesBreakdownAgainstAnalysisReport
 			->toArray();
 			$quantity = 0 ;
 			$items = [];
-			$top50 = (new SalesBreakdownAgainstAnalysisReport)->salesBreakdownAnalysisResult($request,$company,'array') ;
+			$top50 = (new SalesBreakdownAgainstAnalysisReport)->salesBreakdownAnalysisResult($request,$company,'array',null,null,20) ;
 			unset($top50[50]);
 			$top50 = array_column($top50,'item');
 

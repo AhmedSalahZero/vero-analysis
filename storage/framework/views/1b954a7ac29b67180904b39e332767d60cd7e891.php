@@ -35,12 +35,29 @@
                                 </div>
                             </div>
                         </div>
+
+						
+					<?php
+						$num = 50 ;
+							if($type == $main_type){
+								$num = 20 ;
+							}
+							
+					?>
                         <div class="col-md-3">
-                            <label><?php echo e(__('Select Top 50 Or Bottom 50')); ?> </label>
+                            <label>
+								<?php if($type == $main_type): ?>
+							<?php echo e(__('Select Top '.$num.' Or Bottom '.$num)); ?>
+
+							<?php else: ?>
+							<?php echo e(__('Select Top '.$num.' Or Bottom '.$num)); ?>
+
+								<?php endif; ?>
+							 </label>
                             <div class="kt-input-icon">
                               <select name="direction" class="form-control">
-                                  <option value="desc"><?php echo e(__('Top 50')); ?></option>
-                                  <option value="asc"><?php echo e(__('Bottom 50')); ?></option>
+                                  <option value="desc"><?php echo e(__('Top '.$num)); ?></option>
+                                  <option value="asc"><?php echo e(__('Bottom '.$num)); ?></option>
                               </select>
                             </div>
                         </div>

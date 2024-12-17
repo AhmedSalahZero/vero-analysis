@@ -213,10 +213,8 @@
     {{-- Percentages --}}
     <tr class="secondary-row-color ">
         <th> {{ 'Bundle Product %' }} </th>
-{{-- $items_totals[$main_type_item_name] --}}
-	@if($main_type_item_name == 'Grilled Chicken Taco')
-		{{-- {{ dd($value,$items_totals) }} --}}
-		@endif
+
+	
         @foreach ($all_items as $item)
         <?php $value = $report_data[$main_type_item_name][$item] ?? 0;
 	$percentage_per_value = 0 ;

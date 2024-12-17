@@ -109,12 +109,13 @@ class SalesBreakdownAgainstAnalysisReport
 		return HArr::fillMissingKeyWith($simpleLinearRegressionData,$dateIntervals);
 		// return $simpleLinearRegressionData;
 	}
-	public function salesBreakdownAnalysisResult(Request $request, Company $company, $result = 'view', $calculated_report_data = null,string $reportType =null )
+	public function salesBreakdownAnalysisResult(Request $request, Company $company, $result = 'view', $calculated_report_data = null,string $reportType =null , int $numOfTop = null )
 	{
 		$simpleLinearRegressionData =[];
 		$predictionArr = [];
 		$breakdownStartDate = $request->start_date ;
 		$breakdownEndDate = $request->end_date ;
+		$numOfTop = is_null($numOfTop) ? 50 : $numOfTop ;
 		$simpleLinearRegressionStartDate = Carbon::make($breakdownEndDate)->subMonthNoOverflow(23)->startOfMonth()->format('Y-m-d') ;
 		$predictionDates = [
 			Carbon::make($breakdownEndDate)->addMonthsNoOverflow(0)->format('Y-m-d'),	
@@ -290,7 +291,8 @@ class SalesBreakdownAgainstAnalysisReport
 			if ($request->get('direction') == 'asc') {
 				$report_data  = $report_data->reverse();
 			}
-			$top_50 = $report_data->take(50);
+			
+			$top_50 = $report_data->take($numOfTop);
 
 
 			$others_count = count($report_data) - count($top_50);

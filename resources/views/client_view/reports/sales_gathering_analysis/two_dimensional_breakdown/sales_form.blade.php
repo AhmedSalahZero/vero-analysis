@@ -35,12 +35,27 @@
                                 </div>
                             </div>
                         </div>
+
+						
+					@php
+						$num = 50 ;
+							if($type == $main_type){
+								$num = 20 ;
+							}
+							
+					@endphp
                         <div class="col-md-3">
-                            <label>{{__('Select Top 50 Or Bottom 50')}} </label>
+                            <label>
+								@if($type == $main_type)
+							{{__('Select Top '.$num.' Or Bottom '.$num)}}
+							@else
+							{{__('Select Top '.$num.' Or Bottom '.$num)}}
+								@endif
+							 </label>
                             <div class="kt-input-icon">
                               <select name="direction" class="form-control">
-                                  <option value="desc">{{ __('Top 50') }}</option>
-                                  <option value="asc">{{ __('Bottom 50') }}</option>
+                                  <option value="desc">{{ __('Top '.$num) }}</option>
+                                  <option value="asc">{{ __('Bottom '.$num) }}</option>
                               </select>
                             </div>
                         </div>
