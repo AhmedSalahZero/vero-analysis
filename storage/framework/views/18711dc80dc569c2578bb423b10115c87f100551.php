@@ -44,7 +44,6 @@
                                 <div class="input-group date">
 								
 						
-			 
                                     <input  type="date" name="end_date" required value="<?php echo e(getEndYearBasedOnDataUploaded($company)['dec']); ?>" max="<?php echo e(getEndYearBasedOnDataUploaded($company)['dec']); ?>" class="form-control" />
 									
                                 </div>

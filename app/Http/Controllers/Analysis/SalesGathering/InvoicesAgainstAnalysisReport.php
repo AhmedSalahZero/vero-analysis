@@ -144,53 +144,6 @@ class InvoicesAgainstAnalysisReport
 		  return view('client_view.reports.sales_gathering_analysis.invoices_analysis_report',compact('company','view_name','type','secondTypesArray','sumForEachInterval','reportSalesValues'));
 
 
-        
-        // $data_type = ($request->data_type === null || $request->data_type == 'value')? 'net_sales_value' : 'quantity';
-        // foreach ($branches as  $branchName) {
-        //     $branches_data =collect(DB::select(DB::raw("
-        //         SELECT DATE_FORMAT(LAST_DAY(date),'%d-%m-%Y') as gr_date  , ".$data_type." ,branch," . $type ."
-        //         FROM sales_gathering
-        //         WHERE ( company_id = '".$company->id."' AND branch = '".$branchName."' AND date between '".$request->start_date."' and '".$request->end_date."')
-        //         ORDER BY id "
-        //         )))->groupBy($type)->map(function($item)use($data_type){
-        //             return $item->groupBy('gr_date')->map(function($sub_item)use($data_type){
-
-        //                 return $sub_item->sum($data_type);
-        //             });
-        //         })->toArray();
-        //     foreach (($request->sales_channels??[]) as $branch_key => $branch) {
-
-
-        //         $years = [];
-
-        //         $data_per_main_item = $branches_data[$branch]??[];
-        //         if (count(($data_per_main_item))>0 ) {
-
-        //             array_walk($data_per_main_item, function ($val, $date) use (&$years) {
-        //                 $years[] = date('Y', strtotime($date));
-        //             });
-        //             $years = array_unique($years);
-
-        //             $report_data[$branchName][$branch]['Sales Values'] = $data_per_main_item;
-        //             $interval_data = Intervals::intervals($report_data[$branchName][$branch], $years, $request->interval);
-        //             $report_data[$branchName][$branch] = $interval_data['data_intervals'][$request->interval] ?? [];
-
-        //             $report_data[$branchName]['Total']  = $this->finalTotal([($report_data[$branchName]['Total']  ?? []) ,($report_data[$branchName][$branch]['Sales Values']??[]) ]);
-        //             $report_data[$branchName][$branch]['Growth Rate %'] = $this->growthRate(($report_data[$branchName][$branch]['Sales Values'] ?? []));
-
-
-        //         }
-        //     }
-        //     $final_report_total = $this->finalTotal( [($report_data[$branchName]['Total']??[]) , ($final_report_total??[]) ]);
-        //     $report_data[$branchName]['Growth Rate %'] =  $this->growthRate(($report_data[$branchName]['Total']??[]));
-        //     $branches_names[] = (str_replace( ' ','_', $branchName));
-        // }
-
-
-        // $report_data['Total'] = $final_report_total;
-        // $report_data['Growth Rate %']=  $this->growthRate($report_data['Total']);
-        // $dates = array_keys($report_data['Total']);
-        return view('client_view.reports.sales_gathering_analysis.invoices_analysis_report',compact('company','view_name','branches_names','dates','report_data',));
     }
 
     
@@ -366,25 +319,7 @@ class InvoicesAgainstAnalysisReport
         return $branches ;
     }
   
-    public function growthRate($data)
-    {
-
-        // $prev_month = 0;
-        // $final_data = [];
-        // foreach ($data as $date => $value) {
-        //     $prev_month = (round($prev_month));
-        //     if ($prev_month <= 0 && $value<=0) {
-        //         $final_data[$date] = 0 ;
-        //     }if ($prev_month <  0 && $value >= 0) {
-        //         $final_data[$date] =  ((($value - $prev_month) / $prev_month) * 100)*(-1);
-        //     }else{
-
-        //         $final_data[$date] = $prev_month != 0 ? (($value - $prev_month) / $prev_month) * 100 : 0;
-        //     }
-        //     $prev_month = $value;
-        // }
-        // return $final_data;
-    }
+    
 	
 
 

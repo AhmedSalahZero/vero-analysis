@@ -76,7 +76,6 @@
     }
 
 </style>
-{{-- <link href="{{ url('assets/vendors/custom/datatables/datatables.bundle.css') }}" rel="stylesheet" type="text/css" /> --}}
 @endsection
 
 @section('content')
@@ -178,9 +177,7 @@
                         @endphp
                         <td class="text-center">
                             <span class="white-text"><b>
-                                    {{
-                                                          round(($sumForEachInterval[$zone_name][$year][$interval]['avg']) ?? 0)
-                                                        }}
+                                    {{round(($sumForEachInterval[$zone_name][$year][$interval]['avg']) ?? 0) }}
                                 </b></span>
                         </td>
                         @endforeach
@@ -200,22 +197,21 @@
                     <tr class="row{{ $idd }}  active-style text-center" style="display: none">
                         <td class="text-left"><b>{{ __('Avg Invoice Value')  }}</b></td>
 
-
-                        @foreach (getLongestArray($sumForEachInterval) as $year => $d )
-						@php
+							@php
 							$index = -1 ;
 						@endphp
-                        @foreach ($d as $interval=>$q)
+                        @foreach (getLongestArray($sumForEachInterval) as $year => $d )
 						@php
 							$index++;
 						@endphp
+                        @foreach ($d as $interval=>$q)
+						
                         <td class="text-center">
                             <span class="white-text"><b>
                                     @php
                                
                                     $invoiceNumber = ($sumForEachInterval[$zone_name][$year][$interval]['invoice_number']) ?? 0 ;
                                     $salesValue = array_values($reportSalesValues[$zone_name])[$index] ?? 0 ;
-									
 									
                                     $avg_invoice_value = $invoiceNumber ? number_format($salesValue / $invoiceNumber) : 0;
                                     @endphp

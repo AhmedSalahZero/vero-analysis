@@ -75,7 +75,6 @@
     }
 
 </style>
-
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startSection('content'); ?>
@@ -110,16 +109,15 @@
                         <?php
                         $colsSpans = arrayCountAllLongest($sumForEachInterval) + 1 ;
                         ?>
-						
+					
 						<?php $__currentLoopData = getLongestArray($reportSalesValues); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $date => $value): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                         <th>
 						<?php echo e(\Carbon\Carbon::make($date)->format('d-M-Y')); ?>
 
-						
-                            
+
                         </th>
 						<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?> 
-                        
+                  
                        
                     </tr>
                     <?php $__env->endSlot(); ?>
@@ -207,22 +205,21 @@
                     <tr class="row<?php echo e($idd); ?>  active-style text-center" style="display: none">
                         <td class="text-left"><b><?php echo e(__('Avg Invoice Value')); ?></b></td>
 
-
-                        <?php $__currentLoopData = getLongestArray($sumForEachInterval); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $year => $d): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-						<?php
+							<?php
 							$index = -1 ;
 						?>
-                        <?php $__currentLoopData = $d; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $interval=>$q): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <?php $__currentLoopData = getLongestArray($sumForEachInterval); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $year => $d): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 						<?php
 							$index++;
 						?>
+                        <?php $__currentLoopData = $d; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $interval=>$q): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+						
                         <td class="text-center">
                             <span class="white-text"><b>
                                     <?php
                                
                                     $invoiceNumber = ($sumForEachInterval[$zone_name][$year][$interval]['invoice_number']) ?? 0 ;
                                     $salesValue = array_values($reportSalesValues[$zone_name])[$index] ?? 0 ;
-									
 									
                                     $avg_invoice_value = $invoiceNumber ? number_format($salesValue / $invoiceNumber) : 0;
                                     ?>
