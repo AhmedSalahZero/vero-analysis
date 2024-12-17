@@ -113,7 +113,7 @@
 												$sub_section->id == 339||
 												$sub_section->id == 340||
 												$sub_section->id == 343||
-												$sub_section->id == 344||
+												$sub_section->id == 352||
 												
 												 ( false !== $found =  array_search(\Str::singular($name_of_section),$viewing_names)) || 
                                             
@@ -257,7 +257,7 @@
                                                         || ($name_of_section == "Product Ranking" && isset($exportables['product_or_service'] )  && /* not sure salah */  isset($exportables['branch'] ) ) 
                                                         || ($name_of_section == "Customers" &&  (isset($exportables['customer_name']) )
 														|| $name_of_section == "Days" 
-														|| $sub_section->id == 344 
+														|| $sub_section->id == 352 
 														
 														// first if statement
 														)  

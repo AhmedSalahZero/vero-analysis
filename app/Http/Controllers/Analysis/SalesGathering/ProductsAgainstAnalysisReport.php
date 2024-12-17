@@ -101,7 +101,7 @@ class ProductsAgainstAnalysisReport
 				$main_row = str_replace("'", "''", $main_row);
 				$mainData_data = collect(DB::select(DB::raw(
 					"
-                    SELECT DATE_FORMAT(LAST_DAY(date),'%d-%m-%Y') as gr_date  , " . $data_type . " ,product_or_service" . $type . "
+                    SELECT DATE_FORMAT(LAST_DAY(date),'%d-%m-%Y') as gr_date  , " . $data_type . " ,product_or_service," . $type . "
                     FROM sales_gathering 
                     WHERE ( company_id = '" . $company->id . "'AND product_or_service = '" .  $main_row . "'AND date between '" . $request->start_date . "' and '" . $request->end_date . "')
                     ORDER BY id "
@@ -111,7 +111,6 @@ class ProductsAgainstAnalysisReport
 					});
 				})->toArray();
 			} else {
-
 
 				$mainData_data = DB::table('sales_gathering')
 					->where('company_id', $company->id)

@@ -35,8 +35,6 @@ class PredictSales
 									$next1ForecastForCompany = $lastAndGrowthRateForCompanyArr['next1ForecastForCompany']??0;
 									$next2ForecastForCompany = $lastAndGrowthRateForCompanyArr['next2ForecastForCompany']??0;
 									$next3ForecastForCompany = $lastAndGrowthRateForCompanyArr['next3ForecastForCompany']??0;
-									
-									
 						
           
          		   $data = $main_data->groupBy($type)->map(function($year){
