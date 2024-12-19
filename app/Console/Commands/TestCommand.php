@@ -10,7 +10,9 @@ use App\Models\PurchaseOrder;
 use App\Services\Api\OddoService;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Schema;
 
@@ -45,10 +47,39 @@ class TestCommand extends Command
 	 *
 	 * @return int
 	 */
+	
 	public function handle()
 	{
+		dd($this->runPythonScript());
+		// $databaseName = 'salah_db';
+		
+		// DB::statement("CREATE DATABASE IF NOT EXISTS {$databaseName}");
+		// DB::build([
+		// 	'driver' => 'mysql',
+		// 	'database' => 'forge',
+		// 	'username' => 'root',
+		// 	'password' => 'secret',
+		// ]);
+		
+		// DB::reconnect('mysql');
+	
+
+		// $tableName = 'companies';
+		// $columns = [
+		// 	'name','age'
+		// ];
+		// Schema::create($tableName, function (Blueprint $table) use ($columns) {
+		// 	$table->id();
+		// 	foreach ($columns as $column) {
+		// 		$table->string($column);
+		// 	}
+		// 	$table->timestamps();
+		// });
+		
+		
 		
 	}
+	
 	public function refreshStatement($statementModelName,$dateColumnName = 'full_date'){
 		$fullModelName ='App\Models\\'.$statementModelName;
 		$fullModelName::orderBy($dateColumnName)->get()->each(function($statementRaw){
@@ -67,5 +98,12 @@ class TestCommand extends Command
 			}
 		}
 		return $result; 
+	}
+	public function runPythonScript()
+	{
+		$pythonFilePath = public_path('python/test.py');
+		$name = "khaled";
+		$x = shell_exec('python3 '. $pythonFilePath .' '. $name  );
+		dd($x);
 	}
 }
