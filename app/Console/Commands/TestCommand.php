@@ -102,8 +102,8 @@ class TestCommand extends Command
 	public function runPythonScript()
 	{
 		$pythonFilePath = public_path('python/test.py');
-		$name = "khaled";
-		$x = shell_exec('python3 '. $pythonFilePath .' '. $name  );
+		$irr = json_encode([-1000, 200, 300, 400, 500]);
+		$x = shell_exec('python3 '. $pythonFilePath .' '. $irr  );
 		dd($x);
 	}
 }
