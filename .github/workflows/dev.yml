@@ -60,7 +60,7 @@ jobs:
     - name: cache clear
       run: php artisan optimize:clear  
     - name: FTP-Deploy-Action
-      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.5
       with:
          server: 147.182.239.201
          server-dir: public_html/system.veroanalysis.com/
