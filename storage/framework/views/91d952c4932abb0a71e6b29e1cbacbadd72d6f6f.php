@@ -1,9 +1,20 @@
-i<?php
+<?php
 $tableId = 'kt_table_1';
 ?>
-
 <style>
 
+.bb-0{
+border:1px solid transparent !important;	
+}
+.border-green{
+	border:1px solid green !important;
+}
+.border-green:hover {
+	border:1px solid green !important;
+}
+td.padding-left-0{
+	padding-left:0 !important;
+}
     .color-active {
         color: #366cf3 !important;
         font-weight: bold !important;
@@ -28,11 +39,7 @@ $tableId = 'kt_table_1';
         flex: 1;
     }
 
-    .btn.btn-secondary.btn-pricing-plan:hover {
-        background-color: transparent !important;
-        border: 1px solid #e2e5ec !important;
-    }
-
+  
     #test_filter,
     #kt_table_1_filter {
         display: none !important;
@@ -351,15 +358,26 @@ $tableId = 'kt_table_1';
                                 <div id="modal-1-edit-<?php echo e($mainItemData['data']['id']); ?>" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
                                     <div class="modal-dialog modal-lg">
                                         <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h4 class="modal-title"><?php echo e(__('Edit Pricing Plan ' .$mainItemData['data']['name'])); ?></h4>
+                                            <div class="modal-header pb-0 bb-0">
+											<div class="d-flex flex-column w-full">
+											<h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style=""> <?php echo e(__('Edit Pricing Plan ' .$mainItemData['data']['name'])); ?> </h3>
+											   <div style="flex:1">
+											   <hr style="flex:1;background-color:blue" >
+											   </div>
+											   
+											</div>
+											   
+					<div class="row">
+                     
+                    </div>
+					
+                                                
                                             </div>
-                                            <div class="modal-body">
-                                            </div>
-                                            <form action="<?php echo e(route('pricing-plans.update',['company'=>$company->id , 'pricing_plan'=> $mainItemData['data']['id'] ])); ?>" method="post" id="delete_form">
+                                            <div class="modal-body pt-0">
+											 <form action="<?php echo e(route('pricing-plans.update',['company'=>$company->id , 'pricing_plan'=> $mainItemData['data']['id'] ])); ?>" method="post" id="delete_form">
                                                 <div class="container">
 												<div class="row">
-                                                    <div class="col-md-6">
+                                                    <div class="col-md-12">
                                                         <label for="edit_pricing_plan_namd" class="form-label font-weight-bold"> <?php echo e(__('Name')); ?></label>
                                                         <input type="text" class="form-control exclude-text" name="name" value="<?php echo e($mainItemData['data']['name']); ?>">
                                                     </div>
@@ -379,6 +397,9 @@ $tableId = 'kt_table_1';
                                                     </button>
                                                 </div>
                                             </form>
+											
+                                            </div>
+                                           
                                         </div>
                                     </div>
                                 </div>
@@ -426,26 +447,29 @@ $tableId = 'kt_table_1';
                     <td class="text-center max-w-80 text-capitalize"><b class="ml-3">
                             
                             
-                            <table class="table table-striped- table-bordered table-hover table-checkable  ">
+                            <table class="table table-striped- table-bordered  table-checkable  ">
                                 <tr>
-                                    <td><?php echo e(__('Name')); ?></td>
-                                    <td><?php echo e($subItemArr['name']); ?></td>
-                                    <td><?php echo e(__('Service Item')); ?></td>
-                                    <td><?php echo e($subItemArr['service_item_name']); ?></td>
-                                    <td><?php echo e(__('Count Or Days')); ?></td>
-                                    <td><?php echo e($subItemArr['count_or_days']); ?></td>
-                                    <td><?php echo e(__('Count Or Days')); ?></td>
-                                    <td><?php echo e($subItemArr['count_or_days']); ?></td>
+									
+                                    <td class="text-left"><?php echo e(__('Name')); ?></td>
+                                    <td class="bg-white"><?php echo e($subItemArr['name']); ?></td>
+									<td class="text-left"><?php echo e(__('Customer Name')); ?></td>
+                                    <td class="bg-white"><?php echo e($subItemArr['customer_name']); ?></td>
+									
+                                    <td class="text-left"><?php echo e(__('Service Item')); ?></td>
+                                    <td class="bg-white"><?php echo e($subItemArr['service_item_name']); ?></td>
+                          
+                                
                                 </tr>
 
                                 <tr>
-
-                                    <td><?php echo e(__('Total Recommend Withhout Vat')); ?></td>
-                                    <td><?php echo e($subItemArr['total_recommended_without_vat_formatted']); ?></td>
-                                    <td><?php echo e(__('Total Net Profit After Taxes Amount')); ?></td>
-                                    <td><?php echo e($subItemArr['total_net_profit_after_taxes_formatted']); ?></td>
-                                    <td><?php echo e(__('Total Net Profit After Taxes Percentage')); ?></td>
-                                    <td><?php echo e($subItemArr['total_net_profit_after_taxes_percentage_formatted']); ?></td>
+          <td class="text-left"><?php echo e(__('Count Or Days')); ?></td>
+                                    <td class="bg-white"><?php echo e($subItemArr['count_or_days']); ?></td>
+                                    <td class="text-left"><?php echo e(__('Price Without VAT')); ?></td>
+                                    <td class="bg-white "><?php echo e($subItemArr['total_recommended_without_vat_formatted']); ?></td>
+                                    <td class="padding-left-0"><?php echo e(__('Net Profit After Taxes')); ?></td>
+                                    <td class="bg-white "><?php echo e($subItemArr['total_net_profit_after_taxes_formatted']); ?></td>
+                                    <td class="padding-left-0"><?php echo e(__('Net Profit %')); ?></td>
+                                    <td class="bg-white "><?php echo e($subItemArr['total_net_profit_after_taxes_percentage_formatted']); ?></td>
                                 </tr>
 
                             </table>
@@ -538,7 +562,11 @@ $tableId = 'kt_table_1';
                             <?php echo e(__('Name')); ?>
 
                         </th>
+						  <th class="view-table-th header-th" data-db-column-name="" data-is-relation="0" class="header-th" data-is-json="0">
+                            <?php echo e(__('Customer Name')); ?>
 
+                        </th>
+						
                         <th class="view-table-th header-th" data-db-column-name="name" data-relation-name="RevenueBusinessLine" data-is-relation="1" class="header-th" data-is-json="0">
                             <?php echo e(__('Business Line')); ?>
 
@@ -560,15 +588,15 @@ $tableId = 'kt_table_1';
                         </th>
 
                         <th data-db-column-name="total_recommend_price_without_vat" data-is-relation="0" data-relation-name="" class="header-th view-table-th" data-is-json="0">
-                            <?php echo __('Total Recommend <br> Price Without VAT'); ?>
+                            <?php echo __('Recommend <br> Price Without VAT'); ?>
 
                         </th>
                         <th data-db-column-name="total_recommend_price_with_vat" data-is-relation="0" data-relation-name="" class="header-th view-table-th" data-is-json="0">
-                            <?php echo __('Total Recommend <br> Price With VAT'); ?>
+                            <?php echo __('Recommend <br> Price With VAT'); ?>
 
                         </th>
                         <th data-db-column-name="total_net_profit_after_taxes" data-is-relation="0" data-relation-name="" class="header-th view-table-th" data-is-json="0">
-                            <?php echo __('Total Net Profit <br> After Taxes'); ?>
+                            <?php echo __('Net Profit <br> After Taxes'); ?>
 
                         </th>
 
@@ -669,7 +697,7 @@ $tableId = 'kt_table_1';
 
                                 function formatsubrow1(d) {
                                     // `d` is the original data object for the row
-                                    let subtable = `<table id="subtable-1-id${d.id}" class="subtable-1-class table table-striped- kt_table_with_no_pagination table-bordered table-hover table-checkable dataTable no-footer" > <thead style="display:none"><tr><td></td> <td></td> <td></td> <td></td><td></td></tr> </thead> `;
+                                    let subtable = `<table id="subtable-1-id${d.id}" class="subtable-1-class table table-striped- kt_table_with_no_pagination table-bordered  table-checkable dataTable no-footer" > <thead style="display:none"><tr><td></td> <td></td> <td></td> <td></td><td></td></tr> </thead> `;
 
                                     subtable += '</table>';
 
@@ -724,9 +752,15 @@ $tableId = 'kt_table_1';
                                                         data: 'name'
                                                         , searchable: false
                                                         , orderable: false
+                                                    },
+													{
+                                                        data: 'customer_name'
+                                                        , searchable: false
+                                                        , orderable: false
                                                     }
                                                     , {
                                                         render: function(d, b, row) {
+															console.log(row)
                                                             return row['revenueBusinessLineName']
                                                         }
                                                         , data: 'order'
@@ -839,8 +873,8 @@ $tableId = 'kt_table_1';
                                                         }
                                                     },
 													{
-                                                        "text": '<span class="plus-class">+</span>' + "<?php echo e(__('Create')); ?>"
-                                                        , 'className': 'btn btn-bold btn-secondary  flex-1 flex-grow-0 btn-border-radius mr-auto'
+                                                        "text": '' + "<?php echo e(__('Create')); ?>"
+                                                        , 'className': 'btn btn-bold btn-green  mr-2 flex-grow-0 btn-border-radius mr-auto'
                                                         , "action": function() {
                                                             window.location.href = "<?php echo e($createRoute); ?>"
                                                         }
@@ -900,7 +934,7 @@ $tableId = 'kt_table_1';
        
 		<div class="modal-footer">
 			<button type="button" class="btn btn-secondary" data-dismiss="modal"><?php echo e(__('Close')); ?></button>
-			<button data-shareable-id="${data.id}" type="button" class="btn btn-primary submit-modal-class shareable-btn"><?php echo e(__('Generate Link')); ?></button>
+			<button data-shareable-id="${data.id}" type="button" class="btn btn-primary submit-modal-class shareable-btn"><?php echo e(__('Save & Copy')); ?></button>
 		</div>
 
       
@@ -1030,8 +1064,8 @@ $tableId = 'kt_table_1';
         , dom: 'Bfrtip',
 
         buttons: [{
-                "text": '<div ><span class="plus-class">+</span>' + "<?php echo e(__('Create')); ?></div> <form><div><input type='text' class='form-control' id='pricing-plan-input-js' name='name'>  </div> <div><button type='submit'  class='btn btn-bold active-style  btn-pricing-plan-inisde flex-1 flex-grow-0  btn-border-radius'>Save</button></div></form>   "
-                , 'className': 'btn btn-pricing-plan btn-bold btn-secondary  flex-1 flex-grow-0 btn-border-radius mr-auto'
+                "text": '<div class="text-black">' + "<?php echo e(__('Create')); ?></div> <form><div><input type='text' class='form-control' id='pricing-plan-input-js' name='name'>  </div> <div><button type='submit'  class='btn btn-bold active-style  btn-pricing-plan-inisde  flex-1 flex-grow-0  btn-border-radius '>Save</button></div></form>   "
+                , 'className': 'btn btn-pricing-plan border-green btn-bold   flex-1 flex-grow-0 btn-border-radius mr-auto'
                 , "action": function() {
                     //window.location.href = "<?php echo e(route('pricing-plans.create',['company'=>$company->id])); ?>"
                 }

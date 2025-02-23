@@ -30,7 +30,7 @@ class PricingExpense extends Model
 	public static function getTypes():array 
 	{
 		return [
-			'other-variable-direct-manpower-expense'=>__('Other Variable Direct Manpower Expense'),
+			'other-direct-manpower-expense'=>__('Other Direct Manpower Expense'),
 			'other-direct-operations-expense'=>__('Other Direct Operations Expense'),
 			'sales-and-market-expense'=>__('Sales And Market Expense'),
 			'general-and-administrative-expense'=>__('General & Administrative Expense')

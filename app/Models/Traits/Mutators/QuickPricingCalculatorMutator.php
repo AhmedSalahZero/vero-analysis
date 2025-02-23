@@ -21,7 +21,7 @@ trait QuickPricingCalculatorMutator
     {
         
         foreach(
-            ['date','revenue_business_line_id','service_category_id','service_category_id','name',
+            ['date','revenue_business_line_id','service_category_id','service_category_id','customer_id','name',
             'service_item_id','service_nature_id','delivery_days','country_id',
             'state_id','currency_id','price_sensitivity','use_freelancer',
             'total_recommend_price_without_vat','total_recommend_price_with_vat','price_per_day_without_vat','price_per_day_with_vat'

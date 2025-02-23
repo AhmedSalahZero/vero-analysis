@@ -11,6 +11,11 @@
 <?php endif; ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
+<style>
+.trigger-add-new-modal{
+	color:green !important;
+}
+</style>
 <?php $__env->stopSection(); ?>
 <?php $__env->startSection('sub-header'); ?>
  <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
@@ -26,6 +31,50 @@
 <?php endif; ?> 
 <?php $__env->stopSection(); ?>
 <?php $__env->startSection('content'); ?>
+<script>
+function updateField(route, parent = null) {
+            $.ajax({
+                type: 'GET'
+                , url: route
+                , data: {
+                    "_token": "<?php echo e(csrf_token()); ?>"
+                , }
+                , cache: false
+                , contentType: false
+                , processData: false
+                , success: (res) => {
+                    if (res.status) {
+
+                        if (parent && parent.length) {
+                            parent.find('#' + res.append_id).empty().append(res.result).trigger('change').trigger('changed.bs.select').selectpicker('render').selectpicker('setStyle', 'btn-large', 'remove');
+                        } else {
+                            if (res.isFullQuerySelector) {
+
+                                // alert()
+                                if (res.addNew != '0') {
+
+                                    $(res.append_id).find('option:not(.add-new-item)').remove();
+                                    $(res.append_id).find('option.add-new-item').after(res.result).selectpicker('refresh').trigger('change')
+                                } else {
+                                    $(res.append_id).empty().append(res.result).selectpicker('refresh').trigger('change');
+
+                                }
+                            } else {
+
+                                $('#' + res.append_id).empty().append(res.result).trigger('changed.bs.select').trigger('changed.bs.select').selectpicker('render');
+                                $('#' + res.append_id).selectpicker('refresh').trigger('change');
+                                reinitializeSelect2()
+                            }
+                        }
+                        // reinitializeSelect2();
+
+                    }
+                }
+                , error: function(data) {}
+            });
+        }
+		
+</script>
 <div class="row">
     <div class="col-md-12">
 
@@ -40,13 +89,16 @@
 
 
                 <div class="kt-portlet__body">
-
-                    <h2 for="" class="d-bloxk"><?php echo e(__('Offered Service Section')); ?></h2>
+				  <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style=""> <?php echo e(__('Offered Service Section')); ?> </h3>
+					<div class="row">
+                        <hr style="flex:1;background-color:green">
+                    </div>
+					
 
 
 
                     <div class="form-group row">
-                        <div class="col-md-4 mb-4">
+                        <div class="col-md-3 mb-4">
                              <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.select','data' => ['options' => $pricingPlans,'addNew' => false,'label' => __('Choose Pricing Plan (Optional)'),'class' => 'select2-select   ','dataFilterType' => ''.e($type).'','all' => false,'name' => 'pricing_plan_id','pleaseSelect' => 'true','id' => ''.e($type.'_'.'pricing_plan_id').'','selectedValue' => isset($pricingPlanId)  ? $pricingPlanId :  (isset($model) ? $model->getPricingPlanId() : 0) ]]); ?>
 <?php $component->withName('form.select'); ?>
@@ -61,7 +113,7 @@
                         </div>
 
 
-                        <div class="col-md-4 mb-4">
+                        <div class="col-md-2 mb-4">
 
                              <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.label','data' => ['class' => 'label','id' => 'test-id']]); ?>
@@ -85,8 +137,38 @@
                                 </div>
                             </div>
                         </div>
+						
+						 <div class="col-md-4 mb-4">
+                             <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.select','data' => ['pleaseSelect' => true,'additionalColumnName' => 'is_customer','additionalColumnValue' => 1,'addNewModal' => true,'addNewModalModalType' => '','addNewModalModalName' => 'Partner','addNewModalModalTitle' => __('Customer'),'previousSelectNameInDB' => '','previousSelectMustBeSelected' => false,'previousSelectSelector' => '','previousSelectTitle' => '','options' => $customers,'addNew' => false,'label' => __('Customer (Optional)'),'class' => 'select2-select   ','dataFilterType' => ''.e($type).'','all' => false,'name' => 'customer_id','id' => ''.e($type.'_'.'customer_id').'','selectedValue' => isset($model) ? $model->getCustomerId() : 0]]); ?>
+<?php $component->withName('form.select'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php $component->withAttributes(['pleaseSelect' => true,'additional-column-name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('is_customer'),'additional-column-value' => 1,'add-new-modal' => true,'add-new-modal-modal-type' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(''),'add-new-modal-modal-name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('Partner'),'add-new-modal-modal-title' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Customer')),'previous-select-name-in-dB' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(''),'previous-select-must-be-selected' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'previous-select-selector' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(''),'previous-select-title' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(''),'options' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($customers),'add-new' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'label' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Customer (Optional)')),'class' => 'select2-select   ','data-filter-type' => ''.e($type).'','all' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'name' => 'customer_id','id' => ''.e($type.'_'.'customer_id').'','selected-value' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(isset($model) ? $model->getCustomerId() : 0)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
+<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
+<?php endif; ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?> 
+                        </div>
+						 <div class="col-md-2 mb-4">
+                             <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.select','data' => ['isSelect2' => false,'options' => $currencies,'addNew' => false,'label' => __('Currency'),'class' => '','dataFilterType' => ''.e($type).'','all' => false,'name' => 'currency_id','id' => ''.e($type.'_'.'currency_id').'','selectedValue' => isset($model) ? $model->getCurrencyId() : 0]]); ?>
+<?php $component->withName('form.select'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php $component->withAttributes(['is-select2' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'options' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($currencies),'add-new' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'label' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Currency')),'class' => '','data-filter-type' => ''.e($type).'','all' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'name' => 'currency_id','id' => ''.e($type.'_'.'currency_id').'','selected-value' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(isset($model) ? $model->getCurrencyId() : 0)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
+<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
+<?php endif; ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?> 
 
-                        <div class="col-md-4 mb-4">
+
+                        </div>
+						
+						
+                        <div class="col-md-3 mb-4">
                              <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.select','data' => ['addNewModal' => true,'addNewModalModalType' => '','addNewModalModalName' => 'RevenueBusinessLine','addNewModalModalTitle' => __('Revenue Business Line'),'options' => $revenueBusinessLines,'addNew' => false,'label' => __('Revenue Business Line'),'class' => 'select2-select revenue_business_line_class  ','dataFilterType' => ''.e($type).'','all' => false,'name' => 'revenue_business_line_id','id' => ''.e($type.'_'.'revenue_business_line_id').'','selectedValue' => isset($model) ? $model->getRevenueBusinessLineId() : 0]]); ?>
 <?php $component->withName('form.select'); ?>
@@ -100,14 +182,13 @@
 <?php endif; ?> 
                         </div>
 
-
-                        <div class="col-md-4 mb-4">
+                        <div class="col-md-2 mb-4">
                              <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.select','data' => ['addNewModal' => true,'addNewModalModalType' => '','addNewModalModalName' => 'ServiceCategory','addNewModalModalTitle' => __('Service Category'),'previousSelectNameInDB' => 'revenue_business_line_id','previousSelectMustBeSelected' => true,'previousSelectSelector' => 'select.revenue_business_line_class','previousSelectTitle' => __('Revenue Bussiness Line'),'options' => $serviceCategories,'addNew' => false,'label' => __('Service Category'),'class' => 'select2-select service_category_class  ','dataFilterType' => ''.e($type).'','all' => false,'name' => 'service_category_id','id' => ''.e($type.'_'.'service_category_id').'','selectedValue' => isset($model) ? $model->getServiceCategoryId() : 0]]); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.select','data' => ['addNewModal' => true,'addNewModalModalType' => '','addNewModalModalName' => 'ServiceCategory','addNewModalModalTitle' => __('Service Category'),'previousSelectNameInDB' => 'revenue_business_line_id','previousSelectMustBeSelected' => true,'previousSelectSelector' => 'select.revenue_business_line_class','previousSelectTitle' => __('Revenue Business Line'),'options' => $serviceCategories,'addNew' => false,'label' => __('Service Category'),'class' => 'select2-select service_category_class  ','dataFilterType' => ''.e($type).'','all' => false,'name' => 'service_category_id','id' => ''.e($type.'_'.'service_category_id').'','selectedValue' => isset($model) ? $model->getServiceCategoryId() : 0]]); ?>
 <?php $component->withName('form.select'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['add-new-modal' => true,'add-new-modal-modal-type' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(''),'add-new-modal-modal-name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('ServiceCategory'),'add-new-modal-modal-title' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Service Category')),'previous-select-name-in-dB' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('revenue_business_line_id'),'previous-select-must-be-selected' => true,'previous-select-selector' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('select.revenue_business_line_class'),'previous-select-title' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Revenue Bussiness Line')),'options' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($serviceCategories),'add-new' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'label' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Service Category')),'class' => 'select2-select service_category_class  ','data-filter-type' => ''.e($type).'','all' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'name' => 'service_category_id','id' => ''.e($type.'_'.'service_category_id').'','selected-value' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(isset($model) ? $model->getServiceCategoryId() : 0)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['add-new-modal' => true,'add-new-modal-modal-type' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(''),'add-new-modal-modal-name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('ServiceCategory'),'add-new-modal-modal-title' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Service Category')),'previous-select-name-in-dB' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('revenue_business_line_id'),'previous-select-must-be-selected' => true,'previous-select-selector' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('select.revenue_business_line_class'),'previous-select-title' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Revenue Business Line')),'options' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($serviceCategories),'add-new' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'label' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Service Category')),'class' => 'select2-select service_category_class  ','data-filter-type' => ''.e($type).'','all' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'name' => 'service_category_id','id' => ''.e($type.'_'.'service_category_id').'','selected-value' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(isset($model) ? $model->getServiceCategoryId() : 0)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
@@ -115,7 +196,7 @@
 <?php endif; ?> 
                         </div>
 
-                        <div class="col-md-4 mb-4">
+                        <div class="col-md-2 mb-4">
                              <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.select','data' => ['addNewModal' => true,'addNewModalModalType' => '','addNewModalModalName' => 'ServiceItem','addNewModalModalTitle' => __('Service Item'),'previousSelectNameInDB' => 'service_category_id','previousSelectMustBeSelected' => true,'previousSelectSelector' => 'select.service_category_class','previousSelectTitle' => __('Service Category'),'options' => $serviceItems,'addNew' => false,'label' => __('Service Item'),'class' => 'select2-select service_item_class  ','dataFilterType' => ''.e($type).'','all' => false,'name' => 'service_item_id','id' => ''.e($type.'_'.'service_item_id').'','selectedValue' => isset($model) ? $model->getServiceItemId() : 0]]); ?>
 <?php $component->withName('form.select'); ?>
@@ -128,7 +209,7 @@
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
                         </div>
-                        <div class="col-md-4 mb-4">
+                        <div class="col-md-2 mb-4">
 
                              <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.select','data' => ['options' => $serviceNatures,'addNew' => false,'label' => __('Service Nature'),'class' => 'select2-select   ','dataFilterType' => ''.e($type).'','all' => false,'name' => 'service_nature_id','id' => ''.e($type.'_'.'service_nature_id').'','selectedValue' => isset($model) ? $model->getServiceNatureId() : 0]]); ?>
@@ -146,7 +227,7 @@
 
 
 
-                        <div class="col-md-3 mb-4">
+                        <div class="col-md-2 mb-4">
                             <label class="form-label font-weight-bold"><?php echo e(__('Delivered Service (Count Or Days)')); ?> </label>
                             <div class="kt-input-icon">
                                 <div class="input-group">
@@ -156,49 +237,9 @@
                         </div>
 
 
-                        <div class="col-md-3 mb-4">
-                            <label class="form-label font-weight-bold"><?php echo e(__('Select Country')); ?> </label>
-                            <div class="kt-input-icon">
-                                <div class="input-group ">
-                                    <select id="country_id" data-live-search="true" name="country_id" required class="form-control  form-select form-select-2 form-select-solid fw-bolder">
-                                        <option value="" selected><?php echo e(__('Select')); ?></option>
-                                        <?php $__currentLoopData = getCountries(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $value=>$name): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                        <option value="<?php echo e($value); ?>" <?php if(isset($model) && $model->getCountryId() == $value ): ?> selected <?php endif; ?>> <?php echo e($name); ?></option>
-                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
+                        
 
-                        <div class="col-md-3 mb-4">
-                            <label class="form-label font-weight-bold"><?php echo e(__('Select state')); ?> </label>
-                            <div class="kt-input-icon">
-                                <div class="input-group date">
-                                    <select id="state_id" data-live-search="true" name="state_id" required class="form-control  form-select form-select-2 form-select-solid fw-bolder  ">
-                                        <option value="" selected><?php echo e(__('Select')); ?></option>
-                                        <?php $__currentLoopData = []; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $value=>$name): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                        <option value="<?php echo e($value); ?>" <?php if(isset($model) && $model->getStateId() == $value ): ?> selected <?php endif; ?>><?php echo e($name); ?></option>
-                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-md-3 mb-4">
-                             <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.select','data' => ['isSelect2' => false,'options' => $currencies,'addNew' => false,'label' => __('Currency'),'class' => '','dataFilterType' => ''.e($type).'','all' => false,'name' => 'currency_id','id' => ''.e($type.'_'.'currency_id').'','selectedValue' => isset($model) ? $model->getCurrencyId() : 0]]); ?>
-<?php $component->withName('form.select'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['is-select2' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'options' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($currencies),'add-new' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'label' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Currency')),'class' => '','data-filter-type' => ''.e($type).'','all' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'name' => 'currency_id','id' => ''.e($type.'_'.'currency_id').'','selected-value' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(isset($model) ? $model->getCurrencyId() : 0)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
-<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
-<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
-<?php endif; ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?> 
-
-
-                        </div>
+                       
 
 
                         <br>
@@ -215,7 +256,12 @@
                     <div class="form-group row">
 
                         <div class="col-md-12">
-                            <h2 for="" class="d-bloxk"><?php echo e(__('Direct Manpower Expenses')); ?></h2>
+                            
+							 <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style=""> <?php echo e(__('Direct Manpower Salaries')); ?> </h3>
+					<div class="row">
+                        <hr style="flex:1;background-color:green">
+                    </div>
+					
                             <div id="m_repeater_2">
                                 <div class="form-group  m-form__group row">
                                     <div data-repeater-list="manpower_expenses" class="col-lg-12">
@@ -270,8 +316,37 @@
 
 
 
-                        <div class="col-md-12">
-                            <h2 for="" class="d-bloxk"><?php echo e(__('Other Variable Direct Manpower Expense')); ?></h2>
+                      
+
+
+
+
+                    </div>
+
+
+
+
+
+                </div>
+
+            </div>
+
+
+
+            <div class="kt-portlet">
+
+
+                <div class="kt-portlet__body">
+
+                    <div class="form-group row">
+					  <div class="col-md-12">
+					  		
+							 <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style=""> <?php echo e(__('Other Direct Manpower Expense')); ?> </h3>
+					<div class="row">
+                        <hr style="flex:1;background-color:green">
+                    </div>
+					
+                        
                             <div id="m_repeater_7">
                                 <div class="form-group  m-form__group row">
                                     <div data-repeater-list="other_variable_direct_operation_expenses" class="col-lg-12">
@@ -316,22 +391,10 @@
                                 </div>
                             </div>
                         </div>
-
-
-
-
-                    </div>
-
-
-
-
-
-                </div>
-
-            </div>
-
-
-
+						
+					</div>
+					</div>
+					</div>
             <div class="kt-portlet">
 
 
@@ -340,7 +403,12 @@
                     <div class="form-group row">
 
                         <div class="col-md-12">
-                            <h2 for="" class="d-bloxk"><?php echo e(__('Freelancers Expenses')); ?></h2>
+						 <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style=""> <?php echo e(__('Freelancers Expenses')); ?> </h3>
+					<div class="row">
+                        <hr style="flex:1;background-color:green">
+                    </div>
+					
+                            
                             <div class="row">
                                 <div class="col-12">
                                     <div class="col-6">
@@ -348,7 +416,7 @@
                                         <div class="form-group">
                                             <div class="kt-radio-inline">
                                                 <label class="mr-3">
-                                                    <?php echo e(__('Do You Use Freelancer')); ?>
+                                                    <?php echo e(__('Do You To Add Freelancer')); ?>
 
                                                 </label>
 
@@ -434,7 +502,13 @@
 
 
                         <div class="col-md-12">
-                            <h2 for="" class="d-bloxk"><?php echo e(__('Other Direct Opertions Expenses')); ?></h2>
+						<h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style=""> <?php echo e(__('Other Direct Operations Expenses')); ?> </h3>
+<div class="row">
+                        <hr style="flex:1;background-color:green">
+                    </div>
+					
+						
+                            
                             <div id="m_repeater_6">
                                 <div class="form-group  m-form__group row">
                                     <div data-repeater-list="other_direct_operation_expenses" class="col-lg-12">
@@ -510,7 +584,12 @@
 
 
                         <div class="col-md-12">
-                            <h2 for="" class="d-bloxk"><?php echo e(__('Sales & Marketing Expenses')); ?></h2>
+						<h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style=""> <?php echo e(__('Sales & Marketing Expenses')); ?> </h3>
+					<div class="row">
+                        <hr style="flex:1;background-color:green">
+                    </div>
+					
+                            
                             <div id="m_repeater_4">
                                 <div class="form-group  m-form__group row">
                                     <div data-repeater-list="sales_and_marketing_expenses" class="col-lg-12">
@@ -571,7 +650,13 @@
                     <div class="form-group row">
 
                         <div class="col-md-12">
-                            <h2 for="" class="d-bloxk"><?php echo e(__('General & Administrative Expenses')); ?></h2>
+						
+						<h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style=""> <?php echo e(__('General & Administrative Expenses')); ?> </h3>
+					<div class="row">
+                        <hr style="flex:1;background-color:green">
+                    </div>
+					
+                            
                             <div id="m_repeater_5">
                                 <div class="form-group  m-form__group row">
                                     <div data-repeater-list="general_expenses" class="col-lg-12">
@@ -649,8 +734,13 @@
 
                     <div class="form-group row">
                         <div class="col-12">
-                            <h2 class="h2 mb-4"> <?php echo e(__('Profitability Section')); ?> </h2>
-                            <hr>
+						<h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style=""> <?php echo e(__('Profitability Section')); ?> </h3>
+					<div class="row">
+                        <hr style="flex:1;background-color:green">
+                    </div>
+					
+                            
+                            
                         </div>
 
 
@@ -711,8 +801,12 @@
             <div class="kt-portlet__body">
                 <div class="row">
                     <div class="col-12">
-                        <h2><?php echo e(__('Recommended Calculated Pricing & Profitability')); ?></h2>
-                        <hr>
+						<h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style=""> <?php echo e(__('Recommended Calculated Pricing & Profitability')); ?> </h3>
+					<div class="row">
+                        <hr style="flex:1;background-color:blue">
+                    </div>
+					
+                        
                     </div>
                 </div>
                 <div class="row">
@@ -801,8 +895,12 @@
             <div class="kt-portlet__body">
                 <div class="row ">
                     <div class="col-12">
-                        <h2><?php echo e(__('Sensitivity Section')); ?></h2>
-                        <hr>
+						<h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style=""> <?php echo e(__('Sensitivity Section')); ?> </h3>
+					<div class="row">
+                        <hr style="flex:1;background-color:blue">
+                    </div>
+					
+                        
                     </div>
                 </div>
                 <div class="row mb-4">
@@ -1127,7 +1225,7 @@
 
                         });
                         if ($('select[name="pricing_plan_id"]').val()) {
-                            window.location.href = "<?php echo e(route('admin.view.quick.pricing.calculator',['company'=>$company->id , 'active'=>'pricing-plans'])); ?>";
+                            window.location.href = "<?php echo e(route('admin.view.quick.pricing.calculator',['company'=>$company->id??0 , 'active'=>'pricing-plans'])); ?>";
 
                         } else {
                             window.location.href = "<?php echo e($redirectAfterSubmitRoute ?? ''); ?>";
@@ -1219,7 +1317,9 @@
             const previousSelectorSelector = $(this).attr('data-previous-select-selector');
             const previousSelectorValue = previousSelectorSelector ? $(previousSelectorSelector).val() : null;
             const previousSelectorNameInDb = $(this).attr('data-previous-select-name-in-db');
-
+			const additionalColumnName = $(modal).find('input[name="additional_column_name"]').val();
+			const additionalColumnValue = $(modal).find('input[name="additional_column_value"]').val();
+			
             $.ajax({
                 url: "<?php echo e(route('admin.store.new.modal',['company'=>$company->id ?? 0  ])); ?>"
                 , data: {
@@ -1228,7 +1328,9 @@
                     , "modalType": modalType
                     , "value": value
                     , "previousSelectorNameInDb": previousSelectorNameInDb
-                    , "previousSelectorValue": previousSelectorValue
+                    , "previousSelectorValue": previousSelectorValue,
+					additionalColumnName,
+					additionalColumnValue
                 }
                 , type: "POST"
                 , success: function(response) {
@@ -1253,11 +1355,17 @@
         })
 
     </script>
-<script>
-$(function(){
-	$('select.revenue_business_line_class').trigger('change')
-})
-</script>
+    <script>
+        
+
+
+        $(function() {
+            $('select.revenue_business_line_class').trigger('change')
+
+
+        })
+
+    </script>
     <?php $__env->stopSection(); ?>
 
 <?php echo $__env->make('layouts.dashboard', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /media/salah/Software/projects/veroo/resources/views/admin/quick-pricing-calculator/create.blade.php ENDPATH**/ ?>

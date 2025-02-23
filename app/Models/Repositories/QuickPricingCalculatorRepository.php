@@ -87,6 +87,7 @@ class QuickPricingCalculatorRepository implements IBaseRepository
         $filterData = $this->commonScope($request);
         $allFilterDataCounter = $filterData->count();
         $datePerPage = $filterData->skip(Request('start'))->take(Request('length'))->get()->each(function(QuickPricingCalculator $quickPricingCalculator , $index){
+            $quickPricingCalculator->customer_name = $quickPricingCalculator->getCustomerName();
             $quickPricingCalculator->revenueBusinessLineName = $quickPricingCalculator->getRevenueBusinessLineName();
             $quickPricingCalculator->serviceCategoryName = $quickPricingCalculator->getServiceCategoryName();
             $quickPricingCalculator->serviceItemName = $quickPricingCalculator->getServiceItemName();

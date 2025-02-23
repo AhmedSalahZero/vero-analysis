@@ -18,10 +18,8 @@ class HelpersController {
 			$typeColumn = 'expense_type';
 		}
 		$type = $request->get('modalType');
-		
 		$previousSelectorNameInDb = $request->get('previousSelectorNameInDb');
 		$previousSelectorValue = $request->get('previousSelectorValue');
-	
 		$modelName = $model->where('company_id',$companyId);
 		if($type){
 			$modelName = $modelName->where($typeColumn,$type)	;
@@ -40,6 +38,9 @@ class HelpersController {
 		if($previousSelectorNameInDb){
 			
 			$model->{$previousSelectorNameInDb} = $previousSelectorValue;
+		}
+		if($additionalColumnName = $request->get('additionalColumnName')){
+			$model->{$additionalColumnName} = $request->get('additionalColumnValue');
 		}
 		$model->save();
 		return response()->json([

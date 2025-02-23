@@ -107,6 +107,7 @@ class RevenueBusinessLineController extends Controller
 	
 	public function editForm(Company $company,  $revenueBusinessLine ,  $serviceCategory = null, $serviceItem = null )
     {
+	
 		return view(
             'admin.revenue-business-line.create',
             array_merge([
@@ -114,6 +115,7 @@ class RevenueBusinessLineController extends Controller
 				'revenueBusinessLineId'=>$revenueBusinessLine , 
 				'serviceCategoryId'=>$serviceCategory , 
 				'serviceItemId'=>$serviceItem, 
+				
 				
 			], RevenueBusinessLine::getViewVars())
         );

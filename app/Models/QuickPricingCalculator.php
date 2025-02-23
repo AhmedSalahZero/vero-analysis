@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\HHelpers;
 use App\Interfaces\Models\IBaseModel;
 use App\Interfaces\Models\IExportable;
 use App\Interfaces\Models\IHaveAllRelations;
@@ -39,7 +40,7 @@ class QuickPricingCalculator extends Model implements IBaseModel, IHaveAllRelati
             'pricingPlans' => PricingPlan::oneFormattedForSelect($model),
             'directManpowerExpensePositions' => App(PositionRepository::class)->oneFormattedForSelect($model, 'direct-manpower-expense'),
             'freelancerExpensePositions' => App(PositionRepository::class)->oneFormattedForSelect($model, 'freelancer-expenses'),
-            'otherVariableManpowerExpenses' => PricingExpense::oneFormattedForSelect($model, 'other-variable-direct-manpower-expense'),
+            'otherVariableManpowerExpenses' => PricingExpense::oneFormattedForSelect($model, 'other-direct-manpower-expense'),
             'otherDirectOperationsExpenses' => PricingExpense::oneFormattedForSelect($model, 'other-direct-operations-expense'),
             'salesAndMarketExpenses' => PricingExpense::oneFormattedForSelect($model, 'sales-and-market-expense'),
             'generalExpenses' => PricingExpense::oneFormattedForSelect($model, 'general-and-administrative-expense'),
@@ -76,7 +77,6 @@ class QuickPricingCalculator extends Model implements IBaseModel, IHaveAllRelati
     public static function getViewVars(): array
     {
         $currentCompanyId = getCurrentCompanyId();
-
         return [
             'getDataRoute' => route('admin.get.quick.pricing.calculator', ['company' => $currentCompanyId]),
             'modelName' => 'QuickPricingCalculator',
@@ -92,13 +92,14 @@ class QuickPricingCalculator extends Model implements IBaseModel, IHaveAllRelati
             'pricingPlans' => PricingPlan::allFormattedForSelect($currentCompanyId),
             'directManpowerExpensePositions' => App(PositionRepository::class)->allFormattedForSelect('direct-manpower-expense'),
             'freelancerExpensePositions' => App(PositionRepository::class)->allFormattedForSelect('freelancer-expenses'),
-            'otherVariableManpowerExpenses' => PricingExpense::allFormattedForSelect('other-variable-direct-manpower-expense', $currentCompanyId),
+            'otherVariableManpowerExpenses' => PricingExpense::allFormattedForSelect('other-direct-manpower-expense', $currentCompanyId),
             'otherDirectOperationsExpenses' => PricingExpense::allFormattedForSelect('other-direct-operations-expense', $currentCompanyId),
             'salesAndMarketExpenses' => PricingExpense::allFormattedForSelect('sales-and-market-expense', $currentCompanyId),
             'generalExpenses' => PricingExpense::allFormattedForSelect('general-and-administrative-expense', $currentCompanyId),
             'currencies' => App(CurrencyRepository::class)->allFormattedForSelect($currentCompanyId),
             'redirectAfterSubmitRoute' => route('admin.view.quick.pricing.calculator', ['company' => $currentCompanyId, 'active' => 'quick-price-calculator']),
-            'type' => 'create'
+            'type' => 'create',
+			'customers'=>HHelpers::formatForSelect2(Partner::where('company_id',$currentCompanyId)->onlyCustomers()->get()->pluck('name','id')->toArray())
         ];
     }
 

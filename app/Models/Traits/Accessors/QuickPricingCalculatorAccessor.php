@@ -57,6 +57,18 @@ trait QuickPricingCalculatorAccessor
 
         return $serviceItem ?   $serviceItem->getId() : 0   ;
     }
+	public function getCustomerId():int  
+    {
+        $customer = $this->customer ;
+
+        return $customer ?   $customer->id : 0   ;
+    }
+	public function getCustomerName():string  
+    {
+        $customer = $this->customer ;
+
+        return $customer ?   $customer->getName() : '-'   ;
+    }
     public function getServiceNatureId():int  
     {
         $serviceNature = $this->serviceNature ;

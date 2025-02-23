@@ -28,8 +28,9 @@
     $(document).on('change','select[id*="customer_id"]',function(event){
                         if($(this).val())
                        {
+							var val = $('#current_business_sector_id').data('value') ? $('#current_business_sector_id').data('value') : $('#current_business_sector_id').val();
                              updateField(getBaseUrlToCompanyId() +'/helpers/updateBasedOnGlobalController?parentModelId='+$(this).val()
-                            +'&parentModelName=Customer&selectedItem='+ $('#current_business_sector_id').data('value')
+                            +'&parentModelName=Customer&selectedItem='+ val
                             // +'&selectedItem='+ $('#current_tax_id').data('tax-id')
                             +'&append_id=.business-sector-class[data-filter-type="'+ $(this).data('filter-type') + '"]' 
                             + '&isFullQuerySelector=1&add_new_item='+ $(this).data('add-new') +'&select_all='+ $(this).data('all') +'&childRelationName=businessSector&model_id=id&model_value=name')
@@ -69,8 +70,10 @@
 
                        if($(this).val())
                        {
+							let val = $('#current_service_category_id').data('value') ?$('#current_service_category_id').data('value') : $('#current_service_category_id').val();
+						
                             updateField(getBaseUrlToCompanyId() +'/helpers/updateBasedOnGlobalController?parentModelId='+$(this).val()
-                            +'&parentModelName=RevenueBusinessLine&selectedItem='+ $('#current_service_category_id').data('value')
+                            +'&parentModelName=RevenueBusinessLine&selectedItem='+ val
                             // +'&selectedItem='+ $('#current_tax_id').data('tax-id')
                             +'&append_id=.service_category_class[data-filter-type="'+ $(this).data('filter-type') + '"]' + prefix   
                             + '&isFullQuerySelector=1&add_new_item='+ $(this).data('add-new') +'&select_all='+ $(this).data('all') +'&childRelationName=serviceCategories&model_id=id&model_value=name')
@@ -93,9 +96,9 @@
                        else{
                            prefix = '';
                        }
-
+					   			var val = $('#current_service_item_id').data('value') ? $('#current_service_item_id').data('value') : $('#current_service_item_id').val();
                          updateField(getBaseUrlToCompanyId() +'/helpers/updateBasedOnGlobalController?parentModelId='+$(this).val()
-                        +'&parentModelName=ServiceCategory&selectedItem='+ $('#current_service_item_id').data('value')
+                        +'&parentModelName=ServiceCategory&selectedItem='+ val
                         // +'&selectedItem='+ $('#current_tax_id').data('tax-id')
                         +'&append_id=.service_item_class[data-filter-type="'+ $(this).data('filter-type') + '"]' + prefix   
                         + '&isFullQuerySelector=1&add_new_item='+ $(this).data('add-new') + '&select_all='+ $(this).data('all') +'&childRelationName=serviceItems&model_id=id&model_value=name')

@@ -913,13 +913,17 @@ td{
             text-align: center !important;
             color: #fff !important;
         }
+	.sub-item-row td.bg-white{
+		background-color:white !important;
+	}
+	.text-black{
+	color:black !important;
+}
 
-        .plus-class {
-            margin-right: 5px;
-            font-size: 20px;
-            vertical-align: middle;
-            color: #0849A5;
-        }
+    .btn-green{
+		background-color:green  !important;
+		color:white !important;
+	}
 
         .header-tr {
             background-color: #074FA4 !important;
@@ -1706,7 +1710,6 @@ $(document).on('change','.update-exchange-rate',function(){
 
 
                 }
-	console.log(tableName,mainType,subType)
 
                 $.ajax({
                     url: "{{ route('get.type.based.on.dates',$company->id) }}"

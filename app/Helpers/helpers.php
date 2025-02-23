@@ -2355,6 +2355,7 @@ function formatOptionsForSelect(Collection $items, $idFun = 'getId', $valueFun =
 
 function formatSelects($selects, $selectedItem, $id, $value, $addNew = false, $selectAll = false): string
 {
+	// dd($selectedItem);
     $result = '';
     if ($addNew) {
         // $result = '<option class="add-new-item" >'. __('Add New')  .' </option>';
@@ -7717,4 +7718,47 @@ function getExpenseTypes():array
 		'sales-expense'=>__('Sales Expense'),
 		'general-expense'=>__('General Expense')
 	];
+}
+const SHAREABLE_LINKS = 'sharable-links';
+
+function generateShareableLink($shareableType): string
+{
+	$shareableUrl = SHAREABLE_LINKS;
+	return Request()->root() . '/' . App()->getLocale() . '/' . $shareableUrl . '/' . $shareableType . '/' . generateUniqueStringOfLengthTo(30, 'SharingLink', ['link']);
+}
+function camel2dashed($className)
+{
+	return strtolower(preg_replace('/([a-zA-Z])(?=[A-Z])/', '$1-', $className));
+}
+
+function generateUniqueStringOfLengthTo($length, $model = null, $columns = [], $onlyNumeric = false)
+{
+	// modes [string , numeric , string_numeric]
+	if ($onlyNumeric === false) {
+		$randomString = Str::random($length);
+	} else {
+		$randomString = '';
+		for ($i = 0; $i < $length; $i++) {
+			$randomString .= mt_rand(0, 9);
+		}
+
+		return $randomString;
+	}
+	if ($model && $columns) {
+		$query  =  ('App\Models\\' . $model)::query();
+		foreach ($columns as $column) {
+			$query->orWhere($column, $randomString);
+		}
+		if ($query->exists()) {
+			return generateUniqueStringOfLengthTo($length, $model, $columns);
+		}
+		return $randomString;
+	}
+
+	return $randomString;
+}
+function getLastWordInString(string $str, $separator = '/')
+{
+	$explodedStr = explode($separator, $str);
+	return $explodedStr[count($explodedStr) - 1];
 }

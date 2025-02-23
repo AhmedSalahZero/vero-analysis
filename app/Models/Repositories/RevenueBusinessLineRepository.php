@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 
-class RevenueBusinessLineRepository implements IBaseRepository 
+class RevenueBusinessLineRepository  
 {
     public function all():Collection
     {
@@ -49,7 +49,7 @@ class RevenueBusinessLineRepository implements IBaseRepository
         return RevenueBusinessLine::onlyCurrentCompany()->inRandomOrder();
     }
 
-    public function find(?int $id):IBaseModel
+    public function find(?int $id)
     {
         return RevenueBusinessLine::onlyCurrentCompany()->find($id);
     }
@@ -59,7 +59,7 @@ class RevenueBusinessLineRepository implements IBaseRepository
         return RevenueBusinessLine::onlyCurrentCompany()->latest($column)->first();
 
     }
-     public function store(Request $request ):IBaseModel
+     public function store(Request $request )
     {
 		$serviceItemId = $request->get('service_item_id') ;
 		$revenueBusinessLine = null;

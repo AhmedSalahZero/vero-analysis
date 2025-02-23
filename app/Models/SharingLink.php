@@ -10,6 +10,9 @@ use App\Models\Traits\Mutators\SharingLinkMutator;
 use App\Models\Traits\Relations\SharingLinkRelation;
 use Illuminate\Database\Eloquent\Model;
 
-class SharingLink  extends Model
+class SharingLink  extends Model 
 {
+	protected $guarded =[
+		'id'
+	];
 }

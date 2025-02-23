@@ -1,6 +1,11 @@
 @extends('layouts.dashboard')
 @section('css')
 <x-styles.commons></x-styles.commons>
+<style>
+[data-repeater-delete]{
+	margin-top:15px !important;
+}
+</style>
 @endsection
 @section('sub-header')
 <x-main-form-title :id="'main-form-title'" :class="''">{{ __('Expenses') }}</x-main-form-title>

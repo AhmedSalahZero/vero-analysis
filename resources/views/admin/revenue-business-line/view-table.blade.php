@@ -6,6 +6,9 @@ $tableId = 'kt_table_1';
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/jszip-2.5.0/dt-1.12.1/af-2.4.0/b-2.2.3/b-colvis-2.2.3/b-html5-2.2.3/b-print-2.2.3/cr-1.5.6/date-1.1.2/fc-4.1.0/fh-3.2.3/r-2.3.0/rg-1.2.0/sl-1.4.0/sr-1.1.1/datatables.min.css" />
 
 <style>
+td {
+	font-family:'Poppins' !important;
+}
 .removeContainer{
 	background-color:transparent !important ;
 	box-shadow:none !important;
@@ -247,8 +250,8 @@ $tableId = 'kt_table_1';
 
 
     <div style="padding-top:20px">
-        <a href="{{ route('revenue-business.create',['company'=>$company->id]) }}" class="btn btn-bold btn-secondary  flex-1 flex-grow-0 btn-border-radius mr-auto">
-            <span class="plus-class">+</span>{{ __('Create') }}
+        <a href="{{ route('revenue-business.create',['company'=>$company->id]) }}" class="btn btn-bold border-green mb-3 text-black flex-1 flex-grow-0 btn-border-radius mr-auto">
+            {{ __('Create') }}
         </a>
     </div>
     <x-table  :tableClass="'kt_table_with_no_pagination_no_fixed main-table-class removetableContainer  removeGlobalStyle ' ">
@@ -293,8 +296,8 @@ $tableId = 'kt_table_1';
             </td>
 
 
-            <td class=" max-w-80 editable" contenteditable="true" title="{{ __('Click To Edit The Name') }}">
-                {{ $mainItemArr['data']['name'] }}
+            <td class=" max-w-80 editable font-weight-bold" contenteditable="true" title="{{ __('Click To Edit The Name') }}">
+              <h5> {{ $mainItemArr['data']['name'] }}</h5>
             </td>
             <td>
                 <span style="overflow: visible; position: relative; width: 110px;">
@@ -389,9 +392,11 @@ $tableId = 'kt_table_1';
 
 
         <tr data-order="{{ $order }}" class="row2{{ $id }}   bg-last-row" style="display: none">
-            <td>{{ __('Item Name') }}</td>
+            <td>
+				<div class="pl-5">{{ __('Item Name') }}</div>
+			</td>
             <td title="{{ __('Click To Edit The Name') }}" class="text-left text-capitalize bg-active-style editable" contenteditable="true" data-db-column-name="name" data-is-relation="0" data-model-id="{{ $thirdSubId }}" data-model-name="ServiceItem">
-                {{ $subArr['data']['name'] }}
+                <div class="pl-4">{{ $subArr['data']['name'] }}</div>
             </td>
             <td class="text-left ">
                 <b class="ml-3">

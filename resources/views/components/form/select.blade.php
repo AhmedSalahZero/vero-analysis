@@ -25,7 +25,9 @@
 'previousSelectSelector'=>'' ,
 'previousSelectTitle'=>'',
 'previousSelectNameInDB'=>'',
-'insideModalWithJs'=>false 
+'insideModalWithJs'=>false ,
+'additionalColumnName'=>'',
+'additionalColumnValue'=>''
 ])
 @if($label)
 <label class="form-label font-weight-bold @if($addNewModal) d-flex @endif "> {{$label}}
@@ -60,6 +62,7 @@ $basicClasses = $insideModalWithJs ? str_replace($insideModalWithJs,'select2-sel
 <select
 @if(is_array($selectedValue))
 data-current-selected-items="{{ json_encode($selectedValue) }}"
+
 @endif
 
   @if($addNewModalModalName) data-modal-name="{{ $addNewModalModalName }}" data-modal-type="{{ $addNewModalModalType }}" @endif {{-- data-add-modal-name="{{ $addNewModalModalName }}" --}} @if($disabled) disabled @endif {{ $attributes->merge(['class'=>$basicClasses]) }} data-live-search="true" data-add-new="{{ $addNew ? 1 : 0 }}" data-all="{{ $all ? 1 :0 }}" @if($multiple) multiple @endif>
@@ -89,9 +92,13 @@ data-current-selected-items="{{ json_encode($selectedValue) }}"
         selected
         @endif
 		@if(is_array($selectedValue))
+		
+		
 		@if(in_array($val,$selectedValue))
 		selected
+		
 		@endif 
+		
 		@endif 
 
 
@@ -119,6 +126,10 @@ data-current-selected-items="{{ json_encode($selectedValue) }}"
                         <label class="label">{{ __('Please Enter Name') }}</label>
                         <input type="text" class="form-control name-class-js">
                     </div>
+					@if($additionalColumnName)
+					<input type="hidden" name="additional_column_name" value="{{ $additionalColumnName }}">
+					<input type="hidden" name="additional_column_value" value="{{ $additionalColumnValue }}">
+					@endif 
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close') }}</button>

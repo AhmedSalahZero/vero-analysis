@@ -3,6 +3,11 @@
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/jszip-2.5.0/dt-1.12.1/af-2.4.0/b-2.2.3/b-colvis-2.2.3/b-html5-2.2.3/b-print-2.2.3/cr-1.5.6/date-1.1.2/fc-4.1.0/fh-3.2.3/r-2.3.0/rg-1.2.0/sl-1.4.0/sr-1.1.1/datatables.min.css" />
 
 <style>
+<style>
+[data-repeater-delete]{
+	margin-top:15px !important;
+}
+</style>
  #test_filter {
         display: none !important;
     }
@@ -240,8 +245,9 @@
 			<span class="visibility-hidden">/</span>
 			
 			
-                    <a href="{{ route('positions.create',['company'=>$company->id]) }}" class="btn btn-bold btn-secondary  flex-1 flex-grow-0 btn-border-radius mr-auto">
-                        <span class="plus-class">+</span>{{ __('Create') }}"
+                    <a href="{{ route('positions.create',['company'=>$company->id]) }}" class="btn btn-bold  border-green  flex-1 flex-grow-0 btn-border-radius mr-auto">
+                        {{-- <span class="plus-class">+</span> --}}
+						{{ __('Create') }}"
                     </a>
                 </div>
 				

@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 
-class SharingLinkRepository implements IBaseRepository 
+class SharingLinkRepository  
 {
     public function all():Collection
     {
@@ -59,7 +59,7 @@ class SharingLinkRepository implements IBaseRepository
         return SharingLink::latest($column)->first();
 
     }
-    public function store(Request $request ):IBaseModel
+    public function store(Request $request )
     {
         $link = generateShareableLink(camel2dashed($request->get('shareable_type')));
         return SharingLink::create([

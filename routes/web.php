@@ -50,6 +50,8 @@ Route::middleware([])->group(function () {
             'middleware' => ['localeSessionRedirect', 'localizationRedirect', 'localeViewPath', 'auth', 'checkIfAccountExpired']
         ],
         function () {
+			Route::get('sharable-links/quick-pricing-calculator/{pricingPlanId}',[QuickPricingCalculatorController::class, 'create']);
+			
             Route::post('get-net-sales-for-type/', [SalesBreakdownAgainstAnalysisReport::class, 'getNetSalesValueSum'])->name('get.net.sales.modal.for.type');
             Route::post('getTopAndBottomsForDashboard', [SalesBreakdownAgainstAnalysisReport::class, 'topAndBottomsForDashboard'])->name('getTopAndBottomsForDashboard');
 
@@ -127,7 +129,7 @@ Route::middleware([])->group(function () {
 			// 	Route::post('store','CashVeroPermissionsController@store')->name('cashvero.permissions.store');
 			// });
 			
-			
+					
 				Route::get('update-currency-account-based-on-currency/{financialInstitution}','UpdateCurrentAccountBasedOnCurrencyController@index')->name('update.current.account.based.on.currency');
                 Route::post('save-labeling-data', 'CompanyController@saveLabelingData')->name('save.labeling.item');
 
@@ -1085,7 +1087,8 @@ Route::middleware([])->group(function () {
                  *
                  */
 
-                // Route::resource('sharing-links', 'SharingLinkController');
+                Route::resource('sharing-links', 'SharingLinkController');
+				// Route::
                 // Route::get('shareable-paginate', 'SharingLinkController@paginate')->name('admin.get.sharing.links');
                 // Route::get('export-shareable-link', 'SharingLinkController@export')->name('admin.export.sharing.link');
 
@@ -1104,6 +1107,7 @@ Route::middleware([])->group(function () {
                 Route::get('quick-pricing-calculator', [QuickPricingCalculatorController::class, 'view'])->name('admin.view.quick.pricing.calculator');
 
                 Route::get('quick-pricing-calculator/create/{pricingPlanId?}', [QuickPricingCalculatorController::class, 'create'])->name('admin.create.quick.pricing.calculator');
+
                 Route::get('quick-pricing-calculator/{quickPricingCalculator}/edit', [QuickPricingCalculatorController::class, 'edit'])->name('admin.edit.quick.pricing.calculator');
                 Route::post('quick-pricing-calculator/{quickPricingCalculator}/update', [QuickPricingCalculatorController::class, 'update'])->name('admin.update.quick.pricing.calculator');
                 Route::post('quick-pricing-calculator/store', [QuickPricingCalculatorController::class, 'store'])->name('admin.store.quick.pricing.calculator');

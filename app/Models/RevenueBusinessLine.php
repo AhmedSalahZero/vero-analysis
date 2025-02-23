@@ -52,6 +52,9 @@ class RevenueBusinessLine extends Model implements IHaveView,IHaveCompany,IHaveC
     
     public function scopeForCurrentCompany(Builder $builder)
     {
+		if(!getCurrentCompany()){
+			return $builder;
+		}
         return $builder->where('company_id' , \getCurrentCompany()->id);
     }
 	public static function removeUnusedCategories()

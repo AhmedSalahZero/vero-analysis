@@ -183,7 +183,7 @@
                 <div class="col-12">
 
                     <hr>
-                    <h4 class="h4 mb-4"> {{ __('Other Variable Direct Manpower Expense') }} </h4>
+                    <h4 class="h4 mb-4"> {{ __('Other Direct Manpower Expense') }} </h4>
 
                 </div>
                 @if(isset($model) && $model->otherVariableManpowerExpenses->count())

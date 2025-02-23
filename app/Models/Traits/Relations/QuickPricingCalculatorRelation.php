@@ -7,6 +7,7 @@ use App\Models\FreelancerExpense;
 use App\Models\GeneralExpense;
 use App\Models\OtherDirectOperationExpense;
 use App\Models\OtherVariableManpowerExpense;
+use App\Models\Partner;
 use App\Models\Position;
 use App\Models\PricingPlan;
 use App\Models\Profitability;
@@ -41,6 +42,10 @@ trait QuickPricingCalculatorRelation
    public function serviceNature():BelongsTo
    {
        return $this->belongsTo(ServiceNature::class ,'service_nature_id','id');
+   }
+   public function customer():BelongsTo
+   {
+       return $this->belongsTo(Partner::class ,'customer_id','id');
    }
    public function currency():BelongsTo
    {

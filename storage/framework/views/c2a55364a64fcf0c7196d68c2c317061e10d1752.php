@@ -25,7 +25,9 @@
 'previousSelectSelector'=>'' ,
 'previousSelectTitle'=>'',
 'previousSelectNameInDB'=>'',
-'insideModalWithJs'=>false 
+'insideModalWithJs'=>false ,
+'additionalColumnName'=>'',
+'additionalColumnValue'=>''
 ]); ?>
 <?php foreach (array_filter(([
 'selectedValue'=>'',
@@ -54,7 +56,9 @@
 'previousSelectSelector'=>'' ,
 'previousSelectTitle'=>'',
 'previousSelectNameInDB'=>'',
-'insideModalWithJs'=>false 
+'insideModalWithJs'=>false ,
+'additionalColumnName'=>'',
+'additionalColumnValue'=>''
 ]), 'is_string', ARRAY_FILTER_USE_KEY) as $__key => $__value) {
     $$__key = $$__key ?? $__value;
 } ?>
@@ -97,6 +101,7 @@ $basicClasses = $insideModalWithJs ? str_replace($insideModalWithJs,'select2-sel
 <select
 <?php if(is_array($selectedValue)): ?>
 data-current-selected-items="<?php echo e(json_encode($selectedValue)); ?>"
+
 <?php endif; ?>
 
   <?php if($addNewModalModalName): ?> data-modal-name="<?php echo e($addNewModalModalName); ?>" data-modal-type="<?php echo e($addNewModalModalType); ?>" <?php endif; ?>  <?php if($disabled): ?> disabled <?php endif; ?> <?php echo e($attributes->merge(['class'=>$basicClasses])); ?> data-live-search="true" data-add-new="<?php echo e($addNew ? 1 : 0); ?>" data-all="<?php echo e($all ? 1 :0); ?>" <?php if($multiple): ?> multiple <?php endif; ?>>
@@ -127,9 +132,13 @@ data-current-selected-items="<?php echo e(json_encode($selectedValue)); ?>"
         selected
         <?php endif; ?>
 		<?php if(is_array($selectedValue)): ?>
+		
+		
 		<?php if(in_array($val,$selectedValue)): ?>
 		selected
+		
 		<?php endif; ?> 
+		
 		<?php endif; ?> 
 
 
@@ -157,6 +166,10 @@ data-current-selected-items="<?php echo e(json_encode($selectedValue)); ?>"
                         <label class="label"><?php echo e(__('Please Enter Name')); ?></label>
                         <input type="text" class="form-control name-class-js">
                     </div>
+					<?php if($additionalColumnName): ?>
+					<input type="hidden" name="additional_column_name" value="<?php echo e($additionalColumnName); ?>">
+					<input type="hidden" name="additional_column_value" value="<?php echo e($additionalColumnValue); ?>">
+					<?php endif; ?> 
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal"><?php echo e(__('Close')); ?></button>

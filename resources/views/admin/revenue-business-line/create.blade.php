@@ -24,14 +24,13 @@
 
 <div class="row">
     <div class="col-md-12">
-
         @csrf
-     
         <x-form.body method="post" action="{{ !isset($editMode) ? route('admin.store.revenue-business-line',$company->getIdentifier()) : route('admin.update.revenue',$company->getIdentifier()) }}">
-            <x-form.hidden id="current_service_category_id" value="{{ isset($model) ? $model->getServiceCategoryId() : 0 }}"></x-form.hidden>
+            <x-form.hidden id="current_service_category_id" value="{{ isset($model) ? $model->getServiceCategoryId() : ($serviceCategoryId??0) }}"></x-form.hidden>
+            <x-form.hidden id="current_service_item_id" value="{{ isset($model) ? $model->getServiceItemId() : ($serviceItemId??0) }}"></x-form.hidden>
             <x-form.hidden name="old_revenue_business_line_id" value="{{ isset($revenueBusinessLineId) ? $revenueBusinessLineId : ''  }}"></x-form.hidden>
-            <x-form.hidden name="old_service_category__id" value="{{ isset($serviceCategoryId) ? $serviceCategoryId : ''  }}"></x-form.hidden>
-            <x-form.hidden name="old_service_item_id" value="{{ isset($serviceItemId) ? $serviceItemId : '' }}"></x-form.hidden>
+            <x-form.hidden name="old_service_category__id" value="{{ isset($serviceCategoryId) ? $serviceCategoryId : ($serviceCategoryId??0)  }}"></x-form.hidden>
+            <x-form.hidden name="old_service_item_id" value="{{ isset($serviceItemId) ? $serviceItemId : ($serviceItemId??0) }}"></x-form.hidden>
             <x-form.bg-white :body-class="'min-height-170px justify-content-center '">
 			{{-- <input type="hidden" name="old" --}}
                 <x-form.row>

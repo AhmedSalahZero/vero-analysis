@@ -8,6 +8,7 @@ use App\Models\Company;
 use App\Models\PricingPlan;
 use App\Models\QuickPricingCalculator;
 use App\Models\Repositories\QuickPricingCalculatorRepository;
+use App\Models\SharingLink;
 use Illuminate\Http\Request;
 
 class QuickPricingCalculatorController extends Controller
@@ -36,6 +37,7 @@ class QuickPricingCalculatorController extends Controller
 				];
 				foreach($quickPricingCalculators as $quickPricingCalculator){
 					$quickPricingCalculatorName = $quickPricingCalculator->getName();
+					$customerName = $quickPricingCalculator->getCustomerName();
 					$quickPricingCalculatorServiceItemName = $quickPricingCalculator->getServiceItemName();
 					$quickPricingCalculatorId = $quickPricingCalculator->getId();
 					$quickPricingCalculatorCountOrDays = $quickPricingCalculator->getCountOrDays();
@@ -45,6 +47,7 @@ class QuickPricingCalculatorController extends Controller
 					$items[$pricingPlanId]['sub_items'][$quickPricingCalculatorId] = [
 						'id'=>$quickPricingCalculatorId ,
 						'name'=>$quickPricingCalculatorName,
+						'customer_name'=>$customerName,
 						'service_item_name'=>$quickPricingCalculatorServiceItemName,
 						'count_or_days'=>$quickPricingCalculatorCountOrDays , 
 						'total_recommended_without_vat_formatted'=>$totalRecommendedWithoutVatFormatted,
@@ -64,6 +67,18 @@ class QuickPricingCalculatorController extends Controller
     }
     public function create(Company $company,$pricingPlanId = 0 )
     {
+		// dd($pricingPlanId);
+		$sharingLink = SharingLink::where('identifier',$pricingPlanId)->first();
+		if(!$sharingLink){
+			$sharingLink = PricingPlan::find($pricingPlanId);
+			// dd($sharingLink);
+			
+		}
+		// dd($sharingLink);
+		if(!$sharingLink){
+			abort(404);
+		}
+		$pricingPlanId = is_null($sharingLink->shareable_id) ? $pricingPlanId :  $sharingLink->shareable_id;
         return view('admin.quick-pricing-calculator.create' , array_merge(
 			QuickPricingCalculator::getViewVars(),
 			['pricingPlanId'=>$pricingPlanId]

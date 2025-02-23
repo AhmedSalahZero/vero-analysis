@@ -250,7 +250,9 @@ use App\Models\NonBankingService\LeasingCategory;
                                     ?>
                                     <?php $__currentLoopData = $yearsWithItsMonths; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $year=>$monthsForThisYearArray): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 									<?php
-                                    $currentVal = $model->getLeasingGrowthRateAtYearIndex($year) ;
+									
+                                    
+									$currentVal = $model->getLeasingGrowthRateAtYearIndex($year) ;
 									?>
 
                                     <td>

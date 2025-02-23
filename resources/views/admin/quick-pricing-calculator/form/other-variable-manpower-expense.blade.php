@@ -1,5 +1,5 @@
  <div class="col-md-3 mb-4">
-          <x-form.select :add-new-modal="true" :add-new-modal-modal-name="'PricingExpense'" :add-new-modal-modal-type="'other-variable-direct-manpower-expense'"  :add-new-modal-modal-title="__('Other Variable Manpower Expense')" :is-select2="false" :options="$otherVariableManpowerExpenses??[]" :add-new="false"  :label="__('Other Variable Manpower Expense')" class="" data-filter-type="{{ $type }}" :all="false" name="expense_id" id="{{$type.'_'.'name' }}"  :selected-value="isset($otherVariableManpowerExpense) ? $otherVariableManpowerExpense->getName() : 0" ></x-form.select>
+          <x-form.select :add-new-modal="true" :add-new-modal-modal-name="'PricingExpense'" :add-new-modal-modal-type="'other-direct-manpower-expense'"  :add-new-modal-modal-title="__('Other Direct Manpower Expense')" :is-select2="false" :options="$otherVariableManpowerExpenses??[]" :add-new="false"  :label="__('Other Direct Manpower Expense')" class="" data-filter-type="{{ $type }}" :all="false" name="expense_id" id="{{$type.'_'.'name' }}"  :selected-value="isset($otherVariableManpowerExpense) ? $otherVariableManpowerExpense->getName() : 0" ></x-form.select>
                                                 <div class="d-md-none m--margin-bottom-10"></div>
 
      {{-- <label class="form-label font-weight-bold">{{ __('Name') }} </label>
