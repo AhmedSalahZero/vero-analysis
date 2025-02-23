@@ -7,6 +7,7 @@ jobs:
   FTP-Deploy-Action:
     name: FTP-Deploy-Action
     runs-on: ubuntu-latest
+	
     env:
        DB_HOST: veroanalysis.com
        DB_DATABASE: veroanalysis_db
@@ -28,6 +29,7 @@ jobs:
             options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
     - uses: actions/checkout@v2.1.0
+	
       with:
         fetch-depth: 1,
     - name: Setup PHP
@@ -35,8 +37,37 @@ jobs:
       with:
          php-version: 7.4.33
          extensions: mbstring, dom, fileinfo, mysql
+
     - name: Start mysql service
       run: sudo /etc/init.d/mysql start 
+    - name: Deploy with Error Ignoring
+      run: |
+        node -e "
+        const FtpDeploy = require('ftp-deploy');
+        const ftpDeploy = new FtpDeploy();
+        const config = {
+          user: process.env.FTP_USERNAME,
+          password: process.env.FTP_PASSWORD,
+          host: process.env.FTP_SERVER,
+          localRoot: './resources/',
+          remoteRoot: '/public_html/system.veroanalysis.com/resources/',
+          include: ['*', '**/*'],
+          deleteRemote: false
+        };
+        ftpDeploy.on('uploading', (data) => {
+          console.log('Uploading:', data.filename);
+        });
+        ftpDeploy.deploy(config)
+          .then(() => console.log('Deployed successfully'))
+          .catch(err => {
+            if (err.code === 550) {
+              console.log('Ignoring missing folder/file error:', err.message);
+            } else {
+              console.error('Deployment failed:', err);
+              process.exit(1);
+            }
+          });
+        "
     - name: Get composer cache directory 
       id: composer-cache
       run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
