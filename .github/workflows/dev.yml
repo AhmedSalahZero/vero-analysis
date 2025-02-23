@@ -7,7 +7,6 @@ jobs:
   FTP-Deploy-Action:
     name: FTP-Deploy-Action
     runs-on: ubuntu-latest
-	
     env:
        DB_HOST: veroanalysis.com
        DB_DATABASE: veroanalysis_db
@@ -29,9 +28,9 @@ jobs:
             options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
     - uses: actions/checkout@v2.1.0
-	
       with:
         fetch-depth: 1,
+        clean: true
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:
@@ -46,7 +45,7 @@ jobs:
       uses: actions/cache@v3
       with:
            path: ${{ steps.composer-cache.outputs.dir }}
-           key: ${{ runner.os }}-compsoser-${{ hashFiles('**/composer.lock') }}
+           key: ${{ runner.os }}-compdsoser-${{ hashFiles('**/composer.lock') }}
            restore-keys: ${{ runner.os }}-composer-
     - name: Install Composer dependencies
       run: composer update  
