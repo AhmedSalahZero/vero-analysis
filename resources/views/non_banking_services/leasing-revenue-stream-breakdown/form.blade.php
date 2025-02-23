@@ -181,13 +181,16 @@ use App\Models\NonBankingService\LeasingCategory;
                                     </td>
                                     @php
                                     $columnIndex = 0 ;
-                                    $currentVal = 0 ;
+							
                                     @endphp
                                     @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
+									@php
+                                    $currentVal = $model->getLeasingGrowthRateAtYearIndex($year) ;
+									@endphp
 
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
-                                            <x-repeat-right-dot-inputs :currentVal="$currentVal" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :name="'growth_rate['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :currentVal="$currentVal" :classes="'only-greater-than-or-equal-zero-allowed recalculate-gr gr-field'" :is-percentage="true" :name="'growth_rate['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
                                         </div>
                                     </td>
@@ -230,7 +233,7 @@ use App\Models\NonBankingService\LeasingCategory;
                                     @endphp
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
-                                            <x-repeat-right-dot-inputs :number-format-decimals="0" :currentVal="$currentVal" :classes="'only-greater-than-or-equal-zero-allowed current-loan-input'" :is-percentage="false" :name="'loan_amounts['.$currentLeasingRevenueStreamBreakdown->id.']['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :number-format-decimals="0" :currentVal="$currentVal" :classes="'only-greater-than-or-equal-zero-allowed current-loan-input current-growth-rate-result-value '" :is-percentage="false" :name="'loan_amounts['.$currentLeasingRevenueStreamBreakdown->id.']['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
                                         </div>
                                     </td>

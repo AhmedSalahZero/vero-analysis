@@ -40,7 +40,8 @@ use Illuminate\Support\Facades\DB;
 		
 		protected $casts = [
 			'operation_dates'=>'array',
-			'study_dates'=>'array'
+			'study_dates'=>'array',
+			'leasing_growth_rates'=>'array'
 		];
 		
 		public static function boot()
@@ -740,10 +741,10 @@ use Illuminate\Support\Facades\DB;
 			
 					$counter ++ ;
 					$currentMonthlyLoanAmount = $yearIndexWithAmount[$yearIndex] / count($yearMonthIndexes) ;
-					
-					if($currentMonthlyLoanAmount <= 0){
-						continue ;
-					}
+						
+						if($currentMonthlyLoanAmount <= 0){
+							continue ;
+						}
 						$totalMonthlyLoanAmounts[$monthIndex]  = isset($totalMonthlyLoanAmount[$monthIndex]) ? $totalMonthlyLoanAmount[$monthIndex] +  $currentMonthlyLoanAmount : $currentMonthlyLoanAmount ;
 					
 						$leasingRevenueStreamBreakdown = $leasingRevenueStreams->where('id',$leasingRevenueStreamBreakdownId)->first();
@@ -1147,6 +1148,11 @@ use Illuminate\Support\Facades\DB;
 		}
 		
 		
+	}
+
+	public function getLeasingGrowthRateAtYearIndex(int $yearIndex)
+	{
+		return $this->leasing_growth_rates[$yearIndex] ?? 0  ; 
 	}
 	
 }

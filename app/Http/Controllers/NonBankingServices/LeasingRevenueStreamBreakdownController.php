@@ -46,6 +46,9 @@ class LeasingRevenueStreamBreakdownController extends Controller
 					'loan_amounts'=>$loanAmounts[$model->id]
 				]);
 			});
+			$study->update([
+				'leasing_growth_rates'=>$request->get('growth_rate')
+			]);
 		}
 		
 		if($request->has('admin_fees_rates')){

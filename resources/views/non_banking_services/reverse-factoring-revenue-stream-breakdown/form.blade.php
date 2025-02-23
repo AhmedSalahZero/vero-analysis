@@ -122,7 +122,7 @@
 
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
-                                            <x-repeat-right-dot-inputs :currentVal="$model->reverseFactoringRevenueProjectionByCategory ? $model->reverseFactoringRevenueProjectionByCategory->getGrowthRateAtYearIndex($year) : 0" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :name="'ReverseFactoringRevenueProjectionByCategory['.'growth_rates'.']['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :currentVal="$model->reverseFactoringRevenueProjectionByCategory ? $model->reverseFactoringRevenueProjectionByCategory->getGrowthRateAtYearIndex($year) : 0" :classes="'only-greater-than-or-equal-zero-allowed recalculate-gr gr-field'" :is-percentage="true" :name="'ReverseFactoringRevenueProjectionByCategory['.'growth_rates'.']['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
                                         </div>
                                     </td>
@@ -130,19 +130,7 @@
                                     $columnIndex++;
                                     @endphp
                                     @endforeach
-
-
-
                                 </tr>
-
-
-
-
-                             
-
-                                
-
-
                                 <tr data-repeat-formatting-decimals="0" data-repeater-style>
 
                                     <td>
@@ -159,7 +147,7 @@
                                     @endphp
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
-                                            <x-repeat-right-dot-inputs :number-format-decimals="0" :currentVal="$currentVal" :classes="'only-greater-than-or-equal-zero-allowed total-loans-hidden js-recalculate-equity-funding-value'" :is-percentage="false" :name="'ReverseFactoringRevenueProjectionByCategory['.'reverse_factoring_transactions_projections'.']['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :number-format-decimals="0" :currentVal="$currentVal" :classes="'only-greater-than-or-equal-zero-allowed total-loans-hidden js-recalculate-equity-funding-value current-growth-rate-result-value'" :is-percentage="false" :name="'ReverseFactoringRevenueProjectionByCategory['.'reverse_factoring_transactions_projections'.']['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
                                         </div>
                                     </td>
                                     @php

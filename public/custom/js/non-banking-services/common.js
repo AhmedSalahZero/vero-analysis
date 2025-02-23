@@ -228,4 +228,16 @@ $(document).on('click','.add-btn-js',function(e){
 	$(this).toggleClass('rotate-180')
 	$(this).closest('[data-is-main-row]').nextUntil('[data-is-main-row]').toggleClass('hidden')
 	})
-	
+	$(document).on('change','.recalculate-gr',function(){
+		const columnIndex = $(this).attr('data-column-index');
+		const previousColumnIndex = columnIndex -1 ;
+		const growthRateOfCurrentYear = $('.gr-field[data-column-index="'+columnIndex+'"]').val();
+		const loanAmount = $('.current-growth-rate-result-value[data-column-index="'+previousColumnIndex+'"]').val(); 
+
+		if(loanAmount != undefined){
+			currentAmount = (1 + (growthRateOfCurrentYear / 100)) * loanAmount 
+			$('.current-growth-rate-result-value[data-column-index="'+columnIndex+'"]').each(function(index,element){
+				$(element).val(currentAmount).trigger('change');
+			})
+		}
+	})
