@@ -65,6 +65,7 @@ jobs:
          server-dir: public_html/system.veroanalysis.com/
          username: veroanalysis
          password: Aa@112233@aA
+         dry-run: true,
          exclude: |
             **/node_modules/**
             **/storage/**
