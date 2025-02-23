@@ -186,7 +186,8 @@ use App\Models\NonBankingService\LeasingCategory;
                                     @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
 									@php
 									
-                                    $currentVal = $model->getLeasingGrowthRateAtYearIndex($year) ;
+                                    
+									$currentVal = $model->getLeasingGrowthRateAtYearIndex($year) ;
 									@endphp
 
                                     <td>
