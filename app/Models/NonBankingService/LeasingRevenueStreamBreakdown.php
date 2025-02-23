@@ -1,0 +1,49 @@
+<?php
+namespace App\Models\NonBankingService;
+
+use App\Models\LoanScheduleSettlement;
+use App\Models\Traits\Scopes\NonBankingServices\BelongsToStudy;
+use App\Models\Traits\Scopes\CompanyScope;
+use App\Models\Traits\Scopes\IsRevenueStream;
+use App\Traits\HasBasicStoreRequest;
+use Illuminate\Database\Eloquent\Model;
+
+class  LeasingRevenueStreamBreakdown extends Model
+{
+	use HasBasicStoreRequest,CompanyScope , BelongsToStudy , IsRevenueStream;
+	protected $connection= 'non_banking_service';
+	protected $guarded = ['id'];
+	protected $casts =[
+		'loan_amounts'=>'array',
+		// 'growth_rate'=>'array'
+	];
+	public function loanSchedulePayments()
+	{
+		return $this->hasMany(LoanScheduleSettlement::class,'revenue_stream_id','id');
+	}
+	public static function boot()
+		{
+			parent::boot();
+			static::deleted(function(self $leasingRevenueStreamBreakdown){
+				$leasingRevenueStreamBreakdown->loanSchedulePayments->each(function(LoanScheduleSettlement $loanScheduleSettlement) {
+					$loanScheduleSettlement->delete();
+				});
+			});
+		}
+	public function category()
+	{
+		return $this->belongsTo(LeasingCategory::class,'category_id',) ;
+	}
+	
+	public function getReviewForTable()
+	{
+	
+		return $this->category->getTitle().'[' . $this->getLoanNature() . ' / ' . $this->getLoanType(). ' / ' . $this->getTenor(). ' M/ ' . $this->getGracePeriod(). ' M/ ' . $this->getMarginRate(). ' %/ ' . $this->getInstallmentInterval(). ' / ' . $this->getStepRate(). ' %/ ' . $this->getStepInterval() . ' ]';
+	}
+	public function getLoanAmountAtYearIndex(int $yearIndex)
+	{
+		return $this->loan_amounts[$yearIndex] ?? 0  ; 
+	}
+	
+		
+}

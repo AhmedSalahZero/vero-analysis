@@ -1,0 +1,139 @@
+<?php
+namespace App\Models\NonBankingService;
+
+use App\Models\Traits\Scopes\CompanyScope;
+use App\Models\Traits\Scopes\NonBankingServices\BelongsToStudy;
+use App\Traits\HasBasicStoreRequest;
+use Illuminate\Database\Eloquent\Model;
+
+class  GeneralAndReserveAssumption extends Model
+{
+	use HasBasicStoreRequest,CompanyScope , BelongsToStudy;
+	protected $connection= 'non_banking_service';
+	protected $guarded = ['id'];
+	protected $casts = [
+		'employee_profit_share_rates'=>'array',
+		'border_of_directors_profit_share_rates'=>'array',
+		'shareholders_first_dividend_portions'=>'array',
+		'shareholders_dividend_payout_ratios'=>'array',
+		'shareholders_dividend_in_cash_or_shares'=>'array',
+		'salaries_annual_increase_rates'=>'array',
+		'expense_annual_increase_rates'=>'array',
+		'cbe_lending_corridor_rates'=>'array',
+		'bank_lending_margin_rates'=>'array',
+		'credit_interest_rate_for_surplus_cash'=>'array',
+		];
+		
+		
+		public static function boot()
+		{
+			parent::boot();
+			
+			static::updated(function(self $generalAndReserveAssumption){
+				$study = $generalAndReserveAssumption->study ;
+				/**
+				 * @var Study $study 
+				 */
+				if($generalAndReserveAssumption->isDirty('cbe_lending_corridor_rates') || $generalAndReserveAssumption->isDirty('bank_lending_margin_rates')){
+					// $formattedLoanAmounts = [];
+					// $study->leasingRevenueStreamBreakdown->each(function($leasingRevenueStream) use (&$formattedLoanAmounts){
+					// 	$revenueId = $leasingRevenueStream->id ; 
+					// 	$loanAmounts = $leasingRevenueStream->loan_amounts;
+					// 	$formattedLoanAmounts[$revenueId] = $loanAmounts;
+					// });
+					$study->storeFixedLoans(Study::LEASING,'leasingRevenueStreamBreakdown','leasingEclAndNewPortfolioFundingRate');
+					$study->storeFixedLoans(Study::IJARA,'ijaraMortgageBreakdowns','ijaraMortgageNewPortfolioFundingStructure');
+					$study->updateExpensesOfSales();
+				}
+				if($study->isDirty('salaries_annual_increase_rates')){
+					$study->recalculateManpower();
+				 } 
+			});
+		}
+		
+	public function getEmployeeProfitShareRatesAtYearIndex(int $yearIndex)
+	{
+		return $this->employee_profit_share_rates[$yearIndex] ?? 0  ; 
+	}
+	public function getBorderOfDirectorsProfitShareRateAtYearIndex(int $yearIndex)
+	{
+		return $this->border_of_directors_profit_share_rates[$yearIndex] ?? 0  ; 
+	}
+	public function getShareholderFirstDividendPortionAtYearIndex(int $yearIndex)
+	{
+		return $this->shareholders_first_dividend_portions[$yearIndex] ?? 0  ; 
+	}
+	public function getShareholderDividendPayoutRatioAtYearIndex(int $yearIndex)
+	{
+		return $this->shareholders_dividend_payout_ratios[$yearIndex] ?? 0  ; 
+	}
+	public function getShareholderDividendInCashOrSharesAtYearIndex(int $yearIndex)
+	{
+		return $this->shareholders_dividend_in_cash_or_shares[$yearIndex] ?? 0  ; 
+	}
+	public function getSalariesAnnualIncreaseRateAtYearIndex(int $yearIndex)
+	{
+		return $this->salaries_annual_increase_rates[$yearIndex] ?? 0  ; 
+	}
+	public function getExpenseAnnualIncreaseRateAtYearIndex(int $yearIndex)
+	{
+		return $this->expense_annual_increase_rates[$yearIndex] ?? 0  ; 
+	}
+	
+	public function getCbeLendingCorridorRatesAtYearIndex(int $yearIndex)
+	{
+		return $this->cbe_lending_corridor_rates[$yearIndex] ?? 0  ; 
+	}
+	public function getCbeLendingCorridorRates():array 
+	{
+		return $this->cbe_lending_corridor_rates ;
+	}
+	public function getBankLendingMarginRates():array 
+	{
+		return (array) $this->bank_lending_margin_rates ; 
+	}
+	public function getBankLendingMarginRatesAtYearIndex(int $yearIndex)
+	{
+		return $this->getBankLendingMarginRates()[$yearIndex] ?? 0  ; 
+	}
+	public function getCreditInterestRateForSurplusCashAtYearIndex(int $yearIndex)
+	{
+		return $this->credit_interest_rate_for_surplus_cash[$yearIndex] ?? 0  ; 
+	}
+	
+	
+	public function getLegalReserveRate()
+	{
+		return $this->legal_reserve_rate ?: 0;
+	}
+	public function getLegalReserveRateFormatted():string 
+	{
+		return number_format($this->getLegalReserveRate(),2);
+	}
+	public function getMaxLegalReserveRate()
+	{
+		return $this->max_legal_reserve_rate ?: 0;
+	}
+	public function getMaxLegalReserveRateFormatted():string 
+	{
+		return number_format($this->getMaxLegalReserveRate(),2);
+	}
+	public function getFinancialRegulatoryAuthorityRate()
+	{
+		return $this->financial_regulatory_authority_rate ?: 0;
+	}
+	public function getFinancialRegulatoryAuthorityRateFormatted():string 
+	{
+		return number_format($this->getFinancialRegulatoryAuthorityRate(),2);
+	}
+	public function getMaxFinancialRegulatoryAuthorityRate()
+	{
+		return $this->max_financial_regulatory_authority_rate ?: 0;
+	}
+	public function getMaxFinancialRegulatoryAuthorityRateFormatted():string 
+	{
+		return number_format($this->getMaxFinancialRegulatoryAuthorityRate(),2);
+	}
+	
+		
+}

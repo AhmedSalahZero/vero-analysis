@@ -1,0 +1,1152 @@
+<?php
+namespace App\Models\NonBankingService;
+
+use App\Equations\ExpenseAsPercentageEquation;
+use App\Helpers\HArr;
+use App\Models\NonBankingService\Expense;
+use App\Models\Traits\Scopes\BelongsToCompany;
+use App\Models\Traits\Scopes\CompanyScope;
+use App\ReadyFunctions\CalculateDurationService;
+use App\ReadyFunctions\CalculateFixedLoanAtBeginningService;
+use App\ReadyFunctions\CalculateFixedLoanAtEndService;
+use App\ReadyFunctions\CalculateVariableLoanAtEndService;
+use App\Traits\HasBasicStoreRequest;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
+
+	class  Study extends Model
+	{
+		use HasBasicStoreRequest;
+		
+		const STUDY = 'study' ;
+		const LEASING ='leasing';
+		const IJARA ='ijara';
+		const DIRECT_FACTORING ='direct-factoring';
+		const REVERSE_FACTORING ='reverse-factoring';
+		const FACTORING_CATEGORY_ID = 'factoring-category-id';
+		use CompanyScope,BelongsToCompany;
+		
+		protected $connection= 'non_banking_service';
+ 	   protected $table = 'studies';
+
+		protected $guarded = [
+			'id'
+		];
+		
+		protected $casts = [
+			'operation_dates'=>'array',
+			'study_dates'=>'array'
+		];
+		
+		public static function boot()
+		{
+			parent::boot();
+			static::deleted(function(self $study){
+				$study->leasingRevenueStreamBreakdown->each(function(LeasingRevenueStreamBreakdown $leasingRevenueStreamBreakdown){
+					$leasingRevenueStreamBreakdown->delete();
+				});
+			});
+			static::updated(function(self $study){
+				 if($study->isDirty('salary_taxes_rate') || $study->isDirty('social_insurance_rate')){
+					$study->recalculateManpower();
+				 } 
+			});
+		}
+		public function getName()
+		{
+			return $this->study_name;
+		}
+		public function getMainFunctionalCurrency()
+		{
+			return $this->company->getMainFunctionalCurrency();
+		}
+		public function getPropertyStatus()
+	{
+		return $this->property_status;
+	}
+	public function getOperationStartMonth(): ?int
+	{
+		return $this->operation_start_month ?: 0;
+	}
+	public function financialYearStartMonth(): ?string
+	{
+		return $this->financial_year_start_month;
+	}
+	public function getCorporateTaxesRate()
+	{
+		return $this->corporate_taxes_rate ?: 0;
+	}
+	public function getSalaryTaxesRate()
+	{
+		return $this->salary_taxes_rate ?: 0 ;
+	}
+	public function getSocialInsuranceRate()
+	{
+		return $this->social_insurance_rate ?: 0 ;
+	}
+	public function getInvestmentReturnRate()
+	{
+		return $this->investment_return_rate ?: 0 ;
+	}
+	public function getPerpetualGrowthRate()
+	{
+		return $this->perpetual_growth_rate ?: 0 ;
+	}
+	public function getShareholderEquityMultiplier()
+	{
+		return $this->shareholder_equity_multiplier ?: 0 ;
+	}
+	
+	// 	public function getOperationDates(): array
+	// {
+	// 	return $this->operation_dates ?: [];
+	// }
+	public function datesAndIndexesHelpers(array $studyDates){
+		$firstLoop = true ;
+		$baseYear = null ;
+		$datesIndexWithYearIndex = [];
+		$yearIndexWithYear = [];
+		$dateIndexWithDate = [];
+		$dateIndexWithMonthNumber = [];
+		$dateWithMonthNumber = [];
+		$dateWithDateIndex = [];
+		
+		foreach($studyDates as $dateIndex => $dateAsString){
+			$year = explode('-',$dateAsString)[0];
+			$montNumber = explode('-',$dateAsString)[1];
+			if($firstLoop ){
+				$baseYear = $year ;
+				$firstLoop = false ; 
+			}
+			$yearIndex = $year - $baseYear ;
+			$datesIndexWithYearIndex[$dateIndex] =$yearIndex ;
+			$yearIndexWithYear[$yearIndex] = $year ;
+			$dateIndexWithDate[$dateIndex] = $dateAsString ;
+			$dateIndexWithMonthNumber[$dateIndex] = $montNumber ;
+			$dateWithMonthNumber[$dateAsString] = $montNumber ;
+			$dateWithDateIndex[$dateAsString] =$dateIndex ;
+			
+		}
+	
+		return [
+			'datesIndexWithYearIndex'=>$datesIndexWithYearIndex,
+			'yearIndexWithYear'=>$yearIndexWithYear,
+			'dateIndexWithDate'=>$dateIndexWithDate,
+			'dateIndexWithMonthNumber'=>$dateIndexWithMonthNumber,
+			'dateWithMonthNumber'=>$dateWithMonthNumber,
+			'dateWithDateIndex'=>$dateWithDateIndex,
+		];
+		return $datesIndexWithYearIndex ;
+	}
+	public function getStudyDates(): array
+	{
+		return  $this->study_dates ?: [];
+	}
+	
+		public function getDatesAsStringAndIndex()
+	{
+		return array_flip($this->getStudyDates());
+	}
+	protected function editOperationDatesStartingIndex($operationDurationDates,$studyDurationDates){
+		$firstIndexInOperationDates = $operationDurationDates[0] ?? null;
+		if(!$firstIndexInOperationDates)
+		{
+			return [];
+		}
+		$newDates = [];
+		$firstIndex = array_search($firstIndexInOperationDates , $studyDurationDates);
+		$loop = 0 ;
+		foreach($operationDurationDates as $oldIndex=>$value){
+				if($loop == 0){
+					$newDates[$firstIndex] = $value;
+				}else{
+					$newDates[]=$value ;
+				}
+				$loop++;
+		}
+		return $newDates ;
+	}
+	public function updateStudyAndOperationDates(array $datesAsStringAndIndex,array $datesIndexWithYearIndex,array $yearIndexWithYear,array $dateIndexWithDate,array $dateWithMonthNumber)
+	{
+		
+		$operationDurationDates = $this->getOperationDurationPerMonth($datesAsStringAndIndex,$datesIndexWithYearIndex,$yearIndexWithYear,$dateIndexWithDate,$dateWithMonthNumber,false);
+		$studyDurationDates = $this->getStudyDurationPerMonth($datesAsStringAndIndex,$datesIndexWithYearIndex,$yearIndexWithYear,$dateIndexWithDate,$dateWithMonthNumber,false);
+
+		$operationDurationDates = $this->editOperationDatesStartingIndex($operationDurationDates,$studyDurationDates);
+		$this->update([
+			'study_dates'=>$studyDurationDates,
+			'operation_dates'=>$operationDurationDates,
+		]);
+	}
+	public function getDurationInYears(): ?int
+	{
+		return $this->duration_in_years;
+	}
+	
+	public function getOperationStartDate(): ?string
+	{
+		$startDate=$this->operation_start_date;
+
+		return $startDate;
+	}
+
+	public function getOperationStartDateAsIndex(array $datesAsStringAndIndex, ?string $operationStartDateFormatted): ?int
+	{
+		return  $operationStartDateFormatted ? $datesAsStringAndIndex[$operationStartDateFormatted] : null;
+	}
+	public function getStudyStartDate(): ?string
+	{
+		return $this->study_start_date;
+	}
+
+	public function getStudyStartDateFormattedForView(): string
+	{
+		$studyStartDate = $this->getStudyStartDate();
+
+		return dateFormatting($studyStartDate, 'M\' Y');
+	}
+	public function getStudyEndDate(): ?string
+	{
+		return $this->study_end_date;
+	}
+	public function getStudyEndDateFormatted()
+	{
+	
+	}
+	public function getStudyEndDateFormattedForView(): string
+	{
+		$studyEndDate = $this->getStudyEndDate();
+		return dateFormatting($studyEndDate, 'M\' Y');
+	}
+	public function removeDatesBeforeDate(array $items, string $limitDate)
+	{
+		$newItems = [];
+		$limitDate = Carbon::make($limitDate);
+		foreach ($items as $year=>$dateAndValues) {
+			foreach ($dateAndValues as $date=>$value) {
+				$currentDate = Carbon::make($date);
+				if ($limitDate->lessThanOrEqualTo($currentDate)) {
+					$newItems[$year][$date]=$value;
+				}
+			}
+		}
+
+		return $newItems;
+	}
+	public function getStudyDurationPerYear(array $datesAsStringAndIndex,array $datesIndexWithYearIndex,array $yearIndexWithYear,array $dateIndexWithDate,array $dateWithMonthNumber, $asIndexes = true, $maxYearIsStudyEndDate = true, $repeatIndexes = true)
+	{
+		
+		$calculateDurationService = new CalculateDurationService();
+		$studyStartDate  = $this->getStudyStartDate();
+		$operationStartDate = $this->getOperationStartDate();
+		if ($maxYearIsStudyEndDate) {
+			$maxDate = $this->getStudyEndDate();
+		} else {
+			$maxDate = $this->getMaxDate($datesAsStringAndIndex,$datesIndexWithYearIndex ,$yearIndexWithYear,$dateIndexWithDate,$dateWithMonthNumber);
+		}
+
+		$studyDurationInYears = $this->getDurationInYears();
+
+		$limitationDate = $operationStartDate;
+		$studyDurationPerYear = $calculateDurationService->calculateMonthsDurationPerYear($studyStartDate, $maxDate, $studyDurationInYears, $limitationDate,true);
+		
+		$studyDurationPerYear = $this->removeDatesBeforeDate($studyDurationPerYear, $studyStartDate);
+		
+		$dates = [];
+		if ($asIndexes) {
+			$dates =  $this->convertMonthAndYearsToIndexes($studyDurationPerYear, $datesAsStringAndIndex,$datesIndexWithYearIndex);
+		} else {
+			$dates =  $studyDurationPerYear;
+		}
+		if ($repeatIndexes) {
+			return $this->addMoreIndexes($dates,$yearIndexWithYear, $dateIndexWithDate,$dateWithMonthNumber ,$asIndexes);
+		} else {
+			return $dates;
+		}
+		// return $this->removeZeroValuesFromTwoDimArr($dates);
+	}
+	protected function addMoreIndexes(array $yearAndDatesValues,array $yearIndexWithYear , array $dateIndexWithDate,array $dateWithMonthNumber ,bool $asIndexes):array
+	{
+		$maxYearsCount = MAX_YEARS_COUNT;
+		$lastYear = array_key_last($yearAndDatesValues);
+		$firstYear = array_key_first($yearAndDatesValues);
+		$maxYear = $firstYear  + $maxYearsCount;
+		$firstYearAfterLast = $lastYear+1;
+		for ($firstYearAfterLast; $firstYearAfterLast < $maxYear; $firstYearAfterLast++) {
+			$dates = $this->replaceIndexWithItsStringDate($yearAndDatesValues[$lastYear],$dateIndexWithDate);
+			if ($asIndexes) {
+				$yearAndDatesValues[$firstYearAfterLast] = $this->replaceYearWithAnotherYear($dates, $yearIndexWithYear[$firstYearAfterLast], $asIndexes,$dateIndexWithDate,$dateWithMonthNumber);
+			} else {
+				$yearAndDatesValues[$firstYearAfterLast] = $this->replaceYearWithAnotherYear($dates, $firstYearAfterLast, $asIndexes,$dateIndexWithDate,$dateWithMonthNumber);
+			}
+		}
+		return $yearAndDatesValues;
+	}
+	protected function replaceYearWithAnotherYear(array $dateAndValues, $newYear, bool $asIndexes,array $dateIndexWithDate,array $dateWithMonthNumber)
+	{
+		$newDatesAndValues   = [];
+		foreach ($dateAndValues as $date=>$value) {
+			$dateAsIndex = null;
+			if ($asIndexes) {
+				$dateAsIndex = $date;
+				$date = $dateIndexWithDate[$date];
+			}
+			$day = getDayFromDate($date);
+			
+			$monthNumber = $dateWithMonthNumber[$date] ?? getMonthFromDate($date);
+			$fullDate =$newYear.'-' .$monthNumber . '-'  .$day  ;
+
+			if ($asIndexes) {
+				$newDatesAndValues[$dateAsIndex] = $value;
+			} else {
+				$newDatesAndValues[$fullDate] = $value;
+			}
+		}
+
+		return $newDatesAndValues;
+	}
+	public function getStudyDurationPerMonth(array $datesAsStringAndIndex,array $datesIndexWithYearIndex,array $yearIndexWithYear,array $dateIndexWithDate,array $dateWithMonthNumber, $maxYearIsStudyEndDate = true, $repeatIndexes = true)
+	{
+		$studyDurationPerMonth = [];
+		$studyDurationPerYear = $this->getStudyDurationPerYear($datesAsStringAndIndex,$datesIndexWithYearIndex,$yearIndexWithYear,$dateIndexWithDate,$dateWithMonthNumber, false, $maxYearIsStudyEndDate, true, $repeatIndexes);
+
+		foreach ($studyDurationPerYear as $year => $values) {
+			foreach ($values as $date => $value) {
+				$studyDurationPerMonth[$date] = $value;
+			}
+		}
+
+		return array_keys($studyDurationPerMonth);
+	}
+	protected function getMaxDate(array $datesAsStringAndIndex,array $datesIndexWithYearIndex ,array $yearIndexWithYear ,array $dateIndexWithDate,array $dateWithMonthNumber)
+	{
+		$studyDurationPerMonth = $this->getStudyDurationPerMonth($datesAsStringAndIndex,$datesIndexWithYearIndex,$yearIndexWithYear,$dateIndexWithDate,$dateWithMonthNumber);
+
+		return $studyDurationPerMonth[array_key_last($studyDurationPerMonth)];
+	}
+	public function getOperationStartDateFormatted()
+	{
+		$operationStartDate = $this->getOperationStartDate();
+
+		return  $operationStartDate ? Carbon::make($operationStartDate)->format('Y-m-d') : null;
+	}
+	public function getOperationStartDateFormattedForView()
+	{
+		$operationStartDate = $this->getOperationStartDate();
+
+		return  $operationStartDate ? dateFormatting($operationStartDate, 'M\' Y') : null;
+	}
+	public function getOperationDurationPerYear(array $datesAsStringAndIndex,array $datesIndexWithYearIndex,array $yearIndexWithYear,array $dateIndexWithDate,array $dateWithMonthNumber  , $asIndexes = true, $maxYearIsStudyEndDate = true)
+	{
+		$calculateDurationService = new CalculateDurationService();
+		$operationStartDate  = $this->getOperationStartDateFormatted();
+		if ($maxYearIsStudyEndDate) {
+			$maxDate = $this->getStudyEndDate();
+		} else {
+			$maxDate = $this->getMaxDate($datesAsStringAndIndex,$datesIndexWithYearIndex ,$yearIndexWithYear,$dateIndexWithDate,$dateWithMonthNumber);
+		}
+		$studyDurationInYears = $this->getDurationInYears();
+		$operationDurationPerYear = $calculateDurationService->calculateMonthsDurationPerYear($operationStartDate, $maxDate, $studyDurationInYears,true);
+
+		$operationDurationPerYear = $this->removeZeroValuesFromTwoDimArr($operationDurationPerYear);
+		if ($asIndexes) {
+			return $this->convertMonthAndYearsToIndexes($operationDurationPerYear, $datesAsStringAndIndex,$datesIndexWithYearIndex);
+		}
+
+		return $operationDurationPerYear;
+	}
+	protected function convertMonthAndYearsToIndexes(array $yearsAndItsDates, array $datesAsStringAndIndex, array $datesIndexWithYearIndex)
+	{
+		$result = [];
+		foreach ($yearsAndItsDates as $yearNumber => $datesAndZeros) {
+			foreach ($datesAndZeros as $date => $zeroOrOne) {
+				$dateIndex = $datesAsStringAndIndex[$date];
+				$yearIndex = $datesIndexWithYearIndex[$dateIndex];
+				$result[$yearIndex][$dateIndex] = $zeroOrOne;
+			}
+		}
+
+		return $result;
+	}	
+	protected function removeZeroValuesFromTwoDimArr(array $dates)
+	{
+		$result = [];
+		foreach ($dates as $year => $dateAndValues) {
+			foreach ($dateAndValues as $date=>$value) {
+				if ($value) {
+					$result[$year][$date] = $value;
+				}
+			}
+		}
+
+		return $result;
+	}
+	public function getOperationDurationPerMonth(array $datesAsStringAndIndex , array $datesIndexWithYearIndex ,array $yearIndexWithYear,array $dateIndexWithDate,array $dateWithMonthNumber, $maxYearIsStudyEndDate  = true)
+	{
+		$operationDurationPerMonth = [];
+		$operationDurationPerYear = $this->getOperationDurationPerYear($datesAsStringAndIndex, $datesIndexWithYearIndex,$yearIndexWithYear,$dateIndexWithDate,$dateWithMonthNumber, false, $maxYearIsStudyEndDate);
+		foreach ($operationDurationPerYear as $key => $values) {
+			foreach ($values as $k => $v) {
+				if ($v) {
+					$operationDurationPerMonth[$k] = $v;
+				}
+			}
+		}
+
+		return array_keys($operationDurationPerMonth);
+	}		
+		
+		
+	
+	public function replaceIndexWithItsStringDate(array $dates,array $dateIndexWithDate):array
+	{
+		$stringFormattedDates = [];
+		foreach ($dates as $dateIndex => $value) {
+			if (is_numeric($dateIndex)) {
+				// is index date like 25
+				$stringFormattedDates[$dateIndexWithDate[$dateIndex]] =$value;
+			} else {
+				// is already date string like 10-10-2025
+				$stringFormattedDates[$dateIndex] = $value;
+			}
+		}
+
+		return $stringFormattedDates;
+	}	
+	public function getCompanyNature()
+	{
+		return $this->company_nature;
+	}	
+	/**
+	 * * التواريخ كله بالفردة بتاعتها
+	 */
+	public function getOperationDurationPerYearFromIndexesForAllStudyInfo() 
+	{
+		$datesAsStringAndIndex = $this->getDatesAsStringAndIndex();
+		$datesIndexWithYearIndex = App('datesIndexWithYearIndex');
+		$yearIndexWithYear = App('yearIndexWithYear');
+		$dateIndexWithDate = App('dateIndexWithDate');
+		$dateWithMonthNumber = App('dateWithMonthNumber');
+		return $this->getOperationDurationPerYear($datesAsStringAndIndex,$datesIndexWithYearIndex,$yearIndexWithYear,$dateIndexWithDate,$dateWithMonthNumber,true,false);
+		
+	}	
+	/**
+	 * * التواريخ اللي هتتعرض بس اللي هو اختارها
+	 */	
+	public function getOperationDurationPerYearFromIndexes() 
+	{
+		$datesAsStringAndIndex = $this->getDatesAsStringAndIndex();
+		$datesIndexWithYearIndex = App('datesIndexWithYearIndex');
+		$yearIndexWithYear = App('yearIndexWithYear');
+		$dateIndexWithDate = App('dateIndexWithDate');
+		$dateWithMonthNumber = App('dateWithMonthNumber');
+		return $this->getOperationDurationPerYear($datesAsStringAndIndex,$datesIndexWithYearIndex,$yearIndexWithYear,$dateIndexWithDate,$dateWithMonthNumber);
+		
+	}		
+	public function getMonthsWithItsYear(array $yearWithItsIndexes):array 
+	{
+		$result = [];
+		
+		foreach($yearWithItsIndexes as $yearIndex => $months){
+			foreach($months as $monthIndex=>$isActive){
+				if($isActive){
+					$result[$monthIndex] = $yearIndex; 
+				}
+				
+			}
+		}
+		return $result;
+	}	
+	public function getDatesIndexesHelper()
+	{
+		$studyDates = $this->getStudyDates() ;
+
+		$studyStartDate = Arr::first($studyDates);
+
+		$studyEndDate = Arr::last($studyDates);
+		$studyStartDate = $studyStartDate ? Carbon::make($studyStartDate)->format('Y-m-d'):null;
+		$studyEndDate = $studyEndDate ? Carbon::make($studyEndDate)->format('Y-m-d'):null;
+		return $this->datesAndIndexesHelpers($studyDates);
+	}		
+	public function generalAndReserveAssumption()
+	{
+		return $this->hasOne(GeneralAndReserveAssumption::class,'study_id','id');
+	}
+	public function leasingRevenueStreamBreakdown()
+	{
+		return $this->hasMany(LeasingRevenueStreamBreakdown::class,'study_id','id');
+	}	
+	public function reverseFactoringRevenueStreamBreakdown()
+	{
+		return $this->hasMany(ReverseFactoringRevenueStreamBreakdown::class,'study_id','id');
+	}		
+	public function hasLeasing():bool
+	{
+		return $this->has_leasing;
+	}	
+	public function hasDirectFactoring():bool
+	{
+		return $this->has_direct_factoring;
+	}	
+	public function hasReverseFactoring():bool
+	{
+		return $this->has_reverse_factoring;
+	}	
+	public function hasIjaraMortgage():bool
+	{
+		return $this->has_ijara_mortgage;
+	}	
+	public function hasPortfolioMortgage():bool
+	{
+		return $this->has_portfolio_mortgage;
+	}	
+	public function hasMicroFinance():bool
+	{
+		return $this->has_micro_finance;
+	}	
+	public function hasSecuritization():bool
+	{
+		return $this->has_securitization;
+	}	
+	public function hasConsumerFinance():bool
+	{
+		return $this->has_consumer_finance;
+	}	
+	public function leasingEclAndNewPortfolioFundingRate():HasOne
+	{
+		return $this->hasOne(EclAndNewPortfolioFundingRate::class,'study_id','id')->where('revenue_stream_type',self::LEASING);
+	}
+
+	public function directFactoringEclAndNewPortfolioFundingRate():HasOne
+	{
+		return $this->hasOne(EclAndNewPortfolioFundingRate::class,'study_id','id')->where('revenue_stream_type',self::DIRECT_FACTORING);
+	}
+	public function reverseFactoringEclAndNewPortfolioFundingRate():HasOne
+	{
+		return $this->hasOne(EclAndNewPortfolioFundingRate::class,'study_id','id')->where('revenue_stream_type',self::REVERSE_FACTORING);
+	}
+	public static function getRevenueStreamTypes():array 
+	{
+		return [
+			'has_leasing'=>__('Leasing'),
+			'has_direct_factoring'=>__('Direct Factoring'),
+			'has_reverse_factoring'=>__('Reverse Factoring'),
+			'has_ijara_mortgage'=>__('Ijara Mortgage'),
+			'has_portfolio_mortgage'=>__('Portfolio Mortgage'),
+			'has_micro_finance'=>__('Micro Finance'),
+			'has_securitization'=>__('Securitization'),
+			'has_consumer_finance'=>__('Consumer Finance'),
+		];
+	}
+	public function getCheckedRevenueStreamTypesForSelect():array 
+	{
+		$result = [];
+		foreach(self::getRevenueStreamTypes() as $type=>$title){
+			if($this->{$type}){
+				$result[] = ['title'=>$title,'value'=>$type];
+			}
+		}
+		return $result;
+	}
+	public function generateRelationDynamically(string $relationName,string $expenseType ){
+		/**
+		 * * expense type for example CostOfService
+		 * * expense 
+		 */
+	
+		return $this->hasMany(Expense::class , 'model_id','id')->where('model_name','Study')
+		->where('expense_type',$expenseType)->where('relation_name',$relationName);
+	}
+	public function DirectFactoringRevenueProjectionByCategory()
+	{
+		return $this->hasOne(DirectFactoringRevenueProjectionByCategory::class,'study_id');
+	}
+	public function directFactoringBreakdowns():HasMany
+	{
+		return $this->hasMany(DirectFactoringBreakdown::class,'study_id','id');
+	}	
+	public function directFactoryAdminFeesRate():HasOne
+	{
+		return $this->hasOne(DirectFactoringAdminFeesRate::class,'study_id','id');
+	}
+	public function directFactoringNewPortfolioFundingStructure():HasOne
+	{
+		return $this->hasOne(DirectFactoringNewPortfolioFundingStructure::class,'study_id','id');
+	}
+	
+	public function ReverseFactoringRevenueProjectionByCategory()
+	{
+		return $this->hasOne(ReverseFactoringRevenueProjectionByCategory::class,'study_id');
+	}
+	public function reverseFactoringBreakdowns():HasMany
+	{
+		return $this->hasMany(ReverseFactoringBreakdown::class,'study_id','id');
+	}	
+	public function reverseFactoryAdminFeesRate():HasOne
+	{
+		return $this->hasOne(ReverseFactoringAdminFeesRate::class,'study_id','id');
+	}
+	public function reverseFactoringNewPortfolioFundingStructure():HasOne
+	{
+		return $this->hasOne(ReverseFactoringNewPortfolioFundingStructure::class,'study_id','id');
+	}
+	
+	
+	
+	public function ijaraMortgageRevenueProjectionByCategory()
+	{
+		return $this->hasOne(IjaraMortgageRevenueProjectionByCategory::class,'study_id');
+	}
+	public function ijaraMortgageBreakdowns():HasMany
+	{
+		return $this->hasMany(IjaraMortgageBreakdown::class,'study_id','id');
+	}	
+	public function ijaraMortgageAdminFeesRate():HasOne
+	{
+		return $this->hasOne(IjaraMortgageAdminFeesRate::class,'study_id','id');
+	}
+	public function ijaraMortgageNewPortfolioFundingStructure():HasOne
+	{
+		return $this->hasOne(IjaraMortgageNewPortfolioFundingStructure::class,'study_id','id');
+	}
+	public function ijaraMortgageRevenueStreamBreakdown()
+	{
+		return $this->hasMany(IjaraMortgageRevenueStreamBreakdown::class,'study_id','id');
+	}		
+	
+	
+	public function portfolioMortgageRevenueProjectionByCategory()
+	{
+		return $this->hasOne(PortfolioMortgageRevenueProjectionByCategory::class,'study_id');
+	}
+
+	public function portfolioMortgageAdminFeesRate():HasOne
+	{
+		return $this->hasOne(PortfolioMortgageAdminFeesRate::class,'study_id','id');
+	}
+	public function portfolioMortgageNewPortfolioFundingStructure():HasOne
+	{
+		return $this->hasOne(PortfolioMortgageNewPortfolioFundingStructure::class,'study_id','id');
+	}
+	public function portfolioMortgageRevenueStreamBreakdown()
+	{
+		return $this->hasMany(PortfolioMortgageRevenueStreamBreakdown::class,'study_id','id');
+	}	
+	public  function convertYearToMonthIndexes(array $items):array
+	{
+		$result = [];
+
+		$operationDurationPerYear=$this->getOperationDurationPerYearFromIndexes();
+		foreach($operationDurationPerYear as $yearIndex => $yearMonthIndexes)
+			{
+				$sumMonths = array_sum($yearMonthIndexes) ;
+				foreach($yearMonthIndexes as $monthIndex => $monthlyZeroOrOne ){
+					$result[$monthIndex] = $items[$yearIndex]  ;
+				}
+			}
+			return $result;
+	}		
+	public  function convertYearToMonthIndexesAndDivideBySumMonths(array $items):array
+	{
+		$result = [];
+
+		$operationDurationPerYear=$this->getOperationDurationPerYearFromIndexes();
+		foreach($operationDurationPerYear as $yearIndex => $yearMonthIndexes)
+			{
+				$sumMonths = array_sum($yearMonthIndexes) ;
+				foreach($yearMonthIndexes as $monthIndex => $monthlyZeroOrOne ){
+					$result[$monthIndex] = $items[$yearIndex] / $sumMonths ;
+				}
+			}
+			return $result;
+	}	
+
+	public function getTotalDirectFactoringNewPortfolioAmountsAtYearIndex(int $yearIndex)
+	{
+		$yearsWithItsMonths = $this->getOperationDurationPerYearFromIndexes();
+		$this->directFactoringBreakdowns->each(function(DirectFactoringBreakdown $directFactoringBreakdown) use (&$sum,$yearIndex,$yearsWithItsMonths){
+			$yearMonthIndexes = $yearsWithItsMonths[$yearIndex];
+			foreach($yearMonthIndexes as $monthIndex => $trueOrFalse){
+				if($trueOrFalse){
+					$sum+= $directFactoringBreakdown->getNetFundingAmountsAtMonthIndex($monthIndex);
+				}
+			}
+		});
+		return $sum;
+	}
+	/**
+	 * * revenue_stream_type -> leasing , ijara .. etc
+	 * * relation name -> leasingRevenueStreamBreakdown ,
+	 */
+	public function storeFixedLoans(string $revenueStreamType ,string $relationName,$eclRelationName):void
+	{
+			/**
+		 * * start testing
+		 */
+		$revenueIdWitLoanAmounts = $this->{$relationName}->pluck('loan_amounts','id')->toArray() ;
+		$calculateFixedLoanAtEndService = new CalculateFixedLoanAtEndService ;
+		$calculateFixedLoanAtBeginningService = new CalculateFixedLoanAtBeginningService ;
+		$portfolioLoans = [];
+		$studyId  = $this->id ;
+		$companyId = $this->company->id ;
+		$study = $this ;
+		$counter = 0 ;
+		$operationDurationPerYear=$study->getOperationDurationPerYearFromIndexes();
+
+		$leasingRevenueStreams =$study->{$relationName};
+		$generalAndReserveAssumption = $study->generalAndReserveAssumption;
+		$leasingEclAndNewPortfolioFundingRate = $study->{$eclRelationName};
+		
+		/**
+		 * @var EclAndNewPortfolioFundingRate $leasingEclAndNewPortfolioFundingRate
+		 * @var GeneralAndReserveAssumption $generalAndReserveAssumption
+		 */
+		$dateIndexWithDate = app('dateIndexWithDate');
+		$dateWithDateIndex = app('dateWithDateIndex');
+		$yearIndexWithYear = app('yearIndexWithYear');
+
+		$baseRates = $generalAndReserveAssumption->getCbeLendingCorridorRates() ;
+	
+		$baseRatesPerMonths= [];
+		foreach($operationDurationPerYear as $yearIndex => $yearMonthIndexes)
+		{
+			foreach($yearMonthIndexes as $monthIndex => $monthlyZeroOrOne ){
+				$baseRatesPerMonths[Carbon::make($dateIndexWithDate[$monthIndex])->format('Y-m-d')] = $baseRates[$yearIndex];
+			}
+		}
+	
+		DB::connection('non_banking_service')->table('loan_schedule_payments')->where('revenue_stream_type',$revenueStreamType)->where('study_id',$studyId)->delete();
+		$baseRatesMapping = HArr::getFirstOfYear($baseRatesPerMonths);
+	
+		$bankLendingMarginRates=$generalAndReserveAssumption->getBankLendingMarginRates();
+
+		
+		
+		 $baseRatesMapping = HArr::isAllValuesEqual($baseRatesMapping,$bankLendingMarginRates);
+		$totalMonthlyLoanAmounts = [];
+		// $time = 0 ;
+	
+		
+		foreach($operationDurationPerYear as $yearIndex => $yearMonthIndexes){
+			$baseRatesMapping = is_array($baseRatesMapping) ? HArr::filterByYearIndex($baseRatesMapping,$yearIndexWithYear,$yearIndex) : $baseRatesMapping;
+			foreach($yearMonthIndexes as $monthIndex => $monthlyZeroOrOne ){
+			
+				foreach($revenueIdWitLoanAmounts as $leasingRevenueStreamBreakdownId => $yearIndexWithAmount ){
+			
+					$counter ++ ;
+					$currentMonthlyLoanAmount = $yearIndexWithAmount[$yearIndex] / count($yearMonthIndexes) ;
+					
+					if($currentMonthlyLoanAmount <= 0){
+						continue ;
+					}
+						$totalMonthlyLoanAmounts[$monthIndex]  = isset($totalMonthlyLoanAmount[$monthIndex]) ? $totalMonthlyLoanAmount[$monthIndex] +  $currentMonthlyLoanAmount : $currentMonthlyLoanAmount ;
+					
+						$leasingRevenueStreamBreakdown = $leasingRevenueStreams->where('id',$leasingRevenueStreamBreakdownId)->first();
+						$hasCategoryId = method_exists($leasingRevenueStreamBreakdown,'getCategoryId') ;
+						$revenueCategoryId = $hasCategoryId ? $leasingRevenueStreamBreakdown->getCategoryId() : null;
+						$currentMonth = $dateIndexWithDate[$monthIndex];
+						// $currentMonthFormatted = Carbon::make($currentMonth)->format('d-m-Y');
+						$currentMarginRate = $leasingRevenueStreamBreakdown->getMarginRate();
+						$gracePeriod = $leasingRevenueStreamBreakdown->getGracePeriod();
+						$tenor = $leasingRevenueStreamBreakdown->getTenor();
+						$installmentInterval = $leasingRevenueStreamBreakdown->getInstallmentInterval();
+						$installmentPaymentIntervalValue = $calculateFixedLoanAtEndService->getInstallmentPaymentIntervalValue($installmentInterval);
+						$stepUp = $leasingRevenueStreamBreakdown->getStepUp();
+						$stepDown = $leasingRevenueStreamBreakdown->getStepDown();
+						$stepInterval = $leasingRevenueStreamBreakdown->getStepInterval();
+						$loanType = $leasingRevenueStreamBreakdown->getLoanType();
+						$loanNature = $leasingRevenueStreamBreakdown->getLoanNature();
+						$loanService = $loanNature == 'fixed-at-end' ? $calculateFixedLoanAtEndService : $calculateFixedLoanAtBeginningService ; 
+		
+						$currentPortfolioLoans=[];
+						if(is_array($baseRatesMapping)){
+							$currentPortfolioLoans=$loanService->__calculateBasedOnDiffBaseRates($baseRatesMapping ,$loanType, $currentMonth, $currentMonthlyLoanAmount,  $currentMarginRate,  $tenor, $installmentInterval,$installmentPaymentIntervalValue, $stepUp, $stepInterval ,$stepDown ,  $stepInterval ,$gracePeriod ,$monthIndex, $dateWithDateIndex ,$dateIndexWithDate);
+						}else{
+							
+							$currentPortfolioLoans=$loanService->__calculate([] ,-1,$loanType, $currentMonth, $currentMonthlyLoanAmount,$baseRatesMapping, $currentMarginRate,  $tenor, $installmentInterval, $stepUp,$stepInterval ,$stepDown ,  $stepInterval ,$gracePeriod,$monthIndex);
+							$finalResult = $currentPortfolioLoans['final_result']??[];
+							unset($finalResult['totals']);
+							$currentPortfolioLoans = $finalResult ;
+						}
+						
+						if(count($currentPortfolioLoans)){
+							$currentPortfolioLoans['study_id'] = $studyId ;
+							$currentPortfolioLoans['company_id'] = $companyId ;
+							$currentPortfolioLoans['month_as_index'] = $monthIndex ;
+							$currentPortfolioLoans['revenue_stream_id'] =$leasingRevenueStreamBreakdownId ;
+							$currentPortfolioLoans['revenue_stream_category_id'] =$revenueCategoryId ;
+							$currentPortfolioLoans['portfolio_loan_type'] ='portfolio';
+							$currentPortfolioLoans['revenue_stream_type'] =$revenueStreamType;
+							$portfolioLoans[]=collect($currentPortfolioLoans)->map(function($item,$keyName){
+								if(is_array($item)){
+									return json_encode($item);
+								}
+								return $item;
+							})->toArray();
+						}
+				
+						if( $leasingEclAndNewPortfolioFundingRate && count($totalMonthlyLoanAmounts)){
+							$counter++;
+							$newLoanFundingRate = $leasingEclAndNewPortfolioFundingRate->getNewLoansFundingRatesAtYearIndex($yearIndex);
+							$currentMarginRate = $generalAndReserveAssumption->getBankLendingMarginRatesAtYearIndex($yearIndex);
+							$currentMonthlyLoanAmount = $totalMonthlyLoanAmounts[$monthIndex];
+							$currentMonthlyLoanAmount = $currentMonthlyLoanAmount * $newLoanFundingRate / 100 ;
+							if(is_array($baseRatesMapping)){
+								$currentPortfolioLoans=$loanService->__calculateBasedOnDiffBaseRates($baseRatesMapping ,$loanType, $currentMonth, $currentMonthlyLoanAmount,  $currentMarginRate,  $tenor, $installmentInterval,$installmentPaymentIntervalValue, $stepUp, $stepInterval ,$stepDown ,  $stepInterval ,$gracePeriod,$monthIndex,$dateWithDateIndex,$dateIndexWithDate );
+								
+							}else{
+								
+								$currentPortfolioLoans=$loanService->__calculate([] ,-1,$loanType, $currentMonth, $currentMonthlyLoanAmount,$baseRatesMapping, $currentMarginRate,  $tenor, $installmentInterval, $stepUp,$stepInterval ,$stepDown ,  $stepInterval ,$gracePeriod,$monthIndex );
+								$finalResult = $currentPortfolioLoans['final_result']??[];
+								unset($finalResult['totals']);
+								$currentPortfolioLoans = $finalResult;
+				
+							}
+							if(count($currentPortfolioLoans)){
+								$currentPortfolioLoans['study_id'] = $studyId ;
+								$currentPortfolioLoans['company_id'] = $companyId ;
+								$currentPortfolioLoans['month_as_index'] = $monthIndex ;
+								$currentPortfolioLoans['revenue_stream_id'] =$leasingRevenueStreamBreakdownId ;
+								$currentPortfolioLoans['revenue_stream_category_id'] =$revenueCategoryId ;
+								$currentPortfolioLoans['portfolio_loan_type'] ='bank_portfolio';
+								$currentPortfolioLoans['revenue_stream_type'] =$revenueStreamType;
+								$portfolioLoans[]=collect($currentPortfolioLoans)->map(function($item,$keyName){
+								if(is_array($item)){
+									return json_encode($item);
+								}
+								return $item;
+							})->toArray();
+							}
+							
+							
+						
+					
+						}
+						
+						
+						
+						
+						
+					
+				}
+				
+		
+				
+				
+				
+			}
+			
+		}
+
+		DB::connection('non_banking_service')->table('loan_schedule_payments')->insert($portfolioLoans);
+	}
+		
+	protected function sumBaseRateWithMarginRate(array $baseRates , float $marginRate){
+		$result = [];
+		foreach($baseRates as $dateAsString => $baseRate){
+			
+			$result[$dateAsString] = ($baseRate + $marginRate) / 360 /100 ; 
+		}
+		return $result;
+	}
+	public function storeVariableLoans(string $revenueStreamType , array $loans,string $relationName,$eclRelationName):void
+	{
+			
+		$calculateVariableLoanAtEndService = new CalculateVariableLoanAtEndService ;
+		
+		$portfolioLoans = [];
+		$studyId  = $this->id ;
+		$companyId = $this->company->id ;
+		$study = $this ;
+		$counter = 0 ;
+		$operationDurationPerYear=$study->getOperationDurationPerYearFromIndexes();
+
+		$generalAndReserveAssumption = $study->generalAndReserveAssumption;
+		$leasingEclAndNewPortfolioFundingRate = $study->{$eclRelationName};
+		/**
+		 * @var EclAndNewPortfolioFundingRate $leasingEclAndNewPortfolioFundingRate
+		 * @var GeneralAndReserveAssumption $generalAndReserveAssumption
+		 */
+		$dateIndexWithDate = app('dateIndexWithDate');
+
+		$yearIndexWithYear = app('yearIndexWithYear');
+
+		$baseRates = $generalAndReserveAssumption->getCbeLendingCorridorRates() ;
+	
+	
+		$baseRatesPerMonths= [];
+		foreach($operationDurationPerYear as $yearIndex => $yearMonthIndexes)
+		{
+			foreach($yearMonthIndexes as $monthIndex => $monthlyZeroOrOne ){
+				$baseRatesPerMonths[Carbon::make($dateIndexWithDate[$monthIndex])->format('Y-m-d')] = $baseRates[$yearIndex];
+			}
+		}
+		// $dateWithDateIndex = app('dateWithDateIndex');
+		DB::connection('non_banking_service')->table('loan_schedule_payments')->where('revenue_stream_type',$revenueStreamType)->where('study_id',$studyId)->delete();
+		$baseRatesMapping = $baseRatesPerMonths;
+		// $baseRatesMapping = HArr::getFirstOfYear($baseRatesPerMonths);
+		$bankLendingMarginRates=$generalAndReserveAssumption->getBankLendingMarginRates();
+
+		
+		
+		 $baseRatesMapping = HArr::isAllValuesEqual($baseRatesMapping,$bankLendingMarginRates);
+		$totalMonthlyLoanAmounts = [];
+		// $time = 0 ;
+	//	$isAtEnd = true ;
+//		$start = microtime(true);
+
+		foreach($operationDurationPerYear as $yearIndex => $yearMonthIndexes){
+			$baseRatesMapping = is_array($baseRatesMapping) ? HArr::filterByYearIndex($baseRatesMapping,$yearIndexWithYear,$yearIndex) :  $baseRatesMapping;
+		//	$originalBaseRates = $baseRatesMapping;
+			foreach($yearMonthIndexes as $monthIndex => $monthlyZeroOrOne ){
+
+				foreach($loans as $index => $loanArr ){
+					$revenueStreamBreakdownId = $loanArr['id'];
+					$counter ++ ;
+					$currentMonthlyLoanAmount = $loanArr['loan_amounts'][$yearIndex] / count($yearMonthIndexes) ;
+					if($currentMonthlyLoanAmount <= 0){
+						continue ;
+					}
+					$totalMonthlyLoanAmounts[$monthIndex]  = isset($totalMonthlyLoanAmount[$monthIndex]) ? $totalMonthlyLoanAmount[$monthIndex] +  $currentMonthlyLoanAmount : $currentMonthlyLoanAmount ;
+					
+			//		$revenueStreamBreakdown = $leasingRevenueStreams->where('id',$revenueStreamBreakdownId)->first();
+				//	$hasCategoryId = method_exists($revenueStreamBreakdown,'getCategoryId') ;
+						$revenueCategoryId = $loanArr['category'];
+						$currentMonth = $dateIndexWithDate[$monthIndex];
+						$currentMonthFormatted = Carbon::make($currentMonth)->format('Y-m-d');
+				
+						$currentMarginRate = $loanArr['margin_rate'];
+						$baseRatePortfolioLoans = is_array($baseRatesMapping) ? $this->sumBaseRateWithMarginRate($baseRatesMapping,$currentMarginRate) : $baseRatesMapping ;
+						$gracePeriod = 0;
+						$tenor = $loanArr['tenor'];
+						$interestPaymentIntervalName = 'monthly';
+						$installmentPaymentIntervalName = 'monthly';
+						if($revenueCategoryId == 'monthly-interest-and-quarterly-principle'){
+							$interestPaymentIntervalName = 'monthly';
+							$installmentPaymentIntervalName = 'quartly';
+						}elseif($revenueCategoryId == 'quarterly-interest-and-principle'){
+							$interestPaymentIntervalName = 'quartly';
+							$installmentPaymentIntervalName = 'quartly';
+						}
+						$stepUp = 0;
+						$stepDown = 0;
+						$stepInterval = 'monthly';
+						$loanType = 'normal';
+						// $loanNature = $revenueStreamBreakdown->getLoanNature();
+						$loanService = $calculateVariableLoanAtEndService ; 
+						/**
+						 * @var CalculateVariableLoanAtEndService $loanService
+						 */
+						// ;
+						$currentPortfolioLoans=[];
+						$currentPortfolioLoans=$loanService->__calculate([] ,-1,$loanType, $currentMonthFormatted, $currentMonthlyLoanAmount,$baseRatePortfolioLoans, $currentMarginRate,  $tenor, $installmentPaymentIntervalName,$interestPaymentIntervalName, $stepUp,$stepInterval ,$stepDown ,  $stepInterval ,$gracePeriod,$monthIndex ,$dateIndexWithDate);
+						
+					
+							$finalResult = $currentPortfolioLoans['final_result']??[];
+							
+							unset($finalResult['totals']);
+							$currentPortfolioLoans = $finalResult ;
+							
+						
+						if(count($currentPortfolioLoans)){
+							$currentPortfolioLoans['study_id'] = $studyId ;
+							$currentPortfolioLoans['company_id'] = $companyId ;
+							$currentPortfolioLoans['month_as_index'] = $monthIndex ;
+							$currentPortfolioLoans['revenue_stream_id'] =$revenueStreamBreakdownId ;
+							$currentPortfolioLoans['revenue_stream_category_id'] =$revenueCategoryId ;
+							$currentPortfolioLoans['portfolio_loan_type'] ='portfolio';
+							$currentPortfolioLoans['revenue_stream_type'] =$revenueStreamType;
+							$portfolioLoans[]=collect($currentPortfolioLoans)->map(function($item,$keyName){
+								if(is_array($item)){
+									return json_encode($item);
+								}
+								return $item;
+							})->toArray();
+						}
+						if( $leasingEclAndNewPortfolioFundingRate && count($totalMonthlyLoanAmounts)){
+							$counter++;
+							$newLoanFundingRate = $leasingEclAndNewPortfolioFundingRate->getNewLoansFundingRatesAtYearIndex($yearIndex);
+
+							$currentMarginRate = $generalAndReserveAssumption->getBankLendingMarginRatesAtYearIndex($yearIndex);
+					
+					
+							$currentMonthlyLoanAmount = $totalMonthlyLoanAmounts[$monthIndex];
+							$currentMonthlyLoanAmount = $currentMonthlyLoanAmount * $newLoanFundingRate / 100 ;
+							$baseRateBankPortfolioLoans = is_array($baseRatesMapping) ? $this->sumBaseRateWithMarginRate($baseRatesMapping,$currentMarginRate) : $baseRatesMapping ;
+							
+								$currentPortfolioLoans=$loanService->__calculate([] ,-1,$loanType, $currentMonthFormatted, $currentMonthlyLoanAmount,$baseRateBankPortfolioLoans, $currentMarginRate,  $tenor, $installmentPaymentIntervalName,$interestPaymentIntervalName, $stepUp,$stepInterval ,$stepDown ,  $stepInterval ,$gracePeriod ,$monthIndex,$dateIndexWithDate);
+								$finalResult = $currentPortfolioLoans['final_result']??[];
+								unset($finalResult['totals']);
+								$currentPortfolioLoans = $finalResult;
+						
+							if(count($currentPortfolioLoans)){
+								$currentPortfolioLoans['study_id'] = $studyId ;
+								$currentPortfolioLoans['company_id'] = $companyId ;
+								$currentPortfolioLoans['month_as_index'] = $monthIndex ;
+								$currentPortfolioLoans['revenue_stream_id'] =$revenueStreamBreakdownId ;
+								$currentPortfolioLoans['revenue_stream_category_id'] =$revenueCategoryId ;
+								$currentPortfolioLoans['portfolio_loan_type'] ='bank_portfolio';
+								$currentPortfolioLoans['revenue_stream_type'] =$revenueStreamType;
+								$portfolioLoans[]=collect($currentPortfolioLoans)->map(function($item,$keyName){
+								if(is_array($item)){
+									return json_encode($item);
+								}
+								return $item;
+							})->toArray();
+							}
+							
+							
+						
+					
+						}
+						
+						
+						
+						
+						
+					
+				}
+				
+		
+				
+				
+				
+			}
+			
+		}
+		
+		DB::connection('non_banking_service')->table('loan_schedule_payments')->insert($portfolioLoans);
+	}
+	
+	public function getStudyDurationPerYearFromIndexesForView() 
+	{
+		$datesAsStringAndIndex = $this->getDatesAsStringAndIndex();
+		$datesIndexWithYearIndex = App('datesIndexWithYearIndex');
+		$yearIndexWithYear = App('yearIndexWithYear');
+		$dateIndexWithDate = App('dateIndexWithDate');
+		$dateWithMonthNumber = App('dateWithMonthNumber');
+		return $this->getStudyDurationPerMonth($datesAsStringAndIndex,$datesIndexWithYearIndex,$yearIndexWithYear,$dateIndexWithDate,$dateWithMonthNumber,true,false);
+		
+	}			
+	public function getFinancialYearEndMonthNumber():int
+	 {
+		$financialYearStartMonthName = $this->financialYearStartMonth();
+		if($financialYearStartMonthName =='january')
+			return 12;
+		if($financialYearStartMonthName =='april')
+			return 3;
+		if($financialYearStartMonthName =='july')
+			return 6;
+		
+	 }
+	 /* 
+	* * type -> manpower for example 
+	* * expense_type -> cost-of-service for example
+	 */
+	public function departmentsFor(string $type )
+	{
+		return Department::where('study_id',$this->id)->where('type',$type)->get();
+	}
+	public function positions()
+	{
+		return $this->hasMany(Position::class,'study_id','id');
+	}
+	public static function getProjectionTitles()
+	{
+		return [
+			'all'=>__('All'),
+			'direct-factoring'=>__('Direct Factoring'),
+			'ijara'=>__('Ijara'),
+			'leasing'=>__('Leasing'),
+			'reverse-factoring'=>__('Reverse Factoring')
+		];
+	}
+	
+	public function getStudyDurationPerYearFromIndexes() 
+	{
+		$datesAsStringAndIndex = $this->getDatesAsStringAndIndex();
+		$datesIndexWithYearIndex = App('datesIndexWithYearIndex');
+		$yearIndexWithYear = App('yearIndexWithYear');
+		$dateIndexWithDate = App('dateIndexWithDate');
+		$dateWithMonthNumber = App('dateWithMonthNumber');
+		return $this->getStudyDurationPerMonth($datesAsStringAndIndex,$datesIndexWithYearIndex,$yearIndexWithYear,$dateIndexWithDate,$dateWithMonthNumber,false);
+		
+	}	
+	public function updateExpensesOfSales()
+	{
+		$this->generateRelationDynamically('percentage_of_sales','Expense')->each(function($expense){
+			$expenseAsPercentageEquation = new ExpenseAsPercentageEquation;
+			$percentageOf = $expense->getPercentageOf();
+			$revenueStreamTypes = $expense->getRevenueStreamTypes();
+			$streamCategoryIds = $expense->getStreamCategoryIds();
+			$startDateAsIndex = $expense->getStartDateAsIndex();
+			$monthlyPercentage = $expense->getMonthlyPercentage();
+			$endDateAsIndex = $expense->getEndDateAsIndex();
+			$vatRate = $expense->getVatRate();
+			$isDeductible=  $expense->isDeductible();
+			$paymentTerms = $expense->getPaymentTerm();
+			$withholdTaxRate = $expense->getWithholdTaxRate();
+			$result['expense_as_percentages']=$expenseAsPercentageEquation->calculate($this->id,$percentageOf,$revenueStreamTypes,$streamCategoryIds,$startDateAsIndex,$endDateAsIndex,$monthlyPercentage,$paymentTerms,$vatRate,$isDeductible,$withholdTaxRate);
+			$expense->update($result);
+		});
+	}
+	public  function calculateManpowerResult(array $dateAsIndexes , int $existingCount , array $hiringCounts , int $studyStartIndex,float $monthlyNetSalary,float $salaryTaxesRate , float $socialInsuranceRate )
+	{
+		$yearWithItsIndexes = $this->getOperationDurationPerYearFromIndexesForAllStudyInfo();
+		$monthsWithItsYear = $this->getMonthsWithItsYear($yearWithItsIndexes) ;
+		$generalAndReserveAssumption = $this->generalAndReserveAssumption;
+		$currentIndex = 0 ;
+		$annuallyIncrease = $monthlyNetSalary ;
+		$accumulatedManpowerCounts = [];
+		$monthlySalariesPayments = [];
+		$salaryExpenses =[];
+		foreach($dateAsIndexes as  $dateAsIndex){
+			$currentYearIndex = $monthsWithItsYear[$dateAsIndex]  ;
+			$annualIncreaseRate = $generalAndReserveAssumption->getSalariesAnnualIncreaseRateAtYearIndex($currentYearIndex+1) ;  
+			$previousHiringCount =$accumulatedManpowerCounts[$dateAsIndex-1] ?? $existingCount;
+			$accumulatedManpowerCounts[$dateAsIndex] = $hiringCounts[$dateAsIndex] + $previousHiringCount   ;
+			if($currentIndex%12 == 0 && $currentIndex != 0){
+				$annuallyIncrease = $annuallyIncrease * (1+($annualIncreaseRate/100)) * $accumulatedManpowerCounts[$dateAsIndex];   
+			}
+			$monthlySalariesPayments[$dateAsIndex] = $annuallyIncrease ;
+			$salaryExpenses[$dateAsIndex] = $annuallyIncrease / (1 - ($salaryTaxesRate + $socialInsuranceRate));
+			$currentIndex++;
+			
+		}
+		return [
+			'accumulated_manpower_counts'=>$accumulatedManpowerCounts,
+			'manpower_salaries'=>$monthlySalariesPayments,
+			'salary_expenses'=>$salaryExpenses,
+		];
+	}
+	public function recalculateManpower()
+	{
+		$positions = $this->positions ;
+		/**
+		 * @var Position $position
+		 */
+		$operationStartDateAsIndex = $this->operation_start_month;
+		$salaryTaxesRate = $this->getSalaryTaxesRate() / 100;
+        $socialInsuranceRate = $this->getSocialInsuranceRate() /100 ;
+		foreach($positions as $position){
+			$positionArr = [];
+			$hiringCounts = $position->getHiringCounts();
+			$currentExistingCount = $position->getExistingCount();
+			$dateAsIndexes = array_keys($hiringCounts);
+			$monthlyNetSalary = $position->getMonthlyNetSalary();
+			$additionalDatabaseResult =  $this->calculateManpowerResult($dateAsIndexes,$currentExistingCount,$hiringCounts,$operationStartDateAsIndex,$monthlyNetSalary,$salaryTaxesRate,$socialInsuranceRate);
+			foreach($additionalDatabaseResult as $columnName => $payload){
+				$positionArr[$columnName] = $payload;
+			}
+			$position->update($positionArr);
+		}
+		
+		
+	}
+	
+}

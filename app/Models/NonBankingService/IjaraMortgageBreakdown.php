@@ -1,0 +1,66 @@
+<?php
+namespace App\Models\NonBankingService;
+
+use App\Models\Traits\Scopes\CompanyScope;
+use App\Models\Traits\Scopes\NonBankingServices\BelongsToStudy;
+use App\Traits\HasBasicStoreRequest;
+use Illuminate\Database\Eloquent\Model;
+
+class  IjaraMortgageBreakdown extends Model
+{
+	use HasBasicStoreRequest,CompanyScope , BelongsToStudy ;
+	protected $connection= 'non_banking_service';
+
+	protected $guarded = ['id'];
+	protected $casts =[
+		'percentage_payload'=>'array',
+		'loan_amounts'=>'array',
+	];
+	public function getPercentageAtYearIndex(int $yearIndex)
+	{
+		return $this->percentage_payload[$yearIndex] ?? 0  ; 
+	}
+	public function getLoanAmountPayloadAtYearIndex(int $yearIndex)
+	{
+		return $this->loan_amounts[$yearIndex] ?? 0  ; 
+	}
+	public function getInstallmentInterval()
+	{
+		return $this->installment_interval;
+	}
+	public function getMarginRate()
+	{
+		return $this->margin_rate?:0;
+	}
+	public function getTenor()
+	{
+		return $this->tenor?:0;
+	}
+	public function getGracePeriod()
+	{
+		return $this->grace_period?:0;
+	}
+	public function getStepUp()
+	{
+		return 0;
+	}
+	public function getStepDown()
+	{
+		return 0;
+	}
+	public function getStepInterval()
+	{
+		return 'annually';
+	}
+	public function getLoanType()
+	{
+		return 'normal';
+	}
+	
+	public function getLoanNature()
+	{
+		return 'fixed-at-end';
+	}
+	
+		
+}
