@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands;
 
-
 use App\Models\TablesField;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Schema;
