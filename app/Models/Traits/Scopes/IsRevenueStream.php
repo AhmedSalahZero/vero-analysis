@@ -29,6 +29,10 @@ trait IsRevenueStream
 	{
 		return $this->margin_rate;
 	}
+	public function getSensitivityMarginRate():float
+	{
+		return $this->sensitivity_margin_rate;
+	}
 	public function getInstallmentInterval():string 
 	{
 		return $this->installment_interval;

@@ -35,14 +35,11 @@ class  GeneralAndReserveAssumption extends Model
 				 * @var Study $study 
 				 */
 				if($generalAndReserveAssumption->isDirty('cbe_lending_corridor_rates') || $generalAndReserveAssumption->isDirty('bank_lending_margin_rates')){
-					// $formattedLoanAmounts = [];
-					// $study->leasingRevenueStreamBreakdown->each(function($leasingRevenueStream) use (&$formattedLoanAmounts){
-					// 	$revenueId = $leasingRevenueStream->id ; 
-					// 	$loanAmounts = $leasingRevenueStream->loan_amounts;
-					// 	$formattedLoanAmounts[$revenueId] = $loanAmounts;
-					// });
+					
 					$study->storeFixedLoans(Study::LEASING,'leasingRevenueStreamBreakdown','leasingEclAndNewPortfolioFundingRate');
 					$study->storeFixedLoans(Study::IJARA,'ijaraMortgageBreakdowns','ijaraMortgageNewPortfolioFundingStructure');
+					$study->storeVariableLoans(Study::REVERSE_FACTORING,'reverseFactoringBreakdowns','reverseFactoringNewPortfolioFundingStructure');
+					$study->refreshDirectFactoringLoans();
 					$study->updateExpensesOfSales();
 				}
 				if($study->isDirty('salaries_annual_increase_rates')){

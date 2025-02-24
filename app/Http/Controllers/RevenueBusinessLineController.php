@@ -107,7 +107,8 @@ class RevenueBusinessLineController extends Controller
 	
 	public function editForm(Company $company,  $revenueBusinessLine ,  $serviceCategory = null, $serviceItem = null )
     {
-	
+		$serviceItemModel = $serviceItem ? ServiceItem::find($serviceItem) : null;
+		$serviceCategoryModel = $serviceCategory ? ServiceCategory::find($serviceCategory) : null;
 		return view(
             'admin.revenue-business-line.create',
             array_merge([
@@ -115,6 +116,8 @@ class RevenueBusinessLineController extends Controller
 				'revenueBusinessLineId'=>$revenueBusinessLine , 
 				'serviceCategoryId'=>$serviceCategory , 
 				'serviceItemId'=>$serviceItem, 
+				'serviceItem'=>$serviceItemModel,
+				'serviceCategory'=>$serviceCategoryModel
 				
 				
 			], RevenueBusinessLine::getViewVars())
@@ -135,13 +138,17 @@ class RevenueBusinessLineController extends Controller
 		$oldServiceItem = ServiceItem::find($request->get('old_service_item_id'));
 		if($oldServiceCategory && !$oldServiceItem){
 			$oldServiceCategory->revenue_business_line_id = $request->get('revenue_business_line_id');
+			$oldServiceCategory->name = $request->get('service_category_name');
 			$oldServiceCategory->save();
+			dd('good');
 		}
 		if($oldServiceCategory && $oldServiceItem){
 			$oldServiceItem->service_category_id = $request->get('service_category_id');
+			$oldServiceItem->name = $request->get('service_item_name');
 			$oldServiceItem->save();
 			$newServiceCategory = ServiceCategory::find($request->get('service_category_id'));
 			$newServiceCategory->revenue_business_line_id = $request->get('revenue_business_line_id');
+		
 			$newServiceCategory->save();
 		}
 		

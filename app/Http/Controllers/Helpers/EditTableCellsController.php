@@ -28,9 +28,9 @@ class EditTableCellsController extends Controller
         $relationName = $request->get('relationName');
         $modelNamespace = getModelNamespace();
         $model = ($modelNamespace.$modelName)::find($modelId);
-      
+		
         $model = $isRelation ? $model->{$relationName} : $model ;
-          if($isCollectionRelation)
+		if($isCollectionRelation)
             {
                 $model = $model->where('id',$collectionItemId)->first();
             }

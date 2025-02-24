@@ -88,6 +88,7 @@ class DashboardController extends Controller
 
 		
 		$testLoopIndex = 0 ;
+	
 		foreach($loanSchedulePayments as $loanSchedulePaymentAsStdClass ){
 			$portfolioLoanType = $loanSchedulePaymentAsStdClass->portfolio_loan_type;
 			$isPortfolio = $portfolioLoanType == 'portfolio'; 
@@ -110,10 +111,12 @@ class DashboardController extends Controller
 					//		 $resultPerRevenueStreamType[$revenueStreamType]['total'] = isset($resultPerRevenueStreamType[$revenueStreamType]['total']) ? $resultPerRevenueStreamType[$revenueStreamType]['total'] +  $interestAmount : $interestAmount;
 							 
 									
-							$formattedResult['sales_revenue'][$currentYearIndex] = isset($formattedResult['sales_revenue'][$currentYearIndex]) ? $formattedResult['sales_revenue'][$currentYearIndex] + $interestAmount : $interestAmount ;
+							$formattedResult['sales_revenue'][$currentYearIndex] = $salesRevenuePerTypes['total_revenue'][$currentYearIndex] ;
 	
 							$currentDirectFactoringInterestRevenue  =$formattedDirectFactoring['interest_revenue'][$currentYearIndex] ?? 0 ;
-							$formattedResult['sales_revenue'][$currentYearIndex] = $formattedResult['sales_revenue'][$currentYearIndex] + $currentDirectFactoringInterestRevenue ;
+							$formattedResult['sales_revenue'][$currentYearIndex] = $formattedResult['sales_revenue'][$currentYearIndex] 
+							//+ $currentDirectFactoringInterestRevenue
+							 ;
 							$currentSalesRevenue = $formattedResult['sales_revenue'][$currentYearIndex] ;
 							$previousSalesRevenue = $formattedResult['sales_revenue'][$currentYearIndex-1] ?? 0 ;
 							$formattedResult['growth_rate'][$currentYearIndex] = $previousSalesRevenue ? (($currentSalesRevenue / $previousSalesRevenue)-1)*100 : 0 ;
@@ -128,7 +131,7 @@ class DashboardController extends Controller
 				}
 			
 		}
-	
+	// dd($formattedResult,$salesRevenuePerTypes);
 		$salaryExpenses = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('departments')
 		->join('positions','positions.department_id','=','departments.id')
 		->selectRaw('expense_type,salary_expenses,expense_type')->where('type','manpower')->where('departments.study_id',$study->id)->get() ;
@@ -212,9 +215,11 @@ class DashboardController extends Controller
 			$formattedResult['net_profit_percentage_of_sales'][$yearIndex] = $currentSalesRevenue ? $formattedResult['net_profit'][$yearIndex] / $currentSalesRevenue  *100 :0 ;  
 			
 		}
+		// dd($salesRevenuePerTypes);
 		$chartsFormatted =$this->formatForTheeLineChart($resultPerRevenueStreamType); 
 		$lineChart = $chartsFormatted['line_chart'];
 		$barChart = $chartsFormatted['bar_chart'];
+		// dd($formattedResult);
 
 		return view('non_banking_services.dashboard.dashboard',
 	[

@@ -22,17 +22,17 @@ class  ReverseFactoringRevenueStreamBreakdown extends Model
 		'loan_amounts'=>'array',
 		// 'growth_rate'=>'array'
 	];
-	public function loanSchedulePayments()
-	{
-		return $this->hasMany(LoanScheduleSettlement::class,'revenue_stream_id','id');
-	}
+	// public function loanSchedulePayments()
+	// {
+	// 	return $this->hasMany(LoanScheduleSettlement::class,'revenue_stream_id','id');
+	// }
 	public static function boot()
 		{
 			parent::boot();
 			static::deleted(function(self $reverseRevenueStreamBreakdown){
-				$reverseRevenueStreamBreakdown->loanSchedulePayments->each(function(LoanScheduleSettlement $loanScheduleSettlement) {
-					$loanScheduleSettlement->delete();
-				});
+				// $reverseRevenueStreamBreakdown->loanSchedulePayments->each(function(LoanScheduleSettlement $loanScheduleSettlement) {
+				// 	$loanScheduleSettlement->delete();
+				// });
 			});
 		}
 	// public function category()

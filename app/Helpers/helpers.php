@@ -7711,14 +7711,17 @@ function getExpenseCategoriesForSelect2():array
 }
 function getExpenseTypes():array 
 {
+	$isNonBanking = hasMiddleware('isNonBankingService') ;
+	$costOfGoodsText = $isNonBanking ? __('Cost Of Service') : __('Cost Of Goods Sold');
 	return [
-		'cost-of-service'=>__('Cost Of Goods Sold'),
+		'cost-of-service'=>$costOfGoodsText,
 		'marketing-expense'=>__('Market Expense'),
 		'other-operation-expense'=>__('Other Operations Expenses'),
 		'sales-expense'=>__('Sales Expense'),
 		'general-expense'=>__('General Expense')
 	];
 }
+
 const SHAREABLE_LINKS = 'sharable-links';
 
 function generateShareableLink($shareableType): string

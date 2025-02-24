@@ -246,14 +246,14 @@ use App\Models\NonBankingService\LeasingCategory;
                                     </td>
                                     <?php
                                     $columnIndex = 0 ;
-							
+
                                     ?>
                                     <?php $__currentLoopData = $yearsWithItsMonths; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $year=>$monthsForThisYearArray): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-									<?php
-									
-                                    
-									$currentVal = $model->getLeasingGrowthRateAtYearIndex($year) ;
-									?>
+                                    <?php
+
+
+                                    $currentVal = $model->getLeasingGrowthRateAtYearIndex($year) ;
+                                    ?>
 
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
@@ -364,12 +364,7 @@ use App\Models\NonBankingService\LeasingCategory;
                                                 <div class="input-group input-group-sm align-items-center justify-content-center flex-nowrap">
                                                     <div class="input-hidden-parent">
                                                         <input readonly class="form-control copy-value-to-his-input-hidden  expandable-amount-input  repeat-to-right-input-formatted  " type="text" value="<?php echo e(number_format($currentLoanTotal,0)); ?>" data-column-index="<?php echo e($columnIndex); ?>">
-                                                        <input
-														js-recalculate-equity-funding-value
-														
-														 type="hidden" 
-														
-														class="repeat-to-right-input-hidden input-hidden-with-name  total-loans-hidden" value="<?php echo e($currentLoanTotal); ?>" data-column-index="<?php echo e($columnIndex); ?>" name="ee">
+                                                        <input js-recalculate-equity-funding-value type="hidden" class="repeat-to-right-input-hidden input-hidden-with-name  total-loans-hidden" value="<?php echo e($currentLoanTotal); ?>" data-column-index="<?php echo e($columnIndex); ?>" name="ee">
                                                     </div>
 
                                                     <span class="ml-2 currency-class">
@@ -409,7 +404,7 @@ use App\Models\NonBankingService\LeasingCategory;
 <?php endif; ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
-                        
+
 
 
                     </div>
@@ -739,11 +734,11 @@ use App\Models\NonBankingService\LeasingCategory;
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
                                              <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['currentVal' => $leasingEclAndNewPortfolioFundingRate ? $leasingEclAndNewPortfolioFundingRate->getEquityFundingValuesAtYearIndex($year):0,'classes' => 'only-greater-than-or-equal-zero-allowed ','formattedInputClasses' => 'equity-funding-formatted-value-class','isPercentage' => false,'name' => 'equity_funding_values['.$year.']','columnIndex' => $columnIndex]]); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['numberFormatDecimals' => 0,'currentVal' => $leasingEclAndNewPortfolioFundingRate ? $leasingEclAndNewPortfolioFundingRate->getEquityFundingValuesAtYearIndex($year):0,'classes' => 'only-greater-than-or-equal-zero-allowed ','formattedInputClasses' => 'equity-funding-formatted-value-class','isPercentage' => false,'name' => 'equity_funding_values['.$year.']','columnIndex' => $columnIndex]]); ?>
 <?php $component->withName('repeat-right-dot-inputs'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($leasingEclAndNewPortfolioFundingRate ? $leasingEclAndNewPortfolioFundingRate->getEquityFundingValuesAtYearIndex($year):0),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed '),'formatted-input-classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('equity-funding-formatted-value-class'),'is-percentage' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('equity_funding_values['.$year.']'),'columnIndex' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($columnIndex)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['numberFormatDecimals' => 0,'currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($leasingEclAndNewPortfolioFundingRate ? $leasingEclAndNewPortfolioFundingRate->getEquityFundingValuesAtYearIndex($year):0),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed '),'formatted-input-classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('equity-funding-formatted-value-class'),'is-percentage' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('equity_funding_values['.$year.']'),'columnIndex' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($columnIndex)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
@@ -789,11 +784,6 @@ use App\Models\NonBankingService\LeasingCategory;
 
                                 </tr>
 
-
-
-
-
-
                                 <tr data-repeat-formatting-decimals="0" data-repeater-style>
 
 
@@ -811,11 +801,11 @@ use App\Models\NonBankingService\LeasingCategory;
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
                                              <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['formattedInputClasses' => 'new-loans-funding-formatted-value-class','currentVal' => $leasingEclAndNewPortfolioFundingRate ? $leasingEclAndNewPortfolioFundingRate->getNewLoansFundingValuesAtYearIndex($year):0,'classes' => 'only-greater-than-or-equal-zero-allowed','isPercentage' => false,'name' => 'new_loans_funding_values['.$year.']','columnIndex' => $columnIndex]]); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['numberFormatDecimals' => 0,'formattedInputClasses' => 'new-loans-funding-formatted-value-class','currentVal' => $leasingEclAndNewPortfolioFundingRate ? $leasingEclAndNewPortfolioFundingRate->getNewLoansFundingValuesAtYearIndex($year):0,'classes' => 'only-greater-than-or-equal-zero-allowed','isPercentage' => false,'name' => 'new_loans_funding_values['.$year.']','columnIndex' => $columnIndex]]); ?>
 <?php $component->withName('repeat-right-dot-inputs'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['formatted-input-classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('new-loans-funding-formatted-value-class'),'currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($leasingEclAndNewPortfolioFundingRate ? $leasingEclAndNewPortfolioFundingRate->getNewLoansFundingValuesAtYearIndex($year):0),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed'),'is-percentage' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('new_loans_funding_values['.$year.']'),'columnIndex' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($columnIndex)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['numberFormatDecimals' => 0,'formatted-input-classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('new-loans-funding-formatted-value-class'),'currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($leasingEclAndNewPortfolioFundingRate ? $leasingEclAndNewPortfolioFundingRate->getNewLoansFundingValuesAtYearIndex($year):0),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed'),'is-percentage' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('new_loans_funding_values['.$year.']'),'columnIndex' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($columnIndex)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>

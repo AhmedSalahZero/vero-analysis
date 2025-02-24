@@ -2,9 +2,9 @@
 namespace App\Models\NonBankingService;
 
 use App\Models\LoanScheduleSettlement;
-use App\Models\Traits\Scopes\NonBankingServices\BelongsToStudy;
 use App\Models\Traits\Scopes\CompanyScope;
 use App\Models\Traits\Scopes\IsRevenueStream;
+use App\Models\Traits\Scopes\NonBankingServices\BelongsToStudy;
 use App\Traits\HasBasicStoreRequest;
 use Illuminate\Database\Eloquent\Model;
 
@@ -17,17 +17,17 @@ class  LeasingRevenueStreamBreakdown extends Model
 		'loan_amounts'=>'array',
 		// 'growth_rate'=>'array'
 	];
-	public function loanSchedulePayments()
-	{
-		return $this->hasMany(LoanScheduleSettlement::class,'revenue_stream_id','id');
-	}
+	// public function loanSchedulePayments()
+	// {
+	// 	return $this->hasMany(LoanScheduleSettlement::class,'revenue_stream_id','id');
+	// }
 	public static function boot()
 		{
 			parent::boot();
 			static::deleted(function(self $leasingRevenueStreamBreakdown){
-				$leasingRevenueStreamBreakdown->loanSchedulePayments->each(function(LoanScheduleSettlement $loanScheduleSettlement) {
-					$loanScheduleSettlement->delete();
-				});
+				// $leasingRevenueStreamBreakdown->loanSchedulePayments->each(function(LoanScheduleSettlement $loanScheduleSettlement) {
+				// 	$loanScheduleSettlement->delete();
+				// });
 			});
 		}
 	public function category()

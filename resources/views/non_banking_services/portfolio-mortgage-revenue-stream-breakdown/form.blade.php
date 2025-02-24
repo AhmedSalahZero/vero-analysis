@@ -587,7 +587,7 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
                                     @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
-                                            <x-repeat-right-dot-inputs :currentVal="$model->portfolioMortgageNewPortfolioFundingStructure ? $model->portfolioMortgageNewPortfolioFundingStructure->getEquityFundingValuesAtYearIndex($year):0" :classes="'only-greater-than-or-equal-zero-allowed '" :formatted-input-classes="'equity-funding-formatted-value-class'" :is-percentage="false" :name="'portfolioMortgageNewPortfolioFundingStructure['.'equity_funding_values'.']['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :numberFormatDecimals="0" :currentVal="$model->portfolioMortgageNewPortfolioFundingStructure ? $model->portfolioMortgageNewPortfolioFundingStructure->getEquityFundingValuesAtYearIndex($year):0" :classes="'only-greater-than-or-equal-zero-allowed '" :formatted-input-classes="'equity-funding-formatted-value-class'" :is-percentage="false" :name="'portfolioMortgageNewPortfolioFundingStructure['.'equity_funding_values'.']['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
                                         </div>
                                     </td>
@@ -649,7 +649,7 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
 
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
-                                            <x-repeat-right-dot-inputs :formatted-input-classes="'new-loans-funding-formatted-value-class'" :currentVal="$model->portfolioMortgageNewPortfolioFundingStructure ? $model->portfolioMortgageNewPortfolioFundingStructure->getNewLoansFundingValuesAtYearIndex($year):0 " :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="false" :name="'portfolioMortgageNewPortfolioFundingStructure['.'new_loans_funding_values'.']['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :numberFormatDecimals="0" :formatted-input-classes="'new-loans-funding-formatted-value-class'" :currentVal="$model->portfolioMortgageNewPortfolioFundingStructure ? $model->portfolioMortgageNewPortfolioFundingStructure->getNewLoansFundingValuesAtYearIndex($year):0 " :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="false" :name="'portfolioMortgageNewPortfolioFundingStructure['.'new_loans_funding_values'.']['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
                                         </div>
                                     </td>

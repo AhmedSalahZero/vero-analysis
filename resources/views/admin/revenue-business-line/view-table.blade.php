@@ -259,7 +259,7 @@ td {
 			
 			 <tr class=" text-center first-tr-bg ">
             <td class=" text-center"><b class="text-capitalize">{{ __('Expand') }}</b></td>
-            <td data-is-collection-relation="0" data-collection-item-id="1" data-db-column-name="name" data-relation-name="BussinessLineName" data-is-relation="1" data-is-json="0" class="text-center header-th max-w-80">
+            <td data-is-collection-relation="0" data-collection-item-id="1" data-db-column-name="name" data-relation-name="BussinessLineName" data-is-relation="0" data-is-json="0" class="text-center header-th max-w-80">
                 {{ __('Name') }}
             </td>
             <td class=" text-center"><b class="text-capitalize">{{ __('Actions') }}</b></td>
@@ -477,6 +477,48 @@ td {
 <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
 <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.22/datatables.min.js"></script>
 <script type="text/javascript" src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+<script>
+$(function(){
+	   $(document).on('blur','.editable',function(){
+					console.log('here');
+                        var columnIndex = this._DT_CellIndex  ? this._DT_CellIndex.column : 0 ;
+                        var tdData = $(this).closest('table').find('.header-th').eq(columnIndex)[0] ;
+                        var dataTableId = $(this).closest('table.main-table-class').attr('id')  ;
+                        var modelName = $(this).parent().data('model-name') || $(this).data('model-name');
+                        var modelId = $(this).parent().data('model-id') || $(this).data('model-id');
+                        var columnName = $(tdData).data('db-column-name') || $(this).data('db-column-name');
+                        var isRelation = $(tdData).data('is-relation') || $(this).data('is-relation');
+                        var isCollectionRelation = $(tdData).data('is-collection-relation') || $(this).data('is-collection-relation');
+                        var collectionItemId = $(tdData).data('collection-item-id') ;
+                        var isJson = $(tdData).data('is-json');
+                        var relationName = $(tdData).data('relation-name') || $(this).data('relation-name');
+                        var data = $(this).text();
+	console.log(tdData ,isRelation,relationName,modelName )
+                        $.ajax({
+                                url:"{{ route('admin.edit.table.cell',getCurrentCompanyId()) }}",
+                                data:{
+                                        "_token":"{{ csrf_token() }}",
+                                        "isRelation":isRelation ,
+                                        "columnName":columnName ,
+                                        "relationName":relationName,
+                                        "data":data,
+                                        'modelName':modelName,
+                                        'modelId':modelId,
+                                        'isJson':isJson,
+                                        "dataTableId":dataTableId,
+                                        "isCollectionRelation":isCollectionRelation,
+                                        "collectionItemId":collectionItemId
+                                },
+                                type:"POST",
+                                success:function(response){
+										
+                                     //   $('#'+response.dataTableId).DataTable().ajax.reload( null, false )
+                                }
+                        })
+                });
+				
+})
+</script>
 <script>
 $('.removetableContainer').closest('.kt-portlet').addClass('removeContainer')
 $('.removetableContainer').closest('.kt-portlet').find('.kt-portlet__body').addClass('removePadding')

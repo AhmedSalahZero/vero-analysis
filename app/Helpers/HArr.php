@@ -548,5 +548,62 @@ class HArr
 		}
 		return $result;
 	}
+	protected static function sumPerIndexes(array $items , array $financialYearsEndMonths){
+		$group_size = 12;
+		$sums = [];
+		$currentIndex = 0;
+		for ($i = 0; $i < count($items); $i += $group_size) {
+			$currentSumIndex = $financialYearsEndMonths[$currentIndex]??null;
+			if(is_null($currentSumIndex)){
+				return $sums;
+			}
+			$sums[$currentSumIndex] = array_sum(array_slice($items, $i, $group_size));
+			$currentIndex++;
+		}
+		return $sums;
+		// dd($sums);
+		// dd($financialYearsEndMonths );
+		// dd($items,$financialYearsEndMonths);
+	}
+	protected static function calculateGrowthRate(array $items):array {
+		$previousValue = 0 ;
+		foreach($items as $dateIndex => $currentValue){
+			$result[$dateIndex] = $previousValue ? ($currentValue - $previousValue) / $previousValue * 100 : 0 ;
+			$previousValue = $currentValue;
+		}
+		return $result;
+	}
+	protected static function calculatePercentageOf(array $salesRevenues , array $items):array {
+		$result = [];
+		foreach($salesRevenues as $dateIndex => $salesValue){
+			$currenItemVal = $items[$dateIndex]??0 ;
+			$result[$dateIndex] =$salesValue ? $currenItemVal  / $salesValue * 100 : 0;
+		}
+		return $result;
+	}
+	public static function addTotalMonthsPerYear(array $items , array $financialYearsEndMonths):array{
+		$result = [];
+		foreach($items as $index => $itemArr){
+			foreach($itemArr as $mainItemId => $mainItemsArr){
+				foreach($mainItemsArr as $subItemId => $subItemData){
+				
+					if($subItemId == 'growth-rate'){
+						$totalOfSalesRevenue = $result[0]['main_items']['sales-revenue']['total']??[];
+						$subItemData['total'] = self::calculateGrowthRate($totalOfSalesRevenue);						
+					}
+					elseif($subItemId == '% Of Revenue'){
+						$totalOfSalesRevenue = $result[0]['main_items']['sales-revenue']['total']??[];
+						$currentItemTotal = array_values($result[$index][$mainItemId])[0]['total']??[];
+						$subItemData['total'] = self::calculatePercentageOf($totalOfSalesRevenue,$currentItemTotal);
+					}
+					else{
+						$subItemData['total'] = self::sumPerIndexes($subItemData['data'],$financialYearsEndMonths);
+					}
+					$result[$index][$mainItemId][$subItemId]=$subItemData;
+				}
+			}
+		}
+		return $result;
+	}
 
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\NonBankingServices;
 
+use App\Helpers\HArr;
 use App\Http\Controllers\Controller;
 use App\Models\Company;
 use App\Models\NonBankingService\Study;
@@ -12,20 +13,18 @@ use Illuminate\Support\Facades\DB;
 class IncomeStatementController extends Controller
 {
     public function index(Company $company , Request $request,Study $study){
-		
+		$start = microtime(true);
 		$dateIndexWithDate = app('dateIndexWithDate');
-		$yearIndexWithYear = app('yearIndexWithYear');
+	//	$yearIndexWithYear = app('yearIndexWithYear');
 		$corporateTaxes = $study->getCorporateTaxesRate() / 100 ;
-		$startDate = $study->getStudyStartDate();
-		$endDate = $study->getStudyEndDate();
+//		$startDate = $study->getStudyStartDate();
+//		$endDate = $study->getStudyEndDate();
 		$formattedExpenses = [];
 		$formattedResult = [];
 		$salesRevenuePerTypes = [];
 		$yearWithItsIndexes = $study->getOperationDurationPerYearFromIndexes();
 		$monthsWithItsYear = $study->getMonthsWithItsYear($yearWithItsIndexes) ;
-		// dd($monthsWithItsYear);
 		$tableDataFormatted = [];
-		$titlesMapping = Study::getProjectionTitles();
 		$expenseMainTitlesMapping = getExpenseTypes(); 
 		$loanSchedulePayments = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('loan_schedule_payments')->selectRaw('portfolio_loan_type,revenue_stream_type,interestAmount')->where('study_id',$study->id)->get()->toArray();
 		$defaultNumericInputClasses = [
@@ -57,6 +56,7 @@ class IncomeStatementController extends Controller
 			'ebt'=>9,
 			'net-profit'=>10
 		];
+		$financialYearsEndMonths = $study->getFinancialYearsEndMonths();
 		$grossProfitOrderIndex = $orderIndexPerExpenseCategory['gross-profit']; 
 		$ebitdaOrderIndex = $orderIndexPerExpenseCategory['ebitda']; 
 		$ebitOrderIndex = $orderIndexPerExpenseCategory['ebit']; 
@@ -86,19 +86,18 @@ class IncomeStatementController extends Controller
 		],$defaultNumericInputClasses);
 	
 		$tableDataFormatted[$grossProfitOrderIndex]['main_items']['gross-profit']['options']['title'] = __('Gross Profit');
-		$tableDataFormatted[$grossProfitOrderIndex]['main_items']['% Of Sales']['options']['title'] = __('% Of Sales');
+		$tableDataFormatted[$grossProfitOrderIndex]['main_items']['% Of Revenue']['options']['title'] = __('% Of Revenue');
 		
 		$tableDataFormatted[$ebitdaOrderIndex]['main_items']['ebitda']['options']['title'] = __('EBITDA');
-		$tableDataFormatted[$ebitdaOrderIndex]['main_items']['% Of Sales']['options']['title'] = __('% Of Sales');
+		$tableDataFormatted[$ebitdaOrderIndex]['main_items']['% Of Revenue']['options']['title'] = __('% Of Revenue');
 		
 		$tableDataFormatted[$ebitOrderIndex]['main_items']['ebit']['options']['title'] = __('EBIT');
-		$tableDataFormatted[$ebitOrderIndex]['main_items']['% Of Sales']['options']['title'] = __('% Of Sales');
+		$tableDataFormatted[$ebitOrderIndex]['main_items']['% Of Revenue']['options']['title'] = __('% Of Revenue');
 		
 		$tableDataFormatted[$ebtOrderIndex]['main_items']['ebt']['options']['title'] = __('EBT');
-		$tableDataFormatted[$ebtOrderIndex]['main_items']['% Of Sales']['options']['title'] = __('% Of Sales');
-		
+		$tableDataFormatted[$ebtOrderIndex]['main_items']['% Of Revenue']['options']['title'] = __('% Of Revenue');
 		$tableDataFormatted[$netProfitOrderIndex]['main_items']['net-profit']['options']['title'] = __('Net Profit');
-		$tableDataFormatted[$netProfitOrderIndex]['main_items']['% Of Sales']['options']['title'] = __('% Of Sales');
+		$tableDataFormatted[$netProfitOrderIndex]['main_items']['% Of Revenue']['options']['title'] = __('% Of Revenue');
 		
 		$resultPerRevenueStreamType = [
 			'all'=>[]
@@ -114,15 +113,14 @@ class IncomeStatementController extends Controller
 			$bankInterestExpenses= (array)json_decode($currentDirectFactoringBreakdown->bank_interest_expense);
 			foreach($monthsWithItsYear as $currentMonthIndex => $currentYearIndex)
 			{
-			
-				$currentYearAsString = $yearIndexWithYear[$currentMonthIndex]??null;
+				$currentMonthAsString = $dateIndexWithDate[$currentMonthIndex];
 				$currentInterestRevenue  = $interestRevenues[$currentMonthIndex]??0;
 				$currentBankInterestExpense = $bankInterestExpenses[$currentMonthIndex]??0;
 				if(!is_null($currentMonthIndex)){
 					$formattedDirectFactoring['interest_revenue'][$currentMonthIndex] = isset($formattedDirectFactoring['interest_revenue'][$currentMonthIndex]) ? $formattedDirectFactoring['interest_revenue'][$currentMonthIndex] +  $currentInterestRevenue : $currentInterestRevenue;
 					$formattedDirectFactoring['bank_interest_expense'][$currentMonthIndex] = isset($formattedDirectFactoring['bank_interest_expense'][$currentMonthIndex]) ? $formattedDirectFactoring['bank_interest_expense'][$currentMonthIndex] +  $currentBankInterestExpense : $currentBankInterestExpense;
-					$resultPerRevenueStreamType['direct-factoring'][$currentYearAsString] = $formattedDirectFactoring['interest_revenue'][$currentMonthIndex];
-					$salesRevenuePerTypes['direct-factoring'][$currentMonthIndex] = $resultPerRevenueStreamType['direct-factoring'][$currentYearAsString];
+					$resultPerRevenueStreamType['direct-factoring'][$currentMonthIndex] = $formattedDirectFactoring['interest_revenue'][$currentMonthIndex];
+					$salesRevenuePerTypes['direct-factoring'][$currentMonthIndex] = $resultPerRevenueStreamType['direct-factoring'][$currentMonthIndex];
 					$currentDirectFactoringAtMonth = $salesRevenuePerTypes['direct-factoring'][$currentMonthIndex];
 					$tableDataFormatted[0]['sub_items']['direct-factoring']['data'][$currentMonthIndex] = $currentDirectFactoringAtMonth ;
 					$salesRevenuePerTypes['total_revenue'][$currentMonthIndex] =  isset($salesRevenuePerTypes['total_revenue'][$currentMonthIndex]) ? $salesRevenuePerTypes['total_revenue'][$currentMonthIndex] + $currentDirectFactoringAtMonth : $currentDirectFactoringAtMonth;
@@ -144,11 +142,10 @@ class IncomeStatementController extends Controller
 				
 			//	$currentMonthIndex = $monthsWithItsYear[$currentMonthIndex]??null;
 				
-				$currentYearAsString = $yearIndexWithYear[$currentMonthIndex] ?? null ;
+				// $currentYearAsString = $yearIndexWithYear[$currentMonthIndex] ?? null ;
 				if(!is_null($currentMonthIndex)){
 					if($isPortfolio){
 						// test function
-						// dd($revenueStreamType);
 						$salesRevenuePerTypes[$revenueStreamType][$currentMonthIndex] =  isset($salesRevenuePerTypes[$revenueStreamType][$currentMonthIndex]) ? $salesRevenuePerTypes[$revenueStreamType][$currentMonthIndex] + $interestAmount : $interestAmount;
 						$salesRevenuePerTypes['total_revenue'][$currentMonthIndex] =  isset($salesRevenuePerTypes['total_revenue'][$currentMonthIndex]) ? $salesRevenuePerTypes['total_revenue'][$currentMonthIndex] + $interestAmount : $interestAmount;
 						$tableDataFormatted[0]['main_items']['sales-revenue']['data'][$currentMonthIndex]  = $salesRevenuePerTypes['total_revenue'][$currentMonthIndex];
@@ -156,7 +153,7 @@ class IncomeStatementController extends Controller
 						$currentValue = $tableDataFormatted[0]['main_items']['sales-revenue']['data'][$currentMonthIndex] ;
 						$tableDataFormatted[0]['main_items']['growth-rate']['data'][$currentMonthIndex] =  $previousRecord ?  ($currentValue - $previousRecord) / $previousRecord * 100 : 0; 
 						$tableDataFormatted[0]['sub_items'][$revenueStreamType]['data'][$currentMonthIndex] = $salesRevenuePerTypes[$revenueStreamType][$currentMonthIndex];
-						$resultPerRevenueStreamType[$revenueStreamType][$currentYearAsString] = isset($resultPerRevenueStreamType[$revenueStreamType][$currentYearAsString]) ? $resultPerRevenueStreamType[$revenueStreamType][$currentYearAsString] + $interestAmount : $interestAmount;
+						$resultPerRevenueStreamType[$revenueStreamType][$currentMonthIndex] = isset($resultPerRevenueStreamType[$revenueStreamType][$currentMonthIndex]) ? $resultPerRevenueStreamType[$revenueStreamType][$currentMonthIndex] + $interestAmount : $interestAmount;
 					//		 $resultPerRevenueStreamType[$revenueStreamType]['total'] = isset($resultPerRevenueStreamType[$revenueStreamType]['total']) ? $resultPerRevenueStreamType[$revenueStreamType]['total'] +  $interestAmount : $interestAmount;
 							 
 									
@@ -260,7 +257,7 @@ class IncomeStatementController extends Controller
 			$currentGrossProfitAtMonthIndex = $formattedResult['gross_profit'][$monthIndex] ?? 0;
 			$formattedResult['gross_profit_percentage_of_sales'][$monthIndex] = $currentSalesRevenue ? $currentGrossProfitAtMonthIndex / $currentSalesRevenue *100 : 0 ;
 			$tableDataFormatted[$grossProfitOrderIndex]['main_items']['gross-profit']['data'][$monthIndex] = $currentGrossProfitAtMonthIndex ;
-			$tableDataFormatted[$grossProfitOrderIndex]['main_items']['% Of Sales']['data'][$monthIndex] = $currentGrossProfitAtMonthIndex ;
+			$tableDataFormatted[$grossProfitOrderIndex]['main_items']['% Of Revenue']['data'][$monthIndex] = $currentGrossProfitAtMonthIndex ;
 			$currentOPEXExpense =$formattedExpenses['other-operation-expense']['total'][$monthIndex]??0; 
 			$currentMarketingExpense =$formattedExpenses['marketing-expense']['total'][$monthIndex]??0; 
 			$currentSalesExpense =$formattedExpenses['sales-expense']['total'][$monthIndex]??0; 
@@ -271,14 +268,14 @@ class IncomeStatementController extends Controller
 			$formattedResult['ebitda_percentage_of_sales'][$monthIndex] =$currentSalesRevenue ?  $currentEbitdaAtYearIndex / $currentSalesRevenue *100 :0;
 			
 			$tableDataFormatted[$ebitdaOrderIndex]['main_items']['ebitda']['data'][$monthIndex] = $currentEbitdaAtYearIndex ;
-			$tableDataFormatted[$ebitdaOrderIndex]['main_items']['% Of Sales']['data'][$monthIndex] = $formattedResult['ebitda_percentage_of_sales'][$monthIndex] ;
+			$tableDataFormatted[$ebitdaOrderIndex]['main_items']['% Of Revenue']['data'][$monthIndex] = $formattedResult['ebitda_percentage_of_sales'][$monthIndex] ;
 			
 			$currentEbitAtYearIndex = $currentEbitdaAtYearIndex -  $currentDepreciationExpense;
 			$formattedResult['ebit'][$monthIndex] = $currentEbitAtYearIndex;
 			$formattedResult['ebit_percentage_of_sales'][$monthIndex] =$currentSalesRevenue ?  $currentEbitAtYearIndex / $currentSalesRevenue *100 :0;
 			
 			$tableDataFormatted[$ebitOrderIndex]['main_items']['ebit']['data'][$monthIndex] = $currentEbitdaAtYearIndex ;
-			$tableDataFormatted[$ebitOrderIndex]['main_items']['% Of Sales']['data'][$monthIndex] = $formattedResult['ebit_percentage_of_sales'][$monthIndex] ;
+			$tableDataFormatted[$ebitOrderIndex]['main_items']['% Of Revenue']['data'][$monthIndex] = $formattedResult['ebit_percentage_of_sales'][$monthIndex] ;
 			
 			
 			$currentFinanceInterestExpense = $formattedExpenses['financial-interest-expense']['total'][$monthIndex]??0;
@@ -287,24 +284,22 @@ class IncomeStatementController extends Controller
 			$formattedResult['ebt_percentage_of_sales'][$monthIndex] =$currentSalesRevenue ?  $currentEbtAtYearIndex / $currentSalesRevenue *100 :0;
 			
 			$tableDataFormatted[$ebtOrderIndex]['main_items']['ebt']['data'][$monthIndex] = $currentEbtAtYearIndex ;
-			$tableDataFormatted[$ebtOrderIndex]['main_items']['% Of Sales']['data'][$monthIndex] = $formattedResult['ebt_percentage_of_sales'][$monthIndex] ;
+			$tableDataFormatted[$ebtOrderIndex]['main_items']['% Of Revenue']['data'][$monthIndex] = $formattedResult['ebt_percentage_of_sales'][$monthIndex] ;
 			
 			
 			$formattedResult['net_profit'][$monthIndex] = $currentEbtAtYearIndex <0 ? $currentEbtAtYearIndex :$currentEbtAtYearIndex * (1-$corporateTaxes)  ;  
 			$formattedResult['net_profit_percentage_of_sales'][$monthIndex] = $currentSalesRevenue ? $formattedResult['net_profit'][$monthIndex] / $currentSalesRevenue  *100 :0 ;  
 			
 			$tableDataFormatted[$netProfitOrderIndex]['main_items']['net-profit']['data'][$monthIndex] = $currentEbitdaAtYearIndex ;
-			$tableDataFormatted[$netProfitOrderIndex]['main_items']['% Of Sales']['data'][$monthIndex] = $formattedResult['net_profit_percentage_of_sales'][$monthIndex] ;
+			$tableDataFormatted[$netProfitOrderIndex]['main_items']['% Of Revenue']['data'][$monthIndex] = $formattedResult['net_profit_percentage_of_sales'][$monthIndex] ;
 			
 			
 			}
 			
 			
 		}
-		
-		// dd($salesRevenuePerTypes,$tableDataFormatted);
 		$studyMonthsForViews=$study->getStudyDurationPerYearFromIndexesForView();
-		// dd($tableDataFormatted,$formattedExpenses);
+		$tableDataFormatted = HArr::addTotalMonthsPerYear($tableDataFormatted,$financialYearsEndMonths);
 		ksort($tableDataFormatted);
 		
         return view('non_banking_services.income-statement.forecast', [

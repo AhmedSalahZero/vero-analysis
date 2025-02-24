@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Console\Commands;
-
 use App\Helpers\HArr;
 use App\Helpers\HDate;
 use App\Http\Controllers\FinancialStatementController;
@@ -113,8 +112,14 @@ class TestCommand extends Command
 	dd('good');
 		
 	}
+	public function convertFlatRateToDecreasingRate()
+	{
+		
+	}
 	public function handle()
 	{
+		
+	
 		$this->convertIncomeStatementDatesToIndexes();
 		return 'done';
 		$loanData =  [

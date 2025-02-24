@@ -137,9 +137,21 @@ use MathPHP\Statistics\Correlation ;
 
 
                                 <div class="row">
-                                    <div class="col-md-12">
+                                    <div class="col-md-4">
                                         <h3 class="font-weight-bold text-black form-label kt-subheader__title small-caps mr-5 text-primary text-nowrap"> <?php echo e(__('Income Statement Summary')); ?> <?php echo e(__('Fig In Million')); ?> </h3>
                                     </div>
+									<div  class="col-md-8 mb-3">
+										<?php
+											$currentModalId = 'spread-rate-sensitivity';
+											$currentModalTitle = __('Spread Rate Sensitivity');
+											$spreadRates = [];
+										?>
+										  <button class="btn btn-sm btn-brand btn-elevate btn-pill text-white" data-toggle="modal" data-target="#<?php echo e($currentModalId); ?>"><?php echo e($currentModalTitle); ?></button>
+										  
+										
+										<?php echo $__env->make('non_banking_services.dashboard._spread-rate-sensitivity-modal',['currentModalId'=>$currentModalId,'modalTitle'=>$currentModalTitle], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+									</div>
+														
 
                                      <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.tables.repeater-table','data' => ['tableClass' => 'col-md-6','removeActionBtn' => true,'removeRepeater' => true,'initialJs' => false,'repeaterWithSelect2' => true,'canAddNewItem' => false,'parentClass' => 'js-remove-hidden','hideAddBtn' => true,'tableName' => '','repeaterId' => '','relationName' => 'food','isRepeater' => $isRepeater=!(isset($removeRepeater) && $removeRepeater)]]); ?>

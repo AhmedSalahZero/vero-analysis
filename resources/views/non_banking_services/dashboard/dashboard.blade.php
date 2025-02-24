@@ -192,9 +192,21 @@ use MathPHP\Statistics\Correlation ;
 
 
                                 <div class="row">
-                                    <div class="col-md-12">
+                                    <div class="col-md-4">
                                         <h3 class="font-weight-bold text-black form-label kt-subheader__title small-caps mr-5 text-primary text-nowrap"> {{ __('Income Statement Summary') }} {{ __('Fig In Million') }} </h3>
                                     </div>
+									<div  class="col-md-8 mb-3">
+										@php
+											$currentModalId = 'spread-rate-sensitivity';
+											$currentModalTitle = __('Spread Rate Sensitivity');
+											$spreadRates = [];
+										@endphp
+										  <button class="btn btn-sm btn-brand btn-elevate btn-pill text-white" data-toggle="modal" data-target="#{{ $currentModalId }}">{{ $currentModalTitle }}</button>
+										  
+										{{-- <i data-toggle="modal" data-target="#{{ $currentModalId }}" class="flaticon2-information kt-font-primary exclude-icon ml-2 cursor-pointer "></i> --}}
+										@include('non_banking_services.dashboard._spread-rate-sensitivity-modal',['currentModalId'=>$currentModalId,'modalTitle'=>$currentModalTitle])
+									</div>
+														
 
                                     <x-tables.repeater-table :table-class="'col-md-6'" :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
                                         <x-slot name="ths">

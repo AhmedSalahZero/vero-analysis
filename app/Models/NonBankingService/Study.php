@@ -4,6 +4,7 @@ namespace App\Models\NonBankingService;
 use App\Equations\ExpenseAsPercentageEquation;
 use App\Helpers\HArr;
 use App\Models\NonBankingService\Expense;
+use App\Models\NonBankingService\GeneralAndReserveAssumption;
 use App\Models\Traits\Scopes\BelongsToCompany;
 use App\Models\Traits\Scopes\CompanyScope;
 use App\ReadyFunctions\CalculateDurationService;
@@ -13,8 +14,8 @@ use App\ReadyFunctions\CalculateVariableLoanAtEndService;
 use App\Traits\HasBasicStoreRequest;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
@@ -684,11 +685,9 @@ use Illuminate\Support\Facades\DB;
 	 * * revenue_stream_type -> leasing , ijara .. etc
 	 * * relation name -> leasingRevenueStreamBreakdown ,
 	 */
-	public function storeFixedLoans(string $revenueStreamType ,string $relationName,$eclRelationName):void
+	public function storeFixedLoans(string $revenueStreamType ,string $relationName,$eclRelationName,bool $isSensitivity = false ):void
 	{
-			/**
-		 * * start testing
-		 */
+		$loanSchedulePaymentTableName = $isSensitivity ? 'sensitivity_loan_schedule_payments' : 'loan_schedule_payments';
 		$revenueIdWitLoanAmounts = $this->{$relationName}->pluck('loan_amounts','id')->toArray() ;
 		$calculateFixedLoanAtEndService = new CalculateFixedLoanAtEndService ;
 		$calculateFixedLoanAtBeginningService = new CalculateFixedLoanAtBeginningService ;
@@ -721,7 +720,7 @@ use Illuminate\Support\Facades\DB;
 			}
 		}
 	
-		DB::connection('non_banking_service')->table('loan_schedule_payments')->where('revenue_stream_type',$revenueStreamType)->where('study_id',$studyId)->delete();
+		DB::connection('non_banking_service')->table($loanSchedulePaymentTableName)->where('revenue_stream_type',$revenueStreamType)->where('study_id',$studyId)->delete();
 		$baseRatesMapping = HArr::getFirstOfYear($baseRatesPerMonths);
 	
 		$bankLendingMarginRates=$generalAndReserveAssumption->getBankLendingMarginRates();
@@ -752,7 +751,7 @@ use Illuminate\Support\Facades\DB;
 						$revenueCategoryId = $hasCategoryId ? $leasingRevenueStreamBreakdown->getCategoryId() : null;
 						$currentMonth = $dateIndexWithDate[$monthIndex];
 						// $currentMonthFormatted = Carbon::make($currentMonth)->format('d-m-Y');
-						$currentMarginRate = $leasingRevenueStreamBreakdown->getMarginRate();
+						$currentMarginRate = $isSensitivity ?  $leasingRevenueStreamBreakdown->getSensitivityMarginRate() : $leasingRevenueStreamBreakdown->getMarginRate();
 						$gracePeriod = $leasingRevenueStreamBreakdown->getGracePeriod();
 						$tenor = $leasingRevenueStreamBreakdown->getTenor();
 						$installmentInterval = $leasingRevenueStreamBreakdown->getInstallmentInterval();
@@ -844,7 +843,7 @@ use Illuminate\Support\Facades\DB;
 			
 		}
 
-		DB::connection('non_banking_service')->table('loan_schedule_payments')->insert($portfolioLoans);
+		DB::connection('non_banking_service')->table($loanSchedulePaymentTableName)->insert($portfolioLoans);
 	}
 		
 	protected function sumBaseRateWithMarginRate(array $baseRates , float $marginRate){
@@ -855,7 +854,7 @@ use Illuminate\Support\Facades\DB;
 		}
 		return $result;
 	}
-	public function storeVariableLoans(string $revenueStreamType , array $loans,string $relationName,$eclRelationName):void
+	public function storeVariableLoans(string $revenueStreamType , string $relationName,$eclRelationName):void
 	{
 			
 		$calculateVariableLoanAtEndService = new CalculateVariableLoanAtEndService ;
@@ -866,7 +865,7 @@ use Illuminate\Support\Facades\DB;
 		$study = $this ;
 		$counter = 0 ;
 		$operationDurationPerYear=$study->getOperationDurationPerYearFromIndexes();
-
+		$loans = $this->{$relationName}->toArray() ;
 		$generalAndReserveAssumption = $study->generalAndReserveAssumption;
 		$leasingEclAndNewPortfolioFundingRate = $study->{$eclRelationName};
 		/**
@@ -915,8 +914,6 @@ use Illuminate\Support\Facades\DB;
 					}
 					$totalMonthlyLoanAmounts[$monthIndex]  = isset($totalMonthlyLoanAmount[$monthIndex]) ? $totalMonthlyLoanAmount[$monthIndex] +  $currentMonthlyLoanAmount : $currentMonthlyLoanAmount ;
 					
-			//		$revenueStreamBreakdown = $leasingRevenueStreams->where('id',$revenueStreamBreakdownId)->first();
-				//	$hasCategoryId = method_exists($revenueStreamBreakdown,'getCategoryId') ;
 						$revenueCategoryId = $loanArr['category'];
 						$currentMonth = $dateIndexWithDate[$monthIndex];
 						$currentMonthFormatted = Carbon::make($currentMonth)->format('Y-m-d');
@@ -1153,6 +1150,135 @@ use Illuminate\Support\Facades\DB;
 	public function getLeasingGrowthRateAtYearIndex(int $yearIndex)
 	{
 		return $this->leasing_growth_rates[$yearIndex] ?? 0  ; 
+	}
+	public function getFinancialYearsEndMonths():array
+	{
+		$studyStartDateMonth = $this->getStudyStartDate();
+		$studyStartDateMonth = explode('-',$studyStartDateMonth)[1];
+		$financialEndMonth = $this->getFinancialYearEndMonthNumber();
+		$firstYearEndMonth  = $financialEndMonth - $studyStartDateMonth ;
+		if($firstYearEndMonth<0){
+			$firstYearEndMonth  = $firstYearEndMonth+12 ;
+		}
+		$result = [];
+		for($i = 0 ; $i<11 ; $i++){
+			$result[] = $firstYearEndMonth   ;
+			$firstYearEndMonth  = $firstYearEndMonth  + 12 ;
+		}
+		return $result;
+	}
+	public function refreshDirectFactoringLoans()
+	{
+			$generalAndReserveAssumption = $this->generalAndReserveAssumption;
+			/**
+			 * @var GeneralAndReserveAssumption $generalAndReserveAssumption
+			 */
+			$baseRates = $generalAndReserveAssumption->getCbeLendingCorridorRates() ;
+			$bankMarginRates = $generalAndReserveAssumption->getBankLendingMarginRates() ;
+			$datesIndexWithYearIndex = app()->make('datesIndexWithYearIndex');
+			$dateIndexWithDates = app()->make('dateIndexWithDate');
+			
+			$result = [];
+			foreach($this->refresh()->directFactoringBreakdowns as $directFactoringBreakdown){
+				/**
+				 * @var DirectFactoringBreakdown $directFactoringBreakdown
+				 */
+				$directFactoringBreakdownId = $directFactoringBreakdown->id ;
+				$amountAsPayload = $directFactoringBreakdown->getLoanAmountPayload();
+				$currentMarginRate = $directFactoringBreakdown->getMarginRate();
+				$category = $directFactoringBreakdown->getCategory();
+				$directFactoringAmounts = $this->convertYearToMonthIndexesAndDivideBySumMonths($amountAsPayload);
+				$baseRates = $this->convertYearToMonthIndexes($baseRates);
+				$currentBeginningBalance = 0 ;
+				$currentDirectFactoringBankBeginningBalance= 0 ;
+				$currentBankInterestExpensePayment= 0 ;
+				$factoringInterestRevenue = [];
+				$directFactoringStatements[$directFactoringBreakdownId] = [];
+				$directFactoringNetFundingAmounts = [];
+				$directFactoringBankLoanStatements = [];
+				$currentDirectFactoringBeginningBalance = 0 ;
+				foreach($directFactoringAmounts as $monthIndex => $currentDirectAmount){
+					$currentYearIndex = $datesIndexWithYearIndex[$monthIndex];
+					 $currentDateAsString = $dateIndexWithDates[$monthIndex];
+					 $currentDaysInMonth = Carbon::make($currentDateAsString)->daysInMonth;
+					$currentBaseRate = $baseRates[$monthIndex];
+					$currentBankMarginRate = $bankMarginRates[$currentYearIndex];
+					$bankInterestRate = ($currentBaseRate + $currentBankMarginRate)/100  ;
+					$currentDailyPricing = ($currentMarginRate  + $currentBaseRate) /100 / 360; 
+					$directFactoringStatements[$directFactoringBreakdownId]['beginning_balance'][$monthIndex] = $currentDirectFactoringBeginningBalance + $currentDirectAmount ;
+					$directFactoringStatements[$directFactoringBreakdownId]['direct_factoring_settlements'][$monthIndex +  ceil($category/30) ] = $currentDirectAmount;
+					$currentMonthSettlement = $directFactoringStatements[$directFactoringBreakdownId]['direct_factoring_settlements'][$monthIndex] ?? 0;
+					$directFactoringStatements[$directFactoringBreakdownId]['end_balance'][$monthIndex] = $currentDirectFactoringBeginningBalance + $currentDirectAmount - $currentMonthSettlement ;
+					$currentDirectFactoringBeginningBalance = $directFactoringStatements[$directFactoringBreakdownId]['end_balance'][$monthIndex] ;
+					
+					$unearned = [];
+						foreach(HArr::getMonthsAsArray($category) as $index => $currentMonthNumber){
+							$currentIndex = $monthIndex+$index+1 ;
+							$currentAmount = $currentDirectAmount * $currentMonthNumber  * $currentDailyPricing  ;
+							$result[$directFactoringBreakdownId][$currentIndex] = isset($result[$directFactoringBreakdownId][$currentIndex]) ? $result[$directFactoringBreakdownId][$currentIndex]+($currentAmount) : $currentAmount;
+							$interestRevenues[$currentIndex] = $result[$directFactoringBreakdownId][$currentIndex] ;
+							$unearned[$monthIndex] = isset($unearned[$monthIndex]) ? $unearned[$monthIndex] + $currentAmount : $currentAmount;
+						}
+						$factoringInterestRevenue[$directFactoringBreakdownId]['beginning_balance'][$monthIndex] = $currentBeginningBalance;
+						foreach($interestRevenues as $i => $value){
+							$factoringInterestRevenue[$directFactoringBreakdownId]['interest_revenue'][$i] = 
+							$value;
+						}
+						
+						$factoringInterestRevenue[$directFactoringBreakdownId]['unearned_interest'][$monthIndex] = $unearned[$monthIndex];
+						
+						$currentDirectFactoringNetFundingAmounts  = $currentDirectAmount -  $unearned[$monthIndex] ;
+						$directFactoringNetFundingAmounts[$directFactoringBreakdownId][$monthIndex] = $currentDirectFactoringNetFundingAmounts ;
+						if($this->directFactoringNewPortfolioFundingStructure){
+							$newLoanFundingRate = (100 - $this->directFactoringNewPortfolioFundingStructure->getEquityFundingRatesAtYearIndex($currentYearIndex))/100 ;
+							$currentBankLoanAmount = $currentDirectFactoringNetFundingAmounts * $newLoanFundingRate;
+							$directFactoringBankLoanStatements[$directFactoringBreakdownId]['beginning_balance'][$monthIndex] = $currentDirectFactoringBankBeginningBalance ;
+							$directFactoringBankLoanStatements[$directFactoringBreakdownId]['loan_amounts'][$monthIndex] = $currentBankLoanAmount;
+							$directFactoringBankLoanStatements[$directFactoringBreakdownId]['loan_settlements'][$monthIndex +  ceil($category/30) ] = $currentBankLoanAmount;
+							$directFactoringBankLoanStatements[$directFactoringBreakdownId]['interest_expense_payments'][$monthIndex] = $currentBankInterestExpensePayment;
+							$currentBankLoanSettlementAtCurrentMonth = $directFactoringBankLoanStatements[$directFactoringBreakdownId]['loan_settlements'][$monthIndex]??0;
+							$totalDues = $currentDirectFactoringBankBeginningBalance + $currentBankLoanAmount - $currentBankLoanSettlementAtCurrentMonth - $currentBankInterestExpensePayment;
+							$directFactoringBankLoanStatements[$directFactoringBreakdownId]['total_dues'][$monthIndex] = $totalDues;
+							$interestExpense = $totalDues * $currentDaysInMonth * $bankInterestRate  / 360 ;
+							$directFactoringBankLoanStatements[$directFactoringBreakdownId]['interest_expense'][$monthIndex] = $interestExpense;
+							$currentBankInterestExpensePayment = $interestExpense;
+							$endBalance = $totalDues + $interestExpense ;
+							$directFactoringBankLoanStatements[$directFactoringBreakdownId]['end_balance'][$monthIndex] = $endBalance;
+							$currentDirectFactoringBankBeginningBalance = $endBalance ;
+							
+						}
+						
+						
+						$currentInterestRevenueAtMonthIndex = $factoringInterestRevenue[$directFactoringBreakdownId]['interest_revenue'][$monthIndex]??0;
+						$currentEndBalance = $currentBeginningBalance + $currentInterestRevenueAtMonthIndex - $factoringInterestRevenue[$directFactoringBreakdownId]['unearned_interest'][$monthIndex]  ; 
+						$factoringInterestRevenue[$directFactoringBreakdownId]['end_balance'][$monthIndex] =   $currentEndBalance;
+						
+						$currentBeginningBalance = $currentEndBalance ;
+					}
+				
+					$directFactoringBreakdown->update([
+						'beginning_balance' => $factoringInterestRevenue[$directFactoringBreakdownId]['beginning_balance'],
+						'interest_revenue' => $factoringInterestRevenue[$directFactoringBreakdownId]['interest_revenue'],
+						'unearned_interest' => $factoringInterestRevenue[$directFactoringBreakdownId]['unearned_interest'],
+						'end_balance' => $factoringInterestRevenue[$directFactoringBreakdownId]['end_balance'],
+						'net_funding_amounts'=>$directFactoringNetFundingAmounts[$directFactoringBreakdownId],
+						
+						'statement_beginning_balance'=>$directFactoringStatements[$directFactoringBreakdownId]['beginning_balance'],
+						'direct_factoring_amounts'=>$directFactoringAmounts,
+						'direct_factoring_settlements'=>$directFactoringStatements[$directFactoringBreakdownId]['direct_factoring_settlements'],
+						'statement_end_balance'=>$directFactoringStatements[$directFactoringBreakdownId]['end_balance'],
+						
+						
+						'bank_beginning_balance'=>$directFactoringBankLoanStatements[$directFactoringBreakdownId]['beginning_balance']??[],
+						'bank_loan_amounts'=>$directFactoringBankLoanStatements[$directFactoringBreakdownId]['loan_amounts']??[],
+						'bank_loan_settlements'=>$directFactoringBankLoanStatements[$directFactoringBreakdownId]['loan_settlements']??[],
+						'bank_interest_expense_payments'=>$directFactoringBankLoanStatements[$directFactoringBreakdownId]['interest_expense_payments']??[],
+						'bank_total_dues'=>$directFactoringBankLoanStatements[$directFactoringBreakdownId]['total_dues']??[],
+						'bank_interest_expense'=>$directFactoringBankLoanStatements[$directFactoringBreakdownId]['interest_expense']??[],
+						'bank_end_balance'=>$directFactoringBankLoanStatements[$directFactoringBreakdownId]['end_balance']??[],
+						]);
+				
+			}
 	}
 	
 }

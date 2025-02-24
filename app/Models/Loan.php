@@ -2,11 +2,11 @@
 
 namespace App\Models;
 
-
 use App\Models\Traits\Scopes\CompanyScope;
 use App\Traits\HasBasicStoreRequest;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use MathPHP\Finance;
 
 class  Loan extends Model 
 {
@@ -137,5 +137,14 @@ class  Loan extends Model
 	public function getStepDownIntervalName()
 	{
 		return $this->step_down_interval ;
+	}
+	public function convertIncomeStatementDatesToIndexes(float $flatRate , int $tenor):float 
+	{
+		// $tenor       = 13;    // tenor in months
+		$present_value = 1;     // Mortgage note of $265,000.00
+		$future_value  = 0;
+		$beginning     = false;  
+		$payment = -(1+(1*$flatRate/12*$tenor))/$tenor;
+		return  Finance::rate($tenor, $payment, $present_value, $future_value, $beginning)*12;
 	}
 }

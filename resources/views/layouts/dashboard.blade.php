@@ -2035,8 +2035,8 @@ function coverStringToValidClass(name) {
 
 </script>
 <script>
-
-$('#kt_datepicker_max_date_is_today').datepicker({
+if($('#kt_datepicker_max_date_is_today').datepicker != undefined){
+	$('#kt_datepicker_max_date_is_today').datepicker({
  autoclose: true,
  todayHighlight: true,
    orientation: "bottom left",
@@ -2045,6 +2045,8 @@ $('#kt_datepicker_max_date_is_today').datepicker({
 
  rtl:false
 });
+}
+
 
 
 </script>

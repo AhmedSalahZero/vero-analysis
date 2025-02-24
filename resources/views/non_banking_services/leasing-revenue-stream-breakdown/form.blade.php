@@ -181,14 +181,14 @@ use App\Models\NonBankingService\LeasingCategory;
                                     </td>
                                     @php
                                     $columnIndex = 0 ;
-							
+
                                     @endphp
                                     @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
-									@php
-									
-                                    
-									$currentVal = $model->getLeasingGrowthRateAtYearIndex($year) ;
-									@endphp
+                                    @php
+
+
+                                    $currentVal = $model->getLeasingGrowthRateAtYearIndex($year) ;
+                                    @endphp
 
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
@@ -279,12 +279,7 @@ use App\Models\NonBankingService\LeasingCategory;
                                                 <div class="input-group input-group-sm align-items-center justify-content-center flex-nowrap">
                                                     <div class="input-hidden-parent">
                                                         <input readonly class="form-control copy-value-to-his-input-hidden  expandable-amount-input  repeat-to-right-input-formatted  " type="text" value="{{ number_format($currentLoanTotal,0)  }}" data-column-index="{{ $columnIndex }}">
-                                                        <input
-														js-recalculate-equity-funding-value
-														
-														 type="hidden" 
-														
-														class="repeat-to-right-input-hidden input-hidden-with-name  total-loans-hidden" value="{{ $currentLoanTotal  }}" data-column-index="{{ $columnIndex }}" name="ee">
+                                                        <input js-recalculate-equity-funding-value type="hidden" class="repeat-to-right-input-hidden input-hidden-with-name  total-loans-hidden" value="{{ $currentLoanTotal  }}" data-column-index="{{ $columnIndex }}" name="ee">
                                                     </div>
 
                                                     <span class="ml-2 currency-class">
@@ -318,7 +313,7 @@ use App\Models\NonBankingService\LeasingCategory;
 
 
                         </x-tables.repeater-table>
-                        
+
 
 
                     </div>
@@ -540,7 +535,7 @@ use App\Models\NonBankingService\LeasingCategory;
 
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
-                                            <x-repeat-right-dot-inputs   :currentVal="$leasingEclAndNewPortfolioFundingRate ? $leasingEclAndNewPortfolioFundingRate->getEquityFundingValuesAtYearIndex($year):0" :classes="'only-greater-than-or-equal-zero-allowed '" :formatted-input-classes="'equity-funding-formatted-value-class'" :is-percentage="false" :name="'equity_funding_values['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :numberFormatDecimals="0" :currentVal="$leasingEclAndNewPortfolioFundingRate ? $leasingEclAndNewPortfolioFundingRate->getEquityFundingValuesAtYearIndex($year):0" :classes="'only-greater-than-or-equal-zero-allowed '" :formatted-input-classes="'equity-funding-formatted-value-class'" :is-percentage="false" :name="'equity_funding_values['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
                                         </div>
                                     </td>
@@ -581,11 +576,6 @@ use App\Models\NonBankingService\LeasingCategory;
 
                                 </tr>
 
-
-
-
-
-
                                 <tr data-repeat-formatting-decimals="0" data-repeater-style>
 
 
@@ -602,7 +592,7 @@ use App\Models\NonBankingService\LeasingCategory;
 
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
-                                            <x-repeat-right-dot-inputs :formatted-input-classes="'new-loans-funding-formatted-value-class'" :currentVal="$leasingEclAndNewPortfolioFundingRate ? $leasingEclAndNewPortfolioFundingRate->getNewLoansFundingValuesAtYearIndex($year):0" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="false" :name="'new_loans_funding_values['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :numberFormatDecimals="0" :formatted-input-classes="'new-loans-funding-formatted-value-class'" :currentVal="$leasingEclAndNewPortfolioFundingRate ? $leasingEclAndNewPortfolioFundingRate->getNewLoansFundingValuesAtYearIndex($year):0" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="false" :name="'new_loans_funding_values['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
                                         </div>
                                     </td>
