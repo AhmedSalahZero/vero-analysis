@@ -1,4 +1,4 @@
-<div class="col-md-3 mb-3">
+<div class="col-md-3">
                                                 
                                                  <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.select','data' => ['addNewModal' => true,'addNewModalModalType' => 'direct-manpower-expense','addNewModalModalName' => 'Position','addNewModalModalTitle' => __('Position'),'isSelect2' => false,'options' => $positions,'addNew' => false,'label' => __('Position'),'class' => '','dataFilterType' => ''.e($type).'','all' => false,'name' => 'manpower_expense_position_id','id' => ''.e($type.'_'.'manpower_expense_position_id').'','selectedValue' => isset($directManpowerExpense) ? $directManpowerExpense->getPositionId() : 0]]); ?>
