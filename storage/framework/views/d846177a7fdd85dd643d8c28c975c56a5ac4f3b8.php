@@ -429,7 +429,7 @@
                 </div>
                 <div class="col-lg-6 kt-align-right">
                     <a href="<?php echo e(route('create.expenses',['company'=>$company->id,'study'=>$study->id])); ?>"   class="btn active-style" >
-						<?php echo e(__('Save & Continue')); ?>
+						<?php echo e(__('Save & Go To Next')); ?>
 
 					</a>
                 </div>
