@@ -330,6 +330,18 @@ Route::middleware([])->group(function () {
 					route::post('study','StudyController@store')->name('store.non.banking.services');
 					route::delete('study/{study}/delete','StudyController@destroy')->name('study.destroy');
 					
+					// route::get('leasing-categories','LeasingCategoriesController@index')->name('view.leasing.categories');
+					route::get('leasing-products/create','LeasingCategoriesController@create')->name('create.leasing.categories');
+					route::post('leasing-products/create','LeasingCategoriesController@store')->name('store.leasing.categories');
+					// route::get('leasing-categories/edit/{leasingCategory}','LeasingCategoriesController@edit')->name('edit.leasing.categories');
+					// route::delete('leasing-categories/destroy/{leasingCategory}','LeasingCategoriesController@destroy')->name('destroy.leasing.categories');
+
+					route::get('microfinance-products/create','MicrofinanceProductsController@create')->name('create.microfinance.products');
+					route::post('microfinance-products/create','MicrofinanceProductsController@store')->name('store.microfinance.products');
+					
+					route::get('consumerfinance-products/create','ConsumerfinanceProductsController@create')->name('create.consumerfinance.products');
+					route::post('consumerfinance-products/create','ConsumerfinanceProductsController@store')->name('store.consumerfinance.products');
+					
 					/**
 					 * * Start General Assumption 
 					 */
@@ -337,6 +349,7 @@ Route::middleware([])->group(function () {
 						/**
 						 * * General Assumption 
 						 */
+						
 						route::get('general-and-reserve-assumption','GeneralAndReservationAssumptionController@create')->name('create.general.assumption');
 						route::post('general-and-reserve-assumption','GeneralAndReservationAssumptionController@store')->name('store.general.assumption');
 						

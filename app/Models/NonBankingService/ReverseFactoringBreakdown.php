@@ -32,6 +32,10 @@ class  ReverseFactoringBreakdown extends Model
 	{
 		return $this->margin_rate?:0;
 	}
+	public function getSensitivityMarginRate():float
+	{
+		return $this->sensitivity_margin_rate;
+	}
 	public function getTenor()
 	{
 		return $this->tenor?:0;
@@ -41,4 +45,17 @@ class  ReverseFactoringBreakdown extends Model
 		return 'normal';
 	}
 		
+	public function getReviewForTable()
+	{
+		// dd($this->category);
+		/**
+		 * ! Need To Be Fixed
+		 */
+		if(is_numeric($this->category)){
+			return '-';
+		}
+		
+		return $this->category->getTitle().'[' . $this->getLoanNature() . ' / ' . $this->getLoanType(). ' / ' . $this->getTenor(). ' M/ ' . $this->getGracePeriod(). ' M/ ' . $this->getMarginRate(). ' %/ ' . $this->getInstallmentInterval(). ' / ' . $this->getStepRate(). ' %/ ' . $this->getStepInterval() . ' ]';
+	}
+	
 }

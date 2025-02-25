@@ -138,7 +138,7 @@ class TestCommand extends Command
 	public function handle()
 	{
 		
-		$this->insertCustomersIntoPartnerTable(45);
+		// $this->insertCustomersIntoPartnerTable(45);
 		// $this->convertIncomeStatementDatesToIndexes();
 		return 'done';
 		$loanData =  [

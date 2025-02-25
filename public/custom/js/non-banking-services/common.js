@@ -109,18 +109,18 @@ $(document).on('change', '.current-loan-input', function () {
 	$(this).closest('table').find('[data-row-total] .repeat-to-right-input-formatted[data-column-index="' + currentLoanIndex + '"]').val(number_format(total)).trigger('change')
 
 })
-$(document).on('change', '.js-recalculate-equity-funding-value,[js-recalculate-equity-funding-value]', function () {
+$(document).on('change', '[js-recalculate-equity-funding-value]', function () {
 	const columnIndex = parseInt($(this).attr('data-column-index'))
 	const total = $('.total-loans-hidden[data-column-index="' + columnIndex + '"]').val()
 	const equityFundingRate = $('.equity-funding-rates[data-column-index="' + columnIndex + '"]').val()
 	let equityFundingValue = equityFundingRate / 100 * total
 	let newLoanFundingValue = (1 - (equityFundingRate / 100)) * total
-	console.log(equityFundingValue, columnIndex)
-	console.log($('input.equity-funding-formatted-value-class[data-column-index="' + columnIndex + '"]').length)
+//	console.log(equityFundingValue, columnIndex)
+//	console.log($('input.equity-funding-formatted-value-class[data-column-index="' + columnIndex + '"]').length)
 	$('input.equity-funding-formatted-value-class[data-column-index="' + columnIndex + '"]').val(number_format(equityFundingValue)).trigger('change')
 	$('input.new-loans-funding-formatted-value-class[data-column-index="' + columnIndex + '"]').val(number_format(newLoanFundingValue)).trigger('change')
 })
-$('.js-recalculate-equity-funding-value,[js-recalculate-equity-funding-value]').trigger('change')
+$('[js-recalculate-equity-funding-value]').trigger('change')
 function convertDateToDefaultDateFormat(dateStr) {
 	const [month, day, year] = dateStr.split("/") // Split the string by "/";
 	return `${year}-${month}-${day}` // Rearrange to YYYY-MM-DD
@@ -227,15 +227,30 @@ $(document).on('click', '.add-btn-js', function (e) {
 	$(this).closest('[data-is-main-row]').nextUntil('[data-is-main-row]').toggleClass('hidden')
 })
 $(document).on('change', '.recalculate-gr', function () {
-	const columnIndex = $(this).attr('data-column-index')
+	const columnIndex = parseInt($(this).attr('data-column-index'))
+	console.log(columnIndex);
 	const previousColumnIndex = columnIndex - 1
+	const nextColumnIndex=columnIndex+1;
 	const growthRateOfCurrentYear = $('.gr-field[data-column-index="' + columnIndex + '"]').val()
 	const loanAmount = $('.current-growth-rate-result-value[data-column-index="' + previousColumnIndex + '"]').val()
-
+	//console.log(loanAmount,growthRateOfCurrentYear);
 	if (loanAmount != undefined) {
 		currentAmount = (1 + (growthRateOfCurrentYear / 100)) * loanAmount
-		$('.current-growth-rate-result-value[data-column-index="' + columnIndex + '"]').each(function (index, element) {
-			$(element).val(currentAmount).trigger('change')
+		allElements = $('.current-growth-rate-result-value-formatted[data-column-index="' + columnIndex + '"]') ;
+		allElements.each(function (index, element) {
+			$(element).val(number_format(currentAmount)).trigger('change')
 		})
 	}
+	$('.recalculate-gr[data-column-index="'+nextColumnIndex+'"]').trigger('change');
+})
+$(document).on('change','.current-growth-rate-result-value-formatted',function(event){
+	const columnIndex = parseInt($(this).attr('data-column-index'));
+	const nextColumnIndex=columnIndex+1;
+	if(event.originalEvent && event.originalEvent.isTrusted){
+		$('.recalculate-gr[data-column-index="'+nextColumnIndex+'"]').trigger('change');
+	}else{
+		console.log("Input was changed programmatically.");
+
+	}
+	//$('.recalculate-gr[data-column-index="'+nextColumnIndex+'"]').trigger('change');
 })

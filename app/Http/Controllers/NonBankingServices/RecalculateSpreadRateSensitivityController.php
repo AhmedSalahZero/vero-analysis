@@ -17,13 +17,26 @@ class RecalculateSpreadRateSensitivityController extends Controller
 	
 	public function recalculate(Company $company , Study $study,Request $request)
 	{
+
 		$sensitivityMarginRates = $request->get('sensitivity_margin_rate',[]);
-		foreach($sensitivityMarginRates as $leasingRevenueStreamBreakdownId => $sensitivityMarginRate){
-			DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('leasing_revenue_stream_breakdowns')->where('id',$leasingRevenueStreamBreakdownId)->update([
-				'sensitivity_margin_rate'=>number_unformat($sensitivityMarginRate)
-			]);
+		$tableNameMapping = [
+			'leasingRevenueStreamBreakdown'=>'leasing_revenue_stream_breakdowns',
+			'ijaraMortgageBreakdowns'=>'ijara_mortgage_breakdowns',
+			'reverseFactoringBreakdowns'=>'reverse_factoring_breakdowns',
+		];
+		foreach($sensitivityMarginRates as $relationName => $marginRates){
+			$tableName = $tableNameMapping[$relationName];
+			foreach($marginRates as $revenueStreamBreakdownId => $sensitivityMarginRate){
+				DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table($tableName)->where('id',$revenueStreamBreakdownId)->update([
+					'sensitivity_margin_rate'=>number_unformat($sensitivityMarginRate)
+				]);
+			}
 		}
+		
 		$study->storeFixedLoans(Study::LEASING,'leasingRevenueStreamBreakdown','leasingEclAndNewPortfolioFundingRate',true);
+		$study->storeFixedLoans(Study::IJARA,'ijaraMortgageBreakdowns','ijaraMortgageNewPortfolioFundingStructure',true);
+		$study->storeVariableLoans(Study::REVERSE_FACTORING,'reverseFactoringBreakdowns','reverseFactoringNewPortfolioFundingStructure',true);
+		
 		return redirect()->route('view.results.dashboard',['company'=>$company->id,'study'=>$study->id]);
 	}
 }

@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use App\Formatter\Select2Formatter;
+use App\Models\NonBankingService\ConsumerfinanceProduct;
 use App\Models\NonBankingService\LeasingCategory;
+use App\Models\NonBankingService\MicrofinanceProduct;
 use App\Models\NonBankingService\Study;
 use App\NotificationSetting;
+use App\Traits\HasBasicStoreRequest;
 use App\Traits\StaticBoot;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -20,7 +23,8 @@ class Company extends Model implements HasMedia
 	use
 		StaticBoot,
 		InteractsWithMedia ,
-		Notifiable;
+		Notifiable,
+		HasBasicStoreRequest;
 	protected $guarded = [];
 	protected $connection ='mysql';
 	public function getIdentifier():int
@@ -554,6 +558,22 @@ class Company extends Model implements HasMedia
 	{
 		return (new Select2Formatter)->formatForAssocArr($this->leasingCategories->pluck('title','id')->toArray());
 	}
+	public function microfinanceProducts()
+	{
+		return $this->hasMany(MicrofinanceProduct::class,'company_id','id');
+	}
+	public function getMicrofinanceProductsFormattedForSelect():array 
+	{
+		return (new Select2Formatter)->formatForAssocArr($this->microfinanceProducts->pluck('title','id')->toArray());
+	}
+	public function consumerfinanceProducts()
+	{
+		return $this->hasMany(ConsumerfinanceProduct::class,'company_id','id');
+	}
+	public function getConsumerfinanceProductsFormattedForSelect():array 
+	{
+		return (new Select2Formatter)->formatForAssocArr($this->consumerfinanceProducts->pluck('title','id')->toArray());
+	}
 	public function studies():HasMany
 	{
 		return $this->hasMany(Study::class,'company_id','id');
@@ -602,5 +622,6 @@ class Company extends Model implements HasMedia
 		}
 		return $mainPlanning;
 	}
+
 	
 }

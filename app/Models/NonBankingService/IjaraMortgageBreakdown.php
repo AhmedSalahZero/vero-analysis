@@ -32,6 +32,14 @@ class  IjaraMortgageBreakdown extends Model
 	{
 		return $this->margin_rate?:0;
 	}
+	public function getSensitivityMarginRate():float
+	{
+		return $this->sensitivity_margin_rate;
+	}
+	public function getReviewForTable()
+	{
+		return '-';
+	}
 	public function getTenor()
 	{
 		return $this->tenor?:0;

@@ -59,26 +59,27 @@ trait HasBasicStoreRequest
          * * * $relationTableName = 'sales_orders';
          * * $additionRelationData لو حابب تضيف داتا اضافيه وليكن مثلا company_id
 		 */
-		$connectionName =$this->getConnectionName();
+		$connectionName =$this->$relationName()->getModel()->getConnectionName();
         $relationDataArray = $request->get($relationName);
 		$oldIdsFromDatabase = $this->{$relationName}->pluck('id')->toArray();
 		$idsFromRequest =array_column($relationDataArray,'id') ;
 		$elementsToDelete = array_diff($oldIdsFromDatabase,$idsFromRequest);
 		$elementsToUpdate = array_intersect($idsFromRequest,$oldIdsFromDatabase);
-	
 		$this->$relationName()->whereIn($relationTableName.'.id',$elementsToDelete)->delete();
 
 		foreach($elementsToUpdate as $id){
 			$dataToUpdate = findByKey($relationDataArray,'id',$id);
 			$this->$relationName()->where($relationTableName.'.id',$id)->first()->update($dataToUpdate);
 		}
-
+	
 		foreach($relationDataArray as $data){
 			if(!isset($data['id']) || $data['id'] == 0){
 				unset($data['id']);
 				$this->$relationName()->create($this->filterTableColumnThatExistsOnly($connectionName,$relationTableName,array_merge($data,$additionRelationData)));
+		
 			}
 		}
+	
 	}
 	/**
 	 * * دي هنفلتر بيها الكولومز اللي موجوده بس هنرجعها الباقي هنشيله
@@ -86,7 +87,9 @@ trait HasBasicStoreRequest
 	protected function filterTableColumnThatExistsOnly(string $connectionName,string $relationTableName, array $items)
 	{
 		$newItems = [];
+		
 		foreach($items as $key => $value){
+		
 			if(Schema::connection($connectionName)->hasColumn($relationTableName,$key)){
 				$newItems[$key] = $value ;
 			}
@@ -122,6 +125,7 @@ trait HasBasicStoreRequest
 	public function storeRepeaterRelations(Request $request , array $relationNames,Company $company)
 	{
 		foreach($relationNames as $relationName){
+	
 			$this->updateRepeaterRelation($request,$relationName,$this->$relationName()->getRelated()->getTable(),[
 				'company_id'=>$company->id
 			]);	

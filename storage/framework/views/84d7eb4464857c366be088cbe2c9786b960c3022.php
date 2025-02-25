@@ -15,23 +15,34 @@
                     <table class="table">
                         <thead>
                             <tr>
-                                <th class="text-center w-20-percentage text-capitalize th-main-color"><?php echo e(__('Name')); ?></th>
-                                <th class="text-center w-20-percentage text-capitalize th-main-color"><?php echo e(__('Spread Rate')); ?></th>
-                                <th class="text-center w-20-percentage text-capitalize th-main-color"><?php echo e(__('Sensitivity Spread Rate')); ?></th>
+                                <th class="text-center w-30-percentage text-capitalize th-main-color align-middle"><?php echo e(__('Revenue Stream')); ?></th>
+                                <th class="text-center w-50-percentage text-capitalize th-main-color align-middle"><?php echo e(__('Name')); ?></th>
+                                <th class="text-center w-10-percentage text-capitalize th-main-color align-middle"><?php echo e(__('Spread Rate')); ?></th>
+                                <th class="text-center w-10-percentage text-capitalize th-main-color align-middle"><?php echo e(__('Sensitivity Spread Rate')); ?></th>
                             </tr>
                         </thead>
                         <tbody>
 
-
-							<?php $__currentLoopData = $study->leasingRevenueStreamBreakdown; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index=>$currentLeasingRevenueStreamBreakdown): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+							<?php $__currentLoopData = ['leasingRevenueStreamBreakdown','reverseFactoringBreakdowns','ijaraMortgageBreakdowns']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $relationName): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+							<?php
+								$revenueStreamTitle = \App\Models\NonBankingService\Study::getTitleForBreakdown($relationName);
+							?>
+							<?php $__currentLoopData = $study->{$relationName}; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index=>$currentLeasingRevenueStreamBreakdown): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 							<?php
 								$name = $currentLeasingRevenueStreamBreakdown->getReviewForTable();
 								$id = $currentLeasingRevenueStreamBreakdown->id ;
 								$marginRate = $currentLeasingRevenueStreamBreakdown->getMarginRate() ;
 								$sensitivityMarginRate = $currentLeasingRevenueStreamBreakdown->getSensitivityMarginRate() ;
+								$isMarginRateEqualToSensitivityMarginRate = $marginRate == $sensitivityMarginRate ;
 							?>
                             <tr>
-                                <td class="w-60-percentage">
+                                <td class="w-30-percentage">
+                                    <div class="kt-input-icon ">
+                                        <div class="input-group">
+                                            <input disabled type="text" step="0.1" class="form-control ignore-global-style" value="<?php echo e($revenueStreamTitle); ?>">
+                                        </div>
+                                    </div>
+                                </td> <td class="w-50-percentage">
                                     <div class="kt-input-icon ">
                                         <div class="input-group">
                                             <input disabled type="text" step="0.1" class="form-control ignore-global-style" value="<?php echo e($name); ?>">
@@ -40,22 +51,26 @@
                                 </td>
 
                                      
-                                <td class="">
+                                <td class="w-10-percentage">
                                     <div class="d-flex align-items-center ">
                                         <div class="kt-input-icon ml-2 ">
                                             <div class="input-group">
-                                                <input disabled type="text" class="form-control text-center ignore-global-style" value="<?php echo e(number_format($marginRate,2) . ' %'); ?>">
+                                                <input readonly type="text" class="form-control text-center ignore-global-style" value="<?php echo e(number_format($marginRate,2) . ' %'); ?>">
                                             </div>
                                         </div>
                                     </div>
 
                                 </td>
 								
-								<td class="">
+								<td class="w-10-percentage">
                                     <div class="d-flex align-items-center ">
                                         <div class="kt-input-icon ml-2 ">
                                             <div class="input-group">
-                                                <input name="sensitivity_margin_rate[<?php echo e($id); ?>]" type="text" class="form-control text-center ignore-global-style" value="<?php echo e(number_format($marginRate,2)); ?>">
+                                                <input name="sensitivity_margin_rate[<?php echo e($relationName); ?>][<?php echo e($id); ?>]" type="text" class="form-control text-center ignore-global-style
+												<?php if($isMarginRateEqualToSensitivityMarginRate): ?>
+												bg-green text-white												
+												<?php endif; ?> 
+												" value="<?php echo e(number_format($sensitivityMarginRate,2)); ?>">
                                             </div>
                                         </div>
                                     </div>
@@ -68,6 +83,7 @@
 
                             </tr>
 
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
 

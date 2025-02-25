@@ -41,7 +41,7 @@ use App\Models\NonBankingService\Study ;
         <div class="kt-portlet__head-toolbar justify-content-between flex-grow-1">
             <ul class="nav nav-tabs nav-tabs-space-lg nav-tabs-line nav-tabs-bold nav-tabs-line-3x nav-tabs-line-brand" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link {{ !Request('active') || Request('active') == Study::STUDY ?'active':'' }}" data-toggle="tab" href="#{{Study::STUDY  }}" role="tab">
+                    <a class="nav-link {{ !Request('active') || Request('active') == Study::LEASING_CATEGORY ?'active':'' }}" data-toggle="tab" href="#{{Study::LEASING_CATEGORY  }}" role="tab">
                         <i class="fa fa-money-check-alt"></i> {{ $tableTitle }}
                     </a>
                 </li>
@@ -52,27 +52,11 @@ use App\Models\NonBankingService\Study ;
             </ul>
 			{{-- @if(auth()->user()->can('create study info')) --}}
             <div class="flex-tabs">
-                 <a href="{{ route('create.consumerfinance.products',['company'=>$company->id]) }}" class="btn  active-style btn-icon-sm align-self-center">
+               
+                <a href="{{ route('create.leasing.categories',['company'=>$company->id]) }}" class="btn  active-style btn-icon-sm align-self-center">
                     <i class="fas fa-plus"></i>
-                    {{ __('Consumerfinance Products') }}
+                    {{ __('New Leasing Category') }}
                 </a>
-				
-				 <a href="{{ route('create.microfinance.products',['company'=>$company->id]) }}" class="btn  active-style btn-icon-sm align-self-center">
-                    <i class="fas fa-plus"></i>
-                    {{ __('Microfinance Products') }}
-                </a>
-			   
-				  <a href="{{ route('create.leasing.categories',['company'=>$company->id]) }}" class="btn  active-style btn-icon-sm align-self-center">
-                    <i class="fas fa-plus"></i>
-                    {{ __('Leasing Products') }}
-                </a>
-				
-                <a href="{{ route('create.study',['company'=>$company->id]) }}" class="btn  bg-green text-white btn-icon-sm align-self-center">
-                    <i class="fas fa-plus"></i>
-                    {{ __('New Study') }}
-                </a>
-				
-				
             </div>
 		{{-- @endif  --}}
             
@@ -87,13 +71,13 @@ use App\Models\NonBankingService\Study ;
 
 
             @php
-            $currentType = Study::STUDY ;
+            $currentType = Study::LEASING_CATEGORY ;
             @endphp
             <!--Begin:: Tab Content-->
             <div class="tab-pane {{  !Request('active') || Request('active') == $currentType ?'active':'' }}" id="{{ $currentType }}" role="tabpanel">
                 <div class="kt-portlet kt-portlet--mobile">
                     <x-table-title.with-two-dates :type="$currentType" :title="__('Study')" :startDate="$filterDates[$currentType]['startDate']??''" :endDate="$filterDates[$currentType]['endDate']??''">
-                        <x-export-study :search-fields="$searchFields[$currentType]" :current-type="$currentType" :has-search="1" :has-batch-collection="0" href="{{route('create.study',['company'=>$company->id])}}" />
+                        <x-export-study :search-fields="$searchFields[$currentType]" :current-type="$currentType" :has-search="1" :has-batch-collection="0" href="{{route('create.leasing.categories',['company'=>$company->id])}}" />
                     </x-table-title.with-two-dates>
                     <div class="kt-portlet__body">
 
@@ -103,10 +87,10 @@ use App\Models\NonBankingService\Study ;
                                 <tr class="table-standard-color">
                                     <th>{{ __('#') }}</th>
                                     <th>{{ __('Name') }}</th>
-                                    <th>{{ __('Company Nature') }}</th>
-                                    <th>{{ __('Study Start Date') }}</th>
-                                    <th>{{ __('Study End Date') }}</th>
-                                    <th>{{ __('Operation Start Date') }}</th>
+                                    {{-- <th>{{ __('Company Nature') }}</th> --}}
+                                    {{-- <th>{{ __('Study Start Date') }}</th> --}}
+                                    {{-- <th>{{ __('Study End Date') }}</th> --}}
+                                    {{-- <th>{{ __('Operation Start Date') }}</th> --}}
                                     {{-- <th>{{ __('Operation End Date') }}</th> --}}
                                     {{-- <th>{{ __('To Lc Issuance') }}</th> --}}
 									{{-- @if(hasAuthFor('update lc settlement internal transfer') || hasAuthFor('delete lc settlement internal transfer') ) --}}
@@ -122,24 +106,24 @@ use App\Models\NonBankingService\Study ;
                                     </td>
 
                                     <td class="text-nowrap">{{ $model->getName() }}</td>
-                                    <td>{{ $model->getCompanyNature() }}</td>
-                                    <td>{{ $model->getStudyStartDateFormattedForView() }}</td>
-                                    <td>{{ $model->getStudyEndDateFormattedForView() }}</td>
-                                    <td >{{ $model->getOperationStartDateFormattedForView() }}</td>
+                                    {{-- <td>{{ $model->getCompanyNature() }}</td> --}}
+                                    {{-- <td>{{ $model->getStudyStartDateFormattedForView() }}</td> --}}
+                                    {{-- <td>{{ $model->getStudyEndDateFormattedForView() }}</td> --}}
+                                    {{-- <td >{{ $model->getOperationStartDateFormattedForView() }}</td> --}}
                                     {{-- <td >{{ $model->getOperationEndDateFormattedForView() }}</td> --}}
                                     {{-- <td>{{ $model->getLetterOfCreditIssuanceTransactionName() }}</td> --}}
 									{{-- @if(hasAuthFor('update lc settlement internal transfer') || hasAuthFor('delete lc settlement internal transfer') ) --}}
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
 											{{-- @if(hasAuthFor('update lc settlement internal transfer')) --}}
-                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.study',['company'=>$company->id,'study'=>$model->id]) }}"><i class="fa fa-pen-alt"></i></a>
+                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.leasing.categories',['company'=>$company->id,'leasingCategory'=>$model->id]) }}"><i class="fa fa-pen-alt"></i></a>
 											{{-- @endif  --}}
 											{{-- @if(hasAuthFor('delete lc settlement internal transfer')) --}}
-                                            <a data-toggle="modal" data-target="#delete-study-{{ $model->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
-                                            <div class="modal fade" id="delete-study-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                            <a data-toggle="modal" data-target="#delete-leasing-category-{{ $model->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
+                                            <div class="modal fade" id="delete-leasing-category-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                                     <div class="modal-content">
-                                                        <form action="{{ route('study.destroy',['company'=>$company->id,'study'=>$model->id ]) }}" method="post">
+                                                        <form action="{{ route('destroy.leasing.categories',['company'=>$company->id,'leasingCategory'=>$model->id ]) }}" method="post">
                                                             @csrf
                                                             @method('delete')
                                                             <div class="modal-header">

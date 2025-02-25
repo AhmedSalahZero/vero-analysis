@@ -4,10 +4,11 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\Branch;
 use App\Models\Company;
+use App\Models\NonBankingService\ConsumerfinanceProduct;
+use App\Models\NonBankingService\LeasingCategory;
+use App\Models\NonBankingService\MicrofinanceProduct;
 use App\Traits\ImageSave;
 use Illuminate\Http\Request;
-use App\Models\NonBankingService\LeasingCategory;
-
 
 class CompanyController extends Controller
 {
@@ -55,6 +56,8 @@ class CompanyController extends Controller
         ImageSave::saveIfExist('image',$companySection);
 		
 		LeasingCategory::createAllForCompany($companySection->id );
+		MicrofinanceProduct::createAllForCompany($companySection->id );
+		ConsumerfinanceProduct::createAllForCompany($companySection->id );
 		
         return redirect()->back();
     }

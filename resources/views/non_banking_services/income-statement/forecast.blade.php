@@ -76,7 +76,7 @@ use App\Models\NonBankingService\Study;
                             <tr data-is-main-row data-repeat-formatting-decimals="0" data-repeater-style>
                                 <td>
                                     @if($hasSubItems)
-                                    <a href="#" class="btn btn-1-bg btn-sm btn-brand add-btn-class  text-center add-btn-js">
+                                    <a href="#"  class="btn btn-1-bg btn-sm btn-brand add-btn-class  text-center add-btn-js">
                                         <i class="fas fa-angle-double-down expand-icon   exclude-icon"></i>
                                     </a>
                                     @endif
@@ -302,7 +302,7 @@ use App\Models\NonBankingService\Study;
    
     @endsection
     @push('js')
-    {{-- <script src="/custom/js/non-banking-services/common.js"></script> --}}
+    <script src="/custom/js/non-banking-services/common.js"></script>
     <script>
         $(function() {
             //	$('[data-group-index]').trigger('change');

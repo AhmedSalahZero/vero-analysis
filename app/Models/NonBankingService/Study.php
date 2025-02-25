@@ -25,6 +25,9 @@ use Illuminate\Support\Facades\DB;
 		use HasBasicStoreRequest;
 		
 		const STUDY = 'study' ;
+		const LEASING_CATEGORY = 'leasing-categories' ;
+		const MiCROFINANCE_PRODUCTS = 'microfinance-products' ;
+		const CONSUMERFINANCE_PRODUCTS = 'consumerfinance-products' ;
 		const LEASING ='leasing';
 		const IJARA ='ijara';
 		const DIRECT_FACTORING ='direct-factoring';
@@ -854,9 +857,10 @@ use Illuminate\Support\Facades\DB;
 		}
 		return $result;
 	}
-	public function storeVariableLoans(string $revenueStreamType , string $relationName,$eclRelationName):void
+	public function storeVariableLoans(string $revenueStreamType , string $relationName,$eclRelationName,bool $isSensitivity = false):void
 	{
-			
+		$loanSchedulePaymentTableName = $isSensitivity ? 'sensitivity_loan_schedule_payments' : 'loan_schedule_payments';
+		
 		$calculateVariableLoanAtEndService = new CalculateVariableLoanAtEndService ;
 		
 		$portfolioLoans = [];
@@ -887,7 +891,7 @@ use Illuminate\Support\Facades\DB;
 			}
 		}
 		// $dateWithDateIndex = app('dateWithDateIndex');
-		DB::connection('non_banking_service')->table('loan_schedule_payments')->where('revenue_stream_type',$revenueStreamType)->where('study_id',$studyId)->delete();
+		DB::connection('non_banking_service')->table($loanSchedulePaymentTableName)->where('revenue_stream_type',$revenueStreamType)->where('study_id',$studyId)->delete();
 		$baseRatesMapping = $baseRatesPerMonths;
 		// $baseRatesMapping = HArr::getFirstOfYear($baseRatesPerMonths);
 		$bankLendingMarginRates=$generalAndReserveAssumption->getBankLendingMarginRates();
@@ -918,7 +922,7 @@ use Illuminate\Support\Facades\DB;
 						$currentMonth = $dateIndexWithDate[$monthIndex];
 						$currentMonthFormatted = Carbon::make($currentMonth)->format('Y-m-d');
 				
-						$currentMarginRate = $loanArr['margin_rate'];
+						$currentMarginRate = $isSensitivity ?  $loanArr['sensitivity_margin_rate'] : $loanArr['margin_rate'];
 						$baseRatePortfolioLoans = is_array($baseRatesMapping) ? $this->sumBaseRateWithMarginRate($baseRatesMapping,$currentMarginRate) : $baseRatesMapping ;
 						$gracePeriod = 0;
 						$tenor = $loanArr['tenor'];
@@ -1018,7 +1022,7 @@ use Illuminate\Support\Facades\DB;
 			
 		}
 		
-		DB::connection('non_banking_service')->table('loan_schedule_payments')->insert($portfolioLoans);
+		DB::connection('non_banking_service')->table($loanSchedulePaymentTableName)->insert($portfolioLoans);
 	}
 	
 	public function getStudyDurationPerYearFromIndexesForView() 
@@ -1279,6 +1283,13 @@ use Illuminate\Support\Facades\DB;
 						]);
 				
 			}
+	}
+	public static function getTitleForBreakdown(string $relationName):string {
+		return [
+			'reverseFactoringBreakdowns'=>__('Reverse Factoring Breakdowns'),
+			'leasingRevenueStreamBreakdown'=>__('Leasing Revenue Stream Breakdown'),
+			'ijaraMortgageBreakdowns'=>__('Ijara Mortgage Breakdowns')
+		][$relationName];
 	}
 	
 }

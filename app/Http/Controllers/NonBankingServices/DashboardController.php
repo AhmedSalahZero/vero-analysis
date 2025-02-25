@@ -72,14 +72,14 @@ class DashboardController extends Controller
 			{
 				$currentYearIndex = $monthsWithItsYear[$currentMonthIndex]??null;
 				$currentYearAsString = $yearIndexWithYear[$currentYearIndex]??null;
-				$currentInterestRevenue  = $interestRevenues[$currentMonthIndex]??0;
-				$currentBankInterestExpense = $bankInterestExpenses[$currentMonthIndex]??0;
+				$currentInterestRevenueAtMonthIndex  = $interestRevenues[$currentMonthIndex]??0;
+				$currentBankInterestExpenseAtMonthIndex = $bankInterestExpenses[$currentMonthIndex]??0;
 				if(!is_null($currentYearIndex)){
-					$formattedDirectFactoring['interest_revenue'][$currentYearIndex] = isset($formattedDirectFactoring['interest_revenue'][$currentYearIndex]) ? $formattedDirectFactoring['interest_revenue'][$currentYearIndex] +  $currentInterestRevenue : $currentInterestRevenue;
-					$formattedDirectFactoring['bank_interest_expense'][$currentYearIndex] = isset($formattedDirectFactoring['bank_interest_expense'][$currentYearIndex]) ? $formattedDirectFactoring['bank_interest_expense'][$currentYearIndex] +  $currentBankInterestExpense : $currentBankInterestExpense;
+					$formattedDirectFactoring['interest_revenue'][$currentYearIndex] = isset($formattedDirectFactoring['interest_revenue'][$currentYearIndex]) ? $formattedDirectFactoring['interest_revenue'][$currentYearIndex] +  $currentInterestRevenueAtMonthIndex : $currentInterestRevenueAtMonthIndex;
+					$formattedDirectFactoring['bank_interest_expense'][$currentYearIndex] = isset($formattedDirectFactoring['bank_interest_expense'][$currentYearIndex]) ? $formattedDirectFactoring['bank_interest_expense'][$currentYearIndex] +  $currentBankInterestExpenseAtMonthIndex : $currentBankInterestExpenseAtMonthIndex;
 					$resultPerRevenueStreamType['direct-factoring'][$currentYearAsString] = $formattedDirectFactoring['interest_revenue'][$currentYearIndex];
-					$salesRevenuePerTypes['direct-factoring'][$currentYearIndex] = $resultPerRevenueStreamType['direct-factoring'][$currentYearAsString];
-					$salesRevenuePerTypes['total_revenue'][$currentYearIndex] =  isset($salesRevenuePerTypes['total_revenue'][$currentYearIndex]) ? $salesRevenuePerTypes['total_revenue'][$currentYearIndex] + $salesRevenuePerTypes['direct-factoring'][$currentYearIndex] : $salesRevenuePerTypes['direct-factoring'][$currentYearIndex];
+			    	$salesRevenuePerTypes['direct-factoring'][$currentYearIndex] = $resultPerRevenueStreamType['direct-factoring'][$currentYearAsString];
+					$salesRevenuePerTypes['total_revenue'][$currentYearIndex] =  isset($salesRevenuePerTypes['total_revenue'][$currentYearIndex]) ? $salesRevenuePerTypes['total_revenue'][$currentYearIndex] + $currentInterestRevenueAtMonthIndex : $currentInterestRevenueAtMonthIndex + $resultPerRevenueStreamType['direct-factoring'][$currentYearAsString];
 				}
 			}
 		}
@@ -88,50 +88,41 @@ class DashboardController extends Controller
 
 		
 		$testLoopIndex = 0 ;
-	
+
 		foreach($loanSchedulePayments as $loanSchedulePaymentAsStdClass ){
 			$portfolioLoanType = $loanSchedulePaymentAsStdClass->portfolio_loan_type;
 			$isPortfolio = $portfolioLoanType == 'portfolio'; 
 			$revenueStreamType = $loanSchedulePaymentAsStdClass->revenue_stream_type;
 			$interestAmounts = json_decode($loanSchedulePaymentAsStdClass->interestAmount);
+			//dd($interestAmounts);
 			$testLoopIndex ++ ;
-			foreach($interestAmounts as $currentMonthIndex => $interestAmount){
+			foreach($interestAmounts as $currentMonthIndex => $interestAmountAtMonthIndex){
 				
 				$currentYearIndex = $monthsWithItsYear[$currentMonthIndex]??null;
-				
+				$currentDirectFactoringBankInterestExpenseAtYearIndex = $formattedDirectFactoring['bank_interest_expense'][$currentYearIndex]??0;
 				$currentYearAsString = $yearIndexWithYear[$currentYearIndex] ?? null ;
 				if(!is_null($currentYearIndex)){
 					if($isPortfolio){
-						// test function
-						
-						$salesRevenuePerTypes[$revenueStreamType][$currentYearIndex] =  isset($salesRevenuePerTypes[$revenueStreamType][$currentYearIndex]) ? $salesRevenuePerTypes[$revenueStreamType][$currentYearIndex] + $interestAmount : $interestAmount;
-						$salesRevenuePerTypes['total_revenue'][$currentYearIndex] =  isset($salesRevenuePerTypes['total_revenue'][$currentYearIndex]) ? $salesRevenuePerTypes['total_revenue'][$currentYearIndex] + $interestAmount : $interestAmount;
+						$salesRevenuePerTypes[$revenueStreamType][$currentYearIndex] =  isset($salesRevenuePerTypes[$revenueStreamType][$currentYearIndex]) ? $salesRevenuePerTypes[$revenueStreamType][$currentYearIndex] + $interestAmountAtMonthIndex : $interestAmountAtMonthIndex;
+						$salesRevenuePerTypes['total_revenue'][$currentYearIndex] =  isset($salesRevenuePerTypes['total_revenue'][$currentYearIndex]) ? $salesRevenuePerTypes['total_revenue'][$currentYearIndex] + $interestAmountAtMonthIndex : $interestAmountAtMonthIndex;
+						$formattedResult['sales_revenue'][$currentYearIndex] = $salesRevenuePerTypes['total_revenue'][$currentYearIndex] ;
 				
-							 $resultPerRevenueStreamType[$revenueStreamType][$currentYearAsString] = isset($resultPerRevenueStreamType[$revenueStreamType][$currentYearAsString]) ? $resultPerRevenueStreamType[$revenueStreamType][$currentYearAsString] + $interestAmount : $interestAmount;
-					//		 $resultPerRevenueStreamType[$revenueStreamType]['total'] = isset($resultPerRevenueStreamType[$revenueStreamType]['total']) ? $resultPerRevenueStreamType[$revenueStreamType]['total'] +  $interestAmount : $interestAmount;
-							 
-									
-							$formattedResult['sales_revenue'][$currentYearIndex] = $salesRevenuePerTypes['total_revenue'][$currentYearIndex] ;
+							 $resultPerRevenueStreamType[$revenueStreamType][$currentYearAsString] = isset($resultPerRevenueStreamType[$revenueStreamType][$currentYearAsString]) ? $resultPerRevenueStreamType[$revenueStreamType][$currentYearAsString] + $interestAmountAtMonthIndex : $interestAmountAtMonthIndex;
 	
-							$currentDirectFactoringInterestRevenue  =$formattedDirectFactoring['interest_revenue'][$currentYearIndex] ?? 0 ;
-							$formattedResult['sales_revenue'][$currentYearIndex] = $formattedResult['sales_revenue'][$currentYearIndex] 
-							//+ $currentDirectFactoringInterestRevenue
+							// $currentDirectFactoringInterestRevenue  =$formattedDirectFactoring['interest_revenue'][$currentYearIndex] ?? 0 ;
+							// $formattedResult['sales_revenue'][$currentYearIndex] = $formattedResult['sales_revenue'][$currentYearIndex] + $currentDirectFactoringInterestRevenue
 							 ;
 							$currentSalesRevenue = $formattedResult['sales_revenue'][$currentYearIndex] ;
 							$previousSalesRevenue = $formattedResult['sales_revenue'][$currentYearIndex-1] ?? 0 ;
 							$formattedResult['growth_rate'][$currentYearIndex] = $previousSalesRevenue ? (($currentSalesRevenue / $previousSalesRevenue)-1)*100 : 0 ;
-						}else{
-							$formattedResult['interest_cogs'][$currentYearIndex] = isset($formattedResult['interest_cogs'][$currentYearIndex]) ? $formattedResult['interest_cogs'][$currentYearIndex] + $interestAmount : $interestAmount ;
-							$currentDirectFactoringBankInterestExpense = $formattedDirectFactoring['bank_interest_expense'][$currentYearIndex]??0;
-							$formattedResult['interest_cogs'][$currentYearIndex] = $formattedResult['interest_cogs'][$currentYearIndex] + $currentDirectFactoringBankInterestExpense;
-						
+						}else{			
+							$formattedResult['interest_cogs'][$currentYearIndex] = isset($formattedResult['interest_cogs'][$currentYearIndex]) ? $formattedResult['interest_cogs'][$currentYearIndex] + $interestAmountAtMonthIndex : $interestAmountAtMonthIndex + $currentDirectFactoringBankInterestExpenseAtYearIndex ;
 							
 						}
 					}
 				}
 			
 		}
-	// dd($formattedResult,$salesRevenuePerTypes);
 		$salaryExpenses = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('departments')
 		->join('positions','positions.department_id','=','departments.id')
 		->selectRaw('expense_type,salary_expenses,expense_type')->where('type','manpower')->where('departments.study_id',$study->id)->get() ;
@@ -215,11 +206,9 @@ class DashboardController extends Controller
 			$formattedResult['net_profit_percentage_of_sales'][$yearIndex] = $currentSalesRevenue ? $formattedResult['net_profit'][$yearIndex] / $currentSalesRevenue  *100 :0 ;  
 			
 		}
-		// dd($salesRevenuePerTypes);
 		$chartsFormatted =$this->formatForTheeLineChart($resultPerRevenueStreamType); 
 		$lineChart = $chartsFormatted['line_chart'];
 		$barChart = $chartsFormatted['bar_chart'];
-		// dd($formattedResult);
 
 		return view('non_banking_services.dashboard.dashboard',
 	[

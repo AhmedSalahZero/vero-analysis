@@ -15,23 +15,34 @@
                     <table class="table">
                         <thead>
                             <tr>
-                                <th class="text-center w-20-percentage text-capitalize th-main-color">{{ __('Name') }}</th>
-                                <th class="text-center w-20-percentage text-capitalize th-main-color">{{ __('Spread Rate') }}</th>
-                                <th class="text-center w-20-percentage text-capitalize th-main-color">{{ __('Sensitivity Spread Rate') }}</th>
+                                <th class="text-center w-30-percentage text-capitalize th-main-color align-middle">{{ __('Revenue Stream') }}</th>
+                                <th class="text-center w-50-percentage text-capitalize th-main-color align-middle">{{ __('Name') }}</th>
+                                <th class="text-center w-10-percentage text-capitalize th-main-color align-middle">{{ __('Spread Rate') }}</th>
+                                <th class="text-center w-10-percentage text-capitalize th-main-color align-middle">{{ __('Sensitivity Spread Rate') }}</th>
                             </tr>
                         </thead>
                         <tbody>
 
-
-							@foreach ($study->leasingRevenueStreamBreakdown as $index=>$currentLeasingRevenueStreamBreakdown)
+							@foreach(['leasingRevenueStreamBreakdown','reverseFactoringBreakdowns','ijaraMortgageBreakdowns'] as $relationName)
+							@php
+								$revenueStreamTitle = \App\Models\NonBankingService\Study::getTitleForBreakdown($relationName);
+							@endphp
+							@foreach ($study->{$relationName} as $index=>$currentLeasingRevenueStreamBreakdown)
 							@php
 								$name = $currentLeasingRevenueStreamBreakdown->getReviewForTable();
 								$id = $currentLeasingRevenueStreamBreakdown->id ;
 								$marginRate = $currentLeasingRevenueStreamBreakdown->getMarginRate() ;
 								$sensitivityMarginRate = $currentLeasingRevenueStreamBreakdown->getSensitivityMarginRate() ;
+								$isMarginRateEqualToSensitivityMarginRate = $marginRate == $sensitivityMarginRate ;
 							@endphp
                             <tr>
-                                <td class="w-60-percentage">
+                                <td class="w-30-percentage">
+                                    <div class="kt-input-icon ">
+                                        <div class="input-group">
+                                            <input disabled type="text" step="0.1" class="form-control ignore-global-style" value="{{ $revenueStreamTitle }}">
+                                        </div>
+                                    </div>
+                                </td> <td class="w-50-percentage">
                                     <div class="kt-input-icon ">
                                         <div class="input-group">
                                             <input disabled type="text" step="0.1" class="form-control ignore-global-style" value="{{ $name }}">
@@ -40,22 +51,26 @@
                                 </td>
 
                                      
-                                <td class="">
+                                <td class="w-10-percentage">
                                     <div class="d-flex align-items-center ">
                                         <div class="kt-input-icon ml-2 ">
                                             <div class="input-group">
-                                                <input disabled type="text" class="form-control text-center ignore-global-style" value="{{  number_format($marginRate,2) . ' %' }}">
+                                                <input readonly type="text" class="form-control text-center ignore-global-style" value="{{  number_format($marginRate,2) . ' %' }}">
                                             </div>
                                         </div>
                                     </div>
 
                                 </td>
 								
-								<td class="">
+								<td class="w-10-percentage">
                                     <div class="d-flex align-items-center ">
                                         <div class="kt-input-icon ml-2 ">
                                             <div class="input-group">
-                                                <input name="sensitivity_margin_rate[{{ $id }}]" type="text" class="form-control text-center ignore-global-style" value="{{ number_format($marginRate,2) }}">
+                                                <input name="sensitivity_margin_rate[{{ $relationName }}][{{ $id }}]" type="text" class="form-control text-center ignore-global-style
+												@if($isMarginRateEqualToSensitivityMarginRate)
+												{{-- bg-green text-white												 --}}
+												@endif 
+												" value="{{ number_format($sensitivityMarginRate,2) }}">
                                             </div>
                                         </div>
                                     </div>
@@ -68,6 +83,7 @@
 
                             </tr>
 
+                            @endforeach
                             @endforeach
 
 

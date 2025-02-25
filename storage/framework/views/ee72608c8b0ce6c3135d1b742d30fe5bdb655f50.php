@@ -53,12 +53,31 @@ use App\Models\NonBankingService\Study ;
             </ul>
 			
             <div class="flex-tabs">
-               
-                <a href="<?php echo e(route('create.study',['company'=>$company->id,Study::STUDY])); ?>" class="btn  active-style btn-icon-sm align-self-center">
+                 <a href="<?php echo e(route('create.consumerfinance.products',['company'=>$company->id])); ?>" class="btn  active-style btn-icon-sm align-self-center">
+                    <i class="fas fa-plus"></i>
+                    <?php echo e(__('Consumerfinance Products')); ?>
+
+                </a>
+				
+				 <a href="<?php echo e(route('create.microfinance.products',['company'=>$company->id])); ?>" class="btn  active-style btn-icon-sm align-self-center">
+                    <i class="fas fa-plus"></i>
+                    <?php echo e(__('Microfinance Products')); ?>
+
+                </a>
+			   
+				  <a href="<?php echo e(route('create.leasing.categories',['company'=>$company->id])); ?>" class="btn  active-style btn-icon-sm align-self-center">
+                    <i class="fas fa-plus"></i>
+                    <?php echo e(__('Leasing Products')); ?>
+
+                </a>
+				
+                <a href="<?php echo e(route('create.study',['company'=>$company->id])); ?>" class="btn  bg-green text-white btn-icon-sm align-self-center">
                     <i class="fas fa-plus"></i>
                     <?php echo e(__('New Study')); ?>
 
                 </a>
+				
+				
             </div>
 		
             

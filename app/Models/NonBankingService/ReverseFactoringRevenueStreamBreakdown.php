@@ -40,11 +40,7 @@ class  ReverseFactoringRevenueStreamBreakdown extends Model
 	// 	return $this->belongsTo(ReverseCategory::class,'category_id',) ;
 	// }
 	
-	public function getReviewForTable()
-	{
 	
-		return $this->category->getTitle().'[' . $this->getLoanNature() . ' / ' . $this->getLoanType(). ' / ' . $this->getTenor(). ' M/ ' . $this->getGracePeriod(). ' M/ ' . $this->getMarginRate(). ' %/ ' . $this->getInstallmentInterval(). ' / ' . $this->getStepRate(). ' %/ ' . $this->getStepInterval() . ' ]';
-	}
 	public function getLoanAmountAtYearIndex(int $yearIndex)
 	{
 		return $this->loan_amounts[$yearIndex] ?? 0  ; 

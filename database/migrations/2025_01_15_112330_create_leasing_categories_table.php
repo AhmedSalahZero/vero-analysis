@@ -19,14 +19,12 @@ class CreateLeasingCategoriesTable extends Migration
         Schema::connection('non_banking_service')->create('leasing_categories', function (Blueprint $table) {
             $table->id();
 			$table->string('title');
-			// $table->string('slug');
 			$table->unsignedBigInteger('company_id');
             $table->timestamps();
         });
 		$companies = Company::all();
 		foreach($companies as $company){
 			LeasingCategory::createAllForCompany($company->id );
-			
 		}
 		
     }

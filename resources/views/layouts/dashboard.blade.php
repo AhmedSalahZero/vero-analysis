@@ -61,19 +61,21 @@ let pageLoaded = false ;
 		.w-40-percentage {
             width: 40% !important;
         }
-        .w-40-percentage {
-            width: 40% !important;
+        .w-30-percentage {
+            width: 30% !important;
         }
 
         .w-20-percentage {
             width: 20% !important;
         }
+		.w-70-percentage {
+            width: 70% !important;
+        }
 		.w-15-percentage {
             width: 15% !important;
         }
- .w-10-percentage {
+ 	.w-10-percentage {
             width: 10% !important;
-
         }
         .flex-tabs {
             display: flex;
