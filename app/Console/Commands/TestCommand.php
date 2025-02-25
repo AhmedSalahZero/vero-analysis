@@ -9,6 +9,7 @@ use App\Jobs\TestJob2;
 use App\Models\FinancialStatement;
 use App\Models\IncomeStatement;
 use App\Models\NonBankingService\Study;
+use App\Models\Partner;
 use App\ReadyFunctions\OldLoan;
 use App\ReadyFunctions\VariableLoanCalculation;
 use App\Services\AI\PredictionErrorQualityMeasures\MeanAbsoluteError;
@@ -116,11 +117,29 @@ class TestCommand extends Command
 	{
 		
 	}
+	public function insertCustomersIntoPartnerTable(int $companyId)
+	{
+		$salesGatherings = DB::table('sales_gathering')->where('customer_name','!=',null)->where('company_id',$companyId)->get();
+		foreach($salesGatherings as $salesGathering){
+			$customerName = $salesGathering->customer_name;
+			$isFound = Partner::where('company_id',$companyId)->where('name',$customerName)->where('is_customer',1)->first() ;
+			if($isFound){
+				continue ;
+			}
+			Partner::create([
+				'company_id'=>$companyId,
+				'name'=>$customerName,
+				'is_customer'=>1 
+			]);
+			
+		}
+		
+	}
 	public function handle()
 	{
 		
-	
-		$this->convertIncomeStatementDatesToIndexes();
+		$this->insertCustomersIntoPartnerTable(45);
+		// $this->convertIncomeStatementDatesToIndexes();
 		return 'done';
 		$loanData =  [
 		"previousResult" => [],

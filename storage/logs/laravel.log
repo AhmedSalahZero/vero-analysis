@@ -1482,3 +1482,63 @@
 #29 /media/salah/Software/projects/veroo/artisan(37): Illuminate\\Foundation\\Console\\Kernel->handle()
 #30 {main}
 "} 
+[2025-02-25 10:18:12] local.ERROR: syntax error, unexpected ')' {"exception":"[object] (ParseError(code: 0): syntax error, unexpected ')' at /media/salah/Software/projects/veroo/app/Console/Commands/TestCommand.php:122)
+[stacktrace]
+#0 /media/salah/Software/projects/veroo/vendor/composer/ClassLoader.php(427): Composer\\Autoload\\{closure}()
+#1 [internal function]: Composer\\Autoload\\ClassLoader->loadClass()
+#2 [internal function]: spl_autoload_call()
+#3 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(229): is_subclass_of()
+#4 /media/salah/Software/projects/veroo/app/Console/Kernel.php(69): Illuminate\\Foundation\\Console\\Kernel->load()
+#5 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(316): App\\Console\\Kernel->commands()
+#6 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(127): Illuminate\\Foundation\\Console\\Kernel->bootstrap()
+#7 Command line code(1): Illuminate\\Foundation\\Console\\Kernel->handle()
+#8 {main}
+"} 
+[2025-02-25 10:18:12] local.ERROR: syntax error, unexpected ')' {"exception":"[object] (ParseError(code: 0): syntax error, unexpected ')' at /media/salah/Software/projects/veroo/app/Console/Commands/TestCommand.php:122)
+[stacktrace]
+#0 /media/salah/Software/projects/veroo/vendor/composer/ClassLoader.php(427): Composer\\Autoload\\{closure}()
+#1 [internal function]: Composer\\Autoload\\ClassLoader->loadClass()
+#2 [internal function]: spl_autoload_call()
+#3 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(229): is_subclass_of()
+#4 /media/salah/Software/projects/veroo/app/Console/Kernel.php(69): Illuminate\\Foundation\\Console\\Kernel->load()
+#5 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(316): App\\Console\\Kernel->commands()
+#6 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(127): Illuminate\\Foundation\\Console\\Kernel->bootstrap()
+#7 Command line code(1): Illuminate\\Foundation\\Console\\Kernel->handle()
+#8 {main}
+"} 
+[2025-02-25 10:18:19] local.ERROR: syntax error, unexpected ')' {"exception":"[object] (ParseError(code: 0): syntax error, unexpected ')' at /media/salah/Software/projects/veroo/app/Console/Commands/TestCommand.php:122)
+[stacktrace]
+#0 /media/salah/Software/projects/veroo/vendor/composer/ClassLoader.php(427): Composer\\Autoload\\{closure}()
+#1 [internal function]: Composer\\Autoload\\ClassLoader->loadClass()
+#2 [internal function]: spl_autoload_call()
+#3 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(229): is_subclass_of()
+#4 /media/salah/Software/projects/veroo/app/Console/Kernel.php(69): Illuminate\\Foundation\\Console\\Kernel->load()
+#5 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(316): App\\Console\\Kernel->commands()
+#6 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(127): Illuminate\\Foundation\\Console\\Kernel->bootstrap()
+#7 Command line code(1): Illuminate\\Foundation\\Console\\Kernel->handle()
+#8 {main}
+"} 
+[2025-02-25 10:19:12] local.ERROR: syntax error, unexpected ')' {"exception":"[object] (ParseError(code: 0): syntax error, unexpected ')' at /media/salah/Software/projects/veroo/app/Console/Commands/TestCommand.php:122)
+[stacktrace]
+#0 /media/salah/Software/projects/veroo/vendor/composer/ClassLoader.php(427): Composer\\Autoload\\{closure}()
+#1 [internal function]: Composer\\Autoload\\ClassLoader->loadClass()
+#2 [internal function]: spl_autoload_call()
+#3 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(229): is_subclass_of()
+#4 /media/salah/Software/projects/veroo/app/Console/Kernel.php(69): Illuminate\\Foundation\\Console\\Kernel->load()
+#5 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(316): App\\Console\\Kernel->commands()
+#6 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(127): Illuminate\\Foundation\\Console\\Kernel->bootstrap()
+#7 Command line code(1): Illuminate\\Foundation\\Console\\Kernel->handle()
+#8 {main}
+"} 
+[2025-02-25 10:19:12] local.ERROR: syntax error, unexpected ')' {"exception":"[object] (ParseError(code: 0): syntax error, unexpected ')' at /media/salah/Software/projects/veroo/app/Console/Commands/TestCommand.php:122)
+[stacktrace]
+#0 /media/salah/Software/projects/veroo/vendor/composer/ClassLoader.php(427): Composer\\Autoload\\{closure}()
+#1 [internal function]: Composer\\Autoload\\ClassLoader->loadClass()
+#2 [internal function]: spl_autoload_call()
+#3 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(229): is_subclass_of()
+#4 /media/salah/Software/projects/veroo/app/Console/Kernel.php(69): Illuminate\\Foundation\\Console\\Kernel->load()
+#5 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(316): App\\Console\\Kernel->commands()
+#6 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(127): Illuminate\\Foundation\\Console\\Kernel->bootstrap()
+#7 Command line code(1): Illuminate\\Foundation\\Console\\Kernel->handle()
+#8 {main}
+"} 
