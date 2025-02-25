@@ -147,7 +147,7 @@
                                     @endphp
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
-                                            <x-repeat-right-dot-inputs :number-format-decimals="0" :currentVal="$currentVal" :formattedInputClasses="'current-growth-rate-result-value-formatted'" :classes="'only-greater-than-or-equal-zero-allowed total-loans-hidden js-recalculate-equity-funding-value current-growth-rate-result-value'" :is-percentage="false" :name="'ReverseFactoringRevenueProjectionByCategory['.'reverse_factoring_transactions_projections'.']['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :number-format-decimals="0" :currentVal="$currentVal" :formattedInputClasses="'current-growth-rate-result-value-formatted'" :classes="'only-greater-than-or-equal-zero-allowed total-loans-hidden factoring-projection-amount recalculate-factoring js-recalculate-equity-funding-value current-growth-rate-result-value'" :is-percentage="false" :name="'ReverseFactoringRevenueProjectionByCategory['.'reverse_factoring_transactions_projections'.']['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
                                         </div>
                                     </td>
                                     @php
@@ -329,9 +329,9 @@
                                     @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
                                 
                                     <td>
-                                            <x-repeat-right-dot-inputs :numberFormatDecimals="2" :multiple="true" :currentVal="isset($subModel) ? $subModel->getPercentageAtYearIndex($year):0" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :name="'percentage_payload'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :numberFormatDecimals="2" :multiple="true" :currentVal="isset($subModel) ? $subModel->getPercentageAtYearIndex($year):0" :classes="'only-greater-than-or-equal-zero-allowed recalculate-factoring factoring-rate'" :is-percentage="true" :name="'percentage_payload'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
                                        
-                                            <x-repeat-right-dot-inputs :numberFormatDecimals="0" :multiple="true"  :currentVal="isset($subModel) ? $subModel->getLoanAmountPayloadAtYearIndex($year):0" :classes="'only-greater-than-or-equal-zero-allowed current-loan-input'" :is-percentage="false" :name="'loan_amounts'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :numberFormatDecimals="0" :multiple="true"  :currentVal="isset($subModel) ? $subModel->getLoanAmountPayloadAtYearIndex($year):0" :classes="'only-greater-than-or-equal-zero-allowed current-loan-input factoring-value'" :is-percentage="false" :name="'loan_amounts'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
                                     </td>
                                     @php
                                     $columnIndex++;

@@ -1,6 +1,6 @@
 <?php
  use App\Models\NonBankingService\Study;
- use App\Models\NonBankingService\ReverseFactoringBreakdown;
+ use App\Models\NonBankingService\DirectFactoringBreakdown;
 ?>
 <?php $__env->startSection('css'); ?>
  <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
@@ -48,28 +48,29 @@
 
 
 
+
             
 
             
-             <div class="kt-portlet">
+            <div class="kt-portlet">
                 <div class="kt-portlet__body">
                     <div class="row">
 
                         <div class="col-md-10">
                             <div class="d-flex align-items-center ">
                                 <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style="">
-                                    <?php echo e(__('Reverse Factoring Revenue Projection By Category')); ?>
+                                    <?php echo e(__('Direct Factoring Revenue Projection By Category')); ?>
 
                                 </h3>
                             </div>
                         </div>
                         <div class="col-md-2 text-right">
                              <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.show-hide-btn','data' => ['query' => '.reverse-factoring-revenue-projection-by-category']]); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.show-hide-btn','data' => ['query' => '.direct-factoring-revenue-projection-by-category']]); ?>
 <?php $component->withName('show-hide-btn'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['query' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('.reverse-factoring-revenue-projection-by-category')]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['query' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('.direct-factoring-revenue-projection-by-category')]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
@@ -106,11 +107,11 @@
 <?php endif; ?> 
                                 <?php $__currentLoopData = $yearsWithItsMonths; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $year=>$monthsForThisYearArray): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                  <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.tables.repeater-table-th','data' => ['class' => ' header-border-down ','title' => __('Yr-') . $yearIndexWithYear[$year] ]]); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.tables.repeater-table-th','data' => ['class' => ' interval-class header-border-down ','title' => __('Yr-') . $yearIndexWithYear[$year] ]]); ?>
 <?php $component->withName('tables.repeater-table-th'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['class' => ' header-border-down ','title' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Yr-') . $yearIndexWithYear[$year] )]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['class' => ' interval-class header-border-down ','title' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Yr-') . $yearIndexWithYear[$year] )]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
@@ -178,28 +179,39 @@
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
                                              <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['currentVal' => $model->reverseFactoringRevenueProjectionByCategory ? $model->reverseFactoringRevenueProjectionByCategory->getGrowthRateAtYearIndex($year) : 0,'classes' => 'only-greater-than-or-equal-zero-allowed recalculate-gr gr-field','isPercentage' => true,'name' => 'ReverseFactoringRevenueProjectionByCategory['.'growth_rates'.']['.$year.']','columnIndex' => $columnIndex]]); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['currentVal' => $model->directFactoringRevenueProjectionByCategory ? $model->directFactoringRevenueProjectionByCategory->getGrowthRateAtYearIndex($year) : 0,'classes' => 'only-greater-than-or-equal-zero-allowed recalculate-gr gr-field','isPercentage' => true,'name' => 'DirectFactoringRevenueProjectionByCategory['.'growth_rates'.']['.$year.']','columnIndex' => $columnIndex]]); ?>
 <?php $component->withName('repeat-right-dot-inputs'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($model->reverseFactoringRevenueProjectionByCategory ? $model->reverseFactoringRevenueProjectionByCategory->getGrowthRateAtYearIndex($year) : 0),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed recalculate-gr gr-field'),'is-percentage' => true,'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('ReverseFactoringRevenueProjectionByCategory['.'growth_rates'.']['.$year.']'),'columnIndex' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($columnIndex)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($model->directFactoringRevenueProjectionByCategory ? $model->directFactoringRevenueProjectionByCategory->getGrowthRateAtYearIndex($year) : 0),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed recalculate-gr gr-field'),'is-percentage' => true,'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('DirectFactoringRevenueProjectionByCategory['.'growth_rates'.']['.$year.']'),'columnIndex' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($columnIndex)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
-
                                         </div>
                                     </td>
                                     <?php
                                     $columnIndex++;
                                     ?>
                                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+
+
+
                                 </tr>
+
+
+
+
+                             
+
+                                
+
+
                                 <tr data-repeat-formatting-decimals="0" data-repeater-style>
 
                                     <td>
-                                            <input value="<?php echo e(__('Reverse Factoring Transactions Projection')); ?>" disabled class="form-control text-left mt-2" type="text">
+                                            <input value="<?php echo e(__('Direct Factoring Projection')); ?>" disabled class="form-control text-left mt-2" type="text">
                                     </td>
 
 
@@ -208,16 +220,16 @@
                                     ?>
                                     <?php $__currentLoopData = $yearsWithItsMonths; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $year=>$monthsForThisYearArray): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                     <?php
-                                    $currentVal = $model->reverseFactoringRevenueProjectionByCategory ? $model->reverseFactoringRevenueProjectionByCategory->getReverseFactoringTransactionProjectionAtYearIndex($year) : 0;
+                                    $currentVal = $model->directFactoringRevenueProjectionByCategory ? $model->directFactoringRevenueProjectionByCategory->getDirectFactoringTransactionProjectionAtYearIndex($year) : 0;
                                     ?>
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
                                              <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['numberFormatDecimals' => 0,'currentVal' => $currentVal,'formattedInputClasses' => 'current-growth-rate-result-value-formatted','classes' => 'only-greater-than-or-equal-zero-allowed total-loans-hidden factoring-projection-amount recalculate-factoring js-recalculate-equity-funding-value current-growth-rate-result-value','isPercentage' => false,'name' => 'ReverseFactoringRevenueProjectionByCategory['.'reverse_factoring_transactions_projections'.']['.$year.']','columnIndex' => $columnIndex]]); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['numberFormatDecimals' => 0,'currentVal' => $currentVal,'formattedInputClasses' => 'current-growth-rate-result-value-formatted','classes' => 'only-greater-than-or-equal-zero-allowed    factoring-projection-amount recalculate-factoring  is-percentage-total-of current-growth-rate-result-value ','dataCommonPercentageOfClass' => 'percentage-of-total-target','isPercentage' => false,'name' => 'DirectFactoringRevenueProjectionByCategory['.'direct_factoring_transactions_projections'.']['.$year.']','columnIndex' => $columnIndex]]); ?>
 <?php $component->withName('repeat-right-dot-inputs'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['number-format-decimals' => 0,'currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($currentVal),'formattedInputClasses' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('current-growth-rate-result-value-formatted'),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed total-loans-hidden factoring-projection-amount recalculate-factoring js-recalculate-equity-funding-value current-growth-rate-result-value'),'is-percentage' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('ReverseFactoringRevenueProjectionByCategory['.'reverse_factoring_transactions_projections'.']['.$year.']'),'columnIndex' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($columnIndex)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['number-format-decimals' => 0,'currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($currentVal),'formattedInputClasses' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('current-growth-rate-result-value-formatted'),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed    factoring-projection-amount recalculate-factoring  is-percentage-total-of current-growth-rate-result-value '),'data-common-percentage-of-class' => 'percentage-of-total-target','is-percentage' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('DirectFactoringRevenueProjectionByCategory['.'direct_factoring_transactions_projections'.']['.$year.']'),'columnIndex' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($columnIndex)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
@@ -273,9 +285,9 @@
 
             
 
-				
-				
-				 
+
+
+ 
             <div class="kt-portlet">
                 <div class="kt-portlet__body">
                     <div class="row">
@@ -283,18 +295,18 @@
                         <div class="col-md-10">
                             <div class="d-flex align-items-center ">
                                 <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style="">
-                                    <?php echo e(__('Reverse Factoring Breakdown')); ?>
+                                    <?php echo e(__('Direct Factoring Breakdown')); ?>
 
                                 </h3>
                             </div>
                         </div>
                         <div class="col-md-2 text-right">
                              <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.show-hide-btn','data' => ['query' => '.reverse-factoring-admin-fees']]); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.show-hide-btn','data' => ['query' => '.direct-factoring-admin-fees']]); ?>
 <?php $component->withName('show-hide-btn'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['query' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('.reverse-factoring-admin-fees')]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['query' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('.direct-factoring-admin-fees')]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
@@ -306,47 +318,36 @@
                     <div class="row">
                         <hr style="flex:1;background-color:lightgray">
                     </div>
-                    <div class="row reverse-factoring-admin-fees">
+                    <div class="row direct-factoring-admin-fees">
                         <?php
                         $rowIndex = 0;
-                        $relationName ='reverseFactoringBreakdowns';
+                        $relationName ='directFactoringBreakdowns';
                         $repeaterId =$relationName.'repeater';
 						?>
                          <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.tables.repeater-table','data' => ['actionBtnTitle' => '+/-','tableName' => $relationName,'repeaterId' => $repeaterId,'removeActionBtn' => false,'removeRepeater' => false,'initialJs' => true,'repeaterWithSelect2' => true,'canAddNewItem' => true,'parentClass' => 'js-remove-hidden','hideAddBtn' => true,'relationName' => $relationName,'isRepeater' => true]]); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.tables.repeater-table','data' => ['tableName' => $relationName,'repeaterId' => $repeaterId,'removeActionBtn' => false,'removeRepeater' => false,'initialJs' => true,'repeaterWithSelect2' => true,'canAddNewItem' => true,'parentClass' => 'js-remove-hidden','hideAddBtn' => true,'relationName' => 'food','isRepeater' => $isRepeater=!(isset($removeRepeater) && $removeRepeater)]]); ?>
 <?php $component->withName('tables.repeater-table'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['actionBtnTitle' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('+/-'),'tableName' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($relationName),'repeaterId' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($repeaterId),'removeActionBtn' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'removeRepeater' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'initialJs' => true,'repeater-with-select2' => true,'canAddNewItem' => true,'parentClass' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('js-remove-hidden'),'hide-add-btn' => true,'relationName' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($relationName),'isRepeater' => true]); ?>
+<?php $component->withAttributes(['tableName' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($relationName),'repeaterId' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($repeaterId),'removeActionBtn' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'removeRepeater' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'initialJs' => true,'repeater-with-select2' => true,'canAddNewItem' => true,'parentClass' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('js-remove-hidden'),'hide-add-btn' => true,'relationName' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('food'),'isRepeater' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($isRepeater=!(isset($removeRepeater) && $removeRepeater))]); ?>
                              <?php $__env->slot('ths'); ?> 
                                  <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.tables.repeater-table-th','data' => ['class' => 'header-border-down reverse-category-selector-class','title' => __('Category')]]); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.tables.repeater-table-th','data' => ['class' => ' category-selector-class header-border-down ','title' => __('Category')]]); ?>
 <?php $component->withName('tables.repeater-table-th'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['class' => 'header-border-down reverse-category-selector-class','title' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Category'))]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['class' => ' category-selector-class header-border-down ','title' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Category'))]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
                                  <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.tables.repeater-table-th','data' => ['class' => ' tenor-selector-class header-border-down ','title' => __('Tenor <br> (Months)')]]); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.tables.repeater-table-th','data' => ['class' => ' category-selector-class header-border-down ','title' => __('Spread Rate')]]); ?>
 <?php $component->withName('tables.repeater-table-th'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['class' => ' tenor-selector-class header-border-down ','title' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Tenor <br> (Months)'))]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
-<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
-<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
-<?php endif; ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?> 
-                                 <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.tables.repeater-table-th','data' => ['class' => ' tenor-selector-class header-border-down ','title' => __('Spread <br> Rate')]]); ?>
-<?php $component->withName('tables.repeater-table-th'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['class' => ' tenor-selector-class header-border-down ','title' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Spread <br> Rate'))]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['class' => ' category-selector-class header-border-down ','title' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Spread Rate'))]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
@@ -354,11 +355,11 @@
 <?php endif; ?> 
                                 <?php $__currentLoopData = $yearsWithItsMonths; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $year=>$monthsForThisYearArray): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                  <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.tables.repeater-table-th','data' => ['class' => 'header-border-down ','title' => __('Yr-') . $yearIndexWithYear[$year] ]]); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.tables.repeater-table-th','data' => ['class' => ' interval-class header-border-down ','title' => __('Yr-') . $yearIndexWithYear[$year] ]]); ?>
 <?php $component->withName('tables.repeater-table-th'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['class' => 'header-border-down ','title' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Yr-') . $yearIndexWithYear[$year] )]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['class' => ' interval-class header-border-down ','title' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Yr-') . $yearIndexWithYear[$year] )]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
@@ -368,20 +369,21 @@
                              <?php $__env->endSlot(); ?>
                              <?php $__env->slot('trs'); ?> 
 								<?php
-                            $rows = count($model->reverseFactoringBreakdowns) ? $model->reverseFactoringBreakdowns : [-1] ;
+                            $rows = count($model->directFactoringBreakdowns) ? $model->directFactoringBreakdowns : [-1] ;
                             ?>
                              <?php $__currentLoopData = count($rows) ? $rows : [-1]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $subModel): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                             <?php
-                             if( !($subModel instanceof ReverseFactoringBreakdown) ){
+                             if( !($subModel instanceof DirectFactoringBreakdown) ){
                              unset($subModel);
                              }
                             ?>
+						
 					
                                 <tr 
 								
 								data-repeater-item
 								
-								data-repeat-formatting-decimals="0" data-repeater-style>
+								data-repeat-formatting-decimals="2" data-repeater-style>
 									
 									<td class="text-center">
                                     <div class="">
@@ -395,31 +397,18 @@
 
                                     <td>
                            				  <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.select','data' => ['required' => true,'label' => '','pleaseSelect' => false,'selectedValue' => isset($subModel) ? $subModel->getCategory():0,'options' => reverseFactoringSelector(),'addNew' => false,'class' => 'select2-select  repeater-select  ','all' => false,'name' => 'category']]); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.select','data' => ['required' => true,'label' => '','pleaseSelect' => false,'selectedValue' => isset($subModel) ? $subModel->getCategory():0,'options' => factoringDueInDays(),'addNew' => false,'class' => 'select2-select  repeater-select  ','all' => false,'name' => 'category']]); ?>
 <?php $component->withName('form.select'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['required' => true,'label' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(''),'pleaseSelect' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'selectedValue' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(isset($subModel) ? $subModel->getCategory():0),'options' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(reverseFactoringSelector()),'add-new' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'class' => 'select2-select  repeater-select  ','all' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'name' => 'category']); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['required' => true,'label' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(''),'pleaseSelect' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'selectedValue' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(isset($subModel) ? $subModel->getCategory():0),'options' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(factoringDueInDays()),'add-new' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'class' => 'select2-select  repeater-select  ','all' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'name' => 'category']); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
-										  <input value="<?php echo e(__('Reverse Factoring Transactions Projection')); ?>" disabled class="form-control text-left mt-2" type="text">
-                                    </td>
-										 <td>
-                                                                                    <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['numberFormatDecimals' => '0','mark' => '','removeThreeDots' => true,'currentVal' => isset($subModel) ? $subModel->getTenor():12,'classes' => 'only-greater-than-or-equal-zero-allowed','isPercentage' => true,'name' => 'tenor','columnIndex' => null]]); ?>
-<?php $component->withName('repeat-right-dot-inputs'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['number-format-decimals' => '0','mark' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(''),'remove-three-dots' => true,'currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(isset($subModel) ? $subModel->getTenor():12),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed'),'is-percentage' => true,'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('tenor'),'columnIndex' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(null)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
-<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
-<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
-<?php endif; ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?> 
-
+										  <input value="<?php echo e(__('Direct Factoring Projection')); ?>" disabled class="form-control text-left mt-2" type="text">
+										  
                                     </td>
 									 <td>
                                                                                     <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
@@ -435,7 +424,6 @@
 <?php endif; ?> 
 
                                     </td>
-											
                                     <?php
                                     $columnIndex = 0 ;
                                     ?>
@@ -443,11 +431,11 @@
                                 
                                     <td>
                                              <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['numberFormatDecimals' => 2,'multiple' => true,'currentVal' => isset($subModel) ? $subModel->getPercentageAtYearIndex($year):0,'classes' => 'only-greater-than-or-equal-zero-allowed recalculate-factoring factoring-rate','isPercentage' => true,'name' => 'percentage_payload','columnIndex' => $columnIndex]]); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['multiple' => true,'currentVal' => isset($subModel) ? $subModel->getPercentageAtYearIndex($year):0,'classes' => 'only-greater-than-or-equal-zero-allowed recalculate-factoring factoring-rate is-percentage-from-total ','dataCommonPercentageOfClass' => 'percentage-of-total-target','isPercentage' => true,'name' => 'percentage_payload','columnIndex' => $columnIndex]]); ?>
 <?php $component->withName('repeat-right-dot-inputs'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['numberFormatDecimals' => 2,'multiple' => true,'currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(isset($subModel) ? $subModel->getPercentageAtYearIndex($year):0),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed recalculate-factoring factoring-rate'),'is-percentage' => true,'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('percentage_payload'),'columnIndex' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($columnIndex)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['multiple' => true,'currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(isset($subModel) ? $subModel->getPercentageAtYearIndex($year):0),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed recalculate-factoring factoring-rate is-percentage-from-total '),'data-common-percentage-of-class' => 'percentage-of-total-target','is-percentage' => true,'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('percentage_payload'),'columnIndex' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($columnIndex)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
@@ -455,11 +443,11 @@
 <?php endif; ?> 
                                        
                                              <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['numberFormatDecimals' => 0,'multiple' => true,'currentVal' => isset($subModel) ? $subModel->getLoanAmountPayloadAtYearIndex($year):0,'classes' => 'only-greater-than-or-equal-zero-allowed current-loan-input factoring-value','isPercentage' => false,'name' => 'loan_amounts','columnIndex' => $columnIndex]]); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['multiple' => true,'numberFormatDecimals' => 0,'currentVal' => isset($subModel) ? $subModel->getLoanAmountPayloadAtYearIndex($year):0,'classes' => 'only-greater-than-or-equal-zero-allowed current-loan-input factoring-value is-result-total-of','dataCommonPercentageOfClass' => 'percentage-of-total-target','isPercentage' => false,'name' => 'loan_amounts','columnIndex' => $columnIndex]]); ?>
 <?php $component->withName('repeat-right-dot-inputs'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['numberFormatDecimals' => 0,'multiple' => true,'currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(isset($subModel) ? $subModel->getLoanAmountPayloadAtYearIndex($year):0),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed current-loan-input factoring-value'),'is-percentage' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('loan_amounts'),'columnIndex' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($columnIndex)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['multiple' => true,'number-format-decimals' => 0,'currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(isset($subModel) ? $subModel->getLoanAmountPayloadAtYearIndex($year):0),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed current-loan-input factoring-value is-result-total-of'),'data-common-percentage-of-class' => 'percentage-of-total-target','is-percentage' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('loan_amounts'),'columnIndex' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($columnIndex)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
@@ -503,7 +491,6 @@
 
 
 
-           
             
             <div class="kt-portlet">
                 <div class="kt-portlet__body">
@@ -519,11 +506,11 @@
                         </div>
                         <div class="col-md-2 text-right">
                              <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.show-hide-btn','data' => ['query' => '.reverse-factoring-revenue-projection-by-category']]); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.show-hide-btn','data' => ['query' => '.direct-factoring-revenue-projection-by-category']]); ?>
 <?php $component->withName('show-hide-btn'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['query' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('.reverse-factoring-revenue-projection-by-category')]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['query' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('.direct-factoring-revenue-projection-by-category')]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
@@ -561,11 +548,11 @@
 <?php endif; ?> 
                                 <?php $__currentLoopData = $yearsWithItsMonths; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $year=>$monthsForThisYearArray): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                  <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.tables.repeater-table-th','data' => ['class' => 'header-border-down ','title' => __('Yr-') . $yearIndexWithYear[$year] ]]); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.tables.repeater-table-th','data' => ['class' => ' interval-class header-border-down ','title' => __('Yr-') . $yearIndexWithYear[$year] ]]); ?>
 <?php $component->withName('tables.repeater-table-th'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['class' => 'header-border-down ','title' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Yr-') . $yearIndexWithYear[$year] )]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['class' => ' interval-class header-border-down ','title' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Yr-') . $yearIndexWithYear[$year] )]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
@@ -594,11 +581,11 @@
 
 
                                              <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['currentVal' => $model->reverseFactoryAdminFeesRate ? $model->reverseFactoryAdminFeesRate->getAdminFeeRatesAtYearIndex($year):0,'classes' => 'only-greater-than-or-equal-zero-allowed','isPercentage' => true,'name' => 'reverseFactoryAdminFeesRate['.'admin_fees_rates'.']['.$year.']','columnIndex' => $columnIndex]]); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['currentVal' => $model->directFactoryAdminFeesRate ? $model->directFactoryAdminFeesRate->getAdminFeeRatesAtYearIndex($year):0,'classes' => 'only-greater-than-or-equal-zero-allowed','isPercentage' => true,'name' => 'directFactoryAdminFeesRate['.'admin_fees_rates'.']['.$year.']','columnIndex' => $columnIndex]]); ?>
 <?php $component->withName('repeat-right-dot-inputs'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($model->reverseFactoryAdminFeesRate ? $model->reverseFactoryAdminFeesRate->getAdminFeeRatesAtYearIndex($year):0),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed'),'is-percentage' => true,'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('reverseFactoryAdminFeesRate['.'admin_fees_rates'.']['.$year.']'),'columnIndex' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($columnIndex)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($model->directFactoryAdminFeesRate ? $model->directFactoryAdminFeesRate->getAdminFeeRatesAtYearIndex($year):0),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed'),'is-percentage' => true,'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('directFactoryAdminFeesRate['.'admin_fees_rates'.']['.$year.']'),'columnIndex' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($columnIndex)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
@@ -634,11 +621,11 @@
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
                                              <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['currentVal' => $model->reverseFactoryAdminFeesRate ? $model->reverseFactoryAdminFeesRate->getEclRatesAtYearIndex($year):0,'classes' => 'only-greater-than-or-equal-zero-allowed','isPercentage' => true,'name' => 'reverseFactoryAdminFeesRate['.'ecl_rates'.']['.$year.']','columnIndex' => $columnIndex]]); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['currentVal' => $model->directFactoryAdminFeesRate ? $model->directFactoryAdminFeesRate->getEclRatesAtYearIndex($year):0,'classes' => 'only-greater-than-or-equal-zero-allowed','isPercentage' => true,'name' => 'directFactoryAdminFeesRate['.'ecl_rates'.']['.$year.']','columnIndex' => $columnIndex]]); ?>
 <?php $component->withName('repeat-right-dot-inputs'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($model->reverseFactoryAdminFeesRate ? $model->reverseFactoryAdminFeesRate->getEclRatesAtYearIndex($year):0),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed'),'is-percentage' => true,'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('reverseFactoryAdminFeesRate['.'ecl_rates'.']['.$year.']'),'columnIndex' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($columnIndex)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($model->directFactoryAdminFeesRate ? $model->directFactoryAdminFeesRate->getEclRatesAtYearIndex($year):0),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed'),'is-percentage' => true,'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('directFactoryAdminFeesRate['.'ecl_rates'.']['.$year.']'),'columnIndex' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($columnIndex)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
@@ -680,9 +667,9 @@
 
 
 
-
-             
-            <div class="kt-portlet">
+			<?php if(count($study->directFactoringBreakdowns)): ?>
+            
+            <div class="kt-portlet " id="new-funding-id">
                 <div class="kt-portlet__body">
                     <div class="row">
 
@@ -737,11 +724,11 @@
 <?php endif; ?> 
                                 <?php $__currentLoopData = $yearsWithItsMonths; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $year=>$monthsForThisYearArray): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                  <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.tables.repeater-table-th','data' => ['class' => ' header-border-down ','title' => __('Yr-') . $yearIndexWithYear[$year] ]]); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.tables.repeater-table-th','data' => ['class' => ' interval-class header-border-down ','title' => __('Yr-') . $yearIndexWithYear[$year] ]]); ?>
 <?php $component->withName('tables.repeater-table-th'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['class' => ' header-border-down ','title' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Yr-') . $yearIndexWithYear[$year] )]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['class' => ' interval-class header-border-down ','title' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Yr-') . $yearIndexWithYear[$year] )]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
@@ -751,9 +738,51 @@
                              <?php $__env->endSlot(); ?>
                              <?php $__env->slot('trs'); ?> 
 
-                                <tr data-repeat-formatting-decimals="2" data-repeater-style >
+                                <tr data-repeat-formatting-decimals="0" data-repeater-style>
 
-                                    
+  
+
+
+                                    <td>
+                                        <input value="<?php echo e(__('Direct Factoring New Portfolio Amounts')); ?>" disabled class="form-control text-left mt-2" type="text">
+
+                                    </td>
+                                    <?php
+                                    $columnIndex = 0 ;
+                                    ?>
+                                    <?php $__currentLoopData = $yearsWithItsMonths; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $year=>$monthsForThisYearArray): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+
+                                    <td>
+                                        <div class="d-flex align-items-center justify-content-center">
+
+                                             <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['numberFormatDecimals' => 0,'readonly' => true,'removeThreeDots' => true,'inputHiddenAttributes' => '','currentVal' => $study->getTotalDirectFactoringNewPortfolioAmountsAtYearIndex($year),'classes' => 'js-recalculate-equity-funding-value total-loans-hidden','isPercentage' => false,'name' => '','columnIndex' => $columnIndex]]); ?>
+<?php $component->withName('repeat-right-dot-inputs'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php $component->withAttributes(['numberFormatDecimals' => 0,'readonly' => true,'removeThreeDots' => true,'inputHiddenAttributes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(''),'currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($study->getTotalDirectFactoringNewPortfolioAmountsAtYearIndex($year)),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('js-recalculate-equity-funding-value total-loans-hidden'),'is-percentage' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(''),'columnIndex' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($columnIndex)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
+<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
+<?php endif; ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?> 
+
+                                        </div>
+                                    </td>
+                                    <?php
+                                    $columnIndex++;
+                                    ?>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+
+
+
+                                </tr> 
+								
+								
+								
+								<tr data-repeat-formatting-decimals="2" data-repeater-style>
+
+  
 
 
                                     <td>
@@ -769,11 +798,11 @@
                                         <div class="d-flex align-items-center justify-content-center">
 
                                              <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['inputHiddenAttributes' => 'js-recalculate-equity-funding-value','currentVal' => $model->reverseFactoringNewPortfolioFundingStructure ? $model->reverseFactoringNewPortfolioFundingStructure->getEquityFundingRatesAtYearIndex($year):0,'classes' => 'only-greater-than-or-equal-zero-allowed equity-funding-rates equity-funding-rate-input-hidden-class','isPercentage' => true,'name' => 'reverseFactoringNewPortfolioFundingStructure['.'equity_funding_rates'.']['.$year.']','columnIndex' => $columnIndex]]); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['inputHiddenAttributes' => 'js-recalculate-equity-funding-value','currentVal' => $model->directFactoringNewPortfolioFundingStructure ? $model->directFactoringNewPortfolioFundingStructure->getEquityFundingRatesAtYearIndex($year):0,'classes' => 'only-greater-than-or-equal-zero-allowed equity-funding-rates equity-funding-rate-input-hidden-class','isPercentage' => true,'name' => 'directFactoringNewPortfolioFundingStructure['.'equity_funding_rates'.']['.$year.']','columnIndex' => $columnIndex]]); ?>
 <?php $component->withName('repeat-right-dot-inputs'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['inputHiddenAttributes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('js-recalculate-equity-funding-value'),'currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($model->reverseFactoringNewPortfolioFundingStructure ? $model->reverseFactoringNewPortfolioFundingStructure->getEquityFundingRatesAtYearIndex($year):0),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed equity-funding-rates equity-funding-rate-input-hidden-class'),'is-percentage' => true,'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('reverseFactoringNewPortfolioFundingStructure['.'equity_funding_rates'.']['.$year.']'),'columnIndex' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($columnIndex)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['inputHiddenAttributes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('js-recalculate-equity-funding-value'),'currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($model->directFactoringNewPortfolioFundingStructure ? $model->directFactoringNewPortfolioFundingStructure->getEquityFundingRatesAtYearIndex($year):0),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed equity-funding-rates equity-funding-rate-input-hidden-class'),'is-percentage' => true,'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('directFactoringNewPortfolioFundingStructure['.'equity_funding_rates'.']['.$year.']'),'columnIndex' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($columnIndex)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
@@ -809,11 +838,11 @@
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
                                              <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['numberFormatDecimals' => 0,'currentVal' => $model->reverseFactoringNewPortfolioFundingStructure ? $model->reverseFactoringNewPortfolioFundingStructure->getEquityFundingValuesAtYearIndex($year):0,'classes' => 'only-greater-than-or-equal-zero-allowed ','formattedInputClasses' => 'equity-funding-formatted-value-class','isPercentage' => false,'name' => 'reverseFactoringNewPortfolioFundingStructure['.'equity_funding_values'.']['.$year.']','columnIndex' => $columnIndex]]); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['numberFormatDecimals' => 0,'currentVal' => $model->directFactoringNewPortfolioFundingStructure ? $model->directFactoringNewPortfolioFundingStructure->getEquityFundingValuesAtYearIndex($year):0,'classes' => 'only-greater-than-or-equal-zero-allowed ','formattedInputClasses' => 'equity-funding-formatted-value-class','isPercentage' => false,'name' => 'directFactoringNewPortfolioFundingStructure['.'equity_funding_values'.']['.$year.']','columnIndex' => $columnIndex]]); ?>
 <?php $component->withName('repeat-right-dot-inputs'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['numberFormatDecimals' => 0,'currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($model->reverseFactoringNewPortfolioFundingStructure ? $model->reverseFactoringNewPortfolioFundingStructure->getEquityFundingValuesAtYearIndex($year):0),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed '),'formatted-input-classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('equity-funding-formatted-value-class'),'is-percentage' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('reverseFactoringNewPortfolioFundingStructure['.'equity_funding_values'.']['.$year.']'),'columnIndex' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($columnIndex)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['numberFormatDecimals' => 0,'currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($model->directFactoringNewPortfolioFundingStructure ? $model->directFactoringNewPortfolioFundingStructure->getEquityFundingValuesAtYearIndex($year):0),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed '),'formatted-input-classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('equity-funding-formatted-value-class'),'is-percentage' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('directFactoringNewPortfolioFundingStructure['.'equity_funding_values'.']['.$year.']'),'columnIndex' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($columnIndex)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
@@ -846,7 +875,7 @@
 
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
-                                            <input type="text" data-column-index="<?php echo e($columnIndex); ?>" readonly class="form-control expandable-percentage-input new-loan-function-rates-js" name="reverseFactoringNewPortfolioFundingStructure[new_loans_funding_rates][<?php echo e($year); ?>]" value="<?php echo e($model->reverseFactoringNewPortfolioFundingStructure ? $model->reverseFactoringNewPortfolioFundingStructure->getNewLoansFundingRatesAtYearIndex($year):0); ?>"> <span class="ml-2">%</span>
+                                            <input type="text" data-column-index="<?php echo e($columnIndex); ?>" readonly class="form-control expandable-percentage-input new-loan-function-rates-js" name="directFactoringNewPortfolioFundingStructure[new_loans_funding_rates][<?php echo e($year); ?>]" value="<?php echo e($model->directFactoringNewPortfolioFundingStructure ? $model->directFactoringNewPortfolioFundingStructure->getNewLoansFundingRatesAtYearIndex($year):0); ?>"> <span class="ml-2">%</span>
                                         </div>
                                     </td>
                                     <?php
@@ -881,11 +910,11 @@
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
                                              <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['numberFormatDecimals' => 0,'formattedInputClasses' => 'new-loans-funding-formatted-value-class','currentVal' => $model->reverseFactoringNewPortfolioFundingStructure ? $model->reverseFactoringNewPortfolioFundingStructure->getNewLoansFundingValuesAtYearIndex($year):0 ,'classes' => 'only-greater-than-or-equal-zero-allowed','isPercentage' => false,'name' => 'reverseFactoringNewPortfolioFundingStructure['.'new_loans_funding_values'.']['.$year.']','columnIndex' => $columnIndex]]); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['numberFormatDecimals' => 0,'formattedInputClasses' => 'new-loans-funding-formatted-value-class','currentVal' => $model->directFactoringNewPortfolioFundingStructure ? $model->directFactoringNewPortfolioFundingStructure->getNewLoansFundingValuesAtYearIndex($year):0 ,'classes' => 'only-greater-than-or-equal-zero-allowed','isPercentage' => false,'name' => 'directFactoringNewPortfolioFundingStructure['.'new_loans_funding_values'.']['.$year.']','columnIndex' => $columnIndex]]); ?>
 <?php $component->withName('repeat-right-dot-inputs'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['numberFormatDecimals' => 0,'formatted-input-classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('new-loans-funding-formatted-value-class'),'currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($model->reverseFactoringNewPortfolioFundingStructure ? $model->reverseFactoringNewPortfolioFundingStructure->getNewLoansFundingValuesAtYearIndex($year):0 ),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed'),'is-percentage' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('reverseFactoringNewPortfolioFundingStructure['.'new_loans_funding_values'.']['.$year.']'),'columnIndex' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($columnIndex)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['numberFormatDecimals' => 0,'formatted-input-classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('new-loans-funding-formatted-value-class'),'currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($model->directFactoringNewPortfolioFundingStructure ? $model->directFactoringNewPortfolioFundingStructure->getNewLoansFundingValuesAtYearIndex($year):0 ),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed'),'is-percentage' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('directFactoringNewPortfolioFundingStructure['.'new_loans_funding_values'.']['.$year.']'),'columnIndex' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($columnIndex)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
@@ -922,8 +951,8 @@
 
                 </div>
             </div>
+			<?php endif; ?> 
             
-			
              <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.save-or-back','data' => []]); ?>
 <?php $component->withName('save-or-back'); ?>
@@ -936,6 +965,7 @@
 <?php endif; ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
+     
 
 
 
@@ -1011,7 +1041,7 @@
     $(document).on('click', '.save-form', function(e) {
         e.preventDefault(); {
 
-
+            const hasSalesChannel = $('#add-sales-channels-share-discount-id:checked').length
 
             let canSubmitForm = true;
             let errorMessage = '';
@@ -1144,4 +1174,4 @@
 
 <?php $__env->stopSection(); ?>
 
-<?php echo $__env->make('layouts.dashboard', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /media/salah/Software/projects/veroo/resources/views/non_banking_services/reverse-factoring-revenue-stream-breakdown/form.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('layouts.dashboard', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /media/salah/Software/projects/veroo/resources/views/non_banking_services/direct-factoring-revenue-stream-breakdown/form.blade.php ENDPATH**/ ?>

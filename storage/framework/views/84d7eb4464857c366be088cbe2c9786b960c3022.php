@@ -45,7 +45,13 @@
                                 </td> <td class="w-50-percentage">
                                     <div class="kt-input-icon ">
                                         <div class="input-group">
-                                            <input disabled type="text" step="0.1" class="form-control ignore-global-style" value="<?php echo e($name); ?>">
+                                            <input disabled type="text" step="0.1" class="form-control ignore-global-style
+											
+											<?php if(!$isMarginRateEqualToSensitivityMarginRate): ?>
+												bg-green text-white												
+												<?php endif; ?> 
+												
+											" value="<?php echo e($name); ?>">
                                         </div>
                                     </div>
                                 </td>
@@ -67,9 +73,7 @@
                                         <div class="kt-input-icon ml-2 ">
                                             <div class="input-group">
                                                 <input name="sensitivity_margin_rate[<?php echo e($relationName); ?>][<?php echo e($id); ?>]" type="text" class="form-control text-center ignore-global-style
-												<?php if($isMarginRateEqualToSensitivityMarginRate): ?>
-												bg-green text-white												
-												<?php endif; ?> 
+												
 												" value="<?php echo e(number_format($sensitivityMarginRate,2)); ?>">
                                             </div>
                                         </div>

@@ -210,8 +210,8 @@
               
                 </div>
                 <div class="col-lg-6 kt-align-right">
-                    <a href="{{ route('view.financial.planning.income.statement',['company'=>$company->id,'study'=>$study->id]) }}"   class="btn active-style" >
-						{{ __('Back To Income Statement') }}
+                    <a href="{{ route('create.expenses',['company'=>$company->id,'study'=>$study->id]) }}"   class="btn active-style" >
+						{{ __('Save & Go To Next') }}
 					</a>
                 </div>
             </div>

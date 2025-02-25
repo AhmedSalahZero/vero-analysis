@@ -33,7 +33,7 @@ class PortfolioMortgageRevenueStreamBreakdownController extends Controller
 			// $study->storeRepeaterRelations($request,$this->getRepeaterRelations(),$company);
 		
 		return response()->json([
-			'redirectTo'=>route('create.expenses',['company'=>$company->id,'study'=>$study->id])
+			'redirectTo'=>route('view.manpower.for.non.banking',['company'=>$company->id,'study'=>$study->id])
 		]);
 	}
 }

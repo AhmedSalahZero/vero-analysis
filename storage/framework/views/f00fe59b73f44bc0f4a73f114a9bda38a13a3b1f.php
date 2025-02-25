@@ -675,7 +675,7 @@ let pageLoaded = false ;
 					color:white !important ;
 		}
         .bg-green {
-            background-color: green;
+            background-color: green !important;
         }
 
         .border-green {

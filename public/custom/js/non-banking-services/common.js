@@ -132,10 +132,12 @@ function getEndOfMonth(year, month) {
 }
 $(document).on('change', '.recalculate-factoring', function () {
 	const index = parseInt($(this).attr('data-column-index'))
-	const rate = $('.factoring-rate[data-column-index="' + index + '"]').val()
 	const rowIndex = $('.factoring-rate[data-column-index="' + index + '"]').closest('[data-repeater-item]').index()
-	const value = $('.factoring-projection-amount[data-column-index="' + index + '"]').val()
-	$('.factoring-value[data-column-index="' + index + '"]').val(rate / 100 * value).trigger('change')
+	var value = $('.factoring-projection-amount[data-column-index="' + index + '"]').val()
+	$('.factoring-rate[data-column-index="' + index + '"]').each(function(currentIndex,rateElement){
+		var rate = $(rateElement).val()
+		$(rateElement).closest('tr').find('.factoring-value[data-column-index="' + index + '"]').val(rate / 100 * value).trigger('change')
+	})
 })
 
 $(function () {
@@ -228,19 +230,24 @@ $(document).on('click', '.add-btn-js', function (e) {
 })
 $(document).on('change', '.recalculate-gr', function () {
 	const columnIndex = parseInt($(this).attr('data-column-index'))
-	console.log(columnIndex);
 	const previousColumnIndex = columnIndex - 1
 	const nextColumnIndex=columnIndex+1;
 	const growthRateOfCurrentYear = $('.gr-field[data-column-index="' + columnIndex + '"]').val()
-	const loanAmount = $('.current-growth-rate-result-value[data-column-index="' + previousColumnIndex + '"]').val()
+	
 	//console.log(loanAmount,growthRateOfCurrentYear);
-	if (loanAmount != undefined) {
-		currentAmount = (1 + (growthRateOfCurrentYear / 100)) * loanAmount
+	
+		
 		allElements = $('.current-growth-rate-result-value-formatted[data-column-index="' + columnIndex + '"]') ;
 		allElements.each(function (index, element) {
-			$(element).val(number_format(currentAmount)).trigger('change')
+			const loanAmount = $(element).closest('tr').find('.current-growth-rate-result-value[data-column-index="' + previousColumnIndex + '"]').val()
+		//	console.log(loanAmount)
+			if(loanAmount != undefined){
+				currentAmount = (1 + (growthRateOfCurrentYear / 100)) * loanAmount
+		//		console.log(currentAmount);
+				$(element).val(number_format(currentAmount)).trigger('change')
+			}
+		
 		})
-	}
 	$('.recalculate-gr[data-column-index="'+nextColumnIndex+'"]').trigger('change');
 })
 $(document).on('change','.current-growth-rate-result-value-formatted',function(event){
