@@ -77,7 +77,7 @@ class QuickPricingCalculatorController extends Controller
 		if(!$sharingLink && $pricingPlanId != 0){
 			abort(404);
 		}
-		$pricingPlanId = is_null($sharingLink->shareable_id) ? $pricingPlanId :  $sharingLink->shareable_id;
+		$pricingPlanId = !$sharingLink ? $pricingPlanId :  $sharingLink->shareable_id;
         return view('admin.quick-pricing-calculator.create' , array_merge(
 			QuickPricingCalculator::getViewVars(),
 			['pricingPlanId'=>$pricingPlanId]
