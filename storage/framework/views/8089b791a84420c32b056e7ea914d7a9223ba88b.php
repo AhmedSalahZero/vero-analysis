@@ -1,5 +1,5 @@
-@extends('layouts.dashboard')
-@section('css')
+
+<?php $__env->startSection('css'); ?>
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/jszip-2.5.0/dt-1.12.1/af-2.4.0/b-2.2.3/b-colvis-2.2.3/b-html5-2.2.3/b-print-2.2.3/cr-1.5.6/date-1.1.2/fc-4.1.0/fh-3.2.3/r-2.3.0/rg-1.2.0/sl-1.4.0/sr-1.1.1/datatables.min.css" />
 
 
@@ -214,22 +214,32 @@
 </style>
 <style>
     td.details-control {
-        background: url('{{asset('tables_imgs/details_open.png')}}') no-repeat center center;
+        background: url('<?php echo e(asset('tables_imgs/details_open.png')); ?>') no-repeat center center;
         cursor: pointer;
     }
 
     tr.shown td.details-control {
-        background: url('{{asset('tables_imgs/details_close.png')}}') no-repeat center center;
+        background: url('<?php echo e(asset('tables_imgs/details_close.png')); ?>') no-repeat center center;
     }
 
 </style>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('sub-header')
-<x-main-form-title :id="'main-form-title'" :class="''">{{ __('Positions') }}</x-main-form-title>
-@endsection
+<?php $__env->startSection('sub-header'); ?>
+ <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.main-form-title','data' => ['id' => 'main-form-title','class' => '']]); ?>
+<?php $component->withName('main-form-title'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php $component->withAttributes(['id' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('main-form-title'),'class' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('')]); ?><?php echo e(__('Positions')); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
+<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
+<?php endif; ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?> 
+<?php $__env->stopSection(); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 
 <div class="row">
     <div class="col-md-12">
@@ -246,43 +256,50 @@
 			<span class="visibility-hidden">/</span>
 			
 			
-                    <a href="{{ route('positions.create',['company'=>$company->id]) }}" class="btn btn-bold  border-green  flex-1 flex-grow-0 btn-border-radius mr-auto">
-                        {{-- <span class="plus-class">+</span> --}}
-						{{ __('Create') }}
+                    <a href="<?php echo e(route('positions.create',['company'=>$company->id])); ?>" class="btn btn-bold  border-green  flex-1 flex-grow-0 btn-border-radius mr-auto">
+                        
+						<?php echo e(__('Create')); ?>
+
                     </a>
                 </div>
 				
-                            <x-table :tableClass="'kt_table_with_no_pagination_no_fixed  removeGlobalStyle ' ">
-                                @slot('table_header')
+                             <?php if (isset($component)) { $__componentOriginale53a9d2e6d6c51019138cc2fcd3ba8ac893391c6 = $component; } ?>
+<?php $component = $__env->getContainer()->make(App\View\Components\Table::class, ['tableClass' => 'kt_table_with_no_pagination_no_fixed  removeGlobalStyle ' ]); ?>
+<?php $component->withName('table'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php $component->withAttributes([]); ?>
+                                <?php $__env->slot('table_header'); ?>
 
 
                                 <tr class=" text-center second-tr-bg">
                                     <th class="text-center absorbing-column max-w-80"></th>
                                     <th></th>
                                 </tr>
-                                @endslot
-                                @slot('table_body')
+                                <?php $__env->endSlot(); ?>
+                                <?php $__env->slot('table_body'); ?>
                                 <tr class=" text-center first-tr-bg ">
-                                    <td class="max-w-80 text-center view-table-th"><b style="color:white !important" class="text-capitalize">{{ __('Name') }}</b></td>
+                                    <td class="max-w-80 text-center view-table-th"><b style="color:white !important" class="text-capitalize"><?php echo e(__('Name')); ?></b></td>
 
 
                                     <td style="color:white !important" class="text-center view-table-th ">
-                                        {{ __('Actions') }}
+                                        <?php echo e(__('Actions')); ?>
+
                                     </td>
                                 </tr>
-                                @php
+                                <?php
                                 $id = 0 ;
-                                @endphp
-                                @foreach($items as $name => $subItems )
+                                ?>
+                                <?php $__currentLoopData = $items; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $name => $subItems): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 
                                 <tr class="group-color main-row-tr">
-                                    <td class="black-text max-w-80" style="cursor: pointer;" onclick="toggleRow('{{ $id }}')">
+                                    <td class="black-text max-w-80" style="cursor: pointer;" onclick="toggleRow('<?php echo e($id); ?>')">
 
                                         <div class="d-flex align-items-center ">
-                                            @if(count($subItems))
-                                            <i class="row_icon{{ $id }} flaticon2-up  mr-2  "></i>
-                                            @endif
-                                            <b class="text-capitalize ">{{ $name }}</b>
+                                            <?php if(count($subItems)): ?>
+                                            <i class="row_icon<?php echo e($id); ?> flaticon2-up  mr-2  "></i>
+                                            <?php endif; ?>
+                                            <b class="text-capitalize "><?php echo e($name); ?></b>
                                         </div>
                                     </td>
 
@@ -298,41 +315,46 @@
 
                                 </tr>
 
-                                @foreach ($subItems as $subItemIndex => $subItemArr)
+                                <?php $__currentLoopData = $subItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $subItemIndex => $subItemArr): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 
 
 
 
 
-                                <tr class="row{{ $id }}  text-center sub-item-row" style="display: none">
+                                <tr class="row<?php echo e($id); ?>  text-center sub-item-row" style="display: none">
                                     <td class="text-left max-w-80 text-capitalize"><b class="ml-3">
-                                            {{ $subItemArr['name'] }}
+                                            <?php echo e($subItemArr['name']); ?>
+
                                         </b></td>
 
                                     <td class="text-left text-capitalize"><b class="ml-3">
                                             <span style="overflow: visible; position: relative; width: 110px;">
-                                                <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('positions.edit', ['company'=>$company->id , 'position'=>$subItemArr['id']]) }}"><i class="fa fa-pen-alt"></i></a>
-                                                <a class="btn btn-secondary btn-outline-hover-danger btn-icon  " href="#" data-toggle="modal" data-target="#modal-delete-{{ $subItemArr['id']}}" title="Delete"><i class="fa fa-trash-alt"></i>
+                                                <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="<?php echo e(route('positions.edit', ['company'=>$company->id , 'position'=>$subItemArr['id']])); ?>"><i class="fa fa-pen-alt"></i></a>
+                                                <a class="btn btn-secondary btn-outline-hover-danger btn-icon  " href="#" data-toggle="modal" data-target="#modal-delete-<?php echo e($subItemArr['id']); ?>" title="Delete"><i class="fa fa-trash-alt"></i>
                                                 </a>
 
-                                                <div id="modal-delete-{{ $subItemArr['id'] }}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
+                                                <div id="modal-delete-<?php echo e($subItemArr['id']); ?>" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
                                                     <div class="modal-dialog">
                                                         <div class="modal-content">
                                                             <div class="modal-header">
-                                                                <h4 class="modal-title">{{ __('Delete Position ' .$subItemArr['name']) }}</h4>
+                                                                <h4 class="modal-title"><?php echo e(__('Delete Position ' .$subItemArr['name'])); ?></h4>
                                                             </div>
                                                             <div class="modal-body">
-                                                                <h3>{{ __('Are You Sure To Delete This Item ? ') }}</h3>
+                                                                <h3><?php echo e(__('Are You Sure To Delete This Item ? ')); ?></h3>
                                                             </div>
-                                                            <form action="{{ route('positions.destroy',['company'=>$company->id , 'position'=> $subItemArr['id'] ]) }}" method="post" id="delete_form">
-                                                                {{ csrf_field() }}
-                                                                {{ method_field('DELETE') }}
+                                                            <form action="<?php echo e(route('positions.destroy',['company'=>$company->id , 'position'=> $subItemArr['id'] ])); ?>" method="post" id="delete_form">
+                                                                <?php echo e(csrf_field()); ?>
+
+                                                                <?php echo e(method_field('DELETE')); ?>
+
                                                                 <div class="modal-footer">
                                                                     <button class="btn btn-danger">
-                                                                        {{ __('Delete') }}
+                                                                        <?php echo e(__('Delete')); ?>
+
                                                                     </button>
                                                                     <button class="btn btn-secondary" data-dismiss="modal" aria-hidden="true">
-                                                                        {{ __('Close') }}
+                                                                        <?php echo e(__('Close')); ?>
+
                                                                     </button>
                                                                 </div>
                                                             </form>
@@ -351,22 +373,27 @@
 
                                 </tr>
 
-                                @endforeach
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
 
                                 <?php $id++ ;?>
-                                @endforeach
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
 
 
 
 
-                                @endslot
-                            </x-table>
+                                <?php $__env->endSlot(); ?>
+                             <?php if (isset($__componentOriginale53a9d2e6d6c51019138cc2fcd3ba8ac893391c6)): ?>
+<?php $component = $__componentOriginale53a9d2e6d6c51019138cc2fcd3ba8ac893391c6; ?>
+<?php unset($__componentOriginale53a9d2e6d6c51019138cc2fcd3ba8ac893391c6); ?>
+<?php endif; ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?> 
 
                         </div>
-                    {{-- </div> --}}
-                {{-- </div> --}}
+                    
+                
                 <!--begin::Modal Delete  -->
 
 
@@ -383,11 +410,11 @@
 
 
 
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('js')
-<script src="{{ url('assets/vendors/custom/datatables/datatables.bundle.js') }}" type="text/javascript"></script>
-<script src="{{ url('assets/js/demo1/pages/crud/datatables/basic/paginations.js') }}" type="text/javascript">
+<?php $__env->startSection('js'); ?>
+<script src="<?php echo e(url('assets/vendors/custom/datatables/datatables.bundle.js')); ?>" type="text/javascript"></script>
+<script src="<?php echo e(url('assets/js/demo1/pages/crud/datatables/basic/paginations.js')); ?>" type="text/javascript">
 </script>
 
 <script>
@@ -406,4 +433,6 @@
 <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.22/datatables.min.js"></script>
 <script type="text/javascript" src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
 
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.dashboard', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /media/salah/Software/projects/veroo/resources/views/admin/positions/index.blade.php ENDPATH**/ ?>

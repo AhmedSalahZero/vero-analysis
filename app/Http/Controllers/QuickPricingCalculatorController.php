@@ -74,8 +74,7 @@ class QuickPricingCalculatorController extends Controller
 			// dd($sharingLink);
 			
 		}
-		// dd($sharingLink);
-		if(!$sharingLink){
+		if(!$sharingLink && $pricingPlanId != 0){
 			abort(404);
 		}
 		$pricingPlanId = is_null($sharingLink->shareable_id) ? $pricingPlanId :  $sharingLink->shareable_id;

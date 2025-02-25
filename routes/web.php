@@ -52,6 +52,7 @@ Route::middleware([])->group(function () {
         function () {
 			Route::get('sharable-links/quick-pricing-calculator/{pricingPlanId}',[QuickPricingCalculatorController::class, 'create']);
 			
+			
             Route::post('get-net-sales-for-type/', [SalesBreakdownAgainstAnalysisReport::class, 'getNetSalesValueSum'])->name('get.net.sales.modal.for.type');
             Route::post('getTopAndBottomsForDashboard', [SalesBreakdownAgainstAnalysisReport::class, 'topAndBottomsForDashboard'])->name('getTopAndBottomsForDashboard');
 
