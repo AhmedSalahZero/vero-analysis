@@ -25,6 +25,8 @@ use Illuminate\Support\Facades\DB;
 		use HasBasicStoreRequest;
 		
 		const STUDY = 'study' ;
+		const BUSINESS_PLAN = 'business-plans';  // multiple years
+		const ANNUALLY_STUDY = 'annually-study'; // one year
 		const LEASING_CATEGORY = 'leasing-categories' ;
 		const MiCROFINANCE_PRODUCTS = 'microfinance-products' ;
 		const CONSUMERFINANCE_PRODUCTS = 'consumerfinance-products' ;

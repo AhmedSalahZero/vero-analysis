@@ -84,7 +84,8 @@ class StudyController extends Controller
 		];
 	
 		$models = [
-			Study::STUDY =>$studies ,
+			Study::BUSINESS_PLAN =>$studies ,
+			Study::ANNUALLY_STUDY =>$studies ,
 		];
 
         return view('non_banking_services.study.index', [

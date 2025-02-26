@@ -677,7 +677,33 @@ let pageLoaded = false ;
         .bg-green {
             background-color: green !important;
         }
-
+		.delete-btn-class{
+			border:1px solid red !important ;
+		}
+		.delete-btn-class i{
+			color:red !important
+		}
+		.delete-btn-class:hover {
+			background-color:red ;
+		}
+		.delete-btn-class:hover i  {
+			color:white !important
+		}
+		
+		.edit-btn-class{
+			border:1px solid blue !important ;
+		}
+		
+		.edit-btn-class i{
+			color:blue !important
+		}
+		.edit-btn-class:hover {
+			background-color:blue ;
+		}
+		.edit-btn-class:hover i  {
+			color:white !important
+		}
+		
         .border-green {
             border-color: green;
         }

@@ -237,6 +237,9 @@ table:not(.table-condensed) thead th, table:not(.table-condensed) tbody td{
 .btn-sm-width{
 	width:80px !important;
 }
+.btn-md-width{
+	width:150px !important;
+}
 .btn-1-bg{
 	background-color:white ;
 	border:2px solid #4d9afa ;
