@@ -89,8 +89,8 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
 <?php endif; ?> 
                         </div>
                     </div>
-					
-					
+
+
                     <div class="row">
                         <hr style="flex:1;background-color:lightgray">
                     </div>
@@ -235,9 +235,23 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
                                 <tr data-repeat-formatting-decimals="0" data-repeater-style>
 
                                     <td>
-                                        <input value="<?php echo e(__('Portfolio Mortgage Transactions Projection')); ?>" disabled class="form-control text-left mt-2" type="text">
+                                        <input value="<?php echo e(__('Portfolio Mortgage Avg Transactions Amount')); ?>" disabled class="form-control text-left mt-2" type="text">
                                     </td>
-                                    <td></td>
+                                    <td>
+									<div class="d-flex align-items-center justify-content-center">
+                                             <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['removeThreeDots' => true,'removeThreeDotsClass' => true,'currentVal' => $model->portfolioMortgageRevenueProjectionByCategory ? $model->portfolioMortgageRevenueProjectionByCategory->getMarginRate() : 0,'classes' => 'only-greater-than-or-equal-zero-allowed','isPercentage' => true,'name' => 'PortfolioMortgageRevenueProjectionByCategory['.'margin_rate'.']','columnIndex' => -1]]); ?>
+<?php $component->withName('repeat-right-dot-inputs'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php $component->withAttributes(['removeThreeDots' => true,'removeThreeDotsClass' => true,'currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($model->portfolioMortgageRevenueProjectionByCategory ? $model->portfolioMortgageRevenueProjectionByCategory->getMarginRate() : 0),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed'),'is-percentage' => true,'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('PortfolioMortgageRevenueProjectionByCategory['.'margin_rate'.']'),'columnIndex' => -1]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
+<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
+<?php endif; ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?> 
+                                        </div>
+									</td>
 
                                     <?php
                                     $columnIndex = 0 ;
@@ -271,264 +285,207 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
                                 </tr>
 
 
-
-
-
-                                <tr data-repeat-formatting-decimals="2" data-repeater-style>
+                                <tr data-repeat-formatting-decimals="0" data-repeater-style>
 
                                     <td>
-                                        <div class="">
-                                            <input value="<?php echo e(__('Monthly Due Cheques %')); ?>" disabled class="form-control text-left mt-2" type="text">
-                                            <i class="fa fa-ellipsis-h pull-left "></i>
-                                        </div>
+                                        <input value="<?php echo e(__('Frequency Per Year')); ?>" disabled class="form-control text-left mt-2" type="text">
                                     </td>
+                                    <td></td>
 
-                                    <td>
-                                         <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['removeThreeDots' => true,'currentVal' => isset($subModel) ? $subModel->getMonthlyMarginRate():0,'classes' => 'only-greater-than-or-equal-zero-allowed','isPercentage' => true,'name' => 'monthly_margin_rate','columnIndex' => null]]); ?>
-<?php $component->withName('repeat-right-dot-inputs'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['remove-three-dots' => true,'currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(isset($subModel) ? $subModel->getMonthlyMarginRate():0),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed'),'is-percentage' => true,'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('monthly_margin_rate'),'columnIndex' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(null)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
-<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
-<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
-<?php endif; ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?> 
-                                    </td>
                                     <?php
                                     $columnIndex = 0 ;
-
-
                                     ?>
                                     <?php $__currentLoopData = $yearsWithItsMonths; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $year=>$monthsForThisYearArray): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-
+                                    <?php
+                                    $currentVal = $model->portfolioMortgageRevenueProjectionByCategory ? $model->portfolioMortgageRevenueProjectionByCategory->getFrequencyPerYearAtYearIndex($year) : 1;
+                                    ?>
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
                                              <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['currentVal' => $model->portfolioMortgageRevenueProjectionByCategory ? $model->portfolioMortgageRevenueProjectionByCategory->getMonthlyDueChequesPercentagesAtYearIndex($year) : 0,'classes' => 'only-greater-than-or-equal-zero-allowed','isPercentage' => true,'name' => 'PortfolioMortgageRevenueProjectionByCategory['.'monthly_due_cheques_percentages'.']['.$year.']','columnIndex' => $columnIndex]]); ?>
-<?php $component->withName('repeat-right-dot-inputs'); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.select','data' => ['required' => true,'label' => '','pleaseSelect' => false,'selectedValue' => $currentVal,'options' => [['title'=>__('Once Per Year'),'value'=>0],['title'=>__('Monthly'),'value'=>1],['title'=>__('Every 2 Months'),'value'=>'2'],['title'=>__('Every 3 Months'),'value'=>'3'],['title'=>__('Every 4 Months'),'value'=>'4'],['title'=>__('Every 6 Months'),'value'=>'6']],'addNew' => false,'class' => 'select2-select  repeater-select  ','all' => false,'name' => 'PortfolioMortgageRevenueProjectionByCategory['.'frequency_per_year'.']['.$year.']']]); ?>
+<?php $component->withName('form.select'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($model->portfolioMortgageRevenueProjectionByCategory ? $model->portfolioMortgageRevenueProjectionByCategory->getMonthlyDueChequesPercentagesAtYearIndex($year) : 0),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed'),'is-percentage' => true,'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('PortfolioMortgageRevenueProjectionByCategory['.'monthly_due_cheques_percentages'.']['.$year.']'),'columnIndex' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($columnIndex)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['required' => true,'label' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(''),'pleaseSelect' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'selectedValue' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($currentVal),'options' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute([['title'=>__('Once Per Year'),'value'=>0],['title'=>__('Monthly'),'value'=>1],['title'=>__('Every 2 Months'),'value'=>'2'],['title'=>__('Every 3 Months'),'value'=>'3'],['title'=>__('Every 4 Months'),'value'=>'4'],['title'=>__('Every 6 Months'),'value'=>'6']]),'add-new' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'class' => 'select2-select  repeater-select  ','all' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('PortfolioMortgageRevenueProjectionByCategory['.'frequency_per_year'.']['.$year.']')]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
-
                                         </div>
                                     </td>
                                     <?php
-                                    $columnIndex++;
+                                    $columnIndex++ ;
                                     ?>
+
                                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-
-
-
-                                </tr>
-
-
-
-
-
-
-
-
-
-
-
-
-                                <tr data-repeat-formatting-decimals="2" data-repeater-style>
-
-                                    <td>
-                                        <div class="">
-                                            <input value="<?php echo e(__('Quarterly Due Cheques %')); ?>" disabled class="form-control text-left mt-2" type="text">
-                                            <i class="fa fa-ellipsis-h pull-left "></i>
-                                        </div>
-                                    </td>
-
-                                    <td>
-                                         <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['removeThreeDots' => true,'currentVal' => isset($subModel) ? $subModel->getQuarterlyMarginRate():0,'classes' => 'only-greater-than-or-equal-zero-allowed','isPercentage' => true,'name' => 'quarterly_margin_rate','columnIndex' => null]]); ?>
-<?php $component->withName('repeat-right-dot-inputs'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['remove-three-dots' => true,'currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(isset($subModel) ? $subModel->getQuarterlyMarginRate():0),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed'),'is-percentage' => true,'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('quarterly_margin_rate'),'columnIndex' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(null)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
-<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
-<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
-<?php endif; ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?> 
-                                    </td>
-                                    <?php
-                                    $columnIndex = 0 ;
-
-
-                                    ?>
-                                    <?php $__currentLoopData = $yearsWithItsMonths; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $year=>$monthsForThisYearArray): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-
-                                    <td>
-                                        <div class="d-flex align-items-center justify-content-center">
-                                             <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['currentVal' => $model->portfolioMortgageRevenueProjectionByCategory ? $model->portfolioMortgageRevenueProjectionByCategory->getQuarterlyDueChequesPercentagesAtYearIndex($year) : 0,'classes' => 'only-greater-than-or-equal-zero-allowed','isPercentage' => true,'name' => 'PortfolioMortgageRevenueProjectionByCategory['.'quarterly_due_cheques_percentages'.']['.$year.']','columnIndex' => $columnIndex]]); ?>
-<?php $component->withName('repeat-right-dot-inputs'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($model->portfolioMortgageRevenueProjectionByCategory ? $model->portfolioMortgageRevenueProjectionByCategory->getQuarterlyDueChequesPercentagesAtYearIndex($year) : 0),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed'),'is-percentage' => true,'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('PortfolioMortgageRevenueProjectionByCategory['.'quarterly_due_cheques_percentages'.']['.$year.']'),'columnIndex' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($columnIndex)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
-<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
-<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
-<?php endif; ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?> 
-
-                                        </div>
-                                    </td>
-                                    <?php
-                                    $columnIndex++;
-                                    ?>
-                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-
-
-
-                                </tr>
-
-
-                                <tr data-repeat-formatting-decimals="2" data-repeater-style>
-
-                                    <td>
-                                        <div class="">
-                                            <input value="<?php echo e(__('Annually Due Cheques %')); ?>" disabled class="form-control text-left mt-2" type="text">
-                                            <i class="fa fa-ellipsis-h pull-left "></i>
-                                        </div>
-                                    </td>
-
-                                    <td>
-                                         <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['removeThreeDots' => true,'currentVal' => isset($subModel) ? $subModel->getAnnuallyMarginRate():0,'classes' => 'only-greater-than-or-equal-zero-allowed','isPercentage' => true,'name' => 'annually_margin_rate','columnIndex' => null]]); ?>
-<?php $component->withName('repeat-right-dot-inputs'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['remove-three-dots' => true,'currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(isset($subModel) ? $subModel->getAnnuallyMarginRate():0),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed'),'is-percentage' => true,'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('annually_margin_rate'),'columnIndex' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(null)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
-<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
-<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
-<?php endif; ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?> 
-                                    </td>
-                                    <?php
-                                    $columnIndex = 0 ;
-
-
-                                    ?>
-                                    <?php $__currentLoopData = $yearsWithItsMonths; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $year=>$monthsForThisYearArray): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-
-                                    <td>
-                                        <div class="d-flex align-items-center justify-content-center">
-                                             <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['currentVal' => $model->portfolioMortgageRevenueProjectionByCategory ? $model->portfolioMortgageRevenueProjectionByCategory->getAnnuallyDueChequesPercentagesAtYearIndex($year) : 0,'classes' => 'only-greater-than-or-equal-zero-allowed','isPercentage' => true,'name' => 'PortfolioMortgageRevenueProjectionByCategory['.'annually_due_cheques_percentages'.']['.$year.']','columnIndex' => $columnIndex]]); ?>
-<?php $component->withName('repeat-right-dot-inputs'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($model->portfolioMortgageRevenueProjectionByCategory ? $model->portfolioMortgageRevenueProjectionByCategory->getAnnuallyDueChequesPercentagesAtYearIndex($year) : 0),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed'),'is-percentage' => true,'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('PortfolioMortgageRevenueProjectionByCategory['.'annually_due_cheques_percentages'.']['.$year.']'),'columnIndex' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($columnIndex)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
-<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
-<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
-<?php endif; ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?> 
-
-                                        </div>
-                                    </td>
-                                    <?php
-                                    $columnIndex++;
-                                    ?>
-                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-
 
 
                                 </tr>
 								
-								<tr>
-									<td></td>
-									<td></td>
-									<td></td>
-									<td></td>
-									<td></td>
-									<td>
-									<div class="row">
-										<div class="col-md-12">
-											
-											<div class="text-center">
-												 <input type="submit" name="save-and-continue" class="btn btn-danger text-white save-form" value="<?php echo e(__('Delete')); ?>">
-											</div>
-											
-										</div>
-										
-									</div>
+								<tr data-repeat-formatting-decimals="0" data-repeater-style>
+
+                                    <td>
+                                        <input value="<?php echo e(__('Start From')); ?>" disabled class="form-control text-left mt-2" type="text">
+                                    </td>
+                                    <td></td>
+
+                                    <?php
+                                    $columnIndex = 0 ;
+									$startFromIndex = 0 ;
+                                    ?>
+                                    <?php $__currentLoopData = $yearsWithItsMonths; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $year=>$monthsForThisYearArray): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <?php
+									$startFromIndex = array_key_first($monthsForThisYearArray);
+								
+									$months = getMonthNames($startFromIndex);
+									
+                                    $currentVal = $model->portfolioMortgageRevenueProjectionByCategory ? $model->portfolioMortgageRevenueProjectionByCategory->getFrequencyPerYearAtYearIndex($year) : 1;
+                                    ?>
+                                    <td>
+                                        <div class="d-flex align-items-center justify-content-center">
+                                             <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.select','data' => ['required' => true,'label' => '','pleaseSelect' => false,'selectedValue' => $currentVal,'options' => $months,'addNew' => false,'class' => 'select2-select  repeater-select  ','all' => false,'name' => 'PortfolioMortgageRevenueProjectionByCategory['.'start_from'.']['.$year.']']]); ?>
+<?php $component->withName('form.select'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php $component->withAttributes(['required' => true,'label' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(''),'pleaseSelect' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'selectedValue' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($currentVal),'options' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($months),'add-new' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'class' => 'select2-select  repeater-select  ','all' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('PortfolioMortgageRevenueProjectionByCategory['.'start_from'.']['.$year.']')]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
+<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
+<?php endif; ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?> 
+                                        </div>
+                                    </td>
+                                    <?php
+                                    $columnIndex++ ;
+                                    ?>
+
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+
+
+                                </tr>
+								
+								   <tr data-repeat-formatting-decimals="0" data-repeater-style>
+
+                                    <td>
+                                        <input value="<?php echo e(__('Total Per Year')); ?>" disabled class="form-control text-left mt-2" type="text">
+                                    </td>
+                                    <td>
+									
 									</td>
-									<td>
-									<div class="row">
-										<div class="col-md-12">
-											<div class="text-right">
-												 <input type="submit" name="save-and-continue" class="btn active-style save-form" value="<?php echo e(__('Add New Portfolio Mortgage')); ?>">
-											</div>
-											
-											
-										</div>
-										
-									</div>
-									 
-									</td>
-								</tr>
-								
-								
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                             <?php $__env->endSlot(); ?>
-							
-
-
-
-
-                         <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+                                    <?php
+                                    $columnIndex = 0 ;
+                                    ?>
+                                    <?php $__currentLoopData = $yearsWithItsMonths; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $year=>$monthsForThisYearArray): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <?php
+                                    $currentVal = 0;
+                                    ?>
+                                    <td>
+                                        <div class="d-flex align-items-center justify-content-center">
+                                             <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['removeThreeDots' => true,'removeThreeDotsClass' => true,'readonly' => true,'numberFormatDecimals' => 0,'currentVal' => $currentVal,'classes' => '','isPercentage' => false,'name' => '','columnIndex' => $columnIndex]]); ?>
+<?php $component->withName('repeat-right-dot-inputs'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php $component->withAttributes(['removeThreeDots' => true,'removeThreeDotsClass' => true,'readonly' => true,'number-format-decimals' => 0,'currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($currentVal),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(''),'is-percentage' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(''),'columnIndex' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($columnIndex)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
+                                        </div>
+                                    </td>
+                                    <?php
+                                    $columnIndex++ ;
+                                    ?>
+
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
 
+                                </tr>
 
 
+								
+								
+                                
 
-                        
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                
+                                            <div class="text-center">
+                                                <input type="submit" name="save-and-continue" class="btn btn-danger text-white save-form" value="<?php echo e(__('Delete')); ?>">
+                                            </div>
 
+                                        </div>
 
                     </div>
+                    </td>
+                    <td>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="text-right">
+                                    <input type="submit" name="save-and-continue" class="btn active-style save-form" value="<?php echo e(__('Add New Portfolio Mortgage')); ?>">
+                                </div>
+                                
+
+                        </div>
 
                 </div>
+
+                </td>
+                </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                 <?php $__env->endSlot(); ?>
+
+
+
+
+
+                 <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
+<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
+<?php endif; ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?> 
+
+
+
+
+
+                
+
+
             </div>
-			
-            
 
-
-            
-
+    </div>
+</div>
 
 
 
@@ -536,21 +493,27 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
 
 
 
-            
-            <div class="kt-portlet">
-                <div class="kt-portlet__body">
-                    <div class="row">
 
-                        <div class="col-md-10">
-                            <div class="d-flex align-items-center ">
-                                <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style="">
-                                    <?php echo e(__('Administration Fees Rate & ECL Rate')); ?>
 
-                                </h3>
-                            </div>
-                        </div>
-                        <div class="col-md-2 text-right">
-                             <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+
+
+
+
+
+<div class="kt-portlet">
+    <div class="kt-portlet__body">
+        <div class="row">
+
+            <div class="col-md-10">
+                <div class="d-flex align-items-center ">
+                    <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style="">
+                        <?php echo e(__('Administration Fees Rate & ECL Rate')); ?>
+
+                    </h3>
+                </div>
+            </div>
+            <div class="col-md-2 text-right">
+                 <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.show-hide-btn','data' => ['query' => '.revenue-projection-by-category']]); ?>
 <?php $component->withName('show-hide-btn'); ?>
 <?php if ($component->shouldRender()): ?>
@@ -562,25 +525,25 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
 
-                        </div>
-                    </div>
-                    <div class="row">
-                        <hr style="flex:1;background-color:lightgray">
-                    </div>
-                    <div class="row revenue-projection-by-category">
-                        <?php
-                        $rowIndex = 0;
-                        ?>
+            </div>
+        </div>
+        <div class="row">
+            <hr style="flex:1;background-color:lightgray">
+        </div>
+        <div class="row revenue-projection-by-category">
+            <?php
+            $rowIndex = 0;
+            ?>
 
 
-                         <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+             <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.tables.repeater-table','data' => ['removeActionBtn' => true,'removeRepeater' => true,'initialJs' => false,'repeaterWithSelect2' => true,'canAddNewItem' => false,'parentClass' => 'js-remove-hidden','hideAddBtn' => true,'tableName' => '','repeaterId' => '','relationName' => 'food','isRepeater' => $isRepeater=!(isset($removeRepeater) && $removeRepeater)]]); ?>
 <?php $component->withName('tables.repeater-table'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php $component->withAttributes(['removeActionBtn' => true,'removeRepeater' => true,'initialJs' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'repeater-with-select2' => true,'canAddNewItem' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'parentClass' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('js-remove-hidden'),'hide-add-btn' => true,'tableName' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(''),'repeaterId' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(''),'relationName' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('food'),'isRepeater' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($isRepeater=!(isset($removeRepeater) && $removeRepeater))]); ?>
-                             <?php $__env->slot('ths'); ?> 
-                                 <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+                 <?php $__env->slot('ths'); ?> 
+                     <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.tables.repeater-table-th','data' => ['class' => ' category-selector-class header-border-down ','title' => __('Item')]]); ?>
 <?php $component->withName('tables.repeater-table-th'); ?>
 <?php if ($component->shouldRender()): ?>
@@ -591,8 +554,8 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
 <?php endif; ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
-                                <?php $__currentLoopData = $yearsWithItsMonths; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $year=>$monthsForThisYearArray): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                 <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+                    <?php $__currentLoopData = $yearsWithItsMonths; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $year=>$monthsForThisYearArray): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                     <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.tables.repeater-table-th','data' => ['class' => ' interval-class header-border-down ','title' => __('Yr-') . $yearIndexWithYear[$year] ]]); ?>
 <?php $component->withName('tables.repeater-table-th'); ?>
 <?php if ($component->shouldRender()): ?>
@@ -603,29 +566,29 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
 <?php endif; ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
-                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                             <?php $__env->endSlot(); ?>
-                             <?php $__env->slot('trs'); ?> 
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                 <?php $__env->endSlot(); ?>
+                 <?php $__env->slot('trs'); ?> 
 
-                                <tr data-repeat-formatting-decimals="2" data-repeater-style>
+                    <tr data-repeat-formatting-decimals="2" data-repeater-style>
 
-                                    
-
-
-                                    <td>
-                                        <input value="<?php echo e(__('Administration Fees Rate')); ?>" disabled class="form-control text-left mt-2" type="text">
-
-                                    </td>
-                                    <?php
-                                    $columnIndex = 0 ;
-                                    ?>
-                                    <?php $__currentLoopData = $yearsWithItsMonths; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $year=>$monthsForThisYearArray): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-
-                                    <td>
-                                        <div class="d-flex align-items-center justify-content-center">
+                        
 
 
-                                             <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+                        <td>
+                            <input value="<?php echo e(__('Administration Fees Rate')); ?>" disabled class="form-control text-left mt-2" type="text">
+
+                        </td>
+                        <?php
+                        $columnIndex = 0 ;
+                        ?>
+                        <?php $__currentLoopData = $yearsWithItsMonths; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $year=>$monthsForThisYearArray): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+
+                        <td>
+                            <div class="d-flex align-items-center justify-content-center">
+
+
+                                 <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['currentVal' => $model->portfolioMortgageAdminFeesRate ? $model->portfolioMortgageAdminFeesRate->getAdminFeeRatesAtYearIndex($year):0,'classes' => 'only-greater-than-or-equal-zero-allowed','isPercentage' => true,'name' => 'portfolioMortgageAdminFeesRate['.'admin_fees_rates'.']['.$year.']','columnIndex' => $columnIndex]]); ?>
 <?php $component->withName('repeat-right-dot-inputs'); ?>
 <?php if ($component->shouldRender()): ?>
@@ -637,35 +600,35 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
 
-                                        </div>
-                                    </td>
-                                    <?php
-                                    $columnIndex++;
-                                    ?>
-                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                            </div>
+                        </td>
+                        <?php
+                        $columnIndex++;
+                        ?>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
 
 
-                                </tr>
+                    </tr>
 
 
-                                <tr data-repeat-formatting-decimals="2" data-repeater-style>
+                    <tr data-repeat-formatting-decimals="2" data-repeater-style>
 
 
-                                    <td>
-                                        <input disabled value="<?php echo e(__('Expected Credit Loss Rate (ECL %)')); ?>" class="form-control text-left" type="text">
+                        <td>
+                            <input disabled value="<?php echo e(__('Expected Credit Loss Rate (ECL %)')); ?>" class="form-control text-left" type="text">
 
-                                    </td>
-                                    <?php
-                                    $columnIndex = 0 ;
-                                    ?>
+                        </td>
+                        <?php
+                        $columnIndex = 0 ;
+                        ?>
 
-                                    <?php $__currentLoopData = $yearsWithItsMonths; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $year=>$monthsForThisYearArray): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <?php $__currentLoopData = $yearsWithItsMonths; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $year=>$monthsForThisYearArray): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 
 
-                                    <td>
-                                        <div class="d-flex align-items-center justify-content-center">
-                                             <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+                        <td>
+                            <div class="d-flex align-items-center justify-content-center">
+                                 <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['currentVal' => $model->portfolioMortgageAdminFeesRate ? $model->portfolioMortgageAdminFeesRate->getEclRatesAtYearIndex($year):0,'classes' => 'only-greater-than-or-equal-zero-allowed','isPercentage' => true,'name' => 'portfolioMortgageAdminFeesRate['.'ecl_rates'.']['.$year.']','columnIndex' => $columnIndex]]); ?>
 <?php $component->withName('repeat-right-dot-inputs'); ?>
 <?php if ($component->shouldRender()): ?>
@@ -677,57 +640,57 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
 
-                                        </div>
-                                    </td>
-                                    <?php
-                                    $columnIndex++;
-                                    ?>
+                            </div>
+                        </td>
+                        <?php
+                        $columnIndex++;
+                        ?>
 
-                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-
-
-
-                                </tr>
-
-
-                             <?php $__env->endSlot(); ?>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
 
 
+                    </tr>
 
-                         <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+
+                 <?php $__env->endSlot(); ?>
+
+
+
+
+             <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
-                        
+            
 
 
-                    </div>
+        </div>
 
+    </div>
+</div>
+
+
+
+
+
+
+<div class="kt-portlet">
+    <div class="kt-portlet__body">
+        <div class="row">
+
+            <div class="col-md-10">
+                <div class="d-flex align-items-center ">
+                    <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style="">
+                        <?php echo e(__('Portfolio Mortgage New Portfolio Funding Structure')); ?>
+
+                    </h3>
                 </div>
             </div>
-            
-
-
-
-
-            
-            <div class="kt-portlet">
-                <div class="kt-portlet__body">
-                    <div class="row">
-
-                        <div class="col-md-10">
-                            <div class="d-flex align-items-center ">
-                                <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style="">
-                                    <?php echo e(__('Portfolio Mortgage New Portfolio Funding Structure')); ?>
-
-                                </h3>
-                            </div>
-                        </div>
-                        <div class="col-md-2 text-right">
-                             <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+            <div class="col-md-2 text-right">
+                 <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.show-hide-btn','data' => ['query' => '.new-portfolio-funding']]); ?>
 <?php $component->withName('show-hide-btn'); ?>
 <?php if ($component->shouldRender()): ?>
@@ -738,25 +701,25 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
 <?php endif; ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
-                        </div>
-                    </div>
-                    <div class="row">
-                        <hr style="flex:1;background-color:lightgray">
-                    </div>
-                    <div class="row new-portfolio-funding">
-                        <?php
-                        $rowIndex = 0;
-                        ?>
+            </div>
+        </div>
+        <div class="row">
+            <hr style="flex:1;background-color:lightgray">
+        </div>
+        <div class="row new-portfolio-funding">
+            <?php
+            $rowIndex = 0;
+            ?>
 
 
-                         <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+             <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.tables.repeater-table','data' => ['removeActionBtn' => true,'removeRepeater' => true,'initialJs' => false,'repeaterWithSelect2' => true,'canAddNewItem' => false,'parentClass' => 'js-remove-hidden','hideAddBtn' => true,'tableName' => '','repeaterId' => '','relationName' => 'food','isRepeater' => $isRepeater=!(isset($removeRepeater) && $removeRepeater)]]); ?>
 <?php $component->withName('tables.repeater-table'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php $component->withAttributes(['removeActionBtn' => true,'removeRepeater' => true,'initialJs' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'repeater-with-select2' => true,'canAddNewItem' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'parentClass' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('js-remove-hidden'),'hide-add-btn' => true,'tableName' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(''),'repeaterId' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(''),'relationName' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('food'),'isRepeater' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($isRepeater=!(isset($removeRepeater) && $removeRepeater))]); ?>
-                             <?php $__env->slot('ths'); ?> 
-                                 <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+                 <?php $__env->slot('ths'); ?> 
+                     <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.tables.repeater-table-th','data' => ['class' => ' category-selector-class header-border-down ','title' => __('Item')]]); ?>
 <?php $component->withName('tables.repeater-table-th'); ?>
 <?php if ($component->shouldRender()): ?>
@@ -767,8 +730,8 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
 <?php endif; ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
-                                <?php $__currentLoopData = $yearsWithItsMonths; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $year=>$monthsForThisYearArray): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                 <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+                    <?php $__currentLoopData = $yearsWithItsMonths; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $year=>$monthsForThisYearArray): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                     <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.tables.repeater-table-th','data' => ['class' => ' interval-class header-border-down ','title' => __('Yr-') . $yearIndexWithYear[$year] ]]); ?>
 <?php $component->withName('tables.repeater-table-th'); ?>
 <?php if ($component->shouldRender()): ?>
@@ -779,28 +742,28 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
 <?php endif; ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
-                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                             <?php $__env->endSlot(); ?>
-                             <?php $__env->slot('trs'); ?> 
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                 <?php $__env->endSlot(); ?>
+                 <?php $__env->slot('trs'); ?> 
 
-                                <tr data-repeat-formatting-decimals="2" data-repeater-style >
+                    <tr data-repeat-formatting-decimals="2" data-repeater-style >
 
-                                    
+                        
 
 
-                                    <td>
-                                        <input value="<?php echo e(__('Equity Funding Rate (%)')); ?>" disabled class="form-control text-left mt-2" type="text">
+                        <td>
+                            <input value="<?php echo e(__('Equity Funding Rate (%)')); ?>" disabled class="form-control text-left mt-2" type="text">
 
-                                    </td>
-                                    <?php
-                                    $columnIndex = 0 ;
-                                    ?>
-                                    <?php $__currentLoopData = $yearsWithItsMonths; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $year=>$monthsForThisYearArray): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        </td>
+                        <?php
+                        $columnIndex = 0 ;
+                        ?>
+                        <?php $__currentLoopData = $yearsWithItsMonths; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $year=>$monthsForThisYearArray): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 
-                                    <td>
-                                        <div class="d-flex align-items-center justify-content-center">
+                        <td>
+                            <div class="d-flex align-items-center justify-content-center">
 
-                                             <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+                                 <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['inputHiddenAttributes' => 'js-recalculate-equity-funding-value','currentVal' => $model->portfolioMortgageNewPortfolioFundingStructure ? $model->portfolioMortgageNewPortfolioFundingStructure->getEquityFundingRatesAtYearIndex($year):0,'classes' => 'only-greater-than-or-equal-zero-allowed equity-funding-rates equity-funding-rate-input-hidden-class','isPercentage' => true,'name' => 'portfolioMortgageNewPortfolioFundingStructure['.'equity_funding_rates'.']['.$year.']','columnIndex' => $columnIndex]]); ?>
 <?php $component->withName('repeat-right-dot-inputs'); ?>
 <?php if ($component->shouldRender()): ?>
@@ -812,35 +775,35 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
 
-                                        </div>
-                                    </td>
-                                    <?php
-                                    $columnIndex++;
-                                    ?>
-                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                            </div>
+                        </td>
+                        <?php
+                        $columnIndex++;
+                        ?>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
 
 
-                                </tr>
+                    </tr>
 
 
 
-                                <tr data-repeat-formatting-decimals="0" data-repeater-style >
+                    <tr data-repeat-formatting-decimals="0" data-repeater-style >
 
-                                    <input type="hidden" name="id" value="<?php echo e(isset($subModel) ? $subModel->id : 0); ?>">
+                        <input type="hidden" name="id" value="<?php echo e(isset($subModel) ? $subModel->id : 0); ?>">
 
 
-                                    <td>
-                                        <input value="<?php echo e(__('Equity Funding Value')); ?>" disabled class="form-control text-left mt-2" type="text">
+                        <td>
+                            <input value="<?php echo e(__('Equity Funding Value')); ?>" disabled class="form-control text-left mt-2" type="text">
 
-                                    </td>
-                                    <?php
-                                    $columnIndex = 0 ;
-                                    ?>
-                                    <?php $__currentLoopData = $yearsWithItsMonths; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $year=>$monthsForThisYearArray): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                    <td>
-                                        <div class="d-flex align-items-center justify-content-center">
-                                             <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+                        </td>
+                        <?php
+                        $columnIndex = 0 ;
+                        ?>
+                        <?php $__currentLoopData = $yearsWithItsMonths; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $year=>$monthsForThisYearArray): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <td>
+                            <div class="d-flex align-items-center justify-content-center">
+                                 <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['numberFormatDecimals' => 0,'currentVal' => $model->portfolioMortgageNewPortfolioFundingStructure ? $model->portfolioMortgageNewPortfolioFundingStructure->getEquityFundingValuesAtYearIndex($year):0,'classes' => 'only-greater-than-or-equal-zero-allowed ','formattedInputClasses' => 'equity-funding-formatted-value-class','isPercentage' => false,'name' => 'portfolioMortgageNewPortfolioFundingStructure['.'equity_funding_values'.']['.$year.']','columnIndex' => $columnIndex]]); ?>
 <?php $component->withName('repeat-right-dot-inputs'); ?>
 <?php if ($component->shouldRender()): ?>
@@ -852,67 +815,67 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
 
-                                        </div>
-                                    </td>
-                                    <?php
-                                    $columnIndex++;
-                                    ?>
-                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                            </div>
+                        </td>
+                        <?php
+                        $columnIndex++;
+                        ?>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
 
 
-                                </tr>
+                    </tr>
 
 
 
-                                <tr data-repeat-formatting-decimals="2" data-repeater-style>
-                                    <td>
-                                        <input disabled value="<?php echo e(__('New Loans Funding Rate (%)')); ?>" class="form-control text-left" type="text">
-                                    </td>
-                                    <?php
-                                    $columnIndex = 0 ;
-                                    ?>
+                    <tr data-repeat-formatting-decimals="2" data-repeater-style>
+                        <td>
+                            <input disabled value="<?php echo e(__('New Loans Funding Rate (%)')); ?>" class="form-control text-left" type="text">
+                        </td>
+                        <?php
+                        $columnIndex = 0 ;
+                        ?>
 
-                                    <?php $__currentLoopData = $yearsWithItsMonths; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $year=>$monthsForThisYearArray): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-
-
-                                    <td>
-                                        <div class="d-flex align-items-center justify-content-center">
-                                            <input type="text" data-column-index="<?php echo e($columnIndex); ?>" readonly class="form-control expandable-percentage-input new-loan-function-rates-js" name="portfolioMortgageNewPortfolioFundingStructure[new_loans_funding_rates][<?php echo e($year); ?>]" value="<?php echo e($model->portfolioMortgageNewPortfolioFundingStructure ? $model->portfolioMortgageNewPortfolioFundingStructure->getNewLoansFundingRatesAtYearIndex($year):0); ?>"> <span class="ml-2">%</span>
-                                        </div>
-                                    </td>
-                                    <?php
-                                    $columnIndex++;
-                                    ?>
-
-                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        <?php $__currentLoopData = $yearsWithItsMonths; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $year=>$monthsForThisYearArray): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 
 
+                        <td>
+                            <div class="d-flex align-items-center justify-content-center">
+                                <input type="text" data-column-index="<?php echo e($columnIndex); ?>" readonly class="form-control expandable-percentage-input new-loan-function-rates-js" name="portfolioMortgageNewPortfolioFundingStructure[new_loans_funding_rates][<?php echo e($year); ?>]" value="<?php echo e($model->portfolioMortgageNewPortfolioFundingStructure ? $model->portfolioMortgageNewPortfolioFundingStructure->getNewLoansFundingRatesAtYearIndex($year):0); ?>"> <span class="ml-2">%</span>
+                            </div>
+                        </td>
+                        <?php
+                        $columnIndex++;
+                        ?>
 
-                                </tr>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
 
+
+                    </tr>
 
 
 
 
-                                <tr data-repeat-formatting-decimals="0" data-repeater-style>
 
 
-                                    <td>
-                                        <input disabled value="<?php echo e(__('New Loans Funding Value')); ?>" class="form-control text-left" type="text">
-
-                                    </td>
-                                    <?php
-                                    $columnIndex = 0 ;
-                                    ?>
-
-                                    <?php $__currentLoopData = $yearsWithItsMonths; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $year=>$monthsForThisYearArray): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <tr data-repeat-formatting-decimals="0" data-repeater-style>
 
 
-                                    <td>
-                                        <div class="d-flex align-items-center justify-content-center">
-                                             <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+                        <td>
+                            <input disabled value="<?php echo e(__('New Loans Funding Value')); ?>" class="form-control text-left" type="text">
+
+                        </td>
+                        <?php
+                        $columnIndex = 0 ;
+                        ?>
+
+                        <?php $__currentLoopData = $yearsWithItsMonths; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $year=>$monthsForThisYearArray): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+
+
+                        <td>
+                            <div class="d-flex align-items-center justify-content-center">
+                                 <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['numberFormatDecimals' => 0,'formattedInputClasses' => 'new-loans-funding-formatted-value-class','currentVal' => $model->portfolioMortgageNewPortfolioFundingStructure ? $model->portfolioMortgageNewPortfolioFundingStructure->getNewLoansFundingValuesAtYearIndex($year):0 ,'classes' => 'only-greater-than-or-equal-zero-allowed','isPercentage' => false,'name' => 'portfolioMortgageNewPortfolioFundingStructure['.'new_loans_funding_values'.']['.$year.']','columnIndex' => $columnIndex]]); ?>
 <?php $component->withName('repeat-right-dot-inputs'); ?>
 <?php if ($component->shouldRender()): ?>
@@ -924,39 +887,39 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
 
-                                        </div>
-                                    </td>
-                                    <?php
-                                    $columnIndex++;
-                                    ?>
+                            </div>
+                        </td>
+                        <?php
+                        $columnIndex++;
+                        ?>
 
-                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-
-
-
-                                </tr>
-
-                             <?php $__env->endSlot(); ?>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
 
 
+                    </tr>
 
-                         <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+                 <?php $__env->endSlot(); ?>
+
+
+
+
+             <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
-                        
-
-
-                    </div>
-
-                </div>
-            </div>
             
 
-             <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+
+        </div>
+
+    </div>
+</div>
+
+
+ <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.save-or-back','data' => []]); ?>
 <?php $component->withName('save-or-back'); ?>
 <?php if ($component->shouldRender()): ?>
@@ -997,7 +960,7 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
 
 
 
-    </div>
+</div>
 
 </div>
 
@@ -1175,8 +1138,8 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
 <script src="/custom/js/non-banking-services/common.js"></script>
 <script src="/custom/js/non-banking-services/revenue-stream-breakdown.js"></script>
 <script>
-   // const clone = $('#salah').clone();
-  //  $('#factoring-loans').append(clone)
+    // const clone = $('#salah').clone();
+    //  $('#factoring-loans').append(clone)
     $(document).on('click', '.delete-class', function() {
         // $(this).closest('.kt-portlet').remove();
     })

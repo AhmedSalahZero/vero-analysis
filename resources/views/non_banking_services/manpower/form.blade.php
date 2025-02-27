@@ -74,7 +74,7 @@
         $tableId = 'expense_per_employee';
         $repeaterId = 'expense_per_employee_repeater';
         $cardId = $tableId;
-        @endphp
+        @endphp\
 
         <div data-card-id="{{ $cardId }}" class="kt-portlet parent-card ">
             <div class="kt-portlet__body">

@@ -605,5 +605,15 @@ class HArr
 		}
 		return $result;
 	}
+	public static function sumForInternalIndexes(array $items)
+	{
+		$result = [];
+		foreach ($items as $item) {
+			foreach ($item as $index => $value) {
+				$result[$index] =  isset($result[$index] )  ? $result[$index] + $value : $value;
+			}
+		}
+		return $result ; 
+	}
 
 }

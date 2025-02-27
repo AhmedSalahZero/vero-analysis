@@ -32,6 +32,7 @@ use Illuminate\Support\Facades\DB;
 		const CONSUMERFINANCE_PRODUCTS = 'consumerfinance-products' ;
 		const LEASING ='leasing';
 		const IJARA ='ijara';
+		const MiCROFINANCE ='microfinance';
 		const DIRECT_FACTORING ='direct-factoring';
 		const REVERSE_FACTORING ='reverse-factoring';
 		const FACTORING_CATEGORY_ID = 'factoring-category-id';
@@ -320,8 +321,7 @@ use Illuminate\Support\Facades\DB;
 	public function getStudyDurationPerMonth(array $datesAsStringAndIndex,array $datesIndexWithYearIndex,array $yearIndexWithYear,array $dateIndexWithDate,array $dateWithMonthNumber, $maxYearIsStudyEndDate = true, $repeatIndexes = true)
 	{
 		$studyDurationPerMonth = [];
-		$studyDurationPerYear = $this->getStudyDurationPerYear($datesAsStringAndIndex,$datesIndexWithYearIndex,$yearIndexWithYear,$dateIndexWithDate,$dateWithMonthNumber, false, $maxYearIsStudyEndDate, true, $repeatIndexes);
-
+		$studyDurationPerYear = $this->getStudyDurationPerYear($datesAsStringAndIndex,$datesIndexWithYearIndex,$yearIndexWithYear,$dateIndexWithDate,$dateWithMonthNumber, false, $maxYearIsStudyEndDate,$repeatIndexes);
 		foreach ($studyDurationPerYear as $year => $values) {
 			foreach ($values as $date => $value) {
 				$studyDurationPerMonth[$date] = $value;
@@ -569,7 +569,7 @@ use Illuminate\Support\Facades\DB;
 		return $this->hasMany(Expense::class , 'model_id','id')->where('model_name','Study')
 		->where('expense_type',$expenseType)->where('relation_name',$relationName);
 	}
-	public function DirectFactoringRevenueProjectionByCategory()
+	public function directFactoringRevenueProjectionByCategory()
 	{
 		return $this->hasOne(DirectFactoringRevenueProjectionByCategory::class,'study_id');
 	}
@@ -585,7 +585,6 @@ use Illuminate\Support\Facades\DB;
 	{
 		return $this->hasOne(DirectFactoringNewPortfolioFundingStructure::class,'study_id','id');
 	}
-	
 	public function ReverseFactoringRevenueProjectionByCategory()
 	{
 		return $this->hasOne(ReverseFactoringRevenueProjectionByCategory::class,'study_id');
@@ -644,6 +643,31 @@ use Illuminate\Support\Facades\DB;
 	{
 		return $this->hasMany(PortfolioMortgageRevenueStreamBreakdown::class,'study_id','id');
 	}	
+	
+	
+	
+	
+	public function microfinanceRevenueProjectionByCategory()
+	{
+		return $this->hasOne(MicrofinanceRevenueProjectionByCategory::class,'study_id');
+	}
+	public function microfinanceBreakdowns():HasMany
+	{
+		return $this->hasMany(MicrofinanceBreakdown::class,'study_id','id');
+	}	
+	public function microfinanceAdminFeesRate():HasOne
+	{
+		return $this->hasOne(MicrofinanceAdminFeesRate::class,'study_id','id');
+	}
+	public function microfinanceNewPortfolioFundingStructure():HasOne
+	{
+		return $this->hasOne(MicrofinanceNewPortfolioFundingStructure::class,'study_id','id');
+	}
+	public function microfinanceRevenueStreamBreakdown()
+	{
+		return $this->hasMany(MicrofinanceRevenueStreamBreakdown::class,'study_id','id');
+	}	
+	
 	public  function convertYearToMonthIndexes(array $items):array
 	{
 		$result = [];
@@ -744,7 +768,7 @@ use Illuminate\Support\Facades\DB;
 				foreach($revenueIdWitLoanAmounts as $leasingRevenueStreamBreakdownId => $yearIndexWithAmount ){
 			
 					$counter ++ ;
-					$currentMonthlyLoanAmount = $yearIndexWithAmount[$yearIndex] / count($yearMonthIndexes) ;
+					$currentMonthlyLoanAmount = $yearIndexWithAmount[$yearIndex] / count($yearMonthIndexes)  ;
 						
 						if($currentMonthlyLoanAmount <= 0){
 							continue ;
@@ -757,6 +781,7 @@ use Illuminate\Support\Facades\DB;
 						$currentMonth = $dateIndexWithDate[$monthIndex];
 						// $currentMonthFormatted = Carbon::make($currentMonth)->format('d-m-Y');
 						$currentMarginRate = $isSensitivity ?  $leasingRevenueStreamBreakdown->getSensitivityMarginRate() : $leasingRevenueStreamBreakdown->getMarginRate();
+						dd($currentMarginRate);
 						$gracePeriod = $leasingRevenueStreamBreakdown->getGracePeriod();
 						$tenor = $leasingRevenueStreamBreakdown->getTenor();
 						$installmentInterval = $leasingRevenueStreamBreakdown->getInstallmentInterval();
@@ -798,9 +823,12 @@ use Illuminate\Support\Facades\DB;
 						if( $leasingEclAndNewPortfolioFundingRate && count($totalMonthlyLoanAmounts)){
 							$counter++;
 							$newLoanFundingRate = $leasingEclAndNewPortfolioFundingRate->getNewLoansFundingRatesAtYearIndex($yearIndex);
+							
 							$currentMarginRate = $generalAndReserveAssumption->getBankLendingMarginRatesAtYearIndex($yearIndex);
 							$currentMonthlyLoanAmount = $totalMonthlyLoanAmounts[$monthIndex];
 							$currentMonthlyLoanAmount = $currentMonthlyLoanAmount * $newLoanFundingRate / 100 ;
+						
+							// $currentMonthlyLoanAmount = $currentMonthlyLoanAmount * $newLoanFundingRate / 100 ;
 							if(is_array($baseRatesMapping)){
 								$currentPortfolioLoans=$loanService->__calculateBasedOnDiffBaseRates($baseRatesMapping ,$loanType, $currentMonth, $currentMonthlyLoanAmount,  $currentMarginRate,  $tenor, $installmentInterval,$installmentPaymentIntervalValue, $stepUp, $stepInterval ,$stepDown ,  $stepInterval ,$gracePeriod,$monthIndex,$dateWithDateIndex,$dateIndexWithDate );
 								
@@ -1026,7 +1054,9 @@ use Illuminate\Support\Facades\DB;
 		
 		DB::connection('non_banking_service')->table($loanSchedulePaymentTableName)->insert($portfolioLoans);
 	}
-	
+	/**
+	 * * هنا مفرودة لغايه السنوات الاضافيه
+	 */
 	public function getStudyDurationPerYearFromIndexesForView() 
 	{
 		$datesAsStringAndIndex = $this->getDatesAsStringAndIndex();
@@ -1036,7 +1066,20 @@ use Illuminate\Support\Facades\DB;
 		$dateWithMonthNumber = App('dateWithMonthNumber');
 		return $this->getStudyDurationPerMonth($datesAsStringAndIndex,$datesIndexWithYearIndex,$yearIndexWithYear,$dateIndexWithDate,$dateWithMonthNumber,true,false);
 		
-	}			
+	}		
+	/**
+	 * * هنا لحد نهايه الدراسة
+	 */
+	// public function getStudyDurationPerYearFromIndexesForViewWithEndDate() 
+	// {
+	// 	$datesAsStringAndIndex = $this->getDatesAsStringAndIndex();
+	// 	$datesIndexWithYearIndex = App('datesIndexWithYearIndex');
+	// 	$yearIndexWithYear = App('yearIndexWithYear');
+	// 	$dateIndexWithDate = App('dateIndexWithDate');
+	// 	$dateWithMonthNumber = App('dateWithMonthNumber');
+	// 	return $this->getStudyDurationPerMonth($datesAsStringAndIndex,$datesIndexWithYearIndex,$yearIndexWithYear,$dateIndexWithDate,$dateWithMonthNumber,true,false);
+		
+	// }		
 	public function getFinancialYearEndMonthNumber():int
 	 {
 		$financialYearStartMonthName = $this->financialYearStartMonth();
@@ -1105,23 +1148,24 @@ use Illuminate\Support\Facades\DB;
 		$monthsWithItsYear = $this->getMonthsWithItsYear($yearWithItsIndexes) ;
 		$generalAndReserveAssumption = $this->generalAndReserveAssumption;
 		$currentIndex = 0 ;
-		$annuallyIncrease = $monthlyNetSalary ;
+		$currentSalaryAtMonthIndex = $monthlyNetSalary ;
 		$accumulatedManpowerCounts = [];
 		$monthlySalariesPayments = [];
 		$salaryExpenses =[];
 		foreach($dateAsIndexes as  $dateAsIndex){
 			$currentYearIndex = $monthsWithItsYear[$dateAsIndex]  ;
-			$annualIncreaseRate = $generalAndReserveAssumption->getSalariesAnnualIncreaseRateAtYearIndex($currentYearIndex+1) ;  
-			$previousHiringCount =$accumulatedManpowerCounts[$dateAsIndex-1] ?? $existingCount;
+			$annualIncreaseRate = $generalAndReserveAssumption->getSalariesAnnualIncreaseRateAtYearIndex($currentYearIndex) ;  
+			$previousHiringCount = $accumulatedManpowerCounts[$dateAsIndex-1] ?? $existingCount;
 			$accumulatedManpowerCounts[$dateAsIndex] = $hiringCounts[$dateAsIndex] + $previousHiringCount   ;
 			if($currentIndex%12 == 0 && $currentIndex != 0){
-				$annuallyIncrease = $annuallyIncrease * (1+($annualIncreaseRate/100)) * $accumulatedManpowerCounts[$dateAsIndex];   
+				$currentSalaryAtMonthIndex = $currentSalaryAtMonthIndex * (1+($annualIncreaseRate/100)) ;   
 			}
-			$monthlySalariesPayments[$dateAsIndex] = $annuallyIncrease ;
-			$salaryExpenses[$dateAsIndex] = $annuallyIncrease / (1 - ($salaryTaxesRate + $socialInsuranceRate));
+			$monthlySalariesPayments[$dateAsIndex] = $currentSalaryAtMonthIndex * $accumulatedManpowerCounts[$dateAsIndex];
+			$salaryExpenses[$dateAsIndex] = $currentSalaryAtMonthIndex * $accumulatedManpowerCounts[$dateAsIndex] / (1 - ($salaryTaxesRate + $socialInsuranceRate));
 			$currentIndex++;
 			
 		}
+		
 		return [
 			'accumulated_manpower_counts'=>$accumulatedManpowerCounts,
 			'manpower_salaries'=>$monthlySalariesPayments,
@@ -1293,5 +1337,99 @@ use Illuminate\Support\Facades\DB;
 			'ijaraMortgageBreakdowns'=>__('Ijara Mortgage Breakdowns')
 		][$relationName];
 	}
+	public  function calculateMonthlyAdminFeesAmounts(array $adminFeesRates , array $loanAmounts  ):array{
+		$operationDurationPerYear  = $this->getOperationDurationPerYearFromIndexes() ; 
+		$currentAdminFeesAmountsAtMonthIndex = [];
+		foreach($adminFeesRates as $currentYearIndex => $currentAdminFeesRateAtYearIndex ){
+			$currentLoanAmountAtYearIndex = $loanAmounts[$currentYearIndex] ;
+			$currentMonthlyLoanAmount = $currentLoanAmountAtYearIndex / count($operationDurationPerYear[$currentYearIndex]) ;
+			foreach($operationDurationPerYear[$currentYearIndex] as $monthIndex => $monthlyZeroOrOne){
+				$currentAdminFeesAmountsAtMonthIndex[$monthIndex] =  $currentMonthlyLoanAmount * $currentAdminFeesRateAtYearIndex /100 ;
+			}
+		}
 	
+		return $currentAdminFeesAmountsAtMonthIndex;
+	}
+	public function updateDirectFactoryMonthlyAdminFeesAmounts():void
+	{
+		$directFactoringAdminFeesRate = $this->directFactoryAdminFeesRate;
+		$directFactoring = $this->directFactoringRevenueProjectionByCategory ;
+		$directFactoringProjections = $directFactoring->getDirectFactoringTransactionProjection();
+		$directFactoringAdminFeesRate->update([
+			'monthly_admin_fees_amounts'=>$this->calculateMonthlyAdminFeesAmounts($directFactoringAdminFeesRate->getAdminFeesRates(),$directFactoringProjections)
+		]);
+	}
+	public function updateReverseFactoryMonthlyAdminFeesAmounts():void
+	{
+		$reverseFactoringAdminFeesRate = $this->reverseFactoryAdminFeesRate;
+		$reverseFactoring = $this->reverseFactoringRevenueProjectionByCategory ;
+		$reverseFactoringProjections = $reverseFactoring->getReverseFactoringTransactionProjection();
+		$reverseFactoringAdminFeesRate->update([
+			'monthly_admin_fees_amounts'=>$this->calculateMonthlyAdminFeesAmounts($reverseFactoringAdminFeesRate->getAdminFeesRates(),$reverseFactoringProjections)
+		]);
+	}
+	public function updateIjaraMortgageMonthlyAdminFeesAmounts():void
+	{
+		$adminFeesRate = $this->ijaraMortgageAdminFeesRate;
+		$revenueProjection = $this->ijaraMortgageRevenueProjectionByCategory ;
+		$reverseFactoringProjections = $revenueProjection->getIjaraMortgageTransactionProjection();
+		$adminFeesRate->update([
+			'monthly_admin_fees_amounts'=>$this->calculateMonthlyAdminFeesAmounts($adminFeesRate->getAdminFeesRates(),$reverseFactoringProjections)
+		]);
+	}
+	public function updateMicrofinanceMonthlyAdminFeesAmounts():void
+	{
+		$adminFeesRate = $this->microfinanceAdminFeesRate;
+		$revenueProjection = $this->microfinanceRevenueProjectionByCategory ;
+		$reverseFactoringProjections = $revenueProjection->getMicrofinanceTransactionProjection();
+		$adminFeesRate->update([
+			'monthly_admin_fees_amounts'=>$this->calculateMonthlyAdminFeesAmounts($adminFeesRate->getAdminFeesRates(),$reverseFactoringProjections)
+		]);
+	}
+	public function updatePortfolioMortgageMonthlyAdminFeesAmounts():void
+	{
+		$adminFeesRate = $this->portfolioMortgageAdminFeesRate;
+		$revenueProjection = $this->portfolioMortgageRevenueProjectionByCategory ;
+		$projections = $revenueProjection->getPortfolioMortgageTransactionProjection();
+		$adminFeesRate->update([
+			'monthly_admin_fees_amounts'=>$this->calculateMonthlyAdminFeesAmounts($adminFeesRate->getAdminFeesRates(),$projections)
+		]);
+	}
+	/**
+	 * * بتديلها 
+	 * * array 
+	 * * فيه الاندكس بتاع كل سنه وبترجعهالك مفرودة شهور
+	 * 
+	 */
+	public function convertYearlyArrayToMonthly(array $yearlyArrayItems , array $yearWithItsIndexes = null):array 
+	{
+		$result = [];
+		$yearWithItsIndexes = is_null($yearWithItsIndexes) ? $this->getOperationDurationPerYearFromIndexes() :$yearWithItsIndexes ;
+		$monthsWithItsYear = $this->getMonthsWithItsYear($yearWithItsIndexes) ;
+		foreach($yearWithItsIndexes  as $currentYearIndex => $months){
+			foreach($months as $currentMonthIndex => $isActive){
+				$currentYearAsIndex =$monthsWithItsYear[$currentMonthIndex]; 
+				$valueAtCurrentYearIndex = $yearlyArrayItems[$currentYearAsIndex] ?? 0;
+				$result[$currentMonthIndex] = $valueAtCurrentYearIndex;
+			}
+		}
+		return $result; 
+		
+	}
+	public function getMicrofinanceBranchesCount():int
+	{
+		return $this->microfinance_branches_count;
+	}
+	public function getMicrofinanceLoanOfficerCount():int
+	{
+		return $this->microfinance_loan_officer_count;
+	}
+	public function getConsumerfinanceBranchesCount():int
+	{
+		return $this->consumerfinance_branches_count;
+	}
+	public function getConsumerfinanceLoanOfficerCount():int
+	{
+		return $this->consumerfinance_loan_officer_count;
+	}
 }

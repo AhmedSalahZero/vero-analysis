@@ -77,10 +77,13 @@ three-dots-parent
 			 <?php if(!is_null($columnIndex)): ?>
 			data-column-index="<?php echo e($columnIndex); ?>"
 			<?php endif; ?>
-			 name="<?php echo e($name); ?>">
+			<?php if($name): ?>
+			 name="<?php echo e($name); ?>"
+			 <?php endif; ?>
+			 >
         </div>
 		<?php if($mark): ?>
-			  <span class="ml-2"><?php echo e($mark); ?></span>
+			  <span class="ml-2 currency-class"><?php echo e($mark); ?></span>
 		<?php endif; ?>
 		<?php if(!$removeCurrency && !$mark): ?>
             <?php if($isPercentage): ?>

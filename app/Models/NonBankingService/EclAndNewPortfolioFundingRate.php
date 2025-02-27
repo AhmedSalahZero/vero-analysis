@@ -1,8 +1,8 @@
 <?php
 namespace App\Models\NonBankingService;
 
-use App\Models\Traits\Scopes\NonBankingServices\BelongsToStudy;
 use App\Models\Traits\Scopes\CompanyScope;
+use App\Models\Traits\Scopes\NonBankingServices\BelongsToStudy;
 use App\Traits\HasBasicStoreRequest;
 use Illuminate\Database\Eloquent\Model;
 
@@ -14,6 +14,7 @@ class  EclAndNewPortfolioFundingRate extends Model
 	protected $guarded = ['id'];
 	protected $casts = [
 		'admin_fees_rates'=>'array',
+		'monthly_admin_fees_amounts'=>'array',
 		'ecl_rates'=>'array',
 		'equity_funding_rates'=>'array',
 		'equity_funding_values'=>'array',
@@ -27,6 +28,10 @@ class  EclAndNewPortfolioFundingRate extends Model
 	public function getAdminFeesRatesAtYearIndex(int $yearIndex)
 	{
 		return $this->admin_fees_rates[$yearIndex]??0;
+	}
+	public function getMonthlyAdminFeesAmountsAtMonthIndex(int $monthIndex)
+	{
+		return $this->monthly_admin_fees_amounts[$monthIndex] ?? 0  ; 
 	}
 	public function getEclRatesAtYearIndex(int $yearIndex)
 	{

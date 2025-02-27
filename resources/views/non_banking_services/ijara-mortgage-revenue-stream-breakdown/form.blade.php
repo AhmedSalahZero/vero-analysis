@@ -338,14 +338,14 @@
                             </div>
                         </div>
                         <div class="col-md-2 text-right">
-                            <x-show-hide-btn :query="'.revenue-projection-by-category'"></x-show-hide-btn>
+                            <x-show-hide-btn :query="'.admin-fees'"></x-show-hide-btn>
 
                         </div>
                     </div>
                     <div class="row">
                         <hr style="flex:1;background-color:lightgray">
                     </div>
-                    <div class="row revenue-projection-by-category">
+                    <div class="row admin-fees">
                         @php
                         $rowIndex = 0;
                         @endphp

@@ -113,10 +113,7 @@ class TestCommand extends Command
 	dd('good');
 		
 	}
-	public function convertFlatRateToDecreasingRate()
-	{
-		
-	}
+	
 	public function insertCustomersIntoPartnerTable(int $companyId)
 	{
 		$salesGatherings = DB::table('sales_gathering')->where('customer_name','!=',null)->where('company_id',$companyId)->get();

@@ -55,7 +55,7 @@ class CalculateFixedLoanAtEndService
 		return $finalResult;
 	}
 	
-	public function __calculate($previousResult ,int $indexOfLoop,string $loanType, string $startDate, float $loanAmount,  $baseRate, float $marginRate, float $tenor, string $installmentPaymentIntervalName, float $stepUpRate = 0, string $stepUpIntervalName = null, float $stepDownRate = 0, string $stepDownIntervalName = null, float $gracePeriod  = 0,$currentStartDateAsIndex=0  )
+	public function __calculate($previousResult ,int $indexOfLoop,string $loanType, string $startDate, float $loanAmount,  $baseRate, float $marginRate, float $tenor, string $installmentPaymentIntervalName, float $stepUpRate = 0, string $stepUpIntervalName = null, float $stepDownRate = 0, string $stepDownIntervalName = null, float $gracePeriod  = 0,$currentStartDateAsIndex=0 , int $currentDaysCount = null )
 	{
 		if($loanAmount <= 0){
 			return [] ;
@@ -65,8 +65,7 @@ class CalculateFixedLoanAtEndService
 		
 		$datesAsIndexString=HDate::generateDatesBetweenStartDateAndDuration($currentStartDateAsIndex,$startDate,$tenor,$installmentPaymentIntervalName);
 		
-		
-		$datesIndexAndDaysCount =HDate::calculateDaysCount($datesAsIndexString,$currentStartDateAsIndex); 
+		$datesIndexAndDaysCount =HDate::calculateDaysCount($datesAsIndexString,$currentDaysCount); 
 		
 		$datesAsStringIndex = array_flip($datesAsIndexString);
 		$installmentPaymentIntervalValue = $this->getInstallmentPaymentIntervalValue($installmentPaymentIntervalName);

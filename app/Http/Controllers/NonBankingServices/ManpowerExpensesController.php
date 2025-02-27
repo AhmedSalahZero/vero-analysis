@@ -2,11 +2,6 @@
 
 namespace App\Http\Controllers\NonBankingServices;
 
-use App\Equations\ExpenseAsPercentageEquation;
-use App\Equations\MonthlyFixedRepeatingAmountEquation;
-use App\Equations\OneTimeExpenseEquation;
-use App\Helpers\HArr;
-use App\Helpers\HHelpers;
 use App\Http\Controllers\Controller;
 use App\Models\Company;
 use App\Models\NonBankingService\Department;
@@ -38,8 +33,6 @@ class ManpowerExpensesController extends Controller
 	
 	public function store(Company $company , Request $request,Study $study)
 	{
-		
-		
 		$modelId = $request->get('model_id');
 		$modelName = $request->get('model_name');
 		$expenseType = $request->get('expense_type');
@@ -137,6 +130,7 @@ class ManpowerExpensesController extends Controller
 				$socialInsuranceRate = $study->getSocialInsuranceRate() /100 ;
 		        $dateAsIndexes = array_keys($hiringCounts);
 				$additionalDatabaseResult =  $study->calculateManpowerResult($dateAsIndexes,$currentExistingCount,$hiringCounts,$operationStartDateAsIndex,$monthlyNetSalary,$salaryTaxesRate,$socialInsuranceRate);
+			
 				
 				foreach($additionalDatabaseResult as $columnName => $payload){
 					$positionArr[$columnName] = $payload;

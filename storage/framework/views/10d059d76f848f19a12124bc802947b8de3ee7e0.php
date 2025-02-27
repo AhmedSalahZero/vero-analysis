@@ -1630,8 +1630,6 @@ use App\Models\NonBankingService\Expense;
 <?php endif; ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
-
-
                                 </td>
                                 <td>
                                     <div class="d-flex align-items-center">
@@ -1725,11 +1723,11 @@ use App\Models\NonBankingService\Expense;
     </div>
 </div>
  <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.save-or-back','data' => ['btnText' => __('Create')]]); ?>
-<?php $component->withName('save-or-back'); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.save-or-continue-btn','data' => []]); ?>
+<?php $component->withName('save-or-continue-btn'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['btn-text' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Create'))]); ?>
+<?php $component->withAttributes([]); ?>
 <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
@@ -1862,7 +1860,8 @@ use App\Models\NonBankingService\Expense;
             let form = document.getElementById('form-id');
             var formData = new FormData(form);
             $('.save-form').prop('disabled', true);
-
+			var saveAndContinue = $(this).attr('data-save-and-continue');
+			formData.append('saveAndContinue',saveAndContinue);
             $.ajax({
                 cache: false
                 , contentType: false

@@ -302,3 +302,8 @@ input.custom-input-string-width{
 	min-width:200px !important;
 	max-width:200px !important;
 }
+.w-header-400{
+	width:400px !important;
+	min-width:400px !important;
+	max-width:400px !important;
+}

@@ -37,25 +37,25 @@
 
         <form id="form-id" class="kt-form kt-form--label-right" method="POST" enctype="multipart/form-data" action="<?php echo e(isset($model) ? route('update.study',[$company->id , $model->id]) : $storeRoute); ?>">
             <?php echo csrf_field(); ?>
-			<?php if(isset($model)): ?>
-			<?php echo method_field('put'); ?>
-			<?php endif; ?> 
+            <?php if(isset($model)): ?>
+            <?php echo method_field('put'); ?>
+            <?php endif; ?>
             <input type="hidden" name="company_id" value="<?php echo e(getCurrentCompanyId()); ?>">
             <input type="hidden" name="creator_id" value="<?php echo e(\Auth::id()); ?>">
             <div class="kt-portlet">
                 <div class="kt-portlet__body">
-				  <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style=""> <?php echo e(__('Study Main Information')); ?> </h3>
-					<div class="row">
+                    <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style=""> <?php echo e(__('Study Main Information')); ?> </h3>
+                    <div class="row">
                         <hr style="flex:1;background-color:lightgray">
                     </div>
-					
+
                     <div class="form-group  mt-3">
                         <div class="row">
                             <div class="col-md-4 mb-4">
                                 <label class="form-label font-weight-bold"><?php echo e(__('Study Name')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?> </label>
                                 <div class="kt-input-icon">
                                     <div class="input-group">
-                                        <input  type="text" class="form-control" placeholder="<?php echo e(__('Please Enter Study Name')); ?>" name="study_name" value="<?php echo e(isset($model) ? $model->getName() : null); ?>" required>
+                                        <input type="text" class="form-control" placeholder="<?php echo e(__('Please Enter Study Name')); ?>" name="study_name" value="<?php echo e(isset($model) ? $model->getName() : null); ?>" required>
                                     </div>
                                 </div>
                             </div>
@@ -76,7 +76,7 @@
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
                             </div>
-							<div class="col-md-2 mb-4">
+                            <div class="col-md-2 mb-4">
                                  <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.select','data' => ['isSelect2' => false,'isRequired' => true,'options' => [['title'=>__('Existing Company' ) , 'value'=>'existing'] , ['title'=>__('New Company') ,'value'=>'new']],'addNew' => false,'label' => __('Company Nature'),'class' => ' ','all' => false,'name' => 'company_nature','selectedValue' => isset($model) ? $model->getCompanyNature() : 0]]); ?>
 <?php $component->withName('form.select'); ?>
@@ -179,7 +179,6 @@
 
 
                             <div class="col-md-4 ">
-
                                  <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.label','data' => ['class' => 'label','id' => 'test-id']]); ?>
 <?php $component->withName('form.label'); ?>
@@ -194,7 +193,7 @@
                                 <div class="kt-input-icon">
                                     <div class="input-group date">
                                         <input id="study-end-date" type="hidden" name="study_end_date" class=" form-control" readonly value="<?php echo e(isset($model) ? $model->getStudyEndDate() : getCurrentDateForFormDate('date')); ?>" />
-                                        <input id="study-end-date-text" type="text"  class=" form-control" readonly value="<?php echo e(isset($model) ? $model->getStudyEndDate() : getCurrentDateForFormDate('date')); ?>" />
+                                        <input id="study-end-date-text" type="text" class=" form-control" readonly value="<?php echo e(isset($model) ? $model->getStudyEndDate() : getCurrentDateForFormDate('date')); ?>" />
                                         <div class="input-group-append">
                                             <span class="input-group-text">
                                                 <i class="la la-calendar"></i>
@@ -269,9 +268,9 @@
                                     </div>
                                 </div>
                             </div>
-							
-							
-							 <div class="col-md-4 mb-4">
+
+
+                            <div class="col-md-4 mb-4">
                                 <label class="form-label font-weight-bold"><?php echo e(__('Salary Taxes Rate %')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?> </label>
                                 <div class="kt-input-icon">
                                     <div class="input-group">
@@ -279,8 +278,8 @@
                                     </div>
                                 </div>
                             </div>
-							
-							 <div class="col-md-4 mb-4">
+
+                            <div class="col-md-4 mb-4">
                                 <label class="form-label font-weight-bold"><?php echo e(__('Social Insurance Rate %')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?> </label>
                                 <div class="kt-input-icon">
                                     <div class="input-group">
@@ -288,7 +287,7 @@
                                     </div>
                                 </div>
                             </div>
-							
+
 
 
                             <div class="col-md-4 mb-4">
@@ -309,9 +308,9 @@
                                     </div>
                                 </div>
                             </div>
-							
-							
-							     <div class="col-md-4 mb-4">
+
+
+                            <div class="col-md-4 mb-4">
                                 <label class="form-label font-weight-bold"><?php echo e(__('Shareholder Equity Multiplier')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?> </label>
                                 <div class="kt-input-icon">
                                     <div class="input-group">
@@ -319,8 +318,8 @@
                                     </div>
                                 </div>
                             </div>
-							
-							
+
+
                         </div>
                         <br>
                         <hr>
@@ -328,28 +327,27 @@
                     </div>
                 </div>
             </div>
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			<div class="kt-portlet">
+
+
+
+
+
+
+
+
+
+
+
+
+            <div class="kt-portlet">
                 <div class="kt-portlet__body">
                     <div class="row">
                         <div class="col-md-10">
                             <div class="d-flex align-items-center ">
                                 <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style=""> <?php echo e(__('Revenue Stream Types')); ?> </h3>
-                                
                             </div>
                         </div>
-                        
+
                     </div>
                     <div class="row">
                         <hr style="flex:1;background-color:lightgray">
@@ -359,13 +357,7 @@
                         <div class="form-group row" style="flex:1;">
                             <div class="col-md-12 mt-3">
                                 <div class="row">
-
-
-
-
                                     <div class="col-md-12 mb-0 mt-4 text-left">
-                                        
-
                                         <div class="form-group d-inline-block">
                                             <div class="kt-radio-inline">
                                                 <label class="mr-3">
@@ -373,151 +365,143 @@
                                                 </label>
                                                 <label class="kt-radio kt-radio--success text-black font-size-18px font-weight-bold">
 
-                                                    <input  type="checkbox" value="1" name="has_leasing" 
-													<?php if(isset($model) && $model->hasLeasing()): ?> checked <?php endif; ?>
-													> <?php echo e(__('Leasing')); ?>
+                                                    <input type="checkbox" value="1" name="has_leasing" <?php if(isset($model) && $model->hasLeasing()): ?> checked <?php endif; ?>
+                                                    > <?php echo e(__('Leasing')); ?>
 
                                                     <span></span>
                                                 </label>
-										
+
                                                 <label class="kt-radio kt-radio--danger text-black font-size-18px font-weight-bold">
-                                                    <input type="checkbox" value="1" name="has_direct_factoring" 
-													<?php if(isset($model) && $model->hasDirectFactoring()): ?> checked <?php endif; ?>
-													> <?php echo e(__('Direct Factoring')); ?>
+                                                    <input type="checkbox" value="1" name="has_direct_factoring" <?php if(isset($model) && $model->hasDirectFactoring()): ?> checked <?php endif; ?>
+                                                    > <?php echo e(__('Direct Factoring')); ?>
 
                                                     <span></span>
                                                 </label>
-												
-												 <label class="kt-radio kt-radio--primary text-black font-size-18px font-weight-bold">
-                                                    <input type="checkbox" value="1" name="has_reverse_factoring" 
-													<?php if(isset($model) && $model->hasReverseFactoring()): ?> checked <?php endif; ?>
-													> <?php echo e(__('Reverse Factoring')); ?>
+
+                                                <label class="kt-radio kt-radio--primary text-black font-size-18px font-weight-bold">
+                                                    <input type="checkbox" value="1" name="has_reverse_factoring" <?php if(isset($model) && $model->hasReverseFactoring()): ?> checked <?php endif; ?>
+                                                    > <?php echo e(__('Reverse Factoring')); ?>
 
                                                     <span></span>
                                                 </label>
-												
-												
-												
-												
-												
-												
-												 <label class="kt-radio kt-radio--success text-black font-size-18px font-weight-bold">
 
-                                                    <input  type="checkbox" value="1" name="has_ijara_mortgage" 
-													<?php if(isset($model) && $model->hasIjaraMortgage()): ?> checked <?php endif; ?>
-													> <?php echo e(__('Ijara Mortgage')); ?>
+
+
+
+
+
+                                                <label class="kt-radio kt-radio--success text-black font-size-18px font-weight-bold">
+
+                                                    <input type="checkbox" value="1" name="has_ijara_mortgage" <?php if(isset($model) && $model->hasIjaraMortgage()): ?> checked <?php endif; ?>
+                                                    > <?php echo e(__('Ijara Mortgage')); ?>
 
                                                     <span></span>
                                                 </label>
-										
+
                                                 <label class="kt-radio kt-radio--danger text-black font-size-18px font-weight-bold">
-                                                    <input type="checkbox" value="1" name="has_portfolio_mortgage" 
-													<?php if(isset($model) && $model->hasPortfolioMortgage()): ?> checked <?php endif; ?>
-													> <?php echo e(__('Portfolio Mortgage')); ?>
+                                                    <input type="checkbox" value="1" name="has_portfolio_mortgage" <?php if(isset($model) && $model->hasPortfolioMortgage()): ?> checked <?php endif; ?>
+                                                    > <?php echo e(__('Portfolio Mortgage')); ?>
 
                                                     <span></span>
                                                 </label>
-												
-												 <label class="kt-radio kt-radio--primary text-black font-size-18px font-weight-bold">
-                                                    <input type="checkbox" value="1" name="has_micro_finance" 
-												
-													<?php if(isset($model) && $model->hasMicroFinance()): ?> checked <?php endif; ?>
-													> <?php echo e(__('Micro Finance')); ?>
+
+                                                <label class="kt-radio kt-radio--primary text-black font-size-18px font-weight-bold">
+                                                    <input type="checkbox" value="1" name="has_micro_finance" <?php if(isset($model) && $model->hasMicroFinance()): ?> checked <?php endif; ?>
+                                                    > <?php echo e(__('Micro Finance')); ?>
 
                                                     <span></span>
                                                 </label>
-												
-												
-												
-												 <label class="kt-radio kt-radio--success text-black font-size-18px font-weight-bold">
 
-                                                    <input  type="checkbox" value="1" name="has_securitization" 
-													<?php if(isset($model) && $model->hasSecuritization()): ?> checked <?php endif; ?>
-													> <?php echo e(__('Securitization')); ?>
+
+
+                                                <label class="kt-radio kt-radio--success text-black font-size-18px font-weight-bold">
+
+                                                    <input type="checkbox" value="1" name="has_securitization" <?php if(isset($model) && $model->hasSecuritization()): ?> checked <?php endif; ?>
+                                                    > <?php echo e(__('Securitization')); ?>
 
                                                     <span></span>
                                                 </label>
-										
+
                                                 <label class="kt-radio kt-radio--danger text-black font-size-18px font-weight-bold">
-                                                    <input type="checkbox" value="1" name="has_consumer_finance" 
-													<?php if(isset($model) && $model->hasConsumerFinance()): ?> checked <?php endif; ?>
-													> <?php echo e(__('Consumer Finance')); ?>
+                                                    <input type="checkbox" value="1" name="has_consumer_finance" <?php if(isset($model) && $model->hasConsumerFinance()): ?> checked <?php endif; ?>
+                                                    > <?php echo e(__('Consumer Finance')); ?>
 
                                                     <span></span>
                                                 </label>
-												
-												
-												
-											
+
+
+
+
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-
-                           
-
                             </div>
-
                         </div>
-
-
                     </div>
 
                 </div>
             </div>
 			
+			
+			
+			<div class="kt-portlet">
+                <div class="kt-portlet__body">
+                    <div class="row">
+                        <div class="col-md-10">
+                            <div class="d-flex align-items-center ">
+                                <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style=""> <?php echo e(__('Existing Branches Info')); ?> </h3>
+                            </div>
+                        </div>
 
+                    </div>
+                    <div class="row">
+                        <hr style="flex:1;background-color:lightgray">
+                    </div>
+                    <div class="row">
 
+                        <div class="form-group row" style="flex:1;">
+                           	 <div class="col-md-3 mb-4">
+                                <label class="form-label font-weight-bold"><?php echo e(__('Microfinance Branches Count')); ?>  </label>
+                                <div class="kt-input-icon">
+                                    <div class="input-group">
+                                        <input type="number" class="form-control only-greater-than-or-equal-zero-allowed" name="microfinance_branches_count" value="<?php echo e(isset($model) ? $model->getMicrofinanceBranchesCount() : 0); ?>" step="1">
+                                    </div>
+                                </div>
+                            </div>
+							<div class="col-md-3 mb-4">
+                                <label class="form-label font-weight-bold"><?php echo e(__('Microfinance Loan Officer Count')); ?>  </label>
+                                <div class="kt-input-icon">
+                                    <div class="input-group">
+                                        <input type="number" class="form-control only-greater-than-or-equal-zero-allowed" name="microfinance_loan_officer_count" value="<?php echo e(isset($model) ? $model->getMicrofinanceLoanOfficerCount() : 0); ?>" step="1">
+                                    </div>
+                                </div>
+                            </div>
+							
+							 <div class="col-md-3 mb-4">
+                                <label class="form-label font-weight-bold"><?php echo e(__('Consumer Finance Branches Count')); ?>  </label>
+                                <div class="kt-input-icon">
+                                    <div class="input-group">
+                                        <input type="number" class="form-control only-greater-than-or-equal-zero-allowed" name="consumerfinance_branches_count" value="<?php echo e(isset($model) ? $model->getConsumerfinanceBranchesCount() : 0); ?>" step="1">
+                                    </div>
+                                </div>
+                            </div>
+							<div class="col-md-3 mb-4">
+                                <label class="form-label font-weight-bold"><?php echo e(__('Consumer Finance Loan Officer Count')); ?>  </label>
+                                <div class="kt-input-icon">
+                                    <div class="input-group">
+                                        <input type="number" class="form-control only-greater-than-or-equal-zero-allowed" name="consumerfinance_loan_officer_count" value="<?php echo e(isset($model) ? $model->getConsumerfinanceLoanOfficerCount() : 0); ?>" step="1">
+                                    </div>
+                                </div>
+                            </div>
+							
+							
+                        </div>
+                    </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                </div>
+            </div>
+			
 
 
 
@@ -584,23 +568,22 @@
 <?php endif; ?> 
 <script src="/custom/js/non-banking-services/common.js"></script>
 <script>
-
-$(document).on('change', '.recalc-study-end-date', function(e) {
+    $(document).on('change', '.recalc-study-end-date', function(e) {
         e.preventDefault()
         const studyStartDate = new Date($('.study-start-date').val());
         const studyDuration = parseFloat($('.study-duration option:selected').attr('value'));
         if (studyDuration || studyDuration == '0') {
             const numberOfMonths = (studyDuration * 12) - 1
             let studyEndDate = studyStartDate.addMonths(numberOfMonths)
-			let dateFormattedForView = new Date(studyEndDate.getFullYear(), studyEndDate.getMonth() + 1, 0)
-			$('#study-end-date-text').val(convertDateToDefaultDateFormat(formatDate(dateFormattedForView)))
+            let dateFormattedForView = new Date(studyEndDate.getFullYear(), studyEndDate.getMonth() + 1, 0)
+            $('#study-end-date-text').val(convertDateToDefaultDateFormat(formatDate(dateFormattedForView)))
             studyEndDate = convertDateToDefaultDateFormat(formatDate(studyEndDate))
             $('#study-end-date').val(studyEndDate).trigger('change')
 
         }
 
     })
-	   $(document).on('change', '.recalate-operation-start-date', function() {
+    $(document).on('change', '.recalate-operation-start-date', function() {
         const studyStartDate = new Date($('.study-start-date').val());
         const propertyWillStartAfter = parseFloat($('#property-will-start-after').val())
         if (propertyWillStartAfter || propertyWillStartAfter == '0') {

@@ -52,10 +52,13 @@ three-dots-parent
 			 @if(!is_null($columnIndex))
 			data-column-index="{{ $columnIndex }}"
 			@endif
-			 name="{{ $name }}">
+			@if($name)
+			 name="{{ $name }}"
+			 @endif
+			 >
         </div>
 		@if($mark)
-			  <span class="ml-2">{{ $mark }}</span>
+			  <span class="ml-2 currency-class">{{ $mark }}</span>
 		@endif
 		@if(!$removeCurrency && !$mark)
             @if($isPercentage)

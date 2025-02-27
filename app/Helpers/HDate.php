@@ -129,7 +129,7 @@ class HDate
 		$index =$datesAsStringIndex[$date];
 		return $datesAsIndexString[$index + $numberOfShifts ]??null;
 	}
-	public static function calculateDaysCount(array $items):array{
+	public static function calculateDaysCount(array $items,int $currentDaysCount = null):array{
 		$currentDayCount = 0 ; 
 		$dayCounts = [];
 		$secondDate = null ;
@@ -142,13 +142,17 @@ class HDate
 			}
 			else{
 				// $secondDate = Carbon::make($items[$currentDateIndex+1])->diffInDays(Carbon::make($dateAsString));
+				if(!is_null($currentDaysCount)){
+					$dayCounts[$currentDateIndex] =$currentDaysCount;
+					continue;   
+				}
 				$secondDate = $dateAsString  ;
 				$firstDate = $items[$currentDateIndex-1];
 				$secondDateTime  = strtotime($secondDate.' 00:00:00');
 				$firstDateTime  = strtotime($firstDate.' 00:00:00');
 				$result = $secondDateTime-$firstDateTime;
 				$result = round(($result) / (60 * 60 * 24));
-				$dayCounts[$currentDateIndex] =(int)$result;
+				$dayCounts[$currentDateIndex] =   (int)$result;
 			}
 		}
 		return $dayCounts;

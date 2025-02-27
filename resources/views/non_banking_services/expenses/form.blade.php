@@ -1179,8 +1179,6 @@ use App\Models\NonBankingService\Expense;
                                 <td>
                                     <x-form.select :selectedValue="isset($subModel) ? $subModel->getPaymentTerm() : 'cash'" :options="getPaymentTerms()" :add-new="false" class="select2-select repeater-select payment_terms " :all="false" name="@if($isRepeater) payment_terms @else {{ $tableId }}[0][payment_terms] @endif"></x-form.select>
                                     <x-modal.custom-collection :subModel="isset($subModel) ? $subModel : null " :tableId="$tableId" :isRepeater="$isRepeater" :id="$repeaterId.'test-modal-id'"></x-modal.custom-collection>
-
-
                                 </td>
                                 <td>
                                     <div class="d-flex align-items-center">
@@ -1279,7 +1277,7 @@ use App\Models\NonBankingService\Expense;
 
     </div>
 </div>
-<x-save-or-back :btn-text="__('Create')" />
+<x-save-or-continue-btn />
 
 
 
@@ -1396,7 +1394,8 @@ use App\Models\NonBankingService\Expense;
             let form = document.getElementById('form-id');
             var formData = new FormData(form);
             $('.save-form').prop('disabled', true);
-
+			var saveAndContinue = $(this).attr('data-save-and-continue');
+			formData.append('saveAndContinue',saveAndContinue);
             $.ajax({
                 cache: false
                 , contentType: false

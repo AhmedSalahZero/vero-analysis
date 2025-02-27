@@ -2238,7 +2238,21 @@ function getPaymentTerms(): array
         ],
     ];
 }
+function getFfePaymentTerms(): array
+{
 
+    return [
+        [
+            'value' => 'customize',
+            'title' => __('Customize')
+        ],
+        [
+            'value' => 'cash',
+            'title' => __('Cash')
+        ],
+  
+    ];
+}
 function generateNameForFinancialStatementRelations(string $financialStatementName, $relationObject)
 {
     if ($relationObject instanceof IncomeStatement) {
@@ -2910,6 +2924,49 @@ function getTotalOfSalesRevenueFor(int $incomeStatementId, string $subItemType, 
     $totalOfSalesRevenue = $mainRowSalesRevenue->withMainRowsPivotFor($incomeStatementId, $subItemType)->first()->pivot->total;
 
     return $totalOfSalesRevenue ? $totalOfRow / $totalOfSalesRevenue * 100 : 0;
+}
+function getMonthNames(int $startFromIndex):array 
+{
+	return  [
+       	[
+			'title'=>'January',
+			'value'=>$startFromIndex 
+		],
+		[
+			'title'=>'February',
+			'value'=>++$startFromIndex
+		],[
+			'title'=>'March',
+			'value'=>++$startFromIndex
+		],[
+			'title'=>'April',
+			'value'=>++$startFromIndex
+		],[
+			'title'=>'May',
+			'value'=>++$startFromIndex
+		],[
+			'title'=>'June',
+			'value'=>++$startFromIndex
+		],[
+			'title'=>'July',
+			'value'=>++$startFromIndex
+		],[
+			'title'=>'August',
+			'value'=>++$startFromIndex
+		],[
+			'title'=>'September',
+			'value'=>++$startFromIndex
+		],[
+			'title'=>'October',
+			'value'=>++$startFromIndex
+		],[
+			'title'=>'November',
+			'value'=>++$startFromIndex
+		],[
+			'title'=>'December',
+			'value'=>++$startFromIndex
+		],
+    ];
 }
 function sortMonthsByItsNames(array $array): array
 {
@@ -5037,10 +5094,10 @@ function getTypesForValuesForNonBanking():array
             'title'=>__('One Time Expense'),
             'value'=>'one_time_expense',
         ],
-        'expense_per_employee'=>[
-            'title'=>__('Expense Per Employee'),
-            'value'=>'expense_per_employee',
-        ],
+        // 'expense_per_employee'=>[
+        //     'title'=>__('Expense Per Employee'),
+        //     'value'=>'expense_per_employee',
+        // ],
 
 
 
@@ -6126,6 +6183,11 @@ function getNonBankingNavigation(Company $company,User $user):array
 			'show'=>true ,
 			'link'=>route('create.general.assumption',['company'=>$company->id , 'study'=>$studyId])
 		];
+		$urls['branches']= [
+			'title'=>__('Branches <br> Assumptions'),
+			'show'=>true ,
+			'link'=>route('create.microfinance.branches.assumption',['company'=>$company->id , 'study'=>$studyId])
+		];
 		$urls['sales-projection'] = [
             'title'=>__('Sales <br> Projection'),
             'show'=>true ,
@@ -6164,7 +6226,7 @@ function getNonBankingNavigation(Company $company,User $user):array
 				[
 					'title'=>__('Micro Finance Projection'),
 					'show'=>$study->hasMicroFinance(),
-					'link'=>'#',
+					'link'=>route('create.microfinance.revenue.stream.breakdown',['company'=>$company->id,'study'=>$studyId]),
 					'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
 				],
 				[
@@ -6195,7 +6257,7 @@ function getNonBankingNavigation(Company $company,User $user):array
 		$urls['fixed-assets'] = [
             'title'=>__('Fixed <br> Assets'),
             'show'=>true ,
-			'link'=>'#'
+			'link'=>route('create.ffe.fixed.assets',['company'=>$company->id , 'study'=>$studyId])
 		];
 		$urls['analytical-reports'] = [
             'title'=>__('Analytical <br> Reports'),
@@ -7764,4 +7826,26 @@ function getLastWordInString(string $str, $separator = '/')
 {
 	$explodedStr = explode($separator, $str);
 	return $explodedStr[count($explodedStr) - 1];
+}
+function getDepreciationDurations():array
+{
+	$result = [];
+	for($i = 2 ; $i <= 25 ; $i++){
+		$result[] = [
+			'title'=> $i . ' ' . __('Years'),
+			'value'=>$i 
+		];
+	}
+	return $result;
+}
+function getReplacementInterval():array
+{
+	$result = [];
+	for($i = 1 ; $i <= 5 ; $i++){
+		$result[] = [
+			'title'=> $i . ' ' . __('Years'),
+			'value'=>$i 
+		];
+	}
+	return $result;
 }

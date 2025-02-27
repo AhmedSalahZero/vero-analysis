@@ -187,6 +187,7 @@ class IncomeStatementController extends Controller
 			'fixed_monthly_repeating_amount'=>'monthly_repeating_amounts',
 		];
 		$salaryExpensesForCategory = [];
+	
 		foreach($salaryExpenses as $salaryExpense){
 			$expenseCategory = $salaryExpense->expense_type;
 			$salaryExpensePayload = json_decode($salaryExpense->salary_expenses);
@@ -195,7 +196,6 @@ class IncomeStatementController extends Controller
 				$salaryExpensesForCategory[$expenseCategory][$monthIndex] = isset($salaryExpensesForCategory[$expenseCategory][$monthIndex]) ?  $salaryExpensesForCategory[$expenseCategory][$monthIndex] + $currentSalaryExpense : $currentSalaryExpense;
 			}
 		}
-
 		
 		foreach($expenses as $expense){
 		

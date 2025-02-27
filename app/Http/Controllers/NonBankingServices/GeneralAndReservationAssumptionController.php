@@ -32,7 +32,7 @@ class GeneralAndReservationAssumptionController extends Controller
 		$study->generalAndReserveAssumption ? $study->generalAndReserveAssumption->update($data) : GeneralAndReserveAssumption::create($data);
 		
 		return response()->json([
-			'redirectTo'=>route('create.leasing.revenue.stream.breakdown',['company'=>$company->id,'study'=>$study->id])
+			'redirectTo'=>route('create.microfinance.branches.assumption',['company'=>$company->id,'study'=>$study->id])
 		]);
 	}
 }

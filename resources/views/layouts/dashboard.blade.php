@@ -704,6 +704,24 @@ let pageLoaded = false ;
 			color:white !important
 		}
 		
+		.copy-btn-class{
+			border:1px solid green !important ;
+		}
+		
+		.copy-btn-class i{
+			color:green !important
+		}
+		.copy-btn-class:hover {
+			background-color:green ;
+		}
+		.copy-btn-class:hover i  {
+			color:white !important
+		}
+		.font-14px
+{
+	font-size: 14px !important;
+}
+		
         .border-green {
             border-color: green;
         }

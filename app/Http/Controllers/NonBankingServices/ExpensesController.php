@@ -98,8 +98,14 @@ class ExpensesController extends Controller
 				
 			}
 		}
+		if($request->get('saveAndContinue')){
+			return response()->json([
+				'redirectTo'=>route('view.results.dashboard',['company'=>$company->id,'study'=>$study->id])
+			]);	
+		}
 		return response()->json([
-			'redirectTo'=>route('view.results.dashboard',['company'=>$company->id,'study'=>$study->id])
+			'redirectTo'=>route('create.expenses',['company'=>$company->id,'study'=>$study->id])
 		]);
+		
 	}
 }

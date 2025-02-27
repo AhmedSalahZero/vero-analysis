@@ -218,7 +218,7 @@ use App\Models\NonBankingService\Study;
 									<td>
 										<div class="d-flex align-items-center flex-column " style="gap:10px;">
 										<div class="d-flex mr-auto" style="gap:10px;">
-											<a href="#" class="btn btn-md-width btn-1-bg btn-sm btn-brand btn-pill" ><?php echo e(__('Income Statement')); ?></a>  
+											<a href="<?php echo e(route('view.non.banking.forecast.income.statement',['company'=>$company->id,'study'=>$model->id])); ?>" class="btn btn-md-width btn-1-bg btn-sm btn-brand btn-pill" ><?php echo e(__('Income Statement')); ?></a>  
 											<a href="#" class="btn btn-md-width btn-2-bg btn-sm btn-brand btn-pill" ><?php echo e(__('Balance Sheet')); ?></a>  
 										</div>
 										<div class="d-flex mr-auto" style="gap:10px;">
@@ -238,8 +238,8 @@ use App\Models\NonBankingService\Study;
 									  <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
 											
-                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon edit-btn-class" title="Edit" href="<?php echo e(route('edit.study',['company'=>$company->id,'study'=>$model->id])); ?>"><i class="fa fa-pen-alt exclude-icon default-icon-color" ></i></a>
-                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon copy-btn-class" title="Edit" href="<?php echo e(route('edit.study',['company'=>$company->id,'study'=>$model->id])); ?>"><i class="fa fa-book exclude-icon default-icon-color" ></i></a>
+                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon edit-btn-class" title="<?php echo e(__('Edit')); ?>" href="<?php echo e(route('edit.study',['company'=>$company->id,'study'=>$model->id])); ?>"><i class="fa fa-pen-alt exclude-icon default-icon-color" ></i></a>
+                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon copy-btn-class" title="<?php echo e(__('Copy')); ?>" href="<?php echo e(route('edit.study',['company'=>$company->id,'study'=>$model->id])); ?>"><i class="fa fa-layer-group exclude-icon default-icon-color" ></i></a>
 											
 											
                                             <a data-toggle="modal" data-target="#delete-study-<?php echo e($model->id); ?>" type="button" class="btn delete-btn-class btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt exclude-icon default-icon-color"></i></a>

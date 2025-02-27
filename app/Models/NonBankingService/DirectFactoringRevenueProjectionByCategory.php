@@ -2,8 +2,8 @@
 namespace App\Models\NonBankingService;
 
 use App\Models\Company;
-use App\Models\Traits\Scopes\NonBankingServices\BelongsToStudy;
 use App\Models\Traits\Scopes\CompanyScope;
+use App\Models\Traits\Scopes\NonBankingServices\BelongsToStudy;
 use App\Traits\HasBasicStoreRequest;
 use Illuminate\Database\Eloquent\Model;
 
@@ -36,7 +36,11 @@ class  DirectFactoringRevenueProjectionByCategory extends Model
 	
 	public function getDirectFactoringTransactionProjectionAtYearIndex(int $yearIndex)
 	{
-		return $this->direct_factoring_transactions_projections[$yearIndex] ?? 0  ; 
+		return $this->getDirectFactoringTransactionProjection()[$yearIndex] ?? 0  ; 
+	}
+	public function getDirectFactoringTransactionProjection():array 
+	{
+		return $this->direct_factoring_transactions_projections;
 	}
 	public function getGrowthRateAtYearIndex(int $yearIndex)
 	{

@@ -2,8 +2,8 @@
 namespace App\Models\NonBankingService;
 
 use App\Models\Company;
-use App\Models\Traits\Scopes\NonBankingServices\BelongsToStudy;
 use App\Models\Traits\Scopes\CompanyScope;
+use App\Models\Traits\Scopes\NonBankingServices\BelongsToStudy;
 use App\Traits\HasBasicStoreRequest;
 use Illuminate\Database\Eloquent\Model;
 
@@ -16,6 +16,8 @@ class  PortfolioMortgageRevenueProjectionByCategory extends Model
 	protected $casts =[
 		'growth_rates'=>'array',
 		'portfolio_mortgage_transactions_projections'=>'array',
+		'frequency_per_year'=>'array',
+		'start_from'=>'array',
 		'monthly_due_cheques_percentages'=>'array',
 		'quarterly_due_cheques_percentages'=>'array',
 		'annually_due_cheques_percentages'=>'array',
@@ -37,11 +39,32 @@ class  PortfolioMortgageRevenueProjectionByCategory extends Model
 		return 'non_banking_services.portfolio-mortgage-revenue-stream-breakdown.form';
 	}
 	
+	
+	public function getPortfolioMortgageTransactionProjection():array 
+	{
+		return $this->portfolio_mortgage_transactions_projections  ; 
+	}
 	public function getPortfolioMortgageTransactionProjectionAtYearIndex(int $yearIndex)
 	{
-		return $this->portfolio_mortgage_transactions_projections[$yearIndex] ?? 0  ; 
+		return $this->getPortfolioMortgageTransactionProjection()[$yearIndex] ?? 0  ; 
 	}
-	public function getGrowthRateAtYearIndex(int $yearIndex)
+	public function getStartFrom():array 
+	{
+		return (array)$this->start_from  ; 
+	}
+	public function getStartFromAtYearIndex(int $yearIndex)
+	{
+		return $this->getStartFrom()[$yearIndex] ?? 0  ; 
+	}
+	public function getFrequencyPerYear():array 
+	{
+		return (array)$this->frequency_per_year  ; 
+	}
+	public function getFrequencyPerYearAtYearIndex(int $yearIndex)
+	{
+		return $this->getFrequencyPerYear()[$yearIndex] ?? 0  ; 
+	}
+ 	public function getGrowthRateAtYearIndex(int $yearIndex)
 	{
 		return $this->growth_rates[$yearIndex] ?? 0  ; 
 	}
@@ -69,4 +92,9 @@ class  PortfolioMortgageRevenueProjectionByCategory extends Model
 	{
 		return $this->annually_due_cheques_percentages[$yearIndex] ?? 0  ; 
 	}	
+	public function getMarginRate()
+	{
+		$marginRate = $this->margin_rate;
+		return $marginRate ? $this->margin_rate : 0 ;
+	}
 }

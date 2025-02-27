@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\NonBankingServices;
 
+use App\Helpers\HArr;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\NonBankingServices\StoreLeasingRevenueStreamRequest;
 use App\Models\Company;
 use App\Models\NonBankingService\LeasingCategory;
 use App\Models\NonBankingService\Study;
 use App\Traits\NonBankingService;
+use Hash;
 use Illuminate\Http\Request;
 
 class LeasingRevenueStreamBreakdownController extends Controller
@@ -52,14 +54,22 @@ class LeasingRevenueStreamBreakdownController extends Controller
 		}
 		
 		if($request->has('admin_fees_rates')){
+			$adminFeesRates = $request->get('admin_fees_rates',[]);
+			$newLoansFundingValues = $request->get('new_loans_funding_values',[]) ;
+			$equityFundingValues = $request->get('equity_funding_values',[]) ;
+			$loanAmounts = $request->get('loan_amounts',[]);
+			$sumLoanAmounts = HArr::sumForInternalIndexes($loanAmounts);
+			$monthlyAdminFeesAmount = $study->calculateMonthlyAdminFeesAmounts($adminFeesRates , $sumLoanAmounts  );
+							
 			$data = [
 				'revenue_stream_type'=>Study::LEASING,
-				'admin_fees_rates'=>$request->get('admin_fees_rates',[]),
+				'admin_fees_rates'=>$adminFeesRates,
+				'monthly_admin_fees_amounts'=>$monthlyAdminFeesAmount,
 				'ecl_rates'=>$request->get('ecl_rates',[]),
 				'equity_funding_rates'=>$request->get('equity_funding_rates',[]),
-				'equity_funding_values'=>$request->get('equity_funding_values',[]),
+				'equity_funding_values'=>$equityFundingValues,
 				'new_loans_funding_rates'=>$request->get('new_loans_funding_rates',[]),
-				'new_loans_funding_values'=>$request->get('new_loans_funding_values',[]),
+				'new_loans_funding_values'=>$newLoansFundingValues,
 				'company_id'=>$company->id
 			];
 			if($study->leasingEclAndNewPortfolioFundingRate){

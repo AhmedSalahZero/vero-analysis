@@ -353,6 +353,9 @@ Route::middleware([])->group(function () {
 						route::get('general-and-reserve-assumption','GeneralAndReservationAssumptionController@create')->name('create.general.assumption');
 						route::post('general-and-reserve-assumption','GeneralAndReservationAssumptionController@store')->name('store.general.assumption');
 						
+						route::get('microfinance-branches-assumption','MicrofinanceBranchAssumptionsController@create')->name('create.microfinance.branches.assumption');
+						route::post('microfinance-branches-assumption','MicrofinanceBranchAssumptionsController@store')->name('store.microfinance.branches.assumption');
+						
 						/**
 					 	* * End General Assumption 
 						 */
@@ -393,6 +396,10 @@ Route::middleware([])->group(function () {
 						 */
 						route::get('revenue-streams-breakdown/ijara-mortgage','IjaraMortgageRevenueStreamBreakdownController@create')->name('create.ijara.mortgage.revenue.stream.breakdown');
 						route::post('revenue-streams-breakdown/ijara-mortgage','IjaraMortgageRevenueStreamBreakdownController@store')->name('store.ijara.mortgage.revenue.stream.breakdown');
+						
+						route::get('revenue-streams-breakdown/microfinance','MicrofinanceRevenueStreamBreakdownController@create')->name('create.microfinance.revenue.stream.breakdown');
+						route::post('revenue-streams-breakdown/microfinance','MicrofinanceRevenueStreamBreakdownController@store')->name('store.microfinance.revenue.stream.breakdown');
+						
 						/**
 						 * * End Ijara Mortgage Revenue Streams Breakdown  
 						 */
@@ -411,16 +418,17 @@ Route::middleware([])->group(function () {
 						 route::get('income-statement','IncomeStatementController@index')->name('view.non.banking.forecast.income.statement');
 						
 						
-						
-						
-						 /**
-						 * * Start expenses tables
+			
+						/**
+						 * * Non Banking Expenses
 						 */
-						
 						route::get('expenses','ExpensesController@create')->name('create.expenses');
 						route::post('expenses','ExpensesController@store')->name('store.expenses');
 						
-				
+						route::get('ffe-fixed-assets','FfeFixedAssetsController@create')->name('create.ffe.fixed.assets');
+						route::post('ffe-fixed-assets','FfeFixedAssetsController@store')->name('store.ffe.fixed.assets');
+						
+						
 						route::post('departments','ManpowerExpensesController@storeDepartmentPositions')->name('store.department.positions.for.non.banking');
 						route::get('manpower','ManpowerExpensesController@create')->name('view.manpower.for.non.banking');
 						route::post('manpower','ManpowerExpensesController@store')->name('store.manpower.for.non.banking');
