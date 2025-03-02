@@ -40,7 +40,7 @@ use App\Models\NonBankingService\Study;
 
 
 
-                  
+
                     <x-tables.repeater-table :tableClasses="'table-condensed table-row-spacing income-class-table'" :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden scrollable-table'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
                         <x-slot name="ths">
                             <x-tables.repeater-table-th class="  header-border-down first-column-th-class" :title="__('+/-')"></x-tables.repeater-table-th>
@@ -76,7 +76,7 @@ use App\Models\NonBankingService\Study;
                             <tr data-is-main-row data-repeat-formatting-decimals="0" data-repeater-style>
                                 <td>
                                     @if($hasSubItems)
-                                    <a href="#"  class="btn btn-1-bg btn-sm btn-brand add-btn-class  text-center add-btn-js">
+                                    <a href="#" class="btn btn-1-bg btn-sm btn-brand add-btn-class  text-center add-btn-js">
                                         <i class="fas fa-angle-double-down expand-icon   exclude-icon"></i>
                                     </a>
                                     @endif
@@ -87,8 +87,12 @@ use App\Models\NonBankingService\Study;
                                         $currentIndex = 0 ;
                                         @endphp
                                         @foreach($currentTableData['main_items'] as $mainItemId => $mainItemArr)
+<div class="input-hidden-parent">
+            <input data-number-of-decimals="0" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control copy-value-to-his-input-hidden 
 
-                                        <x-repeat-right-dot-inputs :formattedInputClasses="'custom-input-string-width input-text-left '" :removeThreeDots="true" :removeCurrency="true" :mark="' '" :is-number="false" :removeThreeDotsClass="true" :number-format-decimals="$mainItemArr['options']['number-format-decimals']??$defaultClasses[$currentIndex]['number-format-decimals']" :currentVal="$mainItemArr['options']['title']??$mainItemId" :classes="''" :is-percentage="false" :name="''" :columnIndex="-1"></x-repeat-right-dot-inputs>
+			  expandable-amount-input 			  repeat-to-right-input-formatted  custom-input-string-width input-text-left  " type="text" value="{{ $mainItemArr['options']['title']??$mainItemId }}" data-column-index="-1">
+        </div>
+                                        {{-- <x-repeat-right-dot-inputs :formattedInputClasses="'custom-input-string-width input-text-left '" :removeThreeDots="true" :removeCurrency="true" :mark="' '" :is-number="false" :removeThreeDotsClass="true" :number-format-decimals="$mainItemArr['options']['number-format-decimals']??$defaultClasses[$currentIndex]['number-format-decimals']" :currentVal="$mainItemArr['options']['title']??$mainItemId" :classes="''" :is-percentage="false" :name="''" :columnIndex="-1"></x-repeat-right-dot-inputs> --}}
                                         @php
                                         $currentIndex++;
                                         @endphp
@@ -151,7 +155,7 @@ use App\Models\NonBankingService\Study;
     @endphp
 
     @foreach($studyMonthsForViews as $dateAsIndex=>$dateAsString)
-   
+
     <td data-column-index="{{ $dateAsIndex }}">
 
         <div data-column-index="{{ $dateAsIndex }}" class="d-flex align-items-center justify-content-center flex-column" style="gap:10px">
@@ -162,7 +166,29 @@ use App\Models\NonBankingService\Study;
             @php
             $isPercentage = $mainItemArr['options']['is-percentage']??$defaultClasses[$currentIndex]['is-percentage'] ;
             @endphp
-            <x-repeat-right-dot-inputs :readonly="false" :classes="$mainItemArr['options']['classes']??$defaultClasses[$currentIndex]['classes']" data-group-index="{{ $currentIndex ==0   ? $currentYearRepeaterIndex : -1 }}" :formattedInputClasses="$mainItemArr['options']['formatted-input-classes']??$defaultClasses[$currentIndex]['formatted-input-classes']" :removeThreeDots="true" :removeCurrency="true" :mark="$isPercentage ? '%' : ''" :is-number="true" :removeThreeDotsClass="true" :numberFormatDecimals="$mainItemArr['options']['number-format-decimals']??$defaultClasses[$currentIndex]['number-format-decimals']" :currentVal="$mainItemArr['data'][$dateAsIndex]??0" :is-percentage="$isPercentage" :name="''" :columnIndex="$dateAsIndex"></x-repeat-right-dot-inputs>
+            @if($isPercentage)
+            <div class="input-group input-group-sm align-items-center justify-content-center flex-nowrap">
+                <div class="input-hidden-parent">
+                    <input data-number-of-decimals="2" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control copy-value-to-his-input-hidden 
+
+			  expandable-percentage-input  			  repeat-to-right-input-formatted   " type="text" value="{{ number_format($mainItemArr['data'][$dateAsIndex]??0,2) }}" data-column-index="{{ $dateAsIndex }}">
+                    <input data-number-of-decimals="2" data-group-index="{{ $currentIndex ==0   ? $currentYearRepeaterIndex : -1 }}" type="hidden" data-name="" class="repeat-to-right-input-hidden input-hidden-with-name  " value="{{ $mainItemArr['data'][$dateAsIndex]??0 }}" data-column-index="{{ $dateAsIndex }}">
+                </div>
+                <span class="ml-2 currency-class">%</span>
+            </div>
+            @else
+            <div class="input-group input-group-sm align-items-center justify-content-center flex-nowrap">
+                <div class="input-hidden-parent">
+                    <input data-number-of-decimals="0" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control copy-value-to-his-input-hidden 
+
+			  expandable-amount-input 			  repeat-to-right-input-formatted  custom-input-numeric-width  " type="text" value="{{ number_format($mainItemArr['data'][$dateAsIndex]??0) }}" data-column-index="{{ $dateAsIndex }}">
+                    <input data-number-of-decimals="0" data-group-index="{{ $currentIndex ==0   ? $currentYearRepeaterIndex : -1 }}" type="hidden" data-name="" class="repeat-to-right-input-hidden input-hidden-with-name  repeater-with-collapse-input" value="{{ $mainItemArr['data'][$dateAsIndex]??0 }}" data-column-index="{{ $dateAsIndex }}">
+                </div>
+            </div>
+            @endif
+
+
+            {{-- <x-repeat-right-dot-inputs :readonly="false" :classes="$mainItemArr['options']['classes']??$defaultClasses[$currentIndex]['classes']" data-group-index="{{ $currentIndex ==0   ? $currentYearRepeaterIndex : -1 }}" :formattedInputClasses="$mainItemArr['options']['formatted-input-classes']??$defaultClasses[$currentIndex]['formatted-input-classes']" :removeThreeDots="true" :removeCurrency="true" :mark="$isPercentage ? '%' : ''" :is-number="true" :removeThreeDotsClass="true" :numberFormatDecimals="$mainItemArr['options']['number-format-decimals']??$defaultClasses[$currentIndex]['number-format-decimals']" :currentVal="$mainItemArr['data'][$dateAsIndex]??0" :is-percentage="$isPercentage" :name="''" :columnIndex="$dateAsIndex"></x-repeat-right-dot-inputs> --}}
             @php
             $currentIndex++;
             @endphp
@@ -181,19 +207,70 @@ use App\Models\NonBankingService\Study;
     @endphp
     @if($financialYearEndMonthNumber == $currentMonthNumber || $loop->last)
     <td data-column-index="{{ $dateAsIndex }}" class="exclude-from-collapse">
-		@php
-			$currentIndex =0 ;
-		@endphp
-		 
-		@foreach($currentTableData['main_items'] as $mainItemId => $mainItemArr)
+        @php
+        $currentIndex =0 ;
+        @endphp
+
+        @foreach($currentTableData['main_items'] as $mainItemId => $mainItemArr)
         <div class="d-flex align-items-center justify-content-center">
-            <x-repeat-right-dot-inputs :readonly="true" :removeThreeDots="true" :number-format-decimals="0" :mark="''" :currentVal="$mainItemArr['total'][$dateAsIndex]??0 " :formattedInputClasses="'exclude-from-collapse repeat-group-year'" :classes="'year-repeater-index-'.$currentYearRepeaterIndex.' ' .' exclude-from-collapse'" :is-percentage="$mainItemArr['options']['is-percentage']??$defaultClasses[$currentIndex]['is-percentage']" :name="''" :columnIndex="$dateAsIndex"></x-repeat-right-dot-inputs>
+            @if($currentIndex == 0)
+            <div class="
+
+form-group 
+three-dots-parent
+ 
+
+">
+                <div class="input-group input-group-sm align-items-center justify-content-center flex-nowrap">
+                    <div class="input-hidden-parent">
+                        <input data-number-of-decimals="0" readonly="" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control copy-value-to-his-input-hidden 
+
+			  expandable-amount-input 			  repeat-to-right-input-formatted  exclude-from-collapse repeat-group-year " type="text" value="{{ number_format($mainItemArr['total'][$dateAsIndex]??0,0) }}" data-column-index="{{ $dateAsIndex }}">
+                        <input data-number-of-decimals="0" type="hidden" data-name="" class="repeat-to-right-input-hidden input-hidden-with-name  year-repeater-index-{{ $currentYearRepeaterIndex }}  exclude-from-collapse" value="{{ $mainItemArr['total'][$dateAsIndex]??0 }}" data-column-index="{{ $dateAsIndex }}">
+                    </div>
+
+                    <span class="ml-2 currency-class">
+                        EGP
+                    </span>
+
+                </div>
+
+
+
+                {{-- <i class="fa fa-ellipsis-h pull-left repeat-to-right row-repeater-icon visibility-hidden"></i> --}}
+
+            </div>
+            @else
+            <div class="
+
+form-group 
+three-dots-parent
+ 
+
+">
+                <div class="input-group input-group-sm align-items-center justify-content-center flex-nowrap">
+                    <div class="input-hidden-parent">
+                        <input data-number-of-decimals="0" readonly="" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control copy-value-to-his-input-hidden 
+
+			  expandable-percentage-input  			  repeat-to-right-input-formatted  exclude-from-collapse repeat-group-year " type="text" value="{{ number_format($mainItemArr['total'][$dateAsIndex]??0,2) }}" data-column-index="{{ $dateAsIndex }}">
+                        <input data-number-of-decimals="0" type="hidden" data-name="" class="repeat-to-right-input-hidden input-hidden-with-name  year-repeater-index-{{ $currentYearRepeaterIndex }}  exclude-from-collapse" value="{{ $mainItemArr['total'][$dateAsIndex]??0 }}" data-column-index="{{ $dateAsIndex }}">
+                    </div>
+                    <span class="ml-2">%</span>
+                </div>
+
+
+
+                <i class="fa fa-ellipsis-h pull-left repeat-to-right row-repeater-icon visibility-hidden"></i>
+
+            </div>
+            @endif
+            {{-- <x-repeat-right-dot-inputs :readonly="true" :removeThreeDots="true" :number-format-decimals="0" :mark="''" :currentVal="$mainItemArr['total'][$dateAsIndex]??0 " :formattedInputClasses="'exclude-from-collapse repeat-group-year'" :classes="'year-repeater-index-'.$currentYearRepeaterIndex.' ' .' exclude-from-collapse'" :is-percentage="$mainItemArr['options']['is-percentage']??$defaultClasses[$currentIndex]['is-percentage']" :name="''" :columnIndex="$dateAsIndex"></x-repeat-right-dot-inputs> --}}
         </div>
-		@php
-			$currentIndex++;
-		@endphp
-		@endforeach 
-	
+        @php
+        $currentIndex++;
+        @endphp
+        @endforeach
+
 
 
     </td>
@@ -205,7 +282,24 @@ use App\Models\NonBankingService\Study;
     @endforeach
     <td>
         <div class="d-flex align-items-center justify-content-center">
-            <x-repeat-right-dot-inputs :removeThreeDots="true" :removeCurrency="true" :mark="' '" :is-number="true" :removeThreeDotsClass="true" :number-format-decimals="0" :currentVal="0" :classes="'total-td'" :is-percentage="false" :name="''" :columnIndex="0"></x-repeat-right-dot-inputs>
+			<div class="
+
+ 
+
+">
+    <div class="input-group input-group-sm align-items-center justify-content-center flex-nowrap">
+        <div class="input-hidden-parent">
+            <input readonly data-number-of-decimals="0" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control copy-value-to-his-input-hidden 
+
+			  expandable-amount-input 			  repeat-to-right-input-formatted   " type="text" value="0" data-column-index="-1">
+            <input data-number-of-decimals="0" type="hidden" data-name="" class="repeat-to-right-input-hidden input-hidden-with-name  total-td" value="0" data-column-index="-1">
+        </div>
+					  <span class="ml-2 currency-class"> </span>
+				    </div>
+	 
+</div>
+
+            {{-- <x-repeat-right-dot-inputs :removeThreeDots="true" :removeCurrency="true" :mark="' '" :is-number="true" :removeThreeDotsClass="true" :number-format-decimals="0" :currentVal="0" :classes="'total-td'" :is-percentage="false" :name="''" :columnIndex="0"></x-repeat-right-dot-inputs> --}}
         </div>
     </td>
     </tr>
@@ -215,7 +309,25 @@ use App\Models\NonBankingService\Study;
         </td>
         <td>
             <div class="d-flex align-items-center justify-content-center flex-column ml-5" style="gap:10px">
-                <x-repeat-right-dot-inputs :readonly="true" :formattedInputClasses="'custom-input-string-width input-text-left '" :removeThreeDots="true" :removeCurrency="true" :mark="' '" :is-number="false" :removeThreeDotsClass="true" :number-format-decimals="0" :currentVal="$subItemArr['options']['title']??$subItemId" :classes="''" :is-percentage="false" :name="''" :columnIndex="-1"></x-repeat-right-dot-inputs>
+			
+			<div class="
+
+ 
+
+">
+    <div class="input-group input-group-sm align-items-center justify-content-center flex-nowrap">
+        <div class="input-hidden-parent">
+            <input data-number-of-decimals="0" readonly="" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control copy-value-to-his-input-hidden 
+
+			  expandable-amount-input 			  repeat-to-right-input-formatted  custom-input-string-width input-text-left  " type="text" value="{{ $subItemArr['options']['title']??$subItemId }}" data-column-index="-1">
+            <input data-number-of-decimals="0" type="hidden" data-name="" class="repeat-to-right-input-hidden input-hidden-with-name  " value="{{ $subItemArr['options']['title']??$subItemId }}" data-column-index="-1">
+        </div>
+					  <span class="ml-2 currency-class"> </span>
+				    </div>
+	 
+</div>
+
+                {{-- <x-repeat-right-dot-inputs :readonly="true" :formattedInputClasses="'custom-input-string-width input-text-left '" :removeThreeDots="true" :removeCurrency="true" :mark="' '" :is-number="false" :removeThreeDotsClass="true" :number-format-decimals="0" :currentVal="$subItemArr['options']['title']??$subItemId" :classes="''" :is-percentage="false" :name="''" :columnIndex="-1"></x-repeat-right-dot-inputs> --}}
             </div>
         </td>
         <td>
@@ -226,7 +338,21 @@ use App\Models\NonBankingService\Study;
         <td data-column-index="{{ $dateAsIndex }}">
 
             <div data-column-index="{{ $dateAsIndex }}" class="d-flex align-items-center justify-content-center flex-column" style="gap:10px">
-                <x-repeat-right-dot-inputs :readonly="true" :formattedInputClasses="$subItemArr['options']['formatted-input-classes']??$defaultClasses[0]['formatted-input-classes']" :removeThreeDots="true" :removeCurrency="true" :mark="' '" :is-number="true" :removeThreeDotsClass="true" :number-format-decimals="$subItemArr['options']['number-format-decimals']??$defaultClasses[0]['number-format-decimals']" :currentVal="$subItemArr['data'][$dateAsIndex]??0" :classes="$subItemArr['options']['classes']??''" :is-percentage="$subItemArr['options']['number-format-decimals']??$defaultClasses[0]['number-format-decimals']" :name="''" :columnIndex="$dateAsIndex"></x-repeat-right-dot-inputs>
+
+                <div class="">
+                    <div class="input-group input-group-sm align-items-center justify-content-center flex-nowrap">
+                        <div class="input-hidden-parent">
+                            <input data-number-of-decimals="0" readonly="" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control copy-value-to-his-input-hidden 
+
+			  expandable-amount-input 			  repeat-to-right-input-formatted  custom-input-numeric-width  " type="text" value="{{ number_format($subItemArr['data'][$dateAsIndex]??0) }}" data-column-index="{{ $dateAsIndex }}">
+                            <input data-number-of-decimals="0" type="hidden" data-name="" class="repeat-to-right-input-hidden input-hidden-with-name  repeater-with-collapse-input" value="{{ $subItemArr['data'][$dateAsIndex]??0 }}" data-column-index="{{ $dateAsIndex }}">
+                        </div>
+                        <span class="ml-2 currency-class"> </span>
+                    </div>
+
+                </div>
+
+                {{-- <x-repeat-right-dot-inputs :readonly="true" :formattedInputClasses="$subItemArr['options']['formatted-input-classes']??$defaultClasses[0]['formatted-input-classes']" :removeThreeDots="true" :removeCurrency="true" :mark="' '" :is-number="true" :removeThreeDotsClass="true" :number-format-decimals="$subItemArr['options']['number-format-decimals']??$defaultClasses[0]['number-format-decimals']" :currentVal="$subItemArr['data'][$dateAsIndex]??0" :classes="$subItemArr['options']['classes']??''" :is-percentage="$subItemArr['options']['number-format-decimals']??$defaultClasses[0]['number-format-decimals']" :name="''" :columnIndex="$dateAsIndex"></x-repeat-right-dot-inputs> --}}
             </div>
         </td>
         @php
@@ -237,7 +363,25 @@ use App\Models\NonBankingService\Study;
         @if($financialYearEndMonthNumber == $currentMonthNumber || $loop->last)
         <td data-column-index="{{ $dateAsIndex }}" class="exclude-from-collapse">
             <div class="d-flex align-items-center justify-content-center">
-                <x-repeat-right-dot-inputs :readonly="true" :removeThreeDots="true" :number-format-decimals="0" :mark="' '" :currentVal="$subItemArr['total'][$dateAsIndex]??0 " :formattedInputClasses="'exclude-from-collapse '" :classes="'year-repeater-index-'.$currentYearRepeaterIndex.' ' .' exclude-from-collapse'" :is-percentage="false" :name="''" :columnIndex="$dateAsIndex"></x-repeat-right-dot-inputs>
+			
+			<div class="
+
+ 
+
+">
+    <div class="input-group input-group-sm align-items-center justify-content-center flex-nowrap">
+        <div class="input-hidden-parent">
+            <input readonly data-number-of-decimals="0" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control copy-value-to-his-input-hidden 
+
+			  expandable-amount-input 			  repeat-to-right-input-formatted   " type="text" value="{{ number_format($subItemArr['total'][$dateAsIndex]??0) }}" data-column-index="{{ $dateAsIndex }}">
+            <input data-number-of-decimals="0" type="hidden" data-name="" class="repeat-to-right-input-hidden input-hidden-with-name  total-td" value="{{ $subItemArr['total'][$dateAsIndex]??0 }}" data-column-index="{{ $dateAsIndex }}">
+        </div>
+					  <span class="ml-2 currency-class"> </span>
+				    </div>
+	 
+</div>
+
+                {{-- <x-repeat-right-dot-inputs :readonly="true" :removeThreeDots="true" :number-format-decimals="0" :mark="' '" :currentVal="$subItemArr['total'][$dateAsIndex]??0 " :formattedInputClasses="'exclude-from-collapse '" :classes="'year-repeater-index-'.$currentYearRepeaterIndex.' ' .' exclude-from-collapse'" :is-percentage="false" :name="''" :columnIndex="$dateAsIndex"></x-repeat-right-dot-inputs> --}}
             </div>
 
         </td>
@@ -247,10 +391,28 @@ use App\Models\NonBankingService\Study;
         @endif
 
         @endforeach
-		
+
         <td>
             <div class="d-flex align-items-center justify-content-center">
-                <x-repeat-right-dot-inputs :removeThreeDots="true" :removeCurrency="true" :mark="' '" :is-number="true" :removeThreeDotsClass="true" :number-format-decimals="0" :currentVal="0" :classes="'total-td'" :is-percentage="false" :name="''" :columnIndex="-1"></x-repeat-right-dot-inputs>
+			
+			<div class="
+
+ 
+
+">
+    <div class="input-group input-group-sm align-items-center justify-content-center flex-nowrap">
+        <div class="input-hidden-parent">
+            <input readonly data-number-of-decimals="0" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control copy-value-to-his-input-hidden 
+
+			  expandable-amount-input 			  repeat-to-right-input-formatted   " type="text" value="0" data-column-index="-1">
+            <input data-number-of-decimals="0" type="hidden" data-name="" class="repeat-to-right-input-hidden input-hidden-with-name  total-td" value="0" data-column-index="-1">
+        </div>
+					  <span class="ml-2 currency-class"> </span>
+				    </div>
+	 
+</div>
+
+                {{-- <x-repeat-right-dot-inputs :removeThreeDots="true" :removeCurrency="true" :mark="' '" :is-number="true" :removeThreeDotsClass="true" :number-format-decimals="0" :currentVal="0" :classes="'total-td'" :is-percentage="false" :name="''" :columnIndex="-1"></x-repeat-right-dot-inputs> --}}
             </div>
         </td>
     </tr>
@@ -269,44 +431,44 @@ use App\Models\NonBankingService\Study;
     </x-tables.repeater-table>
 
 
-    </div>
-    </div>
+</div>
+</div>
 
 
 
 
-    <!--End:: Tab Content-->
+<!--End:: Tab Content-->
 
 
 
-    <!--End:: Tab Content-->
-    </div>
-    </div>
-    </div>
+<!--End:: Tab Content-->
+</div>
+</div>
+</div>
 
-    @endsection
-    @section('js')
+@endsection
+@section('js')
 
-    {{-- <script src="{{ url('assets/vendors/general/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}" type="text/javascript"></script> --}}
-   
-    <script src="{{ url('assets/vendors/general/jquery.repeater/src/jquery.input.js') }}" type="text/javascript">
-    </script>
+{{-- <script src="{{ url('assets/vendors/general/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}" type="text/javascript"></script> --}}
+
+<script src="{{ url('assets/vendors/general/jquery.repeater/src/jquery.input.js') }}" type="text/javascript">
+</script>
 
 
-    <script>
-        $(document).on('click', '.js-close-modal', function() {
-            $(this).closest('.modal').modal('hide');
-        })
+<script>
+    $(document).on('click', '.js-close-modal', function() {
+        $(this).closest('.modal').modal('hide');
+    })
 
-    </script>
-   
-    @endsection
-    @push('js')
-    <script src="/custom/js/non-banking-services/common.js"></script>
-    <script>
-        $(function() {
-            //	$('[data-group-index]').trigger('change');
-        })
+</script>
 
-    </script>
-    @endpush
+@endsection
+@push('js')
+<script src="/custom/js/non-banking-services/common.js"></script>
+<script>
+    $(function() {
+        //	$('[data-group-index]').trigger('change');
+    })
+
+</script>
+@endpush

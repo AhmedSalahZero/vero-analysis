@@ -409,6 +409,8 @@ Route::middleware([])->group(function () {
 						 */
 						route::get('revenue-streams-breakdown/portfolio-mortgage','PortfolioMortgageRevenueStreamBreakdownController@create')->name('create.portfolio.mortgage.revenue.stream.breakdown');
 						route::post('revenue-streams-breakdown/portfolio-mortgage','PortfolioMortgageRevenueStreamBreakdownController@store')->name('store.portfolio.mortgage.revenue.stream.breakdown');
+						Route::get('add-new-portfolio-mortgage-category','PortfolioMortgageRevenueStreamBreakdownController@addNewCategory')->name('add.new.portfolio.mortgage.category');
+						Route::get('delete-portfolio-mortgage-category/{portfolioMortgageCategory}','PortfolioMortgageRevenueStreamBreakdownController@deleteCategory')->name('delete.portfolio.mortgage.category');
 						/**
 						 * * End Portfolio Mortgage Revenue Streams Breakdown  
 						 */

@@ -81,6 +81,10 @@ class IncomeStatementController extends Controller
 			'title'=>__('Ijara Mortgage'),
 		],$defaultNumericInputClasses);
 		
+		$tableDataFormatted[0]['sub_items'][Study::PORTFOLIO_MORTGAGE]['options'] =array_merge([
+			'title'=>__('Portfolio Mortgage'),
+		],$defaultNumericInputClasses);
+		
 		$tableDataFormatted[0]['sub_items']['reverse-factoring']['options'] =array_merge([
 			'title'=>__('Reverse Factoring'),
 		],$defaultNumericInputClasses);
@@ -130,7 +134,7 @@ class IncomeStatementController extends Controller
 		
 		
 
-		
+		// dd($loanSchedulePayments);
 		$testLoopIndex = 0 ;
 		foreach($loanSchedulePayments as $loanSchedulePaymentAsStdClass ){
 			$portfolioLoanType = $loanSchedulePaymentAsStdClass->portfolio_loan_type;

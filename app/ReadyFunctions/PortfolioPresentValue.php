@@ -1,12 +1,21 @@
 <?php 
 namespace App\ReadyFunctions;
+
+use App\Models\NonBankingService\Study;
+use Illuminate\Support\Facades\DB;
+
 class PortfolioPresentValue 
 {
-	public function calculate(array $dateIndexWithDate ,array $portfolioLoanFundingRatesPerMonths , array $operationDurationPerYearFromIndexes,int $tenorInYears,array $startFromPerYear , array $frequencyPerYear,array $portfolioMortgageTransactionAmountsPerYears,array $cbeLendingRatesPerMonths,float $marginRate,array $bankMarginRates):array 
+	public function calculate(array $dateIndexWithDate ,array $portfolioLoanFundingRatesPerMonths , array $operationDurationPerYearFromIndexes,int $tenorInYears,array $startFromPerYear , array $frequencyPerYear,array $portfolioMortgageTransactionAmountsPerYears,array $cbeLendingRatesPerMonths,float $marginRate,array $bankMarginRates , int $companyId , int $studyId , int $portfolioMortgageCategoryId):void 
 	{
-		// $generalAndReserveAssumption->getBankLendingMarginRatesAtYearIndex($yearIndex)
+	
+				DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('loan_schedule_payments')->where('study_id',$studyId)->where('revenue_stream_type',Study::PORTFOLIO_MORTGAGE)->where('revenue_stream_id',$portfolioMortgageCategoryId)->delete();
+					
 		$portfolioLoanAmounts=[];
+		$portfolioLoanAmountsFormatted=[];
+		$portfolioLoans=[];
 		$bankLoanAmounts=[];
+		$bankLoanAmountsFormatted=[];
 		$currentUnearnedInterestStatement = [];
 			$calculateFixedLoanAtEndService = new CalculateFixedLoanAtEndService; 
 			$occurrenceDates = [];
@@ -71,7 +80,48 @@ class PortfolioPresentValue
 				$currentUnearnedInterest = $portfolioMortgageLoanArray['unearned_interest'];
 				$currentDaysCount = 30 ;
 				$portfolioLoanAmounts[$currentOccurrenceMonthIndex]=$calculateFixedLoanAtEndService->__calculate([],-1,$loanType,$currentLoanDateAsString,$currentLoanAmount,$currentBaseRate,$currentMarginRate,$tenorInMonths,$installmentPaymentIntervalName,0,null,0,null,0,$currentOccurrenceMonthIndex,$currentDaysCount)['final_result']??[];
+				$portfolioLoanAmountsFormatted = $portfolioLoanAmounts[$currentOccurrenceMonthIndex];
 				$bankLoanAmounts[$currentOccurrenceMonthIndex]=$calculateFixedLoanAtEndService->__calculate([],-1,$loanType,$currentLoanDateAsString,$currentBankLoanAmount,$currentBaseRate,$currentBankMarginRate,$tenorInMonths,$installmentPaymentIntervalName,0,null,0,null,0,$currentOccurrenceMonthIndex,$currentDaysCount)['final_result']??[];
+				$bankLoanAmountsFormatted=$bankLoanAmounts[$currentOccurrenceMonthIndex];
+				
+				if(count($portfolioLoanAmountsFormatted)){
+					$portfolioLoanAmountsFormatted['study_id'] = $studyId ;
+					$portfolioLoanAmountsFormatted['company_id'] = $companyId ;
+					$portfolioLoanAmountsFormatted['month_as_index'] = $currentOccurrenceMonthIndex ;
+					$portfolioLoanAmountsFormatted['revenue_stream_id'] =$portfolioMortgageCategoryId ;
+					$portfolioLoanAmountsFormatted['revenue_stream_category_id'] =null ;
+					$portfolioLoanAmountsFormatted['portfolio_loan_type'] ='portfolio';
+					$portfolioLoanAmountsFormatted['revenue_stream_type'] =Study::PORTFOLIO_MORTGAGE;
+					
+					$portfolioLoans[]=collect($portfolioLoanAmountsFormatted)->map(function($item,$keyName){
+						
+						if(is_array($item)){
+							return json_encode($item);
+						}
+						return $item;
+					})->toArray();
+				}
+				if(count($bankLoanAmountsFormatted)){
+					$bankLoanAmountsFormatted['study_id'] = $studyId ;
+					$bankLoanAmountsFormatted['company_id'] = $companyId ;
+					$bankLoanAmountsFormatted['month_as_index'] = $currentOccurrenceMonthIndex ;
+					$bankLoanAmountsFormatted['revenue_stream_id'] =$portfolioMortgageCategoryId ;
+					$bankLoanAmountsFormatted['revenue_stream_category_id'] =null ;
+					$bankLoanAmountsFormatted['portfolio_loan_type'] ='bank_portfolio';
+					$bankLoanAmountsFormatted['revenue_stream_type'] =Study::PORTFOLIO_MORTGAGE;
+					
+					$portfolioLoans[]=collect($bankLoanAmountsFormatted)->map(function($item,$keyName){
+						
+						if(is_array($item)){
+							return json_encode($item);
+						}
+						return $item;
+					})->toArray();
+				}
+				
+				
+				
+				
 				$interestAmountsAtOccurrenceMonthIndex[$currentOccurrenceMonthIndex]=$portfolioLoanAmounts[$currentOccurrenceMonthIndex]['interestAmount']??[];
 				
 				$currentEndUnearnedBeginningBalance = 0 ;
@@ -87,28 +137,12 @@ class PortfolioPresentValue
 				// $interestRevenue 
 				
 			}
-			/**
-			 * * هنزود دي مع الاتنين ونسجلهم في الجدول بتاع اللون بايمنت
-			 * * $bankLoanAmounts , $portfolioLoanAmounts
-			 * * if(count($currentPortfolioLoans)){
-							$currentPortfolioLoans['study_id'] = $studyId ;
-							$currentPortfolioLoans['company_id'] = $companyId ;
-							$currentPortfolioLoans['month_as_index'] = $monthIndex ;
-							$currentPortfolioLoans['revenue_stream_id'] =$leasingRevenueStreamBreakdownId ;
-							$currentPortfolioLoans['revenue_stream_category_id'] =$revenueCategoryId ;
-							$currentPortfolioLoans['portfolio_loan_type'] ='portfolio';
-							$currentPortfolioLoans['revenue_stream_type'] =$revenueStreamType;
-							$portfolioLoans[]=collect($currentPortfolioLoans)->map(function($item,$keyName){
-								if(is_array($item)){
-									return json_encode($item);
-								}
-								return $item;
-							})->toArray();
-						}
-			 * *
-			 * * 
-			 */
-	//		dd($bankLoanAmounts	);
-	return [];
+			// $bankLoanAmounts
+			DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('loan_schedule_payments')->insert(
+				$portfolioLoans
+			);
+		
+			
+	
 	}
 }

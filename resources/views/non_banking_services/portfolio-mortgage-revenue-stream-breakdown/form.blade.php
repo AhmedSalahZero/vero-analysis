@@ -31,7 +31,11 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
             {{-- start of Factoring Revenue Projection By Category   --}}
 
             {{-- start of Factoring New Portfolio Funding Structure   --}}
-            <div class="kt-portlet " id="salah">
+			@php
+				$countCategories = $model->portfolioMortgageRevenueProjectionByCategories->count() ; 
+			@endphp
+            @foreach(count( $model->portfolioMortgageRevenueProjectionByCategories) ? $model->portfolioMortgageRevenueProjectionByCategories : [null] as $currentIndex => $portfolioMortgageRevenueProjectionByCategory  )
+            <div class="kt-portlet ">
                 <div class="kt-portlet__body">
                     <div class="row">
 
@@ -41,8 +45,12 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
                                     {{ __('Portfolio Mortgage Revenue Projection - Please Choose Duration ') }}
                                 </h3>
                                 <div class="form-group mb-0 d-flex w-10" style="margin-right:auto;gap:20px;">
-                                    <select name="portfolio_mortgage_duration" class="form-control blue-select  seasonlity-select main-seasonality-select">
-                                        @for($i = 5 ; $i <= 10 ; $i++) <option value="{{ $i }}"> {{ $i }} {{ __('Years') }} </option>
+                                    <select name="portfolioMortgageRevenueProjectionByCategories[{{ $currentIndex }}][portfolio_mortgage_duration]" class="form-control blue-select  seasonlity-select main-seasonality-select">
+                                        @for($i = 5 ; $i <= 10 ; $i++) <option value="{{ $i }}" @if($portfolioMortgageRevenueProjectionByCategory && $portfolioMortgageRevenueProjectionByCategory->portfolio_mortgage_duration == $i )
+                                            selected
+                                            @endif
+
+                                            > {{ $i }} {{ __('Years') }} </option>
                                             @endfor
                                     </select>
 
@@ -136,7 +144,7 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
 
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
-                                            <x-repeat-right-dot-inputs :currentVal="$model->portfolioMortgageRevenueProjectionByCategory ? $model->portfolioMortgageRevenueProjectionByCategory->getGrowthRateAtYearIndex($year) : 0" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :name="'PortfolioMortgageRevenueProjectionByCategory['.'growth_rates'.']['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :currentVal="$portfolioMortgageRevenueProjectionByCategory ? $portfolioMortgageRevenueProjectionByCategory->getGrowthRateAtYearIndex($year) : 0" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :name="'portfolioMortgageRevenueProjectionByCategories['.$currentIndex.']['.'growth_rates'.']['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
                                         </div>
                                     </td>
@@ -162,22 +170,23 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
                                     <td>
                                         <input value="{{ __('Portfolio Mortgage Avg Transactions Amount') }}" disabled class="form-control text-left mt-2" type="text">
                                     </td>
+									<!-- margin rate -->
                                     <td>
-									<div class="d-flex align-items-center justify-content-center">
-                                            <x-repeat-right-dot-inputs :removeThreeDots="true" :removeThreeDotsClass="true" :currentVal="$model->portfolioMortgageRevenueProjectionByCategory ? $model->portfolioMortgageRevenueProjectionByCategory->getMarginRate() : 0" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :name="'PortfolioMortgageRevenueProjectionByCategory['.'margin_rate'.']'" :columnIndex="-1"></x-repeat-right-dot-inputs>
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <x-repeat-right-dot-inputs :removeThreeDots="true" :removeThreeDotsClass="true" :currentVal="$portfolioMortgageRevenueProjectionByCategory ? $portfolioMortgageRevenueProjectionByCategory->getMarginRate() : 0" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :name="'portfolioMortgageRevenueProjectionByCategories['.$currentIndex.']['.'margin_rate'.']'" :columnIndex="-1"></x-repeat-right-dot-inputs>
                                         </div>
-									</td>
+                                    </td>
 
                                     @php
                                     $columnIndex = 0 ;
                                     @endphp
                                     @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
                                     @php
-                                    $currentVal = $model->portfolioMortgageRevenueProjectionByCategory ? $model->portfolioMortgageRevenueProjectionByCategory->getPortfolioMortgageTransactionProjectionAtYearIndex($year) : 0;
+                                    $currentVal = $portfolioMortgageRevenueProjectionByCategory ? $portfolioMortgageRevenueProjectionByCategory->getPortfolioMortgageTransactionProjectionAtYearIndex($year) : 0;
                                     @endphp
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
-                                            <x-repeat-right-dot-inputs :number-format-decimals="0" :currentVal="$currentVal" :classes="'only-greater-than-or-equal-zero-allowed total-loans-hidden js-recalculate-equity-funding-value'" :is-percentage="false" :name="'PortfolioMortgageRevenueProjectionByCategory['.'portfolio_mortgage_transactions_projections'.']['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :number-format-decimals="0" :currentVal="$currentVal" :classes="'only-greater-than-or-equal-zero-allowed total-loans-hidden js-recalculate-equity-funding-value'" :is-percentage="false" :name="'portfolioMortgageRevenueProjectionByCategories['.$currentIndex.']['.'portfolio_mortgage_transactions_projections'.']['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
                                         </div>
                                     </td>
                                     @php
@@ -202,11 +211,11 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
                                     @endphp
                                     @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
                                     @php
-                                    $currentVal = $model->portfolioMortgageRevenueProjectionByCategory ? $model->portfolioMortgageRevenueProjectionByCategory->getFrequencyPerYearAtYearIndex($year) : 1;
+                                    $currentVal = $portfolioMortgageRevenueProjectionByCategory ? $portfolioMortgageRevenueProjectionByCategory->getFrequencyPerYearAtYearIndex($year) : 1;
                                     @endphp
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
-                                            <x-form.select :required="true" :label="''" :pleaseSelect="false" :selectedValue="$currentVal" :options="[['title'=>__('Once Per Year'),'value'=>0],['title'=>__('Monthly'),'value'=>1],['title'=>__('Every 2 Months'),'value'=>'2'],['title'=>__('Every 3 Months'),'value'=>'3'],['title'=>__('Every 4 Months'),'value'=>'4'],['title'=>__('Every 6 Months'),'value'=>'6']]" :add-new="false" class="select2-select  repeater-select  " :all="false" :name="'PortfolioMortgageRevenueProjectionByCategory['.'frequency_per_year'.']['.$year.']'"></x-form.select>
+                                            <x-form.select :required="true" :label="''" :pleaseSelect="false" :selectedValue="$currentVal" :options="[['title'=>__('Once Per Year'),'value'=>0],['title'=>__('Monthly'),'value'=>1],['title'=>__('Every 2 Months'),'value'=>'2'],['title'=>__('Every 3 Months'),'value'=>'3'],['title'=>__('Every 4 Months'),'value'=>'4'],['title'=>__('Every 6 Months'),'value'=>'6']]" :add-new="false" class="select2-select  repeater-select  " :all="false" :name="'portfolioMortgageRevenueProjectionByCategories['.$currentIndex.']['.'frequency_per_year'.']['.$year.']'"></x-form.select>
                                         </div>
                                     </td>
                                     @php
@@ -217,8 +226,8 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
 
 
                                 </tr>
-								
-								<tr data-repeat-formatting-decimals="0" data-repeater-style>
+
+                                <tr data-repeat-formatting-decimals="0" data-repeater-style>
 
                                     <td>
                                         <input value="{{ __('Start From') }}" disabled class="form-control text-left mt-2" type="text">
@@ -227,19 +236,19 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
 
                                     @php
                                     $columnIndex = 0 ;
-									$startFromIndex = 0 ;
+                                    $startFromIndex = 0 ;
                                     @endphp
                                     @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
                                     @php
-									$startFromIndex = array_key_first($monthsForThisYearArray);
-								
-									$months = getMonthNames($startFromIndex);
-									
-                                    $currentVal = $model->portfolioMortgageRevenueProjectionByCategory ? $model->portfolioMortgageRevenueProjectionByCategory->getFrequencyPerYearAtYearIndex($year) : 1;
+                                    $startFromIndex = array_key_first($monthsForThisYearArray);
+
+                                    $months = getMonthNames($startFromIndex);
+
+                                    $currentVal = $portfolioMortgageRevenueProjectionByCategory ? $portfolioMortgageRevenueProjectionByCategory->getFrequencyPerYearAtYearIndex($year) : 1;
                                     @endphp
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
-                                            <x-form.select :required="true" :label="''" :pleaseSelect="false" :selectedValue="$currentVal" :options="$months" :add-new="false" class="select2-select  repeater-select  " :all="false" :name="'PortfolioMortgageRevenueProjectionByCategory['.'start_from'.']['.$year.']'"></x-form.select>
+                                            <x-form.select :required="true" :label="''" :pleaseSelect="false" :selectedValue="$currentVal" :options="$months" :add-new="false" class="select2-select  repeater-select  " :all="false" :name="'portfolioMortgageRevenueProjectionByCategories['.$currentIndex.']['.'start_from'.']['.$year.']'"></x-form.select>
                                         </div>
                                     </td>
                                     @php
@@ -250,15 +259,15 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
 
 
                                 </tr>
-								
-								   <tr data-repeat-formatting-decimals="0" data-repeater-style>
+
+                                <tr data-repeat-formatting-decimals="0" data-repeater-style>
 
                                     <td>
                                         <input value="{{ __('Total Per Year') }}" disabled class="form-control text-left mt-2" type="text">
                                     </td>
                                     <td>
-									
-									</td>
+
+                                    </td>
 
                                     @php
                                     $columnIndex = 0 ;
@@ -282,138 +291,7 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
                                 </tr>
 
 
-								{{-- <tr data-repeat-formatting-decimals="2" data-repeater-style>
 
-                                    <td>
-                                        <div class="">
-                                            <input value="{{ __('Spread Rate %') }}" disabled class="form-control text-left mt-2" type="text">
-                                            <i class="fa fa-ellipsis-h pull-left "></i>
-                                        </div>
-                                    </td>
-
-                                    <td>
-                                        <x-repeat-right-dot-inputs :remove-three-dots="true" :currentVal="isset($subModel) ? $subModel->getMonthlyMarginRate():0" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :name="'monthly_margin_rate'" :columnIndex="null"></x-repeat-right-dot-inputs>
-                                    </td>
-                                    @php
-                                    $columnIndex = 0 ;
-
-
-                                    @endphp
-                                    @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
-
-                                    <td>
-                                        <div class="d-flex align-items-center justify-content-center">
-                                            <x-repeat-right-dot-inputs :currentVal="$model->portfolioMortgageRevenueProjectionByCategory ? $model->portfolioMortgageRevenueProjectionByCategory->getMonthlyDueChequesPercentagesAtYearIndex($year) : 0" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :name="'PortfolioMortgageRevenueProjectionByCategory['.'monthly_due_cheques_percentages'.']['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
-                                        </div>
-                                    </td>
-                                    @php
-                                    $columnIndex++;
-                                    @endphp
-                                    @endforeach
-
-
-
-                                </tr> --}}
-								
-                                {{-- <tr data-repeat-formatting-decimals="2" data-repeater-style>
-
-                                    <td>
-                                        <div class="">
-                                            <input value="{{ __('Monthly Due Cheques %') }}" disabled class="form-control text-left mt-2" type="text">
-                                            <i class="fa fa-ellipsis-h pull-left "></i>
-                                        </div>
-                                    </td>
-
-                                    <td>
-                                        <x-repeat-right-dot-inputs :remove-three-dots="true" :currentVal="isset($subModel) ? $subModel->getMonthlyMarginRate():0" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :name="'monthly_margin_rate'" :columnIndex="null"></x-repeat-right-dot-inputs>
-                                    </td>
-                                    @php
-                                    $columnIndex = 0 ;
-
-
-                                    @endphp
-                                    @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
-
-                                    <td>
-                                        <div class="d-flex align-items-center justify-content-center">
-                                            <x-repeat-right-dot-inputs :currentVal="$model->portfolioMortgageRevenueProjectionByCategory ? $model->portfolioMortgageRevenueProjectionByCategory->getMonthlyDueChequesPercentagesAtYearIndex($year) : 0" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :name="'PortfolioMortgageRevenueProjectionByCategory['.'monthly_due_cheques_percentages'.']['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
-
-                                        </div>
-                                    </td>
-                                    @php
-                                    $columnIndex++;
-                                    @endphp
-                                    @endforeach
-
-
-
-                                </tr>
-                                <tr data-repeat-formatting-decimals="2" data-repeater-style>
-
-                                    <td>
-                                        <div class="">
-                                            <input value="{{ __('Quarterly Due Cheques %') }}" disabled class="form-control text-left mt-2" type="text">
-                                            <i class="fa fa-ellipsis-h pull-left "></i>
-                                        </div>
-                                    </td>
-
-                                    <td>
-                                        <x-repeat-right-dot-inputs :remove-three-dots="true" :currentVal="isset($subModel) ? $subModel->getQuarterlyMarginRate():0" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :name="'quarterly_margin_rate'" :columnIndex="null"></x-repeat-right-dot-inputs>
-                                    </td>
-                                    @php
-                                    $columnIndex = 0 ;
-
-
-                                    @endphp
-                                    @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
-
-                                    <td>
-                                        <div class="d-flex align-items-center justify-content-center">
-                                            <x-repeat-right-dot-inputs :currentVal="$model->portfolioMortgageRevenueProjectionByCategory ? $model->portfolioMortgageRevenueProjectionByCategory->getQuarterlyDueChequesPercentagesAtYearIndex($year) : 0" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :name="'PortfolioMortgageRevenueProjectionByCategory['.'quarterly_due_cheques_percentages'.']['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
-
-                                        </div>
-                                    </td>
-                                    @php
-                                    $columnIndex++;
-                                    @endphp
-                                    @endforeach
-
-
-
-                                </tr>
-                                <tr data-repeat-formatting-decimals="2" data-repeater-style>
-
-                                    <td>
-                                        <div class="">
-                                            <input value="{{ __('Annually Due Cheques %') }}" disabled class="form-control text-left mt-2" type="text">
-                                            <i class="fa fa-ellipsis-h pull-left "></i>
-                                        </div>
-                                    </td>
-
-                                    <td>
-                                        <x-repeat-right-dot-inputs :remove-three-dots="true" :currentVal="isset($subModel) ? $subModel->getAnnuallyMarginRate():0" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :name="'annually_margin_rate'" :columnIndex="null"></x-repeat-right-dot-inputs>
-                                    </td>
-                                    @php
-                                    $columnIndex = 0 ;
-
-
-                                    @endphp
-                                    @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
-
-                                    <td>
-                                        <div class="d-flex align-items-center justify-content-center">
-                                            <x-repeat-right-dot-inputs :currentVal="$model->portfolioMortgageRevenueProjectionByCategory ? $model->portfolioMortgageRevenueProjectionByCategory->getAnnuallyDueChequesPercentagesAtYearIndex($year) : 0" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :name="'PortfolioMortgageRevenueProjectionByCategory['.'annually_due_cheques_percentages'.']['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
-
-                                        </div>
-                                    </td>
-                                    @php
-                                    $columnIndex++;
-                                    @endphp
-                                    @endforeach
-
-
-
-                                </tr> --}}
 
                                 <tr>
                                     <td></td>
@@ -422,405 +300,409 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
                                     <td></td>
                                     <td></td>
                                     <td>
+						
+									@if($countCategories > 1)
                                         <div class="row">
                                             <div class="col-md-12">
-                                                {{-- <div class="text-right">
-												 <input type="submit" name="save-and-continue" class="btn active-style save-form" value="{{  __('Add New Portfolio Mortgage') }}">
-                                            </div> --}}
-                                            <div class="text-center">
-                                                <input type="submit" name="save-and-continue" class="btn btn-danger text-white save-form" value="{{  __('Delete') }}">
+
+                                                <div class="text-center">
+                                                    <a href="{{ route('delete.portfolio.mortgage.category',['company'=>$company->id,'study'=>$study->id,'portfolioMortgageCategory'=>$portfolioMortgageRevenueProjectionByCategory->id]) }}"  class="btn btn-danger text-white " value="">{{  __('Delete') }}</a>
+                                                </div>
+
                                             </div>
 
                                         </div>
+										@endif 
+                                    </td>
+                                    <td>
+									@if($loop->last)
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="text-right">
+                                                    <a href="{{ route('add.new.portfolio.mortgage.category',['company'=>$company->id,'study'=>$study->id]) }}" type="submit" name="save-and-continue" class="btn active-style">
+													{{  __('Add New Portfolio Mortgage') }}
+													</a>
+                                                </div>
+
+
+                                            </div>
+
+                                        </div>
+										@endif 
+
+                                    </td>
+                                </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                            </x-slot>
+
+
+
+
+
+                        </x-tables.repeater-table>
+
+
+
+
+
+                        {{-- end of fixed monthly repeating amount --}}
+
 
                     </div>
-                    </td>
-                    <td>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="text-right">
-                                    <input type="submit" name="save-and-continue" class="btn active-style save-form" value="{{  __('Add New Portfolio Mortgage') }}">
-                                </div>
-                                {{-- <div class="text-left">
-												 <input type="submit" name="save-and-continue" class="btn active-style save-form" value="{{  __('Delete') }}">
-                            </div> --}}
+
+                </div>
+            </div>
+			@endforeach
+
+            {{-- end of Factoring New Portfolio Funding Structure   --}}
+
+
+            {{-- end of Factoring Revenue Projection By Category   --}}
+
+
+
+
+
+
+
+
+            {{-- start of Administration Fees Rate & ECL Rate   --}}
+            <div class="kt-portlet">
+                <div class="kt-portlet__body">
+                    <div class="row">
+
+                        <div class="col-md-10">
+                            <div class="d-flex align-items-center ">
+                                <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style="">
+                                    {{ __('Administration Fees Rate & ECL Rate') }}
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="col-md-2 text-right">
+                            <x-show-hide-btn :query="'.admin-fees'"></x-show-hide-btn>
 
                         </div>
+                    </div>
+                    <div class="row">
+                        <hr style="flex:1;background-color:lightgray">
+                    </div>
+                    <div class="row admin-fees">
+                        @php
+                        $rowIndex = 0;
+                        @endphp
+
+
+                        <x-tables.repeater-table :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
+                            <x-slot name="ths">
+                                <x-tables.repeater-table-th class=" category-selector-class header-border-down " :title="__('Item')"></x-tables.repeater-table-th>
+                                @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
+                                <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Yr-') . $yearIndexWithYear[$year] "></x-tables.repeater-table-th>
+                                @endforeach
+                            </x-slot>
+                            <x-slot name="trs">
+
+                                <tr data-repeat-formatting-decimals="2" data-repeater-style>
+
+                                    {{-- <input type="hidden" name="id" value="{{ isset($subModel) ? $subModel->id : 0 }}"> --}}
+
+
+                                    <td>
+                                        <input value="{{ __('Administration Fees Rate') }}" disabled class="form-control text-left mt-2" type="text">
+
+                                    </td>
+                                    @php
+                                    $columnIndex = 0 ;
+                                    @endphp
+                                    @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
+
+                                    <td>
+                                        <div class="d-flex align-items-center justify-content-center">
+
+
+                                            <x-repeat-right-dot-inputs :currentVal="$model->portfolioMortgageAdminFeesRate ? $model->portfolioMortgageAdminFeesRate->getAdminFeeRatesAtYearIndex($year):0" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :name="'portfolioMortgageAdminFeesRate['.'admin_fees_rates'.']['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+
+                                        </div>
+                                    </td>
+                                    @php
+                                    $columnIndex++;
+                                    @endphp
+                                    @endforeach
+
+
+
+                                </tr>
+
+
+                                <tr data-repeat-formatting-decimals="2" data-repeater-style>
+
+
+                                    <td>
+                                        <input disabled value="{{ __('Expected Credit Loss Rate (ECL %)') }}" class="form-control text-left" type="text">
+
+                                    </td>
+                                    @php
+                                    $columnIndex = 0 ;
+                                    @endphp
+
+                                    @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
+
+
+                                    <td>
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <x-repeat-right-dot-inputs :currentVal="$model->portfolioMortgageAdminFeesRate ? $model->portfolioMortgageAdminFeesRate->getEclRatesAtYearIndex($year):0" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :name="'portfolioMortgageAdminFeesRate['.'ecl_rates'.']['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+
+                                        </div>
+                                    </td>
+                                    @php
+                                    $columnIndex++;
+                                    @endphp
+
+                                    @endforeach
+
+
+
+                                </tr>
+
+
+                            </x-slot>
+
+
+
+
+                        </x-tables.repeater-table>
+                        {{-- end of fixed monthly repeating amount --}}
+
+
+                    </div>
 
                 </div>
-
-                </td>
-                </tr>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                </x-slot>
-
-
-
-
-
-                </x-tables.repeater-table>
-
-
-
-
-
-                {{-- end of fixed monthly repeating amount --}}
-
-
             </div>
-
-    </div>
-</div>
-
-{{-- end of Factoring New Portfolio Funding Structure   --}}
-
-
-{{-- end of Factoring Revenue Projection By Category   --}}
+            {{-- end of Administration Fees Rate & ECL Rate   --}}
 
 
 
 
+            {{-- start of Factoring New Portfolio Funding Structure   --}}
+            <div class="kt-portlet">
+                <div class="kt-portlet__body">
+                    <div class="row">
+
+                        <div class="col-md-10">
+                            <div class="d-flex align-items-center ">
+                                <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style="">
+                                    {{ __('Portfolio Mortgage New Portfolio Funding Structure') }}
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="col-md-2 text-right">
+                            <x-show-hide-btn :query="'.new-portfolio-funding'"></x-show-hide-btn>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <hr style="flex:1;background-color:lightgray">
+                    </div>
+                    <div class="row new-portfolio-funding">
+                        @php
+                        $rowIndex = 0;
+                        @endphp
+
+
+                        <x-tables.repeater-table :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
+                            <x-slot name="ths">
+                                <x-tables.repeater-table-th class=" category-selector-class header-border-down " :title="__('Item')"></x-tables.repeater-table-th>
+                                @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
+                                <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Yr-') . $yearIndexWithYear[$year] "></x-tables.repeater-table-th>
+                                @endforeach
+                            </x-slot>
+                            <x-slot name="trs">
+
+                                <tr data-repeat-formatting-decimals="2" data-repeater-style {{-- @if($isRepeater) data-repeater-item @endif --}}>
+
+                                    {{-- <input type="hidden" name="id" value="{{ isset($subModel) ? $subModel->id : 0 }}"> --}}
+
+
+                                    <td>
+                                        <input value="{{ __('Equity Funding Rate (%)') }}" disabled class="form-control text-left mt-2" type="text">
+
+                                    </td>
+                                    @php
+                                    $columnIndex = 0 ;
+                                    @endphp
+                                    @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
+
+                                    <td>
+                                        <div class="d-flex align-items-center justify-content-center">
+
+                                            <x-repeat-right-dot-inputs :inputHiddenAttributes="'js-recalculate-equity-funding-value'" :currentVal="$model->portfolioMortgageNewPortfolioFundingStructure ? $model->portfolioMortgageNewPortfolioFundingStructure->getEquityFundingRatesAtYearIndex($year):0" :classes="'only-greater-than-or-equal-zero-allowed equity-funding-rates equity-funding-rate-input-hidden-class'" :is-percentage="true" :name="'portfolioMortgageNewPortfolioFundingStructure['.'equity_funding_rates'.']['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+
+                                        </div>
+                                    </td>
+                                    @php
+                                    $columnIndex++;
+                                    @endphp
+                                    @endforeach
+
+
+
+                                </tr>
+
+
+
+                                <tr data-repeat-formatting-decimals="0" data-repeater-style {{-- @if($isRepeater) data-repeater-item @endif --}}>
+
+                                    <input type="hidden" name="id" value="{{ isset($subModel) ? $subModel->id : 0 }}">
+
+
+                                    <td>
+                                        <input value="{{ __('Equity Funding Value') }}" disabled class="form-control text-left mt-2" type="text">
+
+                                    </td>
+                                    @php
+                                    $columnIndex = 0 ;
+                                    @endphp
+                                    @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
+                                    <td>
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <x-repeat-right-dot-inputs :numberFormatDecimals="0" :currentVal="$model->portfolioMortgageNewPortfolioFundingStructure ? $model->portfolioMortgageNewPortfolioFundingStructure->getEquityFundingValuesAtYearIndex($year):0" :classes="'only-greater-than-or-equal-zero-allowed '" :formatted-input-classes="'equity-funding-formatted-value-class'" :is-percentage="false" :name="'portfolioMortgageNewPortfolioFundingStructure['.'equity_funding_values'.']['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+
+                                        </div>
+                                    </td>
+                                    @php
+                                    $columnIndex++;
+                                    @endphp
+                                    @endforeach
+
+
+
+                                </tr>
+
+
+
+                                <tr data-repeat-formatting-decimals="2" data-repeater-style>
+                                    <td>
+                                        <input disabled value="{{ __('New Loans Funding Rate (%)') }}" class="form-control text-left" type="text">
+                                    </td>
+                                    @php
+                                    $columnIndex = 0 ;
+                                    @endphp
+
+                                    @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
+
+
+                                    <td>
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <input type="text" data-column-index="{{ $columnIndex }}" readonly class="form-control expandable-percentage-input new-loan-function-rates-js" name="portfolioMortgageNewPortfolioFundingStructure[new_loans_funding_rates][{{ $year }}]" value="{{ $model->portfolioMortgageNewPortfolioFundingStructure ? $model->portfolioMortgageNewPortfolioFundingStructure->getNewLoansFundingRatesAtYearIndex($year):0 }}"> <span class="ml-2">%</span>
+                                        </div>
+                                    </td>
+                                    @php
+                                    $columnIndex++;
+                                    @endphp
+
+                                    @endforeach
+
+
+
+                                </tr>
 
 
 
 
-{{-- start of Administration Fees Rate & ECL Rate   --}}
-<div class="kt-portlet">
-    <div class="kt-portlet__body">
-        <div class="row">
 
-            <div class="col-md-10">
-                <div class="d-flex align-items-center ">
-                    <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style="">
-                        {{ __('Administration Fees Rate & ECL Rate') }}
-                    </h3>
+
+                                <tr data-repeat-formatting-decimals="0" data-repeater-style>
+
+
+                                    <td>
+                                        <input disabled value="{{ __('New Loans Funding Value') }}" class="form-control text-left" type="text">
+
+                                    </td>
+                                    @php
+                                    $columnIndex = 0 ;
+                                    @endphp
+
+                                    @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
+
+
+                                    <td>
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <x-repeat-right-dot-inputs :numberFormatDecimals="0" :formatted-input-classes="'new-loans-funding-formatted-value-class'" :currentVal="$model->portfolioMortgageNewPortfolioFundingStructure ? $model->portfolioMortgageNewPortfolioFundingStructure->getNewLoansFundingValuesAtYearIndex($year):0 " :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="false" :name="'portfolioMortgageNewPortfolioFundingStructure['.'new_loans_funding_values'.']['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+
+                                        </div>
+                                    </td>
+                                    @php
+                                    $columnIndex++;
+                                    @endphp
+
+                                    @endforeach
+
+
+
+                                </tr>
+
+                            </x-slot>
+
+
+
+
+                        </x-tables.repeater-table>
+                        {{-- end of fixed monthly repeating amount --}}
+
+
+                    </div>
+
                 </div>
             </div>
-            <div class="col-md-2 text-right">
-                <x-show-hide-btn :query="'.admin-fees'"></x-show-hide-btn>
+            {{-- end of Factoring New Portfolio Funding Structure   --}}
 
-            </div>
-        </div>
-        <div class="row">
-            <hr style="flex:1;background-color:lightgray">
-        </div>
-        <div class="row admin-fees">
-            @php
-            $rowIndex = 0;
-            @endphp
+            <x-save-or-back />
 
 
-            <x-tables.repeater-table :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
-                <x-slot name="ths">
-                    <x-tables.repeater-table-th class=" category-selector-class header-border-down " :title="__('Item')"></x-tables.repeater-table-th>
-                    @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
-                    <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Yr-') . $yearIndexWithYear[$year] "></x-tables.repeater-table-th>
-                    @endforeach
-                </x-slot>
-                <x-slot name="trs">
 
-                    <tr data-repeat-formatting-decimals="2" data-repeater-style>
 
-                        {{-- <input type="hidden" name="id" value="{{ isset($subModel) ? $subModel->id : 0 }}"> --}}
 
 
-                        <td>
-                            <input value="{{ __('Administration Fees Rate') }}" disabled class="form-control text-left mt-2" type="text">
 
-                        </td>
-                        @php
-                        $columnIndex = 0 ;
-                        @endphp
-                        @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
 
-                        <td>
-                            <div class="d-flex align-items-center justify-content-center">
 
 
-                                <x-repeat-right-dot-inputs :currentVal="$model->portfolioMortgageAdminFeesRate ? $model->portfolioMortgageAdminFeesRate->getAdminFeeRatesAtYearIndex($year):0" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :name="'portfolioMortgageAdminFeesRate['.'admin_fees_rates'.']['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
-                            </div>
-                        </td>
-                        @php
-                        $columnIndex++;
-                        @endphp
-                        @endforeach
 
 
 
-                    </tr>
 
 
-                    <tr data-repeat-formatting-decimals="2" data-repeater-style>
 
 
-                        <td>
-                            <input disabled value="{{ __('Expected Credit Loss Rate (ECL %)') }}" class="form-control text-left" type="text">
 
-                        </td>
-                        @php
-                        $columnIndex = 0 ;
-                        @endphp
 
-                        @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
 
 
-                        <td>
-                            <div class="d-flex align-items-center justify-content-center">
-                                <x-repeat-right-dot-inputs :currentVal="$model->portfolioMortgageAdminFeesRate ? $model->portfolioMortgageAdminFeesRate->getEclRatesAtYearIndex($year):0" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :name="'portfolioMortgageAdminFeesRate['.'ecl_rates'.']['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
-                            </div>
-                        </td>
-                        @php
-                        $columnIndex++;
-                        @endphp
 
-                        @endforeach
 
 
 
-                    </tr>
 
 
-                </x-slot>
-
-
-
-
-            </x-tables.repeater-table>
-            {{-- end of fixed monthly repeating amount --}}
-
-
-        </div>
-
-    </div>
-</div>
-{{-- end of Administration Fees Rate & ECL Rate   --}}
-
-
-
-
-{{-- start of Factoring New Portfolio Funding Structure   --}}
-<div class="kt-portlet">
-    <div class="kt-portlet__body">
-        <div class="row">
-
-            <div class="col-md-10">
-                <div class="d-flex align-items-center ">
-                    <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style="">
-                        {{ __('Portfolio Mortgage New Portfolio Funding Structure') }}
-                    </h3>
-                </div>
-            </div>
-            <div class="col-md-2 text-right">
-                <x-show-hide-btn :query="'.new-portfolio-funding'"></x-show-hide-btn>
-            </div>
-        </div>
-        <div class="row">
-            <hr style="flex:1;background-color:lightgray">
-        </div>
-        <div class="row new-portfolio-funding">
-            @php
-            $rowIndex = 0;
-            @endphp
-
-
-            <x-tables.repeater-table :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
-                <x-slot name="ths">
-                    <x-tables.repeater-table-th class=" category-selector-class header-border-down " :title="__('Item')"></x-tables.repeater-table-th>
-                    @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
-                    <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Yr-') . $yearIndexWithYear[$year] "></x-tables.repeater-table-th>
-                    @endforeach
-                </x-slot>
-                <x-slot name="trs">
-
-                    <tr data-repeat-formatting-decimals="2" data-repeater-style {{-- @if($isRepeater) data-repeater-item @endif --}}>
-
-                        {{-- <input type="hidden" name="id" value="{{ isset($subModel) ? $subModel->id : 0 }}"> --}}
-
-
-                        <td>
-                            <input value="{{ __('Equity Funding Rate (%)') }}" disabled class="form-control text-left mt-2" type="text">
-
-                        </td>
-                        @php
-                        $columnIndex = 0 ;
-                        @endphp
-                        @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
-
-                        <td>
-                            <div class="d-flex align-items-center justify-content-center">
-
-                                <x-repeat-right-dot-inputs :inputHiddenAttributes="'js-recalculate-equity-funding-value'" :currentVal="$model->portfolioMortgageNewPortfolioFundingStructure ? $model->portfolioMortgageNewPortfolioFundingStructure->getEquityFundingRatesAtYearIndex($year):0" :classes="'only-greater-than-or-equal-zero-allowed equity-funding-rates equity-funding-rate-input-hidden-class'" :is-percentage="true" :name="'portfolioMortgageNewPortfolioFundingStructure['.'equity_funding_rates'.']['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
-
-                            </div>
-                        </td>
-                        @php
-                        $columnIndex++;
-                        @endphp
-                        @endforeach
-
-
-
-                    </tr>
-
-
-
-                    <tr data-repeat-formatting-decimals="0" data-repeater-style {{-- @if($isRepeater) data-repeater-item @endif --}}>
-
-                        <input type="hidden" name="id" value="{{ isset($subModel) ? $subModel->id : 0 }}">
-
-
-                        <td>
-                            <input value="{{ __('Equity Funding Value') }}" disabled class="form-control text-left mt-2" type="text">
-
-                        </td>
-                        @php
-                        $columnIndex = 0 ;
-                        @endphp
-                        @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
-                        <td>
-                            <div class="d-flex align-items-center justify-content-center">
-                                <x-repeat-right-dot-inputs :numberFormatDecimals="0" :currentVal="$model->portfolioMortgageNewPortfolioFundingStructure ? $model->portfolioMortgageNewPortfolioFundingStructure->getEquityFundingValuesAtYearIndex($year):0" :classes="'only-greater-than-or-equal-zero-allowed '" :formatted-input-classes="'equity-funding-formatted-value-class'" :is-percentage="false" :name="'portfolioMortgageNewPortfolioFundingStructure['.'equity_funding_values'.']['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
-
-                            </div>
-                        </td>
-                        @php
-                        $columnIndex++;
-                        @endphp
-                        @endforeach
-
-
-
-                    </tr>
-
-
-
-                    <tr data-repeat-formatting-decimals="2" data-repeater-style>
-                        <td>
-                            <input disabled value="{{ __('New Loans Funding Rate (%)') }}" class="form-control text-left" type="text">
-                        </td>
-                        @php
-                        $columnIndex = 0 ;
-                        @endphp
-
-                        @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
-
-
-                        <td>
-                            <div class="d-flex align-items-center justify-content-center">
-                                <input type="text" data-column-index="{{ $columnIndex }}" readonly class="form-control expandable-percentage-input new-loan-function-rates-js" name="portfolioMortgageNewPortfolioFundingStructure[new_loans_funding_rates][{{ $year }}]" value="{{ $model->portfolioMortgageNewPortfolioFundingStructure ? $model->portfolioMortgageNewPortfolioFundingStructure->getNewLoansFundingRatesAtYearIndex($year):0 }}"> <span class="ml-2">%</span>
-                            </div>
-                        </td>
-                        @php
-                        $columnIndex++;
-                        @endphp
-
-                        @endforeach
-
-
-
-                    </tr>
-
-
-
-
-
-
-                    <tr data-repeat-formatting-decimals="0" data-repeater-style>
-
-
-                        <td>
-                            <input disabled value="{{ __('New Loans Funding Value') }}" class="form-control text-left" type="text">
-
-                        </td>
-                        @php
-                        $columnIndex = 0 ;
-                        @endphp
-
-                        @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
-
-
-                        <td>
-                            <div class="d-flex align-items-center justify-content-center">
-                                <x-repeat-right-dot-inputs :numberFormatDecimals="0" :formatted-input-classes="'new-loans-funding-formatted-value-class'" :currentVal="$model->portfolioMortgageNewPortfolioFundingStructure ? $model->portfolioMortgageNewPortfolioFundingStructure->getNewLoansFundingValuesAtYearIndex($year):0 " :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="false" :name="'portfolioMortgageNewPortfolioFundingStructure['.'new_loans_funding_values'.']['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
-
-                            </div>
-                        </td>
-                        @php
-                        $columnIndex++;
-                        @endphp
-
-                        @endforeach
-
-
-
-                    </tr>
-
-                </x-slot>
-
-
-
-
-            </x-tables.repeater-table>
-            {{-- end of fixed monthly repeating amount --}}
-
-
-        </div>
-
     </div>
-</div>
-{{-- end of Factoring New Portfolio Funding Structure   --}}
-
-<x-save-or-back />
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-</div>
 
 </div>
 

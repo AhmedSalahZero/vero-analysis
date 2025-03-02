@@ -1484,7 +1484,7 @@ use MathPHP\Statistics\Correlation ;
                                                 <?php $__currentLoopData = $yearsWithItsMonths; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $year=>$monthsForThisYearArray): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 												<?php
 													$currentExpense = $formattedExpenses['cost-of-service']['total'][$year]??0;
-													$currentSalesRevenue = $formattedResult['sales_revenue'][$year] ;
+													$currentSalesRevenue = $formattedResult['sales_revenue'][$year]??0 ;
 													$currentVal = $currentSalesRevenue ? $currentExpense / $currentSalesRevenue * 100 : 0 ;
 												?>
                                                 <td>

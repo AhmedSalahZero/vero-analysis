@@ -597,7 +597,7 @@ class HArr
 						$subItemData['total'] = self::calculatePercentageOf($totalOfSalesRevenue,$currentItemTotal);
 					}
 					else{
-						$subItemData['total'] = self::sumPerIndexes($subItemData['data'],$financialYearsEndMonths);
+						$subItemData['total'] = self::sumPerIndexes($subItemData['data']??[],$financialYearsEndMonths);
 					}
 					$result[$index][$mainItemId][$subItemId]=$subItemData;
 				}

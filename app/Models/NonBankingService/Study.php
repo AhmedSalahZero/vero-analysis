@@ -32,6 +32,7 @@ use Illuminate\Support\Facades\DB;
 		const CONSUMERFINANCE_PRODUCTS = 'consumerfinance-products' ;
 		const LEASING ='leasing';
 		const IJARA ='ijara';
+		const PORTFOLIO_MORTGAGE ='portfolio-mortgage';
 		const MiCROFINANCE ='microfinance';
 		const DIRECT_FACTORING ='direct-factoring';
 		const REVERSE_FACTORING ='reverse-factoring';
@@ -626,9 +627,9 @@ use Illuminate\Support\Facades\DB;
 	}		
 	
 	
-	public function portfolioMortgageRevenueProjectionByCategory()
+	public function portfolioMortgageRevenueProjectionByCategories()
 	{
-		return $this->hasOne(PortfolioMortgageRevenueProjectionByCategory::class,'study_id');
+		return $this->hasMany(PortfolioMortgageRevenueProjectionByCategory::class,'study_id');
 	}
 
 	public function portfolioMortgageAdminFeesRate():HasOne
@@ -781,7 +782,7 @@ use Illuminate\Support\Facades\DB;
 						$currentMonth = $dateIndexWithDate[$monthIndex];
 						// $currentMonthFormatted = Carbon::make($currentMonth)->format('d-m-Y');
 						$currentMarginRate = $isSensitivity ?  $leasingRevenueStreamBreakdown->getSensitivityMarginRate() : $leasingRevenueStreamBreakdown->getMarginRate();
-						dd($currentMarginRate);
+						
 						$gracePeriod = $leasingRevenueStreamBreakdown->getGracePeriod();
 						$tenor = $leasingRevenueStreamBreakdown->getTenor();
 						$installmentInterval = $leasingRevenueStreamBreakdown->getInstallmentInterval();

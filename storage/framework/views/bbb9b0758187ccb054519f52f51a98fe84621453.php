@@ -41,7 +41,7 @@ use App\Models\NonBankingService\Study;
 
 
 
-                  
+
                      <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.tables.repeater-table','data' => ['tableClasses' => 'table-condensed table-row-spacing income-class-table','removeActionBtn' => true,'removeRepeater' => true,'initialJs' => false,'repeaterWithSelect2' => true,'canAddNewItem' => false,'parentClass' => 'js-remove-hidden scrollable-table','hideAddBtn' => true,'tableName' => '','repeaterId' => '','relationName' => 'food','isRepeater' => $isRepeater=!(isset($removeRepeater) && $removeRepeater)]]); ?>
 <?php $component->withName('tables.repeater-table'); ?>
@@ -142,7 +142,7 @@ use App\Models\NonBankingService\Study;
                             <tr data-is-main-row data-repeat-formatting-decimals="0" data-repeater-style>
                                 <td>
                                     <?php if($hasSubItems): ?>
-                                    <a href="#"  class="btn btn-1-bg btn-sm btn-brand add-btn-class  text-center add-btn-js">
+                                    <a href="#" class="btn btn-1-bg btn-sm btn-brand add-btn-class  text-center add-btn-js">
                                         <i class="fas fa-angle-double-down expand-icon   exclude-icon"></i>
                                     </a>
                                     <?php endif; ?>
@@ -153,18 +153,12 @@ use App\Models\NonBankingService\Study;
                                         $currentIndex = 0 ;
                                         ?>
                                         <?php $__currentLoopData = $currentTableData['main_items']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $mainItemId => $mainItemArr): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+<div class="input-hidden-parent">
+            <input data-number-of-decimals="0" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control copy-value-to-his-input-hidden 
 
-                                         <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['formattedInputClasses' => 'custom-input-string-width input-text-left ','removeThreeDots' => true,'removeCurrency' => true,'mark' => ' ','isNumber' => false,'removeThreeDotsClass' => true,'numberFormatDecimals' => $mainItemArr['options']['number-format-decimals']??$defaultClasses[$currentIndex]['number-format-decimals'],'currentVal' => $mainItemArr['options']['title']??$mainItemId,'classes' => '','isPercentage' => false,'name' => '','columnIndex' => -1]]); ?>
-<?php $component->withName('repeat-right-dot-inputs'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['formattedInputClasses' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('custom-input-string-width input-text-left '),'removeThreeDots' => true,'removeCurrency' => true,'mark' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(' '),'is-number' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'removeThreeDotsClass' => true,'number-format-decimals' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($mainItemArr['options']['number-format-decimals']??$defaultClasses[$currentIndex]['number-format-decimals']),'currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($mainItemArr['options']['title']??$mainItemId),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(''),'is-percentage' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(''),'columnIndex' => -1]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
-<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
-<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
-<?php endif; ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?> 
+			  expandable-amount-input 			  repeat-to-right-input-formatted  custom-input-string-width input-text-left  " type="text" value="<?php echo e($mainItemArr['options']['title']??$mainItemId); ?>" data-column-index="-1">
+        </div>
+                                        
                                         <?php
                                         $currentIndex++;
                                         ?>
@@ -188,7 +182,7 @@ use App\Models\NonBankingService\Study;
     ?>
 
     <?php $__currentLoopData = $studyMonthsForViews; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $dateAsIndex=>$dateAsString): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-   
+
     <td data-column-index="<?php echo e($dateAsIndex); ?>">
 
         <div data-column-index="<?php echo e($dateAsIndex); ?>" class="d-flex align-items-center justify-content-center flex-column" style="gap:10px">
@@ -199,17 +193,29 @@ use App\Models\NonBankingService\Study;
             <?php
             $isPercentage = $mainItemArr['options']['is-percentage']??$defaultClasses[$currentIndex]['is-percentage'] ;
             ?>
-             <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['readonly' => false,'classes' => $mainItemArr['options']['classes']??$defaultClasses[$currentIndex]['classes'],'dataGroupIndex' => ''.e($currentIndex ==0   ? $currentYearRepeaterIndex : -1).'','formattedInputClasses' => $mainItemArr['options']['formatted-input-classes']??$defaultClasses[$currentIndex]['formatted-input-classes'],'removeThreeDots' => true,'removeCurrency' => true,'mark' => $isPercentage ? '%' : '','isNumber' => true,'removeThreeDotsClass' => true,'numberFormatDecimals' => $mainItemArr['options']['number-format-decimals']??$defaultClasses[$currentIndex]['number-format-decimals'],'currentVal' => $mainItemArr['data'][$dateAsIndex]??0,'isPercentage' => $isPercentage,'name' => '','columnIndex' => $dateAsIndex]]); ?>
-<?php $component->withName('repeat-right-dot-inputs'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['readonly' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($mainItemArr['options']['classes']??$defaultClasses[$currentIndex]['classes']),'data-group-index' => ''.e($currentIndex ==0   ? $currentYearRepeaterIndex : -1).'','formattedInputClasses' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($mainItemArr['options']['formatted-input-classes']??$defaultClasses[$currentIndex]['formatted-input-classes']),'removeThreeDots' => true,'removeCurrency' => true,'mark' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($isPercentage ? '%' : ''),'is-number' => true,'removeThreeDotsClass' => true,'numberFormatDecimals' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($mainItemArr['options']['number-format-decimals']??$defaultClasses[$currentIndex]['number-format-decimals']),'currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($mainItemArr['data'][$dateAsIndex]??0),'is-percentage' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($isPercentage),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(''),'columnIndex' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($dateAsIndex)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
-<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
-<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
-<?php endif; ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?> 
+            <?php if($isPercentage): ?>
+            <div class="input-group input-group-sm align-items-center justify-content-center flex-nowrap">
+                <div class="input-hidden-parent">
+                    <input data-number-of-decimals="2" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control copy-value-to-his-input-hidden 
+
+			  expandable-percentage-input  			  repeat-to-right-input-formatted   " type="text" value="<?php echo e(number_format($mainItemArr['data'][$dateAsIndex]??0,2)); ?>" data-column-index="<?php echo e($dateAsIndex); ?>">
+                    <input data-number-of-decimals="2" data-group-index="<?php echo e($currentIndex ==0   ? $currentYearRepeaterIndex : -1); ?>" type="hidden" data-name="" class="repeat-to-right-input-hidden input-hidden-with-name  " value="<?php echo e($mainItemArr['data'][$dateAsIndex]??0); ?>" data-column-index="<?php echo e($dateAsIndex); ?>">
+                </div>
+                <span class="ml-2 currency-class">%</span>
+            </div>
+            <?php else: ?>
+            <div class="input-group input-group-sm align-items-center justify-content-center flex-nowrap">
+                <div class="input-hidden-parent">
+                    <input data-number-of-decimals="0" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control copy-value-to-his-input-hidden 
+
+			  expandable-amount-input 			  repeat-to-right-input-formatted  custom-input-numeric-width  " type="text" value="<?php echo e(number_format($mainItemArr['data'][$dateAsIndex]??0)); ?>" data-column-index="<?php echo e($dateAsIndex); ?>">
+                    <input data-number-of-decimals="0" data-group-index="<?php echo e($currentIndex ==0   ? $currentYearRepeaterIndex : -1); ?>" type="hidden" data-name="" class="repeat-to-right-input-hidden input-hidden-with-name  repeater-with-collapse-input" value="<?php echo e($mainItemArr['data'][$dateAsIndex]??0); ?>" data-column-index="<?php echo e($dateAsIndex); ?>">
+                </div>
+            </div>
+            <?php endif; ?>
+
+
+            
             <?php
             $currentIndex++;
             ?>
@@ -228,29 +234,70 @@ use App\Models\NonBankingService\Study;
     ?>
     <?php if($financialYearEndMonthNumber == $currentMonthNumber || $loop->last): ?>
     <td data-column-index="<?php echo e($dateAsIndex); ?>" class="exclude-from-collapse">
-		<?php
-			$currentIndex =0 ;
-		?>
-		 
-		<?php $__currentLoopData = $currentTableData['main_items']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $mainItemId => $mainItemArr): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+        <?php
+        $currentIndex =0 ;
+        ?>
+
+        <?php $__currentLoopData = $currentTableData['main_items']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $mainItemId => $mainItemArr): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
         <div class="d-flex align-items-center justify-content-center">
-             <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['readonly' => true,'removeThreeDots' => true,'numberFormatDecimals' => 0,'mark' => '','currentVal' => $mainItemArr['total'][$dateAsIndex]??0 ,'formattedInputClasses' => 'exclude-from-collapse repeat-group-year','classes' => 'year-repeater-index-'.$currentYearRepeaterIndex.' ' .' exclude-from-collapse','isPercentage' => $mainItemArr['options']['is-percentage']??$defaultClasses[$currentIndex]['is-percentage'],'name' => '','columnIndex' => $dateAsIndex]]); ?>
-<?php $component->withName('repeat-right-dot-inputs'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['readonly' => true,'removeThreeDots' => true,'number-format-decimals' => 0,'mark' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(''),'currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($mainItemArr['total'][$dateAsIndex]??0 ),'formattedInputClasses' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('exclude-from-collapse repeat-group-year'),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('year-repeater-index-'.$currentYearRepeaterIndex.' ' .' exclude-from-collapse'),'is-percentage' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($mainItemArr['options']['is-percentage']??$defaultClasses[$currentIndex]['is-percentage']),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(''),'columnIndex' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($dateAsIndex)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
-<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
-<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
-<?php endif; ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?> 
+            <?php if($currentIndex == 0): ?>
+            <div class="
+
+form-group 
+three-dots-parent
+ 
+
+">
+                <div class="input-group input-group-sm align-items-center justify-content-center flex-nowrap">
+                    <div class="input-hidden-parent">
+                        <input data-number-of-decimals="0" readonly="" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control copy-value-to-his-input-hidden 
+
+			  expandable-amount-input 			  repeat-to-right-input-formatted  exclude-from-collapse repeat-group-year " type="text" value="<?php echo e(number_format($mainItemArr['total'][$dateAsIndex]??0,0)); ?>" data-column-index="<?php echo e($dateAsIndex); ?>">
+                        <input data-number-of-decimals="0" type="hidden" data-name="" class="repeat-to-right-input-hidden input-hidden-with-name  year-repeater-index-<?php echo e($currentYearRepeaterIndex); ?>  exclude-from-collapse" value="<?php echo e($mainItemArr['total'][$dateAsIndex]??0); ?>" data-column-index="<?php echo e($dateAsIndex); ?>">
+                    </div>
+
+                    <span class="ml-2 currency-class">
+                        EGP
+                    </span>
+
+                </div>
+
+
+
+                
+
+            </div>
+            <?php else: ?>
+            <div class="
+
+form-group 
+three-dots-parent
+ 
+
+">
+                <div class="input-group input-group-sm align-items-center justify-content-center flex-nowrap">
+                    <div class="input-hidden-parent">
+                        <input data-number-of-decimals="0" readonly="" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control copy-value-to-his-input-hidden 
+
+			  expandable-percentage-input  			  repeat-to-right-input-formatted  exclude-from-collapse repeat-group-year " type="text" value="<?php echo e(number_format($mainItemArr['total'][$dateAsIndex]??0,2)); ?>" data-column-index="<?php echo e($dateAsIndex); ?>">
+                        <input data-number-of-decimals="0" type="hidden" data-name="" class="repeat-to-right-input-hidden input-hidden-with-name  year-repeater-index-<?php echo e($currentYearRepeaterIndex); ?>  exclude-from-collapse" value="<?php echo e($mainItemArr['total'][$dateAsIndex]??0); ?>" data-column-index="<?php echo e($dateAsIndex); ?>">
+                    </div>
+                    <span class="ml-2">%</span>
+                </div>
+
+
+
+                <i class="fa fa-ellipsis-h pull-left repeat-to-right row-repeater-icon visibility-hidden"></i>
+
+            </div>
+            <?php endif; ?>
+            
         </div>
-		<?php
-			$currentIndex++;
-		?>
-		<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?> 
-	
+        <?php
+        $currentIndex++;
+        ?>
+        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+
 
 
     </td>
@@ -262,17 +309,24 @@ use App\Models\NonBankingService\Study;
     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
     <td>
         <div class="d-flex align-items-center justify-content-center">
-             <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['removeThreeDots' => true,'removeCurrency' => true,'mark' => ' ','isNumber' => true,'removeThreeDotsClass' => true,'numberFormatDecimals' => 0,'currentVal' => 0,'classes' => 'total-td','isPercentage' => false,'name' => '','columnIndex' => 0]]); ?>
-<?php $component->withName('repeat-right-dot-inputs'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['removeThreeDots' => true,'removeCurrency' => true,'mark' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(' '),'is-number' => true,'removeThreeDotsClass' => true,'number-format-decimals' => 0,'currentVal' => 0,'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('total-td'),'is-percentage' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(''),'columnIndex' => 0]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
-<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
-<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
-<?php endif; ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?> 
+			<div class="
+
+ 
+
+">
+    <div class="input-group input-group-sm align-items-center justify-content-center flex-nowrap">
+        <div class="input-hidden-parent">
+            <input readonly data-number-of-decimals="0" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control copy-value-to-his-input-hidden 
+
+			  expandable-amount-input 			  repeat-to-right-input-formatted   " type="text" value="0" data-column-index="-1">
+            <input data-number-of-decimals="0" type="hidden" data-name="" class="repeat-to-right-input-hidden input-hidden-with-name  total-td" value="0" data-column-index="-1">
+        </div>
+					  <span class="ml-2 currency-class"> </span>
+				    </div>
+	 
+</div>
+
+            
         </div>
     </td>
     </tr>
@@ -282,17 +336,25 @@ use App\Models\NonBankingService\Study;
         </td>
         <td>
             <div class="d-flex align-items-center justify-content-center flex-column ml-5" style="gap:10px">
-                 <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['readonly' => true,'formattedInputClasses' => 'custom-input-string-width input-text-left ','removeThreeDots' => true,'removeCurrency' => true,'mark' => ' ','isNumber' => false,'removeThreeDotsClass' => true,'numberFormatDecimals' => 0,'currentVal' => $subItemArr['options']['title']??$subItemId,'classes' => '','isPercentage' => false,'name' => '','columnIndex' => -1]]); ?>
-<?php $component->withName('repeat-right-dot-inputs'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['readonly' => true,'formattedInputClasses' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('custom-input-string-width input-text-left '),'removeThreeDots' => true,'removeCurrency' => true,'mark' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(' '),'is-number' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'removeThreeDotsClass' => true,'number-format-decimals' => 0,'currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($subItemArr['options']['title']??$subItemId),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(''),'is-percentage' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(''),'columnIndex' => -1]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
-<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
-<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
-<?php endif; ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?> 
+			
+			<div class="
+
+ 
+
+">
+    <div class="input-group input-group-sm align-items-center justify-content-center flex-nowrap">
+        <div class="input-hidden-parent">
+            <input data-number-of-decimals="0" readonly="" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control copy-value-to-his-input-hidden 
+
+			  expandable-amount-input 			  repeat-to-right-input-formatted  custom-input-string-width input-text-left  " type="text" value="<?php echo e($subItemArr['options']['title']??$subItemId); ?>" data-column-index="-1">
+            <input data-number-of-decimals="0" type="hidden" data-name="" class="repeat-to-right-input-hidden input-hidden-with-name  " value="<?php echo e($subItemArr['options']['title']??$subItemId); ?>" data-column-index="-1">
+        </div>
+					  <span class="ml-2 currency-class"> </span>
+				    </div>
+	 
+</div>
+
+                
             </div>
         </td>
         <td>
@@ -303,17 +365,21 @@ use App\Models\NonBankingService\Study;
         <td data-column-index="<?php echo e($dateAsIndex); ?>">
 
             <div data-column-index="<?php echo e($dateAsIndex); ?>" class="d-flex align-items-center justify-content-center flex-column" style="gap:10px">
-                 <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['readonly' => true,'formattedInputClasses' => $subItemArr['options']['formatted-input-classes']??$defaultClasses[0]['formatted-input-classes'],'removeThreeDots' => true,'removeCurrency' => true,'mark' => ' ','isNumber' => true,'removeThreeDotsClass' => true,'numberFormatDecimals' => $subItemArr['options']['number-format-decimals']??$defaultClasses[0]['number-format-decimals'],'currentVal' => $subItemArr['data'][$dateAsIndex]??0,'classes' => $subItemArr['options']['classes']??'','isPercentage' => $subItemArr['options']['number-format-decimals']??$defaultClasses[0]['number-format-decimals'],'name' => '','columnIndex' => $dateAsIndex]]); ?>
-<?php $component->withName('repeat-right-dot-inputs'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['readonly' => true,'formattedInputClasses' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($subItemArr['options']['formatted-input-classes']??$defaultClasses[0]['formatted-input-classes']),'removeThreeDots' => true,'removeCurrency' => true,'mark' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(' '),'is-number' => true,'removeThreeDotsClass' => true,'number-format-decimals' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($subItemArr['options']['number-format-decimals']??$defaultClasses[0]['number-format-decimals']),'currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($subItemArr['data'][$dateAsIndex]??0),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($subItemArr['options']['classes']??''),'is-percentage' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($subItemArr['options']['number-format-decimals']??$defaultClasses[0]['number-format-decimals']),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(''),'columnIndex' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($dateAsIndex)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
-<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
-<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
-<?php endif; ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?> 
+
+                <div class="">
+                    <div class="input-group input-group-sm align-items-center justify-content-center flex-nowrap">
+                        <div class="input-hidden-parent">
+                            <input data-number-of-decimals="0" readonly="" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control copy-value-to-his-input-hidden 
+
+			  expandable-amount-input 			  repeat-to-right-input-formatted  custom-input-numeric-width  " type="text" value="<?php echo e(number_format($subItemArr['data'][$dateAsIndex]??0)); ?>" data-column-index="<?php echo e($dateAsIndex); ?>">
+                            <input data-number-of-decimals="0" type="hidden" data-name="" class="repeat-to-right-input-hidden input-hidden-with-name  repeater-with-collapse-input" value="<?php echo e($subItemArr['data'][$dateAsIndex]??0); ?>" data-column-index="<?php echo e($dateAsIndex); ?>">
+                        </div>
+                        <span class="ml-2 currency-class"> </span>
+                    </div>
+
+                </div>
+
+                
             </div>
         </td>
         <?php
@@ -324,17 +390,25 @@ use App\Models\NonBankingService\Study;
         <?php if($financialYearEndMonthNumber == $currentMonthNumber || $loop->last): ?>
         <td data-column-index="<?php echo e($dateAsIndex); ?>" class="exclude-from-collapse">
             <div class="d-flex align-items-center justify-content-center">
-                 <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['readonly' => true,'removeThreeDots' => true,'numberFormatDecimals' => 0,'mark' => ' ','currentVal' => $subItemArr['total'][$dateAsIndex]??0 ,'formattedInputClasses' => 'exclude-from-collapse ','classes' => 'year-repeater-index-'.$currentYearRepeaterIndex.' ' .' exclude-from-collapse','isPercentage' => false,'name' => '','columnIndex' => $dateAsIndex]]); ?>
-<?php $component->withName('repeat-right-dot-inputs'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['readonly' => true,'removeThreeDots' => true,'number-format-decimals' => 0,'mark' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(' '),'currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($subItemArr['total'][$dateAsIndex]??0 ),'formattedInputClasses' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('exclude-from-collapse '),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('year-repeater-index-'.$currentYearRepeaterIndex.' ' .' exclude-from-collapse'),'is-percentage' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(''),'columnIndex' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($dateAsIndex)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
-<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
-<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
-<?php endif; ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?> 
+			
+			<div class="
+
+ 
+
+">
+    <div class="input-group input-group-sm align-items-center justify-content-center flex-nowrap">
+        <div class="input-hidden-parent">
+            <input readonly data-number-of-decimals="0" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control copy-value-to-his-input-hidden 
+
+			  expandable-amount-input 			  repeat-to-right-input-formatted   " type="text" value="<?php echo e(number_format($subItemArr['total'][$dateAsIndex]??0)); ?>" data-column-index="<?php echo e($dateAsIndex); ?>">
+            <input data-number-of-decimals="0" type="hidden" data-name="" class="repeat-to-right-input-hidden input-hidden-with-name  total-td" value="<?php echo e($subItemArr['total'][$dateAsIndex]??0); ?>" data-column-index="<?php echo e($dateAsIndex); ?>">
+        </div>
+					  <span class="ml-2 currency-class"> </span>
+				    </div>
+	 
+</div>
+
+                
             </div>
 
         </td>
@@ -344,20 +418,28 @@ use App\Models\NonBankingService\Study;
         <?php endif; ?>
 
         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-		
+
         <td>
             <div class="d-flex align-items-center justify-content-center">
-                 <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['removeThreeDots' => true,'removeCurrency' => true,'mark' => ' ','isNumber' => true,'removeThreeDotsClass' => true,'numberFormatDecimals' => 0,'currentVal' => 0,'classes' => 'total-td','isPercentage' => false,'name' => '','columnIndex' => -1]]); ?>
-<?php $component->withName('repeat-right-dot-inputs'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['removeThreeDots' => true,'removeCurrency' => true,'mark' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(' '),'is-number' => true,'removeThreeDotsClass' => true,'number-format-decimals' => 0,'currentVal' => 0,'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('total-td'),'is-percentage' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(''),'columnIndex' => -1]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
-<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
-<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
-<?php endif; ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?> 
+			
+			<div class="
+
+ 
+
+">
+    <div class="input-group input-group-sm align-items-center justify-content-center flex-nowrap">
+        <div class="input-hidden-parent">
+            <input readonly data-number-of-decimals="0" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control copy-value-to-his-input-hidden 
+
+			  expandable-amount-input 			  repeat-to-right-input-formatted   " type="text" value="0" data-column-index="-1">
+            <input data-number-of-decimals="0" type="hidden" data-name="" class="repeat-to-right-input-hidden input-hidden-with-name  total-td" value="0" data-column-index="-1">
+        </div>
+					  <span class="ml-2 currency-class"> </span>
+				    </div>
+	 
+</div>
+
+                
             </div>
         </td>
     </tr>
@@ -381,46 +463,46 @@ use App\Models\NonBankingService\Study;
 <?php endif; ?> 
 
 
-    </div>
-    </div>
+</div>
+</div>
 
 
 
 
-    <!--End:: Tab Content-->
+<!--End:: Tab Content-->
 
 
 
-    <!--End:: Tab Content-->
-    </div>
-    </div>
-    </div>
+<!--End:: Tab Content-->
+</div>
+</div>
+</div>
 
-    <?php $__env->stopSection(); ?>
-    <?php $__env->startSection('js'); ?>
-
-    
-   
-    <script src="<?php echo e(url('assets/vendors/general/jquery.repeater/src/jquery.input.js')); ?>" type="text/javascript">
-    </script>
+<?php $__env->stopSection(); ?>
+<?php $__env->startSection('js'); ?>
 
 
-    <script>
-        $(document).on('click', '.js-close-modal', function() {
-            $(this).closest('.modal').modal('hide');
-        })
 
-    </script>
-   
-    <?php $__env->stopSection(); ?>
-    <?php $__env->startPush('js'); ?>
-    <script src="/custom/js/non-banking-services/common.js"></script>
-    <script>
-        $(function() {
-            //	$('[data-group-index]').trigger('change');
-        })
+<script src="<?php echo e(url('assets/vendors/general/jquery.repeater/src/jquery.input.js')); ?>" type="text/javascript">
+</script>
 
-    </script>
-    <?php $__env->stopPush(); ?>
+
+<script>
+    $(document).on('click', '.js-close-modal', function() {
+        $(this).closest('.modal').modal('hide');
+    })
+
+</script>
+
+<?php $__env->stopSection(); ?>
+<?php $__env->startPush('js'); ?>
+<script src="/custom/js/non-banking-services/common.js"></script>
+<script>
+    $(function() {
+        //	$('[data-group-index]').trigger('change');
+    })
+
+</script>
+<?php $__env->stopPush(); ?>
 
 <?php echo $__env->make('layouts.dashboard', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /media/salah/Software/projects/veroo/resources/views/non_banking_services/income-statement/forecast.blade.php ENDPATH**/ ?>

@@ -1257,7 +1257,7 @@ use MathPHP\Statistics\Correlation ;
                                                 @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
 												@php
 													$currentExpense = $formattedExpenses['cost-of-service']['total'][$year]??0;
-													$currentSalesRevenue = $formattedResult['sales_revenue'][$year] ;
+													$currentSalesRevenue = $formattedResult['sales_revenue'][$year]??0 ;
 													$currentVal = $currentSalesRevenue ? $currentExpense / $currentSalesRevenue * 100 : 0 ;
 												@endphp
                                                 <td>

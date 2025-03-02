@@ -42,7 +42,7 @@ class  PortfolioMortgageRevenueProjectionByCategory extends Model
 	
 	public function getPortfolioMortgageTransactionProjection():array 
 	{
-		return $this->portfolio_mortgage_transactions_projections  ; 
+		return (array)$this->portfolio_mortgage_transactions_projections  ; 
 	}
 	public function getPortfolioMortgageTransactionProjectionAtYearIndex(int $yearIndex)
 	{
@@ -68,33 +68,37 @@ class  PortfolioMortgageRevenueProjectionByCategory extends Model
 	{
 		return $this->growth_rates[$yearIndex] ?? 0  ; 
 	}
-	public function getMonthlyMarginRate()
-	{
-		return $this->monthly_margin_rate ?: 0;
-	}
-	public function getQuarterlyMarginRate()
-	{
-		return $this->quarterly_margin_rate ?: 0;
-	}
-	public function getAnnuallyMarginRate()
-	{
-		return $this->annually_margin_rate ?: 0;
-	}
-	public function getMonthlyDueChequesPercentagesAtYearIndex(int $yearIndex)
-	{
-		return $this->monthly_due_cheques_percentages[$yearIndex] ?? 0  ; 
-	}
-	public function getQuarterlyDueChequesPercentagesAtYearIndex(int $yearIndex)
-	{
-		return $this->quarterly_due_cheques_percentages[$yearIndex] ?? 0  ; 
-	}
-	public function getAnnuallyDueChequesPercentagesAtYearIndex(int $yearIndex)
-	{
-		return $this->annually_due_cheques_percentages[$yearIndex] ?? 0  ; 
-	}	
+	// public function getMonthlyMarginRate()
+	// {
+	// 	return $this->monthly_margin_rate ?: 0;
+	// }
+	// public function getQuarterlyMarginRate()
+	// {
+	// 	return $this->quarterly_margin_rate ?: 0;
+	// }
+	// public function getAnnuallyMarginRate()
+	// {
+	// 	return $this->annually_margin_rate ?: 0;
+	// }
+	// public function getMonthlyDueChequesPercentagesAtYearIndex(int $yearIndex)
+	// {
+	// 	return $this->monthly_due_cheques_percentages[$yearIndex] ?? 0  ; 
+	// }
+	// public function getQuarterlyDueChequesPercentagesAtYearIndex(int $yearIndex)
+	// {
+	// 	return $this->quarterly_due_cheques_percentages[$yearIndex] ?? 0  ; 
+	// }
+	// public function getAnnuallyDueChequesPercentagesAtYearIndex(int $yearIndex)
+	// {
+	// 	return $this->annually_due_cheques_percentages[$yearIndex] ?? 0  ; 
+	// }	
 	public function getMarginRate()
 	{
 		$marginRate = $this->margin_rate;
 		return $marginRate ? $this->margin_rate : 0 ;
+	}
+	public function getMortgageDuration()
+	{
+		return $this->portfolio_mortgage_duration;
 	}
 }
