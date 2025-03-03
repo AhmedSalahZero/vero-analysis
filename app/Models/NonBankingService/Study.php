@@ -749,7 +749,6 @@ use Illuminate\Support\Facades\DB;
 				$baseRatesPerMonths[Carbon::make($dateIndexWithDate[$monthIndex])->format('Y-m-d')] = $baseRates[$yearIndex];
 			}
 		}
-	
 		DB::connection('non_banking_service')->table($loanSchedulePaymentTableName)->where('revenue_stream_type',$revenueStreamType)->where('study_id',$studyId)->delete();
 		$baseRatesMapping = HArr::getFirstOfYear($baseRatesPerMonths);
 	
@@ -1108,10 +1107,11 @@ use Illuminate\Support\Facades\DB;
 	{
 		return [
 			'all'=>__('All'),
-			'direct-factoring'=>__('Direct Factoring'),
-			'ijara'=>__('Ijara'),
-			'leasing'=>__('Leasing'),
-			'reverse-factoring'=>__('Reverse Factoring')
+			self::DIRECT_FACTORING=>__('Direct Factoring'),
+			self::IJARA=>__('Ijara'),
+			self::LEASING=>__('Leasing'),
+			self::REVERSE_FACTORING=>__('Reverse Factoring'),
+			self::PORTFOLIO_MORTGAGE=>__('Portfolio Mortgage')
 		];
 	}
 	
@@ -1355,6 +1355,7 @@ use Illuminate\Support\Facades\DB;
 	{
 		$directFactoringAdminFeesRate = $this->directFactoryAdminFeesRate;
 		$directFactoring = $this->directFactoringRevenueProjectionByCategory ;
+		
 		$directFactoringProjections = $directFactoring->getDirectFactoringTransactionProjection();
 		$directFactoringAdminFeesRate->update([
 			'monthly_admin_fees_amounts'=>$this->calculateMonthlyAdminFeesAmounts($directFactoringAdminFeesRate->getAdminFeesRates(),$directFactoringProjections)

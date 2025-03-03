@@ -37,6 +37,6 @@ class RecalculateSpreadRateSensitivityController extends Controller
 		$study->storeFixedLoans(Study::IJARA,'ijaraMortgageBreakdowns','ijaraMortgageNewPortfolioFundingStructure',true);
 		$study->storeVariableLoans(Study::REVERSE_FACTORING,'reverseFactoringBreakdowns','reverseFactoringNewPortfolioFundingStructure',true);
 		
-		return redirect()->route('view.results.dashboard',['company'=>$company->id,'study'=>$study->id]);
+		return redirect()->route('view.results.dashboard.with.sensitivity',['company'=>$company->id,'study'=>$study->id]);
 	}
 }

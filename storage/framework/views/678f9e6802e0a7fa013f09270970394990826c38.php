@@ -54,7 +54,7 @@
 							<?php $__currentLoopData = $yearWithItsIndexes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $currentYearIndex => $monthInfos): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 							<?php
 								$currentExpenseValue = $expenseWithYearIndexAndValue[$currentYearIndex]??0 ;
-								$currentSalesRevenue = $formattedResult['sales_revenue'][$currentYearIndex];
+								$currentSalesRevenue = $formattedResult['sales_revenue'][$currentYearIndex]??0;
 								$currentPercentageOfSales = $currentSalesRevenue ?  $currentExpenseValue /  $currentSalesRevenue * 100 : 0;
 							?>
                                 <td class="

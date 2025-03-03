@@ -64,6 +64,10 @@ trait HasBasicStoreRequest
 		$oldIdsFromDatabase = $this->{$relationName}->pluck('id')->toArray();
 		$idsFromRequest =array_column($relationDataArray,'id') ;
 		$elementsToDelete = array_diff($oldIdsFromDatabase,$idsFromRequest);
+		if(count($oldIdsFromDatabase) && !count($idsFromRequest)){
+			dd('there is no old ids from request .. !!');
+		}
+		// dd($oldIdsFromDatabase,$relationDataArray);
 		$elementsToUpdate = array_intersect($idsFromRequest,$oldIdsFromDatabase);
 		$this->$relationName()->whereIn($relationTableName.'.id',$elementsToDelete)->delete();
 
@@ -79,6 +83,7 @@ trait HasBasicStoreRequest
 		
 			}
 		}
+		$this->refresh();
 	
 	}
 	/**
@@ -120,6 +125,7 @@ trait HasBasicStoreRequest
 				$this->{$relationName}()->update($values);
 			}
 		}
+		$this->refresh();
 		return $this;
 	}
 	public function storeRepeaterRelations(Request $request , array $relationNames,Company $company)

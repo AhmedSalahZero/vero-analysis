@@ -416,6 +416,8 @@ Route::middleware([])->group(function () {
 						 */
 						
 						 route::get('dashboard','DashboardController@view')->name('view.results.dashboard');
+						 route::get('dashboard-with-sensitivity','DashboardController@view')->name('view.results.dashboard.with.sensitivity');
+						 
 						route::post('recalculate-spread-rates-sensitivity','RecalculateSpreadRateSensitivityController@recalculate')->name('calculate.spread.rate.sensitivity');
 						 route::get('income-statement','IncomeStatementController@index')->name('view.non.banking.forecast.income.statement');
 						

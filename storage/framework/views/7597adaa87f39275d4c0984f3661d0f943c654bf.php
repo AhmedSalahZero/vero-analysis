@@ -65,6 +65,7 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
 
                                 </h3>
                                 <div class="form-group mb-0 d-flex w-10" style="margin-right:auto;gap:20px;">
+								<input type="hidden" name="portfolioMortgageRevenueProjectionByCategories[<?php echo e($currentIndex); ?>][id]" value="<?php echo e($portfolioMortgageRevenueProjectionByCategory ? $portfolioMortgageRevenueProjectionByCategory->id :0); ?>">  
                                     <select name="portfolioMortgageRevenueProjectionByCategories[<?php echo e($currentIndex); ?>][portfolio_mortgage_duration]" class="form-control blue-select  seasonlity-select main-seasonality-select">
                                         <?php for($i = 5 ; $i <= 10 ; $i++): ?> <option value="<?php echo e($i); ?>" <?php if($portfolioMortgageRevenueProjectionByCategory && $portfolioMortgageRevenueProjectionByCategory->portfolio_mortgage_duration == $i ): ?>
                                             selected

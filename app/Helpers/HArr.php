@@ -615,5 +615,14 @@ class HArr
 		}
 		return $result ; 
 	}
+	public static function getTitleFromValueArray(array $items , string $value):string
+	{
+		foreach($items as $itemArr){
+			if($itemArr['value'] == $value){
+				return $itemArr['title'];
+			}
+		}
+		dd('title not found');
+	}
 
 }

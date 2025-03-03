@@ -392,7 +392,6 @@
 								
                                     <input type="hidden" name="id" value="<?php echo e(isset($subModel) ? $subModel->id : 0); ?>">
 
-
                                     <td>
                            				  <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.select','data' => ['required' => true,'label' => '','pleaseSelect' => false,'selectedValue' => isset($subModel) ? $subModel->getCategory():0,'options' => reverseFactoringSelector(),'addNew' => false,'class' => 'select2-select  repeater-select  ','all' => false,'name' => 'category']]); ?>

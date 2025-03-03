@@ -53,7 +53,7 @@
 							@foreach($yearWithItsIndexes as  $currentYearIndex => $monthInfos)
 							@php
 								$currentExpenseValue = $expenseWithYearIndexAndValue[$currentYearIndex]??0 ;
-								$currentSalesRevenue = $formattedResult['sales_revenue'][$currentYearIndex];
+								$currentSalesRevenue = $formattedResult['sales_revenue'][$currentYearIndex]??0;
 								$currentPercentageOfSales = $currentSalesRevenue ?  $currentExpenseValue /  $currentSalesRevenue * 100 : 0;
 							@endphp
                                 <td class="

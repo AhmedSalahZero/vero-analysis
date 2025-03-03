@@ -5,6 +5,7 @@ namespace App\Http\Controllers\NonBankingServices;
 use App\Http\Controllers\Controller;
 use App\Models\Company;
 use App\Models\NonBankingService\Study;
+use Artisan;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -162,6 +163,7 @@ class StudyController extends Controller
 	}
 	public function destroy(Request $request , Company $company,Study $study)
 	{
+		Artisan::call('delete:study',['study_id'=>$study->id]);
 		$study->delete();
 		return redirect()->back()->with('success',__('Study Has Been Deleted Successfully'));
 	}

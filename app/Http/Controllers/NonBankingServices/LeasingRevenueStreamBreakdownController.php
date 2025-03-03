@@ -34,11 +34,8 @@ class LeasingRevenueStreamBreakdownController extends Controller
 
 	public function store(Company $company , StoreLeasingRevenueStreamRequest $request,Study $study)
 	{
-
 		if(count($request->get('leasingRevenueStreamBreakdown',[]))){
-		
 			$study->storeRepeaterRelations($request,['leasingRevenueStreamBreakdown'],$company);
-		
 		}
 		
 		$loanAmounts = $request->get('loan_amounts',[]);

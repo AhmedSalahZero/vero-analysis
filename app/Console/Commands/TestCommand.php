@@ -18,6 +18,7 @@ use App\Services\AI\PredictionErrorQualityMeasures\RootMeanSquaredPercentageErro
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
 use MathPHP\Statistics\Correlation;
@@ -134,6 +135,10 @@ class TestCommand extends Command
 	}
 	public function handle()
 	{
+		// foreach([48,47,49] as $studyId){
+		// 	Artisan::call('delete:study',['study_id'=>$studyId]);
+		// }
+		// dd('go');
 		
 		// $this->insertCustomersIntoPartnerTable(45);
 		// $this->convertIncomeStatementDatesToIndexes();

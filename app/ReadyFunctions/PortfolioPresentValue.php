@@ -8,8 +8,11 @@ class PortfolioPresentValue
 {
 	public function calculate(array $dateIndexWithDate ,array $portfolioLoanFundingRatesPerMonths , array $operationDurationPerYearFromIndexes,int $tenorInYears,array $startFromPerYear , array $frequencyPerYear,array $portfolioMortgageTransactionAmountsPerYears,array $cbeLendingRatesPerMonths,float $marginRate,array $bankMarginRates , int $companyId , int $studyId , int $portfolioMortgageCategoryId):void 
 	{
-	
-				DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('loan_schedule_payments')->where('study_id',$studyId)->where('revenue_stream_type',Study::PORTFOLIO_MORTGAGE)->where('revenue_stream_id',$portfolioMortgageCategoryId)->delete();
+	// dd($portfolioMortgageCategoryId,DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('loan_schedule_payments')->where('study_id',$studyId)->where('revenue_stream_type',Study::PORTFOLIO_MORTGAGE)
+	// // ->where('revenue_stream_id',$portfolioMortgageCategoryId)
+	// ->count());
+	DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('loan_schedule_payments')->where('study_id',$studyId)->where('revenue_stream_type',Study::PORTFOLIO_MORTGAGE)->where('revenue_stream_id',$portfolioMortgageCategoryId)->delete();
+	// dd(DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('loan_schedule_payments')->where('study_id',$studyId)->where('revenue_stream_type',Study::PORTFOLIO_MORTGAGE)->where('revenue_stream_id',$portfolioMortgageCategoryId)->count());
 					
 		$portfolioLoanAmounts=[];
 		$portfolioLoanAmountsFormatted=[];
@@ -79,6 +82,7 @@ class PortfolioPresentValue
 				$currentMarginRate = $portfolioMortgageLoanArray['margin_rate'];
 				$currentUnearnedInterest = $portfolioMortgageLoanArray['unearned_interest'];
 				$currentDaysCount = 30 ;
+				
 				$portfolioLoanAmounts[$currentOccurrenceMonthIndex]=$calculateFixedLoanAtEndService->__calculate([],-1,$loanType,$currentLoanDateAsString,$currentLoanAmount,$currentBaseRate,$currentMarginRate,$tenorInMonths,$installmentPaymentIntervalName,0,null,0,null,0,$currentOccurrenceMonthIndex,$currentDaysCount)['final_result']??[];
 				$portfolioLoanAmountsFormatted = $portfolioLoanAmounts[$currentOccurrenceMonthIndex];
 				$bankLoanAmounts[$currentOccurrenceMonthIndex]=$calculateFixedLoanAtEndService->__calculate([],-1,$loanType,$currentLoanDateAsString,$currentBankLoanAmount,$currentBaseRate,$currentBankMarginRate,$tenorInMonths,$installmentPaymentIntervalName,0,null,0,null,0,$currentOccurrenceMonthIndex,$currentDaysCount)['final_result']??[];

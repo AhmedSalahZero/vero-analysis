@@ -41,12 +41,14 @@ class DashboardController extends Controller
 			'bar_chart'=>$barChart
 		] ;
 	}
-	public function view(Request $request , Company $company,Study $study)
+	protected function generateDashboardData(Study $study , Company $company , bool $isSensitivity = false ):array 
 	{
+		$loanSchedulePaymentTableName =  $isSensitivity ? 'sensitivity_loan_schedule_payments' : 'loan_schedule_payments';
+		
 		$yearIndexWithYear = app('yearIndexWithYear');
 		$corporateTaxes = $study->getCorporateTaxesRate() / 100 ;
-		$startDate = $study->getStudyStartDate();
-		$endDate = $study->getStudyEndDate();
+		// $startDate = $study->getStudyStartDate();
+		// $endDate = $study->getStudyEndDate();
 		$formattedExpenses = [];
 		$formattedResult = [];
 		$salesRevenuePerTypes = [];
@@ -54,7 +56,7 @@ class DashboardController extends Controller
 		$monthsWithItsYear = $study->getMonthsWithItsYear($yearWithItsIndexes) ;
 		
 		$titlesMapping = Study::getProjectionTitles();
-		$loanSchedulePayments = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('loan_schedule_payments')->selectRaw('portfolio_loan_type,revenue_stream_type,interestAmount')->where('study_id',$study->id)->get()->toArray();
+		$loanSchedulePayments = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table($loanSchedulePaymentTableName)->selectRaw('portfolio_loan_type,revenue_stream_type,interestAmount')->where('study_id',$study->id)->get()->toArray();
 		
 		$resultPerRevenueStreamType = [
 			'all'=>[]
@@ -83,18 +85,15 @@ class DashboardController extends Controller
 				}
 			}
 		}
-		
-		
 
-		
+		// $loanSchedulePayments = [];
 		$testLoopIndex = 0 ;
-
+		// dd(collect($loanSchedulePayments)->where('revenue_stream_type',Study::PORTFOLIO_MORTGAGE)->toArray());
 		foreach($loanSchedulePayments as $loanSchedulePaymentAsStdClass ){
 			$portfolioLoanType = $loanSchedulePaymentAsStdClass->portfolio_loan_type;
 			$isPortfolio = $portfolioLoanType == 'portfolio'; 
 			$revenueStreamType = $loanSchedulePaymentAsStdClass->revenue_stream_type;
 			$interestAmounts = json_decode($loanSchedulePaymentAsStdClass->interestAmount);
-			//dd($interestAmounts);
 			$testLoopIndex ++ ;
 			foreach($interestAmounts as $currentMonthIndex => $interestAmountAtMonthIndex){
 				
@@ -106,18 +105,12 @@ class DashboardController extends Controller
 						$salesRevenuePerTypes[$revenueStreamType][$currentYearIndex] =  isset($salesRevenuePerTypes[$revenueStreamType][$currentYearIndex]) ? $salesRevenuePerTypes[$revenueStreamType][$currentYearIndex] + $interestAmountAtMonthIndex : $interestAmountAtMonthIndex;
 						$salesRevenuePerTypes['total_revenue'][$currentYearIndex] =  isset($salesRevenuePerTypes['total_revenue'][$currentYearIndex]) ? $salesRevenuePerTypes['total_revenue'][$currentYearIndex] + $interestAmountAtMonthIndex : $interestAmountAtMonthIndex;
 						$formattedResult['sales_revenue'][$currentYearIndex] = $salesRevenuePerTypes['total_revenue'][$currentYearIndex] ;
-				
 							 $resultPerRevenueStreamType[$revenueStreamType][$currentYearAsString] = isset($resultPerRevenueStreamType[$revenueStreamType][$currentYearAsString]) ? $resultPerRevenueStreamType[$revenueStreamType][$currentYearAsString] + $interestAmountAtMonthIndex : $interestAmountAtMonthIndex;
-	
-							// $currentDirectFactoringInterestRevenue  =$formattedDirectFactoring['interest_revenue'][$currentYearIndex] ?? 0 ;
-							// $formattedResult['sales_revenue'][$currentYearIndex] = $formattedResult['sales_revenue'][$currentYearIndex] + $currentDirectFactoringInterestRevenue
-							 ;
-							$currentSalesRevenue = $formattedResult['sales_revenue'][$currentYearIndex] ;
+							$currentSalesRevenue = $formattedResult['sales_revenue'][$currentYearIndex]??0 ;
 							$previousSalesRevenue = $formattedResult['sales_revenue'][$currentYearIndex-1] ?? 0 ;
 							$formattedResult['growth_rate'][$currentYearIndex] = $previousSalesRevenue ? (($currentSalesRevenue / $previousSalesRevenue)-1)*100 : 0 ;
 						}else{			
 							$formattedResult['interest_cogs'][$currentYearIndex] = isset($formattedResult['interest_cogs'][$currentYearIndex]) ? $formattedResult['interest_cogs'][$currentYearIndex] + $interestAmountAtMonthIndex : $interestAmountAtMonthIndex + $currentDirectFactoringBankInterestExpenseAtYearIndex ;
-							
 						}
 					}
 				}
@@ -126,7 +119,6 @@ class DashboardController extends Controller
 		$salaryExpenses = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('departments')
 		->join('positions','positions.department_id','=','departments.id')
 		->selectRaw('expense_type,salary_expenses,expense_type')->where('type','manpower')->where('departments.study_id',$study->id)->get() ;
-		
 		$expenses = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('expenses')->selectRaw('expense_category,name,relation_name,monthly_repeating_amounts,expense_as_percentages,payload')->where('model_id',$study->id)->where('model_name','Study')->get()->toArray();
 		$columnPerTypes = [
 			'one_time_expense'=>'payload',
@@ -152,9 +144,9 @@ class DashboardController extends Controller
 			$currentColumnName = $columnPerTypes[$relationName];
 			$monthlyExpenses = (array)json_decode($expense->{$currentColumnName});
 			foreach($yearWithItsIndexes as $yearIndex => $monthIndexWithActive){
-				
 				$currentYearInterestCost = 0 ;
 				$currentYearManpowerTotal = 0 ;
+				$currentExpenseItemTotalPerYear = 0 ;
 				if($expenseCategory == 'cost-of-service' && !isset($formattedExpenses[$expenseCategory]['Interest Cost'][$yearIndex])){
 					$formattedExpenses[$expenseCategory]['Interest Cost'][$yearIndex]  = $formattedResult['interest_cogs'][$yearIndex]??0 ;
 					$currentYearInterestCost = $formattedExpenses[$expenseCategory]['Interest Cost'][$yearIndex];
@@ -163,22 +155,24 @@ class DashboardController extends Controller
 					$formattedExpenses[$expenseCategory]['Manpower Salaries'][$yearIndex] = $salaryExpensesForCategory[$expenseCategory][$yearIndex] ?? 0;
 					$currentYearManpowerTotal = $formattedExpenses[$expenseCategory]['Manpower Salaries'][$yearIndex];
 				}
-				$currentExpenseItemTotalPerYear = 0 ;
+				
 				foreach($monthIndexWithActive as $monthIndex=> $isActiveIndex){
-					$currentExpenseItemTotalPerYear += $monthlyExpenses[$monthIndex]??0 ;
+					// dump('month value',$monthlyExpenses[$monthIndex]??0,'month index',$monthIndex,'loop year',$yearIndex);
+					// if($yearIndex == 2 ){
+						// dump($monthIndex,$monthlyExpenses[$monthIndex]??0);
+						$currentExpenseItemTotalPerYear += $monthlyExpenses[$monthIndex]??0 ;
+					// }
 				}
+				// dump('year index',$yearIndex,'per year ',$currentExpenseItemTotalPerYear,'--');
 				$formattedExpenses[$expenseCategory][$name][$yearIndex] = $currentExpenseItemTotalPerYear;
-		
-			//	$totalForAllExpenseCategoryPerName[$yearIndex] =   $currentExpenseItemTotalPerYear ; 
 				$currentYearTotal = $currentExpenseItemTotalPerYear + $currentYearInterestCost +$currentYearManpowerTotal;
 				$formattedExpenses[$expenseCategory]['total'][$yearIndex] = isset($formattedExpenses[$expenseCategory]['total'][$yearIndex]) ? $formattedExpenses[$expenseCategory]['total'][$yearIndex] + $currentYearTotal:$currentYearTotal    ; 
-				
-				
-				
 			}
 		
 			
 		}
+		// dd($formattedExpenses);
+		// dd($formattedExpenses);
 		foreach($yearWithItsIndexes as $yearIndex => $monthWithItsIndexes){
 			$currentYearAsString = $yearIndexWithYear[$yearIndex] ?? null ;
 			$currentSalesRevenue = $formattedResult['sales_revenue'][$yearIndex]??0;
@@ -209,11 +203,39 @@ class DashboardController extends Controller
 		$chartsFormatted =$this->formatForTheeLineChart($resultPerRevenueStreamType); 
 		$lineChart = $chartsFormatted['line_chart'];
 		$barChart = $chartsFormatted['bar_chart'];
-
+		
+		return [
+			'titlesMapping'=>$titlesMapping,
+			'lineChart'=>$lineChart ,
+			'barChart'=>$barChart ,
+			'formattedResult'=>$formattedResult ,
+			'formattedExpenses'=>$formattedExpenses,
+			'yearWithItsIndexes'=>$yearWithItsIndexes
+		];
+		
+	}
+	public function view(Request $request , Company $company,Study $study)
+	{
+		$withSensitivity = $request->routeIs('view.results.dashboard.with.sensitivity') ;
+		$dashboardData = $this->generateDashboardData($study,$company,false);
+		$formattedResult = $dashboardData['formattedResult'];
+		$formattedExpenses =$dashboardData['formattedExpenses'];
+		$lineChart =$dashboardData['lineChart'];
+		$titlesMapping =$dashboardData['titlesMapping'];
+		$barChart =$dashboardData['barChart'];
+		$yearWithItsIndexes = $dashboardData['yearWithItsIndexes'];
+		$sensitivityFormattedResult = [];
+		$sensitivityFormattedExpenses=[];
+		if($withSensitivity){
+			$sensitivityDashboardData = $this->generateDashboardData($study,$company,true );
+			$sensitivityFormattedResult = $sensitivityDashboardData['formattedResult'];
+			$sensitivityFormattedExpenses = $sensitivityDashboardData['formattedExpenses'];
+		}
+		
 		return view('non_banking_services.dashboard.dashboard',
 	[
-		'startDate'=>$startDate,
-		'endDate'=>$endDate,
+		// 'startDate'=>$startDate,
+		// 'endDate'=>$endDate,
 		'yearsWithItsMonths' => $study->getOperationDurationPerYearFromIndexes(),
 		'model'=>$study,
 		'study'=>$study,
@@ -223,8 +245,10 @@ class DashboardController extends Controller
 		'titlesMapping'=>$titlesMapping,
 		'lineChart'=>$lineChart,
 		'barChart'=>$barChart,
-		'resultPerRevenueStreamType'=>$resultPerRevenueStreamType,
-		'yearWithItsIndexes'=>$yearWithItsIndexes
+		'yearWithItsIndexes'=>$yearWithItsIndexes,
+		'sensitivityFormattedResult'=>$sensitivityFormattedResult,
+		'sensitivityFormattedExpenses'=>$sensitivityFormattedExpenses,
+		'withSensitivity'=>$withSensitivity
 	]);
 	}
 }

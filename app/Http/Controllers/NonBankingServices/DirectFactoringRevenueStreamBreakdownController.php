@@ -41,6 +41,7 @@ class DirectFactoringRevenueStreamBreakdownController extends Controller
 			$studyHasDirectFactoringBreakdowns = $study->refresh()->directFactoringBreakdowns->count(); 
 			$study->storeRelationsWithNoRepeater($request,$company);
 			$study->storeRepeaterRelations($request,$this->getRepeaterRelations(),$company);
+			
 			$study->updateDirectFactoryMonthlyAdminFeesAmounts();
 			$study->refreshDirectFactoringLoans();
 			$study->updateExpensesOfSales();

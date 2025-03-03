@@ -309,7 +309,6 @@
 								
                                     <input type="hidden" name="id" value="{{ isset($subModel) ? $subModel->id : 0 }}">
 
-
                                     <td>
                            				 <x-form.select :required="true" :label="''" :pleaseSelect="false" :selectedValue="isset($subModel) ? $subModel->getCategory():0" :options="reverseFactoringSelector()" :add-new="false" class="select2-select  repeater-select  "  :all="false" name="category"></x-form.select>
 										  <input value="{{ __('Reverse Factoring Transactions Projection') }}" disabled class="form-control text-left mt-2" type="text">

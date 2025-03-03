@@ -1,6 +1,7 @@
 <?php
 namespace App\Models\NonBankingService;
 
+use App\Helpers\HArr;
 use App\Models\Traits\Scopes\CompanyScope;
 use App\Models\Traits\Scopes\NonBankingServices\BelongsToStudy;
 use App\Traits\HasBasicStoreRequest;
@@ -54,8 +55,8 @@ class  ReverseFactoringBreakdown extends Model
 		if(is_numeric($this->category)){
 			return '-';
 		}
-		
-		return $this->category->getTitle().'[' . $this->getLoanNature() . ' / ' . $this->getLoanType(). ' / ' . $this->getTenor(). ' M/ ' . $this->getGracePeriod(). ' M/ ' . $this->getMarginRate(). ' %/ ' . $this->getInstallmentInterval(). ' / ' . $this->getStepRate(). ' %/ ' . $this->getStepInterval() . ' ]';
+		$category = $this->category ;
+		return HArr::getTitleFromValueArray(reverseFactoringSelector(),$category);
 	}
 	
 }
