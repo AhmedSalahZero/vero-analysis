@@ -646,6 +646,7 @@ use MathPHP\Statistics\Correlation ;
         makeSeries("Direct Factoring", "direct-factoring");
         makeSeries("Reverse Factoring", "reverse-factoring");
         makeSeries("Portfolio Mortgage", "portfolio-mortgage");
+        makeSeries("Microfinance", "microfinance");
 
 
         // Make stuff animate on load

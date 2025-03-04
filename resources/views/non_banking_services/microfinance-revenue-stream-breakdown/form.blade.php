@@ -109,11 +109,11 @@
                                     @endphp
                                     @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
                                     @php
-                                    $currentVal = $model->microfinanceRevenueProjectionByCategory ? $model->microfinanceRevenueProjectionByCategory->getMicrofinanceTransactionProjectionAtYearIndex($year) : 0;
+                                    $currentVal =0;
                                     @endphp
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
-                                            <x-repeat-right-dot-inputs :readonly="true"  :removeCurrency="true" :removeThreeDotsClass="true" :removeThreeDots="true" :number-format-decimals="0"  :currentVal="$currentVal" :formattedInputClasses="''" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="false" :name="'microfinance_transactions_projects'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :readonly="true"  :removeCurrency="true" :removeThreeDotsClass="true" :removeThreeDots="true" :number-format-decimals="0"  :currentVal="$currentVal" :formattedInputClasses="''" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="false" :name="''" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
                                         </div>
                                     </td>
                                     @php
@@ -138,7 +138,7 @@
                                     @endphp
                                     @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
                                     @php
-                                    $currentVal = $model->microfinanceRevenueProjectionByCategory ? $model->microfinanceRevenueProjectionByCategory->getMicrofinanceTransactionProjectionAtYearIndex($year) : 0;
+                                    $currentVal =0;
                                     @endphp
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
@@ -168,7 +168,7 @@
                                     @endphp
                                     @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
                                     @php
-                                    $currentVal = $model->microfinanceRevenueProjectionByCategory ? $model->microfinanceRevenueProjectionByCategory->getMicrofinanceTransactionProjectionAtYearIndex($year) : 0;
+                                    $currentVal =  0;
                                     @endphp
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
@@ -335,11 +335,12 @@
                                     @endphp
                                     @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
                                     @php
-                                    $currentVal = $model->microfinanceRevenueProjectionByCategory ? $model->microfinanceRevenueProjectionByCategory->getMicrofinanceTransactionProjectionAtYearIndex($year) : 0;
+                                    $currentVal = $model->microfinanceRevenueProjectionByCategory ? $model->microfinanceRevenueProjectionByCategory->getLoanAmountsAtYearIndex($year) : 0;
+							
                                     @endphp
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
-                                            <x-repeat-right-dot-inputs :number-format-decimals="0"  :currentVal="$currentVal" :formattedInputClasses="'current-growth-rate-result-value-formatted'" :classes="'only-greater-than-or-equal-zero-allowed total-loans-hidden js-recalculate-equity-funding-value factoring-projection-amount recalculate-factoring current-growth-rate-result-value'" :is-percentage="false" :name="'MicrofinanceRevenueProjectionByCategory['.'loan_case_amount'.']['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :number-format-decimals="0"  :currentVal="$currentVal" :formattedInputClasses="'current-growth-rate-result-value-formatted'" :classes="'only-greater-than-or-equal-zero-allowed total-loans-hidden js-recalculate-equity-funding-value factoring-projection-amount recalculate-factoring current-growth-rate-result-value'" :is-percentage="false" :name="'MicrofinanceRevenueProjectionByCategory['.'loan_case_amounts'.']['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
                                         </div>
                                     </td>
                                     @php
@@ -363,7 +364,7 @@
                                     @endphp
                                     @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
                                     @php
-                                    $currentVal = $model->microfinanceRevenueProjectionByCategory ? $model->microfinanceRevenueProjectionByCategory->getMicrofinanceTransactionProjectionAtYearIndex($year) : 0;
+                                    $currentVal =  0;
                                     @endphp
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
@@ -474,7 +475,7 @@
                                     <input type="hidden" name="id" value="{{ isset($subModel) ? $subModel->id : 0 }}">
 
                                     <td>
-                           				 <x-form.select :required="true" :label="''" :pleaseSelect="false" :selectedValue="isset($subModel) ? $subModel->getInstallmentInterval() : 'monthly'" :options="$microfinanceProductsFormatted" :add-new="false" class="select2-select  repeater-select  "  :all="false" name="installment_interval"></x-form.select>
+                           				 <x-form.select :required="true" :label="''" :pleaseSelect="false" :selectedValue="isset($subModel) ? $subModel->getMicrofinanceProductId() : ''" :options="$microfinanceProductsFormatted" :add-new="false" class="select2-select  repeater-select  "  :all="false" name="microfinance_product_id"></x-form.select>
                            				 <x-form.select :required="true" :label="''" :pleaseSelect="false" :selectedValue="isset($subModel) ? $subModel->getInstallmentInterval() : 'monthly'" :options="[['title'=>__('Monthly'),'value'=>'monthly'],['title'=>__('Quarterly'),'value'=>'quartly'],['value'=>'semi annually','title'=>__('Semi-annually')]]" :add-new="false" class="select2-select  repeater-select  "  :all="false" name="installment_interval"></x-form.select>
 										  {{-- <input value="{{ __('Microfinance Projection') }}" disabled class="form-control text-left mt-2" type="text"> --}}
 										  
@@ -492,13 +493,13 @@
                          </label>
                          <label class="kt-radio kt-radio--success text-black font-size-18px font-weight-bold">
 
-                             <input type="radio" value="1" name="is_active" @if(isset($subModel) && $subModel->isMtl()) checked @endisset
+                             <input type="radio" value="1" name="is_funding_by_mtl" @if(isset($subModel) && $subModel->isMtl()) checked @endisset
                              > {{ __('MTLs') }}
                              <span></span>
                          </label>
 
                          <label class="kt-radio kt-radio--danger text-black font-size-18px font-weight-bold">
-                             <input type="radio" value="0" name="is_active" @if(isset($subModel) && $subModel->isOda()) checked @endisset
+                             <input type="radio" value="0" name="is_funding_by_mtl" @if(isset($subModel) && $subModel->isOda()) checked @endisset
                              > {{ __('ODAs') }}
                              <span></span>
                          </label>
@@ -521,9 +522,8 @@
                                     $columnIndex = 0 ;
                                     @endphp
                                     @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
-                                
                                     <td>
-                                            <x-repeat-right-dot-inputs :multiple="true" :currentVal="isset($subModel) ? $subModel->getContributionPercentageAtYearIndex($year):0" :classes="'only-greater-than-or-equal-zero-allowed recalculate-factoring factoring-rate'" :is-percentage="true" :name="'contribution_percentage'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :multiple="true" :currentVal="isset($subModel) ? $subModel->getContributionPercentageAtYearIndex($year):0" :classes="'only-greater-than-or-equal-zero-allowed recalculate-factoring factoring-rate'" :is-percentage="true" :name="'contribution_percentages'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
                                             <x-repeat-right-dot-inputs  :multiple="true" :number-format-decimals="0" :currentVal="isset($subModel) ? $subModel->getLoanAmountPayloadAtYearIndex($year):0" :classes="'only-greater-than-or-equal-zero-allowed current-loan-input factoring-value'" :is-percentage="false" :name="'loan_amounts'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
                                             <x-repeat-right-dot-inputs :multiple="true" :currentVal="isset($subModel) ? $subModel->getFlatRateAtYearIndex($year):0" :classes="'only-greater-than-or-equal-zero-allowed '" :is-percentage="true" :name="'flat_rates'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
                                     </td>

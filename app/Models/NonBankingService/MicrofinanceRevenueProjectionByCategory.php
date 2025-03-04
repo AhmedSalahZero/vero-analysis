@@ -15,6 +15,7 @@ class  MicrofinanceRevenueProjectionByCategory extends Model
 	protected $guarded = ['id'];
 	protected $casts =[
 		'growth_rates'=>'array',
+		'loan_case_amounts'=>'array',
 		'monthly_due_cheques_percentages'=>'array',
 		'microfinance_transactions_projections'=>'array',
 	];
@@ -35,13 +36,13 @@ class  MicrofinanceRevenueProjectionByCategory extends Model
 		return 'non_banking_services.microfinance-revenue-stream-breakdown.form';
 	}
 	
-	public function getMicrofinanceTransactionProjectionAtYearIndex(int $yearIndex)
+	public function getLoanAmountsAtYearIndex(int $yearIndex)
 	{
-		return $this->getMicrofinanceTransactionProjection()[$yearIndex] ?? 0  ; 
+		return $this->getLoanAmounts()[$yearIndex] ?? 0  ; 
 	}
-	public function getMicrofinanceTransactionProjection():array 
+	public function getLoanAmounts():array 
 	{
-		return (array)$this->microfinance_transactions_projections;
+		return (array)$this->loan_case_amounts;
 	}
 	public function getGrowthRateAtYearIndex(int $yearIndex)
 	{

@@ -42,14 +42,16 @@ class MicrofinanceRevenueStreamBreakdownController extends Controller
 			foreach($currentFlatRatePerMonths as $currentMonthIndex => $currentFlatRate){
 				$pricingPerMonths[$currentMonthIndex] = Loan::convertFlatRateToDecreasingRate($currentFlatRate/100,$currentTenor);
 			}
-			dd($pricingPerMonths);
+	
 		}
+	
 		$study->storeRelationsWithNoRepeater($request,$company);
 		$study->storeRepeaterRelations($request,$this->getRepeaterRelations(),$company);
 		$study = $study->refresh();
 		$study->updateMicrofinanceMonthlyAdminFeesAmounts();
-		$study->storeFixedLoans(Study::MiCROFINANCE,'microfinanceBreakdowns','microfinanceNewPortfolioFundingStructure');
-		$study->updateExpensesOfSales();
+		$study->storeFixedLoans(Study::MiCROFINANCE,'microfinanceBreakdowns','microfinanceNewPortfolioFundingStructure',false,$pricingPerMonths);
+		$study->updateExpensesPercentagesOfSales();
+		
 		return response()->json([
 			'redirectTo'=>route('create.portfolio.mortgage.revenue.stream.breakdown',['company'=>$company->id,'study'=>$study->id])
 		]);

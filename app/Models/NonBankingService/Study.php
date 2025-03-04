@@ -715,7 +715,7 @@ use Illuminate\Support\Facades\DB;
 	 * * revenue_stream_type -> leasing , ijara .. etc
 	 * * relation name -> leasingRevenueStreamBreakdown ,
 	 */
-	public function storeFixedLoans(string $revenueStreamType ,string $relationName,$eclRelationName,bool $isSensitivity = false ):void
+	public function storeFixedLoans(string $revenueStreamType ,string $relationName,$eclRelationName,bool $isSensitivity = false  , array $pricingPerMonths = null):void
 	{
 		$loanSchedulePaymentTableName = $isSensitivity ? 'sensitivity_loan_schedule_payments' : 'loan_schedule_payments';
 		$revenueIdWitLoanAmounts = $this->{$relationName}->pluck('loan_amounts','id')->toArray() ;
@@ -751,7 +751,6 @@ use Illuminate\Support\Facades\DB;
 		}
 		DB::connection('non_banking_service')->table($loanSchedulePaymentTableName)->where('revenue_stream_type',$revenueStreamType)->where('study_id',$studyId)->delete();
 		$baseRatesMapping = HArr::getFirstOfYear($baseRatesPerMonths);
-	
 		$bankLendingMarginRates=$generalAndReserveAssumption->getBankLendingMarginRates();
 
 		
@@ -792,7 +791,7 @@ use Illuminate\Support\Facades\DB;
 						$loanType = $leasingRevenueStreamBreakdown->getLoanType();
 						$loanNature = $leasingRevenueStreamBreakdown->getLoanNature();
 						$loanService = $loanNature == 'fixed-at-end' ? $calculateFixedLoanAtEndService : $calculateFixedLoanAtBeginningService ; 
-		
+	
 						$currentPortfolioLoans=[];
 						if(is_array($baseRatesMapping)){
 							$currentPortfolioLoans=$loanService->__calculateBasedOnDiffBaseRates($baseRatesMapping ,$loanType, $currentMonth, $currentMonthlyLoanAmount,  $currentMarginRate,  $tenor, $installmentInterval,$installmentPaymentIntervalValue, $stepUp, $stepInterval ,$stepDown ,  $stepInterval ,$gracePeriod ,$monthIndex, $dateWithDateIndex ,$dateIndexWithDate);
@@ -1111,7 +1110,8 @@ use Illuminate\Support\Facades\DB;
 			self::IJARA=>__('Ijara'),
 			self::LEASING=>__('Leasing'),
 			self::REVERSE_FACTORING=>__('Reverse Factoring'),
-			self::PORTFOLIO_MORTGAGE=>__('Portfolio Mortgage')
+			self::PORTFOLIO_MORTGAGE=>__('Portfolio Mortgage'),
+			self::MiCROFINANCE => __('Microfinance')
 		];
 	}
 	
@@ -1125,9 +1125,9 @@ use Illuminate\Support\Facades\DB;
 		return $this->getStudyDurationPerMonth($datesAsStringAndIndex,$datesIndexWithYearIndex,$yearIndexWithYear,$dateIndexWithDate,$dateWithMonthNumber,false);
 		
 	}	
-	public function updateExpensesOfSales()
+	public function updateExpensesPercentagesOfSales(bool $isSensitivity = false)
 	{
-		$this->generateRelationDynamically('percentage_of_sales','Expense')->each(function($expense){
+		$this->generateRelationDynamically('percentage_of_sales','Expense')->each(function($expense) use ($isSensitivity){
 			$expenseAsPercentageEquation = new ExpenseAsPercentageEquation;
 			$percentageOf = $expense->getPercentageOf();
 			$revenueStreamTypes = $expense->getRevenueStreamTypes();
@@ -1139,7 +1139,12 @@ use Illuminate\Support\Facades\DB;
 			$isDeductible=  $expense->isDeductible();
 			$paymentTerms = $expense->getPaymentTerm();
 			$withholdTaxRate = $expense->getWithholdTaxRate();
-			$result['expense_as_percentages']=$expenseAsPercentageEquation->calculate($this->id,$percentageOf,$revenueStreamTypes,$streamCategoryIds,$startDateAsIndex,$endDateAsIndex,$monthlyPercentage,$paymentTerms,$vatRate,$isDeductible,$withholdTaxRate);
+			if($isSensitivity){
+				$result['sensitivity_expense_as_percentages']=$expenseAsPercentageEquation->calculate($this->id,$percentageOf,$revenueStreamTypes,$streamCategoryIds,$startDateAsIndex,$endDateAsIndex,$monthlyPercentage,$paymentTerms,$vatRate,$isDeductible,$withholdTaxRate,true);
+			}else{
+				$result['expense_as_percentages']=$expenseAsPercentageEquation->calculate($this->id,$percentageOf,$revenueStreamTypes,$streamCategoryIds,$startDateAsIndex,$endDateAsIndex,$monthlyPercentage,$paymentTerms,$vatRate,$isDeductible,$withholdTaxRate,false);
+				
+			}
 			$expense->update($result);
 		});
 	}
@@ -1383,7 +1388,7 @@ use Illuminate\Support\Facades\DB;
 	{
 		$adminFeesRate = $this->microfinanceAdminFeesRate;
 		$revenueProjection = $this->microfinanceRevenueProjectionByCategory ;
-		$reverseFactoringProjections = $revenueProjection->getMicrofinanceTransactionProjection();
+		$reverseFactoringProjections = $revenueProjection->getLoanAmounts();
 		$adminFeesRate->update([
 			'monthly_admin_fees_amounts'=>$this->calculateMonthlyAdminFeesAmounts($adminFeesRate->getAdminFeesRates(),$reverseFactoringProjections)
 		]);

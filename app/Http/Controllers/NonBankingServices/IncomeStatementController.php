@@ -85,10 +85,16 @@ class IncomeStatementController extends Controller
 			'title'=>__('Portfolio Mortgage'),
 		],$defaultNumericInputClasses);
 		
+
+		
 		$tableDataFormatted[0]['sub_items']['reverse-factoring']['options'] =array_merge([
 			'title'=>__('Reverse Factoring'),
 		],$defaultNumericInputClasses);
 	
+		$tableDataFormatted[0]['sub_items'][Study::MiCROFINANCE]['options'] =array_merge([
+			'title'=>__('Microfinance'),
+		],$defaultNumericInputClasses);
+		
 		$tableDataFormatted[$grossProfitOrderIndex]['main_items']['gross-profit']['options']['title'] = __('Gross Profit');
 		$tableDataFormatted[$grossProfitOrderIndex]['main_items']['% Of Revenue']['options']['title'] = __('% Of Revenue');
 		

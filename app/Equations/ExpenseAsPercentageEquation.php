@@ -7,8 +7,9 @@ use Illuminate\Support\Facades\DB;
 
 class ExpenseAsPercentageEquation
 {
-	public function calculate(int $studyId,string $percentageOf,array $revenueStreamType,array $streamCategoryIds,int $startDateAsIndex,int $endDateAsIndex,float $monthlyRate,string $paymentTermType,float $vatRate,bool $isDeductible,float $withholdTaxRate):array 
+	public function calculate(int $studyId,string $percentageOf,array $revenueStreamType,array $streamCategoryIds,int $startDateAsIndex,int $endDateAsIndex,float $monthlyRate,string $paymentTermType,float $vatRate,bool $isDeductible,float $withholdTaxRate,bool $isSensitivity = false):array 
 	{
+		$loanSchedulePaymentTableName = $isSensitivity ? 'sensitivity_loan_schedule_payments':'loan_schedule_payments';
 		$result = [];
 		if(in_array('has_leasing',$revenueStreamType) || in_array('has_ijara_mortgage',$revenueStreamType) || in_array('has_reverse_factoring',$revenueStreamType) ){
 			$calculationColumn = [
@@ -29,7 +30,7 @@ class ExpenseAsPercentageEquation
 					$selectedRevenueStreamTypes[] = Study::REVERSE_FACTORING;
 				}
 			$categoryIds = in_array('all',$streamCategoryIds) ? [] : $streamCategoryIds; 
-			$leasingLoans = DB::connection('non_banking_service')->table('loan_schedule_payments')
+			$leasingLoans = DB::connection('non_banking_service')->table($loanSchedulePaymentTableName)
 			->whereIn('revenue_stream_type',$selectedRevenueStreamTypes)
 			->where('study_id',$studyId)
 			->where('portfolio_loan_type','portfolio')

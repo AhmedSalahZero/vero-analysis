@@ -55,7 +55,7 @@ class CalculateFixedLoanAtEndService
 		return $finalResult;
 	}
 	
-	public function __calculate($previousResult ,int $indexOfLoop,string $loanType, string $startDate, float $loanAmount,  $baseRate, float $marginRate, float $tenor, string $installmentPaymentIntervalName, float $stepUpRate = 0, string $stepUpIntervalName = null, float $stepDownRate = 0, string $stepDownIntervalName = null, float $gracePeriod  = 0,$currentStartDateAsIndex=0 , int $currentDaysCount = null )
+	public function __calculate($previousResult ,int $indexOfLoop,string $loanType, string $startDate, float $loanAmount,  $baseRate, float $marginRate, float $tenor, string $installmentPaymentIntervalName, float $stepUpRate = 0, string $stepUpIntervalName = null, float $stepDownRate = 0, string $stepDownIntervalName = null, float $gracePeriod  = 0,$currentStartDateAsIndex=0 , int $currentDaysCount = null , array $pricingPerMonths = null)
 	{
 		if($loanAmount <= 0){
 			return [] ;
@@ -88,7 +88,7 @@ class CalculateFixedLoanAtEndService
 		$currentInstallmentFactor = 0 ;
 		
 		foreach($datesIndexAndDaysCount as $currentDateAsIndex => $currentDaysCount){
-			
+			$currentPricing = is_null($pricingPerMonths) ? $currentPricing : $pricingPerMonths[$currentDateAsIndex];
 				/**
 				 * * calculate Interest Loan Factor 
 				 */
@@ -138,7 +138,7 @@ class CalculateFixedLoanAtEndService
 		
 		}
 		
-		$installmentAmounts = $this->calculateInstallmentAmount($loanFactors,$installmentFactors, $stepRate, $installmentStartDateAsIndex, $endDateAsIndex, $tenor, $installmentPaymentIntervalValue, $appliedStepValue);
+		$installmentAmounts = $this->calculateInstallmentAmount($loanFactors,$installmentFactors, $stepRate, $installmentStartDateAsIndex, $endDateAsIndex, $tenor, $installmentPaymentIntervalValue, $appliedStepValue,$pricingPerMonths);
 
 		$loanScheduleResult = $this->calculateLoanScheduleResult($datesIndexAndDaysCount,$loanType, $loanAmount, $interestFactors, $installmentAmounts,$currentStartDateAsIndex);
 		
@@ -220,7 +220,7 @@ class CalculateFixedLoanAtEndService
 	}
 	
 
-	protected function calculateInstallmentAmount(array $loanFactors,array $installmentFactory, float $stepRate, int $installmentStartDateAsIndex, int $endDateAsIndex, float $tenor, int $installmentPaymentIntervalValue, int $appliedStepValue  )
+	protected function calculateInstallmentAmount(array $loanFactors,array $installmentFactory, float $stepRate, int $installmentStartDateAsIndex, int $endDateAsIndex, float $tenor, int $installmentPaymentIntervalValue, int $appliedStepValue )
 	{
 	
 		$installmentsAmounts = [];

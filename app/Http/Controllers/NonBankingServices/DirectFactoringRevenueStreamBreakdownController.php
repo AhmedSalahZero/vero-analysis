@@ -44,7 +44,7 @@ class DirectFactoringRevenueStreamBreakdownController extends Controller
 			
 			$study->updateDirectFactoryMonthlyAdminFeesAmounts();
 			$study->refreshDirectFactoringLoans();
-			$study->updateExpensesOfSales();
+			$study->updateExpensesPercentagesOfSales();
 			
 		if($studyHasDirectFactoringBreakdowns){
 			return response()->json([

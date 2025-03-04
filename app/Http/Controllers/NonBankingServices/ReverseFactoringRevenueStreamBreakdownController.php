@@ -36,7 +36,7 @@ class ReverseFactoringRevenueStreamBreakdownController extends Controller
 			$study->storeRepeaterRelations($request,$this->getRepeaterRelations(),$company);
 			$study->updateReverseFactoryMonthlyAdminFeesAmounts();
 			$study->storeVariableLoans(Study::REVERSE_FACTORING,'reverseFactoringBreakdowns','reverseFactoringNewPortfolioFundingStructure');
-			$study->updateExpensesOfSales();
+			$study->updateExpensesPercentagesOfSales();
 		return response()->json([
 			'redirectTo'=>route('create.ijara.mortgage.revenue.stream.breakdown',['company'=>$company->id , 'study'=>$study->id])
 		]);

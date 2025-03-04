@@ -35,7 +35,7 @@ class IjaraMortgageRevenueStreamBreakdownController extends Controller
 		$study->updateIjaraMortgageMonthlyAdminFeesAmounts();
 		// $loanAmounts = $study->ijaraMortgageBreakdowns->pluck('loan_amounts','id')->toArray();
 		$study->storeFixedLoans(Study::IJARA,'ijaraMortgageBreakdowns','ijaraMortgageNewPortfolioFundingStructure');
-		$study->updateExpensesOfSales();
+		$study->updateExpensesPercentagesOfSales();
 		return response()->json([
 			'redirectTo'=>route('create.portfolio.mortgage.revenue.stream.breakdown',['company'=>$company->id,'study'=>$study->id])
 		]);

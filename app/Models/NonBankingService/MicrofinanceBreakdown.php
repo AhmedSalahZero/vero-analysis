@@ -13,14 +13,18 @@ class  MicrofinanceBreakdown extends Model
 
 	protected $guarded = ['id'];
 	protected $casts =[
-		'contribution_percentage'=>'array',
+		'contribution_percentages'=>'array',
 		'decreasing_rates'=>'array',
 		'flat_rates'=>'array',
 		'loan_amounts'=>'array',
 	];
 	public function getContributionPercentageAtYearIndex(int $yearIndex)
 	{
-		return $this->contribution_percentage[$yearIndex] ?? 0  ; 
+		return $this->contribution_percentages[$yearIndex] ?? 0  ; 
+	}
+	public function getMicrofinanceProductId()
+	{
+		return $this->microfinance_product_id;
 	}
 	public function getFlatRateAtYearIndex(int $yearIndex)
 	{
@@ -79,13 +83,13 @@ class  MicrofinanceBreakdown extends Model
 	{
 		return 'fixed-at-end';
 	}
-	public function isOda()
+	public function isOda():bool
 	{
-		return false ;
+		return !(bool)$this->is_funding_by_mtl  ;
 	}
-	public function isMtl()
+	public function isMtl():bool
 	{
-		return false ;
+		return (bool)$this->is_funding_by_mtl  ;
 	}
 	
 		

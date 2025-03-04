@@ -164,16 +164,16 @@
                                     ?>
                                     <?php $__currentLoopData = $yearsWithItsMonths; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $year=>$monthsForThisYearArray): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                     <?php
-                                    $currentVal = $model->microfinanceRevenueProjectionByCategory ? $model->microfinanceRevenueProjectionByCategory->getMicrofinanceTransactionProjectionAtYearIndex($year) : 0;
+                                    $currentVal =0;
                                     ?>
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
                                              <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['readonly' => true,'removeCurrency' => true,'removeThreeDotsClass' => true,'removeThreeDots' => true,'numberFormatDecimals' => 0,'currentVal' => $currentVal,'formattedInputClasses' => '','classes' => 'only-greater-than-or-equal-zero-allowed','isPercentage' => false,'name' => 'microfinance_transactions_projects','columnIndex' => $columnIndex]]); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['readonly' => true,'removeCurrency' => true,'removeThreeDotsClass' => true,'removeThreeDots' => true,'numberFormatDecimals' => 0,'currentVal' => $currentVal,'formattedInputClasses' => '','classes' => 'only-greater-than-or-equal-zero-allowed','isPercentage' => false,'name' => '','columnIndex' => $columnIndex]]); ?>
 <?php $component->withName('repeat-right-dot-inputs'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['readonly' => true,'removeCurrency' => true,'removeThreeDotsClass' => true,'removeThreeDots' => true,'number-format-decimals' => 0,'currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($currentVal),'formattedInputClasses' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(''),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed'),'is-percentage' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('microfinance_transactions_projects'),'columnIndex' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($columnIndex)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['readonly' => true,'removeCurrency' => true,'removeThreeDotsClass' => true,'removeThreeDots' => true,'number-format-decimals' => 0,'currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($currentVal),'formattedInputClasses' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(''),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed'),'is-percentage' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(''),'columnIndex' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($columnIndex)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
@@ -203,7 +203,7 @@
                                     ?>
                                     <?php $__currentLoopData = $yearsWithItsMonths; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $year=>$monthsForThisYearArray): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                     <?php
-                                    $currentVal = $model->microfinanceRevenueProjectionByCategory ? $model->microfinanceRevenueProjectionByCategory->getMicrofinanceTransactionProjectionAtYearIndex($year) : 0;
+                                    $currentVal =0;
                                     ?>
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
@@ -243,7 +243,7 @@
                                     ?>
                                     <?php $__currentLoopData = $yearsWithItsMonths; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $year=>$monthsForThisYearArray): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                     <?php
-                                    $currentVal = $model->microfinanceRevenueProjectionByCategory ? $model->microfinanceRevenueProjectionByCategory->getMicrofinanceTransactionProjectionAtYearIndex($year) : 0;
+                                    $currentVal =  0;
                                     ?>
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
@@ -471,16 +471,17 @@
                                     ?>
                                     <?php $__currentLoopData = $yearsWithItsMonths; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $year=>$monthsForThisYearArray): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                     <?php
-                                    $currentVal = $model->microfinanceRevenueProjectionByCategory ? $model->microfinanceRevenueProjectionByCategory->getMicrofinanceTransactionProjectionAtYearIndex($year) : 0;
+                                    $currentVal = $model->microfinanceRevenueProjectionByCategory ? $model->microfinanceRevenueProjectionByCategory->getLoanAmountsAtYearIndex($year) : 0;
+							
                                     ?>
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
                                              <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['numberFormatDecimals' => 0,'currentVal' => $currentVal,'formattedInputClasses' => 'current-growth-rate-result-value-formatted','classes' => 'only-greater-than-or-equal-zero-allowed total-loans-hidden js-recalculate-equity-funding-value factoring-projection-amount recalculate-factoring current-growth-rate-result-value','isPercentage' => false,'name' => 'MicrofinanceRevenueProjectionByCategory['.'loan_case_amount'.']['.$year.']','columnIndex' => $columnIndex]]); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['numberFormatDecimals' => 0,'currentVal' => $currentVal,'formattedInputClasses' => 'current-growth-rate-result-value-formatted','classes' => 'only-greater-than-or-equal-zero-allowed total-loans-hidden js-recalculate-equity-funding-value factoring-projection-amount recalculate-factoring current-growth-rate-result-value','isPercentage' => false,'name' => 'MicrofinanceRevenueProjectionByCategory['.'loan_case_amounts'.']['.$year.']','columnIndex' => $columnIndex]]); ?>
 <?php $component->withName('repeat-right-dot-inputs'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['number-format-decimals' => 0,'currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($currentVal),'formattedInputClasses' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('current-growth-rate-result-value-formatted'),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed total-loans-hidden js-recalculate-equity-funding-value factoring-projection-amount recalculate-factoring current-growth-rate-result-value'),'is-percentage' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('MicrofinanceRevenueProjectionByCategory['.'loan_case_amount'.']['.$year.']'),'columnIndex' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($columnIndex)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['number-format-decimals' => 0,'currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($currentVal),'formattedInputClasses' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('current-growth-rate-result-value-formatted'),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed total-loans-hidden js-recalculate-equity-funding-value factoring-projection-amount recalculate-factoring current-growth-rate-result-value'),'is-percentage' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('MicrofinanceRevenueProjectionByCategory['.'loan_case_amounts'.']['.$year.']'),'columnIndex' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($columnIndex)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
@@ -509,7 +510,7 @@
                                     ?>
                                     <?php $__currentLoopData = $yearsWithItsMonths; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $year=>$monthsForThisYearArray): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                     <?php
-                                    $currentVal = $model->microfinanceRevenueProjectionByCategory ? $model->microfinanceRevenueProjectionByCategory->getMicrofinanceTransactionProjectionAtYearIndex($year) : 0;
+                                    $currentVal =  0;
                                     ?>
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
@@ -702,11 +703,11 @@
 
                                     <td>
                            				  <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.select','data' => ['required' => true,'label' => '','pleaseSelect' => false,'selectedValue' => isset($subModel) ? $subModel->getInstallmentInterval() : 'monthly','options' => $microfinanceProductsFormatted,'addNew' => false,'class' => 'select2-select  repeater-select  ','all' => false,'name' => 'installment_interval']]); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.select','data' => ['required' => true,'label' => '','pleaseSelect' => false,'selectedValue' => isset($subModel) ? $subModel->getMicrofinanceProductId() : '','options' => $microfinanceProductsFormatted,'addNew' => false,'class' => 'select2-select  repeater-select  ','all' => false,'name' => 'microfinance_product_id']]); ?>
 <?php $component->withName('form.select'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['required' => true,'label' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(''),'pleaseSelect' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'selectedValue' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(isset($subModel) ? $subModel->getInstallmentInterval() : 'monthly'),'options' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($microfinanceProductsFormatted),'add-new' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'class' => 'select2-select  repeater-select  ','all' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'name' => 'installment_interval']); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['required' => true,'label' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(''),'pleaseSelect' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'selectedValue' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(isset($subModel) ? $subModel->getMicrofinanceProductId() : ''),'options' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($microfinanceProductsFormatted),'add-new' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'class' => 'select2-select  repeater-select  ','all' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'name' => 'microfinance_product_id']); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
@@ -749,14 +750,14 @@
                          </label>
                          <label class="kt-radio kt-radio--success text-black font-size-18px font-weight-bold">
 
-                             <input type="radio" value="1" name="is_active" <?php if(isset($subModel) && $subModel->isMtl()): ?> checked <?php endif; ?>
+                             <input type="radio" value="1" name="is_funding_by_mtl" <?php if(isset($subModel) && $subModel->isMtl()): ?> checked <?php endif; ?>
                              > <?php echo e(__('MTLs')); ?>
 
                              <span></span>
                          </label>
 
                          <label class="kt-radio kt-radio--danger text-black font-size-18px font-weight-bold">
-                             <input type="radio" value="0" name="is_active" <?php if(isset($subModel) && $subModel->isOda()): ?> checked <?php endif; ?>
+                             <input type="radio" value="0" name="is_funding_by_mtl" <?php if(isset($subModel) && $subModel->isOda()): ?> checked <?php endif; ?>
                              > <?php echo e(__('ODAs')); ?>
 
                              <span></span>
@@ -807,20 +808,18 @@
                                     $columnIndex = 0 ;
                                     ?>
                                     <?php $__currentLoopData = $yearsWithItsMonths; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $year=>$monthsForThisYearArray): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                
                                     <td>
                                              <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['multiple' => true,'currentVal' => isset($subModel) ? $subModel->getContributionPercentageAtYearIndex($year):0,'classes' => 'only-greater-than-or-equal-zero-allowed recalculate-factoring factoring-rate','isPercentage' => true,'name' => 'contribution_percentage','columnIndex' => $columnIndex]]); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['multiple' => true,'currentVal' => isset($subModel) ? $subModel->getContributionPercentageAtYearIndex($year):0,'classes' => 'only-greater-than-or-equal-zero-allowed recalculate-factoring factoring-rate','isPercentage' => true,'name' => 'contribution_percentages','columnIndex' => $columnIndex]]); ?>
 <?php $component->withName('repeat-right-dot-inputs'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['multiple' => true,'currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(isset($subModel) ? $subModel->getContributionPercentageAtYearIndex($year):0),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed recalculate-factoring factoring-rate'),'is-percentage' => true,'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('contribution_percentage'),'columnIndex' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($columnIndex)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['multiple' => true,'currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(isset($subModel) ? $subModel->getContributionPercentageAtYearIndex($year):0),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed recalculate-factoring factoring-rate'),'is-percentage' => true,'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('contribution_percentages'),'columnIndex' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($columnIndex)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
-                                       
                                              <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['multiple' => true,'numberFormatDecimals' => 0,'currentVal' => isset($subModel) ? $subModel->getLoanAmountPayloadAtYearIndex($year):0,'classes' => 'only-greater-than-or-equal-zero-allowed current-loan-input factoring-value','isPercentage' => false,'name' => 'loan_amounts','columnIndex' => $columnIndex]]); ?>
 <?php $component->withName('repeat-right-dot-inputs'); ?>

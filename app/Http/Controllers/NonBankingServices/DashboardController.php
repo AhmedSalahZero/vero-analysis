@@ -44,7 +44,7 @@ class DashboardController extends Controller
 	protected function generateDashboardData(Study $study , Company $company , bool $isSensitivity = false ):array 
 	{
 		$loanSchedulePaymentTableName =  $isSensitivity ? 'sensitivity_loan_schedule_payments' : 'loan_schedule_payments';
-		
+		$percentageOfSalesColumnName = $isSensitivity ? 'sensitivity_expense_as_percentages' : 'expense_as_percentages';
 		$yearIndexWithYear = app('yearIndexWithYear');
 		$corporateTaxes = $study->getCorporateTaxesRate() / 100 ;
 		// $startDate = $study->getStudyStartDate();
@@ -119,10 +119,11 @@ class DashboardController extends Controller
 		$salaryExpenses = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('departments')
 		->join('positions','positions.department_id','=','departments.id')
 		->selectRaw('expense_type,salary_expenses,expense_type')->where('type','manpower')->where('departments.study_id',$study->id)->get() ;
-		$expenses = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('expenses')->selectRaw('expense_category,name,relation_name,monthly_repeating_amounts,expense_as_percentages,payload')->where('model_id',$study->id)->where('model_name','Study')->get()->toArray();
+		
+		$expenses = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('expenses')->selectRaw('expense_category,name,relation_name,monthly_repeating_amounts,expense_as_percentages,sensitivity_expense_as_percentages,payload')->where('model_id',$study->id)->where('model_name','Study')->get()->toArray();
 		$columnPerTypes = [
 			'one_time_expense'=>'payload',
-			'percentage_of_sales'=>'expense_as_percentages',
+			'percentage_of_sales'=>$percentageOfSalesColumnName,
 			'fixed_monthly_repeating_amount'=>'monthly_repeating_amounts',
 		];
 		$salaryExpensesForCategory = [];
@@ -231,7 +232,6 @@ class DashboardController extends Controller
 			$sensitivityFormattedResult = $sensitivityDashboardData['formattedResult'];
 			$sensitivityFormattedExpenses = $sensitivityDashboardData['formattedExpenses'];
 		}
-		
 		return view('non_banking_services.dashboard.dashboard',
 	[
 		// 'startDate'=>$startDate,

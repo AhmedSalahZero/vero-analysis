@@ -6,8 +6,10 @@ use App\Helpers\HDate;
 use App\Http\Controllers\FinancialStatementController;
 use App\Jobs\TestJob1;
 use App\Jobs\TestJob2;
+use App\Models\Company;
 use App\Models\FinancialStatement;
 use App\Models\IncomeStatement;
+use App\Models\NonBankingService\Department;
 use App\Models\NonBankingService\Study;
 use App\Models\Partner;
 use App\ReadyFunctions\OldLoan;
@@ -16,6 +18,7 @@ use App\Services\AI\PredictionErrorQualityMeasures\MeanAbsoluteError;
 use App\Services\AI\PredictionErrorQualityMeasures\MeanAbsolutePercentageError;
 use App\Services\AI\PredictionErrorQualityMeasures\RootMeanSquaredPercentageError;
 use Carbon\Carbon;
+use DateTime;
 use Illuminate\Console\Command;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
@@ -135,6 +138,45 @@ class TestCommand extends Command
 	}
 	public function handle()
 	{
+		
+		// $department = Department::create([
+		// 	'name'=>'test_d',
+		// 	'no_position'=>1 ,
+		// 	'type'=>'test_type',
+		// 	'expense_type'=>'expense_type',
+		// 	'study_id'=>Study::first()->id ,
+		// 	'company_id'=>Company::first()->id
+		// ]);
+		// $department->load('positions');
+		// $department->positions()->create([
+		// 	'name'=>'p',
+		// 	'department_id'=>$department->id ,
+		// 	'existing_count'=>2,
+		// 	'monthly_net_salary'=>1000 ,
+		// 	'hiring_counts'=>[1,2,3],
+		// 	'study_id'=>Study::first()->id ,
+		// 	'company_id'=>Company::first()->id
+		// ]);
+		// dd($department->positions);
+		
+// 		$dateAsString ='2025-01-01';
+// $a = 12;
+// $prices = [100,200,300,400,500,600,700,800,900,1000,1100,1200];
+// $quantities = [1,2,3,4,5,6,7,8,9,10,11,12];
+
+// for ($i=0; $i <$a ; $i++) { 
+
+// $date = new DateTime($dateAsString);
+
+// $date->modify(+$i.'month');
+// $value = $prices[$i] * $quantities[$i]	;
+// $dates[$date->format('Y-m-d')] =$value;
+
+// }
+
+// print_r ($dates);
+
+		
 		// foreach([48,47,49] as $studyId){
 		// 	Artisan::call('delete:study',['study_id'=>$studyId]);
 		// }

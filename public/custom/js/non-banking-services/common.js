@@ -65,11 +65,10 @@ $(document).on('change', 'select.revenue-stream-type-js', function () {
 	const companyId = $('body').attr('data-current-company-id')
 	const lang = $('body').attr('data-lang')
 	const url = '/' + lang + '/' + companyId + '/non-banking-financial-services/study/' + studyId + '/get-stream-category-based-on-revenue-stream'
-
 	if (revenueStreams.length) {
-		streamCategoryElement = $(that).closest('tr').find('select.stream-category-class')
+		var streamCategoryElement = $(that).closest('tr').find('select.stream-category-class')
 		var currentSelected = $(streamCategoryElement).attr('data-current-selected-items') ? JSON.parse($(streamCategoryElement).attr('data-current-selected-items')) : null
-
+	//	console.log(that,$(that).closest('tr')[0],$(that).closest('tr').find('select.stream-category-class')[0],streamCategoryElement[0])
 		$.ajax({
 			url,
 			data: {
@@ -83,7 +82,7 @@ $(document).on('change', 'select.revenue-stream-type-js', function () {
 					selected = 'selected'
 				}
 				options += `<option ${selected} value="all">All</option>`
-
+				
 				for (id in res.result) {
 					var title = res.result[id]
 					selected = ''
