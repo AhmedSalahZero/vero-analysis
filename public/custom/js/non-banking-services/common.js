@@ -68,7 +68,6 @@ $(document).on('change', 'select.revenue-stream-type-js', function () {
 	if (revenueStreams.length) {
 		var streamCategoryElement = $(that).closest('tr').find('select.stream-category-class')
 		var currentSelected = $(streamCategoryElement).attr('data-current-selected-items') ? JSON.parse($(streamCategoryElement).attr('data-current-selected-items')) : null
-	//	console.log(that,$(that).closest('tr')[0],$(that).closest('tr').find('select.stream-category-class')[0],streamCategoryElement[0])
 		$.ajax({
 			url,
 			data: {
@@ -114,8 +113,6 @@ $(document).on('change', '[js-recalculate-equity-funding-value]', function () {
 	const equityFundingRate = $('.equity-funding-rates[data-column-index="' + columnIndex + '"]').val()
 	let equityFundingValue = equityFundingRate / 100 * total
 	let newLoanFundingValue = (1 - (equityFundingRate / 100)) * total
-//	console.log(equityFundingValue, columnIndex)
-//	console.log($('input.equity-funding-formatted-value-class[data-column-index="' + columnIndex + '"]').length)
 	$('input.equity-funding-formatted-value-class[data-column-index="' + columnIndex + '"]').val(number_format(equityFundingValue)).trigger('change')
 	$('input.new-loans-funding-formatted-value-class[data-column-index="' + columnIndex + '"]').val(number_format(newLoanFundingValue)).trigger('change')
 })
@@ -131,10 +128,14 @@ function getEndOfMonth(year, month) {
 }
 $(document).on('change', '.recalculate-factoring', function () {
 	const index = parseInt($(this).attr('data-column-index'))
-	const rowIndex = $('.factoring-rate[data-column-index="' + index + '"]').closest('[data-repeater-item]').index()
+	// const rowIndex = $('.factoring-rate[data-column-index="' + index + '"]').closest('[data-repeater-item]').index()
 	var value = $('.factoring-projection-amount[data-column-index="' + index + '"]').val()
+	
 	$('.factoring-rate[data-column-index="' + index + '"]').each(function(currentIndex,rateElement){
 		var rate = $(rateElement).val()
+		console.log('rate=',rate,rateElement,index);
+		var numberOfDecimals = $(rateElement).closest('tr').find('.factoring-value[data-column-index="' + index + '"]').closest('.input-hidden-parent').find('.repeat-to-right-input-formatted').attr('data-number-of-decimals');
+		$(rateElement).closest('tr').find('.factoring-value[data-column-index="' + index + '"]').closest('.input-hidden-parent').find('.repeat-to-right-input-formatted').val(number_format(rate / 100 * value,numberOfDecimals));
 		$(rateElement).closest('tr').find('.factoring-value[data-column-index="' + index + '"]').val(rate / 100 * value).trigger('change')
 	})
 })
@@ -173,13 +174,18 @@ $('select.js-update-positions-for-department').trigger('change')
 $(document).on('change', '.is-percentage-from-total,.is-percentage-total-of', function () {
 	let commonClass = $(this).attr('data-common-percentage-of-class')
 	let columnIndex = $(this).attr('data-column-index')
-	let percentage = $('.is-percentage-from-total[data-common-percentage-of-class="' + commonClass + '"][data-column-index="' + columnIndex + '"]').val()
+	
+	
 	let totalOfAmount = $('.is-percentage-total-of[data-common-percentage-of-class="' + commonClass + '"][data-column-index="' + columnIndex + '"]').val()
 	let currentRow = $(this).closest('tr')
 	let tableRows = $(this).closest('table').find('tbody tr')
 	let rowIndex = $(tableRows).index(currentRow)
+	let percentage = $('.is-percentage-from-total[data-common-percentage-of-class="' + commonClass + '"][data-column-index="' + columnIndex + '"]').eq(rowIndex).val()
 	let result = percentage / 100 * totalOfAmount
-	$('.is-result-total-of[data-common-percentage-of-class="' + commonClass + '"][data-column-index="' + columnIndex + '"]').eq(rowIndex).val(result)
+	let resultRow = $('.is-result-total-of[data-common-percentage-of-class="' + commonClass + '"][data-column-index="' + columnIndex + '"]').eq(rowIndex);
+	let numberOfDecimals = resultRow.closest('.input-hidden-parent').find('.copy-value-to-his-input-hidden[data-column-index="' + columnIndex + '"]').attr('data-number-of-decimals')
+	resultRow.closest('.input-hidden-parent').find('.copy-value-to-his-input-hidden[data-column-index="' + columnIndex + '"]').val(number_format(result, numberOfDecimals)).val(result)
+	resultRow.val(result);
 })
 
 
@@ -233,16 +239,13 @@ $(document).on('change', '.recalculate-gr', function () {
 	const nextColumnIndex=columnIndex+1;
 	const growthRateOfCurrentYear = $('.gr-field[data-column-index="' + columnIndex + '"]').val()
 	
-	//console.log(loanAmount,growthRateOfCurrentYear);
 	
 		
 		allElements = $('.current-growth-rate-result-value-formatted[data-column-index="' + columnIndex + '"]') ;
 		allElements.each(function (index, element) {
 			const loanAmount = $(element).closest('tr').find('.current-growth-rate-result-value[data-column-index="' + previousColumnIndex + '"]').val()
-		//	console.log(loanAmount)
 			if(loanAmount != undefined){
 				currentAmount = (1 + (growthRateOfCurrentYear / 100)) * loanAmount
-		//		console.log(currentAmount);
 				$(element).val(number_format(currentAmount)).trigger('change')
 			}
 		

@@ -1,47 +1,48 @@
-@extends('layouts.dashboard')
-@section('Title')
+
+<?php $__env->startSection('Title'); ?>
 <style>
 tbody td{
 	font-weight:bold;
 	color:black !important ;
 }
 </style>
-
-
-    <link rel="stylesheet" type="text/css"
-        href="https://cdn.datatables.net/v/dt/jszip-2.5.0/dt-1.12.1/af-2.4.0/b-2.2.3/b-colvis-2.2.3/b-html5-2.2.3/b-print-2.2.3/cr-1.5.6/date-1.1.2/fc-4.1.0/fh-3.2.4/kt-2.7.0/r-2.3.0/rg-1.2.0/rr-1.2.8/sc-2.0.7/sb-1.3.4/sp-2.0.2/sl-1.4.0/sr-1.1.1/datatables.min.css" />
-
 <span class="kt-portlet__head-icon">
-    <i class="kt-font-brand flaticon2-line-chart fa-fw flaticon-house-sketch pull-{{__('left')}}"></i>
-    {{ __('Loan Calculator') . ' ( ' .str_to_upper(Request()->segments()[count(Request()->segments())-1]) . ' )'}}
-</span>
-@endsection
+    <i class="kt-font-brand flaticon2-line-chart fa-fw flaticon-house-sketch pull-<?php echo e(__('left')); ?>"></i>
+    <?php echo e(__('Loan Calculator') . ' ( ' .str_to_upper(Request()->segments()[count(Request()->segments())-1]) . ' )'); ?>
 
-@section('content')
-@if(isset($storeByAjax) && $storeByAjax)
+</span>
+<?php $__env->stopSection(); ?>
+<?php $__env->startSection('css'); ?>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/jszip-2.5.0/dt-1.12.1/af-2.4.0/b-2.2.3/b-colvis-2.2.3/b-html5-2.2.3/b-print-2.2.3/cr-1.5.6/date-1.1.2/fc-4.1.0/fh-3.2.4/kt-2.7.0/r-2.3.0/rg-1.2.0/rr-1.2.8/sc-2.0.7/sb-1.3.4/sp-2.0.2/sl-1.4.0/sr-1.1.1/datatables.min.css"/>
+
+<?php $__env->stopSection(); ?>
+
+
+
+<?php $__env->startSection('content'); ?>
+<?php if(isset($storeByAjax) && $storeByAjax): ?>
 <input type="hidden" id="store-by-ajax">
-<input type="hidden" id="loanTypeId" value="{{ $loanType }}">
+<input type="hidden" id="loanTypeId" value="<?php echo e($loanType); ?>">
 <input type="hidden" id="page-is-loading">
 
-@endif
-@if(isset($triggerClick))
+<?php endif; ?>
+<?php if(isset($triggerClick)): ?>
 <input type="hidden" id="trigger_click" value="1">
-@endif 
-
-
+<?php endif; ?> 
 <!-- end::Sticky Toolbar -->
 <div class="kt-portlet">
-    @if(Session::has('success'))
+    <?php if(Session::has('success')): ?>
     <div class="alert alert-success">
         <ul>
-            <li>{{Session::get('success')}}</li>
+            <li><?php echo e(Session::get('success')); ?></li>
         </ul>
     </div>
-    @endif
+    <?php endif; ?>
 </div>
 
-<form class="kt-form kt-form--label-right" id="create-form" method="POST" action="{{ route('loan2.store',['company' => $company->id]) }}">
-    {{ csrf_field() }}
+<form class="kt-form kt-form--label-right" id="create-form" method="POST" action="<?php echo e(route('loan2.store',['company' => $company->id])); ?>">
+    <?php echo e(csrf_field()); ?>
+
 
 
     <div class="kt-portlet">
@@ -49,60 +50,51 @@ tbody td{
 
 
             <div class="row">
-
-                     @if(isset($longTermFunding))
-
-                        <input type="hidden" name="company_id" value="{{$longTermFunding->company_id}}">
-                        <input type="hidden" name="financial_id" value="{{$longTermFunding->financial_id}}">
-                        <input type="hidden" name="long_term_funding_id" value="{{$longTermFunding->id}}">
-                                    @elseif(Request()->has('financial_id'))
-
-                         <input type="hidden" name="company_id" value="{{Request()->segment(3)}}">
-                        <input type="hidden" name="financial_id" value="{{Request()->get('financial_id')}}">
-
-                        @endif 
-
-
-                @if($type =='fixed')
-
+                <?php if($type =='fixed'): ?>
                 <div class="col-md-4 item-main-parent">
                     <div class="form-group validated">
-                        <label class="col-form-label take">{{__('Fixed Loan Type')}}</label><span class="astric">*</span>
+                        <label class="col-form-label take"><?php echo e(__('Fixed Loan Type')); ?></label><span class="astric">*</span>
                         <div class="form-group-sub">
                             <select name="fixed_loan_type" id="fixed_loan_type" class="form-control">
-                                @foreach(getFixedLoanTypes() as $fixedType)
-                                <option value="{{ $fixedType }}" {{ @old('fixed_loan_type') == $fixedType ? 'selected' : '' }}>{{str_to_upper($fixedType)}}</option>
-                                @endforeach
+                                <?php $__currentLoopData = getFixedLoanTypes(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $fixedType): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <option value="<?php echo e($fixedType); ?>" <?php echo e(@old('fixed_loan_type') == $fixedType ? 'selected' : ''); ?>
+
+                                
+                                <?php echo e(isset($loan) && ($loan->fixedType == $fixedType) ? 'selected' : ''); ?>
+
+                                
+                                ><?php echo e(str_to_upper($fixedType)); ?></option>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </select>
-                            @if ($errors->has('installment_interval'))
-                            <div class="invalid-feedback">{{ $errors->first('fixed_loan_type') }}</div>
-                            @endif
+                            <?php if($errors->has('installment_interval')): ?>
+                            <div class="invalid-feedback"><?php echo e($errors->first('fixed_loan_type')); ?></div>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
 
-                {{-- </div> --}}
-
-                @endif
+                <?php endif; ?>
 
 
                 <div class="col-md-4 item-main-parent">
                     <div class="form-group validated">
-                        <label class="col-form-label take">{{__('Loan Start Date')}}
+                        <label class="col-form-label take"><?php echo e(__('Loan Start Date')); ?>
+
                             <span class="astric">*</span>
 
                         </label>
                         <div class="form-group-sub">
                             <input
-                              @if(isset($longTermFunding) && $longTermFunding->date)
-                            value="{{\Carbon\Carbon::make($longTermFunding->date)->format('Y-m-d')}}"
-                            readonly
-                            @elseif(Request()->has('date'))
-                            value="{{\Carbon\Carbon::make(Request()->get('date'))->format('Y-m-d')}}"
-                            readonly
-                            @endif 
 
-                             required type="date" id="start-date" name="start_date" class="form-control number interval-calcs" placeholder="{{__('Loan Start Date')}} {{__('Autoload')}}  .." />
+                            <?php if(isset($longTermFunding) && $longTermFunding->date  ): ?>
+                            value="<?php echo e(\Carbon\Carbon::make($longTermFunding->date)->format('Y-m-d')); ?>"
+                            
+                            readonly
+                            <?php elseif(Request()->has('date')): ?>
+                            value="<?php echo e(\Carbon\Carbon::make(Request()->get('date'))->format('Y-m-d')); ?>"
+                            readonly
+                            <?php endif; ?> 
+                             required type="date" id="start-date" name="start_date" class="form-control number interval-calcs" placeholder="<?php echo e(__('Loan Start Date')); ?> <?php echo e(__('Autoload')); ?>  .." />
                         </div>
                     </div>
                 </div>
@@ -111,52 +103,63 @@ tbody td{
                 <div class="col-md-4 item-main-parent">
                     <div class="form-group validated">
                         <label class="col-form-label take">
-                            {{__('Loan Amount')}}
+                            <?php echo e(__('Loan Amount')); ?>
+
                             <span class="astric">*</span>
                         </label>
+                        <?php if(isset($longTermFunding)): ?>
+                        <input type="hidden" name="company_id" value="<?php echo e($longTermFunding->company_id); ?>">
+                        <input type="hidden" name="financial_id" value="<?php echo e($longTermFunding->financial_id); ?>">
+                        <input type="hidden" name="long_term_funding_id" value="<?php echo e($longTermFunding->id); ?>">
+
+                         <?php elseif(Request()->has('financial_id')): ?>
+                        <input type="hidden" name="long_term_funding_id" value="<?php echo e($longTermFunding ? $longTermFunding->id : Request('long_term_funding_id')); ?>">
+                         <input type="hidden" name="company_id" value="<?php echo e(Request()->segment(3)); ?>">
+                        <input type="hidden" name="financial_id" value="<?php echo e(Request()->get('financial_id')); ?>">
+
+                        <?php endif; ?> 
+
+                       
                         <div class="form-group-sub">
                             <input
-                                  @if(isset($longTermFunding) && $longTermFunding->long_term_banking_facility_amount)
+                            <?php if(isset($longTermFunding) && $longTermFunding->long_term_banking_facility_amount): ?>
 
-                            value="{{$longTermFunding->long_term_banking_facility_amount}}"
+                            value="<?php echo e($longTermFunding->long_term_banking_facility_amount); ?>"
                             readonly
-                             @elseif(Request()->has('current_amount'))
-                                value="{{ Request()->get('current_amount') }}"
+                            <?php elseif(Request()->has('current_amount')): ?>
+                                value="<?php echo e(Request()->get('current_amount')); ?>"
                             readonly
 
-                            @else
-                                value="{{ @old('loan_amount') }}"
+                            <?php else: ?>
+                                value="<?php echo e(@old('loan_amount')); ?>"
 
-                            @endif 
-
-                             type="number" step="any" id="loan_amount" name="loan_amount"  class="form-control number" placeholder="{{__('Loan Amount')}} .." required />
-                            @if ($errors->has('loan_amount'))
-                            <div class="invalid-feedback">{{ $errors->first('loan_amount') }}</div>
-                            @endif
+                            <?php endif; ?> 
+                            
+                             type="number" step="any" id="loan_amount" name="loan_amount" class="form-control number" placeholder="<?php echo e(__('Loan Amount')); ?> .." required />
+                            <?php if($errors->has('loan_amount')): ?>
+                            <div class="invalid-feedback"><?php echo e($errors->first('loan_amount')); ?></div>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
 
-                @if($type == 'fixed')
+                <?php if($type == 'fixed'): ?>
                 <div class="col-md-4 item-main-parent">
                     <div class="form-group validated">
                         <label class="col-form-label take">
-                            {{__('Base Rate % ')}}
+                            <?php echo e(__('Base Rate % ')); ?>
+
                             <span class="astric">*</span>
                         </label>
                         <div class="form-group-sub">
                             <input 
-                              @if($loan && $loan->base_rate)
-                                value="{{$loan->base_rate ?: old('base_rate') }}"
-                            
-                               @else 
-                                value="{{ @old('base_rate') }}"
-                             @endif 
-
-                            type="number" step="any" id="base_rate" name="base_rate"  class="form-control number pricing-calc-item" placeholder="{{__('Base Rate')}} .." required />
-                            @if ($errors->has('base_rate'))
-                            <div class="invalid-feedback">{{ $errors->first('base_rate') }}</div>
-                            @endif
+                            <?php if($loan && $loan->base_rate): ?>
+                            value="<?php echo e($loan->base_rate ?: old('base_rate')); ?>"
+                            <?php endif; ?> 
+                            type="number" step="any" id="base_rate" name="base_rate" class="form-control number pricing-calc-item" placeholder="<?php echo e(__('Base Rate')); ?> .." required />
+                            <?php if($errors->has('base_rate')): ?>
+                            <div class="invalid-feedback"><?php echo e($errors->first('base_rate')); ?></div>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -165,22 +168,19 @@ tbody td{
                 <div class="col-md-4 item-main-parent">
                     <div class="form-group validated">
                         <label class="col-form-label take">
-                            {{__('Margin Rate % ')}}
+                            <?php echo e(__('Margin Rate % ')); ?>
+
                             <span class="astric">*</span>
                         </label>
                         <div class="form-group-sub">
-                            <input 
-                             @if($loan && $loan->margin_rate)
-                                value="{{$loan->margin_rate ?: old('margin_rate') }}"
-                            
-                               @else 
-                                value="{{ @old('margin_rate') }}"
-                             @endif 
-
-                            type="number" step="any" id="margin_rate" name="margin_rate" class="form-control number pricing-calc-item" placeholder="{{__('Margin Rate')}} .." required />
-                            @if ($errors->has('margin_rate'))
-                            <div class="invalid-feedback">{{ $errors->first('margin_rate') }}</div>
-                            @endif
+                            <input
+                              <?php if($loan && $loan->margin_rate): ?>
+                              value="<?php echo e($loan->margin_rate ?: old('margin_rate')); ?>"
+                              <?php endif; ?> 
+                             type="number" step="any" id="margin_rate" name="margin_rate"  class="form-control number pricing-calc-item" placeholder="<?php echo e(__('Margin Rate')); ?> .." required />
+                            <?php if($errors->has('margin_rate')): ?>
+                            <div class="invalid-feedback"><?php echo e($errors->first('margin_rate')); ?></div>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -190,45 +190,47 @@ tbody td{
                 <div class="col-md-4 item-main-parent">
                     <div class="form-group validated">
                         <label class="col-form-label take">
-                            {{__('Pricing %')}}
-                            {{-- <span class="astric">*</span> --}}
+                            <?php echo e(__('Pricing %')); ?>
+
+                            
                         </label>
                         <div class="form-group-sub">
                             <input
-                            @if($loan && $loan->pricing)
-                                value="{{$loan->pricing ?: old('pricing') }}"
+                               <?php if($loan && $loan->pricing): ?>
+                                value="<?php echo e($loan->pricing ?: old('pricing')); ?>"
                             
-                               @else 
-                                value="{{ @old('pricing') }}"
-                             @endif 
+                               <?php else: ?> 
+                                value="<?php echo e(@old('pricing')); ?>"
+                             <?php endif; ?> 
 
-                             disabled type="number" step="any" min="0" id="pricing" name="pricing" class="form-control number pricing-calc-item" placeholder="{{__('Pricing')}} .." required />
-                            @if ($errors->has('pricing'))
-                            <div class="invalid-feedback">{{ $errors->first('pricing') }}</div>
-                            @endif
+                             disabled type="number" step="any" min="0" id="pricing" name="pricing"  class="form-control number pricing-calc-item" placeholder="<?php echo e(__('Pricing')); ?> .." required />
+                            <?php if($errors->has('pricing')): ?>
+                            <div class="invalid-feedback"><?php echo e($errors->first('pricing')); ?></div>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
 
-                @if($type =='fixed')
+                <?php if($type =='fixed'): ?>
                 <div class="col-md-4 item-main-parent">
                     <div class="form-group validated">
                         <label class="col-form-label take">
-                            {{__('Tenor (Duration In Months) ')}}
+                            <?php echo e(__('Tenor (Duration In Months) ')); ?>
+
                         </label><span class="astric">*</span>
                         <div class="form-group-sub">
                             <input 
-                             @if($loan && $loan->duration)
-                                value="{{$loan->duration ?: old('duration') }}"
-                            
-                               @else 
-                                value="{{ @old('duration') }}"
-                             @endif 
+                             <?php if($loan && $loan->duration): ?>
+                                value="<?php echo e($loan->duration ?: old('duration')); ?>"
+                      
+                               <?php else: ?> 
+                                value="<?php echo e(@old('duration')); ?>"
+                             <?php endif; ?> 
 
-                            type="number" step="1" min="1" id="duration" name="duration" class="form-control number grace_period_calc max-tenor-limit  installment_condition" placeholder="{{__('Duration In Months')}} .." required />
-                            @if ($errors->has('duration'))
-                            <div class="invalid-feedback">{{ $errors->first('duration') }}</div>
-                            @endif
+                            type="number" step="1" min="1" max="600" id="duration" name="duration"  class="form-control number  grace_period_calc max-tenor-limit installment_condition" placeholder="<?php echo e(__('Duration In Months')); ?> .." required />
+                            <?php if($errors->has('duration')): ?>
+                            <div class="invalid-feedback"><?php echo e($errors->first('duration')); ?></div>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -236,22 +238,22 @@ tbody td{
                 <div class="col-md-4 item-main-parent" style="display: none">
                     <div class="form-group validated">
                         <label class="col-form-label take">
-                            {{__('Grace Period')}} ( {{__('Months')}} )
+                            <?php echo e(__('Grace Period')); ?> ( <?php echo e(__('Months')); ?> )
                             <span class="astric">*</span>
                         </label>
                         <div class="form-group-sub">
                             <input 
-                             @if($loan && $loan->grace_period)
-                                value="{{$loan->grace_period ?: old('grace_period') }}"
+                             <?php if($loan && $loan->grace_period): ?>
+                                value="<?php echo e($loan->grace_period ?: old('grace_period')); ?>"
                             
-                               @else 
-                                value="{{ @old('grace_period') }}"
-                             @endif 
+                               <?php else: ?> 
+                                value="<?php echo e(@old('grace_period')); ?>"
+                             <?php endif; ?> 
 
-                            type="text" step="any" id="grace_periodid" name="grace_period"  class="form-control number grace-period-class grace_period_calc installment_condition" placeholder="{{__('Grace Period')}} .." />
-                            @if ($errors->has('grace_period'))
-                            <div class="invalid-feedback">{{ $errors->first('grace_period') }}</div>
-                            @endif
+                            type="text" step="any" id="grace_periodid" name="grace_period" class="form-control number  grace-period-class grace_period_calc installment_condition" placeholder="<?php echo e(__('Grace Period')); ?> .." />
+                            <?php if($errors->has('grace_period')): ?>
+                            <div class="invalid-feedback"><?php echo e($errors->first('grace_period')); ?></div>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -259,27 +261,30 @@ tbody td{
 
                 <div class="col-md-4 item-main-parent" style="display: none">
                     <div class="form-group validated">
-                        <label class="col-form-label take">{{__('Capitalization Type')}}</label>
+                        <label class="col-form-label take"><?php echo e(__('Capitalization Type')); ?></label>
                         <div class="form-group-sub">
                             <select disabled name="capitalization_type" id="capitalization_type" class="form-control">
-                                <option
-                                        @if($loan && $loan->capitalization_type == 'with_capitalization')
+                                <option value="with_capitalization" <?php echo e(@old('capitalization_type') == 'with_capitalization' ? 'selected' : ''); ?>
+
+                                
+                                          <?php if($loan && $loan->capitalization_type == 'with_capitalization'): ?>
                             selected
                  
-                             @endif 
+                             <?php endif; ?> 
 
-                                 value="with_capitalization" {{ @old('capitalization_type') == 'with_capitalization' ? 'selected' : '' }}>{{__('With Capitalization')}}</option>
-                                <option
-                                    @if($loan && $loan->capitalization_type == 'without_capitalization')
+                                ><?php echo e(__('With Capitalization')); ?></option>
+                                <option 
+                                    <?php if($loan && $loan->capitalization_type == 'without_capitalization'): ?>
                             selected
                  
-                             @endif 
+                             <?php endif; ?> 
 
-                                 value="without_capitalization" {{ @old('capitalization_type') == 'without_capitalization' ? 'selected' : '' }}>{{__('Without Capitalization')}}</option>
+                                
+                                value="without_capitalization" <?php echo e(@old('capitalization_type') == 'without_capitalization' ? 'selected' : ''); ?>><?php echo e(__('Without Capitalization')); ?></option>
                             </select>
-                            @if ($errors->has('capitalization_type'))
-                            <div class="invalid-feedback">{{ $errors->first('capitalization_type') }}</div>
-                            @endif
+                            <?php if($errors->has('capitalization_type')): ?>
+                            <div class="invalid-feedback"><?php echo e($errors->first('capitalization_type')); ?></div>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -288,36 +293,35 @@ tbody td{
 
                 <div class="col-md-4 item-main-parent">
                     <div class="form-group validated">
-                        <label class="col-form-label take">{{__('Installment Payment Interval')}}</label><span class="astric">*</span>
+                        <label class="col-form-label take"><?php echo e(__('Installment Payment Interval')); ?></label><span class="astric">*</span>
                         <div class="form-group-sub">
                             <select name="installment_interval" id="installment_interval" class="form-control installment_condition">
-                                <option value="" selected disabled>{{__('Select')}} ..</option>
-                                <option 
-                                
-                                @if($loan && $loan->installment_interval == 'monthly')
+                                <option value="" selected disabled><?php echo e(__('Select')); ?> ..</option>
+                                <option
+                                  <?php if($loan && $loan->installment_interval == 'monthly'): ?>
                             selected
                  
-                             @endif 
+                             <?php endif; ?> 
 
-                                 value="monthly" {{ @old('installment_interval') == 'monthly' ? 'selected' : '' }} data-order="1">{{__('Monthly')}}</option>
+                                 value="monthly" <?php echo e(@old('installment_interval') == 'monthly' ? 'selected' : ''); ?> data-order="1"><?php echo e(__('Monthly')); ?></option>
                                 <option 
-                                  @if($loan && $loan->installment_interval == 'quartly')
+                                  <?php if($loan && $loan->installment_interval == 'quartly'): ?>
                             selected
                  
-                             @endif 
+                             <?php endif; ?> 
 
-                                value="quartly" {{ @old('installment_interval') == 'quartly' ? 'selected' : '' }} data-order="2">{{__('Quarterly')}}</option>
-                                <option 
-                                   @if($loan && $loan->installment_interval == 'semi annually')
+                                value="quartly" <?php echo e(@old('installment_interval') == 'quartly' ? 'selected' : ''); ?> data-order="2"><?php echo e(__('Quarterly')); ?></option>
+                                <option
+                                <?php if($loan && $loan->installment_interval == 'semi annually'): ?>
                             selected
                  
-                             @endif 
+                             <?php endif; ?> 
 
-                                value="semi annually" {{ @old('installment_interval') == 'semi annually' ? 'selected' : '' }} data-order="3">{{__('Semi-annually')}}</option>
+                                 value="semi annually" <?php echo e(@old('installment_interval') == 'semi annually' ? 'selected' : ''); ?> data-order="3"><?php echo e(__('Semi-annually')); ?></option>
                             </select>
-                            @if ($errors->has('installment_interval'))
-                            <div class="invalid-feedback">{{ $errors->first('installment_interval') }}</div>
-                            @endif
+                            <?php if($errors->has('installment_interval')): ?>
+                            <div class="invalid-feedback"><?php echo e($errors->first('installment_interval')); ?></div>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -330,64 +334,66 @@ tbody td{
                 <div class="col-md-4 item-main-parent" style="display: none">
                     <div class="form-group validated">
                         <label class="col-form-label take">
-                            {{__('Step-up Rate ( % ) ')}}
-                            {{-- <span class="astric">*</span> --}}
+                            <?php echo e(__('Step-up Rate ( % ) ')); ?>
+
+                            
                         </label><span class="astric">*</span>
                         <div class="" id="step-up-id">
                             <div class="form-group-sub">
-                                <input
-                                 @if($loan && $loan->step_up_rate)
-                                value="{{$loan->step_up_rate ?: old('step_up_rate') }}"
+                                <input 
+                                  <?php if($loan && $loan->step_up_rate): ?>
+                                value="<?php echo e($loan->step_up_rate ?: old('step_up_rate')); ?>"
                             
-                               @else 
-                                value="{{ @old('step_up_rate') }}"
-                             @endif 
+                               <?php else: ?> 
+                                value="<?php echo e(@old('step_up_rate')); ?>"
+                             <?php endif; ?> 
 
-                                 type="number" step="any" min="0" max="100" id="step_up_rate" name="step_up_rate" value="{{ @old('step_up_rate') }}" class="form-control number" placeholder="{{__('Step-up Rate')}} .." required />
-                                @if ($errors->has('step_up_rate'))
-                                <div class="invalid-feedback">{{ $errors->first('step_up_rate') }}</div>
-                                @endif
+                                type="number" step="any" min="0" max="100" id="step_up_rate" name="step_up_rate" class="form-control number" placeholder="<?php echo e(__('Step-up Rate')); ?> .." required />
+                                <?php if($errors->has('step_up_rate')): ?>
+                                <div class="invalid-feedback"><?php echo e($errors->first('step_up_rate')); ?></div>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                @endif
-
+                <?php endif; ?>
 
                 <div class="col-md-4 item-main-parent" style="display: none">
                     <div class="form-group validated">
-                        <label class="col-form-label take">{{__('Step-up Interval')}}</label><span class="astric">*</span>
+                        <label class="col-form-label take"><?php echo e(__('Step-up Interval')); ?></label><span class="astric">*</span>
                         <div class="form-group-sub">
                             <select name="step_up_interval" id="step_up_interval" class="form-control interval-calcs">
-                                <option value="" selected disabled>{{__('Select')}} ..</option>
-                                {{-- <option value="monthly" {{ @old('step_up_interval') == 'monthly' ? 'selected' : '' }}>{{__('Monthly')}}</option> --}}
-                                <option 
-                                   @if($loan && $loan->step_up_interval == 'quartly')
-                            selected
-                 
-                             @endif 
+                                <option value="" selected disabled><?php echo e(__('Select')); ?> ..</option>
                                 
-                                 value="quartly" {{ @old('step_up_interval') == 'quartly' ? 'selected' : '' }}>{{__('Quarterly')}}</option>
-                                <option 
-                                  @if($loan && $loan->step_up_interval == 'semi annually')
+                                <option
+                                  <?php if($loan && $loan->step_up_interval == 'quartly'): ?>
                             selected
                  
-                             @endif 
+                             <?php endif; ?> 
 
-                                  value="semi annually" {{ @old('step_up_interval') == 'semi annually' ? 'selected' : '' }}>{{__('Semi-annually')}}</option>
-                                <option 
-                                   @if($loan && $loan->step_up_interval == 'annually')
+
+                                 value="quartly" <?php echo e(@old('step_up_interval') == 'quartly' ? 'selected' : ''); ?>><?php echo e(__('Quarterly')); ?></option>
+                                <option
+                                   <?php if($loan && $loan->step_up_interval == 'semi annually'): ?>
                             selected
                  
-                             @endif 
+                             <?php endif; ?> 
 
+
+                                 value="semi annually" <?php echo e(@old('step_up_interval') == 'semi annually' ? 'selected' : ''); ?>><?php echo e(__('Semi-annually')); ?></option>
+                                <option
                                 
-                                  value="annually" {{ @old('step_up_interval') == 'annually' ? 'selected' : '' }}>{{__('Annually')}}</option>
+                                    <?php if($loan && $loan->step_up_interval == 'annually'): ?>
+                            selected
+                 
+                             <?php endif; ?> 
+
+                                 value="annually" <?php echo e(@old('step_up_interval') == 'annually' ? 'selected' : ''); ?>><?php echo e(__('Annually')); ?></option>
                             </select>
-                            @if ($errors->has('step_up_interval'))
-                            <div class="invalid-feedback">{{ $errors->first('step_up_interval') }}</div>
-                            @endif
+                            <?php if($errors->has('step_up_interval')): ?>
+                            <div class="invalid-feedback"><?php echo e($errors->first('step_up_interval')); ?></div>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -395,22 +401,31 @@ tbody td{
                 <div class="col-md-4 item-main-parent" style="display: none">
                     <div class="form-group validated">
                         <label class="col-form-label take">
-                            {{__('Step-down Rate ( % ) ') . ' ' . __('Please Insert Negative Number')}}
-                            {{-- <span class="astric">*</span> --}}
+                            <?php echo e(__('Step-down Rate ( % ) ') . ' ' . __('Please Insert Negative Number')); ?>
+
+                            
                         </label>
                         <div class="form-group-sub">
-                            <input 
-                             @if($loan && $loan->step_down_rate)
-                                value="{{$loan->step_down_rate ?: old('step_down_rate') }}"
+                            <input
                             
-                               @else 
-                                value="{{ @old('step_down_rate') }}"
-                             @endif 
 
-                            type="text" step="any" {{-- min="-100" --}} {{-- max="0" --}} id="step_down_rate" name="step_down_rate" value="{{ @old('step_down_rate') }}" class="form-control negative-numbers" placeholder="{{__('Step-down Rate')}} .." required />
-                            @if ($errors->has('step_down_rate'))
-                            <div class="invalid-feedback">{{ $errors->first('step_down_rate') }}</div>
-                            @endif
+
+
+      			    <?php if($loan && $loan->step_down_rate): ?>
+                                value="<?php echo e($loan->step_down_rate ?: old('step_down_rate')); ?>"
+                            
+                               <?php else: ?> 
+                                value="<?php echo e(@old('step_down_rate')); ?>"
+                             <?php endif; ?> 
+
+
+                             type="text" 
+                             
+                             
+                             step="any"   id="step_down_rate" name="step_down_rate" value="<?php echo e(@old('step_down_rate')); ?>" class="form-control negative-numbers" placeholder="<?php echo e(__('Step-down Rate')); ?> .." required />
+                            <?php if($errors->has('step_down_rate')): ?>
+                            <div class="invalid-feedback"><?php echo e($errors->first('step_down_rate')); ?></div>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -418,141 +433,184 @@ tbody td{
 
                 <div class="col-md-4 item-main-parent" style="display: none">
                     <div class="form-group validated">
-                        <label class="col-form-label take">{{__('Step-down Interval')}}</label> <span class="astric">*</span>
+                        <label class="col-form-label take"><?php echo e(__('Step-down Interval')); ?></label> <span class="astric">*</span>
                         <div class="form-group-sub">
                             <select name="step_down_interval" id="step_down_interval" class="form-control interval-calcs">
-                                <option value="" selected disabled>{{__('Select')}} ..</option>
+                                <option value="" selected disabled><?php echo e(__('Select')); ?> ..</option>
                                 <option 
-                                 @if($loan && $loan->step_down_interval == 'quartly')
+                                      <?php if($loan && $loan->step_down_interval == 'quartly'): ?>
                             selected
                  
-                             @endif 
+                             <?php endif; ?> 
 
-                                value="quartly" {{ @old('step_down_interval') == 'quartly' ? 'selected' : '' }}>{{__('Quarterly')}}</option>
+                                value="quartly" <?php echo e(@old('step_down_interval') == 'quartly' ? 'selected' : ''); ?>><?php echo e(__('Quarterly')); ?></option>
                                 <option 
-                                
-                                
-                                  @if($loan && $loan->step_down_interval == 'semi annually')
+                                      <?php if($loan && $loan->step_down_interval == 'semi annually'): ?>
                             selected
                  
-                             @endif 
-                             value="semi annually" {{ @old('step_down_interval') == 'semi annually' ? 'selected' : '' }}>{{__('Semi-annually')}}</option>
-                                <option 
-                                 @if($loan && $loan->step_down_interval == 'annually')
-                            selected
-                 
-                             @endif 
+                             <?php endif; ?> 
 
-                                value="annually" {{ @old('step_down_interval') == 'annually' ? 'selected' : '' }}>{{__('Annually')}}</option>
+                                value="semi annually" <?php echo e(@old('step_down_interval') == 'semi annually' ? 'selected' : ''); ?>><?php echo e(__('Semi-annually')); ?></option>
+                                <option 
+                                      <?php if($loan && $loan->step_down_interval == 'annually'): ?>
+                            selected
+                 
+                             <?php endif; ?> 
+
+                                value="annually" <?php echo e(@old('step_down_interval') == 'annually' ? 'selected' : ''); ?>><?php echo e(__('Annually')); ?></option>
                             </select>
-                            @if ($errors->has('step_down_interval'))
-                            <div class="invalid-feedback">{{ $errors->first('step_down_interval') }}</div>
-                            @endif
+                            <?php if($errors->has('step_down_interval')): ?>
+                            <div class="invalid-feedback"><?php echo e($errors->first('step_down_interval')); ?></div>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
-                @endif
+                <?php endif; ?>
 
             </div>
         </div>
     </div>
     <!-- //////////////////////////////LOAN TYPE////////////////////////////// -->
-    <input type="hidden" value="{{$type}}" name="loan_type" />
+    <input type="hidden" value="<?php echo e($type); ?>" name="loan_type" />
     <!-- //////////////////////////////LOAN Interests////////////////////////////// -->
-    @if($type != 'fixed')
-    <div class="kt-portlet" id="view_loan_interest" style="{{@old('loan_type')  == 'variable' || @old('loan_type')  == 'fixed' ? 'display: block' : 'display:none'}}">
+    <?php if($type != 'fixed'): ?>
+    <div class="kt-portlet" id="view_loan_interest" style="<?php echo e(@old('loan_type')  == 'variable' || @old('loan_type')  == 'fixed' ? 'display: block' : 'display:none'); ?>">
         <div class="kt-portlet__body">
             <div class="row">
-                <div class="col-md-5" id="view_borrowing_rate" style="{{@old('loan_type')  == 'variable'? 'display: block' : 'display:none'}}">
+                <div class="col-md-5" id="view_borrowing_rate" style="<?php echo e(@old('loan_type')  == 'variable'? 'display: block' : 'display:none'); ?>">
                     <div class="form-group validated">
                         <label class="col-form-label take">
-                            {{__('Borrowing Rate')}}
+                            <?php echo e(__('Borrowing Rate')); ?>
+
                             <span class="astric">*</span>
                         </label>
                         <div class="form-group-sub">
-                            <input type="number" step="any" id="borrowing_rate" name="borrowing_rate" value="{{ @old('borrowing_rate') }}" class="form-control number" placeholder="{{__('Borrowing Rate')}} .." />
-                            @if ($errors->has('borrowing_rate'))
-                            <div class="invalid-feedback">{{ $errors->first('borrowing_rate') }}</div>
-                            @endif
+                            <input 
+                                  <?php if($loan && $loan->borrowing_rate): ?>
+                                value="<?php echo e($loan->borrowing_rate ?: old('borrowing_rate')); ?>"
+                            
+                               <?php else: ?> 
+                                value="<?php echo e(@old('borrowing_rate')); ?>"
+                             <?php endif; ?> 
+                            type="number" step="any" id="borrowing_rate" name="borrowing_rate"  class="form-control number" placeholder="<?php echo e(__('Borrowing Rate')); ?> .." />
+                            <?php if($errors->has('borrowing_rate')): ?>
+                            <div class="invalid-feedback"><?php echo e($errors->first('borrowing_rate')); ?></div>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-5">
                     <div class="form-group validated">
                         <label class="col-form-label take " id="interest_label">
-                            {{@old('loan_type') == 'variable'? __('Interest Margin') : __('Interest')}}
+                            <?php echo e(@old('loan_type') == 'variable'? __('Interest Margin') : __('Interest')); ?>
+
                             <span class="astric">*</span>
                         </label>
                         <div class="form-group-sub">
-                            <input type="number" step="any" id="margin_interest" name="margin_interest" value="{{ @old('margin_interest') }}" class="form-control number" placeholder="{{__('Interest Margin')}} .." />
-                            @if ($errors->has('margin_interest'))
-                            <div class="invalid-feedback">{{ $errors->first('margin_interest') }}</div>
-                            @endif
+                            <input 
+                               <?php if($loan && $loan->margin_interest): ?>
+                                value="<?php echo e($loan->margin_interest ?: old('margin_interest')); ?>"
+                            
+                               <?php else: ?> 
+                                value="<?php echo e(@old('margin_interest')); ?>"
+                             <?php endif; ?> 
+
+                            
+                            type="number" step="any" id="margin_interest" name="margin_interest"  class="form-control number" placeholder="<?php echo e(__('Interest Margin')); ?> .." />
+                            <?php if($errors->has('margin_interest')): ?>
+                            <div class="invalid-feedback"><?php echo e($errors->first('margin_interest')); ?></div>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-2" id="view_interest" style="{{@old('loan_type')  == 'variable'? 'display: block' : 'display:none'}}">
+                <div class="col-md-2" id="view_interest" style="<?php echo e(@old('loan_type')  == 'variable'? 'display: block' : 'display:none'); ?>">
                     <div class="form-group validated">
                         <label class="col-form-label take">
-                            {{__('Loan Interest')}}
+                            <?php echo e(__('Loan Interest')); ?>
+
                         </label>
                         <div class="form-group-sub">
-                            <input type="text" step="any" id="loan_interest" name="loan_interest" value="{{ @old('loan_interest') }}" class="form-control number" placeholder="{{__('Loan Interest')}}.." disabled />
+                            <input
+                             <?php if($loan && $loan->loan_interest): ?>
+                                value="<?php echo e($loan->loan_interest ?: old('loan_interest')); ?>"
+                            
+                               <?php else: ?> 
+                                value="<?php echo e(@old('loan_interest')); ?>"
+                             <?php endif; ?> 
+
+                             type="text" step="any" id="loan_interest" name="loan_interest"  class="form-control number" placeholder="<?php echo e(__('Loan Interest')); ?>.." disabled />
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="row" id="view_min_interest" style="{{@old('loan_type')  == 'variable'? 'display: block' : 'display:none'}}">
+            <div class="row" id="view_min_interest" style="<?php echo e(@old('loan_type')  == 'variable'? 'display: block' : 'display:none'); ?>">
                 <div class="col-md-12">
                     <div class="form-group validated">
                         <label class="col-form-label take">
-                            {{__('Min Interest')}}
+                            <?php echo e(__('Min Interest')); ?>
+
                             <span class="astric">*</span>
                         </label>
                         <div class="form-group-sub">
-                            <input type="number" step="any" id="min_interest" name="min_interest" value="{{ @old('min_interest') }}" class="form-control number" placeholder="{{__('Min Interest')}} .." />
-                            @if ($errors->has('min_interest'))
-                            <div class="invalid-feedback">{{ $errors->first('min_interest') }}</div>
-                            @endif
+                            <input
+                            <?php if($loan && $loan->min_interest): ?>
+                                value="<?php echo e($loan->min_interest ?: old('min_interest')); ?>"
+                            
+                               <?php else: ?> 
+                                value="<?php echo e(@old('min_interest')); ?>"
+                             <?php endif; ?> 
+
+                             type="number" step="any" id="min_interest" name="min_interest" value="<?php echo e(@old('min_interest')); ?>" class="form-control number" placeholder="<?php echo e(__('Min Interest')); ?> .." />
+                            <?php if($errors->has('min_interest')): ?>
+                            <div class="invalid-feedback"><?php echo e($errors->first('min_interest')); ?></div>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    @endif
-    @if($type !='fixed')
+    <?php endif; ?>
+    <?php if($type !='fixed'): ?>
 
-    <div class="kt-portlet" id="variable_term_dev" style="{{@old('loan_type')  == 'variable' || @old('loan_type')  == 'fixed'  ? 'display: block' : 'display:none'}}">
+    <div class="kt-portlet" id="variable_term_dev" style="<?php echo e(@old('loan_type')  == 'variable' || @old('loan_type')  == 'fixed'  ? 'display: block' : 'display:none'); ?>">
         <div class="kt-portlet__body">
-            {{-- <h3 id="loan_choosen_type">{{@old('loan_type')  == 'variable'? 'Variable Installment' : 'Fixed Installment'}}</h3> --}}
+            
 
             <div class="row">
                 <div class="col-md-4">
                     <div class="form-group validated">
                         <label class="col-form-label take">
-                            {{__('Tenor Duration')}} ( {{__('Months')}} )
+                            <?php echo e(__('Tenor Duration')); ?> ( <?php echo e(__('Months')); ?> )
                             <span class="astric">*</span>
                         </label>
                         <div class="form-group-sub">
-                            <input type="number" step="any" id="repayment_duration" name="repayment_duration" value="{{ @old('repayment_duration') }}" class="form-control number max-tenor-limit" placeholder="{{__('Duration')}} .." />
-                            @if ($errors->has('repayment_duration'))
-                            <div class="invalid-feedback">{{ $errors->first('repayment_duration') }}</div>
-                            @endif
+                            <input 
+                            <?php if($loan && $loan->repayment_duration): ?>
+                                value="<?php echo e($loan->repayment_duration ?: old('repayment_duration')); ?>"
+                            
+                               <?php else: ?> 
+                                value="<?php echo e(@old('repayment_duration')); ?>"
+                             <?php endif; ?> 
+
+                            type="number" step="any" max="600" id="repayment_duration" name="repayment_duration" value="<?php echo e(@old('repayment_duration')); ?>" class="form-control number max-tenor-limit" placeholder="<?php echo e(__('Duration')); ?> .." />
+                            <?php if($errors->has('repayment_duration')): ?>
+                            <div class="invalid-feedback"><?php echo e($errors->first('repayment_duration')); ?></div>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-4" id="view_grace_period">
                     <div class="form-group validated">
                         <label class="col-form-label take">
-                            {{__('Grace Period')}} ( {{__('Months')}} )
+                            <?php echo e(__('Grace Period')); ?> ( <?php echo e(__('Months')); ?> )
                             <span class="astric">*</span>
                         </label>
                         <div class="form-group-sub">
-                            <input type="text" step="any" id="grace_periodid" name="grace_period" value="{{ @old('grace_period') }}" class="form-control number grace_period_calc " placeholder="{{__('Grace Period')}} .." />
-                            @if ($errors->has('grace_period'))
-                            <div class="invalid-feedback">{{ $errors->first('grace_period') }}</div>
-                            @endif
+                            <input type="text" step="any" id="grace_periodid" name="grace_period" value="<?php echo e(@old('grace_period')); ?>" class="form-control number grace-period-class grace_period_calc installment_condition" placeholder="<?php echo e(__('Grace Period')); ?> .." />
+                            <?php if($errors->has('grace_period')): ?>
+                            <div class="invalid-feedback"><?php echo e($errors->first('grace_period')); ?></div>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -561,52 +619,58 @@ tbody td{
 
                 <div class="col-md-4">
                     <div class="form-group validated">
-                        <label class="col-form-label take">{{__('Installment Payment Interval')}}</label>
+                        <label class="col-form-label take"><?php echo e(__('Installment Payment Interval')); ?></label>
                         <div class="form-group-sub">
                             <select name="installment_interval" id="installment_interval" class="form-control">
-                                <option value="" selected disabled>{{__('Select')}} ..</option>
-                                <option value="monthly" {{ @old('installment_interval') == 'monthly' ? 'selected' : '' }} data-order="1">{{__('Monthly')}}</option>
-                                <option value="quartly" {{ @old('installment_interval') == 'quartly' ? 'selected' : '' }} data-order="2">{{__('Quarterly')}}</option>
-                                <option value="semi annually" {{ @old('installment_interval') == 'semi annually' ? 'selected' : '' }} data-order="3">{{__('Semi-annually')}}</option>
+                                <option value="" selected disabled><?php echo e(__('Select')); ?> ..</option>
+                                <option value="monthly" <?php echo e(@old('installment_interval') == 'monthly' ? 'selected' : ''); ?> data-order="1"><?php echo e(__('Monthly')); ?></option>
+                                <option value="quartly" <?php echo e(@old('installment_interval') == 'quartly' ? 'selected' : ''); ?> data-order="2"><?php echo e(__('Quarterly')); ?></option>
+                                <option value="semi annually" <?php echo e(@old('installment_interval') == 'semi annually' ? 'selected' : ''); ?> data-order="3"><?php echo e(__('Semi-annually')); ?></option>
                             </select>
-                            @if ($errors->has('installment_interval'))
-                            <div class="invalid-feedback">{{ $errors->first('installment_interval') }}</div>
-                            @endif
+                            <?php if($errors->has('installment_interval')): ?>
+                            <div class="invalid-feedback"><?php echo e($errors->first('installment_interval')); ?></div>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
 
-                <div class="col-md-4" id="view_interest_interval" style="{{@old('loan_type')  == 'variable' ? 'display: block' : 'display:none'}}">
+                <div class="col-md-4" id="view_interest_interval" style="<?php echo e(@old('loan_type')  == 'variable' ? 'display: block' : 'display:none'); ?>">
                     <div class="form-group validated">
-                        <label class="col-form-label take">{{__('Interest Payment Interval')}}</label>
+                        <label class="col-form-label take"><?php echo e(__('Interest Payment Interval')); ?></label>
                         <div class="form-group-sub">
                             <select name="interest_interval" id="interest_interval" class="form-control">
-                                <option value="" selected disabled>{{__('Select')}} ..</option>
+                                <option value="" selected disabled><?php echo e(__('Select')); ?> ..</option>
                             </select>
-                            @if ($errors->has('interest_interval'))
-                            <div class="invalid-feedback">{{ $errors->first('interest_interval') }}</div>
-                            @endif
+                            <?php if($errors->has('interest_interval')): ?>
+                            <div class="invalid-feedback"><?php echo e($errors->first('interest_interval')); ?></div>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
 
 
             </div>
-            <div class="row" id="viwe_installment_amount" style="{{@old('loan_type')  == 'variable' ? 'display: block' : 'display:none'}}">
+            <div class="row" id="viwe_installment_amount" style="<?php echo e(@old('loan_type')  == 'variable' ? 'display: block' : 'display:none'); ?>">
                 <div class="col-md-12">
                     <div class="form-group validated">
                         <label class="col-form-label take">
-                            {{__('Principle Payment Amount')}}
+                            <?php echo e(__('Principle Payment Amount')); ?>
+
                         </label>
                         <div class="form-group-sub">
-                            <input type="text" step="any" id="installment_amount" name="installment_amount" value="{{ @old('installment_amount') }}" class="form-control number" placeholder="{{__('Principle Payment Amount')}}.." disabled />
+                            <input type="text" step="any" id="installment_amount" name="installment_amount" value="<?php echo e(@old('installment_amount')); ?>" class="form-control number" placeholder="<?php echo e(__('Principle Payment Amount')); ?>.." disabled />
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    @endif
+    <?php endif; ?>
+
+    <?php $__env->startPush('js'); ?>
+    
+
+    <?php $__env->stopPush(); ?>
 
 
     <div class="kt-portlet">
@@ -614,14 +678,14 @@ tbody td{
             <div class="kt-form__actions">
                 <div class="row">
                     <div class="col-12">
-                        <div class="{{__('right')}} text-right">
-                            <input id="submit---id" type="submit" onclick="return false;" name="submit" value="{{__('Calculate')}}" class="btn active-style submit">
+                        <div class="<?php echo e(__('right')); ?> text-right">
+                            <input id="submit---id" type="submit" onclick="return false;" name="submit" value="<?php echo e(__('Calculate')); ?>" onclick="return false;" class="btn active-style submit">
                         </div>
-                           @if(isset($longTermFunding->financial_id))
-                         <div class="{{__('left')}}">
-                            <a href="{{route('fundingPlans.index',['company_id'=>$company->id , 'financial_id'=>$longTermFunding->financial_id])}}" class="btn btn-success  btn-sm" > {{__('Return To Funding Plan')}} </a>
+                           <?php if(isset($longTermFunding->financial_id)): ?>
+                         <div class="<?php echo e(__('left')); ?>">
+                            <a href="<?php echo e(route('fundingPlans.index',['company_id'=>$company->id , 'financial_id'=>$longTermFunding->financial_id])); ?>" class="btn btn-success  btn-sm" > <?php echo e(__('Return To Funding Plan')); ?> </a>
                         </div>
-                        @endif 
+                        <?php endif; ?> 
                         
                     </div>
                 </div>
@@ -636,13 +700,14 @@ tbody td{
 </form>
 
 
+<a id="loan-table-a" href="#dynamic-datatable_wrapper"></a>
 <div id="append-table-id">
 
 </div>
-@endsection
+<?php $__env->stopSection(); ?>
 
 
-@section('js')
+<?php $__env->startSection('js'); ?>
 <script>
     $(document).on('change', 'input', function(e) {
 
@@ -652,18 +717,19 @@ tbody td{
     })
 
 </script>
-<script src="{{asset('back/assets/total_payment.js')}}" type="text/javascript"></script>
+<script src="<?php echo e(asset('back/assets/total_payment.js')); ?>" type="text/javascript"></script>
+
 <script>
-    var type = "{{$type}}";
+    var type = "<?php echo e($type); ?>";
 
     if (type == 'variable') {
-        $('#interest_label').html('{{__('Interest Margin')}}');
+        $('#interest_label').html('<?php echo e(__('Interest Margin')); ?>');
         $('#view_min_interest').css('display', 'block');
         $('#view_borrowing_rate').css('display', 'block');
         $('#view_interest').css('display', 'block');
         $('#view_loan_interest').css('display', 'block');
 
-        $('#loan_choosen_type').html('{{__('Variable Installment Loan')}}');
+        $('#loan_choosen_type').html('<?php echo e(__('Variable Installment Loan')); ?>');
         $('#view_interest_interval').css('display', 'block');
         $('#view_grace_period').css('display', 'block');
         $('#viwe_installment_amount').css('display', 'block');
@@ -704,6 +770,7 @@ tbody td{
 
     //installment_interval
     function installmentIntervalChange() {
+		
         var interval = $('#installment_interval').val();
 		var select = '';
         if (interval != '') {
@@ -719,16 +786,16 @@ tbody td{
                 }
 
             } else if (interval == 'quartly') {
-                select = '<option value="monthly">{{__("Monthly")}}</option>\n' +
-                    '<option value="quartly">{{__("Quarterly")}}</option>\n';
+                select = '<option value="monthly"><?php echo e(__("Monthly")); ?></option>\n' +
+                    '<option value="quartly"><?php echo e(__("Quarterly")); ?></option>\n';
                 if (loan_amount != '' && repayment_duration != '') {
                     var installment_amount = loan_amount / ((repayment_duration / 12) * 4);
                 }
             } else if (interval == 'semi annually') {
 
-                select = '<option value="monthly">{{__("Monthly")}}</option>\n' +
-                    '<option value="quartly">{{__("Quarterly")}}</option>\n' +
-                    '<option value="semi annually">{{__("Semi-annually")}}</option>\n';
+                select = '<option value="monthly"><?php echo e(__("Monthly")); ?></option>\n' +
+                    '<option value="quartly"><?php echo e(__("Quarterly")); ?></option>\n' +
+                    '<option value="semi annually"><?php echo e(__("Semi-annually")); ?></option>\n';
 
                 if (loan_amount != '' && repayment_duration != '') {
                     var installment_amount = loan_amount / ((repayment_duration / 12) * 2);
@@ -746,32 +813,32 @@ tbody td{
         if (interval != '') {
             if (interval == 'monthly') {
 
-                select = '<option value="monthly" selected >{{__("Monthly")}}</option>\n';
+                select = '<option value="monthly" selected ><?php echo e(__("Monthly")); ?></option>\n';
 
 
             } else if (interval == 'quartly') {
                 if (loan_interval == 'monthly') {
-                    select = '<option value="monthly" selected>{{__("Monthly")}}</option>\n' +
-                        '<option value="quartly" >{{__("Quarterly")}}</option>\n';
+                    select = '<option value="monthly" selected><?php echo e(__("Monthly")); ?></option>\n' +
+                        '<option value="quartly" ><?php echo e(__("Quarterly")); ?></option>\n';
                 } else {
-                    select = '<option value="monthly">{{__("Monthly")}}</option>\n' +
-                        '<option value="quartly" selected>{{__("Quarterly")}}</option>\n';
+                    select = '<option value="monthly"><?php echo e(__("Monthly")); ?></option>\n' +
+                        '<option value="quartly" selected><?php echo e(__("Quarterly")); ?></option>\n';
                 }
 
 
             } else if (interval == 'semi annually') {
                 if (loan_interval == 'monthly') {
-                    select = '<option value="monthly" selected>{{__("Monthly")}}</option>\n' +
-                        '<option value="quartly">{{__("Quarterly")}}</option>\n' +
-                        '<option value="semi annually">{{__("Semi-annually")}}</option>\n';
+                    select = '<option value="monthly" selected><?php echo e(__("Monthly")); ?></option>\n' +
+                        '<option value="quartly"><?php echo e(__("Quarterly")); ?></option>\n' +
+                        '<option value="semi annually"><?php echo e(__("Semi-annually")); ?></option>\n';
                 } else if (loan_interval == 'quartly') {
-                    select = '<option value="monthly">{{__("Monthly")}}</option>\n' +
-                        '<option value="quartly" selected>{{__("Quarterly")}}</option>\n' +
-                        '<option value="semi annually">Semi-{{__("Annually")}}</option>\n';
+                    select = '<option value="monthly"><?php echo e(__("Monthly")); ?></option>\n' +
+                        '<option value="quartly" selected><?php echo e(__("Quarterly")); ?></option>\n' +
+                        '<option value="semi annually">Semi-<?php echo e(__("Annually")); ?></option>\n';
                 } else {
-                    select = '<option value="monthly">{{__("Monthly")}}</option>\n' +
-                        '<option value="quartly">{{__("Quarterly")}}</option>\n' +
-                        '<option value="semi annually" selected>{{__("Semi-annually")}}</option>\n';
+                    select = '<option value="monthly"><?php echo e(__("Monthly")); ?></option>\n' +
+                        '<option value="quartly"><?php echo e(__("Quarterly")); ?></option>\n' +
+                        '<option value="semi annually" selected><?php echo e(__("Semi-annually")); ?></option>\n';
                 }
 
             }
@@ -816,7 +883,6 @@ tbody td{
         instalmentAmount();
     });
 
- 
 
 
 
@@ -835,7 +901,7 @@ tbody td{
 </script>
 
 
-{{-- salah --}}
+
 
 <script>
     $('#fixed_loan_type').on('change', function() {
@@ -909,12 +975,6 @@ tbody td{
     $(document).on('keyup', '.grace_period_calc', function() {
         let duration = parseFloat($('#duration').val());
         let gracePeriod = parseFloat($('#grace_periodid').val()) ? parseFloat($('#grace_periodid').val()) : 0;
-        // if(gracePeriod >= 1){
-        //     $('#capitalization_type').prop('disabled',false);
-        // }
-        // else{
-        //     $('#capitalization_type').prop('disabled',true);
-        // }
         if (gracePeriod != 0 && gracePeriod >= duration - 1) {
             $('#grace_periodid').val(duration - 2);
         }
@@ -923,11 +983,17 @@ tbody td{
 
 </script>
 
-@if($type == 'fixed' )
+<?php if($type == 'fixed' ): ?>
 <script>
     $(document).on('click', '.submit', function(e) {
 
         e.preventDefault();
+        let visiableFields = getVisiablFields();
+        if (!visiableFields.length && visiableFields.emptyFields.length) {
+            alert("please Enter " + visiableFields.emptyFields[0].name)
+            return;
+        }
+
         let fixedType = $('#fixed_loan_type').val();
 
         let start_date = $('#start-date').val();
@@ -957,26 +1023,22 @@ tbody td{
                 )
             ) ? step_down : 0
 
-        let period = getIsFixedAtBeginning() ? parseFloat($('#duration').val()) : parseFloat($('#duration').val());
-
+        let period = parseFloat($('#duration').val());
         let start_date_formatted = new Date(start_date);
         let end_date_end = addMonths(new Date(start_date_formatted.getTime()), (period ? period : 0));
+		
         let end_date_formatted = addMonths(new Date(start_date_formatted.getTime()), (period ? period : 0)).getFullYear() + '-' + (addMonths(new Date(start_date_formatted.getTime()), (period ? period : 0)).getMonth() + 1) + '-' + addMonths(new Date(start_date_formatted.getTime()), (period ? period : 0)).getDate();
-
         let interval = 0;
         let installment_interval = $('#installment_interval').val();
-        let loanAmount = parseFloat($('#loan_amount').val().replace('/,/g', ''));
+        let loanAmount = parseFloat($('#loan_amount').val())
         let gracePeriod = parseFloat($('#grace_periodid').val()) ? parseFloat($('#grace_periodid').val()) : 0;
-
-
-
-        if ($('#store-by-ajax').length) {
+        if ($('#store-by-ajax').length ) {
             let base_rate = $('#base_rate').val();
             let margin_rate = $('#margin_rate').val();
             $.ajax({
-                url: "{{ route('save.fixed.at.end',['company'=>$company->id]) }}"
+                url: "<?php echo e(route('save.fixed.at.end',['company'=>$company->id])); ?>"
                 , data: {
-                    "_token": "{{ __(csrf_token()) }}"
+                    "_token": "<?php echo e(__(csrf_token())); ?>"
                     , 'gracePeriod': gracePeriod
                     , 'loanAmount': loanAmount
                     , 'installment_interval': installment_interval
@@ -1001,27 +1063,29 @@ tbody td{
                     , 'repayment_duration': $('#repayment_duration').val()
                     , 'installment_amount': $('#installment_amount').val()
                     , "loanType": $('#loanTypeId').val()
-                    , 'company_id': "{{ $company->id }}",
-                                'financial_id':$('input[name="financial_id"]').val(),
+                    , 'company_id': "<?php echo e($company->id); ?>",
+                    'financial_id':$('input[name="financial_id"]').val(),
                     'long_term_funding_id':$('input[name="long_term_funding_id"]').val(),
                 }
                 , type: "POST",
                 success:function(res){
-                    
+
                    $.ajax({
-            url:"{{ route('save.loan.dates',['company'=>$company->id ]) }}",
+            url:"<?php echo e(route('save.loan.dates',['company'=>$company->id ])); ?>",
             data:{
-                "_token":"{{ csrf_token() }}",
+                "_token":"<?php echo e(csrf_token()); ?>",
                 "data":window['dataToAjax'] ,
                 "loan_id":res.loan_id,
                 
             },
             type:"POST",
         })
+
+                    
+                    // saveToalForLoan()
                 }
             })
         }
-
 
 
         if (installment_interval) {
@@ -1044,11 +1108,6 @@ tbody td{
 
 
         }
-        // let end_date_end = addMonths(new Date(start_date_formatted.getTime()), (period ? (getIsFixedAtBeginning() ? period - installment_payment_interval : period) : 0));
-        // let end_date_formatted = addMonths(new Date(start_date_formatted.getTime()), (period ? period : 0)).getFullYear() + '-' + (addMonths(new Date(start_date_formatted.getTime()), (period ? period : 0)).getMonth() + 1) + '-' + addMonths(new Date(start_date_formatted.getTime()), (period ? period : 0)).getDate();
-
-
-        // if(applied_step){
         switch (applied_step) {
             case 'quartly':
                 interval = 3;
@@ -1066,27 +1125,26 @@ tbody td{
                 interval = 1;
                 break;
         }
+        // alert(interval);
 
         let installmentStartDate = getInstallmentStartDate(new Date(start_date_formatted.getTime()), gracePeriod, installment_payment_interval);
+        let stepFactor = calcStepFactor(period, interval, new Date(installmentStartDate.getTime()), addMonths(new Date(start_date_formatted.getTime()), (period ? period : 0))); // object
+        
+		let daysCount = calDaysCount(new Date(start_date_formatted.getTime()), period, installment_payment_interval);
 
-        let stepFactor = calcStepFactor(period, interval, new Date(installmentStartDate.getTime()), addMonths(new Date(start_date_formatted.getTime()), (period ? (getIsFixedAtBeginning() ? period - installment_payment_interval : period) : 0))); // object
-        let daysCount = calDaysCount(new Date(start_date_formatted.getTime()), period, installment_payment_interval);
-		console.log(daysCount);
         let pricing = parseFloat($('#pricing').val()) / 100
         let intersetFactor = calcIntersetFactor(daysCount, pricing);
+		
         let loanFactories = calcLoanFactor(fixedType, loanAmount, intersetFactor, gracePeriod, installment_payment_interval, new Date(start_date_formatted.getTime()), period
-            , addMonths(new Date(start_date_formatted.getTime()), (period ? (getIsFixedAtBeginning() ? period - installment_payment_interval : period) : 0))
+            , addMonths(new Date(start_date_formatted.getTime()), (period ? period : 0))
 
         );
 
         let installmentFactories = calcInstallmentFactor(new Date(installmentStartDate.getTime()), intersetFactor, stepRate, stepFactor, period, installment_payment_interval);
 
-        let installmentAmountArr = getInstallmentAmount(loanFactories, installmentFactories, stepRate, stepFactor, new Date(installmentStartDate.getTime()), addMonths(new Date(start_date_formatted.getTime()), (period ? (getIsFixedAtBeginning() ? period - installment_payment_interval : period) : 0))
-            , period, installment_payment_interval, interval
-
-        );
-        //  ;
-        //  let allData = Array.concat(daysCount , intersetFactor,installmentAmountArr);
+        let installmentAmountArr = getInstallmentAmount(loanFactories, installmentFactories, stepRate, stepFactor, new Date(installmentStartDate.getTime()), addMonths(new Date(start_date_formatted.getTime()), (period ? period : 0))
+            , period, installment_payment_interval, interval);
+			
         let FormattedData = {
             ...daysCount
             , ...intersetFactor
@@ -1107,9 +1165,6 @@ tbody td{
             var searchedIntersetFactor = FormattedData.interestFactor.find((item) => {
                 return item.date == getDateFormatted(new Date(FormattedData.daysCount[index].date))
             });
-
-
-            // return ;
             obj.val = {
                 "daysCount": searchedDaysCount.daysDiff
                 , "InstallmentAmount": searchedInstallmentAmount ? searchedInstallmentAmount.amount : 0
@@ -1119,14 +1174,11 @@ tbody td{
             newDat.push(obj);
         }
         formatTable(newDat, loanAmount, fixedType);
-        // }
     })
 
     function calcIntersetFactor(daysCount, pricing) {
         intersetFactor = [];
         for (let i = 0; i < daysCount.daysCount.length; i++) {
-            // if(daysCount.daysCount[i].daysDiff)
-
             interset = (pricing / 360) * (daysCount.daysCount[i].daysDiff);
             obj = {};
             obj.date = daysCount.daysCount[i].date;
@@ -1134,6 +1186,7 @@ tbody td{
             intersetFactor.push(obj);
 
         }
+
         return {
             "interestFactor": intersetFactor
         };
@@ -1142,26 +1195,17 @@ tbody td{
     function calDaysCount(start_date, interval, installment_payment_interval) {
         days = [];
 
-        let isFixedAtBeginning = getIsFixedAtBeginning();
-
-        if (!isFixedAtBeginning) {
-            obj = {};
-            obj.date = getDateFormatted(new Date(start_date.getTime()));
-            obj.daysDiff = 0;
-            days.push(obj);
-
-        }
+        obj = {};
+        obj.date = getDateFormatted(new Date(start_date.getTime()));
+        obj.daysDiff = 0;
+        days.push(obj);
         for (let i = 0; i < interval; i = i + installment_payment_interval) {
             firstMonth = new Date(start_date.getTime());
             let secondMonth = addMonths(start_date, installment_payment_interval);
             let diffInDays = getDifferenceBetweenTwoDatesInDays(firstMonth, secondMonth);
-	
-
-            let isFixedAtBeginning = getIsFixedAtBeginning();
-
 
             obj = {};
-            obj.date = isFixedAtBeginning ? getDateFormatted(new Date(firstMonth.getTime())) : getDateFormatted(new Date(secondMonth.getTime()));
+            obj.date = getDateFormatted(new Date(secondMonth.getTime()));
             obj.daysDiff = diffInDays;
             days.push(obj);
 
@@ -1169,7 +1213,7 @@ tbody td{
 
 
         }
-
+		
         return {
             "daysCount": days
         };
@@ -1181,7 +1225,7 @@ tbody td{
 
         let newDate = date.addMonths(months);
         if (false) {
-            return new Date(newDate.setDate(currentDate));
+           
         } else if (currentDate <= 30) {
             if (newDate.getMonth() == 01) // feb
             {
@@ -1200,8 +1244,6 @@ tbody td{
             return new Date(newDate.setDate(new Date(newDate.getFullYear(), newDate.getMonth() + 1, 0).getDate()));
 
         }
-        //    date.setMonth(date.getMonth() + months) ;
-        //    return date ;
 
 
         let formDate = $('#start-date').val();
@@ -1219,8 +1261,7 @@ tbody td{
 
         return date;
     }
-
-    function getDifferenceBetweenTwoDatesInDays(a, b) {
+	function getDifferenceBetweenTwoDatesInDays(a, b) {
   const _MS_PER_DAY = 1000 * 60 * 60 * 24;
   // Discard the time and time-zone information.
   const utc1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
@@ -1228,15 +1269,16 @@ tbody td{
 
   return Math.floor((utc2 - utc1) / _MS_PER_DAY);
 }
-
+ 
     function calcStepFactor(period, interval, installmentStartDate, end_date) {
         counter = 0;
         let stepFactor = [];
-
-        for (let i = 0; i < period; i++) {
+		console.log(interval,'inn')
+        for (let i = 0; i <= period; i++) {
             if (i % interval == 0 && i != 0) {
                 counter = counter + 1;
             }
+
             obj = {};
             obj.date = getDateFormatted(addMonths(new Date(installmentStartDate.getTime()), i));
             obj.factory = counter;
@@ -1247,9 +1289,6 @@ tbody td{
             }
 
         }
-
-        console.log(stepFactor);
-
         return {
             "stepFactors": stepFactor
         };
@@ -1260,13 +1299,10 @@ tbody td{
         // معامل القرض
         let gracePeriod = gracePeriodVal;
 
-        let isAtBeginning = getIsFixedAtBeginning();
-
         if (fixedLoanType == 'grace_step-up_without_capitalization' || fixedLoanType == 'grace_step-down_without_capitalization' ||
             fixedLoanType == 'grace_period_without_capitalization'
         ) {
-
-            loanFactorStartDate = addMonths(new Date(start_date.getTime()), isAtBeginning ? gracePeriod : installment_payment_interval + gracePeriod);
+            loanFactorStartDate = addMonths(new Date(start_date.getTime()), installment_payment_interval + gracePeriod);
             var searchedInterestFactor = intersetFactor['interestFactor'].find((item) => {
                 return item.date == getDateFormatted(loanFactorStartDate)
             });
@@ -1274,12 +1310,10 @@ tbody td{
             var loanFactor = loanAmount * (1 + searchedInterestFactor.interestFactor);
 
         } else {
-
-            loanFactorStartDate = addMonths(new Date(start_date.getTime()), isAtBeginning ? 0 : installment_payment_interval);
+            loanFactorStartDate = addMonths(new Date(start_date.getTime()), installment_payment_interval);
             var searchedInterestFactor = intersetFactor['interestFactor'].find((item) => {
                 return item.date == getDateFormatted(loanFactorStartDate)
             });
-
             var loanFactor = loanAmount * (1 + searchedInterestFactor.interestFactor);
         }
 
@@ -1287,38 +1321,29 @@ tbody td{
 
         let loanFactoriesArr = [];
 
-        let isFixedAtBeginning = getIsFixedAtBeginning();
-
-        if (!isFixedAtBeginning) {
-            obj = {};
-            obj.date = getDateFormatted((new Date(start_date)));
-            obj.loanFactor = 0;
-            loanFactoriesArr.push(obj);
-            beginningPosition = 0;
-        } else {
-            beginningPosition = 1;
-
-        }
-
         obj = {};
-        obj.date = getDateFormatted((new Date(loanFactorStartDate)));
-        obj.loanFactor = loanFactor;
+
+        obj.date = getDateFormatted((new Date(start_date)));
+	
+        obj.loanFactor = 0;
         loanFactoriesArr.push(obj);
 
 
+        obj = {};
+        obj.date = getDateFormatted((new Date(loanFactorStartDate)));
 
-        for (let i = beginningPosition; i <= interval / installment_payment_interval; i++) {
+        obj.loanFactor = loanFactor;
+        loanFactoriesArr.push(obj);
+
+        for (let i = 1; i <= (interval / installment_payment_interval); i++) {
+
             loopDate = addMonths(loanFactorStartDate, installment_payment_interval);
-
-
             searchedInterestFactor = intersetFactor['interestFactor'].find((item) => {
                 return item.date == getDateFormatted(loopDate)
             });
 
 
             loanFactor = loanFactor + (loanFactor * searchedInterestFactor.interestFactor)
-
-            // loanFactoriesArr.push(loopDate + " " + loanFactor);
 
 
             obj = {};
@@ -1330,9 +1355,6 @@ tbody td{
                 break;
             }
 
-            // loanFactorStartDate = addMonths(loopDate , installment_payment_interval)
-
-            // start_date = new Date(secondMonth.getTime());
         }
         return {
             "loanFactories": loanFactoriesArr
@@ -1340,15 +1362,9 @@ tbody td{
 
     }
 
-    function getIsFixedAtBeginning() {
-        return "{{ $position === 'at_beginning' }}";
-    }
-
     function getInstallmentStartDate(loanStartDate, gracePeriod, installment_payment_interval) {
-        // 01-01-2022               06            03
-        // 01-10-2022
-        let isAtBeginning = getIsFixedAtBeginning();
-        let installmentDate = addMonths(loanStartDate, isAtBeginning ? gracePeriod : gracePeriod + installment_payment_interval);
+
+        let installmentDate = addMonths(loanStartDate, gracePeriod + installment_payment_interval);
         return installmentDate;
     }
 
@@ -1359,24 +1375,18 @@ tbody td{
     }
 
     function calcInstallmentFactor(installmentStartDate, intersetFactor, stepRate, stepFactor, interval, installment_payment_interval) {
-        let firstInstallmentStartDate = installmentStartDate;
+       
+	   
         installmentFactors = [];
-        if (!getIsFixedAtBeginning()) {
-            initalValue = 1;
-            installmentFactor = -1;
+        installmentFactor = -1;
 
-        } else {
-            searchedInterestFactor = intersetFactor['interestFactor'].find((item) => {
-                return item.date == getDateFormatted(installmentStartDate)
-            });
-
-            initalValue = 0;
-            installmentFactor = -1 * (1 + searchedInterestFactor.interestFactor);
-
-        }
-
-        for (let i = initalValue; i <= interval / installment_payment_interval; i++) {
+        obj = {};
+        obj.date = getDateFormatted(new Date(installmentStartDate.getTime()));
+        obj.installmentFactor = -1;
+        installmentFactors.push(obj);
+        for (let i = 1; i <= interval / installment_payment_interval; i++) {
             loopDate = addMonths(installmentStartDate, installment_payment_interval);
+		
             searchedInterestFactor = intersetFactor['interestFactor'].find((item) => {
                 return item.date == getDateFormatted(loopDate)
             });
@@ -1384,16 +1394,11 @@ tbody td{
             stepFactorOfDate = stepFactor['stepFactors'].find((item) => {
                 return item.date == getDateFormatted(loopDate)
             });
+
             if (!searchedInterestFactor) {
-                break
+                break;
             } else {
-                if (getIsFixedAtBeginning()) {
-                    installmentFactor = installmentFactor + ((installmentFactor + (-1 * parseFloat(Math.pow((1 + parseFloat(stepRate)), parseFloat(stepFactorOfDate.factory))))) * searchedInterestFactor.interestFactor) - (1 * parseFloat(Math.pow((1 + parseFloat(stepRate)), parseFloat(stepFactorOfDate.factory))))
-                } else {
-                    installmentFactor = installmentFactor + (installmentFactor * searchedInterestFactor.interestFactor) - (1 * parseFloat(Math.pow((1 + parseFloat(stepRate)), parseFloat(stepFactorOfDate.factory))))
-
-                }
-
+                installmentFactor = installmentFactor + (installmentFactor * searchedInterestFactor.interestFactor) - (1 * parseFloat(Math.pow((1 + parseFloat(stepRate)), parseFloat(stepFactorOfDate.factory))))
                 obj = {};
                 obj.date = getDateFormatted(new Date(loopDate.getTime()));
                 obj.installmentFactor = installmentFactor;
@@ -1402,7 +1407,7 @@ tbody td{
 
 
         }
-        // console.log(installmentFactors);
+
         return {
             "installmentFactors": installmentFactors
         };
@@ -1416,14 +1421,15 @@ tbody td{
     function getInstallmentAmount(loanFactor, InstallmentFactor, stepRate, stepFactor, installmentStartDate, end_date, period, installment_payment_interval, interval) {
         // let end_date_formatted = end_date;
         installmentsAmounts = [];
+		
         loanFactoryAtEndDate = loanFactor['loanFactories'].find((item) => {
             return item.date == getDateFormatted(end_date)
         });
+	
 
         installmentFactorAtEndDate = InstallmentFactor['installmentFactors'].find((item) => {
             return item.date == getDateFormatted(end_date)
         });
-
 
         installmentAmount = loanFactoryAtEndDate.loanFactor / (installmentFactorAtEndDate.installmentFactor * -1);
         obj = {};
@@ -1431,16 +1437,17 @@ tbody td{
         obj.amount = installmentAmount;
         installmentsAmounts.push(obj);
 
-        for (let i = 1; i <= period / installment_payment_interval; i++) {
+        for (let i = 1; i <= (period / installment_payment_interval); i++) {
+
             loopDate = addMonths(installmentStartDate, installment_payment_interval);
 
             stepFactorOfDate = stepFactor['stepFactors'].find((item) => {
                 return item.date == getDateFormatted(loopDate)
             });
+
             if (!stepFactorOfDate) {
                 break
             } else {
-
                 if ((i % (interval / installment_payment_interval)) == 0 && i != 0) {
                     installmentAmount = installmentAmount * (parseFloat(Math.pow((1 + parseFloat(stepRate)), 1)))
                 } else {
@@ -1454,8 +1461,6 @@ tbody td{
 
             }
         }
-
-
         return {
             "InstallmentAmountArr": installmentsAmounts
         };
@@ -1470,14 +1475,15 @@ tbody td{
         table = `<table class='table table-striped table-bordered table-hover table-checkable' id="dynamic-datatable">
         <thead>
              <tr>
-                            <th class="text-center">{{__("Payment No.")}}</th>
-                            <th class="text-center">{{__("Date")}}</th>
-                            <th class="text-center">{{__("Days Count")}}</th>
-                            <th class="text-center">{{__("Begining Balance")}}</th>
-                            <th class="text-center">{{__("Schedule Payment")}}</th>
-                            <th class="text-center">{{__("Interest Amount")}}</th>
-                            <th class="text-center">{{__("Principle Amount")}}</th>
-                            <th class="text-center">{{__("End Balance")}}</th>
+                            <th class="text-center"><?php echo e(__("Payment No.")); ?></th>
+                            <th class="text-center"><?php echo e(__("Date")); ?></th>
+                            <th class="text-center"><?php echo e(__("Days Count")); ?></th>
+                            <th class="text-center"><?php echo e(__("Interest Factor")); ?></th>
+                            <th class="text-center"><?php echo e(__("Begining Balance")); ?></th>
+                            <th class="text-center"><?php echo e(__("Schedule Payment")); ?></th>
+                            <th class="text-center"><?php echo e(__("Interest Amount")); ?></th>
+                            <th class="text-center"><?php echo e(__("Principle Amount")); ?></th>
+                            <th class="text-center"><?php echo e(__("End Balance")); ?></th>
                           
                         </tr>
         </thead>    
@@ -1485,12 +1491,11 @@ tbody td{
         <tbody> `;
 
         // return 
-        let order = 1;
+        let order = 0;
         totalPrincpleAmount = 0;
         totalSchedulePayment = 0;
         totalInterestAmount = 0;
-              let dataToAjax = [];
-
+        let dataToAjax = [];
         for (let i = 0; i < data.length; i++) {
             table += `<tr>
             <td>
@@ -1502,36 +1507,28 @@ tbody td{
 
             <td>
                 ${data[i].val.daysCount}
-            </td>`
-            let isAtBeginning = getIsFixedAtBeginning();
-            let withoutCapitalization = loanType.split('_').includes('without') && loanType.split('_').includes('capitalization')
-            if (isAtBeginning) {
-                if (withoutCapitalization && data[i].val.InstallmentAmount == 0) {
-                    i == 0 ? (Begining = loanAmount) : Begining = endBalance;
+            </td>    
+			<td>
+                ${data[i].val.interestFactor}
+            </td>
+			
+			`
+            i == 0 ? (Begining = loanAmount) : Begining = endBalance;
 
-                    intresetAmount = isAtBeginning ? ((Begining) * data[i].val.interestFactor) : Begining * data[i].val.interestFactor;
-                    totalInterestAmount += intresetAmount
-                } else {
-                    i == 0 ? (Begining = loanAmount) : Begining = endBalance;
-
-                    intresetAmount = isAtBeginning ? ((Begining - data[i].val.InstallmentAmount) * data[i].val.interestFactor) : Begining * data[i].val.interestFactor;
-                    totalInterestAmount += intresetAmount
-                }
-
-
-
-            } else {
-                i == 0 ? (Begining = loanAmount) : Begining = endBalance;
-
-                intresetAmount = isAtBeginning ? ((Begining) * data[i].val.interestFactor) : Begining * data[i].val.interestFactor;
-                totalInterestAmount += intresetAmount
-            }
-
+            intresetAmount = Begining * data[i].val.interestFactor;
+            totalInterestAmount += intresetAmount
+             
             table += `
-            <td>
+            
+            <td> 
+            
+            
+            ` ;
+            table +=`
                ${numberFormat(Begining)}
             </td>
             <td>`
+            let withoutCapitalization = loanType.split('_').includes('without') && loanType.split('_').includes('capitalization')
 
             schedulePayment = (withoutCapitalization) && data[i].val.InstallmentAmount == 0 ? intresetAmount : data[i].val.InstallmentAmount;
             totalSchedulePayment = totalSchedulePayment + schedulePayment
@@ -1547,21 +1544,23 @@ tbody td{
                 `
             <td>
             
-            ${numberFormat(intresetAmount) == '-0' ? 0 : number_format(intresetAmount,2) }
+            ${number_format(intresetAmount,2)}
             </td>
             <td> `;
+            // alert(schedulePayment)
+            // alert(intresetAmount)
             principleAmout = parseFloat(schedulePayment) - intresetAmount;
+		
             // principleAmout = data[i].val.InstallmentAmount - intresetAmount ;
             totalPrincpleAmount = totalPrincpleAmount + principleAmout;
             table +=
                 `
-                ${ (number_format(principleAmout,2)) }
+                ${(number_format(principleAmout,2)) }
             </td>
 
             <td>`;
             endBalance = Begining + intresetAmount - schedulePayment;
-
-               dataToAjax.push({
+            dataToAjax.push({
                 'date':formatDate(new Date(data[i].date)) , 
                 'beginningBalance':Begining ,
                 'principle':principleAmout,
@@ -1570,26 +1569,28 @@ tbody td{
                 'financial_id':$('input[name="financial_id"]').val()
             });
 
-
             table += ` 
             ${ numberFormat(endBalance) == '-0' ? 0 : numberFormat(endBalance) } 
             </td>
             </tr>`
         }
-                window['dataToAjax'] = dataToAjax ;
-
+        window['dataToAjax'] = dataToAjax ;
 
         table += `
         <tr class="custom-color-for-last-tr">
         <th>
         
-        {{ __('Total') }}
+        <?php echo e(__('Total')); ?>
+
         </th>
         <th>
         -
         </th>
 
         <th>
+        -
+        </th>
+ <th>
         -
         </th>
 
@@ -1628,7 +1629,10 @@ tbody td{
         
         `;
 
+       
+
         $('#append-table-id').empty().append(table);
+
         $('#dynamic-datatable').DataTable({
             paginate: false
             , searching: false
@@ -1639,23 +1643,22 @@ tbody td{
                 , headerOffset: 78
             }
             , dom: 'Bfrtip'
-            , buttons: ['copy', 'csv'
-                , {
-                    "extend": "excel"
-                    , title: ''
-                    , filename: 'Fixed Payments At The Beginning'
-                    , customize: function(xlsx) {
+            , buttons: ['copy', 'csv', {
+                "extend": "excel"
+                , title: ''
+                , filename: 'Fixed Payments At The End'
+                , customize: function(xlsx) {
 
-                        exportToExcel(xlsx)
+                    exportToExcel(xlsx)
 
-                    }
                 }
-
-                , 'pdf', 'print'
-            ]
+            }, 'pdf', 'print']
         });
-    }
 
+        
+         
+
+    }
 
     function formatDate(d) {
         return ("0" + d.getDate()).slice(-2) + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" +
@@ -1685,13 +1688,16 @@ tbody td{
 <script>
     $('.max-tenor-limit').on('keyup', function() {
         let val = parseFloat($(this).val());
-        if (val > 270) {
-            $(this).val(270).trigger('change')
+        if (val > 420) {
+            $(this).val(420).trigger('change')
         }
     })
-    $('#gracePeriodId')
+    // $('#gracePeriodId')
 
 </script>
+
+
+
 
 <script>
     $('#installment_interval').on('change', function() {
@@ -1720,36 +1726,42 @@ tbody td{
             }
         });
         if (!$('#step_up_interval').find('option:nth-child(4):selected').length) {
-             if(! $('#page-is-loading').length)
+            if(! $('#page-is-loading').length)
             {
-        
-            $('#step_up_interval').find('option:nth-child(1)').prop('selected', 1);
+                $('#step_up_interval').find('option:nth-child(1)').prop('selected', 1);
+
             }
         }
 
         if (!$('#step_down_interval').find('option:nth-child(4):selected').length) {
-            if(! $('#page-is-loading').length){
-            $('#step_down_interval').find('option:nth-child(1)').prop('selected', 1);
-
+            if(! $('#page-is-loading').length)
+            {
+                $('#step_down_interval').find('option:nth-child(1)').prop('selected', 1);
             }
         }
 
     $('#page-is-loading').remove();
     }).trigger('change');
 
+
+
 </script>
+<script>
 
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.3/moment.min.js" type="text/javascript">
+
+</script>
 <script src="/custom/js/loan.js"></script>
-
-@if(isset($triggerClick))
+<?php if(isset($triggerClick)): ?>
 <script>
     $(function(){
-        $('#submit---id').trigger('click');
+        $('.submit').trigger('click');
+        $('#loan-table-a').trigger('click');
     });
 </script>
-@endif 
+<?php endif; ?> 
+<?php endif; ?>
+<?php $__env->stopSection(); ?>
 
-@endif
-<script src="/custom/js/loan.js"></script>
-
-@endsection
+<?php echo $__env->make('layouts.dashboard', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /media/salah/Software/projects/veroo/resources/views/admin/loan2/create.blade.php ENDPATH**/ ?>

@@ -767,7 +767,8 @@ use Illuminate\Support\Facades\DB;
 				foreach($revenueIdWitLoanAmounts as $leasingRevenueStreamBreakdownId => $yearIndexWithAmount ){
 			
 					$counter ++ ;
-					$currentMonthlyLoanAmount = $yearIndexWithAmount[$yearIndex] / count($yearMonthIndexes)  ;
+					$loanAtCurrentYear = $yearIndexWithAmount[$yearIndex]??0 ;
+					$currentMonthlyLoanAmount = $loanAtCurrentYear / count($yearMonthIndexes)  ;
 						
 						if($currentMonthlyLoanAmount <= 0){
 							continue ;
@@ -777,6 +778,7 @@ use Illuminate\Support\Facades\DB;
 						$leasingRevenueStreamBreakdown = $leasingRevenueStreams->where('id',$leasingRevenueStreamBreakdownId)->first();
 						$hasCategoryId = method_exists($leasingRevenueStreamBreakdown,'getCategoryId') ;
 						$revenueCategoryId = $hasCategoryId ? $leasingRevenueStreamBreakdown->getCategoryId() : null;
+						// dd($dateIndexWithDate,$monthIndex);
 						$currentMonth = $dateIndexWithDate[$monthIndex];
 						// $currentMonthFormatted = Carbon::make($currentMonth)->format('d-m-Y');
 						$currentMarginRate = $isSensitivity ?  $leasingRevenueStreamBreakdown->getSensitivityMarginRate() : $leasingRevenueStreamBreakdown->getMarginRate();
@@ -791,16 +793,20 @@ use Illuminate\Support\Facades\DB;
 						$loanType = $leasingRevenueStreamBreakdown->getLoanType();
 						$loanNature = $leasingRevenueStreamBreakdown->getLoanNature();
 						$loanService = $loanNature == 'fixed-at-end' ? $calculateFixedLoanAtEndService : $calculateFixedLoanAtBeginningService ; 
-	
+						
+						
 						$currentPortfolioLoans=[];
 						if(is_array($baseRatesMapping)){
 							$currentPortfolioLoans=$loanService->__calculateBasedOnDiffBaseRates($baseRatesMapping ,$loanType, $currentMonth, $currentMonthlyLoanAmount,  $currentMarginRate,  $tenor, $installmentInterval,$installmentPaymentIntervalValue, $stepUp, $stepInterval ,$stepDown ,  $stepInterval ,$gracePeriod ,$monthIndex, $dateWithDateIndex ,$dateIndexWithDate);
 						}else{
 							
-							$currentPortfolioLoans=$loanService->__calculate([] ,-1,$loanType, $currentMonth, $currentMonthlyLoanAmount,$baseRatesMapping, $currentMarginRate,  $tenor, $installmentInterval, $stepUp,$stepInterval ,$stepDown ,  $stepInterval ,$gracePeriod,$monthIndex);
+							$currentPortfolioLoans=$loanService->__calculate([] ,-1,$loanType, $currentMonth, $currentMonthlyLoanAmount,$baseRatesMapping, $currentMarginRate,  $tenor, $installmentInterval, $stepUp,$stepInterval ,$stepDown ,  $stepInterval ,$gracePeriod,$monthIndex,null,$pricingPerMonths);
+							dd($currentPortfolioLoans);
+						
 							$finalResult = $currentPortfolioLoans['final_result']??[];
 							unset($finalResult['totals']);
 							$currentPortfolioLoans = $finalResult ;
+					
 						}
 						
 						if(count($currentPortfolioLoans)){
@@ -830,7 +836,6 @@ use Illuminate\Support\Facades\DB;
 							// $currentMonthlyLoanAmount = $currentMonthlyLoanAmount * $newLoanFundingRate / 100 ;
 							if(is_array($baseRatesMapping)){
 								$currentPortfolioLoans=$loanService->__calculateBasedOnDiffBaseRates($baseRatesMapping ,$loanType, $currentMonth, $currentMonthlyLoanAmount,  $currentMarginRate,  $tenor, $installmentInterval,$installmentPaymentIntervalValue, $stepUp, $stepInterval ,$stepDown ,  $stepInterval ,$gracePeriod,$monthIndex,$dateWithDateIndex,$dateIndexWithDate );
-								
 							}else{
 								
 								$currentPortfolioLoans=$loanService->__calculate([] ,-1,$loanType, $currentMonth, $currentMonthlyLoanAmount,$baseRatesMapping, $currentMarginRate,  $tenor, $installmentInterval, $stepUp,$stepInterval ,$stepDown ,  $stepInterval ,$gracePeriod,$monthIndex );
@@ -874,7 +879,6 @@ use Illuminate\Support\Facades\DB;
 			}
 			
 		}
-
 		DB::connection('non_banking_service')->table($loanSchedulePaymentTableName)->insert($portfolioLoans);
 	}
 		

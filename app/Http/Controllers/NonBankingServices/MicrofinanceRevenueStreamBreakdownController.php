@@ -47,7 +47,7 @@ class MicrofinanceRevenueStreamBreakdownController extends Controller
 	
 		$study->storeRelationsWithNoRepeater($request,$company);
 		$study->storeRepeaterRelations($request,$this->getRepeaterRelations(),$company);
-		$study = $study->refresh();
+		$study->refresh();
 		$study->updateMicrofinanceMonthlyAdminFeesAmounts();
 		$study->storeFixedLoans(Study::MiCROFINANCE,'microfinanceBreakdowns','microfinanceNewPortfolioFundingStructure',false,$pricingPerMonths);
 		$study->updateExpensesPercentagesOfSales();

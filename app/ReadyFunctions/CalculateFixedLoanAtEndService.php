@@ -88,7 +88,8 @@ class CalculateFixedLoanAtEndService
 		$currentInstallmentFactor = 0 ;
 		
 		foreach($datesIndexAndDaysCount as $currentDateAsIndex => $currentDaysCount){
-			$currentPricing = is_null($pricingPerMonths) ? $currentPricing : $pricingPerMonths[$currentDateAsIndex];
+
+			$currentPricing = is_null($pricingPerMonths) ? $currentPricing : ($pricingPerMonths[$currentDateAsIndex]??0);
 				/**
 				 * * calculate Interest Loan Factor 
 				 */

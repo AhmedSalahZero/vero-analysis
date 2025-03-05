@@ -114,7 +114,7 @@ class HDate
 				$currentStartDateAsIndex++;
 			}
 		}else{
-			for($i =0 ; $i < ($duration/$intervalValue); $i++  ){
+			for($i =-1 ; $i < ($duration/$intervalValue); $i++  ){
 				$result[$currentStartDateAsIndex]=$dateService->addMonths($startDateDay,$startDate,$i*$intervalValue);
 				$currentStartDateAsIndex++;
 			}
@@ -141,7 +141,6 @@ class HDate
 				$loopIndex++;
 			}
 			else{
-				// $secondDate = Carbon::make($items[$currentDateIndex+1])->diffInDays(Carbon::make($dateAsString));
 				if(!is_null($currentDaysCount)){
 					$dayCounts[$currentDateIndex] =$currentDaysCount;
 					continue;   
@@ -158,6 +157,7 @@ class HDate
 		return $dayCounts;
 		
 	}
+	
 	public static function convertDateIndexArrayToDateString(array $payload, array $dateIndexWithDate){
 		$result = [];
 		foreach($payload as $dateIndex => $value){

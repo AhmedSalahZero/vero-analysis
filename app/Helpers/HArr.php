@@ -567,6 +567,7 @@ class HArr
 	}
 	protected static function calculateGrowthRate(array $items):array {
 		$previousValue = 0 ;
+		$result = [];	
 		foreach($items as $dateIndex => $currentValue){
 			$result[$dateIndex] = $previousValue ? ($currentValue - $previousValue) / $previousValue * 100 : 0 ;
 			$previousValue = $currentValue;

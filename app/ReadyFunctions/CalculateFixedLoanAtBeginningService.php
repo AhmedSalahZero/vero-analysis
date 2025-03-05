@@ -63,6 +63,8 @@ public function __calculate($previousResult ,int $indexOfLoop,string $loanType, 
 		$installmentFactors = [];
 		$datesAsIndexString=HDate::generateDatesBetweenStartDateAndDuration($currentStartDateAsIndex,$startDate,$tenor,$installmentPaymentIntervalName,false);
 		$datesIndexAndDaysCount =HDate::calculateDaysCount($datesAsIndexString); 
+
+		// dd($datesIndexAndDaysCount);
 		$datesAsStringIndex = array_flip($datesAsIndexString);
 		$installmentPaymentIntervalValue = $this->getInstallmentPaymentIntervalValue($installmentPaymentIntervalName);
 		$currentPricing =  ($baseRate + $marginRate) /100  ;
@@ -84,6 +86,7 @@ public function __calculate($previousResult ,int $indexOfLoop,string $loanType, 
 				 * * calculate Interest Loan Factor 
 				 */
 				$interestFactors[$currentDateAsIndex]=($currentPricing / 360) * $currentDaysCount;
+			
 				$currentInterestFactor = $interestFactors[$currentDateAsIndex] ;
 				/**
 				 * * Calculate Loan Factors 
