@@ -584,7 +584,7 @@ use MathPHP\Statistics\Correlation ;
 
             legend.data.push(series);
         }
-
+		
         makeSeries("Leasing", "leasing");
         makeSeries("Direct Factoring", "direct-factoring");
         makeSeries("Reverse Factoring", "reverse-factoring");

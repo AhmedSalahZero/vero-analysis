@@ -63,6 +63,7 @@ public function __calculate($previousResult ,int $indexOfLoop,string $loanType, 
 		$installmentPaymentIntervalName = 'monthly';
 		$datesAsIndexString=HDate::generateDatesBetweenStartDateAndDuration($currentStartDateAsIndex,$startDate,$tenor,$installmentPaymentIntervalName,false);
 		$datesIndexAndDaysCount =HDate::calculateDaysCountAtBeginning($datesAsIndexString); 
+		unset($datesAsIndexString[array_key_last($datesAsIndexString)]);
 		$datesAsStringIndex = array_flip($datesAsIndexString);
 		$dateIndexWithDate = $datesAsIndexString;
 		$installmentPaymentIntervalValue = $this->getInstallmentPaymentIntervalValue($installmentPaymentIntervalName);

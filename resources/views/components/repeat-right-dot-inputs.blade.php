@@ -14,6 +14,7 @@
 'mark'=>'',
 'removeThreeDotsClass'=>false,
 'isNumber'=>true,
+'disabled'=>false
 
 ])
 <div class="
@@ -30,6 +31,9 @@ three-dots-parent
 				data-number-of-decimals="{{ $numberFormatDecimals }}"
 				@if($readonly)
 				readonly
+				@endif 
+				@if($disabled)
+				disabled
 				@endif 
 				@if($name)
 				data-name="{{ removeSquareBrackets($name) }}"

@@ -64,10 +64,7 @@ public function __calculate($previousResult ,int $indexOfLoop,string $loanType, 
 		$datesAsIndexString=HDate::generateDatesBetweenStartDateAndDuration($currentStartDateAsIndex,$startDate,$tenor,$installmentPaymentIntervalName,false);
 		$datesIndexAndDaysCount =HDate::calculateDaysCountAtBeginning($datesAsIndexString); 
 		unset($datesAsIndexString[array_key_last($datesAsIndexString)]);
-		// dd($datesIndexAndDaysCount,$datesAsIndexString);
-		// dd($datesIndexAndDaysCount);
 		$datesAsStringIndex = array_flip($datesAsIndexString);
-		
 		$installmentPaymentIntervalValue = $this->getInstallmentPaymentIntervalValue($installmentPaymentIntervalName);
 		$currentPricing =  ($baseRate + $marginRate) /100  ;
 		$stepRate = Loan::getStepRate($loanType, $stepUpRate, $stepDownRate);

@@ -14,6 +14,7 @@
 'mark'=>'',
 'removeThreeDotsClass'=>false,
 'isNumber'=>true,
+'disabled'=>false
 
 ]); ?>
 <?php foreach (array_filter(([
@@ -32,6 +33,7 @@
 'mark'=>'',
 'removeThreeDotsClass'=>false,
 'isNumber'=>true,
+'disabled'=>false
 
 ]), 'is_string', ARRAY_FILTER_USE_KEY) as $__key => $__value) {
     $$__key = $$__key ?? $__value;
@@ -55,6 +57,9 @@ three-dots-parent
 				data-number-of-decimals="<?php echo e($numberFormatDecimals); ?>"
 				<?php if($readonly): ?>
 				readonly
+				<?php endif; ?> 
+				<?php if($disabled): ?>
+				disabled
 				<?php endif; ?> 
 				<?php if($name): ?>
 				data-name="<?php echo e(removeSquareBrackets($name)); ?>"
