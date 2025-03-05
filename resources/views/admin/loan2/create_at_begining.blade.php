@@ -1155,11 +1155,7 @@ tbody td{
             firstMonth = new Date(start_date.getTime());
             let secondMonth = addMonths(start_date, installment_payment_interval);
             let diffInDays = getDifferenceBetweenTwoDatesInDays(firstMonth, secondMonth);
-	
-
             let isFixedAtBeginning = getIsFixedAtBeginning();
-
-
             obj = {};
             obj.date = isFixedAtBeginning ? getDateFormatted(new Date(firstMonth.getTime())) : getDateFormatted(new Date(secondMonth.getTime()));
             obj.daysDiff = diffInDays;

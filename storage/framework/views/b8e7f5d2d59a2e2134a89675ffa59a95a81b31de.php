@@ -1170,7 +1170,7 @@ tbody td{
             firstMonth = new Date(start_date.getTime());
             let secondMonth = addMonths(start_date, installment_payment_interval);
             let diffInDays = getDifferenceBetweenTwoDatesInDays(firstMonth, secondMonth);
-	
+			console.log(firstMonth,secondMonth,diffInDays);
 
             let isFixedAtBeginning = getIsFixedAtBeginning();
 

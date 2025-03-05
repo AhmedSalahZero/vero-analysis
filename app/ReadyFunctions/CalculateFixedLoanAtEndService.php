@@ -65,7 +65,7 @@ class CalculateFixedLoanAtEndService
 		
 		$datesAsIndexString=HDate::generateDatesBetweenStartDateAndDuration($currentStartDateAsIndex,$startDate,$tenor,$installmentPaymentIntervalName);
 		
-		$datesIndexAndDaysCount =HDate::calculateDaysCount($datesAsIndexString,$currentDaysCount); 
+		$datesIndexAndDaysCount =HDate::calculateDaysCountAtEnd($datesAsIndexString,$currentDaysCount); 
 		
 		$datesAsStringIndex = array_flip($datesAsIndexString);
 		$installmentPaymentIntervalValue = $this->getInstallmentPaymentIntervalValue($installmentPaymentIntervalName);

@@ -114,7 +114,7 @@ class HDate
 				$currentStartDateAsIndex++;
 			}
 		}else{
-			for($i =-1 ; $i < ($duration/$intervalValue); $i++  ){
+			for($i =0 ; $i <= ($duration/$intervalValue); $i++  ){
 				$result[$currentStartDateAsIndex]=$dateService->addMonths($startDateDay,$startDate,$i*$intervalValue);
 				$currentStartDateAsIndex++;
 			}
@@ -129,7 +129,7 @@ class HDate
 		$index =$datesAsStringIndex[$date];
 		return $datesAsIndexString[$index + $numberOfShifts ]??null;
 	}
-	public static function calculateDaysCount(array $items,int $currentDaysCount = null):array{
+	public static function calculateDaysCountAtEnd(array $items,int $currentDaysCount = null):array{
 		$currentDayCount = 0 ; 
 		$dayCounts = [];
 		$secondDate = null ;
@@ -153,6 +153,33 @@ class HDate
 				$result = round(($result) / (60 * 60 * 24));
 				$dayCounts[$currentDateIndex] =   (int)$result;
 			}
+		}
+		return $dayCounts;
+		
+	}
+	public static function calculateDaysCountAtBeginning(array $items,int $currentDaysCount = null):array{
+		$currentDayCount = 0 ; 
+		$dayCounts = [];
+		$secondDate = null ;
+		$loopIndex = 0 ;
+		foreach($items as $currentDateIndex => $dateAsString){
+			
+			
+				if(!is_null($currentDaysCount)){
+					$dayCounts[$currentDateIndex] =$currentDaysCount;
+					continue;   
+				}
+				$secondDate = $items[$currentDateIndex+1]??null  ;
+				
+				$firstDate = $dateAsString ;
+				if(!is_null($secondDate)){
+					$secondDateTime  = strtotime($secondDate.' 00:00:00');
+				$firstDateTime  = strtotime($firstDate.' 00:00:00');
+				$result = $secondDateTime-$firstDateTime;
+				$result = round(($result) / (60 * 60 * 24));
+				$dayCounts[$currentDateIndex] =   (int)$result;
+				}
+				
 		}
 		return $dayCounts;
 		
