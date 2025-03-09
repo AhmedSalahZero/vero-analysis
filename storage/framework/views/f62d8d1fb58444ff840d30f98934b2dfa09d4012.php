@@ -32,80 +32,74 @@ use App\Models\NonBankingService\Expense;
 <?php endif; ?> 
 <?php $__env->stopSection(); ?>
 <?php $__env->startSection('content'); ?>
-
-<div class="row">
-    <div class="col-md-12">
-
-
-
-        <div class="kt-portlet " style="margin-bottom:5px;">
+<form id="form-id" class="kt-form kt-form--label-right" method="POST" enctype="multipart/form-data" action="<?php echo e(route('store.ffe.fixed.assets',['company'=>$company->id,'study'=>$study->id])); ?>">
+    <div class="row">
+        <div class="col-md-12">
 
 
-            <div class="kt-portlet__body">
+
+            <div class="kt-portlet " style="margin-bottom:5px;">
 
 
-                <div class="">
-                    <?php
-                    // $index = 0 ;
-                    ?>
-                    <div class="d-flex align-items-center justify-content-start " style="margin-right:auto">
-                        
-                        <button data-value="ffe-fixed-assets" class="btn mb-5 js-type-btn type-btn btn btn-outline-info active"><?php echo e(__('FFE Fixed Assets')); ?></button>
+                <div class="kt-portlet__body">
+
+
+                    <div class="">
                         <?php
-                        // $index++;
+                        // $index = 0 ;
                         ?>
-                        
+                        <div class="d-flex align-items-center justify-content-start " style="margin-right:auto">
+                            
+                            <button data-value="fixedAssets" class="btn mb-5 js-type-btn type-btn btn btn-outline-info active"><?php echo e(__('FFE Fixed Assets')); ?></button>
+                            <?php
+                            // $index++;
+                            ?>
+                            
+                        </div>
+
+
+
+
                     </div>
 
 
-
-
                 </div>
-
-
             </div>
-        </div>
 
-        
-        <?php
-        $tableId = 'ffe-fixed-assets';
-        $cardId = $tableId;
-        $repeaterId = $tableId.'_repeater';
-        ?>
-        <?php echo $__env->make('non_banking_services.ffe-fixed-assets._repeater', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+            
+            <?php
+            $tableId = 'fixedAssets';
+            $cardId = $tableId;
+            $repeaterId = $tableId.'_repeater';
+            ?>
+            <?php echo $__env->make('non_banking_services.ffe-fixed-assets._repeater', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+            <!--end::Form-->
 
-        
-        
-        
+            <!--end::Portlet-->
+            <?php
+            $fixedAssetsFundingStructure = $model->fixedAssetsFundingStructure ;
+            ?>
 
-
-
-
-        <!--end::Form-->
-
-        <!--end::Portlet-->
+            <div id="ffe-funding" class="kt-portlet " style="margin-bottom:5px;">
 
 
-        <div class="kt-portlet " style="margin-bottom:5px;">
+                <div class="kt-portlet__body">
 
+                    
+                    <div class="kt-portlet " id="new-funding-id">
+                        <div class="kt-portlet__body">
+                            <div class="row">
 
-            <div class="kt-portlet__body">
+                                <div class="col-md-10">
+                                    <div class="d-flex align-items-center ">
+                                        <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style="">
+                                            <?php echo e(__('FFE Funding Structure')); ?>
 
-                
-                <div class="kt-portlet " id="new-funding-id">
-                    <div class="kt-portlet__body">
-                        <div class="row">
-
-                            <div class="col-md-10">
-                                <div class="d-flex align-items-center ">
-                                    <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style="">
-                                        <?php echo e(__('FFE Funding Structure')); ?>
-
-                                    </h3>
+                                        </h3>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-md-2 text-right">
-                                 <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+                                <div class="col-md-2 text-right">
+                                     <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.show-hide-btn','data' => ['query' => '.new-portfolio-funding']]); ?>
 <?php $component->withName('show-hide-btn'); ?>
 <?php if ($component->shouldRender()): ?>
@@ -116,25 +110,25 @@ use App\Models\NonBankingService\Expense;
 <?php endif; ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
+                                </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <hr style="flex:1;background-color:lightgray">
-                        </div>
-                        <div class="row new-portfolio-funding">
-                            <?php
-                            $rowIndex = 0;
-                            ?>
+                            <div class="row">
+                                <hr style="flex:1;background-color:lightgray">
+                            </div>
+                            <div class="row new-portfolio-funding">
+                                <?php
+                                $rowIndex = 0;
+                                ?>
 
 
-                             <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+                                 <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.tables.repeater-table','data' => ['removeActionBtn' => true,'removeRepeater' => true,'initialJs' => false,'repeaterWithSelect2' => true,'canAddNewItem' => false,'parentClass' => 'js-remove-hidden','hideAddBtn' => true,'tableName' => '','repeaterId' => '','relationName' => 'food','isRepeater' => $isRepeater=!(isset($removeRepeater) && $removeRepeater)]]); ?>
 <?php $component->withName('tables.repeater-table'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php $component->withAttributes(['removeActionBtn' => true,'removeRepeater' => true,'initialJs' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'repeater-with-select2' => true,'canAddNewItem' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'parentClass' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('js-remove-hidden'),'hide-add-btn' => true,'tableName' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(''),'repeaterId' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(''),'relationName' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('food'),'isRepeater' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($isRepeater=!(isset($removeRepeater) && $removeRepeater))]); ?>
-                                 <?php $__env->slot('ths'); ?> 
-                                     <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+                                     <?php $__env->slot('ths'); ?> 
+                                         <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.tables.repeater-table-th','data' => ['class' => ' category-selector-class header-border-down ','title' => __('Item')]]); ?>
 <?php $component->withName('tables.repeater-table-th'); ?>
 <?php if ($component->shouldRender()): ?>
@@ -145,397 +139,421 @@ use App\Models\NonBankingService\Expense;
 <?php endif; ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
-                                    <?php $__currentLoopData = $yearsWithItsMonths; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $year=>$monthsForThisYearArray): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                     <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.tables.repeater-table-th','data' => ['class' => ' interval-class header-border-down ','title' => __('Yr-') . $yearIndexWithYear[$year] ]]); ?>
+                                        <?php $__currentLoopData = $studyMonthsForViews; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $dateAsIndex=>$dateAsString): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                         <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.tables.repeater-table-th','data' => ['class' => ' interval-class header-border-down ','title' => dateFormatting($dateAsString, 'M\' Y')]]); ?>
 <?php $component->withName('tables.repeater-table-th'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['class' => ' interval-class header-border-down ','title' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Yr-') . $yearIndexWithYear[$year] )]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['class' => ' interval-class header-border-down ','title' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(dateFormatting($dateAsString, 'M\' Y'))]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
-                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                 <?php $__env->endSlot(); ?>
-                                 <?php $__env->slot('trs'); ?> 
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                     <?php $__env->endSlot(); ?>
+                                     <?php $__env->slot('trs'); ?> 
 
-                                    <tr data-repeat-formatting-decimals="0" data-repeater-style>
-
-
+                                        <tr data-repeat-formatting-decimals="0" data-repeater-style>
 
 
-                                        <td>
-                                            <input value="<?php echo e(__('Direct FFE Amounts')); ?>" disabled class="form-control text-left mt-2" type="text">
 
-                                        </td>
-                                        <?php
-                                        $columnIndex = 0 ;
-                                        ?>
-                                        <?php $__currentLoopData = $yearsWithItsMonths; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $year=>$monthsForThisYearArray): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 
-                                        <td>
-                                            <div class="d-flex align-items-center justify-content-center">
+                                            <td>
+                                                <input value="<?php echo e(__('Direct FFE Amounts')); ?>" disabled class="form-control text-left mt-2" type="text">
 
-                                                 <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['numberFormatDecimals' => 0,'readonly' => true,'removeThreeDots' => true,'inputHiddenAttributes' => '','currentVal' => $study->getTotalDirectFactoringNewPortfolioAmountsAtYearIndex($year),'classes' => 'js-recalculate-equity-funding-value total-loans-hidden','isPercentage' => false,'name' => '','columnIndex' => $columnIndex]]); ?>
+                                            </td>
+                                            <?php
+                                            $columnIndex = 0 ;
+                                            ?>
+                                            <?php $__currentLoopData = $studyMonthsForViews; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $dateAsIndex=>$dateAsString): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+
+                                            <td>
+                                                <div class="d-flex align-items-center justify-content-center">
+
+                                                     <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['formattedInputClasses' => 'exclude-from-trigger-change-when-repeat','numberFormatDecimals' => 0,'readonly' => true,'removeThreeDots' => true,'inputHiddenAttributes' => '','currentVal' => $fixedAssetsFundingStructure ? $fixedAssetsFundingStructure->direct_ffe_amounts[$dateAsIndex] : 0,'classes' => 'js-recalculate-equity-funding-value total-loans-hidden direct-ffe-amounts','isPercentage' => false,'name' => 'fixedAssetsFundingStructure['.'direct_ffe_amounts'.']['.$dateAsIndex.']','columnIndex' => $columnIndex]]); ?>
 <?php $component->withName('repeat-right-dot-inputs'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['numberFormatDecimals' => 0,'readonly' => true,'removeThreeDots' => true,'inputHiddenAttributes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(''),'currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($study->getTotalDirectFactoringNewPortfolioAmountsAtYearIndex($year)),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('js-recalculate-equity-funding-value total-loans-hidden'),'is-percentage' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(''),'columnIndex' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($columnIndex)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['formattedInputClasses' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('exclude-from-trigger-change-when-repeat'),'numberFormatDecimals' => 0,'readonly' => true,'removeThreeDots' => true,'inputHiddenAttributes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(''),'currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($fixedAssetsFundingStructure ? $fixedAssetsFundingStructure->direct_ffe_amounts[$dateAsIndex] : 0),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('js-recalculate-equity-funding-value total-loans-hidden direct-ffe-amounts'),'is-percentage' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('fixedAssetsFundingStructure['.'direct_ffe_amounts'.']['.$dateAsIndex.']'),'columnIndex' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($columnIndex)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
 
-                                            </div>
-                                        </td>
-                                        <?php
-                                        $columnIndex++;
-                                        ?>
-                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                </div>
+                                            </td>
+                                            <?php
+                                            $columnIndex++;
+                                            ?>
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
 
 
-                                    </tr>
+                                        </tr>
 
 
 
-                                    <tr data-repeat-formatting-decimals="2" data-repeater-style>
+                                        <tr data-repeat-formatting-decimals="2" data-repeater-style>
 
 
 
 
-                                        <td>
-                                            <input value="<?php echo e(__('Equity Funding Rate (%)')); ?>" disabled class="form-control text-left mt-2" type="text">
+                                            <td>
+                                                <input value="<?php echo e(__('Equity Funding Rate (%)')); ?>" disabled class="form-control text-left mt-2" type="text">
 
-                                        </td>
-                                        <?php
-                                        $columnIndex = 0 ;
-                                        ?>
-                                        <?php $__currentLoopData = $yearsWithItsMonths; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $year=>$monthsForThisYearArray): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            </td>
+                                            <?php
+                                            $columnIndex = 0 ;
+                                            ?>
+                                            <?php $__currentLoopData = $studyMonthsForViews; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $dateAsIndex=>$dateAsString): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 
-                                        <td>
-                                            <div class="d-flex align-items-center justify-content-center">
+                                            <td>
+                                                <div class="d-flex align-items-center justify-content-center">
 
-                                                 <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['inputHiddenAttributes' => 'js-recalculate-equity-funding-value','currentVal' => $model->directFactoringNewPortfolioFundingStructure ? $model->directFactoringNewPortfolioFundingStructure->getEquityFundingRatesAtYearIndex($year):0,'classes' => 'only-greater-than-or-equal-zero-allowed equity-funding-rates equity-funding-rate-input-hidden-class','isPercentage' => true,'name' => 'directFactoringNewPortfolioFundingStructure['.'equity_funding_rates'.']['.$year.']','columnIndex' => $columnIndex]]); ?>
+                                                     <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['inputHiddenAttributes' => 'js-recalculate-equity-funding-value','currentVal' => $fixedAssetsFundingStructure ? $fixedAssetsFundingStructure->getEquityFundingRatesAtMonthIndex($dateAsIndex) : 0,'formattedInputClasses' => 'exclude-from-trigger-change-when-repeat','classes' => 'only-greater-than-or-equal-zero-allowed equity-funding-rates equity-funding-rate-input-hidden-class','isPercentage' => true,'name' => 'fixedAssetsFundingStructure['.'equity_funding_rates'.']['.$dateAsIndex.']','columnIndex' => $columnIndex]]); ?>
 <?php $component->withName('repeat-right-dot-inputs'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['inputHiddenAttributes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('js-recalculate-equity-funding-value'),'currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($model->directFactoringNewPortfolioFundingStructure ? $model->directFactoringNewPortfolioFundingStructure->getEquityFundingRatesAtYearIndex($year):0),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed equity-funding-rates equity-funding-rate-input-hidden-class'),'is-percentage' => true,'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('directFactoringNewPortfolioFundingStructure['.'equity_funding_rates'.']['.$year.']'),'columnIndex' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($columnIndex)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['inputHiddenAttributes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('js-recalculate-equity-funding-value'),'currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($fixedAssetsFundingStructure ? $fixedAssetsFundingStructure->getEquityFundingRatesAtMonthIndex($dateAsIndex) : 0),'formattedInputClasses' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('exclude-from-trigger-change-when-repeat'),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed equity-funding-rates equity-funding-rate-input-hidden-class'),'is-percentage' => true,'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('fixedAssetsFundingStructure['.'equity_funding_rates'.']['.$dateAsIndex.']'),'columnIndex' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($columnIndex)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
 
-                                            </div>
-                                        </td>
-                                        <?php
-                                        $columnIndex++;
-                                        ?>
-                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                </div>
+                                            </td>
+                                            <?php
+                                            $columnIndex++;
+                                            ?>
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
 
 
-                                    </tr>
+                                        </tr>
 
 
 
-                                    <tr data-repeat-formatting-decimals="0" data-repeater-style >
+                                        <tr data-repeat-formatting-decimals="0" data-repeater-style >
 
-                                        <input type="hidden" name="id" value="<?php echo e(isset($subModel) ? $subModel->id : 0); ?>">
+                                            <input type="hidden" name="id" value="<?php echo e(isset($subModel) ? $subModel->id : 0); ?>">
 
 
-                                        <td>
-                                            <input value="<?php echo e(__('Equity Funding Value')); ?>" disabled class="form-control text-left mt-2" type="text">
+                                            <td>
+                                                <input value="<?php echo e(__('Equity Funding Value')); ?>" disabled class="form-control text-left mt-2" type="text">
 
-                                        </td>
-                                        <?php
-                                        $columnIndex = 0 ;
-                                        ?>
-                                        <?php $__currentLoopData = $yearsWithItsMonths; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $year=>$monthsForThisYearArray): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                        <td>
-                                            <div class="d-flex align-items-center justify-content-center">
-                                                 <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['numberFormatDecimals' => 0,'currentVal' => $model->directFactoringNewPortfolioFundingStructure ? $model->directFactoringNewPortfolioFundingStructure->getEquityFundingValuesAtYearIndex($year):0,'classes' => 'only-greater-than-or-equal-zero-allowed ','formattedInputClasses' => 'equity-funding-formatted-value-class','isPercentage' => false,'name' => 'directFactoringNewPortfolioFundingStructure['.'equity_funding_values'.']['.$year.']','columnIndex' => $columnIndex]]); ?>
+                                            </td>
+                                            <?php
+                                            $columnIndex = 0 ;
+                                            ?>
+                                            <?php $__currentLoopData = $studyMonthsForViews; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $dateAsIndex=>$dateAsString): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <td>
+                                                <div class="d-flex align-items-center justify-content-center">
+                                                     <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['numberFormatDecimals' => 0,'currentVal' => 0,'classes' => 'only-greater-than-or-equal-zero-allowed ','formattedInputClasses' => 'exclude-from-trigger-change-when-repeat equity-funding-formatted-value-class','isPercentage' => false,'name' => 'fixedAssetsFundingStructure['.'equity_funding_values'.']['.$dateAsIndex.']','columnIndex' => $columnIndex]]); ?>
 <?php $component->withName('repeat-right-dot-inputs'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['numberFormatDecimals' => 0,'currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($model->directFactoringNewPortfolioFundingStructure ? $model->directFactoringNewPortfolioFundingStructure->getEquityFundingValuesAtYearIndex($year):0),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed '),'formatted-input-classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('equity-funding-formatted-value-class'),'is-percentage' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('directFactoringNewPortfolioFundingStructure['.'equity_funding_values'.']['.$year.']'),'columnIndex' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($columnIndex)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['numberFormatDecimals' => 0,'currentVal' => 0,'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed '),'formatted-input-classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('exclude-from-trigger-change-when-repeat equity-funding-formatted-value-class'),'is-percentage' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('fixedAssetsFundingStructure['.'equity_funding_values'.']['.$dateAsIndex.']'),'columnIndex' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($columnIndex)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
 
-                                            </div>
-                                        </td>
-                                        <?php
-                                        $columnIndex++;
-                                        ?>
-                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                </div>
+                                            </td>
+                                            <?php
+                                            $columnIndex++;
+                                            ?>
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
 
 
-                                    </tr>
+                                        </tr>
 
 
 
-                                    <tr data-repeat-formatting-decimals="2" data-repeater-style>
-                                        <td>
-                                            <input disabled value="<?php echo e(__('Loans Funding Rate (%)')); ?>" class="form-control text-left" type="text">
-                                        </td>
-                                        <?php
-                                        $columnIndex = 0 ;
-                                        ?>
+                                        <tr data-repeat-formatting-decimals="2" data-repeater-style>
+                                            <td>
+                                                <input disabled value="<?php echo e(__('Loans Funding Rate (%)')); ?>" class="form-control text-left" type="text">
+                                            </td>
+                                            <?php
+                                            $columnIndex = 0 ;
+                                            ?>
 
-                                        <?php $__currentLoopData = $yearsWithItsMonths; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $year=>$monthsForThisYearArray): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-
-
-                                        <td>
-                                            <div class="d-flex align-items-center justify-content-center">
-                                                <input type="text" data-column-index="<?php echo e($columnIndex); ?>" readonly class="form-control expandable-percentage-input new-loan-function-rates-js" name="directFactoringNewPortfolioFundingStructure[new_loans_funding_rates][<?php echo e($year); ?>]" value="<?php echo e($model->directFactoringNewPortfolioFundingStructure ? $model->directFactoringNewPortfolioFundingStructure->getNewLoansFundingRatesAtYearIndex($year):0); ?>"> <span class="ml-2">%</span>
-                                            </div>
-                                        </td>
-                                        <?php
-                                        $columnIndex++;
-                                        ?>
-
-                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                            <?php $__currentLoopData = $studyMonthsForViews; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $dateAsIndex=>$dateAsString): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 
 
+                                            <td>
+                                                <div class="d-flex align-items-center justify-content-center">
+                                                    <input type="text" data-column-index="<?php echo e($columnIndex); ?>" readonly class="exclude-from-trigger-change-when-repeat form-control expandable-percentage-input new-loan-function-rates-js" name="fixedAssetsFundingStructure[new_loans_funding_rates][<?php echo e($dateAsIndex); ?>]" value="<?php echo e(0); ?>"> <span class="ml-2">%</span>
+                                                </div>
+                                            </td>
+                                            <?php
+                                            $columnIndex++;
+                                            ?>
 
-                                    </tr>
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
 
+
+                                        </tr>
 
 
 
 
-                                    <tr data-repeat-formatting-decimals="0" data-repeater-style>
 
 
-                                        <td>
-                                            <input disabled value="<?php echo e(__('Loans Funding Value')); ?>" class="form-control text-left" type="text">
-                                        </td>
-                                        <?php
-                                        $columnIndex = 0 ;
-                                        ?>
-
-                                        <?php $__currentLoopData = $yearsWithItsMonths; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $year=>$monthsForThisYearArray): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <tr data-repeat-formatting-decimals="0" data-repeater-style>
 
 
-                                        <td>
-                                            <div class="d-flex align-items-center justify-content-center">
-                                                 <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['numberFormatDecimals' => 0,'formattedInputClasses' => 'new-loans-funding-formatted-value-class','currentVal' => $model->directFactoringNewPortfolioFundingStructure ? $model->directFactoringNewPortfolioFundingStructure->getNewLoansFundingValuesAtYearIndex($year):0 ,'classes' => 'only-greater-than-or-equal-zero-allowed','isPercentage' => false,'name' => 'directFactoringNewPortfolioFundingStructure['.'new_loans_funding_values'.']['.$year.']','columnIndex' => $columnIndex]]); ?>
+                                            <td>
+                                                <input disabled value="<?php echo e(__('Loans Funding Value')); ?>" class="form-control text-left" type="text">
+                                            </td>
+                                            <?php
+                                            $columnIndex = 0 ;
+                                            ?>
+
+                                            <?php $__currentLoopData = $studyMonthsForViews; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $dateAsIndex=>$dateAsString): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+
+
+                                            <td>
+                                                <div class="d-flex align-items-center justify-content-center">
+                                                     <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['numberFormatDecimals' => 0,'formattedInputClasses' => 'exclude-from-trigger-change-when-repeat new-loans-funding-formatted-value-class','currentVal' => 0,'classes' => 'only-greater-than-or-equal-zero-allowed','isPercentage' => false,'name' => 'fixedAssetsFundingStructure['.'new_loans_funding_values'.']['.$dateAsIndex.']','columnIndex' => $columnIndex]]); ?>
 <?php $component->withName('repeat-right-dot-inputs'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['numberFormatDecimals' => 0,'formatted-input-classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('new-loans-funding-formatted-value-class'),'currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($model->directFactoringNewPortfolioFundingStructure ? $model->directFactoringNewPortfolioFundingStructure->getNewLoansFundingValuesAtYearIndex($year):0 ),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed'),'is-percentage' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('directFactoringNewPortfolioFundingStructure['.'new_loans_funding_values'.']['.$year.']'),'columnIndex' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($columnIndex)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['numberFormatDecimals' => 0,'formatted-input-classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('exclude-from-trigger-change-when-repeat new-loans-funding-formatted-value-class'),'currentVal' => 0,'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed'),'is-percentage' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('fixedAssetsFundingStructure['.'new_loans_funding_values'.']['.$dateAsIndex.']'),'columnIndex' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($columnIndex)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
 
-                                            </div>
-                                        </td>
-                                        <?php
-                                        $columnIndex++;
-                                        ?>
+                                                </div>
+                                            </td>
+                                            <?php
+                                            $columnIndex++;
+                                            ?>
 
-                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-
-
-
-                                    </tr>
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
 
-                                    <tr data-repeat-formatting-decimals="0" data-repeater-style>
 
-                                        <td>
-                                            <input disabled value="<?php echo e(__('Loans Tenor ( Months )')); ?>" class="form-control text-left" type="text">
-                                        </td>
-                                        <?php
-                                        $columnIndex = 0 ;
-                                        ?>
-
-                                        <?php $__currentLoopData = $yearsWithItsMonths; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $year=>$monthsForThisYearArray): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        </tr>
 
 
-                                        <td>
-                                            <div class="d-flex align-items-center justify-content-center">
-                                                 <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['numberFormatDecimals' => 0,'mark' => 'Mth','formattedInputClasses' => 'new-loans-funding-formatted-value-class','currentVal' => $model->directFactoringNewPortfolioFundingStructure ? $model->directFactoringNewPortfolioFundingStructure->getNewLoansFundingValuesAtYearIndex($year):0 ,'classes' => 'only-greater-than-or-equal-zero-allowed','isPercentage' => false,'name' => 'directFactoringNewPortfolioFundingStructure['.'new_loans_funding_values'.']['.$year.']','columnIndex' => $columnIndex]]); ?>
+                                        <tr data-repeat-formatting-decimals="0" data-repeater-style>
+
+                                            <td>
+                                                <input disabled value="<?php echo e(__('Loans Tenor ( Months )')); ?>" class="form-control text-left" type="text">
+                                            </td>
+                                            <?php
+                                            $columnIndex = 0 ;
+                                            ?>
+
+                                            <?php $__currentLoopData = $studyMonthsForViews; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $dateAsIndex=>$dateAsString): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+
+
+                                            <td>
+                                                <div class="d-flex align-items-center justify-content-center">
+                                                     <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['numberFormatDecimals' => 0,'mark' => 'Mth','formattedInputClasses' => 'exclude-from-trigger-change-when-repeat ','currentVal' => $fixedAssetsFundingStructure ? $fixedAssetsFundingStructure->getTenorsAtMonthIndex($dateAsIndex) : 0,'classes' => 'only-greater-than-or-equal-zero-allowed','isPercentage' => false,'name' => 'fixedAssetsFundingStructure['.'tenors'.']['.$dateAsIndex.']','columnIndex' => $columnIndex]]); ?>
 <?php $component->withName('repeat-right-dot-inputs'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['numberFormatDecimals' => 0,'mark' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('Mth'),'formatted-input-classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('new-loans-funding-formatted-value-class'),'currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($model->directFactoringNewPortfolioFundingStructure ? $model->directFactoringNewPortfolioFundingStructure->getNewLoansFundingValuesAtYearIndex($year):0 ),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed'),'is-percentage' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('directFactoringNewPortfolioFundingStructure['.'new_loans_funding_values'.']['.$year.']'),'columnIndex' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($columnIndex)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['numberFormatDecimals' => 0,'mark' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('Mth'),'formatted-input-classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('exclude-from-trigger-change-when-repeat '),'currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($fixedAssetsFundingStructure ? $fixedAssetsFundingStructure->getTenorsAtMonthIndex($dateAsIndex) : 0),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed'),'is-percentage' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('fixedAssetsFundingStructure['.'tenors'.']['.$dateAsIndex.']'),'columnIndex' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($columnIndex)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
 
-                                            </div>
-                                        </td>
-                                        <?php
-                                        $columnIndex++;
-                                        ?>
+                                                </div>
+                                            </td>
+                                            <?php
+                                            $columnIndex++;
+                                            ?>
 
-                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-
-
-
-                                    </tr>
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
 
-                                    <tr data-repeat-formatting-decimals="0" data-repeater-style>
 
-                                        <td>
-                                            <input disabled value="<?php echo e(__('Grace Period ( Months )')); ?>" class="form-control text-left" type="text">
-                                        </td>
-                                        <?php
-                                        $columnIndex = 0 ;
-                                        ?>
-
-                                        <?php $__currentLoopData = $yearsWithItsMonths; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $year=>$monthsForThisYearArray): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        </tr>
 
 
-                                        <td>
-                                            <div class="d-flex align-items-center justify-content-center">
-                                                 <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['numberFormatDecimals' => 0,'mark' => 'Mth','formattedInputClasses' => 'new-loans-funding-formatted-value-class','currentVal' => $model->directFactoringNewPortfolioFundingStructure ? $model->directFactoringNewPortfolioFundingStructure->getNewLoansFundingValuesAtYearIndex($year):0 ,'classes' => 'only-greater-than-or-equal-zero-allowed','isPercentage' => false,'name' => 'directFactoringNewPortfolioFundingStructure['.'new_loans_funding_values'.']['.$year.']','columnIndex' => $columnIndex]]); ?>
+                                        <tr data-repeat-formatting-decimals="0" data-repeater-style>
+
+                                            <td>
+                                                <input disabled value="<?php echo e(__('Grace Period ( Months )')); ?>" class="form-control text-left" type="text">
+                                            </td>
+                                            <?php
+                                            $columnIndex = 0 ;
+                                            ?>
+
+                                            <?php $__currentLoopData = $studyMonthsForViews; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $dateAsIndex=>$dateAsString): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+
+
+                                            <td>
+                                                <div class="d-flex align-items-center justify-content-center">
+                                                     <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['numberFormatDecimals' => 0,'mark' => 'Mth','formattedInputClasses' => 'exclude-from-trigger-change-when-repeat ','currentVal' => $fixedAssetsFundingStructure ? $fixedAssetsFundingStructure->getGracePeriodAtMonthIndex($dateAsIndex) : 0 ,'classes' => 'only-greater-than-or-equal-zero-allowed','isPercentage' => false,'name' => 'fixedAssetsFundingStructure['.'grace_periods'.']['.$dateAsIndex.']','columnIndex' => $columnIndex]]); ?>
 <?php $component->withName('repeat-right-dot-inputs'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['numberFormatDecimals' => 0,'mark' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('Mth'),'formatted-input-classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('new-loans-funding-formatted-value-class'),'currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($model->directFactoringNewPortfolioFundingStructure ? $model->directFactoringNewPortfolioFundingStructure->getNewLoansFundingValuesAtYearIndex($year):0 ),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed'),'is-percentage' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('directFactoringNewPortfolioFundingStructure['.'new_loans_funding_values'.']['.$year.']'),'columnIndex' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($columnIndex)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['numberFormatDecimals' => 0,'mark' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('Mth'),'formatted-input-classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('exclude-from-trigger-change-when-repeat '),'currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($fixedAssetsFundingStructure ? $fixedAssetsFundingStructure->getGracePeriodAtMonthIndex($dateAsIndex) : 0 ),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed'),'is-percentage' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('fixedAssetsFundingStructure['.'grace_periods'.']['.$dateAsIndex.']'),'columnIndex' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($columnIndex)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
 
-                                            </div>
-                                        </td>
-                                        <?php
-                                        $columnIndex++;
-                                        ?>
+                                                </div>
+                                            </td>
+                                            <?php
+                                            $columnIndex++;
+                                            ?>
 
-                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-
-
-
-                                    </tr>
-									
-									 <tr data-repeat-formatting-decimals="2" data-repeater-style>
-
-                                        <td>
-                                            <input disabled value="<?php echo e(__('Interest Rate %')); ?>" class="form-control text-left" type="text">
-                                        </td>
-                                        <?php
-                                        $columnIndex = 0 ;
-                                        ?>
-
-                                        <?php $__currentLoopData = $yearsWithItsMonths; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $year=>$monthsForThisYearArray): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
 
-                                        <td>
-                                            <div class="d-flex align-items-center justify-content-center">
-                                                 <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['numberFormatDecimals' => 0,'mark' => '%','formattedInputClasses' => 'new-loans-funding-formatted-value-class','currentVal' => $model->directFactoringNewPortfolioFundingStructure ? $model->directFactoringNewPortfolioFundingStructure->getNewLoansFundingValuesAtYearIndex($year):0 ,'classes' => 'only-greater-than-or-equal-zero-allowed','isPercentage' => false,'name' => 'directFactoringNewPortfolioFundingStructure['.'new_loans_funding_values'.']['.$year.']','columnIndex' => $columnIndex]]); ?>
+
+                                        </tr>
+
+                                        <tr data-repeat-formatting-decimals="2" data-repeater-style>
+
+                                            <td>
+                                                <input disabled value="<?php echo e(__('Interest Rate %')); ?>" class="form-control text-left" type="text">
+                                            </td>
+                                            <?php
+                                            $columnIndex = 0 ;
+                                            ?>
+
+                                            <?php $__currentLoopData = $studyMonthsForViews; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $dateAsIndex=>$dateAsString): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+
+
+                                            <td>
+                                                <div class="d-flex align-items-center justify-content-center">
+                                                     <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['numberFormatDecimals' => 0,'mark' => '%','formattedInputClasses' => 'exclude-from-trigger-change-when-repeat','currentVal' => $fixedAssetsFundingStructure ? $fixedAssetsFundingStructure->getInterestRateAtMonthIndex($dateAsIndex) : 0 ,'classes' => 'only-greater-than-or-equal-zero-allowed','isPercentage' => false,'name' => 'fixedAssetsFundingStructure['.'interest_rates'.']['.$dateAsIndex.']','columnIndex' => $columnIndex]]); ?>
 <?php $component->withName('repeat-right-dot-inputs'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['numberFormatDecimals' => 0,'mark' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('%'),'formatted-input-classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('new-loans-funding-formatted-value-class'),'currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($model->directFactoringNewPortfolioFundingStructure ? $model->directFactoringNewPortfolioFundingStructure->getNewLoansFundingValuesAtYearIndex($year):0 ),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed'),'is-percentage' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('directFactoringNewPortfolioFundingStructure['.'new_loans_funding_values'.']['.$year.']'),'columnIndex' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($columnIndex)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['numberFormatDecimals' => 0,'mark' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('%'),'formatted-input-classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('exclude-from-trigger-change-when-repeat'),'currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($fixedAssetsFundingStructure ? $fixedAssetsFundingStructure->getInterestRateAtMonthIndex($dateAsIndex) : 0 ),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed'),'is-percentage' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('fixedAssetsFundingStructure['.'interest_rates'.']['.$dateAsIndex.']'),'columnIndex' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($columnIndex)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
 
-                                            </div>
-                                        </td>
-                                        <?php
-                                        $columnIndex++;
-                                        ?>
+                                                </div>
+                                            </td>
+                                            <?php
+                                            $columnIndex++;
+                                            ?>
 
-                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-
-
-
-                                    </tr>
-									
-									 <tr data-repeat-formatting-decimals="0" data-repeater-style>
-
-                                        <td>
-                                            <input disabled value="<?php echo e(__('IInstallment Interval')); ?>" class="form-control text-left" type="text">
-                                        </td>
-                                        <?php
-                                        $columnIndex = 0 ;
-                                        ?>
-
-                                        <?php $__currentLoopData = $yearsWithItsMonths; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $year=>$monthsForThisYearArray): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
 
-                                        <td>
-                                            <div class="d-flex align-items-center justify-content-center">
-                                               <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.select','data' => ['required' => true,'label' => '','pleaseSelect' => false,'selectedValue' => isset($subModel) ? $subModel->getInstallmentInterval() : 'monthly','options' => [['title'=>__('Monthly'),'value'=>'monthly'],['title'=>__('Quarterly'),'value'=>'quartly'],['value'=>'semi annually','title'=>__('Semi-annually')]],'addNew' => false,'class' => 'select2-select  repeater-select  ','all' => false,'name' => 'installment_interval']]); ?>
+
+                                        </tr>
+
+                                        <tr data-repeat-formatting-decimals="0" data-repeater-style>
+
+                                            <td>
+                                                <input disabled value="<?php echo e(__('Installment Interval')); ?>" class="form-control text-left" type="text">
+                                            </td>
+                                            <?php
+                                            $columnIndex = 0 ;
+                                            ?>
+
+                                            <?php $__currentLoopData = $studyMonthsForViews; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $dateAsIndex=>$dateAsString): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+
+                                            <td>
+                                                <div class="d-flex align-items-center justify-content-center">
+                                                     <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.select','data' => ['required' => true,'label' => '','pleaseSelect' => false,'selectedValue' => isset($fixedAssetsFundingStructure) ? $fixedAssetsFundingStructure->getInstallmentIntervalAtMonthIndex($dateAsIndex) : 'monthly','options' => [['title'=>__('Monthly'),'value'=>'monthly'],['title'=>__('Quarterly'),'value'=>'quartly'],['value'=>'semi annually','title'=>__('Semi-annually')]],'addNew' => false,'class' => 'select2-select  repeater-select  ','all' => false,'name' => 'fixedAssetsFundingStructure[installment_intervals]['.e($dateAsIndex).']']]); ?>
 <?php $component->withName('form.select'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['required' => true,'label' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(''),'pleaseSelect' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'selectedValue' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(isset($subModel) ? $subModel->getInstallmentInterval() : 'monthly'),'options' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute([['title'=>__('Monthly'),'value'=>'monthly'],['title'=>__('Quarterly'),'value'=>'quartly'],['value'=>'semi annually','title'=>__('Semi-annually')]]),'add-new' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'class' => 'select2-select  repeater-select  ','all' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'name' => 'installment_interval']); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['required' => true,'label' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(''),'pleaseSelect' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'selectedValue' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(isset($fixedAssetsFundingStructure) ? $fixedAssetsFundingStructure->getInstallmentIntervalAtMonthIndex($dateAsIndex) : 'monthly'),'options' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute([['title'=>__('Monthly'),'value'=>'monthly'],['title'=>__('Quarterly'),'value'=>'quartly'],['value'=>'semi annually','title'=>__('Semi-annually')]]),'add-new' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'class' => 'select2-select  repeater-select  ','all' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'name' => 'fixedAssetsFundingStructure[installment_intervals]['.e($dateAsIndex).']']); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
-                                            </div>
-                                        </td>
-                                        <?php
-                                        $columnIndex++;
-                                        ?>
+                                                </div>
+                                            </td>
+                                            <?php
+                                            $columnIndex++;
+                                            ?>
 
-                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-
-
-
-                                    </tr>
-									
-									
-                                 <?php $__env->endSlot(); ?>
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
 
 
+                                        </tr>
 
-                             <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+
+                                     <?php $__env->endSlot(); ?>
+
+
+
+
+                                 <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
-                            
+                                
 
+
+                            </div>
 
                         </div>
-
                     </div>
+                    
                 </div>
-                
+				
+            </div>
+<style>
+.max-w-btn{
+	max-width:125px !important;
+	min-width:125px !important;
+}
+</style>
+
+         <div id="ffe-funding" class="kt-portlet " style="margin-bottom:5px;">
+
+
+                <div class="kt-portlet__body">
+				<div class="row btn-for-submit--js ">
+                <div class="col-lg-6">
+              
+                </div>
+                <div class="col-lg-6 kt-align-right">
+                    <input data-save-and-add-new-department="0" type="submit" class="btn max-w-btn active-style save-form" value="<?php echo e(isset($text) ? $text : __('Save Changes')); ?>">
+					
+                </div>
+            </div>
+            </div>
             </div>
         </div>
 
+
     </div>
-
-
-</div>
-
+	
+	
+			
+</form>
 </div>
 
 

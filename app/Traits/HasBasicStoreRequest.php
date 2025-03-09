@@ -2,6 +2,7 @@
 namespace App\Traits;
 
 use App\Models\Company;
+use App\ReadyFunctions\dd;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
@@ -64,10 +65,10 @@ trait HasBasicStoreRequest
 		$oldIdsFromDatabase = $this->{$relationName}->pluck('id')->toArray();
 		$idsFromRequest =array_column($relationDataArray,'id') ;
 		$elementsToDelete = array_diff($oldIdsFromDatabase,$idsFromRequest);
+		
 		if(count($oldIdsFromDatabase) && !count($idsFromRequest)){
 			dd('there is no old ids from request .. !!');
 		}
-		// dd($oldIdsFromDatabase,$relationDataArray);
 		$elementsToUpdate = array_intersect($idsFromRequest,$oldIdsFromDatabase);
 		$this->$relationName()->whereIn($relationTableName.'.id',$elementsToDelete)->delete();
 
@@ -106,9 +107,11 @@ trait HasBasicStoreRequest
 		$columnsWithPayload = [
 		];
 		foreach($request->all() as $relationName => $values){
+			
 			if(!is_array($values) || !method_exists($this,$relationName) ){
 				continue ;
 			}
+	
 			foreach($values as $columnName => $payload){
 				if(is_numeric($columnName)){
 					continue;
@@ -125,6 +128,7 @@ trait HasBasicStoreRequest
 				$this->{$relationName}()->update($values);
 			}
 		}
+
 		$this->refresh();
 		return $this;
 	}

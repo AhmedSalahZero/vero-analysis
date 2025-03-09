@@ -64,7 +64,6 @@ class CalculateFixedLoanAtEndService
 		$installmentFactors = [];
 		
 		$datesAsIndexString=HDate::generateDatesBetweenStartDateAndDuration($currentStartDateAsIndex,$startDate,$tenor,$installmentPaymentIntervalName);
-		
 		$datesIndexAndDaysCount =HDate::calculateDaysCountAtEnd($datesAsIndexString,$currentDaysCount); 
 		
 		$datesAsStringIndex = array_flip($datesAsIndexString);
@@ -75,6 +74,7 @@ class CalculateFixedLoanAtEndService
 		$isWithCapitalization = Loan::isWithCapitalization($loanType);
 		$appliedStepName = Loan::getAppliedStepIntervalName($loanType, $stepUpIntervalName, $stepDownIntervalName);
 		$appliedStepValue = $this->getAppliedStepIntervalValue($appliedStepName);
+		
 		$installmentStartDateAsIndex = $datesAsStringIndex[HDate::getDateAfterIndex($datesAsIndexString,$datesAsStringIndex,$startDate,($gracePeriod+$installmentPaymentIntervalValue)/$installmentPaymentIntervalValue)] ;
 		
 		

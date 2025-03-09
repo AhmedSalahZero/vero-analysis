@@ -586,6 +586,7 @@ use Illuminate\Support\Facades\DB;
 	{
 		return $this->hasOne(DirectFactoringNewPortfolioFundingStructure::class,'study_id','id');
 	}
+	
 	public function ReverseFactoringRevenueProjectionByCategory()
 	{
 		return $this->hasOne(ReverseFactoringRevenueProjectionByCategory::class,'study_id');
@@ -801,7 +802,7 @@ use Illuminate\Support\Facades\DB;
 						}else{
 							
 							$currentPortfolioLoans=$loanService->__calculate([] ,-1,$loanType, $currentMonth, $currentMonthlyLoanAmount,$baseRatesMapping, $currentMarginRate,  $tenor, $installmentInterval, $stepUp,$stepInterval ,$stepDown ,  $stepInterval ,$gracePeriod,$monthIndex,null,$pricingPerMonths);
-							dd($currentPortfolioLoans);
+						
 						
 							$finalResult = $currentPortfolioLoans['final_result']??[];
 							unset($finalResult['totals']);
@@ -881,7 +882,163 @@ use Illuminate\Support\Facades\DB;
 		}
 		DB::connection('non_banking_service')->table($loanSchedulePaymentTableName)->insert($portfolioLoans);
 	}
+	public function storeFixedLoansForFixedAssets($isSensitivity = false):void
+	{
+		$loanSchedulePaymentTableName = $isSensitivity ? 'sensitivity_fixed_assets_loan_schedule_payments' : 'fixed_assets_loan_schedule_payments';
+		// $revenueIdWitLoanAmounts = $this->{$relationName}->pluck('loan_amounts','id')->toArray() ;
+		$fixedAssetsFundingStructure = $this->fixedAssetsFundingStructure;
+		$loanAmounts = $fixedAssetsFundingStructure->getFfeAmounts();
+		$calculateFixedLoanAtEndService = new CalculateFixedLoanAtEndService ;
+		$calculateFixedLoanAtBeginningService = new CalculateFixedLoanAtBeginningService ;
+		$portfolioLoans = [];
+		$studyId  = $this->id ;
+		$companyId = $this->company->id ;
+		$study = $this ;
+		$counter = 0 ;
+		$operationDurationPerYear=$study->getOperationDurationPerYearFromIndexes();
+
+		// $leasingRevenueStreams =$study->{$relationName};
+		$generalAndReserveAssumption = $study->generalAndReserveAssumption;
+		// $leasingEclAndNewPortfolioFundingRate = $study->{$eclRelationName};
 		
+		/**
+		 * @var GeneralAndReserveAssumption $generalAndReserveAssumption
+		 */
+		$dateIndexWithDate = app('dateIndexWithDate');
+		$dateWithDateIndex = app('dateWithDateIndex');
+		$yearIndexWithYear = app('yearIndexWithYear');
+
+		$baseRates = $generalAndReserveAssumption->getCbeLendingCorridorRates() ;
+	
+		$baseRatesPerMonths= [];
+		foreach($operationDurationPerYear as $yearIndex => $yearMonthIndexes)
+		{
+			foreach($yearMonthIndexes as $monthIndex => $monthlyZeroOrOne ){
+				$baseRatesPerMonths[Carbon::make($dateIndexWithDate[$monthIndex])->format('Y-m-d')] = $baseRates[$yearIndex];
+			}
+		}
+		DB::connection('non_banking_service')->table($loanSchedulePaymentTableName)
+		// ->where('revenue_stream_type',$revenueStreamType)
+		->where('study_id',$studyId)->delete();
+		$baseRatesMapping = HArr::getFirstOfYear($baseRatesPerMonths);
+		$bankLendingMarginRates=$generalAndReserveAssumption->getBankLendingMarginRates();
+
+		
+		
+		 $baseRatesMapping = HArr::isAllValuesEqual($baseRatesMapping,$bankLendingMarginRates);
+		$totalMonthlyLoanAmounts = [];
+		// $time = 0 ;
+	
+		
+		foreach($operationDurationPerYear as $yearIndex => $yearMonthIndexes){
+			$baseRatesMapping = is_array($baseRatesMapping) ? HArr::filterByYearIndex($baseRatesMapping,$yearIndexWithYear,$yearIndex) : $baseRatesMapping;
+			foreach($yearMonthIndexes as $monthIndex => $monthlyZeroOrOne ){
+			
+				foreach($loanAmounts as  $monthIndexWithAmount ){
+			
+					$counter ++ ;
+					$currentMonthlyLoanAmount = $monthIndexWithAmount[$monthIndex]??0 ;
+			
+						
+						if($currentMonthlyLoanAmount <= 0){
+							continue ;
+						}
+						$totalMonthlyLoanAmounts[$monthIndex]  = isset($totalMonthlyLoanAmount[$monthIndex]) ? $totalMonthlyLoanAmount[$monthIndex] +  $currentMonthlyLoanAmount : $currentMonthlyLoanAmount ;
+						
+						// dd($dateIndexWithDate,$monthIndex);
+						$currentMonth = $dateIndexWithDate[$monthIndex];
+						// $currentMonthFormatted = Carbon::make($currentMonth)->format('d-m-Y');
+						$currentMarginRate = $fixedAssetsFundingStructure->getInterestRateAtMonthIndex($monthIndex);
+						
+						$gracePeriod = $fixedAssetsFundingStructure->getGracePeriodAtMonthIndex($monthIndex);
+						$tenor = $fixedAssetsFundingStructure->getTenorsAtMonthIndex($monthIndex);
+						$installmentInterval = $fixedAssetsFundingStructure->getInstallmentIntervalAtMonthIndex($monthIndex);
+						$installmentPaymentIntervalValue = $calculateFixedLoanAtEndService->getInstallmentPaymentIntervalValue($installmentInterval);
+						$stepUp = 0;
+						$stepDown = 0;
+						$stepInterval =null;
+						$loanType = 'normal';
+						// $loanNature = $leasingRevenueStreamBreakdown->getLoanNature();
+						// $loanService = $loanNature == 'fixed-at-end' ? $calculateFixedLoanAtEndService : $calculateFixedLoanAtBeginningService ; 
+						$loanService = $calculateFixedLoanAtEndService ; 
+						
+						
+						$currentPortfolioLoans=[];
+						if(is_array($baseRatesMapping)){
+							$currentPortfolioLoans=$loanService->__calculateBasedOnDiffBaseRates($baseRatesMapping ,$loanType, $currentMonth, $currentMonthlyLoanAmount,  $currentMarginRate,  $tenor, $installmentInterval,$installmentPaymentIntervalValue, $stepUp, $stepInterval ,$stepDown ,  $stepInterval ,$gracePeriod ,$monthIndex, $dateWithDateIndex ,$dateIndexWithDate);
+						}else{
+							
+							$currentPortfolioLoans=$loanService->__calculate([] ,-1,$loanType, $currentMonth, $currentMonthlyLoanAmount,$baseRatesMapping, $currentMarginRate,  $tenor, $installmentInterval, $stepUp,$stepInterval ,$stepDown ,  $stepInterval ,$gracePeriod,$monthIndex);
+							
+						
+							$finalResult = $currentPortfolioLoans['final_result']??[];
+							unset($finalResult['totals']);
+							$currentPortfolioLoans = $finalResult ;
+					
+						}
+						
+						if(count($currentPortfolioLoans)){
+							$currentPortfolioLoans['study_id'] = $studyId ;
+							$currentPortfolioLoans['company_id'] = $companyId ;
+							$currentPortfolioLoans['month_as_index'] = $monthIndex ;
+							// $currentPortfolioLoans['revenue_stream_id'] =$leasingRevenueStreamBreakdownId ;
+							// $currentPortfolioLoans['revenue_stream_category_id'] =$revenueCategoryId ;
+							$currentPortfolioLoans['portfolio_loan_type'] ='portfolio';
+							// $currentPortfolioLoans['revenue_stream_type'] =$revenueStreamType;
+							$portfolioLoans[]=collect($currentPortfolioLoans)->map(function($item,$keyName){
+								if(is_array($item)){
+									return json_encode($item);
+								}
+								return $item;
+							})->toArray();
+						}
+				
+						if(  count($totalMonthlyLoanAmounts)){
+							$counter++;
+							$newLoanFundingRate = $fixedAssetsFundingStructure->getNewLoansFundingRatesAtMonthIndex($monthIndex);
+							
+							$currentMarginRate = $generalAndReserveAssumption->getBankLendingMarginRatesAtYearIndex($yearIndex);
+							$currentMonthlyLoanAmount = $totalMonthlyLoanAmounts[$monthIndex];
+							$currentMonthlyLoanAmount = $currentMonthlyLoanAmount * $newLoanFundingRate / 100 ;
+						
+							if(is_array($baseRatesMapping)){
+								$currentPortfolioLoans=$loanService->__calculateBasedOnDiffBaseRates($baseRatesMapping ,$loanType, $currentMonth, $currentMonthlyLoanAmount,  $currentMarginRate,  $tenor, $installmentInterval,$installmentPaymentIntervalValue, $stepUp, $stepInterval ,$stepDown ,  $stepInterval ,$gracePeriod,$monthIndex,$dateWithDateIndex,$dateIndexWithDate );
+							}else{
+								
+								$currentPortfolioLoans=$loanService->__calculate([] ,-1,$loanType, $currentMonth, $currentMonthlyLoanAmount,$baseRatesMapping, $currentMarginRate,  $tenor, $installmentInterval, $stepUp,$stepInterval ,$stepDown ,  $stepInterval ,$gracePeriod,$monthIndex );
+								$finalResult = $currentPortfolioLoans['final_result']??[];
+								unset($finalResult['totals']);
+								$currentPortfolioLoans = $finalResult;
+				
+							}
+							if(count($currentPortfolioLoans)){
+								$currentPortfolioLoans['study_id'] = $studyId ;
+								$currentPortfolioLoans['company_id'] = $companyId ;
+								$currentPortfolioLoans['month_as_index'] = $monthIndex ;
+								$currentPortfolioLoans['portfolio_loan_type'] ='bank_portfolio';
+								$portfolioLoans[]=collect($currentPortfolioLoans)->map(function($item,$keyName){
+								if(is_array($item)){
+									return json_encode($item);
+								}
+								return $item;
+							})->toArray();
+							}
+							
+							
+						
+					
+						}
+						
+						
+						
+						
+						
+					
+				}
+			}
+		}
+		DB::connection('non_banking_service')->table($loanSchedulePaymentTableName)->insert($portfolioLoans);
+	}	
 	protected function sumBaseRateWithMarginRate(array $baseRates , float $marginRate){
 		$result = [];
 		foreach($baseRates as $dateAsString => $baseRate){
@@ -1442,5 +1599,13 @@ use Illuminate\Support\Facades\DB;
 	public function getConsumerfinanceLoanOfficerCount():int
 	{
 		return $this->consumerfinance_loan_officer_count;
+	}
+	public function fixedAssets():HasMany
+	{
+		return $this->hasMany(FixedAsset::class,'study_id','id');
+	}
+	public function fixedAssetsFundingStructure():HasOne
+	{
+		return $this->hasOne(FixedAssetsFundingStructure::class,'study_id','id');
 	}
 }

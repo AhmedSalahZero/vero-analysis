@@ -1,4 +1,5 @@
 <?php $attributes = $attributes->exceptProps([
+	'isMultiple'=>false,
 'isPercentage',
 'classes'=>'only-greater-than-zero-allowed',
 'currentVal',
@@ -14,10 +15,11 @@
 'mark'=>'',
 'removeThreeDotsClass'=>false,
 'isNumber'=>true,
-'disabled'=>false
-
+'disabled'=>false,
+'dataCurrentYear'=>null
 ]); ?>
 <?php foreach (array_filter(([
+	'isMultiple'=>false,
 'isPercentage',
 'classes'=>'only-greater-than-zero-allowed',
 'currentVal',
@@ -33,8 +35,8 @@
 'mark'=>'',
 'removeThreeDotsClass'=>false,
 'isNumber'=>true,
-'disabled'=>false
-
+'disabled'=>false,
+'dataCurrentYear'=>null
 ]), 'is_string', ARRAY_FILTER_USE_KEY) as $__key => $__value) {
     $$__key = $$__key ?? $__value;
 } ?>
@@ -54,6 +56,7 @@ three-dots-parent
     <div class="input-group input-group-sm align-items-center justify-content-center flex-nowrap">
         <div class="input-hidden-parent">
             <input
+				
 				data-number-of-decimals="<?php echo e($numberFormatDecimals); ?>"
 				<?php if($readonly): ?>
 				readonly
@@ -72,8 +75,12 @@ three-dots-parent
 			 data-column-index="<?php echo e($columnIndex); ?>" 
 			 <?php endif; ?>
 			 
+			 
 			 >
             <input 
+			<?php if(!is_null($dataCurrentYear)): ?>
+				data-current-year-index="<?php echo e($dataCurrentYear); ?>"
+				<?php endif; ?> 
 			data-number-of-decimals="<?php echo e($numberFormatDecimals); ?>"
 			<?php if($multiple): ?>
 			multiple
@@ -82,6 +89,9 @@ three-dots-parent
 			 <?php if(!is_null($columnIndex)): ?>
 			data-column-index="<?php echo e($columnIndex); ?>"
 			<?php endif; ?>
+			<?php if($isMultiple): ?>
+			multiple
+			<?php endif; ?> 
 			<?php if($name): ?>
 			 name="<?php echo e($name); ?>"
 			 <?php endif; ?>

@@ -58,7 +58,6 @@ class Expense extends Model
 	}
 	public function getMonthlyAmount()
 	{
-	return 5;
 		return $this->monthly_amount ?: 0 ;
 	}
 	public function getPaymentTerm()

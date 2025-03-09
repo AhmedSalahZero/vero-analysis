@@ -375,6 +375,10 @@ Route::middleware([])->group(function () {
 						 */
 						route::get('revenue-streams-breakdown/direct-factoring','DirectFactoringRevenueStreamBreakdownController@create')->name('create.direct.factoring.revenue.stream.breakdown');
 						route::post('revenue-streams-breakdown/direct-factoring','DirectFactoringRevenueStreamBreakdownController@store')->name('store.direct.factoring.revenue.stream.breakdown');
+						
+						route::get('revenue-streams-breakdown/direct-factoring-vue','VueDirectFactoringRevenueStreamBreakdownController@create')->name('create.direct.factoring.revenue.stream.breakdown.vue');
+						route::post('revenue-streams-breakdown/direct-factoring-vue','VueDirectFactoringRevenueStreamBreakdownController@store')->name('store.direct.factoring.revenue.stream.breakdown.vue');
+						
 						/**
 						 * * End Direct Factoring Revenue Streams Breakdown  
 						 */
@@ -431,6 +435,8 @@ Route::middleware([])->group(function () {
 						
 						route::get('ffe-fixed-assets','FfeFixedAssetsController@create')->name('create.ffe.fixed.assets');
 						route::post('ffe-fixed-assets','FfeFixedAssetsController@store')->name('store.ffe.fixed.assets');
+						
+						
 						
 						
 						route::post('departments','ManpowerExpensesController@storeDepartmentPositions')->name('store.department.positions.for.non.banking');

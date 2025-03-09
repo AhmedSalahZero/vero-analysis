@@ -228,7 +228,7 @@ $canAddNewItem = true;
                 dateFormat: 'yy-mm-dd'
                 , autoclose: true
             })
-            $('input:not([type="hidden"])').trigger('change');
+            $('input:not(.exclude-from-trigger-change-when-repeat):not([type="hidden"])').trigger('change');
             $(this).find('.dropdown-toggle').remove();
             $(this).find('select.repeater-select').selectpicker("refresh");
             appendNewOptionsToAllSelects(this)

@@ -133,7 +133,6 @@ $(document).on('change', '.recalculate-factoring', function () {
 	
 	$('.factoring-rate[data-column-index="' + index + '"]').each(function(currentIndex,rateElement){
 		var rate = $(rateElement).val()
-		console.log('rate=',rate,rateElement,index);
 		var numberOfDecimals = $(rateElement).closest('tr').find('.factoring-value[data-column-index="' + index + '"]').closest('.input-hidden-parent').find('.repeat-to-right-input-formatted').attr('data-number-of-decimals');
 		$(rateElement).closest('tr').find('.factoring-value[data-column-index="' + index + '"]').closest('.input-hidden-parent').find('.repeat-to-right-input-formatted').val(number_format(rate / 100 * value,numberOfDecimals));
 		$(rateElement).closest('tr').find('.factoring-value[data-column-index="' + index + '"]').val(rate / 100 * value).trigger('change')
@@ -262,4 +261,40 @@ $(document).on('change','.current-growth-rate-result-value-formatted',function(e
 
 	}
 	//$('.recalculate-gr[data-column-index="'+nextColumnIndex+'"]').trigger('change');
+})
+$(document).on('change','.is-fully-funded-checkbox',function(){
+	const value = parseInt($(this).val());
+	if(value){
+		$('#ffe-funding').hide();
+	}else{
+		$('#ffe-funding').show();
+		
+	}
+});
+$('.is-fully-funded-checkbox:checked').trigger('change');
+$(document).on('change','.recalculate-monthly-increase-amounts',function(){
+	var currentRow = $(this).closest('tr') ;
+	var itemCost = currentRow.find('.ffe-item-cost').val();
+	var costAnnuallyIncreaseRate = currentRow.find('.cost-annually-increase-rate').val() / 100;
+	var yearIndex = -1 ; // will increase every year ;
+	currentRow.find('.ffe_counts').each(function(index,ffeCountElement){
+		var currentYearIndex = parseInt($(ffeCountElement).attr('data-current-year-index'));
+		var currentMonthIndex=$(ffeCountElement).attr('data-column-index');
+		//  console.log(ffeCountElement,currentYearIndex)
+		if(currentYearIndex != yearIndex){
+			yearIndex++;
+		}
+		var currentCount = $(ffeCountElement).val();
+		var currentTotalAmount = itemCost * currentCount ; 
+		var currentTotalAmountIncrease = currentTotalAmount * Math.pow(1 + costAnnuallyIncreaseRate, yearIndex)
+		$(ffeCountElement).closest('td').find('.current-month-amounts').val(currentTotalAmountIncrease);
+		var totalForCurrentMonth = 0 ;
+		$('.current-month-amounts[data-column-index="'+currentMonthIndex+'"]').each(function(index,amountElement){
+			totalForCurrentMonth+= parseFloat($(amountElement).val());
+		})
+		//console.log('inside')
+		$('.direct-ffe-amounts[data-column-index="'+currentMonthIndex+'"]').val(number_format(totalForCurrentMonth)).trigger('change');
+		
+	})
+	
 })

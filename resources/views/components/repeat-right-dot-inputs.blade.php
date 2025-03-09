@@ -1,4 +1,5 @@
 @props([
+	'isMultiple'=>false,
 'isPercentage',
 'classes'=>'only-greater-than-zero-allowed',
 'currentVal',
@@ -14,8 +15,8 @@
 'mark'=>'',
 'removeThreeDotsClass'=>false,
 'isNumber'=>true,
-'disabled'=>false
-
+'disabled'=>false,
+'dataCurrentYear'=>null
 ])
 <div class="
 
@@ -28,6 +29,7 @@ three-dots-parent
     <div class="input-group input-group-sm align-items-center justify-content-center flex-nowrap">
         <div class="input-hidden-parent">
             <input
+				
 				data-number-of-decimals="{{ $numberFormatDecimals }}"
 				@if($readonly)
 				readonly
@@ -46,8 +48,12 @@ three-dots-parent
 			 data-column-index="{{ $columnIndex }}" 
 			 @endif
 			 
+			 
 			 >
             <input 
+			@if(!is_null($dataCurrentYear))
+				data-current-year-index="{{ $dataCurrentYear }}"
+				@endif 
 			data-number-of-decimals="{{ $numberFormatDecimals }}"
 			@if($multiple)
 			multiple
@@ -56,6 +62,9 @@ three-dots-parent
 			 @if(!is_null($columnIndex))
 			data-column-index="{{ $columnIndex }}"
 			@endif
+			@if($isMultiple)
+			multiple
+			@endif 
 			@if($name)
 			 name="{{ $name }}"
 			 @endif

@@ -11,9 +11,8 @@ const mix = require('laravel-mix');
  |
  */
 
-mix
-// .js('resources/js/app.js', 'public/js')
-    // .sass('resources/sass/app.scss', 'public/css')
-    .browserSync({
-        proxy:"http://127.0.0.1:8000"
-    })
+
+ mix.js('resources/js/app.js', 'public/custom/js') // Your main JS file
+	.vue() // Enable Vue.js support
+	//.sass('resources/sass/app.scss', 'public/css'); 
+	// Optional: If you're using SCSS
