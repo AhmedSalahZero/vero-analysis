@@ -15,11 +15,11 @@ class CreateFixedAssetsLoanSchedulePaymentsTable extends Migration
         Schema::connection('non_banking_service')->create('fixed_assets_loan_schedule_payments', function (Blueprint $table) {
             $table->id();
 			// $table->string('revenue_stream_type')->comment('leasing or factoring or ...')->nullable();
-			$table->string('portfolio_loan_type')->nullable()->comment('bank_portfolio or portfolio');
+			// $table->string('portfolio_loan_type')->nullable()->comment('bank_portfolio or portfolio');
 			// $table->unsignedBigInteger('revenue_stream_id')->comment('LeasingRevenueStreamBreakdown')->nullable();
 			// $table->unsignedBigInteger('revenue_stream_category_id')->comment('LeasingCategory')->nullable();
 			$table->integer('month_as_index');
-			$table->string('loan_type')->nullable();
+			// $table->string('loan_type')->nullable();
 			$table->json('totals');
 			$table->json('beginning');
 			$table->json('interestAmount');

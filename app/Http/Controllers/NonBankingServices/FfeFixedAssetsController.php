@@ -49,7 +49,7 @@ class FfeFixedAssetsController extends Controller
 		$study->storeRepeaterRelations($request,$this->getRepeaterRelations(),$company);
 		
 		$study->storeFixedLoansForFixedAssets();
-		dd('good');
+		// dd('good');
 		
 		return response()->json([
 			'redirectTo'=>route('create.expenses',['company'=>$company->id,'study'=>$study->id])

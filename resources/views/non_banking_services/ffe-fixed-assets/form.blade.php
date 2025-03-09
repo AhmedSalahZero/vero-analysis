@@ -764,7 +764,9 @@ use App\Models\NonBankingService\Expense;
     })
 
 </script>
+
 <script src="/custom/js/non-banking-services/common.js"></script>
+<script src="/custom/js/non-banking-services/revenue-stream-breakdown.js"></script>
 <script>
 
 

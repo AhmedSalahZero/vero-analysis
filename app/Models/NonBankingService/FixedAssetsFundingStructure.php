@@ -46,7 +46,11 @@ class  FixedAssetsFundingStructure extends Model
 	}
 	public function getInterestRateAtMonthIndex(int $monthIndex):float
 	{
-		return $this->interest_rates[$monthIndex] ?? 0  ; 
+		return $this->getInterestRates()[$monthIndex] ?? 0  ; 
+	}
+	public function getInterestRates():array
+	{
+		return (array)$this->interest_rates;
 	}
 	public function getInstallmentIntervalAtMonthIndex(int $monthIndex):string
 	{
