@@ -5,6 +5,7 @@
                 <div
                     class="col-md-12 js-remove-hidden js-parent-to-table"
                     :style="{ display: isVisible ? 'block' : 'none' }"
+
                 >
                     <table class="table table-white repeater-class repeater">
                         <thead>
@@ -203,6 +204,11 @@ export default {
     methods: {
         updateWidth(input) {
             input.style.width = (input.value.length + 1) * 10 + "px";
+			// this.isVisible = false ;
+			// this.rate = 40 ;
+			// value {0 : 200 , 1 : 300 }
+			// percentage {0 : 10 , 1 : 300}
+			
         },
         syncHiddenValue(row, colIndex) {
             row.hiddenValues[colIndex] = row.values[colIndex];

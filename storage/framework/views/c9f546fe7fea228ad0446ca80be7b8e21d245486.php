@@ -54,6 +54,17 @@
 <?php endif; ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
+                 <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.tables.repeater-table-th','data' => ['fontSizeClass' => 'font-14px','class' => ' header-border-down rate-class','title' => __('Contingency <br> Rate %')]]); ?>
+<?php $component->withName('tables.repeater-table-th'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php $component->withAttributes(['font-size-class' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('font-14px'),'class' => ' header-border-down rate-class','title' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Contingency <br> Rate %'))]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
+<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
+<?php endif; ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?> 
 
                  <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.tables.repeater-table-th','data' => ['fontSizeClass' => 'font-14px','class' => ' tenor-selector-class header-border-down ','title' => __('Cost Annual <br> Increase %')]]); ?>
@@ -175,7 +186,7 @@
                     </td>
                     <td>
                         <div class="">
-                            <input value="<?php echo e(isset($subModel) ? $subModel->getFfeItemCost() : 0); ?>" <?php if($isRepeater): ?> name="ffe_item_cost" <?php else: ?> name="<?php echo e($tableId); ?>[0][ffe_item_cost]" <?php endif; ?> class="form-control expandable-amount-input text-left ffe-item-cost trigger-change-repeater recalculate-monthly-increase-amounts" type="text">
+                            <input value="<?php echo e(isset($subModel) ? $subModel->getItemCost() : 0); ?>" <?php if($isRepeater): ?> name="ffe_item_cost" <?php else: ?> name="<?php echo e($tableId); ?>[0][ffe_item_cost]" <?php endif; ?> class="form-control expandable-amount-input text-left ffe-item-cost trigger-change-repeater recalculate-monthly-increase-amounts" type="text">
                         </div>
                     </td>
 
@@ -195,6 +206,14 @@
                             <span style="margin-left:3px	">%</span>
                         </div>
                     </td>
+					
+					 <td>
+                        <div class="d-flex align-items-center">
+                            <input value="<?php echo e(isset($subModel) ? $subModel->getContingencyRate():0); ?>" <?php if($isRepeater): ?> name="contingency_rate" <?php else: ?> name="<?php echo e($tableId); ?>[0][contingency_rate]" <?php endif; ?> class="form-control contingency-rate recalculate-monthly-increase-amounts exclude-from-trigger-change-when-repeat expandable-percentage-input text-left exclude-from-trigger-change-when-repeat" type="text">
+                            <span style="margin-left:3px	">%</span>
+                        </div>
+                    </td>
+					
                     <td>
 
 
@@ -286,7 +305,7 @@
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
                         </div>
-                        <input type="hidden" value="0" class="current-month-amounts" data-column-index="<?php echo e($dateAsIndex); ?>">
+                        <input type="hidden" value="<?php echo e(isset($subModel) ? $subModel->getMonthlyAmountAtMonthIndex($dateAsIndex) : 0); ?>" name="monthly_amounts" multiple class="current-month-amounts" data-column-index="<?php echo e($dateAsIndex); ?>">
                     </td>
                     <?php
                     $currentMonthNumber = explode('-',$dateAsString)[1];

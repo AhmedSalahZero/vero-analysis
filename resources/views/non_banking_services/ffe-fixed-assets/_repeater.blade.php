@@ -9,6 +9,7 @@
                 <x-tables.repeater-table-th :font-size-class="'font-14px'" class=" tenor-selector-class header-border-down " :title="__('Item <br> Cost')"></x-tables.repeater-table-th>
                 <x-tables.repeater-table-th :font-size-class="'font-14px'" class=" header-border-down rate-class" :title="__('VAT <br> Rate')"></x-tables.repeater-table-th>
                 <x-tables.repeater-table-th :font-size-class="'font-14px'" class=" header-border-down rate-class" :title="__('Withhold <br> Tax %')"></x-tables.repeater-table-th>
+                <x-tables.repeater-table-th :font-size-class="'font-14px'" class=" header-border-down rate-class" :title="__('Contingency <br> Rate %')"></x-tables.repeater-table-th>
 
                 <x-tables.repeater-table-th :font-size-class="'font-14px'" class=" tenor-selector-class header-border-down " :title="__('Cost Annual <br> Increase %')"></x-tables.repeater-table-th>
                 <x-tables.repeater-table-th :font-size-class="'font-14px'" class="header-border-down" :title="__('Payment <br> Terms')" :helperTitle="__('You can either choose one of the system default terms (cash, quarterly, semi-annually, or annually), if else please choose Customize to insert your payment terms')"></x-tables.repeater-table-th>
@@ -60,7 +61,7 @@
                     </td>
                     <td>
                         <div class="">
-                            <input value="{{ isset($subModel) ? $subModel->getFfeItemCost() : 0 }}" @if($isRepeater) name="ffe_item_cost" @else name="{{ $tableId }}[0][ffe_item_cost]" @endif class="form-control expandable-amount-input text-left ffe-item-cost trigger-change-repeater recalculate-monthly-increase-amounts" type="text">
+                            <input value="{{ isset($subModel) ? $subModel->getItemCost() : 0 }}" @if($isRepeater) name="ffe_item_cost" @else name="{{ $tableId }}[0][ffe_item_cost]" @endif class="form-control expandable-amount-input text-left ffe-item-cost trigger-change-repeater recalculate-monthly-increase-amounts" type="text">
                         </div>
                     </td>
 
@@ -80,6 +81,14 @@
                             <span style="margin-left:3px	">%</span>
                         </div>
                     </td>
+					
+					 <td>
+                        <div class="d-flex align-items-center">
+                            <input value="{{ isset($subModel) ? $subModel->getContingencyRate():0 }}" @if($isRepeater) name="contingency_rate" @else name="{{ $tableId }}[0][contingency_rate]" @endif class="form-control contingency-rate recalculate-monthly-increase-amounts exclude-from-trigger-change-when-repeat expandable-percentage-input text-left exclude-from-trigger-change-when-repeat" type="text">
+                            <span style="margin-left:3px	">%</span>
+                        </div>
+                    </td>
+					
                     <td>
 
 
@@ -121,7 +130,7 @@
                             @endphp
                             <x-repeat-right-dot-inputs :isMultiple="true" :dataCurrentYear="$monthsWithItsYear[$dateAsIndex]" :removeCurrency="true" :removeThreeDots="true" :removeThreeDotsClass="true" :number-format-decimals="0" :mark="' '" :currentVal="isset($subModel) ? $subModel->getFfeCountsAtDateIndex($dateAsIndex) : 0 " data-group-index="{{ $currentYearRepeaterIndex }}" :formattedInputClasses="'exclude-from-trigger-change-when-repeat'" :classes="'repeater-with-collapse-input only-greater-than-or-equal-zero-allowed  ffe_counts recalculate-monthly-increase-amounts'" :is-percentage="true" :name="$name" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
                         </div>
-                        <input type="hidden" value="0" class="current-month-amounts" data-column-index="{{ $dateAsIndex }}">
+                        <input type="hidden" value="{{ isset($subModel) ? $subModel->getMonthlyAmountAtMonthIndex($dateAsIndex) : 0 }}" name="monthly_amounts" multiple class="current-month-amounts" data-column-index="{{ $dateAsIndex }}">
                     </td>
                     @php
                     $currentMonthNumber = explode('-',$dateAsString)[1];

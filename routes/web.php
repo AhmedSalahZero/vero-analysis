@@ -436,6 +436,8 @@ Route::middleware([])->group(function () {
 						route::get('ffe-fixed-assets','FfeFixedAssetsController@create')->name('create.ffe.fixed.assets');
 						route::post('ffe-fixed-assets','FfeFixedAssetsController@store')->name('store.ffe.fixed.assets');
 						
+						route::get('ffe-fixed-assets','FfeFixedAssetsController@create')->name('create.new.branches.fixed.assets');
+						route::post('ffe-fixed-assets','FfeFixedAssetsController@store')->name('store.new.branches.fixed.assets');
 						
 						
 						

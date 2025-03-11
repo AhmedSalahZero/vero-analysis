@@ -6255,9 +6255,21 @@ function getNonBankingNavigation(Company $company,User $user):array
 			'link'=>route('view.manpower.for.non.banking',['company'=>$company->id , 'study'=>$studyId])
 		];
 		$urls['fixed-assets'] = [
-            'title'=>__('Fixed <br> Assets'),
-            'show'=>true ,
-			'link'=>route('create.ffe.fixed.assets',['company'=>$company->id , 'study'=>$studyId])
+			'title'=>__('Fixed Assets'),
+			'show'=>true ,
+			'link'=>'#',
+			'submenu'=>[
+				[
+					'title'=>__('FFE'),
+					'show'=>true ,
+					'link'=>route('create.ffe.fixed.assets',['company'=>$company->id , 'study'=>$studyId])
+				],
+				[
+					'title'=>__('New Branches'),
+					'show'=>true ,
+					'link'=>route('create.new.branches.fixed.assets',['company'=>$company->id , 'study'=>$studyId])
+				]
+			]
 		];
 		$urls['analytical-reports'] = [
             'title'=>__('Analytical <br> Reports'),

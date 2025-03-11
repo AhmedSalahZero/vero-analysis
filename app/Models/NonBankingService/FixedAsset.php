@@ -14,6 +14,7 @@ class FixedAsset extends Model
 	protected $connection ='non_banking_service';
 	protected $casts = [
 		'ffe_counts'=>'array',
+		'monthly_amounts'=>'array',
 	];
 		
 	public function company()
@@ -24,13 +25,12 @@ class FixedAsset extends Model
 	{
 		$modelName = '\App\Models\\'.$this->model_name ;
 		return $this->belongsTo($modelName , 'model_id','id');
-		
 	}
 	public function getName()
 	{
 		return $this->name ;
 	}
-	public function getFfeItemCost()
+	public function getItemCost()
 	{
 		return $this->ffe_item_cost;
 	}
@@ -38,14 +38,21 @@ class FixedAsset extends Model
 	{
 		return $this->vat_rate ?: 0;
 	}
-	
 	public function getWithholdTaxRate()
 	{
 		return $this->withhold_tax_rate?:0;
 	}	
-	public function getDepreciationDuration()
+	public function getContingencyRate()
+	{
+		return $this->contingency_rate?:0;
+	}
+	public function getDepreciationDuration():int
 	{
 		return $this->depreciation_duration ;
+	}
+	public function getDepreciationDurationInMonths():int 
+	{
+		return $this->getDepreciationDuration() * 12 ;
 	}
 	public function getPaymentTerm()
 	{
@@ -53,11 +60,47 @@ class FixedAsset extends Model
 	}
 	public function getReplacementInterval()
 	{
-		return $this->replacement_terms ;
+		return $this->replacement_interval ;
+	}
+	public function getReplacementIntervalInMonths()
+	{
+		return $this->getReplacementInterval() * 12 ;
+	}
+	public function getTotalCost()
+	{
+		return (1+($this->getContingencyRate()/100))*$this->getItemCost();
+	}
+	
+	public function getMonthlyAmounts():array 
+	{
+		return (array)$this->monthly_amounts;
+	}
+	public function getPurchaseDates(array $dateIndexWithDate):array 
+	{
+		// $dateAsIndexString = app('dateIndexWithDate');
+		// dd($dateIndexWithDate);
+		
+		$dates= [];
+		$ffeCounts = $this->getFfeCounts();
+		foreach($ffeCounts as $dateAsIndex => $ffeCount){
+			if($ffeCount > 0){
+				$dates[$dateAsIndex] = $dateIndexWithDate[$dateAsIndex]  ;
+			}
+		}
+		return $dates ; 
+	}
+	public function getMonthlyAmountAtMonthIndex(int $dateAsIndex)
+	{
+		return $this->getMonthlyAmounts()[$dateAsIndex] ?? 0 ;  
 	}
 	public function getFfeCountsAtDateIndex(int $dateIndex)
 	{
-		return $this->ffe_counts[$dateIndex]??0;
+		return $this->getFfeCounts()[$dateIndex]??0;
+	}
+	public function getFfeCounts():array 
+	{
+		logger('salah');
+		return (array)$this->ffe_counts;  
 	}
 	public function getReplacementCostRate()
 	{

@@ -276,6 +276,8 @@ $(document).on('change','.recalculate-monthly-increase-amounts',function(){
 	var currentRow = $(this).closest('tr') ;
 	var itemCost = currentRow.find('.ffe-item-cost').val();
 	var costAnnuallyIncreaseRate = currentRow.find('.cost-annually-increase-rate').val() / 100;
+	var contingencyRate = currentRow.find('.contingency-rate').val() / 100;
+	
 	var yearIndex = -1 ; // will increase every year ;
 	currentRow.find('.ffe_counts').each(function(index,ffeCountElement){
 		var currentYearIndex = parseInt($(ffeCountElement).attr('data-current-year-index'));
@@ -285,8 +287,9 @@ $(document).on('change','.recalculate-monthly-increase-amounts',function(){
 			yearIndex++;
 		}
 		var currentCount = $(ffeCountElement).val();
-		var currentTotalAmount = itemCost * currentCount ; 
+		var currentTotalAmount = itemCost * currentCount  * (1+contingencyRate); 
 		var currentTotalAmountIncrease = currentTotalAmount * Math.pow(1 + costAnnuallyIncreaseRate, yearIndex)
+	
 		$(ffeCountElement).closest('td').find('.current-month-amounts').val(currentTotalAmountIncrease);
 		var totalForCurrentMonth = 0 ;
 		$('.current-month-amounts[data-column-index="'+currentMonthIndex+'"]').each(function(index,amountElement){

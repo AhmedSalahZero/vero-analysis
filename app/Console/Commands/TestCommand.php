@@ -10,8 +10,10 @@ use App\Models\Company;
 use App\Models\FinancialStatement;
 use App\Models\IncomeStatement;
 use App\Models\NonBankingService\Department;
+use App\Models\NonBankingService\FixedAsset;
 use App\Models\NonBankingService\Study;
 use App\Models\Partner;
+use App\ReadyFunctions\FixedAssetCalculation;
 use App\ReadyFunctions\OldLoan;
 use App\ReadyFunctions\VariableLoanCalculation;
 use App\Services\AI\PredictionErrorQualityMeasures\MeanAbsoluteError;
@@ -138,6 +140,12 @@ class TestCommand extends Command
 	}
 	public function handle()
 	{
+		$study = Study::find(50);
+		$fixedAssets =$study->fixedAssets;
+		$fixedAssetCalculationService = new FixedAssetCalculation;
+		$operationStartDateFormatted = $study->getOperationStartDateFormatted();
+		$dateIndexWithDate = $study->getDateIndexWithDate();
+		dd($fixedAssetCalculationService->__calculate($fixedAssets,$dateIndexWithDate,$operationStartDateFormatted,$study->getStudyDates(),$study->getStudyEndDate()));
 		
 		// $department = Department::create([
 		// 	'name'=>'test_d',

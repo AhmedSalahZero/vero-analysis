@@ -948,7 +948,7 @@ use Illuminate\Support\Facades\DB;
 						$gracePeriod = $fixedAssetsFundingStructure->getGracePeriodAtMonthIndex($monthIndex);
 						$tenor = $fixedAssetsFundingStructure->getTenorsAtMonthIndex($monthIndex);
 						$installmentInterval = $fixedAssetsFundingStructure->getInstallmentIntervalAtMonthIndex($monthIndex);
-						$installmentPaymentIntervalValue = $calculateFixedLoanAtEndService->getInstallmentPaymentIntervalValue($installmentInterval);
+						// $installmentPaymentIntervalValue = $calculateFixedLoanAtEndService->getInstallmentPaymentIntervalValue($installmentInterval);
 						$stepUp = 0;
 						$stepDown = 0;
 						$stepInterval =null;
@@ -1566,5 +1566,10 @@ use Illuminate\Support\Facades\DB;
 	public function fixedAssetsFundingStructure():HasOne
 	{
 		return $this->hasOne(FixedAssetsFundingStructure::class,'study_id','id');
+	}
+	public function getDateIndexWithDate():array 
+	{
+				$datesAndIndexesHelpers = $this->getDatesIndexesHelper();
+				return $datesAndIndexesHelpers['dateIndexWithDate']; ;
 	}
 }
