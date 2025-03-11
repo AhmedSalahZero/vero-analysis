@@ -1,7 +1,15 @@
+
 <div data-card-id="<?php echo e($cardId); ?>" class="kt-portlet parent-card ">
     <div class="kt-portlet__body">
-        <h3 class="font-weight-bold text-black form-label kt-subheader__title small-caps mr-5 text-nowrap" style=""> <?php echo e(__('Furniture, Fixtures, and Equipment (FF&E) Cost')); ?></h3>
+        <h3 class="font-weight-bold text-black form-label kt-subheader__title small-caps mr-5 text-nowrap" style=""> <?php echo e(__('Items Cost')); ?></h3>
         <input type="hidden" name="tableIds[]" value="<?php echo e($tableId); ?>">
+<input id="net-branch-opening-projections" class="net-branch-opening-projections" type="hidden" value="<?php echo e(json_encode($newBranchCountPerDateIndex)); ?>">
+<?php $__currentLoopData = $newBranchCountPerDateIndex; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $dateAsIndex=>$newBranchCountPerDateIndexRow): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+<input  data-month-index="<?php echo e($dateAsIndex); ?>" data-year-index="<?php echo e($datesIndexWithYearIndex[$dateAsIndex]); ?>" class="year-index-month-index" type="hidden" >
+ 
+
+<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?> 
+		
          <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.tables.repeater-table','data' => ['initEmpty' => false,'removeActionBtn' => false,'firstElementDeletable' => false,'fontSizeClass' => 'font-14px','appendSaveOrBackBtn' => false,'repeaterWithSelect2' => true,'parentClass' => 'js-toggle-visibility-----','tableName' => $tableId ,'repeaterId' => $repeaterId,'relationName' => 'food','isRepeater' => $isRepeater=!(isset($removeRepeater) && $removeRepeater)]]); ?>
 <?php $component->withName('tables.repeater-table'); ?>
@@ -121,43 +129,19 @@
 <?php endif; ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
-
-                <?php $__currentLoopData = $studyMonthsForViews; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $dateAsIndex=>$dateAsString): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                <?php
-                $currentMonthNumber = explode('-',$dateAsString)[1];
-                $currentYear= explode('-',$dateAsString)[0];
-                $currentYearRepeaterIndex = 0 ;
-                ?>
-
                  <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.tables.repeater-table-th','data' => ['dataColumnIndex' => ''.e($dateAsIndex).'','fontSizeClass' => 'font-14px','class' => ' interval-class header-border-down ','title' => dateFormatting($dateAsString, 'M\' Y') . ' <br> ' .__('Count #')]]); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.tables.repeater-table-th','data' => ['fontSizeClass' => 'font-14px','class' => 'header-border-down','title' => __('Count')]]); ?>
 <?php $component->withName('tables.repeater-table-th'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['data-column-index' => ''.e($dateAsIndex).'','font-size-class' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('font-14px'),'class' => ' interval-class header-border-down ','title' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(dateFormatting($dateAsString, 'M\' Y') . ' <br> ' .__('Count #'))]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['font-size-class' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('font-14px'),'class' => 'header-border-down','title' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Count'))]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
-                <?php if($financialYearEndMonthNumber == $currentMonthNumber || $loop->last): ?>
-                 <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.tables.repeater-table-th','data' => ['icon' => true,'dataColumnIndex' => ''.e($dateAsIndex).'','fontSizeClass' => 'font-14px','class' => ' tenor-selector-class header-border-down '.e('year-repeater-index-'.$currentYearRepeaterIndex).' collapse-before-me exclude-from-collapse','title' => __('Total Yr.').' <br> '. $currentYear]]); ?>
-<?php $component->withName('tables.repeater-table-th'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['icon' => true,'data-column-index' => ''.e($dateAsIndex).'','font-size-class' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('font-14px'),'class' => ' tenor-selector-class header-border-down '.e('year-repeater-index-'.$currentYearRepeaterIndex).' collapse-before-me exclude-from-collapse','title' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Total Yr.').' <br> '. $currentYear)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
-<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
-<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
-<?php endif; ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?> 
-                <?php
-                $currentYearRepeaterIndex ++;
-                ?>
-                <?php endif; ?>
 
-                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                
              <?php $__env->endSlot(); ?>
              <?php $__env->slot('trs'); ?> 
                 <?php
@@ -187,7 +171,7 @@
                     </td>
                     <td>
                         <div class="">
-                            <input value="<?php echo e(isset($subModel) ? $subModel->getItemCost() : 0); ?>" <?php if($isRepeater): ?> name="ffe_item_cost" <?php else: ?> name="<?php echo e($tableId); ?>[0][ffe_item_cost]" <?php endif; ?> class="form-control expandable-amount-input text-left ffe-item-cost trigger-change-repeater recalculate-monthly-increase-amounts" type="text">
+                            <input value="<?php echo e(isset($subModel) ? $subModel->getItemCost() : 0); ?>" <?php if($isRepeater): ?> name="ffe_item_cost" <?php else: ?> name="<?php echo e($tableId); ?>[0][ffe_item_cost]" <?php endif; ?> class="form-control expandable-amount-input text-left ffe-item-cost trigger-change-repeater recalculate-monthly-increase-amounts-branches" type="text">
                         </div>
                     </td>
 
@@ -195,7 +179,7 @@
 
 
                         <div class="d-flex align-items-center">
-                            <input value="<?php echo e(isset($subModel) ? $subModel->getVatRate():0); ?>" <?php if($isRepeater): ?> name="vat_rate" <?php else: ?> name="<?php echo e($tableId); ?>[0][vat_rate]" <?php endif; ?> class="form-control exclude-from-trigger-change-when-repeat expandable-percentage-input text-left " type="text">
+                            <input value="<?php echo e(isset($subModel) ? $subModel->getVatRate():0); ?>" <?php if($isRepeater): ?> name="vat_rate" <?php else: ?> name="<?php echo e($tableId); ?>[0][vat_rate]" <?php endif; ?> class="form-control  exclude-from-trigger-change-when-repeat expandable-percentage-input text-left " type="text">
                             <span style="margin-left:3px	">%</span>
                         </div>
                     </td>
@@ -210,7 +194,7 @@
 					
 					 <td>
                         <div class="d-flex align-items-center">
-                            <input value="<?php echo e(isset($subModel) ? $subModel->getContingencyRate():0); ?>" <?php if($isRepeater): ?> name="contingency_rate" <?php else: ?> name="<?php echo e($tableId); ?>[0][contingency_rate]" <?php endif; ?> class="form-control contingency-rate recalculate-monthly-increase-amounts exclude-from-trigger-change-when-repeat expandable-percentage-input text-left exclude-from-trigger-change-when-repeat" type="text">
+                            <input value="<?php echo e(isset($subModel) ? $subModel->getContingencyRate():0); ?>" <?php if($isRepeater): ?> name="contingency_rate" <?php else: ?> name="<?php echo e($tableId); ?>[0][contingency_rate]" <?php endif; ?> class="form-control contingency-rate recalculate-monthly-increase-amounts-branches exclude-from-trigger-change-when-repeat expandable-percentage-input text-left exclude-from-trigger-change-when-repeat" type="text">
                             <span style="margin-left:3px	">%</span>
                         </div>
                     </td>
@@ -219,7 +203,7 @@
 
 
                         <div class="d-flex align-items-center">
-                            <input value="<?php echo e(isset($subModel) ? $subModel->getCostAnnualIncreaseRate():0); ?>" <?php if($isRepeater): ?> name="cost_annual_increase_rate" <?php else: ?> name="<?php echo e($tableId); ?>[0][cost_annual_increase_rate]" <?php endif; ?> :formattedInputClasses="'exclude-from-trigger-change-when-repeat'" class="form-control expandable-percentage-input text-left cost-annually-increase-rate recalculate-monthly-increase-amounts" type="text">
+                            <input value="<?php echo e(isset($subModel) ? $subModel->getCostAnnualIncreaseRate():0); ?>" <?php if($isRepeater): ?> name="cost_annual_increase_rate" <?php else: ?> name="<?php echo e($tableId); ?>[0][cost_annual_increase_rate]" <?php endif; ?> :formattedInputClasses="'exclude-from-trigger-change-when-repeat'" class="form-control expandable-percentage-input text-left cost-annually-increase-rate recalculate-monthly-increase-amounts-branches" type="text">
                             <span style="margin-left:3px	">%</span>
                         </div>
                     </td>
@@ -281,65 +265,26 @@
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
                     </td>
+					 <td>
 
-                    <?php
-                    $columnIndex = 0 ;
-                    $currentYearRepeaterIndex = 0 ;
-                    ?>
 
-                    <?php $__currentLoopData = $studyMonthsForViews; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $dateAsIndex=>$dateAsString): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-
-                    <td data-column-index="<?php echo e($dateAsIndex); ?>">
-                        <div class="d-flex align-items-center justify-content-center">
-                            <?php
-                            $name = "ffe_counts" ;
-                            ?>
-                             <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['isMultiple' => true,'dataCurrentYear' => $monthsWithItsYear[$dateAsIndex],'removeCurrency' => true,'removeThreeDots' => true,'removeThreeDotsClass' => true,'numberFormatDecimals' => 0,'mark' => ' ','currentVal' => isset($subModel) ? $subModel->getFfeCountsAtDateIndex($dateAsIndex) : 0 ,'dataGroupIndex' => ''.e($currentYearRepeaterIndex).'','formattedInputClasses' => 'exclude-from-trigger-change-when-repeat','classes' => 'repeater-with-collapse-input only-greater-than-or-equal-zero-allowed  ffe_counts recalculate-monthly-increase-amounts','isPercentage' => true,'name' => $name,'columnIndex' => $columnIndex]]); ?>
-<?php $component->withName('repeat-right-dot-inputs'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['isMultiple' => true,'dataCurrentYear' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($monthsWithItsYear[$dateAsIndex]),'removeCurrency' => true,'removeThreeDots' => true,'removeThreeDotsClass' => true,'number-format-decimals' => 0,'mark' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(' '),'currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(isset($subModel) ? $subModel->getFfeCountsAtDateIndex($dateAsIndex) : 0 ),'data-group-index' => ''.e($currentYearRepeaterIndex).'','formattedInputClasses' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('exclude-from-trigger-change-when-repeat'),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('repeater-with-collapse-input only-greater-than-or-equal-zero-allowed  ffe_counts recalculate-monthly-increase-amounts'),'is-percentage' => true,'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($name),'columnIndex' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($columnIndex)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
-<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
-<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
-<?php endif; ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?> 
+                        <div class="">
+                            <input value="<?php echo e(isset($subModel) ? $subModel->getCount():0); ?>" <?php if($isRepeater): ?> name="counts" <?php else: ?> name="<?php echo e($tableId); ?>[0][counts]" <?php endif; ?> class="form-control expandable-percentage-input current-count recalculate-monthly-increase-amounts-branches exclude-from-trigger-change-when-repeat text-left " type="text">
                         </div>
-                        <input type="hidden" value="<?php echo e(isset($subModel) ? $subModel->getMonthlyAmountAtMonthIndex($dateAsIndex) : 0); ?>" name="monthly_amounts" multiple class="current-month-amounts" data-column-index="<?php echo e($dateAsIndex); ?>">
-                    </td>
-                    <?php
-                    $currentMonthNumber = explode('-',$dateAsString)[1];
-                    $currentYear= explode('-',$dateAsString)[0];
-                    ?>
+						<div>
+							<input class="current-row-counts" type="hidden" name="ffe_counts" value="">
+							
+						</div>
+						
+						
+						<?php $__currentLoopData = $newBranchCountPerDateIndex; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $dateAsIndex=>$newBranchCountPerDateIndexRow): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+						 <input type="hidden" value="<?php echo e(isset($subModel) ? $subModel->getMonthlyAmountAtMonthIndex($dateAsIndex) : 0); ?>" name="monthly_amounts" multiple class="current-month-amounts" data-column-index="<?php echo e($dateAsIndex); ?>">
 
-
-                    <?php if($financialYearEndMonthNumber == $currentMonthNumber || $loop->last): ?>
-                    <td data-column-index="<?php echo e($dateAsIndex); ?>" class="exclude-from-collapse">
-                        <div class="d-flex align-items-center justify-content-center">
-                             <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['readonly' => true,'removeThreeDots' => true,'numberFormatDecimals' => 0,'mark' => ' ','currentVal' => 0 ,'formattedInputClasses' => 'exclude-from-collapse exclude-from-trigger-change-when-repeat','classes' => 'year-repeater-index-'.$currentYearRepeaterIndex.' ' .'only-greater-than-or-equal-zero-allowed exclude-from-collapse','isPercentage' => true,'name' => '','columnIndex' => $dateAsIndex]]); ?>
-<?php $component->withName('repeat-right-dot-inputs'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['readonly' => true,'removeThreeDots' => true,'number-format-decimals' => 0,'mark' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(' '),'currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(0 ),'formattedInputClasses' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('exclude-from-collapse exclude-from-trigger-change-when-repeat'),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('year-repeater-index-'.$currentYearRepeaterIndex.' ' .'only-greater-than-or-equal-zero-allowed exclude-from-collapse'),'is-percentage' => true,'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(''),'columnIndex' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($dateAsIndex)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
-<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
-<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
-<?php endif; ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?> 
-                        </div>
+						<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?> 
 
                     </td>
-                    <?php
-                    $currentYearRepeaterIndex++;
-                    ?>
-                    <?php endif; ?>
 
-                    <?php
-                    $columnIndex++;
-                    ?>
-                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                    
 
 
 
@@ -393,4 +338,4 @@
 
 
 </div>
-<?php /**PATH /media/salah/Software/projects/veroo/resources/views/non_banking_services/ffe-fixed-assets/_repeater.blade.php ENDPATH**/ ?>
+<?php /**PATH /media/salah/Software/projects/veroo/resources/views/non_banking_services/new-branch-fixed-assets/_repeater.blade.php ENDPATH**/ ?>

@@ -1,7 +1,15 @@
+
 <div data-card-id="{{ $cardId }}" class="kt-portlet parent-card ">
     <div class="kt-portlet__body">
-        <h3 class="font-weight-bold text-black form-label kt-subheader__title small-caps mr-5 text-nowrap" style=""> {{ __('Furniture, Fixtures, and Equipment (FF&E) Cost') }}</h3>
+        <h3 class="font-weight-bold text-black form-label kt-subheader__title small-caps mr-5 text-nowrap" style=""> {{ __('Items Cost') }}</h3>
         <input type="hidden" name="tableIds[]" value="{{ $tableId }}">
+<input id="net-branch-opening-projections" class="net-branch-opening-projections" type="hidden" value="{{ json_encode($newBranchCountPerDateIndex) }}">
+@foreach($newBranchCountPerDateIndex as $dateAsIndex=>$newBranchCountPerDateIndexRow)
+<input  data-month-index="{{ $dateAsIndex }}" data-year-index="{{ $datesIndexWithYearIndex[$dateAsIndex] }}" class="year-index-month-index" type="hidden" >
+ {{-- <input type="hidden" value="{{ isset($subModel) ? $subModel->getMonthlyAmountAtMonthIndex($dateAsIndex) : 0 }}" name="fixedAssets[{{ $dateAsIndex }}][]" multiple class="current-month-amounts" data-column-index="{{ $dateAsIndex }}"> --}}
+
+@endforeach 
+		
         <x-tables.repeater-table :initEmpty="false" :removeActionBtn="false" :first-element-deletable="false" :font-size-class="'font-14px'" :append-save-or-back-btn="false" :repeater-with-select2="true" :parentClass="'js-toggle-visibility-----'" :tableName="$tableId " :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
             <x-slot name="ths">
                 {{-- <x-tables.repeater-table-th :font-size-class="'font-14px'" class="  header-border-down first-column-th-class" :title="__('Actions')"></x-tables.repeater-table-th> --}}
@@ -16,8 +24,9 @@
                 <x-tables.repeater-table-th :font-size-class="'font-14px'" class="header-border-down" :title="__('Depreciation <br> Duration')"></x-tables.repeater-table-th>
                 <x-tables.repeater-table-th :font-size-class="'font-14px'" class="header-border-down" :title="__('Replacement <br> Cost %')"></x-tables.repeater-table-th>
                 <x-tables.repeater-table-th :font-size-class="'font-14px'" class="header-border-down" :title="__('Replacement <br> Interval')"></x-tables.repeater-table-th>
+                <x-tables.repeater-table-th :font-size-class="'font-14px'" class="header-border-down" :title="__('Count')"></x-tables.repeater-table-th>
 
-                @foreach($studyMonthsForViews as $dateAsIndex=>$dateAsString)
+                {{-- @foreach($studyMonthsForViews as $dateAsIndex=>$dateAsString)
                 @php
                 $currentMonthNumber = explode('-',$dateAsString)[1];
                 $currentYear= explode('-',$dateAsString)[0];
@@ -32,7 +41,7 @@
                 @endphp
                 @endif
 
-                @endforeach
+                @endforeach --}}
             </x-slot>
             <x-slot name="trs">
                 @php
@@ -62,7 +71,7 @@
                     </td>
                     <td>
                         <div class="">
-                            <input value="{{ isset($subModel) ? $subModel->getItemCost() : 0 }}" @if($isRepeater) name="ffe_item_cost" @else name="{{ $tableId }}[0][ffe_item_cost]" @endif class="form-control expandable-amount-input text-left ffe-item-cost trigger-change-repeater recalculate-monthly-increase-amounts" type="text">
+                            <input value="{{ isset($subModel) ? $subModel->getItemCost() : 0 }}" @if($isRepeater) name="ffe_item_cost" @else name="{{ $tableId }}[0][ffe_item_cost]" @endif class="form-control expandable-amount-input text-left ffe-item-cost trigger-change-repeater recalculate-monthly-increase-amounts-branches" type="text">
                         </div>
                     </td>
 
@@ -70,7 +79,7 @@
 
 
                         <div class="d-flex align-items-center">
-                            <input value="{{ isset($subModel) ? $subModel->getVatRate():0 }}" @if($isRepeater) name="vat_rate" @else name="{{ $tableId }}[0][vat_rate]" @endif class="form-control exclude-from-trigger-change-when-repeat expandable-percentage-input text-left " type="text">
+                            <input value="{{ isset($subModel) ? $subModel->getVatRate():0 }}" @if($isRepeater) name="vat_rate" @else name="{{ $tableId }}[0][vat_rate]" @endif class="form-control  exclude-from-trigger-change-when-repeat expandable-percentage-input text-left " type="text">
                             <span style="margin-left:3px	">%</span>
                         </div>
                     </td>
@@ -85,7 +94,7 @@
 					
 					 <td>
                         <div class="d-flex align-items-center">
-                            <input value="{{ isset($subModel) ? $subModel->getContingencyRate():0 }}" @if($isRepeater) name="contingency_rate" @else name="{{ $tableId }}[0][contingency_rate]" @endif class="form-control contingency-rate recalculate-monthly-increase-amounts exclude-from-trigger-change-when-repeat expandable-percentage-input text-left exclude-from-trigger-change-when-repeat" type="text">
+                            <input value="{{ isset($subModel) ? $subModel->getContingencyRate():0 }}" @if($isRepeater) name="contingency_rate" @else name="{{ $tableId }}[0][contingency_rate]" @endif class="form-control contingency-rate recalculate-monthly-increase-amounts-branches exclude-from-trigger-change-when-repeat expandable-percentage-input text-left exclude-from-trigger-change-when-repeat" type="text">
                             <span style="margin-left:3px	">%</span>
                         </div>
                     </td>
@@ -94,7 +103,7 @@
 
 
                         <div class="d-flex align-items-center">
-                            <input value="{{ isset($subModel) ? $subModel->getCostAnnualIncreaseRate():0 }}" @if($isRepeater) name="cost_annual_increase_rate" @else name="{{ $tableId }}[0][cost_annual_increase_rate]" @endif :formattedInputClasses="'exclude-from-trigger-change-when-repeat'" class="form-control expandable-percentage-input text-left cost-annually-increase-rate recalculate-monthly-increase-amounts" type="text">
+                            <input value="{{ isset($subModel) ? $subModel->getCostAnnualIncreaseRate():0 }}" @if($isRepeater) name="cost_annual_increase_rate" @else name="{{ $tableId }}[0][cost_annual_increase_rate]" @endif :formattedInputClasses="'exclude-from-trigger-change-when-repeat'" class="form-control expandable-percentage-input text-left cost-annually-increase-rate recalculate-monthly-increase-amounts-branches" type="text">
                             <span style="margin-left:3px	">%</span>
                         </div>
                     </td>
@@ -116,8 +125,26 @@
                     <td>
                         <x-form.select :selectedValue="isset($subModel) ? $subModel->getReplacementInterval() : 'cash'" :options="getReplacementInterval()" :add-new="false" class="select2-select repeater-select  " :all="false" name="@if($isRepeater) replacement_interval @else {{ $tableId }}[0][replacement_interval] @endif"></x-form.select>
                     </td>
+					 <td>
 
-                    @php
+
+                        <div class="">
+                            <input value="{{ isset($subModel) ? $subModel->getCount():0 }}" @if($isRepeater) name="counts" @else name="{{ $tableId }}[0][counts]" @endif class="form-control expandable-percentage-input current-count recalculate-monthly-increase-amounts-branches exclude-from-trigger-change-when-repeat text-left " type="text">
+                        </div>
+						<div>
+							<input class="current-row-counts" type="hidden" name="ffe_counts" value="">
+							
+						</div>
+						
+						
+						@foreach($newBranchCountPerDateIndex as $dateAsIndex=>$newBranchCountPerDateIndexRow)
+						 <input type="hidden" value="{{ isset($subModel) ? $subModel->getMonthlyAmountAtMonthIndex($dateAsIndex) : 0 }}" name="monthly_amounts" multiple class="current-month-amounts" data-column-index="{{ $dateAsIndex }}">
+
+						@endforeach 
+
+                    </td>
+
+                    {{-- @php
                     $columnIndex = 0 ;
                     $currentYearRepeaterIndex = 0 ;
                     @endphp
@@ -129,7 +156,7 @@
                             @php
                             $name = "ffe_counts" ;
                             @endphp
-                            <x-repeat-right-dot-inputs :isMultiple="true" :dataCurrentYear="$monthsWithItsYear[$dateAsIndex]" :removeCurrency="true" :removeThreeDots="true" :removeThreeDotsClass="true" :number-format-decimals="0" :mark="' '" :currentVal="isset($subModel) ? $subModel->getFfeCountsAtDateIndex($dateAsIndex) : 0 " data-group-index="{{ $currentYearRepeaterIndex }}" :formattedInputClasses="'exclude-from-trigger-change-when-repeat'" :classes="'repeater-with-collapse-input only-greater-than-or-equal-zero-allowed  ffe_counts recalculate-monthly-increase-amounts'" :is-percentage="true" :name="$name" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                            <x-repeat-right-dot-inputs :isMultiple="true" :dataCurrentYear="$monthsWithItsYear[$dateAsIndex]" :removeCurrency="true" :removeThreeDots="true" :removeThreeDotsClass="true" :number-format-decimals="0" :mark="' '" :currentVal="isset($subModel) ? $subModel->getFfeCountsAtDateIndex($dateAsIndex) : 0 " data-group-index="{{ $currentYearRepeaterIndex }}" :formattedInputClasses="'exclude-from-trigger-change-when-repeat'" :classes="'repeater-with-collapse-input only-greater-than-or-equal-zero-allowed  ffe_counts recalculate-monthly-increase-amounts-branches'" :is-percentage="true" :name="$name" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
                         </div>
                         <input type="hidden" value="{{ isset($subModel) ? $subModel->getMonthlyAmountAtMonthIndex($dateAsIndex) : 0 }}" name="monthly_amounts" multiple class="current-month-amounts" data-column-index="{{ $dateAsIndex }}">
                     </td>
@@ -154,7 +181,7 @@
                     @php
                     $columnIndex++;
                     @endphp
-                    @endforeach
+                    @endforeach --}}
 
 
 

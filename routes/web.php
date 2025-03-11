@@ -433,11 +433,11 @@ Route::middleware([])->group(function () {
 						route::get('expenses','ExpensesController@create')->name('create.expenses');
 						route::post('expenses','ExpensesController@store')->name('store.expenses');
 						
-						route::get('ffe-fixed-assets','FfeFixedAssetsController@create')->name('create.ffe.fixed.assets');
-						route::post('ffe-fixed-assets','FfeFixedAssetsController@store')->name('store.ffe.fixed.assets');
+						route::get('fixed-assets/ffe','FfeFixedAssetsController@create')->name('create.ffe.fixed.assets');
+						route::post('fixed-assets/ffe','FfeFixedAssetsController@store')->name('store.ffe.fixed.assets');
 						
-						route::get('ffe-fixed-assets','FfeFixedAssetsController@create')->name('create.new.branches.fixed.assets');
-						route::post('ffe-fixed-assets','FfeFixedAssetsController@store')->name('store.new.branches.fixed.assets');
+						route::get('fixed-assets/new-branches','NewBranchFixedAssetsController@create')->name('create.new.branch.fixed.assets');
+						route::post('fixed-assets/new-branches','NewBranchFixedAssetsController@store')->name('store.new.branch.fixed.assets');
 						
 						
 						

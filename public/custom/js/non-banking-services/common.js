@@ -301,3 +301,36 @@ $(document).on('change','.recalculate-monthly-increase-amounts',function(){
 	})
 	
 })
+let calculateBranchIncreaseAmounts = function(){
+	var currentRow = $(this).closest('tr') ;
+	var itemCost = currentRow.find('.ffe-item-cost').val();
+	var costAnnuallyIncreaseRate = currentRow.find('.cost-annually-increase-rate').val() / 100;
+	var contingencyRate = currentRow.find('.contingency-rate').val() / 100;
+	var currentItemCount = parseInt(currentRow.find('.current-count').val())
+	var yearIndex = -1 ; // will increase every year ;
+	var  netBranchOpeningProjections = JSON.parse($('#net-branch-opening-projections').val());
+	var counts = {};
+	for(var currentDateAsIndex in netBranchOpeningProjections){
+		var currentBranchCount = netBranchOpeningProjections[currentDateAsIndex];
+		currentCount = currentBranchCount * currentItemCount;
+		var currentYearIndex = $('.year-index-month-index[data-month-index="'+ currentDateAsIndex +'"]').attr('data-year-index');
+		var currentMonthIndex=currentDateAsIndex;
+		if(currentYearIndex != yearIndex){
+			yearIndex++;
+		}
+		counts[currentMonthIndex]=currentCount;
+		var currentTotalAmount = itemCost * currentCount  * (1+contingencyRate); 
+		console.log('total',currentTotalAmount);
+		var currentTotalAmountIncrease = currentTotalAmount * Math.pow(1 + costAnnuallyIncreaseRate, yearIndex)
+		$(currentRow).closest('tr').find('.current-month-amounts[data-column-index="'+currentMonthIndex+'"]').val(currentTotalAmountIncrease);
+		var totalForCurrentMonth = 0 ;
+		$('.current-month-amounts[data-column-index="'+currentMonthIndex+'"]').each(function(index,amountElement){
+			totalForCurrentMonth+= parseFloat($(amountElement).val());
+		})
+		$('.direct-ffe-amounts[data-column-index="'+currentMonthIndex+'"]').val(number_format(totalForCurrentMonth)).trigger('change');
+		
+	}
+	$(currentRow).find('.current-row-counts').val(JSON.stringify(counts));
+}
+$(document).on('change','.recalculate-monthly-increase-amounts-branches',calculateBranchIncreaseAmounts)
+$('.recalculate-monthly-increase-amounts-branches').trigger('change');

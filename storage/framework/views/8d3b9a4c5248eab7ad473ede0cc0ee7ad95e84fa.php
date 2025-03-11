@@ -35,8 +35,9 @@ use App\Models\NonBankingService\Expense;
 
 <div class="row">
     <div class="col-md-12">
+	
 
-
+    <form id="form-id" class="kt-form kt-form--label-right" method="POST" enctype="multipart/form-data" action="<?php echo e($storeRoute); ?>">
 
         <div class="kt-portlet " style="margin-bottom:5px;">
 
@@ -51,13 +52,13 @@ use App\Models\NonBankingService\Expense;
 				
 						<?php
 
-				$tableId = 'microfinance_loan_officer_counter';
-				$repeaterId = 'microfinance_loan_officer_counter_repeater';
+				$tableId = 'existingBranchesLoanCases';
+				$repeaterId = $tableId.'_repeater';
 				
 				?>
 
     
-                <form id="form-id" class="kt-form kt-form--label-right" method="POST" enctype="multipart/form-data" action="<?php echo e($storeRoute); ?>">
+            
                     <?php echo csrf_field(); ?>
                     <input type="hidden" name="model_id" value="<?php echo e($model->id ?? 0); ?>">
                     <input type="hidden" name="company_id" value="<?php echo e(getCurrentCompanyId()); ?>">
@@ -111,19 +112,19 @@ use App\Models\NonBankingService\Expense;
                          <?php $__env->slot('trs'); ?> 
                             <?php
 
-                            $rows = isset($model) ?[-1] : [-1] ;
+                            $rows = isset($model) ?$model->existingBranchesLoanCases : [-1] ;
 
                             ?>
                             <?php $__currentLoopData = count($rows) ? $rows : [-1]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $subModel): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                             <?php
-                            if( !($subModel instanceof Expense) ){
+                            if( !($subModel instanceof \App\Models\NonBankingService\ExistingBranchesLoanCaseProjection) ){
                             unset($subModel);
                             }
 
                             ?>
 
                             <tr <?php if($isRepeater): ?> data-repeater-item data-repeater-style <?php endif; ?>>
-
+  <input type="hidden" name="id" value="<?php echo e(isset($subModel) ? $subModel->id : 0); ?>">
                                 <td class="text-center">
                                     <div class="">
                                         <i data-repeater-delete="" class="btn-sm btn btn-danger m-btn m-btn--icon m-btn--pill trash_icon fas fa-times-circle">
@@ -131,27 +132,29 @@ use App\Models\NonBankingService\Expense;
                                     </div>
                                 </td>
                                 <td>
-                                    <input value="<?php echo e((isset($subModel) ? number_format($subModel->getMonthlyCostOfUnit(),0) : $study->getMicrofinanceLoanOfficerCount())); ?>" class="form-control text-center only-greater-than-or-equal-zero-allowed" type="text">
-                                    <input type="hidden" value="<?php echo e((isset($subModel) ? $subModel->getMonthlyCostOfUnit() : $study->getMicrofinanceLoanOfficerCount())); ?>" <?php if($isRepeater): ?> name="monthly_cost_of_unit" <?php else: ?> name="<?php echo e($tableId); ?>[0][monthly_cost_of_unit]" <?php endif; ?>>
-
+								
+                                    <input value="<?php echo e((isset($subModel) ? $subModel->getLoanOfficerCount() : 0)); ?>" class="form-control text-center only-greater-than-or-equal-zero-allowed" type="text">
+                                    <input type="hidden" value="<?php echo e((isset($subModel) ? $subModel->getLoanOfficerCount() : 0)); ?>" <?php if($isRepeater): ?> name="loan_officer_count" <?php else: ?> name="<?php echo e($tableId); ?>[0][loan_officer_count]" <?php endif; ?>>
                                 </td>
 								  <td>
                                     <input readonly value="<?php echo e(__('Average Loan Cases Count Per Officer Per Month')); ?>" class="form-control" type="text">
 
                                 </td>
-                           
+                           <?php
+							 $columnIndex = 0 ;
+						   ?>
 								<?php $__currentLoopData = $studyMonthsForViews; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $dateAsIndex=>$dateAsString): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 								<?php
-									$currentVal=0;
-                                        $columnIndex = 0 ;
+									$currentVal=isset($subModel) ? $subModel->getCountsAtMonthIndex($dateAsIndex) : 0 ;
+                                       
 								?>
                                 <td>
 								       <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['numberFormatDecimals' => 0,'removeCurrency' => true,'name' => 'loan_cases','currentVal' => $currentVal,'classes' => 'only-greater-than-or-equal-zero-allowed','isPercentage' => true,'columnIndex' => $columnIndex]]); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['numberFormatDecimals' => 0,'multiple' => true,'removeCurrency' => true,'name' => 'counts','currentVal' => $currentVal,'classes' => 'only-greater-than-or-equal-zero-allowed','isPercentage' => true,'columnIndex' => $columnIndex]]); ?>
 <?php $component->withName('repeat-right-dot-inputs'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['numberFormatDecimals' => 0,'removeCurrency' => true,'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('loan_cases'),'currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($currentVal),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed'),'is-percentage' => true,'columnIndex' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($columnIndex)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['numberFormatDecimals' => 0,'multiple' => true,'removeCurrency' => true,'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('counts'),'currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($currentVal),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed'),'is-percentage' => true,'columnIndex' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($columnIndex)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
@@ -159,7 +162,6 @@ use App\Models\NonBankingService\Expense;
 <?php endif; ?> 
 									  
                                     
-
                                 </td>
 								<?php
 									$columnIndex++;
@@ -197,8 +199,8 @@ use App\Models\NonBankingService\Expense;
 
         <?php
 
-        $tableId = 'branch_assumptions';
-        $repeaterId = 'branch_assumptions_repeater';
+        $tableId = 'newBranchOpeningProjections';
+        $repeaterId = $tableId.'_repeater';
         $cardId = $tableId;
         ?>
 
@@ -210,7 +212,7 @@ use App\Models\NonBankingService\Expense;
                 </div>
 				
                 
-                <form id="form-id" class="kt-form kt-form--label-right" method="POST" enctype="multipart/form-data" action="<?php echo e($storeRoute); ?>">
+                
                     <?php echo csrf_field(); ?>
                     <input type="hidden" name="model_id" value="<?php echo e($model->id ?? 0); ?>">
                     <input type="hidden" name="company_id" value="<?php echo e(getCurrentCompanyId()); ?>">
@@ -218,12 +220,13 @@ use App\Models\NonBankingService\Expense;
                     <input type="hidden" name="study_id" id="study-id-js" value="<?php echo e($study->id); ?>">
 
                     <input type="hidden" name="tableIds[]" value="<?php echo e($tableId); ?>">
+				
                      <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.tables.repeater-table','data' => ['fontSizeClass' => 'font-14px','appendSaveOrBackBtn' => true,'repeaterWithSelect2' => true,'parentClass' => 'js-toggle-visibility','tableName' => $tableId,'repeaterId' => $repeaterId,'relationName' => 'food','isRepeater' => $isRepeater=!(isset($removeRepeater) && $removeRepeater)]]); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.tables.repeater-table','data' => ['fontSizeClass' => 'font-14px','appendSaveOrBackBtn' => false,'repeaterWithSelect2' => true,'parentClass' => 'js-toggle-visibility','tableName' => $tableId,'repeaterId' => $repeaterId,'relationName' => 'food','isRepeater' => $isRepeater=!(isset($removeRepeater) && $removeRepeater)]]); ?>
 <?php $component->withName('tables.repeater-table'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['font-size-class' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('font-14px'),'append-save-or-back-btn' => true,'repeater-with-select2' => true,'parentClass' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('js-toggle-visibility'),'tableName' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($tableId),'repeaterId' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($repeaterId),'relationName' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('food'),'isRepeater' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($isRepeater=!(isset($removeRepeater) && $removeRepeater))]); ?>
+<?php $component->withAttributes(['font-size-class' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('font-14px'),'append-save-or-back-btn' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'repeater-with-select2' => true,'parentClass' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('js-toggle-visibility'),'tableName' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($tableId),'repeaterId' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($repeaterId),'relationName' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('food'),'isRepeater' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($isRepeater=!(isset($removeRepeater) && $removeRepeater))]); ?>
                          <?php $__env->slot('ths'); ?> 
                              <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.tables.repeater-table-th','data' => ['fontSizeClass' => 'font-14px','class' => 'col-md-1 header-border-down','title' => __('New Branches <br> Count'),'helperTitle' => __('Please insert Cost Per Unit excluding VAT')]]); ?>
@@ -273,37 +276,37 @@ use App\Models\NonBankingService\Expense;
                          <?php $__env->slot('trs'); ?> 
                             <?php
 
-                            $rows = isset($model) ?[-1] : [-1] ;
-
+                            $rows = isset($model) ?$model->newBranchOpeningProjections : [-1] ;
                             ?>
+							
                             <?php $__currentLoopData = count($rows) ? $rows : [-1]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $subModel): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                             <?php
-                            if( !($subModel instanceof Expense) ){
-                            unset($subModel);
+                            if( !($subModel instanceof \App\Models\NonBankingService\NewBranchOpeningProjection) ){
+                       		     unset($subModel);
                             }
-
+ 
                             ?>
-
                             <tr <?php if($isRepeater): ?> data-repeater-item data-repeater-style <?php endif; ?>>
 
                                 <td class="text-center">
+									  <input type="hidden" name="id" value="<?php echo e(isset($subModel) ? $subModel->id : 0); ?>">
                                     <div class="">
                                         <i data-repeater-delete="" class="btn-sm btn btn-danger m-btn m-btn--icon m-btn--pill trash_icon fas fa-times-circle">
                                         </i>
                                     </div>
                                 </td>
                                 <td>
-                                    <input value="<?php echo e((isset($subModel) ? number_format($subModel->getMonthlyCostOfUnit(),0) : 0)); ?>" class="form-control text-center only-greater-than-or-equal-zero-allowed" type="text">
-                                    <input type="hidden" value="<?php echo e((isset($subModel) ? $subModel->getMonthlyCostOfUnit() : 0)); ?>" <?php if($isRepeater): ?> name="monthly_cost_of_unit" <?php else: ?> name="<?php echo e($tableId); ?>[0][monthly_cost_of_unit]" <?php endif; ?>>
+                                    <input value="<?php echo e((isset($subModel) ? $subModel->getCounts() : 0)); ?>" class="form-control text-center only-greater-than-or-equal-zero-allowed" type="text">
+                                    <input type="hidden" value="<?php echo e((isset($subModel) ? $subModel->getCounts() : 0)); ?>" <?php if($isRepeater): ?> name="counts" <?php else: ?> name="<?php echo e($tableId); ?>[0][counts]" <?php endif; ?>>
 
                                 </td>
                                 <td>
                                      <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.calendar','data' => ['value' => isset($subModel) ? $subModel->getStartDateFormatted() : $study->getStudyStartDate() ,'id' => 'start_date','name' => 'start_date']]); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.calendar','data' => ['value' => isset($subModel) ? $subModel->getStartDateAsString() : $study->getStudyStartDate() ,'id' => 'start_date','name' => 'start_date_as_string']]); ?>
 <?php $component->withName('calendar'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['value' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(isset($subModel) ? $subModel->getStartDateFormatted() : $study->getStudyStartDate() ),'id' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('start_date'),'name' => 'start_date']); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['value' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(isset($subModel) ? $subModel->getStartDateAsString() : $study->getStudyStartDate() ),'id' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('start_date'),'name' => 'start_date_as_string']); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
@@ -311,19 +314,16 @@ use App\Models\NonBankingService\Expense;
 <?php endif; ?> 
                                 </td>
 								         <td>
-                                    <input value="<?php echo e((isset($subModel) ? number_format($subModel->getMonthlyCostOfUnit(),0) : 0)); ?>" class="form-control text-center only-greater-than-or-equal-zero-allowed" type="text">
-                                    <input type="hidden" value="<?php echo e((isset($subModel) ? $subModel->getMonthlyCostOfUnit() : 0)); ?>" <?php if($isRepeater): ?> name="monthly_cost_of_unit" <?php else: ?> name="<?php echo e($tableId); ?>[0][monthly_cost_of_unit]" <?php endif; ?>>
+                                    <input value="<?php echo e((isset($subModel) ? $subModel->getLoanOfficerCountPerBranch() : 0)); ?>" class="form-control text-center only-greater-than-or-equal-zero-allowed" type="text">
+                                    <input type="hidden" value="<?php echo e((isset($subModel) ? $subModel->getLoanOfficerCountPerBranch() : 0)); ?>" <?php if($isRepeater): ?> name="loan_officer_count_per_branch" <?php else: ?> name="<?php echo e($tableId); ?>[0][loan_officer_count_per_branch]" <?php endif; ?>>
 
                                 </td>
-
 
                                 <td>
-                                    <input value="<?php echo e((isset($subModel) ? number_format($subModel->getMonthlyCostOfUnit(),0) : 0)); ?>" class="form-control text-center only-greater-than-or-equal-zero-allowed" type="text">
-                                    <input type="hidden" value="<?php echo e((isset($subModel) ? $subModel->getMonthlyCostOfUnit() : 0)); ?>" <?php if($isRepeater): ?> name="monthly_cost_of_unit" <?php else: ?> name="<?php echo e($tableId); ?>[0][monthly_cost_of_unit]" <?php endif; ?>>
+                                    <input value="<?php echo e((isset($subModel) ? number_format($subModel->getTotalBranches(),0) : 0)); ?>" class="form-control text-center only-greater-than-or-equal-zero-allowed" type="text">
+                                    <input type="hidden" value="<?php echo e((isset($subModel) ? $subModel->getTotalBranches() : 0)); ?>" <?php if($isRepeater): ?> name="total_branches" <?php else: ?> name="<?php echo e($tableId); ?>[0][total_branches]" <?php endif; ?>>
 
                                 </td>
-
-
 
                             </tr>
                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -339,7 +339,7 @@ use App\Models\NonBankingService\Expense;
 <?php endif; ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
-                </form>
+                
                 
             </div>
         </div>
@@ -359,18 +359,15 @@ use App\Models\NonBankingService\Expense;
 				
 						<?php
 
-				$tableId = 'new_microfinance_loan_officer_counter';
-				$repeaterId = 'new_microfinance_loan_officer_counter_repeater';
+				$tableId = 'newBranchLoanCaseProjections';
+				$repeaterId = $tableId.'_repeater';
 				
 				?>
 
     
-                <form id="form-id" class="kt-form kt-form--label-right" method="POST" enctype="multipart/form-data" action="<?php echo e($storeRoute); ?>">
+                
                     <?php echo csrf_field(); ?>
-                    <input type="hidden" name="model_id" value="<?php echo e($model->id ?? 0); ?>">
-                    <input type="hidden" name="company_id" value="<?php echo e(getCurrentCompanyId()); ?>">
-                    <input type="hidden" name="model_name" value="Study">
-                    <input type="hidden" name="study_id" id="study-id-js" value="<?php echo e($study->id); ?>">
+                    
 
                     <input type="hidden" name="tableIds[]" value="<?php echo e($tableId); ?>">
                      <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
@@ -442,12 +439,12 @@ use App\Models\NonBankingService\Expense;
                          <?php $__env->slot('trs'); ?> 
                             <?php
 
-                            $rows = isset($model) ?[-1] : [-1] ;
+                            $rows = isset($model) ?$model->newBranchLoanCaseProjections : [-1] ;
 
                             ?>
                             <?php $__currentLoopData = count($rows) ? $rows : [-1]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $subModel): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                             <?php
-                            if( !($subModel instanceof Expense) ){
+                            if( !($subModel instanceof \App\Models\NonBankingService\NewBranchLoanCaseProjection) ){
                             unset($subModel);
                             }
 
@@ -456,29 +453,26 @@ use App\Models\NonBankingService\Expense;
                             <tr <?php if($isRepeater): ?> data-repeater-item data-repeater-style <?php endif; ?>>
 
                                 <td class="text-center">
+								<input type="hidden" name="id" value="<?php echo e(isset($subModel) ? $subModel->id : 0); ?>">
                                     <div class="">
                                         <i data-repeater-delete="" class="btn-sm btn btn-danger m-btn m-btn--icon m-btn--pill trash_icon fas fa-times-circle">
                                         </i>
                                     </div>
                                 </td>
-                                
+                              
 								  <td>
                                     <input readonly value="<?php echo e(__('Average Loan Cases Count Per Officer Per Month')); ?>" class="form-control" type="text">
 
                                 </td>
                            
 								
-								<?php
-									$currentVal=0;
-                                        $columnIndex = 0 ;
-								?>
                                 <td>
 								       <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['mark' => __('Count'),'removeThreeDots' => true,'removeThreeDotsClass' => true,'numberFormatDecimals' => 0,'removeCurrency' => true,'name' => 'loan_cases','currentVal' => $currentVal,'classes' => 'only-greater-than-or-equal-zero-allowed','isPercentage' => true,'columnIndex' => -1]]); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['mark' => __('Count'),'removeThreeDots' => true,'removeThreeDotsClass' => true,'numberFormatDecimals' => 0,'removeCurrency' => true,'name' => 'first_three_count','currentVal' => isset($subModel) ? $subModel->getFirstThreeCount() :0,'classes' => 'only-greater-than-or-equal-zero-allowed','isPercentage' => true,'columnIndex' => -1]]); ?>
 <?php $component->withName('repeat-right-dot-inputs'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['mark' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Count')),'removeThreeDots' => true,'removeThreeDotsClass' => true,'numberFormatDecimals' => 0,'removeCurrency' => true,'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('loan_cases'),'currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($currentVal),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed'),'is-percentage' => true,'columnIndex' => -1]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['mark' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Count')),'removeThreeDots' => true,'removeThreeDotsClass' => true,'numberFormatDecimals' => 0,'removeCurrency' => true,'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('first_three_count'),'currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(isset($subModel) ? $subModel->getFirstThreeCount() :0),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed'),'is-percentage' => true,'columnIndex' => -1]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
@@ -490,11 +484,11 @@ use App\Models\NonBankingService\Expense;
 								
 								  <td>
 								       <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['mark' => __('Count'),'removeThreeDots' => true,'removeThreeDotsClass' => true,'numberFormatDecimals' => 0,'removeCurrency' => true,'name' => 'loan_cases','currentVal' => $currentVal,'classes' => 'only-greater-than-or-equal-zero-allowed','isPercentage' => true,'columnIndex' => -1]]); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['mark' => __('Count'),'removeThreeDots' => true,'removeThreeDotsClass' => true,'numberFormatDecimals' => 0,'removeCurrency' => true,'name' => 'second_three_count','currentVal' => isset($subModel) ? $subModel->getSecondThreeCount() :0,'classes' => 'only-greater-than-or-equal-zero-allowed','isPercentage' => true,'columnIndex' => -1]]); ?>
 <?php $component->withName('repeat-right-dot-inputs'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['mark' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Count')),'removeThreeDots' => true,'removeThreeDotsClass' => true,'numberFormatDecimals' => 0,'removeCurrency' => true,'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('loan_cases'),'currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($currentVal),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed'),'is-percentage' => true,'columnIndex' => -1]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['mark' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Count')),'removeThreeDots' => true,'removeThreeDotsClass' => true,'numberFormatDecimals' => 0,'removeCurrency' => true,'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('second_three_count'),'currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(isset($subModel) ? $subModel->getSecondThreeCount() :0),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed'),'is-percentage' => true,'columnIndex' => -1]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
@@ -505,11 +499,11 @@ use App\Models\NonBankingService\Expense;
                                 </td>
 								  <td>
 								       <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['mark' => __('Count'),'removeThreeDots' => true,'removeThreeDotsClass' => true,'numberFormatDecimals' => 0,'removeCurrency' => true,'name' => 'loan_cases','currentVal' => $currentVal,'classes' => 'only-greater-than-or-equal-zero-allowed','isPercentage' => true,'columnIndex' => -1]]); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['mark' => __('Count'),'removeThreeDots' => true,'removeThreeDotsClass' => true,'numberFormatDecimals' => 0,'removeCurrency' => true,'name' => 'third_three_count','currentVal' => isset($subModel) ? $subModel->getThirdThreeCount() :0,'classes' => 'only-greater-than-or-equal-zero-allowed','isPercentage' => true,'columnIndex' => -1]]); ?>
 <?php $component->withName('repeat-right-dot-inputs'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['mark' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Count')),'removeThreeDots' => true,'removeThreeDotsClass' => true,'numberFormatDecimals' => 0,'removeCurrency' => true,'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('loan_cases'),'currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($currentVal),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed'),'is-percentage' => true,'columnIndex' => -1]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['mark' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Count')),'removeThreeDots' => true,'removeThreeDotsClass' => true,'numberFormatDecimals' => 0,'removeCurrency' => true,'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('third_three_count'),'currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(isset($subModel) ? $subModel->getThirdThreeCount() :0),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed'),'is-percentage' => true,'columnIndex' => -1]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
@@ -520,11 +514,11 @@ use App\Models\NonBankingService\Expense;
                                 </td>
 								  <td>
 								       <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['mark' => __('Count'),'removeThreeDots' => true,'removeThreeDotsClass' => true,'numberFormatDecimals' => 0,'removeCurrency' => true,'name' => 'loan_cases','currentVal' => $currentVal,'classes' => 'only-greater-than-or-equal-zero-allowed','isPercentage' => true,'columnIndex' => -1]]); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.repeat-right-dot-inputs','data' => ['mark' => __('Count'),'removeThreeDots' => true,'removeThreeDotsClass' => true,'numberFormatDecimals' => 0,'removeCurrency' => true,'name' => 'fourth_three_count','currentVal' => isset($subModel) ? $subModel->getFourthThreeCount() :0,'classes' => 'only-greater-than-or-equal-zero-allowed','isPercentage' => true,'columnIndex' => -1]]); ?>
 <?php $component->withName('repeat-right-dot-inputs'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['mark' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Count')),'removeThreeDots' => true,'removeThreeDotsClass' => true,'numberFormatDecimals' => 0,'removeCurrency' => true,'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('loan_cases'),'currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($currentVal),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed'),'is-percentage' => true,'columnIndex' => -1]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['mark' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Count')),'removeThreeDots' => true,'removeThreeDotsClass' => true,'numberFormatDecimals' => 0,'removeCurrency' => true,'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('fourth_three_count'),'currentVal' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(isset($subModel) ? $subModel->getFourthThreeCount() :0),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed'),'is-percentage' => true,'columnIndex' => -1]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
@@ -571,10 +565,10 @@ use App\Models\NonBankingService\Expense;
 
             </div>
             <div class="col-lg-6 kt-align-right">
-                <a href="<?php echo e(route('create.expenses',['company'=>$company->id,'study'=>$study->id])); ?>" class="btn active-style">
+                <button type="submit" class="btn active-style">
                     <?php echo e(__('Save & Go To Next')); ?>
 
-                </a>
+                </button>
             </div>
         </div>
         
@@ -607,7 +601,7 @@ use App\Models\NonBankingService\Expense;
 
 </div>
 </div>
-
+</form>
 
 </div>
 <?php $__env->stopSection(); ?>

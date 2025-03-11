@@ -47,18 +47,17 @@ use App\Models\NonBankingService\Expense;
                 </div>
             </div>
 			<input type="hidden" name="fixed_asset_type" value="{{ $fixedAssetType }}">
-            {{-- @foreach(count($departments)? $departments : [null] as $department) --}}
             @php
             $tableId = 'fixedAssets';
             $cardId = $tableId;
             $repeaterId = $tableId.'_repeater';
             @endphp
-            @include('non_banking_services.ffe-fixed-assets._repeater')
+            @include('non_banking_services.new-branch-fixed-assets._repeater')
             <!--end::Form-->
 
             <!--end::Portlet-->
             @php
-            $fixedAssetsFundingStructure = $model->getFixedAssetStructureForFixAssetType($fixedAssetType);
+            $fixedAssetsFundingStructure = $model->getFixedAssetStructureForFixAssetType($fixedAssetType) ;
             @endphp
 
             <div id="ffe-funding" class="kt-portlet " style="margin-bottom:5px;">
@@ -74,7 +73,7 @@ use App\Models\NonBankingService\Expense;
                                 <div class="col-md-10">
                                     <div class="d-flex align-items-center ">
                                         <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style="">
-                                            {{ __('FFE Funding Structure') }}
+                                            {{ __('New Branches Funding Structure') }}
                                         </h3>
                                     </div>
                                 </div>
@@ -106,7 +105,7 @@ use App\Models\NonBankingService\Expense;
 
 
                                             <td>
-                                                <input value="{{ __('Direct FFE Amounts') }}" disabled class="form-control text-left mt-2" type="text">
+                                                <input value="{{ __('Direct New Branches Amounts') }}" disabled class="form-control text-left mt-2" type="text">
 
                                             </td>
                                             @php

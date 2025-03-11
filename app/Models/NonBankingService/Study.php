@@ -5,16 +5,18 @@ use App\Equations\ExpenseAsPercentageEquation;
 use App\Helpers\HArr;
 use App\Models\NonBankingService\Expense;
 use App\Models\NonBankingService\GeneralAndReserveAssumption;
+use App\Models\NonBankingService\NewBranchLoanCaseProjection;
 use App\Models\Traits\Scopes\BelongsToCompany;
 use App\Models\Traits\Scopes\CompanyScope;
 use App\ReadyFunctions\CalculateDurationService;
 use App\ReadyFunctions\CalculateFixedLoanAtBeginningService;
 use App\ReadyFunctions\CalculateFixedLoanAtEndService;
 use App\ReadyFunctions\CalculateVariableLoanAtEndService;
+use App\ReadyFunctions\FixedAssetCalculation;
 use App\Traits\HasBasicStoreRequest;
+
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
-
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Arr;
@@ -208,6 +210,7 @@ use Illuminate\Support\Facades\DB;
 	{
 		return  $operationStartDateFormatted ? $datesAsStringAndIndex[$operationStartDateFormatted] : null;
 	}
+	
 	public function getStudyStartDate(): ?string
 	{
 		return $this->study_start_date;
@@ -222,6 +225,10 @@ use Illuminate\Support\Facades\DB;
 	public function getStudyEndDate(): ?string
 	{
 		return $this->study_end_date;
+	}
+	public function getStudyEndDateAsIndex(array $datesAsStringAndIndex, ?string $studyEndDateAsString): ?int
+	{
+		return  $studyEndDateAsString ? $datesAsStringAndIndex[$studyEndDateAsString] : null;
 	}
 	public function getStudyEndDateFormatted()
 	{
@@ -879,11 +886,10 @@ use Illuminate\Support\Facades\DB;
 		}
 		DB::connection('non_banking_service')->table($loanSchedulePaymentTableName)->insert($portfolioLoans);
 	}
-	public function storeFixedLoansForFixedAssets($isSensitivity = false):void
+	public function storeFixedLoansForFixedAssets(string $fixedAssetType,$isSensitivity = false):void
 	{
 		$loanSchedulePaymentTableName = $isSensitivity ? 'sensitivity_fixed_assets_loan_schedule_payments' : 'fixed_assets_loan_schedule_payments';
-		// $revenueIdWitLoanAmounts = $this->{$relationName}->pluck('loan_amounts','id')->toArray() ;
-		$fixedAssetsFundingStructure = $this->fixedAssetsFundingStructure;
+		$fixedAssetsFundingStructure = $this->getFixedAssetStructureForFixAssetType($fixedAssetType);
 		$loanAmounts = $fixedAssetsFundingStructure->getFfeAmounts();
 		$calculateFixedLoanAtEndService = new CalculateFixedLoanAtEndService ;
 		$calculateFixedLoanAtBeginningService = new CalculateFixedLoanAtBeginningService ;
@@ -915,7 +921,8 @@ use Illuminate\Support\Facades\DB;
 		}
 		DB::connection('non_banking_service')->table($loanSchedulePaymentTableName)
 		// ->where('revenue_stream_type',$revenueStreamType)
-		->where('study_id',$studyId)->delete();
+		->where('study_id',$studyId)->where('fixed_asset_type',$fixedAssetType)->delete();
+		
 		$baseRatesMapping = HArr::getFirstOfYear($baseRatesPerMonths);
 		$bankLendingMarginRates=$generalAndReserveAssumption->getBankLendingMarginRates();
 
@@ -978,6 +985,7 @@ use Illuminate\Support\Facades\DB;
 								$currentLoanArr['study_id'] = $studyId ;
 								$currentLoanArr['company_id'] = $companyId ;
 								$currentLoanArr['month_as_index'] = $monthIndex ;
+								$currentLoanArr['fixed_asset_type'] = $fixedAssetType ;
 								// $currentLoanArr['portfolio_loan_type'] ='bank_portfolio';
 								$portfolioLoans[]=collect($currentLoanArr)->map(function($item,$keyName){
 								if(is_array($item)){
@@ -1563,13 +1571,74 @@ use Illuminate\Support\Facades\DB;
 	{
 		return $this->hasMany(FixedAsset::class,'study_id','id');
 	}
-	public function fixedAssetsFundingStructure():HasOne
+	public function fixedAssetsFundingStructures():HasMany
 	{
-		return $this->hasOne(FixedAssetsFundingStructure::class,'study_id','id');
+		return $this->hasMany(FixedAssetsFundingStructure::class,'study_id','id');
+	}
+	public function getFixedAssetStructureForFixAssetType(string $fixedAssetType)
+	{
+		return $this->fixedAssetsFundingStructures->where('fixed_asset_type',$fixedAssetType)->first();
 	}
 	public function getDateIndexWithDate():array 
 	{
 				$datesAndIndexesHelpers = $this->getDatesIndexesHelper();
 				return $datesAndIndexesHelpers['dateIndexWithDate']; ;
+	}public function getDateWithDateIndex():array 
+	{
+				$datesAndIndexesHelpers = $this->getDatesIndexesHelper();
+				return $datesAndIndexesHelpers['dateWithDateIndex']; ;
 	}
+	public function recalculateFixedAssetStatement(string $fixedAssetType):void
+	{
+		/**
+		 * * $fixedAssetType for example ffe , new-branches , etc
+		 */
+		$resultFormattedToSaving = [];
+		$fixedAssets =$this->fixedAssets->where('type',$fixedAssetType);
+		$fixedAssetIds = $fixedAssets->pluck('id')->toArray();
+		$dateIndexWithDate = $this->getDateIndexWithDate();
+		$dateWithDateIndex = $this->getDateWithDateIndex();
+		$fixedAssetCalculationService = new FixedAssetCalculation;
+		$operationStartDateFormatted = $this->getOperationStartDateFormatted();
+		$operationStartDateAsIndex = $this->getOperationStartDateAsIndex($dateWithDateIndex,$operationStartDateFormatted);
+		$studyEndDateAsString = $this->getStudyEndDate();
+		$studyEndDateAsIndex = $this->getStudyEndDateAsIndex($dateWithDateIndex,$studyEndDateAsString);
+		DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('fixed_asset_statements')->whereIn('fixed_asset_id',$fixedAssetIds)->delete();
+		$result = $fixedAssetCalculationService->__calculate($fixedAssets,$dateIndexWithDate,$operationStartDateAsIndex,$this->getStudyDates(),$studyEndDateAsIndex,$this->id,$this->company->id);
+		foreach($result as $fixedAssetId => $fixedAssetResult){
+			foreach($fixedAssetResult as $columnName => $columnValue){
+				if(is_array($columnValue)){
+					$resultFormattedToSaving[$fixedAssetId][$columnName] = json_encode($columnValue);
+				}else{
+					$resultFormattedToSaving[$fixedAssetId][$columnName] = $columnValue;
+				}
+			}
+		}
+		$resultFormattedToSaving=array_values($resultFormattedToSaving);
+		DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('fixed_asset_statements')->insert($resultFormattedToSaving);
+	}
+	public function existingBranchesLoanCases():HasMany
+	{
+		return $this->hasMany(ExistingBranchesLoanCaseProjection::class,'study_id','id');
+	}
+	public function newBranchOpeningProjections():HasMany
+	{
+		return $this->hasMany(NewBranchOpeningProjection::class,'study_id','id');
+	}
+	public function getNewBranchCountPerDateIndex():array 
+	{
+		$result = [];
+		$newBranchOpeningProjects = $this->newBranchOpeningProjections ;
+		foreach($newBranchOpeningProjects as $index => $newBranchOpeningProject){
+			$currentDateAsIndex = $newBranchOpeningProject->getStartDateAsIndex();
+			$counts = $newBranchOpeningProject->getCounts();
+			$result[$currentDateAsIndex] = isset($result[$currentDateAsIndex]) ? $result[$currentDateAsIndex]+$counts :$counts; 
+		}
+		return $result;
+	}
+	public function newBranchLoanCaseProjections():HasMany
+	{
+		return $this->hasMany(NewBranchLoanCaseProjection::class,'study_id','id');
+	}
+	
 }

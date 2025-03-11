@@ -71,7 +71,7 @@ trait HasBasicStoreRequest
 		}
 		$elementsToUpdate = array_intersect($idsFromRequest,$oldIdsFromDatabase);
 		$this->$relationName()->whereIn($relationTableName.'.id',$elementsToDelete)->delete();
-
+		
 		foreach($elementsToUpdate as $id){
 			$dataToUpdate = findByKey($relationDataArray,'id',$id);
 			$this->$relationName()->where($relationTableName.'.id',$id)->first()->update($dataToUpdate);

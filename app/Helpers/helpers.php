@@ -1784,6 +1784,13 @@ function generateDatesBetweenTwoDatesWithoutOverflow(Carbon $start_date, Carbon 
     }
     return $dates;
 }
+function generateDatesBetweenTwoIndexedDates(int $startDateAsIndex , int $endDateAsIndex):array {
+	$result = [];
+	for($i =$startDateAsIndex ; $i <=$endDateAsIndex ; $i++  ){
+		$result[] = $i;
+	}
+	return $result;
+}
 function formatDateFromString(string $date): string
 {
     if ($date) {
@@ -6267,7 +6274,7 @@ function getNonBankingNavigation(Company $company,User $user):array
 				[
 					'title'=>__('New Branches'),
 					'show'=>true ,
-					'link'=>route('create.new.branches.fixed.assets',['company'=>$company->id , 'study'=>$studyId])
+					'link'=>route('create.new.branch.fixed.assets',['company'=>$company->id , 'study'=>$studyId])
 				]
 			]
 		];

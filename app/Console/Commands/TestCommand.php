@@ -140,12 +140,15 @@ class TestCommand extends Command
 	}
 	public function handle()
 	{
+		/**
+		 * @var Study $study
+		 */
 		$study = Study::find(50);
-		$fixedAssets =$study->fixedAssets;
-		$fixedAssetCalculationService = new FixedAssetCalculation;
-		$operationStartDateFormatted = $study->getOperationStartDateFormatted();
-		$dateIndexWithDate = $study->getDateIndexWithDate();
-		dd($fixedAssetCalculationService->__calculate($fixedAssets,$dateIndexWithDate,$operationStartDateFormatted,$study->getStudyDates(),$study->getStudyEndDate()));
+		
+		// dd($resultFormattedToSaving);
+		//    = 
+		// dd($result);
+		dd('good');
 		
 		// $department = Department::create([
 		// 	'name'=>'test_d',

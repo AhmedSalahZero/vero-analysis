@@ -66,18 +66,17 @@ use App\Models\NonBankingService\Expense;
                 </div>
             </div>
 			<input type="hidden" name="fixed_asset_type" value="<?php echo e($fixedAssetType); ?>">
-            
             <?php
             $tableId = 'fixedAssets';
             $cardId = $tableId;
             $repeaterId = $tableId.'_repeater';
             ?>
-            <?php echo $__env->make('non_banking_services.ffe-fixed-assets._repeater', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+            <?php echo $__env->make('non_banking_services.new-branch-fixed-assets._repeater', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
             <!--end::Form-->
 
             <!--end::Portlet-->
             <?php
-            $fixedAssetsFundingStructure = $model->getFixedAssetStructureForFixAssetType($fixedAssetType);
+            $fixedAssetsFundingStructure = $model->getFixedAssetStructureForFixAssetType($fixedAssetType) ;
             ?>
 
             <div id="ffe-funding" class="kt-portlet " style="margin-bottom:5px;">
@@ -93,7 +92,7 @@ use App\Models\NonBankingService\Expense;
                                 <div class="col-md-10">
                                     <div class="d-flex align-items-center ">
                                         <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style="">
-                                            <?php echo e(__('FFE Funding Structure')); ?>
+                                            <?php echo e(__('New Branches Funding Structure')); ?>
 
                                         </h3>
                                     </div>
@@ -161,7 +160,7 @@ use App\Models\NonBankingService\Expense;
 
 
                                             <td>
-                                                <input value="<?php echo e(__('Direct FFE Amounts')); ?>" disabled class="form-control text-left mt-2" type="text">
+                                                <input value="<?php echo e(__('Direct New Branches Amounts')); ?>" disabled class="form-control text-left mt-2" type="text">
 
                                             </td>
                                             <?php
@@ -923,4 +922,4 @@ use App\Models\NonBankingService\Expense;
 </script>
 <?php $__env->stopPush(); ?>
 
-<?php echo $__env->make('layouts.dashboard', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /media/salah/Software/projects/veroo/resources/views/non_banking_services/ffe-fixed-assets/form.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('layouts.dashboard', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /media/salah/Software/projects/veroo/resources/views/non_banking_services/new-branch-fixed-assets/form.blade.php ENDPATH**/ ?>

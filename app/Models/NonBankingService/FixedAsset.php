@@ -12,11 +12,16 @@ class FixedAsset extends Model
 	use BelongsToStudy,BelongsToCompany;
 	protected $guarded = ['id'];
 	protected $connection ='non_banking_service';
+	public const FFE = 'ffe';
+	public const NEW_BRANCH = 'new-branch';
 	protected $casts = [
 		'ffe_counts'=>'array',
 		'monthly_amounts'=>'array',
 	];
-		
+	public function getId()
+	{
+		return $this->id;
+	}
 	public function company()
 	{
 		return $this->belongsTo(Company::class , 'company_id','id');
@@ -29,6 +34,10 @@ class FixedAsset extends Model
 	public function getName()
 	{
 		return $this->name ;
+	}
+	public function getType():string
+	{
+		return $this->type;
 	}
 	public function getItemCost()
 	{
@@ -70,10 +79,13 @@ class FixedAsset extends Model
 	{
 		return (1+($this->getContingencyRate()/100))*$this->getItemCost();
 	}
-	
 	public function getMonthlyAmounts():array 
 	{
 		return (array)$this->monthly_amounts;
+	}
+	public function getCount():int
+	{
+		return $this->counts;
 	}
 	public function getPurchaseDates(array $dateIndexWithDate):array 
 	{
@@ -99,7 +111,6 @@ class FixedAsset extends Model
 	}
 	public function getFfeCounts():array 
 	{
-		logger('salah');
 		return (array)$this->ffe_counts;  
 	}
 	public function getReplacementCostRate()

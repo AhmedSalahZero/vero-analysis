@@ -4,6 +4,7 @@ namespace App\Http\Controllers\NonBankingServices;
 
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\NonBankingServices\StoreMicrofinanceBranchAssumption;
 use App\Models\Company;
 use App\Models\NonBankingService\Department;
 use App\Models\NonBankingService\Position;
@@ -32,9 +33,18 @@ class MicrofinanceBranchAssumptionsController extends Controller
 			// 'financialYearEndMonthNumber'=>$study->getFinancialYearEndMonthNumber()
 		];
 	}
-	
-	public function store(Company $company , Request $request,Study $study)
+	protected function getRepeaterRelations():array
 	{
+		return [
+			'existingBranchesLoanCases',
+			'newBranchOpeningProjections',
+			'newBranchLoanCaseProjections'
+		];
+	}
+	public function store(Company $company , StoreMicrofinanceBranchAssumption $request,Study $study)
+	{
+		$study->storeRepeaterRelations($request,$this->getRepeaterRelations(),$company);
+		dd('f');
 		return response()->json([
 			'redirectTo'=>route('create.leasing.revenue.stream.breakdown',['company'=>$company->id,'study'=>$study->id])
 		]);

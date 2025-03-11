@@ -16,8 +16,9 @@ use App\Models\NonBankingService\Expense;
 
 <div class="row">
     <div class="col-md-12">
+	{{-- {{ dd($storeRoute) }} --}}
 
-
+    <form id="form-id" class="kt-form kt-form--label-right" method="POST" enctype="multipart/form-data" action="{{ $storeRoute }}">
 
         <div class="kt-portlet " style="margin-bottom:5px;">
 
@@ -32,13 +33,13 @@ use App\Models\NonBankingService\Expense;
 				
 						@php
 
-				$tableId = 'microfinance_loan_officer_counter';
-				$repeaterId = 'microfinance_loan_officer_counter_repeater';
+				$tableId = 'existingBranchesLoanCases';
+				$repeaterId = $tableId.'_repeater';
 				
 				@endphp
 
     
-                <form id="form-id" class="kt-form kt-form--label-right" method="POST" enctype="multipart/form-data" action="{{ $storeRoute }}">
+            
                     @csrf
                     <input type="hidden" name="model_id" value="{{ $model->id ?? 0  }}">
                     <input type="hidden" name="company_id" value="{{ getCurrentCompanyId()  }}">
@@ -57,19 +58,19 @@ use App\Models\NonBankingService\Expense;
                         <x-slot name="trs">
                             @php
 
-                            $rows = isset($model) ?[-1] : [-1] ;
+                            $rows = isset($model) ?$model->existingBranchesLoanCases : [-1] ;
 
                             @endphp
                             @foreach( count($rows) ? $rows : [-1] as $subModel)
                             @php
-                            if( !($subModel instanceof Expense) ){
+                            if( !($subModel instanceof \App\Models\NonBankingService\ExistingBranchesLoanCaseProjection) ){
                             unset($subModel);
                             }
 
                             @endphp
 
                             <tr @if($isRepeater) data-repeater-item data-repeater-style @endif>
-
+  <input type="hidden" name="id" value="{{ isset($subModel) ? $subModel->id : 0 }}">
                                 <td class="text-center">
                                     <div class="">
                                         <i data-repeater-delete="" class="btn-sm btn btn-danger m-btn m-btn--icon m-btn--pill trash_icon fas fa-times-circle">
@@ -77,26 +78,27 @@ use App\Models\NonBankingService\Expense;
                                     </div>
                                 </td>
                                 <td>
-                                    <input value="{{ (isset($subModel) ? number_format($subModel->getMonthlyCostOfUnit(),0) : $study->getMicrofinanceLoanOfficerCount()) }}" class="form-control text-center only-greater-than-or-equal-zero-allowed" type="text">
-                                    <input type="hidden" value="{{ (isset($subModel) ? $subModel->getMonthlyCostOfUnit() : $study->getMicrofinanceLoanOfficerCount()) }}" @if($isRepeater) name="monthly_cost_of_unit" @else name="{{ $tableId }}[0][monthly_cost_of_unit]" @endif>
-
+								{{-- {{ dd($subModel) }} --}}
+                                    <input value="{{ (isset($subModel) ? $subModel->getLoanOfficerCount() : 0) }}" class="form-control text-center only-greater-than-or-equal-zero-allowed" type="text">
+                                    <input type="hidden" value="{{ (isset($subModel) ? $subModel->getLoanOfficerCount() : 0) }}" @if($isRepeater) name="loan_officer_count" @else name="{{ $tableId }}[0][loan_officer_count]" @endif>
                                 </td>
 								  <td>
                                     <input readonly value="{{ __('Average Loan Cases Count Per Officer Per Month') }}" class="form-control" type="text">
 
                                 </td>
-                           
+                           @php
+							 $columnIndex = 0 ;
+						   @endphp
 								@foreach($studyMonthsForViews as $dateAsIndex=>$dateAsString)
 								@php
-									$currentVal=0;
-                                        $columnIndex = 0 ;
+									$currentVal=isset($subModel) ? $subModel->getCountsAtMonthIndex($dateAsIndex) : 0 ;
+                                       
 								@endphp
                                 <td>
-								      <x-repeat-right-dot-inputs :numberFormatDecimals="0"  :removeCurrency="true" :name="'loan_cases'" :currentVal="$currentVal" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+								      <x-repeat-right-dot-inputs :numberFormatDecimals="0" :multiple="true" :removeCurrency="true" :name="'counts'" :currentVal="$currentVal" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 									  
                                     {{-- <input value="{{ (isset($subModel) ? number_format($subModel->getMonthlyCostOfUnit(),0) : 0) }}" class="form-control text-center only-greater-than-or-equal-zero-allowed" type="text">
                                     <input type="hidden" value="{{ (isset($subModel) ? $subModel->getMonthlyCostOfUnit() : 0) }}" @if($isRepeater) name="monthly_cost_of_unit" @else name="{{ $tableId }}[0][monthly_cost_of_unit]" @endif> --}}
-
                                 </td>
 								@php
 									$columnIndex++;
@@ -129,8 +131,8 @@ use App\Models\NonBankingService\Expense;
 
         @php
 
-        $tableId = 'branch_assumptions';
-        $repeaterId = 'branch_assumptions_repeater';
+        $tableId = 'newBranchOpeningProjections';
+        $repeaterId = $tableId.'_repeater';
         $cardId = $tableId;
         @endphp
 
@@ -142,7 +144,7 @@ use App\Models\NonBankingService\Expense;
                 </div>
 				
                 {{-- start of one time expense --}}
-                <form id="form-id" class="kt-form kt-form--label-right" method="POST" enctype="multipart/form-data" action="{{ $storeRoute }}">
+                {{-- <form id="form-id" class="kt-form kt-form--label-right" method="POST" enctype="multipart/form-data" action="{{ $storeRoute }}"> --}}
                     @csrf
                     <input type="hidden" name="model_id" value="{{ $model->id ?? 0  }}">
                     <input type="hidden" name="company_id" value="{{ getCurrentCompanyId()  }}">
@@ -150,7 +152,8 @@ use App\Models\NonBankingService\Expense;
                     <input type="hidden" name="study_id" id="study-id-js" value="{{ $study->id }}">
 
                     <input type="hidden" name="tableIds[]" value="{{ $tableId }}">
-                    <x-tables.repeater-table :font-size-class="'font-14px'" :append-save-or-back-btn="true" :repeater-with-select2="true" :parentClass="'js-toggle-visibility'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
+				
+                    <x-tables.repeater-table :font-size-class="'font-14px'" :append-save-or-back-btn="false" :repeater-with-select2="true" :parentClass="'js-toggle-visibility'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
                         <x-slot name="ths">
                             <x-tables.repeater-table-th :font-size-class="'font-14px'" class="col-md-1 header-border-down" :title="__('New Branches <br> Count')" :helperTitle="__('Please insert Cost Per Unit excluding VAT')"></x-tables.repeater-table-th>
                             <x-tables.repeater-table-th :font-size-class="'font-14px'" class="col-md-1 header-border-down" :title="__('Start <br> Date')" :helperTitle="__('Default date is Income Statement start date, if else please select a date')"></x-tables.repeater-table-th>
@@ -160,47 +163,44 @@ use App\Models\NonBankingService\Expense;
                         <x-slot name="trs">
                             @php
 
-                            $rows = isset($model) ?[-1] : [-1] ;
-
+                            $rows = isset($model) ?$model->newBranchOpeningProjections : [-1] ;
                             @endphp
+							
                             @foreach( count($rows) ? $rows : [-1] as $subModel)
                             @php
-                            if( !($subModel instanceof Expense) ){
-                            unset($subModel);
+                            if( !($subModel instanceof \App\Models\NonBankingService\NewBranchOpeningProjection) ){
+                       		     unset($subModel);
                             }
-
+ 
                             @endphp
-
                             <tr @if($isRepeater) data-repeater-item data-repeater-style @endif>
 
                                 <td class="text-center">
+									  <input type="hidden" name="id" value="{{ isset($subModel) ? $subModel->id : 0 }}">
                                     <div class="">
                                         <i data-repeater-delete="" class="btn-sm btn btn-danger m-btn m-btn--icon m-btn--pill trash_icon fas fa-times-circle">
                                         </i>
                                     </div>
                                 </td>
                                 <td>
-                                    <input value="{{ (isset($subModel) ? number_format($subModel->getMonthlyCostOfUnit(),0) : 0) }}" class="form-control text-center only-greater-than-or-equal-zero-allowed" type="text">
-                                    <input type="hidden" value="{{ (isset($subModel) ? $subModel->getMonthlyCostOfUnit() : 0) }}" @if($isRepeater) name="monthly_cost_of_unit" @else name="{{ $tableId }}[0][monthly_cost_of_unit]" @endif>
+                                    <input value="{{ (isset($subModel) ? $subModel->getCounts() : 0) }}" class="form-control text-center only-greater-than-or-equal-zero-allowed" type="text">
+                                    <input type="hidden" value="{{ (isset($subModel) ? $subModel->getCounts() : 0) }}" @if($isRepeater) name="counts" @else name="{{ $tableId }}[0][counts]" @endif>
 
                                 </td>
                                 <td>
-                                    <x-calendar :value="isset($subModel) ? $subModel->getStartDateFormatted() : $study->getStudyStartDate() " :id="'start_date'" name="start_date"></x-calendar>
+                                    <x-calendar :value="isset($subModel) ? $subModel->getStartDateAsString() : $study->getStudyStartDate() " :id="'start_date'" name="start_date_as_string"></x-calendar>
                                 </td>
 								         <td>
-                                    <input value="{{ (isset($subModel) ? number_format($subModel->getMonthlyCostOfUnit(),0) : 0) }}" class="form-control text-center only-greater-than-or-equal-zero-allowed" type="text">
-                                    <input type="hidden" value="{{ (isset($subModel) ? $subModel->getMonthlyCostOfUnit() : 0) }}" @if($isRepeater) name="monthly_cost_of_unit" @else name="{{ $tableId }}[0][monthly_cost_of_unit]" @endif>
+                                    <input value="{{ (isset($subModel) ? $subModel->getLoanOfficerCountPerBranch() : 0) }}" class="form-control text-center only-greater-than-or-equal-zero-allowed" type="text">
+                                    <input type="hidden" value="{{ (isset($subModel) ? $subModel->getLoanOfficerCountPerBranch() : 0) }}" @if($isRepeater) name="loan_officer_count_per_branch" @else name="{{ $tableId }}[0][loan_officer_count_per_branch]" @endif>
 
                                 </td>
-
 
                                 <td>
-                                    <input value="{{ (isset($subModel) ? number_format($subModel->getMonthlyCostOfUnit(),0) : 0) }}" class="form-control text-center only-greater-than-or-equal-zero-allowed" type="text">
-                                    <input type="hidden" value="{{ (isset($subModel) ? $subModel->getMonthlyCostOfUnit() : 0) }}" @if($isRepeater) name="monthly_cost_of_unit" @else name="{{ $tableId }}[0][monthly_cost_of_unit]" @endif>
+                                    <input value="{{ (isset($subModel) ? number_format($subModel->getTotalBranches(),0) : 0) }}" class="form-control text-center only-greater-than-or-equal-zero-allowed" type="text">
+                                    <input type="hidden" value="{{ (isset($subModel) ? $subModel->getTotalBranches() : 0) }}" @if($isRepeater) name="total_branches" @else name="{{ $tableId }}[0][total_branches]" @endif>
 
                                 </td>
-
-
 
                             </tr>
                             @endforeach
@@ -211,7 +211,7 @@ use App\Models\NonBankingService\Expense;
 
 
                     </x-tables.repeater-table>
-                </form>
+                {{-- </form> --}}
                 {{-- end of one time expense --}}
             </div>
         </div>
@@ -231,18 +231,18 @@ use App\Models\NonBankingService\Expense;
 				
 						@php
 
-				$tableId = 'new_microfinance_loan_officer_counter';
-				$repeaterId = 'new_microfinance_loan_officer_counter_repeater';
+				$tableId = 'newBranchLoanCaseProjections';
+				$repeaterId = $tableId.'_repeater';
 				
 				@endphp
 
     
-                <form id="form-id" class="kt-form kt-form--label-right" method="POST" enctype="multipart/form-data" action="{{ $storeRoute }}">
+                {{-- <form id="form-id" class="kt-form kt-form--label-right" method="POST" enctype="multipart/form-data" action="{{ $storeRoute }}"> --}}
                     @csrf
-                    <input type="hidden" name="model_id" value="{{ $model->id ?? 0  }}">
+                    {{-- <input type="hidden" name="model_id" value="{{ $model->id ?? 0  }}">
                     <input type="hidden" name="company_id" value="{{ getCurrentCompanyId()  }}">
                     <input type="hidden" name="model_name" value="Study">
-                    <input type="hidden" name="study_id" id="study-id-js" value="{{ $study->id }}">
+                    <input type="hidden" name="study_id" id="study-id-js" value="{{ $study->id }}"> --}}
 
                     <input type="hidden" name="tableIds[]" value="{{ $tableId }}">
                     <x-tables.repeater-table :canAddNewItem="false" :font-size-class="'font-14px'" :append-save-or-back-btn="false" :repeater-with-select2="true" :parentClass="'js-toggle-visibility'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
@@ -259,12 +259,12 @@ use App\Models\NonBankingService\Expense;
                         <x-slot name="trs">
                             @php
 
-                            $rows = isset($model) ?[-1] : [-1] ;
+                            $rows = isset($model) ?$model->newBranchLoanCaseProjections : [-1] ;
 
                             @endphp
                             @foreach( count($rows) ? $rows : [-1] as $subModel)
                             @php
-                            if( !($subModel instanceof Expense) ){
+                            if( !($subModel instanceof \App\Models\NonBankingService\NewBranchLoanCaseProjection) ){
                             unset($subModel);
                             }
 
@@ -273,44 +273,37 @@ use App\Models\NonBankingService\Expense;
                             <tr @if($isRepeater) data-repeater-item data-repeater-style @endif>
 
                                 <td class="text-center">
+								<input type="hidden" name="id" value="{{ isset($subModel) ? $subModel->id : 0 }}">
                                     <div class="">
                                         <i data-repeater-delete="" class="btn-sm btn btn-danger m-btn m-btn--icon m-btn--pill trash_icon fas fa-times-circle">
                                         </i>
                                     </div>
                                 </td>
-                                {{-- <td>
-                                    <input value="{{ (isset($subModel) ? number_format($subModel->getMonthlyCostOfUnit(),0) : $study->getMicrofinanceLoanOfficerCount()) }}" class="form-control text-center only-greater-than-or-equal-zero-allowed" type="text">
-                                    <input type="hidden" value="{{ (isset($subModel) ? $subModel->getMonthlyCostOfUnit() : $study->getMicrofinanceLoanOfficerCount()) }}" @if($isRepeater) name="monthly_cost_of_unit" @else name="{{ $tableId }}[0][monthly_cost_of_unit]" @endif>
-
-                                </td> --}}
+                              
 								  <td>
                                     <input readonly value="{{ __('Average Loan Cases Count Per Officer Per Month') }}" class="form-control" type="text">
 
                                 </td>
                            
 								{{-- @foreach($studyMonthsForViews as $dateAsIndex=>$dateAsString) --}}
-								@php
-									$currentVal=0;
-                                        $columnIndex = 0 ;
-								@endphp
                                 <td>
-								      <x-repeat-right-dot-inputs :mark="__('Count')" :removeThreeDots="true" :removeThreeDotsClass="true" :numberFormatDecimals="0"  :removeCurrency="true" :name="'loan_cases'" :currentVal="$currentVal" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :columnIndex="-1"></x-repeat-right-dot-inputs>
+								      <x-repeat-right-dot-inputs :mark="__('Count')" :removeThreeDots="true" :removeThreeDotsClass="true" :numberFormatDecimals="0"  :removeCurrency="true" :name="'first_three_count'" :currentVal="isset($subModel) ? $subModel->getFirstThreeCount() :0" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :columnIndex="-1"></x-repeat-right-dot-inputs>
 									  
 
                                 </td>
 								
 								  <td>
-								      <x-repeat-right-dot-inputs :mark="__('Count')" :removeThreeDots="true" :removeThreeDotsClass="true" :numberFormatDecimals="0"  :removeCurrency="true" :name="'loan_cases'" :currentVal="$currentVal" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :columnIndex="-1"></x-repeat-right-dot-inputs>
+								      <x-repeat-right-dot-inputs :mark="__('Count')" :removeThreeDots="true" :removeThreeDotsClass="true" :numberFormatDecimals="0"  :removeCurrency="true" :name="'second_three_count'" :currentVal="isset($subModel) ? $subModel->getSecondThreeCount() :0" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :columnIndex="-1"></x-repeat-right-dot-inputs>
 									  
 
                                 </td>
 								  <td>
-								      <x-repeat-right-dot-inputs :mark="__('Count')" :removeThreeDots="true" :removeThreeDotsClass="true" :numberFormatDecimals="0"  :removeCurrency="true" :name="'loan_cases'" :currentVal="$currentVal" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :columnIndex="-1"></x-repeat-right-dot-inputs>
+								      <x-repeat-right-dot-inputs :mark="__('Count')" :removeThreeDots="true" :removeThreeDotsClass="true" :numberFormatDecimals="0"  :removeCurrency="true" :name="'third_three_count'" :currentVal="isset($subModel) ? $subModel->getThirdThreeCount() :0" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :columnIndex="-1"></x-repeat-right-dot-inputs>
 									  
 
                                 </td>
 								  <td>
-								      <x-repeat-right-dot-inputs :mark="__('Count')" :removeThreeDots="true" :removeThreeDotsClass="true" :numberFormatDecimals="0"  :removeCurrency="true" :name="'loan_cases'" :currentVal="$currentVal" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :columnIndex="-1"></x-repeat-right-dot-inputs>
+								      <x-repeat-right-dot-inputs :mark="__('Count')" :removeThreeDots="true" :removeThreeDotsClass="true" :numberFormatDecimals="0"  :removeCurrency="true" :name="'fourth_three_count'" :currentVal="isset($subModel) ? $subModel->getFourthThreeCount() :0" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :columnIndex="-1"></x-repeat-right-dot-inputs>
 									  
 
                                 </td>
@@ -351,9 +344,9 @@ use App\Models\NonBankingService\Expense;
 
             </div>
             <div class="col-lg-6 kt-align-right">
-                <a href="{{ route('create.expenses',['company'=>$company->id,'study'=>$study->id]) }}" class="btn active-style">
+                <button type="submit" class="btn active-style">
                     {{ __('Save & Go To Next') }}
-                </a>
+                </button>
             </div>
         </div>
         {{-- </div>
@@ -387,7 +380,7 @@ use App\Models\NonBankingService\Expense;
 
 </div>
 </div>
-{{-- </form> --}}
+</form>
 
 </div>
 @endsection
