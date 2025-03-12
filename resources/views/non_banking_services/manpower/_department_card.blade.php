@@ -1,19 +1,18 @@
 <div data-card-id="{{ $cardId }}" class="kt-portlet parent-card ">
             <div class="kt-portlet__body">
  @php
-                            $numberOfPositions = $department ? $department->no_positions : 1 ;
+                            //$numberOfPositions = $department ? $department->positions->count() : 1 ;
 							$initialDepartmentIndex = isset($initialDepartmentIndex) ? $initialDepartmentIndex :  0 ; 
 						
 							
                             @endphp
-                <form id="form-id" class="kt-form kt-form--label-right" method="POST" enctype="multipart/form-data" action="{{ $storeDepartmentPositionsRoute }}">
                     @include('non_banking_services.manpower._input-hidden')
                     {{-- start of fixed monthly repeating amount --}}
 
                 
                     <input type="hidden" name="tableIds[]" value="{{ $tableId }}">
                     
-                    <x-tables.repeater-table :addExpenseType="true" :initEmpty="false" :removeActionBtn="true" :first-element-deletable="false" :font-size-class="'font-14px'" :department="$department" :departmentId="is_object($department) ? $department->id :$initialDepartmentIndex" :showRows="is_object($department)" :add-expense-name="true" :append-save-or-back-btn="true" :repeater-with-select2="false" :parentClass="'js-toggle-visibility-----'" :tableName="$department ? $tableId.$department->id : $tableId " :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
+                    <x-tables.repeater-table :addExpenseType="true" :initEmpty="false" :removeActionBtn="true" :first-element-deletable="false" :font-size-class="'font-14px'" :department="$department" :departmentId="is_object($department) ? $department->id :$initialDepartmentIndex" :showRows="is_object($department)" :add-expense-name="true" :append-save-or-back-btn="false" :repeater-with-select2="false" :parentClass="'js-toggle-visibility-----'" :tableName="$department ? $tableId.$department->id : $tableId " :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
                         <x-slot name="ths">
                             <x-tables.repeater-table-th :font-size-class="'font-14px'" class="  header-border-down first-column-th-class" :title="__('Actions')"></x-tables.repeater-table-th>
                             <x-tables.repeater-table-th :font-size-class="'font-14px'" class="  header-border-down first-column-th-class" :title="__('Position')"></x-tables.repeater-table-th>
@@ -38,7 +37,7 @@
                         </x-slot>
                         <x-slot name="trs">
                            
-                            @for($rowIndex = 0 ; $rowIndex< $numberOfPositions ; $rowIndex++ ) 
+                            @foreach($department->positions as $rowIndex=>$position ) 
 							@php $departmentId=$department ? $department->id : $initialDepartmentIndex ;
                                 $currentPosition = isset($department->positions[$rowIndex]) ? $department->positions[$rowIndex] : null ;
 
@@ -46,14 +45,14 @@
                                 <tr {{-- data-repeater-item --}} data-repeat-formatting-decimals="2" data-repeater-style>
 
                                     <td class="text-center">
-                                        @if($currentPosition)
+                                        {{-- @if($currentPosition)
                                         <div class="">
                                             <a href="{{ route('delete.single.position',['company'=>$company->id,'position'=>$currentPosition->id , 'study'=>$study->id]) }}">
                                                 <i class="btn-sm btn cursor-pointer btn-danger m-btn m-btn--icon m-btn--pill trash_icon fas fa-times-circle">
                                                 </i>
                                             </a>
                                         </div>
-                                        @endif
+                                        @endif --}}
                                     </td>
 
                                     <input type="hidden" name="departments[{{ $departmentId }}][positions][{{ $rowIndex	 }}][id]" value="{{ $currentPosition ? $currentPosition->id : 0 }}">
@@ -61,7 +60,7 @@
 
                                     <td>
                                         <div class="">
-                                            <input value="{{ $currentPosition ? $currentPosition->getName() : '' }}" name="departments[{{ $departmentId }}][positions][{{ $rowIndex	 }}][name]" class="form-control text-left mt-2" type="text">
+                                            <input readonly value="{{ $currentPosition ? $currentPosition->getName() : '' }}" name="departments[{{ $departmentId }}][positions][{{ $rowIndex	 }}][name]" class="form-control text-left mt-2" type="text">
 
                                         </div>
                                     </td>
@@ -122,7 +121,7 @@
 
 
                                 </tr>
-                                @endfor
+                                @endforeach
                         </x-slot>
 
 
@@ -135,7 +134,7 @@
 
 
                     {{-- end of fixed monthly repeating amount --}}
-                </form>
+                {{-- </form> --}}
 
 
             </div>

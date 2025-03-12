@@ -25,7 +25,7 @@ class ManpowerExpensesController extends Controller
 			'expenseType'=>'manpower',
 			'storeRoute'=>route('store.manpower.for.non.banking',['company'=>$company->id , 'study'=>$study->id]),
 			'studyMonthsForViews'=>$studyMonthsForViews,
-			'departments'=>$study->departmentsFor(Request()->segment(6)),
+			'departments'=>$company->departmentsFor(Request()->segment(6)),
 			'storeDepartmentPositionsRoute'=>route('store.department.positions.for.non.banking',['company'=>$company->id,'study'=>$study->id]),
 			'financialYearEndMonthNumber'=>$study->getFinancialYearEndMonthNumber()
 		];
@@ -81,41 +81,36 @@ class ManpowerExpensesController extends Controller
 	}
 	
 	public function storeDepartmentPositions(Company $company , Request $request,Study $study){
-		$addNewDepartment = $request->get('addNewDepartment') == 1;
-		session()->put('addNewDepartment',$addNewDepartment);
+		// $addNewDepartment = $request->get('addNewDepartment') == 1;
+		// session()->put('addNewDepartment',$addNewDepartment);
 		foreach($request->get('departments',[]) as $departmentId => $departmentArr){
-			$departmentName = $departmentArr['name'] ;
-			if(is_null($departmentName)){
-				continue ;
-			}
+			
 			$department = Department::find($departmentId);
 
-			
-			$numberOfPositions = $departmentArr['no_positions'] ;
 	
-			$departmentData = [
-				'name'=>$departmentName,
-				'no_positions'=>$numberOfPositions,
-				'type'=>$request->get('type'),
-				'expense_type'=>$request->get('expense_type'),
-				'study_id'=>$study->id,
-				'company_id'=>$company->id,
-			] ;
-			if($department){
-				$department->update($departmentData);
-			}else{
-				$department = Department::create($departmentData);
-			}
+			// $departmentData = [
+			// 	'name'=>$departmentName,
+			// 	'no_positions'=>$numberOfPositions,
+			// 	'type'=>$request->get('type'),
+			// 	'expense_type'=>$request->get('expense_type'),
+			// 	'study_id'=>$study->id,
+			// 	'company_id'=>$company->id,
+			// ] ;
+			// if($department){
+			// 	$department->update($departmentData);
+			// }else{
+			// 	$department = Department::create($departmentData);
+			// }
 			$oldPositionIdsFromDatabase = $department->positions->pluck('id')->toArray();
 			$positions = $department->positions ;
 			$newIdsFromRequest =array_column($departmentArr['positions']??[],'id') ;
 			$additionalPositionsToDelete = [];
 
 			foreach($request->input('departments.'.$department->id.'.positions',[]) as $positionIndex=>$positionArr){
-				if($positionIndex >= $numberOfPositions ){
-					$additionalPositionsToDelete[] =$positionArr['id'];
-					continue ;
-				}
+				// if($positionIndex >= $numberOfPositions ){
+				// 	$additionalPositionsToDelete[] =$positionArr['id'];
+				// 	continue ;
+				// }
 				$hiringCounts = $positionArr['hiring_counts'];
 				$currentExistingCount = $positionArr['existing_count'];
 				$monthlyNetSalary = $positionArr['monthly_net_salary'];
@@ -124,7 +119,7 @@ class ManpowerExpensesController extends Controller
 				$positionArr['study_id'] = $study->id ;
 				$positionArr['company_id'] = $company->id ;
 				// $positionArr['manpower_salaries'] = 
-				$generalAndReserveAssumption = $study->generalAndReserveAssumption;
+				//$generalAndReserveAssumption = $study->generalAndReserveAssumption;
 				
 				$salaryTaxesRate = $study->getSalaryTaxesRate() / 100;
 				$socialInsuranceRate = $study->getSocialInsuranceRate() /100 ;
@@ -136,25 +131,25 @@ class ManpowerExpensesController extends Controller
 					$positionArr[$columnName] = $payload;
 				}
 				$positionId = $positionArr['id'] ?? null; 
-				$isToBeUpdated = isset($positionId) && in_array($positionId,$oldPositionIdsFromDatabase) && in_array($positionId,$newIdsFromRequest);
-				$isToBeDeleted = isset($positionId) && in_array($positionId,$oldPositionIdsFromDatabase) && !in_array($positionId,$newIdsFromRequest) ;
-				if($isToBeUpdated){
+				// $isToBeUpdated = isset($positionId) && in_array($positionId,$oldPositionIdsFromDatabase) && in_array($positionId,$newIdsFromRequest);
+				// $isToBeDeleted = isset($positionId) && in_array($positionId,$oldPositionIdsFromDatabase) && !in_array($positionId,$newIdsFromRequest) ;
+				// if($isToBeUpdated){
 					$positions->where('id',$positionId)->first()->update($positionArr);
-					continue ;
-				}
+					// continue ;
+				// }
 				
-				if($isToBeDeleted){
-					$positions->where('id',$positionId)->delete();
-					continue ; 
-				}
-				unset($positionArr['id']);
-				$department->positions()->create($positionArr);
+				// if($isToBeDeleted){
+				// 	$positions->where('id',$positionId)->delete();
+				// 	continue ; 
+				// }
+			//	unset($positionArr['id']);
+				//$department->positions()->create($positionArr);
 				
 			}
 
-			$department->positions()->whereIn('positions.id',$additionalPositionsToDelete)->delete();
+		//	$department->positions()->whereIn('positions.id',$additionalPositionsToDelete)->delete();
 		}
-
+		return redirect()->route('view.manpower.for.non.banking',['company'=>$company->id,'study'=>$study->id]);
 		return response()->json([
 			'redirectTo'=>route('view.manpower.for.non.banking',['company'=>$company->id,'study'=>$study->id])
 		]);

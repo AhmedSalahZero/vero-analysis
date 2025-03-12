@@ -1,12 +1,11 @@
 <div data-card-id="<?php echo e($cardId); ?>" class="kt-portlet parent-card ">
             <div class="kt-portlet__body">
  <?php
-                            $numberOfPositions = $department ? $department->no_positions : 1 ;
+                            //$numberOfPositions = $department ? $department->positions->count() : 1 ;
 							$initialDepartmentIndex = isset($initialDepartmentIndex) ? $initialDepartmentIndex :  0 ; 
 						
 							
                             ?>
-                <form id="form-id" class="kt-form kt-form--label-right" method="POST" enctype="multipart/form-data" action="<?php echo e($storeDepartmentPositionsRoute); ?>">
                     <?php echo $__env->make('non_banking_services.manpower._input-hidden', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                     
 
@@ -14,11 +13,11 @@
                     <input type="hidden" name="tableIds[]" value="<?php echo e($tableId); ?>">
                     
                      <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.tables.repeater-table','data' => ['addExpenseType' => true,'initEmpty' => false,'removeActionBtn' => true,'firstElementDeletable' => false,'fontSizeClass' => 'font-14px','department' => $department,'departmentId' => is_object($department) ? $department->id :$initialDepartmentIndex,'showRows' => is_object($department),'addExpenseName' => true,'appendSaveOrBackBtn' => true,'repeaterWithSelect2' => false,'parentClass' => 'js-toggle-visibility-----','tableName' => $department ? $tableId.$department->id : $tableId ,'repeaterId' => $repeaterId,'relationName' => 'food','isRepeater' => $isRepeater=!(isset($removeRepeater) && $removeRepeater)]]); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.tables.repeater-table','data' => ['addExpenseType' => true,'initEmpty' => false,'removeActionBtn' => true,'firstElementDeletable' => false,'fontSizeClass' => 'font-14px','department' => $department,'departmentId' => is_object($department) ? $department->id :$initialDepartmentIndex,'showRows' => is_object($department),'addExpenseName' => true,'appendSaveOrBackBtn' => false,'repeaterWithSelect2' => false,'parentClass' => 'js-toggle-visibility-----','tableName' => $department ? $tableId.$department->id : $tableId ,'repeaterId' => $repeaterId,'relationName' => 'food','isRepeater' => $isRepeater=!(isset($removeRepeater) && $removeRepeater)]]); ?>
 <?php $component->withName('tables.repeater-table'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['addExpenseType' => true,'initEmpty' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'removeActionBtn' => true,'first-element-deletable' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'font-size-class' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('font-14px'),'department' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($department),'departmentId' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(is_object($department) ? $department->id :$initialDepartmentIndex),'showRows' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(is_object($department)),'add-expense-name' => true,'append-save-or-back-btn' => true,'repeater-with-select2' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'parentClass' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('js-toggle-visibility-----'),'tableName' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($department ? $tableId.$department->id : $tableId ),'repeaterId' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($repeaterId),'relationName' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('food'),'isRepeater' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($isRepeater=!(isset($removeRepeater) && $removeRepeater))]); ?>
+<?php $component->withAttributes(['addExpenseType' => true,'initEmpty' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'removeActionBtn' => true,'first-element-deletable' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'font-size-class' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('font-14px'),'department' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($department),'departmentId' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(is_object($department) ? $department->id :$initialDepartmentIndex),'showRows' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(is_object($department)),'add-expense-name' => true,'append-save-or-back-btn' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'repeater-with-select2' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'parentClass' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('js-toggle-visibility-----'),'tableName' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($department ? $tableId.$department->id : $tableId ),'repeaterId' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($repeaterId),'relationName' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('food'),'isRepeater' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($isRepeater=!(isset($removeRepeater) && $removeRepeater))]); ?>
                          <?php $__env->slot('ths'); ?> 
                              <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.tables.repeater-table-th','data' => ['fontSizeClass' => 'font-14px','class' => '  header-border-down first-column-th-class','title' => __('Actions')]]); ?>
@@ -103,7 +102,7 @@
                          <?php $__env->endSlot(); ?>
                          <?php $__env->slot('trs'); ?> 
                            
-                            <?php for($rowIndex = 0 ; $rowIndex< $numberOfPositions ; $rowIndex++ ): ?> 
+                            <?php $__currentLoopData = $department->positions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $rowIndex=>$position): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?> 
 							<?php $departmentId=$department ? $department->id : $initialDepartmentIndex ;
                                 $currentPosition = isset($department->positions[$rowIndex]) ? $department->positions[$rowIndex] : null ;
 
@@ -111,14 +110,7 @@
                                 <tr  data-repeat-formatting-decimals="2" data-repeater-style>
 
                                     <td class="text-center">
-                                        <?php if($currentPosition): ?>
-                                        <div class="">
-                                            <a href="<?php echo e(route('delete.single.position',['company'=>$company->id,'position'=>$currentPosition->id , 'study'=>$study->id])); ?>">
-                                                <i class="btn-sm btn cursor-pointer btn-danger m-btn m-btn--icon m-btn--pill trash_icon fas fa-times-circle">
-                                                </i>
-                                            </a>
-                                        </div>
-                                        <?php endif; ?>
+                                        
                                     </td>
 
                                     <input type="hidden" name="departments[<?php echo e($departmentId); ?>][positions][<?php echo e($rowIndex); ?>][id]" value="<?php echo e($currentPosition ? $currentPosition->id : 0); ?>">
@@ -126,7 +118,7 @@
 
                                     <td>
                                         <div class="">
-                                            <input value="<?php echo e($currentPosition ? $currentPosition->getName() : ''); ?>" name="departments[<?php echo e($departmentId); ?>][positions][<?php echo e($rowIndex); ?>][name]" class="form-control text-left mt-2" type="text">
+                                            <input readonly value="<?php echo e($currentPosition ? $currentPosition->getName() : ''); ?>" name="departments[<?php echo e($departmentId); ?>][positions][<?php echo e($rowIndex); ?>][name]" class="form-control text-left mt-2" type="text">
 
                                         </div>
                                     </td>
@@ -207,7 +199,7 @@
 
 
                                 </tr>
-                                <?php endfor; ?>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                          <?php $__env->endSlot(); ?>
 
 
@@ -225,7 +217,7 @@
 
 
                     
-                </form>
+                
 
 
             </div>

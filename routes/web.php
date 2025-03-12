@@ -333,6 +333,14 @@ Route::middleware([])->group(function () {
 					// route::get('leasing-categories','LeasingCategoriesController@index')->name('view.leasing.categories');
 					route::get('leasing-products/create','LeasingCategoriesController@create')->name('create.leasing.categories');
 					route::post('leasing-products/create','LeasingCategoriesController@store')->name('store.leasing.categories');
+					route::get('departments','DepartmentController@index')->name('view.departments');
+					route::get('departments/create','DepartmentController@create')->name('create.departments');
+					route::post('departments/create','DepartmentController@store')->name('store.departments');
+					route::get('departments/{department}/edit','DepartmentController@edit')->name('edit.departments');
+					route::put('departments/{department}/update','DepartmentController@update')->name('update.departments');
+					route::delete('departments/{department}/destroy','DepartmentController@destroy')->name('departments.destroy');
+					
+					
 					// route::get('leasing-categories/edit/{leasingCategory}','LeasingCategoriesController@edit')->name('edit.leasing.categories');
 					// route::delete('leasing-categories/destroy/{leasingCategory}','LeasingCategoriesController@destroy')->name('destroy.leasing.categories');
 
@@ -444,7 +452,7 @@ Route::middleware([])->group(function () {
 						route::post('departments','ManpowerExpensesController@storeDepartmentPositions')->name('store.department.positions.for.non.banking');
 						route::get('manpower','ManpowerExpensesController@create')->name('view.manpower.for.non.banking');
 						route::post('manpower','ManpowerExpensesController@store')->name('store.manpower.for.non.banking');
-						route::get('delete/{position}/manpower','ManpowerExpensesController@deleteSinglePosition')->name('delete.single.position.for.non.banking');
+						// route::get('delete/{position}/manpower','ManpowerExpensesController@deleteSinglePosition')->name('delete.single.position.for.non.banking');
 						route::get('delete-department/{department}/manpower','ManpowerExpensesController@deleteSingleDepartment')->name('delete.single.department.for.non.banking');
 						route::get('get-positions-based-on-department','ManpowerExpensesController@getPositionsBasedOnDepartment'); // ajax ;
 						

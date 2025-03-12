@@ -10,9 +10,7 @@
                 </div>
                 <div class="col-lg-6 kt-align-right">
                     <input data-save-and-add-new-department="0" type="submit" class="btn max-w-btn active-style save-form" value="<?php echo e(isset($text) ? $text : __('Save Changes')); ?>">
-					<?php if($department): ?>
-                    <input data-save-and-add-new-department="1"  type="submit" class="btn  text-white bg-green save-form" value="<?php echo e(isset($text) ? $text : __('Save & Add New Department')); ?>">
-					<?php endif; ?>
+					
                 </div>
             </div>
         

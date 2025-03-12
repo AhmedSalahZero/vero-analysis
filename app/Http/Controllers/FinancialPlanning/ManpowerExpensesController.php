@@ -51,6 +51,7 @@ class ManpowerExpensesController extends Controller
 		$datesAsStringDateIndex = $study->getDatesAsStringAndIndex();
 		$operationStartDateAsIndex = $datesAsStringDateIndex[$study->getOperationStartDate()];
 		$model = ('\App\Models\\FinancialPlanning\\'.$modelName)::find($modelId);
+
 		foreach((array)$request->get('tableIds') as $tableId){
 			#::delete all
 			$model->generateRelationDynamically($tableId,$expenseType)->delete();
@@ -89,6 +90,7 @@ class ManpowerExpensesController extends Controller
 	}
 	
 	public function storeDepartmentPositions(Company $company , Request $request,Study $study,string $expenseType){
+		// dd('f');
 		$addNewDepartment = $request->get('addNewDepartment') == 1;
 		session()->put('addNewDepartment',$addNewDepartment);
 		foreach($request->get('departments',[]) as $departmentId => $departmentArr){
@@ -150,13 +152,7 @@ class ManpowerExpensesController extends Controller
 				$department->positions()->create($positionArr);
 				
 			}
-
 			$department->positions()->whereIn('positions.id',$additionalPositionsToDelete)->delete();
-			
-			
-			
-			
-			
 		}
 
 		return response()->json([
@@ -165,7 +161,6 @@ class ManpowerExpensesController extends Controller
 	}
 	public function deleteSinglePosition(Company $company , Request $request,Study $study,Position $position)
 	{
-
 		$position->delete();
 		$department = $position->department ;
 		$department->update([

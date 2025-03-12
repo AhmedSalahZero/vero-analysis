@@ -33,71 +33,46 @@ $canAddNewItem = true;
     <div class="row align-items-center mb-3 mt-3 border-bottom-green  ">
         <div class="col-md-4">
             <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style="">
-                {{ __('Add Department Name') }}
+                {{ __('Department Name') }}
             </h3>
             <div class="form-group mb-0 d-flex" style="margin-right:auto;gap:20px;">
-                <input class="form-control" name="departments[{{ $departmentId }}][name]" value="{{ $department ? $department->getName():'' }}" placeholder="">
+                <input readonly class="form-control" name="departments[{{ $departmentId }}][name]" value="{{ $department ? $department->getName():'' }}" placeholder="">
             </div>
         </div>
 
-		@if($addExpenseType)
-		  <div class="col-md-2">
+        @if($addExpenseType)
+        <div class="col-md-2">
 
-                                   
-									 <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style="">
+
+            <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style="">
                 {{ __('Expense Type') }}
             </h3>
-                                    <div class="kt-input-icon">
-                                        <div class="kt-input-icon">
-                                            <div class="input-group date">
-                                                <select  data-live-search="true" data-actions-box="true" name="expense_type" class="form-control select2-select ">
-                                                    @foreach(getExpenseTypes() as $id => $title )
-                                                    <option @if( $department ? $department->getExpenseTypeId() == $id :'' ) selected @endif value="{{ $id }}">{{$title}}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-
-
-
-
-                                </div>
-		@endif 
-		
-
-        <div class="col-md-1">
-            <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style="">
-                {{ __('Positions Count') }}
-            </h3>
-            <div class="form-group mb-0 d-flex" style="margin-right:auto;gap:20px;">
-                <input class="form-control" name="departments[{{ $departmentId }}][no_positions]" value="{{ $department ? $department->getNoPositions():0 }}" placeholder="">
+					<div class="kt-input-icon">
+						<div class="kt-input-icon">
+							<div class="input-group date">
+							<div class="form-group mb-0 d-flex" style="margin-right:auto;gap:20px;">
+						<input readonly class="form-control"  value="{{ $department ? $department->getExpenseTypeName():'' }}" placeholder="">
+					</div>
+                       
+                    </div>
+                </div>
             </div>
-			
-			
-			
+
+
+
+
         </div>
-		<div class="col-md-5">
-		@if($department)
-		 <div style="width:max-content" class="ml-auto d-flex flex-column align-items-end  justify-content-center ">
-		 	<h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style="">
-                {{ __('Delete Department') }}
-            </h3>
-			<div class="self-center align-self-center">
-			<a href="{{ $department->getDeleteRoute() }}">
-									    <i  class="btn-sm exclude-icon text-white btn cursor-pointer btn-danger m-btn m-btn--icon m-btn--pill trash_icon fas fa-times-circle">
-                                        </i>
-									   </a>
-			</div>
-		 </div>
-		 @endif
-		                    
-							  
-		</div>
+        @endif
+
+
+        <div class="col-md-5">
+         
+
+
+        </div>
 
     </div>
     @endif
-    {{-- <hr style="width:100%;"> --}}
     @if($showRows)
     <table @if($initialJs) id="{{ $repeaterId }}" @endif class="table  {{ $repeaterId }} {{ $tableClasses }} table-white  repeater-class repeater {{ $tableName }}">
         <thead>
@@ -235,7 +210,7 @@ $canAddNewItem = true;
         },
 
         hide: function(deleteElement) {
-		
+
             if ($('#first-loading').length) {
                 $(this).slideUp(deleteElement, function() {
 

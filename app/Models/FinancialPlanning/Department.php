@@ -28,8 +28,8 @@ class Department extends Model
 		return $this->hasMany(Position::class,'department_id','id');
 	}
 	
-	public function getDeleteRoute():string
-	{
-		return route('delete.single.department',['company'=>$this->company->id,'department'=>$this->id,'study'=>$this->study->id]);
-	}	
+	// public function getDeleteRoute():string
+	// {
+	// 	return route('delete.single.department',['company'=>$this->company->id,'department'=>$this->id,'study'=>$this->study->id]);
+	// }	
 }

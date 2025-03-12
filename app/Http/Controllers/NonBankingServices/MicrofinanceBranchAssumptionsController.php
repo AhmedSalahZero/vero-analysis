@@ -25,12 +25,8 @@ class MicrofinanceBranchAssumptionsController extends Controller
 			'study'=>$study,
 			'model'=>$study ,
 			'title'=>__('Microfinance Branches Assumptions')  ,
-			// 'expenseType'=>'manpower',
 			'storeRoute'=>route('store.microfinance.branches.assumption',['company'=>$company->id , 'study'=>$study->id]),
 			'studyMonthsForViews'=>$studyMonthsForViews,
-			// 'departments'=>$study->departmentsFor(Request()->segment(6)),
-			// 'storeDepartmentPositionsRoute'=>route('store.department.positions.for.non.banking',['company'=>$company->id,'study'=>$study->id]),
-			// 'financialYearEndMonthNumber'=>$study->getFinancialYearEndMonthNumber()
 		];
 	}
 	protected function getRepeaterRelations():array
@@ -173,22 +169,20 @@ class MicrofinanceBranchAssumptionsController extends Controller
 			'redirectTo'=>route('view.manpower.for.non.banking',['company'=>$company->id,'study'=>$study->id])
 		]);
 	}
-	public function deleteSinglePosition(Company $company , Request $request,Study $study,Position $position)
-	{
+	// public function deleteSinglePosition(Company $company , Request $request,Study $study,Position $position)
+	// {
 
-		$position->delete();
-		$department = $position->department ;
-		$department->update([
-			'no_positions'=>$department->getNoPositions() - 1 
-		]);
+	// 	$position->delete();
+	// 	$department = $position->department ;
+	// 	$department->update([
+	// 		'no_positions'=>$department->getNoPositions() - 1 
+	// 	]);
 		
-		return redirect()->back();
-	}
+	// 	return redirect()->back();
+	// }
 	public function deleteSingleDepartment(Company $company , Request $request,Study $study,Department $department)
 	{
-
 		$department->delete();
-			
 		return redirect()->back();
 	}
 	public function getPositionsBasedOnDepartment(Company $company,Request $request,Study $study){

@@ -1222,14 +1222,9 @@ use Illuminate\Support\Facades\DB;
 	* * type -> manpower for example 
 	* * expense_type -> cost-of-service for example
 	 */
-	public function departmentsFor(string $type )
-	{
-		return Department::where('study_id',$this->id)->where('type',$type)->get();
-	}
-	public function positions()
-	{
-		return $this->hasMany(Position::class,'study_id','id');
-	}
+
+	
+	
 	public static function getProjectionTitles()
 	{
 		return [

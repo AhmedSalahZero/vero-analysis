@@ -9,12 +9,12 @@ trait IsDepartment
 	{
 		return $this->name ;
 	}
-	public function getNoPositions():int 
-	{
-		return $this->no_positions;
-	}
 	public function getExpenseTypeId():string
 	{
 		return $this->expense_type;
+	}
+	public function getExpenseTypeName():string 
+	{
+		return getExpenseTypes()[$this->getExpenseTypeId()];
 	}
 } 

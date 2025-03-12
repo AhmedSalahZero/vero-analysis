@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Formatter\Select2Formatter;
 use App\Models\NonBankingService\ConsumerfinanceProduct;
+use App\Models\NonBankingService\Department;
 use App\Models\NonBankingService\LeasingCategory;
 use App\Models\NonBankingService\MicrofinanceProduct;
 use App\Models\NonBankingService\Study;
@@ -623,5 +624,16 @@ class Company extends Model implements HasMedia
 		return $mainPlanning;
 	}
 
-	
+	public function departments()
+	{
+		return $this->hasMany(Department::class,'company_id','id');
+	}	
+	public function positions()
+	{
+		return $this->hasMany(Position::class,'company_id','id');
+	}
+	public function departmentsFor(string $type )
+	{
+		return Department::where('type',$type)->get();
+	}
 }

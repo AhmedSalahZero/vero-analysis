@@ -60,6 +60,11 @@ use App\Models\NonBankingService\Study;
                     {{ __('Leasing Products') }}
                 </a>
 				
+				<a href="{{ route('view.departments',['company'=>$company->id]) }}" class="btn new-record-class new-study-item rounded btn-icon-sm align-self-center">
+                    <i class="fas fa-plus white-icon exclude-icon"></i>
+                    {{ __('Departments') }}
+                </a>
+				
                 <a href="{{ route('create.study',['company'=>$company->id]) }}" class="btn btn-2-bg bg-white-hover new-study-item rounded btn-icon-sm align-self-center">
                     <i class="fas fa-plus white-icon exclude-icon"></i>
                     {{ __('New Study') }}

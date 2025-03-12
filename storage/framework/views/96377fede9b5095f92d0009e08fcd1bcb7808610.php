@@ -64,75 +64,48 @@ $canAddNewItem = true;
     <div class="row align-items-center mb-3 mt-3 border-bottom-green  ">
         <div class="col-md-4">
             <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style="">
-                <?php echo e(__('Add Department Name')); ?>
+                <?php echo e(__('Department Name')); ?>
 
             </h3>
             <div class="form-group mb-0 d-flex" style="margin-right:auto;gap:20px;">
-                <input class="form-control" name="departments[<?php echo e($departmentId); ?>][name]" value="<?php echo e($department ? $department->getName():''); ?>" placeholder="">
+                <input readonly class="form-control" name="departments[<?php echo e($departmentId); ?>][name]" value="<?php echo e($department ? $department->getName():''); ?>" placeholder="">
             </div>
         </div>
 
-		<?php if($addExpenseType): ?>
-		  <div class="col-md-2">
+        <?php if($addExpenseType): ?>
+        <div class="col-md-2">
 
-                                   
-									 <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style="">
+
+            <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style="">
                 <?php echo e(__('Expense Type')); ?>
 
             </h3>
-                                    <div class="kt-input-icon">
-                                        <div class="kt-input-icon">
-                                            <div class="input-group date">
-                                                <select  data-live-search="true" data-actions-box="true" name="expense_type" class="form-control select2-select ">
-                                                    <?php $__currentLoopData = getExpenseTypes(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $id => $title): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                    <option <?php if( $department ? $department->getExpenseTypeId() == $id :'' ): ?> selected <?php endif; ?> value="<?php echo e($id); ?>"><?php echo e($title); ?></option>
-                                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-
-
-
-
-                                </div>
-		<?php endif; ?> 
-		
-
-        <div class="col-md-1">
-            <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style="">
-                <?php echo e(__('Positions Count')); ?>
-
-            </h3>
-            <div class="form-group mb-0 d-flex" style="margin-right:auto;gap:20px;">
-                <input class="form-control" name="departments[<?php echo e($departmentId); ?>][no_positions]" value="<?php echo e($department ? $department->getNoPositions():0); ?>" placeholder="">
+					<div class="kt-input-icon">
+						<div class="kt-input-icon">
+							<div class="input-group date">
+							<div class="form-group mb-0 d-flex" style="margin-right:auto;gap:20px;">
+						<input readonly class="form-control"  value="<?php echo e($department ? $department->getExpenseTypeName():''); ?>" placeholder="">
+					</div>
+                       
+                    </div>
+                </div>
             </div>
-			
-			
-			
-        </div>
-		<div class="col-md-5">
-		<?php if($department): ?>
-		 <div style="width:max-content" class="ml-auto d-flex flex-column align-items-end  justify-content-center ">
-		 	<h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style="">
-                <?php echo e(__('Delete Department')); ?>
 
-            </h3>
-			<div class="self-center align-self-center">
-			<a href="<?php echo e($department->getDeleteRoute()); ?>">
-									    <i  class="btn-sm exclude-icon text-white btn cursor-pointer btn-danger m-btn m-btn--icon m-btn--pill trash_icon fas fa-times-circle">
-                                        </i>
-									   </a>
-			</div>
-		 </div>
-		 <?php endif; ?>
-		                    
-							  
-		</div>
+
+
+
+        </div>
+        <?php endif; ?>
+
+
+        <div class="col-md-5">
+         
+
+
+        </div>
 
     </div>
     <?php endif; ?>
-    
     <?php if($showRows): ?>
     <table <?php if($initialJs): ?> id="<?php echo e($repeaterId); ?>" <?php endif; ?> class="table  <?php echo e($repeaterId); ?> <?php echo e($tableClasses); ?> table-white  repeater-class repeater <?php echo e($tableName); ?>">
         <thead>
@@ -313,7 +286,7 @@ $canAddNewItem = true;
         },
 
         hide: function(deleteElement) {
-		
+
             if ($('#first-loading').length) {
                 $(this).slideUp(deleteElement, function() {
 

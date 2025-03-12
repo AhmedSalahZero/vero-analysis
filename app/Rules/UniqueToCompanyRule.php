@@ -7,18 +7,19 @@ use Illuminate\Support\Arr;
 
 class UniqueToCompanyRule implements Rule
 {
-    private $modelName , $columnName  , $exceptId ,  $failMessage ; 
+    private $modelName , $columnName  , $exceptId ,  $failMessage ,$namespace; 
     /**
      * Create a new rule instance.
      *
      * @return void
      */
-    public function __construct(string $modelName , string $columnName, ?int $exceptId, string $failMessage = null )
+    public function __construct(string $modelName , string $columnName, ?int $exceptId, string $failMessage = null , string $namespace = null )
     {
         $this->modelName =$modelName ;
         $this->columnName =$columnName;
         $this->exceptId = $exceptId ;
         $this->failMessage = $failMessage ;
+		$this->namespace = $namespace ;
     }
 
     /**
@@ -31,9 +32,8 @@ class UniqueToCompanyRule implements Rule
     public function passes($attribute, $value)
     {
         $value = is_array($value) ? Arr::flatten($value) : $value ; 
-
-        return ! (\getModelNamespace().$this->modelName)::where('id','!=',$this->exceptId)->where('company_id',\getCurrentCompany()->id)
-        // (array) $value to include array values like service item and also includes single item like revenue business line
+		$namespace = is_null($this->namespace) ? \getModelNamespace() : $this->namespace ;
+        return ! ($namespace.$this->modelName)::where('id','!=',$this->exceptId)->where('company_id',\getCurrentCompany()->id)
         ->whereIn($this->columnName, (array)$value)
         ->exists();
 

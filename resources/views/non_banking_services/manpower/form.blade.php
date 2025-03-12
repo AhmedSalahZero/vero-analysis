@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 @php
-	use App\Models\NonBankingService\Expense;
+use App\Models\NonBankingService\Expense;
 @endphp
 @section('css')
 <x-styles.commons></x-styles.commons>
@@ -18,6 +18,7 @@
     <div class="col-md-12">
 
 
+        <form id="form-id" class="kt-form kt-form--label-right" method="POST" enctype="multipart/form-data" action="{{ $storeDepartmentPositionsRoute }}">
 
         <div class="kt-portlet " style="margin-bottom:5px;">
 
@@ -47,34 +48,33 @@
             </div>
         </div>
 
-        @foreach(count($departments)? $departments : [null] as $department)
-        @php
-        $tableId = 'departments';
-        $cardId = $tableId;
-        $repeaterId = $tableId.'_repeater';
-        @endphp
-        @include('non_banking_services.manpower._department_card')
+            @foreach(count($departments)? $departments : [null] as $department)
+            @php
+            $tableId = 'departments';
+            $cardId = $tableId;
+            $repeaterId = $tableId.'_repeater';
+            @endphp
+            @include('non_banking_services.manpower._department_card')
 
-        @php
-        $tableId = 'new_departments';
-        $repeaterId = $tableId.'_repeater';
+            @endforeach
+			 <div class="row btn-for-submit--js {{ isset($isHidden)&&$isHidden ? 'd-none':'' }}">
+            <div class="col-lg-6">
 
-        $cardId = 'departments';
-        @endphp
-        @endforeach
-        @if(session()->get('addNewDepartment') && $departments->last())
-        @include('non_banking_services.manpower._department_card',[
-        'departments'=>[],
-        'department'=>null,
-        'initialDepartmentIndex'=>$departments->last()->id + 1
-        ])
-        @endif
+            </div>
+            <div class="col-lg-6 kt-align-right">
+                <button type="submit"  class="btn active-style">
+                    {{ __('Save') }}
+                </button>
+            </div>
+        </div>
+			
+        </form>
         @php
 
         $tableId = 'expense_per_employee';
         $repeaterId = 'expense_per_employee_repeater';
         $cardId = $tableId;
-        @endphp\
+        @endphp
 
         <div data-card-id="{{ $cardId }}" class="kt-portlet parent-card ">
             <div class="kt-portlet__body">
@@ -83,7 +83,7 @@
                     @include('non_banking_services.manpower._input-hidden')
 
                     <input type="hidden" name="tableIds[]" value="{{ $tableId }}">
-                    <x-tables.repeater-table  :font-size-class="'font-14px'" :append-save-or-back-btn="true" :repeater-with-select2="true" :parentClass="'js-toggle-visibility'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
+                    <x-tables.repeater-table :font-size-class="'font-14px'" :append-save-or-back-btn="true" :repeater-with-select2="true" :parentClass="'js-toggle-visibility'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
                         <x-slot name="ths">
                             <x-tables.repeater-table-th :font-size-class="'font-14px'" class="col-md-2 header-border-down" :title="__('Existing <br> Expense')"></x-tables.repeater-table-th>
                             <x-tables.repeater-table-th :font-size-class="'font-14px'" class="col-md-2 header-border-down" :title="__('New <br> Expense Name')"></x-tables.repeater-table-th>
@@ -100,9 +100,9 @@
                         </x-slot>
                         <x-slot name="trs">
                             @php
-                 
-                    	    $rows = isset($model) ? $model->generateRelationDynamically($tableId,$expenseType)->get() : [-1] ;
-		
+
+                            $rows = isset($model) ? $model->generateRelationDynamically($tableId,$expenseType)->get() : [-1] ;
+
                             @endphp
                             @foreach( count($rows) ? $rows : [-1] as $subModel)
                             @php
@@ -111,9 +111,9 @@
                             }
 
                             @endphp
-					
+
                             <tr @if($isRepeater) data-repeater-item data-repeater-style @endif>
-								 <input type="hidden" name="expense_type" value="manpower"> 
+                                <input type="hidden" name="expense_type" value="manpower">
                                 <td class="text-center">
                                     <div class="">
                                         <i data-repeater-delete="" class="btn-sm btn btn-danger m-btn m-btn--icon m-btn--pill trash_icon fas fa-times-circle">
@@ -162,7 +162,7 @@
                                 </td>
                                 <td>
                                     <div class="d-flex align-items-center">
-                                        <input name="is_deductible"  class="form-control max-w-checkbox  text-center" value="1" @if(isset($subModel) ? $subModel->isDeductible() : false) checked @endif type="checkbox">
+                                        <input name="is_deductible" class="form-control max-w-checkbox  text-center" value="1" @if(isset($subModel) ? $subModel->isDeductible() : false) checked @endif type="checkbox">
                                     </div>
                                 </td>
 
@@ -198,24 +198,26 @@
 
 
                     </x-tables.repeater-table>
-                </form>
-                {{-- end of one time expense --}}
+               
             </div>
+			
         </div>
 
-        {{-- <div class="kt-portlet ">
-            <div class="kt-portlet__body"> --}}
- <div class="row btn-for-submit--js {{ isset($isHidden)&&$isHidden ? 'd-none':'' }}">
-                <div class="col-lg-6">
-              
-                </div>
-                <div class="col-lg-6 kt-align-right">
-                    <a href="{{ route('create.expenses',['company'=>$company->id,'study'=>$study->id]) }}"   class="btn active-style" >
-						{{ __('Save & Go To Next') }}
-					</a>
-                </div>
+
+       
+		
+		   {{-- <div class="row btn-for-submit--js {{ isset($isHidden)&&$isHidden ? 'd-none':'' }}">
+            <div class="col-lg-6">
+
             </div>
-            {{-- </div>
+            <div class="col-lg-6 kt-align-right">
+                <a href="{{ route('create.expenses',['company'=>$company->id,'study'=>$study->id]) }}" class="btn active-style">
+                    {{ __('Save & Go To Next') }}
+                </a>
+            </div>
+        </div> --}}
+		 </form>
+        {{-- </div>
         </div> --}}
 
 

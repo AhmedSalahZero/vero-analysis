@@ -1,5 +1,5 @@
 <?php
-	use App\Models\NonBankingService\Expense;
+use App\Models\NonBankingService\Expense;
 ?>
 <?php $__env->startSection('css'); ?>
  <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
@@ -37,6 +37,7 @@
     <div class="col-md-12">
 
 
+        <form id="form-id" class="kt-form kt-form--label-right" method="POST" enctype="multipart/form-data" action="<?php echo e($storeDepartmentPositionsRoute); ?>">
 
         <div class="kt-portlet " style="margin-bottom:5px;">
 
@@ -66,34 +67,34 @@
             </div>
         </div>
 
-        <?php $__currentLoopData = count($departments)? $departments : [null]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $department): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-        <?php
-        $tableId = 'departments';
-        $cardId = $tableId;
-        $repeaterId = $tableId.'_repeater';
-        ?>
-        <?php echo $__env->make('non_banking_services.manpower._department_card', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+            <?php $__currentLoopData = count($departments)? $departments : [null]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $department): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+            <?php
+            $tableId = 'departments';
+            $cardId = $tableId;
+            $repeaterId = $tableId.'_repeater';
+            ?>
+            <?php echo $__env->make('non_banking_services.manpower._department_card', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 
-        <?php
-        $tableId = 'new_departments';
-        $repeaterId = $tableId.'_repeater';
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+			 <div class="row btn-for-submit--js <?php echo e(isset($isHidden)&&$isHidden ? 'd-none':''); ?>">
+            <div class="col-lg-6">
 
-        $cardId = 'departments';
-        ?>
-        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-        <?php if(session()->get('addNewDepartment') && $departments->last()): ?>
-        <?php echo $__env->make('non_banking_services.manpower._department_card',[
-        'departments'=>[],
-        'department'=>null,
-        'initialDepartmentIndex'=>$departments->last()->id + 1
-        ], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
-        <?php endif; ?>
+            </div>
+            <div class="col-lg-6 kt-align-right">
+                <button type="submit"  class="btn active-style">
+                    <?php echo e(__('Save')); ?>
+
+                </button>
+            </div>
+        </div>
+			
+        </form>
         <?php
 
         $tableId = 'expense_per_employee';
         $repeaterId = 'expense_per_employee_repeater';
         $cardId = $tableId;
-        ?>\
+        ?>
 
         <div data-card-id="<?php echo e($cardId); ?>" class="kt-portlet parent-card ">
             <div class="kt-portlet__body">
@@ -244,9 +245,9 @@
                          <?php $__env->endSlot(); ?>
                          <?php $__env->slot('trs'); ?> 
                             <?php
-                 
-                    	    $rows = isset($model) ? $model->generateRelationDynamically($tableId,$expenseType)->get() : [-1] ;
-		
+
+                            $rows = isset($model) ? $model->generateRelationDynamically($tableId,$expenseType)->get() : [-1] ;
+
                             ?>
                             <?php $__currentLoopData = count($rows) ? $rows : [-1]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $subModel): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                             <?php
@@ -255,9 +256,9 @@
                             }
 
                             ?>
-					
+
                             <tr <?php if($isRepeater): ?> data-repeater-item data-repeater-style <?php endif; ?>>
-								 <input type="hidden" name="expense_type" value="manpower"> 
+                                <input type="hidden" name="expense_type" value="manpower">
                                 <td class="text-center">
                                     <div class="">
                                         <i data-repeater-delete="" class="btn-sm btn btn-danger m-btn m-btn--icon m-btn--pill trash_icon fas fa-times-circle">
@@ -366,7 +367,7 @@
                                 </td>
                                 <td>
                                     <div class="d-flex align-items-center">
-                                        <input name="is_deductible"  class="form-control max-w-checkbox  text-center" value="1" <?php if(isset($subModel) ? $subModel->isDeductible() : false): ?> checked <?php endif; ?> type="checkbox">
+                                        <input name="is_deductible" class="form-control max-w-checkbox  text-center" value="1" <?php if(isset($subModel) ? $subModel->isDeductible() : false): ?> checked <?php endif; ?> type="checkbox">
                                     </div>
                                 </td>
 
@@ -417,24 +418,17 @@
 <?php endif; ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
-                </form>
-                
+               
             </div>
+			
         </div>
 
-        
- <div class="row btn-for-submit--js <?php echo e(isset($isHidden)&&$isHidden ? 'd-none':''); ?>">
-                <div class="col-lg-6">
-              
-                </div>
-                <div class="col-lg-6 kt-align-right">
-                    <a href="<?php echo e(route('create.expenses',['company'=>$company->id,'study'=>$study->id])); ?>"   class="btn active-style" >
-						<?php echo e(__('Save & Go To Next')); ?>
 
-					</a>
-                </div>
-            </div>
-            
+       
+		
+		   
+		 </form>
+        
 
 
 

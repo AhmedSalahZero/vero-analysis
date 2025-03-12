@@ -65,6 +65,12 @@ use App\Models\NonBankingService\Study;
 
                 </a>
 				
+				<a href="<?php echo e(route('view.departments',['company'=>$company->id])); ?>" class="btn new-record-class new-study-item rounded btn-icon-sm align-self-center">
+                    <i class="fas fa-plus white-icon exclude-icon"></i>
+                    <?php echo e(__('Departments')); ?>
+
+                </a>
+				
                 <a href="<?php echo e(route('create.study',['company'=>$company->id])); ?>" class="btn btn-2-bg bg-white-hover new-study-item rounded btn-icon-sm align-self-center">
                     <i class="fas fa-plus white-icon exclude-icon"></i>
                     <?php echo e(__('New Study')); ?>
