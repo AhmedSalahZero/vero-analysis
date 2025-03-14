@@ -188,7 +188,7 @@ class IncomeStatementController extends Controller
 	
 		$salaryExpenses = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('departments')
 		->join('positions','positions.department_id','=','departments.id')
-		->selectRaw('expense_type,salary_expenses,expense_type')->where('type','manpower')->where('departments.study_id',$study->id)->get() ;
+		->selectRaw('expense_type,salary_expenses,expense_type')->where('type','manpower')->where('departments.company_id',$company->id)->get() ;
 		
 		$expenses = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('expenses')->selectRaw('expense_category,name,relation_name,monthly_repeating_amounts,expense_as_percentages,payload')->where('model_id',$study->id)->where('model_name','Study')->get()->toArray();
 		$columnPerTypes = [
