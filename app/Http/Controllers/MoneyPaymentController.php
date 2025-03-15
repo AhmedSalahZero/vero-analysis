@@ -312,9 +312,9 @@ class MoneyPaymentController
 		$isGeneralDownPayment = $request->get('down_payment_type') == MoneyPayment::DOWN_PAYMENT_GENERAL;
 		$financialInstitutionId = null;
 		$contractId = $request->get('contract_id');
+		$contractId = is_numeric($contractId) ? $contractId : null;
 		$partnerId = $request->get('supplier_id');
 		$supplier = Partner::find($partnerId);
-		$supplierName = $supplier->getName();
 		$supplierId = $supplier->id;
 		$paymentBranchName = $request->get('delivery_branch_id') ;
 		$data = $request->only(['type','delivery_date','currency','payment_currency','down_payment_type','partner_type']);

@@ -358,9 +358,9 @@ class MoneyReceivedController
 		$isGeneralDownPayment = $request->get('down_payment_type') == MoneyReceived::DOWN_PAYMENT_GENERAL;
 		$partnerType = $request->get('partner_type');
 		$moneyType = $request->get('type');
+		$financialInstitutionId = null;
 		$contractId = $request->get('contract_id');
 		$contractId = is_numeric($contractId) ? $contractId : null;
-		$financialInstitutionId = null;
 		$partnerId = $request->get('customer_id');
 		$customer = Partner::find($partnerId);
 		$customerId = $customer->id;
