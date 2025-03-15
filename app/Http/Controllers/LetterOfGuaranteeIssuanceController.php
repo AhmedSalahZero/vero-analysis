@@ -101,18 +101,23 @@ class LetterOfGuaranteeIssuanceController
 		$cdOrTdAccountTypes = [];
 
 		$financialInstitutionBanks = FinancialInstitution::with('letterOfGuaranteeFacilities')->onlyForCompany($company->id)->onlyBanks()->onlyForSource($source)->onlyHasLgFacility()->get();
-	
+		$errorMessage = __('Please Create / Renew Existing LG Contracts');
 		// $financialInstitutionBanks = FinancialInstitution::with('letterOfGuaranteeFacilities')->onlyForCompany($company->id)->onlyBanks()->onlyForSource($source)->onlyHasLgFacility()->get();
 		if($source == LetterOfGuaranteeIssuance::AGAINST_CD){
+			$financialInstitutionBanks = FinancialInstitution::with('letterOfGuaranteeFacilities')->onlyForCompany($company->id)->onlyBanks()->onlyForSource($source)->get();
 			$cdOrTdAccountTypes = AccountType::onlyCdAccounts()->get();
+			$errorMessage = null;
 		}
 		elseif($source == LetterOfGuaranteeIssuance::AGAINST_TD){
+			$financialInstitutionBanks = FinancialInstitution::with('letterOfGuaranteeFacilities')->onlyForCompany($company->id)->onlyBanks()->onlyForSource($source)->get();
 			$cdOrTdAccountTypes = AccountType::onlyTdAccounts()->get();
+			$errorMessage = null;
 		}
 		
 		
 		if($source == LetterOfGuaranteeIssuance::HUNDRED_PERCENTAGE_CASH_COVER){
 			$financialInstitutionBanks = FinancialInstitution::with('letterOfGuaranteeFacilities')->onlyForCompany($company->id)->onlyBanks()->onlyForSource($source)->get();
+			$errorMessage = null;
 		}
 		
 		
@@ -125,7 +130,8 @@ class LetterOfGuaranteeIssuanceController
 			'accountTypes'=> AccountType::onlyCurrentAccount()->get(),
 			'cashCoverAccountTypes'=>AccountType::onlyCashCoverAccounts()->get(),
 			'source'=>$source,
-			'cdOrTdAccountTypes'=>$cdOrTdAccountTypes
+			'cdOrTdAccountTypes'=>$cdOrTdAccountTypes,
+			'errorMessage'=>$errorMessage
 		];
 
 	}
@@ -134,8 +140,8 @@ class LetterOfGuaranteeIssuanceController
 	{
 		$formName = $source.'-form';
 		$commonVars = $this->commonViewVars($company,$source) ;
-		if(!count($commonVars['financialInstitutionBanks'])){
-			return redirect()->back()->with('fail',__('Please Create / Renew Existing LG Contracts'));
+		if(!count($commonVars['financialInstitutionBanks']) && isset($commonVars['errorMessage'])){
+			return redirect()->back()->with('fail',$commonVars['errorMessage']);
 		}
         return view('reports.LetterOfGuaranteeIssuance.'.$formName,$this->commonViewVars($company,$source));
     }
@@ -225,8 +231,8 @@ class LetterOfGuaranteeIssuanceController
 				'model'=>$letterOfGuaranteeIssuance
 			]
 		) ;
-		if(!count($commonVars['financialInstitutionBanks'])){
-			return redirect()->back()->with('fail',__('Please Create / Renew Existing LG Contracts'));
+		if(!count($commonVars['financialInstitutionBanks']) && isset($commonVars['errorMessage'])){
+			return redirect()->back()->with('fail',$commonVars['errorMessage']);
 		}
         return view('reports.LetterOfGuaranteeIssuance.'.$formName,$commonVars);
 
