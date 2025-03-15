@@ -118,7 +118,7 @@
                                                     @include('star')
                                                 </label>
                                                 <div class="kt-input-icon">
-                                                    <input data-max-cheque-value="0" step="1" type="numeric" value="{{ isset($model) ? $model->getTransferDays():0 }}" name="transfer_days" class="form-control greater-than-or-equal-zero-allowed " placeholder="{{__('Insert Amount')}}">
+                                                    <input  step="1" type="numeric" value="{{ isset($model) ? $model->getTransferDays():0 }}" name="transfer_days" class="form-control greater-than-or-equal-zero-allowed " placeholder="{{__('Insert Amount')}}">
                                                 </div>
                                             </div>
 
@@ -127,7 +127,8 @@
                                                     @include('star')
                                                 </label>
                                                 <div class="kt-input-icon">
-                                                    <input data-max-cheque-value="0" type="text" value="{{ isset($model) ? $model->getAmount():0 }}" name="amount" class="form-control greater-than-or-equal-zero-allowed " placeholder="{{__('Insert Amount')}}">
+                                                    <input  type="text" value="{{ isset($model) ? number_format($model->getAmount()):0 }}"  class="form-control greater-than-or-equal-zero-allowed " >
+													<input type="hidden" name="amount" value="{{ isset($model) ? $model->getAmount():0 }}">
                                                 </div>
                                             </div>
                                             <div class="col-md-3">

@@ -14721,3 +14721,4 @@ Stack trace:
 #59 /media/salah/Software/projects/veroo/server.php(21): require_once('/media/salah/So...')
 #60 {main}
 "} 
+[2025-03-16 00:56:31] local.DEBUG: from oo  

@@ -400,7 +400,31 @@ use App\Models\Contract;
                                         
                                         <?php endif; ?>
                                         <span style="overflow: visible; position: relative; width: 110px;">
-                                            <?php if($currentType == Contract::RUNNING_AND_AGAINST): ?>
+											<?php if($currentType == Contract::RUNNING ): ?>
+											<a data-toggle="modal" data-target="#mark-as-finished-contract-<?php echo e($mainItemId); ?>" type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="<?php echo e(__('Finished')); ?>" href="#"><i class="fa fa-thumbs-up"></i></a>
+                                            <div class="modal fade" id="mark-as-finished-contract-<?php echo e($mainItemId); ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                                    <div class="modal-content">
+                                                        <form action="<?php echo e(route('contract.mark.as.finished', ['company'=>$company->id , 'contract'=>$mainItemId,'type'=>$type])); ?>" method="post">
+                                                            <?php echo csrf_field(); ?>
+                                                            <?php echo method_field('put'); ?>
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="exampleModalLongTitle"><?php echo e(__('Do You Want To Mark This Contract As Finished ?')); ?></h5>
+                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal"><?php echo e(__('Close')); ?></button>
+                                                                <button type="submit" class="btn btn-primary"><?php echo e(__('Confirm')); ?></button>
+                                                            </div>
+
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+											<?php endif; ?> 
+                                            <?php if($currentType == Contract::RUNNING_AND_AGAINST ): ?>
 <?php if(hasAuthFor('update '. str_plural(strtolower($type)) .' contracts')): ?>
                                             <a data-toggle="modal" data-target="#mark-as-finished-contract-<?php echo e($mainItemId); ?>" type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="<?php echo e(__('Finished')); ?>" href="#"><i class="fa fa-thumbs-up"></i></a>
                                             <div class="modal fade" id="mark-as-finished-contract-<?php echo e($mainItemId); ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">

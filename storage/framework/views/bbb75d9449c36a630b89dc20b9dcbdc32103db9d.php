@@ -64,7 +64,6 @@
             <input id="js-in-edit-mode" type="hidden" name="in_edit_mode" value="<?php echo e(isset($model) ? 1 : 0); ?>">
             <input  type="hidden" name="id" value="<?php echo e(isset($model) ? $model->id : 0); ?>">
             <input  type="hidden" name="company_id" value="<?php echo e($company->id); ?>">
-			
 			<?php if(isset($model)): ?>
 			<input type="hidden" name="updated_by" value="<?php echo e(auth()->user()->id); ?>">
 			<?php else: ?>
@@ -85,11 +84,11 @@
                             <div class="kt-portlet__head-label">
                                 <h3 class="kt-portlet__head-title head-title text-primary">
                                      <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.sectionTitle','data' => ['title' => __((isset($model) ? 'Edit' : 'Add') . ' Bank To Bank Internal Money Transfer')]]); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.sectionTitle','data' => ['title' => __((isset($model) ? 'Edit' : 'Add') . ' Safe To Bank Internal Money Transfer')]]); ?>
 <?php $component->withName('sectionTitle'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['title' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__((isset($model) ? 'Edit' : 'Add') . ' Bank To Bank Internal Money Transfer'))]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['title' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__((isset($model) ? 'Edit' : 'Add') . ' Safe To Bank Internal Money Transfer'))]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
@@ -108,7 +107,7 @@
                                 <div class="kt-portlet__head">
                                     <div class="kt-portlet__head-label">
                                         <h3 class="kt-portlet__head-title head-title text-primary">
-                                          <?php echo e(__('Bank To Bank Transfer Information')); ?>
+                                            <?php echo e(__('Safe To Bank Transfer Information')); ?>
 
                                         </h3>
                                     </div>
@@ -131,24 +130,26 @@
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
                                             </div>
+                                            <div class="col-md-3 mb-4">
+                            <label><?php echo e(__('Branch')); ?> <span class="multi_selection"></span> </label>
+                            <div class="kt-input-icon">
+                                <div class="input-group date">
+                                    <select data-live-search="true" data-actions-box="true" name="from_branch_id" required class="form-control customers-js kt-bootstrap-select select2-select kt_bootstrap_select ajax-customer-name">
+                                        <?php $__currentLoopData = $selectedBranches; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $id => $name): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <option value="<?php echo e($id); ?>"><?php echo e($name); ?></option>
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
                                             <div class="col-md-3 ">
-                                                <label><?php echo e(__('Transfer Days')); ?>
+                                                <label><?php echo e(__('Deposit Amount')); ?>
 
                                                     <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                                 </label>
                                                 <div class="kt-input-icon">
-                                                    <input  step="1" type="numeric" value="<?php echo e(isset($model) ? $model->getTransferDays():0); ?>" name="transfer_days" class="form-control greater-than-or-equal-zero-allowed " placeholder="<?php echo e(__('Insert Amount')); ?>">
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-3 ">
-                                                <label><?php echo e(__('Transfer Amount')); ?>
-
-                                                    <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
-                                                </label>
-                                                <div class="kt-input-icon">
-                                                    <input  type="text" value="<?php echo e(isset($model) ? number_format($model->getAmount()):0); ?>"  class="form-control greater-than-or-equal-zero-allowed " >
-													<input type="hidden" name="amount" value="<?php echo e(isset($model) ? $model->getAmount():0); ?>">
+                                                    <input data-max-cheque-value="0" type="text" value="<?php echo e(isset($model) ? $model->getAmount():0); ?>" name="amount" class="form-control greater-than-or-equal-zero-allowed " placeholder="<?php echo e(__('Insert Amount')); ?>">
                                                 </div>
                                             </div>
                                             <div class="col-md-3">
@@ -165,56 +166,7 @@
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div class="col-md-6">
-                                                <label><?php echo e(__('From Bank')); ?>
-
-                                                    <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
-                                                </label>
-                                                <div class="kt-input-icon">
-                                                    <div class="input-group date">
-                                                        <select required js-from-when-change-trigger-change-account-type data-from-financial-institution-id name="from_bank_id" class="form-control ">
-                                                            <?php $__currentLoopData = $financialInstitutionBanks; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index=>$financialInstitutionBank): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                            <option value="<?php echo e($financialInstitutionBank->id); ?>" <?php echo e(isset($model) && $model->getFromBankId() == $financialInstitutionBank->id ? 'selected' : ''); ?>><?php echo e($financialInstitutionBank->getName()); ?></option>
-                                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                                        </select>
-
-                                                    </div>
-                                                </div>
-                                            </div>
-
-
-
-
-                                            <div class="col-md-3 ">
-                                                <label><?php echo e(__('From Account Type')); ?>
-
-                                                    <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
-                                                </label>
-                                                <div class="kt-input-icon">
-                                                    <div class="input-group date">
-                                                        <select required name="from_account_type_id" class="form-control js-from-update-account-number-based-on-account-type">
-                                                            <option value="" selected><?php echo e(__('Select')); ?></option>
-                                                            <?php $__currentLoopData = $accountTypes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $accountType): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                            <option value="<?php echo e($accountType->id); ?>" <?php if(isset($model) && $model->getFromAccountTypeId() == $accountType->id): ?> selected <?php endif; ?>><?php echo e($accountType->getName()); ?></option>
-                                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-3 ">
-                                                <label><?php echo e(__('From Account Number')); ?>
-
-                                                    <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
-                                                </label>
-                                                <div class="kt-input-icon">
-                                                    <div class="input-group date">
-                                                        <select required data-from-current-selected="<?php echo e(isset($model) ? $model->getFromAccountNumber(): 0); ?>" name="from_account_number" class="form-control js-from-account-number">
-                                                            <option value="" selected><?php echo e(__('Select')); ?></option>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                       
 
                                             <div class="col-md-6">
                                                 <label><?php echo e(__('To Bank')); ?>
@@ -224,7 +176,7 @@
                                                 <div class="kt-input-icon">
                                                     <div class="input-group date">
 
-                                                        <select required js-to-when-change-trigger-change-account-type data-to-financial-institution-id name="to_bank_id" class="form-control ">
+                                                        <select js-to-when-change-trigger-change-account-type data-to-financial-institution-id name="to_bank_id" class="form-control ">
                                                             <?php $__currentLoopData = $financialInstitutionBanks; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index=>$financialInstitutionBank): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                             <option value="<?php echo e($financialInstitutionBank->id); ?>" <?php echo e(isset($model) && $model->getFromBankId() == $financialInstitutionBank->id ? 'selected' : ''); ?>><?php echo e($financialInstitutionBank->getName()); ?></option>
                                                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -240,7 +192,7 @@
                                                 </label>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group date">
-                                                        <select required name="to_account_type_id" class="form-control js-to-update-account-number-based-on-account-type">
+                                                        <select name="to_account_type_id" class="form-control js-to-update-account-number-based-on-account-type">
                                                             <option value="" selected><?php echo e(__('Select')); ?></option>
                                                             <?php $__currentLoopData = $accountTypes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $accountType): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                             <option value="<?php echo e($accountType->id); ?>" <?php if(isset($model) && $model->getToAccountTypeId() == $accountType->id): ?> selected <?php endif; ?>><?php echo e($accountType->getName()); ?></option>
@@ -257,7 +209,7 @@
                                                 </label>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group date">
-                                                        <select required data-current-selected="<?php echo e(isset($model) ? $model->getToAccountNumber(): 0); ?>" name="to_account_number" class="form-control js-to-account-number">
+                                                        <select data-current-selected="<?php echo e(isset($model) ? $model->getToAccountNumber(): 0); ?>" name="to_account_number" class="form-control js-to-account-number">
                                                             <option value="" selected><?php echo e(__('Select')); ?></option>
                                                         </select>
                                                     </div>
@@ -390,11 +342,11 @@
 
         </script>
 
-       
+    
     <script>
 	
 	
-$(document).on('change', 'select.js-from-update-account-number-based-on-account-type', function () {
+$(document).on('change', '.js-from-update-account-number-based-on-account-type', function () {
 	const val = $(this).val()
 	const lang = $('body').attr('data-lang')
 	const companyId = $('body').attr('data-current-company-id')
@@ -431,7 +383,7 @@ $(document).on('change', 'select.js-from-update-account-number-based-on-account-
 
 
 })
-$(document).on('change', 'select[js-from-when-change-trigger-change-account-type]', function () {
+$(document).on('change', '[js-from-when-change-trigger-change-account-type]', function () {
 
 	$(this).closest('.kt-portlet__body').find('.js-from-update-account-number-based-on-account-type').trigger('change')
 })
@@ -440,7 +392,7 @@ $(function () {
 })
 
 
-$(document).on('change', 'select.js-to-update-account-number-based-on-account-type', function () {
+$(document).on('change', '.js-to-update-account-number-based-on-account-type', function () {
 	const val = $(this).val()
 	const lang = $('body').attr('data-lang')
 	const companyId = $('body').attr('data-current-company-id')
@@ -476,12 +428,12 @@ $(document).on('change', 'select.js-to-update-account-number-based-on-account-ty
 
 
 })
-$(document).on('change', 'select[js-to-when-change-trigger-change-account-type]', function () {
+$(document).on('change', '[js-to-when-change-trigger-change-account-type]', function () {
 
-	$(this).closest('.kt-portlet__body').find('select.js-to-update-account-number-based-on-account-type').trigger('change')
+	$(this).closest('.kt-portlet__body').find('.js-to-update-account-number-based-on-account-type').trigger('change')
 })
 $(function () {
-	$('select.js-to-update-account-number-based-on-account-type').trigger('change')
+	$('.js-to-update-account-number-based-on-account-type').trigger('change')
 })
 
 	</script>
@@ -489,4 +441,4 @@ $(function () {
 
         <?php $__env->stopSection(); ?>
 
-<?php echo $__env->make('layouts.dashboard', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /media/salah/Software/projects/veroo/resources/views/internal-money-transfer/bank-to-bank-form.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('layouts.dashboard', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /media/salah/Software/projects/veroo/resources/views/internal-money-transfer/safe-to-bank-form.blade.php ENDPATH**/ ?>

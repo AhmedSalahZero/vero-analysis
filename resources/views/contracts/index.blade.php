@@ -383,7 +383,31 @@ use App\Models\Contract;
                                         {{-- <a href="{{ str_replace('?','#',route('contracts.edit',['company'=>$company->id,'contract'=>$contract->id ,'type'=>$type,'connecting'])) }}" title="{{ __('Connecting With Supplier Contracts') }}" class="btn btn-secondary btn-outline-hover-brand btn-icon"><i class="fa fa-link"></i> </a> --}}
                                         @endif
                                         <span style="overflow: visible; position: relative; width: 110px;">
-                                            @if($currentType == Contract::RUNNING_AND_AGAINST)
+											@if($currentType == Contract::RUNNING )
+											<a data-toggle="modal" data-target="#mark-as-finished-contract-{{ $mainItemId }}" type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="{{ __('Finished') }}" href="#"><i class="fa fa-thumbs-up"></i></a>
+                                            <div class="modal fade" id="mark-as-finished-contract-{{ $mainItemId }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                                    <div class="modal-content">
+                                                        <form action="{{ route('contract.mark.as.finished', ['company'=>$company->id , 'contract'=>$mainItemId,'type'=>$type]) }}" method="post">
+                                                            @csrf
+                                                            @method('put')
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Do You Want To Mark This Contract As Finished ?') }}</h5>
+                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close') }}</button>
+                                                                <button type="submit" class="btn btn-primary">{{ __('Confirm') }}</button>
+                                                            </div>
+
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+											@endif 
+                                            @if($currentType == Contract::RUNNING_AND_AGAINST )
 @if(hasAuthFor('update '. str_plural(strtolower($type)) .' contracts'))
                                             <a data-toggle="modal" data-target="#mark-as-finished-contract-{{ $mainItemId }}" type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="{{ __('Finished') }}" href="#"><i class="fa fa-thumbs-up"></i></a>
                                             <div class="modal fade" id="mark-as-finished-contract-{{ $mainItemId }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">

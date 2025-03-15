@@ -134,7 +134,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <td class="bank-max-width">{{ $model->getFinancialInstitutionBankName() }}</td>
                                     <td class="text-uppercase">{{ $model->getSupplierName() }}</td>
                                     <td class="text-transform">{{ $model->getTransactionReference() }}</td>
-                                    <td class="text-transform">{{ $model->getLcAmountFormatted() }}</td>
+                                    <td class="text-transform">{{ $model->getLcAmountFormatted() . ' ' . $model->getLcCurrency() }}</td>
                                     <td class="text-transform text-nowrap">{{ $model->getTransactionDateFormatted() }}</td>
                                     <td class="text-transform text-nowrap">{{ $model->getIssuanceDateFormatted() }}</td>
                                     <td class="text-transform text-nowrap">{{ $model->getDueDateFormatted() }}</td>
@@ -232,7 +232,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <td>{{ $model->getStatusFormatted() }}</td>
                                     <td class="bank-max-width">{{ $model->getFinancialInstitutionBankName() }}</td>
                                     <td class="text-uppercase">{{ $model->getSupplierName() }}</td>
-                                    <td class="text-transform">{{ $model->getLcAmountFormatted() }}</td>
+                                    <td class="text-transform">{{ $model->getLcAmountFormatted(). ' ' . $model->getLcCurrency() }}</td>
                                     <td class="text-transform text-nowrap">{{ $model->getPurchaseOrderDateFormatted() }}</td>
                                     <td class="text-transform text-nowrap">{{ $model->getIssuanceDateFormatted() }}</td>
                                     <td class="text-transform text-nowrap">{{ $model->getDueDateFormatted() }}</td>
@@ -323,7 +323,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
 									<td>{{ $model->getStatusFormatted() }}</td>
                                     <td class="bank-max-width">{{ $model->getFinancialInstitutionBankName() }}</td>
                                     <td class="text-uppercase">{{ $model->getSupplierName() }}</td>
-                                    <td class="text-transform">{{ $model->getLcAmountFormatted() }}</td>
+                                    <td class="text-transform">{{ $model->getLcAmountFormatted(). ' ' . $model->getLcCurrency() }}</td>
                                     <td class="text-transform">{{ $model->getLcCurrentAmountFormatted() }}</td>
                                     <td class="text-transform text-nowrap">{{ $model->getPurchaseOrderDateFormatted() }}</td>
                                     <td class="text-transform text-nowrap">{{ $model->getIssuanceDateFormatted() }}</td>

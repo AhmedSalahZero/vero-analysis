@@ -101,17 +101,17 @@ class LetterOfGuaranteeIssuanceController
 		$cdOrTdAccountTypes = [];
 
 		$financialInstitutionBanks = FinancialInstitution::with('letterOfGuaranteeFacilities')->onlyForCompany($company->id)->onlyBanks()->onlyForSource($source)->onlyHasLgFacility()->get();
-		$errorMessage = __('Please Create / Renew Existing LG Contracts');
+		$errorMessage = __('Please Create / Renew Existing Banking Facilities LGs Contracts');
 		// $financialInstitutionBanks = FinancialInstitution::with('letterOfGuaranteeFacilities')->onlyForCompany($company->id)->onlyBanks()->onlyForSource($source)->onlyHasLgFacility()->get();
 		if($source == LetterOfGuaranteeIssuance::AGAINST_CD){
 			$financialInstitutionBanks = FinancialInstitution::with('letterOfGuaranteeFacilities')->onlyForCompany($company->id)->onlyBanks()->onlyForSource($source)->get();
 			$cdOrTdAccountTypes = AccountType::onlyCdAccounts()->get();
-			$errorMessage = null;
+			$errorMessage = __('Please Create / Renew Existing at least one CD');
 		}
 		elseif($source == LetterOfGuaranteeIssuance::AGAINST_TD){
 			$financialInstitutionBanks = FinancialInstitution::with('letterOfGuaranteeFacilities')->onlyForCompany($company->id)->onlyBanks()->onlyForSource($source)->get();
 			$cdOrTdAccountTypes = AccountType::onlyTdAccounts()->get();
-			$errorMessage = null;
+			$errorMessage = __('Please Create / Renew Existing at least one TD');
 		}
 		
 		

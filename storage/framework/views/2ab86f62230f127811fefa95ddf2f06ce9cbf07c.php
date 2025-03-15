@@ -152,7 +152,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <td class="bank-max-width"><?php echo e($model->getFinancialInstitutionBankName()); ?></td>
                                     <td class="text-uppercase"><?php echo e($model->getSupplierName()); ?></td>
                                     <td class="text-transform"><?php echo e($model->getTransactionReference()); ?></td>
-                                    <td class="text-transform"><?php echo e($model->getLcAmountFormatted()); ?></td>
+                                    <td class="text-transform"><?php echo e($model->getLcAmountFormatted() . ' ' . $model->getLcCurrency()); ?></td>
                                     <td class="text-transform text-nowrap"><?php echo e($model->getTransactionDateFormatted()); ?></td>
                                     <td class="text-transform text-nowrap"><?php echo e($model->getIssuanceDateFormatted()); ?></td>
                                     <td class="text-transform text-nowrap"><?php echo e($model->getDueDateFormatted()); ?></td>
@@ -272,7 +272,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <td><?php echo e($model->getStatusFormatted()); ?></td>
                                     <td class="bank-max-width"><?php echo e($model->getFinancialInstitutionBankName()); ?></td>
                                     <td class="text-uppercase"><?php echo e($model->getSupplierName()); ?></td>
-                                    <td class="text-transform"><?php echo e($model->getLcAmountFormatted()); ?></td>
+                                    <td class="text-transform"><?php echo e($model->getLcAmountFormatted(). ' ' . $model->getLcCurrency()); ?></td>
                                     <td class="text-transform text-nowrap"><?php echo e($model->getPurchaseOrderDateFormatted()); ?></td>
                                     <td class="text-transform text-nowrap"><?php echo e($model->getIssuanceDateFormatted()); ?></td>
                                     <td class="text-transform text-nowrap"><?php echo e($model->getDueDateFormatted()); ?></td>
@@ -385,7 +385,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
 									<td><?php echo e($model->getStatusFormatted()); ?></td>
                                     <td class="bank-max-width"><?php echo e($model->getFinancialInstitutionBankName()); ?></td>
                                     <td class="text-uppercase"><?php echo e($model->getSupplierName()); ?></td>
-                                    <td class="text-transform"><?php echo e($model->getLcAmountFormatted()); ?></td>
+                                    <td class="text-transform"><?php echo e($model->getLcAmountFormatted(). ' ' . $model->getLcCurrency()); ?></td>
                                     <td class="text-transform"><?php echo e($model->getLcCurrentAmountFormatted()); ?></td>
                                     <td class="text-transform text-nowrap"><?php echo e($model->getPurchaseOrderDateFormatted()); ?></td>
                                     <td class="text-transform text-nowrap"><?php echo e($model->getIssuanceDateFormatted()); ?></td>
