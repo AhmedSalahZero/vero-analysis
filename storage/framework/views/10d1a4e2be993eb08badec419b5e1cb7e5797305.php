@@ -1,10 +1,10 @@
-@php
+<?php
 use App\Models\MoneyReceived ;
-@endphp
-@extends('layouts.dashboard')
-@section('css')
-<link href="{{ url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css') }}" rel="stylesheet" type="text/css" />
-<link href="{{ url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css') }}" rel="stylesheet" type="text/css" />
+?>
+
+<?php $__env->startSection('css'); ?>
+<link href="<?php echo e(url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css')); ?>" rel="stylesheet" type="text/css" />
+<link href="<?php echo e(url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css')); ?>" rel="stylesheet" type="text/css" />
 <style>
     .kt-portlet .kt-portlet__head {
         border-bottom-color: #CCE2FD !important;
@@ -57,19 +57,20 @@ use App\Models\MoneyReceived ;
     }
 
 </style>
-@endsection
-@section('sub-header')
-{{ $formTitle }}
-@endsection
-@section('content')
+<?php $__env->stopSection(); ?>
+<?php $__env->startSection('sub-header'); ?>
+<?php echo e($formTitle); ?>
+
+<?php $__env->stopSection(); ?>
+<?php $__env->startSection('content'); ?>
 <div class="row">
     <div class="col-md-12">
 
-        <form method="post" action="{{ isset($model) ? route('contracts.update',['company'=>$company->id,'contract'=>$model->id,'type'=>$type]) : route('contracts.store',['company'=>$company->id,'type'=>$type]) }}" class="kt-form kt-form--label-right">
-            @csrf
-            @if(isset($model))
-            @method('put')
-            @endif
+        <form method="post" action="<?php echo e(isset($model) ? route('contracts.update',['company'=>$company->id,'contract'=>$model->id,'type'=>$type]) : route('contracts.store',['company'=>$company->id,'type'=>$type])); ?>" class="kt-form kt-form--label-right">
+            <?php echo csrf_field(); ?>
+            <?php if(isset($model)): ?>
+            <?php echo method_field('put'); ?>
+            <?php endif; ?>
             <div class="row">
                 <div class="col-md-12">
                     <!--begin::Portlet-->
@@ -77,7 +78,17 @@ use App\Models\MoneyReceived ;
                         <div class="kt-portlet__head">
                             <div class="kt-portlet__head-label">
                                 <h3 class="kt-portlet__head-title head-title text-primary">
-                                    <x-sectionTitle :title="$formTitle"></x-sectionTitle>
+                                     <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.sectionTitle','data' => ['title' => $formTitle]]); ?>
+<?php $component->withName('sectionTitle'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php $component->withAttributes(['title' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($formTitle)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
+<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
+<?php endif; ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?> 
                                 </h3>
                             </div>
                         </div>
@@ -88,55 +99,59 @@ use App\Models\MoneyReceived ;
                         <div class="kt-portlet__head">
                             <div class="kt-portlet__head-label">
                                 <h3 class="kt-portlet__head-title head-title text-primary">
-                                    {{__('Contract Information')}}
+                                    <?php echo e(__('Contract Information')); ?>
+
                                 </h3>
                             </div>
                         </div>
                         <div class="kt-portlet__body">
-                            <input type="hidden" name="company_id" value="{{ $company->id }}">
-                            <input id="model_type" type="hidden" name="model_type" value="{{ $type }}">
+                            <input type="hidden" name="company_id" value="<?php echo e($company->id); ?>">
+                            <input id="model_type" type="hidden" name="model_type" value="<?php echo e($type); ?>">
                             <div class="form-group row">
 
                                 <div class="col-md-4 ">
-                                    <label> {{ __('Name') }}
-                                        @include('star')
+                                    <label> <?php echo e(__('Name')); ?>
+
+                                        <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                     </label>
                                     <div class="kt-input-icon">
                                         <div class="input-group">
-                                            <input required name="name" type="text" class="form-control" value="{{   old('name',isset($model) ? $model->getName() : null ) }}">
+                                            <input required name="name" type="text" class="form-control" value="<?php echo e(old('name',isset($model) ? $model->getName() : null )); ?>">
                                         </div>
                                     </div>
                                 </div>
 
 								
                                 <div class="col-md-2 ">
-                                    <label> {{ __('Code') }}
-                                        @include('star')
+                                    <label> <?php echo e(__('Code')); ?>
+
+                                        <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                     </label>
                                     <div class="kt-input-icon">
                                         <div class="input-group">
                                             <input
-											@if(isset($model))
+											<?php if(isset($model)): ?>
 											readonly
-											@endif 
-											 required name="code" id="contract-code" type="text" class="form-control " value="{{ old('code',isset($model) ? $model->getCode() : null)   }}">
+											<?php endif; ?> 
+											 required name="code" id="contract-code" type="text" class="form-control " value="<?php echo e(old('code',isset($model) ? $model->getCode() : null)); ?>">
                                         </div>
                                     </div>
                                 </div>
 
                                 <div class="col-md-5">
 
-                                    <label>{{__('Partner Name')}}
-                                        @include('star')
+                                    <label><?php echo e(__('Partner Name')); ?>
+
+                                        <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                     </label>
 									
                                     <div class="kt-input-icon">
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
                                                 <select  data-live-search="true" data-actions-box="true" id="customer_name" name="partner_id" class="form-control select2-select regenerate-code-ajax">
-                                                    @foreach($clients as $index => $customer )
-                                                    <option @if( old('partner_id',isset($model) && $model->getClientId() == $customer->id  ) ) selected @endif value="{{ $customer->id }}">{{$customer->getName()}}</option>
-                                                    @endforeach
+                                                    <?php $__currentLoopData = $clients; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $customer): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                    <option <?php if( old('partner_id',isset($model) && $model->getClientId() == $customer->id  ) ): ?> selected <?php endif; ?> value="<?php echo e($customer->id); ?>"><?php echo e($customer->getName()); ?></option>
+                                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                 </select>
                                             </div>
                                         </div>
@@ -149,51 +164,64 @@ use App\Models\MoneyReceived ;
                                 <div class="col-md-1">
                                     <label style="visibility:hidden !important;"> *</label>
                                     <button type="button" class="add-new btn btn-primary d-block" data-toggle="modal" data-target="#add-new-customer-modal">
-                                        {{ __('Add New') }}
+                                        <?php echo e(__('Add New')); ?>
+
                                     </button>
                                 </div>
                                 <div class="modal fade" id="add-new-customer-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                     <div class="modal-dialog" role="document">
                                         <div class="modal-content">
                                             <div class="modal-header">
-                                                <h5 class="modal-title" id="exampleModalLabel">{{ __('Add New' . ' ' . $type) }}</h5>
+                                                <h5 class="modal-title" id="exampleModalLabel"><?php echo e(__('Add New' . ' ' . $type)); ?></h5>
                                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                     <span aria-hidden="true">&times;</span>
                                                 </button>
                                             </div>
                                             <div class="modal-body">
                                                 <form>
-                                                    <input value="" class="form-control" name="new_customer_name" id="new_customer_name" placeholder="{{ __('Enter New Customer Name') }}">
+                                                    <input value="" class="form-control" name="new_customer_name" id="new_customer_name" placeholder="<?php echo e(__('Enter New Customer Name')); ?>">
                                                 </form>
                                             </div>
                                             <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close') }}</button>
-                                                <button type="button" class="btn btn-primary js-add-new-customer-if-not-exist">{{ __('Save') }}</button>
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal"><?php echo e(__('Close')); ?></button>
+                                                <button type="button" class="btn btn-primary js-add-new-customer-if-not-exist"><?php echo e(__('Save')); ?></button>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div class="col-md-2 ">
-                                    <x-form.date :type="'text'" :classes="'datepicker-input recalc-end-date start-date regenerate-code-ajax '" :default-value="formatDateForDatePicker(old('start_date') ?: (isset($model)  ? $model->getStartDate() : now()) )" :model="$model??null" :label="__('Start Date')" :type="'text'" :id="'start-date-id'" :placeholder="__('')" :name="'start_date'" :required="true"></x-form.date>
+                                     <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.date','data' => ['type' => 'text','classes' => 'datepicker-input recalc-end-date start-date regenerate-code-ajax ','defaultValue' => formatDateForDatePicker(old('start_date') ?: (isset($model)  ? $model->getStartDate() : now()) ),'model' => $model??null,'label' => __('Start Date'),'id' => 'start-date-id','placeholder' => __(''),'name' => 'start_date','required' => true]]); ?>
+<?php $component->withName('form.date'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php $component->withAttributes(['type' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('text'),'classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('datepicker-input recalc-end-date start-date regenerate-code-ajax '),'default-value' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(formatDateForDatePicker(old('start_date') ?: (isset($model)  ? $model->getStartDate() : now()) )),'model' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($model??null),'label' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Start Date')),'id' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('start-date-id'),'placeholder' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('')),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('start_date'),'required' => true]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
+<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
+<?php endif; ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?> 
                                 </div>
                                 <div class="col-md-2 ">
-                                    <label> {{ __('Duration (Months)') }}
-                                        @include('star')
+                                    <label> <?php echo e(__('Duration (Months)')); ?>
+
+                                        <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                     </label>
                                     <div class="kt-input-icon">
                                         <div class="input-group">
-                                            <input required name="duration" type="numeric" class="form-control duration recalc-end-date duration " value="{{ old('duration',isset($model) ? $model->getDuration() * (12/365) : null)  }}">
+                                            <input required name="duration" type="numeric" class="form-control duration recalc-end-date duration " value="<?php echo e(old('duration',isset($model) ? $model->getDuration() * (12/365) : null)); ?>">
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-md-2 ">
-                                    <label> {{ __('End Date') }}
-                                        @include('star')
+                                    <label> <?php echo e(__('End Date')); ?>
+
+                                        <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                     </label>
                                     <div class="kt-input-icon">
                                         <div class="input-group">
-                                            <input id="end-date" disabled name="end_date" type="text" class="form-control datepicker-input end-date" value="{{ old('end_date',isset($model) ? $model->getEndDate() : null )   }}">
+                                            <input id="end-date" disabled name="end_date" type="text" class="form-control datepicker-input end-date" value="<?php echo e(old('end_date',isset($model) ? $model->getEndDate() : null )); ?>">
                                         </div>
                                     </div>
                                 </div>
@@ -201,37 +229,40 @@ use App\Models\MoneyReceived ;
 
 
                                 <div class="col-md-3 ">
-                                    <label> {{ __('Amount') }}
-                                        @include('star')
+                                    <label> <?php echo e(__('Amount')); ?>
+
+                                        <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                     </label>
                                     <div class="kt-input-icon">
                                         <div class="input-group">
-                                            <input required name="amount" type="text" class="form-control only-greater-than-or-equal-zero-allowed" value="{{ old('amount',isset($model) ? $model->getAmount() : 0 )   }}">
+                                            <input required name="amount" type="text" class="form-control only-greater-than-or-equal-zero-allowed" value="<?php echo e(old('amount',isset($model) ? $model->getAmount() : 0 )); ?>">
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-md-1 ">
-                                    <label> {{ __('Currency') }}
-                                        @include('star')
+                                    <label> <?php echo e(__('Currency')); ?>
+
+                                        <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                     </label>
                                     <div class="input-group">
                                         <select required name="currency" class="form-control current-currency ajax-get-invoice-numbers" js-when-change-trigger-change-account-type>
-                                            <option selected>{{__('Select')}}</option>
-                                            @foreach(getCurrencies() as $currencyName => $currencyValue )
-                                            <option value="{{ $currencyName }}" @if( old('currency',isset($model) ? $model->getCurrency():null) == $currencyName ) selected @elseif($currencyName == 'EGP' ) selected @endif > {{ $currencyValue }}</option>
-                                            @endforeach
+                                            <option selected><?php echo e(__('Select')); ?></option>
+                                            <?php $__currentLoopData = getCurrencies(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $currencyName => $currencyValue): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <option value="<?php echo e($currencyName); ?>" <?php if( old('currency',isset($model) ? $model->getCurrency():null) == $currencyName ): ?> selected <?php elseif($currencyName == 'EGP' ): ?> selected <?php endif; ?> > <?php echo e($currencyValue); ?></option>
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                         </select>
                                     </div>
                                 </div>
 
 
                                 <div class="col-md-1 ">
-                                    <label> {{ __('Exhange Rate') }}
-                                        @include('star')
+                                    <label> <?php echo e(__('Exhange Rate')); ?>
+
+                                        <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                     </label>
                                     <div class="kt-input-icon">
                                         <div class="input-group">
-                                            <input required name="exchange_rate" type="text" class="form-control only-greater-than-or-equal-zero-allowed" value="{{ generateModelData('exchange_rate',isset($model) ? $model : null ,'getExchangeRate', 1 ) }}">
+                                            <input required name="exchange_rate" type="text" class="form-control only-greater-than-or-equal-zero-allowed" value="<?php echo e(generateModelData('exchange_rate',isset($model) ? $model : null ,'getExchangeRate', 1 )); ?>">
                                         </div>
                                     </div>
                                 </div>
@@ -246,7 +277,8 @@ use App\Models\MoneyReceived ;
                         <div class="kt-portlet__head">
                             <div class="kt-portlet__head-label">
                                 <h3 class="kt-portlet__head-title head-title text-primary">
-                                    {{$salesOrderOrPurchaseOrderInformationText}}
+                                    <?php echo e($salesOrderOrPurchaseOrderInformationText); ?>
+
                                 </h3>
                             </div>
                         </div>
@@ -254,44 +286,59 @@ use App\Models\MoneyReceived ;
 
 
                             <div class="form-group row justify-content-center">
-                                @php
+                                <?php
                                 $index = 0 ;
-                                @endphp
+                                ?>
 
 
 
-                                {{-- start of fixed monthly repeating amount --}}
-                                @php
+                                
+                                <?php
                                 $tableId = $salesOrderOrPurchaseOrderRelationName;
                                 $repeaterId = 'm_repeater_6';
 
-                                @endphp
-                                {{-- <input type="hidden" name="tableIds[]" value="{{ $tableId }}"> --}}
-                                <x-tables.repeater-table :repeater-with-select2="true" :parentClass="'show-class-js'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=true">
-                                    <x-slot name="ths">
-                                        @foreach([
+                                ?>
+                                
+                                 <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.tables.repeater-table','data' => ['repeaterWithSelect2' => true,'parentClass' => 'show-class-js','tableName' => $tableId,'repeaterId' => $repeaterId,'relationName' => 'food','isRepeater' => $isRepeater=true]]); ?>
+<?php $component->withName('tables.repeater-table'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php $component->withAttributes(['repeater-with-select2' => true,'parentClass' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('show-class-js'),'tableName' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($tableId),'repeaterId' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($repeaterId),'relationName' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('food'),'isRepeater' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($isRepeater=true)]); ?>
+                                     <?php $__env->slot('ths'); ?> 
+                                        <?php $__currentLoopData = [
                                         $salesOrderOrPurchaseNumberText =>'col-md-1',
                                         __('Amount')=>'col-md-1',
                                         __('Insert Execution Details')=>'col-md-1'
-                                        ] as $title=>$classes)
-                                        <x-tables.repeater-table-th class="{{ $classes }}" :title="$title"></x-tables.repeater-table-th>
-                                        @endforeach
-                                    </x-slot>
-                                    <x-slot name="trs">
-                                        @php
+                                        ]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $title=>$classes): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                         <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.tables.repeater-table-th','data' => ['class' => ''.e($classes).'','title' => $title]]); ?>
+<?php $component->withName('tables.repeater-table-th'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php $component->withAttributes(['class' => ''.e($classes).'','title' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($title)]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
+<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
+<?php endif; ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?> 
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                     <?php $__env->endSlot(); ?>
+                                     <?php $__env->slot('trs'); ?> 
+                                        <?php
                                         $rows = old($salesOrderOrPurchaseOrderRelationName) ?  fillObjectFromArray(old(($salesOrderOrPurchaseOrderRelationName)),$salesOrderOrPurchaseOrderObject) : (isset($model) ? $model->{$salesOrderOrPurchaseOrderRelationName} : [-1]) ;
 
-                                        @endphp
-                                        @foreach( count($rows) ? $rows : [-1] as $salesOrder)
-                                        @php
+                                        ?>
+                                        <?php $__currentLoopData = count($rows) ? $rows : [-1]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $salesOrder): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <?php
                                         if( !($salesOrder instanceof $salesOrderOrPurchaseOrderObject) ){
                                         unset($salesOrder);
                                         }
-                                        @endphp
-                                        <tr @if($isRepeater) data-repeater-item @endif>
+                                        ?>
+                                        <tr <?php if($isRepeater): ?> data-repeater-item <?php endif; ?>>
                                             <td class="text-center">
-                                                <input type="hidden" name="company_id" value="{{ $company->id }}">
-                                                <input type="hidden" name="id" value="{{ isset($salesOrder) ? $salesOrder->id :0 }}">
+                                                <input type="hidden" name="company_id" value="<?php echo e($company->id); ?>">
+                                                <input type="hidden" name="id" value="<?php echo e(isset($salesOrder) ? $salesOrder->id :0); ?>">
                                                 <div class="">
                                                     <i data-repeater-delete="" class="btn-sm btn btn-danger m-btn m-btn--icon m-btn--pill trash_icon fas fa-times-circle">
                                                     </i>
@@ -301,7 +348,7 @@ use App\Models\MoneyReceived ;
                                             <td>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group">
-                                                        <input name="{{ $salesOrderOrPurchaseNoText }}" type="text" class="form-control " value="{{ isset($salesOrder) ? $salesOrder->getNumber() : old('salesOrders.'.$salesOrderOrPurchaseNoText,0) }}">
+                                                        <input name="<?php echo e($salesOrderOrPurchaseNoText); ?>" type="text" class="form-control " value="<?php echo e(isset($salesOrder) ? $salesOrder->getNumber() : old('salesOrders.'.$salesOrderOrPurchaseNoText,0)); ?>">
                                                     </div>
                                                 </div>
                                             </td>
@@ -309,7 +356,7 @@ use App\Models\MoneyReceived ;
                                             <td>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group">
-                                                        <input name="amount" type="text" class="form-control js-recalculate-amounts-in-popup" value="{{ isset($salesOrder) ? $salesOrder->getAmount() : old('salesOrders.amount',0) }}">
+                                                        <input name="amount" type="text" class="form-control js-recalculate-amounts-in-popup" value="<?php echo e(isset($salesOrder) ? $salesOrder->getAmount() : old('salesOrders.amount',0)); ?>">
                                                     </div>
                                                 </div>
                                             </td>
@@ -318,39 +365,22 @@ use App\Models\MoneyReceived ;
                                          
 
                                             <td class="text-center">
-                                                <button class="btn btn-primary btn-active js-show-execution-percentage-modal">{{ __('Insert Execution Details') }}</button>
-                                                <x-modal.execution-percentage :popup-title="__('Execution Details')" :subModel="isset($salesOrder) ? $salesOrder : null " :subModel="isset($salesOrder) ? $salesOrder : null " :tableId="$tableId" :isRepeater="$isRepeater" :id="$repeaterId.'test-modal-id'"></x-modal.execution-percentage>
+                                                <button class="btn btn-primary btn-active js-show-execution-percentage-modal"><?php echo e(__('Insert Execution Details')); ?></button>
+                                                 <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.modal.execution-percentage','data' => ['popupTitle' => __('Execution Details'),'subModel' => isset($salesOrder) ? $salesOrder : null ,'tableId' => $tableId,'isRepeater' => $isRepeater,'id' => $repeaterId.'test-modal-id']]); ?>
+<?php $component->withName('modal.execution-percentage'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php $component->withAttributes(['popup-title' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Execution Details')),'subModel' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(isset($salesOrder) ? $salesOrder : null ),'tableId' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($tableId),'isRepeater' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($isRepeater),'id' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($repeaterId.'test-modal-id')]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
+<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
+<?php endif; ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?> 
                                             </td>
 
 
-                                            {{-- @for($i = 1 ; $i <= 5 ; $i++) 
-											<td>
-                                                <div class="kt-input-icon">
-                                                    <div class="input-group">
-                                                        <input name="execution_percentage_{{ $i }}" type="numeric" step="0.1" class="form-control " value="{{ isset($salesOrder) ? $salesOrder->getExecutionPercentage($i) : old('salesOrders.execution_percentage_'.$i,0) }}">
-                            </div>
-                        </div>
-                        </td>
-
-                        <td>
-                            <div class="kt-input-icon">
-                                <div class="input-group">
-                                    <input name="execution_days_{{ $i }}" type="numeric" step="1" class="form-control " value="{{ isset($salesOrder) ? $salesOrder->getExecutionDays($i) : old('salesOrders.execution_days_'.$i,0) }}">
-                                </div>
-                            </div>
-                        </td>
-
-                        <td>
-                            <div class="kt-input-icon">
-                                <div class="input-group">
-                                    <input name="collection_days_{{ $i }}" type="numeric" step="1" class="form-control " value="{{ isset($salesOrder) ? $salesOrder->getCollectionDays($i) : old('salesOrders.collection_days_'.$i,0) }}">
-                                </div>
-                            </div>
-                        </td>
-
-
-
-                        @endfor --}}
+                                            
 
 
 
@@ -359,104 +389,39 @@ use App\Models\MoneyReceived ;
 
 
                         </tr>
-                        @endforeach
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
-                        </x-slot>
-
-
+                         <?php $__env->endSlot(); ?>
 
 
-                        </x-tables.repeater-table>
-                        {{-- end of fixed monthly repeating amount --}}
+
+
+                         <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
+<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
+<?php endif; ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?> 
+                        
 
                     </div>
 
                 </div>
             </div>
 			
-			{{-- @if($type == 'Customer')
+			
 
-            <div class="kt-portlet" id="connecting">
 
-                <div class="kt-portlet__head">
-                    <div class="kt-portlet__head-label">
-                        <h3 class="kt-portlet__head-title head-title text-primary">
-                            {{ __('Connecting With Suppliers Contracts') }}
-                        </h3>
-                    </div>
-                </div>
-                <div class="kt-portlet__body">
 
 
-                    <div class="form-group row justify-content-center">
-                        @php
-                        $index = 0 ;
-                        @endphp
 
 
 
-                        @php
-                        $tableId = $contractsRelationName;
 
-                        $repeaterId = 'm_repeater_7';
 
-                        @endphp
-                        <x-tables.repeater-table :repeater-with-select2="true" :parentClass="'show-class-js'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=true">
-                            <x-slot name="ths">
-                                @foreach([
-                                // $salesOrderOrPurchaseNumberText =>'col-md-1',
-                                $reverseTypeText=>'col-md-3',
-                                __('Contract Name')=>'col-md-3',
-                                __('Contract Code')=>'col-md-2',
-                                __('Contract Amount')=>'col-md-2',
-                          //      __('Currency')=>'col-md-1',
-                                ] as $title=>$classes)
-                                <x-tables.repeater-table-th class="{{ $classes }}" :title="$title"></x-tables.repeater-table-th>
-                                @endforeach
-                            </x-slot>
-                            <x-slot name="trs">
-                                @php
-                                $rows = isset($model) ? $model->relatedContracts :[-1] ;
-                                @endphp
-                                @foreach( count($rows) ? $rows : [-1] as $currentContract)
-                                @php
-								$fullPath = new \App\Models\Contract ;
-                                if( !($currentContract instanceof $fullPath ) ){
-                                unset($currentContract);
-                                }
-                                @endphp
-                                <tr @if($isRepeater) data-repeater-item @endif>
 
-                                    <td class="text-center">
-                                        <input type="hidden" name="company_id" value="{{ $company->id }}">
-                                        <div class="">
-                                            <i data-repeater-delete="" class="btn-sm btn btn-danger m-btn m-btn--icon m-btn--pill trash_icon fas fa-times-circle">
-                                            </i>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <x-form.select :selectedValue="isset($currentContract) && $currentContract->client ? $currentContract->client->id : ''" :options="formatOptionsForSelect($clientsWithContracts)" :add-new="false" class="select2-select suppliers-or-customers-js repeater-select  " data-filter-type="{{ $type }}" :all="false" name="@if($isRepeater) partner_id @else {{ $tableId }}[0][partner_id] @endif"></x-form.select>
-                                    </td>
 
-                                    <td>
-                                        <x-form.select data-current-selected="{{ isset($currentContract) ? $currentContract->id : '' }}" :selectedValue="isset($currentContract) ? $currentContract->id : ''" :options="[]" :add-new="false" class="select2-select  contracts-js repeater-select  " data-filter-type="{{ $type }}" :all="false" name="@if($isRepeater) contract_id @else {{ $tableId }}[0][contract_id] @endif"></x-form.select>
-                                    </td>
 
-                                    <td>
-                                        <div class="kt-input-icon">
-                                            <div class="input-group">
-                                                <input disabled type="text" class="form-control contract-code" value="0">
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="kt-input-icon">
-                                            <div class="input-group">
-                                                <input disabled type="text" class="form-control contract-amount" value="0">
-                                            </div>
-                                        </div>
-                                    </td>
-                                   
 
 
 
@@ -466,148 +431,30 @@ use App\Models\MoneyReceived ;
 
 
 
-
-
-
-
-
-
-
-
-
-                                </tr>
-                                @endforeach
-
-                            </x-slot>
-
-
-
-
-                        </x-tables.repeater-table>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                    </div>
-                </div>
-
-
-
-
-
-
-
-            </div>
-			@endif --}}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            <x-submitting />
+             <?php if (isset($component)) { $__componentOriginal49acb4be531871427e6da8fc4bf301f11a96ee34 = $component; } ?>
+<?php $component = $__env->getContainer()->make(App\View\Components\Submitting::class, []); ?>
+<?php $component->withName('submitting'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php $component->withAttributes([]); ?>
+<?php if (isset($__componentOriginal49acb4be531871427e6da8fc4bf301f11a96ee34)): ?>
+<?php $component = $__componentOriginal49acb4be531871427e6da8fc4bf301f11a96ee34; ?>
+<?php unset($__componentOriginal49acb4be531871427e6da8fc4bf301f11a96ee34); ?>
+<?php endif; ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?> 
 
     </div>
 </div>
 
-@endsection
-@section('js')
+<?php $__env->stopSection(); ?>
+<?php $__env->startSection('js'); ?>
 <script>
     function reinitalizeMonthYearInput(dateInput) {
         var currentDate = $(dateInput).val();
-        var startDate = "{{ isset($studyStartDate) && $studyStartDate ? $studyStartDate : -1 }}";
+        var startDate = "<?php echo e(isset($studyStartDate) && $studyStartDate ? $studyStartDate : -1); ?>";
         startDate = startDate == '-1' ? '' : startDate;
-        var endDate = "{{ isset($studyEndDate) && $studyEndDate? $studyEndDate : -1 }}";
+        var endDate = "<?php echo e(isset($studyEndDate) && $studyEndDate? $studyEndDate : -1); ?>";
         endDate = endDate == '-1' ? '' : endDate;
 
         $(dateInput).datepicker({
@@ -627,20 +474,20 @@ use App\Models\MoneyReceived ;
 
 </script>
 <!--begin::Page Scripts(used by this page) -->
-<script src="{{ url('assets/vendors/general/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}" type="text/javascript"></script>
-<script src="{{ url('assets/vendors/custom/js/vendors/bootstrap-datepicker.init.js') }}" type="text/javascript">
+<script src="<?php echo e(url('assets/vendors/general/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js')); ?>" type="text/javascript"></script>
+<script src="<?php echo e(url('assets/vendors/custom/js/vendors/bootstrap-datepicker.init.js')); ?>" type="text/javascript">
 </script>
-<script src="{{ url('assets/js/demo1/pages/crud/forms/widgets/bootstrap-datepicker.js') }}" type="text/javascript">
+<script src="<?php echo e(url('assets/js/demo1/pages/crud/forms/widgets/bootstrap-datepicker.js')); ?>" type="text/javascript">
 </script>
-<script src="{{ url('assets/vendors/general/bootstrap-select/dist/js/bootstrap-select.js') }}" type="text/javascript">
+<script src="<?php echo e(url('assets/vendors/general/bootstrap-select/dist/js/bootstrap-select.js')); ?>" type="text/javascript">
 </script>
-<script src="{{ url('assets/js/demo1/pages/crud/forms/widgets/bootstrap-select.js') }}" type="text/javascript">
+<script src="<?php echo e(url('assets/js/demo1/pages/crud/forms/widgets/bootstrap-select.js')); ?>" type="text/javascript">
 </script>
-<script src="{{ url('assets/vendors/general/jquery.repeater/src/lib.js') }}" type="text/javascript"></script>
-<script src="{{ url('assets/vendors/general/jquery.repeater/src/jquery.input.js') }}" type="text/javascript">
+<script src="<?php echo e(url('assets/vendors/general/jquery.repeater/src/lib.js')); ?>" type="text/javascript"></script>
+<script src="<?php echo e(url('assets/vendors/general/jquery.repeater/src/jquery.input.js')); ?>" type="text/javascript">
 </script>
-<script src="{{ url('assets/vendors/general/jquery.repeater/src/repeater.js') }}" type="text/javascript"></script>
-<script src="{{ url('assets/js/demo1/pages/crud/forms/widgets/form-repeater.js') }}" type="text/javascript"></script>
+<script src="<?php echo e(url('assets/vendors/general/jquery.repeater/src/repeater.js')); ?>" type="text/javascript"></script>
+<script src="<?php echo e(url('assets/js/demo1/pages/crud/forms/widgets/form-repeater.js')); ?>" type="text/javascript"></script>
 <script>
 
 </script>
@@ -792,7 +639,7 @@ use App\Models\MoneyReceived ;
     })
     $(document).on('click', '.js-add-new-customer-if-not-exist', function(e) {
         const customerName = $('#new_customer_name').val()
-        const url = "{{ route('add.new.partner',['company'=>$company->id,'type'=>$type]) }}"
+        const url = "<?php echo e(route('add.new.partner',['company'=>$company->id,'type'=>$type])); ?>"
         if (customerName) {
             $.ajax({
                 url
@@ -830,10 +677,10 @@ use App\Models\MoneyReceived ;
         const parent = $(this).closest('tr')
         const partnerId = parseInt($(this).val())
         const model = $('#model_type').val()
-        let inEditMode = "{{ $inEditMode ?? 0 }}";
+        let inEditMode = "<?php echo e($inEditMode ?? 0); ?>";
 
         $.ajax({
-            url: "{{ route('get.contracts.for.customer.or.supplier',['company'=>$company->id]) }}"
+            url: "<?php echo e(route('get.contracts.for.customer.or.supplier',['company'=>$company->id])); ?>"
             , data: {
                 partnerId
                 , model
@@ -864,7 +711,7 @@ use App\Models\MoneyReceived ;
 		const modelType = $('#model_type').val()
 		if(partnerId && startDate ){
 			$.ajax({
-				url:"{{ route('generate.unique.rondom.contract.code',['company'=>$company->id,'type'=>$type]) }}",
+				url:"<?php echo e(route('generate.unique.rondom.contract.code',['company'=>$company->id,'type'=>$type])); ?>",
 				data:{
 					partnerId,
 					startDate
@@ -975,9 +822,11 @@ $(document).on('change','.recheck-end-date-rule-js',function(){
 
 $('.recheck-start-date-rule-js').trigger('change')
 </script>
-@if(!isset($model))
+<?php if(!isset($model)): ?>
 <script>
 	$('.regenerate-code-ajax:eq(0)').trigger('change')
 </script>
-@endif 
-@endsection
+<?php endif; ?> 
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.dashboard', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /media/salah/Software/projects/veroo/resources/views/contracts/form.blade.php ENDPATH**/ ?>

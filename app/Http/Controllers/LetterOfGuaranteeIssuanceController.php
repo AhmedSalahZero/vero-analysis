@@ -99,19 +99,23 @@ class LetterOfGuaranteeIssuanceController
 	public function commonViewVars(Company $company,string $source):array
 	{
 		$cdOrTdAccountTypes = [];
+
 		$financialInstitutionBanks = FinancialInstitution::with('letterOfGuaranteeFacilities')->onlyForCompany($company->id)->onlyBanks()->onlyForSource($source)->onlyHasLgFacility()->get();
+	
+		// $financialInstitutionBanks = FinancialInstitution::with('letterOfGuaranteeFacilities')->onlyForCompany($company->id)->onlyBanks()->onlyForSource($source)->onlyHasLgFacility()->get();
 		if($source == LetterOfGuaranteeIssuance::AGAINST_CD){
 			$cdOrTdAccountTypes = AccountType::onlyCdAccounts()->get();
 		}
 		elseif($source == LetterOfGuaranteeIssuance::AGAINST_TD){
 			$cdOrTdAccountTypes = AccountType::onlyTdAccounts()->get();
 		}
+		
+		
 		if($source == LetterOfGuaranteeIssuance::HUNDRED_PERCENTAGE_CASH_COVER){
 			$financialInstitutionBanks = FinancialInstitution::with('letterOfGuaranteeFacilities')->onlyForCompany($company->id)->onlyBanks()->onlyForSource($source)->get();
 		}
 		
 		
-
 		return [
 			'financialInstitutionBanks'=>$financialInstitutionBanks  ,
 			'beneficiaries'=>[],
@@ -129,10 +133,11 @@ class LetterOfGuaranteeIssuanceController
 
 	{
 		$formName = $source.'-form';
-	
-        return view('reports.LetterOfGuaranteeIssuance.'.$formName,array_merge(
-			$this->commonViewVars($company,$source) ,[]
-		));
+		$commonVars = $this->commonViewVars($company,$source) ;
+		if(!count($commonVars['financialInstitutionBanks'])){
+			return redirect()->back()->with('fail',__('Please Create / Renew Existing LG Contracts'));
+		}
+        return view('reports.LetterOfGuaranteeIssuance.'.$formName,$this->commonViewVars($company,$source));
     }
 	public function getCommonDataArr():array
 	{
@@ -214,12 +219,16 @@ class LetterOfGuaranteeIssuanceController
 
 	public function edit(Company $company , Request $request , LetterOfGuaranteeIssuance $letterOfGuaranteeIssuance,string $source){
 		$formName = $source.'-form';
-        return view('reports.LetterOfGuaranteeIssuance.'.$formName,array_merge(
+		$commonVars = array_merge(
 			$this->commonViewVars($company,$source) ,
 			[
 				'model'=>$letterOfGuaranteeIssuance
 			]
-		));
+		) ;
+		if(!count($commonVars['financialInstitutionBanks'])){
+			return redirect()->back()->with('fail',__('Please Create / Renew Existing LG Contracts'));
+		}
+        return view('reports.LetterOfGuaranteeIssuance.'.$formName,$commonVars);
 
 	}
 

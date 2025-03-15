@@ -1038,8 +1038,8 @@ use App\Models\MoneyReceived;
         let form = document.getElementById('ajax-send-cheques-to-collection-id' + moneyType);
         let formData = new FormData(form);
         formData.append('cheques', checkedItems);
-        $('button').prop('disabled', true)
-        $.ajax({
+      //  $('button').prop('disabled', true)
+         $.ajax({
             cache: false
             , contentType: false
             , processData: false
@@ -1047,14 +1047,38 @@ use App\Models\MoneyReceived;
             , data: formData
             , type: "post"
         }).then(function(res) {
-            Swal.fire({
+			
+			if(res.status === false){
+				 Swal.fire({
+                text: res.msg
+                , icon: 'error'
+                , timer: 2000
+            }).then(function() {
+              window.location.href = res.pageLink;
+            });
+			}
+           else{
+			 Swal.fire({
                 text: 'Done'
                 , icon: 'success'
                 , timer: 2000
             }).then(function() {
-                window.location.href = res.pageLink;
+              window.location.href = res.pageLink;
             });
-        })
+		   }
+        }).catch(res=>{
+			title ="<?php echo e(__('Error !')); ?>";
+			message = "<?php echo e(__('Something went Wrong')); ?>";
+			if (res.responseJSON && res.responseJSON.errors) {
+                            message = res.responseJSON.errors[Object.keys(res.responseJSON.errors)[0]][0]
+            }
+			 Swal.fire({
+                            icon: 'error'
+                            , title: title
+                            , text: message
+
+                        })
+		})
     });
 
 </script>

@@ -89,11 +89,12 @@ $(document).on('change', '.ajax-get-purchases-orders-for-contract', function () 
 	downPaymentId = isNaN(downPaymentId) ? 0 : downPaymentId ;
 	let contractId = $('#contract-id').val()
 	contractId = contractId ? contractId : $(this).closest('[data-repeater-item]').find('select.supplier-name-js').val()
+	console.log(contractId);
 	let currency = $('.current-currency').val()
 	currency = currency ? currency : $(this).closest('[data-repeater-item]').find('select.current-currency').val()
 	const companyId = $('body').attr('data-current-company-id')
 	const lang = $('body').attr('data-lang')
-	if(isNaN(contractId)){
+	if(!contractId){
 		$('.js-append-down-payment-to').empty().hide()
 		return ;
 	}else{

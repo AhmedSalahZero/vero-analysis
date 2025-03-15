@@ -95,7 +95,6 @@ $(document).on('change', '.ajax-get-sales-orders-for-contract', function () {
 
 	if(!contractId){
 		$('.js-append-down-payment-to').empty().hide()
-
 		return ;
 	}else{
 		$('.js-append-down-payment-to').show()
@@ -385,7 +384,6 @@ $(document).on('change', '.js-update-account-id-based-on-account-type', function
 	let financialInstitutionBankId = parent.find('[data-financial-institution-id]').val()
 	financialInstitutionBankId = typeof financialInstitutionBankId !== 'undefined' ? financialInstitutionBankId : $('[data-financial-institution-id]').val()
 	financialInstitutionBankId = typeof financialInstitutionBankId !== 'undefined' ? financialInstitutionBankId : $(this).closest('.closest-parent').find('input[name="financial_institution_id"]').val()
-	console.log(val,currency,financialInstitutionBankId)
 	if (!val || !currency || !financialInstitutionBankId) {
 		return
 	}

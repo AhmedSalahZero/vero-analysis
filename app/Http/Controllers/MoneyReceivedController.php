@@ -616,7 +616,6 @@ class MoneyReceivedController
 	}
 	public function sendToCollection(Company $company,SendToUnderCollectionChequeRequest $request)
 	{
-		
 		$moneyReceivedIds = $request->get('cheques') ;
 		$moneyReceivedIds = is_array($moneyReceivedIds) ? $moneyReceivedIds :  explode(',',$moneyReceivedIds);
 		$data = $request->only(['deposit_date','drawl_bank_id','account_type','account_number','account_balance','clearance_days']);

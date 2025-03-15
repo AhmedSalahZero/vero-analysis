@@ -14,7 +14,7 @@ class DateMustBeGreaterThanOrEqualDate implements Rule
      */
 	public $largerOrEqualDate , $date ,$failedMessage ; 
 	public bool $isMultiValueRule = false ;
-    public function __construct(?string $largerOrEqualDate , string $date,string $failedMessage , $isMultiValueRule = false)
+    public function __construct(?string $largerOrEqualDate , ?string $date,string $failedMessage , $isMultiValueRule = false)
     {
         $this->largerOrEqualDate = $largerOrEqualDate;
         $this->date = $date;
@@ -35,6 +35,9 @@ class DateMustBeGreaterThanOrEqualDate implements Rule
 		
 		if($this->isMultiValueRule || is_null($this->largerOrEqualDate)){
 			$this->largerOrEqualDate = $value;
+		}
+		if(is_null($this->date)){
+			return false ;
 		}
 		$boolean = Carbon::make($this->largerOrEqualDate)->greaterThanOrEqualTo(Carbon::make($this->date));
 		

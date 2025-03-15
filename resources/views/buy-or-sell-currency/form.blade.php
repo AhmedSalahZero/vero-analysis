@@ -170,12 +170,10 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
                                                     @include('star')
                                                 </label>
                                                 <div class="kt-input-icon">
-                                                    <input type="text" value="{{ isset($model) ? $model->getAmountToSell():0 }}" name="currency_to_sell_amount" class="form-control recalculate-amount-in-main-currency amount-js greater-than-or-equal-zero-allowed " placeholder="{{__('Insert Amount')}}">
+                                                    <input type="text" value="{{ isset($model) ? number_format($model->getAmountToSell()):0 }}" class="form-control " placeholder="{{__('Insert Amount')}}">
+                                                    <input type="hidden" value="{{ isset($model) ? $model->getAmountToSell():0 }}" name="currency_to_sell_amount" class="form-control recalculate-amount-in-main-currency amount-js greater-than-or-equal-zero-allowed " placeholder="{{__('Insert Amount')}}">
                                                 </div>
                                             </div>
-
-
-                                         
 
 
                                             <div class="col-md-3 ">

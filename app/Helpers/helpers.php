@@ -6361,7 +6361,6 @@ function getHeaderMenu($currentCompany = null)
 	$canViewCashFlow = $user->can('view cash flow report');
 	$canViewContractCashFlow = $user->can('view contract cash flow report');
 	$canViewWithdrawalsSettlementReport = $user->can('view withdrawals settlement report');
-	$notificationsSubItems = \App\Notification::formatForMenuItem($company);
 	$canViewNotificationSetting = $user->can('view notification settings');
 	$canViewCashExpenseCategories = $user->can('view cash expense categories');
 	$canViewCustomersSettings = $user->can('view customers');
@@ -6377,29 +6376,6 @@ function getHeaderMenu($currentCompany = null)
 	$canViewSalesPersonsSettings = $user->can('view sales persons');
 	$canViewBranchesSettings = $user->can('view branches');
 	$canViewGeneralSetting = $canViewCustomersSettings || $canViewSubsidiaryCompaniesSettings || $canViewOtherPartnersSettings || $canViewShareholdersSettings || $canViewDeductionsSettings || $canViewEmployeesSettings || $canViewSuppliersSettings || $canViewBusinessSectorSettings || $canViewBusinessUnitSettings || $canViewSalesChannelsSettings || $canViewSalesPersonsSettings ||$canViewBranchesSettings || $canViewCashExpenseCategories;
-	$notificationsSubItems[]	= [
-		'title'=>__('Notification Settings'),
-	'link'=>route('notifications-settings.index', ['company'=>$companyId]),
-	'show'=>$canViewNotificationSetting,
-	];
-
-	$canViewNotificationsSettingAndGeneralSetting = $canViewNotificationSetting || $canViewGeneralSetting;
-	
-	
-	
-	
-	$notificationsSubItems[]	= [
-		'title'=>__('Permissions'),
-		'link'=>route('roles.permissions.edit', ['company'=>$companyId]),
-		'show'=>$user->can('update permissions') && ! $user->isSuperAdmin(),
-	];
-	
-	$notificationsSubItems[]	= [
-		'title'=>__('Users'),
-		'link'=>route('user.index',['company'=>$companyId]),
-		'show'=>$user->can('view users') && ! $user->isSuperAdmin(),
-	];
-	
 	
 	$notificationsSubItems[] = [
 		'title'=>__('General Settings'),
@@ -6473,6 +6449,34 @@ function getHeaderMenu($currentCompany = null)
 			],
 		]
 	];
+	$notificationsSubItems2 = \App\Notification::formatForMenuItem($company);
+	$notificationsSubItems = array_merge($notificationsSubItems,$notificationsSubItems2);
+	
+	$notificationsSubItems[]	= [
+		'title'=>__('Notification Settings'),
+	'link'=>route('notifications-settings.index', ['company'=>$companyId]),
+	'show'=>$canViewNotificationSetting,
+	];
+
+	$canViewNotificationsSettingAndGeneralSetting = $canViewNotificationSetting || $canViewGeneralSetting;
+	
+	
+	
+	
+	$notificationsSubItems[]	= [
+		'title'=>__('Permissions'),
+		'link'=>route('roles.permissions.edit', ['company'=>$companyId]),
+		'show'=>$user->can('update permissions') && ! $user->isSuperAdmin(),
+	];
+	
+	$notificationsSubItems[]	= [
+		'title'=>__('Users'),
+		'link'=>route('user.index',['company'=>$companyId]),
+		'show'=>$user->can('view users') && ! $user->isSuperAdmin(),
+	];
+	
+	
+	
 	$canViewCashStatusDashboard = $user->can('view cash status dashboard');
 	$canViewCashForecastDashboard = $user->can('view cash Forecast dashboard');
 	$canViewLgAndLcDashboard = $user->can('view lg & lc dashboard');
@@ -6485,6 +6489,9 @@ function getHeaderMenu($currentCompany = null)
 	$canViewOpeningBalances =$canUpdateCashAndChequesOpeningBalances 
 	// || $canUpdateLgOpeningBalances || $canUpdateLcOpeningBalances 
 	;
+	$resortedNotificationsSubItems = [];
+	
+	// dd($notificationsSubItems);
 	$cashManagementSubItems = [
 
 		'home'=>generateMenuItem(__('Home'), $user->can('view home') && hasMiddleware('isCashManagement') , route('home'), []),

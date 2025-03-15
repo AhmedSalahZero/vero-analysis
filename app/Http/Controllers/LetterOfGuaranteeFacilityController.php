@@ -99,15 +99,15 @@ class LetterOfGuaranteeFacilityController
 		 */
 
 		$letterOfGuaranteeFacility = $financialInstitution->LetterOfGuaranteeFacilities()->create($data);
-		$currencyName = $letterOfGuaranteeFacility->getCurrency();
-		$source = LetterOfGuaranteeIssuance::LG_FACILITY;
+		// $currencyName = $letterOfGuaranteeFacility->getCurrency();
+		// $source = LetterOfGuaranteeIssuance::LG_FACILITY;
 		foreach($termAndConditions as $termAndConditionArr){
 			$termAndConditionArr['company_id'] = $company->id ;
 			$termAndConditionArr['outstanding_date'] = $request->get('outstanding_date');
-			$currentOutstandingBalance = $termAndConditionArr['outstanding_balance'] ;
-			$currentCashCover = $termAndConditionArr['cash_cover_rate'];
+			// $currentOutstandingBalance = $termAndConditionArr['outstanding_balance'] ;
+			// $currentCashCover = $termAndConditionArr['cash_cover_rate'];
 			
-			$currentLgType = $termAndConditionArr['lg_type'] ;
+			// $currentLgType = $termAndConditionArr['lg_type'] ;
 			// if($currentOutstandingBalance){
 				$letterOfGuaranteeFacility->termAndConditions()->create(array_merge($termAndConditionArr , [
 				]));

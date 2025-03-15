@@ -31,23 +31,37 @@ class SendToUnderCollectionChequeRequest extends FormRequest
 		$ids = is_array($moneyReceivedIds) ? $moneyReceivedIds :  explode(',',$moneyReceivedIds);
 		$firstMoneyReceived = MoneyReceived::whereIn('id',$ids)->orderByDesc('receiving_date')->first() ;
 		$greatestReceivingDate = $firstMoneyReceived->receiving_date;
-		// $financialInstitution = $firstMoneyReceived->getFinancialInstitution();
-		$financialInstitution  = FinancialInstitution::find(Request()->input('drawl_bank_id'));
-		$openingBalanceDate = $financialInstitution->getOpeningBalanceForAccount(Request()->get('account_type'),Request()->get('account_number'),);
+		$drawlBankId = Request()->input('drawl_bank_id') ;
+		$financialInstitution  = FinancialInstitution::find($drawlBankId);
+		$accountType  = Request()->get('account_type') ; 
+		$openingBalanceDate = null;
+		if($accountType){
+			$openingBalanceDate = $financialInstitution->getOpeningBalanceForAccount($accountType,Request()->get('account_number'),);
+		}
         return [
-            'deposit_date'=>['required'
+			'account_type'=>['bail','required'],
+			'drawl_bank_id'=>['bail','sometimes','required','exists:financial_institutions,id'],
+            'deposit_date'=>['bail','required'
 			,new DateMustBeLessThanOrEqualDate(null,now(),__('Dates Must Be Less Than Or Equal To Today'))
 			, new DateMustBeGreaterThanOrEqualDate(null,$greatestReceivingDate , __('Deposit Date Must Be Greater Than Or Equal Receiving Date'))
 			, new DateMustBeGreaterThanOrEqualDate(null,$openingBalanceDate , __('Deposit Date Must Be Greater Than Or Equal Account Opening Balance Date'))
 			
 		],
-			'account_type'=>['required'],
+	
         ];
+    }
+	public function withValidator($validator)
+    {
+        $validator->sometimes(['drawl_bank_id', 'deposit_date'], 'required', function ($input) {
+            return !is_null($input->account_type) && $input->account_type !== '';
+        });
     }
 	public function messages()
 	{
 	
 		return [
+			'drawl_bank_id.required'=>__('Please Select Drawl Bank'),
+			'drawl_bank_id.exists'=>__('This Bank Not Exist'),
 			'deposit_date.required'=>__('Please Select :attribute',['attribute'=>__('Deposit Date - Max Date Of Today')]),
 			'account_type.required'=>__('Please Select :attribute',['attribute'=>__('Account Type')]),
 			// ''=>

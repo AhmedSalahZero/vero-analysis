@@ -47,11 +47,13 @@ $selectedBanks = [];
         width: 8% !important;
         flex: initial !important;
     }
-.width-9-5 {
+
+    .width-9-5 {
         max-width: initial !important;
         width: 9% !important;
         flex: initial !important;
     }
+
     .width-10 {
         max-width: initial !important;
         width: 10% !important;
@@ -64,8 +66,8 @@ $selectedBanks = [];
         flex: initial !important;
     }
 
-    
-	 .width-40 {
+
+    .width-40 {
         max-width: initial !important;
         width: 40% !important;
         flex: initial !important;
@@ -90,72 +92,72 @@ $selectedBanks = [];
 <div class="row">
     <div class="col-md-12">
         <!--begin::Portlet-->
-       
-<form method="post" action="{{ isset($model) ?  route('update.money.payment',['company'=>$company->id,'moneyPayment'=>$model->id]) :route('store.money.payment',['company'=>$company->id]) }}" class="kt-form kt-form--label-right">
-    <input id="js-in-edit-mode" type="hidden" name="in_edit_mode" value="{{ isset($model) ? 1 : 0 }}">
-    <input id="js-money-payment-id" type="hidden" name="money_payment_id" value="{{ isset($model) ? $model->id : 0 }}">
-	<input type="hidden" name="current_cheque_id" value="{{ isset($model) && $model->payableCheque ? $model->payableCheque->id : 0 }}">
-	<input type="hidden" name="cash_id" value="{{ isset($model) && $model->cashPayment ? $model->cashPayment->id : 0 }}">
-	{{-- <input type="hidden" id="js-down-payment-id" value="{{ isset($model) && $model->downPayment ? $model->downPayment->id : 0  }}"> --}}
-    <input type="hidden" id="ajax-invoice-item" data-single-model="{{ $singleModel ? 1 : 0 }}" value="{{ $singleModel ? $singleModel : 0 }}">
+
+        <form method="post" action="{{ isset($model) ?  route('update.money.payment',['company'=>$company->id,'moneyPayment'=>$model->id]) :route('store.money.payment',['company'=>$company->id]) }}" class="kt-form kt-form--label-right">
+            <input id="js-in-edit-mode" type="hidden" name="in_edit_mode" value="{{ isset($model) ? 1 : 0 }}">
+            <input id="js-money-payment-id" type="hidden" name="money_payment_id" value="{{ isset($model) ? $model->id : 0 }}">
+            <input type="hidden" name="current_cheque_id" value="{{ isset($model) && $model->payableCheque ? $model->payableCheque->id : 0 }}">
+            <input type="hidden" name="cash_id" value="{{ isset($model) && $model->cashPayment ? $model->cashPayment->id : 0 }}">
+            {{-- <input type="hidden" id="js-down-payment-id" value="{{ isset($model) && $model->downPayment ? $model->downPayment->id : 0  }}"> --}}
+            <input type="hidden" id="ajax-invoice-item" data-single-model="{{ $singleModel ? 1 : 0 }}" value="{{ $singleModel ? $singleModel : 0 }}">
             <input id="js-down-payment-id" type="hidden" name="down_payment_id" value="{{ isset($model) ? $model->id : 0 }}">
-	
-    @csrf
-    @if(isset($model))
-    @method('put')
-    @endif
-	
-    <div class="kt-portlet">
-        <div class="kt-portlet__head">
-            <div class="kt-portlet__head-label">
-                <h3 class="kt-portlet__head-title head-title text-primary">
-                    {{__('Supplier Payment')}}
-                </h3>
-            </div>
-        </div>
-        <div class="kt-portlet__body">
-            <div class="form-group row">
-                <div class="col-md-2">
-                    <label>{{__('Payment Date')}}</label>
-                    <div class="kt-input-icon">
-                        <div class="input-group date">
-                            <input type="text" name="delivery_date" value="{{ isset($model) ? formatDateForDatePicker($model->getDeliveryDate()) : formatDateForDatePicker(now()->format('Y-m-d')) }}" class="form-control exchange-rate-date update-exchange-rate is-date-css" readonly placeholder="Select date" id="kt_datepicker_max_date_is_today" />
-                            <div class="input-group-append">
-                                <span class="input-group-text">
-                                    <i class="la la-calendar-check-o"></i>
-                                </span>
-                            </div>
-                        </div>
+
+            @csrf
+            @if(isset($model))
+            @method('put')
+            @endif
+
+            <div class="kt-portlet">
+                <div class="kt-portlet__head">
+                    <div class="kt-portlet__head-label">
+                        <h3 class="kt-portlet__head-title head-title text-primary">
+                            {{__('Supplier Payment')}}
+                        </h3>
                     </div>
                 </div>
+                <div class="kt-portlet__body">
+                    <div class="form-group row">
+                        <div class="col-md-2">
+                            <label>{{__('Payment Date')}}</label>
+                            <div class="kt-input-icon">
+                                <div class="input-group date">
+                                    <input type="text" name="delivery_date" value="{{ isset($model) ? formatDateForDatePicker($model->getDeliveryDate()) : formatDateForDatePicker(now()->format('Y-m-d')) }}" class="form-control exchange-rate-date update-exchange-rate is-date-css" readonly placeholder="Select date" id="kt_datepicker_max_date_is_today" />
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">
+                                            <i class="la la-calendar-check-o"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
 
- <div class="col-md-2">
+                        <div class="col-md-2">
                             <label>{{__('Partner Type')}} @include('star')</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
                                     <select required name="partner_type" id="partner_type" class="form-control">
-										@foreach( getAllPartnerTypesForSuppliers() as $type => $title)
-                                 	       <option  @if(isset($model) && $model->getPartnerType()==$type ) selected @endif value="{{ $type }}">{{$title}}</option>
-										@endforeach 
+                                        @foreach( getAllPartnerTypesForSuppliers() as $type => $title)
+                                        <option @if(isset($model) && $model->getPartnerType()==$type ) selected @endif value="{{ $type }}">{{$title}}</option>
+                                        @endforeach
                                     </select>
                                 </div>
                             </div>
-                            </div>
-							
-                @php
-                $currentPaymentCurrency = null ;
-                @endphp
+                        </div>
 
-                <div class="col-md-1" id="invoice-currency-div-id">
-                    <label class="text-nowrap">{{__('Invoice Currency')}} @include('star')</label>
-@php
-	$selectedFound = false ;
-@endphp
+                        @php
+                        $currentPaymentCurrency = null ;
+                        @endphp
 
-                    <div class="kt-input-icon">
-                        <div class="input-group date">
-                            <select id="invoice-currency-id" name="currency" class="form-control
+                        <div class="col-md-1" id="invoice-currency-div-id">
+                            <label class="text-nowrap">{{__('Invoice Currency')}} @include('star')</label>
+                            @php
+                            $selectedFound = false ;
+                            @endphp
+
+                            <div class="kt-input-icon">
+                                <div class="input-group date">
+                                    <select id="invoice-currency-id" name="currency" class="form-control
 							 
 							currency-class
 							 
@@ -164,340 +166,339 @@ $selectedBanks = [];
 							@endif
 							 update-exchange-rate 
 							 current-invoice-currency  ajax-get-invoice-numbers {{ $selectedCurrency }}">
-                                {{-- <option value="" selected>{{__('Select')}}</option> --}}
-                                @foreach(isset($currencies) ? $currencies : getBanksCurrencies () as $currencyId=>$currentName)
-                                @php
-								$selected = $selectedCurrency == $currentName ;
-								
-								if($selected){
-									$selectedFound = true ;
-								}
-							
-								if(!$selected && !$selectedFound){
-	                                $selected =   isset($model) ? $model->getCurrency() == $currencyId : $currentName == $company->getMainFunctionalCurrency();
-									if($selected){
-										$selectedFound = true ;
-										
-									}
-								}
-                                $selected = $selected ? 'selected':'';
-                                if(($selected || (isset($singleModel) && $singleModel)) && !isset($model)){
-                               	 $currentPaymentCurrency = $currencyId ;
-                                }
-                                @endphp
-                                <option {{ $selected }} value="{{ $currencyId }}">{{ touppercase($currentName) }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                </div>
+                                        {{-- <option value="" selected>{{__('Select')}}</option> --}}
+                                        @foreach(isset($currencies) ? $currencies : getBanksCurrencies () as $currencyId=>$currentName)
+                                        @php
+                                        $selected = $selectedCurrency == $currentName ;
 
-                <div class="col-md-3">
+                                        if($selected){
+                                        $selectedFound = true ;
+                                        }
 
-                    <label>{{__('Name')}} @include('star')</label>
-                    <div class="kt-input-icon">
-                        <div class="kt-input-icon">
-                            <div class="input-group date">
-                                <select data-current-selected="{{ isset($model) ? $model->getSupplierName() : '' }}" data-live-search="true" data-actions-box="true" id="supplier_name" name="supplier_id" class="form-control select2-select ajax-get-invoice-numbers ajax-update-contracts supplier-select supplier-js">
-                                  {{-- <option value="" selected>{{__('Select')}}</option> --}}
-                                    @foreach($suppliers as $supplierId => $supplierName)
-                                    <option @if($singleModel) selected @endif @if(isset($model) && $model->getSupplierName() == $supplierName ) selected @endif value="{{ $supplierId }}">{{$supplierName}}</option>
-                                    @endforeach
-                                </select>
+                                        if(!$selected && !$selectedFound){
+                                        $selected = isset($model) ? $model->getCurrency() == $currencyId : $currentName == $company->getMainFunctionalCurrency();
+                                        if($selected){
+                                        $selectedFound = true ;
+
+                                        }
+                                        }
+                                        $selected = $selected ? 'selected':'';
+                                        if(($selected || (isset($singleModel) && $singleModel)) && !isset($model)){
+                                        $currentPaymentCurrency = $currencyId ;
+                                        }
+                                        @endphp
+                                        <option {{ $selected }} value="{{ $currencyId }}">{{ touppercase($currentName) }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                </div>
-				@php
-					$selectedFound = false ;
-				@endphp
-                <div class="col-md-2">
-                    <label class="text-nowrap">{{__('Payment Currency')}} @include('star')</label>
-                    <div class="kt-input-icon">
-                        <div class="input-group date">
-                            <select id="receiving-currency-id" when-change-trigger-account-type-change name="payment_currency" class="form-control
+                        <div class="col-md-3">
+
+                            <label>{{__('Name')}} @include('star')</label>
+                            <div class="kt-input-icon">
+                                <div class="kt-input-icon">
+                                    <div class="input-group date">
+                                        <select data-current-selected="{{ isset($model) ? $model->getSupplierName() : '' }}" data-live-search="true" data-actions-box="true" id="supplier_name" name="supplier_id" class="form-control select2-select ajax-get-invoice-numbers ajax-update-contracts supplier-select supplier-js">
+                                            {{-- <option value="" selected>{{__('Select')}}</option> --}}
+                                            @foreach($suppliers as $supplierId => $supplierName)
+                                            <option @if($singleModel) selected @endif @if(isset($model) && $model->getSupplierName() == $supplierName ) selected @endif value="{{ $supplierId }}">{{$supplierName}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        @php
+                        $selectedFound = false ;
+                        @endphp
+                        <div class="col-md-2">
+                            <label class="text-nowrap">{{__('Payment Currency')}} @include('star')</label>
+                            <div class="kt-input-icon">
+                                <div class="input-group date">
+                                    <select id="receiving-currency-id" when-change-trigger-account-type-change name="payment_currency" class="form-control
 							contract-currency
 							ajax-update-contracts
 							currency-class
 							receiving-currency-class
 							update-exchange-rate
 							 current-currency">
-							
-                                {{-- <option value="" selected>{{__('Select')}}</option> --}}
-                                @foreach(getCurrencies() as $currencyId=>$currentName)
-                                @php
-                                $selected = isset($model) ? $model->getPaymentCurrency() == $currencyId : false;
-                                $selected = $selected ? 'selected':'';
-                                if((!$selected && $currentPaymentCurrency == $currencyId) && !$selectedFound){
-                                $selected = 'selected';
-								$selectedFound = true ;
-                                }
-								if(!$selected && !$selectedFound){
-								 $selected = isset($singleModel) && in_array($currentName,$currencies) ? 'selected':$selected;
-								 $selectedFound= true ;
-								}
-                                @endphp
-                                <option {{ $selected }} value="{{ $currencyId }}">{{ touppercase($currentName) }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                </div>
 
-
-                <div class="col-md-2">
-                    <label>{{__('Money Type')}} @include('star')</label>
-                    <div class="kt-input-icon">
-                        <div class="input-group date">
-                            <select required name="type" id="type" class="form-control">
-                                <option value="" selected>{{__('Select')}}</option>
-                                <option @if(isset($model) && $model->isCashPayment() ) selected @endif value="{{ MoneyPayment::CASH_PAYMENT }}">{{__('Cash Payment')}}</option>
-                                <option @if(isset($model) && $model->isPayableCheque() ) selected @endif value="{{ MoneyPayment::PAYABLE_CHEQUE }}">{{__('Payable Cheques')}}</option>
-                                <option @if(isset($model) && $model->isOutgoingTransfer()) selected @endif value="{{ MoneyPayment::OUTGOING_TRANSFER }}">{{__('Outgoing Transfer')}}</option>
-                            </select>
-                        </div>
-                    </div>
-
-
-
-                 
-
-
-
-
-                </div>
-
-
-
-
-            </div>
-        </div>
-    </div>
-
-    {{-- Cash In Safe Information--}}
-    <div class="kt-portlet js-section-parent hidden" id="{{ MoneyPayment::CASH_PAYMENT}}">
-        <div class="kt-portlet__head">
-            <div class="kt-portlet__head-label flex-1">
-                <h3 class="kt-portlet__head-title head-title text-primary">
-                    {{__('Cash Payment Information')}}
-                </h3>
-				
-				  <div class=" flex-1 d-flex justify-content-end pt-3">
-                    <div class="col-md-3 mb-3">
-                        <label>{{__('Balance')}} <span class="balance-date-js"></span> </label>
-                        <div class="kt-input-icon">
-                            <input value="0" type="text" disabled class="form-control cash-balance-js" data-type="{{  MoneyPayment::PAYABLE_CHEQUE }}" placeholder="{{__('Account Balance')}}">
-                        </div>
-                    </div>
-                   
-                </div>
-				
-            </div>
-        </div>
-        <div class="kt-portlet__body">
-            <div class="form-group">
-                <div class="row">
-                    <div class="col-md-5 width-40 ">
-                        <label>{{__('Paying Branch')}} @include('star')</label>
-                        <div class="kt-input-icon">
-                            <div class="input-group date">
-                                <select id="branch-id" name="delivery_branch_id" class="form-control">
-                                    {{-- <option value="-1">{{__('Select Branch')}}</option> --}}
-                                    @foreach($selectedBranches as $branchId=>$branchName)
-                                    <option value="{{ $branchId }}" {{ isset($model) && $model->getCashPaymentBranchId() == $branchId ? 'selected' : '' }}>{{ $branchName }}</option>
-                                    @endforeach
-                                </select>
-                                {{-- <button id="js-delivery-branch" class="btn btn-sm btn-primary">{{ __('Add New Branch') }}</button> --}}
+                                        {{-- <option value="" selected>{{__('Select')}}</option> --}}
+                                        @foreach(getCurrencies() as $currencyId=>$currentName)
+                                        @php
+                                        $selected = isset($model) ? $model->getPaymentCurrency() == $currencyId : false;
+                                        $selected = $selected ? 'selected':'';
+                                        if((!$selected && $currentPaymentCurrency == $currencyId) && !$selectedFound){
+                                        $selected = 'selected';
+                                        $selectedFound = true ;
+                                        }
+                                        if(!$selected && !$selectedFound){
+                                        $selected = isset($singleModel) && in_array($currentName,$currencies) ? 'selected':$selected;
+                                        $selectedFound= true ;
+                                        }
+                                        @endphp
+                                        <option {{ $selected }} value="{{ $currencyId }}">{{ touppercase($currentName) }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-md-2 closest-parent">
-                        <label>{{__('Paid Amount')}} <span class="currency-span"></span> @include('star')</label>
-                        <div class="kt-input-icon">
-                            <input data-current-value="{{ isset($model) ? $model->getPaidAmount():0 }}" data-max-cheque-value="0" type="text" value="{{ isset($model) ? $model->getPaidAmount() :0 }}" name="paid_amount[{{ MoneyPayment::CASH_PAYMENT}}]" class="form-control only-greater-than-or-equal-zero-allowed  {{ 'js-'. MoneyPayment::CASH_PAYMENT.'-paid-amount' }}  main-amount-class recalculate-amount-class" data-type="{{ MoneyPayment::CASH_PAYMENT }}" placeholder="{{__('Paid Amount')}}">
-                            <x-tool-tip title="{{__('Kash Vero')}}" />
-                        </div>
-                    </div>
-                    <div class="col-md-3 width-12">
-                        <label>{{__('Receipt Number')}} @include('star')</label>
-                        <div class="kt-input-icon">
-                            <input type="text" name="receipt_number" value="{{ isset($model) ?  $model->getCashPaymentReceiptNumber()  : '' }}" class="form-control" placeholder="{{__('Receipt Number')}}">
-                            <x-tool-tip title="{{__('Kash Vero')}}" />
-                        </div>
-                    </div>
-                    <div class="col-md-2 width-12 show-only-when-invoice-currency-not-equal-receiving-currency">
-                        <label>{{__('Exchange Rate')}} @include('star')</label>
-                        <div class="kt-input-icon">
-                            <input data-current-value="{{ isset($model) ? $model->getExchangeRate() : 1 }}" value="{{ isset($model) ? $model->getExchangeRate() : 1}}" placeholder="{{ __('Exchange Rate') }}" type="text" name="exchange_rate[{{ MoneyPayment::CASH_PAYMENT }}]" class="form-control only-greater-than-or-equal-zero-allowed exchange-rate-class recalculate-amount-class" data-type="{{ MoneyPayment::CASH_PAYMENT }}">
-                        </div>
-                    </div>
 
-                    <div class="col-md-3 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden">
-                        <label>{{__('Amount In Invoice Currency')}} @include('star')</label>
-                        <div class="kt-input-icon">
-                            <input readonly value="{{ 0 }}" type="text" name="amount_in_invoice_currency[{{ MoneyPayment::CASH_PAYMENT }}]" class="form-control  amount-after-exchange-rate-class" data-type="{{ MoneyPayment::CASH_PAYMENT }}">
+
+                        <div class="col-md-2">
+                            <label>{{__('Money Type')}} @include('star')</label>
+                            <div class="kt-input-icon">
+                                <div class="input-group date">
+                                    <select required name="type" id="type" class="form-control">
+                                        <option value="" selected>{{__('Select')}}</option>
+                                        <option @if(isset($model) && $model->isCashPayment() ) selected @endif value="{{ MoneyPayment::CASH_PAYMENT }}">{{__('Cash Payment')}}</option>
+                                        <option @if(isset($model) && $model->isPayableCheque() ) selected @endif value="{{ MoneyPayment::PAYABLE_CHEQUE }}">{{__('Payable Cheques')}}</option>
+                                        <option @if(isset($model) && $model->isOutgoingTransfer()) selected @endif value="{{ MoneyPayment::OUTGOING_TRANSFER }}">{{__('Outgoing Transfer')}}</option>
+                                    </select>
+                                </div>
+                            </div>
+
+
+
+
+
+
+
+
                         </div>
+
+
+
+
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
 
+            {{-- Cash In Safe Information--}}
+            <div class="kt-portlet js-section-parent hidden" id="{{ MoneyPayment::CASH_PAYMENT}}">
+                <div class="kt-portlet__head">
+                    <div class="kt-portlet__head-label flex-1">
+                        <h3 class="kt-portlet__head-title head-title text-primary">
+                            {{__('Cash Payment Information')}}
+                        </h3>
+                        <div class=" flex-1 d-flex justify-content-end pt-3">
+                            <div class="col-md-3 mb-3">
+                                <label>{{__('Balance')}} <span class="balance-date-js"></span> </label>
+                                <div class="kt-input-icon">
+                                    <input value="0" type="text" disabled class="form-control cash-balance-js" data-type="{{  MoneyPayment::PAYABLE_CHEQUE }}" placeholder="{{__('Account Balance')}}">
+                                </div>
+                            </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    {{-- Cheques Information--}}
-    <div class="kt-portlet js-section-parent hidden" id="{{ MoneyPayment::PAYABLE_CHEQUE }}">
-        <div class="kt-portlet__head">
-            <div class="kt-portlet__head-label flex-1">
-                <h3 class="kt-portlet__head-title head-title text-primary">
-                    {{__('Payable Cheque Information')}}
-                </h3>
-                <div class=" flex-1 d-flex justify-content-end pt-3">
-                    <div class="col-md-3 mb-3">
-                        <label>{{__('Balance')}} <span class="balance-date-js"></span> </label>
-                        <div class="kt-input-icon">
-                            <input value="0" type="text" disabled class="form-control balance-js"  placeholder="{{__('Account Balance')}}">
                         </div>
-                    </div>
-                    <div class="col-md-3 mb-3">
-                        <label>{{__('Net Balance')}} <span class="net-balance-date-js"></span> </label>
-                        <div class="kt-input-icon">
-                            <input value="0" type="text" disabled class="form-control net-balance-js" placeholder="{{__('Net Balance')}}">
-                            {{-- <x-tool-tip title="{{__('Kash Vero')}}" /> --}}
-                        </div>
+
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <div class="kt-portlet__body">
-            <div class="form-group">
-                <div class="row">
-                    <div class="col-md-6  mb-3">
-                        <label> {!! __('Payment Bank') !!} @include('star')</label>
-                        <div class="kt-input-icon">
-                            <div class="input-group date">
-
-                                <select js-when-change-trigger-change-account-type data-financial-institution-id name="delivery_bank_id[{{ MoneyPayment::PAYABLE_CHEQUE  }}]" class="form-control financial-institution-id">
-                                    @foreach($financialInstitutionBanks as $index=>$financialInstitutionBank)
-                                    <option value="{{ $financialInstitutionBank->id }}" {{ isset($model) && $model->getPayableChequePaymentBankId() == $financialInstitutionBank->id ? 'selected' : '' }}>{{ $financialInstitutionBank->getName() }}</option>
-                                    @endforeach
-                                </select>
-                                {{-- <button id="js-delivery-bank" class="btn btn-sm btn-primary">{{ __('Add New Bank') }}</button> --}}
+                <div class="kt-portlet__body">
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-5 width-40 ">
+                                <label>{{__('Paying Branch')}} @include('star')</label>
+                                <div class="kt-input-icon">
+                                    <div class="input-group date">
+                                        <select id="branch-id" name="delivery_branch_id" class="form-control">
+                                            {{-- <option value="-1">{{__('Select Branch')}}</option> --}}
+                                            @foreach($selectedBranches as $branchId=>$branchName)
+                                            <option value="{{ $branchId }}" {{ isset($model) && $model->getCashPaymentBranchId() == $branchId ? 'selected' : '' }}>{{ $branchName }}</option>
+                                            @endforeach
+                                        </select>
+                                        {{-- <button id="js-delivery-branch" class="btn btn-sm btn-primary">{{ __('Add New Branch') }}</button> --}}
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-3">
-                        <label> {!! __('Account Type') !!} @include('star')</label>
-                        <div class="kt-input-icon">
-                            <div class="input-group date">
-                                <select name="account_type[{{ MoneyPayment::PAYABLE_CHEQUE }}]" class="form-control js-update-account-number-based-on-account-type">
-                                    <option value="" selected>{{__('Select')}}</option>
-                                    @foreach($accountTypes as $index => $accountType)
-                                    <option value="{{ $accountType->id }}" @if(isset($model) && $model->getPayableChequeAccountTypeId() == $accountType->id) selected @endif>{{ $accountType->getName() }}</option>
-                                    @endforeach
-                                </select>
+                            <div class="col-md-2 closest-parent">
+                                <label>{{__('Paid Amount')}} <span class="currency-span"></span> @include('star')</label>
+                                <div class="kt-input-icon">
+                                    <input data-current-value="{{ isset($model) ? $model->getPaidAmount():0 }}" data-max-cheque-value="0" type="text" value="{{ isset($model) ? $model->getPaidAmount() :0 }}" name="paid_amount[{{ MoneyPayment::CASH_PAYMENT}}]" class="form-control only-greater-than-or-equal-zero-allowed  {{ 'js-'. MoneyPayment::CASH_PAYMENT.'-paid-amount' }}  main-amount-class recalculate-amount-class" data-type="{{ MoneyPayment::CASH_PAYMENT }}" placeholder="{{__('Paid Amount')}}">
+                                    <x-tool-tip title="{{__('Kash Vero')}}" />
+                                </div>
                             </div>
-                        </div>
-                    </div>
-
-
-                    <div class="col-md-2 width-12">
-                        <label> {!! __('Account Number') !!} @include('star')</label>
-                        <div class="kt-input-icon">
-                            <div class="input-group date">
-                                <select data-current-selected="{{ isset($model) ? $model->getPayableChequeAccountNumber() : 0 }}" name="account_number[{{ MoneyPayment::PAYABLE_CHEQUE }}]" class="form-control js-account-number">
-                                    <option value="" selected>{{__('Select')}}</option>
-                                </select>
+                            <div class="col-md-3 width-12">
+                                <label>{{__('Receipt Number')}} @include('star')</label>
+                                <div class="kt-input-icon">
+                                    <input type="text" name="receipt_number" value="{{ isset($model) ?  $model->getCashPaymentReceiptNumber()  : '' }}" class="form-control" placeholder="{{__('Receipt Number')}}">
+                                    <x-tool-tip title="{{__('Kash Vero')}}" />
+                                </div>
                             </div>
-                        </div>
-                    </div>
+                            <div class="col-md-2 width-12 show-only-when-invoice-currency-not-equal-receiving-currency">
+                                <label>{{__('Exchange Rate')}} @include('star')</label>
+                                <div class="kt-input-icon">
+                                    <input data-current-value="{{ isset($model) ? $model->getExchangeRate() : 1 }}" value="{{ isset($model) ? $model->getExchangeRate() : 1}}" placeholder="{{ __('Exchange Rate') }}" type="text" name="exchange_rate[{{ MoneyPayment::CASH_PAYMENT }}]" class="form-control only-greater-than-or-equal-zero-allowed exchange-rate-class recalculate-amount-class" data-type="{{ MoneyPayment::CASH_PAYMENT }}">
+                                </div>
+                            </div>
 
-                    <div class="col-md-3 closest-parent">
-                        <label>{{__('Cheque Amount')}}  <span class="currency-span"></span>  @include('star')</label>
-                        <div class="kt-input-icon">
-                            <input data-max-cheque-value="0" value="{{ isset($model) ? $model->getPaidAmount() : 0 }}" placeholder="{{ __('Please insert the cheque amount') }}" type="text" name="paid_amount[{{ MoneyPayment::PAYABLE_CHEQUE }}]" class="form-control only-greater-than-or-equal-zero-allowed {{ 'js-'. MoneyPayment::PAYABLE_CHEQUE .'-paid-amount' }}  main-amount-class recalculate-amount-class" data-type="{{ MoneyPayment::PAYABLE_CHEQUE }}">
-                        </div>
-                    </div>
-
-
-
-                    <div class="col-md-3">
-                        <label>{{__('Due Date')}} @include('star')</label>
-                        <div class="kt-input-icon">
-                            <div class="input-group date">
-                                <input type="text" value="{{ isset($model) && $model->payableCheque ? formatDateForDatePicker($model->payableCheque->getDueDate()):formatDateForDatePicker(now()->format('Y-m-d')) }}" name="due_date" class="form-control is-date-css" readonly placeholder="Select date" id="kt_datepicker_2" />
-                                <div class="input-group-append">
-                                    <span class="input-group-text">
-                                        <i class="la la-calendar-check-o"></i>
-                                    </span>
+                            <div class="col-md-3 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden">
+                                <label>{{__('Amount In Invoice Currency')}} @include('star')</label>
+                                <div class="kt-input-icon">
+                                    <input readonly value="{{ 0 }}" type="text" name="amount_in_invoice_currency[{{ MoneyPayment::CASH_PAYMENT }}]" class="form-control  amount-after-exchange-rate-class" data-type="{{ MoneyPayment::CASH_PAYMENT }}">
                                 </div>
                             </div>
                         </div>
                     </div>
-
-
-                    <div class="col-md-3">
-                        <label>{{__('Cheque Number')}} @include('star')</label>
-                        <div class="kt-input-icon">
-                            <input type="text" name="cheque_number" value="{{ isset($model) && $model->payableCheque ? $model->payableCheque->getChequeNumber() : 0 }}" class="form-control" placeholder="{{__('Cheque Number')}}">
-                        </div>
-                    </div>
-
-                    <div class="col-md-2 width-12 show-only-when-invoice-currency-not-equal-receiving-currency">
-                        <label>{{__('Exchange Rate')}} @include('star')</label>
-                        <div class="kt-input-icon">
-                            <input data-current-value="{{ isset($model) ? $model->getExchangeRate() : 1 }}" value="{{ isset($model) ? $model->getExchangeRate() : 1}}" placeholder="{{ __('Exchange Rate') }}" type="text" name="exchange_rate[{{ MoneyPayment::PAYABLE_CHEQUE }}]" class="form-control only-greater-than-or-equal-zero-allowed exchange-rate-class recalculate-amount-class" data-type="{{ MoneyPayment::PAYABLE_CHEQUE }}">
-                        </div>
-                    </div>
-
-                    <div class="col-md-3 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden closest-parent">
-                        <label>{{__('Amount In Invoice Currency')}}  <span class="currency-span"></span>  @include('star')</label>
-                        <div class="kt-input-icon">
-                            <input readonly value="{{ 0 }}" type="text" name="amount_in_invoice_currency[{{ MoneyPayment::PAYABLE_CHEQUE }}]" class="form-control amount-after-exchange-rate-class" data-type="{{ MoneyPayment::PAYABLE_CHEQUE }}">
-                        </div>
-                    </div>
-
-
-
-                    {{-- <div class="col-md-4">
-                        <label>{{__('Select Currency')}} @include('star')</label>
-                    <div class="kt-input-icon">
-                        <div class="input-group date">
-                            <select name="currency" class="form-control">
-                                <option value="" selected>{{__('Select')}}</option>
-                                <option>EGP</option>
-                                <option>USD</option>
-                                <option>EURO</option>
-                                <option>GBP</option>
-                            </select>
-                        </div>
-                    </div>
-                </div> --}}
+                </div>
             </div>
-        </div>
 
-    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            {{-- Cheques Information--}}
+            <div class="kt-portlet js-section-parent hidden" id="{{ MoneyPayment::PAYABLE_CHEQUE }}">
+                <div class="kt-portlet__head">
+                    <div class="kt-portlet__head-label flex-1">
+                        <h3 class="kt-portlet__head-title head-title text-primary">
+                            {{__('Payable Cheque Information')}}
+                        </h3>
+                        <div class=" flex-1 d-flex justify-content-end pt-3">
+                            <div class="col-md-3 mb-3">
+                                <label>{{__('Balance')}} <span class="balance-date-js"></span> </label>
+                                <div class="kt-input-icon">
+                                    <input value="0" type="text" disabled class="form-control balance-js" placeholder="{{__('Account Balance')}}">
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label>{{__('Net Balance')}} <span class="net-balance-date-js"></span> </label>
+                                <div class="kt-input-icon">
+                                    <input value="0" type="text" disabled class="form-control net-balance-js" placeholder="{{__('Net Balance')}}">
+                                    {{-- <x-tool-tip title="{{__('Kash Vero')}}" /> --}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="kt-portlet__body">
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-6  mb-3">
+                                <label> {!! __('Payment Bank') !!} @include('star')</label>
+                                <div class="kt-input-icon">
+                                    <div class="input-group date">
+
+                                        <select js-when-change-trigger-change-account-type data-financial-institution-id name="delivery_bank_id[{{ MoneyPayment::PAYABLE_CHEQUE  }}]" class="form-control financial-institution-id">
+                                            @foreach($financialInstitutionBanks as $index=>$financialInstitutionBank)
+                                            <option value="{{ $financialInstitutionBank->id }}" {{ isset($model) && $model->getPayableChequePaymentBankId() == $financialInstitutionBank->id ? 'selected' : '' }}>{{ $financialInstitutionBank->getName() }}</option>
+                                            @endforeach
+                                        </select>
+                                        {{-- <button id="js-delivery-bank" class="btn btn-sm btn-primary">{{ __('Add New Bank') }}</button> --}}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label> {!! __('Account Type') !!} @include('star')</label>
+                                <div class="kt-input-icon">
+                                    <div class="input-group date">
+                                        <select name="account_type[{{ MoneyPayment::PAYABLE_CHEQUE }}]" class="form-control js-update-account-number-based-on-account-type">
+                                            <option value="" selected>{{__('Select')}}</option>
+                                            @foreach($accountTypes as $index => $accountType)
+                                            <option value="{{ $accountType->id }}" @if(isset($model) && $model->getPayableChequeAccountTypeId() == $accountType->id) selected @endif>{{ $accountType->getName() }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="col-md-2 width-12">
+                                <label> {!! __('Account Number') !!} @include('star')</label>
+                                <div class="kt-input-icon">
+                                    <div class="input-group date">
+                                        <select data-current-selected="{{ isset($model) ? $model->getPayableChequeAccountNumber() : 0 }}" name="account_number[{{ MoneyPayment::PAYABLE_CHEQUE }}]" class="form-control js-account-number">
+                                            <option value="" selected>{{__('Select')}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-3 closest-parent">
+                                <label>{{__('Cheque Amount')}} <span class="currency-span"></span> @include('star')</label>
+                                <div class="kt-input-icon">
+                                    <input data-max-cheque-value="0" value="{{ isset($model) ? $model->getPaidAmount() : 0 }}" placeholder="{{ __('Please insert the cheque amount') }}" type="text" name="paid_amount[{{ MoneyPayment::PAYABLE_CHEQUE }}]" class="form-control only-greater-than-or-equal-zero-allowed {{ 'js-'. MoneyPayment::PAYABLE_CHEQUE .'-paid-amount' }}  main-amount-class recalculate-amount-class" data-type="{{ MoneyPayment::PAYABLE_CHEQUE }}">
+                                </div>
+                            </div>
+
+
+
+                            <div class="col-md-3">
+                                <label>{{__('Due Date')}} @include('star')</label>
+                                <div class="kt-input-icon">
+                                    <div class="input-group date">
+                                        <input type="text" value="{{ isset($model) && $model->payableCheque ? formatDateForDatePicker($model->payableCheque->getDueDate()):formatDateForDatePicker(now()->format('Y-m-d')) }}" name="due_date" class="form-control is-date-css" readonly placeholder="Select date" id="kt_datepicker_2" />
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">
+                                                <i class="la la-calendar-check-o"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="col-md-3">
+                                <label>{{__('Cheque Number')}} @include('star')</label>
+                                <div class="kt-input-icon">
+                                    <input type="text" name="cheque_number" value="{{ isset($model) && $model->payableCheque ? $model->payableCheque->getChequeNumber() : 0 }}" class="form-control" placeholder="{{__('Cheque Number')}}">
+                                </div>
+                            </div>
+
+                            <div class="col-md-2 width-12 show-only-when-invoice-currency-not-equal-receiving-currency">
+                                <label>{{__('Exchange Rate')}} @include('star')</label>
+                                <div class="kt-input-icon">
+                                    <input data-current-value="{{ isset($model) ? $model->getExchangeRate() : 1 }}" value="{{ isset($model) ? $model->getExchangeRate() : 1}}" placeholder="{{ __('Exchange Rate') }}" type="text" name="exchange_rate[{{ MoneyPayment::PAYABLE_CHEQUE }}]" class="form-control only-greater-than-or-equal-zero-allowed exchange-rate-class recalculate-amount-class" data-type="{{ MoneyPayment::PAYABLE_CHEQUE }}">
+                                </div>
+                            </div>
+
+                            <div class="col-md-3 mt-4 show-only-when-invoice-currency-not-equal-receiving-currency hidden closest-parent">
+                                <label>{{__('Amount In Invoice Currency')}} <span class="currency-span"></span> @include('star')</label>
+                                <div class="kt-input-icon">
+                                    <input readonly value="{{ 0 }}" type="text" name="amount_in_invoice_currency[{{ MoneyPayment::PAYABLE_CHEQUE }}]" class="form-control amount-after-exchange-rate-class" data-type="{{ MoneyPayment::PAYABLE_CHEQUE }}">
+                                </div>
+                            </div>
+
+
+
+                            {{-- <div class="col-md-4">
+                        <label>{{__('Select Currency')}} @include('star')</label>
+                            <div class="kt-input-icon">
+                                <div class="input-group date">
+                                    <select name="currency" class="form-control">
+                                        <option value="" selected>{{__('Select')}}</option>
+                                        <option>EGP</option>
+                                        <option>USD</option>
+                                        <option>EURO</option>
+                                        <option>GBP</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div> --}}
+                    </div>
+                </div>
+
+            </div>
     </div>
 
     {{-- Outgoing Transfer Information--}}
@@ -518,7 +519,7 @@ $selectedBanks = [];
                     <div class="col-md-3 mb-3">
                         <label>{{__('Net Balance')}} <span class="net-balance-date-js"></span> </label>
                         <div class="kt-input-icon">
-                            <input value="0" type="text" disabled class="form-control net-balance-js"  placeholder="{{__('Net Balance')}}">
+                            <input value="0" type="text" disabled class="form-control net-balance-js" placeholder="{{__('Net Balance')}}">
                             {{-- <x-tool-tip title="{{__('Kash Vero')}}" /> --}}
                         </div>
                     </div>
@@ -544,7 +545,7 @@ $selectedBanks = [];
                             </div>
                         </div>
                     </div>
-                   
+
 
 
 
@@ -572,14 +573,14 @@ $selectedBanks = [];
                             </div>
                         </div>
                     </div>
-					
-					 <div class="col-md-2 max-w-15 closest-parent ">
-                        <label> {!! __('Outgoing <br> Transfer Amount') !!}  <span class="currency-span"></span>  @include('star')</label>
+
+                    <div class="col-md-2 max-w-15 closest-parent ">
+                        <label> {!! __('Outgoing <br> Transfer Amount') !!} <span class="currency-span"></span> @include('star')</label>
                         <div class="kt-input-icon">
-                            <input  data-current-value="{{ isset($model) ? $model->getPaidAmount():0 }}" data-max-cheque-value="0" type="text" value="{{ isset($model) ? $model->getPaidAmount():0 }}" name="paid_amount[{{ MoneyPayment::OUTGOING_TRANSFER }}]" class="form-control only-greater-than-or-equal-zero-allowed  {{ 'js-'. MoneyPayment::OUTGOING_TRANSFER .'-paid-amount' }}  main-amount-class recalculate-amount-class" data-type="{{ MoneyPayment::OUTGOING_TRANSFER }}" placeholder="{{__('Insert Amount')}}">
+                            <input data-current-value="{{ isset($model) ? $model->getPaidAmount():0 }}" data-max-cheque-value="0" type="text" value="{{ isset($model) ? $model->getPaidAmount():0 }}" name="paid_amount[{{ MoneyPayment::OUTGOING_TRANSFER }}]" class="form-control only-greater-than-or-equal-zero-allowed  {{ 'js-'. MoneyPayment::OUTGOING_TRANSFER .'-paid-amount' }}  main-amount-class recalculate-amount-class" data-type="{{ MoneyPayment::OUTGOING_TRANSFER }}" placeholder="{{__('Insert Amount')}}">
                         </div>
                     </div>
-					
+
 
 
                     <div class="col-md-3 mt-4  show-only-when-invoice-currency-not-equal-receiving-currency">
@@ -609,7 +610,7 @@ $selectedBanks = [];
 
 
     {{-- Settlement Information "Commen Card" --}}
-		@if(!isset($model) || isset($model) && $model->partner->getType() == 'is_supplier')
+    @if(!isset($model) || isset($model) && $model->partner->getType() == 'is_supplier')
     <div class="kt-portlet" id="settlement-card-id">
         <div class="kt-portlet__head">
             <div class="kt-portlet__head-label">
@@ -638,7 +639,7 @@ $selectedBanks = [];
                                 <div class="kt-input-icon">
                                     <div class="kt-input-icon">
                                         <div class="input-group date">
-											<input type="hidden" name="settlements[][invoice_id]" value="0" class="js-invoice-id">
+                                            <input type="hidden" name="settlements[][invoice_id]" value="0" class="js-invoice-id">
                                             <input readonly class="form-control js-invoice-number" data-invoice-id="0" name="settlements[][invoice_number]" value="0">
                                         </div>
                                     </div>
@@ -841,8 +842,8 @@ $selectedBanks = [];
             </div>
 
             <hr>
-			@include('reports.moneyPayments.unapplied-contract')
-			
+            @include('reports.moneyPayments.unapplied-contract')
+
             <div class="row">
                 <div class="col-md-1 width-10"></div>
                 <div class="col-md-1 width-8"></div>
@@ -851,31 +852,31 @@ $selectedBanks = [];
                 <div class="col-md-1 width-12"></div>
                 <div class="col-md-2 width-12"></div>
                 <div class="col-md-2 width-12"></div>
-                  <div class="col-md-2 width-12 closest-parent">
-                            <label class="label text-nowrap">{{ __('Unapplied Amount') }}
-								<span class="taking-currency-span"></span>
-							</label>
-                            <input readonly id="remaining-settlement-taking-js" class="form-control" placeholder="{{ __('Unapplied Amount') }}" type="text" value="0">
-                        </div>
+                <div class="col-md-2 width-12 closest-parent">
+                    <label class="label text-nowrap">{{ __('Unapplied Amount') }}
+                        <span class="taking-currency-span"></span>
+                    </label>
+                    <input readonly id="remaining-settlement-taking-js" class="form-control" placeholder="{{ __('Unapplied Amount') }}" type="text" value="0">
+                </div>
                 <div class="col-md-2 width-12 closest-parent">
                     <label class="label">{{ __('Unapplied Amount') }}
-					
-					<span class="invoice-currency-span"></span>
-					</label>
+
+                        <span class="invoice-currency-span"></span>
+                    </label>
                     <input readonly id="remaining-settlement-js" class="form-control" placeholder="{{ __('Unapplied Amount') }}" type="text" name="unapplied_amount" value="0">
                 </div>
             </div>
         </div>
     </div>
-	@endif
+    @endif
 
     {{-- <x-submitting /> --}}
     <x-submitting-by-ajax />
 
-</form>
-<!--end::Form-->
+    </form>
+    <!--end::Form-->
 
-<!--end::Portlet-->
+    <!--end::Portlet-->
 </div>
 </div>
 @endsection
@@ -897,11 +898,11 @@ $selectedBanks = [];
 <script src="{{ url('assets/js/demo1/pages/crud/forms/widgets/form-repeater.js') }}" type="text/javascript"></script>
 <script>
     $('#type').change(function() {
-		
-		const parent = $(this).closest('.js-section-parent');
+
+        const parent = $(this).closest('.js-section-parent');
         const branchId = parent.find('select#delivery_branch_id').val()
         type = $(this).val();
-		
+
         $('.js-section-parent').addClass('hidden');
         if (type) {
             $('#' + type).removeClass('hidden');
@@ -918,45 +919,44 @@ $selectedBanks = [];
 </script>
 
 <script>
-	$(document).on('change','select#branch-id,select#receiving-currency-id',function(){
-		const branchId = $('select#branch-id').val();
-		const currencyName = $('select#receiving-currency-id').val();
-		if(branchId != '-1'){
-			$.ajax({
-				url:"{{ route('get.current.end.balance.of.cash.in.safe.statement',['company'=>$company->id]) }}",
-				data:{
-					branchId,
-					currencyName
-				},
-				success:function(res){
-					const endBalance = res.end_balance ;
-					$('.cash-balance-js').val(number_format(endBalance))
-				}
-			})
-		}
-	})
-  
+    $(document).on('change', 'select#branch-id,select#receiving-currency-id', function() {
+        const branchId = $('select#branch-id').val();
+        const currencyName = $('select#receiving-currency-id').val();
+        if (branchId != '-1') {
+            $.ajax({
+                url: "{{ route('get.current.end.balance.of.cash.in.safe.statement',['company'=>$company->id]) }}"
+                , data: {
+                    branchId
+                    , currencyName
+                }
+                , success: function(res) {
+                    const endBalance = res.end_balance;
+                    $('.cash-balance-js').val(number_format(endBalance))
+                }
+            })
+        }
+    })
+
     $(function() {
         $('#type').trigger('change');
-    })
-;
-   
+    });
+
     $(document).on('change', 'select.currency-class', function() {
         const invoiceCurrency = $('select#invoice-currency-id').val();
         const receivingCurrency = $('select#receiving-currency-id').val();
         const moneyType = $('select#type').val();
-		
-		$('.main-amount-class').closest('.closest-parent').find('.currency-span').html(" [ " + receivingCurrency +" ]")
-		$('.amount-after-exchange-rate-class').closest('.closest-parent').find('.currency-span').html(" [ " + invoiceCurrency +" ]")
-		
-		
-		const partnerType = $('select#partner_type').val();
-		if(partnerType && partnerType != 'is_supplier'){
-			  $('.show-only-when-invoice-currency-not-equal-receiving-currency').addClass('hidden')
-			  return ;
-		}
-		
-		
+
+        $('.main-amount-class').closest('.closest-parent').find('.currency-span').html(" [ " + receivingCurrency + " ]")
+        $('.amount-after-exchange-rate-class').closest('.closest-parent').find('.currency-span').html(" [ " + invoiceCurrency + " ]")
+
+
+        const partnerType = $('select#partner_type').val();
+        if (partnerType && partnerType != 'is_supplier') {
+            $('.show-only-when-invoice-currency-not-equal-receiving-currency').addClass('hidden')
+            return;
+        }
+
+
         if (invoiceCurrency != receivingCurrency && invoiceCurrency && receivingCurrency) {
             $('.show-only-when-invoice-currency-not-equal-receiving-currency').removeClass('hidden')
 
@@ -965,13 +965,13 @@ $selectedBanks = [];
 
             $('.show-only-when-invoice-currency-not-equal-receiving-currency').addClass('hidden')
         }
-		
-			if(receivingCurrency != invoiceCurrency){
-		$('#remaining-settlement-taking-js').closest('.closest-parent').removeClass('visibility-hidden');	
-		$('#remaining-settlement-taking-js').closest('.closest-parent').find('.taking-currency-span').html('[ ' +  receivingCurrency +' ]')
-		}else{
-		$('#remaining-settlement-taking-js').closest('.closest-parent').addClass('visibility-hidden');	
-		}
+
+        if (receivingCurrency != invoiceCurrency) {
+            $('#remaining-settlement-taking-js').closest('.closest-parent').removeClass('visibility-hidden');
+            $('#remaining-settlement-taking-js').closest('.closest-parent').find('.taking-currency-span').html('[ ' + receivingCurrency + ' ]')
+        } else {
+            $('#remaining-settlement-taking-js').closest('.closest-parent').addClass('visibility-hidden');
+        }
 
     })
     $(document).on('change', '.recalculate-amount-class', function() {
@@ -981,8 +981,8 @@ $selectedBanks = [];
         const amountAfterExchangeRate = amount / exchangeRate;
         $('.amount-after-exchange-rate-class[data-type="' + moneyType + '"]').val(number_format(amountAfterExchangeRate)).trigger('change')
         $('.js-settlement-amount:eq(0)').trigger('change')
-		
-		
+
+
     })
     $(document).on('change', 'select[when-change-trigger-account-type-change]', function(e) {
         $('select.js-update-account-number-based-on-account-type').trigger('change')
@@ -1046,7 +1046,7 @@ $selectedBanks = [];
                     contracts += `<option ${currentSelected ==contract.id ? 'selected' :'' } value="${contract.id}" data-code="${contract.code}" data-amount="${contract.amount}" data-currency="${contract.currency}" >${contract.name}</option>`;
                 }
                 parent.find('select.contracts-js').empty().append(contracts).trigger('change')
-            	  parent.find('select.contracts-js').selectpicker("refresh")
+                parent.find('select.contracts-js').selectpicker("refresh")
             }
         })
     })
@@ -1059,11 +1059,11 @@ $selectedBanks = [];
         $(parent).find('.contract-amount').val(number_format(amount) + ' ' + currency)
 
     })
-	
-	
-	
-	
- $(document).on('change', '.ajax-update-contracts', function(e) {
+
+
+
+
+    $(document).on('change', '.ajax-update-contracts', function(e) {
         e.preventDefault()
         const supplierId = $('select.supplier-select').val()
         const currency = $('select.contract-currency').val()
@@ -1077,7 +1077,7 @@ $selectedBanks = [];
                 }
                 , success: function(res) {
                     let options = '<option value="general-down">{{ __("General Down Payment") }}</option>';
-					let selectedContractId=$('#contracts').attr('data-current-selected')
+                    let selectedContractId = $('#contracts').attr('data-current-selected')
                     for (id in res.contracts) {
                         options += `<option ${selectedContractId == id ? 'selected' :''} value="${id}">${res.contracts[id]}</option>`
                     }
@@ -1087,23 +1087,23 @@ $selectedBanks = [];
             })
         }
     })
-	
 
 </script>
 
 
 @if (!$singleModel&&!isset($model))
-	<script>
-	
-	$(function(){
+<script>
+    $(function() {
 
-	setTimeout(function(){
-		$('select.ajax-get-invoice-numbers:eq(0)').trigger('change')
-	},1500)
-})
-	</script>
-	<script>
-	$('select#partner_type').trigger('change')
-	</script>
+        setTimeout(function() {
+            $('select.ajax-get-invoice-numbers:eq(0)').trigger('change')
+        }, 1500)
+    })
+
+</script>
+<script>
+    $('select#partner_type').trigger('change')
+
+</script>
 @endif
 @endsection

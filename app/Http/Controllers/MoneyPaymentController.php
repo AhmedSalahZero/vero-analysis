@@ -640,6 +640,7 @@ class MoneyPaymentController
 	public function getCashInSafeStatementEndBalance(Request $request , Company $company , int $branchId = null , string $currencyName = null , string $deliveryDate = null){
 		$branchId = $request->get('branchId',$branchId);
 		$currencyName = $request->get('currencyName',$currencyName);
+		$currencyName = is_null($currencyName) ? $request->get('currency') :$currencyName  ;
 		/**
 		 * @var Branch $branch
 		 */

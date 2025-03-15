@@ -220,10 +220,21 @@ $selectedBanks = [];
     {{-- Cash In Safe Information--}}
     <div class="kt-portlet js-section-parent hidden" id="{{ CashExpense::CASH_PAYMENT}}">
         <div class="kt-portlet__head">
-            <div class="kt-portlet__head-label">
+            <div class="kt-portlet__head-label flex-1">
                 <h3 class="kt-portlet__head-title head-title text-primary">
                     {{__('Cash Payment Information')}}
                 </h3>
+				
+				<div class=" flex-1 d-flex justify-content-end pt-3">
+                            <div class="col-md-3 mb-3">
+                                <label>{{__('Balance')}} <span class="balance-date-js"></span> </label>
+                                <div class="kt-input-icon">
+                                    <input value="0" type="text" disabled class="form-control cash-balance-js" data-type="{{  CashExpense::PAYABLE_CHEQUE }}" placeholder="{{__('Account Balance')}}">
+                                </div>
+                            </div>
+
+                        </div>
+						
             </div>
         </div>
         <div class="kt-portlet__body">
@@ -233,7 +244,7 @@ $selectedBanks = [];
                         <label>{{__('Paying Branch')}} @include('star')</label>
                         <div class="kt-input-icon">
                             <div class="input-group date">
-                                <select name="delivery_branch_id" class="form-control">
+                                <select id="branch-id" name="delivery_branch_id" class="form-control">
                                     <option value="-1">{{__('Select Branch')}}</option>
                                     @foreach($selectedBranches as $branchId=>$branchName)
                                     <option value="{{ $branchId }}" {{ isset($model) && $model->getCashPaymentBranchId() == $branchId ? 'selected' : '' }}>{{ $branchName }}</option>
@@ -771,6 +782,25 @@ $selectedBanks = [];
 
 </script>
 <script>
+
+ $(document).on('change', 'select#branch-id,select#receiving-currency-id', function() {
+        const branchId = $('select#branch-id').val();
+        const currencyName = $('select#receiving-currency-id').val();
+        if (branchId != '-1') {
+            $.ajax({
+                url: "{{ route('get.current.end.balance.of.cash.in.safe.statement',['company'=>$company->id]) }}"
+                , data: {
+                    branchId
+                    , currencyName
+                }
+                , success: function(res) {
+                    const endBalance = res.end_balance;
+                    $('.cash-balance-js').val(number_format(endBalance))
+                }
+            })
+        }
+    })
+	
     $('#type').change(function() {
         selected = $(this).val();
 		if(selected == 'outgoing-transfer'){
