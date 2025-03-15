@@ -135,7 +135,11 @@ use App\Models\LetterOfCreditIssuance;
                                             @include('star')
                                         </label>
                                         <div class="input-group">
-                                            <select name="lc_currency" class="form-control lc-currency current-currency" js-when-change-trigger-change-account-type>
+                                            <select name="lc_currency" class="form-control 
+											lc-currency
+											 {{-- current-currency --}}
+											 
+											 " js-when-change-trigger-change-account-type>
                                                 <option selected>{{__('Select')}}</option>
                                                 @foreach(getCurrencies() as $currencyName => $currencyValue )
                                                 <option value="{{ $currencyName }}" @if(isset($model) && $model->getLcCurrency() == $currencyName ) selected @elseif($currencyName == 'EGP' ) selected @endif > {{ $currencyValue }}</option>
@@ -303,7 +307,7 @@ use App\Models\LetterOfCreditIssuance;
                                             @include('star')
                                         </label>
                                         <div class="input-group">
-                                            <select name="lc_cash_cover_currency" class="form-control current-currency receiving-currency-class update-exchange-rate" js-when-change-trigger-change-account-type>
+                                            <select name="lc_cash_cover_currency" class="form-control lg-actual-currency current-currency receiving-currency-class update-exchange-rate" js-when-change-trigger-change-account-type>
                                                 <option selected>{{__('Select')}}</option>
                                                 @foreach(getCurrencies() as $currencyName => $currencyValue )
                                                 <option value="{{ $currencyName }}" @if(isset($model) && $model->getLcCashCoverCurrency() == $currencyName ) selected @elseif($currencyName == 'EGP' ) selected @endif > {{ $currencyValue }}</option>

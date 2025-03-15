@@ -324,8 +324,10 @@ $('.js-send-to-collection').on('change', function () {
 
 $(document).on('change', '.js-update-account-number-based-on-account-type', function () {
 	const val = $(this).val()
+
 	let appendTo = $(this).attr('data-append-to-query');
 	appendTo = appendTo ? appendTo : '.js-account-number';
+	console.log(appendTo)
 	const lang = $('body').attr('data-lang')
 	const companyId = $('body').attr('data-current-company-id')
 	const repeaterParentIfExists = $(this).closest('[data-repeater-item]')
@@ -381,6 +383,7 @@ $(document).on('change', '.js-update-account-id-based-on-account-type', function
 	currency = currency ? currency : $(this).closest('.kt-portlet__body').find('.current-currency').val();
 	currency = currency ? currency : $(this).closest('[data-repeater-item]').find('.select-for-currency').val();
 	currency = currency ? currency : $('input.current-currency-input').val();	 
+	console.log(currency)
 	let financialInstitutionBankId = parent.find('[data-financial-institution-id]').val()
 	financialInstitutionBankId = typeof financialInstitutionBankId !== 'undefined' ? financialInstitutionBankId : $('[data-financial-institution-id]').val()
 	financialInstitutionBankId = typeof financialInstitutionBankId !== 'undefined' ? financialInstitutionBankId : $(this).closest('.closest-parent').find('input[name="financial_institution_id"]').val()

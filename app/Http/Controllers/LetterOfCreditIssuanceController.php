@@ -118,7 +118,6 @@ class LetterOfCreditIssuanceController
 			if($letterOfCreditIssuance){
 				$currentTimeOfDeposit = TimeOfDeposit::find($letterOfCreditIssuance->cd_or_td_id);
 				$tdOrCdCurrencyName = $currentTimeOfDeposit->getCurrency();
-				
 			}
 		}
 		return [

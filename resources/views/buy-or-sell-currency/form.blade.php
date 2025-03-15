@@ -174,6 +174,7 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
                                                     <input type="hidden" value="{{ isset($model) ? $model->getAmountToSell():0 }}" name="currency_to_sell_amount" class="form-control recalculate-amount-in-main-currency amount-js greater-than-or-equal-zero-allowed " placeholder="{{__('Insert Amount')}}">
                                                 </div>
                                             </div>
+                                         
 
 
                                             <div class="col-md-3 ">
@@ -501,7 +502,7 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
 
     
         <script>
-            $(document).on('change', '.js-from-update-account-number-based-on-account-type', function() {
+            $(document).on('change', 'select.js-from-update-account-number-based-on-account-type', function() {
                 const val = $(this).val()
                 const lang = $('body').attr('data-lang')
                 const companyId = $('body').attr('data-current-company-id')
@@ -538,20 +539,22 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
 
 
             })
-            $(document).on('change', '[js-from-when-change-trigger-change-account-type]', function() {
+            $(document).on('change', 'select[js-from-when-change-trigger-change-account-type]', function() {
 				if($(this).attr('name')){
-	                $(this).closest('.kt-portlet__body').find('.js-from-update-account-number-based-on-account-type').trigger('change')
+	                $(this).closest('.kt-portlet__body').find('select.js-from-update-account-number-based-on-account-type').trigger('change')
 				}
             })
             $(function() {
-                $('.js-from-update-account-number-based-on-account-type[name]').trigger('change')
+                $('select.js-from-update-account-number-based-on-account-type[name]').trigger('change')
             })
 
 
-            $(document).on('change', '.js-to-update-account-number-based-on-account-type', function() {
+            $(document).on('change', 'select.js-to-update-account-number-based-on-account-type', function() {
+				console.log('to',this,$(this).attr('name'));
 				if(!$(this).attr('name')){
 					return
 				}
+				const currentType = $(this).closest('[data-type]').attr('data-type') ;
                 const val = $(this).val()
                 const lang = $('body').attr('data-lang')
                 const companyId = $('body').attr('data-current-company-id')
@@ -559,7 +562,8 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
                 const parent = repeaterParentIfExists.length ? repeaterParentIfExists : $(this).closest('.kt-portlet__body')
                 const data = []
                 let currency = $(this).closest('form').find('select.current-to-currency').val()
-                let financialInstitutionBankId = parent.find('[data-to-financial-institution-id]').val()
+                let financialInstitutionBankId = parent.find('[data-type="'+currentType+'"]').find('select[data-to-financial-institution-id]').val()
+				
                 financialInstitutionBankId = typeof financialInstitutionBankId !== 'undefined' ? financialInstitutionBankId : $('[data-financial-institution-id]').val()
                 if (!val || !currency || !financialInstitutionBankId) {
                     return
@@ -571,6 +575,7 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
                     , success: function(res) {
                         options = ''
                         var selectToAppendInto = $(parent).find('.js-to-account-number[name]')
+						console.log('result',res.data);
                         for (key in res.data) {
                             var val = res.data[key]
                             var selected = $(selectToAppendInto).attr('data-current-selected') == val ? 'selected' : ''
@@ -587,12 +592,12 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
 
 
             })
-            $(document).on('change', '[js-to-when-change-trigger-change-account-type]', function() {
-
-                $(this).closest('.kt-portlet__body').find('.js-to-update-account-number-based-on-account-type').trigger('change')
+            $(document).on('change', 'select[js-to-when-change-trigger-change-account-type]', function() {
+				console.log( $(this).closest('.kt-portlet__body').find('select.js-to-update-account-number-based-on-account-type')[0]);
+                $(this).closest('.kt-portlet__body').find('select.js-to-update-account-number-based-on-account-type').trigger('change')
             })
             $(function() {
-                $('.js-to-update-account-number-based-on-account-type').trigger('change')
+                $('select.js-to-update-account-number-based-on-account-type').trigger('change')
             })
 
         </script>
