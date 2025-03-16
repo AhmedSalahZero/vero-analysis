@@ -331,15 +331,15 @@ use App\Models\LetterOfGuaranteeIssuance;
                                     </div>
 
                                        <div class="col-md-3">
-                                        <label> {{ __('LG Amount') }}
+                                        {{-- <label> {{ __('LG Amount') }}
                                             @include('star')
-                                        </label>
-										                                        {{-- <x-form.input  :data-current-value="isset($model) ? $model->getLgAmount():0" :data-current-value="isset($model) ? $model->getLgAmount():0" :model="$model??null" :label="__('LG Amount')" :type="'text'" :placeholder="__('LG Amount')" :name="'lg_amount'" :class="'only-greater-than-or-equal-zero-allowed only-smaller-than-or-equal-specific-number-allowed recalculate-cash-cover-amount-js recalculate-lg-commission-amount-js lg-amount-js '"  :required="true"></x-form.input> --}}
+                                        </label> --}}
+										                                        <x-form.input  :data-current-value="isset($model) ? $model->getLgAmount():0" :data-current-value="isset($model) ? $model->getLgAmount():0" :model="$model??null" :label="__('LG Amount')" :type="'text'" :placeholder="__('LG Amount')" :name="'lg_amount'" :class="'only-greater-than-or-equal-zero-allowed only-smaller-than-or-equal-specific-number-allowed recalculate-cash-cover-amount-js recalculate-lg-commission-amount-js lg-amount-js '"  :required="true"></x-form.input>
 
-                                        <div>
+                                        {{-- <div>
                                             <input data-current-value="{{ isset($model) ? $model->getLgAmount() : 0 }}" required value="{{ (isset($model) ? number_format($model->getLgAmount(),0) : 0) }}" class="form-control only-greater-than-or-equal-zero-allowed only-smaller-than-or-equal-specific-number-allowed recalculate-cash-cover-amount-js recalculate-lg-commission-amount-js lg-amount-js" type="text" placeholder="{{ __('Lg Amount') }}">
                                             <input data-current-value="{{ isset($model) ? $model->getLgAmount() : 0 }}" type="hidden" value="{{ (isset($model) ? $model->getLgAmount() : 0) }}" name="lg_amount" class="only-greater-than-zero-allowed ">
-                                        </div>
+                                        </div> --}}
                                     </div>
 
                                     <div class="col-md-3">
