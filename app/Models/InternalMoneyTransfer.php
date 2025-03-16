@@ -138,7 +138,7 @@ class InternalMoneyTransfer extends Model
     {
         return $this->fromBank ? $this->fromBank->getName() : __('N/A');
     }
-
+	
     public function getFromBankId()
     {
         return $this->fromBank ? $this->fromBank->id : 0;
@@ -190,7 +190,10 @@ class InternalMoneyTransfer extends Model
     {
         return $this->toBank ? $this->toBank->getName() : __('N/A');
     }
-
+	public function getToBankId()
+    {
+        return $this->toBank ? $this->toBank->id : 0;
+    }
     public function toAccountType()
     {
         return $this->belongsTo(AccountType::class, 'to_account_type_id');

@@ -98,10 +98,25 @@
 
                             <div class="kt-portlet ">
                                 <div class="kt-portlet__head">
-                                    <div class="kt-portlet__head-label">
+                                    <div class="kt-portlet__head-label flex-1">
                                         <h3 class="kt-portlet__head-title head-title text-primary">
                                           {{__('Bank To Safe Transfer Information')}}
                                         </h3>
+										  <div class=" flex-1 d-flex justify-content-end pt-3">
+                                            <div class="col-md-3 mb-3">
+                                                <label>{{__('Balance')}} <span class="balance-date-js"></span> </label>
+                                                <div class="kt-input-icon">
+                                                    <input value="0" type="text" disabled class="form-control balance-js" placeholder="{{__('Account Balance')}}">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3 mb-3">
+                                                <label>{{__('Net Balance')}} <span class="net-balance-date-js"></span> </label>
+                                                <div class="kt-input-icon">
+                                                    <input value="0" type="text" disabled class="form-control net-balance-js" placeholder="{{__('Net Balance')}}">
+                                                    {{-- <x-tool-tip title="{{__('Kash Vero')}}" /> --}}
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -149,7 +164,7 @@
                                                 </label>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group date">
-                                                        <select required js-from-when-change-trigger-change-account-type data-from-financial-institution-id name="from_bank_id" class="form-control ">
+                                                        <select required js-from-when-change-trigger-change-account-type data-from-financial-institution-id name="from_bank_id" class="form-control from-financial-institution">
                                                             @foreach($financialInstitutionBanks as $index=>$financialInstitutionBank)
                                                             <option value="{{ $financialInstitutionBank->id }}" {{ isset($model) && $model->getFromBankId() == $financialInstitutionBank->id ? 'selected' : '' }}>{{ $financialInstitutionBank->getName() }}</option>
                                                             @endforeach
@@ -322,7 +337,71 @@
        
     <script>
 	
-	
+	 $(document).on('change', 'select.js-from-account-number', function() {
+                const parent = $(this).closest('.kt-portlet__body');
+                const financialInstitutionId = parent.find('select.from-financial-institution').val()
+                const accountNumber = $(this).val();
+                const accountType = parent.find('select.js-from-update-account-number-based-on-account-type').val();
+                console.log(financialInstitutionId, accountNumber, accountType)
+                $.ajax({
+                    url: "{{ route('update.balance.and.net.balance.based.on.account.number',['company'=>$company->id]) }}"
+                    , data: {
+                        accountNumber
+                        , accountType
+                        , financialInstitutionId
+                    }
+                    , type: "get"
+                    , success: function(res) {
+                        if (res.balance_date) {
+                            $('.balance-date-js').html('[ ' + res.balance_date + ' ]')
+                        }
+                        if (res.net_balance_date) {
+                            $('.net-balance-date-js').html('[ ' + res.net_balance_date + ' ]')
+                        }
+                        $('.net-balance-js').val(number_format(res.net_balance))
+                        $('.balance-js').val(number_format(res.balance))
+
+                    }
+                })
+            })
+			
+	$(document).on('change', 'select.js-from-update-account-number-based-on-account-type', function () {
+	const val = $(this).val()
+	const lang = $('body').attr('data-lang')
+	const companyId = $('body').attr('data-current-company-id')
+	const repeaterParentIfExists = $(this).closest('[data-repeater-item]')
+	const parent = repeaterParentIfExists.length ? repeaterParentIfExists : $(this).closest('.kt-portlet__body')
+	const data = []
+	let currency = $(this).closest('form').find('select.current-from-currency').val()
+	let financialInstitutionBankId = parent.find('[data-from-financial-institution-id]').val()
+	financialInstitutionBankId = typeof financialInstitutionBankId !== 'undefined' ? financialInstitutionBankId : $('[data-financial-institution-id]').val()
+	if (!val || !currency || !financialInstitutionBankId) {
+		return
+	}
+	const url = '/' + lang + '/' + companyId + '/money-received/get-account-numbers-based-on-account-type/' + val + '/' + currency + '/' + financialInstitutionBankId
+	$.ajax({
+		url,
+		data,
+		success: function (res) {
+			options = ''
+			var selectToAppendInto = $(parent).find('.js-from-account-number')
+
+			for (key in res.data) {
+				var val = res.data[key]
+				var selected = $(selectToAppendInto).attr('data-current-selected') == val ? 'selected' : ''
+				options += '<option ' + selected + '  value="' + val + '">' + val + '</option>'
+			}
+
+			selectToAppendInto.empty().append(options).trigger('change')
+		}
+	})
+
+
+
+
+
+
+})
 $(document).on('change', '.js-from-update-account-number-based-on-account-type', function () {
 	const val = $(this).val()
 	const lang = $('body').attr('data-lang')
@@ -350,7 +429,7 @@ $(document).on('change', '.js-from-update-account-number-based-on-account-type',
 				options += '<option ' + selected + '  value="' + val + '">' + val + '</option>'
 			}
 
-			selectToAppendInto.empty().append(options)
+			selectToAppendInto.empty().append(options).trigger('change')
 		}
 	})
 
@@ -395,7 +474,7 @@ $(document).on('change', '.js-to-update-account-number-based-on-account-type', f
 				options += '<option ' + selected + '  value="' + val + '">' + val + '</option>'
 			}
 
-			selectToAppendInto.empty().append(options)
+			selectToAppendInto.empty().append(options).trigger('change')
 		}
 	})
 

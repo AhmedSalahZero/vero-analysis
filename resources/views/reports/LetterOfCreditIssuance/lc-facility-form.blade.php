@@ -62,13 +62,13 @@ use App\Models\LetterOfCreditIssuance;
     <div class="col-md-12">
 
         <form method="post" action="{{ isset($model) ?  route('update.letter.of.credit.issuance',['company'=>$company->id,'letterOfCreditIssuance'=>$model->id,'source'=>$source]) :route('store.letter.of.credit.issuance',['company'=>$company->id,'source'=>$source]) }}" class="kt-form kt-form--label-right">
-          
+
             <input type="hidden" name="id" value="{{ isset($model) ? $model->id : 0 }}">
             <input type="hidden" name="created_by" value="{{ auth()->user()->id }}">
             <input type="hidden" name="company_id" value="{{ $company->id }}">
             <input type="hidden" name="source" value="{{ $source }}">
-			
-				@csrf
+
+            @csrf
             @if(isset($model))
             @method('put')
             @endif
@@ -98,14 +98,14 @@ use App\Models\LetterOfCreditIssuance;
                             <div class="kt-portlet__body">
 
                                 <div class="form-group row">
-								<input type="hidden" name="to-currency" class="update-exchange-rate to-currency" value="">
-								 <div class="col-md-3">
+                                    <input type="hidden" name="to-currency" class="update-exchange-rate to-currency" value="">
+                                    <div class="col-md-3">
                                         <label>{{__('Issuance Type')}}
                                             @include('star')
                                         </label>
                                         <div class="input-group">
                                             <select name="category_name" required class="form-control repeater-select">
-												<option value="">{{ __('Select') }}</option>
+                                                <option value="">{{ __('Select') }}</option>
                                                 @foreach(LetterOfCreditIssuance::getCategories() as $key => $title )
                                                 <option value="{{ $key }}" @if(isset($model) && $model->getCategoryName() == $key ) selected @endif > {{ $title }}</option>
                                                 @endforeach
@@ -113,7 +113,7 @@ use App\Models\LetterOfCreditIssuance;
                                         </div>
 
                                     </div>
-									
+
                                     <div class="col-md-4">
                                         <x-form.input :model="$model??null" :label="__('Transaction Name')" :type="'text'" :placeholder="__('Transaction Name')" :name="'transaction_name'" :class="''" :required="true"></x-form.input>
                                     </div>
@@ -121,15 +121,15 @@ use App\Models\LetterOfCreditIssuance;
                                         <label> {{ __('Bank') }}
                                             @include('star')
                                         </label>
-                                        <select js-update-interest-rate js-when-change-trigger-change-account-type change-financial-instutition-js id="financial-instutition-id" js-get-lc-facility-based-on-financial-institution  js-when-change-trigger-change-account-type data-financial-institution-id required name="financial_institution_id" class="form-control">
+                                        <select js-update-interest-rate js-when-change-trigger-change-account-type change-financial-instutition-js id="financial-instutition-id" js-get-lc-facility-based-on-financial-institution js-when-change-trigger-change-account-type data-financial-institution-id required name="financial_institution_id" class="form-control">
                                             @foreach($financialInstitutionBanks as $index=>$financialInstitutionBank)
                                             <option value="{{ $financialInstitutionBank->id }}" {{ isset($model) && $model->getFinancialInstitutionBankId() == $financialInstitutionBank->id ? 'selected':'' }}>{{ $financialInstitutionBank->getName() }}</option>
                                             @endforeach
                                         </select>
                                     </div>
-									
-									
-									  <div class="col-md-3">
+
+
+                                    <div class="col-md-3">
                                         <label>{{__('LC Facility')}}
                                             @include('star')
                                         </label>
@@ -140,7 +140,7 @@ use App\Models\LetterOfCreditIssuance;
                                             </div>
                                         </div>
                                     </div>
-									
+
 
 
 
@@ -260,7 +260,7 @@ use App\Models\LetterOfCreditIssuance;
                                     </div>
 
                                     @include('reports/LetterOfCreditIssuance/_contract-inputs')
-									
+
                                     <div class="col-md-3 hidden show-only-bond">
 
                                         <x-form.date :label="__('Transaction Date')" :required="true" :model="$model??null" :name="'transaction_date'" :placeholder="__('Select Transaction Date')"></x-form.date>
@@ -301,175 +301,166 @@ use App\Models\LetterOfCreditIssuance;
                                     </div>
 
                                     <div class="col-md-3">
-									<label> {{ __('Lc Amount') }}
-									@include('star')
-									</label>
-									       <div>
-										                  <input required value="{{ (isset($model) ? number_format($model->getLcAmount(),0) : 0) }}" class="form-control  only-greater-than-or-equal-zero-allowed amount-js  recalculate-amount-in-main-currency recalculate-cash-cover-amount-js recalculate-lc-commission-amount-js lc-amount-js" type="text" placeholder="{{ __('Lc Amount') }}">
-                                    <input type="hidden" value="{{ (isset($model) ? $model->getLcAmount() : 0) }}"  name="lc_amount" class="only-greater-than-zero-allowed ">
-
-										   </div>
-                                    </div>
-									
-									 {{-- <div class="col-md-3">
-                                        <label>{{__('LC Currency')}}
+                                        <label> {{ __('Lc Amount') }}
                                             @include('star')
                                         </label>
-                                        <div class="input-group">
-										<input type="text" class="form-control current-currency-input" name="lc_currency" id="lc-currency-id" value="" readonly js-when-change-trigger-change-account-type >
-                                        
+                                        <div>
+                                            <input required value="{{ (isset($model) ? number_format($model->getLcAmount(),0) : 0) }}" class="form-control  only-greater-than-or-equal-zero-allowed amount-js  recalculate-amount-in-main-currency recalculate-cash-cover-amount-js recalculate-lc-commission-amount-js lc-amount-js" type="text" placeholder="{{ __('Lc Amount') }}">
+                                            <input type="hidden" value="{{ (isset($model) ? $model->getLcAmount() : 0) }}" name="lc_amount" class="only-greater-than-zero-allowed ">
+
                                         </div>
-                                    </div> --}}
+                                    </div>
 
-                                    <div class="col-md-3">
-                                        <label>{{__('LC Currency')}}
-                                            @include('star')
-                                        </label>
-                                        <div class="input-group"> 
-                                            <select name="lc_currency" class="form-control lc-currency update-exchange-rate current-invoice-currency">
-                                                <option selected>{{__('Select')}}</option>
-                                                @foreach(getCurrencies() as $currencyName => $currencyValue )
-                                                <option value="{{ $currencyName }}" @if(isset($model) && $model->getLcCurrency() == $currencyName ) selected @elseif($currencyName == 'USD' ) selected @endif > {{ $currencyValue }}</option>
+
+                                <div class="col-md-3">
+                                    <label>{{__('LC Currency')}}
+                                        @include('star')
+                                    </label>
+                                    <div class="input-group">
+                                        <select name="lc_currency" class="form-control lc-currency update-exchange-rate current-invoice-currency">
+                                            <option selected>{{__('Select')}}</option>
+                                            @foreach(getCurrencies() as $currencyName => $currencyValue )
+                                            <option value="{{ $currencyName }}" @if(isset($model) && $model->getLcCurrency() == $currencyName ) selected @elseif($currencyName == 'USD' ) selected @endif > {{ $currencyValue }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <x-form.input :readonly="false" :default-value="1" :model="$model??null" :label="__('Exchange Rate')" :type="'text'" :placeholder="__('Exchange Rate')" :name="'exchange_rate'" :class="'exchange-rate-class  recalculate-amount-in-main-currency exchange-rate-js only-greater-than-or-equal-zero-allowed'" :required="true"></x-form.input>
+                                </div>
+                                <div class="col-md-3">
+                                    <x-form.input :readonly="true" :default-value="0" :model="$model??null" :label="__('Amount In Main Currency')" :type="'text'" :placeholder="__('Amount In Main Currency')" :name="'amount_in_main_currency'" :class="'amount-in-main-currency-js-hidden recalculate-cash-cover-amount-js '" :required="true"></x-form.input>
+                                </div>
+                                <div class="col-md-3">
+                                    <x-form.input :id="$source != LetterOfCreditIssuance::HUNDRED_PERCENTAGE_CASH_COVER ?  'cash-cover-rate-id' : 'cash-cover-rate-id2'" :default-value="$source == LetterOfCreditIssuance::HUNDRED_PERCENTAGE_CASH_COVER ? 100 : 0 " :readonly="$source == LetterOfCreditIssuance::HUNDRED_PERCENTAGE_CASH_COVER" :model="$model??null" :label="__('Cash Cover Rate %')" :type="'text'" :placeholder="__('Cash Cover Rate %')" :name="'cash_cover_rate'" :class="'only-greater-than-or-equal-zero-allowed recalculate-cash-cover-amount-js cash-cover-rate-js'" :required="true"></x-form.input>
+                                </div>
+
+
+                                <div class="col-md-3">
+                                    <label>{{__('LC Cash Cover Currency')}}
+                                        @include('star')
+                                    </label>
+                                    <div class="input-group">
+                                        <select data-current-selected="{{ isset($model) ? $model->getLcCashCoverCurrency() : ''  }}" name="lc_cash_cover_currency" class="form-control update-exchange-rate current-currency receiving-currency-class" js-when-change-trigger-change-account-type>
+                                            <option selected>{{__('Select')}}</option>
+                                            @foreach(getCurrencies() as $currencyName => $currencyValue )
+                                            <option value="{{ $currencyName }}" @if(isset($model) && $model->getLcCashCoverCurrency() == $currencyName ) selected @elseif($currencyName == 'EGP' ) selected @endif > {{ $currencyValue }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+
+
+                                <div class="col-md-3">
+                                    <x-form.input :default-value="0" :readonly="true" :model="$model??null" :label="__('Cash Cover Amount')" :type="'text'" :placeholder="__('Cash Cover Amount')" :name="'cash_cover_amount'" :class="'only-greater-than-or-equal-zero-allowed cash-cover-amount-js' " :required="true"></x-form.input>
+                                </div>
+
+
+
+
+
+                                <div class="col-md-3">
+                                    <x-form.input :id="'lc_commission_rate-id'" :default-value="0" :model="$model??null" :label="__('LC Commission Rate %')" :type="'text'" :placeholder="__('LC Commission Rate %')" :name="'lc_commission_rate'" :class="'only-greater-than-or-equal-zero-allowed recalculate-lc-commission-amount-js lc-commission-rate-js'" :required="true"></x-form.input>
+                                </div>
+
+
+                                <div class="col-md-3">
+                                    <x-form.input :default-value="0" :readonly="true" :model="$model??null" :label="__('LC Commission Amount')" :type="'text'" :placeholder="__('LC Commission Amount')" :name="'lc_commission_amount'" :class="'only-greater-than-or-equal-zero-allowed lc-commission-amount-js'" :required="true"></x-form.input>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <x-form.input :id="'min_lc_commission_fees_id'" :default-value="0" :readonly="true" :model="$model??null" :label="__('Min LC Commission Fees')" :type="'text'" :placeholder="__('Min LC Commission Fees')" :name="'min_lc_commission_fees'" :class="'only-greater-than-or-equal-zero-allowed '" :required="true"></x-form.input>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <x-form.input :id="'issuance_fees_id'" :default-value="0" :readonly="true" :model="$model??null" :label="__('Issuance Fees')" :type="'text'" :placeholder="__('Issuance Fees')" :name="'issuance_fees'" :class="'only-greater-than-or-equal-zero-allowed '" :required="true"></x-form.input>
+                                </div>
+
+
+
+                                <div class="col-md-3">
+                                    <label>{{ __('Cash Cover From Account Type') }} <span class=""></span> </label>
+                                    <div class="kt-input-icon">
+                                        <div class="input-group date">
+                                            <select id="account_type_id" name="cash_cover_deducted_from_account_type" class="form-control js-update-account-id-based-on-account-type">
+                                                @foreach($cashCoverAccountTypes as $index => $accountType)
+                                                <option @if(isset($model) && ($accountType->id == $model->getCashCoverDeductedFromAccountTypeId()) ) selected @endif value="{{ $accountType->id }}">{{ $accountType->getName() }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
-                                        <x-form.input :readonly="false" :default-value="1" :model="$model??null" :label="__('Exchange Rate')" :type="'text'" :placeholder="__('Exchange Rate')" :name="'exchange_rate'" :class="'exchange-rate-class  recalculate-amount-in-main-currency exchange-rate-js only-greater-than-or-equal-zero-allowed'" :required="true"></x-form.input>
-                                    </div>
-									<div class="col-md-3">
-                                        <x-form.input  :readonly="true" :default-value="0" :model="$model??null" :label="__('Amount In Main Currency')" :type="'text'" :placeholder="__('Amount In Main Currency')" :name="'amount_in_main_currency'" :class="'amount-in-main-currency-js-hidden recalculate-cash-cover-amount-js '" :required="true"></x-form.input>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <x-form.input :id="$source != LetterOfCreditIssuance::HUNDRED_PERCENTAGE_CASH_COVER ?  'cash-cover-rate-id' : 'cash-cover-rate-id2'" :default-value="$source == LetterOfCreditIssuance::HUNDRED_PERCENTAGE_CASH_COVER ? 100 : 0 " :readonly="$source == LetterOfCreditIssuance::HUNDRED_PERCENTAGE_CASH_COVER" :model="$model??null" :label="__('Cash Cover Rate %')" :type="'text'" :placeholder="__('Cash Cover Rate %')" :name="'cash_cover_rate'" :class="'only-greater-than-or-equal-zero-allowed recalculate-cash-cover-amount-js cash-cover-rate-js'" :required="true"></x-form.input>
-                                    </div>
-									
-									
-									  <div class="col-md-3">
-                                        <label>{{__('LC Cash Cover Currency')}}
-                                            @include('star')
-                                        </label>
-                                        <div class="input-group">
-                                            <select data-current-selected="{{ isset($model) ? $model->getLcCashCoverCurrency() : ''  }}" name="lc_cash_cover_currency" class="form-control update-exchange-rate current-currency receiving-currency-class" js-when-change-trigger-change-account-type>
-                                                <option selected>{{__('Select')}}</option>
-                                                @foreach(getCurrencies() as $currencyName => $currencyValue )
-                                                <option value="{{ $currencyName }}" @if(isset($model) && $model->getLcCashCoverCurrency() == $currencyName ) selected @elseif($currencyName == 'EGP' ) selected @endif > {{ $currencyValue }}</option>
-                                                @endforeach
+                                </div>
+
+                                <div class="col-md-3">
+                                    <label>{{ __('Account Number') }} <span class=""></span> </label>
+                                    <div class="kt-input-icon">
+                                        <div class="input-group date">
+                                            <select js-cd-or-td-account-number data-current-selected="{{ isset($model) ? $model->getCashCoverDeductedFromAccountId(): 0 }}" name="cash_cover_deducted_from_account_id" class="form-control js-account-number">
+                                                <option value="" selected>{{__('Select')}}</option>
                                             </select>
                                         </div>
                                     </div>
+                                </div>
+
+                                <div class="col-md-3 ">
+                                    <x-form.input :id="'cd-or-td-amount-id'" :readonly="true" :default-value="0" :model="$model??null" :label="__('Amount')" :type="'text'" :placeholder="''" :name="'amount'" :class="''" :required="true"></x-form.input>
+                                </div>
 
 
-                                    <div class="col-md-3">
-                                        <x-form.input :default-value="0" :readonly="true" :model="$model??null" :label="__('Cash Cover Amount')" :type="'text'" :placeholder="__('Cash Cover Amount')" :name="'cash_cover_amount'" :class="'only-greater-than-or-equal-zero-allowed cash-cover-amount-js' " :required="true"></x-form.input>
-                                    </div>
-
-
-
-
-
-                                    <div class="col-md-3">
-                                        <x-form.input :id="'lc_commission_rate-id'" :default-value="0" :model="$model??null" :label="__('LC Commission Rate %')" :type="'text'" :placeholder="__('LC Commission Rate %')" :name="'lc_commission_rate'" :class="'only-greater-than-or-equal-zero-allowed recalculate-lc-commission-amount-js lc-commission-rate-js'" :required="true"></x-form.input>
-                                    </div>
-
-
-                                    <div class="col-md-3">
-                                        <x-form.input :default-value="0" :readonly="true" :model="$model??null" :label="__('LC Commission Amount')" :type="'text'" :placeholder="__('LC Commission Amount')" :name="'lc_commission_amount'" :class="'only-greater-than-or-equal-zero-allowed lc-commission-amount-js'" :required="true"></x-form.input>
-                                    </div>
-
-                                    <div class="col-md-3">
-                                        <x-form.input :id="'min_lc_commission_fees_id'" :default-value="0" :readonly="true" :model="$model??null" :label="__('Min LC Commission Fees')" :type="'text'" :placeholder="__('Min LC Commission Fees')" :name="'min_lc_commission_fees'" :class="'only-greater-than-or-equal-zero-allowed '" :required="true"></x-form.input>
-                                    </div>
-
-                                    <div class="col-md-3">
-                                        <x-form.input :id="'issuance_fees_id'" :default-value="0" :readonly="true" :model="$model??null" :label="__('Issuance Fees')" :type="'text'" :placeholder="__('Issuance Fees')" :name="'issuance_fees'" :class="'only-greater-than-or-equal-zero-allowed '" :required="true"></x-form.input>
-                                    </div>
-
-
-
-                                   <div class="col-md-3">
-                                        <label>{{ __('Cash Cover From Account Type') }} <span class=""></span> </label>
-                                        <div class="kt-input-icon">
-                                            <div class="input-group date">
-                                                <select id="account_type_id" name="cash_cover_deducted_from_account_type" class="form-control js-update-account-id-based-on-account-type">
-                                                    @foreach($cashCoverAccountTypes as $index => $accountType)
-                                                    <option @if(isset($model) && ($accountType->id == $model->getCashCoverDeductedFromAccountTypeId()) ) selected @endif value="{{ $accountType->id }}">{{ $accountType->getName() }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-3">
-                                        <label>{{ __('Account Number') }} <span class=""></span> </label>
-                                        <div class="kt-input-icon">
-                                            <div class="input-group date">
-                                                <select js-cd-or-td-account-number data-current-selected="{{ isset($model) ? $model->getCashCoverDeductedFromAccountId(): 0 }}" name="cash_cover_deducted_from_account_id" class="form-control js-account-number">
-                                                    <option value="" selected>{{__('Select')}}</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-3 ">
-                                        <x-form.input :id="'cd-or-td-amount-id'" :readonly="true" :default-value="0" :model="$model??null" :label="__('Amount')" :type="'text'" :placeholder="''" :name="'amount'" :class="''" :required="true"></x-form.input>
-                                    </div>
-									
-
-                                    <div class="col-md-3">
-                                        <label>{{__('Fees & Commission Account Type')}}
-                                            @include('star')
-                                        </label>
-                                        <div class="kt-input-icon">
-                                            <div class="input-group date">
-                                                <select data-append-to-query=".js-account-id-2" name="lc_fees_and_commission_account_type" class="form-control 
+                                <div class="col-md-3">
+                                    <label>{{__('Fees & Commission Account Type')}}
+                                        @include('star')
+                                    </label>
+                                    <div class="kt-input-icon">
+                                        <div class="input-group date">
+                                            <select data-append-to-query=".js-account-id-2" name="lc_fees_and_commission_account_type" class="form-control 
 												js-update-account-id-based-on-account-type
 												">
-                                                    {{-- <option value="" selected>{{__('Select')}}</option> --}}
-                                                    @foreach($accountTypes as $index => $accountType)
-                                                    <option value="{{ $accountType->id }}" @if(isset($model) && $model->getFeesAndCommissionAccountTypeId() == $accountType->id) selected @endif>{{ $accountType->getName() }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
+                                                {{-- <option value="" selected>{{__('Select')}}</option> --}}
+                                                @foreach($accountTypes as $index => $accountType)
+                                                <option value="{{ $accountType->id }}" @if(isset($model) && $model->getFeesAndCommissionAccountTypeId() == $accountType->id) selected @endif>{{ $accountType->getName() }}</option>
+                                                @endforeach
+                                            </select>
                                         </div>
                                     </div>
+                                </div>
 
-                                    <div class="col-md-3">
-                                        <label>{{__('Deducted From Account # (Fees & Commission)')}}
-                                            @include('star')
-                                        </label>
-                                        <div class="kt-input-icon">
-                                            <div class="input-group date">
-                                                <select data-current-selected="{{ isset($model) ? $model->getFeesAndCommissionAccountId(): 0 }}" name="lc_fees_and_commission_account_id" class="form-control js-account-id-2">
-                                                    <option value="" selected>{{__('Select')}}</option>
-                                                </select>
-                                            </div>
+                                <div class="col-md-3">
+                                    <label>{{__('Deducted From Account # (Fees & Commission)')}}
+                                        @include('star')
+                                    </label>
+                                    <div class="kt-input-icon">
+                                        <div class="input-group date">
+                                            <select data-current-selected="{{ isset($model) ? $model->getFeesAndCommissionAccountId(): 0 }}" name="lc_fees_and_commission_account_id" class="form-control js-account-id-2">
+                                                <option value="" selected>{{__('Select')}}</option>
+                                            </select>
                                         </div>
                                     </div>
-									
-									
-									   <div class="col-md-3">
-                                        <label>{{__('Financed By Bank Or Self')}}
-                                            @include('star')
-                                        </label>
-                                        <div class="kt-input-icon">
-                                            <div class="input-group date">
-                                                <select  name="financed_by_bank_or_self" id="financed-by-bank-or-self-select-id" class="form-control ">
-                                                    {{-- <option value="" selected>{{__('Select')}}</option> --}}
-                                                    @foreach(['bank'=>__('By Bank') , 'self'=>__('Self')] as $key => $title)
-                                                    <option value="{{ $key }}" @if(isset($model) && $model->getFinancedBy() == $key) selected @endif>{{ $title }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
+                                </div>
+
+
+                                <div class="col-md-3">
+                                    <label>{{__('Financed By Bank Or Self')}}
+                                        @include('star')
+                                    </label>
+                                    <div class="kt-input-icon">
+                                        <div class="input-group date">
+                                            <select name="financed_by_bank_or_self" id="financed-by-bank-or-self-select-id" class="form-control ">
+                                                {{-- <option value="" selected>{{__('Select')}}</option> --}}
+                                                @foreach(['bank'=>__('By Bank') , 'self'=>__('Self')] as $key => $title)
+                                                <option value="{{ $key }}" @if(isset($model) && $model->getFinancedBy() == $key) selected @endif>{{ $title }}</option>
+                                                @endforeach
+                                            </select>
                                         </div>
                                     </div>
-									
+                                </div>
+
 
 
                                 <div class="col-md-3 " id="financing-duration-div-id">
                                     <x-form.input :id="'financing-duration-id'" :model="$model??null" :label="__('Financing Duration (Days)')" :type="'text'" :placeholder="__('Financing Duration (Days)')" :name="'financing_duration'" :class="'only-greater-than-or-equal-zero-allowed'" :required="true"></x-form.input>
                                 </div>
-                               
+
 
                             </div>
                         </div>
@@ -609,7 +600,7 @@ use App\Models\LetterOfCreditIssuance;
         if (!$(this).hasClass('exclude-text')) {
             let val = $(this).val()
             val = number_unformat(val)
-			var parentTag = $(this).parent().prop("tagName");
+            var parentTag = $(this).parent().prop("tagName");
             $(this).parent().find('input[type="hidden"]:not([name="_token"])').val(val)
         }
     })
@@ -620,13 +611,13 @@ use App\Models\LetterOfCreditIssuance;
 
 </script>
 <script>
-   $(document).on('change', '.recalculate-amount-in-main-currency', function() {
+    $(document).on('change', '.recalculate-amount-in-main-currency', function() {
         const parent = $(this).closest('.kt-portlet__body');
         const amount = parseFloat(number_unformat($(parent).find('.amount-js').val()))
-	
+
         const exchangeRate = parseFloat($(parent).find('.exchange-rate-js').val())
         const amountInMainCurrency = parseFloat(amount * exchangeRate);
-	
+
         $(parent).find('.amount-in-main-currency-js-hidden').val(amountInMainCurrency).trigger('change')
         $(parent).find('.amount-in-main-currency-js').val(number_format(amountInMainCurrency))
     })
@@ -678,27 +669,27 @@ use App\Models\LetterOfCreditIssuance;
             $('.show-only-bond').addClass('hidden')
         }
     })
-     $(function(){
-					$('.js-toggle-bond').trigger('change')
-				})
+    $(function() {
+        $('.js-toggle-bond').trigger('change')
+    })
 
 </script>
 <script>
     $(document).on('change', '[js-update-outstanding-balance-and-limits]', function(e) {
         e.preventDefault()
-		const source =  "{{ $source }}"
+        const source = "{{ $source }}"
         const financialInstitutionId = $('select#financial-instutition-id').val()
         const lcType = $('select#lc-type').val()
-		const lcIssuanceId = "{{ isset($model) ? $model->id : 0 }}" 
-		const letterOfCreditFacilityId = $('select#lc-facility-id').val();
+        const lcIssuanceId = "{{ isset($model) ? $model->id : 0 }}"
+        const letterOfCreditFacilityId = $('select#lc-facility-id').val();
         $.ajax({
             url: "{{ route('update.letter.of.credit.outstanding.balance.and.limit',['company'=>$company->id]) }}"
             , data: {
-                financialInstitutionId,
-				letterOfCreditFacilityId
-                , lcType,
-				lcIssuanceId,
-				source
+                financialInstitutionId
+                , letterOfCreditFacilityId
+                , lcType
+                , lcIssuanceId
+                , source
             }
             , type: "GET"
             , success: function(res) {
@@ -707,12 +698,12 @@ use App\Models\LetterOfCreditIssuance;
                 $('#total-room-id').val(res.total_room).prop('readonly', true)
                 $('#current-lc-type-outstanding-balance-id').val(res.current_lc_type_outstanding_balance).prop('readonly', true)
                 $('#min_lc_commission_fees_id').val(res.min_lc_commission_rate).trigger('change');
-				$('#lc-currency-id').val(res.currency_name).trigger('change');
+                $('#lc-currency-id').val(res.currency_name).trigger('change');
                 $('#lc_commission_rate-id').val(res.lc_commission_rate).trigger('change');
                 $('#issuance_fees_id').val(res.min_lc_issuance_fees_for_current_lc_type).trigger('change');
                 $('#cash-cover-rate-id').val(res.min_lc_cash_cover_rate_for_current_lc_type).trigger('change');
-				
-				$('input[type="hidden"].to-currency').val(res.currency_name).trigger('change')
+
+                $('input[type="hidden"].to-currency').val(res.currency_name).trigger('change')
                 $('[js-update-contracts-based-on-customers]').trigger('change')
             }
         })
@@ -726,7 +717,7 @@ use App\Models\LetterOfCreditIssuance;
 </script>
 @endif
 <script>
-   
+
 
 </script>
 
@@ -740,87 +731,88 @@ use App\Models\LetterOfCreditIssuance;
 <script>
     $(document).on('change', '[js-update-interest-rate]', function() {
         const financialInstitutionId = $('select#financial-instutition-id').val();
-		const letterOfCreditFacilityId = $('select#lc-facility-id').val();
-		if(!financialInstitutionId || !letterOfCreditFacilityId){
-			return ;
-		}
+        const letterOfCreditFacilityId = $('select#lc-facility-id').val();
+        if (!financialInstitutionId || !letterOfCreditFacilityId) {
+            return;
+        }
         $.ajax({
             url: "{{ route('get.interest.rate.for.financial.institution.id',['company'=>$company->id]) }}"
             , data: {
-                financialInstitutionId,
-				letterOfCreditFacilityId
+                financialInstitutionId
+                , letterOfCreditFacilityId
             }
             , success: function(res) {
-               // $('#interest-rate-id').val(res.interest_rate)
+                // $('#interest-rate-id').val(res.interest_rate)
             }
         })
     })
-   
-   
-   
-   
-$(document).on('change','select[js-get-lc-facility-based-on-financial-institution]',function(){
-	const financialInstitutionId = $('#financial-instutition-id').val();
-	const currentSelected = $('select#lc-facility-id').attr('data-current-selected');
 
-	$.ajax({
-		url:"{{ route('get.lc.facility.based.on.financial.institution',['company'=>$company->id]) }}",
-		data:{
-			financialInstitutionId
-		},
-		success:function(res){
-			const lcFacilities = res.letterOfCreditFacilities ;
-			let options='<option value="">{{ __("Select") }}</option>';
-			for(id in lcFacilities){
-				var name =lcFacilities[id]; 
-				options+=`<option ${currentSelected == id ? 'selected' : '' } value="${id}"  >${name}</option>`
-			}
-			$('select#lc-facility-id').empty().append(options).trigger('change')
-		}
-	})
-})
 
-$('select[js-get-lc-facility-based-on-financial-institution]').trigger('change')
+
+
+    $(document).on('change', 'select[js-get-lc-facility-based-on-financial-institution]', function() {
+        const financialInstitutionId = $('#financial-instutition-id').val();
+        const currentSelected = $('select#lc-facility-id').attr('data-current-selected');
+
+        $.ajax({
+            url: "{{ route('get.lc.facility.based.on.financial.institution',['company'=>$company->id]) }}"
+            , data: {
+                financialInstitutionId
+            }
+            , success: function(res) {
+                const lcFacilities = res.letterOfCreditFacilities;
+                let options = '<option value="">{{ __("Select") }}</option>';
+                for (id in lcFacilities) {
+                    var name = lcFacilities[id];
+                    options += `<option ${currentSelected == id ? 'selected' : '' } value="${id}"  >${name}</option>`
+                }
+                $('select#lc-facility-id').empty().append(options).trigger('change')
+            }
+        })
+    })
+
+    $('select[js-get-lc-facility-based-on-financial-institution]').trigger('change')
 
 </script>
-  <script>
-                $(document).on('change', '[js-cd-or-td-account-number]', function() {
-                    const parent = $(this).closest('.kt-portlet__body');
-					const financialInstitutionId = $('select#financial-instutition-id').val();
-			
-                    const accountType = parent.find('.js-update-account-id-based-on-account-type').val()
-                    const accountId = parent.find('[js-cd-or-td-account-number]').val();
-                    let url = "{{ route('get.account.amount.based.on.account.id',['company'=>$company->id , 'accountType'=>'replace_account_type' , 'accountId'=>'replace_account_id','financialInstitutionId'=>'replace_financial_institution_id' ]) }}";
-                    url = url.replace('replace_account_type', accountType);
-                    url = url.replace('replace_account_id', accountId);
-                    url = url.replace('replace_financial_institution_id', financialInstitutionId);
-					if(accountType &&accountId &&financialInstitutionId){
-						$.ajax({
-							url
-							, success: function(res) {
-								parent.find('#cd-or-td-amount-id').attr('data-value',res.amount).val(number_format(res.amount) + ' ' + res.currencyName ).trigger('change')
-							}
-						});
-						
-					}else{
-								parent.find('#cd-or-td-amount-id').attr('data-value',0).val(0).trigger('change')
-						
-					}
-                })
+<script>
+    $(document).on('change', '[js-cd-or-td-account-number]', function() {
+        const parent = $(this).closest('.kt-portlet__body');
+        const financialInstitutionId = $('select#financial-instutition-id').val();
 
-            </script>
-			<script>
-			$(document).on('change','select#financed-by-bank-or-self-select-id',function(e){
-				const value = $(this).val();
-				if(value == 'bank'){
-					$('#financing-duration-div-id').show();
-				}else{
-					$('#financing-duration-id').val(0).trigger('change');
-					$('#financing-duration-div-id').hide();
-				}
-			})
-			$('select#financed-by-bank-or-self-select-id').trigger('change');
-			</script>
+        const accountType = parent.find('.js-update-account-id-based-on-account-type').val()
+        const accountId = parent.find('[js-cd-or-td-account-number]').val();
+        let url = "{{ route('get.account.amount.based.on.account.id',['company'=>$company->id , 'accountType'=>'replace_account_type' , 'accountId'=>'replace_account_id','financialInstitutionId'=>'replace_financial_institution_id' ]) }}";
+        url = url.replace('replace_account_type', accountType);
+        url = url.replace('replace_account_id', accountId);
+        url = url.replace('replace_financial_institution_id', financialInstitutionId);
+        if (accountType && accountId && financialInstitutionId) {
+            $.ajax({
+                url
+                , success: function(res) {
+                    parent.find('#cd-or-td-amount-id').attr('data-value', res.amount).val(number_format(res.amount) + ' ' + res.currencyName).trigger('change')
+                }
+            });
+
+        } else {
+            parent.find('#cd-or-td-amount-id').attr('data-value', 0).val(0).trigger('change')
+
+        }
+    })
+
+</script>
+<script>
+    $(document).on('change', 'select#financed-by-bank-or-self-select-id', function(e) {
+        const value = $(this).val();
+        if (value == 'bank') {
+            $('#financing-duration-div-id').show();
+        } else {
+            $('#financing-duration-id').val(0).trigger('change');
+            $('#financing-duration-div-id').hide();
+        }
+    })
+    $('select#financed-by-bank-or-self-select-id').trigger('change');
+
+</script>
 
 
 @endsection

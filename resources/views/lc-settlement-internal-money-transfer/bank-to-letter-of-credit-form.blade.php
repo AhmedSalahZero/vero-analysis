@@ -362,7 +362,7 @@
                             options += '<option ' + selected + '  value="' + val + '">' + val + '</option>'
                         }
 
-                        selectToAppendInto.empty().append(options)
+                        selectToAppendInto.empty().append(options).trigger('change')
                     }
                 })
 
@@ -407,7 +407,7 @@
                             options += '<option ' + selected + '  value="' + val + '">' + val + '</option>'
                         }
 
-                        selectToAppendInto.empty().append(options)
+                        selectToAppendInto.empty().append(options).trigger('change')
                     }
                 })
 

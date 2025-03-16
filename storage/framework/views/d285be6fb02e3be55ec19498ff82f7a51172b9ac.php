@@ -200,8 +200,30 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
                                                     <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                                 </label>
                                                 <div class="kt-input-icon">
-                                                    <input type="text" value="<?php echo e(isset($model) ? $model->getExchangeRate():0); ?>" name="exchange_rate" class="form-control exchange-rate-js recalculate-amount-in-main-currency " placeholder="<?php echo e(__('Exchange Rate')); ?>">
+                                                    <input id="calcInput" onclick="toggleCalculator(this)" type="text" value="<?php echo e(isset($model) ? $model->getExchangeRate():0); ?>" name="exchange_rate" class="form-control exchange-rate-js recalculate-amount-in-main-currency " placeholder="<?php echo e(__('Exchange Rate')); ?>">
                                                 </div>
+												
+												<div id="calculator" class="calculator">
+        <div id="display" style="margin-bottom: 10px; padding: 5px; background: white;"></div>
+        <button onclick="calc('1')">1</button>
+        <button onclick="calc('2')">2</button>
+        <button onclick="calc('3')">3</button>
+        <button onclick="calc('+')">+</button><br>
+        <button onclick="calc('4')">4</button>
+        <button onclick="calc('5')">5</button>
+        <button onclick="calc('6')">6</button>
+        <button onclick="calc('-')">-</button><br>
+        <button onclick="calc('7')">7</button>
+        <button onclick="calc('8')">8</button>
+        <button onclick="calc('9')">9</button>
+        <button onclick="calc('*')">*</button><br>
+        <button onclick="calc('0')">0</button>
+        <button onclick="calc('.')">.</button>
+        <button onclick="calc('/')">/</button>
+        <button onclick="calculate()">=</button><br>
+        <button onclick="clearCalc()">C</button>
+    </div>
+	
                                             </div>
 
                                             
@@ -644,7 +666,7 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
 		<script>
 		$(document).on('change','.recalculate-amount-in-main-currency',function(){
 		const parent = $(this).closest('.kt-portlet__body');
-		const amount = parseFloat($(parent).find('.amount-js').val()	)
+		const amount = parseFloat(number_unformat($(parent).find('.amount-js').val()))
 		const exchangeRate = parseFloat($(parent).find('.exchange-rate-js').val())
 		const amountInMainCurrency = parseFloat(amount * exchangeRate) ;
 		$(parent).find('.amount-in-main-currency-js-hidden').val( amountInMainCurrency)
@@ -672,6 +694,65 @@ $(document).on('change','.type',function(e){
 $('.type').trigger('change')	
 		</script>
 
+
+
+<script>
+        let currentInput = null;
+        let expression = '';
+
+        function toggleCalculator(input) {
+            const calc = document.getElementById('calculator');
+            currentInput = input;
+            
+            // Position calculator below input
+            const rect = input.getBoundingClientRect();
+            calc.style.left = rect.left + 'px';
+            calc.style.top = (rect.bottom + window.scrollY) + 'px';
+            
+            calc.style.display = calc.style.display === 'block' ? 'none' : 'block';
+            
+            // Sync calculator display with input
+            expression = input.value || '';
+            updateDisplay();
+
+            // Close when clicking outside
+            document.addEventListener('click', function handler(e) {
+                if (!calc.contains(e.target) && e.target !== input) {
+                    calc.style.display = 'none';
+                    document.removeEventListener('click', handler);
+                }
+            }, { once: true });
+        }
+
+        function calc(value) {
+            expression += value;
+            updateDisplay();
+        }
+
+        function updateDisplay() {
+            document.getElementById('display').textContent = expression;
+            if (currentInput) {
+                currentInput.value = expression;
+            }
+        }
+
+        function calculate() {
+            try {
+                expression = eval(expression).toString(); // Note: eval() is used here for simplicity, but be cautious in production
+                updateDisplay();
+            } catch (e) {
+                expression = 'Error';
+                updateDisplay();
+                expression = '';
+            }
+        }
+
+        function clearCalc() {
+            expression = '';
+            updateDisplay();
+        }
+    </script>
+	
 
         <?php $__env->stopSection(); ?>
 

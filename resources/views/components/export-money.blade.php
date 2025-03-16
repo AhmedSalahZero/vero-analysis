@@ -160,7 +160,7 @@ use App\Models\MoneyReceived ;
                                         <label>{{__('Net Balance')}} <span class="net-balance-date-js"></span> </label>
                                         <div class="kt-input-icon">
                                             <input value="0" type="text" disabled class="form-control net-balance-js" placeholder="{{__('Net Balance')}}">
-                                            {{-- <x-tool-tip title="{{__('Kash Vero')}}" /> --}}
+                                        
                                         </div>
                                     </div>
                                     <div class="col-md-2 mb-3">

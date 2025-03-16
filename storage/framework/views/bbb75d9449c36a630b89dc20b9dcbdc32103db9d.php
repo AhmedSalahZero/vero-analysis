@@ -105,11 +105,22 @@
 
                             <div class="kt-portlet ">
                                 <div class="kt-portlet__head">
-                                    <div class="kt-portlet__head-label">
+                                    <div class="kt-portlet__head-label flex-1">
                                         <h3 class="kt-portlet__head-title head-title text-primary">
                                             <?php echo e(__('Safe To Bank Transfer Information')); ?>
 
                                         </h3>
+										
+										<div class=" flex-1 d-flex justify-content-end pt-3">
+                            <div class="col-md-3 mb-3">
+                                <label><?php echo e(__('Balance')); ?> <span class="balance-date-js"></span> </label>
+                                <div class="kt-input-icon">
+                                    <input value="0" type="text" disabled class="form-control cash-balance-js"  placeholder="<?php echo e(__('Account Balance')); ?>">
+                                </div>
+                            </div>
+
+                        </div>
+						
                                     </div>
                                 </div>
 
@@ -134,7 +145,7 @@
                             <label><?php echo e(__('Branch')); ?> <span class="multi_selection"></span> </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
-                                    <select data-live-search="true" data-actions-box="true" name="from_branch_id" required class="form-control customers-js kt-bootstrap-select select2-select kt_bootstrap_select ajax-customer-name">
+                                    <select id="branch-id" data-live-search="true" data-actions-box="true" name="from_branch_id" required class="form-control customers-js kt-bootstrap-select select2-select kt_bootstrap_select ajax-customer-name">
                                         <?php $__currentLoopData = $selectedBranches; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $id => $name): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <option value="<?php echo e($id); ?>"><?php echo e($name); ?></option>
                                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -149,7 +160,8 @@
                                                     <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                                 </label>
                                                 <div class="kt-input-icon">
-                                                    <input data-max-cheque-value="0" type="text" value="<?php echo e(isset($model) ? $model->getAmount():0); ?>" name="amount" class="form-control greater-than-or-equal-zero-allowed " placeholder="<?php echo e(__('Insert Amount')); ?>">
+                                                    <input  type="text" value="<?php echo e(isset($model) ? number_format($model->getAmount()):0); ?>"  class="form-control greater-than-or-equal-zero-allowed " >
+													<input type="hidden" name="amount" value="<?php echo e(isset($model) ? $model->getAmount():0); ?>">
                                                 </div>
                                             </div>
                                             <div class="col-md-3">
@@ -346,6 +358,24 @@
     <script>
 	
 	
+	$(document).on('change', 'select#branch-id,select.current-from-currency', function() {
+        const branchId = $('select#branch-id').val();
+        const currencyName = $('select.current-from-currency').val();
+        if (branchId != '-1') {
+            $.ajax({
+                url: "<?php echo e(route('get.current.end.balance.of.cash.in.safe.statement',['company'=>$company->id])); ?>"
+                , data: {
+                    branchId
+                    , currencyName
+                }
+                , success: function(res) {
+                    const endBalance = res.end_balance;
+                    $('.cash-balance-js').val(number_format(endBalance))
+                }
+            })
+        }
+    })
+	
 $(document).on('change', '.js-from-update-account-number-based-on-account-type', function () {
 	const val = $(this).val()
 	const lang = $('body').attr('data-lang')
@@ -373,7 +403,7 @@ $(document).on('change', '.js-from-update-account-number-based-on-account-type',
 				options += '<option ' + selected + '  value="' + val + '">' + val + '</option>'
 			}
 
-			selectToAppendInto.empty().append(options)
+			selectToAppendInto.empty().append(options).trigger('change')
 		}
 	})
 
@@ -418,7 +448,7 @@ $(document).on('change', '.js-to-update-account-number-based-on-account-type', f
 				options += '<option ' + selected + '  value="' + val + '">' + val + '</option>'
 			}
 
-			selectToAppendInto.empty().append(options)
+			selectToAppendInto.empty().append(options).trigger('change')
 		}
 	})
 

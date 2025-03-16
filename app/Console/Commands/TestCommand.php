@@ -140,6 +140,10 @@ class TestCommand extends Command
 	}
 	public function handle()
 	{
+		$var = 50 ;
+		$date = '2010-05-05';
+		// dd(trim($date));
+		// dd(trim($var));
 		/**
 		 * @var Study $study
 		 */

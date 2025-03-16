@@ -181,6 +181,10 @@ class BuyOrSellCurrency extends Model
 	{
 		return $this->exchange_rate;
 	}
+	public function getExchangeRateWithItsReverse():string 
+	{
+		return $this->getExchangeRate() . '<br>' . 1/$this->getExchangeRate();
+	}
     public function getAmountToSell()
     {
         return $this->currency_to_sell_amount ?: 0;

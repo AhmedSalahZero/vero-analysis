@@ -98,10 +98,21 @@
 
                             <div class="kt-portlet ">
                                 <div class="kt-portlet__head">
-                                    <div class="kt-portlet__head-label">
+                                    <div class="kt-portlet__head-label flex-1">
                                         <h3 class="kt-portlet__head-title head-title text-primary">
                                             {{__('Safe To Bank Transfer Information')}}
                                         </h3>
+										
+										<div class=" flex-1 d-flex justify-content-end pt-3">
+                            <div class="col-md-3 mb-3">
+                                <label>{{__('Balance')}} <span class="balance-date-js"></span> </label>
+                                <div class="kt-input-icon">
+                                    <input value="0" type="text" disabled class="form-control cash-balance-js"  placeholder="{{__('Account Balance')}}">
+                                </div>
+                            </div>
+
+                        </div>
+						
                                     </div>
                                 </div>
 
@@ -116,7 +127,7 @@
                             <label>{{ __('Branch') }} <span class="multi_selection"></span> </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
-                                    <select data-live-search="true" data-actions-box="true" name="from_branch_id" required class="form-control customers-js kt-bootstrap-select select2-select kt_bootstrap_select ajax-customer-name">
+                                    <select id="branch-id" data-live-search="true" data-actions-box="true" name="from_branch_id" required class="form-control customers-js kt-bootstrap-select select2-select kt_bootstrap_select ajax-customer-name">
                                         @foreach($selectedBranches as $id => $name)
                                         <option value="{{ $id }}">{{ $name }}</option>
                                         @endforeach
@@ -313,6 +324,24 @@
     <script>
 	
 	
+	$(document).on('change', 'select#branch-id,select.current-from-currency', function() {
+        const branchId = $('select#branch-id').val();
+        const currencyName = $('select.current-from-currency').val();
+        if (branchId != '-1') {
+            $.ajax({
+                url: "{{ route('get.current.end.balance.of.cash.in.safe.statement',['company'=>$company->id]) }}"
+                , data: {
+                    branchId
+                    , currencyName
+                }
+                , success: function(res) {
+                    const endBalance = res.end_balance;
+                    $('.cash-balance-js').val(number_format(endBalance))
+                }
+            })
+        }
+    })
+	
 $(document).on('change', '.js-from-update-account-number-based-on-account-type', function () {
 	const val = $(this).val()
 	const lang = $('body').attr('data-lang')
@@ -340,7 +369,7 @@ $(document).on('change', '.js-from-update-account-number-based-on-account-type',
 				options += '<option ' + selected + '  value="' + val + '">' + val + '</option>'
 			}
 
-			selectToAppendInto.empty().append(options)
+			selectToAppendInto.empty().append(options).trigger('change')
 		}
 	})
 
@@ -385,7 +414,7 @@ $(document).on('change', '.js-to-update-account-number-based-on-account-type', f
 				options += '<option ' + selected + '  value="' + val + '">' + val + '</option>'
 			}
 
-			selectToAppendInto.empty().append(options)
+			selectToAppendInto.empty().append(options).trigger('change')
 		}
 	})
 

@@ -499,18 +499,18 @@ use App\Models\LetterOfGuaranteeIssuance;
 <?php endif; ?> 
                                     </div>
 
-                                    <div class="col-md-3">
-                                         <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.input','data' => ['dataCurrentValue' => isset($model) ? $model->getLgAmount():0,'defaultValue' => 0,'model' => $model??null,'label' => __('LG Amount'),'type' => 'text','placeholder' => __('LG Amount'),'name' => 'lg_amount','class' => 'only-greater-than-or-equal-zero-allowed recalculate-cash-cover-amount-js recalculate-lg-commission-amount-js lg-amount-js','required' => true]]); ?>
-<?php $component->withName('form.input'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['data-current-value' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(isset($model) ? $model->getLgAmount():0),'default-value' => 0,'model' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($model??null),'label' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('LG Amount')),'type' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('text'),'placeholder' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('LG Amount')),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('lg_amount'),'class' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed recalculate-cash-cover-amount-js recalculate-lg-commission-amount-js lg-amount-js'),'required' => true]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
-<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
-<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
-<?php endif; ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?> 
+                                    
+									
+									  <div class="col-md-3">
+                                        <label> <?php echo e(__('LG Amount')); ?>
+
+                                            <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+                                        </label>
+                                        <div>
+                                            <input required value="<?php echo e((isset($model) ? number_format($model->getLgAmount(),0) : 0)); ?>" class="form-control only-greater-than-or-equal-zero-allowed recalculate-cash-cover-amount-js recalculate-lg-commission-amount-js lg-amount-js" type="text" placeholder="<?php echo e(__('Lg Amount')); ?>">
+                                            <input type="hidden" value="<?php echo e((isset($model) ? $model->getLgAmount() : 0)); ?>" name="lg_amount" class="only-greater-than-zero-allowed ">
+
+                                        </div>
                                     </div>
 
                                   

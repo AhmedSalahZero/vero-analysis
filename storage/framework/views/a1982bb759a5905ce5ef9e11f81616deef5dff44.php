@@ -106,11 +106,28 @@
 
                             <div class="kt-portlet ">
                                 <div class="kt-portlet__head">
-                                    <div class="kt-portlet__head-label">
+                                    <div class="kt-portlet__head-label flex-1">
                                         <h3 class="kt-portlet__head-title head-title text-primary">
                                           <?php echo e(__('Bank To Bank Transfer Information')); ?>
 
                                         </h3>
+										
+										  <div class=" flex-1 d-flex justify-content-end pt-3">
+                    <div class="col-md-3 mb-3">
+                        <label><?php echo e(__('Balance')); ?> <span class="balance-date-js"></span> </label>
+                        <div class="kt-input-icon">
+                            <input value="0" type="text" disabled class="form-control balance-js" placeholder="<?php echo e(__('Account Balance')); ?>">
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label><?php echo e(__('Net Balance')); ?> <span class="net-balance-date-js"></span> </label>
+                        <div class="kt-input-icon">
+                            <input value="0" type="text" disabled class="form-control net-balance-js" placeholder="<?php echo e(__('Net Balance')); ?>">
+                            
+                        </div>
+                    </div>
+                </div>
+				
                                     </div>
                                 </div>
 
@@ -172,7 +189,7 @@
                                                 </label>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group date">
-                                                        <select required js-from-when-change-trigger-change-account-type data-from-financial-institution-id name="from_bank_id" class="form-control ">
+                                                        <select data-current-selected="<?php echo e(isset($model) ? $model->getFromBankId() : 0); ?>" required js-from-when-change-trigger-change-account-type data-from-financial-institution-id name="from_bank_id" class="form-control from-financial-institution">
                                                             <?php $__currentLoopData = $financialInstitutionBanks; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index=>$financialInstitutionBank): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                             <option value="<?php echo e($financialInstitutionBank->id); ?>" <?php echo e(isset($model) && $model->getFromBankId() == $financialInstitutionBank->id ? 'selected' : ''); ?>><?php echo e($financialInstitutionBank->getName()); ?></option>
                                                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -209,7 +226,7 @@
                                                 </label>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group date">
-                                                        <select required data-from-current-selected="<?php echo e(isset($model) ? $model->getFromAccountNumber(): 0); ?>" name="from_account_number" class="form-control js-from-account-number">
+                                                        <select required data-from-current-selected="<?php echo e(isset($model) ? $model->getFromAccountNumber(): 0); ?>" name="from_account_number" class="form-control js-from-account-number ">
                                                             <option value="" selected><?php echo e(__('Select')); ?></option>
                                                         </select>
                                                     </div>
@@ -223,10 +240,9 @@
                                                 </label>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group date">
-
-                                                        <select required js-to-when-change-trigger-change-account-type data-to-financial-institution-id name="to_bank_id" class="form-control ">
+                                                        <select data-current-selected="<?php echo e(isset($model) ? $model->getToBankId() : 0); ?>" required js-to-when-change-trigger-change-account-type data-to-financial-institution-id name="to_bank_id" class="form-control ">
                                                             <?php $__currentLoopData = $financialInstitutionBanks; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index=>$financialInstitutionBank): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                            <option value="<?php echo e($financialInstitutionBank->id); ?>" <?php echo e(isset($model) && $model->getFromBankId() == $financialInstitutionBank->id ? 'selected' : ''); ?>><?php echo e($financialInstitutionBank->getName()); ?></option>
+                                                            <option value="<?php echo e($financialInstitutionBank->id); ?>" <?php echo e(isset($model) && $model->getToBankId() == $financialInstitutionBank->id ? 'selected' : ''); ?>><?php echo e($financialInstitutionBank->getName()); ?></option>
                                                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                         </select>
 
@@ -421,7 +437,7 @@ $(document).on('change', 'select.js-from-update-account-number-based-on-account-
 				options += '<option ' + selected + '  value="' + val + '">' + val + '</option>'
 			}
 
-			selectToAppendInto.empty().append(options)
+			selectToAppendInto.empty().append(options).trigger('change')
 		}
 	})
 
@@ -438,8 +454,34 @@ $(document).on('change', 'select[js-from-when-change-trigger-change-account-type
 $(function () {
 	$('.js-from-update-account-number-based-on-account-type').trigger('change')
 })
+console.log('1');
+$(document).on('change', 'select.js-from-account-number', function() {
+        const parent = $(this).closest('.kt-portlet__body');
+        const financialInstitutionId = parent.find('select.from-financial-institution').val()
+        const accountNumber = $(this).val();
+        const accountType = parent.find('select.js-from-update-account-number-based-on-account-type').val();
+		console.log(financialInstitutionId,accountNumber,accountType)
+        $.ajax({
+            url: "<?php echo e(route('update.balance.and.net.balance.based.on.account.number',['company'=>$company->id])); ?>"
+            , data: {
+                accountNumber
+                , accountType
+                , financialInstitutionId
+            }
+            , type: "get"
+            , success: function(res) {
+                if (res.balance_date) {
+                    $('.balance-date-js').html('[ ' + res.balance_date + ' ]')
+                }
+                if (res.net_balance_date) {
+                    $('.net-balance-date-js').html('[ ' + res.net_balance_date + ' ]')
+                }
+                $('.net-balance-js').val(number_format(res.net_balance))
+                $('.balance-js').val(number_format(res.balance))
 
-
+            }
+        })
+    })
 $(document).on('change', 'select.js-to-update-account-number-based-on-account-type', function () {
 	const val = $(this).val()
 	const lang = $('body').attr('data-lang')
@@ -466,7 +508,7 @@ $(document).on('change', 'select.js-to-update-account-number-based-on-account-ty
 				options += '<option ' + selected + '  value="' + val + '">' + val + '</option>'
 			}
 
-			selectToAppendInto.empty().append(options)
+			selectToAppendInto.empty().append(options).trigger('change')
 		}
 	})
 
@@ -481,6 +523,9 @@ $(document).on('change', 'select[js-to-when-change-trigger-change-account-type]'
 	$(this).closest('.kt-portlet__body').find('select.js-to-update-account-number-based-on-account-type').trigger('change')
 })
 $(function () {
+	
+	
+	
 	$('select.js-to-update-account-number-based-on-account-type').trigger('change')
 })
 
