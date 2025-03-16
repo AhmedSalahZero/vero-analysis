@@ -9,6 +9,8 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
 ?>
 <link href="<?php echo e(url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css')); ?>" rel="stylesheet" type="text/css" />
 <link href="<?php echo e(url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css')); ?>" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" type="text/css" href="<?php echo e(asset('assets/jquery-calculator/jquery.calculator.css')); ?>"> 
+
 <style>
     .kt-portlet .kt-portlet__head {
         border-bottom-color: #CCE2FD !important;
@@ -200,30 +202,10 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
                                                     <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                                 </label>
                                                 <div class="kt-input-icon">
-                                                    <input id="calcInput" onclick="toggleCalculator(this)" type="text" value="<?php echo e(isset($model) ? $model->getExchangeRate():0); ?>" name="exchange_rate" class="form-control exchange-rate-js recalculate-amount-in-main-currency " placeholder="<?php echo e(__('Exchange Rate')); ?>">
+                                                    <input  id="imageCalc"  type="text" value="<?php echo e(isset($model) ? $model->getExchangeRate():0); ?>" name="exchange_rate" class="form-control exchange-rate-js recalculate-amount-in-main-currency " placeholder="<?php echo e(__('Exchange Rate')); ?>">
                                                 </div>
 												
-												<div id="calculator" class="calculator">
-        <div id="display" style="margin-bottom: 10px; padding: 5px; background: white;"></div>
-        <button onclick="calc('1')">1</button>
-        <button onclick="calc('2')">2</button>
-        <button onclick="calc('3')">3</button>
-        <button onclick="calc('+')">+</button><br>
-        <button onclick="calc('4')">4</button>
-        <button onclick="calc('5')">5</button>
-        <button onclick="calc('6')">6</button>
-        <button onclick="calc('-')">-</button><br>
-        <button onclick="calc('7')">7</button>
-        <button onclick="calc('8')">8</button>
-        <button onclick="calc('9')">9</button>
-        <button onclick="calc('*')">*</button><br>
-        <button onclick="calc('0')">0</button>
-        <button onclick="calc('.')">.</button>
-        <button onclick="calc('/')">/</button>
-        <button onclick="calculate()">=</button><br>
-        <button onclick="clearCalc()">C</button>
-    </div>
-	
+												
                                             </div>
 
                                             
@@ -693,66 +675,14 @@ $(document).on('change','.type',function(e){
 	
 $('.type').trigger('change')	
 		</script>
-
-
+		<script type="text/javascript" src="<?php echo e(asset('assets/jquery-calculator/jquery.plugin.js')); ?>"></script> 
+<script type="text/javascript" src="<?php echo e(asset('assets/jquery-calculator/jquery.calculator.js')); ?>"></script>
 
 <script>
-        let currentInput = null;
-        let expression = '';
-
-        function toggleCalculator(input) {
-            const calc = document.getElementById('calculator');
-            currentInput = input;
-            
-            // Position calculator below input
-            const rect = input.getBoundingClientRect();
-            calc.style.left = rect.left + 'px';
-            calc.style.top = (rect.bottom + window.scrollY) + 'px';
-            
-            calc.style.display = calc.style.display === 'block' ? 'none' : 'block';
-            
-            // Sync calculator display with input
-            expression = input.value || '';
-            updateDisplay();
-
-            // Close when clicking outside
-            document.addEventListener('click', function handler(e) {
-                if (!calc.contains(e.target) && e.target !== input) {
-                    calc.style.display = 'none';
-                    document.removeEventListener('click', handler);
-                }
-            }, { once: true });
-        }
-
-        function calc(value) {
-            expression += value;
-            updateDisplay();
-        }
-
-        function updateDisplay() {
-            document.getElementById('display').textContent = expression;
-            if (currentInput) {
-                currentInput.value = expression;
-            }
-        }
-
-        function calculate() {
-            try {
-                expression = eval(expression).toString(); // Note: eval() is used here for simplicity, but be cautious in production
-                updateDisplay();
-            } catch (e) {
-                expression = 'Error';
-                updateDisplay();
-                expression = '';
-            }
-        }
-
-        function clearCalc() {
-            expression = '';
-            updateDisplay();
-        }
-    </script>
+$('#imageCalc').calculator({showOn: 'button', 
+    buttonImageOnly: true, buttonImage: "<?php echo e(asset('assets/jquery-calculator/calculator.png')); ?>"});
 	
+</script>
 
         <?php $__env->stopSection(); ?>
 

@@ -22,6 +22,9 @@ let pageLoaded = false ;
 	html body .form-element-hidden{
 		display:none !important;
 	}
+	.calculator-trigger{
+		cursor:pointer;
+	}
 	.width-9 {
         max-width: initial !important;
         width: 9% !important;

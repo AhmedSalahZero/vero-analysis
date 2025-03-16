@@ -10,6 +10,8 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
 @endphp
 <link href="{{ url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css') }}" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" type="text/css" href="{{ asset('assets/jquery-calculator/jquery.calculator.css') }}"> 
+
 <style>
     .kt-portlet .kt-portlet__head {
         border-bottom-color: #CCE2FD !important;
@@ -182,8 +184,10 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
                                                     @include('star')
                                                 </label>
                                                 <div class="kt-input-icon">
-                                                    <input type="text" value="{{ isset($model) ? $model->getExchangeRate():0 }}" name="exchange_rate" class="form-control exchange-rate-js recalculate-amount-in-main-currency " placeholder="{{__('Exchange Rate')}}">
+                                                    <input  id="imageCalc"  type="text" value="{{ isset($model) ? $model->getExchangeRate():0 }}" name="exchange_rate" class="form-control exchange-rate-js recalculate-amount-in-main-currency " placeholder="{{__('Exchange Rate')}}">
                                                 </div>
+												
+												
                                             </div>
 
                                             {{-- {{ exchange rate *  Currency To Sell Amount }} --}}
@@ -632,6 +636,13 @@ $(document).on('change','.type',function(e){
 	
 $('.type').trigger('change')	
 		</script>
+		<script type="text/javascript" src="{{ asset('assets/jquery-calculator/jquery.plugin.js') }}"></script> 
+<script type="text/javascript" src="{{ asset('assets/jquery-calculator/jquery.calculator.js') }}"></script>
 
+<script>
+$('#imageCalc').calculator({showOn: 'button', 
+    buttonImageOnly: true, buttonImage: "{{ asset('assets/jquery-calculator/calculator.png') }}"});
+	
+</script>
 
         @endsection
