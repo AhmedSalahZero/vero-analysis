@@ -331,15 +331,15 @@ use App\Models\LetterOfGuaranteeIssuance;
                                     </div>
 
                                        <div class="col-md-3">
-                                        {{-- <label> {{ __('LG Amount') }}
+                                        <label> {{ __('LG Amount') }}
                                             @include('star')
-                                        </label> --}}
-										                                        <x-form.input  :data-current-value="isset($model) ? $model->getLgAmount():0" :data-current-value="isset($model) ? $model->getLgAmount():0" :model="$model??null" :label="__('LG Amount')" :type="'text'" :placeholder="__('LG Amount')" :name="'lg_amount'" :class="'only-greater-than-or-equal-zero-allowed only-smaller-than-or-equal-specific-number-allowed recalculate-cash-cover-amount-js recalculate-lg-commission-amount-js lg-amount-js '"  :required="true"></x-form.input>
+                                        </label>
+										                                        {{-- <x-form.input  :data-current-value="isset($model) ? $model->getLgAmount():0" :data-current-value="isset($model) ? $model->getLgAmount():0" :model="$model??null" :label="__('LG Amount')" :type="'text'" :placeholder="__('LG Amount')" :name="'lg_amount'" :class="'only-greater-than-or-equal-zero-allowed only-smaller-than-or-equal-specific-number-allowed recalculate-cash-cover-amount-js recalculate-lg-commission-amount-js lg-amount-js '"  :required="true"></x-form.input> --}}
 
-                                        {{-- <div>
-                                            <input data-current-value="{{ isset($model) ? $model->getLgAmount() : 0 }}" required value="{{ (isset($model) ? number_format($model->getLgAmount(),0) : 0) }}" class="form-control only-greater-than-or-equal-zero-allowed only-smaller-than-or-equal-specific-number-allowed recalculate-cash-cover-amount-js recalculate-lg-commission-amount-js lg-amount-js" type="text" placeholder="{{ __('Lg Amount') }}">
+                                        <div>
+                                            <input data-current-value="{{ isset($model) ? $model->getLgAmount() : 0 }}" required value="{{ (isset($model) ? number_format($model->getLgAmount(),0) : 0) }}"  class="form-control only-greater-than-or-equal-zero-allowed only-smaller-than-or-equal-specific-number-allowed recalculate-cash-cover-amount-js recalculate-lg-commission-amount-js lg-amount-js" type="text" placeholder="{{ __('Lg Amount') }}">
                                             <input data-current-value="{{ isset($model) ? $model->getLgAmount() : 0 }}" type="hidden" value="{{ (isset($model) ? $model->getLgAmount() : 0) }}" name="lg_amount" class="only-greater-than-zero-allowed ">
-                                        </div> --}}
+                                        </div>
                                     </div>
 
                                     <div class="col-md-3">
@@ -697,7 +697,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                             $('#total-lg-for-all-types-id').val(res.total_lg_outstanding_balance).prop('readonly', true)
                             $('#total-room-id').val(res.total_room).prop('readonly', true)
 							var totalRoom = number_unformat(res.total_room);
-							$('input[name="lg_amount"]').attr('data-can-not-be-greater-than',totalRoom);
+							$('input[name="lg_amount"]').parent().find('input').attr('data-can-not-be-greater-than',totalRoom);
                             $('#current-lg-type-outstanding-balance-id').val(res.current_lg_type_outstanding_balance).prop('readonly', true)
 							$('#lg-currency-id').val(res.currency_name).trigger('change');
                             $('#min_lg_commission_fees_id').val(res.min_lg_commission_rate).trigger('change');
