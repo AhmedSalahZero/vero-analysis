@@ -289,8 +289,17 @@ use App\Models\LetterOfCreditIssuance;
                                         <x-form.date :classes="'due-date-js'" :readonly="true" :label="__('Due Date')" :required="true" :model="$model??null" :name="'due_date'" :placeholder="__('Select Due Date')"></x-form.date>
                                     </div>
                                     <div class="col-md-3">
-                                        <x-form.input :default-value="0" :model="$model??null" :label="__('LC Amount')" :type="'text'" :placeholder="__('LC Amount')" :name="'lc_amount'" :class="'only-greater-than-zero-allowed amount-js  recalculate-amount-in-main-currency  recalculate-lc-commission-amount-js lc-amount-js'" :required="true"></x-form.input>
+									<label> {{ __('Lc Amount') }}
+									@include('star')
+									</label>
+									       <div>
+										                  <input required value="{{ (isset($model) ? number_format($model->getLcAmount(),0) : 0) }}" class="form-control  only-greater-than-or-equal-zero-allowed amount-js  recalculate-amount-in-main-currency recalculate-cash-cover-amount-js recalculate-lc-commission-amount-js lc-amount-js" type="text" placeholder="{{ __('Lc Amount') }}">
+                                    <input type="hidden" value="{{ (isset($model) ? $model->getLcAmount() : 0) }}"  name="lc_amount" class="only-greater-than-zero-allowed ">
+
+										   </div>
                                     </div>
+									
+                                 
 									  <div class="col-md-3">
                                         <x-form.input :readonly="false" :default-value="1" :model="$model??null" :label="__('Exchange Rate')" :type="'text'" :placeholder="__('Exchange Rate')" :name="'exchange_rate'" :class="'recalculate-amount-in-main-currency recalculate-cash-cover-amount-js exchange-rate-js only-greater-than-or-equal-zero-allowed exchange-rate-class'" :required="true"></x-form.input>
                                     </div>
@@ -519,7 +528,7 @@ use App\Models\LetterOfCreditIssuance;
 			<script>
     $(document).on('change', '.recalculate-amount-in-main-currency', function() {
         const parent = $(this).closest('.kt-portlet__body');
-        const amount = parseFloat($(parent).find('.amount-js').val())
+        const amount = parseFloat(number_unformat($(parent).find('.amount-js').val()))
         const exchangeRate = parseFloat($(parent).find('.exchange-rate-js').val())
         const amountInMainCurrency = parseFloat(amount * exchangeRate);
 	

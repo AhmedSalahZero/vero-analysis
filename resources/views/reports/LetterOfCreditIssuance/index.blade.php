@@ -464,7 +464,7 @@ $("button[data-dismiss=modal2]").click(function(){
 <script>
     $(document).on('change', '.recalculate-amount-in-main-currency', function() {
         const parent = $(this).closest('.modal-body');
-        const amount = parseFloat($(parent).find('.amount-js').val())
+        const amount = parseFloat(number_unformat($(parent).find('.amount-js').val()))
         const exchangeRate = parseFloat($(parent).find('.exchange-rate-js').val())
         const amountInMainCurrency = parseFloat(amount * exchangeRate);
         $(parent).find('.amount-in-main-currency-js-hidden').val(amountInMainCurrency)

@@ -76,6 +76,17 @@ class MoneyReceived extends Model
 			if($moneyReceived->getPartnerType()!='is_customer'){
 				return __('Cheque :name [ :partnerType ] With Number [ :number ]',['name'=>$customerName,'number'=>$chequeNumber,'partnerType'=>$moneyReceived->getPartnerTypeFormatted()],$lang);
 			}
+			if($moneyReceived->isGeneralDownPayment()&&$moneyReceived->isDownPayment()){
+				return __('Cheque :name With Number [ :number ] - General Down Payment',['name'=>$customerName,'number'=>$chequeNumber],$lang) ;
+				
+			}
+			if($moneyReceived->isOverContractDownPayment() && $moneyReceived->isDownPayment()){
+				return __('Cheque :name With Number [ :number ] - Contract Down Payment [ :contractName ] [ :contractCode ]',['name'=>$customerName,'number'=>$chequeNumber,
+				'contractName'=>$moneyReceived->getContractName(),
+			'contractCode'=>$moneyReceived->getContractCode()
+			],$lang) ;
+				
+			}
 			return __('Cheque :name With Number [ :number ] Settled Invoices [ :numbers ] [ :currency ]',['name'=>$customerName,'number'=>$chequeNumber,'numbers'=>$settledInvoiceNumbers,'currency'=>$moneyReceived->getCurrency()],$lang) ;
 		}
 		if($moneyReceived->isCashInSafe()){
@@ -94,6 +105,18 @@ class MoneyReceived extends Model
 			if($moneyReceived->getPartnerType()!='is_customer'){
 				return __('Cash In Safe From :name [ :partnerType ]',['name'=>$customerName,'partnerType'=>$moneyReceived->getPartnerTypeFormatted()],$lang) ;
 			}
+			if($moneyReceived->isGeneralDownPayment()&&$moneyReceived->isDownPayment()){
+				return __('Cash In Safe From :name  - General Down Payment',['name'=>$customerName],$lang) ;
+			}
+			if($moneyReceived->isOverContractDownPayment() && $moneyReceived->isDownPayment()){
+				return __('Cash In Safe From :name  - Contract Down Payment [ :contractName ] [ :contractCode ]',['name'=>$customerName,
+			'contractName'=>$moneyReceived->getContractName(),
+			'contractCode'=>$moneyReceived->getContractCode()
+			],$lang) ;
+			}
+			if($moneyReceived->isGeneralDownPayment()&&$moneyReceived->isDownPayment()){
+				return __('Cash In Safe From :name - General Down Payment',['name'=>$customerName],$lang) ;
+			}
 			return __('Cash In Safe From :name Settled Invoices [ :numbers ]',['name'=>$customerName,'numbers'=>$settledInvoiceNumbers],$lang) ;
 		}
 		if($moneyReceived->isCashInBank()){
@@ -108,6 +131,16 @@ class MoneyReceived extends Model
 			}
 			if($moneyReceived->getPartnerType()!='is_customer'){
 				return __('Bank Deposit From :name [ :partnerType ]',['name'=>$customerName,'partnerType'=>$moneyReceived->getPartnerTypeFormatted()],$lang) ;
+			}
+			if($moneyReceived->isGeneralDownPayment()&&$moneyReceived->isDownPayment()){
+				return __('Bank Deposit From :name - General Down Payment',['name'=>$customerName],$lang) ;
+			}
+			if($moneyReceived->isOverContractDownPayment() && $moneyReceived->isDownPayment()){
+				return __('Bank Deposit From :name - Contract Down Payment [ :contractName ] [ :contractCode ]',['name'=>$customerName,
+			'contractName'=>$moneyReceived->getContractName(),
+			'contractCode'=>$moneyReceived->getContractCode()
+			],$lang) ;
+				
 			}
 			return __('Bank Deposit From :name Settled Invoices [ :numbers ]',['name'=>$customerName,'numbers'=>$settledInvoiceNumbers],$lang) ;
 		}
@@ -128,7 +161,15 @@ class MoneyReceived extends Model
 					'contractCode'=>$moneyReceived->getContractCode()
 				]);
 			}
-			
+			if($moneyReceived->isGeneralDownPayment()&&$moneyReceived->isDownPayment()){
+				return __('Incoming Transfer :name - General Down Payment',['name'=>$customerName],$lang) ;
+			}
+			if($moneyReceived->isOverContractDownPayment() && $moneyReceived->isDownPayment()){
+				return __('Incoming Transfer :name - Contract Down Payment [ :contractName ] [ :contractCode ]',['name'=>$customerName,
+			'contractName'=>$moneyReceived->getContractName(),
+			'contractCode'=>$moneyReceived->getContractCode()
+			],$lang) ;
+			}
 			if($moneyReceived->getPartnerType()!='is_customer'){
 				return __('Incoming Transfer :name [ :partnerType ]',['name'=>$customerName,'partnerType'=>$moneyReceived->getPartnerTypeFormatted()],$lang) ;
 			}

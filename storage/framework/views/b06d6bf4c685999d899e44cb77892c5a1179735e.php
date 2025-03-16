@@ -421,17 +421,16 @@ use App\Models\LetterOfCreditIssuance;
                                     </div>
 
                                     <div class="col-md-3">
-                                         <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.input','data' => ['defaultValue' => 0,'model' => $model??null,'label' => __('LC Amount'),'type' => 'text','placeholder' => __('LC Amount'),'name' => 'lc_amount','class' => 'only-greater-than-zero-allowed amount-js  recalculate-amount-in-main-currency recalculate-cash-cover-amount-js recalculate-lc-commission-amount-js lc-amount-js','required' => true]]); ?>
-<?php $component->withName('form.input'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['default-value' => 0,'model' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($model??null),'label' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('LC Amount')),'type' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('text'),'placeholder' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('LC Amount')),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('lc_amount'),'class' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-zero-allowed amount-js  recalculate-amount-in-main-currency recalculate-cash-cover-amount-js recalculate-lc-commission-amount-js lc-amount-js'),'required' => true]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
-<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
-<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
-<?php endif; ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?> 
+									<label> <?php echo e(__('Lc Amount')); ?>
+
+									<?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+									</label>
+									       <div>
+										                  <input required value="<?php echo e((isset($model) ? number_format($model->getLcAmount(),0) : 0)); ?>" class="form-control  only-greater-than-or-equal-zero-allowed amount-js  recalculate-amount-in-main-currency recalculate-cash-cover-amount-js recalculate-lc-commission-amount-js lc-amount-js" type="text" placeholder="<?php echo e(__('Lc Amount')); ?>">
+                                    <input type="hidden" value="<?php echo e((isset($model) ? $model->getLcAmount() : 0)); ?>"  name="lc_amount" class="only-greater-than-zero-allowed ">
+
+										   </div>
+                                        
                                     </div>
 									
 									 
@@ -841,7 +840,6 @@ use App\Models\LetterOfCreditIssuance;
             let val = $(this).val()
             val = number_unformat(val)
 			var parentTag = $(this).parent().prop("tagName");
-			console.log(this,$(this).parent(),parentTag,'------------------------')
             $(this).parent().find('input[type="hidden"]:not([name="_token"])').val(val)
         }
     })
@@ -854,7 +852,8 @@ use App\Models\LetterOfCreditIssuance;
 <script>
    $(document).on('change', '.recalculate-amount-in-main-currency', function() {
         const parent = $(this).closest('.kt-portlet__body');
-        const amount = parseFloat($(parent).find('.amount-js').val())
+        const amount = parseFloat(number_unformat($(parent).find('.amount-js').val()))
+	
         const exchangeRate = parseFloat($(parent).find('.exchange-rate-js').val())
         const amountInMainCurrency = parseFloat(amount * exchangeRate);
 	
