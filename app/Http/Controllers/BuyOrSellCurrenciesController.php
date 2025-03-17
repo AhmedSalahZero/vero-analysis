@@ -221,7 +221,7 @@ class BuyOrSellCurrenciesController
         return view('buy-or-sell-currency.form' ,$this->getCommonViewVars($company,$buyOrSellCurrency));
     }
 	
-	public function update(Company $company , Request $request , BuyOrSellCurrency $buyOrSellCurrency){
+	public function update(Company $company , StoreBuyOrSellCurrencyRequest $request , BuyOrSellCurrency $buyOrSellCurrency){
 		$type = $buyOrSellCurrency->getType();
 		$buyOrSellCurrency->deleteRelations();
 		$buyOrSellCurrency->delete();
