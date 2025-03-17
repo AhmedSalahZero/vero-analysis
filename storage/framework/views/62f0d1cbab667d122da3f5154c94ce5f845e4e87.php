@@ -123,8 +123,8 @@ use App\Models\BuyOrSellCurrency ;
                                     <th><?php echo e(__('Transaction Date')); ?></th>
                                     <th><?php echo e(__('Amount To Sell')); ?></th>
                                     <th><?php echo e(__('Currency To Sell')); ?></th>
-                                    <th><?php echo e(__('Amount To Buy')); ?></th>
                                     <th><?php echo e(__('Exchange Rate')); ?></th>
+                                    <th><?php echo e(__('Amount To Buy')); ?></th>
                                     <th><?php echo e(__('Currency To Buy')); ?></th>
                                     <th><?php echo e(__('From Bank')); ?></th>
                                     <th><?php echo e(__('From Account Type')); ?></th>
@@ -149,9 +149,9 @@ use App\Models\BuyOrSellCurrency ;
 
                                     <td><?php echo e($model->getAmountToSellFormatted()); ?></td>
                                     <td><?php echo e($model->getCurrencyToSellFormatted()); ?></td>
-                                    <td><?php echo e($model->getAmountToBuyFormatted()); ?></td>
 									<td><?php echo $model->getExchangeRateWithItsReverse(); ?>
 
+                                    <td><?php echo e($model->getAmountToBuyFormatted()); ?></td>
 
 									</td>
                                     <td><?php echo e($model->getCurrencyToBuyFormatted()); ?></td>
@@ -263,8 +263,8 @@ use App\Models\BuyOrSellCurrency ;
                                     <th><?php echo e(__('Transaction Date')); ?></th>
                                     <th><?php echo e(__('Amount To Sell')); ?></th>
                                     <th><?php echo e(__('Currency To Sell')); ?></th>
-                                    <th><?php echo e(__('Amount To Buy')); ?></th>
 									<th><?php echo e(__('Exchange Rate')); ?></th>
+                                    <th><?php echo e(__('Amount To Buy')); ?></th>
                                     <th><?php echo e(__('Currency To Buy')); ?></th>
                                     <th><?php echo e(__('From Bank')); ?></th>
                                     <th><?php echo e(__('From Account Type')); ?></th>
@@ -286,9 +286,9 @@ use App\Models\BuyOrSellCurrency ;
 
                                     <td><?php echo e($model->getAmountToSellFormatted()); ?></td>
                                     <td><?php echo e($model->getCurrencyToSellFormatted()); ?></td>
-                                    <td><?php echo e($model->getAmountToBuyFormatted()); ?></td>
 									<td><?php echo $model->getExchangeRateWithItsReverse(); ?>
 
+                                    <td><?php echo e($model->getAmountToBuyFormatted()); ?></td>
 
 									</td>
                                     <td><?php echo e($model->getCurrencyToBuyFormatted()); ?></td>
@@ -389,8 +389,8 @@ use App\Models\BuyOrSellCurrency ;
                                     <th><?php echo e(__('Transaction Date')); ?></th>
                                     <th><?php echo e(__('Amount To Sell')); ?></th>
                                     <th><?php echo e(__('Currency To Sell')); ?></th>
-                                    <th><?php echo e(__('Amount To Buy')); ?></th>
 									<th><?php echo e(__('Exchange Rate')); ?></th>
+                                    <th><?php echo e(__('Amount To Buy')); ?></th>
                                     <th><?php echo e(__('Currency To Buy')); ?></th>
                                     <th><?php echo e(__('From Branch')); ?></th>
                                     <th><?php echo e(__('To Bank')); ?></th>
@@ -412,9 +412,9 @@ use App\Models\BuyOrSellCurrency ;
 
                                     <td><?php echo e($model->getAmountToSellFormatted()); ?></td>
                                     <td><?php echo e($model->getCurrencyToSellFormatted()); ?></td>
-                                    <td><?php echo e($model->getAmountToBuyFormatted()); ?></td>
 									<td><?php echo $model->getExchangeRateWithItsReverse(); ?>
 
+                                    <td><?php echo e($model->getAmountToBuyFormatted()); ?></td>
 
 									</td>
                                     <td><?php echo e($model->getCurrencyToBuyFormatted()); ?></td>
@@ -527,8 +527,8 @@ use App\Models\BuyOrSellCurrency ;
                                     <th><?php echo e(__('Transaction Date')); ?></th>
                                     <th><?php echo e(__('Amount To Sell')); ?></th>
                                     <th><?php echo e(__('Currency To Sell')); ?></th>
-                                    <th><?php echo e(__('Amount To Buy')); ?></th>
 									<th><?php echo e(__('Exchange Rate')); ?></th>
+                                    <th><?php echo e(__('Amount To Buy')); ?></th>
                                     <th><?php echo e(__('Currency To Buy')); ?></th>
                                     <th><?php echo e(__('From Branch')); ?></th>
                                     <th><?php echo e(__('To Branch')); ?></th>
@@ -549,9 +549,9 @@ use App\Models\BuyOrSellCurrency ;
 
                                     <td><?php echo e($model->getAmountToSellFormatted()); ?></td>
                                     <td><?php echo e($model->getCurrencyToSellFormatted()); ?></td>
-                                    <td><?php echo e($model->getAmountToBuyFormatted()); ?></td>
 									<td><?php echo $model->getExchangeRateWithItsReverse(); ?>
 
+                                    <td><?php echo e($model->getAmountToBuyFormatted()); ?></td>
 
 									</td>
                                     <td><?php echo e($model->getCurrencyToBuyFormatted()); ?></td>

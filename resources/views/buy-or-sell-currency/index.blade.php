@@ -98,8 +98,8 @@ use App\Models\BuyOrSellCurrency ;
                                     <th>{{ __('Transaction Date') }}</th>
                                     <th>{{ __('Amount To Sell') }}</th>
                                     <th>{{ __('Currency To Sell') }}</th>
-                                    <th>{{ __('Amount To Buy') }}</th>
                                     <th>{{ __('Exchange Rate') }}</th>
+                                    <th>{{ __('Amount To Buy') }}</th>
                                     <th>{{ __('Currency To Buy') }}</th>
                                     <th>{{ __('From Bank') }}</th>
                                     <th>{{ __('From Account Type') }}</th>
@@ -123,8 +123,8 @@ use App\Models\BuyOrSellCurrency ;
 
                                     <td>{{ $model->getAmountToSellFormatted() }}</td>
                                     <td>{{ $model->getCurrencyToSellFormatted() }}</td>
-                                    <td>{{ $model->getAmountToBuyFormatted() }}</td>
 									<td>{!! $model->getExchangeRateWithItsReverse()  !!}
+                                    <td>{{ $model->getAmountToBuyFormatted() }}</td>
 
 									</td>
                                     <td>{{ $model->getCurrencyToBuyFormatted() }}</td>
@@ -215,8 +215,8 @@ use App\Models\BuyOrSellCurrency ;
                                     <th>{{ __('Transaction Date') }}</th>
                                     <th>{{ __('Amount To Sell') }}</th>
                                     <th>{{ __('Currency To Sell') }}</th>
-                                    <th>{{ __('Amount To Buy') }}</th>
 									<th>{{ __('Exchange Rate') }}</th>
+                                    <th>{{ __('Amount To Buy') }}</th>
                                     <th>{{ __('Currency To Buy') }}</th>
                                     <th>{{ __('From Bank') }}</th>
                                     <th>{{ __('From Account Type') }}</th>
@@ -239,8 +239,8 @@ use App\Models\BuyOrSellCurrency ;
 
                                     <td>{{ $model->getAmountToSellFormatted() }}</td>
                                     <td>{{ $model->getCurrencyToSellFormatted() }}</td>
-                                    <td>{{ $model->getAmountToBuyFormatted() }}</td>
 									<td>{!! $model->getExchangeRateWithItsReverse()  !!}
+                                    <td>{{ $model->getAmountToBuyFormatted() }}</td>
 
 									</td>
                                     <td>{{ $model->getCurrencyToBuyFormatted() }}</td>
@@ -322,8 +322,8 @@ use App\Models\BuyOrSellCurrency ;
                                     <th>{{ __('Transaction Date') }}</th>
                                     <th>{{ __('Amount To Sell') }}</th>
                                     <th>{{ __('Currency To Sell') }}</th>
-                                    <th>{{ __('Amount To Buy') }}</th>
 									<th>{{ __('Exchange Rate') }}</th>
+                                    <th>{{ __('Amount To Buy') }}</th>
                                     <th>{{ __('Currency To Buy') }}</th>
                                     <th>{{ __('From Branch') }}</th>
                                     <th>{{ __('To Bank') }}</th>
@@ -346,8 +346,8 @@ use App\Models\BuyOrSellCurrency ;
 
                                     <td>{{ $model->getAmountToSellFormatted() }}</td>
                                     <td>{{ $model->getCurrencyToSellFormatted() }}</td>
-                                    <td>{{ $model->getAmountToBuyFormatted() }}</td>
 									<td>{!! $model->getExchangeRateWithItsReverse()  !!}
+                                    <td>{{ $model->getAmountToBuyFormatted() }}</td>
 
 									</td>
                                     <td>{{ $model->getCurrencyToBuyFormatted() }}</td>
@@ -441,8 +441,8 @@ use App\Models\BuyOrSellCurrency ;
                                     <th>{{ __('Transaction Date') }}</th>
                                     <th>{{ __('Amount To Sell') }}</th>
                                     <th>{{ __('Currency To Sell') }}</th>
-                                    <th>{{ __('Amount To Buy') }}</th>
 									<th>{{ __('Exchange Rate') }}</th>
+                                    <th>{{ __('Amount To Buy') }}</th>
                                     <th>{{ __('Currency To Buy') }}</th>
                                     <th>{{ __('From Branch') }}</th>
                                     <th>{{ __('To Branch') }}</th>
@@ -466,8 +466,8 @@ use App\Models\BuyOrSellCurrency ;
 
                                     <td>{{ $model->getAmountToSellFormatted() }}</td>
                                     <td>{{ $model->getCurrencyToSellFormatted() }}</td>
-                                    <td>{{ $model->getAmountToBuyFormatted() }}</td>
 									<td>{!! $model->getExchangeRateWithItsReverse()  !!}
+                                    <td>{{ $model->getAmountToBuyFormatted() }}</td>
 
 									</td>
                                     <td>{{ $model->getCurrencyToBuyFormatted() }}</td>

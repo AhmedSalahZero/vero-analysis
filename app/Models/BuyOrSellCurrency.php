@@ -183,7 +183,7 @@ class BuyOrSellCurrency extends Model
 	}
 	public function getExchangeRateWithItsReverse():string 
 	{
-		return $this->getExchangeRate() . '<br>' . 1/$this->getExchangeRate();
+		return number_format($this->getExchangeRate(),4) . ' <br> <hr> ' . number_format(1/$this->getExchangeRate(),4);
 	}
     public function getAmountToSell()
     {
