@@ -187,17 +187,18 @@ class BuyOrSellCurrency extends Model
 	}
     public function getAmountToSell()
     {
-        return $this->currency_to_sell_amount ?: 0;
+        return number_unformat($this->currency_to_sell_amount ?: 0);
     }
 	
     public function getAmountToSellFormatted()
     {
+	
         return number_format($this->getAmountToSell(), 0);
     }
 	
 	public function getAmountToBuy()
     {
-        return $this->currency_to_buy_amount ?: 0;
+        return number_unformat($this->currency_to_buy_amount ?: 0);
     }
 	
     public function getAmountToBuyFormatted()
