@@ -7,6 +7,7 @@ use App\Models\OutgoingTransfer;
 use App\Traits\Models\HasCreditStatements;
 use App\Traits\Models\HasForeignExchangeGainOrLoss;
 use App\Traits\Models\HasReviewedBy;
+use App\Traits\Models\HasUserComment;
 use App\Traits\Models\IsMoney;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
@@ -16,7 +17,7 @@ use Illuminate\Support\Facades\DB;
 
 class CashExpense extends Model
 {
-	use IsMoney ,HasForeignExchangeGainOrLoss,HasCreditStatements,HasReviewedBy;
+	use IsMoney ,HasForeignExchangeGainOrLoss,HasCreditStatements,HasReviewedBy,HasUserComment;
 	const CASH_PAYMENT  = 'cash_payment';
 	const PAYABLE_CHEQUE  = 'payable_cheque';
 	const OUTGOING_TRANSFER  = 'outgoing-transfer';

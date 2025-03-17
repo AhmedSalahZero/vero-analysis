@@ -2,11 +2,10 @@
 
 namespace App\Models;
 
-use App\Models\FullySecuredOverdraft;
 use App\Traits\HasBasicStoreRequest;
+use App\Traits\Models\HasUserComment;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
 
 /**
  * * هنا عميلة تحويل الاموال من حساب بنك الي حساب خاص بال
@@ -15,7 +14,7 @@ use Illuminate\Support\Facades\DB;
  */
 class LcSettlementInternalMoneyTransfer extends Model 
 {
-	use HasBasicStoreRequest ;
+	use HasBasicStoreRequest , HasUserComment;
 	const BANK_TO_LETTER_OF_CREDIT = 'bank-to-letter-of-credit';
 	
 	

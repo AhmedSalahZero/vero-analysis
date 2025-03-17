@@ -11,9 +11,7 @@
         white-space: nowrap !important
     }
 
-    [class*="col"] {
-        margin-bottom: 1.5rem !important;
-    }
+ 
 
     label {
         text-align: left !important;
@@ -236,6 +234,8 @@
                         <!--end::Portlet-->
                 </div>
             </div>
+			@include('user_comment',['model'=>$model??null])
+			
             <x-submitting />
         </form>
 

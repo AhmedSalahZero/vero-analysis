@@ -8,6 +8,7 @@ use App\Traits\Models\HasDebitStatements;
 use App\Traits\Models\HasForeignExchangeGainOrLoss;
 use App\Traits\Models\HasPartnerStatement;
 use App\Traits\Models\HasReviewedBy;
+use App\Traits\Models\HasUserComment;
 use App\Traits\Models\IsMoney;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
@@ -17,7 +18,7 @@ use Illuminate\Support\Facades\DB;
 
 class MoneyReceived extends Model
 {
-	use IsMoney,HasForeignExchangeGainOrLoss ,HasDebitStatements,HasCreditStatements,HasPartnerStatement,HasReviewedBy;
+	use IsMoney,HasForeignExchangeGainOrLoss ,HasDebitStatements,HasCreditStatements,HasPartnerStatement,HasReviewedBy , HasUserComment;
 	// protected $appends = [
 	// 	'foreign_exchange_rate_at_date'
     // ];

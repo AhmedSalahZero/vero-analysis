@@ -317,7 +317,7 @@ class MoneyPaymentController
 		$supplier = Partner::find($partnerId);
 		$supplierId = $supplier->id;
 		$paymentBranchName = $request->get('delivery_branch_id') ;
-		$data = $request->only(['type','delivery_date','currency','payment_currency','down_payment_type','partner_type']);
+		$data = $request->only(['type','delivery_date','currency','payment_currency','down_payment_type','partner_type','user_comment']);
 		$data['currency'] = $isGeneralDownPayment ? $data['payment_currency'] : $data['currency'];
 		$currencyName = $data['currency'];
 		$paymentCurrency = $data['payment_currency'];

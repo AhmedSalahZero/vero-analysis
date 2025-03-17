@@ -470,6 +470,7 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
                         <!--end::Portlet-->
                 </div>
             </div>
+			<?php echo $__env->make('user_comment',['model'=>$model??null], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
              <?php if (isset($component)) { $__componentOriginal49acb4be531871427e6da8fc4bf301f11a96ee34 = $component; } ?>
 <?php $component = $__env->getContainer()->make(App\View\Components\Submitting::class, []); ?>
 <?php $component->withName('submitting'); ?>

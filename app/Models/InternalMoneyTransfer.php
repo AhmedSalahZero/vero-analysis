@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\FullySecuredOverdraft;
 use App\Traits\HasBasicStoreRequest;
+use App\Traits\Models\HasUserComment;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -14,7 +15,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class InternalMoneyTransfer extends Model 
 {
-	use HasBasicStoreRequest ;
+	use HasBasicStoreRequest ,HasUserComment;
 	const BANK_TO_BANK = 'bank-to-bank';
 	const BANK_TO_SAFE = 'bank-to-safe';
 	const SAFE_TO_BANK = 'safe-to-bank';

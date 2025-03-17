@@ -8,13 +8,14 @@ use App\Traits\HasBasicStoreRequest;
 use App\Traits\Models\HasCommissionStatements;
 use App\Traits\Models\HasLetterOfGuaranteeCashCoverStatements;
 use App\Traits\Models\HasLetterOfGuaranteeStatements;
+use App\Traits\Models\HasUserComment;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class LetterOfGuaranteeIssuance extends Model
 {
-	use HasBasicStoreRequest,HasCommissionStatements,HasLetterOfGuaranteeStatements,HasLetterOfGuaranteeCashCoverStatements;
+	use HasBasicStoreRequest,HasCommissionStatements,HasLetterOfGuaranteeStatements,HasLetterOfGuaranteeCashCoverStatements,HasUserComment;
 	const OPENING_BALANCE = 'opening-balance';
 	const NEW_ISSUANCE = 'new-issuance';
 	const LG_FACILITY = 'lg-facility';

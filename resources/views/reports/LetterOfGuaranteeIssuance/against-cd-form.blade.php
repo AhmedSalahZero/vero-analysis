@@ -97,14 +97,14 @@ use App\Models\LetterOfGuaranteeIssuance;
 
 
                                 <div class="form-group row">
-								
-								 <div class="col-md-2">
+
+                                    <div class="col-md-2">
                                         <label>{{__('Issuance Type')}}
                                             @include('star')
                                         </label>
                                         <div class="input-group">
                                             <select name="category_name" required class="form-control repeater-select">
-											<option value="">{{ __('Select') }}</option>
+                                                <option value="">{{ __('Select') }}</option>
                                                 @foreach(LetterOfGuaranteeIssuance::getCategories() as $key => $title )
                                                 <option value="{{ $key }}" @if(isset($model) && $model->getCategoryName() == $key ) selected @endif > {{ $title }}</option>
                                                 @endforeach
@@ -112,13 +112,13 @@ use App\Models\LetterOfGuaranteeIssuance;
                                         </div>
 
                                     </div>
-									
+
                                     <div class="col-md-3">
                                         <x-form.input :model="$model??null" :label="__('Transaction Name')" :type="'text'" :placeholder="__('Transaction Name')" :name="'transaction_name'" :class="''" :required="true"></x-form.input>
                                     </div>
-									
-									 
-									 <div class="col-md-1">
+
+
+                                    <div class="col-md-1">
                                         <label>{{__('LG Currency')}}
                                             @include('star')
                                         </label>
@@ -131,21 +131,21 @@ use App\Models\LetterOfGuaranteeIssuance;
                                             </select>
                                         </div>
                                     </div>
-									
+
 
                                     <div class="col-md-6">
                                         <label> {{ __('Financial Bank') }}
                                             @include('star')
                                         </label>
                                         <select required id="financial-instutition-id" required js-update-outstanding-balance-and-limits js-when-change-trigger-change-account-type data-financial-institution-id required name="financial_institution_id" class="form-control">
-										<option value="">{{__('Select')}}</option>
+                                            <option value="">{{__('Select')}}</option>
                                             @foreach($financialInstitutionBanks as $index=>$financialInstitutionBank)
                                             <option value="{{ $financialInstitutionBank->id }}" {{ isset($model) && $model->getFinancialInstitutionBankId() == $financialInstitutionBank->id ? 'selected':'' }}>{{ $financialInstitutionBank->getName() }}</option>
                                             @endforeach
                                         </select>
                                     </div>
-									
-										  <div class="col-md-3">
+
+                                    <div class="col-md-3">
                                         <label>{{ __('Account Type') }} <span class=""></span> </label>
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
@@ -174,17 +174,17 @@ use App\Models\LetterOfGuaranteeIssuance;
                                     <div class="col-md-2 ">
                                         <x-form.input :id="'cd-or-td-amount-id'" :readonly="true" :default-value="0" :model="$model??null" :label="__('Amount')" :type="'text'" :placeholder="''" :name="'amount'" :class="'recalculate-cd-or-td-free-to-use'" :required="false"></x-form.input>
                                     </div>
-                                  <div class="col-md-2 ">
-                                        <x-form.input :id="'current-lg-outstanding-balance-id'" :default-value="0" :model="$model??null" :label="__('LG Outstanding Balance')" :type="'text'" :placeholder="__('LG Outstanding Balance')"  :class="'recalculate-cd-or-td-free-to-use'" :required="false"></x-form.input>
+                                    <div class="col-md-2 ">
+                                        <x-form.input :id="'current-lg-outstanding-balance-id'" :default-value="0" :model="$model??null" :label="__('LG Outstanding Balance')" :type="'text'" :placeholder="__('LG Outstanding Balance')" :class="'recalculate-cd-or-td-free-to-use'" :required="false"></x-form.input>
                                     </div>
-									 <div class="col-md-2 ">
-                                        <x-form.input :id="'against-cash-cover-amount-id'" :default-value="0" :model="$model??null" :label="__('Against Cash Cover')" :type="'text'" :placeholder="__('Against Cash Cover')"  :class="'recalculate-cd-or-td-free-to-use'" :required="false"></x-form.input>
+                                    <div class="col-md-2 ">
+                                        <x-form.input :id="'against-cash-cover-amount-id'" :default-value="0" :model="$model??null" :label="__('Against Cash Cover')" :type="'text'" :placeholder="__('Against Cash Cover')" :class="'recalculate-cd-or-td-free-to-use'" :required="false"></x-form.input>
                                     </div>
-									
-									<div class="col-md-3 ">
-                                        <x-form.input :id="'cd-or-td-free-to-use-amount-id'" :default-value="0" :model="$model??null" :label="__('CD Free To Use')" :type="'text'" :placeholder="__('')"  :class="''" :required="false"></x-form.input>
+
+                                    <div class="col-md-3 ">
+                                        <x-form.input :id="'cd-or-td-free-to-use-amount-id'" :default-value="0" :model="$model??null" :label="__('CD Free To Use')" :type="'text'" :placeholder="__('')" :class="''" :required="false"></x-form.input>
                                     </div>
-									
+
 
                                     <div class="col-md-3">
                                         <label> {{ __('LG Type') }}
@@ -210,7 +210,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                             </div>
                         </div>
 
-                      
+
 
 
 
@@ -235,7 +235,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                                         <label>{{__('Beneficiary Name')}}
                                             @include('star')
                                         </label>
-										
+
                                         <div class="kt-input-icon">
                                             <div class="kt-input-icon">
                                                 <div class="input-group date">
@@ -362,9 +362,9 @@ use App\Models\LetterOfGuaranteeIssuance;
                                         <x-form.date :classes="'renewal-date-js'" :readonly="true" :label="__('Renewal Date')" :required="true" :model="$model??null" :name="'renewal_date'" :placeholder="__('Select Renewal Date')"></x-form.date>
                                     </div>
 
-                                    
-									
-									  <div class="col-md-3">
+
+
+                                    <div class="col-md-3">
                                         <label> {{ __('LG Amount') }}
                                             @include('star')
                                         </label>
@@ -375,8 +375,8 @@ use App\Models\LetterOfGuaranteeIssuance;
                                         </div>
                                     </div>
 
-                                  
-						
+
+
 
 
 
@@ -454,6 +454,10 @@ use App\Models\LetterOfGuaranteeIssuance;
                                 </div>
                             </div>
                         </div>
+
+
+                        @include('user_comment',['model'=>$model??null])
+
 
 
 
@@ -648,13 +652,13 @@ use App\Models\LetterOfGuaranteeIssuance;
                         $('.show-only-bond').addClass('hidden')
                     }
                 })
-                $(function(){
-					$('.js-toggle-bond').trigger('change')
-				})
+                $(function() {
+                    $('.js-toggle-bond').trigger('change')
+                })
 
             </script>
-           
-           
+
+
             <script>
                 $(document).on('change', '[js-update-contracts-based-on-customers]', function(e) {
                     const customerId = $('select#customer_name').val()
@@ -668,21 +672,21 @@ use App\Models\LetterOfGuaranteeIssuance;
                         , }
                         , type: "GET"
                         , success: function(res) {
-							var isCustomer = res.is_customer ;
-							if(!isCustomer){
-								$('.only-with-customer .required-label').addClass('visibility-hidden')
-							
-							}else{
-								$('.only-with-customer .required-label').removeClass('visibility-hidden')
-						
-							}
+                            var isCustomer = res.is_customer;
+                            if (!isCustomer) {
+                                $('.only-with-customer .required-label').addClass('visibility-hidden')
+
+                            } else {
+                                $('.only-with-customer .required-label').removeClass('visibility-hidden')
+
+                            }
                             var contractsOptions = '';
                             var currentSelectedId = $('select#contract-id').attr('data-current-selected')
                             for (var contractId in res.contracts) {
                                 var contractName = res.contracts[contractId];
                                 contractsOptions += `<option ${currentSelectedId == contractId ? 'selected' : '' } value="${contractId}"> ${contractName}  </option> `;
                             }
-							$('select#purchase-order-id').empty().selectpicker("refresh");
+                            $('select#purchase-order-id').empty().selectpicker("refresh");
                             $('select#contract-id').empty().append(contractsOptions).selectpicker("refresh");
                             $('select#contract-id').trigger('change')
                         }
@@ -727,76 +731,74 @@ use App\Models\LetterOfGuaranteeIssuance;
                     const parent = $(this).closest('.kt-portlet__body');
                     const accountType = parent.find('.js-update-account-id-based-on-account-type').val()
                     const accountId = parent.find('[js-cd-or-td-account-number]').val();
-					let financialInstitutionId = $('select#financial-instutition-id').val();
-					
+                    let financialInstitutionId = $('select#financial-instutition-id').val();
+
                     let url = "{{ route('get.account.amount.based.on.account.id',['company'=>$company->id , 'accountType'=>'replace_account_type' , 'accountId'=>'replace_account_id','financialInstitutionId'=>'replace_financial_institution_id' ]) }}";
-					
+
                     url = url.replace('replace_account_type', accountType);
                     url = url.replace('replace_account_id', accountId);
-					url = url.replace('replace_financial_institution_id', financialInstitutionId);
-                    if(accountType &&accountId &&financialInstitutionId){
-					$.ajax({
-                        url
-                        , success: function(res) {
-                            parent.find('#cd-or-td-amount-id').attr('data-value',res.amount).val(number_format(res.amount) + ' ' + res.currencyName ).trigger('change')
-                        }
-                    });
-						
-					}else{
-                            parent.find('#cd-or-td-amount-id').attr('data-value',0).val(0 ).trigger('change')
-						
-					}
+                    url = url.replace('replace_financial_institution_id', financialInstitutionId);
+                    if (accountType && accountId && financialInstitutionId) {
+                        $.ajax({
+                            url
+                            , success: function(res) {
+                                parent.find('#cd-or-td-amount-id').attr('data-value', res.amount).val(number_format(res.amount) + ' ' + res.currencyName).trigger('change')
+                            }
+                        });
+
+                    } else {
+                        parent.find('#cd-or-td-amount-id').attr('data-value', 0).val(0).trigger('change')
+
+                    }
                 })
-				$('[js-cd-or-td-account-number]').trigger('change')
-
-
+                $('[js-cd-or-td-account-number]').trigger('change')
 
             </script>
-@include('reports.LetterOfGuaranteeIssuance.commonJs')			
-			
-			
-			 <script>
+            @include('reports.LetterOfGuaranteeIssuance.commonJs')
+
+
+            <script>
                 $(document).on('change', '[js-update-outstanding-balance-and-limits]', function(e) {
-   
+
                     const financialInstitutionId = $('select#financial-instutition-id').val()
                     const lgType = $('select#lg-type').val()
-					const source = "{{ $source }}"
-					const lgIssuanceId = "{{ isset($model) ? $model->id : 0 }}" 
-							const accountTypeId = $('select#account_type_id').val()
-							const cdOrTdAccountId = $('select[name="cd_or_td_id"]').val()
-				
+                    const source = "{{ $source }}"
+                    const lgIssuanceId = "{{ isset($model) ? $model->id : 0 }}"
+                    const accountTypeId = $('select#account_type_id').val()
+                    const cdOrTdAccountId = $('select[name="cd_or_td_id"]').val()
+
                     $.ajax({
                         url: "{{ route('update.letter.of.guarantee.outstanding.balance.and.limit',['company'=>$company->id]) }}"
                         , data: {
-                            financialInstitutionId,
-							lgIssuanceId
-                            , lgType,
-							source,
-								accountTypeId,
-								cdOrTdAccountId
+                            financialInstitutionId
+                            , lgIssuanceId
+                            , lgType
+                            , source
+                            , accountTypeId
+                            , cdOrTdAccountId
                         }
                         , type: "GET"
                         , success: function(res) {
-							
-							let customerOptions = '<option value="">{{ __("Please Select") }}</option>';
-							let currentSelectedCustomerId = $('select#customer_name').attr('data-current-selected');
-							
-							for(var customerId in res.customers ){
-								var customerName = res.customers[customerId];
-								var isSelected =  customerId  == currentSelectedCustomerId  ? 'selected' :'';
-								customerOptions += '<option '+ isSelected +' value="'+customerId+'">'+ customerName +'</option> ';
-							}
-							$('select#customer_name').empty().append(customerOptions).trigger('change');
+
+                            let customerOptions = '<option value="">{{ __("Please Select") }}</option>';
+                            let currentSelectedCustomerId = $('select#customer_name').attr('data-current-selected');
+
+                            for (var customerId in res.customers) {
+                                var customerName = res.customers[customerId];
+                                var isSelected = customerId == currentSelectedCustomerId ? 'selected' : '';
+                                customerOptions += '<option ' + isSelected + ' value="' + customerId + '">' + customerName + '</option> ';
+                            }
+                            $('select#customer_name').empty().append(customerOptions).trigger('change');
                             $('#limit-id').val(res.limit).prop('readonly', true)
                             $('#total-lg-for-all-types-id').val(res.total_lg_outstanding_balance).prop('readonly', true)
                             $('#total-room-id').val(res.total_room).prop('readonly', true)
-							$('#input[name="lg_currency"]').val(res.currency_name)
+                            $('#input[name="lg_currency"]').val(res.currency_name)
                             $('#current-lg-outstanding-balance-id').val(res.total_lg_outstanding_balance).prop('readonly', true).trigger('change')
                             $('#against-cash-cover-amount-id').val(res.total_cash_cover_statement_debit).prop('readonly', true).trigger('change')
-                           // $('#cd-or-td-free-to-use-amount-id').val(cdOrTdFreeToUseAmount).prop('readonly', true)
+                            // $('#cd-or-td-free-to-use-amount-id').val(cdOrTdFreeToUseAmount).prop('readonly', true)
                             $('#current-lg-type-outstanding-balance-id').val(res.current_lg_type_outstanding_balance).prop('readonly', true)
                             $('#min_lg_commission_fees_id').val(res.min_lg_commission_rate).trigger('change');
-                    //        $('#lg_commission_rate-id').val(res.lg_commission_rate).trigger('change');
+                            //        $('#lg_commission_rate-id').val(res.lg_commission_rate).trigger('change');
                             $('#issuance_fees_id').val(res.min_lg_issuance_fees_for_current_lg_type).trigger('change');
                             $('#cash-cover-rate-id').val(res.min_lg_cash_cover_rate_for_current_lg_type).trigger('change');
                             $('[js-update-contracts-based-on-customers]').trigger('change')
@@ -805,9 +807,9 @@ use App\Models\LetterOfGuaranteeIssuance;
                 })
 
             </script>
-			<script>
-			</script>
-			 @if(!isset($model))
+            <script>
+            </script>
+            @if(!isset($model))
             <script>
                 $('[js-update-outstanding-balance-and-limits]').trigger('change')
 

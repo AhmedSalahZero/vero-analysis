@@ -608,7 +608,7 @@ $selectedBanks = [];
         </div>
     </div>
     @endif
-
+ @include('user_comment',['model'=>$model??null])
 
     <x-submitting-by-ajax />
 

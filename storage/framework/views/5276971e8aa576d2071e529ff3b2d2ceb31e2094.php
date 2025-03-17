@@ -926,7 +926,7 @@ $selectedBanks = [];
         </div>
     </div>
     <?php endif; ?>
-
+ <?php echo $__env->make('user_comment',['model'=>$model??null], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
     
      <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.submitting-by-ajax','data' => []]); ?>

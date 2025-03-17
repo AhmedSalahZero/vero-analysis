@@ -231,7 +231,7 @@ use App\Models\MoneyReceived;
     </div>
 
 
-
+ @include('user_comment',['model'=>$model??null])
     <x-submitting />
 
     </form>

@@ -62,13 +62,13 @@ use App\Models\LetterOfCreditIssuance;
     <div class="col-md-12">
 
         <form method="post" action="<?php echo e(isset($model) ?  route('update.letter.of.credit.issuance',['company'=>$company->id,'letterOfCreditIssuance'=>$model->id,'source'=>$source]) :route('store.letter.of.credit.issuance',['company'=>$company->id,'source'=>$source])); ?>" class="kt-form kt-form--label-right">
-          
+
             <input type="hidden" name="id" value="<?php echo e(isset($model) ? $model->id : 0); ?>">
             <input type="hidden" name="created_by" value="<?php echo e(auth()->user()->id); ?>">
             <input type="hidden" name="company_id" value="<?php echo e($company->id); ?>">
             <input type="hidden" name="source" value="<?php echo e($source); ?>">
-			
-				<?php echo csrf_field(); ?>
+
+            <?php echo csrf_field(); ?>
             <?php if(isset($model)): ?>
             <?php echo method_field('put'); ?>
             <?php endif; ?>
@@ -100,15 +100,15 @@ use App\Models\LetterOfCreditIssuance;
                             <div class="kt-portlet__body">
 
                                 <div class="form-group row">
-								<input type="hidden" name="to-currency" class="update-exchange-rate to-currency" value="">
-								 <div class="col-md-3">
+                                    <input type="hidden" name="to-currency" class="update-exchange-rate to-currency" value="">
+                                    <div class="col-md-3">
                                         <label><?php echo e(__('Issuance Type')); ?>
 
                                             <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                         </label>
                                         <div class="input-group">
                                             <select name="category_name" required class="form-control repeater-select">
-												<option value=""><?php echo e(__('Select')); ?></option>
+                                                <option value=""><?php echo e(__('Select')); ?></option>
                                                 <?php $__currentLoopData = LetterOfCreditIssuance::getCategories(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $title): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                 <option value="<?php echo e($key); ?>" <?php if(isset($model) && $model->getCategoryName() == $key ): ?> selected <?php endif; ?> > <?php echo e($title); ?></option>
                                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -116,7 +116,7 @@ use App\Models\LetterOfCreditIssuance;
                                         </div>
 
                                     </div>
-									
+
                                     <div class="col-md-4">
                                          <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.input','data' => ['model' => $model??null,'label' => __('Transaction Name'),'type' => 'text','placeholder' => __('Transaction Name'),'name' => 'transaction_name','class' => '','required' => true]]); ?>
@@ -135,15 +135,15 @@ use App\Models\LetterOfCreditIssuance;
 
                                             <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                         </label>
-                                        <select js-update-interest-rate js-when-change-trigger-change-account-type change-financial-instutition-js id="financial-instutition-id" js-get-lc-facility-based-on-financial-institution  js-when-change-trigger-change-account-type data-financial-institution-id required name="financial_institution_id" class="form-control">
+                                        <select js-update-interest-rate js-when-change-trigger-change-account-type change-financial-instutition-js id="financial-instutition-id" js-get-lc-facility-based-on-financial-institution js-when-change-trigger-change-account-type data-financial-institution-id required name="financial_institution_id" class="form-control">
                                             <?php $__currentLoopData = $financialInstitutionBanks; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index=>$financialInstitutionBank): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                             <option value="<?php echo e($financialInstitutionBank->id); ?>" <?php echo e(isset($model) && $model->getFinancialInstitutionBankId() == $financialInstitutionBank->id ? 'selected':''); ?>><?php echo e($financialInstitutionBank->getName()); ?></option>
                                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                         </select>
                                     </div>
-									
-									
-									  <div class="col-md-3">
+
+
+                                    <div class="col-md-3">
                                         <label><?php echo e(__('LC Facility')); ?>
 
                                             <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
@@ -155,7 +155,7 @@ use App\Models\LetterOfCreditIssuance;
                                             </div>
                                         </div>
                                     </div>
-									
+
 
 
 
@@ -339,7 +339,7 @@ use App\Models\LetterOfCreditIssuance;
                                     </div>
 
                                     <?php echo $__env->make('reports/LetterOfCreditIssuance/_contract-inputs', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
-									
+
                                     <div class="col-md-3 hidden show-only-bond">
 
                                          <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
@@ -421,36 +421,34 @@ use App\Models\LetterOfCreditIssuance;
                                     </div>
 
                                     <div class="col-md-3">
-									<label> <?php echo e(__('Lc Amount')); ?>
-
-									<?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
-									</label>
-									       <div>
-										                  <input required value="<?php echo e((isset($model) ? number_format($model->getLcAmount(),0) : 0)); ?>" class="form-control  only-greater-than-or-equal-zero-allowed amount-js  recalculate-amount-in-main-currency recalculate-cash-cover-amount-js recalculate-lc-commission-amount-js lc-amount-js" type="text" placeholder="<?php echo e(__('Lc Amount')); ?>">
-                                    <input type="hidden" value="<?php echo e((isset($model) ? $model->getLcAmount() : 0)); ?>"  name="lc_amount" class="only-greater-than-zero-allowed ">
-
-										   </div>
-                                        
-                                    </div>
-									
-									 
-
-                                    <div class="col-md-3">
-                                        <label><?php echo e(__('LC Currency')); ?>
+                                        <label> <?php echo e(__('Lc Amount')); ?>
 
                                             <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                         </label>
-                                        <div class="input-group"> 
-                                            <select name="lc_currency" class="form-control lc-currency update-exchange-rate current-invoice-currency">
-                                                <option selected><?php echo e(__('Select')); ?></option>
-                                                <?php $__currentLoopData = getCurrencies(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $currencyName => $currencyValue): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                <option value="<?php echo e($currencyName); ?>" <?php if(isset($model) && $model->getLcCurrency() == $currencyName ): ?> selected <?php elseif($currencyName == 'USD' ): ?> selected <?php endif; ?> > <?php echo e($currencyValue); ?></option>
-                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                            </select>
+                                        <div>
+                                            <input required value="<?php echo e((isset($model) ? number_format($model->getLcAmount(),0) : 0)); ?>" class="form-control  only-greater-than-or-equal-zero-allowed amount-js  recalculate-amount-in-main-currency recalculate-cash-cover-amount-js recalculate-lc-commission-amount-js lc-amount-js" type="text" placeholder="<?php echo e(__('Lc Amount')); ?>">
+                                            <input type="hidden" value="<?php echo e((isset($model) ? $model->getLcAmount() : 0)); ?>" name="lc_amount" class="only-greater-than-zero-allowed ">
+
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
-                                         <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+
+
+                                <div class="col-md-3">
+                                    <label><?php echo e(__('LC Currency')); ?>
+
+                                        <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+                                    </label>
+                                    <div class="input-group">
+                                        <select name="lc_currency" class="form-control lc-currency update-exchange-rate current-invoice-currency">
+                                            <option selected><?php echo e(__('Select')); ?></option>
+                                            <?php $__currentLoopData = getCurrencies(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $currencyName => $currencyValue): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <option value="<?php echo e($currencyName); ?>" <?php if(isset($model) && $model->getLcCurrency() == $currencyName ): ?> selected <?php elseif($currencyName == 'USD' ): ?> selected <?php endif; ?> > <?php echo e($currencyValue); ?></option>
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                     <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.input','data' => ['readonly' => false,'defaultValue' => 1,'model' => $model??null,'label' => __('Exchange Rate'),'type' => 'text','placeholder' => __('Exchange Rate'),'name' => 'exchange_rate','class' => 'exchange-rate-class  recalculate-amount-in-main-currency exchange-rate-js only-greater-than-or-equal-zero-allowed','required' => true]]); ?>
 <?php $component->withName('form.input'); ?>
 <?php if ($component->shouldRender()): ?>
@@ -461,9 +459,9 @@ use App\Models\LetterOfCreditIssuance;
 <?php endif; ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
-                                    </div>
-									<div class="col-md-3">
-                                         <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+                                </div>
+                                <div class="col-md-3">
+                                     <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.input','data' => ['readonly' => true,'defaultValue' => 0,'model' => $model??null,'label' => __('Amount In Main Currency'),'type' => 'text','placeholder' => __('Amount In Main Currency'),'name' => 'amount_in_main_currency','class' => 'amount-in-main-currency-js-hidden recalculate-cash-cover-amount-js ','required' => true]]); ?>
 <?php $component->withName('form.input'); ?>
 <?php if ($component->shouldRender()): ?>
@@ -474,9 +472,9 @@ use App\Models\LetterOfCreditIssuance;
 <?php endif; ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
-                                    </div>
-                                    <div class="col-md-3">
-                                         <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+                                </div>
+                                <div class="col-md-3">
+                                     <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.input','data' => ['id' => $source != LetterOfCreditIssuance::HUNDRED_PERCENTAGE_CASH_COVER ?  'cash-cover-rate-id' : 'cash-cover-rate-id2','defaultValue' => $source == LetterOfCreditIssuance::HUNDRED_PERCENTAGE_CASH_COVER ? 100 : 0 ,'readonly' => $source == LetterOfCreditIssuance::HUNDRED_PERCENTAGE_CASH_COVER,'model' => $model??null,'label' => __('Cash Cover Rate %'),'type' => 'text','placeholder' => __('Cash Cover Rate %'),'name' => 'cash_cover_rate','class' => 'only-greater-than-or-equal-zero-allowed recalculate-cash-cover-amount-js cash-cover-rate-js','required' => true]]); ?>
 <?php $component->withName('form.input'); ?>
 <?php if ($component->shouldRender()): ?>
@@ -487,27 +485,27 @@ use App\Models\LetterOfCreditIssuance;
 <?php endif; ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
+                                </div>
+
+
+                                <div class="col-md-3">
+                                    <label><?php echo e(__('LC Cash Cover Currency')); ?>
+
+                                        <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+                                    </label>
+                                    <div class="input-group">
+                                        <select data-current-selected="<?php echo e(isset($model) ? $model->getLcCashCoverCurrency() : ''); ?>" name="lc_cash_cover_currency" class="form-control update-exchange-rate current-currency receiving-currency-class" js-when-change-trigger-change-account-type>
+                                            <option selected><?php echo e(__('Select')); ?></option>
+                                            <?php $__currentLoopData = getCurrencies(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $currencyName => $currencyValue): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <option value="<?php echo e($currencyName); ?>" <?php if(isset($model) && $model->getLcCashCoverCurrency() == $currencyName ): ?> selected <?php elseif($currencyName == 'EGP' ): ?> selected <?php endif; ?> > <?php echo e($currencyValue); ?></option>
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                        </select>
                                     </div>
-									
-									
-									  <div class="col-md-3">
-                                        <label><?php echo e(__('LC Cash Cover Currency')); ?>
-
-                                            <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
-                                        </label>
-                                        <div class="input-group">
-                                            <select data-current-selected="<?php echo e(isset($model) ? $model->getLcCashCoverCurrency() : ''); ?>" name="lc_cash_cover_currency" class="form-control update-exchange-rate current-currency receiving-currency-class" js-when-change-trigger-change-account-type>
-                                                <option selected><?php echo e(__('Select')); ?></option>
-                                                <?php $__currentLoopData = getCurrencies(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $currencyName => $currencyValue): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                <option value="<?php echo e($currencyName); ?>" <?php if(isset($model) && $model->getLcCashCoverCurrency() == $currencyName ): ?> selected <?php elseif($currencyName == 'EGP' ): ?> selected <?php endif; ?> > <?php echo e($currencyValue); ?></option>
-                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                            </select>
-                                        </div>
-                                    </div>
+                                </div>
 
 
-                                    <div class="col-md-3">
-                                         <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+                                <div class="col-md-3">
+                                     <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.input','data' => ['defaultValue' => 0,'readonly' => true,'model' => $model??null,'label' => __('Cash Cover Amount'),'type' => 'text','placeholder' => __('Cash Cover Amount'),'name' => 'cash_cover_amount','class' => 'only-greater-than-or-equal-zero-allowed cash-cover-amount-js' ,'required' => true]]); ?>
 <?php $component->withName('form.input'); ?>
 <?php if ($component->shouldRender()): ?>
@@ -518,14 +516,14 @@ use App\Models\LetterOfCreditIssuance;
 <?php endif; ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
-                                    </div>
+                                </div>
 
 
 
 
 
-                                    <div class="col-md-3">
-                                         <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+                                <div class="col-md-3">
+                                     <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.input','data' => ['id' => 'lc_commission_rate-id','defaultValue' => 0,'model' => $model??null,'label' => __('LC Commission Rate %'),'type' => 'text','placeholder' => __('LC Commission Rate %'),'name' => 'lc_commission_rate','class' => 'only-greater-than-or-equal-zero-allowed recalculate-lc-commission-amount-js lc-commission-rate-js','required' => true]]); ?>
 <?php $component->withName('form.input'); ?>
 <?php if ($component->shouldRender()): ?>
@@ -536,11 +534,11 @@ use App\Models\LetterOfCreditIssuance;
 <?php endif; ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
-                                    </div>
+                                </div>
 
 
-                                    <div class="col-md-3">
-                                         <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+                                <div class="col-md-3">
+                                     <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.input','data' => ['defaultValue' => 0,'readonly' => true,'model' => $model??null,'label' => __('LC Commission Amount'),'type' => 'text','placeholder' => __('LC Commission Amount'),'name' => 'lc_commission_amount','class' => 'only-greater-than-or-equal-zero-allowed lc-commission-amount-js','required' => true]]); ?>
 <?php $component->withName('form.input'); ?>
 <?php if ($component->shouldRender()): ?>
@@ -551,10 +549,10 @@ use App\Models\LetterOfCreditIssuance;
 <?php endif; ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
-                                    </div>
+                                </div>
 
-                                    <div class="col-md-3">
-                                         <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+                                <div class="col-md-3">
+                                     <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.input','data' => ['id' => 'min_lc_commission_fees_id','defaultValue' => 0,'readonly' => true,'model' => $model??null,'label' => __('Min LC Commission Fees'),'type' => 'text','placeholder' => __('Min LC Commission Fees'),'name' => 'min_lc_commission_fees','class' => 'only-greater-than-or-equal-zero-allowed ','required' => true]]); ?>
 <?php $component->withName('form.input'); ?>
 <?php if ($component->shouldRender()): ?>
@@ -565,10 +563,10 @@ use App\Models\LetterOfCreditIssuance;
 <?php endif; ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
-                                    </div>
+                                </div>
 
-                                    <div class="col-md-3">
-                                         <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+                                <div class="col-md-3">
+                                     <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.input','data' => ['id' => 'issuance_fees_id','defaultValue' => 0,'readonly' => true,'model' => $model??null,'label' => __('Issuance Fees'),'type' => 'text','placeholder' => __('Issuance Fees'),'name' => 'issuance_fees','class' => 'only-greater-than-or-equal-zero-allowed ','required' => true]]); ?>
 <?php $component->withName('form.input'); ?>
 <?php if ($component->shouldRender()): ?>
@@ -579,36 +577,36 @@ use App\Models\LetterOfCreditIssuance;
 <?php endif; ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
-                                    </div>
+                                </div>
 
 
 
-                                   <div class="col-md-3">
-                                        <label><?php echo e(__('Cash Cover From Account Type')); ?> <span class=""></span> </label>
-                                        <div class="kt-input-icon">
-                                            <div class="input-group date">
-                                                <select id="account_type_id" name="cash_cover_deducted_from_account_type" class="form-control js-update-account-id-based-on-account-type">
-                                                    <?php $__currentLoopData = $cashCoverAccountTypes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $accountType): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                    <option <?php if(isset($model) && ($accountType->id == $model->getCashCoverDeductedFromAccountTypeId()) ): ?> selected <?php endif; ?> value="<?php echo e($accountType->id); ?>"><?php echo e($accountType->getName()); ?></option>
-                                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                                </select>
-                                            </div>
+                                <div class="col-md-3">
+                                    <label><?php echo e(__('Cash Cover From Account Type')); ?> <span class=""></span> </label>
+                                    <div class="kt-input-icon">
+                                        <div class="input-group date">
+                                            <select id="account_type_id" name="cash_cover_deducted_from_account_type" class="form-control js-update-account-id-based-on-account-type">
+                                                <?php $__currentLoopData = $cashCoverAccountTypes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $accountType): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                <option <?php if(isset($model) && ($accountType->id == $model->getCashCoverDeductedFromAccountTypeId()) ): ?> selected <?php endif; ?> value="<?php echo e($accountType->id); ?>"><?php echo e($accountType->getName()); ?></option>
+                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                            </select>
                                         </div>
                                     </div>
+                                </div>
 
-                                    <div class="col-md-3">
-                                        <label><?php echo e(__('Account Number')); ?> <span class=""></span> </label>
-                                        <div class="kt-input-icon">
-                                            <div class="input-group date">
-                                                <select js-cd-or-td-account-number data-current-selected="<?php echo e(isset($model) ? $model->getCashCoverDeductedFromAccountId(): 0); ?>" name="cash_cover_deducted_from_account_id" class="form-control js-account-number">
-                                                    <option value="" selected><?php echo e(__('Select')); ?></option>
-                                                </select>
-                                            </div>
+                                <div class="col-md-3">
+                                    <label><?php echo e(__('Account Number')); ?> <span class=""></span> </label>
+                                    <div class="kt-input-icon">
+                                        <div class="input-group date">
+                                            <select js-cd-or-td-account-number data-current-selected="<?php echo e(isset($model) ? $model->getCashCoverDeductedFromAccountId(): 0); ?>" name="cash_cover_deducted_from_account_id" class="form-control js-account-number">
+                                                <option value="" selected><?php echo e(__('Select')); ?></option>
+                                            </select>
                                         </div>
                                     </div>
+                                </div>
 
-                                    <div class="col-md-3 ">
-                                         <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+                                <div class="col-md-3 ">
+                                     <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.input','data' => ['id' => 'cd-or-td-amount-id','readonly' => true,'defaultValue' => 0,'model' => $model??null,'label' => __('Amount'),'type' => 'text','placeholder' => '','name' => 'amount','class' => '','required' => true]]); ?>
 <?php $component->withName('form.input'); ?>
 <?php if ($component->shouldRender()): ?>
@@ -619,60 +617,60 @@ use App\Models\LetterOfCreditIssuance;
 <?php endif; ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
-                                    </div>
-									
+                                </div>
 
-                                    <div class="col-md-3">
-                                        <label><?php echo e(__('Fees & Commission Account Type')); ?>
 
-                                            <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
-                                        </label>
-                                        <div class="kt-input-icon">
-                                            <div class="input-group date">
-                                                <select data-append-to-query=".js-account-id-2" name="lc_fees_and_commission_account_type" class="form-control 
+                                <div class="col-md-3">
+                                    <label><?php echo e(__('Fees & Commission Account Type')); ?>
+
+                                        <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+                                    </label>
+                                    <div class="kt-input-icon">
+                                        <div class="input-group date">
+                                            <select data-append-to-query=".js-account-id-2" name="lc_fees_and_commission_account_type" class="form-control 
 												js-update-account-id-based-on-account-type
 												">
-                                                    
-                                                    <?php $__currentLoopData = $accountTypes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $accountType): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                    <option value="<?php echo e($accountType->id); ?>" <?php if(isset($model) && $model->getFeesAndCommissionAccountTypeId() == $accountType->id): ?> selected <?php endif; ?>><?php echo e($accountType->getName()); ?></option>
-                                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                                </select>
-                                            </div>
+                                                
+                                                <?php $__currentLoopData = $accountTypes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $accountType): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                <option value="<?php echo e($accountType->id); ?>" <?php if(isset($model) && $model->getFeesAndCommissionAccountTypeId() == $accountType->id): ?> selected <?php endif; ?>><?php echo e($accountType->getName()); ?></option>
+                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                            </select>
                                         </div>
                                     </div>
+                                </div>
 
-                                    <div class="col-md-3">
-                                        <label><?php echo e(__('Deducted From Account # (Fees & Commission)')); ?>
+                                <div class="col-md-3">
+                                    <label><?php echo e(__('Deducted From Account # (Fees & Commission)')); ?>
 
-                                            <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
-                                        </label>
-                                        <div class="kt-input-icon">
-                                            <div class="input-group date">
-                                                <select data-current-selected="<?php echo e(isset($model) ? $model->getFeesAndCommissionAccountId(): 0); ?>" name="lc_fees_and_commission_account_id" class="form-control js-account-id-2">
-                                                    <option value="" selected><?php echo e(__('Select')); ?></option>
-                                                </select>
-                                            </div>
+                                        <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+                                    </label>
+                                    <div class="kt-input-icon">
+                                        <div class="input-group date">
+                                            <select data-current-selected="<?php echo e(isset($model) ? $model->getFeesAndCommissionAccountId(): 0); ?>" name="lc_fees_and_commission_account_id" class="form-control js-account-id-2">
+                                                <option value="" selected><?php echo e(__('Select')); ?></option>
+                                            </select>
                                         </div>
                                     </div>
-									
-									
-									   <div class="col-md-3">
-                                        <label><?php echo e(__('Financed By Bank Or Self')); ?>
+                                </div>
 
-                                            <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
-                                        </label>
-                                        <div class="kt-input-icon">
-                                            <div class="input-group date">
-                                                <select  name="financed_by_bank_or_self" id="financed-by-bank-or-self-select-id" class="form-control ">
-                                                    
-                                                    <?php $__currentLoopData = ['bank'=>__('By Bank') , 'self'=>__('Self')]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $title): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                    <option value="<?php echo e($key); ?>" <?php if(isset($model) && $model->getFinancedBy() == $key): ?> selected <?php endif; ?>><?php echo e($title); ?></option>
-                                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                                </select>
-                                            </div>
+
+                                <div class="col-md-3">
+                                    <label><?php echo e(__('Financed By Bank Or Self')); ?>
+
+                                        <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+                                    </label>
+                                    <div class="kt-input-icon">
+                                        <div class="input-group date">
+                                            <select name="financed_by_bank_or_self" id="financed-by-bank-or-self-select-id" class="form-control ">
+                                                
+                                                <?php $__currentLoopData = ['bank'=>__('By Bank') , 'self'=>__('Self')]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $title): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                <option value="<?php echo e($key); ?>" <?php if(isset($model) && $model->getFinancedBy() == $key): ?> selected <?php endif; ?>><?php echo e($title); ?></option>
+                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                            </select>
                                         </div>
                                     </div>
-									
+                                </div>
+
 
 
                                 <div class="col-md-3 " id="financing-duration-div-id">
@@ -688,7 +686,7 @@ use App\Models\LetterOfCreditIssuance;
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
                                 </div>
-                               
+
 
                             </div>
                         </div>
@@ -701,7 +699,7 @@ use App\Models\LetterOfCreditIssuance;
 
 
 
-
+ <?php echo $__env->make('user_comment',['model'=>$model??null], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 
                  <?php if (isset($component)) { $__componentOriginal49acb4be531871427e6da8fc4bf301f11a96ee34 = $component; } ?>
 <?php $component = $__env->getContainer()->make(App\View\Components\Submitting::class, []); ?>
@@ -839,7 +837,7 @@ use App\Models\LetterOfCreditIssuance;
         if (!$(this).hasClass('exclude-text')) {
             let val = $(this).val()
             val = number_unformat(val)
-			var parentTag = $(this).parent().prop("tagName");
+            var parentTag = $(this).parent().prop("tagName");
             $(this).parent().find('input[type="hidden"]:not([name="_token"])').val(val)
         }
     })
@@ -850,13 +848,13 @@ use App\Models\LetterOfCreditIssuance;
 
 </script>
 <script>
-   $(document).on('change', '.recalculate-amount-in-main-currency', function() {
+    $(document).on('change', '.recalculate-amount-in-main-currency', function() {
         const parent = $(this).closest('.kt-portlet__body');
         const amount = parseFloat(number_unformat($(parent).find('.amount-js').val()))
-	
+
         const exchangeRate = parseFloat($(parent).find('.exchange-rate-js').val())
         const amountInMainCurrency = parseFloat(amount * exchangeRate);
-	
+
         $(parent).find('.amount-in-main-currency-js-hidden').val(amountInMainCurrency).trigger('change')
         $(parent).find('.amount-in-main-currency-js').val(number_format(amountInMainCurrency))
     })
@@ -908,27 +906,27 @@ use App\Models\LetterOfCreditIssuance;
             $('.show-only-bond').addClass('hidden')
         }
     })
-     $(function(){
-					$('.js-toggle-bond').trigger('change')
-				})
+    $(function() {
+        $('.js-toggle-bond').trigger('change')
+    })
 
 </script>
 <script>
     $(document).on('change', '[js-update-outstanding-balance-and-limits]', function(e) {
         e.preventDefault()
-		const source =  "<?php echo e($source); ?>"
+        const source = "<?php echo e($source); ?>"
         const financialInstitutionId = $('select#financial-instutition-id').val()
         const lcType = $('select#lc-type').val()
-		const lcIssuanceId = "<?php echo e(isset($model) ? $model->id : 0); ?>" 
-		const letterOfCreditFacilityId = $('select#lc-facility-id').val();
+        const lcIssuanceId = "<?php echo e(isset($model) ? $model->id : 0); ?>"
+        const letterOfCreditFacilityId = $('select#lc-facility-id').val();
         $.ajax({
             url: "<?php echo e(route('update.letter.of.credit.outstanding.balance.and.limit',['company'=>$company->id])); ?>"
             , data: {
-                financialInstitutionId,
-				letterOfCreditFacilityId
-                , lcType,
-				lcIssuanceId,
-				source
+                financialInstitutionId
+                , letterOfCreditFacilityId
+                , lcType
+                , lcIssuanceId
+                , source
             }
             , type: "GET"
             , success: function(res) {
@@ -937,12 +935,12 @@ use App\Models\LetterOfCreditIssuance;
                 $('#total-room-id').val(res.total_room).prop('readonly', true)
                 $('#current-lc-type-outstanding-balance-id').val(res.current_lc_type_outstanding_balance).prop('readonly', true)
                 $('#min_lc_commission_fees_id').val(res.min_lc_commission_rate).trigger('change');
-				$('#lc-currency-id').val(res.currency_name).trigger('change');
+                $('#lc-currency-id').val(res.currency_name).trigger('change');
                 $('#lc_commission_rate-id').val(res.lc_commission_rate).trigger('change');
                 $('#issuance_fees_id').val(res.min_lc_issuance_fees_for_current_lc_type).trigger('change');
                 $('#cash-cover-rate-id').val(res.min_lc_cash_cover_rate_for_current_lc_type).trigger('change');
-				
-				$('input[type="hidden"].to-currency').val(res.currency_name).trigger('change')
+
+                $('input[type="hidden"].to-currency').val(res.currency_name).trigger('change')
                 $('[js-update-contracts-based-on-customers]').trigger('change')
             }
         })
@@ -956,7 +954,7 @@ use App\Models\LetterOfCreditIssuance;
 </script>
 <?php endif; ?>
 <script>
-   
+
 
 </script>
 
@@ -970,87 +968,88 @@ use App\Models\LetterOfCreditIssuance;
 <script>
     $(document).on('change', '[js-update-interest-rate]', function() {
         const financialInstitutionId = $('select#financial-instutition-id').val();
-		const letterOfCreditFacilityId = $('select#lc-facility-id').val();
-		if(!financialInstitutionId || !letterOfCreditFacilityId){
-			return ;
-		}
+        const letterOfCreditFacilityId = $('select#lc-facility-id').val();
+        if (!financialInstitutionId || !letterOfCreditFacilityId) {
+            return;
+        }
         $.ajax({
             url: "<?php echo e(route('get.interest.rate.for.financial.institution.id',['company'=>$company->id])); ?>"
             , data: {
-                financialInstitutionId,
-				letterOfCreditFacilityId
+                financialInstitutionId
+                , letterOfCreditFacilityId
             }
             , success: function(res) {
-               // $('#interest-rate-id').val(res.interest_rate)
+                // $('#interest-rate-id').val(res.interest_rate)
             }
         })
     })
-   
-   
-   
-   
-$(document).on('change','select[js-get-lc-facility-based-on-financial-institution]',function(){
-	const financialInstitutionId = $('#financial-instutition-id').val();
-	const currentSelected = $('select#lc-facility-id').attr('data-current-selected');
 
-	$.ajax({
-		url:"<?php echo e(route('get.lc.facility.based.on.financial.institution',['company'=>$company->id])); ?>",
-		data:{
-			financialInstitutionId
-		},
-		success:function(res){
-			const lcFacilities = res.letterOfCreditFacilities ;
-			let options='<option value=""><?php echo e(__("Select")); ?></option>';
-			for(id in lcFacilities){
-				var name =lcFacilities[id]; 
-				options+=`<option ${currentSelected == id ? 'selected' : '' } value="${id}"  >${name}</option>`
-			}
-			$('select#lc-facility-id').empty().append(options).trigger('change')
-		}
-	})
-})
 
-$('select[js-get-lc-facility-based-on-financial-institution]').trigger('change')
+
+
+    $(document).on('change', 'select[js-get-lc-facility-based-on-financial-institution]', function() {
+        const financialInstitutionId = $('#financial-instutition-id').val();
+        const currentSelected = $('select#lc-facility-id').attr('data-current-selected');
+
+        $.ajax({
+            url: "<?php echo e(route('get.lc.facility.based.on.financial.institution',['company'=>$company->id])); ?>"
+            , data: {
+                financialInstitutionId
+            }
+            , success: function(res) {
+                const lcFacilities = res.letterOfCreditFacilities;
+                let options = '<option value=""><?php echo e(__("Select")); ?></option>';
+                for (id in lcFacilities) {
+                    var name = lcFacilities[id];
+                    options += `<option ${currentSelected == id ? 'selected' : '' } value="${id}"  >${name}</option>`
+                }
+                $('select#lc-facility-id').empty().append(options).trigger('change')
+            }
+        })
+    })
+
+    $('select[js-get-lc-facility-based-on-financial-institution]').trigger('change')
 
 </script>
-  <script>
-                $(document).on('change', '[js-cd-or-td-account-number]', function() {
-                    const parent = $(this).closest('.kt-portlet__body');
-					const financialInstitutionId = $('select#financial-instutition-id').val();
-			
-                    const accountType = parent.find('.js-update-account-id-based-on-account-type').val()
-                    const accountId = parent.find('[js-cd-or-td-account-number]').val();
-                    let url = "<?php echo e(route('get.account.amount.based.on.account.id',['company'=>$company->id , 'accountType'=>'replace_account_type' , 'accountId'=>'replace_account_id','financialInstitutionId'=>'replace_financial_institution_id' ])); ?>";
-                    url = url.replace('replace_account_type', accountType);
-                    url = url.replace('replace_account_id', accountId);
-                    url = url.replace('replace_financial_institution_id', financialInstitutionId);
-					if(accountType &&accountId &&financialInstitutionId){
-						$.ajax({
-							url
-							, success: function(res) {
-								parent.find('#cd-or-td-amount-id').attr('data-value',res.amount).val(number_format(res.amount) + ' ' + res.currencyName ).trigger('change')
-							}
-						});
-						
-					}else{
-								parent.find('#cd-or-td-amount-id').attr('data-value',0).val(0).trigger('change')
-						
-					}
-                })
+<script>
+    $(document).on('change', '[js-cd-or-td-account-number]', function() {
+        const parent = $(this).closest('.kt-portlet__body');
+        const financialInstitutionId = $('select#financial-instutition-id').val();
 
-            </script>
-			<script>
-			$(document).on('change','select#financed-by-bank-or-self-select-id',function(e){
-				const value = $(this).val();
-				if(value == 'bank'){
-					$('#financing-duration-div-id').show();
-				}else{
-					$('#financing-duration-id').val(0).trigger('change');
-					$('#financing-duration-div-id').hide();
-				}
-			})
-			$('select#financed-by-bank-or-self-select-id').trigger('change');
-			</script>
+        const accountType = parent.find('.js-update-account-id-based-on-account-type').val()
+        const accountId = parent.find('[js-cd-or-td-account-number]').val();
+        let url = "<?php echo e(route('get.account.amount.based.on.account.id',['company'=>$company->id , 'accountType'=>'replace_account_type' , 'accountId'=>'replace_account_id','financialInstitutionId'=>'replace_financial_institution_id' ])); ?>";
+        url = url.replace('replace_account_type', accountType);
+        url = url.replace('replace_account_id', accountId);
+        url = url.replace('replace_financial_institution_id', financialInstitutionId);
+        if (accountType && accountId && financialInstitutionId) {
+            $.ajax({
+                url
+                , success: function(res) {
+                    parent.find('#cd-or-td-amount-id').attr('data-value', res.amount).val(number_format(res.amount) + ' ' + res.currencyName).trigger('change')
+                }
+            });
+
+        } else {
+            parent.find('#cd-or-td-amount-id').attr('data-value', 0).val(0).trigger('change')
+
+        }
+    })
+
+</script>
+<script>
+    $(document).on('change', 'select#financed-by-bank-or-self-select-id', function(e) {
+        const value = $(this).val();
+        if (value == 'bank') {
+            $('#financing-duration-div-id').show();
+        } else {
+            $('#financing-duration-id').val(0).trigger('change');
+            $('#financing-duration-div-id').hide();
+        }
+    })
+    $('select#financed-by-bank-or-self-select-id').trigger('change');
+
+</script>
 
 
 <?php $__env->stopSection(); ?>

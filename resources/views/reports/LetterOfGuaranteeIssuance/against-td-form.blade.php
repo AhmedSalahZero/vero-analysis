@@ -482,7 +482,7 @@ use App\Models\LetterOfGuaranteeIssuance;
 
 
 
-
+ @include('user_comment',['model'=>$model??null])
 
 
                         <x-submitting />

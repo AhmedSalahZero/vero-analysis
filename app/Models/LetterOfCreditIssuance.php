@@ -9,14 +9,14 @@ use App\Traits\Models\HasDeleteButTriggerChangeOnLastElement;
 use App\Traits\Models\HasForeignExchangeGainOrLoss;
 use App\Traits\Models\HasLetterOfCreditCashCoverStatements;
 use App\Traits\Models\HasLetterOfCreditStatements;
+use App\Traits\Models\HasUserComment;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Facades\DB;
 
 class LetterOfCreditIssuance extends Model
 {
-	use HasBasicStoreRequest,HasCompany,HasForeignExchangeGainOrLoss,HasCommissionStatements,HasLetterOfCreditStatements,HasLetterOfCreditCashCoverStatements,HasDeleteButTriggerChangeOnLastElement;
+	use HasBasicStoreRequest,HasCompany,HasForeignExchangeGainOrLoss,HasCommissionStatements,HasLetterOfCreditStatements,HasLetterOfCreditCashCoverStatements,HasDeleteButTriggerChangeOnLastElement,HasUserComment;
 	const LC_FACILITY = 'lc-facility';
 	const AGAINST_TD ='against-td';
 	const AGAINST_CD ='against-cd';

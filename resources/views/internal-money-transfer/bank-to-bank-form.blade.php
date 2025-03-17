@@ -269,6 +269,7 @@
                         <!--end::Portlet-->
                 </div>
             </div>
+			 @include('user_comment',['model'=>$model??null])
             <x-submitting />
         </form>
 

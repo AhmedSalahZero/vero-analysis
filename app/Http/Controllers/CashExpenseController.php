@@ -230,7 +230,7 @@ class CashExpenseController
 		$moneyType = $request->get('type');
 		$bankId = null;
 		$paymentBranchName = $request->get('delivery_branch_id') ;
-		$data = $request->only(['type','payment_date','currency','cash_expense_category_name_id']);
+		$data = $request->only(['type','payment_date','currency','cash_expense_category_name_id','user_comment']);
 		$currencyName = $data['currency'];
 		$data['user_id'] = auth()->user()->id ;
 		$data['company_id'] = $company->id ;

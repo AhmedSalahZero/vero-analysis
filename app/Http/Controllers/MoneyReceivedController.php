@@ -365,7 +365,7 @@ class MoneyReceivedController
 		$customer = Partner::find($partnerId);
 		$customerId = $customer->id;
 		$receivedBankName = $request->get('receiving_branch_id') ;
-		$data = $request->only(['type','receiving_date','currency','receiving_currency','customer_id','down_payment_type','partner_type']);
+		$data = $request->only(['type','receiving_date','currency','receiving_currency','customer_id','down_payment_type','partner_type','user_comment']);
 		$data['currency'] = $isGeneralDownPayment ? $data['receiving_currency'] : $data['currency'];
 		$receivingDate = $data['receiving_date'];
 		$currency = $data['currency'] ;

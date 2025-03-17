@@ -98,15 +98,15 @@ use App\Models\LetterOfGuaranteeIssuance;
 
 
                                 <div class="form-group row">
-								
-								 <div class="col-md-2">
+
+                                    <div class="col-md-2">
                                         <label><?php echo e(__('Issuance Type')); ?>
 
                                             <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                         </label>
                                         <div class="input-group">
                                             <select name="category_name" required class="form-control repeater-select">
-											<option value=""><?php echo e(__('Select')); ?></option>
+                                                <option value=""><?php echo e(__('Select')); ?></option>
                                                 <?php $__currentLoopData = LetterOfGuaranteeIssuance::getCategories(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $title): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                 <option value="<?php echo e($key); ?>" <?php if(isset($model) && $model->getCategoryName() == $key ): ?> selected <?php endif; ?> > <?php echo e($title); ?></option>
                                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -114,7 +114,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                                         </div>
 
                                     </div>
-									
+
                                     <div class="col-md-3">
                                          <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.input','data' => ['model' => $model??null,'label' => __('Transaction Name'),'type' => 'text','placeholder' => __('Transaction Name'),'name' => 'transaction_name','class' => '','required' => true]]); ?>
@@ -128,9 +128,9 @@ use App\Models\LetterOfGuaranteeIssuance;
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
                                     </div>
-									
-									 
-									 <div class="col-md-1">
+
+
+                                    <div class="col-md-1">
                                         <label><?php echo e(__('LG Currency')); ?>
 
                                             <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
@@ -144,7 +144,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                                             </select>
                                         </div>
                                     </div>
-									
+
 
                                     <div class="col-md-6">
                                         <label> <?php echo e(__('Financial Bank')); ?>
@@ -152,14 +152,14 @@ use App\Models\LetterOfGuaranteeIssuance;
                                             <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                         </label>
                                         <select required id="financial-instutition-id" required js-update-outstanding-balance-and-limits js-when-change-trigger-change-account-type data-financial-institution-id required name="financial_institution_id" class="form-control">
-										<option value=""><?php echo e(__('Select')); ?></option>
+                                            <option value=""><?php echo e(__('Select')); ?></option>
                                             <?php $__currentLoopData = $financialInstitutionBanks; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index=>$financialInstitutionBank): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                             <option value="<?php echo e($financialInstitutionBank->id); ?>" <?php echo e(isset($model) && $model->getFinancialInstitutionBankId() == $financialInstitutionBank->id ? 'selected':''); ?>><?php echo e($financialInstitutionBank->getName()); ?></option>
                                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                         </select>
                                     </div>
-									
-										  <div class="col-md-3">
+
+                                    <div class="col-md-3">
                                         <label><?php echo e(__('Account Type')); ?> <span class=""></span> </label>
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
@@ -198,7 +198,7 @@ use App\Models\LetterOfGuaranteeIssuance;
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
                                     </div>
-                                  <div class="col-md-2 ">
+                                    <div class="col-md-2 ">
                                          <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.input','data' => ['id' => 'current-lg-outstanding-balance-id','defaultValue' => 0,'model' => $model??null,'label' => __('LG Outstanding Balance'),'type' => 'text','placeholder' => __('LG Outstanding Balance'),'class' => 'recalculate-cd-or-td-free-to-use','required' => false]]); ?>
 <?php $component->withName('form.input'); ?>
@@ -211,7 +211,7 @@ use App\Models\LetterOfGuaranteeIssuance;
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
                                     </div>
-									 <div class="col-md-2 ">
+                                    <div class="col-md-2 ">
                                          <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.input','data' => ['id' => 'against-cash-cover-amount-id','defaultValue' => 0,'model' => $model??null,'label' => __('Against Cash Cover'),'type' => 'text','placeholder' => __('Against Cash Cover'),'class' => 'recalculate-cd-or-td-free-to-use','required' => false]]); ?>
 <?php $component->withName('form.input'); ?>
@@ -224,8 +224,8 @@ use App\Models\LetterOfGuaranteeIssuance;
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
                                     </div>
-									
-									<div class="col-md-3 ">
+
+                                    <div class="col-md-3 ">
                                          <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.input','data' => ['id' => 'cd-or-td-free-to-use-amount-id','defaultValue' => 0,'model' => $model??null,'label' => __('CD Free To Use'),'type' => 'text','placeholder' => __(''),'class' => '','required' => false]]); ?>
 <?php $component->withName('form.input'); ?>
@@ -238,7 +238,7 @@ use App\Models\LetterOfGuaranteeIssuance;
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
                                     </div>
-									
+
 
                                     <div class="col-md-3">
                                         <label> <?php echo e(__('LG Type')); ?>
@@ -285,7 +285,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                             </div>
                         </div>
 
-                      
+
 
 
 
@@ -312,7 +312,7 @@ use App\Models\LetterOfGuaranteeIssuance;
 
                                             <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                         </label>
-										
+
                                         <div class="kt-input-icon">
                                             <div class="kt-input-icon">
                                                 <div class="input-group date">
@@ -499,22 +499,22 @@ use App\Models\LetterOfGuaranteeIssuance;
 <?php endif; ?> 
                                     </div>
 
-                                    
-									
-									  <div class="col-md-3">
+
+
+                                    <div class="col-md-3">
                                         <label> <?php echo e(__('LG Amount')); ?>
 
                                             <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                         </label>
                                         <div>
-                                            <input required value="<?php echo e((isset($model) ? number_format($model->getLgAmount(),0) : 0)); ?>" class="form-control only-greater-than-or-equal-zero-allowed recalculate-cash-cover-amount-js recalculate-lg-commission-amount-js lg-amount-js" type="text" placeholder="<?php echo e(__('Lg Amount')); ?>">
-                                            <input type="hidden" value="<?php echo e((isset($model) ? $model->getLgAmount() : 0)); ?>" name="lg_amount" class="only-greater-than-zero-allowed ">
+                                            <input data-current-value="<?php echo e(isset($model) ? $model->getLgAmount() : 0); ?>" required value="<?php echo e((isset($model) ? number_format($model->getLgAmount(),0) : 0)); ?>" class="form-control only-greater-than-or-equal-zero-allowed recalculate-cash-cover-amount-js recalculate-lg-commission-amount-js lg-amount-js" type="text" placeholder="<?php echo e(__('Lg Amount')); ?>">
+                                            <input data-current-value="<?php echo e(isset($model) ? $model->getLgAmount() : 0); ?>" type="hidden" value="<?php echo e((isset($model) ? $model->getLgAmount() : 0)); ?>" name="lg_amount" class="only-greater-than-zero-allowed ">
 
                                         </div>
                                     </div>
 
-                                  
-						
+
+
 
 
 
@@ -633,6 +633,10 @@ use App\Models\LetterOfGuaranteeIssuance;
                                 </div>
                             </div>
                         </div>
+
+
+                        <?php echo $__env->make('user_comment',['model'=>$model??null], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+
 
 
 
@@ -838,13 +842,13 @@ use App\Models\LetterOfGuaranteeIssuance;
                         $('.show-only-bond').addClass('hidden')
                     }
                 })
-                $(function(){
-					$('.js-toggle-bond').trigger('change')
-				})
+                $(function() {
+                    $('.js-toggle-bond').trigger('change')
+                })
 
             </script>
-           
-           
+
+
             <script>
                 $(document).on('change', '[js-update-contracts-based-on-customers]', function(e) {
                     const customerId = $('select#customer_name').val()
@@ -858,21 +862,21 @@ use App\Models\LetterOfGuaranteeIssuance;
                         , }
                         , type: "GET"
                         , success: function(res) {
-							var isCustomer = res.is_customer ;
-							if(!isCustomer){
-								$('.only-with-customer .required-label').addClass('visibility-hidden')
-							
-							}else{
-								$('.only-with-customer .required-label').removeClass('visibility-hidden')
-						
-							}
+                            var isCustomer = res.is_customer;
+                            if (!isCustomer) {
+                                $('.only-with-customer .required-label').addClass('visibility-hidden')
+
+                            } else {
+                                $('.only-with-customer .required-label').removeClass('visibility-hidden')
+
+                            }
                             var contractsOptions = '';
                             var currentSelectedId = $('select#contract-id').attr('data-current-selected')
                             for (var contractId in res.contracts) {
                                 var contractName = res.contracts[contractId];
                                 contractsOptions += `<option ${currentSelectedId == contractId ? 'selected' : '' } value="${contractId}"> ${contractName}  </option> `;
                             }
-							$('select#purchase-order-id').empty().selectpicker("refresh");
+                            $('select#purchase-order-id').empty().selectpicker("refresh");
                             $('select#contract-id').empty().append(contractsOptions).selectpicker("refresh");
                             $('select#contract-id').trigger('change')
                         }
@@ -917,76 +921,74 @@ use App\Models\LetterOfGuaranteeIssuance;
                     const parent = $(this).closest('.kt-portlet__body');
                     const accountType = parent.find('.js-update-account-id-based-on-account-type').val()
                     const accountId = parent.find('[js-cd-or-td-account-number]').val();
-					let financialInstitutionId = $('select#financial-instutition-id').val();
-					
+                    let financialInstitutionId = $('select#financial-instutition-id').val();
+
                     let url = "<?php echo e(route('get.account.amount.based.on.account.id',['company'=>$company->id , 'accountType'=>'replace_account_type' , 'accountId'=>'replace_account_id','financialInstitutionId'=>'replace_financial_institution_id' ])); ?>";
-					
+
                     url = url.replace('replace_account_type', accountType);
                     url = url.replace('replace_account_id', accountId);
-					url = url.replace('replace_financial_institution_id', financialInstitutionId);
-                    if(accountType &&accountId &&financialInstitutionId){
-					$.ajax({
-                        url
-                        , success: function(res) {
-                            parent.find('#cd-or-td-amount-id').attr('data-value',res.amount).val(number_format(res.amount) + ' ' + res.currencyName ).trigger('change')
-                        }
-                    });
-						
-					}else{
-                            parent.find('#cd-or-td-amount-id').attr('data-value',0).val(0 ).trigger('change')
-						
-					}
+                    url = url.replace('replace_financial_institution_id', financialInstitutionId);
+                    if (accountType && accountId && financialInstitutionId) {
+                        $.ajax({
+                            url
+                            , success: function(res) {
+                                parent.find('#cd-or-td-amount-id').attr('data-value', res.amount).val(number_format(res.amount) + ' ' + res.currencyName).trigger('change')
+                            }
+                        });
+
+                    } else {
+                        parent.find('#cd-or-td-amount-id').attr('data-value', 0).val(0).trigger('change')
+
+                    }
                 })
-				$('[js-cd-or-td-account-number]').trigger('change')
-
-
+                $('[js-cd-or-td-account-number]').trigger('change')
 
             </script>
-<?php echo $__env->make('reports.LetterOfGuaranteeIssuance.commonJs', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>			
-			
-			
-			 <script>
+            <?php echo $__env->make('reports.LetterOfGuaranteeIssuance.commonJs', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+
+
+            <script>
                 $(document).on('change', '[js-update-outstanding-balance-and-limits]', function(e) {
-   
+
                     const financialInstitutionId = $('select#financial-instutition-id').val()
                     const lgType = $('select#lg-type').val()
-					const source = "<?php echo e($source); ?>"
-					const lgIssuanceId = "<?php echo e(isset($model) ? $model->id : 0); ?>" 
-							const accountTypeId = $('select#account_type_id').val()
-							const cdOrTdAccountId = $('select[name="cd_or_td_id"]').val()
-				
+                    const source = "<?php echo e($source); ?>"
+                    const lgIssuanceId = "<?php echo e(isset($model) ? $model->id : 0); ?>"
+                    const accountTypeId = $('select#account_type_id').val()
+                    const cdOrTdAccountId = $('select[name="cd_or_td_id"]').val()
+
                     $.ajax({
                         url: "<?php echo e(route('update.letter.of.guarantee.outstanding.balance.and.limit',['company'=>$company->id])); ?>"
                         , data: {
-                            financialInstitutionId,
-							lgIssuanceId
-                            , lgType,
-							source,
-								accountTypeId,
-								cdOrTdAccountId
+                            financialInstitutionId
+                            , lgIssuanceId
+                            , lgType
+                            , source
+                            , accountTypeId
+                            , cdOrTdAccountId
                         }
                         , type: "GET"
                         , success: function(res) {
-							
-							let customerOptions = '<option value=""><?php echo e(__("Please Select")); ?></option>';
-							let currentSelectedCustomerId = $('select#customer_name').attr('data-current-selected');
-							
-							for(var customerId in res.customers ){
-								var customerName = res.customers[customerId];
-								var isSelected =  customerId  == currentSelectedCustomerId  ? 'selected' :'';
-								customerOptions += '<option '+ isSelected +' value="'+customerId+'">'+ customerName +'</option> ';
-							}
-							$('select#customer_name').empty().append(customerOptions).trigger('change');
+
+                            let customerOptions = '<option value=""><?php echo e(__("Please Select")); ?></option>';
+                            let currentSelectedCustomerId = $('select#customer_name').attr('data-current-selected');
+
+                            for (var customerId in res.customers) {
+                                var customerName = res.customers[customerId];
+                                var isSelected = customerId == currentSelectedCustomerId ? 'selected' : '';
+                                customerOptions += '<option ' + isSelected + ' value="' + customerId + '">' + customerName + '</option> ';
+                            }
+                            $('select#customer_name').empty().append(customerOptions).trigger('change');
                             $('#limit-id').val(res.limit).prop('readonly', true)
                             $('#total-lg-for-all-types-id').val(res.total_lg_outstanding_balance).prop('readonly', true)
                             $('#total-room-id').val(res.total_room).prop('readonly', true)
-							$('#input[name="lg_currency"]').val(res.currency_name)
+                            $('#input[name="lg_currency"]').val(res.currency_name)
                             $('#current-lg-outstanding-balance-id').val(res.total_lg_outstanding_balance).prop('readonly', true).trigger('change')
                             $('#against-cash-cover-amount-id').val(res.total_cash_cover_statement_debit).prop('readonly', true).trigger('change')
-                           // $('#cd-or-td-free-to-use-amount-id').val(cdOrTdFreeToUseAmount).prop('readonly', true)
+                            // $('#cd-or-td-free-to-use-amount-id').val(cdOrTdFreeToUseAmount).prop('readonly', true)
                             $('#current-lg-type-outstanding-balance-id').val(res.current_lg_type_outstanding_balance).prop('readonly', true)
                             $('#min_lg_commission_fees_id').val(res.min_lg_commission_rate).trigger('change');
-                    //        $('#lg_commission_rate-id').val(res.lg_commission_rate).trigger('change');
+                            //        $('#lg_commission_rate-id').val(res.lg_commission_rate).trigger('change');
                             $('#issuance_fees_id').val(res.min_lg_issuance_fees_for_current_lg_type).trigger('change');
                             $('#cash-cover-rate-id').val(res.min_lg_cash_cover_rate_for_current_lg_type).trigger('change');
                             $('[js-update-contracts-based-on-customers]').trigger('change')
@@ -995,9 +997,9 @@ use App\Models\LetterOfGuaranteeIssuance;
                 })
 
             </script>
-			<script>
-			</script>
-			 <?php if(!isset($model)): ?>
+            <script>
+            </script>
+            <?php if(!isset($model)): ?>
             <script>
                 $('[js-update-outstanding-balance-and-limits]').trigger('change')
 

@@ -10,9 +10,7 @@
         white-space: nowrap !important
     }
 
-    [class*="col"] {
-        margin-bottom: 1.5rem !important;
-    }
+ 
 
     label {
         text-align: left !important;
@@ -215,7 +213,7 @@
                                                 </label>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group date">
-                                                        <select required data-from-current-selected="<?php echo e(isset($model) ? $model->getFromAccountNumber(): 0); ?>" name="from_account_number" class="form-control js-from-account-number">
+                                                        <select required data-current-selected="<?php echo e(isset($model) ? $model->getFromAccountNumber(): 0); ?>" data-from-current-selected="<?php echo e(isset($model) ? $model->getFromAccountNumber(): 0); ?>" name="from_account_number" class="form-control js-from-account-number">
                                                             <option value="" selected><?php echo e(__('Select')); ?></option>
                                                         </select>
                                                     </div>
@@ -253,6 +251,8 @@
                         <!--end::Portlet-->
                 </div>
             </div>
+			<?php echo $__env->make('user_comment',['model'=>$model??null], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+			
              <?php if (isset($component)) { $__componentOriginal49acb4be531871427e6da8fc4bf301f11a96ee34 = $component; } ?>
 <?php $component = $__env->getContainer()->make(App\View\Components\Submitting::class, []); ?>
 <?php $component->withName('submitting'); ?>

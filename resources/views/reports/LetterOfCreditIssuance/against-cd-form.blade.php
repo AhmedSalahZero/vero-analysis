@@ -444,7 +444,7 @@ use App\Models\LetterOfCreditIssuance;
 
 
 
-
+ @include('user_comment',['model'=>$model??null])
 
                 <x-submitting />
         </form>
