@@ -189,7 +189,7 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
                                                     <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                                 </label>
                                                 <div class="kt-input-icon">
-                                                    <input id="multiplierField" type="text" value="<?php echo e(isset($model) ? number_format($model->getAmountToSell()):0); ?>" class="form-control recalculate-amount-in-main-currency amount-js greater-than-or-equal-zero-allowed " placeholder="<?php echo e(__('Insert Amount')); ?>">
+                                                    <input name="currency_to_sell_amount" id="multiplierField" type="text" value="<?php echo e(isset($model) ? number_format($model->getAmountToSell()):0); ?>" class="form-control recalculate-amount-in-main-currency amount-js greater-than-or-equal-zero-allowed " placeholder="<?php echo e(__('Insert Amount')); ?>">
                                                     
                                                 </div>
                                             </div>
@@ -218,7 +218,7 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
                                                 </label>
                                                 <div class="kt-input-icon">
 													
-                                                    <input id="resultField" readonly type="text" value="<?php echo e(isset($model) ? $model->getAmountToBuy():0); ?>" class="
+                                                    <input name="currency_to_buy_amount" id="resultField" readonly type="text" value="<?php echo e(isset($model) ? $model->getAmountToBuy():0); ?>" class="
 													form-control greater-than-or-equal-zero-allowed amount-in-main-currency-js
 													" placeholder="<?php echo e(__('Insert Amount')); ?>">
                                                 </div>

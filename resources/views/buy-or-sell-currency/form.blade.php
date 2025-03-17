@@ -172,7 +172,7 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
                                                     @include('star')
                                                 </label>
                                                 <div class="kt-input-icon">
-                                                    <input id="multiplierField" type="text" value="{{ isset($model) ? number_format($model->getAmountToSell()):0 }}" class="form-control recalculate-amount-in-main-currency amount-js greater-than-or-equal-zero-allowed " placeholder="{{__('Insert Amount')}}">
+                                                    <input name="currency_to_sell_amount" id="multiplierField" type="text" value="{{ isset($model) ? number_format($model->getAmountToSell()):0 }}" class="form-control recalculate-amount-in-main-currency amount-js greater-than-or-equal-zero-allowed " placeholder="{{__('Insert Amount')}}">
                                                     {{-- <input  type="hidden" value="{{ isset($model) ? $model->getAmountToSell():0 }}" name="currency_to_sell_amount" > --}}
                                                 </div>
                                             </div>
@@ -199,7 +199,7 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
                                                 </label>
                                                 <div class="kt-input-icon">
 													{{-- <input type="hidden" class="amount-in-main-currency-js-hidden" name="currency_to_buy_amount" value="{{ isset($model) ? $model->getAmountToBuy():0 }}"> --}}
-                                                    <input id="resultField" readonly type="text" value="{{ isset($model) ? $model->getAmountToBuy():0 }}" class="
+                                                    <input name="currency_to_buy_amount" id="resultField" readonly type="text" value="{{ isset($model) ? $model->getAmountToBuy():0 }}" class="
 													form-control greater-than-or-equal-zero-allowed amount-in-main-currency-js
 													" placeholder="{{__('Insert Amount')}}">
                                                 </div>

@@ -15,7 +15,7 @@ begin
 		select  count(*) into _count_all_rows from current_account_bank_statements where is_active = 1 and company_id = new.company_id  and financial_institution_account_id = new.financial_institution_account_id  and  full_date < new.full_date   order by full_date desc , id desc limit 1 ;
 		set new.beginning_balance = if(_count_all_rows,_last_end_balance,ifnull(new.beginning_balance,0)); 
 		
-		set new.end_balance = new.beginning_balance + new.debit - new.credit ; 
+		set new.end_balance = ifnull(new.beginning_balance + new.debit - new.credit,0) ; 
 		set new.is_debit = if(new.debit > 0 , 1 , 0);
 		set new.is_credit = if(new.debit > 0 , 0 , 1);
 	
@@ -80,7 +80,7 @@ begin
 	
 	 set new.beginning_balance = _last_end_balance ;
 	 
-	set new.end_balance = new.beginning_balance + new.debit - new.credit ; 
+	set new.end_balance = ifnull(new.beginning_balance + new.debit - new.credit,0) ; 
 	
 	
 	
