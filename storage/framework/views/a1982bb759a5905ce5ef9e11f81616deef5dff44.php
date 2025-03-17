@@ -62,15 +62,15 @@
 
         <form method="post" action="<?php echo e(isset($model) ?  route('internal-money-transfers.update',['company'=>$company->id,'internal_money_transfer'=>$model->id,'type'=>$type]) :route('internal-money-transfers.store',['company'=>$company->id,'type'=>$type])); ?>" class="kt-form kt-form--label-right">
             <input id="js-in-edit-mode" type="hidden" name="in_edit_mode" value="<?php echo e(isset($model) ? 1 : 0); ?>">
-            <input  type="hidden" name="id" value="<?php echo e(isset($model) ? $model->id : 0); ?>">
-            <input  type="hidden" name="company_id" value="<?php echo e($company->id); ?>">
-			
-			<?php if(isset($model)): ?>
-			<input type="hidden" name="updated_by" value="<?php echo e(auth()->user()->id); ?>">
-			<?php else: ?>
-			<input type="hidden" name="created_by" value="<?php echo e(auth()->user()->id); ?>">
-			
-			<?php endif; ?> 
+            <input type="hidden" name="id" value="<?php echo e(isset($model) ? $model->id : 0); ?>">
+            <input type="hidden" name="company_id" value="<?php echo e($company->id); ?>">
+
+            <?php if(isset($model)): ?>
+            <input type="hidden" name="updated_by" value="<?php echo e(auth()->user()->id); ?>">
+            <?php else: ?>
+            <input type="hidden" name="created_by" value="<?php echo e(auth()->user()->id); ?>">
+
+            <?php endif; ?>
             
             <?php echo csrf_field(); ?>
             <?php if(isset($model)): ?>
@@ -108,26 +108,26 @@
                                 <div class="kt-portlet__head">
                                     <div class="kt-portlet__head-label flex-1">
                                         <h3 class="kt-portlet__head-title head-title text-primary">
-                                          <?php echo e(__('Bank To Bank Transfer Information')); ?>
+                                            <?php echo e(__('Bank To Bank Transfer Information')); ?>
 
                                         </h3>
-										
-										  <div class=" flex-1 d-flex justify-content-end pt-3">
-                    <div class="col-md-3 mb-3">
-                        <label><?php echo e(__('Balance')); ?> <span class="balance-date-js"></span> </label>
-                        <div class="kt-input-icon">
-                            <input value="0" type="text" disabled class="form-control balance-js" placeholder="<?php echo e(__('Account Balance')); ?>">
-                        </div>
-                    </div>
-                    <div class="col-md-3 mb-3">
-                        <label><?php echo e(__('Net Balance')); ?> <span class="net-balance-date-js"></span> </label>
-                        <div class="kt-input-icon">
-                            <input value="0" type="text" disabled class="form-control net-balance-js" placeholder="<?php echo e(__('Net Balance')); ?>">
-                            
-                        </div>
-                    </div>
-                </div>
-				
+
+                                        <div class=" flex-1 d-flex justify-content-end pt-3">
+                                            <div class="col-md-3 mb-3">
+                                                <label><?php echo e(__('Balance')); ?> <span class="balance-date-js"></span> </label>
+                                                <div class="kt-input-icon">
+                                                    <input value="0" type="text" disabled class="form-control balance-js" placeholder="<?php echo e(__('Account Balance')); ?>">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3 mb-3">
+                                                <label><?php echo e(__('Net Balance')); ?> <span class="net-balance-date-js"></span> </label>
+                                                <div class="kt-input-icon">
+                                                    <input value="0" type="text" disabled class="form-control net-balance-js" placeholder="<?php echo e(__('Net Balance')); ?>">
+                                                    
+                                                </div>
+                                            </div>
+                                        </div>
+
                                     </div>
                                 </div>
 
@@ -154,7 +154,7 @@
                                                     <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                                 </label>
                                                 <div class="kt-input-icon">
-                                                    <input  step="1" type="numeric" value="<?php echo e(isset($model) ? $model->getTransferDays():0); ?>" name="transfer_days" class="form-control greater-than-or-equal-zero-allowed " placeholder="<?php echo e(__('Insert Amount')); ?>">
+                                                    <input step="1" type="numeric" value="<?php echo e(isset($model) ? $model->getTransferDays():0); ?>" name="transfer_days" class="form-control greater-than-or-equal-zero-allowed " placeholder="<?php echo e(__('Insert Amount')); ?>">
                                                 </div>
                                             </div>
 
@@ -164,8 +164,8 @@
                                                     <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                                 </label>
                                                 <div class="kt-input-icon">
-                                                    <input  type="text" value="<?php echo e(isset($model) ? number_format($model->getAmount()):0); ?>"  class="form-control greater-than-or-equal-zero-allowed " >
-													<input type="hidden" name="amount" value="<?php echo e(isset($model) ? $model->getAmount():0); ?>">
+                                                    <input type="text" value="<?php echo e(isset($model) ? number_format($model->getAmount()):0); ?>" class="form-control greater-than-or-equal-zero-allowed ">
+                                                    <input type="hidden" name="amount" value="<?php echo e(isset($model) ? $model->getAmount():0); ?>">
                                                 </div>
                                             </div>
                                             <div class="col-md-3">
@@ -406,130 +406,127 @@
 
         </script>
 
-       
-    <script>
-	
-	
-$(document).on('change', 'select.js-from-update-account-number-based-on-account-type', function () {
-	const val = $(this).val()
-	const lang = $('body').attr('data-lang')
-	const companyId = $('body').attr('data-current-company-id')
-	const repeaterParentIfExists = $(this).closest('[data-repeater-item]')
-	const parent = repeaterParentIfExists.length ? repeaterParentIfExists : $(this).closest('.kt-portlet__body')
-	const data = []
-	let currency = $(this).closest('form').find('select.current-from-currency').val()
-	let financialInstitutionBankId = parent.find('[data-from-financial-institution-id]').val()
-	financialInstitutionBankId = typeof financialInstitutionBankId !== 'undefined' ? financialInstitutionBankId : $('[data-financial-institution-id]').val()
-	if (!val || !currency || !financialInstitutionBankId) {
-		return
-	}
-	const url = '/' + lang + '/' + companyId + '/money-received/get-account-numbers-based-on-account-type/' + val + '/' + currency + '/' + financialInstitutionBankId
-	$.ajax({
-		url,
-		data,
-		success: function (res) {
-			options = ''
-			var selectToAppendInto = $(parent).find('.js-from-account-number')
 
-			for (key in res.data) {
-				var val = res.data[key]
-				var selected = $(selectToAppendInto).attr('data-current-selected') == val ? 'selected' : ''
-				options += '<option ' + selected + '  value="' + val + '">' + val + '</option>'
-			}
-
-			selectToAppendInto.empty().append(options).trigger('change')
-		}
-	})
-
-
-
-
-
-
-})
-$(document).on('change', 'select[js-from-when-change-trigger-change-account-type]', function () {
-
-	$(this).closest('.kt-portlet__body').find('.js-from-update-account-number-based-on-account-type').trigger('change')
-})
-$(function () {
-	$('.js-from-update-account-number-based-on-account-type').trigger('change')
-})
-console.log('1');
-$(document).on('change', 'select.js-from-account-number', function() {
-        const parent = $(this).closest('.kt-portlet__body');
-        const financialInstitutionId = parent.find('select.from-financial-institution').val()
-        const accountNumber = $(this).val();
-        const accountType = parent.find('select.js-from-update-account-number-based-on-account-type').val();
-		console.log(financialInstitutionId,accountNumber,accountType)
-        $.ajax({
-            url: "<?php echo e(route('update.balance.and.net.balance.based.on.account.number',['company'=>$company->id])); ?>"
-            , data: {
-                accountNumber
-                , accountType
-                , financialInstitutionId
-            }
-            , type: "get"
-            , success: function(res) {
-                if (res.balance_date) {
-                    $('.balance-date-js').html('[ ' + res.balance_date + ' ]')
+        <script>
+            $(document).on('change', 'select.js-from-update-account-number-based-on-account-type', function() {
+                const val = $(this).val()
+                const lang = $('body').attr('data-lang')
+                const companyId = $('body').attr('data-current-company-id')
+                const repeaterParentIfExists = $(this).closest('[data-repeater-item]')
+                const parent = repeaterParentIfExists.length ? repeaterParentIfExists : $(this).closest('.kt-portlet__body')
+                const data = []
+                let currency = $(this).closest('form').find('select.current-from-currency').val()
+                let financialInstitutionBankId = parent.find('[data-from-financial-institution-id]').val()
+                financialInstitutionBankId = typeof financialInstitutionBankId !== 'undefined' ? financialInstitutionBankId : $('[data-financial-institution-id]').val()
+                if (!val || !currency || !financialInstitutionBankId) {
+                    return
                 }
-                if (res.net_balance_date) {
-                    $('.net-balance-date-js').html('[ ' + res.net_balance_date + ' ]')
+                const url = '/' + lang + '/' + companyId + '/money-received/get-account-numbers-based-on-account-type/' + val + '/' + currency + '/' + financialInstitutionBankId
+                $.ajax({
+                    url
+                    , data
+                    , success: function(res) {
+                        options = ''
+                        var selectToAppendInto = $(parent).find('.js-from-account-number')
+
+                        for (key in res.data) {
+                            var val = res.data[key]
+                            var selected = $(selectToAppendInto).attr('data-current-selected') == val ? 'selected' : ''
+                            options += '<option ' + selected + '  value="' + val + '">' + val + '</option>'
+                        }
+
+                        selectToAppendInto.empty().append(options).trigger('change')
+                    }
+                })
+
+
+
+
+
+
+            })
+            $(document).on('change', 'select[js-from-when-change-trigger-change-account-type]', function() {
+
+                $(this).closest('.kt-portlet__body').find('.js-from-update-account-number-based-on-account-type').trigger('change')
+            })
+            $(function() {
+                $('.js-from-update-account-number-based-on-account-type').trigger('change')
+            })
+            $(document).on('change', 'select.js-from-account-number', function() {
+                const parent = $(this).closest('.kt-portlet__body');
+                const financialInstitutionId = parent.find('select.from-financial-institution').val()
+                const accountNumber = $(this).val();
+                const accountType = parent.find('select.js-from-update-account-number-based-on-account-type').val();
+                console.log(financialInstitutionId, accountNumber, accountType)
+                $.ajax({
+                    url: "<?php echo e(route('update.balance.and.net.balance.based.on.account.number',['company'=>$company->id])); ?>"
+                    , data: {
+                        accountNumber
+                        , accountType
+                        , financialInstitutionId
+                    }
+                    , type: "get"
+                    , success: function(res) {
+                        if (res.balance_date) {
+                            $('.balance-date-js').html('[ ' + res.balance_date + ' ]')
+                        }
+                        if (res.net_balance_date) {
+                            $('.net-balance-date-js').html('[ ' + res.net_balance_date + ' ]')
+                        }
+                        $('.net-balance-js').val(number_format(res.net_balance))
+                        $('.balance-js').val(number_format(res.balance))
+
+                    }
+                })
+            })
+            $(document).on('change', 'select.js-to-update-account-number-based-on-account-type', function() {
+                const val = $(this).val()
+                const lang = $('body').attr('data-lang')
+                const companyId = $('body').attr('data-current-company-id')
+                const repeaterParentIfExists = $(this).closest('[data-repeater-item]')
+                const parent = repeaterParentIfExists.length ? repeaterParentIfExists : $(this).closest('.kt-portlet__body')
+                const data = []
+                let currency = $(this).closest('form').find('select.current-from-currency').val()
+                let financialInstitutionBankId = parent.find('[data-to-financial-institution-id]').val()
+                financialInstitutionBankId = typeof financialInstitutionBankId !== 'undefined' ? financialInstitutionBankId : $('[data-financial-institution-id]').val()
+                if (!val || !currency || !financialInstitutionBankId) {
+                    return
                 }
-                $('.net-balance-js').val(number_format(res.net_balance))
-                $('.balance-js').val(number_format(res.balance))
+                const url = '/' + lang + '/' + companyId + '/money-received/get-account-numbers-based-on-account-type/' + val + '/' + currency + '/' + financialInstitutionBankId
+                $.ajax({
+                    url
+                    , data
+                    , success: function(res) {
+                        options = ''
+                        var selectToAppendInto = $(parent).find('.js-to-account-number')
+                        for (key in res.data) {
+                            var val = res.data[key]
+                            var selected = $(selectToAppendInto).attr('data-current-selected') == val ? 'selected' : ''
+                            options += '<option ' + selected + '  value="' + val + '">' + val + '</option>'
+                        }
 
-            }
-        })
-    })
-$(document).on('change', 'select.js-to-update-account-number-based-on-account-type', function () {
-	const val = $(this).val()
-	const lang = $('body').attr('data-lang')
-	const companyId = $('body').attr('data-current-company-id')
-	const repeaterParentIfExists = $(this).closest('[data-repeater-item]')
-	const parent = repeaterParentIfExists.length ? repeaterParentIfExists : $(this).closest('.kt-portlet__body')
-	const data = []
-	let currency = $(this).closest('form').find('select.current-from-currency').val()
-	let financialInstitutionBankId = parent.find('[data-to-financial-institution-id]').val()
-	financialInstitutionBankId = typeof financialInstitutionBankId !== 'undefined' ? financialInstitutionBankId : $('[data-financial-institution-id]').val()
-	if (!val || !currency || !financialInstitutionBankId) {
-		return
-	}
-	const url = '/' + lang + '/' + companyId + '/money-received/get-account-numbers-based-on-account-type/' + val + '/' + currency + '/' + financialInstitutionBankId
-	$.ajax({
-		url,
-		data,
-		success: function (res) {
-			options = ''
-			var selectToAppendInto = $(parent).find('.js-to-account-number')
-			for (key in res.data) {
-				var val = res.data[key]
-				var selected = $(selectToAppendInto).attr('data-current-selected') == val ? 'selected' : ''
-				options += '<option ' + selected + '  value="' + val + '">' + val + '</option>'
-			}
-
-			selectToAppendInto.empty().append(options).trigger('change')
-		}
-	})
+                        selectToAppendInto.empty().append(options).trigger('change')
+                    }
+                })
 
 
 
 
 
 
-})
-$(document).on('change', 'select[js-to-when-change-trigger-change-account-type]', function () {
+            })
+            $(document).on('change', 'select[js-to-when-change-trigger-change-account-type]', function() {
 
-	$(this).closest('.kt-portlet__body').find('select.js-to-update-account-number-based-on-account-type').trigger('change')
-})
-$(function () {
-	
-	
-	
-	$('select.js-to-update-account-number-based-on-account-type').trigger('change')
-})
+                $(this).closest('.kt-portlet__body').find('select.js-to-update-account-number-based-on-account-type').trigger('change')
+            })
+            $(function() {
 
-	</script>
+
+
+                $('select.js-to-update-account-number-based-on-account-type').trigger('change')
+            })
+
+        </script>
 
 
         <?php $__env->stopSection(); ?>

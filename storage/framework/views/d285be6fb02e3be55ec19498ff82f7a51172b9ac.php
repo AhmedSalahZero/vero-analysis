@@ -189,8 +189,8 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
                                                     <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                                 </label>
                                                 <div class="kt-input-icon">
-                                                    <input type="text" value="<?php echo e(isset($model) ? number_format($model->getAmountToSell()):0); ?>" class="form-control " placeholder="<?php echo e(__('Insert Amount')); ?>">
-                                                    <input type="hidden" value="<?php echo e(isset($model) ? $model->getAmountToSell():0); ?>" name="currency_to_sell_amount" class="form-control recalculate-amount-in-main-currency amount-js greater-than-or-equal-zero-allowed " placeholder="<?php echo e(__('Insert Amount')); ?>">
+                                                    <input id="multiplierField" type="text" value="<?php echo e(isset($model) ? number_format($model->getAmountToSell()):0); ?>" class="form-control recalculate-amount-in-main-currency amount-js greater-than-or-equal-zero-allowed " placeholder="<?php echo e(__('Insert Amount')); ?>">
+                                                    
                                                 </div>
                                             </div>
                                          
@@ -202,7 +202,9 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
                                                     <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                                 </label>
                                                 <div class="kt-input-icon">
-                                                    <input  id="imageCalc"  type="text" value="<?php echo e(isset($model) ? $model->getExchangeRate():0); ?>" name="exchange_rate" class="form-control exchange-rate-js recalculate-amount-in-main-currency " placeholder="<?php echo e(__('Exchange Rate')); ?>">
+                                                    <input  id="calcField"  type="text" value="<?php echo e(isset($model) ? $model->getExchangeRate():0); ?>" name="exchange_rate" class="
+													form-control exchange-rate-js recalculate-amount-in-main-currency 
+													" placeholder="<?php echo e(__('Exchange Rate')); ?>">
                                                 </div>
 												
 												
@@ -215,8 +217,10 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
                                                     
                                                 </label>
                                                 <div class="kt-input-icon">
-													<input type="hidden" class="amount-in-main-currency-js-hidden" name="currency_to_buy_amount" value="<?php echo e(isset($model) ? $model->getAmountToBuy():0); ?>">
-                                                    <input readonly type="text" value="<?php echo e(isset($model) ? $model->getAmountToBuy():0); ?>" class="form-control greater-than-or-equal-zero-allowed amount-in-main-currency-js" placeholder="<?php echo e(__('Insert Amount')); ?>">
+													
+                                                    <input id="resultField" readonly type="text" value="<?php echo e(isset($model) ? $model->getAmountToBuy():0); ?>" class="
+													form-control greater-than-or-equal-zero-allowed amount-in-main-currency-js
+													" placeholder="<?php echo e(__('Insert Amount')); ?>">
                                                 </div>
                                             </div>
 
@@ -452,6 +456,7 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
         <?php $__env->startSection('js'); ?>
         <!--begin::Page Scripts(used by this page) -->
         <script src="<?php echo e(url('assets/vendors/general/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js')); ?>" type="text/javascript"></script>
+        <script src="<?php echo e(url('custom/math.js')); ?>" type="text/javascript"></script>
         <script src="<?php echo e(url('assets/vendors/custom/js/vendors/bootstrap-datepicker.init.js')); ?>" type="text/javascript">
         </script>
         <script src="<?php echo e(url('assets/js/demo1/pages/crud/forms/widgets/bootstrap-datepicker.js')); ?>" type="text/javascript">
@@ -675,14 +680,74 @@ $(document).on('change','.type',function(e){
 	
 $('.type').trigger('change')	
 		</script>
-		<script type="text/javascript" src="<?php echo e(asset('assets/jquery-calculator/jquery.plugin.js')); ?>"></script> 
-<script type="text/javascript" src="<?php echo e(asset('assets/jquery-calculator/jquery.calculator.js')); ?>"></script>
 
-<script>
-$('#imageCalc').calculator({showOn: 'button', 
-    buttonImageOnly: true, buttonImage: "<?php echo e(asset('assets/jquery-calculator/calculator.png')); ?>"});
+	 <script>
+        function formatNumberWithCommas(number, decimals = 2) {
+            return parseFloat(number).toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+        }
+
+        function calculateResult() {
+            let baseValue = document.getElementById("calcField").value.trim();
+            let multiplierValue = document.getElementById("multiplierField").value.replace(/,/g, ""); // Remove commas for calculation
 	
-</script>
+            let multiplier = parseFloat(multiplierValue);
+		
+            if (baseValue.startsWith("=")) {
+                try {
+                    baseValue = math.evaluate(baseValue.substring(1)); // Evaluate formula
+					console.log(baseValue)
+                } catch (e) {
+                    baseValue = 0;
+                }
+            } else {
+                baseValue = parseFloat(baseValue);
+            }
+
+            if (!isNaN(baseValue)) {
+                baseValue = baseValue.toFixed(5); // Format to 5 decimals
+                document.getElementById("calcField").value = baseValue; // Update input field
+            }
+
+            if (!isNaN(baseValue) && !isNaN(multiplier)) {
+                let result = (baseValue * multiplier).toFixed(2); // Format result to 2 decimals
+                document.getElementById("resultField").value = formatNumberWithCommas(result, 2); // Format with commas
+            } else {
+                document.getElementById("resultField").value = "";
+            }
+        }
+
+          // Auto-calculate formula when leaving the field (blur)
+        document.getElementById("calcField").addEventListener("blur", function() {
+            calculateResult();
+        });
+
+
+        // // Evaluate formula and format when pressing Enter
+        // document.getElementById("calcField").addEventListener("keydown", function(event) {
+        //     if (event.key === "Enter") {
+        //         calculateResult();
+        //     }
+        // });
+
+        // Ensure proper formatting when leaving the multiplier field
+        document.getElementById("multiplierField").addEventListener("blur", function() {
+            let value = this.value.replace(/,/g, "").trim(); // Remove commas before parsing
+            if (!isNaN(value) && value !== "") {
+                this.value = formatNumberWithCommas(value, 2); // Format after leaving the field
+            }
+            calculateResult();
+        });
+
+        // Allow smooth number input without interference
+        document.getElementById("multiplierField").addEventListener("input", function() {
+            let value = this.value.replace(/,/g, "").trim(); // Remove commas while typing
+            if (!isNaN(value) || value === "") {
+                this.value = value; // Allow user to type naturally
+            }
+        });
+
+    </script>	
+
 
         <?php $__env->stopSection(); ?>
 

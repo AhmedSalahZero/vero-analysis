@@ -175,7 +175,7 @@ use App\Models\MoneyReceived ;
                                         <label><?php echo e(__('Net Balance')); ?> <span class="net-balance-date-js"></span> </label>
                                         <div class="kt-input-icon">
                                             <input value="0" type="text" disabled class="form-control net-balance-js" placeholder="<?php echo e(__('Net Balance')); ?>">
-                                            
+                                        
                                         </div>
                                     </div>
                                     <div class="col-md-2 mb-3">
