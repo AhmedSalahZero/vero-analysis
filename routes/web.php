@@ -607,10 +607,7 @@ Route::middleware([])->group(function () {
 				 Route::post('add-new-partner','AddNewCustomerController@addNew')->name('add.new.partner');
 				 Route::post('add-new-partner/{type}','AddNewCustomerController@addNew2')->name('add.new.partner.type');
 				 Route::resource('opening-balance', 'OpeningBalancesController');
-				//  Route::resource('lg-opening-balance', 'LgOpeningBalancesController');
-				//  Route::resource('lc-opening-balance', 'LcOpeningBalancesController');
-				//  Route::resource('buy-or-sell-currencies', 'InternalMoneyTransferController');
-				 //
+				
 				 
 				 Route::group(['prefix'=>'general-settings'],function(){
 					Route::get('customers','CustomersController@index')->name('customers.index');

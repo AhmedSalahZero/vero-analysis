@@ -123,7 +123,6 @@
                                                 <label><?php echo e(__('Net Balance')); ?> <span class="net-balance-date-js"></span> </label>
                                                 <div class="kt-input-icon">
                                                     <input value="0" type="text" disabled class="form-control net-balance-js" placeholder="<?php echo e(__('Net Balance')); ?>">
-                                                    
                                                 </div>
                                             </div>
                                         </div>
@@ -226,7 +225,7 @@
                                                 </label>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group date">
-                                                        <select required data-from-current-selected="<?php echo e(isset($model) ? $model->getFromAccountNumber(): 0); ?>" name="from_account_number" class="form-control js-from-account-number ">
+                                                        <select required data-current-selected="<?php echo e(isset($model) ? $model->getFromAccountNumber(): 0); ?>" data-from-current-selected="<?php echo e(isset($model) ? $model->getFromAccountNumber(): 0); ?>" name="from_account_number" class="form-control js-from-account-number ">
                                                             <option value="" selected><?php echo e(__('Select')); ?></option>
                                                         </select>
                                                     </div>

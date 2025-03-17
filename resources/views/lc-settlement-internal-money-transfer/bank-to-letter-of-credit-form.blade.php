@@ -192,7 +192,7 @@
                                                 </label>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group date">
-                                                        <select required data-from-current-selected="{{ isset($model) ? $model->getFromAccountNumber(): 0 }}" name="from_account_number" class="form-control js-from-account-number">
+                                                        <select required data-current-selected="{{ isset($model) ? $model->getFromAccountNumber(): 0  }}" data-from-current-selected="{{ isset($model) ? $model->getFromAccountNumber(): 0 }}" name="from_account_number" class="form-control js-from-account-number">
                                                             <option value="" selected>{{__('Select')}}</option>
                                                         </select>
                                                     </div>

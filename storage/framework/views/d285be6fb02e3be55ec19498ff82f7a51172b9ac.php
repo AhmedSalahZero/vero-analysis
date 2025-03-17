@@ -9,7 +9,7 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
 ?>
 <link href="<?php echo e(url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css')); ?>" rel="stylesheet" type="text/css" />
 <link href="<?php echo e(url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css')); ?>" rel="stylesheet" type="text/css" />
-<link rel="stylesheet" type="text/css" href="<?php echo e(asset('assets/jquery-calculator/jquery.calculator.css')); ?>"> 
+<link rel="stylesheet" type="text/css" href="<?php echo e(asset('assets/jquery-calculator/jquery.calculator.css')); ?>">
 
 <style>
     .kt-portlet .kt-portlet__head {
@@ -116,7 +116,39 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
 
                             <div class="kt-portlet ">
                                 <div class="kt-portlet__head">
-                                    
+                                    <div class="kt-portlet__head-label flex-1">
+                                        <h3 class="kt-portlet__head-title head-title text-primary">
+                                            
+                                        </h3>
+
+                                        <div data-type="<?php echo e($bankToBankConst.','.$bankToSafeConst); ?>" class="show-only-if flex-1 d-flex justify-content-end pt-3">
+                                            <div class="col-md-3 mb-3">
+                                                <label><?php echo e(__('Balance')); ?> <span class="balance-date-js"></span> </label>
+                                                <div class="kt-input-icon">
+                                                    <input value="0" type="text" disabled class="form-control balance-js" placeholder="<?php echo e(__('Account Balance')); ?>">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3 mb-3">
+                                                <label><?php echo e(__('Net Balance')); ?> <span class="net-balance-date-js"></span> </label>
+                                                <div class="kt-input-icon">
+                                                    <input value="0" type="text" disabled class="form-control net-balance-js" placeholder="<?php echo e(__('Net Balance')); ?>">
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                        <div data-type="<?php echo e($safeToBankConst.','.$safeToSafeConst); ?>" class=" flex-1 d-flex justify-content-end pt-3 show-only-if">
+                                            <div class="col-md-3 mb-3">
+                                                <label><?php echo e(__('Balance')); ?> <span class="balance-date-js"></span> </label>
+                                                <div class="kt-input-icon">
+                                                    <input value="0" type="text" disabled class="form-control cash-balance-js" placeholder="<?php echo e(__('Account Balance')); ?>">
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+
+                                    </div>
                                 </div>
 
                                 <div class="kt-portlet__body">
@@ -193,7 +225,7 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
                                                     
                                                 </div>
                                             </div>
-                                         
+
 
 
                                             <div class="col-md-3 ">
@@ -202,12 +234,12 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
                                                     <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                                 </label>
                                                 <div class="kt-input-icon">
-                                                    <input  id="calcField"  type="text" value="<?php echo e(isset($model) ? $model->getExchangeRate():0); ?>" name="exchange_rate" class="
+                                                    <input id="calcField" type="text" value="<?php echo e(isset($model) ? $model->getExchangeRate():0); ?>" name="exchange_rate" class="
 													form-control exchange-rate-js recalculate-amount-in-main-currency 
 													" placeholder="<?php echo e(__('Exchange Rate')); ?>">
                                                 </div>
-												
-												
+
+
                                             </div>
 
                                             
@@ -217,7 +249,7 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
                                                     
                                                 </label>
                                                 <div class="kt-input-icon">
-													
+                                                    
                                                     <input name="currency_to_buy_amount" id="resultField" readonly type="text" value="<?php echo e(isset($model) ? $model->getAmountToBuy():0); ?>" class="
 													form-control greater-than-or-equal-zero-allowed amount-in-main-currency-js
 													" placeholder="<?php echo e(__('Insert Amount')); ?>">
@@ -242,7 +274,7 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
                                                 </label>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group date">
-                                                        <select required js-from-when-change-trigger-change-account-type data-from-financial-institution-id name="from_bank_id" class="form-control ">
+                                                        <select required js-from-when-change-trigger-change-account-type data-from-financial-institution-id name="from_bank_id" class="form-control from-financial-institution">
                                                             <?php $__currentLoopData = $financialInstitutionBanks; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index=>$financialInstitutionBank): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                             <option value="<?php echo e($financialInstitutionBank->id); ?>" <?php echo e(isset($model) && $model->getFromBankId() == $financialInstitutionBank->id ? 'selected' : ''); ?>><?php echo e($financialInstitutionBank->getName()); ?></option>
                                                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -279,7 +311,7 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
                                                 </label>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group date">
-                                                        <select required data-from-current-selected="<?php echo e(isset($model) ? $model->getFromAccountNumber(): 0); ?>" name="from_account_number" class="form-control js-from-account-number">
+                                                        <select required data-current-selected="<?php echo e(isset($model) ? $model->getFromAccountNumber(): 0); ?>" data-from-current-selected="<?php echo e(isset($model) ? $model->getFromAccountNumber(): 0); ?>" name="from_account_number" class="form-control js-from-account-number">
                                                             
                                                         </select>
                                                     </div>
@@ -296,7 +328,7 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
 
                                                         <select required js-to-when-change-trigger-change-account-type data-to-financial-institution-id name="to_bank_id" class="form-control ">
                                                             <?php $__currentLoopData = $financialInstitutionBanks; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index=>$financialInstitutionBank): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                            <option value="<?php echo e($financialInstitutionBank->id); ?>" <?php echo e(isset($model) && $model->getFromBankId() == $financialInstitutionBank->id ? 'selected' : ''); ?>><?php echo e($financialInstitutionBank->getName()); ?></option>
+                                                            <option value="<?php echo e($financialInstitutionBank->id); ?>" <?php echo e(isset($model) && $model->getToBankId() == $financialInstitutionBank->id ? 'selected' : ''); ?>><?php echo e($financialInstitutionBank->getName()); ?></option>
                                                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                         </select>
 
@@ -336,41 +368,41 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
 
 
 
- 
+                                            
                                             <div data-type="<?php echo e($safeToBankConst.','.$safeToSafeConst); ?>" class="col-md-2 mb-4 show-only-if">
                                                 <label><?php echo e(__('From Branch')); ?> <span class="multi_selection"></span> </label>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group date">
-                                                        <select data-live-search="true" data-actions-box="true" name="from_branch_id" required class="form-control customers-js kt-bootstrap-select select2-select kt_bootstrap_select ">
+                                                        <select id="branch-id" data-live-search="true" data-actions-box="true" name="from_branch_id" required class="form-control customers-js kt-bootstrap-select select2-select kt_bootstrap_select ">
                                                             <?php $__currentLoopData = $selectedBranches; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $id => $name): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                            <option  <?php if(isset($model) && $id == $model->getToBranchId()): ?>  selected <?php endif; ?>  value="<?php echo e($id); ?>"><?php echo e($name); ?></option>
+                                                            <option <?php if(isset($model) && $id==$model->getToBranchId()): ?> selected <?php endif; ?> value="<?php echo e($id); ?>"><?php echo e($name); ?></option>
                                                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                         </select>
                                                     </div>
                                                 </div>
                                             </div>
-											
 
-										  
+
+                                            
                                             <div data-type="<?php echo e($safeToSafeConst.','.$bankToSafeConst); ?>" class="col-md-2 mb-4 show-only-if">
                                                 <label><?php echo e(__('To Branch')); ?> <span class="multi_selection"></span> </label>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group date">
                                                         <select data-live-search="true" data-actions-box="true" name="to_branch_id" required class="form-control customers-js kt-bootstrap-select select2-select kt_bootstrap_select ">
                                                             <?php $__currentLoopData = $selectedBranches; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $id => $name): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                            <option  <?php if(isset($model) && $id == $model->getToBranchId()): ?>  selected <?php endif; ?> value="<?php echo e($id); ?>"><?php echo e($name); ?></option>
+                                                            <option <?php if(isset($model) && $id==$model->getToBranchId()): ?> selected <?php endif; ?> value="<?php echo e($id); ?>"><?php echo e($name); ?></option>
                                                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                         </select>
                                                     </div>
                                                 </div>
                                             </div>
-											
-											
-											
-											
-											
-											
-											  <div class="col-md-6 show-only-if" data-type="<?php echo e($safeToBankConst); ?>">
+
+
+
+
+
+
+                                            <div class="col-md-6 show-only-if" data-type="<?php echo e($safeToBankConst); ?>">
                                                 <label><?php echo e(__('To Bank')); ?>
 
                                                     <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
@@ -380,7 +412,7 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
 
                                                         <select required js-to-when-change-trigger-change-account-type data-to-financial-institution-id name="to_bank_id" class="form-control ">
                                                             <?php $__currentLoopData = $financialInstitutionBanks; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index=>$financialInstitutionBank): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                            <option value="<?php echo e($financialInstitutionBank->id); ?>" <?php echo e(isset($model) && $model->getFromBankId() == $financialInstitutionBank->id ? 'selected' : ''); ?>><?php echo e($financialInstitutionBank->getName()); ?></option>
+                                                            <option value="<?php echo e($financialInstitutionBank->id); ?>" <?php echo e(isset($model) && $model->getToBankId() == $financialInstitutionBank->id ? 'selected' : ''); ?>><?php echo e($financialInstitutionBank->getName()); ?></option>
                                                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                         </select>
 
@@ -417,8 +449,8 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
                                                     </div>
                                                 </div>
                                             </div>
-											
-											
+
+
 
 
 
@@ -548,7 +580,7 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
 
         </script>
 
-    
+
         <script>
             $(document).on('change', 'select.js-from-update-account-number-based-on-account-type', function() {
                 const val = $(this).val()
@@ -577,7 +609,27 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
                             options += '<option ' + selected + '  value="' + val + '">' + val + '</option>'
                         }
 
-                        selectToAppendInto.empty().append(options)
+                        selectToAppendInto.empty().append(options).trigger('change')
+                    }
+                })
+
+
+
+                $(document).on('change', 'select#branch-id,select.current-from-currency', function() {
+                    const branchId = $('select#branch-id').val();
+                    const currencyName = $('select.current-from-currency').val();
+                    if (branchId != '-1') {
+                        $.ajax({
+                            url: "<?php echo e(route('get.current.end.balance.of.cash.in.safe.statement',['company'=>$company->id])); ?>"
+                            , data: {
+                                branchId
+                                , currencyName
+                            }
+                            , success: function(res) {
+                                const endBalance = res.end_balance;
+                                $('.cash-balance-js').val(number_format(endBalance))
+                            }
+                        })
                     }
                 })
 
@@ -586,11 +638,12 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
 
 
 
+
             })
             $(document).on('change', 'select[js-from-when-change-trigger-change-account-type]', function() {
-				if($(this).attr('name')){
-	                $(this).closest('.kt-portlet__body').find('select.js-from-update-account-number-based-on-account-type').trigger('change')
-				}
+                if ($(this).attr('name')) {
+                    $(this).closest('.kt-portlet__body').find('select.js-from-update-account-number-based-on-account-type').trigger('change')
+                }
             })
             $(function() {
                 $('select.js-from-update-account-number-based-on-account-type[name]').trigger('change')
@@ -598,11 +651,11 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
 
 
             $(document).on('change', 'select.js-to-update-account-number-based-on-account-type', function() {
-				console.log('to',this,$(this).attr('name'));
-				if(!$(this).attr('name')){
-					return
-				}
-				const currentType = $(this).closest('[data-type]').attr('data-type') ;
+                console.log('to', this, $(this).attr('name'));
+                if (!$(this).attr('name')) {
+                    return
+                }
+                const currentType = $(this).closest('[data-type]').attr('data-type');
                 const val = $(this).val()
                 const lang = $('body').attr('data-lang')
                 const companyId = $('body').attr('data-current-company-id')
@@ -610,8 +663,8 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
                 const parent = repeaterParentIfExists.length ? repeaterParentIfExists : $(this).closest('.kt-portlet__body')
                 const data = []
                 let currency = $(this).closest('form').find('select.current-to-currency').val()
-                let financialInstitutionBankId = parent.find('[data-type="'+currentType+'"]').find('select[data-to-financial-institution-id]').val()
-				
+                let financialInstitutionBankId = parent.find('[data-type="' + currentType + '"]').find('select[data-to-financial-institution-id]').val()
+
                 financialInstitutionBankId = typeof financialInstitutionBankId !== 'undefined' ? financialInstitutionBankId : $('[data-financial-institution-id]').val()
                 if (!val || !currency || !financialInstitutionBankId) {
                     return
@@ -623,14 +676,14 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
                     , success: function(res) {
                         options = ''
                         var selectToAppendInto = $(parent).find('.js-to-account-number[name]')
-						console.log('result',res.data);
+                        console.log('result', res.data);
                         for (key in res.data) {
                             var val = res.data[key]
                             var selected = $(selectToAppendInto).attr('data-current-selected') == val ? 'selected' : ''
                             options += '<option ' + selected + '  value="' + val + '">' + val + '</option>'
                         }
 
-                        selectToAppendInto.empty().append(options)
+                        selectToAppendInto.empty().append(options).trigger('change')
                     }
                 })
 
@@ -641,7 +694,7 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
 
             })
             $(document).on('change', 'select[js-to-when-change-trigger-change-account-type]', function() {
-				console.log( $(this).closest('.kt-portlet__body').find('select.js-to-update-account-number-based-on-account-type')[0]);
+                console.log($(this).closest('.kt-portlet__body').find('select.js-to-update-account-number-based-on-account-type')[0]);
                 $(this).closest('.kt-portlet__body').find('select.js-to-update-account-number-based-on-account-type').trigger('change')
             })
             $(function() {
@@ -649,104 +702,139 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
             })
 
         </script>
-		
-		<script>
-		$(document).on('change','.recalculate-amount-in-main-currency',function(){
-		const parent = $(this).closest('.kt-portlet__body');
-		const amount = parseFloat(number_unformat($(parent).find('.amount-js').val()))
-		const exchangeRate = parseFloat($(parent).find('.exchange-rate-js').val())
-		const amountInMainCurrency = parseFloat(amount * exchangeRate) ;
-		$(parent).find('.amount-in-main-currency-js-hidden').val( amountInMainCurrency)
-		$(parent).find('.amount-in-main-currency-js').val(number_format(amountInMainCurrency))
-	})
-$(document).on('change','.type',function(e){
-	const type = $(this).val()
-	$('.show-only-if').addClass('hidden');
-	$('.show-only-if [name]').each(function(index,element){
-		$(element).attr('data-name',$(element).attr('name'))
-	})
 
-	$('.show-only-if input , .show-only-if select').each(function(index,element){
-		$(element).removeAttr('name')
-	})
-	$('.show-only-if[data-type*="'+type+'"]').removeClass('hidden')
-	$('.show-only-if[data-type*="'+type+'"] input,.show-only-if[data-type*="'+type+'"] select').each(function(index,element){
-		$(element).attr('name',$(element).attr('data-name'))
-	})
-	
-	$('div.show-only-if.hidden input,div.show-only-if.hidden select').removeAttr('required')
-	$('div.show-only-if:not(.hidden) input,div.show-only-if.hidden select').removeAttr('required')
-})
-	
-$('.type').trigger('change')	
-		</script>
+        <script>
+            $(document).on('change', '.recalculate-amount-in-main-currency', function() {
+                const parent = $(this).closest('.kt-portlet__body');
+                const amount = parseFloat(number_unformat($(parent).find('.amount-js').val()))
+                const exchangeRate = parseFloat($(parent).find('.exchange-rate-js').val())
+                const amountInMainCurrency = parseFloat(amount * exchangeRate);
+                $(parent).find('.amount-in-main-currency-js-hidden').val(amountInMainCurrency)
+                $(parent).find('.amount-in-main-currency-js').val(number_format(amountInMainCurrency))
+            })
+            $(document).on('change', '.type', function(e) {
+                const type = $(this).val()
+                $('.show-only-if').addClass('hidden');
+                $('.show-only-if [name]').each(function(index, element) {
+                    $(element).attr('data-name', $(element).attr('name'))
+                })
 
-	 <script>
-        function formatNumberWithCommas(number, decimals = 2) {
-            return parseFloat(number).toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
-        }
+                $('.show-only-if input , .show-only-if select').each(function(index, element) {
+                    $(element).removeAttr('name')
+                })
+                $('.show-only-if[data-type*="' + type + '"]').removeClass('hidden')
+                $('.show-only-if[data-type*="' + type + '"] input,.show-only-if[data-type*="' + type + '"] select').each(function(index, element) {
+                    $(element).attr('name', $(element).attr('data-name'))
+                })
 
-        function calculateResult() {
-            let baseValue = document.getElementById("calcField").value.trim();
-            let multiplierValue = document.getElementById("multiplierField").value.replace(/,/g, ""); // Remove commas for calculation
-	
-            let multiplier = parseFloat(multiplierValue);
-		
-            if (baseValue.startsWith("=")) {
-                try {
-                    baseValue = math.evaluate(baseValue.substring(1)); // Evaluate formula
-					console.log(baseValue)
-                } catch (e) {
-                    baseValue = 0;
+                $('div.show-only-if.hidden input,div.show-only-if.hidden select').removeAttr('required')
+                $('div.show-only-if:not(.hidden) input,div.show-only-if.hidden select').removeAttr('required')
+            })
+
+            $('.type').trigger('change')
+
+        </script>
+
+        <script>
+            function formatNumberWithCommas(number, decimals = 2) {
+                return parseFloat(number).toLocaleString('en-US', {
+                    minimumFractionDigits: decimals
+                    , maximumFractionDigits: decimals
+                });
+            }
+
+            function calculateResult() {
+                let baseValue = document.getElementById("calcField").value.trim();
+                let multiplierValue = document.getElementById("multiplierField").value.replace(/,/g, ""); // Remove commas for calculation
+
+                let multiplier = parseFloat(multiplierValue);
+
+                if (baseValue.startsWith("=")) {
+                    try {
+                        baseValue = math.evaluate(baseValue.substring(1)); // Evaluate formula
+                        console.log(baseValue)
+                    } catch (e) {
+                        baseValue = 0;
+                    }
+                } else {
+                    baseValue = parseFloat(baseValue);
                 }
-            } else {
-                baseValue = parseFloat(baseValue);
+
+                if (!isNaN(baseValue)) {
+                    baseValue = baseValue.toFixed(5); // Format to 5 decimals
+                    document.getElementById("calcField").value = baseValue; // Update input field
+                }
+
+                if (!isNaN(baseValue) && !isNaN(multiplier)) {
+                    let result = (baseValue * multiplier).toFixed(2); // Format result to 2 decimals
+                    document.getElementById("resultField").value = formatNumberWithCommas(result, 2); // Format with commas
+                } else {
+                    document.getElementById("resultField").value = "";
+                }
             }
 
-            if (!isNaN(baseValue)) {
-                baseValue = baseValue.toFixed(5); // Format to 5 decimals
-                document.getElementById("calcField").value = baseValue; // Update input field
-            }
-
-            if (!isNaN(baseValue) && !isNaN(multiplier)) {
-                let result = (baseValue * multiplier).toFixed(2); // Format result to 2 decimals
-                document.getElementById("resultField").value = formatNumberWithCommas(result, 2); // Format with commas
-            } else {
-                document.getElementById("resultField").value = "";
-            }
-        }
-
-          // Auto-calculate formula when leaving the field (blur)
-        document.getElementById("calcField").addEventListener("blur", function() {
-            calculateResult();
-        });
+            // Auto-calculate formula when leaving the field (blur)
+            document.getElementById("calcField").addEventListener("blur", function() {
+                calculateResult();
+            });
 
 
-        // // Evaluate formula and format when pressing Enter
-        // document.getElementById("calcField").addEventListener("keydown", function(event) {
-        //     if (event.key === "Enter") {
-        //         calculateResult();
-        //     }
-        // });
+            // // Evaluate formula and format when pressing Enter
+            // document.getElementById("calcField").addEventListener("keydown", function(event) {
+            //     if (event.key === "Enter") {
+            //         calculateResult();
+            //     }
+            // });
 
-        // Ensure proper formatting when leaving the multiplier field
-        document.getElementById("multiplierField").addEventListener("blur", function() {
-            let value = this.value.replace(/,/g, "").trim(); // Remove commas before parsing
-            if (!isNaN(value) && value !== "") {
-                this.value = formatNumberWithCommas(value, 2); // Format after leaving the field
-            }
-            calculateResult();
-        });
+            // Ensure proper formatting when leaving the multiplier field
+            document.getElementById("multiplierField").addEventListener("blur", function() {
+                let value = this.value.replace(/,/g, "").trim(); // Remove commas before parsing
+                if (!isNaN(value) && value !== "") {
+                    this.value = formatNumberWithCommas(value, 2); // Format after leaving the field
+                }
+                calculateResult();
+            });
 
-        // Allow smooth number input without interference
-        document.getElementById("multiplierField").addEventListener("input", function() {
-            let value = this.value.replace(/,/g, "").trim(); // Remove commas while typing
-            if (!isNaN(value) || value === "") {
-                this.value = value; // Allow user to type naturally
-            }
-        });
+            // Allow smooth number input without interference
+            document.getElementById("multiplierField").addEventListener("input", function() {
+                let value = this.value.replace(/,/g, "").trim(); // Remove commas while typing
+                if (!isNaN(value) || value === "") {
+                    this.value = value; // Allow user to type naturally
+                }
+            });
 
-    </script>	
+
+
+
+            $(document).on('change', 'select.js-from-account-number', function() {
+                const parent = $(this).closest('.kt-portlet__body');
+                const financialInstitutionId = parent.find('select.from-financial-institution').val()
+                const accountNumber = $(this).val();
+                const accountType = parent.find('select.js-from-update-account-number-based-on-account-type').val();
+                console.log(financialInstitutionId, accountNumber, accountType)
+                $.ajax({
+                    url: "<?php echo e(route('update.balance.and.net.balance.based.on.account.number',['company'=>$company->id])); ?>"
+                    , data: {
+                        accountNumber
+                        , accountType
+                        , financialInstitutionId
+                    }
+                    , type: "get"
+                    , success: function(res) {
+                        if (res.balance_date) {
+                            $('.balance-date-js').html('[ ' + res.balance_date + ' ]')
+                        }
+                        if (res.net_balance_date) {
+                            $('.net-balance-date-js').html('[ ' + res.net_balance_date + ' ]')
+                        }
+                        $('.net-balance-js').val(number_format(res.net_balance))
+                        $('.balance-js').val(number_format(res.balance))
+
+                    }
+                })
+            })
+
+        </script>
 
 
         <?php $__env->stopSection(); ?>

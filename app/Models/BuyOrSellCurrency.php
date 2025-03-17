@@ -210,7 +210,10 @@ class BuyOrSellCurrency extends Model
     {
         return $this->belongsTo(FinancialInstitution::class, 'to_bank_id', 'id');
     }
-
+	public function getToBankId()
+    {
+        return $this->toBank ? $this->toBank->id : 0;
+    }
     public function getToBankName()
     {
         return $this->toBank ? $this->toBank->getName() : __('N/A');

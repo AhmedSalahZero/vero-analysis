@@ -108,7 +108,7 @@ class BuyOrSellCurrenciesController
 		 */
 		
 		 
-		 	  /**
+		/**
 		 * * start of safe to safe buy or sell currency 
 		 */
 		
