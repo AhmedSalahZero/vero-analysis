@@ -1156,7 +1156,6 @@ td{
     <!-- end:: Header Mobile -->
     <div class="kt-grid kt-grid--hor kt-grid--root">
         <div class="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--ver kt-page">
-            
             <div class="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor kt-wrapper" id="kt_wrapper">
                 <!-- begin:: Header -->
                 <?php echo $__env->make('layouts.topbar', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
@@ -1214,7 +1213,6 @@ td{
 
 
 
-            
 
 
 

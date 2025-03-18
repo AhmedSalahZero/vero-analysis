@@ -16,6 +16,9 @@ class FinancialInstitution extends Model
     protected $guarded = ['id'];
 
 	const BANK = 'bank';
+	protected $with = [
+		'bank'
+	];
 
 	public function scopeOnlyForCompany(Builder $builder , int $companyId){
 		return $builder->where('company_id',$companyId);
@@ -101,6 +104,7 @@ class FinancialInstitution extends Model
     }
 	public function getName()
 	{
+		
 		return $this->isBank() ? $this->getBankName() : $this->name ;
 	}
 	public function getBranchName()

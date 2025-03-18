@@ -238,24 +238,7 @@ class AppServiceProvider extends ServiceProvider
 				]);
 			}
 		});
-		View::composer('*', function ($view) {
-			if (Auth::check()) {
-				
-				if (request()->route()->named('home') || (!isset(request()->company))) {
-					$sections = [Section::with('subSections')->find(2)];
-					$view->with('client_sections', $sections);
-				} else {
-					$view->with('client_sections', Section::mainClientSideSections()->with('subSections')->get());
-				}
-				if (Auth::user()->hasrole('super-admin')) {
-					$view->with('super_admin_sections', Section::mainSuperAdminSections()->get());
-				}
-				if (Auth::user()->hasrole('company-admin')) {
-					$view->with('super_admin_sections', Section::mainCompanyAdminSections()->get());
-				}
-				
-			}
-		});
+		
 	}
 	
 	

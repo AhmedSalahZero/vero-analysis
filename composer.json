@@ -32,6 +32,7 @@
         "yoeunes/toastr": "^1.2"
     },
     "require-dev": {
+        "barryvdh/laravel-debugbar": "^3.7",
         "barryvdh/laravel-ide-helper": "2.8.2",
         "bnhashem/debug-query": "^1.0",
         "kitloong/laravel-migrations-generator": "^6.11",

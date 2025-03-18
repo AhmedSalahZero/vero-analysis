@@ -45,6 +45,7 @@ use App\Models\SalesGathering;
 use App\Models\SecondAllocationSetting;
 use App\Models\SecondExistingProductAllocationBase;
 use App\Models\SecondNewProductAllocationBase;
+use App\Models\Section;
 use App\Models\User;
 use App\Services\Caching\CashingService;
 use App\Services\IntervalSummationOperations;
@@ -7874,4 +7875,13 @@ function getReplacementInterval():array
 		];
 	}
 	return $result;
+}
+function getSuperAdminSection()
+{
+	if(Auth::user()->hasrole('super-admin')){
+		return Section::where('sub_of',0)->where('section_side','admin')->where('trash',0)->get();
+	}
+	if(Auth::user()->hasrole('company-admin')){
+		return  Section::mainCompanyAdminSections()->get();
+	}
 }

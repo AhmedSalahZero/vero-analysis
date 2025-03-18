@@ -7,6 +7,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class IncomingTransfer extends Model
 {
+	protected $with = [
+		'accountType',
+		'receivingBank'
+	];
 	 
     protected $guarded = ['id'];
 	

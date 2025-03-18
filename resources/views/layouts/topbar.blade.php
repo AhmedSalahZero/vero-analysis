@@ -1,6 +1,9 @@
 
 <div id="kt_header" class="kt-header  kt-header--fixed fh-fixedHeader" data-ktheader-minimize="on">
-
+@php
+	$super_admin_sections = getSuperAdminSection();
+	
+@endphp
 
     <div class="kt-container ">
 
@@ -50,7 +53,6 @@
                         </div>
 
                         <!--end: Head -->
-
 
 
 

@@ -84,7 +84,7 @@ class MoneyReceivedController
 		
 	
 	
-		
+		$company->load(['moneyReceived.cheque','moneyReceived.partner','moneyReceived.incomingTransfer','moneyReceived.cashInSafe.receivingBranch']);
 		$receivedCashesInSafe = $company->getReceivedCashesInSafe($receivedCashesInSafeStartDate ,$receivedCashesInSafeEndDate ) ;
 		$receivedCashesInBanks = $company->getReceivedCashesInBank($cashesInBankStartDate,$cashesInBankEndDate) ;
 		$receivedTransfer = $company->getReceivedTransfer($incomingTransferStartDate,$incomingTransferEndDate) ;

@@ -19,16 +19,6 @@ use Illuminate\Support\Facades\DB;
 class MoneyReceived extends Model
 {
 	use IsMoney,HasForeignExchangeGainOrLoss ,HasDebitStatements,HasCreditStatements,HasPartnerStatement,HasReviewedBy , HasUserComment;
-	// protected $appends = [
-	// 	'foreign_exchange_rate_at_date'
-    // ];
-	// public function getForeignExchangeRateAtDateAttribute(){
-	// 	return 5;
-	// }
-	// public function getNpsAttribute() {
-    //     return 5;
-    // }
-
 
 	const CASH_IN_SAFE  = 'cash-in-safe';
 	const CASH_IN_BANK  = 'cash-in-bank';
@@ -543,12 +533,12 @@ class MoneyReceived extends Model
 		$cheques = self::where('company_id',$companyId)->has('cheque')->with('cheque')->get()->pluck('cheque.drawee_bank_id')->toArray();
 		$cheques=Cheque::where('company_id',$companyId)->pluck('drawee_bank_id')->toArray();
 		
-		
+		$allBanks = Bank::get();
 		$banks = self::getUniqueBanks($cheques);
 	
 		$banksFormatted = [];
 		foreach($banks as $bankId){
-			$bank = Bank::find($bankId) ;
+			$bank = $allBanks->where('id',$bankId)->first() ;
 			if($bank){
 				$banksFormatted[$bankId] = $bank->getViewName() ;
 			}

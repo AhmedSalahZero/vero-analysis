@@ -8,6 +8,11 @@ use Illuminate\Support\Facades\DB;
 
 class Cheque extends Model
 {
+	protected $with = [
+		'drawlBank',
+		'accountType',
+		'draweeBank'
+	];
     public const IN_SAFE = 'in-safe';
 
     public const UNDER_COLLECTION = 'under-collection';
