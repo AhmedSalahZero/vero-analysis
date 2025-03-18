@@ -212,7 +212,6 @@ $canAddNewItem = true;
     var studyEndDate = $('#study-end-date').val()
 
 
-
     $('#' + "<?php echo e($repeaterId); ?>").repeater({
         initEmpty: initEmpty
         , isFirstItemUndeletable: !firstElementDeleteable

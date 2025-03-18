@@ -25,6 +25,9 @@ let pageLoaded = false ;
 	.calculator-trigger{
 		cursor:pointer;
 	}
+	.fs-15{
+		font-size:15px;
+	}
 	.width-9 {
         max-width: initial !important;
         width: 9% !important;

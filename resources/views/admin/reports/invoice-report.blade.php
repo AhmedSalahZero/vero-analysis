@@ -2,12 +2,13 @@
 @section('css')
 <x-styles.commons></x-styles.commons>
 <style>
-.custom-w-25{
-	width:23% !important;
-}
-.custom-w-50{
-	width:50% !important;
-}
+    .custom-w-25 {
+        width: 23% !important;
+    }
+
+    .custom-w-50 {
+        width: 50% !important;
+    }
 
     .max-w-name {
         width: 45% !important;
@@ -318,12 +319,12 @@
                                         <th class="view-table-th max-w-serial bg-lighter header-th  align-middle text-center">
                                             {{ __('#') }}
                                         </th>
-										
-																				@if($hasProjectNameColumn)
-																				<th class="view-table-th   bg-lighter header-th  align-middle text-center">
+
+                                        @if($hasProjectNameColumn)
+                                        <th class="view-table-th   bg-lighter header-th  align-middle text-center">
                                             {{ __('Project Name') }}
                                         </th>
-																				@endif
+                                        @endif
 
                                         <th class="view-table-th   bg-lighter header-th  align-middle text-center">
                                             {{ __('Invoice Date') }}
@@ -336,25 +337,25 @@
                                         <th class="view-table-th   bg-lighter header-th  align-middle text-center">
                                             {{ __('Net Invoice Amount') }}
                                         </th>
-										
-										<th class="view-table-th   bg-lighter header-th  align-middle text-center">
+
+                                        <th class="view-table-th   bg-lighter header-th  align-middle text-center">
                                             {{ __('Withhold Amount') }}
                                         </th>
-										
-										<th class="view-table-th   bg-lighter header-th  align-middle text-center">
+
+                                        <th class="view-table-th   bg-lighter header-th  align-middle text-center">
                                             {{ __('Total Deductions') }}
-                                        </th>	
-										<th class="view-table-th   bg-lighter header-th  align-middle text-center">
+                                        </th>
+                                        <th class="view-table-th   bg-lighter header-th  align-middle text-center">
                                             {{ $totalCollectionOrPaidText }}
                                         </th>
-										
-										
+
+
 
                                         <th class="view-table-th   bg-lighter header-th  align-middle text-center">
                                             {{ __('Invoice Due Date') }}
                                         </th>
-										
-										
+
+
 
                                         <th class="view-table-th   bg-lighter  header-th  align-middle text-center">
                                             {{ __('Net Balance') }}
@@ -393,18 +394,64 @@
                                         let currentTable = null;
 
                                     </script>
-                          
+
 
                                     @foreach($invoices as $index=>$invoice)
                                     <tr class=" parent-tr reset-table-width text-nowrap  cursor-pointer sub-text-bg text-capitalize is-close   ">
                                         <td class="sub-text-bg max-w-serial   ">{{ $index+1 }}</td>
-										@if($hasProjectNameColumn)
+                                        @if($hasProjectNameColumn)
                                         <td class="sub-text-bg text-center  text-nowrap ">{{ $invoice->getProjectName() }}</td>
-										@endif
+                                        @endif
                                         <td class="sub-text-bg text-center  text-nowrap ">{{ $invoice->getInvoiceDateFormatted() }}</td>
-										
+
                                         <td class="sub-text-bg text-center  text-nowrap ">{{ $invoice->getInvoiceNumber() }}</td>
-                                        <td class="sub-text-bg text-center  text-nowrap ">{{ $invoice->getNetInvoiceAmountFormatted() }}</td>
+                                        <td class="sub-text-bg text-center  text-nowrap ">
+                                            {{ $invoice->getNetInvoiceAmountFormatted() }}
+											@if($currency != $company->getMainFunctionalCurrency())
+                                            <i data-toggle="modal" data-target="#net-invoice-amount-modal-{{ $invoice->id }}" class="flaticon2-information fs-15 kt-font-primary exclude-icon ml-2 cursor-pointer "></i>
+                                            <div class="modal fade " id="net-invoice-amount-modal-{{ $invoice->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog modal-sm" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title text-left" id="exampleModalLabel">
+                                                                {{ __('Invoice Number #' . $invoice->getInvoiceNumber()  ) }} <br>
+                                                                {{ __('Dated') . ' ' . $invoice->getInvoiceDate() }}
+                                                            </h5>
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+
+                                                            <table class="table table-bordered ">
+                                                                <thead>
+                                                                    <th style="border-left:2px solid #ebedf2">{{ __('Item') }}</th>
+                                                                    <th>{{ __('Value') }}</th>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td class="text-left">{{ __('Amount In Main Currency') }}</td>
+                                                                        <td>{{ number_format($invoice->getNetInvoiceInMainCurrencyAmount(),2) }}</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td class="text-left">{{ __('Exchange Rate') }}</td>
+                                                                        <td>{{ number_format($invoice->getExchangeRate(),4) }}</td>
+                                                                    </tr>
+
+                                                                </tbody>
+
+                                                            </table>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close') }}</button>
+                                                            </div>
+                                                        </div>
+                                                        </div>
+                                                        </div>
+                                                        </div>
+@endif
+
+
+                                        </td>
                                         <td class="sub-text-bg text-center  text-nowrap ">{{ $invoice->getWithholdAmountFormatted() }}</td>
                                         <td class="sub-text-bg text-center  text-nowrap ">{{ $invoice->getTotalDeductionFormatted() }}</td>
                                         <td class="sub-text-bg text-center  text-nowrap ">{{ $invoice->getTotalCollectedOrPaidFormatted() }}</td>
@@ -426,11 +473,11 @@
                                         </td>
                                         <td class="sub-text-bg  text-center">
                                             {{-- @if(!$invoice->getNetBalance() > 0) --}}
-											 @if(!$invoice->$isCollectedOrPaid())
+                                            @if(!$invoice->$isCollectedOrPaid())
                                             <button type="button" class="add-new btn btn-primary d-block" data-toggle="modal" data-target="#add-new-customer-modal-{{ $invoice->id }}">
                                                 {{ __('Deduct') }}
                                             </button>
-											@endif
+                                            @endif
                                             <div class="modal fade modal-class-js allocate-modal-class" id="add-new-customer-modal-{{ $invoice->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                                 <div class="modal-dialog modal-lg" role="document">
                                                     <div class="modal-content">
@@ -442,109 +489,109 @@
                                                         </div>
                                                         <div class="modal-body">
 
-                                                        <form action="{{ route('update.invoice.deductions',['company'=>$company->id,'modelId'=>$invoice->id , 'modelType'=>$modelType]) }}" method="post">
-														@method('patch')
-														@csrf
-														    <div class="form-group row justify-content-center">
-                                                                @php
-                                                                $index = 0 ;
-                                                                @endphp
+                                                            <form action="{{ route('update.invoice.deductions',['company'=>$company->id,'modelId'=>$invoice->id , 'modelType'=>$modelType]) }}" method="post">
+                                                                @method('patch')
+                                                                @csrf
+                                                                <div class="form-group row justify-content-center">
+                                                                    @php
+                                                                    $index = 0 ;
+                                                                    @endphp
 
-                                                                {{-- start of fixed monthly repeating amount --}}
-                                                                @php
-                                                                $tableId = 'deductions';
+                                                                    {{-- start of fixed monthly repeating amount --}}
+                                                                    @php
+                                                                    $tableId = 'deductions';
 
-                                                                $repeaterId = 'model_repeater';
+                                                                    $repeaterId = 'model_repeater';
 
-                                                                @endphp
-                                                                {{-- <input type="hidden" name="tableIds[]" value="{{ $tableId }}"> --}}
-                                                                <x-tables.repeater-table :initialJs="false" :repeater-with-select2="true" :parentClass="'show-class-js'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=true">
-                                                                    <x-slot name="ths">
-                                                                        @foreach([
-                                                                        __('Deduction')=>'th-main-color custom-w-50',
-                                                                        __('Date')=>'th-main-color custom-w-25',
-                                                                        __('Deduction Amount')=>'th-main-color custom-w-25',
-                                                                        ] as $title=>$classes)
-                                                                        <x-tables.repeater-table-th class="{{ $classes }}" :title="$title"></x-tables.repeater-table-th>
-                                                                        @endforeach
-                                                                    </x-slot>
-                                                                    <x-slot name="trs">
-                                                                        @php
-                                                                     	 $rows = isset($invoice) ? $invoice->deductions :[-1] ;
+                                                                    @endphp
+                                                                    {{-- <input type="hidden" name="tableIds[]" value="{{ $tableId }}"> --}}
+                                                                    <x-tables.repeater-table :initialJs="false" :repeater-with-select2="true" :parentClass="'show-class-js'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=true">
+                                                                        <x-slot name="ths">
+                                                                            @foreach([
+                                                                            __('Deduction')=>'th-main-color custom-w-50',
+                                                                            __('Date')=>'th-main-color custom-w-25',
+                                                                            __('Deduction Amount')=>'th-main-color custom-w-25',
+                                                                            ] as $title=>$classes)
+                                                                            <x-tables.repeater-table-th class="{{ $classes }}" :title="$title"></x-tables.repeater-table-th>
+                                                                            @endforeach
+                                                                        </x-slot>
+                                                                        <x-slot name="trs">
+                                                                            @php
+                                                                            $rows = isset($invoice) ? $invoice->deductions :[-1] ;
 
-                                                                        @endphp
-                                                                        @foreach( count($rows) ? $rows : [-1] as $deductionWithPivot)
-                                                                        @php
-                                                                        $fullPath = new \App\Models\Deduction;
-                                                                        if( !($deductionWithPivot instanceof $fullPath) ){
-                                                                        unset($deductionWithPivot);
-                                                                        }
-                                                                        @endphp
-																	
-																						<tr @if($isRepeater) data-repeater-item @endif>
+                                                                            @endphp
+                                                                            @foreach( count($rows) ? $rows : [-1] as $deductionWithPivot)
+                                                                            @php
+                                                                            $fullPath = new \App\Models\Deduction;
+                                                                            if( !($deductionWithPivot instanceof $fullPath) ){
+                                                                            unset($deductionWithPivot);
+                                                                            }
+                                                                            @endphp
 
-																							<td class="text-center">
-																								<input type="hidden" name="company_id" value="{{ $company->id }}">
-																								<div class="custom-w-50">
-																									<i data-repeater-delete="" class="btn-sm btn btn-danger m-btn m-btn--icon m-btn--pill trash_icon fas fa-times-circle">
-																									</i>
-																								</div>
-																							</td>
-																							<td>
+                                    <tr @if($isRepeater) data-repeater-item @endif>
 
-																								<x-form.select :insideModalWithJs="false" :selectedValue="isset($deductionWithPivot) && $deductionWithPivot->pivot->deduction_id ? $deductionWithPivot->pivot->deduction_id : ''" :options="formatOptionsForSelect($deductions)" :add-new="false" class="select2-select repeater-select form-control custom-w-100" data-filter-type="{{ 'create' }}" :all="false" name="deduction_id"></x-form.select>
-																							</td>
+                                        <td class="text-center">
+                                            <input type="hidden" name="company_id" value="{{ $company->id }}">
+                                            <div class="custom-w-50">
+                                                <i data-repeater-delete="" class="btn-sm btn btn-danger m-btn m-btn--icon m-btn--pill trash_icon fas fa-times-circle">
+                                                </i>
+                                            </div>
+                                        </td>
+                                        <td>
 
-
-
-																							<td>
-																							
-																								<div class="kt-input-icon ">
-																									<div class="input-group date custom-w-100">
-																										<input type="text" name="date" value="{{ isset($deductionWithPivot) ? formatDateForDatePicker($deductionWithPivot->pivot->date) : formatDateForDatePicker(now()->format('Y-m-d')) }}" class="form-control is-date-css refresh-datepicker-js  kt_datepicker_max_date_is_today" readonly placeholder="Select date"  />
-																										<div class="input-group-append">
-																											<span class="input-group-text">
-																												<i class="la la-calendar-check-o"></i>
-																											</span>
-																										</div>
-																									</div>
-																								</div>
-																							</td>
+                                            <x-form.select :insideModalWithJs="false" :selectedValue="isset($deductionWithPivot) && $deductionWithPivot->pivot->deduction_id ? $deductionWithPivot->pivot->deduction_id : ''" :options="formatOptionsForSelect($deductions)" :add-new="false" class="select2-select repeater-select form-control custom-w-100" data-filter-type="{{ 'create' }}" :all="false" name="deduction_id"></x-form.select>
+                                        </td>
 
 
 
-																							<td>
-																								<div class="kt-input-icon custom-w-100">
-																									<div class="input-group">
-																										<input type="text" name="amount" class="form-control only-greater-than-or-equal-zero-allowed" value="{{ isset($deductionWithPivot) ? $deductionWithPivot->pivot->amount: 0 }}">
-																									</div>
-																								</div>
-																							</td>
+                                        <td>
 
-
-																						</tr>
-
-
-
-																						@endforeach
-
-																						</x-slot>
+                                            <div class="kt-input-icon ">
+                                                <div class="input-group date custom-w-100">
+                                                    <input type="text" name="date" value="{{ isset($deductionWithPivot) ? formatDateForDatePicker($deductionWithPivot->pivot->date) : formatDateForDatePicker(now()->format('Y-m-d')) }}" class="form-control is-date-css refresh-datepicker-js  kt_datepicker_max_date_is_today" readonly placeholder="Select date" />
+                                                    <div class="input-group-append">
+                                                        <span class="input-group-text">
+                                                            <i class="la la-calendar-check-o"></i>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
 
 
 
+                                        <td>
+                                            <div class="kt-input-icon custom-w-100">
+                                                <div class="input-group">
+                                                    <input type="text" name="amount" class="form-control only-greater-than-or-equal-zero-allowed" value="{{ isset($deductionWithPivot) ? $deductionWithPivot->pivot->amount: 0 }}">
+                                                </div>
+                                            </div>
+                                        </td>
 
-																						</x-tables.repeater-table>
-																						{{-- end of fixed monthly repeating amount --}}
+
+                                    </tr>
 
 
-                       										 </div>
-															 	<div class="modal-footer">
-									<button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close') }}</button>
-									<button type="submit" class="btn btn-primary submit-form-btn ">{{ __('Save') }}</button>
-								</div>
-														</form>
-               				     </div>
-							
+
+                                    @endforeach
+
+                                    </x-slot>
+
+
+
+
+                                    </x-tables.repeater-table>
+                                    {{-- end of fixed monthly repeating amount --}}
+
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close') }}</button>
+                            <button type="submit" class="btn btn-primary submit-form-btn ">{{ __('Save') }}</button>
+                        </div>
+                        </form>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -577,22 +624,23 @@
 
 
 
-@push('js_end')
-<script>
-$(function(){
-	$('.kt_datepicker_max_date_is_today').datepicker({
- autoclose: true,
- todayHighlight: true,
-   orientation: "bottom left",
-// format: 'mm/dd/yyyy',
- endDate: new Date(), 
+        @push('js_end')
+        <script>
+            $(function() {
+                $('.kt_datepicker_max_date_is_today').datepicker({
+                    autoclose: true
+                    , todayHighlight: true
+                    , orientation: "bottom left",
+                    // format: 'mm/dd/yyyy',
+                    endDate: new Date(),
 
- rtl:false
-});
-})
-</script>
-	
-@endpush
+                    rtl: false
+                });
+            })
+
+        </script>
+
+        @endpush
 
 
         @endforeach
@@ -705,9 +753,9 @@ $(function(){
 </script>
 <script>
     $('.model_repeater').repeater({
-        initEmpty: false,
-		initEmpty:false
-        , isFirstItemUndeletable: false
+        initEmpty: false
+        , initEmpty: false
+        , isFirstItemUndeletable: true
         , defaultValues: {
             'text-input': 'foo'
         },

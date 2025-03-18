@@ -11,12 +11,13 @@
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
 <style>
-.custom-w-25{
-	width:23% !important;
-}
-.custom-w-50{
-	width:50% !important;
-}
+    .custom-w-25 {
+        width: 23% !important;
+    }
+
+    .custom-w-50 {
+        width: 50% !important;
+    }
 
     .max-w-name {
         width: 45% !important;
@@ -333,13 +334,13 @@
                                             <?php echo e(__('#')); ?>
 
                                         </th>
-										
-																				<?php if($hasProjectNameColumn): ?>
-																				<th class="view-table-th   bg-lighter header-th  align-middle text-center">
+
+                                        <?php if($hasProjectNameColumn): ?>
+                                        <th class="view-table-th   bg-lighter header-th  align-middle text-center">
                                             <?php echo e(__('Project Name')); ?>
 
                                         </th>
-																				<?php endif; ?>
+                                        <?php endif; ?>
 
                                         <th class="view-table-th   bg-lighter header-th  align-middle text-center">
                                             <?php echo e(__('Invoice Date')); ?>
@@ -355,29 +356,29 @@
                                             <?php echo e(__('Net Invoice Amount')); ?>
 
                                         </th>
-										
-										<th class="view-table-th   bg-lighter header-th  align-middle text-center">
+
+                                        <th class="view-table-th   bg-lighter header-th  align-middle text-center">
                                             <?php echo e(__('Withhold Amount')); ?>
 
                                         </th>
-										
-										<th class="view-table-th   bg-lighter header-th  align-middle text-center">
+
+                                        <th class="view-table-th   bg-lighter header-th  align-middle text-center">
                                             <?php echo e(__('Total Deductions')); ?>
 
-                                        </th>	
-										<th class="view-table-th   bg-lighter header-th  align-middle text-center">
+                                        </th>
+                                        <th class="view-table-th   bg-lighter header-th  align-middle text-center">
                                             <?php echo e($totalCollectionOrPaidText); ?>
 
                                         </th>
-										
-										
+
+
 
                                         <th class="view-table-th   bg-lighter header-th  align-middle text-center">
                                             <?php echo e(__('Invoice Due Date')); ?>
 
                                         </th>
-										
-										
+
+
 
                                         <th class="view-table-th   bg-lighter  header-th  align-middle text-center">
                                             <?php echo e(__('Net Balance')); ?>
@@ -418,18 +419,66 @@
                                         let currentTable = null;
 
                                     </script>
-                          
+
 
                                     <?php $__currentLoopData = $invoices; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index=>$invoice): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                     <tr class=" parent-tr reset-table-width text-nowrap  cursor-pointer sub-text-bg text-capitalize is-close   ">
                                         <td class="sub-text-bg max-w-serial   "><?php echo e($index+1); ?></td>
-										<?php if($hasProjectNameColumn): ?>
+                                        <?php if($hasProjectNameColumn): ?>
                                         <td class="sub-text-bg text-center  text-nowrap "><?php echo e($invoice->getProjectName()); ?></td>
-										<?php endif; ?>
+                                        <?php endif; ?>
                                         <td class="sub-text-bg text-center  text-nowrap "><?php echo e($invoice->getInvoiceDateFormatted()); ?></td>
-										
+
                                         <td class="sub-text-bg text-center  text-nowrap "><?php echo e($invoice->getInvoiceNumber()); ?></td>
-                                        <td class="sub-text-bg text-center  text-nowrap "><?php echo e($invoice->getNetInvoiceAmountFormatted()); ?></td>
+                                        <td class="sub-text-bg text-center  text-nowrap ">
+                                            <?php echo e($invoice->getNetInvoiceAmountFormatted()); ?>
+
+											<?php if($currency != $company->getMainFunctionalCurrency()): ?>
+                                            <i data-toggle="modal" data-target="#net-invoice-amount-modal-<?php echo e($invoice->id); ?>" class="flaticon2-information fs-15 kt-font-primary exclude-icon ml-2 cursor-pointer "></i>
+                                            <div class="modal fade " id="net-invoice-amount-modal-<?php echo e($invoice->id); ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog modal-sm" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title text-left" id="exampleModalLabel">
+                                                                <?php echo e(__('Invoice Number #' . $invoice->getInvoiceNumber()  )); ?> <br>
+                                                                <?php echo e(__('Dated') . ' ' . $invoice->getInvoiceDate()); ?>
+
+                                                            </h5>
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+
+                                                            <table class="table table-bordered ">
+                                                                <thead>
+                                                                    <th style="border-left:2px solid #ebedf2"><?php echo e(__('Item')); ?></th>
+                                                                    <th><?php echo e(__('Value')); ?></th>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td class="text-left"><?php echo e(__('Amount In Main Currency')); ?></td>
+                                                                        <td><?php echo e(number_format($invoice->getNetInvoiceInMainCurrencyAmount(),2)); ?></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td class="text-left"><?php echo e(__('Exchange Rate')); ?></td>
+                                                                        <td><?php echo e(number_format($invoice->getExchangeRate(),4)); ?></td>
+                                                                    </tr>
+
+                                                                </tbody>
+
+                                                            </table>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal"><?php echo e(__('Close')); ?></button>
+                                                            </div>
+                                                        </div>
+                                                        </div>
+                                                        </div>
+                                                        </div>
+<?php endif; ?>
+
+
+                                        </td>
                                         <td class="sub-text-bg text-center  text-nowrap "><?php echo e($invoice->getWithholdAmountFormatted()); ?></td>
                                         <td class="sub-text-bg text-center  text-nowrap "><?php echo e($invoice->getTotalDeductionFormatted()); ?></td>
                                         <td class="sub-text-bg text-center  text-nowrap "><?php echo e($invoice->getTotalCollectedOrPaidFormatted()); ?></td>
@@ -452,12 +501,12 @@
                                         </td>
                                         <td class="sub-text-bg  text-center">
                                             
-											 <?php if(!$invoice->$isCollectedOrPaid()): ?>
+                                            <?php if(!$invoice->$isCollectedOrPaid()): ?>
                                             <button type="button" class="add-new btn btn-primary d-block" data-toggle="modal" data-target="#add-new-customer-modal-<?php echo e($invoice->id); ?>">
                                                 <?php echo e(__('Deduct')); ?>
 
                                             </button>
-											<?php endif; ?>
+                                            <?php endif; ?>
                                             <div class="modal fade modal-class-js allocate-modal-class" id="add-new-customer-modal-<?php echo e($invoice->id); ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                                 <div class="modal-dialog modal-lg" role="document">
                                                     <div class="modal-content">
@@ -469,35 +518,35 @@
                                                         </div>
                                                         <div class="modal-body">
 
-                                                        <form action="<?php echo e(route('update.invoice.deductions',['company'=>$company->id,'modelId'=>$invoice->id , 'modelType'=>$modelType])); ?>" method="post">
-														<?php echo method_field('patch'); ?>
-														<?php echo csrf_field(); ?>
-														    <div class="form-group row justify-content-center">
-                                                                <?php
-                                                                $index = 0 ;
-                                                                ?>
+                                                            <form action="<?php echo e(route('update.invoice.deductions',['company'=>$company->id,'modelId'=>$invoice->id , 'modelType'=>$modelType])); ?>" method="post">
+                                                                <?php echo method_field('patch'); ?>
+                                                                <?php echo csrf_field(); ?>
+                                                                <div class="form-group row justify-content-center">
+                                                                    <?php
+                                                                    $index = 0 ;
+                                                                    ?>
 
-                                                                
-                                                                <?php
-                                                                $tableId = 'deductions';
+                                                                    
+                                                                    <?php
+                                                                    $tableId = 'deductions';
 
-                                                                $repeaterId = 'model_repeater';
+                                                                    $repeaterId = 'model_repeater';
 
-                                                                ?>
-                                                                
-                                                                 <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+                                                                    ?>
+                                                                    
+                                                                     <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.tables.repeater-table','data' => ['initialJs' => false,'repeaterWithSelect2' => true,'parentClass' => 'show-class-js','tableName' => $tableId,'repeaterId' => $repeaterId,'relationName' => 'food','isRepeater' => $isRepeater=true]]); ?>
 <?php $component->withName('tables.repeater-table'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php $component->withAttributes(['initialJs' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'repeater-with-select2' => true,'parentClass' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('show-class-js'),'tableName' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($tableId),'repeaterId' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($repeaterId),'relationName' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('food'),'isRepeater' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($isRepeater=true)]); ?>
-                                                                     <?php $__env->slot('ths'); ?> 
-                                                                        <?php $__currentLoopData = [
-                                                                        __('Deduction')=>'th-main-color custom-w-50',
-                                                                        __('Date')=>'th-main-color custom-w-25',
-                                                                        __('Deduction Amount')=>'th-main-color custom-w-25',
-                                                                        ]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $title=>$classes): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                                         <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+                                                                         <?php $__env->slot('ths'); ?> 
+                                                                            <?php $__currentLoopData = [
+                                                                            __('Deduction')=>'th-main-color custom-w-50',
+                                                                            __('Date')=>'th-main-color custom-w-25',
+                                                                            __('Deduction Amount')=>'th-main-color custom-w-25',
+                                                                            ]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $title=>$classes): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                                             <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.tables.repeater-table-th','data' => ['class' => ''.e($classes).'','title' => $title]]); ?>
 <?php $component->withName('tables.repeater-table-th'); ?>
 <?php if ($component->shouldRender()): ?>
@@ -508,33 +557,33 @@
 <?php endif; ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
-                                                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                                                     <?php $__env->endSlot(); ?>
-                                                                     <?php $__env->slot('trs'); ?> 
-                                                                        <?php
-                                                                     	 $rows = isset($invoice) ? $invoice->deductions :[-1] ;
+                                                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                                         <?php $__env->endSlot(); ?>
+                                                                         <?php $__env->slot('trs'); ?> 
+                                                                            <?php
+                                                                            $rows = isset($invoice) ? $invoice->deductions :[-1] ;
 
-                                                                        ?>
-                                                                        <?php $__currentLoopData = count($rows) ? $rows : [-1]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $deductionWithPivot): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                                        <?php
-                                                                        $fullPath = new \App\Models\Deduction;
-                                                                        if( !($deductionWithPivot instanceof $fullPath) ){
-                                                                        unset($deductionWithPivot);
-                                                                        }
-                                                                        ?>
-																	
-																						<tr <?php if($isRepeater): ?> data-repeater-item <?php endif; ?>>
+                                                                            ?>
+                                                                            <?php $__currentLoopData = count($rows) ? $rows : [-1]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $deductionWithPivot): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                                            <?php
+                                                                            $fullPath = new \App\Models\Deduction;
+                                                                            if( !($deductionWithPivot instanceof $fullPath) ){
+                                                                            unset($deductionWithPivot);
+                                                                            }
+                                                                            ?>
 
-																							<td class="text-center">
-																								<input type="hidden" name="company_id" value="<?php echo e($company->id); ?>">
-																								<div class="custom-w-50">
-																									<i data-repeater-delete="" class="btn-sm btn btn-danger m-btn m-btn--icon m-btn--pill trash_icon fas fa-times-circle">
-																									</i>
-																								</div>
-																							</td>
-																							<td>
+                                    <tr <?php if($isRepeater): ?> data-repeater-item <?php endif; ?>>
 
-																								 <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+                                        <td class="text-center">
+                                            <input type="hidden" name="company_id" value="<?php echo e($company->id); ?>">
+                                            <div class="custom-w-50">
+                                                <i data-repeater-delete="" class="btn-sm btn btn-danger m-btn m-btn--icon m-btn--pill trash_icon fas fa-times-circle">
+                                                </i>
+                                            </div>
+                                        </td>
+                                        <td>
+
+                                             <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.select','data' => ['insideModalWithJs' => false,'selectedValue' => isset($deductionWithPivot) && $deductionWithPivot->pivot->deduction_id ? $deductionWithPivot->pivot->deduction_id : '','options' => formatOptionsForSelect($deductions),'addNew' => false,'class' => 'select2-select repeater-select form-control custom-w-100','dataFilterType' => ''.e('create').'','all' => false,'name' => 'deduction_id']]); ?>
 <?php $component->withName('form.select'); ?>
 <?php if ($component->shouldRender()): ?>
@@ -545,63 +594,63 @@
 <?php endif; ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
-																							</td>
+                                        </td>
 
 
 
-																							<td>
-																							
-																								<div class="kt-input-icon ">
-																									<div class="input-group date custom-w-100">
-																										<input type="text" name="date" value="<?php echo e(isset($deductionWithPivot) ? formatDateForDatePicker($deductionWithPivot->pivot->date) : formatDateForDatePicker(now()->format('Y-m-d'))); ?>" class="form-control is-date-css refresh-datepicker-js  kt_datepicker_max_date_is_today" readonly placeholder="Select date"  />
-																										<div class="input-group-append">
-																											<span class="input-group-text">
-																												<i class="la la-calendar-check-o"></i>
-																											</span>
-																										</div>
-																									</div>
-																								</div>
-																							</td>
+                                        <td>
+
+                                            <div class="kt-input-icon ">
+                                                <div class="input-group date custom-w-100">
+                                                    <input type="text" name="date" value="<?php echo e(isset($deductionWithPivot) ? formatDateForDatePicker($deductionWithPivot->pivot->date) : formatDateForDatePicker(now()->format('Y-m-d'))); ?>" class="form-control is-date-css refresh-datepicker-js  kt_datepicker_max_date_is_today" readonly placeholder="Select date" />
+                                                    <div class="input-group-append">
+                                                        <span class="input-group-text">
+                                                            <i class="la la-calendar-check-o"></i>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
 
 
 
-																							<td>
-																								<div class="kt-input-icon custom-w-100">
-																									<div class="input-group">
-																										<input type="text" name="amount" class="form-control only-greater-than-or-equal-zero-allowed" value="<?php echo e(isset($deductionWithPivot) ? $deductionWithPivot->pivot->amount: 0); ?>">
-																									</div>
-																								</div>
-																							</td>
+                                        <td>
+                                            <div class="kt-input-icon custom-w-100">
+                                                <div class="input-group">
+                                                    <input type="text" name="amount" class="form-control only-greater-than-or-equal-zero-allowed" value="<?php echo e(isset($deductionWithPivot) ? $deductionWithPivot->pivot->amount: 0); ?>">
+                                                </div>
+                                            </div>
+                                        </td>
 
 
-																						</tr>
-
-
-
-																						<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-
-																						 <?php $__env->endSlot(); ?>
+                                    </tr>
 
 
 
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
-																						 <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+                                     <?php $__env->endSlot(); ?>
+
+
+
+
+                                     <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
-																						
+                                    
 
 
-                       										 </div>
-															 	<div class="modal-footer">
-									<button type="button" class="btn btn-secondary" data-dismiss="modal"><?php echo e(__('Close')); ?></button>
-									<button type="submit" class="btn btn-primary submit-form-btn "><?php echo e(__('Save')); ?></button>
-								</div>
-														</form>
-               				     </div>
-							
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal"><?php echo e(__('Close')); ?></button>
+                            <button type="submit" class="btn btn-primary submit-form-btn "><?php echo e(__('Save')); ?></button>
+                        </div>
+                        </form>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -630,22 +679,23 @@
 
 
 
-<?php $__env->startPush('js_end'); ?>
-<script>
-$(function(){
-	$('.kt_datepicker_max_date_is_today').datepicker({
- autoclose: true,
- todayHighlight: true,
-   orientation: "bottom left",
-// format: 'mm/dd/yyyy',
- endDate: new Date(), 
+        <?php $__env->startPush('js_end'); ?>
+        <script>
+            $(function() {
+                $('.kt_datepicker_max_date_is_today').datepicker({
+                    autoclose: true
+                    , todayHighlight: true
+                    , orientation: "bottom left",
+                    // format: 'mm/dd/yyyy',
+                    endDate: new Date(),
 
- rtl:false
-});
-})
-</script>
-	
-<?php $__env->stopPush(); ?>
+                    rtl: false
+                });
+            })
+
+        </script>
+
+        <?php $__env->stopPush(); ?>
 
 
         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -768,9 +818,9 @@ $(function(){
 </script>
 <script>
     $('.model_repeater').repeater({
-        initEmpty: false,
-		initEmpty:false
-        , isFirstItemUndeletable: false
+        initEmpty: false
+        , initEmpty: false
+        , isFirstItemUndeletable: true
         , defaultValues: {
             'text-input': 'foo'
         },
