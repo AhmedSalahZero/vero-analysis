@@ -102,6 +102,7 @@ class CheckDueAndPastedInvoicesJob implements ShouldQueue
 				 ->where('cheques.status',Cheque::IN_SAFE)
 				 ->whereBetween('cheques.due_date', [$beforeIntervalDate, $dayBeforeDayDate])
 				 ->join('money_received','money_received.id','=','cheques.money_received_id')
+				 ->join('partners','partners.id','=','money_received.partner_id')
 				 ->get();
 				 
 				 
@@ -112,6 +113,7 @@ class CheckDueAndPastedInvoicesJob implements ShouldQueue
 				->where('cheques.status',Cheque::IN_SAFE)
 				->where('cheques.due_date', $dayDate)
 				->join('money_received','money_received.id','=','cheques.money_received_id')
+				->join('partners','partners.id','=','money_received.partner_id')
 				->get();
 				
 				/**
@@ -122,6 +124,7 @@ class CheckDueAndPastedInvoicesJob implements ShouldQueue
 				->where('cheques.status',Cheque::UNDER_COLLECTION)
 				->where('cheques.expected_collection_date',$dayDate)
 				->join('money_received','money_received.id','=','cheques.money_received_id')
+				->join('partners','partners.id','=','money_received.partner_id')
 				->get();
 				
 				
@@ -132,12 +135,12 @@ class CheckDueAndPastedInvoicesJob implements ShouldQueue
 				$underCollectionCheques = DB::table('cheques')->where('cheques.company_id', $companyId)
 				->where('cheques.status',Cheque::UNDER_COLLECTION)
 				->join('money_received','money_received.id','=','cheques.money_received_id')
+				->join('partners','partners.id','=','money_received.partner_id')
 				->whereBetween('cheques.expected_collection_date',[$dayAfterNowDate,$afterIntervalDate])->get();
-
                 foreach ($pastDueCustomerInvoices as $customerInvoice) {
                     $invoiceDueDate = $customerInvoice->invoice_due_date ;
                     $invoiceNumber = $customerInvoice->invoice_number;
-                    $customerName = $customerInvoice->customer_name ;
+                    $customerName = $customerInvoice->customer_name ; //
 					$invoiceDate = $customerInvoice->invoice_date ; 
 					$currency = $customerInvoice->currency ;
 					$invoiceAmount = $customerInvoice->invoice_amount ; 
@@ -159,7 +162,7 @@ class CheckDueAndPastedInvoicesJob implements ShouldQueue
                 foreach ($currentDueCustomerInvoices as $customerInvoice) {
                     $invoiceDueDate = $customerInvoice->invoice_due_date ;
                     $invoiceNumber = $customerInvoice->invoice_number;
-                    $customerName = $customerInvoice->customer_name ;
+                    $customerName = $customerInvoice->customer_name ; // 
 					$invoiceDate = $customerInvoice->invoice_date ; 
 					$currency = $customerInvoice->currency ;
 					$invoiceAmount = $customerInvoice->invoice_amount ; 
@@ -179,7 +182,7 @@ class CheckDueAndPastedInvoicesJob implements ShouldQueue
                 foreach ($upcomingDueCustomerInvoices as $customerInvoice) {
                     $invoiceDueDate = $customerInvoice->invoice_due_date ;
                     $invoiceNumber = $customerInvoice->invoice_number;
-                    $customerName = $customerInvoice->customer_name ;
+                    $customerName = $customerInvoice->customer_name ; // 
 					$invoiceDate = $customerInvoice->invoice_date ; 
 					$currency = $customerInvoice->currency ;
 					$invoiceAmount = $customerInvoice->invoice_amount ; 
@@ -205,7 +208,8 @@ class CheckDueAndPastedInvoicesJob implements ShouldQueue
 				foreach ($pastDueCheques as $cheque) {
                     $chequeDueDate = $cheque->due_date ;
                     $chequeNumber = $cheque->cheque_number;
-					$customerName = $cheque->customer_name ;
+					// dd($cheque);
+					$customerName = $cheque->name ;
 					$chequeAmount = $cheque->received_amount ;
 					$draweeBank = Bank::find($cheque->drawee_bank_id);
 					$chequeDate = $cheque->due_date ;
@@ -233,7 +237,7 @@ class CheckDueAndPastedInvoicesJob implements ShouldQueue
 					$chequeNumber = $cheque->cheque_number;
 					$chequeDueDate = $cheque->due_date ;
                     $chequeNumber = $cheque->cheque_number;
-					$customerName = $cheque->customer_name ;
+					$customerName = $cheque->name ;
 					$chequeAmount = $cheque->received_amount ;
 					$draweeBank = Bank::find($cheque->drawee_bank_id);
 					$chequeDate = $cheque->due_date ;
@@ -261,7 +265,7 @@ class CheckDueAndPastedInvoicesJob implements ShouldQueue
 				foreach ($underCollectionChequesToday as $cheque) {
 					$chequeNumber = $cheque->cheque_number;
 					$chequeDueDate = $cheque->due_date ;
-					$customerName = $cheque->customer_name ;
+					$customerName = $cheque->name ;
 					$chequeAmount = $cheque->received_amount ;
 					$drawalBank = FinancialInstitution::find($cheque->drawl_bank_id);
 					$drawalBankName =  $drawalBank ? $drawalBank->getName() : __('N/A');
@@ -288,7 +292,7 @@ class CheckDueAndPastedInvoicesJob implements ShouldQueue
 					$expectedCollectionDate = $cheque->expected_collection_date;
 					
 					$chequeDueDate = $cheque->due_date ;
-					$customerName = $cheque->customer_name ;
+					$customerName = $cheque->name ;
 					$chequeAmount = $cheque->received_amount ;
 					$drawalBank = FinancialInstitution::find($cheque->drawl_bank_id);
 					$drawalBankName =  $drawalBank ? $drawalBank->getName() : __('N/A');

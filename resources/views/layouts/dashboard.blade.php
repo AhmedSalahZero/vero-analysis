@@ -1172,6 +1172,7 @@ td{
                 <!-- begin:: Header -->
                 @include('layouts.topbar')
 				@if(isset($company))
+			
 				@foreach(\App\Notification::getAllMainTypes() as $notificationMainType => $notificationMainTitle)
 		
 				@include('notifications.popup',['notificationMainType'=>$notificationMainType,'notificationMainTitle'=>$notificationMainTitle])

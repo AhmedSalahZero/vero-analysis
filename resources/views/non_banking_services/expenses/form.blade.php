@@ -647,7 +647,7 @@ use App\Models\NonBankingService\Expense;
 
 
                                 <td>
-                                    <x-form.select :selectedValue="isset($subModel) ? $subModel->getStreamCategory() : ''" :options="getAllocationsBases()" :multiple="true" :add-new="false" class="select2-select repeater-select  stream-category-class" :all="false" name="@if($isRepeater) stream_category_ids @else {{ $tableId }}[0][stream_category_ids] @endif"></x-form.select>
+                                    <x-form.select :selectedValue="isset($subModel) ? $subModel->getStreamCategoryIds() : ''" :options="getAllocationsBases()" :multiple="true" :add-new="false" class="select2-select repeater-select  stream-category-class" :all="false" name="@if($isRepeater) stream_category_ids @else {{ $tableId }}[0][stream_category_ids] @endif"></x-form.select>
 
                                 </td>
 

@@ -1160,6 +1160,7 @@ td{
                 <!-- begin:: Header -->
                 <?php echo $__env->make('layouts.topbar', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 				<?php if(isset($company)): ?>
+			
 				<?php $__currentLoopData = \App\Notification::getAllMainTypes(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $notificationMainType => $notificationMainTitle): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 		
 				<?php echo $__env->make('notifications.popup',['notificationMainType'=>$notificationMainType,'notificationMainTitle'=>$notificationMainTitle], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
