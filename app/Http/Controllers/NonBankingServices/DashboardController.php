@@ -143,7 +143,6 @@ class DashboardController extends Controller
 			$relationName = $expense->relation_name;
 			$expenseCategory = $expense->expense_category;
 			$currentColumnName = $columnPerTypes[$relationName];
-			
 			$monthlyExpenses = (array)json_decode($expense->{$currentColumnName});
 			foreach($yearWithItsIndexes as $yearIndex => $monthIndexWithActive){
 				$currentYearInterestCost = 0 ;
