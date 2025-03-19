@@ -12,7 +12,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class PayableCheque extends Model
 {
-
+	protected $with = [
+		'deliveryBank',
+		'accountType',
+		'moneyPayment',
+		'cashExpenses',
+		'financialInstitution.bank'
+	];
 	const PENDING = 'pending';
 	const PAID = 'paid';
 		 
@@ -212,6 +218,7 @@ class PayableCheque extends Model
 	}
 	public function getPaymentBankName()
 	{
+
 		return $this->financialInstitution->bank->getViewName();
 	}
 	public function financialInstitution()

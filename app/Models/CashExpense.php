@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\DB;
 
 class CashExpense extends Model
 {
+	
 	use IsMoney ,HasForeignExchangeGainOrLoss,HasCreditStatements,HasReviewedBy,HasUserComment;
 	const CASH_PAYMENT  = 'cash_payment';
 	const PAYABLE_CHEQUE  = 'payable_cheque';
@@ -143,7 +144,6 @@ class CashExpense extends Model
 
 	public function getExpenseCategoryName():string
 	{
-	
 		return $this->cashExpenseCategoryName && $this->cashExpenseCategoryName->cashExpenseCategory ? $this->cashExpenseCategoryName->cashExpenseCategory->getName() : __('N/A') ;
 	}
 	public function getExpenseName()

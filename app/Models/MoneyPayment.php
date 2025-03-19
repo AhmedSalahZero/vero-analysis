@@ -19,6 +19,9 @@ use Illuminate\Support\Facades\DB;
 
 class MoneyPayment extends Model
 {
+	protected $with = [
+		// 'payableCheque'
+	];
 	use IsMoney ,HasForeignExchangeGainOrLoss,HasCreditStatements,HasPartnerStatement,HasReviewedBy , HasUserComment;
 	const CASH_PAYMENT  = 'cash_payment';
 	const PAYABLE_CHEQUE  = 'payable_cheque';

@@ -62,6 +62,8 @@ class LetterOfCreditIssuanceController
 	}
 	public function index(Company $company,Request $request)
 	{
+		$company->load('letterOfCreditIssuances.financialInstitutionBank','letterOfCreditIssuances.beneficiary');
+		
 		$clientsWithContracts = Partner::onlyCompany($company->id)	->onlyCustomers()->onlyThatHaveContracts()->get();
 
 		$numberOfMonthsBetweenEndDateAndStartDate = 18 ;

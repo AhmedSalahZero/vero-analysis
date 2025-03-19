@@ -72,6 +72,8 @@ class CashExpenseController
 	}
 	public function index(Company $company,Request $request)
 	{
+		$company->load(['cashExpenses.payableCheque','cashExpenses.partner','cashExpenses.outgoingTransfer','cashExpenses.cashPayment.deliveryBranch','cashExpenses.cashExpenseCategoryName']);
+		
 		$numberOfMonthsBetweenEndDateAndStartDate = 18 ;
 		$moneyType = $request->get('active',CashExpense::CASH_PAYMENT) ;
 		$filterDates = [];

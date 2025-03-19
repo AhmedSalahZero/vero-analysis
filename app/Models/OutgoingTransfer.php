@@ -9,7 +9,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class OutgoingTransfer extends Model
 {
-
+	protected $with = [
+		'accountType',
+		'deliveryBank'
+	];
 	const PENDING = 'pending';
 	const PAID = 'paid';
 	

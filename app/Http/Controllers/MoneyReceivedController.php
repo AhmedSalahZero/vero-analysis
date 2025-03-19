@@ -32,7 +32,7 @@ class MoneyReceivedController
    
 	public function index(Company $company,Request $request)
 	{
-		
+		$company->load(['moneyReceived.cheque','moneyReceived.partner','moneyReceived.incomingTransfer','moneyReceived.cashInSafe.receivingBranch']);
 		$numberOfMonthsBetweenEndDateAndStartDate = 18 ;
 		$moneyType = $request->get('active',MoneyReceived::CHEQUE) ;
 		$filterDates = [];
@@ -84,7 +84,7 @@ class MoneyReceivedController
 		
 	
 	
-		$company->load(['moneyReceived.cheque','moneyReceived.partner','moneyReceived.incomingTransfer','moneyReceived.cashInSafe.receivingBranch']);
+		
 		$receivedCashesInSafe = $company->getReceivedCashesInSafe($receivedCashesInSafeStartDate ,$receivedCashesInSafeEndDate ) ;
 		$receivedCashesInBanks = $company->getReceivedCashesInBank($cashesInBankStartDate,$cashesInBankEndDate) ;
 		$receivedTransfer = $company->getReceivedTransfer($incomingTransferStartDate,$incomingTransferEndDate) ;

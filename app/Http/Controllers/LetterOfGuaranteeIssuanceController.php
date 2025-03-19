@@ -60,7 +60,7 @@ class LetterOfGuaranteeIssuanceController
 	}
 	public function index(Company $company,Request $request)
 	{
-
+		$company->load('letterOfGuaranteeIssuances.financialInstitutionBank','letterOfGuaranteeIssuances.advancedPaymentHistories','letterOfGuaranteeIssuances.beneficiary');
 		$numberOfMonthsBetweenEndDateAndStartDate = 60 ;
 		$activeLgType = $request->get('active',LgTypes::BID_BOND) ;
 		$filterDates = [];

@@ -134,8 +134,6 @@ use App\Models\LetterOfGuaranteeIssuance;
 
                                             <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                         </label>
-										<?php echo e(dd($financialInstitutionBanks)); ?>
-
                                         <select required js-when-change-trigger-change-account-type change-financial-instutition-js id="financial-instutition-id" js-get-lg-facility-based-on-financial-institution js-when-change-trigger-change-account-type data-financial-institution-id required name="financial_institution_id" class="form-control">
 											<option value=""><?php echo e(__('Select')); ?></option>
                                             <?php $__currentLoopData = $financialInstitutionBanks; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index=>$financialInstitutionBank): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
@@ -462,18 +460,17 @@ use App\Models\LetterOfGuaranteeIssuance;
 <?php endif; ?> 
                                     </div>
 
-                                    <div class="col-md-3">
-                                         <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.input','data' => ['dataCurrentValue' => isset($model) ? $model->getLgAmount():0,'model' => $model??null,'label' => __('LG Amount'),'type' => 'text','placeholder' => __('LG Amount'),'name' => 'lg_amount','class' => 'only-greater-than-or-equal-zero-allowed only-smaller-than-or-equal-specific-number-allowed recalculate-cash-cover-amount-js recalculate-lg-commission-amount-js lg-amount-js ','required' => true]]); ?>
-<?php $component->withName('form.input'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['data-current-value' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(isset($model) ? $model->getLgAmount():0),'model' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($model??null),'label' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('LG Amount')),'type' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('text'),'placeholder' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('LG Amount')),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('lg_amount'),'class' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('only-greater-than-or-equal-zero-allowed only-smaller-than-or-equal-specific-number-allowed recalculate-cash-cover-amount-js recalculate-lg-commission-amount-js lg-amount-js '),'required' => true]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
-<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
-<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
-<?php endif; ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?> 
+                                       <div class="col-md-3">
+                                        <label> <?php echo e(__('LG Amount')); ?>
+
+                                            <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+                                        </label>
+										                                        
+
+                                        <div>
+                                            <input data-current-value="<?php echo e(isset($model) ? $model->getLgAmount() : 0); ?>" required value="<?php echo e((isset($model) ? number_format($model->getLgAmount(),0) : 0)); ?>"  class="form-control only-greater-than-or-equal-zero-allowed only-smaller-than-or-equal-specific-number-allowed recalculate-cash-cover-amount-js recalculate-lg-commission-amount-js lg-amount-js" type="text" placeholder="<?php echo e(__('Lg Amount')); ?>">
+                                            <input data-current-value="<?php echo e(isset($model) ? $model->getLgAmount() : 0); ?>" type="hidden" value="<?php echo e((isset($model) ? $model->getLgAmount() : 0)); ?>" name="lg_amount" class="only-greater-than-zero-allowed ">
+                                        </div>
                                     </div>
 
                                     <div class="col-md-3">
@@ -680,7 +677,7 @@ use App\Models\LetterOfGuaranteeIssuance;
 
 
 
-
+ <?php echo $__env->make('user_comment',['model'=>$model??null], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 
                          <?php if (isset($component)) { $__componentOriginal49acb4be531871427e6da8fc4bf301f11a96ee34 = $component; } ?>
 <?php $component = $__env->getContainer()->make(App\View\Components\Submitting::class, []); ?>
@@ -916,7 +913,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                             $('#total-lg-for-all-types-id').val(res.total_lg_outstanding_balance).prop('readonly', true)
                             $('#total-room-id').val(res.total_room).prop('readonly', true)
 							var totalRoom = number_unformat(res.total_room);
-							$('input[name="lg_amount"]').attr('data-can-not-be-greater-than',totalRoom);
+							$('input[name="lg_amount"]').parent().find('input').attr('data-can-not-be-greater-than',totalRoom);
                             $('#current-lg-type-outstanding-balance-id').val(res.current_lg_type_outstanding_balance).prop('readonly', true)
 							$('#lg-currency-id').val(res.currency_name).trigger('change');
                             $('#min_lg_commission_fees_id').val(res.min_lg_commission_rate).trigger('change');

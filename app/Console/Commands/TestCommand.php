@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 use App\Helpers\HArr;
 use App\Helpers\HDate;
 use App\Http\Controllers\FinancialStatementController;
+use App\Jobs\CheckDueAndPastedInvoicesJob;
 use App\Jobs\TestJob1;
 use App\Jobs\TestJob2;
 use App\Models\Company;
@@ -140,6 +141,8 @@ class TestCommand extends Command
 	}
 	public function handle()
 	{
+		
+		
 		$var = 50 ;
 		$date = '2010-05-05';
 		// dd(trim($date));

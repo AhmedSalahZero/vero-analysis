@@ -40,7 +40,11 @@ class CheckDueAndPastedInvoicesJob implements ShouldQueue
      */
     public function handle()
     {
-        $dateFormat = 'Y-m-d' ;
+		$this->startHandling();
+    }
+	public function startHandling()
+	{
+		$dateFormat = 'Y-m-d' ;
         DB::table('notifications')->delete();
         foreach (Company::get() as $company) {
 			/**
@@ -71,7 +75,6 @@ class CheckDueAndPastedInvoicesJob implements ShouldQueue
 				/**
                  * * سيكون مستحق الدفع بعد عدة ايام
                  */
-				
                 $pastDueCustomerInvoices = DB::table('customer_invoices')->where('company_id', $companyId)
                 ->where('net_balance', '>', 0)
                 ->whereBetween('invoice_due_date', [$beforeIntervalDate, $dayBeforeDayDate])->get();
@@ -100,7 +103,8 @@ class CheckDueAndPastedInvoicesJob implements ShouldQueue
 				 $beforeIntervalDate = Carbon::make(now()->format($dateFormat))->subDays($chequesPastDueDays)->format($dateFormat);
 				 $pastDueCheques = DB::table('cheques')->where('cheques.company_id', $companyId)
 				 ->where('cheques.status',Cheque::IN_SAFE)
-				 ->whereBetween('cheques.due_date', [$beforeIntervalDate, $dayBeforeDayDate])
+				 ->where('cheques.due_date','>=', $dayBeforeDayDate)
+				//  ->whereBetween('cheques.due_date', [$beforeIntervalDate, $dayBeforeDayDate])
 				 ->join('money_received','money_received.id','=','cheques.money_received_id')
 				 ->join('partners','partners.id','=','money_received.partner_id')
 				 ->get();
@@ -136,7 +140,8 @@ class CheckDueAndPastedInvoicesJob implements ShouldQueue
 				->where('cheques.status',Cheque::UNDER_COLLECTION)
 				->join('money_received','money_received.id','=','cheques.money_received_id')
 				->join('partners','partners.id','=','money_received.partner_id')
-				->whereBetween('cheques.expected_collection_date',[$dayAfterNowDate,$afterIntervalDate])->get();
+				->where('cheques.expected_collection_date','<=',$afterIntervalDate)->get();
+				// ->whereBetween('cheques.expected_collection_date',[$dayAfterNowDate,$afterIntervalDate])->get();
                 foreach ($pastDueCustomerInvoices as $customerInvoice) {
                     $invoiceDueDate = $customerInvoice->invoice_due_date ;
                     $invoiceNumber = $customerInvoice->invoice_number;
@@ -252,7 +257,6 @@ class CheckDueAndPastedInvoicesJob implements ShouldQueue
 						'Cheque Amount'=>$chequeAmount,
 						'Drawee Bank'=>$draweeBankName,
 						'Cheque Date'=>$chequeDate ,
-						
 					]
 					
 				));
@@ -291,7 +295,7 @@ class CheckDueAndPastedInvoicesJob implements ShouldQueue
 					$chequeNumber = $cheque->cheque_number;
 					$expectedCollectionDate = $cheque->expected_collection_date;
 					
-					$chequeDueDate = $cheque->due_date ;
+					$chequeDate = $cheque->due_date ;
 					$customerName = $cheque->name ;
 					$chequeAmount = $cheque->received_amount ;
 					$drawalBank = FinancialInstitution::find($cheque->drawl_bank_id);
@@ -472,5 +476,5 @@ class CheckDueAndPastedInvoicesJob implements ShouldQueue
 			
 			
         }
-    }
+	}
 }

@@ -77,6 +77,9 @@ class MoneyPaymentController
 	}
 	public function index(Company $company,Request $request)
 	{
+		$company->load(['moneyPayments.payableCheque','moneyPayments.partner','moneyPayments.outgoingTransfer','moneyPayments.cashPayment.deliveryBranch']);
+		// $company->load(['moneyPayments.payableCheques','moneyPayments.partner','moneyPayments.incomingTransfer','moneyPayments.cashInSafe.receivingBranch']);
+		
 		$numberOfMonthsBetweenEndDateAndStartDate = 18 ;
 		$moneyType = $request->get('active',MoneyPayment::CASH_PAYMENT) ;
 		$filterDates = [];
