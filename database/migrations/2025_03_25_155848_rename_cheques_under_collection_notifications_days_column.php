@@ -13,9 +13,9 @@ class RenameChequesUnderCollectionNotificationsDaysColumn extends Migration
      */
     public function up()
     {
-        Schema::table('notification_settings', function (Blueprint $table) {
-			$table->renameColumn('pending_payable_cheques_notifications_days','coming_receivable_cheques_notifications_days');
-        });
+        // Schema::table('notification_settings', function (Blueprint $table) {
+		// 	$table->renameColumn('pending_payable_cheques_notifications_days','coming_receivable_cheques_notifications_days');
+        // });
     }
 
     /**
