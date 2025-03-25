@@ -12,18 +12,20 @@ class Notification extends Model
 	const CUSTOMER = 'customer';
 	const SUPPLIER = 'supplier';
 	const RECEIVABLE_CHEQUE = 'receivable_cheque';
-	const PENDING_PAYABLE_CHEQUE = 'pending_payable_cheque';
+	const CURRENT_PAYABLE_CHEQUE = 'current_payable_cheque';
+	const COMING_PAYABLE_CHEQUE = 'coming_payable_cheque';
 	const CUSTOMER_INVOICE_PAST_DUE = 'customer_invoice_past_due';
 	const SUPPLIER_INVOICE_PAST_DUE = 'supplier_invoice_past_due';
 	const CUSTOMER_INVOICE_CURRENT_DUE = 'customer_invoice_current_due';
 	const SUPPLIER_INVOICE_CURRENT_DUE = 'supplier_invoice_current_due';
 	const CUSTOMER_INVOICE_COMING_DUE = 'customer_invoice_coming_due';
 	const SUPPLIER_INVOICE_COMING_DUE = 'supplier_invoice_coming_due';
-	const PENDING_PAYABLE_CHEQUES = 'pending_payable_cheque';
+	const CURRENT_PAYABLE_CHEQUES = 'current_payable_cheque';
+	const COMING_PAYABLE_CHEQUES = 'coming_payable_cheque';
 	const CHEQUE_PAST_DUE = 'cheque_past_due';
 	const CHEQUE_CURRENT_DUE = 'cheque_current_due';
-	const CHEQUE_UNDER_COLLECTION_TODAY = 'cheque_under_collection_today';
-	const CHEQUE_UNDER_COLLECTION_SINCE_DAYS = 'cheque_under_collection_since_days';
+	const COMING_RECEIVABLE_CHEQUES_NOTIFICATIONS_DAYS = 'coming_receivable_cheques_notifications_days';
+
     protected $guarded = ['id'];
 	public static function getAllMainTypes():array 
 	{
@@ -34,11 +36,12 @@ class Notification extends Model
 			self::SUPPLIER_INVOICE_PAST_DUE => __('Supplier Invoice Past Dues'),
 			self::SUPPLIER_INVOICE_CURRENT_DUE => __('Supplier Invoice Current Dues'),
 			self::SUPPLIER_INVOICE_COMING_DUE => __('Supplier Invoice Coming Dues'),
-			self::PENDING_PAYABLE_CHEQUES => __('Pending Payable Cheques'),
+			self::CURRENT_PAYABLE_CHEQUES => __('Current Payable Cheques'),
+			self::COMING_PAYABLE_CHEQUES => __('Coming Payable Cheques'),
 			self::CHEQUE_PAST_DUE => __('Cheques Past Dues'),
 			self::CHEQUE_CURRENT_DUE => __('Cheques Current Dues'),
-			self::CHEQUE_UNDER_COLLECTION_TODAY => __('Cheques Under Collection Dues'),
-			self::CHEQUE_UNDER_COLLECTION_SINCE_DAYS => __('Cheques Under Collection Since Days'),
+			self::COMING_RECEIVABLE_CHEQUES_NOTIFICATIONS_DAYS => __('Cheque Coming Dues'),
+			// self::CHEQUE_UNDER_COLLECTION_SINCE_DAYS => __('Cheques Under Collection Since Days'),
 		
 		];
 	}
@@ -73,7 +76,6 @@ class Notification extends Model
 		$canViewReceivableChequesNotifications = $canViewChequePastDueNotifications || $canViewChequeComingDueNotifications ||$canViewChequeUnderCollectionTodayNotifications || $canViewChequeUnderCollectionSinceDaysNotifications;
 		 
 		$items = [];
-		
 		if($canViewCustomerInvoicePastDueNotification){
 			$items[self::CUSTOMER]=[
 				'title'=>__('Customer Invoices') ,
@@ -100,19 +102,22 @@ class Notification extends Model
 				'subitems'=>HArr::filterTrulyValue([
 					$canViewChequePastDueNotifications ?self::CHEQUE_PAST_DUE:false,
 					$canViewChequeComingDueNotifications ? self::CHEQUE_CURRENT_DUE : false ,
-					$canViewChequeUnderCollectionTodayNotifications ? self::CHEQUE_UNDER_COLLECTION_TODAY : false ,
-					$canViewChequeUnderCollectionSinceDaysNotifications ? self::CHEQUE_UNDER_COLLECTION_SINCE_DAYS : false
+					$canViewChequeUnderCollectionTodayNotifications ? self::COMING_RECEIVABLE_CHEQUES_NOTIFICATIONS_DAYS : false ,
+					// $canViewChequeUnderCollectionSinceDaysNotifications ? self::CHEQUE_UNDER_COLLECTION_SINCE_DAYS : false
 				])
 				];
 		}
-		if($user->can('view pending payable cheques notifications')){
-			$items[self::PENDING_PAYABLE_CHEQUE] = [
+		if($user->can('view current payable cheques notifications') || $user->can('view coming payable cheques notifications')){
+			$items[self::CURRENT_PAYABLE_CHEQUE] = [
 				'title'=>__('Payable Cheques') ,
 				'subitems'=>HArr::filterTrulyValue([
-					$user->can('view pending payable cheques notifications') ? self::PENDING_PAYABLE_CHEQUES:false
+					$user->can('view current payable cheques notifications') ? self::CURRENT_PAYABLE_CHEQUES:false,
+					$user->can('view coming payable cheques notifications') ? self::COMING_PAYABLE_CHEQUES:false,
+					
 				])
 			];
 		}
+	
 		return $items ; 
 	}
 	public static function formatForMenuItem(Company $company):array 
@@ -128,9 +133,12 @@ class Notification extends Model
 				'show'=>true ,
 			];
 			$subItems = [];
-			
 			foreach($detailArray['subitems'] as $subItemId){
+				// $true = $subItemId == 'customer_invoice_current_due';
 				$customerPastDues = $company->notifications->where('data.type',$subItemId);
+				// if($true){
+				// 	dd($customerPastDues,$company->notifications->pluck('data')->toArray());
+				// }
 				$subCount = count($customerPastDues) ;
 				$mainCount+=$subCount;
 				$subItemTitle = self::getAllMainTypes()[$subItemId] ;
@@ -146,6 +154,7 @@ class Notification extends Model
 			$mainArr['submenu'] = $subItems ;
 			$formattedItems[] = $mainArr;
 		}
+
 		return $formattedItems;
 	}
 	public static function getSearchFieldsBasedOnTypes():array 

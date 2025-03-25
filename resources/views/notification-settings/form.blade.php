@@ -118,7 +118,7 @@ use App\NotificationSetting ;
                                     <x-form.input :default-value="NotificationSetting::CHEQUES_IN_SAFE_NOTIFICATIONS_DAYS" :model="$model??null" :label="__('Cheques In Safe Notifications Days')" :type="'text'" :placeholder="__('Cheques In Safe Notifications Days')" :name="'cheques_in_safe_notifications_days'" :required="true"></x-form.input>
                                 </div>
                                 <div class="col-md-4 ">
-                                    <x-form.input :default-value="NotificationSetting::CHEQUES_UNDER_COLLECTION_NOTIFICATIONS_DAYS" :model="$model??null" :label="__('Cheques Under Collection Notifications Days')" :type="'text'" :placeholder="__('Cheques Under Collection Notifications Days')" :name="'cheques_under_collection_notifications_days'" :required="true"></x-form.input>
+                                    <x-form.input :default-value="NotificationSetting::COMING_RECEIVABLE_CHEQUES_NOTIFICATIONS_DAYS" :model="$model??null" :label="__('Coming Receivable Cheques')" :type="'text'" :placeholder="__('Coming Cheques')" :name="'coming_receivable_cheques_notifications_days'" :required="true"></x-form.input>
                                 </div>
                             </div>
                         </div>
@@ -144,7 +144,7 @@ use App\NotificationSetting ;
                                     <x-form.input :default-value="1" :model="$model??null" :label="__('Past Dues Invoices Notifications Days')" :type="'text'" :placeholder="__('Past Dues Invoices Notifications Days')" :name="'supplier_past_dues_invoices_notifications_days'" :required="true"></x-form.input>
                                 </div>
 								 <div class="col-md-4 ">
-                                    <x-form.input :default-value="NotificationSetting::PENDING_PAYABLE_CHEQUES_NOTIFICATIONS_DAYS" :model="$model??null" :label="__('Pending Payable Cheques Notifications Days')" :type="'text'" :placeholder="__('Pending Payable Cheques Notifications Days')" :name="'pending_payable_cheques_notifications_days'" :required="true"></x-form.input>
+                                    <x-form.input :default-value="NotificationSetting::COMING_PAYABLE_CHEQUES_NOTIFICATIONS_DAYS" :model="$model??null" :label="__('Coming Payable Cheques Notifications Days')" :type="'text'" :placeholder="__('Coming Payable Cheques Notifications Days')" :name="'coming_payable_cheques_notifications_days'" :required="true"></x-form.input>
                                 </div>
 								
                             </div>

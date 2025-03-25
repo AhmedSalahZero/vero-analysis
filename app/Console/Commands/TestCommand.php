@@ -20,6 +20,7 @@ use App\ReadyFunctions\VariableLoanCalculation;
 use App\Services\AI\PredictionErrorQualityMeasures\MeanAbsoluteError;
 use App\Services\AI\PredictionErrorQualityMeasures\MeanAbsolutePercentageError;
 use App\Services\AI\PredictionErrorQualityMeasures\RootMeanSquaredPercentageError;
+use App\Services\Api\OddoService;
 use Carbon\Carbon;
 use DateTime;
 use Illuminate\Console\Command;
@@ -41,7 +42,6 @@ class TestCommand extends Command
 	 * @var string
 	 */
 	protected $signature = 'run:test';
-
 	/**
 	 * The console command description.
 	 *
@@ -58,90 +58,21 @@ class TestCommand extends Command
 	{
 		parent::__construct();
 	}
-
-	/**
-	 * Execute the console command.
-	 *
-	 * @return int
-	 */
-	public function convertIncomeStatementDatesToIndexes()
-	{
-		$financialStatements = FinancialStatement::
 	
-		get();
-		/**
-		 * @var FinancialStatement $financialStatement
-		 */
-		foreach($financialStatements as $financialStatement){
-			$request = (new Request)->merge([
-				'name'=>$financialStatement->getName(),
-				'start_from'=>$financialStatement->start_from,
-				'duration'=>$financialStatement->duration,
-				'duration_type'=>$financialStatement->duration_type,
-				'corporate_taxes_rate'=>22.5
-			]);
-
-			$financialStatement->storeMainSection($request);
-			$financialStatement->updateIndexedDates();
-			$incomeStatement = $financialStatement->incomeStatement;
-			if(is_null($incomeStatement)){
-				continue;
-			}
-			$datesHelper = $financialStatement->getDatesIndexesHelper();
-			$dateWithDateIndex = $datesHelper['dateWithDateIndex'];
-			foreach([
-				'financial_statement_able_main_item_calculations',
-			'financial_statement_able_main_item_sub_items'] as $tableName){
-	
-			$rows = DB::table($tableName)
-			->where('financial_statement_able_id',$incomeStatement->id)
-			->get();
-			foreach($rows as $row ){
-				
-				$indexedPayload = [];
-				$payload = (array)json_decode($row->payload);
-				foreach($payload as $date => $value){
-					$dateIndex = $dateWithDateIndex[$date]??null;
-					if(is_null($dateIndex)){
-						$indexedPayload[$date] = $value;
-						
-					}else{
-						$indexedPayload[$dateIndex] = $value;
-					}
-				}
-				DB::table($tableName)->where('id',$row->id)->update([
-					'payload'=>json_encode($indexedPayload)
-				]);
-				
-			}
-		}
-		
-	}
-	dd('good');
-		
-	}
-	
-	public function insertCustomersIntoPartnerTable(int $companyId)
-	{
-		$salesGatherings = DB::table('sales_gathering')->where('customer_name','!=',null)->where('company_id',$companyId)->get();
-		foreach($salesGatherings as $salesGathering){
-			$customerName = $salesGathering->customer_name;
-			$isFound = Partner::where('company_id',$companyId)->where('name',$customerName)->where('is_customer',1)->first() ;
-			if($isFound){
-				continue ;
-			}
-			Partner::create([
-				'company_id'=>$companyId,
-				'name'=>$customerName,
-				'is_customer'=>1 
-			]);
-			
-		}
-		
-	}
 	public function handle()
 	{
+		dispatch_now(new CheckDueAndPastedInvoicesJob);
+		dd('good');
 		
+		$companies = Company::all();
+		foreach($companies as $company){
+			if($company->hasOddoIntegrationCredentials()){
+				$oddo = new OddoService($company->getOddoDBUrl(),$company->getOddoDBName(),$company->getOddoDBUserName(),$company->getOddoDBPassword(),$company->getId());
+				$importDate = now()->subDay()->format('Y-m-d') ; ;
+				$oddo->startImport($importDate);
+			}
+		}
+		dd('good');
 		
 		$var = 50 ;
 		$date = '2010-05-05';
@@ -410,6 +341,88 @@ class TestCommand extends Command
 		
 		
 	}
+	
+	/**
+	 * Execute the console command.
+	 *
+	 * @return int
+	 */
+	public function convertIncomeStatementDatesToIndexes()
+	{
+		$financialStatements = FinancialStatement::
+	
+		get();
+		/**
+		 * @var FinancialStatement $financialStatement
+		 */
+		foreach($financialStatements as $financialStatement){
+			$request = (new Request)->merge([
+				'name'=>$financialStatement->getName(),
+				'start_from'=>$financialStatement->start_from,
+				'duration'=>$financialStatement->duration,
+				'duration_type'=>$financialStatement->duration_type,
+				'corporate_taxes_rate'=>22.5
+			]);
+
+			$financialStatement->storeMainSection($request);
+			$financialStatement->updateIndexedDates();
+			$incomeStatement = $financialStatement->incomeStatement;
+			if(is_null($incomeStatement)){
+				continue;
+			}
+			$datesHelper = $financialStatement->getDatesIndexesHelper();
+			$dateWithDateIndex = $datesHelper['dateWithDateIndex'];
+			foreach([
+				'financial_statement_able_main_item_calculations',
+			'financial_statement_able_main_item_sub_items'] as $tableName){
+	
+			$rows = DB::table($tableName)
+			->where('financial_statement_able_id',$incomeStatement->id)
+			->get();
+			foreach($rows as $row ){
+				
+				$indexedPayload = [];
+				$payload = (array)json_decode($row->payload);
+				foreach($payload as $date => $value){
+					$dateIndex = $dateWithDateIndex[$date]??null;
+					if(is_null($dateIndex)){
+						$indexedPayload[$date] = $value;
+						
+					}else{
+						$indexedPayload[$dateIndex] = $value;
+					}
+				}
+				DB::table($tableName)->where('id',$row->id)->update([
+					'payload'=>json_encode($indexedPayload)
+				]);
+				
+			}
+		}
+		
+	}
+	dd('good');
+		
+	}
+	
+	public function insertCustomersIntoPartnerTable(int $companyId)
+	{
+		$salesGatherings = DB::table('sales_gathering')->where('customer_name','!=',null)->where('company_id',$companyId)->get();
+		foreach($salesGatherings as $salesGathering){
+			$customerName = $salesGathering->customer_name;
+			$isFound = Partner::where('company_id',$companyId)->where('name',$customerName)->where('is_customer',1)->first() ;
+			if($isFound){
+				continue ;
+			}
+			Partner::create([
+				'company_id'=>$companyId,
+				'name'=>$customerName,
+				'is_customer'=>1 
+			]);
+			
+		}
+		
+	}
+	
 	
 	public function refreshStatement($statementModelName,$dateColumnName = 'full_date'){
 		$fullModelName ='App\Models\\'.$statementModelName;

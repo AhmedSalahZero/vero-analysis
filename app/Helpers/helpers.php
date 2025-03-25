@@ -4137,11 +4137,18 @@ function getPermissions(array $systemsNames  = []):array
 			'view-name'=>'view cheque under collection since days'
 		],
 		[
-			'name'=>'view pending payable cheques notifications',
+			'name'=>'view current payable cheques notifications',
 			'systems'=>[CASH_VERO],
 			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
-			'group'=>'pending payable cheques notifications',
-			'view-name'=>'view pending payable cheques'
+			'group'=>'current payable cheques notifications',
+			'view-name'=>'view current payable cheques'
+		],
+		[
+			'name'=>'view coming payable cheques notifications',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'coming payable cheques notifications',
+			'view-name'=>'view coming payable cheques'
 		],
 		[
             'name'=>'update cash & cheques opening balances',

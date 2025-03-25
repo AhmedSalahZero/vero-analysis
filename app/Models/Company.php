@@ -155,15 +155,15 @@ class Company extends Model implements HasMedia
 		$notificationSetting = $this->notificationSetting ;
 		return  $notificationSetting  ? $notificationSetting->getChequesInSafeNotificationsDays() : NotificationSetting::CHEQUES_IN_SAFE_NOTIFICATIONS_DAYS ;
 	}
-	public function getChequesUnderCollectionNotificationDays()
+	public function getComingReceivableChequesNotificationDays()
 	{
 		$notificationSetting = $this->notificationSetting ;
-		return  $notificationSetting  ? $notificationSetting->getChequesUnderCollectionNotificationsDays() : NotificationSetting::CHEQUES_UNDER_COLLECTION_NOTIFICATIONS_DAYS ;
+		return  $notificationSetting  ? $notificationSetting->getComingReceivableChequesNotificationsDays() : NotificationSetting::COMING_RECEIVABLE_CHEQUES_NOTIFICATIONS_DAYS ;
 	}
-	public function getPendingPayableChequeNotificationDays()
+	public function getComingPayableChequeNotificationDays()
 	{
 		$notificationSetting = $this->notificationSetting ;
-		return  $notificationSetting  ? $notificationSetting->getPendingPayableChequeNotificationDays() : NotificationSetting::CHEQUES_UNDER_COLLECTION_NOTIFICATIONS_DAYS ;
+		return  $notificationSetting  ? $notificationSetting->getComingPayableChequeNotificationDays() : NotificationSetting::COMING_RECEIVABLE_CHEQUES_NOTIFICATIONS_DAYS ;
 	}
 	public function letterOfGuaranteeIssuances()
 	{

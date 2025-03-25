@@ -31,7 +31,6 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-		
 		$schedule->job(new CheckDueAndPastedInvoicesJob)->name('check_due_date')->everyMinute()->withoutOverlapping();
 		$schedule->job(new ImportOddoInvoicesJob)->name('import_odd_invoices')->dailyAt('00:02')->withoutOverlapping();
 		foreach(Company::all() as $company){
