@@ -45,13 +45,13 @@ class CurrentAccountBankStatementActiveJob implements ShouldQueue
 			where('company_id',$company->id)
 			->where('is_active',0)
 			->orderByRaw('full_date asc , id asc')
-			->where('full_date','<=',now())->first() ;
+			->where('date','<=',now()->format('Y-m-d'))->first() ;
 			if($firstRaw){
 				DB::table('current_account_bank_statements')
 				->where('company_id',$company->id)
 				->where('is_active',0)
 				->orderByRaw('full_date asc , id asc')
-				->where('full_date','<=',now())
+				->where('date','<=',now()->format('Y-m-d'))
 				->update([
 					'is_active'=>1 
 				]);
