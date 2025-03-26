@@ -61,6 +61,15 @@ class TestCommand extends Command
 	
 	public function handle()
 	{
+		$companies = Company::all();
+		foreach($companies as $company){
+			if($company->hasOddoIntegrationCredentials()){
+				$oddo = new OddoService($company->getOddoDBUrl(),$company->getOddoDBName(),$company->getOddoDBUserName(),$company->getOddoDBPassword(),$company->getId());
+				$importDate = now()->subDay()->format('Y-m-d') ; ;
+				$oddo->startImport($importDate);
+			}
+		}
+		dd('gg');
 		dispatch_now(new CheckDueAndPastedInvoicesJob);
 		dd('good');
 		

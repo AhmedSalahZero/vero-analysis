@@ -3,13 +3,10 @@
 namespace App\Console;
 
 use App\Jobs\CheckDueAndPastedInvoicesJob;
-use App\Jobs\ImportInvoicesJob;
+use App\Jobs\CurrentAccountBankStatementActiveJob;
 use App\Jobs\ImportOddoInvoicesJob;
-use App\Models\Company;
-use App\Models\CurrentAccountBankStatement;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
-use Illuminate\Support\Facades\DB;
 
 
 class Kernel extends ConsoleKernel
@@ -31,31 +28,10 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-		$schedule->job(new CheckDueAndPastedInvoicesJob)->name('check_due_date')->everyMinute()->withoutOverlapping();
-		$schedule->job(new ImportOddoInvoicesJob)->name('import_odd_invoices')->dailyAt('00:02')->withoutOverlapping();
-		foreach(Company::all() as $company){
-			$firstRaw = CurrentAccountBankStatement::
-			where('company_id',$company->id)
-			->where('is_active',0)
-			->orderByRaw('full_date asc , id asc')
-			->where('full_date','<=',now())->first() ;
-			if($firstRaw){
-				DB::table('current_account_bank_statements')
-				->where('company_id',$company->id)
-				->where('is_active',0)
-				->orderByRaw('full_date asc , id asc')
-				->where('full_date','<=',now())
-				->update([
-					'is_active'=>1 
-				]);
-				/**
-				 * * هنبدا نعمل ابديت من اول الرو اللي تاريخه اصغر حاجه في اللي كانوا محتاجين يتعدلوا
-				 * * وبالتالي هيتعدل هو وكل اللي تحتة
-				 */
-				CurrentAccountBankStatement::updateNextRows($firstRaw);
-				
-			}
-		}
+		$schedule->job(new CheckDueAndPastedInvoicesJob)->name('check_due_date')->dailyAt('00:01')->withoutOverlapping();
+		$schedule->job(new ImportOddoInvoicesJob)->name('import_odd_invoices')->dailyAt('00:01')->withoutOverlapping();
+		$schedule->job(new CurrentAccountBankStatementActiveJob)->name('current_account_bank_statement_active')->everyMinute()->withoutOverlapping();
+		
     }
 
     /**

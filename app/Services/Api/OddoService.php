@@ -13,7 +13,7 @@ class OddoService
 	protected string $username;
 	protected string $password ; 
 	protected \Ripcord_Client $models;
-	protected int $uid;
+	protected ?int $uid;
 	protected int $company_id;
 	public function __construct($url , $db , $userName , $password,$companyId)
 	{
@@ -24,14 +24,22 @@ class OddoService
 		$this->company_id = $companyId ;
 		require_once(public_path('apis/ripcord.php'));
 		$common = ripcord::client("$this->url/xmlrpc/2/common");
-		$uid = $common->authenticate($this->db, $this->username, $this->password, array());
+		$uid = null ;
+		try{
+			$uid = $common->authenticate($this->db, $this->username, $this->password, array());
+		}
+		catch(\Exception $e){
+			$uid = null;
+		}
 		$models = ripcord::client("$this->url/xmlrpc/2/object");
 		$this->models = $models;
 		$this->uid = $uid;
 	}
 	public function startImport($importDate):void
 	{
-		
+		if(is_null($this->uid)){
+			return ;
+		}
 		$invoices = $this->getInvoices($importDate);
 	
 		foreach($invoices as $invoice){
