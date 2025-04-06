@@ -4236,6 +4236,13 @@ function getPermissions(array $systemsNames  = []):array
 			'view-name'=>'safe statement'
 		],
 		[
+			'name'=>'view cash expense report',
+			'systems'=>[CASH_VERO],
+			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
+			'group'=>'reports',
+			'view-name'=>'cash expense'
+		],
+		[
 			'name'=>'view partners statement report',
 			'systems'=>[CASH_VERO],
 			'default-roles'=>[User::SUPER_ADMIN,User::COMPANY_ADMIN,User::MANAGER,User::USER],
@@ -6361,6 +6368,7 @@ function getHeaderMenu($currentCompany = null)
     $hasSelectCustomerNameInTemplate = isset($exportablesForSalesGathering['customer_name']);
     $hasSalesGatheringDataUploadData = hasUploadData($company->id) ;
 	$canViewSafeStatement = $user->can('view safe statement report');
+	$canViewCashExpenseStatement = $user->can('view cash expense report');
 	$canViewPartnersStatement = $user->can('view partners statement report');
 	$canViewBankStatement = $user->can('view bank statement report') ;
 	$canViewLgByBeneficiaryNameReport = $user->can('view lg by beneficiary name report') ;
@@ -6539,7 +6547,7 @@ function getHeaderMenu($currentCompany = null)
 		
 		'reports'=>[
 			'title'=>__('Reports'),
-			'show'=>$canViewCashFlow || $canViewContractCashFlow ||  $canViewSafeStatement || $canViewPartnersStatement || $canViewBankStatement|| $canViewLgByBeneficiaryNameReport || $canViewLgByBankNameReport || $canViewLgLcStatement || $canViewWithdrawalsSettlementReport ,
+			'show'=>$canViewCashFlow || $canViewContractCashFlow ||  $canViewSafeStatement || $canViewCashExpenseStatement || $canViewPartnersStatement || $canViewBankStatement|| $canViewLgByBeneficiaryNameReport || $canViewLgByBankNameReport || $canViewLgLcStatement || $canViewWithdrawalsSettlementReport ,
 			'link'=>'#',
 			'submenu'=>
 			[
@@ -6572,6 +6580,12 @@ function getHeaderMenu($currentCompany = null)
 					'title'=>__('LG & LC Statement'),
 					'link'=>route('view.lg.lc.bank.statement',['company'=>$company->id]),
 					'show'=>$canViewBankStatement,
+					'submenu'=>[]
+				],
+				[
+					'title'=>__('Cash Expense Statement'),
+					'link'=>route('view.cash.expense.statement',['company'=>$company->id]) ,
+					'show'=>$canViewCashExpenseStatement,
 					'submenu'=>[]
 				],
 				[

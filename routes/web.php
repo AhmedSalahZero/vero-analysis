@@ -1007,6 +1007,9 @@ Route::middleware([])->group(function () {
 					Route::get('safe-statement', 'SafeStatementController@index')->name('view.safe.statement');
                     Route::post('safe-statement', 'SafeStatementController@result')->name('result.safe.statement');
 
+					Route::get('cash-expense-statement', 'CashExpenseStatementController@index')->name('view.cash.expense.statement');
+                    Route::post('cash-expense-statement', 'CashExpenseStatementController@result')->name('result.cash.expense.statement');
+					
 					Route::get('partners-statement', 'PartnersStatementController@index')->name('view.partners.statement');
                     Route::post('partners-statement', 'PartnersStatementController@result')->name('result.partners.statement');
 					
