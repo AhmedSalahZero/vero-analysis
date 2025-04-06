@@ -422,6 +422,7 @@
 											<?php
 												$indexKey = 0 ;
 											?>
+									
                                             <?php $__currentLoopData = $invoicesBalances; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index=>$invoicesBalancesAsStdClass): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                             <?php if( $currencyName == $invoicesBalancesAsStdClass->currency): ?>
 											<?php

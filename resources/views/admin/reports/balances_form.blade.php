@@ -387,6 +387,7 @@
 											@php
 												$indexKey = 0 ;
 											@endphp
+									
                                             @foreach($invoicesBalances as $index=>$invoicesBalancesAsStdClass)
                                             @if( $currencyName == $invoicesBalancesAsStdClass->currency)
 											@php

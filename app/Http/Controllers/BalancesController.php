@@ -55,9 +55,13 @@ class BalancesController
 		$downPaymentTableName = $fullClassName::DOWN_PAYMENT_SETTLEMENT_TABLE_NAME;
 		$downPaymentSettlementModelName=$fullClassName::DOWN_PAYMENT_SETTLEMENT_MODEL_NAME;
 		$moneyModelName=$fullClassName::MONEY_MODEL_NAME;
-		$invoiceNetBalanceSqlQuery = 'select partners.id as '. $clientIdColumnName .' , partners.name as '.$clientNameColumnName.' , currency , ifnull(sum(net_balance),0) as net_balance , ifnull(sum(net_balance_in_main_currency),0) as net_balance_in_main_currency from partners left join  '. $tableName .' on partners.id = '.$tableName.'.'.$clientIdColumnName.' where '.$isCustomerOrSupplierColumnName.'=1 and partners.company_id = '. $company->id .' group by '.$clientNameColumnName.' , currency order by net_balance desc;';
-		$downPaymentSqlQuery =  'select  '.  $clientIdColumnName .' , currency , sum(down_payment_balance) as down_payment_balance from '. $downPaymentTableName .' where   company_id = '. $company->id .' group by '. $clientIdColumnName .' , currency order by down_payment_balance desc;';
+		$invoiceNetBalanceSqlQuery = 'select partners.id as '. $clientIdColumnName .' , partners.name as '.$clientNameColumnName.' , currency , ifnull(sum(net_balance),0) as net_balance , ifnull(sum(net_balance_in_main_currency),0) as net_balance_in_main_currency from partners left join  '. $tableName .' on partners.id = '.$tableName.'.'.$clientIdColumnName.' where '.$isCustomerOrSupplierColumnName.'=1 and partners.company_id = '. $company->id .' group by partners.id, '.$clientIdColumnName.' , currency order by net_balance desc;';
 		$invoicesBalances =DB::select(DB::raw($invoiceNetBalanceSqlQuery));
+		// dd($invoiceNetBalanceSqlQuery,$invoicesBalances);
+		$downPaymentSqlQuery =  'select  '.  $clientIdColumnName .' , currency , sum(down_payment_balance) as down_payment_balance from '. $downPaymentTableName .' where   company_id = '. $company->id .' group by '. $clientIdColumnName .' , currency  order by down_payment_balance desc;';
+	
+		
+	
 		$partnerIds = collect($invoicesBalances)->pluck($clientIdColumnName,$clientIdColumnName)->toArray() ;
 	
 		$downPaymentsInMainCurrency = $this->getDownPaymentInMainCurrency($partnerIds,$mainFunctionalCurrency,$clientIdColumnName,$downPaymentSettlementModelName,$moneyModelName);
@@ -108,7 +112,6 @@ class BalancesController
 			$invoicePartnerId =$invoiceBalanceStdClass->{$clientIdColumnName};
 			$invoicePartnerName =$invoiceBalanceStdClass->{$clientNameColumnName};
 			$invoiceCurrency = $invoiceBalanceStdClass->currency;
-
 			foreach($downPayments as $downPaymentStdClass){
 				
 				
