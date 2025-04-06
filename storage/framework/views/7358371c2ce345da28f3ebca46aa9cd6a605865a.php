@@ -196,8 +196,9 @@ td{
 
 									<?php endif; ?>
 									</td>
-                                    <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
+                                    <td class="kt-datatable__cell--left kt-datatable__cell text-right" data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
+										<?php echo $__env->make('reports._user_comment_modal',['model'=>$moneyPayment], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 											<?php if(auth()->user()->can('update supplier payment')): ?>
 											<?php echo $__env->make('reports._review_modal',['model'=>$moneyPayment], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 											<?php if(!$moneyPayment->isOpenBalance()): ?>
@@ -323,8 +324,9 @@ td{
                                     <td data-currency="<?php echo e($money->getCurrency()); ?>"> <?php echo e($money->getCurrencyToPaymentCurrencyFormatted()); ?></td>
                                     <td class="bank-max-width"><?php echo e($money->getOutgoingTransferAccountTypeName()); ?></td>
                                     <td><?php echo e($money->getOutgoingTransferAccountNumber()); ?></td>
-                                    <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
+                                    <td class="kt-datatable__cell--left kt-datatable__cell text-right" data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
+										<?php echo $__env->make('reports._user_comment_modal',['model'=>$money], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 										<?php if(!$money->isOpenBalance()): ?>
 										<?php if(auth()->user()->can('update supplier payment')): ?>
 										<?php echo $__env->make('reports._review_modal',['model'=>$money], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
@@ -432,8 +434,9 @@ td{
                                     <td><?php echo e($moneyPayment->getPaidAmountFormatted()); ?></td>
                                     <td data-currency="<?php echo e($moneyPayment->getCurrency()); ?>"><?php echo e($moneyPayment->getCurrencyToPaymentCurrencyFormatted()); ?></td>
                                     <td><?php echo e($moneyPayment->getCashPaymentReceiptNumber()); ?></td>
-                                    <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
+                                    <td class="kt-datatable__cell--left kt-datatable__cell text-right" data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
+										<?php echo $__env->make('reports._user_comment_modal',['model'=>$money], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 										<?php if(!$moneyPayment->isOpenBalance()): ?>
 										<?php if(auth()->user()->can('update supplier payment')): ?>
 											<?php echo $__env->make('reports._review_modal',['model'=>$moneyPayment], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>

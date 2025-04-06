@@ -138,8 +138,9 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <td class="text-transform text-nowrap">{{ $model->getTransactionDateFormatted() }}</td>
                                     <td class="text-transform text-nowrap">{{ $model->getIssuanceDateFormatted() }}</td>
                                     <td class="text-transform text-nowrap">{{ $model->getDueDateFormatted() }}</td>
-                                    <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
+                                    <td class="kt-datatable__cell--left kt-datatable__cell text-right" data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
+										 @include('reports._user_comment_modal',['model'=>$model])
                                           @include('reports.LetterOfCreditIssuance.actions')
 										@if(!$model->isPaid())
 											@if(hasAuthFor('update letter of credit issuance'))
@@ -236,8 +237,9 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <td class="text-transform text-nowrap">{{ $model->getPurchaseOrderDateFormatted() }}</td>
                                     <td class="text-transform text-nowrap">{{ $model->getIssuanceDateFormatted() }}</td>
                                     <td class="text-transform text-nowrap">{{ $model->getDueDateFormatted() }}</td>
-                                    <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
+                                    <td class="kt-datatable__cell--left kt-datatable__cell text-right" data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
+										 @include('reports._user_comment_modal',['model'=>$model])
                                           @include('reports.LetterOfCreditIssuance.actions')
 											@if(!$model->isPaid())
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.letter.of.credit.issuance',['company'=>$company->id,'letterOfCreditIssuance'=>$model->id,'source'=>$model->getSource()]) }}"><i class="fa fa-pen-alt"></i></a>
@@ -328,8 +330,9 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <td class="text-transform text-nowrap">{{ $model->getPurchaseOrderDateFormatted() }}</td>
                                     <td class="text-transform text-nowrap">{{ $model->getIssuanceDateFormatted() }}</td>
                                     <td class="text-transform text-nowrap">{{ $model->getDueDateFormatted() }}</td>
-                                    <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
+                                    <td class="kt-datatable__cell--left kt-datatable__cell text-right" data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
+										 @include('reports._user_comment_modal',['model'=>$model])
                                         	  @include('reports.LetterOfCreditIssuance.actions')
 											  
 											{{-- @if(!$model->advancedPaymentHistories->count() && !$model->isPaid())   --}}

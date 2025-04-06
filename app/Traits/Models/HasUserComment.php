@@ -11,5 +11,9 @@ trait HasUserComment
 	{
 		return $this->user_comment ?: '' ;
 	}
+	public function hasComment():bool
+	{
+		return (bool) $this->getUserComment(); 
+	}
 	
 }

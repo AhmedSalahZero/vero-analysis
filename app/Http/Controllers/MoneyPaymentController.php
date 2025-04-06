@@ -173,7 +173,7 @@ class MoneyPaymentController
 
 	public function create(Company $company,$supplierInvoiceId = null)
 	{
-		$clientsWithContracts = Partner::onlyCompany($company->id)	->onlyCustomers()->onlyThatHaveContracts()->get();
+		$clientsWithContracts = Partner::orderBy('name')->onlyCompany($company->id)	->onlyCustomers()->onlyThatHaveContracts()->get();
 		
 		
 		$currencies = SupplierInvoice::getCurrencies($supplierInvoiceId);
@@ -189,18 +189,17 @@ class MoneyPaymentController
 		/**
 		 * * for contracts
 		 */
-		$suppliers =  $supplierInvoiceId ?  Partner::where('id',SupplierInvoice::find($supplierInvoiceId)->supplier_id )
+		$suppliers =  $supplierInvoiceId ?  Partner::orderBy('name')->where('id',SupplierInvoice::find($supplierInvoiceId)->supplier_id )
 		->when($isDownPayment,function(Builder $q){
 			$q->has('contracts');
 		})
-		->where('company_id',$company->id)->pluck('name','id')->toArray() :Partner::where('is_supplier',1)->where('company_id',$company->id)
+		->where('company_id',$company->id)->pluck('name','id')->toArray() :Partner::orderBy('name')->where('is_supplier',1)->where('company_id',$company->id)
 		->when($isDownPayment,function(Builder $q){
 			$q->has('contracts');
 		})
 		->pluck('name','id')->toArray();
 	
 		$contracts = [];
-
 		
         return view($viewName,[
 			'financialInstitutionBanks'=>$financialInstitutionBanks,
@@ -472,15 +471,15 @@ class MoneyPaymentController
 		$accountTypes = AccountType::onlyCashAccounts()->get();
 		$financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
 		$partnerType = $moneyPayment->partner->getType();
-		$suppliers =  $supplierInvoiceId ?  Partner::where('id',CustomerInvoice::find($supplierInvoiceId)->supplier_id )->where('company_id',$company->id)->has('contracts')->pluck('name','id')->toArray() :Partner::where('is_supplier',1)->where('company_id',$company->id)->has('contracts')->pluck('name','id')->toArray();
+		$suppliers =  $supplierInvoiceId ?  Partner::orderBy('name')->where('id',CustomerInvoice::find($supplierInvoiceId)->supplier_id )->where('company_id',$company->id)->has('contracts')->pluck('name','id')->toArray() :Partner::where('is_supplier',1)->where('company_id',$company->id)->has('contracts')->pluck('name','id')->toArray();
 		/**
 		 * * for contracts
 		 */
-		$suppliers =  $supplierInvoiceId ?  Partner::where('id',SupplierInvoice::find($supplierInvoiceId)->supplier_id )
+		$suppliers =  $supplierInvoiceId ?  Partner::orderBy('name')->where('id',SupplierInvoice::find($supplierInvoiceId)->supplier_id )
 		->when($isDownPayment,function(Builder $q){
 			$q->has('contracts');
 		})
-		->where('company_id',$company->id)->pluck('name','id')->toArray() :Partner::where($partnerType,1)->where('company_id',$company->id)
+		->where('company_id',$company->id)->pluck('name','id')->toArray() :Partner::orderBy('name')->where($partnerType,1)->where('company_id',$company->id)
 		->when($isDownPayment,function(Builder $q){
 			$q->has('contracts');
 		})
@@ -637,7 +636,7 @@ class MoneyPaymentController
 	
 	public function getSuppliersBasedOnCurrency(Request $request , Company $company , string $currencyName){
 		return response()->json([
-			'supplierInvoices'=>SupplierInvoice::where('currency',$currencyName)->where('company_id',$company->id)->pluck('supplier_name','supplier_id')
+			'supplierInvoices'=>SupplierInvoice::orderBy('supplier_name')->where('currency',$currencyName)->where('company_id',$company->id)->pluck('supplier_id','supplier_name')
 		]);
 	}
 	public function getCashInSafeStatementEndBalance(Request $request , Company $company , int $branchId = null , string $currencyName = null , string $deliveryDate = null){

@@ -6,7 +6,9 @@
     .kt-portlet .kt-portlet__head {
         border-bottom-color: #CCE2FD !important;
     }
-
+.font-normal{
+	font-weight:normal !important;
+}
     label {
         white-space: nowrap !important
     }
@@ -128,12 +130,15 @@
                                                 <x-form.date :label="__('Date')" :required="true" :model="$model??null" :name="'transfer_date'" :placeholder="__('Select Date')"></x-form.date>
                                             </div>
                                             <div class="col-md-3 ">
-                                                <label>{{__('Cheque Number')}}
+                                                <label>{{__('Cheque Number/Cash Withdrawal')}}
                                                     @include('star')
                                                 </label>
                                                 <div class="kt-input-icon">
                                                     <input data-max-cheque-value="0" step="1" type="numeric" value="{{ isset($model) ? $model->getChequeNumber():0 }}" name="cheque_number" class="form-control  " placeholder="{{__('Insert Cheque Number')}}">
                                                 </div>
+												<div>
+													<label for="" class="font-normal">{{ __('If Cash Withdrawal, Please write cash withdrawal') }}</label>
+												</div>
                                             </div>
 
                                             <div class="col-md-3 ">

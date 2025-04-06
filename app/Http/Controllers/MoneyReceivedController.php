@@ -225,11 +225,11 @@ class MoneyReceivedController
 		/**
 		 * * for contracts
 		 */
-		$customers =  $customerInvoiceId ?  Partner::where('id',CustomerInvoice::find($customerInvoiceId)->customer_id)->where('company_id',$company->id)
+		$customers =  $customerInvoiceId ?  Partner::orderBy('name')->where('id',CustomerInvoice::find($customerInvoiceId)->customer_id)->where('company_id',$company->id)
 		->when($isDownPayment,function(Builder $q){
 			$q->has('contracts');
 		})
-		->pluck('name','id')->toArray() : Partner::where('is_customer',1)->where('company_id',$company->id)->when($isDownPayment,function(Builder $q){
+		->pluck('name','id')->toArray() : Partner::orderBy('name')->where('is_customer',1)->where('company_id',$company->id)->when($isDownPayment,function(Builder $q){
 			$q->has('contracts');
 		})->pluck('name','id')->toArray(); 
 		$contracts = [];
@@ -528,11 +528,11 @@ class MoneyReceivedController
 		/**
 		 * * for contracts
 		 */
-		$customers =  $customerInvoiceId ?  Partner::where('id',CustomerInvoice::find($customerInvoiceId)->customer_id)->where('company_id',$company->id)
+		$customers =  $customerInvoiceId ?  Partner::orderBy('name')->where('id',CustomerInvoice::find($customerInvoiceId)->customer_id)->where('company_id',$company->id)
 		->when($isDownPayment,function(Builder $q){
 			$q->has('contracts');
 		})
-		->pluck('name','id')->toArray() : Partner::where($partnerType,1)->where('company_id',$company->id)->when($isDownPayment,function(Builder $q){
+		->pluck('name','id')->toArray() : Partner::orderBy('name')->where($partnerType,1)->where('company_id',$company->id)->when($isDownPayment,function(Builder $q){
 			$q->has('contracts');
 		})->pluck('name','id')->toArray(); 
 		
@@ -849,9 +849,9 @@ class MoneyReceivedController
 
 	
 		return response()->json([
-			'customerInvoices' => CustomerInvoice::
+			'customerInvoices' => CustomerInvoice::orderBy('customer_name')->
 			where('currency',$currencyName)
-			->where('company_id',$company->id)->pluck('customer_name','customer_id')
+			->where('company_id',$company->id)->pluck('customer_id','customer_name')
 			
 		]);
 	}
@@ -859,9 +859,9 @@ class MoneyReceivedController
 		$partnerColumnName = $request->get('partnerColumnName');
 
 		if($partnerColumnName == 'is_customer'){
-			$partners = CustomerInvoice::where('currency',$currencyName)->where('company_id',$company->id)->pluck('customer_name','customer_id');
+			$partners = CustomerInvoice::orderBy('customer_name')->where('currency',$currencyName)->where('company_id',$company->id)->pluck('customer_id','customer_name');
 		}else{
-			$partners = Partner::where('company_id',$company->id)->where($partnerColumnName,1)->pluck('name','id')->toArray();
+			$partners = Partner::orderBy('name')->where('company_id',$company->id)->where($partnerColumnName,1)->pluck('id','name')->toArray();
 		}
 		return response()->json([
 			'partners'=>$partners

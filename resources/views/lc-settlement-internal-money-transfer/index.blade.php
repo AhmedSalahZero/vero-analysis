@@ -113,8 +113,9 @@ use App\Models\LcSettlementInternalMoneyTransfer ;
                                     <td class="text-transform">{{ $model->getFromAccountNumber() }}</td>
                                     <td>{{ $model->getLetterOfCreditIssuanceTransactionName() }}</td>
 									@if(hasAuthFor('update lc settlement internal transfer') || hasAuthFor('delete lc settlement internal transfer') )
-                                    <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
+                                    <td class="kt-datatable__cell--left kt-datatable__cell text-right" data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
+												@include('reports._user_comment_modal',['model'=>$model])
 											@if(hasAuthFor('update lc settlement internal transfer'))
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('lc-settlement-internal-money-transfers.edit',['company'=>$company->id,'lc_settlement_internal_transfer'=>$model->id]) }}"><i class="fa fa-pen-alt"></i></a>
 											@endif 

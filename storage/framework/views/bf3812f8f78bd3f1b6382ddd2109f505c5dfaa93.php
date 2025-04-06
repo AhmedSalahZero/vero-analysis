@@ -191,8 +191,9 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <td class="text-transform text-nowrap"><?php echo e($model->getTransactionDateFormatted()); ?></td>
                                     <td class="text-transform text-nowrap"><?php echo e($model->getIssuanceDateFormatted()); ?></td>
                                     <td class="text-transform text-nowrap"><?php echo e($model->getRenewalDateFormatted()); ?></td>
-                                    <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
+                                    <td class="kt-datatable__cell--left kt-datatable__cell text-right" data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; " class="max-w-control">
+										  <?php echo $__env->make('reports._user_comment_modal',['model'=>$model], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                           <?php echo $__env->make('reports.LetterOfGuaranteeIssuance.actions', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                           <?php echo $__env->make('reports.LetterOfGuaranteeIssuance.renewal-date._renew_modal', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 										<?php if(!$model->isCancelled()): ?>
@@ -327,8 +328,9 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <td class="text-transform text-nowrap"><?php echo e($model->getPurchaseOrderDateFormatted()); ?></td>
                                     <td class="text-transform text-nowrap"><?php echo e($model->getIssuanceDateFormatted()); ?></td>
                                     <td class="text-transform text-nowrap"><?php echo e($model->getRenewalDateFormatted()); ?></td>
-                                    <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
+                                    <td class="kt-datatable__cell--left kt-datatable__cell text-right " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative" class="max-w-control">
+											<?php echo $__env->make('reports._user_comment_modal',['model'=>$model], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                           <?php echo $__env->make('reports.LetterOfGuaranteeIssuance.actions', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 										  <?php echo $__env->make('reports.LetterOfGuaranteeIssuance.renewal-date._renew_modal', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 											<?php if(!$model->isCancelled()): ?>
@@ -457,8 +459,9 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <td class="text-transform text-nowrap"><?php echo e($model->getPurchaseOrderDateFormatted()); ?></td>
                                     <td class="text-transform text-nowrap"><?php echo e($model->getIssuanceDateFormatted()); ?></td>
                                     <td class="text-transform text-nowrap"><?php echo e($model->getRenewalDateFormatted()); ?></td>
-                                    <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
+                                    <td class="kt-datatable__cell--left kt-datatable__cell text-right " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; " class="max-w-control">
+											<?php echo $__env->make('reports._user_comment_modal',['model'=>$model], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                         	  <?php echo $__env->make('reports.LetterOfGuaranteeIssuance.actions', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 											  <?php echo $__env->make('reports.LetterOfGuaranteeIssuance.renewal-date._renew_modal', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 											  
@@ -592,8 +595,9 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <td class="text-transform text-nowrap"><?php echo e($model->getPurchaseOrderDateFormatted()); ?></td>
                                     <td class="text-transform text-nowrap"><?php echo e($model->getIssuanceDateFormatted()); ?></td>
                                     <td class="text-transform text-nowrap"><?php echo e($model->getRenewalDateFormatted()); ?></td>
-                                    <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
+                                    <td class="kt-datatable__cell--left kt-datatable__cell text-right" data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative;" class="max-w-control">
+											<?php echo $__env->make('reports._user_comment_modal',['model'=>$model], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                           <?php echo $__env->make('reports.LetterOfGuaranteeIssuance.actions', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 										  <?php echo $__env->make('reports.LetterOfGuaranteeIssuance.renewal-date._renew_modal', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 

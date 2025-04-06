@@ -187,8 +187,9 @@ td{
 									{{ $dueStatus['status'] }}
 									@endif
 									</td>
-                                    <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
+                                    <td class="kt-datatable__cell--left kt-datatable__cell text-right" data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
+											@include('reports._user_comment_modal',['model'=>$cashExpense])
 											@if(auth()->user()->can('update cash expenses'))
 											@include('reports._review_modal',['model'=>$cashExpense])
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.cash.expense',['company'=>$company->id,'cashExpense'=>$cashExpense->id]) }}"><i class="fa fa-pen-alt"></i></a>
@@ -288,8 +289,9 @@ td{
                                     <td data-currency="{{ $money->getCurrency() }}"> {{ $money->getCurrencyToPaymentCurrencyFormatted() }}</td>
                                     <td class="bank-max-width">{{ $money->getOutgoingTransferAccountTypeName() }}</td>
                                     <td>{{ $money->getOutgoingTransferAccountNumber() }}</td>
-                                    <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
+                                    <td class="kt-datatable__cell--left kt-datatable__cell text-right " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
+										@include('reports._user_comment_modal',['model'=>$money])
 										@if(!$money->isOpenBalance())
 										@if(auth()->user()->can('update cash expenses'))
 										@include('reports._review_modal',['model'=>$money])
@@ -387,8 +389,9 @@ td{
                                     <td>{{ $cashExpense->getPaidAmountFormatted() }}</td>
                                     <td data-currency="{{ $cashExpense->getCurrency() }}">{{ $cashExpense->getCurrencyToPaymentCurrencyFormatted() }}</td>
                                     <td>{{ $cashExpense->getCashPaymentReceiptNumber() }}</td>
-                                    <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
+                                    <td class="kt-datatable__cell--left kt-datatable__cell text-right" data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
+										@include('reports._user_comment_modal',['model'=>$cashExpense])
 										@if(!$cashExpense->isOpenBalance())
 										@if(auth()->user()->can('update cash expenses'))
 										@include('reports._review_modal',['model'=>$cashExpense])

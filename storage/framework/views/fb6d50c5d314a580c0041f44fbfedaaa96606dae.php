@@ -150,7 +150,8 @@ use App\Models\MoneyReceived ;
                                 <div class="kt-input-icon">
                                     <div class="input-group date">
                                         <select data-current-selected="<?php echo e(isset($model) ? $model->getCustomerName() : ''); ?>" data-live-search="true" data-actions-box="true" id="customer_name" name="customer_id" class="form-control select2-select ajax-get-invoice-numbers  ajax-update-contracts customer-select">
-                                            <option value="" selected><?php echo e(__('Select')); ?></option>
+                                            
+									
                                             <?php $__currentLoopData = $customers; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $customerId => $partnerName): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                             <option <?php if($singleModel): ?> selected <?php endif; ?> <?php if(isset($model) && $model->getPartnerName() == $partnerName ): ?> selected <?php endif; ?> value="<?php echo e($customerId); ?>"><?php echo e($partnerName); ?></option>
                                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -174,7 +175,7 @@ use App\Models\MoneyReceived ;
 							receiving-currency-class update-exchange-rate
 							
 							">
-                                        
+                                        <option value="" selected><?php echo e(__('Select')); ?></option>
                                         <?php $__currentLoopData = getCurrencies(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $currencyId=>$currentName): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <?php
                                         $selected = isset($model) ? $model->getReceivingCurrency() == $currencyId : $currentName == $company->getMainFunctionalCurrency() ;
@@ -879,6 +880,22 @@ $(document).on('change','select#branch-id,select#receiving-currency-id',function
     })
 
 </script>
+
+
+<?php if(!$singleModel&&!isset($model)): ?>
+<script>
+    $(function() {
+
+        setTimeout(function() {
+            $('select.ajax-get-invoice-numbers:eq(0)').trigger('change')
+        }, 1500)
+    })
+
+</script>
+<script>
+    $('select#partner_type').trigger('change')
+</script>
+<?php endif; ?>
 
 <?php $__env->stopSection(); ?>
 

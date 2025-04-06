@@ -203,6 +203,7 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 	
 	
 			$('.js-append-to').empty()
+		
 			for (var i in res.invoices) {
 				var invoiceId = res.invoices[i].id
 				var invoiceNumber = res.invoices[i].invoice_number
@@ -280,7 +281,7 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 	}
 })
 
-$('select.ajax-get-invoice-numbers').trigger('change')
+$('select.ajax-get-invoice-numbers:eq(0)').trigger('change')
 //$('select.ajax-get-sales-orders-for-contract').trigger('change')
 $(document).on('change', '.js-settlement-amount,.settlement-amount-class,[data-max-cheque-value]', function () {
 	let total = 0
@@ -456,12 +457,12 @@ $(function () {
 			success:function(res){
 				let options = '<option selected value="">Select</option>';
 				let currentSelected = $('select#customer_name').val()
-				
-				for(customerId in res.customerInvoices ){
-					var customerName = res.customerInvoices[customerId]
+			
+				for(customerName in res.customerInvoices ){
+					var customerId = res.customerInvoices[customerName];
 					options +=` <option value="${customerId}" ${currentSelected == customerId ? 'selected' : ''}>${customerName}</option>`
 				}
-				console.log($('#is-down-payment-id').val())
+				
 				if($('#is-down-payment-id').val()){
 					$('select#customer_name').empty().append(options).trigger('change')
 				}else{
@@ -487,18 +488,18 @@ $(document).on('change','select#partner_type',function(){
 	const lang = $('body').data('lang')
 	const currencyName = $('select#invoice-currency-id').val();
 	const url = '/' + lang + '/' + companyId + '/get-partners-based-on-type/'+currencyName;
-	
-	
 	$.ajax({
 		url,
 		data:{partnerColumnName},
 		type:"get",
 		success:function(res){
 			const partners = res.partners;
-			let elements = '';
-			for(var id in partners){
-				elements+=`<option value="${id}">${partners[id]}</option>`
+			let elements = `<option value="" selected>Select</option>`;
+			for(var name in partners){
+				var id = partners[name]
+				elements+=`<option value="${id}">${name}</option>`
 			}
+		
 			$('select#customer_name').empty().append(elements).trigger('change')
 		}
 	});

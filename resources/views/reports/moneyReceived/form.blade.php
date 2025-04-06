@@ -149,7 +149,8 @@ use App\Models\MoneyReceived ;
                                 <div class="kt-input-icon">
                                     <div class="input-group date">
                                         <select data-current-selected="{{ isset($model) ? $model->getCustomerName() : '' }}" data-live-search="true" data-actions-box="true" id="customer_name" name="customer_id" class="form-control select2-select ajax-get-invoice-numbers  ajax-update-contracts customer-select">
-                                            <option value="" selected>{{__('Select')}}</option>
+                                            {{-- <option value="" selected>{{__('Select')}}</option> --}}
+									
                                             @foreach($customers as $customerId => $partnerName)
                                             <option @if($singleModel) selected @endif @if(isset($model) && $model->getPartnerName() == $partnerName ) selected @endif value="{{ $customerId }}">{{$partnerName}}</option>
                                             @endforeach
@@ -174,7 +175,7 @@ use App\Models\MoneyReceived ;
 							{{-- 
 							 ajax-get-invoice-numbers --}}
 							">
-                                        {{-- <option value="" selected>{{__('Select')}}</option> --}}
+                                        <option value="" selected>{{__('Select')}}</option>
                                         @foreach(getCurrencies() as $currencyId=>$currentName)
                                         @php
                                         $selected = isset($model) ? $model->getReceivingCurrency() == $currencyId : $currentName == $company->getMainFunctionalCurrency() ;
@@ -841,5 +842,21 @@ $(document).on('change','select#branch-id,select#receiving-currency-id',function
     })
 
 </script>
+
+
+@if (!$singleModel&&!isset($model))
+<script>
+    $(function() {
+
+        setTimeout(function() {
+            $('select.ajax-get-invoice-numbers:eq(0)').trigger('change')
+        }, 1500)
+    })
+
+</script>
+<script>
+    $('select#partner_type').trigger('change')
+</script>
+@endif
 
 @endsection

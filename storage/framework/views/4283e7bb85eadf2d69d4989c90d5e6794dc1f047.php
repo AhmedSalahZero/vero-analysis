@@ -5,7 +5,9 @@
     .kt-portlet .kt-portlet__head {
         border-bottom-color: #CCE2FD !important;
     }
-
+.font-normal{
+	font-weight:normal !important;
+}
     label {
         white-space: nowrap !important
     }
@@ -146,13 +148,16 @@
 <?php endif; ?> 
                                             </div>
                                             <div class="col-md-3 ">
-                                                <label><?php echo e(__('Cheque Number')); ?>
+                                                <label><?php echo e(__('Cheque Number/Cash Withdrawal')); ?>
 
                                                     <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                                 </label>
                                                 <div class="kt-input-icon">
                                                     <input data-max-cheque-value="0" step="1" type="numeric" value="<?php echo e(isset($model) ? $model->getChequeNumber():0); ?>" name="cheque_number" class="form-control  " placeholder="<?php echo e(__('Insert Cheque Number')); ?>">
                                                 </div>
+												<div>
+													<label for="" class="font-normal"><?php echo e(__('If Cash Withdrawal, Please write cash withdrawal')); ?></label>
+												</div>
                                             </div>
 
                                             <div class="col-md-3 ">
@@ -223,7 +228,7 @@
                                                 </label>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group date">
-                                                        <select data-from-current-selected="<?php echo e(isset($model) ? $model->getFromAccountNumber(): 0); ?>" name="from_account_number" class="form-control js-from-account-number">
+                                                        <select data-current-selected="<?php echo e(isset($model) ? $model->getFromAccountNumber(): 0); ?>" data-from-current-selected="<?php echo e(isset($model) ? $model->getFromAccountNumber(): 0); ?>" name="from_account_number" class="form-control js-from-account-number">
                                                             <option value="" selected><?php echo e(__('Select')); ?></option>
                                                         </select>
                                                     </div>
@@ -260,6 +265,7 @@
                         <!--end::Portlet-->
                 </div>
             </div>
+			 <?php echo $__env->make('user_comment',['model'=>$model??null], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
              <?php if (isset($component)) { $__componentOriginal49acb4be531871427e6da8fc4bf301f11a96ee34 = $component; } ?>
 <?php $component = $__env->getContainer()->make(App\View\Components\Submitting::class, []); ?>
 <?php $component->withName('submitting'); ?>

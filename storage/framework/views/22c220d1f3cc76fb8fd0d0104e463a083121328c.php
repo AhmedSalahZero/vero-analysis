@@ -167,10 +167,11 @@ use App\Models\InternalMoneyTransfer ;
                                     <td class="text-transform"><?php echo e($model->getToAccountNumber()); ?></td>
 
 									<?php if(auth()->user()->can('update internal money transfer') || auth()->user()->can('delete internal money transfer')): ?>
-                                    <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
+                                    <td class="kt-datatable__cell--left kt-datatable__cell text-right" data-field="Actions" data-autohide-disabled="false">
 
 
                                         <span style="overflow: visible; position: relative; width: 110px;">
+										<?php echo $__env->make('reports._user_comment_modal',['model'=>$model], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 											<?php if(auth()->user()->can('update internal money transfer')): ?>
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="<?php echo e(route('internal-money-transfers.edit',['company'=>$company->id,'internal_money_transfer'=>$model->id,'type'=>$currentType])); ?>"><i class="fa fa-pen-alt"></i></a>
 											<?php endif; ?> 
@@ -275,8 +276,9 @@ use App\Models\InternalMoneyTransfer ;
                                     <td><?php echo e($model->getToBankName()); ?></td>
                                     <td class="text-uppercase"><?php echo e($model->getToAccountTypeName()); ?></td>
                                     <td class="text-transform"><?php echo e($model->getToAccountNumber()); ?></td>
-                                    <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
+                                    <td class="kt-datatable__cell--left kt-datatable__cell text-right" data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
+										<?php echo $__env->make('reports._user_comment_modal',['model'=>$model], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 										<?php if(auth()->user()->can('update internal money transfer')): ?>
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="<?php echo e(route('internal-money-transfers.edit',['company'=>$company->id,'internal_money_transfer'=>$model->id,'type'=>$currentType])); ?>"><i class="fa fa-pen-alt"></i></a>
 											<?php endif; ?> 
@@ -367,6 +369,7 @@ use App\Models\InternalMoneyTransfer ;
                                     <th><?php echo e(__('Amount')); ?></th>
                                     <th><?php echo e(__('Currency')); ?></th>
 	                                    <th><?php echo e(__('From Bank')); ?></th>
+	                                    <th><?php echo e(__('Cheque Number')); ?></th>
                                     <th><?php echo e(__('From Account Type')); ?></th>
                                     <th><?php echo e(__('From Account Number')); ?></th>
                                     <th><?php echo e(__('To Branch')); ?></th>
@@ -385,11 +388,13 @@ use App\Models\InternalMoneyTransfer ;
                                     <td><?php echo e($model->getAmountFormatted()); ?></td>
                                     <td><?php echo e($model->getCurrencyFormatted()); ?></td>
                                     <td><?php echo e($model->getFromBankName()); ?></td>
+									<td><?php echo e($model->getChequeNumber()); ?></td>
                                     <td class="text-uppercase"><?php echo e($model->getFromAccountTypeName()); ?></td>
                                     <td class="text-transform"><?php echo e($model->getFromAccountNumber()); ?></td>
                                     <td><?php echo e($model->getToBranchName()); ?></td>
-                                    <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
+                                    <td class="kt-datatable__cell--left kt-datatable__cell text-right " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
+										<?php echo $__env->make('reports._user_comment_modal',['model'=>$model], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 											<?php if(auth()->user()->can('update internal money transfer')): ?>
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="<?php echo e(route('internal-money-transfers.edit',['company'=>$company->id,'internal_money_transfer'=>$model->id,'type'=>$currentType])); ?>"><i class="fa fa-pen-alt"></i></a>
 											<?php endif; ?> 

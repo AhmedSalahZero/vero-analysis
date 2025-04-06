@@ -195,8 +195,10 @@ use App\Models\MoneyReceived;
 									?>
 									
                                     <td class="font-weight-bold" style="color:<?php echo e($dueStatus['color']); ?>!important"><?php echo e($dueStatus['status']); ?></td>
-                                    <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
-                                        <span style="overflow: visible; position: relative; width: 110px;">
+                                    <td class="kt-datatable__cell--left kt-datatable__cell text-right " data-field="Actions" data-autohide-disabled="false">
+                                        <span style="overflow: visible; position: relative; width: 110px">
+										
+											<?php echo $__env->make('reports._user_comment_modal',['model'=>$moneyReceived], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 									
 											<?php if(auth()->user()->can('update money received')): ?>
 											<?php echo $__env->make('reports._review_modal',['model'=>$moneyReceived], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
@@ -308,8 +310,9 @@ use App\Models\MoneyReceived;
                                     <td class="bank-max-width"><?php echo e($moneyReceived->cheque->getDraweeBankName()); ?></td>
                                     <td class="text-nowrap"><?php echo e($moneyReceived->cheque->getDueDateFormatted()); ?></td>
                                     <td> <?php echo e($moneyReceived->cheque->getStatusFormatted()); ?> </td>
-                                    <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
-                                        <span style="overflow: visible; position: relative; width: 110px;">
+                                    <td class="kt-datatable__cell--left kt-datatable__cell text-right" data-field="Actions" data-autohide-disabled="false">
+                                        <span style="overflow: visible; position: relative; width: 110px">
+											<?php echo $__env->make('reports._user_comment_modal',['model'=>$moneyReceived], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 											<?php if(!$moneyReceived->isOpenBalance() ): ?>
 											<?php if(auth()->user()->can('update money received')  ): ?>
 											<?php echo $__env->make('reports._review_modal',['model'=>$moneyReceived], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
@@ -432,8 +435,8 @@ use App\Models\MoneyReceived;
                                     <td class="font-weight-bold" style="color:<?php echo e($dueStatus['color']); ?>!important"><?php echo e($dueStatus['status']); ?></td>
                                 
 
-                                    <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
-                                        <span style="overflow: visible; position: relative; width: 110px;">
+                                    <td class="kt-datatable__cell--left kt-datatable__cell text-right" data-field="Actions" data-autohide-disabled="false">
+                                        <span style="overflow: visible; position: relative; width: 110px">
 										<?php if(!$moneyReceived->isOpenBalance()  ): ?>
 										<?php if(auth()->user()->can('update money received') ): ?>
 										
@@ -707,8 +710,9 @@ use App\Models\MoneyReceived;
                                     <td data-currency="<?php echo e($money->getReceivingCurrency()); ?>"> <?php echo e($money->getCurrencyToReceivingCurrencyFormatted()); ?></td>
                                     <td class="bank-max-width"><?php echo e($money->getIncomingTransferAccountTypeName()); ?></td>
                                     <td><?php echo e($money->getIncomingTransferAccountNumber()); ?></td>
-                                    <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
-                                        <span style="overflow: visible; position: relative; width: 110px;">
+                                    <td class="kt-datatable__cell--left kt-datatable__cell text-right" data-field="Actions" data-autohide-disabled="false">
+                                        <span style="overflow: visible; position: relative; width: 110px">
+											<?php echo $__env->make('reports._user_comment_modal',['model'=>$money], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 										<?php if(!$money->isOpenBalance()  ): ?>
 										<?php if(auth()->user()->can('update money received') ): ?>
 										<?php echo $__env->make('reports._review_modal',['model'=>$money], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
@@ -816,8 +820,9 @@ use App\Models\MoneyReceived;
                                     <td><?php echo e($moneyReceived->getReceivedAmountFormatted()); ?></td>
                                     <td data-currency="<?php echo e($moneyReceived->getReceivingCurrency()); ?>"><?php echo e($moneyReceived->getCurrencyToReceivingCurrencyFormatted()); ?></td>
                                     <td><?php echo e($moneyReceived->getCashInSafeReceiptNumber()); ?></td>
-                                    <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
-                                        <span style="overflow: visible; position: relative; width: 110px;">
+                                    <td class="kt-datatable__cell--left kt-datatable__cell text-right" data-field="Actions" data-autohide-disabled="false">
+                                        <span style="overflow: visible; position: relative; width: 110px">
+											<?php echo $__env->make('reports._user_comment_modal',['model'=>$moneyReceived], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 										<?php if(!$moneyReceived->isOpenBalance() ): ?>
 										
 											<?php if(auth()->user()->can('update money received') ): ?>
@@ -935,8 +940,9 @@ use App\Models\MoneyReceived;
                                     <td data-currency="<?php echo e($money->getReceivingCurrency()); ?>"> <?php echo e($money->getCurrencyToReceivingCurrencyFormatted()); ?></td>
                                     <td class="bank-max-width"><?php echo e($money->getCashInBankAccountTypeName()); ?></td>
                                     <td><?php echo e($money->getCashInBankAccountNumber()); ?></td>
-                                    <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
-                                        <span style="overflow: visible; position: relative; width: 110px;">
+                                    <td class="kt-datatable__cell--left kt-datatable__cell text-right " data-field="Actions" data-autohide-disabled="false">
+                                        <span style="overflow: visible; position: relative; width: 110px">
+											<?php echo $__env->make('reports._user_comment_modal',['model'=>$money], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 										<?php if(!$money->isOpenBalance()): ?>
 										<?php echo $__env->make('reports._review_modal',['model'=>$money], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 										<?php if(auth()->user()->can('update money received')  ): ?>

@@ -7894,3 +7894,7 @@ function getSuperAdminSection()
 		return  Section::mainCompanyAdminSections()->get();
 	}
 }
+function isArabic($text) {
+    // التحقق مما إذا كان النص يحتوي على حروف عربية
+    return preg_match('/[\p{Arabic}]/u', $text);
+}

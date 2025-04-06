@@ -185,8 +185,9 @@ td{
 									{{ $dueStatus['status'] }}
 									@endif
 									</td>
-                                    <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
+                                    <td class="kt-datatable__cell--left kt-datatable__cell text-right" data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
+										@include('reports._user_comment_modal',['model'=>$moneyPayment])
 											@if(auth()->user()->can('update supplier payment'))
 											@include('reports._review_modal',['model'=>$moneyPayment])
 											@if(!$moneyPayment->isOpenBalance())
@@ -291,8 +292,9 @@ td{
                                     <td data-currency="{{ $money->getCurrency() }}"> {{ $money->getCurrencyToPaymentCurrencyFormatted() }}</td>
                                     <td class="bank-max-width">{{ $money->getOutgoingTransferAccountTypeName() }}</td>
                                     <td>{{ $money->getOutgoingTransferAccountNumber() }}</td>
-                                    <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
+                                    <td class="kt-datatable__cell--left kt-datatable__cell text-right" data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
+										@include('reports._user_comment_modal',['model'=>$money])
 										@if(!$money->isOpenBalance())
 										@if(auth()->user()->can('update supplier payment'))
 										@include('reports._review_modal',['model'=>$money])
@@ -379,8 +381,9 @@ td{
                                     <td>{{ $moneyPayment->getPaidAmountFormatted() }}</td>
                                     <td data-currency="{{ $moneyPayment->getCurrency() }}">{{ $moneyPayment->getCurrencyToPaymentCurrencyFormatted() }}</td>
                                     <td>{{ $moneyPayment->getCashPaymentReceiptNumber() }}</td>
-                                    <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
+                                    <td class="kt-datatable__cell--left kt-datatable__cell text-right" data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
+										@include('reports._user_comment_modal',['model'=>$moneyPayment])
 										@if(!$moneyPayment->isOpenBalance())
 										@if(auth()->user()->can('update supplier payment'))
 											@include('reports._review_modal',['model'=>$moneyPayment])
