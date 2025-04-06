@@ -55,7 +55,7 @@ return [
 			'collation' => 'utf8mb4_unicode_ci',
 			'prefix' => '',
 			'prefix_indexes' => true,
-			'strict' => true,
+			'strict' => false,
 			'engine' => null,
 			'options' => extension_loaded('pdo_mysql') ? array_filter([
 				PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
@@ -75,7 +75,7 @@ return [
 			'collation' => 'utf8mb4_unicode_ci',
 			'prefix' => '',
 			'prefix_indexes' => true,
-			'strict' => true,
+			'strict' => false,
 			'engine' => null,
 			'options' => extension_loaded('pdo_mysql') ? array_filter([
 				PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
@@ -94,7 +94,7 @@ return [
 			'collation' => 'utf8mb4_unicode_ci',
 			'prefix' => '',
 			'prefix_indexes' => true,
-			'strict' => true,
+			'strict' => false,
 			'engine' => null,
 			'options' => extension_loaded('pdo_mysql') ? array_filter([
 				PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
@@ -107,7 +107,6 @@ return [
 			'host' => 'veroanalysis.com',
 			'port' => env('DB_PORT', '3306'),
 			'database' => 'veroanalysis_db',
-			
 			'username' => 'veroanalysis_production',
 			'password' => 'ho_OQYRjSqGB',
 			'unix_socket' => env('DB_SOCKET', ''),
@@ -115,7 +114,7 @@ return [
 			'collation' => 'utf8mb4_unicode_ci',
 			'prefix' => '',
 			'prefix_indexes' => true,
-			'strict' => true,
+			'strict' => false,
 			'engine' => null,
 			'options' => extension_loaded('pdo_mysql') ? array_filter([
 				PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
