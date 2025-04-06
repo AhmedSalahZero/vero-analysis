@@ -507,7 +507,6 @@ $(document).on('change','select.invoice-currency-class',function(){
 		success:function(res){
 			let options = '<option selected value="">Select</option>';
 			let currentSelected = $('select#supplier_name').val()
-			// let currentSelected = $('select#supplier_name').attr('data-current-selected')
 			for(supplierId in res.supplierInvoices ){
 				var supplierName = res.supplierInvoices[supplierId]
 				options +=` <option value="${supplierId}" ${currentSelected == supplierId ? 'selected' : ''} >${supplierName}</option>`

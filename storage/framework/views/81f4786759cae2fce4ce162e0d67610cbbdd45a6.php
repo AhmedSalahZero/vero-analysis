@@ -1,6 +1,4 @@
-@extends('layouts.dashboard')
-
-@section('css')
+<?php $__env->startSection('css'); ?>
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/jszip-2.5.0/dt-1.12.1/af-2.4.0/b-2.2.3/b-colvis-2.2.3/b-html5-2.2.3/b-print-2.2.3/cr-1.5.6/date-1.1.2/fc-4.1.0/fh-3.2.3/r-2.3.0/rg-1.2.0/sl-1.4.0/sr-1.1.1/datatables.min.css" />
 
 <style>
@@ -218,22 +216,32 @@
 </style>
 <style>
     td.details-control {
-        background: url('{{asset('tables_imgs/details_open.png')}}') no-repeat center center;
+        background: url('<?php echo e(asset('tables_imgs/details_open.png')); ?>') no-repeat center center;
         cursor: pointer;
     }
 
     tr.shown td.details-control {
-        background: url('{{asset('tables_imgs/details_close.png')}}') no-repeat center center;
+        background: url('<?php echo e(asset('tables_imgs/details_close.png')); ?>') no-repeat center center;
     }
 
 </style>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('sub-header')
-<x-main-form-title :id="'main-form-title'" :class="''"> {{ __('Cash Expense Categories') }} </x-main-form-title>
-@endsection
+<?php $__env->startSection('sub-header'); ?>
+ <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.main-form-title','data' => ['id' => 'main-form-title','class' => '']]); ?>
+<?php $component->withName('main-form-title'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php $component->withAttributes(['id' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('main-form-title'),'class' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('')]); ?> <?php echo e(__('Cash Expense Categories')); ?>  <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
+<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
+<?php endif; ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?> 
+<?php $__env->stopSection(); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 
 
 <div class="kt-portlet kt-portlet--tabs">
@@ -241,120 +249,89 @@
         <div class="kt-portlet__head-toolbar justify-content-between flex-grow-1">
             <ul class="nav nav-tabs nav-tabs-space-lg nav-tabs-line nav-tabs-bold nav-tabs-line-3x nav-tabs-line-brand" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link {{ !Request('active')  
-					{{-- || Request('active') == Contract::RUNNING 
-					--}}
-					?'active':'' 
+                    <a class="nav-link <?php echo e(!Request('active')  
 					
-					 }}" data-toggle="tab" href="#running" role="tab">
-                        <i class="fa fa-money-check-alt"></i> {{ __('Cash Expense Categories') }}
+					?'active':''); ?>" data-toggle="tab" href="#running" role="tab">
+                        <i class="fa fa-money-check-alt"></i> <?php echo e(__('Cash Expense Categories')); ?>
+
                     </a>
                 </li>
 
-                {{-- <li class="nav-item">
-                    <a class="nav-link {{ Request('active') == Contract::RUNNING_AND_AGAINST ?'active':'' }}" data-toggle="tab" href="#{{ Contract::RUNNING_AND_AGAINST }}" role="tab">
-                        <i class="fa fa-money-check-alt"></i> {{ __('Running And Against') }}
-                    </a>
-                </li>
-
-
-                <li class="nav-item">
-                    <a class="nav-link {{ Request('active') == Contract::FINISHED ?'active':'' }}" data-toggle="tab" href="#{{ Contract::FINISHED }}" role="tab">
-                        <i class="fa fa-money-check-alt"></i> {{ __('Finished') }}
-                    </a>
-                </li> --}}
+                
 
 
             </ul>
 
             <div class="flex-tabs">
-                {{-- <a href="{{ route('buy-or-sell-currencies.create',['company'=>$company->id,Contract::RUNNING]) }}" class="btn active-style btn-icon-sm align-self-center">
-                <i class="fas fa-plus"></i>
-                {{ __('Bank To Bank') }}
-                </a>
-
-
-                <a href="{{ route('buy-or-sell-currencies.create',['company'=>$company->id,Contract::RUNNING_AND_AGAINST]) }}" class="btn  active-style btn-icon-sm align-self-center">
+                
+                <a href="<?php echo e(route('cash.expense.category.create',['company'=>$company->id])); ?>" class="btn  active-style btn-icon-sm align-self-center">
                     <i class="fas fa-plus"></i>
-                    {{ __('Safe To Bank') }}
-                </a>
+                    <?php echo e(__('Create')); ?>
 
-                <a href="{{ route('buy-or-sell-currencies.create',['company'=>$company->id,Contract::FINISHED]) }}" class="btn  active-style btn-icon-sm align-self-center">
-                    <i class="fas fa-plus"></i>
-                    {{ __('Bank To Safe') }}
-                </a>
-                --}}
-                <a href="{{ route('cash.expense.category.create',['company'=>$company->id]) }}" class="btn  active-style btn-icon-sm align-self-center">
-                    <i class="fas fa-plus"></i>
-                    {{ __('Create') }}
                 </a>
             </div>
 
-            {{-- <a href="" class="btn  active-style btn-icon-sm  align-self-center ">
-				<i class="fas fa-plus"></i>
-				<span>{{ __('New Record') }}</span>
-            </a> --}}
+            
         </div>
     </div>
 
 
     <div class="kt-portlet__body">
         <div class="tab-content  kt-margin-t-20">
-            {{-- @foreach(['running'] as $contractStatus)
-            @php
-            $currentType = $contrac ;
-            @endphp --}}
+            
             <!--Begin:: Tab Content-->
-            <div class="tab-pane {{ !Request('active') 
+            <div class="tab-pane <?php echo e(!Request('active') 
 			
-			{{-- && $contractStatus == Contract::RUNNING || Request('active') == $currentType --}} ?'active':'' 
-			
-			 }}" id="{{ 'running' }}" role="tabpanel">
+			 ?'active':''); ?>" id="<?php echo e('running'); ?>" role="tabpanel">
                 <div class="kt-portlet kt-portlet--mobile">
-                    {{-- <x-table-title.with-two-dates :type="$currentType" :title="__(Contract::getAllTypes()[$currentType])" :startDate="$filterDates[$currentType]['startDate']??''" :endDate="$filterDates[$currentType]['endDate']??''">
-                        <x-export-buy-or-sell-currency :search-fields="$searchFields[$currentType]" :money-received-type="$currentType" :has-search="1" :has-batch-collection="0" href="{{route('buy-or-sell-currencies.create',['company'=>$company->id])}}" />
-                    </x-table-title.with-two-dates> --}}
+                    
                     <div class="kt-portlet__body">
 
 
-                        <x-table :tableClass="'kt_table_with_no_pagination_no_fixed  removeGlobalStyle ' ">
-                            @slot('table_header')
+                         <?php if (isset($component)) { $__componentOriginale53a9d2e6d6c51019138cc2fcd3ba8ac893391c6 = $component; } ?>
+<?php $component = $__env->getContainer()->make(App\View\Components\Table::class, ['tableClass' => 'kt_table_with_no_pagination_no_fixed  removeGlobalStyle ' ]); ?>
+<?php $component->withName('table'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php $component->withAttributes([]); ?>
+                            <?php $__env->slot('table_header'); ?>
 
 
                             <tr class=" text-center second-tr-bg">
                                 <th class="text-center absorbing-column "></th>
                                 <th></th>
                             </tr>
-                            @endslot
-                            @slot('table_body')
+                            <?php $__env->endSlot(); ?>
+                            <?php $__env->slot('table_body'); ?>
                             <tr class=" text-center first-tr-bg ">
-                                <td class=" text-center view-table-th max-w-20"><b style="color:white !important" class="text-capitalize">{{ __('Name') }}</b></td>
+                                <td class=" text-center view-table-th max-w-20"><b style="color:white !important" class="text-capitalize"><?php echo e(__('Name')); ?></b></td>
 
 
                                 <td style="color:white !important" class="text-center view-table-th ">
-                                    {{ __('Actions') }}
+                                    <?php echo e(__('Actions')); ?>
+
                                 </td>
                             </tr>
-                            @php
+                            <?php
                             $id = 0 ;
-                            @endphp
-                            @foreach($items as $mainItemId => $parnetAndSubData )
-                            @php
+                            ?>
+                            <?php $__currentLoopData = $items; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $mainItemId => $parnetAndSubData): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <?php
                             $parent =$parnetAndSubData['parent'] ;
                             $subItems =$parnetAndSubData['sub_items'] ?? [];
 
-                            @endphp
+                            ?>
                             <tr class="group-color main-row-tr">
 
 
 
-                                <td class="black-text " style="cursor: pointer;" onclick="toggleRow('{{ $mainItemId }}')">
+                                <td class="black-text " style="cursor: pointer;" onclick="toggleRow('<?php echo e($mainItemId); ?>')">
 
                                     <div class="d-flex align-items-center ">
-                                        @if(count($subItems))
-                                        <i class="row_icon{{ $mainItemId }} flaticon2-up  mr-2  "></i>
-                                        @endif
-                                        <b class="text-capitalize ">{{ $parent['name'] }}</b>
+                                        <?php if(count($subItems)): ?>
+                                        <i class="row_icon<?php echo e($mainItemId); ?> flaticon2-up  mr-2  "></i>
+                                        <?php endif; ?>
+                                        <b class="text-capitalize "><?php echo e($parent['name']); ?></b>
                                     </div>
                                 </td>
 								
@@ -371,28 +348,32 @@
 
                                     <b class="ml-3">
                                       
-                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('cash.expense.category.edit', ['company'=>$company->id , 'cashExpenseCategory'=>$mainItemId]) }}"><i class="fa fa-pen-alt"></i></a>
-                                            <a class="btn btn-secondary btn-outline-hover-danger btn-icon  " href="#" data-toggle="modal" data-target="#modal-delete-{{ $mainItemId }}" title="Delete"><i class="fa fa-trash-alt"></i>
+                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="<?php echo e(route('cash.expense.category.edit', ['company'=>$company->id , 'cashExpenseCategory'=>$mainItemId])); ?>"><i class="fa fa-pen-alt"></i></a>
+                                            <a class="btn btn-secondary btn-outline-hover-danger btn-icon  " href="#" data-toggle="modal" data-target="#modal-delete-<?php echo e($mainItemId); ?>" title="Delete"><i class="fa fa-trash-alt"></i>
                                             </a>
 
-                                            <div id="modal-delete-{{ $mainItemId }}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
+                                            <div id="modal-delete-<?php echo e($mainItemId); ?>" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
-                                                            <h4 class="modal-title">{{ __('Delete Cash Expense Category ' .$parent['name']) }}</h4>
+                                                            <h4 class="modal-title"><?php echo e(__('Delete Cash Expense Category ' .$parent['name'])); ?></h4>
                                                         </div>
                                                         <div class="modal-body">
-                                                            <h3>{{ __('Are You Sure To Delete This Item ? ') }}</h3>
+                                                            <h3><?php echo e(__('Are You Sure To Delete This Item ? ')); ?></h3>
                                                         </div>
-                                                        <form action="{{ route('cash.expense.category.destroy',['company'=>$company->id , 'cashExpenseCategory'=> $mainItemId ]) }}" method="post" id="delete_form">
-                                                            {{ csrf_field() }}
-                                                            {{ method_field('DELETE') }}
+                                                        <form action="<?php echo e(route('cash.expense.category.destroy',['company'=>$company->id , 'cashExpenseCategory'=> $mainItemId ])); ?>" method="post" id="delete_form">
+                                                            <?php echo e(csrf_field()); ?>
+
+                                                            <?php echo e(method_field('DELETE')); ?>
+
                                                             <div class="modal-footer">
                                                                 <button class="btn btn-danger">
-                                                                    {{ __('Delete') }}
+                                                                    <?php echo e(__('Delete')); ?>
+
                                                                 </button>
                                                                 <button class="btn btn-secondary" data-dismiss="modal" aria-hidden="true">
-                                                                    {{ __('Close') }}
+                                                                    <?php echo e(__('Close')); ?>
+
                                                                 </button>
                                                             </div>
                                                         </form>
@@ -413,18 +394,18 @@
 
                             </tr>
 
-                            @foreach ($subItems as $subItemId => $titleAndValue)
+                            <?php $__currentLoopData = $subItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $subItemId => $titleAndValue): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 
 
 
-                            <tr class="row{{ $mainItemId }}  text-center sub-item-row" style="display: none">
+                            <tr class="row<?php echo e($mainItemId); ?>  text-center sub-item-row" style="display: none">
                                 <td colspan="5" class="text-left  text-capitalize">
                                     <table class="table ml-3 table-borderless">
 
                                         <tr>
                                          
-                                            <td class="max-w-20">{{ __('Name') }}</td>
-                                            <td>{{ $titleAndValue['name'] }}</td>
+                                            <td class="max-w-20"><?php echo e(__('Name')); ?></td>
+                                            <td><?php echo e($titleAndValue['name']); ?></td>
 
                                         </tr>
 
@@ -441,24 +422,29 @@
 
                             </tr>
 
-                            @endforeach
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
 
                             <?php $id++ ;?>
-                            @endforeach
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
 
 
 
 
-                            @endslot
-                        </x-table>
+                            <?php $__env->endSlot(); ?>
+                         <?php if (isset($__componentOriginale53a9d2e6d6c51019138cc2fcd3ba8ac893391c6)): ?>
+<?php $component = $__componentOriginale53a9d2e6d6c51019138cc2fcd3ba8ac893391c6; ?>
+<?php unset($__componentOriginale53a9d2e6d6c51019138cc2fcd3ba8ac893391c6); ?>
+<?php endif; ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?> 
 
 
                     </div>
                 </div>
             </div>
-            {{-- @endforeach --}}
+            
         </div>
     </div>
 
@@ -471,11 +457,11 @@
 
 
 
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('js')
-<script src="{{ url('assets/vendors/custom/datatables/datatables.bundle.js') }}" type="text/javascript"></script>
-<script src="{{ url('assets/js/demo1/pages/crud/datatables/basic/paginations.js') }}" type="text/javascript">
+<?php $__env->startSection('js'); ?>
+<script src="<?php echo e(url('assets/vendors/custom/datatables/datatables.bundle.js')); ?>" type="text/javascript"></script>
+<script src="<?php echo e(url('assets/js/demo1/pages/crud/datatables/basic/paginations.js')); ?>" type="text/javascript">
 </script>
 
 <script>
@@ -494,4 +480,6 @@
 <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.22/datatables.min.js"></script>
 <script type="text/javascript" src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
 
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.dashboard', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /media/salah/Software/projects/veroo/resources/views/cash-expense-categories/index.blade.php ENDPATH**/ ?>

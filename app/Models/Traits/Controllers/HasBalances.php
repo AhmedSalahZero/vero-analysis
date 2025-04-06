@@ -135,7 +135,6 @@ trait HasBalances
 						$currentDebit = $isCustomer ? 0 : $currentAmount;
 						$currentCredit = $isCustomer ? $currentAmount : 0 ;
 						$invoiceNumbers = implode('/',$moneyModel->settlements->pluck('invoice.invoice_number')->toArray());
-						
 						$currentComment = method_exists($fullMoneyModelName,'generateComment')  ? $fullMoneyModelName::generateComment($moneyModel,app()->getLocale(),$invoiceNumbers,'') : __('LC Settlement Paid Invoices [ :numbers ]',['numbers'=>$invoiceNumbers],app()->getLocale());
 						$currentData = []; 
 						$currentData['date'] = $dateReceivingFormatted;
@@ -168,7 +167,7 @@ trait HasBalances
 						$currentData['document_no'] =  $docNumber ;
 						$currentData['debit'] = $currentDebit;
 						$currentData['credit'] =$currentCredit;
-						$currentData['comment'] =__('Withhold Taxes For Invoice No.') . ' ' . implode('/',$moneyModel->settlements->where('withhold_amount','>',0)->pluck('invoice.invoice_number')->toArray());
+						$currentData['comment'] =__('Withhold Taxes For Invoice No.') . ' [ ' . implode('/',$moneyModel->settlements->where('withhold_amount','>',0)->pluck('invoice.invoice_number')->toArray()) . ' ]';
 						if($isNotBegBalance){
 							$index++ ;
 							$formattedData[] = $currentData ;

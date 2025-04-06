@@ -14,7 +14,6 @@ class CashExpenseCategoryController
 	
 		
 		$cashExpenseCategories = CashExpenseCategory::where('company_id',$company->id)->get();
-	
 		$items = [];
 	
 			foreach($cashExpenseCategories as $index=>$cashExpenseCategory){
@@ -70,7 +69,7 @@ class CashExpenseCategoryController
 	public function updateExpenseCategoryNameBasedOnCategory(Company $company , Request $request){
 		$expenseCategory = CashExpenseCategory::find($request->get('expenseCategoryId'));
 		return response()->json([
-			'categoryNames'=>$expenseCategory->cashExpenseCategoryNames->pluck('name','id')->toArray()
+			'categoryNames'=>$expenseCategory->cashExpenseCategoryNames->sortBy('name')->pluck('id','name')->toArray()
 		]);
 	}	
 	

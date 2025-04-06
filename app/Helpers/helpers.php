@@ -7504,9 +7504,11 @@ if (!function_exists('getFixedLoanTypes')) {
 	}
 	function getKeysWithSettlementAmount(array $items,string $keyName):string {
 		$result = [];
+
 		foreach($items as $key => $arr){
 			if(isset($arr[$keyName]) && $arr[$keyName] > 0){
-					$result[] = $key ;
+					$result[] =  $arr['invoice_number'] ;
+					// $result[] =  $key ;
 			}
 		}
 		return implode(',',$result) ;

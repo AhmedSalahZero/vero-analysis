@@ -59,6 +59,7 @@ class BalancesController
 		$downPaymentSqlQuery =  'select  '.  $clientIdColumnName .' , currency , sum(down_payment_balance) as down_payment_balance from '. $downPaymentTableName .' where   company_id = '. $company->id .' group by '. $clientIdColumnName .' , currency order by down_payment_balance desc;';
 		$invoicesBalances =DB::select(DB::raw($invoiceNetBalanceSqlQuery));
 		$partnerIds = collect($invoicesBalances)->pluck($clientIdColumnName,$clientIdColumnName)->toArray() ;
+	
 		$downPaymentsInMainCurrency = $this->getDownPaymentInMainCurrency($partnerIds,$mainFunctionalCurrency,$clientIdColumnName,$downPaymentSettlementModelName,$moneyModelName);
 		
 		$downPayments =DB::select(DB::raw($downPaymentSqlQuery));

@@ -330,6 +330,7 @@
                                         <td class="sub-text-bg text-center max-w-amount">{{ number_format($modelAsStdClass->end_balance) }}</td>
                                        @php
 									 		  $comment = isset($modelAsStdClass->{'comment_'.$lang}) ? $modelAsStdClass->{'comment_'.$lang} : null ;
+											$comment = is_null($comment) && isset($modelAsStdClass->type) && $modelAsStdClass->type =='opening-balance' ? __('Opening Balance') : null ;
 											$reviewedArr = getBankStatementReviewed($modelAsStdClass) ;
 											$reviewedText = getReviewedText($reviewedArr);
 											

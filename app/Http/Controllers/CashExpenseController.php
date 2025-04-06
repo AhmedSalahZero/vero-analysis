@@ -209,7 +209,7 @@ class CashExpenseController
 		$selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
 		$financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
 	
-		$cashExpenseCategories = CashExpenseCategory::where('company_id',$company->id)->get()->formattedForSelect(true,'getId','getName');
+		$cashExpenseCategories = CashExpenseCategory::where('company_id',$company->id)->orderBy('name','asc')->get()->formattedForSelect(true,'getId','getName');
         return view($viewName,[
 			'clientsWithContracts'=>$clientsWithContracts,
 			'contractsRelationName'=>$contractsRelationName,

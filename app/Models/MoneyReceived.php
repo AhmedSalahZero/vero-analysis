@@ -39,9 +39,10 @@ class MoneyReceived extends Model
 	
 	public static function generateComment(self $moneyReceived,string $lang,?string $invoiceNumbers = '',?string $customerName = null)
 	{
-		
 		$settledInvoiceNumbers = getKeysWithSettlementAmount(Request()->get('settlements',[]),'settlement_amount');
+
 		$settledInvoiceNumbers =  $settledInvoiceNumbers?: $invoiceNumbers;
+	
 		$customerName = is_null($customerName) ?$moneyReceived->getCustomerName() : $customerName;
 		if($moneyReceived->isCheque()){
 			$chequeNumber = $moneyReceived->getChequeNumber()?:Request('cheque_number');
@@ -171,6 +172,7 @@ class MoneyReceived extends Model
 	{
 	
 		self::creating(function (self $moneyReceived): void {
+		
 			$moneyReceived->comment_en = self::generateComment($moneyReceived,'en');
 			$moneyReceived->comment_ar = self::generateComment($moneyReceived,'ar');
 		});

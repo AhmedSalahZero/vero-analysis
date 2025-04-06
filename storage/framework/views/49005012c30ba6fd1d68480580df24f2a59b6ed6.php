@@ -113,8 +113,6 @@ $selectedBanks = [];
                 </div>
 
                 
-
-
         <div class="col-md-2 mb-4">
              <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.select','data' => ['addNewModal' => true,'addNewModalModalType' => '','addNewModalModalName' => 'CashExpenseCategory','addNewModalModalTitle' => __('Expense Category'),'options' => $cashExpenseCategories,'addNew' => false,'label' => __('Expense Category'),'class' => 'select2-select expense_category  ','dataUpdateCategoryNameBasedOnCategory' => true,'dataFilterType' => ''.e('create').'','all' => false,'name' => 'expense_category_id','id' => 'expense_category_id','selectedValue' => isset($model) ? $model->getExpenseCategoryId() : 0]]); ?>
@@ -1071,8 +1069,9 @@ $selectedBanks = [];
                         , success: function(res) {
                             var options = '';
                             var currentSelectedId = $('select.category_name').attr('data-current-selected')
-                            for (var categoryNameId in res.categoryNames) {
-                                var categoryName = res.categoryNames[categoryNameId];
+						
+                            for (var categoryName in res.categoryNames) {
+                                var categoryNameId = res.categoryNames[categoryName];
                                 options += `<option ${currentSelectedId == categoryNameId ? 'selected' : '' } value="${categoryNameId}"> ${categoryName}  </option> `;
                             }
                             $('select.category_name').empty().append(options).selectpicker("refresh");

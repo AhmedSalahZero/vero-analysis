@@ -112,8 +112,6 @@ $selectedBanks = [];
                 </div>
 
                 
-
-
         <div class="col-md-2 mb-4">
             <x-form.select :add-new-modal="true" :add-new-modal-modal-type="''" :add-new-modal-modal-name="'CashExpenseCategory'" :add-new-modal-modal-title="__('Expense Category')" :options="$cashExpenseCategories" :add-new="false" :label="__('Expense Category')" class="select2-select expense_category  " data-update-category-name-based-on-category data-filter-type="{{ 'create' }}" :all="false" name="expense_category_id" id="expense_category_id" :selected-value="isset($model) ? $model->getExpenseCategoryId() : 0"></x-form.select>
         </div>
@@ -858,7 +856,7 @@ $selectedBanks = [];
         const amount = number_unformat($('.main-amount-class[data-type="' + moneyType + '"]').val());
         const exchangeRate = number_unformat($('.exchange-rate-class[data-type="' + moneyType + '"]').val());
         const amountAfterExchangeRate = amount * exchangeRate;
-        $('.amount-after-exchange-rate-class[data-type="' + moneyType + '"]').val(number_format(amountAfterExchangeRate)).trigger('change')
+        $('.amount-after-exchange-rate-class[data-type="' + moneyType + '"]').val(amountAfterExchangeRate).trigger('change')
         $('.js-settlement-amount:eq(0)').trigger('change')
     })
     $(document).on('change', 'select[when-change-trigger-account-type-change]', function(e) {
@@ -986,8 +984,9 @@ $selectedBanks = [];
                         , success: function(res) {
                             var options = '';
                             var currentSelectedId = $('select.category_name').attr('data-current-selected')
-                            for (var categoryNameId in res.categoryNames) {
-                                var categoryName = res.categoryNames[categoryNameId];
+						
+                            for (var categoryName in res.categoryNames) {
+                                var categoryNameId = res.categoryNames[categoryName];
                                 options += `<option ${currentSelectedId == categoryNameId ? 'selected' : '' } value="${categoryNameId}"> ${categoryName}  </option> `;
                             }
                             $('select.category_name').empty().append(options).selectpicker("refresh");

@@ -281,7 +281,7 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 })
 
 $('select.ajax-get-invoice-numbers').trigger('change')
-$('select.ajax-get-sales-orders-for-contract').trigger('change')
+//$('select.ajax-get-sales-orders-for-contract').trigger('change')
 $(document).on('change', '.js-settlement-amount,.settlement-amount-class,[data-max-cheque-value]', function () {
 	let total = 0
 	$('.js-settlement-amount').each(function (index, input) {
@@ -383,7 +383,6 @@ $(document).on('change', '.js-update-account-id-based-on-account-type', function
 	currency = currency ? currency : $(this).closest('.kt-portlet__body').find('.current-currency').val();
 	currency = currency ? currency : $(this).closest('[data-repeater-item]').find('.select-for-currency').val();
 	currency = currency ? currency : $('input.current-currency-input').val();	 
-	console.log(currency)
 	let financialInstitutionBankId = parent.find('[data-financial-institution-id]').val()
 	financialInstitutionBankId = typeof financialInstitutionBankId !== 'undefined' ? financialInstitutionBankId : $('[data-financial-institution-id]').val()
 	financialInstitutionBankId = typeof financialInstitutionBankId !== 'undefined' ? financialInstitutionBankId : $(this).closest('.closest-parent').find('input[name="financial_institution_id"]').val()
@@ -441,7 +440,9 @@ $(function () {
 
 	$(document).on('change','select.invoice-currency-class',function(){
 		const currencyName = $(this).val();
-		$('select.receiving-currency-class').val(currencyName).trigger('change');
+		$('select.receiving-currency-class').val(currencyName)
+		//.trigger('change')
+		;
 		const companyId = $('body').data('current-company-id')
 		const lang = $('body').data('lang')
 		const url = '/' + lang + '/' + companyId + '/get-customers-based-on-currency/'+currencyName
@@ -460,7 +461,13 @@ $(function () {
 					var customerName = res.customerInvoices[customerId]
 					options +=` <option value="${customerId}" ${currentSelected == customerId ? 'selected' : ''}>${customerName}</option>`
 				}
-				$('select#customer_name').empty().append(options).trigger('change')
+				console.log($('#is-down-payment-id').val())
+				if($('#is-down-payment-id').val()){
+					$('select#customer_name').empty().append(options).trigger('change')
+				}else{
+					$('select#customer_name').empty().append(options)
+				}
+		
 			}
 		})
 	});
@@ -497,4 +504,4 @@ $(document).on('change','select#partner_type',function(){
 	});
 	
 })		
-$('select#partner_type').trigger('change');
+//$('select#partner_type').trigger('change');

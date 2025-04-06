@@ -41,7 +41,6 @@ class OddoService
 			return ;
 		}
 		$invoices = $this->getInvoices($importDate);
-	
 		foreach($invoices as $invoice){
 			$invoiceId = $invoice['id'];
 			$invoiceDate = $invoice['invoice_date'];

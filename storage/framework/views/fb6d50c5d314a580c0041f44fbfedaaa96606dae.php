@@ -839,7 +839,7 @@ $(document).on('change','select#branch-id,select#receiving-currency-id',function
         const amount = number_unformat($('.main-amount-class[data-type="' + moneyType + '"]').val());
         const exchangeRate = number_unformat($('.exchange-rate-class[data-type="' + moneyType + '"]').val());
         const amountAfterExchangeRate = amount / exchangeRate;
-        $('.amount-after-exchange-rate-class[data-type="' + moneyType + '"]').val(number_format(amountAfterExchangeRate)).trigger('change')
+        $('.amount-after-exchange-rate-class[data-type="' + moneyType + '"]').val(amountAfterExchangeRate).trigger('change')
         $('.js-settlement-amount:eq(0)').trigger('change')
     })
     $(document).on('change', 'select[when-change-trigger-account-type-change]', function(e) {

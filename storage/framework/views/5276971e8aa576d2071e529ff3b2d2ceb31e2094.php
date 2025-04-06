@@ -196,7 +196,6 @@ $selectedBanks = [];
                         </div>
 
                         <div class="col-md-3">
-
                             <label><?php echo e(__('Name')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
                             <div class="kt-input-icon">
                                 <div class="kt-input-icon">
@@ -1047,7 +1046,7 @@ $selectedBanks = [];
         const amount = number_unformat($('.main-amount-class[data-type="' + moneyType + '"]').val());
         const exchangeRate = number_unformat($('.exchange-rate-class[data-type="' + moneyType + '"]').val());
         const amountAfterExchangeRate = amount / exchangeRate;
-        $('.amount-after-exchange-rate-class[data-type="' + moneyType + '"]').val(number_format(amountAfterExchangeRate)).trigger('change')
+        $('.amount-after-exchange-rate-class[data-type="' + moneyType + '"]').val(amountAfterExchangeRate).trigger('change')
         $('.js-settlement-amount:eq(0)').trigger('change')
 
 
