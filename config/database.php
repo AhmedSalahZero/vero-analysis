@@ -107,6 +107,7 @@ return [
 			'host' => 'veroanalysis.com',
 			'port' => env('DB_PORT', '3306'),
 			'database' => 'veroanalysis_db',
+			
 			'username' => 'veroanalysis_production',
 			'password' => 'ho_OQYRjSqGB',
 			'unix_socket' => env('DB_SOCKET', ''),
