@@ -19,18 +19,17 @@ class Department extends Model
 	 {
 		 parent::boot();
 		 static::deleting(function(self $department){
-			$department->positions->each(function(Position $position){
+			$positions = Position::where('department_id',$department->id)->get();
+			$positions->each(function(Position $position){
 				$position->delete();
 			});
 		 });
 	 }
 	 public function positions()
 	{
-		return $this->hasMany(Position::class,'department_id','id');
+		$studyId = Request()->segment(5);
+		return $this->hasMany(Position::class,'department_id','id')->where('study_id',$studyId);
 	}
 	
-	// public function getDeleteRoute():string
-	// {
-	// 	return route('delete.single.department.for.non.banking',['company'=>$this->company->id,'department'=>$this->id,'study'=>$this->study->id]);
-	// }	
+	
 }

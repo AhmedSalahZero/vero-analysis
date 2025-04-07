@@ -154,24 +154,24 @@ class ManpowerExpensesController extends Controller
 			'redirectTo'=>route('view.manpower.for.non.banking',['company'=>$company->id,'study'=>$study->id])
 		]);
 	}
-	public function deleteSinglePosition(Company $company , Request $request,Study $study,Position $position)
-	{
+	// public function deleteSinglePosition(Company $company , Request $request,Study $study,Position $position)
+	// {
 
-		$position->delete();
-		$department = $position->department ;
-		$department->update([
-			'no_positions'=>$department->getNoPositions() - 1 
-		]);
+	// 	$position->delete();
+	// 	$department = $position->department ;
+	// 	$department->update([
+	// 		'no_positions'=>$department->getNoPositions() - 1 
+	// 	]);
 		
-		return redirect()->back();
-	}
-	public function deleteSingleDepartment(Company $company , Request $request,Study $study,Department $department)
-	{
+	// 	return redirect()->back();
+	// }
+	// public function deleteSingleDepartment(Company $company , Request $request,Study $study,Department $department)
+	// {
 
-		$department->delete();
+	// 	$department->delete();
 			
-		return redirect()->back();
-	}
+	// 	return redirect()->back();
+	// }
 	public function getPositionsBasedOnDepartment(Company $company,Request $request,Study $study){
 		$department  = Department::find($request->get('departmentId'));
 

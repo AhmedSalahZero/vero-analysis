@@ -264,25 +264,41 @@ $(document).on('change','.current-growth-rate-result-value-formatted',function(e
 })
 $(document).on('change','.is-fully-funded-checkbox',function(){
 	const value = parseInt($(this).val());
+	const canViewFundingStructure = parseInt($('#toggleEditBtn').attr('can-show-funding-structure'));
+
+
+	$('#ffe-funding').hide();
 	if(value){
 		$('#ffe-funding').hide();
+		$('#toggleEditBtn').hide();
+		$('#save-and-go-to-next').show();
+	
 	}else{
-		$('#ffe-funding').show();
+		if(canViewFundingStructure){
+			$('#ffe-funding').show();
+		}
+		$('#save-and-go-to-next').hide();
+		$('#toggleEditBtn').show();
+	
 		
 	}
+	if(canViewFundingStructure){
+		$('#save-and-go-to-next').show();
+	}
+	
 });
 $('.is-fully-funded-checkbox:checked').trigger('change');
 $(document).on('change','.recalculate-monthly-increase-amounts',function(){
 	var currentRow = $(this).closest('tr') ;
 	var itemCost = currentRow.find('.ffe-item-cost').val();
+	// var vat = currentRow.find('dd');
 	var costAnnuallyIncreaseRate = currentRow.find('.cost-annually-increase-rate').val() / 100;
 	var contingencyRate = currentRow.find('.contingency-rate').val() / 100;
 	
-	var yearIndex = -1 ; // will increase every year ;
+	var yearIndex = -1 ; ;
 	currentRow.find('.ffe_counts').each(function(index,ffeCountElement){
 		var currentYearIndex = parseInt($(ffeCountElement).attr('data-current-year-index'));
 		var currentMonthIndex=$(ffeCountElement).attr('data-column-index');
-		//  console.log(ffeCountElement,currentYearIndex)
 		if(currentYearIndex != yearIndex){
 			yearIndex++;
 		}
@@ -295,7 +311,6 @@ $(document).on('change','.recalculate-monthly-increase-amounts',function(){
 		$('.current-month-amounts[data-column-index="'+currentMonthIndex+'"]').each(function(index,amountElement){
 			totalForCurrentMonth+= parseFloat($(amountElement).val());
 		})
-		//console.log('inside')
 		$('.direct-ffe-amounts[data-column-index="'+currentMonthIndex+'"]').val(number_format(totalForCurrentMonth)).trigger('change');
 		
 	})
@@ -303,10 +318,14 @@ $(document).on('change','.recalculate-monthly-increase-amounts',function(){
 })
 let calculateBranchIncreaseAmounts = function(){
 	var currentRow = $(this).closest('tr') ;
-	var itemCost = currentRow.find('.ffe-item-cost').val();
+	var itemCost = parseFloat(currentRow.find('.ffe-item-cost').val());
+	itemCost = itemCost ? itemCost : 0 ;
 	var costAnnuallyIncreaseRate = currentRow.find('.cost-annually-increase-rate').val() / 100;
+	costAnnuallyIncreaseRate = costAnnuallyIncreaseRate ? costAnnuallyIncreaseRate : 0 ;
 	var contingencyRate = currentRow.find('.contingency-rate').val() / 100;
-	var currentItemCount = parseInt(currentRow.find('.current-count').val())
+	contingencyRate = contingencyRate ? contingencyRate : 0;
+	var currentItemCount = parseInt(currentRow.find('.current-count').val());
+	currentItemCount = currentItemCount ? currentItemCount : 0;
 	var yearIndex = -1 ; // will increase every year ;
 	var  netBranchOpeningProjections = JSON.parse($('#net-branch-opening-projections').val());
 	var counts = {};
@@ -320,12 +339,14 @@ let calculateBranchIncreaseAmounts = function(){
 		}
 		counts[currentMonthIndex]=currentCount;
 		var currentTotalAmount = itemCost * currentCount  * (1+contingencyRate); 
-		console.log('total',currentTotalAmount);
 		var currentTotalAmountIncrease = currentTotalAmount * Math.pow(1 + costAnnuallyIncreaseRate, yearIndex)
 		$(currentRow).closest('tr').find('.current-month-amounts[data-column-index="'+currentMonthIndex+'"]').val(currentTotalAmountIncrease);
 		var totalForCurrentMonth = 0 ;
 		$('.current-month-amounts[data-column-index="'+currentMonthIndex+'"]').each(function(index,amountElement){
-			totalForCurrentMonth+= parseFloat($(amountElement).val());
+			var currentAmount = $(amountElement).val() ;
+			currentAmount = currentAmount == undefined ? 0 : currentAmount ;
+			totalForCurrentMonth+= parseFloat(currentAmount);
+			
 		})
 		$('.direct-ffe-amounts[data-column-index="'+currentMonthIndex+'"]').val(number_format(totalForCurrentMonth)).trigger('change');
 		
@@ -334,3 +355,86 @@ let calculateBranchIncreaseAmounts = function(){
 }
 $(document).on('change','.recalculate-monthly-increase-amounts-branches',calculateBranchIncreaseAmounts)
 $('.recalculate-monthly-increase-amounts-branches').trigger('change');
+$(document).on('change','select.department-class',function(){
+	const departmentIds = $(this).val();
+	const companyId = $('body').attr('data-current-company-id')
+	const lang = $('body').attr('data-lang')
+	let studyId = $('#study-id-js').val()
+	const url = '/' + lang + '/' + companyId + '/non-banking-financial-services/study/' + studyId + '/get-positions-based-on-departments';
+	var data = {
+		departmentIds
+	}
+	$.ajax({
+		url,
+		data,
+		success:(res)=>{
+			var positionArr = res.positionIds ;
+			var options ='';
+			var positionRow = $(this).closest('tr').find('select.position-class');
+			var currentSelected = JSON.parse($(positionRow).attr('data-current-selected-items'));
+			for(var positionId in positionArr){
+				positionId = positionId;
+				var selected = currentSelected.includes(positionId);
+				console.log(currentSelected,positionId,selected,'--')
+				options+=`<option ${selected ? 'selected':''} value="${positionId}">${positionArr[positionId]}</option>`
+			}
+			$(positionRow).empty().append(options).trigger('change');
+		}
+	})
+	
+})
+$(function(){
+	$('select.department-class').trigger('change');
+})
+
+
+$(document).ready(function() {
+    // Set table to readonly by default
+	var inEditMode = parseInt($('#toggleEditBtn').attr('in-edit-mode'));
+	if(inEditMode){
+		$('#fixedAssets_repeater').addClass('readonly');
+		const table = $('#fixedAssets_repeater');
+		table.find('input, select').prop('readonly', true);
+	}
+    // Toggle editability
+    $('#toggleEditBtn').click(function(e) {
+		e.preventDefault();
+        const table = $('#fixedAssets_repeater');
+        const isReadonly = table.hasClass('readonly');
+        
+		// console.log('save form',saveForm);
+
+        if (isReadonly) {
+			table.removeClass('readonly').addClass('editable');
+			$(this).text('Disabled Editing');
+			$(this).attr('can-show-funding-structure',0);
+		//	$(this).attr('is-save-and-continue',1);
+            // Enable all inputs and selects
+			
+				table.find('input, select').prop('readonly', false);
+				//table.find('.bootstrap-select').removeClass('disabled');
+			
+        } else {
+			table.removeClass('editable').addClass('readonly');
+
+			$(this).text('Enable Editing');
+	//		$(this).attr('is-save-and-continue',0);
+			$(this).attr('can-show-funding-structure',1);
+            // Disable all inputs and selects
+		
+				table.find('input, select').prop('readonly', true);
+	
+		
+				
+        }
+		$('.is-fully-funded-checkbox:checked').trigger('change');
+    });
+    
+    // Initially disable all inputs and selects
+    // $('#fixedAssets_repeater').find('input, select').prop('readonly', true);
+    // $('#fixedAssets_repeater').find('.bootstrap-select').addClass('readonly');
+});
+
+$(function(){
+//	$('#toggleEditBtn').click();
+})

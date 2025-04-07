@@ -1,19 +1,19 @@
+<div class="kt-portlet 
 
-<div data-card-id="{{ $cardId }}" class="kt-portlet parent-card ">
+ ">
     <div class="kt-portlet__body">
         <h3 class="font-weight-bold text-black form-label kt-subheader__title small-caps mr-5 text-nowrap" style=""> {{ __('Items Cost') }}</h3>
         <input type="hidden" name="tableIds[]" value="{{ $tableId }}">
-<input id="net-branch-opening-projections" class="net-branch-opening-projections" type="hidden" value="{{ json_encode($newBranchCountPerDateIndex) }}">
-@foreach($newBranchCountPerDateIndex as $dateAsIndex=>$newBranchCountPerDateIndexRow)
-<input  data-month-index="{{ $dateAsIndex }}" data-year-index="{{ $datesIndexWithYearIndex[$dateAsIndex] }}" class="year-index-month-index" type="hidden" >
- {{-- <input type="hidden" value="{{ isset($subModel) ? $subModel->getMonthlyAmountAtMonthIndex($dateAsIndex) : 0 }}" name="fixedAssets[{{ $dateAsIndex }}][]" multiple class="current-month-amounts" data-column-index="{{ $dateAsIndex }}"> --}}
+        <input id="net-branch-opening-projections" class="net-branch-opening-projections" type="hidden" value="{{ json_encode($newBranchCountPerDateIndex) }}">
+        @foreach($newBranchCountPerDateIndex as $dateAsIndex=>$newBranchCountPerDateIndexRow)
+        <input data-month-index="{{ $dateAsIndex }}" data-year-index="{{ $datesIndexWithYearIndex[$dateAsIndex] }}" class="year-index-month-index" type="hidden">
+        @endforeach
 
-@endforeach 
-		
-        <x-tables.repeater-table :initEmpty="false" :removeActionBtn="false" :first-element-deletable="false" :font-size-class="'font-14px'" :append-save-or-back-btn="false" :repeater-with-select2="true" :parentClass="'js-toggle-visibility-----'" :tableName="$tableId " :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
+        <x-tables.repeater-table :hideByDefault="false" :initEmpty="false" :removeActionBtn="false" :first-element-deletable="false" :font-size-class="'font-14px'" :append-save-or-back-btn="false" :repeater-with-select2="true" :parentClass="'js-toggle-visibility-----'" :tableName="$tableId " :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
             <x-slot name="ths">
-                {{-- <x-tables.repeater-table-th :font-size-class="'font-14px'" class="  header-border-down first-column-th-class" :title="__('Actions')"></x-tables.repeater-table-th> --}}
                 <x-tables.repeater-table-th :font-size-class="'font-14px'" class="  header-border-down first-column-th-class" :title="__('Item <br> Name')"></x-tables.repeater-table-th>
+                <x-tables.repeater-table-th :font-size-class="'font-14px'" class=" tenor-selector-class header-border-down " :title="__('Department <br> Name')"></x-tables.repeater-table-th>
+                <x-tables.repeater-table-th :font-size-class="'font-14px'" class=" tenor-selector-class header-border-down " :title="__('Position <br> Name')"></x-tables.repeater-table-th>
                 <x-tables.repeater-table-th :font-size-class="'font-14px'" class=" tenor-selector-class header-border-down " :title="__('Item <br> Cost')"></x-tables.repeater-table-th>
                 <x-tables.repeater-table-th :font-size-class="'font-14px'" class=" header-border-down rate-class" :title="__('VAT <br> Rate')"></x-tables.repeater-table-th>
                 <x-tables.repeater-table-th :font-size-class="'font-14px'" class=" header-border-down rate-class" :title="__('Withhold <br> Tax %')"></x-tables.repeater-table-th>
@@ -26,22 +26,6 @@
                 <x-tables.repeater-table-th :font-size-class="'font-14px'" class="header-border-down" :title="__('Replacement <br> Interval')"></x-tables.repeater-table-th>
                 <x-tables.repeater-table-th :font-size-class="'font-14px'" class="header-border-down" :title="__('Count')"></x-tables.repeater-table-th>
 
-                {{-- @foreach($studyMonthsForViews as $dateAsIndex=>$dateAsString)
-                @php
-                $currentMonthNumber = explode('-',$dateAsString)[1];
-                $currentYear= explode('-',$dateAsString)[0];
-                $currentYearRepeaterIndex = 0 ;
-                @endphp
-
-                <x-tables.repeater-table-th data-column-index="{{ $dateAsIndex }}" :font-size-class="'font-14px'" class=" interval-class header-border-down " :title="dateFormatting($dateAsString, 'M\' Y') . ' <br> ' .__('Count #')"></x-tables.repeater-table-th>
-                @if($financialYearEndMonthNumber == $currentMonthNumber || $loop->last)
-                <x-tables.repeater-table-th :icon="true" data-column-index="{{ $dateAsIndex }}" :font-size-class="'font-14px'" class=" tenor-selector-class header-border-down {{ 'year-repeater-index-'.$currentYearRepeaterIndex }} collapse-before-me exclude-from-collapse" :title="__('Total Yr.').' <br> '. $currentYear"></x-tables.repeater-table-th>
-                @php
-                $currentYearRepeaterIndex ++;
-                @endphp
-                @endif
-
-                @endforeach --}}
             </x-slot>
             <x-slot name="trs">
                 @php
@@ -62,18 +46,29 @@
                         </div>
                     </td>
                     <input type="hidden" name="id" value="{{ isset($subModel) ? $subModel->id : 0 }}">
-                   
+
                     <td>
                         <div class="">
                             <input value="{{ isset($subModel) ? $subModel->getName() : '' }}" @if($isRepeater) name="name" @else name="{{ $tableId }}[0][name]" @endif class="form-control text-left exclude-from-trigger-change-when-repeat" type="text">
 
                         </div>
                     </td>
+
+                    <td>
+                        <x-form.select :multiple="true" :selectedValue="isset($subModel) ? $subModel->getDepartmentIds() : []" :options="$departmentFormattedForSelect2" :add-new="false" class="select2-select repeater-select department-class " :all="false" name="@if($isRepeater) department_ids @else {{ $tableId }}[0][department_ids] @endif"></x-form.select>
+                    </td>
+{
+                    <td>
+                        <x-form.select :selectedValue="isset($subModel) ? $subModel->getPositionIds() : []" :multiple="true" :options="[]" :add-new="false" class="select2-select repeater-select position-class " :all="false" name="@if($isRepeater) position_ids @else {{ $tableId }}[0][position_ids] @endif"></x-form.select>
+                    </td>
+
                     <td>
                         <div class="">
                             <input value="{{ isset($subModel) ? $subModel->getItemCost() : 0 }}" @if($isRepeater) name="ffe_item_cost" @else name="{{ $tableId }}[0][ffe_item_cost]" @endif class="form-control expandable-amount-input text-left ffe-item-cost trigger-change-repeater recalculate-monthly-increase-amounts-branches" type="text">
                         </div>
                     </td>
+
+
 
                     <td>
 
@@ -91,14 +86,14 @@
                             <span style="margin-left:3px	">%</span>
                         </div>
                     </td>
-					
-					 <td>
+
+                    <td>
                         <div class="d-flex align-items-center">
                             <input value="{{ isset($subModel) ? $subModel->getContingencyRate():0 }}" @if($isRepeater) name="contingency_rate" @else name="{{ $tableId }}[0][contingency_rate]" @endif class="form-control contingency-rate recalculate-monthly-increase-amounts-branches exclude-from-trigger-change-when-repeat expandable-percentage-input text-left exclude-from-trigger-change-when-repeat" type="text">
                             <span style="margin-left:3px	">%</span>
                         </div>
                     </td>
-					
+
                     <td>
 
 
@@ -112,7 +107,7 @@
                         <x-modal.custom-collection :subModel="isset($subModel) ? $subModel : null " :tableId="$tableId" :isRepeater="$isRepeater" :id="$repeaterId.'test-modal-id'"></x-modal.custom-collection>
                     </td>
                     <td>
-                        <x-form.select :selectedValue="isset($subModel) ? $subModel->getDepreciationDuration() : 0" :options="getDepreciationDurations()" :add-new="false" class="select2-select repeater-select depreciation_duration " :all="false" name="@if($isRepeater) depreciation_duration @else {{ $tableId }}[0][depreciation_duration] @endif"></x-form.select>
+                        <x-form.select :selectedValue="isset($subModel) ? $subModel->getDepreciationDuration() : 5" :options="getDepreciationDurations()" :add-new="false" class="select2-select repeater-select depreciation_duration " :all="false" name="@if($isRepeater) depreciation_duration @else {{ $tableId }}[0][depreciation_duration] @endif"></x-form.select>
                     </td>
                     <td>
 
@@ -123,65 +118,28 @@
                         </div>
                     </td>
                     <td>
-                        <x-form.select :selectedValue="isset($subModel) ? $subModel->getReplacementInterval() : 'cash'" :options="getReplacementInterval()" :add-new="false" class="select2-select repeater-select  " :all="false" name="@if($isRepeater) replacement_interval @else {{ $tableId }}[0][replacement_interval] @endif"></x-form.select>
+                        <x-form.select :selectedValue="isset($subModel) ? $subModel->getReplacementInterval() : 1" :options="getReplacementInterval()" :add-new="false" class="select2-select repeater-select  " :all="false" name="@if($isRepeater) replacement_interval @else {{ $tableId }}[0][replacement_interval] @endif"></x-form.select>
                     </td>
-					 <td>
+                    <td>
 
 
                         <div class="">
-                            <input value="{{ isset($subModel) ? $subModel->getCount():0 }}" @if($isRepeater) name="counts" @else name="{{ $tableId }}[0][counts]" @endif class="form-control expandable-percentage-input current-count recalculate-monthly-increase-amounts-branches exclude-from-trigger-change-when-repeat text-left " type="text">
+                            <input value="{{ isset($subModel) ? $subModel->getCount():1 }}" @if($isRepeater) name="counts" @else name="{{ $tableId }}[0][counts]" @endif class="form-control expandable-percentage-input current-count recalculate-monthly-increase-amounts-branches exclude-from-trigger-change-when-repeat text-left " type="text">
                         </div>
-						<div>
-							<input class="current-row-counts" type="hidden" name="ffe_counts" value="">
-							
-						</div>
-						
-						
-						@foreach($newBranchCountPerDateIndex as $dateAsIndex=>$newBranchCountPerDateIndexRow)
-						 <input type="hidden" value="{{ isset($subModel) ? $subModel->getMonthlyAmountAtMonthIndex($dateAsIndex) : 0 }}" name="monthly_amounts" multiple class="current-month-amounts" data-column-index="{{ $dateAsIndex }}">
+                        <div>
+                            <input class="current-row-counts" type="hidden" name="ffe_counts" value="">
 
-						@endforeach 
-
-                    </td>
-
-                    {{-- @php
-                    $columnIndex = 0 ;
-                    $currentYearRepeaterIndex = 0 ;
-                    @endphp
-
-                    @foreach($studyMonthsForViews as $dateAsIndex=>$dateAsString)
-
-                    <td data-column-index="{{ $dateAsIndex }}">
-                        <div class="d-flex align-items-center justify-content-center">
-                            @php
-                            $name = "ffe_counts" ;
-                            @endphp
-                            <x-repeat-right-dot-inputs :isMultiple="true" :dataCurrentYear="$monthsWithItsYear[$dateAsIndex]" :removeCurrency="true" :removeThreeDots="true" :removeThreeDotsClass="true" :number-format-decimals="0" :mark="' '" :currentVal="isset($subModel) ? $subModel->getFfeCountsAtDateIndex($dateAsIndex) : 0 " data-group-index="{{ $currentYearRepeaterIndex }}" :formattedInputClasses="'exclude-from-trigger-change-when-repeat'" :classes="'repeater-with-collapse-input only-greater-than-or-equal-zero-allowed  ffe_counts recalculate-monthly-increase-amounts-branches'" :is-percentage="true" :name="$name" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
                         </div>
+
+
+                        @foreach($newBranchCountPerDateIndex as $dateAsIndex=>$newBranchCountPerDateIndexRow)
                         <input type="hidden" value="{{ isset($subModel) ? $subModel->getMonthlyAmountAtMonthIndex($dateAsIndex) : 0 }}" name="monthly_amounts" multiple class="current-month-amounts" data-column-index="{{ $dateAsIndex }}">
-                    </td>
-                    @php
-                    $currentMonthNumber = explode('-',$dateAsString)[1];
-                    $currentYear= explode('-',$dateAsString)[0];
-                    @endphp
 
-
-                    @if($financialYearEndMonthNumber == $currentMonthNumber || $loop->last)
-                    <td data-column-index="{{ $dateAsIndex }}" class="exclude-from-collapse">
-                        <div class="d-flex align-items-center justify-content-center">
-                            <x-repeat-right-dot-inputs :readonly="true" :removeThreeDots="true" :number-format-decimals="0" :mark="' '" :currentVal="0 " :formattedInputClasses="'exclude-from-collapse exclude-from-trigger-change-when-repeat'" :classes="'year-repeater-index-'.$currentYearRepeaterIndex.' ' .'only-greater-than-or-equal-zero-allowed exclude-from-collapse'" :is-percentage="true" :name="''" :columnIndex="$dateAsIndex"></x-repeat-right-dot-inputs>
-                        </div>
+                        @endforeach
 
                     </td>
-                    @php
-                    $currentYearRepeaterIndex++;
-                    @endphp
-                    @endif
 
-                    @php
-                    $columnIndex++;
-                    @endphp
-                    @endforeach --}}
+                  
 
 
 
@@ -198,11 +156,10 @@
 
 
 
-        {{-- end of fixed monthly repeating amount --}}
-        {{-- </form> --}}
-	@php
-		$isFullyFundingTroughEquity = $model->getFixedAssetStructureForFixAssetType($fixedAssetType) ? $model->getFixedAssetStructureForFixAssetType($fixedAssetType)->is_fully_funded_though_equity : 1;
-	@endphp
+      
+        @php
+        $isFullyFundingTroughEquity = $model->getFixedAssetStructureForFixAssetType($fixedAssetType) ? $model->getFixedAssetStructureForFixAssetType($fixedAssetType)->is_fully_funded_though_equity : 1;
+        @endphp
 
         <div class="form-group d-inline-block">
             <div class="kt-radio-inline">
@@ -210,20 +167,45 @@
 
                 </label>
                 <label class="kt-radio kt-radio--success text-black font-size-18px font-weight-bold">
-
-                    <input class="is-fully-funded-checkbox exclude-from-trigger-change-when-repeat" type="radio" value="1" name="newBranchFixedAssetsFundingStructure[is_fully_funded_though_equity]" @if(!isset($subModel) || ($isFullyFundingTroughEquity)) checked @endisset
-                    > {{ __('Fully Funded Through Equity') }}
+                    <input class="is-fully-funded-checkbox exclude-from-trigger-change-when-repeat" type="radio" value="1" name="perEmployeeFixedAssetsFundingStructure[is_fully_funded_though_equity]" @if(!isset($subModel) || ($isFullyFundingTroughEquity)) dd checked @endisset> {{ __('Fully Funded Through Equity') }}
                     <span></span>
                 </label>
 
                 <label class="kt-radio kt-radio--danger text-black font-size-18px font-weight-bold">
-                    <input class="is-fully-funded-checkbox exclude-from-trigger-change-when-repeat" type="radio" value="0" name="newBranchFixedAssetsFundingStructure[is_fully_funded_though_equity]" @if(isset($subModel) && !$isFullyFundingTroughEquity) checked @endisset
-                    > {{ __('Funded Through Equity & Debt') }}
+                    <input class="is-fully-funded-checkbox exclude-from-trigger-change-when-repeat" type="radio" value="0" name="perEmployeeFixedAssetsFundingStructure[is_fully_funded_though_equity]" @if(isset($subModel) && !$isFullyFundingTroughEquity) ss checked @endisset> {{ __('Funded Through Equity & Debt') }}
                     <span></span>
                 </label>
+				@php
+					$inEditMode = isset($model) && $model->fixedAssets->count() ? 1 : 0 ;
+				@endphp
+				<div class="d-inline-block w-full text-right">
+					<div class="d-inline-block">
+					<button  
+					is-save-and-continue="1"
+					 in-edit-mode="{{ $inEditMode }}" class="btn active-style 
+					 save-form
+					 
+					
+					 ">
+					
+					 {{ __('Save & Continue') }}
+				
+					 
+					 </button>
+					 @if($inEditMode)
+					 <button  
+					can-show-funding-structure="{{ $inEditMode  }}" id="toggleEditBtn" in-edit-mode="{{ $inEditMode }}" class="btn active-style ">
+						 {{ __('Enable Edit') }}
+					 </button>
+					 @endif
+					 
+					</div>
+					
+				</div>
             </div>
         </div>
-
+		
+		
     </div>
 
 

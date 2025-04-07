@@ -628,10 +628,7 @@ class Company extends Model implements HasMedia
 	{
 		return $this->hasMany(Department::class,'company_id','id');
 	}	
-	public function positions()
-	{
-		return $this->hasMany(Position::class,'company_id','id');
-	}
+	
 	public function departmentsFor(string $type )
 	{
 		return Department::where('type',$type)->get();

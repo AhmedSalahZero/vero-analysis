@@ -46,4 +46,5 @@ class AjaxController extends Controller
 		]);
 		
 	}
+	
 }

@@ -110,24 +110,26 @@ trait HasBasicStoreRequest
 			if(!is_array($values) || !method_exists($this,$relationName) ){
 				continue ;
 			}
-	
+
 			foreach($values as $columnName => $payload){
 				if(is_numeric($columnName)){
 					continue;
 				}
+		
 				$columnsWithPayload[$relationName]['company_id'] = $company->id ;
 				$columnsWithPayload[$relationName][$columnName] = $payload;
 			}
 			
 		}
+
 		foreach($columnsWithPayload as $relationName => $values){
 			if(is_null($this->{$relationName})){
 				$this->{$relationName}()->create($values);
 			}else{
+		
 				$this->{$relationName}()->update($values);
 			}
 		}
-
 		$this->refresh();
 		return $this;
 	}

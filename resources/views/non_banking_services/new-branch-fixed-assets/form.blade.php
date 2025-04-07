@@ -89,7 +89,7 @@ use App\Models\NonBankingService\Expense;
                                 $rowIndex = 0;
                                 @endphp
 
-								<input type="hidden" name="fixedAssetsFundingStructures[fixed_asset_type]" value="{{ $fixedAssetType }}">
+								<input type="hidden" name="newBranchFixedAssetsFundingStructure[fixed_asset_type]" value="{{ $fixedAssetType }}">
                                 <x-tables.repeater-table :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
                                     <x-slot name="ths">
                                         <x-tables.repeater-table-th class=" category-selector-class header-border-down " :title="__('Item')"></x-tables.repeater-table-th>
@@ -116,7 +116,7 @@ use App\Models\NonBankingService\Expense;
                                             <td>
                                                 <div class="d-flex align-items-center justify-content-center">
 
-                                                    <x-repeat-right-dot-inputs :formattedInputClasses="'exclude-from-trigger-change-when-repeat'" :numberFormatDecimals="0" :readonly="true" :removeThreeDots="true" :inputHiddenAttributes="''" :currentVal="$fixedAssetsFundingStructure ? $fixedAssetsFundingStructure->direct_ffe_amounts[$dateAsIndex] : 0" :classes="'js-recalculate-equity-funding-value total-loans-hidden direct-ffe-amounts'" :is-percentage="false" :name="'fixedAssetsFundingStructures['.'direct_ffe_amounts'.']['.$dateAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                                    <x-repeat-right-dot-inputs :formattedInputClasses="'exclude-from-trigger-change-when-repeat'" :numberFormatDecimals="0" :readonly="true" :removeThreeDots="true" :inputHiddenAttributes="''" :currentVal="$fixedAssetsFundingStructure ? $fixedAssetsFundingStructure->direct_ffe_amounts[$dateAsIndex] : 0" :classes="'js-recalculate-equity-funding-value total-loans-hidden direct-ffe-amounts'" :is-percentage="false" :name="'newBranchFixedAssetsFundingStructure['.'direct_ffe_amounts'.']['.$dateAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
                                                 </div>
                                             </td>
@@ -148,7 +148,7 @@ use App\Models\NonBankingService\Expense;
                                             <td>
                                                 <div class="d-flex align-items-center justify-content-center">
 
-                                                    <x-repeat-right-dot-inputs :inputHiddenAttributes="'js-recalculate-equity-funding-value'" :currentVal="$fixedAssetsFundingStructure ? $fixedAssetsFundingStructure->getEquityFundingRatesAtMonthIndex($dateAsIndex) : 0" :formattedInputClasses="'exclude-from-trigger-change-when-repeat'" :classes="'only-greater-than-or-equal-zero-allowed equity-funding-rates equity-funding-rate-input-hidden-class'" :is-percentage="true" :name="'fixedAssetsFundingStructures['.'equity_funding_rates'.']['.$dateAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                                    <x-repeat-right-dot-inputs :inputHiddenAttributes="'js-recalculate-equity-funding-value'" :currentVal="$fixedAssetsFundingStructure ? $fixedAssetsFundingStructure->getEquityFundingRatesAtMonthIndex($dateAsIndex) : 0" :formattedInputClasses="'exclude-from-trigger-change-when-repeat'" :classes="'only-greater-than-or-equal-zero-allowed equity-funding-rates equity-funding-rate-input-hidden-class'" :is-percentage="true" :name="'newBranchFixedAssetsFundingStructure['.'equity_funding_rates'.']['.$dateAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
                                                 </div>
                                             </td>
@@ -178,7 +178,7 @@ use App\Models\NonBankingService\Expense;
                                             @foreach($studyMonthsForViews as $dateAsIndex=>$dateAsString)
                                             <td>
                                                 <div class="d-flex align-items-center justify-content-center">
-                                                    <x-repeat-right-dot-inputs :numberFormatDecimals="0" :currentVal="0" :classes="'only-greater-than-or-equal-zero-allowed '" :formatted-input-classes="'exclude-from-trigger-change-when-repeat equity-funding-formatted-value-class'" :is-percentage="false" :name="'fixedAssetsFundingStructures['.'equity_funding_values'.']['.$dateAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                                    <x-repeat-right-dot-inputs :numberFormatDecimals="0" :currentVal="0" :classes="'only-greater-than-or-equal-zero-allowed '" :formatted-input-classes="'exclude-from-trigger-change-when-repeat equity-funding-formatted-value-class'" :is-percentage="false" :name="'newBranchFixedAssetsFundingStructure['.'equity_funding_values'.']['.$dateAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
                                                 </div>
                                             </td>
@@ -206,7 +206,7 @@ use App\Models\NonBankingService\Expense;
 
                                             <td>
                                                 <div class="d-flex align-items-center justify-content-center">
-                                                    <input type="text" data-column-index="{{ $columnIndex }}" readonly class="exclude-from-trigger-change-when-repeat form-control expandable-percentage-input new-loan-function-rates-js" name="fixedAssetsFundingStructures[new_loans_funding_rates][{{ $dateAsIndex }}]" value="{{ 0 }}"> <span class="ml-2">%</span>
+                                                    <input type="text" data-column-index="{{ $columnIndex }}" readonly class="exclude-from-trigger-change-when-repeat form-control expandable-percentage-input new-loan-function-rates-js" name="newBranchFixedAssetsFundingStructure[new_loans_funding_rates][{{ $dateAsIndex }}]" value="{{ 0 }}"> <span class="ml-2">%</span>
                                                 </div>
                                             </td>
                                             @php
@@ -239,7 +239,7 @@ use App\Models\NonBankingService\Expense;
 
                                             <td>
                                                 <div class="d-flex align-items-center justify-content-center">
-                                                    <x-repeat-right-dot-inputs :numberFormatDecimals="0" :formatted-input-classes="'exclude-from-trigger-change-when-repeat new-loans-funding-formatted-value-class'" :currentVal="0" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="false" :name="'fixedAssetsFundingStructures['.'new_loans_funding_values'.']['.$dateAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                                    <x-repeat-right-dot-inputs :numberFormatDecimals="0" :formatted-input-classes="'exclude-from-trigger-change-when-repeat new-loans-funding-formatted-value-class'" :currentVal="0" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="false" :name="'newBranchFixedAssetsFundingStructure['.'new_loans_funding_values'.']['.$dateAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
                                                 </div>
                                             </td>
@@ -268,7 +268,7 @@ use App\Models\NonBankingService\Expense;
 
                                             <td>
                                                 <div class="d-flex align-items-center justify-content-center">
-                                                    <x-repeat-right-dot-inputs :numberFormatDecimals="0" :mark="'Mth'" :formatted-input-classes="'exclude-from-trigger-change-when-repeat '" :currentVal="$fixedAssetsFundingStructure ? $fixedAssetsFundingStructure->getTenorsAtMonthIndex($dateAsIndex) : 0" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="false" :name="'fixedAssetsFundingStructures['.'tenors'.']['.$dateAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                                    <x-repeat-right-dot-inputs :numberFormatDecimals="0" :mark="'Mth'" :formatted-input-classes="'exclude-from-trigger-change-when-repeat '" :currentVal="$fixedAssetsFundingStructure ? $fixedAssetsFundingStructure->getTenorsAtMonthIndex($dateAsIndex) : 0" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="false" :name="'newBranchFixedAssetsFundingStructure['.'tenors'.']['.$dateAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
                                                 </div>
                                             </td>
@@ -297,7 +297,7 @@ use App\Models\NonBankingService\Expense;
 
                                             <td>
                                                 <div class="d-flex align-items-center justify-content-center">
-                                                    <x-repeat-right-dot-inputs :numberFormatDecimals="0" :mark="'Mth'" :formatted-input-classes="'exclude-from-trigger-change-when-repeat '" :currentVal="$fixedAssetsFundingStructure ? $fixedAssetsFundingStructure->getGracePeriodAtMonthIndex($dateAsIndex) : 0 " :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="false" :name="'fixedAssetsFundingStructures['.'grace_periods'.']['.$dateAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                                    <x-repeat-right-dot-inputs :numberFormatDecimals="0" :mark="'Mth'" :formatted-input-classes="'exclude-from-trigger-change-when-repeat '" :currentVal="$fixedAssetsFundingStructure ? $fixedAssetsFundingStructure->getGracePeriodAtMonthIndex($dateAsIndex) : 0 " :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="false" :name="'newBranchFixedAssetsFundingStructure['.'grace_periods'.']['.$dateAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
                                                 </div>
                                             </td>
@@ -325,7 +325,7 @@ use App\Models\NonBankingService\Expense;
 
                                             <td>
                                                 <div class="d-flex align-items-center justify-content-center">
-                                                    <x-repeat-right-dot-inputs :numberFormatDecimals="0" :mark="'%'" :formatted-input-classes="'exclude-from-trigger-change-when-repeat'" :currentVal="$fixedAssetsFundingStructure ? $fixedAssetsFundingStructure->getInterestRateAtMonthIndex($dateAsIndex) : 0 " :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="false" :name="'fixedAssetsFundingStructures['.'interest_rates'.']['.$dateAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                                    <x-repeat-right-dot-inputs :numberFormatDecimals="0" :mark="'%'" :formatted-input-classes="'exclude-from-trigger-change-when-repeat'" :currentVal="$fixedAssetsFundingStructure ? $fixedAssetsFundingStructure->getInterestRateAtMonthIndex($dateAsIndex) : 0 " :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="false" :name="'newBranchFixedAssetsFundingStructure['.'interest_rates'.']['.$dateAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
                                                 </div>
                                             </td>
@@ -352,7 +352,7 @@ use App\Models\NonBankingService\Expense;
 
                                             <td>
                                                 <div class="d-flex align-items-center justify-content-center">
-                                                    <x-form.select :required="true" :label="''" :pleaseSelect="false" :selectedValue="isset($fixedAssetsFundingStructure) ? $fixedAssetsFundingStructure->getInstallmentIntervalAtMonthIndex($dateAsIndex) : 'monthly'" :options="[['title'=>__('Monthly'),'value'=>'monthly'],['title'=>__('Quarterly'),'value'=>'quartly'],['value'=>'semi annually','title'=>__('Semi-annually')]]" :add-new="false" class="select2-select  repeater-select  " :all="false" name="fixedAssetsFundingStructures[installment_intervals][{{ $dateAsIndex }}]"></x-form.select>
+                                                    <x-form.select :required="true" :label="''" :pleaseSelect="false" :selectedValue="isset($fixedAssetsFundingStructure) ? $fixedAssetsFundingStructure->getInstallmentIntervalAtMonthIndex($dateAsIndex) : 'monthly'" :options="[['title'=>__('Monthly'),'value'=>'monthly'],['title'=>__('Quarterly'),'value'=>'quartly'],['value'=>'semi annually','title'=>__('Semi-annually')]]" :add-new="false" class="select2-select  repeater-select  " :all="false" name="newBranchFixedAssetsFundingStructure[installment_intervals][{{ $dateAsIndex }}]"></x-form.select>
                                                 </div>
                                             </td>
                                             @php

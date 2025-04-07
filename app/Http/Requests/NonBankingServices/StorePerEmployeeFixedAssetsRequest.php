@@ -1,0 +1,97 @@
+<?php
+
+namespace App\Http\Requests\NonBankingServices;
+
+use App\Equations\MonthlyFixedRepeatingAmountEquation;
+use App\Helpers\HArr;
+use App\Models\NonBankingService\Position;
+use App\Models\NonBankingService\Study;
+use Arr;
+use Illuminate\Foundation\Http\FormRequest;
+
+class StorePerEmployeeFixedAssetsRequest extends FormRequest
+{
+    /**
+     * Determine if the user is authorized to make this request.
+     *
+     * @return bool
+     */
+    public function authorize()
+    {
+        return true;
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array
+     */
+	public function prepareForValidation()
+	{
+	
+		$fixedAssets = $this->get('fixedAssets');
+		$fixedAssetType = $this->get('fixed_asset_type');
+		$studyId =$this->study_id;
+		$study = Study::find($studyId);
+		/**
+		 * @var Study $study 
+		 */
+		$operationStartDateFormatted = $study->getOperationStartDateFormatted();
+		$dateWithDateIndex = $study->getDateWithDateIndex();
+		// $operationStartDateAsIndex = $this->getOperationStartDateAsIndex($dateWithDateIndex,$operationStartDateFormatted);
+		$studyEndDateAsString = $study->getStudyEndDate();
+		$studyStartDateAsString = $study->getStudyStartDate();
+		$studyStartDateAsIndex = $study->getStudyStartDateAsIndex($dateWithDateIndex,$studyStartDateAsString);
+		$studyEndDateAsIndex = $study->getStudyEndDateAsIndex($dateWithDateIndex,$studyEndDateAsString);
+	
+		
+		$currentFixedAssetAmounts = [];
+		foreach($fixedAssets as $rowIndex => &$fixedAssetArr){
+			$fixedAssetArr['ffe_counts'] =$fixedAssetArr['ffe_counts'] ? (array)json_decode($fixedAssetArr['ffe_counts']) : [];
+			$fixedAssetArr['type'] =$fixedAssetType;
+			
+			// calculate position  
+			$currentPositionIds  = $fixedAssetArr['position_ids']??[];
+			$currentPositions = Position::where('study_id',$studyId)->whereIn('id',$currentPositionIds)->get();
+
+			$hiringCountArrs = $currentPositions->pluck('hiring_counts')->toArray();
+			$dates = array_keys(Arr::first($hiringCountArrs));
+			$sumHiringCount = HArr::sumAtDates($hiringCountArrs,$dates);
+			$itemCost = $fixedAssetArr['ffe_item_cost'];
+			$vatRate = $fixedAssetArr['vat_rate'];
+			$isDeductible = false;
+			$increaseRate = $fixedAssetArr['cost_annual_increase_rate'];
+			$currentFfeItemCostPerDateIndex = (new MonthlyFixedRepeatingAmountEquation())->calculate($itemCost,$studyStartDateAsIndex,$studyEndDateAsIndex,'annually',$increaseRate,$isDeductible,$vatRate);
+			
+			foreach($sumHiringCount as $dateAsIndex => $hiringValue){
+				$currentFixedAssetAmounts[$rowIndex][$dateAsIndex]  = $hiringValue * ($currentFfeItemCostPerDateIndex[$dateAsIndex]??0);
+				$totalFixedAssetAmounts[$dateAsIndex] = isset($totalFixedAssetAmounts[$dateAsIndex]) ? $totalFixedAssetAmounts[$dateAsIndex] +  $currentFixedAssetAmounts[$rowIndex][$dateAsIndex] : $currentFixedAssetAmounts[$rowIndex][$dateAsIndex];
+				
+			}
+		}
+		// $positionIds = $this->input('fixedAssets.*.position_ids') ;
+		// $positionCountPerMonths = [];
+	
+		
+		// foreach($positionIds as $index => $positionIds){
+		// 	foreach($positionIds  as $positionId){
+		// 		$positions->where('position_id',$positionCountPerMonths)->first();
+		// 	}
+		// }
+		
+		// $directFFEAmounts = $this->input('perEmployeeFixedAssetsFundingStructure.direct_ffe_amounts');
+	
+		$this->merge([
+			'fixedAssets'=>$fixedAssets ,
+			'perEmployeeFixedAssetsFundingStructure'=>[
+				'direct_ffe_amounts'=>$totalFixedAssetAmounts
+			]
+		]);
+	}
+    public function rules()
+    {
+        return [
+            //
+        ];
+    }
+}

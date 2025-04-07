@@ -25,7 +25,6 @@ class CashExpenseStatementController
 		]);
     }
 	public function result(Company $company , Request $request){
-		// dd($request->all());
 		$startDate = $request->get('start_date');
 		$endDate = $request->get('end_date');
 		$currency = $request->get('currency');

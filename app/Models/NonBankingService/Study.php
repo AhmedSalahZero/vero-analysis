@@ -226,6 +226,10 @@ use Illuminate\Support\Facades\DB;
 	{
 		return $this->study_end_date;
 	}
+	public function getStudyStartDateAsIndex(array $datesAsStringAndIndex, ?string $studyStartDateAsString): ?int
+	{
+		return  $studyStartDateAsString ? $datesAsStringAndIndex[$studyStartDateAsString] : null;
+	}
 	public function getStudyEndDateAsIndex(array $datesAsStringAndIndex, ?string $studyEndDateAsString): ?int
 	{
 		return  $studyEndDateAsString ? $datesAsStringAndIndex[$studyEndDateAsString] : null;
@@ -784,7 +788,6 @@ use Illuminate\Support\Facades\DB;
 						$leasingRevenueStreamBreakdown = $leasingRevenueStreams->where('id',$leasingRevenueStreamBreakdownId)->first();
 						$hasCategoryId = method_exists($leasingRevenueStreamBreakdown,'getCategoryId') ;
 						$revenueCategoryId = $hasCategoryId ? $leasingRevenueStreamBreakdown->getCategoryId() : null;
-						// dd($dateIndexWithDate,$monthIndex);
 						$currentMonth = $dateIndexWithDate[$monthIndex];
 						// $currentMonthFormatted = Carbon::make($currentMonth)->format('d-m-Y');
 						$currentMarginRate = $isSensitivity ?  $leasingRevenueStreamBreakdown->getSensitivityMarginRate() : $leasingRevenueStreamBreakdown->getMarginRate();
@@ -890,7 +893,7 @@ use Illuminate\Support\Facades\DB;
 	{
 		$loanSchedulePaymentTableName = $isSensitivity ? 'sensitivity_fixed_assets_loan_schedule_payments' : 'fixed_assets_loan_schedule_payments';
 		$fixedAssetsFundingStructure = $this->getFixedAssetStructureForFixAssetType($fixedAssetType);
-		$loanAmounts = $fixedAssetsFundingStructure->getFfeAmounts();
+		$loanAmounts = $fixedAssetsFundingStructure ? $fixedAssetsFundingStructure->getFfeAmounts() : 0;
 		$calculateFixedLoanAtEndService = new CalculateFixedLoanAtEndService ;
 		$calculateFixedLoanAtBeginningService = new CalculateFixedLoanAtBeginningService ;
 		$portfolioLoans = [];
@@ -911,7 +914,7 @@ use Illuminate\Support\Facades\DB;
 		$yearIndexWithYear = app('yearIndexWithYear');
 
 		$baseRates = $generalAndReserveAssumption->getCbeLendingCorridorRates() ;
-		$pricingPerMonths = $fixedAssetsFundingStructure->getInterestRates();
+		$pricingPerMonths = $fixedAssetsFundingStructure ? $fixedAssetsFundingStructure->getInterestRates(): null;
 		$baseRatesPerMonths= [];
 		foreach($operationDurationPerYear as $yearIndex => $yearMonthIndexes)
 		{
@@ -947,14 +950,16 @@ use Illuminate\Support\Facades\DB;
 						}
 						$totalMonthlyLoanAmounts[$monthIndex]  = isset($totalMonthlyLoanAmount[$monthIndex]) ? $totalMonthlyLoanAmount[$monthIndex] +  $currentMonthlyLoanAmount : $currentMonthlyLoanAmount ;
 						
-						// dd($dateIndexWithDate,$monthIndex);
 						$currentMonth = $dateIndexWithDate[$monthIndex];
 						// $currentMonthFormatted = Carbon::make($currentMonth)->format('d-m-Y');
 						
 					
-						$gracePeriod = $fixedAssetsFundingStructure->getGracePeriodAtMonthIndex($monthIndex);
-						$tenor = $fixedAssetsFundingStructure->getTenorsAtMonthIndex($monthIndex);
-						$installmentInterval = $fixedAssetsFundingStructure->getInstallmentIntervalAtMonthIndex($monthIndex);
+						$gracePeriod = $fixedAssetsFundingStructure? $fixedAssetsFundingStructure->getGracePeriodAtMonthIndex($monthIndex):0;
+						$tenor = $fixedAssetsFundingStructure ? $fixedAssetsFundingStructure->getTenorsAtMonthIndex($monthIndex) : 0;
+						if($tenor <=0){
+							continue ;
+						}
+						$installmentInterval = $fixedAssetsFundingStructure ? $fixedAssetsFundingStructure->getInstallmentIntervalAtMonthIndex($monthIndex):null;
 						// $installmentPaymentIntervalValue = $calculateFixedLoanAtEndService->getInstallmentPaymentIntervalValue($installmentInterval);
 						$stepUp = 0;
 						$stepDown = 0;
@@ -974,14 +979,15 @@ use Illuminate\Support\Facades\DB;
 							// 	$currentPortfolioLoans=$loanService->__calculateBasedOnDiffBaseRates($baseRatesMapping ,$loanType, $currentMonth, $currentMonthlyLoanAmount,  $currentMarginRate,  $tenor, $installmentInterval,$installmentPaymentIntervalValue, $stepUp, $stepInterval ,$stepDown ,  $stepInterval ,$gracePeriod,$monthIndex,$dateWithDateIndex,$dateIndexWithDate );
 							// }else{
 								
-								$currentLoanArr=$loanService->__calculate([] ,-1,$loanType, $currentMonth, $currentMonthlyLoanAmount,$baseRatesMapping, $currentMarginRate,  $tenor, $installmentInterval, $stepUp,$stepInterval ,$stepDown ,  $stepInterval ,$gracePeriod,$monthIndex,null,$pricingPerMonths );
+									$currentLoanArr=$loanService->__calculate([] ,-1,$loanType, $currentMonth, $currentMonthlyLoanAmount,$baseRatesMapping, $currentMarginRate,  $tenor, $installmentInterval, $stepUp,$stepInterval ,$stepDown ,  $stepInterval ,$gracePeriod,$monthIndex,null,$pricingPerMonths );
+									$finalResult = $currentLoanArr['final_result']??[];
+									unset($finalResult['totals']);
+									$currentLoanArr = $finalResult;
+								
 							
-								$finalResult = $currentLoanArr['final_result']??[];
-								unset($finalResult['totals']);
-								$currentLoanArr = $finalResult;
 				
 							// }
-							if(count($currentLoanArr)){
+							if(isset($currentLoanArr) && count($currentLoanArr)){
 								$currentLoanArr['study_id'] = $studyId ;
 								$currentLoanArr['company_id'] = $companyId ;
 								$currentLoanArr['month_as_index'] = $monthIndex ;
@@ -1566,13 +1572,38 @@ use Illuminate\Support\Facades\DB;
 	{
 		return $this->hasMany(FixedAsset::class,'study_id','id');
 	}
-	public function fixedAssetsFundingStructures():HasMany
+	// public function fixedAssetsFundingStructure():HasOne 
+	// {
+	// 	return $this->hasOne(FixedAssetsFundingStructure::class,'study_id','id');
+	// }
+	public function generalFixedAssetsFundingStructure():HasOne 
 	{
-		return $this->hasMany(FixedAssetsFundingStructure::class,'study_id','id');
+		return $this->hasOne(FixedAssetsFundingStructure::class,'study_id','id')->where('fixed_asset_type',FixedAsset::FFE);
+	}	
+	public function newBranchFixedAssetsFundingStructure():HasOne 
+	{
+		return $this->hasOne(FixedAssetsFundingStructure::class,'study_id','id')->where('fixed_asset_type',FixedAsset::NEW_BRANCH);
 	}
+	public function perEmployeeFixedAssetsFundingStructure():HasOne 
+	{
+		return $this->hasOne(FixedAssetsFundingStructure::class,'study_id','id')->where('fixed_asset_type',FixedAsset::PER_EMPLOYEE);
+	}
+	// public function fixedAssetsFundingStructures():HasMany 
+	// {
+	// 	return $this->hasMany(FixedAssetsFundingStructure::class,'study_id','id');
+	// }
 	public function getFixedAssetStructureForFixAssetType(string $fixedAssetType)
 	{
-		return $this->fixedAssetsFundingStructures->where('fixed_asset_type',$fixedAssetType)->first();
+		if($fixedAssetType == FixedAsset::FFE){
+			return $this->generalFixedAssetsFundingStructure;
+		}
+		elseif($fixedAssetType == FixedAsset::NEW_BRANCH){
+			return $this->newBranchFixedAssetsFundingStructure;
+		}elseif($fixedAssetType == FixedAsset::PER_EMPLOYEE){
+			return $this->perEmployeeFixedAssetsFundingStructure;
+		}
+		dd('not supported fixed asset type');
+		// return $this->fixedAssetsFundingStructure->where('fixed_asset_type',$fixedAssetType)->first();
 	}
 	public function getDateIndexWithDate():array 
 	{
@@ -1634,6 +1665,10 @@ use Illuminate\Support\Facades\DB;
 	public function newBranchLoanCaseProjections():HasMany
 	{
 		return $this->hasMany(NewBranchLoanCaseProjection::class,'study_id','id');
+	}
+	public function positions()
+	{
+		return $this->hasMany(Position::class,'study_id','id');
 	}
 	
 }

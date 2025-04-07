@@ -5,6 +5,8 @@ namespace App\Models\NonBankingService;
 use App\Models\Company;
 use App\Models\Traits\Scopes\BelongsToCompany;
 use App\Models\Traits\Scopes\NonBankingServices\BelongsToStudy;
+use function PHPSTORM_META\map;
+
 use Illuminate\Database\Eloquent\Model;
 
 class FixedAsset extends Model
@@ -14,9 +16,12 @@ class FixedAsset extends Model
 	protected $connection ='non_banking_service';
 	public const FFE = 'ffe';
 	public const NEW_BRANCH = 'new-branch';
+	public const PER_EMPLOYEE = 'per-employee';
 	protected $casts = [
 		'ffe_counts'=>'array',
 		'monthly_amounts'=>'array',
+		'position_ids'=>'array',
+		'department_ids'=>'array'
 	];
 	public function getId()
 	{
@@ -127,5 +132,12 @@ class FixedAsset extends Model
 	public function getPaymentRateAtDueInDays($rateIndex)
 	{
 		return array_keys($this->custom_collection_policy ?? [])[$rateIndex] ?? 0 ; 
+	}
+	public function getPositionIds()
+	{
+		return $this->position_ids;
+	}public function getDepartmentIds()
+	{
+		return $this->department_ids;
 	}
 }

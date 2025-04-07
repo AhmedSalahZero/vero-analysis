@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\NonBankingServices;
 
+use App\Models\FinancialPlanning\Position;
 use App\Models\NonBankingService\Study;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -24,12 +25,13 @@ class StoreNewBranchFixedAssetsRequest extends FormRequest
      */
 	public function prepareForValidation()
 	{
-		// $study = Study::find($this->study_id);
+	
 		$fixedAssets = $this->get('fixedAssets');
+		$fixedAssetType = $this->get('fixed_asset_type');
 		foreach($fixedAssets as $index => &$fixedAssetArr){
 			$fixedAssetArr['ffe_counts'] =$fixedAssetArr['ffe_counts'] ? (array)json_decode($fixedAssetArr['ffe_counts']) : [];
+			$fixedAssetArr['type'] =$fixedAssetType;
 		}
-		
 		$this->merge([
 			'fixedAssets'=>$fixedAssets 
 		]);

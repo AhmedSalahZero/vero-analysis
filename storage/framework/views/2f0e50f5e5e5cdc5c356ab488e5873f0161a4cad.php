@@ -114,6 +114,7 @@
                                     </td>
 
                                     <input type="hidden" name="departments[<?php echo e($departmentId); ?>][positions][<?php echo e($rowIndex); ?>][id]" value="<?php echo e($currentPosition ? $currentPosition->id : 0); ?>">
+                                    <input type="hidden" name="departments[<?php echo e($departmentId); ?>][positions][<?php echo e($rowIndex); ?>][study_id]" value="<?php echo e($study->id); ?>">
                                     
 
                                     <td>

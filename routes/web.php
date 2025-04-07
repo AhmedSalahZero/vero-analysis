@@ -447,17 +447,19 @@ Route::middleware([])->group(function () {
 						route::get('fixed-assets/new-branches','NewBranchFixedAssetsController@create')->name('create.new.branch.fixed.assets');
 						route::post('fixed-assets/new-branches','NewBranchFixedAssetsController@store')->name('store.new.branch.fixed.assets');
 						
-						
+						route::get('fixed-assets/per-employee','PerEmployeeFixedAssetsController@create')->name('create.per.employee.fixed.assets');
+						route::post('fixed-assets/per-employee','PerEmployeeFixedAssetsController@store')->name('store.per.employee.fixed.assets');
 						
 						route::post('departments','ManpowerExpensesController@storeDepartmentPositions')->name('store.department.positions.for.non.banking');
 						route::get('manpower','ManpowerExpensesController@create')->name('view.manpower.for.non.banking');
 						route::post('manpower','ManpowerExpensesController@store')->name('store.manpower.for.non.banking');
 						// route::get('delete/{position}/manpower','ManpowerExpensesController@deleteSinglePosition')->name('delete.single.position.for.non.banking');
-						route::get('delete-department/{department}/manpower','ManpowerExpensesController@deleteSingleDepartment')->name('delete.single.department.for.non.banking');
+						// route::get('delete-department/{department}/manpower','ManpowerExpensesController@deleteSingleDepartment')->name('delete.single.department.for.non.banking');
 						route::get('get-positions-based-on-department','ManpowerExpensesController@getPositionsBasedOnDepartment'); // ajax ;
 						
 						
 						Route::post('get-stream-category-based-on-revenue-stream','AjaxController@getStreamCategoryBasedOnRevenueStream');
+						Route::get('get-positions-based-on-departments','AjaxController@getPositionsBasedOnDepartments');
 						
 						/**
 						 * * End expenses table  

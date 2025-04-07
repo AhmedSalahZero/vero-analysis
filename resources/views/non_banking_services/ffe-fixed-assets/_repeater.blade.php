@@ -184,13 +184,15 @@
                 </label>
                 <label class="kt-radio kt-radio--success text-black font-size-18px font-weight-bold">
 
-                    <input class="is-fully-funded-checkbox exclude-from-trigger-change-when-repeat" type="radio" value="1" name="fixedAssetsFundingStructures[is_fully_funded_though_equity]" @if(!isset($subModel) || ($isFullyFundingTroughEquity)) checked @endisset
+dd('good');
+                    <input class="is-fully-funded-checkbox exclude-from-trigger-change-when-repeat" type="radio" value="1" name="generalFixedAssetsFundingStructure[is_fully_funded_though_equity]" @if(!isset($subModel) || ($isFullyFundingTroughEquity)) checked @endisset
                     > {{ __('Fully Funded Through Equity') }}
                     <span></span>
                 </label>
 
                 <label class="kt-radio kt-radio--danger text-black font-size-18px font-weight-bold">
-                    <input class="is-fully-funded-checkbox exclude-from-trigger-change-when-repeat" type="radio" value="0" name="fixedAssetsFundingStructures[is_fully_funded_though_equity]" @if(isset($subModel) && !$isFullyFundingTroughEquity) checked @endisset
+dd('good');
+                    <input class="is-fully-funded-checkbox exclude-from-trigger-change-when-repeat" type="radio" value="0" name="generalFixedAssetsFundingStructure[is_fully_funded_though_equity]" @if(isset($subModel) && !$isFullyFundingTroughEquity) checked @endisset
                     > {{ __('Funded Through Equity & Debt') }}
                     <span></span>
                 </label>

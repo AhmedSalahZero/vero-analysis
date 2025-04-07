@@ -20,7 +20,8 @@
 'departmentId'=>0,
 'department'=>null ,
 'fontSizeClass'=>'',
-'addExpenseType'=>false
+'addExpenseType'=>false,
+'hideByDefault'=>true
 ]); ?>
 <?php foreach (array_filter(([
 'repeater-with-select2'=>true,
@@ -44,7 +45,8 @@
 'departmentId'=>0,
 'department'=>null ,
 'fontSizeClass'=>'',
-'addExpenseType'=>false
+'addExpenseType'=>false,
+'hideByDefault'=>true
 ]), 'is_string', ARRAY_FILTER_USE_KEY) as $__key => $__value) {
     $$__key = $$__key ?? $__value;
 } ?>
@@ -58,7 +60,13 @@
 $canAddNewItem = true;
 ?>
 
-<div class="<?php echo e($tableClass); ?> <?php echo e($parentClass); ?>  js-parent-to-table" data-table-id="<?php echo e($repeaterId??''); ?>" style="display:none">
+<div class="<?php echo e($tableClass); ?> <?php echo e($parentClass); ?>  js-parent-to-table" data-table-id="<?php echo e($repeaterId??''); ?>" 
+<?php if($hideByDefault): ?>
+style="display:none"
+<?php endif; ?>
+
+>
+
 
     <?php if($addExpenseName): ?>
     <div class="row align-items-center mb-3 mt-3 border-bottom-green  ">
@@ -96,7 +104,6 @@ $canAddNewItem = true;
 
         </div>
         <?php endif; ?>
-
 
         <div class="col-md-5">
          
@@ -165,7 +172,6 @@ $canAddNewItem = true;
             <?php endif; ?>
 
         </tbody>
-
         <td>
             
             <?php if($canAddNewItem && !$removeActionBtn): ?>
@@ -216,6 +222,10 @@ $canAddNewItem = true;
         initEmpty: initEmpty
         , isFirstItemUndeletable: !firstElementDeleteable
         , defaultValues: {
+			"replacement_cost_rate":0,
+			"replacement_interval":1,
+			"depreciation_duration":5,
+			'counts':1,
             'grace_period': 0
             , 'tenor': 12
             , "margin_rate": 0
@@ -231,6 +241,9 @@ $canAddNewItem = true;
             , "vat_rate": 0
             , "start_date": studyStartDate
             , "end_date": studyEndDate,
+			"withhold_tax_rate":0,
+			"contingency_rate":0,
+			"cost_annual_increase_rate":0
 
         },
 

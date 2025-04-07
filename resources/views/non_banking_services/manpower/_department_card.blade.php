@@ -56,6 +56,7 @@
                                     </td>
 
                                     <input type="hidden" name="departments[{{ $departmentId }}][positions][{{ $rowIndex	 }}][id]" value="{{ $currentPosition ? $currentPosition->id : 0 }}">
+                                    <input type="hidden" name="departments[{{ $departmentId }}][positions][{{ $rowIndex	 }}][study_id]" value="{{ $study->id }}">
                                     {{-- <input type="hidden" name="id" value="{{ isset($subModel) ? $subModel->id : 0 }}"> --}}
 
                                     <td>

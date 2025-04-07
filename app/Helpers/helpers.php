@@ -6282,14 +6282,19 @@ function getNonBankingNavigation(Company $company,User $user):array
 			'link'=>'#',
 			'submenu'=>[
 				[
-					'title'=>__('FFE'),
+					'title'=>__('General Fixed Assets'),
 					'show'=>true ,
 					'link'=>route('create.ffe.fixed.assets',['company'=>$company->id , 'study'=>$studyId])
 				],
 				[
-					'title'=>__('New Branches'),
+					'title'=>__('New Branches Fixed Assets'),
 					'show'=>true ,
 					'link'=>route('create.new.branch.fixed.assets',['company'=>$company->id , 'study'=>$studyId])
+				],
+				[
+					'title'=>__('Fixed Assets Per Employee'),
+					'show'=>true ,
+					'link'=>route('create.per.employee.fixed.assets',['company'=>$company->id , 'study'=>$studyId])
 				]
 			]
 		];

@@ -39,7 +39,6 @@ class MoneyReceivedController
 		foreach(MoneyReceived::getAllTypes() as $type){
 			$startDate = $request->has('startDate') ? $request->input('startDate.'.$type) : now()->subMonths($numberOfMonthsBetweenEndDateAndStartDate)->format('Y-m-d');
 			$endDate = $request->has('endDate') ? $request->input('endDate.'.$type) : now()->format('Y-m-d');
-			
 			$filterDates[$type] = [
 				'startDate'=>$startDate,
 				'endDate'=>$endDate

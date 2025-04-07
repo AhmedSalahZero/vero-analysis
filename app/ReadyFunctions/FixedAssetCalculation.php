@@ -17,6 +17,7 @@ class FixedAssetCalculation
 			 */
 			$studyDates = array_flip($studyDates);
 			$ffeAssetItems = $this->calculateFFEAssetsForFFE($fixedAssets,$dateIndexWithDate,$operationStartDateAsIndex,$studyDates,$studyEndDateAsIndex);
+			// dd($fixedAssets);
 			return $this->sumTotalPerRow($ffeAssetItems,$studyId,$companyId);
 			// dd($ffeAssetItems);
 			// FixedAssetStatement::create($ffeAssetItems);

@@ -9,16 +9,8 @@
                     <x-tables.repeater-table :removeRepeater="false" :repeater-with-select2="true" :canAddNewItem="$canAddNewItem" :parentClass="'js-remove-hidden'" :hide-add-btn="true" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
                         <x-slot name="ths">
                             <x-tables.repeater-table-th class=" category-selector-class header-border-down  " :title="__('Position Name')"></x-tables.repeater-table-th>
-                            {{-- <x-tables.repeater-table-th class="category-selector-class header-border-down " :title="__('Expense <br> Type')" :helperTitle="__('If you have different expense items under the same category, please insert Category Name')"></x-tables.repeater-table-th> --}}
-                            {{-- <x-tables.repeater-table-th class="loan-type-class header-border-down " :title="__('Loan <br> Type')" :helperTitle="__('Please insert amount excluding VAT')"></x-tables.repeater-table-th> --}}
-                            {{-- <x-tables.repeater-table-th class=" rate-class header-border-down " :title="__('Position <br> Counts')"></x-tables.repeater-table-th> --}}
-                            {{-- <x-tables.repeater-table-th class=" rate-class header-border-down " :title="__('Grace <br> Period')"></x-tables.repeater-table-th> --}}
-                            {{-- <x-tables.repeater-table-th class=" rate-class header-border-down " :title="__('Spread <br> Rate')" :helperTitle="__('You can either choose one of the system default terms (cash, quarterly, semi-annually, or annually), if else please choose Customize to insert your payment terms')"></x-tables.repeater-table-th> --}}
-                            {{-- <x-tables.repeater-table-th class=" rate-class header-border-down " :title="__('Pricing <br> Rate')"></x-tables.repeater-table-th> --}}
-                            {{-- <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Installment <br> Interval')"></x-tables.repeater-table-th> --}}
-                            {{-- <x-tables.repeater-table-th class=" rate-class header-border-down " :title="__('Step <br> Rate (+/-)')" :helperTitle="__('Withhold Tax rate will be calculated based on Monthly Amount excluding VAT')"></x-tables.repeater-table-th> --}}
-                            {{-- <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Step <br> Interval')"></x-tables.repeater-table-th> --}}
                         </x-slot>
+					
                         <x-slot name="trs">
                             @php
                             $rows = isset($model) ? $model->positions : [-1] ;

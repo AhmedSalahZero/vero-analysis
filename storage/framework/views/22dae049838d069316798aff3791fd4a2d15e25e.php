@@ -1,29 +1,49 @@
+<div class="kt-portlet 
 
-<div data-card-id="<?php echo e($cardId); ?>" class="kt-portlet parent-card ">
+ ">
     <div class="kt-portlet__body">
         <h3 class="font-weight-bold text-black form-label kt-subheader__title small-caps mr-5 text-nowrap" style=""> <?php echo e(__('Items Cost')); ?></h3>
         <input type="hidden" name="tableIds[]" value="<?php echo e($tableId); ?>">
-<input id="net-branch-opening-projections" class="net-branch-opening-projections" type="hidden" value="<?php echo e(json_encode($newBranchCountPerDateIndex)); ?>">
-<?php $__currentLoopData = $newBranchCountPerDateIndex; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $dateAsIndex=>$newBranchCountPerDateIndexRow): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-<input  data-month-index="<?php echo e($dateAsIndex); ?>" data-year-index="<?php echo e($datesIndexWithYearIndex[$dateAsIndex]); ?>" class="year-index-month-index" type="hidden" >
- 
+        <input id="net-branch-opening-projections" class="net-branch-opening-projections" type="hidden" value="<?php echo e(json_encode($newBranchCountPerDateIndex)); ?>">
+        <?php $__currentLoopData = $newBranchCountPerDateIndex; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $dateAsIndex=>$newBranchCountPerDateIndexRow): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+        <input data-month-index="<?php echo e($dateAsIndex); ?>" data-year-index="<?php echo e($datesIndexWithYearIndex[$dateAsIndex]); ?>" class="year-index-month-index" type="hidden">
+        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
-<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?> 
-		
          <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.tables.repeater-table','data' => ['initEmpty' => false,'removeActionBtn' => false,'firstElementDeletable' => false,'fontSizeClass' => 'font-14px','appendSaveOrBackBtn' => false,'repeaterWithSelect2' => true,'parentClass' => 'js-toggle-visibility-----','tableName' => $tableId ,'repeaterId' => $repeaterId,'relationName' => 'food','isRepeater' => $isRepeater=!(isset($removeRepeater) && $removeRepeater)]]); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.tables.repeater-table','data' => ['hideByDefault' => false,'initEmpty' => false,'removeActionBtn' => false,'firstElementDeletable' => false,'fontSizeClass' => 'font-14px','appendSaveOrBackBtn' => false,'repeaterWithSelect2' => true,'parentClass' => 'js-toggle-visibility-----','tableName' => $tableId ,'repeaterId' => $repeaterId,'relationName' => 'food','isRepeater' => $isRepeater=!(isset($removeRepeater) && $removeRepeater)]]); ?>
 <?php $component->withName('tables.repeater-table'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['initEmpty' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'removeActionBtn' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'first-element-deletable' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'font-size-class' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('font-14px'),'append-save-or-back-btn' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'repeater-with-select2' => true,'parentClass' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('js-toggle-visibility-----'),'tableName' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($tableId ),'repeaterId' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($repeaterId),'relationName' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('food'),'isRepeater' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($isRepeater=!(isset($removeRepeater) && $removeRepeater))]); ?>
+<?php $component->withAttributes(['hideByDefault' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'initEmpty' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'removeActionBtn' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'first-element-deletable' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'font-size-class' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('font-14px'),'append-save-or-back-btn' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'repeater-with-select2' => true,'parentClass' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('js-toggle-visibility-----'),'tableName' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($tableId ),'repeaterId' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($repeaterId),'relationName' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('food'),'isRepeater' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($isRepeater=!(isset($removeRepeater) && $removeRepeater))]); ?>
              <?php $__env->slot('ths'); ?> 
-                
                  <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.tables.repeater-table-th','data' => ['fontSizeClass' => 'font-14px','class' => '  header-border-down first-column-th-class','title' => __('Item <br> Name')]]); ?>
 <?php $component->withName('tables.repeater-table-th'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php $component->withAttributes(['font-size-class' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('font-14px'),'class' => '  header-border-down first-column-th-class','title' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Item <br> Name'))]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
+<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
+<?php endif; ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?> 
+                 <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.tables.repeater-table-th','data' => ['fontSizeClass' => 'font-14px','class' => ' tenor-selector-class header-border-down ','title' => __('Department <br> Name')]]); ?>
+<?php $component->withName('tables.repeater-table-th'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php $component->withAttributes(['font-size-class' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('font-14px'),'class' => ' tenor-selector-class header-border-down ','title' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Department <br> Name'))]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
+<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
+<?php endif; ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?> 
+                 <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.tables.repeater-table-th','data' => ['fontSizeClass' => 'font-14px','class' => ' tenor-selector-class header-border-down ','title' => __('Position <br> Name')]]); ?>
+<?php $component->withName('tables.repeater-table-th'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php $component->withAttributes(['font-size-class' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('font-14px'),'class' => ' tenor-selector-class header-border-down ','title' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Position <br> Name'))]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
@@ -141,7 +161,6 @@
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
 
-                
              <?php $__env->endSlot(); ?>
              <?php $__env->slot('trs'); ?> 
                 <?php
@@ -162,18 +181,49 @@
                         </div>
                     </td>
                     <input type="hidden" name="id" value="<?php echo e(isset($subModel) ? $subModel->id : 0); ?>">
-                   
+
                     <td>
                         <div class="">
                             <input value="<?php echo e(isset($subModel) ? $subModel->getName() : ''); ?>" <?php if($isRepeater): ?> name="name" <?php else: ?> name="<?php echo e($tableId); ?>[0][name]" <?php endif; ?> class="form-control text-left exclude-from-trigger-change-when-repeat" type="text">
 
                         </div>
                     </td>
+
+                    <td>
+                         <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.select','data' => ['multiple' => true,'selectedValue' => isset($subModel) ? $subModel->getDepartmentIds() : [],'options' => $departmentFormattedForSelect2,'addNew' => false,'class' => 'select2-select repeater-select department-class ','all' => false,'name' => '@if($isRepeater) department_ids @else '.e($tableId).'[0][department_ids] @endif']]); ?>
+<?php $component->withName('form.select'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php $component->withAttributes(['multiple' => true,'selectedValue' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(isset($subModel) ? $subModel->getDepartmentIds() : []),'options' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($departmentFormattedForSelect2),'add-new' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'class' => 'select2-select repeater-select department-class ','all' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'name' => '@if($isRepeater) department_ids @else '.e($tableId).'[0][department_ids] @endif']); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
+<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
+<?php endif; ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?> 
+                    </td>
+{
+                    <td>
+                         <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.select','data' => ['selectedValue' => isset($subModel) ? $subModel->getPositionIds() : [],'multiple' => true,'options' => [],'addNew' => false,'class' => 'select2-select repeater-select position-class ','all' => false,'name' => '@if($isRepeater) position_ids @else '.e($tableId).'[0][position_ids] @endif']]); ?>
+<?php $component->withName('form.select'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php $component->withAttributes(['selectedValue' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(isset($subModel) ? $subModel->getPositionIds() : []),'multiple' => true,'options' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute([]),'add-new' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'class' => 'select2-select repeater-select position-class ','all' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'name' => '@if($isRepeater) position_ids @else '.e($tableId).'[0][position_ids] @endif']); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
+<?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
+<?php endif; ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?> 
+                    </td>
+
                     <td>
                         <div class="">
                             <input value="<?php echo e(isset($subModel) ? $subModel->getItemCost() : 0); ?>" <?php if($isRepeater): ?> name="ffe_item_cost" <?php else: ?> name="<?php echo e($tableId); ?>[0][ffe_item_cost]" <?php endif; ?> class="form-control expandable-amount-input text-left ffe-item-cost trigger-change-repeater recalculate-monthly-increase-amounts-branches" type="text">
                         </div>
                     </td>
+
+
 
                     <td>
 
@@ -191,14 +241,14 @@
                             <span style="margin-left:3px	">%</span>
                         </div>
                     </td>
-					
-					 <td>
+
+                    <td>
                         <div class="d-flex align-items-center">
                             <input value="<?php echo e(isset($subModel) ? $subModel->getContingencyRate():0); ?>" <?php if($isRepeater): ?> name="contingency_rate" <?php else: ?> name="<?php echo e($tableId); ?>[0][contingency_rate]" <?php endif; ?> class="form-control contingency-rate recalculate-monthly-increase-amounts-branches exclude-from-trigger-change-when-repeat expandable-percentage-input text-left exclude-from-trigger-change-when-repeat" type="text">
                             <span style="margin-left:3px	">%</span>
                         </div>
                     </td>
-					
+
                     <td>
 
 
@@ -233,11 +283,11 @@
                     </td>
                     <td>
                          <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.select','data' => ['selectedValue' => isset($subModel) ? $subModel->getDepreciationDuration() : 0,'options' => getDepreciationDurations(),'addNew' => false,'class' => 'select2-select repeater-select depreciation_duration ','all' => false,'name' => '@if($isRepeater) depreciation_duration @else '.e($tableId).'[0][depreciation_duration] @endif']]); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.select','data' => ['selectedValue' => isset($subModel) ? $subModel->getDepreciationDuration() : 5,'options' => getDepreciationDurations(),'addNew' => false,'class' => 'select2-select repeater-select depreciation_duration ','all' => false,'name' => '@if($isRepeater) depreciation_duration @else '.e($tableId).'[0][depreciation_duration] @endif']]); ?>
 <?php $component->withName('form.select'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['selectedValue' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(isset($subModel) ? $subModel->getDepreciationDuration() : 0),'options' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(getDepreciationDurations()),'add-new' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'class' => 'select2-select repeater-select depreciation_duration ','all' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'name' => '@if($isRepeater) depreciation_duration @else '.e($tableId).'[0][depreciation_duration] @endif']); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['selectedValue' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(isset($subModel) ? $subModel->getDepreciationDuration() : 5),'options' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(getDepreciationDurations()),'add-new' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'class' => 'select2-select repeater-select depreciation_duration ','all' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'name' => '@if($isRepeater) depreciation_duration @else '.e($tableId).'[0][depreciation_duration] @endif']); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
@@ -254,37 +304,37 @@
                     </td>
                     <td>
                          <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.select','data' => ['selectedValue' => isset($subModel) ? $subModel->getReplacementInterval() : 'cash','options' => getReplacementInterval(),'addNew' => false,'class' => 'select2-select repeater-select  ','all' => false,'name' => '@if($isRepeater) replacement_interval @else '.e($tableId).'[0][replacement_interval] @endif']]); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.select','data' => ['selectedValue' => isset($subModel) ? $subModel->getReplacementInterval() : 1,'options' => getReplacementInterval(),'addNew' => false,'class' => 'select2-select repeater-select  ','all' => false,'name' => '@if($isRepeater) replacement_interval @else '.e($tableId).'[0][replacement_interval] @endif']]); ?>
 <?php $component->withName('form.select'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['selectedValue' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(isset($subModel) ? $subModel->getReplacementInterval() : 'cash'),'options' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(getReplacementInterval()),'add-new' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'class' => 'select2-select repeater-select  ','all' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'name' => '@if($isRepeater) replacement_interval @else '.e($tableId).'[0][replacement_interval] @endif']); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['selectedValue' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(isset($subModel) ? $subModel->getReplacementInterval() : 1),'options' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(getReplacementInterval()),'add-new' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'class' => 'select2-select repeater-select  ','all' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(false),'name' => '@if($isRepeater) replacement_interval @else '.e($tableId).'[0][replacement_interval] @endif']); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
                     </td>
-					 <td>
+                    <td>
 
 
                         <div class="">
-                            <input value="<?php echo e(isset($subModel) ? $subModel->getCount():0); ?>" <?php if($isRepeater): ?> name="counts" <?php else: ?> name="<?php echo e($tableId); ?>[0][counts]" <?php endif; ?> class="form-control expandable-percentage-input current-count recalculate-monthly-increase-amounts-branches exclude-from-trigger-change-when-repeat text-left " type="text">
+                            <input value="<?php echo e(isset($subModel) ? $subModel->getCount():1); ?>" <?php if($isRepeater): ?> name="counts" <?php else: ?> name="<?php echo e($tableId); ?>[0][counts]" <?php endif; ?> class="form-control expandable-percentage-input current-count recalculate-monthly-increase-amounts-branches exclude-from-trigger-change-when-repeat text-left " type="text">
                         </div>
-						<div>
-							<input class="current-row-counts" type="hidden" name="ffe_counts" value="">
-							
-						</div>
-						
-						
-						<?php $__currentLoopData = $newBranchCountPerDateIndex; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $dateAsIndex=>$newBranchCountPerDateIndexRow): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-						 <input type="hidden" value="<?php echo e(isset($subModel) ? $subModel->getMonthlyAmountAtMonthIndex($dateAsIndex) : 0); ?>" name="monthly_amounts" multiple class="current-month-amounts" data-column-index="<?php echo e($dateAsIndex); ?>">
+                        <div>
+                            <input class="current-row-counts" type="hidden" name="ffe_counts" value="">
 
-						<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?> 
+                        </div>
+
+
+                        <?php $__currentLoopData = $newBranchCountPerDateIndex; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $dateAsIndex=>$newBranchCountPerDateIndexRow): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <input type="hidden" value="<?php echo e(isset($subModel) ? $subModel->getMonthlyAmountAtMonthIndex($dateAsIndex) : 0); ?>" name="monthly_amounts" multiple class="current-month-amounts" data-column-index="<?php echo e($dateAsIndex); ?>">
+
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
                     </td>
 
-                    
+                  
 
 
 
@@ -306,11 +356,10 @@
 
 
 
-        
-        
-	<?php
-		$isFullyFundingTroughEquity = $model->getFixedAssetStructureForFixAssetType($fixedAssetType) ? $model->getFixedAssetStructureForFixAssetType($fixedAssetType)->is_fully_funded_though_equity : 1;
-	?>
+      
+        <?php
+        $isFullyFundingTroughEquity = $model->getFixedAssetStructureForFixAssetType($fixedAssetType) ? $model->getFixedAssetStructureForFixAssetType($fixedAssetType)->is_fully_funded_though_equity : 1;
+        ?>
 
         <div class="form-group d-inline-block">
             <div class="kt-radio-inline">
@@ -318,24 +367,51 @@
 
                 </label>
                 <label class="kt-radio kt-radio--success text-black font-size-18px font-weight-bold">
-
-                    <input class="is-fully-funded-checkbox exclude-from-trigger-change-when-repeat" type="radio" value="1" name="fixedAssetsFundingStructures[is_fully_funded_though_equity]" <?php if(!isset($subModel) || ($isFullyFundingTroughEquity)): ?> checked <?php endif; ?>
-                    > <?php echo e(__('Fully Funded Through Equity')); ?>
+                    <input class="is-fully-funded-checkbox exclude-from-trigger-change-when-repeat" type="radio" value="1" name="perEmployeeFixedAssetsFundingStructure[is_fully_funded_though_equity]" <?php if(!isset($subModel) || ($isFullyFundingTroughEquity)): ?> dd checked <?php endif; ?>> <?php echo e(__('Fully Funded Through Equity')); ?>
 
                     <span></span>
                 </label>
 
                 <label class="kt-radio kt-radio--danger text-black font-size-18px font-weight-bold">
-                    <input class="is-fully-funded-checkbox exclude-from-trigger-change-when-repeat" type="radio" value="0" name="fixedAssetsFundingStructures[is_fully_funded_though_equity]" <?php if(isset($subModel) && !$isFullyFundingTroughEquity): ?> checked <?php endif; ?>
-                    > <?php echo e(__('Funded Through Equity & Debt')); ?>
+                    <input class="is-fully-funded-checkbox exclude-from-trigger-change-when-repeat" type="radio" value="0" name="perEmployeeFixedAssetsFundingStructure[is_fully_funded_though_equity]" <?php if(isset($subModel) && !$isFullyFundingTroughEquity): ?> ss checked <?php endif; ?>> <?php echo e(__('Funded Through Equity & Debt')); ?>
 
                     <span></span>
                 </label>
+				<?php
+					$inEditMode = isset($model) && $model->fixedAssets->count() ? 1 : 0 ;
+				?>
+				<div class="d-inline-block w-full text-right">
+					<div class="d-inline-block">
+					<button  
+					is-save-and-continue="1"
+					 in-edit-mode="<?php echo e($inEditMode); ?>" class="btn active-style 
+					 save-form
+					 
+					
+					 ">
+					
+					 <?php echo e(__('Save & Continue')); ?>
+
+				
+					 
+					 </button>
+					 <?php if($inEditMode): ?>
+					 <button  
+					can-show-funding-structure="<?php echo e($inEditMode); ?>" id="toggleEditBtn" in-edit-mode="<?php echo e($inEditMode); ?>" class="btn active-style ">
+						 <?php echo e(__('Enable Edit')); ?>
+
+					 </button>
+					 <?php endif; ?>
+					 
+					</div>
+					
+				</div>
             </div>
         </div>
-
+		
+		
     </div>
 
 
 </div>
-<?php /**PATH /media/salah/Software/projects/veroo/resources/views/non_banking_services/new-branch-fixed-assets/_repeater.blade.php ENDPATH**/ ?>
+<?php /**PATH /media/salah/Software/projects/veroo/resources/views/non_banking_services/per-employee-fixed-assets/_repeater.blade.php ENDPATH**/ ?>
