@@ -176,20 +176,26 @@ class Partner extends Model
 	public static function findByOddoId(int $id){
 		return self::where('oddo_id',$id)->first();
 	}
+	public static function handlePartnerForOdd($oddoPartnerId ,$oddoPartnerName,$isSupplier ,$isCustomer,$companyId  ):int
+	{
+		$partner = Partner::findByOddoId($oddoPartnerId);
+			if(is_null($partner)){
+				$partner = Partner::createNewForOddo($oddoPartnerId,$oddoPartnerName,$companyId,$isCustomer,$isSupplier);
+			}
+			if($isSupplier){
+				$partner->update([
+					'is_supplier'=>1 
+				]);
+			}
+			if($isCustomer){
+				$partner->update([
+					'is_customer'=>1 
+				]);
+			}
+			return $partner->id ;
+	}
 	public static function createNewForOddo(int $id,string $partnerName,int $companyId,int $isCustomer,int $isSupplier){
-		// $companyRequest = (new Request())->merge([
-		// 	'is_api'=>1 ,
-		// 	'name'=>[
-		// 		'en'=>$partnerName,
-		// 		'ar'=>$partnerName
-		// 	],
-		// 	'systems'=>[
-		// 		CASH_VERO
-		// 	],
-		// 	'main_functional_currency'=>$invoiceCurrency,
-	
-		// ]);
-		// $company = (new CompanyController)->store($companyRequest);
+		
 		/**
 		 * @var Company $company 
 		 */

@@ -61,12 +61,17 @@ class TestCommand extends Command
 	
 	public function handle()
 	{
-		$companies = Company::all();
+		$companies = Company::where('id',105)->get();
+		// $companies = Company::where('id',105)->get();
+		// $companies = Company::get();
 		foreach($companies as $company){
 			if($company->hasOddoIntegrationCredentials()){
 				$oddo = new OddoService($company->getOddoDBUrl(),$company->getOddoDBName(),$company->getOddoDBUserName(),$company->getOddoDBPassword(),$company->getId());
-				$importDate = now()->subDay()->format('Y-m-d') ; ;
-				$oddo->startImportContracts($importDate);
+				// $importDate = now()->format('Y-m-d') ; ;
+				$startDate = now()->subDays(30)->format('Y-m-d') ; ;
+				$endDate = now()->format('Y-m-d') ; ;
+				$oddo->startImport($startDate,$endDate);
+				$oddo->startImportContracts($startDate,$endDate,$company->id);
 			}
 		}
 		dd('gg');

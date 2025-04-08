@@ -38,8 +38,9 @@ class ImportOddoInvoicesJob implements ShouldQueue
 		foreach($companies as $company){
 			if($company->hasOddoIntegrationCredentials()){
 				$oddo = new OddoService($company->getOddoDBUrl(),$company->getOddoDBName(),$company->getOddoDBUserName(),$company->getOddoDBPassword(),$company->getId());
-				$importDate = now()->subDay()->format('Y-m-d') ; ;
-				$oddo->startImport($importDate);
+				$startDate = now()->subDay()->format('Y-m-d') ; ;
+				$endDate = now()->subDay()->format('Y-m-d') ; ;
+				$oddo->startImport($startDate,$endDate);
 			}
 		}
     }

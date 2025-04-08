@@ -183,7 +183,7 @@ use App\Models\MoneyReceived ;
                                     </label>
                                     <div class="kt-input-icon">
                                         <div class="input-group">
-                                            <input required name="duration" type="numeric" class="form-control duration recalc-end-date duration " value="{{ old('duration',isset($model) ? $model->getDuration() * (12/365) : null)  }}">
+                                            <input required name="duration" type="numeric" class="form-control duration recalc-end-date duration " value="{{ ceil(old('duration',isset($model) ? $model->getDuration() * (12/365) : null))  }}">
                                         </div>
                                     </div>
                                 </div>

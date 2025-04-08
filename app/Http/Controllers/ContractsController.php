@@ -86,7 +86,6 @@ class ContractsController
 			$clients =$clients->onlyCustomers();
 			$clientsWithContracts = Partner::onlyCompany($company->id)->onlySuppliers()->onlyThatHaveContracts();
 			$reverseTypeText = __('Suppliers');
-			
 		}
 		$clients = $clients->get();
 		$clientsWithContracts = $clientsWithContracts->get();
@@ -94,7 +93,6 @@ class ContractsController
 			'reverseTypeText'=>$reverseTypeText,
 			'contractsRelationName'=>$contractsRelationName,
 			'clientsWithContracts'=>$clientsWithContracts,
-			// 'suppliersOrCustomers'=>$suppliersOrCustomers,
 			'formTitle'=>$formTitle,
 			'company'=>$company,
 			'clients'=>$clients,

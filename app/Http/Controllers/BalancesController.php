@@ -60,12 +60,13 @@ class BalancesController
 		$downPaymentSqlQuery =  'select  '.  $clientIdColumnName .' , currency , sum(down_payment_balance) as down_payment_balance from '. $downPaymentTableName .' where   company_id = '. $company->id .' group by '. $clientIdColumnName .' , currency  order by down_payment_balance desc;';
 	
 		
-	
+
 		$partnerIds = collect($invoicesBalances)->pluck($clientIdColumnName,$clientIdColumnName)->toArray() ;
 	
 		$downPaymentsInMainCurrency = $this->getDownPaymentInMainCurrency($partnerIds,$mainFunctionalCurrency,$clientIdColumnName,$downPaymentSettlementModelName,$moneyModelName);
 		
 		$downPayments =DB::select(DB::raw($downPaymentSqlQuery));
+	
 		$invoicesBalancesWithPartnersWithoutInvoices = $this->subtractQuery($invoicesBalances,$downPayments,$clientIdColumnName,$clientNameColumnName);
 		$invoicesBalances = $invoicesBalancesWithPartnersWithoutInvoices['data'] ?? [];
 		$partnersWithoutInvoices = $invoicesBalancesWithPartnersWithoutInvoices['partners_without_invoices'];
@@ -73,8 +74,6 @@ class BalancesController
 		$invoicesBalances = array_merge($invoicesBalances , $invoicesBalancesForMainFunctionalCurrency);
 		$cardNetBalances = $this->sumNetBalancePerCurrency($invoicesBalances,$mainFunctionalCurrency,$clientNameColumnName);
 		$hasMoreThanCurrency = isset($cardNetBalances['currencies']) && count($cardNetBalances['currencies']) >1 ; 
-		
-		
         return view('admin.reports.balances_form', compact('company','mainFunctionalCurrency','hasMoreThanCurrency','title','invoicesBalances','cardNetBalances','mainCurrency','modelType','clientNameColumnName','clientIdColumnName','customersOrSupplierStatementText'));
     }
 	protected function getDownPaymentInMainCurrency(array $partnerIds,string $mainFunctionalCurrency,string $clientIdColumnName,string $downPaymentSettlementModelName , string $moneyModelName):array{
