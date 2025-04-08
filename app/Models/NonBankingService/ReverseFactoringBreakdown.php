@@ -48,7 +48,6 @@ class  ReverseFactoringBreakdown extends Model
 		
 	public function getReviewForTable()
 	{
-		// dd($this->category);
 		/**
 		 * ! Need To Be Fixed
 		 */

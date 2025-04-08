@@ -70,7 +70,6 @@ class DepartmentController extends Controller
 		$endDate = $filterDates[Department::DEPARTMENT]['endDate'] ?? null ;
 		$departments = $company->departments ;
 		// $departments =  $departments->filterByDateColumn('study_start_date',$startDate,$endDate) ;
-		// dd($departments);
 		$departments =  $currentType == Department::DEPARTMENT ? $this->applyFilter($request,$departments):$departments ;
 
 		/**

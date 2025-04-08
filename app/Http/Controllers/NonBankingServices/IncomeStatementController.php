@@ -140,7 +140,6 @@ class IncomeStatementController extends Controller
 		
 		
 
-		// dd($loanSchedulePayments);
 		$testLoopIndex = 0 ;
 		foreach($loanSchedulePayments as $loanSchedulePaymentAsStdClass ){
 			$portfolioLoanType = $loanSchedulePaymentAsStdClass->portfolio_loan_type;

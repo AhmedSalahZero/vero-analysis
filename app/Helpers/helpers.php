@@ -2377,7 +2377,6 @@ function formatOptionsForSelect(Collection $items, $idFun = 'getId', $valueFun =
 
 function formatSelects($selects, $selectedItem, $id, $value, $addNew = false, $selectAll = false): string
 {
-	// dd($selectedItem);
     $result = '';
     if ($addNew) {
         // $result = '<option class="add-new-item" >'. __('Add New')  .' </option>';

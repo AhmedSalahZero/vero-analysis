@@ -88,7 +88,6 @@ class DashboardController extends Controller
 
 		// $loanSchedulePayments = [];
 		$testLoopIndex = 0 ;
-		// dd(collect($loanSchedulePayments)->where('revenue_stream_type',Study::PORTFOLIO_MORTGAGE)->toArray());
 		foreach($loanSchedulePayments as $loanSchedulePaymentAsStdClass ){
 			$portfolioLoanType = $loanSchedulePaymentAsStdClass->portfolio_loan_type;
 			$isPortfolio = $portfolioLoanType == 'portfolio'; 
@@ -172,8 +171,6 @@ class DashboardController extends Controller
 		
 			
 		}
-		// dd($formattedExpenses);
-		// dd($formattedExpenses);
 		foreach($yearWithItsIndexes as $yearIndex => $monthWithItsIndexes){
 			$currentYearAsString = $yearIndexWithYear[$yearIndex] ?? null ;
 			$currentSalesRevenue = $formattedResult['sales_revenue'][$yearIndex]??0;

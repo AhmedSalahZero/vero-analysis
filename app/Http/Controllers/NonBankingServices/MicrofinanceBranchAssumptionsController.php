@@ -40,7 +40,6 @@ class MicrofinanceBranchAssumptionsController extends Controller
 	public function store(Company $company , StoreMicrofinanceBranchAssumption $request,Study $study)
 	{
 		$study->storeRepeaterRelations($request,$this->getRepeaterRelations(),$company);
-		dd('f');
 		return response()->json([
 			'redirectTo'=>route('create.leasing.revenue.stream.breakdown',['company'=>$company->id,'study'=>$study->id])
 		]);

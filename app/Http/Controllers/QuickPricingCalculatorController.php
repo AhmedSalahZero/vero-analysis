@@ -67,12 +67,9 @@ class QuickPricingCalculatorController extends Controller
     }
     public function create(Company $company,$pricingPlanId = 0 )
     {
-		// dd($pricingPlanId);
 		$sharingLink = SharingLink::where('identifier',$pricingPlanId)->first();
 		if(!$sharingLink){
 			$sharingLink = PricingPlan::find($pricingPlanId);
-			// dd($sharingLink);
-			
 		}
 		if(!$sharingLink && $pricingPlanId != 0){
 			abort(404);

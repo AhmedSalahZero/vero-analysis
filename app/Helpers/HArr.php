@@ -561,9 +561,6 @@ class HArr
 			$currentIndex++;
 		}
 		return $sums;
-		// dd($sums);
-		// dd($financialYearsEndMonths );
-		// dd($items,$financialYearsEndMonths);
 	}
 	protected static function calculateGrowthRate(array $items):array {
 		$previousValue = 0 ;

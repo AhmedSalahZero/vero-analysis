@@ -140,7 +140,6 @@ class RevenueBusinessLineController extends Controller
 			$oldServiceCategory->revenue_business_line_id = $request->get('revenue_business_line_id');
 			$oldServiceCategory->name = $request->get('service_category_name');
 			$oldServiceCategory->save();
-			dd('good');
 		}
 		if($oldServiceCategory && $oldServiceItem){
 			$oldServiceItem->service_category_id = $request->get('service_category_id');

@@ -95,7 +95,6 @@ class FixedAsset extends Model
 	public function getPurchaseDates(array $dateIndexWithDate):array 
 	{
 		// $dateAsIndexString = app('dateIndexWithDate');
-		// dd($dateIndexWithDate);
 		
 		$dates= [];
 		$ffeCounts = $this->getFfeCounts();

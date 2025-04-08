@@ -1,5 +1,7 @@
 <?php
 namespace App\Http\Controllers;
+
+use App\Http\Requests\StoreInternalMoneyTransferRequest;
 use App\Models\AccountType;
 use App\Models\Bank;
 use App\Models\Branch;
@@ -153,7 +155,7 @@ class InternalMoneyTransferController
 		];
 	}
 	
-	public function store(Company $company , string $type  , Request $request){
+	public function store(Company $company , string $type  , StoreInternalMoneyTransferRequest $request){
 		$internalMoneyTransfer = new InternalMoneyTransfer ;
 		$internalMoneyTransfer->type = $type ;
 		$transferDate = $request->get('transfer_date') ;

@@ -17,13 +17,7 @@ class FixedAssetCalculation
 			 */
 			$studyDates = array_flip($studyDates);
 			$ffeAssetItems = $this->calculateFFEAssetsForFFE($fixedAssets,$dateIndexWithDate,$operationStartDateAsIndex,$studyDates,$studyEndDateAsIndex);
-			// dd($fixedAssets);
 			return $this->sumTotalPerRow($ffeAssetItems,$studyId,$companyId);
-			// dd($ffeAssetItems);
-			// FixedAssetStatement::create($ffeAssetItems);
-			// DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('fixed_asset_statements')->insert($ffeAssetItems);
-			// $totalOfFFEItemForFFE = $this->findTotalOfFFEFixedAssets($ffeAssetItems ,$studyDates);
-		// 
 	}
 	protected function sumTotalPerRow(array $ffeAssetItems,int $studyId,int $companyId):array
 	{
@@ -41,7 +35,6 @@ class FixedAssetCalculation
 				// $finalResult[$fixedAssetItemId][$typeName] = json_encode($finalResult[$fixedAssetItemId][$typeName]);
 			}
 		}
-		// dd($finalResult);
 		return $finalResult;
 	}
 	// protected function findTotalOfFFEFixedAssets(array $ffeAsset,array $studyDates ){
@@ -149,21 +142,16 @@ class FixedAssetCalculation
 			}
 			$depreciationEndDateAsIndex = $depreciationStartDateAsIndex ? $depreciationStartDateAsIndex+$propertyDepreciationDurationInMonths - 1 : null;
 			$buildingAssets['beginning_balance'][$dateAsIndex]= $beginningBalance;
-			// dd($purchaseDateAsString ,$constructionTransferredValue );
 			$buildingAssets['additions'][$dateAsIndex]=  $dateAsIndex ==$purchaseDateAsIndex ? $constructionTransferredValue : 0;
-			// dd($buildingAssets);
 			// $buildingAssets['additions'][$dateAsString]=  $dateAsString ==$constructionTransferredDate ? $constructionTransferredValue : 0;
 			// $buildingAssets['initial_total_gross'][$dateAsString] =    $beginningBalance;
 			$buildingAssets['initial_total_gross'][$dateAsIndex] =  $buildingAssets['additions'][$dateAsIndex] +  $beginningBalance;
 			$currentInitialTotalGross = $buildingAssets['initial_total_gross'][$dateAsIndex] ??0;
 			$replacementCost[$dateAsIndex] =    in_array($dateAsIndex ,$replacementDates)  ? $this->calculateReplacementCost($currentInitialTotalGross,$propertyReplacementCostRate) : 0;
-			// dd($replacementDates , $dateAsString,in_array($dateAsString ,$replacementDates) );
-			// dd('value must be index',$replacementDates);
 			if( in_array($dateAsIndex ,$replacementDates) 
 			// && ( Carbon::make($constructionTransferredDate)->lessThan($operationStartDateFormatted))
 		){
 				$depreciationStartDateAsIndex = $dateAsIndex+1;
-				// dd($propertyDepreciationDurationInMonths);
 				$depreciationEndDateAsIndex = $depreciationStartDateAsIndex ? $depreciationStartDateAsIndex+$propertyDepreciationDurationInMonths - 1 : null;
 			}
 			$replacementValueAtCurrentDate = $replacementCost[$dateAsIndex] ?? 0;
@@ -190,7 +178,6 @@ class FixedAssetCalculation
 		$monthlyDepreciations = [];
 		$monthlyDepreciationAtCurrentDate =  ($additions+$replacementCost) / $propertyDepreciationDurationInMonths ;
 		$depreciationDates = generateDatesBetweenTwoIndexedDates($depreciationStartDateAsIndex,$depreciationEndDateAsIndex);
-		// dd('generate dates between two indexes',$depreciationStartDateAsIndex,$depreciationEndDateAsIndex,$depreciationDates);
 		// $depreciationStartDateAsCarbon = Carbon::make($depreciationStartDate);
 		// $depreciationEndDateAsCarbon = Carbon::make($depreciationEndDate);
 		// $depreciationDates = generateDatesBetweenTwoDates($depreciationStartDateAsCarbon, $depreciationEndDateAsCarbon, 'addMonth', 'Y-m-d');

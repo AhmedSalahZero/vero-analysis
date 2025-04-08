@@ -179,8 +179,8 @@ class BuyOrSellCurrenciesController
 		$type = $request->get('type');
 		$transferDate = $request->get('transaction_date') ;
 		$receivingDate = Carbon::make($transferDate)->addDay($request->get('transfer_days',0))->format('Y-m-d');
-		$transferFromAmount = number_unformat($request->get('currency_to_sell_amount',0)) ;
-		$transferToAmount = number_unformat($request->get('currency_to_buy_amount')) ;
+		$transferFromAmount = $request->get('currency_to_sell_amount',0) ;
+		$transferToAmount =$request->get('currency_to_buy_amount') ;
 		$exchangeRate  = $request->get('exchange_rate');
 		$buyOrSellCurrency->storeBasicForm($request);
 		$fromFinancialInstitutionId = $request->get('from_bank_id');
@@ -193,7 +193,6 @@ class BuyOrSellCurrenciesController
 		$fromBranchId = $request->get('from_branch_id');
 		$currencyToSellName = $request->get('currency_to_sell');	
 		$currencyToBuyName = $request->get('currency_to_buy');	
-		// dd($transferFromAmount,$transferToAmount);
 		$fromAccountType = AccountType::find($fromAccountTypeId);
 		$toAccountType = AccountType::find($toAccountTypeId);
 		if($type === BuyOrSellCurrency::BANK_TO_BANK){

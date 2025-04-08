@@ -82,7 +82,6 @@ class CheckDueAndPastedInvoicesJob implements ShouldQueue
                 $pastDueCustomerInvoices = DB::table('customer_invoices')->where('company_id', $companyId)
                 ->where('net_balance', '>', 0)
                 ->where('invoice_due_date', '<',$todayDate)->get();
-			// dd($pastDueCustomerInvoices);
                 /**
                  * * مستحق الدفع اليوم
                  */
@@ -229,7 +228,6 @@ class CheckDueAndPastedInvoicesJob implements ShouldQueue
 				foreach ($pastDueCheques as $cheque) {
                     $chequeDueDate = $cheque->due_date ;
                     $chequeNumber = $cheque->cheque_number;
-					// dd($cheque);
 					$customerName = $cheque->name ;
 					$chequeAmount = $cheque->received_amount ;
 					$draweeBank = Bank::find($cheque->drawee_bank_id);
@@ -393,11 +391,6 @@ class CheckDueAndPastedInvoicesJob implements ShouldQueue
 				 //  ->whereBetween('payable_cheques.due_date', [$beforeIntervalDate, $dayBeforeDayDate])
 				 ->join('money_payments','money_payments.id','=','payable_cheques.money_payment_id')
 				 ->get();
-				//  dd($dayAfterNowDate,$afterIntervalDate,$comingPayableCheques);
-				 
-				 
-				
-				
 					
 			foreach ($pastDueSupplierInvoices as $supplierInvoice) {
 				$invoiceDueDate = $supplierInvoice->invoice_due_date ;

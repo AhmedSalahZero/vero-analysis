@@ -67,6 +67,7 @@
             <input id="js-in-edit-mode" type="hidden" name="in_edit_mode" value="{{ isset($model) ? 1 : 0 }}">
             <input  type="hidden" name="id" value="{{ isset($model) ? $model->id : 0 }}">
             <input  type="hidden" name="company_id" value="{{ $company->id }}">
+			<input type="hidden" name="type" value="safe-to-bank" >
 			@if(isset($model))
 			<input type="hidden" name="updated_by" value="{{ auth()->user()->id }}">
 			@else
@@ -342,6 +343,9 @@
             })
         }
     })
+	$(function(){
+		$('select#branch-id').trigger('change');
+	})
 	
 $(document).on('change', '.js-from-update-account-number-based-on-account-type', function () {
 	const val = $(this).val()

@@ -30,7 +30,6 @@ class NonBankingServiceProvider extends ServiceProvider
 				$datesIndexWithYearIndex=$datesAndIndexesHelpers['datesIndexWithYearIndex']; 
 	
 				$yearIndexWithYear=$datesAndIndexesHelpers['yearIndexWithYear']; 
-				// dd($yearIndexWithYear);
 				$dateIndexWithDate=$datesAndIndexesHelpers['dateIndexWithDate']; 
 				$dateIndexWithMonthNumber=$datesAndIndexesHelpers['dateIndexWithMonthNumber']; 
 				$dateWithMonthNumber=$datesAndIndexesHelpers['dateWithMonthNumber']; 

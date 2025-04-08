@@ -65,7 +65,6 @@ public function __calculate($previousResult ,int $indexOfLoop,string $loanType, 
 		$datesIndexAndDaysCount =HDate::calculateDaysCountAtEnd($datesAsIndexString); 
 		$datesAsStringIndex = array_flip($datesAsIndexString);
 		$dateIndexWithDate = $datesAsIndexString;
-		// dd($dateIndexWithDate);
 		$installmentPaymentIntervalValue = $this->getInstallmentPaymentIntervalValue($installmentPaymentIntervalName);
 
 		 $dailyPricing = is_numeric($baseRate) ?  (($baseRate + $marginRate) /100)/360 : $baseRate  ;
