@@ -40,7 +40,7 @@ class SafeStatementController
 									->with('fail',__('No Data Found'))	
 									;
 			}
-		
+	
 		return view('safe_statement_result',[
 			'results'=>$results,
 			'currency'=>$currency

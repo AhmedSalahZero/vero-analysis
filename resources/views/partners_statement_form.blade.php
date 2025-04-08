@@ -10,7 +10,7 @@
 </style>
 @endsection
 @section('sub-header')
-{{ __('Safe Statement') }}
+{{ __('Partner Statement') }}
 @endsection
 @section('content')
 <div class="row">
@@ -24,7 +24,7 @@
             <div class="kt-portlet" style="overflow-x:hidden">
                 <div class="kt-portlet__body">
                     <div class="form-group row">
-                        <div class="col-md-3 mb-4">
+                        <div class="col-md-2 mb-4">
                             <label>{{ __('Start Date') }} <span class="multi_selection"></span> </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
@@ -33,7 +33,7 @@
                             </div>
                         </div>
 
-                        <div class="col-md-3 mb-4">
+                        <div class="col-md-2 mb-4">
                             <label>{{ __('End Date') }} <span class="multi_selection"></span> </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
@@ -41,7 +41,7 @@
                                 </div>
                             </div>
                         </div>
-   <div class="col-md-3 mb-4">
+   <div class="col-md-2 mb-4">
                             <label>{{ __('Currency') }} </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">

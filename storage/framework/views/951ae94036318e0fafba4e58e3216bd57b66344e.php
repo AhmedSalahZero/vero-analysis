@@ -424,7 +424,7 @@
 											
 											$reviewedArr = getBankStatementReviewed($modelAsStdClass) ;
 											$reviewedText = getReviewedText($reviewedArr);
-											
+											$userComment = getUserCommentFromModel($modelAsStdClass);
 										?>
 								
                                         <td class="sub-text-bg text-left "><?php echo e($reviewedText); ?></td>
@@ -439,7 +439,12 @@
 																					
 											<?php endif; ?>
 										</td>
-                                        <td class="sub-text-bg text-left max-w-comment"><?php echo e($comment?: getBankStatementComment($modelAsStdClass)); ?></td>
+                                        <td class="sub-text-bg text-left max-w-comment"><?php echo e($comment?: getBankStatementComment($modelAsStdClass)); ?>
+
+										<br>
+										<?php echo e($userComment); ?>
+
+										</td>
 
                                  
 

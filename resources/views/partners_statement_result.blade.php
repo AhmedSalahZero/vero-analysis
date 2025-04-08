@@ -332,10 +332,14 @@
 									 		  $comment = isset($modelAsStdClass->{'comment_'.$lang}) ? $modelAsStdClass->{'comment_'.$lang} : null ;
 											$reviewedArr = getBankStatementReviewed($modelAsStdClass) ;
 											$reviewedText = getReviewedText($reviewedArr);
-											
+											$userComment = getUserCommentFromModel($modelAsStdClass);
 									   @endphp
 									      <td class="sub-text-bg text-left ">{{   $reviewedText   }}</td>
-									    <td class="sub-text-bg text-left max-w-amount">{{ $comment?:  getBankStatementComment($modelAsStdClass) }}</td>
+									    <td class="sub-text-bg text-left max-w-amount">{{ $comment?:  getBankStatementComment($modelAsStdClass) }}
+										<br>
+										{{ $userComment }}
+										
+										</td>
 									
 
                                     </tr>

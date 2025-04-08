@@ -7470,7 +7470,6 @@ if (!function_exists('getFixedLoanTypes')) {
 		}
 		elseif($id = $stdClass->internal_money_transfer_id){
 			$tableName = 'internal_money_transfers';
-			
 		}
 		if(is_null($tableName)){
 			return [
@@ -7916,4 +7915,39 @@ function getSuperAdminSection()
 function isArabic($text) {
     // التحقق مما إذا كان النص يحتوي على حروف عربية
     return preg_match('/[\p{Arabic}]/u', $text);
+}
+function getUserCommentFromModel($stdClass)
+{
+	$tableName = null ;
+		
+	if($id = $stdClass->money_received_id){
+		$tableName = 'money_received';
+	}
+	elseif($id = $stdClass->money_payment_id){
+		$tableName = 'money_payments';
+	}
+	elseif($id = $stdClass->cash_expense_id){
+		$tableName = 'cash_expenses';
+	}
+	elseif($id = $stdClass->buy_or_sell_currency_id){
+		$tableName = 'buy_or_sell_currencies';
+	}
+	elseif($id = $stdClass->internal_money_transfer_id){
+		$tableName = 'internal_money_transfers';
+	}
+	elseif($id = $stdClass->letter_of_guarantee_issuance_id){
+		$tableName = 'letter_of_guarantee_issuances';
+	}
+	elseif($id = $stdClass->letter_of_credit_issuance_id){
+		$tableName = 'letter_of_credit_issuances';
+	}
+	if(is_null($tableName)){
+		return '' ;
+	}
+	$row = DB::table($tableName)->where('id',$id)->first();
+	if($row && $row->user_comment){
+		return '[ '.  $row->user_comment . ' ]' ;
+	}
+	return '';
+	
 }

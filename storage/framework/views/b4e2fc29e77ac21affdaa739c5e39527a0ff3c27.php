@@ -361,10 +361,15 @@
 											$comment = is_null($comment) && isset($modelAsStdClass->type) && $modelAsStdClass->type =='opening-balance' ? __('Opening Balance') : null ;
 											$reviewedArr = getBankStatementReviewed($modelAsStdClass) ;
 											$reviewedText = getReviewedText($reviewedArr);
+											$userComment = getUserCommentFromModel($modelAsStdClass);
 											
 									   ?>
 									      <td class="sub-text-bg text-left "><?php echo e($reviewedText); ?></td>
-									    <td class="sub-text-bg text-left max-w-amount"><?php echo e($comment?:  getBankStatementComment($modelAsStdClass)); ?></td>
+									    <td class="sub-text-bg text-left max-w-amount"><?php echo e($comment?:  getBankStatementComment($modelAsStdClass)); ?> <br> 
+										
+										<?php echo e($userComment); ?>
+
+										</td>
 									
 
                                     </tr>
