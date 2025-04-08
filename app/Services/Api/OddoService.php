@@ -35,6 +35,19 @@ class OddoService
 		$this->models = $models;
 		$this->uid = $uid;
 	}
+	/**
+	 * * import project or contracts
+	 */
+	public function startImportContracts()
+	{
+		if(is_null($this->uid)){
+			return ;
+		}
+		dd($this->getContracts(now()->subDay()->format('Y-m-d')));
+	}
+	/**
+	 * * import invoices
+	 */
 	public function startImport($importDate):void
 	{
 		if(is_null($this->uid)){
@@ -70,7 +83,16 @@ class OddoService
 		}
 		
 	}
-	protected function getInvoices($importDate)
+	protected function getContracts(string $importDate)
+	{
+		// $fields = $this->getInvoicesFieldNames();
+		$filter = array(array(array('move_type', 'in', ['in_invoice','out_invoice']),array('state', '=', 'posted'),array('date', '=', $importDate)));
+		$ids=$this->models->execute_kw($this->db, $this->uid, $this->password, 'project.project', 'search',$filter, array('limit' => 10));
+		return $this->models->execute_kw($this->db, $this->uid, $this->password, 'project.project', 'read', array($ids),[
+			'fields'=>['name', 'date_start', 'date_end', 'partner_id']
+		]);
+	}
+	protected function getInvoices(string $importDate)
 	{
 		$fields = $this->getInvoicesFieldNames();
 		$filter = array(array(array('move_type', 'in', ['in_invoice','out_invoice']),array('state', '=', 'posted'),array('date', '=', $importDate)));

@@ -7935,10 +7935,18 @@ function getUserCommentFromModel($stdClass)
 	elseif($id = $stdClass->internal_money_transfer_id){
 		$tableName = 'internal_money_transfers';
 	}
-	elseif($id = $stdClass->letter_of_guarantee_issuance_id){
+	// elseif($id = $stdClass->letter_of_guarantee_issuance_id){
+	// 	$tableName = 'letter_of_guarantee_issuances';
+	// }
+	// elseif($id = $stdClass->letter_of_credit_issuance_id){
+	// 	$tableName = 'letter_of_credit_issuances';
+	// }
+	if(isset($stdClass->letter_of_guarantee_issuance_id) &&$stdClass->letter_of_guarantee_issuance_id ){
+		$id = $stdClass->letter_of_guarantee_issuance_id ;
 		$tableName = 'letter_of_guarantee_issuances';
 	}
-	elseif($id = $stdClass->letter_of_credit_issuance_id){
+	if(isset($stdClass->letter_of_credit_issuance_id) &&$stdClass->letter_of_credit_issuance_id ){
+		$id = $stdClass->letter_of_credit_issuance_id ;
 		$tableName = 'letter_of_credit_issuances';
 	}
 	if(is_null($tableName)){
