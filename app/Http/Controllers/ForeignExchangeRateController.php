@@ -54,11 +54,8 @@ class ForeignExchangeRateController
 		$filterDates = [];
 		$searchFields = [];
 		$models = [];
-		// $existingCurrencies =ForeignExchangeRate::where('company_id',$company->id)->pluck('from_currency','from_currency')->toArray();
 		$existingCurrencies =FinancialInstitutionAccount::getAllCurrentAccountCurrenciesForCompany($company->id,[$mainFunctionalCurrency]);
 		$existingCurrencies = array_values(array_unique(array_merge($existingCurrencies , CashInSafeStatement::getCurrencies($company->id,[$mainFunctionalCurrency]))));
-
-		
 		$isMainFunctionCurrencyExistInHisCurrency = in_array($mainFunctionalCurrency,$existingCurrencies );
 		$activeType = $isMainFunctionCurrencyExistInHisCurrency ? $mainFunctionalCurrency : Arr::first($existingCurrencies);
 		foreach($existingCurrencies as $currentCurrency){

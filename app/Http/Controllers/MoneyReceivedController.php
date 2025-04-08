@@ -778,10 +778,10 @@ class MoneyReceivedController
 		$netBalanceDate = '' ;
 		$accountTypeId = $request->get('accountType',$accountTypeId );
 		$accountType = AccountType::find($accountTypeId);
-		$statementDate = $statementDate ?: now() ;
+		$statementDate = $statementDate ?: now()->format('Y-m-d') ;
+		// dd($statementDate);
 		$accountNumber = $request->get('accountNumber',$accountNumber);
 		$financialInstitutionId = $request->get('financialInstitutionId',$financialInstitutionId);
-
 		if(!$accountType){
 			return response()->json([
 				'status'=>true ,
@@ -804,7 +804,7 @@ class MoneyReceivedController
 		}
 		$statementTableName = (get_class($accountNumberModel)::getStatementTableName()) ;
 		$foreignKeyName = get_class($accountNumberModel)::getForeignKeyInStatementTable();
-		$balanceRow = DB::table($statementTableName)->where($foreignKeyName,$accountNumberModel->id)->where('full_date','<=' , $statementDate)->orderByRaw('full_date desc')->first();
+		$balanceRow = DB::table($statementTableName)->where($foreignKeyName,$accountNumberModel->id)->where('date','<=' , $statementDate)->orderByRaw('full_date desc')->first();
 		$NetBalanceRow = DB::table($statementTableName)->where($foreignKeyName,$accountNumberModel->id)->orderByRaw('full_date desc')->first();
 		$column = $accountType->isOverdraftAccount() ? 'room' : 'end_balance';
 		$balance = 0;

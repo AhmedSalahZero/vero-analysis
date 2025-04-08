@@ -6511,7 +6511,6 @@ function getHeaderMenu($currentCompany = null)
 	;
 	$resortedNotificationsSubItems = [];
 	
-	// dd($notificationsSubItems);
 	$cashManagementSubItems = [
 
 		'home'=>generateMenuItem(__('Home'), $user->can('view home') && hasMiddleware('isCashManagement') , route('home'), []),
@@ -7289,9 +7288,13 @@ function capitalize($currentName)
 
 function dashesToCamelCase($string)
 {
-    $str = str_replace(' ', '', ucwords(str_replace('-', ' ', $string)));
-    $str[0] = strtolower($str[0]);
-    return $str;
+	$string = str_replace(['-', '_'], ' ', $string);
+    return lcfirst(str_replace(' ', '', ucwords($string)));
+		
+	// // return lcfirst(str_replace('_', '', ucwords($string, '_')));
+    // $str = str_replace(' ', '', ucwords(str_replace('_','',str_replace('-', ' ', $string))));
+    // $str[0] = strtolower($str[0]);
+    // return $str;
 }
 function isAll($percentageOf){
 	if(is_null($percentageOf)){

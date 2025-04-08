@@ -196,7 +196,7 @@ class InternalMoneyTransferController
         return view('internal-money-transfer.'.$formName ,$this->getCommonViewVars($company,$type,$internalMoneyTransfer));
     }
 	
-	public function update(Company $company , string $type , Request $request , InternalMoneyTransfer $internalMoneyTransfer){
+	public function update(Company $company , string $type , StoreInternalMoneyTransferRequest $request , InternalMoneyTransfer $internalMoneyTransfer){
 		
 		$internalMoneyTransfer->deleteRelations();
 		$internalMoneyTransfer->delete();

@@ -367,7 +367,7 @@ class CashExpenseController
 	}
 
 	public function update(Company $company , StoreCashExpenseRequest $request , cashExpense $cashExpense){
-
+		
 		$newType = $request->get('type');
 		$cashExpense->deleteRelations();
 		$cashExpense->delete();
