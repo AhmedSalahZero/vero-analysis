@@ -263,6 +263,15 @@ class MoneyPaymentController
 		$moneyPayment = MoneyPayment::find($moneyPaymentId);
 		$partner = Partner::find($supplierInvoiceId);
 		$downPaymentContract = Contract::find($request->get('downPaymentContractId'));
+		if(!$partner){
+			return response()->json([
+				'status'=>true ,
+				'invoices'=>[],
+				'currencies'=>[],
+				'selectedCurrency'=>[],
+				'clientsWithContracts'=>[]
+			]);
+		}
 		$partnerId = $partner->id ;
 		
 		$invoices = SupplierInvoice::where('supplier_id',$partnerId)->where('company_id',$company->id)
@@ -643,13 +652,25 @@ class MoneyPaymentController
 		$branchId = $request->get('branchId',$branchId);
 		$currencyName = $request->get('currencyName',$currencyName);
 		$currencyName = is_null($currencyName) ? $request->get('currency') :$currencyName  ;
+		$additionalAmountInEditMode = 0 ;
+		// $additionalAmountInEditMode = number_unformat($request->get('additionalBalanceInEditMode',0));
 		/**
 		 * @var Branch $branch
 		 */
 		$branch = Branch::find($branchId);
+		if($request->has('modelId')){
+			$modelId = $request->get('modelId');
+			$modelType = $request->get('modelType');
+			$model = ('App\Models\\'.$modelType)::find($modelId);
+			$oldBranchId = $model ? $model->getBranchId() : null;
+			if($oldBranchId && $oldBranchId != $branch->id){
+				// $additionalAmount 
+			}
+		}
+		// dd($branch,$request->get('modelId'));
 		$endBalance = $branch->getCurrentEndBalance($company->id,$currencyName,$deliveryDate);
 		return response()->json([
-			'end_balance'=>$endBalance
+			'end_balance'=>$endBalance+$additionalAmountInEditMode
 		]);
 		
 	}

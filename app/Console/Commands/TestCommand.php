@@ -68,10 +68,12 @@ class TestCommand extends Command
 			if($company->hasOddoIntegrationCredentials()){
 				$oddo = new OddoService($company->getOddoDBUrl(),$company->getOddoDBName(),$company->getOddoDBUserName(),$company->getOddoDBPassword(),$company->getId());
 				// $importDate = now()->format('Y-m-d') ; ;
-				$startDate = now()->subDays(30)->format('Y-m-d') ; ;
+				$startDate = now()->subDays(60)->format('Y-m-d') ; ;
 				$endDate = now()->format('Y-m-d') ; ;
-				$oddo->startImport($startDate,$endDate);
-				$oddo->startImportContracts($startDate,$endDate,$company->id);
+				// $oddo->startImportInvoices($startDate,$endDate);
+				// $oddo->payInvoice(49,100,'2025-04-09','salah comment',54);
+				// $oddo->startImportContracts($startDate,$endDate,$company->id);
+				$oddo->test($startDate,$endDate,$company->id);
 			}
 		}
 		dd('gg');
@@ -83,7 +85,7 @@ class TestCommand extends Command
 			if($company->hasOddoIntegrationCredentials()){
 				$oddo = new OddoService($company->getOddoDBUrl(),$company->getOddoDBName(),$company->getOddoDBUserName(),$company->getOddoDBPassword(),$company->getId());
 				$importDate = now()->subDay()->format('Y-m-d') ; ;
-				$oddo->startImport($importDate);
+				$oddo->startImportInvoices($importDate);
 			}
 		}
 		dd('good');

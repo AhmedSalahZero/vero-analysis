@@ -307,6 +307,14 @@ class MoneyReceivedController
 		
 		$moneyReceived = MoneyReceived::find($moneyReceivedId);
 		$partner = Partner::find($customerId);
+		if(!$partner){
+			return response()->json([
+				'status'=>true , 
+				'invoices'=>[],
+				'currencies'=>[],
+				'selectedCurrency'=>[]
+			]);
+		}
 		$downPaymentContract = Contract::find($request->get('downPaymentContractId'));
 		$partnerId = $partner->id;
 		$invoices = CustomerInvoice::where('customer_id',$partnerId)
@@ -775,6 +783,9 @@ class MoneyReceivedController
 	}
 	public function updateNetBalanceBasedOnAccountNumber(Request $request , Company $company , $accountTypeId = null , $accountNumber = null , $financialInstitutionId = null , $statementDate = null)
 	{
+		$additionalAmountInEditMode = number_unformat($request->get('additionalBalanceInEditMode',0));
+
+	
 		$netBalanceDate = '' ;
 		$accountTypeId = $request->get('accountType',$accountTypeId );
 		$accountType = AccountType::find($accountTypeId);
@@ -819,12 +830,11 @@ class MoneyReceivedController
 			$netBalance =$NetBalanceRow->{$column} ; 
 			$netBalanceDate =Carbon::make($NetBalanceRow->date)->format('d-m-Y') ; 
 		}
-		
 		return response()->json([
 			'status'=>true ,
-			'balance'=>$balance,
+			'balance'=>$balance+$additionalAmountInEditMode,
+			'net_balance'=>$netBalance+$additionalAmountInEditMode ,
 			'balance_date'=>$balanceDate,
-			'net_balance'=>$netBalance ,
 			'net_balance_date'=>$netBalanceDate ,
 		]);
 

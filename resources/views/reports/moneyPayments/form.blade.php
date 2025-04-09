@@ -101,7 +101,9 @@ $selectedBanks = [];
             {{-- <input type="hidden" id="js-down-payment-id" value="{{ isset($model) && $model->downPayment ? $model->downPayment->id : 0  }}"> --}}
             <input type="hidden" id="ajax-invoice-item" data-single-model="{{ $singleModel ? 1 : 0 }}" value="{{ $singleModel ? $singleModel : 0 }}">
             <input id="js-down-payment-id" type="hidden" name="down_payment_id" value="{{ isset($model) ? $model->id : 0 }}">
-
+			{{-- <input type="hidden" name="additional_amount_balance_{{ isset($model) ? $model->getType() : '' }}_{{ isset($model) ? $model->getCashPaymentBranchId() :  }}" id="additional-balance-amount-{{ isset($model) ? $model->getType() : '' }}-" value="{{ isset($model) ? $model->getPaidAmount() : 0 }}"> --}}
+			{{-- <input type="hidden" name="current_type" id="current-type-in-edit-mode" value="{{ isset($model) ? $model->getType() : '' }}"> --}}
+			
             @csrf
             @if(isset($model))
             @method('put')
@@ -921,12 +923,20 @@ $selectedBanks = [];
     $(document).on('change', 'select#branch-id,select#receiving-currency-id', function() {
         const branchId = $('select#branch-id').val();
         const currencyName = $('select#receiving-currency-id').val();
+		const modelId = $('#js-money-payment-id').val();
+		const modelType = 'MoneyPayment';
+		// const editType = $('#type').val();
+		//let additionalBalanceInEditMode = $('#additional-balance-amount-'+editType).val();
+		//additionalBalanceInEditMode = additionalBalanceInEditMode == undefined ? 0 : additionalBalanceInEditMode;
         if (branchId != '-1') {
             $.ajax({
                 url: "{{ route('get.current.end.balance.of.cash.in.safe.statement',['company'=>$company->id]) }}"
                 , data: {
                     branchId
-                    , currencyName
+                    , currencyName,
+					modelId,
+					modelType
+					//,additionalBalanceInEditMode
                 }
                 , success: function(res) {
                     const endBalance = res.end_balance;
@@ -994,12 +1004,17 @@ $selectedBanks = [];
         const financialInstitutionId = parent.find('select.financial-institution-id').val()
         const accountNumber = $(this).val();
         const accountType = parent.find('select.js-update-account-number-based-on-account-type').val();
+		const editType = $('#type').val();
+		let additionalBalanceInEditMode = $('#additional-balance-amount-'+editType).val();
+		additionalBalanceInEditMode = additionalBalanceInEditMode == undefined ? 0 : additionalBalanceInEditMode;
+		
         $.ajax({
             url: "{{ route('update.balance.and.net.balance.based.on.account.number',['company'=>$company->id]) }}"
             , data: {
                 accountNumber
                 , accountType
-                , financialInstitutionId
+                , financialInstitutionId,
+				additionalBalanceInEditMode
             }
             , type: "get"
             , success: function(res) {

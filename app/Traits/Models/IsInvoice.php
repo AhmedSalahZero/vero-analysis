@@ -333,7 +333,7 @@ trait IsInvoice
         ->where($clientIdColumnName, '=', $partnerId)->get();
 	
 	}
-	public static function createForOddo(int $invoiceId,int $partnerId,string $partnerName,string $invoiceDate,string $invoiceDueDate,string $invoiceNumber,string $invoiceCurrency,$invoiceAmount,$vatAmount,$withholdAmount,int $companyId):void{
+	public static function createForOddo(int $invoiceId,int $partnerId,string $partnerName,string $invoiceDate,string $invoiceDueDate,string $invoiceNumber,string $invoiceCurrency,$invoiceAmount,$vatAmount,$withholdAmount,$soOrPoNumber,int $companyId):void{
 		$isExist = self::where('oddo_id',$invoiceId)->where('company_id',$companyId)->exists();
 		if($isExist){
 			return ;
@@ -343,6 +343,7 @@ trait IsInvoice
 			'company_id'=>$companyId , 
 			self::CLIENT_ID_COLUMN_NAME=>$partnerId,
 			self::CLIENT_NAME_COLUMN_NAME=>$partnerName ,
+			self::SO_OR_PO_NUMBER => $soOrPoNumber,
 			'invoice_date'=>$invoiceDate,
 			'invoice_number'=>$invoiceNumber ,
 			'invoice_amount'=>$invoiceAmount ,

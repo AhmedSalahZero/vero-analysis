@@ -177,6 +177,8 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 	const companyId = $('body').attr('data-current-company-id')
 	const lang = $('body').attr('data-lang')
 	const url = '/' + lang + '/' + companyId + '/money-received/get-invoice-numbers/' + customerInvoiceId + '/' + currency
+	console.log('customer id ',customerInvoiceId);
+	
 	if (customerInvoiceId) {
 		$.ajax({
 			url,
@@ -455,7 +457,7 @@ $(function () {
 		$.ajax({
 			url,
 			success:function(res){
-				let options = '<option selected value="">Select</option>';
+				let options = '<option selected value="0">Select</option>';
 				let currentSelected = $('select#customer_name').val()
 			
 				for(customerName in res.customerInvoices ){

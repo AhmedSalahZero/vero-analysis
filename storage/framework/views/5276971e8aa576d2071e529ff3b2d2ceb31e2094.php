@@ -101,7 +101,9 @@ $selectedBanks = [];
             
             <input type="hidden" id="ajax-invoice-item" data-single-model="<?php echo e($singleModel ? 1 : 0); ?>" value="<?php echo e($singleModel ? $singleModel : 0); ?>">
             <input id="js-down-payment-id" type="hidden" name="down_payment_id" value="<?php echo e(isset($model) ? $model->id : 0); ?>">
-
+			
+			
+			
             <?php echo csrf_field(); ?>
             <?php if(isset($model)): ?>
             <?php echo method_field('put'); ?>
@@ -989,12 +991,20 @@ $selectedBanks = [];
     $(document).on('change', 'select#branch-id,select#receiving-currency-id', function() {
         const branchId = $('select#branch-id').val();
         const currencyName = $('select#receiving-currency-id').val();
+		const modelId = $('#js-money-payment-id').val();
+		const modelType = 'MoneyPayment';
+		// const editType = $('#type').val();
+		//let additionalBalanceInEditMode = $('#additional-balance-amount-'+editType).val();
+		//additionalBalanceInEditMode = additionalBalanceInEditMode == undefined ? 0 : additionalBalanceInEditMode;
         if (branchId != '-1') {
             $.ajax({
                 url: "<?php echo e(route('get.current.end.balance.of.cash.in.safe.statement',['company'=>$company->id])); ?>"
                 , data: {
                     branchId
-                    , currencyName
+                    , currencyName,
+					modelId,
+					modelType
+					//,additionalBalanceInEditMode
                 }
                 , success: function(res) {
                     const endBalance = res.end_balance;
@@ -1062,12 +1072,17 @@ $selectedBanks = [];
         const financialInstitutionId = parent.find('select.financial-institution-id').val()
         const accountNumber = $(this).val();
         const accountType = parent.find('select.js-update-account-number-based-on-account-type').val();
+		const editType = $('#type').val();
+		let additionalBalanceInEditMode = $('#additional-balance-amount-'+editType).val();
+		additionalBalanceInEditMode = additionalBalanceInEditMode == undefined ? 0 : additionalBalanceInEditMode;
+		
         $.ajax({
             url: "<?php echo e(route('update.balance.and.net.balance.based.on.account.number',['company'=>$company->id])); ?>"
             , data: {
                 accountNumber
                 , accountType
-                , financialInstitutionId
+                , financialInstitutionId,
+				additionalBalanceInEditMode
             }
             , type: "get"
             , success: function(res) {

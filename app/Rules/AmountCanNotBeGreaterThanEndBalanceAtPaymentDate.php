@@ -16,8 +16,8 @@ class AmountCanNotBeGreaterThanEndBalanceAtPaymentDate implements ImplicitRule
      *
      * @return void
      */
-	protected $type,$company,$paid_amount,$account_type_id,$account_number,$financial_institution_id,$delivery_date,$branch_id,$currency ;
-    public function __construct($type,$paidAmount, $company , $accountTypeId , $accountNumber,$financialInstitutionId,$deliveryDate,$branchId,$currency=null)
+	protected $type,$company,$paid_amount,$account_type_id,$account_number,$financial_institution_id,$delivery_date,$branch_id,$currency,$additional_amount_in_edit_mode ;
+    public function __construct($type,$paidAmount, $company , $accountTypeId , $accountNumber,$financialInstitutionId,$deliveryDate,$branchId,$currency=null,float $additionalAmountInEditMode=0)
     {
 		$this->company=  $company;
 		$this->type=$type;
@@ -28,6 +28,7 @@ class AmountCanNotBeGreaterThanEndBalanceAtPaymentDate implements ImplicitRule
 		$this->delivery_date = Carbon::make($deliveryDate)->format('Y-m-d');
 		$this->branch_id = $branchId ;
 		$this->currency = $currency;
+		$this->additional_amount_in_edit_mode = $additionalAmountInEditMode;
     }
 
     /**
@@ -43,12 +44,12 @@ class AmountCanNotBeGreaterThanEndBalanceAtPaymentDate implements ImplicitRule
 			
 			$response = (new MoneyReceivedController)->updateNetBalanceBasedOnAccountNumber(Request(),$this->company,$this->account_type_id,$this->account_number,$this->financial_institution_id,$this->delivery_date);
 			$balance = $response->getData(true)['balance'] ;
-			return $balance >= $this->paid_amount;
+			return $balance+$this->additional_amount_in_edit_mode >= $this->paid_amount;
 		}
 		if($this->type == MoneyPayment::CASH_PAYMENT || $this->type == BuyOrSellCurrency::SAFE_TO_BANK || $this->type == BuyOrSellCurrency::SAFE_TO_SAFE){
 			$response = (new MoneyPaymentController)->getCashInSafeStatementEndBalance(Request(),$this->company,Request('delivery_branch_id',$this->branch_id),Request('payment_currency',$this->currency),$this->delivery_date);
 			$balance = $response->getData(true)['end_balance'];
-			return $balance >= $this->paid_amount;
+			return $balance+$this->additional_amount_in_edit_mode >= $this->paid_amount;
 		}
 		
 		return true ;

@@ -41,6 +41,7 @@ class SupplierInvoice extends Model implements IInvoice
 	const AGING_CHEQUE_TABLE_NAME = 'payable_cheques';
 	const DOWN_PAYMENT_SETTLEMENT_MODEL_NAME ='DownPaymentMoneyPaymentSettlement';
 	const DOWN_PAYMENT_SETTLEMENT_TABLE_NAME ='down_payment_money_payment_settlements';
+	const SO_OR_PO_NUMBER ='purchases_order_number';
     protected $guarded = [];
 	
 	public function getClientDisplayName()

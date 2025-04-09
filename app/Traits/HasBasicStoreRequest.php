@@ -34,6 +34,7 @@ trait HasBasicStoreRequest
 				// is relationship
 				foreach($request->get($name) as $index => $values){
 					if(key_exists('company_id',$values)){
+						
 						$values['company_id'] = $request->get('company_id');
 					}
 					$this->$name()->create($values);
@@ -42,8 +43,9 @@ trait HasBasicStoreRequest
 			// in update case
 			elseif(is_array($request->get($name)) && method_exists($this,$name) && $this->id ){
 				// is relationship
+				// dd(getCurrentCompanyId(),$this);
 				$this->updateRepeaterRelation($request,$name,$this->$name()->getRelated()->getTable(),[
-					'company_id'=>getCurrentCompanyId()
+					'company_id'=>getCurrentCompanyId()  ?: $this->company_id
 				]);
 			}
 

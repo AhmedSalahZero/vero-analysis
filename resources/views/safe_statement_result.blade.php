@@ -277,6 +277,8 @@
                                         </th>
 
                                         <th class="view-table-th   header-th  align-middle text-center">
+                                            {{ __('Full Date') }}
+                                        </th>   <th class="view-table-th   header-th  align-middle text-center">
                                             {{ __('Date') }}
                                         </th>
 
@@ -323,6 +325,7 @@
                                     @foreach($results as $index=>$modelAsStdClass)
                                     <tr class=" parent-tr reset-table-width text-nowrap  cursor-pointer sub-text-bg text-capitalize is-close   ">
                                         <td class="sub-text-bg max-w-serial   ">{{ $index+1 }}</td>
+                                        <td class="sub-text-bg  text-center ">{{ $modelAsStdClass->full_date }}</td>
                                         <td class="sub-text-bg  text-center ">{{ \Carbon\Carbon::make($modelAsStdClass->date)->format('d-m-Y') }}</td>
                                         <td class="sub-text-bg text-center max-w-invoice-number">{{ number_format($modelAsStdClass->beginning_balance) }}</td>
                                         <td class="sub-text-bg text-center max-w-invoice-date">{{ number_format($modelAsStdClass->debit) }}</td>

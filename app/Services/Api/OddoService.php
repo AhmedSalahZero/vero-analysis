@@ -7,6 +7,8 @@ use App\Models\Partner;
 use App\Models\SupplierInvoice;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use ripcord;
 
 class OddoService
@@ -49,40 +51,63 @@ class OddoService
 		dd($this->getContracts($startDate,$endDate,$companyId));
 	}
 	/**
+	 * * for test purpose
+	 */
+	public function test(string $startDate, string $endDate,int $companyId)
+	{
+		if(is_null($this->uid)){
+			return ;
+		}
+		$tableName ='account.payment.register';
+		$contractFilters = array(array(array('id', '>=', 0)));
+		$contractIds=$this->models->execute_kw($this->db, $this->uid, $this->password, $tableName, 'search',$contractFilters);
+		$projects = $this->models->execute_kw($this->db, $this->uid, $this->password, $tableName, 'read', array($contractIds),[
+			'fields'=>[
+				
+			]
+		]);
+		dd($projects);
+		
+	}
+	/**
 	 * * import invoices
 	 */
-	public function startImport($startDate , $endDate):void
+	public function startImportInvoices($startDate , $endDate):void
 	{
 		if(is_null($this->uid)){
 			return ;
 		}
 		$invoices = $this->getInvoices($startDate,$endDate);
+		// dd($invoices);
 		
 		$companyId = $this->company_id;
-		
+		// dd($invoices);
 		foreach($invoices as $invoice){
 			$invoiceId = $invoice['id'];
 			$invoiceDate = $invoice['invoice_date'];
 			$invoiceDueDate = $invoice['invoice_date_due'];
+			$soNumber = $invoice['invoice_origin']??null;
 			$amountTax = $invoice['amount_tax'];
 			$vatAmount = $amountTax;
 			$invoiceAmount = $invoice['amount_residual'] - $amountTax;
+			// if($index == 2){
+			// 	dd($invoiceAmount,$invoice['amount_residual'],$amountTax);
+			// 	// dd();
+			// }
 			$withholdAmount = 0 ;
 		
 			$invoiceNumber = $invoice['name'];
+			// $amountTax = $invoice['vat_amount'];
 			$oddoPartnerId = $invoice['partner_id'][0];
 			$oddoPartnerName = $invoice['partner_id'][1];
 			$invoiceCurrency = $invoice['currency_id'][1];
 			$isSupplier = $invoice['move_type'] == 'in_invoice';
 			$isCustomer = $invoice['move_type'] == 'out_invoice';
 			$parentId = Partner::handlePartnerForOdd($oddoPartnerId ,$oddoPartnerName,$isSupplier ,$isCustomer,$companyId  );
-			
-			// Parent::createForPartner();
-			// $parentId = $partner->id;
 			if($isCustomer){
-				CustomerInvoice::createForOddo($invoiceId,$parentId,$oddoPartnerName,$invoiceDate,$invoiceDueDate,$invoiceNumber,$invoiceCurrency,$invoiceAmount,$vatAmount,$withholdAmount,$companyId);
+				CustomerInvoice::createForOddo($invoiceId,$parentId,$oddoPartnerName,$invoiceDate,$invoiceDueDate,$invoiceNumber,$invoiceCurrency,$invoiceAmount,$vatAmount,$withholdAmount,$soNumber,$companyId);
 			}elseif($isSupplier){
-				SupplierInvoice::createForOddo($invoiceId,$parentId,$oddoPartnerName,$invoiceDate,$invoiceDueDate,$invoiceNumber,$invoiceCurrency,$invoiceAmount,$vatAmount,$withholdAmount,$companyId);
+				SupplierInvoice::createForOddo($invoiceId,$parentId,$oddoPartnerName,$invoiceDate,$invoiceDueDate,$invoiceNumber,$invoiceCurrency,$invoiceAmount,$vatAmount,$withholdAmount,$soNumber,$companyId);
 			}
 	
 		}
@@ -90,21 +115,9 @@ class OddoService
 	}
 	protected function getContracts(string $startDate ,string $endDate,int $companyId)
 	{
-		// $models = $this->models->execute_kw(
-		// 	$this->db,
-		// 	$this->uid,
-		// 	$this->password,
-		// 	'project.project',
-		// 	'search_read',
-		// 	[[]], // no filter = get all
-		// 	['fields' => ['model', 'name']]
-		// );
-		// dd($models);
-		// $fields = $this->getInvoicesFieldNames();
+		
 		$contractFilters = array(array(array('id', '>=', 0)));
-		$contractIds=$this->models->execute_kw($this->db, $this->uid, $this->password, 'project.project', 'search',$contractFilters
-		// , array('limit' => 10)
-	);
+		$contractIds=$this->models->execute_kw($this->db, $this->uid, $this->password, 'project.project', 'search',$contractFilters);
 		$projects = $this->models->execute_kw($this->db, $this->uid, $this->password, 'project.project', 'read', array($contractIds),[
 			'fields'=>[
 				'id',
@@ -114,8 +127,6 @@ class OddoService
 				'date', //end date
 			]
 		]);
-		$projectsFormatted = [];
-		
 		foreach($projects as $projectArr){
 			$projectAmount = 0 ;
 			$modelType = 'Customer';
@@ -162,24 +173,29 @@ class OddoService
 					$currentSalesOrderAmount = $salesOrderArr['amount_total'];
 					$projectAmount += $currentSalesOrderAmount;
 					$salesOrderFormatted[]=[
+						'oddo_id'=>$currentSalesOrderId,
 						'so_number'=>$salesOrderArr['display_name'],
-						'id'=>$currentSalesOrderId,
+						// 'id'=>$currentSalesOrderId,
 						'amount'=>$currentSalesOrderAmount,
 						'execution_percentage_'.$currentOrderIndex=>100,
 						'start_date_'.$currentOrderIndex=>$currentProjectStartDate,
 						'end_date_'.$currentOrderIndex=>$currentProjectEndDate,
 						'execution_days_'.$currentOrderIndex=>Carbon::make($currentProjectEndDate)->diffInMonths($currentProjectStartDate),
-						'collection_days_'.$currentOrderIndex=>0
+						'collection_days_'.$currentOrderIndex=>0,
+						'company_id'=>$companyId
 						
 					];
 				}
 				$projectFormatted['amount'] = $projectAmount ;
 				$projectFormatted['salesOrders']=$salesOrderFormatted;
-				dd($projectFormatted);
+				// dd($projectFormatted);
+				
 				$contract = new Contract ;
+		
 				$request = (new Request())->merge($projectFormatted);
 				$contract->storeBasicForm($request);
 				dd('good');
+				// dd('good');
 		}
 
 		
@@ -191,15 +207,16 @@ class OddoService
 	{
 		$fields = $this->getInvoicesFieldNames();
 		$filter = array(array(array('move_type', 'in', ['in_invoice','out_invoice']),array('state', '=', 'posted'),
-		['name','=','Inv6']
-		,
-		// ,array('date', '=', $importDate)
-		array('date', '>=', $startDate),
-        array('date', '<=', $endDate)
-	));
+			array('date', '>=', $startDate),
+			array('date', '<=', $endDate)
+			// ,['name','=','Inv7']
+		));
 		$ids=$this->models->execute_kw($this->db, $this->uid, $this->password, 'account.move', 'search',$filter, 
 		// array('limit' => 10)
 	);
+	// dd($this->models->execute_kw($this->db, $this->uid, $this->password, 'account.move', 'read', array($ids),[
+	// 	// 'fields'=>$fields
+	// ]));
 		return $this->models->execute_kw($this->db, $this->uid, $this->password, 'account.move', 'read', array($ids),[
 			'fields'=>$fields
 		]);
@@ -218,7 +235,7 @@ class OddoService
 			'name',
 			'move_type',
 			'currency_id',
-			'amount_total',
+		//	'amount_untaxed', // invoice_amount
 			'amount_residual',
 			'amount_total_signed',
 			'amount_tax',
@@ -227,4 +244,140 @@ class OddoService
 			'invoice_origin' // so_number
 		];
 	}
+	
+	public function payInvoice(int $invoiceId, float $invoiceAmount , string $paymentDate , string $userComment  ,int $oddoPartnerId)
+{
+   
+	$userId = $this->uid;
+	if(is_null($this->uid)){
+		return ;
+	}
+    // $partnerId = $oddoPartnerId;
+    // if (!$partnerId) {
+    //     $partnerResp = Http::post("$this->url/jsonrpc", [
+    //         'jsonrpc' => '2.0',
+    //         'method' => 'call',
+    //         'params' => [
+    //             'service' => 'object',
+    //             'method' => 'execute_kw',
+    //             'args' => [
+    //                 $this->db,
+    //                 $userId,
+    //                 $this->password,
+    //                 'res.users',
+    //                 'read',
+    //                 [$userId],
+    //                 ['fields' => ['partner_id']]
+    //             ]
+    //         ]
+    //     ]);
+
+    //     if ($partnerResp->failed()) {
+    //         Log::error('Failed to fetch partner_id for current user', [
+    //             'status' => $partnerResp->status(),
+    //             'body' => $partnerResp->body(),
+    //         ]);
+    //         return response()->json(['error' => 'Failed to determine partner'], 500);
+    //     }
+
+    //     $partnerId = $partnerResp['result'][0]['partner_id'][0] ?? null;
+    //     if (!$partnerId) {
+    //         Log::critical('Partner ID not found for user', ['user_id' => $userId]);
+    //         return response()->json(['error' => 'No partner associated with user'], 500);
+    //     }
+    // }
+
+    // Http::post("$this->url/jsonrpc", [
+    //     'jsonrpc' => '2.0',
+    //     'method' => 'call',
+    //     'params' => [
+    //         'service' => 'object',
+    //         'method' => 'execute_kw',
+    //         'args' => [
+    //             $this->db,
+    //             $userId,
+    //             $this->password,
+    //             'res.partner',
+    //             'write',
+    //             [[$partnerId], ['customer_rank' => 1]]
+    //         ]
+    //     ]
+    // ]);
+
+    $paymentData = [
+        'payment_type' => 'inbound',
+        'partner_type' => 'customer',
+        'partner_id' => $oddoPartnerId, 
+        'journal_id' => (int) 7,
+        'amount' => (float) $invoiceAmount,
+        'date' => $paymentDate,
+        'payment_method_code' => "manual",
+        'payment_method_id' => (int) 1,
+        'payment_method_line_id' => (int) 4,
+        'memo' => $userComment ?: __('N/A'),
+        'invoice_ids' => [[6, 0, [(int) $invoiceId]]],
+    ];
+
+    // Log::debug('Sending payment creation request to Odoo', ['payload' => $paymentData]);
+
+    $response = Http::post("$this->url/jsonrpc", [
+        'jsonrpc' => '2.0',
+        'method' => 'call',
+        'params' => [
+            'service' => 'object',
+            'method' => 'execute_kw',
+            'args' => [
+                $this->db,
+                $userId,
+                $this->password,
+                'account.payment',
+                'create',
+                [$paymentData]
+            ]
+        ]
+    ]);
+	dd($paymentData,$response->failed());
+    if ($response->failed()) {
+        Log::error('Odoo request failed (payment create)', [
+            'status' => $response->status(),
+            'body' => $response->body(),
+        ]);
+        return response()->json(['error' => 'Failed to create payment'], 500);
+    }
+
+    $paymentId = $response->json()['result'] ?? null;
+
+    if (!$paymentId) {
+        return response()->json(['error' => 'Failed to create payment'], 500);
+    }
+
+    $postPayment = Http::post("$this->odooUrl/jsonrpc", [
+        'jsonrpc' => '2.0',
+        'method' => 'call',
+        'params' => [
+            'service' => 'object',
+            'method' => 'execute_kw',
+            'args' => [
+                $this->odooDb,
+                $userId,
+                $this->odooPassword,
+                'account.payment',
+                'action_post',
+                [[$paymentId]] 
+            ]
+        ]
+    ]);
+
+
+
+    if ($postPayment->failed()) {
+        return response()->json(['error' => 'Failed to post payment'], 500);
+    }
+    return response()->json([
+        'message' => 'Payment successful',
+        'payment_id' => $paymentId,
+    ]);    
+}
+
+
 }
