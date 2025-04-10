@@ -211,9 +211,7 @@ class OddoService
 			array('date', '<=', $endDate)
 			// ,['name','=','Inv7']
 		));
-		$ids=$this->models->execute_kw($this->db, $this->uid, $this->password, 'account.move', 'search',$filter, 
-		// array('limit' => 10)
-	);
+		$ids=$this->models->execute_kw($this->db, $this->uid, $this->password, 'account.move', 'search',$filter, );
 	// dd($this->models->execute_kw($this->db, $this->uid, $this->password, 'account.move', 'read', array($ids),[
 	// 	// 'fields'=>$fields
 	// ]));
@@ -336,6 +334,100 @@ class OddoService
             ]
         ]
     ]);
+	$paymentId = json_decode($response->body())->result ;
+	// dd($paymentId);
+	$this->models->execute_kw(
+		$this->db,
+		$this->uid,
+		$this->password,
+		'account.payment',
+		'action_post', // Method to confirm payment
+		[[$paymentId]] // Array of payment IDs
+	);
+	
+	$updatedInvoice = $this->models->execute_kw(
+		$this->db,
+		$this->uid,
+		$this->password,
+		'account.move',
+		'read',
+		[[$invoiceId]],
+		['fields' => ['payment_state']]
+	);
+	
+	// dd($paymentId);
+	// Step 5: Fetch payment move lines to reconcile
+	
+	$filter = array(array(
+			['payment_id', '=', $paymentId],
+			['account_id.type', '=', 'receivable']
+			// ,['name','=','Inv7']
+		));
+		$paymentIds=$this->models->execute_kw($this->db, $this->uid, $this->password, 'account.move.line', 'search',$filter );
+		$paymentLines = $this->models->execute_kw($this->db, $this->uid, $this->password, 'account.move.line', 'read', array($paymentIds),[
+			// 'fields'=>$fields
+		]);
+		// dd($paymentIds);
+		// dd($paymentLines);
+		
+
+	// $paymentLines = $this->models->execute_kw(
+	// 	$this->db,
+	// 	$this->uid,
+	// 	$this->password,
+	// 	'account.move.line',
+	// 	'search_read',
+	// 	[['payment_id', '=', $paymentId], ['account_id.type', '=', 'receivable']],
+	// 	// ['fields' => ['id']]
+	// );
+	// dd('f');
+	// dd($paymentLines);
+
+	// if (!$paymentLines || empty($paymentLines)) {
+	// 	return response()->json(['error' => 'No receivable lines found for payment'], 500);
+	// }
+	$paymentLineId = $paymentLines[0]['id'];
+
+	// Step 6: Fetch invoice move lines to reconcile
+	$invoiceLines = $this->models->execute_kw(
+		$this->db,
+		$this->uid,
+		$this->password,
+		'account.move.line',
+		'search_read',
+		[['move_id', '=', $invoiceId], ['account_id.type', '=', 'receivable']],
+		['fields' => ['id']]
+	);
+
+	if (!$invoiceLines || empty($invoiceLines)) {
+		return response()->json(['error' => 'No receivable lines found for invoice'], 500);
+	}
+	$invoiceLineId = $invoiceLines[0]['id'];
+
+	// Step 7: Reconcile payment and invoice lines
+	$this->models->execute_kw(
+		$this->db,
+		$this->uid,
+		$this->password,
+		'account.move.line',
+		'reconcile',
+		[[$paymentLineId, $invoiceLineId]]
+	);
+
+	// Step 8: Verify invoice is paid
+	$updatedInvoice = $this->models->execute_kw(
+		$this->db,
+		$this->uid,
+		$this->password,
+		'account.move',
+		'read',
+		[[$invoiceId]],
+		['fields' => ['payment_state']]
+	);
+	
+	
+	dd($updatedInvoice);
+	
 	dd($paymentData,$response->failed());
     if ($response->failed()) {
         Log::error('Odoo request failed (payment create)', [

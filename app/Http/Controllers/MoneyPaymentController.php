@@ -658,17 +658,17 @@ class MoneyPaymentController
 		 * @var Branch $branch
 		 */
 		$branch = Branch::find($branchId);
-		if($request->has('modelId')){
-			$modelId = $request->get('modelId');
+		if($request->has('modelId') ){
+			$modelId = $request->get('modelId')  ;
 			$modelType = $request->get('modelType');
 			$model = ('App\Models\\'.$modelType)::find($modelId);
 			$oldBranchId = $model ? $model->getBranchId() : null;
-			if($oldBranchId && $oldBranchId != $branch->id){
-				// $additionalAmount 
+			if($oldBranchId && $oldBranchId == $branch->id){
+				$additionalAmountInEditMode =  $model->getPaidAmount();
 			}
 		}
-		// dd($branch,$request->get('modelId'));
 		$endBalance = $branch->getCurrentEndBalance($company->id,$currencyName,$deliveryDate);
+		
 		return response()->json([
 			'end_balance'=>$endBalance+$additionalAmountInEditMode
 		]);

@@ -102,6 +102,11 @@ $selectedBanks = [];
             <input type="hidden" id="ajax-invoice-item" data-single-model="<?php echo e($singleModel ? 1 : 0); ?>" value="<?php echo e($singleModel ? $singleModel : 0); ?>">
             <input id="js-down-payment-id" type="hidden" name="down_payment_id" value="<?php echo e(isset($model) ? $model->id : 0); ?>">
 			
+			<?php if(isset($model)): ?>
+			<input type="hidden" name="modelId" value="<?php echo e($model->id); ?>">
+			<input type="hidden" name="modelType" value="MoneyPayment">
+			<?php endif; ?>
+			
 			
 			
             <?php echo csrf_field(); ?>
@@ -1072,17 +1077,17 @@ $selectedBanks = [];
         const financialInstitutionId = parent.find('select.financial-institution-id').val()
         const accountNumber = $(this).val();
         const accountType = parent.find('select.js-update-account-number-based-on-account-type').val();
-		const editType = $('#type').val();
-		let additionalBalanceInEditMode = $('#additional-balance-amount-'+editType).val();
-		additionalBalanceInEditMode = additionalBalanceInEditMode == undefined ? 0 : additionalBalanceInEditMode;
-		
+		const modelId = $('#js-money-payment-id').val();
+		const modelType = 'MoneyPayment';
+				
         $.ajax({
             url: "<?php echo e(route('update.balance.and.net.balance.based.on.account.number',['company'=>$company->id])); ?>"
             , data: {
                 accountNumber
                 , accountType
                 , financialInstitutionId,
-				additionalBalanceInEditMode
+				modelType,
+				modelId
             }
             , type: "get"
             , success: function(res) {

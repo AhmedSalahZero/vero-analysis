@@ -6,6 +6,8 @@
         "framework",
         "laravel"
     ],
+
+	
     "license": "MIT",
     "require": {
         "php": "7.4.33",
@@ -70,7 +72,7 @@
             "Tests\\": "tests/"
         }
     },
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "prefer-stable": true,
     "scripts": {
         "post-autoload-dump": [

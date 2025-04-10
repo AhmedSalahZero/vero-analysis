@@ -68,7 +68,10 @@ use App\Models\MoneyReceived ;
 			
             <input type="hidden" id="ajax-invoice-item" data-single-model="<?php echo e($singleModel ? 1 : 0); ?>" value="<?php echo e($singleModel ? $singleModel : 0); ?>">
             <input id="js-down-payment-id" type="hidden" name="down_payment_id" value="<?php echo e(isset($model) ? $model->id : 0); ?>">
-			
+			<?php if(isset($model)): ?>
+			<input type="hidden" name="modelId" value="<?php echo e($model->id); ?>">
+			<input type="hidden" name="modelType" value="MoneyReceived">
+			<?php endif; ?>
             <?php echo csrf_field(); ?>
             <?php if(isset($model)): ?>
             <?php echo method_field('put'); ?>
@@ -787,6 +790,8 @@ use App\Models\MoneyReceived ;
 $(document).on('change','select#branch-id,select#receiving-currency-id',function(){
 		const branchId = $('select#branch-id').val();
 		const currencyName = $('select#receiving-currency-id').val();
+			const modelId = $('#js-money-received-id').val();
+		const modelType = 'MoneyReceived';
 		if(branchId != '-1'){
 			$.ajax({
 				url:"<?php echo e(route('get.current.end.balance.of.cash.in.safe.statement',['company'=>$company->id])); ?>",

@@ -75,6 +75,10 @@ $selectedBanks = [];
     <input id="js-money-payment-id" type="hidden" name="money_received_id" value="{{ isset($model) ? $model->id : 0 }}">
     <input type="hidden" id="ajax-invoice-item" data-single-model="{{ $singleModel ? 1 : 0 }}" value="{{ $singleModel ? $singleModel : 0 }}">
     <input id="js-down-payment-id" type="hidden" name="down_payment_id" value="{{ isset($model) ? $model->id : 0 }}">
+	@if(isset($model))
+			<input type="hidden" name="modelId" value="{{ $model->id }}">
+			<input type="hidden" name="modelType" value="MoneyPayment">
+			@endif
     @csrf
     @if(isset($model))
     @method('put')

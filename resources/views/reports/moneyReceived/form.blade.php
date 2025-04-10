@@ -68,7 +68,10 @@ use App\Models\MoneyReceived ;
 			{{-- <input type="hidden" id="js-down-payment-id" value="{{ isset($model) && $model->downPayment ? $model->downPayment->id : 0  }}"> --}}
             <input type="hidden" id="ajax-invoice-item" data-single-model="{{ $singleModel ? 1 : 0 }}" value="{{ $singleModel ? $singleModel : 0 }}">
             <input id="js-down-payment-id" type="hidden" name="down_payment_id" value="{{ isset($model) ? $model->id : 0 }}">
-			
+			@if(isset($model))
+			<input type="hidden" name="modelId" value="{{ $model->id }}">
+			<input type="hidden" name="modelType" value="MoneyReceived">
+			@endif
             @csrf
             @if(isset($model))
             @method('put')
@@ -749,6 +752,8 @@ use App\Models\MoneyReceived ;
 $(document).on('change','select#branch-id,select#receiving-currency-id',function(){
 		const branchId = $('select#branch-id').val();
 		const currencyName = $('select#receiving-currency-id').val();
+			const modelId = $('#js-money-received-id').val();
+		const modelType = 'MoneyReceived';
 		if(branchId != '-1'){
 			$.ajax({
 				url:"{{ route('get.current.end.balance.of.cash.in.safe.statement',['company'=>$company->id]) }}",

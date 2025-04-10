@@ -82,6 +82,12 @@ $selectedBanks = [];
     <input id="js-money-payment-id" type="hidden" name="cash_expense_id" value="{{ isset($model) ? $model->id : 0 }}">
 	<input type="hidden" name="cash_id" value="{{ isset($model) && $model->cashPayment ? $model->cashPayment->id : 0 }}">
 	<input type="hidden" name="current_cheque_id" value="{{ isset($model) && $model->payableCheque ? $model->payableCheque->id : 0 }}">
+	
+	@if(isset($model))
+			<input type="hidden" name="modelId" value="{{ $model->id }}">
+			<input type="hidden" name="modelType" value="CashExpense">
+			@endif
+	
     {{-- <input type="hidden" id="ajax-invoice-item" data-single-model="{{ $singleModel ? 1 : 0 }}" value="{{ $singleModel ? $singleModel : 0 }}"> --}}
     @csrf
     @if(isset($model))
@@ -784,12 +790,16 @@ $selectedBanks = [];
  $(document).on('change', 'select#branch-id,select#receiving-currency-id', function() {
         const branchId = $('select#branch-id').val();
         const currencyName = $('select#receiving-currency-id').val();
+		const modelId = $('#js-money-payment-id').val();
+		const modelType = 'CashExpense';
         if (branchId != '-1') {
             $.ajax({
                 url: "{{ route('get.current.end.balance.of.cash.in.safe.statement',['company'=>$company->id]) }}"
                 , data: {
                     branchId
-                    , currencyName
+                    , currencyName,
+					modelType,
+					modelId
                 }
                 , success: function(res) {
                     const endBalance = res.end_balance;
@@ -870,12 +880,17 @@ $selectedBanks = [];
         const financialInstitutionId = parent.find('select.financial-institution-id').val()
         const accountNumber = $(this).val();
         const accountType = parent.find('select.js-update-account-number-based-on-account-type').val();
+			const modelId = $('#js-money-payment-id').val();
+		const modelType = 'CashExpense';
+		
         $.ajax({
             url: "{{ route('update.balance.and.net.balance.based.on.account.number',['company'=>$company->id]) }}"
             , data: {
                 accountNumber
                 , accountType
-                , financialInstitutionId
+                , financialInstitutionId,
+				modelId,
+				modelType
             }
             , type: "get"
             , success: function(res) {

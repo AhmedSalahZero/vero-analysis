@@ -783,15 +783,17 @@ class MoneyReceivedController
 	}
 	public function updateNetBalanceBasedOnAccountNumber(Request $request , Company $company , $accountTypeId = null , $accountNumber = null , $financialInstitutionId = null , $statementDate = null)
 	{
-		$additionalAmountInEditMode = number_unformat($request->get('additionalBalanceInEditMode',0));
+		$additionalAmountInEditMode=  0 ;
+		// $additionalAmountInEditMode = number_unformat($request->get('additionalBalanceInEditMode',0));
 
 	
 		$netBalanceDate = '' ;
 		$accountTypeId = $request->get('accountType',$accountTypeId );
 		$accountType = AccountType::find($accountTypeId);
 		$statementDate = $statementDate ?: now()->format('Y-m-d') ;
-		// dd($statementDate);
 		$accountNumber = $request->get('accountNumber',$accountNumber);
+		
+		
 		$financialInstitutionId = $request->get('financialInstitutionId',$financialInstitutionId);
 		if(!$accountType){
 			return response()->json([
@@ -811,6 +813,16 @@ class MoneyReceivedController
 						'net_balance'=>0 ,
 					]
 				);
+			}
+		}
+
+		if($request->has('modelId') ){
+			$modelId = $request->get('modelId')  ;
+			$modelType = $request->get('modelType');
+			$model = ('App\Models\\'.$modelType)::find($modelId);
+			$oldAccountNumberId = $model ? $model->getAccountNumber() : null;
+			if($oldAccountNumberId && $oldAccountNumberId == $accountNumber){
+				$additionalAmountInEditMode =  $model->getPaidAmount();
 			}
 		}
 		$statementTableName = (get_class($accountNumberModel)::getStatementTableName()) ;
