@@ -649,7 +649,12 @@ class MoneyPaymentController
 		]);
 	}
 	public function getCashInSafeStatementEndBalance(Request $request , Company $company , int $branchId = null , string $currencyName = null , string $deliveryDate = null){
+		
 		$branchId = $request->get('branchId',$branchId);
+		if(is_null($deliveryDate) && $request->has('balanceDate')){
+			$deliveryDate = $request->get('balanceDate');
+			$deliveryDate = Carbon::make($deliveryDate)->format('Y-m-d');
+		}
 		$currencyName = $request->get('currencyName',$currencyName);
 		$currencyName = is_null($currencyName) ? $request->get('currency') :$currencyName  ;
 		$additionalAmountInEditMode = 0 ;

@@ -993,11 +993,13 @@ $selectedBanks = [];
 </script>
 
 <script>
+	
     $(document).on('change', 'select#branch-id,select#receiving-currency-id', function() {
         const branchId = $('select#branch-id').val();
         const currencyName = $('select#receiving-currency-id').val();
 		const modelId = $('#js-money-payment-id').val();
 		const modelType = 'MoneyPayment';
+		const balanceDate = $('.balance-date').val();
 		// const editType = $('#type').val();
 		//let additionalBalanceInEditMode = $('#additional-balance-amount-'+editType).val();
 		//additionalBalanceInEditMode = additionalBalanceInEditMode == undefined ? 0 : additionalBalanceInEditMode;
@@ -1008,7 +1010,8 @@ $selectedBanks = [];
                     branchId
                     , currencyName,
 					modelId,
-					modelType
+					modelType,
+					balanceDate
 					//,additionalBalanceInEditMode
                 }
                 , success: function(res) {
@@ -1072,8 +1075,9 @@ $selectedBanks = [];
 
 </script>
 <script>
-$(document).on('change','.balance-date',function(){
-				$('select.js-account-number').trigger('change');	
+		$(document).on('change','.balance-date',function(){
+				$('select.js-account-number').trigger('change');
+				$('select#branch-id,select#receiving-currency-id').trigger('change');
 			})
 			
     $(document).on('change', '.js-account-number', function() {
@@ -1083,7 +1087,7 @@ $(document).on('change','.balance-date',function(){
         const accountType = parent.find('select.js-update-account-number-based-on-account-type').val();
 		const modelId = $('#js-money-payment-id').val();
 		const modelType = 'MoneyPayment';
-				const balanceDate = $('.balance-date').val();
+		const balanceDate = $('.balance-date').val();
 				
         $.ajax({
             url: "<?php echo e(route('update.balance.and.net.balance.based.on.account.number',['company'=>$company->id])); ?>"

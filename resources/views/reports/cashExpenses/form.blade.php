@@ -792,6 +792,7 @@ $selectedBanks = [];
         const currencyName = $('select#receiving-currency-id').val();
 		const modelId = $('#js-money-payment-id').val();
 		const modelType = 'CashExpense';
+		const balanceDate = $('.balance-date').val();
         if (branchId != '-1') {
             $.ajax({
                 url: "{{ route('get.current.end.balance.of.cash.in.safe.statement',['company'=>$company->id]) }}"
@@ -799,7 +800,8 @@ $selectedBanks = [];
                     branchId
                     , currencyName,
 					modelType,
-					modelId
+					modelId,
+					balanceDate
                 }
                 , success: function(res) {
                     const endBalance = res.end_balance;
@@ -877,6 +879,7 @@ $selectedBanks = [];
 <script>
 $(document).on('change','.balance-date',function(){
 				$('select.js-account-number').trigger('change');	
+				$('select#branch-id,select#receiving-currency-id').trigger('change');	
 			})
 			
     $(document).on('change', '.js-account-number', function() {
