@@ -404,6 +404,10 @@ class InternalMoneyTransfer extends Model
 	{
 		return $this->belongsTo(Branch::class,'from_branch_id','id');
 	}
+	public function getBranchId()
+	{
+		return $this->getFromBankId();
+	}
 	public function getFromBranchName()
 	{
 		return $this->fromBranch ? $this->fromBranch->getName()  : __('N/A');  
