@@ -793,7 +793,6 @@ class MoneyReceivedController
 		$statementDate = $statementDate ?: now()->format('Y-m-d') ;
 		$accountNumber = $request->get('accountNumber',$accountNumber);
 		
-		
 		$financialInstitutionId = $request->get('financialInstitutionId',$financialInstitutionId);
 		if(!$accountType){
 			return response()->json([
@@ -820,8 +819,13 @@ class MoneyReceivedController
 			$modelId = $request->get('modelId')  ;
 			$modelType = $request->get('modelType');
 			$model = ('App\Models\\'.$modelType)::find($modelId);
-			$oldAccountNumberId = $model ? $model->getAccountNumber() : null;
-			if($oldAccountNumberId && $oldAccountNumberId == $accountNumber){
+			$oldAccountNumber = $model ? $model->getAccountNumber() : null;
+			$oldAccountTypeId = $model ? $model->getAccountTypeId() : null;
+			$oldFinancialInstitution = $model ? $model->getAccountTypeId() : null;
+			if($oldAccountNumber && $oldAccountNumber == $accountNumber
+			&& $oldAccountTypeId && $oldAccountTypeId == $accountTypeId 
+		// 	&&  == $financialInstitutionId 
+			){
 				$additionalAmountInEditMode =  $model->getPaidAmount();
 			}
 		}

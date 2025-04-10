@@ -297,10 +297,8 @@
 
                                         </th>
 
-                                        <th class="view-table-th   header-th  align-middle text-center">
-                                            <?php echo e(__('Full Date')); ?>
-
-                                        </th>   <th class="view-table-th   header-th  align-middle text-center">
+                                        
+										<th class="view-table-th   header-th  align-middle text-center">
                                             <?php echo e(__('Date')); ?>
 
                                         </th>
@@ -354,7 +352,7 @@
                                     <?php $__currentLoopData = $results; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index=>$modelAsStdClass): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                     <tr class=" parent-tr reset-table-width text-nowrap  cursor-pointer sub-text-bg text-capitalize is-close   ">
                                         <td class="sub-text-bg max-w-serial   "><?php echo e($index+1); ?></td>
-                                        <td class="sub-text-bg  text-center "><?php echo e($modelAsStdClass->full_date); ?></td>
+                                        
                                         <td class="sub-text-bg  text-center "><?php echo e(\Carbon\Carbon::make($modelAsStdClass->date)->format('d-m-Y')); ?></td>
                                         <td class="sub-text-bg text-center max-w-invoice-number"><?php echo e(number_format($modelAsStdClass->beginning_balance)); ?></td>
                                         <td class="sub-text-bg text-center max-w-invoice-date"><?php echo e(number_format($modelAsStdClass->debit)); ?></td>
