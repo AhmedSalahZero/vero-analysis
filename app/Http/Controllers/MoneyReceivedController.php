@@ -790,7 +790,10 @@ class MoneyReceivedController
 		$netBalanceDate = '' ;
 		$accountTypeId = $request->get('accountType',$accountTypeId );
 		$accountType = AccountType::find($accountTypeId);
-		$statementDate = $statementDate ?: now()->format('Y-m-d') ;
+		$statementDate = $statementDate ?: $request->get('balanceDate'); 
+		$statementDate = $statementDate ?: now()->format('Y-m-d');
+		$statementDate = Carbon::make($statementDate)->format('Y-m-d');
+		
 		$accountNumber = $request->get('accountNumber',$accountNumber);
 		
 		$financialInstitutionId = $request->get('financialInstitutionId',$financialInstitutionId);
@@ -803,6 +806,7 @@ class MoneyReceivedController
 		}
 	
 		$accountNumberModel =  ('\App\Models\\'.$accountType->getModelName())::findByAccountNumber($accountNumber,$company->id,$financialInstitutionId);
+		
 		if(!$accountNumberModel){
 			if(!$accountType || !$accountNumberModel){
 				return response()->json(
@@ -814,14 +818,14 @@ class MoneyReceivedController
 				);
 			}
 		}
-
+		
 		if($request->has('modelId') ){
 			$modelId = $request->get('modelId')  ;
 			$modelType = $request->get('modelType');
 			$model = ('App\Models\\'.$modelType)::find($modelId);
 			$oldAccountNumber = $model ? $model->getAccountNumber() : null;
 			$oldAccountTypeId = $model ? $model->getAccountTypeId() : null;
-			$oldFinancialInstitution = $model ? $model->getAccountTypeId() : null;
+			// $oldFinancialInstitution = $model ? $model->getAccountTypeId() : null;
 			if($oldAccountNumber && $oldAccountNumber == $accountNumber
 			&& $oldAccountTypeId && $oldAccountTypeId == $accountTypeId 
 		// 	&&  == $financialInstitutionId 
@@ -829,14 +833,16 @@ class MoneyReceivedController
 				$additionalAmountInEditMode =  $model->getPaidAmount();
 			}
 		}
+		
 		$statementTableName = (get_class($accountNumberModel)::getStatementTableName()) ;
 		$foreignKeyName = get_class($accountNumberModel)::getForeignKeyInStatementTable();
+	
 		$balanceRow = DB::table($statementTableName)->where($foreignKeyName,$accountNumberModel->id)->where('date','<=' , $statementDate)->orderByRaw('full_date desc')->first();
 		$NetBalanceRow = DB::table($statementTableName)->where($foreignKeyName,$accountNumberModel->id)->orderByRaw('full_date desc')->first();
 		$column = $accountType->isOverdraftAccount() ? 'room' : 'end_balance';
 		$balance = 0;
 		$balanceDate = '';
-		
+
 		$netBalance = 0;
 		if($balanceRow){
 			$balance = $balanceRow->{$column} ; 

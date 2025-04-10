@@ -154,10 +154,18 @@ class InternalMoneyTransfer extends Model
     {
         return $this->fromAccountType ? $this->fromAccountType->getName() : __('N/A');
     } 
+	public function getAccountNumber()
+	{
+		return $this->getFromAccountNumber();
+	}
 	 public function getFromAccountTypeId()
     {
         return $this->fromAccountType ? $this->fromAccountType->getId() : 0;
     }
+	public function getAccountTypeId()
+	{
+		return $this->getFromAccountTypeId();
+	}
 
     public function getFromAccountNumber()
     {
@@ -176,7 +184,10 @@ class InternalMoneyTransfer extends Model
     {
         return $this->amount ?: 0;
     }
-	
+	public function getPaidAmount()
+	{
+		return $this->getAmount();
+	}
     public function getAmountFormatted()
     {
         return number_format($this->getAmount(), 0);

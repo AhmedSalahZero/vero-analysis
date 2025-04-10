@@ -64,8 +64,9 @@
 
         <form method="post" action="<?php echo e(isset($model) ?  route('internal-money-transfers.update',['company'=>$company->id,'internal_money_transfer'=>$model->id,'type'=>$type]) :route('internal-money-transfers.store',['company'=>$company->id,'type'=>$type])); ?>" class="kt-form kt-form--label-right">
             <input id="js-in-edit-mode" type="hidden" name="in_edit_mode" value="<?php echo e(isset($model) ? 1 : 0); ?>">
-            <input  type="hidden" name="id" value="<?php echo e(isset($model) ? $model->id : 0); ?>">
+            <input  id="model-id" type="hidden" name="id" value="<?php echo e(isset($model) ? $model->id : 0); ?>">
             <input  type="hidden" name="company_id" value="<?php echo e($company->id); ?>">
+			<input type="hidden" name="type" value="bank-to-safe" >
 			<?php if(isset($model)): ?>
 			<input type="hidden" name="updated_by" value="<?php echo e(auth()->user()->id); ?>">
 			<?php else: ?>
@@ -383,13 +384,16 @@
                 const financialInstitutionId = parent.find('select.from-financial-institution').val()
                 const accountNumber = $(this).val();
                 const accountType = parent.find('select.js-from-update-account-number-based-on-account-type').val();
-                console.log(financialInstitutionId, accountNumber, accountType)
+                 const modelId = $('#model-id').val();
+				const modelType = 'InternalMoneyTransfer';
                 $.ajax({
                     url: "<?php echo e(route('update.balance.and.net.balance.based.on.account.number',['company'=>$company->id])); ?>"
                     , data: {
                         accountNumber
                         , accountType
-                        , financialInstitutionId
+                        , financialInstitutionId,
+				modelType,
+				modelId
                     }
                     , type: "get"
                     , success: function(res) {

@@ -67,7 +67,9 @@
 
         <form method="post" action="{{ isset($model) ?  route('internal-money-transfers.update',['company'=>$company->id,'internal_money_transfer'=>$model->id,'type'=>$type]) :route('internal-money-transfers.store',['company'=>$company->id,'type'=>$type]) }}" class="kt-form kt-form--label-right">
             <input id="js-in-edit-mode" type="hidden" name="in_edit_mode" value="{{ isset($model) ? 1 : 0 }}">
-            <input  type="hidden" name="id" value="{{ isset($model) ? $model->id : 0 }}">
+            <input  id="model-id" type="hidden" name="id" value="{{ isset($model) ? $model->id : 0 }}">
+			<input  type="hidden" name="modelId" value="{{ isset($model) ? $model->id : 0 }}">
+            <input  type="hidden" name="modelType" value="InternalMoneyTransfer">
             <input  type="hidden" name="company_id" value="{{ $company->id }}">
 			<input type="hidden" name="type" value="bank-to-safe" >
 			@if(isset($model))
@@ -128,7 +130,7 @@
                                         <div class="row">
 
                                             <div class="col-md-3">
-                                                <x-form.date :label="__('Date')" :required="true" :model="$model??null" :name="'transfer_date'" :placeholder="__('Select Date')"></x-form.date>
+                                                <x-form.date :classes="'balance-date'"  :label="__('Date')" :required="true" :model="$model??null" :name="'transfer_date'" :placeholder="__('Select Date')"></x-form.date>
                                             </div>
                                             <div class="col-md-3 ">
                                                 <label>{{__('Cheque Number/Cash Withdrawal')}}
@@ -343,19 +345,26 @@
 
        
     <script>
-	
+	$(document).on('change','.balance-date',function(){
+				$('select.js-from-account-number').trigger('change');	
+			})
 	 $(document).on('change', 'select.js-from-account-number', function() {
                 const parent = $(this).closest('.kt-portlet__body');
                 const financialInstitutionId = parent.find('select.from-financial-institution').val()
                 const accountNumber = $(this).val();
                 const accountType = parent.find('select.js-from-update-account-number-based-on-account-type').val();
-                console.log(financialInstitutionId, accountNumber, accountType)
+                 const modelId = $('#model-id').val();
+				const modelType = 'InternalMoneyTransfer';
+				const balanceDate = $('.balance-date').val();
                 $.ajax({
                     url: "{{ route('update.balance.and.net.balance.based.on.account.number',['company'=>$company->id]) }}"
                     , data: {
                         accountNumber
                         , accountType
-                        , financialInstitutionId
+                        , financialInstitutionId,
+				modelType,
+				modelId,
+				balanceDate
                     }
                     , type: "get"
                     , success: function(res) {

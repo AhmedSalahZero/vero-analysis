@@ -190,7 +190,18 @@ class BuyOrSellCurrency extends Model
     {
         return number_unformat($this->currency_to_sell_amount ?: 0);
     }
-	
+	public function getPaidAmount()
+	{
+		return $this->getAmountToSell();
+	}
+	public function getAccountNumber()
+	{
+		return $this->getFromAccountNumber();
+	} 
+	public function getAccountTypeId()
+	{
+		return $this->getFromAccountTypeId();
+	}
     public function getAmountToSellFormatted()
     {
 	

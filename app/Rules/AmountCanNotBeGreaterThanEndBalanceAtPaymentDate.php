@@ -16,7 +16,7 @@ class AmountCanNotBeGreaterThanEndBalanceAtPaymentDate implements ImplicitRule
      *
      * @return void
      */
-	protected $type,$company,$paid_amount,$account_type_id,$account_number,$financial_institution_id,$delivery_date,$branch_id,$currency,$additional_amount_in_edit_mode ;
+	protected $type,$company,$paid_amount,$account_type_id,$account_number,$financial_institution_id,$delivery_date,$branch_id,$currency ;
     public function __construct($type,$paidAmount, $company , $accountTypeId , $accountNumber,$financialInstitutionId,$deliveryDate,$branchId,$currency=null)
     {
 		$this->company=  $company;
@@ -43,12 +43,13 @@ class AmountCanNotBeGreaterThanEndBalanceAtPaymentDate implements ImplicitRule
 		if($this->type == MoneyPayment::OUTGOING_TRANSFER || $this->type == 'ACTUAL_PAYMENT_DATE' || $this->type == BuyOrSellCurrency::BANK_TO_BANK || $this->type == BuyOrSellCurrency::BANK_TO_SAFE){
 			$response = (new MoneyReceivedController)->updateNetBalanceBasedOnAccountNumber(Request(),$this->company,$this->account_type_id,$this->account_number,$this->financial_institution_id,$this->delivery_date);
 			$balance = $response->getData(true)['balance'] ;
-			return $balance+$this->additional_amount_in_edit_mode >= $this->paid_amount;
+			dd($balance);
+			return $balance >= $this->paid_amount;
 		}
 		if($this->type == MoneyPayment::CASH_PAYMENT || $this->type == BuyOrSellCurrency::SAFE_TO_BANK || $this->type == BuyOrSellCurrency::SAFE_TO_SAFE){
 			$response = (new MoneyPaymentController)->getCashInSafeStatementEndBalance(Request(),$this->company,Request('delivery_branch_id',$this->branch_id),Request('payment_currency',$this->currency),$this->delivery_date);
 			$balance = $response->getData(true)['end_balance'];
-			return $balance+$this->additional_amount_in_edit_mode >= $this->paid_amount;
+			return $balance >= $this->paid_amount;
 		}
 		
 		return true ;

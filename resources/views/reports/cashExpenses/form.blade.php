@@ -107,7 +107,7 @@ $selectedBanks = [];
                     <label>{{__('Payment Date')}}</label>
                     <div class="kt-input-icon">
                         <div class="input-group date">
-                            <input type="text" name="payment_date" value="{{ isset($model) ? formatDateForDatePicker($model->getPaymentDate()) : formatDateForDatePicker(now()->format('Y-m-d')) }}" class="form-control is-date-css exchange-rate-date update-exchange-rate" readonly placeholder="Select date" id="kt_datepicker_max_date_is_today" />
+                            <input type="text"  name="payment_date" value="{{ isset($model) ? formatDateForDatePicker($model->getPaymentDate()) : formatDateForDatePicker(now()->format('Y-m-d')) }}" class="form-control balance-date is-date-css exchange-rate-date update-exchange-rate" readonly placeholder="Select date" id="kt_datepicker_max_date_is_today" />
                             <div class="input-group-append">
                                 <span class="input-group-text">
                                     <i class="la la-calendar-check-o"></i>
@@ -875,6 +875,10 @@ $selectedBanks = [];
 
 </script>
 <script>
+$(document).on('change','.balance-date',function(){
+				$('select.js-account-number').trigger('change');	
+			})
+			
     $(document).on('change', '.js-account-number', function() {
         const parent = $(this).closest('.js-section-parent');
         const financialInstitutionId = parent.find('select.financial-institution-id').val()
@@ -882,7 +886,7 @@ $selectedBanks = [];
         const accountType = parent.find('select.js-update-account-number-based-on-account-type').val();
 			const modelId = $('#js-money-payment-id').val();
 		const modelType = 'CashExpense';
-		
+		const balanceDate = $('.balance-date').val();
         $.ajax({
             url: "{{ route('update.balance.and.net.balance.based.on.account.number',['company'=>$company->id]) }}"
             , data: {
@@ -890,7 +894,8 @@ $selectedBanks = [];
                 , accountType
                 , financialInstitutionId,
 				modelId,
-				modelType
+				modelType,
+				balanceDate
             }
             , type: "get"
             , success: function(res) {

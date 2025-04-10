@@ -128,7 +128,7 @@ $selectedBanks = [];
                             <label>{{__('Payment Date')}}</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
-                                    <input type="text" name="delivery_date" value="{{ isset($model) ? formatDateForDatePicker($model->getDeliveryDate()) : formatDateForDatePicker(now()->format('Y-m-d')) }}" class="form-control exchange-rate-date update-exchange-rate is-date-css" readonly placeholder="Select date" id="kt_datepicker_max_date_is_today" />
+                                    <input type="text" name="delivery_date" value="{{ isset($model) ? formatDateForDatePicker($model->getDeliveryDate()) : formatDateForDatePicker(now()->format('Y-m-d')) }}" class="form-control balance-date exchange-rate-date update-exchange-rate is-date-css" readonly placeholder="Select date" id="kt_datepicker_max_date_is_today" />
                                     <div class="input-group-append">
                                         <span class="input-group-text">
                                             <i class="la la-calendar-check-o"></i>
@@ -1004,6 +1004,10 @@ $selectedBanks = [];
 
 </script>
 <script>
+$(document).on('change','.balance-date',function(){
+				$('select.js-account-number').trigger('change');	
+			})
+			
     $(document).on('change', '.js-account-number', function() {
         const parent = $(this).closest('.js-section-parent');
         const financialInstitutionId = parent.find('select.financial-institution-id').val()
@@ -1011,6 +1015,7 @@ $selectedBanks = [];
         const accountType = parent.find('select.js-update-account-number-based-on-account-type').val();
 		const modelId = $('#js-money-payment-id').val();
 		const modelType = 'MoneyPayment';
+		const balanceDate = $('.balance-date').val();
 				
         $.ajax({
             url: "{{ route('update.balance.and.net.balance.based.on.account.number',['company'=>$company->id]) }}"
@@ -1019,7 +1024,8 @@ $selectedBanks = [];
                 , accountType
                 , financialInstitutionId,
 				modelType,
-				modelId
+				modelId,
+				balanceDate
             }
             , type: "get"
             , success: function(res) {

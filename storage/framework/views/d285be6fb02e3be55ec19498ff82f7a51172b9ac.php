@@ -72,7 +72,9 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
 
         <form method="post" action="<?php echo e(isset($model) ?  route('buy-or-sell-currencies.update',['company'=>$company->id,'buy_or_sell_currency'=>$model->id]) :route('buy-or-sell-currencies.store',['company'=>$company->id])); ?>" class="kt-form kt-form--label-right">
             <input id="js-in-edit-mode" type="hidden" name="in_edit_mode" value="<?php echo e(isset($model) ? 1 : 0); ?>">
-            <input type="hidden" name="id" value="<?php echo e(isset($model) ? $model->id : 0); ?>">
+            <input id="model-id" type="hidden" name="id" value="<?php echo e(isset($model) ? $model->id : 0); ?>">
+            <input  type="hidden" name="modelId" value="<?php echo e(isset($model) ? $model->id : 0); ?>">
+            <input  type="hidden" name="modelType" value="BuyOrSellCurrency">
             <input type="hidden" name="company_id" value="<?php echo e($company->id); ?>">
 
             <?php if(isset($model)): ?>
@@ -171,11 +173,11 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
 
                                             <div class="col-md-3">
                                                  <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
-<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.date','data' => ['label' => __('Transaction Date'),'required' => true,'model' => $model??null,'name' => 'transaction_date','placeholder' => __('Select Date')]]); ?>
+<?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.form.date','data' => ['classes' => 'balance-date','label' => __('Transaction Date'),'required' => true,'model' => $model??null,'name' => 'transaction_date','placeholder' => __('Select Date')]]); ?>
 <?php $component->withName('form.date'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php $component->withAttributes(['label' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Transaction Date')),'required' => true,'model' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($model??null),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('transaction_date'),'placeholder' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Select Date'))]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
+<?php $component->withAttributes(['classes' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('balance-date'),'label' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Transaction Date')),'required' => true,'model' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($model??null),'name' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute('transaction_date'),'placeholder' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(__('Select Date'))]); ?> <?php if (isset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4)): ?>
 <?php $component = $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4; ?>
 <?php unset($__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4); ?>
 <?php endif; ?>
@@ -806,19 +808,26 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
 
 
 
-
+			$(document).on('change','.balance-date',function(){
+				$('select.js-from-account-number').trigger('change');	
+			})
             $(document).on('change', 'select.js-from-account-number', function() {
                 const parent = $(this).closest('.kt-portlet__body');
                 const financialInstitutionId = parent.find('select.from-financial-institution').val()
                 const accountNumber = $(this).val();
                 const accountType = parent.find('select.js-from-update-account-number-based-on-account-type').val();
-                console.log(financialInstitutionId, accountNumber, accountType)
+                const modelId = $('#model-id').val();
+				const modelType = 'BuyOrSellCurrency';
+				const balanceDate = $('.balance-date').val();
                 $.ajax({
                     url: "<?php echo e(route('update.balance.and.net.balance.based.on.account.number',['company'=>$company->id])); ?>"
                     , data: {
                         accountNumber
                         , accountType
-                        , financialInstitutionId
+                        , financialInstitutionId,
+				modelType,
+				modelId,
+				balanceDate
                     }
                     , type: "get"
                     , success: function(res) {
