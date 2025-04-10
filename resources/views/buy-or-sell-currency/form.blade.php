@@ -574,16 +574,24 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
                 })
 
 
-
+$(document).on('change','.balance-date',function(){
+				$('select#branch-id,select.current-from-currency').trigger('change');
+			})
                 $(document).on('change', 'select#branch-id,select.current-from-currency', function() {
                     const branchId = $('select#branch-id').val();
                     const currencyName = $('select.current-from-currency').val();
+						const modelId = $('#model-id').val();
+						const modelType = 'BuyOrSellCurrency';
+						const balanceDate = $('.balance-date').val();
                     if (branchId != '-1') {
                         $.ajax({
                             url: "{{ route('get.current.end.balance.of.cash.in.safe.statement',['company'=>$company->id]) }}"
                             , data: {
                                 branchId
-                                , currencyName
+                                , currencyName,
+								modelType,
+								modelId,
+								balanceDate
                             }
                             , success: function(res) {
                                 const endBalance = res.end_balance;

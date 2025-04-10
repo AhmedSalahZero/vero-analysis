@@ -65,7 +65,7 @@
 
         <form method="post" action="{{ isset($model) ?  route('internal-money-transfers.update',['company'=>$company->id,'internal_money_transfer'=>$model->id,'type'=>$type]) :route('internal-money-transfers.store',['company'=>$company->id,'type'=>$type]) }}" class="kt-form kt-form--label-right">
             <input id="js-in-edit-mode" type="hidden" name="in_edit_mode" value="{{ isset($model) ? 1 : 0 }}">
-            <input  type="hidden" name="id" value="{{ isset($model) ? $model->id : 0 }}">
+            <input id="model-id"  type="hidden" name="id" value="{{ isset($model) ? $model->id : 0 }}">
             <input  type="hidden" name="company_id" value="{{ $company->id }}">
 			<input type="hidden" name="type" value="safe-to-bank" >
 			@if(isset($model))
@@ -122,7 +122,7 @@
                                         <div class="row">
 
                                             <div class="col-md-3">
-                                                <x-form.date :label="__('Date')" :required="true" :model="$model??null" :name="'transfer_date'" :placeholder="__('Select Date')"></x-form.date>
+                                                <x-form.date :classes="'balance-date'" :label="__('Date')" :required="true" :model="$model??null" :name="'transfer_date'" :placeholder="__('Select Date')"></x-form.date>
                                             </div>
                                             <div class="col-md-3 mb-4">
                             <label>{{ __('Branch') }} <span class="multi_selection"></span> </label>
@@ -325,16 +325,24 @@
     
     <script>
 	
-	
+		$(document).on('change','.balance-date',function(){
+				$('select#branch-id,select.current-from-currency').trigger('change');
+			})
 	$(document).on('change', 'select#branch-id,select.current-from-currency', function() {
         const branchId = $('select#branch-id').val();
         const currencyName = $('select.current-from-currency').val();
+		const modelId = $('#model-id').val();
+		const modelType = 'InternalMoneyTransfer';
+		const balanceDate = $('.balance-date').val();
         if (branchId != '-1') {
             $.ajax({
                 url: "{{ route('get.current.end.balance.of.cash.in.safe.statement',['company'=>$company->id]) }}"
                 , data: {
                     branchId
-                    , currencyName
+                    , currencyName,
+					modelType,
+					modelId,
+					balanceDate
                 }
                 , success: function(res) {
                     const endBalance = res.end_balance;
