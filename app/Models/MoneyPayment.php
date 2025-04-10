@@ -168,8 +168,7 @@ class MoneyPayment extends Model
     }
 	public function getBranchId():int
     {
-		$cashPayment = $this->cashPayment ;
-        return  $cashPayment ? $cashPayment->getDeliveryBranchId() :0;
+		return $this->getCashPaymentBranchId();
     }
 	public function getAmountInInvoiceCurrency()
     {

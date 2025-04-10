@@ -111,6 +111,10 @@ class CashExpense extends Model
 		$cashPayment = $this->cashPayment ;
         return  $cashPayment ? $cashPayment->getDeliveryBranchId() :0;
     }
+	public function getBranchId():int
+    {
+		return $this->getCashPaymentBranchId();
+    }
     public function getPaidAmount()
     {
         return  $this->paid_amount?:0 ;

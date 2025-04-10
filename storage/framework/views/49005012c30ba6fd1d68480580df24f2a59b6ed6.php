@@ -82,6 +82,12 @@ $selectedBanks = [];
     <input id="js-money-payment-id" type="hidden" name="cash_expense_id" value="<?php echo e(isset($model) ? $model->id : 0); ?>">
 	<input type="hidden" name="cash_id" value="<?php echo e(isset($model) && $model->cashPayment ? $model->cashPayment->id : 0); ?>">
 	<input type="hidden" name="current_cheque_id" value="<?php echo e(isset($model) && $model->payableCheque ? $model->payableCheque->id : 0); ?>">
+	
+	<?php if(isset($model)): ?>
+			<input type="hidden" name="modelId" value="<?php echo e($model->id); ?>">
+			<input type="hidden" name="modelType" value="CashExpense">
+			<?php endif; ?>
+	
     
     <?php echo csrf_field(); ?>
     <?php if(isset($model)): ?>
@@ -102,7 +108,7 @@ $selectedBanks = [];
                     <label><?php echo e(__('Payment Date')); ?></label>
                     <div class="kt-input-icon">
                         <div class="input-group date">
-                            <input type="text" name="payment_date" value="<?php echo e(isset($model) ? formatDateForDatePicker($model->getPaymentDate()) : formatDateForDatePicker(now()->format('Y-m-d'))); ?>" class="form-control is-date-css exchange-rate-date update-exchange-rate" readonly placeholder="Select date" id="kt_datepicker_max_date_is_today" />
+                            <input type="text"  name="payment_date" value="<?php echo e(isset($model) ? formatDateForDatePicker($model->getPaymentDate()) : formatDateForDatePicker(now()->format('Y-m-d'))); ?>" class="form-control balance-date is-date-css exchange-rate-date update-exchange-rate" readonly placeholder="Select date" id="kt_datepicker_max_date_is_today" />
                             <div class="input-group-append">
                                 <span class="input-group-text">
                                     <i class="la la-calendar-check-o"></i>
@@ -869,12 +875,18 @@ $selectedBanks = [];
  $(document).on('change', 'select#branch-id,select#receiving-currency-id', function() {
         const branchId = $('select#branch-id').val();
         const currencyName = $('select#receiving-currency-id').val();
+		const modelId = $('#js-money-payment-id').val();
+		const modelType = 'CashExpense';
+		const balanceDate = $('.balance-date').val();
         if (branchId != '-1') {
             $.ajax({
                 url: "<?php echo e(route('get.current.end.balance.of.cash.in.safe.statement',['company'=>$company->id])); ?>"
                 , data: {
                     branchId
-                    , currencyName
+                    , currencyName,
+					modelType,
+					modelId,
+					balanceDate
                 }
                 , success: function(res) {
                     const endBalance = res.end_balance;
@@ -950,17 +962,28 @@ $selectedBanks = [];
 
 </script>
 <script>
+$(document).on('change','.balance-date',function(){
+				$('select.js-account-number').trigger('change');	
+				$('select#branch-id,select#receiving-currency-id').trigger('change');	
+			})
+			
     $(document).on('change', '.js-account-number', function() {
         const parent = $(this).closest('.js-section-parent');
         const financialInstitutionId = parent.find('select.financial-institution-id').val()
         const accountNumber = $(this).val();
         const accountType = parent.find('select.js-update-account-number-based-on-account-type').val();
+			const modelId = $('#js-money-payment-id').val();
+		const modelType = 'CashExpense';
+		const balanceDate = $('.balance-date').val();
         $.ajax({
             url: "<?php echo e(route('update.balance.and.net.balance.based.on.account.number',['company'=>$company->id])); ?>"
             , data: {
                 accountNumber
                 , accountType
-                , financialInstitutionId
+                , financialInstitutionId,
+				modelId,
+				modelType,
+				balanceDate
             }
             , type: "get"
             , success: function(res) {
