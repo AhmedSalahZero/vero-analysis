@@ -6762,6 +6762,25 @@ function getHeaderMenu($currentCompany = null)
 					'submenu'=>[]
 				],
 				
+				[
+					'title'=>__('Odoo Integration'),
+					'link'=>route('view.foreign.exchange.rate',['company'=>$company->id]),
+					'show'=>$user->can('view foreign exchange rate'),
+					'submenu'=>[
+						[
+							'title'=>__('Read Invoices'), 
+						'link'=>route('view.foreign.exchange.rate',['company'=>$company->id]),
+						'show'=>$user->can('view foreign exchange rate'),
+						],
+						[
+							'title'=>__('Send Collections Or Payments'),
+						'link'=>route('view.foreign.exchange.rate',['company'=>$company->id]),
+						'show'=>$user->can('view foreign exchange rate'),
+						],
+						
+					]
+				],
+				
 						
 						
 						

@@ -8,8 +8,10 @@ use App\Jobs\CheckDueAndPastedInvoicesJob;
 use App\Jobs\TestJob1;
 use App\Jobs\TestJob2;
 use App\Models\Company;
+use App\Models\CustomerInvoice;
 use App\Models\FinancialStatement;
 use App\Models\IncomeStatement;
+use App\Models\MoneyReceived;
 use App\Models\NonBankingService\Department;
 use App\Models\NonBankingService\FixedAsset;
 use App\Models\NonBankingService\Study;
@@ -20,6 +22,7 @@ use App\ReadyFunctions\VariableLoanCalculation;
 use App\Services\AI\PredictionErrorQualityMeasures\MeanAbsoluteError;
 use App\Services\AI\PredictionErrorQualityMeasures\MeanAbsolutePercentageError;
 use App\Services\AI\PredictionErrorQualityMeasures\RootMeanSquaredPercentageError;
+use App\Services\Api\OddoPayment;
 use App\Services\Api\OddoService;
 use Carbon\Carbon;
 use DateTime;
@@ -68,12 +71,23 @@ class TestCommand extends Command
 		foreach($companies as $company){
 			if($company->hasOddoIntegrationCredentials()){
 				$oddo = new OddoService($company->getOddoDBUrl(),$company->getOddoDBName(),$company->getOddoDBUserName(),$company->getOddoDBPassword(),$company->getId());
+				$oddo = new OddoPayment($company->getOddoDBUrl(),$company->getOddoDBName(),$company->getOddoDBUserName(),$company->getOddoDBPassword(),$company->getId());
+				// OddoPayment
 				// $importDate = now()->format('Y-m-d') ; ;
 				$startDate = now()->subDays(60)->format('Y-m-d') ; ;
 				$endDate = now()->format('Y-m-d') ; ;
-				$oddo->startImportInvoices($startDate,$endDate);
-			
-				$oddo->createPayment(89,1150,'2025-04-09');
+				// $oddo->startImportInvoices($startDate,$endDate);
+				$journalId = [
+					MoneyReceived::CASH_IN_SAFE=>7,
+					MoneyReceived::INCOMING_TRANSFER=>12 
+				][MoneyReceived::INCOMING_TRANSFER];
+				$isCustomerInvoice = true ;
+				$inBoundOrOutBound = $isCustomerInvoice ? 'inbound':'outbound';
+					$paymentType = $isCustomerInvoice ? 'customer':'supplier'; 
+				// $oddo->createPayment(28,60,1,'2025-04-13',12,"BILL/2025/03/0006",$journalId,$inBoundOrOutBound);
+				$oddo->reCreatePayment($paymentType,28,50,1,'2025-04-13',12,"INV/2025/00006",$journalId,$inBoundOrOutBound);
+				// $oddo->createPayment(3,22137.5,1,'2025-04-13',12,"INV/2025/00003",$journalId,$inBoundOrOutBound);
+				
 				// $oddo->createPayment(89,1150,'2025-04-09','salah comment',3);
 				// $oddo->startImportContracts($startDate,$endDate,$company->id);
 				// $oddo->test($startDate,$endDate,$company->id);
