@@ -192,6 +192,8 @@ use App\Models\MoneyReceived ;
 
                                             <td class="text-center">
                                                 <input type="hidden" name="company_id" value="<?php echo e($company->id); ?>">
+                                                <input type="hidden" name="company_id" value="<?php echo e($company->id); ?>">
+												  <input type="hidden" name="id" value="<?php echo e(isset($cashExpenseCategoryName) ? $cashExpenseCategoryName->id :0); ?>">
                                                 <div class="">
                                                     <i data-repeater-delete="" class="btn-sm btn btn-danger m-btn m-btn--icon m-btn--pill trash_icon fas fa-times-circle">
                                                     </i>

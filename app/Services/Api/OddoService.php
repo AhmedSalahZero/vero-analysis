@@ -472,4 +472,88 @@ class OddoService
 }
 
 
+public function registerPayment(Request $request)
+    {
+        // Example request data from your app
+        $paymentData = [
+            'invoice_id' => $request->input('invoice_id'),
+            'amount' => $request->input('amount'),
+            'payment_date' => $request->input('payment_date', date('Y-m-d')),
+            'journal_id' => $request->input('journal_id'),
+            'payment_method_id' => 1, // Manual payment method
+        ];
+
+        // Authenticate
+        $uid = $this->authenticate();
+        if (!$uid) {
+            return response()->json(['error' => 'Authentication failed'], 401);
+        }
+
+        // Register and reconcile payment
+        $payment = $this->createPayment($uid, $paymentData);
+
+        return response()->json($payment);
+    }
+
+    private function authenticate()
+    {
+        $common = Ripcord::client($this->url . 'common');
+        $uid = $common->authenticate($this->db, $this->username, $this->password, []);
+        return $uid;
+    }
+	/**
+	 * * create payment for test
+	 */
+    public function createPayment($invoiceId,float $paymentAmount,$paymentDate)
+    {
+		$uid = $this->uid;
+		
+        // Connect to the object endpoint
+        $models = $this->models;
+
+        // Step 1: Create payment context with invoice to reconcile
+        $context = [
+            'active_ids' => [$invoiceId],
+            'active_model' => 'account.move',
+        ];
+
+        // Create the payment register record
+        $paymentRegisterId = $models->execute_kw(
+            $this->db,
+            $uid,
+            $this->password,
+            'account.payment.register',
+            'create',
+            [[
+                'amount' => (float) $paymentAmount,
+                'payment_date' => $paymentDate,
+                'journal_id' => 7,
+           //     'payment_method_id' => 1,
+            ]],
+            ['context' => $context]
+        );
+        if (Ripcord::isFault($paymentRegisterId)) {
+            return ['error' => $paymentRegisterId['faultString']];
+        }
+
+        // Step 2: Post the payment to reconcile it
+        $result = $models->execute_kw(
+            $this->db,
+            $uid,
+            $this->password,
+            'account.payment.register',
+            'action_register_payment',
+            [[$paymentRegisterId]]
+        );
+		// dd('good',$result);
+
+        if (Ripcord::isFault($result)) {
+            return ['error' => $result['faultString']];
+        }
+
+        return ['success' => 'Payment registered and reconciled', 'payment_id' => $result];
+    }
+	
+
+
 }

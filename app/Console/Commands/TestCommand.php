@@ -71,7 +71,8 @@ class TestCommand extends Command
 				$startDate = now()->subDays(60)->format('Y-m-d') ; ;
 				$endDate = now()->format('Y-m-d') ; ;
 				// $oddo->startImportInvoices($startDate,$endDate);
-				$oddo->payInvoice(89,1150,'2025-04-09','salah comment',3);
+				$oddo->createPayment(89,1150,'2025-04-09');
+				// $oddo->createPayment(89,1150,'2025-04-09','salah comment',3);
 				// $oddo->startImportContracts($startDate,$endDate,$company->id);
 				// $oddo->test($startDate,$endDate,$company->id);
 			}

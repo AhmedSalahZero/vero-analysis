@@ -561,8 +561,9 @@ $(document).on('change','select#partner_type',function(){
 		success:function(res){
 			const partners = res.partners;
 			let elements = `<option value="" selected>Select</option>`;
-			for(var id in partners){
-				elements+=`<option value="${id}">${partners[id]}</option>`
+			for(var name in partners){
+				var id = partners[name];
+				elements+=`<option value="${id}">${name}</option>`
 			}
 			$('select#supplier_name').empty().append(elements).trigger('change')
 		}

@@ -67,7 +67,7 @@ trait HasBasicStoreRequest
 		$oldIdsFromDatabase = $this->{$relationName}->pluck('id')->toArray();
 		$idsFromRequest =array_column($relationDataArray,'id') ;
 		$elementsToDelete = array_diff($oldIdsFromDatabase,$idsFromRequest);
-		if(count($oldIdsFromDatabase) && !count($idsFromRequest) && env('APP_ENV') == 'local'){
+		if(count($oldIdsFromDatabase) && !count($idsFromRequest)){
 			dd('there is no old ids from request .. !!');
 		}
 		$elementsToUpdate = array_intersect($idsFromRequest,$oldIdsFromDatabase);
