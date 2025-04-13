@@ -74,6 +74,7 @@ class OddoService
 	 */
 	public function startImportInvoices($startDate , $endDate):void
 	{
+	
 		if(is_null($this->uid)){
 			return ;
 		}
@@ -532,6 +533,7 @@ public function registerPayment(Request $request)
             ]],
             ['context' => $context]
         );
+	
         if (Ripcord::isFault($paymentRegisterId)) {
             return ['error' => $paymentRegisterId['faultString']];
         }

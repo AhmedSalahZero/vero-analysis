@@ -61,7 +61,8 @@ class TestCommand extends Command
 	
 	public function handle()
 	{
-		$companies = Company::where('id',105)->get();
+		$companies = Company::where('id',38)->get();
+		// $companies = Company::where('id',105)->get();
 		// $companies = Company::where('id',105)->get();
 		// $companies = Company::get();
 		foreach($companies as $company){
@@ -70,7 +71,8 @@ class TestCommand extends Command
 				// $importDate = now()->format('Y-m-d') ; ;
 				$startDate = now()->subDays(60)->format('Y-m-d') ; ;
 				$endDate = now()->format('Y-m-d') ; ;
-				// $oddo->startImportInvoices($startDate,$endDate);
+				$oddo->startImportInvoices($startDate,$endDate);
+			
 				$oddo->createPayment(89,1150,'2025-04-09');
 				// $oddo->createPayment(89,1150,'2025-04-09','salah comment',3);
 				// $oddo->startImportContracts($startDate,$endDate,$company->id);
