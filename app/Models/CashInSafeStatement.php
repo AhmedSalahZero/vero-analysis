@@ -20,7 +20,8 @@ class CashInSafeStatement extends Model
 
 	public static function updateNextRows(CashInSafeStatement $model):string 
 	{
-		$minDate  = $model->full_date ;
+		$minDate  = $model->date ;
+		// $minDate  = $model->full_date ;
 	
 		
 		/**
@@ -32,8 +33,8 @@ class CashInSafeStatement extends Model
 		 */
 
 		 DB::table('cash_in_safe_statements')
-		->where('full_date','>=',$minDate)
-		->orderByRaw('full_date asc , id asc')
+		->where('date','>=',$minDate)
+		->orderByRaw('date asc , id asc')
 		->where('branch_id',$model->branch_id)
 		->each(function($cashInSafeStatement){
 			DB::table('cash_in_safe_statements')->where('id',$cashInSafeStatement->id)->update([
@@ -51,6 +52,12 @@ class CashInSafeStatement extends Model
 				$model->created_at = now();
 				$date = $model->date ;
 				$time  = now()->format('H:i:s');
+				$row = DB::table('temp_deleted_statements')->where('company_id',$model->company_id)->where('table_name','cash_in_safe_statements')->first();
+				
+				if($row){
+					$model->id = $row->deleted_id;
+					DB::table('temp_deleted_statements')->where('company_id',$model->company_id)->where('table_name','cash_in_safe_statements')->delete();
+				}
 			
 				$fullDateTime = date('Y-m-d H:i:s', strtotime("$date $time")) ;
 		
@@ -91,8 +98,8 @@ class CashInSafeStatement extends Model
 						// وتلقائي هيحذف السحوبات settlements
 					}else{
 						DB::table('cash_in_safe_statements')
-						->where('full_date','>=',$minDate)
-						->orderByRaw('full_date asc , id asc')
+						->where('date','>=',$minDate)
+						->orderByRaw('date asc , id asc')
 						->where('branch_id',$model->branch_id)->update([
 							'updated_at'=>now()
 						]);

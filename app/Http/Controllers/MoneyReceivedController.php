@@ -844,6 +844,7 @@ class MoneyReceivedController
 		$balanceDate = '';
 
 		$netBalance = 0;
+		
 		if($balanceRow){
 			$balance = $balanceRow->{$column} ; 
 			$balanceDate = Carbon::make($balanceRow->date)->format('d-m-Y') ;

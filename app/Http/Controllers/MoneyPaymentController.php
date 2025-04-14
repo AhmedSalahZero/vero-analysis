@@ -673,7 +673,6 @@ class MoneyPaymentController
 			}
 		}
 		$endBalance = $branch->getCurrentEndBalance($company->id,$currencyName,$deliveryDate);
-		
 		return response()->json([
 			'end_balance'=>$endBalance+$additionalAmountInEditMode
 		]);
