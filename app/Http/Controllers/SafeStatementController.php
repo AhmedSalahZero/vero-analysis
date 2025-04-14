@@ -32,7 +32,7 @@ class SafeStatementController
 		->where('branch_id',$branchId)
 		->where('date','>=',$startDate)
 		->where('date','<=',$endDate)
-		->orderByRaw('date asc , created_at asc')
+		->orderByRaw('date asc , id asc')
 		// ->orderByRaw('full_date asc , created_at asc')
 		->get();
 			if(!count($results)){
@@ -41,7 +41,7 @@ class SafeStatementController
 									->with('fail',__('No Data Found'))	
 									;
 			}
-	
+	// dd($results);
 		return view('safe_statement_result',[
 			'results'=>$results,
 			'currency'=>$currency
