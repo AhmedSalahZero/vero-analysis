@@ -20,6 +20,11 @@ trait IsInvoice
 	public function getId(){
 		return $this->id ;
 	}
+	
+	public function getOdooId():int
+	{
+		return $this->oddo_id;
+	}
 	public function scopeOnlyCompany(Builder $query,$companyId){
 		return $query->where('company_id',$companyId);
 	}

@@ -15,58 +15,70 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
 
-<script>
-let pageLoaded = false ;
-</script>
+    <script>
+        let pageLoaded = false;
+
+    </script>
     <style>
-	html body .form-element-hidden{
-		display:none !important;
-	}
-	.calculator-trigger{
-		cursor:pointer;
-	}
-	.fs-15{
-		font-size:15px;
-	}
-	.width-9 {
-        max-width: initial !important;
-        width: 9% !important;
-        flex: initial !important;
-    }
-	html body .bg-red-progress{
-		background-color:#8d0834 !important  ;
-	}
-	.flex-1{
-		flex:1;
-	}
+        html body .form-element-hidden {
+            display: none !important;
+        }
+
+        .calculator-trigger {
+            cursor: pointer;
+        }
+
+        .fs-15 {
+            font-size: 15px;
+        }
+
+        .width-9 {
+            max-width: initial !important;
+            width: 9% !important;
+            flex: initial !important;
+        }
+
+        html body .bg-red-progress {
+            background-color: #8d0834 !important;
+        }
+
+        .flex-1 {
+            flex: 1;
+        }
+
         #show-notification-here {
             width: 50%;
             background-color: red;
 
         }
-		
-.notification-span{
-    font-family: 'Poppins';
-    font-weight: bold;
-    padding: 2px 7px;
-	background:#0b29ffab;
-		    color: white;
-}
-.notification-bg{
-				background: #ff0000ab;
-			
-		}
+
+        .notification-span {
+            font-family: 'Poppins';
+            font-weight: bold;
+            padding: 2px 7px;
+            background: #0b29ffab;
+            color: white;
+        }
+
+        .notification-bg {
+            background: #ff0000ab;
+
+        }
+
     </style>
     <style>
         .w-60-percentage {
             width: 60% !important;
         }
-.w-50-percentage {
+
+        .w-50-percentage {
             width: 50% !important;
         }
-		.w-40-percentage {
+
+        .w-40-percentage {
             width: 40% !important;
         }
+
         .w-30-percentage {
             width: 30% !important;
         }
@@ -74,15 +86,19 @@ let pageLoaded = false ;
         .w-20-percentage {
             width: 20% !important;
         }
-		.w-70-percentage {
+
+        .w-70-percentage {
             width: 70% !important;
         }
-		.w-15-percentage {
+
+        .w-15-percentage {
             width: 15% !important;
         }
- 	.w-10-percentage {
+
+        .w-10-percentage {
             width: 10% !important;
         }
+
         .flex-tabs {
             display: flex;
             gap: 10px;
@@ -366,7 +382,8 @@ let pageLoaded = false ;
             background-color: green;
             color: white;
         }
-		.add-row {
+
+        .add-row {
             border-color: green;
             background-color: green;
             color: white;
@@ -449,9 +466,8 @@ let pageLoaded = false ;
 
 
     <!--begin::Fonts -->
-	<script>
-	
-	 function getVisiablFields() {
+    <script>
+        function getVisiablFields() {
             let visiableFields = [];
             let EmptyFields = [];
 
@@ -483,15 +499,16 @@ let pageLoaded = false ;
             };
 
         }
-		
-	function toFixed(num,points = 2){
-	if(!num){
-		return 0;
-	}
-	 
-	return (Math.round(num * 100) / 100).toFixed(points);
-}
-	</script>
+
+        function toFixed(num, points = 2) {
+            if (!num) {
+                return 0;
+            }
+
+            return (Math.round(num * 100) / 100).toFixed(points);
+        }
+
+    </script>
     <script src="<?php echo e(asset('custom/webfont.js')); ?>"></script>
     <script src="<?php echo e(asset('custom/helper.js')); ?>"></script>
     
@@ -672,62 +689,72 @@ let pageLoaded = false ;
     <link href="<?php echo e(url('assets/css/custom.css')); ?>" rel="stylesheet" type="text/css" />
     <link href="<?php echo e(url('datatable/datatable.css')); ?>" rel="stylesheet" type="text/css" />
     <!--end::Global Theme Styles -->
-    <style>	
-	.text-green{
-		color:green ;
-	}
-		.th-main-color{
-			        background-color: #0742A6 !important; 
-					color:white !important ;
-		}
+    <style>
+        .text-green {
+            color: green;
+        }
+
+        .th-main-color {
+            background-color: #0742A6 !important;
+            color: white !important;
+        }
+
         .bg-green {
             background-color: green !important;
         }
-		.delete-btn-class{
-			border:1px solid red !important ;
-		}
-		.delete-btn-class i{
-			color:red !important
-		}
-		.delete-btn-class:hover {
-			background-color:red ;
-		}
-		.delete-btn-class:hover i  {
-			color:white !important
-		}
-		
-		.edit-btn-class{
-			border:1px solid blue !important ;
-		}
-		
-		.edit-btn-class i{
-			color:blue !important
-		}
-		.edit-btn-class:hover {
-			background-color:blue ;
-		}
-		.edit-btn-class:hover i  {
-			color:white !important
-		}
-		
-		.copy-btn-class{
-			border:1px solid green !important ;
-		}
-		
-		.copy-btn-class i{
-			color:green !important
-		}
-		.copy-btn-class:hover {
-			background-color:green ;
-		}
-		.copy-btn-class:hover i  {
-			color:white !important
-		}
-		.font-14px
-{
-	font-size: 14px !important;
-}
-		
+
+        .delete-btn-class {
+            border: 1px solid red !important;
+        }
+
+        .delete-btn-class i {
+            color: red !important
+        }
+
+        .delete-btn-class:hover {
+            background-color: red;
+        }
+
+        .delete-btn-class:hover i {
+            color: white !important
+        }
+
+        .edit-btn-class {
+            border: 1px solid blue !important;
+        }
+
+        .edit-btn-class i {
+            color: blue !important
+        }
+
+        .edit-btn-class:hover {
+            background-color: blue;
+        }
+
+        .edit-btn-class:hover i {
+            color: white !important
+        }
+
+        .copy-btn-class {
+            border: 1px solid green !important;
+        }
+
+        .copy-btn-class i {
+            color: green !important
+        }
+
+        .copy-btn-class:hover {
+            background-color: green;
+        }
+
+        .copy-btn-class:hover i {
+            color: white !important
+        }
+
+        .font-14px {
+            font-size: 14px !important;
+        }
+
         .border-green {
             border-color: green;
         }
@@ -801,9 +828,11 @@ let pageLoaded = false ;
             color: black !important;
             font-weight: bold !important;
         }
-td{
-	vertical-align:middle !important;
-}
+
+        td {
+            vertical-align: middle !important;
+        }
+
     </style>
 
 
@@ -965,17 +994,19 @@ td{
             text-align: center !important;
             color: #fff !important;
         }
-	.sub-item-row td.bg-white{
-		background-color:white !important;
-	}
-	.text-black{
-	color:black !important;
-}
 
-    .btn-green{
-		background-color:green  !important;
-		color:white !important;
-	}
+        .sub-item-row td.bg-white {
+            background-color: white !important;
+        }
+
+        .text-black {
+            color: black !important;
+        }
+
+        .btn-green {
+            background-color: green !important;
+            color: white !important;
+        }
 
         .header-tr {
             background-color: #074FA4 !important;
@@ -1128,7 +1159,6 @@ td{
     <?php
     $user = Auth()->user();
     ?>
-    
 
     <div class="text-center hide_class" id="loader_id">
         <img src="<?php echo e(asset('loading.gif')); ?>">
@@ -1159,13 +1189,151 @@ td{
             <div class="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor kt-wrapper" id="kt_wrapper">
                 <!-- begin:: Header -->
                 <?php echo $__env->make('layouts.topbar', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
-				<?php if(isset($company)): ?>
-			
-				<?php $__currentLoopData = \App\Notification::getAllMainTypes(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $notificationMainType => $notificationMainTitle): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-		
-				<?php echo $__env->make('notifications.popup',['notificationMainType'=>$notificationMainType,'notificationMainTitle'=>$notificationMainTitle], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
-				<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-				<?php endif; ?> 
+                <?php if(isset($company)): ?>
+
+                <?php $__currentLoopData = \App\Notification::getAllMainTypes(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $notificationMainType => $notificationMainTitle): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+
+                <?php echo $__env->make('notifications.popup',['notificationMainType'=>$notificationMainType,'notificationMainTitle'=>$notificationMainTitle], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+
+
+                <div class="modal fade read-modal read-invoices-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                    <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+                        <form action="<?php echo e(route('read-oddo-invoices',['company'=>$company->id])); ?>" class="modal-content" method="post">
+
+
+                            <?php echo csrf_field(); ?>
+                            <div class="modal-header">
+                                <h5 class="modal-title" style="color:#0741A5 !important" id="exampleModalLongTitle"><?php echo e(__('Read Invoices')); ?></h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="customize-elements">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+
+                                                <th class="text-center"> <?php echo e(__('From Date')); ?> </th>
+                                                <th class="text-center"> <?php echo e(__('To Date')); ?> </th>
+
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+
+
+
+                                            <tr>
+
+
+                                                <td>
+
+                                                    
+                                                    <label for="oddo-start-date" class="text-nowrap mr-3"><?php echo e(__('Start Date')); ?></label>
+                                                    <input id="oddo-start-date" type="date" value="<?php echo e(now()->format('Y-m-d')); ?>" class="form-control" name="start_date">
+                                                    
+
+                                                </td>
+
+                                                <td>
+
+                                                    
+                                                    <label for="oddo-end-date" class="text-nowrap mr-3"><?php echo e(__('End Date')); ?></label>
+                                                    <input id="oddo-end-date" type="date" value="<?php echo e(now()->format('Y-m-d')); ?>" class="form-control" name="end_date">
+                                                    
+
+                                                </td>
+
+
+
+
+
+                                            </tr>
+
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn  btn-primary "><?php echo e(__('Submit')); ?></button>
+                                <button type="button" class="btn btn-primary" data-dismiss="modal"><?php echo e(__('Close')); ?></button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+				
+				
+				 <div class="modal fade send-modal send-invoices-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                    <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+                        <form action="<?php echo e(route('send-oddo-collection-or-payments',['company'=>$company->id])); ?>" class="modal-content" method="post">
+
+
+                            <?php echo csrf_field(); ?>
+                            <div class="modal-header">
+                                <h5 class="modal-title" style="color:#0741A5 !important" id="exampleModalLongTitle"><?php echo e(__('Send Collection Or Payments')); ?></h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="customize-elements">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+
+                                                <th class="text-center"> <?php echo e(__('From Date')); ?> </th>
+                                                <th class="text-center"> <?php echo e(__('To Date')); ?> </th>
+
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+
+
+
+                                            <tr>
+
+
+                                                <td>
+
+                                                    
+                                                    <label for="oddo-send-start-date" class="text-nowrap mr-3"><?php echo e(__('Start Date')); ?></label>
+                                                    <input id="oddo-send-start-date" type="date" value="<?php echo e(now()->format('Y-m-d')); ?>" class="form-control" name="start_date">
+                                                    
+
+                                                </td>
+
+                                                <td>
+
+                                                    
+                                                    <label for="oddo-send-end-date" class="text-nowrap mr-3"><?php echo e(__('End Date')); ?></label>
+                                                    <input id="oddo-send-end-date" type="date" value="<?php echo e(now()->format('Y-m-d')); ?>" class="form-control" name="end_date">
+                                                    
+
+                                                </td>
+
+
+
+
+
+                                            </tr>
+
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn  btn-primary "><?php echo e(__('Submit')); ?></button>
+                                <button type="button" class="btn btn-primary" data-dismiss="modal"><?php echo e(__('Close')); ?></button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+				
+
+                <?php endif; ?>
                 <!-- end:: Header -->
                 <div class="kt-body kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor kt-grid--stretch" id="kt_body">
                     <div class="kt-content kt-content--fit-top  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
@@ -1291,10 +1459,10 @@ td{
         }
 
         function number_unformat(formattedNumber) {
-			if(formattedNumber){
-            		return formattedNumber.replace(/(<([^>]+)>)/gi, "").replace(/,/g, "")
-			}
-			return 0;
+            if (formattedNumber) {
+                return formattedNumber.replace(/(<([^>]+)>)/gi, "").replace(/,/g, "")
+            }
+            return 0;
         }
 
         function orderObjectKeys(myObj) {
@@ -1594,51 +1762,48 @@ td{
 
     <?php if(isset($company) && $company->id): ?>
     <script>
-	
-		
-$(document).on('change','.update-exchange-rate',function(){
+        $(document).on('change', '.update-exchange-rate', function() {
 
 
-	if(!pageLoaded){
-		return 
-	}
-	let fromCurrency = $('select.current-invoice-currency').val()
-	fromCurrency = fromCurrency ? fromCurrency : $('input[type="hidden"].from-currency').val();
-	let toCurrency = $('input[type="hidden"].to-currency').val() 
-	toCurrency = toCurrency ? toCurrency : $('select.receiving-currency-class').val();
+            if (!pageLoaded) {
+                return
+            }
+            let fromCurrency = $('select.current-invoice-currency').val()
+            fromCurrency = fromCurrency ? fromCurrency : $('input[type="hidden"].from-currency').val();
+            let toCurrency = $('input[type="hidden"].to-currency').val()
+            toCurrency = toCurrency ? toCurrency : $('select.receiving-currency-class').val();
 
-	let isGeneralDownPayment = $('select#down_payment_type').val() == 'general';
-	const date = $('.exchange-rate-date').val()
-	const companyId = $('body').data('current-company-id')
-	const lang = $('body').data('lang')
-	const url = '/' + lang + '/' + companyId + '/get-exchange-rate-for-date-and-currencies/'
-	if(isGeneralDownPayment){
-		$('.show-only-when-invoice-currency-not-equal-receiving-currency').hide();
-		return ;
-	}else{
-	}
-	if(fromCurrency == toCurrency   ){
-	
-		$('.exchange-rate-class').val(1).trigger('change')
-		return 
-	}
-	$('.show-only-when-invoice-currency-not-equal-receiving-currency').show();
-	
-	$.ajax({
-		url,
-		data:{
-			fromCurrency,
-			toCurrency,
-			date
-		},
-		success:function(res){
-			exchangeRate = res.exchange_rate ;
-		
-			$('.exchange-rate-class').val(exchangeRate).trigger('change')
-		}
-	})
-})
-	
+            let isGeneralDownPayment = $('select#down_payment_type').val() == 'general';
+            const date = $('.exchange-rate-date').val()
+            const companyId = $('body').data('current-company-id')
+            const lang = $('body').data('lang')
+            const url = '/' + lang + '/' + companyId + '/get-exchange-rate-for-date-and-currencies/'
+            if (isGeneralDownPayment) {
+                $('.show-only-when-invoice-currency-not-equal-receiving-currency').hide();
+                return;
+            } else {}
+            if (fromCurrency == toCurrency) {
+
+                $('.exchange-rate-class').val(1).trigger('change')
+                return
+            }
+            $('.show-only-when-invoice-currency-not-equal-receiving-currency').show();
+
+            $.ajax({
+                url
+                , data: {
+                    fromCurrency
+                    , toCurrency
+                    , date
+                }
+                , success: function(res) {
+                    exchangeRate = res.exchange_rate;
+
+                    $('.exchange-rate-class').val(exchangeRate).trigger('change')
+                }
+            })
+        })
+
 
 
 
@@ -1654,14 +1819,14 @@ $(document).on('change','.update-exchange-rate',function(){
     </script>
 
     <?php endif; ?>
-	<?php if(!isset($model) && !isset($singleModel) ): ?>
-<script>
+    <?php if(!isset($model) && !isset($singleModel) ): ?>
+    <script>
+        $('select.current-invoice-currency.update-exchange-rate').trigger('change')
 
-	$('select.current-invoice-currency.update-exchange-rate').trigger('change')
-</script>	
-	<?php endif; ?>
-	
-	
+    </script>
+    <?php endif; ?>
+
+
     <?php if(isset($company) && $company->id): ?>
     <?php if(isset($modelName) && cacheHas(generateCacheFailedName($company->id , auth()->user()->id , $modelName ))): ?>
     <script>
@@ -1724,10 +1889,10 @@ $(document).on('change','.update-exchange-rate',function(){
                 let startDate = $('input[name="start_date"]').val();
                 let endDate = $('input[name="end_date"]').val();
                 let mainType = $('input[name="main_type"]').val();
-				mainType = mainType ? mainType : $('input[id="first-column-name-id"]').val();
+                mainType = mainType ? mainType : $('input[id="first-column-name-id"]').val();
                 let subType = $('input[name="type"]').val();
-				subType = subType ? subType : $('input[id="second-column-name-id"]').val();
-				let tableName = $('#filter-table-name-id').val();
+                subType = subType ? subType : $('input[id="second-column-name-id"]').val();
+                let tableName = $('#filter-table-name-id').val();
                 let appendTo = $('#append-to').val();
                 let isIntervalComarping = $('#report_type').val() === 'comparing'
                 if (isIntervalComarping) {
@@ -1756,8 +1921,8 @@ $(document).on('change','.update-exchange-rate',function(){
                         , endDate
                         , mainType
                         , subType
-                        , appendTo,
-						tableName
+                        , appendTo
+                        , tableName
                     }
                     , type: "post"
                     , success: function(response) {
@@ -1817,16 +1982,16 @@ $(document).on('change','.update-exchange-rate',function(){
                 e.preventDefault();
 
                 // Validate form before submit
-		
+
                 form = $(this).closest('form')[0]
 
                 var formData = new FormData(form);
-		
-				if($(form).attr('action') == undefined){
-					alert('not action attr for this form');
-					return ;
-				}
-              //  this.disabled = true;
+
+                if ($(form).attr('action') == undefined) {
+                    alert('not action attr for this form');
+                    return;
+                }
+                //  this.disabled = true;
                 $.ajax({
                     type: "POST"
                     , url: $(form).attr('action')
@@ -1835,14 +2000,14 @@ $(document).on('change','.update-exchange-rate',function(){
                     , contentType: false
                     , processData: false
                     , success: function(res) {
-				
+
                         if (res.reloadCurrentPage) {
                             return window.location.reload()
 
                         }
                         if (res.redirectTo) {
-				
-					
+
+
                             window.location.href = res.redirectTo;
                             return
                         }
@@ -1881,15 +2046,13 @@ $(document).on('change','.update-exchange-rate',function(){
                                     })
 
                                 })
-                            } 
-							else if(res.errorMessage){
-								Swal.fire({
-                                icon: 'error'
-                                , title: res.errorMessage,
+                            } else if (res.errorMessage) {
+                                Swal.fire({
+                                    icon: 'error'
+                                    , title: res.errorMessage,
 
-                            })
-							}
-							else {
+                                })
+                            } else {
                                 $('.submit-form.btn').prop('disabled', false);
                                 window.location.href = "<?php echo e(route('admin.view.revenue.business.line',getCurrentCompany() ? getCurrentCompany()->getIdentifier( ) : 0 )); ?>"
                             }
@@ -2014,10 +2177,10 @@ $(document).on('change','.update-exchange-rate',function(){
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body " >
+                <div class="modal-body ">
                     <h3 class="main-form-title " id="body-for-notification">
-						
-					</h3>
+
+                    </h3>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss-modal-3="modal3"><?php echo e(__('Close')); ?></button>
@@ -2025,115 +2188,151 @@ $(document).on('change','.update-exchange-rate',function(){
             </div>
         </div>
     </div>
-<script>
-$(document).on('click','[data-enlarge-content-js]',function(e){
-	const id = $(this).attr('data-id')
-	const content = $(this).find('[data-notification-content-id="'+id+'"]').text()
-	$('#body-for-notification').html(content)
-	$('#body-for-notification').closest('.modal').modal('show')
-})
-$('button[data-dismiss-modal-3="modal3"]').click(function () {
-
-		$(this).closest('#notifications-modal').modal('hide');
-	});
-</script>
-<script>
-$(function(){
-	$('.trigger-change-after-page-open').trigger('change')
-})
-</script>
-<script>
-	$('.inner-modal-class').on('show.bs.modal',function(){
-		$('.modal:not(.inner-modal-class)').modal('hide')
-	})
-</script>
-
-<script>
-$(document).on('change','.checkbox-for-row',function(e){
-	let isChecked = $(this).is(':checked')
-	if(isChecked){
-		
-		$(this).closest('tr').find('.checkbox-for-permission').prop("checked", true).prop('disabled',false)
-	}else{
-		$(this).closest('tr').find('.checkbox-for-permission').prop("checked", false).prop('disabled',true)
-	}
-})
-</script>
 
 
-<script>
-function coverStringToValidClass(name) {
-    return name.replace(/[^a-z0-9]/g, function(s) {
-        var c = s.charCodeAt(0);
-        if (c == 32) return '-';
-        if (c >= 65 && c <= 90) return '_' + s.toLowerCase();
-        return '__' + ('000' + c.toString(16)).slice(-4);
-    });
-}
+    <div class="modal fade " id="read-invoices" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel"><?php echo e(__('Notification Detail')); ?></h5>
+                    <button type="button" class="close" data-dismiss-modal-3="modal3" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body ">
+                    <h3 class="main-form-title " id="body-for-read">
 
-</script>
-<script>
-if($('#kt_datepicker_max_date_is_today').datepicker != undefined){
-	$('#kt_datepicker_max_date_is_today').datepicker({
- autoclose: true,
- todayHighlight: true,
-   orientation: "bottom left",
-// format: 'mm/dd/yyyy',
- endDate: new Date(),
+                    </h3>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss-modal-3="modal3"><?php echo e(__('Close')); ?></button>
+                </div>
+            </div>
+        </div>
+    </div>
 
- rtl:false
-});
-}
+    <script>
+        $(document).on('click', '[data-enlarge-content-js]', function(e) {
+            const id = $(this).attr('data-id')
+            const content = $(this).find('[data-notification-content-id="' + id + '"]').text()
+            $('#body-for-notification').html(content)
+            $('#body-for-notification').closest('.modal').modal('show')
+        })
+        $('button[data-dismiss-modal-3="modal3"]').click(function() {
 
-
-
-</script>
-<script>
-$(function(){
-	pageLoaded = true;
-	
-	  $(function() {
-			
-		
-            $('.only-month-year-picker').each(function(index, dateInput) {
-                var currentDate = $(dateInput).val();
-                var startDate = "<?php echo e(isset($studyStartDate) && $studyStartDate ? $studyStartDate : -1); ?>";
-                startDate = startDate == '-1' ? '' : startDate;
-                var endDate = "<?php echo e(isset($studyEndDate) && $studyEndDate? $studyEndDate : -1); ?>";
-                endDate = endDate == '-1' ? '' : endDate;
-				if(startDate && endDate){
-					
-					 $(dateInput).datepicker({
-                        viewMode: "year"
-                        , minViewMode: "year"
-                        , todayHighlight: false
-                        , clearBtn: true,
-                        autoclose: true
-                        , format: "yyyy-mm-01"
-                    , })
-                    .datepicker('setDate', new Date(currentDate))
-                  .datepicker('setStartDate', new Date(startDate))
-                    .datepicker('setEndDate', new Date(endDate))
-				}else{
-						 $(dateInput).datepicker({
-                        viewMode: "year"
-                        , minViewMode: "year"
-                        , todayHighlight: false
-                        , clearBtn: true,
-                        autoclose: true
-                        , format: "yyyy-mm-01"
-                    })
-                    .datepicker('setDate', new Date(currentDate))
-				}
-               
-            })
-
-
+            $(this).closest('#notifications-modal').modal('hide');
         });
-		
-})
-</script>
 
+    </script>
+    <script>
+        $(function() {
+            $('.trigger-change-after-page-open').trigger('change')
+        })
+
+    </script>
+    <script>
+        $('.inner-modal-class').on('show.bs.modal', function() {
+            $('.modal:not(.inner-modal-class)').modal('hide')
+        })
+
+    </script>
+
+    <script>
+        $(document).on('change', '.checkbox-for-row', function(e) {
+            let isChecked = $(this).is(':checked')
+            if (isChecked) {
+
+                $(this).closest('tr').find('.checkbox-for-permission').prop("checked", true).prop('disabled', false)
+            } else {
+                $(this).closest('tr').find('.checkbox-for-permission').prop("checked", false).prop('disabled', true)
+            }
+        })
+
+    </script>
+
+
+    <script>
+        function coverStringToValidClass(name) {
+            return name.replace(/[^a-z0-9]/g, function(s) {
+                var c = s.charCodeAt(0);
+                if (c == 32) return '-';
+                if (c >= 65 && c <= 90) return '_' + s.toLowerCase();
+                return '__' + ('000' + c.toString(16)).slice(-4);
+            });
+        }
+
+    </script>
+    <script>
+        if ($('#kt_datepicker_max_date_is_today').datepicker != undefined) {
+            $('#kt_datepicker_max_date_is_today').datepicker({
+                autoclose: true
+                , todayHighlight: true
+                , orientation: "bottom left",
+                // format: 'mm/dd/yyyy',
+                endDate: new Date(),
+
+                rtl: false
+            });
+        }
+
+    </script>
+    <script>
+        $(function() {
+            pageLoaded = true;
+
+            $(function() {
+
+
+                $('.only-month-year-picker').each(function(index, dateInput) {
+                    var currentDate = $(dateInput).val();
+                    var startDate = "<?php echo e(isset($studyStartDate) && $studyStartDate ? $studyStartDate : -1); ?>";
+                    startDate = startDate == '-1' ? '' : startDate;
+                    var endDate = "<?php echo e(isset($studyEndDate) && $studyEndDate? $studyEndDate : -1); ?>";
+                    endDate = endDate == '-1' ? '' : endDate;
+                    if (startDate && endDate) {
+
+                        $(dateInput).datepicker({
+                                viewMode: "year"
+                                , minViewMode: "year"
+                                , todayHighlight: false
+                                , clearBtn: true
+                                , autoclose: true
+                                , format: "yyyy-mm-01"
+                            , })
+                            .datepicker('setDate', new Date(currentDate))
+                            .datepicker('setStartDate', new Date(startDate))
+                            .datepicker('setEndDate', new Date(endDate))
+                    } else {
+                        $(dateInput).datepicker({
+                                viewMode: "year"
+                                , minViewMode: "year"
+                                , todayHighlight: false
+                                , clearBtn: true
+                                , autoclose: true
+                                , format: "yyyy-mm-01"
+                            })
+                            .datepicker('setDate', new Date(currentDate))
+                    }
+
+                })
+
+
+            });
+
+        })
+
+    </script>
+    <script>
+        $(document).on('click', '[data-show-notification-modal="read-invoices-modal"]', function(e) {
+            e.preventDefault();
+            $('.read-invoices-modal').modal('show');
+        })
+        $(document).on('click', '[data-show-notification-modal="send-invoices-modal"]', function(e) {
+            e.preventDefault();
+            $('.send-invoices-modal').modal('show');
+        })
+
+    </script>
 
 </body>
 

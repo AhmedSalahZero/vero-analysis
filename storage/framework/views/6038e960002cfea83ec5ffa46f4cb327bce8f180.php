@@ -6,13 +6,14 @@
 			$('.<?php echo e($notificationMainType); ?>-modal').modal('show');
 		})
 	</script>
+	
+
+	
 <?php $__env->stopPush(); ?>
 
 <?php
 	$customerPastDues = $company->notifications->where('data.type',$notificationMainType);
 	$notificationHeaders = $customerPastDues->first() ? array_keys($customerPastDues->first()->data['data_array']) : [];
-	
-
 ?>
 
 

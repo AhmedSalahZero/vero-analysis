@@ -6,13 +6,14 @@
 			$('.{{ $notificationMainType }}-modal').modal('show');
 		})
 	</script>
+	
+
+	
 @endpush
 
 @php
 	$customerPastDues = $company->notifications->where('data.type',$notificationMainType);
 	$notificationHeaders = $customerPastDues->first() ? array_keys($customerPastDues->first()->data['data_array']) : [];
-	
-
 @endphp
 
 

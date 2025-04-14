@@ -1058,7 +1058,8 @@ Route::middleware([])->group(function () {
 					Route::get('down-payment-contracts-settlements/{downPaymentId}/{modelType}','DownPaymentContractsController@downPaymentSettlements')->name('view.down.payment.settlement');
 					Route::post('store-down-payment-settlement/{downPaymentId}/{partnerId}/{modelType}','DownPaymentContractsController@storeDownPaymentSettlement')->name('store.down.payment.settlement');
 					
-					
+					Route::post('read-odoo-invoices','ReadOdooInvoices@handle')->name('read-oddo-invoices');
+					Route::post('send-odoo-collection-or-payments','SendOdooCollectionOrPayment@handle')->name('send-oddo-collection-or-payments');
 					
 					
                     Route::get('money-received', 'MoneyReceivedController@index')->name('view.money.receive');
@@ -1078,7 +1079,7 @@ Route::middleware([])->group(function () {
 					Route::get('get-beneficiary-name-from-lg-issuance-based-on-currency','LetterOfGuaranteeIssuanceController@getBeneficiaryNameByCurrency')->name('get.beneficiary.name.by.currency');
 					Route::get('get-bank-name-from-lg-issuance-based-on-currency','LetterOfGuaranteeIssuanceController@getBankNameByCurrency')->name('get.bank.name.by.currency');
 					 Route::post('confirmed-reviewed/{model}','MoneyReceivedController@markAsConfirmed')->name('confirmed.review');
-
+				 	
 					Route::get('money-received', 'MoneyReceivedController@index')->name('view.money.receive');
                     Route::get('money-received/create/{model?}', 'MoneyReceivedController@create')->name('create.money.receive');
                     Route::post('money-received/create', 'MoneyReceivedController@store')->name('store.money.receive');

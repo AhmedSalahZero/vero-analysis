@@ -171,7 +171,10 @@ class OddoPayment
     }
 	public function reCreatePayment(string $invoiceType, $invoiceId,float $paymentAmount,int $odooCurrencyId,$paymentDate,int $odooPartnerId,string $invoiceNumber,int $journalId,string $inBoundOrOutBound)
     {
-		$paymentRef = $invoiceType === 'customer' ? "Payment for invoice {$invoiceNumber}" : $invoiceNumber;
+			// $paymentRef = $invoiceNumber;
+			
+		// $paymentRef = $invoiceType === 'customer' ? "Payment for invoice {$invoiceNumber}" : $invoiceNumber;
+		// dd($paymentRef);
 		$payments = $this->models->execute_kw(
 			$this->db,
 			$this->uid,
@@ -179,23 +182,25 @@ class OddoPayment
 			'account.payment',
 			'search_read',
 			[[
-				['name', '=', $paymentRef],
+				// ['name', '=', $paymentRef],
+				['memo', '=', $invoiceNumber],
 				['partner_id', '=', $odooPartnerId],
 			]],
-			['fields' => ['id', 'state', 'amount', 'currency_id', 'journal_id']]
+			// ['fields' => ['id', 'state', 'amount','name', 'currency_id', 'journal_id']]
 		);
-		dd($payments);
-		$existingPayment = $payments[0];
-		$this->models->execute_kw(
-			$this->db,
-			$this->uid,
-			$this->password,
-			'account.payment',
-			'action_cancel',
-			[[$existingPayment['id']]]
-		);
-		// dd('d',$existingPayment);
-		// dd('cancel');
+		/**
+		 * * مش بكون عارف هي انهي مدفوعه بالظبط .. فا بلغيهم كلهم
+		 */
+		foreach($payments as $existingPayment){
+			$this->models->execute_kw(
+				$this->db,
+				$this->uid,
+				$this->password,
+				'account.payment',
+				'action_cancel',
+				[[$existingPayment['id']]]
+			);
+		}
 		$this->createPayment($invoiceId, $paymentAmount, $odooCurrencyId,$paymentDate, $odooPartnerId, $invoiceNumber, $journalId, $inBoundOrOutBound);
 
     }

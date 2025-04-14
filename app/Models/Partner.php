@@ -38,6 +38,10 @@ class Partner extends Model
 	public function getId(){
 		return $this->id ;
 	}
+	public function getOdooId():?int
+	{
+		return $this->odoo_id;
+	}
 	public function getName()
 	{
 		return $this->name ;
