@@ -130,7 +130,6 @@ $selectedBanks = [];
         <div class="col-md-1">
 			<input type="hidden" class="to-currency" value="{{ $company->getMainFunctionalCurrency() }}">
             <label>{{__('Currency')}} @include('star')</label>
-
             <div class="kt-input-icon">
                 <div class="input-group date">
                     <select id="receiving-currency-id" when-change-trigger-account-type-change name="currency" class="form-control
@@ -144,6 +143,8 @@ $selectedBanks = [];
                         @php
                         $selected = isset($model) ? $model->getPaymentCurrency() == $currencyId : $currentName == $company->getMainFunctionalCurrency() ;
                         $selected = $selected ? 'selected':'';
+						if($selected){
+						}
                         @endphp
                         <option {{ $selected }} value="{{ $currencyId }}">{{ touppercase($currentName) }}</option>
                         @endforeach

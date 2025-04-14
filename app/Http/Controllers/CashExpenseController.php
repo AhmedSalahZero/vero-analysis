@@ -333,19 +333,11 @@ class CashExpenseController
 		$contractsRelationName = 'contracts' ;
 		$clientsWithContracts = Partner::onlyCompany($company->id)	->onlyCustomers()->onlyThatHaveContracts()->get();
 		
-		// $currencies = DB::table('customer_invoices')
-		// ->select('currency')
-		// ->where('company_id',$company->id)
-		// ->where('currency','!=','')
-		// ->get()
-		// ->unique('currency')->pluck('currency','currency');
-		
-		
 		$cashExpenseCategories = CashExpenseCategory::where('company_id',$company->id)->get()->formattedForSelect(true,'getId','getName');
 		
 		// $isDownPayment = false; 
 		$viewName =  'reports.cashExpenses.form';
-		$viewName =  'reports.cashExpenses.form';
+		// $viewName =  'reports.cashExpenses.form';
 		$banks = Bank::pluck('view_name','id');
 		$selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
 		$accountTypes = AccountType::onlyCashAccounts()->get();

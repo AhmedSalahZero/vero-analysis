@@ -151,7 +151,6 @@ $selectedBanks = [];
         <div class="col-md-1">
 			<input type="hidden" class="to-currency" value="<?php echo e($company->getMainFunctionalCurrency()); ?>">
             <label><?php echo e(__('Currency')); ?> <?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?></label>
-
             <div class="kt-input-icon">
                 <div class="input-group date">
                     <select id="receiving-currency-id" when-change-trigger-account-type-change name="currency" class="form-control
@@ -165,6 +164,8 @@ $selectedBanks = [];
                         <?php
                         $selected = isset($model) ? $model->getPaymentCurrency() == $currencyId : $currentName == $company->getMainFunctionalCurrency() ;
                         $selected = $selected ? 'selected':'';
+						if($selected){
+						}
                         ?>
                         <option <?php echo e($selected); ?> value="<?php echo e($currencyId); ?>"><?php echo e(touppercase($currentName)); ?></option>
                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>

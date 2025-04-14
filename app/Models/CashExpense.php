@@ -160,7 +160,7 @@ class CashExpense extends Model
 	}
 	public function getPaymentCurrency()
 	{
-		return $this->payment_currency;
+		return $this->getCurrency();
 	}
 	
 	public function getPaymentCurrencyFormatted()
