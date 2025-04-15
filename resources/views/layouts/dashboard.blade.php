@@ -20,6 +20,10 @@
 
     </script>
     <style>
+	.modal-90{
+		width:95% !important;
+		max-width:95% !important;
+	}
         html body .form-element-hidden {
             display: none !important;
         }
@@ -434,8 +438,8 @@
     !in_array('SalesForecastQuantity',Request()->segments()) && !in_array('dashboard',Request()->segments()) && !in_array('SalesReport',Request()->segments())&&!in_array('Comparing',Request()->segments())&&!in_array('SalesBreakdownAnalysis',Request()->segments())&&!in_array('SalesDiscountSalesBreakdownAnalysis',Request()->segments()) && Request()->route()->getName() != 'salesGathering.index' && !in_array('ForecastedSalesValues',Request()->segments()))
     <style>
         .table-active:not(.remove-max-class) th:first-of-type,
-        .group-color th:first-of-type,
-        .group-color td:first-of-type,
+        .group-color th:first-of-type:not(.exclude-max-width),
+        .group-color td:first-of-type:not(.exclude-max-width),
         .kt_table_with_no_pagination th:first-of-type,
         .kt_table_with_no_pagination_no_fixed_right th:first-of-type .kt_table_with_no_pagination_no_fixed_right td:first-of-type {
             width: 350px !important;

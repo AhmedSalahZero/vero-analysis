@@ -446,7 +446,7 @@
 													<?php if($currencyName != "main_currency"): ?>
                                                 <td class="sub-text-bg max-w-report-btn text-center">
                                                     <?php if($invoicesBalancesAsStdClass->{$clientNameColumnName} && $invoicesBalancesAsStdClass->currency): ?>
-                                                    <a href="<?php echo e(route('view.invoice.report',['company'=>$company->id ,'partnerId'=>$invoicesBalancesAsStdClass->{$clientIdColumnName},'currency'=>$invoicesBalancesAsStdClass->currency,'modelType'=>$modelType])); ?>" class="btn btn-sm btn-success" style="border-radius: 20px !important"><?php echo e(__('Invoices Report')); ?></a>
+                                                    <a href="<?php echo e(route('view.invoice.report',['company'=>$company->id ,'partnerId'=>$invoicesBalancesAsStdClass->{$clientIdColumnName},'currency'=>$invoicesBalancesAsStdClass->currency,'modelType'=>$modelType])); ?>" class="btn btn-sm btn-green" style="border-radius: 20px !important"><?php echo e(__('Invoices Report')); ?></a>
 													<?php endif; ?>
                                                 </td>
                                                     <?php endif; ?>

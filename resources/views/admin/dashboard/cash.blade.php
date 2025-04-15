@@ -129,8 +129,6 @@
             <div class="kt-portlet__head sky-border">
                 <div class="kt-portlet__head-label">
                     <h3 class="font-weight-bold text-black form-label kt-subheader__title small-caps mr-5 text-primary text-nowrap" style=""> {{__('Current Cash Position')}}</h3>
-
-
                 </div>
             </div>
             <div class="kt-portlet__body  kt-portlet__body--fit">

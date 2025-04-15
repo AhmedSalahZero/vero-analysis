@@ -411,7 +411,7 @@
 													@if($currencyName != "main_currency")
                                                 <td class="sub-text-bg max-w-report-btn text-center">
                                                     @if($invoicesBalancesAsStdClass->{$clientNameColumnName} && $invoicesBalancesAsStdClass->currency)
-                                                    <a href="{{ route('view.invoice.report',['company'=>$company->id ,'partnerId'=>$invoicesBalancesAsStdClass->{$clientIdColumnName},'currency'=>$invoicesBalancesAsStdClass->currency,'modelType'=>$modelType]) }}" class="btn btn-sm btn-success" style="border-radius: 20px !important">{{ __('Invoices Report') }}</a>
+                                                    <a href="{{ route('view.invoice.report',['company'=>$company->id ,'partnerId'=>$invoicesBalancesAsStdClass->{$clientIdColumnName},'currency'=>$invoicesBalancesAsStdClass->currency,'modelType'=>$modelType]) }}" class="btn btn-sm btn-green" style="border-radius: 20px !important">{{ __('Invoices Report') }}</a>
 													@endif
                                                 </td>
                                                     @endif

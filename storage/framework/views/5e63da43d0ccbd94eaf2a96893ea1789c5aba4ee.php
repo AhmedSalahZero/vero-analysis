@@ -3,7 +3,197 @@ use App\Models\Contract;
 ?>
 <?php $__env->startSection('css'); ?>
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/jszip-2.5.0/dt-1.12.1/af-2.4.0/b-2.2.3/b-colvis-2.2.3/b-html5-2.2.3/b-print-2.2.3/cr-1.5.6/date-1.1.2/fc-4.1.0/fh-3.2.3/r-2.3.0/rg-1.2.0/sl-1.4.0/sr-1.1.1/datatables.min.css" />
+<style>
+        .w-60-percentage {
+            width: 60% !important;
+        }
 
+        .w-50-percentage {
+            width: 50% !important;
+        }
+
+        .w-40-percentage {
+            width: 40% !important;
+        }
+
+        .w-30-percentage {
+            width: 30% !important;
+        }
+
+        .w-20-percentage {
+            width: 20% !important;
+        }
+
+        .w-70-percentage {
+            width: 70% !important;
+        }
+
+        .w-15-percentage {
+            width: 15% !important;
+        }
+
+        .w-10-percentage {
+            width: 10% !important;
+        }
+
+        .flex-tabs {
+            display: flex;
+            gap: 10px;
+        }
+
+        .text-green {
+            color: green !important;
+        }
+
+        .text-red {
+            color: red !important;
+        }
+
+        .show-class-js {
+            display: block !important;
+        }
+
+        .table-condensed th {
+            background-color: white !important;
+        }
+
+        input,
+        select,
+        .dropdown-toggle.bs-placeholder {
+            border: 1px solid #CCE2FD !important;
+        }
+
+        .flex-2 {
+            flex: 2 !important;
+        }
+
+        .text-main-color {
+            color: #0742A6 !important
+        }
+
+        ::placeholder {
+            color: lightgray !important;
+            font-weight: 100;
+        }
+
+        .visibility-hidden {
+            visibility: hidden !important;
+        }
+
+        .income-statement-table {}
+
+        .btn-border-radius {
+            border-radius: 10px !important;
+        }
+
+        .income-statement-table .main-level-tr td,
+        .income-statement-table .main-level-tr th {
+            background-color: #9FC9FB !important;
+            border: 1px solid #fff;
+
+        }
+
+        .income-statement-table .main-level-tr td:first-of-type,
+        .income-statement-table .main-level-tr td:nth-of-type(2),
+        .income-statement-table .main-level-tr th:first-of-type,
+        .income-statement-table .main-level-tr th:nth-of-type(2) {
+            background-color: #9FC9FB !important;
+        }
+
+        .income-statement-table .sub-level-tr td,
+        .income-statement-table .sub-level-tr th {
+            background-color: #fff !important;
+        }
+
+        input,
+        select,
+        .filter-option-inner-inner {
+            font-weight: 600 !important;
+            color: black !important;
+        }
+
+        html body tr.all-td-white td {
+            background-color: white !important;
+        }
+
+        .font-size-1-25rem {
+            font-size: 1.25rem !important;
+        }
+
+        .font-size-15px {
+            font-size: 15px !important
+        }
+
+        .label-clr {
+            color: #646c9a !important;
+        }
+
+        .installment-section {
+            background: #F2F2F2 !important;
+            padding-top: 10px;
+            margin-bottom: 10px !important;
+        }
+
+        .label-size {
+            font-size: 1.25rem !important;
+        }
+
+        .pr-6rem {
+            padding-right: 6rem;
+        }
+
+        .pointer-events-none {
+            pointer-events: none;
+        }
+
+        .dtfh-floatingparent.dtfh-floatingparenthead {
+            top: 59px !important;
+        }
+
+        .table-for-collection-policy tr:nth-child(odd) {
+            background-color: white !important;
+        }
+
+        .percentage-weight {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+
+
+
+
+        .small-caps {
+            font-variant: small-caps;
+        }
+
+        .sharing-sign {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin: auto;
+        }
+
+        .active-sharing {
+            background: #00ff28;
+        }
+
+        .inactive-sharing {
+            background: #f00;
+        }
+
+        .w-full {
+            width: 100%;
+        }
+
+        .btn.dropdown-toggle {
+            height: 100%;
+        }
+
+        /* .dropdown-toggle{} */
+
+    </style>
+	
 <style>
     .main-td-background {
         background-color: #0742A6;
@@ -400,6 +590,14 @@ use App\Models\Contract;
                                         
                                         <?php endif; ?>
                                         <span style="overflow: visible; position: relative; width: 110px;">
+										<?php
+											$currentModelId = 'contract-invoice-details-'.$mainItemId  ;
+										?>
+										<?php if($hasProjectNameColumn): ?>
+										<button class="btn btn-sm btn-brand btn-elevate btn-pill text-white" data-toggle="modal" data-target="#<?php echo e($currentModelId); ?>"><?php echo e(__('Invoices')); ?></button>
+										<?php echo $__env->make('contracts.contract-invoice-details',['modalId'=>$currentModelId,'detailItems'=>$parent['invoices']], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?> 
+										<?php endif; ?> 
+
 											<?php if($currentType == Contract::RUNNING ): ?>
 											<a data-toggle="modal" data-target="#mark-as-finished-contract-<?php echo e($mainItemId); ?>" type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="<?php echo e(__('Finished')); ?>" href="#"><i class="fa fa-thumbs-up"></i></a>
                                             <div class="modal fade" id="mark-as-finished-contract-<?php echo e($mainItemId); ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">

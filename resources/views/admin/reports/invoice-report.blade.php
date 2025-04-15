@@ -319,54 +319,15 @@
                                         <th class="view-table-th max-w-serial bg-lighter header-th  align-middle text-center">
                                             {{ __('#') }}
                                         </th>
-{{-- {{ dd($hasProjectNameColumn) }} --}}
+
                                         @if($hasProjectNameColumn)
                                         <th class="view-table-th   bg-lighter header-th  align-middle text-center">
                                             {{ __('Project Name') }}
                                         </th>
                                         @endif
 
-                                        <th class="view-table-th   bg-lighter header-th  align-middle text-center">
-                                            {{ __('Invoice Date') }}
-                                        </th>
-
-                                        <th class="view-table-th   bg-lighter header-th  align-middle text-center">
-                                            {{ __('Invoice Number') }}
-                                        </th>
-
-                                        <th class="view-table-th   bg-lighter header-th  align-middle text-center">
-                                            {{ __('Net Invoice Amount') }}
-                                        </th>
-
-                                        <th class="view-table-th   bg-lighter header-th  align-middle text-center">
-                                            {{ __('Withhold Amount') }}
-                                        </th>
-
-                                        <th class="view-table-th   bg-lighter header-th  align-middle text-center">
-                                            {{ __('Total Deductions') }}
-                                        </th>
-                                        <th class="view-table-th   bg-lighter header-th  align-middle text-center">
-                                            {{ $totalCollectionOrPaidText }}
-                                        </th>
-
-
-
-                                        <th class="view-table-th   bg-lighter header-th  align-middle text-center">
-                                            {{ __('Invoice Due Date') }}
-                                        </th>
-
-
-
-                                        <th class="view-table-th   bg-lighter  header-th  align-middle text-center">
-                                            {{ __('Net Balance') }}
-                                        </th>
-
-                                        <th class="view-table-th   bg-lighter  header-th  align-middle text-center">
-                                            {{ __('Status') }}
-                                        </th>
-                                        <th class="view-table-th   bg-lighter  header-th  align-middle text-center">
-                                            {{ __('Aging') }}
-                                        </th>
+                                        @include('admin.reports.invoice-report-th',['totalCollectionOrPaidText'=>$totalCollectionOrPaidText])
+                                      
 
                                         <th class="view-table-th   bg-lighter  header-th  align-middle text-center">
                                             {{ __('Adjust Due Date') }}
@@ -380,12 +341,6 @@
                                         <th class="view-table-th   bg-lighter  header-th  align-middle text-center">
                                             {{ __('Actions') }}
                                         </th>
-
-                                        {{--
-										 <th class="view-table-th   bg-lighter  header-th  align-middle text-center">
-                                            {!! __('Unapplied Amount <br> Settlement') !!}
-                                        </th>
-										 --}}
                                     </tr>
 
                                 </thead>
@@ -402,65 +357,7 @@
                                         @if($hasProjectNameColumn)
                                         <td class="sub-text-bg text-center  text-nowrap ">{{ $invoice->getProjectName() }}</td>
                                         @endif
-                                        <td class="sub-text-bg text-center  text-nowrap ">{{ $invoice->getInvoiceDateFormatted() }}</td>
-
-                                        <td class="sub-text-bg text-center  text-nowrap ">{{ $invoice->getInvoiceNumber() }}</td>
-                                        <td class="sub-text-bg text-center  text-nowrap ">
-                                            {{ $invoice->getNetInvoiceAmountFormatted() }}
-											@if($currency != $company->getMainFunctionalCurrency())
-                                            <i data-toggle="modal" data-target="#net-invoice-amount-modal-{{ $invoice->id }}" class="flaticon2-information fs-15 kt-font-primary exclude-icon ml-2 cursor-pointer "></i>
-                                            <div class="modal fade " id="net-invoice-amount-modal-{{ $invoice->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                                <div class="modal-dialog modal-sm" role="document">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h5 class="modal-title text-left" id="exampleModalLabel">
-                                                                {{ __('Invoice Number #' . $invoice->getInvoiceNumber()  ) }} <br>
-                                                                {{ __('Dated') . ' ' . $invoice->getInvoiceDate() }}
-                                                            </h5>
-                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                <span aria-hidden="true">&times;</span>
-                                                            </button>
-                                                        </div>
-                                                        <div class="modal-body">
-
-                                                            <table class="table table-bordered ">
-                                                                <thead>
-                                                                    <th style="border-left:2px solid #ebedf2">{{ __('Item') }}</th>
-                                                                    <th>{{ __('Value') }}</th>
-                                                                </thead>
-                                                                <tbody>
-                                                                    <tr>
-                                                                        <td class="text-left">{{ __('Amount In Main Currency') }}</td>
-                                                                        <td>{{ number_format($invoice->getNetInvoiceInMainCurrencyAmount(),2) }}</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td class="text-left">{{ __('Exchange Rate') }}</td>
-                                                                        <td>{{ number_format($invoice->getExchangeRate(),4) }}</td>
-                                                                    </tr>
-
-                                                                </tbody>
-
-                                                            </table>
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close') }}</button>
-                                                            </div>
-                                                        </div>
-                                                        </div>
-                                                        </div>
-                                                        </div>
-@endif
-
-
-                                        </td>
-                                        <td class="sub-text-bg text-center  text-nowrap ">{{ $invoice->getWithholdAmountFormatted() }}</td>
-                                        <td class="sub-text-bg text-center  text-nowrap ">{{ $invoice->getTotalDeductionFormatted() }}</td>
-                                        <td class="sub-text-bg text-center  text-nowrap ">{{ $invoice->getTotalCollectedOrPaidFormatted() }}</td>
-                                        <td class="sub-text-bg text-center  text-nowrap ">{{ $invoice->getDueDateFormatted() }}</td>
-                                        <td class="sub-text-bg text-center text-nowrap">{{ $invoice->getNetBalanceFormatted() }}</td>
-                                        <td class="sub-text-bg text-center text-wrap">{{ $invoice->getStatusFormatted() }}</td>
-                                        <td class="sub-text-bg  text-center">
-                                            {{ $invoice->getAging() }}
-                                        </td>
+                                         @include('admin.reports.invoice-report-td',['company'=>$company,'currency'=>$currency,'invoice'=>$invoice])
                                         <td class="sub-text-bg  text-center">
                                             @if(!$invoice->$isCollectedOrPaid())
                                             <a href="{{ route('adjust.due.dates',['company'=>$company->id,'modelId'=>$invoice->id ,'modelType'=>getModelNameWithoutNamespace($invoice) ]) }}" title="{{ __('Adjust Due Date') }}" class="btn btn-sm btn-success" @if($invoice->dueDateHistories->count())
@@ -472,7 +369,6 @@
                                             @endif
                                         </td>
                                         <td class="sub-text-bg  text-center">
-                                            {{-- @if(!$invoice->getNetBalance() > 0) --}}
                                             @if(!$invoice->$isCollectedOrPaid())
                                             <button type="button" class="add-new btn btn-primary d-block" data-toggle="modal" data-target="#add-new-customer-modal-{{ $invoice->id }}">
                                                 {{ __('Deduct') }}

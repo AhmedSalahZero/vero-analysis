@@ -4,6 +4,7 @@ use App\Http\Requests\DeleteContractRequest;
 use App\Http\Requests\StoreContractRequest;
 use App\Models\Company;
 use App\Models\Contract;
+use App\Models\CustomerInvoice;
 use App\Models\Partner;
 use App\Models\PurchaseOrder;
 use App\Models\SalesOrder;
@@ -19,7 +20,7 @@ class ContractsController
     use GeneralFunctions;
 	public function index(Company  $company ,$type)
     {
-		
+		$hasProjectNameColumn = $type == 'Customer'?  CustomerInvoice::hasProjectNameColumn() : false;
 		$contractStatues = [
 			Contract::RUNNING ,
 			Contract::RUNNING_AND_AGAINST ,
@@ -35,11 +36,13 @@ class ContractsController
 			Contract::RUNNING_AND_AGAINST=>$runningAndAgainstContracts,
 			Contract::FINISHED=>$finishedContracts
 		];
+		
 		$customerOrSupplierContractsText = $type == 'Supplier' ? __('Supplier Contracts') : __('Customer Contracts');
 		$items = [];
 		foreach($contractStatues as $contractStatus){
 			foreach($contracts[$contractStatus] as $index=>$contract){
 				$contractId = $contract->id ;
+				$customerInvoices = $contract->customerInvoices;
 				$items[$contractStatus][$contractId]['parent'] = [
 					'name'=>$contract->getName() ,
 					'contract'=>$contract,
@@ -49,6 +52,7 @@ class ContractsController
 					'end_date'=>$contract->getEndDateFormatted(),
 					'currency'=> $contract->getCurrency() ,
 					'amount'=>$contract->getAmountFormatted(),
+					'invoices'=>$customerInvoices
 				];
 				foreach($contract->getOrders() as $order){
 					$items[$contractStatus][$contractId]['sub_items'][$order->id][$order->getOrderColumnName()] =$order->getNumber() ;
@@ -59,7 +63,7 @@ class ContractsController
 		}
 
 
-        return view('contracts.index',compact('company','items','type','customerOrSupplierContractsText','contractStatues'));
+        return view('contracts.index',compact('company','items','type','customerOrSupplierContractsText','contractStatues','hasProjectNameColumn'));
     }
 	public function create(Request $request,Company $company,string $type)
 	{
