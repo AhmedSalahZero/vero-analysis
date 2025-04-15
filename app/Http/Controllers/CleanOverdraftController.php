@@ -144,6 +144,7 @@ class CleanOverdraftController
 	
 	public function update(Company $company , UpdateCleanOverdraftRequest $request , FinancialInstitution $financialInstitution,CleanOverdraft $cleanOverdraft){
 		$data['updated_by'] = auth()->user()->id ;
+		
 		$data = $request->only($this->getCommonDataArr());
 		foreach(['contract_start_date','contract_end_date','balance_date'] as $dateField){
 			$data[$dateField] = $request->get($dateField) ? Carbon::make($request->get($dateField))->format('Y-m-d'):null;
@@ -151,6 +152,26 @@ class CleanOverdraftController
 		$cleanOverdraft->update($data);
 		$cleanOverdraft->storeOutstandingBreakdown($request,$company);
 		$type = $request->get('type','clean-over-draft');
+		$activeLimitRow = $cleanOverdraft->cleanOverdraftBankStatements->where('type','active-limit')->first();
+		$activeLimitRowData = [
+			'type'=>'active-limit',
+			'is_debit'=>1 ,
+			'is_credit'=> 0 ,
+			'priority'=>3,
+			'company_id'=>$company->id ,
+			'date'=>$cleanOverdraft->contract_start_date ,
+			'limit'=>$cleanOverdraft->limit ,
+			'debit'=>0,
+			'credit'=>0,
+			'comment_en'=>'-',
+			'comment_ar'=>'-',
+			
+		];
+		if($activeLimitRow){
+			$activeLimitRow->update($activeLimitRowData);
+		}else{
+			$cleanOverdraft->cleanOverdraftBankStatements()->create($activeLimitRowData);
+		}
 		$activeTab = $type ;
 		return response()->json([
 			'redirectTo'=>route('view.clean.overdraft',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'active'=>$activeTab])

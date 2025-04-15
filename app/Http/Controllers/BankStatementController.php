@@ -96,7 +96,7 @@ class BankStatementController
 				 ->join('clean_overdrafts','clean_overdraft_bank_statements.clean_overdraft_id','=','clean_overdrafts.id')
 				 ->where('clean_overdrafts.currency','=',$currencyName)
 				//  ->leftJoin('money_received','current_account_bank_statements.money_received_id','=','money_received.id')
-				->orderByRaw('full_date desc')
+				->orderByRaw('clean_overdraft_bank_statements.date desc , clean_overdraft_bank_statements.id desc')
 				->selectRaw('*,clean_overdraft_bank_statements.id as id')
 				 ->get();
 			

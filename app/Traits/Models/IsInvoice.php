@@ -338,14 +338,19 @@ trait IsInvoice
         ->where($clientIdColumnName, '=', $partnerId)->get();
 	
 	}
-	public static function createForOddo(int $invoiceId,int $partnerId,string $partnerName,string $invoiceDate,string $invoiceDueDate,string $invoiceNumber,string $invoiceCurrency,$invoiceAmount,$vatAmount,$withholdAmount,$soOrPoNumber,int $companyId):void{
+	public static function createForOddo(int $invoiceId,int $partnerId,string $partnerName,string $invoiceDate,string $invoiceDueDate,string $invoiceNumber,string $invoiceCurrency,$invoiceAmount,$vatAmount,$withholdAmount,$collectedAmount,$exchangeRate,$soOrPoNumber,int $companyId):void{
 		$isExist = self::where('oddo_id',$invoiceId)->where('company_id',$companyId)->exists();
 		if($isExist){
 			return ;
 		}
+		$salesOrder = DB::table('sales_orders')->where('company_id',$companyId)->where('so_number',$soOrPoNumber)->first() ;
+		$contract = $salesOrder ? DB::table('contracts')->where('id',$salesOrder->contract_id)->first() : null ;
+		
 		self::create([
 			'oddo_id'=>$invoiceId,
 			'company_id'=>$companyId , 
+			'exchange_rate'=>$exchangeRate,
+			self::COLLETED_OR_PAID_AMOUNT=>$collectedAmount,
 			self::CLIENT_ID_COLUMN_NAME=>$partnerId,
 			self::CLIENT_NAME_COLUMN_NAME=>$partnerName ,
 			self::SO_OR_PO_NUMBER => $soOrPoNumber,
@@ -356,6 +361,10 @@ trait IsInvoice
 			'vat_amount'=>$vatAmount,
 			'withhold_amount'=>$withholdAmount,
 			'invoice_due_date'=>$invoiceDueDate,
+			'contract_code'=>$contract ? $contract->code : null,
+			'contract_name'=>$contract ? $contract->name : null,
+			'project_name'=>$contract ? $contract->name : null,
+			
 		]);
 	}
 

@@ -36,8 +36,12 @@ class OddoService
 		catch(\Exception $e){
 			$uid = null;
 		}
+		if(is_array($uid)){
+			$uid = null ;
+		}
 		$models = ripcord::client("$this->url/xmlrpc/2/object");
 		$this->models = $models;
+		
 		$this->uid = $uid;
 	}
 	/**
@@ -48,7 +52,7 @@ class OddoService
 		if(is_null($this->uid)){
 			return ;
 		}
-		dd($this->getContracts($startDate,$endDate,$companyId));
+		$this->getContracts($startDate,$endDate,$companyId);
 	}
 	/**
 	 * * for test purpose
@@ -80,25 +84,19 @@ class OddoService
 		}
 		$invoices = $this->getInvoices($startDate,$endDate);
 		// dd($invoices);
-		
 		$companyId = $this->company_id;
-		// dd($invoices);
 		foreach($invoices as $invoice){
+		
 			$invoiceId = $invoice['id'];
 			$invoiceDate = $invoice['invoice_date'];
 			$invoiceDueDate = $invoice['invoice_date_due'];
 			$soNumber = $invoice['invoice_origin']??null;
-			$amountTax = $invoice['amount_tax'];
-			$vatAmount = $amountTax;
-			$invoiceAmount = $invoice['amount_residual'] - $amountTax ;
-			// if($index == 2){
-			// 	dd($invoiceAmount,$invoice['amount_residual'],$amountTax);
-			// 	// dd();
-			// }
+			$exchangeRate = 1/$invoice['invoice_currency_rate'];
+			$vatAmount = $invoice['amount_tax'];
+			$invoiceAmount = abs($invoice['amount_untaxed_in_currency_signed']);
+			$collectedAmount =$invoiceAmount + $vatAmount  - $invoice['amount_residual'] ;
 			$withholdAmount = 0 ;
-		
 			$invoiceNumber = $invoice['name'];
-			// $amountTax = $invoice['vat_amount'];
 			$oddoPartnerId = $invoice['partner_id'][0];
 			$oddoPartnerName = $invoice['partner_id'][1];
 			$invoiceCurrency = $invoice['currency_id'][1];
@@ -106,9 +104,9 @@ class OddoService
 			$isCustomer = $invoice['move_type'] == 'out_invoice';
 			$parentId = Partner::handlePartnerForOdd($oddoPartnerId ,$oddoPartnerName,$isSupplier ,$isCustomer,$companyId  );
 			if($isCustomer){
-				CustomerInvoice::createForOddo($invoiceId,$parentId,$oddoPartnerName,$invoiceDate,$invoiceDueDate,$invoiceNumber,$invoiceCurrency,$invoiceAmount,$vatAmount,$withholdAmount,$soNumber,$companyId);
+				CustomerInvoice::createForOddo($invoiceId,$parentId,$oddoPartnerName,$invoiceDate,$invoiceDueDate,$invoiceNumber,$invoiceCurrency,$invoiceAmount,$vatAmount,$withholdAmount,$collectedAmount,$exchangeRate,$soNumber,$companyId);
 			}elseif($isSupplier){
-				SupplierInvoice::createForOddo($invoiceId,$parentId,$oddoPartnerName,$invoiceDate,$invoiceDueDate,$invoiceNumber,$invoiceCurrency,$invoiceAmount,$vatAmount,$withholdAmount,$soNumber,$companyId);
+				SupplierInvoice::createForOddo($invoiceId,$parentId,$oddoPartnerName,$invoiceDate,$invoiceDueDate,$invoiceNumber,$invoiceCurrency,$invoiceAmount,$vatAmount,$withholdAmount,$collectedAmount,$exchangeRate,$soNumber,$companyId);
 			}
 	
 		}
@@ -128,16 +126,22 @@ class OddoService
 				'date', //end date
 			]
 		]);
+		// dd($projects);
 		foreach($projects as $projectArr){
 			$projectAmount = 0 ;
 			$modelType = 'Customer';
-			$currentProjectStartDate = $projectArr['date_start'] ?? now()->format('Y-m-d') ;
-			$currentProjectEndDate = $projectArr['date'] ?? now()->format('Y-m-d') ;
+			$currentProjectStartDate = isset($projectArr['date_start']) && $projectArr['date_start'] ? $projectArr['date_start'] :  now()->format('Y-m-d') ;
+			$currentProjectEndDate = isset($projectArr['date']) && $projectArr['date'] ? $projectArr['date'] : now()->format('Y-m-d') ;
 			$currentOddoProjectId = $projectArr['id'];
-			$currentOddoCustomerId = $projectArr['partner_id'][0] ;
+			// dd($projectArr);
+			$currentOddoCustomerId = $projectArr['partner_id'][0]??null ;
+			if(is_null($currentOddoCustomerId)){
+				continue;
+			}
 			$currentOddoCustomerName = $projectArr['partner_id'][1] ;
 			$code = Contract::generateRandomContract($companyId,$currentOddoCustomerName,$startDate,$modelType);
 			$parentId = Partner::handlePartnerForOdd($currentOddoCustomerId ,$currentOddoCustomerName,0, 1,$companyId  );
+			
 			$projectFormatted = [
 				'oddo_id'=>$currentOddoProjectId,
 				'code'=>$code,
@@ -188,15 +192,19 @@ class OddoService
 					];
 				}
 				$projectFormatted['amount'] = $projectAmount ;
-				$projectFormatted['salesOrders']=$salesOrderFormatted;
+				// if(!count($salesOrderFormatted)){
+					// dd('q',$salesOrderFormatted,$projectAmount);
+				// }
+				if(count($salesOrderFormatted)){
+					$projectFormatted['salesOrders']=$salesOrderFormatted;
+					$contract = new Contract ;
+					$request = (new Request())->merge($projectFormatted);
+					$contract->storeBasicForm($request);
+					
+				}
 				// dd($projectFormatted);
 				
-				$contract = new Contract ;
-		
-				$request = (new Request())->merge($projectFormatted);
-				$contract->storeBasicForm($request);
-				dd('good');
-				// dd('good');
+				
 		}
 
 		
@@ -210,7 +218,8 @@ class OddoService
 		$filter = array(array(array('move_type', 'in', ['in_invoice','out_invoice']),array('state', '=', 'posted'),
 			array('date', '>=', $startDate),
 			array('date', '<=', $endDate)
-			// ,['name','=','Inv7']
+			// ,['name','=','INV/2025/00015']
+			// ,['name','=','INV/2025/00023']
 		));
 		$ids=$this->models->execute_kw($this->db, $this->uid, $this->password, 'account.move', 'search',$filter, );
 	
@@ -224,6 +233,7 @@ class OddoService
 	}
 	protected function getInvoicesFieldNames():array 
 	{
+		// return [];
 		return [
 			'partner_id',
 			'id',
@@ -233,11 +243,14 @@ class OddoService
 			'currency_id',
 		//	'amount_untaxed', // invoice_amount
 			'amount_residual',
-			'amount_total_signed',
+			'amount_untaxed_in_currency_signed',
 			'amount_tax',
 			'invoice_date_due',
 			'date',
-			'invoice_origin' // so_number
+			'invoice_currency_rate',//exchange rate
+			'invoice_origin' ,// so_number
+			'create_date',
+			'write_date'
 		];
 	}
 	

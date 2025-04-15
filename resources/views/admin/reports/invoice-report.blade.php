@@ -319,7 +319,7 @@
                                         <th class="view-table-th max-w-serial bg-lighter header-th  align-middle text-center">
                                             {{ __('#') }}
                                         </th>
-
+{{-- {{ dd($hasProjectNameColumn) }} --}}
                                         @if($hasProjectNameColumn)
                                         <th class="view-table-th   bg-lighter header-th  align-middle text-center">
                                             {{ __('Project Name') }}

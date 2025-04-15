@@ -33,10 +33,10 @@ begin
 		declare _last_end_balance decimal(14,2) default 0 ;
 		declare _previous_date date default null ;
 		declare _count_all_rows integer default 0 ; 
-		select date,end_balance into _previous_date, _last_end_balance  from cash_in_safe_statements where company_id = new.company_id and branch_id = new.branch_id and currency = new.currency and date = new.date and id < new.id order by date desc , id desc limit 1 ;
-		if(_previous_date)
+		select date,end_balance into _previous_date, _last_end_balance from cash_in_safe_statements where company_id = new.company_id and branch_id = new.branch_id and currency = new.currency and date = new.date and id < new.id order by date desc , id desc limit 1 ;
+		if (_previous_date)
 		then 
-				select date,end_balance into _previous_date, _last_end_balance  from cash_in_safe_statements where company_id = new.company_id and branch_id = new.branch_id and currency = new.currency and date = new.date and id < new.id order by date desc , id desc limit 1 ;
+				select date,end_balance into _previous_date, _last_end_balance from cash_in_safe_statements where company_id = new.company_id and branch_id = new.branch_id and currency = new.currency and date = new.date and id < new.id order by date desc , id desc limit 1 ;
 		else 
 			select date,end_balance into _previous_date, _last_end_balance  from cash_in_safe_statements where company_id = new.company_id and branch_id = new.branch_id and currency = new.currency and date < new.date order by date desc , id desc limit 1 ;
 		

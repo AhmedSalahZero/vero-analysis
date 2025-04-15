@@ -14,8 +14,8 @@
 		
 			-- في حالة الانشاء
 			set new.created_at = CURRENT_TIMESTAMP;
-			select date , end_balance  into _previous_date,_last_end_balance  from clean_overdraft_bank_statements where  clean_overdraft_id = new.clean_overdraft_id and full_date < new.full_date order by full_date desc , id desc limit 1 ; -- رتبت بالاي دي الاكبر علشان  لو كانوا متساوين في التاريخ بالظبط (ودا احتمال ضعيف ) ياخد اللي ال اي دي بتاعه اكبر
-			select  count(*) into _count_all_rows from clean_overdraft_bank_statements where  clean_overdraft_id = new.clean_overdraft_id and full_date < new.full_date ;
+			select date , end_balance  into _previous_date,_last_end_balance  from clean_overdraft_bank_statements where  clean_overdraft_id = new.clean_overdraft_id and date <= new.date order by date desc , id desc limit 1 ; -- رتبت بالاي دي الاكبر علشان  لو كانوا متساوين في التاريخ بالظبط (ودا احتمال ضعيف ) ياخد اللي ال اي دي بتاعه اكبر
+			select  count(*) into _count_all_rows from clean_overdraft_bank_statements where  clean_overdraft_id = new.clean_overdraft_id and date <= new.date ;
 
 		set new.beginning_balance = if(_count_all_rows,_last_end_balance,ifnull(new.beginning_balance,0)); 
 		
@@ -60,7 +60,7 @@
 	drop trigger if exists  refresh_calculation_before_update_clean_overdraft ;
 	drop procedure if exists resettlement_clean_overdraft_from ;
 	delimiter // 
-	create procedure resettlement_clean_overdraft_from(in _type varchar(255),in _start_update_from_date_time date , in _clean_overdraft_id integer , in _current_company_id integer  )
+	create procedure resettlement_clean_overdraft_from(in _type varchar(255),  in _clean_overdraft_id integer , in _current_company_id integer  )
 	begin 
 		declare _current_debit decimal(14,2) default 0 ;
 		declare _total_settlements decimal(14,2) default 0 ;
@@ -78,8 +78,6 @@
 	delimiter // 
 	create procedure reverse_clean_overdraft_settlements(in _start_update_from_date_time date  , in _clean_overdraft_id integer )
 	begin 
-		-- declare i INTEGER DEFAULT 0 ;
-	--	declare _clean_overdraft_withdrawal_id integer default 0 ;
 	-- هنجيب كل السحوبات اللي تاريخها اكبر من تاريخ الاغلاق لان اللي تاريخها اصغر من او يساوي تاريخ الاغلاق مش هنقدر نيجي يمها
 		update clean_overdraft_withdrawals set net_balance = net_balance + settlement_amount , settlement_amount = 0 where due_date > _start_update_from_date_time  and clean_overdraft_id = _clean_overdraft_id ;
 	end //
@@ -103,7 +101,6 @@
 			declare _current_bank_statement_id integer default 0 ; 
 			declare _current_bank_statement_debit integer default 0 ; 
 			declare _i integer default 0 ;
-			declare _origin_update_row_is_debit integer default 0 ;
 			declare _bank_statements_greater_than_current_one_length integer default 0 ;
 			
 			declare _last_bank_statement_date datetime default null ;
@@ -127,7 +124,14 @@
 			
 			
 		end if;
-			select date,end_balance,id into _previous_date, _last_end_balance,_last_id  from clean_overdraft_bank_statements where  clean_overdraft_id = new.clean_overdraft_id and full_date < new.full_date order by full_date desc , id desc  limit 1 ; -- رتبت بالاي دي الاكبر علشان  لو كانوا متساوين في التاريخ بالظبط (ودا احتمال ضعيف ) ياخد اللي ال اي دي بتاعه اكبر
+			select date,end_balance,id into _previous_date, _last_end_balance,_last_id  from clean_overdraft_bank_statements where  clean_overdraft_id = new.clean_overdraft_id and date = new.date and id < new.id order by date desc , id desc  limit 1 ; -- رتبت بالاي دي الاكبر علشان  لو كانوا متساوين في التاريخ بالظبط (ودا احتمال ضعيف ) ياخد اللي ال اي دي بتاعه اكبر
+			if  (_previous_date)
+			then
+			select date,end_balance,id into _previous_date, _last_end_balance,_last_id  from clean_overdraft_bank_statements where  clean_overdraft_id = new.clean_overdraft_id and date = new.date and id < new.id order by date desc , id desc  limit 1 ; -- رتبت بالاي دي الاكبر علشان  لو كانوا متساوين في التاريخ بالظبط (ودا احتمال ضعيف ) ياخد اللي ال اي دي بتاعه اكبر
+			else 
+							select date,end_balance,id into _previous_date, _last_end_balance,_last_id  from clean_overdraft_bank_statements where  clean_overdraft_id = new.clean_overdraft_id and date < new.date order by date desc , id desc limit 1  ; -- رتبت بالاي دي الاكبر علشان  لو كانوا متساوين في التاريخ بالظبط (ودا احتمال ضعيف ) ياخد اللي ال اي دي بتاعه اكبر
+			end if ;
+			 
 			set _last_end_balance = ifnull(_last_end_balance,0);
 			set _count_all_rows =1 ;
 		set new.beginning_balance = if(_count_all_rows,_last_end_balance,ifnull(new.beginning_balance,0)) ;
@@ -179,11 +183,9 @@
 		-- هنجيب اخر اي دي للحساب دا لان من عندة هنبدا نسدد من اول وجديد 
 		-- هنجيب اللي الدبت اكبر من الصفر علشان احنا هنسدد وبالتالي عايزين القيم اللي فيها دبنت
 		-- select date into _last_bank_statement_date from clean_overdraft_bank_statements where clean_overdraft_id = new.clean_overdraft_id and debit > 0 order by date desc , created_at desc limit 1 ;
-		-- select full_date into _last_bank_statement_date from clean_overdraft_bank_statements where clean_overdraft_id = new.clean_overdraft_id and debit > 0 order by full_date desc limit 1 ;
 			-- لو العنصر دا اللي بنحدث حاليا هو اخر عنصر هنبدا ال السايكل بتاعت اعادة توزيع التسديدات لكل العناصر من اول عنصر اتغير 
-				-- select full_date  into _last_bank_statement_date_to_start_settlement_from from clean_overdraft_bank_statements where clean_overdraft_id = new.clean_overdraft_id order by full_date desc , priority asc limit 1 ;
 				select full_date into _last_bank_statement_date_to_start_settlement_from from clean_overdraft_bank_statements where clean_overdraft_id = new.clean_overdraft_id order by full_date desc , priority asc , id asc limit 1 ; 
-				select oldest_full_date,origin_update_row_is_debit into _start_update_from_date_time,_origin_update_row_is_debit from clean_overdrafts where id = new.clean_overdraft_id  ; 
+				select oldest_date into _start_update_from_date_time from clean_overdrafts where id = new.clean_overdraft_id  ; 
 --				select start_settlement_from_bank_statement_date into _last_bank_statement_date_to_start_settlement_from from clean_overdrafts where id = new.clean_overdraft_id ; 
 				-- عايزين بدل السطر اللي فوق نجيب ال closing date 
 			
@@ -196,7 +198,7 @@
 		
 	
 				call reverse_clean_overdraft_settlements(_start_update_from_date_time,new.clean_overdraft_id);	
-				call resettlement_clean_overdraft_from(new.type,_start_update_from_date_time,new.clean_overdraft_id,new.company_id);
+				call resettlement_clean_overdraft_from(new.type,new.clean_overdraft_id,new.company_id);
 	
 		end if;
 		
@@ -400,3 +402,13 @@
 
 	
 	
+ DELIMITER ; 
+drop trigger if exists refresh_calculation_before_delete_codbs_statements ;
+  delimiter //  
+create  trigger refresh_calculation_before_delete_codbs_statements before delete on `clean_overdraft_bank_statements` for each row 
+begin 
+	delete from `temp_deleted_statements` where company_id = old.company_id and table_name = 'clean_overdraft_bank_statements';
+	insert into `temp_deleted_statements` (company_id,table_name,deleted_id) values (old.company_id,'clean_overdraft_bank_statements',old.id);
+end //
+
+ 

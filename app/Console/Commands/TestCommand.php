@@ -64,35 +64,36 @@ class TestCommand extends Command
 	
 	public function handle()
 	{
-		$companies = Company::where('id',38)->get();
+		$companies = Company::where('id',111)->get();
 		// $companies = Company::where('id',105)->get();
 		// $companies = Company::where('id',105)->get();
 		// $companies = Company::get();
 		foreach($companies as $company){
 			if($company->hasOddoIntegrationCredentials()){
 				$oddo = new OddoService($company->getOddoDBUrl(),$company->getOddoDBName(),$company->getOddoDBUserName(),$company->getOddoDBPassword(),$company->getId());
-				$oddo = new OddoPayment($company->getOddoDBUrl(),$company->getOddoDBName(),$company->getOddoDBUserName(),$company->getOddoDBPassword(),$company->getId());
+				// $oddo = new OddoPayment($company->getOddoDBUrl(),$company->getOddoDBName(),$company->getOddoDBUserName(),$company->getOddoDBPassword(),$company->getId());
 				// OddoPayment
 				// $importDate = now()->format('Y-m-d') ; ;
 				$startDate = now()->subDays(60)->format('Y-m-d') ; ;
-				$endDate = now()->format('Y-m-d') ; ;
-				// $oddo->startImportInvoices($startDate,$endDate);
-				$journalId = [
-					MoneyReceived::CASH_IN_SAFE=>7,
-					MoneyReceived::INCOMING_TRANSFER=>12 
-				][MoneyReceived::INCOMING_TRANSFER];
-				$isCustomerInvoice = true ;
-				$inBoundOrOutBound = $isCustomerInvoice ? 'inbound':'outbound';
-					$paymentType = $isCustomerInvoice ? 'customer':'supplier'; 
-					$invoiceId  = 28 ;
-					$paymentAmount = 115 ;
-					$paymentDate = '2025-04-13';
-					$currencyId = 1 ;
-					 $oddoPartnerId= 12 ;
-					 $invoiceNumber = 'INV/2025/00006' ;
+				$endDate = now()->format('Y-m-d') ; 
+				$oddo->startImportContracts($startDate,$endDate,$company->id);
+				$oddo->startImportInvoices($startDate,$endDate);
+				// $journalId = [
+				// 	MoneyReceived::CASH_IN_SAFE=>7,
+				// 	MoneyReceived::INCOMING_TRANSFER=>12 
+				// ][MoneyReceived::INCOMING_TRANSFER];
+				// $isCustomerInvoice = true ;
+				// $inBoundOrOutBound = $isCustomerInvoice ? 'inbound':'outbound';
+				// 	$paymentType = $isCustomerInvoice ? 'customer':'supplier'; 
+				// 	$invoiceId  = 28 ;
+				// 	$paymentAmount = 115 ;
+				// 	$paymentDate = '2025-04-13';
+				// 	$currencyId = 1 ;
+				// 	 $oddoPartnerId= 12 ;
+				// 	 $invoiceNumber = 'INV/2025/00006' ;
 					
 				// $oddo->createPayment(28,60,1,'2025-04-13',12,"BILL/2025/03/0006",$journalId,$inBoundOrOutBound);
-				$oddo->reCreatePayment($paymentType,$invoiceId,$paymentAmount,$currencyId,$paymentDate,$oddoPartnerId,$invoiceNumber,$journalId,$inBoundOrOutBound);
+				// $oddo->reCreatePayment($paymentType,$invoiceId,$paymentAmount,$currencyId,$paymentDate,$oddoPartnerId,$invoiceNumber,$journalId,$inBoundOrOutBound);
 				// $oddo->createPayment(3,22137.5,1,'2025-04-13',12,"INV/2025/00003",$journalId,$inBoundOrOutBound);
 				
 				// $oddo->createPayment(89,1150,'2025-04-09','salah comment',3);
