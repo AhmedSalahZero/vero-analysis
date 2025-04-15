@@ -160,10 +160,10 @@ end //
 				
 				
 			 delimiter ; 
-drop trigger if exists refresh_calculation_before_delete_current_account_bank_statements ;
+drop trigger if exists refresh_calculation_before_delete_current_acc_bank_stat ;
   delimiter //  
   
-create  trigger refresh_calculation_before_delete_current_account_bank_statements before delete on `current_account_bank_statements` for each row 
+create  trigger refresh_calculation_before_delete_current_acc_bank_stat before delete on `current_account_bank_statements` for each row 
 begin 
 	delete from `temp_deleted_statements` where company_id = old.company_id and table_name = 'current_account_bank_statements';
 	insert into `temp_deleted_statements` (company_id,table_name,deleted_id) values (old.company_id,'current_account_bank_statements',old.id);

@@ -91076,3 +91076,420 @@ end ;
 #19 /media/salah/Software/projects/veroo/artisan(37): Illuminate\\Foundation\\Console\\Kernel->handle()
 #20 {main}
 "} 
+[2025-04-15 14:28:47] local.ERROR: SQLSTATE[42000]: Syntax error or access violation: 1059 Identifier name 'refresh_calculation_before_delete_current_account_bank_statements' is too long (SQL: drop trigger if exists before_insert_current_account_bank_statements ;
+ 
+create  trigger before_insert_current_account_bank_statements before insert on `current_account_bank_statements` for each row 
+begin 
+	declare _last_end_balance decimal(14,2) default 0 ;
+	declare _previous_date date default null ;
+		declare _count_all_rows integer default 0 ; 
+	declare _min_interest_balance decimal(14,2) default 0 ;
+	declare _current_interest_rate decimal(5,2) default 0 ;
+	declare _interest_rate decimal(5,2) default 0 ;
+	declare _min_interest_rate decimal(5,2) default 0 ; 
+						
+		set new.created_at = CURRENT_TIMESTAMP;
+		select date , end_balance  into _previous_date,_last_end_balance  from current_account_bank_statements where is_active = 1 and company_id = new.company_id and financial_institution_account_id = new.financial_institution_account_id  and  date <= new.date   order by date desc , id desc  limit 1 ;
+		select  count(*) into _count_all_rows from current_account_bank_statements where is_active = 1 and company_id = new.company_id  and financial_institution_account_id = new.financial_institution_account_id  and  date <= new.date   order by date desc , id desc limit 1 ;
+		set new.beginning_balance = if(_count_all_rows,_last_end_balance,ifnull(new.beginning_balance,0)); 
+		
+		set new.end_balance = ifnull(new.beginning_balance + new.debit - new.credit,0) ; 
+		set new.is_debit = if(new.debit > 0 , 1 , 0);
+		set new.is_credit = if(new.debit > 0 , 0 , 1);
+	
+	
+	
+	
+	
+	
+	
+					set @dayCounts = 0 ;
+					set @interestAmount = 0 ; 
+					
+						-- هنبدا نحسب الفوائد اللي عليه 
+						
+					select min_balance , interest_rate into _min_interest_balance, _interest_rate from account_interests where financial_institution_account_id = new.financial_institution_account_id and start_date <= new.date order by start_date desc , id desc limit 1 ;
+					set _interest_rate = ifnull(_interest_rate,0);
+					
+					
+						set _current_interest_rate = _interest_rate ;
+					set _current_interest_rate = _current_interest_rate / 100 ;
+
+
+			
+					set @dailyInterestRate = _current_interest_rate/365 ;
+					if _previous_date then 
+					set @dayCounts = DATEDIFF(new.date,_previous_date) ;
+					set @interestAmount = if(_min_interest_balance <=  new.beginning_balance , _last_end_balance * @dailyInterestRate * @dayCounts , 0)  ;
+					end if ; 
+					set new.interest_rate_annually = _current_interest_rate ;
+					set new.interest_rate_daily = @dailyInterestRate ;
+					set new.days_count = @dayCounts ;
+					set new.interest_amount = @interestAmount;
+					-- نهاية حسبة الفوائد
+					
+	
+	
+
+end ;
+ 
+drop trigger if exists before_update_current_account_bank_statements ;
+ 
+create  trigger before_update_current_account_bank_statements before update on `current_account_bank_statements` for each row 
+begin 
+
+	-- الكود دا نفس الكود اللي في ال
+	-- before insert 
+	-- فا لو عدلت ال
+	-- before insert
+	-- خده كوبي وبيست وحطة هنا
+		
+		declare _min_interest_balance decimal(14,2) default 0 ;
+		declare _last_end_balance decimal(14,2) default 0 ;
+		declare _previous_date date default null ;
+		declare _count_all_rows integer default 0 ; 
+		declare _current_interest_rate decimal(5,2) default 0 ;
+	    declare _interest_rate decimal(5,2) default 0 ;
+	    declare _min_interest_rate decimal(5,2) default 0 ; 
+	
+		-- في حاله التعديل
+		select date,end_balance into _previous_date, _last_end_balance  from current_account_bank_statements where is_active = 1 and company_id = new.company_id and financial_institution_account_id = new.financial_institution_account_id  and date = new.date and id < new.id order by date desc , id desc limit 1 ;
+		if  (_previous_date)
+			then
+		select date,end_balance into _previous_date, _last_end_balance  from current_account_bank_statements where is_active = 1 and company_id = new.company_id and financial_institution_account_id = new.financial_institution_account_id  and date = new.date and id < new.id order by date desc , id desc limit 1 ;
+			else 
+		select date,end_balance into _previous_date, _last_end_balance  from current_account_bank_statements where is_active = 1 and company_id = new.company_id and financial_institution_account_id = new.financial_institution_account_id  and date < new.date order by date desc , id desc limit 1 ;
+					
+			end if ;
+		set _count_all_rows =1 ;
+	
+	 set new.beginning_balance = _last_end_balance ;
+	 
+	set new.end_balance = ifnull(new.beginning_balance + new.debit - new.credit,0) ; 
+	
+	
+	
+	
+	
+	
+	
+		-- هنبدا نحسب الفوائد اللي عليه 
+						
+							set @dayCounts = 0 ;
+					set @interestAmount = 0 ; 
+
+					select min_balance , interest_rate into _min_interest_balance, _interest_rate from account_interests where financial_institution_account_id = new.financial_institution_account_id and start_date <= new.date order by start_date desc , id desc limit 1 ;
+	
+					set _interest_rate = ifnull(_interest_rate,0);
+					
+				
+						set _current_interest_rate = _interest_rate ;
+					set _current_interest_rate = _current_interest_rate / 100 ;
+
+				
+					
+					set @dailyInterestRate = _current_interest_rate/365 ;
+					if _previous_date then 
+					set @dayCounts = DATEDIFF(new.date,_previous_date) ;
+					set @interestAmount = if(_min_interest_balance <=  new.beginning_balance , _last_end_balance * @dailyInterestRate * @dayCounts , 0)  ;
+					-- set @interestAmount = if(_last_end_balance < 0 , _last_end_balance * @dailyInterestRate * @dayCounts , 0)  ;
+					end if ; 
+					set new.interest_rate_annually = _current_interest_rate ;
+					set new.interest_rate_daily = @dailyInterestRate ;
+					set new.days_count = @dayCounts ;
+					set new.interest_amount = @interestAmount;
+					
+					-- نهاية حسبة الفوائد
+					
+					
+	
+end ;
+
+
+
+				
+				drop procedure if exists recalculate_end_of_month_current_account_interests ;
+				 
+				create procedure recalculate_end_of_month_current_account_interests()
+				begin 
+					declare current_id integer default 0 ;
+					declare _financial_institution_account_id integer default 0 ;
+					declare _company_id integer default 0 ;
+					declare _largest_end_balance decimal(14,2) default 0;
+					declare interest_type_text varchar(100) default 'interest';
+				
+					declare _current_interest_amount decimal(14,2) default 0;
+					declare i INTEGER DEFAULT 0 ;
+					select count(distinct(financial_institution_account_id)) into @n from  current_account_bank_statements where `type` != interest_type_text  and EXTRACT(MONTH from date) = EXTRACT(MONTH from current_date()) and  EXTRACT(YEAR from date) = EXTRACT(YEAR from current_date()) group by financial_institution_account_id;
+					set @n = ifnull(@n,0);
+					if @n > 0 then 
+					
+					repeat 
+								-- حساب الفايدة نهاية كل شهر
+								select financial_institution_account_id , sum(interest_amount)  into _financial_institution_account_id,_current_interest_amount from  current_account_bank_statements where `type` != interest_type_text  and EXTRACT(MONTH from date) = EXTRACT(MONTH from current_date()) and  EXTRACT(YEAR from date) = EXTRACT(YEAR from current_date()) group by financial_institution_account_id limit i , 1;
+								set _current_interest_amount = ifnull(_current_interest_amount , 0);
+								select company_id into _company_id from financial_institution_accounts where id = _financial_institution_account_id  ;
+								insert into current_account_bank_statements (type ,financial_institution_account_id,company_id,date,debit,interest_type,full_date) values(interest_type_text,_financial_institution_account_id,_company_id,current_date(),_current_interest_amount,'end_of_month',NOW());
+								set i = i +1 ; 
+							UNTIL i >= @n  end repeat ;
+					end if ;
+					
+				end ;
+				
+				
+			  
+drop trigger if exists refresh_calculation_before_delete_current_account_bank_statements ;
+    
+  
+create  trigger refresh_calculation_before_delete_current_account_bank_statements before delete on `current_account_bank_statements` for each row 
+begin 
+	delete from `temp_deleted_statements` where company_id = old.company_id and table_name = 'current_account_bank_statements';
+	insert into `temp_deleted_statements` (company_id,table_name,deleted_id) values (old.company_id,'current_account_bank_statements',old.id);
+end ;
+  
+ ) {"exception":"[object] (Illuminate\\Database\\QueryException(code: 42000): SQLSTATE[42000]: Syntax error or access violation: 1059 Identifier name 'refresh_calculation_before_delete_current_account_bank_statements' is too long (SQL: drop trigger if exists before_insert_current_account_bank_statements ;
+ 
+create  trigger before_insert_current_account_bank_statements before insert on `current_account_bank_statements` for each row 
+begin 
+\tdeclare _last_end_balance decimal(14,2) default 0 ;
+\tdeclare _previous_date date default null ;
+\t\tdeclare _count_all_rows integer default 0 ; 
+\tdeclare _min_interest_balance decimal(14,2) default 0 ;
+\tdeclare _current_interest_rate decimal(5,2) default 0 ;
+\tdeclare _interest_rate decimal(5,2) default 0 ;
+\tdeclare _min_interest_rate decimal(5,2) default 0 ; 
+\t\t\t\t\t\t
+\t\tset new.created_at = CURRENT_TIMESTAMP;
+\t\tselect date , end_balance  into _previous_date,_last_end_balance  from current_account_bank_statements where is_active = 1 and company_id = new.company_id and financial_institution_account_id = new.financial_institution_account_id  and  date <= new.date   order by date desc , id desc  limit 1 ;
+\t\tselect  count(*) into _count_all_rows from current_account_bank_statements where is_active = 1 and company_id = new.company_id  and financial_institution_account_id = new.financial_institution_account_id  and  date <= new.date   order by date desc , id desc limit 1 ;
+\t\tset new.beginning_balance = if(_count_all_rows,_last_end_balance,ifnull(new.beginning_balance,0)); 
+\t\t
+\t\tset new.end_balance = ifnull(new.beginning_balance + new.debit - new.credit,0) ; 
+\t\tset new.is_debit = if(new.debit > 0 , 1 , 0);
+\t\tset new.is_credit = if(new.debit > 0 , 0 , 1);
+\t
+\t
+\t
+\t
+\t
+\t
+\t
+\t\t\t\t\tset @dayCounts = 0 ;
+\t\t\t\t\tset @interestAmount = 0 ; 
+\t\t\t\t\t
+\t\t\t\t\t\t-- هنبدا نحسب الفوائد اللي عليه 
+\t\t\t\t\t\t
+\t\t\t\t\tselect min_balance , interest_rate into _min_interest_balance, _interest_rate from account_interests where financial_institution_account_id = new.financial_institution_account_id and start_date <= new.date order by start_date desc , id desc limit 1 ;
+\t\t\t\t\tset _interest_rate = ifnull(_interest_rate,0);
+\t\t\t\t\t
+\t\t\t\t\t
+\t\t\t\t\t\tset _current_interest_rate = _interest_rate ;
+\t\t\t\t\tset _current_interest_rate = _current_interest_rate / 100 ;
+
+
+\t\t\t
+\t\t\t\t\tset @dailyInterestRate = _current_interest_rate/365 ;
+\t\t\t\t\tif _previous_date then 
+\t\t\t\t\tset @dayCounts = DATEDIFF(new.date,_previous_date) ;
+\t\t\t\t\tset @interestAmount = if(_min_interest_balance <=  new.beginning_balance , _last_end_balance * @dailyInterestRate * @dayCounts , 0)  ;
+\t\t\t\t\tend if ; 
+\t\t\t\t\tset new.interest_rate_annually = _current_interest_rate ;
+\t\t\t\t\tset new.interest_rate_daily = @dailyInterestRate ;
+\t\t\t\t\tset new.days_count = @dayCounts ;
+\t\t\t\t\tset new.interest_amount = @interestAmount;
+\t\t\t\t\t-- نهاية حسبة الفوائد
+\t\t\t\t\t
+\t
+\t
+
+end ;
+ 
+drop trigger if exists before_update_current_account_bank_statements ;
+ 
+create  trigger before_update_current_account_bank_statements before update on `current_account_bank_statements` for each row 
+begin 
+
+\t-- الكود دا نفس الكود اللي في ال
+\t-- before insert 
+\t-- فا لو عدلت ال
+\t-- before insert
+\t-- خده كوبي وبيست وحطة هنا
+\t\t
+\t\tdeclare _min_interest_balance decimal(14,2) default 0 ;
+\t\tdeclare _last_end_balance decimal(14,2) default 0 ;
+\t\tdeclare _previous_date date default null ;
+\t\tdeclare _count_all_rows integer default 0 ; 
+\t\tdeclare _current_interest_rate decimal(5,2) default 0 ;
+\t    declare _interest_rate decimal(5,2) default 0 ;
+\t    declare _min_interest_rate decimal(5,2) default 0 ; 
+\t
+\t\t-- في حاله التعديل
+\t\tselect date,end_balance into _previous_date, _last_end_balance  from current_account_bank_statements where is_active = 1 and company_id = new.company_id and financial_institution_account_id = new.financial_institution_account_id  and date = new.date and id < new.id order by date desc , id desc limit 1 ;
+\t\tif  (_previous_date)
+\t\t\tthen
+\t\tselect date,end_balance into _previous_date, _last_end_balance  from current_account_bank_statements where is_active = 1 and company_id = new.company_id and financial_institution_account_id = new.financial_institution_account_id  and date = new.date and id < new.id order by date desc , id desc limit 1 ;
+\t\t\telse 
+\t\tselect date,end_balance into _previous_date, _last_end_balance  from current_account_bank_statements where is_active = 1 and company_id = new.company_id and financial_institution_account_id = new.financial_institution_account_id  and date < new.date order by date desc , id desc limit 1 ;
+\t\t\t\t\t
+\t\t\tend if ;
+\t\tset _count_all_rows =1 ;
+\t
+\t set new.beginning_balance = _last_end_balance ;
+\t 
+\tset new.end_balance = ifnull(new.beginning_balance + new.debit - new.credit,0) ; 
+\t
+\t
+\t
+\t
+\t
+\t
+\t
+\t\t-- هنبدا نحسب الفوائد اللي عليه 
+\t\t\t\t\t\t
+\t\t\t\t\t\t\tset @dayCounts = 0 ;
+\t\t\t\t\tset @interestAmount = 0 ; 
+
+\t\t\t\t\tselect min_balance , interest_rate into _min_interest_balance, _interest_rate from account_interests where financial_institution_account_id = new.financial_institution_account_id and start_date <= new.date order by start_date desc , id desc limit 1 ;
+\t
+\t\t\t\t\tset _interest_rate = ifnull(_interest_rate,0);
+\t\t\t\t\t
+\t\t\t\t
+\t\t\t\t\t\tset _current_interest_rate = _interest_rate ;
+\t\t\t\t\tset _current_interest_rate = _current_interest_rate / 100 ;
+
+\t\t\t\t
+\t\t\t\t\t
+\t\t\t\t\tset @dailyInterestRate = _current_interest_rate/365 ;
+\t\t\t\t\tif _previous_date then 
+\t\t\t\t\tset @dayCounts = DATEDIFF(new.date,_previous_date) ;
+\t\t\t\t\tset @interestAmount = if(_min_interest_balance <=  new.beginning_balance , _last_end_balance * @dailyInterestRate * @dayCounts , 0)  ;
+\t\t\t\t\t-- set @interestAmount = if(_last_end_balance < 0 , _last_end_balance * @dailyInterestRate * @dayCounts , 0)  ;
+\t\t\t\t\tend if ; 
+\t\t\t\t\tset new.interest_rate_annually = _current_interest_rate ;
+\t\t\t\t\tset new.interest_rate_daily = @dailyInterestRate ;
+\t\t\t\t\tset new.days_count = @dayCounts ;
+\t\t\t\t\tset new.interest_amount = @interestAmount;
+\t\t\t\t\t
+\t\t\t\t\t-- نهاية حسبة الفوائد
+\t\t\t\t\t
+\t\t\t\t\t
+\t
+end ;
+
+
+
+\t\t\t\t
+\t\t\t\tdrop procedure if exists recalculate_end_of_month_current_account_interests ;
+\t\t\t\t 
+\t\t\t\tcreate procedure recalculate_end_of_month_current_account_interests()
+\t\t\t\tbegin 
+\t\t\t\t\tdeclare current_id integer default 0 ;
+\t\t\t\t\tdeclare _financial_institution_account_id integer default 0 ;
+\t\t\t\t\tdeclare _company_id integer default 0 ;
+\t\t\t\t\tdeclare _largest_end_balance decimal(14,2) default 0;
+\t\t\t\t\tdeclare interest_type_text varchar(100) default 'interest';
+\t\t\t\t
+\t\t\t\t\tdeclare _current_interest_amount decimal(14,2) default 0;
+\t\t\t\t\tdeclare i INTEGER DEFAULT 0 ;
+\t\t\t\t\tselect count(distinct(financial_institution_account_id)) into @n from  current_account_bank_statements where `type` != interest_type_text  and EXTRACT(MONTH from date) = EXTRACT(MONTH from current_date()) and  EXTRACT(YEAR from date) = EXTRACT(YEAR from current_date()) group by financial_institution_account_id;
+\t\t\t\t\tset @n = ifnull(@n,0);
+\t\t\t\t\tif @n > 0 then 
+\t\t\t\t\t
+\t\t\t\t\trepeat 
+\t\t\t\t\t\t\t\t-- حساب الفايدة نهاية كل شهر
+\t\t\t\t\t\t\t\tselect financial_institution_account_id , sum(interest_amount)  into _financial_institution_account_id,_current_interest_amount from  current_account_bank_statements where `type` != interest_type_text  and EXTRACT(MONTH from date) = EXTRACT(MONTH from current_date()) and  EXTRACT(YEAR from date) = EXTRACT(YEAR from current_date()) group by financial_institution_account_id limit i , 1;
+\t\t\t\t\t\t\t\tset _current_interest_amount = ifnull(_current_interest_amount , 0);
+\t\t\t\t\t\t\t\tselect company_id into _company_id from financial_institution_accounts where id = _financial_institution_account_id  ;
+\t\t\t\t\t\t\t\tinsert into current_account_bank_statements (type ,financial_institution_account_id,company_id,date,debit,interest_type,full_date) values(interest_type_text,_financial_institution_account_id,_company_id,current_date(),_current_interest_amount,'end_of_month',NOW());
+\t\t\t\t\t\t\t\tset i = i +1 ; 
+\t\t\t\t\t\t\tUNTIL i >= @n  end repeat ;
+\t\t\t\t\tend if ;
+\t\t\t\t\t
+\t\t\t\tend ;
+\t\t\t\t
+\t\t\t\t
+\t\t\t  
+drop trigger if exists refresh_calculation_before_delete_current_account_bank_statements ;
+    
+  
+create  trigger refresh_calculation_before_delete_current_account_bank_statements before delete on `current_account_bank_statements` for each row 
+begin 
+\tdelete from `temp_deleted_statements` where company_id = old.company_id and table_name = 'current_account_bank_statements';
+\tinsert into `temp_deleted_statements` (company_id,table_name,deleted_id) values (old.company_id,'current_account_bank_statements',old.id);
+end ;
+  
+ ) at /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Database/Connection.php:670)
+[stacktrace]
+#0 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Database/Connection.php(630): Illuminate\\Database\\Connection->runQueryCallback()
+#1 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Database/Connection.php(516): Illuminate\\Database\\Connection->run()
+#2 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Database/DatabaseManager.php(367): Illuminate\\Database\\Connection->unprepared()
+#3 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Support/Facades/Facade.php(261): Illuminate\\Database\\DatabaseManager->__call()
+#4 /media/salah/Software/projects/veroo/app/Console/Commands/RunSqlOnProduction.php(57): Illuminate\\Support\\Facades\\Facade::__callStatic()
+#5 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): App\\Console\\Commands\\RunSqlOnProduction->handle()
+#6 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Container/Util.php(37): Illuminate\\Container\\BoundMethod::Illuminate\\Container\\{closure}()
+#7 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(93): Illuminate\\Container\\Util::unwrapIfClosure()
+#8 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(37): Illuminate\\Container\\BoundMethod::callBoundMethod()
+#9 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Container/Container.php(596): Illuminate\\Container\\BoundMethod::call()
+#10 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Console/Command.php(134): Illuminate\\Container\\Container->call()
+#11 /media/salah/Software/projects/veroo/vendor/symfony/console/Command/Command.php(298): Illuminate\\Console\\Command->execute()
+#12 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Console/Command.php(121): Symfony\\Component\\Console\\Command\\Command->run()
+#13 /media/salah/Software/projects/veroo/vendor/symfony/console/Application.php(1040): Illuminate\\Console\\Command->run()
+#14 /media/salah/Software/projects/veroo/vendor/symfony/console/Application.php(301): Symfony\\Component\\Console\\Application->doRunCommand()
+#15 /media/salah/Software/projects/veroo/vendor/symfony/console/Application.php(171): Symfony\\Component\\Console\\Application->doRun()
+#16 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Console/Application.php(93): Symfony\\Component\\Console\\Application->run()
+#17 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(129): Illuminate\\Console\\Application->run()
+#18 /media/salah/Software/projects/veroo/artisan(37): Illuminate\\Foundation\\Console\\Kernel->handle()
+#19 {main}
+
+[previous exception] [object] (Doctrine\\DBAL\\Driver\\PDO\\Exception(code: 42000): SQLSTATE[42000]: Syntax error or access violation: 1059 Identifier name 'refresh_calculation_before_delete_current_account_bank_statements' is too long at /media/salah/Software/projects/veroo/vendor/doctrine/dbal/lib/Doctrine/DBAL/Driver/PDO/Exception.php:18)
+[stacktrace]
+#0 /media/salah/Software/projects/veroo/vendor/doctrine/dbal/lib/Doctrine/DBAL/Driver/PDOConnection.php(60): Doctrine\\DBAL\\Driver\\PDO\\Exception::new()
+#1 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Database/Connection.php(512): Doctrine\\DBAL\\Driver\\PDOConnection->exec()
+#2 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Database/Connection.php(663): Illuminate\\Database\\Connection->Illuminate\\Database\\{closure}()
+#3 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Database/Connection.php(630): Illuminate\\Database\\Connection->runQueryCallback()
+#4 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Database/Connection.php(516): Illuminate\\Database\\Connection->run()
+#5 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Database/DatabaseManager.php(367): Illuminate\\Database\\Connection->unprepared()
+#6 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Support/Facades/Facade.php(261): Illuminate\\Database\\DatabaseManager->__call()
+#7 /media/salah/Software/projects/veroo/app/Console/Commands/RunSqlOnProduction.php(57): Illuminate\\Support\\Facades\\Facade::__callStatic()
+#8 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): App\\Console\\Commands\\RunSqlOnProduction->handle()
+#9 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Container/Util.php(37): Illuminate\\Container\\BoundMethod::Illuminate\\Container\\{closure}()
+#10 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(93): Illuminate\\Container\\Util::unwrapIfClosure()
+#11 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(37): Illuminate\\Container\\BoundMethod::callBoundMethod()
+#12 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Container/Container.php(596): Illuminate\\Container\\BoundMethod::call()
+#13 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Console/Command.php(134): Illuminate\\Container\\Container->call()
+#14 /media/salah/Software/projects/veroo/vendor/symfony/console/Command/Command.php(298): Illuminate\\Console\\Command->execute()
+#15 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Console/Command.php(121): Symfony\\Component\\Console\\Command\\Command->run()
+#16 /media/salah/Software/projects/veroo/vendor/symfony/console/Application.php(1040): Illuminate\\Console\\Command->run()
+#17 /media/salah/Software/projects/veroo/vendor/symfony/console/Application.php(301): Symfony\\Component\\Console\\Application->doRunCommand()
+#18 /media/salah/Software/projects/veroo/vendor/symfony/console/Application.php(171): Symfony\\Component\\Console\\Application->doRun()
+#19 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Console/Application.php(93): Symfony\\Component\\Console\\Application->run()
+#20 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(129): Illuminate\\Console\\Application->run()
+#21 /media/salah/Software/projects/veroo/artisan(37): Illuminate\\Foundation\\Console\\Kernel->handle()
+#22 {main}
+
+[previous exception] [object] (PDOException(code: 42000): SQLSTATE[42000]: Syntax error or access violation: 1059 Identifier name 'refresh_calculation_before_delete_current_account_bank_statements' is too long at /media/salah/Software/projects/veroo/vendor/doctrine/dbal/lib/Doctrine/DBAL/Driver/PDOConnection.php:55)
+[stacktrace]
+#0 /media/salah/Software/projects/veroo/vendor/doctrine/dbal/lib/Doctrine/DBAL/Driver/PDOConnection.php(55): PDO->exec()
+#1 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Database/Connection.php(512): Doctrine\\DBAL\\Driver\\PDOConnection->exec()
+#2 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Database/Connection.php(663): Illuminate\\Database\\Connection->Illuminate\\Database\\{closure}()
+#3 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Database/Connection.php(630): Illuminate\\Database\\Connection->runQueryCallback()
+#4 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Database/Connection.php(516): Illuminate\\Database\\Connection->run()
+#5 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Database/DatabaseManager.php(367): Illuminate\\Database\\Connection->unprepared()
+#6 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Support/Facades/Facade.php(261): Illuminate\\Database\\DatabaseManager->__call()
+#7 /media/salah/Software/projects/veroo/app/Console/Commands/RunSqlOnProduction.php(57): Illuminate\\Support\\Facades\\Facade::__callStatic()
+#8 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): App\\Console\\Commands\\RunSqlOnProduction->handle()
+#9 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Container/Util.php(37): Illuminate\\Container\\BoundMethod::Illuminate\\Container\\{closure}()
+#10 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(93): Illuminate\\Container\\Util::unwrapIfClosure()
+#11 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(37): Illuminate\\Container\\BoundMethod::callBoundMethod()
+#12 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Container/Container.php(596): Illuminate\\Container\\BoundMethod::call()
+#13 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Console/Command.php(134): Illuminate\\Container\\Container->call()
+#14 /media/salah/Software/projects/veroo/vendor/symfony/console/Command/Command.php(298): Illuminate\\Console\\Command->execute()
+#15 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Console/Command.php(121): Symfony\\Component\\Console\\Command\\Command->run()
+#16 /media/salah/Software/projects/veroo/vendor/symfony/console/Application.php(1040): Illuminate\\Console\\Command->run()
+#17 /media/salah/Software/projects/veroo/vendor/symfony/console/Application.php(301): Symfony\\Component\\Console\\Application->doRunCommand()
+#18 /media/salah/Software/projects/veroo/vendor/symfony/console/Application.php(171): Symfony\\Component\\Console\\Application->doRun()
+#19 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Console/Application.php(93): Symfony\\Component\\Console\\Application->run()
+#20 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(129): Illuminate\\Console\\Application->run()
+#21 /media/salah/Software/projects/veroo/artisan(37): Illuminate\\Foundation\\Console\\Kernel->handle()
+#22 {main}
+"} 
