@@ -39,7 +39,7 @@ class CurrentAccountBankStatement extends Model  implements IHaveStatement
 
 	public static function updateNextRows(CurrentAccountBankStatement $model):string 
 	{
-		$minDate  = $model->full_date ;
+		$minDate  = $model->date ;
 		
 		
 		/**
@@ -51,8 +51,8 @@ class CurrentAccountBankStatement extends Model  implements IHaveStatement
 		 */
 
 		 DB::table('current_account_bank_statements')
-		->where('full_date','>=',$minDate)
-		->orderByRaw('full_date asc , id asc')
+		->where('date','>=',$minDate)
+		->orderByRaw('date asc , id asc')
 		->where('financial_institution_account_id',$model->financial_institution_account_id)
 		->each(function($currentAccountBankStatement){
 			DB::table('current_account_bank_statements')->where('id',$currentAccountBankStatement->id)->update([
@@ -70,7 +70,12 @@ class CurrentAccountBankStatement extends Model  implements IHaveStatement
 				$model->created_at = now();
 				$date = $model->date ;
 				$time  = now()->format('H:i:s');
+				$row = DB::table('temp_deleted_statements')->where('company_id',$model->company_id)->where('table_name','current_account_bank_statements')->first();
 				
+				if($row){
+					$model->id = $row->deleted_id;
+					DB::table('temp_deleted_statements')->where('company_id',$model->company_id)->where('table_name','current_account_bank_statements')->delete();
+				}
 				$fullDateTime = date('Y-m-d H:i:s', strtotime("$date $time")) ;
 				/**
 				 * * دي علشان لو ليهم نفس التاريخ والوقت بالظبط يزود ثانيه علي التاريخ القديم
@@ -108,8 +113,8 @@ class CurrentAccountBankStatement extends Model  implements IHaveStatement
 						// وتلقائي هيحذف السحوبات settlements
 					}else{
 						DB::table('current_account_bank_statements')
-						->where('full_date','>=',$minDate)
-						->orderByRaw('full_date asc , id asc')
+						->where('date','>=',$minDate)
+						->orderByRaw('date asc , id asc')
 						->where('financial_institution_account_id',$model->financial_institution_account_id)->update([
 							'updated_at'=>now()
 						]);
@@ -124,10 +129,10 @@ class CurrentAccountBankStatement extends Model  implements IHaveStatement
 				$oldDate = null ;
 				if($currentAccountBankStatement->is_debit && Request('receiving_date')||$currentAccountBankStatement->is_credit && Request('delivery_date')){
 						$oldDate = Carbon::make(Request('receiving_date',Request('delivery_date')))->format('Y-m-d');
-						$time  = now()->format('H:i:s');
-						$oldDate = date('Y-m-d H:i:s', strtotime("$oldDate $time")) ;
-						$currentDate = $currentAccountBankStatement->full_date ;
-						$currentAccountBankStatement->full_date = min($oldDate,$currentDate);
+						// $time  = now()->format('H:i:s');
+						// $oldDate = date('Y-m-d H:i:s', strtotime("$oldDate $time")) ;
+						$currentDate = $currentAccountBankStatement->date ;
+						$currentAccountBankStatement->date = min($oldDate,$currentDate);
 				}
 			
 				
@@ -211,41 +216,41 @@ class CurrentAccountBankStatement extends Model  implements IHaveStatement
 	{
 		return $this->belongsTo(LoanScheduleSettlement::class,'loan_schedule_settlement_id','id');
 	}	
-	public static function updateNonActiveDaily(Company $company)
-	{
+	// public static function updateNonActiveDaily(Company $company)
+	// {
 
-		DB::table('current_account_bank_statements')
-		->where('company_id',$company->id)
-		->where('is_active',0)
-		->where('full_date','<=',now())
-		->orderByRaw('full_date asc , id asc')
-		->each(function($currentAccountBankStatementRow){
-			$letterOfGuaranteeIssuanceId = $currentAccountBankStatementRow->letter_of_guarantee_issuance_id;
+	// 	DB::table('current_account_bank_statements')
+	// 	->where('company_id',$company->id)
+	// 	->where('is_active',0)
+	// 	->where('full_date','<=',now())
+	// 	->orderByRaw('full_date asc , id asc')
+	// 	->each(function($currentAccountBankStatementRow){
+	// 		$letterOfGuaranteeIssuanceId = $currentAccountBankStatementRow->letter_of_guarantee_issuance_id;
 			
-			$letterOfGuaranteeIssuance = DB::table('letter_of_guarantee_issuances')
-			->where('id',$letterOfGuaranteeIssuanceId)
-			->first();
+	// 		$letterOfGuaranteeIssuance = DB::table('letter_of_guarantee_issuances')
+	// 		->where('id',$letterOfGuaranteeIssuanceId)
+	// 		->first();
 			
-			$commissionRate = $letterOfGuaranteeIssuance->lg_commission_rate; 
+	// 		$commissionRate = $letterOfGuaranteeIssuance->lg_commission_rate; 
 			
-			$totalPaid = DB::table('lg_issuance_advanced_payment_histories')
-			->where('letter_of_guarantee_issuance_id',$letterOfGuaranteeIssuanceId)
-			->where('date' ,'<=' , $currentAccountBankStatementRow->full_date)
-			->sum('amount');
+	// 		$totalPaid = DB::table('lg_issuance_advanced_payment_histories')
+	// 		->where('letter_of_guarantee_issuance_id',$letterOfGuaranteeIssuanceId)
+	// 		->where('date' ,'<=' , $currentAccountBankStatementRow->full_date)
+	// 		->sum('amount');
 			
-			DB::table('current_account_bank_statements')->where('id',$currentAccountBankStatementRow->id)
-			->update([
-				'is_active'=>1 ,
-				'credit'=> ($letterOfGuaranteeIssuance->lg_amount - $totalPaid) * $commissionRate
-			]);
-			/**
-		 * * هنبدا نعمل ابديت من اول الرو اللي تاريخه اصغر حاجه في اللي كانوا محتاجين يتعدلوا
-		 * * وبالتالي هيتعدل هو وكل اللي تحتة
-		 */
-			CurrentAccountBankStatement::updateNextRows(CurrentAccountBankStatement::find($currentAccountBankStatementRow->id));
+	// 		DB::table('current_account_bank_statements')->where('id',$currentAccountBankStatementRow->id)
+	// 		->update([
+	// 			'is_active'=>1 ,
+	// 			'credit'=> ($letterOfGuaranteeIssuance->lg_amount - $totalPaid) * $commissionRate
+	// 		]);
+	// 		/**
+	// 	 * * هنبدا نعمل ابديت من اول الرو اللي تاريخه اصغر حاجه في اللي كانوا محتاجين يتعدلوا
+	// 	 * * وبالتالي هيتعدل هو وكل اللي تحتة
+	// 	 */
+	// 		CurrentAccountBankStatement::updateNextRows(CurrentAccountBankStatement::find($currentAccountBankStatementRow->id));
 			
-		});
-	}
+	// 	});
+	// }
 	public static function generateRefundLgCashCoverComment($lang,string $customerName,?string $transactionName,?string $lgCode):string 
 	{
 		$transactionName = is_null($transactionName) ? '-' : $transactionName ;
