@@ -329,7 +329,7 @@ class MoneyPaymentController
 		$supplierId = $supplier->id;
 		$paymentBranchName = $request->get('delivery_branch_id') ;
 		$data = $request->only(['type','delivery_date','currency','payment_currency','down_payment_type','partner_type','user_comment']);
-		$isSupplier = $partnerType == 'is_supplier';
+		// $isSupplier = $partnerType == 'is_supplier';
 		$data['currency'] = $isGeneralDownPayment   ? $data['payment_currency'] : $data['currency']??null;
 		$paymentCurrency = $data['payment_currency'];
 		$data['currency'] = is_null($data['currency']) ?  $paymentCurrency : $data['currency'];
