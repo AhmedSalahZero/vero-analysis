@@ -25,13 +25,5 @@ class Settlement extends Model
 	{
 		return $this->customerInvoice();
 	}
-
-	
-		
-	
-	
-	
-	
-
 	
 }

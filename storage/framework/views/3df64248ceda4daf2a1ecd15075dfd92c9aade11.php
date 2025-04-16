@@ -24,6 +24,20 @@
                             </div>
                         </div>
                     </div>
+					<?php if($company->hasOddoIntegrationCredentials()): ?>
+					     <div class="col-1	">
+                        <label class="form-label font-weight-bold "><?php echo e(__('Odoo Code')); ?>
+
+						<?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+                        </label>
+                        <div class="kt-input-icon">
+                            <div class="input-group">
+                                <input required placeholder="<?php echo e(__('Odoo Code')); ?>" type="text" class="form-control  exclude-text" <?php if($isRepeater): ?> name="odoo_code" <?php else: ?> name="accounts[0][odoo_code]" <?php endif; ?> value="<?php echo e(isset($account) ? $account->getOdooCode() : old('odoo_code')); ?>">
+                            </div>
+                        </div>
+                    </div>
+					<?php endif; ?>
+					
 
                    
 
@@ -57,7 +71,7 @@
                             </div>
                         </div>
                     </div>
-					
+				
 					<div class="col-md-1">
                          <?php if (isset($component)) { $__componentOriginalc254754b9d5db91d5165876f9d051922ca0066f4 = $component; } ?>
 <?php $component = $__env->getContainer()->make(Illuminate\View\AnonymousComponent::class, ['view' => 'components.calendar','data' => ['value' => isset($model) ? $model->getBalanceDate() : null,'label' => __('Balance Date'),'id' => 'balance_date','name' => 'balance_date']]); ?>
@@ -71,6 +85,7 @@
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?> 
                     </div>
+					
 					
 					
 					

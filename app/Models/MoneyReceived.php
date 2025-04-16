@@ -969,6 +969,7 @@ class MoneyReceived extends Model
 		}
 		throw new \Exception('Custom Exception .. getAccountTypeId .. This Method Is Only For Incoming Transfer Or Payable Cheque');
 	}
+	
 	public function getAccountNumber()
 	{
 		if($this->isIncomingTransfer()){
@@ -982,6 +983,12 @@ class MoneyReceived extends Model
 		}
 		throw new \Exception('Custom Exception .. getAccountNumber .. This Method Is Only For Incoming Transfer Or Payable Cheque');
 	}	
+	public function getBankAccountOdooId():int
+	{
+		$financialInstitution = $this->getFinancialInstitution();
+		return $financialInstitution->getOdooIdForAccount($this->getAccountTypeId(),$this->getAccountNumber());
+	}
+		
 		
 	
 }

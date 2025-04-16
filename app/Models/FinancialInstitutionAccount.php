@@ -192,8 +192,6 @@ class FinancialInstitutionAccount extends Model
 	public function getOpeningBalanceDate():string
 	{
 		return $this->balance_date;
-		// return $this->accountInterests->sortBy('start_date')->first()->start_date;
-		// return $this->accountInterests->sortBy('start_date')->first()->start_date;
 	}
 	public function getAmount(string $currencyName , string $accountNumber,int $financialInstitutionId , int $companyId)
 	{
@@ -207,5 +205,13 @@ class FinancialInstitutionAccount extends Model
                 ->limit(1)
                 ->first();
 		return $row ? number_format($row->end_balance) : 0;
+	}
+	public function getOdooCode():?string 
+	{
+		return $this->odoo_code ;
+	}
+	public function getOdooId():?int 
+	{
+		return $this->odoo_id ;
 	}
 }

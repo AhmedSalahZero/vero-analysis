@@ -76,9 +76,10 @@ class TestCommand extends Command
 				// $importDate = now()->format('Y-m-d') ; ;
 				$startDate = now()->subDays(60)->format('Y-m-d') ; ;
 				$endDate = now()->format('Y-m-d') ; 
+				$oddo->startImportInvoices($startDate,$endDate);
 				// $oddo->startImportContracts($startDate,$endDate,$company->id);
-				$oddo->syncDeletedInvoices($company->id);
-				// $oddo->startImportInvoices($startDate,$endDate);
+				// $oddo->syncFinancialInstitutions('BNK2');
+				// $oddo->syncDeletedInvoices($company->id);
 				// $journalId = [
 				// 	MoneyReceived::CASH_IN_SAFE=>7,
 				// 	MoneyReceived::INCOMING_TRANSFER=>12 

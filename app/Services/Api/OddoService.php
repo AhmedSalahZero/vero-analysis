@@ -4,10 +4,12 @@ namespace App\Services\Api;
 use App\Helpers\HArr;
 use App\Models\Contract;
 use App\Models\CustomerInvoice;
+use App\Models\FinancialInstitutionAccount;
 use App\Models\Partner;
 use App\Models\SupplierInvoice;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use ripcord;
@@ -79,7 +81,6 @@ class OddoService
 	 */
 	public function startImportInvoices($startDate , $endDate):void
 	{
-	
 		if(is_null($this->uid)){
 			return ;
 		}
@@ -213,34 +214,13 @@ class OddoService
 	}
 	protected function getInvoices(string $startDate,string $endDate)
 	{
-		$fields = $this->getInvoicesFieldNames();
-		$filter = array(array(array('move_type', 'in', ['in_invoice','out_invoice'])
-		,array('state', '=', 'posted'),
-			array('write_date', '>=', $startDate),
-			array('write_date', '<=', $endDate)
-			// ,['name','=','INV/2025/00004']
-		));
-		$ids=$this->models->execute_kw($this->db, $this->uid, $this->password, 'account.move', 'search',$filter, );
-	
-		return $this->models->execute_kw($this->db, $this->uid, $this->password, 'account.move', 'read', array($ids),[
-			'fields'=>$fields
-		]);
-	}
-	protected function getUser(array $ids){
-		 $user = $this->models->execute_kw($this->db, $this->uid, $this->password, 'res.partner', 'read', array($ids));
-		 return $user;
-	}
-	protected function getInvoicesFieldNames():array 
-	{
-		// return [];
-		return [
+		$fields= [
 			'partner_id',
 			'id',
 			'invoice_date',
 			'name',
 			'move_type',
 			'currency_id',
-		//	'amount_untaxed', // invoice_amount
 			'amount_residual',
 			'amount_untaxed_in_currency_signed',
 			'amount_tax',
@@ -248,12 +228,33 @@ class OddoService
 			'date',
 			'invoice_currency_rate',//exchange rate
 			'invoice_origin' ,// so_number
-			// 'create_date',
 			'write_date',
-			// 'active',
-			'state'
+			'state',
+			'invoice_line_ids' // product ids 
 		];
+		$filters = array(array(array('move_type', 'in', ['in_invoice','out_invoice'])
+		,array('state', '=', 'posted'),
+			array('write_date', '>=', $startDate),
+			array('write_date', '<=', $endDate)
+			// ,['name','=','INV/2025/00004']
+		));
+		return $invoices = $this->fetchData('account.move',$fields,$filters);
+		$productIds = array_unique(Arr::flatten(array_column($invoices,'invoice_line_ids'))) ;
+		$filters = [[
+			['id','in',$productIds]
+		]];
+		$fields = [
+			'name','display_name','product_id','quantity','price_unit','price_subtotal'
+		];
+		dd($this->fetchData('account.move.line',$fields,$filters));
+		return ;
+		
 	}
+	protected function getUser(array $ids){
+		 $user = $this->models->execute_kw($this->db, $this->uid, $this->password, 'res.partner', 'read', array($ids));
+		 return $user;
+	}
+	
 	
 	public function payInvoice(int $invoiceId, float $invoiceAmount , string $paymentDate , string $userComment  ,int $oddoPartnerId)
 	{
@@ -619,6 +620,52 @@ class OddoService
 		}
 		dd($deletedIds);
 	}
+	public function syncFinancialInstitutions(string $financialInstitutionOdooCode)
+	{
+			$fields = [
+				'id',
+				'code'
+			];
+			$filters = [
+				[
+					['type','=','bank'
+				],
+				// ['code','=',$financialInstitutionOdooCode]
+				]
+		];
+		$journals = $this->fetchData('account.journal',$fields,$filters);
+		$journals = collect($journals)->keyBy('code')->toArray();
+			$financialInstitutionAccounts = FinancialInstitutionAccount::where('company_id',$this->company_id)->whereNotNull('odoo_code')->get();
+
+			foreach($financialInstitutionAccounts as $financialInstitutionAccount){
+				$codeCode = $financialInstitutionAccount->getOdooCode();
+				if($codeCode){
+		
+					$currentJournal = $journals[$codeCode]??null;
+					$currentJournalId = $currentJournal ? $currentJournal['id'] : null;
+					if($currentJournalId){
+						$financialInstitutionAccount->update([
+							'odoo_id'=>$currentJournalId
+						]);
+					}
+					
+				}
+			}
+			
+			
+		
+		dd($journals);
+	
+		
+	}
+	protected function fetchData(string $modelName ,array $fields = [],  array $filters = [[]]  )
+	{
+		$ids=$this->models->execute_kw($this->db, $this->uid, $this->password, $modelName, 'search',$filters );
+		return $this->models->execute_kw($this->db, $this->uid, $this->password, $modelName, 'read', array($ids),[
+			'fields'=>$fields
+		]);
+	}
+	
 	
 
 

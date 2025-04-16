@@ -23,6 +23,19 @@
                             </div>
                         </div>
                     </div>
+					@if($company->hasOddoIntegrationCredentials())
+					     <div class="col-1	">
+                        <label class="form-label font-weight-bold ">{{ __('Odoo Code') }}
+						@include('star')
+                        </label>
+                        <div class="kt-input-icon">
+                            <div class="input-group">
+                                <input required placeholder="{{ __('Odoo Code') }}" type="text" class="form-control  exclude-text" @if($isRepeater) name="odoo_code" @else name="accounts[0][odoo_code]" @endif value="{{ isset($account) ? $account->getOdooCode() : old('odoo_code') }}">
+                            </div>
+                        </div>
+                    </div>
+					@endif
+					
 
                    
 
@@ -54,10 +67,11 @@
                             </div>
                         </div>
                     </div>
-					
+				
 					<div class="col-md-1">
                         <x-calendar :value="isset($model) ? $model->getBalanceDate() : null" :label="__('Balance Date')"  :id="'balance_date'" name="balance_date"></x-calendar>
                     </div>
+					
 					
 					
 					

@@ -198,16 +198,21 @@ class FinancialInstitution extends Model
 	{
 		foreach($accounts as $index=>$accountArr){
 			$balanceAmount = $accountArr['balance_amount'] ?? 0 ;
-			$currentBalanceDate = Carbon::make($accountArr['balance_date'])->format('Y-m-d');
-			$account = $this->accounts()->create([
-				'account_number'=>$accountArr['account_number'],
-				'balance_amount'=>$balanceAmount ,
-				'exchange_rate'=>$accountArr['exchange_rate'],
-				'currency'=> $accountArr['currency'],
-				'iban'=>$accountArr['iban'],
-				'balance_date'=>$currentBalanceDate,
-				'company_id'=>getCurrentCompanyId(),
-			]);
+			$balanceDate = $accountArr['balance_date'];
+			$currentBalanceDate = $balanceDate ? Carbon::make($balanceDate)->format('Y-m-d'):null;
+			if($currentBalanceDate){
+				$account = $this->accounts()->create([
+					'account_number'=>$accountArr['account_number'],
+					'odoo_code'=>$accountArr['odoo_code'],
+					'balance_amount'=>$balanceAmount ,
+					'exchange_rate'=>$accountArr['exchange_rate'],
+					'currency'=> $accountArr['currency'],
+					'iban'=>$accountArr['iban'],
+					'balance_date'=>$currentBalanceDate,
+					'company_id'=>getCurrentCompanyId(),
+				]);
+			}
+			
 			/**
 			 * * لو ال
 			 * * balance amount > 0
@@ -323,5 +328,27 @@ class FinancialInstitution extends Model
 		])->first();
 		return $accountModel instanceof FinancialInstitutionAccount ? $accountModel->getOpeningBalanceDate() : $accountModel->getContractStartDate();
 	}
+	
+	public  function getOdooIdForAccount( int $accountTypeId , string $accountNumber
+	// ,string $currencyName
+	 ){
+		/**
+		 * @var AccountType $accountType 
+		 */
+		$accountType = AccountType::find($accountTypeId);
+		$accountTypeModelName = $accountType->getModelName();
+		/**
+		 * @var CleanOverdraft|FinancialInstitutionAccount $accountModel 
+		 */
+		$fullModelName = 'App\Models\\'.$accountTypeModelName ;
+	
+		$accountModel = $fullModelName::where([
+			['financial_institution_id','=',$this->id],
+			['account_number','=',$accountNumber],
+			// ['currency','=',$currencyName]
+		])->first();
+		return $accountModel instanceof FinancialInstitutionAccount ? $accountModel->getOdooId() : $accountModel->getOdooCode();
+	}
+	
 	
 }

@@ -48,7 +48,11 @@
 <div class="kt-input-icon">
     <div class="input-group date">
 
-        <input type="text" name="<?php echo e($name); ?>" class="<?php if($onlyMonth): ?>  only-month-year-picker <?php endif; ?> datepicker-input date-input form-control recalc-end-date start-date <?php echo e($classes); ?> " value="<?php echo e($value); ?> " />
+        <input
+		 <?php if($required): ?>
+		 required
+    <?php endif; ?>
+		 type="text" name="<?php echo e($name); ?>" class="<?php if($onlyMonth): ?>  only-month-year-picker <?php endif; ?> datepicker-input date-input form-control recalc-end-date start-date <?php echo e($classes); ?> " value="<?php echo e($value); ?> " />
     </div>
 </div>
 <?php /**PATH /media/salah/Software/projects/veroo/resources/views/components/calendar.blade.php ENDPATH**/ ?>
