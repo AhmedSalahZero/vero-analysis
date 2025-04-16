@@ -339,14 +339,15 @@ trait IsInvoice
 	
 	}
 	public static function createForOddo(int $invoiceId,int $partnerId,string $partnerName,string $invoiceDate,string $invoiceDueDate,string $invoiceNumber,string $invoiceCurrency,$invoiceAmount,$vatAmount,$withholdAmount,$collectedAmount,$exchangeRate,$soOrPoNumber,int $companyId):void{
-		$isExist = self::where('oddo_id',$invoiceId)->where('company_id',$companyId)->exists();
-		if($isExist){
-			return ;
+		$currentInvoice = self::where('oddo_id',$invoiceId)->where('company_id',$companyId)->first();
+		$contract = null;
+		$soOrPoNumber = $soOrPoNumber ? $soOrPoNumber : null ;
+		if($soOrPoNumber){
+			$salesOrder = DB::table('sales_orders')->where('company_id',$companyId)->where('so_number',$soOrPoNumber)->first() ;
+			$contract = $salesOrder ? DB::table('contracts')->where('id',$salesOrder->contract_id)->first() : null ;
 		}
-		$salesOrder = DB::table('sales_orders')->where('company_id',$companyId)->where('so_number',$soOrPoNumber)->first() ;
-		$contract = $salesOrder ? DB::table('contracts')->where('id',$salesOrder->contract_id)->first() : null ;
 		
-		self::create([
+		$invoiceData = [
 			'oddo_id'=>$invoiceId,
 			'company_id'=>$companyId , 
 			'exchange_rate'=>$exchangeRate,
@@ -365,7 +366,12 @@ trait IsInvoice
 			'contract_name'=>$contract ? $contract->name : null,
 			'project_name'=>$contract ? $contract->name : null,
 			
-		]);
+		] ;
+		if($currentInvoice){
+			$currentInvoice->update($invoiceData);
+			return  ;
+		}
+		self::create($invoiceData);
 	}
 
 }

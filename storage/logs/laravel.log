@@ -91493,3 +91493,66 @@ end ;
 #21 /media/salah/Software/projects/veroo/artisan(37): Illuminate\\Foundation\\Console\\Kernel->handle()
 #22 {main}
 "} 
+[2025-04-15 15:33:54] local.ERROR: Command "queue:worker" is not defined.
+
+Did you mean one of these?
+    queue:failed
+    queue:failed-table
+    queue:flush
+    queue:forget
+    queue:listen
+    queue:restart
+    queue:retry
+    queue:table
+    queue:work {"exception":"[object] (Symfony\\Component\\Console\\Exception\\CommandNotFoundException(code: 0): Command \"queue:worker\" is not defined.
+
+Did you mean one of these?
+    queue:failed
+    queue:failed-table
+    queue:flush
+    queue:forget
+    queue:listen
+    queue:restart
+    queue:retry
+    queue:table
+    queue:work at /media/salah/Software/projects/veroo/vendor/symfony/console/Application.php:720)
+[stacktrace]
+#0 /media/salah/Software/projects/veroo/vendor/symfony/console/Application.php(259): Symfony\\Component\\Console\\Application->find()
+#1 /media/salah/Software/projects/veroo/vendor/symfony/console/Application.php(171): Symfony\\Component\\Console\\Application->doRun()
+#2 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Console/Application.php(93): Symfony\\Component\\Console\\Application->run()
+#3 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(129): Illuminate\\Console\\Application->run()
+#4 /media/salah/Software/projects/veroo/artisan(37): Illuminate\\Foundation\\Console\\Kernel->handle()
+#5 {main}
+"} 
+[2025-04-15 16:02:28] local.ERROR: Class 'PHPExcel_IOFactory' not found {"exception":"[object] (Error(code: 0): Class 'PHPExcel_IOFactory' not found at /media/salah/Software/projects/veroo/app/Helpers/PHPEXCEL.php:3)
+[stacktrace]
+#0 /media/salah/Software/projects/veroo/vendor/composer/ClassLoader.php(576): include()
+#1 /media/salah/Software/projects/veroo/vendor/composer/ClassLoader.php(427): Composer\\Autoload\\{closure}()
+#2 [internal function]: Composer\\Autoload\\ClassLoader->loadClass()
+#3 [internal function]: spl_autoload_call()
+#4 /media/salah/Software/projects/veroo/vendor/barryvdh/laravel-ide-helper/src/Console/ModelsCommand.php(251): class_exists()
+#5 /media/salah/Software/projects/veroo/vendor/barryvdh/laravel-ide-helper/src/Console/ModelsCommand.php(159): Barryvdh\\LaravelIdeHelper\\Console\\ModelsCommand->generateDocs()
+#6 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): Barryvdh\\LaravelIdeHelper\\Console\\ModelsCommand->handle()
+#7 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Container/Util.php(37): Illuminate\\Container\\BoundMethod::Illuminate\\Container\\{closure}()
+#8 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(93): Illuminate\\Container\\Util::unwrapIfClosure()
+#9 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(37): Illuminate\\Container\\BoundMethod::callBoundMethod()
+#10 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Container/Container.php(596): Illuminate\\Container\\BoundMethod::call()
+#11 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Console/Command.php(134): Illuminate\\Container\\Container->call()
+#12 /media/salah/Software/projects/veroo/vendor/symfony/console/Command/Command.php(298): Illuminate\\Console\\Command->execute()
+#13 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Console/Command.php(121): Symfony\\Component\\Console\\Command\\Command->run()
+#14 /media/salah/Software/projects/veroo/vendor/symfony/console/Application.php(1040): Illuminate\\Console\\Command->run()
+#15 /media/salah/Software/projects/veroo/vendor/symfony/console/Application.php(301): Symfony\\Component\\Console\\Application->doRunCommand()
+#16 /media/salah/Software/projects/veroo/vendor/symfony/console/Application.php(171): Symfony\\Component\\Console\\Application->doRun()
+#17 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Console/Application.php(93): Symfony\\Component\\Console\\Application->run()
+#18 /media/salah/Software/projects/veroo/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(129): Illuminate\\Console\\Application->run()
+#19 /media/salah/Software/projects/veroo/artisan(37): Illuminate\\Foundation\\Console\\Kernel->handle()
+#20 {main}
+"} 
+[2025-04-15 16:37:00] local.ERROR: Cannot use empty array elements in arrays {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Cannot use empty array elements in arrays at /media/salah/Software/projects/veroo/app/Services/Api/OddoService.php:216)
+[stacktrace]
+#0 {main}
+"} 
+[2025-04-15 16:43:09] local.ERROR: Cannot use empty array elements in arrays {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Cannot use empty array elements in arrays at /media/salah/Software/projects/veroo/app/Services/Api/OddoService.php:220)
+[stacktrace]
+#0 {main}
+"} 

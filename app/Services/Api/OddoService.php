@@ -1,6 +1,7 @@
 <?php
 namespace App\Services\Api;
 
+use App\Helpers\HArr;
 use App\Models\Contract;
 use App\Models\CustomerInvoice;
 use App\Models\Partner;
@@ -83,7 +84,7 @@ class OddoService
 			return ;
 		}
 		$invoices = $this->getInvoices($startDate,$endDate);
-		// dd($invoices);
+		dd($invoices);
 		$companyId = $this->company_id;
 		foreach($invoices as $invoice){
 		
@@ -126,14 +127,12 @@ class OddoService
 				'date', //end date
 			]
 		]);
-		// dd($projects);
 		foreach($projects as $projectArr){
 			$projectAmount = 0 ;
 			$modelType = 'Customer';
 			$currentProjectStartDate = isset($projectArr['date_start']) && $projectArr['date_start'] ? $projectArr['date_start'] :  now()->format('Y-m-d') ;
 			$currentProjectEndDate = isset($projectArr['date']) && $projectArr['date'] ? $projectArr['date'] : now()->format('Y-m-d') ;
 			$currentOddoProjectId = $projectArr['id'];
-			// dd($projectArr);
 			$currentOddoCustomerId = $projectArr['partner_id'][0]??null ;
 			if(is_null($currentOddoCustomerId)){
 				continue;
@@ -215,11 +214,11 @@ class OddoService
 	protected function getInvoices(string $startDate,string $endDate)
 	{
 		$fields = $this->getInvoicesFieldNames();
-		$filter = array(array(array('move_type', 'in', ['in_invoice','out_invoice']),array('state', '=', 'posted'),
-			array('date', '>=', $startDate),
-			array('date', '<=', $endDate)
-			// ,['name','=','INV/2025/00015']
-			// ,['name','=','INV/2025/00023']
+		$filter = array(array(array('move_type', 'in', ['in_invoice','out_invoice'])
+		,array('state', '=', 'posted'),
+			array('write_date', '>=', $startDate),
+			array('write_date', '<=', $endDate)
+			// ,['name','=','INV/2025/00004']
 		));
 		$ids=$this->models->execute_kw($this->db, $this->uid, $this->password, 'account.move', 'search',$filter, );
 	
@@ -249,8 +248,10 @@ class OddoService
 			'date',
 			'invoice_currency_rate',//exchange rate
 			'invoice_origin' ,// so_number
-			'create_date',
-			'write_date'
+			// 'create_date',
+			'write_date',
+			// 'active',
+			'state'
 		];
 	}
 	
@@ -585,7 +586,6 @@ class OddoService
             );
 		
 			if ($invoiceAfter[0]['payment_state'] !== 'paid') {
-				dd($invoiceAfter);
                 Log::error("Reconciliation failed: payment_state is {$invoiceAfter[0]['payment_state']}");
                 return response()->json(['error' => 'Reconciliation failed, invoice not marked as paid'], 500);
             }
@@ -595,6 +595,30 @@ class OddoService
 		
 		
     }
+	public function syncDeletedInvoices(int $companyId)
+	{
+		$customerInvoices  = CustomerInvoice::where('company_id',$companyId)->where('oddo_id','>',0)->get();
+		$supplierInvoices  = SupplierInvoice::where('company_id',$companyId)->where('oddo_id','>',0)->get();
+		
+		$startDate = now()->subDays(360)->format('Y-m-d');
+		$endDate = now()->format('Y-m-d');
+		$deletedIds= [];
+		$odooInvoicesIds = array_column($this->getInvoices($startDate,$endDate),'id');
+		foreach([$customerInvoices,$supplierInvoices] as $invoices){
+			foreach($invoices as $invoice){
+				$invoiceOdooId = $invoice->getOdooId();
+				if(!in_array($invoiceOdooId,$odooInvoicesIds)){
+					$deletedIds[] = [
+						'id'=>$invoiceOdooId,
+						'type'=>getModelNameWithoutNamespace($invoice)
+					];
+					$invoice->delete();
+				}
+			}
+			
+		}
+		dd($deletedIds);
+	}
 	
 
 
