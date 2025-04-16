@@ -8,11 +8,11 @@ begin
 	
 		set new.created_at = CURRENT_TIMESTAMP;
 		if new.source = "lg-facility" then 
-		select date , end_balance  into _previous_date,_last_end_balance  from letter_of_guarantee_statements where company_id = new.company_id and currency = new.currency and lg_facility_id = new.lg_facility_id and financial_institution_id = new.financial_institution_id and source = new.source and lg_type = new.lg_type  and  full_date < new.full_date   order by full_date desc , id desc limit 1 ;
-		select  count(*) into _count_all_rows from letter_of_guarantee_statements where company_id = new.company_id and currency = new.currency and lg_facility_id = new.lg_facility_id  and lg_type = new.lg_type and financial_institution_id = new.financial_institution_id and source = new.source and full_date < new.full_date   order by full_date desc , id desc limit 1 ;
+		select date , end_balance  into _previous_date,_last_end_balance  from letter_of_guarantee_statements where company_id = new.company_id and currency = new.currency and lg_facility_id = new.lg_facility_id and financial_institution_id = new.financial_institution_id and source = new.source and lg_type = new.lg_type  and  date <= new.date   order by date desc , id desc limit 1 ;
+		select  count(*) into _count_all_rows from letter_of_guarantee_statements where company_id = new.company_id and currency = new.currency and lg_facility_id = new.lg_facility_id  and lg_type = new.lg_type and financial_institution_id = new.financial_institution_id and source = new.source and date <= new.date   order by date desc , id desc limit 1 ;
 		else
-		select date , end_balance  into _previous_date,_last_end_balance  from letter_of_guarantee_statements where company_id = new.company_id and currency = new.currency and financial_institution_id = new.financial_institution_id and source = new.source and lg_type = new.lg_type  and  full_date < new.full_date   order by full_date desc , id desc limit 1 ;
-		select  count(*) into _count_all_rows from letter_of_guarantee_statements where company_id = new.company_id and currency = new.currency  and lg_type = new.lg_type and financial_institution_id = new.financial_institution_id and source = new.source and full_date < new.full_date   order by full_date desc , id desc limit 1 ;
+		select date , end_balance  into _previous_date,_last_end_balance  from letter_of_guarantee_statements where company_id = new.company_id and currency = new.currency and financial_institution_id = new.financial_institution_id and source = new.source and lg_type = new.lg_type  and  date <= new.date   order by date desc , id desc limit 1 ;
+		select  count(*) into _count_all_rows from letter_of_guarantee_statements where company_id = new.company_id and currency = new.currency  and lg_type = new.lg_type and financial_institution_id = new.financial_institution_id and source = new.source and date <= new.date   order by date desc , id desc limit 1 ;
 		end if ; 
 					
 		
@@ -34,9 +34,25 @@ begin
 		declare _count_all_rows integer default 0 ; 
 		
 		if new.source = "lg-facility" then 
-				select date,end_balance into _previous_date, _last_end_balance  from letter_of_guarantee_statements where company_id = new.company_id and lg_facility_id = new.lg_facility_id  and financial_institution_id = new.financial_institution_id and source = new.source and lg_type = new.lg_type and currency = new.currency and full_date < new.full_date order by full_date desc , id desc limit 1 ;
+				select date,end_balance into _previous_date, _last_end_balance  from letter_of_guarantee_statements where company_id = new.company_id and lg_facility_id = new.lg_facility_id  and financial_institution_id = new.financial_institution_id and source = new.source and lg_type = new.lg_type and currency = new.currency  and date = new.date and id < new.id order by date desc , id desc limit 1 ;
+				if  (_previous_date)
+			then
+				select date,end_balance into _previous_date, _last_end_balance  from letter_of_guarantee_statements where company_id = new.company_id and lg_facility_id = new.lg_facility_id  and financial_institution_id = new.financial_institution_id and source = new.source and lg_type = new.lg_type and currency = new.currency  and date = new.date and id < new.id order by date desc , id desc limit 1 ;
+			else 
+				select date,end_balance into _previous_date, _last_end_balance  from letter_of_guarantee_statements where company_id = new.company_id and lg_facility_id = new.lg_facility_id  and financial_institution_id = new.financial_institution_id and source = new.source and lg_type = new.lg_type and currency = new.currency  and date < new.date order by date desc , id desc limit 1  ;
+					 
+			end if ;
+				
+				
 else
-				select date,end_balance into _previous_date, _last_end_balance  from letter_of_guarantee_statements where company_id = new.company_id  and financial_institution_id = new.financial_institution_id and source = new.source and lg_type = new.lg_type and currency = new.currency and full_date < new.full_date order by full_date desc , id desc limit 1 ;
+				select date,end_balance into _previous_date, _last_end_balance  from letter_of_guarantee_statements where company_id = new.company_id  and financial_institution_id = new.financial_institution_id and source = new.source and lg_type = new.lg_type and currency = new.currency  and date = new.date and id < new.id order by date desc , id desc limit 1 ;
+				
+				if  (_previous_date)
+			then
+				select date,end_balance into _previous_date, _last_end_balance  from letter_of_guarantee_statements where company_id = new.company_id  and financial_institution_id = new.financial_institution_id and source = new.source and lg_type = new.lg_type and currency = new.currency  and date = new.date and id < new.id order by date desc , id desc limit 1 ;
+			else 
+				select date,end_balance into _previous_date, _last_end_balance  from letter_of_guarantee_statements where company_id = new.company_id  and financial_institution_id = new.financial_institution_id and source = new.source and lg_type = new.lg_type and currency = new.currency  and date < new.date order by date desc , id desc limit 1  ;
+			end if ;
 end if ; 
 		
 		set _count_all_rows =1 ;
@@ -45,3 +61,14 @@ end if ;
 	set new.end_balance = new.beginning_balance + new.debit - new.credit ; 
 	
 end //
+ delimiter ; 
+drop trigger if exists refresh_calculation_before_delete_letter_of_gs ;
+  delimiter //  
+  
+create  trigger refresh_calculation_before_delete_letter_of_gs before delete on `letter_of_guarantee_statements` for each row 
+begin 
+	delete from `temp_deleted_statements` where company_id = old.company_id and table_name = 'letter_of_guarantee_statements';
+	insert into `temp_deleted_statements` (company_id,table_name,deleted_id) values (old.company_id,'letter_of_guarantee_statements',old.id);
+end //
+ delimiter ; 
+ 

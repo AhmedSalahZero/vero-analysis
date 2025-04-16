@@ -12,8 +12,8 @@
 						declare highest_debit_balance_text varchar(100) default 'highest_debit_balance';
 						-- في حالة الانشاء
 						set new.created_at = CURRENT_TIMESTAMP;
-						select date , end_balance  into _previous_date,_last_end_balance  from lc_overdraft_bank_statements where  source = new.source and lc_overdraft_bank_statements.lc_facility_id = new.lc_facility_id  and full_date < new.full_date order by full_date desc , id desc limit 1 ; -- رتبت بالاي دي الاكبر علشان  لو كانوا متساوين في التاريخ بالظبط (ودا احتمال ضعيف ) ياخد اللي ال اي دي بتاعه اكبر
-						select  count(*) into _count_all_rows from lc_overdraft_bank_statements where  source = new.source and lc_overdraft_bank_statements.lc_facility_id = new.lc_facility_id and full_date < new.full_date ;
+						select date , end_balance  into _previous_date,_last_end_balance  from lc_overdraft_bank_statements where  source = new.source and lc_overdraft_bank_statements.lc_facility_id = new.lc_facility_id  and date <= new.date order by date desc , id desc limit 1 ; -- رتبت بالاي دي الاكبر علشان  لو كانوا متساوين في التاريخ بالظبط (ودا احتمال ضعيف ) ياخد اللي ال اي دي بتاعه اكبر
+						select  count(*) into _count_all_rows from lc_overdraft_bank_statements where  source = new.source and lc_overdraft_bank_statements.lc_facility_id = new.lc_facility_id and date <= new.date ;
 					set new.beginning_balance = if(_count_all_rows,_last_end_balance,ifnull(new.beginning_balance,0)); 
 					set new.end_balance = new.beginning_balance + new.debit - new.credit ; 
 					set new.room = new.limit +  new.end_balance ;
@@ -48,7 +48,7 @@
 				drop trigger if exists  refresh_calculation_before_update_lc_overdraft ;
 				drop procedure if exists resettlement_lc_overdraft_from ;
 				delimiter // 
-				create procedure resettlement_lc_overdraft_from(in _type varchar(255),in _start_update_from_date_time date , in _lc_issuance_id integer,in _lc_facility_id integer , in _current_company_id integer , in _source varchar(255) )
+				create procedure resettlement_lc_overdraft_from(in _type varchar(255),in _lc_issuance_id integer,in _lc_facility_id integer , in _current_company_id integer , in _source varchar(255) )
 				begin 
 					declare _current_debit decimal(14,2) default 0 ;
 					declare _total_settlements decimal(14,2) default 0 ;
@@ -61,12 +61,12 @@
 				delimiter ;
 				drop procedure if exists reverse_lc_overdraft_settlements ;
 				delimiter // 
-				create procedure reverse_lc_overdraft_settlements(in _start_update_from_date_time date  , in _lc_facility_id integer )
+				create procedure reverse_lc_overdraft_settlements(in _start_update_from_date date  , in _lc_facility_id integer )
 				begin 
 					-- declare i INTEGER DEFAULT 0 ;
 				--	declare _lc_overdraft_withdrawal_id integer default 0 ;
 				-- هنجيب كل السحوبات اللي تاريخها اكبر من تاريخ الاغلاق لان اللي تاريخها اصغر من او يساوي تاريخ الاغلاق مش هنقدر نيجي يمها
-					update lc_overdraft_withdrawals set net_balance = net_balance + settlement_amount , settlement_amount = 0 where due_date > _start_update_from_date_time  and lc_overdraft_withdrawals.lc_facility_id = _lc_facility_id ;
+					update lc_overdraft_withdrawals set net_balance = net_balance + settlement_amount , settlement_amount = 0 where due_date > _start_update_from_date  and lc_overdraft_withdrawals.lc_facility_id = _lc_facility_id ;
 				end //
 				
 				delimiter ; 
@@ -78,7 +78,7 @@
 						declare _current_debit decimal(14,2) default 0 ;
 						declare _total_settlements decimal(14,2) default 0 ;
 						declare _last_end_balance decimal(14,2) default 0 ;
-						declare _start_update_from_date_time date default '2000-01-01' ;
+						declare _start_update_from_date date default '2000-01-01' ;
 						declare _previous_date date default null ;
 						declare _last_bank_statement_date_to_start_settlement_from datetime default null ;
 						declare _current_interest_rate decimal(5,2) default 0 ;
@@ -98,7 +98,16 @@
 							declare _lc_overdraft_to_be_settled_after integer default 0 ;
 							declare interest_type_text varchar(100) default 'interest';
 							declare highest_debit_balance_text varchar(100) default 'highest_debit_balance';
-						select date,end_balance,id into _previous_date, _last_end_balance,_last_id  from lc_overdraft_bank_statements where  lc_overdraft_bank_statements.lc_facility_id = new.lc_facility_id and source = new.source and full_date < new.full_date order by full_date desc , id desc  limit 1 ; -- رتبت بالاي دي الاكبر علشان  لو كانوا متساوين في التاريخ بالظبط (ودا احتمال ضعيف ) ياخد اللي ال اي دي بتاعه اكبر
+						select date,end_balance,id into _previous_date, _last_end_balance,_last_id  from lc_overdraft_bank_statements where  lc_overdraft_bank_statements.lc_facility_id = new.lc_facility_id and source = new.source and date = new.date and id < new.id order by date desc , id desc limit 1 ; -- رتبت بالاي دي الاكبر علشان  لو كانوا متساوين في التاريخ بالظبط (ودا احتمال ضعيف ) ياخد اللي ال اي دي بتاعه اكبر
+						if  (_previous_date)
+			then
+						select date,end_balance,id into _previous_date, _last_end_balance,_last_id  from lc_overdraft_bank_statements where  lc_overdraft_bank_statements.lc_facility_id = new.lc_facility_id and source = new.source and date = new.date and id < new.id order by date desc , id desc limit 1 ; -- رتبت بالاي دي الاكبر علشان  لو كانوا متساوين في التاريخ بالظبط (ودا احتمال ضعيف ) ياخد اللي ال اي دي بتاعه اكبر
+			  
+			else 
+					
+						select date,end_balance,id into _previous_date, _last_end_balance,_last_id  from lc_overdraft_bank_statements where  lc_overdraft_bank_statements.lc_facility_id = new.lc_facility_id and source = new.source and date < new.date order by date desc , id desc limit 1  ;  -- رتبت بالاي دي الاكبر علشان  لو كانوا متساوين في التاريخ بالظبط (ودا احتمال ضعيف ) ياخد اللي ال اي دي بتاعه اكبر
+			end if ;
+						
 						set _count_all_rows =1 ;
 					set new.beginning_balance = if(_count_all_rows,_last_end_balance,ifnull(new.beginning_balance,0)) ;
 					
@@ -135,16 +144,16 @@
 					-- هنجيب اخر اي دي للحساب دا لان من عندة هنبدا نسدد من اول وجديد 
 					-- هنجيب اللي الدبت اكبر من الصفر علشان احنا هنسدد وبالتالي عايزين القيم اللي فيها دبنت
 						-- لو العنصر دا اللي بنحدث حاليا هو اخر عنصر هنبدا ال السايكل بتاعت اعادة توزيع التسديدات لكل العناصر من اول عنصر اتغير 
-							select full_date into _last_bank_statement_date_to_start_settlement_from from lc_overdraft_bank_statements where lc_overdraft_bank_statements.lc_facility_id = new.lc_facility_id order by full_date desc , priority asc , id asc limit 1 ; 
-							select oldest_full_date into _start_update_from_date_time from letter_of_credit_facilities where id = new.lc_facility_id  ; 
+							select full_date into _last_bank_statement_date_to_start_settlement_from from lc_overdraft_bank_statements where lc_overdraft_bank_statements.lc_facility_id = new.lc_facility_id order by date desc , priority asc , id asc limit 1 ; 
+							select oldest_date into _start_update_from_date from letter_of_credit_facilities where id = new.lc_facility_id  ; 
 							-- عايزين بدل السطر اللي فوق نجيب ال closing date 
 						
 					if(_last_bank_statement_date_to_start_settlement_from = new.full_date) then 		
 						select sum(debit) into _current_debit from lc_overdraft_bank_statements where lc_overdraft_bank_statements.lc_facility_id = new.lc_facility_id and is_debit > 0  and source = new.source   ;
 						select sum(settlement_amount) into _total_settlements from lc_overdraft_withdrawals where lc_overdraft_withdrawals.lc_facility_id =  new.lc_facility_id ;
 						set _current_debit = _current_debit - _total_settlements ;
-							call reverse_lc_overdraft_settlements(_start_update_from_date_time,new.lc_facility_id);	
-							call resettlement_lc_overdraft_from(new.type,_start_update_from_date_time,new.lc_issuance_id,new.lc_facility_id,new.company_id,new.source);
+							call reverse_lc_overdraft_settlements(_start_update_from_date,new.lc_facility_id);	
+							call resettlement_lc_overdraft_from(new.type,new.lc_issuance_id,new.lc_facility_id,new.company_id,new.source);
 					end if;
 					
 				
@@ -299,3 +308,14 @@
 				-- call recalculate_end_of_month_lc_overdraft_interests();
 				END$$
 				
+ delimiter ; 
+drop trigger if exists refresh_calculation_before_delete_lc_over_statements ;
+  delimiter //  
+  
+create  trigger refresh_calculation_before_delete_lc_over_statements before delete on `lc_overdraft_bank_statements` for each row 
+begin 
+	delete from `temp_deleted_statements` where company_id = old.company_id and table_name = 'lc_overdraft_bank_statements';
+	insert into `temp_deleted_statements` (company_id,table_name,deleted_id) values (old.company_id,'lc_overdraft_bank_statements',old.id);
+end //
+ delimiter ; 
+ 

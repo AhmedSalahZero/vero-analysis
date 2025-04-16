@@ -29,7 +29,7 @@ class LcOverdraftBankStatement extends Model
 	{
 		$minDate  = $model->full_date ;
 		DB::table('letter_of_credit_facilities')->where('id',$model->lc_facility_id)->update([
-			'oldest_full_date'=>$minDate,
+			'oldest_date'=>$minDate,
 		]);
 		/**
 		 * * ليه بنستخدم ال 
@@ -40,8 +40,8 @@ class LcOverdraftBankStatement extends Model
 		 */
 		$tableName = (new self)->getTable();
 		 DB::table($tableName)
-		->where('full_date','>=',$minDate)
-		->orderByRaw('full_date asc , priority asc , id asc')
+		->where('date','>=',$minDate)
+		->orderByRaw('date asc , priority asc , id asc')
 		->where($tableName.'.lc_facility_id',$model->lc_facility_id)
 		->each(function($lcOverdraftBankStatement) use($tableName){
 			DB::table($tableName)->where('id',$lcOverdraftBankStatement->id)->update([
@@ -59,6 +59,14 @@ class LcOverdraftBankStatement extends Model
 				$date = $model->date ;
 				$time  = now()->format('H:i:s');
 				$fullDateTime = date('Y-m-d H:i:s', strtotime("$date $time")) ;
+				
+				$row = DB::table('temp_deleted_statements')->where('company_id',$model->company_id)->where('table_name','lc_overdraft_bank_statements')->first();
+				
+				if($row){
+					$model->id = $row->deleted_id;
+					DB::table('temp_deleted_statements')->where('company_id',$model->company_id)->where('table_name','lc_overdraft_bank_statements')->delete();
+				}
+				
 				/**
 				 * * دي علشان لو ليهم نفس التاريخ والوقت بالظبط يزود ثانيه علي التاريخ القديم
 				 */
@@ -94,8 +102,8 @@ class LcOverdraftBankStatement extends Model
 						// وتلقائي هيحذف السحوبات settlements
 					}else{
 						DB::table($tableName)
-						->where('full_date','>=',$minDate)
-						->orderByRaw('full_date asc , priority asc , id asc')
+						->where('date','>=',$minDate)
+						->orderByRaw('date asc , priority asc , id asc')
 						->where('lc_facility_id',$model->lc_facility_id)->update([
 							'updated_at'=>now()
 						]);
@@ -112,13 +120,13 @@ class LcOverdraftBankStatement extends Model
 				
 				if($lcOverdraftBankStatement->is_debit && Request('receiving_date')||$lcOverdraftBankStatement->is_credit && Request('delivery_date')){
 						$oldDate = Carbon::make(Request('receiving_date',Request('delivery_date')))->format('Y-m-d');
-						$time  = now()->format('H:i:s');
-						$oldDate = date('Y-m-d H:i:s', strtotime("$oldDate $time")) ;
-						$currentDate = $lcOverdraftBankStatement->full_date ;
-						$lcOverdraftBankStatement->full_date = min($oldDate,$currentDate);
+						// $time  = now()->format('H:i:s');
+						// $oldDate = date('Y-m-d H:i:s', strtotime("$oldDate $time")) ;
+						$currentDate = $lcOverdraftBankStatement->date ;
+						$lcOverdraftBankStatement->date = min($oldDate,$currentDate);
 				}
 				DB::table('letter_of_credit_facilities')->where('id',$lcOverdraftBankStatement->lc_facility_id)->update([
-					'oldest_full_date'=>$lcOverdraftBankStatement->full_date,
+					'oldest_date'=>$lcOverdraftBankStatement->date,
 					// 'origin_update_row_is_debit'=>$lcOverdraftBankStatement->is_debit
 				]);
 				

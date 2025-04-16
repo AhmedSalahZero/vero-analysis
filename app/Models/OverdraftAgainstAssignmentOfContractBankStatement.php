@@ -19,9 +19,9 @@ class OverdraftAgainstAssignmentOfContractBankStatement extends Model
 	public $oldFullDate = null;
 	public static function updateNextRows(self $model):string 
 	{
-		$minDate  = $model->full_date ;
+		$minDate  = $model->date ;
 		DB::table('overdraft_against_assignment_of_contracts')->where('id',$model->overdraft_against_assignment_of_contract_id)->update([
-			'oldest_full_date'=>$minDate,
+			'oldest_date'=>$minDate,
 		]);
 	
 		
@@ -34,8 +34,8 @@ class OverdraftAgainstAssignmentOfContractBankStatement extends Model
 		 */
 		$tableName = (new self)->getTable();
 		 DB::table($tableName)
-		->where('full_date','>=',$minDate)
-		->orderByRaw('full_date asc , priority asc , id asc')
+		->where('date','>=',$minDate)
+		->orderByRaw('date asc , priority asc , id asc')
 		->where('overdraft_against_assignment_of_contract_id',$model->overdraft_against_assignment_of_contract_id)
 		->each(function($odAgainstAssignmentOfContractBankStatement) use($tableName){
 			DB::table($tableName)->where('id',$odAgainstAssignmentOfContractBankStatement->id) 
@@ -53,6 +53,12 @@ class OverdraftAgainstAssignmentOfContractBankStatement extends Model
 			static::creating(function(self $model){
 				$model->created_at = now();
 				$date = $model->date ;
+				$row = DB::table('temp_deleted_statements')->where('company_id',$model->company_id)->where('table_name','overdraft_against_assignment_of_contract_bank_statements')->first();
+				if($row){
+					$model->id = $row->deleted_id;
+					DB::table('temp_deleted_statements')->where('company_id',$model->company_id)->where('table_name','overdraft_against_assignment_of_contract_bank_statements')->delete();
+				}
+				
 				$time  = now()->format('H:i:s');
 				$fullDateTime = date('Y-m-d H:i:s', strtotime("$date $time")) ;
 				/**
@@ -92,8 +98,8 @@ class OverdraftAgainstAssignmentOfContractBankStatement extends Model
 						// وتلقائي هيحذف السحوبات settlements
 					}else{
 						DB::table($tableName)
-						->where('full_date','>=',$minDate)
-						->orderByRaw('full_date asc , priority asc , id asc')
+						->where('date','>=',$minDate)
+						->orderByRaw('date asc , priority asc , id asc')
 						->where('overdraft_against_assignment_of_contract_id',$model->overdraft_against_assignment_of_contract_id)->update([
 							'updated_at'=>now()
 						]);
@@ -108,13 +114,13 @@ class OverdraftAgainstAssignmentOfContractBankStatement extends Model
 				$oldDate = null ;
 				if($odAgainstAssignmentOfContractBankStatement->is_debit && Request('receiving_date')||$odAgainstAssignmentOfContractBankStatement->is_credit && Request('delivery_date')){
 						$oldDate = Carbon::make(Request('receiving_date',Request('delivery_date')))->format('Y-m-d');
-						$time  = now()->format('H:i:s');
-						$oldDate = date('Y-m-d H:i:s', strtotime("$oldDate $time")) ;
-						$currentDate = $odAgainstAssignmentOfContractBankStatement->full_date ;
-						$odAgainstAssignmentOfContractBankStatement->full_date = min($oldDate,$currentDate);
+						// $time  = now()->format('H:i:s');
+						// $oldDate = date('Y-m-d H:i:s', strtotime("$oldDate $time")) ;
+						$currentDate = $odAgainstAssignmentOfContractBankStatement->date ;
+						$odAgainstAssignmentOfContractBankStatement->date = min($oldDate,$currentDate);
 				}
 				DB::table('overdraft_against_assignment_of_contracts')->where('id',$odAgainstAssignmentOfContractBankStatement->overdraft_against_assignment_of_contract_id)->update([
-					'oldest_full_date'=>$odAgainstAssignmentOfContractBankStatement->full_date
+					'oldest_date'=>$odAgainstAssignmentOfContractBankStatement->date
 				]);
 				
 				$odAgainstAssignmentOfContractBankStatement->debit = 0;

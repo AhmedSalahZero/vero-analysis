@@ -195,7 +195,7 @@
 					-- select full_date into _last_bank_statement_date from overdraft_against_commercial_paper_bank_statements where overdraft_against_commercial_paper_id = new.overdraft_against_commercial_paper_id and debit > 0 order by full_date desc limit 1 ;
 						-- لو العنصر دا اللي بنحدث حاليا هو اخر عنصر هنبدا ال السايكل بتاعت اعادة توزيع التسديدات لكل العناصر من اول عنصر اتغير 
 							-- select full_date  into _last_bank_statement_date_to_start_settlement_from from overdraft_against_commercial_paper_bank_statements where overdraft_against_commercial_paper_id = new.overdraft_against_commercial_paper_id order by full_date desc , priority asc limit 1 ;
-							select full_date into _last_bank_statement_date_to_start_settlement_from from overdraft_against_commercial_paper_bank_statements where overdraft_against_commercial_paper_id = new.overdraft_against_commercial_paper_id order by full_date desc , priority asc , id asc limit 1 ; 
+							select full_date into _last_bank_statement_date_to_start_settlement_from from overdraft_against_commercial_paper_bank_statements where overdraft_against_commercial_paper_id = new.overdraft_against_commercial_paper_id order by date desc , priority asc , id asc limit 1 ; 
 							select oldest_full_date,origin_update_row_is_debit into _start_update_from_date_time,_origin_update_row_is_debit from overdraft_against_commercial_papers where id = new.overdraft_against_commercial_paper_id  ; 
 			--				select start_settlement_from_bank_statement_date into _last_bank_statement_date_to_start_settlement_from from overdraft_against_commercial_papers where id = new.overdraft_against_commercial_paper_id ; 
 							-- عايزين بدل السطر اللي فوق نجيب ال closing date 

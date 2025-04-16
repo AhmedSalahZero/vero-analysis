@@ -20,11 +20,11 @@ class FullySecuredOverdraftBankStatement extends Model
 	public $oldFullDate = null;
 	public static function updateNextRows(self $model):string 
 	{
-		$minDate  = $model->full_date ;
+		$minDate  = $model->date ;
 		
 		DB::table('fully_secured_overdrafts')->where('id',$model->fully_secured_overdraft_id)->update([
-			'oldest_full_date'=>$minDate,
-			'origin_update_row_is_debit'=>$model->is_debit  
+			'oldest_date'=>$minDate,
+			// 'origin_update_row_is_debit'=>$model->is_debit  
 		]);
 		
 		/**
@@ -36,8 +36,8 @@ class FullySecuredOverdraftBankStatement extends Model
 		 */
 		$tableName = (new self)->getTable();
 		 DB::table($tableName)
-		->where('full_date','>=',$minDate)
-		->orderByRaw('full_date asc , priority asc , id asc')
+		->where('date','>=',$minDate)
+		->orderByRaw('date asc , priority asc , id asc')
 		->where('fully_secured_overdraft_id',$model->fully_secured_overdraft_id)
 		->each(function($fullySecuredOverdraftBankStatement) use($tableName){
 			DB::table($tableName)->where('id',$fullySecuredOverdraftBankStatement->id)->update([
@@ -55,6 +55,15 @@ class FullySecuredOverdraftBankStatement extends Model
 				$date = $model->date ;
 				$time  = now()->format('H:i:s');
 				$fullDateTime = date('Y-m-d H:i:s', strtotime("$date $time")) ;
+				
+				
+				$row = DB::table('temp_deleted_statements')->where('company_id',$model->company_id)->where('table_name','fully_secured_overdraft_bank_statements')->first();
+				
+				if($row){
+					$model->id = $row->deleted_id;
+					DB::table('temp_deleted_statements')->where('company_id',$model->company_id)->where('table_name','fully_secured_overdraft_bank_statements')->delete();
+				}
+				
 				/**
 				 * * دي علشان لو ليهم نفس التاريخ والوقت بالظبط يزود ثانيه علي التاريخ القديم
 				 */
@@ -108,14 +117,14 @@ class FullySecuredOverdraftBankStatement extends Model
 				$oldDate = null ;
 				if($fullySecuredOverdraftBankStatement->is_debit && Request('receiving_date')||$fullySecuredOverdraftBankStatement->is_credit && Request('delivery_date')){
 						$oldDate = Carbon::make(Request('receiving_date',Request('delivery_date')))->format('Y-m-d');
-						$time  = now()->format('H:i:s');
-						$oldDate = date('Y-m-d H:i:s', strtotime("$oldDate $time")) ;
-						$currentDate = $fullySecuredOverdraftBankStatement->full_date ;
-						$fullySecuredOverdraftBankStatement->full_date = min($oldDate,$currentDate);
+						// $time  = now()->format('H:i:s');
+						// $oldDate = date('Y-m-d H:i:s', strtotime("$oldDate $time")) ;
+						$currentDate = $fullySecuredOverdraftBankStatement->date ;
+						$fullySecuredOverdraftBankStatement->date = min($oldDate,$currentDate);
 				}
 				DB::table('fully_secured_overdrafts')->where('id',$fullySecuredOverdraftBankStatement->fully_secured_overdraft_id)->update([
-					'oldest_full_date'=>$fullySecuredOverdraftBankStatement->full_date,
-					'origin_update_row_is_debit'=>$fullySecuredOverdraftBankStatement->is_debit
+					'oldest_date'=>$fullySecuredOverdraftBankStatement->date,
+					// 'origin_update_row_is_debit'=>$fullySecuredOverdraftBankStatement->is_debit
 				]);
 				
 				$fullySecuredOverdraftBankStatement->debit = 0;

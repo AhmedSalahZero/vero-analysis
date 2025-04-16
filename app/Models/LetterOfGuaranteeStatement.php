@@ -37,7 +37,7 @@ class LetterOfGuaranteeStatement extends Model
 	}
 	public static function updateNextRows(LetterOfGuaranteeStatement $model):string 
 	{
-		$minDate  = $model->full_date ;
+		$minDate  = $model->date ;
 	
 		
 		/**
@@ -49,8 +49,8 @@ class LetterOfGuaranteeStatement extends Model
 		 */
 
 		 DB::table((new self)->getTable())
-		->where('full_date','>=',$minDate)
-		->orderByRaw('full_date asc , id asc')
+		->where('date','>=',$minDate)
+		->orderByRaw('date asc , id asc')
 		->where('financial_institution_id',$model->financial_institution_id)
 		->where('source',$model->source)
 		->where('lg_facility_id',$model->lg_facility_id)
@@ -72,7 +72,12 @@ class LetterOfGuaranteeStatement extends Model
 				$model->created_at = now();
 				$date = $model->date ;
 				$time  = now()->format('H:i:s');
+				$row = DB::table('temp_deleted_statements')->where('company_id',$model->company_id)->where('table_name','letter_of_guarantee_statements')->first();
 				
+				if($row){
+					$model->id = $row->deleted_id;
+					DB::table('temp_deleted_statements')->where('company_id',$model->company_id)->where('table_name','letter_of_guarantee_statements')->delete();
+				}
 				$fullDateTime = date('Y-m-d H:i:s', strtotime("$date $time")) ;
 				/**
 				 * * دي علشان لو ليهم نفس التاريخ والوقت بالظبط يزود ثانيه علي التاريخ القديم
@@ -129,8 +134,8 @@ class LetterOfGuaranteeStatement extends Model
 						// وتلقائي هيحذف السحوبات settlements
 					}else{
 						DB::table((new self)->getTable())
-						->where('full_date','>=',$minDate)
-						->orderByRaw('full_date asc , id asc')
+						->where('date','>=',$minDate)
+						->orderByRaw('date asc , id asc')
 						->where('lg_facility_id',$model->lg_facility_id)
 						->where('cd_or_td_id',$model->cd_or_td_id)
 						->where('lg_type',$model->lg_type)
@@ -151,10 +156,10 @@ class LetterOfGuaranteeStatement extends Model
 				$oldDate = null ;
 				if($letterOfGuaranteeStatement->is_debit && Request('cancellation_date')||$letterOfGuaranteeStatement->is_credit && Request('issuance_date')){
 						$oldDate = Carbon::make(Request('cancellation_date',Request('issuance_date')))->format('Y-m-d');
-						$time  = now()->format('H:i:s');
-						$oldDate = date('Y-m-d H:i:s', strtotime("$oldDate $time")) ;
-						$currentDate = $letterOfGuaranteeStatement->full_date ;
-						$letterOfGuaranteeStatement->full_date = min($oldDate,$currentDate);
+						// $time  = now()->format('H:i:s');
+						// $oldDate = date('Y-m-d H:i:s', strtotime("$oldDate $time")) ;
+						$currentDate = $letterOfGuaranteeStatement->date ;
+						$letterOfGuaranteeStatement->date = min($oldDate,$currentDate);
 				}
 				$letterOfGuaranteeStatement->debit = 0;
 				$letterOfGuaranteeStatement->credit = 0;
@@ -234,7 +239,7 @@ class LetterOfGuaranteeStatement extends Model
 					->where('currency',$currencyName)
 					->where('lg_type',$lgTypeId)
 					->where('source',$currentSourceId)
-					->orderByRaw('full_date desc')
+					->orderByRaw('date desc,id desc')
 					->first();
 					$letterOfGuaranteeStatementEndBalance = $letterOfGuaranteeStatement ? $letterOfGuaranteeStatement->end_balance : 0 ;
 					$totalLastOutstandingBalanceOfFourTypes += $letterOfGuaranteeStatementEndBalance;
@@ -250,7 +255,7 @@ class LetterOfGuaranteeStatement extends Model
 			->where('financial_institution_id',$financialInstitutionId)
 			->where('currency',$currencyName)
 			->where('lg_type',$lgType)
-			->orderByRaw('full_date desc')
+			->orderByRaw('date desc,id desc')
 			->first();
 			$letterOfGuaranteeStatementEndBalance = $letterOfGuaranteeStatement ? $letterOfGuaranteeStatement->end_balance : 0 ;
 			return abs($letterOfGuaranteeStatementEndBalance);
@@ -272,7 +277,7 @@ class LetterOfGuaranteeStatement extends Model
 						->when($source , function(Builder $builder) use ($source){
 							$builder->where('source',$source);
 						})
-						->orderByRaw('full_date desc')
+						->orderByRaw('date desc,id desc')
 						->first();
 						if(!$rowPerType){
 							continue;
@@ -296,7 +301,7 @@ class LetterOfGuaranteeStatement extends Model
 		->where('date','<=',$date)
 		->where('source',$currentSourceId)
 		->where('lg_type',$currentLgTypeId)
-		->orderByRaw('full_date desc')
+		->orderByRaw('date desc,id desc')
 		->first();
 		
 		if(!$rowPerType){
@@ -318,7 +323,7 @@ class LetterOfGuaranteeStatement extends Model
 				->where('date','<=',$date)
 				->where('source',$currentSourceId)
 				->where('lg_type',$lgTypeId)
-				->orderByRaw('full_date desc')
+				->orderByRaw('date desc,id desc')
 				->first();
 				if(!$rowPerType){continue ;}
 				$currentOutstandingBalance = abs($rowPerType->end_balance) ;
@@ -342,7 +347,7 @@ class LetterOfGuaranteeStatement extends Model
 			->when($source , function(Builder $builder) use ($source){
 				$builder->where('source',$source);
 			})
-			->orderByRaw('full_date desc')
+			->orderByRaw('date desc,id desc')
 			->first();
 			$letterOfGuaranteeCashCoverEndBalance = $letterOfGuaranteeCashCover ? $letterOfGuaranteeCashCover->end_balance : 0 ;
 			$totalLastCashCoverOfFourTypes += $letterOfGuaranteeCashCoverEndBalance;

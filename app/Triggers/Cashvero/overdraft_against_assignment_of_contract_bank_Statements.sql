@@ -17,13 +17,12 @@
 						declare _limit decimal (14,2) default 0 ;
 						-- في حالة الانشاء
 						set new.created_at = CURRENT_TIMESTAMP;
-						select date , end_balance  into _previous_date,_last_end_balance  from overdraft_against_assignment_of_contract_bank_statements where  overdraft_against_assignment_of_contract_id = new.overdraft_against_assignment_of_contract_id and full_date < new.full_date order by full_date desc , id desc limit 1 ; -- رتبت بالاي دي الاكبر علشان  لو كانوا متساوين في التاريخ بالظبط (ودا احتمال ضعيف ) ياخد اللي ال اي دي بتاعه اكبر
-						select  count(*) into _count_all_rows from overdraft_against_assignment_of_contract_bank_statements where  overdraft_against_assignment_of_contract_id = new.overdraft_against_assignment_of_contract_id and full_date < new.full_date ;
+						select date , end_balance  into _previous_date,_last_end_balance  from overdraft_against_assignment_of_contract_bank_statements where  overdraft_against_assignment_of_contract_id = new.overdraft_against_assignment_of_contract_id and date <= new.date order by date desc , id desc limit 1 ; -- رتبت بالاي دي الاكبر علشان  لو كانوا متساوين في التاريخ بالظبط (ودا احتمال ضعيف ) ياخد اللي ال اي دي بتاعه اكبر
+						select  count(*) into _count_all_rows from overdraft_against_assignment_of_contract_bank_statements where  overdraft_against_assignment_of_contract_id = new.overdraft_against_assignment_of_contract_id and date <= new.date ;
 
 					set new.beginning_balance = if(_count_all_rows,_last_end_balance,ifnull(new.beginning_balance,0)); 
 					set new.end_balance = new.beginning_balance + new.debit - new.credit ; 
-					-- call calculate_limit_overdraft_against_contract_bank_statements(new.overdraft_against_assignment_of_contract_id , new.money_received_id , new.full_date , new.company_id,_limit);
-					select `accumulated_limit`   into _accumulated_limit from overdraft_against_assignment_of_contract_limits where is_active = 1 and company_id = new.company_id and overdraft_against_assignment_of_contract_id = new.overdraft_against_assignment_of_contract_id and date(full_date) <=  date(new.full_date)  order by full_date desc limit 1 ;
+					select `accumulated_limit`   into _accumulated_limit from overdraft_against_assignment_of_contract_limits where is_active = 1 and company_id = new.company_id and overdraft_against_assignment_of_contract_id = new.overdraft_against_assignment_of_contract_id and date <=  date  order by date desc , id desc  limit 1 ;
 					select `limit` into _limit from overdraft_against_assignment_of_contracts where id = new.overdraft_against_assignment_of_contract_id limit 1 ;
 					set new.end_balance = ifnull(new.beginning_balance + new.debit - new.credit,0) ; 
 					set _accumulated_limit = least(_limit,_accumulated_limit);
@@ -74,7 +73,7 @@
 				
 				
 				delimiter // 
-				create procedure resettlement_overdraft_against_assignment_of_contract_from(in _type varchar(255),in _start_update_from_date_time date , in _overdraft_against_assignment_of_contract_id integer , in _current_company_id integer  )
+				create procedure resettlement_overdraft_against_assignment_of_contract_from(in _type varchar(255), in _overdraft_against_assignment_of_contract_id integer , in _current_company_id integer  )
 				begin 
 					declare _current_debit decimal(14,2) default 0 ;
 					declare _total_settlements decimal(14,2) default 0 ;
@@ -91,13 +90,13 @@
 				delimiter ;
 				drop procedure if exists reverse_overdraft_against_contract ;
 				delimiter // 
-				create procedure reverse_overdraft_against_contract(in _start_update_from_date_time date  , in _overdraft_against_assignment_of_contract_id integer )
+				create procedure reverse_overdraft_against_contract(in _start_update_from_date date  , in _overdraft_against_assignment_of_contract_id integer )
 				begin 
 				
 					-- declare i INTEGER DEFAULT 0 ;
 				--	declare _overdraft_against_assignment_of_contract_withdrawal_id integer default 0 ;
 				-- هنجيب كل السحوبات اللي تاريخها اكبر من تاريخ الاغلاق لان اللي تاريخها اصغر من او يساوي تاريخ الاغلاق مش هنقدر نيجي يمها
-					update overdraft_against_assignment_of_contract_withdrawals set net_balance = net_balance + settlement_amount , settlement_amount = 0 where due_date > _start_update_from_date_time  and overdraft_against_assignment_of_contract_id = _overdraft_against_assignment_of_contract_id ;
+					update overdraft_against_assignment_of_contract_withdrawals set net_balance = net_balance + settlement_amount , settlement_amount = 0 where due_date > _start_update_from_date  and overdraft_against_assignment_of_contract_id = _overdraft_against_assignment_of_contract_id ;
 				end //
 				
 				delimiter ; 
@@ -109,7 +108,7 @@
 						declare _current_debit decimal(14,2) default 0 ;
 						declare _total_settlements decimal(14,2) default 0 ;
 						declare _last_end_balance decimal(14,2) default 0 ;
-						declare _start_update_from_date_time date default '2000-01-01' ;
+						declare _start_update_from_date date default '2000-01-01' ;
 						declare _previous_date date default null ;
 						declare _last_bank_statement_date_to_start_settlement_from datetime default null ;
 						declare _current_interest_rate decimal(5,2) default 0 ;
@@ -145,12 +144,19 @@
 						
 						
 					end if;
-						select date,end_balance,id into _previous_date, _last_end_balance,_last_id  from overdraft_against_assignment_of_contract_bank_statements where  overdraft_against_assignment_of_contract_id = new.overdraft_against_assignment_of_contract_id and full_date < new.full_date order by full_date desc , id desc  limit 1 ; -- رتبت بالاي دي الاكبر علشان  لو كانوا متساوين في التاريخ بالظبط (ودا احتمال ضعيف ) ياخد اللي ال اي دي بتاعه اكبر
+						select date,end_balance,id into _previous_date, _last_end_balance,_last_id  from overdraft_against_assignment_of_contract_bank_statements where  overdraft_against_assignment_of_contract_id = new.overdraft_against_assignment_of_contract_id and date = new.date and id < new.id order by date desc , id desc limit 1; -- رتبت بالاي دي الاكبر علشان  لو كانوا متساوين في التاريخ بالظبط (ودا احتمال ضعيف ) ياخد اللي ال اي دي بتاعه اكبر
+						if  (_previous_date)
+							then
+						select date,end_balance,id into _previous_date, _last_end_balance,_last_id  from overdraft_against_assignment_of_contract_bank_statements where  overdraft_against_assignment_of_contract_id = new.overdraft_against_assignment_of_contract_id and date = new.date and id < new.id order by date desc , id desc limit 1; -- رتبت بالاي دي الاكبر علشان  لو كانوا متساوين في التاريخ بالظبط (ودا احتمال ضعيف ) ياخد اللي ال اي دي بتاعه اكبر
+							else 
+						select date,end_balance,id into _previous_date, _last_end_balance,_last_id  from overdraft_against_assignment_of_contract_bank_statements where  overdraft_against_assignment_of_contract_id = new.overdraft_against_assignment_of_contract_id and date < new.date order by date desc , id desc limit 1  ;  -- رتبت بالاي دي الاكبر علشان  لو كانوا متساوين في التاريخ بالظبط (ودا احتمال ضعيف ) ياخد اللي ال اي دي بتاعه اكبر
+					
+							end if ;
+						
 						set _count_all_rows =1 ;
 					set new.beginning_balance = if(_count_all_rows,_last_end_balance,ifnull(new.beginning_balance,0)) ;
 					
-								--		call calculate_limit_overdraft_against_contract_bank_statements(new.overdraft_against_assignment_of_contract_id , new.money_received_id , new.full_date , new.company_id,_limit);
-					select `accumulated_limit`  into _accumulated_limit from overdraft_against_assignment_of_contract_limits where is_active = 1 and company_id = new.company_id and overdraft_against_assignment_of_contract_id = new.overdraft_against_assignment_of_contract_id and date(full_date) <=  date(new.full_date)  order by full_date desc limit 1 ;
+					select `accumulated_limit`  into _accumulated_limit from overdraft_against_assignment_of_contract_limits where is_active = 1 and company_id = new.company_id and overdraft_against_assignment_of_contract_id = new.overdraft_against_assignment_of_contract_id and date <=  date  order by date desc , id desc limit 1 ;
 					select `limit` into _limit from overdraft_against_assignment_of_contracts where id = new.overdraft_against_assignment_of_contract_id limit 1 ;
 					set new.end_balance = ifnull(new.beginning_balance + new.debit - new.credit,0) ; 
 					set _accumulated_limit = least(_limit,_accumulated_limit);
@@ -200,13 +206,11 @@
 					-- هنجيب اخر اي دي للحساب دا لان من عندة هنبدا نسدد من اول وجديد 
 					-- هنجيب اللي الدبت اكبر من الصفر علشان احنا هنسدد وبالتالي عايزين القيم اللي فيها دبنت
 					-- select date into _last_bank_statement_date from overdraft_against_assignment_of_contract_bank_statements where overdraft_against_assignment_of_contract_id = new.overdraft_against_assignment_of_contract_id and debit > 0 order by date desc , created_at desc limit 1 ;
-					-- select full_date into _last_bank_statement_date from overdraft_against_assignment_of_contract_bank_statements where overdraft_against_assignment_of_contract_id = new.overdraft_against_assignment_of_contract_id and debit > 0 order by full_date desc limit 1 ;
 						-- لو العنصر دا اللي بنحدث حاليا هو اخر عنصر هنبدا ال السايكل بتاعت اعادة توزيع التسديدات لكل العناصر من اول عنصر اتغير 
-							-- select full_date  into _last_bank_statement_date_to_start_settlement_from from overdraft_against_assignment_of_contract_bank_statements where overdraft_against_assignment_of_contract_id = new.overdraft_against_assignment_of_contract_id order by full_date desc , priority asc limit 1 ;
-							select full_date into _last_bank_statement_date_to_start_settlement_from from overdraft_against_assignment_of_contract_bank_statements where overdraft_against_assignment_of_contract_id = new.overdraft_against_assignment_of_contract_id order by full_date desc , priority asc , id asc limit 1 ; 
-							select oldest_full_date
+							select full_date into _last_bank_statement_date_to_start_settlement_from from overdraft_against_assignment_of_contract_bank_statements where overdraft_against_assignment_of_contract_id = new.overdraft_against_assignment_of_contract_id order by date desc , priority asc , id asc limit 1 ; 
+							select oldest_date
 							-- ,origin_update_row_is_debit
-							 into _start_update_from_date_time
+							 into _start_update_from_date
 							-- ,_origin_update_row_is_debit
 							 from overdraft_against_assignment_of_contracts where id = new.overdraft_against_assignment_of_contract_id  ; 
 			--				select start_settlement_from_bank_statement_date into _last_bank_statement_date_to_start_settlement_from from overdraft_against_assignment_of_contracts where id = new.overdraft_against_assignment_of_contract_id ; 
@@ -220,8 +224,8 @@
 						
 					
 				
-							call reverse_overdraft_against_contract(_start_update_from_date_time,new.overdraft_against_assignment_of_contract_id);	
-							call resettlement_overdraft_against_assignment_of_contract_from(new.type,_start_update_from_date_time,new.overdraft_against_assignment_of_contract_id,new.company_id);
+							call reverse_overdraft_against_contract(_start_update_from_date,new.overdraft_against_assignment_of_contract_id);	
+							call resettlement_overdraft_against_assignment_of_contract_from(new.type,new.overdraft_against_assignment_of_contract_id,new.company_id);
 			
 					end if;
 					
@@ -406,3 +410,15 @@
 				END$$
 				DELIMITER ;
 				
+				
+				 delimiter ; 
+drop trigger if exists refresh_calculation_before_delete_contract_statements ;
+  delimiter //  
+  
+create  trigger refresh_calculation_before_delete_contract_statements before delete on `overdraft_against_assignment_of_contract_bank_statements` for each row 
+begin 
+	delete from `temp_deleted_statements` where company_id = old.company_id and table_name = 'overdraft_against_assignment_of_contract_bank_statements';
+	insert into `temp_deleted_statements` (company_id,table_name,deleted_id) values (old.company_id,'overdraft_against_assignment_of_contract_bank_statements',old.id);
+end //
+ delimiter ; 
+ 

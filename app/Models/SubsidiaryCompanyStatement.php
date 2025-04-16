@@ -36,7 +36,7 @@ class SubsidiaryCompanyStatement extends Model  implements IHaveStatement
 
 	public static function updateNextRows(self $model):string 
 	{
-		$minDate  = $model->full_date ;
+		$minDate  = $model->date ;
 	
 		
 		/**
@@ -48,8 +48,8 @@ class SubsidiaryCompanyStatement extends Model  implements IHaveStatement
 		 */
 
 		 DB::table('subsidiary_company_statements')
-		->where('full_date','>=',$minDate)
-		->orderByRaw('full_date asc , id asc')
+		->where('date','>=',$minDate)
+		->orderByRaw('date asc , id asc')
 		// ->where('financial_institution_account_id',$model->financial_institution_account_id)
 		->each(function($subsidiaryCompanyStatement){
 			DB::table('subsidiary_company_statements')->where('id',$subsidiaryCompanyStatement->id)->update([
@@ -66,6 +66,12 @@ class SubsidiaryCompanyStatement extends Model  implements IHaveStatement
 			static::creating(function(self $model){
 				$model->created_at = now();
 				$date = $model->date ;
+				$row = DB::table('temp_deleted_statements')->where('company_id',$model->company_id)->where('table_name','subsidiary_company_statements')->first();
+				if($row){
+					$model->id = $row->deleted_id;
+					DB::table('temp_deleted_statements')->where('company_id',$model->company_id)->where('table_name','subsidiary_company_statements')->delete();
+				}
+				
 				$time  = now()->format('H:i:s');
 				
 				$fullDateTime = date('Y-m-d H:i:s', strtotime("$date $time")) ;

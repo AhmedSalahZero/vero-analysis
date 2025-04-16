@@ -20,7 +20,7 @@ class LetterOfCreditStatement extends Model
 
 	public static function updateNextRows(LetterOfCreditStatement $model):string 
 	{
-		$minDate  = $model->full_date ;
+		$minDate  = $model->date ;
 	
 		
 		/**
@@ -31,8 +31,8 @@ class LetterOfCreditStatement extends Model
 		 * * ودا غلط مفروض التاريخ الاقل ما بين التاريخ الجديد و القديم للعنصر بحيث دايما يبدا يحدث من عنده
 		 */
 		 DB::table('letter_of_credit_statements')
-		->where('full_date','>=',$minDate)
-		->orderByRaw('full_date asc , id asc')
+		->where('date','>=',$minDate)
+		->orderByRaw('date asc , id asc')
 		->where('financial_institution_id',$model->financial_institution_id)
 		->where('source',$model->source)
 		->where('lc_facility_id',$model->lc_facility_id)
@@ -55,6 +55,13 @@ class LetterOfCreditStatement extends Model
 				$time  = now()->format('H:i:s');
 				
 				$fullDateTime = date('Y-m-d H:i:s', strtotime("$date $time")) ;
+				
+				$row = DB::table('temp_deleted_statements')->where('company_id',$model->company_id)->where('table_name','letter_of_credit_statements')->first();
+				if($row){
+					$model->id = $row->deleted_id;
+					DB::table('temp_deleted_statements')->where('company_id',$model->company_id)->where('table_name','letter_of_credit_statements')->delete();
+				}
+				
 				/**
 				 * * دي علشان لو ليهم نفس التاريخ والوقت بالظبط يزود ثانيه علي التاريخ القديم
 				 */
@@ -108,8 +115,8 @@ class LetterOfCreditStatement extends Model
 						// وتلقائي هيحذف السحوبات settlements
 					}else{
 						DB::table('letter_of_credit_statements')
-						->where('full_date','>=',$minDate)
-						->orderByRaw('full_date asc , id asc')
+						->where('date','>=',$minDate)
+						->orderByRaw('date asc , id asc')
 						->where('lc_facility_id',$model->lc_facility_id)
 						->where('cd_or_td_id',$model->cd_or_td_id)
 						->where('lc_type',$model->lc_type)
@@ -130,10 +137,10 @@ class LetterOfCreditStatement extends Model
 				$oldDate = null ;
 				if($letterOfCreditStatement->is_debit && Request('payment_date')||$letterOfCreditStatement->is_credit && Request('issuance_date')){
 						$oldDate = Carbon::make(Request('payment_date',Request('issuance_date')))->format('Y-m-d');
-						$time  = now()->format('H:i:s');
-						$oldDate = date('Y-m-d H:i:s', strtotime("$oldDate $time")) ;
-						$currentDate = $letterOfCreditStatement->full_date ;
-						$letterOfCreditStatement->full_date = min($oldDate,$currentDate);
+						// $time  = now()->format('H:i:s');
+						// $oldDate = date('Y-m-d H:i:s', strtotime("$oldDate $time")) ;
+						$currentDate = $letterOfCreditStatement->date ;
+						$letterOfCreditStatement->date = min($oldDate,$currentDate);
 				}
 				$letterOfCreditStatement->debit = 0;
 				$letterOfCreditStatement->credit = 0;
@@ -224,7 +231,7 @@ class LetterOfCreditStatement extends Model
 					->where('currency',$currencyName)
 					->where('lc_type',$lcTypeId)
 					->where('source',$currentSourceId)
-					->orderByRaw('full_date desc')
+					->orderByRaw('date desc , id desc')
 					->first();
 					$letterOfCreditStatementEndBalance = $letterOfCreditStatement ? $letterOfCreditStatement->end_balance : 0 ;
 					$totalLastOutstandingBalanceOfFourTypes += $letterOfCreditStatementEndBalance;
@@ -240,7 +247,7 @@ class LetterOfCreditStatement extends Model
 			->where('financial_institution_id',$financialInstitutionId)
 			->where('currency',$currencyName)
 			->where('lc_type',$lcType)
-			->orderByRaw('full_date desc')
+			->orderByRaw('date desc,id desc')
 			->first();
 			$letterOfCreditStatementEndBalance = $letterOfCreditStatement ? $letterOfCreditStatement->end_balance : 0 ;
 			return abs($letterOfCreditStatementEndBalance);
@@ -262,7 +269,7 @@ class LetterOfCreditStatement extends Model
 						->when($source , function(Builder $builder) use ($source){
 							$builder->where('source',$source);
 						})
-						->orderByRaw('full_date desc')
+						->orderByRaw('date desc,id desc')
 						->first();
 						if(!$rowPerType){
 							continue;
@@ -286,7 +293,7 @@ class LetterOfCreditStatement extends Model
 		->where('date','<=',$date)
 		->where('source',$currentSourceId)
 		->where('lc_type',$currentLcTypeId)
-		->orderByRaw('full_date desc')
+		->orderByRaw('date desc,id desc')
 		->first();
 		
 		if(!$rowPerType){
@@ -308,7 +315,7 @@ class LetterOfCreditStatement extends Model
 				->where('date','<=',$date)
 				->where('source',$currentSourceId)
 				->where('lc_type',$lcTypeId)
-				->orderByRaw('full_date desc')
+				->orderByRaw('date desc,id desc')
 				->first();
 				if(!$rowPerType){continue ;}
 				$currentOutstandingBalance = abs($rowPerType->end_balance) ;
@@ -332,7 +339,7 @@ class LetterOfCreditStatement extends Model
 			->when($source , function(Builder $builder) use ($source){
 				$builder->where('source',$source);
 			})
-			->orderByRaw('full_date desc')
+			->orderByRaw('date desc,id desc')
 			->first();
 			$letterOfCreditCashCoverEndBalance = $letterOfCreditCashCover ? $letterOfCreditCashCover->end_balance : 0 ;
 			$totalLastCashCoverOfFourTypes += $letterOfCreditCashCoverEndBalance;
