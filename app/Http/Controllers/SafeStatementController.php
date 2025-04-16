@@ -32,8 +32,7 @@ class SafeStatementController
 		->where('branch_id',$branchId)
 		->where('date','>=',$startDate)
 		->where('date','<=',$endDate)
-		->orderByRaw('date asc , id asc')
-		// ->orderByRaw('full_date asc , created_at asc')
+		->orderByRaw('date desc , id desc')
 		->get();
 			if(!count($results)){
 				return redirect()
