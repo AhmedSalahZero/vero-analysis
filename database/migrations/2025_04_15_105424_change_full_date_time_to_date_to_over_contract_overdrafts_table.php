@@ -5,7 +5,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class ChangeFullDateTimeToDateToLqOverdraftsTable extends Migration
+class ChangeFullDateTimeToDateToOverContractOverdraftsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,7 +14,7 @@ class ChangeFullDateTimeToDateToLqOverdraftsTable extends Migration
      */
     public function up()
     {
-		$tableName = 'overdraft_against_assignment_of_contract_bank_statements';
+		$tableName = 'overdraft_against_assignment_of_contracts';
 		
         Schema::table($tableName, function (Blueprint $table) {
 			$table->renameColumn('oldest_full_date','oldest_date');
