@@ -32,7 +32,8 @@ class Branch extends Model
 	{
 		self::create([
 			'company_id'=>$companyId,
-			'name'=>'Head Office'
+			'name'=>'Head Office',
+			'odoo_id'=>7
 		]);
 	}
 	public function getCurrentEndBalance(int $companyId,?string $currency,$deliveryDate = null ):float
@@ -54,4 +55,5 @@ class Branch extends Model
 		}
 		return $cashInSafeStatement->end_balance;
 	}
+	
 }

@@ -62,7 +62,6 @@
 <div class="row">
     <div class="col-md-12">
         <!--begin::Portlet-->
-
         <form method="post" action="{{ isset($model) ?  route($updateRouteName,['company'=>$company->id,'branch'=>$model->id]) :route($storeRouteName,['company'=>$company->id]) }}" class="kt-form kt-form--label-right">
             <input id="js-in-edit-mode" type="hidden" name="in_edit_mode" value="{{ isset($model) ? 1 : 0 }}">
             <input type="hidden" name="id" value="{{ isset($model) ? $model->id : 0 }}">
@@ -119,6 +118,20 @@
                                                     <input type="text" value="{{ isset($model) ? $model->getName():'' }}" name="name" class="form-control  " placeholder="{{__('Name')}}">
                                                 </div>
                                             </div>
+											
+												@if($company->hasOddoIntegrationCredentials())
+													<div class="col-3	">
+													<label class="form-label font-weight-bold ">{{ __('Odoo Code') }}
+													@include('star')
+													</label>
+													<div class="kt-input-icon">
+														<div class="input-group">
+															<input required placeholder="{{ __('Odoo Code') }}" type="text" class="form-control  exclude-text"  name="odoo_code"  value="{{ isset($model) ? $model->getOdooCode() : old('odoo_code') }}">
+														</div>
+													</div>
+												</div>
+												@endif
+					
 
 
 

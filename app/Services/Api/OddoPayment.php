@@ -37,14 +37,9 @@ class OddoPayment
 		$this->uid = $uid;
     }
 
-    public function createPayment($invoiceId,float $paymentAmount,int $odooCurrencyId,$paymentDate,int $odooPartnerId,string $invoiceNumber,int $journalId,string $inBoundOrOutBound)
+    public function createPayment($currentPayment ,$invoiceId,float $paymentAmount,int $odooCurrencyId,$paymentDate,int $odooPartnerId,string $invoiceNumber,int $journalId,string $inBoundOrOutBound)
     {
        
-
-        try {
-            
-
-
             // Step 2: Register payment using account.payment.register
             $context = [
                 'active_model' => 'account.move',
@@ -69,15 +64,13 @@ class OddoPayment
                 ]],
                 ['context' => $context]
             );
-
+			
+			
             if (!$paymentWizardId) {
                 Log::error("Failed to create payment wizard for invoice {$invoiceNumber}");
                 return response()->json(['error' => 'Failed to create payment wizard'], 500);
             }
 
-            Log::info("Payment wizard created: ID {$paymentWizardId}");
-
-            // Step 3: Create and post payment
             $paymentResult = $this->models->execute_kw(
                 $this->db,
                 $this->uid,
@@ -87,106 +80,110 @@ class OddoPayment
                 [[$paymentWizardId]],
                 ['context' => $context]
             );
-
+			$currentPayment->update([
+				'odoo_id'=>$paymentResult['res_id']
+			]);
 
 
             // Step 4: Find the created payment (optional, for logging)
-            $payments = $this->models->execute_kw(
-                $this->db,
-                $this->uid,
-                $this->password,
-                'account.payment',
-                'search_read',
-                [[
-                    ['ref', '=', "Payment for invoice {$invoiceNumber}"],
-                    ['partner_id', '=', $odooPartnerId],
-                    ['state', '=', 'posted'],
-                ]],
-                ['fields' => ['id', 'amount', 'journal_id']]
-            );
-
-            if (!empty($payments)) {
-                Log::info("Payment found", ['payment' => $payments[0]]);
-            } else {
-                Log::warning("Payment not found after creation, checking invoice state anyway");
-            }
+            // $payments = $this->models->execute_kw(
+            //     $this->db,
+            //     $this->uid,
+            //     $this->password,
+            //     'account.payment',
+            //     'search_read',
+            //     [[
+            //         ['ref', '=', "Payment for invoice {$invoiceNumber}"],
+            //         ['partner_id', '=', $odooPartnerId],
+            //         ['state', '=', 'posted'],
+            //     ]],
+            //     ['fields' => ['id', 'amount', 'journal_id']]
+            // );
+			// dd($payments);
+		// dd($payments);
+        //     if (!empty($payments)) {
+        //         Log::info("Payment found", ['payment' => $payments[0]]);
+        //     } else {
+        //         Log::warning("Payment not found after creation, checking invoice state anyway");
+        //     }
 
             // Step 5: Verify reconciliation
-            $invoiceAfter = $this->models->execute_kw(
-                $this->db,
-                $this->uid,
-                $this->password,
-                'account.move',
-                'read',
-                [[$invoiceId]],
-                ['fields' => ['payment_state', 'amount_residual', 'line_ids']]
-            );
-
-            if ($invoiceAfter[0]['payment_state'] !== 'paid' || $invoiceAfter[0]['amount_residual'] != 0) {
-                Log::error("Reconciliation failed", [
-                    'invoice_id' => $invoiceId,
-                    'payment_state' => $invoiceAfter[0]['payment_state'],
-                    'amount_residual' => $invoiceAfter[0]['amount_residual'],
-                ]);
+            // $invoiceAfter = $this->models->execute_kw(
+            //     $this->db,
+            //     $this->uid,
+            //     $this->password,
+            //     'account.move',
+            //     'read',
+            //     [[$invoiceId]],
+            //     ['fields' => ['payment_state', 'amount_residual', 'line_ids']]
+            // );
+			
+            // if ($invoiceAfter[0]['payment_state'] !== 'paid' || $invoiceAfter[0]['amount_residual'] != 0) {
+                // Log::error("Reconciliation failed", [
+                //     'invoice_id' => $invoiceId,
+                //     'payment_state' => $invoiceAfter[0]['payment_state'],
+                //     'amount_residual' => $invoiceAfter[0]['amount_residual'],
+                // ]);
 
                 // Debug journal items
-                $journalItems = $this->models->execute_kw(
-                    $this->db,
-                    $this->uid,
-                    $this->password,
-                    'account.move.line',
-                    'search_read',
-                    [[['move_id', '=', $invoiceId]]],
-                    ['fields' => ['id', 'account_id', 'balance', 'reconciled', 'partner_id']]
-                );
+                // $journalItems = $this->models->execute_kw(
+                //     $this->db,
+                //     $this->uid,
+                //     $this->password,
+                //     'account.move.line',
+                //     'search_read',
+                //     [[['move_id', '=', $invoiceId]]],
+                //     ['fields' => ['id', 'account_id', 'balance', 'reconciled', 'partner_id']]
+                // );
 
-                Log::info("Invoice journal items", ['items' => $journalItems]);
+                // Log::info("Invoice journal items", ['items' => $journalItems]);
 
-                if (!empty($payments)) {
-                    $paymentItems = $this->models->execute_kw(
-                        $this->db,
-                        $this->uid,
-                        $this->password,
-                        'account.move.line',
-                        'search_read',
-                        [[['payment_id', '=', $payments[0]['id']]]],
-                        ['fields' => ['id', 'account_id', 'balance', 'reconciled', 'partner_id']]
-                    );
-                    Log::info("Payment journal items", ['items' => $paymentItems]);
-                }
+                // if (!empty($payments)) {
+                //     $paymentItems = $this->models->execute_kw(
+                //         $this->db,
+                //         $this->uid,
+                //         $this->password,
+                //         'account.move.line',
+                //         'search_read',
+                //         [[['payment_id', '=', $payments[0]['id']]]],
+                //         ['fields' => ['id', 'account_id', 'balance', 'reconciled', 'partner_id']]
+                //     );
+                //     Log::info("Payment journal items", ['items' => $paymentItems]);
+                // }
 
-                return response()->json(['error' => 'Reconciliation failed, invoice not marked as paid'], 500);
-            }
+                // return response()->json(['error' => 'Reconciliation failed, invoice not marked as paid'], 500);
+            // }
 
-            Log::info("Payment registered and reconciled successfully for invoice {$invoiceNumber}");
+            // Log::info("Payment registered and reconciled successfully for invoice {$invoiceNumber}");
 
             return response()->json(['success' => 'Payment registered and reconciled successfully']);
 
-        } catch (Exception $e) {
-            Log::error("Error in payment registration: " . $e->getMessage(), [
-                'exception' => $e->getTraceAsString(),
-            ]);
-            return response()->json(['error' => 'Error: ' . $e->getMessage()], 500);
-        }
+       
     }
-	public function reCreatePayment(string $invoiceType, $invoiceId,float $paymentAmount,int $odooCurrencyId,$paymentDate,int $odooPartnerId,string $invoiceNumber,int $journalId,string $inBoundOrOutBound)
+	public function reCreatePayment($payment,string $invoiceType, $invoiceId,float $paymentAmount,int $odooCurrencyId,$paymentDate,int $odooPartnerId,string $invoiceNumber,int $journalId,string $inBoundOrOutBound)
     {
-			// $paymentRef = $invoiceNumber;
-			
-		// $paymentRef = $invoiceType === 'customer' ? "Payment for invoice {$invoiceNumber}" : $invoiceNumber;
-		// dd($paymentRef);
+	
+		if($payment->odoo_id){
+			$this->cancelPayments($payment->odoo_id);
+		}
+		$this->createPayment($payment,$invoiceId, $paymentAmount, $odooCurrencyId,$paymentDate, $odooPartnerId, $invoiceNumber, $journalId, $inBoundOrOutBound);
+
+    }
+	public function cancelPayments(int $paymentOdooId)
+	{
+		$filters = [
+				['id','=',$paymentOdooId]
+			// ['name', '=', $paymentRef],
+			// ['memo', '=', $invoiceNumber],
+			// ['partner_id', '=', $odooPartnerId],
+		];
 		$payments = $this->models->execute_kw(
 			$this->db,
 			$this->uid,
 			$this->password,
 			'account.payment',
 			'search_read',
-			[[
-				// ['name', '=', $paymentRef],
-				['memo', '=', $invoiceNumber],
-				['partner_id', '=', $odooPartnerId],
-			]],
-			// ['fields' => ['id', 'state', 'amount','name', 'currency_id', 'journal_id']]
+			[$filters],
 		);
 		/**
 		 * * مش بكون عارف هي انهي مدفوعه بالظبط .. فا بلغيهم كلهم
@@ -201,8 +198,6 @@ class OddoPayment
 				[[$existingPayment['id']]]
 			);
 		}
-		$this->createPayment($invoiceId, $paymentAmount, $odooCurrencyId,$paymentDate, $odooPartnerId, $invoiceNumber, $journalId, $inBoundOrOutBound);
-
-    }
+	}
 	
 }

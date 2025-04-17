@@ -636,13 +636,15 @@ class MoneyPayment extends Model
 	public function deleteRelations()
 	{
 		$oldType = $this->getType();
+		$this->settlements->each(function($settlement){
+			$settlement->delete();
+		});
+		
 		// $this->downPayment ? (new MoneyPaymentController())->destroy(getCurrentCompany(),$this->downPayment) : null ;
 		$oldTypeRelationName = dashesToCamelCase($oldType);
 		// $this->downPayment? $this->downPayment->delete():null;
 		$this->$oldTypeRelationName ? $this->$oldTypeRelationName->delete() : null;
-		$this->settlements->each(function($settlement){
-			$settlement->delete();
-		});
+	
 		$this->settlementAllocations()->delete();
 		$currentStatement = $this->getCurrentStatement() ;
 		if($currentStatement){

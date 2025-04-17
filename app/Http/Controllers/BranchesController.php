@@ -138,8 +138,10 @@ class BranchesController
 	public function update(Company $company, StoreBranchRequest $request , CashVeroBranch $branch){
 		
 		$newName = $request->get('name');
+		$odooCode = $request->get('odoo_code');
 		$branch->update([
-			'name'=>$newName
+			'name'=>$newName,
+			'odoo_code'=>$odooCode
 		]);
 		$type = CashVeroBranch::BRANCHES;
 		// $this->store($company,$request);

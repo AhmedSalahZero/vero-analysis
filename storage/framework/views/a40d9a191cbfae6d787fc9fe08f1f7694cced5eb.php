@@ -59,7 +59,6 @@
 <div class="row">
     <div class="col-md-12">
         <!--begin::Portlet-->
-
         <form method="post" action="<?php echo e(isset($model) ?  route($updateRouteName,['company'=>$company->id,'branch'=>$model->id]) :route($storeRouteName,['company'=>$company->id])); ?>" class="kt-form kt-form--label-right">
             <input id="js-in-edit-mode" type="hidden" name="in_edit_mode" value="<?php echo e(isset($model) ? 1 : 0); ?>">
             <input type="hidden" name="id" value="<?php echo e(isset($model) ? $model->id : 0); ?>">
@@ -128,6 +127,21 @@
                                                     <input type="text" value="<?php echo e(isset($model) ? $model->getName():''); ?>" name="name" class="form-control  " placeholder="<?php echo e(__('Name')); ?>">
                                                 </div>
                                             </div>
+											
+												<?php if($company->hasOddoIntegrationCredentials()): ?>
+													<div class="col-3	">
+													<label class="form-label font-weight-bold "><?php echo e(__('Odoo Code')); ?>
+
+													<?php echo $__env->make('star', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+													</label>
+													<div class="kt-input-icon">
+														<div class="input-group">
+															<input required placeholder="<?php echo e(__('Odoo Code')); ?>" type="text" class="form-control  exclude-text"  name="odoo_code"  value="<?php echo e(isset($model) ? $model->getOdooCode() : old('odoo_code')); ?>">
+														</div>
+													</div>
+												</div>
+												<?php endif; ?>
+					
 
 
 

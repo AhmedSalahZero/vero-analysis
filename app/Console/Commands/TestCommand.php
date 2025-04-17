@@ -76,7 +76,8 @@ class TestCommand extends Command
 				// $importDate = now()->format('Y-m-d') ; ;
 				$startDate = now()->subDays(60)->format('Y-m-d') ; ;
 				$endDate = now()->format('Y-m-d') ; 
-				$oddo->startImportInvoices($startDate,$endDate);
+				// $oddo->syncBanks($startDate,$endDate);
+				$oddo->startImportContracts($startDate,$endDate,$company->id);
 				// $oddo->startImportContracts($startDate,$endDate,$company->id);
 				// $oddo->syncFinancialInstitutions('BNK2');
 				// $oddo->syncDeletedInvoices($company->id);
@@ -93,12 +94,7 @@ class TestCommand extends Command
 				// 	$currencyId = 1 ;
 				// 	 $oddoPartnerId= 12 ;
 				// 	 $invoiceNumber = 'INV/2025/00006' ;
-					
-				// $oddo->createPayment(28,60,1,'2025-04-13',12,"BILL/2025/03/0006",$journalId,$inBoundOrOutBound);
-				// $oddo->reCreatePayment($paymentType,$invoiceId,$paymentAmount,$currencyId,$paymentDate,$oddoPartnerId,$invoiceNumber,$journalId,$inBoundOrOutBound);
-				// $oddo->createPayment(3,22137.5,1,'2025-04-13',12,"INV/2025/00003",$journalId,$inBoundOrOutBound);
-				
-				// $oddo->createPayment(89,1150,'2025-04-09','salah comment',3);
+			
 				// $oddo->startImportContracts($startDate,$endDate,$company->id);
 				// $oddo->test($startDate,$endDate,$company->id);
 			}

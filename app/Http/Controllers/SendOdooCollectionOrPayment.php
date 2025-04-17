@@ -25,27 +25,28 @@ class SendOdooCollectionOrPayment extends Controller
 		->where('company_id',$company->id)->get();
 		
 		foreach($customerInvoiceSettlements as $customerInvoiceSettlement){
+			$settlementId = $customerInvoiceSettlement->id;
 			$paymentType='customer';
 			$invoice = $customerInvoiceSettlement->invoice;
-			$moneyReceived = $customerInvoiceSettlement->moneyReceived;
-			if($moneyReceived->isIncomingTransfer()){
-				$bankOdooId = $moneyReceived->getBankAccountOdooId();
+			$moneyModel = $customerInvoiceSettlement->getMoney;
+			$isBankMoney = $moneyModel->isIncomingTransfer() || $moneyModel->isCashInBank() ;
+			$isCashInSafe = $moneyModel->isCashInSafe();
+			// if(){
+				$bankOrSafeId = $isCashInSafe  ? $moneyModel->getCashInSafeBranchOddoId() : $moneyModel->getBankAccountOdooId();
 				$invoiceId = $invoice->getOdooId();
 				$paymentAmount = $customerInvoiceSettlement->getAmount();
-				$currencyName = $moneyReceived->getReceivingOrPaymentCurrency();
+				$currencyName = $moneyModel->getReceivingOrPaymentCurrency();
 				$currencyOddoId = DB::table('currencies')->where('name',$currencyName)->first()->oddo_id;
-				$paymentDate = $moneyReceived->getReceivingOrPaymentMoneyDate();
-				$oddoPartnerId = $moneyReceived->partner->getOdooId();
+				$paymentDate = $moneyModel->getReceivingOrPaymentMoneyDate();
+				$oddoPartnerId = $moneyModel->partner->getOdooId();
 				$invoiceNumber = $invoice->getInvoiceNumber();
-				$moneyType = $moneyReceived->getType();
-				$journalId = [
-					MoneyReceived::CASH_IN_SAFE=>7,
-				][$moneyType] ?? $bankOdooId;
+				// $moneyType = $moneyModel->getType();
+				$journalId = $bankOrSafeId;
 				$inBoundOrOutBound ='inbound';
-				$oddoPaymentService->reCreatePayment($paymentType,$invoiceId,$paymentAmount,$currencyOddoId,$paymentDate,$oddoPartnerId,$invoiceNumber,$journalId,$inBoundOrOutBound);
-			}
+				$oddoPaymentService->reCreatePayment($customerInvoiceSettlement,$paymentType,$invoiceId,$paymentAmount,$currencyOddoId,$paymentDate,$oddoPartnerId,$invoiceNumber,$journalId,$inBoundOrOutBound);
+			// }
 		}
-		dd('qq');
+		
 		/**
 		 * @var CustomerInvoice $customerInvoice 
 		 */

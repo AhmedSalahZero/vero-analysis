@@ -584,12 +584,6 @@ class MoneyReceivedController
 		$companyId = $company->id ;
 		$newType = $request->get('type');
 		$moneyReceivedAmountHasChanged = $moneyReceived->getAmount() != $request->input('received_amount.'.$newType);
-		// $mainFunctionCurrency = $company->getMainFunctionalCurrency();
-		// $currency = $moneyReceived->getCurrency();
-		// $receivingDate = $moneyReceived->getReceivingDate();
-		// $foreignExchangeRate = ForeignExchangeRate::getExchangeRateForCurrencyAndClosestDate($currency,$mainFunctionCurrency,$receivingDate,$company->id);
-		// $receivingCurrency = $moneyReceived->getReceivingCurrency();
-		// $exchangeRate = $moneyReceived->getExchangeRate();
 		$moneyReceived->deleteRelations();
 		$moneyReceived->delete();
 		$newMoneyReceived = $this->store($company,$request,true);

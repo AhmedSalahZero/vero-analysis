@@ -36,5 +36,10 @@ class CashVeroBranch extends Model
 	public function scopeOnlyCompany(Builder $query,$companyId){
 		return $query->where('company_id',$companyId);
 	}
+	public function getOdooCode():?string 
+	{
+		return $this->odoo_code ;
+	}
+	
 	
 }

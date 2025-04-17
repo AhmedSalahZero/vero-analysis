@@ -1,9 +1,25 @@
 <?php 
 namespace App\Traits\Models;
 
+use App\Models\MoneyPayment;
+use App\Models\MoneyReceived;
+use App\Models\PaymentSettlement;
+use App\Models\Settlement;
+use App\Traits\HasCompany;
+
 trait IsSettlement 
 {
-
+	use HasCompany;
+	public function getMoney()
+	{
+		if($this instanceof Settlement){
+			return $this->moneyReceived();
+		}
+		if($this instanceof PaymentSettlement){
+			return $this->moneyPayment();
+		}
+		dd('test dd');
+	}
 	public function getAmount()
 	{
 		return $this->settlement_amount ;

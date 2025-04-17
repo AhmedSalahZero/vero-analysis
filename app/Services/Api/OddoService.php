@@ -2,6 +2,7 @@
 namespace App\Services\Api;
 
 use App\Helpers\HArr;
+use App\Models\CashVeroBranch;
 use App\Models\Contract;
 use App\Models\CustomerInvoice;
 use App\Models\FinancialInstitutionAccount;
@@ -431,171 +432,6 @@ class OddoService
 	}
 
 
-// public function registerPayment(int $invoiceId,float $amount,string $paymentDate)
-//     {
-//         $paymentData = [
-//             'invoice_id' => $invoiceId,
-//             'amount' => $amount,
-//             'payment_date' => $paymentDate,
-//             'journal_id' => 7,
-//             'payment_method_id' => 1, // Manual payment method
-//         ];
-
-//         // Authenticate
-//         // $uid = $this->authenticate();
-//         // if (!$uid) {
-//         //     return response()->json(['error' => 'Authentication failed'], 401);
-//         // }
-
-//         // Register and reconcile payment
-//         $payment = $this->createPayment($this->uid, $invoiceId);
-
-//         return response()->json($payment);
-//     }
-
-    // private function authenticate()
-    // {
-    //     $common = Ripcord::client($this->url . 'common');
-    //     $uid = $common->authenticate($this->db, $this->username, $this->password, []);
-    //     return $uid;
-    // }
-	/**
-	 * * create payment for test
-	 */
-    public function createPayment($invoiceId,float $paymentAmount,$paymentDate,int $odooPartnerId)
-    {
-		
-		
-
-            // Step 2: Create a payment
-            $paymentData = [
-                'partner_type' => 'customer',
-                'partner_id' => $odooPartnerId,
-                'amount' => $paymentAmount,
-                'journal_id' => 7, // for cash
-                'payment_type' => 'inbound',
-                'date' => $paymentDate,
-                // 'ref' => "Payment for invoice {$invoiceNumber}",
-                'invoice_ids' => [[6, 0, [$invoiceId]]], // Link to invoice
-            ];
-
-            $paymentId = $this->models->execute_kw(
-                $this->db,
-                $this->uid,
-                $this->password,
-                'account.payment',
-                'create',
-                [$paymentData]
-            );
-
-            if (!$paymentId) {
-                return response()->json(['error' => 'Failed to create payment'], 500);
-            }
-
-            // Step 3: Post the payment
-            $this->models->execute_kw(
-                $this->db,
-                $this->uid,
-                $this->password,
-                'account.payment',
-                'action_post',
-                [[$paymentId]]
-            );
-
-            // Step 4: Reconcile using account.reconcile.wizard
-            // Find payment journal items
-            $paymentLines = $this->models->execute_kw(
-                $this->db,
-                $this->uid,
-                $this->password,
-                'account.move.line',
-                'search_read',
-                [[
-                    ['payment_id', '=', $paymentId],
-                    ['account_id.reconcile', '=', true],
-					['balance', '!=', 0],
-                    ['partner_id', '=', $odooPartnerId],
-                ]],
-                ['fields' => ['id','account_id','balance']]
-            );
-
-            // Find invoice journal items
-            $invoiceLines = $this->models->execute_kw(
-                $this->db,
-                $this->uid,
-                $this->password,
-                'account.move.line',
-                'search_read',
-                [[
-                    ['move_id', '=',$invoiceId],
-                    ['account_id.reconcile', '=', true],
-					['balance', '!=', 0],
-                    ['partner_id', '=', $odooPartnerId],
-                ]],
-                ['fields' => ['id', 'account_id', 'balance']]
-            );
-
-            if (empty($paymentLines) || empty($invoiceLines)) {
-                return response()->json(['error' => 'No reconcilable lines found'], 500);
-            }
-
-            // Create reconciliation wizard
-            $reconcileWizardId = $this->models->execute_kw(
-                $this->db,
-                $this->uid,
-                $this->password,
-                'account.reconcile.wizard',
-                'create',
-                [[
-                    'line_ids' => [[6, 0, [$paymentLines[0]['id'], $invoiceLines[0]['id']]]],
-                    'allow_partials' => true,
-					'partner_id' => $odooPartnerId,
-                ]]
-            );
-
-            // Perform reconciliation
-			$this->models->execute_kw(
-                $this->db,
-                $this->uid,
-                $this->password,
-                'account.move.line',
-                'reconcile',
-                [[]], // Empty IDs list to use write_off_vals
-                ['write_off_vals' => [
-                    'line_ids' => [[6, 0, [$paymentLines[0]['id'], $invoiceLines[0]['id']]]],
-                ]]
-            );
-			
-            // $this->models->execute_kw(
-            //     $this->db,
-            //     $this->uid,
-            //     $this->password,
-            //     'account.reconcile.wizard',
-            //     'reconcile',
-            //     [[$reconcileWizardId]]
-            // );
-			
-			// Step 6: Verify reconciliation
-            $invoiceAfter = $this->models->execute_kw(
-                $this->db,
-                $this->uid,
-                $this->password,
-                'account.move',
-                'read',
-                [[$invoiceId]],
-                ['fields' => ['payment_state']]
-            );
-		
-			if ($invoiceAfter[0]['payment_state'] !== 'paid') {
-                Log::error("Reconciliation failed: payment_state is {$invoiceAfter[0]['payment_state']}");
-                return response()->json(['error' => 'Reconciliation failed, invoice not marked as paid'], 500);
-            }
-
-            return response()->json(['success' => 'Payment registered and reconciled successfully']);
-
-		
-		
-    }
 	public function syncDeletedInvoices(int $companyId)
 	{
 		$customerInvoices  = CustomerInvoice::where('company_id',$companyId)->where('oddo_id','>',0)->get();
@@ -620,7 +456,7 @@ class OddoService
 		}
 		dd($deletedIds);
 	}
-	public function syncFinancialInstitutions(string $financialInstitutionOdooCode)
+	public function syncFinancialInstitutions()
 	{
 			$fields = [
 				'id',
@@ -630,7 +466,6 @@ class OddoService
 				[
 					['type','=','bank'
 				],
-				// ['code','=',$financialInstitutionOdooCode]
 				]
 		];
 		$journals = $this->fetchData('account.journal',$fields,$filters);
@@ -658,6 +493,39 @@ class OddoService
 	
 		
 	}
+	
+	public function syncBanks()
+	{
+			$fields = [
+				'id',
+				'code'
+			];
+			$filters = [
+				[
+					['type','=','cash'
+				],
+				]
+		];
+		$banks = $this->fetchData('account.journal',$fields,$filters);
+	
+		$journals = collect($banks)->keyBy('code')->toArray();
+		$banks = CashVeroBranch::where('company_id',$this->company_id)->whereNotNull('odoo_code')->get();
+
+			foreach($banks as $bank){
+				$codeCode = $bank->getOdooCode();
+				if($codeCode){
+					$currentJournal = $journals[$codeCode]??null;
+					$currentJournalId = $currentJournal ? $currentJournal['id'] : null;
+					if($currentJournalId){
+						$bank->update([
+							'odoo_id'=>$currentJournalId
+						]);
+					}
+					
+				}
+			}
+	}
+	
 	protected function fetchData(string $modelName ,array $fields = [],  array $filters = [[]]  )
 	{
 		$ids=$this->models->execute_kw($this->db, $this->uid, $this->password, $modelName, 'search',$filters );

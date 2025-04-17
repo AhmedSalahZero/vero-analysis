@@ -564,7 +564,12 @@ class MoneyReceived extends Model
 
 		return $cashInSafe ? $cashInSafe->getReceivingBranchName() : null ;
 	}
-	
+	public function getCashInSafeBranchOddoId()
+	{
+		$cashInSafe = $this->cashInSafe;
+
+		return $cashInSafe ? $cashInSafe->getBankOddoId() : null ;
+	}
 	public function getChequeDepositDate()
 	{
 		$cheque = $this->cheque;
@@ -747,8 +752,13 @@ class MoneyReceived extends Model
 	
 	public function deleteRelations()
 	{
+		
+	
+	
 		$oldType = $this->getType();
-
+		$this->settlements->each(function($settlement){
+			$settlement->delete();
+		});
 		// $this->downPayment ? (new MoneyReceivedController())->destroy(getCurrentCompany(),$this->downPayment) : null ;
 		// $oldTypeRelationName = dashesToCamelCase($oldType);
 		$this->incomingTransfer ? $this->incomingTransfer->delete() :null ;
@@ -766,9 +776,7 @@ class MoneyReceived extends Model
 		$this->overdraftAgainstAssignmentOfContractCreditBankStatement ? $this->overdraftAgainstAssignmentOfContractCreditBankStatement->delete() :null ;
 		$this->overdraftAgainstCommercialPaperCreditBankStatement ? $this->overdraftAgainstCommercialPaperCreditBankStatement->delete() :null ;
 		// $this->$oldTypeRelationName ? $this->$oldTypeRelationName->delete() : null;
-		$this->settlements->each(function($settlement){
-			$settlement->delete();
-		});
+		
 		$this->downPaymentSettlements->each(function($downPaymentSettlement){
 			$downPaymentSettlement->delete();
 		});
