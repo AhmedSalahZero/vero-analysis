@@ -93,22 +93,20 @@ trait FinancialStatementAbleAccessor
 		}
 		return $lastActualDate ; 
 	}
-	protected function getLastTrueValueFromArray($datesAsStringAndBoolean = []){
+	protected function getLastTrueValueFromArray($datesAsStringAndBoolean ,array $datesAsIndexAndString){
 		$lastActualDate = null ;
 		foreach($datesAsStringAndBoolean as $date => $bool){
 			if($bool){
 				$lastActualDate = $date;
 			}
 		}
-		return $lastActualDate;
+		return $datesAsIndexAndString[$lastActualDate]??null;
 	}
 	public function getFirstAndEndDate(): array
 	{
 		$dates = $this->getIntervalFormatted();
-		// $startDate = Arr::first($dates);
-		
 		$actualDates = HArr::getActualDatesAsIndexAndBoolean($dates);
-		$lastActualDate = $this->getLastTrueValueFromArray($actualDates);
+		$lastActualDate = $this->getLastTrueValueFromArray($actualDates,$dates);
 		
 		
 		// $lastActualDate = $this->lastActualDates($dates);
