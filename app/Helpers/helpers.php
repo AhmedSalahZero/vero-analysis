@@ -1820,24 +1820,25 @@ function formatReportDataForDashBoard(string $incomeStatementDurationType, strin
     $dates = generateDatesBetweenTwoDates(Carbon::make($start_date), Carbon::make($end_date), 'addMonth');
 
     $newData = [];
-
     foreach ($data as $index => $mainItem) {
-        foreach ($dates as $date) {
+        foreach ($dates as $dateAsIndex => $dateAsString) {
             $mainItemName = $mainItem->name;
-            $newData[$mainItemName]['data'][$date] = getTotalInPivotDate($incomeStatementDurationType, $incomeStatementStartDate, $mainItem->withSubItemsFor(
+            $newData[$mainItemName]['data'][$dateAsString] = getTotalInPivotDate($incomeStatementDurationType, $incomeStatementStartDate, $mainItem->withSubItemsFor(
                 $mainItem->pivot->financial_statement_able_id,
                 $mainItem->pivot->sub_item_type
-            )->get()->pluck('pivot'), $date, $dates);
+            )->get()->pluck('pivot'), $dateAsIndex,$dateAsString, $dates);
         }
+		
         if (isset($mainItemName)) {
-            $newData[$mainItemName]['sub_items'] = getSubItemsFormatted($mainItem->withSubItemsFor(
+
+			$newData[$mainItemName]['sub_items'] = getSubItemsFormatted($mainItem->withSubItemsFor(
                 $mainItem->pivot->financial_statement_able_id,
                 $mainItem->pivot->sub_item_type
             )->get()->pluck('pivot'), $dates, $incomeStatementStartDate, $incomeStatementDurationType);
             $newData[$mainItemName]['name'] = $mainItemName;
+			// dd($newData[$mainItemName]['sub_items']);
         }
     }
-
     return $newData;
 }
 function getSubItemsFormatted($data, $dates, string $incomeStatementStartDate, string $incomeStatementDurationType): array
@@ -1906,7 +1907,7 @@ function inDurationDate(string $date, $dates, $incomeStatementDurationType)
     }
     return yearAndMonthInArray($date, $dates);
 }
-function getTotalInPivotDate(string $incomeStatementDurationType, string $incomeStatementStartDate, $pivot, $date, $dates): array
+function getTotalInPivotDate(string $incomeStatementDurationType, string $incomeStatementStartDate, $pivot, int $dateAsIndex,string $dateAsString, $dates): array
 {
     // 1-1-2021
 
@@ -1916,15 +1917,16 @@ function getTotalInPivotDate(string $incomeStatementDurationType, string $income
     $incomeStatementStartDate = Carbon::make($incomeStatementStartDate);
 
     // 2023
-    if (inDurationDate($date, $dates, $incomeStatementDurationType)) {
+    if (inDurationDate($dateAsString, $dates, $incomeStatementDurationType)) {
         foreach ($pivot as $data) {
             if (!isQuantitySubItem($data->sub_item_name)) {
-                $formattedDate = explode('-', $date)[0] . '-' . explode('-', $date)[1] . '-' . sprintf('%02d', $incomeStatementStartDate->day);
+                // $formattedDate = explode('-', $date)[0] . '-' . explode('-', $date)[1] . '-' . sprintf('%02d', $incomeStatementStartDate->day);
                 $payload = $data->payload ? (array)json_decode($data->payload) : null;
-                if ($payload && isset($payload[$formattedDate]) && $payload[$formattedDate]) {
-                    $totalWithDepreciation += $payload[$formattedDate];
+				// dd($payload,$formattedDate);
+                if ($payload && isset($payload[$dateAsIndex]) && $payload[$dateAsIndex]) {
+                    $totalWithDepreciation += $payload[$dateAsIndex];
                     if ($data->is_depreciation_or_amortization) {
-                        $totalDepreciation += $payload[$formattedDate];
+                        $totalDepreciation += $payload[$dateAsIndex];
                     }
                 }
             }

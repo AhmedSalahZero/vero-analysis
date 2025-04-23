@@ -472,7 +472,6 @@ class HomeController extends Controller
 		}
 		$exportableFields  = (new ExportTable)->customizedTableField($company, 'SalesGathering', 'selected_fields');
 		$db_names = array_keys($exportableFields);
-
 		$types =  [
 			'zone' => 'brand',
 			'sales_channel' => 'warning',
@@ -494,7 +493,6 @@ class HomeController extends Controller
 			$incomeStatement = optional();
 			$breakdown_data   = [];
 		}
-	
 		$formattedDataForChart = formatDataForChart($breakdown_data);
 		$monthlyChartCumulative = getMonthlyChartCumulative($formattedDataForChart);
 		$types = array_unique(array_keys($breakdown_data));
