@@ -1883,10 +1883,12 @@ function yearAndMonthInArray(string $date, array $dates)
 function array_sum_conditional($data, $dates, $incomeStatementStartDate, $incomeStatementDurationType)
 {
     $incomeStatementStartDate = Carbon::make($incomeStatementStartDate);
+	$incomeStatementDurationType='annually';
     $total = 0;
     foreach ($data as $date => $value) {
-        if ($incomeStatementDurationType == 'annually') {
-            if (yearInArray($date, $dates)) {
+		if ($incomeStatementDurationType == 'annually') {
+			// dd('e',$dates[$date]);
+            if (yearInArray($dates[$date], $dates)) {
 				$total += $value;
             }
         } else {

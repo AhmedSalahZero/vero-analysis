@@ -195,12 +195,14 @@ class  IncomeStatementItem extends Model implements IFinancialStatementAbleItem
 		$firstDateAsIndex = array_key_first($dates);
 		$lastDateAsIndex = array_key_last($dates);
 // dd($firstDateAsIndex,$lastDateAsIndex);
-
+		// dd($intervalName);
+		// $intervalName='annually';
+		
 		$filteredItems = [];
 		foreach ($items as $item) {
 			$payload = (array)json_decode($item->payload);
 			foreach ($payload as $payloadDate => $payloadItem) {
-				if ($intervalName == 'annually' && yearInArray($payloadDate, $dates)) {
+				if ($intervalName == 'annually' && yearInArray($dates[$payloadDate], $dates)) {
 					$filteredItems[$item->sub_item_name ?: $mainItemName][$payloadDate] = $payloadItem;
 				} elseif ($payloadDate>=$firstDateAsIndex && $payloadDate<=$lastDateAsIndex) {
 					$filteredItems[$item->sub_item_name ?: $mainItemName][$payloadDate] = $payloadItem;
