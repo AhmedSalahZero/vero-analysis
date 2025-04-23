@@ -485,7 +485,6 @@ trait FinancialStatementAbleMutator
 		// 	],
 		// ][$mainItemIdThatTriggerEditOrCreate];
 		$allMainItems = $this->mainItems()
-		// ->whereIn('financial_statement_able_items.id',$changables)
 		->get();
 		$totals = [];
 		// $debug = false ;
@@ -503,7 +502,10 @@ trait FinancialStatementAbleMutator
 			$isMainWithoutSubItems = !$mainItem->has_sub_items && !$isPercentageOfSalesRevenue;
 			// IncomeStatementItem::isMainWithoutSubItems($allMainItems, $incomeStatementItemId, $isPercentageOfSalesRevenue)
 			$oldSubItemsForCurrentMainItem = $this->withSubItemsFor($incomeStatementItemId, $subItemType)->get();
-			
+			// if($mainItem->id == 21){
+			// 	dd($oldSubItemsForCurrentMainItem);
+			// }
+			// dd($allMainItems,$oldSubItemsForCurrentMainItem);
 			$this->updateCostOfUnitAndPercentagesOfSubItems($actualDatesAsIndexAndBooleans,$salesRevenuesSubItemsArray,$oldSubItemsForCurrentMainItem, $dates, $subItemType);
 
 			$subItems = $this->withSubItemsFor($incomeStatementItemId, $subItemType)->get()->keyBy(function ($subItem) {

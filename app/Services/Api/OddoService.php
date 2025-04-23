@@ -525,9 +525,39 @@ class OddoService
 				}
 			}
 	}
-	
-	protected function fetchData(string $modelName ,array $fields = [],  array $filters = [[]]  )
+	public function createInternalMoneyTransfer(string $transferDate,float $transferAmount,int $fromJournalId , int $toJournalId , int $oddoCurrencyId , string $comment = null  )
 	{
+		$paymentData = [
+			'payment_type' => 'outbound',
+			// 'is_internal_transfer' => true,
+			'journal_id' =>$fromJournalId, // Source journal (Bank A)
+			'amount' => $transferAmount, // Transfer amount
+			'currency_id' => $oddoCurrencyId, // Currency ID (e.g., USD)
+			'date' => $transferDate, // Transfer date
+			// 'ref' => $comment ?? 'Internal transfer from Bank A to Bank B',
+			// 'partner_type' => 'customer', // Optional, for reconciliation
+			'destination_account_id' => $toJournalId, // Destination bank account
+		];
+		$paymentId=$this->models->execute_kw(
+			$this->db, $this->uid, $this->password,
+			"account.payment", "create",
+			[$paymentData]
+		);
+		
+		  $this->models->execute_kw(
+			$this->db, $this->uid, $this->password,
+			"account.payment", "action_post",
+			[[$paymentId]]
+		);
+		// dd($paymentId);
+			// dd($paymentId);
+		
+		
+		
+	}
+	public function fetchData(string $modelName ,array $fields = [],  array $filters = [[]]  )
+	{
+		// dd($modelName);
 		$ids=$this->models->execute_kw($this->db, $this->uid, $this->password, $modelName, 'search',$filters );
 		return $this->models->execute_kw($this->db, $this->uid, $this->password, $modelName, 'read', array($ids),[
 			'fields'=>$fields

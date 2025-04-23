@@ -14,6 +14,7 @@ use App\Models\IncomeStatement;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class FinancialStatementRepository implements IBaseRepository
 {
@@ -104,16 +105,24 @@ class FinancialStatementRepository implements IBaseRepository
 		$financialStatement->storeMainSection($request);
 		$financialStatement->updateIndexedDates();
 		$incomeStatement = $financialStatement->incomeStatement;
+			// هنا هنحدث ال corporate taxes للعناصر الصب علشان اعادة الحسبة
+			DB::table('financial_statement_able_main_item_sub_items')->where('financial_statement_able_id',$incomeStatement->id)->where('financial_statement_able_item_id',FinancialStatementItem::CORPORATE_TAXES_ID)->update([
+				'percentage_value'=>$request->get('corporate_taxes_rate',0)
+			]);
+	
 		foreach(getAllFinancialAbleTypes() as $index => $subItemType){
-			if($index ==0 ) // current type
-				{
-					$incomeStatement->refreshCalculationFor($subItemType);
-				}else{
-					$incomeStatement['is_caching_'.$subItemType] = 1 ;
-					$incomeStatement->save();
-						$job = (new RecalculateIncomeStatementCalculationForTypesJob($incomeStatement,$subItemType));
-						dispatch($job)	;
-				}
+		
+			// dd($subRows);
+			$incomeStatement->refreshCalculationFor($subItemType);
+			// if($index ==0 ) // current type
+			// 	{
+			// 		$incomeStatement->refreshCalculationFor($subItemType);
+			// 	}else{
+			// 		$incomeStatement['is_caching_'.$subItemType] = 1 ;
+			// 		$incomeStatement->save();
+			// 			$job = (new RecalculateIncomeStatementCalculationForTypesJob($incomeStatement,$subItemType));
+			// 			dispatch($job)	;
+			// 	}
 		}
 		// return response()->json([
 		// 	'status'=>true ,

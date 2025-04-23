@@ -77,6 +77,12 @@ class TestCommand extends Command
 				$startDate = now()->subDays(60)->format('Y-m-d') ; ;
 				$endDate = now()->format('Y-m-d') ; 
 				// $oddo->syncBanks($startDate,$endDate);
+				$transferDate = '2025-04-17';
+				$fromJournalId = 12 ;
+				$toJournalId = 7 ;
+				$currencyOdooId = 1 ; 
+				$transferAmount = 10;
+				dd($oddo->createInternalMoneyTransfer($transferDate,$transferAmount,$fromJournalId,$toJournalId,$currencyOdooId));
 				$oddo->startImportContracts($startDate,$endDate,$company->id);
 				// $oddo->startImportContracts($startDate,$endDate,$company->id);
 				// $oddo->syncFinancialInstitutions('BNK2');

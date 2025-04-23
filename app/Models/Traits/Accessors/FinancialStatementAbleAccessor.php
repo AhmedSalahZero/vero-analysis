@@ -2,6 +2,8 @@
 
 namespace App\Models\Traits\Accessors;
 
+use App\Helpers\HArr;
+use Arr;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
@@ -91,11 +93,25 @@ trait FinancialStatementAbleAccessor
 		}
 		return $lastActualDate ; 
 	}
+	protected function getLastTrueValueFromArray($datesAsStringAndBoolean = []){
+		$lastActualDate = null ;
+		foreach($datesAsStringAndBoolean as $date => $bool){
+			if($bool){
+				$lastActualDate = $date;
+			}
+		}
+		return $lastActualDate;
+	}
 	public function getFirstAndEndDate(): array
 	{
 		$dates = $this->getIntervalFormatted();
-		$dates = array_keys($dates);
-		$lastActualDate = $this->lastActualDates($dates);
+		// $startDate = Arr::first($dates);
+		
+		$actualDates = HArr::getActualDatesAsIndexAndBoolean($dates);
+		$lastActualDate = $this->getLastTrueValueFromArray($actualDates);
+		
+		
+		// $lastActualDate = $this->lastActualDates($dates);
 		$dateLength = count($dates);
 		$interval = [];
 		if ($dateLength) {

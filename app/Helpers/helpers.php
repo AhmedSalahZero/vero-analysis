@@ -1872,10 +1872,9 @@ function yearAndMonthInArray(string $date, array $dates)
     $year = explode('-', $date)[0];
     $month = explode('-', $date)[1];
     foreach ($dates as $newDate) {
-        if (explode('-', $newDate)[0] == $year && $month == explode('-', $newDate)[1]) {
+		if (explode('-', $newDate)[0] == $year && $month == explode('-', $newDate)[1]) {
             return true;
         }
-        //  ;
     }
 
     return false;
@@ -1883,15 +1882,16 @@ function yearAndMonthInArray(string $date, array $dates)
 function array_sum_conditional($data, $dates, $incomeStatementStartDate, $incomeStatementDurationType)
 {
     $incomeStatementStartDate = Carbon::make($incomeStatementStartDate);
-
     $total = 0;
     foreach ($data as $date => $value) {
         if ($incomeStatementDurationType == 'annually') {
             if (yearInArray($date, $dates)) {
-                $total += $value;
+				$total += $value;
             }
         } else {
-            if (yearAndMonthInArray($date, $dates)) {
+			// dd(array_key_exists($date,$dates),$date,$dates);
+            if (array_key_exists($date,$dates)) {
+            // if (yearAndMonthInArray($date, $dates)) {
                 $total += $value;
             }
         }
@@ -1904,7 +1904,6 @@ function inDurationDate(string $date, $dates, $incomeStatementDurationType)
     if ($incomeStatementDurationType == 'annually') {
         return yearInArray($date, $dates);
     }
-
     return yearAndMonthInArray($date, $dates);
 }
 function getTotalInPivotDate(string $incomeStatementDurationType, string $incomeStatementStartDate, $pivot, $date, $dates): array
@@ -7709,7 +7708,8 @@ function getAllPartnerTypesForCustomers():array
 }
 function hasExport(array $fields,int $companyId,$modelName='SalesGathering')
 {
-	$exportableFields = CustomizedFieldsExportation::where('company_id',$companyId)->where('model_name',$modelName)->first()->fields;
+	$fieldRow = CustomizedFieldsExportation::where('company_id',$companyId)->where('model_name',$modelName)->first();
+	$exportableFields = $fieldRow ? $fieldRow->fields : [];
 	foreach($fields as $field){
 		if(!in_array($field,$exportableFields)){
 			return false ;
