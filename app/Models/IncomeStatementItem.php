@@ -192,23 +192,17 @@ class  IncomeStatementItem extends Model implements IFinancialStatementAbleItem
 	public static function getItemsForInterval(Collection $items, array $dates, $intervalName, $mainItemName = ''): array
 	{
 		// $items must be a collection 
-
-		$firstDate = Carbon::make($dates[\array_key_first($dates)]);
-		$lastDate = Carbon::make($dates[\array_key_last($dates)]);
-
+		$firstDateAsIndex = array_key_first($dates);
+		$lastDateAsIndex = array_key_last($dates);
+// dd($firstDateAsIndex,$lastDateAsIndex);
 
 		$filteredItems = [];
-
 		foreach ($items as $item) {
 			$payload = (array)json_decode($item->payload);
 			foreach ($payload as $payloadDate => $payloadItem) {
-				$payloadDateFormatted = Carbon::make($payloadDate);
-
 				if ($intervalName == 'annually' && yearInArray($payloadDate, $dates)) {
-
 					$filteredItems[$item->sub_item_name ?: $mainItemName][$payloadDate] = $payloadItem;
-				} elseif (dateIsBetweenTwoDates($payloadDateFormatted, $firstDate, $lastDate)) {
-
+				} elseif ($payloadDate>=$firstDateAsIndex && $payloadDate<=$lastDateAsIndex) {
 					$filteredItems[$item->sub_item_name ?: $mainItemName][$payloadDate] = $payloadItem;
 				}
 			}
