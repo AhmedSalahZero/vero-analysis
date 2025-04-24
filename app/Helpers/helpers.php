@@ -2741,21 +2741,20 @@ function getChartsData($chartItems, $dates, $arrayOfData, $mainItemName)
     $firstTypeAccumulated = 0;
     $secondTypeAccumulated = 0;
     $subItems = $chartItems[$mainItemName] ?? [];
-    foreach ($dates as $date) {
+    foreach ($dates as $dateAsIndex => $dateAsString) {
         //barChart chart
-
-        $data['barChart'][$mainItemName][$date][$firstReportType] = sumAllKeysOfData($arrayOfData[$firstReportTypeKey], $subItems, $date);
-        $data['barChart'][$mainItemName][$date][$secondReportType] =  sumAllKeysOfData($arrayOfData[$secondReportTypeKey], $subItems, $date);
-        $data['barChart'][$mainItemName][$date]['variance'] = $data['barChart'][$mainItemName][$date][$secondReportType] - $data['barChart'][$mainItemName][$date][$firstReportType];
-        $data['barChart'][$mainItemName][$date]['var %'] = $data['barChart'][$mainItemName][$date][$firstReportType] ? $data['barChart'][$mainItemName][$date]['variance'] / $data['barChart'][$mainItemName][$date][$firstReportType] * 100 : 0;
-        $data['barChart'][$mainItemName][$date][$secondReportType] =  sumAllKeysOfData($arrayOfData[$secondReportTypeKey], $subItems, $date);
+        $data['barChart'][$mainItemName][$dateAsString][$firstReportType] = sumAllKeysOfData($arrayOfData[$firstReportTypeKey], $subItems, $dateAsIndex);
+        $data['barChart'][$mainItemName][$dateAsString][$secondReportType] =  sumAllKeysOfData($arrayOfData[$secondReportTypeKey], $subItems, $dateAsIndex);
+        $data['barChart'][$mainItemName][$dateAsString]['variance'] = $data['barChart'][$mainItemName][$dateAsString][$secondReportType] - $data['barChart'][$mainItemName][$dateAsString][$firstReportType];
+        $data['barChart'][$mainItemName][$dateAsString]['var %'] = $data['barChart'][$mainItemName][$dateAsString][$firstReportType] ? $data['barChart'][$mainItemName][$dateAsString]['variance'] / $data['barChart'][$mainItemName][$dateAsString][$firstReportType] * 100 : 0;
+        $data['barChart'][$mainItemName][$dateAsString][$secondReportType] =  sumAllKeysOfData($arrayOfData[$secondReportTypeKey], $subItems, $dateAsIndex);
         // two lines charts
-        $firstTypeAccumulated +=  $data['barChart'][$mainItemName][$date][$firstReportType];
-        $secondTypeAccumulated +=  $data['barChart'][$mainItemName][$date][$secondReportType];
-        $data['twoLinesChart'][$mainItemName][$date][$firstReportType] = $firstTypeAccumulated;
-        $data['twoLinesChart'][$mainItemName][$date][$secondReportType] = $secondTypeAccumulated;
-        $data['twoLinesChart'][$mainItemName][$date]['variance'] = $data['twoLinesChart'][$mainItemName][$date][$secondReportType] - $data['twoLinesChart'][$mainItemName][$date][$firstReportType];
-        $data['twoLinesChart'][$mainItemName][$date]['var %'] = $data['twoLinesChart'][$mainItemName][$date][$firstReportType] ? $data['twoLinesChart'][$mainItemName][$date]['variance'] / $data['twoLinesChart'][$mainItemName][$date][$firstReportType]  * 100 : 0;
+        $firstTypeAccumulated +=  $data['barChart'][$mainItemName][$dateAsString][$firstReportType];
+        $secondTypeAccumulated +=  $data['barChart'][$mainItemName][$dateAsString][$secondReportType];
+        $data['twoLinesChart'][$mainItemName][$dateAsString][$firstReportType] = $firstTypeAccumulated;
+        $data['twoLinesChart'][$mainItemName][$dateAsString][$secondReportType] = $secondTypeAccumulated;
+        $data['twoLinesChart'][$mainItemName][$dateAsString]['variance'] = $data['twoLinesChart'][$mainItemName][$dateAsString][$secondReportType] - $data['twoLinesChart'][$mainItemName][$dateAsString][$firstReportType];
+        $data['twoLinesChart'][$mainItemName][$dateAsString]['var %'] = $data['twoLinesChart'][$mainItemName][$dateAsString][$firstReportType] ? $data['twoLinesChart'][$mainItemName][$dateAsString]['variance'] / $data['twoLinesChart'][$mainItemName][$dateAsString][$firstReportType]  * 100 : 0;
     }
     // donut chart
 
