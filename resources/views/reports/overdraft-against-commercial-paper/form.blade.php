@@ -191,6 +191,7 @@
 
                             <div class="col-md-4 ">
                                 <x-form.input :default-value="0" :model="$model??null" :label="__('Max Lending Limit Per Customer')" :type="'text'" :placeholder="__('Max Lending Limit Per Customer')" :name="'max_lending_limit_per_customer'" :class="'only-greater-than-or-equal-zero-allowed'" :required="true"></x-form.input>
+								<div>{{ __('Must be greater than Zero and Less than or equal Credit Limit') }}</div>
                             </div>
 
 

@@ -323,7 +323,34 @@ class Cheque extends Model
 
         return getDiffBetweenTwoDatesInDays($firstDate, $secondDate);
     }
-
+	public static function deleteLimitUpdateRowFromStatement($overdraftAgainstCommercialPaperLimit)
+	{
+		$paperId = $overdraftAgainstCommercialPaperLimit->overdraft_against_commercial_paper_id;
+		$row =  OverdraftAgainstCommercialPaperBankStatement::where('type', 'limit_update')->where('overdraft_against_commercial_paper_limit_id',$overdraftAgainstCommercialPaperLimit->id)->where('overdraft_against_commercial_paper_id',$paperId)->first();
+		if($row){
+			$row->delete();
+			// $date =$row->date; 
+		// $limitRow = OverdraftAgainstCommercialPaperLimit::
+		// where('overdraft_against_commercial_paper_id',$paperId)
+		// ->whereRaw('year(full_date) >= '.$date)
+		// ->orderByRaw('full_date asc , id asc')->first();
+		// ;
+		// if($limitRow){
+		// 	logger('good'.$date);
+		// 	$limitRow->update([
+		// 		'updated_at'=>now()
+		// 	]);
+		// }
+		}
+		
+	}
+	public static function updateLimitUpdateRowFromStatement($overdraftAgainstCommercialPaperLimit,$fullDate)
+	{
+		DB::table('overdraft_against_commercial_paper_bank_statements')->where('type', 'limit_update')->where('overdraft_against_commercial_paper_limit_id',$overdraftAgainstCommercialPaperLimit->id)->where('overdraft_against_commercial_paper_id',$overdraftAgainstCommercialPaperLimit->overdraft_against_commercial_paper_id)->update([
+			'date'=>Carbon::make($fullDate)->format('Y-m-d'),
+			'full_date'=>$fullDate
+		]);
+	}
     protected static function booted(): void
     {
 		// static::created(function(self $model){
@@ -331,6 +358,7 @@ class Cheque extends Model
 		// 		'updated_at'=>now()
 		// 	]);
 		// });
+		
         static::updated(
             function (self $model) {
                 $oldStatus = $model->getRawOriginal('status');
@@ -348,6 +376,7 @@ class Cheque extends Model
                     $negativeOverdraftAgainstCommercialPaperLimit = $model->overdraftAgainstCommercialPaperLimits->where('limit', '<', 0)->first();
                     $negativeOverdraftAgainstCommercialPaperLimit ? $negativeOverdraftAgainstCommercialPaperLimit->update(['is_active' => 0]) : null ;
                     $negativeOverdraftAgainstCommercialPaperLimit ? DB::table('overdraft_against_commercial_paper_limits')->where('id', $negativeOverdraftAgainstCommercialPaperLimit->id)->delete() : null ;
+                    $negativeOverdraftAgainstCommercialPaperLimit ? self::deleteLimitUpdateRowFromStatement($negativeOverdraftAgainstCommercialPaperLimit) : null ;
 
                     return ;
                 }
@@ -415,7 +444,10 @@ class Cheque extends Model
                     return ;
                 }
                 $overdraftAgainstCommercialPaperLimit = $model->overdraftAgainstCommercialPaperLimits->sortBy('full_date')->first() ;
-                $overdraftAgainstCommercialPaperLimit ? $overdraftAgainstCommercialPaperLimit->update(['updated_at' => now(), 'full_date' => $overdraftAgainstCommercialPaperLimit->updateFullDate()]) : null;
+				$fullDate = $overdraftAgainstCommercialPaperLimit->updateFullDate();
+                $overdraftAgainstCommercialPaperLimit ? $overdraftAgainstCommercialPaperLimit->update(['updated_at' => now(), 'full_date' => $fullDate]) : null;
+                $overdraftAgainstCommercialPaperLimit ? self::updateLimitUpdateRowFromStatement($overdraftAgainstCommercialPaperLimit,$fullDate) : null;
+                // $overdraftAgainstCommercialPaperLimit ? $overdraftAgainstCommercialPaperLimit->update(['updated_at' => now(), 'full_date' => $fullDate]) : null;
             }
         );
 
@@ -431,6 +463,7 @@ class Cheque extends Model
         $this->overdraftAgainstCommercialPaperLimits->each(function ($overdraftAgainstCommercialPaperLimit) {
             $overdraftAgainstCommercialPaperLimit->update(['is_active' => 0]);
             DB::table('overdraft_against_commercial_paper_limits')->where('id', $overdraftAgainstCommercialPaperLimit->id)->delete();
+			self::deleteLimitUpdateRowFromStatement($overdraftAgainstCommercialPaperLimit);
         });
     }
 
@@ -444,14 +477,50 @@ class Cheque extends Model
         /**
          * @var AccountType $accountType
          */
+		$companyId = $this->company_id ?: getCurrentCompanyId();
         $accountType = AccountType::find($this->getAccountType());
-        $overdraftAgainstCommercialPaper = OverdraftAgainstCommercialPaper::where('account_number', $this->getAccountNumber())->first();
+        $overdraftAgainstCommercialPaper = OverdraftAgainstCommercialPaper::where('account_number', $this->getAccountNumber())->where('company_id',$companyId)->first();
 
         if ($accountType && $accountType->isOverdraftAgainstCommercialPaperAccount() && $overdraftAgainstCommercialPaper) {
             $this->overdraftAgainstCommercialPaperLimits()->create([
-                'company_id' => $this->company_id ?: getCurrentCompanyId(),
+                'company_id' => $companyId,
                 'overdraft_against_commercial_paper_id' => $overdraftAgainstCommercialPaper->id
             ]);
+			$paperLimitRow = DB::table('overdraft_against_commercial_paper_limits')->where('overdraft_against_commercial_paper_id',$overdraftAgainstCommercialPaper->id)->orderByDesc('full_date')->first();
+			
+			$accumulatedLimit = $paperLimitRow->accumulated_limit;
+			$date = Carbon::make($paperLimitRow->full_date)->format('Y-m-d');
+			$limitRowId = $paperLimitRow->id;
+			$paperId = $overdraftAgainstCommercialPaper->id;
+			logger('limit id'.$limitRowId.'paper id'.$paperId);
+			// $isExist = OverdraftAgainstCommercialPaperBankStatement::
+			// where('type','=','limit_update')
+			// ->where('company_id',$companyId)
+			// ->where('overdraft_against_commercial_paper_id',$overdraftAgainstCommercialPaper->id)
+			// ->where('date',$date)
+			// ->where('overdraft_against_commercial_paper_limit_id',$limitRowId)
+			// ->exists();
+			// if(!$isExist){
+				OverdraftAgainstCommercialPaperBankStatement::create([
+					'type'=>'limit_update',
+					'is_debit'=>1 ,
+					'is_credit'=>0 ,
+					'priority'=>3 ,
+					'company_id' => $companyId,
+					'overdraft_against_commercial_paper_id' => $paperId,
+					'debit'=>0,
+					'credit'=>0,
+					'limit'=>$accumulatedLimit,
+					'date'=>$date,
+					'overdraft_against_commercial_paper_limit_id'=>$limitRowId,
+					'comment_en'=>__('Limit Update'),
+					'comment_ar'=>__('Limit Update',[],'ar'),
+				]);
+			// }
+			
+			
+			// $this->statements()->create();
+			
         }
     }
 }

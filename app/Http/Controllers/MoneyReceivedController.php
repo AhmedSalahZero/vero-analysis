@@ -704,8 +704,7 @@ class MoneyReceivedController
 			$currentStatement->delete();
 			$moneyReceived = $moneyReceived->refresh();
 		}
-		// $moneyReceived->
-
+		
 		return redirect()->route('view.money.receive',['company'=>$company->id,'active'=>MoneyReceived::CHEQUE_UNDER_COLLECTION])->with('success',__('Cheque Is Under Collection'));
 		
 	}

@@ -2341,6 +2341,7 @@ function combineNoneZeroValuesBasedOnComingDates(array $actualDatesAsIndexAndBoo
 {
     $combined = [];
     $dates = getDatedOf($first, $second);
+
     foreach ($dates as $date) {
         $isActualValue = $actualDatesAsIndexAndBooleans[$date]  ;
         $firstVal = $first[$date] ?? 0;
@@ -2508,6 +2509,9 @@ function getIndexesLargerThanOrEqualIndex(array $items, string $item): array
 }
 function isActualDate(string $dateString): bool
 {
+	if(is_numeric($dateString)){
+		dd('date must be string');
+	}
     $year = explode('-', $dateString)[0];
     $month = explode('-', $dateString)[1];
 

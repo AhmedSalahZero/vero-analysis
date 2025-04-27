@@ -1219,8 +1219,6 @@
 "Received In [ :bankName ] [ :accountType ] [ :accountNumber ]":"Received In [ :bankName ] [ :accountType ] [ :accountNumber ]",
 "Received In [ :bankName ]":"Received In [ :bankName ]",
 "Money Received From [ :partnerType ]":"Money Received From - :partnerType",
-"At Least There Must Be One Current Account in :currencyName":"علي الاقل يجب ان يكون هناك حساب جاري بعملة :currencyName"
-
-
-
+"At Least There Must Be One Current Account in :currencyName":"علي الاقل يجب ان يكون هناك حساب جاري بعملة :currencyName",
+"Limit Update":"تحديث الحد"
 }

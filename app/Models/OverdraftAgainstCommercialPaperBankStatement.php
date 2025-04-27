@@ -20,11 +20,11 @@ class OverdraftAgainstCommercialPaperBankStatement extends Model
 	public $oldFullDate = null;
 	public static function updateNextRows(self $model):string 
 	{
-		$minDate  = $model->full_date ;
+		$minDate  = $model->date ;
 		DB::table('overdraft_against_commercial_papers')->where('id',$model->overdraft_against_commercial_paper_id)->update([
-			'oldest_full_date'=>$minDate,
+			'oldest_date'=>$minDate,
 		]);
-	
+		
 		
 		/**
 		 * * ليه بنستخدم ال 
@@ -35,8 +35,8 @@ class OverdraftAgainstCommercialPaperBankStatement extends Model
 		 */
 		$tableName = (new self)->getTable();
 		 DB::table($tableName)
-		->where('full_date','>=',$minDate)
-		->orderByRaw('full_date asc , priority asc , id asc')
+		->where('date','>=',$minDate)
+		->orderByRaw('date asc , priority asc , id asc')
 		->where('overdraft_against_commercial_paper_id',$model->overdraft_against_commercial_paper_id)
 		->each(function($overdraftAgainstCommercialPaperBankStatement) use($tableName){
 			DB::table($tableName)->where('id',$overdraftAgainstCommercialPaperBankStatement->id) 
@@ -56,6 +56,14 @@ class OverdraftAgainstCommercialPaperBankStatement extends Model
 				$date = $model->date ;
 				$time  = now()->format('H:i:s');
 				$fullDateTime = date('Y-m-d H:i:s', strtotime("$date $time")) ;
+				
+				$row = DB::table('temp_deleted_statements')->where('company_id',$model->company_id)->where('table_name','overdraft_against_commercial_paper_bank_statements')->first();
+				
+				if($row){
+					$model->id = $row->deleted_id;
+					DB::table('temp_deleted_statements')->where('company_id',$model->company_id)->where('table_name','overdraft_against_commercial_paper_bank_statements')->delete();
+				}
+				
 				/**
 				 * * دي علشان لو ليهم نفس التاريخ والوقت بالظبط يزود ثانيه علي التاريخ القديم
 				 */
@@ -93,8 +101,8 @@ class OverdraftAgainstCommercialPaperBankStatement extends Model
 						// وتلقائي هيحذف السحوبات settlements
 					}else{
 						DB::table($tableName)
-						->where('full_date','>=',$minDate)
-						->orderByRaw('full_date asc , priority asc , id asc')
+						->where('date','>=',$minDate)
+						->orderByRaw('date asc , priority asc , id asc')
 						->where('overdraft_against_commercial_paper_id',$model->overdraft_against_commercial_paper_id)->update([
 							'updated_at'=>now()
 						]);
@@ -109,13 +117,13 @@ class OverdraftAgainstCommercialPaperBankStatement extends Model
 				$oldDate = null ;
 				if($overdraftAgainstCommercialPaperBankStatement->is_debit && Request('receiving_date')||$overdraftAgainstCommercialPaperBankStatement->is_credit && Request('delivery_date')){
 						$oldDate = Carbon::make(Request('receiving_date',Request('delivery_date')))->format('Y-m-d');
-						$time  = now()->format('H:i:s');
-						$oldDate = date('Y-m-d H:i:s', strtotime("$oldDate $time")) ;
-						$currentDate = $overdraftAgainstCommercialPaperBankStatement->full_date ;
-						$overdraftAgainstCommercialPaperBankStatement->full_date = min($oldDate,$currentDate);
+						// $time  = now()->format('H:i:s');
+						// $oldDate = date('Y-m-d H:i:s', strtotime("$oldDate $time")) ;
+						$currentDate = $overdraftAgainstCommercialPaperBankStatement->date ;
+						$overdraftAgainstCommercialPaperBankStatement->date = min($oldDate,$currentDate);
 				}
 				DB::table('overdraft_against_commercial_papers')->where('id',$overdraftAgainstCommercialPaperBankStatement->overdraft_against_commercial_paper_id)->update([
-					'oldest_full_date'=>$overdraftAgainstCommercialPaperBankStatement->full_date
+					'oldest_date'=>$overdraftAgainstCommercialPaperBankStatement->full_date
 				]);
 				
 				$overdraftAgainstCommercialPaperBankStatement->debit = 0;

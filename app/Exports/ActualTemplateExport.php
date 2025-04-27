@@ -87,14 +87,16 @@ class ActualTemplateExport implements
 		];
 
 		$headerItems  = ['Name'];
-		foreach ($dates as $date => $value) {
-			if(isActualDate($date)){
-				$year = explode('-',$date)[0];
-				$month = explode('-',$date)[1];
+		
+		foreach ($dates as $dateAsIndex => $dateAsString) {
+			if(isActualDate($dateAsString)){
+				$year = explode('-',$dateAsString)[0];
+				$month = explode('-',$dateAsString)[1];
 				$headerItems[] = $year . '-' . $month;
 			}
 		}
 		$header[] = $headerItems;
+		// dd($header);
 		return $header;
 	}
 

@@ -7,6 +7,7 @@ use App\Models\MoneyReceived;
 use App\Rules\DateMustBeGreaterThanOrEqualDate;
 use App\Rules\DateMustBeLessThanOrEqualDate;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Arr;
 
 class SendToUnderCollectionChequeRequest extends FormRequest
 {
@@ -31,12 +32,16 @@ class SendToUnderCollectionChequeRequest extends FormRequest
 		$ids = is_array($moneyReceivedIds) ? $moneyReceivedIds :  explode(',',$moneyReceivedIds);
 		$firstMoneyReceived = MoneyReceived::whereIn('id',$ids)->orderByDesc('receiving_date')->first() ;
 		$greatestReceivingDate = $firstMoneyReceived->receiving_date;
-		$drawlBankId = Request()->input('drawl_bank_id') ;
+		$drawlBankId = Request()->input('drawl_bank_id',Arr::first(Request()->input('receiving_bank_id',[]))) ;
 		$financialInstitution  = FinancialInstitution::find($drawlBankId);
 		$accountType  = Request()->get('account_type') ; 
+		$accountType = is_array($accountType) ? Arr::first($accountType) : $accountType ;
 		$openingBalanceDate = null;
+		$accountNumber = Request()->get('account_number');
+		$accountNumber = is_array($accountNumber) ? Arr::first($accountNumber) : $accountNumber;
+		
 		if($accountType){
-			$openingBalanceDate = $financialInstitution->getOpeningBalanceForAccount($accountType,Request()->get('account_number'),);
+			$openingBalanceDate = $financialInstitution->getOpeningBalanceForAccount($accountType,$accountNumber);
 		}
         return [
 			'account_type'=>['bail','required'],

@@ -51,12 +51,7 @@ begin
 		 
 
 		set new.limit =  LEAST(_lending_rate /100 * _contract_amount , _max_lending_limit_per_contract)  ;
-		insert into debugging (message) values ('limit create');
-		insert into debugging (message) values (new.limit);
-		insert into debugging (message) values ('lending');
-		insert into debugging (message) values (_lending_rate);
-		insert into debugging (message) values ('contract amount');
-		insert into debugging (message) values (_contract_amount);
+		
 		if(_contract_status = 'finished'
 			and   _number_of_contracts_existence > 1 
 			and new.full_date = _max_full_date 
@@ -118,12 +113,7 @@ begin
 		 
 		 
 		set new.limit =  LEAST(_lending_rate /100 * _contract_amount , _max_lending_limit_per_contract)  ;
-		insert into debugging (message) values ('limit update');
-		insert into debugging (message) values (new.limit);
-		insert into debugging (message) values ('lending');
-		insert into debugging (message) values (_lending_rate);
-		insert into debugging (message) values ('contract amount');
-		insert into debugging (message) values (_contract_amount);
+		
 		if(_contract_status = 'finished'
 			and   _number_of_contracts_existence > 1 
 			and new.full_date = _max_full_date 

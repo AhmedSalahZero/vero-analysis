@@ -22,7 +22,7 @@ class OverdraftAgainstAssignmentOfContractLimit extends Model
 		$minDate  =min($model->full_date,$model->getRawOriginal('full_date')) ?: $model->full_date ;
 		;
 		DB::table('overdraft_against_assignment_of_contracts')->where('id',$model->overdraft_against_assignment_of_contract_id)->update([
-			'oldest_full_date'=>$minDate,
+			'oldest_date'=>$minDate,
 		]);
 		
 		/**
@@ -156,7 +156,7 @@ class OverdraftAgainstAssignmentOfContractLimit extends Model
 						$odAgainstAssignmentOfContractLimit->full_date = min($oldDate,$currentDate);
 				}
 				DB::table('overdraft_against_assignment_of_contracts')->where('id',$odAgainstAssignmentOfContractLimit->overdraft_against_assignment_of_contract_id)->update([
-					'oldest_full_date'=>$odAgainstAssignmentOfContractLimit->full_date
+					'oldest_date'=>$odAgainstAssignmentOfContractLimit->full_date
 				]);
 	
 				// $odAgainstAssignmentOfContractLimit->limit = -1;

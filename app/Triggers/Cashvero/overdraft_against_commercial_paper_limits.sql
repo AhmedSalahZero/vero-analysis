@@ -55,7 +55,9 @@ delimiter //
 create  trigger after_insert_overdraft_against_commercial_paper_limits after insert on `overdraft_against_commercial_paper_limits` for each row 
 
 begin 
-		update overdraft_against_commercial_paper_bank_statements set updated_at = CURRENT_TIMESTAMP where company_id = new.company_id and overdraft_against_commercial_paper_id = new.overdraft_against_commercial_paper_id and date(full_date) >= date(new.full_date) order by full_date asc  ;
+		declare _facility_start_date date default null ;
+		select contract_start_date into _facility_start_date from overdraft_against_commercial_papers where id = new.overdraft_against_commercial_paper_id ;
+		update overdraft_against_commercial_paper_bank_statements set updated_at = CURRENT_TIMESTAMP where company_id = new.company_id and overdraft_against_commercial_paper_id = new.overdraft_against_commercial_paper_id and date >= _facility_start_date  order by full_date asc  ;
 end //
 
 
@@ -64,7 +66,10 @@ drop trigger if exists after_update_overdraft_against_commercial_paper_limits ;
 delimiter // 
 create  trigger after_update_overdraft_against_commercial_paper_limits after update on `overdraft_against_commercial_paper_limits` for each row 
 begin 
-		update overdraft_against_commercial_paper_bank_statements set updated_at = CURRENT_TIMESTAMP where company_id = new.company_id and overdraft_against_commercial_paper_id = new.overdraft_against_commercial_paper_id and date(full_date) >= date(new.full_date) order by full_date asc  ;
+	declare _facility_start_date date default null ;
+		select contract_start_date into _facility_start_date from overdraft_against_commercial_papers where id = new.overdraft_against_commercial_paper_id ;
+		
+		update overdraft_against_commercial_paper_bank_statements set updated_at = CURRENT_TIMESTAMP where company_id = new.company_id and overdraft_against_commercial_paper_id = new.overdraft_against_commercial_paper_id and date >= _facility_start_date order by full_date asc  ;
 end //
 delimiter ; 
 drop trigger if exists before_update_overdraft_against_commercial_paper_limits ;

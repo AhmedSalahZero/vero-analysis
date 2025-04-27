@@ -15,8 +15,8 @@
 						declare _accumulated_limit decimal (14,2) default 0 ;
 						-- في حالة الانشاء
 						set new.created_at = CURRENT_TIMESTAMP;
-						select date , end_balance  into _previous_date,_last_end_balance  from overdraft_against_commercial_paper_bank_statements where  overdraft_against_commercial_paper_id = new.overdraft_against_commercial_paper_id and full_date < new.full_date order by full_date desc , id desc limit 1 ; -- رتبت بالاي دي الاكبر علشان  لو كانوا متساوين في التاريخ بالظبط (ودا احتمال ضعيف ) ياخد اللي ال اي دي بتاعه اكبر
-						select  count(*) into _count_all_rows from overdraft_against_commercial_paper_bank_statements where  overdraft_against_commercial_paper_id = new.overdraft_against_commercial_paper_id and full_date < new.full_date ;
+						select date , end_balance  into _previous_date,_last_end_balance  from overdraft_against_commercial_paper_bank_statements where  overdraft_against_commercial_paper_id = new.overdraft_against_commercial_paper_id and date <= new.date order by date desc , id desc limit 1 ; -- رتبت بالاي دي الاكبر علشان  لو كانوا متساوين في التاريخ بالظبط (ودا احتمال ضعيف ) ياخد اللي ال اي دي بتاعه اكبر
+						select  count(*) into _count_all_rows from overdraft_against_commercial_paper_bank_statements where  overdraft_against_commercial_paper_id = new.overdraft_against_commercial_paper_id and date <= new.date ;
 
 					set new.beginning_balance = if(_count_all_rows,_last_end_balance,ifnull(new.beginning_balance,0)); 
 					set new.end_balance = ifnull(new.beginning_balance + new.debit - new.credit,0) ; 
@@ -115,7 +115,6 @@
 						declare _current_bank_statement_id integer default 0 ; 
 						declare _current_bank_statement_debit integer default 0 ; 
 						declare _i integer default 0 ;
-						declare _origin_update_row_is_debit integer default 0 ;
 						declare _bank_statements_greater_than_current_one_length integer default 0 ;
 						
 						declare _last_bank_statement_date datetime default null ;
@@ -140,8 +139,17 @@
 						
 						
 					end if;
-						select date,end_balance into _previous_date, _last_end_balance  from overdraft_against_commercial_paper_bank_statements where  overdraft_against_commercial_paper_id = new.overdraft_against_commercial_paper_id and full_date < new.full_date order by full_date desc , id desc  limit 1 ; -- رتبت بالاي دي الاكبر علشان  لو كانوا متساوين في التاريخ بالظبط (ودا احتمال ضعيف ) ياخد اللي ال اي دي بتاعه اكبر
+						select date,end_balance into _previous_date, _last_end_balance  from overdraft_against_commercial_paper_bank_statements where  overdraft_against_commercial_paper_id = new.overdraft_against_commercial_paper_id and date = new.date and id < new.id order by date desc , id desc limit 1; -- رتبت بالاي دي الاكبر علشان  لو كانوا متساوين في التاريخ بالظبط (ودا احتمال ضعيف ) ياخد اللي ال اي دي بتاعه اكبر
 						set _count_all_rows =1 ;
+						
+						if  (_previous_date)
+			then
+						select date,end_balance into _previous_date, _last_end_balance  from overdraft_against_commercial_paper_bank_statements where  overdraft_against_commercial_paper_id = new.overdraft_against_commercial_paper_id and date = new.date and id < new.id order by date desc , id desc limit 1; -- رتبت بالاي دي الاكبر علشان  لو كانوا متساوين في التاريخ بالظبط (ودا احتمال ضعيف ) ياخد اللي ال اي دي بتاعه اكبر
+			else 
+						select date,end_balance into _previous_date, _last_end_balance  from overdraft_against_commercial_paper_bank_statements where  overdraft_against_commercial_paper_id = new.overdraft_against_commercial_paper_id and date < new.date order by date desc , id desc limit 1; -- رتبت بالاي دي الاكبر علشان  لو كانوا متساوين في التاريخ بالظبط (ودا احتمال ضعيف ) ياخد اللي ال اي دي بتاعه اكبر
+					 
+			end if ;
+						
 					set new.beginning_balance = if(_count_all_rows,_last_end_balance,ifnull(new.beginning_balance,0)) ;
 					
 					select `accumulated_limit`  into _accumulated_limit from overdraft_against_commercial_paper_limits where is_active = 1 and company_id = new.company_id and overdraft_against_commercial_paper_id = new.overdraft_against_commercial_paper_id and date(full_date) <=  date(new.full_date)  order by full_date desc limit 1 ;
@@ -196,7 +204,7 @@
 						-- لو العنصر دا اللي بنحدث حاليا هو اخر عنصر هنبدا ال السايكل بتاعت اعادة توزيع التسديدات لكل العناصر من اول عنصر اتغير 
 							-- select full_date  into _last_bank_statement_date_to_start_settlement_from from overdraft_against_commercial_paper_bank_statements where overdraft_against_commercial_paper_id = new.overdraft_against_commercial_paper_id order by full_date desc , priority asc limit 1 ;
 							select full_date into _last_bank_statement_date_to_start_settlement_from from overdraft_against_commercial_paper_bank_statements where overdraft_against_commercial_paper_id = new.overdraft_against_commercial_paper_id order by date desc , priority asc , id asc limit 1 ; 
-							select oldest_full_date,origin_update_row_is_debit into _start_update_from_date_time,_origin_update_row_is_debit from overdraft_against_commercial_papers where id = new.overdraft_against_commercial_paper_id  ; 
+							select oldest_date into _start_update_from_date_time from overdraft_against_commercial_papers where id = new.overdraft_against_commercial_paper_id  ; 
 			--				select start_settlement_from_bank_statement_date into _last_bank_statement_date_to_start_settlement_from from overdraft_against_commercial_papers where id = new.overdraft_against_commercial_paper_id ; 
 							-- عايزين بدل السطر اللي فوق نجيب ال closing date 
 						
@@ -395,3 +403,12 @@
 				END$$
 				DELIMITER ;
 				
+				
+				 DELIMITER ; 
+drop trigger if exists refresh_calculation_before_delete_paper_statements ;
+  delimiter //  
+create  trigger refresh_calculation_before_delete_paper_statements before delete on `overdraft_against_commercial_paper_bank_statements` for each row 
+begin 
+	delete from `temp_deleted_statements` where company_id = old.company_id and table_name = 'overdraft_against_commercial_paper_bank_statements';
+	insert into `temp_deleted_statements` (company_id,table_name,deleted_id) values (old.company_id,'overdraft_against_commercial_paper_bank_statements',old.id);
+end //

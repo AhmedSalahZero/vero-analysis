@@ -35,7 +35,7 @@ class StoreOverdraftAgainstCommercialPaperRequest extends FormRequest
 			'currency'=>'required',
 			'limit'=>['required','gt:0'],
 			'interest_rate'=>['sometimes','required','gt:0'],
-			'infos'=>[new LendingRateRule()],
+	//		'infos'=>[new LendingRateRule()],
 			'max_lending_limit_per_customer'=>'required|gt:0',
 			'outstanding_breakdowns'=>[new OutstandingBreakdownRule($this->outstanding_balance?:0,$this->contract_start_date)],
         ];

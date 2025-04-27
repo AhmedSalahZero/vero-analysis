@@ -37,6 +37,7 @@ ToCollection,
     {
 
 		$dates = checkIfAllDates($rows[0]->toArray());
+	
 		if(! count($dates)){
 			return  collect([]);
 		}
@@ -51,31 +52,30 @@ ToCollection,
 				$subItemName = trim(explode('-', $fullName, 2)[1]);
 				$mainItem = IncomeStatementItem::where('name',$mainName)->where('financial_statement_able_type','IncomeStatement')->first();
 				$currentValues = [];
-				foreach($dates as $dateIndex=>$date){
-					$currentDate = $date.'-01' ;
+				foreach($dates as $dateIndex=>$dateAsString){
+					// $currentDate = $date.'-01' ;
 					$currentValue = 0;
 					if($row[$dateIndex+1] != null){
 						$currentValue = $row[$dateIndex+1]; 
 					}else{
 						$model = $this->incomeStatement->subItems->where('pivot.financial_statement_able_id',$this->incomeStatement->id)->where('pivot.financial_statement_able_item_id',$mainItem->id)->where('pivot.sub_item_name',$subItemName)->where('pivot.sub_item_type','actual')->first() ;
-						$currentValue = ((array)json_decode($model->pivot->payload))[$currentDate] ?? 0 ;
+						$currentValue = ((array)json_decode($model->pivot->payload))[$dateIndex] ?? 0 ;
 					}
-					$currentValues[$currentDate] = 	number_unformat($currentValue) ;	
+					$currentValues[$dateIndex] = 	number_unformat($currentValue) ;	
 					// $subItems['value'][$this->incomeStatement->id][$mainItem->id][$subItemName][$currentDate] = number_unformat($currentValue);
 				}
 				
-				if($mainItem->id == IncomeStatementItem::SALES_REVENUE_ID && str_contains($subItemName,' ( Quantity )') ){
+				if($mainItem && $mainItem->id == IncomeStatementItem::SALES_REVENUE_ID && str_contains($subItemName,' ( Quantity )') ){
 					$quantities[$index] = $currentValues;
 				}
 				
 				$subItems[$index] = [
 					'name'=>$subItemName ,
-					'financial_statement_able_item_id'=>$mainItem->id,
+					'financial_statement_able_item_id'=> $mainItem->id ,
 					'percentage_or_fixed'=>'non_repeating_fixed',
 					'can_be_percentage_or_fixed'=>1 ,
 					'vat_rate'=>0,
 					'non_repeating_popup'=>$currentValues
-					
 				];
 			}
 			// remove quantities and append it to values 

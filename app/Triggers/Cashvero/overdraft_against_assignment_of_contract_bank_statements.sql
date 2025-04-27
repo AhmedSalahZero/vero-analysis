@@ -141,8 +141,6 @@
 					elseif (new.type = 'outgoing-transfer') then
 					select to_be_setteled_max_within_days into _overdraft_against_assignment_of_contract_to_be_settled_after from overdraft_against_assignment_of_contracts where id = new.overdraft_against_assignment_of_contract_id ;
 						update overdraft_against_assignment_of_contract_withdrawals set due_date =  ADDDATE(new.date,_overdraft_against_assignment_of_contract_to_be_settled_after) where overdraft_against_assignment_of_contract_bank_statement_id = new.id ;
-						
-						
 					end if;
 						select date,end_balance,id into _previous_date, _last_end_balance,_last_id  from overdraft_against_assignment_of_contract_bank_statements where  overdraft_against_assignment_of_contract_id = new.overdraft_against_assignment_of_contract_id and date = new.date and id < new.id order by date desc , id desc limit 1; -- رتبت بالاي دي الاكبر علشان  لو كانوا متساوين في التاريخ بالظبط (ودا احتمال ضعيف ) ياخد اللي ال اي دي بتاعه اكبر
 						if  (_previous_date)

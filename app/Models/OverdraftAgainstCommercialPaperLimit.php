@@ -27,7 +27,7 @@ class OverdraftAgainstCommercialPaperLimit extends Model
 		$minDate  =min($model->full_date,$model->getRawOriginal('full_date')) ?: $model->full_date ;
 		;
 		DB::table('overdraft_against_commercial_papers')->where('id',$model->overdraft_against_commercial_paper_id)->update([
-			'oldest_full_date'=>$minDate,
+			'oldest_date'=>$minDate,
 		]);
 		
 		/**
@@ -156,12 +156,13 @@ class OverdraftAgainstCommercialPaperLimit extends Model
 						$overdraftAgainstCommercialPaperLimit->full_date = min($oldDate,$currentDate);
 				}
 				DB::table('overdraft_against_commercial_papers')->where('id',$overdraftAgainstCommercialPaperLimit->overdraft_against_commercial_paper_id)->update([
-					'oldest_full_date'=>$overdraftAgainstCommercialPaperLimit->full_date
+					'oldest_date'=>$overdraftAgainstCommercialPaperLimit->full_date
 				]);
 	
 				// $overdraftAgainstCommercialPaperLimit->limit = -1;
 				// $overdraftAgainstCommercialPaperLimit->accumulated_limit = 0;
 				$overdraftAgainstCommercialPaperLimit->save();
+				Cheque::deleteLimitUpdateRowFromStatement($overdraftAgainstCommercialPaperLimit);
 				
 			});
 		}
