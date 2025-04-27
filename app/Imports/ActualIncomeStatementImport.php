@@ -53,6 +53,7 @@ ToCollection,
 				$mainItem = IncomeStatementItem::where('name',$mainName)->where('financial_statement_able_type','IncomeStatement')->first();
 				$currentValues = [];
 				foreach($dates as $dateIndex=>$dateAsString){
+					
 					// $currentDate = $date.'-01' ;
 					$currentValue = 0;
 					if($row[$dateIndex+1] != null){
