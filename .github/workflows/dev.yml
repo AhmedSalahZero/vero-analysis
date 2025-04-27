@@ -30,4 +30,3 @@ jobs:
             npm install
             npm run production
             /usr/bin/php artisan run:sql
-            sudo /usr/sbin/service supervisor restart

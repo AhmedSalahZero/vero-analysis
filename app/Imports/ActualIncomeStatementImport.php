@@ -47,6 +47,7 @@ ToCollection,
 		$quantities =[];
         foreach ($rows as $index=>$row) 
         {		
+			
 				$fullName = $row[0];
 				$mainName = trim(explode('-', $fullName, 2)[0]);
 				$subItemName = trim(explode('-', $fullName, 2)[1]);
