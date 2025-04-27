@@ -17,7 +17,7 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           port: 22
           script: |
-            cd /var/www/html/system.veroanalysis.com
+            cd /home/veroanalysis/public_html/system.veroanalysis.com
             git stash
             git pull origin salah
             /usr/bin/php /usr/local/bin/composer install --no-interaction --prefer-dist --optimize-autoloader
@@ -30,4 +30,4 @@ jobs:
             npm install
             npm run production
             /usr/bin/php artisan run:sql
-            
+            sudo /usr/sbin/service supervisor restart
