@@ -21,7 +21,7 @@ jobs:
             git stash
             git pull origin salah
             /usr/bin/php /usr/local/bin/composer install --no-interaction --prefer-dist --optimize-autoloader
-            /usr/bin/php artisan optimize:clear
+            /usr/bin/php artisan view:clear
             chmod -R 775 storage
             chmod -R 775 bootstrap/cache
             chmod 777 -R storage/framework/*
