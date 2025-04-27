@@ -1,77 +1,33 @@
-name: Publish Website
+name: Laravel Deploy
+
 on:
-   push:
+  push:
     branches:
-     - salah	
+      - salah    # الفرع اللي تشتغل عليه (انت كنت على "salah")
+
 jobs:
-  FTP-Deploy-Action:
-    name: FTP-Deploy-Action
+  deploy:
     runs-on: ubuntu-latest
-    env:
-       DB_HOST: veroanalysis.com
-       DB_DATABASE: veroanalysis_db
-       DB_USERNAME: veroanalysis_production
-       DB_PASSWORD: ho_OQYRjSqGB
-       DB_NON_BANK_SERVICE_DATABASE: veroanalysis_non_banking_services
-       DB_NON_BANK_SERVICE_USERNAME: veroanalysis_non_banking
-       DB_NON_BANK_SERVICE_PASSWORD: lkqm=vO,R*%*
-       BROADCAST_DRIVER: log
-    services:
-           mysql:
-            image: mysql:5.7
-            env:
-                MYSQL_ALLOW_EMPTY_PASSWORD: false
-                MYSQL_ROOT_PASSWORD: ho_OQYRjSqGB
-                MYSQL_DATABASE: veroanalysis_db
-            ports:
-                   - 3306/tcp
-            options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
-    - uses: actions/checkout@v4
-      with:
-        fetch-depth: 1
-        clean: true
-    - name: Setup PHP
-      uses: shivammathur/setup-php@v2
-      with:
-         php-version: 7.4.33
-         extensions: mbstring, dom, fileinfo, mysql
-    - name: Start mysql service
-      run: sudo /etc/init.d/mysql start 
-    - name: Get composer cache directory 
-      id: composer-cache
-      run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-    - name: Cache composer dependencies
-      uses: actions/cache@v3
-      with:
-           path: ${{ steps.composer-cache.outputs.dir }}
-           key: ${{ runner.os }}-compdsoser-${{ hashFiles('**/composer.lock') }}
-           restore-keys: ${{ runner.os }}-composer-
-    - name: Install Composer dependencies
-      run: composer update  
-    - name: remove caching
-      run: php artisan optimize:clear 
-    - name: Storage link
-      run: php artisan storage:link 
-    - name: run migration
-      run: php artisan migrate --force   
-    - name: run sql file
-      run: php artisan run:sql  
-    - name: cache clear
-      run: php artisan optimize:clear  
-    - name: FTP-Deploy-Action
-      uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-      with:
-         server: 147.182.239.201
-         server-dir: public_html/system.veroanalysis.com/
-         username: veroanalysis
-         password: Aa@112233@aA
-         dry-run: false
-         exclude: |
-            **/node_modules/**
-            **/storage/**
-            **/vendor/**
-            **/public/python/**
-            **/.git/**
-            **/.vscode/**    
-    
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: 22
+          script: |
+            cd /var/www/html/system.veroanalysis.com
+            git stash
+            git pull origin salah
+            /usr/bin/php /usr/local/bin/composer install --no-interaction --prefer-dist --optimize-autoloader
+            /usr/bin/php artisan optimize:clear
+            chmod -R 775 storage
+            chmod -R 775 bootstrap/cache
+            chmod 777 -R storage/framework/*
+            /usr/bin/php artisan migrate --force
+            /usr/bin/php artisan storage:link
+            npm install
+            npm run production
+            /usr/bin/php artisan run:sql
+            sudo /usr/sbin/service supervisor restart
