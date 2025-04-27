@@ -543,6 +543,7 @@ class HArr
 	}
 	public static function getActualDatesAsIndexAndBoolean(array $datesAsIndexAndString ){
 		$result = [];
+		
 		foreach($datesAsIndexAndString as $dateIndex => $dateString ){
 			$result[$dateIndex] = isActualDate($dateString);
 			
