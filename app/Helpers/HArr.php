@@ -624,5 +624,14 @@ class HArr
 		}
 		dd('title not found');
 	}
+	public static function getIndexUsingName(array $array , $searchName)
+	{
+		foreach ($array as $key => $item) {
+			if ($item['name'] === $searchName) {
+				return  $key;
+			}
+		}
+		dd('name not found');
+	}
 
 }

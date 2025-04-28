@@ -2,6 +2,7 @@
 
 namespace App\Imports;
 
+use App\Helpers\HArr;
 use App\Models\Company;
 use App\Models\IncomeStatement;
 use App\Models\IncomeStatementItem;
@@ -37,7 +38,7 @@ ToCollection,
     {
 
 		$dates = checkIfAllDates($rows[0]->toArray());
-	
+
 		if(! count($dates)){
 			return  collect([]);
 		}
@@ -51,10 +52,10 @@ ToCollection,
 				$fullName = $row[0];
 				$mainName = trim(explode('-', $fullName, 2)[0]);
 				$subItemName = trim(explode('-', $fullName, 2)[1]);
+			
 				$mainItem = IncomeStatementItem::where('name',$mainName)->where('financial_statement_able_type','IncomeStatement')->first();
 				$currentValues = [];
 				foreach($dates as $dateIndex=>$dateAsString){
-					// $currentDate = $date.'-01' ;
 					$currentValue = 0;
 					if($row[$dateIndex+1] != null){
 						$currentValue = $row[$dateIndex+1]; 
@@ -63,11 +64,11 @@ ToCollection,
 						$currentValue = ((array)json_decode($model->pivot->payload))[$dateIndex] ?? 0 ;
 					}
 					$currentValues[$dateIndex] = 	number_unformat($currentValue) ;	
-					// $subItems['value'][$this->incomeStatement->id][$mainItem->id][$subItemName][$currentDate] = number_unformat($currentValue);
+				
 				}
 				
-				if($mainItem && $mainItem->id == IncomeStatementItem::SALES_REVENUE_ID && str_contains($subItemName,' ( Quantity )') ){
-					$quantities[$index] = $currentValues;
+				if($mainItem->id == IncomeStatementItem::SALES_REVENUE_ID && str_contains($subItemName,' ( Quantity )') ){
+					$quantities[$index] = ['values'=>$currentValues , 'name'=>$subItemName];
 				}
 				
 				$subItems[$index] = [
@@ -85,11 +86,17 @@ ToCollection,
 			 * * مع بعض في نفس ال array 
 			 * * بدل ما هما في اتنين اري مختلفين
 			 */
-			foreach($quantities as $index => $quantityValArr){
+			// dd($subItems);
+			foreach($quantities as $index => $quantityNamesValArr){
+				$quantityValArr = $quantityNamesValArr['values'];
+				// dd($subItems,$subItems[$index],$subItems[$index+1]);
+				// dd($quantities);
+				$nameWithoutQuantity = str_replace(' ( Quantity )','',$quantityNamesValArr['name']);
+				$searchIndex = HArr::getIndexUsingName($subItems,$nameWithoutQuantity);
 				unset($subItems[$index]);
-				$subItems[$index+1]['quantity'] =  $quantityValArr;
-				$subItems[$index+1]['val']  = $subItems[$index+1]['non_repeating_popup'];
-				unset($subItems[$index+1]['non_repeating_popup']);
+				$subItems[$searchIndex]['quantity'] =  $quantityValArr;
+				$subItems[$searchIndex]['val']  = $subItems[$searchIndex]['non_repeating_popup'];
+				unset($subItems[$searchIndex]['non_repeating_popup']);
 			}
 			$subItems=array_values($subItems);
 			
@@ -101,7 +108,6 @@ ToCollection,
 				'income_statement_id'=>$this->incomeStatement->id,
 				'sub_items'=>$subItems
 			]);
-			
 			$this->incomeStatement->storeReport($newRequest);
 		return $rows ;
     }

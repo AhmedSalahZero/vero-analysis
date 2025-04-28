@@ -193,8 +193,9 @@ trait FinancialStatementAbleMutator
 		$datesHelper = $incomeStatement->financialStatement->getDatesIndexesHelper();
 		$dateIndexWithDate = $datesHelper['dateIndexWithDate'];
 		$actualDatesAsIndexAndBooleans = HArr::getActualDatesAsIndexAndBoolean($dateIndexWithDate);
-
-		foreach($request->get('sub_items',[]) as $subItemArr){
+		$rows = $request->get('sub_items',[]);
+		
+		foreach($rows as $subItemArr){
 			/**
 			 * * دي علشان الرفع الخاص بال actual 
 			 * * لان وقتها بنرفع اكثر من $financialStatementAbleItemId
@@ -203,17 +204,15 @@ trait FinancialStatementAbleMutator
 			$currentSubItemValues = [];
 			$isSalesRevenue = $financialStatementAbleItemId == 1 ;
 			
-		
+			
 			foreach($insertSubItems as $currentSubItemToBeInserted ){
 				$currentSubItemDataArr = $incomeStatement->getFinancialStatementAbleData($currentSubItemToBeInserted,$formSubItemType,$subItemArr,false);
 				$percentageOfValue = $currentSubItemDataArr['percentage_value'];
 				$isPercentageOf = $currentSubItemDataArr['is_percentage_of'];
 				$costOfUnitValue = $currentSubItemDataArr['cost_of_unit_value'];
 				$isCostOfUnitOf = $currentSubItemDataArr['is_cost_of_unit_of'];
-				
 				$vatRate = $currentSubItemDataArr['vat_rate'];
 				$isFinancialExpense = $currentSubItemDataArr['is_financial_expense'];
-					
 				$isDepreciationOrAmortization = $currentSubItemDataArr['is_depreciation_or_amortization'];
 				$isDeductible =$currentSubItemDataArr['is_deductible']; 
 				$percentageOfFixed = $currentSubItemDataArr['percentage_or_fixed'] ;
@@ -226,10 +225,15 @@ trait FinancialStatementAbleMutator
 				
 				$salesRevenuesSubItemsArray = $incomeStatement->getSalesRevenueArr($newSubItemName);
 
-				if($isSalesRevenue){
-				
+
+				if($isSalesRevenue 
+				// && isset($subItemArr['val'])
+				){
+					// dd($subItemArr,$isSalesRevenue,$isNonRepeating,$subItemArr);
 					$currentSubItemValues=$subItemArr['val'] ?? [];
+					
 					$currentPayloadForQuantity = $subItemArr['quantity'] ?? [];
+					
 					if($formSubItemType != $currentSubItemToBeInserted ){
 						$currentPayloadForQuantity = [];
 					}

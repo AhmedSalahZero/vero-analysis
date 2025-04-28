@@ -57,6 +57,7 @@ class ActualTemplateExport implements
 			$itemsNames[] = 	$mainItem->getName().' - '.$subItemName;
 			}
 		}
+		dd($itemsNames);
 		return collect($itemsNames);
 	}
 
@@ -67,7 +68,6 @@ class ActualTemplateExport implements
 	public function headings(): array
 	{
 		$dates  = $this->incomeStatement->getIntervalFormatted();
-		
 		$header = [
 			[
 				getCurrentCompany()->getName(),
@@ -96,7 +96,7 @@ class ActualTemplateExport implements
 			}
 		}
 		$header[] = $headerItems;
-		// dd($header);
+		
 		return $header;
 	}
 
