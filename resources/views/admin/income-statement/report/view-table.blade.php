@@ -294,15 +294,8 @@ $tableId = 'kt_table_1';
         const sales_rate_maps = JSON.parse(sales_rates_maps);
         let opens = [];
         let globalTable = null;
-        let canSendAjaxRequest = true;
-        let inEditMode = false;
+    
         let lastInputValue = 0;
-        let numberOfConsole = 0
-        let lastPercentageSubItemOfEachMainRow = {}
-        let lastCostOfUnitSubItemOfEachMainRow = {}
-        let modalIsOpenInAddOrEdit = false
-        let currentDelete = {}
-        let deleteModalIsOpen = false
         let salesRevenueModalTdData = {}
         let nonRepeatingModalTdData = {}
         const vatRateMaps = JSON.parse(document.getElementById('vat-rates-maps').value);
@@ -399,21 +392,9 @@ $tableId = 'kt_table_1';
 
             <script>
                 let inAddOrEditModal = false;
-                let canRefreshPercentages = false;
                 window.addEventListener('DOMContentLoaded', function() {
                     (function($) {
-						$(document).on('change','.names-items-names',function(){
-							var names = [];
-							$('#new_items_names').val('[]');
-							$('.names-items-names').each(function(index,input){
-								var currentName = $(input).val() ;
-								if(currentName!=''){
-								names.push(currentName);
-									
-								}
-							})
-							$('#new_items_names').val(names);
-						});
+						
                         window.addEventListener('scroll', function() {
                             const top = window.scrollY > 140 ? window.scrollY : 140;
 
@@ -428,6 +409,7 @@ $tableId = 'kt_table_1';
 
 						
                             $(document).on('click', '.arrow-nav', function() {
+								console.log('arrow nave');
                                 const scrollLeftOfTableBody = document.querySelector('.kt-portlet__body').scrollLeft
                                 const scrollByUnit = 50
                                 if (this.classList.contains('arrow-right')) {
@@ -441,20 +423,22 @@ $tableId = 'kt_table_1';
 
                         }
                         $(document).on('click', '.import-modal-class', function() {
-
+console.log('import1')
                             $('#exampleModalCenter').modal('show')
 
                         })
                         $(document).on('change', '.trim-when-key-up', function() {
+							console.log('change2')
                             $(this).val($(this).val().trim())
                         })
                         $(document).on("hidden.bs.modal", '.modal', function(e) {
+							
                             if ($('.modal:visible').length) {
                                 $('body').addClass('modal-open');
                             }
                         });
                         $(document).on('click', '.repeat-row', function() {
-
+console.log('repeat now 1')
                             const parentQuery = this.getAttribute('data-parent-query')
                             const columnIndex = this.getAttribute('data-column-index')
                             const rowIndex = this.getAttribute('data-row-index')
@@ -471,6 +455,7 @@ $tableId = 'kt_table_1';
                         })
 
                         $(document).on('change', 'input[name*="is_depreciation_or_amortization"]', function() {
+							console.log('change3')
                             const val = $(this).is(':checked');
 
                             if (val) {
@@ -488,7 +473,7 @@ $tableId = 'kt_table_1';
                         })
 
                         $(document).on('change', '.collection_rate_input', function() {
-
+console.log('change4')
 
                             let percentage = filterNumericUserInput($(this).val())
                             percentage = parseFloat(percentage)
@@ -518,14 +503,15 @@ $tableId = 'kt_table_1';
                         })
 
                         $(document).on('change', '.can-trigger-quantity-modal', function() {
+							console.log('change5')
                             let quantityOrPrice = $(this).val()
                             let currentIndex = $(this).closest('.how-many-item').attr('data-index')
                             currentIndex = currentIndex == undefined ? 0 : currentIndex
 
                             let inEditMode = $(this).attr('data-in-edit-mode')
                             let subItemName = $(this).attr('data-sub-item-name')
+                            let subItemId = $(this).attr('data-sub-item-id')
                             $(this).closest('.quantity-section').find('[data-index]').attr('data-index', currentIndex)
-
                             let currentCheckedItem = $(this).parent().parent().find('input[name="sub_items[' + currentIndex + '][is_quantity]"]:checked')
                             if (currentCheckedItem.length >= 1) {
                                 let firstCheckboxValue = currentCheckedItem[0].value
@@ -587,11 +573,12 @@ $tableId = 'kt_table_1';
                                 quantitySection.find('.modal-for-quantity[data-index="' + currentIndex + '"]').attr('id', 'modal-for-quantity-' + currentIndex)
                                 quantitySection.find('.modal-for-quantity[data-index="' + currentIndex + '"]').attr('data-id', 'modal-for-quantity-' + currentIndex)
                                 // to update total 
-								quantitySection.find('.modal-for-quantity tr td:nth-of-type(2) input.hidden-for-popup:first-of-type').trigger('blur')
+							//	quantitySection.find('.modal-for-quantity tr td:nth-of-type(2) input.hidden-for-popup:first-of-type').trigger('blur')
 
                                 //$('.hidden-for-popup').trigger('blur')
-                                $('.modal-for-quantity').addClass('d-none').addClass('fade').removeClass('d-block')
-                                $('.modal-for-quantity[data-index="' + currentIndex + '"]').removeClass('fade').removeClass('d-none').addClass('d-block').modal('show')
+                            //    $('.modal-for-quantity').addClass('d-none').addClass('fade').removeClass('d-block')
+						
+                                $('.modal-for-quantity[data-index="' + currentIndex + '"][data-sub-id="'+subItemId+'"]').removeClass('fade').removeClass('d-none').addClass('d-block').modal('show')
                             } else {
 
                                 const name = "sub_items[" + currentIndex + "][is_value_quantity_price]";
@@ -602,12 +589,14 @@ $tableId = 'kt_table_1';
                         })
 
                         $(document).on('change', '.can-trigger-non-repeating-modal', function() {
+							console.log('change6')
                             // return false ;
 
                             let currentIndex = $(this).closest('.how-many-item').attr('data-index')
                             currentIndex = currentIndex == undefined ? 0 : currentIndex
                             let inEditMode = +$(this).attr('data-in-edit-mode')
                             let subItemName = $(this).attr('data-sub-item-name')
+                            let subItemId = $(this).attr('data-sub-item-id')
                             $(this).closest('.non-repeating-section').find('[data-index]').attr('data-index', currentIndex)
 
                             let currentCheckedItem = $(this).parent().parent().find('input[name="sub_items[' + currentIndex + '][percentage_or_fixed]"]:checked')
@@ -628,18 +617,16 @@ $tableId = 'kt_table_1';
                                 nonRepeatingSection.find('.modal-for-non-repeating[data-index="' + currentIndex + '"]').attr('data-id', 'modal-for-non-repeating-' + currentIndex)
 
                                 // to update total 
-                                $('.append-non-repeating-modal-table-body tr td:nth-of-type(2) input.hidden-for-popup-non-repeating:first-of-type').trigger('blur')
-
-                              //
-                                $('.modal-for-non-repeating').addClass('d-none').addClass('fade').removeClass('d-block')
-								
-                                $('.modal-for-non-repeating[data-index="' + currentIndex + '"]').removeClass('fade').removeClass('d-none').addClass('d-block').modal('show')
+                              //  $('.append-non-repeating-modal-table-body tr td:nth-of-type(2) input.hidden-for-popup-non-repeating:first-of-type').trigger('blur')
+                         	 //      $('.modal-for-non-repeating').addClass('d-none').addClass('fade').removeClass('d-block')
+                                $('.modal-for-non-repeating[data-index="' + currentIndex + '"][data-sub-id="'+subItemId+'"]').removeClass('fade').removeClass('d-none').addClass('d-block').modal('show')
                             }
 
                         })
 
 
                         $(document).on('change', '.only-one-checked', function() {
+							console.log('change7')
                             const parent = $(this).closest('.only-one-checked-parent')
                             parent.find('.only-one-checked').prop('checked', false)
                             parent.find('.for-only-one-checked').addClass('d-none').find('input,select').prop('disabled', true)
@@ -654,12 +641,14 @@ $tableId = 'kt_table_1';
 
 
                         $(document).on('change', '.only-one-checkbox', function() {
+							console.log('change8')
                             const parent = $(this).closest('.only-one-checkbox-parent')
                             parent.find('.only-one-checkbox').prop('checked', false)
                             $(this).prop('checked', true)
                         })
 
                         $(document).on('change', '.only-two-checkbox', function() {
+							console.log('change9')
                             const parent = $(this).closest('.only-two-checkbox-parent')
                             let currentCheckedLength = parent.find('.only-two-checkbox:checked').length
                             if (currentCheckedLength > 2) {
@@ -677,7 +666,7 @@ $tableId = 'kt_table_1';
                         })
 
                         $(document).on('blur', '.blured-item', function() {
-						
+						console.log('blur2')
                             const date = this.getAttribute('data-date')
                             const type = this.getAttribute('data-type')
                             const parentElement = this.parentElement.parentElement
@@ -716,7 +705,7 @@ $tableId = 'kt_table_1';
                         })
 						
 						 $(document).on('blur', '.blured-item-non-repeating', function() {
-			
+							console.log('blur')
                             const date = this.getAttribute('data-date')
                             const type = this.getAttribute('data-type')
                             const parentElement = this.parentElement.parentElement
@@ -812,23 +801,26 @@ $tableId = 'kt_table_1';
                     
 
                         // Add event listener for opening and closing details
-                        $(document).on('hide.bs.modal', '.edit-sub-modal-class', function() {
-                            inEditMode = false
-                        })
                         $(document).on('click', '.edit-btn', function() {
-                            inEditMode = true
                             const target = $(this).attr('data-target');
                             if (target) {
-                                $(target).find('.can-trigger-quantity-modal:checked:first-of-type').trigger('change');
+								if($(target).find('.can-trigger-quantity-modal:checked:first-of-type').length){
+									console.log('from if');
+                                	$(target).find('.can-trigger-quantity-modal:checked:first-of-type').trigger('change');
+								}else{
+									console.log('from else');
                                 $(target).find('.can-trigger-non-repeating-modal:checked:first-of-type').trigger('change');
+								}
                             }
 
 
                         })
+                    
 						$(document).on('change','.has-collection-policy-class',function(){
 							$(this).prop('checked',true)
 						})
                         $(document).on('change', '.has-collection-policy-class', function() {
+							console.log('change11')
                             const hasCollectionPolicy = this.checked
 
                             const collectionPolicyContent = $(this).closest('.collection-policy').find('.collection-policy-content')
@@ -845,6 +837,7 @@ $tableId = 'kt_table_1';
                         })
 
                         $(document).on('click', '.can_be_percentage_or_fixed_class', function() {
+							console.log('can be 1')
                             let val = $(this).val();
                             $(this).closest('.how-many-item').find('.non-repeating-fixed-sub,.repeating-fixed-sub,.percentage-sub,.cost-of-unit-sub').removeClass('d-flex').addClass('d-none');
                             $(this).closest('.how-many-item').find('.can_be_percentage_or_fixed_class').prop('checked', false);
@@ -855,19 +848,22 @@ $tableId = 'kt_table_1';
                         });
                      
                         $(document).on('click', '.redirect-btn', function(e) {
+							console.log('redirect btn')
                             e.preventDefault();
                             window.location.href = $(this).data('redirect-to');
                         })
-                        $(document).on('click', function(e) {
+                     //   $(document).on('click', function(e) {
+					//		console.log('on click');
                             // close opened custom modal [for filter and export btn]
-                            let target = e.target;
-                            if (!$(target).closest('.close-when-clickaway').length && !$(target).closest('.do-not-close-when-click-away').length) {
-                                $('.close-when-clickaway').addClass('d-none');
-                            }
-                        });
+                     //       let target = e.target;
+                    //        if (!$(target).closest('.close-when-clickaway').length && !$(target).closest('.do-not-close-when-click-away').length) {
+                     //           $('.close-when-clickaway').addClass('d-none');
+                    //        }
+                 //       });
 
 
                         $(document).on('click', '.trigger-child-row-1', function(e) {
+							console.log('click child')
                             const parentId = $(e.target.closest('tr')).data('model-id');
                             var parentRow = $(e.target).parent();
                             var subRows = parentRow.nextAll('tr.add-sub.maintable-1-row-class' + parentId);
@@ -897,6 +893,7 @@ $tableId = 'kt_table_1';
 
 
                         $(document).on('click', '.expand-all', function(e) {
+							console.log('expenad all')
                             e.preventDefault();
                             if ($(this).hasClass('is-open-parent')) {
                                 $(this).addClass('is-close-parent').removeClass('is-open-parent')
@@ -929,7 +926,7 @@ $tableId = 'kt_table_1';
                                     datesFormatted = JSON.parse(datesFormatted);
                                     window['dates'] = data;
                                     window['datesFormatted'] = datesFormatted;
-							
+								console.log('init 1')
                                     const columns = [];
                                     columns.push({
                                         data: 'id'
@@ -937,6 +934,7 @@ $tableId = 'kt_table_1';
                                         , orderable: false
                                         , className: 'trigger-child-row-1 cursor-pointer sub-text-bg text-capitalize  is-close '
                                         , render: function(d, b, row) {
+											console.log('init 2')
                                             if (!row.isSubItem && row.has_sub_items) {
                                                 return '+';
                                             } else if (row.isSubItem && row.pivot && row.pivot.can_be_percentage_or_fixed) {
@@ -986,6 +984,7 @@ $tableId = 'kt_table_1';
                                     , });
                                     columns.push({
                                         render: function(d, b, row) {
+												console.log('init 22')
                                             this.currentRow = row;
                                             if (row.isSubItem) {
                                                 return row.pivot.sub_item_name;
@@ -997,6 +996,7 @@ $tableId = 'kt_table_1';
                                         , className: 'sub-text-bg  editable editable-text is-name-cell'
                                     });
                                     for (let i = 0; i < data.length; i++) {
+										console.log('init 3')
                                         columns.push({
                                             render: function(d, b, row, setting) {
                                                 date = data[i];
@@ -1033,6 +1033,7 @@ $tableId = 'kt_table_1';
 
                                     columns.push({
                                         render: function(d, b, row, setting) {
+											console.log('init 33')
                                             var subTotal = row.main_rows && row.main_rows[0] ? row.main_rows[0].pivot.total : 0
                                             return subTotal;
 
@@ -1057,6 +1058,7 @@ $tableId = 'kt_table_1';
                                                 , "type": "post"
                                                 , "dataSrc": "data", // they key in the jsom response from the server where we will get our data
                                                 "data": function(d) {
+													console.log('init 44')
                                                     d.search_input = $(getSearchInputSelector(tableId)).val();
                                                     d.sub_item_type = $('#sub-item-type').val()
                                                     d.income_statement_id = $('#income_statement_id').val()
@@ -1161,7 +1163,6 @@ $tableId = 'kt_table_1';
 
                                             ]
                                             , createdRow: function(row, data, dataIndex, cells) {
-												
                                                 let reportType = vars.subItemType;
                                                 let subOfSelect = ''
 
@@ -1169,7 +1170,7 @@ $tableId = 'kt_table_1';
                                                 let costOfGoodsId = domElements.costOfGoodsId;
                                                 let corporateTaxesId = domElements.corporateTaxesId;
                                                 let salesReveueId = domElements.salesRevenueId;
-											
+											console.log('init 66')
                                                 if (data.id == salesReveueId&& !data.duration) {
 											
                                                     sales_revenues_sub_items_names = [{id:'all',name:'{{ __("All") }}'}];
@@ -1299,7 +1300,7 @@ $tableId = 'kt_table_1';
 																<div class="d-flex flex-column align-items-center justify-content-center flex-wrap ">
 																	<label >{{ __('Non-Repeating Amount') }}</label>
 															
-															<input data-sub-item-name="${data.pivot.sub_item_name}" data-in-edit-mode="1" ${nonRepeatingFixedisChecked} class="can_be_percentage_or_fixed_class non-repeating-fixed can-trigger-non-repeating-modal" type="checkbox" value="non_repeating_fixed" name="sub_items[0][percentage_or_fixed]"  style="width:16px;height:16px;margin-left:-0.05rem;left:50%;">	
+															<input data-sub-item-name="${data.pivot.sub_item_name}" data-sub-item-id="${data.pivot.id}" data-in-edit-mode="1" ${nonRepeatingFixedisChecked} class="can_be_percentage_or_fixed_class non-repeating-fixed can-trigger-non-repeating-modal" type="checkbox" value="non_repeating_fixed" name="sub_items[0][percentage_or_fixed]"  style="width:16px;height:16px;margin-left:-0.05rem;left:50%;">	
 															</div>
 															</div>
 															<div class="form-group custom-divs-class ${reportType == 'actual' || reportType =='modified'  ?'hidden' : ''}">
@@ -1732,7 +1733,7 @@ $tableId = 'kt_table_1';
 																<div class="d-flex flex-column align-items-center justify-content-center flex-wrap">
 																	<label >{{ __('Non-Repeating Amount') }}</label>
 															
-															<input data-sub-item-name="new" data-in-edit-mode="0"  class="can_be_percentage_or_fixed_class non-repeating-fixed can-trigger-non-repeating-modal" type="checkbox" value="non_repeating_fixed" name="sub_items[0][percentage_or_fixed]"  style="width:16px;height:16px;margin-left:-0.05rem;left:50%;">	
+															<input data-sub-item-name="new" data-in-edit-mode="0" data-sub-item-id="0"  class="can_be_percentage_or_fixed_class non-repeating-fixed can-trigger-non-repeating-modal" type="checkbox" value="non_repeating_fixed" name="sub_items[0][percentage_or_fixed]"  style="width:16px;height:16px;margin-left:-0.05rem;left:50%;">	
 															<input   type="hidden" value="1" name="in_add_mode"  >	
 															</div>
 															</div>
@@ -1902,7 +1903,6 @@ $tableId = 'kt_table_1';
 																						
 																						<label class="label ">{{ __('How Many Items ?') }}</label>
 																																	<input type="hidden" name="in_add_or_edit_modal" value="1">
-																																					<input class="visibility-hidden" style="height:0;overflow:hidden;width:0;background-color:transparent;border:none;color:transparent;"   type="text" value="[]" id="new_items_names" name="new_items_names_in_popup"  >	
 
 																						<input type="hidden" name="sub_item_type" value="{{ getReportNameFromRouteName(Request()->route()->getName()) }}">
 																						<input type="hidden" name="financial_statement_able_item_id"  value="${data.id}">
@@ -1959,6 +1959,7 @@ $tableId = 'kt_table_1';
 
                                             }
                                             , drawCallback: function(settings) {
+												console.log('draw callback')
                                                 const reportType = vars.subItemType;
                                                 let corporateTaxesId = document.getElementById('corporate-taxes-id').value;
                                                 let options = '';
@@ -2095,11 +2096,10 @@ $tableId = 'kt_table_1';
                                                 // handle data for intervals 
                                             }
                                             , initComplete: function(settings, json) {
+												console.log('init completed')
                                                 table = $('.main-table-class').DataTable();
                                                 globalTable = table;
 
-
-                                                canRefreshPercentages = true;
                                             }
 
 
@@ -2125,37 +2125,28 @@ $tableId = 'kt_table_1';
                             KTDatatablesDataSourceAjaxServer.init();
 
                          
-                            $(document).on('click', '.close-inner-modal', function() {
+                            $(document).on('click', '.close-inner-modal', function(e) {
+							
+								$(this).closest('.modal-for-quantity').removeClass('d-block').modal('hide');
+								$(this).closest('.modal-for-non-repeating').removeClass('d-block').modal('hide');
+							//	console.log('qp',$(this).closest('.modal-for-quantity').length)
+							//	console.log('qp',$(this).closest('.modal-for-non-repeating').length)
+                           })
+                         //     $(document).on('click', '.close-inner-modal', function() {
 
-                                $('.modal-for-quantity').removeClass('d-block').modal('hide')
-                                $('.modal-for-non-repeating').removeClass('d-block').modal('hide')
-                            })
-                            $(document).on('show.bs.modal', '.edit-sub-modal-class,.add-sub-item-modal', function() {
-                                modalIsOpenInAddOrEdit = true
-                            })
-                            $(document).on('hide.bs.modal', '.edit-sub-modal-class,.add-sub-item-modal', function() {
-                                modalIsOpenInAddOrEdit = false
-                            })
+                          //      $('.modal-for-quantity').removeClass('d-block').modal('hide')
+                          //      $('.modal-for-non-repeating').removeClass('d-block').modal('hide')
+                        //  //  })
 
-                            $(document).on('show.bs.modal', '.delete-item-modal', function() {
-                                let mainRowId = this.getAttribute('data-item-id')
-                                let subItemName = this.getAttribute('data-sub-name')
-                                deleteModalIsOpen = true
-                                currentDelete = {
-                                    id: mainRowId
-                                    , subName: subItemName
-                                }
-                            })
-                            $(document).on('hide.bs.modal', '.delete-item-modal', function() {
-                                currentDelete = {}
-                                deleteModalIsOpen = false
-                            })
+                          
+                         
 
                           
 
 
 
                             $(document).on('click', '.save-sub-item-edit', function(e) {
+						//		console.log('save edit')
 							 let formId = $(this).data('id');
                                 let currentSubItemName = $(this).data('sub-item-name');
 							   currentForm = document.getElementById('edit-sub-item-form' + formId + convertStringToClass(currentSubItemName));
@@ -2208,6 +2199,7 @@ $tableId = 'kt_table_1';
 
 
                             $(document).on('click', '.save-sub-item-delete', function(e) {
+								console.log('save edit');
                                 e.preventDefault();
                                 let id = $(this).data('id');
                                 let subItemName = $(this).data('sub-item-name');
@@ -2267,6 +2259,7 @@ $tableId = 'kt_table_1';
 
 
                             $(document).on('keyup', '.how-many-class', function() {
+								console.log('how many1')
                                 let index = parseInt(this.getAttribute('data-id'));
                                 let currentHowMany = parseInt(document.querySelector('.how-many-class[data-id="' + index + '"]').value);
                                 let currentHowManyInstances = $('.how-many-item[data-id="' + index + '"]').length;
@@ -2465,6 +2458,7 @@ $tableId = 'kt_table_1';
                   
                     let pivotFormatted = editModal && pivot && pivot.payload ? JSON.parse(pivot.payload) : {}
                     let subItemName = editModal && pivot && pivot.payload ? pivot.sub_item_name : 'new';
+                    let subItemId = editModal && pivot && pivot.payload ? pivot.id : 0;
                     let currentValueForValueOrQuantityOrPrice = editModal && pivot && pivot.payload && pivot.payload.is_value_quantity_price ? pivot.payload.is_value_quantity_price : 'value';
                 
                     let thsForHeader = '<th class="text-white"> {{ __("Item") }} <input type="text" style="height:0;overflow:hidden;width:0;background-color:transparent;border:none;color:transparent;" class="value_quantity_price-id" value="' + currentValueForValueOrQuantityOrPrice + '" name="sub_items[0][is_value_quantity_price]"> </th>';
@@ -2472,43 +2466,49 @@ $tableId = 'kt_table_1';
                     let tdForBodyValue = '<td>{{ __("Value") }}</td>';
                     let tdForBodyQuantity = '<td>{{ __("Quantity") }}</td>';
                     let tdForBodyPrice = '<td>{{ __("Price") }} </td>';
-
+					var totalForValue =  0 ; 
+					var totalForQuantity = 0 ; 
+					var totalForPrice = 0 ; 
                     for (date of dates) {
                         var salesQuantityAtDate = editModal && salesRevenueQuantityDateValues[date] ? salesRevenueQuantityDateValues[date] : 0;
                         salesQuantityAtDate = parseFloat(salesQuantityAtDate)
+						totalForQuantity+= salesQuantityAtDate;
                         var valueAtDate = editModal && pivotFormatted[date] ? pivotFormatted[date] : 0;
                         valueAtDate = parseFloat(valueAtDate)
+						totalForValue+=valueAtDate
                         var priceAtDate = editModal && salesQuantityAtDate ? valueAtDate / salesQuantityAtDate : 0;
+						
 						var disabledInput = isDisabledInput(date)
                         thsForHeader += '<th class="' + thdClass + '" data-date="' + date + '">' + datesFormatted[date] + '</th>'
                         tdForBodyValue += `<td class="" data-type="value"  data-date="${date}">
-							<input ${disabledInput ? 'disabled' : ''} data-in-edit-mode="${editModal}"  style="min-width: 80px" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" onblur="this.style.width = ((this.value.length + 1) * 10) + 'px';" onkeyup="this.style.width = ((this.value.length + 1) * 10) + 'px';" data-date="${date}" data-type="value" class="val-input hidden-for-popup form-control blured-item" type="text"  value="${number_format(valueAtDate,0)}" > 
-							<input ${disabledInput ? 'disabled' : ''} data-in-edit-mode="${editModal}"  style="min-width: 80px" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" onblur="this.style.width = ((this.value.length + 1) * 10) + 'px';" onkeyup="this.style.width = ((this.value.length + 1) * 10) + 'px';" data-date="${date}" data-type="value" class="val-input hidden-for-popup pr-0" type="hidden" name="sub_items[0][val][${date}]" value="${valueAtDate}" > 
+							<input ${disabledInput ? 'disabled' : ''} data-in-edit-mode="${editModal}" data-in-edit-mode="${subItemId}"  style="min-width: 80px" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" onblur="this.style.width = ((this.value.length + 1) * 10) + 'px';" onkeyup="this.style.width = ((this.value.length + 1) * 10) + 'px';" data-date="${date}" data-type="value" class="val-input hidden-for-popup form-control blured-item" type="text"  value="${number_format(valueAtDate,0)}" > 
+							<input ${disabledInput ? 'disabled' : ''} data-in-edit-mode="${editModal}" data-in-edit-mode="${subItemId}"  style="min-width: 80px" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" onblur="this.style.width = ((this.value.length + 1) * 10) + 'px';" onkeyup="this.style.width = ((this.value.length + 1) * 10) + 'px';" data-date="${date}" data-type="value" class="val-input hidden-for-popup pr-0" type="hidden" name="sub_items[0][val][${date}]" value="${valueAtDate}" > 
 							<i class="fa fa-ellipsis-h repeat-row" data-column-index="${date}" data-index="value" data-parent-query="tr"  title="{{__('Repeat Right')}}"></i>
 							
 						  </td> `
                         tdForBodyQuantity += `<td class="" data-type="quantity"  data-date="${date}"> 
 						
-						<input ${disabledInput ? 'disabled' : ''} data-current-value="${salesQuantityAtDate}" data-in-edit-mode="${editModal}" style="min-width: 80px" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" onblur="this.style.width = ((this.value.length + 1) * 10) + 'px';" onkeyup="this.style.width = ((this.value.length + 1) * 10) + 'px';" data-date="${date}" data-type="quantity" class="quantity-input hidden-for-popup form-control blured-item" type="text"  value="${salesQuantityAtDate}" >
-						<input ${disabledInput ? 'disabled' : ''} data-current-value="${salesQuantityAtDate}" data-in-edit-mode="${editModal}" style="min-width: 80px" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" onblur="this.style.width = ((this.value.length + 1) * 10) + 'px';" onkeyup="this.style.width = ((this.value.length + 1) * 10) + 'px';" data-date="${date}" data-type="quantity" class="quantity-input hidden-for-popup" type="hidden" name="sub_items[0][quantity][${date}]" value="${salesQuantityAtDate}" >
+						<input ${disabledInput ? 'disabled' : ''} data-current-value="${salesQuantityAtDate}" data-in-edit-mode="${editModal}" data-sub-item-id="${subItemId}" style="min-width: 80px" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" onblur="this.style.width = ((this.value.length + 1) * 10) + 'px';" onkeyup="this.style.width = ((this.value.length + 1) * 10) + 'px';" data-date="${date}" data-type="quantity" class="quantity-input hidden-for-popup form-control blured-item" type="text"  value="${salesQuantityAtDate}" >
+						<input ${disabledInput ? 'disabled' : ''} data-current-value="${salesQuantityAtDate}" data-in-edit-mode="${editModal}" data-sub-item-id="${subItemId}" style="min-width: 80px" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" onblur="this.style.width = ((this.value.length + 1) * 10) + 'px';" onkeyup="this.style.width = ((this.value.length + 1) * 10) + 'px';" data-date="${date}" data-type="quantity" class="quantity-input hidden-for-popup" type="hidden" name="sub_items[0][quantity][${date}]" value="${salesQuantityAtDate}" >
 						<i class="fa fa-ellipsis-h repeat-row" data-column-index="${date}" data-index="value" data-parent-query="tr"  title="{{__('Repeat Right')}}"></i>
 						
 						</td> `
                         tdForBodyPrice += `<td class="" data-type="price"  data-date="${date}">
 						
-						<input ${disabledInput ? 'disabled' : ''} data-current-value="${priceAtDate}" data-in-edit-mode="${editModal}" style="min-width: 80px" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" onblur="this.style.width = ((this.value.length + 1) * 10) + 'px';" onkeyup="this.style.width = ((this.value.length + 1) * 10) + 'px';" data-date="${date}" class="price-input hidden-for-popup form-control blured-item"  data-type="price" type="text"  value="${number_format(priceAtDate,0)}" >
-						<input ${disabledInput ? 'disabled' : ''} data-current-value="${priceAtDate}" data-in-edit-mode="${editModal}" style="min-width: 80px" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" onblur="this.style.width = ((this.value.length + 1) * 10) + 'px';" onkeyup="this.style.width = ((this.value.length + 1) * 10) + 'px';" data-date="${date}" class="price-input hidden-for-popup" data-type="price" type="hidden" name="sub_items[0][price][${date}]" value="${priceAtDate}" >
+						<input ${disabledInput ? 'disabled' : ''} data-current-value="${priceAtDate}" data-in-edit-mode="${editModal}" data-sub-item-id="${subItemId}" style="min-width: 80px" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" onblur="this.style.width = ((this.value.length + 1) * 10) + 'px';" onkeyup="this.style.width = ((this.value.length + 1) * 10) + 'px';" data-date="${date}" class="price-input hidden-for-popup form-control blured-item"  data-type="price" type="text"  value="${number_format(priceAtDate,0)}" >
+						<input ${disabledInput ? 'disabled' : ''} data-current-value="${priceAtDate}" data-in-edit-mode="${editModal}" data-sub-item-id="${subItemId}" style="min-width: 80px" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" onblur="this.style.width = ((this.value.length + 1) * 10) + 'px';" onkeyup="this.style.width = ((this.value.length + 1) * 10) + 'px';" data-date="${date}" class="price-input hidden-for-popup" data-type="price" type="hidden" name="sub_items[0][price][${date}]" value="${priceAtDate}" >
 						<i class="fa fa-ellipsis-h repeat-row" data-column-index="${date}" data-index="value" data-parent-query="tr"  title="{{__('Repeat Right')}}"></i>
 						
 						</td> 
 						`;
 						
                     }
+					totalForPrice = totalForQuantity ? totalForValue / totalForQuantity : 0;
                     thsForHeader += "<th class='text-white text-center'>{{ __('Total') }}</th>";
 
 
                     tdForBodyPrice += `<td class="" data-type="price"> 
-					<input readonly type="text" class="form-control pr-0 total-for-price" style="min-width: 80px" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" onblur="this.style.width = ((this.value.length + 1) * 10) + 'px';" onkeyup="this.style.width = ((this.value.length + 1) * 10) + 'px';"> 
+					<input value="${number_format(totalForPrice)}" readonly type="text" class="form-control pr-0 total-for-price" style="min-width: 80px" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" onblur="this.style.width = ((this.value.length + 1) * 10) + 'px';" onkeyup="this.style.width = ((this.value.length + 1) * 10) + 'px';"> 
 					<i style="visibility:hidden" class="fa fa-ellipsis-h" ></i>
 						
 						
@@ -2517,12 +2517,12 @@ $tableId = 'kt_table_1';
                     tdForBodyPrice = '<tr data-equation="value / quantity" data-number-format="2" class="price" data-type="price" >' + tdForBodyPrice + '</tr>'
 
 
-                    tdForBodyQuantity += `<td class="" data-type="quantity"> <input readonly type="text" class="form-control pr-0 total-for-quantity" style="min-width: 80px" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" onblur="this.style.width = ((this.value.length + 1) * 10) + 'px';" onkeyup="this.style.width = ((this.value.length + 1) * 10) + 'px';">
+                    tdForBodyQuantity += `<td class="" data-type="quantity"> <input value="${number_format(totalForQuantity)}" readonly type="text" class="form-control pr-0 total-for-quantity" style="min-width: 80px" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" onblur="this.style.width = ((this.value.length + 1) * 10) + 'px';" onkeyup="this.style.width = ((this.value.length + 1) * 10) + 'px';">
 						<i style="visibility:hidden" class="fa fa-ellipsis-h " ></i>
 					 </td>`
 
                     tdForBodyQuantity = '<tr data-equation="value / price" data-number-format="0" class="quantity" data-type="quantity">' + tdForBodyQuantity + '</tr>'
-                    tdForBodyValue += `<td class="" data-type="value"> <input readonly type="text" class="form-control pr-0 total-for-value" style="min-width: 80px" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" onblur="this.style.width = ((this.value.length + 1) * 10) + 'px';" onkeyup="this.style.width = ((this.value.length + 1) * 10) + 'px';"> 
+                    tdForBodyValue += `<td class="" data-type="value"> <input value="${number_format(totalForValue)}" readonly type="text" class="form-control pr-0 total-for-value" style="min-width: 80px" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" onblur="this.style.width = ((this.value.length + 1) * 10) + 'px';" onkeyup="this.style.width = ((this.value.length + 1) * 10) + 'px';"> 
 					<i style="visibility:hidden" class="fa fa-ellipsis-h " ></i>
 					
 					</td>`
@@ -2557,25 +2557,25 @@ $tableId = 'kt_table_1';
 						<div class="checkboxes-for-quantity only-two-checkbox-parent mt-4">
 							<div class="quantity-checkbox-div">
 							<label >{{ __('Value') }}</label>
-								<input data-sub-item-name="${editModal ? pivot.sub_item_name : 'new'}" data-in-edit-mode="${editModal }" class="only-two-checkbox 	" type="checkbox" value="value"  style="width:16px;height:16px;" name="sub_items[0][is_quantity]" ${editModal && pivot.is_value_quantity_price&& pivot.is_value_quantity_price.includes('value') ? 'checked' : '' } ${!editModal ? '' : ''}>
+								<input data-sub-item-name="${editModal ? pivot.sub_item_name : 'new'}" data-sub-item-id="${subItemId}" data-in-edit-mode="${editModal }" class="only-two-checkbox 	" type="checkbox" value="value"  style="width:16px;height:16px;" name="sub_items[0][is_quantity]" ${editModal && pivot.is_value_quantity_price&& pivot.is_value_quantity_price.includes('value') ? 'checked' : '' } ${!editModal ? '' : ''}>
 							</div>
 							<div class="quantity-checkbox-div">
 								<label >{{ __('Quantity') }}</label>
-								<input data-sub-item-name="${editModal ? pivot.sub_item_name : 'new'}" data-in-edit-mode="${editModal }" class="only-two-checkbox can-trigger-quantity-modal" type="checkbox" value="quantity"  style="width:16px;height:16px;" name="sub_items[0][is_quantity]" ${editModal &&  pivot.is_value_quantity_price && pivot.is_value_quantity_price.includes('quantity') ? 'checked' : ''}>
+								<input data-sub-item-name="${editModal ? pivot.sub_item_name : 'new'}" data-sub-item-id="${subItemId}" data-in-edit-mode="${editModal }" class="only-two-checkbox can-trigger-quantity-modal" type="checkbox" value="quantity"  style="width:16px;height:16px;" name="sub_items[0][is_quantity]" ${editModal &&  pivot.is_value_quantity_price && pivot.is_value_quantity_price.includes('quantity') ? 'checked' : ''}>
 							</div>
 							<div class="quantity-checkbox-div">
 								<label >{{ __('Price') }}</label>
-								<input data-sub-item-name="${editModal ? pivot.sub_item_name : 'new'}" data-in-edit-mode="${editModal}" class="only-two-checkbox can-trigger-quantity-modal" type="checkbox" value="price"  style="width:16px;height:16px;" name="sub_items[0][is_quantity]" ${editModal && pivot.is_value_quantity_price&& pivot.is_value_quantity_price.includes('price') ? 'checked' : ''}>
+								<input data-sub-item-name="${editModal ? pivot.sub_item_name : 'new'}" data-sub-item-id="${subItemId}" data-in-edit-mode="${editModal}" class="only-two-checkbox can-trigger-quantity-modal" type="checkbox" value="price"  style="width:16px;height:16px;" name="sub_items[0][is_quantity]" ${editModal && pivot.is_value_quantity_price&& pivot.is_value_quantity_price.includes('price') ? 'checked' : ''}>
 							</div>
 						</div>
 						
 						
-						<div id="modal-for-quantity-0" class="modal fade modal-for-quantity" data-index="0"  tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" >
+						<div id="modal-for-quantity-0" data-sub-id="${editModal ? pivot.id : 0}" class="modal fade modal-for-quantity" data-index="0"  tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" >
   <div class="modal-dialog modal-dialog-centered custom-modal-w-h "  role="document">
     <div class="modal-content" style="overflow-x:scroll">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLongTitle">Values And Quantities</h5>
-        <button type="button" class="close-inner-modal close" data-dismiss="modal" aria-label="Close">
+        <button type="button"  class="close-inner-modal close" data-dismiss="modal" aria-label="Close">
           <span >&times;</span>
         </button>
       </div>
@@ -2592,8 +2592,8 @@ $tableId = 'kt_table_1';
 		</table>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary close-inner-modal" >Close</button>
-        <button type="button" class="btn btn-primary close-inner-modal">Save</button>
+        <button  type="button" class="btn btn-secondary close-inner-modal" >Close</button>
+        <button  type="button" class="btn btn-primary close-inner-modal">Save</button>
       </div>
     </div>
   </div>
@@ -2625,12 +2625,13 @@ $tableId = 'kt_table_1';
                     let thdClass = 'view-table-th header-th  text-nowrap sorting_disabled  reset-table-width cursor-pointer sub-text-bg text-capitalize';
                     let tdForBodyValue = '<td>{{ __("Value") }}</td>';
 					let reportType = $('#sub-item-type').val()
-				
+					var totalForNonRepeating = 0 ;
                     for (date of dates) {
 
                         var valueAtDate = editModal && pivotFormatted[date] ? pivotFormatted[date] : 0;
                         valueAtDate = parseFloat(valueAtDate)
 						valueAtDate = editModal ? valueAtDate / (1+(vatRate/100)) : valueAtDate;
+						totalForNonRepeating+=valueAtDate;
                         thsForHeader += '<th class="' + thdClass + '" data-date="' + date + '">' + datesFormatted[date] + '</th>'
 						var disabledInput =isDisabledInput(date) ;
                         tdForBodyValue += `<td data-id="${id}" class="" data-type="value"  data-date="${date}">
@@ -2648,7 +2649,7 @@ $tableId = 'kt_table_1';
 
 
 
-                    tdForBodyValue += `<td class="" data-type="value"> <input readonly type="text" class="form-control pr-0 total-for-non-repeating-value" style="min-width: 80px" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" onblur="this.style.width = ((this.value.length + 1) * 10) + 'px';" onkeyup="this.style.width = ((this.value.length + 1) * 10) + 'px';"> 
+                    tdForBodyValue += `<td class="" data-type="value"> <input value="${number_format(totalForNonRepeating)}" readonly type="text" class="form-control pr-0 total-for-non-repeating-value" style="min-width: 80px" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" onblur="this.style.width = ((this.value.length + 1) * 10) + 'px';" onkeyup="this.style.width = ((this.value.length + 1) * 10) + 'px';"> 
 					<i style="visibility:hidden" class="fa fa-ellipsis-h " ></i>
 					
 					</td>`
@@ -2672,12 +2673,12 @@ $tableId = 'kt_table_1';
                     let result = `<div class="non-repeating-section ">
 						
 						
-						<div id="modal-for-non-repeating-0" data-edit-model="${editModal}" class="modal fade modal-for-non-repeating" data-index="0"  tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" >
+						<div id="modal-for-non-repeating-0" data-sub-id="${editModal ? pivot.id : 0}" data-edit-model="${editModal}" class="modal fade modal-for-non-repeating" data-index="0"  tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" >
   <div class="modal-dialog modal-dialog-centered custom-modal-w-h "  role="document">
     <div class="modal-content" style="overflow-x:scroll">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLongTitle">Non Repeating</h5>
-        <button type="button" class="close-inner-modal close" data-dismiss="modal" aria-label="Close">
+        <button type="button"  class="close-inner-modal close" data-dismiss="modal" aria-label="Close">
           <span >&times;</span>
         </button>
       </div>
@@ -2695,7 +2696,7 @@ $tableId = 'kt_table_1';
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary close-inner-modal" >Close</button>
-        <button type="button" class="btn btn-primary close-inner-modal">Save</button>
+        <button type="button"   class="btn btn-primary close-inner-modal">Save</button>
       </div>
     </div>
   </div>

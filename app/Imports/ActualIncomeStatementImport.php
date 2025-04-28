@@ -55,6 +55,7 @@ ToCollection,
 			
 				$mainItem = IncomeStatementItem::where('name',$mainName)->where('financial_statement_able_type','IncomeStatement')->first();
 				$currentValues = [];
+				
 				foreach($dates as $dateIndex=>$dateAsString){
 					$currentValue = 0;
 					if($row[$dateIndex+1] != null){
@@ -77,7 +78,8 @@ ToCollection,
 					'percentage_or_fixed'=>'non_repeating_fixed',
 					'can_be_percentage_or_fixed'=>1 ,
 					'vat_rate'=>0,
-					'non_repeating_popup'=>$currentValues
+					'non_repeating_popup'=>$currentValues,
+				//	'is_depreciation_or_amortization'=>   postponed
 				];
 			}
 			// remove quantities and append it to values 

@@ -37,6 +37,7 @@ trait FinancialStatementAbleItemRelation
 	}
 	public function withSubItemsFor(int $financialStatementAbleId, string $subItemType = '', string $subItemName = ''): BelongsToMany
 	{
+		
 		$subItemNameOperator = $subItemName ? '=' : '!=';
 		$subItemTypeOperator = $subItemType ? '=' : '!=';
 		return $this
@@ -47,6 +48,7 @@ trait FinancialStatementAbleItemRelation
 			->orderBy('financial_statement_able_main_item_sub_items.id','asc')
 			;
 	}
+	
 	// use withMainRowsPivot Instead
 	public function mainRowsPivot(): BelongsToMany
 	{

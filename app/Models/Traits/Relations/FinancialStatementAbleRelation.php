@@ -55,6 +55,17 @@ trait FinancialStatementAbleRelation
 			->wherePivot('sub_item_type', $subItemTypeOperator, $subItemType)
 			->wherePivot('sub_item_name', $subItemNameOperator, $subItemName);
 	}
+	
+	public function withSubItemsForGlobal( string $subItemType = '', string $subItemName = ''): BelongsToMany
+	{
+		$subItemNameOperator = $subItemName ? '=' : '!=';
+		$subItemTypeOperator = $subItemType ? '=' : '!=';
+		// $financialStatementAbleItemOperator = $financialStatementAbleItemId ? '=' : '!=';
+		return $this->subItems()
+			// ->wherePivot('financial_statement_able_item_id', $financialStatementAbleItemOperator, $financialStatementAbleItemId)
+			->wherePivot('sub_item_type', $subItemTypeOperator, $subItemType)
+			->wherePivot('sub_item_name', $subItemNameOperator, $subItemName);
+	}
 	// use  withMainRowsFor instead 
 	public function mainRows(): BelongsToMany
 	{

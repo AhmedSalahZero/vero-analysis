@@ -13,6 +13,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 
 trait FinancialStatementAbleMutator
@@ -204,7 +205,6 @@ trait FinancialStatementAbleMutator
 			$currentSubItemValues = [];
 			$isSalesRevenue = $financialStatementAbleItemId == 1 ;
 			
-			
 			foreach($insertSubItems as $currentSubItemToBeInserted ){
 				$currentSubItemDataArr = $incomeStatement->getFinancialStatementAbleData($currentSubItemToBeInserted,$formSubItemType,$subItemArr,false);
 				$percentageOfValue = $currentSubItemDataArr['percentage_value'];
@@ -262,7 +262,6 @@ trait FinancialStatementAbleMutator
 					// $subItemsFromForecastTable=$subItemsFromForecastTable ? json_decode($subItemsFromForecastTable->pivot->payload) : [];
 					foreach($dates as $date=>$dateFormatted ){
 						$currentSubItemValues[$date]= $subItemArr['repeating_fixed_value'];
-						
 					}
 				}
 				elseif($isPercentage){
@@ -297,7 +296,9 @@ trait FinancialStatementAbleMutator
 			foreach ($insertSubItems as $index=>$insertSubItem) {
 				if($index ==0 ) // current type
 				{
+					// $f = microtime(true);
 					$incomeStatement->refreshCalculationFor($insertSubItem);
+					// dd('f',microtime(true)-$f);
 				}else{
 					
 					
@@ -499,19 +500,26 @@ trait FinancialStatementAbleMutator
 		$actualDatesAsIndexAndBooleans = HArr::getActualDatesAsIndexAndBoolean($dateIndexWithDate);
 		$companyId = $this->company_id;
 		$creatorId = $this->creator_id;
+		// $q = $this->withSubItemsForGlobal($subItemType)->get();;
+		// dd($q);
+		// $time = 0 ;
+		$mainRows = [];
+		$this->removeMainRowsCalculations($subItemType);
 		foreach ($allMainItems as $mainItem) {
 			$incomeStatementItemId = $mainItem->id;
 			$isMainWithSubItems= $mainItem->has_sub_items;
 			$isPercentageOfSalesRevenue = IncomeStatementItem::isPercentageOfSalesRevenue($incomeStatementItemId);
 			$isMainWithoutSubItems = !$mainItem->has_sub_items && !$isPercentageOfSalesRevenue;
 			// IncomeStatementItem::isMainWithoutSubItems($allMainItems, $incomeStatementItemId, $isPercentageOfSalesRevenue)
+			// $oldSubItemsForCurrentMainItem = $this->withSubItemsFor($incomeStatementItemId, $subItemType)->get();
 			$oldSubItemsForCurrentMainItem = $this->withSubItemsFor($incomeStatementItemId, $subItemType)->get();
+			// dd(count($oldSubItemsForCurrentMainItem),count());
 			// if($mainItem->id == 21){
 			// 	dd($oldSubItemsForCurrentMainItem);
 			// }
 			// dd($allMainItems,$oldSubItemsForCurrentMainItem);
 			$this->updateCostOfUnitAndPercentagesOfSubItems($actualDatesAsIndexAndBooleans,$salesRevenuesSubItemsArray,$oldSubItemsForCurrentMainItem, $dates, $subItemType);
-
+			
 			$subItems = $this->withSubItemsFor($incomeStatementItemId, $subItemType)->get()->keyBy(function ($subItem) {
 				return $subItem->pivot->sub_item_name;
 			})->map(function ($subItem) {
@@ -529,7 +537,6 @@ trait FinancialStatementAbleMutator
 						'is_quantity' => $pivot->is_quantity,
 						'can_be_quantity' => $pivot->can_be_quantity,
 						'is_value_quantity_price'=>$pivot->is_value_quantity_price,
-	//					'actual_dates' => $pivot->actual_dates,
 						'is_depreciation_or_amortization' => $pivot->is_depreciation_or_amortization ?: 0,
 						'percentage_or_fixed' => $pivot->percentage_or_fixed,
 						'can_be_percentage_or_fixed' => $pivot->can_be_percentage_or_fixed,
@@ -560,18 +567,24 @@ trait FinancialStatementAbleMutator
 
 				];
 			})->toArray();
+	
+	
 			// 1- recalculate sub items [because modified ] (percentage and cost of units)
 
 			// 2- recalculate totals
-
-			$totals[$incomeStatementItemId] = $this->recalculateTotalForRow($actualDatesAsIndexAndBooleans,$isMainWithSubItems,$isMainWithoutSubItems,$isPercentageOfSalesRevenue,$dates, $incomeStatementItemId, $subItems, $subItemType, $totals,$companyId,$creatorId);
-	
+			// $start = microtime(true);
+			$totals[$incomeStatementItemId] = $this->recalculateTotalForRow($actualDatesAsIndexAndBooleans,$isMainWithSubItems,$isMainWithoutSubItems,$isPercentageOfSalesRevenue,$dates, $incomeStatementItemId, $subItems, $subItemType, $totals,$companyId,$creatorId,$mainRows);
+			// $end = microtime(true)-$start;
+			// $time = $time + $end ;
 		}
+		$this->attachMainCalculations($mainRows);
+		// dd($time);
 	}
 
-	protected function recalculateTotalForRow(array $actualDatesAsIndexAndBooleans , bool $isMainWithSubItems , bool $isMainWithoutSubItems , bool $isPercentageOfSalesRevenue , array $dates, int $incomeStatementItemId, array $subItemNameWithDateValues, string $subItemType, array &$allItemsTotals,int $companyId , int $creatorId)
+	protected function recalculateTotalForRow(array $actualDatesAsIndexAndBooleans , bool $isMainWithSubItems , bool $isMainWithoutSubItems , bool $isPercentageOfSalesRevenue , array $dates, int $incomeStatementItemId, array $subItemNameWithDateValues, string $subItemType, array &$allItemsTotals,int $companyId , int $creatorId , array &$mainRows)
 	{
 		$currentItemTotal = [];
+
 		$corporateTaxesID = IncomeStatementItem::CORPORATE_TAXES_ID;
 		if ($isMainWithSubItems && $incomeStatementItemId != IncomeStatementItem::CORPORATE_TAXES_ID) {
 		// if (IncomeStatementItem::isMainWithSubItems($allMainItems, $incomeStatementItemId) && $incomeStatementItemId != IncomeStatementItem::CORPORATE_TAXES_ID) {
@@ -580,16 +593,17 @@ trait FinancialStatementAbleMutator
 			$totalDepreciationAtDates = [];
 			
 			if(!count($subItemNameWithDateValues)){
-				$this->withMainRowsFor($incomeStatementItemId, $subItemType)->detach();
-				$this->withMainRowsFor($incomeStatementItemId, $subItemType)->attach($incomeStatementItemId, [
-					'total' => 0,
-					'payload' => json_encode([]),
-					'company_id'=>$companyId,
-					'creator_id'=>$creatorId,
-					'sub_item_type'=>$subItemType
-				]);	
+				// $this->withMainRowsFor($incomeStatementItemId, $subItemType)->detach();
+				$mainRows[] = $this->getMainRowCalculationsArr($incomeStatementItemId,$subItemType,0,json_encode([]),$companyId,$creatorId);
+			
+				// $this->withMainRowsFor($incomeStatementItemId, $subItemType)->attach($incomeStatementItemId, [
+				// 	'total' => 0,
+				// 	'payload' => json_encode([]),
+				// 	'company_id'=>$companyId,
+				// 	'creator_id'=>$creatorId,
+				// 	'sub_item_type'=>$subItemType
+				// ]);	
 			}
-		
 			foreach ($subItemNameWithDateValues as $subItemName => $optionsAndValues) {
 				$dateValues = $optionsAndValues['values'];
 				$options = $optionsAndValues['options'];
@@ -621,6 +635,8 @@ trait FinancialStatementAbleMutator
 						}
 					} else {
 						$totalAtDates[$date]  = isset($totalAtDates[$date]) ? $totalAtDates[$date] + $value : $value;
+			
+						
 					}
 
 					if ($options['is_depreciation_or_amortization']) {
@@ -628,46 +644,49 @@ trait FinancialStatementAbleMutator
 					}
 				}
 				
-				$this->withMainRowsFor($incomeStatementItemId, $subItemType)->detach();
-				$this->withMainRowsFor($incomeStatementItemId, $subItemType)->attach($incomeStatementItemId, [
-					'total' => $totalOfAllRows,
-					'payload' => json_encode($totalAtDates),
-					'company_id'=>$companyId,
-					'creator_id'=>$creatorId,
-					'sub_item_type'=>$subItemType
-				]);
+				// $this->withMainRowsFor($incomeStatementItemId, $subItemType)->detach();
+				
+				// $this->withMainRowsFor($incomeStatementItemId, $subItemType)->attach($incomeStatementItemId, [
+				// 	'total' => $totalOfAllRows,
+				// 	'payload' => json_encode($totalAtDates),
+				// 	'company_id'=>$companyId,
+				// 	'creator_id'=>$creatorId,
+				// 	'sub_item_type'=>$subItemType
+				// ]);
 			}
 
 			$currentItemTotal['total']['dates'] = $totalAtDates;
 			$currentItemTotal['total']['total'] = $totalOfAllRows ?: 0;
 			$currentItemTotal['total']['totalDepreciationAtDates'] = $totalDepreciationAtDates;
+			$mainRows[] = $this->getMainRowCalculationsArr($incomeStatementItemId,$subItemType,$totalOfAllRows,json_encode($totalAtDates),$companyId,$creatorId);
 		} elseif ($isMainWithoutSubItems) {
-			$currentItemTotal = $this->calculateTotalForMainRowWithoutSubItems($actualDatesAsIndexAndBooleans,$incomeStatementItemId, $allItemsTotals, $dates, $subItemType,$companyId);
+			$currentItemTotal = $this->calculateTotalForMainRowWithoutSubItems($actualDatesAsIndexAndBooleans,$incomeStatementItemId, $allItemsTotals, $dates, $subItemType,$companyId,$mainRows);
 		} elseif ($isPercentageOfSalesRevenue) {
-			$currentItemTotal = $this->calculateTotalPercentageOfSalesRevenueFor($incomeStatementItemId, $allItemsTotals, $dates, $subItemType,$companyId);
+			$currentItemTotal = $this->calculateTotalPercentageOfSalesRevenueFor($incomeStatementItemId, $allItemsTotals, $dates, $subItemType,$companyId,$mainRows);
 		} elseif (IncomeStatementItem::CORPORATE_TAXES_ID == $incomeStatementItemId) {
 			$corporateTaxesRow = $this->withSubItemsFor($incomeStatementItemId, $subItemType, 'Corporate Taxes')->first() ;
 			$percentageOfCorporateTaxes = $corporateTaxesRow && $corporateTaxesRow->pivot ? $corporateTaxesRow->pivot->percentage_value : 0;
 			$percentageOfCorporateTaxes = $percentageOfCorporateTaxes / 100;
 			$totalOfEarningBeforeTaxes = $allItemsTotals[IncomeStatementItem::EARNING_BEFORE_TAXES_ID]['total']['total'] ?? 0;
 			$currentItemTotal['total']['total'] = $totalOfEarningBeforeTaxes < 0 ? 0 : $totalOfEarningBeforeTaxes * $percentageOfCorporateTaxes;
-			$this->withMainRowsFor($incomeStatementItemId, $subItemType)->detach();
-			$this->withMainRowsFor($incomeStatementItemId, $subItemType)->attach($incomeStatementItemId, [
-				'total' => $currentItemTotal['total']['total'] ?? 0,
-				// update sub items of corporate taxes [needs to be here]
-				// main row will be zero allows
-				'payload' => json_encode([]),
-				'company_id'=>$companyId,
-				'creator_id'=>$creatorId,
-				'sub_item_type'=>$subItemType
-			]);
+			// $this->withMainRowsFor($incomeStatementItemId, $subItemType)->detach();
+			// $this->withMainRowsFor($incomeStatementItemId, $subItemType)->attach($incomeStatementItemId, [
+			// 	'total' => $currentItemTotal['total']['total'] ?? 0,
+			// 	// update sub items of corporate taxes [needs to be here]
+			// 	// main row will be zero allows
+			// 	'payload' => json_encode([]),
+			// 	'company_id'=>$companyId,
+			// 	'creator_id'=>$creatorId,
+			// 	'sub_item_type'=>$subItemType
+			// ]);
+			$mainRows[]=$this->getMainRowCalculationsArr($incomeStatementItemId,$subItemType, $currentItemTotal['total']['total'] ?? 0,json_encode([]),$companyId,$creatorId);
 		}
 
 
 		return $currentItemTotal;
 	}
 
-	protected function calculateTotalPercentageOfSalesRevenueFor(int $incomeStatementItemId, array &$allItemsTotals, array $dates, string $subItemType,int $companyId): array
+	protected function calculateTotalPercentageOfSalesRevenueFor(int $incomeStatementItemId, array &$allItemsTotals, array $dates, string $subItemType,int $companyId,array &$mainRows): array
 	{
 		$values = [];
 		$mapParentId  = array_flip(IncomeStatementItem::salesRateMap())[$incomeStatementItemId];
@@ -680,19 +699,21 @@ trait FinancialStatementAbleMutator
 			$totalOfCurrentIncomeStatementItemAtDate = $allItemsTotals[$mapParentId]['total']['dates'][$date] ?? 0;
 			$values['total']['dates'][$date] = $totalOfSalesRevenueAtDate ? $totalOfCurrentIncomeStatementItemAtDate / $totalOfSalesRevenueAtDate * 100 : 0;
 		}
-		$this->withMainRowsFor($incomeStatementItemId, $subItemType)->detach();
-		$this->withMainRowsFor($incomeStatementItemId, $subItemType)->attach($incomeStatementItemId, [
-			'total' => $values['total']['total'] ?? 0,
-			'payload' => json_encode($values['total']['dates'] ?? []),
-			'company_id'=>$companyId,
-			'sub_item_type'=>$subItemType,
-			'creator_id'=>$this->creator_id 
-		]);
+		// $this->withMainRowsFor($incomeStatementItemId, $subItemType)->detach();
+		// $this->withMainRowsFor($incomeStatementItemId, $subItemType)->attach($incomeStatementItemId, [
+		// 	'total' => $values['total']['total'] ?? 0,
+		// 	'payload' => json_encode($values['total']['dates'] ?? []),
+		// 	'company_id'=>$companyId,
+		// 	'sub_item_type'=>$subItemType,
+		// 	'creator_id'=>$this->creator_id 
+		// ]);
+		$mainRows[] = $this->getMainRowCalculationsArr($incomeStatementItemId,$subItemType,$values['total']['total'] ?? 0,json_encode($values['total']['dates'] ?? []),$companyId,$this->creator_id);
+		
 
 		return $values;
 	}
 
-	protected function calculateTotalForMainRowWithoutSubItems(array $actualDatesAsIndexAndBooleans , int $incomeStatementItemId, array $totalOfMainRows, array $dates, string $subItemType,int $companyId)
+	protected function calculateTotalForMainRowWithoutSubItems(array $actualDatesAsIndexAndBooleans , int $incomeStatementItemId, array $totalOfMainRows, array $dates, string $subItemType,int $companyId , array &$mainRows)
 	{
 		$salesRevenueId = IncomeStatementItem::SALES_REVENUE_ID;
 		$salesGrowthRateId = IncomeStatementItem::SALES_GROWTH_RATE_ID;
@@ -716,10 +737,8 @@ trait FinancialStatementAbleMutator
 		
 			foreach ($dates as $date => $formattedDate) {
 				$values['total']['dates'][$date] = 0;
-			
 				$previousDate  = HArr::getPreviousKey($dates, $date);
-				
-				if ($previousDate) {
+				if (!is_null($previousDate)) {
 					$totalOfSalesRevenueAtDate = $totalOfMainRows[$salesRevenueId]['total']['dates'][$date] ?? 0;
 					$totalOfSalesRevenueAtPreviousDate = $totalOfMainRows[$salesRevenueId]['total']['dates'][$previousDate] ?? 0;
 					$growthRateDiff = $totalOfSalesRevenueAtDate - $totalOfSalesRevenueAtPreviousDate;
@@ -796,15 +815,16 @@ trait FinancialStatementAbleMutator
 				$values['total']['total'] += $values['total']['dates'][$date];
 			}
 		}
-		$this->withMainRowsFor($incomeStatementItemId, $subItemType)->detach();
+		// $this->withMainRowsFor($incomeStatementItemId, $subItemType)->detach();
 		// logger($companyId);
-		$this->withMainRowsFor($incomeStatementItemId, $subItemType)->attach($incomeStatementItemId, [
-			'total' => $values['total']['total'] ?? 0,
-			'payload' =>   json_encode($values['total']['dates'] ?? []),
-			'sub_item_type'=>$subItemType,
-			'company_id'=>$companyId,
-			'creator_id'=>$this->creator_id 
-		]);
+		// $this->withMainRowsFor($incomeStatementItemId, $subItemType)->attach($incomeStatementItemId, [
+		// 	'total' => $values['total']['total'] ?? 0,
+		// 	'payload' =>   json_encode($values['total']['dates'] ?? []),
+		// 	'sub_item_type'=>$subItemType,
+		// 	'company_id'=>$companyId,
+		// 	'creator_id'=>$this->creator_id 
+		// ]);
+		$mainRows[] = $this->getMainRowCalculationsArr($incomeStatementItemId,$subItemType,$values['total']['total'] ?? 0,json_encode($values['total']['dates'] ?? []),$companyId,$this->creator_id);
 	
 		if ($incomeStatementItemId === IncomeStatementItem::EARNING_BEFORE_INTEREST_TAXES_ID) {
 			// update sub items of corporate taxes [needs to be here]
@@ -848,5 +868,65 @@ trait FinancialStatementAbleMutator
 			
 		}
 		return $newPayload;
+	}
+	public function getMainRowCalculationsArr($incomeStatementItemId,$subItemType,$totalOfAllRows,$totalAtDates,$companyId,$creatorId):array 
+	{
+		// dd([
+		// 	'financial_statement_able_id'=>$this->id ,
+		// 	'financial_statement_able_item_id'=>$incomeStatementItemId,
+		// 	'payload'=>$totalAtDates,
+		// 	'total'=>$totalOfAllRows,
+		// 	'sub_item_type'=>$subItemType,
+		// 	'company_id'=>$companyId,
+		// 	'creator_id'=>$creatorId,
+		// ]);
+		return [
+			'financial_statement_able_id'=>$this->id ,
+			'financial_statement_able_item_id'=>$incomeStatementItemId,
+			'payload'=>$totalAtDates,
+			'total'=>$totalOfAllRows,
+			'sub_item_type'=>$subItemType,
+			'company_id'=>$companyId,
+			'creator_id'=>$creatorId,
+		];
+		// logger('salah');
+		// DB::table('financial_statement_able_main_item_calculations')
+		// ->insert([
+		// 	'financial_statement_able_id'=>$this->id ,
+		// 	'financial_statement_able_item_id'=>$incomeStatementItemId,
+		// 	'payload'=>$totalAtDates,
+		// 	'total'=>$totalOfAllRows,
+		// 	'sub_item_type'=>$subItemType,
+		// 	'company_id'=>$companyId,
+		// 	'creator_id'=>$creatorId,
+		// ]);
+		// 	->insert([
+		// 	'financial_statement_able_id'=>$this->id ,
+		// 	'financial_statement_able_item_id'=>$incomeStatementItemId,
+		// 	'payload'=>$totalAtDates,
+		// 	'total'=>$totalOfAllRows,
+		// 	'sub_item_type'=>$subItemType,
+		// 	'company_id'=>$companyId,
+		// 	'creator_id'=>$creatorId,
+		// ]);
+		
+	}
+	public function removeMainRowsCalculations(string $subItemType)
+	{
+		DB::table('financial_statement_able_main_item_calculations')->where('financial_statement_able_id',$this->id)->where('sub_item_type',$subItemType)->delete();
+	}
+	public function attachMainCalculations(array $mainRows)
+	{
+		DB::table('financial_statement_able_main_item_calculations')
+		->insert($mainRows);
+		// ->insert([
+		// 	'financial_statement_able_id'=>$this->id ,
+		// 	'financial_statement_able_item_id'=>$incomeStatementItemId,
+		// 	'payload'=>$totalAtDates,
+		// 	'total'=>$totalOfAllRows,
+		// 	'sub_item_type'=>$subItemType,
+		// 	'company_id'=>$companyId,
+		// 	'creator_id'=>$creatorId,
+		// ]);
 	}
 }

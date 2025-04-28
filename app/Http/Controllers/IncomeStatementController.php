@@ -112,6 +112,7 @@ class IncomeStatementController extends Controller
 
 	public function updateReport(Company $company, Request $request)
 	{
+		
 
 		$incomeStatementId = $request->get('financial_statement_able_id');
 		$incomeStatementItemId = $request->get('financial_statement_able_item_id');
@@ -166,15 +167,15 @@ class IncomeStatementController extends Controller
 					$quantityItemsToUpdateName[$subItemType] = ['item'=>$currentQuantitySubItem,'new_name'=>html_entity_decode($request->get('new_sub_item_name') . quantityIdentifier)];
 					
 			//	}
-				
+				// $start = microtime(true);
 				if($index == 0){
 					$incomeStatement->storeReport($request);
 				}
-				
+				// dd(microtime(true)-$start,$subItemTypesToDetach,$index);
 				//$incomeStatement->syncPivotFor($incomeStatementItemId, $subItemType, $request->get('sub_item_name') . __(quantityIdentifier),$currentDataForQuantity,null);
 				
 		}
-	
+
 		foreach($itemsToUpdateName as $subItemType => $subItemArr){
 			$subItem = $subItemArr['item'];
 			$newName = $subItemArr['new_name'];
@@ -182,7 +183,7 @@ class IncomeStatementController extends Controller
 				'sub_item_name'=>$newName
 			]);
 		}
-
+	
 		foreach($quantityItemsToUpdateName as $subItemType => $subItemArr){
 			$subItem = $subItemArr['item'];
 			$newName = $subItemArr['new_name'];
