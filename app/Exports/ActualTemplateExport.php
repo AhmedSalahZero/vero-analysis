@@ -48,8 +48,9 @@ class ActualTemplateExport implements
 		$itemsNames = [];
 	
 		 $mainItemsWithSubItems = $this->incomeStatement->mainItems->where('has_sub_items',1)->filter(function(IncomeStatementItem $mainItem){
-			$subItemsNames = $mainItem->subItems()->wherePivot('sub_item_type', 'forecast')->wherePivot('financial_statement_able_id',$this->incomeStatement->id)->wherePivot('financial_statement_able_item_id',$mainItem->id)->orderBy('financial_statement_able_item_id')->get()->pluck('pivot.sub_item_name','pivot.id') ;
-			dd($subItemsNames);
+			// dd($mainItem->subItems()->wherePivot('sub_item_type', 'forecast')->wherePivot('financial_statement_able_id',$this->incomeStatement->id)->wherePivot('financial_statement_able_item_id',$mainItem->id)->orderBy('financial_statement_able_id')->first());
+			$subItemsNames = $mainItem->subItems()->wherePivot('sub_item_type', 'forecast')->wherePivot('financial_statement_able_id',$this->incomeStatement->id)->wherePivot('financial_statement_able_item_id',$mainItem->id)->orderBy('financial_statement_able_id')->get()->pluck('pivot.sub_item_name','pivot.id') ;
+			dd('f',$subItemsNames);
 			return $mainItem->setRelation('sub_items_name',$subItemsNames);
 		}) ;
 		foreach($mainItemsWithSubItems as $mainItem )
