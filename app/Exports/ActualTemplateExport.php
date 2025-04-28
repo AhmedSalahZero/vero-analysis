@@ -58,6 +58,7 @@ class ActualTemplateExport implements
 			$itemsNames[] = 	$mainItem->getName().' - '.$subItemName;
 			}
 		}
+		dd($subItemsNames);
 		return collect($itemsNames);
 	}
 
