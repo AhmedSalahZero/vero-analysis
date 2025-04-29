@@ -31,4 +31,5 @@ jobs:
             npm install
             npm run production
             supervisord -c /etc/supervisord.conf
+            supervisorctl restart vero-worker:*
             /usr/local/bin/ea-php74 artisan run:sql
