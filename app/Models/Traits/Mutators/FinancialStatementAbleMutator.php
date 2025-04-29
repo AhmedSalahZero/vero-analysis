@@ -586,7 +586,7 @@ trait FinancialStatementAbleMutator
 		$currentItemTotal = [];
 
 		$corporateTaxesID = IncomeStatementItem::CORPORATE_TAXES_ID;
-		if ($isMainWithSubItems && $incomeStatementItemId != IncomeStatementItem::CORPORATE_TAXES_ID) {
+		if ($isMainWithSubItems && $incomeStatementItemId != $corporateTaxesID) {
 		// if (IncomeStatementItem::isMainWithSubItems($allMainItems, $incomeStatementItemId) && $incomeStatementItemId != IncomeStatementItem::CORPORATE_TAXES_ID) {
 			$totalOfAllRows = 0;
 			$totalAtDates = [];
@@ -610,6 +610,7 @@ trait FinancialStatementAbleMutator
 				// 1 - total of each sub item
 				if ($subItemName == 'Corporate Taxes') {
 					$currentItemTotal['total']['sub_items'][$subItemName] = $allItemsTotals[$corporateTaxesID]['total']['total'] ?? 0;
+				
 				} else {
 					$currentItemTotal['total']['sub_items'][$subItemName] = array_sum($dateValues);
 				}
@@ -665,10 +666,13 @@ trait FinancialStatementAbleMutator
 			$currentItemTotal = $this->calculateTotalPercentageOfSalesRevenueFor($incomeStatementItemId, $allItemsTotals, $dates, $subItemType,$companyId,$mainRows);
 		} elseif (IncomeStatementItem::CORPORATE_TAXES_ID == $incomeStatementItemId) {
 			$corporateTaxesRow = $this->withSubItemsFor($incomeStatementItemId, $subItemType, 'Corporate Taxes')->first() ;
+			
 			$percentageOfCorporateTaxes = $corporateTaxesRow && $corporateTaxesRow->pivot ? $corporateTaxesRow->pivot->percentage_value : 0;
 			$percentageOfCorporateTaxes = $percentageOfCorporateTaxes / 100;
+
 			$totalOfEarningBeforeTaxes = $allItemsTotals[IncomeStatementItem::EARNING_BEFORE_TAXES_ID]['total']['total'] ?? 0;
 			$currentItemTotal['total']['total'] = $totalOfEarningBeforeTaxes < 0 ? 0 : $totalOfEarningBeforeTaxes * $percentageOfCorporateTaxes;
+	
 			// $this->withMainRowsFor($incomeStatementItemId, $subItemType)->detach();
 			// $this->withMainRowsFor($incomeStatementItemId, $subItemType)->attach($incomeStatementItemId, [
 			// 	'total' => $currentItemTotal['total']['total'] ?? 0,
@@ -679,6 +683,7 @@ trait FinancialStatementAbleMutator
 			// 	'creator_id'=>$creatorId,
 			// 	'sub_item_type'=>$subItemType
 			// ]);
+			// dd($this->getMainRowCalculationsArr($incomeStatementItemId,$subItemType, $currentItemTotal['total']['total'] ?? 0,json_encode([]),$companyId,$creatorId));
 			$mainRows[]=$this->getMainRowCalculationsArr($incomeStatementItemId,$subItemType, $currentItemTotal['total']['total'] ?? 0,json_encode([]),$companyId,$creatorId);
 		}
 
@@ -864,7 +869,6 @@ trait FinancialStatementAbleMutator
 			$vatable = $this instanceof IncomeStatement && !$isDeductible || $this instanceof CashFlowStatement  && CashFlowStatementItem::CASH_IN_ID == $financialStatementItemAbleId || $this instanceof CashFlowStatement  && $isDeductible    ;
 			// $newPayload[$date] = 999;
 			$newPayload[$date] = $vatable ?  $value   * $this->calculateVat($vatRate)  : $value ;
-		
 			
 		}
 		return $newPayload;

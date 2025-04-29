@@ -1224,7 +1224,10 @@ console.log('change4')
                                                 var incomeStatementItemId = data.isSubItem ? data.pivot.financial_statement_able_item_id : data.id;
                                                 var subItemName = data.isSubItem ? data.pivot.sub_item_name : '';
                                                 let is_quantity = false;
-
+												let percentageValue = data.isSubItem && data.pivot.percentage_or_fixed == 'percentage' ? data.pivot.percentage_value : 0;
+											//	if(data.isSubItem && data.pivot && data.pivot.financial_statement_able_item_id == corporateTaxesId){
+											//		percentageValue = data.pivot.percentage_value;
+											//	}
                                                 $(cells).filter(".editable")
                                                     .attr('data-income-statement-id', incomeStatementId)
                                                     .attr('title', "{{ __('Click To Edit') }}")
@@ -1239,8 +1242,8 @@ console.log('change4')
                                                     .attr('data-vat-rate', data.isSubItem ? data.pivot.vat_rate : 0)
                                                     .attr('data-is-deductible', data.isSubItem ? data.pivot.is_deductible : false)
                                                     .attr('data-is-financial-income', data.isSubItem ? data.pivot.is_financial_income : false)
-                                                    .attr('data-percentage-value', data.isSubItem && data.pivot.percentage_or_fixed == 'percentage' ? data.pivot.percentage_value : -1)
-                                                    .attr('data-cost-of-unit-value', data.isSubItem && data.pivot.percentage_or_fixed == 'cost_of_unit' ? data.pivot.cost_of_unit_value : -1)
+                                                    .attr('data-percentage-value', percentageValue)
+                                                    .attr('data-cost-of-unit-value', data.isSubItem && data.pivot.percentage_or_fixed == 'cost_of_unit' ? data.pivot.cost_of_unit_value : 0)
                                                 if (data.isSubItem) {
                                                     let has_percentage_or_fixed_sub_items = '';
                                                     if (data.pivot.can_be_percentage_or_fixed 
@@ -2003,9 +2006,10 @@ console.log('change4')
                                                     const salesRevenueId = domElements.salesRevenueId
                                                     const corporateTaxesSalesRateRow = document.querySelector('tr.is-sales-rate[data-financial-statement-able-item-id="' + sales_rate_maps[corporateTaxesId] + '"]')
                                                     const netProfitTaxesSalesRateRow = document.querySelector('tr.is-sales-rate[data-financial-statement-able-item-id="' + sales_rate_maps[netProfitId] + '"]')
-
+console.log('corporate',corporateTaxesPercentageValue)
                                                     const totalOfSalesRevenue = document.querySelector('.maintable-1-row-class' + salesRevenueId + ' .input-hidden-for-total').value;
                                                     const netProfitRow = document.querySelector('tr[data-model-id="' + netProfitId + '"]')
+													
                                                     corporateTaxesRow.querySelector('td.total-row').innerHTML = number_format(totalCorporateTaxes)
 													if(corporateTaxesSubRowRow){
                                                     corporateTaxesSubRowRow.querySelector('td.total-row').innerHTML = number_format(totalCorporateTaxes)

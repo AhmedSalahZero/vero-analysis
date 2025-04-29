@@ -45,10 +45,11 @@ class ActualTemplateExport implements
 
 	public function collection()
 	{
+		// dd('f');
 		$itemsNames = [];
 	
 		 $mainItemsWithSubItems = $this->incomeStatement->mainItems->where('has_sub_items',1)->filter(function(IncomeStatementItem $mainItem){
-			$subItemsNames = $mainItem->subItems()->wherePivot('sub_item_type', 'forecast')->wherePivot('financial_statement_able_id',$this->incomeStatement->id)->wherePivot('financial_statement_able_item_id',$mainItem->id)->get()->sortBy('pivot.id')->pluck('pivot.sub_item_name','pivot.id')->toArray() ;
+			$subItemsNames = $mainItem->subItems()->wherePivot('sub_item_type', 'actual')->wherePivot('financial_statement_able_id',$this->incomeStatement->id)->wherePivot('financial_statement_able_item_id',$mainItem->id)->get()->sortBy('pivot.id')->pluck('pivot.sub_item_name','pivot.id')->toArray() ;
 			return $mainItem->setRelation('sub_items_name',$subItemsNames);
 		}) ;
 		foreach($mainItemsWithSubItems as $mainItem )

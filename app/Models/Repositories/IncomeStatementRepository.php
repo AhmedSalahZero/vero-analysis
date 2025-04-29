@@ -100,7 +100,6 @@ class IncomeStatementRepository implements IBaseRepository
 
 	public function paginateReport(Request $request, IncomeStatement $incomeStatement): array
 	{
-
 		$filterData = $this->commonScopeForReport($request, $incomeStatement);
 		$subItemType = $request->get('sub_item_type');
 		$allFilterDataCounter = $filterData->count();
@@ -114,6 +113,8 @@ class IncomeStatementRepository implements IBaseRepository
 			$incomeStatementItem['main_rows'] = $incomeStatementItem->getMainRows($incomeStatement->id, $subItemType);
 			$dataWithRelations->add($incomeStatementItem);
 			$quantitiesFor = [];
+			// dd($incomeStatementItem->getSubItems($incomeStatement->id, $subItemType)->sortByDesc('pivot.id')->pluck('pivot.sub_item_name','pivot.id'));
+			
 			$incomeStatementItem->getSubItems($incomeStatement->id, $subItemType)->each(function ($subItem) use ($incomeStatement, $subItemType, $dataWithRelations, $incomeStatementItem, &$quantitiesFor) {
 
 				$subItem->isSubItem = true; // isSubRow

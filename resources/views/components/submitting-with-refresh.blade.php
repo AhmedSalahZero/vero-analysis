@@ -11,7 +11,7 @@
                 </div>
                 <div class="col-lg-6 kt-align-right">
                     {{-- <button type="submit" class="btn active-style save-form">{{__('Refresh Calculations')}}</button> --}}
-                    <a class="btn active-style" href="{{$returnRedirectRoute }}" > {{__('Save & Close')}} </a>
+                    <a class="btn active-style" href="{{$returnRedirectRoute }}" > {{__('Close')}} </a>
                 </div>
             </div>
         </div>

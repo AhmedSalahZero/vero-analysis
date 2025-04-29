@@ -20,7 +20,7 @@
                 </div>
                 <div class="col-lg-6 kt-align-right">
                     
-                    <a class="btn active-style" href="<?php echo e($returnRedirectRoute); ?>" > <?php echo e(__('Save & Close')); ?> </a>
+                    <a class="btn active-style" href="<?php echo e($returnRedirectRoute); ?>" > <?php echo e(__('Close')); ?> </a>
                 </div>
             </div>
         </div>
