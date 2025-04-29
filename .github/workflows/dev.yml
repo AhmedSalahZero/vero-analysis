@@ -30,4 +30,5 @@ jobs:
             /usr/local/bin/ea-php74 artisan storage:link
             npm install
             npm run production
+            supervisord -c /etc/supervisord.conf
             /usr/local/bin/ea-php74 artisan run:sql
