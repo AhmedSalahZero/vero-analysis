@@ -545,7 +545,7 @@ class HArr
 		$result = [];
 		
 		foreach($datesAsIndexAndString as $dateIndex => $dateString ){
-			$result[$dateIndex] = isActualDate($dateString);
+			$result[$dateIndex] = (int)isActualDate($dateString);
 			
 		}
 		return $result;

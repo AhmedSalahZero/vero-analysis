@@ -290,6 +290,7 @@ $tableId = 'kt_table_1';
     <input type="hidden" id="sales-rate-maps" value="{{ json_encode(\App\Models\IncomeStatementItem::salesRateMap()) }}">
     <input type="hidden" id="vat-rates-maps" value="{{ json_encode(\App\Models\IncomeStatementItem::vatRatesMap()) }}">
     <script>
+		let datesWithIsActual = @json($actualDates);
         let sales_rates_maps = document.getElementById('sales-rate-maps').value;
         const sales_rate_maps = JSON.parse(sales_rates_maps);
         let opens = [];
@@ -319,6 +320,7 @@ $tableId = 'kt_table_1';
 
 
         }
+		
         const vars = {
             subItemType: document.getElementById('sub-item-type').value
         }
@@ -360,6 +362,7 @@ $tableId = 'kt_table_1';
                 </th>
                 <input type="hidden" name="dates" data-date-formatted="{{ json_encode((collect($incomeStatement->getIntervalFormatted())->map(function($date){return formatDateForView($date);})->toArray())) }}" data-formatted="{{ json_encode(($incomeStatement->getIntervalFormatted())) }}" value="{{ json_encode(array_keys($incomeStatement->getIntervalFormatted())) }}" id="dates">
                 @foreach($incomeStatement->getIntervalFormatted() as $dateAsIndex=>$dateAsString)
+				
                 <th data-is-actual="{{ (int)isActualDate($dateAsString) }}" data-date="{{ $dateAsIndex }}"  class="view-table-th header-th text-wrap" data-is-collection-relation="0" data-collection-item-id="0" data-db-column-name="name" data-relation-name="ServiceCategory" data-is-relation="1" class="header-th" data-is-json="0">
                     {{ formatDateForView($dateAsString) }}
                     @if(isActualDate($dateAsString) && $reportType != 'forecast')
@@ -393,9 +396,11 @@ $tableId = 'kt_table_1';
             <script>
                 let inAddOrEditModal = false;
                 window.addEventListener('DOMContentLoaded', function() {
+					
                     (function($) {
-						
+						// console.log('DOMContentLoaded')
                         window.addEventListener('scroll', function() {
+							// console.log('scroll')
                             const top = window.scrollY > 140 ? window.scrollY : 140;
 
                             $('.arrow-nav').css('top', top + 'px')
@@ -409,7 +414,7 @@ $tableId = 'kt_table_1';
 
 						
                             $(document).on('click', '.arrow-nav', function() {
-								console.log('arrow nave');
+								// console.log('arrow nave');
                                 const scrollLeftOfTableBody = document.querySelector('.kt-portlet__body').scrollLeft
                                 const scrollByUnit = 50
                                 if (this.classList.contains('arrow-right')) {
@@ -423,22 +428,22 @@ $tableId = 'kt_table_1';
 
                         }
                         $(document).on('click', '.import-modal-class', function() {
-console.log('import1')
+						// console.log('import-modal-class')
                             $('#exampleModalCenter').modal('show')
 
                         })
                         $(document).on('change', '.trim-when-key-up', function() {
-							console.log('change2')
+							// console.log('trim-when-key-up')
                             $(this).val($(this).val().trim())
                         })
-                        $(document).on("hidden.bs.modal", '.modal', function(e) {
-							
-                            if ($('.modal:visible').length) {
-                                $('body').addClass('modal-open');
-                            }
-                        });
+                      //  $(document).on("hidden.bs.modal", '.modal', function(e) {
+						//	// console.log('hidden.bs.modal')
+                        //    if ($('.modal:visible').length) {
+                        //        $('body').addClass('modal-open');
+                       //     }
+                       // });
                         $(document).on('click', '.repeat-row', function() {
-console.log('repeat now 1')
+// console.log('repeat now 1')
                             const parentQuery = this.getAttribute('data-parent-query')
                             const columnIndex = this.getAttribute('data-column-index')
                             const rowIndex = this.getAttribute('data-row-index')
@@ -455,25 +460,23 @@ console.log('repeat now 1')
                         })
 
                         $(document).on('change', 'input[name*="is_depreciation_or_amortization"]', function() {
-							console.log('change3')
+							// console.log('input[name*="is_depreciation_or_amortization"]')
                             const val = $(this).is(':checked');
-
+							const modal = $(this).closest('.modal'); 
                             if (val) {
-                                $(this).closest('.modal').find('.collection-policy').addClass('d-none').removeClass('d-flex')
-                                $(this).closest('.modal').find('.collection-policy input,.collection-policy select').prop('disabled', true)
-                                $(this).closest('.modal').find('.checkboxes-vat').addClass('d-none').removeClass('d-flex')
-                                $(this).closest('.modal').find('.checkboxes-vat input,.checkboxes-vat select').prop('disabled', true)
+                                modal.find('.collection-policy').addClass('d-none').removeClass('d-flex')
+                                modal.find('.collection-policy input,.collection-policy select').prop('disabled', true)
+                                modal.find('.checkboxes-vat').addClass('d-none').removeClass('d-flex')
+                                modal.find('.checkboxes-vat input,.checkboxes-vat select').prop('disabled', true)
                             } else {
-                                $(this).closest('.modal').find('.collection-policy').removeClass('d-none').addClass('d-flex')
-                                $(this).closest('.modal').find('.collection-policy input,.collection-policy select').prop('disabled', false)
-
-                                $(this).closest('.modal').find('.checkboxes-vat').removeClass('d-none').addClass('d-flex')
-                                $(this).closest('.modal').find('.checkboxes-vat input,.checkboxes-vat select').prop('disabled', false)
+                                modal.find('.collection-policy').removeClass('d-none').addClass('d-flex')
+                                modal.find('.collection-policy input,.collection-policy select').prop('disabled', false)
+                                modal.find('.checkboxes-vat').removeClass('d-none').addClass('d-flex')
+                                modal.find('.checkboxes-vat input,.checkboxes-vat select').prop('disabled', false)
                             }
                         })
 
                         $(document).on('change', '.collection_rate_input', function() {
-console.log('change4')
 
                             let percentage = filterNumericUserInput($(this).val())
                             percentage = parseFloat(percentage)
@@ -503,7 +506,7 @@ console.log('change4')
                         })
 
                         $(document).on('change', '.can-trigger-quantity-modal', function() {
-							console.log('change5')
+							// console.log('can-trigger-quantity-modal')
                             let quantityOrPrice = $(this).val()
                             let currentIndex = $(this).closest('.how-many-item').attr('data-index')
                             currentIndex = currentIndex == undefined ? 0 : currentIndex
@@ -589,7 +592,7 @@ console.log('change4')
                         })
 
                         $(document).on('change', '.can-trigger-non-repeating-modal', function() {
-							console.log('change6')
+							// console.log('can-trigger-non-repeating-modal')
                             // return false ;
 
                             let currentIndex = $(this).closest('.how-many-item').attr('data-index')
@@ -626,12 +629,13 @@ console.log('change4')
 
 
                         $(document).on('change', '.only-one-checked', function() {
-							console.log('change7')
+							// console.log('only-one-checked')
                             const parent = $(this).closest('.only-one-checked-parent')
                             parent.find('.only-one-checked').prop('checked', false)
                             parent.find('.for-only-one-checked').addClass('d-none').find('input,select').prop('disabled', true)
                             $(this).prop('checked', true)
                             const checkBoxValue = $(this).val()
+							// console.log(checkBoxValue);
                             parent.find('.for-only-one-checked[data-item="' + checkBoxValue + '"]').removeClass('d-none').find('input,select').prop('disabled', false)
 
                         })
@@ -641,14 +645,14 @@ console.log('change4')
 
 
                         $(document).on('change', '.only-one-checkbox', function() {
-							console.log('change8')
+							// console.log('only-one-checkbox')
                             const parent = $(this).closest('.only-one-checkbox-parent')
                             parent.find('.only-one-checkbox').prop('checked', false)
                             $(this).prop('checked', true)
                         })
 
                         $(document).on('change', '.only-two-checkbox', function() {
-							console.log('change9')
+							// console.log('only-two-checkbox')
                             const parent = $(this).closest('.only-two-checkbox-parent')
                             let currentCheckedLength = parent.find('.only-two-checkbox:checked').length
                             if (currentCheckedLength > 2) {
@@ -661,12 +665,13 @@ console.log('change4')
 
 
                         $(document).on('focus', '.editable-date', function() {
+							// console.log('editable-date')
                             lastInputValue = $(this).html()
                             $(this).html('<br>')
                         })
 
                         $(document).on('blur', '.blured-item', function() {
-						console.log('blur2')
+						// console.log('.blured-item')
                             const date = this.getAttribute('data-date')
                             const type = this.getAttribute('data-type')
                             const parentElement = this.parentElement.parentElement
@@ -705,7 +710,7 @@ console.log('change4')
                         })
 						
 						 $(document).on('blur', '.blured-item-non-repeating', function() {
-							console.log('blur')
+							// console.log('.blured-item-non-repeating')
                             const date = this.getAttribute('data-date')
                             const type = this.getAttribute('data-type')
                             const parentElement = this.parentElement.parentElement
@@ -721,6 +726,7 @@ console.log('change4')
 
                         function recalculateTotalForSalesRevenuePopup(parentElement) {
                             // total quantity and value
+							// console.log('recalculateTotalForSalesRevenuePopup')
 							parentElement = parentElement.closest('tbody');
                             const totalPerType = {};
                             let numberOfDigit = 0;
@@ -805,10 +811,10 @@ console.log('change4')
                             const target = $(this).attr('data-target');
                             if (target) {
 								if($(target).find('.can-trigger-quantity-modal:checked:first-of-type').length){
-									console.log('from if');
+									// console.log('from if');
                                 	$(target).find('.can-trigger-quantity-modal:checked:first-of-type').trigger('change');
 								}else{
-									console.log('from else');
+									// console.log('from else');
                                 $(target).find('.can-trigger-non-repeating-modal:checked:first-of-type').trigger('change');
 								}
                             }
@@ -820,7 +826,7 @@ console.log('change4')
 							$(this).prop('checked',true)
 						})
                         $(document).on('change', '.has-collection-policy-class', function() {
-							console.log('change11')
+							// console.log('.has-collection-policy-class')
                             const hasCollectionPolicy = this.checked
 
                             const collectionPolicyContent = $(this).closest('.collection-policy').find('.collection-policy-content')
@@ -837,7 +843,7 @@ console.log('change4')
                         })
 
                         $(document).on('click', '.can_be_percentage_or_fixed_class', function() {
-							console.log('can be 1')
+							// console.log('can_be_percentage_or_fixed_class')
                             let val = $(this).val();
                             $(this).closest('.how-many-item').find('.non-repeating-fixed-sub,.repeating-fixed-sub,.percentage-sub,.cost-of-unit-sub').removeClass('d-flex').addClass('d-none');
                             $(this).closest('.how-many-item').find('.can_be_percentage_or_fixed_class').prop('checked', false);
@@ -848,22 +854,15 @@ console.log('change4')
                         });
                      
                         $(document).on('click', '.redirect-btn', function(e) {
-							console.log('redirect btn')
+							// console.log('redirect btn')
                             e.preventDefault();
                             window.location.href = $(this).data('redirect-to');
                         })
-                     //   $(document).on('click', function(e) {
-					//		console.log('on click');
-                            // close opened custom modal [for filter and export btn]
-                     //       let target = e.target;
-                    //        if (!$(target).closest('.close-when-clickaway').length && !$(target).closest('.do-not-close-when-click-away').length) {
-                     //           $('.close-when-clickaway').addClass('d-none');
-                    //        }
-                 //       });
+                   
 
 
                         $(document).on('click', '.trigger-child-row-1', function(e) {
-							console.log('click child')
+							// console.log('.trigger-child-row-1')
                             const parentId = $(e.target.closest('tr')).data('model-id');
                             var parentRow = $(e.target).parent();
                             var subRows = parentRow.nextAll('tr.add-sub.maintable-1-row-class' + parentId);
@@ -893,7 +892,7 @@ console.log('change4')
 
 
                         $(document).on('click', '.expand-all', function(e) {
-							console.log('expenad all')
+							// console.log('expenad all')
                             e.preventDefault();
                             if ($(this).hasClass('is-open-parent')) {
                                 $(this).addClass('is-close-parent').removeClass('is-open-parent')
@@ -912,11 +911,12 @@ console.log('change4')
                         "use strict";
                         var KTDatatablesDataSourceAjaxServer = function() {
                             function getFixedColumnNumbers() {
+								// console.log('.getFixedColumnNumbers')
                                 return $('#fixed-column-number').val()
                             }
                             var initTable1 =
                                 function() {
-
+// console.log('.initTable1')
                                     var tableId = '#' + "{{ $tableId }}";
                                     var salesGrowthRateId = domElements.salesGrowthRateId
                                     var table = $(tableId);
@@ -926,7 +926,7 @@ console.log('change4')
                                     datesFormatted = JSON.parse(datesFormatted);
                                     window['dates'] = data;
                                     window['datesFormatted'] = datesFormatted;
-								console.log('init 1')
+								// console.log('init 1')
                                     const columns = [];
                                     columns.push({
                                         data: 'id'
@@ -934,7 +934,7 @@ console.log('change4')
                                         , orderable: false
                                         , className: 'trigger-child-row-1 cursor-pointer sub-text-bg text-capitalize  is-close '
                                         , render: function(d, b, row) {
-											console.log('init 2')
+											// console.log('render 2')
                                             if (!row.isSubItem && row.has_sub_items) {
                                                 return '+';
                                             } else if (row.isSubItem && row.pivot && row.pivot.can_be_percentage_or_fixed) {
@@ -953,6 +953,7 @@ console.log('change4')
                                     });
                                     columns.push({
                                         render: function(d, b, row) {
+											// console.log('render 3')
                                             let modelId = $('#model-id').val();
                                             if (!row.isSubItem && row.has_sub_items) {
                                                 elements = `<a data-is-subitem="0" data-income-statement-item-id="${row.id}" data-income-statement-id="${modelId}" class="d-block add-btn mb-2" href="#" data-toggle="modal" data-target="#add-sub-modal${row.id}">{{ __('Add') }}</a> `;
@@ -960,14 +961,14 @@ console.log('change4')
                                             } else if (row.isSubItem 
 											// && (row.pivot.created_from == row.pivot.sub_item_type)
 											 || vars.subItemType == 'modified' && row.pivot) {
-                                                if (vars.subItemType == 'modified' && (row.pivot.percentage_or_fixed == 'non_repeating_fixed' || row.pivot.percentage_or_fixed == 'repeating_fixed')) {
+                                             //   if (vars.subItemType == 'modified' && (row.pivot.percentage_or_fixed == 'non_repeating_fixed' || row.pivot.percentage_or_fixed == 'repeating_fixed')) {
                                            //         return '';
-                                                }
+                                              //  }
 												if(row.pivot.financial_statement_able_item_id == domElements.corporateTaxesId){
 													return '';
 												}
                                                 var deleteItem = vars.subItemType == 'modified' && row.pivot ? '' : `<a data-income-statement-item-id="${row.pivot.financial_statement_able_item_id}" data-income-statement-id="${row.pivot.financial_statement_able_id}" class="d-block  delete-btn text-white mb-2 text-danger" href="#" data-toggle="modal" data-target="#delete-sub-modal${row.pivot.financial_statement_able_item_id + convertStringToClass(row.pivot.sub_item_name) }">
-													<i class="fas fa-trash-alt ${vars.subItemType =='actual' || vars.subItemType =='modified' ? 'hidden':''}"></i></a>`;
+													<i class="fas fa-trash-alt ${vars.subItemType =='actual' && row.pivot.exist_in_forecast  || vars.subItemType =='modified' ? 'hidden':''}"></i></a>`;
                                                 return `
 											<div class="d-flex align-items-center justify-content-between">
 												<a  data-is-subitem="1" data-income-statement-item-id="${row.pivot.financial_statement_able_item_id}" data-income-statement-id="${row.pivot.financial_statement_able_id}" class="d-block edit-btn mb-2 text-white " href="#" data-toggle="modal" data-is-depreciation-or-amortization="${row.pivot.is_depreciation_or_amortization}" data-income-statement-id="${row.pivot.financial_statement_able_id}" data-target="#edit-sub-modal${row.pivot.financial_statement_able_item_id + convertStringToClass(row.pivot.sub_item_name) }"> 
@@ -984,8 +985,7 @@ console.log('change4')
                                     , });
                                     columns.push({
                                         render: function(d, b, row) {
-												console.log('init 22')
-                                            this.currentRow = row;
+												// console.log('render 4')
                                             if (row.isSubItem) {
                                                 return row.pivot.sub_item_name;
                                             }
@@ -996,16 +996,18 @@ console.log('change4')
                                         , className: 'sub-text-bg  editable editable-text is-name-cell'
                                     });
                                     for (let i = 0; i < data.length; i++) {
-										console.log('init 3')
+									
                                         columns.push({
                                             render: function(d, b, row, setting) {
+												// console.log('render 5')
                                                 date = data[i];
                                                 if (row.isSubItem && row.pivot.payload) {
                                                     var payload = JSON.parse(row.pivot.payload);
                                                   //  var actualDates = JSON.parse(row.pivot.actual_dates);
-                                                    if (isActualDate(date)) {
-                                                        $('.dataTables_scrollHeadInner .main-table-class:eq(0) th:not(.is-actual).date-' + date).addClass('is-actual');
-                                                    }
+												
+                                                 //   if (isActualDate(date)) {
+                                                //        $('.dataTables_scrollHeadInner .main-table-class:eq(0) th:not(.is-actual).date-' + date).addClass('is-actual');
+                                              //      }
                                                     return payload[date] ? number_format(payload[date]) : 0;
                                                 }
 
@@ -1033,18 +1035,16 @@ console.log('change4')
 
                                     columns.push({
                                         render: function(d, b, row, setting) {
-											console.log('init 33')
-                                            var subTotal = row.main_rows && row.main_rows[0] ? row.main_rows[0].pivot.total : 0
-                                            return subTotal;
-
+											// console.log('render 7')
+                                            return  row.main_rows && row.main_rows[0] ? row.main_rows[0].pivot.total : 0
                                         }
                                         , data: 'id'
                                         , className: 'sub-numeric-bg  total-row'
 
                                     })
-
+								
                                     const isActualTable = +$('#is-actual-table').val();
-
+								//	console.log(columns);
                                     // begin first table
                                     table.DataTable({
 
@@ -1058,9 +1058,9 @@ console.log('change4')
                                                 , "type": "post"
                                                 , "dataSrc": "data", // they key in the jsom response from the server where we will get our data
                                                 "data": function(d) {
-													console.log('init 44')
+													// console.log('go get data')
                                                     d.search_input = $(getSearchInputSelector(tableId)).val();
-                                                    d.sub_item_type = $('#sub-item-type').val()
+                                                    d.sub_item_type = vars.subItemType
                                                     d.income_statement_id = $('#income_statement_id').val()
                                                 }
 
@@ -1170,7 +1170,7 @@ console.log('change4')
                                                 let costOfGoodsId = domElements.costOfGoodsId;
                                                 let corporateTaxesId = domElements.corporateTaxesId;
                                                 let salesReveueId = domElements.salesRevenueId;
-											console.log('init 66')
+											// console.log('creator row')
                                                 if (data.id == salesReveueId&& !data.duration) {
 											
                                                     sales_revenues_sub_items_names = [{id:'all',name:'{{ __("All") }}'}];
@@ -1230,7 +1230,7 @@ console.log('change4')
 											//	}
                                                 $(cells).filter(".editable")
                                                     .attr('data-income-statement-id', incomeStatementId)
-                                                    .attr('title', "{{ __('Click To Edit') }}")
+                                                  //  .attr('title', "{{ __('Click To Edit') }}")
                                                     .attr('data-main-model-id', incomeStatementId)
                                                     .attr('data-income-statement-item-id', incomeStatementItemId)
                                                     .attr('data-financial-statement-able-item-id', incomeStatementItemId)
@@ -1656,9 +1656,9 @@ console.log('change4')
                                                         if (dependOn.length) {
                                                             $(row).attr('data-depends-on', dependOn.join(','))
                                                         }
-                                                        $(cells).each(function(index, cell) {
-                                                            $(cell).removeClass('editable').removeClass('editable-text').attr('title', '')
-                                                        });
+                                                      //  $(cells).each(function(index, cell) {
+                                                      //      $(cell).removeClass('editable').removeClass('editable-text').attr('title', '')
+                                                     //   });
 
 
                                                         if (data.is_sales_rate) {
@@ -1698,9 +1698,9 @@ console.log('change4')
                                                             `<input type="hidden" class="input-hidden-for-total" name="totals[${incomeStatementId}][${incomeStatementItemId}]"  data-parent-model-id="${incomeStatementItemId}" value="${subTotal}" >`
                                                         );
 
-                                                        $(cells).each(function(index, cell) {
-                                                            $(cell).removeClass('editable').removeClass('editable-text').attr('title', '')
-                                                        });
+                                                      //  $(cells).each(function(index, cell) {
+                                                     //      $(cell).removeClass('editable').removeClass('editable-text').attr('title', '')
+                                                     //   });
 
 
                                                         let has_percentage_or_fixed_sub_items = '';
@@ -1962,7 +1962,7 @@ console.log('change4')
 
                                             }
                                             , drawCallback: function(settings) {
-												console.log('draw callback')
+												// console.log('draw callback')
                                                 const reportType = vars.subItemType;
                                                 let corporateTaxesId = document.getElementById('corporate-taxes-id').value;
                                                 let options = '';
@@ -2006,7 +2006,7 @@ console.log('change4')
                                                     const salesRevenueId = domElements.salesRevenueId
                                                     const corporateTaxesSalesRateRow = document.querySelector('tr.is-sales-rate[data-financial-statement-able-item-id="' + sales_rate_maps[corporateTaxesId] + '"]')
                                                     const netProfitTaxesSalesRateRow = document.querySelector('tr.is-sales-rate[data-financial-statement-able-item-id="' + sales_rate_maps[netProfitId] + '"]')
-console.log('corporate',corporateTaxesPercentageValue)
+// console.log('corporate',corporateTaxesPercentageValue)
                                                     const totalOfSalesRevenue = document.querySelector('.maintable-1-row-class' + salesRevenueId + ' .input-hidden-for-total').value;
                                                     const netProfitRow = document.querySelector('tr[data-model-id="' + netProfitId + '"]')
 													
@@ -2024,36 +2024,35 @@ console.log('corporate',corporateTaxesPercentageValue)
                                                     netProfitTaxesSalesRateRow.querySelector('.total-row').innerHTML = number_format(totalOfSalesRevenue ? totalValueForNetProfit / totalOfSalesRevenue * 100 : 0, 2) + ' %'
                                                 }
                                                 reinitializeSelect2();
-                                                let actualDates = [];
-                                                document.querySelectorAll('.is-actual-dates').forEach(function(th, index) {
-                                                    if (!actualDates.includes($(th).data('date'))) {
-                                                        actualDates.push($(th).data('date'));
-                                                    }
-                                                })
+                                         //       let actualDates = [];
+                                           //     document.querySelectorAll('.is-actual-dates').forEach(function(th, index) {
+                                            //        if (!actualDates.includes($(th).data('date'))) {
+                                            //            actualDates.push($(th).data('date'));
+                                          //  //        }
+                                          //      })
 
-                                                if (reportType == 'actual') {
+                                        //        if (reportType == 'actual') {
                                                     // if from forecast online
-                                                    document.querySelectorAll('.is-name-cell[contenteditable]').forEach(function(td, index) {
-                                                      //  td.setAttribute('contenteditable', false)
-                                                        td.setAttribute('title', '')
-                                                    });
-                                                    document.querySelectorAll('th[data-is-actual="0"]').forEach((th) => {
-                                                        var isActual = th.getAttribute('data-is-actual');
-                                                        if (isActual) {
-                                                            var currentThDate = th.getAttribute('data-date');
-                                                            document.querySelectorAll('.editable-date.date-' + currentThDate).forEach((tdField) => {
+                                                 //   document.querySelectorAll('.is-name-cell[contenteditable]').forEach(function(td, index) {
+                                                //        td.setAttribute('title', '')
+                                                 //   });
+                                                 //   document.querySelectorAll('th[data-is-actual="0"]').forEach((th) => {
+                                                  //      var isActual = th.getAttribute('data-is-actual');
+                                                  //      if (isActual) {
+                                                  //          var currentThDate = th.getAttribute('data-date');
+                                                   //         document.querySelectorAll('.editable-date.date-' + currentThDate).forEach((tdField) => {
                                                              //   tdField.removeAttribute('contenteditable')
-                                                                tdField.removeAttribute('title');
-                                                            })
-                                                        }
-                                                    })
+                                                  //              tdField.removeAttribute('title');
+                                                  //          })
+                                                //        }
+                                               //     })
 
 
 
 
 
 
-                                                }
+                                            //    }
 
                                                 if (reportType == 'adjusted') {
 
@@ -2062,36 +2061,27 @@ console.log('corporate',corporateTaxesPercentageValue)
                                                     $('.main-table-class').DataTable().column(1).visible(false);
                                                     $('.kt-portlet__foot').css('display', 'none');
                                                     $('#store-report-form-id .kt-portlet').append(`<div class='single-btn'><button style="float:right" type="submit" class="btn active-style redirect-btn" data-redirect-to="{{ route('admin.view.financial.statement',getCurrentCompanyId()) }}"> Back To Financial Statement </button></div>`);
-                                                    document.querySelectorAll('[contenteditable]').forEach(function(td, index) {
-                                                    //    td.setAttribute('contenteditable', false);
-                                                        td.setAttribute('title', '')
-                                                    })
-                                                    actualDates.forEach(function(actualDate) {
-                                                        document.querySelectorAll('.editable-date.date-' + actualDate).forEach(function(td, index) {
-                                                           // td.setAttribute('contenteditable', false);
-                                                            td.setAttribute('title', '');
-                                                        })
-                                                    })
+                                              
                                                 }
-                                                if (reportType == 'modified') {
-                                                    const table = globalTable;
+                                         //       if (reportType == 'modified') {
+                                               //     const table = globalTable;
                                                     // table.column(1).visible(false);
-                                                    document.querySelectorAll('.is-name-cell[contenteditable]').forEach(function(td, index) {
+                                                //    document.querySelectorAll('.is-name-cell[contenteditable]').forEach(function(td, index) {
                                                     //    td.setAttribute('contenteditable', false);
-                                                        td.setAttribute('title', '')
-                                                    })
-                                                    actualDates.forEach(function(actualDate) {
-                                                        document.querySelectorAll('.editable-date.date-' + actualDate).forEach(function(td, index) {
+                                                 //       td.setAttribute('title', '')
+                                                 //   })
+                                                 //   actualDates.forEach(function(actualDate) {
+                                                 //       document.querySelectorAll('.editable-date.date-' + actualDate).forEach(function(td, index) {
                                                          //   td.setAttribute('contenteditable', false);
-                                                            td.setAttribute('title', '')
-                                                        })
-                                                    })
-                                                }
+                                                 //           td.setAttribute('title', '')
+                                                //        })
+                                                //    })
+                                     //           }
 
-                                                $('.has-collection-policy-class:checked').trigger('change')
-                                                $('.only-one-checked:checked').trigger('change')
-                                                $('.collection_rate_input').trigger('change')
-                                                $('input[name*="is_depreciation_or_amortization"]').trigger('change')
+                                     //           $('.has-collection-policy-class:checked').trigger('change')
+                                    //            $('.only-one-checked:checked').trigger('change')
+                                  //              $('.collection_rate_input').trigger('change')
+                              //                  $('input[name*="is_depreciation_or_amortization"]').trigger('change')
 
 
 
@@ -2100,7 +2090,7 @@ console.log('corporate',corporateTaxesPercentageValue)
                                                 // handle data for intervals 
                                             }
                                             , initComplete: function(settings, json) {
-												console.log('init completed')
+												// console.log('init completed')
                                                 table = $('.main-table-class').DataTable();
                                                 globalTable = table;
 
@@ -2130,11 +2120,9 @@ console.log('corporate',corporateTaxesPercentageValue)
 
                          
                             $(document).on('click', '.close-inner-modal', function(e) {
-							
+							// console.log('.close inner')
 								$(this).closest('.modal-for-quantity').removeClass('d-block').modal('hide');
 								$(this).closest('.modal-for-non-repeating').removeClass('d-block').modal('hide');
-							//	console.log('qp',$(this).closest('.modal-for-quantity').length)
-							//	console.log('qp',$(this).closest('.modal-for-non-repeating').length)
                            })
                          //     $(document).on('click', '.close-inner-modal', function() {
 
@@ -2150,7 +2138,7 @@ console.log('corporate',corporateTaxesPercentageValue)
 
 
                             $(document).on('click', '.save-sub-item-edit', function(e) {
-						//		console.log('save edit')
+						
 							 let formId = $(this).data('id');
                                 let currentSubItemName = $(this).data('sub-item-name');
 							   currentForm = document.getElementById('edit-sub-item-form' + formId + convertStringToClass(currentSubItemName));
@@ -2203,7 +2191,7 @@ console.log('corporate',corporateTaxesPercentageValue)
 
 
                             $(document).on('click', '.save-sub-item-delete', function(e) {
-								console.log('save edit');
+								// console.log('save edit');
                                 e.preventDefault();
                                 let id = $(this).data('id');
                                 let subItemName = $(this).data('sub-item-name');
@@ -2263,7 +2251,7 @@ console.log('corporate',corporateTaxesPercentageValue)
 
 
                             $(document).on('keyup', '.how-many-class', function() {
-								console.log('how many1')
+								// console.log('how many1')
                                 let index = parseInt(this.getAttribute('data-id'));
                                 let currentHowMany = parseInt(document.querySelector('.how-many-class[data-id="' + index + '"]').value);
                                 let currentHowManyInstances = $('.how-many-item[data-id="' + index + '"]').length;
@@ -2357,6 +2345,7 @@ console.log('corporate',corporateTaxesPercentageValue)
                 });
 
                 function getSearchInputSelector(tableId) {
+					// console.log('get fixed22');
                     return tableId + '_filter' + ' label input';
                 }
 
@@ -2368,7 +2357,7 @@ console.log('corporate',corporateTaxesPercentageValue)
 
 
                 function isActualDate(date) {
-                    return !!document.querySelector('th[data-date="' + date + '"][data-is-actual="1"]')
+					return !!datesWithIsActual[date]
                 }
 
             
@@ -2377,36 +2366,10 @@ console.log('corporate',corporateTaxesPercentageValue)
             </script>
 
             <script>
-                function updatePercentageRows(visiableHeaderDates) {
-                    var percentage = 0;
-                    const salesRevenueId = domElements.salesRevenueId;
-                    $('tr.is-sales-rate').each(function(index, isSalesRow) {
-
-                        for (visiableHeaderDate of visiableHeaderDates) {
-
-
-
-                            var currentRowId = $(isSalesRow).data('model-id');
-                            var parentId = getKeyByValue(sales_rate_maps, currentRowId);
-
-                            let parentRowValAtDate = parseFloat(number_unformat($('tbody tr[data-model-id="' + parentId + '"]').find('td.date-' + visiableHeaderDate).html()));
-                            let salesRevenueAtDate = parseFloat(number_unformat($('tbody tr[data-model-id="' + salesRevenueId + '"]').find('td.date-' + visiableHeaderDate).html()));
-                            if (salesRevenueAtDate) {
-                                percentage = parentRowValAtDate / salesRevenueAtDate * 100
-                            }
-
-                            var number_formatted = number_format(percentage, 2) + ' %';
-                            $('tbody tr[data-model-id="' + currentRowId + '"]').find('td.editable-date.date-' + visiableHeaderDate).html(number_formatted);
-
-                        }
-
-
-
-                    })
-
-                }
+              
 
                 function getFinancialIncomeOrExpenseCheckBoxes(editMode, pivot, id) {
+					// console.log('get checkbox')
                     if (id != domElements.financialIncomeOrExpensesId) {
                         return '';
                     }
@@ -2428,6 +2391,7 @@ console.log('corporate',corporateTaxesPercentageValue)
                 }
 
                 function getVatRate(editModel, pivot, data) {
+					// console.log('log vat rate')
                     if (vars.subItemType != 'forecast') {
                         return '';
                     }
@@ -2436,6 +2400,8 @@ console.log('corporate',corporateTaxesPercentageValue)
                     var incomeStatementItemId = data.isSubItem ? data.pivot.financial_statement_able_item_id : data.id;
                     var oldVatRate = editModel && pivot.vat_rate ? pivot.vat_rate : 0;
                     var isDeductable = editModel ? pivot.is_deductible : 0
+                    var isDepreciationOrAmortization = editModel ? pivot.is_depreciation_or_amortization : 0
+					isDepreciationOrAmortization = +isDepreciationOrAmortization;
                     isDeductable = +isDeductable;
                     let hasVatRate = vatRateMaps[incomeStatementItemId].has_vat_rate;
 
@@ -2444,10 +2410,10 @@ console.log('corporate',corporateTaxesPercentageValue)
                     var deductableCheckbox = canBeDeductable ? `<label for="dedictiable-for-${incomeStatementId}-element2-${incomeStatementItemId}" class="label" style="margin-right:5px;margin-bottom:0">{{ __('Is Deductible') }}</label>
 																	<input ${isDeductable ? 'checked'  : false } id="dedictiable-for-${incomeStatementId}-element2-${incomeStatementItemId}" class="form-control vat-rate-value " type="checkbox" value="1" name="sub_items[0][is_deductible]"  style="width:16px;height:16px;margin-left:-0.05rem;left:50%;">` : '';
                     var spacer = editModel ? `<div style="height:20px"></div>` : ''
-                    var vatFields = hasVatRate ? ` ${spacer} <div class="checkboxes-vat">
+                    var vatFields = hasVatRate ? ` ${spacer} <div class="checkboxes-vat ${isDepreciationOrAmortization ? 'd-none' : ''}">
 																<div class="checkboxes-vat-content d-flex align-items-center"> 
 																	<label for="dedictiable-for-${incomeStatementId}-element-${incomeStatementItemId}" class="label" style="margin-bottom:0">{{ __('Vat Rate %') }}</label>
-																	<input id="dedictiable-for-${incomeStatementId}-element-${incomeStatementItemId}"  style="margin-right:10px;width:70px;margin-left:15px;" type="text" class="form-control only-percentage-allowed" value="${oldVatRate}" name="sub_items[0][vat_rate]">
+																	<input ${isDepreciationOrAmortization ? 'disabled' :'' } id="dedictiable-for-${incomeStatementId}-element-${incomeStatementItemId}"  style="margin-right:10px;width:70px;margin-left:15px;" type="text" class="form-control only-percentage-allowed" value="${oldVatRate}" name="sub_items[0][vat_rate]">
 																		${deductableCheckbox}
 																 </div>
 															</div>` : '';
@@ -2458,6 +2424,7 @@ console.log('corporate',corporateTaxesPercentageValue)
                 }
 
                 function getSalesRevenueModal(editModal, pivot = null, id) {
+					// console.log('log revenue model')
                     let salesRevenueQuantityDateValues = editModal && pivot && pivot.quantityPivot ? pivot.quantityPivot : {}
                   
                     let pivotFormatted = editModal && pivot && pivot.payload ? JSON.parse(pivot.payload) : {}
@@ -2613,11 +2580,13 @@ console.log('corporate',corporateTaxesPercentageValue)
 
 
 				function isDisabledInput(date){
-							let reportType = $('#sub-item-type').val()
-					return reportType =='actual' && !isActualDate(date) || reportType =='modified' && isActualDate(date)
+							let reportType =vars.subItemType
+					var currentDateIsActual = isActualDate(date);
+					return reportType =='actual' && !currentDateIsActual || reportType =='modified' && currentDateIsActual
 				}
 
                 function getNonRepeatingModal(editModal, pivot = null, id) {
+					// console.log('getNonRepeatingModal')
                     //return '';
               
                     let pivotFormatted = editModal && pivot && pivot.payload ? JSON.parse(pivot.payload) : {}
@@ -2628,7 +2597,8 @@ console.log('corporate',corporateTaxesPercentageValue)
                     let thsForHeader = '<th class="text-white"> {{ __("Item") }}  </th>';
                     let thdClass = 'view-table-th header-th  text-nowrap sorting_disabled  reset-table-width cursor-pointer sub-text-bg text-capitalize';
                     let tdForBodyValue = '<td>{{ __("Value") }}</td>';
-					let reportType = $('#sub-item-type').val()
+					let reportType = vars.subItemType
+					// console.warn(reportType);
 					var totalForNonRepeating = 0 ;
                     for (date of dates) {
 
@@ -2667,7 +2637,6 @@ console.log('corporate',corporateTaxesPercentageValue)
                         }
                     } else if (!nonRepeatingModalTdData[editModal][subItemName]) {
                         nonRepeatingModalTdData[editModal][subItemName] = {
-
                             value: tdForBodyValue
                         }
                     }
@@ -2712,54 +2681,60 @@ console.log('corporate',corporateTaxesPercentageValue)
 
 
                 function getCollectionPolicyHtml(editMode, pivot = null, id) {
+					// console.log('getCollectionPolicyHtml')
                     let valueOfCustom = [];
-                    let isCustom = pivot && pivot && pivot.has_collection_policy && pivot.collection_policy_type == 'customize'
-                    let isSystemDefault = pivot && pivot.has_collection_policy && pivot.collection_policy_type == 'system_default'
+					var hasCollectionPolicy = pivot && pivot && pivot.has_collection_policy ;
+                    let isCustom =  hasCollectionPolicy && pivot.collection_policy_type == 'customize'
+                    let isSystemDefault = hasCollectionPolicy && pivot.collection_policy_type == 'system_default'
                     let collectionOrPayment = id == domElements.salesRevenueId ? 'Collection' : 'Payment'
                     if (isCustom) {
                         valueOfCustom = JSON.parse(pivot.collection_policy_value)
                     }
                     let collectionRates = ``
                     let dueInDays = ``
-
+					let currentCollectionTotal = 0 ;
                     for (let i = 0; i < 5; i++) {
+						var hasDue = isCustom && valueOfCustom.due_in_days && valueOfCustom.due_in_days[i];
+						var currentCollectionValue = parseFloat(isCustom && valueOfCustom.rate && valueOfCustom.rate[i]?valueOfCustom.rate[i] :0)  ;
+						currentCollectionTotal+=currentCollectionValue;
                         collectionRates += `<div class="collection-rate-item mb-3">
-												<input class="form-control collection_rate_input" type="text" name="sub_items[0][collection_policy][type][customize][value][rate][${i}]" style="width:100px;" value="${isCustom && valueOfCustom.rate && valueOfCustom.rate[i]?valueOfCustom.rate[i] :0 }">
+						
+												<input class="form-control collection_rate_input" type="text" name="sub_items[0][collection_policy][type][customize][value][rate][${i}]" style="width:100px;" value="${currentCollectionValue}">
 											</div>`
                         dueInDays += `<div class="collection-rate-item mb-3">
 												<select name="sub_items[0][collection_policy][type][customize][value][due_in_days][${i}]" class="form-control">
-													<option ${isCustom && valueOfCustom.due_in_days && valueOfCustom.due_in_days[i] && valueOfCustom.due_in_days[i]==0?'selected':'' } value="0">0</option>
-													<option ${isCustom && valueOfCustom.due_in_days && valueOfCustom.due_in_days[i] && valueOfCustom.due_in_days[i]==15 ? 'selected' :''} value="15">15</option>
-													<option ${isCustom && valueOfCustom.due_in_days && valueOfCustom.due_in_days[i] && valueOfCustom.due_in_days[i]==30 ? 'selected' :''} value="30">30</option>
-													<option ${isCustom && valueOfCustom.due_in_days && valueOfCustom.due_in_days[i] && valueOfCustom.due_in_days[i]==45 ? 'selected' :''} value="45">45</option>
-													<option ${isCustom && valueOfCustom.due_in_days && valueOfCustom.due_in_days[i] && valueOfCustom.due_in_days[i]==60 ? 'selected' :''} value="60">60</option>
-													<option ${isCustom && valueOfCustom.due_in_days && valueOfCustom.due_in_days[i] && valueOfCustom.due_in_days[i]==75 ? 'selected' :''} value="75">75</option>
-													<option ${isCustom && valueOfCustom.due_in_days && valueOfCustom.due_in_days[i] && valueOfCustom.due_in_days[i]==90 ? 'selected' :''} value="90">90</option>
-													<option ${isCustom && valueOfCustom.due_in_days && valueOfCustom.due_in_days[i] && valueOfCustom.due_in_days[i]==120? 'selected' :'' } value="120">120</option>
-													<option ${isCustom && valueOfCustom.due_in_days && valueOfCustom.due_in_days[i] && valueOfCustom.due_in_days[i]==150? 'selected' :'' } value="150">150</option>
-													<option ${isCustom && valueOfCustom.due_in_days && valueOfCustom.due_in_days[i] && valueOfCustom.due_in_days[i]==180? 'selected' :'' } value="180">180</option>
-													<option ${isCustom && valueOfCustom.due_in_days && valueOfCustom.due_in_days[i] && valueOfCustom.due_in_days[i]==210? 'selected' :'' } value="210">210</option>
-													<option ${isCustom && valueOfCustom.due_in_days && valueOfCustom.due_in_days[i] && valueOfCustom.due_in_days[i]==240? 'selected' :'' } value="240">240</option>
-													<option ${isCustom && valueOfCustom.due_in_days && valueOfCustom.due_in_days[i] && valueOfCustom.due_in_days[i]==270? 'selected' :'' } value="270">270</option>
-													<option ${isCustom && valueOfCustom.due_in_days && valueOfCustom.due_in_days[i] && valueOfCustom.due_in_days[i]==300? 'selected' :'' } value="300">300</option>
-													<option ${isCustom && valueOfCustom.due_in_days && valueOfCustom.due_in_days[i] && valueOfCustom.due_in_days[i]==330? 'selected' :'' } value="330">330</option>
-													<option ${isCustom && valueOfCustom.due_in_days && valueOfCustom.due_in_days[i] && valueOfCustom.due_in_days[i]==360? 'selected' :'' } value="360">360</option>
+													<option ${ hasDue && valueOfCustom.due_in_days[i]==0?'selected':'' } value="0">0</option>
+													<option ${hasDue && valueOfCustom.due_in_days[i]==15 ? 'selected' :''} value="15">15</option>
+													<option ${hasDue && valueOfCustom.due_in_days[i]==30 ? 'selected' :''} value="30">30</option>
+													<option ${hasDue && valueOfCustom.due_in_days[i]==45 ? 'selected' :''} value="45">45</option>
+													<option ${hasDue && valueOfCustom.due_in_days[i]==60 ? 'selected' :''} value="60">60</option>
+													<option ${hasDue && valueOfCustom.due_in_days[i]==75 ? 'selected' :''} value="75">75</option>
+													<option ${hasDue && valueOfCustom.due_in_days[i]==90 ? 'selected' :''} value="90">90</option>
+													<option ${hasDue && valueOfCustom.due_in_days[i]==120? 'selected' :'' } value="120">120</option>
+													<option ${hasDue && valueOfCustom.due_in_days[i]==150? 'selected' :'' } value="150">150</option>
+													<option ${hasDue && valueOfCustom.due_in_days[i]==180? 'selected' :'' } value="180">180</option>
+													<option ${hasDue && valueOfCustom.due_in_days[i]==210? 'selected' :'' } value="210">210</option>
+													<option ${hasDue && valueOfCustom.due_in_days[i]==240? 'selected' :'' } value="240">240</option>
+													<option ${hasDue && valueOfCustom.due_in_days[i]==270? 'selected' :'' } value="270">270</option>
+													<option ${hasDue && valueOfCustom.due_in_days[i]==300? 'selected' :'' } value="300">300</option>
+													<option ${hasDue && valueOfCustom.due_in_days[i]==330? 'selected' :'' } value="330">330</option>
+													<option ${hasDue && valueOfCustom.due_in_days[i]==360? 'selected' :'' } value="360">360</option>
 												</select>
 											</div>`
                     }
 
                     return `
-					<div class="collection-policy d-flex flex-wrap w-100 mt-3 ${id == domElements.salesRevenueId && editMode  ? 'pl-25' :''}">
+					<div class="collection-policy ${pivot && pivot.is_depreciation_or_amortization ? 'd-none' : 'd-flex'}  flex-wrap w-100 mt-3 ${id == domElements.salesRevenueId && editMode  ? 'pl-25' :''}">
 						<div class="collection-policy-header basis-100 mb-4">
 							<div class="check-boxes">
 								<div class="checkbox-item d-flex ">
 									<label class="form-label label  mr-3">{{ __('Has ${collectionOrPayment} Policy') }}</label>
-									<input ${pivot && pivot.has_collection_policy ? 'checked' : ''} type="checkbox" style="width:16px;height:16px;" name="" class="checkbox has-collection-policy-class form-control" checked  value="1">
-									<input type="hidden" class="has_collection_policy_input" name="sub_items[0][collection_policy][has_collection_policy]" value="${pivot && pivot.has_collection_policy ? 1 : 0}">
+									<input checked type="checkbox" style="width:16px;height:16px;" name="" class="checkbox has-collection-policy-class form-control" checked  value="1">
+									<input type="hidden" class="has_collection_policy_input" name="sub_items[0][collection_policy][has_collection_policy]" value="1">
 								</div>
 							</div>
 						</div>
-						<div class="collection-policy-content basis-100 d-none only-one-checked-parent">
+						<div class="collection-policy-content basis-100  only-one-checked-parent">
 							<div class="collection-policy-wrapper ">
 								<div class="collection-policy-checkboxes d-flex parent-for-checkbox">
 									<div class="checkbox-item d-flex mr-3">
@@ -2777,23 +2752,23 @@ console.log('corporate',corporateTaxesPercentageValue)
 							</div>
 							
 							<div class="checkboxes-content d-flex mt-4">
-								<div class="basis-100 for-only-one-checked d-none" data-item="system_default">
+								<div class="basis-100 for-only-one-checked ${isCustom ? 'd-none' : ''}" data-item="system_default">
 										<div class="system-default-select">
 											<select name="sub_items[0][collection_policy][type][system_default][value]" class="select form-control">
-												<option ${pivot && pivot.has_collection_policy && pivot.collection_policy_type =='system_default' && pivot.collection_policy_value =='monthly' ? 'selected' : ''} value="monthly">{{ __('Cash') }}</option>
-												<option ${pivot && pivot.has_collection_policy && pivot.collection_policy_type =='system_default' && pivot.collection_policy_value =='quarterly' ? 'selected' : ''} value="quarterly">{{ __('Quarterly') }}</option>
-												<option ${pivot && pivot.has_collection_policy && pivot.collection_policy_type =='system_default' && pivot.collection_policy_value =='semi-annually' ? 'selected' : ''} value="semi-annually">{{ __('Semi-annually') }}</option>
-												<option ${pivot && pivot.has_collection_policy && pivot.collection_policy_type =='system_default' && pivot.collection_policy_value =='annually' ? 'selected' : ''} value="annually">{{ __('Annually') }}</option>
+												<option ${isSystemDefault && pivot.collection_policy_value =='monthly' ? 'selected' : ''} value="monthly">{{ __('Cash') }}</option>
+												<option ${isSystemDefault && pivot.collection_policy_value =='quarterly' ? 'selected' : ''} value="quarterly">{{ __('Quarterly') }}</option>
+												<option ${isSystemDefault && pivot.collection_policy_value =='semi-annually' ? 'selected' : ''} value="semi-annually">{{ __('Semi-annually') }}</option>
+												<option ${isSystemDefault && pivot.collection_policy_value =='annually' ? 'selected' : ''} value="annually">{{ __('Annually') }}</option>
 											</select>
 										</div>
 								</div>
-								<div class="basis-100 for-only-one-checked d-none" data-item="customize">
+								<div class="basis-100 for-only-one-checked ${isCustom ? '' : 'd-none'} " data-item="customize">
 									<div class="customize-content" style="display:flex;gap:50px;">
 										<div class="collection-rate d-flex flex-column ">
 											<h5 class="mb-3 label form-label">{{ __('${collectionOrPayment} Rate %') }} </h5>
 											${collectionRates}
 											<label class="label form-label">{{ __('Total') }}</label>
-											<input style="width:100px;" value="0" disabled class="form-control collection_rate_total_class" name="sub_items[0][collection_rate_total][]">
+											<input style="width:100px;" value="${currentCollectionTotal}" disabled class="form-control collection_rate_total_class" name="sub_items[0][collection_rate_total][]">
 										</div>
 										<div class="due-in-days d-flex flex-column">
 											<h5 class="label form-label mb-3">{{ __('Due In Days') }}</h5>
@@ -2809,45 +2784,8 @@ console.log('corporate',corporateTaxesPercentageValue)
 					`;
                 }
 
-                function updateSalesGrowthRate(visiableHeaderDates) {
-                    const salesRevenueId = domElements.salesRevenueId;
-                    const salesGrowthRateId = domElements.salesGrowthRateId;
-                    for (visiableHeaderDate of visiableHeaderDates) {
-                        previousDate = getPreviousElementInArray(visiableHeaderDates, visiableHeaderDate);
-                        if (previousDate) {
-
-                            var currentSalesRevenueValue = number_unformat($('tbody tr[data-model-id="' + salesRevenueId + '"] td.editable-date.date-' + visiableHeaderDate).html());
-                            var previousSalesRevenueValue = number_unformat($('tbody tr[data-model-id="' + salesRevenueId + '"] td.editable-date.date-' + previousDate).html());
-                            if (previousSalesRevenueValue) {
-                                $('tbody tr[data-model-id="' + salesGrowthRateId + '"] td.editable-date.date-' + visiableHeaderDate).html(number_format((currentSalesRevenueValue - previousSalesRevenueValue) / previousSalesRevenueValue * 100, 2) + ' %');
-                            } else {
-                                $('tbody tr[data-model-id="' + salesGrowthRateId + '"] td.editable-date.date-' + visiableHeaderDate).html(number_format(0, 2) + ' %');
-
-                            }
 
 
-                        } else {
-                            $('tbody tr[data-model-id="' + salesGrowthRateId + '"] td.editable-date.date-' + visiableHeaderDate).html(number_format(0, 2) + ' %');
-                        }
-                    }
-
-
-                }
-
-                function getYearsFromDates(dates) {
-                    years = [];
-                    for (date of dates) {
-                        years.push(date.split('-')[0]);
-                    }
-                    return uniqueArray(years);
-                }
-
-                function uniqueArray(a) {
-                    return a.filter(function(item, pos) {
-                        return a.indexOf(item) == pos;
-                    });
-
-                }
 
             </script>
             <script>

@@ -8,9 +8,7 @@
 @section('content')
 <div class="row">
     <div class="col-md-12">
-
         <div class="kt-portlet">
-
             <div class="kt-portlet__body">
                 @include('admin.income-statement.report.view-table' )
             </div>

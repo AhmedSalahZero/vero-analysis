@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exports\IncomeStatementExport;
 use App\Exports\IncomeStatementExportAsPdf;
+use App\Helpers\HArr;
 use App\Http\Controllers\CashFlowStatementController;
 use App\Http\Requests\IncomeStatementRequest;
 use App\Http\Requests\StoreIncomeStatementReportRequest;
@@ -37,6 +38,7 @@ class IncomeStatementController extends Controller
 	}
 	public function create()
 	{
+		
 		return view('admin.income-statement.create', IncomeStatement::getViewVars());
 	}
 
@@ -46,14 +48,15 @@ class IncomeStatementController extends Controller
 		if($incomeStatement->{'is_caching_'.$reportType}){
 			return redirect()->route('admin.view.financial.statement',['company'=>$company->id])->with('fail',__('Please Wait A Second'));
 		}
-		
 		// $cashFlowStatement = $incomeStatement->financialStatement->cashFlowStatement;
-		return view('admin.income-statement.report.view', IncomeStatement::getReportViewVars([
+		$additionalVarOptions = [
 			'financial_statement_able_id' => $incomeStatement->id,
 			'incomeStatement' => $incomeStatement,
-			// 'cashFlowStatement' => $cashFlowStatement,
-			'reportType' => $reportType 
-		]));
+			'reportType' => $reportType ,
+			 
+		] ;
+		
+		return view('admin.income-statement.report.view', IncomeStatement::getReportViewVars($additionalVarOptions));
 	}
 
 	public function paginate(Request $request)

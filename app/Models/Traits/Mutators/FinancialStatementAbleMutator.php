@@ -190,7 +190,7 @@ trait FinancialStatementAbleMutator
 	
 		
 		$formSubItemType = $request->get('sub_item_type');
-		$insertSubItems = $this->getInsertToSubItemFields($formSubItemType);
+		$insertSubItems =  $this->getInsertToSubItemFields($formSubItemType);
 		$datesHelper = $incomeStatement->financialStatement->getDatesIndexesHelper();
 		$dateIndexWithDate = $datesHelper['dateIndexWithDate'];
 		$actualDatesAsIndexAndBooleans = HArr::getActualDatesAsIndexAndBoolean($dateIndexWithDate);
@@ -204,8 +204,10 @@ trait FinancialStatementAbleMutator
 			$financialStatementAbleItemId = is_null($incomeStatementItemId) ? $subItemArr['financial_statement_able_item_id'] :$incomeStatementItemId ;
 			$currentSubItemValues = [];
 			$isSalesRevenue = $financialStatementAbleItemId == 1 ;
-			
+			// dd($insertSubItems);
+			// $insertSubItems = ['actual']; // deleteit
 			foreach($insertSubItems as $currentSubItemToBeInserted ){
+				
 				$currentSubItemDataArr = $incomeStatement->getFinancialStatementAbleData($currentSubItemToBeInserted,$formSubItemType,$subItemArr,false);
 				$percentageOfValue = $currentSubItemDataArr['percentage_value'];
 				$isPercentageOf = $currentSubItemDataArr['is_percentage_of'];
@@ -224,8 +226,7 @@ trait FinancialStatementAbleMutator
 				
 				
 				$salesRevenuesSubItemsArray = $incomeStatement->getSalesRevenueArr($newSubItemName);
-
-
+				
 				if($isSalesRevenue 
 				// && isset($subItemArr['val'])
 				){
@@ -233,19 +234,31 @@ trait FinancialStatementAbleMutator
 					$currentSubItemValues=$subItemArr['val'] ?? [];
 					
 					$currentPayloadForQuantity = $subItemArr['quantity'] ?? [];
-					
-					if($formSubItemType != $currentSubItemToBeInserted ){
-						$currentPayloadForQuantity = [];
-					}
+					$currentDataForQuantity = $incomeStatement->getFinancialStatementAbleData($currentSubItemToBeInserted,$formSubItemType,$subItemArr,true);
+				
 					/**
 					 * * هنا هنضيف صف جديد للكميه
 					 */
-					$currentDataForQuantity = $incomeStatement->getFinancialStatementAbleData($currentSubItemToBeInserted,$formSubItemType,$subItemArr,true);
 					$currentDataForQuantity['payload'] = json_encode($currentPayloadForQuantity);
+					
+					if($formSubItemType != $currentSubItemToBeInserted){ 
+						$oldRowForQuantity = $incomeStatement->withSubItemsFor($financialStatementAbleItemId, $currentSubItemToBeInserted,$currentDataForQuantity['sub_item_name'])->first() ;
+						$oldRowForValue = $incomeStatement->withSubItemsFor($financialStatementAbleItemId, $currentSubItemToBeInserted,$newSubItemName)->first() ;
+						$oldPayloadForQuantity = $oldRowForQuantity && $oldRowForQuantity->pivot ? $oldRowForQuantity->pivot->payload : json_encode([]);
+						$oldPayloadForValue = $oldRowForValue && $oldRowForValue->pivot ? $oldRowForValue->pivot->payload : json_encode([]);
+						$currentDataForQuantity['payload'] = $oldPayloadForQuantity ;
+						$currentSubItemValues = (array) json_decode($oldPayloadForValue);
+					}
+					
 					$currentDataForQuantity['is_quantity'] = 1;
 					$currentDataForQuantity['can_be_quantity'] = 1 ;
 					$currentSubItem  = $incomeStatement->withSubItemsFor($financialStatementAbleItemId, $currentSubItemToBeInserted,$currentDataForQuantity['sub_item_name']);
+					
 					$currentSubItemExist  = $currentSubItem->count();
+					// if($currentSubItemToBeInserted == 'actual'){
+					// 		// dd($rows);
+					// 	}
+						
 					if(!$currentSubItemExist){
 						$currentSubItem->attach($financialStatementAbleItemId,$currentDataForQuantity);
 					}else{
@@ -274,13 +287,17 @@ trait FinancialStatementAbleMutator
 					$currentSubItemValues = $this->getPayloadForCostOf($actualDatesAsIndexAndBooleans,$currentSubItemValues,$salesRevenuesSubItemsArray,$newSubItemName,$vatRate,$costOfUnitValue,$isCostOfUnitOf,$isFinancialExpense,$incomeStatementId,$financialStatementAbleItemId,$currentSubItemToBeInserted,$dates,$isDeductible);	
 					$currentSubItemValues = $currentSubItemValues[$financialStatementAbleItemId][$newSubItemName] ?? [];
 				}
+				if($formSubItemType != $currentSubItemToBeInserted){
+						$oldRow = $incomeStatement->withSubItemsFor($financialStatementAbleItemId, $currentSubItemToBeInserted,$newSubItemName)->first() ;
+						$currentSubItemValues = $oldRow && $oldRow->pivot ? (array)json_decode($oldRow->pivot->payload) : [];
+				}
 				if(!$isDeductible && $vatRate > 0  && !$isDepreciationOrAmortization && !$isSalesRevenue && !$isPercentage  && !$isCostOfUnit ){
 					$currentSubItemValues = $this->calculatePayloadWithVat($currentSubItemValues,$currentSubItemToBeInserted,$isDeductible,$vatRate,$financialStatementAbleItemId); 
 				}
-				if($formSubItemType != $currentSubItemToBeInserted){
-					$currentSubItemValues = [];
-				}
+				
+				
 				$currentSubItemDataArr['payload'] = json_encode($currentSubItemValues);
+				
 	//			$currentSubItemDataArr['actual_dates']=json_encode($actualDates);
 				$currentSubItemExist = $incomeStatement->withSubItemsFor($financialStatementAbleItemId, $currentSubItemToBeInserted,$newSubItemName)->count();
 				$attachOrUpdateExistingMethod = $currentSubItemExist ? 'updateExistingPivot' : 'attach';

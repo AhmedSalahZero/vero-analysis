@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\HArr;
 use App\Interfaces\Models\IBaseModel;
 use App\Interfaces\Models\IExportable;
 use App\Interfaces\Models\IHaveAllRelations;
@@ -92,7 +93,7 @@ class  IncomeStatement extends Model implements IBaseModel, IHaveAllRelations, I
 
 		$currentCompanyId =  getCurrentCompanyId();
 		$reportType = $options['reportType'];
-
+		$incomeStatement = $options['incomeStatement'];
 		return [
 			'getDataRoute' => route('admin.get.income.statement.report', ['company' => $currentCompanyId, 'incomeStatement' => $options['financial_statement_able_id']]),
 			'modelName' => 'IncomeStatementReport',
@@ -106,10 +107,11 @@ class  IncomeStatement extends Model implements IBaseModel, IHaveAllRelations, I
 			'pageTitle' => __('Income Statement Report'),
 			'redirectAfterSubmitRoute' => route('admin.view.income.statement', $currentCompanyId),
 			'type' => 'create',
-			'incomeStatement' => $options['incomeStatement'],
+			'incomeStatement' => $incomeStatement,
 			// 'cashFlowStatement' => $options['cashFlowStatement'],
 			'interval' => getIntervalForSelect($options['incomeStatement']->getDurationType()),
-			'reportType' => $options['reportType']
+			'reportType' => $options['reportType'],
+			'actualDates'=>HArr::getActualDatesAsIndexAndBoolean($incomeStatement->getIntervalFormatted())
 		];
 	}
 	public static function getPageTitle(): string

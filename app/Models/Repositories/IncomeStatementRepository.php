@@ -2,6 +2,7 @@
 
 namespace App\Models\Repositories;
 
+use App\Helpers\HArr;
 use App\Interfaces\Models\IBaseModel;
 use App\Interfaces\Repositories\IBaseRepository;
 use App\Models\IncomeStatement;
@@ -104,26 +105,34 @@ class IncomeStatementRepository implements IBaseRepository
 		$subItemType = $request->get('sub_item_type');
 		$allFilterDataCounter = $filterData->count();
 		$dataWithRelations = collect([]);
+		
+		// dd($actualDates);
 		$datePerPage = $filterData->get()->each(function (IncomeStatementItem $incomeStatementItem, $index) use ($dataWithRelations, $incomeStatement, $subItemType) {
 			$incomeStatementItem->creator_name = $incomeStatementItem->getCreatorName();
 			$incomeStatementItem->created_at_formatted = formatDateFromString($incomeStatementItem->created_at);
 			$incomeStatementItem->updated_at_formatted = formatDateFromString($incomeStatementItem->updated_at);
 			$incomeStatementItem->order = $index + 1;
-
+			$forecastSubItemNames =$incomeStatementItem->getSubItems($incomeStatement->id, 'forecast')->pluck('pivot.sub_item_name')->toArray(); 
 			$incomeStatementItem['main_rows'] = $incomeStatementItem->getMainRows($incomeStatement->id, $subItemType);
 			$dataWithRelations->add($incomeStatementItem);
 			$quantitiesFor = [];
 			// dd($incomeStatementItem->getSubItems($incomeStatement->id, $subItemType)->sortByDesc('pivot.id')->pluck('pivot.sub_item_name','pivot.id'));
 			
-			$incomeStatementItem->getSubItems($incomeStatement->id, $subItemType)->each(function ($subItem) use ($incomeStatement, $subItemType, $dataWithRelations, $incomeStatementItem, &$quantitiesFor) {
+			$incomeStatementItem->getSubItems($incomeStatement->id, $subItemType)->each(function ($subItem) use ($forecastSubItemNames,$incomeStatement, $subItemType, $dataWithRelations, $incomeStatementItem, &$quantitiesFor) {
 
 				$subItem->isSubItem = true; // isSubRow
 				if ($incomeStatementItem->has_depreciation_or_amortization) {
 					$subItem->pivot->can_be_depreciation = true;
 				}
 				$isQuantity = $subItem->pivot && $subItem->pivot->is_quantity;
-				
-
+				$subItemName = $subItem->pivot && $subItem->pivot->sub_item_name ? $subItem->pivot->sub_item_name : null;
+				$isExistInForecast = in_array($subItemName,$forecastSubItemNames);
+				if($isExistInForecast){
+					$subItem->pivot->exist_in_forecast = 1 ;
+				}else{
+					$subItem->pivot->exist_in_forecast = 0 ;
+					
+				}
 				if (!$isQuantity) {
 					$quantityRow = $incomeStatementItem->getSubItems($incomeStatement->id, $subItemType, $subItem->pivot->sub_item_name . quantityIdentifier)->first();
 					if ($quantityRow) {
@@ -140,6 +149,7 @@ class IncomeStatementRepository implements IBaseRepository
 			"draw" => (int)Request('draw'),
 			"recordsTotal" => IncomeStatementItem::count(),
 			"recordsFiltered" => $allFilterDataCounter,
+	
 		];
 	}
 	public function commonScope(Request $request): builder

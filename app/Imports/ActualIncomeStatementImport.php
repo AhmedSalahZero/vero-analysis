@@ -97,6 +97,9 @@ ToCollection,
 				$searchIndex = HArr::getIndexUsingName($subItems,$nameWithoutQuantity);
 				unset($subItems[$index]);
 				$subItems[$searchIndex]['quantity'] =  $quantityValArr;
+				$subItems[$searchIndex]['is_quantity'] =  true;
+				$subItems[$searchIndex]['can_be_quantity'] =  1;
+				$subItems[$searchIndex]['is_value_quantity_price'] =  'value_quantity';
 				$subItems[$searchIndex]['val']  = $subItems[$searchIndex]['non_repeating_popup'];
 				unset($subItems[$searchIndex]['non_repeating_popup']);
 			}
