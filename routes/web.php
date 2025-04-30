@@ -152,8 +152,8 @@ Route::middleware([])->group(function () {
                 Route::post('income-statement-report/update', [IncomeStatementController::class, 'updateReport'])->name('admin.update.income.statement.report');
                 Route::post('income-statement-report/delete', [IncomeStatementController::class, 'deleteReport'])->name('admin.destroy.income.statement.report');
                 Route::post('income-statement/storeReport', [IncomeStatementController::class, 'storeReport'])->name('admin.store.income.statement.report');
-                Route::post('export-income-statement-report-excel', 'IncomeStatementController@exportReport')->name('admin.export.income.statement.report');
-                Route::post('export-income-statement-report-pdf', 'IncomeStatementController@exportReportAsPdf')->name('admin.export.income.statement.report.pdf');
+                Route::post('export-income-statement-report-excel/{incomeStatementId}/{reportType}', 'IncomeStatementController@exportReport')->name('admin.export.income.statement.report');
+                Route::post('export-income-statement-report-pdf/{incomeStatementId}/{reportType}', 'IncomeStatementController@exportReportAsPdf')->name('admin.export.income.statement.report.pdf');
                 Route::post('get-income-statement-report/{incomeStatement}', 'IncomeStatementController@paginateReport')->name('admin.get.income.statement.report');
 				Route::get('/expense-dashboard', 'Analysis\SalesGathering\ExpenseAgainstAnalysisReport@viewDashboard')->name('view.expense.analysis.dashboard');
                 // balance sheet

@@ -99,6 +99,7 @@ class IncomeStatementExportAsPdf implements
 		];
 
 		$headerItems  = [];
+		// dd($dates);
 		foreach ($dates as $date => $value) {
 			if(validateDate($date)){
 				$headerItems[] = Carbon::make($date)->format('F`Y');

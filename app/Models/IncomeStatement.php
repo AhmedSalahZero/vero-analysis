@@ -93,11 +93,12 @@ class  IncomeStatement extends Model implements IBaseModel, IHaveAllRelations, I
 
 		$currentCompanyId =  getCurrentCompanyId();
 		$reportType = $options['reportType'];
+		// dd($reportType);
 		$incomeStatement = $options['incomeStatement'];
 		return [
 			'getDataRoute' => route('admin.get.income.statement.report', ['company' => $currentCompanyId, 'incomeStatement' => $options['financial_statement_able_id']]),
 			'modelName' => 'IncomeStatementReport',
-			'exportRoute' => route('admin.export.income.statement.report', $currentCompanyId),
+			'exportRoute' => route('admin.export.income.statement.report',[$currentCompanyId,$incomeStatement->id,$reportType]),
 			'createRoute' => route('admin.create.income.statement.' . $reportType . '.report', [
 				'company' => $currentCompanyId,
 				'incomeStatement' => $options['financial_statement_able_id']

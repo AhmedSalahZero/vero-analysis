@@ -253,20 +253,22 @@ class IncomeStatementController extends Controller
 	{
 		// return (new IncomeStatementExport($this->incomeStatementRepository->export($request), $request))->download();
 	}
-	public function exportReport(Request $request)
+	public function exportReport(Request $request,Company $company , int $incomeStatementId , string $subItemType)
 	{
-		$formattedData = $this->formatReportDataForExport($request)['data'];
+		$formattedData = $this->formatReportDataForExport($request,$incomeStatementId,$subItemType)['data'];
 		
-		$incomeStatementId = array_key_first($request->get('valueMainRowThatHasSubItems'));
+		// $incomeStatementId = array_key_first($request->get('valueMainRowThatHasSubItems'));
 		$incomeStatement = IncomeStatement::find($incomeStatementId);
 		$reportType = $request->input('sub_item_type');
 		return (new IncomeStatementExport(collect($formattedData), $request, $incomeStatement,$reportType))->download();
 	}
-	public function exportReportAsPdf(Request $request)
+	public function exportReportAsPdf(Request $request ,Company $company, int $incomeStatementId,string $subItemType)
 	{
 		$reportType = $request->input('sub_item_type');
-		
-		$reportItems = $this->formatReportDataForExport($request) ;
+		$incomeStatement = IncomeStatement::find($incomeStatementId);
+		// dd($incomeStatementId);
+		// dd($incomeStatement);
+		$reportItems = $this->formatReportDataForExport($request,$incomeStatementId,$subItemType) ;
 		$formattedData = $reportItems['data'];
 		$mainRowsIndexes = array_keys($reportItems['mainRowsIndexes']);
 		$percentageRowsIndexes = array_keys($reportItems['percentageRowsIndexes']);
@@ -274,8 +276,8 @@ class IncomeStatementController extends Controller
 		$maxColsCount = $reportItems['maxColsCount'];
 		$maxRowsCount = $reportItems['maxRowsCount'];
 		
-		$incomeStatementId = array_key_first($request->get('valueMainRowThatHasSubItems'));
-		$incomeStatement = IncomeStatement::find($incomeStatementId);
+		// $incomeStatementId = array_key_first($request->get('valueMainRowThatHasSubItems'));
+		
 		// return (new IncomeStatementExport(collect($formattedData), $request, $incomeStatement))->download();
 		return (new IncomeStatementExportAsPdf(collect($formattedData), $request, $incomeStatement,$mainRowsIndexes,$percentageRowsIndexes,$subRowsIndexes,$maxColsCount,$maxRowsCount,$reportType))->download($incomeStatement->getName().'.pdf','Dompdf');
 		
@@ -302,28 +304,46 @@ class IncomeStatementController extends Controller
 
 		return $mergeArray;
 	}
-	public function formatReportDataForExport(Request $request)
+	public function formatReportDataForExport(Request $request,int $incomeStatementId, string $subItemType)
 	{
 		$dynamicRowsShow = (bool) $request->get('dynamic_rows_shown');
 		$opensMainRows = (array)json_decode($request->opens) ;
+		// dd($opensMainRows);
 		$numberOfColumnBeforeDates = 1 ; // name column
 		$numberOfColumnAfterDates = 1 ; // total column
 		$staticHeaderRows = 2 ; 
 		$formattedData = [];
 		$totals = $request->get('totals');
 		$subTotals = $request->get('subTotals');
+		$incomeStatement = IncomeStatement::find($incomeStatementId);
 		$rateIncomeStatementItemsIds = IncomeStatementItem::rateFieldsIds();
 		$maxRowsCount = 0 ;
-		
 		$index =$staticHeaderRows+1   ; 
 		$mainRowsIndexes = [] ;
 		$percentageRowsIndexes = [] ;
 		$subRowsIndexes = [] ;
-		
-		$incomeStatementId = array_key_first($request->get('valueMainRowThatHasSubItems')) ;
-		$dates = Arr::first($request->get('valueMainRowThatHasSubItems')[$incomeStatementId] ?? []);
-		$maxColsCount = $numberOfColumnBeforeDates +  count($dates) + $numberOfColumnAfterDates ; 
-		$combineMainValuesWithItsPercentageRows = $this->combineMainValuesWithItsPercentageRows($request->get('valueMainRowThatHasSubItems'), $request->get('valueMainRowWithoutSubItems'));
+		$allMainItems = $incomeStatement->mainItems()->get();
+		// $subItemType ='forecast';
+		$combineMainValuesWithItsPercentageRows = [];
+		$currentPayload = [];
+		foreach($allMainItems as $mainItem){
+			$incomeStatementItemId = $mainItem->id ;
+			$mainRowWithAuthCalculation = $incomeStatement->withMainRowsFor($incomeStatementItemId, $subItemType)->first();
+			$mainRowWithAuthCalculation->pivot->payload;
+			$currentPayload = (array) json_decode($mainRowWithAuthCalculation->pivot->payload) ;
+			$combineMainValuesWithItsPercentageRows[$incomeStatementId][$incomeStatementItemId] =$currentPayload ;
+		}
+		// $incomeStatement->getD
+		$datesFormatted = $incomeStatement->getIntervalFormatted();
+		// dd($combineMainValuesWithItsPercentageRows,$dates);
+		//dd(count($currentPayload),$incomeStatement,$request->get('valueMainRowThatHasSubItems'),$request->get('valueMainRowWithoutSubItems'));
+		// $incomeStatementId = array_key_first($request->get('valueMainRowThatHasSubItems')) ;
+		$datesCount = count($currentPayload);
+		// $dates = Arr::first($request->get('valueMainRowThatHasSubItems')[$incomeStatementId] ?? []);
+		$maxColsCount = $numberOfColumnBeforeDates +  $datesCount + $numberOfColumnAfterDates ; 
+		// dd($combineMainValuesWithItsPercentageRows, $this->combineMainValuesWithItsPercentageRows($request->get('valueMainRowThatHasSubItems'), $request->get('valueMainRowWithoutSubItems')));
+		// $combineMainValuesWithItsPercentageRows = $this->combineMainValuesWithItsPercentageRows($request->get('valueMainRowThatHasSubItems'), $request->get('valueMainRowWithoutSubItems'));
+		// dd($request->get('valueMainRowThatHasSubItems'),$request->get('valueMainRowWithoutSubItems'));
 		foreach ($combineMainValuesWithItsPercentageRows as $incomeStatementId => $incomeStatementValues) {
 			
 			foreach ($incomeStatementValues as $incomeStatementItemId => $incomeStatementItemsValues) {
@@ -339,8 +359,9 @@ class IncomeStatementController extends Controller
 					$maxRowsCount = $index;
 				}
 			
-				foreach ($incomeStatementItemsValues as $date => $value) {
-					$formattedData[$incomeStatementItem->name][$date] = in_array($incomeStatementItemId, $rateIncomeStatementItemsIds) ? number_format($value, 2) . ' %' : number_format($value);
+				foreach ($incomeStatementItemsValues as $dateAsIndex => $value) {
+					$dateAsString = formatDateForView($datesFormatted[$dateAsIndex]);
+					$formattedData[$incomeStatementItem->name][$dateAsString] = in_array($incomeStatementItemId, $rateIncomeStatementItemsIds) ? number_format($value, 2) . ' %' : number_format($value);
 				}
 				$total = $totals[$incomeStatementId][$incomeStatementItemId];
 				
@@ -368,6 +389,9 @@ class IncomeStatementController extends Controller
 				}
 			}
 		}
+		// dd($formattedData);
+	//	dd('formatted',$formattedData,$request->all());
+	// dd($formattedData);
 		return [
 			'data'=>$formattedData,
 			'mainRowsIndexes'=>$mainRowsIndexes,

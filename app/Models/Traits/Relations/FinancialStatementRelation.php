@@ -48,7 +48,7 @@ trait FinancialStatementRelation
 			'financial_statement_main_item_sub_items',
 			'financial_statement_id',
 			'financial_statement_item_id'
-		)->withPivot(['sub_item_name', 'payload', 'is_depreciation_or_amortization']);
+		)->withPivot(['sub_item_name', 'payload', 'is_depreciation_or_amortization','total']);
 	}
 	public function withSubItemsFor(int $financialStatementItemId, string $subItemName = ''): BelongsToMany
 	{

@@ -64,6 +64,15 @@ class TestCommand extends Command
 	
 	public function handle()
 	{
+		$incomeStatements = IncomeStatement::get();
+
+		foreach($incomeStatements as $incomeStatement){
+			foreach(['forecast','actual','adjusted','modified'] as $insertSubItem){
+				$incomeStatement->refreshCalculationFor($insertSubItem);
+			}
+		}
+		
+		dd('good');
 		$companies = Company::where('id',110)->get();
 		// $companies = Company::where('id',105)->get();
 		// $companies = Company::where('id',105)->get();

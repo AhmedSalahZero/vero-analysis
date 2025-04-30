@@ -1,7 +1,6 @@
 @php
 $tableId = 'kt_table_1';
 @endphp
-
 <style>
     html body table tr.edit-info-row[data-sub-item-name][data-percentage-value][data-is-quantity="1"] td {
         background-color: antiquewhite !important;
@@ -398,9 +397,9 @@ $tableId = 'kt_table_1';
                 window.addEventListener('DOMContentLoaded', function() {
 					
                     (function($) {
-						console.log('DOMContentLoaded')
+						// console.log('DOMContentLoaded')
                         window.addEventListener('scroll', function() {
-							console.log('scroll')
+							// console.log('scroll')
                             const top = window.scrollY > 140 ? window.scrollY : 140;
 
                             $('.arrow-nav').css('top', top + 'px')
@@ -414,7 +413,7 @@ $tableId = 'kt_table_1';
 
 						
                             $(document).on('click', '.arrow-nav', function() {
-								console.log('arrow nave');
+								// console.log('arrow nave');
                                 const scrollLeftOfTableBody = document.querySelector('.kt-portlet__body').scrollLeft
                                 const scrollByUnit = 50
                                 if (this.classList.contains('arrow-right')) {
@@ -428,22 +427,22 @@ $tableId = 'kt_table_1';
 
                         }
                         $(document).on('click', '.import-modal-class', function() {
-						console.log('import-modal-class')
+						// console.log('import-modal-class')
                             $('#exampleModalCenter').modal('show')
 
                         })
                         $(document).on('change', '.trim-when-key-up', function() {
-							console.log('trim-when-key-up')
+							// console.log('trim-when-key-up')
                             $(this).val($(this).val().trim())
                         })
                       //  $(document).on("hidden.bs.modal", '.modal', function(e) {
-						//	console.log('hidden.bs.modal')
+						//	// console.log('hidden.bs.modal')
                         //    if ($('.modal:visible').length) {
                         //        $('body').addClass('modal-open');
                        //     }
                        // });
                         $(document).on('click', '.repeat-row', function() {
-console.log('repeat now 1')
+// console.log('repeat now 1')
                             const parentQuery = this.getAttribute('data-parent-query')
                             const columnIndex = this.getAttribute('data-column-index')
                             const rowIndex = this.getAttribute('data-row-index')
@@ -460,7 +459,7 @@ console.log('repeat now 1')
                         })
 
                         $(document).on('change', 'input[name*="is_depreciation_or_amortization"]', function() {
-							console.log('input[name*="is_depreciation_or_amortization"]')
+							// console.log('input[name*="is_depreciation_or_amortization"]')
                             const val = $(this).is(':checked');
 							const modal = $(this).closest('.modal'); 
                             if (val) {
@@ -506,7 +505,7 @@ console.log('repeat now 1')
                         })
 
                         $(document).on('change', '.can-trigger-quantity-modal', function() {
-							console.log('can-trigger-quantity-modal')
+							// console.log('can-trigger-quantity-modal')
                             let quantityOrPrice = $(this).val()
                             let currentIndex = $(this).closest('.how-many-item').attr('data-index')
                             currentIndex = currentIndex == undefined ? 0 : currentIndex
@@ -592,7 +591,7 @@ console.log('repeat now 1')
                         })
 
                         $(document).on('change', '.can-trigger-non-repeating-modal', function() {
-							console.log('can-trigger-non-repeating-modal')
+							// console.log('can-trigger-non-repeating-modal')
                             // return false ;
 
                             let currentIndex = $(this).closest('.how-many-item').attr('data-index')
@@ -629,13 +628,13 @@ console.log('repeat now 1')
 
 
                         $(document).on('change', '.only-one-checked', function() {
-							console.log('only-one-checked')
+							// console.log('only-one-checked')
                             const parent = $(this).closest('.only-one-checked-parent')
                             parent.find('.only-one-checked').prop('checked', false)
                             parent.find('.for-only-one-checked').addClass('d-none').find('input,select').prop('disabled', true)
                             $(this).prop('checked', true)
                             const checkBoxValue = $(this).val()
-							console.log(checkBoxValue);
+							// console.log(checkBoxValue);
                             parent.find('.for-only-one-checked[data-item="' + checkBoxValue + '"]').removeClass('d-none').find('input,select').prop('disabled', false)
 
                         })
@@ -645,14 +644,14 @@ console.log('repeat now 1')
 
 
                         $(document).on('change', '.only-one-checkbox', function() {
-							console.log('only-one-checkbox')
+							// console.log('only-one-checkbox')
                             const parent = $(this).closest('.only-one-checkbox-parent')
                             parent.find('.only-one-checkbox').prop('checked', false)
                             $(this).prop('checked', true)
                         })
 
                         $(document).on('change', '.only-two-checkbox', function() {
-							console.log('only-two-checkbox')
+							// console.log('only-two-checkbox')
                             const parent = $(this).closest('.only-two-checkbox-parent')
                             let currentCheckedLength = parent.find('.only-two-checkbox:checked').length
                             if (currentCheckedLength > 2) {
@@ -665,13 +664,13 @@ console.log('repeat now 1')
 
 
                         $(document).on('focus', '.editable-date', function() {
-							console.log('editable-date')
+							// console.log('editable-date')
                             lastInputValue = $(this).html()
                             $(this).html('<br>')
                         })
 
                         $(document).on('blur', '.blured-item', function() {
-						console.log('.blured-item')
+						// console.log('.blured-item')
                             const date = this.getAttribute('data-date')
                             const type = this.getAttribute('data-type')
                             const parentElement = this.parentElement.parentElement
@@ -710,7 +709,7 @@ console.log('repeat now 1')
                         })
 						
 						 $(document).on('blur', '.blured-item-non-repeating', function() {
-							console.log('.blured-item-non-repeating')
+							// console.log('.blured-item-non-repeating')
                             const date = this.getAttribute('data-date')
                             const type = this.getAttribute('data-type')
                             const parentElement = this.parentElement.parentElement
@@ -726,7 +725,7 @@ console.log('repeat now 1')
 
                         function recalculateTotalForSalesRevenuePopup(parentElement) {
                             // total quantity and value
-							console.log('recalculateTotalForSalesRevenuePopup')
+							// console.log('recalculateTotalForSalesRevenuePopup')
 							parentElement = parentElement.closest('tbody');
                             const totalPerType = {};
                             let numberOfDigit = 0;
@@ -811,10 +810,10 @@ console.log('repeat now 1')
                             const target = $(this).attr('data-target');
                             if (target) {
 								if($(target).find('.can-trigger-quantity-modal:checked:first-of-type').length){
-									console.log('from if');
+									// console.log('from if');
                                 	$(target).find('.can-trigger-quantity-modal:checked:first-of-type').trigger('change');
 								}else{
-									console.log('from else');
+									// console.log('from else');
                                 $(target).find('.can-trigger-non-repeating-modal:checked:first-of-type').trigger('change');
 								}
                             }
@@ -826,7 +825,7 @@ console.log('repeat now 1')
 							$(this).prop('checked',true)
 						})
                         $(document).on('change', '.has-collection-policy-class', function() {
-							console.log('.has-collection-policy-class')
+							// console.log('.has-collection-policy-class')
                             const hasCollectionPolicy = this.checked
 
                             const collectionPolicyContent = $(this).closest('.collection-policy').find('.collection-policy-content')
@@ -843,7 +842,7 @@ console.log('repeat now 1')
                         })
 
                         $(document).on('click', '.can_be_percentage_or_fixed_class', function() {
-							console.log('can_be_percentage_or_fixed_class')
+							// console.log('can_be_percentage_or_fixed_class')
                             let val = $(this).val();
                             $(this).closest('.how-many-item').find('.non-repeating-fixed-sub,.repeating-fixed-sub,.percentage-sub,.cost-of-unit-sub').removeClass('d-flex').addClass('d-none');
                             $(this).closest('.how-many-item').find('.can_be_percentage_or_fixed_class').prop('checked', false);
@@ -854,7 +853,7 @@ console.log('repeat now 1')
                         });
                      
                         $(document).on('click', '.redirect-btn', function(e) {
-							console.log('redirect btn')
+							// console.log('redirect btn')
                             e.preventDefault();
                             window.location.href = $(this).data('redirect-to');
                         })
@@ -862,7 +861,7 @@ console.log('repeat now 1')
 
 
                         $(document).on('click', '.trigger-child-row-1', function(e) {
-							console.log('.trigger-child-row-1')
+							// console.log('.trigger-child-row-1')
                             const parentId = $(e.target.closest('tr')).data('model-id');
                             var parentRow = $(e.target).parent();
                             var subRows = parentRow.nextAll('tr.add-sub.maintable-1-row-class' + parentId);
@@ -892,7 +891,7 @@ console.log('repeat now 1')
 
 
                         $(document).on('click', '.expand-all', function(e) {
-							console.log('expenad all')
+							// console.log('expenad all')
                             e.preventDefault();
                             if ($(this).hasClass('is-open-parent')) {
                                 $(this).addClass('is-close-parent').removeClass('is-open-parent')
@@ -911,12 +910,12 @@ console.log('repeat now 1')
                         "use strict";
                         var KTDatatablesDataSourceAjaxServer = function() {
                             function getFixedColumnNumbers() {
-								console.log('.getFixedColumnNumbers')
+								// console.log('.getFixedColumnNumbers')
                                 return $('#fixed-column-number').val()
                             }
                             var initTable1 =
                                 function() {
-										console.log('.initTable1')
+										// console.log('.initTable1')
                                     var tableId = '#' + "{{ $tableId }}";
                                     var salesGrowthRateId = domElements.salesGrowthRateId
                                     var table = $(tableId);
@@ -926,7 +925,7 @@ console.log('repeat now 1')
                                     datesFormatted = JSON.parse(datesFormatted);
                                     window['dates'] = data;
                                     window['datesFormatted'] = datesFormatted;
-									console.log('init 1')
+									// console.log('init 1')
                                     const columns = [];
                                     columns.push({
                                         data: 'id'
@@ -934,7 +933,7 @@ console.log('repeat now 1')
                                         , orderable: false
                                         , className: 'trigger-child-row-1 cursor-pointer sub-text-bg text-capitalize  is-close '
                                         , render: function(d, b, row) {
-											console.log('render 2')
+											// console.log('render 2')
                                             if (!row.isSubItem && row.has_sub_items) {
                                                 return '+';
                                             } else if (row.isSubItem && row.pivot && row.pivot.can_be_percentage_or_fixed) {
@@ -953,20 +952,20 @@ console.log('repeat now 1')
                                     });
                                     columns.push({
                                         render: function(d, b, row) {
-											console.log('render 3')
+											// console.log('render 3')
                                             let modelId = $('#model-id').val();
                                             if (!row.isSubItem && row.has_sub_items) {
-                                                elements = `<a data-is-subitem="0" data-income-statement-item-id="${row.id}" data-income-statement-id="${modelId}" class="d-block add-btn mb-2" href="#" data-toggle="modal" data-target="#add-sub-modal${row.id}">{{ __('Add') }}</a> `;
+                                                elements = `<a data-is-subitem="0"    class=" ${row.id == domElements.corporateTaxesId ? 'd-none' :'d-block' } add-btn mb-2" href="#" data-toggle="modal" data-target="#add-sub-modal${row.id}">{{ __('Add') }}</a> `;
                                                 return elements;
                                             } else if (row.isSubItem || vars.subItemType == 'modified' && row.pivot) {
 												if(row.pivot.financial_statement_able_item_id == domElements.corporateTaxesId){
 													return '';
 												}
-                                                var deleteItem = vars.subItemType == 'modified' && row.pivot ? '' : `<a data-income-statement-item-id="${row.pivot.financial_statement_able_item_id}" data-income-statement-id="${row.pivot.financial_statement_able_id}" class="d-block  delete-btn text-white mb-2 text-danger" href="#" data-toggle="modal" data-target="#delete-sub-modal${row.pivot.financial_statement_able_item_id + convertStringToClass(row.pivot.sub_item_name) }">
+                                                var deleteItem = vars.subItemType == 'modified' && row.pivot ? '' : `<a   class="${row.pivot.financial_statement_able_item_id == domElements.corporateTaxesId ? 'd-none' :'d-block' }  delete-btn text-white mb-2 text-danger" href="#" data-toggle="modal" data-target="#delete-sub-modal${row.pivot.financial_statement_able_item_id + convertStringToClass(row.pivot.sub_item_name) }">
 													<i class="fas fa-trash-alt ${vars.subItemType =='actual' && row.pivot.exist_in_forecast  || vars.subItemType =='modified' ? 'hidden':''}"></i></a>`;
                                                 return `
 											<div class="d-flex align-items-center justify-content-between">
-												<a  data-is-subitem="1" data-income-statement-item-id="${row.pivot.financial_statement_able_item_id}" data-income-statement-id="${row.pivot.financial_statement_able_id}" class="d-block edit-btn mb-2 text-white " href="#" data-toggle="modal" data-is-depreciation-or-amortization="${row.pivot.is_depreciation_or_amortization}" data-income-statement-id="${row.pivot.financial_statement_able_id}" data-target="#edit-sub-modal${row.pivot.financial_statement_able_item_id + convertStringToClass(row.pivot.sub_item_name) }"> 
+												<a  data-is-subitem="1"   class="${row.pivot.financial_statement_able_item_id == domElements.corporateTaxesId ? 'd-none' :'d-block' } edit-btn mb-2 text-white " href="#" data-toggle="modal"   data-target="#edit-sub-modal${row.pivot.financial_statement_able_item_id + convertStringToClass(row.pivot.sub_item_name) }"> 
 												<i data-id="${row.pivot.financial_statement_able_item_id}" class="fa fa-pen-alt edit-modal-icon"></i>  
 												</a> 
 												${deleteItem}
@@ -980,7 +979,7 @@ console.log('repeat now 1')
                                     , });
                                     columns.push({
                                         render: function(d, b, row) {
-												console.log('render 4')
+												// console.log('render 4')
                                             if (row.isSubItem) {
                                                 return row.pivot.sub_item_name;
                                             }
@@ -994,7 +993,7 @@ console.log('repeat now 1')
 									
                                         columns.push({
                                             render: function(d, b, row, setting) {
-												console.log('render 5')
+												// console.log('render 5')
                                                 date = data[i];
                                                 if (row.isSubItem && row.pivot.payload) {
                                                     var payload = JSON.parse(row.pivot.payload);
@@ -1025,7 +1024,7 @@ console.log('repeat now 1')
 
                                     columns.push({
                                         render: function(d, b, row, setting) {
-											console.log('render 7')
+											// console.log('render 7')
                                             return  row.main_rows && row.main_rows[0] ? row.main_rows[0].pivot.total : 0
                                         }
                                         , data: 'id'
@@ -1034,7 +1033,7 @@ console.log('repeat now 1')
                                     })
 								
                                     const isActualTable = +$('#is-actual-table').val();
-									console.log(columns);
+									// console.log(columns);
                                     // begin first table
                                     table.DataTable({
 
@@ -1048,7 +1047,7 @@ console.log('repeat now 1')
                                                 , "type": "post"
                                                 , "dataSrc": "data", // they key in the jsom response from the server where we will get our data
                                                 "data": function(d) {
-													console.log('go get data')
+													// console.log('go get data')
                                                     d.search_input = $(getSearchInputSelector(tableId)).val();
                                                     d.sub_item_type = vars.subItemType
                                                     d.income_statement_id = $('#income_statement_id').val()
@@ -1124,7 +1123,7 @@ console.log('repeat now 1')
                                                         let form = $('form#store-report-form-id');
                                                         $('#export_type').val(0);
                                                         let oldFormAction = form.attr('action');
-                                                        let exportFormAction = "{{ route('admin.export.income.statement.report',$company->id) }}";
+                                                        let exportFormAction = "{{ route('admin.export.income.statement.report',[$company->id,$incomeStatement->id,$reportType]) }}";
                                                         form.attr('action', exportFormAction);
                                                         form.submit();
                                                         form.attr('action', oldFormAction);
@@ -1141,7 +1140,7 @@ console.log('repeat now 1')
                                                         let oldFormAction = form.attr('action');
                                                         $('#export_type').val(1);
                                                         $('#pdf_only').val(JSON.stringify(opens))
-                                                        let exportFormAction = "{{ route('admin.export.income.statement.report.pdf',$company->id) }}";
+                                                        let exportFormAction = "{{ route('admin.export.income.statement.report.pdf',[$company->id,$incomeStatement->id,$reportType]) }}";
                                                         form.attr('action', exportFormAction);
                                                         form.submit();
                                                         form.attr('action', oldFormAction);
@@ -1155,12 +1154,12 @@ console.log('repeat now 1')
                                             , createdRow: function(row, data, dataIndex, cells) {
                                                 let reportType = vars.subItemType;
                                                 let subOfSelect = ''
-
+												let editableCells = $(cells).filter('.editable.editable-date')
                                                 let salesGrowthRateId = domElements.salesGrowthRateId;
                                                 let costOfGoodsId = domElements.costOfGoodsId;
                                                 let corporateTaxesId = domElements.corporateTaxesId;
                                                 let salesReveueId = domElements.salesRevenueId;
-											console.log('creator row')
+											// console.log('creator row')
                                                 if (data.id == salesReveueId&& !data.duration) {
 											
                                                     sales_revenues_sub_items_names = [{id:'all',name:'{{ __("All") }}'}];
@@ -1209,31 +1208,31 @@ console.log('repeat now 1')
 
                                                     window['cost_of_goods_sub_items_names'] = cost_of_goods_sub_items_names;
                                                 }
-                                                var totalOfRowArray = [];
+                                            //    var totalOfRowArray = [];
                                                 var incomeStatementId = data.isSubItem ? data.pivot.financial_statement_able_id : $('#model-id').val();
                                                 var incomeStatementItemId = data.isSubItem ? data.pivot.financial_statement_able_item_id : data.id;
-                                                var subItemName = data.isSubItem ? data.pivot.sub_item_name : '';
-                                                let is_quantity = false;
-												let percentageValue = data.isSubItem && data.pivot.percentage_or_fixed == 'percentage' ? data.pivot.percentage_value : 0;
+                                         //       var subItemName = data.isSubItem ? data.pivot.sub_item_name : '';
+                                        //        let is_quantity = false;
+										//		let percentageValue = data.isSubItem && data.pivot.percentage_or_fixed == 'percentage' ? data.pivot.percentage_value : 0;
 											//	if(data.isSubItem && data.pivot && data.pivot.financial_statement_able_item_id == corporateTaxesId){
 											//		percentageValue = data.pivot.percentage_value;
 											//	}
-                                                $(cells).filter(".editable")
-                                                    .attr('data-income-statement-id', incomeStatementId)
+                                           //     $(cells).filter(".editable")
+                                              //      .attr('data-income-statement-id', incomeStatementId)
                                                   //  .attr('title', "{{ __('Click To Edit') }}")
-                                                    .attr('data-main-model-id', incomeStatementId)
-                                                    .attr('data-income-statement-item-id', incomeStatementItemId)
-                                                    .attr('data-financial-statement-able-item-id', incomeStatementItemId)
-                                                    .attr('data-main-row-id', incomeStatementItemId)
-                                                    .attr('data-sub-item-name', subItemName)
-                                                    .attr('data-table-id', "{{$tableId}}")
-                                                    .attr('data-is-quantity', data.isSubItem ? data.pivot.is_quantity : false)
-                                                    .attr('data-is-financial-expense', data.isSubItem ? data.pivot.is_financial_expense : false)
-                                                    .attr('data-vat-rate', data.isSubItem ? data.pivot.vat_rate : 0)
-                                                    .attr('data-is-deductible', data.isSubItem ? data.pivot.is_deductible : false)
-                                                    .attr('data-is-financial-income', data.isSubItem ? data.pivot.is_financial_income : false)
-                                                    .attr('data-percentage-value', percentageValue)
-                                                    .attr('data-cost-of-unit-value', data.isSubItem && data.pivot.percentage_or_fixed == 'cost_of_unit' ? data.pivot.cost_of_unit_value : 0)
+                                               //     .attr('data-main-model-id', incomeStatementId)
+                                              //      .attr('data-income-statement-item-id', incomeStatementItemId)
+                                          //          .attr('data-financial-statement-able-item-id', incomeStatementItemId)
+                                                 //   .attr('data-main-row-id', incomeStatementItemId)
+                                         //           .attr('data-sub-item-name', subItemName)
+                                          //          .attr('data-table-id', "{{$tableId}}")
+                                         //           .attr('data-is-quantity', data.isSubItem ? data.pivot.is_quantity : false)
+                                                //    .attr('data-is-financial-expense', data.isSubItem ? data.pivot.is_financial_expense : false)
+                                                //    .attr('data-vat-rate', data.isSubItem ? data.pivot.vat_rate : 0)
+                                                //    .attr('data-is-deductible', data.isSubItem ? data.pivot.is_deductible : false)
+                                         //           .attr('data-is-financial-income', data.isSubItem ? data.pivot.is_financial_income : false)
+                                           //         .attr('data-percentage-value', percentageValue)
+                                             //       .attr('data-cost-of-unit-value', data.isSubItem && data.pivot.percentage_or_fixed == 'cost_of_unit' ? data.pivot.cost_of_unit_value : 0)
                                                 if (data.isSubItem) {
                                                     let has_percentage_or_fixed_sub_items = '';
                                                     if (data.pivot.can_be_percentage_or_fixed 
@@ -1557,6 +1556,9 @@ console.log('repeat now 1')
 														</div>
 													</div>
 														</div>
+														
+														<input type="hidden" class="input-hidden-for-total" name="subTotals[${data.pivot.financial_statement_able_id}][${data.pivot.financial_statement_able_item_id}][${data.pivot.sub_item_name}]"   value="0" >
+														
 														`
                                                     )
 
@@ -1565,78 +1567,67 @@ console.log('repeat now 1')
                                                     $(row).attr('data-sub-item-name', data.pivot.sub_item_name)
 
                                                     $(row).attr('data-percentage-value', data.pivot && data.pivot.percentage_or_fixed == 'percentage' ? data.pivot.percentage_value || 0 : 0)
-                                                    $(row).attr('data-cost-of-unit-value', data.pivot && data.pivot.percentage_or_fixed == 'cost_of_unit' ? data.pivot.cost_of_unit_value || 0 : 0)
-                                                    $(row).attr('data-is-financial-expense', data.pivot && data.pivot.is_financial_expense == '1' ? 1 : 0)
+                                             //       $(row).attr('data-cost-of-unit-value', data.pivot && data.pivot.percentage_or_fixed == 'cost_of_unit' ? data.pivot.cost_of_unit_value || 0 : 0)
+                                                //    $(row).attr('data-is-financial-expense', data.pivot && data.pivot.is_financial_expense == '1' ? 1 : 0)
                                                     $(row).attr('data-is-quantity', data.pivot && data.pivot.is_quantity == '1' ? 1 : 0)
-                                                    $(row).attr('data-is-financial-income', data.pivot && data.pivot.is_financial_income == '1' ? 1 : 0)
-                                                    $(row).attr('data-vat-rate', data.pivot ? data.pivot.vat_rate : 0)
-                                                    $(row).attr('data-is-deductible', data.pivot ? data.pivot.is_deductible : 0)
+                                               //     $(row).attr('data-is-financial-income', data.pivot && data.pivot.is_financial_income == '1' ? 1 : 0)
+                                                //    $(row).attr('data-vat-rate', data.pivot ? data.pivot.vat_rate : 0)
+                                                 //   $(row).attr('data-is-deductible', data.pivot ? data.pivot.is_deductible : 0)
 
                                                     if (data.pivot.can_be_percentage_or_fixed) {
-                                                        $(row).attr('data-can-be-percentage-or-fixed', data.pivot.can_be_percentage_or_fixed)
-                                                        $(row).attr('data-is-percentage-of', data.pivot.is_percentage_of)
-                                                        $(row).attr('data-is-cost-of-unit-of', data.pivot.is_cost_of_unit_of)
-                                                        $(row).attr('data-percentage-or-fixed', data.pivot.percentage_or_fixed)
-                                                        $(row).attr('data-is-percentage', data.pivot.percentage_or_fixed == 'percentage')
-                                                        $(row).attr('data-is-cost-of-unit', data.pivot.percentage_or_fixed == 'cost_of_unit')
-                                                        $(row).attr('data-is-repeating-fixed', data.pivot.percentage_or_fixed == 'repeating_fixed')
-                                                        $(row).attr('data-is-none-repeating-fixed', data.pivot.percentage_or_fixed == 'non_repeating_fixed')
-                                                        $(row).attr('data-financial-statement-able-item-id', incomeStatementItemId)
+                                                //        $(row).attr('data-can-be-percentage-or-fixed', data.pivot.can_be_percentage_or_fixed)
+                                                    //    $(row).attr('data-is-percentage-of', data.pivot.is_percentage_of)
+                                                //        $(row).attr('data-is-cost-of-unit-of', data.pivot.is_cost_of_unit_of)
+                                                //        $(row).attr('data-percentage-or-fixed', data.pivot.percentage_or_fixed)
+                                                //        $(row).attr('data-is-percentage', data.pivot.percentage_or_fixed == 'percentage')
+                                                      //  $(row).attr('data-is-cost-of-unit', data.pivot.percentage_or_fixed == 'cost_of_unit')
+                                                     //   $(row).attr('data-is-repeating-fixed', data.pivot.percentage_or_fixed == 'repeating_fixed')
+                                                      //  $(row).attr('data-is-none-repeating-fixed', data.pivot.percentage_or_fixed == 'non_repeating_fixed')
+                                                    //    $(row).attr('data-financial-statement-able-item-id', -999)
 
                                                     }
 
 
 
-                                                    if (data.pivot && data.pivot.is_depreciation_or_amortization) {
-                                                        $(row).addClass('is-depreciation-or-amortization')
-                                                    }
+                                                //    if (data.pivot && data.pivot.is_depreciation_or_amortization) {
+                                               //         $(row).addClass('is-depreciation-or-amortization')
+                                               //     }
 
 
-                                                    $(cells).filter('.editable.editable-date').each(function(index, dateDt) {
-                                                        var filterDate = $(dateDt).attr("class").split(/\s+/).filter(function(classItem) {
-                                                            return classItem.startsWith('date-');
-                                                        })[0];
-                                                        // good
-                                                        filterDate = filterDate.split('date-')[1];
-                                                        totalOfRowArray.push(parseFloat(filterNumericUserInput($(dateDt).html(), data.pivot ? data.pivot.is_financial_expense : 0)));
+                                                //    editableCells.each(function(index, dateDt) {
+                                                      
+                                                   //   totalOfRowArray.push(parseFloat(filterNumericUserInput($(dateDt).html(), data.pivot ? data.pivot.is_financial_expense : 0)));
 
-                                                        var hiddenInput = `<input type="hidden" name="value[${incomeStatementId}][${incomeStatementItemId}][${subItemName}][${filterDate}]" data-date="${filterDate}" data-is-quantity="${data.pivot ? data.pivot.is_quantity : 0}" data-is-cost-of-unit="${data.pivot ? data.pivot.is_cost_of_unit_of : 0}" data-parent-model-id="${incomeStatementItemId}" value="${(filterNumericUserInput($(dateDt).html(), data.pivot ? data.pivot.is_financial_expense : 0 ))}" >
-														<input type="hidden" name="is_financial_income[${incomeStatementId}][${incomeStatementItemId}][${subItemName}]"  value="${data.pivot && data.pivot.is_financial_income!= null? data.pivot.is_financial_income :0}" >
+                                                  //      var hiddenInput = `<input type="hidden" name="value[${incomeStatementId}][${incomeStatementItemId}][${subItemName}][${index}]" data-date="${index}" data-is-quantity="${data.pivot ? data.pivot.is_quantity : 0}" data-is-cost-of-unit="${data.pivot ? data.pivot.is_cost_of_unit_of : 0}" data-parent-model-id="${incomeStatementItemId}" value="${(filterNumericUserInput($(dateDt).html(), data.pivot ? data.pivot.is_financial_expense : 0 ))}" >
+													//	<input type="hidden" name="is_financial_income[${incomeStatementId}][${incomeStatementItemId}][${subItemName}]"  value="${data.pivot && data.pivot.is_financial_income!= null? data.pivot.is_financial_income :0}" >
 														
-														 `;
-                                                        $(dateDt).after(hiddenInput);
+													//	 `;
+                                                   //     $(dateDt).after(hiddenInput);
 
-                                                    });
-
-                                                    $(row).append(
-                                                        `<input type="hidden" class="input-hidden-for-total" name="subTotals[${incomeStatementId}][${incomeStatementItemId}][${subItemName}]"  data-parent-model-id="${incomeStatementItemId}" value="0" >`
-                                                    );
-
-
-                                                    $(cells).filter('.editable.editable-text').each(function(index, textDt) {
+                                                  //  });
+										//		// console.log(row)
+                                               //     $(row).append(
+                                              //          `<input type="hidden" class="input-hidden-for-total" name="subTotals[${incomeStatementId}][${incomeStatementItemId}][${subItemName}]"   value="0" >`
+                                              //      );
 
 
-
-                                                        var hiddenInput = `<input type="hidden" class="text-input-hidden"  name="financialStatementAbleItemName[${incomeStatementId}][${incomeStatementItemId}][${subItemName}]" value="${$(textDt).html()}" > `;
-                                                        $(textDt).after(hiddenInput);
-                                                    })
+                                               //     $(cells).filter('.editable.editable-text').each(function(index, textDt) {
+//
+                                                  //      var hiddenInput = `<input type="hidden" class="text-input-hidden"  name="financialStatementAbleItemName[${incomeStatementId}][${incomeStatementItemId}][${subItemName}]" value="${$(textDt).html()}" > `;
+                                                   //     $(textDt).after(hiddenInput);
+                                                   // })
 
                                                 } else {
                                                     if (!data.has_sub_items) {
 
                                                         $(row).addClass('main-with-no-child').attr('data-model-id', data.id).attr('data-financial-statement-able-item-id', data.id);
-                                                        $(cells).filter('.editable.editable-date').each(function(index, dateDt) {
-
-                                                            var filterDate = $(dateDt).attr("class").split(/\s+/).filter(function(classItem) {
-                                                                return classItem.startsWith('date-');
-                                                            })[0];
-                                                            filterDate = filterDate.split('date-')[1];
-
-                                                            var hiddenInput = `<input type="hidden" name="valueMainRowWithoutSubItems[${incomeStatementId}][${incomeStatementItemId}][${filterDate}]" data-date="${filterDate}" data-parent-model-id="${incomeStatementItemId}" value="${(filterNumericUserInput($(dateDt).html(),data.pivot ? data.pivot.is_financial_expense : false))}" > `;
-                                                            $(dateDt).after(hiddenInput);
-                                                        });
+														// console.log('eeeeee')
+                                                     //   editableCells.each(function(index, dateDt) {
+                                                     //     var hiddenInput = `<input type="hidden" name="valueMainRowWithoutSubItems[${incomeStatementId}][${incomeStatementItemId}][${index}]" data-date="${index}"  value="${(filterNumericUserInput($(dateDt).html(),data.pivot ? data.pivot.is_financial_expense : false))}" > `;
+                                                     //       $(dateDt).after(hiddenInput);
+                                                  //      });
                                                         var subTotal = data.main_rows && data.main_rows[0] ? data.main_rows[0].pivot.total : 0
-                                                        totalOfRowArray.push(parseFloat(subTotal))
+                                             //           totalOfRowArray.push(parseFloat(subTotal))
                                                         $(row).append(`
 											<input type="hidden" class="input-hidden-for-total" name="totals[${incomeStatementId}][${incomeStatementItemId}]" value="${subTotal}">
 										`);
@@ -1670,22 +1661,18 @@ console.log('repeat now 1')
                                                         if (data.is_main_for_all_calculations) {
                                                             $(row).addClass('is-main-for-all-calculations');
                                                         }
-                                                        $(cells).filter('.editable.editable-date').each(function(index, dateDt) {
-                                                            var filterDate = $(dateDt).attr("class").split(/\s+/).filter(function(classItem) {
-                                                                return classItem.startsWith('date-');
-                                                            })[0];
+														// console.warn('ffffff')
+                                                  //     editableCells.each(function(index, dateDt) {
+                                                           
+                                                      //      totalOfRowArray.push(parseFloat(filterNumericUserInput($(dateDt).html(), data.pivot ? data.pivot.is_financial_expense : 0)));
 
-
-                                                            filterDate = filterDate.split('date-')[1];
-                                                            totalOfRowArray.push(parseFloat(filterNumericUserInput($(dateDt).html(), data.pivot ? data.pivot.is_financial_expense : 0)));
-
-                                                            var hiddenInput = `<input type="hidden" class="main-row-that-has-sub-class" name="valueMainRowThatHasSubItems[${incomeStatementId}][${incomeStatementItemId}][${filterDate}]" data-date="${filterDate}" data-parent-model-id="${incomeStatementItemId}" value="${(filterNumericUserInput($(dateDt).html(),data.pivot ? data.pivot.is_financial_expense : 0))}" > `;
-                                                            $(dateDt).after(hiddenInput);
-                                                        });
+                                                        //    var hiddenInput = `<input type="hidden" class="main-row-that-has-sub-class" name="valueMainRowThatHasSubItems[${incomeStatementId}][${incomeStatementItemId}][${index}]" data-date="${index}"  value="${(filterNumericUserInput($(dateDt).html(),data.pivot ? data.pivot.is_financial_expense : 0))}" > `;
+                                                        //    $(dateDt).after(hiddenInput);
+                                                     //   });
                                                         var subTotal = data.main_rows && data.main_rows[0] ? data.main_rows[0].pivot.total : 0
 
                                                         $(row).append(
-                                                            `<input type="hidden" class="input-hidden-for-total" name="totals[${incomeStatementId}][${incomeStatementItemId}]"  data-parent-model-id="${incomeStatementItemId}" value="${subTotal}" >`
+                                                            `<input type="hidden" class="input-hidden-for-total" name="totals[${incomeStatementId}][${incomeStatementItemId}]"  value="${subTotal}" >`
                                                         );
 
                                                       //  $(cells).each(function(index, cell) {
@@ -1944,15 +1931,18 @@ console.log('repeat now 1')
 
                                                     }
                                                 } else {
-                                                    var totals = array_sum(totalOfRowArray);
-
+												
+                                                   // var totals =-150;
+											       var totals = data.pivot ? data.pivot.total : subTotal ;
+                                            //      var totals = array_sum(totalOfRowArray);
+									//			   // console.log('total',totals,data,'---end');
                                                     $(row).find('td.total-row').html(number_format(totals));
                                                     $(row).find('.input-hidden-for-total').val(totals)
                                                 }
 
                                             }
                                             , drawCallback: function(settings) {
-												console.log('draw callback')
+												// console.log('draw callback')
                                                 const reportType = vars.subItemType;
                                                 let corporateTaxesId = document.getElementById('corporate-taxes-id').value;
                                                 let options = '';
@@ -1974,45 +1964,43 @@ console.log('repeat now 1')
                                                     }
                                                 })
 
-                                                var addBtnForCorporateTaxes = document.querySelector('.add-btn[data-income-statement-item-id="' + corporateTaxesId + '"]')
-                                                var deleteBtnForCorporateTaxes = document.querySelector('.delete-btn[data-income-statement-item-id="' + corporateTaxesId + '"]')
-                                                if (addBtnForCorporateTaxes) {
-                                                    addBtnForCorporateTaxes.classList.add('d-none')
-                                                    addBtnForCorporateTaxes.classList.remove('d-block')
-                                                }
-                                                if (deleteBtnForCorporateTaxes) {
-                                                    deleteBtnForCorporateTaxes.classList.add('d-none')
-                                                    deleteBtnForCorporateTaxes.classList.remove('d-block')
-                                                }
-                                                if (reportType != 'actual' 
-												|| true
-												) {
-                                                    const netProfitId = domElements.netProfitId;
-                                                    const corporateTaxesPercentageValue = document.querySelector('.is-sub-row.maintable-1-row-class' + corporateTaxesId + ' td.editable-date') ? document.querySelector('.is-sub-row.maintable-1-row-class' + corporateTaxesId + ' td.editable-date').getAttribute('data-percentage-value') / 100 : 0;
-                                                    const earningBeforeTaxesTotalValue = document.querySelector('.main-with-no-child[data-financial-statement-able-item-id="' + domElements.earningBeforeTaxesId + '"] input.input-hidden-for-total').value;
-                                                    const totalCorporateTaxes = earningBeforeTaxesTotalValue < 0 ? 0 : earningBeforeTaxesTotalValue * corporateTaxesPercentageValue;
-                                                    const corporateTaxesRow = document.querySelector('tr[data-model-id="' + corporateTaxesId + '"]')
-                                                    const corporateTaxesSubRowRow = document.querySelector('tr.is-sub-row.maintable-1-row-class' + corporateTaxesId)
-                                                    const salesRevenueId = domElements.salesRevenueId
-                                                    const corporateTaxesSalesRateRow = document.querySelector('tr.is-sales-rate[data-financial-statement-able-item-id="' + sales_rate_maps[corporateTaxesId] + '"]')
-                                                    const netProfitTaxesSalesRateRow = document.querySelector('tr.is-sales-rate[data-financial-statement-able-item-id="' + sales_rate_maps[netProfitId] + '"]')
-													console.log('corporate',corporateTaxesPercentageValue)
-                                                    const totalOfSalesRevenue = document.querySelector('.maintable-1-row-class' + salesRevenueId + ' .input-hidden-for-total').value;
-                                                    const netProfitRow = document.querySelector('tr[data-model-id="' + netProfitId + '"]')
+                                              //  var addBtnForCorporateTaxes = document.querySelector('.add-btn[data-income-statement-item-id="' + corporateTaxesId + '"]')
+                                              //  var deleteBtnForCorporateTaxes = document.querySelector('.delete-btn[data-income-statement-item-id="' + corporateTaxesId + '"]')
+                                            //    if (addBtnForCorporateTaxes) {
+                                           //         addBtnForCorporateTaxes.classList.add('d-none')
+                                            //        addBtnForCorporateTaxes.classList.remove('d-block')
+                                            //    }
+                                            //    if (deleteBtnForCorporateTaxes) {
+                                            //        deleteBtnForCorporateTaxes.classList.add('d-none')
+                                            //        deleteBtnForCorporateTaxes.classList.remove('d-block')
+                                            //    }
+                                            //    if (true
+											//	) {
+                                               //     const netProfitId = domElements.netProfitId;
+                                              // //     const corporateTaxesPercentageValue = document.querySelector('.is-sub-row.maintable-1-row-class' + corporateTaxesId + ' td.editable-date') ? document.querySelector('.is-sub-row.maintable-1-row-class' + corporateTaxesId + ' td.editable-date').getAttribute('data-percentage-value') / 100 : 0;
+                                               //     const earningBeforeTaxesTotalValue = document.querySelector('.main-with-no-child[data-financial-statement-able-item-id="' + domElements.earningBeforeTaxesId + '"] input.input-hidden-for-total').value;
+                                               //     const totalCorporateTaxes = earningBeforeTaxesTotalValue < 0 ? 0 : earningBeforeTaxesTotalValue * corporateTaxesPercentageValue;
+                                               //     const corporateTaxesRow = document.querySelector('tr[data-model-id="' + corporateTaxesId + '"]')
+                                               //     const corporateTaxesSubRowRow = document.querySelector('tr.is-sub-row.maintable-1-row-class' + corporateTaxesId)
+                                                //    const salesRevenueId = domElements.salesRevenueId
+                                               //     const corporateTaxesSalesRateRow = document.querySelector('tr.is-sales-rate[data-financial-statement-able-item-id="' + sales_rate_maps[corporateTaxesId] + '"]')
+                                               //     const netProfitTaxesSalesRateRow = document.querySelector('tr.is-sales-rate[data-financial-statement-able-item-id="' + sales_rate_maps[netProfitId] + '"]')
+                                                //    const totalOfSalesRevenue = document.querySelector('.maintable-1-row-class' + salesRevenueId + ' .input-hidden-for-total').value;
+                                               //     const netProfitRow = document.querySelector('tr[data-model-id="' + netProfitId + '"]')
 													
-                                                    corporateTaxesRow.querySelector('td.total-row').innerHTML = number_format(totalCorporateTaxes)
-													if(corporateTaxesSubRowRow){
-                                                    corporateTaxesSubRowRow.querySelector('td.total-row').innerHTML = number_format(totalCorporateTaxes)
-                                                    corporateTaxesSubRowRow.querySelector('input.input-hidden-for-total').value = totalCorporateTaxes
-                                                    corporateTaxesRow.querySelector('input.input-hidden-for-total').value = totalCorporateTaxes
+                                                //    corporateTaxesRow.querySelector('td.total-row').innerHTML = number_format(totalCorporateTaxes)
+												//	if(corporateTaxesSubRowRow){
+                                               //     corporateTaxesSubRowRow.querySelector('td.total-row').innerHTML = number_format(totalCorporateTaxes)
+                                               //     corporateTaxesSubRowRow.querySelector('input.input-hidden-for-total').value = totalCorporateTaxes
+                                              //      corporateTaxesRow.querySelector('input.input-hidden-for-total').value = totalCorporateTaxes
 														
-													}
-                                                    corporateTaxesSalesRateRow.querySelector('.total-row').innerHTML = number_format(totalOfSalesRevenue ? totalCorporateTaxes / totalOfSalesRevenue * 100 : 0, 2) + ' %'
-                                                    const totalValueForNetProfit = earningBeforeTaxesTotalValue - totalCorporateTaxes;
-                                                    netProfitRow.querySelector('td.total-row').innerHTML = number_format(totalValueForNetProfit)
-                                                    netProfitRow.querySelector('input.input-hidden-for-total').value = totalValueForNetProfit
-                                                    netProfitTaxesSalesRateRow.querySelector('.total-row').innerHTML = number_format(totalOfSalesRevenue ? totalValueForNetProfit / totalOfSalesRevenue * 100 : 0, 2) + ' %'
-                                                }
+												//	}
+                                                //    corporateTaxesSalesRateRow.querySelector('.total-row').innerHTML = number_format(totalOfSalesRevenue ? totalCorporateTaxes / totalOfSalesRevenue * 100 : 0, 2) + ' %'
+                                                //    const totalValueForNetProfit = earningBeforeTaxesTotalValue - totalCorporateTaxes;
+                                                 //   netProfitRow.querySelector('td.total-row').innerHTML = number_format(totalValueForNetProfit)
+                                                  //  netProfitRow.querySelector('input.input-hidden-for-total').value = totalValueForNetProfit
+                                                //    netProfitTaxesSalesRateRow.querySelector('.total-row').innerHTML = number_format(totalOfSalesRevenue ? totalValueForNetProfit / totalOfSalesRevenue * 100 : 0, 2) + ' %'
+                                            //    }
                                                 reinitializeSelect2();
 
                                                 if (reportType == 'adjusted') {
@@ -2027,7 +2015,7 @@ console.log('repeat now 1')
                                                 // handle data for intervals 
                                             }
                                             , initComplete: function(settings, json) {
-												console.log('init completed')
+												// console.log('init completed')
                                                 table = $('.main-table-class').DataTable();
                                                 globalTable = table;
 
@@ -2057,7 +2045,7 @@ console.log('repeat now 1')
 
                          
                             $(document).on('click', '.close-inner-modal', function(e) {
-							console.log('.close inner')
+							// console.log('.close inner')
 								$(this).closest('.modal-for-quantity').removeClass('d-block').modal('hide');
 								$(this).closest('.modal-for-non-repeating').removeClass('d-block').modal('hide');
                            })
@@ -2128,7 +2116,7 @@ console.log('repeat now 1')
 
 
                             $(document).on('click', '.save-sub-item-delete', function(e) {
-								console.log('save edit');
+								// console.log('save edit');
                                 e.preventDefault();
                                 let id = $(this).data('id');
                                 let subItemName = $(this).data('sub-item-name');
@@ -2188,7 +2176,7 @@ console.log('repeat now 1')
 
 
                             $(document).on('keyup', '.how-many-class', function() {
-								console.log('how many1')
+								// console.log('how many1')
                                 let index = parseInt(this.getAttribute('data-id'));
                                 let currentHowMany = parseInt(document.querySelector('.how-many-class[data-id="' + index + '"]').value);
                                 let currentHowManyInstances = $('.how-many-item[data-id="' + index + '"]').length;
@@ -2282,7 +2270,7 @@ console.log('repeat now 1')
                 });
 
                 function getSearchInputSelector(tableId) {
-					console.log('get fixed22');
+					// console.log('get fixed22');
                     return tableId + '_filter' + ' label input';
                 }
 
@@ -2306,7 +2294,7 @@ console.log('repeat now 1')
               
 
                 function getFinancialIncomeOrExpenseCheckBoxes(editMode, pivot, id) {
-					console.log('get checkbox')
+					// console.log('get checkbox')
                     if (id != domElements.financialIncomeOrExpensesId) {
                         return '';
                     }
@@ -2328,7 +2316,7 @@ console.log('repeat now 1')
                 }
 
                 function getVatRate(editModel, pivot, data) {
-					console.log('log vat rate')
+					// console.log('log vat rate')
                     if (vars.subItemType != 'forecast') {
                         return '';
                     }
@@ -2361,7 +2349,7 @@ console.log('repeat now 1')
                 }
 
                 function getSalesRevenueModal(editModal, pivot = null, id) {
-					console.log('log revenue model')
+					// console.log('log revenue model')
                     let salesRevenueQuantityDateValues = editModal && pivot && pivot.quantityPivot ? pivot.quantityPivot : {}
                   
                     let pivotFormatted = editModal && pivot && pivot.payload ? JSON.parse(pivot.payload) : {}
@@ -2523,7 +2511,7 @@ console.log('repeat now 1')
 				}
 
                 function getNonRepeatingModal(editModal, pivot = null, id) {
-					console.log('getNonRepeatingModal')
+					// console.log('getNonRepeatingModal')
                     //return '';
               
                     let pivotFormatted = editModal && pivot && pivot.payload ? JSON.parse(pivot.payload) : {}
@@ -2535,7 +2523,7 @@ console.log('repeat now 1')
                     let thdClass = 'view-table-th header-th  text-nowrap sorting_disabled  reset-table-width cursor-pointer sub-text-bg text-capitalize';
                     let tdForBodyValue = '<td>{{ __("Value") }}</td>';
 					let reportType = vars.subItemType
-					console.warn(reportType);
+					// console.warn(reportType);
 					var totalForNonRepeating = 0 ;
                     for (date of dates) {
 
@@ -2618,7 +2606,7 @@ console.log('repeat now 1')
 
 
                 function getCollectionPolicyHtml(editMode, pivot = null, id) {
-					console.log('getCollectionPolicyHtml')
+					// console.log('getCollectionPolicyHtml')
                     let valueOfCustom = [];
 					var hasCollectionPolicy = pivot && pivot && pivot.has_collection_policy ;
                     let isCustom =  hasCollectionPolicy && pivot.collection_policy_type == 'customize'

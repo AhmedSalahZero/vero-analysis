@@ -11,7 +11,6 @@
     <div class="col-md-12">
 
 
-
         <!--begin::Form-->
         <form class="kt-form kt-form--label-right" method="POST" action="{{ $submitRouteName }}" enctype="multipart/form-data">
             @csrf

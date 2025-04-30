@@ -1235,7 +1235,7 @@
 
                                                     
                                                     <label for="oddo-start-date" class="text-nowrap mr-3"><?php echo e(__('Start Date')); ?></label>
-                                                    <input id="oddo-start-date" type="date" value="<?php echo e(now()->format('Y-m-d')); ?>" class="form-control" name="start_date">
+                                                    <input id="oddo-start-date" type="date" value="<?php echo e(now()->format('Y-m-d')); ?>" class="form-control" name="odoo_start_date">
                                                     
 
                                                 </td>
@@ -1244,7 +1244,7 @@
 
                                                     
                                                     <label for="oddo-end-date" class="text-nowrap mr-3"><?php echo e(__('End Date')); ?></label>
-                                                    <input id="oddo-end-date" type="date" value="<?php echo e(now()->format('Y-m-d')); ?>" class="form-control" name="end_date">
+                                                    <input id="oddo-end-date" type="date" value="<?php echo e(now()->format('Y-m-d')); ?>" class="form-control" name="odoo_end_date">
                                                     
 
                                                 </td>
@@ -1303,7 +1303,7 @@
 
                                                     
                                                     <label for="oddo-send-start-date" class="text-nowrap mr-3"><?php echo e(__('Start Date')); ?></label>
-                                                    <input id="oddo-send-start-date" type="date" value="<?php echo e(now()->format('Y-m-d')); ?>" class="form-control" name="start_date">
+                                                    <input id="oddo-send-start-date" type="date" value="<?php echo e(now()->format('Y-m-d')); ?>" class="form-control" name="odoo_start_date">
                                                     
 
                                                 </td>
@@ -1312,7 +1312,7 @@
 
                                                     
                                                     <label for="oddo-send-end-date" class="text-nowrap mr-3"><?php echo e(__('End Date')); ?></label>
-                                                    <input id="oddo-send-end-date" type="date" value="<?php echo e(now()->format('Y-m-d')); ?>" class="form-control" name="end_date">
+                                                    <input id="oddo-send-end-date" type="date" value="<?php echo e(now()->format('Y-m-d')); ?>" class="form-control" name="odoo_end_date">
                                                     
 
                                                 </td>

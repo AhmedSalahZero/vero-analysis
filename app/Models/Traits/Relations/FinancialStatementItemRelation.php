@@ -42,7 +42,7 @@ trait FinancialStatementItemRelation
 			'financial_statement_item_id',
 			'financial_statement_id'
 		)
-			->withPivot(['payload', 'company_id', 'creator_id']);
+			->withPivot(['payload','total', 'company_id', 'creator_id']);
 	}
 	public function withMainRowsPivot(int $financialStatementId): BelongsToMany
 	{

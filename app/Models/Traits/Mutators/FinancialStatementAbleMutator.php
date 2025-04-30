@@ -65,6 +65,7 @@ trait FinancialStatementAbleMutator
 		$pivotForModified = combineNoneZeroValuesBasedOnComingDates($actualDatesAsIndexAndBooleans,$pivotForForecast, $pivotForActual);
 		$dataArr =  [
 			'payload' => json_encode($pivotForModified),
+			'total'=>array_sum($pivotForModified),
 		//	'actual_dates' => json_encode($actualDates),
 			'sub_item_type'=>'adjusted'
 		];
@@ -78,6 +79,7 @@ trait FinancialStatementAbleMutator
 			
 			$dataArr = [
 				'payload' => json_encode($pivotForModified),
+				'total'=>array_sum($pivotForModified),
 			//	'actual_dates' => json_encode($actualDates),
 				'sub_item_type'=>'modified'
 			];
@@ -238,6 +240,7 @@ trait FinancialStatementAbleMutator
 					/**
 					 * * هنا هنضيف صف جديد للكميه
 					 */
+					$currentDataForQuantity['total'] = array_sum($currentPayloadForQuantity);
 					$currentDataForQuantity['payload'] = json_encode($currentPayloadForQuantity);
 					
 					if($formSubItemType != $currentSubItemToBeInserted){ 
@@ -246,6 +249,7 @@ trait FinancialStatementAbleMutator
 						$oldPayloadForQuantity = $oldRowForQuantity && $oldRowForQuantity->pivot ? $oldRowForQuantity->pivot->payload : json_encode([]);
 						$oldPayloadForValue = $oldRowForValue && $oldRowForValue->pivot ? $oldRowForValue->pivot->payload : json_encode([]);
 						$currentDataForQuantity['payload'] = $oldPayloadForQuantity ;
+						$currentDataForQuantity['total'] = array_sum((array) json_decode($oldPayloadForQuantity)) ;
 						$currentSubItemValues = (array) json_decode($oldPayloadForValue);
 					}
 					
@@ -295,6 +299,7 @@ trait FinancialStatementAbleMutator
 				}
 				
 				
+				$currentSubItemDataArr['total'] = array_sum($currentSubItemValues);
 				$currentSubItemDataArr['payload'] = json_encode($currentSubItemValues);
 				
 	//			$currentSubItemDataArr['actual_dates']=json_encode($actualDates);
@@ -457,8 +462,10 @@ trait FinancialStatementAbleMutator
 				if($total == 0){
 					$this->withSubItemsFor($financialStatementAbleItemId, $subItemType, $subItemName)->detach();
 				}else{
+					$payload = $values[$financialStatementAbleItemId][$subItemName] ;
 					$this->withSubItemsFor($financialStatementAbleItemId, $subItemType, $subItemName)->updateExistingPivot($financialStatementAbleItemId, [
-						'payload' => json_encode($values[$financialStatementAbleItemId][$subItemName]),
+						'payload' => json_encode($payload),
+						'total'=>array_sum($payload),
 						'is_deductible'=>$subItem->pivot->is_deductible,
 						'vat_rate'=>$subItem->pivot->vat_rate
 					]);
@@ -470,8 +477,10 @@ trait FinancialStatementAbleMutator
 				if($total == 0){
 					$this->withSubItemsFor($financialStatementAbleItemId, $subItemType, $subItemName)->detach();
 				}else{
+					$payload = $values[$financialStatementAbleItemId][$subItemName];
 					$this->withSubItemsFor($financialStatementAbleItemId, $subItemType, $subItemName)->updateExistingPivot($financialStatementAbleItemId, [
-						'payload' => json_encode($values[$financialStatementAbleItemId][$subItemName]),
+						'total'=>array_sum($payload),
+						'payload' => json_encode($payload),
 						'is_deductible'=>$subItem->pivot->is_deductible,
 						'vat_rate'=>$subItem->pivot->vat_rate
 					]);
@@ -539,6 +548,14 @@ trait FinancialStatementAbleMutator
 			$subItems = $this->withSubItemsFor($incomeStatementItemId, $subItemType)->get()->keyBy(function ($subItem) {
 				return $subItem->pivot->sub_item_name;
 			})->map(function ($subItem) {
+				/**
+				 * ! remove this
+				 */
+				$payload = $subItem->pivot ? (array)json_decode($subItem->pivot->payload):[];
+					DB::table('financial_statement_able_main_item_sub_items')->where('id',$subItem->pivot->id)->update(['total'=>array_sum($payload)]);
+					/**
+				 * ! end remove this
+				 */
 				$pivot = $subItem->pivot;
 				// cache::fore
 				return [
@@ -546,6 +563,7 @@ trait FinancialStatementAbleMutator
 						'name' => $pivot->sub_item_name,
 						'sub_item_type' => $pivot->sub_item_type,
 						'payload' => $pivot->payload ? (array)json_decode($pivot->payload) : [],
+						'total'=>$pivot->payload ? array_sum((array)json_decode($pivot->payload)) : 0,
 						'sub_item_type' => $pivot->sub_item_type,
 						'has_collection_policy' => $pivot->has_collection_policy,
 						'collection_policy_type' => $pivot->collection_policy_type,
@@ -579,7 +597,8 @@ trait FinancialStatementAbleMutator
 							'is_accumulated' => $subItem->is_accumulated,
 						]
 					],
-					'values' => $subItem->pivot ? (array)json_decode($subItem->pivot->payload) : []
+					'values' => $subItem->pivot ? (array)json_decode($subItem->pivot->payload) : [],
+					'total' => $subItem->pivot ? $subItem->pivot->total : 0
 
 				];
 			})->toArray();
@@ -852,6 +871,7 @@ trait FinancialStatementAbleMutator
 			$subItemName = 'Corporate Taxes';
 			$this->withSubItemsFor($corporateTaxesID, $subItemType, $subItemName)->updateExistingPivot($corporateTaxesID, [
 				'payload' => json_encode($valuesForCorporateTaxesAtDate ?? []),
+				'total'=>array_sum($valuesForCorporateTaxesAtDate ?? []),
 				'company_id'=>$companyId
 			]);
 		}

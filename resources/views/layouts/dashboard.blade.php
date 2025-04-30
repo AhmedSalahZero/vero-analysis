@@ -1235,7 +1235,7 @@
 
                                                     {{-- <div class="col-md-3 d-flex align-items-center "> --}}
                                                     <label for="oddo-start-date" class="text-nowrap mr-3">{{ __('Start Date') }}</label>
-                                                    <input id="oddo-start-date" type="date" value="{{ now()->format('Y-m-d') }}" class="form-control" name="start_date">
+                                                    <input id="oddo-start-date" type="date" value="{{ now()->format('Y-m-d') }}" class="form-control" name="odoo_start_date">
                                                     {{-- </div> --}}
 
                                                 </td>
@@ -1244,7 +1244,7 @@
 
                                                     {{-- <div class="col-md-3 d-flex align-items-center "> --}}
                                                     <label for="oddo-end-date" class="text-nowrap mr-3">{{ __('End Date') }}</label>
-                                                    <input id="oddo-end-date" type="date" value="{{ now()->format('Y-m-d') }}" class="form-control" name="end_date">
+                                                    <input id="oddo-end-date" type="date" value="{{ now()->format('Y-m-d') }}" class="form-control" name="odoo_end_date">
                                                     {{-- </div> --}}
 
                                                 </td>
@@ -1303,7 +1303,7 @@
 
                                                     {{-- <div class="col-md-3 d-flex align-items-center "> --}}
                                                     <label for="oddo-send-start-date" class="text-nowrap mr-3">{{ __('Start Date') }}</label>
-                                                    <input id="oddo-send-start-date" type="date" value="{{ now()->format('Y-m-d') }}" class="form-control" name="start_date">
+                                                    <input id="oddo-send-start-date" type="date" value="{{ now()->format('Y-m-d') }}" class="form-control" name="odoo_start_date">
                                                     {{-- </div> --}}
 
                                                 </td>
@@ -1312,7 +1312,7 @@
 
                                                     {{-- <div class="col-md-3 d-flex align-items-center "> --}}
                                                     <label for="oddo-send-end-date" class="text-nowrap mr-3">{{ __('End Date') }}</label>
-                                                    <input id="oddo-send-end-date" type="date" value="{{ now()->format('Y-m-d') }}" class="form-control" name="end_date">
+                                                    <input id="oddo-send-end-date" type="date" value="{{ now()->format('Y-m-d') }}" class="form-control" name="odoo_end_date">
                                                     {{-- </div> --}}
 
                                                 </td>

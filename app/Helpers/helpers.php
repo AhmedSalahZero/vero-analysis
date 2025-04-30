@@ -683,7 +683,7 @@ function getTypeFor($type, $companyId, $formatted = false, $date = false, $start
         // start 01-01-2021
         // end 01-01-2022
 
-
+		
         return  DB::table($tableName)->where('company_id', $companyId)
             ->when($date && $start_date, function (Builder $builder) use ($start_date) {
                 $builder->where('date', '>=', $start_date);
