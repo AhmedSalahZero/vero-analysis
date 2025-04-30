@@ -57,10 +57,9 @@ trait FinancialStatementAbleMutator
 
 	public function updatePivotForAdjustedSubItems(array $actualDatesAsIndexAndBooleans , int $financialStatementAbleItemId, string $sub_item_origin_name,array $subItemData,?string $isValueQuantityPrice ): void
 	{
-		$pivotForForecast = $this->withSubItemsFor($financialStatementAbleItemId, 'forecast', $sub_item_origin_name)->get()->pluck('pivot.payload')->toArray()[0] ?? [];
+		$pivotForForecast = $this->withSubItemsFor($financialStatementAbleItemId, 'forecast', $sub_item_origin_name)->get()->sortByDesc('pivot.id')->pluck('pivot.payload')->toArray()[0] ?? [];
 	
-		$pivotForActual = $this->withSubItemsFor($financialStatementAbleItemId, 'actual', $sub_item_origin_name)->get()->pluck('pivot.payload')->toArray()[0] ?? [];
-		
+		$pivotForActual = $this->withSubItemsFor($financialStatementAbleItemId, 'actual', $sub_item_origin_name)->get()->sortByDesc('pivot.id')->pluck('pivot.payload')->toArray()[0] ?? [];
 		$pivotForForecast = is_array($pivotForForecast) ? $pivotForForecast : (array)(json_decode($pivotForForecast));
 		$pivotForActual = is_array($pivotForActual) ? $pivotForActual : (array)json_decode($pivotForActual);
 		$pivotForModified = combineNoneZeroValuesBasedOnComingDates($actualDatesAsIndexAndBooleans,$pivotForForecast, $pivotForActual);

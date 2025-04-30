@@ -116,10 +116,19 @@ class IncomeStatementRepository implements IBaseRepository
 			$incomeStatementItem['main_rows'] = $incomeStatementItem->getMainRows($incomeStatement->id, $subItemType);
 			$dataWithRelations->add($incomeStatementItem);
 			$quantitiesFor = [];
+			$subItems = $incomeStatementItem->getSubItems($incomeStatement->id, $subItemType);
+			if($subItemType == 'adjusted' || $subItemType == 'modified'){
+				$orderByReferenceArray = $incomeStatementItem->getSubItems($incomeStatement->id, 'actual')->values()->pluck('pivot.sub_item_name')->flip();
+				$subItems=$subItems->sortBy(function($value , $key ) use ($orderByReferenceArray){
+					return $orderByReferenceArray[$value->pivot->sub_item_name] ?? PHP_INT_MAX;
+				});
+				// $subItems = collect($subItems->all());
+				// dd($subItems->pluck('pivot.sub_item_name','pivot.id'),$orderByReferenceArray);
+			}
 			// dd($incomeStatementItem->getSubItems($incomeStatement->id, $subItemType)->sortByDesc('pivot.id')->pluck('pivot.sub_item_name','pivot.id'));
-			
-			$incomeStatementItem->getSubItems($incomeStatement->id, $subItemType)->each(function ($subItem) use ($forecastSubItemNames,$incomeStatement, $subItemType, $dataWithRelations, $incomeStatementItem, &$quantitiesFor) {
-
+			// dd($subItems);
+			$subItems->each(function ($subItem) use ($forecastSubItemNames,$incomeStatement, $subItemType, $dataWithRelations, $incomeStatementItem, &$quantitiesFor) {
+				
 				$subItem->isSubItem = true; // isSubRow
 				if ($incomeStatementItem->has_depreciation_or_amortization) {
 					$subItem->pivot->can_be_depreciation = true;
