@@ -49,16 +49,16 @@ $user = auth()->user();
 <form action="{{ route('admin.store-cash-and-banks',['company'=>$company->id]) }}" method="post">
 <input type="hidden" value="{{ $cashFlowStatementId }}" name="cash_flow_statement_id">
 <input type="hidden" value="{{ $subItemType }}" name="subItemType">
- @foreach($dates as $index => $fullDate)
-					<input type="hidden" name="dates[]" value="{{ $fullDate }}">
+ @foreach($datesFormatted as $dateAsIndex => $dateAsString)
+					<input type="hidden" name="dates[]" value="{{ $dateAsIndex }}">
 					@endforeach
 @csrf
 <div class="kt-portlet">
     <div class="kt-portlet__body d-flex " style="flex-direction:row !important;flex-wrap:nowrap !important;">
-        <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5 col-3" style="white-space:nowrap"> {{ __('Cash & Banks Begining Balance') }} </h3>
+        <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5 col-3" style="white-space:nowrap"> {{ __('Cash & Banks Beginning Balance') }} </h3>
         <div class="kt-input-icon">
             <div class="input-group">
-                <input type="text" class="form-control col-3 only-greater-than-or-equal-zero-allowed date-value-element" value="{{ number_format(isset($model) ? $model->getCashAndBanksBeginningBalance($fullDate) : old('cash_and_banks_beginning_balance',0) ) }}" >
+                <input type="text" class="form-control col-3 only-greater-than-or-equal-zero-allowed date-value-element" value="{{ number_format(isset($model) ? $model->getCashAndBanksBeginningBalance($dateAsIndex) : old('cash_and_banks_beginning_balance',0) ) }}" >
                 <input class="date-value-element-hidden" type="hidden" name="cash_and_banks_beginning_balance" value="{{ (isset($model) ? $model->getCashAndBanksBeginningBalance() : old('cash_and_banks_beginning_balance',0)) }}">
             </div>
         </div>

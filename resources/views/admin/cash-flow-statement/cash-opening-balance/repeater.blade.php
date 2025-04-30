@@ -36,14 +36,15 @@
                             </div>
                         </div>
                     </div>
-                    @foreach($dates as $index => $fullDate)
-					<input type="hidden" name="dates" value="{{ $fullDate }}">
+				
+                    @foreach($datesFormatted as $dateAsIndex => $dateAsString)
+					<input type="hidden" name="dates" value="{{ $dateAsIndex }}">
                     <div class="col-1 text-center">
-                        <label class="form-label font-weight-bold">{{ formatDateForView($fullDate) }} </label>
+                        <label class="form-label font-weight-bold">{{ formatDateForView($dateAsString) }} </label>
                         <div class="kt-input-icon">
                             <div class="input-group">
-                                <input type="text" class="form-control only-greater-than-or-equal-zero-allowed date-value-element trigger-change-repeater"  value="{{ number_format(isset($receivable_and_payment) ? $receivable_and_payment->getReceivableValueAtDate($fullDate) : old('payload',0) ) }}" step="0.5">
-								<input class="date-value-element-hidden" type="hidden" @if($isRepeater) name="payload[{{ $fullDate }}]" @else name="opening[0][payload][{{ $fullDate }}]" @endif value="{{ (isset($receivable_and_payment) ? $receivable_and_payment->getReceivableValueAtDate($fullDate) : old('balance_amount',0)) }}" >
+                                <input type="text" class="form-control only-greater-than-or-equal-zero-allowed date-value-element trigger-change-repeater"  value="{{ number_format(isset($receivable_and_payment) ? $receivable_and_payment->getReceivableValueAtDate($dateAsIndex) : old('payload',0) ) }}" step="0.5">
+								<input class="date-value-element-hidden" type="hidden" @if($isRepeater) name="payload[{{ $dateAsIndex }}]" @else name="opening[0][payload][{{ $dateAsIndex }}]" @endif value="{{ (isset($receivable_and_payment) ? $receivable_and_payment->getReceivableValueAtDate($dateAsIndex) : old('balance_amount',0)) }}" >
                             </div>
                         </div>
                     </div>

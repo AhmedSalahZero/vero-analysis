@@ -69,7 +69,11 @@ class CashFlowStatementController extends Controller
 			$cashFlowStatement->update([
 				'entered_receivables_and_payments_table'=>1
 			]);
-			return view('admin.cash-flow-statement.cash-opening-balance.create', ['dates'=>$dates, 'company'=>$company, 'cashFlowStatementId'=>$cashFlowStatement->id, 'receivables_and_payments'=>$receivables_and_payments, 'model'=>$model, 'subItemType'=>$subItemType,'hasPayments'=>$hasPayments,'hasReceivables'=>$hasReceivables]);
+			// dd();
+			// $dates = HArr::
+			$datesFormatted = $cashFlowStatement->getIntervalFormatted();
+			
+			return view('admin.cash-flow-statement.cash-opening-balance.create', ['dates'=>$dates,'datesFormatted'=>$datesFormatted, 'company'=>$company, 'cashFlowStatementId'=>$cashFlowStatement->id, 'receivables_and_payments'=>$receivables_and_payments, 'model'=>$model, 'subItemType'=>$subItemType,'hasPayments'=>$hasPayments,'hasReceivables'=>$hasReceivables]);
 		}
 
 		$cashFlowStatement = $cashFlowStatement->financialStatement->cashFlowStatement;

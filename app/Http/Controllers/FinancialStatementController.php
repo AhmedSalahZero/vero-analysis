@@ -203,6 +203,7 @@ class FinancialStatementController extends Controller
 	public function formatReportDataForExport(Request $request)
 	{
 		// $financial
+		
 		$formattedData = [];
 		$totals = $request->get('totals');
 		$subTotals = $request->get('subTotals');

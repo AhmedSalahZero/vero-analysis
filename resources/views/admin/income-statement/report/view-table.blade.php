@@ -398,9 +398,9 @@ $tableId = 'kt_table_1';
                 window.addEventListener('DOMContentLoaded', function() {
 					
                     (function($) {
-						// console.log('DOMContentLoaded')
+						console.log('DOMContentLoaded')
                         window.addEventListener('scroll', function() {
-							// console.log('scroll')
+							console.log('scroll')
                             const top = window.scrollY > 140 ? window.scrollY : 140;
 
                             $('.arrow-nav').css('top', top + 'px')
@@ -414,7 +414,7 @@ $tableId = 'kt_table_1';
 
 						
                             $(document).on('click', '.arrow-nav', function() {
-								// console.log('arrow nave');
+								console.log('arrow nave');
                                 const scrollLeftOfTableBody = document.querySelector('.kt-portlet__body').scrollLeft
                                 const scrollByUnit = 50
                                 if (this.classList.contains('arrow-right')) {
@@ -428,22 +428,22 @@ $tableId = 'kt_table_1';
 
                         }
                         $(document).on('click', '.import-modal-class', function() {
-						// console.log('import-modal-class')
+						console.log('import-modal-class')
                             $('#exampleModalCenter').modal('show')
 
                         })
                         $(document).on('change', '.trim-when-key-up', function() {
-							// console.log('trim-when-key-up')
+							console.log('trim-when-key-up')
                             $(this).val($(this).val().trim())
                         })
                       //  $(document).on("hidden.bs.modal", '.modal', function(e) {
-						//	// console.log('hidden.bs.modal')
+						//	console.log('hidden.bs.modal')
                         //    if ($('.modal:visible').length) {
                         //        $('body').addClass('modal-open');
                        //     }
                        // });
                         $(document).on('click', '.repeat-row', function() {
-// console.log('repeat now 1')
+console.log('repeat now 1')
                             const parentQuery = this.getAttribute('data-parent-query')
                             const columnIndex = this.getAttribute('data-column-index')
                             const rowIndex = this.getAttribute('data-row-index')
@@ -460,7 +460,7 @@ $tableId = 'kt_table_1';
                         })
 
                         $(document).on('change', 'input[name*="is_depreciation_or_amortization"]', function() {
-							// console.log('input[name*="is_depreciation_or_amortization"]')
+							console.log('input[name*="is_depreciation_or_amortization"]')
                             const val = $(this).is(':checked');
 							const modal = $(this).closest('.modal'); 
                             if (val) {
@@ -506,7 +506,7 @@ $tableId = 'kt_table_1';
                         })
 
                         $(document).on('change', '.can-trigger-quantity-modal', function() {
-							// console.log('can-trigger-quantity-modal')
+							console.log('can-trigger-quantity-modal')
                             let quantityOrPrice = $(this).val()
                             let currentIndex = $(this).closest('.how-many-item').attr('data-index')
                             currentIndex = currentIndex == undefined ? 0 : currentIndex
@@ -592,7 +592,7 @@ $tableId = 'kt_table_1';
                         })
 
                         $(document).on('change', '.can-trigger-non-repeating-modal', function() {
-							// console.log('can-trigger-non-repeating-modal')
+							console.log('can-trigger-non-repeating-modal')
                             // return false ;
 
                             let currentIndex = $(this).closest('.how-many-item').attr('data-index')
@@ -629,13 +629,13 @@ $tableId = 'kt_table_1';
 
 
                         $(document).on('change', '.only-one-checked', function() {
-							// console.log('only-one-checked')
+							console.log('only-one-checked')
                             const parent = $(this).closest('.only-one-checked-parent')
                             parent.find('.only-one-checked').prop('checked', false)
                             parent.find('.for-only-one-checked').addClass('d-none').find('input,select').prop('disabled', true)
                             $(this).prop('checked', true)
                             const checkBoxValue = $(this).val()
-							// console.log(checkBoxValue);
+							console.log(checkBoxValue);
                             parent.find('.for-only-one-checked[data-item="' + checkBoxValue + '"]').removeClass('d-none').find('input,select').prop('disabled', false)
 
                         })
@@ -645,14 +645,14 @@ $tableId = 'kt_table_1';
 
 
                         $(document).on('change', '.only-one-checkbox', function() {
-							// console.log('only-one-checkbox')
+							console.log('only-one-checkbox')
                             const parent = $(this).closest('.only-one-checkbox-parent')
                             parent.find('.only-one-checkbox').prop('checked', false)
                             $(this).prop('checked', true)
                         })
 
                         $(document).on('change', '.only-two-checkbox', function() {
-							// console.log('only-two-checkbox')
+							console.log('only-two-checkbox')
                             const parent = $(this).closest('.only-two-checkbox-parent')
                             let currentCheckedLength = parent.find('.only-two-checkbox:checked').length
                             if (currentCheckedLength > 2) {
@@ -665,13 +665,13 @@ $tableId = 'kt_table_1';
 
 
                         $(document).on('focus', '.editable-date', function() {
-							// console.log('editable-date')
+							console.log('editable-date')
                             lastInputValue = $(this).html()
                             $(this).html('<br>')
                         })
 
                         $(document).on('blur', '.blured-item', function() {
-						// console.log('.blured-item')
+						console.log('.blured-item')
                             const date = this.getAttribute('data-date')
                             const type = this.getAttribute('data-type')
                             const parentElement = this.parentElement.parentElement
@@ -710,7 +710,7 @@ $tableId = 'kt_table_1';
                         })
 						
 						 $(document).on('blur', '.blured-item-non-repeating', function() {
-							// console.log('.blured-item-non-repeating')
+							console.log('.blured-item-non-repeating')
                             const date = this.getAttribute('data-date')
                             const type = this.getAttribute('data-type')
                             const parentElement = this.parentElement.parentElement
@@ -726,7 +726,7 @@ $tableId = 'kt_table_1';
 
                         function recalculateTotalForSalesRevenuePopup(parentElement) {
                             // total quantity and value
-							// console.log('recalculateTotalForSalesRevenuePopup')
+							console.log('recalculateTotalForSalesRevenuePopup')
 							parentElement = parentElement.closest('tbody');
                             const totalPerType = {};
                             let numberOfDigit = 0;
@@ -811,10 +811,10 @@ $tableId = 'kt_table_1';
                             const target = $(this).attr('data-target');
                             if (target) {
 								if($(target).find('.can-trigger-quantity-modal:checked:first-of-type').length){
-									// console.log('from if');
+									console.log('from if');
                                 	$(target).find('.can-trigger-quantity-modal:checked:first-of-type').trigger('change');
 								}else{
-									// console.log('from else');
+									console.log('from else');
                                 $(target).find('.can-trigger-non-repeating-modal:checked:first-of-type').trigger('change');
 								}
                             }
@@ -826,7 +826,7 @@ $tableId = 'kt_table_1';
 							$(this).prop('checked',true)
 						})
                         $(document).on('change', '.has-collection-policy-class', function() {
-							// console.log('.has-collection-policy-class')
+							console.log('.has-collection-policy-class')
                             const hasCollectionPolicy = this.checked
 
                             const collectionPolicyContent = $(this).closest('.collection-policy').find('.collection-policy-content')
@@ -843,7 +843,7 @@ $tableId = 'kt_table_1';
                         })
 
                         $(document).on('click', '.can_be_percentage_or_fixed_class', function() {
-							// console.log('can_be_percentage_or_fixed_class')
+							console.log('can_be_percentage_or_fixed_class')
                             let val = $(this).val();
                             $(this).closest('.how-many-item').find('.non-repeating-fixed-sub,.repeating-fixed-sub,.percentage-sub,.cost-of-unit-sub').removeClass('d-flex').addClass('d-none');
                             $(this).closest('.how-many-item').find('.can_be_percentage_or_fixed_class').prop('checked', false);
@@ -854,7 +854,7 @@ $tableId = 'kt_table_1';
                         });
                      
                         $(document).on('click', '.redirect-btn', function(e) {
-							// console.log('redirect btn')
+							console.log('redirect btn')
                             e.preventDefault();
                             window.location.href = $(this).data('redirect-to');
                         })
@@ -862,7 +862,7 @@ $tableId = 'kt_table_1';
 
 
                         $(document).on('click', '.trigger-child-row-1', function(e) {
-							// console.log('.trigger-child-row-1')
+							console.log('.trigger-child-row-1')
                             const parentId = $(e.target.closest('tr')).data('model-id');
                             var parentRow = $(e.target).parent();
                             var subRows = parentRow.nextAll('tr.add-sub.maintable-1-row-class' + parentId);
@@ -892,7 +892,7 @@ $tableId = 'kt_table_1';
 
 
                         $(document).on('click', '.expand-all', function(e) {
-							// console.log('expenad all')
+							console.log('expenad all')
                             e.preventDefault();
                             if ($(this).hasClass('is-open-parent')) {
                                 $(this).addClass('is-close-parent').removeClass('is-open-parent')
@@ -911,12 +911,12 @@ $tableId = 'kt_table_1';
                         "use strict";
                         var KTDatatablesDataSourceAjaxServer = function() {
                             function getFixedColumnNumbers() {
-								// console.log('.getFixedColumnNumbers')
+								console.log('.getFixedColumnNumbers')
                                 return $('#fixed-column-number').val()
                             }
                             var initTable1 =
                                 function() {
-// console.log('.initTable1')
+										console.log('.initTable1')
                                     var tableId = '#' + "{{ $tableId }}";
                                     var salesGrowthRateId = domElements.salesGrowthRateId
                                     var table = $(tableId);
@@ -926,7 +926,7 @@ $tableId = 'kt_table_1';
                                     datesFormatted = JSON.parse(datesFormatted);
                                     window['dates'] = data;
                                     window['datesFormatted'] = datesFormatted;
-								// console.log('init 1')
+									console.log('init 1')
                                     const columns = [];
                                     columns.push({
                                         data: 'id'
@@ -934,7 +934,7 @@ $tableId = 'kt_table_1';
                                         , orderable: false
                                         , className: 'trigger-child-row-1 cursor-pointer sub-text-bg text-capitalize  is-close '
                                         , render: function(d, b, row) {
-											// console.log('render 2')
+											console.log('render 2')
                                             if (!row.isSubItem && row.has_sub_items) {
                                                 return '+';
                                             } else if (row.isSubItem && row.pivot && row.pivot.can_be_percentage_or_fixed) {
@@ -953,17 +953,12 @@ $tableId = 'kt_table_1';
                                     });
                                     columns.push({
                                         render: function(d, b, row) {
-											// console.log('render 3')
+											console.log('render 3')
                                             let modelId = $('#model-id').val();
                                             if (!row.isSubItem && row.has_sub_items) {
                                                 elements = `<a data-is-subitem="0" data-income-statement-item-id="${row.id}" data-income-statement-id="${modelId}" class="d-block add-btn mb-2" href="#" data-toggle="modal" data-target="#add-sub-modal${row.id}">{{ __('Add') }}</a> `;
                                                 return elements;
-                                            } else if (row.isSubItem 
-											// && (row.pivot.created_from == row.pivot.sub_item_type)
-											 || vars.subItemType == 'modified' && row.pivot) {
-                                             //   if (vars.subItemType == 'modified' && (row.pivot.percentage_or_fixed == 'non_repeating_fixed' || row.pivot.percentage_or_fixed == 'repeating_fixed')) {
-                                           //         return '';
-                                              //  }
+                                            } else if (row.isSubItem || vars.subItemType == 'modified' && row.pivot) {
 												if(row.pivot.financial_statement_able_item_id == domElements.corporateTaxesId){
 													return '';
 												}
@@ -985,7 +980,7 @@ $tableId = 'kt_table_1';
                                     , });
                                     columns.push({
                                         render: function(d, b, row) {
-												// console.log('render 4')
+												console.log('render 4')
                                             if (row.isSubItem) {
                                                 return row.pivot.sub_item_name;
                                             }
@@ -999,15 +994,10 @@ $tableId = 'kt_table_1';
 									
                                         columns.push({
                                             render: function(d, b, row, setting) {
-												// console.log('render 5')
+												console.log('render 5')
                                                 date = data[i];
                                                 if (row.isSubItem && row.pivot.payload) {
                                                     var payload = JSON.parse(row.pivot.payload);
-                                                  //  var actualDates = JSON.parse(row.pivot.actual_dates);
-												
-                                                 //   if (isActualDate(date)) {
-                                                //        $('.dataTables_scrollHeadInner .main-table-class:eq(0) th:not(.is-actual).date-' + date).addClass('is-actual');
-                                              //      }
                                                     return payload[date] ? number_format(payload[date]) : 0;
                                                 }
 
@@ -1035,7 +1025,7 @@ $tableId = 'kt_table_1';
 
                                     columns.push({
                                         render: function(d, b, row, setting) {
-											// console.log('render 7')
+											console.log('render 7')
                                             return  row.main_rows && row.main_rows[0] ? row.main_rows[0].pivot.total : 0
                                         }
                                         , data: 'id'
@@ -1044,7 +1034,7 @@ $tableId = 'kt_table_1';
                                     })
 								
                                     const isActualTable = +$('#is-actual-table').val();
-								//	console.log(columns);
+									console.log(columns);
                                     // begin first table
                                     table.DataTable({
 
@@ -1058,7 +1048,7 @@ $tableId = 'kt_table_1';
                                                 , "type": "post"
                                                 , "dataSrc": "data", // they key in the jsom response from the server where we will get our data
                                                 "data": function(d) {
-													// console.log('go get data')
+													console.log('go get data')
                                                     d.search_input = $(getSearchInputSelector(tableId)).val();
                                                     d.sub_item_type = vars.subItemType
                                                     d.income_statement_id = $('#income_statement_id').val()
@@ -1170,7 +1160,7 @@ $tableId = 'kt_table_1';
                                                 let costOfGoodsId = domElements.costOfGoodsId;
                                                 let corporateTaxesId = domElements.corporateTaxesId;
                                                 let salesReveueId = domElements.salesRevenueId;
-											// console.log('creator row')
+											console.log('creator row')
                                                 if (data.id == salesReveueId&& !data.duration) {
 											
                                                     sales_revenues_sub_items_names = [{id:'all',name:'{{ __("All") }}'}];
@@ -1962,7 +1952,7 @@ $tableId = 'kt_table_1';
 
                                             }
                                             , drawCallback: function(settings) {
-												// console.log('draw callback')
+												console.log('draw callback')
                                                 const reportType = vars.subItemType;
                                                 let corporateTaxesId = document.getElementById('corporate-taxes-id').value;
                                                 let options = '';
@@ -2006,7 +1996,7 @@ $tableId = 'kt_table_1';
                                                     const salesRevenueId = domElements.salesRevenueId
                                                     const corporateTaxesSalesRateRow = document.querySelector('tr.is-sales-rate[data-financial-statement-able-item-id="' + sales_rate_maps[corporateTaxesId] + '"]')
                                                     const netProfitTaxesSalesRateRow = document.querySelector('tr.is-sales-rate[data-financial-statement-able-item-id="' + sales_rate_maps[netProfitId] + '"]')
-// console.log('corporate',corporateTaxesPercentageValue)
+													console.log('corporate',corporateTaxesPercentageValue)
                                                     const totalOfSalesRevenue = document.querySelector('.maintable-1-row-class' + salesRevenueId + ' .input-hidden-for-total').value;
                                                     const netProfitRow = document.querySelector('tr[data-model-id="' + netProfitId + '"]')
 													
@@ -2024,35 +2014,6 @@ $tableId = 'kt_table_1';
                                                     netProfitTaxesSalesRateRow.querySelector('.total-row').innerHTML = number_format(totalOfSalesRevenue ? totalValueForNetProfit / totalOfSalesRevenue * 100 : 0, 2) + ' %'
                                                 }
                                                 reinitializeSelect2();
-                                         //       let actualDates = [];
-                                           //     document.querySelectorAll('.is-actual-dates').forEach(function(th, index) {
-                                            //        if (!actualDates.includes($(th).data('date'))) {
-                                            //            actualDates.push($(th).data('date'));
-                                          //  //        }
-                                          //      })
-
-                                        //        if (reportType == 'actual') {
-                                                    // if from forecast online
-                                                 //   document.querySelectorAll('.is-name-cell[contenteditable]').forEach(function(td, index) {
-                                                //        td.setAttribute('title', '')
-                                                 //   });
-                                                 //   document.querySelectorAll('th[data-is-actual="0"]').forEach((th) => {
-                                                  //      var isActual = th.getAttribute('data-is-actual');
-                                                  //      if (isActual) {
-                                                  //          var currentThDate = th.getAttribute('data-date');
-                                                   //         document.querySelectorAll('.editable-date.date-' + currentThDate).forEach((tdField) => {
-                                                             //   tdField.removeAttribute('contenteditable')
-                                                  //              tdField.removeAttribute('title');
-                                                  //          })
-                                                //        }
-                                               //     })
-
-
-
-
-
-
-                                            //    }
 
                                                 if (reportType == 'adjusted') {
 
@@ -2063,34 +2024,10 @@ $tableId = 'kt_table_1';
                                                     $('#store-report-form-id .kt-portlet').append(`<div class='single-btn'><button style="float:right" type="submit" class="btn active-style redirect-btn" data-redirect-to="{{ route('admin.view.financial.statement',getCurrentCompanyId()) }}"> Back To Financial Statement </button></div>`);
                                               
                                                 }
-                                         //       if (reportType == 'modified') {
-                                               //     const table = globalTable;
-                                                    // table.column(1).visible(false);
-                                                //    document.querySelectorAll('.is-name-cell[contenteditable]').forEach(function(td, index) {
-                                                    //    td.setAttribute('contenteditable', false);
-                                                 //       td.setAttribute('title', '')
-                                                 //   })
-                                                 //   actualDates.forEach(function(actualDate) {
-                                                 //       document.querySelectorAll('.editable-date.date-' + actualDate).forEach(function(td, index) {
-                                                         //   td.setAttribute('contenteditable', false);
-                                                 //           td.setAttribute('title', '')
-                                                //        })
-                                                //    })
-                                     //           }
-
-                                     //           $('.has-collection-policy-class:checked').trigger('change')
-                                    //            $('.only-one-checked:checked').trigger('change')
-                                  //              $('.collection_rate_input').trigger('change')
-                              //                  $('input[name*="is_depreciation_or_amortization"]').trigger('change')
-
-
-
-
-
                                                 // handle data for intervals 
                                             }
                                             , initComplete: function(settings, json) {
-												// console.log('init completed')
+												console.log('init completed')
                                                 table = $('.main-table-class').DataTable();
                                                 globalTable = table;
 
@@ -2120,7 +2057,7 @@ $tableId = 'kt_table_1';
 
                          
                             $(document).on('click', '.close-inner-modal', function(e) {
-							// console.log('.close inner')
+							console.log('.close inner')
 								$(this).closest('.modal-for-quantity').removeClass('d-block').modal('hide');
 								$(this).closest('.modal-for-non-repeating').removeClass('d-block').modal('hide');
                            })
@@ -2191,7 +2128,7 @@ $tableId = 'kt_table_1';
 
 
                             $(document).on('click', '.save-sub-item-delete', function(e) {
-								// console.log('save edit');
+								console.log('save edit');
                                 e.preventDefault();
                                 let id = $(this).data('id');
                                 let subItemName = $(this).data('sub-item-name');
@@ -2251,7 +2188,7 @@ $tableId = 'kt_table_1';
 
 
                             $(document).on('keyup', '.how-many-class', function() {
-								// console.log('how many1')
+								console.log('how many1')
                                 let index = parseInt(this.getAttribute('data-id'));
                                 let currentHowMany = parseInt(document.querySelector('.how-many-class[data-id="' + index + '"]').value);
                                 let currentHowManyInstances = $('.how-many-item[data-id="' + index + '"]').length;
@@ -2345,7 +2282,7 @@ $tableId = 'kt_table_1';
                 });
 
                 function getSearchInputSelector(tableId) {
-					// console.log('get fixed22');
+					console.log('get fixed22');
                     return tableId + '_filter' + ' label input';
                 }
 
@@ -2369,7 +2306,7 @@ $tableId = 'kt_table_1';
               
 
                 function getFinancialIncomeOrExpenseCheckBoxes(editMode, pivot, id) {
-					// console.log('get checkbox')
+					console.log('get checkbox')
                     if (id != domElements.financialIncomeOrExpensesId) {
                         return '';
                     }
@@ -2391,7 +2328,7 @@ $tableId = 'kt_table_1';
                 }
 
                 function getVatRate(editModel, pivot, data) {
-					// console.log('log vat rate')
+					console.log('log vat rate')
                     if (vars.subItemType != 'forecast') {
                         return '';
                     }
@@ -2424,7 +2361,7 @@ $tableId = 'kt_table_1';
                 }
 
                 function getSalesRevenueModal(editModal, pivot = null, id) {
-					// console.log('log revenue model')
+					console.log('log revenue model')
                     let salesRevenueQuantityDateValues = editModal && pivot && pivot.quantityPivot ? pivot.quantityPivot : {}
                   
                     let pivotFormatted = editModal && pivot && pivot.payload ? JSON.parse(pivot.payload) : {}
@@ -2586,7 +2523,7 @@ $tableId = 'kt_table_1';
 				}
 
                 function getNonRepeatingModal(editModal, pivot = null, id) {
-					// console.log('getNonRepeatingModal')
+					console.log('getNonRepeatingModal')
                     //return '';
               
                     let pivotFormatted = editModal && pivot && pivot.payload ? JSON.parse(pivot.payload) : {}
@@ -2598,7 +2535,7 @@ $tableId = 'kt_table_1';
                     let thdClass = 'view-table-th header-th  text-nowrap sorting_disabled  reset-table-width cursor-pointer sub-text-bg text-capitalize';
                     let tdForBodyValue = '<td>{{ __("Value") }}</td>';
 					let reportType = vars.subItemType
-					// console.warn(reportType);
+					console.warn(reportType);
 					var totalForNonRepeating = 0 ;
                     for (date of dates) {
 
@@ -2681,7 +2618,7 @@ $tableId = 'kt_table_1';
 
 
                 function getCollectionPolicyHtml(editMode, pivot = null, id) {
-					// console.log('getCollectionPolicyHtml')
+					console.log('getCollectionPolicyHtml')
                     let valueOfCustom = [];
 					var hasCollectionPolicy = pivot && pivot && pivot.has_collection_policy ;
                     let isCustom =  hasCollectionPolicy && pivot.collection_policy_type == 'customize'

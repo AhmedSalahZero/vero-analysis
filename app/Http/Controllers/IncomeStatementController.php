@@ -242,24 +242,7 @@ class IncomeStatementController extends Controller
 				// $incomeStatement->refreshCalculationFor($subItemType);
 			// }
 		}
-		// looooooooool
-
-		// $cashFlowStatement = $incomeStatement->financialStatement->cashFlowStatement;
-		// $dates = array_keys($incomeStatement->getIntervalFormatted());
-		// $request['dates'] = $dates;
-		// $request['cash_flow_statement_id'] = $cashFlowStatement->id;
-		// $request['income_statement_id'] = $incomeStatement->id;
-		// $cashFlowStatementDataFormatted = $cashFlowStatement->formatDataFromIncomeStatement($request);
-
-		// $request['financial_statement_able_id'] = $cashFlowStatement->id;
-		// $request['financial_statement_able_item_id'] = $request->financial_statement_able_item_id ? $cashFlowStatement->getCashFlowStatementItemIdFromIncomeStatementItemId($request->financial_statement_able_item_id, $isFinancialIncome) : 0;
-		// $request['value'] = $cashFlowStatementDataFormatted['value'];
-		// $request['valueMainRowThatHasSubItems'] = $cashFlowStatementDataFormatted['valueMainRowThatHasSubItems'];
-		// $request['totals'] = $cashFlowStatementDataFormatted['totals'];
-		// $request['financialStatementAbleItemName'] = $cashFlowStatementDataFormatted['financialStatementAbleItemName'];
-		// $request['valueMainRowWithoutSubItems'] = [];
-		// (new CashFlowStatementController(new CashFlowStatementRepository))->deleteReport($company, $request);
-
+	
 
 		return response()->json([
 			'status' => true,
