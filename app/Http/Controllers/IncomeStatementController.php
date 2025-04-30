@@ -48,6 +48,7 @@ class IncomeStatementController extends Controller
 		if($incomeStatement->{'is_caching_'.$reportType}){
 			return redirect()->route('admin.view.financial.statement',['company'=>$company->id])->with('fail',__('Please Wait A Second'));
 		}
+		
 		// $cashFlowStatement = $incomeStatement->financialStatement->cashFlowStatement;
 		$additionalVarOptions = [
 			'financial_statement_able_id' => $incomeStatement->id,

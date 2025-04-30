@@ -1054,7 +1054,7 @@ $tableId = 'kt_table_1';
                                     })
 								
                                     const isActualTable = +$('#is-actual-table').val();
-									console.log(columns);
+								//	console.log(columns);
                                     // begin first table
                                     table.DataTable({
 
