@@ -548,14 +548,14 @@ trait FinancialStatementAbleMutator
 			$subItems = $this->withSubItemsFor($incomeStatementItemId, $subItemType)->get()->keyBy(function ($subItem) {
 				return $subItem->pivot->sub_item_name;
 			})->map(function ($subItem) {
-				/**
-				 * ! remove this
-				 */
-				$payload = $subItem->pivot ? (array)json_decode($subItem->pivot->payload):[];
-					DB::table('financial_statement_able_main_item_sub_items')->where('id',$subItem->pivot->id)->update(['total'=>array_sum($payload)]);
-					/**
-				 * ! end remove this
-				 */
+				// /**
+				//  * ! remove this
+				//  */
+				// $payload = $subItem->pivot ? (array)json_decode($subItem->pivot->payload):[];
+				// 	DB::table('financial_statement_able_main_item_sub_items')->where('id',$subItem->pivot->id)->update(['total'=>array_sum($payload)]);
+				// 	/**
+				//  * ! end remove this
+				//  */
 				$pivot = $subItem->pivot;
 				// cache::fore
 				return [

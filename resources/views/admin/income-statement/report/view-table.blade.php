@@ -1943,6 +1943,7 @@ $tableId = 'kt_table_1';
                                             }
                                             , drawCallback: function(settings) {
 												// console.log('draw callback')
+										
                                                 const reportType = vars.subItemType;
                                                 let corporateTaxesId = document.getElementById('corporate-taxes-id').value;
                                                 let options = '';

@@ -17,7 +17,8 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           port: 22
           script: |
-            cd /home/veroanalysis/public_html/system.veroanalysis.com
+           su - veroanalysis
+            cd public_html/system.veroanalysis.com
             git status
             git stash
             git pull origin salah
@@ -33,4 +34,3 @@ jobs:
             supervisord -c /etc/supervisord.conf
             supervisorctl restart vero-worker:*
             /usr/local/bin/ea-php74 artisan run:sql
-            /usr/local/bin/ea-php74 artisan run:test

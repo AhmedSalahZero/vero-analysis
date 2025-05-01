@@ -1470,107 +1470,7 @@ $tableId = 'kt_table_1';
 															<input ${checkedDepreciation} class="" type="checkbox" value="1" name="is_depreciation_or_amortization"  style="width:16px;height:16px;margin-left:-0.05rem;left:50%;">`
                                                     }
 
-                                                    $(row).append(
-                                                        `
-										<div class="modal fade edit-sub-modal-class" id="edit-sub-modal${data.pivot.financial_statement_able_item_id + convertStringToClass(data.pivot.sub_item_name) }" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" >
-											<div class="modal-dialog" role="document">
-												<div class="modal-content custom-modal-w-h">
-												<div class="modal-header">
-													<h5 class="modal-title" id="exampleModalLongTitle"><?php echo e(__('Edit Sub Item For')); ?> ${data.pivot.sub_item_name} </h5>
-													<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-													<span >&times;</span>
-													</button>
-												</div>
-												<div class="modal-body">
-													<form method="post" data-financial-statement-able-item-id="${data.pivot.financial_statement_able_item_id}" id="edit-sub-item-form${data.pivot.financial_statement_able_item_id + convertStringToClass(data.pivot.sub_item_name)  }" class="edit-submit-sub-item" action="<?php echo e(route('admin.update.income.statement.report',['company'=>getCurrentCompanyId()])); ?>">
-														<input type="hidden" name="_token" value="<?php echo e(csrf_token()); ?>">
-														<input type="hidden" name="in_add_or_edit_modal" value="1">
-														
-														<input type="hidden" name="sub_item_type" value="<?php echo e(getReportNameFromRouteName(Request()->route()->getName())); ?>">
-														<input type="hidden" name="financial_statement_able_item_id"  value="${data.pivot.financial_statement_able_item_id}">
-														<input  type="hidden" name="financial_statement_able_id"  value="<?php echo e($incomeStatement->id); ?>">
-														<input  type="hidden" name="income_statement_id"  value="<?php echo e($incomeStatement->id); ?>">
-														<input  type="hidden" name="in_edit_mode"  value="1">
-														<input  type="hidden" name="was_financial_income"  value="${data.pivot && data.pivot.is_financial_income!=null ? data.pivot.is_financial_income :''}">
-														<input  type="hidden" name="was_financial_expense"  value="${data.pivot && data.pivot.is_financial_expense!=null ? data.pivot.is_financial_expense :''}">
-														<input  type="hidden" name="sub_item_name"  value="${data.pivot.sub_item_name}">
-														<div class="d-flex align-items-center">
-														
-													<div style="width:75%">
-														<label><?php echo e(__('Name')); ?></label>
-														<input ${data.pivot.financial_statement_able_item_id == domElements.corporateTaxesId ? 'readonly':'' } name="new_sub_item_name"  class="form-control mb-2" type="text" value="${data.pivot.sub_item_name}">
-														
-														</div>
-														<div style="margin-left: 15px;
-															display: flex;
-															flex-direction: column;
-															align-items: center;">
-															
-														${Depreciation}
-														</div>
-														${data.pivot.financial_statement_able_item_id == domElements.salesRevenueId ? getSalesRevenueModal(true ,data.pivot,data.pivot.financial_statement_able_item_id) : ''}
-														</div>
-														
-														${has_percentage_or_fixed_sub_items}
-														${subOfSelect}
-														${getNonRepeatingModal(true ,data.pivot,data.pivot.financial_statement_able_item_id)}
-														${getVatRate(true ,data.pivot,data )}
-														
-														${getFinancialIncomeOrExpenseCheckBoxes(true ,data.pivot,data.pivot.financial_statement_able_item_id )}
-														${getCollectionPolicyHtml(true,data.pivot,data.pivot.financial_statement_able_item_id)}
-														</div>
-
-														<div class="modal-footer" style="border-top:0 !important">
-													<button type="button" class="btn btn-secondary" data-dismiss="modal"><?php echo e(__('Close')); ?></button>
-													<button type="button" class="btn btn-primary save-sub-item-edit" data-id="${data.pivot.financial_statement_able_item_id}" data-sub-item-name="${data.pivot.sub_item_name }"><?php echo e(__('Edit')); ?></button>
-												</div>
-													</form>
-												
-												</div>
-											</div>
-												</div>
-												`
-                                                    )
-
-
-                                                    $(row).append(
-                                                        `
-                            
-                            
-											<div class="modal fade delete-item-modal" data-item-id="${data.pivot.financial_statement_able_item_id}" data-sub-name="${data.pivot.sub_item_name}" id="delete-sub-modal${data.pivot.financial_statement_able_item_id + convertStringToClass(data.pivot.sub_item_name)}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" >
-													<div class="modal-dialog" role="document">
-														<div class="modal-content ">
-														<div class="modal-header">
-															<h5 class="modal-title" id="exampleModalLongTitle"><?php echo e(__('Delete Sub Item ')); ?> ${data.pivot.sub_item_name} </h5>
-															<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-															<span >&times;</span>
-															</button>
-														</div>
-														<div class="modal-body">
-															<form id="delete-sub-item-form${data.pivot.financial_statement_able_item_id+convertStringToClass(data.pivot.sub_item_name) }" class="delete-submit-sub-item" action="<?php echo e(route('admin.destroy.income.statement.report',['company'=>getCurrentCompanyId()])); ?>">
-																<input type="hidden" value="1" name="in_delete_modal" >
-																<input type="hidden" name="sub_item_type" value="<?php echo e(getReportNameFromRouteName(Request()->route()->getName())); ?>">
-																<input type="hidden" name="income_statement_id" value="<?php echo e($incomeStatement->id); ?>">
-																<input type="hidden" name="is_financial_income" value="${data.pivot.is_financial_income }">
-																<input type="hidden" name="is_financial_expense" value="${data.pivot.is_financial_expense}">
-																<input type="hidden" name="financial_statement_able_item_id"  value="${data.pivot.financial_statement_able_item_id}">
-																<input  type="hidden" name="financial_statement_able_id"  value="<?php echo e($incomeStatement->id); ?>">
-																<input  type="hidden" name="sub_item_name"  value="${data.pivot.sub_item_name}">
-																<p><?php echo e(__('Are You Sure To Delete ')); ?> ${data.pivot.sub_item_name}  ? </p>
-															</form>
-														</div>
-														<div class="modal-footer" style="border-top:0 !important">
-															<button type="button" class="btn btn-secondary" data-dismiss="modal"><?php echo e(__('Close')); ?></button>
-															<button type="button" class="btn btn-primary save-sub-item-delete" data-id="${data.pivot.financial_statement_able_item_id}" data-sub-item-name="${data.pivot.sub_item_name }" ><?php echo e(__('Delete')); ?></button>
-														</div>
-														</div>
-													</div>
-														</div>
-														
-														<input type="hidden" class="input-hidden-for-total" name="subTotals[${data.pivot.financial_statement_able_id}][${data.pivot.financial_statement_able_item_id}][${data.pivot.sub_item_name}]"   value="0" >
-														
-														`
-                                                    )
+                                                  
 
                                                     $(row).addClass('edit-info-row').addClass('add-sub maintable-1-row-class' + (incomeStatementItemId))
                                                     $(row).addClass('d-none is-sub-row ');
@@ -1954,6 +1854,7 @@ $tableId = 'kt_table_1';
                                             }
                                             , drawCallback: function(settings) {
 												// console.log('draw callback')
+										
                                                 const reportType = vars.subItemType;
                                                 let corporateTaxesId = document.getElementById('corporate-taxes-id').value;
                                                 let options = '';
