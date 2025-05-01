@@ -335,7 +335,7 @@ class OpeningBalancesController
 				}
             }
 
-            $dataToUpdate['partner_id'] = is_numeric($dataToUpdate['customer_id']) ? Partner::find($dataToUpdate['customer_id'])->getName() : Partner::where('is_customer',1)->where('name',$dataToUpdate['customer_id'])->first()->id ;
+            $dataToUpdate['partner_id'] = is_numeric($dataToUpdate['customer_id']) ? Partner::find($dataToUpdate['customer_id'])->id : Partner::where('is_customer',1)->where('name',$dataToUpdate['customer_id'])->first()->id ;
 			$dataToUpdate['receiving_date'] = $openingBalanceDate;
 			$dataToUpdate['receiving_currency'] = $dataToUpdate['currency'];
 			$dataToUpdate['company_id']=$company->id;
