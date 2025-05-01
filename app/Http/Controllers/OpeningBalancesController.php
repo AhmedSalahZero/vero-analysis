@@ -266,7 +266,7 @@ class OpeningBalancesController
             ];
             unset($dataToUpdate['due_date'], $dataToUpdate['drawee_bank_id'], $dataToUpdate['cheque_number']);
 			$dataToUpdate['received_amount'] = isset($dataToUpdate['received_amount']) ? number_unformat($dataToUpdate['received_amount']) : 0;
-            $dataToUpdate['partner_id'] = is_numeric($dataToUpdate['customer_id']) ? Partner::find()->getName() : Partner::where('is_customer',1)->where('name',$dataToUpdate['customer_id'])->first()->id ;
+            $dataToUpdate['partner_id'] = is_numeric($dataToUpdate['customer_id']) ? Partner::find($dataToUpdate['customer_id'])->getName() : Partner::where('is_customer',1)->where('name',$dataToUpdate['customer_id'])->first()->id ;
             $dataToUpdate['receiving_date'] =  $openingBalanceDate ;
             $dataToUpdate['company_id'] =  $company->id ;
 			$dataToUpdate['receiving_currency'] = $dataToUpdate['currency'] ;
