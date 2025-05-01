@@ -18,6 +18,7 @@ jobs:
           port: 22
           script: |
            su - veroanalysis
+            ll
             cd public_html/system.veroanalysis.com
             git status
             git stash
