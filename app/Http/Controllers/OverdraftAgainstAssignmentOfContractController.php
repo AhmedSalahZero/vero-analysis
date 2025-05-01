@@ -184,6 +184,7 @@ class OverdraftAgainstAssignmentOfContractController
 		]);
 		$limitRowExist = $odAgainstAssignmentOfContract->overdraftAgainstAssignmentOfContractBankStatements()->where('type','active-limit',)->exists();
 		if(!$limitRowExist){
+		
 			$limitRowExist = $odAgainstAssignmentOfContract->overdraftAgainstAssignmentOfContractBankStatements()->create([
 				'type'=>'active-limit',
 				'debit'=>0,

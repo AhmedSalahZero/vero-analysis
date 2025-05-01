@@ -22,7 +22,7 @@
 
 					set new.beginning_balance = if(_count_all_rows,_last_end_balance,ifnull(new.beginning_balance,0)); 
 					set new.end_balance = new.beginning_balance + new.debit - new.credit ; 
-					select `accumulated_limit`   into _accumulated_limit from overdraft_against_assignment_of_contract_limits where is_active = 1 and company_id = new.company_id and overdraft_against_assignment_of_contract_id = new.overdraft_against_assignment_of_contract_id and date <=  date  order by date desc , id desc  limit 1 ;
+					select `accumulated_limit`   into _accumulated_limit from overdraft_against_assignment_of_contract_limits where is_active = 1 and company_id = new.company_id and overdraft_against_assignment_of_contract_id = new.overdraft_against_assignment_of_contract_id and date <=  new.date  order by date desc , id desc  limit 1 ;
 					select `limit` into _limit from overdraft_against_assignment_of_contracts where id = new.overdraft_against_assignment_of_contract_id limit 1 ;
 					set new.end_balance = ifnull(new.beginning_balance + new.debit - new.credit,0) ; 
 					set _accumulated_limit = least(_limit,_accumulated_limit);
