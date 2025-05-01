@@ -203,7 +203,7 @@ class FinancialInstitution extends Model
 			if($currentBalanceDate){
 				$account = $this->accounts()->create([
 					'account_number'=>$accountArr['account_number'],
-					'odoo_code'=>$accountArr['odoo_code'],
+					'odoo_code'=>$accountArr['odoo_code']??null,
 					'balance_amount'=>$balanceAmount ,
 					'exchange_rate'=>$accountArr['exchange_rate'],
 					'currency'=> $accountArr['currency'],
