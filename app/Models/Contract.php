@@ -157,7 +157,7 @@ class Contract extends Model
                 if ($model->isRunningAndAgainst() 
 				// && $currentAccountType->isOverdraftAgainstAssignmentOfContractAccount()
 			 	&& !$model->overdraftAgainstAssignmentOfContractLimits->count()) {
-					logger('from tty');
+				//	logger('from tty');
 					
                     $model->handleOverdraftAgainstAssignmentOfContractLimit();
                     return ;
