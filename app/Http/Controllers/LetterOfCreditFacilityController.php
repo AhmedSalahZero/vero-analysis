@@ -280,7 +280,7 @@ class LetterOfCreditFacilityController
 			->where('letter_of_credit_cash_cover_statements.currency',$currencyName)
 			->where('letter_of_credit_cash_cover_statements.financial_institution_id',$financialInstitutionId)
 			->join('letter_of_credit_cash_cover_statements','letter_of_credit_issuances.id','=','letter_of_credit_cash_cover_statements.letter_of_credit_issuance_id')
-			->orderByRaw('full_date desc')
+			->orderByRaw('date desc , letter_of_credit_cash_cover_statements.id desc')
 			->sum('letter_of_credit_cash_cover_statements.debit');
 		}
 		
@@ -299,7 +299,7 @@ class LetterOfCreditFacilityController
 			})
 			->where('lc_type',$lcTypeId)
 			->where('source',$currentSource)
-			->orderByRaw('full_date desc')
+			->orderByRaw('date desc , letter_of_credit_statements.id desc')
 			->first();
 			$letterOfCreditStatementEndBalance = $letterOfCreditStatement ? $letterOfCreditStatement->end_balance : 0 ;
 			if($lcTypeId == $selectedLcType ){

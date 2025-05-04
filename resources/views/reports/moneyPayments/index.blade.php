@@ -185,7 +185,7 @@ td{
 									{{ $dueStatus['status'] }}
 									@endif
 									</td>
-                                    <td class="kt-datatable__cell--left kt-datatable__cell text-right" data-field="Actions" data-autohide-disabled="false">
+                                    <td class="kt-datatable__cell--left kt-datatable__cell" data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
 										@include('reports._user_comment_modal',['model'=>$moneyPayment])
 											@if(auth()->user()->can('update supplier payment'))
@@ -263,7 +263,7 @@ td{
                         <table class="table table-striped- table-bordered table-hover table-checkable text-center kt_table_1">
                             <thead>
                                 <tr class="table-standard-color">
-                                    <th class="align-middle">{{ __('Select') }}</th>
+                                    {{-- <th class="align-middle">{{ __('Select') }}</th> --}}
 								
                                     <th class="bank-max-width">{{ __('Status') }}</th>
                                     <th class="bank-max-width">{{ __('Supplier Name') }}</th>
@@ -281,9 +281,9 @@ td{
                                 @foreach($outgoingTransfer as $money)
 
                                 <tr>
-								<td>
+								{{-- <td>
                                         <input style="max-height:25px;" id="cash-send-to-collection{{ $money->id }}" type="checkbox" name="second_to_collection[]" value="{{ $money->id }}" data-money-type="{{ MoneyPayment::OUTGOING_TRANSFER }}" class="form-control checkbox js-send-to-collection">
-                                    </td>
+                                    </td> --}}
 								   <td class="bank-max-width">{{ $money->getMoneyTypeFormatted() }}</td>
                                     <td class="bank-max-width">{{ $money->getSupplierName() }}</td>
                                     <td class="text-nowrap">{{ $money->getDeliveryDateFormatted() }}</td>
@@ -292,7 +292,7 @@ td{
                                     <td data-currency="{{ $money->getCurrency() }}"> {{ $money->getCurrencyToPaymentCurrencyFormatted() }}</td>
                                     <td class="bank-max-width">{{ $money->getOutgoingTransferAccountTypeName() }}</td>
                                     <td>{{ $money->getOutgoingTransferAccountNumber() }}</td>
-                                    <td class="kt-datatable__cell--left kt-datatable__cell text-right" data-field="Actions" data-autohide-disabled="false">
+                                    <td class="kt-datatable__cell--left kt-datatable__cell" data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
 										@include('reports._user_comment_modal',['model'=>$money])
 										@if(!$money->isOpenBalance())
@@ -381,7 +381,7 @@ td{
                                     <td>{{ $moneyPayment->getPaidAmountFormatted() }}</td>
                                     <td data-currency="{{ $moneyPayment->getCurrency() }}">{{ $moneyPayment->getCurrencyToPaymentCurrencyFormatted() }}</td>
                                     <td>{{ $moneyPayment->getCashPaymentReceiptNumber() }}</td>
-                                    <td class="kt-datatable__cell--left kt-datatable__cell text-right" data-field="Actions" data-autohide-disabled="false">
+                                    <td class="kt-datatable__cell--left kt-datatable__cell" data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
 										@include('reports._user_comment_modal',['model'=>$moneyPayment])
 										@if(!$moneyPayment->isOpenBalance())

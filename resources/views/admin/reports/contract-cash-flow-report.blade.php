@@ -423,7 +423,7 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
                                             $rowIndex = 0 ;
                                             @endphp
 
-                                            @foreach(['customers','suppliers','cash_expenses'] as $mainReportKey)
+                                            @foreach(['customers','suppliers','cash_expenses','lg'] as $mainReportKey)
 
                                             @foreach( $finalResult[$currentCurrencyName][$mainReportKey] ?? [] as $parentKeyName => $subRows)
                                             @php

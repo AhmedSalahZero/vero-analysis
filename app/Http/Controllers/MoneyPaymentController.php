@@ -413,10 +413,10 @@ class MoneyPaymentController
 		/**
 		 * @var MoneyPayment $moneyPayment
 		 */
-		$mainFunctionCurrency = $company->getMainFunctionalCurrency();
+		// $mainFunctionCurrency = $company->getMainFunctionalCurrency();
 		$paymentDate = $data['delivery_date'];
 		$paymentDate = Carbon::make($paymentDate)->format('Y-m-d');
-		$foreignExchangeRate = ForeignExchangeRate::getExchangeRateForCurrencyAndClosestDate($currencyName,$mainFunctionCurrency,$paymentDate,$company->id);
+		// $foreignExchangeRate = ForeignExchangeRate::getExchangeRateForCurrencyAndClosestDate($currencyName,$mainFunctionCurrency,$paymentDate,$company->id);
 		
 		 $moneyPayment = MoneyPayment::create($data);
 
@@ -429,7 +429,7 @@ class MoneyPaymentController
 		$accountNumber = $request->input('account_number.'.$moneyType) ;
 		$deliveryBranchId = $relationData['delivery_branch_id'] ?? null ;
 		$moneyPayment->handleCreditStatement($company->id , $financialInstitutionId,$accountType,$accountNumber,$moneyType,$statementDate,$amountInPaymentCurrency,$deliveryBranchId,$paymentCurrency);
-		$isSupplier = $partnerType == 'is_supplier';
+	//	$isSupplier = $partnerType == 'is_supplier';
 		if($partnerType && $partnerType != 'is_supplier'){
 			$moneyPayment->handlePartnerDebitStatement($partnerType,$partnerId, $moneyPayment->id,$company->id,$statementDate,$invoiceCurrencyAmount,$paymentCurrency,$bankNameOrBranchName , $accountType , $accountNumber);
 		}
@@ -594,7 +594,9 @@ class MoneyPaymentController
 			}
 			// $chequeDueDate = $moneyPayment->payableCheque->due_date;
 			$moneyPayment->payableCheque->update($data);
-			if($currentStatement = $moneyPayment->getCurrentStatement()){
+			$currentStatement = $moneyPayment->getCurrentStatement();
+			
+			if($currentStatement){
 				$currentStatement->handleFullDateAfterDateEdit(Carbon::make($data['actual_payment_date'])->format('Y-m-d'),$currentStatement->debit,$currentStatement->credit);
 			}
 
@@ -609,32 +611,31 @@ class MoneyPaymentController
 		return redirect()->route('view.money.payment',['company'=>$company->id,'active'=>MoneyPayment::PAYABLE_CHEQUE]);
 
 	}
-	public function markOutgoingTransfersAsPaid(Company $company,Request $request)
-	{
-		$moneyPaymentIds = $request->get('cheques') ;
-		$moneyPaymentIds = is_array($moneyPaymentIds) ? $moneyPaymentIds :  explode(',',$moneyPaymentIds);
-		$data = $request->only(['actual_payment_date']);
-		$data['status'] = OutgoingTransfer::PAID;
-		foreach($moneyPaymentIds as $moneyPaymentId){
-			$moneyPayment = MoneyPayment::find($moneyPaymentId) ;
-			// $chequeDueDate = $moneyPayment->outgoingTransfer->due_date;
-			$moneyPayment->outgoingTransfer->update($data);
-			if($currentStatement = $moneyPayment->getCurrentStatement()){
-				$currentStatement->handleFullDateAfterDateEdit(Carbon::make($data['actual_payment_date'])->format('Y-m-d'),$currentStatement->debit,$currentStatement->credit);
+	// public function markOutgoingTransfersAsPaid(Company $company,Request $request)
+	// {
+	// 	$moneyPaymentIds = $request->get('cheques') ;
+	// 	$moneyPaymentIds = is_array($moneyPaymentIds) ? $moneyPaymentIds :  explode(',',$moneyPaymentIds);
+	// 	$data = $request->only(['actual_payment_date']);
+	// 	$data['status'] = OutgoingTransfer::PAID;
+	// 	foreach($moneyPaymentIds as $moneyPaymentId){
+	// 		$moneyPayment = MoneyPayment::find($moneyPaymentId) ;
+	// 		$moneyPayment->outgoingTransfer->update($data);
+	// 		if($currentStatement = $moneyPayment->getCurrentStatement()){
+	// 			$currentStatement->handleFullDateAfterDateEdit(Carbon::make($data['actual_payment_date'])->format('Y-m-d'),$currentStatement->debit,$currentStatement->credit);
 
-			}
+	// 		}
 
-		}
-		if($request->ajax()){
-			return response()->json([
-				'status'=>true ,
-				'msg'=>__('Good'),
-				'pageLink'=>route('view.money.payment',['company'=>$company->id,'active'=>MoneyPayment::OUTGOING_TRANSFER])
-			]);
-		}
-		return redirect()->route('view.money.payment',['company'=>$company->id,'active'=>MoneyPayment::OUTGOING_TRANSFER]);
+	// 	}
+	// 	if($request->ajax()){
+	// 		return response()->json([
+	// 			'status'=>true ,
+	// 			'msg'=>__('Good'),
+	// 			'pageLink'=>route('view.money.payment',['company'=>$company->id,'active'=>MoneyPayment::OUTGOING_TRANSFER])
+	// 		]);
+	// 	}
+	// 	return redirect()->route('view.money.payment',['company'=>$company->id,'active'=>MoneyPayment::OUTGOING_TRANSFER]);
 
-	}
+	// }
 
 	public function getAccountNumbersForAccountType(Company $company ,  Request $request ,  string $accountType,?string $selectedCurrency=null , ?int $financialInstitutionId = 0){
 		$accountType = AccountType::find($accountType);

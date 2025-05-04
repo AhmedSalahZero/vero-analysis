@@ -63,7 +63,7 @@
                             </div>
                         </div>
 						
-						   <div class="col-md-2">
+						   <div class="col-md-3">
                                         <label>{{__('Account Type')}}
                                             @include('star')
                                         </label>
@@ -80,8 +80,8 @@
                                     </div>
 									
 
-                        <div class="col-md-2">
-                            <label>{{__('Select Currency')}}</label>
+                        <div class="col-md-1">
+                            <label>{{__('Currency')}}</label>
 
                             <div class="kt-input-icon">
                                 <div class="input-group date">

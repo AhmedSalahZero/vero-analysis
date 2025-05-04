@@ -619,6 +619,7 @@ class MoneyReceivedController
 	}
 	public function sendToCollection(Company $company,SendToUnderCollectionChequeRequest $request)
 	{
+
 		$moneyReceivedIds = $request->get('cheques') ;
 		$moneyReceivedIds = is_array($moneyReceivedIds) ? $moneyReceivedIds :  explode(',',$moneyReceivedIds);
 		$data = $request->only(['deposit_date','drawl_bank_id','account_type','account_number','account_balance','clearance_days']);
@@ -780,7 +781,7 @@ class MoneyReceivedController
 	{
 		$additionalAmountInEditMode=  0 ;
 		// $additionalAmountInEditMode = number_unformat($request->get('additionalBalanceInEditMode',0));
-
+		$model = null ;
 	
 		$netBalanceDate = '' ;
 		$accountTypeId = $request->get('accountType',$accountTypeId );
@@ -820,6 +821,7 @@ class MoneyReceivedController
 			$model = ('App\Models\\'.$modelType)::find($modelId);
 			$oldAccountNumber = $model ? $model->getAccountNumber() : null;
 			$oldAccountTypeId = $model ? $model->getAccountTypeId() : null;
+			$statementDate = $model && $model->payableCheque ? $model->payableCheque->due_date : $statementDate ; 
 			// $oldFinancialInstitution = $model ? $model->getAccountTypeId() : null;
 			if($oldAccountNumber && $oldAccountNumber == $accountNumber
 			&& $oldAccountTypeId && $oldAccountTypeId == $accountTypeId 
@@ -831,9 +833,9 @@ class MoneyReceivedController
 		
 		$statementTableName = (get_class($accountNumberModel)::getStatementTableName()) ;
 		$foreignKeyName = get_class($accountNumberModel)::getForeignKeyInStatementTable();
-	
-		$balanceRow = DB::table($statementTableName)->where($foreignKeyName,$accountNumberModel->id)->where('date','<=' , $statementDate)->orderByRaw('full_date desc')->first();
-		$NetBalanceRow = DB::table($statementTableName)->where($foreignKeyName,$accountNumberModel->id)->orderByRaw('full_date desc')->first();
+
+		$balanceRow = DB::table($statementTableName)->where($foreignKeyName,$accountNumberModel->id)->where('date','<=' , $statementDate)->orderByRaw('date desc , id desc')->first();
+		$NetBalanceRow = DB::table($statementTableName)->where($foreignKeyName,$accountNumberModel->id)->orderByRaw('date desc , id desc')->first();
 		$column = $accountType->isOverdraftAccount() ? 'room' : 'end_balance';
 		$balance = 0;
 		$balanceDate = '';
@@ -848,6 +850,7 @@ class MoneyReceivedController
 			$netBalance =$NetBalanceRow->{$column} ; 
 			$netBalanceDate =Carbon::make($NetBalanceRow->date)->format('d-m-Y') ; 
 		}
+		// dd($statementDate,$NetBalanceRow);
 		return response()->json([
 			'status'=>true ,
 			'balance'=>$balance+$additionalAmountInEditMode,

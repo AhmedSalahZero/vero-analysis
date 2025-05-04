@@ -638,7 +638,7 @@ $selectedBanks = [];
   										<td>
                                         <div class="kt-input-icon ">
                                             <div class="input-group">
-                                                <input  type="text" name="amount" class="form-control " value="{{ isset($currentContract) ? $currentContract->pivot->amount : 0 }}">
+                                                <input  type="text" name="amount" class="form-control " value="{{ isset($currentContract) ? number_format($currentContract->pivot->amount,2) : 0 }}">
                                             </div>
                                         </div>
                                     </td>

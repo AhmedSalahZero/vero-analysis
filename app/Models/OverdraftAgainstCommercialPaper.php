@@ -83,7 +83,7 @@ public static function getCashDashboardDataForFinancialInstitution(array &$total
 					->where('overdraft_against_commercial_papers.currency', '=', $currencyName)
 					->where('overdraft_against_commercial_paper_id',$overdraftAgainstCommercialPaperId)
 					->where('financial_institution_id',$financialInstitutionBankId)
-					->orderByRaw('full_date desc , overdraft_against_commercial_paper_bank_statements.id desc')
+					->orderByRaw('date desc , overdraft_against_commercial_paper_bank_statements.id desc')
 					->first();
 					
 					$overdraftAgainstCommercialPaperRoom = $overdraftAgainstCommercialPaperStatement ? $overdraftAgainstCommercialPaperStatement->room : 0 ;

@@ -30,7 +30,7 @@
                                  <input disabled value="{{  $model->getLgCode()  }}" type="text" class="form-control only-greater-than-or-equal-zero-allowed">
                              </div>
                          </div>
-						 
+						 {{-- {{ dd($model) }} --}}
                          <div class="col-md-2 mb-4">
                              <label>{{__('LG Current Amount')}} </label>
                              <div class="kt-input-icon">
@@ -42,7 +42,7 @@
                              <label>{{__('Cancellation Date')}}</label>
                              <div class="kt-input-icon">
                                  <div class="input-group date">
-                                     <input required type="text" name="cancellation_date" value="{{ formatDateForDatePicker(now()->format('Y-m-d')) }}" class="form-control" readonly placeholder="Select date" id="kt_datepicker_2" />
+                                     <input required type="text" name="cancellation_date" value="{{ formatDateForDatePicker($model->getRenewalDate()) }}" class="form-control" readonly placeholder="Select date" id="kt_datepicker_2" />
                                      <div class="input-group-append">
                                          <span class="input-group-text">
                                              <i class="la la-calendar-check-o"></i>

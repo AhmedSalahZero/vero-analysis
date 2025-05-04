@@ -8,6 +8,7 @@ use App\Http\Controllers\Analysis\SalesGathering\IncomeStatementBreakdownAgainst
 use App\Http\Controllers\Analysis\SalesGathering\IntervalsComparingForIncomeStatementReport;
 use App\Http\Controllers\Analysis\SalesGathering\IntervalsComparingReport;
 use App\Http\Controllers\Analysis\SalesGathering\SalesBreakdownAgainstAnalysisReport;
+use App\Jobs\CheckDueAndPastedInvoicesJob;
 use App\Models\Company;
 use App\Models\IncomeStatement;
 use App\Models\IncomeStatementItem;
@@ -52,7 +53,9 @@ class HomeController extends Controller
 	}
 	public function welcomePage(Request $request, Company $company)
 	{
-
+		if($company->hasCashVero()){
+			dispatch_now(new CheckDueAndPastedInvoicesJob($company->id));
+		}
 		return view('client_view.homePage', compact('company'));
 	}
 

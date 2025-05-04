@@ -44,6 +44,8 @@ class MoneyReceived extends Model
 		$settledInvoiceNumbers =  $settledInvoiceNumbers?: $invoiceNumbers;
 	
 		$customerName = is_null($customerName) ?$moneyReceived->getCustomerName() : $customerName;
+		logger('customer name = ' . $customerName);
+		
 		if($moneyReceived->isCheque()){
 			$chequeNumber = $moneyReceived->getChequeNumber()?:Request('cheque_number');
 			if($moneyReceived->isOpenBalance()){
@@ -765,6 +767,8 @@ class MoneyReceived extends Model
 		$this->cashInBank ? $this->cashInBank->delete() :null ;
 		$this->cashInSafe ? $this->cashInSafe->delete() :null ;
 		$this->cheque ? $this->cheque->delete() :null ;
+		$this->cleanOverdraftCreditBankStatement ? $this->cleanOverdraftCreditBankStatement->delete() :null ;
+		$this->fullySecuredOverdraftCreditBankStatement ? $this->fullySecuredOverdraftCreditBankStatement->delete() :null ;
 		$this->cleanOverdraftDebitBankStatement ? $this->cleanOverdraftDebitBankStatement->delete() :null ;
 		$this->fullySecuredOverdraftDebitBankStatement ? $this->fullySecuredOverdraftDebitBankStatement->delete() :null ;
 		$this->overdraftAgainstCommercialPaperDebitBankStatement ? $this->overdraftAgainstCommercialPaperDebitBankStatement->delete() :null ;
@@ -996,7 +1000,14 @@ class MoneyReceived extends Model
 		$financialInstitution = $this->getFinancialInstitution();
 		return $financialInstitution->getOdooIdForAccount($this->getAccountTypeId(),$this->getAccountNumber());
 	}
-		
-		
+	public function cleanOverdraftCreditBankStatement()
+	{
+		return $this->hasOne(CleanOverdraftBankStatement::class,'money_received_id','id');
+	}	
+	public function fullySecuredOverdraftCreditBankStatement()
+	{
+		return $this->hasOne(FullySecuredOverdraftBankStatement::class,'money_received_id','id');
+	}
+			
 	
 }

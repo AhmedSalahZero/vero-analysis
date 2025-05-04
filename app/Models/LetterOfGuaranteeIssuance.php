@@ -12,6 +12,7 @@ use App\Traits\Models\HasUserComment;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\DB;
 
 class LetterOfGuaranteeIssuance extends Model
 {
@@ -479,4 +480,72 @@ class LetterOfGuaranteeIssuance extends Model
 	{
 		return $this->issuance_fees ;
 	}	
+	public static function getCommissionAndFeesAtDates(array &$result , array &$totalCashOutFlowArray,string $dateFieldName,string $currency , int $companyId, string $startDate , string $endDate , string $currentWeekYear) 
+	{
+		$lgsTypes = LgTypes::getAll();
+		// $mainType = 'lg';
+		$mainType = 'cash_expenses';
+		// $mainType = 'lg';
+		$rows = DB::table('current_account_bank_statements')->where('current_account_bank_statements.company_id',$companyId)
+						->join('financial_institution_accounts','financial_institution_accounts.id','=','current_account_bank_statements.financial_institution_account_id')
+						->join('letter_of_guarantee_issuances','letter_of_guarantee_issuances.id','=','current_account_bank_statements.letter_of_guarantee_issuance_id')
+						->where('financial_institution_accounts.currency',$currency)
+						->whereBetween($dateFieldName,[$startDate,$endDate])
+						->where('letter_of_guarantee_issuance_id','>',0)
+						->where(function($q){
+							$q->where('is_renewal_fees',1)->orWhere('is_commission_fees',1)->orWhere('is_issuance_fees',1);
+						})
+						->groupBy('letter_of_guarantee_issuances.lg_type')
+						->selectRaw('letter_of_guarantee_issuances.lg_type as lg_type ,sum(credit) as paid_amount')->get();
+		
+
+		$subType = __('LGs Commission & Fees');
+		foreach($rows as $row){
+			$lgType = $lgsTypes[$row->lg_type];
+			$currentPaidAmount = $row->paid_amount ;
+			$result[$mainType][$subType][$lgType]['weeks'][$currentWeekYear] = isset($result[$mainType][$subType][$lgType]['weeks'][$currentWeekYear]) ? $result[$mainType][$subType][$lgType]['weeks'][$currentWeekYear] + $currentPaidAmount :  $currentPaidAmount;
+			$result[$mainType][$subType][$lgType]['total'] = isset($result[$mainType][$subType][$lgType]['total']) ? $result[$mainType][$subType][$lgType]['total']  + $currentPaidAmount : $currentPaidAmount;
+			$currentTotal = $currentPaidAmount;
+			$result[$mainType][$subType]['total'][$currentWeekYear] = isset($result[$mainType][$subType]['total'][$currentWeekYear]) ? $result[$mainType][$subType]['total'][$currentWeekYear] +  $currentTotal : $currentTotal ;
+			$result[$mainType][$subType]['total']['total_of_total'] = isset($result[$mainType][$subType]['total']['total_of_total']) ? $result[$mainType][$subType]['total']['total_of_total'] + $result[$mainType][$subType]['total'][$currentWeekYear] : $result[$mainType][$subType]['total'][$currentWeekYear];
+			$totalCashOutFlowArray[$currentWeekYear] = isset($totalCashOutFlowArray[$currentWeekYear]) ? $totalCashOutFlowArray[$currentWeekYear] +   $currentTotal : $currentTotal ;
+		}
+	
+	}
+	
+	public static function getCashCovers(array &$result , array &$totalCashInFlowArray,string $dateFieldName,string $currency , int $companyId, string $startDate , string $endDate , string $currentWeekYear) 
+	{
+		$lgsTypes = LgTypes::getAll();
+		// $mainType = 'lg';
+		$mainType = 'customers';
+		// $mainType = 'lg';
+		$rows = DB::table('letter_of_guarantee_cash_cover_statements')->where('letter_of_guarantee_cash_cover_statements.company_id',$companyId)
+						->join('letter_of_guarantee_issuances','letter_of_guarantee_issuances.id','=','letter_of_guarantee_cash_cover_statements.letter_of_guarantee_issuance_id')
+						->where('letter_of_guarantee_cash_cover_statements.currency',$currency)
+						->whereBetween($dateFieldName,[$startDate,$endDate])
+						->where('letter_of_guarantee_issuance_id','>',0)
+						// ->where(function($q){
+						// 	$q->where('is_renewal_fees',1)->orWhere('is_commission_fees',1)->orWhere('is_issuance_fees',1);
+						// })
+						->groupBy('letter_of_guarantee_issuances.lg_type')
+						->selectRaw('letter_of_guarantee_issuances.lg_type as lg_type ,sum(debit) as total_amount')->get();
+		
+
+		$subType = __('Cancelled LGs Cash Cover');
+		foreach($rows as $row){
+			$lgType = $lgsTypes[$row->lg_type];
+			$currentPaidAmount = $row->total_amount ;
+			$result[$mainType][$subType][$lgType]['weeks'][$currentWeekYear] = isset($result[$mainType][$subType][$lgType]['weeks'][$currentWeekYear]) ? $result[$mainType][$subType][$lgType]['weeks'][$currentWeekYear] + $currentPaidAmount :  $currentPaidAmount;
+			$result[$mainType][$subType][$lgType]['total'] = isset($result[$mainType][$subType][$lgType]['total']) ? $result[$mainType][$subType][$lgType]['total']  + $currentPaidAmount : $currentPaidAmount;
+			$currentTotal = $currentPaidAmount;
+			$result[$mainType][$subType]['total'][$currentWeekYear] = isset($result[$mainType][$subType]['total'][$currentWeekYear]) ? $result[$mainType][$subType]['total'][$currentWeekYear] +  $currentTotal : $currentTotal ;
+			$result[$mainType][$subType]['total']['total_of_total'] = isset($result[$mainType][$subType]['total']['total_of_total']) ? $result[$mainType][$subType]['total']['total_of_total'] + $result[$mainType][$subType]['total'][$currentWeekYear] : $result[$mainType][$subType]['total'][$currentWeekYear];
+			$totalCashInFlowArray[$currentWeekYear] = isset($totalCashInFlowArray[$currentWeekYear]) ? $totalCashInFlowArray[$currentWeekYear] +   $currentTotal : $currentTotal ;
+		}
+		// dd($rows);
+	
+	}
+	
+	
+	
 }

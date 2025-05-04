@@ -26,5 +26,6 @@ class LogSuccessfulLogin
     public function handle($event)
     {
         Log::storeNewLogRecord('successLogin');
+		// (request()->all());
     }
 }

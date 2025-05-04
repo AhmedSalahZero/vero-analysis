@@ -164,7 +164,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <td class="text-transform text-nowrap">{{ $model->getTransactionDateFormatted() }}</td>
                                     <td class="text-transform text-nowrap">{{ $model->getIssuanceDateFormatted() }}</td>
                                     <td class="text-transform text-nowrap">{{ $model->getRenewalDateFormatted() }}</td>
-                                    <td class="kt-datatable__cell--left kt-datatable__cell text-right" data-field="Actions" data-autohide-disabled="false">
+                                    <td class="kt-datatable__cell--left kt-datatable__cell" data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; " class="max-w-control">
 										  @include('reports._user_comment_modal',['model'=>$model])
                                           @include('reports.LetterOfGuaranteeIssuance.actions')
@@ -279,7 +279,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <td class="text-transform text-nowrap">{{ $model->getPurchaseOrderDateFormatted() }}</td>
                                     <td class="text-transform text-nowrap">{{ $model->getIssuanceDateFormatted() }}</td>
                                     <td class="text-transform text-nowrap">{{ $model->getRenewalDateFormatted() }}</td>
-                                    <td class="kt-datatable__cell--left kt-datatable__cell text-right " data-field="Actions" data-autohide-disabled="false">
+                                    <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative" class="max-w-control">
 											@include('reports._user_comment_modal',['model'=>$model])
                                           @include('reports.LetterOfGuaranteeIssuance.actions')
@@ -388,7 +388,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <td class="text-transform text-nowrap">{{ $model->getPurchaseOrderDateFormatted() }}</td>
                                     <td class="text-transform text-nowrap">{{ $model->getIssuanceDateFormatted() }}</td>
                                     <td class="text-transform text-nowrap">{{ $model->getRenewalDateFormatted() }}</td>
-                                    <td class="kt-datatable__cell--left kt-datatable__cell text-right " data-field="Actions" data-autohide-disabled="false">
+                                    <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; " class="max-w-control">
 											@include('reports._user_comment_modal',['model'=>$model])
                                         	  @include('reports.LetterOfGuaranteeIssuance.actions')
@@ -502,7 +502,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <td class="text-transform text-nowrap">{{ $model->getPurchaseOrderDateFormatted() }}</td>
                                     <td class="text-transform text-nowrap">{{ $model->getIssuanceDateFormatted() }}</td>
                                     <td class="text-transform text-nowrap">{{ $model->getRenewalDateFormatted() }}</td>
-                                    <td class="kt-datatable__cell--left kt-datatable__cell text-right" data-field="Actions" data-autohide-disabled="false">
+                                    <td class="kt-datatable__cell--left kt-datatable__cell" data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative;" class="max-w-control">
 											@include('reports._user_comment_modal',['model'=>$model])
                                           @include('reports.LetterOfGuaranteeIssuance.actions')

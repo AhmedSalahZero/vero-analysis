@@ -184,10 +184,10 @@
                             <div class="col-md-4 ">
                                 <x-form.input :default-value="0" :model="$model??null" :class="'only-percentage-allowed'" :label="__('Admin Fees Rate (%)')" :placeholder="__('Admin Fees Rate (%)')" :name="'admin_fees_rate'" :required="true" :type="'text'"></x-form.input>
                             </div>
-
-                            <div class="col-md-4 ">
+<input type="hidden" name="to_be_setteled_max_within_days" value="0">
+                            {{-- <div class="col-md-4 ">
                                 <x-form.input :default-value="0" :model="$model??null" :label="__('Setteled Max Within (Days)')" :type="'text'" :placeholder="__('Setteled Max Within (Days)')" :name="'to_be_setteled_max_within_days'" :class="'only-greater-than-or-equal-zero-allowed'" :required="true"></x-form.input>
-                            </div>
+                            </div> --}}
 
                             <div class="col-md-4 ">
                                 <x-form.input :default-value="0" :model="$model??null" :label="__('Max Lending Limit Per Customer')" :type="'text'" :placeholder="__('Max Lending Limit Per Customer')" :name="'max_lending_limit_per_customer'" :class="'only-greater-than-or-equal-zero-allowed'" :required="true"></x-form.input>

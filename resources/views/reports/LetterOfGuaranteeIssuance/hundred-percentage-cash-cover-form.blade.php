@@ -654,8 +654,8 @@ use App\Models\LetterOfGuaranteeIssuance;
 						let customerOptions = '<option value="">{{ __("Please Select") }}</option>';
 							let currentSelectedCustomerId = $('select#customer_name').attr('data-current-selected');
 							
-							for(var customerId in res.customers ){
-								var customerName = res.customers[customerId];
+							for(var customerName in res.customers ){
+								var customerId = res.customers[customerName];
 								var isSelected =  customerId  == currentSelectedCustomerId  ? 'selected' :'';
 								customerOptions += '<option '+ isSelected +' value="'+customerId+'">'+ customerName +'</option> ';
 							}

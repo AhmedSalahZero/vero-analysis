@@ -505,7 +505,7 @@ use App\Models\MoneyReceived ;
 
                                                 <div class="kt-input-icon width-15">
                                                     <div class="input-group">
-                                                        <input name="exchange_rate" type="text" class="form-control " value="{{ isset($chequeInSafe) ? $chequeInSafe->getExchangeRate() : old('exchange_rate',0) }}">
+                                                        <input name="exchange_rate" type="text" class="form-control " value="{{ isset($chequeInSafe) ? $chequeInSafe->getExchangeRate() : old('exchange_rate',1) }}">
                                                     </div>
                                                 </div>
 
@@ -744,7 +744,7 @@ use App\Models\MoneyReceived ;
 
                                                 <div class="kt-input-icon width-15" >
                                                     <div class="input-group">
-                                                        <input name="exchange_rate" type="text" class="form-control " value="{{ isset($chequeUnderCollection) ? $chequeUnderCollection->getExchangeRate() : old('exchange_rate',0) }}">
+                                                        <input name="exchange_rate" type="text" class="form-control " value="{{ isset($chequeUnderCollection) ? $chequeUnderCollection->getExchangeRate() : old('exchange_rate',1) }}">
                                                     </div>
                                                 </div>
 
@@ -1012,7 +1012,7 @@ use App\Models\MoneyReceived ;
 
                                                 <div class="kt-input-icon width-15">
                                                     <div class="input-group">
-                                                        <input name="exchange_rate" type="numeric"  class="form-control " value="{{ isset($payableCheques) ? $payableCheques->getExchangeRate() : old('exchange_rate',0) }}">
+                                                        <input name="exchange_rate" type="numeric"  class="form-control " value="{{ isset($payableCheques) ? $payableCheques->getExchangeRate() : old('exchange_rate',1) }}">
                                                     </div>
                                                 </div>
 

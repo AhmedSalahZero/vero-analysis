@@ -136,7 +136,7 @@ use App\Models\BuyOrSellCurrency ;
                                     <td class="text-transform">{{ $model->getToAccountNumber() }}</td>
 
 									@if(hasAuthFor('update buy or sell currency') || hasAuthFor('delete buy or sell currency') )
-                                    <td class="kt-datatable__cell--left kt-datatable__cell text-right" data-field="Actions" data-autohide-disabled="false">
+                                    <td class="kt-datatable__cell--left kt-datatable__cell" data-field="Actions" data-autohide-disabled="false">
 
 
                                         <span style="overflow: visible; position: relative; width: 110px;">
@@ -254,7 +254,7 @@ use App\Models\BuyOrSellCurrency ;
                                     <td class="text-uppercase">{{ $model->getToBranchName() }}</td>
 
 
-                                    <td class="kt-datatable__cell--left kt-datatable__cell text-right " data-field="Actions" data-autohide-disabled="false">
+                                    <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
 
 
                                         <span style="overflow: visible; position: relative; width: 110px;">
@@ -362,7 +362,7 @@ use App\Models\BuyOrSellCurrency ;
                                     <td class="text-transform">{{ $model->getToAccountNumber() }}</td> --}}
 
 
-                                    <td class="kt-datatable__cell--left kt-datatable__cell text-right" data-field="Actions" data-autohide-disabled="false">
+                                    <td class="kt-datatable__cell--left kt-datatable__cell" data-field="Actions" data-autohide-disabled="false">
 
 
                                         <span style="overflow: visible; position: relative; width: 110px;">
@@ -484,7 +484,7 @@ use App\Models\BuyOrSellCurrency ;
                                     <td class="text-transform">{{ $model->getToAccountNumber() }}</td> --}}
 
 
-                                    <td class="kt-datatable__cell--left kt-datatable__cell text-right" data-field="Actions" data-autohide-disabled="false">
+                                    <td class="kt-datatable__cell--left kt-datatable__cell" data-field="Actions" data-autohide-disabled="false">
 
 
                                         <span style="overflow: visible; position: relative; width: 110px;">

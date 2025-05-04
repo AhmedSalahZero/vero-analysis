@@ -284,9 +284,13 @@ class SupplierInvoice extends Model implements IInvoice
 		->where('currency',$currency)
 		->where('net_balance','>',0)
 		->whereBetween('invoice_due_date',[$startDate,$endDate])->get();
-		$sum = $items->sum('net_balance') ;
-		$invoiceNumber = $items->count() ? $items->first()->invoice_number : null ;
-		if($sum ){
+		// $sum = $items->sum('net_balance') ;
+		// $invoiceNumber = $items->count() ? $items->first()->invoice_number : null ;
+		// if($sum ){
+		foreach($items as $item){
+			// $invoiceNumber = 
+			$sum = $item->net_balance ; 
+			$invoiceNumber = $item->invoice_number . ' [ ' . $item->supplier_name . ' ]' ; 
 			$invoiceNumber = __('Invoice No.') . ' ' .  $invoiceNumber;
 			$result['suppliers'][$key][$invoiceNumber]['weeks'][$currentWeekYear] = isset($result['suppliers'][$key][$invoiceNumber]['weeks'][$currentWeekYear]) ? $result['suppliers'][$key][$invoiceNumber]['weeks'][$currentWeekYear] + $sum :  $sum;
 			$result['suppliers'][$key][$invoiceNumber]['total'] = isset($result['suppliers'][$key][$invoiceNumber]['total']) ? $result['suppliers'][$key][$invoiceNumber]['total']  + $sum : $sum;
@@ -294,7 +298,8 @@ class SupplierInvoice extends Model implements IInvoice
 			$result['suppliers'][$key]['total'][$currentWeekYear] = isset($result['suppliers'][$key]['total'][$currentWeekYear]) ? $result['suppliers'][$key]['total'][$currentWeekYear] +  $currentTotal : $currentTotal ;
 			$totalCashOutFlowArray[$currentWeekYear] = isset($totalCashOutFlowArray[$currentWeekYear]) ? $totalCashOutFlowArray[$currentWeekYear] + $currentTotal : $currentTotal;
 			$result['suppliers'][$key]['total']['total_of_total']= isset($result['suppliers'][$key]['total']['total_of_total']) ? $result['suppliers'][$key]['total']['total_of_total'] +$sum :$sum ;
-		} 
+		}
+		// } 
 	}
 	public function letterOfCreditIssuancePaymentSettlements()
 	{

@@ -104,7 +104,7 @@ class FullySecuredOverdraft extends Model implements IHaveStatement
 						->where('fully_secured_overdrafts.currency', '=', $currencyName)
 						->where('fully_secured_overdraft_id',$fullySecuredOverdraftId)
 						->where('financial_institution_id',$financialInstitutionBankId)
-						->orderByRaw('full_date desc , fully_secured_overdraft_bank_statements.id desc')
+						->orderByRaw('date desc , fully_secured_overdraft_bank_statements.id desc')
 						->first();
 						
 						$fullySecuredOverdraftRoom = $fullySecuredOverdraftStatement ? $fullySecuredOverdraftStatement->room : 0 ;

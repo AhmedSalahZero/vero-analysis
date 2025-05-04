@@ -1220,5 +1220,8 @@
 "Received In [ :bankName ]":"Received In [ :bankName ]",
 "Money Received From [ :partnerType ]":"Money Received From - :partnerType",
 "At Least There Must Be One Current Account in :currencyName":"علي الاقل يجب ان يكون هناك حساب جاري بعملة :currencyName",
-"Limit Update":"تحديث الحد"
+"Limit Update":"تحديث الحد",
+"TD Amount":"قيمة الوديعة",
+"TD Interest Amount":"قيمة فؤائد الوديعة",
+"TD Break Fees Amount":"مصاريف كسر الوديعة"
 }

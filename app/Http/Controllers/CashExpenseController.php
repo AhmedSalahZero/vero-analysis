@@ -305,7 +305,7 @@ class CashExpenseController
 			foreach($contracts as $contractArr){
 				$currentContractId = $contractArr['contract_id'] ?? null ;
 			
-				$currentAmount = $contractArr['amount'] ?? 0 ;
+				$currentAmount = number_unformat($contractArr['amount'] ?? 0) ;
 				if($currentContractId && $currentAmount > 0){
 					$cashExpense->contracts()->attach(
 						$currentContractId,

@@ -85,7 +85,7 @@ class LGLCSBanktatementController
 				 ->when($lcTypeOrLgTypeColumnName , function($q) use ($lcTypeOrLgTypeColumnName,$type){
 					 $q->where($lcTypeOrLgTypeColumnName,$type);
 				 })
-				 ->orderByRaw('full_date desc')
+				 ->orderByRaw('date desc , '.$statementTableName.'.id desc')
 				 ->get();
 				 
         if (!count($results)) {

@@ -88,7 +88,7 @@ class CleanOverdraft extends Model implements IHaveStatement
 						->where('clean_overdrafts.currency', '=', $currencyName)
 						->where('clean_overdraft_id',$cleanOverdraftId)
 						->where('financial_institution_id',$financialInstitutionBankId)
-						->orderByRaw('full_date desc , clean_overdraft_bank_statements.id desc')
+						->orderByRaw('date desc , clean_overdraft_bank_statements.id desc')
 						->first();
 						
 						$cleanOverdraftRoom = $cleanOverdraftStatement ? $cleanOverdraftStatement->room : 0 ;

@@ -121,9 +121,19 @@
                                     <div class="form-group">
                                         <div class="row">
 
-                                            <div class="col-md-3">
-                                                <x-form.date :classes="'balance-date'" :label="__('Date')" :required="true" :model="$model??null" :name="'transfer_date'" :placeholder="__('Select Date')"></x-form.date>
-                                            </div>
+                                           	<div class="col-md-3">
+                    <label>{{__('Date')}}</label>
+                    <div class="kt-input-icon">
+                        <div class="input-group date">
+                            <input type="text"  name="transfer_date" value="{{ isset($model) ? formatDateForDatePicker($model->getPaymentDate()) : formatDateForDatePicker(now()->format('Y-m-d')) }}" class="form-control balance-date is-date-css " readonly placeholder="Select date" id="kt_datepicker_max_date_is_today" />
+                            <div class="input-group-append">
+                                <span class="input-group-text">
+                                    <i class="la la-calendar-check-o"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                                             <div class="col-md-3 mb-4">
                             <label>{{ __('Branch') }} <span class="multi_selection"></span> </label>
                             <div class="kt-input-icon">

@@ -381,7 +381,7 @@ function generateAllocationRow(settlementAllocations , clientsWithContracts,invo
 			  <td>
 			<div class="kt-input-icon ">
 				<div class="input-group">
-					<input  type="text" data-name="allocation_amount" name="settlements[${invoiceId}][${rowIndex}][allocation_amount]" class="form-control allocation-amount-class repeater-amount-class" value="${currentSettlementAllocation.allocation_amount}">
+					<input  type="text" data-name="allocation_amount" name="settlements[${invoiceId}][${rowIndex}][allocation_amount]" class="form-control allocation-amount-class repeater-amount-class" value="${number_format(currentSettlementAllocation.allocation_amount,2)}">
 				</div>
 			</div>
 		</td>

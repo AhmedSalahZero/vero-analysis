@@ -677,7 +677,7 @@ class MoneyPayment extends Model
 			foreach($allocationsArr as $index => $allocationArr){
 				$partnerId = $allocationArr['partner_id'] ?? 0 ;
 				$contractId = $allocationArr['contract_id'] ?? 0 ;
-				$allocationAmount = $allocationArr['allocation_amount'] ?? 0 ;
+				$allocationAmount = number_unformat($allocationArr['allocation_amount'] ?? 0) ;
 				if($allocationAmount>0){
 					$this->settlementAllocations()->create([
 						'allocation_amount'=>$allocationAmount,

@@ -11,6 +11,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 /**
@@ -304,4 +305,48 @@ class TimeOfDeposit extends Model
 		$this->storeCurrentAccountDebitBankStatement($statementDate,$interestAmount,$financialInstitutionAccount->id,true,$commentEn , $commentAr);
 		return $interestAmount; 
 	}
+	public static function getAmountAndInterestAtDates(array &$result , array &$totalCashInFlowArray,string $currency , int $companyId, string $startDate , string $endDate , string $currentWeekYear) 
+	{
+		$tdsTypes = [
+			self::MATURED => __('Matured'),
+			self::BROKEN=>__('Broken'),
+			self::RUNNING => __('Running')
+		];
+		// $mainType = 'lg';
+		$mainType = 'customers';
+		// dd($currency);
+		// $mainType = 'lg';
+		// $x = "end_date between " . $endDate . ' AND ' . $startDate ;
+		$rows = DB::table('time_of_deposits')->where('time_of_deposits.company_id',$companyId)
+						->where('currency',$currency)
+						->whereRaw("(CASE WHEN status = 'broken' THEN break_date ELSE end_date END) between '" .$startDate ."'". ' AND ' ."'" .$endDate . "'")
+						->groupBy('status')
+						->selectRaw("status , SUM(CASE 
+             WHEN status = 'matured' THEN amount + actual_interest_amount
+             WHEN status = 'broken' THEN amount + break_interest_amount
+             WHEN status = 'running' THEN amount + interest_amount
+             ELSE 0 
+           END) AS total_amount ")
+		//    ->limit(1)
+		//    ->
+		   ->get();
+	
+		 
+
+		$subType = __('Time Of Deposits');
+		foreach($rows as $row){
+			$currentStatus = $tdsTypes[$row->status] ;
+			// $lgType = $lgsTypes[$row->status];
+			$currentPaidAmount = $row->total_amount ;
+			$result[$mainType][$subType][$currentStatus]['weeks'][$currentWeekYear] = isset($result[$mainType][$subType][$currentStatus]['weeks'][$currentWeekYear]) ? $result[$mainType][$subType][$currentStatus]['weeks'][$currentWeekYear] + $currentPaidAmount :  $currentPaidAmount;
+			$result[$mainType][$subType][$currentStatus]['total'] = isset($result[$mainType][$subType][$currentStatus]['total']) ? $result[$mainType][$subType][$currentStatus]['total']  + $currentPaidAmount : $currentPaidAmount;
+			$currentTotal = $currentPaidAmount;
+			$result[$mainType][$subType]['total'][$currentWeekYear] = isset($result[$mainType][$subType]['total'][$currentWeekYear]) ? $result[$mainType][$subType]['total'][$currentWeekYear] +  $currentTotal : $currentTotal ;
+			$result[$mainType][$subType]['total']['total_of_total'] = isset($result[$mainType][$subType]['total']['total_of_total']) ? $result[$mainType][$subType]['total']['total_of_total'] + $result[$mainType][$subType]['total'][$currentWeekYear] : $result[$mainType][$subType]['total'][$currentWeekYear];
+			$totalCashInFlowArray[$currentWeekYear] = isset($totalCashInFlowArray[$currentWeekYear]) ? $totalCashInFlowArray[$currentWeekYear] +   $currentTotal : $currentTotal ;
+		}
+		// dd($result);
+	
+	}
+	
 }

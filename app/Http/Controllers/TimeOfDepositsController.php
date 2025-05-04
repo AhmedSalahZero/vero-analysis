@@ -1,5 +1,7 @@
 <?php
 namespace App\Http\Controllers;
+use App\Http\Requests\StoreTimeOfDepositRequest;
+use App\Http\Requests\UpdateTimeOfDepositRequest;
 use App\Models\AccountType;
 use App\Models\Bank;
 use App\Models\Branch;
@@ -11,8 +13,6 @@ use App\Traits\GeneralFunctions;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-use App\Http\Requests\StoreTimeOfDepositRequest;
-use App\Http\Requests\UpdateTimeOfDepositRequest;
 
 class TimeOfDepositsController
 {
@@ -283,19 +283,25 @@ class TimeOfDepositsController
 		 * * اول حاجه هنضيف دبت بقيمة الشهادة 
 		 */
 		if($amount > 0){
-			$timeOfDeposit->handleDebitStatement($financialInstitution->id , $accountType , $timeOfDeposit->getMaturityAmountAddedToAccountNumber() , null , $breakDate,$amount);
+			$commentEn = __('TD Amount',[],'en');
+			$commentAr = __('TD Amount',[],'ar');
+			$timeOfDeposit->handleDebitStatement($financialInstitution->id , $accountType , $timeOfDeposit->getMaturityAmountAddedToAccountNumber() , null , $breakDate,$amount,null,null,1,$commentEn , $commentAr);
 		}
 		/**
 		 * * تاني حاجه هنضيف دبت بقيمة الفايدة
 		 */
 		if($breakInterestAmount > 0){
-			$timeOfDeposit->handleDebitStatement($financialInstitution->id , $accountType , $timeOfDeposit->getMaturityAmountAddedToAccountNumber() , null , $breakDate,$breakInterestAmount);
+			$commentEn = __('TD Interest Amount',[],'en');
+			$commentAr = __('TD Interest Amount',[],'ar');
+			$timeOfDeposit->handleDebitStatement($financialInstitution->id , $accountType , $timeOfDeposit->getMaturityAmountAddedToAccountNumber() , null , $breakDate,$breakInterestAmount,null,null,1,$commentEn,$commentAr);
 		}
 		/**
-		 * * واخيرا هنضيف كريدت بقيمة الرسوم الادارية
+		 * * واخيرا هنضيف كريدت بقيمة الرسوم الادارية ( رسوم كسر الوديعة)
 		 */
 		if($breakChargeAmount){
-			$timeOfDeposit->handleCreditStatement($company->id,$financialInstitution->id , $accountType , $timeOfDeposit->getMaturityAmountAddedToAccountNumber() , null , $breakDate,$breakChargeAmount);
+			$commentEn = __('TD Break Fees Amount',[],'en');
+			$commentAr = __('TD Break Fees Amount',[],'ar');
+			$timeOfDeposit->handleCreditStatement($company->id,$financialInstitution->id , $accountType , $timeOfDeposit->getMaturityAmountAddedToAccountNumber() , null , $breakDate,$breakChargeAmount,null,null,$commentEn,$commentAr);
 		}
 		
 		return redirect()->route('view.time.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id ,'active'=>$type])->with('success',__('Time Of Deposit Has Been Marked As Matured'));

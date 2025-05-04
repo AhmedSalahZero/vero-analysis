@@ -6,7 +6,7 @@ var FormRepeater = function () {
 		$('#m_repeater_1').repeater({
 			initEmpty: false,
 			defaultValues: {
-				'text-input': 'foo'
+				'exchange_rate':1
 			},
 			show: function () {
 				$('select.repeater-select').selectpicker('refresh')
@@ -79,7 +79,7 @@ var FormRepeater = function () {
 			initEmpty: false,
 
 			defaultValues: {
-				'text-input': 'foo'
+				'exchange_rate':1
 			},
 			isFirstItemUndeletable: true,
 			show: function () {
@@ -117,7 +117,7 @@ var FormRepeater = function () {
 			initEmpty: false,
 
 			defaultValues: {
-				'text-input': 'foo'
+				'exchange_rate':1
 			},
 			isFirstItemUndeletable: true,
 
@@ -155,7 +155,7 @@ var FormRepeater = function () {
 			initEmpty: false,
 			isFirstItemUndeletable: true,
 			defaultValues: {
-				'text-input': 'foo'
+				'exchange_rate':1
 			},
 
 			show: function () {
@@ -194,7 +194,7 @@ var FormRepeater = function () {
 			initEmpty: false,
 			isFirstItemUndeletable: true,
 			defaultValues: {
-				'text-input': 'foo'
+				'exchange_rate':1
 			},
 
 			show: function () {
@@ -234,7 +234,7 @@ var FormRepeater = function () {
 			initEmpty: false,
 			isFirstItemUndeletable: true,
 			defaultValues: {
-				'text-input': 'foo'
+				'exchange_rate':1
 			},
 
 			show: function () {
@@ -273,7 +273,7 @@ var FormRepeater = function () {
 			initEmpty: false,
 			isFirstItemUndeletable: true,
 			defaultValues: {
-				"text-input": "foo",
+				'exchange_rate':1,
 			},
 
 			show: function () {
@@ -307,7 +307,7 @@ var FormRepeater = function () {
 			isFirstItemUndeletable: true,
 
 			defaultValues: {
-				"text-input": "foo",
+				'exchange_rate':1,
 			},
 
 			show: function () {
@@ -346,7 +346,7 @@ var FormRepeater = function () {
 			isFirstItemUndeletable: true,
 
 			defaultValues: {
-				"text-input": "foo",
+				'exchange_rate':1,
 			},
 
 			show: function () {

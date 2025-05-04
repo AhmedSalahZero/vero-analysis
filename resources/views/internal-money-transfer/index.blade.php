@@ -142,7 +142,7 @@ use App\Models\InternalMoneyTransfer ;
                                     <td class="text-transform">{{ $model->getToAccountNumber() }}</td>
 
 									@if(auth()->user()->can('update internal money transfer') || auth()->user()->can('delete internal money transfer'))
-                                    <td class="kt-datatable__cell--left kt-datatable__cell text-right" data-field="Actions" data-autohide-disabled="false">
+                                    <td class="kt-datatable__cell--left kt-datatable__cell" data-field="Actions" data-autohide-disabled="false">
 
 
                                         <span style="overflow: visible; position: relative; width: 110px;">
@@ -229,7 +229,7 @@ use App\Models\InternalMoneyTransfer ;
                                     <td>{{ $model->getToBankName() }}</td>
                                     <td class="text-uppercase">{{ $model->getToAccountTypeName() }}</td>
                                     <td class="text-transform">{{ $model->getToAccountNumber() }}</td>
-                                    <td class="kt-datatable__cell--left kt-datatable__cell text-right" data-field="Actions" data-autohide-disabled="false">
+                                    <td class="kt-datatable__cell--left kt-datatable__cell" data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
 										@include('reports._user_comment_modal',['model'=>$model])
 										@if(auth()->user()->can('update internal money transfer'))
@@ -323,7 +323,7 @@ use App\Models\InternalMoneyTransfer ;
                                     <td class="text-uppercase">{{ $model->getFromAccountTypeName() }}</td>
                                     <td class="text-transform">{{ $model->getFromAccountNumber() }}</td>
                                     <td>{{ $model->getToBranchName() }}</td>
-                                    <td class="kt-datatable__cell--left kt-datatable__cell text-right " data-field="Actions" data-autohide-disabled="false">
+                                    <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
 										@include('reports._user_comment_modal',['model'=>$model])
 											@if(auth()->user()->can('update internal money transfer'))

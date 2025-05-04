@@ -807,7 +807,7 @@ $selectedBanks = [];
                                                                 <td>
                                                                     <div class="kt-input-icon custom-w-15">
                                                                         <div class="input-group">
-                                                                            <input type="text" data-name="allocation_amount" name="allocation_amount" class="form-control allocation-amount-class" value="{{ isset($settlementAllocation) ? $settlementAllocation->getAmount(): 0 }}">
+                                                                            <input type="text" data-name="allocation_amount" name="allocation_amount" class="form-control allocation-amount-class" value="{{ isset($settlementAllocation) ? number_format($settlementAllocation->getAmount(),2): 0 }}">
                                                                         </div>
                                                                     </div>
                                                                 </td>

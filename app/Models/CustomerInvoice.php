@@ -278,26 +278,32 @@ class CustomerInvoice extends Model implements IInvoice
 	public static function getCustomerInvoicesUnderCollectionAtDatesForContracts(array &$result , array &$totalCashInFlowArray , int $companyId , string $startDate , string $endDate,string $currency  , ?string $contractCode ,string $currentWeekYear):void
 	{
 		$key = __('Customers Invoices') ;
-
 		$items = self::where('company_id',$companyId)
-		
 		->when($contractCode,function($builder) use ($contractCode){
 			$builder->where('contract_code',$contractCode);
 		})
 		->where('currency',$currency)
 		->where('net_balance','>',0)
 		->whereBetween('invoice_due_date',[$startDate,$endDate])->get();
-		$sum = $items->sum('net_balance') ;
-		$invoiceNumber = $items->count() ? $items->first()->invoice_number : null ;
-		if($sum ){
-			$invoiceNumber = __('Invoice No.') . ' ' .  $invoiceNumber;
-			$result['customers'][$key][$invoiceNumber]['weeks'][$currentWeekYear] = isset($result['customers'][$key][$invoiceNumber]['weeks'][$currentWeekYear]) ? $result['customers'][$key][$invoiceNumber]['weeks'][$currentWeekYear] + $sum :  $sum;
-			$result['customers'][$key][$invoiceNumber]['total'] = isset($result['customers'][$key][$invoiceNumber]['total']) ? $result['customers'][$key][$invoiceNumber]['total']  + $sum : $sum;
-			$currentTotal = $sum;
-			$result['customers'][$key]['total'][$currentWeekYear] = isset($result['customers'][$key]['total'][$currentWeekYear]) ? $result['customers'][$key]['total'][$currentWeekYear] +  $currentTotal : $currentTotal ;
-			$totalCashInFlowArray[$currentWeekYear] = isset($totalCashInFlowArray[$currentWeekYear]) ? $totalCashInFlowArray[$currentWeekYear] + $currentTotal : $currentTotal;
-			$result['customers'][$key]['total']['total_of_total']= isset($result['customers'][$key]['total']['total_of_total']) ? $result['customers'][$key]['total']['total_of_total'] +$sum :$sum ;
-		} 
+		if(count($items)>1){
+			// dd($items);
+		}
+		// $sum = $items->sum('net_balance') ;
+		// $invoiceNumber = $items->count() ? $items->first()->invoice_number : null ;
+		// if($sum ){
+			foreach($items as $item){
+				$sum = $item->net_balance ; 
+				$invoiceNumber = $item->invoice_number . ' [ ' . $item->customer_name . ' ]' ; 
+				// $customerName = $item->customer_name ; 
+				$invoiceNumber = __('Invoice No.') . ' ' .  $invoiceNumber;
+				$result['customers'][$key][$invoiceNumber]['weeks'][$currentWeekYear] = isset($result['customers'][$key][$invoiceNumber]['weeks'][$currentWeekYear]) ? $result['customers'][$key][$invoiceNumber]['weeks'][$currentWeekYear] + $sum :  $sum;
+				$result['customers'][$key][$invoiceNumber]['total'] = isset($result['customers'][$key][$invoiceNumber]['total']) ? $result['customers'][$key][$invoiceNumber]['total']  + $sum : $sum;
+				$currentTotal = $sum;
+				$result['customers'][$key]['total'][$currentWeekYear] = isset($result['customers'][$key]['total'][$currentWeekYear]) ? $result['customers'][$key]['total'][$currentWeekYear] +  $currentTotal : $currentTotal ;
+				$totalCashInFlowArray[$currentWeekYear] = isset($totalCashInFlowArray[$currentWeekYear]) ? $totalCashInFlowArray[$currentWeekYear] + $currentTotal : $currentTotal;
+				$result['customers'][$key]['total']['total_of_total']= isset($result['customers'][$key]['total']['total_of_total']) ? $result['customers'][$key]['total']['total_of_total'] +$sum :$sum ;
+			}
+		// } 
 	}
 	
 	public static function getSettlementAmountUnderDateForSpecificType(array &$result , array &$totalCashInFlowArray , string $moneyType , string $dateColumnName , string $startDate , string $endDate, ?string $contractCode , string $currentWeekYear , ?string $chequeStatus = null  , $currency = null , $companyId = null):void

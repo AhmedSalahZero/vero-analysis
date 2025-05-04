@@ -499,19 +499,11 @@ class CashExpense extends Model
 	public static function getCashOutForExpenseCategoriesAtDates(array &$result , array &$totalCashOutFlowArray  , string $moneyType,string $dateFieldName,string $currency , int $companyId, string $startDate , string $endDate , string $currentWeekYear , ?string $chequeStatus = null) 
 	{
 		$subTableName = (new self)->getTable();
-		// $keyNameForCurrentType = [
-		// 	MoneyPayment::OUTGOING_TRANSFER => __('Outgoing Transfers'),
-		// 	MoneyPayment::CASH_PAYMENT =>__('Cash Payments'),
-		// 	MoneyPayment::PAYABLE_CHEQUE => $chequeStatus == PayableCheque::PAID ? __('Paid Payable Cheques') : __('Under Payment Payable Cheques')
-		// ][$moneyType];
-		
 		$mainTableName = [
 			MoneyPayment::OUTGOING_TRANSFER => (new OutgoingTransfer())->getTable(),
 			MoneyPayment::CASH_PAYMENT =>(new CashPayment())->getTable(),
 			MoneyPayment::PAYABLE_CHEQUE => (new PayableCheque())->getTable()
 		][$moneyType];
-		
-
 		$expensesWithPaidAmount = DB::table($mainTableName)
 						->where($subTableName.'.currency',$currency)
 						->where('type',$moneyType)

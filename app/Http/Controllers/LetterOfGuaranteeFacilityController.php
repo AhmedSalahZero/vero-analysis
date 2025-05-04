@@ -203,13 +203,17 @@ class LetterOfGuaranteeFacilityController
 		->when(!$isBidBond,function(Builder $builder){
 			$builder->onlyThatHaveContracts();
 		})
-		->pluck('name','id')
+		->orderBy('name','asc')
+		->pluck('id','name')
 		->toArray();
+
 	
 		$otherPartnerArr = Partner::onlyOtherPartners()->onlyForCompany($company->id)
-		->pluck('name','id')
+		->orderBy('name','asc')
+		->pluck('id','name')
 		->toArray();
 		$customerOrOtherPartnersArr = HArr::mergeTwoAssocArr($customersArr,$otherPartnerArr);
+	
 		$accountTypeId = $request->get('accountTypeId');
 		$currentSource = $request->get('source');
 		$cdOrTdAccountId = $request->get('cdOrTdAccountId');
@@ -265,7 +269,7 @@ class LetterOfGuaranteeFacilityController
 			// ->where('letter_of_guarantee_cash_cover_statements.lg_type',$lgTypeId)
 			->where('letter_of_guarantee_cash_cover_statements.financial_institution_id',$financialInstitutionId)
 			->join('letter_of_guarantee_cash_cover_statements','letter_of_guarantee_issuances.id','=','letter_of_guarantee_cash_cover_statements.letter_of_guarantee_issuance_id')
-			->orderByRaw('full_date desc')
+			->orderByRaw('date desc , letter_of_guarantee_cash_cover_statements.id desc')
 			// ->select('letter_of_guarantee_cash_cover_statements.end_balance as cash_cover_statement_end_balance')
 			->sum('letter_of_guarantee_cash_cover_statements.debit')
 			;
@@ -290,7 +294,7 @@ class LetterOfGuaranteeFacilityController
 			})
 			->where('lg_type',$lgTypeId)
 			->where('source',$currentSource)
-			->orderByRaw('full_date desc')
+			->orderByRaw('date desc , letter_of_guarantee_statements.id desc')
 			->first();
 			
 			

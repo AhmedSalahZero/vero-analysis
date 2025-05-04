@@ -29,8 +29,10 @@ class CheckDueAndPastedInvoicesJob implements ShouldQueue
      *
      * @return void
      */
-    public function __construct()
+	protected $company_id ;
+    public function __construct(int $companyId)
     {
+		$this->company_id = $companyId ; 
     }
 
     /**
@@ -45,9 +47,9 @@ class CheckDueAndPastedInvoicesJob implements ShouldQueue
 	public function startHandling()
 	{
 		$dateFormat = 'Y-m-d' ;
-        DB::table('notifications')->delete();
-		$companies = Company::get() ;
-		$companies = Company::where('id',92)->get();
+		$companyId = $this->company_id;
+        DB::table('notifications')->where('notifiable_id',$companyId)->delete();
+		$companies = Company::where('id',$companyId)->get();
         foreach ($companies as $company) {
 			/**
 			 * @var Company $company 

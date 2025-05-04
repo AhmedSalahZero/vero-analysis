@@ -80,7 +80,7 @@ class BankStatementController
 			->where('current_account_bank_statements.date', '<', $endDate)
 			->leftJoin('money_received','current_account_bank_statements.money_received_id','=','money_received.id')
 			->selectRaw('current_account_bank_statements.*,financial_institution_accounts.*,money_received.is_reviewed,money_received.reviewed_by,current_account_bank_statements.id as id,current_account_bank_statements.full_date as full_date,current_account_bank_statements.date as date')
-			->orderByRaw('date desc, current_account_bank_statements.id desc')
+			->orderByRaw('date desc , current_account_bank_statements.id desc')
 			->get();
 			
 		}

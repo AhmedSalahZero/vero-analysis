@@ -7,10 +7,12 @@ use App\Models\CashExpense;
 use App\Models\Cheque;
 use App\Models\Company;
 use App\Models\CustomerInvoice;
+use App\Models\LetterOfGuaranteeIssuance;
 use App\Models\MoneyPayment;
 use App\Models\MoneyReceived;
 use App\Models\PayableCheque;
 use App\Models\SupplierInvoice;
+use App\Models\TimeOfDeposit;
 use App\Traits\GeneralFunctions;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -38,8 +40,10 @@ class CashFlowReportController
 			'Incoming Transfers'=>[],
 			'Bank Deposits'=> [],
 			'Cash Collections'=> [],
+			'Time Of Deposits'=> [],
 			'Cheques Under Collection'=>[],
 			'Cheques In Safe'=>[],
+			'Cancelled LGs Cash Cover'=>[],
 			'Customers Invoices'=>[],
 			'Customers Past Due Invoices'=>[],
 			__('Total Cash Inflow')=>[]
@@ -106,13 +110,17 @@ class CashFlowReportController
 			 MoneyPayment::getCashOutForMoneyTypeAtDates($result,$totalCashOutFlowArray,MoneyPayment::PAYABLE_CHEQUE,'due_date',$currency,$company->id,$startDate,$endDate,$currentWeekYear,PayableCheque::PENDING);
 
 			 SupplierInvoice::getSupplierInvoicesUnderCollectionAtDates($result,$totalCashOutFlowArray,$company->id,$startDate,$endDate,$currency,$currentWeekYear);
+			 TimeOfDeposit::getAmountAndInterestAtDates($result,$totalCashInFlowArray,$currency,$company->id,$startDate,$endDate,$currentWeekYear);
+			 LetterOfGuaranteeIssuance::getCommissionAndFeesAtDates($result,$totalCashOutFlowArray,'date',$currency,$company->id,$startDate,$endDate,$currentWeekYear);
+			 LetterOfGuaranteeIssuance::getCashCovers($result,$totalCashInFlowArray,'renewal_date',$currency,$company->id,$startDate,$endDate,$currentWeekYear);
 			CashExpense::getCashOutForExpenseCategoriesAtDates($result,$totalCashOutFlowArray,CashExpense::OUTGOING_TRANSFER,'payment_date',$currency,$company->id,$startDate,$endDate,$currentWeekYear,null);
 			CashExpense::getCashOutForExpenseCategoriesAtDates($result,$totalCashOutFlowArray,CashExpense::CASH_PAYMENT,'payment_date',$currency,$company->id,$startDate,$endDate,$currentWeekYear,null);
 			CashExpense::getCashOutForExpenseCategoriesAtDates($result,$totalCashOutFlowArray,CashExpense::PAYABLE_CHEQUE,'actual_payment_date',$currency,$company->id,$startDate,$endDate,$currentWeekYear,PayableCheque::PAID);
 			CashExpense::getCashOutForExpenseCategoriesAtDates($result,$totalCashOutFlowArray,CashExpense::PAYABLE_CHEQUE,'due_date',$currency,$company->id,$startDate,$endDate,$currentWeekYear,PayableCheque::PENDING);
+		
 			
 			$result['suppliers']['Suppliers Past Due Invoices'] = [];
-		
+
 			$dates[$currentWeekYear] = [
 				'start_date' => $startDate,
 				'end_date'=>$endDate 
@@ -144,7 +152,6 @@ class CashFlowReportController
 		
 		$totalCashInFlowArray = $this->mergeTotal($totalCashInFlowArray,$customerDueInvoices);
 		$totalCashOutFlowArray = $this->mergeTotal($totalCashOutFlowArray,$supplierDueInvoices);
-		
 		$result['customers'][__('Total Cash Inflow')]['total'] = $totalCashInFlowArray ;
 		$result['customers'][__('Total Cash Inflow')]['total']['total_of_total'] = array_sum($totalCashInFlowArray);
 		$result['cash_expenses'][__('Total Cash Outflow')]['total'] = $totalCashOutFlowArray;

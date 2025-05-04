@@ -104,7 +104,7 @@ class CustomerInvoiceDashboardController extends Controller
 				->where('company_id', $company->id)
 				->where('currency', $currencyName)
 				->where('branch_id',$currentBranchId)
-				->orderByRaw('full_date desc')->limit(1)->first();
+				->orderByRaw('date desc , id desc')->limit(1)->first();
 				$details[$currencyName]['cash_in_safe'][] = [
 					'amount'=>$currentBranchEndBalanceForCurrency=$cashInSafeStatementAmountForCurrencyAndBranch ? $cashInSafeStatementAmountForCurrencyAndBranch->end_balance : 0 ,
 					'branch_name'=>$currentBranchName,
@@ -417,7 +417,7 @@ class CustomerInvoiceDashboardController extends Controller
 			->where($bankStatementName.'.company_id',$company->id)
 			->where('date','=',$currentDateAsString)
 			->where($foreignKeyName,$account->id)
-			->orderByRaw('full_date desc')
+			->orderByRaw('date desc ,'. $bankStatementName.'.id desc')
 			->join($tableName , $tableName.'.id' ,'=',$bankStatementName.'.'.$foreignKeyInStatementTable)
 			->where('financial_institution_id',$financialInstitutionBankId)
 			->where('currency',$currency)
@@ -427,7 +427,7 @@ class CustomerInvoiceDashboardController extends Controller
 			$lastEndBalanceAtCurrentDate = DB::table($bankStatementName)->where($bankStatementName.'.company_id',$company->id)
 			->where('date','<=',$currentDateAsString)
 			->where($foreignKeyName,$account->id)
-			->orderByRaw('full_date desc')
+			->orderByRaw('date desc ,'. $bankStatementName.'.id desc')
 			->join($tableName , $tableName.'.id' ,'=',$bankStatementName.'.'.$foreignKeyInStatementTable)
 			->where('financial_institution_id',$financialInstitutionBankId)
 			->where('currency',$currency)

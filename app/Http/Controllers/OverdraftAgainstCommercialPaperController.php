@@ -161,9 +161,11 @@ class OverdraftAgainstCommercialPaperController
 	
 	public function destroy(Company $company , FinancialInstitution $financialInstitution , OverdraftAgainstCommercialPaper $overdraftAgainstCommercialPaper)
 	{
-		$overdraftAgainstCommercialPaper->lendingInformation->each(function($lendingInformation){
-			$lendingInformation->delete();
-		});
+		foreach(['lendingInformation','rates','overdraftAgainstCommercialPaperBankLimits','overdraftAgainstCommercialPaperBankStatements'] as $hasManyRelationName){
+			$overdraftAgainstCommercialPaper->{$hasManyRelationName}->each(function($model){
+				$model->delete();
+			});	
+		}
 		$overdraftAgainstCommercialPaper->delete();
 		return redirect()->back()->with('success',__('Item Has Been Delete Successfully'));
 	}

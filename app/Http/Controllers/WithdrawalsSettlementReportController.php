@@ -16,7 +16,7 @@ class WithdrawalsSettlementReportController
     public function index(Company $company)
 	{
 		$financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyHasOverdrafts()->get();
-		$accountTypes = AccountType::onlyOverdraftsAccounts()->get();
+		$accountTypes = AccountType::onlyOverdraftsAccounts()->where('id','!=',32)->get();
 		
         return view('reports.withdrawals_settlement_report_form', [
 			'company'=>$company,

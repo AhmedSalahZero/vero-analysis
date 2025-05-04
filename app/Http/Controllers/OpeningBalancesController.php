@@ -125,11 +125,14 @@ class OpeningBalancesController
                     'user_id' => auth()->id(),
                     'exchange_rate' => isset($chequeUnderCollection['exchange_rate']) ? $chequeUnderCollection['exchange_rate'] : 1
                 ]);
+				$dueDate = $chequeUnderCollection['due_date'] ?: null;
+				$dueDate = $dueDate?  Carbon::make($dueDate)->format('Y-m-d'): null;
                 $currentUnderCollectionCheque = $moneyReceived->cheque()->create([
                     'status' => Cheque::UNDER_COLLECTION,
                     'cheque_number' => $chequeUnderCollection['cheque_number'] ?: null,
                     'drawee_bank_id' => isset($chequeUnderCollection['drawee_bank_id']) ? $chequeUnderCollection['drawee_bank_id'] : null,
-                    'due_date' => $chequeUnderCollection['due_date'] ?: null,
+                    'due_date' =>$dueDate  ,
+					'expected_collection_date'=>$dueDate,
                     'deposit_date' => $chequeUnderCollection['deposit_date'] ?: null,
                     'drawl_bank_id' => $chequeUnderCollection['drawl_bank_id'] ?: null,
                     'account_type' => $chequeUnderCollection['account_type'] ?: null,
@@ -151,27 +154,39 @@ class OpeningBalancesController
             $supplier = Partner::find($payableChequeArr['supplier_id'] ?: null);
             $currentAmount = isset($payableChequeArr['paid_amount']) ? number_unformat($payableChequeArr['paid_amount']) : 0 ;
             if ($currentAmount > 0) {
+				$paymentCurrency = $payableChequeArr['currency'] ;
                 $moneyPayment = $openingBalance->moneyPayments()->create([
                     'type' => MoneyPayment::PAYABLE_CHEQUE,
                     'partner_id' => $supplier ? $supplier->id : null,
                     'paid_amount' => $currentAmount,
 					'amount_in_invoice_currency' => $currentAmount,
-                    'currency' => $payableChequeArr['currency'],
+                    'currency' => $paymentCurrency,
                     'delivery_date' => $openingBalanceDate,
                     'company_id' => $company->id,
                     'user_id' => auth()->id(),
                     'exchange_rate' => isset($payableChequeArr['exchange_rate']) ? $payableChequeArr['exchange_rate'] : 1
                 ]);
+				$financialInstitutionId = isset($payableChequeArr['delivery_bank_id']) ? $payableChequeArr['delivery_bank_id'] : null;
+				$accountType = $payableChequeArr['account_type'] ?: null ;
+				$accountNumber = $payableChequeArr['account_number'] ?: null ;
+				$dueDate = $payableChequeArr['due_date'] ?: null ;
+				$dueDate = $dueDate ? Carbon::make($dueDate)->format('Y-m-d') : null  ;
+				$statementDate = $dueDate ;
+				$moneyType = MoneyPayment::PAYABLE_CHEQUE;
+				$amountInPaymentCurrency = $currentAmount ;
+				$deliveryBranchId = null;
                 $currentPayableCheque = $moneyPayment->payableCheque()->create([
                     'status' => PayableCheque::PENDING,
                     'cheque_number' => $payableChequeArr['cheque_number'] ?: null,
-                    'delivery_bank_id' => isset($payableChequeArr['delivery_bank_id']) ? $payableChequeArr['delivery_bank_id'] : null,
-                    'due_date' => $payableChequeArr['due_date'] ?: null,
+                    'delivery_bank_id' => $financialInstitutionId,
+                    'due_date' => $dueDate,
                     'delivery_date' => $openingBalanceDate ?: null,
 					'company_id'=>$company->id,
-                    'account_type' => $payableChequeArr['account_type'] ?: null,
-                    'account_number' => $payableChequeArr['account_number'] ?: null,
+                    'account_type' => $accountType,
+                    'account_number' => $accountNumber ,
                 ]);
+				$accountType = AccountType::find($accountType);
+				$moneyPayment->handleCreditStatement($company->id , $financialInstitutionId,$accountType,$accountNumber,$moneyType,$statementDate,$amountInPaymentCurrency,$deliveryBranchId,$paymentCurrency);
 				$currentPayableCheque->update([
 					'updated_at'=>now()
 				]);
@@ -317,8 +332,11 @@ class OpeningBalancesController
             $dataToUpdate = findByKey($request->input(MoneyReceived::CHEQUE_UNDER_COLLECTION), 'id', $id);
 			$dataToUpdate['received_amount'] = isset($dataToUpdate['received_amount']) ? number_unformat($dataToUpdate['received_amount']) : 0;
             unset($dataToUpdate['id']);
+			$dueDate = $dataToUpdate['due_date'] ?? null ;
+			$dueDate = $dueDate ? Carbon::make($dueDate)->format('Y-m-d'):null;
             $pivotData = [
-                'due_date' => $dataToUpdate['due_date'],
+                'due_date' => $dueDate ,
+                'expected_collection_date' => $dueDate,
                 'drawee_bank_id' => isset($dataToUpdate['drawee_bank_id']) ? $dataToUpdate['drawee_bank_id'] : null,
                 'cheque_number' => $dataToUpdate['cheque_number'],
                 'deposit_date' => $dataToUpdate['deposit_date'] ?: null,
@@ -347,8 +365,10 @@ class OpeningBalancesController
         foreach ($request->get(MoneyReceived::CHEQUE_UNDER_COLLECTION, []) as $data) {
             if (!isset($data['id']) || (isset($data['id']) && $data['id'] == '0')  ) {
                 unset($data['id']);
+				$dueDate = $data['due_date'] ? Carbon::make($data['due_date'])->format('Y-m-d') : null ;
                 $pivotData = [
-                    'due_date' => $data['due_date'],
+                    'due_date' => $dueDate,
+                    'expected_collection_date' => $dueDate,
                     'status' => Cheque::UNDER_COLLECTION,
                     'drawee_bank_id' => isset($data['drawee_bank_id']) ? $data['drawee_bank_id'] : null,
                     'cheque_number' => $data['cheque_number'],
@@ -362,7 +382,7 @@ class OpeningBalancesController
                 foreach ($pivotData as $key => $val) {
                     unset($data[$key]);
                 }
-                $data['partner_id'] = is_numeric($data['customer_id']) ? Partner::find($data['customer_id'])->getName() : Partner::where('is_customer',1)->where('name',$data['customer_id'])->first()->id ;
+                $data['partner_id'] = is_numeric($data['customer_id']) ? Partner::find($data['customer_id'])->id : Partner::where('is_customer',1)->where('name',$data['customer_id'])->first()->id ;
 				$data['receiving_date']=$openingBalanceDate;
 				$data['receiving_currency']=$data['currency'];
 				$data['company_id']=$company->id;
@@ -405,6 +425,8 @@ class OpeningBalancesController
 				 'cheque_number' => $dataToUpdate['cheque_number'],
 				 'account_type' => $dataToUpdate['account_type'] ?: null,
 				 'account_number' => $dataToUpdate['account_number'] ?: null,
+				 'company_id'=>$company->id 
+				 
 			 ];
 			 foreach ($pivotData as $key => $val) {
 				 unset($dataToUpdate[$key]);
@@ -421,26 +443,44 @@ class OpeningBalancesController
 		 foreach ($request->get(MoneyPayment::PAYABLE_CHEQUE, []) as $data) {
 			 if (!isset($data['id']) || (isset($data['id']) && $data['id'] == '0')  ) {
 				 unset($data['id']);
+				 $financialInstitutionId =isset($data['delivery_bank_id']) ? $data['delivery_bank_id'] : null;
+				 $chequeNumber= $data['cheque_number'];
+				 $accountType = $data['account_type'] ?: null;
+				 $accountNumber = $data['account_number'] ?: null ;
+				 $moneyType = MoneyPayment::PAYABLE_CHEQUE;
+				 $dueDate = $data['due_date'];
+				 $statementDate = $dueDate ;
 				 $pivotData = [
-					 'due_date' => $data['due_date'],
+					 'due_date' => $dueDate ,
 					 'status' => PayableCheque::PENDING,
-					 'delivery_bank_id' => isset($data['delivery_bank_id']) ? $data['delivery_bank_id'] : null,
-					 'cheque_number' => $data['cheque_number'],
-					 'account_type' => $data['account_type'] ?: null,
-					 'account_number' => $data['account_number'] ?: null,
+					 'delivery_bank_id' => $financialInstitutionId,
+					 'cheque_number' => $chequeNumber,
+					 'account_type' => $accountType,
+					 'account_number' => $accountNumber,
+					 'company_id'=>$company->id,
+					 'delivery_date'=>$openingBalanceDate
 					];
 					foreach ($pivotData as $key => $val) {
-						unset($data[$key]);
+						if($key != 'delivery_date'){
+							unset($data[$key]);
+						}
 					}
 					$data['partner_id'] = is_numeric($data['supplier_id']) ? Partner::find($data['supplier_id'])->id : Partner::where('is_supplier',1)->where('name',$dataToUpdate['supplier_id'])->first()->id ;
 					$data['paid_amount'] = isset($data['paid_amount']) ? number_unformat($data['paid_amount']) : 0 ;
 					$data['amount_in_invoice_currency'] = $data['paid_amount'];
+					$amountInPaymentCurrency = $data['amount_in_invoice_currency'];
 				 $moneyPayment = $openingBalance->payableCheques()->create(array_merge($data, [
 					 'type' => MoneyPayment::PAYABLE_CHEQUE,
 					 'user_id' => auth()->id(),
-					 'payment_currency'=>$data['currency'],
-					 'company_id'=>$company->id
+					 'payment_currency'=>$paymentCurrency = $data['currency'],
+					 'company_id'=>$company->id,
+					 'delivery_date'=>$openingBalanceDate
 				 ]));
+				//  $paymentCurrency = $data['currency'];
+				$deliveryBranchId = null;
+				$accountType  = AccountType::find($accountType);
+				 $moneyPayment->handleCreditStatement($company->id , $financialInstitutionId,$accountType,$accountNumber,$moneyType,$statementDate,$amountInPaymentCurrency,$deliveryBranchId,$paymentCurrency);
+				 
 				 $payableCheque = $moneyPayment->payableCheque()->create($pivotData);
 				 $payableCheque->update(['updated_at'=>now()]);
 			 }
