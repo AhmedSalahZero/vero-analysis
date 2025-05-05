@@ -26,16 +26,20 @@ class CashFlowReportController
         return view('reports.cash_flow_form', compact('company'));
     }
 	public function result(Company $company , Request $request, bool $returnResultAsArray = false ){
+	
 		$defaultStartDate = $request->get('cash_start_date',now()->format('Y-m-d'));
 		$defaultEndDate = $request->get('cash_end_date',now()->addMonth()->format('Y-m-d'));
 		$formStartDate =$request->get('start_date',$defaultStartDate); 
 		$formEndDate =$request->get('end_date',$defaultEndDate);
 		$reportInterval =  $request->get('report_interval','weekly');
+		$title = __('Company Cash Flow') . ' [ ' . $reportInterval . ' ]' ;
+		
 		// $reportInterval = 'daily';
 		$result = [];
 		// $cashExpenseCategoryNamesArr = [];
 		
 		$result['customers']=[
+			'Cash & Banks Balance'=>[],
 			'Checks Collected'=>[],
 			'Incoming Transfers'=>[],
 			'Bank Deposits'=> [],
@@ -46,6 +50,7 @@ class CashFlowReportController
 			'Cancelled LGs Cash Cover'=>[],
 			'Customers Invoices'=>[],
 			'Customers Past Due Invoices'=>[],
+			'Forecasted Project Collection'=>[],
 			__('Total Cash Inflow')=>[]
 		];
 		
@@ -72,10 +77,10 @@ class CashFlowReportController
 		$firstIndex = array_key_first($weeks);
 		$lastIndex = array_key_last($weeks);
 		$dates = [];
-	
 		$rangedWeeks = [];
 		$totalCashInFlowArray = [];
 		$totalCashOutFlowArray = [];
+		CustomerInvoice::getCashAndBankBalanceAtDate($result,$totalCashInFlowArray ,MoneyReceived::CHEQUE,'expected_collection_date',$startDate , $endDate,null,array_keys($weeks)[0],Cheque::UNDER_COLLECTION,$currency,$company->id) ;
 		foreach($weeks as $currentWeekYear=>$week){
 			
 			$currentYear = explode('-',$currentWeekYear)[1];
@@ -93,6 +98,8 @@ class CashFlowReportController
 				$startDate = $rangedWeeks['start_date'];
 				$endDate = $rangedWeeks['end_date'];
 			}
+			// eee
+			
 			CustomerInvoice::getSettlementAmountUnderDateForSpecificType($result,$totalCashInFlowArray ,MoneyReceived::CHEQUE,'expected_collection_date',$startDate , $endDate,null,$currentWeekYear,Cheque::UNDER_COLLECTION,$currency,$company->id) ;
 			CustomerInvoice::getSettlementAmountUnderDateForSpecificType($result,$totalCashInFlowArray,MoneyReceived::CHEQUE,'actual_collection_date',$startDate , $endDate,null,$currentWeekYear,Cheque::COLLECTED,$currency,$company->id);
 			CustomerInvoice::getCustomerInvoicesUnderCollectionAtDatesForContracts($result,$totalCashInFlowArray,$company->id,$startDate , $endDate,$currency,null,$currentWeekYear);
@@ -118,7 +125,7 @@ class CashFlowReportController
 			CashExpense::getCashOutForExpenseCategoriesAtDates($result,$totalCashOutFlowArray,CashExpense::PAYABLE_CHEQUE,'actual_payment_date',$currency,$company->id,$startDate,$endDate,$currentWeekYear,PayableCheque::PAID);
 			CashExpense::getCashOutForExpenseCategoriesAtDates($result,$totalCashOutFlowArray,CashExpense::PAYABLE_CHEQUE,'due_date',$currency,$company->id,$startDate,$endDate,$currentWeekYear,PayableCheque::PENDING);
 		
-			
+		
 			$result['suppliers']['Suppliers Past Due Invoices'] = [];
 
 			$dates[$currentWeekYear] = [
@@ -160,8 +167,17 @@ class CashFlowReportController
 		$result['cash_expenses'][__('Net Cash (+/-)')]['total'] = $netCash;
 		$result['cash_expenses'][__('Net Cash (+/-)')]['total']['total_of_total'] = array_sum($netCash) ;
 		$result['cash_expenses'][__('Accumulated Net Cash (+/-)')]['total'] = $this->formatAccumulatedNetCash($netCash,$weeks);
-	
-		
+		$orderByKeys = [
+			'Cash Payments',
+			'Outgoing Transfers',
+			'Paid Payable Cheques',
+			'Under Payment Payable Cheques',
+			'Suppliers Invoices',
+			'Suppliers Past Due Invoices',
+		];
+		$result['suppliers'] = collect($result['suppliers'])->sortBy(function($value,$key) use ($orderByKeys){
+			return array_search($key, $orderByKeys);
+		})->toArray();
 		
 		if($returnResultAsArray){
 			return [
@@ -188,6 +204,7 @@ class CashFlowReportController
 			'pastDueSupplierInvoices'=>$pastDueSupplierInvoices,
 			'supplierDueInvoices'=>$supplierDueInvoices,
 			'noRowHeaders'=>$noRowHeaders,
+			'title'=>$title
 			// 'cashExpenseCategoryNamesArr'=>$cashExpenseCategoryNamesArr
 		]);
 	}

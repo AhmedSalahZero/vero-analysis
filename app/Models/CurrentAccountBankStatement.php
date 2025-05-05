@@ -31,7 +31,7 @@ class CurrentAccountBankStatement extends Model  implements IHaveStatement
     {
         parent::boot();
         static::addGlobalScope('only_active',function(Builder $builder){
-			$builder->where('is_active',1); 
+			$builder->where('current_account_bank_statements.is_active',1); 
 		});
 
     }

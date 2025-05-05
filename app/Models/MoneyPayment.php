@@ -705,32 +705,80 @@ class MoneyPayment extends Model
 			MoneyPayment::PAYABLE_CHEQUE => (new PayableCheque())->getTable()
 		][$moneyType];
 		
-		$supplierNamesWithPaidAmount = DB::table($mainTableName)
-						->where($subTableName.'.currency',$currency)
-						->where('type',$moneyType)
-						->where($subTableName.'.company_id',$companyId)
-						->whereBetween($dateFieldName,[$startDate,$endDate])
-						->join($subTableName,$subTableName.'.id','=',$mainTableName.'.money_payment_id')
-						->when($chequeStatus , function(Builder $builder) use ($chequeStatus){
-							$builder->where('payable_cheques.status',$chequeStatus);
-						})
-						->groupBy('partner_id')
-						->selectRaw('partner_id,sum(paid_amount) as paid_amount')->get();
-		foreach($supplierNamesWithPaidAmount as $supplierNameAndPaidAmount){
-			$partner = Partner::find($supplierNameAndPaidAmount->partner_id);
-			$supplierName = $partner->getName();
-			$currentPaidAmount = $supplierNameAndPaidAmount->paid_amount ;
-			$result['suppliers'][$supplierName][$keyNameForCurrentType]['weeks'][$currentWeekYear] = isset($result['suppliers'][$supplierName][$keyNameForCurrentType]['weeks'][$currentWeekYear]) ? $result['suppliers'][$supplierName][$keyNameForCurrentType]['weeks'][$currentWeekYear] + $currentPaidAmount :  $currentPaidAmount;
-			$result['suppliers'][$supplierName][$keyNameForCurrentType]['total'] = isset($result['suppliers'][$supplierName][$keyNameForCurrentType]['total']) ? $result['suppliers'][$supplierName][$keyNameForCurrentType]['total']  + $currentPaidAmount : $currentPaidAmount;
+		$rows = DB::table('money_payments')
+		->when($chequeStatus , function(Builder $builder) use ($chequeStatus){
+			$builder->join('payable_cheques','payable_cheques.money_payment_id','=','money_payments.id')->where('payable_cheques.status',$chequeStatus);
+		})
+		->join('partners','partners.id','=','money_payments.partner_id')
+		->where('money_payments.type','=',$moneyType)
+		->where('payment_currency',$currency)
+		->whereBetween($dateFieldName,[$startDate,$endDate])
+		->selectRaw('paid_amount,name')->get();
+						// ->where($subTableName.'.currency',$currency)
+						// ->where('type',$moneyType)
+						// ->where($subTableName.'.company_id',$companyId)
+						// ->join($subTableName,$subTableName.'.id','=',$mainTableName.'.money_payment_id')
+						
+						// ->groupBy('partner_id')
+						// ->selectRaw('partner_id,sum(paid_amount) as paid_amount')->get();
+		foreach($rows as $row){
+			//$partner = Partner::find($row->partner_id);
+			$supplierName =$row->name;
+			$currentPaidAmount = $row->paid_amount ;
+			$result['suppliers'][$keyNameForCurrentType][$supplierName]['weeks'][$currentWeekYear] = isset($result['suppliers'][$keyNameForCurrentType][$supplierName]['weeks'][$currentWeekYear]) ? $result['suppliers'][$keyNameForCurrentType][$supplierName]['weeks'][$currentWeekYear] + $row->paid_amount :  $row->paid_amount;
+			$result['suppliers'][$keyNameForCurrentType][$supplierName]['total'] = isset($result['suppliers'][$keyNameForCurrentType][$supplierName]['total']) ? $result['suppliers'][$keyNameForCurrentType][$supplierName]['total']  + $row->paid_amount : $row->paid_amount;
 			$currentTotal = $currentPaidAmount;
-			$result['suppliers'][$supplierName]['total'][$currentWeekYear] = isset($result['suppliers'][$supplierName]['total'][$currentWeekYear]) ? $result['suppliers'][$supplierName]['total'][$currentWeekYear] +  $currentTotal : $currentTotal ;
-			$result['suppliers'][$supplierName]['total']['total_of_total'] = isset($result['suppliers'][$supplierName]['total']['total_of_total']) ? $result['suppliers'][$supplierName]['total']['total_of_total'] + $result['suppliers'][$supplierName]['total'][$currentWeekYear] : $result['suppliers'][$supplierName]['total'][$currentWeekYear];
-			$totalCashOutFlowArray[$currentWeekYear] = isset($totalCashOutFlowArray[$currentWeekYear]) ? $totalCashOutFlowArray[$currentWeekYear] +   $currentTotal : $currentTotal ;
+			$result['suppliers'][$keyNameForCurrentType]['total'][$currentWeekYear] = isset($result['suppliers'][$keyNameForCurrentType]['total'][$currentWeekYear]) ? $result['suppliers'][$keyNameForCurrentType]['total'][$currentWeekYear] +  $currentTotal : $currentTotal ;
+			$result['suppliers'][$keyNameForCurrentType]['total']['total_of_total'] = isset($result['suppliers'][$keyNameForCurrentType]['total']['total_of_total']) ? $result['suppliers'][$keyNameForCurrentType]['total']['total_of_total'] + $result['suppliers'][$keyNameForCurrentType]['total'][$currentWeekYear] : $result['suppliers'][$keyNameForCurrentType]['total'][$currentWeekYear];
+			$totalCashOutFlowArray[$currentWeekYear] = isset($totalCashOutFlowArray[$currentWeekYear]) ? $totalCashOutFlowArray[$currentWeekYear] +   $row->paid_amount : $row->paid_amount ;
 			
 		}
 		
 	
 	}
+	
+	
+	// public static function getCashOutForMoneyTypeAtDates(array &$result , array &$totalCashOutFlowArray  , string $moneyType,string $dateFieldName,string $currency , int $companyId, string $startDate , string $endDate , string $currentWeekYear , ?string $chequeStatus = null) 
+	// {
+	// 	$subTableName = (new self)->getTable(); // money_payments
+	// 	$keyNameForCurrentType = [
+	// 		MoneyPayment::OUTGOING_TRANSFER => __('Outgoing Transfers'),
+	// 		MoneyPayment::CASH_PAYMENT =>__('Cash Payments'),
+	// 		MoneyPayment::PAYABLE_CHEQUE => $chequeStatus == PayableCheque::PAID ? __('Paid Payable Cheques') : __('Under Payment Payable Cheques')
+	// 	][$moneyType];
+		
+	// 	$mainTableName = [
+	// 		MoneyPayment::OUTGOING_TRANSFER => (new OutgoingTransfer())->getTable(),
+	// 		MoneyPayment::CASH_PAYMENT =>(new CashPayment())->getTable(),
+	// 		MoneyPayment::PAYABLE_CHEQUE => (new PayableCheque())->getTable()
+	// 	][$moneyType];
+		
+	// 	$rows = DB::table($mainTableName)
+	// 					->where($subTableName.'.currency',$currency)
+	// 					->where('type',$moneyType)
+	// 					->where($subTableName.'.company_id',$companyId)
+	// 					->whereBetween($dateFieldName,[$startDate,$endDate])
+	// 					->join($subTableName,$subTableName.'.id','=',$mainTableName.'.money_payment_id')
+	// 					->when($chequeStatus , function(Builder $builder) use ($chequeStatus){
+	// 						$builder->where('payable_cheques.status',$chequeStatus);
+	// 					})
+	// 					->groupBy('partner_id')
+	// 					->selectRaw('partner_id,sum(paid_amount) as paid_amount')->get();
+	// 	foreach($rows as $supplierNameAndPaidAmount){
+	// 		$partner = Partner::find($supplierNameAndPaidAmount->partner_id);
+	// 		$supplierName = $partner->getName();
+	// 		$currentPaidAmount = $supplierNameAndPaidAmount->paid_amount ;
+	// 		$result['suppliers'][$supplierName][$keyNameForCurrentType]['weeks'][$currentWeekYear] = isset($result['suppliers'][$supplierName][$keyNameForCurrentType]['weeks'][$currentWeekYear]) ? $result['suppliers'][$supplierName][$keyNameForCurrentType]['weeks'][$currentWeekYear] + $currentPaidAmount :  $currentPaidAmount;
+	// 		$result['suppliers'][$supplierName][$keyNameForCurrentType]['total'] = isset($result['suppliers'][$supplierName][$keyNameForCurrentType]['total']) ? $result['suppliers'][$supplierName][$keyNameForCurrentType]['total']  + $currentPaidAmount : $currentPaidAmount;
+	// 		$currentTotal = $currentPaidAmount;
+	// 		$result['suppliers'][$supplierName]['total'][$currentWeekYear] = isset($result['suppliers'][$supplierName]['total'][$currentWeekYear]) ? $result['suppliers'][$supplierName]['total'][$currentWeekYear] +  $currentTotal : $currentTotal ;
+	// 		$result['suppliers'][$supplierName]['total']['total_of_total'] = isset($result['suppliers'][$supplierName]['total']['total_of_total']) ? $result['suppliers'][$supplierName]['total']['total_of_total'] + $result['suppliers'][$supplierName]['total'][$currentWeekYear] : $result['suppliers'][$supplierName]['total'][$currentWeekYear];
+	// 		$totalCashOutFlowArray[$currentWeekYear] = isset($totalCashOutFlowArray[$currentWeekYear]) ? $totalCashOutFlowArray[$currentWeekYear] +   $currentTotal : $currentTotal ;
+			
+	// 	}
+		
+	
+	// }
 	
 	
 	public  function getForeignKeyName()

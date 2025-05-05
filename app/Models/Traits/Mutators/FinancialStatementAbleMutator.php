@@ -207,6 +207,7 @@ trait FinancialStatementAbleMutator
 			$isSalesRevenue = $financialStatementAbleItemId == 1 ;
 			// dd($insertSubItems);
 			// $insertSubItems = ['actual']; // deleteit
+			// dd($insertSubItems);
 			foreach($insertSubItems as $currentSubItemToBeInserted ){
 				
 				$currentSubItemDataArr = $incomeStatement->getFinancialStatementAbleData($currentSubItemToBeInserted,$formSubItemType,$subItemArr,false);
@@ -297,7 +298,6 @@ trait FinancialStatementAbleMutator
 				if(!$isDeductible && $vatRate > 0  && !$isDepreciationOrAmortization && !$isSalesRevenue && !$isPercentage  && !$isCostOfUnit ){
 					$currentSubItemValues = $this->calculatePayloadWithVat($currentSubItemValues,$currentSubItemToBeInserted,$isDeductible,$vatRate,$financialStatementAbleItemId); 
 				}
-				
 				
 				$currentSubItemDataArr['total'] = array_sum($currentSubItemValues);
 				$currentSubItemDataArr['payload'] = json_encode($currentSubItemValues);

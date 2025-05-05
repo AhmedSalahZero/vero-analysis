@@ -285,9 +285,9 @@ class CustomerInvoice extends Model implements IInvoice
 		->where('currency',$currency)
 		->where('net_balance','>',0)
 		->whereBetween('invoice_due_date',[$startDate,$endDate])->get();
-		if(count($items)>1){
+		// if(count($items)>1){
 			// dd($items);
-		}
+		// }
 		// $sum = $items->sum('net_balance') ;
 		// $invoiceNumber = $items->count() ? $items->first()->invoice_number : null ;
 		// if($sum ){
@@ -305,7 +305,69 @@ class CustomerInvoice extends Model implements IInvoice
 			}
 		// } 
 	}
+	public static function getCashAndBankBalanceAtDate(array &$result , array &$totalCashInFlowArray , string $moneyType , string $dateColumnName , string $startDate , string $endDate, ?string $contractCode , string $currentWeekYear , ?string $chequeStatus = null  , $currency = null , $companyId = null):void
+	{
+		/**
+		 * 
+		 * * في حالة لو مرر العقد فا مش محتاجين عمله لان العقد الواحد مربوط بعملة واحدة
+		 */
+		$totalCashInFlowKey = __('Total Cash Inflow');
+		
+		$currentTypeText = 'Cash & Banks Balance';
+		$rows = CashInSafeStatement::
+		where('cash_in_safe_statements.currency',$currency)
+		->where('cash_in_safe_statements.company_id',$companyId)
+		->where('cash_in_safe_statements.date','<=',$startDate)
+		->join('branch','branch.id','=','cash_in_safe_statements.branch_id')
+		->orderByRaw('cash_in_safe_statements.date desc , cash_in_safe_statements.id desc')
+		->selectRaw('cash_in_safe_statements.branch_id , cash_in_safe_statements.end_balance as received_amount,branch.name,date')
+		->get()->groupBy('branch_id')->map(function($result){
+			return $result->first();
+		})->values();
 	
+		foreach($rows as $row){
+			$invoiceNumber =   $row->name  ;
+			 $result['customers'][$currentTypeText][$invoiceNumber]['weeks'][$currentWeekYear] = isset($result['customers'][$currentTypeText][$invoiceNumber]['weeks'][$currentWeekYear]) ? $result['customers'][$currentTypeText][$invoiceNumber]['weeks'][$currentWeekYear]+  $row->received_amount :$row->received_amount;
+			$result['customers'][$currentTypeText][$invoiceNumber]['total'] = isset($result['customers'][$currentTypeText][$invoiceNumber]['total']) ? $result['customers'][$currentTypeText][$invoiceNumber]['total']  + $row->received_amount : $row->received_amount;
+			$currentTotal = $row->received_amount;
+			$result['customers'][$currentTypeText]['total'][$currentWeekYear] = isset($result['customers'][$currentTypeText]['total'][$currentWeekYear]) ? $result['customers'][$currentTypeText]['total'][$currentWeekYear] +  $currentTotal : $currentTotal ;
+			$result['customers'][$totalCashInFlowKey]['total'][$currentWeekYear] = isset($result['customers'][$totalCashInFlowKey]['total'][$currentWeekYear]) ? $result['customers'][$totalCashInFlowKey]['total'][$currentWeekYear] + $row->received_amount : $row->received_amount;
+			$totalCashInFlowArray[$currentWeekYear] = isset($totalCashInFlowArray[$currentWeekYear]) ? $totalCashInFlowArray[$currentWeekYear] + $row->received_amount : $row->received_amount ;
+			$result['customers'][$currentTypeText]['total']['total_of_total'] = isset($result['customers'][$currentTypeText]['total']['total_of_total']) ? $result['customers'][$currentTypeText]['total']['total_of_total'] + $row->received_amount : $row->received_amount;
+		}
+		
+		$rows = CurrentAccountBankStatement::
+		where('financial_institution_accounts.currency',$currency)
+		->where('current_account_bank_statements.company_id',$companyId)
+		->where('current_account_bank_statements.date','<=',$startDate)
+		->join('financial_institution_accounts','financial_institution_accounts.id','=','current_account_bank_statements.financial_institution_account_id')
+		->join('financial_institutions','financial_institutions.id','=','financial_institution_accounts.financial_institution_id')
+		->join('banks','banks.id','=','financial_institutions.bank_id')
+		->orderByRaw('current_account_bank_statements.date desc , current_account_bank_statements.id desc')
+		->selectRaw('current_account_bank_statements.financial_institution_account_id , current_account_bank_statements.end_balance as received_amount,banks.name_en as name,date')
+		->get()->groupBy('financial_institution_account_id')->map(function($result){
+			return $result->first();
+		})->values();
+		foreach($rows as $row){
+			$invoiceNumber =   $row->name  ;
+			 $result['customers'][$currentTypeText][$invoiceNumber]['weeks'][$currentWeekYear] = isset($result['customers'][$currentTypeText][$invoiceNumber]['weeks'][$currentWeekYear]) ? $result['customers'][$currentTypeText][$invoiceNumber]['weeks'][$currentWeekYear]+  $row->received_amount :$row->received_amount;
+			$result['customers'][$currentTypeText][$invoiceNumber]['total'] = isset($result['customers'][$currentTypeText][$invoiceNumber]['total']) ? $result['customers'][$currentTypeText][$invoiceNumber]['total']  + $row->received_amount : $row->received_amount;
+			$currentTotal = $row->received_amount;
+			$result['customers'][$currentTypeText]['total'][$currentWeekYear] = isset($result['customers'][$currentTypeText]['total'][$currentWeekYear]) ? $result['customers'][$currentTypeText]['total'][$currentWeekYear] +  $currentTotal : $currentTotal ;
+			$result['customers'][$totalCashInFlowKey]['total'][$currentWeekYear] = isset($result['customers'][$totalCashInFlowKey]['total'][$currentWeekYear]) ? $result['customers'][$totalCashInFlowKey]['total'][$currentWeekYear] + $row->received_amount : $row->received_amount;
+			$totalCashInFlowArray[$currentWeekYear] = isset($totalCashInFlowArray[$currentWeekYear]) ? $totalCashInFlowArray[$currentWeekYear] + $row->received_amount : $row->received_amount ;
+			$result['customers'][$currentTypeText]['total']['total_of_total'] = isset($result['customers'][$currentTypeText]['total']['total_of_total']) ? $result['customers'][$currentTypeText]['total']['total_of_total'] + $row->received_amount : $row->received_amount;
+		}
+		
+		// if(count($rows)){
+		// 	dd($result['customers'][$currentTypeText]);
+		// }
+		// if(count($rows)>1){
+		// 	dd($result['customers'][$currentTypeText][$invoiceNumber]);
+		// }
+		
+			
+	}
 	public static function getSettlementAmountUnderDateForSpecificType(array &$result , array &$totalCashInFlowArray , string $moneyType , string $dateColumnName , string $startDate , string $endDate, ?string $contractCode , string $currentWeekYear , ?string $chequeStatus = null  , $currency = null , $companyId = null):void
 	{
 		/**
@@ -313,7 +375,6 @@ class CustomerInvoice extends Model implements IInvoice
 		 * * في حالة لو مرر العقد فا مش محتاجين عمله لان العقد الواحد مربوط بعملة واحدة
 		 */
 		$totalCashInFlowKey = __('Total Cash Inflow');
-		// $totalCashFlowKey = __('Net Cash (+/-)');
 		$currentTypeText = [
 			MoneyReceived::INCOMING_TRANSFER => __('Incoming Transfers'),
 			MoneyReceived::CHEQUE => $chequeStatus == Cheque::IN_SAFE ? __('Cheques In Safe') : __('Checks Collected'),
@@ -324,38 +385,140 @@ class CustomerInvoice extends Model implements IInvoice
 		if($chequeStatus == Cheque::UNDER_COLLECTION){
 			$currentTypeText = __('Cheques Under Collection');
 		}
-		
-		$queryResultRaw =  DB::table('customer_invoices')
-		->when($contractCode , function($query) use ($contractCode){
-			$query->where('contract_code',$contractCode);
-		})
-		->when($currency,function($builder) use ($currency){
-			$builder->where('customer_invoices.currency',$currency);
-		})
-		->join('settlements','settlements.invoice_id','=','customer_invoices.id')
-		->join('money_received','money_received.id','=','settlements.money_received_id')
-		->where('money_received.type','=',$moneyType)
-		->whereBetween($dateColumnName,[$startDate,$endDate])
+		// dd($chequeStatus);
+		$rows =  DB::table('money_received')
+		// ->when($contractCode , function($query) use ($contractCode){
+		// 	$query->where('contract_code',$contractCode);
+		// })
+		// ->when($currency,function($builder) use ($currency){
+		// 	$builder->where('customer_invoices.currency',$currency);
+		// })
 		->when($chequeStatus , function( $builder) use ($chequeStatus){
 			$builder->join('cheques','cheques.money_received_id','=','money_received.id')->where('cheques.status',$chequeStatus);
 		})
-		->where('customer_invoices.company_id',$companyId)
-		->selectRaw('sum(settlement_amount) as current_sum,customer_invoices.invoice_number')->first();
-
-
-		if($queryResultRaw->current_sum){
-			$invoiceNumber = __('Invoice No.') . ' ' .  $queryResultRaw->invoice_number ;
-			$sum = $queryResultRaw->current_sum;
-			$result['customers'][$currentTypeText][$invoiceNumber]['weeks'][$currentWeekYear] =  $sum;
-			$result['customers'][$currentTypeText][$invoiceNumber]['total'] = isset($result['customers'][$currentTypeText][$invoiceNumber]['total']) ? $result['customers'][$currentTypeText][$invoiceNumber]['total']  + $sum : $sum;
-			$currentTotal = $sum;
+		->join('partners','partners.id','=','money_received.partner_id')
+		->where('money_received.type','=',$moneyType)
+		->where('receiving_currency',$currency)
+		->whereBetween($dateColumnName,[$startDate,$endDate])
+		->where('money_received.company_id',$companyId)
+		// ->when($chequeStatus , function( $builder) use ($chequeStatus){
+		// 	$builder->join('cheques','cheques.money_received_id','=','money_received.id')->where('cheques.status',$chequeStatus);
+		// })
+		// ->where('customer_invoices.company_id',$companyId)
+		->selectRaw('received_amount,name')->get();
+		// if(count($rows) > 0){
+		// 	dd($rows,$currentWeekYear);
+		// }
+		foreach($rows as $row){
+			$invoiceNumber =   $row->name  ;
+			 $result['customers'][$currentTypeText][$invoiceNumber]['weeks'][$currentWeekYear] = isset($result['customers'][$currentTypeText][$invoiceNumber]['weeks'][$currentWeekYear]) ? $result['customers'][$currentTypeText][$invoiceNumber]['weeks'][$currentWeekYear]+  $row->received_amount :$row->received_amount;
+			$result['customers'][$currentTypeText][$invoiceNumber]['total'] = isset($result['customers'][$currentTypeText][$invoiceNumber]['total']) ? $result['customers'][$currentTypeText][$invoiceNumber]['total']  + $row->received_amount : $row->received_amount;
+			$currentTotal = $row->received_amount;
 			$result['customers'][$currentTypeText]['total'][$currentWeekYear] = isset($result['customers'][$currentTypeText]['total'][$currentWeekYear]) ? $result['customers'][$currentTypeText]['total'][$currentWeekYear] +  $currentTotal : $currentTotal ;
-			$result['customers'][$totalCashInFlowKey]['total'][$currentWeekYear] = isset($result['customers'][$totalCashInFlowKey]['total'][$currentWeekYear]) ? $result['customers'][$totalCashInFlowKey]['total'][$currentWeekYear] + $sum : $sum;
-			$totalCashInFlowArray[$currentWeekYear] = isset($totalCashInFlowArray[$currentWeekYear]) ? $totalCashInFlowArray[$currentWeekYear] + $sum : $sum ;
-			$result['customers'][$currentTypeText]['total']['total_of_total'] = isset($result['customers'][$currentTypeText]['total']['total_of_total']) ? $result['customers'][$currentTypeText]['total']['total_of_total'] + $sum : $sum;
+			$result['customers'][$totalCashInFlowKey]['total'][$currentWeekYear] = isset($result['customers'][$totalCashInFlowKey]['total'][$currentWeekYear]) ? $result['customers'][$totalCashInFlowKey]['total'][$currentWeekYear] + $row->received_amount : $row->received_amount;
+			$totalCashInFlowArray[$currentWeekYear] = isset($totalCashInFlowArray[$currentWeekYear]) ? $totalCashInFlowArray[$currentWeekYear] + $row->received_amount : $row->received_amount ;
+			$result['customers'][$currentTypeText]['total']['total_of_total'] = isset($result['customers'][$currentTypeText]['total']['total_of_total']) ? $result['customers'][$currentTypeText]['total']['total_of_total'] + $row->received_amount : $row->received_amount;
+		
 		}
-	
+		// if(count($rows)>1){
+		// 	dd($result['customers'][$currentTypeText][$invoiceNumber]);
+		// }
+		
+			
 	}
+	
+	public static function getForecastedProjectCollection(array &$result , array &$totalCashInFlowArray , string $moneyType , string $dateColumnName , string $startDate , string $endDate, ?string $contractCode , string $currentWeekYear , ?string $chequeStatus = null  , $currency = null , $companyId = null):void
+	{
+		/**
+		 * 
+		 * * في حالة لو مرر العقد فا مش محتاجين عمله لان العقد الواحد مربوط بعملة واحدة
+		 */
+		$totalCashInFlowKey = __('Total Cash Inflow');
+		$currentTypeText = [
+			MoneyReceived::INCOMING_TRANSFER => __('Incoming Transfers'),
+			MoneyReceived::CHEQUE => $chequeStatus == Cheque::IN_SAFE ? __('Cheques In Safe') : __('Checks Collected'),
+			MoneyReceived::CASH_IN_BANK=>__('Bank Deposits'),
+			MoneyReceived::CASH_IN_SAFE=>__('Cash Collections')
+		][$moneyType];
+		
+		if($chequeStatus == Cheque::UNDER_COLLECTION){
+			$currentTypeText = __('Cheques Under Collection');
+		}
+		$rows =  DB::table('money_received')
+		->when($chequeStatus , function( $builder) use ($chequeStatus){
+			$builder->join('cheques','cheques.money_received_id','=','money_received.id')->where('cheques.status',$chequeStatus);
+		})
+		->join('partners','partners.id','=','money_received.partner_id')
+		->where('money_received.type','=',$moneyType)
+		->where('receiving_currency',$currency)
+		->whereBetween($dateColumnName,[$startDate,$endDate])
+		->where('money_received.company_id',$companyId)
+		->selectRaw('received_amount,name')->get();
+		
+		foreach($rows as $row){
+			$invoiceNumber =   $row->name  ;
+			 $result['customers'][$currentTypeText][$invoiceNumber]['weeks'][$currentWeekYear] = isset($result['customers'][$currentTypeText][$invoiceNumber]['weeks'][$currentWeekYear]) ? $result['customers'][$currentTypeText][$invoiceNumber]['weeks'][$currentWeekYear]+  $row->received_amount :$row->received_amount;
+			$result['customers'][$currentTypeText][$invoiceNumber]['total'] = isset($result['customers'][$currentTypeText][$invoiceNumber]['total']) ? $result['customers'][$currentTypeText][$invoiceNumber]['total']  + $row->received_amount : $row->received_amount;
+			$currentTotal = $row->received_amount;
+			$result['customers'][$currentTypeText]['total'][$currentWeekYear] = isset($result['customers'][$currentTypeText]['total'][$currentWeekYear]) ? $result['customers'][$currentTypeText]['total'][$currentWeekYear] +  $currentTotal : $currentTotal ;
+			$result['customers'][$totalCashInFlowKey]['total'][$currentWeekYear] = isset($result['customers'][$totalCashInFlowKey]['total'][$currentWeekYear]) ? $result['customers'][$totalCashInFlowKey]['total'][$currentWeekYear] + $row->received_amount : $row->received_amount;
+			$totalCashInFlowArray[$currentWeekYear] = isset($totalCashInFlowArray[$currentWeekYear]) ? $totalCashInFlowArray[$currentWeekYear] + $row->received_amount : $row->received_amount ;
+			$result['customers'][$currentTypeText]['total']['total_of_total'] = isset($result['customers'][$currentTypeText]['total']['total_of_total']) ? $result['customers'][$currentTypeText]['total']['total_of_total'] + $row->received_amount : $row->received_amount;
+		
+		}
+			
+	}
+	
+	// public static function getSettlementAmountUnderDateForSpecificType(array &$result , array &$totalCashInFlowArray , string $moneyType , string $dateColumnName , string $startDate , string $endDate, ?string $contractCode , string $currentWeekYear , ?string $chequeStatus = null  , $currency = null , $companyId = null):void
+	// {
+	// 	/**
+	// 	 * 
+	// 	 * * في حالة لو مرر العقد فا مش محتاجين عمله لان العقد الواحد مربوط بعملة واحدة
+	// 	 */
+	// 	$totalCashInFlowKey = __('Total Cash Inflow');
+	// 	$currentTypeText = [
+	// 		MoneyReceived::INCOMING_TRANSFER => __('Incoming Transfers'),
+	// 		MoneyReceived::CHEQUE => $chequeStatus == Cheque::IN_SAFE ? __('Cheques In Safe') : __('Checks Collected'),
+	// 		MoneyReceived::CASH_IN_BANK=>__('Bank Deposits'),
+	// 		MoneyReceived::CASH_IN_SAFE=>__('Cash Collections')
+	// 	][$moneyType];
+		
+	// 	if($chequeStatus == Cheque::UNDER_COLLECTION){
+	// 		$currentTypeText = __('Cheques Under Collection');
+	// 	}
+		
+	// 	$queryResultRaw =  DB::table('customer_invoices')
+	// 	->when($contractCode , function($query) use ($contractCode){
+	// 		$query->where('contract_code',$contractCode);
+	// 	})
+	// 	->when($currency,function($builder) use ($currency){
+	// 		$builder->where('customer_invoices.currency',$currency);
+	// 	})
+	// 	->join('settlements','settlements.invoice_id','=','customer_invoices.id')
+	// 	->join('money_received','money_received.id','=','settlements.money_received_id')
+	// 	->where('money_received.type','=',$moneyType)
+	// 	->whereBetween($dateColumnName,[$startDate,$endDate])
+	// 	->when($chequeStatus , function( $builder) use ($chequeStatus){
+	// 		$builder->join('cheques','cheques.money_received_id','=','money_received.id')->where('cheques.status',$chequeStatus);
+	// 	})
+	// 	->where('customer_invoices.company_id',$companyId)
+	// 	->selectRaw('sum(settlement_amount) as current_sum,customer_invoices.invoice_number,customer_name')->first();
+
+	// 	if($queryResultRaw->current_sum){
+	// 		$invoiceNumber = __('Invoice No.') . ' ' .  $queryResultRaw->invoice_number . ' [ ' . $queryResultRaw->customer_name .' ] ' ;
+	// 		$sum = $queryResultRaw->current_sum;
+	// 		$result['customers'][$currentTypeText][$invoiceNumber]['weeks'][$currentWeekYear] =  $sum;
+	// 		$result['customers'][$currentTypeText][$invoiceNumber]['total'] = isset($result['customers'][$currentTypeText][$invoiceNumber]['total']) ? $result['customers'][$currentTypeText][$invoiceNumber]['total']  + $sum : $sum;
+	// 		$currentTotal = $sum;
+	// 		$result['customers'][$currentTypeText]['total'][$currentWeekYear] = isset($result['customers'][$currentTypeText]['total'][$currentWeekYear]) ? $result['customers'][$currentTypeText]['total'][$currentWeekYear] +  $currentTotal : $currentTotal ;
+	// 		$result['customers'][$totalCashInFlowKey]['total'][$currentWeekYear] = isset($result['customers'][$totalCashInFlowKey]['total'][$currentWeekYear]) ? $result['customers'][$totalCashInFlowKey]['total'][$currentWeekYear] + $sum : $sum;
+	// 		$totalCashInFlowArray[$currentWeekYear] = isset($totalCashInFlowArray[$currentWeekYear]) ? $totalCashInFlowArray[$currentWeekYear] + $sum : $sum ;
+	// 		$result['customers'][$currentTypeText]['total']['total_of_total'] = isset($result['customers'][$currentTypeText]['total']['total_of_total']) ? $result['customers'][$currentTypeText]['total']['total_of_total'] + $sum : $sum;
+			
+	// 	}
+		
+	// }
+	
 	public function getDeleteByDateColumnName()
 	{
 		return 'invoice_date';

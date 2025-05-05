@@ -34,6 +34,7 @@ class ContractCashFlowReportController
 		$formEndDate =$request->get('end_date',$request->get('cash_end_date'));
 		
 		$reportInterval =  $request->get('report_interval','weekly');
+		
 		$contractId = $request->get('contract_id')	 ;
 		$finalResult = [];
 		$contract = Contract::find($contractId);
@@ -41,11 +42,14 @@ class ContractCashFlowReportController
 		 * @var Contract $contract 
 		 */
 		$contractCode = $contract ? $contract->getCode() : null ;
+		$contractName = $contract ? $contract->getName() : null ;
 		if(is_null($contractCode)){
 			return redirect()->back()->with('fail',__('Please Select Contract'));
 		}
 		$customer = $contract ? $contract->client : null ;
 		$customerId = $customer ? $customer->getId() : null ;
+		$customerName = $customer ? $customer->getName() : null ;
+		$title = __('Contract Cash Flow Report') . ' [ '. $reportInterval . ' ] ['. $customerName . ' ] ' . ' [ ' . $contractName . ' ]';   ;    
 		$result['customers']=[
 			'Checks Collected'=>[],
 			'Incoming Transfers'=>[],
@@ -108,7 +112,7 @@ class ContractCashFlowReportController
 					$startDate = $rangedWeeks['start_date'];
 					$endDate = $rangedWeeks['end_date'];
 				}
-				
+					// eeeee
 					 CustomerInvoice::getSettlementAmountUnderDateForSpecificType($result,$totalCashInFlowArray ,MoneyReceived::CHEQUE,'expected_collection_date',$startDate , $endDate,$contractCode,$currentWeekYear,Cheque::UNDER_COLLECTION,$currencyName,$company->id) ;
 				// for customers 
 			
@@ -128,12 +132,13 @@ class ContractCashFlowReportController
 					
 					$customerDueInvoicesPerCurrency[$currencyName] = $customerDueInvoices ;
 					CustomerInvoice::getSettlementAmountUnderDateForSpecificType($result ,$totalCashInFlowArray,MoneyReceived::INCOMING_TRANSFER,'receiving_date',$startDate , $endDate,$contractCode,$currentWeekYear,null,$currencyName,$company->id);
-				
+					// eee
 					 CustomerInvoice::getSettlementAmountUnderDateForSpecificType($result,$totalCashInFlowArray,MoneyReceived::CHEQUE,'actual_collection_date',$startDate , $endDate,$contractCode,$currentWeekYear,Cheque::COLLECTED,$currencyName,$company->id);
 					 CustomerInvoice::getCustomerInvoicesUnderCollectionAtDatesForContracts($result,$totalCashInFlowArray,$company->id,$startDate , $endDate,$currencyName,$contractCode,$currentWeekYear);
 					 CustomerInvoice::getSettlementAmountUnderDateForSpecificType($result ,$totalCashInFlowArray, MoneyReceived::CASH_IN_SAFE,'receiving_date',$startDate , $endDate,$contractCode,$currentWeekYear,$currencyName,$company->id);
 					 CustomerInvoice::getSettlementAmountUnderDateForSpecificType($result ,$totalCashInFlowArray, MoneyReceived::CASH_IN_BANK,'receiving_date',$startDate , $endDate,$contractCode,$currentWeekYear,$currencyName,$company->id);
 				$result['customers'][__('Customers Past Due Invoices')] = [];
+				// eee
 				 CustomerInvoice::getSettlementAmountUnderDateForSpecificType($result,$totalCashInFlowArray,MoneyReceived::CHEQUE,'due_date',$startDate , $endDate,$contractCode,$currentWeekYear,Cheque::IN_SAFE,$currencyName,$company->id);
 		
 					SettlementAllocation::getSettlementAllocationPerContractAndMoneyType($result , $totalCashOutFlowArray  , MoneyPayment::OUTGOING_TRANSFER,'delivery_date',$contractId,$customerId,$startDate,$endDate,$currentWeekYear,$currencyName);
@@ -187,7 +192,8 @@ class ContractCashFlowReportController
 			'reportInterval'=>$reportInterval,
 			'noRowHeaders'=>$noRowHeaders,
 			'finalResult'=>$finalResult,
-			'allCurrencies'=>$allCurrencies
+			'allCurrencies'=>$allCurrencies,
+			'title'=>$title
 		]);
 	}
 	public function formatAccumulatedNetCash(array $netCashes,array $weeks)

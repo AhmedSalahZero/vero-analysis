@@ -115,7 +115,7 @@ use Carbon\Carbon ;
 </style>
 @endsection
 @section('sub-header')
-<x-main-form-title :id="'main-form-title'" :class="''">{{ __('Contract Cash Flow Report') }}</x-main-form-title>
+<x-main-form-title :id="'main-form-title'" :class="''">{{ $title }}</x-main-form-title>
 @endsection
 @section('content')
 @php
@@ -304,8 +304,8 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
             </div>
 
 
-            <div class="kt-portlet__body ">
-                <div class="tab-content  kt-margin-t-20">
+            <div class="kt-portlet__body " style="padding-top:0 !important">
+                <div class="tab-content  ">
 				@php
 					$index = -1 ;
 				@endphp

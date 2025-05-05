@@ -450,7 +450,7 @@ $tableId = 'kt_table_1';
                             const tr = $(this).closest(parentQuery)
 
                             const currentVal = filterNumericUserInput(parent.find('input[type="text"]').val(), false)
-                            tr.find('input[type="text"]').not(':disabled').each(function(i, inputText) {
+                            tr.find('input[type="text"]').not('[readonly]').each(function(i, inputText) {
                                 var date = $(inputText).attr('data-date')
                                 if (Date.parse(date) > Date.parse(columnIndex)) {
                                     $(inputText).val(currentVal).trigger('blur')
@@ -464,14 +464,18 @@ $tableId = 'kt_table_1';
 							const modal = $(this).closest('.modal'); 
                             if (val) {
                                 modal.find('.collection-policy').addClass('d-none').removeClass('d-flex')
-                                modal.find('.collection-policy input,.collection-policy select').prop('disabled', true)
+                                modal.find('.collection-policy input').prop('readonly', true)
+                                modal.find('.collection-policy select').prop('disabled', true)
                                 modal.find('.checkboxes-vat').addClass('d-none').removeClass('d-flex')
-                                modal.find('.checkboxes-vat input,.checkboxes-vat select').prop('disabled', true)
+                                modal.find('.checkboxes-vat input').prop('readonly', true)
+                                modal.find('.checkboxes-vat select').prop('disabled', true)
                             } else {
                                 modal.find('.collection-policy').removeClass('d-none').addClass('d-flex')
-                                modal.find('.collection-policy input,.collection-policy select').prop('disabled', false)
+                                modal.find('.collection-policy input').prop('readonly', false)
+                                modal.find('.collection-policy select').prop('disabled', false)
                                 modal.find('.checkboxes-vat').removeClass('d-none').addClass('d-flex')
-                                modal.find('.checkboxes-vat input,.checkboxes-vat select').prop('disabled', false)
+                                modal.find('.checkboxes-vat input').prop('readonly', false)
+                                modal.find('.checkboxes-vat select').prop('disabled', false)
                             }
                         })
 
@@ -631,11 +635,13 @@ $tableId = 'kt_table_1';
 							// console.log('only-one-checked')
                             const parent = $(this).closest('.only-one-checked-parent')
                             parent.find('.only-one-checked').prop('checked', false)
-                            parent.find('.for-only-one-checked').addClass('d-none').find('input,select').prop('disabled', true)
+                            parent.find('.for-only-one-checked').addClass('d-none').find('input').prop('readonly', true)
+                            parent.find('.for-only-one-checked').addClass('d-none').find('select').prop('disabled', true)
                             $(this).prop('checked', true)
                             const checkBoxValue = $(this).val()
 							// console.log(checkBoxValue);
-                            parent.find('.for-only-one-checked[data-item="' + checkBoxValue + '"]').removeClass('d-none').find('input,select').prop('disabled', false)
+                            parent.find('.for-only-one-checked[data-item="' + checkBoxValue + '"]').removeClass('d-none').find('input').prop('readonly', false)
+                            parent.find('.for-only-one-checked[data-item="' + checkBoxValue + '"]').removeClass('d-none').find('select').prop('disabled', false)
 
                         })
 
@@ -2104,7 +2110,6 @@ $tableId = 'kt_table_1';
                                         }
                                     }
                                     , error: function(data) {
-                                        // $(this).prop('disabled',false);
 
                                     }
                                 });
@@ -2339,7 +2344,7 @@ $tableId = 'kt_table_1';
                     var vatFields = hasVatRate ? ` ${spacer} <div class="checkboxes-vat ${isDepreciationOrAmortization ? 'd-none' : ''}">
 																<div class="checkboxes-vat-content d-flex align-items-center"> 
 																	<label for="dedictiable-for-${incomeStatementId}-element-${incomeStatementItemId}" class="label" style="margin-bottom:0">{{ __('Vat Rate %') }}</label>
-																	<input ${isDepreciationOrAmortization ? 'disabled' :'' } id="dedictiable-for-${incomeStatementId}-element-${incomeStatementItemId}"  style="margin-right:10px;width:70px;margin-left:15px;" type="text" class="form-control only-percentage-allowed" value="${oldVatRate}" name="sub_items[0][vat_rate]">
+																	<input ${isDepreciationOrAmortization ? 'readonly' :'' } id="dedictiable-for-${incomeStatementId}-element-${incomeStatementItemId}"  style="margin-right:10px;width:70px;margin-left:15px;" type="text" class="form-control only-percentage-allowed" value="${oldVatRate}" name="sub_items[0][vat_rate]">
 																		${deductableCheckbox}
 																 </div>
 															</div>` : '';
@@ -2378,22 +2383,22 @@ $tableId = 'kt_table_1';
 						var disabledInput = isDisabledInput(date)
                         thsForHeader += '<th class="' + thdClass + '" data-date="' + date + '">' + datesFormatted[date] + '</th>'
                         tdForBodyValue += `<td class="" data-type="value"  data-date="${date}">
-							<input ${disabledInput ? 'disabled' : ''} data-in-edit-mode="${editModal}" data-in-edit-mode="${subItemId}"  style="min-width: 80px" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" onblur="this.style.width = ((this.value.length + 1) * 10) + 'px';" onkeyup="this.style.width = ((this.value.length + 1) * 10) + 'px';" data-date="${date}" data-type="value" class="val-input hidden-for-popup form-control blured-item" type="text"  value="${number_format(valueAtDate,0)}" > 
-							<input ${disabledInput ? 'disabled' : ''} data-in-edit-mode="${editModal}" data-in-edit-mode="${subItemId}"  style="min-width: 80px" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" onblur="this.style.width = ((this.value.length + 1) * 10) + 'px';" onkeyup="this.style.width = ((this.value.length + 1) * 10) + 'px';" data-date="${date}" data-type="value" class="val-input hidden-for-popup pr-0" type="hidden" name="sub_items[0][val][${date}]" value="${valueAtDate}" > 
+							<input ${disabledInput ? 'readonly' : ''} data-in-edit-mode="${editModal}" data-in-edit-mode="${subItemId}"  style="min-width: 80px" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" onblur="this.style.width = ((this.value.length + 1) * 10) + 'px';" onkeyup="this.style.width = ((this.value.length + 1) * 10) + 'px';" data-date="${date}" data-type="value" class="val-input hidden-for-popup form-control blured-item" type="text"  value="${number_format(valueAtDate,0)}" > 
+							<input ${disabledInput ? 'readonly' : ''} data-in-edit-mode="${editModal}" data-in-edit-mode="${subItemId}"  style="min-width: 80px" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" onblur="this.style.width = ((this.value.length + 1) * 10) + 'px';" onkeyup="this.style.width = ((this.value.length + 1) * 10) + 'px';" data-date="${date}" data-type="value" class="val-input hidden-for-popup pr-0" type="hidden" name="sub_items[0][val][${date}]" value="${valueAtDate}" > 
 							<i class="fa fa-ellipsis-h repeat-row" data-column-index="${date}" data-index="value" data-parent-query="tr"  title="{{__('Repeat Right')}}"></i>
 							
 						  </td> `
                         tdForBodyQuantity += `<td class="" data-type="quantity"  data-date="${date}"> 
 						
-						<input ${disabledInput ? 'disabled' : ''} data-current-value="${salesQuantityAtDate}" data-in-edit-mode="${editModal}" data-sub-item-id="${subItemId}" style="min-width: 80px" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" onblur="this.style.width = ((this.value.length + 1) * 10) + 'px';" onkeyup="this.style.width = ((this.value.length + 1) * 10) + 'px';" data-date="${date}" data-type="quantity" class="quantity-input hidden-for-popup form-control blured-item" type="text"  value="${salesQuantityAtDate}" >
-						<input ${disabledInput ? 'disabled' : ''} data-current-value="${salesQuantityAtDate}" data-in-edit-mode="${editModal}" data-sub-item-id="${subItemId}" style="min-width: 80px" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" onblur="this.style.width = ((this.value.length + 1) * 10) + 'px';" onkeyup="this.style.width = ((this.value.length + 1) * 10) + 'px';" data-date="${date}" data-type="quantity" class="quantity-input hidden-for-popup" type="hidden" name="sub_items[0][quantity][${date}]" value="${salesQuantityAtDate}" >
+						<input ${disabledInput ? 'readonly' : ''} data-current-value="${salesQuantityAtDate}" data-in-edit-mode="${editModal}" data-sub-item-id="${subItemId}" style="min-width: 80px" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" onblur="this.style.width = ((this.value.length + 1) * 10) + 'px';" onkeyup="this.style.width = ((this.value.length + 1) * 10) + 'px';" data-date="${date}" data-type="quantity" class="quantity-input hidden-for-popup form-control blured-item" type="text"  value="${salesQuantityAtDate}" >
+						<input ${disabledInput ? 'readonly' : ''} data-current-value="${salesQuantityAtDate}" data-in-edit-mode="${editModal}" data-sub-item-id="${subItemId}" style="min-width: 80px" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" onblur="this.style.width = ((this.value.length + 1) * 10) + 'px';" onkeyup="this.style.width = ((this.value.length + 1) * 10) + 'px';" data-date="${date}" data-type="quantity" class="quantity-input hidden-for-popup" type="hidden" name="sub_items[0][quantity][${date}]" value="${salesQuantityAtDate}" >
 						<i class="fa fa-ellipsis-h repeat-row" data-column-index="${date}" data-index="value" data-parent-query="tr"  title="{{__('Repeat Right')}}"></i>
 						
 						</td> `
                         tdForBodyPrice += `<td class="" data-type="price"  data-date="${date}">
 						
-						<input ${disabledInput ? 'disabled' : ''} data-current-value="${priceAtDate}" data-in-edit-mode="${editModal}" data-sub-item-id="${subItemId}" style="min-width: 80px" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" onblur="this.style.width = ((this.value.length + 1) * 10) + 'px';" onkeyup="this.style.width = ((this.value.length + 1) * 10) + 'px';" data-date="${date}" class="price-input hidden-for-popup form-control blured-item"  data-type="price" type="text"  value="${number_format(priceAtDate,0)}" >
-						<input ${disabledInput ? 'disabled' : ''} data-current-value="${priceAtDate}" data-in-edit-mode="${editModal}" data-sub-item-id="${subItemId}" style="min-width: 80px" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" onblur="this.style.width = ((this.value.length + 1) * 10) + 'px';" onkeyup="this.style.width = ((this.value.length + 1) * 10) + 'px';" data-date="${date}" class="price-input hidden-for-popup" data-type="price" type="hidden" name="sub_items[0][price][${date}]" value="${priceAtDate}" >
+						<input ${disabledInput ? 'readonly' : ''} data-current-value="${priceAtDate}" data-in-edit-mode="${editModal}" data-sub-item-id="${subItemId}" style="min-width: 80px" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" onblur="this.style.width = ((this.value.length + 1) * 10) + 'px';" onkeyup="this.style.width = ((this.value.length + 1) * 10) + 'px';" data-date="${date}" class="price-input hidden-for-popup form-control blured-item"  data-type="price" type="text"  value="${number_format(priceAtDate,0)}" >
+						<input ${disabledInput ? 'readonly' : ''} data-current-value="${priceAtDate}" data-in-edit-mode="${editModal}" data-sub-item-id="${subItemId}" style="min-width: 80px" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" onblur="this.style.width = ((this.value.length + 1) * 10) + 'px';" onkeyup="this.style.width = ((this.value.length + 1) * 10) + 'px';" data-date="${date}" class="price-input hidden-for-popup" data-type="price" type="hidden" name="sub_items[0][price][${date}]" value="${priceAtDate}" >
 						<i class="fa fa-ellipsis-h repeat-row" data-column-index="${date}" data-index="value" data-parent-query="tr"  title="{{__('Repeat Right')}}"></i>
 						
 						</td> 
@@ -2535,8 +2540,8 @@ $tableId = 'kt_table_1';
                         thsForHeader += '<th class="' + thdClass + '" data-date="' + date + '">' + datesFormatted[date] + '</th>'
 						var disabledInput =isDisabledInput(date) ;
                         tdForBodyValue += `<td data-id="${id}" class="" data-type="value"  data-date="${date}">
-							<input ${disabledInput ? 'disabled ' :'' } data-id="${id}" style="min-width: 80px" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" onblur="this.style.width = ((this.value.length + 1) * 10) + 'px';" onkeyup="this.style.width = ((this.value.length + 1) * 10) + 'px';" data-date="${date}" data-type-non-repeating="value" class="val-input hidden-for-popup-non-repeating blured-item-non-repeating form-control " type="text"  value="${number_format(valueAtDate,0)}" > 
-							<input ${disabledInput ? 'disabled ' :'' } data-id="${id}" style="min-width: 80px" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" onblur="this.style.width = ((this.value.length + 1) * 10) + 'px';" onkeyup="this.style.width = ((this.value.length + 1) * 10) + 'px';" data-date="${date}" data-type-non-repeating="value" class="val-input hidden-for-popup-non-repeating pr-0" type="hidden" name="sub_items[0][non_repeating_popup][${date}]" value="${valueAtDate}" > 
+							<input ${disabledInput ? 'readonly ' :'' } data-id="${id}" style="min-width: 80px" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" onblur="this.style.width = ((this.value.length + 1) * 10) + 'px';" onkeyup="this.style.width = ((this.value.length + 1) * 10) + 'px';" data-date="${date}" data-type-non-repeating="value" class="val-input hidden-for-popup-non-repeating blured-item-non-repeating form-control " type="text"  value="${number_format(valueAtDate,0)}" > 
+							<input ${disabledInput ? 'readonly ' :'' } data-id="${id}" style="min-width: 80px" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" onblur="this.style.width = ((this.value.length + 1) * 10) + 'px';" onkeyup="this.style.width = ((this.value.length + 1) * 10) + 'px';" data-date="${date}" data-type-non-repeating="value" class="val-input hidden-for-popup-non-repeating pr-0" type="hidden" name="sub_items[0][non_repeating_popup][${date}]" value="${valueAtDate}" > 
 							<i class="fa fa-ellipsis-h repeat-row" data-column-index="${date}" data-index="value" data-parent-query="tr"  title="{{__('Repeat Right')}}"></i>
 							
 						  </td> `
@@ -2694,7 +2699,7 @@ $tableId = 'kt_table_1';
 											<h5 class="mb-3 label form-label">{{ __('${collectionOrPayment} Rate %') }} </h5>
 											${collectionRates}
 											<label class="label form-label">{{ __('Total') }}</label>
-											<input style="width:100px;" value="${currentCollectionTotal}" disabled class="form-control collection_rate_total_class" name="sub_items[0][collection_rate_total][]">
+											<input style="width:100px;" value="${currentCollectionTotal}" readonly class="form-control collection_rate_total_class" name="sub_items[0][collection_rate_total][]">
 										</div>
 										<div class="due-in-days d-flex flex-column">
 											<h5 class="label form-label mb-3">{{ __('Due In Days') }}</h5>
