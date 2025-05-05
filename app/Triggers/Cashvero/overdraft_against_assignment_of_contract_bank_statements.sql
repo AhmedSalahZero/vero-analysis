@@ -10,7 +10,6 @@
 						declare _interest_rate decimal(5,2) default 0 ;
 						declare _min_interest_rate decimal(5,2) default 0 ; 
 						declare _count_all_rows integer default 0 ; 
-						declare _last_delete_id integer default 0 ; 
 						declare interest_type_text varchar(100) default 'interest';
 						declare highest_debit_balance_text varchar(100) default 'highest_debit_balance';
 						declare _accumulated_limit decimal (14,2) default 0 ;
@@ -22,7 +21,7 @@
 
 					set new.beginning_balance = if(_count_all_rows,_last_end_balance,ifnull(new.beginning_balance,0)); 
 					set new.end_balance = new.beginning_balance + new.debit - new.credit ; 
-					select `accumulated_limit`   into _accumulated_limit from overdraft_against_assignment_of_contract_limits where is_active = 1 and company_id = new.company_id and overdraft_against_assignment_of_contract_id = new.overdraft_against_assignment_of_contract_id and full_date <=  new.full_date  order by full_date desc , id desc  limit 1 ;
+					select `accumulated_limit`   into _accumulated_limit from overdraft_against_assignment_of_contract_limits where is_active = 1 and company_id = new.company_id and overdraft_against_assignment_of_contract_id = new.overdraft_against_assignment_of_contract_id and date(full_date) <=  date(new.full_date)  order by full_date desc , id desc  limit 1 ;
 					select `limit` into _limit from overdraft_against_assignment_of_contracts where id = new.overdraft_against_assignment_of_contract_id limit 1 ;
 					set new.end_balance = ifnull(new.beginning_balance + new.debit - new.credit,0) ; 
 					set _accumulated_limit = least(_limit,_accumulated_limit);
@@ -118,7 +117,6 @@
 						declare _current_bank_statement_id integer default 0 ; 
 						declare _current_bank_statement_debit integer default 0 ; 
 						declare _i integer default 0 ;
-						declare _origin_update_row_is_debit integer default 0 ;
 						declare _bank_statements_greater_than_current_one_length integer default 0 ;
 						
 						declare _last_bank_statement_date datetime default null ;
@@ -154,13 +152,12 @@
 						set _count_all_rows =1 ;
 					set new.beginning_balance = if(_count_all_rows,_last_end_balance,ifnull(new.beginning_balance,0)) ;
 					
-					select `accumulated_limit`  into _accumulated_limit from overdraft_against_assignment_of_contract_limits where is_active = 1 and company_id = new.company_id and overdraft_against_assignment_of_contract_id = new.overdraft_against_assignment_of_contract_id and full_date <=  new.full_date  order by full_date desc , id desc limit 1 ;
+					select `accumulated_limit`  into _accumulated_limit from overdraft_against_assignment_of_contract_limits where is_active = 1 and company_id = new.company_id and overdraft_against_assignment_of_contract_id = new.overdraft_against_assignment_of_contract_id and date(full_date) <=  date(new.full_date)  order by full_date desc , id desc limit 1 ;
 					select `limit` into _limit from overdraft_against_assignment_of_contracts where id = new.overdraft_against_assignment_of_contract_id limit 1 ;
 					set new.end_balance = ifnull(new.beginning_balance + new.debit - new.credit,0) ; 
 					set _accumulated_limit = least(_limit,_accumulated_limit);
 					set new.limit = _accumulated_limit;
 					set new.room = _accumulated_limit +  new.end_balance ;
-					
 					
 
 					set @dayCounts = 0 ;

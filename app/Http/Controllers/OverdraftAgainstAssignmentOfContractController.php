@@ -167,11 +167,13 @@ class OverdraftAgainstAssignmentOfContractController
 	public function applyLendingInformation(Request $request , Company $company , FinancialInstitution $financialInstitution , OverdraftAgainstAssignmentOfContract $odAgainstAssignmentOfContract )
 	{
 		$contractId = $request->get('contract_id_create') ;
+		$assignmentDate = Carbon::make($request->get('assignment_date_create'))->format('Y-m-d') ;
 		$contract = Contract::find($contractId);
 		$odAgainstAssignmentOfContract->lendingInformation()->create([
 			'company_id'=>$company->id ,
 			'lending_rate'=>$request->get('lending_rate_create'),
 			'customer_id'=>$request->get('customer_id_create'),
+			'assignment_date'=>$assignmentDate,
 			'contract_id'=>$contractId,
 			'updated_at'=>now()
 		]);
@@ -183,10 +185,10 @@ class OverdraftAgainstAssignmentOfContractController
 			'updated_at'=>now(),
 			'overdraft_against_assignment_of_contract_id'=>$odAgainstAssignmentOfContract->id
 		]);
-		$limitRowExist = $odAgainstAssignmentOfContract->overdraftAgainstAssignmentOfContractBankStatements()->where('type','active-limit',)->exists();
-		if(!$limitRowExist){
+		$statementRow = $odAgainstAssignmentOfContract->overdraftAgainstAssignmentOfContractBankStatements()->where('type','active-limit',)->exists();
+		if(!$statementRow){
 		
-			$limitRowExist = $odAgainstAssignmentOfContract->overdraftAgainstAssignmentOfContractBankStatements()->create([
+			$statementRow = $odAgainstAssignmentOfContract->overdraftAgainstAssignmentOfContractBankStatements()->create([
 				'type'=>'active-limit',
 				'debit'=>0,
 				'credit'=>0,
@@ -194,7 +196,7 @@ class OverdraftAgainstAssignmentOfContractController
 				'is_credit'=>0,
 				'priority'=>3 ,
 				'company_id'=>$company->id,
-				'date'=>$odAgainstAssignmentOfContract->contract_start_date ,
+				'date'=>$assignmentDate ,
 				'comment_en'=>'-',
 				'comment_ar'=>'-'
 			]);
@@ -209,17 +211,39 @@ class OverdraftAgainstAssignmentOfContractController
 	public function editLendingInformation(Request $request , Company $company , FinancialInstitution $financialInstitution , LendingInformationAgainstAssignmentOfContract $lendingInformation)
 	{
 		$contractId = $request->get('contract_id_edit') ;
+		$assignmentDate = $request->get('assignment_date_edit') ;
+		$assignmentDate = Carbon::make($assignmentDate)->format('Y-m-d');
 		$contract = Contract::find($contractId);
+		$overdraftAgainstAssignmentOfContract = $lendingInformation->overdraftAgainstAssignmentOfContract;
 		$lendingInformation->update([
 			'lending_rate'=>$request->get('lending_rate_edit'),
 			'customer_id'=>$request->get('customer_id_edit'),
 			'contract_id'=>$contractId,
+			'assignment_date'=>$assignmentDate,
 			'updated_at'=>now()
 		]);
 		$contract->update([
-			'overdraft_against_assignment_of_contract_id'=>$lendingInformation->overdraftAgainstAssignmentOfContract->id,
+			'overdraft_against_assignment_of_contract_id'=>$overdraftAgainstAssignmentOfContract->id,
 			'updated_at'=>now(),
 		]);
+		
+		$statementRow = $overdraftAgainstAssignmentOfContract->overdraftAgainstAssignmentOfContractBankStatements()->where('type','active-limit',)->first();
+		if($statementRow){
+			$statementRow->update([
+					'type'=>'active-limit',
+					'debit'=>0,
+					'credit'=>0,
+					'is_debit'=>1 ,
+					'is_credit'=>0,
+					'priority'=>3 ,
+					'company_id'=>$company->id,
+					'date'=>$assignmentDate ,
+					'comment_en'=>'-',
+					'comment_ar'=>'-'
+			]);
+			
+		}
+		
 	
 		return response()->json([
 			'status'=>true ,

@@ -250,7 +250,6 @@ class Cheque extends Model
         $chequeDepositDate = Carbon::make($chequeDepositDate);
         if ($chequeDepositDate->lessThan($chequeDueDate)) {
             $diffInDays = $chequeDueDate->diffInDays($chequeDepositDate) + $chequeClearanceDays ;
-
             return $chequeDepositDate->addDays($diffInDays)->format('Y-m-d');
         } else {
             return $chequeDepositDate->addDays($chequeClearanceDays)->format('Y-m-d');
@@ -327,8 +326,8 @@ class Cheque extends Model
 	{
 		$paperId = $overdraftAgainstCommercialPaperLimit->overdraft_against_commercial_paper_id;
 		$row =  OverdraftAgainstCommercialPaperBankStatement::where('type', 'limit_update')->where('overdraft_against_commercial_paper_limit_id',$overdraftAgainstCommercialPaperLimit->id)->where('overdraft_against_commercial_paper_id',$paperId)->first();
-		$rowId = $row ? $row->id : -1 ;
-		logger('paper id'. $paperId . ' limit id ' . $overdraftAgainstCommercialPaperLimit->id .  ' row id ' . $rowId );
+	//	$rowId = $row ? $row->id : -1 ;
+//		logger('paper id'. $paperId . ' limit id ' . $overdraftAgainstCommercialPaperLimit->id .  ' row id ' . $rowId );
 		if($row){
 			$row->delete();
 		}
@@ -480,17 +479,8 @@ class Cheque extends Model
 			
 			$accumulatedLimit = $paperLimitRow->accumulated_limit;
 			$date = Carbon::make($currentPaperLimitRow->full_date)->format('Y-m-d');
-			$limitRowId = $paperLimitRow->id;
 			$paperId = $overdraftAgainstCommercialPaper->id;
-			// logger('limit id'.$limitRowId.'paper id'.$paperId);
-			// $isExist = OverdraftAgainstCommercialPaperBankStatement::
-			// where('type','=','limit_update')
-			// ->where('company_id',$companyId)
-			// ->where('overdraft_against_commercial_paper_id',$overdraftAgainstCommercialPaper->id)
-			// ->where('date',$date)
-			// ->where('overdraft_against_commercial_paper_limit_id',$limitRowId)
-			// ->exists();
-			// if(!$isExist){
+		
 				OverdraftAgainstCommercialPaperBankStatement::create([
 					'type'=>'limit_update',
 					'is_debit'=>1 ,
@@ -506,10 +496,6 @@ class Cheque extends Model
 					'comment_en'=>__('Limit Update'),
 					'comment_ar'=>__('Limit Update',[],'ar'),
 				]);
-			// }
-			
-			
-			// $this->statements()->create();
 			
         }
     }

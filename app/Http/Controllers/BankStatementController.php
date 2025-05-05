@@ -30,7 +30,7 @@ class BankStatementController
 		$selectedAccountTypeName = $request->get('accountType');
 		$selectedCurrency  = $request->get('currency');
 		$financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
-		$accountTypes = AccountType::onlyCashAccounts()->get();		
+		$accountTypes = AccountType::onlyCashAccounts()->get();
         return view('bank_statement_form', [
             'company' => $company,
             'financialInstitutionBanks' => $financialInstitutionBanks,

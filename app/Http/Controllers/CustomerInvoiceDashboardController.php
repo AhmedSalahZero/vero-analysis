@@ -22,6 +22,7 @@ use App\Models\FullySecuredOverdraft;
 use App\Models\LetterOfCreditIssuance;
 use App\Models\LetterOfGuaranteeIssuance;
 use App\Models\MediumTermLoan;
+use App\Models\OverdraftAgainstAssignmentOfContract;
 use App\Models\OverdraftAgainstCommercialPaper;
 use App\Models\Partner;
 use App\Models\TimeOfDeposit;
@@ -68,6 +69,15 @@ class CustomerInvoiceDashboardController extends Controller
 		$totalRoomForEachOverdraftAgainstCommercialPaperId =  [];
         // end overdraftAgainstCommercialPaper
 		
+		
+			// start overdraft Against Assignment Of Contract
+		 
+			$allOverdraftAgainstAssignmentOfContractBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->onlyHasOverdraftAgainstAssignmentOfContracts()->get();
+			$overdraftAgainstAssignmentOfContractAccountTypes = AccountType::onlyOverdraftAgainstAssignmentOfContract()->get();
+			$overdraftAgainstAssignmentOfContractCardData = [];
+			$totalRoomForEachOverdraftAgainstAssignmentOfContractId =  [];
+			// end overdraft Against Assignment Of Contract
+			
 		
 		$financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
 		$financialInstitutionBankIds = $financialInstitutionBanks->pluck('id')->toArray();
@@ -129,12 +139,21 @@ class CustomerInvoiceDashboardController extends Controller
 			
 			
 			
-			// start clean overdraft
+			// start over draft against commercial paper
 			$totalOverdraftAgainstCommercialPaperRoom = 0 ;
 			$overdraftAgainstCommercialPaperCardCommonQuery = OverdraftAgainstCommercialPaper::getCommonQueryForCashDashboard($company,$currencyName,$date);
 			$overdraftAgainstCommercialPaperIds = $overdraftAgainstCommercialPaperCardCommonQuery->pluck('id')->toArray() ;
 			$hasOverdraftAgainstCommercialPaper[$currencyName] = OverdraftAgainstCommercialPaper::hasAnyRecord($company,$currencyName);
-			// end clean Overdraft
+			// end over draft against commercial paper
+			
+			
+			// start over draft against assignment of contract
+			$totalOverdraftAgainstAssignmentOfContractRoom = 0 ;
+			$overdraftAgainstAssignmentOfContractCardCommonQuery = OverdraftAgainstAssignmentOfContract::getCommonQueryForCashDashboard($company,$currencyName,$date);
+			$overdraftAgainstAssignmentOfContractIds = $overdraftAgainstAssignmentOfContractCardCommonQuery->pluck('id')->toArray() ;
+			$hasOverdraftAgainstAssignmentOfContract[$currencyName] = OverdraftAgainstAssignmentOfContract::hasAnyRecord($company,$currencyName);
+			// end over draft against assignment of contract
+			
 			
 			
 			
@@ -172,6 +191,14 @@ class CustomerInvoiceDashboardController extends Controller
 				 * * end overdraft against commercial paper
 				 */
 		
+				 
+				   	/**
+				 * * start overdraft against assignment of contract
+				 */
+				OverdraftAgainstAssignmentOfContract::getCashDashboardDataForFinancialInstitution($totalRoomForEachOverdraftAgainstAssignmentOfContractId,$company,$overdraftAgainstAssignmentOfContractIds,$currencyName,$date,$financialInstitutionBankId,$totalOverdraftAgainstAssignmentOfContractRoom);
+				/**
+				 * * end overdraft against assignment of contract
+				 */
 				 
 				
                 /**
@@ -334,6 +361,7 @@ class CustomerInvoiceDashboardController extends Controller
 			CleanOverdraft::getCashDashboardDataForYear($cleanOverdraftCardData,$cleanOverdraftCardCommonQuery,$company,$cleanOverdraftIds,$currencyName,$date,$year);
 			FullySecuredOverdraft::getCashDashboardDataForYear($fullySecuredOverdraftCardData,$fullySecuredOverdraftCardCommonQuery,$company,$fullySecuredOverdraftIds,$currencyName,$date,$year);
 			OverdraftAgainstCommercialPaper::getCashDashboardDataForYear($overdraftAgainstCommercialPaperCardData,$overdraftAgainstCommercialPaperCardCommonQuery,$company,$overdraftAgainstCommercialPaperIds,$currencyName,$date,$year);
+			OverdraftAgainstAssignmentOfContract::getCashDashboardDataForYear($overdraftAgainstAssignmentOfContractCardData,$overdraftAgainstAssignmentOfContractCardCommonQuery,$company,$overdraftAgainstAssignmentOfContractIds,$currencyName,$date,$year);
 			
             $reports['cash_and_banks'][$currencyName] = $cashInSafeStatementAmountForCurrency + $currentAccountInBanks ;
             $reports['certificate_of_deposits'][$currencyName] =$totalCertificateOfDepositsForCurrentFinancialInstitutionAmount  ;
@@ -346,7 +374,7 @@ class CustomerInvoiceDashboardController extends Controller
 			
 			
 			#TODO: هنا احنا عاملينها لل كلين اوفر درافت بس .. عايزين نضف الباقي علشان يدخل في التوتال لما نعمله برضو
-			$totalCard[$currencyName] = $this->sumForTotalCard($totalCard[$currencyName]??[],[$cleanOverdraftCardData[$currencyName]??0 , $fullySecuredOverdraftCardData[$currencyName]??0 , $overdraftAgainstCommercialPaperCardData[$currencyName]??0]);
+			$totalCard[$currencyName] = $this->sumForTotalCard($totalCard[$currencyName]??[],[$cleanOverdraftCardData[$currencyName]??0 , $fullySecuredOverdraftCardData[$currencyName]??0 , $overdraftAgainstCommercialPaperCardData[$currencyName]??0 , $overdraftAgainstAssignmentOfContractCardData[$currencyName]??0]);
 		
 		}
         return view('admin.dashboard.cash', [
@@ -385,6 +413,17 @@ class CustomerInvoiceDashboardController extends Controller
 				'overdraftAgainstCommercialPaperAccountTypes'=>$overdraftAgainstCommercialPaperAccountTypes,
 				'allOverdraftAgainstCommercialPaperBanks'=>$allOverdraftAgainstCommercialPaperBanks,
 				'hasOverdraftAgainstCommercialPaper'=>$hasOverdraftAgainstCommercialPaper ?? [],
+
+				
+				
+				
+				// overdraftAgainstAssignmentOfContract
+			
+				'overdraftAgainstAssignmentOfContractCardData' => $overdraftAgainstAssignmentOfContractCardData,
+				'totalRoomForEachOverdraftAgainstAssignmentOfContractId'=>$totalRoomForEachOverdraftAgainstAssignmentOfContractId,
+				'overdraftAgainstAssignmentOfContractAccountTypes'=>$overdraftAgainstAssignmentOfContractAccountTypes,
+				'allOverdraftAgainstAssignmentOfContractBanks'=>$allOverdraftAgainstAssignmentOfContractBanks,
+				'hasOverdraftAgainstAssignmentOfContract'=>$hasOverdraftAgainstAssignmentOfContract ?? [],
 				
 			
         ]);

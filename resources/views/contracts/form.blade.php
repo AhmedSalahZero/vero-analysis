@@ -175,9 +175,9 @@ use App\Models\MoneyReceived ;
                                 </div>
 
                                 <div class="col-md-2 ">
-                                    <x-form.date :type="'text'" :classes="'datepicker-input recalc-end-date start-date regenerate-code-ajax '" :default-value="formatDateForDatePicker(old('start_date') ?: (isset($model)  ? $model->getStartDate() : now()) )" :model="$model??null" :label="__('Start Date')" :type="'text'" :id="'start-date-id'" :placeholder="__('')" :name="'start_date'" :required="true"></x-form.date>
+                                    <x-form.date :type="'text'" :classes="'datepicker-input start-date regenerate-code-ajax '" :default-value="formatDateForDatePicker(old('start_date') ?: (isset($model)  ? $model->getStartDate() : now()) )" :model="$model??null" :label="__('Start Date')" :type="'text'" :id="'start-date-id'" :placeholder="__('')" :name="'start_date'" :required="true"></x-form.date>
                                 </div>
-                                <div class="col-md-2 ">
+                                {{-- <div class="col-md-2 ">
                                     <label> {{ __('Duration (Months)') }}
                                         @include('star')
                                     </label>
@@ -186,17 +186,22 @@ use App\Models\MoneyReceived ;
                                             <input required name="duration" type="numeric" class="form-control duration recalc-end-date duration " value="{{ ceil(old('duration',isset($model) ? $model->getDuration() * (12/365) : null))  }}">
                                         </div>
                                     </div>
+                                </div> --}}
+								
+								 <div class="col-md-2 ">
+                                    <x-form.date :type="'text'" :classes="'datepicker-input '" :default-value="formatDateForDatePicker(old('end_date') ?: (isset($model)  ? $model->getEndDate() : now()->addYear()) )" :model="$model??null" :label="__('End Date')" :type="'text'" :id="'end-date-id'" :placeholder="__('')" :name="'end_date'" :required="true"></x-form.date>
                                 </div>
-                                <div class="col-md-2 ">
+								
+                                {{-- <div class="col-md-2 ">
                                     <label> {{ __('End Date') }}
                                         @include('star')
                                     </label>
                                     <div class="kt-input-icon">
                                         <div class="input-group">
-                                            <input id="end-date" disabled name="end_date" type="text" class="form-control datepicker-input end-date" value="{{ old('end_date',isset($model) ? $model->getEndDate() : null )   }}">
+                                            <input  name="end_date" type="text" class="form-control datepicker-input end-date" value="{{ old('end_date',isset($model) ? $model->getEndDate() : null )   }}">
                                         </div>
                                     </div>
-                                </div>
+                                </div> --}}
 
 
 

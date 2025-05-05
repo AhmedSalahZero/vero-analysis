@@ -58,6 +58,10 @@ class FinancialInstitution extends Model
 		$builder
 		->has('overdraftAgainstCommercialPapers');
 	}
+	public function scopeOnlyHasOverdraftAgainstAssignmentOfContracts(Builder $builder){
+		$builder
+		->has('overdraftAgainstAssignmentOfContracts');
+	}
 	public function scopeOnlyHasFullySecuredOverdrafts(Builder $builder){
 		$builder
 		->has('fullySecuredOverdrafts');

@@ -58,7 +58,10 @@ class LendingInformationAgainstAssignmentOfContract extends Model
 	public function getContractEndDate()
 	{
 		return $this->contract ? $this->contract->getEndDate():__('N/A');
-		
+	}
+	public function getAssignmentEndDate()
+	{
+		return $this->assignment_date;
 	}
 	public function getContractAmount()
 	{

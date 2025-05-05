@@ -1,8 +1,8 @@
 @php
 	$mode = isset($lendingInformationAgainstAssignmentOfContract) ? 'edit' : 'create';
 @endphp
-<div class="col-lg-2" data-dd="{{ isset($lendingInformationAgainstAssignmentOfContract) ? 1 : -1 }}">
-    <label>{{__('Select Customer')}} @include('star')</label>
+<div class="col-lg-3" data-dd="{{ isset($lendingInformationAgainstAssignmentOfContract) ? 1 : -1 }}">
+    <label>{{__('Customer')}} @include('star')</label>
     <div class="input-group">
         <select data-live-search="true" name="customer_id_{{ $mode }}" class="form-control kt-bootstrap-select select2-select select2 ajax-get-contracts-for-customer-{{ $mode }}">
             @foreach($customers as $customerId => $customerName )
@@ -15,7 +15,7 @@
 
 
 <div class="col-md-3">
-    <label>{{__('Select Contract')}} @include('star')</label>
+    <label>{{__('Contract')}} @include('star')</label>
     <div class="input-group">
         <select name="contract_id_{{ $mode }}" class="form-control append-contracts-{{ $mode }}">
 			@if(isset($lendingInformationAgainstAssignmentOfContract))
@@ -49,6 +49,15 @@
     <div class="kt-input-icon">
         <div class="input-group date">
             <input disabled type="date" value="{{ isset($lendingInformationAgainstAssignmentOfContract) ? $lendingInformationAgainstAssignmentOfContract->getContractEndDate() : '' }}" class="form-control contract-end-date-class-{{ $mode }}" />
+        </div>
+    </div>
+</div>
+
+<div class="col-md-2">
+    <label>{{__('Assignment Date')}} </label>
+    <div class="kt-input-icon">
+        <div class="input-group date">
+            <input name="assignment_date_{{ $mode }}" required type="date" value="{{ isset($lendingInformationAgainstAssignmentOfContract) ? $lendingInformationAgainstAssignmentOfContract->getAssignmentEndDate() : '' }}" class="form-control contract-assignment-date-class-{{ $mode }}" />
         </div>
     </div>
 </div>

@@ -1216,6 +1216,247 @@
 
 
 
+            {{-- start Overdraft Against Assignment Of Contract --}}
+            @if($hasOverdraftAgainstAssignmentOfContract[$currency] ?? false )
+            <div class="col-md-4">
+                <div class="kt-portlet ">
+                    <div class="kt-portlet__head">
+                        <div class="kt-portlet__head-label col-8">
+                            <h3 class="font-weight-bold text-black form-label kt-subheader__title small-caps mr-5 text-primary text-nowrap" style=""> {{ __('Overdraft Against Assignment Of Contract') }} </h3>
+                        </div>
+
+                    </div>
+                    <div class="kt-portlet__body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="kt-portlet kt-iconbox kt-iconbox--brand kt-iconbox--animate-slower">
+                                    <div class="kt-portlet__body">
+                                        <div class="kt-iconbox__body">
+                                            <div class="kt-iconbox__desc">
+                                                <h3 class="kt-iconbox__title">
+                                                    <a class="kt-link" onclick="return false" href="#">{{ __('Limit') }}</a>
+                                                </h3>
+                                                <div class="kt-iconbox__content text-primary  ">
+                                                    <h4>{{ number_format($overdraftAgainstAssignmentOfContractCardData[$currency]['limit'] ?? 0,0) }}</h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="kt-portlet kt-iconbox kt-iconbox--brand kt-iconbox--animate-slower">
+                                    <div class="kt-portlet__body">
+                                        <div class="kt-iconbox__body">
+                                            <div class="kt-iconbox__desc">
+                                                <h3 class="kt-iconbox__title">
+                                                    <a class="kt-link" onclick="return false" href="#">{{ __('Outstanding') }}</a>
+                                                </h3>
+                                                <div class="kt-iconbox__content text-primary  ">
+                                                    <h4> {{ number_format($overdraftAgainstAssignmentOfContractCardData[$currency]['outstanding']??0,0) }} </h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="kt-portlet kt-iconbox kt-iconbox--brand kt-iconbox--animate-slower">
+                                    <div class="kt-portlet__body">
+                                        <div class="kt-iconbox__body">
+                                            <div class="kt-iconbox__desc">
+                                                <h3 class="kt-iconbox__title">
+                                                    <a class="kt-link" onclick="return false" href="#">{{ __('Available') }}</a>
+                                                </h3>
+                                                <div class="kt-iconbox__content text-primary  ">
+                                                    <h4>{{ number_format($overdraftAgainstAssignmentOfContractCardData[$currency]['room']??0,0) }}</h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="kt-portlet kt-iconbox kt-iconbox--brand kt-iconbox--animate-slower">
+                                    <div class="kt-portlet__body">
+                                        <div class="kt-iconbox__body">
+                                            <div class="kt-iconbox__desc">
+                                                <h3 class="kt-iconbox__title">
+                                                    <a class="kt-link" onclick="return false" href="#">{{ __('Interest') }}</a>
+                                                </h3>
+                                                <div class="kt-iconbox__content text-primary  ">
+                                                    <h4>{{ number_format($overdraftAgainstAssignmentOfContractCardData[$currency]['interest_amount']??0,0) }}</h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            {{-- Overdraft Against Assignment Of Contract Chart --}}
+            <div class="col-md-8">
+                <div class="kt-portlet kt-portlet--tabs">
+                    <div class="kt-portlet__head">
+                        <div class="kt-portlet__head-toolbar w-full">
+                            <ul class="w-full nav nav-tabs nav-tabs-space-lg nav-tabs-line nav-tabs-bold nav-tabs-line-3x nav-tabs-line-brand" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" data-toggle="tab" href="#OverdraftAgainstAssignmentOfContractkt_apps_contacts_view_tab_1_{{$currency}}" role="tab">
+                                        <i class="flaticon-line-graph"></i> &nbsp; Charts
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link " data-toggle="tab" href="#OverdraftAgainstAssignmentOfContractkt_apps_contacts_view_tab_2_{{$currency}}" role="tab">
+                                        <i class="flaticon2-checking"></i>Reports Table
+                                    </a>
+                                </li>
+                                <li class="nav-item ml-auto">
+                                    <div class="kt-portlet__head-label ">
+                                        <div class="kt-align-right">
+                                            <a href="{{ route('view.bank.statement',['company'=>$company->id,'accountType'=>'OverdraftAgainstAssignmentOfContract','currency'=>$currency]) }}" type="button" class="btn btn-sm btn-brand btn-elevate btn-pill text-white"><i class="fa fa-chart-line"></i> {{ __('Bank Statement Report') }} </a>
+                                        </div>
+                                    </div>
+                                </li>
+
+                                <li class="nav-item">
+                                    <div class="kt-portlet__head-label ">
+                                        <div class="kt-align-right">
+                                            <a href="{{ route('view.withdrawals.settlement.report',['company'=>$company->id,'accountType'=>'OverdraftAgainstAssignmentOfContract','currency'=>$currency]) }}" type="button" class="btn btn-sm btn-brand btn-elevate btn-pill text-white"><i class="fa fa-chart-line"></i> {{ __('Withdrawal Report') }} </a>
+                                        </div>
+                                    </div>
+                                </li>
+
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="kt-portlet__body pt-0">
+                        <select class="current-currency hidden">
+                            <option value="{{ $currency }}"></option>
+                        </select>
+
+                        <div class="tab-content  kt-margin-t-20">
+
+                            <div class="tab-pane active" id="OverdraftAgainstAssignmentOfContractkt_apps_contacts_view_tab_1_{{$currency}}" role="tabpanel">
+
+                                {{-- Monthly Chart --}}
+                                <div class="row">
+                                    <div class="col-md-4">
+
+                                        <h4> {{ __('Available Room') }} </h4>
+                                        <div id="OverdraftAgainstAssignmentOfContractchartdiv_available_room_{{$currency}}" class="chartDiv"></div>
+                                    </div>
+
+
+
+                                    <div class="col-md-8 margin__left">
+
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <h4> {{ __('Bank Movement') }} </h4>
+                                            </div>
+                                            <div class="col-md-9">
+                                                <select data-financial-institution-id js-when-change-trigger-change-account-type data-currency="{{ $currency }}" data-table="OverdraftAgainstAssignmentOfContract" js-refresh-limits-chart class="form-control bank-id-js">
+                                                    @foreach($allOverdraftAgainstAssignmentOfContractBanks as $bank)
+                                                    <option value="{{ $bank->id }}"> {{ $bank->getName() }} </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <div class="col-md-3 hidden">
+                                                <label>{{__('Account Type')}} @include('star')</label>
+                                                <div class="kt-input-icon">
+                                                    <div class="input-group date">
+                                                        <select class="form-control js-update-account-number-based-on-account-type">
+                                                            @foreach($overdraftAgainstAssignmentOfContractAccountTypes as $index => $accountType)
+                                                            <option selected value="{{ $accountType->id }}" @if(isset($model) && $model->getCashInBankAccountTypeId() == $accountType->id) selected @endif>{{ $accountType->getName() }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-3">
+                                                <select data-currency="{{ $currency }}" data-table="OverdraftAgainstAssignmentOfContract" js-refresh-limits-chart class="form-control js-account-number">
+
+                                                </select>
+                                            </div>
+
+                                        </div>
+                                        <div class="chartdiv_two_lines" id="OverdraftAgainstAssignmentOfContractchartdiv_two_lines_{{ $currency }}"></div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="tab-pane" id="OverdraftAgainstAssignmentOfContractkt_apps_contacts_view_tab_2_{{$currency}}" role="tabpanel">
+                                <div class="col-md-12">
+                                    <div class="kt-portlet kt-portlet--mobile">
+
+                                        <div class="kt-portlet__body">
+
+                                            <!--begin: Datatable -->
+                                            <?php
+                                               
+                                                $availableRoomTotal = array_sum(array_column(($totalRoomForEachOverdraftAgainstAssignmentOfContractId[$currency]??[]),'available_room'));$key=0;
+                                                $limitTotal = array_sum(array_column(($totalRoomForEachOverdraftAgainstAssignmentOfContractId[$currency]??[]),'limit'));$key=0;
+                                                $endBalanceTotal = array_sum(array_column(($totalRoomForEachOverdraftAgainstAssignmentOfContractId[$currency]??[]),'end_balance'));$key=0;
+                                            ?>
+
+                                            <x-table :tableClass="'kt_table_with_no_pagination_no_scroll_no_entries'">
+                                                @slot('table_header')
+                                                <tr class="table-active text-center">
+                                                    <th class="text-center max-w-300">{{ __('Bank Name') }}</th>
+                                                    <th class="text-center ">{{ __('Limit') }}</th>
+                                                    <th class="text-center ">{{ __('Outstanding') }}</th>
+                                                    <th class="text-center ">{{ __('Room') }}</th>
+                                                </tr>
+                                                @endslot
+                                                @slot('table_body')
+
+
+                                                @foreach ($totalRoomForEachOverdraftAgainstAssignmentOfContractId[$currency] ??[] as $key => $item)
+                                                <tr>
+
+                                                    <td class=" max-w-300">{{$item['item']?? '-'}}</td>
+                                                    <td class="text-center">{{number_format($item['limit']??0)}}</td>
+                                                    <td class="text-center">{{number_format($item['end_balance']??0)}}</td>
+                                                    <td class="text-center">{{number_format($item['available_room']??0)}}</td>
+                                                </tr>
+                                                @endforeach
+
+                                                <tr class="table-active text-center">
+                                                    <td>{{__('Total')}}</td>
+                                                    <td>{{number_format($limitTotal)}}</td>
+                                                    <td>{{number_format($endBalanceTotal)}}</td>
+                                                    <td>{{number_format($availableRoomTotal)}}</td>
+
+                                                </tr>
+                                                @endslot
+                                            </x-table>
+
+                                            <!--end: Datatable -->
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <input type="hidden" id="OverdraftAgainstAssignmentOfContracttotal_available_room_{{$currency}}" data-total="{{ json_encode($totalRoomForEachOverdraftAgainstAssignmentOfContractId[$currency] ?? [] ) }}">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            @endif
+            {{-- End Overdraft Against Assignment Of Contract --}}
+			
+
+
+
 
 
         </div>

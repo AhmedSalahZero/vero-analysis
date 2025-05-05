@@ -98,7 +98,7 @@
                                     @endif
                                     @if(hasAuthFor('create overdraft against assignment of contract'))
                                     <div class="modal fade" id="apply-expense-{{ $odAgainstAssignmentOfContract->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                                        <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+                                        <div class="modal-dialog modal-xl modal-90 modal-dialog-centered" role="document">
                                             <div class="modal-content">
                                                 <form action="{{ route('lending.information.apply.for.against.assignment.of.contract',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'odAgainstAssignmentOfContract'=>$odAgainstAssignmentOfContract->id ]) }}" method="post">
                                                     @csrf
@@ -133,6 +133,7 @@
                                                                                 <th>{{ __('Amount') }}</th>
                                                                                 <th>{{ __('Start Date') }}</th>
                                                                                 <th>{{ __('End Date') }}</th>
+                                                                                <th>{{ __('Assign Date') }}</th>
                                                                                 <th>{{ __('Lending %') }}</th>
                                                                                 <th>{{ __('Lending Amount') }}</th>
                                                                                 <th>{{ __('Actions') }}</th>
@@ -147,6 +148,7 @@
                                                                                 <td> {{ $lendingInformationAgainstAssignmentOfContract->getContractAmountFormatted() }} </td>
                                                                                 <td> {{ $lendingInformationAgainstAssignmentOfContract->getContractStartDate() }} </td>
                                                                                 <td> {{ $lendingInformationAgainstAssignmentOfContract->getContractEndDate() }} </td>
+                                                                                <td> {{ $lendingInformationAgainstAssignmentOfContract->getAssignmentEndDate() }} </td>
                                                                                 <td> {{ $lendingInformationAgainstAssignmentOfContract->getLendingRateFormatted() . ' %' }} </td>
                                                                                 <td> {{ $lendingInformationAgainstAssignmentOfContract->getLendingAmountFormatted() }} </td>
                                                                                 <td>
@@ -411,6 +413,7 @@
         const selectedOption = $(this).find('option:selected')
         $(parent).find('.contract-start-date-class-create').val($(selectedOption).data('start-date'))
         $(parent).find('.contract-end-date-class-create').val($(selectedOption).data('end-date'))
+        // $(parent).find('.contract-assignment-date-class-create').val($(selectedOption).data('end-date'))
         $(parent).find('.contract-amount-class-create').val($(selectedOption).data('amount'))
 
     })

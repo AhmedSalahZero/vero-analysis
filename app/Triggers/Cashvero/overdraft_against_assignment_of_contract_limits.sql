@@ -113,7 +113,7 @@ begin
 		 
 		 
 		set new.limit =  LEAST(_lending_rate /100 * _contract_amount , _max_lending_limit_per_contract)  ;
-		
+	
 		if(_contract_status = 'finished'
 			and   _number_of_contracts_existence > 1 
 			and new.full_date = _max_full_date 

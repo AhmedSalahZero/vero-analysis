@@ -47,7 +47,9 @@ class OverdraftAgainstAssignmentOfContractLimit extends Model
 	}
 		public function getLimitFullDate()
 		{
-			return $this->contract->getStartDate();
+			return DB::table('lending_information_against_assignment_of_contracts')->where('overdraft_against_assignment_of_contract_id',$this->overdraft_against_assignment_of_contract_id)
+			->where('contract_id',$this->contract_id)->first()->assignment_date;
+		
 		}
 		// public function getChequeActualCollectionOrDepositDate()
 		// {

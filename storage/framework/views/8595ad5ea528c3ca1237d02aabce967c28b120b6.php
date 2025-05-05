@@ -122,7 +122,7 @@
                                     <?php endif; ?>
                                     <?php if(hasAuthFor('create overdraft against assignment of contract')): ?>
                                     <div class="modal fade" id="apply-expense-<?php echo e($odAgainstAssignmentOfContract->id); ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                                        <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+                                        <div class="modal-dialog modal-xl modal-90 modal-dialog-centered" role="document">
                                             <div class="modal-content">
                                                 <form action="<?php echo e(route('lending.information.apply.for.against.assignment.of.contract',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'odAgainstAssignmentOfContract'=>$odAgainstAssignmentOfContract->id ])); ?>" method="post">
                                                     <?php echo csrf_field(); ?>
@@ -157,6 +157,7 @@
                                                                                 <th><?php echo e(__('Amount')); ?></th>
                                                                                 <th><?php echo e(__('Start Date')); ?></th>
                                                                                 <th><?php echo e(__('End Date')); ?></th>
+                                                                                <th><?php echo e(__('Assign Date')); ?></th>
                                                                                 <th><?php echo e(__('Lending %')); ?></th>
                                                                                 <th><?php echo e(__('Lending Amount')); ?></th>
                                                                                 <th><?php echo e(__('Actions')); ?></th>
@@ -171,6 +172,7 @@
                                                                                 <td> <?php echo e($lendingInformationAgainstAssignmentOfContract->getContractAmountFormatted()); ?> </td>
                                                                                 <td> <?php echo e($lendingInformationAgainstAssignmentOfContract->getContractStartDate()); ?> </td>
                                                                                 <td> <?php echo e($lendingInformationAgainstAssignmentOfContract->getContractEndDate()); ?> </td>
+                                                                                <td> <?php echo e($lendingInformationAgainstAssignmentOfContract->getAssignmentEndDate()); ?> </td>
                                                                                 <td> <?php echo e($lendingInformationAgainstAssignmentOfContract->getLendingRateFormatted() . ' %'); ?> </td>
                                                                                 <td> <?php echo e($lendingInformationAgainstAssignmentOfContract->getLendingAmountFormatted()); ?> </td>
                                                                                 <td>
@@ -435,6 +437,7 @@
         const selectedOption = $(this).find('option:selected')
         $(parent).find('.contract-start-date-class-create').val($(selectedOption).data('start-date'))
         $(parent).find('.contract-end-date-class-create').val($(selectedOption).data('end-date'))
+        // $(parent).find('.contract-assignment-date-class-create').val($(selectedOption).data('end-date'))
         $(parent).find('.contract-amount-class-create').val($(selectedOption).data('amount'))
 
     })

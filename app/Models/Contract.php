@@ -31,6 +31,7 @@ class Contract extends Model
         $this->overdraftAgainstAssignmentOfContractLimits->each(function ($overdraftAgainstAssignmentOfContractLimit) {
             $overdraftAgainstAssignmentOfContractLimit->update(['is_active' => 0]);
             DB::table('overdraft_against_assignment_of_contract_limits')->where('id', $overdraftAgainstAssignmentOfContractLimit->id)->delete();
+			self::deleteLimitUpdateRowFromStatement($overdraftAgainstAssignmentOfContractLimit);
         });
     }
 	public function handleOverdraftAgainstAssignmentOfContractLimit(): void
@@ -41,15 +42,39 @@ class Contract extends Model
         // $accountType = AccountType::find($this->getAccountType());
         $overdraftAgainstAssignmentOfContract = $this->overdraftAgainstAssignmentOfContract;
 		//  OverdraftAgainstAssignmentOfContract::where('account_number', $this->getAccountNumber())->first();
-
+		$companyId = $this->company_id ;
         if (
 			// $accountType && $accountType->isOverdraftAgainstAssignmentOfContractAccount() &&
 		
 		 $overdraftAgainstAssignmentOfContract) {
-            $this->overdraftAgainstAssignmentOfContractLimits()->create([
-                'company_id' => $this->company_id,
+            $currentLimitRow = $this->overdraftAgainstAssignmentOfContractLimits()->create([
+                'company_id' => $companyId,
                 'overdraft_against_assignment_of_contract_id' => $overdraftAgainstAssignmentOfContract->id
             ]);
+			
+			
+			$limitRow = DB::table('overdraft_against_assignment_of_contract_limits')->where('overdraft_against_assignment_of_contract_id',$overdraftAgainstAssignmentOfContract->id)->orderByDesc('full_date')->first();
+			
+			$accumulatedLimit = $limitRow->accumulated_limit;
+			$date = Carbon::make($currentLimitRow->full_date)->format('Y-m-d');
+			$contractId = $overdraftAgainstAssignmentOfContract->id;
+		
+				OverdraftAgainstAssignmentOfContractBankStatement::create([
+					'type'=>'limit_update',
+					'is_debit'=>1 ,
+					'is_credit'=>0 ,
+					'priority'=>3 ,
+					'company_id' => $companyId,
+					'overdraft_against_assignment_of_contract_id' => $contractId,
+					'debit'=>0,
+					'credit'=>0,
+					'limit'=>$accumulatedLimit,
+					'date'=>$date,
+					'overdraft_against_assignment_of_contract_limit_id'=>$currentLimitRow->id,
+					'comment_en'=>__('Limit Update'),
+					'comment_ar'=>__('Limit Update',[],'ar'),
+				]);
+				
         }
     }
 	public function isRunning()
@@ -67,10 +92,10 @@ class Contract extends Model
 	public static function boot()
     {
         parent::boot();
-        self::saving(function($model){
-			$model->duration = $model->duration * 365/12;
-			$model->end_date = $model->start_date && $model->duration ? Carbon::make($model->start_date)->addDays($model->duration)->format('Y-m-d') : null;  
-        });
+        // self::saving(function($model){
+		// 	$model->duration = $model->duration * 365/12;
+		// 	$model->end_date = $model->start_date && $model->duration ? Carbon::make($model->start_date)->addDays($model->duration)->format('Y-m-d') : null;  
+        // });
 		
 		
 		static::updated(
@@ -85,6 +110,7 @@ class Contract extends Model
                     $negativeOverdraftAgainstAssignmentOfContractLimit = $model->overdraftAgainstAssignmentOfContractLimits->where('limit', '<', 0)->first();
                     $negativeOverdraftAgainstAssignmentOfContractLimit ? $negativeOverdraftAgainstAssignmentOfContractLimit->update(['is_active' => 0]) : null ;
                     $negativeOverdraftAgainstAssignmentOfContractLimit ? DB::table('overdraft_against_assignment_of_contract_limits')->where('id', $negativeOverdraftAgainstAssignmentOfContractLimit->id)->delete() : null ;
+					$negativeOverdraftAgainstAssignmentOfContractLimit ? self::deleteLimitUpdateRowFromStatement($negativeOverdraftAgainstAssignmentOfContractLimit) : null ;
                     return ;
                 }
                 /**
@@ -109,7 +135,7 @@ class Contract extends Model
                 }
                 /**
                  * * في حالة لو هو عدل شيك تحت التحصيل وفي نفس الوقت غير نوع الاكونت لاي اكونت تاني غير
-                 * * overdraft against commercial paper
+                 * * overdraft against assignment of contract
                  */
                 // if ($model->isRunningAndAgainst() && $currentAccountType && !$currentAccountType->isOverdraftAgainstAssignmentOfContractAccount()) {
 				// 	logger('from fff');
@@ -120,11 +146,11 @@ class Contract extends Model
 
                 /**
                  * * في حالة لو هو عدل شيك تحت التحصيل وفي نفس الوقت غير نوع الاكونت ل
-                 * * overdraft against commercial paper
+                 * * overdraft against assignment of contract
                  * * وكان عدد ال
-                 * * papers limits
+                 * * assignment of contract limits
                  * * صفر يبقي هو اكيد كان جي من نوع تاني غير ال
-                 * * overdraft against commercial paper
+                 * * overdraft against commercial assignment of contract
                  * *
                  */
                 // if ($model->isRunningAndAgainst() && $currentAccountType && $currentAccountType->isOverdraftAgainstAssignmentOfContractAccount() && !$model->overdraftAgainstAssignmentOfContractLimits->count() && $oldAccountType && !$oldAccountType->isOverdraftAgainstAssignmentOfContractAccount()) {
@@ -136,7 +162,7 @@ class Contract extends Model
                 // }
                 /**
                  * * في حالة لو غير رقم الحساب ال
-                 * * overdraft against commercial paper
+                 * * overdraft against assignment of contract
                  * * وحطها في حساب تاني حتى لو كانت بنك مختلف
                  */
                 // if ($model->isRunningAndAgainst() && $oldAccountType && $oldAccountType->isOverdraftAgainstAssignmentOfContractAccount() && $currentAccountType && $currentAccountType->isOverdraftAgainstAssignmentOfContractAccount() && $currentAccountNumber != $oldAccountNumber) {
@@ -165,7 +191,9 @@ class Contract extends Model
 				
 		
                 $overdraftAgainstAssignmentOfContractLimit = $model->overdraftAgainstAssignmentOfContractLimits->sortBy('full_date')->first() ;
-                $overdraftAgainstAssignmentOfContractLimit ? $overdraftAgainstAssignmentOfContractLimit->update(['updated_at' => now(), 'full_date' => $overdraftAgainstAssignmentOfContractLimit->updateFullDate()]) : null;
+                $overdraftAgainstAssignmentOfContractLimit ? $overdraftAgainstAssignmentOfContractLimit->update(['updated_at' => now(), 'full_date' => $fullDate = $overdraftAgainstAssignmentOfContractLimit->updateFullDate()]) : null;
+				$overdraftAgainstAssignmentOfContractLimit ? self::updateLimitUpdateRowFromStatement($overdraftAgainstAssignmentOfContractLimit,$fullDate) : null;
+
             }
         );
 
@@ -226,10 +254,6 @@ class Contract extends Model
 		
 		$this->attributes['start_date'] = $year.'-'.$month.'-'.$day;
 	}
-	public function getDuration()
-	{
-		return $this->duration ;
-	}
 	
 	public function getEndDate()
 	{
@@ -240,7 +264,19 @@ class Contract extends Model
 		$date = $this->getEndDate() ;
 		return $date ? Carbon::make($date)->format('d-m-Y'):null ;
 	}
-	
+	public function setEndDateAttribute($value)
+	{
+		$date = explode('/',$value);
+		if(count($date) != 3){
+			$this->attributes['end_date'] =  $value ;
+			return ;
+		}
+		$month = $date[0];
+		$day = $date[1];
+		$year = $date[2];
+		
+		$this->attributes['end_date'] = $year.'-'.$month.'-'.$day;
+	}
 	public function getAmount()
 	{
 		return $this->amount?:0 ;
@@ -417,4 +453,22 @@ class Contract extends Model
 	{
 		return $this->hasMany(CustomerInvoice::class,'contract_code','code')->where('company_id',$this->company_id);
 	}
+	public static function deleteLimitUpdateRowFromStatement($overdraftAgainstAssignmentOfContractLimit)
+	{
+		$paperId = $overdraftAgainstAssignmentOfContractLimit->overdraft_against_assignment_of_contract_id;
+		$row =  OverdraftAgainstAssignmentOfContractBankStatement::where('type', 'limit_update')->where('overdraft_against_assignment_of_contract_limit_id',$overdraftAgainstAssignmentOfContractLimit->id)->where('overdraft_against_assignment_of_contract_id',$paperId)->first();
+		if($row){
+			$row->delete();
+		}
+		
+	}
+	public static function updateLimitUpdateRowFromStatement($overdraftAgainstAssignmentOfContractLimit,$fullDate)
+	{
+		DB::table('overdraft_against_assignment_of_contract_bank_statements')->where('type', 'limit_update')->where('overdraft_against_assignment_of_contract_limit_id',$overdraftAgainstAssignmentOfContractLimit->id)->where('overdraft_against_assignment_of_contract_id',$overdraftAgainstAssignmentOfContractLimit->overdraft_against_assignment_of_contract_id)->update([
+			'date'=>Carbon::make($fullDate)->format('Y-m-d'),
+			'full_date'=>$fullDate
+		]);
+	}
+	
+	
 }
