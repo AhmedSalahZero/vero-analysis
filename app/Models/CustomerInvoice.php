@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use App\Helpers\HArr;
 use App\Interfaces\Models\IInvoice;
 use App\Traits\Models\IsInvoice;
 use App\Traits\StaticBoot;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use PhpParser\Node\Expr\Cast;
 
 class CustomerInvoice extends Model implements IInvoice
 {
@@ -427,45 +430,90 @@ class CustomerInvoice extends Model implements IInvoice
 			
 	}
 	
-	public static function getForecastedProjectCollection(array &$result , array &$totalCashInFlowArray , string $moneyType , string $dateColumnName , string $startDate , string $endDate, ?string $contractCode , string $currentWeekYear , ?string $chequeStatus = null  , $currency = null , $companyId = null):void
+	public static function getForecastedProjectCollection(array &$result , array &$totalCashInFlowArray  , string $startDate , string $endDate , $currency = null , $companyId = null):void
 	{
 		/**
 		 * 
 		 * * في حالة لو مرر العقد فا مش محتاجين عمله لان العقد الواحد مربوط بعملة واحدة
 		 */
 		$totalCashInFlowKey = __('Total Cash Inflow');
-		$currentTypeText = [
-			MoneyReceived::INCOMING_TRANSFER => __('Incoming Transfers'),
-			MoneyReceived::CHEQUE => $chequeStatus == Cheque::IN_SAFE ? __('Cheques In Safe') : __('Checks Collected'),
-			MoneyReceived::CASH_IN_BANK=>__('Bank Deposits'),
-			MoneyReceived::CASH_IN_SAFE=>__('Cash Collections')
-		][$moneyType];
+		$currentTypeText = 'Forecasted Project Collection';
+		// $currentTypeText = [
+		// 	MoneyReceived::INCOMING_TRANSFER => __('Incoming Transfers'),
+		// 	MoneyReceived::CHEQUE => $chequeStatus == Cheque::IN_SAFE ? __('Cheques In Safe') : __('Checks Collected'),
+		// 	MoneyReceived::CASH_IN_BANK=>__('Bank Deposits'),
+		// 	MoneyReceived::CASH_IN_SAFE=>__('Cash Collections')
+		// ][$moneyType];
 		
-		if($chequeStatus == Cheque::UNDER_COLLECTION){
-			$currentTypeText = __('Cheques Under Collection');
+		$contracts = Contract::where('company_id',$companyId)->where('end_date','>=',$startDate)->with('salesOrders')->get();
+		$contractWithSalesOrders = [];
+		foreach($contracts as $contract){
+			foreach($contract->salesOrders as $salesOrder){
+				$contractWithSalesOrders[$contract->id][$salesOrder->id] = [
+					'contract'=>$contract ,
+					'sales_orders'=>HArr::getLatestNonZeroExecutionKeys($salesOrder->toArray())
+				];
+			}
 		}
-		$rows =  DB::table('money_received')
-		->when($chequeStatus , function( $builder) use ($chequeStatus){
-			$builder->join('cheques','cheques.money_received_id','=','money_received.id')->where('cheques.status',$chequeStatus);
-		})
-		->join('partners','partners.id','=','money_received.partner_id')
-		->where('money_received.type','=',$moneyType)
-		->where('receiving_currency',$currency)
-		->whereBetween($dateColumnName,[$startDate,$endDate])
-		->where('money_received.company_id',$companyId)
-		->selectRaw('received_amount,name')->get();
 		
-		foreach($rows as $row){
-			$invoiceNumber =   $row->name  ;
-			 $result['customers'][$currentTypeText][$invoiceNumber]['weeks'][$currentWeekYear] = isset($result['customers'][$currentTypeText][$invoiceNumber]['weeks'][$currentWeekYear]) ? $result['customers'][$currentTypeText][$invoiceNumber]['weeks'][$currentWeekYear]+  $row->received_amount :$row->received_amount;
-			$result['customers'][$currentTypeText][$invoiceNumber]['total'] = isset($result['customers'][$currentTypeText][$invoiceNumber]['total']) ? $result['customers'][$currentTypeText][$invoiceNumber]['total']  + $row->received_amount : $row->received_amount;
-			$currentTotal = $row->received_amount;
-			$result['customers'][$currentTypeText]['total'][$currentWeekYear] = isset($result['customers'][$currentTypeText]['total'][$currentWeekYear]) ? $result['customers'][$currentTypeText]['total'][$currentWeekYear] +  $currentTotal : $currentTotal ;
-			$result['customers'][$totalCashInFlowKey]['total'][$currentWeekYear] = isset($result['customers'][$totalCashInFlowKey]['total'][$currentWeekYear]) ? $result['customers'][$totalCashInFlowKey]['total'][$currentWeekYear] + $row->received_amount : $row->received_amount;
-			$totalCashInFlowArray[$currentWeekYear] = isset($totalCashInFlowArray[$currentWeekYear]) ? $totalCashInFlowArray[$currentWeekYear] + $row->received_amount : $row->received_amount ;
-			$result['customers'][$currentTypeText]['total']['total_of_total'] = isset($result['customers'][$currentTypeText]['total']['total_of_total']) ? $result['customers'][$currentTypeText]['total']['total_of_total'] + $row->received_amount : $row->received_amount;
-		
+		foreach($contractWithSalesOrders as $contractId => $contractWithSos){
+			foreach($contractWithSos as $soId => $ContractWithSoArr){
+				$contract = $ContractWithSoArr['contract'];
+				$soArr = $ContractWithSoArr['sales_orders'];
+				$soEndDate = $soArr['end_date'];
+				$soCollectionDays = $soArr['collection_days'];
+				$currentWeekYear = Carbon::make($soEndDate)->addDays($soCollectionDays)->format('n-Y');
+				$salesOrderAmount = $soArr['amount'];
+				$contractCode = $contract->getCode();
+				$contractName = $contract->getName();
+				$soNumber = $soArr['so_number']; 
+				$customerName = $contract->getClientName();
+				$currentInvoiceAmount = DB::table('customer_invoices')->where('company_id',$companyId)->where('currency',$currency)->where('sales_order_number',$soNumber)->where('contract_code',$contractCode)->sum('invoice_amount');
+				$salesOrderNetBalance = 0 ;
+				if($currentInvoiceAmount > $salesOrderAmount){
+					$salesOrderNetBalance = 0;	
+				}else{
+					$salesOrderNetBalance = $salesOrderAmount - $currentInvoiceAmount;
+				}
+				$invoiceNumber =   $customerName . '-' . $contractName  ;
+				$result['customers'][$currentTypeText][$invoiceNumber]['weeks'][$currentWeekYear] = isset($result['customers'][$currentTypeText][$invoiceNumber]['weeks'][$currentWeekYear]) ? $result['customers'][$currentTypeText][$invoiceNumber]['weeks'][$currentWeekYear]+  $salesOrderNetBalance :$salesOrderNetBalance;
+				$result['customers'][$currentTypeText][$invoiceNumber]['total'] = isset($result['customers'][$currentTypeText][$invoiceNumber]['total']) ? $result['customers'][$currentTypeText][$invoiceNumber]['total']  + $salesOrderNetBalance : $salesOrderNetBalance;
+				$currentTotal = $salesOrderNetBalance;
+				$result['customers'][$currentTypeText]['total'][$currentWeekYear] = isset($result['customers'][$currentTypeText]['total'][$currentWeekYear]) ? $result['customers'][$currentTypeText]['total'][$currentWeekYear] +  $currentTotal : $currentTotal ;
+				$result['customers'][$totalCashInFlowKey]['total'][$currentWeekYear] = isset($result['customers'][$totalCashInFlowKey]['total'][$currentWeekYear]) ? $result['customers'][$totalCashInFlowKey]['total'][$currentWeekYear] + $salesOrderNetBalance : $salesOrderNetBalance;
+				$totalCashInFlowArray[$currentWeekYear] = isset($totalCashInFlowArray[$currentWeekYear]) ? $totalCashInFlowArray[$currentWeekYear] + $salesOrderNetBalance : $salesOrderNetBalance ;
+				$result['customers'][$currentTypeText]['total']['total_of_total'] = isset($result['customers'][$currentTypeText]['total']['total_of_total']) ? $result['customers'][$currentTypeText]['total']['total_of_total'] + $salesOrderNetBalance : $salesOrderNetBalance;
+			}
 		}
+		// dd($result['customers']);
+		// dd($result);
+		// // foreach($contracts )
+		
+		// if($chequeStatus == Cheque::UNDER_COLLECTION){
+		// 	$currentTypeText = __('Cheques Under Collection');
+		// }
+		// $rows =  DB::table('money_received')
+		// ->when($chequeStatus , function( $builder) use ($chequeStatus){
+		// 	$builder->join('cheques','cheques.money_received_id','=','money_received.id')->where('cheques.status',$chequeStatus);
+		// })
+		// ->join('partners','partners.id','=','money_received.partner_id')
+		// ->where('money_received.type','=',$moneyType)
+		// ->where('receiving_currency',$currency)
+		// ->whereBetween($dateColumnName,[$startDate,$endDate])
+		// ->where('money_received.company_id',$companyId)
+		// ->selectRaw('received_amount,name')->get();
+		
+		// foreach($rows as $row){
+		// 	$invoiceNumber =   $row->name  ;
+		// 	 $result['customers'][$currentTypeText][$invoiceNumber]['weeks'][$currentWeekYear] = isset($result['customers'][$currentTypeText][$invoiceNumber]['weeks'][$currentWeekYear]) ? $result['customers'][$currentTypeText][$invoiceNumber]['weeks'][$currentWeekYear]+  $row->received_amount :$row->received_amount;
+		// 	$result['customers'][$currentTypeText][$invoiceNumber]['total'] = isset($result['customers'][$currentTypeText][$invoiceNumber]['total']) ? $result['customers'][$currentTypeText][$invoiceNumber]['total']  + $row->received_amount : $row->received_amount;
+		// 	$currentTotal = $row->received_amount;
+		// 	$result['customers'][$currentTypeText]['total'][$currentWeekYear] = isset($result['customers'][$currentTypeText]['total'][$currentWeekYear]) ? $result['customers'][$currentTypeText]['total'][$currentWeekYear] +  $currentTotal : $currentTotal ;
+		// 	$result['customers'][$totalCashInFlowKey]['total'][$currentWeekYear] = isset($result['customers'][$totalCashInFlowKey]['total'][$currentWeekYear]) ? $result['customers'][$totalCashInFlowKey]['total'][$currentWeekYear] + $row->received_amount : $row->received_amount;
+		// 	$totalCashInFlowArray[$currentWeekYear] = isset($totalCashInFlowArray[$currentWeekYear]) ? $totalCashInFlowArray[$currentWeekYear] + $row->received_amount : $row->received_amount ;
+		// 	$result['customers'][$currentTypeText]['total']['total_of_total'] = isset($result['customers'][$currentTypeText]['total']['total_of_total']) ? $result['customers'][$currentTypeText]['total']['total_of_total'] + $row->received_amount : $row->received_amount;
+		
+		// }
 			
 	}
 	

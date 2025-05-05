@@ -6,6 +6,7 @@ use App\Helpers\HArr;
 use App\Models\CashExpense;
 use App\Models\Cheque;
 use App\Models\Company;
+use App\Models\Contract;
 use App\Models\CustomerInvoice;
 use App\Models\LetterOfGuaranteeIssuance;
 use App\Models\MoneyPayment;
@@ -74,13 +75,19 @@ class CashFlowReportController
 			$datesWithWeeks = 	getDayNumberBetweenDates($year , Carbon::make($endDate)) ;
 		}
 		$weeks  = $this->mergeYearWithWeek($datesWithWeeks ,Carbon::make($startDate) );
+		
+		// dd($contractWithSalesOrders);
+		
 		$firstIndex = array_key_first($weeks);
 		$lastIndex = array_key_last($weeks);
 		$dates = [];
 		$rangedWeeks = [];
 		$totalCashInFlowArray = [];
 		$totalCashOutFlowArray = [];
+		// dd($weeks);
 		CustomerInvoice::getCashAndBankBalanceAtDate($result,$totalCashInFlowArray ,MoneyReceived::CHEQUE,'expected_collection_date',$startDate , $endDate,null,array_keys($weeks)[0],Cheque::UNDER_COLLECTION,$currency,$company->id) ;
+		CustomerInvoice::getForecastedProjectCollection($result,$totalCashInFlowArray ,$startDate , $endDate,$currency,$company->id) ;
+		
 		foreach($weeks as $currentWeekYear=>$week){
 			
 			$currentYear = explode('-',$currentWeekYear)[1];
@@ -99,6 +106,7 @@ class CashFlowReportController
 				$endDate = $rangedWeeks['end_date'];
 			}
 			// eee
+			
 			
 			CustomerInvoice::getSettlementAmountUnderDateForSpecificType($result,$totalCashInFlowArray ,MoneyReceived::CHEQUE,'expected_collection_date',$startDate , $endDate,null,$currentWeekYear,Cheque::UNDER_COLLECTION,$currency,$company->id) ;
 			CustomerInvoice::getSettlementAmountUnderDateForSpecificType($result,$totalCashInFlowArray,MoneyReceived::CHEQUE,'actual_collection_date',$startDate , $endDate,null,$currentWeekYear,Cheque::COLLECTED,$currency,$company->id);

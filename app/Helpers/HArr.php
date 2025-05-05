@@ -633,5 +633,57 @@ class HArr
 		}
 		dd('name not found');
 	}
+	public static function getLatestNonZeroExecutionKeys(array $data): array
+{
+    $maxEndDate = null;
+    $selectedIndex = null;
+
+    // Iterate through possible indices (1 to 5 in your example)
+    for ($i = 1; $i <= 5; $i++) {
+        $executionPercentageKey = "execution_percentage_$i";
+        $endDateKey = "end_date_$i";
+
+        // Check if the keys exist and execution_percentage is greater than 0
+        if (
+            isset($data[$executionPercentageKey], $data[$endDateKey]) &&
+            floatval($data[$executionPercentageKey]) > 0
+        ) {
+            $currentEndDate = \Carbon\Carbon::parse($data[$endDateKey]);
+
+            // Update if this end_date is greater or if maxEndDate is not set
+            if ($maxEndDate === null || $currentEndDate->greaterThan($maxEndDate)) {
+                $maxEndDate = $currentEndDate;
+                $selectedIndex = $i;
+            }
+        }
+    }
+
+    // If no valid set is found, return an empty array
+    if ($selectedIndex === null) {
+        return [];
+    }
+
+    // Collect all keys related to the selected index
+    $result = [];
+    $keys = [
+        "start_date_$selectedIndex",
+        "end_date_$selectedIndex",
+        "execution_percentage_$selectedIndex",
+        "execution_days_$selectedIndex",
+        "collection_days_$selectedIndex",
+		'so_number',
+		'amount'
+    ];
+
+    foreach ($keys as $key) {
+        if (isset($data[$key])) {
+			$r= '_'.$selectedIndex;
+			$newKey = str_replace($r,'',$key);
+            $result[$newKey] = $data[$key];
+        }
+    }
+
+    return $result;
+}
 
 }
