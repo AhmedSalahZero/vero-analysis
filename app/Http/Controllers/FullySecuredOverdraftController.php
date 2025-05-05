@@ -104,6 +104,22 @@ class FullySecuredOverdraftController
 		$type = $request->get('type','fully-secured-over-draft');
 		$activeTab = $type ; 
 		
+		$fullySecuredOverdraft->fullySecuredOverdraftBankStatements()->create([
+			'type'=>'active-limit',
+			'is_debit'=>1 ,
+			'is_credit'=> 0 ,
+			'priority'=>3,
+			'company_id'=>$company->id ,
+			'date'=>$fullySecuredOverdraft->contract_start_date ,
+			'limit'=>$fullySecuredOverdraft->limit ,
+			'debit'=>0,
+			'credit'=>0,
+			'comment_en'=>__('Limit'),
+			'comment_ar'=>__('Limit',[],'ar'),
+			
+		]);
+		
+		
 		$fullySecuredOverdraft->storeOutstandingBreakdown($request,$company);
 		return response()->json([
 			'redirectTo'=>route('view.fully.secured.overdraft',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'active'=>$activeTab])
@@ -135,6 +151,8 @@ class FullySecuredOverdraftController
 		
 		$fullySecuredOverdraft->update($data);
 		$fullySecuredOverdraft->storeOutstandingBreakdown($request,$company);
+		$fullySecuredOverdraft->updateLimitRaw($request,$company);
+		
 		$type = $request->get('type','fully-secured-over-draft');
 		$activeTab = $type ;
 		return response()->json([

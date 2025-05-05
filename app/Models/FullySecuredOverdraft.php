@@ -198,4 +198,31 @@ class FullySecuredOverdraft extends Model implements IHaveStatement
 			$model->rates()->delete();
 		});
 	}
+	public function company()
+	{
+		return $this->belongsTo(Company::class,'company_id');
+	}
+	public function updateLimitRaw()
+	{
+		$data = [
+			'type'=>'active-limit',
+			'is_debit'=>1 ,
+			'is_credit'=> 0 ,
+			'priority'=>3,
+			'company_id'=>$this->company->id ,
+			'date'=>$this->contract_start_date ,
+			'limit'=>$this->limit ,
+			'debit'=>0,
+			'credit'=>0,
+			'comment_en'=>__('Limit'),
+			'comment_ar'=>__('Limit',[],'ar'),
+		];
+		$row = $this->fullySecuredOverdraftBankStatements()->where('type','active-limit')->first();
+		if($row){
+			$row->update($data);
+		}else{
+			$this->fullySecuredOverdraftBankStatements()->create($data);
+		}
+		
+	}
 }

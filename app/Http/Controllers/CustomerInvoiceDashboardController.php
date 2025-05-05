@@ -627,8 +627,8 @@ class CustomerInvoiceDashboardController extends Controller
 				'lc'=>$lcTypes
 			];
 		$financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
-		$financialInstitutionBankIds = $financialInstitutionBanks->pluck('id')->toArray();
-		$selectedFinancialInstitutionBankIds = $request->ajax() && $request->get('financialInstitutionId') > 0 ? (array)$request->get('financialInstitutionId') : $financialInstitutionBankIds; 
+		// $financialInstitutionBankIds = $financialInstitutionBanks->pluck('id')->toArray();
+		
 	
 		$currentDate = now()->format('Y-m-d') ;
         $date = $request->get('date');
@@ -666,8 +666,14 @@ class CustomerInvoiceDashboardController extends Controller
 			$letterOfFacilityTableName = $lgOrLcOptionsArr['letter_of_facility_table_name'];
 			$currentStatementTableName = $lgOrLcOptionsArr['statement_table_name'];
 			$lgOrLcTypes = $typesForLgAndLc[$currentLgOrLcType];
-			
 			foreach ($selectedCurrencies as $currencyName) {
+				$financialInstitutionBankIds = [
+					'lg'=>array_keys($company->letterOfGuaranteeIssuances->where('status','!=','cancelled')->where('lg_currency',$currencyName)->load('financialInstitutionBank')->pluck('financialInstitutionBank.bank.name_en','financialInstitutionBank.id')->toArray()),
+					// 'lc'=>
+				][$currentLgOrLcType] ??[];
+			
+				$selectedFinancialInstitutionBankIds = $request->ajax() && $request->get('financialInstitutionId') > 0 ? (array)$request->get('financialInstitutionId') : $financialInstitutionBankIds; 
+				
 					$canShowDashboardPerCurrency[$currentLgOrLcType][$currencyName]  = DB::table($currentStatementTableName)->where('company_id',$company->id)->where('currency',$currencyName)->exists();
 				
 				foreach($lgOrLcTypes as $currentLgType => $currentLgTitle){

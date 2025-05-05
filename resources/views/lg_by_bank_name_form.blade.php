@@ -46,7 +46,7 @@
 
 
                         <div class="col-md-2 mb-4">
-                            <label>{{ __('Select Currency') }} </label>
+                            <label>{{ __('Currency') }} </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
                                     <select js-get-bank data-live-search="true" data-actions-box="true" id="currency_name" name="currency_name" required class="form-control ajax-current-currency  kt-bootstrap-select select2-select kt_bootstrap_select ">
@@ -147,7 +147,6 @@ $(document).on('change','[js-get-bank]',function(e){
 			},
 			success:function(res){
 				var banks = res.banks
-				
 				var options = '';
 				for(var id in banks){
 					var name = banks[id]

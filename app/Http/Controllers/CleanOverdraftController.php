@@ -112,8 +112,8 @@ class CleanOverdraftController
 			'limit'=>$cleanOverdraft->limit ,
 			'debit'=>0,
 			'credit'=>0,
-			'comment_en'=>'-',
-			'comment_ar'=>'-',
+			'comment_en'=>__('Limit'),
+			'comment_ar'=>__('Limit',[],'ar'),
 			
 		]);
 		/**
@@ -151,6 +151,7 @@ class CleanOverdraftController
 		}
 		$cleanOverdraft->update($data);
 		$cleanOverdraft->storeOutstandingBreakdown($request,$company);
+		$cleanOverdraft->updateLimitRaw();
 		$type = $request->get('type','clean-over-draft');
 		$activeLimitRow = $cleanOverdraft->cleanOverdraftBankStatements->where('type','active-limit')->first();
 		$activeLimitRowData = [

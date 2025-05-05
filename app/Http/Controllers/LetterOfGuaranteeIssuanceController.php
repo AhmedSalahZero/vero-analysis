@@ -468,7 +468,11 @@ class LetterOfGuaranteeIssuanceController
 		$currencyName = $request->get('currencyName');
 		$banks = $company->letterOfGuaranteeIssuances->where('lg_currency',$currencyName)->load('financialInstitutionBank')->pluck('financialInstitutionBank.bank.name_en','financialInstitutionBank.id')->toArray() ;
 		return response()->json([
-			'banks'=>$banks
+			/**
+			 * * ال كي دا مستخدم هنا
+			 * * CustomerInvoiceDashboardController
+			 */
+			'banks'=>$banks 
 		]);
 	}
 }

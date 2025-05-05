@@ -157,9 +157,10 @@ class OverdraftAgainstAssignmentOfContractController
 	
 	public function destroy(Company $company , FinancialInstitution $financialInstitution , OverdraftAgainstAssignmentOfContract $odAgainstAssignmentOfContract)
 	{
-		$odAgainstAssignmentOfContract->lendingInformation->each(function($lendingInformation){
-			$lendingInformation->delete();
-		});
+		foreach(['lendingInformation','rates','overdraftAgainstAssignmentOfContractBankLimits','overdraftAgainstAssignmentOfContractBankStatements'] as $hasManyRelationName)
+		$odAgainstAssignmentOfContract->{$hasManyRelationName}->each(function($model){
+			$model->delete();
+		});	
 		$odAgainstAssignmentOfContract->delete();
 		return redirect()->back()->with('success',__('Item Has Been Delete Successfully'));
 	}
