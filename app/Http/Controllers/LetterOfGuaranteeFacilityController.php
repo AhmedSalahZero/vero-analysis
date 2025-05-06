@@ -250,10 +250,12 @@ class LetterOfGuaranteeFacilityController
         $lgCommissionRate  = $letterOfGuaranteeFacility && $selectedLgType  && $letterOfGuaranteeFacility->termAndConditionForLgType($selectedLgType) ? $letterOfGuaranteeFacility->termAndConditionForLgType($selectedLgType)->commission_rate : 0;
         $minLgCashCoverRateForCurrentLgType  = $letterOfGuaranteeFacility && $selectedLgType  && $letterOfGuaranteeFacility->termAndConditionForLgType($selectedLgType) ? $letterOfGuaranteeFacility->termAndConditionForLgType($selectedLgType)->cash_cover_rate : 0;
 		$minLgIssuanceFeesForCurrentLgType  = $letterOfGuaranteeFacility && $selectedLgType  && $letterOfGuaranteeFacility->termAndConditionForLgType($selectedLgType) ? $letterOfGuaranteeFacility->termAndConditionForLgType($selectedLgType)->issuance_fees : 0;
+		$lgAmount = 0 ;
 		if($letterOfGuaranteeIssuance){
 			$minLgCashCoverRateForCurrentLgType = $letterOfGuaranteeIssuance->getCashCoverRate();
 			$lgCommissionRate = $letterOfGuaranteeIssuance->getLgCommissionRate();
 			$minLgIssuanceFeesForCurrentLgType = $letterOfGuaranteeIssuance->getIssuanceFees();
+			$lgAmount= $letterOfGuaranteeIssuance->getLgAmount();
 		}
 		
 		
@@ -306,15 +308,19 @@ class LetterOfGuaranteeFacilityController
 			}
 			$totalLastOutstandingBalanceOfFourTypes += $letterOfGuaranteeStatementEndBalance;
 		}
-		
+		// dd($totalLastOutstandingBalanceOfFourTypes,$lgAmount);
+		// $totalLastOutstandingBalanceOfFourTypes = $totalLastOutstandingBalanceOfFourTypes - $lgAmount;
+		// $currentLgTypeOutstanding = $currentLgTypeOutstanding - $lgAmount;
+		$totalLastOutstandingBalanceOfFourTypes = abs($totalLastOutstandingBalanceOfFourTypes) - $lgAmount;
 		$limit = $letterOfGuaranteeFacility ? $letterOfGuaranteeFacility->getLimit() : 0;
+		$currentLgTypeOutstanding = abs($currentLgTypeOutstanding) - $lgAmount ;
 	
 		return response()->json([
 			'limit'=>number_format($limit) ,
-			'total_lg_outstanding_balance'=>number_format(abs($totalLastOutstandingBalanceOfFourTypes)),
-			'total_room'=>number_format($limit - abs($totalLastOutstandingBalanceOfFourTypes)),
+			'total_lg_outstanding_balance'=>number_format($totalLastOutstandingBalanceOfFourTypes),
+			'total_room'=>number_format($limit - $totalLastOutstandingBalanceOfFourTypes ),
 			'currency_name'=>$currencyName,
-			'current_lg_type_outstanding_balance'=>number_format(abs($currentLgTypeOutstanding)),
+			'current_lg_type_outstanding_balance'=>number_format($currentLgTypeOutstanding),
             'min_lg_commission_rate'=>$minLgCommissionRateForCurrentLgType,
 			'lg_commission_rate'=>$lgCommissionRate , 
             'min_lg_cash_cover_rate_for_current_lg_type'=>$minLgCashCoverRateForCurrentLgType ,

@@ -92,7 +92,7 @@ use App\Models\MediumTermLoan ;
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
 										@if(hasAuthFor('create medium term loan'))
-                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="{{ __('Upload Loan Schedule') }}" href="{{ route('view.uploading',['company'=>$company->id,'loanId'=>$model->id,'model'=>'LoanSchedule']) }}"><i class="fa fa-dollar-sign"></i></a>
+                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="{{ __('Upload Loan Schedule & Apply Payments') }}" href="{{ route('view.uploading',['company'=>$company->id,'loanId'=>$model->id,'model'=>'LoanSchedule']) }}"><i class="fa fa-upload pl-2"></i> <i class="fa fa-dollar-sign ml-1 pr-2"></i> </a>
 											@endif 
 											@if(hasAuthFor('update medium term loan'))
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('loans.edit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'mediumTermLoan'=>$model->id]) }}"><i class="fa fa-pen-alt"></i></a>

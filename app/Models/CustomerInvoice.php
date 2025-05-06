@@ -278,7 +278,7 @@ class CustomerInvoice extends Model implements IInvoice
 		->get()
 		->unique('currency')->pluck('currency','currency')->toArray();
 	}
-	public static function getCustomerInvoicesUnderCollectionAtDatesForContracts(array &$result , array &$totalCashInFlowArray , int $companyId , string $startDate , string $endDate,string $currency  , ?string $contractCode ,string $currentWeekYear):void
+	public static function getCustomerInvoicesUnderCollectionAtDatesForContracts(array &$result , array &$totalCashInFlowArray , int $companyId ,string $currency  , ?string $contractCode , array $datesWithWeekNumber , string $endDate ):void
 	{
 		$key = __('Customers Invoices') ;
 		$items = self::where('company_id',$companyId)
@@ -287,7 +287,7 @@ class CustomerInvoice extends Model implements IInvoice
 		})
 		->where('currency',$currency)
 		->where('net_balance','>',0)
-		->whereBetween('invoice_due_date',[$startDate,$endDate])->get();
+		->whereBetween('invoice_due_date',[now()->format('Y-m-d'),$endDate])->get();
 		// if(count($items)>1){
 			// dd($items);
 		// }
@@ -297,6 +297,7 @@ class CustomerInvoice extends Model implements IInvoice
 			foreach($items as $item){
 				$sum = $item->net_balance ; 
 				$invoiceNumber = $item->invoice_number . ' [ ' . $item->customer_name . ' ]' ; 
+				$currentWeekYear = $datesWithWeekNumber[$item->invoice_due_date] ;
 				// $customerName = $item->customer_name ; 
 				$invoiceNumber = __('Invoice No.') . ' ' .  $invoiceNumber;
 				$result['customers'][$key][$invoiceNumber]['weeks'][$currentWeekYear] = isset($result['customers'][$key][$invoiceNumber]['weeks'][$currentWeekYear]) ? $result['customers'][$key][$invoiceNumber]['weeks'][$currentWeekYear] + $sum :  $sum;
@@ -430,7 +431,7 @@ class CustomerInvoice extends Model implements IInvoice
 			
 	}
 	
-	public static function getForecastedProjectCollection(array &$result , array &$totalCashInFlowArray  , string $startDate , string $endDate , $currency = null , $companyId = null):void
+	public static function getForecastedProjectCollection(array &$result , array &$totalCashInFlowArray  , string $startDate , string $endDate , $currency = null , $companyId = null , array $datesWithWeekNumber):void
 	{
 		/**
 		 * 
@@ -445,7 +446,10 @@ class CustomerInvoice extends Model implements IInvoice
 		// 	MoneyReceived::CASH_IN_SAFE=>__('Cash Collections')
 		// ][$moneyType];
 		
-		$contracts = Contract::where('company_id',$companyId)->where('end_date','>=',$startDate)->with('salesOrders')->get();
+		$contracts = Contract::where('company_id',$companyId)
+		->where('end_date','>=',now()->format('Y-m-d'))
+		// ->where('end_date','<=',now()->format('Y-m-d'))
+		->with('salesOrders')->get();
 		$contractWithSalesOrders = [];
 		foreach($contracts as $contract){
 			foreach($contract->salesOrders as $salesOrder){
@@ -462,7 +466,13 @@ class CustomerInvoice extends Model implements IInvoice
 				$soArr = $ContractWithSoArr['sales_orders'];
 				$soEndDate = $soArr['end_date'];
 				$soCollectionDays = $soArr['collection_days'];
-				$currentWeekYear = Carbon::make($soEndDate)->addDays($soCollectionDays)->format('n-Y');
+				$currentSoCollectionDays = Carbon::make($soEndDate)->addDays($soCollectionDays);
+				$isBetweenViewInterval = $currentSoCollectionDays->between($startDate,$endDate);
+				if(!$isBetweenViewInterval){
+					continue;
+				}
+				$currentSoCollectionDaysFormatted = $currentSoCollectionDays->format('Y-m-d');
+				$currentWeekYear =$datesWithWeekNumber[$currentSoCollectionDaysFormatted];
 				$salesOrderAmount = $soArr['amount'];
 				$contractCode = $contract->getCode();
 				$contractName = $contract->getName();
@@ -570,6 +580,27 @@ class CustomerInvoice extends Model implements IInvoice
 	public function getDeleteByDateColumnName()
 	{
 		return 'invoice_date';
+	}
+	public static function getProjectionOtherCashIn(array &$result , array &$totalCashInFlowArray ,Company $company ):void
+	{
+	//	$totalCashInFlowKey = __('Projected Other Cash In Items');
+		
+		$currentTypeText = 'Projected Other Cash In Items';
+		
+		$items = CashProjection::where('company_id',$company->id)->where('type','in')->get();
+		
+			foreach($items as $item){
+				$name = $item->name ; 
+				foreach($item->amounts as $currentWeekYear => $value){
+					$result['customers'][$currentTypeText][$name]['weeks'][$currentWeekYear] = isset($result['customers'][$currentTypeText][$name]['weeks'][$currentWeekYear]) ? $result['customers'][$currentTypeText][$name]['weeks'][$currentWeekYear] + $value :  $value;
+					$result['customers'][$currentTypeText][$name]['total'] = isset($result['customers'][$currentTypeText][$name]['total']) ? $result['customers'][$currentTypeText][$name]['total']  + $value : $value;
+					$currentTotal = $value;
+					$result['customers'][$currentTypeText]['total'][$currentWeekYear] = isset($result['customers'][$currentTypeText]['total'][$currentWeekYear]) ? $result['customers'][$currentTypeText]['total'][$currentWeekYear] +  $currentTotal : $currentTotal ;
+					$totalCashInFlowArray[$currentWeekYear] = isset($totalCashInFlowArray[$currentWeekYear]) ? $totalCashInFlowArray[$currentWeekYear] + $currentTotal : $currentTotal;
+					$result['customers'][$currentTypeText]['total']['total_of_total']= isset($result['customers'][$currentTypeText]['total']['total_of_total']) ? $result['customers'][$currentTypeText]['total']['total_of_total'] +$value :$value ;
+					
+				}
+			}
 	}
 	
 }

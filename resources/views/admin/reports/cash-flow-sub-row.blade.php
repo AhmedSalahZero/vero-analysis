@@ -14,10 +14,22 @@
                                              @foreach($weeks as $weekAndYear => $week)
 											 @php
 											 	$currentValue = $result[$mainReportKey][$parentKeyName][$currentSubRowKeyName]['weeks'][$weekAndYear] ?? 0;
+												if($currentSubRowKeyName == 'Customers Past Due Invoices' )
+												{
+													$startDate = $dates[$weekAndYear]['start_date'] ;
+													$currentRow = $customerDueInvoices->where('week_start_date',$startDate)->first() ;
+													$currentValue =$currentRow ?  $currentRow->amount : 0;
+												}
 												if($currentSubRowKeyName == 'Suppliers Past Due Invoices' )
 												{
 													$startDate = $dates[$weekAndYear]['start_date'] ;
 													$currentRow = $supplierDueInvoices->where('week_start_date',$startDate)->first() ;
+													$currentValue =$currentRow ?  $currentRow->amount : 0;
+												}
+												if($currentSubRowKeyName == 'Loan Past Due Installments' )
+												{
+													$startDate = $dates[$weekAndYear]['start_date'] ;
+													$currentRow = $pastDueLoanInstallments->where('week_start_date',$startDate)->first() ;
 													$currentValue =$currentRow ?  $currentRow->amount : 0;
 												}
 											 @endphp

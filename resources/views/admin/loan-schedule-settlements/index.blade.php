@@ -323,7 +323,7 @@ use Carbon\Carbon;
                                         </h3>
                                     </div>
                                 </div>
-                                <div class="kt-portlet__body pb-0">
+                                <div class="kt-portlet__body pb-0 pt-0">
                                     <div class="form-group row mb-0">
                                         <div class="col-md-4 mb-4">
                                             <label> {{ __('Loan Name') }} </label>
@@ -355,7 +355,7 @@ use Carbon\Carbon;
                                         </div>
 
                                         <div class="col-md-4 mb-4">
-                                            <label>{{__('Pricincple Amount')}} </label>
+                                            <label>{{__('Principle Amount')}} </label>
                                             <input type="text" class="form-control" disabled value="{{ $loanSchedule->getPrincipleAmountFormatted() }}">
                                         </div>
 
@@ -382,7 +382,6 @@ use Carbon\Carbon;
                                             <label>{{__('Settlement Amount')}} </label>
                                             <input type="text" class="form-control" name="amount" value="{{ isset($model) ? $model->getAmount() : $loanSchedule->getRemaining() }}">
                                         </div>
-
 
                                         <div class="col-md-3 mb-4">
                                             <label class="form-label font-weight-bold">{{ __('Current Account') }} </label>

@@ -530,6 +530,25 @@ class CashExpense extends Model
 		}
 	
 	}
+	public static function getProjectionOtherCashOut(array &$result , array &$totalCashInFlowArray ,Company $company ):void
+	{
+		$key = __('Projected Other Cash Out Items') ;
+		$items = CashProjection::where('company_id',$company->id)->where('type','out')->get();
+		
+			foreach($items as $item){
+				$invoiceNumber = $item->name ; 
+				foreach($item->amounts as $currentWeekYear => $value){
+					$result['cash_expenses'][$key][$invoiceNumber]['weeks'][$currentWeekYear] = isset($result['cash_expenses'][$key][$invoiceNumber]['weeks'][$currentWeekYear]) ? $result['cash_expenses'][$key][$invoiceNumber]['weeks'][$currentWeekYear] + $value :  $value;
+					$result['cash_expenses'][$key][$invoiceNumber]['total'] = isset($result['cash_expenses'][$key][$invoiceNumber]['total']) ? $result['cash_expenses'][$key][$invoiceNumber]['total']  + $value : $value;
+					$currentTotal = $value;
+					$result['cash_expenses'][$key]['total'][$currentWeekYear] = isset($result['cash_expenses'][$key]['total'][$currentWeekYear]) ? $result['cash_expenses'][$key]['total'][$currentWeekYear] +  $currentTotal : $currentTotal ;
+					$totalCashInFlowArray[$currentWeekYear] = isset($totalCashInFlowArray[$currentWeekYear]) ? $totalCashInFlowArray[$currentWeekYear] + $currentTotal : $currentTotal;
+					$result['cash_expenses'][$key]['total']['total_of_total']= isset($result['cash_expenses'][$key]['total']['total_of_total']) ? $result['cash_expenses'][$key]['total']['total_of_total'] +$value :$value ;
+					
+				}
+			}
+	}
+	
 	
 	public function isOutgoingTransferBankCharges():bool
 	{

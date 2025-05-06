@@ -59,6 +59,7 @@ class ContractCashFlowReportController
 			'Cheques In Safe'=>[],
 			'Customers Invoices'=>[],
 			'Customers Past Due Invoices'=>[],
+			__('Projected Other Cash In Items'),
 			__('Total Cash Inflow')=>[]
 		];
 		$pastDueCustomerInvoicesPerCurrency = [];

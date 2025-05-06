@@ -63,7 +63,7 @@
 
         <form method="post" action="{{ isset($model) ?  route('lc-settlement-internal-money-transfers.update',['company'=>$company->id,'lc_settlement_internal_transfer'=>$model->id]) :route('lc-settlement-internal-money-transfers.store',['company'=>$company->id]) }}" class="kt-form kt-form--label-right">
             <input id="js-in-edit-mode" type="hidden" name="in_edit_mode" value="{{ isset($model) ? 1 : 0 }}">
-            <input type="hidden" name="id" value="{{ isset($model) ? $model->id : 0 }}">
+            <input type="hidden" id="model-id" name="id" value="{{ isset($model) ? $model->id : 0 }}">
             <input type="hidden" name="company_id" value="{{ $company->id }}">
             @if(isset($model))
             <input type="hidden" name="updated_by" value="{{ auth()->user()->id }}">
@@ -453,10 +453,12 @@
 	})
 	$(document).on('change','select#letter-of-credit-issuance-id',function(e){
 		const letterOfCreditIssuanceId = $(this).val()
+		const internalMoneyTransferId = $('#model-id').val();
 		$.ajax({
 			url:"{{ route('get.remaining.balance.lc.issuance',['company'=>$company->id]) }}",
 			data:{
-				letterOfCreditIssuanceId
+				letterOfCreditIssuanceId,
+				internalMoneyTransferId
 			},
 			success:function(res){
 				$('#remaining-balance-id').val(number_format(res.remaining_balance))				

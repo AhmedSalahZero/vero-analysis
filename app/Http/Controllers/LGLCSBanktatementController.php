@@ -87,7 +87,6 @@ class LGLCSBanktatementController
 				 })
 				 ->orderByRaw('date desc , '.$statementTableName.'.id desc')
 				 ->get();
-				 
         if (!count($results)) {
             return redirect()->back()->with('fail', __('No Data Found'));
         }

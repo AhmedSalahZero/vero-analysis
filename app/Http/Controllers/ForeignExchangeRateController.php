@@ -147,7 +147,13 @@ class ForeignExchangeRateController
 	}
 	public function getExchangeRate(Request $request  , Company $company)
 	{
-		$date = Carbon::make($request->get('date'))->format('Y-m-d') ;
+		$date = $request->get('date') ;
+		if(!$date){
+			 return response()->json([
+				'exchange_rate'=> 1 
+			]);
+		}
+		$date = Carbon::make($date)->format('Y-m-d') ;
 		$exchangeRateRow = ForeignExchangeRate::where('company_id',$company->id)
 		->where('from_currency',$request->get('fromCurrency'))
 		->where('to_currency',$request->get('toCurrency'))

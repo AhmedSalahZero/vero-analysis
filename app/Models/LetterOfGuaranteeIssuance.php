@@ -483,9 +483,7 @@ class LetterOfGuaranteeIssuance extends Model
 	public static function getCommissionAndFeesAtDates(array &$result , array &$totalCashOutFlowArray,string $dateFieldName,string $currency , int $companyId, string $startDate , string $endDate , string $currentWeekYear) 
 	{
 		$lgsTypes = LgTypes::getAll();
-		// $mainType = 'lg';
 		$mainType = 'cash_expenses';
-		// $mainType = 'lg';
 		$rows = DB::table('current_account_bank_statements')->where('current_account_bank_statements.company_id',$companyId)
 						->join('financial_institution_accounts','financial_institution_accounts.id','=','current_account_bank_statements.financial_institution_account_id')
 						->join('letter_of_guarantee_issuances','letter_of_guarantee_issuances.id','=','current_account_bank_statements.letter_of_guarantee_issuance_id')

@@ -633,4 +633,8 @@ class Company extends Model implements HasMedia
 	{
 		return Department::where('type',$type)->get();
 	}
+	public function cashProjects()
+	{
+		return $this->hasMany(CashProjection::class);
+	}
 }

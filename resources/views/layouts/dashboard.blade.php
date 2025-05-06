@@ -1765,7 +1765,7 @@
 
 
 
-    @if(isset($company) && $company->id)
+    @if(isset($company) && $company->id && !isset($model))
     <script>
         $(document).on('change', '.update-exchange-rate', function() {
 
@@ -1803,7 +1803,7 @@
                 }
                 , success: function(res) {
                     exchangeRate = res.exchange_rate;
-
+				console.log('ex',exchangeRate)
                     $('.exchange-rate-class').val(exchangeRate).trigger('change')
                 }
             })

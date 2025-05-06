@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use App\Helpers\HArr;
+use App\Helpers\HDate;
 use App\Traits\StaticBoot;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\DB;
 
 class LoanSchedule extends Model
 {
@@ -142,4 +145,30 @@ class LoanSchedule extends Model
 		->where('id',$this->id)
 		->toArray())[0]  + 1 	;
 	}
+	public static function getLoanInstallmentsAtDates(array &$result , array &$totalCashOutFlowArray,string $currency , int $companyId,array $datesWithWeekNumber,string $endDate) 
+	{
+		$mainType = 'cash_expenses';
+		$rows = DB::table('loan_schedules')->where('loan_schedules.company_id',$companyId)
+						->join('medium_term_loans','medium_term_loans.id','=','loan_schedules.medium_term_loan_id')
+						->where('medium_term_loans.currency',$currency)
+						->whereBetween('date',[now()->format('Y-m-d'),$endDate])
+						->where('remaining','>',0)
+						->selectRaw('medium_term_loans.name as name ,loan_schedules.remaining as paid_amount ,date')->get();
+		$subType = __('Loan Installments');
+		foreach($rows as $row){
+			
+			$lcType = $row->name;
+			$currentPaidAmount = $row->paid_amount ;
+			$currentWeekYear =$datesWithWeekNumber[$row->date];
+			$result[$mainType][$subType][$lcType]['weeks'][$currentWeekYear] = isset($result[$mainType][$subType][$lcType]['weeks'][$currentWeekYear]) ? $result[$mainType][$subType][$lcType]['weeks'][$currentWeekYear] + $currentPaidAmount :  $currentPaidAmount;
+			$result[$mainType][$subType][$lcType]['total'] = isset($result[$mainType][$subType][$lcType]['total']) ? $result[$mainType][$subType][$lcType]['total']  + $currentPaidAmount : $currentPaidAmount;
+			$currentTotal = $currentPaidAmount;
+			$result[$mainType][$subType]['total'][$currentWeekYear] = isset($result[$mainType][$subType]['total'][$currentWeekYear]) ? $result[$mainType][$subType]['total'][$currentWeekYear] +  $currentTotal : $currentTotal ;
+			$result[$mainType][$subType]['total']['total_of_total'] = isset($result[$mainType][$subType]['total']['total_of_total']) ? $result[$mainType][$subType]['total']['total_of_total'] + $result[$mainType][$subType]['total'][$currentWeekYear] : $result[$mainType][$subType]['total'][$currentWeekYear];
+			$totalCashOutFlowArray[$currentWeekYear] = isset($totalCashOutFlowArray[$currentWeekYear]) ? $totalCashOutFlowArray[$currentWeekYear] +   $currentTotal : $currentTotal ;
+		}
+		// dd($result[$mainType][$subType]);
+	
+	}
+	
 }

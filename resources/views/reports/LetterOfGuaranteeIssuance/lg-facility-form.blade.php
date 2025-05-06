@@ -154,7 +154,7 @@ use App\Models\LetterOfGuaranteeIssuance;
                                         <x-form.input :id="'total-lg-for-all-types-id'" :default-value="0" :model="$model??null" :label="__('Total LGs Outstanding Balance')" :type="'text'" :name="'total_lg_outstanding_balance'" :class="'only-greater-than-zero-allowed'" :required="true"></x-form.input>
                                     </div>
                                     <div class="col-md-3">
-                                        <x-form.input :id="'total-room-id'" :default-value="0" :model="$model??null" :label="__('Total LGs Room')" :type="'text'" :placeholder="__('Total LGs Room')" :name="'total_lg_outstanding_balance'" :class="'only-greater-than-zero-allowed'" :required="true"></x-form.input>
+                                        <x-form.input :id="'total-room-id'" :default-value="0" :model="$model??null" :label="__('Total LGs Room')" :type="'text'" :placeholder="__('Total LGs Room')" :name="'total_lg_room'" :class="'only-greater-than-zero-allowed'" :required="true"></x-form.input>
                                     </div>
 
                                     <div class="col-md-3">

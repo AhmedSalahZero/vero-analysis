@@ -69,7 +69,7 @@ class MediumTermLoanController
 		
 		$runningStartDate = $filterDates[MediumTermLoan::RUNNING]['startDate'] ?? null ;
 		$runningEndDate = $filterDates[MediumTermLoan::RUNNING]['endDate'] ?? null ;
-		$mediumTermLoans = $company->mediumTermLoans ;
+		$mediumTermLoans = $company->mediumTermLoans->where('financial_institution_id',$financialInstitution->id) ;
 		$mediumTermLoans =  $mediumTermLoans->filterByStartDate($runningStartDate,$runningEndDate) ;
 		$mediumTermLoans =  $currentType == MediumTermLoan::RUNNING ? $this->applyFilter($request,$mediumTermLoans):$mediumTermLoans ;
 
@@ -191,6 +191,7 @@ class MediumTermLoanController
 	}
 	protected function getCommonSettlementVars(Company $company,LoanSchedule $loanSchedule , LoanScheduleSettlement $loanScheduleSettlement = null):array 
 	{
+		// dd($loanSchedule , $loanSchedule->getFinancialInstitutionId());
 		$currentAccounts = FinancialInstitutionAccount::getAllAccountNumberForCurrency($company->id , $loanSchedule->getCurrency(),$loanSchedule->getFinancialInstitutionId());
 		return [
 			'loanSchedule'=>$loanSchedule,

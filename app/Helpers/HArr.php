@@ -672,6 +672,7 @@ class HArr
         "execution_days_$selectedIndex",
         "collection_days_$selectedIndex",
 		'so_number',
+		'po_number',
 		'amount'
     ];
 

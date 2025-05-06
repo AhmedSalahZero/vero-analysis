@@ -7,6 +7,15 @@ use App\Models\MoneyReceived ;
 <link href="{{ url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css') }}" rel="stylesheet" type="text/css" />
 <style>
+    .bootstrap-select .dropdown-menu {
+        max-height: 100px !important;
+        /* Adjust height as needed */
+        overflow-y: auto !important;
+        /* Enable vertical scrollbar */
+        overflow-x: hidden !important;
+        /* Prevent horizontal scrollbar */
+    }
+
     .css-fix-plus-direction {
         display: flex;
         align-items: center;
@@ -23,11 +32,13 @@ use App\Models\MoneyReceived ;
         width: 500px !important;
         min-width: 500px !important;
     }
-	.account-number-width {
+
+    .account-number-width {
         max-width: 250px !important;
         width: 250px !important;
         min-width: 250px !important;
     }
+
     .account-type-width {
         max-width: 400px !important;
         width: 400px !important;
@@ -210,21 +221,21 @@ use App\Models\MoneyReceived ;
                                                     </i>
                                                 </div>
                                             </td>
-											<td>
-											  <div class="input-group">
-                                                    <select name="received_branch_id" class="form-control " >
+                                            <td>
+                                                <div class="input-group">
+                                                    <select name="received_branch_id" class="form-control ">
                                                         @foreach($selectedBranches as $branchId => $branchName )
-                                                        <option value="{{ $branchId }}" @if(isset($cashInSafeStatement) && $cashInSafeStatement->getBranchId() == $branchId )  selected @endif > {{ $branchName }}</option>
+                                                        <option value="{{ $branchId }}" @if(isset($cashInSafeStatement) && $cashInSafeStatement->getBranchId() == $branchId ) selected @endif > {{ $branchName }}</option>
                                                         @endforeach
                                                     </select>
                                                 </div>
-												
-											</td>
+
+                                            </td>
                                             <td>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group">
                                                         {{-- <input type="hidden" name="" value="{{ $company->getHeadOfficeId() }}"> --}}
-														
+
                                                         <input name="received_amount" type="text" class="form-control " value="{{ number_format(isset($cashInSafeStatement) ? $cashInSafeStatement->getDebitAmount() : old('amount',0)) }}">
                                                     </div>
                                                 </div>
@@ -672,7 +683,7 @@ use App\Models\MoneyReceived ;
                                         unset($chequeUnderCollection);
                                         }
                                         @endphp
-                                        <tr  @if($isRepeater) data-repeater-item @endif>
+                                        <tr @if($isRepeater) data-repeater-item @endif>
                                             <td class="text-center">
                                                 <div class="">
                                                     <i data-repeater-delete="" class="btn-sm btn btn-danger m-btn m-btn--icon m-btn--pill trash_icon fas fa-times-circle">
@@ -742,7 +753,7 @@ use App\Models\MoneyReceived ;
                                             </td>
                                             <td>
 
-                                                <div class="kt-input-icon width-15" >
+                                                <div class="kt-input-icon width-15">
                                                     <div class="input-group">
                                                         <input name="exchange_rate" type="text" class="form-control " value="{{ isset($chequeUnderCollection) ? $chequeUnderCollection->getExchangeRate() : old('exchange_rate',1) }}">
                                                     </div>
@@ -761,7 +772,7 @@ use App\Models\MoneyReceived ;
                                                     <div class="input-group date ">
                                                         <select js-when-change-trigger-change-account-type data-financial-institution-id required name="drawl_bank_id" class="form-control js-drawl-bank">
                                                             @foreach($financialInstitutionBanks as $index=>$financialInstitutionBank)
-                                                            <option  value="{{ $financialInstitutionBank->id }}" {{ isset($chequeUnderCollection) && $chequeUnderCollection && $chequeUnderCollection->getChequeDrawlBankId() == $financialInstitutionBank->id ? 'selected':'' }}>{{ $financialInstitutionBank->getName() }}</option>
+                                                            <option value="{{ $financialInstitutionBank->id }}" {{ isset($chequeUnderCollection) && $chequeUnderCollection && $chequeUnderCollection->getChequeDrawlBankId() == $financialInstitutionBank->id ? 'selected':'' }}>{{ $financialInstitutionBank->getName() }}</option>
                                                             @endforeach
                                                         </select>
                                                     </div>
@@ -771,7 +782,7 @@ use App\Models\MoneyReceived ;
                                             <td>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group date">
-                                                        <select  name="account_type" class="form-control js-update-account-number-based-on-account-type">
+                                                        <select name="account_type" class="form-control js-update-account-number-based-on-account-type">
                                                             <option value="" selected>{{__('Select')}}</option>
                                                             @foreach($accountTypes as $index => $accountType)
                                                             <option value="{{ $accountType->id }}" @if(isset($chequeUnderCollection) && $chequeUnderCollection->getChequeAccountType() == $accountType->id) selected @endif>{{ $accountType->getName() }}</option>
@@ -925,7 +936,7 @@ use App\Models\MoneyReceived ;
 
                                 @endphp
                                 <input type="hidden" name="tableIds[]" value="{{ $tableId }}">
-                                <x-tables.repeater-table :initEmpty="!isset($model) || !$model->payableCheques->count()" :firstElementDeletable="true" :repeater-with-select2="true" :parentClass="'show-class-js modal-parent--js is-supplier-class'"  :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=true">
+                                <x-tables.repeater-table :initEmpty="!isset($model) || !$model->payableCheques->count()" :firstElementDeletable="true" :repeater-with-select2="true" :parentClass="'show-class-js modal-parent--js is-supplier-class'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=true">
                                     <x-slot name="ths">
                                         @foreach([
                                         __('Supplier <br> Name')=>'customer-name-width',
@@ -943,7 +954,7 @@ use App\Models\MoneyReceived ;
                                         <x-tables.repeater-table-th class="{{ $classes }}" :title="$title"></x-tables.repeater-table-th>
                                         @endforeach
                                     </x-slot>
-								
+
                                     <x-slot name="trs">
                                         @php
                                         $rows = isset($model) ? $model->payableCheques :[-1] ;
@@ -954,7 +965,7 @@ use App\Models\MoneyReceived ;
                                         unset($payableCheques);
                                         }
                                         @endphp
-                                        <tr  @if($isRepeater) data-repeater-item @endif>
+                                        <tr @if($isRepeater) data-repeater-item @endif>
                                             <td class="text-center">
                                                 <div class="">
                                                     <i data-repeater-delete="" class="btn-sm btn btn-danger m-btn m-btn--icon m-btn--pill trash_icon fas fa-times-circle">
@@ -1012,13 +1023,13 @@ use App\Models\MoneyReceived ;
 
                                                 <div class="kt-input-icon width-15">
                                                     <div class="input-group">
-                                                        <input name="exchange_rate" type="numeric"  class="form-control " value="{{ isset($payableCheques) ? $payableCheques->getExchangeRate() : old('exchange_rate',1) }}">
+                                                        <input name="exchange_rate" type="numeric" class="form-control " value="{{ isset($payableCheques) ? $payableCheques->getExchangeRate() : old('exchange_rate',1) }}">
                                                     </div>
                                                 </div>
 
                                             </td>
 
-                                          
+
 
                                             <td>
                                                 <div class="kt-input-icon">
@@ -1035,7 +1046,7 @@ use App\Models\MoneyReceived ;
                                             <td>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group date">
-                                                        <select  name="account_type" class="form-control js-update-account-number-based-on-account-type">
+                                                        <select name="account_type" class="form-control js-update-account-number-based-on-account-type">
                                                             <option value="" selected>{{__('Select')}}</option>
                                                             @foreach($accountTypes as $index => $accountType)
                                                             <option value="{{ $accountType->id }}" @if(isset($payableCheques) && $payableCheques->getPayableChequeAccountType() == $accountType->id) selected @endif>{{ $accountType->getName() }}</option>
@@ -1055,7 +1066,7 @@ use App\Models\MoneyReceived ;
                                             </td>
 
 
-                                     
+
 
 
                                         </tr>
@@ -1235,7 +1246,7 @@ use App\Models\MoneyReceived ;
 
             </script>
 
-         
+
 
             <script src="/custom/money-receive.js"></script>
 
@@ -1285,17 +1296,17 @@ use App\Models\MoneyReceived ;
 
                     const additionalColumn = $(this).attr('data-additional-column')
                     const additionalColumnValue = $(this).attr('data-additional-column-value')
-					let route = "{{ route('add.new.partner.type',['company'=>$company->id , 'type'=>'replace_with_actual_type']) }}"
-					let isSupplier = $(this).closest('.modal-parent--js.is-supplier-class').length ;  
-					let isCustomer = $(this).closest('.modal-parent--js.is-customer-class').length ;
-					let type = isSupplier > 0 ?'Supplier':'Customer';
-					route = 	route.replace('replace_with_actual_type',modalName);
-					
+                    let route = "{{ route('add.new.partner.type',['company'=>$company->id , 'type'=>'replace_with_actual_type']) }}"
+                    let isSupplier = $(this).closest('.modal-parent--js.is-supplier-class').length;
+                    let isCustomer = $(this).closest('.modal-parent--js.is-customer-class').length;
+                    let type = isSupplier > 0 ? 'Supplier' : 'Customer';
+                    route = route.replace('replace_with_actual_type', modalName);
+
                     $.ajax({
                         url: route
                         , data: {
-							value,
-							type
+                            value
+                            , type
                         }
                         , type: "POST"
                         , success: function(response) {
@@ -1321,4 +1332,5 @@ use App\Models\MoneyReceived ;
                 })
 
             </script>
+
             @endsection

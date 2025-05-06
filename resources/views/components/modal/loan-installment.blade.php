@@ -3,19 +3,18 @@
 'pastDueCustomerInvoices',
 'weeks',
 'dates',
-'currentInvoiceType',
 'reportInterval'
 ])
 
 
 <div class="modal fade modal-item-js" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-90 modal-dialog-centered" role="document">
-        <form action="{{ route('adjust.customer.dues.invoices',['company'=>$company->id]) }}" class="modal-content" method="post">
+        <form action="{{ route('adjust.loan.past.dues.installments',['company'=>$company->id]) }}" class="modal-content" method="post">
 		
 								
 		@csrf
             <div class="modal-header">
-                <h5 class="modal-title" style="color:#0741A5 !important" id="exampleModalLongTitle">{{ $currentInvoiceType == 'CustomerInvoice' ?  __('Customer Past Due Invoices') :  __('Supplier Past Due Invoices') }}</h5>
+                <h5 class="modal-title" style="color:#0741A5 !important" id="exampleModalLongTitle">{{ __('Loan Past Due Installment') }}</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -25,72 +24,53 @@
                     <table class="table  kt_table_with_no_pagination_no_collapse table-striped- table-bordered table-hover table-checkable position-relative table-with-two-subrows main-table-class dataTable no-footer">
                         <thead>
                             <tr class="header-tr">
-                                <th class="view-table-th  text-white header-th  align-middle text-center">{{ $currentInvoiceType == 'CustomerInvoice' ? __('Customer Name') : __('Supplier Name') }}</th>
-                                <th class="view-table-th  text-white header-th  align-middle text-center">{{ __('Invoice No.') }}</th>
-                                <th class="view-table-th  text-white header-th  align-middle text-center"> {!! __('Net <br> Balance') !!} </th>
-                                <th class="view-table-th  text-white header-th  align-middle text-center">{{ __('Due Date') }}</th>
-                                <th class="view-table-th  text-white header-th  align-middle text-center"> {!! __('Collection <br> Percentage') !!} </th>
-                                <th class="view-table-th  text-white header-th  align-middle text-center"> {!! __('Collection <br> Date') !!} </th>
+                                <th class=" view-table-th  text-white header-th  align-middle text-center"> {{ __('Name') }} </th>
+                                <th class=" view-table-th  text-white  align-middle text-center"> {!! __('Remaining Installments') !!} </th>
+                                <th class=" view-table-th   text-white header-th  align-middle text-center">{{ __('Due Date') }}</th>
+                                <th class=" view-table-th   text-white header-th  align-middle text-center"> {!! __('Collection <br> Percentage') !!} </th>
+                                <th class="view-table-th   text-white header-th  align-middle text-center"> {!! __('Collection <br> Date') !!} </th>
                             </tr>
                         </thead>
                         <tbody>
 						
 							@php
 								$totalNetBalance = 0 ;
-								
 								$allIds = $pastDueCustomerInvoices->pluck('id')->toArray() ;
-								$dueInvoiceRow = \DB::table('weekly_cashflow_custom_due_invoices')->where('invoice_type',$currentInvoiceType)->where('company_id',$company->id)->whereIn('invoice_id',$allIds)->get();
+								$dueInvoiceRow = \DB::table('weekly_cashflow_custom_past_due_schedules')->where('company_id',$company->id)->whereIn('loan_schedule_id',$allIds)->get();
 								
 							@endphp
                             @foreach($pastDueCustomerInvoices as $pastDueCustomerInvoice)
 							@php
-								//if($pastDueCustomerInvoice->net_balance_until_date <= 0 ){
-								//	continue;
-							//	}
-								$row = $dueInvoiceRow->where('invoice_id',$pastDueCustomerInvoice->id)->first();
+								$row = $dueInvoiceRow->where('loan_schedule_id',$pastDueCustomerInvoice->id)->first();
 								
 							@endphp
-                            <input type="hidden" name="customer_invoice_id[]" value="{{ $pastDueCustomerInvoice->id }}">
-											<input type="hidden" name="invoice_amount[{{ $pastDueCustomerInvoice->id }}]"  value="{{ $pastDueCustomerInvoice->net_balance }}">
-											<input type="hidden" name="invoiceType" value="{{ $currentInvoiceType }}">
-
+                            <input type="hidden" name="loan_schedule_id[]" value="{{ $pastDueCustomerInvoice->id }}">
+							<input type="hidden" name="invoice_amount[{{ $pastDueCustomerInvoice->id }}]"  value="{{ $pastDueCustomerInvoice->remaining }}">
                             <tr>
                                 <td>
                                     <div class="kt-input-icon">
                                         <div class="input-group">
-                                            <input disabled type="numeric" step="0.1" class="form-control" value="{{ $pastDueCustomerInvoice->getName() }}">
+                                            <input disabled type="numeric" step="0.1" class="form-control" value="{{ $pastDueCustomerInvoice->getMediumTermLoanName() }}">
                                         </div>
                                     </div>
                                 </td>
                                 <td>
                                     <div class="kt-input-icon">
                                         <div class="input-group">
-                                            <input disabled type="text" class="form-control text-center" value="{{  $pastDueCustomerInvoice->invoice_number }}">
-                                        </div>
-                                    </div>
-                                </td>
-
-
-                                <td>
-                                    <div class="kt-input-icon">
-                                        <div class="input-group">
-                                            <input disabled type="text" class="form-control text-center" value="{{ number_format($pastDueCustomerInvoice->net_balance) }}">
+                                            <input disabled type="text" class="form-control text-center" value="{{ number_format($pastDueCustomerInvoice->remaining) }}">
 											@php
-												$totalNetBalance +=$pastDueCustomerInvoice->net_balance; 
+												$totalNetBalance +=$pastDueCustomerInvoice->remaining; 
 											@endphp
                                         </div>
                                     </div>
                                 </td>
-
                                 <td>
                                     <div class="kt-input-icon">
                                         <div class="input-group">
-                                            <input disabled type="text" class="form-control text-center" value="{{ $pastDueCustomerInvoice->invoice_due_date }}">
+                                            <input disabled type="text" class="form-control text-center" value="{{ $pastDueCustomerInvoice->date }}">
                                         </div>
                                     </div>
                                 </td>
-								
-								
 								            <td>
                                     <div class="kt-input-icon">
                                         <div class="input-group">

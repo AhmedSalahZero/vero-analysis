@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\HArr;
 use App\Interfaces\Models\IInvoice;
 use App\Traits\Models\IsInvoice;
 use App\Traits\StaticBoot;
@@ -276,20 +277,20 @@ class SupplierInvoice extends Model implements IInvoice
 		->get()
 		->unique('currency')->pluck('currency','currency')->toArray();
 	}
-	public static function getSupplierInvoicesUnderCollectionAtDates(array &$result , array &$totalCashOutFlowArray , int $companyId , string $startDate , string $endDate,string $currency  ,string $currentWeekYear):void
+	public static function getSupplierInvoicesUnderCollectionAtDates(array &$result , array &$totalCashOutFlowArray , int $companyId ,string $currency,array $datesWithWeekNumber,string $endDate  ):void
 	{
 		$key = __('Suppliers Invoices') ;
-
 		$items = self::where('company_id',$companyId)
 		->where('currency',$currency)
 		->where('net_balance','>',0)
-		->whereBetween('invoice_due_date',[$startDate,$endDate])->get();
+		->whereBetween('invoice_due_date',[now()->format('Y-m-d'),$endDate])->get();
 		// $sum = $items->sum('net_balance') ;
 		// $invoiceNumber = $items->count() ? $items->first()->invoice_number : null ;
 		// if($sum ){
 		foreach($items as $item){
 			// $invoiceNumber = 
 			$sum = $item->net_balance ; 
+			$currentWeekYear = $datesWithWeekNumber[$item->invoice_due_date] ;
 			$invoiceNumber = $item->invoice_number . ' [ ' . $item->supplier_name . ' ]' ; 
 			$invoiceNumber = __('Invoice No.') . ' ' .  $invoiceNumber;
 			$result['suppliers'][$key][$invoiceNumber]['weeks'][$currentWeekYear] = isset($result['suppliers'][$key][$invoiceNumber]['weeks'][$currentWeekYear]) ? $result['suppliers'][$key][$invoiceNumber]['weeks'][$currentWeekYear] + $sum :  $sum;
@@ -309,4 +310,69 @@ class SupplierInvoice extends Model implements IInvoice
 	{
 		return 'invoice_date';
 	}
+	public static function getForecastedProjectCollection(array &$result , array &$totalCashOutFlowArray  , string $startDate , string $endDate , $currency = null , $companyId = null , array $datesWithWeekNumber):void
+	{
+		/**
+		 * 
+		 * * في حالة لو مرر العقد فا مش محتاجين عمله لان العقد الواحد مربوط بعملة واحدة
+		 */
+		$key = 'Forecasted Suppliers Contract Payments';
+		// $currentTypeText = [
+		// 	MoneyReceived::INCOMING_TRANSFER => __('Incoming Transfers'),
+		// 	MoneyReceived::CHEQUE => $chequeStatus == Cheque::IN_SAFE ? __('Cheques In Safe') : __('Checks Collected'),
+		// 	MoneyReceived::CASH_IN_BANK=>__('Bank Deposits'),
+		// 	MoneyReceived::CASH_IN_SAFE=>__('Cash Collections')
+		// ][$moneyType];
+		
+		$contracts = Contract::where('company_id',$companyId)
+		->where('end_date','>=',now()->format('Y-m-d'))
+		// ->where('end_date','<=',now()->format('Y-m-d'))
+		->with('purchasesOrders')->get();
+		$contractWithPurchaseOrders = [];
+		foreach($contracts as $contract){
+			foreach($contract->purchasesOrders as $purchaseOrder){
+				$contractWithPurchaseOrders[$contract->id][$purchaseOrder->id] = [
+					'contract'=>$contract ,
+					'purchase_orders'=>HArr::getLatestNonZeroExecutionKeys($purchaseOrder->toArray())
+				];
+			}
+		}
+		
+		foreach($contractWithPurchaseOrders as $contractId => $contractWithSos){
+			foreach($contractWithSos as $soId => $ContractWithSoArr){
+				$contract = $ContractWithSoArr['contract'];
+				$soArr = $ContractWithSoArr['purchase_orders'];
+				$soEndDate = $soArr['end_date'];
+				$soCollectionDays = $soArr['collection_days'];
+				$currentSoCollectionDays = Carbon::make($soEndDate)->addDays($soCollectionDays);
+				$isBetweenViewInterval = $currentSoCollectionDays->between($startDate,$endDate);
+				if(!$isBetweenViewInterval){
+					continue;
+				}
+				$currentSoCollectionDaysFormatted = $currentSoCollectionDays->format('Y-m-d');
+				$currentWeekYear =$datesWithWeekNumber[$currentSoCollectionDaysFormatted];
+				$purchaseOrderAmount = $soArr['amount'];
+				$contractCode = $contract->getCode();
+				$contractName = $contract->getName();
+				$poNumber = $soArr['po_number']; 
+				$customerName = $contract->getClientName();
+				$currentInvoiceAmount = DB::table('supplier_invoices')->where('company_id',$companyId)->where('currency',$currency)->where('purchases_order_number',$poNumber)->where('contract_code',$contractCode)->sum('invoice_amount');
+				$purchaseOrderNetBalance = 0 ;
+				if($currentInvoiceAmount > $purchaseOrderAmount){
+					$purchaseOrderNetBalance = 0;	
+				}else{
+					$purchaseOrderNetBalance = $purchaseOrderAmount - $currentInvoiceAmount;
+				}
+				$invoiceNumber =   $customerName . '-' . $contractName  ;
+				$result['suppliers'][$key][$invoiceNumber]['weeks'][$currentWeekYear] = isset($result['suppliers'][$key][$invoiceNumber]['weeks'][$currentWeekYear]) ? $result['suppliers'][$key][$invoiceNumber]['weeks'][$currentWeekYear]+  $purchaseOrderNetBalance :$purchaseOrderNetBalance;
+				$result['suppliers'][$key][$invoiceNumber]['total'] = isset($result['suppliers'][$key][$invoiceNumber]['total']) ? $result['suppliers'][$key][$invoiceNumber]['total']  + $purchaseOrderNetBalance : $purchaseOrderNetBalance;
+				$currentTotal = $purchaseOrderNetBalance;
+				$result['suppliers'][$key]['total'][$currentWeekYear] = isset($result['suppliers'][$key]['total'][$currentWeekYear]) ? $result['suppliers'][$key]['total'][$currentWeekYear] +  $currentTotal : $currentTotal ;
+				$result['suppliers'][$key]['total'][$currentWeekYear] = isset($result['suppliers'][$key]['total'][$currentWeekYear]) ? $result['suppliers'][$key]['total'][$currentWeekYear] + $purchaseOrderNetBalance : $purchaseOrderNetBalance;
+				$totalCashOutFlowArray[$currentWeekYear] = isset($totalCashOutFlowArray[$currentWeekYear]) ? $totalCashOutFlowArray[$currentWeekYear] + $purchaseOrderNetBalance : $purchaseOrderNetBalance ;
+				$result['suppliers'][$key]['total']['total_of_total'] = isset($result['suppliers'][$key]['total']['total_of_total']) ? $result['suppliers'][$key]['total']['total_of_total'] + $purchaseOrderNetBalance : $purchaseOrderNetBalance;
+			}
+		}
+	}
+	
 }

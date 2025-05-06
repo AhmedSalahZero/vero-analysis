@@ -405,17 +405,25 @@ $date = now()->format('d-m-Y')
 
 
             @foreach ($db_names as $name)
-
+		
             @if ($name == 'date' || $name=='invoice_due_date' || $name == 'invoice_date')
+			
             <td class="text-center">{{ isset($item->$name) ? date('d-M-Y',strtotime($item->$name)):  '-' }}</td>
             @elseif($name == 'invoice_amount' || $name == 'vat_amount' || $name == 'withhold_amount' || $name == 'collected_amount' || $name == 'paid_amount' || $name=='net_balance'|| $name=='net_invoice_amount')
-            <td class="text-center">{{ number_format($item->$name?:0 ,2 ) }}</td>
+			
+            <td class="text-center">{{ number_format($item->$name?:0 ,2 ) }}   </td>
             @else
             <td @if($modelName == 'LabelingItem') data-css-col-name="{{ $name??'' }}" @endif class="text-center">
+			@if($name == 'beginning_balance' || $name =='schedule_payment' || $name =='interest_amount' || $name == 'principle_amount' || $name == 'end_balance')
+			@php
+				$item->$name = number_format($item->$name);
+			@endphp
+			@endif 
                 {{ qrcodeSpacing($item->$name??'') }}
 
 
                 @endif
+				
                 @endforeach
 
 
@@ -448,9 +456,12 @@ $date = now()->format('d-m-Y')
                     <form class="kt-portlet__body" method="post" action="{{route('salesGathering.destroy',[$company->id,$item->id,$modelName])}}" style="display: inline">
 					
 						@if($modelName == 'LoanSchedule')
+						{{-- {{ dd() }} --}}
+						{{-- @if($item->remaining > 0) --}}
 						<a href="{{ route('view.loan.schedule.settlements',['company'=>$company->id , 'loanSchedule'=>$item->id]) }}" class="btn btn-secondary btn-outline-hover-primary btn-icon">
 							<i class="fa fa-dollar-sign"></i>
 						</a>
+						{{-- @endif --}}
 						@endif 
                         @method('DELETE')
                         @csrf

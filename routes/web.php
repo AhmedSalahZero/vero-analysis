@@ -1042,7 +1042,7 @@ Route::middleware([])->group(function () {
                     Route::get('/customer-balances/total-net-balance-details/{currency}/{modelType}', 'BalancesController@showTotalNetBalanceDetailsReport')->name('show.total.net.balance.in');
 				 	// Route::get('collection-effectiveness-index-report',[]);
 					Route::get('cashflow-report', 'CashFlowReportController@index')->name('view.cashflow.report');
-					Route::post('cashflow-report', 'CashFlowReportController@result')->name('result.cashflow.report');
+					Route::get('cashflow-report-result', 'CashFlowReportController@result')->name('result.cashflow.report');
 					
 					Route::get('contract-cashflow-report', 'ContractCashFlowReportController@index')->name('view.contract.cashflow.report');
 					Route::post('contract-cashflow-report', 'ContractCashFlowReportController@result')->name('result.contract.cashflow.report');
@@ -1120,6 +1120,9 @@ Route::middleware([])->group(function () {
 
 					
 					Route::post('adjust-customer-due-invoices','CashFlowReportController@adjustCustomerDueInvoices')->name('adjust.customer.dues.invoices');
+					Route::post('adjust-loan-past-due-installments','CashFlowReportController@adjustLoanPastDueInstallments')->name('adjust.loan.past.dues.installments');
+					Route::post('save-projections','CashFlowReportController@saveProjection')->name('save.projection');
+					// Route::post('adjust-loan-past-due-installments','CashFlowReportController@storeProjection')->name('store.projection');
 					
                     // Route::get('unapplied-amounts/{partnerId}/{modelType}', 'UnappliedAmountController@index')->name('view.settlement.by.unapplied.amounts');
                     // Route::get('unapplied-amounts/create/{customerInvoiceId}/{modelType}', 'UnappliedAmountController@create')->name('create.settlement.by.unapplied.amounts');

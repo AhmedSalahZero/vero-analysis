@@ -113,12 +113,8 @@
 <x-main-form-title :id="'main-form-title'" :class="''">{{ __('Cash Flow Report') }}</x-main-form-title>
 @endsection
 @section('content')
-@php
-$moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
-@endphp
 <div class="row">
     <div class="col-md-12">
-
         <div class="kt-portlet">
 
 
@@ -269,7 +265,7 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
 
                
                 <div class="table-custom-container position-relative  ">
-
+			
 
                     <div class="responsive">
                         <table class="table kt_table_with_no_pagination_no_collapse table-striped- table-bordered table-hover table-checkable position-relative table-with-two-subrows main-table-class dataTable no-footer">
@@ -395,6 +391,15 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
                                                 <x-modal.due-invoices :report-interval="$reportInterval" :currentInvoiceType="'SupplierInvoice'" :dates="$dates" :weeks="$weeks" :pastDueCustomerInvoices="$pastDueSupplierInvoices" :id="'test-modal-id'"></x-modal.due-invoices>
 										
 											@endif 
+											@if($customerName == 'Loan Past Due Installments')
+
+												<button   class="btn btn-sm btn-warning text-white js-show-loan-past-due-installment-modal">{{ __('View') }}</button>
+                                                {{-- <x-modal.due-invoices :report-interval="$reportInterval" :currentInvoiceType="'SupplierInvoice'" :dates="$dates" :weeks="$weeks" :pastDueCustomerInvoices="$pastDueSupplierInvoices" :id="'test-modal-id'"></x-modal.due-invoices> --}}
+												  <x-modal.loan-installment :report-interval="$reportInterval"  :dates="$dates" :weeks="$weeks" :pastDueCustomerInvoices="$pastDueInstallments" :id="'test-modal-id'"></x-modal.loan-installment>
+										
+											@endif 
+											
+											
 										
 										
 									
@@ -415,6 +420,12 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
 									{
 										$startDate = $dates[$weekAndYear]['start_date'] ;
 										$currentRow = $supplierDueInvoices->where('week_start_date',$startDate)->first() ;
+										$currentValue =$currentRow ?  $currentRow->amount : 0;
+									}	
+									if($customerName == 'Loan Past Due Installments' )
+									{
+										$startDate = $dates[$weekAndYear]['start_date'] ;
+										$currentRow = $pastDueLoanInstallments->where('week_start_date',$startDate)->first() ;
 										$currentValue =$currentRow ?  $currentRow->amount : 0;
 									}
                                     $currentPercentage = $currentValue && $currentTotal ? $currentValue/ $currentTotal * 100 : 0 ;

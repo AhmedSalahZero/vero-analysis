@@ -132,7 +132,7 @@
                     <label>{{__('Date')}}</label>
                     <div class="kt-input-icon">
                         <div class="input-group date">
-                            <input type="text"  name="transfer_date" value="{{ isset($model) ? formatDateForDatePicker($model->getPaymentDate()) : formatDateForDatePicker(now()->format('Y-m-d')) }}" class="form-control balance-date is-date-css " readonly placeholder="Select date" id="kt_datepicker_max_date_is_today" />
+                            <input type="text"  name="transfer_date" value="{{ isset($model) ? formatDateForDatePicker($model->getTransferDate()) : formatDateForDatePicker(now()->format('Y-m-d')) }}" class="form-control balance-date is-date-css " readonly placeholder="Select date" id="kt_datepicker_max_date_is_today" />
                             <div class="input-group-append">
                                 <span class="input-group-text">
                                     <i class="la la-calendar-check-o"></i>

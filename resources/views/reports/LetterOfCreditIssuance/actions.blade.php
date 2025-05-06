@@ -158,7 +158,7 @@
  @include('reports.LetterOfCreditIssuance.cancel-issuance-modal')
  @elseif($model->isPaid())
  @include('reports.LetterOfCreditIssuance.cancel-issuance-modal'
- // ,['disabled'=>false]
+
  )
  <a data-toggle="modal" data-target="#back-to-running-modal-{{ $model->id }}" type="button" class="btn  btn-secondary btn-outline-hover-success   btn-icon" title="{{ __('Back To Running') }}" href="#"><i class="fa fa fa-undo"></i></a>
 

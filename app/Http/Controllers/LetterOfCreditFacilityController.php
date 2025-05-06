@@ -250,7 +250,7 @@ class LetterOfCreditFacilityController
         $lcCommissionRate  = $letterOfCreditFacility  && $letterOfCreditFacility->termAndConditionForLcType($selectedLcType) ? $letterOfCreditFacility->termAndConditionForLcType($selectedLcType)->commission_rate : 0;
         $minLcCashCoverRateForCurrentLcType  = $letterOfCreditFacility && $letterOfCreditFacility->termAndConditionForLcType($selectedLcType)  ? $letterOfCreditFacility->termAndConditionForLcType($selectedLcType)->cash_cover_rate : 0;
         $minLcIssuanceFeesForCurrentLcType  = $letterOfCreditFacility  && $letterOfCreditFacility->termAndConditionForLcType($selectedLcType) ? $letterOfCreditFacility->termAndConditionForLcType($selectedLcType)->issuance_fees : 0;
-
+		$lcAmountInMainCurrency = 0;
 		if($isLCFacilitySource && $letterOfCreditFacility){
 			$currencyName = $letterOfCreditFacility->getCurrency();
 		}
@@ -269,6 +269,7 @@ class LetterOfCreditFacilityController
 			$minLcCashCoverRateForCurrentLcType = $letterOfCreditIssuance->getCashCoverRate();
 			$lcCommissionRate = $letterOfCreditIssuance->getLcCommissionRate();
 			$minLcIssuanceFeesForCurrentLcType = $letterOfCreditIssuance->getIssuanceFees();
+			$lcAmountInMainCurrency = $letterOfCreditIssuance->getLcAmountInMainCurrency();
 		}
 		if($isCdOrTdSource){
 			$totalCashCoverStatementDebit = DB::table('letter_of_credit_issuances')
@@ -308,11 +309,16 @@ class LetterOfCreditFacilityController
 			$totalLastOutstandingBalanceOfFourTypes += $letterOfCreditStatementEndBalance;
 		}
 		$limit = $letterOfCreditFacility ? $letterOfCreditFacility->getLimit() : 0;
+		// dd($totalLastOutstandingBalanceOfFourTypes,$lcAmountInMainCurrency);
+		$totalLastOutstandingBalanceOfFourTypes =abs($totalLastOutstandingBalanceOfFourTypes) - $lcAmountInMainCurrency;
+		$currentLcOutstanding = abs($currentLcOutstanding)  - $lcAmountInMainCurrency ;
+		 
+		
 		return response()->json([
 			'limit'=>number_format($limit) ,
-			'total_lc_outstanding_balance'=>number_format(abs($totalLastOutstandingBalanceOfFourTypes)),
-			'total_room'=>number_format($limit - abs($totalLastOutstandingBalanceOfFourTypes)),
-			'current_lc_type_outstanding_balance'=>number_format(abs($currentLcOutstanding)),
+			'total_lc_outstanding_balance'=>number_format($totalLastOutstandingBalanceOfFourTypes),
+			'total_room'=>number_format($limit - $totalLastOutstandingBalanceOfFourTypes),
+			'current_lc_type_outstanding_balance'=>number_format($currentLcOutstanding),
             'min_lc_commission_rate'=>$minLcCommissionRateForCurrentLcType,
 			'lc_commission_rate'=>$lcCommissionRate , 
 			'currency_name'=>$currencyName,

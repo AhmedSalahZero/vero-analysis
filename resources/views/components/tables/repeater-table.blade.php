@@ -80,7 +80,7 @@ style="display:none"
     </div>
     @endif
     @if($showRows)
-    <table @if($initialJs) id="{{ $repeaterId }}" @endif class="table  {{ $repeaterId }} {{ $tableClasses }} table-white  repeater-class repeater {{ $tableName }}">
+    <table @if($initialJs) id="{{ $repeaterId }}" @endif class="table  {{ $repeaterId }} {{ $tableClasses }} table-white  repeater-class repeater {{ $tableName }}" >
         <thead>
             <tr>
                 @if(!$removeActionBtn)
