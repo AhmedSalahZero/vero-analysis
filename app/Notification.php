@@ -136,9 +136,7 @@ class Notification extends Model
 			foreach($detailArray['subitems'] as $subItemId){
 				// $true = $subItemId == 'customer_invoice_current_due';
 				$customerPastDues = $company->notifications->where('data.type',$subItemId);
-				// if($true){
-				// 	dd($customerPastDues,$company->notifications->pluck('data')->toArray());
-				// }
+			
 				$subCount = count($customerPastDues) ;
 				$mainCount+=$subCount;
 				$subItemTitle = self::getAllMainTypes()[$subItemId] ;

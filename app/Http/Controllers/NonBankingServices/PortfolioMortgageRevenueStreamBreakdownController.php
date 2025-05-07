@@ -52,10 +52,6 @@ class PortfolioMortgageRevenueStreamBreakdownController extends Controller
 			$bankMarginRatesPerMonths = $study->convertYearlyArrayToMonthly($bankMarginRatesPerYears,$operationDurationPerYearFromIndexes);
 			$cbeLendingRatesPerMonths = $study->convertYearlyArrayToMonthly($baseRatePerYear,$operationDurationPerYearFromIndexes);
 			$portfolioLoanFundingRatesPerMonths = $study->convertYearlyArrayToMonthly($portfolioLoanFundingRatesPerYear,$operationDurationPerYearFromIndexes);
-			// $study = $study->refresh();
-			// dd($request->all());
-			// dB::table('loan_schedule_payments')->deleteAllForPortfolio
-			// dd($request->get('portfolioMortgageRevenueProjectionByCategories'));
 			foreach($request->get('portfolioMortgageRevenueProjectionByCategories') as $currentIndex => $portfolioMortgageRevenueProjectionByCategoryArr){
 				$portfolioMortgageCategoryId = $study->portfolioMortgageRevenueProjectionByCategories[$currentIndex]->id; 
 				$tenor = $portfolioMortgageRevenueProjectionByCategoryArr['portfolio_mortgage_duration'];

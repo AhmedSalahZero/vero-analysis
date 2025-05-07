@@ -194,9 +194,6 @@ class  IncomeStatementItem extends Model implements IFinancialStatementAbleItem
 		// $items must be a collection 
 		$firstDateAsIndex = array_key_first($dates);
 		$lastDateAsIndex = array_key_last($dates);
-// dd($firstDateAsIndex,$lastDateAsIndex);
-		// dd($intervalName);
-		// $intervalName='annually';
 		
 		$filteredItems = [];
 		foreach ($items as $item) {

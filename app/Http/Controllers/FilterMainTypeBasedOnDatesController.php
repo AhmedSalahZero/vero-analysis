@@ -11,7 +11,6 @@ class FilterMainTypeBasedOnDatesController extends Controller
     {
 		$tableName = $request->get('tableName');
         $mainTypeArray = getTypeFor($request->get('mainType',$request->get('subType')),$company->id,true,true,$request->get('startDate')  , $request->get('endDate'),$tableName);
-		// dd($mainTypeArray,$request->get('mainType',$request->get('subType')),$company->id,$request->get('startDate'),$request->get('endDate'),$tableName);
         return response()->json([
             'status'=>true ,
             'data'=>$mainTypeArray ,

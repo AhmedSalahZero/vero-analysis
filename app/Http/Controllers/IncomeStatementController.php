@@ -175,7 +175,6 @@ class IncomeStatementController extends Controller
 				if($index == 0){
 					$incomeStatement->storeReport($request);
 				}
-				// dd(microtime(true)-$start,$subItemTypesToDetach,$index);
 				//$incomeStatement->syncPivotFor($incomeStatementItemId, $subItemType, $request->get('sub_item_name') . __(quantityIdentifier),$currentDataForQuantity,null);
 				
 		}
@@ -266,8 +265,6 @@ class IncomeStatementController extends Controller
 	{
 		$reportType = $request->input('sub_item_type');
 		$incomeStatement = IncomeStatement::find($incomeStatementId);
-		// dd($incomeStatementId);
-		// dd($incomeStatement);
 		$reportItems = $this->formatReportDataForExport($request,$incomeStatementId,$subItemType) ;
 		$formattedData = $reportItems['data'];
 		$mainRowsIndexes = array_keys($reportItems['mainRowsIndexes']);
@@ -308,7 +305,6 @@ class IncomeStatementController extends Controller
 	{
 		$dynamicRowsShow = (bool) $request->get('dynamic_rows_shown');
 		$opensMainRows = (array)json_decode($request->opens) ;
-		// dd($opensMainRows);
 		$numberOfColumnBeforeDates = 1 ; // name column
 		$numberOfColumnAfterDates = 1 ; // total column
 		$staticHeaderRows = 2 ; 
@@ -333,17 +329,9 @@ class IncomeStatementController extends Controller
 			$currentPayload = (array) json_decode($mainRowWithAuthCalculation->pivot->payload) ;
 			$combineMainValuesWithItsPercentageRows[$incomeStatementId][$incomeStatementItemId] =$currentPayload ;
 		}
-		// $incomeStatement->getD
 		$datesFormatted = $incomeStatement->getIntervalFormatted();
-		// dd($combineMainValuesWithItsPercentageRows,$dates);
-		//dd(count($currentPayload),$incomeStatement,$request->get('valueMainRowThatHasSubItems'),$request->get('valueMainRowWithoutSubItems'));
-		// $incomeStatementId = array_key_first($request->get('valueMainRowThatHasSubItems')) ;
 		$datesCount = count($currentPayload);
-		// $dates = Arr::first($request->get('valueMainRowThatHasSubItems')[$incomeStatementId] ?? []);
 		$maxColsCount = $numberOfColumnBeforeDates +  $datesCount + $numberOfColumnAfterDates ; 
-		// dd($combineMainValuesWithItsPercentageRows, $this->combineMainValuesWithItsPercentageRows($request->get('valueMainRowThatHasSubItems'), $request->get('valueMainRowWithoutSubItems')));
-		// $combineMainValuesWithItsPercentageRows = $this->combineMainValuesWithItsPercentageRows($request->get('valueMainRowThatHasSubItems'), $request->get('valueMainRowWithoutSubItems'));
-		// dd($request->get('valueMainRowThatHasSubItems'),$request->get('valueMainRowWithoutSubItems'));
 		foreach ($combineMainValuesWithItsPercentageRows as $incomeStatementId => $incomeStatementValues) {
 			
 			foreach ($incomeStatementValues as $incomeStatementItemId => $incomeStatementItemsValues) {
@@ -389,9 +377,6 @@ class IncomeStatementController extends Controller
 				}
 			}
 		}
-		// dd($formattedData);
-	//	dd('formatted',$formattedData,$request->all());
-	// dd($formattedData);
 		return [
 			'data'=>$formattedData,
 			'mainRowsIndexes'=>$mainRowsIndexes,

@@ -74,13 +74,7 @@ class StoreMoneyPaymentRequest extends FormRequest
 			$financialInstitution = FinancialInstitution::find($financialInstitutionId);
 			$openingBalanceDate =$financialInstitution->getOpeningBalanceForAccount($accountTypeId,$accountNumber); 
 		}
-		// $moneyPaymentId = $this->get('money_payment_id');
-		// $moneyPayment = MoneyPayment::find($moneyPaymentId);
-		// $moneyPaymentOldType = $moneyPayment ? $moneyPayment->getType() : '';
-		// dd('add branch id');
-		// $additionalEditBalance = $this['additional_amount_balance_'.$type.'_'.$branchId] ;
-		// $additionalEditBalance = $additionalEditBalance ? $additionalEditBalance : 0 ;
-		// dd($additionalEditBalance,$type,$this->all());
+		
 	
         return [
 			'supplier_id'=>'required',

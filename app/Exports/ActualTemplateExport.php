@@ -45,7 +45,6 @@ class ActualTemplateExport implements
 
 	public function collection()
 	{
-		// dd('f');
 		$itemsNames = [];
 	
 		 $mainItemsWithSubItems = $this->incomeStatement->mainItems->where('has_sub_items',1)->filter(function(IncomeStatementItem $mainItem){

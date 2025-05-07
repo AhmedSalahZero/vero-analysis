@@ -88,11 +88,8 @@ ToCollection,
 			 * * مع بعض في نفس ال array 
 			 * * بدل ما هما في اتنين اري مختلفين
 			 */
-			// dd($subItems);
 			foreach($quantities as $index => $quantityNamesValArr){
 				$quantityValArr = $quantityNamesValArr['values'];
-				// dd($subItems,$subItems[$index],$subItems[$index+1]);
-				// dd($quantities);
 				$nameWithoutQuantity = str_replace(' ( Quantity )','',$quantityNamesValArr['name']);
 				$searchIndex = HArr::getIndexUsingName($subItems,$nameWithoutQuantity);
 				unset($subItems[$index]);

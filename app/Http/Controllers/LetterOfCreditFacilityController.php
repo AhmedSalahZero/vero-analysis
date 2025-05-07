@@ -309,7 +309,6 @@ class LetterOfCreditFacilityController
 			$totalLastOutstandingBalanceOfFourTypes += $letterOfCreditStatementEndBalance;
 		}
 		$limit = $letterOfCreditFacility ? $letterOfCreditFacility->getLimit() : 0;
-		// dd($totalLastOutstandingBalanceOfFourTypes,$lcAmountInMainCurrency);
 		$totalLastOutstandingBalanceOfFourTypes =abs($totalLastOutstandingBalanceOfFourTypes) - $lcAmountInMainCurrency;
 		$currentLcOutstanding = abs($currentLcOutstanding)  - $lcAmountInMainCurrency ;
 		 

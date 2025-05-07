@@ -850,7 +850,6 @@ class MoneyReceivedController
 			$netBalance =$NetBalanceRow->{$column} ; 
 			$netBalanceDate =Carbon::make($NetBalanceRow->date)->format('d-m-Y') ; 
 		}
-		// dd($statementDate,$NetBalanceRow);
 		return response()->json([
 			'status'=>true ,
 			'balance'=>$balance+$additionalAmountInEditMode,

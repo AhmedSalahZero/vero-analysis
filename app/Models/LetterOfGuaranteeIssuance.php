@@ -540,7 +540,7 @@ class LetterOfGuaranteeIssuance extends Model
 			$result[$mainType][$subType]['total']['total_of_total'] = isset($result[$mainType][$subType]['total']['total_of_total']) ? $result[$mainType][$subType]['total']['total_of_total'] + $result[$mainType][$subType]['total'][$currentWeekYear] : $result[$mainType][$subType]['total'][$currentWeekYear];
 			$totalCashInFlowArray[$currentWeekYear] = isset($totalCashInFlowArray[$currentWeekYear]) ? $totalCashInFlowArray[$currentWeekYear] +   $currentTotal : $currentTotal ;
 		}
-		// dd($rows);
+
 	
 	}
 	

@@ -93,7 +93,6 @@ class WithdrawalsSettlementReportController
 		// ->get();
 	}
 	public function result(Company $company , Request $request){
-		// dd($request->all());
 		$startDate = $request->get('withdrawal_start_date',$request->get('start_date'));
 		$endDate  = $request->get('withdrawal_end_date',$request->get('end_date'));
 		$currency = $request->get('currency');

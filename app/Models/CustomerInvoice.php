@@ -288,12 +288,7 @@ class CustomerInvoice extends Model implements IInvoice
 		->where('currency',$currency)
 		->where('net_balance','>',0)
 		->whereBetween('invoice_due_date',[now()->format('Y-m-d'),$endDate])->get();
-		// if(count($items)>1){
-			// dd($items);
-		// }
-		// $sum = $items->sum('net_balance') ;
-		// $invoiceNumber = $items->count() ? $items->first()->invoice_number : null ;
-		// if($sum ){
+	
 			foreach($items as $item){
 				$sum = $item->net_balance ; 
 				$invoiceNumber = $item->invoice_number . ' [ ' . $item->customer_name . ' ]' ; 
@@ -362,13 +357,7 @@ class CustomerInvoice extends Model implements IInvoice
 			$totalCashInFlowArray[$currentWeekYear] = isset($totalCashInFlowArray[$currentWeekYear]) ? $totalCashInFlowArray[$currentWeekYear] + $row->received_amount : $row->received_amount ;
 			$result['customers'][$currentTypeText]['total']['total_of_total'] = isset($result['customers'][$currentTypeText]['total']['total_of_total']) ? $result['customers'][$currentTypeText]['total']['total_of_total'] + $row->received_amount : $row->received_amount;
 		}
-		
-		// if(count($rows)){
-		// 	dd($result['customers'][$currentTypeText]);
-		// }
-		// if(count($rows)>1){
-		// 	dd($result['customers'][$currentTypeText][$invoiceNumber]);
-		// }
+
 		
 			
 	}
@@ -389,7 +378,6 @@ class CustomerInvoice extends Model implements IInvoice
 		if($chequeStatus == Cheque::UNDER_COLLECTION){
 			$currentTypeText = __('Cheques Under Collection');
 		}
-		// dd($chequeStatus);
 		$rows =  DB::table('money_received')
 		// ->when($contractCode , function($query) use ($contractCode){
 		// 	$query->where('contract_code',$contractCode);
@@ -495,8 +483,7 @@ class CustomerInvoice extends Model implements IInvoice
 				$result['customers'][$currentTypeText]['total']['total_of_total'] = isset($result['customers'][$currentTypeText]['total']['total_of_total']) ? $result['customers'][$currentTypeText]['total']['total_of_total'] + $salesOrderNetBalance : $salesOrderNetBalance;
 			}
 		}
-		// dd($result['customers']);
-		// dd($result);
+
 		// // foreach($contracts )
 		
 		// if($chequeStatus == Cheque::UNDER_COLLECTION){

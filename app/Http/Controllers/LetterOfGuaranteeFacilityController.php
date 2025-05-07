@@ -308,9 +308,6 @@ class LetterOfGuaranteeFacilityController
 			}
 			$totalLastOutstandingBalanceOfFourTypes += $letterOfGuaranteeStatementEndBalance;
 		}
-		// dd($totalLastOutstandingBalanceOfFourTypes,$lgAmount);
-		// $totalLastOutstandingBalanceOfFourTypes = $totalLastOutstandingBalanceOfFourTypes - $lgAmount;
-		// $currentLgTypeOutstanding = $currentLgTypeOutstanding - $lgAmount;
 		$totalLastOutstandingBalanceOfFourTypes = abs($totalLastOutstandingBalanceOfFourTypes) - $lgAmount;
 		$limit = $letterOfGuaranteeFacility ? $letterOfGuaranteeFacility->getLimit() : 0;
 		$currentLgTypeOutstanding = abs($currentLgTypeOutstanding) - $lgAmount ;

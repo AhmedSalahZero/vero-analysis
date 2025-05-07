@@ -53,7 +53,6 @@ class ExportTable extends Controller
 		if($modelName == 'SupplierInvoice'){
 			unset($columnsWithViewingNames['paid_amount']);
 		}
-		// dd(get_defined_vars());
 		if($modelName)
 		return view('client_view.Exportation.fieldsSelectionToBeExported', compact('columnsWithViewingNames', 'company', 'model', 'view', 'selected_fields','modelName'));
 	}

@@ -451,7 +451,6 @@ class CashExpense extends Model
 	{
 		$oldType = $this->getType();
 		$oldTypeRelationName = dashesToCamelCase($oldType);
-		// dd($oldType,$oldTypeRelationName,$this->$oldTypeRelationName);
 		$this->$oldTypeRelationName ? $this->$oldTypeRelationName->delete() : null;
 		$this->contracts()->detach();
 		// $this->cashPayment ? $this->cashPayment->delete():null; 

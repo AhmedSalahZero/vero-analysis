@@ -30,7 +30,6 @@ class MicrofinanceRevenueStreamBreakdownController extends Controller
 	}
 	public function store(Company $company , Request $request,Study $study)
 	{
-		// dd($request->all());
 		$operationDurationPerYearFromIndexes = $study->getOperationDurationPerYearFromIndexes();
 		// $flatRates = array_column($request->input('microfinanceBreakdowns',[]),'flat_rates');
 		$pricingPerMonths=[];
