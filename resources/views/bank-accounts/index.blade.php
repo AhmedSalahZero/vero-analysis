@@ -65,10 +65,13 @@
                                     <td>
                                         {{ $index+1 }}
                                     </td>
+								
                                     <td class="text-left">{{ $bankAccount->getType() }}</td>
                                     <td class="text-nowrap">{{ $bankAccount->getAccountNumber() }}</td>
                                     <td>{{ $bankAccount->getCurrencyFormatted() }}</td>
+								
                                     <td>{{ $bankAccount->getLastAmountFormatted($company->id , $bankAccount->getCurrency(),$bankAccount->getFinancialInstitutionId(),$bankAccount->getAccountNumber()) }}</td>
+							
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
 
 

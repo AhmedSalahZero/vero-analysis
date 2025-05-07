@@ -78,6 +78,9 @@ class SalesGatheringController extends Controller
 				}
 			}
 		})
+		->when($uploadType == 'LoanSchedule',function($q) use ($loanId){
+			$q->where('medium_term_loan_id',$loanId);
+		})
         ->orderBy($mainDateOrderBy, $orderByDirection)->paginate($pageLength);
         $exportableFields  = (new ExportTable)->customizedTableField($company, $uploadType, 'selected_fields');
         if($modelName == 'CustomerInvoice' || 'SupplierName'==$modelName) {
@@ -96,7 +99,7 @@ class SalesGatheringController extends Controller
 		$firstIndexElementInLabeling = $salesGatherings->first() ? $salesGatherings->first()->id : 0;
 		$lastIndexElementInLabeling = $salesGatherings->last() ? $salesGatherings->last()->id : 0;
         $navigators =$this->getUploadingPageExportNavigation($modelName,$uploadPermissionName,$exportPermissionName,$deletePermissionName,$firstIndexElementInLabeling,$lastIndexElementInLabeling);
-		
+
         return view('client_view.sales_gathering.index', compact('navigators','loan','hasLabelingItemCodeField','hasCodeColumnForLabelingItem','labelingUniqueItemsPerColumn', 'salesGatherings', 'company', 'viewing_names', 'db_names', 'uploadPermissionName', 'exportPermissionName', 'deletePermissionName', 'modelName', 'notPeriodClosedCustomerInvoices'));
     }
     

@@ -170,6 +170,7 @@ class FinancialInstitutionAccount extends Model
  
 	public static function getLastAmountFormatted(int $companyId , string $currencyName , int $financialInstitutionId , $accountNumber ) 
 	{
+	
 		$row = 	DB::table(self::getBankStatementTableName())
                 ->join('financial_institution_accounts', 'financial_institution_account_id', '=', 'financial_institution_accounts.id')
                 ->where('financial_institution_accounts.company_id', $companyId)

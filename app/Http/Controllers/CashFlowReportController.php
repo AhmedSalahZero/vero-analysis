@@ -31,12 +31,13 @@ class CashFlowReportController
         return view('reports.cash_flow_form', compact('company'));
     }
 	public function result(Company $company , Request $request, bool $returnResultAsArray = false ,  CashFlowReport $cashflowReport= null ){
-		
 		$saveReport = $request->has('save_report');
-		if($cashflowReport && $cashflowReport->report_data){
-			$reportData = json_decode($cashflowReport->report_data,true);
-			return view('admin.reports.contract-cash-flow-report',array_merge($reportData,['cashflowReport'=>$cashflowReport]));
-		}
+		// dd($returnResultAsArray);
+		// dd($cashflowReport,$cashflowReport);
+		// if($cashflowReport && $cashflowReport->report_data){
+			// $reportData = json_decode($cashflowReport->report_data,true);
+			// return view('admin.reports.contract-cash-flow-report',array_merge($reportData,['cashflowReport'=>$cashflowReport]));
+		// }
 		$defaultStartDate = $request->get('cash_start_date',now()->format('Y-m-d'));
 		$defaultEndDate = $request->get('cash_end_date',now()->addMonth()->format('Y-m-d'));
 		$formStartDate =$request->get('start_date',$defaultStartDate); 

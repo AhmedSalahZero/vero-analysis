@@ -133,14 +133,12 @@ class BankStatementController
 		elseif($accountType->isOverdraftAgainstAssignmentOfContractAccount()){
 			$statementModelName = 'OverdraftAgainstAssignmentOfContractBankStatement';
 			$overdraftAgainstAgainstAssignmentOfContract  = OverdraftAgainstAssignmentOfContract::findByAccountNumber($accountNumber,$company->id,$financialInstitutionId);
-			if(!$overdraftAgainstAgainstAssignmentOfContract){
-				return collect([]);
-			}
+			$odaId = $overdraftAgainstAgainstAssignmentOfContract ? $overdraftAgainstAgainstAssignmentOfContract->id:0;
 			$results = DB::table('overdraft_against_assignment_of_contract_bank_statements')
 				 ->where('overdraft_against_assignment_of_contract_bank_statements.company_id',$company->id)
 				 ->where('date', '>=', $startDate)
 				 ->where('date', '<=', $endDate)
-				 ->where('overdraft_against_assignment_of_contract_id',$overdraftAgainstAgainstAssignmentOfContract->id)
+				 ->where('overdraft_against_assignment_of_contract_id',$odaId)
 				 ->join('overdraft_against_assignment_of_contracts','overdraft_against_assignment_of_contract_bank_statements.overdraft_against_assignment_of_contract_id','=','overdraft_against_assignment_of_contracts.id')
 				 ->where('overdraft_against_assignment_of_contracts.currency','=',$currencyName)
 				 ->orderByRaw('date desc, overdraft_against_assignment_of_contract_bank_statements.id desc')

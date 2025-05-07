@@ -1,6 +1,8 @@
 <?php
 namespace App\Traits;
 
+use App\Models\CleanOverdraft;
+use App\Models\CleanOverdraftBankStatement;
 use Illuminate\Support\Facades\DB;
 
 
@@ -21,9 +23,10 @@ trait HasLastStatementAmount
                 ->where('currency', $currencyName)
 				->where('account_number',$accountNumber)
 				->where(self::generateForeignKeyFormModelName(),$fullySecuredOverdraftId)
-                ->orderBy(self::getBankStatementTableName().'.full_date', 'desc')
+                ->orderByRaw(self::getBankStatementTableName().'.date desc ,'. self::getBankStatementTableName().'.id desc')
                 ->limit(1)
                 ->first();
+	
 		return $row ? number_format($row->end_balance) : 0;
 	}	
 	

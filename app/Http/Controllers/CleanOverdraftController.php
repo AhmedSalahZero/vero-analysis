@@ -63,7 +63,6 @@ class CleanOverdraftController
 			'limit'=>__('Limit'),
 			'outstanding_balance'=>__('Outstanding Balance'),
 			'balance_date'=>__('Balance Date'),
-			
 		];
 
         return view('reports.clean-overdraft.index', [

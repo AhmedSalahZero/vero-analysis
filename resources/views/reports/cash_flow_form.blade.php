@@ -3,6 +3,26 @@
 <link href="{{ url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css') }}" rel="stylesheet" type="text/css" />
 <style>
+ input[type="checkbox"] {
+        cursor: pointer;
+    }
+
+    th {
+        background-color: #0742A6;
+        color: white;
+    }
+
+    .bank-max-width {
+        max-width: 200px !important;
+    }
+
+  
+
+    input.form-control[disabled]:not(.ignore-global-style) {
+        background-color: #CCE2FD !important;
+        font-weight: bold !important;
+    }
+	
     .kt-portlet {
         overflow: visible !important;
     }
@@ -99,6 +119,12 @@
 						
                                         {{-- </div> --}}
 						</div>
+						<div class="col-md-3 mt-4">
+							<p class="text-left text-red">
+								{{ __('Note: Kindly the date of Today must be included within the report duration') }}
+							</p>
+						</div>
+						
 						  <div class="col-md-4 mt-4 " id="report-name-div" style="display:none">
                             <label>{{ __('Report Name') }} </label>
                         <div class="kt-input-icon">
@@ -107,13 +133,11 @@
                             </div>
                         </div>
                     </div>
-					<div class="col-md-6">
-						</div>
-						{{-- <div class="col-md-3">
-							<p class="text-left text-red">
-								{{ __('Note: Kindly the date of Today must be included within the report duration') }}
-							</p>
-						</div> --}}
+				
+				
+				
+					{{-- @include('cashflow-report-index') --}}
+						
 
 					
 
