@@ -14,9 +14,9 @@ use Carbon\Carbon;
 <div class="tab-pane " id="{{ $currentTabId }}" role="tabpanel">
 <form action="{{ route('save.projection',['company'=>$company->id]) }}" method="post">
 	@csrf
-    <div class="kt-portlet">
+    {{-- <div class="kt-portlet">
 
-        <div class="kt-portlet__body">
+        <div class="kt-portlet__body"> --}}
 
             <div class="form-group row justify-content-center" style="overflow:scroll">
                 @php
@@ -36,6 +36,7 @@ use Carbon\Carbon;
                 <input type="hidden" name="tableIds[]" value="{{ $tableId }}">
                 <input type="hidden" name="dates[]" value="{{ json_encode($dates) }}">
                 <input type="hidden" name="type" value="{{ $projectionType }}">
+                <input type="hidden" name="cashFlowReportId" value="{{ isset($cashflowReport) ? $cashflowReport->id:0 }}">
                 <x-tables.repeater-table  :initEmpty="false" :firstElementDeletable="true" :repeater-with-select2="false" :parentClass="'show-class-js'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=true">
                     <x-slot name="ths">
 
@@ -93,7 +94,8 @@ use Carbon\Carbon;
                     </x-slot>
                     <x-slot name="trs">
                         @php
-                        $rows = count($company->cashProjects->where('type',$projectionType)) ? $company->cashProjects->where('type',$projectionType) :[-1] ;
+						$model = isset($cashflowReport) ? $cashflowReport : $company; 
+                        $rows = count($model->cashProjects->where('type',$projectionType)) ? $model->cashProjects->where('type',$projectionType) :[-1] ;
                         @endphp
                         @foreach( count($rows) ? $rows : [-1] as $currentRow)
                         @php
@@ -167,8 +169,8 @@ use Carbon\Carbon;
             </div>
 
 
-        </div>
-    </div>
+        {{-- </div>
+    </div> --}}
   <x-submitting />
 </form>
 </div>

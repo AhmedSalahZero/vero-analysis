@@ -6,7 +6,12 @@
     .kt-portlet {
         overflow: visible !important;
     }
-
+ .max-w-checkbox {
+        min-width: 25px !important;
+        max-width: 25px !important;
+        width: 25px !important;
+		margin-left:30px;
+    }
 </style>
 @endsection
 @section('sub-header')
@@ -63,8 +68,8 @@
                                     <x-form.date :type="'text'" :classes="'datepicker-input '" :default-value="formatDateForDatePicker(old('end_date') ?: (now()->addMonths(6)) )" :model="$model??null" :label="__('End Date')" :type="'text'" :id="'id'" :placeholder="__('')" :name="'end_date'" :required="true"></x-form.date>
                                 </div>
 
-                        <div class="col-md-3">
-                            <label>{{__('Select Currency')}} @include('star')</label>
+                        <div class="col-md-1">
+                            <label>{{__('Currency')}} @include('star')</label>
 
                             <div class="kt-input-icon">
                                 <div class="input-group date">
@@ -81,25 +86,39 @@
                                 </div>
                             </div>
                         </div>
-						<div class="col-md-3">
+						<div class="col-md-3 mt-4">
+						{{-- <div class="d-flex align-items-center"> --}}
+						 <label>{{__('Do You Want To Save Report')}} </label>
+
+                            <div class="kt-input-icon">
+                                <div class="input-group date">
+                                            <input name="save_report"  class="form-control max-w-checkbox want-to-save-report  text-center" value="1"   type="checkbox">
+								
+								</div>
+								</div>
+						
+                                        {{-- </div> --}}
 						</div>
-						<div class="col-md-3">
+						  <div class="col-md-4 mt-4 " id="report-name-div" style="display:none">
+                            <label>{{ __('Report Name') }} </label>
+                        <div class="kt-input-icon">
+                            <div class="input-group date" id="report_name">
+                                <input type="text" class="form-control" name="report_name" value="">
+                            </div>
+                        </div>
+                    </div>
+					<div class="col-md-6">
+						</div>
+						{{-- <div class="col-md-3">
 							<p class="text-left text-red">
 								{{ __('Note: Kindly the date of Today must be included within the report duration') }}
 							</p>
-						</div>
+						</div> --}}
+
+					
 
 
-
-
-                        {{-- <div class="col-md-4">
-                            <label>{{ __('Cash Beginning Balance') }} </label>
-                        <div class="kt-input-icon">
-                            <div class="input-group date" id="sales_persons">
-                                <input type="text" class="only-greater-than-zero-allowed form-control" name="cash_beginning_balance" value="0">
-                            </div>
-                        </div>
-                    </div> --}}
+                      
 
 
 
@@ -163,5 +182,15 @@
                 , autoclose: true
             })
 			
+</script>
+<script>
+$(document).on('change','.want-to-save-report',function(){
+	const isChecked = $(this).is(':checked');
+	if(isChecked){
+		$('#report-name-div').show();
+	}else{
+		$('#report-name-div').hide();
+	}
+})
 </script>
 @endsection

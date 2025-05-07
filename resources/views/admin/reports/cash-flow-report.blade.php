@@ -412,21 +412,31 @@
 									if($customerName == 'Customers Past Due Invoices' )
 									{
 										$startDate = $dates[$weekAndYear]['start_date'] ;
-										$currentRow = $customerDueInvoices->where('week_start_date',$startDate)->first() ;
-										$currentValue =$currentRow ?  $currentRow->amount : 0;
+										
+										$filtered = array_filter($customerDueInvoices, function ($item) use ($startDate) {
+    												return $item['week_start_date'] == $startDate;
+											});
+										$currentRow = reset($filtered) ?: null ;
+										$currentValue =$currentRow ?  $currentRow['amount'] : 0;
 										
 									}
 									if($customerName == 'Suppliers Past Due Invoices' )
 									{
 										$startDate = $dates[$weekAndYear]['start_date'] ;
-										$currentRow = $supplierDueInvoices->where('week_start_date',$startDate)->first() ;
-										$currentValue =$currentRow ?  $currentRow->amount : 0;
+										$filtered = array_filter($supplierDueInvoices, function ($item) use ($startDate) {
+    												return $item['week_start_date'] == $startDate;
+											});
+										$currentRow = reset($filtered) ?: null ;
+										$currentValue =$currentRow ?  $currentRow['amount'] : 0;
 									}	
 									if($customerName == 'Loan Past Due Installments' )
 									{
 										$startDate = $dates[$weekAndYear]['start_date'] ;
-										$currentRow = $pastDueLoanInstallments->where('week_start_date',$startDate)->first() ;
-										$currentValue =$currentRow ?  $currentRow->amount : 0;
+										$filtered = array_filter($pastDueLoanInstallments, function ($item) use ($startDate) {
+    												return $item['week_start_date'] == $startDate;
+											});
+										$currentRow = reset($filtered) ?: null ;
+										$currentValue =$currentRow ?  $currentRow['amount'] : 0;
 									}
                                     $currentPercentage = $currentValue && $currentTotal ? $currentValue/ $currentTotal * 100 : 0 ;
                                     @endphp

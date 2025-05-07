@@ -1042,7 +1042,7 @@ Route::middleware([])->group(function () {
                     Route::get('/customer-balances/total-net-balance-details/{currency}/{modelType}', 'BalancesController@showTotalNetBalanceDetailsReport')->name('show.total.net.balance.in');
 				 	// Route::get('collection-effectiveness-index-report',[]);
 					Route::get('cashflow-report', 'CashFlowReportController@index')->name('view.cashflow.report');
-					Route::get('cashflow-report-result', 'CashFlowReportController@result')->name('result.cashflow.report');
+					Route::get('cashflow-report-result/{returnResultAsArray?}/{cashflowReport?}', 'CashFlowReportController@result')->name('result.cashflow.report');
 					
 					Route::get('contract-cashflow-report', 'ContractCashFlowReportController@index')->name('view.contract.cashflow.report');
 					Route::post('contract-cashflow-report', 'ContractCashFlowReportController@result')->name('result.contract.cashflow.report');

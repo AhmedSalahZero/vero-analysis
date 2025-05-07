@@ -2,8 +2,9 @@
 
 namespace App\Providers;
 
-
+use App\Http\Controllers\CashFlowReportController;
 use App\Http\Controllers\ExportTable;
+use App\Models\CashflowReport;
 use App\Models\Company;
 use App\Models\FullySecuredOverdraft;
 use App\Models\Section;
@@ -32,6 +33,7 @@ class AppServiceProvider extends ServiceProvider
 	public function register()
 	{
 	
+	
 		
 	
 		// if ($this->app->isLocal()) {
@@ -42,7 +44,12 @@ class AppServiceProvider extends ServiceProvider
 	
 	
 	public function boot()
-	{
+	{	
+		// $cashFlowReport = CashflowReport::first();
+		// $reportData =json_decode($cashFlowReport->report_data,true) ;
+		// extract($reportData);
+		// dd($weeks);
+		// dd();
 	
 		ini_set('max_execution_time', 6000); //300 seconds = 5 minutes
 		\PhpOffice\PhpSpreadsheet\Shared\Font::setAutoSizeMethod(Font::AUTOSIZE_METHOD_EXACT);

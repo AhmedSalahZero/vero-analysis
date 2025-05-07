@@ -13,11 +13,13 @@ class CreateCashProjectionsTable extends Migration
      */
     public function up()
     {
+		Schema::dropIfExists('cash_projections');
         Schema::create('cash_projections', function (Blueprint $table) {
             $table->id();
 			$table->string('name')->nullable();
 			$table->string('type')->comment('in or out');
 			$table->json('amounts')->nullable();
+			$table->unsignedBigInteger('cashflow_report_id')->nullable();
 			$table->unsignedBigInteger('company_id');
             $table->timestamps();
         });

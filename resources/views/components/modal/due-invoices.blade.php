@@ -37,8 +37,7 @@
 						
 							@php
 								$totalNetBalance = 0 ;
-								
-								$allIds = $pastDueCustomerInvoices->pluck('id')->toArray() ;
+								$allIds = array_column($pastDueCustomerInvoices,'id') ;
 								$dueInvoiceRow = \DB::table('weekly_cashflow_custom_due_invoices')->where('invoice_type',$currentInvoiceType)->where('company_id',$company->id)->whereIn('invoice_id',$allIds)->get();
 								
 							@endphp
@@ -47,25 +46,24 @@
 								//if($pastDueCustomerInvoice->net_balance_until_date <= 0 ){
 								//	continue;
 							//	}
-								$row = $dueInvoiceRow->where('invoice_id',$pastDueCustomerInvoice->id)->first();
+								$row = $dueInvoiceRow->where('invoice_id',$pastDueCustomerInvoice['id'])->first();
 								
 							@endphp
-                            <input type="hidden" name="customer_invoice_id[]" value="{{ $pastDueCustomerInvoice->id }}">
-											<input type="hidden" name="invoice_amount[{{ $pastDueCustomerInvoice->id }}]"  value="{{ $pastDueCustomerInvoice->net_balance }}">
+                            <input type="hidden" name="customer_invoice_id[]" value="{{ $pastDueCustomerInvoice['id'] }}">
+											<input type="hidden" name="invoice_amount[{{ $pastDueCustomerInvoice['id'] }}]"  value="{{ $pastDueCustomerInvoice['net_balance'] }}">
 											<input type="hidden" name="invoiceType" value="{{ $currentInvoiceType }}">
-
                             <tr>
                                 <td>
                                     <div class="kt-input-icon">
                                         <div class="input-group">
-                                            <input disabled type="numeric" step="0.1" class="form-control" value="{{ $pastDueCustomerInvoice->getName() }}">
+                                            <input disabled type="numeric" step="0.1" class="form-control" value="{{ isset($pastDueCustomerInvoice['customer_name']) ? $pastDueCustomerInvoice['customer_name'] : $pastDueCustomerInvoice['supplier_name'] }}">
                                         </div>
                                     </div>
                                 </td>
                                 <td>
                                     <div class="kt-input-icon">
                                         <div class="input-group">
-                                            <input disabled type="text" class="form-control text-center" value="{{  $pastDueCustomerInvoice->invoice_number }}">
+                                            <input disabled type="text" class="form-control text-center" value="{{  $pastDueCustomerInvoice['invoice_number'] }}">
                                         </div>
                                     </div>
                                 </td>
@@ -74,9 +72,9 @@
                                 <td>
                                     <div class="kt-input-icon">
                                         <div class="input-group">
-                                            <input disabled type="text" class="form-control text-center" value="{{ number_format($pastDueCustomerInvoice->net_balance) }}">
+                                            <input disabled type="text" class="form-control text-center" value="{{ number_format($pastDueCustomerInvoice['net_balance']) }}">
 											@php
-												$totalNetBalance +=$pastDueCustomerInvoice->net_balance; 
+												$totalNetBalance +=$pastDueCustomerInvoice['net_balance']; 
 											@endphp
                                         </div>
                                     </div>
@@ -85,7 +83,7 @@
                                 <td>
                                     <div class="kt-input-icon">
                                         <div class="input-group">
-                                            <input disabled type="text" class="form-control text-center" value="{{ $pastDueCustomerInvoice->invoice_due_date }}">
+                                            <input disabled type="text" class="form-control text-center" value="{{ $pastDueCustomerInvoice['invoice_due_date'] }}">
                                         </div>
                                     </div>
                                 </td>
@@ -94,14 +92,14 @@
 								            <td>
                                     <div class="kt-input-icon">
                                         <div class="input-group">
-                                            <input type="text" name="percentage[{{ $pastDueCustomerInvoice->id }}]" class="form-control text-center only-percentage-allowed" value="{{ $row ? $row->percentage : 100 }}">
+                                            <input type="text" name="percentage[{{ $pastDueCustomerInvoice['id'] }}]" class="form-control text-center only-percentage-allowed" value="{{ $row ? $row->percentage : 100 }}">
                                         </div>
                                     </div>
                                 </td>
 								
 
                                 <td>
-                                    <select class="form-control" name="week_start_date[{{ $pastDueCustomerInvoice->id }}]">
+                                    <select class="form-control" name="week_start_date[{{ $pastDueCustomerInvoice['id'] }}]">
 									
                                       @foreach($weeks as $weekDate => $weekNo )
 									  @php
