@@ -255,6 +255,7 @@ class CashFlowReportController
 		] ;
 			if($saveReport){
 				$cashFlowReport = CashflowReport::create([
+					'report_name'=>$request->get('report_name'),
 					'report_data'=>json_encode($reportData),
 					'start_date'=>$formStartDate,
 					'end_date'=>$formEndDate,
