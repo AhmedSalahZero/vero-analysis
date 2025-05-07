@@ -729,7 +729,7 @@ class MoneyPayment extends Model
 			$result['suppliers'][$keyNameForCurrentType][$supplierName]['total'] = isset($result['suppliers'][$keyNameForCurrentType][$supplierName]['total']) ? $result['suppliers'][$keyNameForCurrentType][$supplierName]['total']  + $row->paid_amount : $row->paid_amount;
 			$currentTotal = $currentPaidAmount;
 			$result['suppliers'][$keyNameForCurrentType]['total'][$currentWeekYear] = isset($result['suppliers'][$keyNameForCurrentType]['total'][$currentWeekYear]) ? $result['suppliers'][$keyNameForCurrentType]['total'][$currentWeekYear] +  $currentTotal : $currentTotal ;
-			$result['suppliers'][$keyNameForCurrentType]['total']['total_of_total'] = isset($result['suppliers'][$keyNameForCurrentType]['total']['total_of_total']) ? $result['suppliers'][$keyNameForCurrentType]['total']['total_of_total'] + $result['suppliers'][$keyNameForCurrentType]['total'][$currentWeekYear] : $result['suppliers'][$keyNameForCurrentType]['total'][$currentWeekYear];
+			// $result['suppliers'][$keyNameForCurrentType]['total']['total_of_total'] = isset($result['suppliers'][$keyNameForCurrentType]['total']['total_of_total']) ? $result['suppliers'][$keyNameForCurrentType]['total']['total_of_total'] + $result['suppliers'][$keyNameForCurrentType]['total'][$currentWeekYear] : $result['suppliers'][$keyNameForCurrentType]['total'][$currentWeekYear];
 			$totalCashOutFlowArray[$currentWeekYear] = isset($totalCashOutFlowArray[$currentWeekYear]) ? $totalCashOutFlowArray[$currentWeekYear] +   $row->paid_amount : $row->paid_amount ;
 			
 		}

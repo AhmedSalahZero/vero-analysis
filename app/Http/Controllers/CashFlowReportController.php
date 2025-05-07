@@ -201,15 +201,16 @@ class CashFlowReportController
 		$totalCashOutFlowArray = $this->mergeTotal($totalCashOutFlowArray,$pastDueLoanInstallments,$datesWithWeekNumber);
 		
 		$result['customers'][__('Total Cash Inflow')]['total'] = $totalCashInFlowArray ;
-		$result['customers'][__('Total Cash Inflow')]['total']['total_of_total'] = array_sum($totalCashInFlowArray);
+		// $result['customers'][__('Total Cash Inflow')]['total']['total_of_total'] = array_sum($totalCashInFlowArray);
 		$outProjection = $result['cash_expenses'][__('Projected Other Cash Out Items')] ?? [];
 		unset($result['cash_expenses'][__('Projected Other Cash Out Items')]);
 		$result['cash_expenses'][__('Projected Other Cash Out Items')] =$outProjection;
+		// dd($outProjection);
 		$result['cash_expenses'][__('Total Cash Outflow')]['total'] = $totalCashOutFlowArray;
-		$result['cash_expenses'][__('Total Cash Outflow')]['total']['total_of_total'] = array_sum($totalCashOutFlowArray);
+		// $result['cash_expenses'][__('Total Cash Outflow')]['total']['total_of_total'] = array_sum($totalCashOutFlowArray);
 		$netCash = HArr::subtractAtDates([$totalCashInFlowArray,$totalCashOutFlowArray] , array_merge(array_keys($totalCashInFlowArray),array_keys($totalCashOutFlowArray))) ;
 		$result['cash_expenses'][__('Net Cash (+/-)')]['total'] = $netCash;
-		$result['cash_expenses'][__('Net Cash (+/-)')]['total']['total_of_total'] = array_sum($netCash) ;
+		// $result['cash_expenses'][__('Net Cash (+/-)')]['total']['total_of_total'] = array_sum($netCash) ;
 		$result['cash_expenses'][__('Accumulated Net Cash (+/-)')]['total'] = $this->formatAccumulatedNetCash($netCash,$weeks);
 		$orderByKeys = [
 			'Cash Payments',

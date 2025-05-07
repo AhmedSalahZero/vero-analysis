@@ -11,9 +11,13 @@
 											</td>
                                             <td class="sub-text-bg"></td>
                                             {{-- <td class="sub-text-bg max-w-classes-name editable editable-text is-name-cell ">{{$currentSubRowKeyName }}</td> --}}
+											@php
+												$currentSubTotal = 0;
+											@endphp
                                              @foreach($weeks as $weekAndYear => $week)
 											 @php
 											 	$currentValue = $result[$mainReportKey][$parentKeyName][$currentSubRowKeyName]['weeks'][$weekAndYear] ?? 0;
+												$currentSubTotal+=$currentValue;
 												if($currentSubRowKeyName == 'Customers Past Due Invoices' )
 												{
 													$startDate = $dates[$weekAndYear]['start_date'] ;
@@ -22,6 +26,7 @@
 													});
 													$currentRow = reset($filtered) ?: null ;
 													$currentValue =$currentRow ?  $currentRow['amount'] : 0;
+													$currentSubTotal+=$currentValue;
 												}
 												if($currentSubRowKeyName == 'Suppliers Past Due Invoices' )
 												{
@@ -31,6 +36,8 @@
 													});
 														$currentRow = reset($filtered) ?: null  ;
 													$currentValue =$currentRow ?  $currentRow['amount'] : 0;
+													$currentSubTotal+=$currentValue;
+													
 												}
 												if($currentSubRowKeyName == 'Loan Past Due Installments' )
 												{
@@ -40,13 +47,15 @@
 													});
 													$currentRow = reset($filtered) ?: null  ;
 													$currentValue =$currentRow ?  $currentRow['amount'] : 0;
+													$currentSubTotal+=$currentValue;
 												}
 											 @endphp
                                             <td class="  sub-numeric-bg text-center editable-date">{{ number_format($currentValue) }}</td>
                                             @endforeach
 											@php
-												$currentSubTotal = $result[$mainReportKey][$parentKeyName][$currentSubRowKeyName]['total'] ?? 0 ;
-												$currentSubTotal = is_array($currentSubTotal) ? 0 : $currentSubTotal;
+									//			$currentSubTotal = $result[$mainReportKey][$parentKeyName][$currentSubRowKeyName]['total'] ?? 0 ;
+									//			$currentSubTotal = is_array($currentSubTotal) ? 0 : $currentSubTotal;
+												// $currentSubTotal = -8;
 											@endphp
                                     <td class="  sub-numeric-bg text-center editable-date">{{ number_format($currentSubTotal) }}</td>
 											

@@ -708,7 +708,6 @@ class CustomerInvoiceDashboardController extends Controller
 			foreach ($selectedCurrencies as $currencyName) {
 				$financialInstitutionBankIds = [
 					'lg'=>array_keys($company->letterOfGuaranteeIssuances->where('status','!=','cancelled')->where('lg_currency',$currencyName)->load('financialInstitutionBank')->pluck('financialInstitutionBank.bank.name_en','financialInstitutionBank.id')->toArray()),
-					// 'lc'=>
 				][$currentLgOrLcType] ??[];
 			
 				$selectedFinancialInstitutionBankIds = $request->ajax() && $request->get('financialInstitutionId') > 0 ? (array)$request->get('financialInstitutionId') : $financialInstitutionBankIds; 

@@ -409,7 +409,7 @@ class Contract extends Model
 			$result['cash_expenses'][$categoryName][$categoryNameName]['total'] = isset($result['cash_expenses'][$categoryName][$categoryNameName]['total']) ? $result['cash_expenses'][$categoryName][$categoryNameName]['total']  + $currentAllocationAmount : $currentAllocationAmount;
 			$currentTotal = $currentAllocationAmount;
 			$result['cash_expenses'][$categoryName]['total'][$currentWeekYear] = isset($result['cash_expenses'][$categoryName]['total'][$currentWeekYear]) ? $result['cash_expenses'][$categoryName]['total'][$currentWeekYear] +  $currentTotal : $currentTotal ;
-			$result['cash_expenses'][$categoryName]['total']['total_of_total'] = isset($result['cash_expenses'][$categoryName]['total']['total_of_total']) ? $result['cash_expenses'][$categoryName]['total']['total_of_total'] +   $currentAllocationAmount : $currentAllocationAmount ; 	
+			// $result['cash_expenses'][$categoryName]['total']['total_of_total'] = isset($result['cash_expenses'][$categoryName]['total']['total_of_total']) ? $result['cash_expenses'][$categoryName]['total']['total_of_total'] +   $currentAllocationAmount : $currentAllocationAmount ; 	
 			$totalCashOutFlowArray[$currentWeekYear] = isset($totalCashOutFlowArray[$currentWeekYear]) ? $totalCashOutFlowArray[$currentWeekYear] +   $currentTotal : $currentTotal ;
 
 	}

@@ -54,7 +54,7 @@
                                         <div class="input-group">
                                             <input disabled type="text" class="form-control text-center ignore-global-style" value="{{ number_format($detailItem[$colName]) }}">
 											@php
-												$totals[$colName]= isset($totals[$colName]) ? $totals[$colName] +  $detailItem[$colName] : $detailItem[$colName] ;
+												$totals[$colName]= isset($totals[$colName]) ? $totals[$colName] +  $detailItem[$colName] : ($detailItem[$colName])??0 ;
 											@endphp
                                         </div>
                                     </div>
@@ -81,7 +81,7 @@
 							@foreach(['limit','outstanding_balance','room','cash_cover'] as $colName)
 							<td class="text-center">
 							
-							{{ number_format($totals[$colName]) }}
+							{{ number_format($totals[$colName]??0) }}
 							</td>
 							@endforeach 
 							

@@ -442,7 +442,10 @@
                                     @endphp
                                     <td class="  sub-numeric-bg text-center editable-date">{{ number_format($currentValue,0) }}</td>
                                     @endforeach
-                                    <td class="  sub-numeric-bg text-center editable-date">{{ number_format($result[$customerName]['total'][$year] ?? 0 ) }}</td>
+                                    <td class="  sub-numeric-bg text-center editable-date">
+									{{ number_format($result[$customerName]['total'][$year] ?? 0 ) }}
+									
+									</td>
 
                                 </tr>
 

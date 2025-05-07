@@ -467,6 +467,7 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
                                             }
                                             $rowIndex = $rowIndex+ 1;
                                             $subRowKeys = HArr::removeKeyFromArrayByValue(array_keys($finalResult[$currentCurrencyName][$mainReportKey][$parentKeyName] ?? []),['total']);
+											
 		
                                             @endphp
                                             @include('admin.reports.cash-flow-main-row',['isTotalRow'=>true,'result'=>$finalResult[$currentCurrencyName]??[],'pastDueCustomerInvoices'=>$pastDueCustomerInvoices[$currentCurrencyName]??[] ,'customerDueInvoices'=>$customerDueInvoices[$currentCurrencyName] ?? []])

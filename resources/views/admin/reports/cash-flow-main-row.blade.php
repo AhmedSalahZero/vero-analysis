@@ -22,7 +22,8 @@
 									
 									 </td>
 									 @php
-											$currentMainRowTotal = $result[$mainReportKey][$parentKeyName]['total']['total_of_total']??0;
+										//	$currentMainRowTotal = $result[$mainReportKey][$parentKeyName]['total']['total_of_total']??0;
+											$currentMainRowTotal = 0;
 									 @endphp
                                     @foreach($weeks as $weekAndYear => $week)
                                     @php
@@ -34,9 +35,11 @@
 									if(isset($result[$mainReportKey][$parentKeyName]['weeks'][$weekAndYear]))
 									{
 										$currentValue = $result[$mainReportKey][$parentKeyName]['weeks'][$weekAndYear];
+										$currentMainRowTotal += $currentValue;
 									}
 									if(isset($isTotalRow) && isset($result[$mainReportKey][$parentKeyName]['total'][$weekAndYear])){
 										$currentValue = $result[$mainReportKey][$parentKeyName]['total'][$weekAndYear];
+										$currentMainRowTotal += $currentValue;
 									}
 									if($customerName == __('Customers Past Due Invoices') )
 									{
@@ -69,13 +72,19 @@
 										$currentValue =$currentRow ?  $currentRow['amount'] : 0;
 										$currentMainRowTotal += $currentValue;
 									}
+									if($customerName == 'Accumulated Net Cash (+/-)'){
+										$currentMainRowTotal =0;
+									}
                                     @endphp
 									
                                     <td  data-id="{{ $currentValue }}" class="  sub-numeric-bg text-center editable-date">{{ number_format($currentValue,0) }}</td>
                                     @endforeach
 									
                                    
-                                    <td class="  sub-numeric-bg text-center editable-date">{{ number_format(  $currentMainRowTotal ) }} </td>
+                                    <td class="  sub-numeric-bg text-center editable-date">
+									{{ number_format(  $currentMainRowTotal ) }}
+								
+									 </td>
 
                                 </tr>
 								

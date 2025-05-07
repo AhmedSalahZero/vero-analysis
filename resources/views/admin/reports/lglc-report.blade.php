@@ -203,7 +203,7 @@
 										@endphp
 										<button class="btn btn-sm btn-brand btn-elevate btn-pill text-white @if($currentColType != 'limit') visibility-hidden  @endif "   data-toggle="modal" data-target="#{{ $currentModalId.$currency.$lgOrLcType }}">{{ __('Details') }}</button>
 										@if($currentColType == 'limit')
-										@include('admin.dashboard.lg-lc-details',['detailItems'=> $details[$name][$lgOrLcType]  , 'modalId'=>$currentModalId ,'title'=>__('Details')])
+										@include('admin.dashboard.lg-lc-details',['detailItems'=> $details[$name][$lgOrLcType]??[]  , 'modalId'=>$currentModalId ,'title'=>__('Details')])
 										@endif 
                                     </h4>
 

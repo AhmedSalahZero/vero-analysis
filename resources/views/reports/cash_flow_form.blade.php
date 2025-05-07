@@ -106,6 +106,13 @@
                                 </div>
                             </div>
                         </div>
+						
+						<div class="col-md-2 mt-4">
+							<p class="text-left text-red">
+								{{ __('Note: Kindly the date of Today must be included within the report duration') }}
+							</p>
+						</div>
+						
 						<div class="col-md-3 mt-4">
 						{{-- <div class="d-flex align-items-center"> --}}
 						 <label>{{__('Do You Want To Save Report')}} </label>
@@ -119,11 +126,7 @@
 						
                                         {{-- </div> --}}
 						</div>
-						<div class="col-md-3 mt-4">
-							<p class="text-left text-red">
-								{{ __('Note: Kindly the date of Today must be included within the report duration') }}
-							</p>
-						</div>
+						
 						
 						  <div class="col-md-4 mt-4 " id="report-name-div" style="display:none">
                             <label>{{ __('Report Name') }} </label>
