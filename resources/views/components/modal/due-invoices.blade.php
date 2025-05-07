@@ -4,7 +4,8 @@
 'weeks',
 'dates',
 'currentInvoiceType',
-'reportInterval'
+'reportInterval',
+'cashflowReport'=>null
 ])
 
 
@@ -12,7 +13,7 @@
     <div class="modal-dialog modal-xl modal-90 modal-dialog-centered" role="document">
         <form action="{{ route('adjust.customer.dues.invoices',['company'=>$company->id]) }}" class="modal-content" method="post">
 		
-								
+		<input type="hidden" name="cashFlowReportId" value="{{ isset($cashflowReport) ? $cashflowReport->id:0 }}">
 		@csrf
             <div class="modal-header">
                 <h5 class="modal-title" style="color:#0741A5 !important" id="exampleModalLongTitle">{{ $currentInvoiceType == 'CustomerInvoice' ?  __('Customer Past Due Invoices') :  __('Supplier Past Due Invoices') }}</h5>

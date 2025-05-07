@@ -3,14 +3,15 @@
 'pastDueCustomerInvoices',
 'weeks',
 'dates',
-'reportInterval'
+'reportInterval',
+'cashflowReport'=>null
 ])
 
 
 <div class="modal fade modal-item-js" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-90 modal-dialog-centered" role="document">
         <form action="{{ route('adjust.loan.past.dues.installments',['company'=>$company->id]) }}" class="modal-content" method="post">
-		
+		<input type="hidden" name="cashFlowReportId" value="{{ isset($cashflowReport) ? $cashflowReport->id:0 }}">
 								
 		@csrf
             <div class="modal-header">
