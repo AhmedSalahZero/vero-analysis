@@ -15,7 +15,6 @@ elseif($modelName == 'LoanSchedule'){
 elseif($modelName =='ExpenseAnalysis'){
 	$redirectUrl = route('view.expense.analysis.dashboard',['company'=>$company->id]);
 }
-dd(Request('medium_term_loan_id'));
 $additionalArray = $modelName == 'LoanSchedule' ? ['medium_term_loan_id'=>Request('medium_term_loan_id')] : [];
 
 
