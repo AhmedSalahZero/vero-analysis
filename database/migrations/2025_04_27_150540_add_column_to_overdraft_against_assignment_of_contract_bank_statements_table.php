@@ -13,9 +13,9 @@ class AddColumnToOverdraftAgainstAssignmentOfContractBankStatementsTable extends
      */
     public function up()
     {
-        // Schema::table('overdraft_against_assignment_of_contract_bank_statements', function (Blueprint $table) {
-        //     $table->unsignedBigInteger('overdraft_against_assignment_of_contract_limit_id')->nullable()->after('company_id');
-        // });
+        Schema::table('overdraft_against_assignment_of_contract_bank_statements', function (Blueprint $table) {
+            $table->unsignedBigInteger('overdraft_against_assignment_of_contract_limit_id')->nullable()->after('company_id');
+        });
     }
 
     /**

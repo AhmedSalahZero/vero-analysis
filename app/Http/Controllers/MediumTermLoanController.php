@@ -70,6 +70,7 @@ class MediumTermLoanController
 		$runningStartDate = $filterDates[MediumTermLoan::RUNNING]['startDate'] ?? null ;
 		$runningEndDate = $filterDates[MediumTermLoan::RUNNING]['endDate'] ?? null ;
 		$mediumTermLoans = $company->mediumTermLoans->where('financial_institution_id',$financialInstitution->id) ;
+		// dd($mediumTermLoans,$financialInstitution->id);
 		$mediumTermLoans =  $mediumTermLoans->filterByStartDate($runningStartDate,$runningEndDate) ;
 		$mediumTermLoans =  $currentType == MediumTermLoan::RUNNING ? $this->applyFilter($request,$mediumTermLoans):$mediumTermLoans ;
 
