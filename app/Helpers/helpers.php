@@ -7989,3 +7989,22 @@ function getUserCommentFromModel($stdClass)
 	return '';
 	
 }
+function sliceArrayKeyToEnd($array ,$key )
+{
+	$keys = array_keys($array);
+
+// Find the index of "Total Cash Inflow"
+$totalCashInflowIndex = array_search($key, $keys);
+
+// Get the sub-array starting from the key after "Total Cash Inflow"
+return array_slice($array, $totalCashInflowIndex + 1);
+}
+function sumKeyAcrossArrays($data, $key) {
+    $sum = 0;
+    foreach ($data as $subArray) {
+        if (isset($subArray[$key])) {
+            $sum += $subArray[$key];
+        }
+    }
+    return $sum;
+}

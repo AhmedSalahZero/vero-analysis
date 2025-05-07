@@ -80,8 +80,7 @@
 							
 							@foreach(['limit','outstanding_balance','room','cash_cover'] as $colName)
 							<td class="text-center">
-							
-							{{ number_format($totals[$colName]??0) }}
+								{{ number_format($totals[$colName]??0) }}
 							</td>
 							@endforeach 
 							

@@ -18,6 +18,7 @@
 											 @php
 											 	$currentValue = $result[$mainReportKey][$parentKeyName][$currentSubRowKeyName]['weeks'][$weekAndYear] ?? 0;
 												$currentSubTotal+=$currentValue;
+												
 												if($currentSubRowKeyName == 'Customers Past Due Invoices' )
 												{
 													$startDate = $dates[$weekAndYear]['start_date'] ;

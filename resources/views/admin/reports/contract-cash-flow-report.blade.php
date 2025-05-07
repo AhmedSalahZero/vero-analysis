@@ -447,6 +447,7 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
                                             </script>
                                             @php
                                             $rowIndex = 0 ;
+											$allMainRowsTotals = [];
                                             @endphp
 
                                             @foreach(['customers','suppliers','cash_expenses','lg'] as $mainReportKey)
@@ -467,10 +468,148 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
                                             }
                                             $rowIndex = $rowIndex+ 1;
                                             $subRowKeys = HArr::removeKeyFromArrayByValue(array_keys($finalResult[$currentCurrencyName][$mainReportKey][$parentKeyName] ?? []),['total']);
-											
-		
+											$isTotalRow = true ;
                                             @endphp
-                                            @include('admin.reports.cash-flow-main-row',['isTotalRow'=>true,'result'=>$finalResult[$currentCurrencyName]??[],'pastDueCustomerInvoices'=>$pastDueCustomerInvoices[$currentCurrencyName]??[] ,'customerDueInvoices'=>$customerDueInvoices[$currentCurrencyName] ?? []])
+                                            
+											
+											
+											{{-- {{ dD($pastDueLoanInstallments,$dates) }} --}}
+					 <tr class=" @if($customerName == __('Total Cash Inflow') || $customerName == __('Total Cash Outflow') ||  $customerName == __('Total Cash')) bg-lighter @else  @endif  parent-tr reset-table-width text-nowrap  cursor-pointer sub-text-bg text-capitalize is-close   " data-model-id="{{ $rowIndex }}">
+                                    <td class="red reset-table-width text-nowrap trigger-child-row-1 cursor-pointer sub-text-bg text-capitalize main-tr is-close"> @if($hasSubRows) + @endif  </td>
+                                    <td class="sub-text-bg   editable-text  max-w-classes-name is-name-cell ">{{ $customerName }}</td>
+                                    <td class="  sub-numeric-bg text-center editable-date"> 
+										@if($customerName == __('Customers Past Due Invoices'))
+										<button   class="btn btn-sm btn-danger text-white js-show-customer-due-invoices-modal">{{ __('View') }}</button>
+                                                <x-modal.due-invoices :report-interval="$reportInterval" :currentInvoiceType="'CustomerInvoice'" :dates="$dates" :weeks="$weeks" :pastDueCustomerInvoices="$pastDueCustomerInvoices[$currentCurrencyName]??[]" :id="'test-modal-id'"></x-modal.due-invoices>
+										@endif 
+										
+											@if($customerName == 'Suppliers Past Due Invoices')
+												<button   class="btn btn-sm btn-danger text-white js-show-customer-due-invoices-modal">{{ __('View') }}</button>
+                                                <x-modal.due-invoices :report-interval="$reportInterval" :currentInvoiceType="'SupplierInvoice'" :dates="$dates" :weeks="$weeks" :pastDueCustomerInvoices="$pastDueSupplierInvoices" :id="'test-modal-id'"></x-modal.due-invoices>
+										
+											@endif 
+												@if($customerName == 'Loan Past Due Installments')
+												<button   class="btn btn-sm btn-danger text-white js-show-loan-past-due-installment-modal">{{ __('View') }}</button>
+                                                <x-modal.loan-installment :report-interval="$reportInterval"  :dates="$dates" :weeks="$weeks" :pastDueCustomerInvoices="$pastDueInstallments" :id="'test-modal-id'"></x-modal.loan-installment>
+										
+											@endif 
+											
+									
+									 </td>
+									 @php
+										//	$currentMainRowTotal = $finalResult[$currentCurrencyName][$mainReportKey][$parentKeyName]['total']['total_of_total']??0;
+											$currentMainRowTotal = 0;
+									 @endphp
+                                    @foreach($weeks as $weekAndYear => $week)
+                                    @php
+								
+									$year = explode('-',$weekAndYear)[1];
+									
+                                    $currentValue = 0 ;
+									
+									if($customerName == 'Total Cash Inflow'){
+										$currentValue =  array_sum(array_column($allMainRowsTotals,$weekAndYear)) ;
+										$finalResult[$currentCurrencyName][$mainReportKey][$parentKeyName]['weeks'][$weekAndYear]  = $currentValue;
+									}
+									if($customerName == 'Total Cash Outflow'){
+										$currentValue = array_sum(array_column(sliceArrayKeyToEnd($allMainRowsTotals,'Total Cash Inflow'),$weekAndYear)); // هنجيب من بعد الكي دا لحد اخر كي قبل الكاش اوت يبقي دول هما الكاش اوت توتال 
+										$finalResult[$currentCurrencyName][$mainReportKey][$parentKeyName]['weeks'][$weekAndYear]  = $currentValue;
+										$totalCashInForWeek = $finalResult[$currentCurrencyName]['customers']['Total Cash Inflow']['weeks'][$weekAndYear]??0;
+										$netCashAtWeek = $totalCashInForWeek - $currentValue;
+										$finalResult[$currentCurrencyName][$mainReportKey]['Net Cash (+/-)']['weeks'][$weekAndYear] = $netCashAtWeek;
+										$finalResult[$currentCurrencyName][$mainReportKey]['Accumulated Net Cash (+/-)']['weeks'][$weekAndYear] = array_sum($finalResult[$currentCurrencyName][$mainReportKey]['Net Cash (+/-)']['weeks']);
+									}	
+									if($customerName == 'Net Cash (+/-)'){
+										//	dd($allMainRowsTotals);
+									}
+									
+									if(isset($finalResult[$currentCurrencyName][$mainReportKey][$parentKeyName]['weeks'][$weekAndYear]))
+									{
+										
+										$currentValue = $finalResult[$currentCurrencyName][$mainReportKey][$parentKeyName]['weeks'][$weekAndYear];
+										$currentMainRowTotal += $currentValue;
+									}
+									if(isset($isTotalRow) && isset($finalResult[$currentCurrencyName][$mainReportKey][$parentKeyName]['total'][$weekAndYear])){
+										
+										$currentValue = $finalResult[$currentCurrencyName][$mainReportKey][$parentKeyName]['total'][$weekAndYear];
+										$currentMainRowTotal += $currentValue;
+										
+									}
+									if($customerName == __('Customers Past Due Invoices') )
+									{
+										$startDate = $dates[$weekAndYear]['start_date'] ;
+										$filtered = array_filter($customerDueInvoices[$currentCurrencyName] ?? [], function ($item) use ($startDate) {
+    												return $item['week_start_date'] == $startDate;
+											});
+										$currentRow = reset($filtered) ?: null ;
+										$currentValue =$currentRow ?  $currentRow['amount'] : 0;
+										$currentMainRowTotal += $currentValue;
+										
+									}
+									if($customerName == __('Suppliers Past Due Invoices') )
+									{
+										$startDate = $dates[$weekAndYear]['start_date'] ;
+										$filtered = array_filter($supplierDueInvoices, function ($item) use ($startDate) {
+    												return $item['week_start_date'] == $startDate;
+											});
+										$currentRow = reset($filtered) ?: null ;
+										$currentValue =$currentRow ?  $currentRow['amount'] : 0;
+										$currentMainRowTotal += $currentValue;
+									}
+									if($customerName == __('Loan Past Due Installments') )
+									{
+										$startDate = $dates[$weekAndYear]['start_date'] ;
+											$filtered = array_filter($pastDueLoanInstallments, function ($item) use ($startDate) {
+    												return $item['week_start_date'] == $startDate;
+											});
+										$currentRow = reset($filtered) ?: null ;
+										$currentValue =$currentRow ?  $currentRow['amount'] : 0;
+										$currentMainRowTotal += $currentValue;
+									}
+								
+										
+											$allMainRowsTotals[$customerName][$weekAndYear] = isset($allMainRowsTotals[$customerName][$weekAndYear]) ? $allMainRowsTotals[$customerName][$weekAndYear] + $currentValue :$currentValue ; // important place
+									if($customerName == 'Total Cash Inflow'){
+											
+										}else{
+											if($customerName=='Cash & Banks Balance'){
+										//	dump($customerName , $weekAndYear ,$allMainRowsTotals[$customerName][$weekAndYear],'-----');
+												
+											}
+										}
+										
+                                    @endphp
+									
+                                    <td  data-id="{{ $currentValue }}" class="  sub-numeric-bg text-center editable-date">{{ number_format($currentValue,0) }}</td>
+                                    @endforeach
+									@php
+											
+										
+									 if($customerName == 'Accumulated Net Cash (+/-)'){
+										
+										$currentMainRowTotal = 0;
+									}
+									@endphp
+                                   
+                                    <td class="  sub-numeric-bg text-center editable-date">
+									{{ number_format(  $currentMainRowTotal ) }}
+								
+									 </td>
+
+                                </tr>
+								
+				
+					
+					
+											
+											
+											
+											
+											
+											
+											
+											
+											
                                             @foreach($subRowKeys as $currentSubRowKeyName)
                                             {{-- @foreach(['Outgoing Transfers','Cash Payments','Paid Payable Cheques','Under Payment Payable Cheques','Suppliers Invoices'] as $currentSupplierKeyName) --}}
                                             @include('admin.reports.cash-flow-sub-row',['result'=>$finalResult[$currentCurrencyName]])

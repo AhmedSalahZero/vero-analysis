@@ -5,7 +5,7 @@
                                     <td class="  sub-numeric-bg text-center editable-date"> 
 										@if($customerName == __('Customers Past Due Invoices'))
 										<button   class="btn btn-sm btn-danger text-white js-show-customer-due-invoices-modal">{{ __('View') }}</button>
-                                                <x-modal.due-invoices :report-interval="$reportInterval" :currentInvoiceType="'CustomerInvoice'" :dates="$dates" :weeks="$weeks" :pastDueCustomerInvoices="$pastDueCustomerInvoices" :id="'test-modal-id'"></x-modal.due-invoices>
+                                                <x-modal.due-invoices :report-interval="$reportInterval" :currentInvoiceType="'CustomerInvoice'" :dates="$dates" :weeks="$weeks" :pastDueCustomerInvoices="$pastDueCustomerInvoices[$currentCurrencyName]??[]" :id="'test-modal-id'"></x-modal.due-invoices>
 										@endif 
 										
 											@if($customerName == 'Suppliers Past Due Invoices')
@@ -22,7 +22,7 @@
 									
 									 </td>
 									 @php
-										//	$currentMainRowTotal = $result[$mainReportKey][$parentKeyName]['total']['total_of_total']??0;
+										//	$currentMainRowTotal = $finalResult[$currentCurrencyName][$mainReportKey][$parentKeyName]['total']['total_of_total']??0;
 											$currentMainRowTotal = 0;
 									 @endphp
                                     @foreach($weeks as $weekAndYear => $week)
@@ -31,20 +31,20 @@
 									$year = explode('-',$weekAndYear)[1];
 									
                                     $currentValue = 0 ;
-									
-									if(isset($result[$mainReportKey][$parentKeyName]['weeks'][$weekAndYear]))
+								
+									if(isset($finalResult[$currentCurrencyName][$mainReportKey][$parentKeyName]['weeks'][$weekAndYear]))
 									{
-										$currentValue = $result[$mainReportKey][$parentKeyName]['weeks'][$weekAndYear];
+										$currentValue = $finalResult[$currentCurrencyName][$mainReportKey][$parentKeyName]['weeks'][$weekAndYear];
 										$currentMainRowTotal += $currentValue;
 									}
-									if(isset($isTotalRow) && isset($result[$mainReportKey][$parentKeyName]['total'][$weekAndYear])){
-										$currentValue = $result[$mainReportKey][$parentKeyName]['total'][$weekAndYear];
+									if(isset($isTotalRow) && isset($finalResult[$currentCurrencyName][$mainReportKey][$parentKeyName]['total'][$weekAndYear])){
+										$currentValue = $finalResult[$currentCurrencyName][$mainReportKey][$parentKeyName]['total'][$weekAndYear];
 										$currentMainRowTotal += $currentValue;
 									}
 									if($customerName == __('Customers Past Due Invoices') )
 									{
 										$startDate = $dates[$weekAndYear]['start_date'] ;
-										$filtered = array_filter($customerDueInvoices, function ($item) use ($startDate) {
+										$filtered = array_filter($customerDueInvoices[$currentCurrencyName] ?? [], function ($item) use ($startDate) {
     												return $item['week_start_date'] == $startDate;
 											});
 										$currentRow = reset($filtered) ?: null ;
@@ -72,9 +72,11 @@
 										$currentValue =$currentRow ?  $currentRow['amount'] : 0;
 										$currentMainRowTotal += $currentValue;
 									}
-									if($customerName == 'Accumulated Net Cash (+/-)'){
-										$currentMainRowTotal =0;
+									 if($customerName == 'Accumulated Net Cash (+/-)'){
+										dd($customerName,$allMainRowsTotals,$finalResult[$currentCurrencyName]);
 									}
+									$allMainRowsTotals[$customerName][$weekAndYear] = $currentMainRowTotal ;
+										
                                     @endphp
 									
                                     <td  data-id="{{ $currentValue }}" class="  sub-numeric-bg text-center editable-date">{{ number_format($currentValue,0) }}</td>
