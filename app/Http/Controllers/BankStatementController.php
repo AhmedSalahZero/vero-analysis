@@ -133,6 +133,9 @@ class BankStatementController
 		elseif($accountType->isOverdraftAgainstAssignmentOfContractAccount()){
 			$statementModelName = 'OverdraftAgainstAssignmentOfContractBankStatement';
 			$overdraftAgainstAgainstAssignmentOfContract  = OverdraftAgainstAssignmentOfContract::findByAccountNumber($accountNumber,$company->id,$financialInstitutionId);
+			if(!$overdraftAgainstAgainstAssignmentOfContract){
+				return collect([]);
+			}
 			$results = DB::table('overdraft_against_assignment_of_contract_bank_statements')
 				 ->where('overdraft_against_assignment_of_contract_bank_statements.company_id',$company->id)
 				 ->where('date', '>=', $startDate)
