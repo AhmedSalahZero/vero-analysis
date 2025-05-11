@@ -277,7 +277,7 @@ class SupplierInvoice extends Model implements IInvoice
 		->get()
 		->unique('currency')->pluck('currency','currency')->toArray();
 	}
-	public static function getSupplierInvoicesUnderCollectionAtDates(array &$result , array &$totalCashOutFlowArray , int $companyId ,string $currency,array $datesWithWeekNumber,string $endDate  ):void
+	public static function getSupplierInvoicesUnderCollectionAtDates(array &$result  , int $companyId ,string $currency,array $datesWithWeekNumber,string $endDate  ):void
 	{
 		$key = __('Suppliers Invoices') ;
 		$items = self::where('company_id',$companyId)
@@ -310,7 +310,7 @@ class SupplierInvoice extends Model implements IInvoice
 	{
 		return 'invoice_date';
 	}
-	public static function getForecastedProjectCollection(array &$result , array &$totalCashOutFlowArray  , string $startDate , string $endDate , $currency = null , $companyId = null , array $datesWithWeekNumber):void
+	public static function getForecastedProjectCollection(array &$result  , string $startDate , string $endDate , $currency = null , $companyId = null , array $datesWithWeekNumber):void
 	{
 		/**
 		 * 

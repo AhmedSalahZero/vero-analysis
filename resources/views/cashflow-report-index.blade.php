@@ -1,203 +1,145 @@
+ <div class="kt-portlet mt-2 pt-3">
 
-@section('css')
-<link href="{{ url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css') }}" rel="stylesheet" type="text/css" />
-<link href="{{ url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css') }}" rel="stylesheet" type="text/css" />
+                    <div class="kt-portlet__body with-scroll pt-0">
 
-<style>
-   
+                        <div class="table-custom-container position-relative  ">
 
-</style>
-@endsection
-@section('sub-header')
-{{ __('Cash Flow Report') }}
-@endsection
-@section('content')
 
-<div class="kt-portlet kt-portlet--tabs">
-  {{-- <x-back-to-bank-header-btn :create-permission-name="'create clean overdraft'" :create-route="route('create.clean.overdraft',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id])"></x-back-to-bank-header-btn> --}}
-<div class="kt-portlet__body">
-    <div class="tab-content  kt-margin-t-20">
+                            <div>
 
-        <!--Begin:: Tab Content-->
-        <div class="tab-pane {{ !Request('active') || Request('active') == 'clean-over-draft' ?'active':'' }}" id="bank" role="tabpanel">
-            <div class="kt-portlet kt-portlet--mobile">
-                <div class="kt-portlet__head kt-portlet__head--lg p-0">
-                    <div class="kt-portlet__head-label">
-                        <span class="kt-portlet__head-icon">
-                            <i class="kt-font-secondary btn-outline-hover-danger fa fa-layer-group"></i>
-                        </span>
-                        <h3 class="kt-portlet__head-title">
-                            {{ __('Clean Overdraft Table') }}
-                        </h3>
+
+
+
+                                <div class="responsive ">
+                                    <table class="table kt_table_with_no_pagination_no_collapse table-for-currency  table-striped- table-bordered table-hover table-checkable position-relative table-with-two-subrows main-table-class-for-currency dataTable no-footer">
+                                        <thead>
+
+                                            <tr class="header-tr ">
+
+                                                <th class="view-table-th max-w-serial  header-th  align-middle text-center">
+                                                    {{ __('#') }}
+                                                </th>
+
+                                                <th class="view-table-th max-w-name  max-w-invoice-date header-th  align-middle text-center">
+                                                    {{ __('Report Name') }}
+                                                </th>
+
+                                                <th class="view-table-th max-w-name  max-w-counts header-th  align-middle text-center">
+                                                    {{ __('Report Interval') }}
+                                                </th>
+
+                                                <th class="view-table-th max-w-name  max-w-counts header-th  align-middle text-center">
+                                                    {{ __('Start Date') }}
+													
+													<br> DD-MM-YYYY
+													
+                                                </th>
+
+                                                <th class="view-table-th max-w-name  max-w-counts header-th  align-middle text-center">
+                                                    {{ __('End Date') }}
+													<br> DD-MM-YYYY
+                                                </th>
+
+
+                                                <th class="view-table-th max-w-name max-w-action  header-th  align-middle text-center">
+                                                    {{ __('Actions') }}
+                                                </th>
+
+
+
+
+
+
+
+                                            </tr>
+
+                                        </thead>
+                                        <tbody>
+                                            @php
+                                            $previousDate = null ;
+                                            @endphp
+											
+                                            @foreach($cashflowReports as $index => $cashflowReport)
+                                            <tr class=" parent-tr reset-table-width text-nowrap  cursor-pointer sub-text-bg text-capitalize  ">
+                                                <td class="sub-text-bg max-w-serial text-center   ">{{ ++$index }}</td>
+                                                <td class="sub-text-bg  text-center  max-w-counts ">{{ $cashflowReport->getName()}}</td>
+                                                <td class="sub-text-bg  text-center  max-w-counts ">{{ $cashflowReport->getIntervalName()}}</td>
+                                               
+                                                <td class="sub-text-bg  text-center max-w-counts ">{{ $cashflowReport->getStartDateFormatted() }}  </td>
+                                                <td class="sub-text-bg  text-center max-w-counts ">{{ $cashflowReport->getEndDateFormatted() }}</td>
+                                                <td class="sub-text-bg  text-center max-w-action   ">
+                                                    <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{route('result.cashflow.report',[$company,'returnResultAsArray'=>'view','cashflowReport'=>$cashflowReport->id])}}"><i class="fa fa-pen-alt"></i></a>
+
+                                                    <a class="btn btn-secondary btn-outline-hover-danger btn-icon  " href="#" data-toggle="modal" data-target="#modal-delete-{{ $cashflowReport->id}}" title="Delete"><i class="fa fa-trash-alt"></i>
+                                                    </a>
+                                                
+
+                                                    <div id="modal-delete-{{ $cashflowReport->id }}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
+                                                        <div class="modal-dialog">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h4 class="modal-title">{{ __('Delete Cashflow Report ' .$cashflowReport->getName()) }}</h4>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    <h3>{{ __('Are You Sure To Delete This Item ? ') }}</h3>
+                                                                </div>
+                                                                <form action="{{ route('delete.cashflow.report',[$company,$cashflowReport->id]) }}" method="post" id="delete_form">
+                                                                    {{ csrf_field() }}
+                                                                    {{ method_field('DELETE') }}
+                                                                    <div class="modal-footer">
+                                                                        <button class="btn btn-danger">
+                                                                            {{ __('Delete') }}
+                                                                        </button>
+                                                                        <button class="btn btn-secondary" data-dismiss="modal" aria-hidden="true">
+                                                                            {{ __('Close') }}
+                                                                        </button>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </td>
+                                            </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                            </div>
+
+                            @push('js')
+                            <script>
+                                $('.table-for-currency').DataTable({
+                                        dom: 'Bfrtip'
+
+                                        , "processing": false
+                                        , "scrollX": true
+                                        , "scrollY": true
+                                        , "ordering": false
+                                        , 'paging': false
+                                        , "fixedColumns": {
+                                            left: 2
+                                        }
+                                        , "fixedHeader": {
+                                            headerOffset: 60
+                                        }
+                                        , "serverSide": false
+                                        , "responsive": false
+                                        , "pageLength": 25
+                                        , drawCallback: function(setting) {
+                                            $('.buttons-html5').addClass('btn border-parent btn-border-export btn-secondary btn-bold  ml-2 flex-1 flex-grow-0 btn-border-radius do-not-close-when-click-away')
+                                            $('.buttons-print').addClass('btn border-parent top-0 btn-border-export btn-secondary btn-bold  ml-2 flex-1 flex-grow-0 btn-border-radius do-not-close-when-click-away')
+                                        },
+
+                                    }
+
+                                )
+
+                            </script>
+                            @endpush
+
+                        </div>
+
                     </div>
-                    {{-- Export --}}
-                    {{-- <x-export-clean-overdraft :financialInstitution="$financialInstitution" :search-fields="$searchFields" :money-received-type="'clean-over-draft'" :has-search="1" :has-batch-collection="0" href="{{route('create.clean.overdraft',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id])}}" /> --}}
                 </div>
-                <div class="kt-portlet__body">
-
-                    <!--begin: Datatable -->
-                    <table class="table  table-striped- table-bordered table-hover table-checkable text-center kt_table_1">
-                        <thead>
-                            <tr class="table-standard-color">
-                                <th>{{ __('#') }}</th>
-                                <th>{{ __('Start Date') }}</th>
-                                <th>{{ __('End Date') }}</th>
-                                <th>{{ __('Account Number') }}</th>
-                                <th>{{ __('Currency') }}</th>
-                                <th>{{ __('Limit') }}</th>
-                                <th>{{ __('Borrowing Rate %') }}</th>
-                                <th>{{ __('Margin Rate %') }}</th>
-                                <th>{{ __('Intreset Rate %') }}</th>
-                                {{-- <th>{{ __('Max Lending Limit Per Customer') }}</th> --}}
-                                {{-- <th>{{ __('Max Settlement Days') }}</th> --}}
-                                <th>{{ __('Control') }}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach([] as $index=>$cleanOverdraft)
-                            <tr>
-                                <td>
-                                    {{ $index+1 }}
-                                </td>
-                                <td class="text-nowrap">{{ $cleanOverdraft->getContractStartDateFormatted() }}</td>
-                                <td class="text-nowrap">{{ $cleanOverdraft->getContractEndDateFormatted() }}</td>
-                                <td>{{ $cleanOverdraft->getAccountNumber() }}</td>
-                                <td class="text-uppercase">{{ $cleanOverdraft->getCurrency() }}</td>
-                                <td class="text-transform">{{ $cleanOverdraft->getLimitFormatted() }}</td>
-                                <td class="bank-max-width">{{ $cleanOverdraft->getBorrowingRateFormatted() .' %'  }}</td>
-                                <td class="text-nowrap">{{ $cleanOverdraft->getMarginRateFormatted() .' %'  }}</td>
-                                <td>{{ $cleanOverdraft->getInterestRateFormatted() .' %'  }}</td>
-                                {{-- <td>{{ $cleanOverdraft->getMaxLendingLimitPerCustomer() }}</td> --}}
-                                {{-- <td>{{ $cleanOverdraft->getMaxSettlementDays() }}</td> --}}
-                                <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
-
-
-                                    @include('reports.clean-overdraft.apply-rate')
-
-                                    <span style="overflow: visible; position: relative; width: 110px;">
-                                        @if(auth()->user()->can('update clean overdraft'))
-                                        <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" 
-										{{-- href="{{ route('edit.clean.overdraft',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'cleanOverdraft'=>$cleanOverdraft->id]) }}" --}}
-										><i class="fa fa-pen-alt"></i></a>
-                                        @endif
-                                        @if(auth()->user()->can('delete clean overdraft'))
-                                        <a data-toggle="modal" data-target="#delete-financial-institution-bank-id-{{ $cleanOverdraft->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
-                                        <div class="modal fade" id="delete-financial-institution-bank-id-{{ $cleanOverdraft->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                                            <div class="modal-dialog modal-dialog-centered" role="document">
-                                                <div class="modal-content">
-                                                    <form 
-													{{-- action="{{ route('delete.clean.overdraft',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'cleanOverdraft'=>$cleanOverdraft]) }}" --}}
-													 method="post">
-                                                        @csrf
-                                                        @method('delete')
-                                                        <div class="modal-header">
-                                                            <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Do You Want To Delete This Item ?') }}</h5>
-                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                <span aria-hidden="true">&times;</span>
-                                                            </button>
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close') }}</button>
-                                                            <button type="submit" class="btn btn-danger">{{ __('Confirm Delete') }}</button>
-                                                        </div>
-
-                                                    </form>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        @endif
-                                    </span>
-
-                                    @foreach($cleanOverdraft->rates as $index=>$rate)
-                                    @include('reports.clean-overdraft.rate-modal')
-                                    @endforeach
-
-                                </td>
-                            </tr>
-
-
-
-
-                            @endforeach
-                        </tbody>
-                    </table>
-
-                    <!--end: Datatable -->
-                </div>
-            </div>
-        </div>
-
-
-
-
-
-
-
-
-
-
-        <!--End:: Tab Content-->
-
-
-
-        <!--End:: Tab Content-->
-    </div>
-</div>
-</div>
-
-@endsection
-@section('js')
-<!--begin::Page Scripts(used by this page) -->
-<script src="{{ url('assets/vendors/general/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}" type="text/javascript"></script>
-<script src="{{ url('assets/vendors/custom/js/vendors/bootstrap-datepicker.init.js') }}" type="text/javascript">
-</script>
-<script src="{{ url('assets/js/demo1/pages/crud/forms/widgets/bootstrap-datepicker.js') }}" type="text/javascript">
-</script>
-<script src="{{ url('assets/vendors/general/bootstrap-select/dist/js/bootstrap-select.js') }}" type="text/javascript">
-</script>
-<script src="{{ url('assets/js/demo1/pages/crud/forms/widgets/bootstrap-select.js') }}" type="text/javascript">
-</script>
-<script src="{{ url('assets/vendors/general/jquery.repeater/src/lib.js') }}" type="text/javascript"></script>
-<script src="{{ url('assets/vendors/general/jquery.repeater/src/jquery.input.js') }}" type="text/javascript">
-</script>
-<script src="{{ url('assets/vendors/general/jquery.repeater/src/repeater.js') }}" type="text/javascript"></script>
-<script src="{{ url('assets/js/demo1/pages/crud/forms/widgets/form-repeater.js') }}" type="text/javascript"></script>
-
-
-
-<script>
-    $(document).on('click', '.js-close-modal', function() {
-        $(this).closest('.modal').modal('hide');
-    })
-
-</script>
-<script>
-    $(document).on('change', '.js-search-modal', function() {
-        const searchFieldName = $(this).val();
-        const popupType = $(this).attr('data-type');
-        const modal = $(this).closest('.modal');
-        if (searchFieldName === 'contract_start_date') {
-            modal.find('.data-type-span').html('[ {{ __("Contract Start Date") }} ]')
-            $(modal).find('.search-field').val('').trigger('change').prop('disabled', true);
-        } else if (searchFieldName === 'contract_end_date') {
-            modal.find('.data-type-span').html('[ {{ __("Contract End Date") }} ]')
-            $(modal).find('.search-field').val('').trigger('change').prop('disabled', true);
-        } else if (searchFieldName === 'balance_date') {
-            modal.find('.data-type-span').html('[ {{ __("Balance Date") }} ]')
-            $(modal).find('.search-field').val('').trigger('change').prop('disabled', true);
-        } else {
-            modal.find('.data-type-span').html('[ {{ __("Contract Start Date") }} ]')
-            $(modal).find('.search-field').prop('disabled', false);
-        }
-    })
-    $(function() {
-
-        $('.js-search-modal').trigger('change')
-
-    })
-
-</script>
-@endsection
-@push('js')
-
-@endpush

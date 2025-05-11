@@ -36,7 +36,7 @@ class SettlementAllocation extends Model
 	{
 		return $this->allocation_amount ;
 	}
-	public static function getSettlementAllocationPerContractAndMoneyType(array &$result , array &$totalCashOutFlowArray  , string $moneyType,string $dateFieldName,int $contractId , int $customerId, string $startDate , string $endDate , string $currentWeekYear,string $currencyName , ?string $chequeStatus = null  ):void
+	public static function getSettlementAllocationPerContractAndMoneyType(array &$result   , string $moneyType,string $dateFieldName,int $contractId , int $customerId, string $startDate , string $endDate , string $currentWeekYear,string $currencyName , ?string $chequeStatus = null  ):void
 	{
 		
 		$keyNameForCurrentType = [
@@ -74,7 +74,7 @@ class SettlementAllocation extends Model
 	}
 	
 	
-	public static function getSettlementAllocationPerContractAndLetterOfCreditIssuance(array &$result , array &$totalCashOutFlowArray ,string $dateFieldName,int $contractId , int $customerId, string $startDate , string $endDate , string $currentWeekYear  ):void
+	public static function getSettlementAllocationPerContractAndLetterOfCreditIssuance(array &$result  ,string $dateFieldName,int $contractId , int $customerId, string $startDate , string $endDate , string $currentWeekYear  ):void
 	{
 		
 		$keyNameForCurrentType = __('Letter Of Credit');

@@ -4,14 +4,17 @@
 'weeks',
 'dates',
 'reportInterval',
-'cashflowReport'=>null
+'cashflowReport'=>null,
+'currencyName'
 ])
-
-
+@php
+	$cashflowReportId = isset($cashflowReport) ? $cashflowReport->id:0;
+	
+@endphp
 <div class="modal fade modal-item-js" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-90 modal-dialog-centered" role="document">
         <form action="{{ route('adjust.loan.past.dues.installments',['company'=>$company->id]) }}" class="modal-content" method="post">
-		<input type="hidden" name="cashFlowReportId" value="{{ isset($cashflowReport) ? $cashflowReport->id:0 }}">
+		<input type="hidden" name="cashFlowReportId" value="{{ $cashflowReportId }}">
 								
 		@csrf
             <div class="modal-header">
@@ -37,7 +40,7 @@
 							@php
 								$totalNetBalance = 0 ;
 								$allIds = array_column($pastDueCustomerInvoices,'id') ;
-								$dueInvoiceRow = \DB::table('weekly_cashflow_custom_past_due_schedules')->where('company_id',$company->id)->whereIn('loan_schedule_id',$allIds)->get();
+								$dueInvoiceRow = \DB::table('weekly_cashflow_custom_past_due_schedules')->where('cashflow_report_id',$cashflowReportId)->where('company_id',$company->id)->whereIn('loan_schedule_id',$allIds)->get();
 								
 							@endphp
                             @foreach($pastDueCustomerInvoices as $pastDueCustomerInvoice)
@@ -45,8 +48,11 @@
 								$row = $dueInvoiceRow->where('loan_schedule_id',$pastDueCustomerInvoice['id'])->first();
 								
 							@endphp
+						
                             <input type="hidden" name="loan_schedule_id[]" value="{{ $pastDueCustomerInvoice['id'] }}">
 							<input type="hidden" name="invoice_amount[{{ $pastDueCustomerInvoice['id'] }}]"  value="{{ $pastDueCustomerInvoice['remaining'] }}">
+							<input type="hidden" name="currency_name"  value="{{ $currencyName }}">
+							<input type="hidden" name="cashflow_report_id"  value="{{ $cashflowReportId }}">
                             <tr>
                                 <td>
 								

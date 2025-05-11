@@ -495,7 +495,7 @@ class CashExpense extends Model
 		;
 	}
 
-	public static function getCashOutForExpenseCategoriesAtDates(array &$result , array &$totalCashOutFlowArray  , string $moneyType,string $dateFieldName,string $currency , int $companyId, string $startDate , string $endDate , string $currentWeekYear , ?string $chequeStatus = null) 
+	public static function getCashOutForExpenseCategoriesAtDates(array &$result   , string $moneyType,string $dateFieldName,string $currency , int $companyId, string $startDate , string $endDate , string $currentWeekYear , ?string $chequeStatus = null) 
 	{
 		$subTableName = (new self)->getTable();
 		$mainTableName = [
@@ -529,10 +529,10 @@ class CashExpense extends Model
 		}
 	
 	}
-	public static function getProjectionOtherCashOut(array &$result , array &$totalCashInFlowArray ,Company $company ):void
+	public static function getProjectionOtherCashOut(array &$result ,Company $company , int $cashflowReportId ):void
 	{
 		$key = __('Projected Other Cash Out Items') ;
-		$items = CashProjection::where('company_id',$company->id)->where('type','out')->get();
+		$items = CashProjection::where('company_id',$company->id)->where('cashflow_report_id',$cashflowReportId)->where('type','out')->get();
 		// dd($items);
 		
 			foreach($items as $item){
@@ -542,7 +542,7 @@ class CashExpense extends Model
 					$result['cash_expenses'][$key][$invoiceNumber]['total'] = isset($result['cash_expenses'][$key][$invoiceNumber]['total']) ? $result['cash_expenses'][$key][$invoiceNumber]['total']  + $value : $value;
 					$currentTotal = $value;
 					$result['cash_expenses'][$key]['total'][$currentWeekYear] = isset($result['cash_expenses'][$key]['total'][$currentWeekYear]) ? $result['cash_expenses'][$key]['total'][$currentWeekYear] +  $currentTotal : $currentTotal ;
-					$totalCashInFlowArray[$currentWeekYear] = isset($totalCashInFlowArray[$currentWeekYear]) ? $totalCashInFlowArray[$currentWeekYear] + $currentTotal : $currentTotal;
+					// $totalCashInFlowArray[$currentWeekYear] = isset($totalCashInFlowArray[$currentWeekYear]) ? $totalCashInFlowArray[$currentWeekYear] + $currentTotal : $currentTotal;
 					// $result['cash_expenses'][$key]['total']['total_of_total']= isset($result['cash_expenses'][$key]['total']['total_of_total']) ? $result['cash_expenses'][$key]['total']['total_of_total'] +$value :$value ;
 					
 				}

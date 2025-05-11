@@ -5,15 +5,19 @@
 'dates',
 'currentInvoiceType',
 'reportInterval',
-'cashflowReport'=>null
+'cashflowReport'=>null,
+'currencyName'
 ])
-
+@php
+	$cashflowReportId = isset($cashflowReport) ? $cashflowReport->id:0;
+	
+@endphp
 
 <div class="modal fade modal-item-js" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-90 modal-dialog-centered" role="document">
         <form action="{{ route('adjust.customer.dues.invoices',['company'=>$company->id]) }}" class="modal-content" method="post">
 		
-		<input type="hidden" name="cashFlowReportId" value="{{ isset($cashflowReport) ? $cashflowReport->id:0 }}">
+		<input type="hidden" name="cashFlowReportId" value="{{ $cashflowReportId }}">
 		@csrf
             <div class="modal-header">
                 <h5 class="modal-title" style="color:#0741A5 !important" id="exampleModalLongTitle">{{ $currentInvoiceType == 'CustomerInvoice' ?  __('Customer Past Due Invoices') :  __('Supplier Past Due Invoices') }}</h5>
@@ -39,7 +43,7 @@
 							@php
 								$totalNetBalance = 0 ;
 								$allIds = array_column($pastDueCustomerInvoices,'id') ;
-								$dueInvoiceRow = \DB::table('weekly_cashflow_custom_due_invoices')->where('invoice_type',$currentInvoiceType)->where('company_id',$company->id)->whereIn('invoice_id',$allIds)->get();
+								$dueInvoiceRow = \DB::table('weekly_cashflow_custom_due_invoices')->where('cashflow_report_id',$cashflowReportId)->where('invoice_type',$currentInvoiceType)->where('company_id',$company->id)->whereIn('invoice_id',$allIds)->get();
 								
 							@endphp
                             @foreach($pastDueCustomerInvoices as $pastDueCustomerInvoice)
@@ -53,6 +57,8 @@
                             <input type="hidden" name="customer_invoice_id[]" value="{{ $pastDueCustomerInvoice['id'] }}">
 											<input type="hidden" name="invoice_amount[{{ $pastDueCustomerInvoice['id'] }}]"  value="{{ $pastDueCustomerInvoice['net_balance'] }}">
 											<input type="hidden" name="invoiceType" value="{{ $currentInvoiceType }}">
+											<input type="hidden" name="currency_name"  value="{{ $currencyName }}">
+											<input type="hidden" name="cashflow_report_id"  value="{{ $cashflowReportId }}">
                             <tr>
                                 <td>
                                     <div class="kt-input-icon">

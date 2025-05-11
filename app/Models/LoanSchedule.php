@@ -145,7 +145,7 @@ class LoanSchedule extends Model
 		->where('id',$this->id)
 		->toArray())[0]  + 1 	;
 	}
-	public static function getLoanInstallmentsAtDates(array &$result , array &$totalCashOutFlowArray,string $currency , int $companyId,array $datesWithWeekNumber,string $endDate) 
+	public static function getLoanInstallmentsAtDates(array &$result ,string $currency , int $companyId,array $datesWithWeekNumber,string $endDate) 
 	{
 		$mainType = 'cash_expenses';
 		$rows = DB::table('loan_schedules')->where('loan_schedules.company_id',$companyId)

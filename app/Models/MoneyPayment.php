@@ -690,7 +690,7 @@ class MoneyPayment extends Model
 		}
 	}
 		
-	public static function getCashOutForMoneyTypeAtDates(array &$result , array &$totalCashOutFlowArray  , string $moneyType,string $dateFieldName,string $currency , int $companyId, string $startDate , string $endDate , string $currentWeekYear , ?string $chequeStatus = null) 
+	public static function getCashOutForMoneyTypeAtDates(array &$result   , string $moneyType,string $dateFieldName,string $currency , int $companyId, string $startDate , string $endDate , string $currentWeekYear , ?string $chequeStatus = null) 
 	{
 		$subTableName = (new self)->getTable(); // money_payments
 		$keyNameForCurrentType = [

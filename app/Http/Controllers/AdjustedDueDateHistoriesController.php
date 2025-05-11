@@ -25,8 +25,6 @@ class AdjustedDueDateHistoriesController
 			'dueDateHistories'=>$dueDateHistories,
 			'modelType'=>$invoiceModelName,
 			'customerNameOrSupplierNameText'=>$customerNameOrSupplierNameText,
-		
-			
 		]);
     }
 	public function store(Request $request, Company $company, $invoiceId , $invoiceModelName){

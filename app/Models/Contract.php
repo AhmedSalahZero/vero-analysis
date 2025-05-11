@@ -380,7 +380,7 @@ class Contract extends Model
 		->withPivot(['amount','cash_expense_id'])
 		;
 	}
-	public function getCashExpensePerCategoryName(array &$result,array &$totalCashOutFlowArray,string $moneyType,string $dateFieldName,string $startDate , string $endDate ,string $currentWeekYear , string $currencyName , ?string $chequeStatus = null ):void
+	public function getCashExpensePerCategoryName(array &$result,string $moneyType,string $dateFieldName,string $startDate , string $endDate ,string $currentWeekYear , string $currencyName , ?string $chequeStatus = null ):void
 	{
 		foreach($this->cashExpenses as $cashExpense){
 			/**
@@ -410,7 +410,7 @@ class Contract extends Model
 			$currentTotal = $currentAllocationAmount;
 			$result['cash_expenses'][$categoryName]['total'][$currentWeekYear] = isset($result['cash_expenses'][$categoryName]['total'][$currentWeekYear]) ? $result['cash_expenses'][$categoryName]['total'][$currentWeekYear] +  $currentTotal : $currentTotal ;
 			// $result['cash_expenses'][$categoryName]['total']['total_of_total'] = isset($result['cash_expenses'][$categoryName]['total']['total_of_total']) ? $result['cash_expenses'][$categoryName]['total']['total_of_total'] +   $currentAllocationAmount : $currentAllocationAmount ; 	
-			$totalCashOutFlowArray[$currentWeekYear] = isset($totalCashOutFlowArray[$currentWeekYear]) ? $totalCashOutFlowArray[$currentWeekYear] +   $currentTotal : $currentTotal ;
+			// $totalCashOutFlowArray[$currentWeekYear] = isset($totalCashOutFlowArray[$currentWeekYear]) ? $totalCashOutFlowArray[$currentWeekYear] +   $currentTotal : $currentTotal ;
 
 	}
 	

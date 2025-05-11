@@ -684,17 +684,15 @@ class CustomerInvoiceDashboardController extends Controller
 		$source = $request->get('lgSource');
         $reports = [];
 		$canShowDashboardPerCurrency = [];
-		 
-		foreach(['lg'=>
-		[
+		
+		foreach([
+			'lg'=>[
 			'letter_of_facility_table_name'=>'letter_of_guarantee_facilities',
 			'statement_table_name'=>'letter_of_guarantee_statements',
-			
 			'statement_table'=>'\App\Models\LetterOfGuaranteeStatement'
-			] ,
-			
+		],	
 			'lc'=>
-		[
+			[
 			'letter_of_facility_table_name'=>'letter_of_credit_facilities',
 			'statement_table_name'=>'letter_of_credit_statements',
 			'statement_table'=>'\App\Models\LetterOfCreditStatement'
@@ -704,19 +702,23 @@ class CustomerInvoiceDashboardController extends Controller
 			$statementTableFullClassName = $lgOrLcOptionsArr['statement_table'];
 			$letterOfFacilityTableName = $lgOrLcOptionsArr['letter_of_facility_table_name'];
 			$currentStatementTableName = $lgOrLcOptionsArr['statement_table_name'];
+
 			$lgOrLcTypes = $typesForLgAndLc[$currentLgOrLcType];
 			foreach ($selectedCurrencies as $currencyName) {
 				$financialInstitutionBankIds = [
 					'lg'=>array_keys($company->letterOfGuaranteeIssuances->where('status','!=','cancelled')->where('lg_currency',$currencyName)->load('financialInstitutionBank')->pluck('financialInstitutionBank.bank.name_en','financialInstitutionBank.id')->toArray()),
+					'lc'=>array_keys($company->letterOfCreditIssuances->where('status','!=','cancelled')->where('lc_cash_cover_currency',$currencyName)->load('financialInstitutionBank')->pluck('financialInstitutionBank.bank.name_en','financialInstitutionBank.id')->toArray()),
+					
 				][$currentLgOrLcType] ??[];
-			
 				$selectedFinancialInstitutionBankIds = $request->ajax() && $request->get('financialInstitutionId') > 0 ? (array)$request->get('financialInstitutionId') : $financialInstitutionBankIds; 
+				
 				
 					$canShowDashboardPerCurrency[$currentLgOrLcType][$currencyName]  = DB::table($currentStatementTableName)->where('company_id',$company->id)->where('currency',$currencyName)->exists();
 				
 				foreach($lgOrLcTypes as $currentLgType => $currentLgTitle){
 					$statementTableFullClassName::getDashboardOutstandingPerTypeFormattedData($charts,$company,$currencyName , $date , $currentLgType,$source,$selectedFinancialInstitutionBankIds);
 				}
+				
 				foreach ($selectedFinancialInstitutionBankIds as $financialInstitutionBankId) {
 					
 					$currentFinancialInstitution = FinancialInstitution::find($financialInstitutionBankId);
@@ -731,10 +733,15 @@ class CustomerInvoiceDashboardController extends Controller
 					->orderBy('contract_start_date', 'desc')
 					->limit(1)
 					->first();
+					
+					
+					
 						foreach($lgOrLcTypes as $currentLgType => $currentLgTitle){
 							$statementTableFullClassName::getDashboardOutstandingTableFormattedData($tablesData,$company,$currencyName , $date ,$financialInstitutionBankId,$currentLgType,$currentFinancialInstitution->getName(),$lastLetterOfGuaranteeOrCreditFacility,$source);
 						}
-			
+						if($currentLgOrLcType == 'lc'){
+							// dd($statementTableFullClassName,$statementTableFullClassName::getTotalCashCoverForAllTypes($company->id,$financialInstitutionBankId,$currencyName));
+						}
 						$details[$currencyName][$currentLgOrLcType][] = [
 							'limit'=>$currentLimit = $lastLetterOfGuaranteeOrCreditFacility ? $lastLetterOfGuaranteeOrCreditFacility->limit : 0 ,
 							'outstanding_balance'=> $currentOutstanding = $statementTableFullClassName::getTotalOutstandingBalanceForAllTypes($company->id,$financialInstitutionBankId,$currencyName)  , 

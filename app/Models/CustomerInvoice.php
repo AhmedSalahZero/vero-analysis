@@ -278,7 +278,7 @@ class CustomerInvoice extends Model implements IInvoice
 		->get()
 		->unique('currency')->pluck('currency','currency')->toArray();
 	}
-	public static function getCustomerInvoicesUnderCollectionAtDatesForContracts(array &$result , array &$totalCashInFlowArray , int $companyId ,string $currency  , ?string $contractCode , array $datesWithWeekNumber , string $endDate ):void
+	public static function getCustomerInvoicesUnderCollectionAtDatesForContracts(array &$result  , int $companyId ,string $currency  , ?string $contractCode , array $datesWithWeekNumber , string $endDate ):void
 	{
 		$key = __('Customers Invoices') ;
 		$items = self::where('company_id',$companyId)
@@ -304,7 +304,7 @@ class CustomerInvoice extends Model implements IInvoice
 			}
 		// } 
 	}
-	public static function getCashAndBankBalanceAtDate(array &$result , array &$totalCashInFlowArray , string $moneyType , string $dateColumnName , string $startDate , string $endDate, ?string $contractCode , string $currentWeekYear , ?string $chequeStatus = null  , $currency = null , $companyId = null):void
+	public static function getCashAndBankBalanceAtDate(array &$result   , string $startDate , string $currentWeekYear   , $currency , $companyId = null):void
 	{
 		/**
 		 * 
@@ -361,7 +361,7 @@ class CustomerInvoice extends Model implements IInvoice
 
 		
 	}
-	public static function getSettlementAmountUnderDateForSpecificType(array &$result , array &$totalCashInFlowArray , string $moneyType , string $dateColumnName , string $startDate , string $endDate, ?string $contractCode , string $currentWeekYear , ?string $chequeStatus = null  , $currency = null , $companyId = null):void
+	public static function getSettlementAmountUnderDateForSpecificType(array &$result  , string $moneyType , string $dateColumnName , string $startDate , string $endDate, ?int $contractId , string $currentWeekYear , ?string $chequeStatus = null  , $currency = null , $companyId = null):void
 	{
 		/**
 		 * 
@@ -392,6 +392,9 @@ class CustomerInvoice extends Model implements IInvoice
 		->where('money_received.type','=',$moneyType)
 		->where('receiving_currency',$currency)
 		->whereBetween($dateColumnName,[$startDate,$endDate])
+		->when($contractId , function($query) use ($contractId){
+			$query->where('contract_id',$contractId);
+		})
 		->where('money_received.company_id',$companyId)
 		// ->when($chequeStatus , function( $builder) use ($chequeStatus){
 		// 	$builder->join('cheques','cheques.money_received_id','=','money_received.id')->where('cheques.status',$chequeStatus);
@@ -419,7 +422,7 @@ class CustomerInvoice extends Model implements IInvoice
 			
 	}
 	
-	public static function getForecastedProjectCollection(array &$result , array &$totalCashInFlowArray  , string $startDate , string $endDate , $currency = null , $companyId = null , array $datesWithWeekNumber):void
+	public static function getForecastedProjectCollection(array &$result   , string $startDate , string $endDate , $currency = null , $companyId = null , array $datesWithWeekNumber):void
 	{
 		/**
 		 * 
@@ -568,13 +571,11 @@ class CustomerInvoice extends Model implements IInvoice
 	{
 		return 'invoice_date';
 	}
-	public static function getProjectionOtherCashIn(array &$result , array &$totalCashInFlowArray ,Company $company ):void
+	public static function getProjectionOtherCashIn(array &$result  ,Company $company,int $cashflowReportId ):void
 	{
-	//	$totalCashInFlowKey = __('Projected Other Cash In Items');
-		
 		$currentTypeText = 'Projected Other Cash In Items';
 		
-		$items = CashProjection::where('company_id',$company->id)->where('type','in')->get();
+		$items = CashProjection::where('company_id',$company->id)->where('cashflow_report_id',$cashflowReportId)->where('type','in')->get();
 		
 			foreach($items as $item){
 				$name = $item->name ; 
@@ -588,6 +589,7 @@ class CustomerInvoice extends Model implements IInvoice
 					
 				}
 			}
+			// dd($items,$cashflowReportId);
 	}
 	
 }

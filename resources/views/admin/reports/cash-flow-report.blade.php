@@ -382,20 +382,20 @@
                                     <td class="  sub-numeric-bg text-center editable-date"> 
 										@if($customerName == 'Customers Past Due Invoices')
 										<button   class="btn btn-sm btn-warning text-white js-show-customer-due-invoices-modal">{{ __('View') }}</button>
-                                                <x-modal.due-invoices :cashflowReport="isset($cashflowReport) ? $cashflowReport:null" :report-interval="$reportInterval" :currentInvoiceType="'CustomerInvoice'" :dates="$dates" :weeks="$weeks" :pastDueCustomerInvoices="$pastDueCustomerInvoices" :id="'test-modal-id'"></x-modal.due-invoices>
+                                                <x-modal.due-invoices :currencyName="$currencyName" :cashflowReport="isset($cashflowReport) ? $cashflowReport:null" :report-interval="$reportInterval" :currentInvoiceType="'CustomerInvoice'" :dates="$dates" :weeks="$weeks" :pastDueCustomerInvoices="$pastDueCustomerInvoices" :id="'test-modal-id'"></x-modal.due-invoices>
 										
 										@endif 
 										
 											@if($customerName == 'Suppliers Past Due Invoices')
 												<button   class="btn btn-sm btn-warning text-white js-show-customer-due-invoices-modal">{{ __('View') }}</button>
-                                                <x-modal.due-invoices :cashflowReport="isset($cashflowReport) ? $cashflowReport:null" :report-interval="$reportInterval" :currentInvoiceType="'SupplierInvoice'" :dates="$dates" :weeks="$weeks" :pastDueCustomerInvoices="$pastDueSupplierInvoices" :id="'test-modal-id'"></x-modal.due-invoices>
+                                                <x-modal.due-invoices :currencyName="$currencyName" :cashflowReport="isset($cashflowReport) ? $cashflowReport:null" :report-interval="$reportInterval" :currentInvoiceType="'SupplierInvoice'" :dates="$dates" :weeks="$weeks" :pastDueCustomerInvoices="$pastDueSupplierInvoices" :id="'test-modal-id'"></x-modal.due-invoices>
 										
 											@endif 
 											@if($customerName == 'Loan Past Due Installments')
 
 												<button   class="btn btn-sm btn-warning text-white js-show-loan-past-due-installment-modal">{{ __('View') }}</button>
                                                 {{-- <x-modal.due-invoices :report-interval="$reportInterval" :currentInvoiceType="'SupplierInvoice'" :dates="$dates" :weeks="$weeks" :pastDueCustomerInvoices="$pastDueSupplierInvoices" :id="'test-modal-id'"></x-modal.due-invoices> --}}
-												  <x-modal.loan-installment :cashflowReport="isset($cashflowReport) ? $cashflowReport : null" :report-interval="$reportInterval"  :dates="$dates" :weeks="$weeks" :pastDueCustomerInvoices="$pastDueInstallments" :id="'test-modal-id'"></x-modal.loan-installment>
+												  <x-modal.loan-installment  :currencyName="$currencyName" :cashflowReport="isset($cashflowReport) ? $cashflowReport : null" :report-interval="$reportInterval"  :dates="$dates" :weeks="$weeks" :pastDueCustomerInvoices="$pastDueInstallments" :id="'test-modal-id'"></x-modal.loan-installment>
 										
 											@endif 
 											
@@ -467,6 +467,7 @@
                 @push('js')
                 <script>
                     $(document).on('click', '.trigger-child-row-1', function(e) {
+				
                         const parentId = $(e.target.closest('tr')).data('model-id');
                         var parentRow = $(e.target).parent();
                         var subRows = parentRow.nextAll('tr.add-sub.maintable-1-row-class' + parentId);

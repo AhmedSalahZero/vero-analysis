@@ -155,6 +155,7 @@ class LetterOfCreditIssuanceController
 		$letterOfCreditFacilityId =  0 ; 
 		$contractId = $request->get('contract_id');
 		$purchaseOrderId = $request->get('purchase_order_id');
+		$lcCashCoverCurrency = $request->get('lc_cash_cover_currency');
 		$contractType  = null ;
 		$newPurchaseOrderNumber = $request->get('new_purchase_order_number') ;
 	
@@ -248,7 +249,7 @@ class LetterOfCreditIssuanceController
 		$commentEn = __('LC Issuance Cash Cover [:lcType] [:transactionName]',['lcType'=>$lcType,'transactionName'=>$transactionName],'en');
 		$commentAr = __('LC Issuance Cash Cover [:lcType] [:transactionName]',['lcType'=>$lcType,'transactionName'=>$transactionName],'ar');
 		$model->handleLetterOfCreditStatement($financialInstitutionId,$source,$letterOfCreditFacilityId , $lcType,$company->id , $issuanceDate ,0 ,$cashCoverAmount,0,$lcCashCoverOrCdOrTdCurrency,0,$cdOrTdId,'credit-lc-amount',$commentEn,$commentAr);
-		$model->handleLetterOfCreditCashCoverStatement($financialInstitutionId,$source,$letterOfCreditFacilityId , $lcType,$company->id , $issuanceDate ,0 ,$cashCoverAmount,0,$currency,0,'credit-lc-amount');
+		$model->handleLetterOfCreditCashCoverStatement($financialInstitutionId,$source,$letterOfCreditFacilityId , $lcType,$company->id , $issuanceDate ,0 ,$cashCoverAmount,0,$lcCashCoverCurrency,0,'credit-lc-amount');
 		
 		// $lcDurationDays = $request->get('lc_duration_days',1);
 	//	$numberOfIterationsForQuarter = ceil($lcDurationDays / 3); 

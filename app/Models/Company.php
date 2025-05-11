@@ -633,8 +633,27 @@ class Company extends Model implements HasMedia
 	{
 		return Department::where('type',$type)->get();
 	}
+	public function cashflowReports():HasMany
+	{
+		return $this->hasMany(CashflowReport::class , 'company_id','id');
+	}
 	public function cashProjects()
 	{
-		return $this->hasMany(CashProjection::class);
+		return $this->hasMany(CashProjection::class)->where('cashflow_report_id',0);
+	}
+	public function resetCashflowReport()
+	{
+		DB::table('weekly_cashflow_custom_due_invoices')
+		->where('cashflow_report_id',0)
+		->where('company_id',$this->id)->delete();		
+		
+		DB::table('weekly_cashflow_custom_past_due_schedules')
+		->where('cashflow_report_id',0)
+		->where('company_id',$this->id)
+		->delete();
+
+		DB::table('cash_projections')
+		->where('cashflow_report_id','=',0)->where('company_id',$this->id)->delete();
+		
 	}
 }

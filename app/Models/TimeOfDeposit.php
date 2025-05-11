@@ -305,7 +305,7 @@ class TimeOfDeposit extends Model
 		$this->storeCurrentAccountDebitBankStatement($statementDate,$interestAmount,$financialInstitutionAccount->id,true,$commentEn , $commentAr);
 		return $interestAmount; 
 	}
-	public static function getAmountAndInterestAtDates(array &$result , array &$totalCashInFlowArray,string $currency , int $companyId, string $startDate , string $endDate , string $currentWeekYear) 
+	public static function getAmountAndInterestAtDates(array &$result ,string $currency , int $companyId, string $startDate , string $endDate , string $currentWeekYear) 
 	{
 		$tdsTypes = [
 			self::MATURED => __('Matured'),

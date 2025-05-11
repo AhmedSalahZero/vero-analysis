@@ -306,24 +306,7 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
 							$index++
 						@endphp
 
-                        {{-- <li class="nav-item">
-                    <a class="nav-link {{ Request('active') == BuyOrSellCurrency::SAFE_TO_BANK ?'active':'' }}" data-toggle="tab" href="#{{ BuyOrSellCurrency::SAFE_TO_BANK }}" role="tab">
-                        <i class="fa fa-money-check-alt"></i> {{ __('Safe To Bank') }}
-                        </a>
-                        </li>
-
-
-                        <li class="nav-item">
-                            <a class="nav-link {{ Request('active') == BuyOrSellCurrency::BANK_TO_SAFE ?'active':'' }}" data-toggle="tab" href="#{{ BuyOrSellCurrency::BANK_TO_SAFE }}" role="tab">
-                                <i class="fa fa-money-check-alt"></i> {{ __('Bank To Safe') }}
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a class="nav-link {{ Request('active') == BuyOrSellCurrency::SAFE_TO_SAFE ?'active':'' }}" data-toggle="tab" href="#{{ BuyOrSellCurrency::SAFE_TO_SAFE }}" role="tab">
-                                <i class="fa fa-money-check-alt"></i> {{ __('Safe To Safe') }}
-                            </a>
-                        </li> --}}
+                    
 
                     </ul>
 
@@ -355,7 +338,7 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
                                     <table class="table kt_table_with_no_pagination_no_collapse{{ $tableId }} table-striped- table-bordered table-hover table-checkable position-relative table-with-two-subrows main-table-class{{ $tableId }} dataTable no-footer">
                                         <thead>
                                             <tr class="header-tr ">
-                                                <th rowspan="{{ $noRowHeaders }}" class="view-table-th expand-all is-open-parent header-th editable-date max-w-classes-expand align-middle text-center trigger-child-row-1">
+                                                <th rowspan="{{ $noRowHeaders }}" class="view-table-th expand-all is-open-parent header-th editable-date max-w-classes-expand align-middle text-center  trigger-child-row-1">
                                                     {{ __('Expand All' ) }} 
                                                     <span>+</span>
                                                 </th>
@@ -475,22 +458,22 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
 											
 											{{-- {{ dD($pastDueLoanInstallments,$dates) }} --}}
 					 <tr class=" @if($customerName == __('Total Cash Inflow') || $customerName == __('Total Cash Outflow') ||  $customerName == __('Total Cash')) bg-lighter @else  @endif  parent-tr reset-table-width text-nowrap  cursor-pointer sub-text-bg text-capitalize is-close   " data-model-id="{{ $rowIndex }}">
-                                    <td class="red reset-table-width text-nowrap trigger-child-row-1 cursor-pointer sub-text-bg text-capitalize main-tr is-close"> @if($hasSubRows) + @endif  </td>
+                                    <td class="red reset-table-width text-nowrap @if($hasSubRows) trigger-child-row-1 cursor-pointer @endif sub-text-bg text-capitalize main-tr is-close"> @if($hasSubRows) + @endif  </td>
                                     <td class="sub-text-bg   editable-text  max-w-classes-name is-name-cell ">{{ $customerName }}</td>
                                     <td class="  sub-numeric-bg text-center editable-date"> 
 										@if($customerName == __('Customers Past Due Invoices'))
 										<button   class="btn btn-sm btn-danger text-white js-show-customer-due-invoices-modal">{{ __('View') }}</button>
-                                                <x-modal.due-invoices  :cashflowReport="isset($cashflowReport) ? $cashflowReport:null" :report-interval="$reportInterval" :currentInvoiceType="'CustomerInvoice'" :dates="$dates" :weeks="$weeks" :pastDueCustomerInvoices="$pastDueCustomerInvoices[$currentCurrencyName]??[]" :id="'test-modal-id'"></x-modal.due-invoices>
+                                                <x-modal.due-invoices :currencyName="$currencyName"  :cashflowReport="isset($cashflowReport) ? $cashflowReport:null" :report-interval="$reportInterval" :currentInvoiceType="'CustomerInvoice'" :dates="$dates" :weeks="$weeks" :pastDueCustomerInvoices="$pastDueCustomerInvoices[$currentCurrencyName]??[]" :id="'test-modal-id'"></x-modal.due-invoices>
 										@endif 
 										
 											@if($customerName == 'Suppliers Past Due Invoices')
 												<button   class="btn btn-sm btn-danger text-white js-show-customer-due-invoices-modal">{{ __('View') }}</button>
-                                                <x-modal.due-invoices :cashflowReport="isset($cashflowReport) ? $cashflowReport:null" :report-interval="$reportInterval" :currentInvoiceType="'SupplierInvoice'" :dates="$dates" :weeks="$weeks" :pastDueCustomerInvoices="$pastDueSupplierInvoices" :id="'test-modal-id'"></x-modal.due-invoices>
+                                                <x-modal.due-invoices :currencyName="$currencyName" :cashflowReport="isset($cashflowReport) ? $cashflowReport:null" :report-interval="$reportInterval" :currentInvoiceType="'SupplierInvoice'" :dates="$dates" :weeks="$weeks" :pastDueCustomerInvoices="$pastDueSupplierInvoices" :id="'test-modal-id'"></x-modal.due-invoices>
 										
 											@endif 
 												@if($customerName == 'Loan Past Due Installments')
 												<button   class="btn btn-sm btn-danger text-white js-show-loan-past-due-installment-modal">{{ __('View') }}</button>
-                                                <x-modal.loan-installment :cashflowReport="isset($cashflowReport) ? $cashflowReport:null" :report-interval="$reportInterval"  :dates="$dates" :weeks="$weeks" :pastDueCustomerInvoices="$pastDueInstallments" :id="'test-modal-id'"></x-modal.loan-installment>
+                                                <x-modal.loan-installment  :currencyName="$currencyName" :cashflowReport="isset($cashflowReport) ? $cashflowReport:null" :report-interval="$reportInterval"  :dates="$dates" :weeks="$weeks" :pastDueCustomerInvoices="$pastDueInstallments" :id="'test-modal-id'"></x-modal.loan-installment>
 										
 											@endif 
 											

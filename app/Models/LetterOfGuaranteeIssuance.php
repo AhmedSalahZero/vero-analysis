@@ -480,7 +480,7 @@ class LetterOfGuaranteeIssuance extends Model
 	{
 		return $this->issuance_fees ;
 	}	
-	public static function getCommissionAndFeesAtDates(array &$result , array &$totalCashOutFlowArray,string $dateFieldName,string $currency , int $companyId, string $startDate , string $endDate , string $currentWeekYear) 
+	public static function getCommissionAndFeesAtDates(array &$result ,string $dateFieldName,string $currency , int $companyId, string $startDate , string $endDate , string $currentWeekYear) 
 	{
 		$lgsTypes = LgTypes::getAll();
 		$mainType = 'cash_expenses';
@@ -511,7 +511,7 @@ class LetterOfGuaranteeIssuance extends Model
 	
 	}
 	
-	public static function getCashCovers(array &$result , array &$totalCashInFlowArray,string $dateFieldName,string $currency , int $companyId, string $startDate , string $endDate , string $currentWeekYear) 
+	public static function getCashCovers(array &$result ,string $dateFieldName,string $currency , int $companyId, string $startDate , string $endDate , string $currentWeekYear) 
 	{
 		$lgsTypes = LgTypes::getAll();
 		// $mainType = 'lg';

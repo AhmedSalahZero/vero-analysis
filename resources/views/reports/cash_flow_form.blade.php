@@ -45,7 +45,7 @@
 
         <!--begin::Form-->
         <form class="kt-form kt-form--label-right" method="get" action="{{ route('result.cashflow.report',['company'=>$company->id ]) }}" enctype="multipart/form-data">
-            @csrf
+            {{-- @csrf --}}
             <div class="kt-portlet" style="overflow-x:hidden">
 
                 <div class="kt-portlet__body">
@@ -112,19 +112,22 @@
 								{{ __('Note: Kindly the date of Today must be included within the report duration') }}
 							</p>
 						</div>
+						<div class="col-md-3 mt-4">
+						 <label>{{__('Reset [Past Dues & Other Projected Cash In & Out]')}} </label>
+                            <div class="kt-input-icon">
+                                <div class="input-group date justify-content-center">
+                                            <input name="reset_report"  class="form-control max-w-checkbox  text-center" value="1"   type="checkbox">
+								</div>
+								</div>
+						</div>
 						
 						<div class="col-md-3 mt-4">
-						{{-- <div class="d-flex align-items-center"> --}}
 						 <label>{{__('Do You Want To Save Report')}} </label>
-
                             <div class="kt-input-icon">
-                                <div class="input-group date">
+                                <div class="input-group date ">
                                             <input name="save_report"  class="form-control max-w-checkbox want-to-save-report  text-center" value="1"   type="checkbox">
-								
 								</div>
 								</div>
-						
-                                        {{-- </div> --}}
 						</div>
 						
 						
@@ -139,7 +142,7 @@
 				
 				
 				
-					{{-- @include('cashflow-report-index') --}}
+				
 						
 
 					
@@ -161,17 +164,20 @@
 
 
                 </div>
-                <x-submitting />
+				
+					
 
+		
             </div>
     </div>
-
-
-
-
-
+                <x-submitting />
     </form>
 
+
+
+
+
+			@include('cashflow-report-index')
     <!--end::Form-->
 
     <!--end::Portlet-->

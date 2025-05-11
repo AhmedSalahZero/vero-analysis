@@ -677,7 +677,7 @@ class LetterOfCreditIssuance extends Model
 		]);
 	}
 	
-	public static function getCommissionAndFeesAtDates(array &$result , array &$totalCashOutFlowArray,string $dateFieldName,string $currency , int $companyId, string $startDate , string $endDate , string $currentWeekYear) 
+	public static function getCommissionAndFeesAtDates(array &$result ,string $dateFieldName,string $currency , int $companyId, string $startDate , string $endDate , string $currentWeekYear) 
 	{
 		$lcsTypes = LcTypes::getAll();
 		$mainType = 'cash_expenses';
@@ -708,7 +708,7 @@ class LetterOfCreditIssuance extends Model
 	
 	}
 	
-	public static function getRemainingLcAmountAtDates(array &$result , array &$totalCashOutFlowArray,string $currency , int $companyId, string $startDate , string $endDate , string $currentWeekYear) 
+	public static function getRemainingLcAmountAtDates(array &$result ,string $currency , int $companyId, string $startDate , string $endDate , string $currentWeekYear) 
 	{
 		$lcsTypes = LcTypes::getAll();
 		$mainType = 'cash_expenses';
