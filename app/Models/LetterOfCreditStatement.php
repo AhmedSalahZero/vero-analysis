@@ -217,7 +217,7 @@ class LetterOfCreditStatement extends Model
 	// }
 	
 	
-	public static function getTotalOutstandingBalanceForAllTypes(int $companyId , int $financialInstitutionId,string $currencyName):float 
+	public static function getTotalOutstandingBalanceForAllTypes(int $lcFacilityId , int $companyId , int $financialInstitutionId,string $currencyName):float 
 	{
 		$totalLastOutstandingBalanceOfFourTypes = 0 ;
 		foreach(LcTypes::getAll() as $lcTypeId => $lcTypeNameFormatted){	
@@ -229,6 +229,7 @@ class LetterOfCreditStatement extends Model
 					->where('company_id',$companyId)
 					->where('financial_institution_id',$financialInstitutionId)
 					->where('currency',$currencyName)
+					->where('lc_facility_id',$lcFacilityId)
 					->where('lc_type',$lcTypeId)
 					->where('source',$currentSourceId)
 					->orderByRaw('date desc , id desc')
@@ -321,11 +322,11 @@ class LetterOfCreditStatement extends Model
 				if(!$rowPerType){continue ;}
 				$currentOutstandingBalance = abs($rowPerType->end_balance) ;
 				$currentLimit = $lastLetterOfCreditFacility ? $lastLetterOfCreditFacility->limit : 0 ;
-				$tablesData['lc_outstanding_for_table'][$currencyName][] = ['financial_institution_name'=>$financialInstitutionName , 'outstanding'=>$currentOutstandingBalance , 'source'=>LetterOfCreditIssuance::lcSources()[$rowPerType->source] , 'type'=>LcTypes::getAll()[$rowPerType->lc_type] , 'limit'=>$currentLimit , 'cash_cover'=>LetterOfCreditStatement::getTotalCashCoverForAllTypes($company->id,$financialInstitutionId,$currencyName,$lcTypeId,$currentSourceId)] ;
+				$tablesData['lc_outstanding_for_table'][$currencyName][] = ['financial_institution_name'=>$financialInstitutionName , 'outstanding'=>$currentOutstandingBalance , 'source'=>LetterOfCreditIssuance::lcSources()[$rowPerType->source] , 'type'=>LcTypes::getAll()[$rowPerType->lc_type] , 'limit'=>$currentLimit , 'cash_cover'=>LetterOfCreditStatement::getTotalCashCoverForAllTypes($lastLetterOfCreditFacility->id,$company->id,$financialInstitutionId,$currencyName,$lcTypeId,$currentSourceId)] ;
 			
 		}
 		}
-	public static function getTotalCashCoverForAllTypes(int $companyId , int $financialInstitutionId,string $currency , ?string $type = null , ?string $source = null):float 
+	public static function getTotalCashCoverForAllTypes(int $lcFacilityId,int $companyId , int $financialInstitutionId,string $currency , ?string $type = null , ?string $source = null):float 
 	{
 		$totalLastCashCoverOfFourTypes = 0 ;
 		foreach(LcTypes::getAll() as $lcTypeId => $lcTypeNameFormatted){
@@ -333,6 +334,7 @@ class LetterOfCreditStatement extends Model
 			->where('company_id',$companyId)
 			->where('currency',$currency)
 			->where('financial_institution_id',$financialInstitutionId)
+			->where('lc_facility_id',$lcFacilityId)
 			// ->where('lc_type',$lcTypeId)
 			->when($type , function(Builder $builder) use ($type){
 				$builder->where('lc_type',$type);

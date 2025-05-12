@@ -129,7 +129,6 @@
     @php
     $index = 0 ;
     @endphp
-
     @foreach($selectedCurrencies as $name=>$currency)
 	
     <div class="tab-pane  @if($activeCurrency == $currency) active @endif" id="kt_apps_contacts_view_tab_main{{ $index }}" role="tabpanel">
@@ -192,7 +191,6 @@
 						] as $currentColType=>$currentColOptions )
                     <div class="col-md-6 col-lg-3 col-xl-3">
 @php
-	
 @endphp
                         <!--begin::Total Profit-->
                         <div class="kt-widget24 text-center">
@@ -233,7 +231,6 @@
             </div>
         </div>
         <!--end:: Widgets/Stats-->
-
 
      
 		

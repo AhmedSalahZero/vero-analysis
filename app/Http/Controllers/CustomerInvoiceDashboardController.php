@@ -666,7 +666,6 @@ class CustomerInvoiceDashboardController extends Controller
 				'lc'=>$lcTypes
 			];
 		$financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
-		// $financialInstitutionBankIds = $financialInstitutionBanks->pluck('id')->toArray();
 		
 	
 		$currentDate = now()->format('Y-m-d') ;
@@ -705,58 +704,74 @@ class CustomerInvoiceDashboardController extends Controller
 
 			$lgOrLcTypes = $typesForLgAndLc[$currentLgOrLcType];
 			foreach ($selectedCurrencies as $currencyName) {
+				
+				
 				$financialInstitutionBankIds = [
 					'lg'=>array_keys($company->letterOfGuaranteeIssuances->where('status','!=','cancelled')->where('lg_currency',$currencyName)->load('financialInstitutionBank')->pluck('financialInstitutionBank.bank.name_en','financialInstitutionBank.id')->toArray()),
 					'lc'=>array_keys($company->letterOfCreditIssuances->where('status','!=','cancelled')->where('lc_cash_cover_currency',$currencyName)->load('financialInstitutionBank')->pluck('financialInstitutionBank.bank.name_en','financialInstitutionBank.id')->toArray()),
-					
 				][$currentLgOrLcType] ??[];
 				$selectedFinancialInstitutionBankIds = $request->ajax() && $request->get('financialInstitutionId') > 0 ? (array)$request->get('financialInstitutionId') : $financialInstitutionBankIds; 
 				
+				$currentLimit = DB::table($letterOfFacilityTableName)
+				->where($letterOfFacilityTableName.'.company_id', $company->id)
+				->where('currency', $currencyName)
+				->where('contract_end_date', '>=', $date)
+			//	->where($letterOfFacilityTableName.'.financial_institution_id', '=', $financialInstitutionBankId)
+				->orderBy('contract_end_date', 'desc')
+				->sum('limit'); 
+				$reports[$currentLgOrLcType][$currencyName]['limit'] = $currentLimit ;
 				
-					$canShowDashboardPerCurrency[$currentLgOrLcType][$currencyName]  = DB::table($currentStatementTableName)->where('company_id',$company->id)->where('currency',$currencyName)->exists();
+					$canShowDashboardPerCurrency[$currentLgOrLcType][$currencyName]  = $currentLimit > 0;
+					// $canShowDashboardPerCurrency[$currentLgOrLcType][$currencyName]  = DB::table($currentStatementTableName)->where('company_id',$company->id)->where('currency',$currencyName)->exists();
 				
 				foreach($lgOrLcTypes as $currentLgType => $currentLgTitle){
 					$statementTableFullClassName::getDashboardOutstandingPerTypeFormattedData($charts,$company,$currencyName , $date , $currentLgType,$source,$selectedFinancialInstitutionBankIds);
 				}
+				
 				
 				foreach ($selectedFinancialInstitutionBankIds as $financialInstitutionBankId) {
 					
 					$currentFinancialInstitution = FinancialInstitution::find($financialInstitutionBankId);
 					$statementTableFullClassName::getDashboardOutstandingPerFinancialInstitutionFormattedData($charts,$company,$currencyName , $date ,$financialInstitutionBankId,$currentFinancialInstitution->getName(),$source,$lgOrLcTypes);
 						
-					$lastLetterOfGuaranteeOrCreditFacility = DB::table($letterOfFacilityTableName)
-					->join('financial_institutions', $letterOfFacilityTableName.'.financial_institution_id', '=', 'financial_institutions.id')
-					->where('financial_institutions.company_id', $company->id)
+					$lastLetterOfGuaranteeOrCreditFacilities = DB::table($letterOfFacilityTableName)
+					// ->join('financial_institutions', $letterOfFacilityTableName.'.financial_institution_id', '=', 'financial_institutions.id')
+					->where($letterOfFacilityTableName.'.company_id', $company->id)
 					->where('currency', $currencyName)
-					->where('contract_start_date', '<=', $date)
+					->where('contract_end_date', '>=', $date)
 					->where($letterOfFacilityTableName.'.financial_institution_id', '=', $financialInstitutionBankId)
-					->orderBy('contract_start_date', 'desc')
-					->limit(1)
-					->first();
+					->orderBy('contract_end_date', 'desc')
+					->get();
 					
 					
-					
+					foreach($lastLetterOfGuaranteeOrCreditFacilities as $currentLastLetterOfGuaranteeOrCreditFacility){
 						foreach($lgOrLcTypes as $currentLgType => $currentLgTitle){
-							$statementTableFullClassName::getDashboardOutstandingTableFormattedData($tablesData,$company,$currencyName , $date ,$financialInstitutionBankId,$currentLgType,$currentFinancialInstitution->getName(),$lastLetterOfGuaranteeOrCreditFacility,$source);
+							$statementTableFullClassName::getDashboardOutstandingTableFormattedData($tablesData,$company,$currencyName , $date ,$financialInstitutionBankId,$currentLgType,$currentFinancialInstitution->getName(),$currentLastLetterOfGuaranteeOrCreditFacility,$source);
 						}
-						if($currentLgOrLcType == 'lc'){
-							// dd($statementTableFullClassName,$statementTableFullClassName::getTotalCashCoverForAllTypes($company->id,$financialInstitutionBankId,$currencyName));
+						
+					}
+						// if($currentLgOrLcType == 'lc'){
+						// 	// dd($statementTableFullClassName,$statementTableFullClassName::getTotalCashCoverForAllTypes($company->id,$financialInstitutionBankId,$currencyName));
+						// }
+						foreach($lastLetterOfGuaranteeOrCreditFacilities as $currentLastLetterOfGuaranteeOrCreditFacility){
+					//		dd($currentLastLetterOfGuaranteeOrCreditFacility);
+							$details[$currencyName][$currentLgOrLcType][] = [
+								'limit'=>$currentLimit = $currentLastLetterOfGuaranteeOrCreditFacility ? $currentLastLetterOfGuaranteeOrCreditFacility->limit : 0 ,
+								'outstanding_balance'=> $currentOutstanding = $statementTableFullClassName::getTotalOutstandingBalanceForAllTypes($currentLastLetterOfGuaranteeOrCreditFacility->id,$company->id,$financialInstitutionBankId,$currencyName)  , 
+								'room'=> $currentRoom = $currentLimit - $currentOutstanding ,
+								'cash_cover'=> $currentCashCover = $statementTableFullClassName::getTotalCashCoverForAllTypes($currentLastLetterOfGuaranteeOrCreditFacility->id,$company->id,$financialInstitutionBankId,$currencyName)  , 
+								'financial_institution_name'=>$currentFinancialInstitution->getName()
+							] ;
+							$total[$currentLgOrLcType][$currencyName]['limit'] = isset($total[$currentLgOrLcType][$currencyName]['limit']) ? $total[$currentLgOrLcType][$currencyName]['limit'] + $currentLimit  : $currentLimit ;
+							$total[$currentLgOrLcType][$currencyName]['outstanding_balance'] = isset($total[$currentLgOrLcType][$currencyName]['outstanding_balance']) ? $total[$currentLgOrLcType][$currencyName]['outstanding_balance'] + $currentOutstanding  : $currentOutstanding ;
+							$total[$currentLgOrLcType][$currencyName]['room'] = isset($total[$currentLgOrLcType][$currencyName]['room']) ? $total[$currentLgOrLcType][$currencyName]['room'] + $currentRoom  : $currentRoom ;
+							$total[$currentLgOrLcType][$currencyName]['cash_cover'] = isset($total[$currentLgOrLcType][$currencyName]['cash_cover']) ? $total[$currentLgOrLcType][$currencyName]['cash_cover'] + $currentCashCover  : $currentCashCover ;
+				
 						}
-						$details[$currencyName][$currentLgOrLcType][] = [
-							'limit'=>$currentLimit = $lastLetterOfGuaranteeOrCreditFacility ? $lastLetterOfGuaranteeOrCreditFacility->limit : 0 ,
-							'outstanding_balance'=> $currentOutstanding = $statementTableFullClassName::getTotalOutstandingBalanceForAllTypes($company->id,$financialInstitutionBankId,$currencyName)  , 
-							'room'=> $currentRoom = $currentLimit - $currentOutstanding ,
-							'cash_cover'=> $currentCashCover = $statementTableFullClassName::getTotalCashCoverForAllTypes($company->id,$financialInstitutionBankId,$currencyName)  , 
-							'financial_institution_name'=>$currentFinancialInstitution->getName()
-						] ;
-					$total[$currentLgOrLcType][$currencyName]['limit'] = isset($total[$currentLgOrLcType][$currencyName]['limit']) ? $total[$currentLgOrLcType][$currencyName]['limit'] + $currentLimit  : $currentLimit ;
-					$total[$currentLgOrLcType][$currencyName]['outstanding_balance'] = isset($total[$currentLgOrLcType][$currencyName]['outstanding_balance']) ? $total[$currentLgOrLcType][$currencyName]['outstanding_balance'] + $currentOutstanding  : $currentOutstanding ;
-					$total[$currentLgOrLcType][$currencyName]['room'] = isset($total[$currentLgOrLcType][$currencyName]['room']) ? $total[$currentLgOrLcType][$currencyName]['room'] + $currentRoom  : $currentRoom ;
-					$total[$currentLgOrLcType][$currencyName]['cash_cover'] = isset($total[$currentLgOrLcType][$currencyName]['cash_cover']) ? $total[$currentLgOrLcType][$currencyName]['cash_cover'] + $currentCashCover  : $currentCashCover ;
-		
+					
 	
 				}
-				$reports[$currentLgOrLcType][$currencyName]['limit'] = $total[$currentLgOrLcType][$currencyName]['limit'] ?? 0 ;
+				// $reports[$currentLgOrLcType][$currencyName]['limit'] = $total[$currentLgOrLcType][$currencyName]['limit'] ?? 0 ;
 				$reports[$currentLgOrLcType][$currencyName]['outstanding_balance'] = $total[$currentLgOrLcType][$currencyName]['outstanding_balance'] ?? 0 ;
 				$reports[$currentLgOrLcType][$currencyName]['room'] = $total[$currentLgOrLcType][$currencyName]['room'] ?? 0 ;
 				$reports[$currentLgOrLcType][$currencyName]['cash_cover'] = $total[$currentLgOrLcType][$currencyName]['cash_cover'] ?? 0 ;
@@ -765,7 +780,6 @@ class CustomerInvoiceDashboardController extends Controller
 			
 		}
         
-		
 		if($request->ajax()){
 			
 			return response()->json([
