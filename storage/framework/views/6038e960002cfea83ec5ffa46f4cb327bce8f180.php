@@ -31,11 +31,11 @@
             </div>
             <div class="modal-body">
                 <div class="customize-elements">
-                    <table class="table">
+                    <table class="table  kt_table_with_no_pagination_no_collapse table-striped- table-bordered table-hover table-checkable position-relative table-with-two-subrows main-table-class dataTable no-footer">
                         <thead>
-                            <tr>
+                            <tr class="header-tr">
 								<?php $__currentLoopData = $notificationHeaders; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $notificationHeader): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                <th class="text-center"> <?php echo __($notificationHeader); ?> </th>
+                                <th class="view-table-th   bg-lighter header-th  align-middle text-center"> <?php echo __($notificationHeader); ?> </th>
 								<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </tr>
                         </thead>

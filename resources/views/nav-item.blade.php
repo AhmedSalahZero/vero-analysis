@@ -48,7 +48,7 @@ kt-menu__toggle align-items-center
                 <a
 				@if(isset($subItemOptions['attr']) )
 				@foreach((array) $subItemOptions['attr']  as $attr=>$value)
-				{{ $attr.'='.$value . ' ' }}
+					{{ $attr.'='.$value . ' ' }}
 				@endforeach 
 				@endif
 

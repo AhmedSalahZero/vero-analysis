@@ -7,7 +7,25 @@
             $hasSubmenu =isset($menuArr['submenu']) && count($menuArr['submenu']);
             ?>
             <?php if($menuArr['show']): ?>
-            <li class="kt-menu__item  kt-menu__item--submenu kt-menu__item--rel" data-ktmenu-submenu-toggle="click" aria-haspopup="true"><a href="<?php if( !$hasSubmenu ): ?> <?php echo e($menuArr['link']); ?> <?php else: ?> javascript:;       <?php endif; ?>" class="kt-menu__link <?php if($hasSubmenu): ?> kt-menu__toggle <?php endif; ?>"><span class="kt-menu__link-text"><?php echo $menuArr['title']; ?></span><i class="kt-menu__ver-arrow la la-angle-right"></i></a>
+            <li 
+		
+			
+			
+			class="kt-menu__item  kt-menu__item--submenu kt-menu__item--rel" data-ktmenu-submenu-toggle="click" aria-haspopup="true"><a href="<?php if( !$hasSubmenu ): ?> <?php echo e($menuArr['link']); ?> <?php else: ?> javascript:;       <?php endif; ?>" class="kt-menu__link  <?php if($hasSubmenu): ?> kt-menu__toggle align-items-center <?php endif; ?>"><span  class="kt-menu__link-text"><?php echo $menuArr['title']; ?>
+
+			<?php if(isset($menuArr['is-notification']) && isset($menuArr['is-notification'])): ?>
+			
+			<span style="display:block !important;color:red !important;font-size:20px !important;margin-left:-17px !important;">
+				<?php echo e(count($company->notifications)); ?>
+
+			</span>
+			<?php endif; ?> 
+			
+			</span>
+			
+			<i class="kt-menu__ver-arrow la la-angle-right"></i>
+			
+			</a>
                 <div class="kt-menu__submenu kt-menu__submenu--classic kt-menu__submenu--left">
                     <ul class="kt-menu__subnav">
                         <?php if($hasSubmenu): ?>

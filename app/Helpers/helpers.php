@@ -6524,7 +6524,8 @@ function getHeaderMenu($currentCompany = null)
 			'title'=>__('Notifications & Settings'),
 			'link'=>'#',
 			'show'=>$canViewNotificationsSettingAndGeneralSetting,
-			'submenu'=>$notificationsSubItems
+			'submenu'=>$notificationsSubItems,
+			'is-notification'=>true 
 		],
 		'cash-dashboard'=>[
 			'title'=>__('Cash Dashboard'),
@@ -6731,7 +6732,7 @@ function getHeaderMenu($currentCompany = null)
 					'submenu'=>[]
 				],
 				[
-					'title'=>__('Supplier Payment'),
+					'title'=>__('Money Payment'),
 					'link'=>route('view.money.payment', ['company'=>$companyId]),
 					'show'=>$user->can('view supplier payment'),
 					'submenu'=>[]

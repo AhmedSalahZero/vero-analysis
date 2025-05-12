@@ -28,16 +28,20 @@ class CashExpenseStatementController
 		$startDate = $request->get('start_date');
 		$endDate = $request->get('end_date');
 		$currency = $request->get('currency');
-		$expenseCategory = CashExpenseCategory::find($request->get('expense_category_id'))->getName();
+		$expenseCategory =count($request->get('expense_category_id'))  == 1 ? CashExpenseCategory::find($request->get('expense_category_id'))->getName() : null;
 		$cashExpenseCategoryId = $request->get('cash_expense_category_name_id'); 
-		$expenseCategoryName = CashExpenseCategoryName::find($cashExpenseCategoryId)->getName();
+		$expenseCategoryName = count($cashExpenseCategoryId)  == 1 ?  CashExpenseCategoryName::find($cashExpenseCategoryId)->getName() : null ;
 
-		$result = DB::table('cash_expenses')->where('company_id',$company->id)->where('currency',$currency)
+		$result = DB::table('cash_expenses')->where('cash_expenses.company_id',$company->id)->where('currency',$currency)
 		->where('payment_date','>=',$startDate)
 		->where('payment_date','<=',$endDate)
-		->where('cash_expense_category_name_id',$cashExpenseCategoryId)
-		->orderBy('payment_date')
+		->whereIn('cash_expense_category_name_id',$cashExpenseCategoryId)
+		->orderByRaw('payment_date asc')
+		->join('cash_expense_category_names','cash_expense_category_names.id','=','cash_expenses.cash_expense_category_name_id')
+		->join('cash_expense_categories','cash_expense_categories.id','=','cash_expense_category_names.cash_expense_category_id')
+		->selectRaw('cash_expenses.*,cash_expense_category_names.name as sub_category_name , cash_expense_categories.name as main_category_name ' )
 		->get();
+		// dd($result);
 		// ->whereBet('payment_date');
 		// $results=DB::table('cash_in_safe_statements')
 		// ->where('company_id',$company->id)

@@ -109,7 +109,12 @@
 </style>
 @endsection
 @section('sub-header')
-<x-main-form-title :id="'main-form-title'" :class="''">{{ __('Cash Expense Statement ['  ) . ' ' . __($currency) . ' ]' }} [{{ $expenseCategory }}] [{{ $expenseCategoryName }}]</x-main-form-title>
+<x-main-form-title :id="'main-form-title'" :class="''">{{ __('Cash Expense Statement ['  ) . ' ' . __($currency) . ' ]' }} 
+@if($expenseCategoryName)
+[{{ $expenseCategory }}]
+ [{{ $expenseCategoryName }}]
+ @endif 
+ </x-main-form-title>
 @endsection
 @section('content')
 
@@ -275,9 +280,14 @@
                                         <th class="view-table-th max-w-serial  header-th  align-middle text-center">
                                             {{ __('#') }}
                                         </th>
-
+										  <th class="view-table-th   header-th  align-middle text-center">
+                                            {{ __('Category ') }}
+                                        </th>
+										  <th class="view-table-th   header-th  align-middle text-center">
+                                            {{ __('Sub Category ') }}
+                                        </th>
                                         <th class="view-table-th   header-th  align-middle text-center">
-                                            {{ __('Payment Date') }}
+                                            {!! __('Payment Date <br> DD-MM-YYYY ') !!}
                                         </th>
 
 
@@ -323,6 +333,8 @@
 									@endphp
                                     <tr class=" parent-tr reset-table-width text-nowrap  cursor-pointer sub-text-bg text-capitalize is-close   ">
                                         <td class="sub-text-bg max-w-serial   ">{{ $index+1 }}</td>
+                                        <td class="sub-text-bg text-center ">{{ str_to_upper($modelAsStdClass->main_category_name) }}</td>
+                                        <td class="sub-text-bg text-center ">{{ str_to_upper($modelAsStdClass->sub_category_name) }}</td>
                                         <td class="sub-text-bg  text-center ">{{ \Carbon\Carbon::make($modelAsStdClass->payment_date)->format('d-m-Y') }}</td>
                                         <td class="sub-text-bg text-center max-w-invoice-number">{{ number_format($modelAsStdClass->paid_amount) }}</td>
                                         <td class="sub-text-bg text-center max-w-invoice-number">{{ number_format($accumulatedAmount) }}</td>
