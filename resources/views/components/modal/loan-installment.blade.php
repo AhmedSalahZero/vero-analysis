@@ -5,7 +5,8 @@
 'dates',
 'reportInterval',
 'cashflowReport'=>null,
-'currencyName'
+'currencyName',
+'contractCode'
 ])
 @php
 	$cashflowReportId = isset($cashflowReport) ? $cashflowReport->id:0;
@@ -53,6 +54,9 @@
 							<input type="hidden" name="invoice_amount[{{ $pastDueCustomerInvoice['id'] }}]"  value="{{ $pastDueCustomerInvoice['remaining'] }}">
 							<input type="hidden" name="currency_name"  value="{{ $currencyName }}">
 							<input type="hidden" name="cashflow_report_id"  value="{{ $cashflowReportId }}">
+							@if($contractCode)
+							<input type="hidden" name="contract_code"  value="{{ $contractCode }}">
+							@endif
                             <tr>
                                 <td>
 								

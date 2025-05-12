@@ -495,7 +495,7 @@ class CashExpense extends Model
 		;
 	}
 
-	public static function getCashOutForExpenseCategoriesAtDates(array &$result   , string $moneyType,string $dateFieldName,string $currency , int $companyId, string $startDate , string $endDate , string $currentWeekYear , ?string $chequeStatus = null) 
+	public static function getCashOutForExpenseCategoriesAtDates(array &$result   , string $moneyType,string $dateFieldName,string $currency , int $companyId, string $startDate , string $endDate , string $currentWeekYear , int $contractId = null , ?string $chequeStatus = null) 
 	{
 		$subTableName = (new self)->getTable();
 		$mainTableName = [
@@ -503,19 +503,25 @@ class CashExpense extends Model
 			MoneyPayment::CASH_PAYMENT =>(new CashPayment())->getTable(),
 			MoneyPayment::PAYABLE_CHEQUE => (new PayableCheque())->getTable()
 		][$moneyType];
+		$columnNames = $contractId ? 'cash_expense_categories.name as category_name , cash_expense_category_names.name as expense_name ,sum(amount) as paid_amount'  :'cash_expense_categories.name as category_name , cash_expense_category_names.name as expense_name ,sum(paid_amount) as paid_amount'; 
 		$expensesWithPaidAmount = DB::table($mainTableName)
 						->where($subTableName.'.currency',$currency)
 						->where('type',$moneyType)
 						->where($subTableName.'.company_id',$companyId)
 						->whereBetween($dateFieldName,[$startDate,$endDate])
-						->join($subTableName,$subTableName.'.id','=','cash_expense_id')
+						->join($subTableName,$subTableName.'.id','=',$mainTableName.'.cash_expense_id')
 						->join('cash_expense_category_names',$subTableName.'.cash_expense_category_name_id','=','cash_expense_category_names.id')
 						->join('cash_expense_categories','cash_expense_category_id','=','cash_expense_categories.id')
 						->when($chequeStatus , function(Builder $builder) use ($chequeStatus){
 							$builder->where('payable_cheques.status',$chequeStatus);
 						})
+						->when($contractId,function($query) use ($contractId) {
+						  	$query->join('cash_expense_contract','cash_expense_contract.cash_expense_id','=','cash_expenses.id')
+							->where('contract_id',$contractId);
+						})
 						->groupBy('cash_expense_category_name_id')
-						->selectRaw('cash_expense_categories.name as category_name , cash_expense_category_names.name as expense_name ,sum(paid_amount) as paid_amount')->get();
+						->selectRaw($columnNames)->get();
+				
 		foreach($expensesWithPaidAmount as $expenseWithPaidAmount){
 			$categoryName = $expenseWithPaidAmount->category_name;
 			$expenseName = $expenseWithPaidAmount->expense_name;
@@ -525,8 +531,9 @@ class CashExpense extends Model
 			$currentTotal = $currentPaidAmount;
 			$result['cash_expenses'][$categoryName]['total'][$currentWeekYear] = isset($result['cash_expenses'][$categoryName]['total'][$currentWeekYear]) ? $result['cash_expenses'][$categoryName]['total'][$currentWeekYear] +  $currentTotal : $currentTotal ;
 			// $result['cash_expenses'][$categoryName]['total']['total_of_total'] = isset($result['cash_expenses'][$categoryName]['total']['total_of_total']) ? $result['cash_expenses'][$categoryName]['total']['total_of_total'] + $result['cash_expenses'][$categoryName]['total'][$currentWeekYear] : $result['cash_expenses'][$categoryName]['total'][$currentWeekYear];
-			$totalCashOutFlowArray[$currentWeekYear] = isset($totalCashOutFlowArray[$currentWeekYear]) ? $totalCashOutFlowArray[$currentWeekYear] +   $currentTotal : $currentTotal ;
+			// $totalCashOutFlowArray[$currentWeekYear] = isset($totalCashOutFlowArray[$currentWeekYear]) ? $totalCashOutFlowArray[$currentWeekYear] +   $currentTotal : $currentTotal ;
 		}
+	
 	
 	}
 	public static function getProjectionOtherCashOut(array &$result ,Company $company , int $cashflowReportId ):void

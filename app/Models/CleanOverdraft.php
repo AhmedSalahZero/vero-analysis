@@ -24,7 +24,7 @@ class CleanOverdraft extends Model implements IHaveStatement
 {
     protected $guarded = ['id'];
 	
-	use HasOutstandingBreakdown , IsOverdraft , HasLastStatementAmount;
+	use HasOutstandingBreakdown , IsOverdraft , HasLastStatementAmount  ;
 	
 	public function cleanOverdraftBankStatements()
 	{

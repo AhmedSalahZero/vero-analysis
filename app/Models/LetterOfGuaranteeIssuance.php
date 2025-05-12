@@ -480,7 +480,7 @@ class LetterOfGuaranteeIssuance extends Model
 	{
 		return $this->issuance_fees ;
 	}	
-	public static function getCommissionAndFeesAtDates(array &$result ,string $dateFieldName,string $currency , int $companyId, string $startDate , string $endDate , string $currentWeekYear) 
+	public static function getCommissionAndFeesAtDates(array &$result ,string $dateFieldName,string $currency , int $companyId, string $startDate , string $endDate , string $currentWeekYear , int $contractId = null) 
 	{
 		$lgsTypes = LgTypes::getAll();
 		$mainType = 'cash_expenses';
@@ -492,6 +492,9 @@ class LetterOfGuaranteeIssuance extends Model
 						->where('letter_of_guarantee_issuance_id','>',0)
 						->where(function($q){
 							$q->where('is_renewal_fees',1)->orWhere('is_commission_fees',1)->orWhere('is_issuance_fees',1);
+						})
+						->when($contractId , function($q) use($contractId){
+							$q->where('contract_id',$contractId);	
 						})
 						->groupBy('letter_of_guarantee_issuances.lg_type')
 						->selectRaw('letter_of_guarantee_issuances.lg_type as lg_type ,sum(credit) as paid_amount')->get();
@@ -511,17 +514,21 @@ class LetterOfGuaranteeIssuance extends Model
 	
 	}
 	
-	public static function getCashCovers(array &$result ,string $dateFieldName,string $currency , int $companyId, string $startDate , string $endDate , string $currentWeekYear) 
+	public static function getCashCovers(array &$result ,string $dateFieldName,string $currency , int $companyId, string $startDate , string $endDate , string $currentWeekYear , int $contractId = null) 
 	{
 		$lgsTypes = LgTypes::getAll();
 		// $mainType = 'lg';
 		$mainType = 'customers';
 		// $mainType = 'lg';
-		$rows = DB::table('letter_of_guarantee_cash_cover_statements')->where('letter_of_guarantee_cash_cover_statements.company_id',$companyId)
+		$rows = DB::table('letter_of_guarantee_cash_cover_statements')
+						->where('letter_of_guarantee_cash_cover_statements.company_id',$companyId)
 						->join('letter_of_guarantee_issuances','letter_of_guarantee_issuances.id','=','letter_of_guarantee_cash_cover_statements.letter_of_guarantee_issuance_id')
 						->where('letter_of_guarantee_cash_cover_statements.currency',$currency)
 						->whereBetween($dateFieldName,[$startDate,$endDate])
 						->where('letter_of_guarantee_issuance_id','>',0)
+						->when($contractId , function($q) use($contractId){
+							$q->where('contract_id',$contractId);	
+						})
 						// ->where(function($q){
 						// 	$q->where('is_renewal_fees',1)->orWhere('is_commission_fees',1)->orWhere('is_issuance_fees',1);
 						// })

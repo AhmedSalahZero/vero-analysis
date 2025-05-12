@@ -6,7 +6,8 @@
 'currentInvoiceType',
 'reportInterval',
 'cashflowReport'=>null,
-'currencyName'
+'currencyName',
+'contractCode'
 ])
 @php
 	$cashflowReportId = isset($cashflowReport) ? $cashflowReport->id:0;
@@ -59,6 +60,9 @@
 											<input type="hidden" name="invoiceType" value="{{ $currentInvoiceType }}">
 											<input type="hidden" name="currency_name"  value="{{ $currencyName }}">
 											<input type="hidden" name="cashflow_report_id"  value="{{ $cashflowReportId }}">
+											@if($contractCode)
+											<input type="hidden" name="contract_code"  value="{{ $contractCode }}">
+											@endif 
                             <tr>
                                 <td>
                                     <div class="kt-input-icon">

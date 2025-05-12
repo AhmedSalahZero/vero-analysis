@@ -338,38 +338,35 @@
 	delimiter ;
 	drop procedure if exists recalculate_end_of_month_clean_overdraft_interests ;
 	delimiter // 
-	create procedure recalculate_end_of_month_clean_overdraft_interests()
-	begin 
-		declare current_id integer default 0 ;
-		declare _clean_overdraft_id integer default 0 ;
-		declare _company_id integer default 0 ;
-		declare _limit decimal(14,2) default 0;
-		declare _largest_end_balance decimal(14,2) default 0;
-		declare interest_type_text varchar(100) default 'interest';
-		declare highest_debit_balance_text varchar(100) default 'highest_debit_balance';
-		declare _current_interest_amount decimal(14,2) default 0;
-		declare _highest_debt_balance_rate decimal(5,2) default 0 ;
-		declare i INTEGER DEFAULT 0 ;
-		set _highest_debt_balance_rate = ifnull(_highest_debt_balance_rate,0);
-		select count(distinct(clean_overdraft_id)) into @n from  clean_overdraft_bank_statements where `type` != interest_type_text and `type` != highest_debit_balance_text and EXTRACT(MONTH from date) = EXTRACT(MONTH from current_date()) and  EXTRACT(YEAR from date) = EXTRACT(YEAR from current_date()) group by clean_overdraft_id;
-		set @n = ifnull(@n,0);
-		if @n > 0 then 
+	-- create procedure recalculate_end_of_month_clean_overdraft_interests(in _date date  , in _clean_overdraft_id integer)
+	-- begin 
+	-- 	declare current_id integer default 0 ;
+	-- 	declare _company_id integer default 0 ;
+	-- 	declare _limit decimal(14,2) default 0;
+	-- 	declare _largest_end_balance decimal(14,2) default 0;
+	-- 	declare interest_type_text varchar(100) default 'interest';
+	-- 	declare highest_debit_balance_text varchar(100) default 'highest_debit_balance';
+	-- 	declare _current_interest_amount decimal(14,2) default 0;
+	-- 	declare _highest_debt_balance_rate decimal(5,2) default 0 ;
+	-- 	declare i INTEGER DEFAULT 0 ;
+	-- 	set _highest_debt_balance_rate = ifnull(_highest_debt_balance_rate,0);
+	-- 	set @n = 1;
+	-- 	if @n > 0 then 
 		
-		repeat 
-					-- حساب الفايدة نهاية كل شهر
-					select clean_overdraft_id , sum(interest_amount) , min(end_balance) into _clean_overdraft_id,_current_interest_amount,_largest_end_balance from  clean_overdraft_bank_statements where `type` != interest_type_text and `type` != highest_debit_balance_text and EXTRACT(MONTH from date) = EXTRACT(MONTH from current_date()) and  EXTRACT(YEAR from date) = EXTRACT(YEAR from current_date()) group by clean_overdraft_id limit i , 1;
-					set _current_interest_amount = ifnull(_current_interest_amount , 0);
-					set _largest_end_balance = ifnull(_largest_end_balance,0);
-					select company_id,`limit`,highest_debt_balance_rate into _company_id,_limit,_highest_debt_balance_rate from clean_overdrafts where id = _clean_overdraft_id  ;
-					set _current_interest_amount = _highest_debt_balance_rate / 100 * _largest_end_balance * -1 ; 
-					insert into clean_overdraft_bank_statements (type,priority ,clean_overdraft_id,money_received_id,company_id,date,`limit`,credit,interest_type,full_date) values(highest_debit_balance_text,1,_clean_overdraft_id,0,_company_id,current_date(),_limit,_current_interest_amount,'end_of_month',NOW());
-					insert into clean_overdraft_bank_statements (type ,priority,clean_overdraft_id,money_received_id,company_id,date,`limit`,credit,interest_type,full_date) values(interest_type_text,1,_clean_overdraft_id,0,_company_id,current_date(),_limit,_current_interest_amount,'end_of_month',NOW());
-					-- حساب ال highest debit balance
-				set i = i +1 ; 
-				UNTIL i >= @n  end repeat ;
-		end if ;
+	-- 	repeat 
+	-- 				-- حساب الفايدة نهاية كل شهر
+	-- 				select  sum(interest_amount) , min(end_balance) into _current_interest_amount,_largest_end_balance from  clean_overdraft_bank_statements where `type` != interest_type_text and `type` != highest_debit_balance_text and EXTRACT(MONTH from date) = EXTRACT(MONTH from current_date()) and  EXTRACT(YEAR from date) = EXTRACT(YEAR from current_date()) group by clean_overdraft_id limit i , 1;
+	-- 				set _current_interest_amount = ifnull(_current_interest_amount , 0);
+	-- 				set _largest_end_balance = ifnull(_largest_end_balance,0);
+	-- 				select company_id,`limit`,highest_debt_balance_rate into _company_id,_limit,_highest_debt_balance_rate from clean_overdrafts where id = _clean_overdraft_id  ;
+	-- 				set _current_interest_amount = _highest_debt_balance_rate / 100 * _largest_end_balance * -1 ; 
+	-- 				update clean_overdraft_bank_statements set (`limit`,credit) values(_limit,_current_interest_amount);
+	-- 				update clean_overdraft_bank_statements set (`limit`,credit) values(_limit,_current_interest_amount);
+	-- 			set i = i +1 ; 
+	-- 			UNTIL i >= @n  end repeat ;
+	-- 	end if ;
 		
-	end //
+	-- end //
 	delimiter ; 
 	DROP EVENT IF EXISTS `recalculate_end_of_month_clean_overdraft_interests_event`;
 	DELIMITER $$

@@ -690,8 +690,9 @@ class MoneyPayment extends Model
 		}
 	}
 		
-	public static function getCashOutForMoneyTypeAtDates(array &$result   , string $moneyType,string $dateFieldName,string $currency , int $companyId, string $startDate , string $endDate , string $currentWeekYear , ?string $chequeStatus = null) 
+	public static function getCashOutForMoneyTypeAtDates(array &$result   , string $moneyType,string $dateFieldName,string $currency , int $companyId, string $startDate , string $endDate , string $currentWeekYear , int $contractId = null , ?string $chequeStatus = null) 
 	{
+		// dd('qq');
 		$subTableName = (new self)->getTable(); // money_payments
 		$keyNameForCurrentType = [
 			MoneyPayment::OUTGOING_TRANSFER => __('Outgoing Transfers'),
@@ -704,8 +705,9 @@ class MoneyPayment extends Model
 			MoneyPayment::CASH_PAYMENT =>(new CashPayment())->getTable(),
 			MoneyPayment::PAYABLE_CHEQUE => (new PayableCheque())->getTable()
 		][$moneyType];
-		
+		$columnNames = $contractId ? 'allocation_amount as paid_amount , name' : 'paid_amount,name';
 		$rows = DB::table('money_payments')
+		->where('money_payments.company_id',$companyId)
 		->when($chequeStatus , function(Builder $builder) use ($chequeStatus){
 			$builder->join('payable_cheques','payable_cheques.money_payment_id','=','money_payments.id')->where('payable_cheques.status',$chequeStatus);
 		})
@@ -713,7 +715,12 @@ class MoneyPayment extends Model
 		->where('money_payments.type','=',$moneyType)
 		->where('payment_currency',$currency)
 		->whereBetween($dateFieldName,[$startDate,$endDate])
-		->selectRaw('paid_amount,name')->get();
+		->when($contractId , function($query) use ($contractId){
+			$query->join('settlement_allocations','money_payments.id','=','settlement_allocations.money_payment_id')
+			->where('settlement_allocations.contract_id',$contractId);
+			;
+		})
+		->selectRaw($columnNames)->get();
 						// ->where($subTableName.'.currency',$currency)
 						// ->where('type',$moneyType)
 						// ->where($subTableName.'.company_id',$companyId)

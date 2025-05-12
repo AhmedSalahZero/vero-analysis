@@ -342,7 +342,7 @@ class LetterOfCreditStatement extends Model
 			})
 			->orderByRaw('date desc,id desc')
 			->first();
-			// dd($letterOfCreditCashCover);
+			
 			$letterOfCreditCashCoverEndBalance = $letterOfCreditCashCover ? $letterOfCreditCashCover->end_balance : 0 ;
 			$totalLastCashCoverOfFourTypes += $letterOfCreditCashCoverEndBalance;
 		}

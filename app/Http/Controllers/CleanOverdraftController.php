@@ -100,6 +100,10 @@ class CleanOverdraftController
 		 */
 		$cleanOverdraft = $financialInstitution->cleanOverdrafts()->create($data);
 		
+		$cleanOverdraft->handleEndOfMonthInterest($data['contract_start_date'],$data['contract_end_date'],$company->id);
+		
+		dd('dd');
+		
 		// add new empty line in clean overdraft bank statement
 		$cleanOverdraft->cleanOverdraftBankStatements()->create([
 			'type'=>'active-limit',

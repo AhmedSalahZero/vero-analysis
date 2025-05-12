@@ -1,9 +1,11 @@
 <?php
 namespace App\Traits;
 
+use App\Helpers\HDate;
 use App\Models\FinancialInstitution;
 use App\Models\LendingInformation;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 
 
@@ -198,5 +200,29 @@ trait IsOverdraft
 			]);
 		}
 	}
-	
+	public function handleEndOfMonthInterest(string $contractStartDate , string $contractEndDate , int $companyId)
+	{
+		$foreignKeyColumnName = self::generateForeignKeyFormModelName(); // clean_overdraft_id for clean_overdrafts for example
+		$fullBankStatement = self::getBankStatementTableClassName();
+		$contractStartDateAsCarbon = Carbon::make($contractStartDate);
+		$contractEndDateAsCarbon= Carbon::make($contractEndDate);
+		$dates = generateDatesBetweenTwoDates($contractStartDateAsCarbon,$contractEndDateAsCarbon) ;
+		$countDates = count($dates);
+		// highest_debit_balance
+		foreach($dates as $index => $dateAsString){
+			$isLastLoop = $index == $countDates -1;
+			$currentEndOfMonthDate = $isLastLoop ? Carbon::make($contractEndDate)->format('Y-m-d') : Carbon::make($dateAsString)->endOfMonth()->format('Y-m-d');
+			$fullBankStatement::create([
+				'company_id'=>$companyId,
+				$foreignKeyColumnName=>$this->id ,
+				'priority'=>1 ,
+				'type'=>'interest',
+				'date'=>$currentEndOfMonthDate,
+				'limit'=>100000 ,
+				'credit'=>2500 ,
+				'interest_type'=>'end_of_month'
+			]);
+		}
+		dd($dates);
+	}
 }

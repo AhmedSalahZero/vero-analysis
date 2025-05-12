@@ -310,7 +310,7 @@ class SupplierInvoice extends Model implements IInvoice
 	{
 		return 'invoice_date';
 	}
-	public static function getForecastedProjectCollection(array &$result  , string $startDate , string $endDate , $currency = null , $companyId = null , array $datesWithWeekNumber):void
+	public static function getForecastedProjectCollection(array &$result  , string $startDate , string $endDate , $currency = null , $companyId = null , array $datesWithWeekNumber , int $contractId = null):void
 	{
 		/**
 		 * 
@@ -326,7 +326,11 @@ class SupplierInvoice extends Model implements IInvoice
 		
 		$contracts = Contract::where('company_id',$companyId)
 		->where('end_date','>=',now()->format('Y-m-d'))
-		// ->where('end_date','<=',now()->format('Y-m-d'))
+		->where('end_date','<=',$endDate)
+		->where('currency',$currency)
+		->when($contractId,function($query) use ($contractId){
+			$query->where('id',$contractId);
+		})
 		->with('purchasesOrders')->get();
 		$contractWithPurchaseOrders = [];
 		foreach($contracts as $contract){
