@@ -354,14 +354,16 @@ class CheckDueAndPastedInvoicesJob implements ShouldQueue
 				
                 $pastDueSupplierInvoices = DB::table('supplier_invoices')->where('company_id', $companyId)
                 ->where('net_balance', '>', 0)
-                ->where('invoice_due_date', '<',$todayDate)->get();
+                ->where('invoice_due_date', '<',$todayDate)
+				->get();
 				
                 /**
                  * * مستحق الدفع اليوم
                  */
                 $currentDueSupplierInvoices = DB::table('supplier_invoices')->where('company_id', $companyId)
                 ->where('net_balance', '>', 0)
-                ->where('invoice_due_date', $todayDate)->get();
+                ->where('invoice_due_date', $todayDate)
+				->get();
 
                 /**
                  * * القادم
@@ -384,16 +386,17 @@ class CheckDueAndPastedInvoicesJob implements ShouldQueue
 				 ->where('payable_cheques.due_date','<=',$todayDate)
 				//  ->whereBetween('payable_cheques.due_date', [$beforeIntervalDate, $dayBeforeDayDate])
 				 ->join('money_payments','money_payments.id','=','payable_cheques.money_payment_id')
+				 ->join('partners','partners.id','=','money_payments.partner_id')
+				 
 				 ->get();
 				 
 				 $afterIntervalDate = Carbon::make(now()->format($dateFormat))->addDays($comingPayableChequeNotificationDays)->format($dateFormat);
 				 $comingPayableCheques = PayableCheque::where('payable_cheques.company_id', $companyId)
 				 ->where('payable_cheques.status',PayableCheque::PENDING)
-				 ->whereBetween('payable_cheques.due_date',[$dayAfterNowDate,$afterIntervalDate])
-				 //  ->whereBetween('payable_cheques.due_date', [$beforeIntervalDate, $dayBeforeDayDate])
+				//  ->whereBetween('payable_cheques.due_date',[$dayAfterNowDate,$afterIntervalDate])
 				 ->join('money_payments','money_payments.id','=','payable_cheques.money_payment_id')
+				 ->join('partners','partners.id','=','money_payments.partner_id')
 				 ->get();
-					
 			foreach ($pastDueSupplierInvoices as $supplierInvoice) {
 				$invoiceDueDate = $supplierInvoice->invoice_due_date ;
 				$invoiceNumber = $supplierInvoice->invoice_number;
@@ -440,7 +443,6 @@ class CheckDueAndPastedInvoicesJob implements ShouldQueue
 				]
 			));
 			}
-
 			foreach ($upcomingDueSupplierInvoices as $supplierInvoice) {
 				$invoiceDueDate = $supplierInvoice->invoice_due_date ;
 				$invoiceNumber = $supplierInvoice->invoice_number;
@@ -469,7 +471,7 @@ class CheckDueAndPastedInvoicesJob implements ShouldQueue
 				$invoiceDueDate = $currentPayableCheque->due_date ;
 				$chequeNumber = $currentPayableCheque->cheque_number;
 				$chequeAmount = $currentPayableCheque->paid_amount ;
-				$supplierName = $currentPayableCheque->supplier_name ;
+				$supplierName = $currentPayableCheque->name ;
 				$bankName = $currentPayableCheque->getDeliveryBankName();
 				$dueDays = Carbon::make(now()->format($dateFormat))->diffInDays(Carbon::make($invoiceDueDate));
 				$messageEn = __('Cheque Number ',[],'en') . $chequeNumber . ' ' . __('Is Past Due Since ',[],'en') . ' ' . $dueDays . ' ' . __('days For Bank',[],'en') . $bankName ;
@@ -484,12 +486,12 @@ class CheckDueAndPastedInvoicesJob implements ShouldQueue
 				]
 			));
 			} 
-			
+
 			foreach ($comingPayableCheques as $comingPayableCheque) {
 				$invoiceDueDate = $comingPayableCheque->due_date ;
 				$chequeNumber = $comingPayableCheque->cheque_number;
 				$chequeAmount = $comingPayableCheque->paid_amount ;
-				$supplierName = $comingPayableCheque->supplier_name ;
+				$supplierName = $comingPayableCheque->name ;
 				$bankName = $comingPayableCheque->getDeliveryBankName();
 				$dueDays = Carbon::make(now()->format($dateFormat))->diffInDays(Carbon::make($invoiceDueDate));
 				$messageEn = __('Cheque Number ',[],'en') . $chequeNumber . ' ' . __('Is Due After ',[],'en') . ' ' . $dueDays . ' ' . __('days For Bank',[],'en') . $bankName ;

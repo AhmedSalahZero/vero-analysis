@@ -64,58 +64,57 @@ class TestCommand extends Command
 	
 	public function handle()
 	{
-		$incomeStatements = IncomeStatement::get();
+		// $incomeStatements = IncomeStatement::get();
 
-		foreach($incomeStatements as $incomeStatement){
-			foreach(['forecast','actual','adjusted','modified'] as $insertSubItem){
-				$incomeStatement->refreshCalculationFor($insertSubItem);
-			}
-		}
+		// foreach($incomeStatements as $incomeStatement){
+		// 	foreach(['forecast','actual','adjusted','modified'] as $insertSubItem){
+		// 		$incomeStatement->refreshCalculationFor($insertSubItem);
+		// 	}
+		// }
 		
-		dd('good');
-		$companies = Company::where('id',110)->get();
-		// $companies = Company::where('id',105)->get();
-		// $companies = Company::where('id',105)->get();
-		// $companies = Company::get();
-		foreach($companies as $company){
-			if($company->hasOddoIntegrationCredentials()){
-				$oddo = new OddoService($company->getOddoDBUrl(),$company->getOddoDBName(),$company->getOddoDBUserName(),$company->getOddoDBPassword(),$company->getId());
-				// $oddo = new OddoPayment($company->getOddoDBUrl(),$company->getOddoDBName(),$company->getOddoDBUserName(),$company->getOddoDBPassword(),$company->getId());
-				// OddoPayment
-				// $importDate = now()->format('Y-m-d') ; ;
-				$startDate = now()->subDays(60)->format('Y-m-d') ; ;
-				$endDate = now()->format('Y-m-d') ; 
-				// $oddo->syncBanks($startDate,$endDate);
-				$transferDate = '2025-04-17';
-				$fromJournalId = 12 ;
-				$toJournalId = 7 ;
-				$currencyOdooId = 1 ; 
-				$transferAmount = 10;
-				dd($oddo->createInternalMoneyTransfer($transferDate,$transferAmount,$fromJournalId,$toJournalId,$currencyOdooId));
-				$oddo->startImportContracts($startDate,$endDate,$company->id);
-				// $oddo->startImportContracts($startDate,$endDate,$company->id);
-				// $oddo->syncFinancialInstitutions('BNK2');
-				// $oddo->syncDeletedInvoices($company->id);
-				// $journalId = [
-				// 	MoneyReceived::CASH_IN_SAFE=>7,
-				// 	MoneyReceived::INCOMING_TRANSFER=>12 
-				// ][MoneyReceived::INCOMING_TRANSFER];
-				// $isCustomerInvoice = true ;
-				// $inBoundOrOutBound = $isCustomerInvoice ? 'inbound':'outbound';
-				// 	$paymentType = $isCustomerInvoice ? 'customer':'supplier'; 
-				// 	$invoiceId  = 28 ;
-				// 	$paymentAmount = 115 ;
-				// 	$paymentDate = '2025-04-13';
-				// 	$currencyId = 1 ;
-				// 	 $oddoPartnerId= 12 ;
-				// 	 $invoiceNumber = 'INV/2025/00006' ;
+		// dd('good');
+		// $companies = Company::where('id',110)->get();
+		// // $companies = Company::where('id',105)->get();
+		// // $companies = Company::where('id',105)->get();
+		// // $companies = Company::get();
+		// foreach($companies as $company){
+		// 	if($company->hasOddoIntegrationCredentials()){
+		// 		$oddo = new OddoService($company->getOddoDBUrl(),$company->getOddoDBName(),$company->getOddoDBUserName(),$company->getOddoDBPassword(),$company->getId());
+		// 		// $oddo = new OddoPayment($company->getOddoDBUrl(),$company->getOddoDBName(),$company->getOddoDBUserName(),$company->getOddoDBPassword(),$company->getId());
+		// 		// OddoPayment
+		// 		// $importDate = now()->format('Y-m-d') ; ;
+		// 		$startDate = now()->subDays(60)->format('Y-m-d') ; ;
+		// 		$endDate = now()->format('Y-m-d') ; 
+		// 		// $oddo->syncBanks($startDate,$endDate);
+		// 		$transferDate = '2025-04-17';
+		// 		$fromJournalId = 12 ;
+		// 		$toJournalId = 7 ;
+		// 		$currencyOdooId = 1 ; 
+		// 		$transferAmount = 10;
+		// 		dd($oddo->createInternalMoneyTransfer($transferDate,$transferAmount,$fromJournalId,$toJournalId,$currencyOdooId));
+		// 		$oddo->startImportContracts($startDate,$endDate,$company->id);
+		// 		// $oddo->startImportContracts($startDate,$endDate,$company->id);
+		// 		// $oddo->syncFinancialInstitutions('BNK2');
+		// 		// $oddo->syncDeletedInvoices($company->id);
+		// 		// $journalId = [
+		// 		// 	MoneyReceived::CASH_IN_SAFE=>7,
+		// 		// 	MoneyReceived::INCOMING_TRANSFER=>12 
+		// 		// ][MoneyReceived::INCOMING_TRANSFER];
+		// 		// $isCustomerInvoice = true ;
+		// 		// $inBoundOrOutBound = $isCustomerInvoice ? 'inbound':'outbound';
+		// 		// 	$paymentType = $isCustomerInvoice ? 'customer':'supplier'; 
+		// 		// 	$invoiceId  = 28 ;
+		// 		// 	$paymentAmount = 115 ;
+		// 		// 	$paymentDate = '2025-04-13';
+		// 		// 	$currencyId = 1 ;
+		// 		// 	 $oddoPartnerId= 12 ;
+		// 		// 	 $invoiceNumber = 'INV/2025/00006' ;
 			
-				// $oddo->startImportContracts($startDate,$endDate,$company->id);
-				// $oddo->test($startDate,$endDate,$company->id);
-			}
-		}
-		dd('gg');
-		dispatch_now(new CheckDueAndPastedInvoicesJob);
+		// 		// $oddo->startImportContracts($startDate,$endDate,$company->id);
+		// 		// $oddo->test($startDate,$endDate,$company->id);
+		// 	}
+		// }
+		dispatch_now(new CheckDueAndPastedInvoicesJob(107));
 		dd('good');
 		
 		$companies = Company::all();
