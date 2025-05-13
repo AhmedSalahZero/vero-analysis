@@ -7,6 +7,7 @@ use App\Models\ForeignExchangeRate;
 use App\Models\MoneyPayment;
 use App\Models\MoneyReceived;
 use App\Models\Partner;
+use App\Services\Api\OddoPayment;
 use Carbon\Carbon;
 
 
@@ -61,22 +62,33 @@ trait IsMoney
 		];
 	}
 	public function storeNewSettlement(
-	array $settlements,int $partnerId,int $companyId , bool $isFromDownPayment = false )
+	array $settlements,int $partnerId,Company $company , bool $isFromDownPayment = false )
 	{
 		
 		$totalWithholdAmount= 0 ;
+		$oddoPaymentService = null ;
+		if($company->hasOddoIntegrationCredentials()){
+			$oddoPaymentService = new OddoPayment($company->getOddoDBUrl(),$company->getOddoDBName(),$company->getOddoDBUserName(),$company->getOddoDBPassword(),$company->getId());
+		}
+		
 		foreach($settlements as $settlementArr)
 		{
 			$settlementArr['settlement_amount'] = isset($settlementArr['settlement_amount']) ?  unformat_number($settlementArr['settlement_amount']) :  0 ;  
 			if($settlementArr['settlement_amount'] > 0){
-				$settlementArr['company_id'] = $companyId ;
+				$settlementArr['company_id'] = $company->id ;
 				$settlementArr['partner_id'] = $partnerId;
 				$settlementArr['is_from_down_payment'] = $isFromDownPayment ;
 				$withholdAmount = isset($settlementArr['withhold_amount']) ? unformat_number($settlementArr['withhold_amount']) : 0 ;
 				$settlementArr['withhold_amount'] = $withholdAmount ;
 				$totalWithholdAmount += $withholdAmount  ;
 				unset($settlementArr['net_balance']);
-				$this->settlements()->create($settlementArr);
+				$payment = $this->settlements()->create($settlementArr);
+				// if($companyId)
+				if($oddoPaymentService){
+					// $oddoPaymentService->reCreatePayment($payment);
+					$oddoPaymentService->createPayment($payment);
+				}
+				
 			}
 		}
 		return $totalWithholdAmount ;

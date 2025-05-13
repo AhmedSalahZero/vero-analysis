@@ -10,7 +10,9 @@ use Carbon\Carbon;
     margin-top: 10px;
 }
 </style>
-  
+@php
+	$isContract = $contractCode?1:0;
+@endphp  
 <div class="tab-pane " id="{{ $currentTabId }}" role="tabpanel">
 <form action="{{ route('save.projection',['company'=>$company->id]) }}" method="post">
 	@csrf
@@ -32,11 +34,11 @@ use Carbon\Carbon;
 
 
                 @endphp
-
                 <input type="hidden" name="tableIds[]" value="{{ $tableId }}">
                 <input type="hidden" name="dates[]" value="{{ json_encode($dates) }}">
                 <input type="hidden" name="type" value="{{ $projectionType }}">
                 <input type="hidden" name="cashFlowReportId" value="{{ isset($cashflowReport) ? $cashflowReport->id:0 }}">
+                <input type="hidden" name="is_contract" value="{{ $isContract }}">
                 <x-tables.repeater-table  :initEmpty="false" :firstElementDeletable="true" :repeater-with-select2="false" :parentClass="'show-class-js'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=true">
                     <x-slot name="ths">
 
@@ -95,7 +97,7 @@ use Carbon\Carbon;
                     <x-slot name="trs">
                         @php
 						$model = isset($cashflowReport) ? $cashflowReport : $company; 
-                        $rows = count($model->cashProjects->where('type',$projectionType)) ? $model->cashProjects->where('type',$projectionType) :[-1] ;
+                        $rows = count($model->cashProjects->where('is_contract',$isContract)->where('type',$projectionType)) ? $model->cashProjects->where('is_contract',$isContract)->where('type',$projectionType) :[-1] ;
                         @endphp
                         @foreach( count($rows) ? $rows : [-1] as $currentRow)
                         @php

@@ -752,7 +752,7 @@ Route::middleware([])->group(function () {
 				//  Route::get('internal-money-');
 				 
 				//  Route::resource('contracts', 'ContractsController');
-
+				 Route::post('store-po-allocation','ContractsController@storePoAllocations')->name('store.po.allocations');
 				 Route::get('contracts/{type}','ContractsController@index')->name('contracts.index');
 				 Route::get('contracts/create/{type}','ContractsController@create')->name('contracts.create');
 				 Route::post('contracts/{type}','ContractsController@store')->name('contracts.store');
@@ -1045,7 +1045,7 @@ Route::middleware([])->group(function () {
 					Route::get('cashflow-report-result/{returnResultAsArray?}/{cashflowReport?}', 'CashFlowReportController@result')->name('result.cashflow.report');
 					Route::delete('delete-cashflow-report/{cashflowReport}','CashFlowReportController@destroy')->name('delete.cashflow.report');
 					Route::get('contract-cashflow-report', 'ContractCashFlowReportController@index')->name('view.contract.cashflow.report');
-					Route::post('contract-cashflow-report', 'ContractCashFlowReportController@result')->name('result.contract.cashflow.report');
+					Route::get('contract-cashflow-report-result/{returnResultAsArray?}/{cashflowReport?}', 'ContractCashFlowReportController@result')->name('result.contract.cashflow.report');
 					
 
 					Route::get('withdrawals-settlements-report', 'WithdrawalsSettlementReportController@index')->name('view.withdrawals.settlement.report');

@@ -23,28 +23,10 @@ class SendOdooCollectionOrPayment extends Controller
 		})->
 		whereBetween(DB::raw('DATE(created_at)'), [$startDate, $endDate])
 		->where('company_id',$company->id)->get();
+		// syncFinancialInstitutions
 		
 		foreach($customerInvoiceSettlements as $customerInvoiceSettlement){
-			$settlementId = $customerInvoiceSettlement->id;
-			$paymentType='customer';
-			$invoice = $customerInvoiceSettlement->invoice;
-			$moneyModel = $customerInvoiceSettlement->getMoney;
-			$isBankMoney = $moneyModel->isIncomingTransfer() || $moneyModel->isCashInBank() ;
-			$isCashInSafe = $moneyModel->isCashInSafe();
-			// if(){
-				$bankOrSafeId = $isCashInSafe  ? $moneyModel->getCashInSafeBranchOddoId() : $moneyModel->getBankAccountOdooId();
-				$invoiceId = $invoice->getOdooId();
-				$paymentAmount = $customerInvoiceSettlement->getAmount();
-				$currencyName = $moneyModel->getReceivingOrPaymentCurrency();
-				$currencyOddoId = DB::table('currencies')->where('name',$currencyName)->first()->oddo_id;
-				$paymentDate = $moneyModel->getReceivingOrPaymentMoneyDate();
-				$oddoPartnerId = $moneyModel->partner->getOdooId();
-				$invoiceNumber = $invoice->getInvoiceNumber();
-				// $moneyType = $moneyModel->getType();
-				$journalId = $bankOrSafeId;
-				$inBoundOrOutBound ='inbound';
-				$oddoPaymentService->reCreatePayment($customerInvoiceSettlement,$paymentType,$invoiceId,$paymentAmount,$currencyOddoId,$paymentDate,$oddoPartnerId,$invoiceNumber,$journalId,$inBoundOrOutBound);
-			// }
+				$oddoPaymentService->reCreatePayment($customerInvoiceSettlement);
 		}
 		
 		/**

@@ -28,12 +28,17 @@ class CashFlowReportController
     use GeneralFunctions;
     public function index(Company $company)
 	{
-		$cashflowReports = $company->cashflowReports;
+		$cashflowReports = $company->cashflowReports->where('is_contract',0);
         return view('reports.cash_flow_form',[
 			'company'=>$company,
 			'cashflowReports'=>$cashflowReports
 		]);
     }
+	public function getRedirectRoute(bool $isContract):string 
+	{
+		return $isContract ?'result.contract.cashflow.report' :'result.cashflow.report';
+	}
+	
 	public function result(Company $company , Request $request, bool $returnResultAsArray = false ,  CashFlowReport $cashflowReport= null  ){
 		$saveReport = $request->has('save_report');
 		$resetReport = $request->has('reset_report') && $request->get('reset_report');
@@ -48,24 +53,8 @@ class CashFlowReportController
 		$customer = $contract ? $contract->client : null ;
 		$customerId = $customer ? $customer->getId() : null ;
 		$customerName = $customer ? $customer->getName() : null ;
-		
-		// if(is_null($contractCode)){
-		// 	return redirect()->back()->with('fail',__('Please Select Contract'));
-		// }
-		// dd($contractCode);
-		// $request->merge([
-		// 	'reset_report'=>0
-		// ]);
-		
-		
-		// $referer = $request->header('referer');
-		// if ($referer && str_contains($referer, url('form/route'))) {
-		// 	// Likely a form submission
-		// 	return 'Request came from a form submission';
-		// } else {
-		// 	// Likely a redirect
-		// 	return 'Request came from a redirect';
-		// }
+		$isContract = (bool)$customerId;
+		$redirectRouteName = $this->getRedirectRoute($isContract);
 		
 		$cashflowReportId = $cashflowReport && $cashflowReport->id ? $cashflowReport->id : 0;
 		if( $resetReport && !session()->has('without_resetting') ){
@@ -75,19 +64,23 @@ class CashFlowReportController
 			$queryParams['company'] = $company->id;
 			if($cashflowReportId){
 				$queryParams['cashflowReport'] = $cashflowReportId;
+				if($contractId){
+					$queryParams['contract_id'] = $contractId;
+				}
 			}
-			return redirect()->route('result.cashflow.report',  $queryParams);
+			return redirect()->route($redirectRouteName,  $queryParams);
 		}
 		if($cashflowReport && $cashflowReport->report_data){
 			$reportData = json_decode($cashflowReport->report_data,true);
 			$currencyName = Arr::first($reportData['allCurrencies']);
 			return view('admin.reports.contract-cash-flow-report',array_merge($reportData,['cashflowReport'=>$cashflowReport,'currencyName'=>$currencyName,'contractCode'=>$contractCode]));
 		}
-		$currencyName = $contract ? $contract->getCurrency(): $request->get('currency');
+		$isContract = (bool)$contract ;
+		$currencyName = $isContract ? $contract->getCurrency(): $request->get('currency');
 		$defaultStartDate = $request->get('cash_start_date',now()->format('Y-m-d'));
 		$defaultEndDate = $request->get('cash_end_date',now()->addMonth()->format('Y-m-d'));
-		$formStartDate =$request->get('start_date',$defaultStartDate); 
-		$formEndDate =$request->get('end_date',$defaultEndDate);
+		$formStartDate =Carbon::make($request->get('start_date',$defaultStartDate))->format('Y-m-d'); 
+		$formEndDate =Carbon::make($request->get('end_date',$defaultEndDate))->format('Y-m-d');
 		if(!now()->between($formStartDate,$formEndDate)){
 			return redirect()->back()->with('fail',__('Kindly the date of Today must be included within the report duration'));
 		}
@@ -128,7 +121,8 @@ class CashFlowReportController
 		$currency = $request->get('currency',$company->getMainFunctionalCurrency());
 		$year = explode('-',$startDate)[0];
 		$endDate  = Carbon::make($request->get('end_date',$defaultEndDate))->format('Y-m-d');
-		
+		$redirectRouteName = $this->getRedirectRoute($isContract);
+
 		$datesWithWeeks = [];
 		if($reportInterval == 'weekly'){
 			$datesWithWeeks = 	getWeekNumberBetweenDates($year , Carbon::make($endDate)) ;
@@ -146,13 +140,13 @@ class CashFlowReportController
 		$lastIndex = array_key_last($weeks);
 		$dates = [];
 		$rangedWeeks = [];
-		CashExpense::getProjectionOtherCashOut($result ,$company,$cashflowReportId) ;
+		CashExpense::getProjectionOtherCashOut($result ,$company,$cashflowReportId,$isContract) ;
 		// dd();
 		if(!$contractId){
 			CustomerInvoice::getCashAndBankBalanceAtDate($result ,$startDate ,array_keys($weeks)[0],$currency,$company->id) ;
 			LoanSchedule::getLoanInstallmentsAtDates($result,$currency,$company->id,$datesWithWeekNumber,$endDate);
 		}
-		CustomerInvoice::getProjectionOtherCashIn($result ,$company,$cashflowReportId) ;
+		CustomerInvoice::getProjectionOtherCashIn($result ,$company,$cashflowReportId,$isContract) ;
 		CustomerInvoice::getForecastedProjectCollection($result ,$startDate , $endDate,$currency,$company->id,$datesWithWeekNumber,$contractId) ;
 		SupplierInvoice::getForecastedProjectCollection($result ,$startDate , $endDate,$currency,$company->id,$datesWithWeekNumber,$contractId) ;
 		CustomerInvoice::getCustomerInvoicesUnderCollectionAtDatesForContracts($result,$company->id,$currency,$contractCode,$datesWithWeekNumber,$endDate);
@@ -240,6 +234,7 @@ class CashFlowReportController
 		$customerDueInvoices=json_decode(json_encode(DB::table('weekly_cashflow_custom_due_invoices')->where('weekly_cashflow_custom_due_invoices.company_id',$company->id)
 		->where('invoice_type','CustomerInvoice')
 		->where('cashflow_report_id',$cashflowReportId)
+		->where('is_contract',$isContract)
 		->when($contractCode,function($query) use($contractCode){
 						$query->join('customer_invoices','customer_invoices.id','=','weekly_cashflow_custom_due_invoices.invoice_id')
 						->where('customer_invoices.contract_code',$contractCode);
@@ -254,6 +249,7 @@ class CashFlowReportController
 		$supplierDueInvoices=json_decode(json_encode(DB::table('weekly_cashflow_custom_due_invoices')->where('weekly_cashflow_custom_due_invoices.company_id',$company->id)
 		->where('invoice_type','SupplierInvoice')
 		->where('cashflow_report_id',$cashflowReportId)
+		->where('is_contract',$isContract)
 		->when($contractCode,function($query) use($contractCode){
 			$query->join('supplier_invoices','supplier_invoices.id','=','weekly_cashflow_custom_due_invoices.invoice_id')
 			->where('supplier_invoices.contract_code',$contractCode);
@@ -334,6 +330,7 @@ class CashFlowReportController
 		] ;
 			if($saveReport){
 				$cashFlowReport = CashflowReport::create([
+					'is_contract'=>$isContract,
 					'report_name'=>$request->get('report_name'),
 					'report_data'=>json_encode($reportData),
 					'start_date'=>$formStartDate,
@@ -341,7 +338,11 @@ class CashFlowReportController
 					'report_interval'=>$reportInterval,
 					'company_id'=>$company->id
 				]);
-				return redirect()->route('result.cashflow.report',['company'=>$company->id,'returnResultAsArray'=>'view',$cashFlowReport->id]);
+				$routeParams = ['company'=>$company->id,'returnResultAsArray'=>'view',$cashFlowReport->id] ;
+				if($isContract){
+					$routeParams['contract_id'] = $contractId;
+				}
+				return redirect()->route($redirectRouteName,$routeParams);
 			}
 		
 		return view('admin.reports.contract-cash-flow-report',array_merge($reportData,['currencyName'=>$currencyName,'contractCode'=>$contractCode]));
@@ -454,6 +455,7 @@ class CashFlowReportController
 		$invoiceType = $request->get('invoiceType');
 		$currencyName = $request->get('currency_name');
 		$contractCode = $request->get('contract_code');
+		$isContract = $request->get('is_contract');
 		$cashflowReportId = $request->get('cashflow_report_id');
 		foreach($request->get('customer_invoice_id',[]) as $customerInvoiceId){
 			$weekStartDate = $request->input('week_start_date.'.$customerInvoiceId);
@@ -463,6 +465,7 @@ class CashFlowReportController
 			$first = DB::table('weekly_cashflow_custom_due_invoices')
 			->where('company_id',$company->id)
 			->where('invoice_id',$customerInvoiceId)
+			->where('is_contract',$isContract)
 			->where('cashflow_report_id',$cashflowReportId)
 			->where('invoice_type',$invoiceType)->first();
 			$data = [
@@ -473,13 +476,15 @@ class CashFlowReportController
 				'percentage'=>$percentage,
 				'amount'=>$amount,
 				'company_id'=>$company->id ,
-				'cashflow_report_id'=>$cashflowReportId
+				'cashflow_report_id'=>$cashflowReportId,
+				'is_contract'=>$isContract,
 			] ;
 			if($first){
 				DB::table('weekly_cashflow_custom_due_invoices')
 				->where('company_id',$company->id)
 				->where('invoice_id',$customerInvoiceId)
 				->where('cashflow_report_id',$cashflowReportId)
+				->where('is_contract',$isContract)
 				->where('invoice_type',$invoiceType)->update($data);
 			}else{
 				DB::table('weekly_cashflow_custom_due_invoices')->insert($data);
@@ -505,7 +510,7 @@ class CashFlowReportController
 			'reloadCurrentPage'=>true 
 		]);
 	}
-	public function refreshDueInvoicesAndSettlements(Company $company , Request $request , string $currency , string $contractCode = null  )
+	public function refreshDueInvoicesAndSettlements(Company $company , Request $request , string $currency , bool $isContract , string $contractCode = null  )
 	{
 		
 		
@@ -523,6 +528,7 @@ class CashFlowReportController
 			$customerDueInvoices=json_decode(json_encode(DB::table('weekly_cashflow_custom_due_invoices')->where('company_id',$company->id)
 			->where('invoice_type','CustomerInvoice')
 			->where('cashflow_report_id',$cashflowReportId)
+			->where('is_contract',$isContract)
 			// ->whereNotIn('invoice_id',$excludeIds)
 			->groupBy('week_start_date')->selectRaw('week_start_date,sum(amount) as amount')->get()),true);
 		
@@ -531,6 +537,7 @@ class CashFlowReportController
 			$supplierDueInvoices=json_decode(json_encode(DB::table('weekly_cashflow_custom_due_invoices')->where('company_id',$company->id)
 			->where('invoice_type','SupplierInvoice')
 			->where('cashflow_report_id',$cashflowReportId)
+			->where('is_contract',$isContract)
 			// ->whereNotIn('invoice_id',$excludeIds)
 			->groupBy('week_start_date')->selectRaw('week_start_date,sum(amount) as amount')->get()),true);
 		
@@ -556,6 +563,7 @@ class CashFlowReportController
 	
 	public function adjustLoanPastDueInstallments(Request $request,Company $company){
 		$currencyName = $request->get('currency_name');
+		$isContract = $request->get('is_contract');
 		
 		foreach($request->get('loan_schedule_id',[]) as $loanScheduleId){
 			$weekStartDate = $request->input('week_start_date.'.$loanScheduleId);
@@ -564,9 +572,11 @@ class CashFlowReportController
 			$amount = $percentage/100  * $invoiceAmount;
 			$first = DB::table('weekly_cashflow_custom_past_due_schedules')
 			->where('company_id',$company->id)
+			->where('is_contract',$isContract)
 			->where('loan_schedule_id',$loanScheduleId)
 			->first();
 			$data = [
+				'is_contract'=>$isContract,
 				'company_id'=>$company->id ,
 				'loan_schedule_id'=>$loanScheduleId,
 				'week_start_date'=>$weekStartDate,
@@ -577,12 +587,13 @@ class CashFlowReportController
 			if($first){
 				DB::table('weekly_cashflow_custom_past_due_schedules')
 				->where('company_id',$company->id)
+				->where('is_contract',$isContract)
 				->where('loan_schedule_id',$loanScheduleId)
 				->update($data);
 			}else{
 				DB::table('weekly_cashflow_custom_past_due_schedules')->insert($data);
 			}
-			$this->refreshDueInvoicesAndSettlements($company,$request,$currencyName,$contractCode);
+			$this->refreshDueInvoicesAndSettlements($company,$request,$currencyName,$isContract,$contractCode);
 		}
 		return response()->json([
 			'status'=>true ,
@@ -596,12 +607,14 @@ class CashFlowReportController
 		$projectionType = $request->get('type');
 		$dates = array_keys((array)json_decode($request->input('dates.0')));
 		$cashflowReportId = $request->get('cashFlowReportId');
+		$isContract = $request->get('is_contract');
 		$model  = $cashflowReportId ? CashFlowReport::find($cashflowReportId) : $company;
-		$model->cashProjects()->where('type',$projectionType)->delete();
+		$model->cashProjects()->where('is_contract',$isContract)->where('type',$projectionType)->delete();
 		foreach($request->get('projection-'.$projectionType.'id') as $projectionArr){
 			$amounts = $projectionArr['amounts'];
 			$amounts = array_combine($dates,$amounts);
 			$model->cashProjects()->create([
+				'is_contract'=>$isContract,
 				'name'=>$projectionArr['name'],
 				'type'=>$projectionType,
 				'amounts'=>$amounts,
@@ -615,8 +628,8 @@ class CashFlowReportController
 		if($cashflowReportId){
 	
 			$newResult =[];
-			CashExpense::getProjectionOtherCashOut($newResult ,$company,$cashflowReportId) ;
-			CustomerInvoice::getProjectionOtherCashIn($newResult ,$company,$cashflowReportId) ;
+			CashExpense::getProjectionOtherCashOut($newResult ,$company,$cashflowReportId,$isContract) ;
+			CustomerInvoice::getProjectionOtherCashIn($newResult ,$company,$cashflowReportId,$isContract) ;
 			$oldReportData = json_decode($model->report_data,true);
 			extract($oldReportData);
 			foreach($allCurrencies as $currencyName){
@@ -626,7 +639,7 @@ class CashFlowReportController
 			$model->update([
 				'report_data'=>json_encode($oldReportData)
 			]);
-			return redirect()->route('result.cashflow.report',['company'=>$company->id,'cashflowReport'=>$model->id,'returnResultAsArray'=>'view']);
+			return redirect()->route($redirectRouteName,['company'=>$company->id,'cashflowReport'=>$model->id,'returnResultAsArray'=>'view']);
 			
 		}
 		return redirect()->back()->with('without_resetting',1);
@@ -634,11 +647,12 @@ class CashFlowReportController
 	}
 
 	public function destroy(Request $request, Company $company,CashflowReport $cashflowReport){
+		$viewRouteName = $cashflowReport->is_contract ? 'view.contract.cashflow.report' :'view.cashflow.report';
 		$cashflowReport->cashProjects()->delete();
 		DB::table('weekly_cashflow_custom_due_invoices')
 		->where('company_id',$company->id)
 		->where('cashflow_report_id',$cashflowReport->id)->delete();
 		$cashflowReport->delete();
-		return redirect()->route('view.cashflow.report',['company'=>$company->id]);
+		return redirect()->route($viewRouteName,['company'=>$company->id]);
 	}
 }

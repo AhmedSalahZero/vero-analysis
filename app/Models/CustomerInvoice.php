@@ -637,11 +637,11 @@ class CustomerInvoice extends Model implements IInvoice
 	{
 		return 'invoice_date';
 	}
-	public static function getProjectionOtherCashIn(array &$result  ,Company $company,int $cashflowReportId ):void
+	public static function getProjectionOtherCashIn(array &$result  ,Company $company,int $cashflowReportId,int $isContract ):void
 	{
 		$currentTypeText = 'Projected Other Cash In Items';
 		
-		$items = CashProjection::where('company_id',$company->id)->where('cashflow_report_id',$cashflowReportId)->where('type','in')->get();
+		$items = CashProjection::where('company_id',$company->id)->where('is_contract',$isContract)->where('cashflow_report_id',$cashflowReportId)->where('type','in')->get();
 		
 			foreach($items as $item){
 				$name = $item->name ; 

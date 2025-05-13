@@ -6,7 +6,12 @@
     .kt-portlet {
         overflow: visible !important;
     }
-
+.max-w-checkbox {
+        min-width: 25px !important;
+        max-width: 25px !important;
+        width: 25px !important;
+		margin-left:30px;
+    }
 </style>
 @endsection
 @section('sub-header')
@@ -20,8 +25,7 @@
 
 
         <!--begin::Form-->
-        <form class="kt-form kt-form--label-right" method="POST" action="{{ route('result.contract.cashflow.report',['company'=>$company->id ]) }}" enctype="multipart/form-data">
-            @csrf
+        <form class="kt-form kt-form--label-right" method="get" action="{{ route('result.contract.cashflow.report',['company'=>$company->id ]) }}" enctype="multipart/form-data">
             <div class="kt-portlet" style="overflow-x:hidden">
 
                 <div class="kt-portlet__body closest-parent-tr">
@@ -95,18 +99,62 @@
 
 
 
-
-                        <div class="col-md-3">
+						
+						
+						<div class="col-md-3 ">
+                                    <x-form.date :type="'text'" :classes="'datepicker-input '" :default-value="formatDateForDatePicker(old('start_date') ?: (now()) )" :model="$model??null" :label="__('Report Start Date')" :type="'text'" :id="'id'" :placeholder="__('')" :name="'start_date'" :required="true"></x-form.date>
+                                </div>
+								
+								<div class="col-md-3 ">
+                                    <x-form.date :type="'text'" :classes="'datepicker-input '" :default-value="formatDateForDatePicker(old('end_date') ?: (now()->addMonths(6)) )" :model="$model??null" :label="__('End Start Date')" :type="'text'" :id="'id'" :placeholder="__('')" :name="'end_date'" :required="true"></x-form.date>
+                                </div>
+								
+								
+									<div class="col-md-2 mt-4">
+							<p class="text-left text-red">
+								{{ __('Note: Kindly the date of Today must be included within the report duration') }}
+							</p>
+						</div>
+						<div class="col-md-3 mt-4">
+						 <label>{{__('Reset [Past Dues & Other Projected Cash In & Out]')}} </label>
+                            <div class="kt-input-icon">
+                                <div class="input-group date justify-content-center">
+                                            <input name="reset_report"  class="form-control max-w-checkbox  text-center" value="1"   type="checkbox">
+								</div>
+								</div>
+						</div>
+						
+						<div class="col-md-3 mt-4">
+						 <label>{{__('Do You Want To Save Report')}} </label>
+                            <div class="kt-input-icon">
+                                <div class="input-group date ">
+                                            <input name="save_report"  class="form-control max-w-checkbox want-to-save-report  text-center" value="1"   type="checkbox">
+								</div>
+								</div>
+						</div>
+						
+						
+						  <div class="col-md-4 mt-4 " id="report-name-div" style="display:none">
+                            <label>{{ __('Report Name') }} </label>
+                        <div class="kt-input-icon">
+                            <div class="input-group date" id="report_name">
+                                <input type="text" class="form-control" name="report_name" value="">
+                            </div>
+                        </div>
+                    </div>
+					
+								
+                        {{-- <div class="col-md-3">
                             <label>{{ __('Report Start Date') }}  @include('star') </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date" id="start_date">
                                     <input required type="date" class="form-control" name="start_date" value="{{ now() }}">
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
 
 
-                        <div class="col-md-3">
+                        {{-- <div class="col-md-3">
                             <label>{{ __('Report End Date') }} @include('star') </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date" id="end_date">
@@ -114,7 +162,7 @@
                                 </div>
                             </div>
 
-                        </div>
+                        </div> --}}
 
 
 
@@ -131,7 +179,7 @@
         </form>
 
         <!--end::Form-->
-
+	@include('contract-cashflow-report-index')
         <!--end::Portlet-->
     </div>
 </div>
@@ -197,6 +245,24 @@
         $('select.suppliers-or-customers-js').trigger('change')
     })
 
+</script>
+<script>
+ $(document).find('.datepicker-input').datepicker({
+                dateFormat: 'yy-mm-dd'
+                , autoclose: true
+            })
+			
+</script>
+
+<script>
+$(document).on('change','.want-to-save-report',function(){
+	const isChecked = $(this).is(':checked');
+	if(isChecked){
+		$('#report-name-div').show();
+	}else{
+		$('#report-name-div').hide();
+	}
+})
 </script>
 
 @endsection

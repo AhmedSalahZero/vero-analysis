@@ -633,6 +633,14 @@ class Company extends Model implements HasMedia
 	{
 		return Department::where('type',$type)->get();
 	}
+	// public function contractCashflowReports():HasMany
+	// {
+	// 	return $this->hasMany(ContractCashflowReport::class , 'company_id','id');
+	// }
+	// public function contractCashProjects()
+	// {
+	// 	return $this->hasMany(ContractCashProjection::class)->where('cashflow_report_id',0);
+	// }
 	public function cashflowReports():HasMany
 	{
 		return $this->hasMany(CashflowReport::class , 'company_id','id');
@@ -654,6 +662,5 @@ class Company extends Model implements HasMedia
 
 		DB::table('cash_projections')
 		->where('cashflow_report_id','=',0)->where('company_id',$this->id)->delete();
-		
 	}
 }

@@ -4,197 +4,200 @@ use App\Models\Contract;
 @endphp
 @section('css')
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/jszip-2.5.0/dt-1.12.1/af-2.4.0/b-2.2.3/b-colvis-2.2.3/b-html5-2.2.3/b-print-2.2.3/cr-1.5.6/date-1.1.2/fc-4.1.0/fh-3.2.3/r-2.3.0/rg-1.2.0/sl-1.4.0/sr-1.1.1/datatables.min.css" />
+<link href="{{ url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css') }}" rel="stylesheet" type="text/css" />
+<link href="{{ url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css') }}" rel="stylesheet" type="text/css" />
+
 <style>
-        .w-60-percentage {
-            width: 60% !important;
-        }
+    .w-60-percentage {
+        width: 60% !important;
+    }
 
-        .w-50-percentage {
-            width: 50% !important;
-        }
+    .w-50-percentage {
+        width: 50% !important;
+    }
 
-        .w-40-percentage {
-            width: 40% !important;
-        }
+    .w-40-percentage {
+        width: 40% !important;
+    }
 
-        .w-30-percentage {
-            width: 30% !important;
-        }
+    .w-30-percentage {
+        width: 30% !important;
+    }
 
-        .w-20-percentage {
-            width: 20% !important;
-        }
+    .w-20-percentage {
+        width: 20% !important;
+    }
 
-        .w-70-percentage {
-            width: 70% !important;
-        }
+    .w-70-percentage {
+        width: 70% !important;
+    }
 
-        .w-15-percentage {
-            width: 15% !important;
-        }
+    .w-15-percentage {
+        width: 15% !important;
+    }
 
-        .w-10-percentage {
-            width: 10% !important;
-        }
+    .w-10-percentage {
+        width: 10% !important;
+    }
 
-        .flex-tabs {
-            display: flex;
-            gap: 10px;
-        }
+    .flex-tabs {
+        display: flex;
+        gap: 10px;
+    }
 
-        .text-green {
-            color: green !important;
-        }
+    .text-green {
+        color: green !important;
+    }
 
-        .text-red {
-            color: red !important;
-        }
+    .text-red {
+        color: red !important;
+    }
 
-        .show-class-js {
-            display: block !important;
-        }
+    .show-class-js {
+        display: block !important;
+    }
 
-        .table-condensed th {
-            background-color: white !important;
-        }
+    .table-condensed th {
+        background-color: white !important;
+    }
 
-        input,
-        select,
-        .dropdown-toggle.bs-placeholder {
-            border: 1px solid #CCE2FD !important;
-        }
+    input,
+    select,
+    .dropdown-toggle.bs-placeholder {
+        border: 1px solid #CCE2FD !important;
+    }
 
-        .flex-2 {
-            flex: 2 !important;
-        }
+    .flex-2 {
+        flex: 2 !important;
+    }
 
-        .text-main-color {
-            color: #0742A6 !important
-        }
+    .text-main-color {
+        color: #0742A6 !important
+    }
 
-        ::placeholder {
-            color: lightgray !important;
-            font-weight: 100;
-        }
+    ::placeholder {
+        color: lightgray !important;
+        font-weight: 100;
+    }
 
-        .visibility-hidden {
-            visibility: hidden !important;
-        }
+    .visibility-hidden {
+        visibility: hidden !important;
+    }
 
-        .income-statement-table {}
+    .income-statement-table {}
 
-        .btn-border-radius {
-            border-radius: 10px !important;
-        }
+    .btn-border-radius {
+        border-radius: 10px !important;
+    }
 
-        .income-statement-table .main-level-tr td,
-        .income-statement-table .main-level-tr th {
-            background-color: #9FC9FB !important;
-            border: 1px solid #fff;
+    .income-statement-table .main-level-tr td,
+    .income-statement-table .main-level-tr th {
+        background-color: #9FC9FB !important;
+        border: 1px solid #fff;
 
-        }
+    }
 
-        .income-statement-table .main-level-tr td:first-of-type,
-        .income-statement-table .main-level-tr td:nth-of-type(2),
-        .income-statement-table .main-level-tr th:first-of-type,
-        .income-statement-table .main-level-tr th:nth-of-type(2) {
-            background-color: #9FC9FB !important;
-        }
+    .income-statement-table .main-level-tr td:first-of-type,
+    .income-statement-table .main-level-tr td:nth-of-type(2),
+    .income-statement-table .main-level-tr th:first-of-type,
+    .income-statement-table .main-level-tr th:nth-of-type(2) {
+        background-color: #9FC9FB !important;
+    }
 
-        .income-statement-table .sub-level-tr td,
-        .income-statement-table .sub-level-tr th {
-            background-color: #fff !important;
-        }
+    .income-statement-table .sub-level-tr td,
+    .income-statement-table .sub-level-tr th {
+        background-color: #fff !important;
+    }
 
-        input,
-        select,
-        .filter-option-inner-inner {
-            font-weight: 600 !important;
-            color: black !important;
-        }
+    input,
+    select,
+    .filter-option-inner-inner {
+        font-weight: 600 !important;
+        color: black !important;
+    }
 
-        html body tr.all-td-white td {
-            background-color: white !important;
-        }
+    html body tr.all-td-white td {
+        background-color: white !important;
+    }
 
-        .font-size-1-25rem {
-            font-size: 1.25rem !important;
-        }
+    .font-size-1-25rem {
+        font-size: 1.25rem !important;
+    }
 
-        .font-size-15px {
-            font-size: 15px !important
-        }
+    .font-size-15px {
+        font-size: 15px !important
+    }
 
-        .label-clr {
-            color: #646c9a !important;
-        }
+    .label-clr {
+        color: #646c9a !important;
+    }
 
-        .installment-section {
-            background: #F2F2F2 !important;
-            padding-top: 10px;
-            margin-bottom: 10px !important;
-        }
+    .installment-section {
+        background: #F2F2F2 !important;
+        padding-top: 10px;
+        margin-bottom: 10px !important;
+    }
 
-        .label-size {
-            font-size: 1.25rem !important;
-        }
+    .label-size {
+        font-size: 1.25rem !important;
+    }
 
-        .pr-6rem {
-            padding-right: 6rem;
-        }
+    .pr-6rem {
+        padding-right: 6rem;
+    }
 
-        .pointer-events-none {
-            pointer-events: none;
-        }
+    .pointer-events-none {
+        pointer-events: none;
+    }
 
-        .dtfh-floatingparent.dtfh-floatingparenthead {
-            top: 59px !important;
-        }
+    .dtfh-floatingparent.dtfh-floatingparenthead {
+        top: 59px !important;
+    }
 
-        .table-for-collection-policy tr:nth-child(odd) {
-            background-color: white !important;
-        }
+    .table-for-collection-policy tr:nth-child(odd) {
+        background-color: white !important;
+    }
 
-        .percentage-weight {
-            font-weight: bold;
-            margin-right: 10px;
-        }
-
-
+    .percentage-weight {
+        font-weight: bold;
+        margin-right: 10px;
+    }
 
 
 
-        .small-caps {
-            font-variant: small-caps;
-        }
 
-        .sharing-sign {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            margin: auto;
-        }
 
-        .active-sharing {
-            background: #00ff28;
-        }
+    .small-caps {
+        font-variant: small-caps;
+    }
 
-        .inactive-sharing {
-            background: #f00;
-        }
+    .sharing-sign {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        margin: auto;
+    }
 
-        .w-full {
-            width: 100%;
-        }
+    .active-sharing {
+        background: #00ff28;
+    }
 
-        .btn.dropdown-toggle {
-            height: 100%;
-        }
+    .inactive-sharing {
+        background: #f00;
+    }
 
-        /* .dropdown-toggle{} */
+    .w-full {
+        width: 100%;
+    }
 
-    </style>
-	
+    .btn.dropdown-toggle {
+        height: 100%;
+    }
+
+    /* .dropdown-toggle{} */
+
+</style>
+
 <style>
     .main-td-background {
         background-color: #0742A6;
@@ -446,18 +449,18 @@ use App\Models\Contract;
                     </a>
                 </li>
 
-           
+
 
             </ul>
-@if(hasAuthFor('view '. str_plural(strtolower($type)) .' contracts'))
+            @if(hasAuthFor('view '. str_plural(strtolower($type)) .' contracts'))
             <div class="flex-tabs">
-              
+
                 <a href="{{ route('contracts.create',['company'=>$company->id,'type'=>$type]) }}" class="btn  active-style btn-icon-sm align-self-center">
                     <i class="fas fa-plus"></i>
                     {{ __('Create') }}
                 </a>
             </div>
-			@endif 
+            @endif
 
         </div>
     </div>
@@ -485,6 +488,7 @@ use App\Models\Contract;
                             <tr class=" text-center second-tr-bg">
                                 <th class="text-center absorbing-column "></th>
                                 <th></th>
+                                <th></th>
                             </tr>
                             @endslot
                             @slot('table_body')
@@ -511,7 +515,7 @@ use App\Models\Contract;
                             $contract = $parent['contract'] ;
 
                             @endphp
-                            <tr class="group-color main-row-tr">
+                            <tr class="group-color main-row-tr closest-parent-tr">
 
 
 
@@ -521,21 +525,21 @@ use App\Models\Contract;
                                         @if(count($subItems))
                                         <i class="row_icon{{ $mainItemId }} flaticon2-up  mr-2  "></i>
                                         @endif
-										 <b class="text-capitalize ">
-                                        <b class="text-capitalize ">{{ $parent['client_name'] }}</b>
-                                    </b>
-                                      
+                                        <b class="text-capitalize ">
+                                            <b class="text-capitalize ">{{ $parent['client_name'] }}</b>
+                                        </b>
+
                                     </div>
                                 </td>
-								 <td class="text-center">
+                                <td class="text-center">
                                     <b class="text-capitalize ">
-                                     
-										  <b class="text-capitalize ">{{ $parent['name'] }}</b>
+
+                                        <b class="text-capitalize ">{{ $parent['name'] }}</b>
                                     </b>
 
                                 </td>
                                 <td class="text-center">
-                                      <b class="text-capitalize ">{{ $parent['contract_code'] }}</b>
+                                    <b class="text-capitalize ">{{ $parent['contract_code'] }}</b>
 
                                 </td>
                                 <td class="text-center">
@@ -562,51 +566,26 @@ use App\Models\Contract;
 
                                 <td class="text-left text-capitalize">
 
-                            
+
 
 
 
                                     <b class="ml-3">
                                         @if($type == 'Customer')
-										                                        {{-- <button  type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon"><i class="flaticon2-copy"></i> </button> --}}
+                                        {{-- <button  type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon"><i class="flaticon2-copy"></i> </button> --}}
                                         {{-- <button data-toggle="modal" data-target="#details_model{{ $contract->id }}" type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon"><i class="fa fa-eye"></i> </button> --}}
                                         {{-- <a href="{{ str_replace('?','#',route('contracts.edit',['company'=>$company->id,'contract'=>$contract->id ,'type'=>$type,'connecting'])) }}" title="{{ __('Connecting With Supplier Contracts') }}" class="btn btn-secondary btn-outline-hover-brand btn-icon"><i class="fa fa-link"></i> </a> --}}
                                         @endif
                                         <span style="overflow: visible; position: relative; width: 110px;">
-										@php
-											$currentModelId = 'contract-invoice-details-'.$mainItemId  ;
-										@endphp
-										@if($hasProjectNameColumn)
-										<button class="btn btn-sm btn-brand btn-elevate btn-pill text-white" data-toggle="modal" data-target="#{{ $currentModelId }}">{{ __('Invoices') }}</button>
-										@include('contracts.contract-invoice-details',['modalId'=>$currentModelId,'detailItems'=>$parent['invoices']]) 
-										@endif 
+                                            @php
+                                            $currentModelId = 'contract-invoice-details-'.$mainItemId ;
+                                            @endphp
+                                            @if($hasProjectNameColumn)
+                                            <button class="btn btn-sm btn-brand btn-elevate btn-pill text-white" data-toggle="modal" data-target="#{{ $currentModelId }}">{{ __('Invoices') }}</button>
+                                            @include('contracts.contract-invoice-details',['modalId'=>$currentModelId,'detailItems'=>$parent['invoices']])
+                                            @endif
 
-											@if($currentType == Contract::RUNNING )
-											<a data-toggle="modal" data-target="#mark-as-finished-contract-{{ $mainItemId }}" type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="{{ __('Finished') }}" href="#"><i class="fa fa-thumbs-up"></i></a>
-                                            <div class="modal fade" id="mark-as-finished-contract-{{ $mainItemId }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                                                <div class="modal-dialog modal-dialog-centered" role="document">
-                                                    <div class="modal-content">
-                                                        <form action="{{ route('contract.mark.as.finished', ['company'=>$company->id , 'contract'=>$mainItemId,'type'=>$type]) }}" method="post">
-                                                            @csrf
-                                                            @method('put')
-                                                            <div class="modal-header">
-                                                                <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Do You Want To Mark This Contract As Finished ?') }}</h5>
-                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                    <span aria-hidden="true">&times;</span>
-                                                                </button>
-                                                            </div>
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close') }}</button>
-                                                                <button type="submit" class="btn btn-primary">{{ __('Confirm') }}</button>
-                                                            </div>
-
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            </div>
-											@endif 
-                                            @if($currentType == Contract::RUNNING_AND_AGAINST )
-@if(hasAuthFor('update '. str_plural(strtolower($type)) .' contracts'))
+                                            @if($currentType == Contract::RUNNING )
                                             <a data-toggle="modal" data-target="#mark-as-finished-contract-{{ $mainItemId }}" type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="{{ __('Finished') }}" href="#"><i class="fa fa-thumbs-up"></i></a>
                                             <div class="modal fade" id="mark-as-finished-contract-{{ $mainItemId }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
@@ -629,9 +608,34 @@ use App\Models\Contract;
                                                     </div>
                                                 </div>
                                             </div>
-@endif 
+                                            @endif
+                                            @if($currentType == Contract::RUNNING_AND_AGAINST )
+                                            @if(hasAuthFor('update '. str_plural(strtolower($type)) .' contracts'))
+                                            <a data-toggle="modal" data-target="#mark-as-finished-contract-{{ $mainItemId }}" type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="{{ __('Finished') }}" href="#"><i class="fa fa-thumbs-up"></i></a>
+                                            <div class="modal fade" id="mark-as-finished-contract-{{ $mainItemId }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                                    <div class="modal-content">
+                                                        <form action="{{ route('contract.mark.as.finished', ['company'=>$company->id , 'contract'=>$mainItemId,'type'=>$type]) }}" method="post">
+                                                            @csrf
+                                                            @method('put')
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Do You Want To Mark This Contract As Finished ?') }}</h5>
+                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close') }}</button>
+                                                                <button type="submit" class="btn btn-primary">{{ __('Confirm') }}</button>
+                                                            </div>
+
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            @endif
                                             @elseif($currentType == Contract::FINISHED)
-											@if(hasAuthFor('update '. str_plural(strtolower($type)) .' contracts'))
+                                            @if(hasAuthFor('update '. str_plural(strtolower($type)) .' contracts'))
                                             <a data-toggle="modal" data-target="#mark-as-running-and-against-contract-{{ $mainItemId }}" type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="{{ __('Running And Against') }}" href="#"><i class="fa fa-thumbs-up"></i></a>
                                             <div class="modal fade" id="mark-as-running-and-against-contract-{{ $mainItemId }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
@@ -654,13 +658,13 @@ use App\Models\Contract;
                                                     </div>
                                                 </div>
                                             </div>
-											@endif 
+                                            @endif
 
                                             @endif
-											@if(hasAuthFor('update '. str_plural(strtolower($type)) .' contracts'))
+                                            @if(hasAuthFor('update '. str_plural(strtolower($type)) .' contracts'))
                                             <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('contracts.edit', ['company'=>$company->id , 'contract'=>$mainItemId,'type'=>$type]) }}"><i class="fa fa-pen-alt"></i></a>
-											@endif 
-											@if(hasAuthFor('delete '. str_plural(strtolower($type)) .' contracts'))
+                                            @endif
+                                            @if(hasAuthFor('delete '. str_plural(strtolower($type)) .' contracts'))
                                             <a class="btn btn-secondary btn-outline-hover-danger btn-icon  " href="#" data-toggle="modal" data-target="#modal-delete-{{ $mainItemId }}" title="Delete"><i class="fa fa-trash-alt"></i>
                                             </a>
 
@@ -688,7 +692,7 @@ use App\Models\Contract;
                                                     </div>
                                                 </div>
                                             </div>
-											@endif 
+                                            @endif
 
                                         </span>
                                     </b>
@@ -710,25 +714,167 @@ use App\Models\Contract;
                                     <table class="table ml-3 table-borderless">
 
 
-                                        <tr>
+                                        <tr class="total-amount" data-value="{{ number_unformat($titleAndValue['amount']) }}">
                                             @if(isset($titleAndValue['so_number'] ))
                                             <td>{{ __('Sales Order Number') }}</td>
                                             <td>{{ $titleAndValue['so_number'] }}</td>
                                             @elseif(isset($titleAndValue['po_number'] ))
                                             <td>{{ __('Purchase Order Number') }}</td>
                                             <td>{{ $titleAndValue['po_number'] }}</td>
+
                                             @endif
 
                                             <td>{{ __('Amount') }}</td>
                                             <td>{{ $titleAndValue['amount']  }}</td>
+
+
                                         </tr>
 
                                     </table>
+
+
+
+
                                 </td>
 
                                 <td>
                                 </td>
+                                <td class="text-center ">
+								
+										<form action="{{ route('store.po.allocations',['company'=>$company->id]) }}" method="post">
+										@csrf 
+										  <input type="hidden" name="po_id" value="{{ $titleAndValue['id'] }}">
+										
+                                        <button type="button" class="add-new btn btn-primary d-block" data-toggle="modal" data-target="#add-new-customer-modal--0">
+                                            {{ __('Allocate') }}
+                                        </button>
 
+                                        <div class="modal fade modal-class-js allocate-modal-class" id="add-new-customer-modal--0" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog modal-xl" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalLabel">{{ __('Allocate') }}</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+
+                                                        <div class="form-group row justify-content-center">
+                                                            @php
+                                                            $index = 0 ;
+                                                            @endphp
+
+                                                            @php
+                                                            $tableId = 'poAllocations';
+
+                                                            $repeaterId = 'm_repeater_inner';
+
+                                                            @endphp
+                                                            <x-tables.repeater-table :initialJs="false" :repeater-with-select2="true" :parentClass="'show-class-js'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=true">
+                                                                <x-slot name="ths">
+                                                                    @foreach([
+                                                                    __('Customer')=>'th-main-color',
+                                                                    __('Contract Name')=>'th-main-color',
+                                                                    __('Contract Code')=>'th-main-color',
+                                                                    __('Contract Amount')=>'th-main-color',
+                                                                    __('Allocate Percentage')=>'th-main-color',
+                                                                    __('Allocate Amount')=>'th-main-color',
+                                                                    ] as $title=>$classes)
+                                                                    <x-tables.repeater-table-th class="{{ $classes }}" :title="$title"></x-tables.repeater-table-th>
+                                                                    @endforeach
+                                                                </x-slot>
+                                                                <x-slot name="trs">
+                                                                    @php
+                                                                    $rows = isset($titleAndValue['allocations']) ? $titleAndValue['allocations'] : [-1] ;
+                                                                    @endphp
+                                                                    @foreach( count($rows) ? $rows : [-1] as $poAllocation)
+                                                                    @php
+                                                                    $fullPath = new \App\Models\PoAllocation;
+                                                                    if( !($poAllocation instanceof $fullPath) ){
+                                                                    unset($poAllocation);
+                                                                    }
+                                                                    @endphp
+                            <tr class="closest-parent-tr" @if($isRepeater) data-repeater-item @endif>
+
+                                <td class="text-center">
+
+                                    <input type="hidden" name="company_id" value="{{ $company->id }}">
+                                  
+                                    <div class="">
+                                        <i data-repeater-delete="" class="btn-sm btn btn-danger m-btn m-btn--icon m-btn--pill trash_icon fas fa-times-circle">
+                                        </i>
+                                    </div>
+                                </td>
+                                {{-- {{ dd($clientsWithContracts) }} --}}
+                                <td>
+                                    <x-form.select :insideModalWithJs="false" :selectedValue="isset($poAllocation) && $poAllocation->partner_id ? $poAllocation->partner_id : ''" :options="formatOptionsForSelect($clientsWithContracts)" :add-new="false" class=" suppliers-or-customers-js " data-filter-type="{{ 'create' }}" :all="false" data-name="partner_id" name="partner_id"></x-form.select>
+                                </td>
+
+                                <td>
+                                    <x-form.select :insideModalWithJs="false" data-current-selected="{{ isset($poAllocation) ? $poAllocation->id : '' }}" :selectedValue="isset($poAllocation) ? $poAllocation->contract_id : ''" :options="[]" :add-new="false" class=" contracts-js   " data-filter-type="{{ 'create' }}" :all="false" data-name="contract_id" name="contract_id"></x-form.select>
+                                </td>
+
+                                <td>
+                                    <div class="kt-input-icon ">
+                                        <div class="input-group">
+                                            <input disabled type="text" class="form-control contract-code " value="">
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="kt-input-icon ">
+                                        <div class="input-group">
+                                            <input disabled type="text" class="form-control contract-amount" value="0">
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <div class="kt-input-icon ">
+                                        <div class="input-group">
+                                            <input type="text" data-name="allocation_percentage" name="allocation_percentage" class="form-control allocation-percentage-class" value="{{ isset($poAllocation) ? number_format($poAllocation->getPercentage(),2): 0 }}">
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <div class="kt-input-icon ">
+                                        <div class="input-group">
+                                            <input type="text" readonly data-name="allocation_amount" name="allocation_amount" class="form-control allocation-amount-class" value="{{ isset($poAllocation) ? number_format($poAllocation->getAmount(),2): 0 }}">
+                                        </div>
+                                    </div>
+                                </td>
+
+
+                            </tr>
+
+
+
+                            @endforeach
+
+                            </x-slot>
+
+
+
+
+                            </x-tables.repeater-table>
+                            {{-- end of fixed monthly repeating amount --}}
+
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close') }}</button>
+                    <button type="submit" class="btn btn-primary ">{{ __('Save') }}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+	
+	
+										</form>
+                                </td>
 
 
 
@@ -785,8 +931,89 @@ use App\Models\Contract;
     }
 
 </script>
-<script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
-<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.22/datatables.min.js"></script>
-<script type="text/javascript" src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
 
+<!--begin::Page Scripts(used by this page) -->
+<script src="{{ url('assets/vendors/general/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}" type="text/javascript"></script>
+<script src="{{ url('assets/vendors/custom/js/vendors/bootstrap-datepicker.init.js') }}" type="text/javascript">
+</script>
+<script src="{{ url('assets/js/demo1/pages/crud/forms/widgets/bootstrap-datepicker.js') }}" type="text/javascript">
+</script>
+<script src="{{ url('assets/vendors/general/bootstrap-select/dist/js/bootstrap-select.js') }}" type="text/javascript">
+</script>
+<script src="{{ url('assets/js/demo1/pages/crud/forms/widgets/bootstrap-select.js') }}" type="text/javascript">
+</script>
+<script src="{{ url('assets/vendors/general/jquery.repeater/src/lib.js') }}" type="text/javascript"></script>
+<script src="{{ url('assets/vendors/general/jquery.repeater/src/jquery.input.js') }}" type="text/javascript">
+</script>
+<script src="{{ url('assets/vendors/general/jquery.repeater/src/repeater.js') }}" type="text/javascript"></script>
+<script src="{{ url('assets/js/demo1/pages/crud/forms/widgets/form-repeater.js') }}" type="text/javascript"></script>
+<script>
+
+</script>
+
+{{-- <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.22/datatables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script> --}}
+
+
+<script src="{{asset('assets/form-repeater.js')}}" type="text/javascript"></script>
+
+<script>
+    $(document).find('.datepicker-input').datepicker({
+        dateFormat: 'mm-dd-yy'
+        , autoclose: true
+    })
+
+</script>
+<script>
+    $(document).on('change', '.allocation-percentage-class', function() {
+        let percentage = $(this).val()
+        percentage = percentage ? percentage : 0;
+        percentage = percentage / 100;
+        const parent = $(this).closest('.sub-item-row');
+        let amount = number_unformat($(parent).find('.total-amount').attr('data-value'));
+        amount = amount ? amount : 0;
+        $(this).closest('tr').find('.allocation-amount-class').val(Math.round(percentage * amount, 2))
+
+    });
+    $(document).on('change', 'select.contracts-js', function() {
+        const parent = $(this).closest('tr')
+        const code = $(this).find('option:selected').data('code')
+        const amount = $(this).find('option:selected').data('amount')
+        const currency = $(this).find('option:selected').data('currency').toUpperCase()
+        $(parent).find('.contract-code').val(code)
+        $(parent).find('.contract-amount').val(number_format(amount) + ' ' + currency)
+
+    })
+
+    $(document).on('change', 'select.suppliers-or-customers-js', function() {
+        const parent = $(this).closest('.closest-parent-tr')
+        const partnerId = parseInt($(this).val())
+        const model = 'Customer'
+        let inEditMode = 0;
+
+        $.ajax({
+            url: "{{ route('get.contracts.for.customer.or.supplier',['company'=>$company->id]) }}"
+            , data: {
+                partnerId
+                , model
+                , inEditMode
+            }
+            , type: "get"
+            , success: function(res) {
+                let contracts = '';
+                const currentSelected = $(parent).find('select.contracts-js').data('current-selected')
+                for (var contract of res.contracts) {
+                    contracts += `<option ${currentSelected ==contract.id ? 'selected' :'' } value="${contract.id}" data-code="${contract.code}" data-amount="${contract.amount}" data-start-date="${contract.start_date}" data-end-date="${contract.end_date}" data-currency="${contract.currency}" >${contract.name}</option>`;
+                }
+                console.log(parent.find('select.contracts-js').length)
+                parent.find('select.contracts-js').empty().append(contracts).trigger('change')
+            }
+        })
+    })
+    $(function() {
+        $('select.suppliers-or-customers-js').trigger('change')
+    })
+
+</script>
 @endsection

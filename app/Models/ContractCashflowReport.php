@@ -5,7 +5,7 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
-class CashflowReport extends Model
+class ContractCashflowReport extends Model
 {
 	protected $guarded = [];
 	protected $casts = [
@@ -13,7 +13,7 @@ class CashflowReport extends Model
 	];
 	public function cashProjects()
 	{
-		return $this->hasMany(CashProjection::class,'cashflow_report_id');
+		return $this->hasMany(CashProjection::class,'contract_cashflow_report_id');
 	}
 	public function getName():string 
 	{

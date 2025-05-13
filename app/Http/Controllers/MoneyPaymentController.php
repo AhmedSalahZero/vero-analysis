@@ -438,7 +438,7 @@ class MoneyPaymentController
 		 */
 		$totalWithholdAmount = $moneyPayment->storeNewSettlement(
 			// $paymentCurrency,$currencyName,$exchangeRate,$foreignExchangeRate,
-			$request->get('settlements',[]),$partnerId,$company->id);
+			$request->get('settlements',[]),$partnerId,$company);
 		$moneyPayment->update([
 			'total_withhold_amount'=>$totalWithholdAmount
 		]);
@@ -534,7 +534,7 @@ class MoneyPaymentController
 			$foreignExchangeRate = ForeignExchangeRate::getExchangeRateForCurrencyAndClosestDate($currencyName,$mainFunctionCurrency,$paymentDate,$company->id);
 			$newMoneyPayment->storeNewSettlement(
 				// $paymentCurrency,$currencyName,$exchangeRate,$foreignExchangeRate,
-				$oldSettlementsForMoneyReceivedWithDownPayment->toArray(),$newMoneyPayment->getPartnerId(),$companyId,1);
+				$oldSettlementsForMoneyReceivedWithDownPayment->toArray(),$newMoneyPayment->getPartnerId(),$company,1);
 		}
 		 $activeTab = $newType;
 		 if($request->ajax()){

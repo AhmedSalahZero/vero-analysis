@@ -536,10 +536,10 @@ class CashExpense extends Model
 	
 	
 	}
-	public static function getProjectionOtherCashOut(array &$result ,Company $company , int $cashflowReportId ):void
+	public static function getProjectionOtherCashOut(array &$result ,Company $company , int $cashflowReportId,int $isContract ):void
 	{
 		$key = __('Projected Other Cash Out Items') ;
-		$items = CashProjection::where('company_id',$company->id)->where('cashflow_report_id',$cashflowReportId)->where('type','out')->get();
+		$items = CashProjection::where('company_id',$company->id)->where('is_contract',$isContract)->where('cashflow_report_id',$cashflowReportId)->where('type','out')->get();
 		// dd($items);
 		
 			foreach($items as $item){

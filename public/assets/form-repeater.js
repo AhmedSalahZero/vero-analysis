@@ -375,8 +375,117 @@ var FormRepeater = function () {
 		})
 	}
 	
+	
+	
+	var demo10 = function () {
+		$('.m_repeater_outer').repeater({
+			initEmpty: false,
+			isFirstItemUndeletable: true,
+			selector: '.inner-repeater',
+			defaultValues: {
+				'exchange_rate': 1
+			},
+			show: function () {
+				$('select.repeater-select').selectpicker('refresh');
+				$(this).slideDown();
+				appendNewOptionsToAllSelects(this);
+	
+				// Initialize the inner repeater for the newly added row
+				$(this).find('.m_repeater_inner').repeater({
+					initEmpty: false,
+					isFirstItemUndeletable: true,
+					defaultValues: {
+						'exchange_rate': 1
+					},
+					show: function () {
+						$(this).find('.dropdown-toggle').remove();
+						$(this).find('select.select2-select.suppliers-or-customers-js').selectpicker();
+						$(this).slideDown();
+						appendNewOptionsToAllSelects(this);
+	
+						// Stop propagation for the inner repeater's add button
+						$(this).find('[data-repeater-create]').off('click').on('click', function (e) {
+							e.stopPropagation();
+						});
+					},
+					hide: function (deleteElement) {
+						if ($('#first-loading').length) {
+							$(this).slideUp(deleteElement, function () {
+								deleteElement();
+							});
+						} else {
+							if (confirm('Are you sure you want to delete this element?')) {
+								$(this).slideUp(deleteElement, function () {
+									deleteElement();
+									$('select.main-service-item').trigger('change');
+								});
+							}
+						}
+					}
+				});
+			},
+			hide: function (deleteElement) {
+				if ($('#first-loading').length) {
+					$(this).slideUp(deleteElement, function () {
+						deleteElement();
+					});
+				} else {
+					if (confirm('Are you sure you want to delete this element?')) {
+						$(this).slideUp(deleteElement, function () {
+							deleteElement();
+							$('select.main-service-item').trigger('change');
+						});
+					}
+				}
+			}
+		});
+	};
+	
+	
+	
+	
 
+	var demo11 = function () {
+		$('.m_repeater_inner').repeater({
+			initEmpty: false,
+			isFirstItemUndeletable: true,
+		
+			defaultValues: {
+				'exchange_rate':1
+			},
 
+			show: function () {
+				$(this).find('.dropdown-toggle').remove();
+				$(this).find('select.select2-select.suppliers-or-customers-js').selectpicker()
+				$(this).slideDown()
+				appendNewOptionsToAllSelects(this)
+				// alert($(this).find('[data-repeater-create]').length)
+				console.log($('[data-repeater-list="purchasesOrders"] [data-repeater-create]:eq(1)').length)
+				$('[data-repeater-list="purchasesOrders"] [data-repeater-create]:eq(1)').off('click').on('click', function (e) {
+					e.stopPropagation(); // Prevent the event from bubbling up to the outer repeater
+				});
+			},
+
+			hide: function (deleteElement) {
+				if ($('#first-loading').length) {
+					$(this).slideUp(deleteElement, function () {
+
+						deleteElement()
+						//   $('select.main-service-item').trigger('change');
+					})
+				}
+				else {
+					if (confirm('Are you sure you want to delete this element?')) {
+						$(this).slideUp(deleteElement, function () {
+
+							deleteElement()
+							$('select.main-service-item').trigger('change')
+						})
+					}
+				}
+			}
+		})
+	}
 
 
 
@@ -392,6 +501,8 @@ var FormRepeater = function () {
 			demo7()
 			demo8()
 			demo9()
+			demo10()
+			demo11()
 		}
 	}
 }()

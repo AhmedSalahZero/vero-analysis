@@ -24,8 +24,9 @@ class ContractCashFlowReportController
     public function index(Company $company)
 	{
 		$clientsWithContracts = Partner::onlyCompany($company->id)->onlyCustomers()->onlyThatHaveContracts()->get();
-	
-        return view('reports.contract_cash_flow_form', compact('company','clientsWithContracts'));
+		dd($clientsWithContracts);
+		$contractCashflowReports = $company->cashflowReports->where('is_contract',1);
+        return view('reports.contract_cash_flow_form', compact('company','clientsWithContracts','contractCashflowReports'));
     }
 	public function result(Company $company , Request $request , bool $returnResultAsArray = false ){
 		

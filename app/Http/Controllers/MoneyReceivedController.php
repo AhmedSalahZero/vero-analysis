@@ -481,7 +481,7 @@ class MoneyReceivedController
 		 */
 		$totalWithholdAmount = $moneyReceived->storeNewSettlement(
 			// $receivingCurrency,$currency,$exchangeRate,$foreignExchangeRate,
-			$request->get('settlements',[]),$partnerId,$company->id);
+			$request->get('settlements',[]),$partnerId,$company);
 		
 		$moneyReceived->update([
 			'total_withhold_amount'=>$totalWithholdAmount
@@ -590,7 +590,7 @@ class MoneyReceivedController
 		if(!$moneyReceivedAmountHasChanged){
 			$newMoneyReceived->storeNewSettlement(
 				// $receivingCurrency,$currency,$exchangeRate,$foreignExchangeRate,
-				$oldSettlementsForMoneyReceivedWithDownPayment->toArray(),$newMoneyReceived->getPartnerId(),$companyId,1);
+				$oldSettlementsForMoneyReceivedWithDownPayment->toArray(),$newMoneyReceived->getPartnerId(),$company,1);
 		}
 		 $activeTab = $newType;
 
@@ -603,6 +603,7 @@ class MoneyReceivedController
 	{
 		$moneyReceived->deleteRelations();
 		$activeTab = $moneyReceived->getType();
+		
 		$moneyReceived->delete();
 		return redirect()->route('view.money.receive',['company'=>$company->id,'active'=>$activeTab])->with('success',__('Money Received Has Been Updated Successfully'));
 	}

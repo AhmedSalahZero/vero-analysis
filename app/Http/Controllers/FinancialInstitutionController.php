@@ -143,7 +143,7 @@ class FinancialInstitutionController
 		 * @var FinancialInstitution $financialInstitution
 		 */
 		$financialInstitution = FinancialInstitution::create($data);
-		$financialInstitution->storeNewAccounts($accounts);
+		$financialInstitution->storeNewAccounts($accounts,$company);
 		$activeTab = $this->getActiveTab($type);
 		return redirect()->route('view.financial.institutions',['company'=>$company->id,'active'=>$activeTab])->with('success',__('Data Store Successfully'));
 		
@@ -214,7 +214,7 @@ class FinancialInstitutionController
 	public function storeAccount(Company $company , StoreCurrentAccountRequest $request , FinancialInstitution $financialInstitution)
 	{
 		$accounts = $request->get('accounts',[]) ;
-		$financialInstitution->storeNewAccounts($accounts);
+		$financialInstitution->storeNewAccounts($accounts,$company);
 		return redirect()->route('view.all.bank.accounts',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id ])->with('success',__('Item Has Been Delete Successfully'));
 		
 	}

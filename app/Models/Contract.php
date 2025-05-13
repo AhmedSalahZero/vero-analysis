@@ -301,6 +301,10 @@ class Contract extends Model
 	{
 		return $this->hasMany(PurchaseOrder::class,'contract_id','id');
 	}
+	public function poAllocations()
+	{
+		return $this->hasMany(PoAllocation::class,'contract_id','id');
+	}
 	public function forCustomer()
 	{
 		return $this->model_type === 'Customer';
@@ -470,5 +474,6 @@ class Contract extends Model
 		]);
 	}
 	
+		
 	
 }

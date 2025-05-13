@@ -31,11 +31,12 @@ class OddoService
 		$this->username =$userName;
 		$this->password = $password;
 		$this->company_id = $companyId ;
+		
 		require_once(public_path('apis/ripcord.php'));
 		$common = ripcord::client("$this->url/xmlrpc/2/common");
 		$uid = null ;
+		$uid = $common->authenticate($this->db, $this->username, $this->password, array());
 		try{
-			$uid = $common->authenticate($this->db, $this->username, $this->password, array());
 		}
 		catch(\Exception $e){
 			$uid = null;
@@ -80,14 +81,20 @@ class OddoService
 	/**
 	 * * import invoices
 	 */
-	public function startImportInvoices($startDate , $endDate):void
+	public function startImportInvoices($startDate , $endDate,$companyId)
 	{
-		if(is_null($this->uid)){
+		// dd($startDate,$endDate,$this->uid);
+		if(is_null($this->uid)  ){
 			return ;
+			// $invoices = $this->getInvoices($startDate,$endDate);
+			// $message =$invoices['faultString'] ?? '' ; 
+			// return __('Can Not Connect To Odoo') .' ' . $message;
 		}
+		$this->getContracts($startDate,$endDate,$companyId);
 		$invoices = $this->getInvoices($startDate,$endDate);
-		dd($invoices);
+		// dd($invoices);
 		$companyId = $this->company_id;
+		// dd($invoices,$startDate,$endDate);
 		foreach($invoices as $invoice){
 		
 			$invoiceId = $invoice['id'];
@@ -129,6 +136,7 @@ class OddoService
 				'date', //end date
 			]
 		]);
+		// dd($projects);
 		foreach($projects as $projectArr){
 			$projectAmount = 0 ;
 			$modelType = 'Customer';
@@ -488,8 +496,6 @@ class OddoService
 			}
 			
 			
-		
-		dd($journals);
 	
 		
 	}

@@ -167,7 +167,7 @@ class DownPaymentContractsController extends Controller
 		->each(function($settlement){
 			$settlement->delete();
 		});
-		$downPayment->storeNewSettlement($request->get('settlements',[]),$downPayment->getPartnerId(),$company->id,$isFromDownPayment);
+		$downPayment->storeNewSettlement($request->get('settlements',[]),$downPayment->getPartnerId(),$company,$isFromDownPayment);
 		return redirect()->route('view.contracts.down.payments',['company'=>$company->id,'partnerId'=>$partnerId,'modelType'=>$modelType,'currency'=>$downPayment->getCurrency()]);
 		
 	}

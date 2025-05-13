@@ -998,6 +998,7 @@ class MoneyReceived extends Model
 	public function getBankAccountOdooId():int
 	{
 		$financialInstitution = $this->getFinancialInstitution();
+		
 		return $financialInstitution->getOdooIdForAccount($this->getAccountTypeId(),$this->getAccountNumber());
 	}
 	public function cleanOverdraftCreditBankStatement()

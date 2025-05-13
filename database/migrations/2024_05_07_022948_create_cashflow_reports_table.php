@@ -16,20 +16,6 @@ class CreateCashflowReportsTable extends Migration
 		Schema::dropIfExists('cashflow_reports');
         Schema::create('cashflow_reports', function (Blueprint $table) {
             $table->id();
-			// $table->string('title')->comment('Company Cash Flow [ monthly ] for example');
-			// $table->json('weeks');
-			// $table->json('allCurrencies');
-			// $table->json('finalResult');
-			// $table->json('dates');
-			// $table->json('pastDueCustomerInvoices');
-			// $table->json('customerDueInvoices');
-			// $table->json('pastDueSupplierInvoices');
-			// $table->json('supplierDueInvoices');
-			// $table->json('pastDueInstallments');
-			// $table->json('pastDueLoanInstallments');
-			// $table->json('months');
-			// $table->json('days');
-			// $table->integer('noRowHeaders');
 			$table->string('report_name')->nullable();
 			$table->string('report_interval')->comment('monthly,  weekly ..etc');
 			$table->string('start_date');

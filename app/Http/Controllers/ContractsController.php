@@ -21,6 +21,7 @@ class ContractsController
 	public function index(Company  $company ,$type)
     {
 		$hasProjectNameColumn = $type == 'Customer'?  CustomerInvoice::hasProjectNameColumn() : false;
+		
 		$contractStatues = [
 			Contract::RUNNING ,
 			Contract::RUNNING_AND_AGAINST ,
@@ -58,12 +59,18 @@ class ContractsController
 					$items[$contractStatus][$contractId]['sub_items'][$order->id][$order->getOrderColumnName()] =$order->getNumber() ;
 					$items[$contractStatus][$contractId]['sub_items'][$order->id]['amount'] =$order->getAmountFormatted() ;
 					$items[$contractStatus][$contractId]['sub_items'][$order->id]['id'] =$order->id ;
+					$items[$contractStatus][$contractId]['sub_items'][$order->id]['allocations'] =$order->allocations ;
 				}
 		}
 		}
 
-
-        return view('contracts.index',compact('company','items','type','customerOrSupplierContractsText','contractStatues','hasProjectNameColumn'));
+		$commonVars = $this->getCommonVars($company,$type);
+		$clientsWithContracts = $commonVars['clientsWithContracts'];
+		// dd($clientsWithContracts);
+		
+		// dd($commonVars);
+		
+        return view('contracts.index',compact('clientsWithContracts','company','items','type','customerOrSupplierContractsText','contractStatues','hasProjectNameColumn'));
     }
 	public function create(Request $request,Company $company,string $type)
 	{
@@ -111,8 +118,13 @@ class ContractsController
 		];
 	}
 	public function store(StoreContractRequest $request, Company $company,string $type){
+		// dd($request->all());
 			$contract = new Contract ;
 			$contract->storeBasicForm($request);
+			// foreach($contract->purchasesOrders as $purchaseOrder){
+			// 	$contract->storeNewAllocation($request->get('allocations',[]));
+			// }
+			// dd('good');
 			return redirect()->route('contracts.index',['company'=>$company->id,'type'=>$type]);
 	}
 	public function edit(Request $request,Company $company,Contract $contract,string $type)
@@ -214,4 +226,12 @@ class ContractsController
 		]);
 		
 	}	
+	public function storePoAllocations(Request $request , Company $company){
+		$purchaseOrder = PurchaseOrder::find($request->get('po_id'));
+		$purchaseOrder->allocations()->delete();
+		foreach( $request->get('poAllocations',[])  as $index => $purchaseOrderArr){
+				$purchaseOrder->allocations()->create($purchaseOrderArr);
+		}
+		return redirect()->back();
+	}
 }

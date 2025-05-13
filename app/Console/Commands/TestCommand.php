@@ -64,6 +64,10 @@ class TestCommand extends Command
 	
 	public function handle()
 	{
+		$company= Company::find(138);
+		$oddo = new OddoService($company->getOddoDBUrl(),$company->getOddoDBName(),$company->getOddoDBUserName(),$company->getOddoDBPassword(),$company->getId());
+					$oddo->syncFinancialInstitutions();
+					
 		// $incomeStatements = IncomeStatement::get();
 
 		// foreach($incomeStatements as $incomeStatement){
@@ -94,7 +98,7 @@ class TestCommand extends Command
 		// 		dd($oddo->createInternalMoneyTransfer($transferDate,$transferAmount,$fromJournalId,$toJournalId,$currencyOdooId));
 		// 		$oddo->startImportContracts($startDate,$endDate,$company->id);
 		// 		// $oddo->startImportContracts($startDate,$endDate,$company->id);
-		// 		// $oddo->syncFinancialInstitutions('BNK2');
+				// $oddo->syncFinancialInstitutions('BNK2');
 		// 		// $oddo->syncDeletedInvoices($company->id);
 		// 		// $journalId = [
 		// 		// 	MoneyReceived::CASH_IN_SAFE=>7,
@@ -117,14 +121,14 @@ class TestCommand extends Command
 		dispatch_now(new CheckDueAndPastedInvoicesJob(107));
 		dd('good');
 		
-		$companies = Company::all();
-		foreach($companies as $company){
-			if($company->hasOddoIntegrationCredentials()){
-				$oddo = new OddoService($company->getOddoDBUrl(),$company->getOddoDBName(),$company->getOddoDBUserName(),$company->getOddoDBPassword(),$company->getId());
-				$importDate = now()->subDay()->format('Y-m-d') ; ;
-				$oddo->startImportInvoices($importDate);
-			}
-		}
+		// $companies = Company::all();
+		// foreach($companies as $company){
+		// 	if($company->hasOddoIntegrationCredentials()){
+		// 		$oddo = new OddoService($company->getOddoDBUrl(),$company->getOddoDBName(),$company->getOddoDBUserName(),$company->getOddoDBPassword(),$company->getId());
+		// 		$importDate = now()->subDay()->format('Y-m-d') ; ;
+		// 		$oddo->startImportInvoices($importDate);
+		// 	}
+		// }
 		dd('good');
 		
 		$var = 50 ;

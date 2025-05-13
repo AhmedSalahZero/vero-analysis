@@ -6,6 +6,7 @@ use App\Models\Bank;
 use App\Models\CertificatesOfDeposit;
 use App\Models\CleanOverdraft;
 use App\Models\OverdraftAgainstCommercialPaper;
+use App\Services\Api\OddoService;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -198,7 +199,7 @@ class FinancialInstitution extends Model
 		return $this->hasMany(LetterOfCreditFacility::class , 'financial_institution_id','id');
 	}
 	
-	public function storeNewAccounts(array $accounts)
+	public function storeNewAccounts(array $accounts,Company $company)
 	{
 		foreach($accounts as $index=>$accountArr){
 			$balanceAmount = $accountArr['balance_amount'] ?? 0 ;
@@ -207,7 +208,7 @@ class FinancialInstitution extends Model
 			if($currentBalanceDate){
 				$account = $this->accounts()->create([
 					'account_number'=>$accountArr['account_number'],
-					'odoo_code'=>$accountArr['odoo_code']??null,
+					'odoo_code'=>$odooCode = $accountArr['odoo_code']??null,
 					'balance_amount'=>$balanceAmount ,
 					'exchange_rate'=>$accountArr['exchange_rate'],
 					'currency'=> $accountArr['currency'],
@@ -215,6 +216,7 @@ class FinancialInstitution extends Model
 					'balance_date'=>$currentBalanceDate,
 					'company_id'=>getCurrentCompanyId(),
 				]);
+				
 			}
 			
 			/**
@@ -245,6 +247,11 @@ class FinancialInstitution extends Model
 				'start_date'=>$currentBalanceDate
 			]);
 		}
+		if($company->hasOddoIntegrationCredentials()){
+			$oddo = new OddoService($company->getOddoDBUrl(),$company->getOddoDBName(),$company->getOddoDBUserName(),$company->getOddoDBPassword(),$company->getId());
+			$oddo->syncFinancialInstitutions();
+		}
+		
 	}
 	// public function updateBeginningBalanceDebitBankStatementDate()
 	// {

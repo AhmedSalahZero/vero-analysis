@@ -268,18 +268,20 @@ use App\Models\MoneyReceived ;
                                 {{-- start of fixed monthly repeating amount --}}
                                 @php
                                 $tableId = $salesOrderOrPurchaseOrderRelationName;
-                                $repeaterId = 'm_repeater_6';
+                                $repeaterId = 'm_repeater_outer';
 
                                 @endphp
                                 {{-- <input type="hidden" name="tableIds[]" value="{{ $tableId }}"> --}}
-                                <x-tables.repeater-table :repeater-with-select2="true" :parentClass="'show-class-js'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=true">
+                                <x-tables.repeater-table :initialJs="false" :repeater-with-select2="true" :parentClass="'show-class-js'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=true">
                                     <x-slot name="ths">
                                         @foreach([
                                         $salesOrderOrPurchaseNumberText =>'col-md-1',
                                         __('Amount')=>'col-md-1',
-                                        __('Insert Execution Details')=>'col-md-1'
+                                        __('Insert Execution Details')=>'col-md-1',
+									//	__('Allocate')=>'col-md-1'
                                         ] as $title=>$classes)
                                         <x-tables.repeater-table-th class="{{ $classes }}" :title="$title"></x-tables.repeater-table-th>
+										
                                         @endforeach
                                     </x-slot>
                                     <x-slot name="trs">
@@ -314,10 +316,13 @@ use App\Models\MoneyReceived ;
                                             <td>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group">
-                                                        <input name="amount" type="text" class="form-control js-recalculate-amounts-in-popup" value="{{ isset($salesOrder) ? $salesOrder->getAmount() : old('salesOrders.amount',0) }}">
+                                                        <input name="amount" type="text" class="form-control js-recalculate-amounts-in-popup js-recalculate-allocation-amount-js" value="{{ isset($salesOrder) ? $salesOrder->getAmount() : old('salesOrders.amount',0) }}">
                                                     </div>
                                                 </div>
                                             </td>
+											
+											
+											
 
 
                                          
@@ -326,6 +331,12 @@ use App\Models\MoneyReceived ;
                                                 <button class="btn btn-primary btn-active js-show-execution-percentage-modal">{{ __('Insert Execution Details') }}</button>
                                                 <x-modal.execution-percentage :popup-title="__('Execution Details')" :subModel="isset($salesOrder) ? $salesOrder : null " :subModel="isset($salesOrder) ? $salesOrder : null " :tableId="$tableId" :isRepeater="$isRepeater" :id="$repeaterId.'test-modal-id'"></x-modal.execution-percentage>
                                             </td>
+											
+											
+											
+											
+											
+											
 
 
                                             {{-- @for($i = 1 ; $i <= 5 ; $i++) 
@@ -737,7 +748,7 @@ use App\Models\MoneyReceived ;
             $(this).closest('tr').find('.amount-js').val(executionPercentage * amount)
         })
     });
-
+	
     $(document).on('change', '.execution-percentage-js', function() {
         let executionPercentage = $(this).val()
         executionPercentage = executionPercentage ? executionPercentage : 0;
@@ -748,6 +759,29 @@ use App\Models\MoneyReceived ;
         $(this).closest('tr').find('.amount-js').val(executionPercentage * amount)
 
     });
+	
+	 $(document).on('change', '.js-recalculate-allocation-amount-js', function() {
+        let amount = number_unformat($(this).val())
+        amount = amount ? amount : 0;
+        const parent = $(this).closest('[data-repeater-list="purchasesOrders"]');
+        $(parent).find('.allocation-percentage-class').each(function(index, element) {
+            var allocationPercentage = $(element).val();
+            allocationPercentage = allocationPercentage ? allocationPercentage / 100 : 0;
+            $(this).closest('tr').find('.allocation-amount-class').val(allocationPercentage * amount)
+        })
+    });
+	$(document).on('change', '.allocation-percentage-class', function() {
+        let percentage = $(this).val()
+        percentage = percentage ? percentage : 0;
+        percentage = percentage / 100;
+        const parent = $(this).closest('[data-repeater-list="purchasesOrders"]');
+        let amount = number_unformat($(parent).find('.js-recalculate-allocation-amount-js').val());
+		console.log(parent,percentage,amount)
+        amount = amount ? amount : 0;
+        $(this).closest('tr').find('.allocation-amount-class').val(percentage * amount)
+
+    });
+
 
     $('.must-not-exceed-100').trigger('change')
 
@@ -980,6 +1014,8 @@ $(document).on('change','.recheck-end-date-rule-js',function(){
 
 $('.recheck-start-date-rule-js').trigger('change')
 </script>
+<script src="{{asset('assets/form-repeater.js')}}" type="text/javascript"></script>
+
 @if(!isset($model))
 <script>
 	$('.regenerate-code-ajax:eq(0)').trigger('change')

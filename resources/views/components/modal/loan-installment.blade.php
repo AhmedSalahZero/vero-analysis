@@ -10,7 +10,7 @@
 ])
 @php
 	$cashflowReportId = isset($cashflowReport) ? $cashflowReport->id:0;
-	
+	$isContract = $contractCode ? 1 : 0 ;
 @endphp
 <div class="modal fade modal-item-js" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-90 modal-dialog-centered" role="document">
@@ -41,7 +41,7 @@
 							@php
 								$totalNetBalance = 0 ;
 								$allIds = array_column($pastDueCustomerInvoices,'id') ;
-								$dueInvoiceRow = \DB::table('weekly_cashflow_custom_past_due_schedules')->where('cashflow_report_id',$cashflowReportId)->where('company_id',$company->id)->whereIn('loan_schedule_id',$allIds)->get();
+								$dueInvoiceRow = \DB::table('weekly_cashflow_custom_past_due_schedules')->where('is_contract',$isContract)->where('cashflow_report_id',$cashflowReportId)->where('company_id',$company->id)->whereIn('loan_schedule_id',$allIds)->get();
 								
 							@endphp
                             @foreach($pastDueCustomerInvoices as $pastDueCustomerInvoice)
@@ -54,6 +54,7 @@
 							<input type="hidden" name="invoice_amount[{{ $pastDueCustomerInvoice['id'] }}]"  value="{{ $pastDueCustomerInvoice['remaining'] }}">
 							<input type="hidden" name="currency_name"  value="{{ $currencyName }}">
 							<input type="hidden" name="cashflow_report_id"  value="{{ $cashflowReportId }}">
+							<input type="hidden" name="is_contract"  value="{{ $contractCode ? 1 : 0 }}">
 							@if($contractCode)
 							<input type="hidden" name="contract_code"  value="{{ $contractCode }}">
 							@endif
