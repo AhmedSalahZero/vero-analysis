@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\Api\OddoPayment;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
@@ -14,6 +15,25 @@ class DownPaymentSettlement extends Model
 {
 	protected $guarded = ['id'];
 	protected $table ='down_payment_settlements';
+	
+	protected static function booted()
+	{
+		self::deleting(function (self $downPaymentSettlement): void {
+			$moneyReceived = $downPaymentSettlement->moneyReceived;
+			$company =$moneyReceived->company;
+			if($company->hasOddoIntegrationCredentials()){
+				$odooId = $moneyReceived->odoo_id ;
+				if($odooId){
+					$odooPaymentService = new OddoPayment($company->getOddoDBUrl(),$company->getOddoDBName(),$company->getOddoDBUserName(),$company->getOddoDBPassword(),$company->getId());
+					$odooPaymentService->cancelDownPayment($odooId);
+				}
+			}
+		});
+		
+	}
+	
+	
+	
 	public function moneyReceived()
 	{
 		return $this->belongsTo(MoneyReceived::class , 'money_received_id','id');

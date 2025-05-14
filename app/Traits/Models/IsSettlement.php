@@ -18,7 +18,7 @@ trait IsSettlement
 		if($this instanceof PaymentSettlement){
 			return $this->moneyPayment();
 		}
-		dd('test dd');
+		// dd('test dd');
 	}
 	public function getAmount()
 	{
@@ -51,6 +51,12 @@ trait IsSettlement
 	public function getInvoiceNumber()
 	{
 		return $this->invoice->getInvoiceNumber();
+	}
+	public function getAmountInReceivingCurrency():float
+	{
+		logger('exchange rate'.$this->getMoney->getExchangeRate());
+		logger('amount'.$this->getMoney->getAmount());
+		return $this->getMoney->getExchangeRate() * $this->getAmount();
 	}
 	
 	

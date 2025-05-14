@@ -18,6 +18,7 @@ use App\Models\ForeignExchangeRate;
 use App\Models\MoneyReceived;
 use App\Models\Partner;
 use App\Models\SalesOrder;
+use App\Services\Api\OddoPayment;
 use App\Traits\GeneralFunctions;
 use App\Traits\Models\HasBasicFilter;
 use App\Traits\Models\HasDebitStatements;
@@ -379,7 +380,6 @@ class MoneyReceivedController
 		$receivingDate = $data['receiving_date'];
 		$currency = $data['currency'] ;
 		
-		
 		$companyId = $company->id;
 		$receivingCurrency = $data['receiving_currency'] ; 
 		$isDownPayment = $request->get('is_down_payment') && $request->has('sales_orders_amounts');
@@ -494,6 +494,12 @@ class MoneyReceivedController
 
 		if( $hasUnappliedAmount || $isDownPayment){
 			$moneyReceived->storeNewSalesOrdersAmounts($request->get('sales_orders_amounts',[]),$contractId,$customerId,$companyId,$amountInReceivingCurrency);
+			if($company->hasOddoIntegrationCredentials()){
+				$oddoPaymentService = new OddoPayment($company->getOddoDBUrl(),$company->getOddoDBName(),$company->getOddoDBUserName(),$company->getOddoDBPassword(),$company->getId());
+				$oddoPaymentService->createDownPayment($moneyReceived);
+			}
+			
+			
 		}
 		// if(!$isTheSameCurrency && $totalSalesOrderAmount > 0){
 			
@@ -581,7 +587,7 @@ class MoneyReceivedController
 	
 	public function update(Company $company , StoreMoneyReceivedRequest $request , moneyReceived $moneyReceived){
 		$oldSettlementsForMoneyReceivedWithDownPayment  = $moneyReceived->settlementsForDownPaymentThatComeFromMoneyModel ;
-		$companyId = $company->id ;
+	//	$companyId = $company->id ;
 		$newType = $request->get('type');
 		$moneyReceivedAmountHasChanged = $moneyReceived->getAmount() != $request->input('received_amount.'.$newType);
 		$moneyReceived->deleteRelations();
@@ -589,7 +595,6 @@ class MoneyReceivedController
 		$newMoneyReceived = $this->store($company,$request,true);
 		if(!$moneyReceivedAmountHasChanged){
 			$newMoneyReceived->storeNewSettlement(
-				// $receivingCurrency,$currency,$exchangeRate,$foreignExchangeRate,
 				$oldSettlementsForMoneyReceivedWithDownPayment->toArray(),$newMoneyReceived->getPartnerId(),$company,1);
 		}
 		 $activeTab = $newType;
@@ -603,7 +608,6 @@ class MoneyReceivedController
 	{
 		$moneyReceived->deleteRelations();
 		$activeTab = $moneyReceived->getType();
-		
 		$moneyReceived->delete();
 		return redirect()->route('view.money.receive',['company'=>$company->id,'active'=>$activeTab])->with('success',__('Money Received Has Been Updated Successfully'));
 	}

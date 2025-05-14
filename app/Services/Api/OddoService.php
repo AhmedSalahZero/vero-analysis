@@ -11,8 +11,6 @@ use App\Models\SupplierInvoice;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 use ripcord;
 
 class OddoService
@@ -35,8 +33,8 @@ class OddoService
 		require_once(public_path('apis/ripcord.php'));
 		$common = ripcord::client("$this->url/xmlrpc/2/common");
 		$uid = null ;
-		$uid = $common->authenticate($this->db, $this->username, $this->password, array());
 		try{
+			$uid = $common->authenticate($this->db, $this->username, $this->password, array());
 		}
 		catch(\Exception $e){
 			$uid = null;
@@ -59,25 +57,7 @@ class OddoService
 		}
 		$this->getContracts($startDate,$endDate,$companyId);
 	}
-	/**
-	 * * for test purpose
-	 */
-	public function test(string $startDate, string $endDate,int $companyId)
-	{
-		if(is_null($this->uid)){
-			return ;
-		}
-		$tableName ='account.payment.register';
-		$contractFilters = array(array(array('id', '>=', 0)));
-		$contractIds=$this->models->execute_kw($this->db, $this->uid, $this->password, $tableName, 'search',$contractFilters);
-		$projects = $this->models->execute_kw($this->db, $this->uid, $this->password, $tableName, 'read', array($contractIds),[
-			'fields'=>[
-				
-			]
-		]);
-		dd($projects);
-		
-	}
+	
 	/**
 	 * * import invoices
 	 */
@@ -86,15 +66,10 @@ class OddoService
 		// dd($startDate,$endDate,$this->uid);
 		if(is_null($this->uid)  ){
 			return ;
-			// $invoices = $this->getInvoices($startDate,$endDate);
-			// $message =$invoices['faultString'] ?? '' ; 
-			// return __('Can Not Connect To Odoo') .' ' . $message;
 		}
 		$this->getContracts($startDate,$endDate,$companyId);
 		$invoices = $this->getInvoices($startDate,$endDate);
-		// dd($invoices);
 		$companyId = $this->company_id;
-		// dd($invoices,$startDate,$endDate);
 		foreach($invoices as $invoice){
 		
 			$invoiceId = $invoice['id'];
@@ -201,9 +176,6 @@ class OddoService
 					];
 				}
 				$projectFormatted['amount'] = $projectAmount ;
-				// if(!count($salesOrderFormatted)){
-					// dd('q',$salesOrderFormatted,$projectAmount);
-				// }
 				if(count($salesOrderFormatted)){
 					$projectFormatted['salesOrders']=$salesOrderFormatted;
 					$contract = new Contract ;
@@ -211,8 +183,6 @@ class OddoService
 					$contract->storeBasicForm($request);
 					
 				}
-				// dd($projectFormatted);
-				
 				
 		}
 
@@ -247,7 +217,11 @@ class OddoService
 			array('write_date', '<=', $endDate)
 			// ,['name','=','INV/2025/00004']
 		));
-		return $invoices = $this->fetchData('account.move',$fields,$filters);
+		$invoices = $this->fetchData('account.move',$fields,$filters);
+		return $invoices;
+		/**
+		 * * الكود اللي تحت دا بيجيب المنتجات
+		 */
 		$productIds = array_unique(Arr::flatten(array_column($invoices,'invoice_line_ids'))) ;
 		$filters = [[
 			['id','in',$productIds]
@@ -255,8 +229,8 @@ class OddoService
 		$fields = [
 			'name','display_name','product_id','quantity','price_unit','price_subtotal'
 		];
-		dd($this->fetchData('account.move.line',$fields,$filters));
-		return ;
+		return $invoices ;
+		
 		
 	}
 	protected function getUser(array $ids){
@@ -265,179 +239,160 @@ class OddoService
 	}
 	
 	
-	public function payInvoice(int $invoiceId, float $invoiceAmount , string $paymentDate , string $userComment  ,int $oddoPartnerId)
-	{
+	// public function payInvoice(int $invoiceId, float $invoiceAmount , string $paymentDate , string $userComment  ,int $oddoPartnerId)
+	// {
 	
-		$userId = $this->uid;
-		if(is_null($this->uid)){
-			return ;
-		}
-		$paymentData = [
-			'payment_type' => 'inbound',
-			'partner_type' => 'customer',
-			'partner_id' => $oddoPartnerId, 
-			'journal_id' => (int) 7,
-			'amount' => (float) $invoiceAmount,
-			'date' => $paymentDate,
-			'payment_method_code' => "manual",
-			'payment_method_id' => (int) 1,
-			'payment_method_line_id' => (int) 4,
-			'memo' => $userComment ?: __('N/A'),
-			'invoice_ids' => [[6, 0, [(int) $invoiceId]]],
-		];
-
-
-		$response = Http::post("$this->url/jsonrpc", [
-			'jsonrpc' => '2.0',
-			'method' => 'call',
-			'params' => [
-				'service' => 'object',
-				'method' => 'execute_kw',
-				'args' => [
-					$this->db,
-					$userId,
-					$this->password,
-					'account.payment',
-					'create',
-					[$paymentData]
-				]
-			]
-		]);
-		$paymentId = json_decode($response->body())->result ;
-		$this->models->execute_kw(
-			$this->db,
-			$this->uid,
-			$this->password,
-			'account.payment',
-			'action_post', // Method to confirm payment
-			[[$paymentId]] // Array of payment IDs
-		);
+	// 	$userId = $this->uid;
+	// 	if(is_null($this->uid)){
+	// 		return ;
+	// 	}
 		
-		$updatedInvoice = $this->models->execute_kw(
-			$this->db,
-			$this->uid,
-			$this->password,
-			'account.move',
-			'read',
-			[[$invoiceId]],
-			['fields' => ['payment_state']]
-		);
+	// 	$paymentData = [
+	// 		'payment_type' => 'inbound',
+	// 		'partner_type' => 'customer',
+	// 		'partner_id' => $oddoPartnerId, 
+	// 		'journal_id' => (int) 7,
+	// 		'amount' => (float) $invoiceAmount,
+	// 		'date' => $paymentDate,
+	// 		'payment_method_code' => "manual",
+	// 		'payment_method_id' => (int) 1,
+	// 		'payment_method_line_id' => (int) 4,
+	// 		'memo' => $userComment ?: __('N/A'),
+	// 		'invoice_ids' => [[6, 0, [(int) $invoiceId]]],
+	// 	];
+
+
+	// 	$response = Http::post("$this->url/jsonrpc", [
+	// 		'jsonrpc' => '2.0',
+	// 		'method' => 'call',
+	// 		'params' => [
+	// 			'service' => 'object',
+	// 			'method' => 'execute_kw',
+	// 			'args' => [
+	// 				$this->db,
+	// 				$userId,
+	// 				$this->password,
+	// 				'account.payment',
+	// 				'create',
+	// 				[$paymentData]
+	// 			]
+	// 		]
+	// 	]);
+	// 	$paymentId = json_decode($response->body())->result ;
+	// 	$this->models->execute_kw(
+	// 		$this->db,
+	// 		$this->uid,
+	// 		$this->password,
+	// 		'account.payment',
+	// 		'action_post', // Method to confirm payment
+	// 		[[$paymentId]] // Array of payment IDs
+	// 	);
 		
-		// dd($paymentId);
-		// Step 5: Fetch payment move lines to reconcile
+	// 	$updatedInvoice = $this->models->execute_kw(
+	// 		$this->db,
+	// 		$this->uid,
+	// 		$this->password,
+	// 		'account.move',
+	// 		'read',
+	// 		[[$invoiceId]],
+	// 		['fields' => ['payment_state']]
+	// 	);
 		
-		$filter = array(array(
-				['payment_id', '=', $paymentId],
-				['account_id.type', '=', 'receivable']
-				// ,['name','=','Inv7']
-			));
-			$paymentIds=$this->models->execute_kw($this->db, $this->uid, $this->password, 'account.move.line', 'search',$filter );
-			$paymentLines = $this->models->execute_kw($this->db, $this->uid, $this->password, 'account.move.line', 'read', array($paymentIds),[
-				// 'fields'=>$fields
-			]);
-			// dd($paymentIds);
-			// dd($paymentLines);
-			
+	// 	// Step 5: Fetch payment move lines to reconcile
+		
+	// 	$filter = array(array(
+	// 			['payment_id', '=', $paymentId],
+	// 			['account_id.type', '=', 'receivable']
+	// 		));
+	// 		$paymentIds=$this->models->execute_kw($this->db, $this->uid, $this->password, 'account.move.line', 'search',$filter );
+	// 		$paymentLines = $this->models->execute_kw($this->db, $this->uid, $this->password, 'account.move.line', 'read', array($paymentIds),[
+	// 			// 'fields'=>$fields
+	// 		]);
+		
+	// 	$paymentLineId = $paymentLines[0]['id'];
 
-		// $paymentLines = $this->models->execute_kw(
-		// 	$this->db,
-		// 	$this->uid,
-		// 	$this->password,
-		// 	'account.move.line',
-		// 	'search_read',
-		// 	[['payment_id', '=', $paymentId], ['account_id.type', '=', 'receivable']],
-		// 	// ['fields' => ['id']]
-		// );
-		// dd('f');
-		// dd($paymentLines);
+	// 	// Step 6: Fetch invoice move lines to reconcile
+	// 	$invoiceLines = $this->models->execute_kw(
+	// 		$this->db,
+	// 		$this->uid,
+	// 		$this->password,
+	// 		'account.move.line',
+	// 		'search_read',
+	// 		[['move_id', '=', $invoiceId], ['account_id.type', '=', 'receivable']],
+	// 		['fields' => ['id']]
+	// 	);
 
-		// if (!$paymentLines || empty($paymentLines)) {
-		// 	return response()->json(['error' => 'No receivable lines found for payment'], 500);
-		// }
-		$paymentLineId = $paymentLines[0]['id'];
+	// 	if (!$invoiceLines || empty($invoiceLines)) {
+	// 		return response()->json(['error' => 'No receivable lines found for invoice'], 500);
+	// 	}
+	// 	$invoiceLineId = $invoiceLines[0]['id'];
 
-		// Step 6: Fetch invoice move lines to reconcile
-		$invoiceLines = $this->models->execute_kw(
-			$this->db,
-			$this->uid,
-			$this->password,
-			'account.move.line',
-			'search_read',
-			[['move_id', '=', $invoiceId], ['account_id.type', '=', 'receivable']],
-			['fields' => ['id']]
-		);
+	// 	// Step 7: Reconcile payment and invoice lines
+	// 	$this->models->execute_kw(
+	// 		$this->db,
+	// 		$this->uid,
+	// 		$this->password,
+	// 		'account.move.line',
+	// 		'reconcile',
+	// 		[[$paymentLineId, $invoiceLineId]]
+	// 	);
 
-		if (!$invoiceLines || empty($invoiceLines)) {
-			return response()->json(['error' => 'No receivable lines found for invoice'], 500);
-		}
-		$invoiceLineId = $invoiceLines[0]['id'];
-
-		// Step 7: Reconcile payment and invoice lines
-		$this->models->execute_kw(
-			$this->db,
-			$this->uid,
-			$this->password,
-			'account.move.line',
-			'reconcile',
-			[[$paymentLineId, $invoiceLineId]]
-		);
-
-		// Step 8: Verify invoice is paid
-		$updatedInvoice = $this->models->execute_kw(
-			$this->db,
-			$this->uid,
-			$this->password,
-			'account.move',
-			'read',
-			[[$invoiceId]],
-			['fields' => ['payment_state']]
-		);
+	// 	// Step 8: Verify invoice is paid
+	// 	$updatedInvoice = $this->models->execute_kw(
+	// 		$this->db,
+	// 		$this->uid,
+	// 		$this->password,
+	// 		'account.move',
+	// 		'read',
+	// 		[[$invoiceId]],
+	// 		['fields' => ['payment_state']]
+	// 	);
 		
 		
-		dd($updatedInvoice);
+	// 	dd($updatedInvoice);
 		
-		dd($paymentData,$response->failed());
-		if ($response->failed()) {
-			Log::error('Odoo request failed (payment create)', [
-				'status' => $response->status(),
-				'body' => $response->body(),
-			]);
-			return response()->json(['error' => 'Failed to create payment'], 500);
-		}
+	// 	dd($paymentData,$response->failed());
+	// 	if ($response->failed()) {
+	// 		Log::error('Odoo request failed (payment create)', [
+	// 			'status' => $response->status(),
+	// 			'body' => $response->body(),
+	// 		]);
+	// 		return response()->json(['error' => 'Failed to create payment'], 500);
+	// 	}
 
-		$paymentId = $response->json()['result'] ?? null;
+	// 	$paymentId = $response->json()['result'] ?? null;
 
-		if (!$paymentId) {
-			return response()->json(['error' => 'Failed to create payment'], 500);
-		}
+	// 	if (!$paymentId) {
+	// 		return response()->json(['error' => 'Failed to create payment'], 500);
+	// 	}
 
-		$postPayment = Http::post("$this->odooUrl/jsonrpc", [
-			'jsonrpc' => '2.0',
-			'method' => 'call',
-			'params' => [
-				'service' => 'object',
-				'method' => 'execute_kw',
-				'args' => [
-					$this->odooDb,
-					$userId,
-					$this->odooPassword,
-					'account.payment',
-					'action_post',
-					[[$paymentId]] 
-				]
-			]
-		]);
+	// 	$postPayment = Http::post("$this->odooUrl/jsonrpc", [
+	// 		'jsonrpc' => '2.0',
+	// 		'method' => 'call',
+	// 		'params' => [
+	// 			'service' => 'object',
+	// 			'method' => 'execute_kw',
+	// 			'args' => [
+	// 				$this->odooDb,
+	// 				$userId,
+	// 				$this->odooPassword,
+	// 				'account.payment',
+	// 				'action_post',
+	// 				[[$paymentId]] 
+	// 			]
+	// 		]
+	// 	]);
 
 
 
-		if ($postPayment->failed()) {
-			return response()->json(['error' => 'Failed to post payment'], 500);
-		}
-		return response()->json([
-			'message' => 'Payment successful',
-			'payment_id' => $paymentId,
-		]);    
-	}
+	// 	if ($postPayment->failed()) {
+	// 		return response()->json(['error' => 'Failed to post payment'], 500);
+	// 	}
+	// 	return response()->json([
+	// 		'message' => 'Payment successful',
+	// 		'payment_id' => $paymentId,
+	// 	]);    
+	// }
 
 
 	public function syncDeletedInvoices(int $companyId)
@@ -462,7 +417,6 @@ class OddoService
 			}
 			
 		}
-		dd($deletedIds);
 	}
 	public function syncFinancialInstitutions()
 	{
@@ -531,6 +485,27 @@ class OddoService
 				}
 			}
 	}
+	public function execute($model, $method, $args, $kwargs = [])
+    {
+        return $this->models->execute_kw($this->db, $this->uid, $this->password, $model, $method, $args, $kwargs);
+    }
+	private function validateJournal($journalId)
+    {
+        $journal = $this->execute('account.journal', 'read', [[$journalId], ['type', 'default_account_id']])[0];
+        if (!in_array($journal['type'], ['bank', 'cash'])) {
+            throw new \Exception('Journal must be of type bank or cash');
+        }
+        if (!$journal['default_account_id']) {
+            throw new \Exception('Journal has no default account configured');
+        }
+        return $journal['default_account_id'][0]; // Return account ID
+    }
+	public function getFieldSelection($model, $field)
+    {
+            $fields = $this->models->execute_kw($this->db, $this->uid, $this->password,$model, 'fields_get', [[$field]]);
+            return $fields[$field]['selection'] ?? [];
+      
+    }
 	public function createInternalMoneyTransfer(string $transferDate,float $transferAmount,int $fromJournalId , int $toJournalId , int $oddoCurrencyId , string $comment = null  )
 	{
 		$paymentData = [
@@ -549,7 +524,7 @@ class OddoService
 			"account.payment", "create",
 			[$paymentData]
 		);
-		
+		dd($paymentId);
 		  $this->models->execute_kw(
 			$this->db, $this->uid, $this->password,
 			"account.payment", "action_post",
@@ -561,6 +536,7 @@ class OddoService
 		
 		
 	}
+	
 	public function fetchData(string $modelName ,array $fields = [],  array $filters = [[]]  )
 	{
 		// dd($modelName);

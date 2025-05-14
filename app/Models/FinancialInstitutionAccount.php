@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Helpers\HArr;
 use App\Models\AccountInterest;
+use App\Traits\HasCompany;
 use App\Traits\HasLastStatementAmount;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
@@ -14,7 +15,7 @@ use Illuminate\Support\Str;
 
 class FinancialInstitutionAccount extends Model
 {
-	use HasLastStatementAmount ;
+	use HasLastStatementAmount ,HasCompany;
     protected $guarded = ['id'];
 	
     public function financialInstitution()

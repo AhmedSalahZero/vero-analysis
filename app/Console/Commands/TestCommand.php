@@ -22,6 +22,7 @@ use App\ReadyFunctions\VariableLoanCalculation;
 use App\Services\AI\PredictionErrorQualityMeasures\MeanAbsoluteError;
 use App\Services\AI\PredictionErrorQualityMeasures\MeanAbsolutePercentageError;
 use App\Services\AI\PredictionErrorQualityMeasures\RootMeanSquaredPercentageError;
+use App\Services\Api\InternalMoneyTransfer;
 use App\Services\Api\OddoPayment;
 use App\Services\Api\OddoService;
 use Carbon\Carbon;
@@ -64,9 +65,9 @@ class TestCommand extends Command
 	
 	public function handle()
 	{
-		$company= Company::find(138);
-		$oddo = new OddoService($company->getOddoDBUrl(),$company->getOddoDBName(),$company->getOddoDBUserName(),$company->getOddoDBPassword(),$company->getId());
-					$oddo->syncFinancialInstitutions();
+		// $company= Company::find(138);
+		// $oddo = new OddoService($company->getOddoDBUrl(),$company->getOddoDBName(),$company->getOddoDBUserName(),$company->getOddoDBPassword(),$company->getId());
+		// 			$oddo->syncFinancialInstitutions();
 					
 		// $incomeStatements = IncomeStatement::get();
 
@@ -77,25 +78,25 @@ class TestCommand extends Command
 		// }
 		
 		// dd('good');
-		// $companies = Company::where('id',110)->get();
+		$company = Company::where('id',138)->first();
 		// // $companies = Company::where('id',105)->get();
 		// // $companies = Company::where('id',105)->get();
 		// // $companies = Company::get();
 		// foreach($companies as $company){
 		// 	if($company->hasOddoIntegrationCredentials()){
-		// 		$oddo = new OddoService($company->getOddoDBUrl(),$company->getOddoDBName(),$company->getOddoDBUserName(),$company->getOddoDBPassword(),$company->getId());
+				$oddo = new InternalMoneyTransfer($company->getOddoDBUrl(),$company->getOddoDBName(),$company->getOddoDBUserName(),$company->getOddoDBPassword(),$company->getId());
 		// 		// $oddo = new OddoPayment($company->getOddoDBUrl(),$company->getOddoDBName(),$company->getOddoDBUserName(),$company->getOddoDBPassword(),$company->getId());
 		// 		// OddoPayment
 		// 		// $importDate = now()->format('Y-m-d') ; ;
 		// 		$startDate = now()->subDays(60)->format('Y-m-d') ; ;
 		// 		$endDate = now()->format('Y-m-d') ; 
 		// 		// $oddo->syncBanks($startDate,$endDate);
-		// 		$transferDate = '2025-04-17';
-		// 		$fromJournalId = 12 ;
-		// 		$toJournalId = 7 ;
-		// 		$currencyOdooId = 1 ; 
-		// 		$transferAmount = 10;
-		// 		dd($oddo->createInternalMoneyTransfer($transferDate,$transferAmount,$fromJournalId,$toJournalId,$currencyOdooId));
+				$transferDate = '2025-05-15';
+				$fromJournalId = 25 ;
+				$toJournalId = 19;
+				$odooCurrencyId = 74 ; 
+				$transferAmount = 5200;
+				dd($oddo->createInternalMoneyTransfer($transferDate,$transferAmount,$fromJournalId,$toJournalId,$odooCurrencyId));
 		// 		$oddo->startImportContracts($startDate,$endDate,$company->id);
 		// 		// $oddo->startImportContracts($startDate,$endDate,$company->id);
 				// $oddo->syncFinancialInstitutions('BNK2');

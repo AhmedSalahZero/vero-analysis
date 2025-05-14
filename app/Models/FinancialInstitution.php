@@ -356,6 +356,7 @@ class FinancialInstitution extends Model
 		$accountModel = $fullModelName::where([
 			['financial_institution_id','=',$this->id],
 			['account_number','=',$accountNumber],
+			['company_id','=',$this->company_id]
 			// ['currency','=',$currencyName]
 		])->first();
 		return $accountModel instanceof FinancialInstitutionAccount ? $accountModel->getOdooId() : $accountModel->getOdooCode();

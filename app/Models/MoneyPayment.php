@@ -841,6 +841,11 @@ class MoneyPayment extends Model
 	{
 		return $this->hasOne(EmployeeStatement::class,'money_received_id','id');
 	}
+	public function getCustomerOrSupplier():string
+	{
+		return 'supplier';
+	}
+	
 	
 
 }

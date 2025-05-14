@@ -168,16 +168,19 @@ trait IsMoney
     {
 		return number_format($this->getDownPaymentAmount());
     }
-	public function getReceivingOrPaidAmount():string
-	{
-		if($this instanceof MoneyReceived){
-			return $this->getReceivingAmount();
-		}
-		if($this instanceof MoneyPayment){
-			return $this->getPaymentCurrency();
-		}
-		throw new \Exception('Customer Exception Invalid Money Type');
-	}
+	// public function getReceivingOrPaidAmount():string
+	// {
+	// 	/**
+	// 	 * @var MoneyReceived $this
+	// 	 */
+	// 	if($this instanceof MoneyReceived){
+	// 		return $this->getReceivingAmount();
+	// 	}
+	// 	if($this instanceof MoneyPayment){
+	// 		return $this->getPaymentCurrency();
+	// 	}
+	// 	throw new \Exception('Customer Exception Invalid Money Type');
+	// }
 	public function getReceivingOrPaymentCurrency():string
 	{
 		if($this instanceof MoneyReceived){
@@ -294,6 +297,9 @@ trait IsMoney
 		}
 		return $totalWithhold;
 	}			
-	
+	public function getInboundOrOutbound()
+	{
+		return $this instanceof MoneyReceived ? 'inbound':'outbound';
+	}	
 	
 }

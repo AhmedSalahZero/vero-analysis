@@ -44,7 +44,7 @@ class MoneyReceived extends Model
 		$settledInvoiceNumbers =  $settledInvoiceNumbers?: $invoiceNumbers;
 	
 		$customerName = is_null($customerName) ?$moneyReceived->getCustomerName() : $customerName;
-		logger('customer name = ' . $customerName);
+	//	logger('customer name = ' . $customerName);
 		
 		if($moneyReceived->isCheque()){
 			$chequeNumber = $moneyReceived->getChequeNumber()?:Request('cheque_number');
@@ -755,8 +755,6 @@ class MoneyReceived extends Model
 	public function deleteRelations()
 	{
 		
-	
-	
 		$oldType = $this->getType();
 		$this->settlements->each(function($settlement){
 			$settlement->delete();
@@ -1009,6 +1007,9 @@ class MoneyReceived extends Model
 	{
 		return $this->hasOne(FullySecuredOverdraftBankStatement::class,'money_received_id','id');
 	}
-			
+	public function getCustomerOrSupplier():string 
+	{
+		return 'customer';
+	}
 	
 }

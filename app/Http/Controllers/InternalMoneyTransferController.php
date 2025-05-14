@@ -8,10 +8,12 @@ use App\Models\Branch;
 use App\Models\Company;
 use App\Models\FinancialInstitution;
 use App\Models\InternalMoneyTransfer;
+use App\Services\Api\OddoService;
 use App\Traits\GeneralFunctions;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class InternalMoneyTransferController
 {
@@ -163,7 +165,9 @@ class InternalMoneyTransferController
 		$transferAmount = $request->get('amount') ;
 		$internalMoneyTransfer->storeBasicForm($request);
 		$fromFinancialInstitutionId = $request->get('from_bank_id');
+		$fromFinancialInstitution = FinancialInstitution::find($fromFinancialInstitutionId);
 		$toFinancialInstitutionId = $request->get('to_bank_id');
+		$toFinancialInstitution = FinancialInstitution::find($request->get('to_bank_id'));
 		$fromAccountTypeId = $request->get('from_account_type_id');
 		$toAccountTypeId = $request->get('to_account_type_id');
 		$fromAccountNumber = $request->get('from_account_number');
@@ -173,15 +177,30 @@ class InternalMoneyTransferController
 		$currencyName = $request->get('currency');	
 		$fromAccountType = AccountType::find($fromAccountTypeId);
 		$toAccountType = AccountType::find($toAccountTypeId);
+		
+		$fromJournalId = null;
+		$toJournalId =  null ;
+		
+		
 		if($type === InternalMoneyTransfer::BANK_TO_BANK){
+			$fromJournalId = $fromFinancialInstitution->getOdooIdForAccount($fromAccountTypeId,$fromAccountNumber);
+			$toJournalId = $toFinancialInstitution->getOdooIdForAccount($toAccountTypeId,$toAccountNumber);
 			$internalMoneyTransfer->handleBankToBankTransfer($company->id , $fromAccountType , $fromAccountNumber  , $fromFinancialInstitutionId , $toAccountType ,  $toAccountNumber,$toFinancialInstitutionId,$transferDate,$receivingDate,$transferAmount);
 		}
 		elseif($type === InternalMoneyTransfer::BANK_TO_SAFE ){
+			$fromJournalId = $fromFinancialInstitution->getOdooIdForAccount($fromAccountTypeId,$fromAccountNumber);
+			$toJournalId = $toFinancialInstitution->getOdooIdForAccount($toAccountTypeId,$toAccountNumber);
 			$internalMoneyTransfer->handleBankToSafeTransfer($company->id , $fromAccountType , $fromAccountNumber  , $fromFinancialInstitutionId ,$toBranchId , $currencyName , $transferDate,$transferAmount);
 		}
 		elseif($type === InternalMoneyTransfer::SAFE_TO_BANK ){
 			$internalMoneyTransfer->handleSafeToBankTransfer($company->id , $toAccountType , $toAccountNumber  , $toFinancialInstitutionId ,$fromBranchId , $currencyName , $transferDate,$transferAmount);
 		}
+		if($company->hasOddoIntegrationCredentials()){
+			$odooCurrencyId = DB::table('currencies')->where('name',$currencyName)->first()->oddo_id;
+			$odooService = new OddoService($company->getOddoDBUrl(),$company->getOddoDBName(),$company->getOddoDBUserName(),$company->getOddoDBPassword(),$company->getId());
+			$odooService->createInternalMoneyTransfer($transferDate,$transferAmount,$fromJournalId,$toJournalId,$odooCurrencyId);
+		}
+		
 		
 		$activeTab = $type ; 
 		
