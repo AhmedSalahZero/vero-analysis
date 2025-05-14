@@ -195,11 +195,11 @@ class InternalMoneyTransferController
 		elseif($type === InternalMoneyTransfer::SAFE_TO_BANK ){
 			$internalMoneyTransfer->handleSafeToBankTransfer($company->id , $toAccountType , $toAccountNumber  , $toFinancialInstitutionId ,$fromBranchId , $currencyName , $transferDate,$transferAmount);
 		}
-		if($company->hasOddoIntegrationCredentials()){
-			$odooCurrencyId = DB::table('currencies')->where('name',$currencyName)->first()->oddo_id;
-			$odooService = new OddoService($company->getOddoDBUrl(),$company->getOddoDBName(),$company->getOddoDBUserName(),$company->getOddoDBPassword(),$company->getId());
-			$odooService->createInternalMoneyTransfer($transferDate,$transferAmount,$fromJournalId,$toJournalId,$odooCurrencyId);
-		}
+		// if($company->hasOddoIntegrationCredentials()){
+		// 	$odooCurrencyId = DB::table('currencies')->where('name',$currencyName)->first()->oddo_id;
+		// 	$odooService = new OddoService($company->getOddoDBUrl(),$company->getOddoDBName(),$company->getOddoDBUserName(),$company->getOddoDBPassword(),$company->getId());
+		// 	$odooService->createInternalMoneyTransfer($transferDate,$transferAmount,$fromJournalId,$toJournalId,$odooCurrencyId);
+		// }
 		
 		
 		$activeTab = $type ; 
