@@ -10,6 +10,7 @@ use App\Jobs\TestJob2;
 use App\Models\Company;
 use App\Models\CustomerInvoice;
 use App\Models\FinancialStatement;
+use App\Models\ForeignExchangeRate;
 use App\Models\IncomeStatement;
 use App\Models\MoneyReceived;
 use App\Models\NonBankingService\Department;
@@ -22,9 +23,9 @@ use App\ReadyFunctions\VariableLoanCalculation;
 use App\Services\AI\PredictionErrorQualityMeasures\MeanAbsoluteError;
 use App\Services\AI\PredictionErrorQualityMeasures\MeanAbsolutePercentageError;
 use App\Services\AI\PredictionErrorQualityMeasures\RootMeanSquaredPercentageError;
+use App\Services\Api\ExchangeRateService;
 use App\Services\Api\InternalMoneyTransfer;
 use App\Services\Api\OddoPayment;
-use App\Services\Api\OddoService;
 use Carbon\Carbon;
 use DateTime;
 use Illuminate\Console\Command;
@@ -65,8 +66,8 @@ class TestCommand extends Command
 	
 	public function handle()
 	{
-		// $company= Company::find(138);
-		// $oddo = new OddoService($company->getOddoDBUrl(),$company->getOddoDBName(),$company->getOddoDBUserName(),$company->getOddoDBPassword(),$company->getId());
+		$company= Company::find(138);
+		// $oddo = new OdooService($company->getOddoDBUrl(),$company->getOddoDBName(),$company->getOddoDBUserName(),$company->getOddoDBPassword(),$company->getId());
 		// 			$oddo->syncFinancialInstitutions();
 					
 		// $incomeStatements = IncomeStatement::get();
@@ -77,8 +78,40 @@ class TestCommand extends Command
 		// 	}
 		// }
 		
-		// dd('good');
-		$company = Company::where('id',138)->first();
+		// $company = Company::where('id',138)->first();
+		// $exchangeRateService = new ExchangeRateService($company->getOddoDBUrl(),$company->getOddoDBName(),$company->getOddoDBUserName(),$company->getOddoDBPassword(),$company->getId());
+		// $mainFunctionCurrency = $company->getMainFunctionalCurrency();
+		// $oldForeignExchangeRates = ForeignExchangeRate::where('company_id',$company->id)->get();
+		// foreach(getCurrenciesForSuppliersAndCustomers($company->id) as $currencyName){
+		// 	if($currencyName != $mainFunctionCurrency){
+		// 		$newExchangeRates = $exchangeRateService->getExchangeRates($currencyName) ;
+			
+		// 			$newRates = $newExchangeRates['rates']??[];
+		// 			$secondaryCurrency = $newExchangeRates['currency']??null;
+		// 			foreach($newRates as $newRateArr){
+		// 				$date = $newRateArr['date'];
+		// 				$rate = $newRateArr['direct_rate'];
+		// 				$oldForeignExchangeRateAtDate = $oldForeignExchangeRates->where('date',$date)->where('to_currency',$mainFunctionCurrency)->where('from_currency',$secondaryCurrency)->first();
+		// 				if($oldForeignExchangeRateAtDate){
+		// 					$oldForeignExchangeRateAtDate->update([
+		// 						'exchange_rate'=>$rate
+		// 					]);
+		// 				}else{
+		// 					ForeignExchangeRate::create([
+		// 						'date'=>$date ,
+		// 						'exchange_rate'=>$rate ,
+		// 						'from_currency'=>$secondaryCurrency,
+		// 						'to_currency'=>$mainFunctionCurrency,
+		// 						'company_id'=>$company->id ,
+		// 					]);
+		// 				}
+						
+		// 			}
+				
+				
+		// 	}
+		// }
+		// foreach()
 		// // $companies = Company::where('id',105)->get();
 		// // $companies = Company::where('id',105)->get();
 		// // $companies = Company::get();
@@ -92,11 +125,14 @@ class TestCommand extends Command
 		// 		$endDate = now()->format('Y-m-d') ; 
 		// 		// $oddo->syncBanks($startDate,$endDate);
 				$transferDate = '2025-05-15';
-				$fromJournalId = 25 ;
-				$toJournalId = 19;
+				$fromJournalId = 19 ;
+				// $toJournalId = 25;
+				$toJournalId = 23; //safe
 				$odooCurrencyId = 74 ; 
-				$transferAmount = 5200;
-				dd($oddo->createInternalMoneyTransfer($transferDate,$transferAmount,$fromJournalId,$toJournalId,$odooCurrencyId));
+				$transferAmount = 14	;
+				$ref = 'ref';
+				$paymentMethodId ='cash' ; 
+				dd($oddo->createInternalTransfer($fromJournalId,$toJournalId,$transferAmount,$transferDate,$ref,$paymentMethodId));
 		// 		$oddo->startImportContracts($startDate,$endDate,$company->id);
 		// 		// $oddo->startImportContracts($startDate,$endDate,$company->id);
 				// $oddo->syncFinancialInstitutions('BNK2');
@@ -119,15 +155,15 @@ class TestCommand extends Command
 		// 		// $oddo->test($startDate,$endDate,$company->id);
 		// 	}
 		// }
-		dispatch_now(new CheckDueAndPastedInvoicesJob(107));
-		dd('good');
+		// dispatch_now(new CheckDueAndPastedInvoicesJob(107));
+		// dd('good');
 		
 		// $companies = Company::all();
 		// foreach($companies as $company){
 		// 	if($company->hasOddoIntegrationCredentials()){
-		// 		$oddo = new OddoService($company->getOddoDBUrl(),$company->getOddoDBName(),$company->getOddoDBUserName(),$company->getOddoDBPassword(),$company->getId());
-		// 		$importDate = now()->subDay()->format('Y-m-d') ; ;
-		// 		$oddo->startImportInvoices($importDate);
+		// 		$oddo = new OdooService($company->getOddoDBUrl(),$company->getOddoDBName(),$company->getOddoDBUserName(),$company->getOddoDBPassword(),$company->getId());
+		 		$importDate = now()->subDay()->format('Y-m-d') ; ;
+		 		$oddo->startImportInvoices($importDate);
 		// 	}
 		// }
 		dd('good');

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use App\Services\Api\ExchangeRateService;
 
 class ForeignExchangeRate extends Model
 {
@@ -63,6 +64,42 @@ class ForeignExchangeRate extends Model
 		->orderByDesc('date')
 		->first();
 		return $exchangeRate ? $exchangeRate->getExchangeRate() : 1 ;
+	}
+	public static function importOdooExchangeRates(Company $company)
+	{
+		
+		$exchangeRateService = new ExchangeRateService($company->getOddoDBUrl(),$company->getOddoDBName(),$company->getOddoDBUserName(),$company->getOddoDBPassword(),$company->getId());
+		$mainFunctionCurrency = $company->getMainFunctionalCurrency();
+		$oldForeignExchangeRates = ForeignExchangeRate::where('company_id',$company->id)->get();
+		foreach(getCurrenciesForSuppliersAndCustomers($company->id) as $currencyName){
+			if($currencyName != $mainFunctionCurrency){
+				$newExchangeRates = $exchangeRateService->getExchangeRates($currencyName) ;
+				
+					$newRates = $newExchangeRates['rates']??[];
+					$secondaryCurrency = $newExchangeRates['currency']??null;
+					foreach($newRates as $newRateArr){
+						$date = $newRateArr['date'];
+						$rate = $newRateArr['direct_rate'];
+						$oldForeignExchangeRateAtDate = $oldForeignExchangeRates->where('date',$date)->where('to_currency',$mainFunctionCurrency)->where('from_currency',$secondaryCurrency)->first();
+						if($oldForeignExchangeRateAtDate){
+							$oldForeignExchangeRateAtDate->update([
+								'exchange_rate'=>$rate
+							]);
+						}else{
+							ForeignExchangeRate::create([
+								'date'=>$date ,
+								'exchange_rate'=>$rate ,
+								'from_currency'=>$secondaryCurrency,
+								'to_currency'=>$mainFunctionCurrency,
+								'company_id'=>$company->id ,
+							]);
+						}
+						
+					}
+				
+				
+			}
+		}
 	}
 	
 }

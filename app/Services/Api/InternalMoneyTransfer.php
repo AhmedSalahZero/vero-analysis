@@ -2,6 +2,7 @@
 namespace App\Services\Api;
 
 use Exception;
+use Ramsey\Uuid\Uuid;
 use ripcord;
 
 class InternalMoneyTransfer
@@ -39,299 +40,667 @@ class InternalMoneyTransfer
 		
 		$this->uid = $uid;
 	}
-
-    public function execute($model, $method, $args, $kwargs = [])
-    {
-        $result = $this->models->execute_kw($this->db, $this->uid, $this->password, $model, $method, $args, $kwargs);
-        if (is_array($result) && isset($result['faultCode'], $result['faultString'])) {
-            throw new Exception("Odoo API error: {$result['faultString']}");
-        }
-        return $result;
-    }
-
-    /**
-     * Validate journal and get its default account ID
-     */
-    private function validateJournal($journalId, $context = 'source')
+	public function getFieldAcceptableValues($modelName, $fieldName)
     {
         try {
-            $journal = $this->execute('account.journal', 'read', [[$journalId], ['type', 'default_account_id', 'suspense_account_id', 'name']])[0];
-            if (!in_array($journal['type'], ['bank', 'cash'])) {
-                throw new Exception("Journal {$journalId} ($context) must be of type bank or cash");
-            }
-            if (!$journal['default_account_id']) {
-                throw new Exception("Journal {$journalId} ($context: {$journal['name']}) has no default account configured");
-            }
-            $accountId = $journal['default_account_id'][0];
-            $account = $this->execute('account.account', 'read', [[$accountId], ['account_type', 'name']])[0];
-            if ($journal['suspense_account_id'] && $journal['suspense_account_id'][0] == $accountId) {
-                throw new Exception("Journal {$journalId} ($context: {$journal['name']}) uses a suspense account ({$account['name']}) as default account");
-            }
-            if ($account['account_type'] === 'asset_receivable') {
-                throw new Exception("Journal {$journalId} ($context: {$journal['name']}) default account ({$account['name']}) is a receivable account");
-            }
-            return $accountId;
-        } catch (Exception $e) {
-            throw new Exception("Failed to validate journal {$journalId} ($context): " . $e->getMessage());
-        }
-    }
-
-    /**
-     * Create an internal money transfer using account.payment
-     * @param string $transferDate Date of transfer (YYYY-MM-DD)
-     * @param float $transferAmount Transfer amount
-     * @param int $fromJournalId Source journal ID
-     * @param int $toJournalId Destination journal ID
-     * @param int $oddoCurrencyId Currency ID
-     * @param string|null $comment Optional comment
-     * @return int Payment ID
-     */
-    public function createInternalMoneyTransfer(string $transferDate, float $transferAmount, int $fromJournalId, int $toJournalId, int $oddoCurrencyId, string $comment = null)
-    {
-        try {
-            // Step 1: Validate inputs
-            if ($transferAmount <= 0) {
-                throw new Exception('Transfer amount must be positive');
-            }
-            if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $transferDate)) {
-                throw new Exception('Transfer date must be in YYYY-MM-DD format');
-            }
-            if ($fromJournalId == $toJournalId) {
-                throw new Exception('Source and destination journals cannot be the same');
-            }
-            $sourceAccountId = $this->validateJournal($fromJournalId, 'source');
-            $destAccountId = $this->validateJournal($toJournalId, 'destination');
-			
-            // Validate currency
-            $currency = $this->execute('res.currency', 'read', [[$oddoCurrencyId], ['name']]);
-            if (empty($currency)) {
-				throw new Exception("Invalid currency ID: {$oddoCurrencyId}");
-            }
-			
-            // Step 2: Create payment
-            $paymentData = [
-				'payment_type' => 'outbound',
-                'journal_id' => $fromJournalId,
-                'amount' => $transferAmount,
-                'currency_id' => $oddoCurrencyId,
-                'date' => $transferDate,
-                'communication' => $comment ?? "Internal transfer from Journal {$fromJournalId} to {$toJournalId}",
-                'destination_account_id' => $destAccountId, // Corrected to use account ID
-            ];
-            \Log::info('Creating payment', ['data' => $paymentData]);
-			
-			dd($paymentData);
-            $paymentId = $this->execute('account.payment', 'create', [$paymentData]);
-			
-            // Step 3: Post payment
-            $this->execute('account.payment', 'action_post', [[$paymentId]]);
-            \Log::info('Payment posted', ['payment_id' => $paymentId]);
-			
-            return $paymentId;
-        } catch (Exception $e) {
-            \Log::error('Failed to create internal money transfer', [
-                'error' => $e->getMessage(),
-                'from_journal' => $fromJournalId,
-                'to_journal' => $toJournalId,
-                'amount' => $transferAmount,
-                'date' => $transferDate,
-                'currency_id' => $oddoCurrencyId
+            // Step 1: Fetch field metadata from ir.model.fields
+            $fields = $this->execute('ir.model.fields', 'search_read', [
+                [['model', '=', $modelName]
+				, ['name', '=', $fieldName]
+			],
+                ['name', 'ttype', 'selection', 'relation', 'required', 'domain'],
+                // ['limit' => 1]
             ]);
-            throw new Exception("Failed to create internal money transfer: " . $e->getMessage());
-        }
-    }
+			dd($fields);
 
-    /**
-     * Archive a payment by setting active to false
-     */
-    public function archivePayment($paymentId)
-    {
-        try {
-            $this->execute('account.payment', 'write', [[$paymentId], ['active' => false]]);
-            \Log::info('Payment archived', ['payment_id' => $paymentId]);
-            return true;
-        } catch (Exception $e) {
-            \Log::error('Failed to archive payment', ['payment_id' => $paymentId, 'error' => $e->getMessage()]);
-            throw new Exception("Failed to archive payment: " . $e->getMessage());
-        }
-    }
-
-    /**
-     * Check if payment is reconciled with a bank statement
-     */
-    public function isPaymentBankReconciled($paymentId)
-    {
-        $moveLines = $this->execute('account.move.line', 'search_read', [
-            [['payment_id', '=', $paymentId], ['reconciled', '=', true]],
-            ['id']
-        ]);
-        return !empty($moveLines);
-    }
-
-    /**
-     * Unreconcile payment from bank statements
-     */
-    public function unreconcilePayment($paymentId)
-    {
-        $moveLines = $this->execute('account.move.line', 'search', [
-            [['payment_id', '=', $paymentId], ['reconciled', '=', true]]
-        ]);
-        if (!empty($moveLines)) {
-            $this->execute('account.move.line', 'remove_move_reconcile', [$moveLines]);
-            \Log::info('Payment unreconciled', ['payment_id' => $paymentId, 'lines' => $moveLines]);
-        }
-    }
-
-    /**
-     * Get payment details
-     */
-    public function getPaymentDetails($paymentId)
-    {
-        return $this->execute('account.payment', 'read', [[$paymentId], [
-            'state', 'payment_type', 'reconciled_invoice_ids', 'destination_account_id'
-        ]])[0];
-    }
-
-    /**
-     * Delete or archive a payment
-     * @param int $paymentId Odoo payment ID
-     * @param bool $forceDelete If true, attempt to cancel and delete instead of archiving
-     */
-    public function deletePayment($paymentId, $forceDelete = false)
-    {
-        try {
-            if (!$forceDelete) {
-                $this->archivePayment($paymentId);
-                return response()->json(['success' => 'Payment archived successfully']);
+            if (empty($fields)) {
+                throw new Exception("Field {$fieldName} not found in model {$modelName}");
             }
 
-            $payment = $this->getPaymentDetails($paymentId);
-            if ($payment['state'] === 'posted') {
-                if ($this->isPaymentBankReconciled($paymentId)) {
-                    $this->unreconcilePayment($paymentId);
-                }
-                $this->execute('account.payment', 'action_cancel', [[$paymentId]]);
-            }
-            $this->execute('account.payment', 'unlink', [[$paymentId]]);
-            \Log::info('Payment deleted', ['payment_id' => $paymentId]);
-            return response()->json(['success' => 'Payment deleted successfully']);
-        } catch (Exception $e) {
-            \Log::error('Failed to process payment', ['payment_id' => $paymentId, 'error' => $e->getMessage()]);
-            return response()->json(['error' => 'Failed to process payment: ' . $e->getMessage()], 500);
-        }
-    }
-
-    // Optional: Retain createInternalTransfer (transitory account approach) for fallback
-    private function getTransferAccount()
-    {
-        try {
-            $accounts = $this->execute('account.account', 'search_read', [
-                [['name', 'ilike', 'Internal Transfer'], ['account_type', '=', 'asset_current']],
-                ['id', 'name', 'code']
-            ]);
-            if ($accounts && !empty($accounts[0]['id'])) {
-                \Log::info('Found internal transfer account', ['account_id' => $accounts[0]['id']]);
-                return $accounts[0]['id'];
-            }
-            $companyId = $this->execute('res.users', 'read', [[$this->uid], ['company_id']])[0]['company_id'][0];
-            $accountData = [
-                'name' => 'Internal Transfer',
-                'code' => '999999',
-                'account_type' => 'asset_current',
-                'company_id' => $companyId,
+            $field = $fields[0];
+            $result = [
+                'model' => $modelName,
+                'field' => $fieldName,
+                'type' => $field['ttype'],
+                'required' => $field['required'],
+                'acceptable_values' => [],
+                'description' => ''
             ];
-            $accountId = $this->execute('account.account', 'create', [$accountData]);
-            \Log::info('Created internal transfer account', ['account_id' => $accountId]);
-            return $accountId;
+
+            // Step 2: Handle field type
+            switch ($field['ttype']) {
+                case 'selection':
+                    // Parse selection options
+                    if ($field['selection']) {
+                        // Selection is stored as a string like "[['draft', 'Draft'], ['posted', 'Posted']]"
+                        $selection = eval("return " . $field['selection'] . ";"); // Convert string to array
+                        $result['acceptable_values'] = array_map(function ($option) {
+                            return [
+                                'value' => $option[0],
+                                'label' => $option[1]
+                            ];
+                        }, $selection);
+                        $result['description'] = 'Select one of the predefined options.';
+                    } else {
+                        $result['description'] = 'Selection field, but no options defined (possibly dynamic).';
+                    }
+                    break;
+
+                case 'many2one':
+                    // Fetch records from the relation model
+                    if ($field['relation']) {
+                        $records = $this->execute($field['relation'], 'search_read', [
+                            [], // No domain filter by default
+                            ['id', 'name'],
+                            ['limit' => 100] // Limit to avoid large datasets
+                        ]);
+                        $result['acceptable_values'] = array_map(function ($record) {
+                            return [
+                                'id' => $record['id'],
+                                'name' => $record['name']
+                            ];
+                        }, $records);
+                        $result['description'] = "Select an ID from the {$field['relation']} model. Additional records may exist beyond the limit.";
+                    } else {
+                        $result['description'] = 'Many2one field with no relation model defined.';
+                    }
+                    break;
+
+                case 'many2many':
+                case 'one2many':
+                    $result['acceptable_values'] = [];
+                    $result['description'] = "Relational field ({$field['ttype']}) linking to {$field['relation']}. Provide a list of IDs from {$field['relation']} (many2many) or create related records (one2many).";
+                    break;
+
+                case 'char':
+                case 'text':
+                    $result['acceptable_values'] = [];
+                    $result['description'] = 'Free-form text input. May be constrained by domain or custom validation.';
+                    break;
+
+                case 'integer':
+                    $result['acceptable_values'] = [];
+                    $result['description'] = 'Integer number. May be constrained by domain or custom validation.';
+                    break;
+
+                case 'float':
+                    $result['acceptable_values'] = [];
+                    $result['description'] = 'Decimal number. May be constrained by domain or custom validation.';
+                    break;
+
+                case 'boolean':
+                    $result['acceptable_values'] = [
+                        ['value' => true, 'label' => 'True'],
+                        ['value' => false, 'label' => 'False']
+                    ];
+                    $result['description'] = 'Boolean value (True or False).';
+                    break;
+
+                case 'reference':
+                    $result['acceptable_values'] = [];
+                    $result['description'] = 'Dynamic reference to various models. Format: <model>,<id> (e.g., res.partner,1).';
+                    break;
+
+                default:
+                    $result['acceptable_values'] = [];
+                    $result['description'] = "Field type {$field['ttype']} not explicitly handled. Consult Odoo documentation for constraints.";
+                    break;
+            }
+
+            // Add domain if present
+            if ($field['domain']) {
+                $result['domain'] = $field['domain'];
+                $result['description'] .= " Constrained by domain: {$field['domain']}.";
+            }
+
+            return $result;
         } catch (Exception $e) {
-            throw new Exception("Failed to get or create transfer account: " . $e->getMessage());
-        }
-    }
-
-    public function createInternalTransfer($fromJournalId, $toJournalId, $amount, $transferDate)
-    {
-        try {
-            if ($amount <= 0) {
-                throw new Exception('Transfer amount must be positive');
-            }
-            if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $transferDate)) {
-                throw new Exception('Transfer date must be in YYYY-MM-DD format');
-            }
-            $sourceAccountId = $this->validateJournal($fromJournalId, 'source');
-            $destAccountId = $this->validateJournal($toJournalId, 'destination');
-            if ($fromJournalId == $toJournalId) {
-                throw new Exception('Source and destination journals cannot be the same');
-            }
-            $transferAccountId = $this->getTransferAccount();
-
-            $sourceMoveData = [
-                'journal_id' => $fromJournalId,
-                'date' => $transferDate,
-                'ref' => "Internal Transfer Out on $transferDate",
-                'line_ids' => [
-                    [0, 0, [
-                        'account_id' => $transferAccountId,
-                        'debit' => $amount,
-                        'credit' => 0.0,
-                        'name' => "Transfer to Journal $toJournalId",
-                    ]],
-                    [0, 0, [
-                        'account_id' => $sourceAccountId,
-                        'debit' => 0.0,
-                        'credit' => $amount,
-                        'name' => 'Transfer Out',
-                    ]],
-                ],
-            ];
-            \Log::info('Creating source journal entry', ['data' => $sourceMoveData]);
-            $sourceMoveId = $this->execute('account.move', 'create', [$sourceMoveData]);
-            $this->execute('account.move', 'action_post', [[$sourceMoveId]]);
-            $destMoveData = [
-                'journal_id' => $toJournalId,
-                'date' => $transferDate,
-                'ref' => "Internal Transfer In on $transferDate",
-                'line_ids' => [
-                    [0, 0, [
-                        'account_id' => $destAccountId,
-                        'debit' => $amount,
-                        'credit' => 0.0,
-                        'name' => 'Transfer In',
-                    ]],
-                    [0, 0, [
-                        'account_id' => $transferAccountId,
-                        'debit' => 0.0,
-                        'credit' => $amount,
-                        'name' => "Transfer from Journal $fromJournalId",
-                    ]],
-                ],
-            ];
-            \Log::info('Creating destination journal entry', ['data' => $destMoveData]);
-            $destMoveId = $this->execute('account.move', 'create', [$destMoveData]);
-            $this->execute('account.move', 'action_post', [[$destMoveId]]);
-
-            $transitoryLines = $this->execute('account.move.line', 'search', [
-                [['account_id', '=', $transferAccountId], ['move_id', 'in', [$sourceMoveId, $destMoveId]]]
-            ]);
-            if (count($transitoryLines) >= 2) {
-                \Log::info('Reconciling transitory lines', ['lines' => $transitoryLines]);
-                $this->execute('account.move.line', 'reconcile', [$transitoryLines]);
-            } else {
-                \Log::warning('Insufficient transitory lines for reconciliation', ['lines' => $transitoryLines]);
-            }
-
-            return [$sourceMoveId, $destMoveId];
-        } catch (Exception $e) {
-            \Log::error('Failed to create internal transfer', [
-                'error' => $e->getMessage(),
-                'from_journal' => $fromJournalId,
-                'to_journal' => $toJournalId,
-                'amount' => $amount,
-                'date' => $transferDate
-            ]);
-            throw new Exception("Failed to create internal transfer: " . $e->getMessage());
+            throw new Exception("Failed to fetch field values: " . $e->getMessage());
         }
     }
 	
+   
+	public function execute($model, $method, $args)
+    {
+        return $this->models->execute_kw($this->db, $this->uid, $this->password, $model, $method, $args);
+    }
+	
+	
+    /**
+     * Validate that a journal is a bank or cash journal
+     * @param int $journalId
+     * @return array Journal details
+     */
+  
 	 
+	 public function validateJournal($journalId)
+	 {
+		 try {
+			 $fields = ['type', 'name', 'currency_id', 'default_account_id', 'suspense_account_id'];
+			 // Dynamically check available fields to avoid errors
+			 $journalFields = $this->execute('account.journal', 'fields_get', [[]]);
+			 if (isset($journalFields['inbound_payment_method_line_ids'])) {
+				 $fields[] = 'inbound_payment_method_line_ids';
+			 }
+			 if (isset($journalFields['outbound_payment_method_line_ids'])) {
+				 $fields[] = 'outbound_payment_method_line_ids';
+			 }
+ 
+			 $journal = $this->execute('account.journal', 'read', [[$journalId], $fields])[0];
+			 if (!in_array($journal['type'], ['bank', 'cash'])) {
+				 throw new Exception("Journal {$journal['name']} is not a bank or cash journal");
+			 }
+			 if (!$journal['default_account_id']) {
+				 throw new Exception("Journal {$journal['name']} has no default account configured");
+			 }
+			 \Log::debug("Journal {$journal['name']} fields: " . json_encode($journal));
+			 return $journal;
+		 } catch (Exception $e) {
+			 throw new Exception("Failed to validate journal: " . $e->getMessage());
+		 }
+	 }
+ 
+	 /**
+	  * Get currency ID by currency code
+	  * @param string $currencyCode
+	  * @return int
+	  */
+	 public function getCurrencyId($currencyCode)
+	 {
+		 try {
+			 $currencies = $this->execute('res.currency', 'search_read', [
+				 [['name', '=', strtoupper($currencyCode)]],
+				 ['id'],
+				 ['limit' => 1]
+			 ]);
+			 if (empty($currencies)) {
+				 throw new Exception("Currency {$currencyCode} not found");
+			 }
+			 return $currencies[0]['id'];
+		 } catch (Exception $e) {
+			 throw new Exception("Failed to fetch currency ID: " . $e->getMessage());
+		 }
+	 }
+ 
+	 /**
+	  * Fetch exchange rates for a currency
+	  * @param string $currencyCode
+	  * @param string $date
+	  * @return array
+	  */
+	 public function getExchangeRates($currencyCode, $date)
+	 {
+		 try {
+			 $currencyId = $this->getCurrencyId($currencyCode);
+			 $domain = [['currency_id', '=', $currencyId], ['name', '=', $date]];
+			 $rates = $this->execute('res.currency.rate', 'search_read', [
+				 $domain,
+				 ['name', 'rate'],
+				 ['limit' => 1]
+			 ]);
+			 return [
+				 'currency' => $currencyCode,
+				 'rates' => array_map(function ($rate) {
+					 return [
+						 'date' => $rate['name'],
+						 'rate' => $rate['rate'],
+						 'direct_rate' => $rate['rate'] ? 1 / $rate['rate'] : 0,
+					 ];
+				 }, $rates)
+			 ];
+		 } catch (Exception $e) {
+			 throw new Exception("Failed to fetch exchange rates: " . $e->getMessage());
+		 }
+	 }
+ 
+	 /**
+	  * Validate transfer account
+	  * @param int $accountId
+	  * @return bool
+	  */
+	 public function validateTransferAccount($accountId)
+	 {
+		 try {
+			 $account = $this->execute('account.account', 'read', [[$accountId], ['id', 'name', 'code']])[0];
+			 return !empty($account);
+		 } catch (Exception $e) {
+			 throw new Exception("Invalid transfer account: " . $e->getMessage());
+		 }
+	 }
+ 
+	 /**
+	  * Get the transfer (suspense) account ID for internal transfers
+	  * @param int $sourceJournalId Source journal ID
+	  * @return int Transfer account ID
+	  */
+	 public function getTransferAccountId($sourceJournalId)
+	 {
+		 try {
+			 // Step 1: Check journal's suspense_account_id
+			 $journal = $this->validateJournal($sourceJournalId);
+			 if($journal['id'] != 19){
+				dd($journal);
+			 }
+			 if ($journal['suspense_account_id'] && $this->validateTransferAccount($journal['suspense_account_id'][0])) {
+				 return $journal['suspense_account_id'][0];
+			 }
+ 
+			 // Step 2: Fallback to searching for a suspense account by name or code
+			 $companyId = $this->execute('res.company', 'search_read', [
+				 [['id', '!=', 0]],
+				 ['id'],
+				 ['limit' => 1]
+			 ])[0]['id'];
+ 
+			 $accounts = $this->execute('account.account', 'search_read', [
+				 [
+					 ['company_id', '=', $companyId],
+					 ['account_type', 'in', ['asset_current', 'liability_current']],
+					 '|', ['name', 'ilike', 'Suspense'], ['code', 'ilike', '999%']
+				 ],
+				 ['id'],
+				 ['limit' => 1]
+			 ]);
+			 if (!empty($accounts)) {
+				 $accountId = $accounts[0]['id'];
+				 if ($this->validateTransferAccount($accountId)) {
+					 return $accountId;
+				 }
+			 }
+ 
+			 throw new Exception(
+				 'No transfer account found. Please configure a suspense_account_id on the source journal ' .
+				 'or create an account named "Bank Suspense" or with code starting "999" in Accounting > Configuration > Accounts.'
+			 );
+		 } catch (Exception $e) {
+			 throw new Exception("Failed to fetch transfer account ID: " . $e->getMessage());
+		 }
+	 }
+ 
+	 /**
+	  * Validate or fetch a payment method for a journal
+	  * @param int $paymentMethodId
+	  * @param int $journalId
+	  * @param string $paymentType ('inbound' or 'outbound')
+	  * @return int Valid payment method ID
+	  */
+	 public function validatePaymentMethod($paymentMethodId, $journalId, $paymentType)
+	 {
+		 try {
+			 $journal = $this->validateJournal($journalId);
+			 $journalType = $journal['type'];
+ 
+			 // Define valid payment method codes for the journal type
+			 $validCodes = $journalType == 'cash' ? ['manual', 'cash'] : ['manual', 'bank'];
+ 
+			 // Select the appropriate payment method line field based on payment type
+			 $methodLineField = $paymentType == 'inbound' ? 'inbound_payment_method_line_ids' : 'outbound_payment_method_line_ids';
+			 $paymentMethodLineIds = isset($journal[$methodLineField]) ? $journal[$methodLineField] : [];
+			 // Fetch journal's available payment method lines
+			 $paymentMethodLines = [];
+			 if (!empty($paymentMethodLineIds)) {
+				 $paymentMethodLines = $this->execute('account.payment.method.line', 'search_read', [
+					 [['id', 'in', $paymentMethodLineIds]],
+					 ['payment_method_id', 'name'],
+				 ]);
+			 }
+ 
+			 // Map payment method line IDs to payment method IDs
+			 $journalPaymentMethodIds = array_column($paymentMethodLines, 'payment_method_id', 'payment_method_id');
+			 $journalPaymentMethodIds = array_map(function($method) { return $method[0]; }, $journalPaymentMethodIds);
+ 
+			 // Check if the provided payment method ID is valid for the journal
+			 if (in_array($paymentMethodId, $journalPaymentMethodIds)) {
+				 $paymentMethods = $this->execute('account.payment.method', 'search_read', [
+					 [['id', '=', $paymentMethodId], ['code', 'in', $validCodes]],
+					 ['id', 'name', 'code'],
+				 ]);
+				 if (!empty($paymentMethods)) {
+					 \Log::info("Using provided payment method ID {$paymentMethodId} ({$paymentMethods[0]['name']}) for {$journalType} journal ($paymentType)");
+					 return $paymentMethodId;
+				 }
+			 }
+ 
+			 // Log all available payment methods for debugging
+			 $allMethods = $this->execute('account.payment.method', 'search_read', [
+				 [[]],
+				 ['id', 'name', 'code'],
+			 ]);
+			 \Log::info("Available payment methods: " . json_encode($allMethods));
+			 \Log::debug("Journal {$journal['name']} {$methodLineField}: " . json_encode($paymentMethodLines));
+ 
+			 // Fetch a fallback payment method from the journal's payment method lines
+			 if (!empty($paymentMethodLines)) {
+				 foreach ($paymentMethodLines as $line) {
+					 $methodId = $line['payment_method_id'][0];
+					 $paymentMethods = $this->execute('account.payment.method', 'search_read', [
+						 [['id', '=', $methodId], ['code', 'in', $validCodes]],
+						 ['id', 'name', 'code'],
+						//  ['limit' => 1]
+					 ]);
+					//  dd($paymentMethods);
+					 if (!empty($paymentMethods)) {
+						 $fallbackId = $paymentMethods[0]['id'];
+						 \Log::info("Falling back to payment method ID {$fallbackId} ({$paymentMethods[0]['name']}) for {$journalType} journal ($paymentType)");
+						 return $fallbackId;
+					 }
+				 }
+			 }
+			 dd('d');
+ 
+			 // Fallback to any valid payment method
+			 $fallbackMethods = $this->execute('account.payment.method', 'search_read', [
+				 [['code', 'in', $validCodes]],
+				 ['id', 'name', 'code'],
+				 ['limit' => 1]
+			 ]);
+ 
+			 if (!empty($fallbackMethods)) {
+				 $fallbackId = $fallbackMethods[0]['id'];
+				 \Log::info("Falling back to payment method ID {$fallbackId} ({$fallbackMethods[0]['name']}) for {$journalType} journal ($paymentType)");
+				 return $fallbackId;
+			 }
+ 
+			 throw new Exception(
+				 "No valid payment method found for {$journalType} journal ($paymentType). " .
+				 "Please configure a payment method with code 'manual' or '{$journalType}' in Accounting > Configuration > Payment Methods, " .
+				 "and ensure it is assigned to the journal's {$methodLineField}. Available methods: " . json_encode($allMethods)
+			 );
+		 } catch (Exception $e) {
+			 throw new Exception("Failed to validate payment method: " . $e->getMessage());
+		 }
+	 }
+ 
+	 /**
+	  * Get the correct reference field for account.payment
+	  * @return string|null Field name
+	  */
+	 public function getPaymentReferenceField()
+	 {
+		 try {
+			 $fields = $this->execute('account.payment', 'fields_get', [[]]);
+			 if (isset($fields['ref'])) {
+				 return 'ref';
+			 }
+			 if (isset($fields['name'])) {
+				 return 'name';
+			 }
+			 return null; // No reference field available
+		 } catch (Exception $e) {
+			 throw new Exception("Failed to fetch account.payment fields: " . $e->getMessage());
+		 }
+	 }
+ 
+	 /**
+	  * Get the state field for account.payment
+	  * @return string Field name
+	  */
+	 public function getPaymentStateField()
+	 {
+		 try {
+			 $fields = $this->execute('account.payment', 'fields_get', [[]]);
+			 return isset($fields['state']) ? 'state' : 'status'; // Fallback to 'status' if 'state' is customized
+		 } catch (Exception $e) {
+			 throw new Exception("Failed to fetch account.payment state field: " . $e->getMessage());
+		 }
+	 }
+ 
+	 /**
+	  * Reconcile a payment's journal entry with the suspense account
+	  * @param int $paymentId
+	  * @param int $transferAccountId
+	  * @return void
+	  */
+	  public function reconcilePayment($paymentId, $transferAccountId)
+	  {
+		  try {
+			  \Log::info("Starting reconciliation for payment ID {$paymentId} with transfer account ID {$transferAccountId}");
+  
+			  // Fetch the payment's journal entry (account.move)
+			  $payment = $this->execute('account.payment', 'read', [[$paymentId], ['move_id', 'journal_id']])[0];
+			  if (!$payment['move_id']) {
+				  \Log::warning("No journal entry (move_id) found for payment ID {$paymentId}");
+				  return false;
+			  }
+			  $moveId = $payment['move_id'][0];
+			  \Log::info("Found journal entry ID {$moveId} for payment ID {$paymentId}");
+  
+			  // Fetch journal details to get default_account_id (liquidity account)
+			  $journal = $this->execute('account.journal', 'read', [[$payment['journal_id'][0]], ['default_account_id']])[0];
+			  $liquidityAccountId = $journal['default_account_id'] ? $journal['default_account_id'][0] : null;
+			  \Log::info("Journal liquidity account ID: " . ($liquidityAccountId ?: 'none'));
+  
+			  // Fetch all journal entry lines (account.move.line)
+			  $moveLines = $this->execute('account.move.line', 'search_read', [
+				  [['move_id', '=', $moveId]],
+				  ['id', 'account_id', 'debit', 'credit', 'reconciled', 'name'],
+			  ]);
+			  \Log::debug("Journal entry lines for move ID {$moveId}: " . json_encode($moveLines));
+  
+			  // Find suspense account line
+			  $suspenseLine = null;
+			  foreach ($moveLines as $line) {
+				  if ($line['account_id'][0] == $transferAccountId && !$line['reconciled']) {
+					  $suspenseLine = $line;
+					  break;
+				  }
+			  }
+  
+			  if (!$suspenseLine) {
+				  \Log::warning("No unreconciled suspense account line found for payment ID {$paymentId} with account ID {$transferAccountId}");
+				  return false;
+			  }
+			  \Log::info("Found suspense account line ID {$suspenseLine['id']} (Debit: {$suspenseLine['debit']}, Credit: {$suspenseLine['credit']})");
+  
+			  // Find liquidity account line
+			  $liquidityLine = null;
+			  foreach ($moveLines as $line) {
+				  if ($line['account_id'][0] == $liquidityAccountId && !$line['reconciled']) {
+					  $liquidityLine = $line;
+					  break;
+				  }
+			  }
+  
+			  if (!$liquidityLine) {
+				  \Log::warning("No unreconciled liquidity account line found for payment ID {$paymentId} with account ID {$liquidityAccountId}");
+				  return false;
+			  }
+			  \Log::info("Found liquidity account line ID {$liquidityLine['id']} (Debit: {$liquidityLine['debit']}, Credit: {$liquidityLine['credit']})");
+  
+			  // Verify amounts match for reconciliation
+			  if (abs($suspenseLine['debit'] - $liquidityLine['credit']) > 0.01 || abs($suspenseLine['credit'] - $liquidityLine['debit']) > 0.01) {
+				  \Log::warning("Mismatched amounts for reconciliation: Suspense (Debit: {$suspenseLine['debit']}, Credit: {$suspenseLine['credit']}), Liquidity (Debit: {$liquidityLine['debit']}, Credit: {$liquidityLine['credit']})");
+				  return false;
+			  }
+  
+			  // Reconcile the suspense and liquidity lines
+			  $reconcileLines = [$suspenseLine['id'], $liquidityLine['id']];
+			  \Log::info("Attempting to reconcile lines: " . json_encode($reconcileLines));
+			  $this->execute('account.move.line', 'reconcile', [[
+				  'lines' => $reconcileLines,
+				  'writeoff_acc_id' => false,
+			  ]]);
+  
+			  \Log::info("Successfully reconciled payment ID {$paymentId} with lines: " . json_encode($reconcileLines));
+			  return true;
+		  } catch (Exception $e) {
+			  \Log::error("Failed to reconcile payment ID {$paymentId}: " . $e->getMessage());
+			  return false;
+		  }
+	  }
+ 
+	 /**
+	  * Check and archive existing payments with the same reference
+	  * @param string $outboundRef
+	  * @param string $inboundRef
+	  * @param string $referenceField
+	  * @return void
+	  */
+	 public function checkAndArchiveExistingPayments($outboundRef, $inboundRef, $referenceField)
+	 {
+		 try {
+			 if (!$referenceField) {
+				 return; // Skip archiving if no reference field is available
+			 }
+ 
+			 $existingPayments = $this->execute('account.payment', 'search_read', [
+				 [[$referenceField, 'in', [$outboundRef, $inboundRef]], ['active', '=', true]],
+				 ['id'],
+			 ]);
+ 
+			 if (!empty($existingPayments)) {
+				 $paymentIds = array_column($existingPayments, 'id');
+				 $this->execute('account.payment', 'write', [$paymentIds, ['active' => false]]);
+				 \Log::info("Archived existing payments with IDs: " . json_encode($paymentIds));
+			 }
+		 } catch (Exception $e) {
+			 throw new Exception("Failed to archive existing payments: " . $e->getMessage());
+		 }
+	 }
+ 
+	 /**
+	  * Create an internal transfer between two journals (bank or cash)
+	  * @param int $sourceJournalId Source journal ID (bank or cash)
+	  * @param int $destinationJournalId Destination journal ID (bank or cash)
+	  * @param float $amount Transfer amount
+	  * @param string $date Transfer date (YYYY-MM-DD)
+	  * @param string $reference Transfer reference
+	  * @param int|null $transferAccountId Suspense account ID (optional, fetched if null)
+	  * @param int $paymentMethodId Payment method ID
+	  * @return array Payment IDs
+	  */
+	  public function createInternalTransfer($sourceJournalId, $destinationJournalId, $amount, $date, $reference, $paymentMethodId)
+    {
+        try {
+            // Step 1: Validate inputs
+            if ($amount <= 0) {
+                throw new Exception('Amount must be greater than zero');
+            }
+            if ($sourceJournalId == $destinationJournalId) {
+                throw new Exception('Source and destination journals must be different');
+            }
+
+            // Step 2: Validate and get payment method IDs for both journals
+            $sourcePaymentMethodId = $this->validatePaymentMethod($paymentMethodId, $sourceJournalId, 'outbound');
+            $destinationPaymentMethodId = $this->validatePaymentMethod($paymentMethodId, $destinationJournalId, 'inbound');
+
+            // Step 3: Get transfer account ID if not provided
+            $transferAccountId =  $this->getTransferAccountId($sourceJournalId);
+            $this->validateTransferAccount($transferAccountId);
+
+            // Step 4: Get the correct reference field
+            $referenceField = $this->getPaymentReferenceField();
+
+            // Step 5: Generate unique payment references
+            $uniqueId = Uuid::uuid4()->toString();
+            $outboundRef = "{$reference} (Outbound) [{$uniqueId}]";
+            $inboundRef = "{$reference} (Inbound) [{$uniqueId}]";
+
+            // Step 6: Archive existing payments with the same references
+            $this->checkAndArchiveExistingPayments($outboundRef, $inboundRef, $referenceField);
+
+            // Step 7: Validate journals
+            $sourceJournal = $this->validateJournal($sourceJournalId);
+            $destinationJournal = $this->validateJournal($destinationJournalId);
+
+            // Step 8: Handle multi-currency if journals have different currencies
+            $sourceCurrencyId = $sourceJournal['currency_id'] ? $sourceJournal['currency_id'][0] : null;
+            $destinationCurrencyId = $destinationJournal['currency_id'] ? $destinationJournal['currency_id'][0] : null;
+            $amountDestination = $amount;
+            if ($sourceCurrencyId && $destinationCurrencyId && $sourceCurrencyId != $destinationCurrencyId) {
+                $rateData = $this->getExchangeRates($sourceJournal['currency_id'][1], $date);
+                if (empty($rateData['rates'])) {
+                    throw new Exception('No exchange rate found for the specified date');
+                }
+                $rate = $rateData['rates'][0]['rate'];
+                $amountDestination = $amount * (1 / $rate); // Convert to destination currency
+            }
+
+            // Step 9: Create outbound payment from source journal to suspense account
+            $outboundPaymentData = [
+                'payment_type' => 'outbound',
+                'partner_type' => 'supplier', // Using supplier for suspense account
+                'partner_id' => false, // No partner for internal transfer
+                'amount' => $amount,
+                'currency_id' => $sourceCurrencyId ?: $this->getCurrencyId('USD'), // Default to USD if unset
+                'date' => $date,
+                'journal_id' => $sourceJournalId,
+                'payment_method_id' => $sourcePaymentMethodId,
+                'destination_account_id' => $transferAccountId,
+            ];
+            if ($referenceField) {
+                $outboundPaymentData[$referenceField] = $outboundRef;
+            }
+
+            \Log::debug("Creating outbound payment: " . json_encode($outboundPaymentData));
+            $outboundPaymentId = $this->execute('account.payment', 'create', [$outboundPaymentData]);
+            $this->execute('account.payment', 'action_post', [[$outboundPaymentId]]);
+            \Log::info("Created and posted outbound payment ID {$outboundPaymentId}");
+
+            // Step 10: Create inbound payment to destination journal from suspense account
+            $inboundPaymentData = [
+                'payment_type' => 'inbound',
+                'partner_type' => 'customer', // Using customer for suspense account
+                'partner_id' => false, // No partner for internal transfer
+                'amount' => $amountDestination,
+                'currency_id' => $destinationCurrencyId ?: $this->getCurrencyId('USD'), // Default to USD if unset
+                'date' => $date,
+                'journal_id' => $destinationJournalId,
+                'payment_method_id' => $destinationPaymentMethodId,
+                'destination_account_id' => $transferAccountId,
+            ];
+            if ($referenceField) {
+                $inboundPaymentData[$referenceField] = $inboundRef;
+            }
+
+            \Log::debug("Creating inbound payment: " . json_encode($inboundPaymentData));
+            $inboundPaymentId = $this->execute('account.payment', 'create', [$inboundPaymentData]);
+            $this->execute('account.payment', 'action_post', [[$inboundPaymentId]]);
+            \Log::info("Created and posted inbound payment ID {$inboundPaymentId}");
+
+            // Step 11: Reconcile inbound payment if destination journal is cash
+            $reconciled = false;
+            if ($destinationJournal['type'] == 'cash') {
+                $reconciled = $this->reconcilePayment($inboundPaymentId, $transferAccountId);
+                if (!$reconciled) {
+                    \Log::warning("Reconciliation failed for inbound payment ID {$inboundPaymentId}. Attempting to force post.");
+                }
+            }
+
+            // Step 12: Verify payment state and force post if needed
+            $stateField = $this->getPaymentStateField();
+            $inboundPayment = $this->execute('account.payment', 'read', [[$inboundPaymentId], [$stateField]])[0];
+            \Log::info("Inbound payment ID {$inboundPaymentId} state: {$inboundPayment[$stateField]}");
+
+            if ($destinationJournal['type'] == 'cash' && $inboundPayment[$stateField] == 'in_progress') {
+                \Log::warning("Inbound payment ID {$inboundPaymentId} is still in_progress after reconciliation attempt.");
+                if (!$reconciled) {
+                    // Attempt to force post the payment
+                    try {
+                        $this->execute('account.payment', 'action_post', [[$inboundPaymentId]]);
+                        $inboundPayment = $this->execute('account.payment', 'read', [[$inboundPaymentId], [$stateField]])[0];
+                        \Log::info("After forcing post, inbound payment ID {$inboundPaymentId} state: {$inboundPayment[$stateField]}");
+                    } catch (Exception $e) {
+                        \Log::error("Failed to force post payment ID {$inboundPaymentId}: " . $e->getMessage());
+                    }
+                }
+            }
+
+            if ($inboundPayment[$stateField] != 'posted' && $inboundPayment[$stateField] != 'reconciled') {
+                \Log::warning("Inbound payment ID {$inboundPaymentId} is in state '{$inboundPayment[$stateField]}' instead of 'posted' or 'reconciled'");
+            }
+
+            // Step 13: Return payment IDs
+            return [
+                'outbound_payment_id' => $outboundPaymentId,
+                'inbound_payment_id' => $inboundPaymentId,
+            ];
+        } catch (Exception $e) {
+            \Log::error("Failed to create internal transfer: " . $e->getMessage());
+            throw new Exception("Failed to create internal transfer: " . $e->getMessage());
+        }
+    }
+	 
+	
 }
 ?>

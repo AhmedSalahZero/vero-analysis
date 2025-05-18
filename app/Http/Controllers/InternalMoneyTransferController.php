@@ -8,7 +8,7 @@ use App\Models\Branch;
 use App\Models\Company;
 use App\Models\FinancialInstitution;
 use App\Models\InternalMoneyTransfer;
-use App\Services\Api\OddoService;
+use App\Services\Api\OdooService;
 use App\Traits\GeneralFunctions;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -197,7 +197,7 @@ class InternalMoneyTransferController
 		}
 		// if($company->hasOddoIntegrationCredentials()){
 		// 	$odooCurrencyId = DB::table('currencies')->where('name',$currencyName)->first()->oddo_id;
-		// 	$odooService = new OddoService($company->getOddoDBUrl(),$company->getOddoDBName(),$company->getOddoDBUserName(),$company->getOddoDBPassword(),$company->getId());
+		// 	$odooService = new OdooService($company->getOddoDBUrl(),$company->getOddoDBName(),$company->getOddoDBUserName(),$company->getOddoDBPassword(),$company->getId());
 		// 	$odooService->createInternalMoneyTransfer($transferDate,$transferAmount,$fromJournalId,$toJournalId,$odooCurrencyId);
 		// }
 		

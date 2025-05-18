@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use App\Models\FullySecuredOverdraft;
-use App\Services\Api\OddoService;
+use App\Services\Api\OdooService;
 use App\Traits\HasBasicStoreRequest;
 use App\Traits\Models\HasUserComment;
 use Carbon\Carbon;

@@ -20,6 +20,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use App\Jobs\ImportForeignExchangeRates;
 
 
 class HomeController extends Controller
@@ -55,6 +56,8 @@ class HomeController extends Controller
 	{
 		if($company->hasCashVero()){
 			dispatch_now(new CheckDueAndPastedInvoicesJob($company->id));
+			dispatch_now(new ImportForeignExchangeRates($company->id));
+			
 		}
 		return view('client_view.homePage', compact('company'));
 	}

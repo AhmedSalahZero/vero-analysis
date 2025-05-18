@@ -5,7 +5,6 @@ namespace App\Jobs;
 
 use App\Models\Company;
 use App\Models\CurrentAccountBankStatement;
-use App\Services\Api\OddoService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

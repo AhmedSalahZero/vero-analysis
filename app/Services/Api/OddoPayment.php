@@ -116,8 +116,10 @@ class OddoPayment
 			$invoiceId = $invoice->getOdooId();
 			$settlementAmountInInvoiceCurrency = $customerInvoiceSettlement->getAmount();
 			$amountInInReceivingCurrency = $customerInvoiceSettlement->getAmountInReceivingCurrency();
-			$currencyName = $moneyModel->getInvoiceCurrency();
-			$odooCurrencyId = DB::table('currencies')->where('name',$currencyName)->first()->oddo_id;
+			$invoiceCurrencyName = $moneyModel->getInvoiceCurrency();
+			$receivingCurrencyName = $moneyModel->getReceivingOrPaymentCurrency();
+			$odooInvoiceCurrencyId = DB::table('currencies')->where('name',$invoiceCurrencyName)->first()->oddo_id;
+			$odooReceivingCurrencyId = DB::table('currencies')->where('name',$receivingCurrencyName)->first()->oddo_id;
 			$paymentDate = $moneyModel->getReceivingOrPaymentMoneyDate();
 			$odooPartnerId = $moneyModel->partner->getOdooId();
 			$invoiceNumber = $invoice->getInvoiceNumber();
@@ -138,12 +140,11 @@ class OddoPayment
                 'account.payment.register',
                 'create',
                 [[
-                    'amount' => $settlementAmountInInvoiceCurrency,
-					'source_amount_currency'=>$amountInInReceivingCurrency,
+                    'amount' => $amountInInReceivingCurrency,
+					'currency_id'=>$odooReceivingCurrencyId,
                     'journal_id' => $journalId,
                     'payment_date' => $paymentDate,
                     'communication' => $invoiceNumber,
-					'currency_id'=>$odooCurrencyId,
                     'partner_id' => $odooPartnerId,
                     'payment_type' => $inBoundOrOutBound,
                     'partner_type' => $customerOrSupplier ,

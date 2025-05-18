@@ -6,7 +6,7 @@ use App\Models\Bank;
 use App\Models\CertificatesOfDeposit;
 use App\Models\CleanOverdraft;
 use App\Models\OverdraftAgainstCommercialPaper;
-use App\Services\Api\OddoService;
+use App\Services\Api\OdooService;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -248,7 +248,7 @@ class FinancialInstitution extends Model
 			]);
 		}
 		if($company->hasOddoIntegrationCredentials()){
-			$oddo = new OddoService($company->getOddoDBUrl(),$company->getOddoDBName(),$company->getOddoDBUserName(),$company->getOddoDBPassword(),$company->getId());
+			$oddo = new OdooService($company->getOddoDBUrl(),$company->getOddoDBName(),$company->getOddoDBUserName(),$company->getOddoDBPassword(),$company->getId());
 			$oddo->syncFinancialInstitutions();
 		}
 		

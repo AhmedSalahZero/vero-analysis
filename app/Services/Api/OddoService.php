@@ -13,7 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use ripcord;
 
-class OddoService
+class OdooService
 {
 	protected string $url ;
 	protected String $db;

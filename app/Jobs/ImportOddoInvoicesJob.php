@@ -4,7 +4,7 @@ namespace App\Jobs;
 
 
 use App\Models\Company;
-use App\Services\Api\OddoService;
+use App\Services\Api\OdooService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -37,7 +37,7 @@ class ImportOddoInvoicesJob implements ShouldQueue
 		$companies = Company::all();
 		foreach($companies as $company){
 			if($company->hasOddoIntegrationCredentials()){
-				$oddo = new OddoService($company->getOddoDBUrl(),$company->getOddoDBName(),$company->getOddoDBUserName(),$company->getOddoDBPassword(),$company->getId());
+				$oddo = new OdooService($company->getOddoDBUrl(),$company->getOddoDBName(),$company->getOddoDBUserName(),$company->getOddoDBPassword(),$company->getId());
 				$startDate = now()->subDay()->format('Y-m-d') ; ;
 				$endDate = now()->subDay()->format('Y-m-d') ; ;
 				$oddo->startImportInvoices($startDate,$endDate,$company->id);
