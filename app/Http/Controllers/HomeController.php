@@ -9,6 +9,7 @@ use App\Http\Controllers\Analysis\SalesGathering\IntervalsComparingForIncomeStat
 use App\Http\Controllers\Analysis\SalesGathering\IntervalsComparingReport;
 use App\Http\Controllers\Analysis\SalesGathering\SalesBreakdownAgainstAnalysisReport;
 use App\Jobs\CheckDueAndPastedInvoicesJob;
+use App\Jobs\ImportForeignExchangeRates;
 use App\Models\Company;
 use App\Models\IncomeStatement;
 use App\Models\IncomeStatementItem;
@@ -20,7 +21,6 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
-use App\Jobs\ImportForeignExchangeRates;
 
 
 class HomeController extends Controller
@@ -56,8 +56,9 @@ class HomeController extends Controller
 	{
 		if($company->hasCashVero()){
 			dispatch_now(new CheckDueAndPastedInvoicesJob($company->id));
+		}
+		if($company->hasOddoIntegrationCredentials()){
 			dispatch_now(new ImportForeignExchangeRates($company->id));
-			
 		}
 		return view('client_view.homePage', compact('company'));
 	}

@@ -66,10 +66,9 @@ class CollectionEffectivenessIndexController
 		$modelType = $request->get('model_type');
 		$fullClassName = ('\App\Models\\'.$modelType) ;
 		$companyId =$company->id ;
-		$reportType = $request->get('report_type');
+		$reportType = $request->get('report_type','whole_interval');
 		$startDate = $request->get('start_date');
 		$endDate = $request->get('end_date');
-		
 		$currency = $request->get('currency');
 		$reportName = (new $fullClassName)->getEffectivenessText();
 		$totalCurrentTotalToBeCollectedPerDate = [] ;
@@ -86,6 +85,7 @@ class CollectionEffectivenessIndexController
 		$datesForHeader = [];
 		$customerOrSupplierNameText = (new $fullClassName)->getClientNameText();
 		$agingResult = (new AgingController)->result($company,$request,$modelType,true);
+		// dd($agingResult);
 		$collectionEffectivenessIndexPerCustomer = [];
 		$isMonthlyReport =$reportType == 'monthly'; 
 		$dates = $isMonthlyReport ? HDate::generateStartDateAndEndDateBetween($startDate,$endDate) : [['start_date'=>$startDate,'end_date'=>$endDate]] ;  
@@ -121,6 +121,7 @@ class CollectionEffectivenessIndexController
 			}
 		}
 		$collectionEffectivenessIndexForAllCustomersPerAll = $totalCurrentTotalToBeCollectedPerAll ? $totalCurrentTotalCollectedPerAll/$totalCurrentTotalToBeCollectedPerAll*100 :0;
+		
 		$tableHeaders =  $datesForHeader ;
 		
 		return view('admin.reports.collection-effectiveness-index.result',[

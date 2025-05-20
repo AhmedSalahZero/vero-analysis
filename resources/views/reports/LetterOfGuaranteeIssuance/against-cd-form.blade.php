@@ -682,10 +682,11 @@ use App\Models\LetterOfGuaranteeIssuance;
                             }
                             var contractsOptions = '';
                             var currentSelectedId = $('select#contract-id').attr('data-current-selected')
-                            for (var contractId in res.contracts) {
-                                var contractName = res.contracts[contractId];
-                                contractsOptions += `<option ${currentSelectedId == contractId ? 'selected' : '' } value="${contractId}"> ${contractName}  </option> `;
-                            }
+                            for (var contractName in res.contracts) {
+								var contractId = res.contracts[contractName].id ;
+								var contractCurrency = res.contracts[contractName].currency ;
+								contractsOptions += `<option data-contract-currency="${contractCurrency}" ${currentSelectedId == contractId ? 'selected' : '' } value="${contractId}"> ${contractName}  </option> `;
+							}
                             $('select#purchase-order-id').empty().selectpicker("refresh");
                             $('select#contract-id').empty().append(contractsOptions).selectpicker("refresh");
                             $('select#contract-id').trigger('change')

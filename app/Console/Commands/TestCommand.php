@@ -118,6 +118,7 @@ class TestCommand extends Command
 		// foreach($companies as $company){
 		// 	if($company->hasOddoIntegrationCredentials()){
 				$oddo = new InternalMoneyTransfer($company->getOddoDBUrl(),$company->getOddoDBName(),$company->getOddoDBUserName(),$company->getOddoDBPassword(),$company->getId());
+				// $oddo = new InternalMoneyTransfer($company->getOddoDBUrl(),$company->getOddoDBName(),$company->getOddoDBUserName(),$company->getOddoDBPassword(),$company->getId());
 		// 		// $oddo = new OddoPayment($company->getOddoDBUrl(),$company->getOddoDBName(),$company->getOddoDBUserName(),$company->getOddoDBPassword(),$company->getId());
 		// 		// OddoPayment
 		// 		// $importDate = now()->format('Y-m-d') ; ;
@@ -125,14 +126,14 @@ class TestCommand extends Command
 		// 		$endDate = now()->format('Y-m-d') ; 
 		// 		// $oddo->syncBanks($startDate,$endDate);
 				$transferDate = '2025-05-15';
-				$fromJournalId = 19 ;
-				// $toJournalId = 25;
-				$toJournalId = 23; //safe
+				$fromJournalId = 25 ;
+				$toJournalId = 19;
+				// $toJournalId = 23; //safe
 				$odooCurrencyId = 74 ; 
-				$transferAmount = 14	;
+				$transferAmount = 100000	;
 				$ref = 'ref';
-				$paymentMethodId ='cash' ; 
-				dd($oddo->createInternalTransfer($fromJournalId,$toJournalId,$transferAmount,$transferDate,$ref,$paymentMethodId));
+				// $paymentMethodId ='cash' ; 
+				dd($oddo->createOutgoingTransferToSuspense($fromJournalId,$transferAmount,$transferDate,$ref));
 		// 		$oddo->startImportContracts($startDate,$endDate,$company->id);
 		// 		// $oddo->startImportContracts($startDate,$endDate,$company->id);
 				// $oddo->syncFinancialInstitutions('BNK2');

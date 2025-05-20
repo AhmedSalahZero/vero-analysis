@@ -69,7 +69,8 @@ class StoreMoneyReceivedRequest extends FormRequest
 			'type'=>'required',
 			'receiving_branch_id'=>$type == MoneyReceived::CASH_IN_SAFE  ? ['required','not_in:-1'] : [],
 			'received_amount.'.$type => ['required','gt:0'],
-			'account_type.'.$type => $type == MoneyReceived::INCOMING_TRANSFER || $type == MoneyReceived::CASH_IN_BANK ? 'required' : 'sometimes',
+			'account_type.'.$type => $accountTypeValidation =  $type == MoneyReceived::INCOMING_TRANSFER || $type == MoneyReceived::CASH_IN_BANK ? 'required' : 'sometimes',
+			'account_number.'.$type=>$accountTypeValidation,
 			'receiving_date'=>['required',new ReceivingOrPaymentDateRule($companyId,$type,[MoneyReceived::CASH_IN_BANK,MoneyReceived::INCOMING_TRANSFER],[MoneyReceived::CASH_IN_SAFE],$financialInstitutionId,$accountTypeId,$accountNumber)],
 			'unapplied_amount'=>['sometimes','gte:0'],
 			'contract_id'=>$partnerType == 'is_customer'?[new ContractAmountWithUnappliedAmountRule($this->get('unapplied_amount',0),$this->get('contract_id',0))]:[],
@@ -88,6 +89,7 @@ class StoreMoneyReceivedRequest extends FormRequest
 		return [
 			'receiving_branch_id.not_in'=>__('Please Enter New Branch Name'),
 			'account_type.'.$type.'.required' => __('Please Select Account Type') ,
+			'account_number.'.$type.'.required' => __('Please Select Account Number') ,
 			'unapplied_amount.gte'=>__('Invalid Unapplied Amount'),
 			'type.required'=>__('Please Select Money Type'),
 			'received_amount.'.$type.'.required'=>__('Please Enter Received Amount'),

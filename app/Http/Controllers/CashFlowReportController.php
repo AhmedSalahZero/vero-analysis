@@ -14,6 +14,7 @@ use App\Models\LoanSchedule;
 use App\Models\MoneyPayment;
 use App\Models\MoneyReceived;
 use App\Models\PayableCheque;
+use App\Models\PoAllocation;
 use App\Models\SettlementAllocation;
 use App\Models\SupplierInvoice;
 use App\Models\TimeOfDeposit;
@@ -77,6 +78,11 @@ class CashFlowReportController
 		}
 		$isContract = (bool)$contract ;
 		$currencyName = $isContract ? $contract->getCurrency(): $request->get('currency');
+		$customerContractId = $contractId ;
+		$poAllocations = PoAllocation::where('po_allocations.contract_id',$customerContractId)	
+		->join('purchase_orders','purchase_orders.id','=','po_allocations.purchase_order_id')
+		->join('contracts','contracts.id','=','purchase_orders.contract_id')
+		->get(); ;
 		$defaultStartDate = $request->get('cash_start_date',now()->format('Y-m-d'));
 		$defaultEndDate = $request->get('cash_end_date',now()->addMonth()->format('Y-m-d'));
 		$formStartDate =Carbon::make($request->get('start_date',$defaultStartDate))->format('Y-m-d'); 
@@ -90,7 +96,7 @@ class CashFlowReportController
 		// $reportInterval = 'daily';
 		$result = [];
 		// $cashExpenseCategoryNamesArr = [];
-		
+		$pastDueSupplierInvoicesForContracts = collect([]);
 		$result['customers']=[
 			'Cash & Banks Balance'=>[],
 			'Checks Collected'=>[],
@@ -151,7 +157,7 @@ class CashFlowReportController
 		SupplierInvoice::getForecastedProjectCollection($result ,$startDate , $endDate,$currency,$company->id,$datesWithWeekNumber,$contractId) ;
 		CustomerInvoice::getCustomerInvoicesUnderCollectionAtDatesForContracts($result,$company->id,$currency,$contractCode,$datesWithWeekNumber,$endDate);
 		
-		SupplierInvoice::getSupplierInvoicesUnderCollectionAtDates($result,$company->id,$currency,$datesWithWeekNumber,$endDate);
+		$isContract ? SupplierInvoice::getSupplierInvoicesForPoUnderCollectionAtDates($result,$company->id,$currency,$datesWithWeekNumber,$startDate,$endDate,$poAllocations,$pastDueSupplierInvoicesForContracts) : SupplierInvoice::getSupplierInvoicesUnderCollectionAtDates($result,$company->id,$currency,$datesWithWeekNumber,$startDate,$endDate);
 		foreach($weeks as $currentWeekYear=>$week){
 			
 			$currentYear = explode('-',$currentWeekYear)[1];
@@ -245,18 +251,23 @@ class CashFlowReportController
 		
 		
 		// for suppliers 
-		$pastDueSupplierInvoices = $this->getPastDueCustomerInvoices('SupplierInvoice',$currency,$company->id,$contractCode);
-		$supplierDueInvoices=json_decode(json_encode(DB::table('weekly_cashflow_custom_due_invoices')->where('weekly_cashflow_custom_due_invoices.company_id',$company->id)
+		$pastDueSupplierInvoices = $isContract ? $pastDueSupplierInvoicesForContracts->toArray() : $this->getPastDueCustomerInvoices('SupplierInvoice',$currency,$company->id,$contractCode);
+		$supplierContractCodes = $pastDueSupplierInvoicesForContracts->pluck('contract_code')->toArray();
+	
+		$currentContractCode = $isContract ? $supplierContractCodes : [$contractCode];
+		// dd($pastDueSupplierInvoices);
+		$supplierDueInvoices=  json_decode(json_encode(DB::table('weekly_cashflow_custom_due_invoices')->where('weekly_cashflow_custom_due_invoices.company_id',$company->id)
 		->where('invoice_type','SupplierInvoice')
 		->where('cashflow_report_id',$cashflowReportId)
 		->where('is_contract',$isContract)
-		->when($contractCode,function($query) use($contractCode){
+		->when($contractCode,function($query) use($currentContractCode){
 			$query->join('supplier_invoices','supplier_invoices.id','=','weekly_cashflow_custom_due_invoices.invoice_id')
-			->where('supplier_invoices.contract_code',$contractCode);
+			->where('supplier_invoices.contract_code',$currentContractCode);
 			})
-		// ->whereNotIn('invoice_id',$excludeIds)
 		->groupBy('week_start_date')->selectRaw('week_start_date,sum(amount) as amount')->get()),true);
-	
+		
+			// dd($pastDueSupplierInvoices,$supplierDueInvoices);
+		$isContract ? SupplierInvoice::getForecastedProjectPayment($result ,$startDate , $endDate,$currency,$company->id,$datesWithWeekNumber,$contractId) : [];
 		
 		// for loans 
 		$pastDueInstallments = $this->getPastDueLoanSchedules($currency,$company->id);
@@ -281,6 +292,7 @@ class CashFlowReportController
 		$result['cash_expenses'][__('Net Cash (+/-)')]['total'] = [];
 		// $result['cash_expenses'][__('Net Cash (+/-)')]['total']['total_of_total'] = array_sum($netCash) ;
 		$result['cash_expenses'][__('Accumulated Net Cash (+/-)')]['total'] = [];
+		//  dd($result['suppliers']['Suppliers Invoices']['total']);
 		// dd($result['cash_expenses']);
 		// $result['cash_expenses'][__('Accumulated Net Cash (+/-)')]['total'] = $this->formatAccumulatedNetCash($netCash,$weeks);
 		$orderByKeys = [
@@ -416,19 +428,16 @@ class CashFlowReportController
 	
 	public function getPastDueCustomerInvoices(string $invoiceType,string $currency , int $companyId , string $contractCode = null ){
 		$fullClassName = '\App\Models\\'.$invoiceType;
-	// dd($fullClassName);
 		$items  = $fullClassName::where('company_id',$companyId)
 		->where('net_balance','>',0)
 		->whereIn('invoice_status',['past_due','partially_collected_and_past_due'])
 		->where('currency',$currency)->where('invoice_due_date','<',now()->format('Y-m-d'))
-		->when($contractCode , function($query) use($contractCode) {
+		->when($contractCode , function($query) use($contractCode,$invoiceType) {
 			$query->where('contract_code',$contractCode);
 		})
 		->orderBy('invoice_due_date')
 		->get()->toArray() ;
-		// foreach($items as $item){
-		// 	$item->net_balance_until_date = $item->getNetBalanceUntil(now()->format('Y-m-d'));
-		// }
+		
 		return $items;
 	}
 	public function getPastDueLoanSchedules(string $currency , int $companyId  ){
@@ -491,7 +500,7 @@ class CashFlowReportController
 			}
 			
 		}
-		$this->refreshDueInvoicesAndSettlements($company,$request,$currencyName,$contractCode);
+		$this->refreshDueInvoicesAndSettlements($company,$request,$currencyName,$isContract,$contractCode);
 		// $excludeIds = $pastDueInstallments->where('net_balance_until_date','<=',0)->pluck('id')->toArray() ;
 		// ->whereNotIn('loan_schedule_id',$excludeIds)
 
@@ -561,10 +570,11 @@ class CashFlowReportController
 	}
 	
 	
-	public function adjustLoanPastDueInstallments(Request $request,Company $company){
+	public function adjustLoanPastDueInstallments(Request $request,Company $company ){
 		$currencyName = $request->get('currency_name');
 		$isContract = $request->get('is_contract');
-		
+		$contractCode = $request->get('contract_code');
+		// $contractCode = 
 		foreach($request->get('loan_schedule_id',[]) as $loanScheduleId){
 			$weekStartDate = $request->input('week_start_date.'.$loanScheduleId);
 			$percentage = $request->input('percentage.'.$loanScheduleId);

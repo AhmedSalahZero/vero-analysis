@@ -362,6 +362,7 @@ class MoneyReceivedController
 	}
 	
 	public function store(Company $company , StoreMoneyReceivedRequest $request , $returnModel = false){
+		
 		$hasUnappliedAmount = (bool)$request->get('unapplied_amount');
 		$isGeneralDownPayment = $request->get('down_payment_type') == MoneyReceived::DOWN_PAYMENT_GENERAL;
 		$partnerType = $request->get('partner_type');

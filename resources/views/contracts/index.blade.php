@@ -11,7 +11,14 @@ use App\Models\Contract;
     .w-60-percentage {
         width: 60% !important;
     }
-
+	.action-class{
+		min-width:10px !important;
+		max-width:10px !important;
+		width:10px !important;
+		background-color: #0742A6 !important;
+    	color: white !important;
+	
+	}
     .w-50-percentage {
         width: 50% !important;
     }
@@ -314,9 +321,11 @@ use App\Models\Contract;
         padding: 0.60rem 1.25rem !important;
     }
 
-    .max-w-22 {
-        max-width: 22%;
-    }
+   .max-w-25{
+	width:20% !important ;
+	min-width:20% !important ;
+	max-width:20% !important ;
+   }
 
     .form-label {
         white-space: nowrap !important;
@@ -745,12 +754,13 @@ use App\Models\Contract;
 										@csrf 
 										  <input type="hidden" name="po_id" value="{{ $titleAndValue['id'] }}">
 										
-                                        <button type="button" class="add-new btn btn-primary d-block" data-toggle="modal" data-target="#add-new-customer-modal--0">
+                                        <button type="button" class="add-new btn btn-primary d-block" data-toggle="modal" data-target="#allocate-po-{{ $titleAndValue['id'] }}">
                                             {{ __('Allocate') }}
+											
                                         </button>
 
-                                        <div class="modal fade modal-class-js allocate-modal-class" id="add-new-customer-modal--0" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog modal-xl" role="document">
+                                        <div class="modal fade modal-class-js allocate-modal-class" id="allocate-po-{{ $titleAndValue['id'] }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog modal-90 modal-xl" role="document">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
                                                         <h5 class="modal-title" id="exampleModalLabel">{{ __('Allocate') }}</h5>
@@ -771,15 +781,15 @@ use App\Models\Contract;
                                                             $repeaterId = 'm_repeater_inner';
 
                                                             @endphp
-                                                            <x-tables.repeater-table :initialJs="false" :repeater-with-select2="true" :parentClass="'show-class-js'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=true">
+                                                            <x-tables.repeater-table  :hideAddBtn="true" :initialJs="false" :repeater-with-select2="true" :parentClass="'show-class-js'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=true">
                                                                 <x-slot name="ths">
                                                                     @foreach([
-                                                                    __('Customer')=>'th-main-color',
-                                                                    __('Contract Name')=>'th-main-color',
-                                                                    __('Contract Code')=>'th-main-color',
-                                                                    __('Contract Amount')=>'th-main-color',
-                                                                    __('Allocate Percentage')=>'th-main-color',
-                                                                    __('Allocate Amount')=>'th-main-color',
+                                                                    __('Customer')=>'th-main-color max-w-25',
+                                                                    __('Contract Name')=>'th-main-color max-w-25',
+                                                                    __('Code')=>'th-main-color ',
+                                                                    __('Amount')=>'th-main-color',
+                                                                    __('Allocate <br> Percentage')=>'th-main-color',
+                                                                    __('Allocate <br> Amount')=>'th-main-color',
                                                                     ] as $title=>$classes)
                                                                     <x-tables.repeater-table-th class="{{ $classes }}" :title="$title"></x-tables.repeater-table-th>
                                                                     @endforeach
@@ -808,11 +818,15 @@ use App\Models\Contract;
                                 </td>
                                 {{-- {{ dd($clientsWithContracts) }} --}}
                                 <td>
+									{{-- <div class="max-w-25">
+									</div> --}}
                                     <x-form.select :insideModalWithJs="false" :selectedValue="isset($poAllocation) && $poAllocation->partner_id ? $poAllocation->partner_id : ''" :options="formatOptionsForSelect($clientsWithContracts)" :add-new="false" class=" suppliers-or-customers-js " data-filter-type="{{ 'create' }}" :all="false" data-name="partner_id" name="partner_id"></x-form.select>
                                 </td>
 
                                 <td>
-                                    <x-form.select :insideModalWithJs="false" data-current-selected="{{ isset($poAllocation) ? $poAllocation->id : '' }}" :selectedValue="isset($poAllocation) ? $poAllocation->contract_id : ''" :options="[]" :add-new="false" class=" contracts-js   " data-filter-type="{{ 'create' }}" :all="false" data-name="contract_id" name="contract_id"></x-form.select>
+                                    	<x-form.select :insideModalWithJs="false" data-current-selected="{{ isset($poAllocation) ? $poAllocation->id : '' }}" :selectedValue="isset($poAllocation) ? $poAllocation->contract_id : ''" :options="[]" :add-new="false" class=" contracts-js   " data-filter-type="{{ 'create' }}" :all="false" data-name="contract_id" name="contract_id"></x-form.select>
+									{{-- <div class="max-w-25">
+									</div> --}}
                                 </td>
 
                                 <td>

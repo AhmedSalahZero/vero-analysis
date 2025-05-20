@@ -24,7 +24,7 @@
             <div class="kt-portlet" style="overflow-x:hidden">
                 <div class="kt-portlet__body">
                     <div class="form-group row">
-					<div class="col-md-3 mb-4">
+					{{-- <div class="col-md-3 mb-4">
                             <label>{{ __('Select Report Type') }}  </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date" >
@@ -34,9 +34,9 @@
                                     </select>
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
 						
-					 <div class="col-md-3 mb-4">
+					 <div class="col-md-2 mb-4">
                             <label>{{ __('Start Date') }}</span> </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date" >
@@ -46,7 +46,7 @@
                         </div>
 						
 						
-					 <div class="col-md-3 mb-4">
+					 <div class="col-md-2 mb-4">
                             <label>{{ __('End Date') }}</span> </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date" >
@@ -56,8 +56,8 @@
                         </div>
 						
 						@if(count($businessUnits))
-						<div class="col-md-3 mb-4">
-                            <label>{{ __('Select Business Unit') }} <span class="multi_selection"></span>  </label>
+						<div class="col-md-2 mb-4">
+                            <label>{{ __('Business Unit') }} <span class="multi_selection"></span>  </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date" >
                                     <select  data-live-search="true" data-actions-box="true" name="business_units[]" class="form-control business-unit-js kt-bootstrap-select select2-select kt_bootstrap_select ajax-refresh-customers" multiple>
@@ -70,8 +70,8 @@
                         </div>
 						@endif 
 						@if(count($salesPersons))
-						<div class="col-md-3 mb-4">
-                            <label>{{ __('Select Sales Person') }} <span class="multi_selection"></span>  </label>
+						<div class="col-md-2 mb-4">
+                            <label>{{ __('Sales Person') }} <span class="multi_selection"></span>  </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date" >
                                     <select  data-live-search="true" data-actions-box="true" name="sales_persons[]" class="form-control sales-person-js kt-bootstrap-select select2-select kt_bootstrap_select ajax-refresh-customers" multiple>
@@ -84,8 +84,8 @@
                         </div>
 						@endif 
 						@if(count($businessSectors))
-							<div class="col-md-3 mb-4">
-                            <label>{{ __('Select Business Sectors') }} <span class="multi_selection"></span>  </label>
+							<div class="col-md-2 mb-4">
+                            <label>{{ __('Business Sectors') }} <span class="multi_selection"></span>  </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date" >
                                     <select  data-live-search="true" data-actions-box="true" name="business_sectors[]" class="form-control business-sector-js kt-bootstrap-select select2-select kt_bootstrap_select ajax-refresh-customers" multiple>
@@ -99,8 +99,8 @@
 						@endif
 						
 					
-						 <div class="col-md-3 mb-4">
-                            <label>{{ __('Select Currency') }}   </label>
+						 <div class="col-md-1 mb-4">
+                            <label>{{ __('Currency') }}   </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date" >
                                     <select  data-live-search="true" data-actions-box="true" name="currency" required class="form-control currency-js kt-bootstrap-select select2-select kt_bootstrap_select ajax-currency-name ajax-refresh-customers" >

@@ -159,10 +159,17 @@ class ContractsController
 				'contracts'=>[]
 			]);
 		}
-		$contracts = $customer->contracts->pluck('name','id')->toArray();
+		$contracts = $customer->contracts;
+		$contractFormatted = [];
+		foreach($contracts as $contract){
+			$contractFormatted[$contract->name] = [
+				'id'=>$contract->id ,
+				'currency'=>$contract->getCurrency()
+			];
+		}
 		$isCustomer = $customer->is_customer ;
 		return response()->json([
-			'contracts'=>$contracts,
+			'contracts'=>$contractFormatted,
 			'is_customer'=>$isCustomer
 		]);
 	}

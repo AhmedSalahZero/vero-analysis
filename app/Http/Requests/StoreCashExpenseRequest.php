@@ -62,7 +62,8 @@ class StoreCashExpenseRequest extends FormRequest
 			'type'=>'required',
 			'delivery_branch_id'=>$type == CashExpense::CASH_PAYMENT  ? ['required','not_in:-1'] : [],
 			'paid_amount.'.$type => ['required','gt:0'],
-			'account_type.'.$type => $type == CashExpense::OUTGOING_TRANSFER || $type == CashExpense::PAYABLE_CHEQUE ? 'required' : 'sometimes',
+			'account_type.'.$type => $accountTypeValidation =  $type == CashExpense::OUTGOING_TRANSFER || $type == CashExpense::PAYABLE_CHEQUE ? 'required' : 'sometimes',
+			'account_number.'.$type=>$accountTypeValidation,
 			'unapplied_amount'=>'sometimes|gte:0',
 			'net_balance_rules'=>new SettlementPlusWithoutCanNotBeGreaterNetBalance($this->get('settlements',[])),
 			

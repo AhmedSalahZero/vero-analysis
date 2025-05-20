@@ -348,8 +348,8 @@
 										@endphp
 										@endforeach 
 										<tr class=" parent-tr reset-table-width text-nowrap  cursor-pointer text-capitalize  ">
-												<th class="sub-text-bg max-w-serial   ">{{ '-' }}</td>
-												<th class="sub-text-bg  is-name-cell text-left">{{ __('All Company') }}</th>
+												<th class="sub-text-bg max-w-serial  custom-th ">{{ '-' }}</td>
+												<th class="sub-text-bg  is-name-cell custom-th text-left">{{ __('All Company') }}</th>
 													@foreach($tableHeaders as $tableHeader)
 												<th class="sub-text-bg text-center custom-th">{{ number_format($collectionEffectivenessIndexForAllCustomersPerDate[$tableHeader],2) .  ' %' }}</th>
 												@endforeach

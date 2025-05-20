@@ -15,7 +15,7 @@ class CreatePoAllocationsTable extends Migration
     {
         Schema::create('po_allocations', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('invoice_id')->nullable();
+            // $table->unsignedBigInteger('invoice_id')->nullable();
             // $table->integer('money_payment_id')->nullable()->index('settlement_allocations_money_payment_id_foreign');
             // $table->unsignedBigInteger('letter_of_credit_issuance_id')->nullable();
             $table->unsignedBigInteger('contract_id')->nullable()->index('allocations_contract_id_foreign');

@@ -81,7 +81,8 @@ class StoreMoneyPaymentRequest extends FormRequest
 			'type'=>'required',
 			'delivery_branch_id'=>$type == MoneyPayment::CASH_PAYMENT  ? ['required','not_in:-1'] : [],
 			'paid_amount.'.$type => ['required','gt:0'],
-			'account_type.'.$type => $type == MoneyPayment::OUTGOING_TRANSFER || $type == MoneyPayment::PAYABLE_CHEQUE ? 'required' : 'sometimes',
+			'account_type.'.$type => $accountTypeValidation = $type == MoneyPayment::OUTGOING_TRANSFER || $type == MoneyPayment::PAYABLE_CHEQUE ? 'required' : 'sometimes',
+			'account_number.'.$type=>$accountTypeValidation,
 			'delivery_date'=>['required',new ReceivingOrPaymentDateRule($companyId,$type,[MoneyPayment::OUTGOING_TRANSFER],[MoneyPayment::CASH_PAYMENT],$financialInstitutionId,$accountTypeId,$accountNumber)],
 			'unapplied_amount'=>'sometimes|gte:0',
 			'net_balance_rules'=>new SettlementPlusWithoutCanNotBeGreaterNetBalance($this->get('settlements',[])),
@@ -100,6 +101,7 @@ class StoreMoneyPaymentRequest extends FormRequest
 		return [
 		
 			'account_type.'.$type.'.required' => __('Please Select Account Type') ,
+			'account_number.'.$type.'.required' => __('Please Select Account Number') ,
 			'unapplied_amount.gte'=>__('Invalid Unapplied Amount'),
 			'type.required'=>__('Please Select Money Type'),
 			'paid_amount.'.$type.'.required'=>__('Please Enter Paid Amount'),

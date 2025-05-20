@@ -121,17 +121,14 @@
                         $invoices = \App\Models\SupplierInvoice::onlyCompany($company->id)->onlyForPartner($model->getBeneficiaryId())
                         ->where(function($q) use($lcAmount){
                         $q->orHas('letterOfCreditIssuancePaymentSettlements')
-                        ->orWhere('net_balance','>=',$lcAmount)
-                        ;
-                        })
-                        // ->where('net_balance','>=',$lcAmount)
+	                        ->orWhere('net_balance','>=',$lcAmount);
+                    	})
                         ->onlyCurrency($model->getLcCurrency())
                         ->get();
 
 
 
                         @endphp
-
                         <div class="col-md-3">
                             <label>{{ __('Invoice') }} <span class=""></span> </label>
                             <div class="kt-input-icon">

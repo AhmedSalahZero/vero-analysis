@@ -1,16 +1,10 @@
 <div class="col-md-3 hidden hide-only-bond">
-
                                         <label> {{ __('Contract Reference') }}
                                             @include('star')
                                         </label>
                                         <select  data-contract-type="{{ isset($model) ? $model->getContractType() : '' }}"  js-update-purchase-orders-based-on-contract id="contract-id" data-current-selected="{{ isset($model) ?  $model->getContractId() : 0 }}" name="contract_id" data-live-search="true" class="form-control kt-bootstrap-select select2-select kt_bootstrap_select">
-                                           
                                         </select>
                                     </div>
-
-
-
-
 
                                     <div class="col-md-2 hidden hide-only-bond">
 
@@ -47,9 +41,10 @@
                 var currentSelectedId = $('select#contract-id').attr('data-current-selected')
 				let contractType = $('select#contract-id').attr('data-contract-type');
                 var contractsOptions = `<option value="-1" ${contractType == 'no-po' ? 'selected' : '' }>{{ __("New PO") }}</option> <option ${contractType == 'existing-po' ? 'selected' : '' } value="-2">{{ __("Existing PO") }}</option>`;
-                for (var contractId in res.contracts) {
-                    var contractName = res.contracts[contractId];
-                    contractsOptions += `<option ${currentSelectedId == contractId ? 'selected' : '' } value="${contractId}"> ${contractName}  </option> `;
+                for (var contractName in res.contracts) {
+					var contractId = res.contracts[contractName].id ;
+					var contractCurrency = res.contracts[contractName].currency ;
+                     contractsOptions += `<option data-contract-currency="${contractCurrency}" ${currentSelectedId == contractId ? 'selected' : '' } value="${contractId}"> ${contractName}  </option> `;
                 }
                 $('select#contract-id').empty().append(contractsOptions).selectpicker("refresh");
                 $('select#contract-id').trigger('change')
@@ -65,6 +60,8 @@
                         contractId = -2;
                     }
 					const currentNewPurchaseOrder = $('#new-purchase-order-id').val()
+					const currencyName = $(this).find('option:selected').attr('data-contract-currency');
+					
                     $.ajax({
                         url: "{{route('update.purchase.orders.based.on.contract',['company'=>$company->id])}}"
                         , data: {
@@ -86,7 +83,7 @@
                                 var contractName = res.purchase_orders[purchaseOrderId];
                                 purchaseOrdersOptions += `<option ${currentSelectedId == purchaseOrderId ? 'selected' : '' } value="${purchaseOrderId}"> ${contractName}  </option> `;
                             }
-							
+							$('select.lc-currency').val(currencyName).trigger('change');
                             $('select#purchase-order-id').empty().append(purchaseOrdersOptions).selectpicker("refresh");
                         }
                     })

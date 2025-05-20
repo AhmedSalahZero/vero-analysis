@@ -491,12 +491,7 @@ class CustomerInvoice extends Model implements IInvoice
 		 */
 		$totalCashInFlowKey = __('Total Cash Inflow');
 		$currentTypeText = 'Forecasted Project Collection';
-		// $currentTypeText = [
-		// 	MoneyReceived::INCOMING_TRANSFER => __('Incoming Transfers'),
-		// 	MoneyReceived::CHEQUE => $chequeStatus == Cheque::IN_SAFE ? __('Cheques In Safe') : __('Checks Collected'),
-		// 	MoneyReceived::CASH_IN_BANK=>__('Bank Deposits'),
-		// 	MoneyReceived::CASH_IN_SAFE=>__('Cash Collections')
-		// ][$moneyType];
+		
 		
 		$contracts = Contract::where('company_id',$companyId)
 		->where('end_date','>=',now()->format('Y-m-d'))
@@ -525,6 +520,7 @@ class CustomerInvoice extends Model implements IInvoice
 				$soCollectionDays = $soArr['collection_days'];
 				$currentSoCollectionDays = Carbon::make($soEndDate)->addDays($soCollectionDays);
 				$isBetweenViewInterval = $currentSoCollectionDays->between($startDate,$endDate);
+				// dd($soArr,$startDate,$endDate,$isBetweenViewInterval);
 				if(!$isBetweenViewInterval){
 					continue;
 				}
