@@ -873,7 +873,6 @@ class MoneyReceivedController
 			'financialInstitutionId'=>$financialInstitutionId
 		]),$company);
 	}
-	
 	public function getCustomersWithOpeningBalance(Request $request , Company $company){
 		if($request->get('type') != 'settlement-of-opening-balance'){
 			return response()->json([
