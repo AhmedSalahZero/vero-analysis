@@ -446,7 +446,6 @@ class SupplierInvoice extends Model implements IInvoice
 				$soCollectionDays = $soArr['collection_days'];
 				$currentSoCollectionDays = Carbon::make($soEndDate)->addDays($soCollectionDays);
 				$isBetweenViewInterval = $currentSoCollectionDays->between($startDate,$endDate);
-				// dd($soArr,$startDate,$endDate,$isBetweenViewInterval);
 				if(!$isBetweenViewInterval){
 					continue;
 				}
