@@ -585,6 +585,7 @@ class OdooService
 				 Partner::handlePartnerForOdoo($currentOdooCustomerId ,$currentOdooCustomerName,$isCustomer,$isSupplier,$isEmployee,$companyId  );
             }
             return $partners;
+			
         
     }
 		
