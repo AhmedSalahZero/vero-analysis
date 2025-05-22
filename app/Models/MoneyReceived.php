@@ -954,6 +954,7 @@ class MoneyReceived extends Model
 	}
 	public function storeNewSalesOrdersAmounts(array $salesOrdersAmounts,?int $contractId,?int $customerId,int $companyId,$receivedAmount = null)
 	{
+		dd($salesOrdersAmounts);
 		if(!count($salesOrdersAmounts)){
 			$salesOrdersAmounts[] = [
 				'received_amount'=>$receivedAmount,
@@ -982,6 +983,7 @@ class MoneyReceived extends Model
 						'down_payment_balance'=>$downPaymentAmount
 					]
 				) ;
+				
 				$this->downPaymentSettlements()->create($dataArr);
 			}
 		}

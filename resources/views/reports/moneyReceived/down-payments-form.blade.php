@@ -689,8 +689,7 @@ use App\Models\Partner;
 
 
 
-
-            @if(isset($model) && $model->getDownPaymentType() != MoneyReceived::DOWN_PAYMENT_GENERAL)
+            @if(isset($model) && $model->getDownPaymentType() == MoneyReceived::DOWN_PAYMENT_OVER_CONTRACT)
             <div class="kt-portlet" id="settlement-card-id">
                 <div class="kt-portlet__head">
                     <div class="kt-portlet__head-label">

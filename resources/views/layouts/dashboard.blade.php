@@ -1778,7 +1778,7 @@
             let toCurrency = $('input[type="hidden"].to-currency').val()
             toCurrency = toCurrency ? toCurrency : $('select.receiving-currency-class').val();
 
-            let isGeneralDownPayment = $('select#down_payment_type').val() == 'general';
+            let isGeneralDownPayment = $('select#down_payment_type').val() == 'general' || $('select#down_payment_type').val() == 'settlement-of-opening-balance';
             const date = $('.exchange-rate-date').val()
             const companyId = $('body').data('current-company-id')
             const lang = $('body').data('lang')
@@ -1788,7 +1788,6 @@
                 return;
             } else {}
             if (fromCurrency == toCurrency) {
-
                 $('.exchange-rate-class').val(1).trigger('change')
                 return
             }

@@ -39,7 +39,7 @@ class ExchangeRateService
      */
     public function getCurrencyId($currencyCode)
     {
-        try {
+
             $currencies = $this->execute('res.currency', 'search_read', [
                 [
 					['name', '=', strtoupper($currencyCode)], ['active', '=', true]],
@@ -49,10 +49,7 @@ class ExchangeRateService
                 throw new Exception("Currency {$currencyCode} not found or inactive");
             }
             return $currencies[0]['id'];
-        } catch (Exception $e) {
-		
-            throw new Exception('Failed to fetch currency ID: ' . $e->getMessage());
-        }
+        
     }
 
     public function getExchangeRates($currencyCode, $date = null, $startDate = null, $endDate = null)

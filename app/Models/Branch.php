@@ -36,6 +36,10 @@ class Branch extends Model
 			'odoo_id'=>7
 		]);
 	}
+	public function getOdooId():int 
+	{
+		return $this->odoo_id ;
+	}
 	public function getCurrentEndBalance(int $companyId,?string $currency,$deliveryDate = null ):float
 	{
 		if(is_null($currency)){

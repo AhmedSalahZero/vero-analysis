@@ -92,7 +92,6 @@ $(document).on('change', '.ajax-get-sales-orders-for-contract', function () {
 	currency = currency ? currency : $(this).closest('[data-repeater-item]').find('select.current-currency').val()
 	const companyId = $('body').attr('data-current-company-id')
 	const lang = $('body').attr('data-lang')
-
 	if(!contractId){
 		$('.js-append-down-payment-to').empty().hide()
 		return ;
@@ -152,7 +151,6 @@ $(document).on('change', '.ajax-get-sales-orders-for-contract', function () {
 				}
 
 			}
-			
 			if(res.sales_orders.length == 0){
 				$('.js-append-down-payment-to').append(lastNode)
 			}

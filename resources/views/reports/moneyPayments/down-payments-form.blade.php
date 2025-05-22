@@ -115,7 +115,8 @@ $selectedBanks = [];
                         <div class="input-group date">
                             <select required name="down_payment_type" id="down_payment_type" class="form-control">
                                 <option @if(isset($model) && $model->isDownPaymentOverContract() ) selected @endif value="{{ MoneyPayment::DOWN_PAYMENT_OVER_CONTRACT }}">{{__('Contract Down Payment')}}</option>
-                                <option @if(isset($model) && $model->isFreeDownPayment() ) selected @endif value="{{ MoneyPayment::DOWN_PAYMENT_GENERAL }}">{{__('General Down Payment')}}</option>
+                                <option @if(isset($model) && $model->isGeneralDownPayment() ) selected @endif value="{{ MoneyPayment::DOWN_PAYMENT_GENERAL }}">{{__('General Down Payment')}}</option>
+								<option @if(isset($model) && $model->isSettlementOfOpeningBalance() ) selected @endif value="{{ MoneyPayment::SETTLEMENT_OF_OPENING_BALANCE }}">{{__('Settlement Of Opening Balance')}}</option>
                             </select>
                         </div>
                     </div>
@@ -564,7 +565,7 @@ $selectedBanks = [];
 
 
 
-    @if(isset($model) && $model->getDownPaymentType() != MoneyPayment::DOWN_PAYMENT_GENERAL )
+    @if(isset($model) && $model->getDownPaymentType() == MoneyPayment::DOWN_PAYMENT_OVER_CONTRACT )
     <div class="kt-portlet" id="settlement-card-id">
         <div class="kt-portlet__head">
             <div class="kt-portlet__head-label">
@@ -747,6 +748,44 @@ $selectedBanks = [];
 	
 $(document).on('change','#down_payment_type',function(){
 	const val = $(this).val();
+	
+	if(val == 'settlement-of-opening-balance'){
+			$.ajax({
+				data:{
+					type:val
+				},
+			url:"{{ route('get.suppliers.of.opening-balance',['company'=>$company->id]) }}",
+			type:'get'
+		}).then(function(res){
+			let suppliersOptions = '';
+			for (var supplierName in res.supplierInvoices){
+				var customerId = res.supplierInvoices[supplierName];
+				suppliersOptions += ` <option value="${customerId}">${supplierName}</option> `
+			}
+			$('select#supplier_name').selectpicker('destroy');
+			$('select#supplier_name').empty().append(suppliersOptions)
+			$('select#supplier_name').selectpicker("refresh")
+		})
+		}else{
+			$.ajax({
+				data:{
+					type:val
+				},
+			url:"{{ route('get.suppliers.of.opening-balance',['company'=>$company->id]) }}",
+			type:'get'
+		}).then(function(res){
+			let suppliersOptions = '';
+			for (var supplierName in res.supplierInvoices){
+				var customerId = res.supplierInvoices[supplierName];
+				suppliersOptions += ` <option value="${customerId}">${supplierName}</option> `
+			}
+			console.log(suppliersOptions)
+			$('select#supplier_name').selectpicker('destroy');
+			$('select#supplier_name').empty().append(suppliersOptions)
+			$('select#supplier_name').selectpicker("refresh")
+		})
+		}
+		
 	if(val != 'over_contract'){
 		$('.contract-id-div').hide();
 		$('.down-payment-id').hide();

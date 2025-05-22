@@ -1,7 +1,7 @@
 <?php
 namespace App\Services\Api;
 
-
+use App\Models\Currency;
 use App\Services\Api\Traits\AuthTrait;
 use Illuminate\Support\Facades\DB;
 
@@ -22,7 +22,7 @@ class OdooPayment
 			 */
 			$paymentAmount = $moneyModel->isInvoiceSettlementWithDownPayment() ? $moneyModel->downPaymentSettlements->sum('down_payment_amount') : $moneyModel->getAmount()  ;
 			$currencyName = $moneyModel->getReceivingOrPaymentCurrency();
-			$odooCurrencyId = DB::table('currencies')->where('name',$currencyName)->first()->odoo_id;
+			$odooCurrencyId = Currency::getOdooId($currencyName);
 			$paymentDate = $moneyModel->getReceivingOrPaymentMoneyDate();
 			$odooPartnerId = $moneyModel->partner->getOdooId();
 			$inBoundOrOutBound =$moneyModel->getInboundOrOutbound();
@@ -91,7 +91,7 @@ class OdooPayment
 		//	$invoiceCurrencyName = $moneyModel->getInvoiceCurrency();
 			$receivingCurrencyName = $moneyModel->getReceivingOrPaymentCurrency();
 			// $odooInvoiceCurrencyId = DB::table('currencies')->where('name',$invoiceCurrencyName)->first()->odoo_id;
-			$odooReceivingCurrencyId = DB::table('currencies')->where('name',$receivingCurrencyName)->first()->odoo_id;
+			$odooReceivingCurrencyId =  Currency::getOdooId($receivingCurrencyName) ;
 			$paymentDate = $moneyModel->getReceivingOrPaymentMoneyDate();
 			$odooPartnerId = $moneyModel->partner->getOdooId();
 			$invoiceNumber = $invoice->getInvoiceNumber();

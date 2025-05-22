@@ -160,7 +160,7 @@ class InternalMoneyTransferController
 	public function store(Company $company , string $type  , StoreInternalMoneyTransferRequest $request){
 		$internalMoneyTransfer = new InternalMoneyTransfer ;
 		$internalMoneyTransfer->type = $type ;
-		$transferDate = $request->get('transfer_date') ;
+		$transferDate = Carbon::make($request->get('transfer_date'))->format('Y-m-d') ;
 		$receivingDate = Carbon::make($transferDate)->addDay($request->get('transfer_days',0))->format('Y-m-d');
 		$transferAmount = $request->get('amount') ;
 		$internalMoneyTransfer->storeBasicForm($request);
@@ -181,22 +181,30 @@ class InternalMoneyTransferController
 		$fromJournalId = null;
 		$toJournalId =  null ;
 		
-		
 		if($type === InternalMoneyTransfer::BANK_TO_BANK){
-			$fromJournalId = $fromFinancialInstitution->getOdooIdForAccount($fromAccountTypeId,$fromAccountNumber);
-			$toJournalId = $toFinancialInstitution->getOdooIdForAccount($toAccountTypeId,$toAccountNumber);
+			if($company->hasOdooIntegrationCredentials()){
+				$fromJournalId = $fromFinancialInstitution->getOdooIdForAccount($fromAccountTypeId,$fromAccountNumber);
+				$toJournalId = $toFinancialInstitution->getOdooIdForAccount($toAccountTypeId,$toAccountNumber);
+				$internalMoneyTransfer->storeOdoo($company,$transferDate,$toJournalId,$fromJournalId,$transferAmount,$currencyName);
+			}
 			$internalMoneyTransfer->handleBankToBankTransfer($company->id , $fromAccountType , $fromAccountNumber  , $fromFinancialInstitutionId , $toAccountType ,  $toAccountNumber,$toFinancialInstitutionId,$transferDate,$receivingDate,$transferAmount);
 		}
 		elseif($type === InternalMoneyTransfer::BANK_TO_SAFE ){
-			$fromJournalId = $fromFinancialInstitution->getOdooIdForAccount($fromAccountTypeId,$fromAccountNumber);
-			$toJournalId = $toFinancialInstitution->getOdooIdForAccount($toAccountTypeId,$toAccountNumber);
+			if($company->hasOdooIntegrationCredentials()){
+				$fromJournalId = $fromFinancialInstitution->getOdooIdForAccount($fromAccountTypeId,$fromAccountNumber);
+				$toJournalId = Branch::find($toBranchId)->getOdooId();
+				$internalMoneyTransfer->storeOdoo($company,$transferDate,$toJournalId,$fromJournalId,$transferAmount,$currencyName);
+			}
 			$internalMoneyTransfer->handleBankToSafeTransfer($company->id , $fromAccountType , $fromAccountNumber  , $fromFinancialInstitutionId ,$toBranchId , $currencyName , $transferDate,$transferAmount);
 		}
 		elseif($type === InternalMoneyTransfer::SAFE_TO_BANK ){
+			if($company->hasOdooIntegrationCredentials()){
+				$fromJournalId = Branch::find($fromBranchId)->getOdooId();
+				$toJournalId = $toFinancialInstitution->getOdooIdForAccount($toAccountTypeId,$toAccountNumber);
+				$internalMoneyTransfer->storeOdoo($company,$transferDate,$toJournalId,$fromJournalId,$transferAmount,$currencyName);
+			}
 			$internalMoneyTransfer->handleSafeToBankTransfer($company->id , $toAccountType , $toAccountNumber  , $toFinancialInstitutionId ,$fromBranchId , $currencyName , $transferDate,$transferAmount);
 		}
-	
-		
 		
 		$activeTab = $type ; 
 		

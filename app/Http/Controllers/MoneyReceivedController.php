@@ -365,7 +365,7 @@ class MoneyReceivedController
 	public function store(Company $company , StoreMoneyReceivedRequest $request , $returnModel = false){
 		
 		$hasUnappliedAmount = (bool)$request->get('unapplied_amount');
-		$isGeneralDownPayment = $request->get('down_payment_type') == MoneyReceived::DOWN_PAYMENT_GENERAL;
+		$isGeneralDownPaymentOrSettlementOpening = $request->get('down_payment_type') == MoneyReceived::DOWN_PAYMENT_GENERAL || $request->get('down_payment_type') == MoneyReceived::SETTLEMENT_OF_OPENING_BALANCE;
 		$partnerType = $request->get('partner_type');
 		$moneyType = $request->get('type');
 		$financialInstitutionId = null;
@@ -376,7 +376,7 @@ class MoneyReceivedController
 		$customerId = $customer->id;
 		$receivedBankName = $request->get('receiving_branch_id') ;
 		$data = $request->only(['type','receiving_date','currency','receiving_currency','customer_id','down_payment_type','partner_type','user_comment']);
-		$data['currency'] = $isGeneralDownPayment ? $data['receiving_currency'] : $data['currency']??null;
+		$data['currency'] = $isGeneralDownPaymentOrSettlementOpening ? $data['receiving_currency'] : $data['currency']??null;
 		$receivingCurrency = $data['receiving_currency'];
 		$data['currency'] = is_null($data['currency']) ?  $receivingCurrency : $data['currency'];
 		$receivingDate = $data['receiving_date'];
@@ -878,8 +878,6 @@ class MoneyReceivedController
 		if($request->get('type') != 'settlement-of-opening-balance'){
 			return response()->json([
 			'customerInvoices' => CustomerInvoice::orderBy('customer_name')
-		//	->whereNotNull('opening_balance_id')
-		//	->whereNotNull('opening_balance_id')
 			->where('company_id',$company->id)->pluck('customer_id','customer_name')
 		]);
 		}

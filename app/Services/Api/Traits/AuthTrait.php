@@ -49,7 +49,8 @@ trait AuthTrait
             $args
         );
         if (isset($result['faultCode'])) {
-            throw new \Exception($result['faultString']);
+            // throw new \Exception($result['faultString']);
+			return ;
         }
         return $result;
     }

@@ -322,7 +322,7 @@ class MoneyPaymentController
 		$hasUnappliedAmount = (bool)$request->get('unapplied_amount');
 		$partnerType = $request->get('partner_type');
 		$moneyType = $request->get('type');
-		$isGeneralDownPayment = $request->get('down_payment_type') == MoneyPayment::DOWN_PAYMENT_GENERAL;
+		$isGeneralDownPaymentOrSettlementOpening = $request->get('down_payment_type') == MoneyPayment::DOWN_PAYMENT_GENERAL || $request->get('down_payment_type') == MoneyPayment::SETTLEMENT_OF_OPENING_BALANCE;
 		$financialInstitutionId = null;
 		$contractId = $request->get('contract_id');
 		$contractId = is_numeric($contractId) ? $contractId : null;
@@ -332,7 +332,7 @@ class MoneyPaymentController
 		$paymentBranchName = $request->get('delivery_branch_id') ;
 		$data = $request->only(['type','delivery_date','currency','payment_currency','down_payment_type','partner_type','user_comment']);
 		// $isSupplier = $partnerType == 'is_supplier';
-		$data['currency'] = $isGeneralDownPayment   ? $data['payment_currency'] : $data['currency']??null;
+		$data['currency'] = $isGeneralDownPaymentOrSettlementOpening   ? $data['payment_currency'] : $data['currency']??null;
 		$paymentCurrency = $data['payment_currency'];
 		$data['currency'] = is_null($data['currency']) ?  $paymentCurrency : $data['currency'];
 		$currencyName = $data['currency'];
@@ -654,6 +654,19 @@ class MoneyPaymentController
 	public function getSuppliersBasedOnCurrency(Request $request , Company $company , string $currencyName){
 		return response()->json([
 			'supplierInvoices'=>SupplierInvoice::orderBy('supplier_name')->where('currency',$currencyName)->where('company_id',$company->id)->pluck('supplier_id','supplier_name')
+		]);
+	}
+	public function getSuppliersWithOpeningBalance(Request $request , Company $company ){
+		if($request->get('type') != 'settlement-of-opening-balance'){
+			return response()->json([
+			'supplierInvoices'=>SupplierInvoice::orderBy('supplier_name')
+			->where('company_id',$company->id)->pluck('supplier_id','supplier_name')
+		]);
+		}
+		return response()->json([
+			'supplierInvoices'=>SupplierInvoice::orderBy('supplier_name')
+			->whereNotNull('opening_balance_id')
+			->where('company_id',$company->id)->pluck('supplier_id','supplier_name')
 		]);
 	}
 	public function getCashInSafeStatementEndBalance(Request $request , Company $company , int $branchId = null , string $currencyName = null , string $deliveryDate = null){

@@ -3,20 +3,21 @@
 namespace App\Models;
 
 use App\Models\FullySecuredOverdraft;
+use App\Services\Api\InternalMoneyTransfer as OdooInternalMoneyTransfer;
 use App\Services\Api\OdooService;
 use App\Traits\HasBasicStoreRequest;
+use App\Traits\HasCompany;
 use App\Traits\Models\HasUserComment;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-
 /**
  * * هنا عميلة تحويل الاموال من حساب بنك الي حساب بنكي اخر
  * * عن طريق بسحب كريدت من حساب احطة دبت في حساب تاني
  */
 class InternalMoneyTransfer extends Model 
 {
-	use HasBasicStoreRequest ,HasUserComment;
+	use HasBasicStoreRequest ,HasUserComment,HasCompany;
 	const BANK_TO_BANK = 'bank-to-bank';
 	const BANK_TO_SAFE = 'bank-to-safe';
 	const SAFE_TO_BANK = 'safe-to-bank';
@@ -250,6 +251,7 @@ class InternalMoneyTransfer extends Model
 	}
     public function deleteRelations()
     {
+		$this->deleteOdoo();
         $this->cleanOverdraftBankStatements->each(function (CleanOverdraftBankStatement $cleanOverdraftBankStatement) {
 			$cleanOverdraftBankStatement->delete();
 		});
@@ -427,5 +429,26 @@ class InternalMoneyTransfer extends Model
 	public function getChequeNumber()
 	{
 		return $this->cheque_number ; 
+	}
+	public function storeOdoo(Company $company,string $date,int $inJournalId,int $outJournalId,float $amount,string $currencyName)
+	{
+		$odooCurrencyId = Currency::getOdooId($currencyName);
+		$internalMoneyTransferService = (new OdooInternalMoneyTransfer($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId()));
+		$this->odoo_inbound_payment_id = $internalMoneyTransferService->processInboundPayment($date , $inJournalId , $amount , $odooCurrencyId);
+		$this->odoo_outbound_payment_id = $internalMoneyTransferService->processOutboundPayment($date , $outJournalId , $amount , $odooCurrencyId);
+		$this->save();
+	}
+	public function deleteOdoo()
+	{
+		$company = $this->company;
+		if($company->hasOdooIntegrationCredentials()){
+			$internalMoneyTransferService = (new OdooInternalMoneyTransfer($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId()));
+			if($this->odoo_inbound_payment_id){
+				$internalMoneyTransferService->cancelMoneyTransferPayment($this->odoo_inbound_payment_id);
+			}
+			if($this->odoo_outbound_payment_id){
+				$internalMoneyTransferService->cancelMoneyTransferPayment($this->odoo_outbound_payment_id);
+			}	
+		}
 	}
 }
