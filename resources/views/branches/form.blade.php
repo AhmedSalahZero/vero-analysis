@@ -119,14 +119,14 @@
                                                 </div>
                                             </div>
 											
-												@if($company->hasOddoIntegrationCredentials())
+												@if($company->hasOdooIntegrationCredentials())
 													<div class="col-3	">
-													<label class="form-label font-weight-bold ">{{ __('Odoo Code') }}
+													<label class="form-label font-weight-bold ">{{ __('Odoo Short Code') }}
 													@include('star')
 													</label>
 													<div class="kt-input-icon">
 														<div class="input-group">
-															<input required placeholder="{{ __('Odoo Code') }}" type="text" class="form-control  exclude-text"  name="odoo_code"  value="{{ isset($model) ? $model->getOdooCode() : old('odoo_code') }}">
+															<input required placeholder="{{ __('Odoo Short Code') }}" type="text" class="form-control  exclude-text"  name="odoo_code"  value="{{ isset($model) ? $model->getOdooCode() : old('odoo_code') }}">
 														</div>
 													</div>
 												</div>

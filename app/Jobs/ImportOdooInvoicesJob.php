@@ -11,7 +11,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class ImportOddoInvoicesJob implements ShouldQueue
+class ImportOdooInvoicesJob implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;
@@ -36,8 +36,8 @@ class ImportOddoInvoicesJob implements ShouldQueue
     {
 		$companies = Company::all();
 		foreach($companies as $company){
-			if($company->hasOddoIntegrationCredentials()){
-				$oddo = new OdooService($company->getOddoDBUrl(),$company->getOddoDBName(),$company->getOddoDBUserName(),$company->getOddoDBPassword(),$company->getId());
+			if($company->hasOdooIntegrationCredentials()){
+				$oddo = new OdooService($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId());
 				$startDate = now()->subDay()->format('Y-m-d') ; ;
 				$endDate = now()->subDay()->format('Y-m-d') ; ;
 				$oddo->startImportInvoices($startDate,$endDate,$company->id);

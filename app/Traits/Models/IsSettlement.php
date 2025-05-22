@@ -13,12 +13,15 @@ trait IsSettlement
 	public function getMoney()
 	{
 		if($this instanceof Settlement){
-			return $this->moneyReceived();
+			$id = $this->money_received_id ;
+			return MoneyReceived::find($id);			
+			// return $this->moneyReceived();
 		}
 		if($this instanceof PaymentSettlement){
-			return $this->moneyPayment();
+			$id = $this->money_payment_id;
+			return MoneyPayment::find($id);
 		}
-		// dd('test dd');
+		dd('test dd');
 	}
 	public function getAmount()
 	{
@@ -54,9 +57,8 @@ trait IsSettlement
 	}
 	public function getAmountInReceivingCurrency():float
 	{
-		logger('exchange rate'.$this->getMoney->getExchangeRate());
-		logger('amount'.$this->getMoney->getAmount());
-		return $this->getMoney->getExchangeRate() * $this->getAmount();
+
+		return $this->getMoney()->getExchangeRate() * $this->getAmount();
 	}
 	
 	

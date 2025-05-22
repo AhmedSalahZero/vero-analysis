@@ -11,14 +11,16 @@ use App\Models\Contract;
     .w-60-percentage {
         width: 60% !important;
     }
-	.action-class{
-		min-width:10px !important;
-		max-width:10px !important;
-		width:10px !important;
-		background-color: #0742A6 !important;
-    	color: white !important;
-	
-	}
+
+    .action-class {
+        min-width: 10px !important;
+        max-width: 10px !important;
+        width: 10px !important;
+        background-color: #0742A6 !important;
+        color: white !important;
+
+    }
+
     .w-50-percentage {
         width: 50% !important;
     }
@@ -321,11 +323,11 @@ use App\Models\Contract;
         padding: 0.60rem 1.25rem !important;
     }
 
-   .max-w-25{
-	width:20% !important ;
-	min-width:20% !important ;
-	max-width:20% !important ;
-   }
+    .max-w-25 {
+        width: 20% !important;
+        min-width: 20% !important;
+        max-width: 20% !important;
+    }
 
     .form-label {
         white-space: nowrap !important;
@@ -433,8 +435,6 @@ use App\Models\Contract;
 @endsection
 
 @section('content')
-
-
 <div class="kt-portlet kt-portlet--tabs">
     <div class="kt-portlet__head">
         <div class="kt-portlet__head-toolbar justify-content-between flex-grow-1">
@@ -749,14 +749,14 @@ use App\Models\Contract;
                                 <td>
                                 </td>
                                 <td class="text-center ">
-								
-										<form action="{{ route('store.po.allocations',['company'=>$company->id]) }}" method="post">
-										@csrf 
-										  <input type="hidden" name="po_id" value="{{ $titleAndValue['id'] }}">
-										
+
+                                    <form action="{{ route('store.po.allocations',['company'=>$company->id]) }}" method="post">
+                                        @csrf
+                                        <input type="hidden" name="po_id" value="{{ $titleAndValue['id'] }}">
+                                        @if($type == 'Supplier')
                                         <button type="button" class="add-new btn btn-primary d-block" data-toggle="modal" data-target="#allocate-po-{{ $titleAndValue['id'] }}">
                                             {{ __('Allocate') }}
-											
+
                                         </button>
 
                                         <div class="modal fade modal-class-js allocate-modal-class" id="allocate-po-{{ $titleAndValue['id'] }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -781,7 +781,7 @@ use App\Models\Contract;
                                                             $repeaterId = 'm_repeater_inner';
 
                                                             @endphp
-                                                            <x-tables.repeater-table  :hideAddBtn="true" :initialJs="false" :repeater-with-select2="true" :parentClass="'show-class-js'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=true">
+                                                            <x-tables.repeater-table :hideAddBtn="true" :initialJs="false" :repeater-with-select2="true" :parentClass="'show-class-js'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=true">
                                                                 <x-slot name="ths">
                                                                     @foreach([
                                                                     __('Customer')=>'th-main-color max-w-25',
@@ -810,23 +810,21 @@ use App\Models\Contract;
                                 <td class="text-center">
 
                                     <input type="hidden" name="company_id" value="{{ $company->id }}">
-                                  
+
                                     <div class="">
                                         <i data-repeater-delete="" class="btn-sm btn btn-danger m-btn m-btn--icon m-btn--pill trash_icon fas fa-times-circle">
                                         </i>
                                     </div>
                                 </td>
-                                {{-- {{ dd($clientsWithContracts) }} --}}
                                 <td>
-									{{-- <div class="max-w-25">
-									</div> --}}
+
                                     <x-form.select :insideModalWithJs="false" :selectedValue="isset($poAllocation) && $poAllocation->partner_id ? $poAllocation->partner_id : ''" :options="formatOptionsForSelect($clientsWithContracts)" :add-new="false" class=" suppliers-or-customers-js " data-filter-type="{{ 'create' }}" :all="false" data-name="partner_id" name="partner_id"></x-form.select>
                                 </td>
 
                                 <td>
-                                    	<x-form.select :insideModalWithJs="false" data-current-selected="{{ isset($poAllocation) ? $poAllocation->id : '' }}" :selectedValue="isset($poAllocation) ? $poAllocation->contract_id : ''" :options="[]" :add-new="false" class=" contracts-js   " data-filter-type="{{ 'create' }}" :all="false" data-name="contract_id" name="contract_id"></x-form.select>
-									{{-- <div class="max-w-25">
-									</div> --}}
+                                    <x-form.select :insideModalWithJs="false" data-current-selected="{{ isset($poAllocation) ? $poAllocation->id : '' }}" :selectedValue="isset($poAllocation) ? $poAllocation->contract_id : ''" :options="[]" :add-new="false" class=" contracts-js   " data-filter-type="{{ 'create' }}" :all="false" data-name="contract_id" name="contract_id"></x-form.select>
+                                    {{-- <div class="max-w-25">
+																					</div> --}}
                                 </td>
 
                                 <td>
@@ -885,38 +883,39 @@ use App\Models\Contract;
             </div>
         </div>
     </div>
-	
-	
-										</form>
-                                </td>
+    @endif
+
+
+    </form>
+    </td>
 
 
 
 
 
 
-                            </tr>
+    </tr>
 
-                            @endforeach
-
-
-                            <?php $id++ ;?>
-                            @endforeach
+    @endforeach
 
 
+    <?php $id++ ;?>
+    @endforeach
 
 
 
-                            @endslot
-                        </x-table>
 
 
-                    </div>
-                </div>
-            </div>
-            @endforeach
-        </div>
-    </div>
+    @endslot
+    </x-table>
+
+
+</div>
+</div>
+</div>
+@endforeach
+</div>
+</div>
 
 
 

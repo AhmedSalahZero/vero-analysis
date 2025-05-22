@@ -25,5 +25,12 @@ class CashExpenseCategoryName extends Model
 	public static function getAllForCompany(Company $company){
 		return self::where('company_id',$company->id)->get();
 	} 		
-	
+	public function getOdooId()
+	{
+		return $this->odoo_id ;
+	}
+	public function getOdooChartOfAccountNumber()
+	{
+		return $this->odoo_chart_of_account_number;
+	}
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreBranchRequest;
 use App\Models\CashVeroBranch;
 use App\Models\Company;
+use App\Services\Api\OdooService;
 use App\Traits\GeneralFunctions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -122,6 +123,10 @@ class BranchesController
 		$type = CashVeroBranch::BRANCHES;
 		$model = new CashVeroBranch ;
 		$model->storeBasicForm($request);
+		if($company->hasOdooIntegrationCredentials()){
+			$odoo = new OdooService($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId());
+			$odoo->syncBranchSafe($model->odoo_code,$company->id);
+		}
 		$activeTab = $type ; 
 		return response()->json([
 			'redirectTo'=>route('branches.index',['company'=>$company->id,'active'=>$activeTab])
@@ -143,6 +148,10 @@ class BranchesController
 			'name'=>$newName,
 			'odoo_code'=>$odooCode
 		]);
+		if($company->hasOdooIntegrationCredentials()){
+			$odoo = new OdooService($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId());
+			$odoo->syncBranchSafe($branch->odoo_code,$company->id);
+		}
 		$type = CashVeroBranch::BRANCHES;
 		// $this->store($company,$request);
 		$activeTab = $type ;

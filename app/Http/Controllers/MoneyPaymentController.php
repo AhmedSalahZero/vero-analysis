@@ -18,6 +18,7 @@ use App\Models\Partner;
 use App\Models\PayableCheque;
 use App\Models\PurchaseOrder;
 use App\Models\SupplierInvoice;
+use App\Services\Api\OdooPayment;
 use App\Traits\GeneralFunctions;
 use App\Traits\Models\HasCreditStatements;
 use Carbon\Carbon;
@@ -276,6 +277,7 @@ class MoneyPaymentController
 		
 		$invoices = SupplierInvoice::where('supplier_id',$partnerId)->where('company_id',$company->id)
 		->where('net_invoice_amount','>',0)
+		->whereNull('opening_balance_id')
 		->when($downPaymentContract , function($q) use($downPaymentContract){
 			$q->where('contract_code',$downPaymentContract->getCode());
 		});
@@ -429,7 +431,6 @@ class MoneyPaymentController
 		$accountNumber = $request->input('account_number.'.$moneyType) ;
 		$deliveryBranchId = $relationData['delivery_branch_id'] ?? null ;
 		$moneyPayment->handleCreditStatement($company->id , $financialInstitutionId,$accountType,$accountNumber,$moneyType,$statementDate,$amountInPaymentCurrency,$deliveryBranchId,$paymentCurrency);
-	//	$isSupplier = $partnerType == 'is_supplier';
 		if($partnerType && $partnerType != 'is_supplier'){
 			$moneyPayment->handlePartnerDebitStatement($partnerType,$partnerId, $moneyPayment->id,$company->id,$statementDate,$invoiceCurrencyAmount,$paymentCurrency,$bankNameOrBranchName , $accountType , $accountNumber);
 		}
@@ -450,6 +451,10 @@ class MoneyPaymentController
 	
 		if($hasUnappliedAmount || $isDownPayment){
 			$moneyPayment->storeNewPurchaseOrders($request->get('purchases_orders_amounts',[]),$contractId,$supplierId,$company->id,$amountInPaymentCurrency);
+			if($company->hasOdooIntegrationCredentials()){
+				$odooPaymentService = new OdooPayment($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId());
+				$odooPaymentService->createDownPayment($moneyPayment);
+			}
 		}
 		/**
 		 * @var SupplierInvoice $supplierInvoice
@@ -542,7 +547,7 @@ class MoneyPaymentController
 				'redirectTo'=>route('view.money.payment',['company'=>$company->id,'active'=>$activeTab])
 			]);
 		}
-		return redirect()->route('view.money.payment',['company'=>$company->id,'active'=>$activeTab])->with('success',__('Money Received Has Been Updated Successfully'));
+		return redirect()->route('view.money.payment',['company'=>$company->id,'active'=>$activeTab])->with('success',__('Money Payment Has Been Updated Successfully'));
 	}
 
 	public function destroy(Company $company , MoneyPayment $moneyPayment , DeleteMoneyPaymentRequest $request)
@@ -550,7 +555,7 @@ class MoneyPaymentController
 		$moneyPayment->deleteRelations();
 		$activeTab = $moneyPayment->getType();
 		$moneyPayment->delete();
-		return redirect()->route('view.money.payment',['company'=>$company->id,'active'=>$activeTab])->with('success',__('Money Received Has Been Updated Successfully'));
+		return redirect()->route('view.money.payment',['company'=>$company->id,'active'=>$activeTab])->with('success',__('Money Payment Has Been Updated Successfully'));
 	}
 	protected function generateBranchId($nameOrId,$companyId){
 		$branch = Branch::where('id',$nameOrId)->first();

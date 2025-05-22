@@ -174,7 +174,6 @@ class MoneyReceived extends Model
 	{
 	
 		self::creating(function (self $moneyReceived): void {
-		
 			$moneyReceived->comment_en = self::generateComment($moneyReceived,'en');
 			$moneyReceived->comment_ar = self::generateComment($moneyReceived,'ar');
 		});
@@ -566,11 +565,11 @@ class MoneyReceived extends Model
 
 		return $cashInSafe ? $cashInSafe->getReceivingBranchName() : null ;
 	}
-	public function getCashInSafeBranchOddoId()
+	public function getCashBranchOdooId()
 	{
 		$cashInSafe = $this->cashInSafe;
 
-		return $cashInSafe ? $cashInSafe->getBankOddoId() : null ;
+		return $cashInSafe ? $cashInSafe->getBankOdooId() : null ;
 	}
 	public function getChequeDepositDate()
 	{

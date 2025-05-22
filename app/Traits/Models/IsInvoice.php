@@ -23,7 +23,7 @@ trait IsInvoice
 	
 	public function getOdooId():int
 	{
-		return $this->oddo_id;
+		return $this->odoo_id;
 	}
 	public function scopeOnlyCompany(Builder $query,$companyId){
 		return $query->where('company_id',$companyId);
@@ -315,8 +315,6 @@ trait IsInvoice
 		}
 		return $netBalance + $totalSettlementAmount +  $totalWithholdAmount ;
 	}
-	
-	
 	public function getCollectedOrPaidAmount()
 	{
 		if($this instanceof CustomerInvoice){
@@ -329,17 +327,15 @@ trait IsInvoice
 	}
 	public static function getInvoicesForInvoiceStartAndEndDate(string $clientIdColumnName,int $partnerId,Company $company , string $currency , string $startDate , string $endDate)
 	{
-
 		return self::where('company_id', $company->id)
 		->when($currency != 'main_currency',function($query)use($currency){
 			$query->where('currency', $currency);
 		})
         ->whereBetween('invoice_date', [$startDate, $endDate])
         ->where($clientIdColumnName, '=', $partnerId)->get();
-	
 	}
-	public static function createForOddo(int $invoiceId,int $partnerId,string $partnerName,string $invoiceDate,string $invoiceDueDate,string $invoiceNumber,string $invoiceCurrency,$invoiceAmount,$vatAmount,$withholdAmount,$collectedAmount,$exchangeRate,$soOrPoNumber,int $companyId):void{
-		$currentInvoice = self::where('oddo_id',$invoiceId)->where('company_id',$companyId)->first();
+	public static function createForOdoo(int $invoiceId,int $partnerId,string $partnerName,string $invoiceDate,string $invoiceDueDate,string $invoiceNumber,string $invoiceCurrency,$invoiceAmount,$vatAmount,$withholdAmount,$collectedAmount,$exchangeRate,$soOrPoNumber,int $companyId):void{
+		$currentInvoice = self::where('odoo_id',$invoiceId)->where('company_id',$companyId)->first();
 		$contract = null;
 		$soOrPoNumber = $soOrPoNumber ? $soOrPoNumber : null ;
 		if($soOrPoNumber){
@@ -348,7 +344,7 @@ trait IsInvoice
 		}
 		
 		$invoiceData = [
-			'oddo_id'=>$invoiceId,
+			'odoo_id'=>$invoiceId,
 			'company_id'=>$companyId , 
 			'exchange_rate'=>$exchangeRate,
 			self::COLLETED_OR_PAID_AMOUNT=>$collectedAmount,
@@ -372,6 +368,10 @@ trait IsInvoice
 			return  ;
 		}
 		self::create($invoiceData);
+	}
+	public function getInvoiceAmount():float
+	{
+		return $this->invoice_amount ; 
 	}
 
 }

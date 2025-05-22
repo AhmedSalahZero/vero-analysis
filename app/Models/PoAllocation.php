@@ -60,9 +60,7 @@ class PoAllocation extends Model
 				->where('payable_cheques.status',$chequeStatus);
 			})
 			->get(['settlement_allocations.contract_id','invoice_id','settlement_allocations.money_payment_id','allocation_amount']);
-			// if(count($settlementAllocations)){
-			// 	dd($dateFieldName,$settlementAllocations);
-			// }
+			
 			foreach($settlementAllocations as $settlementAllocation){
 				$supplier = $settlementAllocation->moneyPayment->supplier ;
 				$invoiceId = $settlementAllocation->invoice_id ; 

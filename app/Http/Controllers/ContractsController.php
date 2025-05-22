@@ -66,9 +66,6 @@ class ContractsController
 
 		$commonVars = $this->getCommonVars($company,$type);
 		$clientsWithContracts = $commonVars['clientsWithContracts'];
-		// dd($clientsWithContracts);
-		
-		// dd($commonVars);
 		
         return view('contracts.index',compact('clientsWithContracts','company','items','type','customerOrSupplierContractsText','contractStatues','hasProjectNameColumn'));
     }
@@ -118,13 +115,8 @@ class ContractsController
 		];
 	}
 	public function store(StoreContractRequest $request, Company $company,string $type){
-		// dd($request->all());
 			$contract = new Contract ;
 			$contract->storeBasicForm($request);
-			// foreach($contract->purchasesOrders as $purchaseOrder){
-			// 	$contract->storeNewAllocation($request->get('allocations',[]));
-			// }
-			// dd('good');
 			return redirect()->route('contracts.index',['company'=>$company->id,'type'=>$type]);
 	}
 	public function edit(Request $request,Company $company,Contract $contract,string $type)
@@ -132,7 +124,6 @@ class ContractsController
 		return view('contracts.form',$this->getCommonVars($company,$type,$contract));
 	}
 	public function update(Company $company , StoreContractRequest $request , Contract $contract,string $type){
-		
 			$contract->storeBasicForm($request);
 			return redirect()->route('contracts.index',['company'=>$company->id,'type'=>$type]);
 	}

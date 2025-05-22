@@ -1,5 +1,6 @@
 <?php
 namespace App\Http\Controllers;
+
 use App\Http\Requests\DeleteCurrentAccountRequest;
 use App\Http\Requests\UpdateCurrentAccountRequest;
 use App\Models\Branch;

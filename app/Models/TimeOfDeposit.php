@@ -314,7 +314,6 @@ class TimeOfDeposit extends Model
 		];
 		// $mainType = 'lg';
 		$mainType = 'customers';
-		// dd($currency);
 		// $mainType = 'lg';
 		// $x = "end_date between " . $endDate . ' AND ' . $startDate ;
 		$rows = DB::table('time_of_deposits')->where('time_of_deposits.company_id',$companyId)
@@ -345,7 +344,6 @@ class TimeOfDeposit extends Model
 			// $result[$mainType][$subType]['total']['total_of_total'] = isset($result[$mainType][$subType]['total']['total_of_total']) ? $result[$mainType][$subType]['total']['total_of_total'] + $result[$mainType][$subType]['total'][$currentWeekYear] : $result[$mainType][$subType]['total'][$currentWeekYear];
 		//	$totalCashInFlowArray[$currentWeekYear] = isset($totalCashInFlowArray[$currentWeekYear]) ? $totalCashInFlowArray[$currentWeekYear] +   $currentTotal : $currentTotal ;
 		}
-		// dd($result);
 	
 	}
 	

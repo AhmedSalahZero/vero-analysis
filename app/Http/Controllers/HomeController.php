@@ -57,7 +57,7 @@ class HomeController extends Controller
 		if($company->hasCashVero()){
 			dispatch_now(new CheckDueAndPastedInvoicesJob($company->id));
 		}
-		if($company->hasOddoIntegrationCredentials()){
+		if($company->hasOdooIntegrationCredentials()){
 			dispatch_now(new ImportForeignExchangeRates($company->id));
 		}
 		return view('client_view.homePage', compact('company'));

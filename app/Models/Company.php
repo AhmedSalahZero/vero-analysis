@@ -177,6 +177,11 @@ class Company extends Model implements HasMedia
 	{
 		return $this->hasOne(OpeningBalance::class,'company_id');
 	}
+	public function customerOpeningBalance()
+	{
+		return $this->hasOne(CustomerOpeningBalance::class,'company_id');
+	}
+	
     // public function lgOpeningBalance()
 	// {
 	// 	return $this->hasOne(LgOpeningBalance::class,'company_id');
@@ -481,25 +486,25 @@ class Company extends Model implements HasMedia
 		return $this->hasMany(Deduction::class,'company_id','id');
 	}
 	
-	public function getOddoDBUrl()
+	public function getOdooDBUrl()
 	{
-		return $this->oddo_db_url;
+		return $this->odoo_db_url;
 	}
-	public function getOddoDBName()
+	public function getOdooDBName()
 	{
-		return $this->oddo_db_name;
+		return $this->odoo_db_name;
 	}
-	public function getOddoDBUserName()
+	public function getOdooDBUserName()
 	{
-		return $this->oddo_username;
+		return $this->odoo_username;
 	}
-	public function getOddoDBPassword()
+	public function getOdooDBPassword()
 	{
-		return $this->oddo_db_password;
+		return $this->odoo_db_password;
 	}
-	public function hasOddoIntegrationCredentials():bool
+	public function hasOdooIntegrationCredentials():bool
 	{
-		return $this->getOddoDBUrl() && $this->getOddoDBName() && $this->getOddoDBUserName() && $this->getOddoDBPassword();
+		return $this->getOdooDBUrl() && $this->getOdooDBName() && $this->getOdooDBUserName() && $this->getOdooDBPassword();
 	}
 	public function lastUploadFileNames()
 	{

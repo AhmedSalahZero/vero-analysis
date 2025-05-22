@@ -2,45 +2,16 @@
 namespace App\Services\Api;
 
 
-use Exception;
+use App\Services\Api\Traits\AuthTrait;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use ripcord;
 
-class OddoPayment
+class OdooPayment
 {
-	protected string $url ;
-	protected String $db;
-	protected string $username;
-	protected string $password ; 
-	protected \Ripcord_Client $models;
-	protected ?int $uid;
-	protected int $company_id;
-
-    public function __construct($url , $db , $userName , $password,$companyId)
-    {
-		$this->url = $url;
-		$this->db = $db;
-		$this->username =$userName;
-		$this->password = $password;
-		$this->company_id = $companyId ;
-		require_once(public_path('apis/ripcord.php'));
-		$common = ripcord::client("$this->url/xmlrpc/2/common");
-		$uid = null ;
-		try{
-			$uid = $common->authenticate($this->db, $this->username, $this->password, array());
-		}
-		catch(\Exception $e){
-			$uid = null;
-		}
-		$models = ripcord::client("$this->url/xmlrpc/2/object");
-		$this->models = $models;
-		$this->uid = $uid;
-    }
+	use AuthTrait ;
 	public function getJournalId($moneyModel):int 
 	{
-		$isCashInSafe = $moneyModel->isCashInSafe();
-		return $isCashInSafe  ? $moneyModel->getCashInSafeBranchOddoId() : $moneyModel->getBankAccountOdooId();
+		$isCashInSafeOrCashPayment = $moneyModel->isCash();
+		return $isCashInSafeOrCashPayment  ? $moneyModel->getCashBranchOdooId() : $moneyModel->getBankAccountOdooId();
 	}
 
 	public function createDownPayment($moneyModel )
@@ -51,7 +22,7 @@ class OddoPayment
 			 */
 			$paymentAmount = $moneyModel->isInvoiceSettlementWithDownPayment() ? $moneyModel->downPaymentSettlements->sum('down_payment_amount') : $moneyModel->getAmount()  ;
 			$currencyName = $moneyModel->getReceivingOrPaymentCurrency();
-			$odooCurrencyId = DB::table('currencies')->where('name',$currencyName)->first()->oddo_id;
+			$odooCurrencyId = DB::table('currencies')->where('name',$currencyName)->first()->odoo_id;
 			$paymentDate = $moneyModel->getReceivingOrPaymentMoneyDate();
 			$odooPartnerId = $moneyModel->partner->getOdooId();
 			$inBoundOrOutBound =$moneyModel->getInboundOrOutbound();
@@ -105,21 +76,22 @@ class OddoPayment
 	{
 		return $this->cancelPayments($downPaymentOdooId);
 	}
-    public function createPayment($customerInvoiceSettlement )
+    
+	 public function createPayment($customerInvoiceSettlement )
     {
 			$invoice = $customerInvoiceSettlement->invoice;
-			$moneyModel = $customerInvoiceSettlement->getMoney;
+			$moneyModel = $customerInvoiceSettlement->getMoney();
 			$journalId = $this->getJournalId($moneyModel);
 			/**
 			 * * $bankOrSafeId
 			 */
 			$invoiceId = $invoice->getOdooId();
-			$settlementAmountInInvoiceCurrency = $customerInvoiceSettlement->getAmount();
+		//	$settlementAmountInInvoiceCurrency = $customerInvoiceSettlement->getAmount();
 			$amountInInReceivingCurrency = $customerInvoiceSettlement->getAmountInReceivingCurrency();
-			$invoiceCurrencyName = $moneyModel->getInvoiceCurrency();
+		//	$invoiceCurrencyName = $moneyModel->getInvoiceCurrency();
 			$receivingCurrencyName = $moneyModel->getReceivingOrPaymentCurrency();
-			$odooInvoiceCurrencyId = DB::table('currencies')->where('name',$invoiceCurrencyName)->first()->oddo_id;
-			$odooReceivingCurrencyId = DB::table('currencies')->where('name',$receivingCurrencyName)->first()->oddo_id;
+			// $odooInvoiceCurrencyId = DB::table('currencies')->where('name',$invoiceCurrencyName)->first()->odoo_id;
+			$odooReceivingCurrencyId = DB::table('currencies')->where('name',$receivingCurrencyName)->first()->odoo_id;
 			$paymentDate = $moneyModel->getReceivingOrPaymentMoneyDate();
 			$odooPartnerId = $moneyModel->partner->getOdooId();
 			$invoiceNumber = $invoice->getInvoiceNumber();
@@ -141,7 +113,7 @@ class OddoPayment
                 'create',
                 [[
                     'amount' => $amountInInReceivingCurrency,
-					'currency_id'=>$odooReceivingCurrencyId,
+		    'currency_id'=>$odooReceivingCurrencyId,
                     'journal_id' => $journalId,
                     'payment_date' => $paymentDate,
                     'communication' => $invoiceNumber,
@@ -162,10 +134,7 @@ class OddoPayment
                 [[$paymentWizardId]],
                 ['context' => $context]
             );
-			// dd($paymentResult);
-			if(!isset($paymentResult['res_id'])){
-				dd($paymentResult);
-			}
+			
 			$customerInvoiceSettlement->update([
 				'odoo_id'=>$paymentResult['res_id']
 			]);
@@ -174,6 +143,7 @@ class OddoPayment
 
        
     }
+	
 	public function reCreatePayment($customerInvoiceSettlement)
     {
 		if($customerInvoiceSettlement->odoo_id){

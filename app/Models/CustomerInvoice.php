@@ -398,11 +398,7 @@ class CustomerInvoice extends Model implements IInvoice
 			;
 		})
 		->selectRaw($columnNames)->get();
-		// if(count($rows) && $moneyType == MoneyReceived::INCOMING_TRANSFER ){
-		// }
-		// if($chequeStatus == Cheque::IN_SAFE){
-		// 	dd($rows,$moneyType,$chequeStatus);
-		// }
+		
 		foreach($rows as $row){
 			$invoiceNumber =  $contractCode ? $row->invoice_number : $row->name  ;
 			 $result['customers'][$currentTypeText][$invoiceNumber]['weeks'][$currentWeekYear] = isset($result['customers'][$currentTypeText][$invoiceNumber]['weeks'][$currentWeekYear]) ? $result['customers'][$currentTypeText][$invoiceNumber]['weeks'][$currentWeekYear]+  $row->received_amount :$row->received_amount;
@@ -464,11 +460,7 @@ class CustomerInvoice extends Model implements IInvoice
 		->whereBetween($dateColumnName,[$startDate,$endDate])
 		->selectRaw('received_amount')->get();
 		
-		// if(count($rows) && $moneyType == MoneyReceived::INCOMING_TRANSFER ){
-		// }
-		// if($chequeStatus == Cheque::IN_SAFE){
-		// 	dd($rows,$moneyType,$chequeStatus);
-		// }
+		
 		foreach($rows as $row){
 			$invoiceNumber =  __('Down Payment')  ;
 			 $result['customers'][$currentTypeText][$invoiceNumber]['weeks'][$currentWeekYear] = isset($result['customers'][$currentTypeText][$invoiceNumber]['weeks'][$currentWeekYear]) ? $result['customers'][$currentTypeText][$invoiceNumber]['weeks'][$currentWeekYear]+  $row->received_amount :$row->received_amount;
@@ -520,7 +512,6 @@ class CustomerInvoice extends Model implements IInvoice
 				$soCollectionDays = $soArr['collection_days'];
 				$currentSoCollectionDays = Carbon::make($soEndDate)->addDays($soCollectionDays);
 				$isBetweenViewInterval = $currentSoCollectionDays->between($startDate,$endDate);
-				// dd($soArr,$startDate,$endDate,$isBetweenViewInterval);
 				if(!$isBetweenViewInterval){
 					continue;
 				}
@@ -646,12 +637,9 @@ class CustomerInvoice extends Model implements IInvoice
 					$result['customers'][$currentTypeText][$name]['total'] = isset($result['customers'][$currentTypeText][$name]['total']) ? $result['customers'][$currentTypeText][$name]['total']  + $value : $value;
 					$currentTotal = $value;
 					$result['customers'][$currentTypeText]['total'][$currentWeekYear] = isset($result['customers'][$currentTypeText]['total'][$currentWeekYear]) ? $result['customers'][$currentTypeText]['total'][$currentWeekYear] +  $currentTotal : $currentTotal ;
-				//	$totalCashInFlowArray[$currentWeekYear] = isset($totalCashInFlowArray[$currentWeekYear]) ? $totalCashInFlowArray[$currentWeekYear] + $currentTotal : $currentTotal;
-					// $result['customers'][$currentTypeText]['total']['total_of_total']= isset($result['customers'][$currentTypeText]['total']['total_of_total']) ? $result['customers'][$currentTypeText]['total']['total_of_total'] +$value :$value ;
-					
+			
 				}
 			}
-			// dd($items,$cashflowReportId);
 	}
 	
 }

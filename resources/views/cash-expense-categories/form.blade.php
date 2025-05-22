@@ -59,7 +59,7 @@ use App\Models\MoneyReceived ;
 </style>
 @endsection
 @section('sub-header')
-{{ __('Cash Expense Categories') }}
+{{ __('Expense Categories') }}
 @endsection
 @section('content')
 <div class="row">
@@ -77,7 +77,7 @@ use App\Models\MoneyReceived ;
                         <div class="kt-portlet__head">
                             <div class="kt-portlet__head-label">
                                 <h3 class="kt-portlet__head-title head-title text-primary">
-                                    <x-sectionTitle :title="__('Cash Expense Categories')"></x-sectionTitle>
+                                    <x-sectionTitle :title="__('Expense Categories')"></x-sectionTitle>
                                 </h3>
                             </div>
                         </div>
@@ -88,7 +88,7 @@ use App\Models\MoneyReceived ;
                         <div class="kt-portlet__head">
                             <div class="kt-portlet__head-label">
                                 <h3 class="kt-portlet__head-title head-title text-primary">
-                                    {{__('Cash Expense Category Information')}}
+                                    {{__('Expense Category Information')}}
                                 </h3>
                             </div>
                         </div>
@@ -119,7 +119,7 @@ use App\Models\MoneyReceived ;
                         <div class="kt-portlet__head">
                             <div class="kt-portlet__head-label">
                                 <h3 class="kt-portlet__head-title head-title text-primary">
-                                   {{ __('Cash Expense Category Names') }}
+                                   {{ __('Expense Item Names') }}
                                 </h3>
                             </div>
                         </div>
@@ -132,7 +132,14 @@ use App\Models\MoneyReceived ;
                                 @endphp
 
 
-
+@php
+										$columns = [
+                                        __('Name') =>'col-md-1',
+                                        ] ;
+										if($company->hasOdooIntegrationCredentials()){
+											$columns[__('Odoo Chart Of Account Number')] ='col-md-1';
+										}
+									@endphp
                                 {{-- start of fixed monthly repeating amount --}}
                                 @php
                                 $tableId = 'cashExpenseCategoryNames';
@@ -142,16 +149,17 @@ use App\Models\MoneyReceived ;
                                 {{-- <input type="hidden" name="tableIds[]" value="{{ $tableId }}"> --}}
                                 <x-tables.repeater-table :repeater-with-select2="true" :parentClass="'show-class-js'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=true">
                                     <x-slot name="ths">
-                                        @foreach([
-                                        __('Name') =>'col-md-1',
-
-                                        ] as $title=>$classes)
+									
+                                        @foreach( $columns as $title=>$classes)
                                         <x-tables.repeater-table-th class="{{ $classes }}" :title="$title"></x-tables.repeater-table-th>
                                         @endforeach
                                     </x-slot>
                                     <x-slot name="trs">
                                         @php
                                         $rows = isset($model) ? $model->cashExpenseCategoryNames :[-1] ;
+										if(count(old('cashExpenseCategoryNames',[]))){
+											$rows = newInstanceOf( \App\Models\CashExpenseCategoryName::class , old('cashExpenseCategoryNames'));
+										}
                                         @endphp
                                         @foreach( count($rows) ? $rows : [-1] as $cashExpenseCategoryName)
                                         @php
@@ -175,11 +183,20 @@ use App\Models\MoneyReceived ;
                                             <td>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group">
-                                                        <input name="name" type="text" class="form-control" value="{{ isset($cashExpenseCategoryName) ? $cashExpenseCategoryName->getName() : old('salesOrders.amount','') }}">
+                                                        <input required name="name" type="text" class="form-control" value="{{ isset($cashExpenseCategoryName) ? $cashExpenseCategoryName->getName() : old('name','') }}">
                                                     </div>
                                                 </div>
                                             </td>
-
+											 
+											@if($company->hasOdooIntegrationCredentials())
+											  <td>
+                                                <div class="kt-input-icon">
+                                                    <div class="input-group">
+                                                        <input required name="odoo_chart_of_account_number" type="numeric" class="form-control only-greater-than-zero-allowed" value="{{ isset($cashExpenseCategoryName) ? $cashExpenseCategoryName->getOdooChartOfAccountNumber() : old('odoo_chart_of_account_number','') }}">
+                                                    </div>
+                                                </div>
+                                            </td>
+											@endif 
 
 
 

@@ -750,11 +750,8 @@ class CustomerInvoiceDashboardController extends Controller
 						}
 						
 					}
-						// if($currentLgOrLcType == 'lc'){
-						// 	// dd($statementTableFullClassName,$statementTableFullClassName::getTotalCashCoverForAllTypes($company->id,$financialInstitutionBankId,$currencyName));
-						// }
+					
 						foreach($lastLetterOfGuaranteeOrCreditFacilities as $currentLastLetterOfGuaranteeOrCreditFacility){
-					//		dd($currentLastLetterOfGuaranteeOrCreditFacility);
 							$details[$currencyName][$currentLgOrLcType][] = [
 								'limit'=>$currentLimit = $currentLastLetterOfGuaranteeOrCreditFacility ? $currentLastLetterOfGuaranteeOrCreditFacility->limit : 0 ,
 								'outstanding_balance'=> $currentOutstanding = $statementTableFullClassName::getTotalOutstandingBalanceForAllTypes($currentLastLetterOfGuaranteeOrCreditFacility->id,$company->id,$financialInstitutionBankId,$currencyName)  , 

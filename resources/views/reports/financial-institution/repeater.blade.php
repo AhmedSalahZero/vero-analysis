@@ -23,7 +23,7 @@
                             </div>
                         </div>
                     </div>
-					@if($company->hasOddoIntegrationCredentials())
+					@if($company->hasOdooIntegrationCredentials())
 					     <div class="col-1	">
                         <label class="form-label font-weight-bold ">{{ __('Odoo Code') }}
 						@include('star')

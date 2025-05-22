@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Services\Api\OddoPayment;
+use App\Services\Api\OdooPayment;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
@@ -21,10 +21,10 @@ class DownPaymentSettlement extends Model
 		self::deleting(function (self $downPaymentSettlement): void {
 			$moneyReceived = $downPaymentSettlement->moneyReceived;
 			$company =$moneyReceived->company;
-			if($company->hasOddoIntegrationCredentials()){
+			if($company->hasOdooIntegrationCredentials()){
 				$odooId = $moneyReceived->odoo_id ;
 				if($odooId){
-					$odooPaymentService = new OddoPayment($company->getOddoDBUrl(),$company->getOddoDBName(),$company->getOddoDBUserName(),$company->getOddoDBPassword(),$company->getId());
+					$odooPaymentService = new OdooPayment($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId());
 					$odooPaymentService->cancelDownPayment($odooId);
 				}
 			}

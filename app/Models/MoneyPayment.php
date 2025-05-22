@@ -692,7 +692,6 @@ class MoneyPayment extends Model
 		
 	public static function getCashOutForMoneyTypeAtDates(array &$result   , string $moneyType,string $dateFieldName,string $currency , int $companyId, string $startDate , string $endDate , string $currentWeekYear , int $contractId = null , ?string $chequeStatus = null) 
 	{
-		// dd('qq');
 		$subTableName = (new self)->getTable(); // money_payments
 		$keyNameForCurrentType = [
 			MoneyPayment::OUTGOING_TRANSFER => __('Outgoing Transfers'),
@@ -845,7 +844,19 @@ class MoneyPayment extends Model
 	{
 		return 'supplier';
 	}
+	public function getCashBranchOdooId()
+	{
+		$cashPayment = $this->cashPayment;
+
+		return $cashPayment ? $cashPayment->getBankOdooId() : null ;
+	}
 	
+	public function getBankAccountOdooId():int
+	{
+		$financialInstitution = $this->getFinancialInstitution();
+		
+		return $financialInstitution->getOdooIdForAccount($this->getAccountTypeId(),$this->getAccountNumber());
+	}
 	
 
 }

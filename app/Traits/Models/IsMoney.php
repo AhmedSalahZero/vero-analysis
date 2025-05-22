@@ -1,13 +1,14 @@
 <?php
 namespace App\Traits\Models;
 
+use App\Models\CashExpense;
 use App\Models\Company;
 use App\Models\FinancialInstitution;
 use App\Models\ForeignExchangeRate;
 use App\Models\MoneyPayment;
 use App\Models\MoneyReceived;
 use App\Models\Partner;
-use App\Services\Api\OddoPayment;
+use App\Services\Api\OdooPayment;
 use Carbon\Carbon;
 
 
@@ -64,11 +65,10 @@ trait IsMoney
 	public function storeNewSettlement(
 	array $settlements,int $partnerId,Company $company , bool $isFromDownPayment = false )
 	{
-		
 		$totalWithholdAmount= 0 ;
-		$oddoPaymentService = null ;
-		if($company->hasOddoIntegrationCredentials()){
-			$oddoPaymentService = new OddoPayment($company->getOddoDBUrl(),$company->getOddoDBName(),$company->getOddoDBUserName(),$company->getOddoDBPassword(),$company->getId());
+		$OdooPaymentService = null ;
+		if($company->hasOdooIntegrationCredentials()){
+			$OdooPaymentService = new OdooPayment($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId());
 		}
 		
 		foreach($settlements as $settlementArr)
@@ -84,9 +84,9 @@ trait IsMoney
 				unset($settlementArr['net_balance']);
 				$payment = $this->settlements()->create($settlementArr);
 				// if($companyId)
-				if($oddoPaymentService){
-					// $oddoPaymentService->reCreatePayment($payment);
-					$oddoPaymentService->createPayment($payment);
+				if($OdooPaymentService){
+					// $OdooPaymentService->reCreatePayment($payment);
+					$OdooPaymentService->createPayment($payment);
 				}
 				
 			}
@@ -186,9 +186,10 @@ trait IsMoney
 		if($this instanceof MoneyReceived){
 			return $this->getReceivingCurrency();
 		}
-		if($this instanceof MoneyPayment){
-			return $this->getPaymentCurrency();
-		}
+		return $this->getPaymentCurrency();
+		// if($this instanceof MoneyPayment){
+		// 	return 
+		// }
 		throw new \Exception('Customer Exception Invalid Money Type');
 	}
 	public function getReceivingOrPaymentMoneyDate():string
@@ -196,20 +197,21 @@ trait IsMoney
 		if($this instanceof MoneyReceived){
 			return $this->getReceivingDate();
 		}
-		if($this instanceof MoneyPayment){
-			return $this->getDeliveryDate();
-		}
-		throw new \Exception('Customer Exception Invalid Money Type');
+		return $this->getDeliveryDate();
+		// if($this instanceof MoneyPayment){
+			
+		// }
+		// throw new \Exception('Customer Exception Invalid Money Type');
 	}
 	public function getReceivingOrPaymentMoneyDateFormatted():string
 	{
 		if($this instanceof MoneyReceived){
 			return $this->getReceivingDateFormatted();
 		}
-		if($this instanceof MoneyPayment){
-			return $this->getDeliveryDateFormatted();
-		}
-		throw new \Exception('Customer Exception Invalid Money Type');
+		return $this->getDeliveryDateFormatted();
+		// if($this instanceof MoneyPayment){
+		// }
+		// throw new \Exception('Customer Exception Invalid Money Type');
 	}
 	public static function getAllUniquePartnerIdsForCheques(int $companyId , $currencyName)
 	{
@@ -301,5 +303,18 @@ trait IsMoney
 	{
 		return $this instanceof MoneyReceived ? 'inbound':'outbound';
 	}	
-	
+	public function isCash():bool 
+	{
+		$isCashInSafeOrCashPayment = false ;
+		if($this instanceof MoneyReceived && $this->isCashInSafe()){
+			$isCashInSafeOrCashPayment = true ; 
+		}
+		if($this instanceof MoneyPayment && $this->isCashPayment()){
+			$isCashInSafeOrCashPayment = true ; 
+		}
+		if($this instanceof CashExpense && $this->isCashPayment()){
+			$isCashInSafeOrCashPayment = true ; 
+		}
+		return $isCashInSafeOrCashPayment ;
+	}
 }

@@ -40,7 +40,7 @@ class Partner extends Model
 	}
 	public function getOdooId():?int
 	{
-		return $this->oddo_id;
+		return $this->odoo_id;
 	}
 	public function getName()
 	{
@@ -177,14 +177,14 @@ class Partner extends Model
 	public static function getSuppliersForCompany(int $companyId){
 		return self::where('company_id',$companyId)->where('is_supplier',1)->orderBy('name')->pluck('name','id');
 	} 
-	public static function findByOddoId(int $id,int $companyId){
-		return self::where('oddo_id',$id)->where('company_id',$companyId)->first();
+	public static function findByOdooId(int $id,int $companyId){
+		return self::where('odoo_id',$id)->where('company_id',$companyId)->first();
 	}
-	public static function handlePartnerForOdd($oddoPartnerId ,$oddoPartnerName,$isSupplier ,$isCustomer,$companyId  ):int
+	public static function handlePartnerForOdoo($odooPartnerId ,$odooPartnerName,$isSupplier ,$isCustomer,$isEmployee,$companyId  ):int
 	{
-		$partner = Partner::findByOddoId($oddoPartnerId,$companyId);
+		$partner = Partner::findByOdooId($odooPartnerId,$companyId);
 			if(is_null($partner)){
-				$partner = Partner::createNewForOddo($oddoPartnerId,$oddoPartnerName,$companyId,$isCustomer,$isSupplier);
+				$partner = Partner::createNewForOdoo($odooPartnerId,$odooPartnerName,$companyId,$isCustomer,$isSupplier);
 			}
 			if($isSupplier){
 				$partner->update([
@@ -196,15 +196,20 @@ class Partner extends Model
 					'is_customer'=>1 
 				]);
 			}
+			if($isEmployee){
+				$partner->update([
+					'is_employee'=>1 
+				]);
+			}
 			return $partner->id ;
 	}
-	public static function createNewForOddo(int $id,string $partnerName,int $companyId,int $isCustomer,int $isSupplier){
+	public static function createNewForOdoo(int $id,string $partnerName,int $companyId,int $isCustomer,int $isSupplier){
 		
 		/**
 		 * @var Company $company 
 		 */
 		$partner = Partner::create([
-			'oddo_id'=>$id ,
+			'odoo_id'=>$id ,
 			'is_customer'=>$isCustomer ,
 			'is_supplier'=>$isSupplier,
 			'company_id'=>$companyId ,

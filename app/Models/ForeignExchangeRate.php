@@ -68,7 +68,7 @@ class ForeignExchangeRate extends Model
 	public static function importOdooExchangeRates(Company $company)
 	{
 		
-		$exchangeRateService = new ExchangeRateService($company->getOddoDBUrl(),$company->getOddoDBName(),$company->getOddoDBUserName(),$company->getOddoDBPassword(),$company->getId());
+		$exchangeRateService = new ExchangeRateService($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId());
 		$mainFunctionCurrency = $company->getMainFunctionalCurrency();
 		$oldForeignExchangeRates = ForeignExchangeRate::where('company_id',$company->id)->get();
 		foreach(getCurrenciesForSuppliersAndCustomers($company->id) as $currencyName){

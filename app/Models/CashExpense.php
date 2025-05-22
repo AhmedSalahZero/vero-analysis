@@ -540,8 +540,6 @@ class CashExpense extends Model
 	{
 		$key = __('Projected Other Cash Out Items') ;
 		$items = CashProjection::where('company_id',$company->id)->where('is_contract',$isContract)->where('cashflow_report_id',$cashflowReportId)->where('type','out')->get();
-		// dd($items);
-		
 			foreach($items as $item){
 				$invoiceNumber = $item->name ; 
 				foreach($item->amounts as $currentWeekYear => $value){

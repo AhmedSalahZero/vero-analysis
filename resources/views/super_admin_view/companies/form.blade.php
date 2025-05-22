@@ -95,7 +95,7 @@
                 <div class="kt-portlet__head">
                     <div class="kt-portlet__head-label">
                         <h3 class="kt-portlet__head-title head-title text-primary">
-                            {{__('Oddo Integration')}}
+                            {{__('Odoo Integration')}}
                         </h3>
                     </div>
                 </div>
@@ -110,19 +110,19 @@
  					 <div class="col-3">
                             <label>{{__('Database URL')  }}</label>
                             <div class="kt-input-icon">
-                                <input type="text" name="oddo_db_url" value="{{@$row['oddo_db_url']}}" class="form-control" placeholder="{{__('Oddo  Database URL')}}" >
+                                <input type="text" name="odoo_db_url" value="{{@$row['odoo_db_url']}}" class="form-control" placeholder="{{__('Odoo  Database URL')}}" >
                             </div>
                         </div>
 						  <div class="col-3">
                             <label>{{__('Database Name')  }}</label>
                             <div class="kt-input-icon">
-                                <input type="text" name="oddo_db_name" value="{{@$row['oddo_db_name']}}" class="form-control" placeholder="{{__('Oddo  Database Name')}}" >
+                                <input type="text" name="odoo_db_name" value="{{@$row['odoo_db_name']}}" class="form-control" placeholder="{{__('Odoo  Database Name')}}" >
                             </div>
                         </div>
                     <div class="col-3">
                             <label>{{__('User Name')  }}</label>
                             <div class="kt-input-icon">
-                                <input type="text" name="oddo_username" value="{{@$row['oddo_username']}}" class="form-control" placeholder="{{__('Oddo  User Name')}}" >
+                                <input type="text" name="odoo_username" value="{{@$row['odoo_username']}}" class="form-control" placeholder="{{__('Odoo  User Name')}}" >
                             </div>
                         </div>
 						
@@ -131,7 +131,7 @@
 						<div class="col-3">
                             <label>{{__('Password')  }}</label>
                             <div class="kt-input-icon">
-                                <input type="text" name="oddo_db_password" value="{{@$row['oddo_db_password']}}" class="form-control" placeholder="{{__('Oddo  Database Password')}}" >
+                                <input type="text" name="odoo_db_password" value="{{@$row['odoo_db_password']}}" class="form-control" placeholder="{{__('Odoo  Database Password')}}" >
                             </div>
                         </div>
 						

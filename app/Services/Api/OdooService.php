@@ -2,51 +2,22 @@
 namespace App\Services\Api;
 
 use App\Helpers\HArr;
+use App\Models\CashExpenseCategoryName;
 use App\Models\CashVeroBranch;
 use App\Models\Contract;
 use App\Models\CustomerInvoice;
 use App\Models\FinancialInstitutionAccount;
 use App\Models\Partner;
+use App\Models\SalesOrder;
 use App\Models\SupplierInvoice;
+use App\Services\Api\Traits\AuthTrait;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
-use ripcord;
+use Illuminate\Support\Facades\DB;
 
 class OdooService
 {
-	protected string $url ;
-	protected String $db;
-	protected string $username;
-	protected string $password ; 
-	protected \Ripcord_Client $models;
-	protected ?int $uid;
-	protected int $company_id;
-	public function __construct($url , $db , $userName , $password,$companyId)
-	{
-		$this->url = $url;
-		$this->db = $db;
-		$this->username =$userName;
-		$this->password = $password;
-		$this->company_id = $companyId ;
-		
-		require_once(public_path('apis/ripcord.php'));
-		$common = ripcord::client("$this->url/xmlrpc/2/common");
-		$uid = null ;
-		try{
-			$uid = $common->authenticate($this->db, $this->username, $this->password, array());
-		}
-		catch(\Exception $e){
-			$uid = null;
-		}
-		if(is_array($uid)){
-			$uid = null ;
-		}
-		$models = ripcord::client("$this->url/xmlrpc/2/object");
-		$this->models = $models;
-		
-		$this->uid = $uid;
-	}
+	use AuthTrait;
 	/**
 	 * * import project or contracts
 	 */
@@ -63,12 +34,13 @@ class OdooService
 	 */
 	public function startImportInvoices($startDate , $endDate,$companyId)
 	{
-		// dd($startDate,$endDate,$this->uid);
 		if(is_null($this->uid)  ){
 			return ;
 		}
+		$this->getPartners($startDate,$endDate,$companyId);
 		$this->getContracts($startDate,$endDate,$companyId);
 		$invoices = $this->getInvoices($startDate,$endDate);
+		$this->syncDeletedInvoices($companyId);
 		$companyId = $this->company_id;
 		foreach($invoices as $invoice){
 		
@@ -82,16 +54,16 @@ class OdooService
 			$collectedAmount =$invoiceAmount + $vatAmount  - $invoice['amount_residual'] ;
 			$withholdAmount = 0 ;
 			$invoiceNumber = $invoice['name'];
-			$oddoPartnerId = $invoice['partner_id'][0];
-			$oddoPartnerName = $invoice['partner_id'][1];
+			$odooPartnerId = $invoice['partner_id'][0];
+			$odooPartnerName = $invoice['partner_id'][1];
 			$invoiceCurrency = $invoice['currency_id'][1];
 			$isSupplier = $invoice['move_type'] == 'in_invoice';
 			$isCustomer = $invoice['move_type'] == 'out_invoice';
-			$parentId = Partner::handlePartnerForOdd($oddoPartnerId ,$oddoPartnerName,$isSupplier ,$isCustomer,$companyId  );
+			$parentId = Partner::handlePartnerForOdoo($odooPartnerId ,$odooPartnerName,$isSupplier ,$isCustomer,false,$companyId  );
 			if($isCustomer){
-				CustomerInvoice::createForOddo($invoiceId,$parentId,$oddoPartnerName,$invoiceDate,$invoiceDueDate,$invoiceNumber,$invoiceCurrency,$invoiceAmount,$vatAmount,$withholdAmount,$collectedAmount,$exchangeRate,$soNumber,$companyId);
+				CustomerInvoice::createForOdoo($invoiceId,$parentId,$odooPartnerName,$invoiceDate,$invoiceDueDate,$invoiceNumber,$invoiceCurrency,$invoiceAmount,$vatAmount,$withholdAmount,$collectedAmount,$exchangeRate,$soNumber,$companyId);
 			}elseif($isSupplier){
-				SupplierInvoice::createForOddo($invoiceId,$parentId,$oddoPartnerName,$invoiceDate,$invoiceDueDate,$invoiceNumber,$invoiceCurrency,$invoiceAmount,$vatAmount,$withholdAmount,$collectedAmount,$exchangeRate,$soNumber,$companyId);
+				SupplierInvoice::createForOdoo($invoiceId,$parentId,$odooPartnerName,$invoiceDate,$invoiceDueDate,$invoiceNumber,$invoiceCurrency,$invoiceAmount,$vatAmount,$withholdAmount,$collectedAmount,$exchangeRate,$soNumber,$companyId);
 			}
 	
 		}
@@ -99,8 +71,11 @@ class OdooService
 	}
 	protected function getContracts(string $startDate ,string $endDate,int $companyId)
 	{
-		
-		$contractFilters = array(array(array('id', '>=', 0)));
+		$contractFilters = array(array(
+			array('id', '>=', 0),
+			array('write_date', '>=', $startDate),
+			array('write_date', '<=', $endDate)
+		));
 		$contractIds=$this->models->execute_kw($this->db, $this->uid, $this->password, 'project.project', 'search',$contractFilters);
 		$projects = $this->models->execute_kw($this->db, $this->uid, $this->password, 'project.project', 'read', array($contractIds),[
 			'fields'=>[
@@ -111,23 +86,22 @@ class OdooService
 				'date', //end date
 			]
 		]);
-		// dd($projects);
 		foreach($projects as $projectArr){
 			$projectAmount = 0 ;
 			$modelType = 'Customer';
 			$currentProjectStartDate = isset($projectArr['date_start']) && $projectArr['date_start'] ? $projectArr['date_start'] :  now()->format('Y-m-d') ;
 			$currentProjectEndDate = isset($projectArr['date']) && $projectArr['date'] ? $projectArr['date'] : now()->format('Y-m-d') ;
-			$currentOddoProjectId = $projectArr['id'];
-			$currentOddoCustomerId = $projectArr['partner_id'][0]??null ;
-			if(is_null($currentOddoCustomerId)){
+			$currentOdooProjectId = $projectArr['id'];
+			$currentOdooCustomerId = $projectArr['partner_id'][0]??null ;
+			if(is_null($currentOdooCustomerId)){
 				continue;
 			}
-			$currentOddoCustomerName = $projectArr['partner_id'][1] ;
-			$code = Contract::generateRandomContract($companyId,$currentOddoCustomerName,$startDate,$modelType);
-			$parentId = Partner::handlePartnerForOdd($currentOddoCustomerId ,$currentOddoCustomerName,0, 1,$companyId  );
-			
+			$currentOdooCustomerName = $projectArr['partner_id'][1] ;
+			$code = Contract::generateRandomContract($companyId,$currentOdooCustomerName,$startDate,$modelType);
+			$parentId = Partner::handlePartnerForOdoo($currentOdooCustomerId ,$currentOdooCustomerName,0, 1,false,$companyId  );
+			$oldProject = Contract::where('odoo_id',$currentOdooProjectId)->first();
 			$projectFormatted = [
-				'oddo_id'=>$currentOddoProjectId,
+				'odoo_id'=>$currentOdooProjectId,
 				'code'=>$code,
 				'name'=>$projectArr['name'],
 				'model_type'=>$modelType,
@@ -137,10 +111,11 @@ class OdooService
 				'company_id'=>$companyId,
 				'duration'=>Carbon::make($currentProjectEndDate)->diffInMonths($currentProjectStartDate)
 			];
-			
+			if($oldProject){
+				$projectFormatted['id'] = $oldProject->id;
+			}
 			$salesOrderFilters = array(array(
-				['project_id','=',$currentOddoProjectId]
-				// ['project_id','in',$contractIds]
+				['project_id','=',$currentOdooProjectId]
 			));
 				$salesOrderIds=$this->models->execute_kw($this->db, $this->uid, $this->password, 'sale.order', 'search',$salesOrderFilters
 				// , array('limit' => 10)
@@ -161,8 +136,9 @@ class OdooService
 					$currentSalesOrderId = $salesOrderArr['id'];
 					$currentSalesOrderAmount = $salesOrderArr['amount_total'];
 					$projectAmount += $currentSalesOrderAmount;
-					$salesOrderFormatted[]=[
-						'oddo_id'=>$currentSalesOrderId,
+					
+					$currentSalesOrderArr = [
+						'odoo_id'=>$currentSalesOrderId,
 						'so_number'=>$salesOrderArr['display_name'],
 						// 'id'=>$currentSalesOrderId,
 						'amount'=>$currentSalesOrderAmount,
@@ -173,12 +149,17 @@ class OdooService
 						'collection_days_'.$currentOrderIndex=>0,
 						'company_id'=>$companyId
 						
-					];
+					] ;
+					$oldSalesOrder = SalesOrder::where('odoo_id',$currentSalesOrderId)->first();
+					if($oldSalesOrder){
+						$currentSalesOrderArr['id'] = $oldSalesOrder->id;
+					}
+					$salesOrderFormatted[]=$currentSalesOrderArr;
 				}
 				$projectFormatted['amount'] = $projectAmount ;
 				if(count($salesOrderFormatted)){
 					$projectFormatted['salesOrders']=$salesOrderFormatted;
-					$contract = new Contract ;
+					$contract = $oldProject ? $oldProject : new Contract ;
 					$request = (new Request())->merge($projectFormatted);
 					$contract->storeBasicForm($request);
 					
@@ -188,7 +169,6 @@ class OdooService
 
 		
 		
-		// dd($salesOrders);
 		
 	}
 	protected function getInvoices(string $startDate,string $endDate)
@@ -219,17 +199,17 @@ class OdooService
 		));
 		$invoices = $this->fetchData('account.move',$fields,$filters);
 		return $invoices;
-		/**
-		 * * الكود اللي تحت دا بيجيب المنتجات
-		 */
-		$productIds = array_unique(Arr::flatten(array_column($invoices,'invoice_line_ids'))) ;
-		$filters = [[
-			['id','in',$productIds]
-		]];
-		$fields = [
-			'name','display_name','product_id','quantity','price_unit','price_subtotal'
-		];
-		return $invoices ;
+		// /**
+		//  * * الكود اللي تحت دا بيجيب المنتجات
+		//  */
+		// $productIds = array_unique(Arr::flatten(array_column($invoices,'invoice_line_ids'))) ;
+		// $filters = [[
+		// 	['id','in',$productIds]
+		// ]];
+		// $fields = [
+		// 	'name','display_name','product_id','quantity','price_unit','price_subtotal'
+		// ];
+		// return $invoices ;
 		
 		
 	}
@@ -239,7 +219,7 @@ class OdooService
 	}
 	
 	
-	// public function payInvoice(int $invoiceId, float $invoiceAmount , string $paymentDate , string $userComment  ,int $oddoPartnerId)
+	// public function payInvoice(int $invoiceId, float $invoiceAmount , string $paymentDate , string $userComment  ,int $odooPartnerId)
 	// {
 	
 	// 	$userId = $this->uid;
@@ -250,7 +230,7 @@ class OdooService
 	// 	$paymentData = [
 	// 		'payment_type' => 'inbound',
 	// 		'partner_type' => 'customer',
-	// 		'partner_id' => $oddoPartnerId, 
+	// 		'partner_id' => $odooPartnerId, 
 	// 		'journal_id' => (int) 7,
 	// 		'amount' => (float) $invoiceAmount,
 	// 		'date' => $paymentDate,
@@ -349,9 +329,6 @@ class OdooService
 	// 	);
 		
 		
-	// 	dd($updatedInvoice);
-		
-	// 	dd($paymentData,$response->failed());
 	// 	if ($response->failed()) {
 	// 		Log::error('Odoo request failed (payment create)', [
 	// 			'status' => $response->status(),
@@ -397,8 +374,8 @@ class OdooService
 
 	public function syncDeletedInvoices(int $companyId)
 	{
-		$customerInvoices  = CustomerInvoice::where('company_id',$companyId)->where('oddo_id','>',0)->get();
-		$supplierInvoices  = SupplierInvoice::where('company_id',$companyId)->where('oddo_id','>',0)->get();
+		$customerInvoices  = CustomerInvoice::where('company_id',$companyId)->where('odoo_id','>',0)->get();
+		$supplierInvoices  = SupplierInvoice::where('company_id',$companyId)->where('odoo_id','>',0)->get();
 		
 		$startDate = now()->subDays(360)->format('Y-m-d');
 		$endDate = now()->format('Y-m-d');
@@ -418,6 +395,28 @@ class OdooService
 			
 		}
 	}
+	public function syncChartOfAccountNumbers(string $chartOfAccountCode,int $companyId)
+	{
+			$fields = [
+				'id'
+			];
+			
+			$filters = [
+				[
+					['account_type','=','expense'],
+					['code','=',$chartOfAccountCode],
+				]
+		];
+		$odooExpenseItem = $this->fetchData('account.account',$fields,$filters)[0]??null;
+		
+		if($odooExpenseItem){
+			DB::table('cash_expense_category_names')->where('company_id',$companyId)->where('odoo_chart_of_account_number',$chartOfAccountCode)->update([
+				'odoo_id'=>$odooExpenseItem['id']
+			]);
+		}
+		return $odooExpenseItem ;
+	}
+	
 	public function syncFinancialInstitutions()
 	{
 			$fields = [
@@ -437,7 +436,6 @@ class OdooService
 			foreach($financialInstitutionAccounts as $financialInstitutionAccount){
 				$codeCode = $financialInstitutionAccount->getOdooCode();
 				if($codeCode){
-		
 					$currentJournal = $journals[$codeCode]??null;
 					$currentJournalId = $currentJournal ? $currentJournal['id'] : null;
 					if($currentJournalId){
@@ -453,7 +451,26 @@ class OdooService
 	
 		
 	}
-	
+	public function syncBranchSafe(string $odooCode,int $companyId)
+	{
+			$fields = [
+				'id',
+				'code'
+			];
+			$filters = [
+				[
+					['type','=','cash'],
+					['code','=',$odooCode]
+				]
+		];
+		$odooBranch = $this->fetchData('account.journal',$fields,$filters)[0]??null;
+		if($odooBranch){
+			DB::table('branch')->where('company_id',$companyId)->where('odoo_code',$odooCode)->update([
+				'odoo_id'=>$odooBranch['id']
+			]);
+		}
+		
+	}
 	public function syncBanks()
 	{
 			$fields = [
@@ -506,14 +523,14 @@ class OdooService
             return $fields[$field]['selection'] ?? [];
       
     }
-	public function createInternalMoneyTransfer(string $transferDate,float $transferAmount,int $fromJournalId , int $toJournalId , int $oddoCurrencyId , string $comment = null  )
+	public function createInternalMoneyTransfer(string $transferDate,float $transferAmount,int $fromJournalId , int $toJournalId , int $odooCurrencyId , string $comment = null  )
 	{
 		$paymentData = [
 			'payment_type' => 'outbound',
 			// 'is_internal_transfer' => true,
 			'journal_id' =>$fromJournalId, // Source journal (Bank A)
 			'amount' => $transferAmount, // Transfer amount
-			'currency_id' => $oddoCurrencyId, // Currency ID (e.g., USD)
+			'currency_id' => $odooCurrencyId, // Currency ID (e.g., USD)
 			'date' => $transferDate, // Transfer date
 			// 'ref' => $comment ?? 'Internal transfer from Bank A to Bank B',
 			// 'partner_type' => 'customer', // Optional, for reconciliation
@@ -524,28 +541,53 @@ class OdooService
 			"account.payment", "create",
 			[$paymentData]
 		);
-		dd($paymentId);
 		  $this->models->execute_kw(
 			$this->db, $this->uid, $this->password,
 			"account.payment", "action_post",
 			[[$paymentId]]
 		);
-		// dd($paymentId);
-			// dd($paymentId);
 		
 		
 		
 	}
 	
-	public function fetchData(string $modelName ,array $fields = [],  array $filters = [[]]  )
-	{
-		// dd($modelName);
-		$ids=$this->models->execute_kw($this->db, $this->uid, $this->password, $modelName, 'search',$filters );
-		return $this->models->execute_kw($this->db, $this->uid, $this->password, $modelName, 'read', array($ids),[
-			'fields'=>$fields
-		]);
-	}
 	
+ public function getPartners(string $startDate,string $endDate,int $companyId):array
+    {
+     		 $fields = ['name', 'email', 'phone', 'customer_rank', 'supplier_rank'];
+            // Search all partners
+            $partnerIds = $this->execute('res.partner', 'search', [[]]);
+            if (empty($partnerIds)) {
+                return [];
+            }
+
+            // Read partner details with role-related fields
+			$filters = [
+				[
+					array('write_date', '>=', $startDate),
+			array('write_date', '<=', $endDate)
+				]
+			];
+			$partners = $this->fetchData('res.partner',$fields,$filters);
+            $partners = $this->execute('res.partner', 'read', [$partnerIds, $fields]);
+			unset($partners[0]); // هنشيل اول واحد لانه بيكون الادمن
+            // Check for employee role by searching hr.employee
+          //  $employeeData = $this->execute('hr.employee', 'search_read', [[['address_id', 'in', $partnerIds]]], ['fields' => ['address_id']]);
+          //  $employeePartnerIds = array_column($employeeData, 'address_id');
+
+            // Add role information to each partner
+            foreach ($partners as &$partner) {
+                $isCustomer = $partner['customer_rank'] > 0;
+                $isSupplier = $partner['supplier_rank'] > 0;
+				$currentOdooCustomerName =$partner['name']; 
+				$currentOdooCustomerId =$partner['id']; 
+                $isEmployee = !$isCustomer && !$isSupplier ;
+				 Partner::handlePartnerForOdoo($currentOdooCustomerId ,$currentOdooCustomerName,$isCustomer,$isSupplier,$isEmployee,$companyId  );
+            }
+            return $partners;
+        
+    }
+		
 	
 
 

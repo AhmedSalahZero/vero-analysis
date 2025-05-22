@@ -1203,7 +1203,7 @@
 
                 <div class="modal fade read-modal read-invoices-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                     <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
-                        <form action="<?php echo e(route('read-oddo-invoices',['company'=>$company->id])); ?>" class="modal-content" method="post">
+                        <form action="<?php echo e(route('read-odoo-invoices',['company'=>$company->id])); ?>" class="modal-content" method="post">
 
 
                             <?php echo csrf_field(); ?>
@@ -1234,8 +1234,8 @@
                                                 <td>
 
                                                     
-                                                    <label for="oddo-start-date" class="text-nowrap mr-3"><?php echo e(__('Start Date')); ?></label>
-                                                    <input id="oddo-start-date" type="date" value="<?php echo e(now()->format('Y-m-d')); ?>" class="form-control" name="odoo_start_date">
+                                                    <label for="odoo-start-date" class="text-nowrap mr-3"><?php echo e(__('Start Date')); ?></label>
+                                                    <input id="odoo-start-date" type="date" value="<?php echo e(now()->format('Y-m-d')); ?>" class="form-control" name="odoo_start_date">
                                                     
 
                                                 </td>
@@ -1243,8 +1243,8 @@
                                                 <td>
 
                                                     
-                                                    <label for="oddo-end-date" class="text-nowrap mr-3"><?php echo e(__('End Date')); ?></label>
-                                                    <input id="oddo-end-date" type="date" value="<?php echo e(now()->format('Y-m-d')); ?>" class="form-control" name="odoo_end_date">
+                                                    <label for="odoo-end-date" class="text-nowrap mr-3"><?php echo e(__('End Date')); ?></label>
+                                                    <input id="odoo-end-date" type="date" value="<?php echo e(now()->format('Y-m-d')); ?>" class="form-control" name="odoo_end_date">
                                                     
 
                                                 </td>
@@ -1271,7 +1271,7 @@
 				
 				 <div class="modal fade send-modal send-invoices-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                     <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
-                        <form action="<?php echo e(route('send-oddo-collection-or-payments',['company'=>$company->id])); ?>" class="modal-content" method="post">
+                        <form action="<?php echo e(route('send-odoo-collection-or-payments',['company'=>$company->id])); ?>" class="modal-content" method="post">
 
 
                             <?php echo csrf_field(); ?>
@@ -1302,8 +1302,8 @@
                                                 <td>
 
                                                     
-                                                    <label for="oddo-send-start-date" class="text-nowrap mr-3"><?php echo e(__('Start Date')); ?></label>
-                                                    <input id="oddo-send-start-date" type="date" value="<?php echo e(now()->format('Y-m-d')); ?>" class="form-control" name="odoo_start_date">
+                                                    <label for="odoo-send-start-date" class="text-nowrap mr-3"><?php echo e(__('Start Date')); ?></label>
+                                                    <input id="odoo-send-start-date" type="date" value="<?php echo e(now()->format('Y-m-d')); ?>" class="form-control" name="odoo_start_date">
                                                     
 
                                                 </td>
@@ -1311,8 +1311,8 @@
                                                 <td>
 
                                                     
-                                                    <label for="oddo-send-end-date" class="text-nowrap mr-3"><?php echo e(__('End Date')); ?></label>
-                                                    <input id="oddo-send-end-date" type="date" value="<?php echo e(now()->format('Y-m-d')); ?>" class="form-control" name="odoo_end_date">
+                                                    <label for="odoo-send-end-date" class="text-nowrap mr-3"><?php echo e(__('End Date')); ?></label>
+                                                    <input id="odoo-send-end-date" type="date" value="<?php echo e(now()->format('Y-m-d')); ?>" class="form-control" name="odoo_end_date">
                                                     
 
                                                 </td>

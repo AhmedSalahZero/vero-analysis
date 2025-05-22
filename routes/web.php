@@ -609,6 +609,7 @@ Route::middleware([])->group(function () {
 				 Route::post('add-new-partner','AddNewCustomerController@addNew')->name('add.new.partner');
 				 Route::post('add-new-partner/{type}','AddNewCustomerController@addNew2')->name('add.new.partner.type');
 				 Route::resource('opening-balance', 'OpeningBalancesController');
+				 Route::resource('customers-opening-balance', 'CustomerOpeningBalancesController');
 				
 				 
 				 Route::group(['prefix'=>'general-settings'],function(){
@@ -769,12 +770,12 @@ Route::middleware([])->group(function () {
 				 
 				 // 
 				 
-				 Route::get('cash-expense-category','CashExpenseCategoryController@index')->name('cash.expense.category.index');
-				 Route::get('cash-expense-category/create','CashExpenseCategoryController@create')->name('cash.expense.category.create');
-				 Route::post('cash-expense-category','CashExpenseCategoryController@store')->name('cash.expense.category.store');
-				 Route::get('cash-expense-category/{cashExpenseCategory}/edit','CashExpenseCategoryController@edit')->name('cash.expense.category.edit');
-				 Route::put('cash-expense-category/{cashExpenseCategory}','CashExpenseCategoryController@update')->name('cash.expense.category.update');
-				 Route::delete('cash-expense-category/{cashExpenseCategory}','CashExpenseCategoryController@destroy')->name('cash.expense.category.destroy');
+				 Route::get('expense-category','CashExpenseCategoryController@index')->name('cash.expense.category.index');
+				 Route::get('expense-category/create','CashExpenseCategoryController@create')->name('cash.expense.category.create');
+				 Route::post('expense-category','CashExpenseCategoryController@store')->name('cash.expense.category.store');
+				 Route::get('expense-category/{cashExpenseCategory}/edit','CashExpenseCategoryController@edit')->name('cash.expense.category.edit');
+				 Route::put('expense-category/{cashExpenseCategory}','CashExpenseCategoryController@update')->name('cash.expense.category.update');
+				 Route::delete('expense-category/{cashExpenseCategory}','CashExpenseCategoryController@destroy')->name('cash.expense.category.destroy');
 				 Route::get('update-expense-category-name-based-on-expense-category-category','CashExpenseCategoryController@updateExpenseCategoryNameBasedOnCategory')->name('update.expense.category.name.based.on.category');
 				 // 
 				 Route::get('notifications/{type}','NotificationsController@index')->name('view.notifications');
@@ -1058,8 +1059,8 @@ Route::middleware([])->group(function () {
 					Route::get('down-payment-contracts-settlements/{downPaymentId}/{modelType}','DownPaymentContractsController@downPaymentSettlements')->name('view.down.payment.settlement');
 					Route::post('store-down-payment-settlement/{downPaymentId}/{partnerId}/{modelType}','DownPaymentContractsController@storeDownPaymentSettlement')->name('store.down.payment.settlement');
 					
-					Route::post('read-odoo-invoices','ReadOdooInvoices@handle')->name('read-oddo-invoices');
-					Route::post('send-odoo-collection-or-payments','SendOdooCollectionOrPayment@handle')->name('send-oddo-collection-or-payments');
+					Route::post('read-odoo-invoices','ReadOdooInvoices@handle')->name('read-odoo-invoices');
+					Route::post('send-odoo-collection-or-payments','SendOdooCollectionOrPayment@handle')->name('send-odoo-collection-or-payments');
 					
 					
                     Route::get('money-received', 'MoneyReceivedController@index')->name('view.money.receive');

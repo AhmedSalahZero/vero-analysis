@@ -104,10 +104,6 @@ class OpeningBalancesController
                 ]);
             }
         }
-
-		
-		
-		
 		
         foreach ($request->get(MoneyReceived::CHEQUE_UNDER_COLLECTION,[]) as $index => $chequeUnderCollection) {
             $customer = Partner::find($chequeUnderCollection['customer_id'] ?: null);

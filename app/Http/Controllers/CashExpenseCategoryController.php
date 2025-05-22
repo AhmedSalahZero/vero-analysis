@@ -1,7 +1,9 @@
 <?php
 namespace App\Http\Controllers;
+use App\Http\Requests\StoreExpenseItemRequest;
 use App\Models\CashExpenseCategory;
 use App\Models\Company;
+use App\Services\Api\OdooService;
 use App\Traits\GeneralFunctions;
 use Illuminate\Http\Request;
 
@@ -47,19 +49,32 @@ class CashExpenseCategoryController
 		]
 		;
 	}
-	public function store(Request $request, Company $company){
+	public function store(StoreExpenseItemRequest $request, Company $company){
 			$cashExpenseCategory = new CashExpenseCategory ;
 			$cashExpenseCategory->storeBasicForm($request);
+			if($company->hasOdooIntegrationCredentials()){
+				foreach($request->get('cashExpenseCategoryNames',[]) as $cashExpenseName){
+                   $odooService = new OdooService($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId());
+					$code = $cashExpenseName['odoo_chart_of_account_number'];
+					$odooService->syncChartOfAccountNumbers($code,$company->id);
+				}
+			}
 			return redirect()->route('cash.expense.category.index',['company'=>$company->id]);
 	}
 	public function edit(Request $request,Company $company,CashExpenseCategory $cashExpenseCategory)
 	{
 		return view('cash-expense-categories.form',$this->getCommonVars($company,$cashExpenseCategory));
 	}
-	public function update(Company $company , Request $request , CashExpenseCategory $cashExpenseCategory){
+	public function update(Company $company , StoreExpenseItemRequest $request , CashExpenseCategory $cashExpenseCategory){
 		
 			$cashExpenseCategory->storeBasicForm($request);
-
+			if($company->hasOdooIntegrationCredentials()){
+				foreach($request->get('cashExpenseCategoryNames',[]) as $cashExpenseName){
+                   $odooService = new OdooService($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId());
+					$code = $cashExpenseName['odoo_chart_of_account_number'];
+					$odooService->syncChartOfAccountNumbers($code,$company->id);
+				}
+			}
 			return redirect()->route('cash.expense.category.index',['company'=>$company->id]);
 	}
 	public function destroy(Company $company , Request $request , CashExpenseCategory $cashExpenseCategory){
@@ -67,7 +82,8 @@ class CashExpenseCategoryController
 		return redirect()->route('cash.expense.category.index',['company'=>$company->id]);  
 	}	
 	public function updateExpenseCategoryNameBasedOnCategory(Company $company , Request $request){
-		$expenseCategories = CashExpenseCategory::whereIn('id',$request->get('expenseCategoryId'))->get();
+		$caseExpensesIds = (array) $request->get('expenseCategoryId');
+		$expenseCategories = CashExpenseCategory::whereIn('id',$caseExpensesIds)->get();
 		$result = [];
 		foreach($expenseCategories as $expenseCategory){
 			$subItems   = $expenseCategory->cashExpenseCategoryNames->sortBy('name')->pluck('id','name')->toArray() ;

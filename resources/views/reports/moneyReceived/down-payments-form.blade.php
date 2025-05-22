@@ -60,6 +60,7 @@ use App\Models\Partner;
             <input id="js-in-edit-mode" type="hidden" name="in_edit_mode" value="{{ isset($model) ? 1 : 0 }}">
             <input type="hidden" name="current_cheque_id" value="{{ isset($model) && $model->cheque ? $model->cheque->id : 0 }}">
             <input type="hidden" name="is_down_payment" id="is-down-payment-id" value="1">
+			  <input type="hidden" name="cash_id" value="{{ isset($model) && $model->cashInSafe ? $model->cashInSafe->id : 0 }}">
             <input id="js-down-payment-id" type="hidden" name="down_payment_id" value="{{ isset($model) ? $model->id : 0 }}">
             <input id="js-money-received-id" type="hidden" name="money_received_id" value="{{ isset($model) ? $model->id : 0 }}">
             <input type="hidden" id="ajax-sales-order-item" data-single-model="{{ $singleModel ? 1 : 0 }}" value="{{ $singleModel ? $salesOrderId : 0 }}">

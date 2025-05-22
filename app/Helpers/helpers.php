@@ -6419,6 +6419,11 @@ function getHeaderMenu($currentCompany = null)
 				'show'=>$canViewSuppliersSettings 
 			],
 			[
+				'title'=>__('Branches / Safe'),
+				'link'=>route('branches.index',['company'=>$companyId]),
+				'show'=>$canViewBranchesSettings 
+			],
+			[
 				'title'=>__('Subsidiary Companies'),
 				'link'=>route('subsidiary.companies.index',['company'=>$companyId]),
 				'show'=>$canViewSubsidiaryCompaniesSettings 
@@ -6458,11 +6463,7 @@ function getHeaderMenu($currentCompany = null)
 				'link'=>route('sales.persons.index',['company'=>$companyId]),
 				'show'=>$canViewSalesPersonsSettings 
 			],
-			[
-				'title'=>__('Branches'),
-				'link'=>route('branches.index',['company'=>$companyId]),
-				'show'=>$canViewBranchesSettings 
-			],
+			
 			[
 				'title'=>__('Deductions'),
 				'link'=>route('deductions.index',['company'=>$companyId]),
@@ -6772,7 +6773,7 @@ function getHeaderMenu($currentCompany = null)
 				[
 					'title'=>__('Odoo Integration'),
 					'link'=>'#',
-					'show'=>$company->hasOddoIntegrationCredentials(),
+					'show'=>$company->hasOdooIntegrationCredentials(),
 					'submenu'=>[
 						[
 							'title'=>__('Read Invoices'), 
@@ -6804,6 +6805,11 @@ function getHeaderMenu($currentCompany = null)
 						[
 							'title'=>__('Cash & Cheques Opening Balance'),
 							'link'=>route('opening-balance.index', ['company'=>$companyId]),
+							'show'=>$canUpdateCashAndChequesOpeningBalances,
+						],
+						[
+							'title'=>__('Customers Opening Balance'),
+							'link'=>route('customers-opening-balance.index', ['company'=>$companyId]),
 							'show'=>$canUpdateCashAndChequesOpeningBalances,
 						],
 		
@@ -8008,4 +8014,16 @@ function sumKeyAcrossArrays($data, $key) {
         }
     }
     return $sum;
+}
+function newInstanceOf($class , $arrayOfItems)
+{
+	$collection = collect([]);
+	foreach($arrayOfItems as $index=>$arr){
+		$newClass = new $class ;
+		foreach($arr as $key => $value){
+			$newClass->{$key}  = $value ; 
+		}
+		$collection[$index] = $newClass ;
+	}
+	return $collection;
 }

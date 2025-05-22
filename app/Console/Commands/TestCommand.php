@@ -24,8 +24,11 @@ use App\Services\AI\PredictionErrorQualityMeasures\MeanAbsoluteError;
 use App\Services\AI\PredictionErrorQualityMeasures\MeanAbsolutePercentageError;
 use App\Services\AI\PredictionErrorQualityMeasures\RootMeanSquaredPercentageError;
 use App\Services\Api\ExchangeRateService;
+use App\Services\Api\ExpenseService;
 use App\Services\Api\InternalMoneyTransfer;
-use App\Services\Api\OddoPayment;
+use App\Services\Api\OdooPayment;
+use App\Services\Api\OdooService;
+use Arr;
 use Carbon\Carbon;
 use DateTime;
 use Illuminate\Console\Command;
@@ -67,8 +70,23 @@ class TestCommand extends Command
 	public function handle()
 	{
 		$company= Company::find(138);
-		// $oddo = new OdooService($company->getOddoDBUrl(),$company->getOddoDBName(),$company->getOddoDBUserName(),$company->getOddoDBPassword(),$company->getId());
-		// 			$oddo->syncFinancialInstitutions();
+		$odooService = new OdooService($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId());
+		dd($odooService->getPartners('2010-01-01','2026-12-01',138));
+		// $odooService = new OdooService();
+		$odoo = new ExpenseService($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId());
+		$journalId = 23 ;
+		$expenseSheetId = 7 ;
+		$amountInPaymentCurrency = 550 ;
+		$paymentCurrencyName=  'EGP';
+		$paymentDate = '2025-05-20';
+		$odooPartnerId = 7 ;
+		dd($odoo->payApprovedExpense($journalId,$expenseSheetId,$amountInPaymentCurrency,$paymentCurrencyName,$paymentDate,$odooPartnerId));
+		// $odoo = new OdooService($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId());
+		dd($odoo->fetchData('account.account',['name','id'],[[['id','=',237],['account_type','=','expense']]]));
+		// dd($odoo->fetchData('hr.expense.sheet')[0]);
+		$odoo->syncBranchSafe('CSH2',$company->id);
+		
+		// 			$odoo->syncFinancialInstitutions();
 					
 		// $incomeStatements = IncomeStatement::get();
 
@@ -79,7 +97,7 @@ class TestCommand extends Command
 		// }
 		
 		// $company = Company::where('id',138)->first();
-		// $exchangeRateService = new ExchangeRateService($company->getOddoDBUrl(),$company->getOddoDBName(),$company->getOddoDBUserName(),$company->getOddoDBPassword(),$company->getId());
+		// $exchangeRateService = new ExchangeRateService($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId());
 		// $mainFunctionCurrency = $company->getMainFunctionalCurrency();
 		// $oldForeignExchangeRates = ForeignExchangeRate::where('company_id',$company->id)->get();
 		// foreach(getCurrenciesForSuppliersAndCustomers($company->id) as $currencyName){
@@ -116,15 +134,15 @@ class TestCommand extends Command
 		// // $companies = Company::where('id',105)->get();
 		// // $companies = Company::get();
 		// foreach($companies as $company){
-		// 	if($company->hasOddoIntegrationCredentials()){
-				$oddo = new InternalMoneyTransfer($company->getOddoDBUrl(),$company->getOddoDBName(),$company->getOddoDBUserName(),$company->getOddoDBPassword(),$company->getId());
-				// $oddo = new InternalMoneyTransfer($company->getOddoDBUrl(),$company->getOddoDBName(),$company->getOddoDBUserName(),$company->getOddoDBPassword(),$company->getId());
-		// 		// $oddo = new OddoPayment($company->getOddoDBUrl(),$company->getOddoDBName(),$company->getOddoDBUserName(),$company->getOddoDBPassword(),$company->getId());
-		// 		// OddoPayment
+		// 	if($company->hasOdooIntegrationCredentials()){
+				$odoo = new InternalMoneyTransfer($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId());
+				// $odoo = new InternalMoneyTransfer($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId());
+		// 		// $odoo = new OdooPayment($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId());
+		// 		// OdooPayment
 		// 		// $importDate = now()->format('Y-m-d') ; ;
 		// 		$startDate = now()->subDays(60)->format('Y-m-d') ; ;
 		// 		$endDate = now()->format('Y-m-d') ; 
-		// 		// $oddo->syncBanks($startDate,$endDate);
+		// 		// $odoo->syncBanks($startDate,$endDate);
 				$transferDate = '2025-05-15';
 				$fromJournalId = 25 ;
 				$toJournalId = 19;
@@ -133,11 +151,11 @@ class TestCommand extends Command
 				$transferAmount = 100000	;
 				$ref = 'ref';
 				// $paymentMethodId ='cash' ; 
-				dd($oddo->createOutgoingTransferToSuspense($fromJournalId,$transferAmount,$transferDate,$ref));
-		// 		$oddo->startImportContracts($startDate,$endDate,$company->id);
-		// 		// $oddo->startImportContracts($startDate,$endDate,$company->id);
-				// $oddo->syncFinancialInstitutions('BNK2');
-		// 		// $oddo->syncDeletedInvoices($company->id);
+				dd($odoo->createOutgoingTransferToSuspense($fromJournalId,$transferAmount,$transferDate,$ref));
+		// 		$odoo->startImportContracts($startDate,$endDate,$company->id);
+		// 		// $odoo->startImportContracts($startDate,$endDate,$company->id);
+				// $odoo->syncFinancialInstitutions('BNK2');
+		// 		// $odoo->syncDeletedInvoices($company->id);
 		// 		// $journalId = [
 		// 		// 	MoneyReceived::CASH_IN_SAFE=>7,
 		// 		// 	MoneyReceived::INCOMING_TRANSFER=>12 
@@ -149,11 +167,11 @@ class TestCommand extends Command
 		// 		// 	$paymentAmount = 115 ;
 		// 		// 	$paymentDate = '2025-04-13';
 		// 		// 	$currencyId = 1 ;
-		// 		// 	 $oddoPartnerId= 12 ;
+		// 		// 	 $odooPartnerId= 12 ;
 		// 		// 	 $invoiceNumber = 'INV/2025/00006' ;
 			
-		// 		// $oddo->startImportContracts($startDate,$endDate,$company->id);
-		// 		// $oddo->test($startDate,$endDate,$company->id);
+		// 		// $odoo->startImportContracts($startDate,$endDate,$company->id);
+		// 		// $odoo->test($startDate,$endDate,$company->id);
 		// 	}
 		// }
 		// dispatch_now(new CheckDueAndPastedInvoicesJob(107));
@@ -161,10 +179,10 @@ class TestCommand extends Command
 		
 		// $companies = Company::all();
 		// foreach($companies as $company){
-		// 	if($company->hasOddoIntegrationCredentials()){
-		// 		$oddo = new OdooService($company->getOddoDBUrl(),$company->getOddoDBName(),$company->getOddoDBUserName(),$company->getOddoDBPassword(),$company->getId());
+		// 	if($company->hasOdooIntegrationCredentials()){
+		// 		$odoo = new OdooService($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId());
 		 		$importDate = now()->subDay()->format('Y-m-d') ; ;
-		 		$oddo->startImportInvoices($importDate);
+		 		$odoo->startImportInvoices($importDate);
 		// 	}
 		// }
 		dd('good');

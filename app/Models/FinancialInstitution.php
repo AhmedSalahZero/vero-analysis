@@ -247,9 +247,9 @@ class FinancialInstitution extends Model
 				'start_date'=>$currentBalanceDate
 			]);
 		}
-		if($company->hasOddoIntegrationCredentials()){
-			$oddo = new OdooService($company->getOddoDBUrl(),$company->getOddoDBName(),$company->getOddoDBUserName(),$company->getOddoDBPassword(),$company->getId());
-			$oddo->syncFinancialInstitutions();
+		if($company->hasOdooIntegrationCredentials()){
+			$odoo = new OdooService($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId());
+			$odoo->syncFinancialInstitutions();
 		}
 		
 	}

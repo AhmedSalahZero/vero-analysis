@@ -20,7 +20,7 @@ trait HasBasicStoreRequest
 					$this->{$name} = $request->boolean($name);
 				}
 			}
-			elseif($columnExist ){
+			elseif($columnExist){
 				$val = $request->get($name) == 'null' ? null :$request->get($name);
 				$this->{$name} = $val;
 			}
@@ -43,7 +43,6 @@ trait HasBasicStoreRequest
 			// in update case
 			elseif(is_array($request->get($name)) && method_exists($this,$name) && $this->id ){
 				// is relationship
-				// dd(getCurrentCompanyId(),$this);
 				$this->updateRepeaterRelation($request,$name,$this->$name()->getRelated()->getTable(),[
 					'company_id'=>getCurrentCompanyId()  ?: $this->company_id
 				]);

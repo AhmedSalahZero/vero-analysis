@@ -18,7 +18,7 @@ use App\Models\ForeignExchangeRate;
 use App\Models\MoneyReceived;
 use App\Models\Partner;
 use App\Models\SalesOrder;
-use App\Services\Api\OddoPayment;
+use App\Services\Api\OdooPayment;
 use App\Traits\GeneralFunctions;
 use App\Traits\Models\HasBasicFilter;
 use App\Traits\Models\HasDebitStatements;
@@ -320,6 +320,7 @@ class MoneyReceivedController
 		$partnerId = $partner->id;
 		$invoices = CustomerInvoice::where('customer_id',$partnerId)
 		->where('company_id',$company->id)
+		->whereNull('opening_balance_id')
 		->where('net_invoice_amount','>',0)
 		->when($downPaymentContract , function($q) use($downPaymentContract){
 			$q->where('contract_code',$downPaymentContract->getCode());
@@ -453,8 +454,7 @@ class MoneyReceivedController
 		 * @var MoneyReceived $moneyReceived ;
 		 */
 		$accountType = AccountType::find($request->input('account_type.'.$moneyType));
-		$accountNumber = $request->input('account_number.'.$moneyType) ;
-		// $mainFunctionCurrency = $company->getMainFunctionalCurrency();
+		$accountNumber = $request->input('account_number.'.$moneyType);
 		$receivingDate = Carbon::make($receivingDate)->format('Y-m-d');
 		// $foreignExchangeRate = ForeignExchangeRate::getExchangeRateForCurrencyAndClosestDate($currency,$mainFunctionCurrency,$receivingDate,$company->id);
 		if(!$isDownPayment && !$isDownPaymentFromMoneyReceived){
@@ -495,17 +495,11 @@ class MoneyReceivedController
 
 		if( $hasUnappliedAmount || $isDownPayment){
 			$moneyReceived->storeNewSalesOrdersAmounts($request->get('sales_orders_amounts',[]),$contractId,$customerId,$companyId,$amountInReceivingCurrency);
-			if($company->hasOddoIntegrationCredentials()){
-				$oddoPaymentService = new OddoPayment($company->getOddoDBUrl(),$company->getOddoDBName(),$company->getOddoDBUserName(),$company->getOddoDBPassword(),$company->getId());
-				$oddoPaymentService->createDownPayment($moneyReceived);
+			if($company->hasOdooIntegrationCredentials()){
+				$odooPaymentService = new OdooPayment($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId());
+				$odooPaymentService->createDownPayment($moneyReceived);
 			}
-			
-			
 		}
-		// if(!$isTheSameCurrency && $totalSalesOrderAmount > 0){
-			
-		// }
-		
 		/**
 		 * @var CustomerInvoice $customerInvoice
 		 */
@@ -596,7 +590,7 @@ class MoneyReceivedController
 		$newMoneyReceived = $this->store($company,$request,true);
 		if(!$moneyReceivedAmountHasChanged){
 			$newMoneyReceived->storeNewSettlement(
-				$oldSettlementsForMoneyReceivedWithDownPayment->toArray(),$newMoneyReceived->getPartnerId(),$company,1);
+			$oldSettlementsForMoneyReceivedWithDownPayment->toArray(),$newMoneyReceived->getPartnerId(),$company,1);
 		}
 		 $activeTab = $newType;
 

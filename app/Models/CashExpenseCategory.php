@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class CashExpenseCategory extends Model
 {
-	use HasBasicStoreRequest;
+	use HasBasicStoreRequest ;
 	protected $guarded = ['id'];
 	public function getId()
 	{
@@ -22,5 +22,4 @@ class CashExpenseCategory extends Model
 	{
 		return $this->hasMany(CashExpenseCategoryName::class,'cash_expense_category_id','id');
 	}
-	
 }
