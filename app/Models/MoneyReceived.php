@@ -35,6 +35,7 @@ class MoneyReceived extends Model
 	const CLIENT_NAME ='customer_name';
 	const DOWN_PAYMENT_OVER_CONTRACT = 'over_contract' ;
 	const DOWN_PAYMENT_GENERAL = 'general' ;
+	const SETTLEMENT_OF_OPENING_BALANCE = 'settlement-of-opening-balance' ;
 	const RECEIVING_OR_PAYMENT_CURRENCY_COLUMN_NAME='receiving_currency';
 	
 	public static function generateComment(self $moneyReceived,string $lang,?string $invoiceNumbers = '',?string $customerName = null)
@@ -54,6 +55,9 @@ class MoneyReceived extends Model
 			if($moneyReceived->isGeneralDownPayment()){
 				return __('General Down Payment - Cheque :name With Number [ :number ]',['name'=>$customerName,'number'=>$chequeNumber],$lang) ;
 			}
+			if($moneyReceived->isSettlementOfOpeningBalance()){
+				return __('Opening Balance Settlement - Cheque :name With Number [ :number ]',['name'=>$customerName,'number'=>$chequeNumber],$lang) ;
+			}
 			if($moneyReceived->isOverContractDownPayment()){
 				return __('Down Payment - Cheque :name [ :contractName ] [ :contractCode ] With Number [ :number ]',['name'=>$customerName,'contractName'=>$moneyReceived->getContractName(),'contractCode'=>$moneyReceived->getContractCode(),'number'=>$chequeNumber],$lang) ;
 			}
@@ -72,7 +76,9 @@ class MoneyReceived extends Model
 			}
 			if($moneyReceived->isGeneralDownPayment()&&$moneyReceived->isDownPayment()){
 				return __('Cheque :name With Number [ :number ] - General Down Payment',['name'=>$customerName,'number'=>$chequeNumber],$lang) ;
-				
+			}
+			if($moneyReceived->isSettlementOfOpeningBalance()&&$moneyReceived->isDownPayment()){
+				return __('Cheque :name With Number [ :number ] - Opening Balance Settlement',['name'=>$customerName,'number'=>$chequeNumber],$lang) ;
 			}
 			if($moneyReceived->isOverContractDownPayment() && $moneyReceived->isDownPayment()){
 				return __('Cheque :name With Number [ :number ] - Contract Down Payment [ :contractName ] [ :contractCode ]',['name'=>$customerName,'number'=>$chequeNumber,
@@ -102,6 +108,9 @@ class MoneyReceived extends Model
 			if($moneyReceived->isGeneralDownPayment()&&$moneyReceived->isDownPayment()){
 				return __('Cash In Safe From :name  - General Down Payment',['name'=>$customerName],$lang) ;
 			}
+			if($moneyReceived->isSettlementOfOpeningBalance()&&$moneyReceived->isDownPayment()){
+				return __('Cash In Safe From :name  - Opening Balance Settlement',['name'=>$customerName],$lang) ;
+			}
 			if($moneyReceived->isOverContractDownPayment() && $moneyReceived->isDownPayment()){
 				return __('Cash In Safe From :name  - Contract Down Payment [ :contractName ] [ :contractCode ]',['name'=>$customerName,
 			'contractName'=>$moneyReceived->getContractName(),
@@ -110,6 +119,9 @@ class MoneyReceived extends Model
 			}
 			if($moneyReceived->isGeneralDownPayment()&&$moneyReceived->isDownPayment()){
 				return __('Cash In Safe From :name - General Down Payment',['name'=>$customerName],$lang) ;
+			}
+			if($moneyReceived->isSettlementOfOpeningBalance()&&$moneyReceived->isDownPayment()){
+				return __('Cash In Safe From :name - Opening Balance Settlement',['name'=>$customerName],$lang) ;
 			}
 			return __('Cash In Safe From :name Settled Invoices [ :numbers ]',['name'=>$customerName,'numbers'=>$settledInvoiceNumbers],$lang) ;
 		}
@@ -129,6 +141,9 @@ class MoneyReceived extends Model
 			if($moneyReceived->isGeneralDownPayment()&&$moneyReceived->isDownPayment()){
 				return __('Bank Deposit From :name - General Down Payment',['name'=>$customerName],$lang) ;
 			}
+			if($moneyReceived->isSettlementOfOpeningBalance()&&$moneyReceived->isDownPayment()){
+				return __('Bank Deposit From :name - Opening Balance Settlement',['name'=>$customerName],$lang) ;
+			}
 			if($moneyReceived->isOverContractDownPayment() && $moneyReceived->isDownPayment()){
 				return __('Bank Deposit From :name - Contract Down Payment [ :contractName ] [ :contractCode ]',['name'=>$customerName,
 			'contractName'=>$moneyReceived->getContractName(),
@@ -142,6 +157,9 @@ class MoneyReceived extends Model
 			
 			if($moneyReceived->isGeneralDownPayment()){
 				return __('General Down Payment - Incoming Transfer :name',['name'=>$customerName],$lang) ;
+			}
+			if($moneyReceived->isSettlementOfOpeningBalance()){
+				return __('Opening Balance Settlement - Incoming Transfer :name',['name'=>$customerName],$lang) ;
 			}
 			if($moneyReceived->isOverContractDownPayment()){
 				return __('Down Payment - Incoming Transfer :name [ :contractName ] [ :contractCode ]',['name'=>$customerName,'contractName'=>$moneyReceived->getContractName(),'contractCode'=>$moneyReceived->getContractCode()],$lang) ;
@@ -157,6 +175,9 @@ class MoneyReceived extends Model
 			}
 			if($moneyReceived->isGeneralDownPayment()&&$moneyReceived->isDownPayment()){
 				return __('Incoming Transfer :name - General Down Payment',['name'=>$customerName],$lang) ;
+			}
+			if($moneyReceived->isSettlementOfOpeningBalance()&&$moneyReceived->isDownPayment()){
+				return __('Incoming Transfer :name - Opening Balance Settlement',['name'=>$customerName],$lang) ;
 			}
 			if($moneyReceived->isOverContractDownPayment() && $moneyReceived->isDownPayment()){
 				return __('Incoming Transfer :name - Contract Down Payment [ :contractName ] [ :contractCode ]',['name'=>$customerName,
@@ -732,7 +753,7 @@ class MoneyReceived extends Model
 		if($partnerType != 'is_customer'){
 			return __('Money Received From [ :partnerType ]',['partnerType'=>$this->getPartnerTypeFormatted()]);	
 		}
-		return camelizeWithSpace($moneyType) ;
+		return camelizeWithSpace($moneyType)  ;
 	}
 	public function getContractId()
 	{

@@ -873,10 +873,22 @@ class MoneyReceivedController
 			'financialInstitutionId'=>$financialInstitutionId
 		]),$company);
 	}
-	
+	public function getCustomersWithOpeningBalance(Request $request , Company $company){
+		if($request->get('type') != 'settlement-of-opening-balance'){
+			return response()->json([
+			'customerInvoices' => CustomerInvoice::orderBy('customer_name')
+		//	->whereNotNull('opening_balance_id')
+		//	->whereNotNull('opening_balance_id')
+			->where('company_id',$company->id)->pluck('customer_id','customer_name')
+		]);
+		}
+		return response()->json([
+			'customerInvoices' => CustomerInvoice::orderBy('customer_name')
+			->whereNotNull('opening_balance_id')
+			->where('company_id',$company->id)->pluck('customer_id','customer_name')
+		]);
+	}
 	public function getCustomersBasedOnCurrency(Request $request , Company $company , string $currencyName){
-
-	
 		return response()->json([
 			'customerInvoices' => CustomerInvoice::orderBy('customer_name')->
 			where('currency',$currencyName)

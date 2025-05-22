@@ -31,6 +31,7 @@ class MoneyPayment extends Model
 	const CLIENT_NAME ='supplier_name';
 	const DOWN_PAYMENT_OVER_CONTRACT = 'over_contract' ;
 	const DOWN_PAYMENT_GENERAL = 'general' ;
+	const SETTLEMENT_OF_OPENING_BALANCE = 'settlement-of-opening-balance' ;
 	const SUPPLIER_INVOICE = 'supplierINo' ;
 	const CONTRACTS_WITH_DOWN_PAYMENTS = 'contracts-with-down-payments';
 	const RECEIVING_OR_PAYMENT_CURRENCY_COLUMN_NAME='payment_currency';
@@ -47,6 +48,9 @@ class MoneyPayment extends Model
 			}
 			if($moneyPayment->isGeneralDownPayment()){
 				return __('General Down Payment - Cheque :name With Number [ :number ]',['name'=>$supplierName,'number'=>$chequeNumber],$lang) ;
+			}
+			if($moneyPayment->isSettlementOfOpeningBalance()){
+				return __('Opening Balance Settlement - Cheque :name With Number [ :number ]',['name'=>$supplierName,'number'=>$chequeNumber],$lang) ;
 			}
 			if($moneyPayment->isOverContractDownPayment()){
 				return __('Down Payment - Cheque :name [ :contractName ] [ :contractCode ] With Number [ :number ]',['name'=>$supplierName,'contractName'=>$moneyPayment->getContractName(),'contractCode'=>$moneyPayment->getContractCode(),'number'=>$chequeNumber],$lang) ;
@@ -89,6 +93,9 @@ class MoneyPayment extends Model
 			
 			if($moneyPayment->isGeneralDownPayment()){
 				return __('General Down Payment - Outgoing Transfer :name',['name'=>$supplierName],$lang) ;
+			}
+			if($moneyPayment->isSettlementOfOpeningBalance()){
+				return __('Opening Balance <Settlement></Settlement> - Outgoing Transfer :name',['name'=>$supplierName],$lang) ;
 			}
 			if($moneyPayment->isOverContractDownPayment()){
 				return __('Down Payment - Outgoing Transfer :name [ :contractName ] [ :contractCode ]',['name'=>$supplierName,'contractName'=>$moneyPayment->getContractName(),'contractCode'=>$moneyPayment->getContractCode()],$lang) ;

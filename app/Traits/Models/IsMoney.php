@@ -240,11 +240,6 @@ trait IsMoney
 	{
 		return $this->getDownPaymentType() == self::DOWN_PAYMENT_OVER_CONTRACT;
 	}
-	public function isFreeDownPayment()
-	{
-		return $this->getDownPaymentType() == self::DOWN_PAYMENT_GENERAL;
-	}
-	
 	public function getContractName()
 	{
 		return $this->contract ? $this->contract->getName() : '-';
@@ -268,6 +263,10 @@ trait IsMoney
 	public function isGeneralDownPayment()
 	{
 		return $this->isDownPayment() && $this->getDownPaymentType() == self::DOWN_PAYMENT_GENERAL;
+	}
+	public function isSettlementOfOpeningBalance()
+	{
+		return $this->isDownPayment() && $this->getDownPaymentType() == self::SETTLEMENT_OF_OPENING_BALANCE;
 	}
 	public function isOverContractDownPayment()
 	{

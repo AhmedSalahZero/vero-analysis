@@ -1241,6 +1241,7 @@ Route::middleware([])->group(function () {
                     // Providers Two Dimensional Breakdown
                     Route::post('/ProvidersTwoDimensionalBreakdown', 'Analysis\SalesGathering\ProvidersTwodimensionalSalesBreakdownAgainstAnalysisReport@result')->name('ProvidersTwoDimensionalBreakdown.result');
                     Route::get('/get-customers-from-currencies/{modelType}', 'AgingController@getCustomersFromBusinessUnitsAndCurrencies')->name('get.customers.or.suppliers.from.business.units.currencies');
+                    Route::get('/get-customers-for-settlement-of-opening-balance', 'MoneyReceivedController@getCustomersWithOpeningBalance')->name('get.customers.of.opening-balance');
                     //########### Sales Trend Analysis Links +   Average Prices +  Breakdown ############
                     // For [Zone , Sales Channels , Categories , Products , Product Items , Branches , Business Sectors ,Sales Persons]
 					Route::get('products-bundling','Analysis\SalesGathering\ProductsAgainstAnalysisReport@viewBundlingReport')->name('view.products.bundling');

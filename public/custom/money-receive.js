@@ -177,8 +177,6 @@ $(document).on('change', 'select.ajax-get-invoice-numbers', function () {
 	const companyId = $('body').attr('data-current-company-id')
 	const lang = $('body').attr('data-lang')
 	const url = '/' + lang + '/' + companyId + '/money-received/get-invoice-numbers/' + customerInvoiceId + '/' + currency
-	console.log('customer id ',customerInvoiceId);
-	
 	if (customerInvoiceId) {
 		$.ajax({
 			url,

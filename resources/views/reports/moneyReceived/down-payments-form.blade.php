@@ -100,7 +100,8 @@ use App\Models\Partner;
                                 <div class="input-group date">
                                     <select required name="down_payment_type" id="down_payment_type" class="form-control ">
                                         <option @if(isset($model) && $model->isDownPaymentOverContract() ) selected @endif value="{{ MoneyReceived::DOWN_PAYMENT_OVER_CONTRACT }}">{{__('Contract Down Payment')}}</option>
-                                        <option @if(isset($model) && $model->isFreeDownPayment() ) selected @endif value="{{ MoneyReceived::DOWN_PAYMENT_GENERAL }}">{{__('General Down Payment')}}</option>
+                                        <option @if(isset($model) && $model->isGeneralDownPayment() ) selected @endif value="{{ MoneyReceived::DOWN_PAYMENT_GENERAL }}">{{__('General Down Payment')}}</option>
+                                        <option @if(isset($model) && $model->isSettlementOfOpeningBalance() ) selected @endif value="{{ MoneyReceived::SETTLEMENT_OF_OPENING_BALANCE }}">{{__('Settlement Of Opening Balance')}}</option>
                                     </select>
                                 </div>
                             </div>
@@ -877,11 +878,49 @@ use App\Models\Partner;
     })
     $(document).on('change', '#down_payment_type', function() {
         const val = $(this).val();
+	
+		if(val == 'settlement-of-opening-balance'){
+			$.ajax({
+				data:{
+					type:val
+				},
+			url:"{{ route('get.customers.of.opening-balance',['company'=>$company->id]) }}",
+			type:'get'
+		}).then(function(res){
+			let customersOptions = '';
+			for (var customerName in res.customerInvoices){
+				var customerId = res.customerInvoices[customerName];
+				customersOptions += ` <option value="${customerId}">${customerName}</option> `
+			}
+			$('select#customer_name').selectpicker('destroy');
+			$('select#customer_name').empty().append(customersOptions)
+			$('select#customer_name').selectpicker("refresh")
+		})
+		}else{
+			$.ajax({
+				data:{
+					type:val
+				},
+			url:"{{ route('get.customers.of.opening-balance',['company'=>$company->id]) }}",
+			type:'get'
+		}).then(function(res){
+			let customersOptions = '';
+			for (var customerName in res.customerInvoices){
+				var customerId = res.customerInvoices[customerName];
+				customersOptions += ` <option value="${customerId}">${customerName}</option> `
+			}
+			console.log(customersOptions)
+			$('select#customer_name').selectpicker('destroy');
+			$('select#customer_name').empty().append(customersOptions)
+			$('select#customer_name').selectpicker("refresh")
+		})
+		}
         if (val != 'over_contract') {
             $('.contract-id-div').hide();
             $('.down-payment-id').hide();
             $('#settlement-card-id').hide();
             $('#invoice-currency-div').hide();
+			
         } else {
             $('.contract-id-div').show();
             $('.down-payment-id').show();
