@@ -3,25 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreOpeningBalanceRequest;
-use App\Models\AccountType;
 use App\Models\Bank;
-use App\Models\Branch;
-use App\Models\CashInSafeStatement;
-use App\Models\Cheque;
 use App\Models\Company;
-use App\Models\FinancialInstitution;
-use App\Models\MoneyPayment;
-use App\Models\MoneyReceived;
-use App\Models\OpeningBalance;
 use App\Models\Partner;
-use App\Models\PayableCheque;
 use App\Models\SupplierOpeningBalance;
 use App\Traits\GeneralFunctions;
 use App\Traits\Models\HasDebitStatements;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
-class CustomerOpeningBalancesController
+class SupplierOpeningBalancesController
 {
     use GeneralFunctions;
     use HasDebitStatements;

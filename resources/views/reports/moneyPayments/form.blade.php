@@ -92,7 +92,6 @@ $selectedBanks = [];
 <div class="row">
     <div class="col-md-12">
         <!--begin::Portlet-->
-
         <form method="post" action="{{ isset($model) ?  route('update.money.payment',['company'=>$company->id,'moneyPayment'=>$model->id]) :route('store.money.payment',['company'=>$company->id]) }}" class="kt-form kt-form--label-right">
             <input id="js-in-edit-mode" type="hidden" name="in_edit_mode" value="{{ isset($model) ? 1 : 0 }}">
             <input id="js-money-payment-id" type="hidden" name="money_payment_id" value="{{ isset($model) ? $model->id : 0 }}">
@@ -1007,6 +1006,7 @@ $selectedBanks = [];
 
 </script>
 <script>
+
 		$(document).on('change','.balance-date',function(){
 				$('select.js-account-number').trigger('change');
 				$('select#branch-id,select#receiving-currency-id').trigger('change');

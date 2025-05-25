@@ -1,8 +1,8 @@
 <?php
 
 namespace App\Models;
-
 use App\Models\FullySecuredOverdraft;
+use App\Services\Api\InternalMoneyTransfer as OdooInternalMoneyTransfer;
 use App\Traits\HasBasicStoreRequest;
 use App\Traits\Models\HasUserComment;
 use Carbon\Carbon;
@@ -274,6 +274,7 @@ class BuyOrSellCurrency extends Model
 	}
     public function deleteRelations()
     {
+		$this->deleteOdoo();
         $this->cleanOverdraftBankStatements->each(function (CleanOverdraftBankStatement $cleanOverdraftBankStatement) {
 			$cleanOverdraftBankStatement->delete();
 		});
@@ -453,4 +454,19 @@ class BuyOrSellCurrency extends Model
 	{
 		return $this->cheque_number ; 
 	}
+	public function deleteOdoo()
+	{
+		
+		$company = $this->company;
+		if($company->hasOdooIntegrationCredentials()){
+			$internalMoneyTransferService = (new OdooInternalMoneyTransfer($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId()));
+			if($this->odoo_inbound_payment_id){
+				$internalMoneyTransferService->cancelMoneyTransferPayment($this->odoo_inbound_payment_id);
+			}
+			if($this->odoo_outbound_payment_id){
+				$internalMoneyTransferService->cancelMoneyTransferPayment($this->odoo_outbound_payment_id);
+			}	
+		}
+	}
+	
 }

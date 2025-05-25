@@ -1223,5 +1223,8 @@
 "Limit Update":"تحديث الحد",
 "TD Amount":"قيمة الوديعة",
 "TD Interest Amount":"قيمة فؤائد الوديعة",
-"TD Break Fees Amount":"مصاريف كسر الوديعة"
+"TD Break Fees Amount":"مصاريف كسر الوديعة",
+"Opening Balance Settlement - Cash Payment To :name":"Opening Balance Settlement - Cash Payment To :name",
+"General Down Payment - Cash Payment To :name":"General Down Payment - Cash Payment To :name",
+"Down Payment - Cash Payment To :name [ :contractName ] [ :contractCode ]":"Down Payment - Cash Payment To :name [ :contractName ] [ :contractCode ]"
 }

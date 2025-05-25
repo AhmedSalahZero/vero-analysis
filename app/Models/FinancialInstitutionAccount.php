@@ -22,7 +22,10 @@ class FinancialInstitutionAccount extends Model
     {
         return $this->belongsTo(FinancialInstitution::class, 'financial_institution_id', 'id');
     }
-
+	public function getFinancialInstitutionId():int
+	{
+		return $this->financialInstitution->id; 
+	}
 	/**
 	 * * رقم الحساب ( رقم الفيزا مثلا)
 	 */

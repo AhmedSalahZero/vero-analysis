@@ -1336,6 +1336,73 @@
                     </div>
                 </div>
 				
+				<div class="modal fade send-modal read-expenses-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                    <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+                        <form action="<?php echo e(route('read-odoo-expenses',['company'=>$company->id])); ?>" class="modal-content" method="post">
+
+
+                            <?php echo csrf_field(); ?>
+                            <div class="modal-header">
+                                <h5 class="modal-title" style="color:#0741A5 !important" id="exampleModalLongTitle"><?php echo e(__('Read Expenses')); ?></h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="customize-elements">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+
+                                                <th class="text-center"> <?php echo e(__('From Date')); ?> </th>
+                                                <th class="text-center"> <?php echo e(__('To Date')); ?> </th>
+
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+
+
+
+                                            <tr>
+
+
+                                                <td>
+
+                                                    
+                                                    <label for="odoo-send-start-date" class="text-nowrap mr-3"><?php echo e(__('Start Date')); ?></label>
+                                                    <input id="odoo-send-start-date" type="date" value="<?php echo e(now()->format('Y-m-d')); ?>" class="form-control" name="odoo_start_date">
+                                                    
+
+                                                </td>
+
+                                                <td>
+
+                                                    
+                                                    <label for="odoo-send-end-date" class="text-nowrap mr-3"><?php echo e(__('End Date')); ?></label>
+                                                    <input id="odoo-send-end-date" type="date" value="<?php echo e(now()->format('Y-m-d')); ?>" class="form-control" name="odoo_end_date">
+                                                    
+
+                                                </td>
+
+
+
+
+
+                                            </tr>
+
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn  btn-primary "><?php echo e(__('Submit')); ?></button>
+                                <button type="button" class="btn btn-primary" data-dismiss="modal"><?php echo e(__('Close')); ?></button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+				
 
                 <?php endif; ?>
                 <!-- end:: Header -->
@@ -2334,7 +2401,12 @@
             e.preventDefault();
             $('.send-invoices-modal').modal('show');
         })
-
+		
+		 $(document).on('click', '[data-show-notification-modal="read-expenses-modal"]', function(e) {
+            e.preventDefault();
+            $('.read-expenses-modal').modal('show');
+        })
+		
     </script>
 
 </body>

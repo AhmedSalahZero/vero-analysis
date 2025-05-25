@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Models\FullySecuredOverdraft;
 use App\Services\Api\InternalMoneyTransfer as OdooInternalMoneyTransfer;
-use App\Services\Api\OdooService;
 use App\Traits\HasBasicStoreRequest;
 use App\Traits\HasCompany;
 use App\Traits\Models\HasUserComment;

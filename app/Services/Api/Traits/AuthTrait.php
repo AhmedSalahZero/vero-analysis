@@ -1,6 +1,7 @@
 <?php 
 namespace App\Services\Api\Traits;
 use Exception;
+use Illuminate\Support\Facades\Log;
 use ripcord;
 
 trait AuthTrait 
@@ -49,11 +50,34 @@ trait AuthTrait
             $args
         );
         if (isset($result['faultCode'])) {
-            // throw new \Exception($result['faultString']);
+            throw new \Exception($result['faultString']);
 			return ;
         }
         return $result;
     }
+	
+// public function fetchData(string $modelName, array $fields = [], array $filters = [[]], string $order = '', int $limit = 0)
+//     {
+
+//             $searchKwargs = [];
+//             if (!empty($order)) {
+//                 $searchKwargs['order'] = $order;
+//             }
+//             if ($limit > 0) {
+//                 $searchKwargs['limit'] = $limit;
+//             }
+
+//             $ids = $this->execute($modelName, 'search', $filters, $searchKwargs);
+//             if (empty($ids)) {
+//                 return [];
+//             }
+//             $readKwargs = ['fields' => $fields];
+// 			dd($readKwargs);
+//             $records = $this->execute($modelName, 'read', [$ids], $readKwargs);
+//             return $records;
+       
+//     }
+	
 	public function fetchData(string $modelName ,array $fields = [],  array $filters = [[]]  )
 	{
 		$ids=$this->models->execute_kw($this->db, $this->uid, $this->password, $modelName, 'search',$filters );
@@ -72,7 +96,6 @@ trait AuthTrait
                 ['name', 'ttype', 'selection', 'relation', 'required', 'domain'],
                 // ['limit' => 1]
             ]);
-			dd($fields);
             if (empty($fields)) {
                 throw new Exception("Field {$fieldName} not found in model {$modelName}");
             }
@@ -178,4 +201,5 @@ trait AuthTrait
             throw new Exception("Failed to fetch field values: " . $e->getMessage());
         }
     }
+	
 }

@@ -71,6 +71,15 @@ class MoneyPayment extends Model
 			return __('Payable Cheque To :name With Number [:number ] Paid Invoices [ :numbers ] [ :currency ]',['name'=>$supplierName,'number'=>$chequeNumber,'numbers'=>$paidInvoiceNumbers,'currency'=>$moneyPayment->getCurrency()],$lang) ;
 		}
 		if($moneyPayment->isCashPayment()){
+			if($moneyPayment->isGeneralDownPayment()){
+				return __('General Down Payment - Cash Payment 	:name',['name'=>$supplierName],$lang) ;
+			}
+			if($moneyPayment->isSettlementOfOpeningBalance()){
+				return __('Opening Balance Settlement - Cash Payment :name',['name'=>$supplierName],$lang) ;
+			}
+			if($moneyPayment->isOverContractDownPayment()){
+				return __('Down Payment - Cash Payment :name [ :contractName ] [ :contractCode ]',['name'=>$supplierName,'contractName'=>$moneyPayment->getContractName(),'contractCode'=>$moneyPayment->getContractCode()],$lang) ;
+			}
 			
 			if($moneyPayment->isInvoiceSettlementWithDownPayment()){
 				return __('Cash To :name Settled Invoices [ :numbers ] [ :currency ] | Down Payment - [ :contractName ] [ :contractCode ]',[
@@ -82,20 +91,19 @@ class MoneyPayment extends Model
 				]);
 			}
 			if($moneyPayment->getPartnerType()!='is_supplier'){
-				return __('Cash Payment To :name [ :partnerType ]',['name'=>$supplierName,'partnerType'=>$moneyPayment->getPartnerTypeFormatted()],$lang);
+				return __('Cash Payment :name [ :partnerType ]',['name'=>$supplierName,'partnerType'=>$moneyPayment->getPartnerTypeFormatted()],$lang);
 			}
-			return __('Cash Payment To :name Paid Invoices [ :numbers ]',['name'=>$supplierName,'numbers'=>$paidInvoiceNumbers],$lang) ;
+			return __('Cash Payment :name Paid Invoices [ :numbers ]',['name'=>$supplierName,'numbers'=>$paidInvoiceNumbers],$lang) ;
 		}
 		if($moneyPayment->isOutgoingTransfer()){
 			if($moneyPayment->getPartnerType()!='is_supplier'){
 				return __('Outgoing Transfer To :name [ :partnerType ]',['name'=>$supplierName,'partnerType'=>$moneyPayment->getPartnerTypeFormatted()],$lang);
 			}
-			
 			if($moneyPayment->isGeneralDownPayment()){
 				return __('General Down Payment - Outgoing Transfer :name',['name'=>$supplierName],$lang) ;
 			}
 			if($moneyPayment->isSettlementOfOpeningBalance()){
-				return __('Opening Balance <Settlement></Settlement> - Outgoing Transfer :name',['name'=>$supplierName],$lang) ;
+				return __('Opening Balance Settlement - Outgoing Transfer :name',['name'=>$supplierName],$lang) ;
 			}
 			if($moneyPayment->isOverContractDownPayment()){
 				return __('Down Payment - Outgoing Transfer :name [ :contractName ] [ :contractCode ]',['name'=>$supplierName,'contractName'=>$moneyPayment->getContractName(),'contractCode'=>$moneyPayment->getContractCode()],$lang) ;

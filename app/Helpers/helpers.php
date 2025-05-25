@@ -6744,6 +6744,12 @@ function getHeaderMenu($currentCompany = null)
 					'show'=>$user->can('view cash expenses'),
 					'submenu'=>[]
 				],
+				[
+					'title'=>__('Approved Expenses'),
+					'link'=>route('odoo-expenses.index', ['company'=>$companyId]),
+					'show'=>$company->hasOdooIntegrationCredentials(),
+					'submenu'=>[]
+				],
 				
 				[
 					'title'=>__('LC Settlement Internal Transfer'),
@@ -6786,9 +6792,15 @@ function getHeaderMenu($currentCompany = null)
 						'link'=>'#',
 						'show'=>true,
 						'data-show-notification-modal'=>'send-invoices-modal',
-						],
-						
-					]
+					],
+					[
+						'title'=>__('Read Expenses'),
+						'link'=>'#',
+						'show'=>true,
+						'data-show-notification-modal'=>'read-expenses-modal',
+					],
+					],
+					
 				],
 				
 						
@@ -6810,6 +6822,11 @@ function getHeaderMenu($currentCompany = null)
 						[
 							'title'=>__('Customers Opening Balance'),
 							'link'=>route('customers-opening-balance.index', ['company'=>$companyId]),
+							'show'=>$canUpdateCashAndChequesOpeningBalances,
+						],
+						[
+							'title'=>__('Suppliers Opening Balance'),
+							'link'=>route('suppliers-opening-balance.index', ['company'=>$companyId]),
 							'show'=>$canUpdateCashAndChequesOpeningBalances,
 						],
 		

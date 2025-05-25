@@ -181,7 +181,10 @@ class Company extends Model implements HasMedia
 	{
 		return $this->hasOne(CustomerOpeningBalance::class,'company_id');
 	}
-	
+	public function supplierOpeningBalance()
+	{
+		return $this->hasOne(SupplierOpeningBalance::class,'company_id');
+	}
     // public function lgOpeningBalance()
 	// {
 	// 	return $this->hasOne(LgOpeningBalance::class,'company_id');
@@ -667,5 +670,9 @@ class Company extends Model implements HasMedia
 
 		DB::table('cash_projections')
 		->where('cashflow_report_id','=',0)->where('company_id',$this->id)->delete();
+	}
+	public function odooApprovedExpenses():HasMany
+	{
+		return $this->hasMany(OdooExpense::class,'company_id','id');
 	}
 }

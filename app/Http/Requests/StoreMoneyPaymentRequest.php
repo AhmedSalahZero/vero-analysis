@@ -74,8 +74,6 @@ class StoreMoneyPaymentRequest extends FormRequest
 			$financialInstitution = FinancialInstitution::find($financialInstitutionId);
 			$openingBalanceDate =$financialInstitution->getOpeningBalanceForAccount($accountTypeId,$accountNumber); 
 		}
-		
-	
         return [
 			'supplier_id'=>'required',
 			'type'=>'required',

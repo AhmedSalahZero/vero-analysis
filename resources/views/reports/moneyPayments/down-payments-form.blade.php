@@ -72,7 +72,8 @@ $selectedBanks = [];
 
     <input type="hidden" name="current_cheque_id" value="{{ isset($model) && $model->payableCheque ? $model->payableCheque->id : 0 }}">
 	 <input type="hidden" name="is_down_payment" id="is-down-payment-id" value="1">
-    <input id="js-money-payment-id" type="hidden" name="money_received_id" value="{{ isset($model) ? $model->id : 0 }}">
+    <input id="js-money-payment-id" type="hidden" name="money_payment_id" value="{{ isset($model) ? $model->id : 0 }}">
+	  <input type="hidden" name="cash_id" value="{{ isset($model) && $model->cashPayment ? $model->cashPayment->id : 0 }}">
     <input type="hidden" id="ajax-invoice-item" data-single-model="{{ $singleModel ? 1 : 0 }}" value="{{ $singleModel ? $singleModel : 0 }}">
     <input id="js-down-payment-id" type="hidden" name="down_payment_id" value="{{ isset($model) ? $model->id : 0 }}">
 	@if(isset($model))
@@ -277,20 +278,30 @@ $selectedBanks = [];
     {{-- Cash In Safe Information--}}
     <div class="kt-portlet js-section-parent hidden" id="{{ MoneyPayment::CASH_PAYMENT}}">
         <div class="kt-portlet__head">
-            <div class="kt-portlet__head-label">
+            <div class="kt-portlet__head-label flex-1">
                 <h3 class="kt-portlet__head-title head-title text-primary">
                     {{__('Cash Payment Information')}}
                 </h3>
+				
+				
+				<div class=" flex-1 d-flex justify-content-end pt-3">
+                            <div class="col-md-3 mb-3">
+                                <label>{{__('Balance')}} <span class="balance-date-js"></span> </label>
+                                <div class="kt-input-icon">
+                                    <input value="0" type="text" disabled class="form-control cash-balance-js" data-type="{{  MoneyPayment::PAYABLE_CHEQUE }}" placeholder="{{__('Account Balance')}}">
+                                </div>
+                            </div>
+                 </div>
             </div>
         </div>
         <div class="kt-portlet__body">
             <div class="form-group">
                 <div class="row">
                     <div class="col-md-5 width-45 ">
-                        <label>{{__('Select Delivery Branch')}} @include('star')</label>
+                        <label>{{__('Delivery Branch')}} @include('star')</label>
                         <div class="kt-input-icon">
                             <div class="input-group date">
-                                <select name="delivery_branch_id" class="form-control">
+                                <select id="branch-id" name="delivery_branch_id" class="form-control">
                                     <option value="-1">{{__('Select Branch')}}</option>
                                     @foreach($selectedBranches as $branchId=>$branchName)
                                     <option value="{{ $branchId }}" {{ isset($model) && $model->getCashPaymentBranchId() == $branchId ? 'selected' : '' }}>{{ $branchName }}</option>
@@ -336,10 +347,27 @@ $selectedBanks = [];
     {{-- Cheques Information--}}
     <div class="kt-portlet js-section-parent hidden" id="{{ MoneyPayment::PAYABLE_CHEQUE }}">
         <div class="kt-portlet__head">
-            <div class="kt-portlet__head-label">
+            <div class="kt-portlet__head-label flex-1">
                 <h3 class="kt-portlet__head-title head-title text-primary">
                     {{__('Payable Cheque Information')}}
                 </h3>
+				
+				<div class=" flex-1 d-flex justify-content-end pt-3">
+                            <div class="col-md-3 mb-3">
+                                <label>{{__('Balance')}} <span class="balance-date-js"></span> </label>
+                                <div class="kt-input-icon">
+                                    <input value="0" type="text" disabled class="form-control balance-js" placeholder="{{__('Account Balance')}}">
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label>{{__('Net Balance')}} <span class="net-balance-date-js"></span> </label>
+                                <div class="kt-input-icon">
+                                    <input value="0" type="text" disabled class="form-control net-balance-js" placeholder="{{__('Net Balance')}}">
+                                    {{-- <x-tool-tip title="{{__('Kash Vero')}}" /> --}}
+                                </div>
+                            </div>
+                        </div>
+						
             </div>
         </div>
 
@@ -351,7 +379,7 @@ $selectedBanks = [];
                         <div class="kt-input-icon">
                             <div class="input-group date">
 
-                                <select js-when-change-trigger-change-account-type data-financial-institution-id name="delivery_bank_id[{{ MoneyPayment::PAYABLE_CHEQUE  }}]" class="form-control ">
+                                <select js-when-change-trigger-change-account-type data-financial-institution-id name="delivery_bank_id[{{ MoneyPayment::PAYABLE_CHEQUE  }}]" class="form-control financial-institution-id">
                                     @foreach($financialInstitutionBanks as $index=>$financialInstitutionBank)
                                     <option value="{{ $financialInstitutionBank->id }}" {{ isset($model) && $model->getPayableChequePaymentBankId() == $financialInstitutionBank->id ? 'selected' : '' }}>{{ $financialInstitutionBank->getName() }}</option>
                                     @endforeach
@@ -442,10 +470,27 @@ $selectedBanks = [];
     {{-- Outgoing Transfer Information--}}
     <div class="kt-portlet js-section-parent hidden" id="{{ MoneyPayment::OUTGOING_TRANSFER }}">
         <div class="kt-portlet__head">
-            <div class="kt-portlet__head-label">
+            <div class="kt-portlet__head-label flex-1">
                 <h3 class="kt-portlet__head-title head-title text-primary">
                     {{__('Outgoing Transfer Information')}}
                 </h3>
+				
+				   <div class=" flex-1 d-flex justify-content-end pt-3">
+                    <div class="col-md-3 mb-3">
+                        <label>{{__('Balance')}} <span class="balance-date-js"></span> </label>
+                        <div class="kt-input-icon">
+                            <input value="0" type="text" disabled class="form-control balance-js" data-type="{{  MoneyPayment::OUTGOING_TRANSFER }}" placeholder="{{__('Account Balance')}}">
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label>{{__('Net Balance')}} <span class="net-balance-date-js"></span> </label>
+                        <div class="kt-input-icon">
+                            <input value="0" type="text" disabled class="form-control net-balance-js" placeholder="{{__('Net Balance')}}">
+                            {{-- <x-tool-tip title="{{__('Kash Vero')}}" /> --}}
+                        </div>
+                    </div>
+                </div>
+				
             </div>
         </div>
 
@@ -457,7 +502,7 @@ $selectedBanks = [];
                         <div class="kt-input-icon">
                             <div class="input-group date">
 
-                                <select js-when-change-trigger-change-account-type data-financial-institution-id name="delivery_bank_id[{{ MoneyPayment::OUTGOING_TRANSFER }}]" class="form-control ">
+                                <select js-when-change-trigger-change-account-type data-financial-institution-id name="delivery_bank_id[{{ MoneyPayment::OUTGOING_TRANSFER }}]" class="form-control financial-institution-id">
                                     @foreach($financialInstitutionBanks as $index=>$financialInstitutionBank)
                                     <option value="{{ $financialInstitutionBank->id }}" {{ isset($model) && $model->getOutgoingTransferDeliveryBankId() == $financialInstitutionBank->id ? 'selected' : '' }}>{{ $financialInstitutionBank->getName() }}</option>
                                     @endforeach
@@ -702,6 +747,73 @@ $selectedBanks = [];
 
 <script>
    
+		$(document).on('change','.balance-date',function(){
+				$('select.js-account-number').trigger('change');
+				$('select#branch-id,select#receiving-currency-id').trigger('change');
+			})
+			
+			 $(document).on('change', 'select#branch-id,select#receiving-currency-id', function() {
+        const branchId = $('select#branch-id').val();
+        const currencyName = $('select#receiving-currency-id').val();
+		const modelId = $('#js-money-payment-id').val();
+		const modelType = 'MoneyPayment';
+		const balanceDate = $('.balance-date').val();
+		// const editType = $('#type').val();
+		//let additionalBalanceInEditMode = $('#additional-balance-amount-'+editType).val();
+		//additionalBalanceInEditMode = additionalBalanceInEditMode == undefined ? 0 : additionalBalanceInEditMode;
+        if (branchId != '-1') {
+            $.ajax({
+                url: "{{ route('get.current.end.balance.of.cash.in.safe.statement',['company'=>$company->id]) }}"
+                , data: {
+                    branchId
+                    , currencyName,
+					modelId,
+					modelType,
+					balanceDate
+					//,additionalBalanceInEditMode
+                }
+                , success: function(res) {
+                    const endBalance = res.end_balance;
+                    $('.cash-balance-js').val(number_format(endBalance))
+                }
+            })
+        }
+    })
+	
+			
+    $(document).on('change', '.js-account-number', function() {
+        const parent = $(this).closest('.js-section-parent');
+        const financialInstitutionId = parent.find('select.financial-institution-id').val()
+        const accountNumber = $(this).val();
+        const accountType = parent.find('select.js-update-account-number-based-on-account-type').val();
+		const modelId = $('#js-money-payment-id').val();
+		const modelType = 'MoneyPayment';
+		const balanceDate = $('.balance-date').val();
+				
+        $.ajax({
+            url: "{{ route('update.balance.and.net.balance.based.on.account.number',['company'=>$company->id]) }}"
+            , data: {
+                accountNumber
+                , accountType
+                , financialInstitutionId,
+				modelType,
+				modelId,
+				balanceDate
+            }
+            , type: "get"
+            , success: function(res) {
+                if (res.balance_date) {
+                    $(parent).find('.balance-date-js').html('[ ' + res.balance_date + ' ]')
+                }
+                if (res.net_balance_date) {
+                    $(parent).find('.net-balance-date-js').html('[ ' + res.net_balance_date + ' ]')
+                }
+                $(parent).find('.net-balance-js').val(number_format(res.net_balance))
+                $(parent).find('.balance-js').val(number_format(res.balance))
+
+            }
+        })
+    })
     $(function() {
         $('#type').trigger('change');
     })

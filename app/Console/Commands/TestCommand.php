@@ -71,6 +71,10 @@ class TestCommand extends Command
 	{
 		$company= Company::find(138);
 		$odooService = new OdooService($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId());
+		$accountJournal = $odooService->fetchData('account.account',[],[[['id','=',239]]])[0];
+		dd($accountJournal);
+		dd($odooService->fetchData('account.journal',[],[[['id','=',19]]]));
+		
 		dd($odooService->getPartners('2010-01-01','2026-12-01',138));
 		// $odooService = new OdooService();
 		$odoo = new ExpenseService($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId());

@@ -610,6 +610,7 @@ Route::middleware([])->group(function () {
 				 Route::post('add-new-partner/{type}','AddNewCustomerController@addNew2')->name('add.new.partner.type');
 				 Route::resource('opening-balance', 'OpeningBalancesController');
 				 Route::resource('customers-opening-balance', 'CustomerOpeningBalancesController');
+				 Route::resource('suppliers-opening-balance', 'SupplierOpeningBalancesController');
 				
 				 
 				 Route::group(['prefix'=>'general-settings'],function(){
@@ -838,6 +839,11 @@ Route::middleware([])->group(function () {
 				 Route::get('financial-institutions/{financialInstitution}/medium-term-loan/{mediumTermLoan}/edit','MediumTermLoanController@edit')->name('loans.edit');
 				 Route::put('financial-institutions/{financialInstitution}/medium-term-loan/{mediumTermLoan}/update','MediumTermLoanController@update')->name('loans.update');
 				 Route::delete('financial-institutions/{financialInstitution}/medium-term-loan/{mediumTermLoan}/delete','MediumTermLoanController@destroy')->name('loans.destroy');
+				 
+				 
+				
+				 
+				 
 				 Route::get('loan-schedule-settlement/{loanSchedule}','MediumTermLoanController@viewLoanScheduleSettlement')->name('view.loan.schedule.settlements');
 				 Route::post('loan-schedule-settlements/{loanSchedule}','MediumTermLoanController@storeLoanScheduleSettlement')->name('store.loan.schedule.settlements');
 				 Route::get('edit-loan-schedule-settlement/{loanScheduleSettlement}','MediumTermLoanController@editLoanScheduleSettlement')->name('edit.loan.schedule.settlements');
@@ -1061,6 +1067,7 @@ Route::middleware([])->group(function () {
 					
 					Route::post('read-odoo-invoices','ReadOdooInvoices@handle')->name('read-odoo-invoices');
 					Route::post('send-odoo-collection-or-payments','SendOdooCollectionOrPayment@handle')->name('send-odoo-collection-or-payments');
+					Route::post('read-expenses','ReadOdooExpense@handle')->name('read-odoo-expenses');
 					
 					
                     Route::get('money-received', 'MoneyReceivedController@index')->name('view.money.receive');
@@ -1108,6 +1115,13 @@ Route::middleware([])->group(function () {
 					Route::get('get-current-end-balance-of-current-account','MoneyPaymentController@getCashInSafeStatementEndBalance')->name('get.current.end.balance.of.cash.in.safe.statement');
 					// cash expense
 					Route::get('get-exchange-rate-for-date-and-currencies','ForeignExchangeRateController@getExchangeRate');
+					
+					Route::get('odoo-approved-expenses','OdooExpensesController@index')->name('odoo-expenses.index');
+					// Route::get('odoo-approved-expenses/create','OdooExpensesController@create')->name('odoo-expenses.create');
+					Route::post('odoo-approved-expenses/mark-as-paid','OdooExpensesController@markAsPaid')->name('odoo-expenses.mark.as.paid');
+					// Route::get('odoo-approved-expenses/{odooExpense}/edit','OdooExpensesController@edit')->name('odoo-expenses.edit');
+					// Route::put('odoo-approved-expenses/{odooExpense}/update','OdooExpensesController@update')->name('odoo-expenses.update');
+					Route::delete('odoo-approved-expenses/{odooExpense}/delete','OdooExpensesController@destroy')->name('odoo-expenses.destroy');
 					
 					Route::get('cash-expense', 'CashExpenseController@index')->name('view.cash.expense');
                     Route::get('cash-expense/create/{model?}', 'CashExpenseController@create')->name('create.cash.expense');

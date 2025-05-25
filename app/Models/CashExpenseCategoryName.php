@@ -14,6 +14,10 @@ class CashExpenseCategoryName extends Model
 	{
 		return $this->belongsTo(CashExpenseCategory::class,'cash_expense_category_id','id');
 	}
+	public static function findByOdooChatOfAccountNumber(int $companyId , string $code)
+	{
+		return self::where('company_id',$companyId)->where('odoo_chart_of_account_number',$code)->first();
+	}
 	public function getName()
 	{
 		return $this->name;
