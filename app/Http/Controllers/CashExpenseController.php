@@ -232,7 +232,7 @@ class CashExpenseController
 		$moneyType = $request->get('type');
 		$bankId = null;
 		$paymentBranchName = $request->get('delivery_branch_id') ;
-		$data = $request->only(['type','payment_date','currency','cash_expense_category_name_id','user_comment']);
+		$data = $request->only(['type','odoo_id','payment_date','currency','cash_expense_category_name_id','user_comment']);
 		$currencyName = $data['currency'];
 		$data['user_id'] = auth()->user()->id ;
 		$data['company_id'] = $company->id ;
@@ -300,22 +300,8 @@ class CashExpenseController
 		$deliveryBranchId = $relationData['delivery_branch_id'] ?? null ;
 		$cashExpense->handleCreditStatement($company->id , $bankId,$accountType,$accountNumber,$moneyType,$statementDate,$paidAmount,$deliveryBranchId,$currencyName);
 		$contracts = $request->get('contracts',[]) ;
-
-		if(count($contracts)){
-			foreach($contracts as $contractArr){
-				$currentContractId = $contractArr['contract_id'] ?? null ;
-			
-				$currentAmount = number_unformat($contractArr['amount'] ?? 0) ;
-				if($currentContractId && $currentAmount > 0){
-					$cashExpense->contracts()->attach(
-						$currentContractId,
-						['amount'=>$currentAmount],
-					);
-				}
-				
-			} 
-			
-		}
+		$cashExpense->saveAllocations($contracts);
+		
 		
 		$activeTab = $moneyType;
 		return response()->json([
@@ -332,17 +318,12 @@ class CashExpenseController
 		$currencies = getCurrencies();
 		$contractsRelationName = 'contracts' ;
 		$clientsWithContracts = Partner::onlyCompany($company->id)	->onlyCustomers()->onlyThatHaveContracts()->get();
-		
 		$cashExpenseCategories = CashExpenseCategory::where('company_id',$company->id)->get()->formattedForSelect(true,'getId','getName');
-		
-		// $isDownPayment = false; 
 		$viewName =  'reports.cashExpenses.form';
-		// $viewName =  'reports.cashExpenses.form';
 		$banks = Bank::pluck('view_name','id');
 		$selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
 		$accountTypes = AccountType::onlyCashAccounts()->get();
 		$financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
-
         return view($viewName,[
 			'banks'=>$banks,
 			'clientsWithContracts'=>$clientsWithContracts,
@@ -357,7 +338,37 @@ class CashExpenseController
 		]);
 
 	}
-
+	public function viewAllocation(Company $company , Request $request , cashExpense $cashExpense){
+		$currencies = getCurrencies();
+		$contractsRelationName = 'contracts' ;
+		$clientsWithContracts = Partner::onlyCompany($company->id)	->onlyCustomers()->onlyThatHaveContracts()->get();
+		$cashExpenseCategories = CashExpenseCategory::where('company_id',$company->id)->get()->formattedForSelect(true,'getId','getName');
+		$viewName =  'reports.cashExpenses.allocate_odoo_expense';
+		//	$banks = Bank::pluck('view_name','id');
+		//	$selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
+	//	$accountTypes = AccountType::onlyCashAccounts()->get();
+	//	$financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
+	return view($viewName,[
+			// 'banks'=>$banks,
+			'clientsWithContracts'=>$clientsWithContracts,
+			'contractsRelationName'=>$contractsRelationName,
+			'cashExpenseCategories'=>$cashExpenseCategories,
+			// 'selectedBranches'=>$selectedBranches,
+			// 'accountTypes'=>$accountTypes,
+			// 'financialInstitutionBanks'=>$financialInstitutionBanks,
+			'model'=>$cashExpense,
+			// 'singleModel'=>$supplierInvoiceId,
+			'currencies'=>$currencies
+		]); 
+	}
+	public function postAllocation(Company $company , Request $request , cashExpense $cashExpense){
+			$contracts = $request->get('contracts',[]) ;
+			$cashExpense->contracts()->detach();
+			$cashExpense->saveAllocations($contracts);
+			 return response()->json([
+			'redirectTo'=>route('odoo-expenses.index',['company'=>$company->id])
+		]);
+	}
 	public function update(Company $company , StoreCashExpenseRequest $request , cashExpense $cashExpense){
 		
 		$newType = $request->get('type');

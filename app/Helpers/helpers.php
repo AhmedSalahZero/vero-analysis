@@ -6794,7 +6794,7 @@ function getHeaderMenu($currentCompany = null)
 						'data-show-notification-modal'=>'send-invoices-modal',
 					],
 					[
-						'title'=>__('Read Expenses'),
+						'title'=>__('Read Approved Expenses'),
 						'link'=>'#',
 						'show'=>true,
 						'data-show-notification-modal'=>'read-expenses-modal',

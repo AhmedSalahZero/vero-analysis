@@ -38,9 +38,9 @@ use App\Models\OdooExpense ;
 
 <div class="kt-portlet kt-portlet--tabs">
     {{-- <x-back-to-bank-header-btn :create-permission-name="'create medium term loan'" :create-route="route('loans.create',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,OdooExpense::APPROVED])"></x-back-to-bank-header-btn> --}}
-	
-	
-	<div class="kt-portlet__body">
+
+
+    <div class="kt-portlet__body">
         <div class="tab-content  kt-margin-t-20">
 
             @php
@@ -50,7 +50,7 @@ use App\Models\OdooExpense ;
             <div class="tab-pane {{  !Request('active') || Request('active') == $currentType ?'active':'' }}" id="{{ $currentType }}" role="tabpanel">
                 <div class="kt-portlet kt-portlet--mobile">
                     <x-table-title.with-two-dates :type="$currentType" :title="__('Approved Odoo Expense')" :startDate="$filterDates[$currentType]['startDate']??''" :endDate="$filterDates[$currentType]['endDate']??''">
-                        <x-export-odoo-expenses   :search-fields="$searchFields[$currentType]" :money-received-type="$currentType" :has-search="1" :has-batch-collection="0" href="#" />
+                        <x-export-odoo-expenses :search-fields="$searchFields[$currentType]" :money-received-type="$currentType" :has-search="1" :has-batch-collection="0" href="#" />
                     </x-table-title.with-two-dates>
                     <div class="kt-portlet__body">
 
@@ -61,8 +61,11 @@ use App\Models\OdooExpense ;
                                     <th>{{ __('#') }}</th>
                                     <th>{{ __('Employee') }}</th>
                                     <th>{{ __('Name') }}</th>
+                                    <th>{{ __('Bank/Cash Name') }}</th>
+                                    <th>{{ __('Account Number') }}</th>
                                     <th>{{ __('Total') }}</th>
                                     <th>{{ __('Status') }}</th>
+                                    <th>{{ __('Payment') }}</th>
                                     {{-- <th>{{ __('Start Date') }}</th>
                                     <th>{{ __('End Date') }}</th>
                                     <th>{{ __('Currency') }}</th>
@@ -76,6 +79,7 @@ use App\Models\OdooExpense ;
                                 </tr>
                             </thead>
                             <tbody>
+                                {{-- {{ dd($models) }} --}}
                                 @foreach($models[$currentType] as $index=>$model)
                                 <tr>
                                     <td>
@@ -83,8 +87,11 @@ use App\Models\OdooExpense ;
                                     </td>
                                     <td class="text-nowrap">{{ $model->employee()->getName() }}</td>
                                     <td class="text-nowrap">{{ $model->getName() }}</td>
+                                    <td class="text-nowrap">{{ $model->getBankName() }}</td>
+                                    <td class="text-nowrap">{{ $model->getAccountNumber() }}</td>
                                     <td class="text-nowrap">{{ $model->getTotal() }}</td>
                                     <td class="text-nowrap">{{ $model->getState() }}</td>
+                                    <td class="text-nowrap">{{ $model->getPaymentStatus() }}</td>
                                     {{-- <td>{{ $model->getStartDateFormatted() }}</td>
                                     <td>{{ $model->getEndDateFormatted() }}</td>
                                     <td>{{ $model->getCurrencyFormatted() }}</td>
@@ -96,59 +103,64 @@ use App\Models\OdooExpense ;
                                     <td class="text-transform">{{ $model->getPaymentInstallmentIntervalFormatted() }}</td> --}}
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px;">
-										{{-- @if(hasAuthFor('create medium term loan')) --}}
+                                            {{-- @if(hasAuthFor('create medium term loan')) --}}
+                                            @if($model->getPaymentStatus() == 'not_paid')
                                             <a data-toggle="modal" data-target="#pay-modal{{ $model->id }}" type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="{{ __('Paid') }}" href="#"><i class="fa fa-dollar pl-2"></i> <i class="fa fa-dollar-sign ml-1 pr-2"></i> </a>
-											
-											  <div class="modal fade text-left" id="pay-modal{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                <div class="modal-dialog  modal-dialog-centered" role="document">
-                    <div class="modal-content">
-                        <form action="{{ route('odoo-expenses.mark.as.paid',['company'=>$company->id]) }}" method="post">
-						 @csrf
-							<input type="hidden" name="id" value="{{ $model->id }}">
-							{{-- <input type="hidden" name="odoo_id" value="{{ $model->getOdooId() }}"> --}}
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Mark As Paid') }}</h5>
-                                <button type="button" class="close" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="row mb-3">
-                                    <div class="col-md-12">
-									
-                                        <label>{{__('Payment Date')}}</label>
-                                        <div class="kt-input-icon">
-                                            <div class="input-group date">
-                                                <input required type="text" name="payment_date" value="{{ formatDateForDatePicker( now()->format('Y-m-d') ) }}" class="form-control" readonly placeholder="Select date" id="kt_datepicker_2" />
-                                                <div class="input-group-append">
-                                                    <span class="input-group-text">
-                                                        <i class="la la-calendar-check-o"></i>
-                                                    </span>
+                                            <div class="modal fade text-left" id="pay-modal{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                                <div class="modal-dialog  modal-dialog-centered" role="document">
+                                                    <div class="modal-content">
+                                                        <form action="{{ route('odoo-expenses.mark.as.paid',['company'=>$company->id]) }}" method="post">
+                                                            @csrf
+                                                            <input type="hidden" name="id" value="{{ $model->id }}">
+                                                            {{-- <input type="hidden" name="odoo_id" value="{{ $model->getOdooId() }}"> --}}
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Mark As Paid') }}</h5>
+                                                                <button type="button" class="close" aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <div class="row mb-3">
+                                                                    <div class="col-md-12">
+
+                                                                        <label>{{__('Payment Date')}}</label>
+                                                                        <div class="kt-input-icon">
+                                                                            <div class="input-group date">
+                                                                                <input required type="text" name="payment_date" value="{{ formatDateForDatePicker( now()->format('Y-m-d') ) }}" class="form-control" readonly placeholder="Select date" id="kt_datepicker_2" />
+                                                                                <div class="input-group-append">
+                                                                                    <span class="input-group-text">
+                                                                                        <i class="la la-calendar-check-o"></i>
+                                                                                    </span>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+
+                                                                </div>
+
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                                <button type="submit" class="btn btn-success">{{ __('Confirm') }}</button>
+                                                            </div>
+
+                                                        </form>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </div>
+											@elseif($model->cashExpense) 
+											<a type="button" class="btn btn-sm btn-brand btn-elevate btn-pill text-white"" title="{{ __('Allocate') }}" href="{{ route('cash.expense.allocate',['company'=>$company->id,'cashExpense'=>$model->cashExpense->id]) }}">
+												{{ __('Allocate') }}
+											</a> 
+											@endif
 
-
-                                </div>
-
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-success">{{ __('Confirm') }}</button>
-                            </div>
-
-                        </form>
-                    </div>
-                </div>
-            </div>
-			
-											{{-- @endif  --}}
-											{{-- @if(hasAuthFor('update medium term loan'))
-                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('loans.edit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'odooExpense'=>$model->id]) }}"><i class="fa fa-pen-alt"></i></a>
-											@endif  --}}
-											{{-- @if(hasAuthFor('delete medium term loan')) --}}
-                                            <a data-toggle="modal" data-target="#delete-expense-{{ $model->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
+                                            {{-- @endif  --}}
+                                            {{-- @if(hasAuthFor('update medium term loan'))
+                                             
+                                            @endif --}}
+                                            {{-- @if(hasAuthFor('delete medium term loan')) --}}
+                                            {{-- <a data-toggle="modal" data-target="#delete-expense-{{ $model->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
                                             <div class="modal fade" id="delete-expense-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                                     <div class="modal-content">
@@ -169,8 +181,8 @@ use App\Models\OdooExpense ;
                                                         </form>
                                                     </div>
                                                 </div>
-                                            </div>
-											{{-- @endif  --}}
+                                            </div> --}}
+                                            {{-- @endif  --}}
                                         </span>
                                     </td>
                                 </tr>

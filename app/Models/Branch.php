@@ -44,6 +44,10 @@ class Branch extends Model
 	{
 		return self::where('company_id',$companyId)->where('odoo_code',$code)->first()->id;
 	}
+	public static function getNameFromOdooCode(int $companyId , string $code)
+	{
+		return self::where('company_id',$companyId)->where('odoo_code',$code)->first()->name;
+	}
 	public function getCurrentEndBalance(int $companyId,?string $currency,$deliveryDate = null ):float
 	{
 		if(is_null($currency)){

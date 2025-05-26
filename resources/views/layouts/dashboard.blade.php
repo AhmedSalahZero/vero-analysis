@@ -1235,7 +1235,7 @@
 
                                                     {{-- <div class="col-md-3 d-flex align-items-center "> --}}
                                                     <label for="odoo-start-date" class="text-nowrap mr-3">{{ __('Start Date') }}</label>
-                                                    <input id="odoo-start-date" type="date" value="{{ now()->format('Y-m-d') }}" class="form-control" name="odoo_start_date">
+                                                    <input id="odoo-start-date" type="date" value="{{ now()->subMonths(6)->format('Y-m-d') }}" class="form-control" name="odoo_start_date">
                                                     {{-- </div> --}}
 
                                                 </td>
@@ -1303,7 +1303,7 @@
 
                                                     {{-- <div class="col-md-3 d-flex align-items-center "> --}}
                                                     <label for="odoo-send-start-date" class="text-nowrap mr-3">{{ __('Start Date') }}</label>
-                                                    <input id="odoo-send-start-date" type="date" value="{{ now()->format('Y-m-d') }}" class="form-control" name="odoo_start_date">
+                                                    <input id="odoo-send-start-date" type="date" value="{{ now()->subMonths(6)->format('Y-m-d') }}" class="form-control" name="odoo_start_date">
                                                     {{-- </div> --}}
 
                                                 </td>
@@ -1343,7 +1343,7 @@
 
                             @csrf
                             <div class="modal-header">
-                                <h5 class="modal-title" style="color:#0741A5 !important" id="exampleModalLongTitle">{{ __('Read Expenses') }}</h5>
+                                <h5 class="modal-title" style="color:#0741A5 !important" id="exampleModalLongTitle">{{ __('Read Approved Expenses') }}</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
@@ -1370,7 +1370,7 @@
 
                                                     {{-- <div class="col-md-3 d-flex align-items-center "> --}}
                                                     <label for="odoo-send-start-date" class="text-nowrap mr-3">{{ __('Start Date') }}</label>
-                                                    <input id="odoo-send-start-date" type="date" value="{{ now()->format('Y-m-d') }}" class="form-control" name="odoo_start_date">
+                                                    <input id="odoo-send-start-date" type="date" value="{{ now()->subMonths(6)->format('Y-m-d') }}" class="form-control" name="odoo_start_date">
                                                     {{-- </div> --}}
 
                                                 </td>

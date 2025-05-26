@@ -566,4 +566,22 @@ class CashExpense extends Model
 	         ||
 			 Request()->boolean('is_bank_charges');
 	}
+	public function saveAllocations(array $contracts)
+	{
+		if(count($contracts)){
+			foreach($contracts as $contractArr){
+				$currentContractId = $contractArr['contract_id'] ?? null ;
+			
+				$currentAmount = number_unformat($contractArr['amount'] ?? 0) ;
+				if($currentContractId && $currentAmount > 0){
+					$this->contracts()->attach(
+						$currentContractId,
+						['amount'=>$currentAmount],
+					);
+				}
+				
+			} 
+			
+		}
+	}
 }

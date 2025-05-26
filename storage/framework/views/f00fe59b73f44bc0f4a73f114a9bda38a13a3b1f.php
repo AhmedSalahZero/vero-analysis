@@ -1235,7 +1235,7 @@
 
                                                     
                                                     <label for="odoo-start-date" class="text-nowrap mr-3"><?php echo e(__('Start Date')); ?></label>
-                                                    <input id="odoo-start-date" type="date" value="<?php echo e(now()->format('Y-m-d')); ?>" class="form-control" name="odoo_start_date">
+                                                    <input id="odoo-start-date" type="date" value="<?php echo e(now()->subMonths(6)->format('Y-m-d')); ?>" class="form-control" name="odoo_start_date">
                                                     
 
                                                 </td>
@@ -1303,7 +1303,7 @@
 
                                                     
                                                     <label for="odoo-send-start-date" class="text-nowrap mr-3"><?php echo e(__('Start Date')); ?></label>
-                                                    <input id="odoo-send-start-date" type="date" value="<?php echo e(now()->format('Y-m-d')); ?>" class="form-control" name="odoo_start_date">
+                                                    <input id="odoo-send-start-date" type="date" value="<?php echo e(now()->subMonths(6)->format('Y-m-d')); ?>" class="form-control" name="odoo_start_date">
                                                     
 
                                                 </td>
@@ -1343,7 +1343,7 @@
 
                             <?php echo csrf_field(); ?>
                             <div class="modal-header">
-                                <h5 class="modal-title" style="color:#0741A5 !important" id="exampleModalLongTitle"><?php echo e(__('Read Expenses')); ?></h5>
+                                <h5 class="modal-title" style="color:#0741A5 !important" id="exampleModalLongTitle"><?php echo e(__('Read Approved Expenses')); ?></h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
@@ -1370,7 +1370,7 @@
 
                                                     
                                                     <label for="odoo-send-start-date" class="text-nowrap mr-3"><?php echo e(__('Start Date')); ?></label>
-                                                    <input id="odoo-send-start-date" type="date" value="<?php echo e(now()->format('Y-m-d')); ?>" class="form-control" name="odoo_start_date">
+                                                    <input id="odoo-send-start-date" type="date" value="<?php echo e(now()->subMonths(6)->format('Y-m-d')); ?>" class="form-control" name="odoo_start_date">
                                                     
 
                                                 </td>

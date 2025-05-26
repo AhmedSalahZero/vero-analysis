@@ -69,30 +69,10 @@ td{
     <div class="kt-portlet__head">
         <div class="kt-portlet__head-toolbar justify-content-between flex-grow-1">
             <ul class="nav nav-tabs nav-tabs-space-lg nav-tabs-line nav-tabs-bold nav-tabs-line-3x nav-tabs-line-brand" role="tablist">
-                <li class="nav-item">
-                    <a class="nav-link {{ !Request('active') || Request('active') == CashExpense::PAYABLE_CHEQUE ?'active':'' }}" data-toggle="tab" href="#{{ CashExpense::PAYABLE_CHEQUE }}" role="tab">
-                        <i class="fa fa-money-check-alt"></i> {{ __('Payable Cheques') }}
-                    </a>
-                </li>
-                {{-- <li class="nav-item">
-                    <a class="nav-link {{ Request('active') == CashExpense::CHEQUE_UNDER_COLLECTION ? 'active':''  }}" data-toggle="tab" href="#{{ CashExpense::CHEQUE_UNDER_COLLECTION }}" role="tab">
-                        <i class="fa fa-money-check-alt"></i> {{ __('Cheques Under Collection') }}
-                    </a>
-                </li> --}}
-                {{-- <li class="nav-item">
-                    <a class="nav-link {{ Request('active') == CashExpense::CHEQUE_COLLECTED ? 'active':''  }}" data-toggle="tab" href="#{{ CashExpense::CHEQUE_COLLECTED }}" role="tab">
-                        <i class="fa fa-money-check-alt"></i> {{ __('Collected Cheques') }}
-                    </a>
-                </li> --}}
-                {{-- <li class="nav-item">
-                    <a class="nav-link {{  Request('active') == CashExpense::CHEQUE_REJECTED ?'active':'' }}" data-toggle="tab" href="#{{ CashExpense::CHEQUE_REJECTED }}" role="tab">
-                        <i class="fa fa-money-check-alt"></i> {{ __('Rejected Cheques') }}
-                    </a>
-                </li> --}}
-
+               
 
                 <li class="nav-item">
-                    <a class="nav-link {{ Request('active') == CashExpense::OUTGOING_TRANSFER ? 'active':''  }}" data-toggle="tab" href="#{{ CashExpense::OUTGOING_TRANSFER }}" role="tab">
+                    <a class="nav-link {{ !Request('active') || Request('active') == CashExpense::OUTGOING_TRANSFER ? 'active':''  }}" data-toggle="tab" href="#{{ CashExpense::OUTGOING_TRANSFER }}" role="tab">
                         <i class="fa fa-money-check-alt"></i>{{ __('Outgoing Transfer') }}
                     </a>
                 </li>
@@ -101,7 +81,11 @@ td{
                         <i class="fa fa-money-check-alt"></i>{{ __('Cash Payment') }}
                     </a>
                 </li>
-
+ 				<li class="nav-item">
+                    <a class="nav-link {{  Request('active') == CashExpense::PAYABLE_CHEQUE ?'active':'' }}" data-toggle="tab" href="#{{ CashExpense::PAYABLE_CHEQUE }}" role="tab">
+                        <i class="fa fa-money-check-alt"></i> {{ __('Payable Cheques') }}
+                    </a>
+                </li>
                 {{-- <li class="nav-item">
                     <a class="nav-link {{ Request('active') == CashExpense::CASH_IN_BANK ? 'active':''  }}" data-toggle="tab" href="#{{ CashExpense::CASH_IN_BANK }}" role="tab">
                         <i class="fa fa-money-check-alt"></i>{{ __('Bank Deposit') }}
@@ -109,14 +93,12 @@ td{
                 </li> --}}
 
             </ul>
-@if(auth()->user()->can('create cash expenses'))
+			@if(auth()->user()->can('create cash expenses'))
             <div class="flex-tabs">
 			<a href="{{route('create.cash.expense',['company'=>$company->id])}}" class="btn  btn-sm active-style btn-icon-sm align-self-center">
                 <i class="fas fa-plus"></i>
                 {{ __('Cash Expense') }}
             </a>
-			
-			  
 			</div>
 			@endif 
 
@@ -125,7 +107,7 @@ td{
     <div class="kt-portlet__body">
         <div class="tab-content  kt-margin-t-20">
             <!--Begin:: Tab Content-->
-            <div class="tab-pane {{ !Request('active') || Request('active') == CashExpense::PAYABLE_CHEQUE ?'active':'' }}" id="{{ CashExpense::PAYABLE_CHEQUE }}" role="tabpanel">
+            <div class="tab-pane {{   Request('active') == CashExpense::PAYABLE_CHEQUE ?'active':'' }}" id="{{ CashExpense::PAYABLE_CHEQUE }}" role="tabpanel">
                 <div class="kt-portlet kt-portlet--mobile">
                     <x-table-title.with-two-dates :type="CashExpense::PAYABLE_CHEQUE" :title="__('Payable Cheques')" :startDate="$filterDates[CashExpense::PAYABLE_CHEQUE]['startDate']??''" :endDate="$filterDates[CashExpense::PAYABLE_CHEQUE]['endDate']??''">
                         <x-export-cash-expense :route-redirect="route('view.cash.expense',['company'=>$company->id])" :route-action="route('cash.expense.payable.cheque.mark.as.paid',['company'=>$company->id])" :popup-title="__('Do You Want To Mark This Cheque / Cheques As Paid ?')" :account-types="$accountTypes" :financialInstitutionBanks="$financialInstitutionBanks" :search-fields="$payableChequesTableSearchFields" :cash-expense-type="CashExpense::PAYABLE_CHEQUE" :has-search="1" :has-batch-collection="1" :banks="$banks??[]" :selectedBanks="$selectedBanks" href="{{route('create.cash.expense',['company'=>$company->id])}}" />
@@ -244,7 +226,7 @@ td{
             <!--End:: Tab Content-->
 
             <!--Begin:: Tab Content-->
-            <div class="tab-pane {{ Request('active') == CashExpense::OUTGOING_TRANSFER ? 'active':''  }}" id="{{ CashExpense::OUTGOING_TRANSFER }}" role="tabpanel">
+            <div class="tab-pane {{ !Request('active') || Request('active') == CashExpense::OUTGOING_TRANSFER ? 'active':''  }}" id="{{ CashExpense::OUTGOING_TRANSFER }}" role="tabpanel">
                 <div class="kt-portlet kt-portlet--mobile">
 
                     <x-table-title.with-two-dates :type="CashExpense::OUTGOING_TRANSFER" :title="__('Outgoing Transfer')" :startDate="$filterDates[CashExpense::OUTGOING_TRANSFER]['startDate']??''" :endDate="$filterDates[CashExpense::OUTGOING_TRANSFER]['endDate']??''">

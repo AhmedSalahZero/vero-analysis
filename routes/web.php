@@ -1068,7 +1068,8 @@ Route::middleware([])->group(function () {
 					Route::post('read-odoo-invoices','ReadOdooInvoices@handle')->name('read-odoo-invoices');
 					Route::post('send-odoo-collection-or-payments','SendOdooCollectionOrPayment@handle')->name('send-odoo-collection-or-payments');
 					Route::post('read-expenses','ReadOdooExpense@handle')->name('read-odoo-expenses');
-					
+					 Route::get('allocate-expense/{cashExpense}', 'CashExpenseController@viewAllocation')->name('cash.expense.allocate');
+                    Route::put('allocate-expense/{cashExpense}', 'CashExpenseController@postAllocation')->name('allocate.odoo.cash.expense');
 					
                     Route::get('money-received', 'MoneyReceivedController@index')->name('view.money.receive');
                     Route::get('money-received/create/{model?}', 'MoneyReceivedController@create')->name('create.money.receive');
@@ -1127,6 +1128,7 @@ Route::middleware([])->group(function () {
                     Route::get('cash-expense/create/{model?}', 'CashExpenseController@create')->name('create.cash.expense');
                     Route::post('cash-expense/create', 'CashExpenseController@store')->name('store.cash.expense');
                     Route::get('cash-expense/edit/{cashExpense}', 'CashExpenseController@edit')->name('edit.cash.expense');
+                   
                     Route::put('cash-expense/update/{cashExpense}', 'CashExpenseController@update')->name('update.cash.expense');
                     Route::delete('cash-expense/delete/{cashExpense}', 'CashExpenseController@destroy')->name('delete.cash.expense');
 					Route::get('cash-expense/get-account-numbers-based-on-account-type/{accountType}/{currency}/{financialInstitutionId}', 'CashExpenseController@getAccountNumbersForAccountType'); // ajax request

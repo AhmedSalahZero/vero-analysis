@@ -27,11 +27,11 @@ class FinancialInstitutionAccountController
 		]);
 	}
 	public function update(Company $company , UpdateCurrentAccountRequest $request ,FinancialInstitution $financialInstitution , FinancialInstitutionAccount $financialInstitutionAccount){
-	
 		$currency = $request->get('currency',$financialInstitutionAccount->getCurrency());
 		$balanceDate = Carbon::make($request->get('balance_date'))->format('Y-m-d');
 		$financialInstitutionAccount->update([
 			'account_number'=>$request->get('account_number'),
+			'odoo_code'=>$request->get('odoo_code'),
 			'currency'=>$currency ,
 			'balance_amount'=>$request->get('balance_amount'),
 			'balance_date'=>$balanceDate,

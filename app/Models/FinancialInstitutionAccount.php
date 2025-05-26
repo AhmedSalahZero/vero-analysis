@@ -26,6 +26,10 @@ class FinancialInstitutionAccount extends Model
 	{
 		return $this->financialInstitution->id; 
 	}
+	public function getFinancialInstitutionName():string
+	{
+		return $this->financialInstitution->getName(); 
+	}
 	/**
 	 * * رقم الحساب ( رقم الفيزا مثلا)
 	 */

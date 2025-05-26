@@ -52,6 +52,18 @@ public static function getAllTypes()
 	{
 		return $this->state ;
 	}
+	public function getPaymentStatus()
+	{
+		return $this->payment_state ;
+	}
+	public function getAccountNumber()
+	{
+		return $this->account_number ;
+	}
+	public function getBankName()
+	{
+		return $this->bank_name ;
+	}
 	public function getJournalId():int 
 	{
 		return $this->journal_id ;
@@ -61,7 +73,7 @@ public static function getAllTypes()
 		return $this->payment_method_line_id;
 	}
 	
-	public function generateCashExpenseData(string $paymentDate,int $cashExpenseCategorySubId):array 
+	public function generateCashExpenseData(string $paymentDate,?int $cashExpenseCategorySubId):array 
 	{
 		$result = [];
 		$company =$this->company;
@@ -89,6 +101,7 @@ public static function getAllTypes()
 		}
 	
 		$request->merge([
+			'odoo_id'=>$this->getOdooId(),
 			'cash_expense_category_name_id'=>$cashExpenseCategorySubId,
 			'payment_date'=>$paymentDate,
 			'expense_category_id'=>21 ,
@@ -116,5 +129,9 @@ public static function getAllTypes()
 		]);
 		(new CashExpenseController)->store($company,$request);
 		return $result;
+	}
+	public function cashExpense()
+	{
+		return $this->hasOne(CashExpense::class , 'odoo_id','odoo_id');
 	}
 }

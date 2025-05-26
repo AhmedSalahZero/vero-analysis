@@ -100,7 +100,7 @@ class ExpensePayment
 			// dd($sheets);
 			// dd($sheets);
             if (empty($sheets)) {
-                Log::warning("Odoo: No expense sheet found with ID {$expenseSheetId}");
+          //      Log::warning("Odoo: No expense sheet found with ID {$expenseSheetId}");
                 return [
                     'success' => false,
                     'message' => "No expense sheet found with ID {$expenseSheetId}",
@@ -109,13 +109,13 @@ class ExpensePayment
             }
 
             $sheet = $sheets[0];
-            Log::info("Odoo: Sheet payment_mode", ['sheet_id' => $expenseSheetId, 'payment_mode' => $sheet['payment_mode']]);
+          ///  Log::info("Odoo: Sheet payment_mode", ['sheet_id' => $expenseSheetId, 'payment_mode' => $sheet['payment_mode']]);
 
             if ($sheet['state'] !== 'approve' || $sheet['payment_state'] !== 'not_paid') {
-                Log::warning("Odoo: Expense sheet {$expenseSheetId} has invalid state or payment_state", [
-                    'state' => $sheet['state'],
-                    'payment_state' => $sheet['payment_state']
-                ]);
+                // Log::warning("Odoo: Expense sheet {$expenseSheetId} has invalid state or payment_state", [
+                //     'state' => $sheet['state'],
+                //     'payment_state' => $sheet['payment_state']
+                // ]);
                 return [
                     'success' => false,
                     'message' => "Expense sheet {$expenseSheetId} is not in state=approve or payment_state=not_paid",
@@ -137,7 +137,7 @@ class ExpensePayment
                         if (!empty($employee[0]['address_home_id']) && is_array($employee[0]['address_home_id'])) {
                             $employeePartnerId = $employee[0]['address_home_id'][0];
                         } else {
-                            Log::info("Odoo: Creating partner for employee {$employee[0]['name']}");
+                            // Log::info("Odoo: Creating partner for employee {$employee[0]['name']}");
                             $partnerData = [
                                 'name' => $employee[0]['name'],
                                 'company_id' => $this->company_id
@@ -171,6 +171,7 @@ class ExpensePayment
                 ['id', 'state', 'amount', 'partner_id', 'journal_id', 'move_id'],
                 [[['expense_sheet_id', '=', $expenseSheetId], ['state', '=', 'draft']]]
             );
+			// dd($payments,$expenseSheetId);
             if (empty($payments)) {
                 Log::warning("Odoo: No draft payment found for sheet {$expenseSheetId}");
                 // Create journal entry if missing

@@ -15,7 +15,7 @@
 
                     <div class="col-2">
                         <label class="form-label font-weight-bold ">{{ __('Account Number') }}
-						@include('star')
+                            @include('star')
                         </label>
                         <div class="kt-input-icon">
                             <div class="input-group">
@@ -23,10 +23,10 @@
                             </div>
                         </div>
                     </div>
-					@if($company->hasOdooIntegrationCredentials())
-					     <div class="col-1	">
+                    @if($company->hasOdooIntegrationCredentials())
+                    <div class="col-1	">
                         <label class="form-label font-weight-bold ">{{ __('Odoo Code') }}
-						@include('star')
+                            @include('star')
                         </label>
                         <div class="kt-input-icon">
                             <div class="input-group">
@@ -34,17 +34,12 @@
                             </div>
                         </div>
                     </div>
-					@endif
-					
+                    @endif
 
-                   
 
-                    <div 
-					 
-					
-					class="col-2"
-			
-					>
+
+
+                    <div class="col-2">
                         <label class="form-label font-weight-bold">{{ __('IBAN') }}
                         </label>
                         <div class="kt-input-icon">
@@ -58,7 +53,7 @@
 
                     <div class="col-2">
                         <label class="form-label font-weight-bold">{{ __('Balance Amount') }}
-						@include('star')
+                            @include('star')
                         </label>
                         <div class="kt-input-icon">
                             <div class="input-group">
@@ -67,16 +62,16 @@
                             </div>
                         </div>
                     </div>
-				
-					<div class="col-md-1">
-                        <x-calendar :value="isset($model) ? $model->getBalanceDate() : null" :label="__('Balance Date')"  :id="'balance_date'" name="balance_date"></x-calendar>
+
+                    <div class="col-md-1">
+                        <x-calendar :value="isset($model) ? $model->getBalanceDate() : null" :label="__('Balance Date')" :id="'balance_date'" name="balance_date"></x-calendar>
                     </div>
-					
-					
-					
-					
-		
-								
+
+
+
+
+
+
 
 
                     <div class="col-1">
@@ -94,7 +89,7 @@
 
                     <div class="col-1">
                         <label class="form-label font-weight-bold">{{ __('Exchange Rate') }}
-						@include('star')
+                            @include('star')
                         </label>
                         <div class="kt-input-icon">
                             <div class="input-group">
@@ -108,7 +103,7 @@
 
                     <div class="col-1">
                         <label class="form-label font-weight-bold">{{ __('Interest Rate') }}
-						@include('star')
+                            @include('star')
                         </label>
                         <div class="kt-input-icon">
                             <div class="input-group">
@@ -120,8 +115,8 @@
 
                     <div class="col-1">
                         <label class="form-label font-weight-bold">{{ __('Min Balance') }}
-						
-						@include('star')
+
+                            @include('star')
                         </label>
                         <div class="kt-input-icon">
                             <div class="input-group">
@@ -130,10 +125,10 @@
                             </div>
                         </div>
                     </div>
-					
-					
-                    
-                    
+
+
+
+
 
 
                     @if($isRepeater)

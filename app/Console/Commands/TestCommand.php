@@ -69,8 +69,9 @@ class TestCommand extends Command
 	
 	public function handle()
 	{
-		$company= Company::find(138);
+		$company= Company::find(136);
 		$odooService = new OdooService($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId());
+		dd($odooService);
 		$accountJournal = $odooService->fetchData('account.account',[],[[['id','=',239]]])[0];
 		dd($accountJournal);
 		dd($odooService->fetchData('account.journal',[],[[['id','=',19]]]));

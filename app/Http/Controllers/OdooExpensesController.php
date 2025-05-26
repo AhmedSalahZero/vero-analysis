@@ -1,20 +1,13 @@
 <?php
 namespace App\Http\Controllers;
-use App\Models\AccountType;
-use App\Models\Bank;
 use App\Models\CashExpenseCategoryName;
 use App\Models\Company;
-use App\Models\FinancialInstitution;
-use App\Models\FinancialInstitutionAccount;
-use App\Models\LoanSchedule;
-use App\Models\LoanScheduleSettlement;
 use App\Models\OdooExpense;
 use App\Services\Api\ExpensePayment;
 use App\Traits\GeneralFunctions;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 
 class OdooExpensesController
 {
@@ -112,61 +105,30 @@ class OdooExpensesController
 		 $odooExpenseSheetId =$odooExpense->getOdooId(); 
         $expensePaymentService = new ExpensePayment($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId());
 		$settlementResult = $expensePaymentService->settleApprovedExpenses($journalId,$paymentMethodId,$paymentDate,$odooExpenseSheetId);
+	
+		// if(isset($settlementResult['success']) && $settlementResult['success'] == false ){
+		// 	return redirect()->back()->with('fail',$settlementResult['message']);
+		// }
 		$code = $settlementResult['account_result']['account_code'];
 		$expenseCategorySub = CashExpenseCategoryName::findByOdooChatOfAccountNumber($company->id ,$code );
+		// if(!$expenseCategorySub){
+		// 	$expenseCategorySub = CashExpenseCategoryName::create([
+		// 		'name'=>$settlementResult['account_result']['account_name'],
+		// 		'odoo_chart_of_account_number'=>$settlementResult['account_result']['account_id'],
+		// 		'company_id'=>$company->id,
+		// 	]);	
+		// }
 		// $expenseCategoryParentId = $expenseCategorySub->cashExpenseCategory->id;
-		$expenseCategorySubId = $expenseCategorySub->id ;
+		$expenseCategorySubId = $expenseCategorySub ? $expenseCategorySub->id : null  ;
 		$odooExpense->generateCashExpenseData($paymentDate,$expenseCategorySubId);
 		$odooExpense->update([
-			'state'=>'paid'
+			'state'=>'done',
+			'payment_state'=>'paid'
 		]);
+		return redirect()->back()->with('success',__('Done'));
 		
 	}
-	// public function create(Company $company)
-	// {
-    //     return view('odoo-expenses.form',$this->getCommonViewVars($company));
-    // }
-	// public function getCommonViewVars(Company $company,$model = null)
-	// {
-	// 	return [
-	// 		'model'=>$model,
-	// 		'company'=>$company
-	// 	];
-	// }
-	
-	// public function store(Company $company   , Request $request , FinancialInstitution $financialInstitution){
-	// 	$type = OdooExpense::APPROVED;
-	// 	$mediumTermLoan = new MediumTermLoan ;
-	// 	$mediumTermLoan->status = OdooExpense::APPROVED;
-	// 	$mediumTermLoan->storeBasicForm($request);
-	// 	$activeTab = $type ; 
-	// 	return redirect()->route('odoo-expenses.index',['company'=>$company->id,'active'=>$activeTab,'financialInstitution'=>$financialInstitution->id])->with('success',__('Data Store Successfully'));
-		
-	// }
 
-	// public function edit(Company $company,OdooExpense $odooExpense)
-	// {
-
-    //     return view('odoo-expenses.form' ,$this->getCommonViewVars($company,$financialInstitution,$mediumTermLoan));
-    // }
-	
-	// public function update(Company $company, Request $request , FinancialInstitution $financialInstitution , MediumTermLoan $mediumTermLoan){
-		
-	// 	$mediumTermLoan->deleteRelations();
-	// 	$mediumTermLoan->delete();
-	// 	$type = OdooExpense::APPROVED;
-	// 	$this->store($company,$request,$financialInstitution);
-	// 	$activeTab = $type ;
-	// 	return redirect()->route('odoo-expenses.index',['company'=>$company->id,'active'=>$activeTab,'financialInstitution'=>$financialInstitution->id])->with('success',__('Item Has Been Updated Successfully'));
-	// }
-	
-	public function destroy(Company $company , OdooExpense $odooExpense)
-	{
-		dd('delete it ');
-		// $odooExpense->deleteRelations();
-		$odooExpense->delete();
-		return redirect()->back()->with('success',__('Item Has Been Delete Successfully'));
-	}
 	
 
 }

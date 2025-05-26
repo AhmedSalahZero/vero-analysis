@@ -103,7 +103,18 @@
                                             </div>
                                         </div>
                                     </div>
-									
+									 @if($company->hasOdooIntegrationCredentials())
+                    <div class="col-1	">
+                        <label class="form-label font-weight-bold ">{{ __('Odoo Code') }}
+                            @include('star')
+                        </label>
+                        <div class="kt-input-icon">
+                            <div class="input-group">
+                                <input required placeholder="{{ __('Odoo Code') }}" type="text" class="form-control  exclude-text" name="odoo_code" value="{{ isset($model) ? $model->getOdooCode() : old('odoo_code') }}">
+                            </div>
+                        </div>
+                    </div>
+                    @endif
 
                                     <div class="col-2">
                                         <label class="form-label font-weight-bold">{{ __('Balance Amount') }}
@@ -116,7 +127,7 @@
                                         </div>
                                     </div>
 									
-									<div class="col-md-2">
+									<div class="col-md-1">
                      			   <x-calendar :classes="'balance-date-js'" :value="$model->getBalanceDateForSelect()" :label="__('Balance Date')" :id="'balance_date'" name="balance_date"></x-calendar>
                  				   </div>
 					

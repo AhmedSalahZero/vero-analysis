@@ -24,10 +24,7 @@ class Settlement extends Model
 				}
 			}
 		});
-		
 	}
-	
-	
 	public function moneyReceived()
 	{
 		return $this->belongsTo(MoneyReceived::class , 'money_received_id','id');

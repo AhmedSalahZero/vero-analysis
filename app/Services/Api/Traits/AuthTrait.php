@@ -34,6 +34,7 @@ trait AuthTrait
 		if(is_array($uid)){
 			$uid = null ;
 		}
+		// dd($uid);
 		$models = ripcord::client("$this->url/xmlrpc/2/object");
 		$this->models = $models;
 		
