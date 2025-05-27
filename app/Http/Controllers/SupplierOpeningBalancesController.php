@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreOpeningBalanceRequest;
 use App\Models\Bank;
 use App\Models\Company;
+use App\Models\MoneyPayment;
 use App\Models\Partner;
 use App\Models\SupplierOpeningBalance;
 use App\Traits\GeneralFunctions;
@@ -56,6 +57,15 @@ class SupplierOpeningBalancesController
 			$invoiceData = self::generateData($openingBalanceDate,$openingBalanceArr,$company);
 			$openingBalance->supplierInvoices()->create($invoiceData);
         }
+		
+		// store opening balances
+		$currentKey = 'advanced-opening-balances';
+        foreach ($request->get($currentKey,[]) as $index => $openingBalanceArr) {
+			$data = self::generateAdvancedData($openingBalanceDate,$openingBalanceArr,$company);
+			$money = $openingBalance->moneyModel()->create($data);
+			$money->downPaymentSettlements()->create(self::generateDownPaymentData($openingBalanceArr,$company,$money->id));
+        } 
+		
        
 		return response()->json([
 			'redirectTo'=>route('suppliers-opening-balance.index',['company'=>$company->id])
@@ -96,6 +106,40 @@ public function update(Company $company, StoreOpeningBalanceRequest $request, Su
                 $suppliers_opening_balance->supplierInvoices()->create($invoiceData);
             }
         }
+		
+		
+		
+		
+		
+		
+		
+		
+		/**
+         * * هنا تحديث ال
+         * * opening-balances
+         */
+		$currentKey = 'advanced-opening-balances';
+        $oldIdsFromDatabase = $suppliers_opening_balance->moneyModel->pluck('id')->toArray();
+        $idsFromRequest = array_column($request->input($currentKey, []), 'id') ;
+
+        $elementsToUpdate = array_intersect($idsFromRequest, $oldIdsFromDatabase); // origin one
+	
+        foreach ($elementsToUpdate as $id) {
+            $dataToUpdate = findByKey($request->input($currentKey), 'id', $id);
+			$moneyData = self::generateAdvancedData($openingBalanceDate,$dataToUpdate,$company);
+            $suppliers_opening_balance->moneyModel()->where('money_payments.id', $id)->first()->update($moneyData);
+			$moneyPayment = MoneyPayment::find($id);
+			$moneyPayment->downPaymentSettlements()->update(self::generateDownPaymentData($dataToUpdate,$company,$id));
+        }
+        foreach ($request->get($currentKey, []) as $data) {
+            if (!isset($data['id']) || (isset($data['id']) && $data['id'] == '0' )  ) {
+                unset($data['id']);
+				$moneyData = self::generateAdvancedData($openingBalanceDate,$data,$company);
+                $money = $suppliers_opening_balance->moneyModel()->create($moneyData);
+				$money->downPaymentSettlements()->create(self::generateDownPaymentData($data,$company,$money->id));
+            }
+        }
+		
 		 return response()->json([
 			'redirectTo'=>route('suppliers-opening-balance.index',['company'=>$company->id])
 		]);
@@ -103,7 +147,7 @@ public function update(Company $company, StoreOpeningBalanceRequest $request, Su
     }
 	public static function generateData(string $openingBalanceDate , array $openingBalanceArr , Company $company):array 
 	{
-		$amount = number_unformat($openingBalanceArr['received_amount'] ?: 0) ;
+		$amount = number_unformat($openingBalanceArr['paid_amount'] ?: 0) ;
             $partnerId = $openingBalanceArr['partner_id'] ?: null ;
 			$currencyName = $openingBalanceArr['currency'];
 			$partner = Partner::find($partnerId);
@@ -121,4 +165,52 @@ public function update(Company $company, StoreOpeningBalanceRequest $request, Su
 				'invoice_number'=>'opening-balance'
 		];
 	}
+	
+	public static function generateAdvancedData(string $openingBalanceDate , array $openingBalanceArr , Company $company):array 
+	{
+		$amount = number_unformat($openingBalanceArr['paid_amount'] ?: 0) ;
+            $partnerId = $openingBalanceArr['partner_id'] ?: null ;
+			$currencyName = $openingBalanceArr['currency'];
+			// $partner = Partner::find($partnerId);
+			// $invoiceDueDate = Carbon::make($openingBalanceArr['invoice_due_date'])->format('Y-m-d');
+            $exchangeRate = isset($openingBalanceArr['exchange_rate']) ? $openingBalanceArr['exchange_rate'] : 1  ;
+			return [
+				'company_id'=>$company->id ,
+				'partner_id'=>$partnerId,
+				'partner_type'=>'is_supplier',
+				'paid_amount'=>$amount,
+				'amount_in_invoice_currency'=>$amount,
+				'money_type'=>'down-payment',
+				'down_payment_type'=>$openingBalanceArr['down_payment_type'],
+				'contract_id'=>$openingBalanceArr['contract_id']??null,
+				'type'=>MoneyPayment::CASH_PAYMENT,
+				'delivery_date'=>$openingBalanceDate,
+				'exchange_rate'=>$exchangeRate,
+				'currency'=>$currencyName,
+				'payment_currency'=>$currencyName,
+				'invoice_number'=>'opening-balance',
+				'comment_en'=>__('Advanced Down Payment'),
+				'comment_ar'=>__('Advanced Down Payment'),
+		];
+	}
+	public static function generateDownPaymentData( array $openingBalanceArr , Company $company,int $moneyPaymentId):array 
+	{
+			$amount = number_unformat($openingBalanceArr['paid_amount'] ?: 0) ;
+            $partnerId = $openingBalanceArr['partner_id'] ?: null ;
+			$currencyName = $openingBalanceArr['currency'];
+			// $partner = Partner::find($partnerId);
+			// $invoiceDueDate = Carbon::make($openingBalanceArr['invoice_due_date'])->format('Y-m-d');
+            // $exchangeRate = isset($openingBalanceArr['exchange_rate']) ? $openingBalanceArr['exchange_rate'] : 1  ;
+			return [
+				'company_id'=>$company->id ,
+				'contract_id'=>$openingBalanceArr['contract_id']??null,
+				'sales_order_id'=>null ,
+				'supplier_id'=>$partnerId,
+				'down_payment_amount'=>$amount,
+				'down_payment_balance'=>$amount,
+				'currency'=>$currencyName,
+				'money_payment_id'=>$moneyPaymentId,
+		];
+	}
+	
 }

@@ -217,26 +217,26 @@ use App\Models\MoneyReceived ;
                                                     </i>
                                                 </div>
                                             </td>
-											
-											
+
+
                                             <td>
                                                 <div class="input-group">
                                                     <select name="partner_id" class="form-control ">
-                                                        @foreach($customersFormatted as  $customerArr )
-														@php
-															$customerName = $customerArr['title'];
-															$customerId = $customerArr['value'];
-														@endphp
+                                                        @foreach($customersFormatted as $customerArr )
+                                                        @php
+                                                        $customerName = $customerArr['title'];
+                                                        $customerId = $customerArr['value'];
+                                                        @endphp
                                                         <option value="{{ $customerId }}" @if(isset($customerInvoice) && $customerInvoice->getPartnerId() == $customerId ) selected @endif > {{ $customerName }}</option>
                                                         @endforeach
                                                     </select>
                                                 </div>
 
                                             </td>
-                                             <td>
+                                            <td>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group">
-                                                     
+
                                                         <input name="received_amount" type="text" class="form-control " value="{{ number_format(isset($customerInvoice) ? $customerInvoice->getInvoiceAmount() : old('amount',0)) }}">
                                                     </div>
                                                 </div>
@@ -267,8 +267,8 @@ use App\Models\MoneyReceived ;
                                                 </div>
 
                                             </td>
-											<td>
-                                    				<x-form.date :type="'text'" :classes="'datepicker-input'" :default-value="formatDateForDatePicker(isset($customerInvoice)  ? $customerInvoice->getInvoiceDueDate() : now()->format('Y-m-d'))" :model="$model??null" :label="''" :type="'text'" :placeholder="__('')" :name="'invoice_due_date'" :required="true"></x-form.date>
+                                            <td>
+                                                <x-form.date :type="'text'" :classes="'datepicker-input'" :default-value="formatDateForDatePicker(isset($customerInvoice)  ? $customerInvoice->getInvoiceDueDate() : now()->format('Y-m-d'))" :model="$model??null" :label="''" :type="'text'" :placeholder="__('')" :name="'invoice_due_date'" :required="true"></x-form.date>
                                             </td>
                                         </tr>
                                         @endforeach
@@ -364,9 +364,9 @@ use App\Models\MoneyReceived ;
 
                         </div>
                     </div>
-					
-					
-					
+
+
+
                     <div class="kt-portlet">
 
                         <div class="kt-portlet__head">
@@ -382,7 +382,7 @@ use App\Models\MoneyReceived ;
                                 @php
                                 $index = 0 ;
                                 @endphp
-	                                {{-- start of fixed monthly repeating amount --}}
+                                {{-- start of fixed monthly repeating amount --}}
                                 @php
                                 $tableId = 'advanced-opening-balances';
                                 $repeaterId = 'm_repeater_7';
@@ -397,7 +397,7 @@ use App\Models\MoneyReceived ;
                                         __('Exchange <br> Rate')=>'col-md-1',
                                         __('Type')=>'col-md-1',
                                         ] as $title=>$classes)
-                                       	 <x-tables.repeater-table-th class="{{ $classes }}" :title="$title"></x-tables.repeater-table-th>
+                                        <x-tables.repeater-table-th class="{{ $classes }}" :title="$title"></x-tables.repeater-table-th>
                                         @endforeach
                                     </x-slot>
                                     <x-slot name="trs">
@@ -407,7 +407,7 @@ use App\Models\MoneyReceived ;
                                         @foreach( count($rows) ? $rows : [-1] as $moneyModel)
                                         @php
                                         if( !($moneyModel instanceof \App\Models\MoneyReceived) ){
-                                      	  unset($moneyModel);
+                                        unset($moneyModel);
                                         }
                                         @endphp
                                         <tr @if($isRepeater) data-repeater-item @endif>
@@ -417,26 +417,26 @@ use App\Models\MoneyReceived ;
                                                     </i>
                                                 </div>
                                             </td>
-											
-											
+
+
                                             <td>
                                                 <div class="input-group">
                                                     <select name="partner_id" class="form-control partner_id ajax-get-contracts-for-customer">
-                                                        @foreach($customersFormatted as  $customerArr )
-														@php
-															$customerName = $customerArr['title'];
-															$customerId = $customerArr['value'];
-														@endphp
+                                                        @foreach($customersFormatted as $customerArr )
+                                                        @php
+                                                        $customerName = $customerArr['title'];
+                                                        $customerId = $customerArr['value'];
+                                                        @endphp
                                                         <option value="{{ $customerId }}" @if(isset($moneyModel) && $moneyModel->getPartnerId() == $customerId ) selected @endif > {{ $customerName }}</option>
                                                         @endforeach
                                                     </select>
                                                 </div>
 
                                             </td>
-                                             <td>
+                                            <td>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group">
-                                                     
+
                                                         <input name="received_amount" type="text" class="form-control " value="{{ number_format(isset($moneyModel) ? $moneyModel->getReceivedAmount() : old('amount',0)) }}">
                                                     </div>
                                                 </div>
@@ -467,20 +467,20 @@ use App\Models\MoneyReceived ;
                                                 </div>
 
                                             </td>
-											<td>
-                                    			 <select name="down_payment_type" class="form-control down-payment-type" >
-                                                        <option value="{{ MoneyReceived::DOWN_PAYMENT_GENERAL }}" @if(isset($moneyModel) && $moneyModel->isGeneralDownPayment()  ) selected  @endif > {{ __('General') }}</option>
-                                                        <option value="{{ MoneyReceived::DOWN_PAYMENT_OVER_CONTRACT }}" @if(isset($moneyModel) && $moneyModel->isOverContractDownPayment()) selected @endif > {{ __('Over Contract') }}</option>
+                                            <td>
+                                                <select name="down_payment_type" class="form-control down-payment-type">
+                                                    <option value="{{ MoneyReceived::DOWN_PAYMENT_GENERAL }}" @if(isset($moneyModel) && $moneyModel->isGeneralDownPayment() ) selected @endif > {{ __('General') }}</option>
+                                                    <option value="{{ MoneyReceived::DOWN_PAYMENT_OVER_CONTRACT }}" @if(isset($moneyModel) && $moneyModel->isOverContractDownPayment()) selected @endif > {{ __('Over Contract') }}</option>
+                                                </select>
+
+                                                <div class="contract-container">
+                                                    <select data-current-selected="{{ isset($moneyModel) && $moneyModel->getContractId() ?  $moneyModel->getContractId() : 0 }}" name="contract_id" class="form-control contract-class">
+                                                        {{-- @foreach($contracts as $contract) --}}
+                                                        {{-- <option value="{{ $contract->id }}" @if(isset($moneyModel) && $moneyModel->getContractId() ) selected @endif > {{$contract->getName() }}</option> --}}
+                                                        {{-- @endforeach --}}
                                                     </select>
-													
-													<div class="contract-container">
-																 <select   data-current-selected="{{ isset($moneyModel) && $moneyModel->getContractId() ?  $moneyModel->getContractId() : 0 }}" name="contract_id" class="form-control contract-class" >
-																 	{{-- @foreach($contracts as $contract) --}}
-                                                        			{{-- <option value="{{ $contract->id }}" @if(isset($moneyModel) && $moneyModel->getContractId()  ) selected  @endif > {{$contract->getName() }}</option> --}}
-																	{{-- @endforeach --}}
-                                                    </select>
-													
-													</div>
+
+                                                </div>
                                             </td>
                                         </tr>
                                         @endforeach
@@ -576,7 +576,7 @@ use App\Models\MoneyReceived ;
 
                         </div>
                     </div>
-					
+
 
 
 
@@ -754,44 +754,45 @@ use App\Models\MoneyReceived ;
 
 
 
-$(document).on('change', '.ajax-get-contracts-for-customer', function(e) {
-        e.preventDefault()
-		const parent = $(this).closest('tr') ;
-        const customerId = parent.find('select.partner_id').val()
-        const currency =  parent.find('select.currency-for-contracts').val()
-        const contractId =  parent.find('select.contract-class').attr('data-current-selected');
-        if (customerId && currency) {
-            $.ajax({
-                url: "{{ route('get.contracts.for.customer',['company'=>$company->id]) }}"
-                , data: {
-                    customerId
-                    , currency
-                }
-                , success: function(res) {
-                    let options = '';
-                    for (id in res.contracts) {
-                        options += `<option value="${id}" ${contractId == id ? 'selected' : ''} >${res.contracts[id]}</option>`
+                $(document).on('change', '.ajax-get-contracts-for-customer', function(e) {
+                    e.preventDefault()
+                    const parent = $(this).closest('tr');
+                    const customerId = parent.find('select.partner_id').val()
+                    const currency = parent.find('select.currency-for-contracts').val()
+                    const contractId = parent.find('select.contract-class').attr('data-current-selected');
+                    if (customerId && currency) {
+                        $.ajax({
+                            url: "{{ route('get.contracts.for.customer',['company'=>$company->id]) }}"
+                            , data: {
+                                customerId
+                                , currency
+                            }
+                            , success: function(res) {
+                                let options = '';
+                                for (id in res.contracts) {
+                                    options += `<option value="${id}" ${contractId == id ? 'selected' : ''} >${res.contracts[id]}</option>`
+                                }
+                                console.log(options)
+                                parent.find('select.contract-class').empty().append(options)
+                                parent.find('select.contract-class').trigger('change')
+                            }
+                        })
+                    } else {
+                        parent.find('select.contract-class').empty().append("")
+                        parent.find('select.contract-class').trigger('change')
                     }
-					console.log(options)
-                    parent.find('select.contract-class').empty().append(options)
-                    parent.find('select.contract-class').trigger('change')
-                }
-            })
-        }else{
-					 parent.find('select.contract-class').empty().append("")
-                    parent.find('select.contract-class').trigger('change')
-		}
-    })
-	$('select.ajax-get-contracts-for-customer').trigger('change')
-	$(document).on('change','select.down-payment-type',function(){
-			const val = $(this).val();
-			if(val == 'over_contract'){
-				$(this).closest('td').find('.contract-container').show();
-			}else{
-				$(this).closest('td').find('.contract-container').hide();
-			}
-	});
-	$('select.down-payment-type').trigger('change');
+                })
+                $('select.ajax-get-contracts-for-customer').trigger('change')
+                $(document).on('change', 'select.down-payment-type', function() {
+                    const val = $(this).val();
+                    if (val == 'over_contract') {
+                        $(this).closest('td').find('.contract-container').show();
+                    } else {
+                        $(this).closest('td').find('.contract-container').hide();
+                    }
+                });
+                $('select.down-payment-type').trigger('change');
+
             </script>
 
             @endsection

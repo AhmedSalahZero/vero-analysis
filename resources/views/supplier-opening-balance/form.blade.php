@@ -1,6 +1,5 @@
 @php
 use App\Models\MoneyPayment ;
-use App\Models\MoneyReceived ;
 @endphp
 @extends('layouts.dashboard')
 @section('css')
@@ -237,7 +236,7 @@ use App\Models\MoneyReceived ;
                                                 <div class="kt-input-icon">
                                                     <div class="input-group">
                                                      
-                                                        <input name="received_amount" type="text" class="form-control " value="{{ number_format(isset($supplierInvoice) ? $supplierInvoice->getInvoiceAmount() : old('amount',0)) }}">
+                                                        <input name="paid_amount" type="text" class="form-control " value="{{ number_format(isset($supplierInvoice) ? $supplierInvoice->getInvoiceAmount() : old('amount',0)) }}">
                                                     </div>
                                                 </div>
                                             </td>
@@ -269,6 +268,218 @@ use App\Models\MoneyReceived ;
                                             </td>
 											<td>
                                     				<x-form.date :type="'text'" :classes="'datepicker-input'" :default-value="formatDateForDatePicker(isset($supplierInvoice)  ? $supplierInvoice->getInvoiceDueDate() : now()->format('Y-m-d'))" :model="$model??null" :label="''" :type="'text'" :placeholder="__('')" :name="'invoice_due_date'" :required="true"></x-form.date>
+                                            </td>
+                                        </tr>
+                                        @endforeach
+
+                                    </x-slot>
+
+
+
+
+                                </x-tables.repeater-table>
+                                {{-- end of fixed monthly repeating amount --}}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                            </div>
+
+
+                        </div>
+                    </div>
+					
+					
+					
+					
+					<div class="kt-portlet">
+
+                        <div class="kt-portlet__head">
+                            <div class="kt-portlet__head-label">
+                                <h3 class="kt-portlet__head-title head-title text-primary">
+                                    {{__('Suppliers Advanced Opening Balance')}}
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="kt-portlet__body">
+
+                            <div class="form-group row justify-content-center">
+                                @php
+                                $index = 0 ;
+                                @endphp
+                                {{-- start of fixed monthly repeating amount --}}
+                                @php
+                                $tableId = 'advanced-opening-balances';
+                                $repeaterId = 'm_repeater_7';
+                                @endphp
+                                <input type="hidden" name="tableIds[]" value="{{ $tableId }}">
+                                <x-tables.repeater-table :initEmpty="!isset($model) || !$model->supplierInvoices->count()" :firstElementDeletable="true" :repeater-with-select2="true" :parentClass="'show-class-js'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=true">
+                                    <x-slot name="ths">
+                                        @foreach([
+                                        __('Supplier')=>'col-md-1',
+                                        __('Amount')=>'col-md-1',
+                                        __('Currency')=>'col-md-1',
+                                        __('Exchange <br> Rate')=>'col-md-1',
+                                        __('Type')=>'col-md-1',
+                                        ] as $title=>$classes)
+                                        <x-tables.repeater-table-th class="{{ $classes }}" :title="$title"></x-tables.repeater-table-th>
+                                        @endforeach
+                                    </x-slot>
+                                    <x-slot name="trs">
+                                        @php
+                                        $rows = isset($model) ? $model->moneyModel :[-1] ;
+                                        @endphp
+                                        @foreach( count($rows) ? $rows : [-1] as $moneyModel)
+                                        @php
+                                        if( !($moneyModel instanceof \App\Models\MoneyPayment) ){
+                                        unset($moneyModel);
+                                        }
+                                        @endphp
+                                        <tr @if($isRepeater) data-repeater-item @endif>
+                                            <td class="text-center">
+                                                <div class="">
+                                                    <i data-repeater-delete="" class="btn-sm btn btn-danger m-btn m-btn--icon m-btn--pill trash_icon fas fa-times-circle">
+                                                    </i>
+                                                </div>
+                                            </td>
+
+                                            <td>
+                                                <div class="input-group">
+                                                    <select name="partner_id" class="form-control partner_id ajax-get-contracts-for-supplier">
+                                                        @foreach($suppliersFormatted as $supplierArr )
+                                                        @php
+                                                        $supplierName = $supplierArr['title'];
+                                                        $supplierId = $supplierArr['value'];
+                                                        @endphp
+                                                        <option value="{{ $supplierId }}" @if(isset($moneyModel) && $moneyModel->getPartnerId() == $supplierId ) selected @endif > {{ $supplierName }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+
+                                            </td>
+                                            <td>
+                                                <div class="kt-input-icon">
+                                                    <div class="input-group">
+
+                                                        <input name="paid_amount" type="text" class="form-control " value="{{ number_format(isset($moneyModel) ? $moneyModel->getPaidAmount() : old('amount',0)) }}">
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <input type="hidden" name="id" value="{{ isset($moneyModel) ? $moneyModel->id : 0 }}">
+
+
+
+
+
+                                                <div class="input-group">
+                                                    <select name="currency" class="form-control select-for-currency currency-for-contracts ajax-get-contracts-for-supplier" js-when-change-trigger-change-account-type>
+                                                        {{-- <option  selected>{{__('Select')}}</option> --}}
+                                                        @foreach(getCurrencies() as $currencyName => $currencyValue )
+                                                        <option value="{{ $currencyName }}" @if(isset($moneyModel) && $moneyModel->getCurrency() == $currencyName ) selected @elseif($currencyName == 'EGP' ) selected @endif > {{ $currencyValue }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+
+                                            </td>
+                                            <td>
+
+                                                <div class="kt-input-icon">
+                                                    <div class="input-group">
+                                                        <input name="exchange_rate" step="4" type="text" class="form-control  " value="{{ isset($moneyModel) ? $moneyModel->getExchangeRate() : old('exchange_rate',1) }}">
+                                                    </div>
+                                                </div>
+
+                                            </td>
+                                            <td>
+                                                <select name="down_payment_type" class="form-control down-payment-type">
+                                                    <option value="{{ MoneyPayment::DOWN_PAYMENT_GENERAL }}" @if(isset($moneyModel) && $moneyModel->isGeneralDownPayment() ) selected @endif > {{ __('General') }}</option>
+                                                    <option value="{{ MoneyPayment::DOWN_PAYMENT_OVER_CONTRACT }}" @if(isset($moneyModel) && $moneyModel->isOverContractDownPayment()) selected @endif > {{ __('Over Contract') }}</option>
+                                                </select>
+
+                                                <div class="contract-container">
+                                                    <select data-current-selected="{{ isset($moneyModel) && $moneyModel->getContractId() ?  $moneyModel->getContractId() : 0 }}" name="contract_id" class="form-control contract-class">
+                                                        {{-- @foreach($contracts as $contract) --}}
+                                                        {{-- <option value="{{ $contract->id }}" @if(isset($moneyModel) && $moneyModel->getContractId() ) selected @endif > {{$contract->getName() }}</option> --}}
+                                                        {{-- @endforeach --}}
+                                                    </select>
+
+                                                </div>
                                             </td>
                                         </tr>
                                         @endforeach
@@ -503,7 +714,6 @@ use App\Models\MoneyReceived ;
                     const additionalColumnValue = $(this).attr('data-additional-column-value')
                     let route = "{{ route('add.new.partner.type',['company'=>$company->id , 'type'=>'replace_with_actual_type']) }}"
                     let isSupplier = $(this).closest('.modal-parent--js.is-supplier-class').length;
-                    let isSupplier = $(this).closest('.modal-parent--js.is-supplier-class').length;
                     let type = isSupplier > 0 ? 'Supplier' : 'Supplier';
                     route = route.replace('replace_with_actual_type', modalName);
 
@@ -535,6 +745,60 @@ use App\Models\MoneyReceived ;
                         , error: function(response) {}
                     });
                 })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+$(document).on('change', '.ajax-get-contracts-for-supplier', function(e) {
+                    e.preventDefault()
+                    const parent = $(this).closest('tr');
+                    const supplierId = parent.find('select.partner_id').val()
+                    const currency = parent.find('select.currency-for-contracts').val()
+                    const contractId = parent.find('select.contract-class').attr('data-current-selected');
+                    if (supplierId && currency) {
+                        $.ajax({
+                            url: "{{ route('get.contracts.for.supplier',['company'=>$company->id]) }}"
+                            , data: {
+                                supplierId
+                                , currency
+                            }
+                            , success: function(res) {
+                                let options = '';
+                                for (id in res.contracts) {
+                                    options += `<option value="${id}" ${contractId == id ? 'selected' : ''} >${res.contracts[id]}</option>`
+                                }
+                                console.log(options)
+                                parent.find('select.contract-class').empty().append(options)
+                                parent.find('select.contract-class').trigger('change')
+                            }
+                        })
+                    } else {
+                        parent.find('select.contract-class').empty().append("")
+                        parent.find('select.contract-class').trigger('change')
+                    }
+                })
+                $('select.ajax-get-contracts-for-supplier').trigger('change')
+                $(document).on('change', 'select.down-payment-type', function() {
+                    const val = $(this).val();
+                    if (val == 'over_contract') {
+                        $(this).closest('td').find('.contract-container').show();
+                    } else {
+                        $(this).closest('td').find('.contract-container').hide();
+                    }
+                });
+                $('select.down-payment-type').trigger('change');
 
             </script>
 
