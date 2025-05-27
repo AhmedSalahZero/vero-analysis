@@ -423,6 +423,9 @@
                                         <td class="sub-text-bg text-center ">{{ number_format($item['credit']) }}</td>
 										@php
 											if($index == 0 ){
+												if(!isset($item['end_balance'])){
+													dd($item);
+												}
 												$balances[$index] = $item['end_balance']  ;
 											}else{
 												$balances[$index] = $balances[$index-1] + $invoicesWithItsReceivedMoney[$index]['debit'] - $invoicesWithItsReceivedMoney[$index]['credit'];
