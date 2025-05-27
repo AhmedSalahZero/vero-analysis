@@ -439,6 +439,7 @@ use App\Models\MoneyPayment ;
                                                         <input name="paid_amount" type="text" class="form-control " value="{{ number_format(isset($moneyModel) ? $moneyModel->getPaidAmount() : old('amount',0)) }}">
                                                     </div>
                                                 </div>
+												
                                             </td>
                                             <td>
                                                 <input type="hidden" name="id" value="{{ isset($moneyModel) ? $moneyModel->id : 0 }}">
