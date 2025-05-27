@@ -319,15 +319,15 @@ class Company extends Model implements HasMedia
 	
 	public function getMoneyPaymentCashPayments(?string $startDate = null , ?string $endDate = null):Collection
 	{
-		return $this->moneyPayments->where('type',MoneyPayment::CASH_PAYMENT)->whereNull('opening_balance_id')->filterByDeliveryDate($startDate,$endDate) ;
+		return $this->moneyPayments->whereNull('advanced_opening_balance_id')->where('type',MoneyPayment::CASH_PAYMENT)->whereNull('opening_balance_id')->filterByDeliveryDate($startDate,$endDate) ;
 	}
 	public function getMoneyPaymentOutgoingTransfer(?string $startDate = null ,?string $endDate = null):Collection
 	{
-		return $this->moneyPayments->where('type',MoneyPayment::OUTGOING_TRANSFER)->filterByDeliveryDate($startDate,$endDate) ;
+		return $this->moneyPayments->whereNull('advanced_opening_balance_id')->where('type',MoneyPayment::OUTGOING_TRANSFER)->filterByDeliveryDate($startDate,$endDate) ;
 	}	
 	public function getMoneyPaymentPayableCheques(?string $startDate = null , ?string $endDate = null):Collection
 	{
-		return $this->moneyPayments->where('type',MoneyPayment::PAYABLE_CHEQUE)->filterByDeliveryDate($startDate,$endDate)->filter(function(MoneyPayment $moneyPayment){
+		return $this->moneyPayments->whereNull('advanced_opening_balance_id')->where('type',MoneyPayment::PAYABLE_CHEQUE)->filterByDeliveryDate($startDate,$endDate)->filter(function(MoneyPayment $moneyPayment){
 			$payableCheque = $moneyPayment->payableCheque ;
 			return $payableCheque && in_array($payableCheque->getStatus(),[PayableCheque::PENDING,PayableCheque::PAID]) ;
 		})->values();
@@ -434,13 +434,10 @@ class Company extends Model implements HasMedia
 	{
 		return $this->financialInstitutions->where('type','mortgage_companies') ;
 	}
-	public function getMoneyReceived():Collection
-	{
-		return $this->moneyReceived->where('company_id',getCurrentCompanyId()) ;
-	}
+
 	public function getReceivedChequesInSafe(?string $startDate = null , ?string $endDate = null):Collection
 	{
-		return $this->moneyReceived->where('type',MoneyReceived::CHEQUE)->filterByReceivingDate($startDate,$endDate)->filter(function(MoneyReceived $moneyReceived){
+		return $this->moneyReceived->whereNull('advanced_opening_balance_id')->where('type',MoneyReceived::CHEQUE)->filterByReceivingDate($startDate,$endDate)->filter(function(MoneyReceived $moneyReceived){
 			$cheque = $moneyReceived->cheque ;
 			return $cheque && in_array($cheque->getStatus(),[Cheque::IN_SAFE]) ;
 		})->values();
@@ -451,7 +448,7 @@ class Company extends Model implements HasMedia
 	 */
 	public function getReceivedRejectedChequesInSafe(?string $startDate = null , ?string $endDate = null):Collection
 	{
-		return $this->moneyReceived->where('type',MoneyReceived::CHEQUE)->filterByReceivingDate($startDate,$endDate)->filter(function(MoneyReceived $moneyReceived){
+		return $this->moneyReceived->whereNull('advanced_opening_balance_id')->where('type',MoneyReceived::CHEQUE)->filterByReceivingDate($startDate,$endDate)->filter(function(MoneyReceived $moneyReceived){
 			$cheque = $moneyReceived->cheque ;
 			return $cheque && in_array($cheque->getStatus(),[Cheque::REJECTED]) ;
 		})->values();
@@ -459,7 +456,7 @@ class Company extends Model implements HasMedia
 	
 	public function getCollectedCheques(?string $startDate = null , ?string $endDate = null):Collection
 	{
-		return $this->moneyReceived->where('type',MoneyReceived::CHEQUE)->filterByReceivingDate($startDate,$endDate)->filter(function(MoneyReceived $moneyReceived){
+		return $this->moneyReceived->whereNull('advanced_opening_balance_id')->where('type',MoneyReceived::CHEQUE)->filterByReceivingDate($startDate,$endDate)->filter(function(MoneyReceived $moneyReceived){
 			$cheque = $moneyReceived->cheque ;
 			return $cheque && in_array($cheque->getStatus(),[Cheque::COLLECTED]) ;
 		})->values();
@@ -467,22 +464,22 @@ class Company extends Model implements HasMedia
 	
 	public function getReceivedChequesUnderCollection(?string $startDate = null , ?string $endDate = null):Collection
 	{
-		return $this->moneyReceived->where('type',MoneyReceived::CHEQUE)->filterByReceivingDate($startDate,$endDate)->filter(function(MoneyReceived $moneyReceived){
+		return $this->moneyReceived->whereNull('advanced_opening_balance_id')->where('type',MoneyReceived::CHEQUE)->filterByReceivingDate($startDate,$endDate)->filter(function(MoneyReceived $moneyReceived){
 			$cheque = $moneyReceived->cheque ;
 			return $cheque && in_array($cheque->getStatus(),[Cheque::UNDER_COLLECTION]) ;
 		})->values();
 	}
 	public function getReceivedCashesInSafe(?string $startDate = null , ?string $endDate = null):Collection
 	{
-		return $this->moneyReceived->where('type',MoneyReceived::CASH_IN_SAFE)->whereNull('opening_balance_id')->filterByReceivingDate($startDate,$endDate) ;
+		return $this->moneyReceived->whereNull('advanced_opening_balance_id')->whereNull('advanced_opening_balance_id')->where('type',MoneyReceived::CASH_IN_SAFE)->whereNull('opening_balance_id')->filterByReceivingDate($startDate,$endDate) ;
 	}
 	public function getReceivedCashesInBank(?string $startDate = null , ?string $endDate = null):Collection
 	{
-		return $this->moneyReceived->where('type',MoneyReceived::CASH_IN_BANK)->filterByReceivingDate($startDate,$endDate) ;
+		return $this->moneyReceived->whereNull('advanced_opening_balance_id')->where('type',MoneyReceived::CASH_IN_BANK)->filterByReceivingDate($startDate,$endDate) ;
 	}
 	public function getReceivedTransfer(?string $startDate = null ,?string $endDate = null):Collection
 	{
-		return $this->moneyReceived->where('type',MoneyReceived::INCOMING_TRANSFER)->filterByReceivingDate($startDate,$endDate) ;
+		return $this->moneyReceived->whereNull('advanced_opening_balance_id')->where('type',MoneyReceived::INCOMING_TRANSFER)->filterByReceivingDate($startDate,$endDate) ;
 	}
 	public function moneyReceived()
 	{

@@ -93,6 +93,8 @@ class MoneyReceivedController
 		$receivedChequesUnderCollection=  $company->getReceivedChequesUnderCollection($chequesUnderCollectionStartDate,$chequesUnderCollectionEndDate);
 		$collectedCheques=  $company->getCollectedCheques($chequesCollectedStartDate,$chequesCollectedEndDate);
 		
+		
+		
 		$financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
 		
 		$accountTypes = AccountType::onlyCashAccounts()->get();		
