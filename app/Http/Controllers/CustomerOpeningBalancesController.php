@@ -9,13 +9,13 @@ use App\Models\Branch;
 use App\Models\CashInSafeStatement;
 use App\Models\Cheque;
 use App\Models\Company;
+use App\Models\CustomerOpeningBalance;
 use App\Models\FinancialInstitution;
 use App\Models\MoneyPayment;
 use App\Models\MoneyReceived;
 use App\Models\OpeningBalance;
 use App\Models\Partner;
 use App\Models\PayableCheque;
-use App\Models\SupplierOpeningBalance;
 use App\Traits\GeneralFunctions;
 use App\Traits\Models\HasDebitStatements;
 use Carbon\Carbon;
@@ -31,20 +31,20 @@ class CustomerOpeningBalancesController
         // $financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
         // $accountTypes = AccountType::onlyCashAccounts()->get();
         // $selectedBanks = MoneyReceived::getDrawlBanksForCurrentCompany($company->id) ;
-        $suppliers = Partner::where('company_id', $company->id)->where('is_supplier',1)->get()->formattedForSelect(true, 'getId', 'getName');
-        // $suppliers = Partner::where('company_id', $company->id)->where('is_supplier',1)->get()->formattedForSelect(true, 'getId', 'getName');
+        $customers = Partner::where('company_id', $company->id)->where('is_customer',1)->get()->formattedForSelect(true, 'getId', 'getName');
+        // $customers = Partner::where('company_id', $company->id)->where('is_customer',1)->get()->formattedForSelect(true, 'getId', 'getName');
 		// $selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
 
         $banks = Bank::pluck('view_name', 'id');
-        return view('supplier-opening-balance.form', [
+        return view('customer-opening-balance.form', [
             'company' => $company,
-            'model' => $company->supplierOpeningBalance,
+            'model' => $company->customerOpeningBalance,
             // 'selectedBanks' => $selectedBanks,
             // 'banks' => $banks,
-            'suppliersFormatted' => $suppliers,
+            'customersFormatted' => $customers,
             // 'financialInstitutionBanks' => $financialInstitutionBanks,
             // 'accountTypes' => $accountTypes,
-			// 'suppliersFormatted'=>$suppliers,
+			// 'customersFormatted'=>$customers,
 			// 'selectedBranches'=>$selectedBranches
         ]);
     }
@@ -53,60 +53,93 @@ class CustomerOpeningBalancesController
     {
 		
         $openingBalanceDate = $request->get('date');
-		
 		$openingBalanceDate = Carbon::make($openingBalanceDate)->format('Y-m-d');
-        $openingBalance = SupplierOpeningBalance::create([
-            'date' => $openingBalanceDate,
+        $openingBalance = CustomerOpeningBalance::create([
+			'date' => $openingBalanceDate,
             'company_id' => $company->id
         ]);
 		
-		
-        foreach ($request->get('opening-balances',[]) as $index => $openingBalanceArr) {
+		// store opening balances
+		$currentKey = 'opening-balances';
+        foreach ($request->get($currentKey,[]) as $index => $openingBalanceArr) {
 			$invoiceData = self::generateData($openingBalanceDate,$openingBalanceArr,$company);
-			$openingBalance->supplierInvoices()->create($invoiceData);
+			$openingBalance->customerInvoices()->create($invoiceData);
         }
+		
+		// store opening balances
+		$currentKey = 'advanced-opening-balances';
+        foreach ($request->get($currentKey,[]) as $index => $openingBalanceArr) {
+			$invoiceData = self::generateAdvancedData($openingBalanceDate,$openingBalanceArr,$company);
+			$openingBalance->moneyReceived()->create($invoiceData);
+        } 
+
        
 		return response()->json([
-			'redirectTo'=>route('suppliers-opening-balance.index',['company'=>$company->id])
+			'redirectTo'=>route('customers-opening-balance.index',['company'=>$company->id])
 		]);
       
     }
 
-public function update(Company $company, StoreOpeningBalanceRequest $request, SupplierOpeningBalance $suppliers_opening_balance)
+public function update(Company $company, StoreOpeningBalanceRequest $request, CustomerOpeningBalance $customers_opening_balance)
     {
 		
 		$openingBalanceDate = $request->get('date') ;
 		$openingBalanceDate = Carbon::make($openingBalanceDate)->format('Y-m-d');
-        $suppliers_opening_balance->update([
+        $customers_opening_balance->update([
             'date' => $openingBalanceDate,
         ]);
         /**
          * * هنا تحديث ال
-         * * cash in safe
+         * * opening-balances
          */
-        $oldIdsFromDatabase = $suppliers_opening_balance->supplierInvoices->pluck('id')->toArray();
-        $idsFromRequest = array_column($request->input('opening-balances', []), 'id') ;
-
-      //  $elementsToDelete = array_diff($oldIdsFromDatabase, $idsFromRequest);
+		$currentKey = 'opening-balances';
+        $oldIdsFromDatabase = $customers_opening_balance->customerInvoices->pluck('id')->toArray();
+        $idsFromRequest = array_column($request->input($currentKey, []), 'id') ;
 
         $elementsToUpdate = array_intersect($idsFromRequest, $oldIdsFromDatabase); // origin one
-		
-	//	CashInSafeStatement::deleteButTriggerChangeOnLastElement($openingBalance->supplierInvoices->whereIn('id', $elementsToDelete));
 	
         foreach ($elementsToUpdate as $id) {
-            $dataToUpdate = findByKey($request->input('opening-balances'), 'id', $id);
+            $dataToUpdate = findByKey($request->input($currentKey), 'id', $id);
 			$invoiceData = self::generateData($openingBalanceDate,$dataToUpdate,$company);
-            $suppliers_opening_balance->supplierInvoices()->where('supplier_invoices.id', $id)->first()->update($invoiceData);
+            $customers_opening_balance->customerInvoices()->where('customer_invoices.id', $id)->first()->update($invoiceData);
         }
-        foreach ($request->get('opening-balances', []) as $data) {
+        foreach ($request->get($currentKey, []) as $data) {
             if (!isset($data['id']) || (isset($data['id']) && $data['id'] == '0' )  ) {
                 unset($data['id']);
 				$invoiceData = self::generateData($openingBalanceDate,$data,$company);
-                $suppliers_opening_balance->supplierInvoices()->create($invoiceData);
+                $customers_opening_balance->customerInvoices()->create($invoiceData);
             }
         }
+		
+		
+		
+		
+		
+		/**
+         * * هنا تحديث ال
+         * * opening-balances
+         */
+		$currentKey = 'advanced-opening-balances';
+        $oldIdsFromDatabase = $customers_opening_balance->moneyReceived->pluck('id')->toArray();
+        $idsFromRequest = array_column($request->input($currentKey, []), 'id') ;
+
+        $elementsToUpdate = array_intersect($idsFromRequest, $oldIdsFromDatabase); // origin one
+	
+        foreach ($elementsToUpdate as $id) {
+            $dataToUpdate = findByKey($request->input($currentKey), 'id', $id);
+			$invoiceData = self::generateAdvancedData($openingBalanceDate,$dataToUpdate,$company);
+            $customers_opening_balance->moneyReceived()->where('money_received.id', $id)->first()->update($invoiceData);
+        }
+        foreach ($request->get($currentKey, []) as $data) {
+            if (!isset($data['id']) || (isset($data['id']) && $data['id'] == '0' )  ) {
+                unset($data['id']);
+				$invoiceData = self::generateAdvancedData($openingBalanceDate,$data,$company);
+                $customers_opening_balance->moneyReceived()->create($invoiceData);
+            }
+        }
+		
 		 return response()->json([
-			'redirectTo'=>route('suppliers-opening-balance.index',['company'=>$company->id])
+			'redirectTo'=>route('customers-opening-balance.index',['company'=>$company->id])
 		]);
 		
     }
@@ -120,8 +153,8 @@ public function update(Company $company, StoreOpeningBalanceRequest $request, Su
             $exchangeRate = isset($openingBalanceArr['exchange_rate']) ? $openingBalanceArr['exchange_rate'] : 1  ;
 			return [
 				'company_id'=>$company->id ,
-				'supplier_id'=>$partnerId,
-				'supplier_name'=>$partner->getName(),
+				'customer_id'=>$partnerId,
+				'customer_name'=>$partner->getName(),
 				'invoice_date'=>$openingBalanceDate,
 				'invoice_due_date'=>$invoiceDueDate,
 				'invoice_amount'=>$amount , 
@@ -130,4 +163,27 @@ public function update(Company $company, StoreOpeningBalanceRequest $request, Su
 				'invoice_number'=>'opening-balance'
 		];
 	}
+	
+	
+	public static function generateAdvancedData(string $openingBalanceDate , array $openingBalanceArr , Company $company):array 
+	{
+		$amount = number_unformat($openingBalanceArr['received_amount'] ?: 0) ;
+            $partnerId = $openingBalanceArr['partner_id'] ?: null ;
+			$currencyName = $openingBalanceArr['currency'];
+			$partner = Partner::find($partnerId);
+			$invoiceDueDate = Carbon::make($openingBalanceArr['invoice_due_date'])->format('Y-m-d');
+            $exchangeRate = isset($openingBalanceArr['exchange_rate']) ? $openingBalanceArr['exchange_rate'] : 1  ;
+			return [
+				'company_id'=>$company->id ,
+				'partner_id'=>$partnerId,
+				'customer_name'=>$partner->getName(),
+				'invoice_date'=>$openingBalanceDate,
+				'invoice_due_date'=>$invoiceDueDate,
+				'invoice_amount'=>$amount , 
+				'exchange_rate'=>$exchangeRate,
+				'currency'=>$currencyName,
+				'invoice_number'=>'opening-balance'
+		];
+	}
+	
 }

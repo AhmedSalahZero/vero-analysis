@@ -272,8 +272,8 @@ trait IsMoney
 	{
 		return $this->isDownPayment() && $this->getDownPaymentType() == self::DOWN_PAYMENT_OVER_CONTRACT;
 	}
-	public function getForeignExchangeRateAtDate(){
-		return ForeignExchangeRate::getExchangeRateForCurrencyAndClosestDate($this->getReceivingOrPaymentCurrency(),$this->company->getMainFunctionalCurrency(),$this->getDate(),$this->company->id);
+	public function getForeignExchangeRateAtDate(string $currency,Company $company){
+		return ForeignExchangeRate::getExchangeRateForCurrencyAndClosestDate($currency,$company->getMainFunctionalCurrency(),$this->getDate(),$this->company->id);
 	}
 	public function getAmountForMainCurrency()
 	{

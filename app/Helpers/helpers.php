@@ -5987,7 +5987,8 @@ function getCurrencies()
         'EURO' => __('EURO'),
         'SAR' => __('SAR'),
         'AED' => __('AED'),
-        'GBP' => __('GBP')
+        'GBP' => __('GBP'),
+		'OMR'=> __('OMR')
     ];
 }
 function formatDateForDatePicker(?string $date)

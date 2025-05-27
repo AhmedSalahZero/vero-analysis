@@ -27,7 +27,10 @@ class CustomerOpeningBalance extends Model
 	public function customerInvoices()
 	{
 		return $this->hasMany(CustomerInvoice::class,'opening_balance_id','id');
-		
+	}
+	public function moneyModel()
+	{
+		return $this->hasMany(MoneyReceived::class,'advanced_opening_balance_id','id');
 	}
 	public function setDateAttribute($value)
 	{

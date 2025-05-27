@@ -43,7 +43,6 @@ class DownPaymentContractsController extends Controller
 		  /**
 		 * * start of bank to safe internal money transfer 
 		 */
-
 		$moneyModels = $fullMoneyModelName::whereIn('money_type',[
 			$fullMoneyModelName::DOWN_PAYMENT
 			,$fullMoneyModelName::INVOICE_SETTLEMENT_WITH_DOWN_PAYMENT
@@ -72,7 +71,7 @@ class DownPaymentContractsController extends Controller
 			$contractsWithDownPayments =>$moneyModels ,
 		];
 
-
+		// dd($models);
         return view('contracts-down-payment.index', [
 			'company'=>$company,
 			'modelType'=>$modelType,

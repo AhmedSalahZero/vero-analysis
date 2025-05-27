@@ -364,6 +364,210 @@ use App\Models\MoneyReceived ;
 
                         </div>
                     </div>
+					
+					
+					
+                    <div class="kt-portlet">
+
+                        <div class="kt-portlet__head">
+                            <div class="kt-portlet__head-label">
+                                <h3 class="kt-portlet__head-title head-title text-primary">
+                                    {{__('Customers Advanced Opening Balance')}}
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="kt-portlet__body">
+
+                            <div class="form-group row justify-content-center">
+                                @php
+                                $index = 0 ;
+                                @endphp
+	                                {{-- start of fixed monthly repeating amount --}}
+                                @php
+                                $tableId = 'advanced-opening-balances';
+                                $repeaterId = 'm_repeater_7';
+                                @endphp
+                                <input type="hidden" name="tableIds[]" value="{{ $tableId }}">
+                                <x-tables.repeater-table :initEmpty="!isset($model) || !$model->customerInvoices->count()" :firstElementDeletable="true" :repeater-with-select2="true" :parentClass="'show-class-js'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=true">
+                                    <x-slot name="ths">
+                                        @foreach([
+                                        __('Customer')=>'col-md-1',
+                                        __('Amount')=>'col-md-1',
+                                        __('Currency')=>'col-md-1',
+                                        __('Exchange <br> Rate')=>'col-md-1',
+                                        __('Type')=>'col-md-1',
+                                        ] as $title=>$classes)
+                                       	 <x-tables.repeater-table-th class="{{ $classes }}" :title="$title"></x-tables.repeater-table-th>
+                                        @endforeach
+                                    </x-slot>
+                                    <x-slot name="trs">
+                                        @php
+                                        $rows = isset($model) ? $model->moneyModel :[-1] ;
+                                        @endphp
+                                        @foreach( count($rows) ? $rows : [-1] as $moneyModel)
+                                        @php
+                                        if( !($moneyModel instanceof \App\Models\MoneyReceived) ){
+                                      	  unset($moneyModel);
+                                        }
+                                        @endphp
+                                        <tr @if($isRepeater) data-repeater-item @endif>
+                                            <td class="text-center">
+                                                <div class="">
+                                                    <i data-repeater-delete="" class="btn-sm btn btn-danger m-btn m-btn--icon m-btn--pill trash_icon fas fa-times-circle">
+                                                    </i>
+                                                </div>
+                                            </td>
+											
+											
+                                            <td>
+                                                <div class="input-group">
+                                                    <select name="partner_id" class="form-control ">
+                                                        @foreach($customersFormatted as  $customerArr )
+														@php
+															$customerName = $customerArr['title'];
+															$customerId = $customerArr['value'];
+														@endphp
+                                                        <option value="{{ $customerId }}" @if(isset($moneyModel) && $moneyModel->getPartnerId() == $customerId ) selected @endif > {{ $customerName }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+
+                                            </td>
+                                             <td>
+                                                <div class="kt-input-icon">
+                                                    <div class="input-group">
+                                                     
+                                                        <input name="received_amount" type="text" class="form-control " value="{{ number_format(isset($moneyModel) ? $moneyModel->getInvoiceAmount() : old('amount',0)) }}">
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <input type="hidden" name="id" value="{{ isset($moneyModel) ? $moneyModel->id : 0 }}">
+
+
+
+
+
+                                                <div class="input-group">
+                                                    <select name="currency" class="form-control select-for-currency ajax-get-invoice-numbers" js-when-change-trigger-change-account-type>
+                                                        {{-- <option selected>{{__('Select')}}</option> --}}
+                                                        @foreach(getCurrencies() as $currencyName => $currencyValue )
+                                                        <option value="{{ $currencyName }}" @if(isset($moneyModel) && $moneyModel->getCurrency() == $currencyName ) selected @elseif($currencyName == 'EGP' ) selected @endif > {{ $currencyValue }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+
+                                            </td>
+                                            <td>
+
+                                                <div class="kt-input-icon">
+                                                    <div class="input-group">
+                                                        <input name="exchange_rate" step="4" type="text" class="form-control " value="{{ isset($moneyModel) ? $moneyModel->getExchangeRate() : old('exchange_rate',1) }}">
+                                                    </div>
+                                                </div>
+
+                                            </td>
+											<td>
+                                    			 <select name="down_payment_type" class="form-control " >
+                                                        <option value="{{ MoneyReceived::DOWN_PAYMENT_GENERAL }}" @if(isset($moneyModel) && $moneyModel->isGeneralDownPayment()  ) selected  @endif > {{ __('General') }}</option>
+                                                        <option value="{{ MoneyReceived::DOWN_PAYMENT_OVER_CONTRACT }}" @if(isset($moneyModel) && $moneyModel->isOverContractDownPayment()) selected @endif > {{ __('Over Contract') }}</option>
+                                                    </select>
+                                            </td>
+                                        </tr>
+                                        @endforeach
+
+                                    </x-slot>
+
+
+
+
+                                </x-tables.repeater-table>
+                                {{-- end of fixed monthly repeating amount --}}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                            </div>
+
+
+                        </div>
+                    </div>
+					
 
 
 

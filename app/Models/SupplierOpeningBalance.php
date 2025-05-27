@@ -26,6 +26,10 @@ class SupplierOpeningBalance extends Model
 		return $this->hasMany(SupplierInvoice::class,'opening_balance_id','id');
 		
 	}
+	public function moneyModel()
+	{
+		return $this->hasMany(MoneyPayment::class,'advanced_opening_balance_id','id');
+	}
 	public function setDateAttribute($value)
 	{
 		$date = explode('/',$value);
