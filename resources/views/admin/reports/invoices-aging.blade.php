@@ -3,14 +3,15 @@
 <x-styles.commons></x-styles.commons>
 
 <style>
-[data-chart-name="Total-Aging-Analysis-Chart"]{
-	max-height:340px !important;
-}
-[data-chart-name="Total-Coming-Dues-Aging-Analysis-Chart"],
-[data-chart-name="Total-Past-Dues-Aging-Analysis-Chart"]
-{
-	max-height:580px !important;
-}
+    [data-chart-name="Total-Aging-Analysis-Chart"] {
+        max-height: 340px !important;
+    }
+
+    [data-chart-name="Total-Coming-Dues-Aging-Analysis-Chart"],
+    [data-chart-name="Total-Past-Dues-Aging-Analysis-Chart"] {
+        max-height: 580px !important;
+    }
+
     .is-sub-row.is-total-row td.sub-numeric-bg,
     .is-sub-row.is-total-row td.sub-text-bg {
         background-color: #087383 !important;
@@ -293,7 +294,7 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
 
 
                             <div class="responsive">
-                                <table class="table kt_table_with_no_pagination_no_collapse table-striped- table-bordered table-hover table-checkable position-relative table-with-two-subrows main-table-class dataTable no-footer">
+                                <table class="table qqq kt_table_with_no_pagination_no_collapse table-striped- table-bordered table-hover table-checkable position-relative table-with-two-subrows main-table-class dataTable no-footer">
                                     <thead>
 
                                         <tr class="header-tr ">
@@ -340,13 +341,13 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
                                             @foreach(array_reverse(getInvoiceDayIntervals()) as $daysIntervalInInverseOrder)
                                             <th class="view-table-th editable-date header-th">
                                                 <span style="white-space:nowrap !important">[{{ $daysIntervalInInverseOrder }}] {{ __('Days') }}</span>
-												
+
                                                 {{-- @foreach(getDatesFromTwoIndexes($daysIntervalInInverseOrder,$aginDate,'past') as $dateFormatted) --}}
-												@if(isset($weeksDates['past_due'][$daysIntervalInInverseOrder]['start_date']))
-												<span class="d-block">{{ $weeksDates['past_due'][$daysIntervalInInverseOrder]['start_date']  }} <br></span>
-												<span class="d-block">{{ $weeksDates['past_due'][$daysIntervalInInverseOrder]['end_date']  }} <br></span>
-												@endif
-												{{-- <span class="d-block">{{ $dateFormatted  }} <br></span> --}}
+                                                @if(isset($weeksDates['past_due'][$daysIntervalInInverseOrder]['start_date']))
+                                                <span class="d-block">{{ $weeksDates['past_due'][$daysIntervalInInverseOrder]['start_date']  }} <br></span>
+                                                <span class="d-block">{{ $weeksDates['past_due'][$daysIntervalInInverseOrder]['end_date']  }} <br></span>
+                                                @endif
+                                                {{-- <span class="d-block">{{ $dateFormatted  }} <br></span> --}}
                                                 {{-- @endforeach --}}
                                             </th>
                                             @endforeach
@@ -361,10 +362,10 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
                                             <th class="view-table-th header-th">
                                                 <span style="white-space:nowrap !important">[{{ $daysInterval }}] {{ __('Days') }}</span>
                                                 {{-- @foreach(getDatesFromTwoIndexes($daysIntervalInInverseOrder,$aginDate,'coming') as $dateFormatted) --}}
-												@if(isset($weeksDates['coming_due'][$daysInterval]['start_date']))
+                                                @if(isset($weeksDates['coming_due'][$daysInterval]['start_date']))
                                                 <span class="d-block">{{ $weeksDates['coming_due'][$daysInterval]['start_date']  }} <br></span>
                                                 <span class="d-block">{{ $weeksDates['coming_due'][$daysInterval]['end_date']  }} <br></span>
-												@endif
+                                                @endif
                                                 {{-- @endforeach --}}
 
                                             </th>
@@ -597,81 +598,81 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
 
                 @foreach($agings['charts']??[] as $chartName =>$chartArr)
                 {{-- <div class="kt-portlet"> --}}
-                    
-                        <div class="row">
-						
-							<x-title :title="$chartName"></x-title>
 
-                            <div class="col-md-6">
-                                <div class="kt-portlet kt-portlet--mobile">
+                <div class="row">
 
-                                    <div class="kt-portlet__body" data-chart-name="{{ convertStringToClass($chartName) }}">
+                    <x-title :title="$chartName"></x-title>
 
-                                        <!--begin: Datatable -->
+                    <div class="col-md-6">
+                        <div class="kt-portlet kt-portlet--mobile">
 
-                                        <!-- HTML -->
-                                        <div id="chartdiv_{{ convertStringToClass($chartName) }}" class="chartDiv"></div>
+                            <div class="kt-portlet__body" data-chart-name="{{ convertStringToClass($chartName) }}">
 
-                                        <!--end: Datatable -->
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="kt-portlet kt-portlet--mobile">
+                                <!--begin: Datatable -->
 
+                                <!-- HTML -->
+                                <div id="chartdiv_{{ convertStringToClass($chartName) }}" class="chartDiv"></div>
 
-
-                                    <div class="kt-portlet__body">
-
-                                        <!--begin: Datatable -->
-
-                                        @php
-                                        $order = 1 ;
-                                        @endphp
-
-                                        <x-table :tableClass="'kt_table_with_no_pagination_no_scroll_no_info'">
-                                            @slot('table_header')
-                                            <tr class="table-active remove-max-class text-center">
-                                                <th>#</th>
-                                                <th>{{ __('Item') }}</th>
-                                                <th>{{ __('Value') }}</th>
-                                                <th>{{ __('%') }}</th>
-
-                                            </tr>
-                                            @endslot
-                                            @slot('table_body')
-
-                                            @foreach ($chartArr as $key => $item)
-                                            <tr>
-                                                <th>{{++$key}}</th>
-                                                <th style="white-space: normal !important">{{ $item['item'] }}</th>
-                                                <td class="text-center">{{ number_format($item['value']) }}</td>
-                                                <td class="text-center">{{ number_format($item['percentage'],1) }} %</td>
-                                            </tr>
-                                            @endforeach
-
-                                            <tr class="table-active remove-max-class text-center">
-                                                <th colspan="2">{{__('Total')}}</th>
-                                                <td>{{ number_format($item['total_for_all_values'] , 0) }}</td>
-                                                <td>{{ number_format($item['total_for_all_percentages'] , 1) }} %</td>
-                                            </tr>
-                                            @endslot
-                                        </x-table>
-
-
-
-
-                                    </div>
-                                </div>
+                                <!--end: Datatable -->
                             </div>
                         </div>
-                            @endforeach
+                    </div>
+                    <div class="col-md-6">
+                        <div class="kt-portlet kt-portlet--mobile">
 
-                            @foreach($agings['charts']??[] as $chartName => $chartArr)
-                            <input type="hidden" id="total_{{ convertStringToClass($chartName) }}" data-total="{{ json_encode(
+
+
+                            <div class="kt-portlet__body">
+
+                                <!--begin: Datatable -->
+
+                                @php
+                                $order = 1 ;
+                                @endphp
+
+                                <x-table :tableClass="'kt_table_with_no_pagination_no_scroll_no_info'">
+                                    @slot('table_header')
+                                    <tr class="table-active remove-max-class text-center">
+                                        <th>#</th>
+                                        <th>{{ __('Item') }}</th>
+                                        <th>{{ __('Value') }}</th>
+                                        <th>{{ __('%') }}</th>
+
+                                    </tr>
+                                    @endslot
+                                    @slot('table_body')
+
+                                    @foreach ($chartArr as $key => $item)
+                                    <tr>
+                                        <th>{{++$key}}</th>
+                                        <th style="white-space: normal !important">{{ $item['item'] }}</th>
+                                        <td class="text-center">{{ number_format($item['value']) }}</td>
+                                        <td class="text-center">{{ number_format($item['percentage'],1) }} %</td>
+                                    </tr>
+                                    @endforeach
+
+                                    <tr class="table-active remove-max-class text-center">
+                                        <th colspan="2">{{__('Total')}}</th>
+                                        <td>{{ number_format($item['total_for_all_values'] , 0) }}</td>
+                                        <td>{{ number_format($item['total_for_all_percentages'] , 1) }} %</td>
+                                    </tr>
+                                    @endslot
+                                </x-table>
+
+
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @endforeach
+
+                @foreach($agings['charts']??[] as $chartName => $chartArr)
+                <input type="hidden" id="total_{{ convertStringToClass($chartName) }}" data-total="{{ json_encode(
       							      $chartArr
         					) }}">
-				                @endforeach
+                @endforeach
 
                 {{-- </div> --}}
 
@@ -680,8 +681,8 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
         </div>
 
         @push('js')
-{{-- <script src="{{ url('assets/js/demo1/pages/crud/datatables/basic/paginations.js') }}" type="text/javascript"></script> --}}
-		
+        {{-- <script src="{{ url('assets/js/demo1/pages/crud/datatables/basic/paginations.js') }}" type="text/javascript"></script> --}}
+
         <script>
             $(document).on('click', '.trigger-child-row-1', function(e) {
                 const parentId = $(e.target.closest('tr')).data('model-id');
@@ -728,7 +729,7 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
 
 
 
-            var table = $(".kt_table_with_no_pagination_no_collapse");
+            var table = $(".kt_table_with_no_pagination_no_collapse.qqq");
 
 
             window.addEventListener('scroll', function() {
@@ -777,7 +778,7 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
                     , "pageLength": 25
                     , drawCallback: function(setting) {
                         if (!currentTable) {
-                            currentTable = $('.main-table-class').DataTable();
+                            currentTable = $('.main-table-class.qqq').DataTable();
                         }
                         currentTable.columns([2, 3, 4, 5, 6, 7, 8, 9, 10]).visible(false);
                         currentTable.columns([13, 14, 15, 16, 17, 18, 19, 20, 21]).visible(false);
@@ -815,20 +816,12 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
         return yourDate.toISOString().split('T')[0]
     }
 
-    am4core.ready(function() {
-
-        // Themes begin
-
-
-
-    }); // end am4core.ready()
-
+ 
 </script>
 <script>
-
     $(document).on('click', '#show-past-due-detail', function() {
         if (!currentTable) {
-            currentTable = $('.main-table-class').DataTable()
+            currentTable = $('.main-table-class.qqq').DataTable()
         }
         if (currentTable.column(2).visible()) {
             $(this).html("{{ __('Show Details') }}")
@@ -841,7 +834,7 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
 
     $(document).on('click', '#show-coming-due-detail', function() {
         if (!currentTable) {
-            currentTable = $('.main-table-class').DataTable()
+            currentTable = $('.main-table-class.qqq').DataTable()
         }
         if (currentTable.column(13).visible()) {
             $(this).html("{{ __('Show Details') }}")
@@ -856,10 +849,6 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
 
 
 
-<!-- Resources -->
-<script src="https://cdn.amcharts.com/lib/4/core.js"></script>
-<script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
-<script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script>
 
 <!-- Chart code -->
 
