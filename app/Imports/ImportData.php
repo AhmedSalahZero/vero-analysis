@@ -203,7 +203,7 @@ class ImportData implements
 	{
 		
 		$invalidDates = [];
-		$allValidations =[ ];
+		$allValidations =[];
 		if(in_array($key , ['Date'  , __('Date') , 'Estimated',__('Estimated')])){
 			$dateValidation = $this->dateFormatting($value);
 				if (is_null($dateValidation)) {
@@ -239,6 +239,7 @@ class ImportData implements
 				];
 			}
 		}
+	
 		return $allValidations;
 		
 		
@@ -256,6 +257,7 @@ class ImportData implements
 			$row_with_no_spaces[trim($key)] = trim($value);
 			$rowValidation = $this->validateRowValue(trim($key), trim($value));
 			if (isset($rowValidation[$key]) && count($rowValidation[$key])) {
+				logger($key);
 				$validations[$rowId][$key] =  $rowValidation[$key] ;
 			}
 		}

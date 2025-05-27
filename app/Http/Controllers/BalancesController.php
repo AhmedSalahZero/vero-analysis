@@ -94,7 +94,7 @@ class BalancesController
 			 */
 			$partnerId = $downPaymentSettlement->{$clientIdColumnName};
 			$downPaymentCurrency = $downPaymentSettlement->currency ;
-			$foreignExchangeRateAtDate =$moneyReceived ? $moneyReceived->getForeignExchangeRateAtDate($moneyReceived->getReceivingOrPaymentCurrency(),$company) : dd('qqqqqqqq');
+			$foreignExchangeRateAtDate =$moneyReceived ? $moneyReceived->getForeignExchangeRateAtDate($moneyReceived->getReceivingOrPaymentCurrency(),$company) : 1;
 			$downPaymentBalance = $downPaymentSettlement->down_payment_balance  ;
 			$downPaymentBalanceInMainCurrency = $downPaymentBalance * $foreignExchangeRateAtDate;
 			if($mainFunctionalCurrency != $downPaymentCurrency){

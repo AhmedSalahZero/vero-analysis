@@ -71,6 +71,10 @@ class MoneyPayment extends Model
 			return __('Payable Cheque To :name With Number [:number ] Paid Invoices [ :numbers ] [ :currency ]',['name'=>$supplierName,'number'=>$chequeNumber,'numbers'=>$paidInvoiceNumbers,'currency'=>$moneyPayment->getCurrency()],$lang) ;
 		}
 		if($moneyPayment->isCashPayment()){
+			if($moneyPayment->isAdvancedOpeningBalance()){
+				return __('Advanced Opening Balance From :name',['name'=>$supplierName],$lang) ;
+				// return __('General Down Payment - Cash Payment 	:name',['name'=>$supplierName],$lang) ;
+			}
 			if($moneyPayment->isGeneralDownPayment()){
 				return __('General Down Payment - Cash Payment 	:name',['name'=>$supplierName],$lang) ;
 			}

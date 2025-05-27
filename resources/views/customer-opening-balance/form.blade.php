@@ -421,7 +421,7 @@ use App\Models\MoneyReceived ;
 											
                                             <td>
                                                 <div class="input-group">
-                                                    <select name="partner_id" class="form-control ">
+                                                    <select name="partner_id" class="form-control partner_id ajax-get-contracts-for-customer">
                                                         @foreach($customersFormatted as  $customerArr )
 														@php
 															$customerName = $customerArr['title'];
@@ -437,7 +437,7 @@ use App\Models\MoneyReceived ;
                                                 <div class="kt-input-icon">
                                                     <div class="input-group">
                                                      
-                                                        <input name="received_amount" type="text" class="form-control " value="{{ number_format(isset($moneyModel) ? $moneyModel->getInvoiceAmount() : old('amount',0)) }}">
+                                                        <input name="received_amount" type="text" class="form-control " value="{{ number_format(isset($moneyModel) ? $moneyModel->getReceivedAmount() : old('amount',0)) }}">
                                                     </div>
                                                 </div>
                                             </td>
@@ -449,8 +449,8 @@ use App\Models\MoneyReceived ;
 
 
                                                 <div class="input-group">
-                                                    <select name="currency" class="form-control select-for-currency ajax-get-invoice-numbers" js-when-change-trigger-change-account-type>
-                                                        {{-- <option selected>{{__('Select')}}</option> --}}
+                                                    <select name="currency" class="form-control select-for-currency currency-for-contracts ajax-get-contracts-for-customer" js-when-change-trigger-change-account-type>
+                                                        {{-- <option  selected>{{__('Select')}}</option> --}}
                                                         @foreach(getCurrencies() as $currencyName => $currencyValue )
                                                         <option value="{{ $currencyName }}" @if(isset($moneyModel) && $moneyModel->getCurrency() == $currencyName ) selected @elseif($currencyName == 'EGP' ) selected @endif > {{ $currencyValue }}</option>
                                                         @endforeach
@@ -462,16 +462,25 @@ use App\Models\MoneyReceived ;
 
                                                 <div class="kt-input-icon">
                                                     <div class="input-group">
-                                                        <input name="exchange_rate" step="4" type="text" class="form-control " value="{{ isset($moneyModel) ? $moneyModel->getExchangeRate() : old('exchange_rate',1) }}">
+                                                        <input name="exchange_rate" step="4" type="text" class="form-control  " value="{{ isset($moneyModel) ? $moneyModel->getExchangeRate() : old('exchange_rate',1) }}">
                                                     </div>
                                                 </div>
 
                                             </td>
 											<td>
-                                    			 <select name="down_payment_type" class="form-control " >
+                                    			 <select name="down_payment_type" class="form-control down-payment-type" >
                                                         <option value="{{ MoneyReceived::DOWN_PAYMENT_GENERAL }}" @if(isset($moneyModel) && $moneyModel->isGeneralDownPayment()  ) selected  @endif > {{ __('General') }}</option>
                                                         <option value="{{ MoneyReceived::DOWN_PAYMENT_OVER_CONTRACT }}" @if(isset($moneyModel) && $moneyModel->isOverContractDownPayment()) selected @endif > {{ __('Over Contract') }}</option>
                                                     </select>
+													
+													<div class="contract-container">
+																 <select   data-current-selected="{{ isset($moneyModel) && $moneyModel->getContractId() ?  $moneyModel->getContractId() : 0 }}" name="contract_id" class="form-control contract-class" >
+																 	{{-- @foreach($contracts as $contract) --}}
+                                                        			{{-- <option value="{{ $contract->id }}" @if(isset($moneyModel) && $moneyModel->getContractId()  ) selected  @endif > {{$contract->getName() }}</option> --}}
+																	{{-- @endforeach --}}
+                                                    </select>
+													
+													</div>
                                             </td>
                                         </tr>
                                         @endforeach
@@ -740,6 +749,49 @@ use App\Models\MoneyReceived ;
                     });
                 })
 
+
+
+
+
+
+$(document).on('change', '.ajax-get-contracts-for-customer', function(e) {
+        e.preventDefault()
+		const parent = $(this).closest('tr') ;
+        const customerId = parent.find('select.partner_id').val()
+        const currency =  parent.find('select.currency-for-contracts').val()
+        const contractId =  parent.find('select.contract-class').attr('data-current-selected');
+        if (customerId && currency) {
+            $.ajax({
+                url: "{{ route('get.contracts.for.customer',['company'=>$company->id]) }}"
+                , data: {
+                    customerId
+                    , currency
+                }
+                , success: function(res) {
+                    let options = '';
+                    for (id in res.contracts) {
+                        options += `<option value="${id}" ${contractId == id ? 'selected' : ''} >${res.contracts[id]}</option>`
+                    }
+					console.log(options)
+                    parent.find('select.contract-class').empty().append(options)
+                    parent.find('select.contract-class').trigger('change')
+                }
+            })
+        }else{
+					 parent.find('select.contract-class').empty().append("")
+                    parent.find('select.contract-class').trigger('change')
+		}
+    })
+	$('select.ajax-get-contracts-for-customer').trigger('change')
+	$(document).on('change','select.down-payment-type',function(){
+			const val = $(this).val();
+			if(val == 'over_contract'){
+				$(this).closest('td').find('.contract-container').show();
+			}else{
+				$(this).closest('td').find('.contract-container').hide();
+			}
+	});
+	$('select.down-payment-type').trigger('change');
             </script>
 
             @endsection

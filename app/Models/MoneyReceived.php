@@ -105,6 +105,9 @@ class MoneyReceived extends Model
 			if($moneyReceived->getPartnerType()!='is_customer'){
 				return __('Cash In Safe From :name [ :partnerType ]',['name'=>$customerName,'partnerType'=>$moneyReceived->getPartnerTypeFormatted()],$lang) ;
 			}
+			if($moneyReceived->isAdvancedOpeningBalance()){
+				return __('Advanced Opening Balance From :name',['name'=>$customerName],$lang) ;
+			}
 			if($moneyReceived->isGeneralDownPayment()&&$moneyReceived->isDownPayment()){
 				return __('Cash In Safe From :name  - General Down Payment',['name'=>$customerName],$lang) ;
 			}

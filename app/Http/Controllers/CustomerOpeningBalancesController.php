@@ -69,8 +69,9 @@ class CustomerOpeningBalancesController
 		// store opening balances
 		$currentKey = 'advanced-opening-balances';
         foreach ($request->get($currentKey,[]) as $index => $openingBalanceArr) {
-			$invoiceData = self::generateAdvancedData($openingBalanceDate,$openingBalanceArr,$company);
-			$openingBalance->moneyReceived()->create($invoiceData);
+			$data = self::generateAdvancedData($openingBalanceDate,$openingBalanceArr,$company);
+			$money = $openingBalance->moneyModel()->create($data);
+			$money->downPaymentSettlements()->create(self::generateDownPaymentData($openingBalanceArr,$company,$money->id));
         } 
 
        
@@ -120,21 +121,24 @@ public function update(Company $company, StoreOpeningBalanceRequest $request, Cu
          * * opening-balances
          */
 		$currentKey = 'advanced-opening-balances';
-        $oldIdsFromDatabase = $customers_opening_balance->moneyReceived->pluck('id')->toArray();
+        $oldIdsFromDatabase = $customers_opening_balance->moneyModel->pluck('id')->toArray();
         $idsFromRequest = array_column($request->input($currentKey, []), 'id') ;
 
         $elementsToUpdate = array_intersect($idsFromRequest, $oldIdsFromDatabase); // origin one
 	
         foreach ($elementsToUpdate as $id) {
             $dataToUpdate = findByKey($request->input($currentKey), 'id', $id);
-			$invoiceData = self::generateAdvancedData($openingBalanceDate,$dataToUpdate,$company);
-            $customers_opening_balance->moneyReceived()->where('money_received.id', $id)->first()->update($invoiceData);
+			$moneyData = self::generateAdvancedData($openingBalanceDate,$dataToUpdate,$company);
+            $customers_opening_balance->moneyModel()->where('money_received.id', $id)->first()->update($moneyData);
+			$moneyReceived = MoneyReceived::find($id);
+			$moneyReceived->downPaymentSettlements()->update(self::generateDownPaymentData($dataToUpdate,$company,$id));
         }
         foreach ($request->get($currentKey, []) as $data) {
             if (!isset($data['id']) || (isset($data['id']) && $data['id'] == '0' )  ) {
                 unset($data['id']);
-				$invoiceData = self::generateAdvancedData($openingBalanceDate,$data,$company);
-                $customers_opening_balance->moneyReceived()->create($invoiceData);
+				$moneyData = self::generateAdvancedData($openingBalanceDate,$data,$company);
+                $money = $customers_opening_balance->moneyModel()->create($moneyData);
+				$money->downPaymentSettlements()->create(self::generateDownPaymentData($data,$company,$money->id));
             }
         }
 		
@@ -170,20 +174,47 @@ public function update(Company $company, StoreOpeningBalanceRequest $request, Cu
 		$amount = number_unformat($openingBalanceArr['received_amount'] ?: 0) ;
             $partnerId = $openingBalanceArr['partner_id'] ?: null ;
 			$currencyName = $openingBalanceArr['currency'];
-			$partner = Partner::find($partnerId);
-			$invoiceDueDate = Carbon::make($openingBalanceArr['invoice_due_date'])->format('Y-m-d');
+			// $partner = Partner::find($partnerId);
+			// $invoiceDueDate = Carbon::make($openingBalanceArr['invoice_due_date'])->format('Y-m-d');
             $exchangeRate = isset($openingBalanceArr['exchange_rate']) ? $openingBalanceArr['exchange_rate'] : 1  ;
 			return [
 				'company_id'=>$company->id ,
 				'partner_id'=>$partnerId,
-				'customer_name'=>$partner->getName(),
-				'invoice_date'=>$openingBalanceDate,
-				'invoice_due_date'=>$invoiceDueDate,
-				'invoice_amount'=>$amount , 
+				'partner_type'=>'is_customer',
+				'received_amount'=>$amount,
+				'amount_in_invoice_currency'=>$amount,
+				'money_type'=>'down-payment',
+				'down_payment_type'=>$openingBalanceArr['down_payment_type'],
+				'contract_id'=>$openingBalanceArr['contract_id']??null,
+				'type'=>MoneyReceived::CASH_IN_SAFE,
+				'receiving_date'=>$openingBalanceDate,
 				'exchange_rate'=>$exchangeRate,
 				'currency'=>$currencyName,
-				'invoice_number'=>'opening-balance'
+				'receiving_currency'=>$currencyName,
+				'invoice_number'=>'opening-balance',
+				'comment_en'=>__('Advanced Down Payment'),
+				'comment_ar'=>__('Advanced Down Payment'),
 		];
 	}
+	public static function generateDownPaymentData( array $openingBalanceArr , Company $company,int $moneyReceivedId):array 
+	{
+			$amount = number_unformat($openingBalanceArr['received_amount'] ?: 0) ;
+            $partnerId = $openingBalanceArr['partner_id'] ?: null ;
+			$currencyName = $openingBalanceArr['currency'];
+			// $partner = Partner::find($partnerId);
+			// $invoiceDueDate = Carbon::make($openingBalanceArr['invoice_due_date'])->format('Y-m-d');
+            // $exchangeRate = isset($openingBalanceArr['exchange_rate']) ? $openingBalanceArr['exchange_rate'] : 1  ;
+			return [
+				'company_id'=>$company->id ,
+				'contract_id'=>$openingBalanceArr['contract_id']??null,
+				'sales_order_id'=>null ,
+				'customer_id'=>$partnerId,
+				'down_payment_amount'=>$amount,
+				'down_payment_balance'=>$amount,
+				'currency'=>$currencyName,
+				'money_received_id'=>$moneyReceivedId,
+		];
+	}
+	
 	
 }

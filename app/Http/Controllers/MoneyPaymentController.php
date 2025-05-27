@@ -438,7 +438,6 @@ class MoneyPaymentController
 		 * * For Money Payment Only
 		 */
 		$totalWithholdAmount = $moneyPayment->storeNewSettlement(
-			// $paymentCurrency,$currencyName,$exchangeRate,$foreignExchangeRate,
 			$request->get('settlements',[]),$partnerId,$company);
 		$moneyPayment->update([
 			'total_withhold_amount'=>$totalWithholdAmount

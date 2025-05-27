@@ -63,11 +63,11 @@ trait IsMoney
 		];
 	}
 	public function storeNewSettlement(
-	array $settlements,int $partnerId,Company $company , bool $isFromDownPayment = false )
+	array $settlements,int $partnerId,Company $company , bool $isFromDownPayment = false , bool $syncWithOdoo = true )
 	{
 		$totalWithholdAmount= 0 ;
 		$OdooPaymentService = null ;
-		if($company->hasOdooIntegrationCredentials()){
+		if($company->hasOdooIntegrationCredentials() && $syncWithOdoo){
 			$OdooPaymentService = new OdooPayment($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId());
 		}
 		
@@ -84,7 +84,7 @@ trait IsMoney
 				unset($settlementArr['net_balance']);
 				$payment = $this->settlements()->create($settlementArr);
 				// if($companyId)
-				if($OdooPaymentService){
+				if($OdooPaymentService && $syncWithOdoo){
 					// $OdooPaymentService->reCreatePayment($payment);
 					$OdooPaymentService->createPayment($payment);
 				}
@@ -315,5 +315,9 @@ trait IsMoney
 			$isCashInSafeOrCashPayment = true ; 
 		}
 		return $isCashInSafeOrCashPayment ;
+	}
+	public function isAdvancedOpeningBalance():bool
+	{
+		return $this->advanced_opening_balance_id != null ;
 	}
 }

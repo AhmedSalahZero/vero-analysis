@@ -166,7 +166,8 @@ class DownPaymentContractsController extends Controller
 		->each(function($settlement){
 			$settlement->delete();
 		});
-		$downPayment->storeNewSettlement($request->get('settlements',[]),$downPayment->getPartnerId(),$company,$isFromDownPayment);
+		$syncWithOdoo = false ;
+		$downPayment->storeNewSettlement($request->get('settlements',[]),$downPayment->getPartnerId(),$company,$isFromDownPayment,$syncWithOdoo);
 		return redirect()->route('view.contracts.down.payments',['company'=>$company->id,'partnerId'=>$partnerId,'modelType'=>$modelType,'currency'=>$downPayment->getCurrency()]);
 		
 	}
