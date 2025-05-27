@@ -68,6 +68,7 @@ trait HasBalances
 			$currentData['document_no'] = $invoiceNumber;
 			$currentData['debit'] = $currentDebit  ;
 			$currentData['credit'] =$currentCredit;
+			$currentData['end_balance'] =$currentDebit-$currentCredit;
 			$currentData['comment'] =null;
 			if($isNotBegBalance){
 				$index++ ;
