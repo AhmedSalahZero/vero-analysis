@@ -3,20 +3,25 @@ namespace App\Services\Api;
 
 use App\Models\Currency;
 use App\Services\Api\Traits\AuthTrait;
-use Illuminate\Support\Facades\DB;
+use App\Services\Api\Traits\HasPayment;
 
 class OdooPayment
 {
-	use AuthTrait ;
-	public function getJournalId($moneyModel):int 
+	use AuthTrait,HasPayment ;
+	public function getChartOfAccountId($moneyModel):int 
 	{
 		$isCashInSafeOrCashPayment = $moneyModel->isCash();
 		return $isCashInSafeOrCashPayment  ? $moneyModel->getCashBranchOdooId() : $moneyModel->getBankAccountOdooId();
 	}
-
+	public function getJournalId($moneyModel):int 
+	{
+		$isCashInSafeOrCashPayment = $moneyModel->isCash();
+		return $isCashInSafeOrCashPayment  ? $moneyModel->getCashBranchJournalId() : $moneyModel->getBankAccountJournalId();
+	}
 	public function createDownPayment($moneyModel )
     {
-			$journalId = $this->getJournalId($moneyModel);
+		//	$chartOfAccountId = $this->getChartOfAccountId($moneyModel);
+			$journalId = $this->getJournalId($moneyModel) ;
 			/**
 			 * * $bankOrSafeId
 			 */
@@ -69,19 +74,15 @@ class OdooPayment
 			]);
 
             return response()->json(['success' => 'Payment registered and reconciled successfully']);
-
        
     }
-	public function cancelDownPayment(int $downPaymentOdooId)
-	{
-		return $this->cancelPayments($downPaymentOdooId);
-	}
     
 	 public function createPayment($customerInvoiceSettlement )
     {
 			$invoice = $customerInvoiceSettlement->invoice;
 			$moneyModel = $customerInvoiceSettlement->getMoney();
-			$journalId = $this->getJournalId($moneyModel);
+	//		$chartOfAccountId = $this->getChartOfAccountId($moneyModel);
+			$journalId = $this->getJournalId($moneyModel) ;
 			/**
 			 * * $bankOrSafeId
 			 */
@@ -149,42 +150,6 @@ class OdooPayment
 		$this->createPayment($customerInvoiceSettlement);
 
     }
-	public function cancelPayments(int $paymentOdooId)
-	{
-		$filters = [
-				['id','=',$paymentOdooId]
-		];
-		$payments = $this->models->execute_kw(
-			$this->db,
-			$this->uid,
-			$this->password,
-			'account.payment',
-			'search_read',
-			[$filters],
-		);
-		/**
-		 * * مش بكون عارف هي انهي مدفوعه بالظبط .. فا بلغيهم كلهم
-		 */
-		foreach($payments as $existingPayment){
-			$this->models->execute_kw(
-				$this->db,
-				$this->uid,
-				$this->password,
-				'account.payment',
-				'action_cancel',
-				[[$existingPayment['id']]]
-			);
-			
-			$this->models->execute_kw(
-				$this->db,
-				$this->uid,
-				$this->password,
-				'account.payment',
-				'unlink',
-				[[$existingPayment['id']]]
-			);
-			
-		}
-	}
+	
 	
 }

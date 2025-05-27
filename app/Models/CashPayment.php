@@ -21,6 +21,11 @@ class CashPayment extends Model
 		$branch = $this->deliveryBranch;
 		return $branch ? $branch->odoo_id : 0 ;
 	}
+	public function getBankJournalId():?int
+	{
+		$branch = $this->deliveryBranch;
+		return $branch ? $branch->journal_id : 0 ;
+	}
 	public function deliveryBranch(){
 		return $this->belongsTo(Branch::class,'delivery_branch_id','id');
 	}

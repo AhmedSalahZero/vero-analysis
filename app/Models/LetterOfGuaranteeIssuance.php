@@ -4,7 +4,9 @@ namespace App\Models;
 
 use App\Enums\LgTypes;
 use App\Models\LgRenewalDateHistory;
+use App\Services\Api\LetterOfGuaranteeService;
 use App\Traits\HasBasicStoreRequest;
+use App\Traits\HasCompany;
 use App\Traits\Models\HasCommissionStatements;
 use App\Traits\Models\HasLetterOfGuaranteeCashCoverStatements;
 use App\Traits\Models\HasLetterOfGuaranteeStatements;
@@ -16,7 +18,7 @@ use Illuminate\Support\Facades\DB;
 
 class LetterOfGuaranteeIssuance extends Model
 {
-	use HasBasicStoreRequest,HasCommissionStatements,HasLetterOfGuaranteeStatements,HasLetterOfGuaranteeCashCoverStatements,HasUserComment;
+	use HasBasicStoreRequest,HasCommissionStatements,HasLetterOfGuaranteeStatements,HasLetterOfGuaranteeCashCoverStatements,HasUserComment,HasCompany;
 	const OPENING_BALANCE = 'opening-balance';
 	const NEW_ISSUANCE = 'new-issuance';
 	const LG_FACILITY = 'lg-facility';
@@ -330,6 +332,10 @@ class LetterOfGuaranteeIssuance extends Model
 	{
 		return $this->cash_cover_deducted_from_account_type;
 	}
+	public function cashCoverDeductedFromAccountType()
+	{
+		return $this->belongsTo(AccountType::class , 'cash_cover_deducted_from_account_type','id');
+	}
 	public function getCashCoverDeductedFromAccountId()
 	{
 		return $this->cash_cover_deducted_from_account_id ?: $this->lg_fees_and_commission_account_id;
@@ -429,9 +435,30 @@ class LetterOfGuaranteeIssuance extends Model
 	{
 		return number_format($this->getLgCurrentAmount());
 	}
-	
+	public function isCashCoverCurrentAccount():bool 
+	{
+		return $this->cashCoverDeductedFromAccountType && $this->cashCoverDeductedFromAccountType->isCurrentAccount();
+	}
 	public function deleteAllRelations():self
 	{
+		
+		$financialInstitutionAccount = FinancialInstitutionAccount::find($this->getCashCoverDeductedFromAccountId());
+		$lgType = $this->getLgType();
+		$currency = $financialInstitutionAccount->getCurrency();
+		$company = $this->company;
+		$issuanceDate = $this->getIssuanceDate();
+		$financialInstitution = $this->financialInstitutionBank;
+		$cashCoverAmount = $this->getCashCoverAmount();
+		$isOpeningBalance = $this->isOpeningBalance();
+		$isCurrentAccount = $this->isCashCoverCurrentAccount() ;
+		if($company->hasOdooIntegrationCredentials() && !$isOpeningBalance && $isCurrentAccount ){
+			$odooLetterOfGuaranteeIssuance = new LetterOfGuaranteeService($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId());
+			$fromAccountNumber = $financialInstitutionAccount->getAccountNumber();
+			$outJournalId = $financialInstitution->getJournalIdForAccount(27,$fromAccountNumber);
+			$odooCurrencyId = Currency::getOdooId($currency);
+			$lgOdooAccountId = FinancialInstitutionAccount::getLetterOfGuaranteeOdooIdFromType($lgType,$company->id);
+			$odooLetterOfGuaranteeIssuance->createLgCancelCashCover($issuanceDate,$outJournalId,$cashCoverAmount,$odooCurrencyId,$lgOdooAccountId);
+		}
 		/**
 		 * @var LetterOfGuaranteeIssuanceAdvancedPaymentHistory $advancedPaymentHistory
 		 */

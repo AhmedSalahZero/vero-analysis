@@ -781,6 +781,7 @@ Route::middleware([])->group(function () {
 				 // 
 				 Route::get('notifications/{type}','NotificationsController@index')->name('view.notifications');
 				 Route::resource('notifications-settings', 'NotificationSettingsController');
+				 Route::resource('odoo-settings', 'OtherOdooSettingController');
 				 Route::get('mark-notifications-as-read', 'NotificationSettingsController@markAsRead')->name('mark.notifications.as.read');
 
 				 Route::get('adjust-due-dates/{modelId}/{modelType}', 'AdjustedDueDateHistoriesController@index')->name('adjust.due.dates');

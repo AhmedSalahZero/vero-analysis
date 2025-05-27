@@ -10,13 +10,14 @@ use App\Models\Partner;
 use App\Models\SalesOrder;
 use App\Models\SupplierInvoice;
 use App\Services\Api\Traits\AuthTrait;
+use App\Services\Api\Traits\CommonHelper;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class OdooService
 {
-	use AuthTrait;
+	use AuthTrait , CommonHelper;
 	/**
 	 * * import project or contracts
 	 */
@@ -397,17 +398,16 @@ class OdooService
 	public function syncChartOfAccountNumbers(string $chartOfAccountCode,int $companyId)
 	{
 			$fields = [
-				'id'
+				// 'id'
 			];
 			
 			$filters = [
 				[
-					['account_type','=','expense'],
+					// ['account_type','=','expense'],
 					['code','=',$chartOfAccountCode],
 				]
 		];
 		$odooExpenseItem = $this->fetchData('account.account',$fields,$filters)[0]??null;
-		
 		if($odooExpenseItem){
 			DB::table('cash_expense_category_names')->where('company_id',$companyId)->where('odoo_chart_of_account_number',$chartOfAccountCode)->update([
 				'odoo_id'=>$odooExpenseItem['id']
@@ -415,7 +415,6 @@ class OdooService
 		}
 		return $odooExpenseItem ;
 	}
-	
 	public function syncFinancialInstitutions()
 	{
 			$fields = [
@@ -424,22 +423,23 @@ class OdooService
 			];
 			$filters = [
 				[
-					['type','=','bank'
-				],
+					// ['type','=','bank'],
 				]
 		];
-		$journals = $this->fetchData('account.journal',$fields,$filters);
-		$journals = collect($journals)->keyBy('code')->toArray();
+		$chartOfAccounts = $this->fetchData('account.account',$fields,$filters);
+		
+		$chartOfAccounts = collect($chartOfAccounts)->keyBy('code')->toArray();
 			$financialInstitutionAccounts = FinancialInstitutionAccount::where('company_id',$this->company_id)->whereNotNull('odoo_code')->get();
 
 			foreach($financialInstitutionAccounts as $financialInstitutionAccount){
 				$codeCode = $financialInstitutionAccount->getOdooCode();
 				if($codeCode){
-					$currentJournal = $journals[$codeCode]??null;
-					$currentJournalId = $currentJournal ? $currentJournal['id'] : null;
-					if($currentJournalId){
+					$currentJournal = $chartOfAccounts[$codeCode]??null;
+					$chartOfAccountId = $currentJournal ? $currentJournal['id'] : null;
+					if($chartOfAccountId){
 						$financialInstitutionAccount->update([
-							'odoo_id'=>$currentJournalId
+							'odoo_id'=>$chartOfAccountId,
+							'journal_id'=>$this->getJournalIdFromChartOfAccountId($chartOfAccountId)
 						]);
 					}
 					
@@ -458,14 +458,17 @@ class OdooService
 			];
 			$filters = [
 				[
-					['type','=','cash'],
+					// ['type','=','cash'],
 					['code','=',$odooCode]
 				]
 		];
-		$odooBranch = $this->fetchData('account.journal',$fields,$filters)[0]??null;
+		$odooBranch = $this->fetchData('account.account',$fields,$filters)[0]??null;
+		$chartOfAccountId= $odooBranch['id'];
+		$journalId = $this->getJournalIdFromChartOfAccountId($chartOfAccountId);
 		if($odooBranch){
 			DB::table('branch')->where('company_id',$companyId)->where('odoo_code',$odooCode)->update([
-				'odoo_id'=>$odooBranch['id']
+				'odoo_id'=>$chartOfAccountId,
+				'journal_id'=>$journalId
 			]);
 		}
 		
@@ -482,19 +485,20 @@ class OdooService
 				],
 				]
 		];
-		$banks = $this->fetchData('account.journal',$fields,$filters);
+		$banks = $this->fetchData('account.account',$fields,$filters);
 	
-		$journals = collect($banks)->keyBy('code')->toArray();
+		$chartOfAccounts = collect($banks)->keyBy('code')->toArray();
 		$banks = CashVeroBranch::where('company_id',$this->company_id)->whereNotNull('odoo_code')->get();
 
 			foreach($banks as $bank){
 				$codeCode = $bank->getOdooCode();
 				if($codeCode){
-					$currentJournal = $journals[$codeCode]??null;
-					$currentJournalId = $currentJournal ? $currentJournal['id'] : null;
-					if($currentJournalId){
+					$currentJournal = $chartOfAccounts[$codeCode]??null;
+					$chartOfAccountId = $currentJournal ? $currentJournal['id'] : null;
+					if($chartOfAccountId){
 						$bank->update([
-							'odoo_id'=>$currentJournalId
+							'odoo_id'=>$chartOfAccountId,
+							'journal_id'=>$this->getJournalIdFromChartOfAccountId($chartOfAccountId)
 						]);
 					}
 					
@@ -505,50 +509,23 @@ class OdooService
     {
         return $this->models->execute_kw($this->db, $this->uid, $this->password, $model, $method, $args, $kwargs);
     }
-	private function validateJournal($journalId)
-    {
-        $journal = $this->execute('account.journal', 'read', [[$journalId], ['type', 'default_account_id']])[0];
-        if (!in_array($journal['type'], ['bank', 'cash'])) {
-            throw new \Exception('Journal must be of type bank or cash');
-        }
-        if (!$journal['default_account_id']) {
-            throw new \Exception('Journal has no default account configured');
-        }
-        return $journal['default_account_id'][0]; // Return account ID
-    }
+	// private function validateJournal($journalId)
+    // {
+    //     $journal = $this->execute('account.journal', 'read', [[$journalId], ['type', 'default_account_id']])[0];
+    //     if (!in_array($journal['type'], ['bank', 'cash'])) {
+    //         throw new \Exception('Journal must be of type bank or cash');
+    //     }
+    //     if (!$journal['default_account_id']) {
+    //         throw new \Exception('Journal has no default account configured');
+    //     }
+    //     return $journal['default_account_id'][0]; // Return account ID
+    // }
 	public function getFieldSelection($model, $field)
     {
             $fields = $this->models->execute_kw($this->db, $this->uid, $this->password,$model, 'fields_get', [[$field]]);
             return $fields[$field]['selection'] ?? [];
       
     }
-	public function createInternalMoneyTransfer(string $transferDate,float $transferAmount,int $fromJournalId , int $toJournalId , int $odooCurrencyId , string $comment = null  )
-	{
-		$paymentData = [
-			'payment_type' => 'outbound',
-			// 'is_internal_transfer' => true,
-			'journal_id' =>$fromJournalId, // Source journal (Bank A)
-			'amount' => $transferAmount, // Transfer amount
-			'currency_id' => $odooCurrencyId, // Currency ID (e.g., USD)
-			'date' => $transferDate, // Transfer date
-			// 'ref' => $comment ?? 'Internal transfer from Bank A to Bank B',
-			// 'partner_type' => 'customer', // Optional, for reconciliation
-			'destination_account_id' => $toJournalId, // Destination bank account
-		];
-		$paymentId=$this->models->execute_kw(
-			$this->db, $this->uid, $this->password,
-			"account.payment", "create",
-			[$paymentData]
-		);
-		  $this->models->execute_kw(
-			$this->db, $this->uid, $this->password,
-			"account.payment", "action_post",
-			[[$paymentId]]
-		);
-		
-		
-		
-	}
 	
 	
  public function getPartners(string $startDate,string $endDate,int $companyId):array

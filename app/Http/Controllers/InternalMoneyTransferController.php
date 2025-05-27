@@ -183,24 +183,24 @@ class InternalMoneyTransferController
 		
 		if($type === InternalMoneyTransfer::BANK_TO_BANK){
 			if($company->hasOdooIntegrationCredentials()){
-				$fromJournalId = $fromFinancialInstitution->getOdooIdForAccount($fromAccountTypeId,$fromAccountNumber);
-				$toJournalId = $toFinancialInstitution->getOdooIdForAccount($toAccountTypeId,$toAccountNumber);
+				$fromJournalId = $fromFinancialInstitution->getJournalIdForAccount($fromAccountTypeId,$fromAccountNumber);
+				$toJournalId = $toFinancialInstitution->getJournalIdForAccount($toAccountTypeId,$toAccountNumber);
 				$internalMoneyTransfer->storeOdoo($company,$transferDate,$toJournalId,$fromJournalId,$transferAmount,$currencyName);
 			}
 			$internalMoneyTransfer->handleBankToBankTransfer($company->id , $fromAccountType , $fromAccountNumber  , $fromFinancialInstitutionId , $toAccountType ,  $toAccountNumber,$toFinancialInstitutionId,$transferDate,$receivingDate,$transferAmount);
 		}
 		elseif($type === InternalMoneyTransfer::BANK_TO_SAFE ){
 			if($company->hasOdooIntegrationCredentials()){
-				$fromJournalId = $fromFinancialInstitution->getOdooIdForAccount($fromAccountTypeId,$fromAccountNumber);
-				$toJournalId = Branch::find($toBranchId)->getOdooId();
+				$fromJournalId = $fromFinancialInstitution->getJournalIdForAccount($fromAccountTypeId,$fromAccountNumber);
+				$toJournalId = Branch::find($toBranchId)->getJournalId();
 				$internalMoneyTransfer->storeOdoo($company,$transferDate,$toJournalId,$fromJournalId,$transferAmount,$currencyName);
 			}
 			$internalMoneyTransfer->handleBankToSafeTransfer($company->id , $fromAccountType , $fromAccountNumber  , $fromFinancialInstitutionId ,$toBranchId , $currencyName , $transferDate,$transferAmount);
 		}
 		elseif($type === InternalMoneyTransfer::SAFE_TO_BANK ){
 			if($company->hasOdooIntegrationCredentials()){
-				$fromJournalId = Branch::find($fromBranchId)->getOdooId();
-				$toJournalId = $toFinancialInstitution->getOdooIdForAccount($toAccountTypeId,$toAccountNumber);
+				$fromJournalId = Branch::find($fromBranchId)->getJournalId();
+				$toJournalId = $toFinancialInstitution->getJournalIdForAccount($toAccountTypeId,$toAccountNumber);
 				$internalMoneyTransfer->storeOdoo($company,$transferDate,$toJournalId,$fromJournalId,$transferAmount,$currencyName);
 			}
 			$internalMoneyTransfer->handleSafeToBankTransfer($company->id , $toAccountType , $toAccountNumber  , $toFinancialInstitutionId ,$fromBranchId , $currencyName , $transferDate,$transferAmount);

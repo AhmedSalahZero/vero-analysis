@@ -6474,6 +6474,13 @@ function getHeaderMenu($currentCompany = null)
 			'link'=>route('cash.expense.category.index', ['company'=>$companyId]),
 			'show'=>$canViewCashExpenseCategories,
 			],
+				[
+				'title'=>__('Other Odoo Setting'),
+			'link'=>route('odoo-settings.index', ['company'=>$companyId]),
+			'show'=>$company->hasOdooIntegrationCredentials(),
+			],
+			
+			
 		]
 	];
 	$notificationsSubItems2 = \App\Notification::formatForMenuItem($company);

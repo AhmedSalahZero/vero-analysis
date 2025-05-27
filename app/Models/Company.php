@@ -9,6 +9,7 @@ use App\Models\NonBankingService\LeasingCategory;
 use App\Models\NonBankingService\MicrofinanceProduct;
 use App\Models\NonBankingService\Study;
 use App\NotificationSetting;
+use App\OdooSetting;
 use App\Traits\HasBasicStoreRequest;
 use App\Traits\StaticBoot;
 use Illuminate\Database\Eloquent\Collection;
@@ -130,6 +131,11 @@ class Company extends Model implements HasMedia
 	{
 		return $this->hasOne(NotificationSetting::class , 'company_id','id');
 	}
+	public function odooSetting()
+	{
+		return $this->hasOne(OdooSetting::class , 'company_id','id');
+	}
+	
 	public function getCustomerComingDuesInvoicesNotificationsDays():int
 	{
 		$notificationSetting = $this->notificationSetting ;
@@ -675,4 +681,5 @@ class Company extends Model implements HasMedia
 	{
 		return $this->hasMany(OdooExpense::class,'company_id','id');
 	}
+	
 }

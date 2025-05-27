@@ -8,6 +8,7 @@ use App\Models\Company;
 use App\Models\CurrentAccountBankStatement;
 use App\Models\FinancialInstitution;
 use App\Models\FinancialInstitutionAccount;
+use App\Services\Api\OdooService;
 use App\Traits\GeneralFunctions;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -38,6 +39,12 @@ class FinancialInstitutionAccountController
 			'iban'=>$request->get('iban'),
 			'exchange_rate'=>$request->get('exchange_rate')
 		]);
+		
+		if($company->hasOdooIntegrationCredentials()){
+			$odoo = new OdooService($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId());
+			$odoo->syncFinancialInstitutions();
+		}
+		
 		$currentAccountBeginningBalance = $financialInstitutionAccount->getOpeningBalanceFromCurrentAccountBankStatement() ;
 	
 		if($currentAccountBeginningBalance){

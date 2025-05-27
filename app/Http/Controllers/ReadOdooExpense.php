@@ -26,6 +26,7 @@ class ReadOdooExpense extends Controller
 		$filters = [[['state','=','approve'],['payment_state','=','not_paid'],
 			['write_date', '<=', $endDate],['write_date', '>=', $startDate]
 		]];
+		
 		$odooExpenses =$odooExpensePayment->fetchData('hr.expense.sheet',$fields,$filters);
 		
 		$oldIds = OdooExpense::whereNotNull('odoo_id')->where('company_id',$company->id)->pluck('odoo_id')->toArray();
@@ -51,17 +52,17 @@ class ReadOdooExpense extends Controller
 				'bank_name'=>null 
 			];
 			if($accountJournal['type'] == 'bank'){
-			$odooCode = $accountJournal['code'];
-			$financialInstitutionAccount = FinancialInstitutionAccount::where('company_id',$company->id)->where('odoo_code',$odooCode)->first();
+			$odooId = $accountJournal['id'];
+			$financialInstitutionAccount = FinancialInstitutionAccount::where('company_id',$company->id)->where('odoo_id',$odooId)->first();
 			$deliveryBankName = $financialInstitutionAccount->getFinancialInstitutionName();
 			$accountNumber = $financialInstitutionAccount->getAccountNumber();
 			$additionalData['account_number']= $accountNumber ;
 			$additionalData['bank_name']= $deliveryBankName ;
-		}elseif($accountJournal['type'] == 'cash'){
-			$deliveryBranchName = Branch::getNameFromOdooCode($company->id,$accountJournal['code']);
-			$additionalData['bank_name']= $deliveryBranchName ;
-			$additionalData['account_number']= $accountJournal['default_account_id'][1] ;
-		}
+			}elseif($accountJournal['type'] == 'cash'){
+				$deliveryBranchName = Branch::getNameFromOdooId($company->id,$accountJournal['id']);
+				$additionalData['bank_name']= $deliveryBranchName ;
+				$additionalData['account_number']= $accountJournal['default_account_id'][1] ;
+			}
 			$data = array_merge($additionalData, [
 				'odoo_id'=>$odooId,
 				'company_id'=>$company->id ,

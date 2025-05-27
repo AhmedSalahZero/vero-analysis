@@ -24,6 +24,11 @@ trait IsCashInSafe
 		$branch = $this->receivingBranch;
 		return $branch ? $branch->odoo_id : 0 ;
 	}
+	public function getBankJournalId():?int
+	{
+		$branch = $this->receivingBranch;
+		return $branch ? $branch->journal_id : 0 ;
+	}
 	public function getReceivingBranchName()
 	{
 		$branch = $this->receivingBranch;

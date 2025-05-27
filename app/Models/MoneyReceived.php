@@ -592,6 +592,12 @@ class MoneyReceived extends Model
 
 		return $cashInSafe ? $cashInSafe->getBankOdooId() : null ;
 	}
+	public function getCashBranchJournalId()
+	{
+		$cashInSafe = $this->cashInSafe;
+
+		return $cashInSafe ? $cashInSafe->getBankJournalId() : null ;
+	}
 	public function getChequeDepositDate()
 	{
 		$cheque = $this->cheque;
@@ -1019,6 +1025,12 @@ class MoneyReceived extends Model
 		$financialInstitution = $this->getFinancialInstitution();
 		
 		return $financialInstitution->getOdooIdForAccount($this->getAccountTypeId(),$this->getAccountNumber());
+	}
+	public function getBankAccountJournalId():int
+	{
+		$financialInstitution = $this->getFinancialInstitution();
+		
+		return $financialInstitution->getJournalIdForAccount($this->getAccountTypeId(),$this->getAccountNumber());
 	}
 	public function cleanOverdraftCreditBankStatement()
 	{

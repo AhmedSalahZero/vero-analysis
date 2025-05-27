@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use App\Enums\LgTypes;
 use App\Helpers\HArr;
 use App\Models\AccountInterest;
+use App\OdooSetting;
 use App\Traits\HasCompany;
 use App\Traits\HasLastStatementAmount;
 use Carbon\Carbon;
@@ -222,5 +224,37 @@ class FinancialInstitutionAccount extends Model
 	public function getOdooId():?int 
 	{
 		return $this->odoo_id ;
+	}
+	public function getJournalId():?int 
+	{
+		return $this->journal_id ;
+	}
+	public static function getLetterOfGuaranteeOdooIdFromType(string $lgType,int $companyId):int
+	{
+		if($lgType == LgTypes::BID_BOND){
+			$row = OdooSetting::where('company_id',$companyId)->whereNotNull('bid_lg_cash_cover_id')->first();
+			if($row){
+				return $row->bid_lg_cash_cover_id ;
+			}
+		}
+		if($lgType == LgTypes::FINAL_LGS){
+			$row = OdooSetting::where('company_id',$companyId)->whereNotNull('final_lg_cash_cover_id')->first();
+			if($row){
+				return $row->final_lg_cash_cover_id ;
+			}
+		}
+		if($lgType == LgTypes::ADVANCED_PAYMENT_LGS){
+			$row = OdooSetting::where('company_id',$companyId)->whereNotNull('advanced_lg_cash_cover_id')->first();
+			if($row){
+				return $row->advanced_lg_cash_cover_id ;
+			}
+		}
+		if($lgType == LgTypes::PERFORMANCE_LG){
+			$row = OdooSetting::where('company_id',$companyId)->whereNotNull('performance_lg_cash_cover_id')->first();
+			if($row){
+				return $row->performance_lg_cash_cover_id ;
+			}
+		}
+		return 0 ;
 	}
 }

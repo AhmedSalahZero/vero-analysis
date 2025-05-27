@@ -40,13 +40,17 @@ class Branch extends Model
 	{
 		return $this->odoo_id ;
 	}
+	public function getJournalId():int 
+	{
+		return $this->journal_id ;
+	}
 	public static function getIdFromOdooCode(int $companyId , string $code)
 	{
 		return self::where('company_id',$companyId)->where('odoo_code',$code)->first()->id;
 	}
-	public static function getNameFromOdooCode(int $companyId , string $code)
+	public static function getNameFromOdooId(int $companyId , int $odooId)
 	{
-		return self::where('company_id',$companyId)->where('odoo_code',$code)->first()->name;
+		return self::where('company_id',$companyId)->where('odoo_id',$odooId)->first()->name;
 	}
 	public function getCurrentEndBalance(int $companyId,?string $currency,$deliveryDate = null ):float
 	{

@@ -58,7 +58,7 @@ class ExpensePayment
                     'success' => true,
                     'message' => "Account ID found but no account details available",
                     'account_id' => $accountId,
-                    'account_code' => null,
+                //    'account_code' => null,
                     'account_name' => null
                 ];
             }
@@ -68,7 +68,7 @@ class ExpensePayment
                 'success' => true,
                 'message' => "Expense account fetched successfully for sheet {$expenseSheetId}",
                 'account_id' => $accountId,
-                'account_code' => $account[0]['code'],
+              //  'account_code' => $account[0]['code'],
                 'account_name' => $account[0]['name']
             ];
         } catch (Exception $e) {
@@ -80,7 +80,7 @@ class ExpensePayment
                 'success' => false,
                 'message' => "Failed to fetch expense account: {$e->getMessage()}",
                 'account_id' => null,
-                'account_code' => null,
+               // 'account_code' => null,
                 'account_name' => null
             ];
         }
@@ -298,7 +298,7 @@ class ExpensePayment
                 'expense_sheet_id' => $expenseSheetId,
                 'payment_id' => $result['payment_id'],
                 'account_id' => $accountResult['account_id'],
-                'account_code' => $accountResult['account_code'],
+          //      'account_code' => $accountResult['account_code'],
                 'account_name' => $accountResult['account_name']
             ]] : [];
 
@@ -323,7 +323,7 @@ class ExpensePayment
                     'expense_sheet_id'=>$expenseSheetId,
                     'message' => "Account fetch not attempted due to error",
                     'account_id' => null,
-                    'account_code' => null,
+                  //  'account_code' => null,
                     'account_name' => null
                 ]
             ];

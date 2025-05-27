@@ -865,13 +865,21 @@ class MoneyPayment extends Model
 
 		return $cashPayment ? $cashPayment->getBankOdooId() : null ;
 	}
-	
+	public function getCashBranchJournalId()
+	{
+		$cashPayment = $this->cashPayment;
+
+		return $cashPayment ? $cashPayment->getBankJournalId() : null ;
+	}
 	public function getBankAccountOdooId():int
 	{
 		$financialInstitution = $this->getFinancialInstitution();
-		
 		return $financialInstitution->getOdooIdForAccount($this->getAccountTypeId(),$this->getAccountNumber());
 	}
-	
+	public function getBankAccountJournalId():int
+	{
+		$financialInstitution = $this->getFinancialInstitution();
+		return $financialInstitution->getJournalIdForAccount($this->getAccountTypeId(),$this->getAccountNumber());
+	}
 
 }

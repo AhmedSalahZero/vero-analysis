@@ -26,6 +26,7 @@ use App\Services\AI\PredictionErrorQualityMeasures\RootMeanSquaredPercentageErro
 use App\Services\Api\ExchangeRateService;
 use App\Services\Api\ExpenseService;
 use App\Services\Api\InternalMoneyTransfer;
+use App\Services\Api\LetterOfGuaranteeService;
 use App\Services\Api\OdooPayment;
 use App\Services\Api\OdooService;
 use Arr;
@@ -69,10 +70,16 @@ class TestCommand extends Command
 	
 	public function handle()
 	{
-		$company= Company::find(136);
-		$odooService = new OdooService($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId());
-		dd($odooService);
-		$accountJournal = $odooService->fetchData('account.account',[],[[['id','=',239]]])[0];
+	
+				
+		$company= Company::find(138);
+		$odooService = new LetterOfGuaranteeService($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId());
+		dd($odooService->processOutboundPayment('2025-05-27',19,7560,74,231));
+		
+		// $odooService = new OdooService($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId());
+		
+		$accountJournal = $odooService->fetchData('account.journal',[],[[['default_account_id','=',225]]]);
+		dd($accountJournal);
 		dd($accountJournal);
 		dd($odooService->fetchData('account.journal',[],[[['id','=',19]]]));
 		
@@ -156,6 +163,7 @@ class TestCommand extends Command
 				$transferAmount = 100000	;
 				$ref = 'ref';
 				// $paymentMethodId ='cash' ; 
+				
 				dd($odoo->createOutgoingTransferToSuspense($fromJournalId,$transferAmount,$transferDate,$ref));
 		// 		$odoo->startImportContracts($startDate,$endDate,$company->id);
 		// 		// $odoo->startImportContracts($startDate,$endDate,$company->id);
