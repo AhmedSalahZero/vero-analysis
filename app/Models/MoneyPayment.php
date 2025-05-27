@@ -40,7 +40,7 @@ class MoneyPayment extends Model
 	{
 		$paidInvoiceNumbers = getKeysWithSettlementAmount(Request()->get('settlements',[]),'settlement_amount');
 		$paidInvoiceNumbers =  $paidInvoiceNumbers?: $invoiceNumbers;
-		$supplierName = is_null($supplierName) ?$moneyPayment->getSupplierName() : $supplierName;
+		$supplierName = is_null($supplierName) || $supplierName ==''  ?$moneyPayment->getSupplierName() : $supplierName;
 		if($moneyPayment->isPayableCheque()){
 			$chequeNumber = $moneyPayment->getPayableChequeNumber()?:Request('cheque_number');
 			if($moneyPayment->isOpenBalance()){

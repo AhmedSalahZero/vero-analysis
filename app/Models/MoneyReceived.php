@@ -43,9 +43,7 @@ class MoneyReceived extends Model
 		$settledInvoiceNumbers = getKeysWithSettlementAmount(Request()->get('settlements',[]),'settlement_amount');
 
 		$settledInvoiceNumbers =  $settledInvoiceNumbers?: $invoiceNumbers;
-	
-		$customerName = is_null($customerName) ?$moneyReceived->getCustomerName() : $customerName;
-	//	logger('customer name = ' . $customerName);
+		$customerName = is_null($customerName) || $customerName ==''  ?$moneyReceived->getCustomerName() : $customerName;
 		
 		if($moneyReceived->isCheque()){
 			$chequeNumber = $moneyReceived->getChequeNumber()?:Request('cheque_number');
