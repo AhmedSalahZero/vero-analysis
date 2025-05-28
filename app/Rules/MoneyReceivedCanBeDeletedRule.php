@@ -32,6 +32,7 @@ class MoneyReceivedCanBeDeletedRule implements ImplicitRule
      */
     public function passes($attribute, $value)
     {
+		return true ;
 		$balance = null ;
 		$receivedAmount = $this->moneyReceived->getReceivedAmount();
 		if($this->moneyReceived->isChequeInSafe()){
