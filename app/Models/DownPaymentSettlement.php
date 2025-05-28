@@ -24,7 +24,7 @@ class DownPaymentSettlement extends Model
 			if($company->hasOdooIntegrationCredentials()){
 				$odooId = $moneyReceived->odoo_id ;
 				if($odooId){
-					$odooPaymentService = new OdooPayment($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId());
+					$odooPaymentService = new OdooPayment($company);
 					$odooPaymentService->cancelDownPayment($odooId);
 				}
 			}

@@ -20,7 +20,7 @@ class OtherOdooSettingController
 		$result = [
 			
 		];
-		$odooService = new OdooService($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId());
+		$odooService = new OdooService($company);
 		foreach($request->except(['_token']) as $key => $value){
 			$journal = $odooService->fetchData('account.account',['code','name'],[[['code','=',$value]]]);
 			if($journal){

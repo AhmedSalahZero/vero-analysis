@@ -459,7 +459,7 @@ class BuyOrSellCurrency extends Model
 		
 		$company = $this->company;
 		if($company->hasOdooIntegrationCredentials()){
-			$internalMoneyTransferService = (new OdooInternalMoneyTransfer($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId()));
+			$internalMoneyTransferService = (new OdooInternalMoneyTransfer($company));
 			if($this->odoo_inbound_payment_id){
 				$internalMoneyTransferService->cancelMoneyTransferPayment($this->odoo_inbound_payment_id);
 			}

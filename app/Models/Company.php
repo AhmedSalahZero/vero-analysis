@@ -678,5 +678,8 @@ class Company extends Model implements HasMedia
 	{
 		return $this->hasMany(OdooExpense::class,'company_id','id');
 	}
-	
+	public function getOdooId():?int 
+	{
+		return $this->odoo_id ;
+	}
 }

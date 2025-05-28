@@ -124,7 +124,7 @@ class BranchesController
 		$model = new CashVeroBranch ;
 		$model->storeBasicForm($request);
 		if($company->hasOdooIntegrationCredentials()){
-			$odoo = new OdooService($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId());
+			$odoo = new OdooService($company);
 			$odoo->syncBranchSafe($model->odoo_code,$company->id);
 		}
 		$activeTab = $type ; 
@@ -149,7 +149,7 @@ class BranchesController
 			'odoo_code'=>$odooCode
 		]);
 		if($company->hasOdooIntegrationCredentials()){
-			$odoo = new OdooService($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId());
+			$odoo = new OdooService($company);
 			$odoo->syncBranchSafe($branch->odoo_code,$company->id);
 		}
 		$type = CashVeroBranch::BRANCHES;

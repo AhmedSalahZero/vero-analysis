@@ -15,7 +15,7 @@ class SendOdooCollectionOrPayment extends Controller
 {
 	public function handle(Request $request,  Company $company)
 	{
-		$OdooPaymentService = new OdooPayment($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId());
+		$OdooPaymentService = new OdooPayment($company);
 		$startDate = $request->get('odoo_start_date');
 		$endDate = $request->get('odoo_end_date');
 		$customerInvoiceSettlements = Settlement::whereHas('invoice',function($q){

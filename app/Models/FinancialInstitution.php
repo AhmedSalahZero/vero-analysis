@@ -248,7 +248,7 @@ class FinancialInstitution extends Model
 			]);
 		}
 		if($company->hasOdooIntegrationCredentials()){
-			$odoo = new OdooService($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId());
+			$odoo = new OdooService($company);
 			$odoo->syncFinancialInstitutions();
 		}
 		

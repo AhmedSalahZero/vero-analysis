@@ -23,22 +23,16 @@ use App\ReadyFunctions\VariableLoanCalculation;
 use App\Services\AI\PredictionErrorQualityMeasures\MeanAbsoluteError;
 use App\Services\AI\PredictionErrorQualityMeasures\MeanAbsolutePercentageError;
 use App\Services\AI\PredictionErrorQualityMeasures\RootMeanSquaredPercentageError;
-use App\Services\Api\ExchangeRateService;
 use App\Services\Api\ExpenseService;
 use App\Services\Api\InternalMoneyTransfer;
 use App\Services\Api\LetterOfGuaranteeService;
 use App\Services\Api\OdooPayment;
 use App\Services\Api\OdooService;
-use Arr;
 use Carbon\Carbon;
-use DateTime;
 use Illuminate\Console\Command;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
 use MathPHP\Statistics\Correlation;
-use PHPUnit\Framework\MockObject\Builder\Stub;
 use Schema;
 
 
@@ -71,9 +65,11 @@ class TestCommand extends Command
 	public function handle()
 	{
 		$company= Company::find(138);
-		$odooService = new OdooService($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId());
+		$time = microtime(true);
+		$odooService = new OdooService($company);
+		dd(microtime(true)-$time);
 		// dd($odooService->getPartners('2001-01-01','2027-01-01',$company->id));
-		$odooService = new LetterOfGuaranteeService($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId());
+		$odooService = new LetterOfGuaranteeService($company);
 		// dd($odooService->processOutboundPayment('2025-05-27',19,7560,74,231));
 		
 		
@@ -84,7 +80,7 @@ class TestCommand extends Command
 		
 		dd($odooService->getPartners('2010-01-01','2026-12-01',138));
 		// $odooService = new OdooService();
-		$odoo = new ExpenseService($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId());
+		$odoo = new ExpenseService($company);
 		$journalId = 23 ;
 		$expenseSheetId = 7 ;
 		$amountInPaymentCurrency = 550 ;
@@ -92,7 +88,6 @@ class TestCommand extends Command
 		$paymentDate = '2025-05-20';
 		$odooPartnerId = 7 ;
 		dd($odoo->payApprovedExpense($journalId,$expenseSheetId,$amountInPaymentCurrency,$paymentCurrencyName,$paymentDate,$odooPartnerId));
-		// $odoo = new OdooService($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId());
 		dd($odoo->fetchData('account.account',['name','id'],[[['id','=',237],['account_type','=','expense']]]));
 		// dd($odoo->fetchData('hr.expense.sheet')[0]);
 		$odoo->syncBranchSafe('CSH2',$company->id);
@@ -146,7 +141,7 @@ class TestCommand extends Command
 		// // $companies = Company::get();
 		// foreach($companies as $company){
 		// 	if($company->hasOdooIntegrationCredentials()){
-				$odoo = new InternalMoneyTransfer($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId());
+				$odoo = new InternalMoneyTransfer($company);
 				// $odoo = new InternalMoneyTransfer($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId());
 		// 		// $odoo = new OdooPayment($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId());
 		// 		// OdooPayment

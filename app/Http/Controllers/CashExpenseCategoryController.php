@@ -54,7 +54,7 @@ class CashExpenseCategoryController
 			$cashExpenseCategory->storeBasicForm($request);
 			if($company->hasOdooIntegrationCredentials()){
 				foreach($request->get('cashExpenseCategoryNames',[]) as $cashExpenseName){
-                   $odooService = new OdooService($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId());
+                   $odooService = new OdooService($company);
 					$code = $cashExpenseName['odoo_chart_of_account_number'];
 					$odooService->syncChartOfAccountNumbers($code,$company->id);
 				}
@@ -70,7 +70,7 @@ class CashExpenseCategoryController
 			$cashExpenseCategory->storeBasicForm($request);
 			if($company->hasOdooIntegrationCredentials()){
 				foreach($request->get('cashExpenseCategoryNames',[]) as $cashExpenseName){
-                   $odooService = new OdooService($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId());
+                   $odooService = new OdooService($company);
 					$code = $cashExpenseName['odoo_chart_of_account_number'];
 					$odooService->syncChartOfAccountNumbers($code,$company->id);
 				}

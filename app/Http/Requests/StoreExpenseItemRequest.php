@@ -29,7 +29,7 @@ class StoreExpenseItemRequest extends FormRequest
 		$rules = [];
 		$company  = Company::find($this->company_id);
 		if($company->hasOdooIntegrationCredentials()){
-            $odooService = new OdooService($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId());
+            $odooService = new OdooService($company);
 			$rules['odoo_chart_of_account_number'] = [new ExpenseCategoryItemMustBeExistRule($odooService , $this->input('cashExpenseCategoryNames') , $company)];
 		}
         return $rules;

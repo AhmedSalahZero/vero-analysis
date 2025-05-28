@@ -19,7 +19,7 @@ class Settlement extends Model
 			$company =$settlement->company;
 			if($company->hasOdooIntegrationCredentials()){
 				if($settlement->odoo_id){
-					$odooPaymentService = new OdooPayment($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId());
+					$odooPaymentService = new OdooPayment($company);
 					$odooPaymentService->cancelPayments($settlement->odoo_id);
 				}
 			}

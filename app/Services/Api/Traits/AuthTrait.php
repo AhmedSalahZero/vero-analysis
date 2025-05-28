@@ -1,8 +1,9 @@
 <?php 
 namespace App\Services\Api\Traits;
+use App\Models\Company;
 use Exception;
-use Illuminate\Support\Facades\Log;
 use ripcord;
+require_once(public_path('apis/ripcord.php'));
 
 trait AuthTrait 
 {
@@ -12,21 +13,21 @@ trait AuthTrait
 	protected string $password ; 
 	protected \Ripcord_Client $models;
 	protected ?int $uid;
-	protected int $company_id;
-	public function __construct($url , $db , $userName , $password,$companyId)
+	public function __construct(Company $company ) 
 	{
-		$this->url = $url;
-		$this->db = $db;
-		$this->username =$userName;
-		$this->password = $password;
-		$this->company_id = $companyId ;
-		
-		require_once(public_path('apis/ripcord.php'));
+		$this->url = $company->getOdooDBUrl();
+		$this->db = $company->getOdooDBName();
+		$this->username =$company->getOdooDBUserName();
+		$this->password = $company->getOdooDBPassword();
+		$currentOdooId = $company->getOdooId() ;
 		$common = ripcord::client("$this->url/xmlrpc/2/common");
-		// dd($common,$this->db, $this->username, $this->password);
 		$uid = null ;
 		try{
-			$uid = $common->authenticate($this->db, $this->username, $this->password, array());
+			if(is_null($currentOdooId)){
+					$uid = $common->authenticate($this->db, $this->username, $this->password, array());
+				}else{
+					$uid = $currentOdooId ;
+				}
 		}
 		catch(\Exception $e){
 			$uid = null;
@@ -34,10 +35,14 @@ trait AuthTrait
 		if(is_array($uid)){
 			$uid = null ;
 		}
-		// dd($uid);
+		if(is_null($currentOdooId)){
+			$company->update([
+				'odoo_id'=>$uid 
+			]);
+		}
 		$models = ripcord::client("$this->url/xmlrpc/2/object");
+
 		$this->models = $models;
-		
 		$this->uid = $uid;
 	}
 	   private function execute($model, $method, $args)
@@ -58,27 +63,6 @@ trait AuthTrait
         return $result;
     }
 	
-// public function fetchData(string $modelName, array $fields = [], array $filters = [[]], string $order = '', int $limit = 0)
-//     {
-
-//             $searchKwargs = [];
-//             if (!empty($order)) {
-//                 $searchKwargs['order'] = $order;
-//             }
-//             if ($limit > 0) {
-//                 $searchKwargs['limit'] = $limit;
-//             }
-
-//             $ids = $this->execute($modelName, 'search', $filters, $searchKwargs);
-//             if (empty($ids)) {
-//                 return [];
-//             }
-//             $readKwargs = ['fields' => $fields];
-// 			dd($readKwargs);
-//             $records = $this->execute($modelName, 'read', [$ids], $readKwargs);
-//             return $records;
-       
-//     }
 	
 	public function fetchData(string $modelName ,array $fields = [],  array $filters = [[]]  )
 	{

@@ -3,7 +3,6 @@ namespace App\Services\Api;
 
 use App\Services\Api\Traits\AuthTrait;
 use Exception;
-use ripcord;
 
 class ExchangeRateService
 {

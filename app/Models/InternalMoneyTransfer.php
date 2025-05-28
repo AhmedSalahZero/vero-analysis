@@ -432,7 +432,7 @@ class InternalMoneyTransfer extends Model
 	public function storeOdoo(Company $company,string $date,int $inJournalId,int $outJournalId,float $amount,string $currencyName)
 	{
 		$odooCurrencyId = Currency::getOdooId($currencyName);
-		$internalMoneyTransferService = (new OdooInternalMoneyTransfer($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId()));
+		$internalMoneyTransferService = (new OdooInternalMoneyTransfer($company));
 		$this->odoo_inbound_payment_id = $internalMoneyTransferService->processInboundPayment($date , $inJournalId , $amount , $odooCurrencyId);
 		$this->odoo_outbound_payment_id = $internalMoneyTransferService->processOutboundPayment($date , $outJournalId , $amount , $odooCurrencyId);
 		$this->save();
@@ -441,7 +441,7 @@ class InternalMoneyTransfer extends Model
 	{
 		$company = $this->company;
 		if($company->hasOdooIntegrationCredentials()){
-			$internalMoneyTransferService = (new OdooInternalMoneyTransfer($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId()));
+			$internalMoneyTransferService = (new OdooInternalMoneyTransfer($company));
 			if($this->odoo_inbound_payment_id){
 				$internalMoneyTransferService->cancelMoneyTransferPayment($this->odoo_inbound_payment_id);
 			}

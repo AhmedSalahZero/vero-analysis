@@ -197,9 +197,8 @@ class LetterOfGuaranteeIssuanceController
 		
 		$financialInstitutionAccountForCashCover = FinancialInstitutionAccount::find($cashCoverDeductedFromAccountId);
 		$financialInstitutionAccountIdForFeesAndCommission = $financialInstitutionAccountForFeesAndCommission->id;
-		// dd($company->hasOdooIntegrationCredentials() ,!$isOpeningBalance);
 		if($company->hasOdooIntegrationCredentials() && !$isOpeningBalance && $model->isCashCoverCurrentAccount() ){
-			$odooLetterOfGuaranteeIssuance = new LetterOfGuaranteeService($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId());
+			$odooLetterOfGuaranteeIssuance = new LetterOfGuaranteeService($company);
 			$fromAccountNumber = $financialInstitutionAccountForCashCover->getAccountNumber();
 			$outJournalId = $financialInstitutionAccountForCashCover->financialInstitution->getJournalIdForAccount(27,$fromAccountNumber);
 			$odooCurrencyId = Currency::getOdooId($currency);
@@ -278,7 +277,7 @@ class LetterOfGuaranteeIssuanceController
 		$currency = $financialInstitutionAccount->getCurrency();
 		
 		if($company->hasOdooIntegrationCredentials() && $letterOfGuaranteeIssuance->isCashCoverCurrentAccount() ){
-			$odooLetterOfGuaranteeIssuance = new LetterOfGuaranteeService($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId());
+			$odooLetterOfGuaranteeIssuance = new LetterOfGuaranteeService($company);
 			$fromAccountNumber = $financialInstitutionAccount->getAccountNumber();
 			$outJournalId = $financialInstitutionAccount->financialInstitution->getJournalIdForAccount(27,$fromAccountNumber);
 			$odooCurrencyId = Currency::getOdooId($currency);
@@ -353,7 +352,7 @@ class LetterOfGuaranteeIssuanceController
 		$financialInstitutionAccount = FinancialInstitutionAccount::find($letterOfGuaranteeIssuance->getCashCoverDeductedFromAccountId());
 		$currency = $financialInstitutionAccount->getCurrency();
 		if($company->hasOdooIntegrationCredentials() && $letterOfGuaranteeIssuance->isCashCoverCurrentAccount() ){
-			$odooLetterOfGuaranteeIssuance = new LetterOfGuaranteeService($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId());
+			$odooLetterOfGuaranteeIssuance = new LetterOfGuaranteeService($company);
 			$fromAccountNumber = $financialInstitutionAccount->getAccountNumber();
 			$outJournalId = $financialInstitution->getJournalIdForAccount(27,$fromAccountNumber);
 			$odooCurrencyId = Currency::getOdooId($currency);

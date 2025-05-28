@@ -41,7 +41,6 @@ class OdooService
 		$this->getContracts($startDate,$endDate,$companyId);
 		$invoices = $this->getInvoices($startDate,$endDate);
 		$this->syncDeletedInvoices($companyId);
-		$companyId = $this->company_id;
 		foreach($invoices as $invoice){
 		
 			$invoiceId = $invoice['id'];

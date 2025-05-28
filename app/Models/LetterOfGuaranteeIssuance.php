@@ -452,7 +452,7 @@ class LetterOfGuaranteeIssuance extends Model
 		$isOpeningBalance = $this->isOpeningBalance();
 		$isCurrentAccount = $this->isCashCoverCurrentAccount() ;
 		if($company->hasOdooIntegrationCredentials() && !$isOpeningBalance && $isCurrentAccount ){
-			$odooLetterOfGuaranteeIssuance = new LetterOfGuaranteeService($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId());
+			$odooLetterOfGuaranteeIssuance = new LetterOfGuaranteeService($company);
 			$fromAccountNumber = $financialInstitutionAccount->getAccountNumber();
 			$outJournalId = $financialInstitution->getJournalIdForAccount(27,$fromAccountNumber);
 			$odooCurrencyId = Currency::getOdooId($currency);

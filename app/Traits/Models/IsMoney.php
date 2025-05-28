@@ -68,7 +68,7 @@ trait IsMoney
 		$totalWithholdAmount= 0 ;
 		$OdooPaymentService = null ;
 		if($company->hasOdooIntegrationCredentials() && $syncWithOdoo){
-			$OdooPaymentService = new OdooPayment($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId());
+			$OdooPaymentService = new OdooPayment($company);
 		}
 		
 		foreach($settlements as $settlementArr)

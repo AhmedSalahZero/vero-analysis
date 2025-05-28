@@ -78,7 +78,7 @@ public static function getAllTypes()
 		$result = [];
 		$company =$this->company;
 		$request = new StoreCashExpenseRequest();
-		$odooService = new OdooService($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId());
+		$odooService = new OdooService($company);
 		// $accountJournal = $odooService->fetchData('account.account',[],[[['id','=',239]]])[0];
 		$accountJournal = $odooService->fetchData('account.journal',[],[[['id','=',$this->journal_id]]])[0];
 		$type = null ;

@@ -103,7 +103,7 @@ class OdooExpensesController
 		$journalId = $odooExpense->getJournalId();
 		 $paymentMethodId = $odooExpense->getPaymentMethodId();
 		 $odooExpenseSheetId =$odooExpense->getOdooId(); 
-        $expensePaymentService = new ExpensePayment($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId());
+        $expensePaymentService = new ExpensePayment($company);
 		$settlementResult = $expensePaymentService->settleApprovedExpenses($journalId,$paymentMethodId,$paymentDate,$odooExpenseSheetId);
 	
 		// if(isset($settlementResult['success']) && $settlementResult['success'] == false ){

@@ -11,7 +11,7 @@ class ReadOdooInvoices extends Controller
 {
 	public function handle(Request $request,  Company $company)
 	{
-		$odoo = new OdooService($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId());
+		$odoo = new OdooService($company);
 		$startDate = $request->get('odoo_start_date');
 		$endDate = $request->get('odoo_end_date');
 		$odoo->startImportInvoices($startDate,$endDate,$company->id);

@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
+use App\Services\Api\ExchangeRateService;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
-use App\Services\Api\ExchangeRateService;
 
 class ForeignExchangeRate extends Model
 {
@@ -68,7 +68,7 @@ class ForeignExchangeRate extends Model
 	public static function importOdooExchangeRates(Company $company)
 	{
 		
-		$exchangeRateService = new ExchangeRateService($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId());
+		$exchangeRateService = new ExchangeRateService($company);
 		$mainFunctionCurrency = $company->getMainFunctionalCurrency();
 		$oldForeignExchangeRates = ForeignExchangeRate::where('company_id',$company->id)->get();
 		foreach(getCurrenciesForSuppliersAndCustomers($company->id) as $currencyName){

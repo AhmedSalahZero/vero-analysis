@@ -327,10 +327,10 @@ class MoneyReceivedController
 		->when($downPaymentContract , function($q) use($downPaymentContract){
 			$q->where('contract_code',$downPaymentContract->getCode());
 		});
+		
 		if(!$inEditMode){
 			$invoices->where('net_balance','>',0);
 		}
-		
 		$contractsWithDownPaymentsCurrencies =$invoices->pluck('currency','currency')->mapWithKeys(function($value,$key){
 			return [
 				$key=>$value 
@@ -498,7 +498,7 @@ class MoneyReceivedController
 		if( $hasUnappliedAmount || $isDownPayment){
 			$moneyReceived->storeNewSalesOrdersAmounts($request->get('sales_orders_amounts',[]),$contractId,$customerId,$companyId,$amountInReceivingCurrency);
 			if($company->hasOdooIntegrationCredentials()){
-				$odooPaymentService = new OdooPayment($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId());
+				$odooPaymentService = new OdooPayment($company);
 				$odooPaymentService->createDownPayment($moneyReceived);
 			}
 		}

@@ -9,8 +9,6 @@ use App\Models\FinancialInstitutionAccount;
 use App\Models\OdooExpense;
 use App\Models\Partner;
 use App\Services\Api\ExpensePayment;
-use App\Services\Api\OdooService;
-use Arr;
 use Illuminate\Http\Request;
 
 
@@ -20,7 +18,7 @@ class ReadOdooExpense extends Controller
 	{
 		$startDate = $request->get('odoo_start_date');
 		$endDate = $request->get('odoo_end_date');
-		$odooExpensePayment = new ExpensePayment($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId());
+		$odooExpensePayment = new ExpensePayment($company);
 		$fields = ['id','write_date','currency_id','expense_line_ids', 'name', 'state', 'payment_state', 'employee_id', 'total_amount', 'account_move_ids', 'journal_id','payment_method_line_id', 'payment_mode'];
 		
 		$filters = [[['state','=','approve'],['payment_state','=','not_paid'],

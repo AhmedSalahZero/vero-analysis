@@ -451,7 +451,7 @@ class MoneyPaymentController
 		if($hasUnappliedAmount || $isDownPayment){
 			$moneyPayment->storeNewPurchaseOrders($request->get('purchases_orders_amounts',[]),$contractId,$supplierId,$company->id,$amountInPaymentCurrency);
 			if($company->hasOdooIntegrationCredentials()){
-				$odooPaymentService = new OdooPayment($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId());
+				$odooPaymentService = new OdooPayment($company);
 				$odooPaymentService->createDownPayment($moneyPayment);
 			}
 		}

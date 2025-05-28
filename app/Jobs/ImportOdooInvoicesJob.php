@@ -37,7 +37,7 @@ class ImportOdooInvoicesJob implements ShouldQueue
 		$companies = Company::all();
 		foreach($companies as $company){
 			if($company->hasOdooIntegrationCredentials()){
-				$oddo = new OdooService($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId());
+				$oddo = new OdooService($company);
 				$startDate = now()->subDay()->format('Y-m-d') ; ;
 				$endDate = now()->subDay()->format('Y-m-d') ; ;
 				$oddo->startImportInvoices($startDate,$endDate,$company->id);
