@@ -21,6 +21,7 @@ trait IsSettlement
 			$id = $this->money_payment_id;
 			return MoneyPayment::find($id);
 		}
+		
 		dd('test dd');
 	}
 	public function getAmount()
