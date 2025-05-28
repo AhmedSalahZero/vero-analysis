@@ -12,6 +12,7 @@ trait AuthTrait
 	protected string $username;
 	protected string $password ; 
 	protected \Ripcord_Client $models;
+	protected int $company_id  ;
 	protected ?int $uid;
 	public function __construct(Company $company ) 
 	{
@@ -19,6 +20,7 @@ trait AuthTrait
 		$this->db = $company->getOdooDBName();
 		$this->username =$company->getOdooDBUserName();
 		$this->password = $company->getOdooDBPassword();
+		$this->company_id = $company->id;
 		$currentOdooId = $company->getOdooId() ;
 		$common = ripcord::client("$this->url/xmlrpc/2/common");
 		$uid = null ;
