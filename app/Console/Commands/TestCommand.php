@@ -67,10 +67,10 @@ class TestCommand extends Command
 		$company= Company::find(138);
 		$time = microtime(true);
 		$odooService = new OdooService($company);
-		dd(microtime(true)-$time);
-		// dd($odooService->getPartners('2001-01-01','2027-01-01',$company->id));
+	
+
 		$odooService = new LetterOfGuaranteeService($company);
-		// dd($odooService->processOutboundPayment('2025-05-27',19,7560,74,231));
+
 		
 		
 		$accountJournal = $odooService->fetchData('account.journal',[],[[['default_account_id','=',225]]]);
@@ -80,7 +80,6 @@ class TestCommand extends Command
 		
 		dd($odooService->getPartners('2010-01-01','2026-12-01',138));
 		// $odooService = new OdooService();
-		$odoo = new ExpenseService($company);
 		$journalId = 23 ;
 		$expenseSheetId = 7 ;
 		$amountInPaymentCurrency = 550 ;

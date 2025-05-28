@@ -201,7 +201,9 @@ class Partner extends Model
 					return $partner->id;
 				}
 			}
-			$partner = Partner::createNewForOdoo($odooPartnerId,$odooPartnerName,$companyId,$isCustomer,$isSupplier);
+			if(is_null($partner)){
+				$partner = Partner::createNewForOdoo($odooPartnerId,$odooPartnerName,$companyId,$isCustomer,$isSupplier);
+			}
 			if($isSupplier){
 				$partner->update([
 					'is_supplier'=>1 
