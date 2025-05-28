@@ -541,7 +541,7 @@ class OdooService
 			$filters = [
 				[
 					array('write_date', '>=', $startDate),
-			array('write_date', '<=', $endDate)
+					array('write_date', '<=', $endDate)
 				]
 			];
 			$partners = $this->fetchData('res.partner',$fields,$filters);
@@ -550,15 +550,19 @@ class OdooService
             // Check for employee role by searching hr.employee
           //  $employeeData = $this->execute('hr.employee', 'search_read', [[['address_id', 'in', $partnerIds]]], ['fields' => ['address_id']]);
           //  $employeePartnerIds = array_column($employeeData, 'address_id');
-
+			$test = [];
             // Add role information to each partner
+		
             foreach ($partners as &$partner) {
                 $isCustomer = $partner['customer_rank'] > 0;
                 $isSupplier = $partner['supplier_rank'] > 0;
 				$currentOdooCustomerName =$partner['name']; 
 				$currentOdooCustomerId =$partner['id']; 
                 $isEmployee = !$isCustomer && !$isSupplier ;
-				 Partner::handlePartnerForOdoo($currentOdooCustomerId ,$currentOdooCustomerName,$isCustomer,$isSupplier,$isEmployee,$companyId  );
+				if($isCustomer){
+					$test[]=$partner;
+				}
+				Partner::handlePartnerForOdoo($currentOdooCustomerId ,$currentOdooCustomerName,$isCustomer,$isSupplier,$isEmployee,$companyId  );
             }
             return $partners;
 			

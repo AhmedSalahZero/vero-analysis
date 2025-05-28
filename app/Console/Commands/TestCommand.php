@@ -70,13 +70,12 @@ class TestCommand extends Command
 	
 	public function handle()
 	{
-	
-				
 		$company= Company::find(138);
+		$odooService = new OdooService($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId());
+		// dd($odooService->getPartners('2001-01-01','2027-01-01',$company->id));
 		$odooService = new LetterOfGuaranteeService($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId());
-		dd($odooService->processOutboundPayment('2025-05-27',19,7560,74,231));
+		// dd($odooService->processOutboundPayment('2025-05-27',19,7560,74,231));
 		
-		// $odooService = new OdooService($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId());
 		
 		$accountJournal = $odooService->fetchData('account.journal',[],[[['default_account_id','=',225]]]);
 		dd($accountJournal);

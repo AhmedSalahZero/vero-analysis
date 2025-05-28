@@ -180,12 +180,28 @@ class Partner extends Model
 	public static function findByOdooId(int $id,int $companyId){
 		return self::where('odoo_id',$id)->where('company_id',$companyId)->first();
 	}
+	public static function findByName(string $name,int $companyId){
+		return self::where('name',$name)->where('company_id',$companyId)->first();
+	}
 	public static function handlePartnerForOdoo($odooPartnerId ,$odooPartnerName,$isSupplier ,$isCustomer,$isEmployee,$companyId  ):int
 	{
-		$partner = Partner::findByOdooId($odooPartnerId,$companyId);
+			$partner = Partner::findByOdooId($odooPartnerId,$companyId);
 			if(is_null($partner)){
-				$partner = Partner::createNewForOdoo($odooPartnerId,$odooPartnerName,$companyId,$isCustomer,$isSupplier);
+				$partner = Partner::findByName($odooPartnerName,$companyId);
+				if($partner){
+					$oldIsCustomer = $partner->is_customer;
+					$oldIsSupplier = $partner->is_supplier;
+					$oldIsEmployee = $partner->is_employee;
+					$partner->update([
+						'odoo_id'=>$odooPartnerId,
+						'is_customer'=>$oldIsCustomer?:$isCustomer,
+						'is_supplier'=>$oldIsSupplier?:$isSupplier,
+						'is_employee'=>$oldIsEmployee?:$isEmployee,
+					]);
+					return $partner->id;
+				}
 			}
+			$partner = Partner::createNewForOdoo($odooPartnerId,$odooPartnerName,$companyId,$isCustomer,$isSupplier);
 			if($isSupplier){
 				$partner->update([
 					'is_supplier'=>1 
