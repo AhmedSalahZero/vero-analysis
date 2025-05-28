@@ -41,16 +41,7 @@ class CashExpenseStatementController
 		->join('cash_expense_categories','cash_expense_categories.id','=','cash_expense_category_names.cash_expense_category_id')
 		->selectRaw('cash_expenses.*,cash_expense_category_names.name as sub_category_name , cash_expense_categories.name as main_category_name ' )
 		->get();
-		// dd($result);
-		// ->whereBet('payment_date');
-		// $results=DB::table('cash_in_safe_statements')
-		// ->where('company_id',$company->id)
-		// ->where('currency',$currency)
-		// ->where('branch_id',$branchId)
-		// ->where('date','>=',$startDate)
-		// ->where('date','<=',$endDate)
-		// ->orderByRaw('full_date asc , created_at asc')
-		// ->get();
+		
 			if(!count($result)){
 				return redirect()
 									->back()

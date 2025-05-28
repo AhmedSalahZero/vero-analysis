@@ -85,7 +85,6 @@ class CollectionEffectivenessIndexController
 		$datesForHeader = [];
 		$customerOrSupplierNameText = (new $fullClassName)->getClientNameText();
 		$agingResult = (new AgingController)->result($company,$request,$modelType,true);
-		// dd($agingResult);
 		$collectionEffectivenessIndexPerCustomer = [];
 		$isMonthlyReport =$reportType == 'monthly'; 
 		$dates = $isMonthlyReport ? HDate::generateStartDateAndEndDateBetween($startDate,$endDate) : [['start_date'=>$startDate,'end_date'=>$endDate]] ;  

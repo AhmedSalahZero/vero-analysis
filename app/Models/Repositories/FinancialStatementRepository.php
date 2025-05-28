@@ -112,22 +112,10 @@ class FinancialStatementRepository implements IBaseRepository
 	
 		foreach(getAllFinancialAbleTypes() as $index => $subItemType){
 		
-			// dd($subRows);
 			$incomeStatement->refreshCalculationFor($subItemType);
-			// if($index ==0 ) // current type
-			// 	{
-			// 		$incomeStatement->refreshCalculationFor($subItemType);
-			// 	}else{
-			// 		$incomeStatement['is_caching_'.$subItemType] = 1 ;
-			// 		$incomeStatement->save();
-			// 			$job = (new RecalculateIncomeStatementCalculationForTypesJob($incomeStatement,$subItemType));
-			// 			dispatch($job)	;
-			// 	}
+			
 		}
-		// return response()->json([
-		// 	'status'=>true ,
-		// 	'redirectTo'=>route('admin.view.financial.statement',['company'=>getCurrentCompanyId()])
-		// ]);
+		
 		
 		
 	}

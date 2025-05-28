@@ -147,7 +147,6 @@ class CashFlowReportController
 		$dates = [];
 		$rangedWeeks = [];
 		CashExpense::getProjectionOtherCashOut($result ,$company,$cashflowReportId,$isContract) ;
-		// dd();
 		if(!$contractId){
 			CustomerInvoice::getCashAndBankBalanceAtDate($result ,$startDate ,array_keys($weeks)[0],$currency,$company->id) ;
 			LoanSchedule::getLoanInstallmentsAtDates($result,$currency,$company->id,$datesWithWeekNumber,$endDate);
@@ -255,7 +254,6 @@ class CashFlowReportController
 		$supplierContractCodes = $pastDueSupplierInvoicesForContracts->pluck('contract_code')->toArray();
 	
 		$currentContractCode = $isContract ? $supplierContractCodes : [$contractCode];
-		// dd($pastDueSupplierInvoices);
 		$supplierDueInvoices=  json_decode(json_encode(DB::table('weekly_cashflow_custom_due_invoices')->where('weekly_cashflow_custom_due_invoices.company_id',$company->id)
 		->where('invoice_type','SupplierInvoice')
 		->where('cashflow_report_id',$cashflowReportId)
@@ -266,7 +264,6 @@ class CashFlowReportController
 			})
 		->groupBy('week_start_date')->selectRaw('week_start_date,sum(amount) as amount')->get()),true);
 		
-			// dd($pastDueSupplierInvoices,$supplierDueInvoices);
 		$isContract ? SupplierInvoice::getForecastedProjectPayment($result ,$startDate , $endDate,$currency,$company->id,$datesWithWeekNumber,$contractId) : [];
 		
 		// for loans 
@@ -292,8 +289,6 @@ class CashFlowReportController
 		$result['cash_expenses'][__('Net Cash (+/-)')]['total'] = [];
 		// $result['cash_expenses'][__('Net Cash (+/-)')]['total']['total_of_total'] = array_sum($netCash) ;
 		$result['cash_expenses'][__('Accumulated Net Cash (+/-)')]['total'] = [];
-		//  dd($result['suppliers']['Suppliers Invoices']['total']);
-		// dd($result['cash_expenses']);
 		// $result['cash_expenses'][__('Accumulated Net Cash (+/-)')]['total'] = $this->formatAccumulatedNetCash($netCash,$weeks);
 		$orderByKeys = [
 			'Cash Payments',

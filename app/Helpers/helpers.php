@@ -1836,7 +1836,6 @@ function formatReportDataForDashBoard(string $incomeStatementDurationType, strin
                 $mainItem->pivot->sub_item_type
             )->get()->pluck('pivot'), $dates, $incomeStatementStartDate, $incomeStatementDurationType);
             $newData[$mainItemName]['name'] = $mainItemName;
-			// dd($newData[$mainItemName]['sub_items']);
         }
     }
     return $newData;
@@ -1887,12 +1886,10 @@ function array_sum_conditional($data, $dates, $incomeStatementStartDate, $income
     $total = 0;
     foreach ($data as $date => $value) {
 		if ($incomeStatementDurationType == 'annually') {
-			// dd('e',$dates[$date]);
             if (isset($dates[$date]) && yearInArray($dates[$date], $dates)) {
 				$total += $value;
             }
         } else {
-			// dd(array_key_exists($date,$dates),$date,$dates);
             if (array_key_exists($date,$dates)) {
             // if (yearAndMonthInArray($date, $dates)) {
                 $total += $value;
@@ -1924,7 +1921,6 @@ function getTotalInPivotDate(string $incomeStatementDurationType, string $income
             if (!isQuantitySubItem($data->sub_item_name)) {
                 // $formattedDate = explode('-', $date)[0] . '-' . explode('-', $date)[1] . '-' . sprintf('%02d', $incomeStatementStartDate->day);
                 $payload = $data->payload ? (array)json_decode($data->payload) : null;
-				// dd($payload,$formattedDate);
                 if ($payload && isset($payload[$dateAsIndex]) && $payload[$dateAsIndex]) {
                     $totalWithDepreciation += $payload[$dateAsIndex];
                     if ($data->is_depreciation_or_amortization) {
@@ -6795,12 +6791,12 @@ function getHeaderMenu($currentCompany = null)
 						'show'=>true,
 						'data-show-notification-modal'=>'read-invoices-modal'
 					],
-					[
-						'title'=>__('Send Collections Or Payments'),
-						'link'=>'#',
-						'show'=>true,
-						'data-show-notification-modal'=>'send-invoices-modal',
-					],
+					// [
+					// 	'title'=>__('Send Collections Or Payments'),
+					// 	'link'=>'#',
+					// 	'show'=>true,
+					// 	'data-show-notification-modal'=>'send-invoices-modal',
+					// ],
 					[
 						'title'=>__('Read Approved Expenses'),
 						'link'=>'#',

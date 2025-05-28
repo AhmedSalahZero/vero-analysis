@@ -37,43 +37,7 @@ class FixedAssetCalculation
 		}
 		return $finalResult;
 	}
-	// protected function findTotalOfFFEFixedAssets(array $ffeAsset,array $studyDates ){
-	// 	$total = [];
-	// 	$initialTotalGross = array_column($ffeAsset,'initial_total_gross');
-	// 	$finalTotalGross = array_column($ffeAsset,'final_total_gross');
-	// 	$finalTotalAccumulated = array_column($ffeAsset,'accumulated_depreciation');
-	// 	$finalTotalOfEndBalance = array_column($ffeAsset,'end_balance');
-	// 	$finalTotalOfTotalDepreciation = array_column($ffeAsset,'total_monthly_depreciation');
-
-	// 	$finalTotalOfReplacementCost = array_column($ffeAsset,'replacement_cost');
-
-	// 	$finalTotalGrossCount = count($finalTotalGross);
-	// 	foreach($studyDates as $dateAsString=>$dateAsIndex){
-	// 		$currenTotal = 0 ;
-	// 		$currenAccumulatedDepreciationTotal = 0 ;
-	// 		$currentTotalOfEndBalance = 0 ;
-	// 		$currentTotalOfInitialGross = 0 ;
-	// 		$currentTotalOfTotalDepreciation = 0 ;
-	// 		$currentTotalOfReplacementCost = 0 ;
-	// 		for($i = 0 ; $i< $finalTotalGrossCount ; $i++){
-	// 			$currenTotal+=$finalTotalGross[$i][$dateAsIndex]??0;
-	// 			dd($initialTotalGross);
-	// 			$currentTotalOfInitialGross+=$initialTotalGross[$i][$dateAsIndex]??0;
-	// 			$currenAccumulatedDepreciationTotal+=$finalTotalAccumulated[$i][$dateAsIndex]??0;
-	// 			$currentTotalOfEndBalance+=$finalTotalOfEndBalance[$i][$dateAsIndex]??0;
-	// 			$currentTotalOfTotalDepreciation+=$finalTotalOfTotalDepreciation[$i][$dateAsIndex]??0;
-	// 			$currentTotalOfReplacementCost+=$finalTotalOfReplacementCost[$i][$dateAsIndex]??0;
-	// 		}
-	// 		$total['initial_total_gross'][$dateAsIndex] = $currentTotalOfInitialGross;
-	// 		$total['final_total_gross'][$dateAsIndex] = $currenTotal;
-	// 		$total['accumulated_depreciation'][$dateAsIndex] = $currenAccumulatedDepreciationTotal;
-	// 		$total['end_balance'][$dateAsIndex] = $currentTotalOfEndBalance;
-	// 		$total['total_monthly_depreciation'][$dateAsIndex] = $currentTotalOfTotalDepreciation;
-	// 		$total['replacement_cost'][$dateAsIndex] = $currentTotalOfReplacementCost;
-	// 	}
-
-	// 	return $total ;
-	// }
+	
 	public function getTotalItemsCost(Collection $ffeItems):float 
 	{
 		

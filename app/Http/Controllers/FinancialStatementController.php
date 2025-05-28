@@ -209,7 +209,6 @@ class FinancialStatementController extends Controller
 		$subTotals = $request->get('subTotals');
 		$rateFinancialStatementItemsIds = FinancialStatementItem::rateFieldsIds();
 		$combineMainValuesWithItsPercentageRows = $this->combineMainValuesWithItsPercentageRows($request->get('valueMainRowThatHasSubItems'), $request->get('valueMainRowWithoutSubItems'));
-	//	dd('d',$combineMainValuesWithItsPercentageRows);
 		foreach ($combineMainValuesWithItsPercentageRows as $financialStatementId => $financialStatementValues) {
 			foreach ($financialStatementValues as $financialStatementItemId => $financialStatementItemsValues) {
 				$financialStatementItem = FinancialStatementItem::find($financialStatementItemId);

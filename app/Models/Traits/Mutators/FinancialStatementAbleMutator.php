@@ -205,9 +205,6 @@ trait FinancialStatementAbleMutator
 			$financialStatementAbleItemId = is_null($incomeStatementItemId) ? $subItemArr['financial_statement_able_item_id'] :$incomeStatementItemId ;
 			$currentSubItemValues = [];
 			$isSalesRevenue = $financialStatementAbleItemId == 1 ;
-			// dd($insertSubItems);
-			// $insertSubItems = ['actual']; // deleteit
-			// dd($insertSubItems);
 			foreach($insertSubItems as $currentSubItemToBeInserted ){
 				
 				$currentSubItemDataArr = $incomeStatement->getFinancialStatementAbleData($currentSubItemToBeInserted,$formSubItemType,$subItemArr,false);
@@ -232,7 +229,6 @@ trait FinancialStatementAbleMutator
 				if($isSalesRevenue 
 				// && isset($subItemArr['val'])
 				){
-					// dd($subItemArr,$isSalesRevenue,$isNonRepeating,$subItemArr);
 					$currentSubItemValues=$subItemArr['val'] ?? [];
 					
 					$currentPayloadForQuantity = $subItemArr['quantity'] ?? [];
@@ -259,9 +255,7 @@ trait FinancialStatementAbleMutator
 					$currentSubItem  = $incomeStatement->withSubItemsFor($financialStatementAbleItemId, $currentSubItemToBeInserted,$currentDataForQuantity['sub_item_name']);
 					
 					$currentSubItemExist  = $currentSubItem->count();
-					// if($currentSubItemToBeInserted == 'actual'){
-					// 		// dd($rows);
-					// 	}
+				
 						
 					if(!$currentSubItemExist){
 						$currentSubItem->attach($financialStatementAbleItemId,$currentDataForQuantity);

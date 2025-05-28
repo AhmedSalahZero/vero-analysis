@@ -105,8 +105,15 @@
                                     <div class="col-md-3 ">
                                         <x-form.input :model="$model??null" :label="__('Account Number')" :type="'text'" :placeholder="__('Account Number')" :name="'account_number'" :required="true"></x-form.input>
                                     </div>
-                                    <div class="col-md-3">
-                                        <label>{{__('Select Currency')}} </label>
+                                    <div 
+									 @if($company->hasOdooIntegrationCredentials())
+									class="col-md-2"
+									@else
+									class="col-md-3"
+									
+									@endif 
+									>
+                                        <label>{{__('Currency')}} </label>
                                         <div class="input-group">
                                             <select name="currency" class="form-control repeater-select js-update-current-accounts">
                                                 @foreach(getCurrencies() as $currencyName => $currencyValue )
@@ -115,6 +122,18 @@
                                             </select>
                                         </div>
                                     </div>
+									 @if($company->hasOdooIntegrationCredentials())
+                    <div class="col-1	">
+                        <label class="form-label font-weight-bold ">{{ __('Odoo Code') }}
+                            @include('star')
+                        </label>
+                        <div class="kt-input-icon">
+                            <div class="input-group">
+                                <input required placeholder="{{ __('Odoo Code') }}" type="text" class="form-control  exclude-text"  name="odoo_code"  value="{{ isset($model) ? $model->getOdooCode() : old('odoo_code') }}">
+                            </div>
+                        </div>
+                    </div>
+                    @endif
 
 
 
