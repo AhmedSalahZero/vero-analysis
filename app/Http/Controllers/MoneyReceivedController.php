@@ -365,7 +365,7 @@ class MoneyReceivedController
 	}
 	
 	public function store(Company $company , StoreMoneyReceivedRequest $request , $returnModel = false){
-		
+		// dd($request->all());
 		$hasUnappliedAmount = (bool)$request->get('unapplied_amount');
 		$isGeneralDownPaymentOrSettlementOpening = $request->get('down_payment_type') == MoneyReceived::DOWN_PAYMENT_GENERAL || $request->get('down_payment_type') == MoneyReceived::SETTLEMENT_OF_OPENING_BALANCE;
 		$partnerType = $request->get('partner_type');
@@ -405,7 +405,7 @@ class MoneyReceivedController
 		$totalSettlements = array_sum(array_column($request->get('settlements',[]),'settlement_amount'));
 		$invoiceCurrencyAmount =  $isTheSameCurrency ? $amountInReceivingCurrency  : $totalSettlements  ;
 		// $totalSalesOrderAmount = $isTheSameCurrency ? 0 : array_sum(array_column($request->get('sales_orders_amounts'),'received_amount'));
-		
+		// dd($moneyType);
 		if($moneyType == MoneyReceived::CASH_IN_SAFE){
 			$relationData = $request->only(['receipt_number']) ;
 			$relationData['receiving_branch_id'] = $this->generateBranchId($receivedBankName,$company->id) ;
@@ -479,12 +479,13 @@ class MoneyReceivedController
 		if($partnerType && $partnerType != 'is_customer' ){
 			$moneyReceived->handlePartnerCreditStatement($partnerType,$partnerId, $moneyReceived->id,$company->id,$statementDate,$amountInReceivingCurrency,$receivingCurrency,$bankNameOrBranchName , $accountType , $accountNumber);
 		}
+		$syncWithOdoo = !$request->has('stop-sync-with-odoo');
 		/**
 		 * * For Money Received Only
 		 */
 		$totalWithholdAmount = $moneyReceived->storeNewSettlement(
 			// $receivingCurrency,$currency,$exchangeRate,$foreignExchangeRate,
-			$request->get('settlements',[]),$partnerId,$company);
+			$request->get('settlements',[]),$partnerId,$company,false,$syncWithOdoo);
 		
 		$moneyReceived->update([
 			'total_withhold_amount'=>$totalWithholdAmount

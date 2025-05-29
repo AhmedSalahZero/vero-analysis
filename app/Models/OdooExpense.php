@@ -97,7 +97,7 @@ public static function getAllTypes()
 		}elseif($accountJournal['type'] == 'cash'){
 			$type = CashExpense::CASH_PAYMENT;
 			$deliveryBranchId = Branch::getIdFromOdooCode($company->id,$accountJournal['code']);
-			$receiptNumber = $accountJournal['code'] . floor(time()-999999999);
+			$receiptNumber = generateReceiptNumber($accountJournal['code']);
 		}
 	
 		$request->merge([

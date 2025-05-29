@@ -64,17 +64,20 @@ class TestCommand extends Command
 	
 	public function handle()
 	{
+		$test = (new TestCommand)->getTableNamesThatHasColumn('account_number');
+		dd($test);
+		
 		$company= Company::find(138);
 		$time = microtime(true);
 		$odooService = new OdooService($company);
 	
 
-		$odooService = new LetterOfGuaranteeService($company);
-
+		$odooService = new OdooService($company);
+dd('qqqqd');
 		
-		
-		$accountJournal = $odooService->fetchData('account.journal',[],[[['default_account_id','=',225]]]);
-		dd($accountJournal);
+		// $odooService->createPaymentFromOdooToInvoice(26);
+		// $accountJournal = $odooService->fetchData('account.journal',[],[[['default_account_id','=',225]]]);
+		dd($payments);
 		dd($accountJournal);
 		dd($odooService->fetchData('account.journal',[],[[['id','=',19]]]));
 		

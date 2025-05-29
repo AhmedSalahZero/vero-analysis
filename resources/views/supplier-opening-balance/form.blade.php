@@ -388,7 +388,7 @@ use App\Models\MoneyPayment ;
                                 $repeaterId = 'm_repeater_7';
                                 @endphp
                                 <input type="hidden" name="tableIds[]" value="{{ $tableId }}">
-                                <x-tables.repeater-table :initEmpty="!isset($model) || !$model->supplierInvoices->count()" :firstElementDeletable="true" :repeater-with-select2="true" :parentClass="'show-class-js'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=true">
+                                <x-tables.repeater-table :initEmpty="!isset($model) || !$model->moneyModel->count()" :firstElementDeletable="true" :repeater-with-select2="true" :parentClass="'show-class-js'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=true">
                                     <x-slot name="ths">
                                         @foreach([
                                         __('Supplier')=>'col-md-1',

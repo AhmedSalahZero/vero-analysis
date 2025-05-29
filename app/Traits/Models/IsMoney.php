@@ -70,7 +70,6 @@ trait IsMoney
 		if($company->hasOdooIntegrationCredentials() && $syncWithOdoo){
 			$OdooPaymentService = new OdooPayment($company);
 		}
-		
 		foreach($settlements as $settlementArr)
 		{
 			$settlementArr['settlement_amount'] = isset($settlementArr['settlement_amount']) ?  unformat_number($settlementArr['settlement_amount']) :  0 ;  

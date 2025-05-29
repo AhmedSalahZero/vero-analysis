@@ -1,11 +1,14 @@
 <?php
 namespace App\Services\Api;
 
-
+use App\Http\Controllers\MoneyReceivedController;
+use App\Http\Requests\StoreMoneyReceivedRequest;
 use App\Models\CashVeroBranch;
 use App\Models\Contract;
+use App\Models\Currency;
 use App\Models\CustomerInvoice;
 use App\Models\FinancialInstitutionAccount;
+use App\Models\MoneyReceived;
 use App\Models\Partner;
 use App\Models\SalesOrder;
 use App\Models\SupplierInvoice;
@@ -28,7 +31,98 @@ class OdooService
 		}
 		$this->getContracts($startDate,$endDate,$companyId);
 	}
-	
+	/**
+	 * * 
+	 */
+	public function createPaymentFromOdooToInvoice(int $odooInvoiceId,int $invoiceId,int $partnerId,$invoiceCurrencyName,$newMoneyClass )
+	{
+		/**
+		 * @var MoneyReceived|MoneyPayment $newMoneyClass [new MoneyReceived empty class]
+		 */
+		$isMoneyReceived = $newMoneyClass instanceof MoneyReceived;
+		$settlementTableName = $isMoneyReceived ? 'settlements' : 'payment_settlements';
+		$inboundOrOutbound = $isMoneyReceived ? 'inbound' : 'outbound';
+		$isCustomerOrSupplier = $isMoneyReceived ? 'customer' : 'supplier';
+		$partnerType = $isMoneyReceived ? 'is_customer' : 'is_supplier';
+		$customerOrSupplierId = $isMoneyReceived ? 'customer_id' : 'supplier_id';
+		$moneyModel = $isMoneyReceived ? 'App\Models\MoneyReceived': 'App\Models\MoneyPayment';
+		$receivingDate = $isMoneyReceived ? 'receiving_date' : 'delivery_date';
+		$branchIdColumnName = $isMoneyReceived ? 'receiving_branch_id' : 'delivery_branch_id';
+		$amountColumnName = $isMoneyReceived ? 'received_amount' : 'paid_amount';
+		$bankColumnName = $isMoneyReceived ? 'receiving_bank_id' : 'delivery_bank_id';
+		$receivingOrDeliveryCurrencyName = $isMoneyReceived ? 'receiving_currency' : 'payment_currency';
+		$moneyModel = new $moneyModel;
+		$dataFormatted = [];
+		// foreach(['EGP','USD'] as $currencyName){
+			
+		$currencyOdooId = Currency::getOdooId($invoiceCurrencyName);
+		$payments = $this->fetchData('account.payment',[],[[['invoice_ids','=',$odooInvoiceId],['currency_id','=',$currencyOdooId],['payment_type','=',$inboundOrOutbound],['partner_type','=',$isCustomerOrSupplier]]]);
+		
+				
+				foreach($payments as $paymentArr){
+					$paymentOdooId = $paymentArr['id'];
+					$isExist = DB::table($settlementTableName)->where('company_id',$this->company_id)->where('odoo_id',$paymentOdooId)->first();
+					if($isExist){
+						continue ;
+					}
+					$journalId = $paymentArr['journal_id'][0];
+					$date =$paymentArr['date'] ;
+					$currentJournal = $newMoneyClass::getMoneyTypeFromJournalId($journalId,$this->company_id);
+					$moneyType = $currentJournal['type'];
+					$branchId = $currentJournal['branch_id']??null;
+					$financialInstitutionId = $currentJournal['financial_institution_id']??null;
+					$amount  = $paymentArr['amount'];
+					$receiptNumber = generateReceiptNumber('receipt_number_');
+					$dataFormatted[$moneyType][$date]=[
+						'stop-sync-with-odoo'=> true ,
+						'partner_type'=>$partnerType,
+						'currency'=>$invoiceCurrencyName,
+						$receivingOrDeliveryCurrencyName=>$invoiceCurrencyName,
+						$customerOrSupplierId=>$partnerId,
+						'type'=>$moneyType,
+						$receivingDate=>$date,
+						$branchIdColumnName=>$branchId,
+						$amountColumnName => [
+							$moneyType=>$amount
+						],
+						'receipt_number'=>$receiptNumber,
+						'exchange_rate'=>[$moneyType=>1] , // not found in the model dd
+						'amount_in_invoice_currency'=>[
+							$moneyType=>$amount 
+						],
+						$bankColumnName=>[
+							$moneyType=>$financialInstitutionId 
+						],
+						'account_type'=>[
+							$moneyType => $currentJournal['account_type_id']??null 
+						],
+						'account_number'=>[
+							$moneyType=>$currentJournal['account_number']??null
+						],
+						'drawee_bank_id'=>null, // in case of cheque we have to fill it 
+						'due_date'=>null, // in case of cheque we have to fill it  
+						'cheque_number'=>null, // in case of cheque we have to fill it  
+						'settlements'=>[
+							$invoiceId => [
+								'odoo_id'=>$paymentOdooId,
+								'invoice_id'=>$invoiceId,
+								'settlement_amount'=>$amount ,
+								'withhold_amount'=>0 
+							]
+						]
+					];
+					
+					
+				}
+				// }		
+				foreach($dataFormatted as $moneyType => $date){
+					foreach($date as $receivingDate => $moneyArr){
+						(new MoneyReceivedController)->store($this->company,(new StoreMoneyReceivedRequest())->merge($moneyArr));
+					}
+				}
+				dd('good');
+
+	}
 	/**
 	 * * import invoices
 	 */
@@ -43,7 +137,7 @@ class OdooService
 		$this->syncDeletedInvoices($companyId);
 		foreach($invoices as $invoice){
 		
-			$invoiceId = $invoice['id'];
+			$odooInvoiceId = $invoice['id'];
 			$invoiceDate = $invoice['invoice_date'];
 			$invoiceDueDate = $invoice['invoice_date_due'];
 			$soNumber = $invoice['invoice_origin']??null;
@@ -58,11 +152,12 @@ class OdooService
 			$invoiceCurrency = $invoice['currency_id'][1];
 			$isSupplier = $invoice['move_type'] == 'in_invoice';
 			$isCustomer = $invoice['move_type'] == 'out_invoice';
-			$parentId = Partner::handlePartnerForOdoo($odooPartnerId ,$odooPartnerName,$isSupplier ,$isCustomer,false,$companyId  );
+			$partnerId = Partner::handlePartnerForOdoo($odooPartnerId ,$odooPartnerName,$isSupplier ,$isCustomer,false,$companyId  );
 			if($isCustomer){
-				CustomerInvoice::createForOdoo($invoiceId,$parentId,$odooPartnerName,$invoiceDate,$invoiceDueDate,$invoiceNumber,$invoiceCurrency,$invoiceAmount,$vatAmount,$withholdAmount,$collectedAmount,$exchangeRate,$soNumber,$companyId);
+				$invoiceId =  CustomerInvoice::createForOdoo($odooInvoiceId,$partnerId,$odooPartnerName,$invoiceDate,$invoiceDueDate,$invoiceNumber,$invoiceCurrency,$invoiceAmount,$vatAmount,$withholdAmount,$collectedAmount,$exchangeRate,$soNumber,$companyId);
+				$this->createPaymentFromOdooToInvoice($odooInvoiceId,$invoiceId,$partnerId,$invoiceCurrency,new MoneyReceived());
 			}elseif($isSupplier){
-				SupplierInvoice::createForOdoo($invoiceId,$parentId,$odooPartnerName,$invoiceDate,$invoiceDueDate,$invoiceNumber,$invoiceCurrency,$invoiceAmount,$vatAmount,$withholdAmount,$collectedAmount,$exchangeRate,$soNumber,$companyId);
+				$invoiceId= SupplierInvoice::createForOdoo($odooInvoiceId,$partnerId,$odooPartnerName,$invoiceDate,$invoiceDueDate,$invoiceNumber,$invoiceCurrency,$invoiceAmount,$vatAmount,$withholdAmount,$collectedAmount,$exchangeRate,$soNumber,$companyId);
 			}
 	
 		}
@@ -97,14 +192,14 @@ class OdooService
 			}
 			$currentOdooCustomerName = $projectArr['partner_id'][1] ;
 			$code = Contract::generateRandomContract($companyId,$currentOdooCustomerName,$startDate,$modelType);
-			$parentId = Partner::handlePartnerForOdoo($currentOdooCustomerId ,$currentOdooCustomerName,0, 1,false,$companyId  );
+			$partnerId = Partner::handlePartnerForOdoo($currentOdooCustomerId ,$currentOdooCustomerName,0, 1,false,$companyId  );
 			$oldProject = Contract::where('odoo_id',$currentOdooProjectId)->first();
 			$projectFormatted = [
 				'odoo_id'=>$currentOdooProjectId,
 				'code'=>$code,
 				'name'=>$projectArr['name'],
 				'model_type'=>$modelType,
-				'partner_id'=>$parentId,
+				'partner_id'=>$partnerId,
 				'start_date'=>$currentProjectStartDate,
 				'end_date'=>$currentProjectEndDate,
 				'company_id'=>$companyId,

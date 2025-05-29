@@ -334,7 +334,7 @@ trait IsInvoice
         ->whereBetween('invoice_date', [$startDate, $endDate])
         ->where($clientIdColumnName, '=', $partnerId)->get();
 	}
-	public static function createForOdoo(int $invoiceId,int $partnerId,string $partnerName,string $invoiceDate,string $invoiceDueDate,string $invoiceNumber,string $invoiceCurrency,$invoiceAmount,$vatAmount,$withholdAmount,$collectedAmount,$exchangeRate,$soOrPoNumber,int $companyId):void{
+	public static function createForOdoo(int $invoiceId,int $partnerId,string $partnerName,string $invoiceDate,string $invoiceDueDate,string $invoiceNumber,string $invoiceCurrency,$invoiceAmount,$vatAmount,$withholdAmount,$collectedAmount,$exchangeRate,$soOrPoNumber,int $companyId):int{
 		$currentInvoice = self::where('odoo_id',$invoiceId)->where('company_id',$companyId)->first();
 		$contract = null;
 		$soOrPoNumber = $soOrPoNumber ? $soOrPoNumber : null ;
@@ -365,9 +365,10 @@ trait IsInvoice
 		] ;
 		if($currentInvoice){
 			$currentInvoice->update($invoiceData);
-			return  ;
+			return  $currentInvoice->id ;
 		}
-		self::create($invoiceData);
+		$currentInvoice = self::create($invoiceData);
+		return $currentInvoice->id ;
 	}
 	public function getInvoiceAmount():float
 	{

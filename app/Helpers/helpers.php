@@ -8048,3 +8048,7 @@ function newInstanceOf($class , $arrayOfItems)
 	}
 	return $collection;
 }
+function generateReceiptNumber(string $code )
+{
+	return $code . floor(time()-999999999);
+}

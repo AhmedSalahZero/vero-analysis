@@ -1045,5 +1045,31 @@ class MoneyReceived extends Model
 	{
 		return 'customer';
 	}
-	
+	/**
+	 * * هنا هنديله ال جورنال اي دي ونحاول نعرف هو بنك ولا كاش
+	 */
+	public static function getMoneyTypeFromJournalId(int $journalId , int $companyId):array 
+	{
+		$account = DB::table('financial_institution_accounts')->where('journal_id',$journalId)->where('company_id',$companyId)->first();
+		if($account){
+			return [
+				'type'=>self::INCOMING_TRANSFER,
+				// 'id'=>$account->id ,
+				'odoo_id'=>$account->odoo_id ,
+				'account_type_id'=>27,
+				'account_number'=>$account->account_number,
+				'financial_institution_id'=>$account->financial_institution_id
+			];
+		}
+		$branch = DB::table('branch')->where('company_id',$companyId)->where('journal_id',$journalId)->first();
+		if($branch){
+			return [
+				'type'=>self::CASH_IN_SAFE,
+				'branch_id'=>$branch->id,
+				'odoo_id'=>$branch->odoo_id 
+			];
+		}
+		dd('no journal found');
+		
+	}
 }

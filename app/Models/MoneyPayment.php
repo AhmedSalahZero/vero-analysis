@@ -885,5 +885,22 @@ class MoneyPayment extends Model
 		$financialInstitution = $this->getFinancialInstitution();
 		return $financialInstitution->getJournalIdForAccount($this->getAccountTypeId(),$this->getAccountNumber());
 	}
+	/**
+	 * * هنا هنديله ال جورنال اي دي ونحاول نعرف هو بنك ولا كاش
+	 */
+	public static function getMoneyTypeFromJournalId(int $journalId , int $companyId)
+	{
+		$account = DB::table('financial_institution_accounts')->where('journal_id',$journalId)->where('company_id',$companyId)->first();
+		if($account){
+			return self::OUTGOING_TRANSFER;
+		}
+		$bank = DB::table('branch')->where('company_id',$companyId)->where('journal_id',$journalId)->first();
+		if($bank){
+			return self::CASH_PAYMENT;
+		}
+		dd('no journal found');
+		
+	}
+	
 
 }
