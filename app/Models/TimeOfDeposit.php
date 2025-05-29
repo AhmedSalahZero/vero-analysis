@@ -346,5 +346,8 @@ class TimeOfDeposit extends Model
 		}
 	
 	}
-	
+	public function getOdooCode()
+	{
+		return $this->odoo_code;
+	}
 }
