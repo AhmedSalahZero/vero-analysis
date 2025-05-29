@@ -106,12 +106,12 @@
                                         <x-form.input :model="$model??null" :label="__('Account Number')" :type="'text'" :placeholder="__('Account Number')" :name="'account_number'" :required="true"></x-form.input>
                                     </div>
                                     <div 
-									 @if($company->hasOdooIntegrationCredentials())
+									 {{-- @if($company->hasOdooIntegrationCredentials())
 									class="col-md-2"
-									@else
+									@else --}}
 									class="col-md-3"
 									
-									@endif 
+									{{-- @endif  --}}
 									>
                                         <label>{{__('Currency')}} </label>
                                         <div class="input-group">
@@ -122,7 +122,7 @@
                                             </select>
                                         </div>
                                     </div>
-									 @if($company->hasOdooIntegrationCredentials())
+									 {{-- @if($company->hasOdooIntegrationCredentials())
                     <div class="col-1	">
                         <label class="form-label font-weight-bold ">{{ __('Odoo Code') }}
                             @include('star')
@@ -133,7 +133,7 @@
                             </div>
                         </div>
                     </div>
-                    @endif
+                    @endif --}}
 
 
 
