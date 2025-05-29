@@ -87,7 +87,12 @@ public function update(Company $company, StoreOpeningBalanceRequest $request, Su
          */
         $oldIdsFromDatabase = $suppliers_opening_balance->supplierInvoices->pluck('id')->toArray();
         $idsFromRequest = array_column($request->input('opening-balances', []), 'id') ;
-
+		
+		$elementsToDelete = array_diff($oldIdsFromDatabase, $idsFromRequest);
+		foreach($elementsToDelete as $idToDelete){
+			$suppliers_opening_balance->supplierInvoices()->where('supplier_invoices.id', $idToDelete)->delete();
+		}
+		
       //  $elementsToDelete = array_diff($oldIdsFromDatabase, $idsFromRequest);
 
         $elementsToUpdate = array_intersect($idsFromRequest, $oldIdsFromDatabase); // origin one
@@ -121,7 +126,12 @@ public function update(Company $company, StoreOpeningBalanceRequest $request, Su
 		$currentKey = 'advanced-opening-balances';
         $oldIdsFromDatabase = $suppliers_opening_balance->moneyModel->pluck('id')->toArray();
         $idsFromRequest = array_column($request->input($currentKey, []), 'id') ;
-
+		
+		$elementsToDelete = array_diff($oldIdsFromDatabase, $idsFromRequest);
+		foreach($elementsToDelete as $idToDelete){
+			$suppliers_opening_balance->moneyModel()->where('money_payments.id', $idToDelete)->delete();
+		}
+		
         $elementsToUpdate = array_intersect($idsFromRequest, $oldIdsFromDatabase); // origin one
 	
         foreach ($elementsToUpdate as $id) {
