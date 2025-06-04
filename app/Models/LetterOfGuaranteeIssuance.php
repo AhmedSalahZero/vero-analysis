@@ -662,4 +662,5 @@ class LetterOfGuaranteeIssuance extends Model
 	{
 		return __('Cash Cover');
 	}
+	
 }

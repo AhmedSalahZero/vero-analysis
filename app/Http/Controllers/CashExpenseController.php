@@ -340,6 +340,9 @@ class CashExpenseController
 		
 		
 		$activeTab = $moneyType;
+		if($inUpdateMode){
+			return $cashExpense;
+		}
 		return response()->json([
 			'redirectTo'=>route('view.cash.expense',['company'=>$company->id,'active'=>$activeTab])
 		]);
@@ -409,7 +412,20 @@ class CashExpenseController
 		
 		$newType = $request->get('type');
 		
-		if($company->hasOdooIntegrationCredentials()){
+	
+		$request->merge([
+			'journal_entry_id'=>$cashExpense->journal_entry_id,
+			'account_bank_statement_odoo_id'=>$cashExpense->account_bank_statement_odoo_id,
+			'odoo_id'=>$cashExpense->odoo_id,
+		]);
+		
+		$cashExpense->deleteRelations();
+		$cashExpense->delete();
+		
+		
+		$cashExpense = $this->store($company,$request,true);
+		
+			if($company->hasOdooIntegrationCredentials()){
 			$statementEntryId = $cashExpense->journal_entry_id;
 			$accountBankStatementOdooId = $cashExpense->account_bank_statement_odoo_id;
 			$moveId = $cashExpense->journal_entry_id;
@@ -425,22 +441,12 @@ class CashExpenseController
 				$creditOdooAccountId=$cashExpenseOdooService->getChartOfAccountId($cashExpense);
 				$odooCurrencyId = Currency::getOdooId($currencyName);
 				$debitOdooAccountId = $cashExpenseCategoryName->getOdooId();
-				$odooPartnerId = null;
-				$cashExpenseOdooService->updateJournalEntry($statementEntryId,$moveId,$date,$paidAmount,$journalId,$odooCurrencyId,$debitOdooAccountId,$creditOdooAccountId,$odooPartnerId);
+				$analytic_distribution = $cashExpense->formatAnalysisDistribution();
+				$cashExpenseOdooService->updateJournalEntry($statementEntryId,$moveId,$date,$paidAmount,$journalId,$odooCurrencyId,$debitOdooAccountId,$creditOdooAccountId,$analytic_distribution);
 			
 			}
 		}
-		$request->merge([
-			'journal_entry_id'=>$cashExpense->journal_entry_id,
-			'account_bank_statement_odoo_id'=>$cashExpense->account_bank_statement_odoo_id,
-			'odoo_id'=>$cashExpense->odoo_id,
-		]);
 		
-		$cashExpense->deleteRelations();
-		$cashExpense->delete();
-		
-		
-		$this->store($company,$request,true);
 		 $activeTab = $newType;
 		 return response()->json([
 			'redirectTo'=>route('view.cash.expense',['company'=>$company->id,'active'=>$activeTab])
