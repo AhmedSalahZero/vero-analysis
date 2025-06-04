@@ -14,13 +14,14 @@ use App\Models\SalesOrder;
 use App\Models\SupplierInvoice;
 use App\Services\Api\Traits\AuthTrait;
 use App\Services\Api\Traits\CommonHelper;
+use App\Services\Api\Traits\HasUnlink;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class OdooService
 {
-	use AuthTrait , CommonHelper;
+	use AuthTrait , CommonHelper,HasUnlink;
 	/**
 	 * * import project or contracts
 	 */
@@ -128,7 +129,8 @@ class OdooService
 	 */
 	public function startImportInvoices($startDate , $endDate,$companyId)
 	{
-		if(is_null($this->uid)  ){
+	
+			if(is_null($this->uid)  ){
 			return ;
 		}
 		$this->getPartners($startDate,$endDate,$companyId);
@@ -162,8 +164,10 @@ class OdooService
 	
 		}
 		
+		
+		
 	}
-	protected function getContracts(string $startDate ,string $endDate,int $companyId)
+	public function getContracts(string $startDate ,string $endDate,int $companyId)
 	{
 		$contractFilters = array(array(
 			array('id', '>=', 0),
@@ -174,6 +178,7 @@ class OdooService
 		$projects = $this->models->execute_kw($this->db, $this->uid, $this->password, 'project.project', 'read', array($contractIds),[
 			'fields'=>[
 				'id',
+				'x_plan2_id',
 				'name',
 				'partner_id',
 				'date_start', // start date
@@ -197,6 +202,7 @@ class OdooService
 			$projectFormatted = [
 				'odoo_id'=>$currentOdooProjectId,
 				'code'=>$code,
+				'x_plan2_id'=>$projectArr['x_plan2_id'][0]??null,
 				'name'=>$projectArr['name'],
 				'model_type'=>$modelType,
 				'partner_id'=>$partnerId,
@@ -261,7 +267,6 @@ class OdooService
 				
 		}
 
-		
 		
 		
 	}
@@ -488,6 +493,15 @@ class OdooService
 			}
 			
 		}
+	}
+	public function chartOfAccount(string $chartOfAccountCode) 
+	{
+		$filters = [
+				[
+					['code','=',$chartOfAccountCode],
+				]
+		];
+		return $this->fetchData('account.account',[],$filters)[0]??null;
 	}
 	public function syncChartOfAccountNumbers(string $chartOfAccountCode,int $companyId)
 	{

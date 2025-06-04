@@ -2410,6 +2410,7 @@
     </script>
 
 </body>
+<?php echo e(session()->forget('fail')); ?>
 
 <!-- end::Body -->
 </html>

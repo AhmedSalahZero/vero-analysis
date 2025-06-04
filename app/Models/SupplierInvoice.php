@@ -277,17 +277,17 @@ class SupplierInvoice extends Model implements IInvoice
 		->get()
 		->unique('currency')->pluck('currency','currency')->toArray();
 	}
-	public static function getSupplierInvoicesUnderCollectionAtDates(array &$result  , int $companyId ,string $currency,array $datesWithWeekNumber,string $startDate,string $endDate  ):void
+	public static function getSupplierInvoicesUnderCollectionAtDates(array &$result  , int $companyId ,array $datesWithWeekNumber,string $startDate,string $endDate  ):void
 	{
 		$key = __('Suppliers Invoices') ;
 		$items = self::where('company_id',$companyId)
-		->where('currency',$currency)
+		// ->where('currency',$currency)
 		->where('net_balance','>',0)
 	
 		->whereBetween('invoice_due_date',[$startDate,$endDate])->get();
 		
 		foreach($items as $item){
-			$sum = $item->net_balance ; 
+			$sum = $item->net_balance_in_main_currency ; 
 			$currentWeekYear = $datesWithWeekNumber[$item->invoice_due_date] ;
 			$invoiceNumber = $item->invoice_number . ' [ ' . $item->supplier_name . ' ]' ; 
 			$invoiceNumber = __('Invoice No.') . ' ' .  $invoiceNumber;
@@ -298,7 +298,7 @@ class SupplierInvoice extends Model implements IInvoice
 		}
 	
 	}
-	public static function getSupplierInvoicesForPoUnderCollectionAtDates(array &$result  , int $companyId ,string $currency,array $datesWithWeekNumber,string $startDate,string $endDate  , $poAllocations  , &$pastDueSupplierInvoicesForContracts = []  ):void
+	public static function getSupplierInvoicesForPoUnderCollectionAtDates(array &$result  , int $companyId ,array $datesWithWeekNumber,string $startDate,string $endDate  , $poAllocations  , &$pastDueSupplierInvoicesForContracts = []  ):void
 	{
 		$key = __('Suppliers Invoices') ;
 	
@@ -308,7 +308,7 @@ class SupplierInvoice extends Model implements IInvoice
 			$allocationPercentage = $poAllocation->allocation_percentage / 100;
 
 			$items = self::where('company_id',$companyId)
-			->where('currency',$currency)
+			// ->where('currency',$currency)
 			->where('net_balance','>',0)
 			->where('contract_code',$supplierContractCode)
 			->where('purchases_order_number',$purchaseOrderNumber)
@@ -321,7 +321,7 @@ class SupplierInvoice extends Model implements IInvoice
 				if($invoiceDueDate->lessThan(now())){
 					$pastDueSupplierInvoicesForContracts[] = $item ;
 				}else{
-					$sum = $item->net_balance * $allocationPercentage ; 
+					$sum = $item->net_balance_in_main_currency * $allocationPercentage ; 
 					$currentWeekYear = $datesWithWeekNumber[$item->invoice_due_date] ;
 					$invoiceNumber = $item->invoice_number . ' [ ' . $item->supplier_name . ' ]' ; 
 					$invoiceNumber = __('Invoice No.') . ' ' .  $invoiceNumber;

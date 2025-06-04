@@ -151,7 +151,7 @@ class LetterOfGuaranteeIssuanceController
 	{
 		return ['contract_start_date','contract_end_date','currency','limit'];
 	}
-	public function store(Company $company  , StoreLetterOfGuaranteeIssuanceRequest $request , string $source){
+	public function store(Company $company  , StoreLetterOfGuaranteeIssuanceRequest $request , string $source,$inUpdateMode = false ){
 		$partner = Partner::find($request->get('partner_id'));
 		$customerName = $partner->getName() ;
 		$lgCode = $request->get('lg_code');
@@ -197,13 +197,11 @@ class LetterOfGuaranteeIssuanceController
 		
 		$financialInstitutionAccountForCashCover = FinancialInstitutionAccount::find($cashCoverDeductedFromAccountId);
 		$financialInstitutionAccountIdForFeesAndCommission = $financialInstitutionAccountForFeesAndCommission->id;
-		if($company->hasOdooIntegrationCredentials() && !$isOpeningBalance && $model->isCashCoverCurrentAccount() ){
-			$odooLetterOfGuaranteeIssuance = new LetterOfGuaranteeService($company);
-			$fromAccountNumber = $financialInstitutionAccountForCashCover->getAccountNumber();
-			$outJournalId = $financialInstitutionAccountForCashCover->financialInstitution->getJournalIdForAccount(27,$fromAccountNumber);
-			$odooCurrencyId = Currency::getOdooId($currency);
-			$lgOdooAccountId = FinancialInstitutionAccount::getLetterOfGuaranteeOdooIdFromType($lgType,$company->id);
-			$odooLetterOfGuaranteeIssuance->createLgIssuanceCashCover($issuanceDate,$outJournalId,$cashCoverAmount,$odooCurrencyId,$lgOdooAccountId);
+		$isCdOrTdCashCoverAccount = $model->isCdOrTd(); 
+		// in_array($request->get('cash_cover_deducted_from_account_id',[]),[28,29]);
+		// dd($company->hasOdooIntegrationCredentials() && !$isOpeningBalance && $model->isCashCoverCurrentAccount(),!$isOpeningBalance,$model->isCashCoverCurrentAccount());
+		if(!$inUpdateMode){
+			$model->handleLgIssuanceCashCoverForOdoo();
 		}
 
 		$openingBalanceDateOfCurrentAccount = $financialInstitutionAccountForFeesAndCommission->getOpeningBalanceDate();
@@ -211,7 +209,7 @@ class LetterOfGuaranteeIssuanceController
 		$financialInstitutionAccountIdForCashCover = $financialInstitutionAccountForCashCover->id ?? 0;
 		
 		
-		$isCdOrTdCashCoverAccount = in_array($request->get('cash_cover_deducted_from_account_id',[]),[28,29]);
+		
 		$customerName = $model->getBeneficiaryName();
 		if(!$isOpeningBalance && !$isCdOrTdCashCoverAccount ){
 			$model->storeCurrentAccountCreditBankStatement($issuanceDate,$cashCoverAmount , $financialInstitutionAccountIdForCashCover,0,1,__('Cash Cover [ :customerName ] [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'en'),'customerName'=>$customerName,'transactionName'=>$transactionName],'en') , __('Cash Cover [ :customerName ] [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'ar'),'customerName'=>$customerName,'transactionName'=>$transactionName],'ar') );
@@ -230,7 +228,9 @@ class LetterOfGuaranteeIssuanceController
 		$lgCommissionInterval = $request->get('lg_commission_interval');
 		
 		$model->storeCommissionAmountCreditBankStatement( $lgCommissionInterval ,  $numberOfIterationsForQuarter ,  $issuanceDate, $openingBalanceDateOfCurrentAccount,$maxLgCommissionAmount, $financialInstitutionAccountIdForFeesAndCommission, $transactionName, $lgType, $isOpeningBalance);
-		
+		if($inUpdateMode){
+			return $model;
+		}
 		return redirect()->route('view.letter.of.guarantee.issuance',['company'=>$company->id,'active'=>$request->get('lg_type')])->with('success',__('Data Store Successfully'));
 
 	}
@@ -254,9 +254,27 @@ class LetterOfGuaranteeIssuanceController
 		if($letterOfGuaranteeIssuance->renewalDateHistories->count()  > 1){
 			return redirect()->route('view.letter.of.guarantee.issuance',['company'=>$company->id,'active'=>$request->get('lg_type',$letterOfGuaranteeIssuance->getLgType())])->with('success',__('Data Store Successfully'));
 		}
+		
+		
+		
+		
+		
+		
+		
+		
+		/**
+		 * ! call update here like cash expense
+		 */
+		$request->merge([
+			'journal_entry_id'=>$letterOfGuaranteeIssuance->journal_entry_id,
+			'account_bank_statement_odoo_id'=>$letterOfGuaranteeIssuance->account_bank_statement_odoo_id,
+			'odoo_id'=>$letterOfGuaranteeIssuance->odoo_id,
+		]);
+		
 		$letterOfGuaranteeIssuance->deleteAllRelations();
 		$letterOfGuaranteeIssuance->delete();
-		$this->store($company,$request,$source);
+		$model = $this->store($company,$request,$source,true);
+		$model->handleLgIssuanceCashCoverForOdoo();
 		return redirect()->route('view.letter.of.guarantee.issuance',['company'=>$company->id,'active'=>$request->get('lg_type')])->with('success',__('Data Store Successfully'));
 	}
 
@@ -275,14 +293,21 @@ class LetterOfGuaranteeIssuanceController
 		$cashCoverAmount = $letterOfGuaranteeIssuance->getCashCoverAmount();
 		$financialInstitutionAccount = FinancialInstitutionAccount::find($letterOfGuaranteeIssuance->getCashCoverDeductedFromAccountId());
 		$currency = $financialInstitutionAccount->getCurrency();
-		
-		if($company->hasOdooIntegrationCredentials() && $letterOfGuaranteeIssuance->isCashCoverCurrentAccount() ){
+		$isCdOrTd = $letterOfGuaranteeIssuance->isCdOrTd();
+		if($company->hasOdooIntegrationCredentials() && !$isCdOrTd){
 			$odooLetterOfGuaranteeIssuance = new LetterOfGuaranteeService($company);
 			$fromAccountNumber = $financialInstitutionAccount->getAccountNumber();
-			$outJournalId = $financialInstitutionAccount->financialInstitution->getJournalIdForAccount(27,$fromAccountNumber);
+			$journalId = $financialInstitutionAccount->financialInstitution->getJournalIdForAccount(27,$fromAccountNumber);
+			$accountOdooId = $financialInstitutionAccount->financialInstitution->getOdooIdForAccount(27,$fromAccountNumber);
 			$odooCurrencyId = Currency::getOdooId($currency);
 			$lgOdooAccountId = FinancialInstitutionAccount::getLetterOfGuaranteeOdooIdFromType($lgType,$company->id);
-			$odooLetterOfGuaranteeIssuance->createLgIssuanceCashCover($issuanceDate,$outJournalId,$cashCoverAmount,$odooCurrencyId,$lgOdooAccountId);
+			$ref = $letterOfGuaranteeIssuance->generateIssuanceRef();
+			$message = $letterOfGuaranteeIssuance->generateIssuanceMessage();
+			$result = $odooLetterOfGuaranteeIssuance->createLgIssuanceCashCover($issuanceDate,$cashCoverAmount,$journalId,$odooCurrencyId,$lgOdooAccountId,$accountOdooId,$letterOfGuaranteeIssuance->getBeneficiaryOdooId(),$ref,$message);
+			$letterOfGuaranteeIssuance->account_bank_statement_odoo_id=$result['account_bank_statement_line_id'];
+			$letterOfGuaranteeIssuance->journal_entry_id=$result['journal_entry_id'];
+			$letterOfGuaranteeIssuance->save();
+			
 		}
 		
 		$letterOfGuaranteeIssuanceStatus = LetterOfGuaranteeIssuance::RUNNING ;
@@ -351,13 +376,21 @@ class LetterOfGuaranteeIssuanceController
 		// $isOpeningBalance = $letterOfGuaranteeIssuance->isOpeningBalance();
 		$financialInstitutionAccount = FinancialInstitutionAccount::find($letterOfGuaranteeIssuance->getCashCoverDeductedFromAccountId());
 		$currency = $financialInstitutionAccount->getCurrency();
-		if($company->hasOdooIntegrationCredentials() && $letterOfGuaranteeIssuance->isCashCoverCurrentAccount() ){
+		$isCdOrTdCashCoverAccount = $letterOfGuaranteeIssuance->isCdOrTd();
+		if($company->hasOdooIntegrationCredentials() && !$isCdOrTdCashCoverAccount ){
 			$odooLetterOfGuaranteeIssuance = new LetterOfGuaranteeService($company);
 			$fromAccountNumber = $financialInstitutionAccount->getAccountNumber();
-			$outJournalId = $financialInstitution->getJournalIdForAccount(27,$fromAccountNumber);
+			$journalId = $financialInstitution->getJournalIdForAccount(27,$fromAccountNumber);
 			$odooCurrencyId = Currency::getOdooId($currency);
 			$lgOdooAccountId = FinancialInstitutionAccount::getLetterOfGuaranteeOdooIdFromType($lgType,$company->id);
-			$odooLetterOfGuaranteeIssuance->createLgCancelCashCover($cancellationDate,$outJournalId,$cashCoverAmount,$odooCurrencyId,$lgOdooAccountId);
+			$accountOdooId = $financialInstitution->getOdooIdForAccount(27,$fromAccountNumber);
+			$ref = $letterOfGuaranteeIssuance->generateCancelRef();
+			$message = $letterOfGuaranteeIssuance->generateCancelMessage();
+			$result = $odooLetterOfGuaranteeIssuance->createLgCancelCashCover($cancellationDate,$cashCoverAmount,$journalId,$odooCurrencyId,$lgOdooAccountId,$accountOdooId,$letterOfGuaranteeIssuance->getBeneficiaryOdooId(),$ref,$message);
+			$letterOfGuaranteeIssuance->account_bank_statement_odoo_id=$result['account_bank_statement_line_id'];
+			$letterOfGuaranteeIssuance->journal_entry_id=$result['journal_entry_id'];
+			$letterOfGuaranteeIssuance->save();
+			
 		}
 		$commentEn = LetterOfGuaranteeStatement::generateCancelComment('en',$lgType,$partnerName,$transactionName,$lgCode);
 		$commentAr = LetterOfGuaranteeStatement::generateCancelComment('ar',$lgType,$partnerName,$transactionName,$lgCode);

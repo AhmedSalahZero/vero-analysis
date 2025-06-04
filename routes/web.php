@@ -1073,6 +1073,7 @@ Route::middleware([])->group(function () {
                     Route::put('allocate-expense/{cashExpense}', 'CashExpenseController@postAllocation')->name('allocate.odoo.cash.expense');
 					
                     Route::get('money-received', 'MoneyReceivedController@index')->name('view.money.receive');
+					Route::post('resend-odoo-money/{moneyReceived}','MoneyReceivedController@resendToOdoo')->name('resend.with.odoo');
                     Route::get('money-received/create/{model?}', 'MoneyReceivedController@create')->name('create.money.receive');
                     Route::post('money-received/create', 'MoneyReceivedController@store')->name('store.money.receive');
                     Route::get('money-received/edit/{moneyReceived}', 'MoneyReceivedController@edit')->name('edit.money.receive');

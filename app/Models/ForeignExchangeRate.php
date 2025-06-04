@@ -59,12 +59,25 @@ class ForeignExchangeRate extends Model
 	{
 		return $this->to_currency; 
 	}
-	public static function getExchangeRateForCurrencyAndClosestDate(string $fromCurrency , string $toCurrency , string $closestDate,int $companyId){
-		$exchangeRate = self::where('company_id',$companyId)->where('from_currency',$fromCurrency)->where('to_currency',$toCurrency)->where('date','<=',$closestDate)
-		->orderByDesc('date')
-		->first();
+	public static function getExchangeRateForCurrencyAndClosestDate(string $fromCurrency , string $toCurrency , string $closestDate,int $companyId , $exchangeRates = null){
+		// $exchangeRates = 
+		$orderBy = 'orderByDesc';
+		if(is_null($exchangeRates)){
+			$exchangeRates = self::get();
+			$orderBy= 'sortByDesc';
+		}
+	
+		$exchangeRate = $exchangeRates->where('company_id',$companyId)->where('from_currency',$fromCurrency)->where('to_currency',$toCurrency)->where('date','<=',$closestDate)
+			->sortByDesc('date')
+			->first();
 		return $exchangeRate ? $exchangeRate->getExchangeRate() : 1 ;
 	}
+	public static function getExchangeRateAt($receivingCurrency,$mainFunctionalCurrency,$receivingDate,$companyId,$foreignExchangeRates)
+	{
+		return  $receivingCurrency != $mainFunctionalCurrency ? self::getExchangeRateForCurrencyAndClosestDate($receivingCurrency,$mainFunctionalCurrency,$receivingDate,$companyId,$foreignExchangeRates) : 1;
+		
+	}
+	
 	public static function importOdooExchangeRates(Company $company)
 	{
 		

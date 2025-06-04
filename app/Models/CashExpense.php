@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\OpeningBalance;
 use App\Models\OutgoingTransfer;
+use App\Services\Api\OdooService;
 use App\Traits\Models\HasCreditStatements;
 use App\Traits\Models\HasForeignExchangeGainOrLoss;
 use App\Traits\Models\HasReviewedBy;
@@ -449,6 +450,7 @@ class CashExpense extends Model
 	}
 	public function deleteRelations()
 	{
+		
 		$oldType = $this->getType();
 		$oldTypeRelationName = dashesToCamelCase($oldType);
 		$this->$oldTypeRelationName ? $this->$oldTypeRelationName->delete() : null;
@@ -495,7 +497,7 @@ class CashExpense extends Model
 		;
 	}
 
-	public static function getCashOutForExpenseCategoriesAtDates(array &$result   , string $moneyType,string $dateFieldName,string $currency , int $companyId, string $startDate , string $endDate , string $currentWeekYear , int $contractId = null , ?string $chequeStatus = null) 
+	public static function getCashOutForExpenseCategoriesAtDates(array &$result  ,$foreignExchangeRates,$mainFunctionalCurrency , string $moneyType,string $dateFieldName , int $companyId, string $startDate , string $endDate , string $currentWeekYear , int $contractId = null , ?string $chequeStatus = null) 
 	{
 		$subTableName = (new self)->getTable();
 		$mainTableName = [
@@ -503,9 +505,9 @@ class CashExpense extends Model
 			MoneyPayment::CASH_PAYMENT =>(new CashPayment())->getTable(),
 			MoneyPayment::PAYABLE_CHEQUE => (new PayableCheque())->getTable()
 		][$moneyType];
-		$columnNames = $contractId ? 'cash_expense_categories.name as category_name , cash_expense_category_names.name as expense_name ,sum(amount) as paid_amount'  :'cash_expense_categories.name as category_name , cash_expense_category_names.name as expense_name ,sum(paid_amount) as paid_amount'; 
+		$columnNames = $contractId ? 'cash_expense_categories.name as category_name , cash_expense_category_names.name as expense_name ,sum(amount) as paid_amount, currency,payment_date'  :'cash_expense_categories.name as category_name , cash_expense_category_names.name as expense_name ,sum(paid_amount) as paid_amount, currency,payment_date'; 
 		$expensesWithPaidAmount = DB::table($mainTableName)
-						->where($subTableName.'.currency',$currency)
+						// ->where($subTableName.'.currency',$currency)
 						->where('type',$moneyType)
 						->where($subTableName.'.company_id',$companyId)
 						->whereBetween($dateFieldName,[$startDate,$endDate])
@@ -523,15 +525,18 @@ class CashExpense extends Model
 						->selectRaw($columnNames)->get();
 				
 		foreach($expensesWithPaidAmount as $expenseWithPaidAmount){
+			
+				$currentCurrency = $expenseWithPaidAmount->currency;
+				$paymentDate = $expenseWithPaidAmount->payment_date;
+				$exchangeRate = ForeignExchangeRate::getExchangeRateForCurrencyAndClosestDate($currentCurrency,$mainFunctionalCurrency,$paymentDate,$companyId,$foreignExchangeRates);
+				
 			$categoryName = $expenseWithPaidAmount->category_name;
 			$expenseName = $expenseWithPaidAmount->expense_name;
-			$currentPaidAmount = $expenseWithPaidAmount->paid_amount ;
+			$currentPaidAmount = $expenseWithPaidAmount->paid_amount *$exchangeRate;
 			$result['cash_expenses'][$categoryName][$expenseName]['weeks'][$currentWeekYear] = isset($result['cash_expenses'][$categoryName][$expenseName]['weeks'][$currentWeekYear]) ? $result['cash_expenses'][$categoryName][$expenseName]['weeks'][$currentWeekYear] + $currentPaidAmount :  $currentPaidAmount;
 			$result['cash_expenses'][$categoryName][$expenseName]['total'] = isset($result['cash_expenses'][$categoryName][$expenseName]['total']) ? $result['cash_expenses'][$categoryName][$expenseName]['total']  + $currentPaidAmount : $currentPaidAmount;
 			$currentTotal = $currentPaidAmount;
 			$result['cash_expenses'][$categoryName]['total'][$currentWeekYear] = isset($result['cash_expenses'][$categoryName]['total'][$currentWeekYear]) ? $result['cash_expenses'][$categoryName]['total'][$currentWeekYear] +  $currentTotal : $currentTotal ;
-			// $result['cash_expenses'][$categoryName]['total']['total_of_total'] = isset($result['cash_expenses'][$categoryName]['total']['total_of_total']) ? $result['cash_expenses'][$categoryName]['total']['total_of_total'] + $result['cash_expenses'][$categoryName]['total'][$currentWeekYear] : $result['cash_expenses'][$categoryName]['total'][$currentWeekYear];
-			// $totalCashOutFlowArray[$currentWeekYear] = isset($totalCashOutFlowArray[$currentWeekYear]) ? $totalCashOutFlowArray[$currentWeekYear] +   $currentTotal : $currentTotal ;
 		}
 	
 	
@@ -547,9 +552,7 @@ class CashExpense extends Model
 					$result['cash_expenses'][$key][$invoiceNumber]['total'] = isset($result['cash_expenses'][$key][$invoiceNumber]['total']) ? $result['cash_expenses'][$key][$invoiceNumber]['total']  + $value : $value;
 					$currentTotal = $value;
 					$result['cash_expenses'][$key]['total'][$currentWeekYear] = isset($result['cash_expenses'][$key]['total'][$currentWeekYear]) ? $result['cash_expenses'][$key]['total'][$currentWeekYear] +  $currentTotal : $currentTotal ;
-					// $totalCashInFlowArray[$currentWeekYear] = isset($totalCashInFlowArray[$currentWeekYear]) ? $totalCashInFlowArray[$currentWeekYear] + $currentTotal : $currentTotal;
-					// $result['cash_expenses'][$key]['total']['total_of_total']= isset($result['cash_expenses'][$key]['total']['total_of_total']) ? $result['cash_expenses'][$key]['total']['total_of_total'] +$value :$value ;
-					
+						
 				}
 			}
 	}
@@ -584,4 +587,31 @@ class CashExpense extends Model
 			
 		}
 	}
+	public function getBankAccountJournalId():int
+	{
+		$financialInstitution = $this->getFinancialInstitution();
+		
+		return $financialInstitution->getJournalIdForAccount($this->getAccountTypeId(),$this->getAccountNumber());
+	}
+	public function getBankAccountOdooId():int
+	{
+		$financialInstitution = $this->getFinancialInstitution();
+		
+		return $financialInstitution->getOdooIdForAccount($this->getAccountTypeId(),$this->getAccountNumber());
+	}
+	public function formatAnalysisDistribution():array 
+	{
+		$amount = $this->getAmount();
+		$result = [];
+		foreach($this->contracts as $contract){
+			$xPlan2Id = $contract->x_plan2_id ?: 87 ;
+			$pivotAmount = $contract->pivot->amount ;
+			$pivotPercentage = $pivotAmount / $amount *100 ;
+			if($xPlan2Id){
+				$result[strval($xPlan2Id)] =(float)$pivotPercentage; 
+			}
+		}
+		return $result;
+	}
+	
 }

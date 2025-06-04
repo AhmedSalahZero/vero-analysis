@@ -184,8 +184,10 @@ class InternalMoneyTransferController
 		if($type === InternalMoneyTransfer::BANK_TO_BANK){
 			if($company->hasOdooIntegrationCredentials()){
 				$fromJournalId = $fromFinancialInstitution->getJournalIdForAccount($fromAccountTypeId,$fromAccountNumber);
+				$fromOdooId = $fromFinancialInstitution->getJournalIdForAccount($fromAccountTypeId,$fromAccountNumber);
 				$toJournalId = $toFinancialInstitution->getJournalIdForAccount($toAccountTypeId,$toAccountNumber);
-				$internalMoneyTransfer->storeOdoo($company,$transferDate,$toJournalId,$fromJournalId,$transferAmount,$currencyName);
+				$toOdooId = $toFinancialInstitution->getJournalIdForAccount($toAccountTypeId,$toAccountNumber);
+				$internalMoneyTransfer->storeOdoo($company,$transferDate,$fromOdooId,$fromJournalId,$toJournalId,$toOdooId,$transferAmount,$currencyName);
 			}
 			$internalMoneyTransfer->handleBankToBankTransfer($company->id , $fromAccountType , $fromAccountNumber  , $fromFinancialInstitutionId , $toAccountType ,  $toAccountNumber,$toFinancialInstitutionId,$transferDate,$receivingDate,$transferAmount);
 		}

@@ -17,6 +17,7 @@ use App\Models\NonBankingService\Department;
 use App\Models\NonBankingService\FixedAsset;
 use App\Models\NonBankingService\Study;
 use App\Models\Partner;
+use App\Models\TimeOfDeposit;
 use App\ReadyFunctions\FixedAssetCalculation;
 use App\ReadyFunctions\OldLoan;
 use App\ReadyFunctions\VariableLoanCalculation;
@@ -64,6 +65,35 @@ class TestCommand extends Command
 	
 	public function handle()
 	{
+		$fields = [
+				'id',
+				'code'
+			];
+			$filters = [
+				[
+					// ['type','=','bank'],
+				]
+		];
+		$analytic_distribution = ["87" => 80.0,"81" => 20.0];
+			$distribution_analytic_account_ids = [];
+		foreach (array_keys($analytic_distribution) as $key) {
+			$distribution_analytic_account_ids[] = [0, (int)$key];
+		}
+		
+
+// Wrap in outer array with 6 and 0
+$distribution_analytic_account_ids = [[6, 0, ...$distribution_analytic_account_ids]];
+dd($distribution_analytic_account_ids);
+
+		$odooService =new OdooService(Company::find(107));
+		dd($odooService->getContracts('2010-01-01','2026-01-01',107));
+		$chartOfAccounts = $odooService->fetchData('account.account',$fields,$filters);
+		dd($chartOfAccounts);
+		
+		$timeOfDeposit = TimeOfDeposit::find(34);
+		dd($timeOfDeposit->currentAccountBankStatements);
+		$x = 100;
+		dd(-$x);
 		$test = (new TestCommand)->getTableNamesThatHasColumn('account_number');
 		dd($test);
 		

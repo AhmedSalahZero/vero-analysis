@@ -56,7 +56,7 @@
 								
 							@endphp
                             <input type="hidden" name="customer_invoice_id[]" value="{{ $pastDueCustomerInvoice['id'] }}">
-											<input type="hidden" name="invoice_amount[{{ $pastDueCustomerInvoice['id'] }}]"  value="{{ $pastDueCustomerInvoice['net_balance'] }}">
+											<input type="hidden" name="invoice_amount[{{ $pastDueCustomerInvoice['id'] }}]"  value="{{ $pastDueCustomerInvoice['net_balance_in_main_currency'] }}">
 											<input type="hidden" name="invoiceType" value="{{ $currentInvoiceType }}">
 											<input type="hidden" name="currency_name"  value="{{ $currencyName }}">
 											<input type="hidden" name="cashflow_report_id"  value="{{ $cashflowReportId }}">
@@ -84,9 +84,9 @@
                                 <td>
                                     <div class="kt-input-icon">
                                         <div class="input-group">
-                                            <input disabled type="text" class="form-control text-center" value="{{ number_format($pastDueCustomerInvoice['net_balance']) }}">
+                                            <input disabled type="text" class="form-control text-center" value="{{ number_format($pastDueCustomerInvoice['net_balance_in_main_currency']) }}">
 											@php
-												$totalNetBalance +=$pastDueCustomerInvoice['net_balance']; 
+												$totalNetBalance +=$pastDueCustomerInvoice['net_balance_in_main_currency']; 
 											@endphp
                                         </div>
                                     </div>

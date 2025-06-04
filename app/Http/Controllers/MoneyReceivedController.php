@@ -365,7 +365,7 @@ class MoneyReceivedController
 	}
 	
 	public function store(Company $company , StoreMoneyReceivedRequest $request , $returnModel = false){
-		// dd($request->all());
+		$syncWithOdoo = !$request->has('stop-sync-with-odoo');
 		$hasUnappliedAmount = (bool)$request->get('unapplied_amount');
 		$isGeneralDownPaymentOrSettlementOpening = $request->get('down_payment_type') == MoneyReceived::DOWN_PAYMENT_GENERAL || $request->get('down_payment_type') == MoneyReceived::SETTLEMENT_OF_OPENING_BALANCE;
 		$partnerType = $request->get('partner_type');
@@ -391,8 +391,10 @@ class MoneyReceivedController
 		$data['money_type'] =  !$isDownPayment ? 'money-received' : 'down-payment';
 		$data['money_type'] = $isDownPaymentFromMoneyReceived ? MoneyReceived::INVOICE_SETTLEMENT_WITH_DOWN_PAYMENT : $data['money_type'];
 		$data['partner_id'] = $partnerId;
+		$hasUnappliedOrIsDownPayment = $hasUnappliedAmount || $isDownPayment ;
 		$data['user_id'] = auth()->user()->id ;
 		$data['company_id'] = $company->id ;
+		$data['has_unapplied_or_down_payment'] =$hasUnappliedOrIsDownPayment ;
 		
 		$relationData = [];
 		$relationName = null ;
@@ -404,8 +406,6 @@ class MoneyReceivedController
 		$amountInReceivingCurrency = unformat_number($amountInReceivingCurrency);
 		$totalSettlements = array_sum(array_column($request->get('settlements',[]),'settlement_amount'));
 		$invoiceCurrencyAmount =  $isTheSameCurrency ? $amountInReceivingCurrency  : $totalSettlements  ;
-		// $totalSalesOrderAmount = $isTheSameCurrency ? 0 : array_sum(array_column($request->get('sales_orders_amounts'),'received_amount'));
-		// dd($moneyType);
 		if($moneyType == MoneyReceived::CASH_IN_SAFE){
 			$relationData = $request->only(['receipt_number']) ;
 			$relationData['receiving_branch_id'] = $this->generateBranchId($receivedBankName,$company->id) ;
@@ -444,7 +444,8 @@ class MoneyReceivedController
 		// $mainFunctionalCurrency = $company->getMainFunctionalCurrency();
 		// $invoiceExchangeRate = $customer
 		$data['received_amount'] =$amountInReceivingCurrency ; 
-
+		// receiving_currency with main functional currency if not exist 
+		
 	
 		$data['amount_in_invoice_currency'] = $invoiceCurrencyAmount ;
 		$data['exchange_rate'] =$exchangeRate ;
@@ -479,13 +480,11 @@ class MoneyReceivedController
 		if($partnerType && $partnerType != 'is_customer' ){
 			$moneyReceived->handlePartnerCreditStatement($partnerType,$partnerId, $moneyReceived->id,$company->id,$statementDate,$amountInReceivingCurrency,$receivingCurrency,$bankNameOrBranchName , $accountType , $accountNumber);
 		}
-		$syncWithOdoo = !$request->has('stop-sync-with-odoo');
+		
 		/**
 		 * * For Money Received Only
 		 */
-		$totalWithholdAmount = $moneyReceived->storeNewSettlement(
-			// $receivingCurrency,$currency,$exchangeRate,$foreignExchangeRate,
-			$request->get('settlements',[]),$partnerId,$company,false,$syncWithOdoo);
+		$totalWithholdAmount = $moneyReceived->storeNewSettlement($request->get('settlements',[]),$partnerId,$company,false,$syncWithOdoo);
 		
 		$moneyReceived->update([
 			'total_withhold_amount'=>$totalWithholdAmount
@@ -495,8 +494,8 @@ class MoneyReceivedController
 		 * * For Contract Only
 		 */
 		
-
-		if( $hasUnappliedAmount || $isDownPayment){
+		
+		if( $hasUnappliedOrIsDownPayment ){
 			$moneyReceived->storeNewSalesOrdersAmounts($request->get('sales_orders_amounts',[]),$contractId,$customerId,$companyId,$amountInReceivingCurrency);
 			if($company->hasOdooIntegrationCredentials()){
 				$odooPaymentService = new OdooPayment($company);
@@ -918,5 +917,15 @@ class MoneyReceivedController
 			'reviewed_by'=>auth()->user()->id 
 		]);
 		return redirect()->back();
+	}
+	public function resendToOdoo(Company $company,Request $request,MoneyReceived $moneyReceived){
+		$OdooPaymentService = new OdooPayment($company);
+		foreach($moneyReceived->settlements as $payment){
+			$OdooPaymentService->reCreatePayment($payment);
+		}
+		if( !session()->has('fail') && $moneyReceived->hasUnappliedOrDownPayment()){
+			$OdooPaymentService->RecreateDownPayment($moneyReceived);
+		}
+		return back();
 	}
 }

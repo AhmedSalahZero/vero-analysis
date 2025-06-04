@@ -345,7 +345,8 @@ class MoneyPaymentController
 		$data['money_type'] =  !$isDownPayment ? 'money-payment' : 'down-payment';
 		$data['money_type'] = $isDownPaymentFromMoneyPayment ? MoneyPayment::INVOICE_SETTLEMENT_WITH_DOWN_PAYMENT : $data['money_type'];
 		$currency = $data['currency'] ;
-
+		$hasUnappliedOrIsDownPayment = $hasUnappliedAmount || $isDownPayment;
+		$data['has_unapplied_or_down_payment'] = $hasUnappliedOrIsDownPayment;
 		$relationData = [];
 		$relationName = null ;
 		$isTheSameCurrency = $currency == $paymentCurrency ;
@@ -447,8 +448,8 @@ class MoneyPaymentController
 		 */
 		$moneyPayment->storeNewAllocation($request->get('allocations',[]));
 		
-	
-		if($hasUnappliedAmount || $isDownPayment){
+		
+		if($hasUnappliedOrIsDownPayment){
 			$moneyPayment->storeNewPurchaseOrders($request->get('purchases_orders_amounts',[]),$contractId,$supplierId,$company->id,$amountInPaymentCurrency);
 			if($company->hasOdooIntegrationCredentials()){
 				$odooPaymentService = new OdooPayment($company);

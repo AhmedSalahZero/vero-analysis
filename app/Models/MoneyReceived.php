@@ -11,6 +11,7 @@ use App\Traits\Models\HasReviewedBy;
 use App\Traits\Models\HasUserComment;
 use App\Traits\Models\IsMoney;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
@@ -1069,7 +1070,7 @@ class MoneyReceived extends Model
 				'odoo_id'=>$branch->odoo_id 
 			];
 		}
-		dd('no journal found');
+		throw new Exception('No Journal Id Found Please Edit Your Bank / Branch To Add Odoo Code');
 		
 	}
 }

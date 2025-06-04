@@ -45,7 +45,6 @@ trait AuthTrait
 			]);
 		}
 		$models = ripcord::client("$this->url/xmlrpc/2/object");
-
 		$this->models = $models;
 		$this->uid = $uid;
 	}
@@ -60,7 +59,6 @@ trait AuthTrait
             $args
         );
         if (isset($result['faultCode'])) {
-			dd($result);
             throw new \Exception($result['faultString']);
 			return ;
         }

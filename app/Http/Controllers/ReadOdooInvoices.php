@@ -14,7 +14,13 @@ class ReadOdooInvoices extends Controller
 		$odoo = new OdooService($company);
 		$startDate = $request->get('odoo_start_date');
 		$endDate = $request->get('odoo_end_date');
-		$odoo->startImportInvoices($startDate,$endDate,$company->id);
+		try{
+			$odoo->startImportInvoices($startDate,$endDate,$company->id);
+			
+		}catch(\Exception $e){
+			session()->put('fail', $e->getMessage());
+			return back();
+		}
 		return redirect()->back()->with('success',__('Invoices Reading Has Been Completed'));
 		
 	}

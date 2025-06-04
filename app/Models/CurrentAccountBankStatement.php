@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\DB;
 
 class CurrentAccountBankStatement extends Model  implements IHaveStatement
 {
+	const DEDUCTED_FOR_CURRENT_ACCOUNT = 'deducted-for-deposit';
+	
 	use HasDeleteButTriggerChangeOnLastElement,IsBankStatement;
     protected $guarded = [
         'id'

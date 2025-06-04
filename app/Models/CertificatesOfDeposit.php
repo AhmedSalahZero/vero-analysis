@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\FinancialInstitutionAccount;
+use App\Traits\HasDepositAccount;
 use App\Traits\HasLastStatementAmount;
 use App\Traits\Models\HasBlockedAgainst;
 use App\Traits\Models\HasCreditStatements;
@@ -18,7 +19,7 @@ use Illuminate\Support\Str;
 	 */
 class CertificatesOfDeposit extends Model
 {
-	use HasDebitStatements,HasCreditStatements,HasBlockedAgainst,HasLastStatementAmount ;
+	use HasDebitStatements,HasCreditStatements,HasBlockedAgainst,HasLastStatementAmount,HasDepositAccount ;
     protected $guarded = ['id'];
 	const RUNNING = 'running';
 	const MATURED = 'matured';
@@ -257,5 +258,9 @@ class CertificatesOfDeposit extends Model
 		->where('cash_cover_deducted_from_account_type',$cdAccount->id);
 	}
 
-
+public function getOdooCode()
+	{
+		return $this->odoo_code;
+	}
+	
 }

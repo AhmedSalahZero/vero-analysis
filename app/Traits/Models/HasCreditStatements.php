@@ -16,7 +16,7 @@ trait HasCreditStatements
 	 * * بنحطها في الاستيت منت
 	 * * سواء كانت كاش استيتمنت او بانك استيتمنت علي حسب نوع الحساب او الحركة يعني
 	 */
-	public function handleCreditStatement(int $companyId , $bankId = null ,?AccountType $accountType = null , ?string $accountNumber = null,?string $moneyType = null,?string $statementDate = null,?float $paidAmount = null,$deliveryBranchId=null,?string $currencyName = null , ?string $commentEn = null , ?string $commentAr = null)
+	public function handleCreditStatement(int $companyId , $bankId = null ,?AccountType $accountType = null , ?string $accountNumber = null,?string $moneyType = null,?string $statementDate = null,?float $paidAmount = null,$deliveryBranchId=null,?string $currencyName = null , ?string $commentEn = null , ?string $commentAr = null , ?string $type = null)
 	{
 		if($accountType && $accountType->getSlug() == AccountType::CLEAN_OVERDRAFT){
 			$cleanOverdraft  = CleanOverdraft::findByAccountNumber($accountNumber,$companyId,$bankId);
@@ -36,7 +36,7 @@ trait HasCreditStatements
 		}
 		elseif($accountType && $accountType->getSlug() == AccountType::CURRENT_ACCOUNT){
 			$financialInstitutionAccount = FinancialInstitutionAccount::findByAccountNumber($accountNumber,$companyId,$bankId);
-			$this->storeCurrentAccountCreditBankStatement($statementDate,$paidAmount,$financialInstitutionAccount->id,$commentEn,$commentAr);
+			$this->storeCurrentAccountCreditBankStatement($statementDate,$paidAmount,$financialInstitutionAccount->id,$commentEn,$commentAr,$type);
 		}
 		elseif($this->isCashPayment()){
 			$this->storeCashInSafeCreditStatement($statementDate,$paidAmount,$currencyName,$deliveryBranchId,$commentEn,$commentAr);
@@ -59,7 +59,7 @@ trait HasCreditStatements
 		]);
 	}
 
-	public function storeCurrentAccountCreditBankStatement(string $date , $paidAmount , int $financialInstitutionAccountId,?string $commentEn = null , ?string $commentAr )
+	public function storeCurrentAccountCreditBankStatement(string $date , $paidAmount , int $financialInstitutionAccountId,?string $commentEn = null , ?string $commentAr = null , ?string $type = null )
 	{
 		return $this->currentAccountCreditBankStatement()->create([
 			'financial_institution_account_id'=>$financialInstitutionAccountId ,
@@ -67,7 +67,8 @@ trait HasCreditStatements
 			'credit'=>$paidAmount,
 			'date'=>$date,
 			'comment_en'=>$commentEn,
-			'comment_ar'=>$commentAr
+			'comment_ar'=>$commentAr,
+			'type'=>$type
 		]);
 	}
 

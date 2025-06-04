@@ -17,7 +17,10 @@ class OdooSetting extends Model
 	{
 		return $this->belongsTo(Company::class , 'company_id','id');
 	}
-	
+	public  function getLiquidityAccountOdooId():int
+	{
+		return $this->liquidity_transfer_account_id; 
+	}
 	public function getChequesReceivableCode()
 	{
 		return $this->cheques_receivable_code;

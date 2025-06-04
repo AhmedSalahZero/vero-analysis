@@ -9,6 +9,7 @@ use App\Models\CertificatesOfDeposit;
 use App\Models\Company;
 use App\Models\CurrentAccountBankStatement;
 use App\Models\FinancialInstitution;
+use App\Services\Api\OdooService;
 use App\Traits\GeneralFunctions;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -165,7 +166,7 @@ class CertificatesOfDepositsController
     }
 	public function getCommonDataArr():array 
 	{
-		return ['start_date','account_number','amount','end_date','currency','interest_rate','interest_amount','maturity_amount_added_to_account_id'];
+		return ['start_date','account_number','amount','end_date','currency','interest_rate','interest_amount','maturity_amount_added_to_account_id','odoo_code'];
 	}
 	public function store(Company $company  ,FinancialInstitution $financialInstitution, StoreCertificateOfDepositRequest $request){
 		
@@ -176,7 +177,15 @@ class CertificatesOfDepositsController
 		$data['created_by'] = auth()->user()->id ;
 		$data['company_id'] = $company->id ;
 		$data['interest_amount'] = number_unformat($request->get('interest_amount')) ;
-		$financialInstitution->certificatesOfDeposits()->create($data);
+		$odooCode = $request->get('odoo_code') ;
+		if($company->hasOdooIntegrationCredentials() && $odooCode ){
+			$odooService = new OdooService($company);
+			$data['odoo_id'] = $odooService->chartOfAccount($odooCode)['id'] ;
+		}
+		$deductedFromAccountId = $request->get('deducted_from_account_id',0) ;
+		
+		$model=$financialInstitution->certificatesOfDeposits()->create($data);
+		$model->handleDeductedForBankStatement($financialInstitution->id,$data['start_date'],number_unformat($request->get('amount')),$company->id,$deductedFromAccountId,$request->get('account_number'));
 		$type = $request->get('type',CertificatesOfDeposit::RUNNING);
 		$activeTab = $type ; 
 		
@@ -195,14 +204,21 @@ class CertificatesOfDepositsController
 	}
 	
 	public function update(Company $company , UpdateCertificateOfDepositRequest $request , FinancialInstitution $financialInstitution,CertificatesOfDeposit $certificatesOfDeposit){
-		
+		$deductedFromAccountId = $request->get('deducted_from_account_id',0) ;
 		$data['updated_by'] = auth()->user()->id ;
 		$data = $request->only($this->getCommonDataArr());
 		foreach(['start_date','end_date'] as $dateField){
 			$data[$dateField] = $request->get($dateField) ? Carbon::make($request->get($dateField))->format('Y-m-d'):null;
 		}
 		$data['interest_amount'] = number_unformat($request->get('interest_amount')) ;
+		$odooCode = $request->get('odoo_code') ;
+		if($company->hasOdooIntegrationCredentials() && $odooCode ){
+			$odooService = new OdooService($company);
+			$data['odoo_id'] = $odooService->chartOfAccount($odooCode)['id'] ;
+		}
 		$certificatesOfDeposit->update($data);
+	    $certificatesOfDeposit->handleDeductedForBankStatement($financialInstitution->id,$data['start_date'],number_unformat($request->get('amount')),$company->id,$deductedFromAccountId,$request->get('account_number'));
+				
 		$type = $request->get('type',CertificatesOfDeposit::RUNNING);
 		$activeTab = $type ;
 		return redirect()->route('view.certificates.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'active'=>$activeTab])->with('success',__('Item Has Been Updated Successfully'));
@@ -254,7 +270,7 @@ class CertificatesOfDepositsController
 		 * * هنشيل قيم ال
 		 * * current account bank statement
 		 */
-		CurrentAccountBankStatement::deleteButTriggerChangeOnLastElement($certificatesOfDeposit->currentAccountBankStatements);
+		CurrentAccountBankStatement::deleteButTriggerChangeOnLastElement($certificatesOfDeposit->currentAccountBankStatements->where('type','!=',CurrentAccountBankStatement::DEDUCTED_FOR_CURRENT_ACCOUNT));
 		return redirect()->route('view.certificates.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id ,'active'=>$certificateType])->with('success',__('Certificate Has Been Marked As Matured'));
 	}
 	

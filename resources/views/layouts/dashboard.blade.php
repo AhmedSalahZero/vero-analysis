@@ -2411,6 +2411,6 @@
     </script>
 
 </body>
-
+{{ session()->forget('fail') }}
 <!-- end::Body -->
 </html>

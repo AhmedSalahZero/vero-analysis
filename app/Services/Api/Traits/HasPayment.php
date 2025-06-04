@@ -111,6 +111,7 @@ trait HasPayment
 			
 		}
 	}
+	
 	public function cancelDownPayment(int $downPaymentOdooId)
 	{
 		return $this->cancelPayments($downPaymentOdooId);

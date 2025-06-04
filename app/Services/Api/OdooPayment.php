@@ -3,23 +3,18 @@ namespace App\Services\Api;
 
 use App\Models\Currency;
 use App\Services\Api\Traits\AuthTrait;
+use App\Services\Api\Traits\HasJournal;
 use App\Services\Api\Traits\HasPayment;
 
 class OdooPayment
 {
-	use AuthTrait,HasPayment ;
-	public function getChartOfAccountId($moneyModel):int 
-	{
-		$isCashInSafeOrCashPayment = $moneyModel->isCash();
-		return $isCashInSafeOrCashPayment  ? $moneyModel->getCashBranchOdooId() : $moneyModel->getBankAccountOdooId();
-	}
-	public function getJournalId($moneyModel):int 
-	{
-		$isCashInSafeOrCashPayment = $moneyModel->isCash();
-		return $isCashInSafeOrCashPayment  ? $moneyModel->getCashBranchJournalId() : $moneyModel->getBankAccountJournalId();
-	}
+	use AuthTrait,HasPayment,HasJournal ;
+	
+	
 	public function createDownPayment($moneyModel )
     {
+		try{
+			
 		//	$chartOfAccountId = $this->getChartOfAccountId($moneyModel);
 			$journalId = $this->getJournalId($moneyModel) ;
 			/**
@@ -70,18 +65,28 @@ class OdooPayment
             );
 		
 			$moneyModel->update([
-				'odoo_id'=>$paymentId
+				'odoo_id'=>$paymentId,
+				'synced_with_odoo'=>true ,
+				'odoo_error_message'=>null
 			]);
+		}
+		catch(\Exception $e){
+			session()->put('fail',__('Error While Connecting With Odoo : ' . $e->getMessage()));
+			$moneyModel->update([
+				'synced_with_odoo'=>false ,
+				'odoo_error_message'=>$e->getMessage() 
+			]);
+		}
+		
 
-            return response()->json(['success' => 'Payment registered and reconciled successfully']);
-       
+         
     }
     
 	 public function createPayment($customerInvoiceSettlement )
     {
+		try{
 			$invoice = $customerInvoiceSettlement->invoice;
 			$moneyModel = $customerInvoiceSettlement->getMoney();
-	//		$chartOfAccountId = $this->getChartOfAccountId($moneyModel);
 			$journalId = $this->getJournalId($moneyModel) ;
 			/**
 			 * * $bankOrSafeId
@@ -132,12 +137,28 @@ class OdooPayment
                 [[$paymentWizardId]],
                 ['context' => $context]
             );
-			
-			$customerInvoiceSettlement->update([
-				'odoo_id'=>$paymentResult['res_id']
+			$resId = $paymentResult['res_id'];
+			if(is_numeric($resId)){
+				$moneyModel->update([
+				'synced_with_odoo'=>true ,
+				'odoo_error_message'=>null
 			]);
-
-            return response()->json(['success' => 'Payment registered and reconciled successfully']);
+			return [
+				'odoo_id'=>$resId
+			];
+			
+			}
+			
+			
+		}
+		catch(\Exception $e){
+			session()->put('fail',__('Error While Connecting With Odoo : ' . $e->getMessage()));
+			$moneyModel->update([
+				'synced_with_odoo'=>false ,
+				'odoo_error_message'=>$e->getMessage() 
+			]);
+		}
+			
 
        
     }
@@ -151,5 +172,12 @@ class OdooPayment
 
     }
 	
-	
+	public function reCreateDownPayment($moneyModel)
+    {
+		if($moneyModel->odoo_id){
+			$this->cancelPayments($moneyModel->odoo_id);
+		}
+		$this->createDownPayment($moneyModel);
+
+    }
 }

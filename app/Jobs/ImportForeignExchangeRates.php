@@ -36,7 +36,11 @@ class ImportForeignExchangeRates implements ShouldQueue
     public function handle()
     {
 		$company = Company::find($this->company_id);
-		ForeignExchangeRate::importOdooExchangeRates($company);
+		try{
+			ForeignExchangeRate::importOdooExchangeRates($company);
+		}catch(\Exception $e){
+			session()->put('fail',__('Can Not Connect To Odoo'));
+		}
     }
 	
 }

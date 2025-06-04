@@ -8,7 +8,9 @@ use App\Models\Branch;
 use App\Models\Company;
 use App\Models\CurrentAccountBankStatement;
 use App\Models\FinancialInstitution;
+use App\Models\FinancialInstitutionAccount;
 use App\Models\TimeOfDeposit;
+use App\Services\Api\OdooService;
 use App\Traits\GeneralFunctions;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -152,6 +154,8 @@ class TimeOfDepositsController
 	{
 		$banks = Bank::pluck('view_name','id');
 		$selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
+		$accountTypes = AccountType::onlyCurrentAccount()->get();
+		
 		/**
 		 * * عباره عن حساب جاري فقط
 		 */
@@ -160,12 +164,13 @@ class TimeOfDepositsController
 			'banks'=>$banks,
 			'selectedBranches'=>$selectedBranches,
 			'financialInstitution'=>$financialInstitution,
-			'accounts'=>$accounts
+			'accounts'=>$accounts,
+			'accountTypes'=>$accountTypes
 		]);
     }
 	public function getCommonDataArr():array 
 	{
-		return ['start_date','account_number','amount','end_date','currency','interest_rate','interest_amount','maturity_amount_added_to_account_id'];
+		return ['start_date','account_number','amount','end_date','currency','interest_rate','interest_amount','maturity_amount_added_to_account_id','odoo_code'];
 	}
 	public function store(Company $company  ,FinancialInstitution $financialInstitution, StoreTimeOfDepositRequest $request){
 		
@@ -173,10 +178,24 @@ class TimeOfDepositsController
 		foreach(['start_date','end_date'] as $dateField){
 			$data[$dateField] = $request->get($dateField) ? Carbon::make($request->get($dateField))->format('Y-m-d'):null;
 		}
+		$odooCode = $request->get('odoo_code') ;
+		$deductedFromAccountId = $request->get('deducted_from_account_id',0) ;
+		if($company->hasOdooIntegrationCredentials() && $odooCode ){
+			$odooService = new OdooService($company);
+			$data['odoo_id'] = $odooService->chartOfAccount($odooCode)['id'] ;
+		}
+		
 		$data['created_by'] = auth()->user()->id ;
 		$data['company_id'] = $company->id ;
 		$data['interest_amount'] = number_unformat($request->get('interest_amount')) ;
-		$financialInstitution->timeOfDeposits()->create($data);
+		$timeOfDeposit=$financialInstitution->timeOfDeposits()->create($data);
+		/**
+		 * @var TimeOfDeposit $timeOfDeposit
+		 */
+
+		$timeOfDeposit->handleDeductedForBankStatement($financialInstitution->id,$data['start_date'],number_unformat($request->get('amount')),$company->id,$deductedFromAccountId,$request->get('account_number'));
+		
+		
 		$type = $request->get('type',TimeOfDeposit::RUNNING);
 		$activeTab = $type ; 
 		
@@ -186,10 +205,12 @@ class TimeOfDepositsController
 	
 	public function edit(Company $company , Request $request , FinancialInstitution $financialInstitution , TimeOfDeposit $timeOfDeposit){
 		$accounts = $financialInstitution->accounts ;
+		$accountTypes = AccountType::onlyCurrentAccount()->get();
         return view('reports.time-of-deposit.form',[
 			'financialInstitution'=>$financialInstitution,
 			'model'=>$timeOfDeposit,
-			'accounts'=>$accounts
+			'accounts'=>$accounts,
+			'accountTypes'=>$accountTypes
 		]);
 		
 	}
@@ -202,7 +223,15 @@ class TimeOfDepositsController
 			$data[$dateField] = $request->get($dateField) ? Carbon::make($request->get($dateField))->format('Y-m-d'):null;
 		}
 		$data['interest_amount'] = number_unformat($request->get('interest_amount')) ;
+		if($company->hasOdooIntegrationCredentials()){
+			$odooService = new OdooService($company);
+			$data['odoo_id'] = $odooService->chartOfAccount($request->get('odoo_code'))['id'] ;
+		}
+		
 		$timeOfDeposit->update($data);
+		$deductedFromAccountId = $request->get('deducted_from_account_id',0) ;
+		$timeOfDeposit->handleDeductedForBankStatement($financialInstitution->id,$data['start_date'],number_unformat($request->get('amount')),$company->id,$deductedFromAccountId,$request->get('account_number'));
+
 		$type = $request->get('type',TimeOfDeposit::RUNNING);
 		$activeTab = $type ;
 		return redirect()->route('view.time.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'active'=>$activeTab])->with('success',__('Item Has Been Updated Successfully'));
@@ -256,7 +285,7 @@ class TimeOfDepositsController
 		 * * هنشيل قيم ال
 		 * * current account bank statement
 		 */
-		CurrentAccountBankStatement::deleteButTriggerChangeOnLastElement($timeOfDeposit->currentAccountBankStatements);
+		CurrentAccountBankStatement::deleteButTriggerChangeOnLastElement($timeOfDeposit->currentAccountBankStatements->where('type','!=',CurrentAccountBankStatement::DEDUCTED_FOR_CURRENT_ACCOUNT));
 		return redirect()->route('view.time.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id ,'active'=>$type])->with('success',__('Time Of Deposit Has Been Marked As Matured'));
 	}
 	
@@ -277,6 +306,7 @@ class TimeOfDepositsController
 			'status'=>$type,
 			'break_charge_amount'=>$breakChargeAmount
 		]);
+		
 		
 		$accountType = AccountType::where('slug',AccountType::CURRENT_ACCOUNT)->first() ;
 		/**

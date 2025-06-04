@@ -1,8 +1,6 @@
 <?php
 namespace App\Traits;
 
-use App\Models\CleanOverdraft;
-use App\Models\CleanOverdraftBankStatement;
 use Illuminate\Support\Facades\DB;
 
 

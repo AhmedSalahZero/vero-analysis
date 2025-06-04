@@ -169,6 +169,7 @@ use App\Models\MoneyReceived;
                                         <span style="overflow: visible; position: relative; width: 110px">
 										{{-- display:inline-block ; --}}
 											@include('reports._user_comment_modal',['model'=>$moneyReceived])
+											@include('reports._user_odoo_modal',['model'=>$moneyReceived])
 									
 											@if(auth()->user()->can('update money received'))
 											@include('reports._review_modal',['model'=>$moneyReceived])
@@ -262,6 +263,7 @@ use App\Models\MoneyReceived;
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px">
 											@include('reports._user_comment_modal',['model'=>$moneyReceived])
+											@include('reports._user_odoo_modal',['model'=>$moneyReceived])
 											@if(!$moneyReceived->isOpenBalance() )
 											@if(auth()->user()->can('update money received')  )
 											@include('reports._review_modal',['model'=>$moneyReceived])
@@ -600,7 +602,7 @@ use App\Models\MoneyReceived;
                                     <td>{{ $money->getIncomingTransferAccountNumber() }}</td>
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px">
-											@include('reports._user_comment_modal',['model'=>$money])
+											@include('reports._user_odoo_modal',['model'=>$money])
 										@if(!$money->isOpenBalance()  )
 										@if(auth()->user()->can('update money received') )
 										@include('reports._review_modal',['model'=>$money])
@@ -690,6 +692,7 @@ use App\Models\MoneyReceived;
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px">
 											@include('reports._user_comment_modal',['model'=>$moneyReceived])
+											@include('reports._user_odoo_modal',['model'=>$moneyReceived])
 										@if(!$moneyReceived->isOpenBalance() )
 										
 											@if(auth()->user()->can('update money received') )
@@ -789,6 +792,7 @@ use App\Models\MoneyReceived;
                                     <td class="kt-datatable__cell--left kt-datatable__cell  " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px">
 											@include('reports._user_comment_modal',['model'=>$money])
+											@include('reports._user_odoo_modal',['model'=>$money])
 										@if(!$money->isOpenBalance())
 										@include('reports._review_modal',['model'=>$money])
 										@if(auth()->user()->can('update money received')  )

@@ -104,8 +104,16 @@
                                     <div class="col-md-3 ">
                                         <x-form.input :model="$model??null" :label="__('Account Number')" :type="'text'" :placeholder="__('Account Number')" :name="'account_number'" :required="true"></x-form.input>
                                     </div>
-                                    <div class="col-md-3">
-                                        <label>{{__('Select Currency')}} </label>
+                                    <div 
+									
+									 @if($company->hasOdooIntegrationCredentials())
+									class="col-md-2"
+									 @else
+									class="col-md-3"
+									@endif 
+									
+									>
+                                        <label>{{__('Currency')}} </label>
                                         <div class="input-group">
                                             <select name="currency" class="form-control repeater-select js-update-current-accounts">
                                                 @foreach(getCurrencies() as $currencyName => $currencyValue )
@@ -114,6 +122,20 @@
                                             </select>
                                         </div>
                                     </div>
+									
+									 @if($company->hasOdooIntegrationCredentials())
+                    <div class="col-1	">
+                        <label class="form-label font-weight-bold ">{{ __('Odoo Code') }}
+                           
+                        </label>
+                        <div class="kt-input-icon">
+                            <div class="input-group">
+                                <input  placeholder="{{ __('Odoo Code') }}" type="text" class="form-control  exclude-text"  name="odoo_code"  value="{{ isset($model) ? $model->getOdooCode() : old('odoo_code') }}">
+                            </div>
+                        </div>
+                    </div>
+                    @endif
+					
 
 
 
@@ -135,6 +157,20 @@
                                     <div class="col-md-2 ">
                                         <x-form.input :readonly="true" :id="'interest-amount-id'" :model="$model??null" :label="__('Interest Amount')" :type="'text'" :placeholder="__('Interest Amount')" :name="'interest_amount'" :class="'only-greater-than-or-equal-zero-allowed'" :required="true"></x-form.input>
                                     </div>
+									
+									 <div class="col-md-3">
+                                        <label>{{__('Deducted From Account #')}}
+                                            @include('star')
+                                        </label>
+                                        <div class="kt-input-icon">
+                                            <div class="input-group date">
+                                                <select data-current-selected="{{ isset($model) ? $model->getDeductedFromAccountId(): 0 }}" name="deducted_from_account_id"  class="form-control js-append-current-accounts-with-select js-account-id-2">
+                                                    <option value="" selected>{{__('Select')}}</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+									
                                     <div class="col-md-2">
                                         <label>{{__('Add Maturity Amount To Account')}} @include('star')</label>
                                         <div class="input-group">
@@ -292,12 +328,15 @@
 					},
 					success:function(res){
 						let options = '';
+						 let optionsWithSelect = '<option value="0">Opening Balance</option>';
 						for(var i = 0  ; i < res.data.length ; i++){
 							id = Object.keys(res.data[i])[0];
 							accountNumber = res.data[i][id]
 							options+=' <option value="'+ id +'">'+accountNumber+'</option> '
+							optionsWithSelect += ' <option value="' + id + '">' + accountNumber + '</option> '
 						}
 						$('select.js-append-current-accounts').empty().append(options)
+						$('select.js-append-current-accounts-with-select').empty().append(optionsWithSelect)
 					}
 				})
 					

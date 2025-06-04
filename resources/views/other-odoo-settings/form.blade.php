@@ -93,8 +93,11 @@ use App\NotificationSetting ;
                         <div class="kt-portlet__body">
 
                             <div class="form-group row">
-							<div class="col-md-3 ">
-                                    <x-form.input :default-value="null" :model="$model??null" :label="__('Suspense Account')" :type="'text'" :placeholder="__('Suspense Account')" :name="'suspense_account_code'" :required="false"></x-form.input>
+								<div class="col-md-3 ">
+                                    <x-form.input :default-value="null" :model="$model??null" :label="__('Liquidity Transfer Account')" :type="'text'" :placeholder="__('Liquidity Transfer Account')" :name="'liquidity_transfer_account_code'" :required="false"></x-form.input>
+                                </div>
+								<div class="col-md-3 ">
+                                    <x-form.input :default-value="null" :model="$model??null" :label="__('Custody Account')" :type="'text'" :placeholder="__('Custody Account')" :name="'custody_account_code'" :required="false"></x-form.input>
                                 </div>
 								
                                 <div class="col-md-3 ">
@@ -127,6 +130,11 @@ use App\NotificationSetting ;
 								<div class="col-md-3 ">
                                     <x-form.input :default-value="null" :model="$model??null" :label="__('Deferred Lc Cash Cover')" :type="'text'" :placeholder="__('Deferred Lc Cash Cover')" :name="'deferred_lc_cash_cover_code'" :required="false"></x-form.input>
                                 </div>
+								
+								<div class="col-md-3 ">
+                                    <x-form.input :default-value="null" :model="$model??null" :label="__('Interest Revenue')" :type="'text'" :placeholder="__('Interest Revenue')" :name="'interest_revenue_code'" :required="false"></x-form.input>
+                                </div>
+								
 								
 								
 								

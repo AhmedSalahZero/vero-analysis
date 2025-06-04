@@ -429,12 +429,15 @@ class InternalMoneyTransfer extends Model
 	{
 		return $this->cheque_number ; 
 	}
-	public function storeOdoo(Company $company,string $date,int $inJournalId,int $outJournalId,float $amount,string $currencyName)
+	public function storeOdoo(Company $company,string $date,int $outBankOdooId,int $outJournalId,int $inJournalId,int $inBankOdooId,float $amount,string $currencyName)
 	{
+	
 		$odooCurrencyId = Currency::getOdooId($currencyName);
 		$internalMoneyTransferService = (new OdooInternalMoneyTransfer($company));
-		$this->odoo_inbound_payment_id = $internalMoneyTransferService->processInboundPayment($date , $inJournalId , $amount , $odooCurrencyId);
-		$this->odoo_outbound_payment_id = $internalMoneyTransferService->processOutboundPayment($date , $outJournalId , $amount , $odooCurrencyId);
+		// $this->odoo_outbound_payment_id = $internalMoneyTransferService->processOutboundPayment($date , $outJournalId , $amount , $odooCurrencyId);
+		$this->odoo_outbound_payment_id = $internalMoneyTransferService->sendMoneyTo($date ,$amount,$odooCurrencyId, $outJournalId, $outBankOdooId );
+		$this->odoo_inbound_payment_id = $internalMoneyTransferService->receiveMoneyTo($date ,$amount,$odooCurrencyId, $inJournalId, $inBankOdooId );
+		// $this->odoo_inbound_payment_id = $internalMoneyTransferService->received($date , $inJournalId , $amount , $odooCurrencyId);
 		$this->save();
 	}
 	public function deleteOdoo()

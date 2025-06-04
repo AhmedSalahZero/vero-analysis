@@ -23,6 +23,9 @@ trait IsInvoice
 	
 	public function getOdooId():int
 	{
+		if(is_null($this->odoo_id)){
+			throw new \Exception('Invoice Odoo Id Not Found Please Sync Your Invoices');
+		}
 		return $this->odoo_id;
 	}
 	public function scopeOnlyCompany(Builder $query,$companyId){
@@ -280,8 +283,6 @@ trait IsInvoice
 		->where('currency',$currencyName)
 		->where('opening_balance_id',null)
 		->whereBetween(self::RECEIVING_OR_PAYMENT_DATE_COLUMN_NAME,[$startDate,$endDate]);
-		
-		// ->sum(DB::raw('total_withhold_amount + '.self::RECEIVED_OR_PAYMENT_AMOUNT));
 	}
 	
 	public function deductions()

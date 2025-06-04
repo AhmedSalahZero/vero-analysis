@@ -677,27 +677,30 @@ class LetterOfCreditIssuance extends Model
 		]);
 	}
 	
-	public static function getCommissionAndFeesAtDates(array &$result ,string $dateFieldName,string $currency , int $companyId, string $startDate , string $endDate , string $currentWeekYear) 
+	public static function getCommissionAndFeesAtDates(array &$result ,$foreignExchangeRates , $mainFunctionalCurrency,string $dateFieldName , int $companyId, string $startDate , string $endDate , string $currentWeekYear) 
 	{
 		$lcsTypes = LcTypes::getAll();
 		$mainType = 'cash_expenses';
 		$rows = DB::table('current_account_bank_statements')->where('current_account_bank_statements.company_id',$companyId)
 						->join('financial_institution_accounts','financial_institution_accounts.id','=','current_account_bank_statements.financial_institution_account_id')
 						->join('letter_of_credit_issuances','letter_of_credit_issuances.id','=','current_account_bank_statements.letter_of_credit_issuance_id')
-						->where('financial_institution_accounts.currency',$currency)
+						// ->where('financial_institution_accounts.currency',$currency)
 						->whereBetween($dateFieldName,[$startDate,$endDate])
 						->where('letter_of_credit_issuance_id','>',0)
 						->where(function($q){
 							$q->where('is_renewal_fees',1)->orWhere('is_commission_fees',1)->orWhere('is_issuance_fees',1);
 						})
-						->groupBy('letter_of_credit_issuances.lc_type')
-						->selectRaw('letter_of_credit_issuances.lc_type as lc_type ,sum(credit) as paid_amount')->get();
+						->groupByRaw('letter_of_credit_issuances.lc_type,financial_institution_accounts.currency')
+						->selectRaw('letter_of_credit_issuances.lc_type as lc_type ,sum(credit) as paid_amount,financial_institution_accounts.currency as currency,'.$dateFieldName)->get();
 		
 
 		$subType = __('LCs Commission & Fees');
 		foreach($rows as $row){
+			$currentCurrency = $row->currency;
+				$date = $row->{$dateFieldName};
+				$exchangeRate = ForeignExchangeRate::getExchangeRateForCurrencyAndClosestDate($currentCurrency,$mainFunctionalCurrency,$date,$companyId,$foreignExchangeRates);
 			$lcType = $lcsTypes[$row->lc_type];
-			$currentPaidAmount = $row->paid_amount ;
+			$currentPaidAmount = $row->paid_amount*$exchangeRate ;
 			$result[$mainType][$subType][$lcType]['weeks'][$currentWeekYear] = isset($result[$mainType][$subType][$lcType]['weeks'][$currentWeekYear]) ? $result[$mainType][$subType][$lcType]['weeks'][$currentWeekYear] + $currentPaidAmount :  $currentPaidAmount;
 			$result[$mainType][$subType][$lcType]['total'] = isset($result[$mainType][$subType][$lcType]['total']) ? $result[$mainType][$subType][$lcType]['total']  + $currentPaidAmount : $currentPaidAmount;
 			$currentTotal = $currentPaidAmount;
@@ -708,20 +711,23 @@ class LetterOfCreditIssuance extends Model
 	
 	}
 	
-	public static function getRemainingLcAmountAtDates(array &$result ,string $currency , int $companyId, string $startDate , string $endDate , string $currentWeekYear) 
+	public static function getRemainingLcAmountAtDates(array &$result ,$foreignExchangeRates , $mainFunctionalCurrency , int $companyId, string $startDate , string $endDate , string $currentWeekYear) 
 	{
 		$lcsTypes = LcTypes::getAll();
 		$mainType = 'cash_expenses';
 		$rows = DB::table('letter_of_credit_issuances')->where('letter_of_credit_issuances.company_id',$companyId)
 		->where('status',LetterOfCreditIssuance::RUNNING)
-						->where('lc_cash_cover_currency',$currency)
+						// ->where('lc_cash_cover_currency',$currency)
 						->whereBetween('due_date',[$startDate,$endDate])
-						->selectRaw('transaction_name,letter_of_credit_issuances.lc_type as lc_type ,(amount_in_main_currency - cash_cover_amount) as paid_amount ')->get();
+						->selectRaw('transaction_name,letter_of_credit_issuances.lc_type as lc_type ,(amount_in_main_currency - cash_cover_amount) as paid_amount ,lc_cash_cover_currency as currency')->get();
 		
 		$subType = __('LCs Remaining Amounts');
 		foreach($rows as $row){
+			$currentCurrency = $row->currency;
+				$date = $row->due_date;
+				$exchangeRate = ForeignExchangeRate::getExchangeRateAt($currentCurrency,$mainFunctionalCurrency,$date,$companyId,$foreignExchangeRates);
 			$lcType = $lcsTypes[$row->lc_type] . ' [ ' . $row->transaction_name . ' ]';
-			$currentPaidAmount = $row->paid_amount ;
+			$currentPaidAmount = $row->paid_amount *$exchangeRate ;
 			$result[$mainType][$subType][$lcType]['weeks'][$currentWeekYear] = isset($result[$mainType][$subType][$lcType]['weeks'][$currentWeekYear]) ? $result[$mainType][$subType][$lcType]['weeks'][$currentWeekYear] + $currentPaidAmount :  $currentPaidAmount;
 			$result[$mainType][$subType][$lcType]['total'] = isset($result[$mainType][$subType][$lcType]['total']) ? $result[$mainType][$subType][$lcType]['total']  + $currentPaidAmount : $currentPaidAmount;
 			$currentTotal = $currentPaidAmount;

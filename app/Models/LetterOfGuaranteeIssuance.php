@@ -132,6 +132,10 @@ class LetterOfGuaranteeIssuance extends Model
 	{
 		return $this->lg_type;
 	}
+	public function getLgTypeFormatted()
+	{
+		return LgTypes::getAll()[$this->getLgType()];
+	}
 	public function isAdvancedPayment()
 	{
 		return $this->getLgType() === LgTypes::ADVANCED_PAYMENT_LGS;
@@ -170,6 +174,13 @@ class LetterOfGuaranteeIssuance extends Model
 		$beneficiary = $this->beneficiary ;
 		return  $beneficiary ? $beneficiary->getId(): 0 ;
 	}
+	
+	public function getBeneficiaryOdooId()
+	{
+		$beneficiary = $this->beneficiary ;
+		return  $beneficiary ? $beneficiary->getOdooId(): 0 ;
+	}
+	
 
 	public function contract()
 	{
@@ -340,7 +351,10 @@ class LetterOfGuaranteeIssuance extends Model
 	{
 		return $this->cash_cover_deducted_from_account_id ?: $this->lg_fees_and_commission_account_id;
 	}
-	
+	public function isCdOrTd():bool
+	{
+		return  in_array($this->getCashCoverDeductedFromAccountId(),[28,29]);
+	}
 	public function getFeesAndCommissionAccountTypeId()
 	{
 		return $this->lg_fees_and_commission_account_type;
@@ -437,6 +451,7 @@ class LetterOfGuaranteeIssuance extends Model
 	}
 	public function isCashCoverCurrentAccount():bool 
 	{
+		// dd($this->cashCoverDeductedFromAccountType,$this);
 		return $this->cashCoverDeductedFromAccountType && $this->cashCoverDeductedFromAccountType->isCurrentAccount();
 	}
 	public function deleteAllRelations():self
@@ -450,14 +465,22 @@ class LetterOfGuaranteeIssuance extends Model
 		$financialInstitution = $this->financialInstitutionBank;
 		$cashCoverAmount = $this->getCashCoverAmount();
 		$isOpeningBalance = $this->isOpeningBalance();
-		$isCurrentAccount = $this->isCashCoverCurrentAccount() ;
-		if($company->hasOdooIntegrationCredentials() && !$isOpeningBalance && $isCurrentAccount ){
+		// $isCurrentAccount = $this->isCashCoverCurrentAccount() ;
+		$isCdOrTd = $this->isCdOrTd();
+		if($company->hasOdooIntegrationCredentials() && !$isOpeningBalance && !$isCdOrTd ){
 			$odooLetterOfGuaranteeIssuance = new LetterOfGuaranteeService($company);
 			$fromAccountNumber = $financialInstitutionAccount->getAccountNumber();
-			$outJournalId = $financialInstitution->getJournalIdForAccount(27,$fromAccountNumber);
+			$journalId = $financialInstitution->getJournalIdForAccount(27,$fromAccountNumber);
+			$accountOdooId = $financialInstitution->getOdooIdForAccount(27,$fromAccountNumber);
 			$odooCurrencyId = Currency::getOdooId($currency);
 			$lgOdooAccountId = FinancialInstitutionAccount::getLetterOfGuaranteeOdooIdFromType($lgType,$company->id);
-			$odooLetterOfGuaranteeIssuance->createLgCancelCashCover($issuanceDate,$outJournalId,$cashCoverAmount,$odooCurrencyId,$lgOdooAccountId);
+			$ref = $this->generateCancelRef();
+			$message = $this->generateCancelMessage();
+			$result = $odooLetterOfGuaranteeIssuance->createLgCancelCashCover($issuanceDate,$cashCoverAmount,$journalId,$odooCurrencyId,$lgOdooAccountId,$accountOdooId,$this->getBeneficiaryOdooId(),$ref,$message);
+			$this->account_bank_statement_odoo_id=$result['account_bank_statement_line_id'];
+			$this->journal_entry_id=$result['journal_entry_id'];
+			$this->save();
+			
 		}
 		/**
 		 * @var LetterOfGuaranteeIssuanceAdvancedPaymentHistory $advancedPaymentHistory
@@ -507,14 +530,14 @@ class LetterOfGuaranteeIssuance extends Model
 	{
 		return $this->issuance_fees ;
 	}	
-	public static function getCommissionAndFeesAtDates(array &$result ,string $dateFieldName,string $currency , int $companyId, string $startDate , string $endDate , string $currentWeekYear , int $contractId = null) 
+	public static function getCommissionAndFeesAtDates(array &$result,$foreignExchangeRates , $mainFunctionalCurrency ,string $dateFieldName , int $companyId, string $startDate , string $endDate , string $currentWeekYear , int $contractId = null) 
 	{
 		$lgsTypes = LgTypes::getAll();
 		$mainType = 'cash_expenses';
 		$rows = DB::table('current_account_bank_statements')->where('current_account_bank_statements.company_id',$companyId)
 						->join('financial_institution_accounts','financial_institution_accounts.id','=','current_account_bank_statements.financial_institution_account_id')
 						->join('letter_of_guarantee_issuances','letter_of_guarantee_issuances.id','=','current_account_bank_statements.letter_of_guarantee_issuance_id')
-						->where('financial_institution_accounts.currency',$currency)
+						// ->where('financial_institution_accounts.currency',$currency)
 						->whereBetween($dateFieldName,[$startDate,$endDate])
 						->where('letter_of_guarantee_issuance_id','>',0)
 						->where(function($q){
@@ -523,14 +546,19 @@ class LetterOfGuaranteeIssuance extends Model
 						->when($contractId , function($q) use($contractId){
 							$q->where('contract_id',$contractId);	
 						})
-						->groupBy('letter_of_guarantee_issuances.lg_type')
-						->selectRaw('letter_of_guarantee_issuances.lg_type as lg_type ,sum(credit) as paid_amount')->get();
+						->groupByRaw('letter_of_guarantee_issuances.lg_type,financial_institution_accounts.currency')
+						->selectRaw('letter_of_guarantee_issuances.lg_type as lg_type ,sum(credit) as paid_amount,financial_institution_accounts.currency as currency,'.$dateFieldName)->get();
 		
 
 		$subType = __('LGs Commission & Fees');
 		foreach($rows as $row){
+			
+				$currentCurrency = $row->currency;
+				$date = $row->{$dateFieldName};
+				$exchangeRate = ForeignExchangeRate::getExchangeRateForCurrencyAndClosestDate($currentCurrency,$mainFunctionalCurrency,$date,$companyId,$foreignExchangeRates);
+				
 			$lgType = $lgsTypes[$row->lg_type];
-			$currentPaidAmount = $row->paid_amount ;
+			$currentPaidAmount = $row->paid_amount*$exchangeRate ;
 			$result[$mainType][$subType][$lgType]['weeks'][$currentWeekYear] = isset($result[$mainType][$subType][$lgType]['weeks'][$currentWeekYear]) ? $result[$mainType][$subType][$lgType]['weeks'][$currentWeekYear] + $currentPaidAmount :  $currentPaidAmount;
 			$result[$mainType][$subType][$lgType]['total'] = isset($result[$mainType][$subType][$lgType]['total']) ? $result[$mainType][$subType][$lgType]['total']  + $currentPaidAmount : $currentPaidAmount;
 			$currentTotal = $currentPaidAmount;
@@ -541,7 +569,7 @@ class LetterOfGuaranteeIssuance extends Model
 	
 	}
 	
-	public static function getCashCovers(array &$result ,string $dateFieldName,string $currency , int $companyId, string $startDate , string $endDate , string $currentWeekYear , int $contractId = null) 
+	public static function getCashCovers(array &$result ,$foreignExchangeRates , $mainFunctionalCurrency ,string $dateFieldName , int $companyId, string $startDate , string $endDate , string $currentWeekYear , int $contractId = null) 
 	{
 		$lgsTypes = LgTypes::getAll();
 		// $mainType = 'lg';
@@ -550,7 +578,7 @@ class LetterOfGuaranteeIssuance extends Model
 		$rows = DB::table('letter_of_guarantee_cash_cover_statements')
 						->where('letter_of_guarantee_cash_cover_statements.company_id',$companyId)
 						->join('letter_of_guarantee_issuances','letter_of_guarantee_issuances.id','=','letter_of_guarantee_cash_cover_statements.letter_of_guarantee_issuance_id')
-						->where('letter_of_guarantee_cash_cover_statements.currency',$currency)
+						// ->where('letter_of_guarantee_cash_cover_statements.currency',$currency)
 						->whereBetween($dateFieldName,[$startDate,$endDate])
 						->where('letter_of_guarantee_issuance_id','>',0)
 						->when($contractId , function($q) use($contractId){
@@ -559,14 +587,20 @@ class LetterOfGuaranteeIssuance extends Model
 						// ->where(function($q){
 						// 	$q->where('is_renewal_fees',1)->orWhere('is_commission_fees',1)->orWhere('is_issuance_fees',1);
 						// })
-						->groupBy('letter_of_guarantee_issuances.lg_type')
-						->selectRaw('letter_of_guarantee_issuances.lg_type as lg_type ,sum(debit) as total_amount')->get();
+						->groupByRaw('letter_of_guarantee_issuances.lg_type,letter_of_guarantee_cash_cover_statements.currency')
+						->selectRaw('letter_of_guarantee_issuances.lg_type as lg_type ,sum(debit) as total_amount , letter_of_guarantee_cash_cover_statements.currency as currency,'.$dateFieldName)->get();
 		
 
 		$subType = __('Cancelled LGs Cash Cover');
 		foreach($rows as $row){
+			
+			
+				$currentCurrency = $row->currency;
+				$date = $row->{$dateFieldName};
+				$exchangeRate = ForeignExchangeRate::getExchangeRateAt($currentCurrency,$mainFunctionalCurrency,$date,$companyId,$foreignExchangeRates);
+				
 			$lgType = $lgsTypes[$row->lg_type];
-			$currentPaidAmount = $row->total_amount ;
+			$currentPaidAmount = $row->total_amount *$exchangeRate;
 			$result[$mainType][$subType][$lgType]['weeks'][$currentWeekYear] = isset($result[$mainType][$subType][$lgType]['weeks'][$currentWeekYear]) ? $result[$mainType][$subType][$lgType]['weeks'][$currentWeekYear] + $currentPaidAmount :  $currentPaidAmount;
 			$result[$mainType][$subType][$lgType]['total'] = isset($result[$mainType][$subType][$lgType]['total']) ? $result[$mainType][$subType][$lgType]['total']  + $currentPaidAmount : $currentPaidAmount;
 			$currentTotal = $currentPaidAmount;
@@ -579,5 +613,53 @@ class LetterOfGuaranteeIssuance extends Model
 	}
 	
 	
-	
+	public function handleLgIssuanceCashCoverForOdoo()
+	{
+		$isOpeningBalance = $this->isOpeningBalance();
+		$isCdOrTdCashCoverAccount = $this->isCdOrTd();
+		$company = $this->company;
+		if($company->hasOdooIntegrationCredentials() && !$isOpeningBalance && !$isCdOrTdCashCoverAccount ){
+			$financialInstitutionAccountForCashCover = FinancialInstitutionAccount::find($this->getCashCoverDeductedFromAccountId());
+			$odooLetterOfGuaranteeIssuance = new LetterOfGuaranteeService($company);
+			$fromAccountNumber = $financialInstitutionAccountForCashCover->getAccountNumber();
+			$journalId = $financialInstitutionAccountForCashCover->financialInstitution->getJournalIdForAccount(27,$fromAccountNumber);
+			$accountOdooId = $financialInstitutionAccountForCashCover->financialInstitution->getOdooIdForAccount(27,$fromAccountNumber);
+			$currency = $this->getLgCurrency();
+			$issuanceDate = $this->getIssuanceDate();
+			$odooCurrencyId = Currency::getOdooId($currency);
+			$lgType = $this->getLgType();
+			$cashCoverAmount = $this->getCashCoverAmount();
+			$lgDebitOdooAccountId = FinancialInstitutionAccount::getLetterOfGuaranteeOdooIdFromType($lgType,$company->id);
+			$inUpdateMode = $this->journal_entry_id && $this->account_bank_statement_odoo_id ;
+			if($inUpdateMode){
+				$statementEntryId = $this->journal_entry_id;
+				$accountBankStatementOdooId = $this->account_bank_statement_odoo_id;
+				$odooLetterOfGuaranteeIssuance->updateJournalEntry($statementEntryId,$accountBankStatementOdooId,$issuanceDate,$cashCoverAmount,$odooCurrencyId,$journalId,$lgDebitOdooAccountId,$accountOdooId,);
+			}else{
+				$ref = $this->generateIssuanceRef();
+				$message = $this->generateIssuanceMessage();
+				$result = $odooLetterOfGuaranteeIssuance->createLgIssuanceCashCover($issuanceDate,$cashCoverAmount,$journalId,$odooCurrencyId,$lgDebitOdooAccountId,$accountOdooId,$this->getBeneficiaryOdooId(),$ref,$message);
+				$this->account_bank_statement_odoo_id=$result['account_bank_statement_line_id'];
+				$this->journal_entry_id=$result['journal_entry_id'];
+				$this->save();
+			}
+			
+		}
+	}
+	public function generateIssuanceRef():string 
+	{
+		return __('Create') . ' ' . $this->getLgTypeFormatted();
+	}
+	public function generateIssuanceMessage():string 
+	{
+		return __('Cash Cover');
+	}
+	public function generateCancelRef():string 
+	{
+		return __('Cancel') . ' ' . $this->getLgTypeFormatted() ;
+	}
+	public function generateCancelMessage():string 
+	{
+		return __('Cash Cover');
+	}
 }

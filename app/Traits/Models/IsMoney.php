@@ -62,8 +62,7 @@ trait IsMoney
 			'settlement_in_invoice_exchange_rate'=>0
 		];
 	}
-	public function storeNewSettlement(
-	array $settlements,int $partnerId,Company $company , bool $isFromDownPayment = false , bool $syncWithOdoo = true )
+	public function storeNewSettlement(array $settlements,int $partnerId,Company $company , bool $isFromDownPayment = false , bool $syncWithOdoo = true )
 	{
 		$totalWithholdAmount= 0 ;
 		$OdooPaymentService = null ;
@@ -82,9 +81,7 @@ trait IsMoney
 				$totalWithholdAmount += $withholdAmount  ;
 				unset($settlementArr['net_balance']);
 				$payment = $this->settlements()->create($settlementArr);
-				// if($companyId)
 				if($OdooPaymentService && $syncWithOdoo){
-					// $OdooPaymentService->reCreatePayment($payment);
 					$OdooPaymentService->createPayment($payment);
 				}
 				
@@ -318,5 +315,20 @@ trait IsMoney
 	public function isAdvancedOpeningBalance():bool
 	{
 		return $this->advanced_opening_balance_id != null ;
+	}
+	public function hasOdooError():bool
+	{
+		return !$this->synced_with_odoo && $this->odoo_error_message;
+	}
+	public function getOdooError()
+	{
+		if($this->hasOdooError() ){
+			return $this->odoo_error_message;
+		}
+		return '';
+	}
+	public function hasUnappliedOrDownPayment():bool
+	{
+		return (bool) $this->has_unapplied_or_down_payment;
 	}
 }

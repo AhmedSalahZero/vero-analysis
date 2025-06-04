@@ -1,105 +1,78 @@
 <?php 
 namespace App\Services\Api;
 
-use App\OdooSetting;
 use App\Services\Api\Traits\AuthTrait;
+use App\Services\Api\Traits\HasEntryJournal;
+use App\Services\Api\Traits\HasJournal;
 use App\Services\Api\Traits\HasPayment;
 use Exception;
 
 class LetterOfGuaranteeService
 {
-    use AuthTrait,HasPayment;
-
-    public function createLgIssuanceCashCover(string $date,int $outJournalId,float $amount,int $odooCurrencyId,int $lgOddoAccountId)
+    use AuthTrait,HasPayment,HasEntryJournal,HasJournal;
+	// string $date,int $outJournalId,float $amount,int $odooCurrencyId,int $lgOddoAccountId
+	
+	
+    public function createLgIssuanceCashCover(string $date,float $amount,int $journalId,int $odooCurrencyId,int $lgDebitOdooAccountId,int $lgCreditOdooAccountId,int $odooPartnerId , string $ref  , string $message  )
     {
-          
-            $paymentId = $this->createPayment('outbound',$outJournalId,$date, $amount, $odooCurrencyId);
-            $updateData = [];
-            if (!empty($updateData)) {
-                $this->setPaymentToDraft($paymentId);
-                $this->updatePayment($paymentId, $updateData);
-            }
 
-            $this->postPayment($paymentId);
-
-            $journalEntryId = $this->createAndPostJournalEntry(
-                $amount ,
-                $date ,
-                $odooCurrencyId ,
-                $outJournalId,
-				$lgOddoAccountId,
-				OdooSetting::getSuspenseAccountId()
-            );
-            return response()->json([
-                'success' => true,
-                'message' => 'Payment and journal entry registered and posted successfully',
-                'payment_id' => $paymentId,
-                'journal_entry_id' => $journalEntryId
-            ]);
+		  $amount = $amount * -1;
+          return $this->createAndPostJournalEntry($date,$amount,$odooCurrencyId,$journalId,$lgDebitOdooAccountId,$lgCreditOdooAccountId,$ref,$odooPartnerId,$message);
        
     }
 	
 	
-	 public function createLgCancelCashCover(string $date,int $outJournalId,float $amount,int $odooCurrencyId,int $lgOddoAccountId)
+	
+	 public function createLgCancelCashCover(string $date,float $amount,int $journalId,int $odooCurrencyId,int $lgDebitOdooAccountId,int $lgCreditOdooAccountId,int $odooPartnerId,string $ref,string $message)
     {
           
-            $paymentId = $this->createPayment('inbound',$outJournalId,$date, $amount, $odooCurrencyId);
-            $updateData = [];
-            if (!empty($updateData)) {
-                $this->setPaymentToDraft($paymentId);
-                $this->updatePayment($paymentId, $updateData);
-            }
-
-            $this->postPayment($paymentId);
-
-            $journalEntryId = $this->createAndPostJournalEntry(
-                $amount ,
-                $date ,
-                $odooCurrencyId ,
-                $outJournalId,
-				OdooSetting::getSuspenseAccountId(),
-				$lgOddoAccountId,
-            );
-            return response()->json([
-                'success' => true,
-                'message' => 'Payment and journal entry registered and posted successfully',
-                'payment_id' => $paymentId,
-                'journal_entry_id' => $journalEntryId
-            ]);
+          return $this->createAndPostJournalEntry($date,$amount,$odooCurrencyId,$journalId,$lgCreditOdooAccountId,$lgDebitOdooAccountId,$ref,$odooPartnerId,$message);
+		  
+        
        
     }
-	
-   
-	protected function createAndPostJournalEntry(float $amount, string $date, int $currency_id, int $journal_id , int $debitOdooAccountId,int $creditOdooAccountId)
-    {
-            $journalEntryData = [
-                'journal_id' => $journal_id,
-                'date' => $date,
-                'ref' => 'LG Cash Cover',
-                'line_ids' => [
-                    [0, 0, [
-                        'account_id' => $debitOdooAccountId, // 87
+	protected function getDataFormatted(string $date , float $amount  , int $odooCurrencyId , int $journalId, int $debitOdooAccountId , int $creditOdooAccountId  , ?string $ref , ?int $partner_id ,?string $message , int $id = null ):array 
+	{
+		$inEditMode = is_null($id) ? 0 : 1;
+		$id = is_null($id) ? 0 : $id ; 
+
+		return [
+               'journal_id' => $journalId, // account journal id (safe or bank journal id )
+               'amount' => $amount,
+               'date' => $date,
+               'partner_id' => $partner_id,
+               'ref' =>  $ref, // create lg type
+               'line_ids' => [
+                    [$inEditMode, $id, [
+                        'account_id' => $debitOdooAccountId, // lg cash cover odoo id (create lg cash cover)
                         'debit' => abs($amount),
                         'credit' => 0.0,
-                        'currency_id' => $currency_id,
-                        'name' => 'LG Cash Cover Debit',
+                        'currency_id' => $odooCurrencyId,
+                        'name' => $message , // cash cover  
+                        'partner_id' => $partner_id,
                     ]],
-                    [0, 0, [
-                        'account_id' => $creditOdooAccountId,
+                    [$inEditMode, $id+1, [
+                        'account_id' => $creditOdooAccountId, // chart of account odoo id 
                         'debit' => 0.0,
                         'credit' => abs($amount),
-                        'currency_id' => $currency_id,
-                        'name' => 'Bank Suspense To LG Cash Cover',
+                        'currency_id' => $odooCurrencyId,
+                        'name' => $message ,
+                        'partner_id' => $partner_id,
                     ]],
                 ],
             ];
+	}
+	 protected function createAndPostJournalEntry(string $date , float $amount  , int $odooCurrencyId , int $journalId, int $debitOdooAccountId , int $creditOdooAccountId  , ?string $ref , ?int $partner_id ,?string $message ) 
+    {
+			$id = null ;  // in edit mode 
+            $journalEntryData = $this->getDataFormatted($date,$amount,$odooCurrencyId,$journalId,$debitOdooAccountId,$creditOdooAccountId,$ref,$partner_id,$message,$id) ;
 
             $context = [
                 'check_move_validity' => true,
             ];
 
             $journalEntryId = $this->execute(
-                'account.move',
+                'account.bank.statement.line',
                 'create',
                 [$journalEntryData],
                 ['context' => $context]
@@ -108,14 +81,30 @@ class LetterOfGuaranteeService
             if (!is_numeric($journalEntryId)) {
                 throw new Exception("Failed to create journal entry: " . json_encode($journalEntryId));
             }
+			
+		
+			  $statementData = $this->execute(
+            'account.bank.statement.line',
+            'read',
+            [[$journalEntryId], ['move_id']],
+            []
+        );
 
-			 $this->execute(
-                'account.move',
-                'action_post',
-                [[$journalEntryId]]
-            );
-
-            return $journalEntryId;
+        if (!is_array($statementData) || empty($statementData[0]['move_id'])) {
+            throw new Exception("Failed to retrieve move_id for statement entry: " . $journalEntryId);
+        }
+			$moveId = $statementData[0]['move_id'][0];
+            if (!is_numeric($journalEntryId)) {
+                throw new Exception("Failed to create journal entry: " . json_encode($journalEntryId));
+            }
+			
+            return [
+				'account_bank_statement_line_id'=>$journalEntryId,
+				'journal_entry_id'=>$moveId
+			];
     }
+	
+		
+   
 }
 ?>

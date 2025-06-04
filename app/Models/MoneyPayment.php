@@ -11,6 +11,7 @@ use App\Traits\Models\HasReviewedBy;
 use App\Traits\Models\HasUserComment;
 use App\Traits\Models\IsMoney;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Query\Builder;
@@ -709,7 +710,7 @@ class MoneyPayment extends Model
 		}
 	}
 		
-	public static function getCashOutForMoneyTypeAtDates(array &$result   , string $moneyType,string $dateFieldName,string $currency , int $companyId, string $startDate , string $endDate , string $currentWeekYear , int $contractId = null , ?string $chequeStatus = null) 
+	public static function getCashOutForMoneyTypeAtDates(array &$result ,$foreignExchangeRates,$mainFunctionalCurrency  , string $moneyType,string $dateFieldName , int $companyId, string $startDate , string $endDate , string $currentWeekYear , int $contractId = null , ?string $chequeStatus = null) 
 	{
 		$subTableName = (new self)->getTable(); // money_payments
 		$keyNameForCurrentType = [
@@ -723,7 +724,7 @@ class MoneyPayment extends Model
 			MoneyPayment::CASH_PAYMENT =>(new CashPayment())->getTable(),
 			MoneyPayment::PAYABLE_CHEQUE => (new PayableCheque())->getTable()
 		][$moneyType];
-		$columnNames = $contractId ? 'allocation_amount as paid_amount , name' : 'paid_amount,name';
+		$columnNames = $contractId ? 'allocation_amount as paid_amount , name,payment_currency,money_payments.delivery_date' : 'paid_amount,name,payment_currency,money_payments.delivery_date';
 		$rows = DB::table('money_payments')
 		->where('money_payments.company_id',$companyId)
 		->when($chequeStatus , function(Builder $builder) use ($chequeStatus){
@@ -731,7 +732,7 @@ class MoneyPayment extends Model
 		})
 		->join('partners','partners.id','=','money_payments.partner_id')
 		->where('money_payments.type','=',$moneyType)
-		->where('payment_currency',$currency)
+		// ->where('payment_currency',$currency)
 		->whereBetween($dateFieldName,[$startDate,$endDate])
 		->when($contractId , function($query) use ($contractId){
 			$query->join('settlement_allocations','money_payments.id','=','settlement_allocations.money_payment_id')
@@ -739,71 +740,27 @@ class MoneyPayment extends Model
 			;
 		})
 		->selectRaw($columnNames)->get();
-						// ->where($subTableName.'.currency',$currency)
-						// ->where('type',$moneyType)
-						// ->where($subTableName.'.company_id',$companyId)
-						// ->join($subTableName,$subTableName.'.id','=',$mainTableName.'.money_payment_id')
-						
-						// ->groupBy('partner_id')
-						// ->selectRaw('partner_id,sum(paid_amount) as paid_amount')->get();
+					
 		foreach($rows as $row){
+				$receivingCurrency = $row->payment_currency;
+				$receivingDate = $row->delivery_date;
+				$exchangeRate = ForeignExchangeRate::getExchangeRateAt($receivingCurrency,$mainFunctionalCurrency,$receivingDate,$companyId,$foreignExchangeRates);
+				
 			//$partner = Partner::find($row->partner_id);
 			$supplierName =$row->name;
-			$currentPaidAmount = $row->paid_amount ;
+			$currentPaidAmount = $row->paid_amount *$exchangeRate;
 			$result['suppliers'][$keyNameForCurrentType][$supplierName]['weeks'][$currentWeekYear] = isset($result['suppliers'][$keyNameForCurrentType][$supplierName]['weeks'][$currentWeekYear]) ? $result['suppliers'][$keyNameForCurrentType][$supplierName]['weeks'][$currentWeekYear] + $row->paid_amount :  $row->paid_amount;
 			$result['suppliers'][$keyNameForCurrentType][$supplierName]['total'] = isset($result['suppliers'][$keyNameForCurrentType][$supplierName]['total']) ? $result['suppliers'][$keyNameForCurrentType][$supplierName]['total']  + $row->paid_amount : $row->paid_amount;
 			$currentTotal = $currentPaidAmount;
 			$result['suppliers'][$keyNameForCurrentType]['total'][$currentWeekYear] = isset($result['suppliers'][$keyNameForCurrentType]['total'][$currentWeekYear]) ? $result['suppliers'][$keyNameForCurrentType]['total'][$currentWeekYear] +  $currentTotal : $currentTotal ;
-			// $result['suppliers'][$keyNameForCurrentType]['total']['total_of_total'] = isset($result['suppliers'][$keyNameForCurrentType]['total']['total_of_total']) ? $result['suppliers'][$keyNameForCurrentType]['total']['total_of_total'] + $result['suppliers'][$keyNameForCurrentType]['total'][$currentWeekYear] : $result['suppliers'][$keyNameForCurrentType]['total'][$currentWeekYear];
-	//		$totalCashOutFlowArray[$currentWeekYear] = isset($totalCashOutFlowArray[$currentWeekYear]) ? $totalCashOutFlowArray[$currentWeekYear] +   $row->paid_amount : $row->paid_amount ;
-			
+		
 		}
 		
 	
 	}
 	
 	
-	// public static function getCashOutForMoneyTypeAtDates(array &$result , array &$totalCashOutFlowArray  , string $moneyType,string $dateFieldName,string $currency , int $companyId, string $startDate , string $endDate , string $currentWeekYear , ?string $chequeStatus = null) 
-	// {
-	// 	$subTableName = (new self)->getTable(); // money_payments
-	// 	$keyNameForCurrentType = [
-	// 		MoneyPayment::OUTGOING_TRANSFER => __('Outgoing Transfers'),
-	// 		MoneyPayment::CASH_PAYMENT =>__('Cash Payments'),
-	// 		MoneyPayment::PAYABLE_CHEQUE => $chequeStatus == PayableCheque::PAID ? __('Paid Payable Cheques') : __('Under Payment Payable Cheques')
-	// 	][$moneyType];
-		
-	// 	$mainTableName = [
-	// 		MoneyPayment::OUTGOING_TRANSFER => (new OutgoingTransfer())->getTable(),
-	// 		MoneyPayment::CASH_PAYMENT =>(new CashPayment())->getTable(),
-	// 		MoneyPayment::PAYABLE_CHEQUE => (new PayableCheque())->getTable()
-	// 	][$moneyType];
-		
-	// 	$rows = DB::table($mainTableName)
-	// 					->where($subTableName.'.currency',$currency)
-	// 					->where('type',$moneyType)
-	// 					->where($subTableName.'.company_id',$companyId)
-	// 					->whereBetween($dateFieldName,[$startDate,$endDate])
-	// 					->join($subTableName,$subTableName.'.id','=',$mainTableName.'.money_payment_id')
-	// 					->when($chequeStatus , function(Builder $builder) use ($chequeStatus){
-	// 						$builder->where('payable_cheques.status',$chequeStatus);
-	// 					})
-	// 					->groupBy('partner_id')
-	// 					->selectRaw('partner_id,sum(paid_amount) as paid_amount')->get();
-	// 	foreach($rows as $supplierNameAndPaidAmount){
-	// 		$partner = Partner::find($supplierNameAndPaidAmount->partner_id);
-	// 		$supplierName = $partner->getName();
-	// 		$currentPaidAmount = $supplierNameAndPaidAmount->paid_amount ;
-	// 		$result['suppliers'][$supplierName][$keyNameForCurrentType]['weeks'][$currentWeekYear] = isset($result['suppliers'][$supplierName][$keyNameForCurrentType]['weeks'][$currentWeekYear]) ? $result['suppliers'][$supplierName][$keyNameForCurrentType]['weeks'][$currentWeekYear] + $currentPaidAmount :  $currentPaidAmount;
-	// 		$result['suppliers'][$supplierName][$keyNameForCurrentType]['total'] = isset($result['suppliers'][$supplierName][$keyNameForCurrentType]['total']) ? $result['suppliers'][$supplierName][$keyNameForCurrentType]['total']  + $currentPaidAmount : $currentPaidAmount;
-	// 		$currentTotal = $currentPaidAmount;
-	// 		$result['suppliers'][$supplierName]['total'][$currentWeekYear] = isset($result['suppliers'][$supplierName]['total'][$currentWeekYear]) ? $result['suppliers'][$supplierName]['total'][$currentWeekYear] +  $currentTotal : $currentTotal ;
-	// 		$result['suppliers'][$supplierName]['total']['total_of_total'] = isset($result['suppliers'][$supplierName]['total']['total_of_total']) ? $result['suppliers'][$supplierName]['total']['total_of_total'] + $result['suppliers'][$supplierName]['total'][$currentWeekYear] : $result['suppliers'][$supplierName]['total'][$currentWeekYear];
-	// 		$totalCashOutFlowArray[$currentWeekYear] = isset($totalCashOutFlowArray[$currentWeekYear]) ? $totalCashOutFlowArray[$currentWeekYear] +   $currentTotal : $currentTotal ;
-			
-	// 	}
-		
-	
-	// }
+
 	
 	
 	public  function getForeignKeyName()
@@ -898,7 +855,7 @@ class MoneyPayment extends Model
 		if($bank){
 			return self::CASH_PAYMENT;
 		}
-		dd('no journal found');
+		throw new Exception('No Journal Id Found Please Edit Your Bank / Branch To Add Odoo Code');
 		
 	}
 	

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\FinancialInstitutionAccount;
+use App\Traits\HasDepositAccount;
 use App\Traits\HasLastStatementAmount;
 use App\Traits\Models\HasBlockedAgainst;
 use App\Traits\Models\HasCreditStatements;
@@ -21,7 +22,7 @@ use Illuminate\Support\Str;
 	 */
 class TimeOfDeposit extends Model
 {
-	use HasDebitStatements,HasCreditStatements,HasBlockedAgainst,HasLastStatementAmount ;
+	use HasDebitStatements,HasCreditStatements,HasBlockedAgainst,HasLastStatementAmount,HasDepositAccount ;
     protected $guarded = ['id'];
 	const RUNNING = 'running';
 	const MATURED = 'matured';
@@ -305,7 +306,7 @@ class TimeOfDeposit extends Model
 		$this->storeCurrentAccountDebitBankStatement($statementDate,$interestAmount,$financialInstitutionAccount->id,true,$commentEn , $commentAr);
 		return $interestAmount; 
 	}
-	public static function getAmountAndInterestAtDates(array &$result ,string $currency , int $companyId, string $startDate , string $endDate , string $currentWeekYear) 
+	public static function getAmountAndInterestAtDates(array &$result ,$foreignExchangeRates,$mainFunctionalCurrency , int $companyId, string $startDate , string $endDate , string $currentWeekYear) 
 	{
 		$tdsTypes = [
 			self::MATURED => __('Matured'),
@@ -317,10 +318,10 @@ class TimeOfDeposit extends Model
 		// $mainType = 'lg';
 		// $x = "end_date between " . $endDate . ' AND ' . $startDate ;
 		$rows = DB::table('time_of_deposits')->where('time_of_deposits.company_id',$companyId)
-						->where('currency',$currency)
+						// ->where('currency',$currency)
 						->whereRaw("(CASE WHEN status = 'broken' THEN break_date ELSE end_date END) between '" .$startDate ."'". ' AND ' ."'" .$endDate . "'")
-						->groupBy('status')
-						->selectRaw("status , SUM(CASE 
+						->groupBy('status,currency')
+						->selectRaw("status ,currency, SUM(CASE 
              WHEN status = 'matured' THEN amount + actual_interest_amount
              WHEN status = 'broken' THEN amount + break_interest_amount
              WHEN status = 'running' THEN amount + interest_amount
@@ -334,9 +335,13 @@ class TimeOfDeposit extends Model
 
 		$subType = __('Time Of Deposits');
 		foreach($rows as $row){
+			
+			$tdCurrency = $row->currency;
+			$depositDate = $row->deposit_date;
+			$exchangeRate = ForeignExchangeRate::getExchangeRateAt($tdCurrency,$mainFunctionalCurrency,$depositDate,$companyId,$foreignExchangeRates);
 			$currentStatus = $tdsTypes[$row->status] ;
 			// $lgType = $lgsTypes[$row->status];
-			$currentPaidAmount = $row->total_amount ;
+			$currentPaidAmount = $row->total_amount*$exchangeRate ;
 			$result[$mainType][$subType][$currentStatus]['weeks'][$currentWeekYear] = isset($result[$mainType][$subType][$currentStatus]['weeks'][$currentWeekYear]) ? $result[$mainType][$subType][$currentStatus]['weeks'][$currentWeekYear] + $currentPaidAmount :  $currentPaidAmount;
 			$result[$mainType][$subType][$currentStatus]['total'] = isset($result[$mainType][$subType][$currentStatus]['total']) ? $result[$mainType][$subType][$currentStatus]['total']  + $currentPaidAmount : $currentPaidAmount;
 			$currentTotal = $currentPaidAmount;
