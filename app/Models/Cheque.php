@@ -101,7 +101,10 @@ class Cheque extends Model
 
         return $drawlBank ? $drawlBank->id : 0 ;
     }
-
+	  public function getDrawlBank()
+    {
+        return $this->drawlBank ;
+    }
     public function getDrawlBankName()
     {
         $drawlBank = $this->drawlBank ;
@@ -228,7 +231,10 @@ class Cheque extends Model
     {
         return $this->account_number;
     }
-
+	public function branch()
+	{
+		return $this->belongsTo(Branch::class , 'branch_id','id');
+	}
     public function getAccountBalance()
     {
         return $this->account_balance ;

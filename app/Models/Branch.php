@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\HasOdooPaymentMethod;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
 class Branch extends Model
 {
+	use HasOdooPaymentMethod;
 	protected $table ='branch';
 	protected $guarded = ['id'];
 	public function getName()

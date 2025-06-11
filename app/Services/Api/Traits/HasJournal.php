@@ -7,6 +7,10 @@ trait HasJournal
 
 	public function getJournalId($moneyModel):int 
 	{
+		$isChequeOrChequePayment = $moneyModel->isChequeOrChequePayment();
+		if($isChequeOrChequePayment){
+			return $moneyModel->getChequeJournalId();
+		}
 		$isCashInSafeOrCashPayment = $moneyModel->isCash();
 		return $isCashInSafeOrCashPayment  ? $moneyModel->getCashBranchJournalId() : $moneyModel->getBankAccountJournalId();
 	}

@@ -12,6 +12,7 @@ use App\Models\Branch;
 use App\Models\Cheque;
 use App\Models\Company;
 use App\Models\Contract;
+use App\Models\Currency;
 use App\Models\CustomerInvoice;
 use App\Models\FinancialInstitution;
 use App\Models\ForeignExchangeRate;
@@ -434,7 +435,8 @@ class MoneyReceivedController
 			$relationData = [
 				'due_date'=>$request->input('due_date'),
 				'cheque_number'=>$request->input('cheque_number'),
-				'drawee_bank_id'=>$request->input('drawee_bank_id')
+				'drawee_bank_id'=>$request->input('drawee_bank_id'),
+				'branch_id'=>$request->input('cheque_branch_id')
 			];
 		}
 		$receivedBank = FinancialInstitution::find($financialInstitutionId);
@@ -485,6 +487,7 @@ class MoneyReceivedController
 		 * * For Money Received Only
 		 */
 		$totalWithholdAmount = $moneyReceived->storeNewSettlement($request->get('settlements',[]),$partnerId,$company,false,$syncWithOdoo);
+		// $totalWithholdAmount = $moneyReceived->storeNewSettlement($request->get('settlements',[]),$partnerId,$company,false,$syncWithOdoo);
 		
 		$moneyReceived->update([
 			'total_withhold_amount'=>$totalWithholdAmount
@@ -621,7 +624,11 @@ class MoneyReceivedController
 	}
 	public function sendToCollection(Company $company,SendToUnderCollectionChequeRequest $request)
 	{
-
+		$hasOdooIntegration = $company->hasOdooIntegrationCredentials();
+		$OdooPaymentService = null ;
+		if($hasOdooIntegration){
+			$OdooPaymentService = new OdooPayment($company);
+		}
 		$moneyReceivedIds = $request->get('cheques') ;
 		$moneyReceivedIds = is_array($moneyReceivedIds) ? $moneyReceivedIds :  explode(',',$moneyReceivedIds);
 		$data = $request->only(['deposit_date','drawl_bank_id','account_type','account_number','account_balance','clearance_days']);
@@ -642,7 +649,11 @@ class MoneyReceivedController
 			$moneyReceived = MoneyReceived::find($moneyReceivedId) ;
 			$data['expected_collection_date'] = $moneyReceived->cheque->calculateChequeExpectedCollectionDate($data['deposit_date'],$data['clearance_days']);
 			$moneyReceived->cheque->update(array_merge($data,['updated_at'=>now()]));
-			
+			if($hasOdooIntegration){
+				foreach($moneyReceived->settlements as $settlement){
+					$OdooPaymentService->reCreatePayment($settlement);
+				}
+			}
 		
 			
 		}
@@ -666,7 +677,7 @@ class MoneyReceivedController
 		 * @var MoneyReceived $moneyReceived
 		 */
 		$collectionFeesAmount = $request->get('collection_fees',0) ;
-		$actualCollectionDate = $request->get('actual_collection_date')  ;
+		$actualCollectionDate = Carbon::make($request->get('actual_collection_date'))->format('Y-m-d')  ;
 		$moneyReceived->cheque->update([
 			'status'=>Cheque::COLLECTED,
 			'collection_fees'=>$collectionFeesAmount,
@@ -680,12 +691,37 @@ class MoneyReceivedController
 		$moneyType = MoneyReceived::CHEQUE;
 		$accountNumber = $moneyReceived->cheque->account_number ;
 		$financialInstitutionId = $moneyReceived->cheque->getDrawlBankId();
+		$financialInstitution = $moneyReceived->cheque->getDrawlBank();
 		/**
 		 * @var AccountType $accountType ;
 		 */
 		
 		$moneyReceived->handleDebitStatement($financialInstitutionId,$accountType,$accountNumber,$moneyType,$actualCollectionDate,$receivedAmount,$currency,null);
 		$moneyReceived->handleCreditStatement($company->id , $financialInstitutionId , $accountType,$accountNumber,'fees',$actualCollectionDate,$collectionFeesAmount,null,$currency,__('Cheque Collection Fees - Cheque [ :number ]' ,['number'=>$chequeNumber],'en' ),__('Cheque Collection Fees - Cheque [ :number ]' ,['number'=>$chequeNumber],'ar' ));
+		
+		$hasOdooIntegration = $company->hasOdooIntegrationCredentials();
+		$OdooPaymentService = null ;
+		if($hasOdooIntegration){
+			$OdooPaymentService = new OdooPayment($company);
+		}
+		
+		if($hasOdooIntegration){
+			$odooSetting = $company->odooSetting;
+			foreach($moneyReceived->settlements as $settlement){
+				$odooId = $settlement->odoo_id ; 
+				$odooCurrencyId =Currency::getOdooId($currency);
+				$accountTypeId=$moneyReceived->cheque->getAccountTypeId();
+				$accountNumber = $moneyReceived->cheque->getAccountNumber();
+				$journalId = $financialInstitution->getJournalIdForAccount($accountTypeId,$accountNumber);
+				$debitAccountOdooId = $financialInstitution->getOdooIdForAccount($accountTypeId,$accountNumber);
+				$creditOdooAccountId = $odooSetting->getChequesReceivableId();
+				$odooPartnerId = $moneyReceived->getPartnerOdooId();
+				$ref = 'Cheque Collection ' . $settlement->getInvoiceNumber();
+				$OdooPaymentService->chequeCollection($odooId,$receivedAmount,$actualCollectionDate,$odooCurrencyId,$journalId,$debitAccountOdooId,$creditOdooAccountId,$odooPartnerId,$ref);
+			}
+		}
+		
+		
 		if($request->ajax()){
 			return response()->json([
 				'status'=>true ,
@@ -707,12 +743,30 @@ class MoneyReceivedController
 			$currentStatement->delete();
 			$moneyReceived = $moneyReceived->refresh();
 		}
-		
+		$hasOdooIntegration = $company->hasOdooIntegrationCredentials();
+		$OdooPaymentService = null ;
+		if($hasOdooIntegration){
+			$OdooPaymentService = new OdooPayment($company);
+		}
+		/**
+		 * ! postponed
+		 */
+		// if($hasOdooIntegration){
+		// 		foreach($moneyReceived->settlements as $settlement){
+		// 			$OdooPaymentService->reCreatePayment($settlement);
+		// 		}
+		// 	}
 		return redirect()->route('view.money.receive',['company'=>$company->id,'active'=>MoneyReceived::CHEQUE_UNDER_COLLECTION])->with('success',__('Cheque Is Under Collection'));
 		
 	}
 	public function sendToSafe(Company $company,Request $request,MoneyReceived $moneyReceived)
 	{
+		$hasOdooIntegration = $company->hasOdooIntegrationCredentials();
+		$OdooPaymentService = null ;
+		if($hasOdooIntegration){
+			$OdooPaymentService = new OdooPayment($company);
+		}
+		
 		$moneyReceived->cheque->update([
 			'status'=>Cheque::IN_SAFE,
 			'deposit_date'=>null ,
@@ -723,6 +777,12 @@ class MoneyReceivedController
 			'expected_collection_date'=>null ,
 			'clearance_days'=>null
 		]);
+		
+		if($hasOdooIntegration){
+				foreach($moneyReceived->settlements as $settlement){
+					$OdooPaymentService->reCreatePayment($settlement);
+				}
+			}
 
 		return redirect()->route('view.money.receive',['company'=>$company->id,'active'=>MoneyReceived::CHEQUE])->with('success',__('Cheque Is Returned To Safe'));
 	}

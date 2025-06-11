@@ -322,27 +322,11 @@ class FinancialInstitution extends Model
 	public  function getOpeningBalanceForAccount( int $accountTypeId , string $accountNumber
 	// ,string $currencyName
 	 ){
-		/**
-		 * @var AccountType $accountType 
-		 */
-		$accountType = AccountType::find($accountTypeId);
-		$accountTypeModelName = $accountType->getModelName();
-		/**
-		 * @var CleanOverdraft|FinancialInstitutionAccount $accountModel 
-		 */
-		$fullModelName = 'App\Models\\'.$accountTypeModelName ;
-	
-		$accountModel = $fullModelName::where([
-			['financial_institution_id','=',$this->id],
-			['account_number','=',$accountNumber],
-			// ['currency','=',$currencyName]
-		])->first();
+		$accountModel = $this->getAccountFromTypeAndNumber($accountTypeId,$accountNumber);
 		return $accountModel instanceof FinancialInstitutionAccount ? $accountModel->getOpeningBalanceDate() : $accountModel->getContractStartDate();
 	}
-	
-	public  function getOdooIdForAccount( int $accountTypeId , string $accountNumber
-	// ,string $currencyName
-	 ){
+	public function getAccountFromTypeAndNumber($accountTypeId,$accountNumber)
+	{
 		/**
 		 * @var AccountType $accountType 
 		 */
@@ -353,34 +337,30 @@ class FinancialInstitution extends Model
 		 */
 		$fullModelName = 'App\Models\\'.$accountTypeModelName ;
 	
-		$accountModel = $fullModelName::where([
+		return  $fullModelName::where([
 			['financial_institution_id','=',$this->id],
 			['account_number','=',$accountNumber],
 			['company_id','=',$this->company_id]
-			// ['currency','=',$currencyName]
 		])->first();
+	}
+	public  function getOdooPaymentIds( int $accountTypeId , string $accountNumber):array{
+		$accountModel = $this->getAccountFromTypeAndNumber($accountTypeId,$accountNumber);
+		return [
+			'odoo_inbound_transfer_payment_method_id'=>$accountModel->getOdooInboundTransferPaymentMethodId(), // add HasOdooPaymentMethod Trait to CleanOverdraft and so on with the columns migration
+			'odoo_outbound_transfer_payment_method_id'=>$accountModel->getOdooOutboundTransferPaymentMethodId(),
+			'odoo_inbound_cheque_payment_method_id'=>$accountModel->getOdooInboundChequePaymentMethodId(),
+			'odoo_outbound_cheque_payment_method_id'=>$accountModel->getOdooOutboundChequePaymentMethodId()
+		];
+		// return $accountModel instanceof FinancialInstitutionAccount ? $accountModel->getOpeningBalanceDate() : $accountModel->getContractStartDate();
+	}
+	public  function getOdooIdForAccount( int $accountTypeId , string $accountNumber){
+		$accountModel = $this->getAccountFromTypeAndNumber($accountTypeId,$accountNumber);
 		return $accountModel->getOdooId();
 	}
 	
-	public  function getJournalIdForAccount( int $accountTypeId , string $accountNumber
-	// ,string $currencyName
-	 ){
-		/**
-		 * @var AccountType $accountType 
-		 */
-		$accountType = AccountType::find($accountTypeId);
-		$accountTypeModelName = $accountType->getModelName();
-		/**
-		 * @var CleanOverdraft|FinancialInstitutionAccount $accountModel 
-		 */
-		$fullModelName = 'App\Models\\'.$accountTypeModelName ;
 	
-		$accountModel = $fullModelName::where([
-			['financial_institution_id','=',$this->id],
-			['account_number','=',$accountNumber],
-			['company_id','=',$this->company_id]
-			// ['currency','=',$currencyName]
-		])->first();
+	public  function getJournalIdForAccount( int $accountTypeId , string $accountNumber){
+		$accountModel = $this->getAccountFromTypeAndNumber($accountTypeId,$accountNumber);
 		return  $accountModel->getJournalId();
 	}
 }

@@ -157,7 +157,7 @@ class InternalMoneyTransferController
 		];
 	}
 	
-	public function store(Company $company , string $type  , StoreInternalMoneyTransferRequest $request){
+	public function store(Company $company , string $type  , StoreInternalMoneyTransferRequest $request , bool $inUpdateMode = false){
 		$internalMoneyTransfer = new InternalMoneyTransfer ;
 		$internalMoneyTransfer->type = $type ;
 		$transferDate = Carbon::make($request->get('transfer_date'))->format('Y-m-d') ;
@@ -165,9 +165,9 @@ class InternalMoneyTransferController
 		$transferAmount = $request->get('amount') ;
 		$internalMoneyTransfer->storeBasicForm($request);
 		$fromFinancialInstitutionId = $request->get('from_bank_id');
-		$fromFinancialInstitution = FinancialInstitution::find($fromFinancialInstitutionId);
+		// $fromFinancialInstitution = FinancialInstitution::find($fromFinancialInstitutionId);
 		$toFinancialInstitutionId = $request->get('to_bank_id');
-		$toFinancialInstitution = FinancialInstitution::find($request->get('to_bank_id'));
+		// $toFinancialInstitution = FinancialInstitution::find($request->get('to_bank_id'));
 		$fromAccountTypeId = $request->get('from_account_type_id');
 		$toAccountTypeId = $request->get('to_account_type_id');
 		$fromAccountNumber = $request->get('from_account_number');
@@ -182,32 +182,20 @@ class InternalMoneyTransferController
 		$toJournalId =  null ;
 		
 		if($type === InternalMoneyTransfer::BANK_TO_BANK){
-			if($company->hasOdooIntegrationCredentials()){
-				$fromJournalId = $fromFinancialInstitution->getJournalIdForAccount($fromAccountTypeId,$fromAccountNumber);
-				$fromOdooId = $fromFinancialInstitution->getJournalIdForAccount($fromAccountTypeId,$fromAccountNumber);
-				$toJournalId = $toFinancialInstitution->getJournalIdForAccount($toAccountTypeId,$toAccountNumber);
-				$toOdooId = $toFinancialInstitution->getJournalIdForAccount($toAccountTypeId,$toAccountNumber);
-				$internalMoneyTransfer->storeOdoo($company,$transferDate,$fromOdooId,$fromJournalId,$toJournalId,$toOdooId,$transferAmount,$currencyName);
-			}
+			
 			$internalMoneyTransfer->handleBankToBankTransfer($company->id , $fromAccountType , $fromAccountNumber  , $fromFinancialInstitutionId , $toAccountType ,  $toAccountNumber,$toFinancialInstitutionId,$transferDate,$receivingDate,$transferAmount);
 		}
 		elseif($type === InternalMoneyTransfer::BANK_TO_SAFE ){
-			if($company->hasOdooIntegrationCredentials()){
-				$fromJournalId = $fromFinancialInstitution->getJournalIdForAccount($fromAccountTypeId,$fromAccountNumber);
-				$toJournalId = Branch::find($toBranchId)->getJournalId();
-				$internalMoneyTransfer->storeOdoo($company,$transferDate,$toJournalId,$fromJournalId,$transferAmount,$currencyName);
-			}
+			
 			$internalMoneyTransfer->handleBankToSafeTransfer($company->id , $fromAccountType , $fromAccountNumber  , $fromFinancialInstitutionId ,$toBranchId , $currencyName , $transferDate,$transferAmount);
 		}
 		elseif($type === InternalMoneyTransfer::SAFE_TO_BANK ){
-			if($company->hasOdooIntegrationCredentials()){
-				$fromJournalId = Branch::find($fromBranchId)->getJournalId();
-				$toJournalId = $toFinancialInstitution->getJournalIdForAccount($toAccountTypeId,$toAccountNumber);
-				$internalMoneyTransfer->storeOdoo($company,$transferDate,$toJournalId,$fromJournalId,$transferAmount,$currencyName);
-			}
 			$internalMoneyTransfer->handleSafeToBankTransfer($company->id , $toAccountType , $toAccountNumber  , $toFinancialInstitutionId ,$fromBranchId , $currencyName , $transferDate,$transferAmount);
 		}
-		
+		$internalMoneyTransfer->handleOdooTransfer();
+		if($inUpdateMode){
+			return $internalMoneyTransfer;
+		}
 		$activeTab = $type ; 
 		
 	
@@ -222,16 +210,22 @@ class InternalMoneyTransferController
     }
 	
 	public function update(Company $company , string $type , StoreInternalMoneyTransferRequest $request , InternalMoneyTransfer $internalMoneyTransfer){
-		
+		$request->merge([
+			'outbound_account_bank_statement_odoo_id'=>$internalMoneyTransfer->outbound_account_bank_statement_odoo_id,
+			'outbound_journal_entry_id'=>$internalMoneyTransfer->outbound_journal_entry_id,
+			'inbound_account_bank_statement_odoo_id'=>$internalMoneyTransfer->inbound_account_bank_statement_odoo_id,
+			'inbound_journal_entry_id'=>$internalMoneyTransfer->inbound_journal_entry_id,
+		]);
 		$internalMoneyTransfer->deleteRelations();
 		$internalMoneyTransfer->delete();
-		$this->store($company,$type,$request);
+		$internalMoneyTransfer=$this->store($company,$type,$request,true);
 		$activeTab = $type ;
 		return redirect()->route('internal-money-transfers.index',['company'=>$company->id,'active'=>$activeTab])->with('success',__('Item Has Been Updated Successfully'));
 	}
 	
 	public function destroy(Company $company , string $type, InternalMoneyTransfer $internalMoneyTransfer)
 	{
+		$internalMoneyTransfer->deleteOdoo();
 		$internalMoneyTransfer->deleteRelations();
 		$internalMoneyTransfer->delete();
 		return redirect()->back()->with('success',__('Item Has Been Delete Successfully'));

@@ -331,4 +331,66 @@ trait IsMoney
 	{
 		return (bool) $this->has_unapplied_or_down_payment;
 	}
+	public function getBranch()
+	{
+		if($this instanceof MoneyReceived){
+			return $this->cashInSafeReceivingBranch() ;
+		}
+		return $this->cashPaymentDeliveryBranch();
+	}
+	public function getPaymentMethodLineId()
+	{
+		if($this instanceof MoneyReceived){
+			if($this->isCashInSafe() ){
+				return $this->getBranch()->getOdooInboundTransferPaymentMethodId();
+			}
+			if($this->isCashInBank() ){
+				$financialInstitution = $this->cashInBank->receivingBank;
+				$accountTypeId = $this->getCashInBankAccountTypeId();
+				$accountNumber = $this->getCashInBankAccountNumber();
+				return $financialInstitution->getOdooPaymentIds($accountTypeId,$accountNumber)['odoo_inbound_transfer_payment_method_id'];				
+				
+			}
+			if( $this->isIncomingTransfer()){
+				$financialInstitution = $this->incomingTransferReceivingBank();
+				$accountTypeId = $this->getIncomingTransferAccountTypeId();
+				$accountNumber = $this->getIncomingTransferAccountNumber();
+				return $financialInstitution->getOdooPaymentIds($accountTypeId,$accountNumber)['odoo_inbound_transfer_payment_method_id'];				
+			}
+			if($this->isCheque()){
+				$cheque = $this->cheque ; 
+				if($cheque->isInSafe()){
+					return $cheque->branch->getOdooInboundChequePaymentMethodId();
+				}
+				$financialInstitution = $cheque->drawlBank;
+				$accountTypeId = $cheque->account_type;
+				$accountNumber  = $cheque->account_number;
+				return $financialInstitution->getOdooPaymentIds($accountTypeId,$accountNumber)['odoo_inbound_cheque_payment_method_id'];		
+			}
+			
+		}
+		
+	}
+	public function isChequeOrChequePayment():bool
+	{
+		if($this instanceof MoneyReceived){
+			return $this->isCheque();
+		}
+		return $this->isPayableCheque();
+	}
+	public function getChequeJournalId()
+	{
+		if($cheque = $this->cheque){
+			if($cheque->isInSafe()){
+					return $cheque->branch->getJournalId();
+				}
+				$financialInstitution = $cheque->drawlBank;
+				$accountTypeId = $cheque->account_type;
+				$accountNumber  = $cheque->account_number;
+				return $financialInstitution->getJournalIdForAccount($accountTypeId,$accountNumber);		
+				
+		}
+		dd('journal id for payable cheque');
+		return null ;
+	}
 }

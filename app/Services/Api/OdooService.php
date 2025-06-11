@@ -16,8 +16,10 @@ use App\Services\Api\Traits\AuthTrait;
 use App\Services\Api\Traits\CommonHelper;
 use App\Services\Api\Traits\HasUnlink;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class OdooService
 {
@@ -121,8 +123,7 @@ class OdooService
 						(new MoneyReceivedController)->store($this->company,(new StoreMoneyReceivedRequest())->merge($moneyArr));
 					}
 				}
-				dd('good');
-
+	
 	}
 	/**
 	 * * import invoices
@@ -155,12 +156,16 @@ class OdooService
 			$isSupplier = $invoice['move_type'] == 'in_invoice';
 			$isCustomer = $invoice['move_type'] == 'out_invoice';
 			$partnerId = Partner::handlePartnerForOdoo($odooPartnerId ,$odooPartnerName,$isSupplier ,$isCustomer,false,$companyId  );
+			// if($invoice['id'] == 9736){
+			// 	dd($isCustomer,$isSupplier);
+			// }
 			if($isCustomer){
 				$invoiceId =  CustomerInvoice::createForOdoo($odooInvoiceId,$partnerId,$odooPartnerName,$invoiceDate,$invoiceDueDate,$invoiceNumber,$invoiceCurrency,$invoiceAmount,$vatAmount,$withholdAmount,$collectedAmount,$exchangeRate,$soNumber,$companyId);
 				$this->createPaymentFromOdooToInvoice($odooInvoiceId,$invoiceId,$partnerId,$invoiceCurrency,new MoneyReceived());
 			}elseif($isSupplier){
 				$invoiceId= SupplierInvoice::createForOdoo($odooInvoiceId,$partnerId,$odooPartnerName,$invoiceDate,$invoiceDueDate,$invoiceNumber,$invoiceCurrency,$invoiceAmount,$vatAmount,$withholdAmount,$collectedAmount,$exchangeRate,$soNumber,$companyId);
 			}
+			
 	
 		}
 		
@@ -525,6 +530,8 @@ class OdooService
 	}
 	public function syncFinancialInstitutions()
 	{
+		$odooSetting = $this->company->odooSetting;
+	
 			$fields = [
 				'id',
 				'code'
@@ -545,9 +552,26 @@ class OdooService
 					$currentJournal = $chartOfAccounts[$codeCode]??null;
 					$chartOfAccountId = $currentJournal ? $currentJournal['id'] : null;
 					if($chartOfAccountId){
+						$journalId = $this->getJournalIdFromChartOfAccountId($chartOfAccountId) ;
+						$odooInboundTransferPaymentMethodId = $this->getPaymentMethodId($journalId,$chartOfAccountId,'inbound');
+						$odooOutboundTransferPaymentMethodId = $this->getPaymentMethodId($journalId,$chartOfAccountId,'outbound');
+						$chequeReceivableId=$odooSetting ? $odooSetting->getChequesReceivableId() : null;
+						$chequePayableId=$odooSetting ? $odooSetting->getChequesPayableId() : null;
+						if($chequeReceivableId){
+							$odooInboundChequePaymentMethodId = $this->getPaymentMethodId($journalId,$chequeReceivableId,'inbound');
+						}
+						if($chequePayableId){
+							$odooOutboundChequePaymentMethodId = $this->getPaymentMethodId($journalId,$chequePayableId,'outbound');
+						}
+						
+						
 						$financialInstitutionAccount->update([
 							'odoo_id'=>$chartOfAccountId,
-							'journal_id'=>$this->getJournalIdFromChartOfAccountId($chartOfAccountId)
+							'journal_id'=>$journalId ,
+							'odoo_inbound_transfer_payment_method_id'=>$odooInboundTransferPaymentMethodId??null ,
+							'odoo_outbound_transfer_payment_method_id'=>$odooOutboundTransferPaymentMethodId??null,
+							'odoo_inbound_cheque_payment_method_id'=>$odooInboundChequePaymentMethodId??null ,
+							'odoo_outbound_cheque_payment_method_id'=>$odooOutboundChequePaymentMethodId??null,
 						]);
 					}
 					
@@ -570,14 +594,30 @@ class OdooService
 					['code','=',$odooCode]
 				]
 		];
+			$odooSetting = $this->company->odooSetting;
 		$odooBranch = $this->fetchData('account.account',$fields,$filters)[0]??null;
 		$chartOfAccountId= $odooBranch['id'];
 		$journalId = $this->getJournalIdFromChartOfAccountId($chartOfAccountId);
 		if($odooBranch){
-			DB::table('branch')->where('company_id',$companyId)->where('odoo_code',$odooCode)->update([
-				'odoo_id'=>$chartOfAccountId,
-				'journal_id'=>$journalId
-			]);
+			$odooInboundTransferPaymentMethodId = $this->getPaymentMethodId($journalId,$chartOfAccountId,'inbound');
+						$odooOutboundTransferPaymentMethodId = $this->getPaymentMethodId($journalId,$chartOfAccountId,'outbound');
+						$chequeReceivableId=$odooSetting ? $odooSetting->getChequesReceivableId() : null;
+						$chequePayableId=$odooSetting ? $odooSetting->getChequesPayableId() : null;
+						if($chequeReceivableId){
+							$odooInboundChequePaymentMethodId = $this->getPaymentMethodId($journalId,$chequeReceivableId,'inbound');
+						}
+						if($chequePayableId){
+							$odooOutboundChequePaymentMethodId = $this->getPaymentMethodId($journalId,$chequePayableId,'outbound');
+						}
+						
+					DB::table('branch')->where('company_id',$companyId)->where('odoo_code',$odooCode)->update([
+						'odoo_id'=>$chartOfAccountId,
+						'journal_id'=>$journalId,
+						'odoo_inbound_transfer_payment_method_id'=>$odooInboundTransferPaymentMethodId??null ,
+						'odoo_outbound_transfer_payment_method_id'=>$odooOutboundTransferPaymentMethodId??null,
+						'odoo_inbound_cheque_payment_method_id'=>$odooInboundChequePaymentMethodId??null ,
+						'odoo_outbound_cheque_payment_method_id'=>$odooOutboundChequePaymentMethodId??null,
+					]);
 		}
 		
 	}
@@ -678,6 +718,44 @@ class OdooService
     }
 		
 	
+	public function getPaymentMethodId(int $journalId , int $accountId , string $inboundOrOutbound )
+	{
+		try {
+            $filters = [
+              [
+				  ['journal_id', '=', $journalId],
+                ['payment_account_id', '=', $accountId],
+                ['payment_type', '=', $inboundOrOutbound]
+			  ]
+            ];
 
+            // Log::info("Odoo: Fetching outgoing payment method", [
+            //     'journal_id' => $journalId,
+            //     'account_id' => $accountId,
+            //     'filters' => $filters,
+            //     'fields' => $fields
+            // ]);
+			$fields = [];
+            $records = $this->fetchData('account.payment.method.line', $fields,$filters);
+            if (empty($records)) {
+     //           Log::info("Odoo: No outgoing payment methods found for journal {$journalId} and account {$accountId}");
+                return [];
+            }
+
+         //   Log::info("Odoo: Fetched " . count($records) . " outgoing payment methods", ['records' => $records]);
+            return $records[0]['id']??null;
+        } catch (\Exception $e) {
+            // Log::error("Odoo Fetch Outgoing Payment Method Error: " . $e->getMessage(), [
+            //     'journal_id' => $journalId,
+            //     'account_id' => $accountId,
+            //     'filters' => $filters,
+            //     'trace' => $e->getTraceAsString()
+            // ]);
+            throw $e;
+        }
+	}
+	
+	 
+	
 
 }

@@ -632,9 +632,9 @@ class LetterOfGuaranteeIssuance extends Model
 			$lgDebitOdooAccountId = FinancialInstitutionAccount::getLetterOfGuaranteeOdooIdFromType($lgType,$company->id);
 			$inUpdateMode = $this->journal_entry_id && $this->account_bank_statement_odoo_id ;
 			if($inUpdateMode){
-				$statementEntryId = $this->journal_entry_id;
+				$journalEntryId = $this->journal_entry_id;
 				$accountBankStatementOdooId = $this->account_bank_statement_odoo_id;
-				$odooLetterOfGuaranteeIssuance->updateJournalEntry($statementEntryId,$accountBankStatementOdooId,$issuanceDate,$cashCoverAmount,$odooCurrencyId,$journalId,$lgDebitOdooAccountId,$accountOdooId,);
+				$odooLetterOfGuaranteeIssuance->updateJournalEntry($journalEntryId,$accountBankStatementOdooId,$issuanceDate,$cashCoverAmount,$odooCurrencyId,$journalId,$lgDebitOdooAccountId,$accountOdooId,);
 			}else{
 				$ref = $this->generateIssuanceRef();
 				$message = $this->generateIssuanceMessage();

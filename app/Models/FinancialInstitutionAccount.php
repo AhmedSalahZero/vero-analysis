@@ -8,6 +8,7 @@ use App\Models\AccountInterest;
 use App\OdooSetting;
 use App\Traits\HasCompany;
 use App\Traits\HasLastStatementAmount;
+use App\Traits\HasOdooPaymentMethod;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -17,7 +18,7 @@ use Illuminate\Support\Str;
 
 class FinancialInstitutionAccount extends Model
 {
-	use HasLastStatementAmount ,HasCompany;
+	use HasLastStatementAmount ,HasCompany,HasOdooPaymentMethod;
     protected $guarded = ['id'];
 	
     public function financialInstitution()

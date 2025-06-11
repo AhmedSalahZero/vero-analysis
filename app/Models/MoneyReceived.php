@@ -264,6 +264,10 @@ class MoneyReceived extends Model
 	{
 		return $this->partner ? $this->partner->id : 0 ;
 	}
+	public function getPartnerOdooId()
+	{
+		return $this->partner ? $this->partner->odoo_id : 0 ;
+	}
 	public function getCustomerId()
 	{
 		return $this->getPartnerId();
@@ -410,7 +414,7 @@ class MoneyReceived extends Model
 	public function incomingTransferReceivingBank():?FinancialInstitution
 	{
 		$incomingTransfer = $this->incomingTransfer ;
-		return $incomingTransfer ? $incomingTransfer->receivingBank() : null ;
+		return $incomingTransfer ? $incomingTransfer->receivingBank : null ;
 	}
 	public function getIncomingTransferReceivingBankName()
 	{
@@ -450,6 +454,20 @@ class MoneyReceived extends Model
 			return $this->cheque ? $this->cheque->getDrawlBankId() : 0;
 		}
 	}
+	
+	// public function getFinancialInstitutionOrBank()
+	// {
+	// 	if($this->isCashInBank()){
+	// 		return $this->cashInBank;
+	// 	}
+	// 	if($this->isIncomingTransfer()){
+	// 		return $this->incomingTransfer;
+	// 	}
+	// 	// if($this->isCheque()){
+	// 	// 	return $this->cheque ? $this->cheque->getDrawlBank() :null;
+	// 	// }
+	// }
+	
 	
 	
 	/**
@@ -1030,6 +1048,7 @@ class MoneyReceived extends Model
 	}
 	public function getBankAccountJournalId():int
 	{
+	
 		$financialInstitution = $this->getFinancialInstitution();
 		
 		return $financialInstitution->getJournalIdForAccount($this->getAccountTypeId(),$this->getAccountNumber());

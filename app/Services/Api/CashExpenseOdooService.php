@@ -31,36 +31,36 @@ class CashExpenseOdooService
                 'check_move_validity' => true,
             ];
 
-            $journalEntryId = $this->execute(
+            $accountBankStatementLineId = $this->execute(
                 'account.bank.statement.line',
                 'create',
                 [$journalEntryData],
                 ['context' => $context]
             );
 
-            if (!is_numeric($journalEntryId)) {
-                throw new Exception("Failed to create journal entry: " . json_encode($journalEntryId));
+            if (!is_numeric($accountBankStatementLineId)) {
+                throw new Exception("Failed to create journal entry: " . json_encode($accountBankStatementLineId));
             }
 			
 		
 			  $statementData = $this->execute(
             'account.bank.statement.line',
             'read',
-            [[$journalEntryId], ['move_id']],
+            [[$accountBankStatementLineId], ['move_id']],
             []
         );
 
         if (!is_array($statementData) || empty($statementData[0]['move_id'])) {
-            throw new Exception("Failed to retrieve move_id for statement entry: " . $journalEntryId);
+            throw new Exception("Failed to retrieve move_id for statement entry: " . $accountBankStatementLineId);
         }
-			$moveId = $statementData[0]['move_id'][0];
-            if (!is_numeric($journalEntryId)) {
-                throw new Exception("Failed to create journal entry: " . json_encode($journalEntryId));
+			$journalEntryId = $statementData[0]['move_id'][0];
+            if (!is_numeric($accountBankStatementLineId)) {
+                throw new Exception("Failed to create journal entry: " . json_encode($accountBankStatementLineId));
             }
 			
             return [
-				'account_bank_statement_line_id'=>$journalEntryId,
-				'journal_entry_id'=>$moveId
+				'account_bank_statement_line_id'=>$accountBankStatementLineId,
+				'journal_entry_id'=>$journalEntryId
 			];
     }
 	

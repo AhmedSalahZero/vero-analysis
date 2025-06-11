@@ -323,7 +323,7 @@ use App\Models\MoneyReceived ;
                     <div class="form-group">
                         <div class="row">
                             <div class="col-md-5 width-45 ">
-                                <label>{{__('Select Receiving Branch')}} @include('star')</label>
+                                <label>{{__('Receiving Branch')}} @include('star')</label>
                                 <div class="kt-input-icon">
                                     <div class="input-group date">
                                         <select id="branch-id" name="receiving_branch_id" class="form-control">
@@ -537,6 +537,20 @@ use App\Models\MoneyReceived ;
                                 <label>{{__('Cheque Number')}} @include('star')</label>
                                 <div class="kt-input-icon">
                                     <input type="text" name="cheque_number" value="{{ isset($model) && $model->cheque ? $model->cheque->getChequeNumber() : 0 }}" class="form-control" placeholder="{{__('Cheque Number')}}">
+                                </div>
+                            </div>
+							
+							 <div class="col-md-2 ">
+                                <label>{{__('Branch')}} @include('star')</label>
+                                <div class="kt-input-icon">
+                                    <div class="input-group date">
+                                        <select  name="cheque_branch_id" class="form-control">
+                                            {{-- <option value="-1">{{__('Branch')}}</option> --}}
+                                            @foreach($selectedBranches as $branchId=>$branchName)
+                                            <option value="{{ $branchId }}" {{ isset($model) && $model->getCashInSafeReceivingBranchId() == $branchId ? 'selected' : '' }}>{{ $branchName }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
 

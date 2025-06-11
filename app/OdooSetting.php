@@ -33,7 +33,7 @@ class OdooSetting extends Model
 	{
 		return $this->cheques_payable_code;
 	}
-		public function getChequesPayableId()
+	public function getChequesPayableId()
 	{
 		return $this->cheques_payable_id;
 	}
@@ -57,5 +57,5 @@ class OdooSetting extends Model
 	{
 		return OdooSetting::where('company_id',getCurrentCompanyId())->first()->suspense_account_id ; 
 	}
-	
+
 }

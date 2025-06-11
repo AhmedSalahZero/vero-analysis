@@ -70,36 +70,36 @@ class LetterOfGuaranteeService
                 'check_move_validity' => true,
             ];
 
-            $journalEntryId = $this->execute(
+            $accountBankStatementLineId = $this->execute(
                 'account.bank.statement.line',
                 'create',
                 [$journalEntryData],
                 ['context' => $context]
             );
 
-            if (!is_numeric($journalEntryId)) {
-                throw new Exception("Failed to create journal entry: " . json_encode($journalEntryId));
+            if (!is_numeric($accountBankStatementLineId)) {
+                throw new Exception("Failed to create journal entry: " . json_encode($accountBankStatementLineId));
             }
 			
 		
 			  $statementData = $this->execute(
             'account.bank.statement.line',
             'read',
-            [[$journalEntryId], ['move_id']],
+            [[$accountBankStatementLineId], ['move_id']],
             []
         );
 
         if (!is_array($statementData) || empty($statementData[0]['move_id'])) {
-            throw new Exception("Failed to retrieve move_id for statement entry: " . $journalEntryId);
+            throw new Exception("Failed to retrieve move_id for statement entry: " . $accountBankStatementLineId);
         }
-			$moveId = $statementData[0]['move_id'][0];
-            if (!is_numeric($journalEntryId)) {
-                throw new Exception("Failed to create journal entry: " . json_encode($journalEntryId));
+			$journalEntryId = $statementData[0]['move_id'][0];
+            if (!is_numeric($accountBankStatementLineId)) {
+                throw new Exception("Failed to create journal entry: " . json_encode($accountBankStatementLineId));
             }
 			
             return [
-				'account_bank_statement_line_id'=>$journalEntryId,
-				'journal_entry_id'=>$moveId
+				'account_bank_statement_line_id'=>$accountBankStatementLineId,
+				'journal_entry_id'=>$journalEntryId
 			];
     }
 	
@@ -107,7 +107,7 @@ class LetterOfGuaranteeService
  
 public function updateJournalEntry(
         int $statementEntryId = 457,
-        int $move_id = 1338,
+        int $accountBankStatementOdooId = 1338, // move_id
         string $date = '2025-06-01', 
         float $amount = 33000, 
         int $currency_id = 74, 
@@ -120,13 +120,13 @@ public function updateJournalEntry(
 
 		 $name = "/"; // when bank changed only;
 
-       $reset = $this->execute(
+       $this->execute(
             'account.bank.statement.line',
             'write',
             [[$statementEntryId], ['state' => 'draft']],
         );
         
-        $bankJournal = $this->execute(
+         $this->execute(
             'account.bank.statement.line',
             'write',
             [[$statementEntryId],
@@ -142,14 +142,14 @@ public function updateJournalEntry(
 
 
 
-$line_ids= $this->fetchData('account.move',['id','line_ids'],[[['id', '=', $move_id]]]) [0]['line_ids']??[];
+$line_ids= $this->fetchData('account.move',['id','line_ids'],[[['id', '=', $accountBankStatementOdooId]]]) [0]['line_ids']??[];
 if(!isset($line_ids[0])){
-     throw new Exception("Line Ids not found: " . $move_id);
+     throw new Exception("Line Ids not found: " . $accountBankStatementOdooId);
 }
- $updateDebitAndCredit = $this->execute(
+  $this->execute(
             'account.move',
             'write',
-            [[$move_id],
+            [[$accountBankStatementOdooId],
              [
                   
             'line_ids' => [
@@ -176,10 +176,10 @@ if(!isset($line_ids[0])){
         ];
 
 
-  $posted = $this->execute(
+   $this->execute(
             'account.move',
             'action_post',
-            [[$move_id]],
+            [[$accountBankStatementOdooId]],
             ['context' => $context]
         );
 

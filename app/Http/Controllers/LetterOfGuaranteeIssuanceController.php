@@ -262,9 +262,7 @@ class LetterOfGuaranteeIssuanceController
 		
 		
 		
-		/**
-		 * ! call update here like cash expense
-		 */
+		
 		$request->merge([
 			'journal_entry_id'=>$letterOfGuaranteeIssuance->journal_entry_id,
 			'account_bank_statement_odoo_id'=>$letterOfGuaranteeIssuance->account_bank_statement_odoo_id,
