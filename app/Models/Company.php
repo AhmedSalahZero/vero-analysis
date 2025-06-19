@@ -685,7 +685,7 @@ class Company extends Model implements HasMedia
 	}
 	public function getIntegrationStartDate():?string 
 	{
-		return $this->odoo_integration_start_date;
+		return $this->odoo_integration_start_date?:'2025-01-01';
 	}
 	public function withinIntegrationDate(string $date)
 	{
