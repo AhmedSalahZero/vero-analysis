@@ -4,7 +4,6 @@ namespace App\Services\Api\Traits;
 
 trait HasUnlink 
 {
-
 	public function unlink(string $modelName,int $id) 
 	{
 		$this->models->execute_kw(
