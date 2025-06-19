@@ -37,6 +37,14 @@ class PayableCheque extends Model
 			self::PENDING,
 		];
 	}
+	public function isPending():bool
+	{
+		return $this->getStatus() == self::PENDING;
+	}
+	public function isPaid():bool
+	{
+		return $this->getStatus() == self::PAID;
+	}
 	public function getDeliveryDate()
 	{
 		return $this->delivery_date ; 

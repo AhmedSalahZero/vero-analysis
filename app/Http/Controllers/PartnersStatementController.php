@@ -15,7 +15,10 @@ class PartnersStatementController
     use GeneralFunctions;
     public function index(Company $company)
 	{
-		$partnerTypes = ['is_subsidiary_company'=>__('Subsidiary Company') , 'is_shareholder'=>__('Shareholder') , 'is_employee'=>__('Employee')];
+		$partnerTypes = ['is_subsidiary_company'=>__('Subsidiary Company') , 'is_shareholder'=>__('Shareholder') , 'is_employee'=>__('Employee'),
+		'is_other_partner'=>__('Other Partner')
+	
+	];
 		
         return view('partners_statement_form', [
 			'company'=>$company,
@@ -34,6 +37,7 @@ class PartnersStatementController
 			'is_subsidiary_company'=>'subsidiary_company_statements',
 			'is_shareholder'=>'shareholder_statements',
 			'is_employee'=>'employee_statements',
+			'is_other_partner'=>'other_partner_statements',
 		][$partnerType] ;
 		
 		$results=DB::table($statementTableName)

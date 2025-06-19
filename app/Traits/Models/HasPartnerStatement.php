@@ -5,6 +5,7 @@ use App\Models\AccountType;
 use App\Models\EmployeeStatement;
 use App\Models\MoneyPayment;
 use App\Models\MoneyReceived;
+use App\Models\OtherPartnerStatement;
 use App\Models\ShareholderStatement;
 use App\Models\SubsidiaryCompanyStatement;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -19,14 +20,17 @@ trait HasPartnerStatement
 {
 	public function deletePartnerStatement()
 	{
-		if($this->isEmployee()){
+		if($this->isEmployee() && $this->employeeStatement){
 			$this->employeeStatement->delete();
 		}
-		if($this->isShareholder()){
+		if($this->isShareholder() && $this->shareholderStatement){
 			$this->shareholderStatement->delete();
 		}
-		if($this->isSubsidiaryCompany()){
+		if($this->isSubsidiaryCompany() && $this->subsidiaryCompanyStatement){
 			$this->subsidiaryCompanyStatement->delete();
+		}
+		if($this->isOtherPartner() && $this->otherPartnerStatement){
+			$this->otherPartnerStatement->delete();
 		}
 		
 	}
@@ -62,12 +66,18 @@ trait HasPartnerStatement
 		if($partnerType == 'is_subsidiary_company'){
 			return __('Subsidiary Company');
 		}
-		
+		if($partnerType == 'is_other_partner'){
+			return __('Other Partner');
+		}
 		throw new \Exception('Custom Exception .. This Partner Type Not Allowed [ ' . $partnerType .' ]');
 	}
 	public function isEmployee()
 	{
 		return $this->getPartnerType() == 'is_employee';
+	}
+	public function isOtherPartner()
+	{
+		return $this->getPartnerType() == 'is_other_partner';
 	}
 	public function isShareholder()
 	{
@@ -88,6 +98,10 @@ trait HasPartnerStatement
 	public function subsidiaryCompanyStatement():HasOne
 	{
 		return $this->hasOne(SubsidiaryCompanyStatement::class,$this->getForeignKeyName(),'id');
+	}
+	public function otherPartnerStatement():HasOne
+	{
+		return $this->hasOne(OtherPartnerStatement::class,$this->getForeignKeyName(),'id');
 	}
 	public function handlePartnerCreditStatement(string $partnerType , int $partnerId , int $moneyReceivedId  ,int $companyId, string $statementDate , $amount ,string $currencyName , string $bankNameOrBranchName , ?AccountType $accountType , ?string $accountNumber ):void
 	{
@@ -112,7 +126,9 @@ trait HasPartnerStatement
 		elseif($partnerType == 'is_subsidiary_company'){
 			$this->subsidiaryCompanyStatement()->create($statementData);
 		}
-		 
+		 elseif($partnerType == 'is_other_partner'){
+			$this->otherPartnerStatement()->create($statementData);
+		}
 	}
 	public function handlePartnerDebitStatement(string $partnerType , int $partnerId , int $moneyPaymentId  ,int $companyId, string $statementDate , $amount ,string $currencyName , string $bankNameOrBranchName , ?AccountType $accountType , ?string $accountNumber ):void
 	{
@@ -136,6 +152,9 @@ trait HasPartnerStatement
 		}
 		elseif($partnerType == 'is_subsidiary_company'){
 			$this->subsidiaryCompanyStatement()->create($statementData);
+		}
+		elseif($partnerType == 'is_other_partner'){
+			$this->otherPartnerStatement()->create($statementData);
 		}
 		 
 	}

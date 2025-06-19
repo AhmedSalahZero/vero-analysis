@@ -100,7 +100,7 @@ $selectedBanks = [];
                     <label>{{__('Payment Date')}}</label>
                     <div class="kt-input-icon">
                         <div class="input-group date">
-                            <input type="text" name="delivery_date" value="{{ isset($model) ? formatDateForDatePicker($model->getDeliveryDate()) : formatDateForDatePicker(now()->format('Y-m-d')) }}" class="form-control is-date-css" readonly placeholder="Select date" id="kt_datepicker_max_date_is_today" />
+                            <input type="text" name="delivery_date" value="{{ isset($model) ? formatDateForDatePicker($model->getDeliveryDate()) : '' }}" class="form-control is-date-css" readonly placeholder="Select date" id="kt_datepicker_max_date_is_today" />
                             <div class="input-group-append">
                                 <span class="input-group-text">
                                     <i class="la la-calendar-check-o"></i>
@@ -239,7 +239,7 @@ $selectedBanks = [];
 
 
 
-                    <div class="modal fade" id="js-choose-delivery-branch-id" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                    {{-- <div class="modal fade" id="js-choose-delivery-branch-id" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                         <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
@@ -257,7 +257,7 @@ $selectedBanks = [];
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> --}}
 
 
 
@@ -307,7 +307,7 @@ $selectedBanks = [];
                                     <option value="{{ $branchId }}" {{ isset($model) && $model->getCashPaymentBranchId() == $branchId ? 'selected' : '' }}>{{ $branchName }}</option>
                                     @endforeach
                                 </select>
-                                <button id="js-delivery-branch" class="btn btn-sm btn-primary">{{ __('Add New Branch') }}</button>
+                                {{-- <button id="js-delivery-branch" class="btn btn-sm btn-primary">{{ __('Add New Branch') }}</button> --}}
                             </div>
                         </div>
                     </div>
@@ -427,7 +427,7 @@ $selectedBanks = [];
                         <label>{{__('Due Date')}} @include('star')</label>
                         <div class="kt-input-icon">
                             <div class="input-group date">
-                                <input type="text" value="{{ isset($model) && $model->payableCheque ? formatDateForDatePicker($model->payableCheque->getDueDate()):formatDateForDatePicker(now()->format('Y-m-d')) }}" name="due_date" class="form-control is-date-css" readonly placeholder="Select date" id="kt_datepicker_2" />
+                                <input type="text" value="{{ isset($model) && $model->payableCheque ? formatDateForDatePicker($model->payableCheque->getDueDate()):'' }}" name="due_date" class="form-control is-date-css" readonly placeholder="Select date" id="kt_datepicker_2" />
                                 <div class="input-group-append">
                                     <span class="input-group-text">
                                         <i class="la la-calendar-check-o"></i>
@@ -870,8 +870,8 @@ $(document).on('change','#down_payment_type',function(){
 			type:'get'
 		}).then(function(res){
 			let suppliersOptions = '';
-			for (var supplierName in res.supplierInvoices){
-				var customerId = res.supplierInvoices[supplierName];
+			for (var supplierName in res.invoices){
+				var customerId = res.invoices[supplierName];
 				suppliersOptions += ` <option value="${customerId}">${supplierName}</option> `
 			}
 			$('select#supplier_name').selectpicker('destroy');
@@ -887,8 +887,8 @@ $(document).on('change','#down_payment_type',function(){
 			type:'get'
 		}).then(function(res){
 			let suppliersOptions = '';
-			for (var supplierName in res.supplierInvoices){
-				var customerId = res.supplierInvoices[supplierName];
+			for (var supplierName in res.invoices){
+				var customerId = res.invoices[supplierName];
 				suppliersOptions += ` <option value="${customerId}">${supplierName}</option> `
 			}
 			console.log(suppliersOptions)

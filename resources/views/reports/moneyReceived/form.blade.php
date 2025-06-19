@@ -93,7 +93,7 @@ use App\Models\MoneyReceived ;
                             <label>{{__('Receiving Date')}}</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
-                                    <input type="text" name="receiving_date" max-date="{{ formatDateForDatePicker(now()) }}" value="{{ isset($model) ? formatDateForDatePicker($model->getReceivingDate()) : formatDateForDatePicker(now()->format('Y-m-d')) }}" class="form-control is-date-css exchange-rate-date update-exchange-rate" readonly placeholder="Select date" id="kt_datepicker_max_date_is_today" />
+                                    <input type="text" name="receiving_date" max-date="{{ formatDateForDatePicker(now()) }}" value="{{ isset($model) ? formatDateForDatePicker($model->getReceivingDate()) : '' }}" class="form-control is-date-css exchange-rate-date update-exchange-rate" required readonly placeholder="Select date" id="kt_datepicker_max_date_is_today" />
                                     <div class="input-group-append">
                                         <span class="input-group-text">
                                             <i class="la la-calendar-check-o"></i>
@@ -167,7 +167,7 @@ use App\Models\MoneyReceived ;
                         </div>
 
 
-                        <div class="col-md-2 ">
+                        <div class="col-md-1 ">
                             <label class="text-nowrap">{{__('Receiving Currency')}} @include('star')</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
@@ -246,7 +246,7 @@ use App\Models\MoneyReceived ;
                                 <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Select receiving Bank') }}</h5>
+                                            <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Receiving Bank') }}</h5>
                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
@@ -272,7 +272,7 @@ use App\Models\MoneyReceived ;
 
 
 
-                            <div class="modal fade" id="js-choose-receiving-branch-id" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                            {{-- <div class="modal fade" id="js-choose-receiving-branch-id" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                 <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header">
@@ -290,11 +290,21 @@ use App\Models\MoneyReceived ;
                                         </div>
                                     </div>
                                 </div>
+                            </div> --}}
+
+
+
+
+                        </div>
+						
+						   <div class="col-md-2" data-current-selected="{{ isset($mode) ? $model->getTransactionType() : '' }}" id="transaction-type-parent">
+                            <label>{{__('Transaction')}} @include('star')</label>
+                            <div class="kt-input-icon">
+                                <div class="input-group date">
+                                    <select required name="transaction_type" id="transaction_type" class="form-control">
+                                    </select>
+                                </div>
                             </div>
-
-
-
-
                         </div>
 
                     </div>
@@ -332,7 +342,7 @@ use App\Models\MoneyReceived ;
                                             <option value="{{ $branchId }}" {{ isset($model) && $model->getCashInSafeReceivingBranchId() == $branchId ? 'selected' : '' }}>{{ $branchName }}</option>
                                             @endforeach
                                         </select>
-                                        <button id="js-receiving-branch" class="btn btn-sm btn-primary">{{ __('Add New Branch') }}</button>
+                                        {{-- <button id="js-receiving-branch" class="btn btn-sm btn-primary">{{ __('Add New Branch') }}</button> --}}
                                     </div>
                                 </div>
                             </div>
@@ -388,10 +398,9 @@ use App\Models\MoneyReceived ;
                     <div class="form-group">
                         <div class="row">
                             <div class="col-md-5 width-45">
-                                <label>{{__('Select Receiving Bank')}} @include('star')</label>
+                                <label>{{__('Receiving Bank')}} @include('star')</label>
                                 <div class="kt-input-icon">
                                     <div class="input-group date">
-
                                         <select js-when-change-trigger-change-account-type data-financial-institution-id name="receiving_bank_id[{{ MoneyReceived::CASH_IN_BANK  }}]" class="form-control ">
                                             @foreach($financialInstitutionBanks as $index=>$financialInstitutionBank)
                                             <option value="{{ $financialInstitutionBank->id }}" {{ isset($model) && $model->getCashInBankReceivingBankId() == $financialInstitutionBank->id ? 'selected' : '' }}>{{ $financialInstitutionBank->getName() }}</option>
@@ -522,7 +531,7 @@ use App\Models\MoneyReceived ;
                                 <label>{{__('Due Date')}} @include('star')</label>
                                 <div class="kt-input-icon">
                                     <div class="input-group date">
-                                        <input type="text" value="{{ isset($model) && $model->cheque ? formatDateForDatePicker($model->cheque->getDueDate()):formatDateForDatePicker(now()->format('Y-m-d')) }}" name="due_date" class="form-control is-date-css" readonly placeholder="Select date" id="kt_datepicker_2" />
+                                        <input type="text" value="{{ isset($model) && $model->cheque ? formatDateForDatePicker($model->cheque->getDueDate()):'' }}" name="due_date" class="form-control is-date-css" readonly placeholder="Select date" id="kt_datepicker_2" />
                                         <div class="input-group-append">
                                             <span class="input-group-text">
                                                 <i class="la la-calendar-check-o"></i>
@@ -588,7 +597,7 @@ use App\Models\MoneyReceived ;
                     <div class="form-group">
                         <div class="row">
                             <div class="col-md-5 width-45">
-                                <label>{{__('Select Receiving Bank')}} @include('star')</label>
+                                <label>{{__('Receiving Bank')}} @include('star')</label>
                                 <div class="kt-input-icon">
                                     <div class="input-group date">
 
@@ -665,7 +674,7 @@ use App\Models\MoneyReceived ;
 
             {{-- Settlement Information "Commen Card" --}}
 
-            @if(!isset($model) || isset($model) && $model->partner->getType() == 'is_customer')
+            @if(!isset($model) || isset($model) && $model->partner->getCustomerType() == 'is_customer')
             <div class="kt-portlet" id="settlement-card-id">
                 <div class="kt-portlet__head">
                     <div class="kt-portlet__head-label">

@@ -24,6 +24,7 @@ use App\ReadyFunctions\VariableLoanCalculation;
 use App\Services\AI\PredictionErrorQualityMeasures\MeanAbsoluteError;
 use App\Services\AI\PredictionErrorQualityMeasures\MeanAbsolutePercentageError;
 use App\Services\AI\PredictionErrorQualityMeasures\RootMeanSquaredPercentageError;
+use App\Services\Api\CashExpenseOdooService;
 use App\Services\Api\ExpenseService;
 use App\Services\Api\InternalMoneyTransfer;
 use App\Services\Api\LetterOfGuaranteeService;
@@ -85,7 +86,16 @@ class TestCommand extends Command
 // $distribution_analytic_account_ids = [[6, 0, ...$distribution_analytic_account_ids]];
 // dd($distribution_analytic_account_ids);
 
+
 		$odooService =new OdooService(Company::find(139));
+		// $result = $odooService->fetchData('project.project',[],[[['id','=','62']]]) ;
+		$result = $odooService->fetchData('account.move.line',[],[[['id','=','24090']]]) ;
+		dd($result);
+		// dd($result[count($result)-1]);
+		dd($odooService->getContracts('2020-01-01','2026-01-01',139));
+		
+		$odooService =new OdooService(Company::find(139));
+		dd($odooService->getExpenseAccounts('2024-01-01','2025-12-31',139));
 		dd($odooService->getPaymentMethodId(243,260)); //363
 		// dd($odooService->getPaymentMethodId(243,260)); // 323
 		// dd($odooService->getPaymentMethodId(243,406));

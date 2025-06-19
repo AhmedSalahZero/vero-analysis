@@ -164,6 +164,10 @@ class LetterOfGuaranteeIssuance extends Model
 	{
 		return $this->belongsTo(Partner::class,'partner_id','id') ;
 	}
+	public function getPartnerOdooId()
+	{
+		return $this->beneficiary ? $this->beneficiary->getOdooId():null ;
+	}
 	public function getBeneficiaryName()
 	{
 		$beneficiary = $this->beneficiary ;
@@ -454,33 +458,36 @@ class LetterOfGuaranteeIssuance extends Model
 		// dd($this->cashCoverDeductedFromAccountType,$this);
 		return $this->cashCoverDeductedFromAccountType && $this->cashCoverDeductedFromAccountType->isCurrentAccount();
 	}
+	// public function deleteOdoo()
+	// {
+	// 	$company = $this->company;
+	// 	$isOpeningBalance = $this->isOpeningBalance();
+	// 	$isCdOrTd = $this->isCdOrTd();
+	// 	$odooMustBeDeleted  = $company->hasOdooIntegrationCredentials() && $isOpeningBalance && !$isCdOrTd;
+	// 	if($odooMustBeDeleted){
+	// 		$odooLetterOfGuaranteeIssuance = new LetterOfGuaranteeService($company);
+	// 		if($accountBankStatementOdooId = $this->account_bank_statement_odoo_id){
+	// 			$odooLetterOfGuaranteeIssuance->unlink('account.bank.statement.line',$accountBankStatementOdooId);
+	// 		}
+	// 	}
+	// }
 	public function deleteAllRelations():self
 	{
 		
-		$financialInstitutionAccount = FinancialInstitutionAccount::find($this->getCashCoverDeductedFromAccountId());
-		$lgType = $this->getLgType();
-		$currency = $financialInstitutionAccount->getCurrency();
+		// $financialInstitutionAccount = FinancialInstitutionAccount::find($this->getCashCoverDeductedFromAccountId());
+		// $lgType = $this->getLgType();
+		// $currency = $financialInstitutionAccount->getCurrency();
 		$company = $this->company;
-		$issuanceDate = $this->getIssuanceDate();
-		$financialInstitution = $this->financialInstitutionBank;
-		$cashCoverAmount = $this->getCashCoverAmount();
-		$isOpeningBalance = $this->isOpeningBalance();
+		// $issuanceDate = $this->getIssuanceDate();
+		// $financialInstitution = $this->financialInstitutionBank;
+		// $cashCoverAmount = $this->getCashCoverAmount();
+		// $isOpeningBalance = $this->isOpeningBalance();
 		// $isCurrentAccount = $this->isCashCoverCurrentAccount() ;
-		$isCdOrTd = $this->isCdOrTd();
-		if($company->hasOdooIntegrationCredentials() && !$isOpeningBalance && !$isCdOrTd ){
+		// $isCdOrTd = $this->isCdOrTd();
+		$journalEntryId = $this->journal_entry_id;
+		if($company->hasOdooIntegrationCredentials() && $journalEntryId ){
 			$odooLetterOfGuaranteeIssuance = new LetterOfGuaranteeService($company);
-			$fromAccountNumber = $financialInstitutionAccount->getAccountNumber();
-			$journalId = $financialInstitution->getJournalIdForAccount(27,$fromAccountNumber);
-			$accountOdooId = $financialInstitution->getOdooIdForAccount(27,$fromAccountNumber);
-			$odooCurrencyId = Currency::getOdooId($currency);
-			$lgOdooAccountId = FinancialInstitutionAccount::getLetterOfGuaranteeOdooIdFromType($lgType,$company->id);
-			$ref = $this->generateCancelRef();
-			$message = $this->generateCancelMessage();
-			$result = $odooLetterOfGuaranteeIssuance->createLgCancelCashCover($issuanceDate,$cashCoverAmount,$journalId,$odooCurrencyId,$lgOdooAccountId,$accountOdooId,$this->getBeneficiaryOdooId(),$ref,$message);
-			$this->account_bank_statement_odoo_id=$result['account_bank_statement_line_id'];
-			$this->journal_entry_id=$result['journal_entry_id'];
-			$this->save();
-			
+			 $odooLetterOfGuaranteeIssuance->unlink($journalEntryId);
 		}
 		/**
 		 * @var LetterOfGuaranteeIssuanceAdvancedPaymentHistory $advancedPaymentHistory
@@ -630,19 +637,24 @@ class LetterOfGuaranteeIssuance extends Model
 			$lgType = $this->getLgType();
 			$cashCoverAmount = $this->getCashCoverAmount();
 			$lgDebitOdooAccountId = FinancialInstitutionAccount::getLetterOfGuaranteeOdooIdFromType($lgType,$company->id);
-			$inUpdateMode = $this->journal_entry_id && $this->account_bank_statement_odoo_id ;
-			if($inUpdateMode){
-				$journalEntryId = $this->journal_entry_id;
-				$accountBankStatementOdooId = $this->account_bank_statement_odoo_id;
-				$odooLetterOfGuaranteeIssuance->updateJournalEntry($journalEntryId,$accountBankStatementOdooId,$issuanceDate,$cashCoverAmount,$odooCurrencyId,$journalId,$lgDebitOdooAccountId,$accountOdooId,);
-			}else{
+			// $inUpdateMode = $this->journal_entry_id && $this->account_bank_statement_odoo_id ;
+			// if($inUpdateMode){
+			// 	$journalEntryId = $this->journal_entry_id;
+			// 	$accountBankStatementOdooId = $this->account_bank_statement_odoo_id;
+			// 	$ref = $this->generateIssuanceRef();
+			// 	$message = $this->generateCancelMessage();
+			// 	$partnerOdooId = $this->getPartnerOdooId();
+			// 	$odooLetterOfGuaranteeIssuance->updateJournalEntry($journalEntryId,$accountBankStatementOdooId,$issuanceDate,$cashCoverAmount,$odooCurrencyId,$journalId,$lgDebitOdooAccountId,$accountOdooId,$partnerOdooId,$ref,$accountNumberHasChanged,$message);
+			// }else{
+				
+			// }
+			
 				$ref = $this->generateIssuanceRef();
 				$message = $this->generateIssuanceMessage();
 				$result = $odooLetterOfGuaranteeIssuance->createLgIssuanceCashCover($issuanceDate,$cashCoverAmount,$journalId,$odooCurrencyId,$lgDebitOdooAccountId,$accountOdooId,$this->getBeneficiaryOdooId(),$ref,$message);
 				$this->account_bank_statement_odoo_id=$result['account_bank_statement_line_id'];
 				$this->journal_entry_id=$result['journal_entry_id'];
 				$this->save();
-			}
 			
 		}
 	}

@@ -104,7 +104,10 @@ class StoreMoneyPaymentRequest extends FormRequest
 			'type.required'=>__('Please Select Money Type'),
 			'paid_amount.'.$type.'.required'=>__('Please Enter Paid Amount'),
 			'paid_amount.'.$type.'.gt'=>__('Paid Amount Must Be Greater Than Zero'),
-			'delivery_branch_id.not_in'=>__('Please Enter New Branch Name')
+			'delivery_branch_id.not_in'=>__('Please Enter New Branch Name'),
+			'due_date.required'=>__('Cheque Due Date Is Required'),
+			'delivery_date.required'=>__('Please Select Payment Date'),
+			'cheque_number.required'=>__('Please Insert Cheque Number'),
 		];
 	}
 	

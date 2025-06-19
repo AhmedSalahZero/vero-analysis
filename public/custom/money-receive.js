@@ -482,6 +482,12 @@ $(document).on('change','select#partner_type',function(){
 		$('#invoice-currency-div-id').fadeOut();
 		$('.show-only-when-invoice-currency-not-equal-receiving-currency').addClass('hidden')
 	}
+	
+		showOrHideTransaction(partnerColumnName);
+		
+		
+	
+	
 	const companyId = $('body').data('current-company-id')
 	const lang = $('body').data('lang')
 	const currencyName = $('select#invoice-currency-id').val();
@@ -503,4 +509,44 @@ $(document).on('change','select#partner_type',function(){
 	});
 	
 })		
-//$('select#partner_type').trigger('change');
+
+function showOrHideTransaction(partnerColumnName)
+{
+	if(partnerColumnName =='is_customer'){
+			$('#invoice-currency-div-id').show();
+			$('#transaction-type-parent').hide();
+		}else{
+			$('#invoice-currency-div-id').hide();
+			$('#transaction-type-parent').show();
+		}
+		
+		let options = '';
+		let currentSelect = $('#transaction-type-parent').attr('data-current-selected')
+
+		if(partnerColumnName == 'is_employee'){
+			
+			options = `
+			<option ${currentSelect == 'refund-custody' ? 'selected' :''}  value="refund-custody">Refund Custody</option>
+			<option ${currentSelect == 'pay-loan' ? 'selected' :''}  value="pay-loan">Pay Loan</option>
+			`
+		}else if(partnerColumnName =='is_shareholder' ){
+			options = `
+				<option ${currentSelect == 'funding-from' ? 'selected' :''}  value="funding-from">Funding From</option>
+			`
+		}
+		else if( partnerColumnName=="is_subsidiary_company"){
+			options = `
+				<option ${currentSelect == 'funding-from' ? 'selected' :''}  value="funding-from">Funding From</option>
+			`
+		}
+		else if(partnerColumnName =='is_other_partner'){
+			options = `
+				<option ${currentSelect == 'insurance-from' ? 'selected' :''}  value="insurance-from">Insurance From</option>
+			`
+		}
+		
+		$('#transaction-type-parent').find('select').empty().append(options);
+		
+}
+let currentPartnerType = $('select#partner_type')
+showOrHideTransaction(currentPartnerType.val());

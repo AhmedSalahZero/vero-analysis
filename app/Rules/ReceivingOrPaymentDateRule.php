@@ -10,7 +10,7 @@ use Illuminate\Contracts\Validation\Rule;
 class ReceivingOrPaymentDateRule implements Rule
 {
 	protected int $company_id ;
-	protected string $money_type ;
+	protected ?string $money_type ;
 	protected ?int $financial_institution_id ;
 	protected ?int $account_type_id ;
 	protected ?string $account_number ;
@@ -22,7 +22,7 @@ class ReceivingOrPaymentDateRule implements Rule
      *
      * @return void
      */
-    public function __construct(int $companyId , string $moneyType , array $moneyTypeValidationForBankTypes , array $moneyTypeValidationForSafe, ?int  $financialInstitutionId , ?int $accountTypeId , ?string $accountNumber )
+    public function __construct(int $companyId , ?string $moneyType , array $moneyTypeValidationForBankTypes , array $moneyTypeValidationForSafe, ?int  $financialInstitutionId , ?int $accountTypeId , ?string $accountNumber )
     {
 		$this->company_id = $companyId;
         $this->money_type = $moneyType ;

@@ -2,13 +2,10 @@
 namespace App\Http\Controllers;
 use App\Http\Requests\StoreTdRenewalDateRequest;
 use App\Models\Company;
-use App\Models\CurrentAccountBankStatement;
 use App\Models\TdRenewalDateHistory;
 use App\Models\TimeOfDeposit;
 use App\Traits\GeneralFunctions;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class TimeOfDepositRenewalDateController
 {
@@ -26,9 +23,12 @@ class TimeOfDepositRenewalDateController
 	
 		$date = $request->get('renewal_date') ;
 		$newInterestRate = $request->get('interest_rate');
-		// $accountNumber = $timeOfDeposit->getAccountNumber() ;
-		// $renewalFeesAmount = $request->get('fees_amount');
 		$expiryDate = $timeOfDeposit->getRenewalDate();
+		
+		
+		
+		
+		
 		$date = explode('/',$date);
 		$month = $date[0];
 		$day = $date[1];
@@ -38,7 +38,7 @@ class TimeOfDepositRenewalDateController
 		// $lgType = $timeOfDeposit->getLgType();
 		// $transactionName = $timeOfDeposit->getTransactionName();
 		// $financialInstitutionAccount = FinancialInstitutionAccount::findByAccountNumber($accountNumber,$company->id , $financialInstitution->id);
-	
+		
 		if(!$timeOfDeposit->renewalDateHistories->count()){
 			/**
 			 * * في حالة اول مرة هنضيف تاريخ التجديد الاصلي اكنة تاريخ علشان نحتفظ بيه علشان ما يضيعش
@@ -60,6 +60,7 @@ class TimeOfDepositRenewalDateController
 			'expiry_date'=>$expiryDate,
 			'time_of_deposit_id'=>$timeOfDeposit->id
 		]);
+		
 		// $this->storeCommissionToCreditCurrentAccountBankStatement($tdRenewalDateHistory,$timeOfDeposit,$company,$expiryDate,$renewalDate,$transactionName,$lgType);
 		// $financialInstitutionAccountOpeningBalance = $financialInstitutionAccount->getOpeningBalanceDate();
 		// if(Carbon::make($expiryDate)->greaterThanOrEqualTo(Carbon::make($financialInstitutionAccountOpeningBalance))){
@@ -67,8 +68,8 @@ class TimeOfDepositRenewalDateController
 		// }
 		$commentEn = __('Renewal For Time Deposit',[],'en');
 		$commentAr = __('Renewal For Time Deposit',[],'ar');
-		
 		$interestAmount = $timeOfDeposit->storeRenewalDebitCurrentAccount($expiryDate,$renewalDate,$newInterestRate,$commentEn,$commentAr);
+		$timeOfDeposit->storeRenewal($expiryDate,$interestAmount);
 		$timeOfDeposit->update([
 			'end_date'=>$renewalDate,
 			'start_date'=>$expiryDate,

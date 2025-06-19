@@ -109,6 +109,10 @@ class SubsidiaryCompaniesController
 		$type = Partner::SUBSIDIARY_COMPANIES;
 		$subsidiaryCompany = new Partner ;
 		$subsidiaryCompany->is_subsidiary_company = 1 ;
+		if($company->hasOdooIntegrationCredentials()){
+			$subsidiaryCompany->due_to_chart_of_account_number_code = $request->get('due_to_chart_of_account_number_code');
+			$subsidiaryCompany->due_from_chart_of_account_number_code = $request->get('due_from_chart_of_account_number_code');
+		}
 		$subsidiaryCompany->storeBasicForm($request);
 		$activeTab = $type ; 
 		return response()->json([

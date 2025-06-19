@@ -174,7 +174,7 @@ class BuyOrSellCurrenciesController
 		];
 	}
 	
-	public function store(Company $company  , StoreBuyOrSellCurrencyRequest $request){
+	public function store(Company $company  , StoreBuyOrSellCurrencyRequest $request,bool $inUpdateMode = false,bool $accountNumberHasChanged = false){
 		$buyOrSellCurrency = new BuyOrSellCurrency ;
 		$type = $request->get('type');
 		$transferDate = Carbon::make($request->get('transaction_date'))->format('Y-m-d') ;
@@ -208,6 +208,11 @@ class BuyOrSellCurrenciesController
 		
 			$buyOrSellCurrency->handleSafeToSafeTransfer($company->id  ,$fromBranchId , $currencyToBuyName , $toBranchId , $currencyToSellName , $exchangeRate , $transferDate,$transferFromAmount,$transferToAmount);
 		}
+		$buyOrSellCurrency->handleOdooTransfer($accountNumberHasChanged);
+		if($inUpdateMode){
+			return $buyOrSellCurrency;
+		}
+		
 		$activeTab = $type ; 
 		
 	
@@ -221,16 +226,24 @@ class BuyOrSellCurrenciesController
     }
 	
 	public function update(Company $company , StoreBuyOrSellCurrencyRequest $request , BuyOrSellCurrency $buyOrSellCurrency){
+		$request->merge([
+			'outbound_account_bank_statement_odoo_id'=>$buyOrSellCurrency->outbound_account_bank_statement_odoo_id,
+			'outbound_journal_entry_id'=>$buyOrSellCurrency->outbound_journal_entry_id,
+			'inbound_account_bank_statement_odoo_id'=>$buyOrSellCurrency->inbound_account_bank_statement_odoo_id,
+			'inbound_journal_entry_id'=>$buyOrSellCurrency->inbound_journal_entry_id,
+		]);
+		$accountNumberHasChanged = $request->get('from_account_number') != $buyOrSellCurrency->getFromAccountNumber();
 		$type = $buyOrSellCurrency->getType();
 		$buyOrSellCurrency->deleteRelations();
 		$buyOrSellCurrency->delete();
-		$this->store($company,$request);
+		$this->store($company,$request,true,$accountNumberHasChanged);
 		$activeTab = $type ;
 		return redirect()->route('buy-or-sell-currencies.index',['company'=>$company->id,'active'=>$activeTab])->with('success',__('Item Has Been Updated Successfully'));
 	}
 	
 	public function destroy(Company $company , BuyOrSellCurrency $buyOrSellCurrency)
 	{
+		$buyOrSellCurrency->deleteOdoo();
 		$buyOrSellCurrency->deleteRelations();
 		$buyOrSellCurrency->delete();
 		return redirect()->back()->with('success',__('Item Has Been Delete Successfully'));

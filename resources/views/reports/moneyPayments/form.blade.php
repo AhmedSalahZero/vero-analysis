@@ -100,14 +100,13 @@ $selectedBanks = [];
             {{-- <input type="hidden" id="js-down-payment-id" value="{{ isset($model) && $model->downPayment ? $model->downPayment->id : 0  }}"> --}}
             <input type="hidden" id="ajax-invoice-item" data-single-model="{{ $singleModel ? 1 : 0 }}" value="{{ $singleModel ? $singleModel : 0 }}">
             <input id="js-down-payment-id" type="hidden" name="down_payment_id" value="{{ isset($model) ? $model->id : 0 }}">
-			
-			@if(isset($model))
-			<input type="hidden" name="modelId" value="{{ $model->id }}">
-			<input type="hidden" name="modelType" value="MoneyPayment">
-			@endif
-			{{-- <input type="hidden" name="additional_amount_balance_{{ isset($model) ? $model->getType() : '' }}_{{ isset($model) ? $model->getCashPaymentBranchId() :  }}" id="additional-balance-amount-{{ isset($model) ? $model->getType() : '' }}-" value="{{ isset($model) ? $model->getPaidAmount() : 0 }}"> --}}
-			{{-- <input type="hidden" name="current_type" id="current-type-in-edit-mode" value="{{ isset($model) ? $model->getType() : '' }}"> --}}
-			
+
+            @if(isset($model))
+            <input type="hidden" name="modelId" value="{{ $model->id }}">
+            <input type="hidden" name="modelType" value="MoneyPayment">
+            @endif
+
+
             @csrf
             @if(isset($model))
             @method('put')
@@ -127,7 +126,7 @@ $selectedBanks = [];
                             <label>{{__('Payment Date')}}</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
-                                    <input type="text" name="delivery_date" value="{{ isset($model) ? formatDateForDatePicker($model->getDeliveryDate()) : formatDateForDatePicker(now()->format('Y-m-d')) }}" class="form-control balance-date exchange-rate-date update-exchange-rate is-date-css" readonly placeholder="Select date" id="kt_datepicker_max_date_is_today" />
+                                    <input type="text" name="delivery_date" value="{{ isset($model) ? formatDateForDatePicker($model->getDeliveryDate()) : '' }}" class="form-control balance-date exchange-rate-date update-exchange-rate is-date-css" readonly placeholder="Select date" id="kt_datepicker_max_date_is_today" />
                                     <div class="input-group-append">
                                         <span class="input-group-text">
                                             <i class="la la-calendar-check-o"></i>
@@ -219,8 +218,8 @@ $selectedBanks = [];
                         @php
                         $selectedFound = false ;
                         @endphp
-                        <div class="col-md-2">
-                            <label class="text-nowrap">{{__('Payment Currency')}} @include('star')</label>
+                        <div class="col-md-1">
+                            <label class="text-nowrap">{{__('Pay Currency')}} @include('star')</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
                                     <select id="receiving-currency-id" when-change-trigger-account-type-change name="payment_currency" class="form-control
@@ -265,15 +264,19 @@ $selectedBanks = [];
                                     </select>
                                 </div>
                             </div>
-
-
-
-
-
-
-
-
                         </div>
+
+
+                        <div class="col-md-2" data-current-selected="{{ isset($mode) ? $model->getTransactionType() : '' }}" id="transaction-type-parent">
+                            <label>{{__('Transaction')}} @include('star')</label>
+                            <div class="kt-input-icon">
+                                <div class="input-group date">
+                                    <select required name="transaction_type" id="transaction_type" class="form-control">
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
 
 
 
@@ -452,7 +455,7 @@ $selectedBanks = [];
                                 <label>{{__('Due Date')}} @include('star')</label>
                                 <div class="kt-input-icon">
                                     <div class="input-group date">
-                                        <input type="text" value="{{ isset($model) && $model->payableCheque ? formatDateForDatePicker($model->payableCheque->getDueDate()):formatDateForDatePicker(now()->format('Y-m-d')) }}" name="due_date" class="form-control is-date-css" readonly placeholder="Select date" id="kt_datepicker_2" />
+                                        <input type="text" value="{{ isset($model) && $model->payableCheque ? formatDateForDatePicker($model->payableCheque->getDueDate()):'' }}" name="due_date" class="form-control is-date-css" readonly placeholder="Select date" id="kt_datepicker_2" />
                                         <div class="input-group-append">
                                             <span class="input-group-text">
                                                 <i class="la la-calendar-check-o"></i>
@@ -615,7 +618,7 @@ $selectedBanks = [];
 
 
     {{-- Settlement Information "Commen Card" --}}
-    @if(!isset($model) || isset($model) && $model->partner->getType() == 'is_supplier')
+    @if(!isset($model) || isset($model) && $model->partner->getSupplierType() == 'is_supplier')
     <div class="kt-portlet" id="settlement-card-id">
         <div class="kt-portlet__head">
             <div class="kt-portlet__head-label">
@@ -628,7 +631,6 @@ $selectedBanks = [];
 
             <div class="js-append-to">
                 <div class="col-md-12 js-duplicate-node">
-
                 </div>
             </div>
 
@@ -874,7 +876,7 @@ $selectedBanks = [];
         </div>
     </div>
     @endif
- @include('user_comment',['model'=>$model??null])
+    @include('user_comment',['model'=>$model??null])
     {{-- <x-submitting /> --}}
     <x-submitting-by-ajax />
 
@@ -908,6 +910,7 @@ $selectedBanks = [];
         const branchId = parent.find('select#delivery_branch_id').val()
         type = $(this).val();
 
+
         $('.js-section-parent').addClass('hidden');
         if (type) {
             $('#' + type).removeClass('hidden');
@@ -924,26 +927,25 @@ $selectedBanks = [];
 </script>
 
 <script>
-	
     $(document).on('change', 'select#branch-id,select#receiving-currency-id', function() {
         const branchId = $('select#branch-id').val();
         const currencyName = $('select#receiving-currency-id').val();
-		const modelId = $('#js-money-payment-id').val();
-		const modelType = 'MoneyPayment';
-		const balanceDate = $('.balance-date').val();
-		// const editType = $('#type').val();
-		//let additionalBalanceInEditMode = $('#additional-balance-amount-'+editType).val();
-		//additionalBalanceInEditMode = additionalBalanceInEditMode == undefined ? 0 : additionalBalanceInEditMode;
+        const modelId = $('#js-money-payment-id').val();
+        const modelType = 'MoneyPayment';
+        const balanceDate = $('.balance-date').val();
+        // const editType = $('#type').val();
+        //let additionalBalanceInEditMode = $('#additional-balance-amount-'+editType).val();
+        //additionalBalanceInEditMode = additionalBalanceInEditMode == undefined ? 0 : additionalBalanceInEditMode;
         if (branchId != '-1') {
             $.ajax({
                 url: "{{ route('get.current.end.balance.of.cash.in.safe.statement',['company'=>$company->id]) }}"
                 , data: {
                     branchId
-                    , currencyName,
-					modelId,
-					modelType,
-					balanceDate
-					//,additionalBalanceInEditMode
+                    , currencyName
+                    , modelId
+                    , modelType
+                    , balanceDate
+                    //,additionalBalanceInEditMode
                 }
                 , success: function(res) {
                     const endBalance = res.end_balance;
@@ -964,7 +966,6 @@ $selectedBanks = [];
 
         $('.main-amount-class').closest('.closest-parent').find('.currency-span').html(" [ " + receivingCurrency + " ]")
         $('.amount-after-exchange-rate-class').closest('.closest-parent').find('.currency-span').html(" [ " + invoiceCurrency + " ]")
-
 
         const partnerType = $('select#partner_type').val();
         if (partnerType && partnerType != 'is_supplier') {
@@ -1006,30 +1007,29 @@ $selectedBanks = [];
 
 </script>
 <script>
+    $(document).on('change', '.balance-date', function() {
+        $('select.js-account-number').trigger('change');
+        $('select#branch-id,select#receiving-currency-id').trigger('change');
+    })
 
-		$(document).on('change','.balance-date',function(){
-				$('select.js-account-number').trigger('change');
-				$('select#branch-id,select#receiving-currency-id').trigger('change');
-			})
-			
     $(document).on('change', '.js-account-number', function() {
         const parent = $(this).closest('.js-section-parent');
         const financialInstitutionId = parent.find('select.financial-institution-id').val()
         const accountNumber = $(this).val();
         const accountType = parent.find('select.js-update-account-number-based-on-account-type').val();
-		const modelId = $('#js-money-payment-id').val();
-		const modelType = 'MoneyPayment';
-		const balanceDate = $('.balance-date').val();
-				
+        const modelId = $('#js-money-payment-id').val();
+        const modelType = 'MoneyPayment';
+        const balanceDate = $('.balance-date').val();
+
         $.ajax({
             url: "{{ route('update.balance.and.net.balance.based.on.account.number',['company'=>$company->id]) }}"
             , data: {
                 accountNumber
                 , accountType
-                , financialInstitutionId,
-				modelType,
-				modelId,
-				balanceDate
+                , financialInstitutionId
+                , modelType
+                , modelId
+                , balanceDate
             }
             , type: "get"
             , success: function(res) {

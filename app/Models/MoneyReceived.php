@@ -6,6 +6,7 @@ use App\Models\OpeningBalance;
 use App\Traits\Models\HasCreditStatements;
 use App\Traits\Models\HasDebitStatements;
 use App\Traits\Models\HasForeignExchangeGainOrLoss;
+use App\Traits\Models\HasNonCustomerOrSupplier;
 use App\Traits\Models\HasPartnerStatement;
 use App\Traits\Models\HasReviewedBy;
 use App\Traits\Models\HasUserComment;
@@ -19,7 +20,7 @@ use Illuminate\Support\Facades\DB;
 
 class MoneyReceived extends Model
 {
-	use IsMoney,HasForeignExchangeGainOrLoss ,HasDebitStatements,HasCreditStatements,HasPartnerStatement,HasReviewedBy , HasUserComment;
+	use IsMoney,HasForeignExchangeGainOrLoss ,HasDebitStatements,HasCreditStatements,HasPartnerStatement,HasReviewedBy , HasUserComment,HasNonCustomerOrSupplier;
 
 	const CASH_IN_SAFE  = 'cash-in-safe';
 	const CASH_IN_BANK  = 'cash-in-bank';
@@ -800,7 +801,7 @@ class MoneyReceived extends Model
 	
 	public function deleteRelations()
 	{
-		
+		$this->unlinkNonCustomerOrSupplierOdooExpense();
 		$oldType = $this->getType();
 		$this->settlements->each(function($settlement){
 			$settlement->delete();
@@ -828,11 +829,7 @@ class MoneyReceived extends Model
 		$this->downPaymentSettlements->each(function($downPaymentSettlement){
 			$downPaymentSettlement->delete();
 		});
-		// money_received_id
-		// $this->subsidiaryCompanyStatement ? $this->subsidiaryCompanyStatement->delete() : null;
-		// $this->shareholderStatement ? $this->shareholderStatement->delete() : null;
-		// $this->employeeStatement ? $this->employeeStatement->delete() : null;
-		// $this->cleanOverdraftDebitBankStatement ? $this->cleanOverdraftDebitBankStatement->delete() :null ;
+		
 		
 		$this->deletePartnerStatement();
 	}
@@ -1092,4 +1089,50 @@ class MoneyReceived extends Model
 		throw new Exception('No Journal Id Found Please Edit Your Bank / Branch To Add Odoo Code');
 		
 	}
+	
+	public function getOdooIdWithRefOfTransaction():array
+	{
+		$transactionType = $this->getTransactionType();
+		$odooSettings = $this->company->odooSetting;
+		if($transactionType == 'refund-custody'){
+			return [
+				'id'=>$odooSettings->getCustodyAccountId() ,
+				'ref'=>__('Refund Custody Received From'), 
+			];
+		}
+		if($transactionType == 'pay-loan'){
+			return  [
+				'id'=>$odooSettings->getEmployeeLoanAccountId() ,
+				'ref'=>__('Loan Received From'), 
+			];
+		}
+		if($transactionType == 'funding-from'&& $this->getPartnerType() == 'is_subsidiary_company'){
+			return [
+				'id'=>$this->partner->dueToChartOfAccountNumberId(),
+				'ref'=>__('Funding From')
+			];
+		}		
+		if($transactionType == 'funding-from' && $this->getPartnerType() == 'is_shareholder'){
+			return [
+				'id'=>$odooSettings->getShareholderAccount(),
+				'ref'=>__('Funding From')
+			];
+		}
+		// if($transactionType == 'dividend-payment' && $this->getPartnerType() == 'is_shareholder'){
+		// 	return [
+		// 		'id'=>$odooSettings->getDividendPaymentAccount(),
+		// 		'ref'=>__('Dividend Payment To')
+		// 	];
+		// }
+		if($transactionType == 'insurance-from' ){
+			return [
+				'id'=>$odooSettings->getInsuranceToAccount(),
+				'ref'=>__('Insurance From')
+			];
+		}
+		
+		throw New Exception('Transaction Type ' . $transactionType . ' Does Not Have Account Id');
+		
+	}
+	
 }

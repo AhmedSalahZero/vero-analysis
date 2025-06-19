@@ -2,6 +2,7 @@
 namespace App\Services\Api\Traits;
 
 use App\OdooSetting;
+use Exception;
 
 trait HasPayment 
 {
@@ -49,20 +50,7 @@ trait HasPayment
        
     }
 		
-	protected function setPaymentToDraft($paymentId)
-    {
-           $this->models->execute_kw(
-                $this->db,
-                $this->uid,
-                $this->password,
-                'account.payment',
-                'action_post',
-                [[$paymentId]],
-            );
-        
-            return true;
-      
-    }
+
 
 	 protected function updatePayment($paymentId, $updateData)
     {
@@ -91,23 +79,30 @@ trait HasPayment
 		 * * مش بكون عارف هي انهي مدفوعه بالظبط .. فا بلغيهم كلهم
 		 */
 		foreach($payments as $existingPayment){
-			$this->models->execute_kw(
-				$this->db,
-				$this->uid,
-				$this->password,
-				'account.payment',
-				'action_cancel',
-				[[$existingPayment['id']]]
-			);
+			$odooPaymentId = $existingPayment['id'] ;
+			$this->setPaymentToDraft($odooPaymentId);
+			// $this->models->execute_kw(
+			// 	$this->db,
+			// 	$this->uid,
+			// 	$this->password,
+			// 	'account.payment',
+			// 	'action_cancel',
+			// 	[[$odooPaymentId]]
+			// );
+			   $this->execute(
+                'account.payment',
+                'unlink',
+                [[$odooPaymentId]]
+            );
 			
-			$this->models->execute_kw(
-				$this->db,
-				$this->uid,
-				$this->password,
-				'account.payment',
-				'unlink',
-				[[$existingPayment['id']]]
-			);
+			// $this->models->execute_kw(
+			// 	$this->db,
+			// 	$this->uid,
+			// 	$this->password,
+			// 	'account.payment',
+			// 	'unlink',
+			// 	[[$odooPaymentId]]
+			// );
 			
 		}
 	}
@@ -117,6 +112,125 @@ trait HasPayment
 		return $this->cancelPayments($downPaymentOdooId);
 	}
 	
+	
+
+	public function setPaymentToDraft(int $paymentId)
+    { 
+        // Check if the payment exists
+        $entry = $this->execute(
+            'account.payment',
+            'read',
+            [[$paymentId], ['id', 'state']]
+        );
+
+        if (empty($entry)) {
+            throw new Exception("Payment not found: " . $paymentId);
+        }
+        if ($entry[0]['state'] === 'draft') {
+    //        Log::info("Payment $paymentId is already in draft state");
+            return true;
+        }
+        
+        // Set the account.payment to draft
+         $this->execute(
+            'account.payment',
+            'action_draft',
+            [[$paymentId]]
+        );
+    }
+	
+	public function updateMoneyReceiveOrMoneyPayment(bool $isCustomer , int $odooPaymentId,int $odooInvoiceId,string $paymentDate,string $invoiceNumber,int $journalId,int $odooPartnerId,int $paymentMethodLineId , float $amountInInReceivingCurrency , int $odooReceivingCurrencyId )
+    {
+		$paymentId = $odooPaymentId;
+        // $paymentId = 156;
+        // $journalId = 243;
+        // $paymentMethodLineId = 363;
+        // $odooInvoiceId = 9734;
+        // $amountInInReceivingCurrency = 80080;
+        // $odooReceivingCurrencyId = 74;
+        // $paymentDate = '2025-06-11';
+        // $odooPartnerId = 27;
+        // $invoiceNumber = 'INV/2025/00001';
+        $inBoundOrOutBound = $isCustomer ? 'inbound' : 'outbound' ;
+        $customerOrSupplier = $isCustomer ? 'customer' : 'supplier';
+
+
+     // Step 1: Set the payment to draft, this unlink payment to invoice id, where invoice state is 'not paid'
+  
+    $this->setPaymentToDraft($paymentId);
+
+ 
+
+   // Step 2: Delete the payment - In This case the serial of the payment is not deleted it is preserved
+        try {
+            $postResult = $this->execute(
+                'account.payment',
+                'unlink',
+                [[$paymentId]]
+            );
+
+            if ($postResult !== true) {
+                throw new Exception("Failed to delete  payment: " . json_encode($postResult));
+            }
+        } catch (\Exception $e) {
+ //           Log::error("Failed to delete payment", ['paymentId' => $paymentId, 'error' => $e->getMessage()]);
+            throw $e;
+        }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+      
+    // Step 3: create payment again this will generate new payment id
+
+         $context = [
+                'active_model' => 'account.move',
+                'active_ids' => [$odooInvoiceId],
+            ];
+
+
+         $paymentWizardId = $this->models->execute_kw(
+                $this->db,
+                $this->uid,
+                $this->password,
+                'account.payment.register',
+                'create',
+                [[
+                    'journal_id' => $journalId,
+                    'amount' => $amountInInReceivingCurrency,
+                    'currency_id'=>$odooReceivingCurrencyId,
+                    'payment_date' => $paymentDate,
+                    'communication' => $invoiceNumber,
+                    'partner_id' => $odooPartnerId,
+                    'payment_type' => $inBoundOrOutBound,
+                    'partner_type' => $customerOrSupplier ,
+                    'payment_method_line_id' => $paymentMethodLineId
+
+                ]],
+                ['context' => $context]
+            );
+            
+           
+
+            $paymentResult = $this->models->execute_kw(
+                $this->db,
+                $this->uid,
+                $this->password,
+                'account.payment.register',
+                'action_create_payments',
+                [[$paymentWizardId]],
+                ['context' => $context]
+            );
+           
+       
+            return [
+            'odoo_id'=>$paymentResult['res_id'],
+            
+             ];
+
+
+}
+
 	
 	
 }

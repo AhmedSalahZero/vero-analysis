@@ -25,7 +25,7 @@ class AmountCanNotBeGreaterThanEndBalanceAtPaymentDate implements ImplicitRule
 		$this->account_type_id = $accountTypeId;
 		$this->account_number = $accountNumber;
 		$this->financial_institution_id = $financialInstitutionId; 
-		$this->delivery_date = Carbon::make($deliveryDate)->format('Y-m-d');
+		$this->delivery_date = $deliveryDate ? Carbon::make($deliveryDate)->format('Y-m-d') : null;
 		$this->branch_id = $branchId ;
 		$this->currency = $currency;
 
@@ -40,6 +40,9 @@ class AmountCanNotBeGreaterThanEndBalanceAtPaymentDate implements ImplicitRule
      */
     public function passes($attribute, $value)
     {
+		if(is_null($this->delivery_date)){
+			return false;
+		}
 
 		if($this->type == MoneyPayment::OUTGOING_TRANSFER || $this->type == 'ACTUAL_PAYMENT_DATE' || $this->type == BuyOrSellCurrency::BANK_TO_BANK || $this->type == BuyOrSellCurrency::BANK_TO_SAFE){
 			$response = (new MoneyReceivedController)->updateNetBalanceBasedOnAccountNumber(Request(),$this->company,$this->account_type_id,$this->account_number,$this->financial_institution_id,$this->delivery_date);

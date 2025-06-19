@@ -43,4 +43,11 @@ class StoreInternalMoneyTransferRequest extends FormRequest
 			'amount_can_not_be_greater_than_end_balance_at_payment_date'=>new AmountCanNotBeGreaterThanEndBalanceAtPaymentDate($type,$amount,$this->route('company'),$accountType,$accountNumber,$financialInstitutionId,$date,$branchId,$currency),
         ];
     }
+	public function messages()
+	{
+		return [
+			'transfer_date.required'=>__('Transaction Date Is Required'),
+		];
+	}
+	
 }

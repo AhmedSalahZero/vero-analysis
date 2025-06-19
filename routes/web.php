@@ -1067,6 +1067,7 @@ Route::middleware([])->group(function () {
 					Route::post('store-down-payment-settlement/{downPaymentId}/{partnerId}/{modelType}','DownPaymentContractsController@storeDownPaymentSettlement')->name('store.down.payment.settlement');
 					
 					Route::post('read-odoo-invoices','ReadOdooInvoices@handle')->name('read-odoo-invoices');
+					Route::post('read-odoo-partners','ReadOdooPartners@handle')->name('read-odoo-partners');
 					Route::post('send-odoo-collection-or-payments','SendOdooCollectionOrPayment@handle')->name('send-odoo-collection-or-payments');
 					Route::post('read-expenses','ReadOdooExpense@handle')->name('read-odoo-expenses');
 					 Route::get('allocate-expense/{cashExpense}', 'CashExpenseController@viewAllocation')->name('cash.expense.allocate');

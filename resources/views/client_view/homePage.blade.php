@@ -179,8 +179,8 @@
                                                     @can(uploadSupplierInvoiceData)
                                                     <x-quick-nav :link="route('view.uploading', ['company'=>$company->id , 'model'=>'SupplierInvoice'])">{{ __('Upload Supplier Invoices') }}</x-quick-nav>
                                                     @endcan
-                                                    @can('view financial institutions')
-                                                    <x-quick-nav :link="route('view.financial.institutions', ['company'=>$company->id ])">{{ __('Go To Cash Vero') }}</x-quick-nav>
+                                                    @can('view cash status dashboard')
+                                                    <x-quick-nav :link="route('view.customer.invoice.dashboard.cash', ['company'=>$company->id ])">{{ __('Go To Cash Vero') }}</x-quick-nav>
                                                     @endcan
 
                                                 </div>

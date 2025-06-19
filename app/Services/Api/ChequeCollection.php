@@ -117,7 +117,7 @@ class ChequeCollection
 
             // dd($accountPayment_id);
 
-            $statementEntryId = null;
+            $moveId = null;
             $statementMoveId = null;
             $statementLineIds = [];
 
@@ -166,7 +166,7 @@ class ChequeCollection
                     'check_move_validity' => true,
                 ];
 
-                $statementEntryId = $this->execute(
+                $moveId = $this->execute(
                     'account.bank.statement.line',
                     'create',
                     [$statementEntryData],
@@ -174,8 +174,8 @@ class ChequeCollection
                 );
 
            
-                if (!is_numeric($statementEntryId)) {
-                    throw new Exception("Failed to create bank statement line: " . json_encode($statementEntryId));
+                if (!is_numeric($moveId)) {
+                    throw new Exception("Failed to create bank statement line: " . json_encode($moveId));
                 }
 
 
@@ -185,7 +185,7 @@ class ChequeCollection
                 $statementData = $this->execute(
                     'account.bank.statement.line',
                     'read',
-                    [[$statementEntryId], ['move_id', 'line_ids']],
+                    [[$moveId], ['move_id', 'line_ids']],
                     []
                 );
 
@@ -193,7 +193,7 @@ class ChequeCollection
 
 
                 if (!is_array($statementData) || empty($statementData) || !isset($statementData[0]['move_id'])) {
-                    throw new Exception("Failed to retrieve move_id for statement entry: $statementEntryId, response: " . json_encode($statementData));
+                    throw new Exception("Failed to retrieve move_id for statement entry: $moveId, response: " . json_encode($statementData));
                 }
 
                 $statementMoveId = $statementData[0]['move_id'][0];
@@ -268,7 +268,7 @@ class ChequeCollection
 
             // Step 9: Return result
             return [
-                'statement_entry_id' => $statementEntryId,
+                'statement_entry_id' => $moveId,
                 'entry_id' => $statementMoveId,
                 'payment_id' => $accountPayment_id,
                 'invoice_state' => !empty($invoiceState) ? $invoiceState[0]['state'] : 'unknown',

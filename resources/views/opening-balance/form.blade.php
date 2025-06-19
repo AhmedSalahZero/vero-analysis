@@ -160,7 +160,7 @@ use App\Models\MoneyReceived ;
 
                             <div class="form-group row">
                                 <div class="col-md-4 ">
-                                    <x-form.date :type="'text'" :classes="'datepicker-input'" :default-value="formatDateForDatePicker(isset($model)  ? $model->getDate() : now())" :model="$model??null" :label="__('Opening Balance Date')" :type="'text'" :placeholder="__('')" :name="'date'" :required="true"></x-form.date>
+                                    <x-form.date :type="'text'" :classes="'datepicker-input'" :default-value="formatDateForDatePicker(isset($model)  ? $model->getDate() : null)" :model="$model??null" :label="__('Opening Balance Date')" :type="'text'" :placeholder="__('')" :name="'date'" :required="true"></x-form.date>
                                 </div>
 
 
@@ -196,7 +196,7 @@ use App\Models\MoneyReceived ;
                                 <x-tables.repeater-table :initEmpty="!isset($model) || !$model->cashInSafeStatements->count()" :firstElementDeletable="true" :repeater-with-select2="true" :parentClass="'show-class-js'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=true">
                                     <x-slot name="ths">
                                         @foreach([
-                                        __('Branch')=>'col-md-1',
+                                        __('Safe')=>'col-md-1',
                                         __('Amount')=>'col-md-1',
                                         __('Currency')=>'col-md-1',
                                         __('Exchange <br> Rate')=>'col-md-1'

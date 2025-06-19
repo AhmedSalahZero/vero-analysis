@@ -6406,6 +6406,11 @@ function getHeaderMenu($currentCompany = null)
 		'show'=>$canViewGeneralSetting ,
 		'submenu'=> [
 			[
+				'title'=>__('Cash Expense'),
+			'link'=>route('cash.expense.category.index', ['company'=>$companyId]),
+			'show'=>$canViewCashExpenseCategories,
+			],
+			[
 				'title'=>__('Customers'),
 				'link'=>route('customers.index',['company'=>$companyId]),
 				'show'=>$canViewCustomersSettings 
@@ -6415,11 +6420,7 @@ function getHeaderMenu($currentCompany = null)
 				'link'=>route('suppliers.index',['company'=>$companyId]),
 				'show'=>$canViewSuppliersSettings 
 			],
-			[
-				'title'=>__('Branches / Safe'),
-				'link'=>route('branches.index',['company'=>$companyId]),
-				'show'=>$canViewBranchesSettings 
-			],
+			
 			[
 				'title'=>__('Subsidiary Companies'),
 				'link'=>route('subsidiary.companies.index',['company'=>$companyId]),
@@ -6441,6 +6442,17 @@ function getHeaderMenu($currentCompany = null)
 				'show'=>$canViewOtherPartnersSettings 
 			],
 			[
+				'title'=>__('Deductions'),
+				'link'=>route('deductions.index',['company'=>$companyId]),
+				'show'=>$canViewDeductionsSettings 
+			],
+			
+			[
+				'title'=>__('Other Settings'),
+				'link'=>'#',
+				'show'=>true ,
+				'submenu'=>[
+					[
 				'title'=>__('Business Sectors'),
 				'link'=>route('business.sectors.index',['company'=>$companyId]),
 				'show'=>$canViewBusinessSectorSettings 
@@ -6460,22 +6472,9 @@ function getHeaderMenu($currentCompany = null)
 				'link'=>route('sales.persons.index',['company'=>$companyId]),
 				'show'=>$canViewSalesPersonsSettings 
 			],
+				]
+			],
 			
-			[
-				'title'=>__('Deductions'),
-				'link'=>route('deductions.index',['company'=>$companyId]),
-				'show'=>$canViewDeductionsSettings 
-			],
-			[
-				'title'=>__('Cash Expense Categories'),
-			'link'=>route('cash.expense.category.index', ['company'=>$companyId]),
-			'show'=>$canViewCashExpenseCategories,
-			],
-				[
-				'title'=>__('Other Odoo Setting'),
-			'link'=>route('odoo-settings.index', ['company'=>$companyId]),
-			'show'=>$company->hasOdooIntegrationCredentials(),
-			],
 			
 			
 		]
@@ -6630,12 +6629,58 @@ function getHeaderMenu($currentCompany = null)
 				
 					],	
 		],
-
-		'financial-institution'=>[
+		'bank-and-cash-account'=>[
+			'title'=>__('Cash & Bank Accounts'),
+			'show'=>true ,
+			'submenu'=>[
+				[
 			'title'=>__('Financial Institutions'),
 			'link'=>route('view.financial.institutions',['company'=>$companyId]),
 			'show'=>$user->can('view financial institutions')
+				],
+				[
+				'title'=>__('Safe'),
+				'link'=>route('branches.index',['company'=>$companyId]),
+				'show'=>$canViewBranchesSettings 
+				],
+				[
+					'title'=>__('Opening Balances'),
+					'link'=>'#',
+					'show'=>$canViewOpeningBalances ,
+					'submenu'=>[
+						[
+							'title'=>__('Cash & Cheques Opening Balance'),
+							'link'=>route('opening-balance.index', ['company'=>$companyId]),
+							'show'=>$canUpdateCashAndChequesOpeningBalances,
+						],
+						[
+							'title'=>__('Customers Opening Balance'),
+							'link'=>route('customers-opening-balance.index', ['company'=>$companyId]),
+							'show'=>$canUpdateCashAndChequesOpeningBalances,
+						],
+						[
+							'title'=>__('Suppliers Opening Balance'),
+							'link'=>route('suppliers-opening-balance.index', ['company'=>$companyId]),
+							'show'=>$canUpdateCashAndChequesOpeningBalances,
+						],
+		
+					],
+					
+					
+						],
+						[
+				'title'=>__('Other Odoo Integration Settings'),
+				'link'=>route('odoo-settings.index', ['company'=>$companyId]),
+				'show'=>$company->hasOdooIntegrationCredentials(),
+			],
+				],
+				
 		],
+		// 'financial-institution'=>[
+		// 	'title'=>__('Financial Institutions'),
+		// 	'link'=>route('view.financial.institutions',['company'=>$companyId]),
+		// 	'show'=>$user->can('view financial institutions')
+		// ],
 		'customer-sections'=>[
 			'title'=>__('Customer Sections'),
 			'link'=>'#',
@@ -6791,6 +6836,12 @@ function getHeaderMenu($currentCompany = null)
 						'show'=>true,
 						'data-show-notification-modal'=>'read-invoices-modal'
 					],
+						[
+							'title'=>__('Read Partners'), 
+						'link'=>'#',
+						'show'=>true,
+						'data-show-notification-modal'=>'read-partners-modal'
+					],
 					// [
 					// 	'title'=>__('Send Collections Or Payments'),
 					// 	'link'=>'#',
@@ -6813,47 +6864,33 @@ function getHeaderMenu($currentCompany = null)
 						
 					
 						
-						[
-					'title'=>__('Opening Balances'),
-					'link'=>'#',
-					'show'=>$canViewOpeningBalances ,
-					'submenu'=>[
-						[
-							'title'=>__('Cash & Cheques Opening Balance'),
-							'link'=>route('opening-balance.index', ['company'=>$companyId]),
-							'show'=>$canUpdateCashAndChequesOpeningBalances,
-						],
-						[
-							'title'=>__('Customers Opening Balance'),
-							'link'=>route('customers-opening-balance.index', ['company'=>$companyId]),
-							'show'=>$canUpdateCashAndChequesOpeningBalances,
-						],
-						[
-							'title'=>__('Suppliers Opening Balance'),
-							'link'=>route('suppliers-opening-balance.index', ['company'=>$companyId]),
-							'show'=>$canUpdateCashAndChequesOpeningBalances,
-						],
-		
-					]
-						],
+						
 						
 
 			]
 		]
 		,
 		'view letter of guarantee issuance'=>[
-			'title'=>__('LG Issuance'),
+			'title'=>__('LG & LC Issuance'),
+			'show'=>true ,
+			'submenu'=>[
+				[
+			'title'=>__('Letter Of Guarantee (LG) Issuance'),
 			'link'=>route('view.letter.of.guarantee.issuance', ['company'=>$companyId]),
 			'show'=>$user->can('view letter of guarantee issuance'),
 			'submenu'=>[]
-		],
-		'view letter of credit issuance'=>[
-			'title'=>__('LC Issuance'),
+			],
+			[
+			'title'=>__('Letter Of Credit (LC) Issuance'),
 			'link'=>route('view.letter.of.credit.issuance', ['company'=>$companyId]),
 			'show'=>$user->can('view letter of credit issuance'),
 			'submenu'=>[]
-		]
-		,
+			]
+			]
+			
+			
+		],
+		
 		];
 		$isCustomerOrSupplierUploading = in_array('CustomerInvoice',Request()->segments()) || in_array('SupplierInvoice',Request()->segments());
 		if( $company->hasCashVero() && (hasMiddleware('isCashManagement') || $isCustomerOrSupplierUploading || in_array('LoanSchedule',Request()->segments())) ){
@@ -7733,12 +7770,16 @@ function AtLeastOnKeyIsTrue(array $items , string $key){
 }
 function getAllPartnerTypesForSuppliers():array 
 {
-	return ['is_supplier'=>__('Supplier'),'is_subsidiary_company'=>__('Subsidiary Company') , 'is_shareholder'=>__('Shareholder') , 'is_employee'=>__('Employee')];
+	return ['is_supplier'=>__('Supplier'),'is_subsidiary_company'=>__('Subsidiary Company') , 'is_shareholder'=>__('Shareholder') , 'is_employee'=>__('Employee'),
+	'is_other_partner'=>__('Other Partner')
+];
 	
 }
 function getAllPartnerTypesForCustomers():array 
 {
-	return ['is_customer'=>__('Customer'),'is_subsidiary_company'=>__('Subsidiary Company') , 'is_shareholder'=>__('Shareholder') , 'is_employee'=>__('Employee')];
+	return ['is_customer'=>__('Customer'),'is_subsidiary_company'=>__('Subsidiary Company') , 'is_shareholder'=>__('Shareholder') , 'is_employee'=>__('Employee'),
+'is_other_partner'=>__('Other Partner')
+];
 	
 }
 function hasExport(array $fields,int $companyId,$modelName='SalesGathering')

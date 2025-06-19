@@ -170,6 +170,7 @@ use App\Models\MoneyReceived;
 										{{-- display:inline-block ; --}}
 											@include('reports._user_comment_modal',['model'=>$moneyReceived])
 											@include('reports._user_odoo_modal',['model'=>$moneyReceived])
+											@include('reports._integrated_modal',['model'=>$moneyReceived])
 									
 											@if(auth()->user()->can('update money received'))
 											@include('reports._review_modal',['model'=>$moneyReceived])
@@ -264,6 +265,7 @@ use App\Models\MoneyReceived;
                                         <span style="overflow: visible; position: relative; width: 110px">
 											@include('reports._user_comment_modal',['model'=>$moneyReceived])
 											@include('reports._user_odoo_modal',['model'=>$moneyReceived])
+											@include('reports._integrated_modal',['model'=>$moneyReceived])
 											@if(!$moneyReceived->isOpenBalance() )
 											@if(auth()->user()->can('update money received')  )
 											@include('reports._review_modal',['model'=>$moneyReceived])
@@ -367,6 +369,10 @@ use App\Models\MoneyReceived;
 
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px">
+										@include('reports._user_comment_modal',['model'=>$moneyReceived])
+										@include('reports._user_odoo_modal',['model'=>$moneyReceived])
+											@include('reports._integrated_modal',['model'=>$moneyReceived])
+											
 										@if(!$moneyReceived->isOpenBalance()  )
 										@if(auth()->user()->can('update money received') )
 										
@@ -427,12 +433,12 @@ use App\Models\MoneyReceived;
                                                                         </div>
                                                                     </div>
 
-                                                                    <div class="col-md-4 mb-4">
+                                                                    {{-- <div class="col-md-4 mb-4">
                                                                         <label>{{__('Collection Fees')}} @include('star')</label>
                                                                         <div class="kt-input-icon">
                                                                             <input required value="0" type="text" name="collection_fees" class="form-control" placeholder="{{__('Collection Fees')}}">
                                                                         </div>
-                                                                    </div>
+                                                                    </div> --}}
 
 
 
@@ -523,7 +529,7 @@ use App\Models\MoneyReceived;
                                     <th class="bank-max-width align-middle">{{ __('Drawal Bank') }}</th>
                                     <th class="align-middle bank-max-width">{{ __('Account Type') }}</th>
                                     <th class="align-middle">{{ __('Account Number') }}</th>
-                                    <th class="align-middle">{{ __('Collection Fees') }}</th>
+                                    {{-- <th class="align-middle">{{ __('Collection Fees') }}</th> --}}
                                     <th class="align-middle">{!! __('Cheque Actual <br> Collection Date') !!}</th>
                                     <th class="align-middle">{{ __('Control') }}</th>
                                 </tr>
@@ -540,9 +546,12 @@ use App\Models\MoneyReceived;
                                     <td class="bank-max-width">{{ $moneyReceived->cheque->getDrawlBankName() }}</td>
                                     <td class="bank-max-width">{{ $moneyReceived->cheque->getAccountTypeName() }}</td>
                                     <td>{{ $moneyReceived->cheque->getAccountNumber() }}</td>
-                                    <td> {{ $moneyReceived->cheque->getCollectionFeesFormatted() }} </td>
+                                    {{-- <td> {{ $moneyReceived->cheque->getCollectionFeesFormatted() }} </td> --}}
                                     <td class="text-nowrap"> {{ $moneyReceived->cheque->chequeActualCollectionDateFormatted() }} </td>
 									<td>
+										@include('reports._user_odoo_modal',['model'=>$moneyReceived])
+											@include('reports._integrated_modal',['model'=>$moneyReceived])
+											
 										@if($moneyReceived->cheque->isCollected())
 											 <a type="button" class="btn  btn-secondary btn-outline-hover-danger   btn-icon" title="{{ __('Under Collection') }}" href="{{ route('cheque.send.to.under.collection',['company'=>$company->id,'moneyReceived'=>$moneyReceived->id ]) }}"><i class="fa fa-undo"></i></a>
 											@endif 
@@ -603,6 +612,7 @@ use App\Models\MoneyReceived;
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
                                         <span style="overflow: visible; position: relative; width: 110px">
 											@include('reports._user_odoo_modal',['model'=>$money])
+											@include('reports._integrated_modal',['model'=>$money])
 										@if(!$money->isOpenBalance()  )
 										@if(auth()->user()->can('update money received') )
 										@include('reports._review_modal',['model'=>$money])
@@ -693,6 +703,7 @@ use App\Models\MoneyReceived;
                                         <span style="overflow: visible; position: relative; width: 110px">
 											@include('reports._user_comment_modal',['model'=>$moneyReceived])
 											@include('reports._user_odoo_modal',['model'=>$moneyReceived])
+											@include('reports._integrated_modal',['model'=>$moneyReceived])
 										@if(!$moneyReceived->isOpenBalance() )
 										
 											@if(auth()->user()->can('update money received') )
@@ -793,6 +804,7 @@ use App\Models\MoneyReceived;
                                         <span style="overflow: visible; position: relative; width: 110px">
 											@include('reports._user_comment_modal',['model'=>$money])
 											@include('reports._user_odoo_modal',['model'=>$money])
+											@include('reports._integrated_modal',['model'=>$money])
 										@if(!$money->isOpenBalance())
 										@include('reports._review_modal',['model'=>$money])
 										@if(auth()->user()->can('update money received')  )

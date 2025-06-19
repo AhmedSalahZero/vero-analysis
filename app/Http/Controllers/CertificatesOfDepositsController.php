@@ -166,7 +166,7 @@ class CertificatesOfDepositsController
     }
 	public function getCommonDataArr():array 
 	{
-		return ['start_date','account_number','amount','end_date','currency','interest_rate','interest_amount','maturity_amount_added_to_account_id','odoo_code'];
+		return ['start_date','account_number','amount','end_date','currency','interest_rate','interest_amount','maturity_amount_added_to_account_id','odoo_code','deducted_from_account_id'];
 	}
 	public function store(Company $company  ,FinancialInstitution $financialInstitution, StoreCertificateOfDepositRequest $request){
 		
@@ -180,12 +180,19 @@ class CertificatesOfDepositsController
 		$odooCode = $request->get('odoo_code') ;
 		if($company->hasOdooIntegrationCredentials() && $odooCode ){
 			$odooService = new OdooService($company);
-			$data['odoo_id'] = $odooService->chartOfAccount($odooCode)['id'] ;
+			$odooCode = $request->get('odoo_code');
+			$chartOfAccountId = $odooService->getChartOfAccountIdFromOdooCode($odooCode);
+			$data['odoo_id'] = $chartOfAccountId ; 
+			$data['journal_id'] =$odooService->getJournalIdFromChartOfAccountId($chartOfAccountId) ;
 		}
 		$deductedFromAccountId = $request->get('deducted_from_account_id',0) ;
 		
 		$model=$financialInstitution->certificatesOfDeposits()->create($data);
+		/**
+		 * @var CertificateOfDeposit $model
+		 */
 		$model->handleDeductedForBankStatement($financialInstitution->id,$data['start_date'],number_unformat($request->get('amount')),$company->id,$deductedFromAccountId,$request->get('account_number'));
+		$model->handleTdOrCdStoreDepositForOdoo(false);
 		$type = $request->get('type',CertificatesOfDeposit::RUNNING);
 		$activeTab = $type ; 
 		
@@ -205,6 +212,7 @@ class CertificatesOfDepositsController
 	
 	public function update(Company $company , UpdateCertificateOfDepositRequest $request , FinancialInstitution $financialInstitution,CertificatesOfDeposit $certificatesOfDeposit){
 		$deductedFromAccountId = $request->get('deducted_from_account_id',0) ;
+		$accountNumberHasChanged = $deductedFromAccountId != $certificatesOfDeposit->getDeductedFromAccountId();
 		$data['updated_by'] = auth()->user()->id ;
 		$data = $request->only($this->getCommonDataArr());
 		foreach(['start_date','end_date'] as $dateField){
@@ -214,11 +222,14 @@ class CertificatesOfDepositsController
 		$odooCode = $request->get('odoo_code') ;
 		if($company->hasOdooIntegrationCredentials() && $odooCode ){
 			$odooService = new OdooService($company);
-			$data['odoo_id'] = $odooService->chartOfAccount($odooCode)['id'] ;
+			$odooCode = $request->get('odoo_code');
+			$chartOfAccountId = $odooService->getChartOfAccountIdFromOdooCode($odooCode);
+			$data['odoo_id'] = $chartOfAccountId ; 
+			$data['journal_id'] =$odooService->getJournalIdFromChartOfAccountId($chartOfAccountId) ;
 		}
 		$certificatesOfDeposit->update($data);
 	    $certificatesOfDeposit->handleDeductedForBankStatement($financialInstitution->id,$data['start_date'],number_unformat($request->get('amount')),$company->id,$deductedFromAccountId,$request->get('account_number'));
-				
+		$certificatesOfDeposit->handleTdOrCdStoreDepositForOdoo($accountNumberHasChanged);
 		$type = $request->get('type',CertificatesOfDeposit::RUNNING);
 		$activeTab = $type ;
 		return redirect()->route('view.certificates.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'active'=>$activeTab])->with('success',__('Item Has Been Updated Successfully'));
@@ -261,6 +272,7 @@ class CertificatesOfDepositsController
 	public function reverseDeposit(Company $company,Request $request,FinancialInstitution $financialInstitution,CertificatesOfDeposit $certificatesOfDeposit)
 	{
 		$certificateType = CertificatesOfDeposit::RUNNING ;
+		$certificatesOfDeposit->reverseOdooDeposit();
 		$certificatesOfDeposit->update([
 			'deposit_date'=>null,
 			'actual_interest_amount'=>null,
@@ -291,7 +303,7 @@ class CertificatesOfDepositsController
 			'status'=>$certificateType,
 			'break_charge_amount'=>$breakChargeAmount
 		]);
-		
+		$certificatesOfDeposit->storeOdooBreak(false);
 		$accountType = AccountType::where('slug',AccountType::CURRENT_ACCOUNT)->first() ;
 		/**
 		 * * اول حاجه هنضيف دبت بقيمة الشهادة 
@@ -312,7 +324,7 @@ class CertificatesOfDepositsController
 			$certificatesOfDeposit->handleCreditStatement($company->id,$financialInstitution->id , $accountType , $certificatesOfDeposit->getMaturityAmountAddedToAccountNumber() , null , $breakDate,$breakChargeAmount);
 		}
 		
-		return redirect()->route('view.certificates.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id ,'active'=>$certificateType])->with('success',__('Certificate Has Been Marked As Matured'));
+		return redirect()->route('view.certificates.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id ,'active'=>$certificateType])->with('success',__('Certificate Has Been Marked As Broken'));
 	}
 	
 	

@@ -9,6 +9,7 @@ use App\Models\Bank;
 use App\Models\Branch;
 use App\Models\Company;
 use App\Models\Contract;
+use App\Models\Currency;
 use App\Models\CustomerInvoice;
 use App\Models\FinancialInstitution;
 use App\Models\ForeignExchangeRate;
@@ -18,6 +19,7 @@ use App\Models\Partner;
 use App\Models\PayableCheque;
 use App\Models\PurchaseOrder;
 use App\Models\SupplierInvoice;
+use App\OdooSetting;
 use App\Services\Api\OdooPayment;
 use App\Traits\GeneralFunctions;
 use App\Traits\Models\HasCreditStatements;
@@ -318,7 +320,9 @@ class MoneyPaymentController
 		return SupplierInvoice::formatInvoices($invoices,$inEditMode,$moneyPayment);
 	}
 
-	public function store(Company $company , StoreMoneyPaymentRequest $request  , $returnModel = false){
+	public function store(Company $company , StoreMoneyPaymentRequest $request  , $returnModel = false
+	// ,$accountNumberHasChanged = false
+	){
 		$hasUnappliedAmount = (bool)$request->get('unapplied_amount');
 		$partnerType = $request->get('partner_type');
 		$moneyType = $request->get('type');
@@ -330,7 +334,7 @@ class MoneyPaymentController
 		$supplier = Partner::find($partnerId);
 		$supplierId = $supplier->id;
 		$paymentBranchName = $request->get('delivery_branch_id') ;
-		$data = $request->only(['type','delivery_date','currency','payment_currency','down_payment_type','partner_type','user_comment']);
+		$data = $request->only(['type','delivery_date','currency','payment_currency','down_payment_type','partner_type','user_comment','transaction_type','account_bank_statement_line_id','journal_entry_id']);
 		// $isSupplier = $partnerType == 'is_supplier';
 		$data['currency'] = $isGeneralDownPaymentOrSettlementOpening   ? $data['payment_currency'] : $data['currency']??null;
 		$paymentCurrency = $data['payment_currency'];
@@ -387,7 +391,7 @@ class MoneyPaymentController
 				'delivery_bank_id'=>$financialInstitutionId,
 				'account_number'=>$request->input('account_number.'.MoneyPayment::PAYABLE_CHEQUE),
 				'account_type'=>$request->input('account_type.'.MoneyPayment::PAYABLE_CHEQUE),
-				'company_id'=>$company->id,
+				'company_id'=>$company->id
 			];
 		}
 	
@@ -420,7 +424,9 @@ class MoneyPaymentController
 		$paymentDate = $data['delivery_date'];
 		$paymentDate = Carbon::make($paymentDate)->format('Y-m-d');
 		// $foreignExchangeRate = ForeignExchangeRate::getExchangeRateForCurrencyAndClosestDate($currencyName,$mainFunctionCurrency,$paymentDate,$company->id);
-		
+		/**
+		 * @var MoneyPayment $moneyPayment
+		 */
 		 $moneyPayment = MoneyPayment::create($data);
 
 		 $relationData['company_id'] = $company->id ;
@@ -434,12 +440,23 @@ class MoneyPaymentController
 		$moneyPayment->handleCreditStatement($company->id , $financialInstitutionId,$accountType,$accountNumber,$moneyType,$statementDate,$amountInPaymentCurrency,$deliveryBranchId,$paymentCurrency);
 		if($partnerType && $partnerType != 'is_supplier'){
 			$moneyPayment->handlePartnerDebitStatement($partnerType,$partnerId, $moneyPayment->id,$company->id,$statementDate,$invoiceCurrencyAmount,$paymentCurrency,$bankNameOrBranchName , $accountType , $accountNumber);
+			$moneyPayment->storeNonCustomerOrSupplierOdooExpense();
 		}
+		/**
+		 * * دي علشان لو كان مثلا
+		 * * employee 
+		 * * بس في التعديل غيرها ل
+		 * * supplier 
+		 * * يبقي لازم تحذف ال employee
+		 */
+		// if($partnerType == 'is_supplier' && $moneyPayment->journal_entry_id && $moneyPayment->account_bank_statement_line_id){
+		// 	$moneyPayment->unlinkNonCustomerOrSupplierOdooExpense();
+		// }
 		/**
 		 * * For Money Payment Only
 		 */
 		$totalWithholdAmount = $moneyPayment->storeNewSettlement(
-			$request->get('settlements',[]),$partnerId,$company);
+		$request->get('settlements',[]),$partnerId,$company);
 		$moneyPayment->update([
 			'total_withhold_amount'=>$totalWithholdAmount
 		]);
@@ -486,7 +503,7 @@ class MoneyPaymentController
 		$selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
 		$accountTypes = AccountType::onlyCashAccounts()->get();
 		$financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
-		$partnerType = $moneyPayment->partner->getType();
+		$partnerType = $moneyPayment->partner->getSupplierType();
 		$suppliers =  $supplierInvoiceId ?  Partner::orderBy('name')->where('id',CustomerInvoice::find($supplierInvoiceId)->supplier_id )->where('company_id',$company->id)->has('contracts')->pluck('name','id')->toArray() :Partner::where('is_supplier',1)->where('company_id',$company->id)->has('contracts')->pluck('name','id')->toArray();
 		/**
 		 * * for contracts
@@ -524,19 +541,25 @@ class MoneyPaymentController
 
 	public function update(Company $company , StoreMoneyPaymentRequest $request , moneyPayment $moneyPayment){
 		$oldSettlementsForMoneyReceivedWithDownPayment  = $moneyPayment->settlementsForDownPaymentThatComeFromMoneyModel ;
-		$companyId = $company->id;
+	//	$companyId = $company->id;
 		$newType = $request->get('type');
+		// $accountNumber =  $request->input('account_number.'.$newType);
+		$request->merge([
+			'journal_entry_id'=>$moneyPayment->journal_entry_id,
+			'account_bank_statement_line_id'=>$moneyPayment->account_bank_statement_line_id,
+		]);
+		// $accountNumberHasChanged = $moneyPayment->getAccountNumber() != $accountNumber;
 		$moneyPayment->deleteRelations();
-		$paymentCurrency = $moneyPayment->getPaymentCurrency();
-		$currencyName = $moneyPayment->getInvoiceCurrency();
-		$exchangeRate = $moneyPayment->getExchangeRate();
+		// $paymentCurrency = $moneyPayment->getPaymentCurrency();
+		// $currencyName = $moneyPayment->getInvoiceCurrency();
+		// $exchangeRate = $moneyPayment->getExchangeRate();
 		$moneyPaidAmountHasChanged = $moneyPayment->getAmount() != $request->input('paid_amount.'.$newType);
 		$moneyPayment->delete();
-		$newMoneyPayment = $this->store($company,$request,true);
+		$newMoneyPayment = $this->store($company,$request);
 		if(!$moneyPaidAmountHasChanged){
-			$paymentDate = $moneyPayment->getDeliveryDate();
-			$mainFunctionCurrency = $company->getMainFunctionalCurrency();
-			$foreignExchangeRate = ForeignExchangeRate::getExchangeRateForCurrencyAndClosestDate($currencyName,$mainFunctionCurrency,$paymentDate,$company->id);
+		//	$paymentDate = $moneyPayment->getDeliveryDate();
+		//	$mainFunctionCurrency = $company->getMainFunctionalCurrency();
+			//$foreignExchangeRate = ForeignExchangeRate::getExchangeRateForCurrencyAndClosestDate($currencyName,$mainFunctionCurrency,$paymentDate,$company->id);
 			$newMoneyPayment->storeNewSettlement(
 				// $paymentCurrency,$currencyName,$exchangeRate,$foreignExchangeRate,
 				$oldSettlementsForMoneyReceivedWithDownPayment->toArray(),$newMoneyPayment->getPartnerId(),$company,1);
@@ -552,6 +575,7 @@ class MoneyPaymentController
 
 	public function destroy(Company $company , MoneyPayment $moneyPayment , DeleteMoneyPaymentRequest $request)
 	{
+		
 		$moneyPayment->deleteRelations();
 		$activeTab = $moneyPayment->getType();
 		$moneyPayment->delete();
@@ -570,10 +594,17 @@ class MoneyPaymentController
 	}
 	public function markChequesAsPaid(Company $company,MarkChequeAsPaidRequest $request)
 	{
+		
+			$hasOdooIntegration = $company->hasOdooIntegrationCredentials();
+			$OdooPaymentService = null ;
+			if($hasOdooIntegration){
+				$OdooPaymentService = new OdooPayment($company);
+			}
+			
 		$moneyPaymentIds = $request->get('cheques') ;
 		$moneyPaymentIds = is_array($moneyPaymentIds) ? $moneyPaymentIds :  explode(',',$moneyPaymentIds);
 		$data = $request->only(['actual_payment_date']);
-		$actualPaymentDate = $request->get('actual_payment_date');
+		$actualPaymentDate = Carbon::make($request->get('actual_payment_date'))->format('Y-m-d');
 		$data['status'] = PayableCheque::PAID;
 		foreach($moneyPaymentIds as $moneyPaymentId){
 			/**
@@ -584,7 +615,7 @@ class MoneyPaymentController
 			$balancesResultJsonResponse = ((new MoneyReceivedController())->updateNetBalanceBasedOnAccountNumber($request,$company,$moneyPayment->getPayableChequeAccountType(),$moneyPayment->getPayableChequeAccountNumber(),$moneyPayment->getPayableChequePaymentBankId(),$actualPaymentDate));
 			$netBalance = $balancesResultJsonResponse->getData()->net_balance;
 			$errMessage = __('Net Balance Less Than Paid Amount');
-			// if(true){
+			
 			if($netBalance < $currentPaidAmount){
 				if($request->ajax()){
 			
@@ -601,6 +632,28 @@ class MoneyPaymentController
 			$moneyPayment->payableCheque->update($data);
 			$currentStatement = $moneyPayment->getCurrentStatement();
 			
+		
+			if($hasOdooIntegration){
+				/**
+				 * @var OdooSetting $odooSetting
+				 */
+			$odooSetting = $company->odooSetting;
+			$financialInstitution = $moneyPayment->payableCheque->deliveryBank;
+			$currency = $moneyPayment->getCurrency();
+			foreach($moneyPayment->settlements as $settlement){
+				$odooId = $settlement->odoo_id ; 
+				$odooCurrencyId =Currency::getOdooId($currency);
+				$accountTypeId=$moneyPayment->payableCheque->getAccountTypeId();
+				$accountNumber = $moneyPayment->payableCheque->getAccountNumber();
+				$journalId = $financialInstitution->getJournalIdForAccount($accountTypeId,$accountNumber);
+				$debitAccountOdooId = $financialInstitution->getOdooIdForAccount($accountTypeId,$accountNumber);
+				$creditOdooAccountId = $odooSetting->getChequesPayableId();
+				$odooPartnerId = $moneyPayment->getPartnerOdooId();
+				$ref = 'Cheque Collection ' . $settlement->getInvoiceNumber();
+				$OdooPaymentService->chequePayment($odooId,$currentPaidAmount,$actualPaymentDate,$odooCurrencyId,$journalId,$creditOdooAccountId,$debitAccountOdooId,$odooPartnerId,$ref);
+			}
+		}
+		
 			if($currentStatement){
 				$currentStatement->handleFullDateAfterDateEdit(Carbon::make($data['actual_payment_date'])->format('Y-m-d'),$currentStatement->debit,$currentStatement->credit);
 			}
@@ -616,31 +669,6 @@ class MoneyPaymentController
 		return redirect()->route('view.money.payment',['company'=>$company->id,'active'=>MoneyPayment::PAYABLE_CHEQUE]);
 
 	}
-	// public function markOutgoingTransfersAsPaid(Company $company,Request $request)
-	// {
-	// 	$moneyPaymentIds = $request->get('cheques') ;
-	// 	$moneyPaymentIds = is_array($moneyPaymentIds) ? $moneyPaymentIds :  explode(',',$moneyPaymentIds);
-	// 	$data = $request->only(['actual_payment_date']);
-	// 	$data['status'] = OutgoingTransfer::PAID;
-	// 	foreach($moneyPaymentIds as $moneyPaymentId){
-	// 		$moneyPayment = MoneyPayment::find($moneyPaymentId) ;
-	// 		$moneyPayment->outgoingTransfer->update($data);
-	// 		if($currentStatement = $moneyPayment->getCurrentStatement()){
-	// 			$currentStatement->handleFullDateAfterDateEdit(Carbon::make($data['actual_payment_date'])->format('Y-m-d'),$currentStatement->debit,$currentStatement->credit);
-
-	// 		}
-
-	// 	}
-	// 	if($request->ajax()){
-	// 		return response()->json([
-	// 			'status'=>true ,
-	// 			'msg'=>__('Good'),
-	// 			'pageLink'=>route('view.money.payment',['company'=>$company->id,'active'=>MoneyPayment::OUTGOING_TRANSFER])
-	// 		]);
-	// 	}
-	// 	return redirect()->route('view.money.payment',['company'=>$company->id,'active'=>MoneyPayment::OUTGOING_TRANSFER]);
-
-	// }
 
 	public function getAccountNumbersForAccountType(Company $company ,  Request $request ,  string $accountType,?string $selectedCurrency=null , ?int $financialInstitutionId = 0){
 		$accountType = AccountType::find($accountType);
@@ -657,16 +685,24 @@ class MoneyPaymentController
 		]);
 	}
 	public function getSuppliersWithOpeningBalance(Request $request , Company $company ){
-		if($request->get('type') != 'settlement-of-opening-balance'){
-			return response()->json([
-			'supplierInvoices'=>SupplierInvoice::orderBy('supplier_name')
-			->where('company_id',$company->id)->pluck('supplier_id','supplier_name')
-		]);
+		
+		$type =$request->get('type') ;
+		$partners = [];
+		if($type == 'over_contract'){
+			$partners=  Partner::has('contracts')->where('is_supplier',1)->orderBy('name')
+									->where('company_id',$company->id)->pluck('id','name');
+		}
+		elseif($type == 'general'){
+			$partners =  Partner::where('is_supplier',1)->orderBy('name')
+									->where('company_id',$company->id)->pluck('id','name');
+		}
+		elseif($type == 'settlement-of-opening-balance'){
+			$partners = SupplierInvoice::orderBy('supplier_name')
+			->whereNotNull('opening_balance_id')
+			->where('company_id',$company->id)->pluck('supplier_id','supplier_name');
 		}
 		return response()->json([
-			'supplierInvoices'=>SupplierInvoice::orderBy('supplier_name')
-			->whereNotNull('opening_balance_id')
-			->where('company_id',$company->id)->pluck('supplier_id','supplier_name')
+			'invoices' => $partners 
 		]);
 	}
 	public function getCashInSafeStatementEndBalance(Request $request , Company $company , int $branchId = null , string $currencyName = null , string $deliveryDate = null){

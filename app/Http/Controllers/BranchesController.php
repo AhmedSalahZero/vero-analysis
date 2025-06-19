@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreBranchRequest;
 use App\Models\CashVeroBranch;
 use App\Models\Company;
+use App\Repositories\SafeRepository;
 use App\Services\Api\OdooService;
 use App\Traits\GeneralFunctions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use League\Flysystem\SafeStorage;
 
 class BranchesController
 {
@@ -94,8 +96,8 @@ class BranchesController
 			'models'=>$models,
 			'filterDates'=>$filterDates,
 			'indexRouteName'=>'branches.index',
-			'title'=>__('Branches'),
-			'tableTitle'=>__('Branches Table'),
+			'title'=>__('Safe'),
+			'tableTitle'=>__('Safe Table'),
 			'createPermissionName'=>'create branches',
 			'updatePermissionName'=>'update branches',
 			'deletePermissionName'=>'delete branches',
@@ -119,13 +121,23 @@ class BranchesController
 		];
 	}
 	
-	public function store(Company $company   , StoreBranchRequest $request){
+	public function store(Company $company   , StoreBranchRequest $request,SafeRepository $safeRepository){
 		$type = CashVeroBranch::BRANCHES;
-		$model = new CashVeroBranch ;
-		$model->storeBasicForm($request);
-		if($company->hasOdooIntegrationCredentials()){
-			$odoo = new OdooService($company);
-			$odoo->syncBranchSafe($model->odoo_code,$company->id);
+		$hasOdoo  = $company->hasOdooIntegrationCredentials();
+		$odooService = null ;
+		if($hasOdoo){
+			$odooService = new OdooService($company);
+			
+		}
+		foreach($request->get('safe',[]) as $currentSafeArr){
+			$currentSafeArr = array_merge($currentSafeArr , [
+				'company_id'=>$company->id,
+				'created_by'=>auth()->user()->id
+			]);
+			$model = $safeRepository->store($currentSafeArr);
+			if($hasOdoo){
+				$odooService->syncBranchSafe($model->odoo_code,$company->id);
+			}
 		}
 		$activeTab = $type ; 
 		return response()->json([
@@ -142,16 +154,20 @@ class BranchesController
 	
 	public function update(Company $company, StoreBranchRequest $request , CashVeroBranch $branch){
 		
-		$newName = $request->get('name');
-		$odooCode = $request->get('odoo_code');
-		$branch->update([
-			'name'=>$newName,
-			'odoo_code'=>$odooCode
-		]);
-		if($company->hasOdooIntegrationCredentials()){
-			$odoo = new OdooService($company);
-			$odoo->syncBranchSafe($branch->odoo_code,$company->id);
+		// $newName = $request->get('name');
+		// $odooCode = $request->get('odoo_code');
+		$hasOdoo = $company->hasOdooIntegrationCredentials();
+		$odooService = null;
+		if($hasOdoo){
+			$odooService = new OdooService($company);
 		}
+		foreach($request->get('safe',[]) as $safeArr){
+			$branch->update($safeArr);
+			if($hasOdoo){
+				$odooService->syncBranchSafe($branch->odoo_code,$company->id);
+			}
+		}
+	
 		$type = CashVeroBranch::BRANCHES;
 		// $this->store($company,$request);
 		$activeTab = $type ;

@@ -181,7 +181,6 @@ use App\Models\MoneyReceived ;
 
                         </div>
                     </div>
-
                     <div class="js-template ">
 					     <div class="col-md-12 js-duplicate-node">
                           {{-- {!! $fullClassName::getSettlementsTemplate() !!} --}}

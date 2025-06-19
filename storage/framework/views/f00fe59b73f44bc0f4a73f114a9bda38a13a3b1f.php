@@ -20,6 +20,9 @@
 
     </script>
     <style>
+	.text-blue{
+		color:blue !important;
+	}
 	.modal-90{
 		width:95% !important;
 		max-width:95% !important;
@@ -1202,7 +1205,7 @@
 
 
                 <div class="modal fade read-modal read-invoices-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                    <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+                    <div class="modal-dialog modal-md modal-dialog-centered" role="document">
                         <form action="<?php echo e(route('read-odoo-invoices',['company'=>$company->id])); ?>" class="modal-content" method="post">
 
 
@@ -1217,12 +1220,7 @@
                                 <div class="customize-elements">
                                     <table class="table">
                                         <thead>
-                                            <tr>
-
-                                                <th class="text-center"> <?php echo e(__('From Date')); ?> </th>
-                                                <th class="text-center"> <?php echo e(__('To Date')); ?> </th>
-
-                                            </tr>
+                                            
                                         </thead>
                                         <tbody>
 
@@ -1232,10 +1230,9 @@
 
 
                                                 <td>
-
                                                     
                                                     <label for="odoo-start-date" class="text-nowrap mr-3"><?php echo e(__('Start Date')); ?></label>
-                                                    <input id="odoo-start-date" type="date" value="<?php echo e(now()->subMonths(6)->format('Y-m-d')); ?>" class="form-control" name="odoo_start_date">
+                                                    <input id="odoo-start-date" type="date" min="<?php echo e($company->getIntegrationStartDate()); ?>" value="<?php echo e($company->getIntegrationStartDate()); ?>" class="form-control" name="odoo_start_date">
                                                     
 
                                                 </td>
@@ -1244,7 +1241,7 @@
 
                                                     
                                                     <label for="odoo-end-date" class="text-nowrap mr-3"><?php echo e(__('End Date')); ?></label>
-                                                    <input id="odoo-end-date" type="date" value="<?php echo e(now()->format('Y-m-d')); ?>" class="form-control" name="odoo_end_date">
+                                                    <input id="odoo-end-date" type="date" value="<?php echo e(\Carbon\Carbon::make($company->getIntegrationStartDate())->addMonth()->format('Y-m-d')); ?>" class="form-control" name="odoo_end_date">
                                                     
 
                                                 </td>
@@ -1267,6 +1264,68 @@
                         </form>
                     </div>
                 </div>
+				
+				 <div class="modal fade read-modal read-partners-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                    <div class="modal-dialog modal-md modal-dialog-centered" role="document">
+                        <form action="<?php echo e(route('read-odoo-partners',['company'=>$company->id])); ?>" class="modal-content" method="post">
+
+
+                            <?php echo csrf_field(); ?>
+                            <div class="modal-header">
+                                <h5 class="modal-title" style="color:#0741A5 !important" id="exampleModalLongTitle"><?php echo e(__('Read Partners')); ?></h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="customize-elements">
+                                    <table class="table">
+                                        <thead>
+                                            
+                                        </thead>
+                                        <tbody>
+
+
+
+                                            <tr>
+
+
+                                                <td>
+                                                    
+                                                    <label for="odoo-start-date" class="text-nowrap mr-3"><?php echo e(__('Start Date')); ?></label>
+                                                    <input id="odoo-start-date" type="date" min="<?php echo e($company->getIntegrationStartDate()); ?>" value="<?php echo e($company->getIntegrationStartDate()); ?>" class="form-control" name="odoo_start_date">
+                                                    
+
+                                                </td>
+
+                                                <td>
+
+                                                    
+                                                    <label for="odoo-end-date" class="text-nowrap mr-3"><?php echo e(__('End Date')); ?></label>
+                                                    <input id="odoo-end-date" type="date" value="<?php echo e(\Carbon\Carbon::make($company->getIntegrationStartDate())->addMonth()->format('Y-m-d')); ?>" class="form-control" name="odoo_end_date">
+                                                    
+
+                                                </td>
+
+
+
+
+
+                                            </tr>
+
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn  btn-primary "><?php echo e(__('Submit')); ?></button>
+                                <button type="button" class="btn btn-primary" data-dismiss="modal"><?php echo e(__('Close')); ?></button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+				
 				
 				
 				 <div class="modal fade send-modal send-invoices-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -1303,7 +1362,7 @@
 
                                                     
                                                     <label for="odoo-send-start-date" class="text-nowrap mr-3"><?php echo e(__('Start Date')); ?></label>
-                                                    <input id="odoo-send-start-date" type="date" value="<?php echo e(now()->subMonths(6)->format('Y-m-d')); ?>" class="form-control" name="odoo_start_date">
+                                                    <input id="odoo-send-start-date" type="date" min="<?php echo e($company->getIntegrationStartDate()); ?>" value="<?php echo e($company->getIntegrationStartDate()); ?>" class="form-control" name="odoo_start_date">
                                                     
 
                                                 </td>
@@ -1337,10 +1396,8 @@
                 </div>
 				
 				<div class="modal fade send-modal read-expenses-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                    <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+                    <div class="modal-dialog modal-md modal-dialog-centered" role="document">
                         <form action="<?php echo e(route('read-odoo-expenses',['company'=>$company->id])); ?>" class="modal-content" method="post">
-
-
                             <?php echo csrf_field(); ?>
                             <div class="modal-header">
                                 <h5 class="modal-title" style="color:#0741A5 !important" id="exampleModalLongTitle"><?php echo e(__('Read Approved Expenses')); ?></h5>
@@ -1352,12 +1409,7 @@
                                 <div class="customize-elements">
                                     <table class="table">
                                         <thead>
-                                            <tr>
-
-                                                <th class="text-center"> <?php echo e(__('From Date')); ?> </th>
-                                                <th class="text-center"> <?php echo e(__('To Date')); ?> </th>
-
-                                            </tr>
+                                            
                                         </thead>
                                         <tbody>
 
@@ -1370,7 +1422,7 @@
 
                                                     
                                                     <label for="odoo-send-start-date" class="text-nowrap mr-3"><?php echo e(__('Start Date')); ?></label>
-                                                    <input id="odoo-send-start-date" type="date" value="<?php echo e(now()->subMonths(6)->format('Y-m-d')); ?>" class="form-control" name="odoo_start_date">
+                                                    <input id="odoo-send-start-date" type="date" min="<?php echo e($company->getIntegrationStartDate()); ?>" value="<?php echo e($company->getIntegrationStartDate()); ?>" class="form-control" name="odoo_start_date">
                                                     
 
                                                 </td>
@@ -2396,6 +2448,10 @@
         $(document).on('click', '[data-show-notification-modal="read-invoices-modal"]', function(e) {
             e.preventDefault();
             $('.read-invoices-modal').modal('show');
+        })
+		$(document).on('click', '[data-show-notification-modal="read-partners-modal"]', function(e) {
+            e.preventDefault();
+            $('.read-partners-modal').modal('show');
         })
         $(document).on('click', '[data-show-notification-modal="send-invoices-modal"]', function(e) {
             e.preventDefault();

@@ -3,9 +3,10 @@
 namespace App\Models;
 
 use App\Models\FullySecuredOverdraft;
-use App\Services\Api\InternalMoneyTransfer as OdooInternalMoneyTransfer;
+
 use App\Traits\HasBasicStoreRequest;
 use App\Traits\HasCompany;
+use App\Traits\Models\HasOdooMoneyTransfer;
 use App\Traits\Models\HasUserComment;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
@@ -16,7 +17,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class InternalMoneyTransfer extends Model 
 {
-	use HasBasicStoreRequest ,HasUserComment,HasCompany;
+	use HasBasicStoreRequest ,HasUserComment,HasCompany,HasOdooMoneyTransfer;
 	const BANK_TO_BANK = 'bank-to-bank';
 	const BANK_TO_SAFE = 'bank-to-safe';
 	const SAFE_TO_BANK = 'safe-to-bank';
@@ -177,6 +178,10 @@ class InternalMoneyTransfer extends Model
     {
         return $this->currency ;
     }
+	public function getCurrencyInMainName()
+    {
+        return $this->getCurrency() ;
+    }
 	public function getCurrencyFormatted()
     {
         return $this->getCurrency() ;
@@ -185,6 +190,14 @@ class InternalMoneyTransfer extends Model
     {
         return $this->amount ?: 0;
     }
+	public function getAmountInCurrency()
+	{
+		return $this->getAmount();
+	}
+	public function getAmountInMainCurrency()
+	{
+		return $this->getAmount();
+	}
 	public function getPaidAmount()
 	{
 		return $this->getAmount();
@@ -250,7 +263,7 @@ class InternalMoneyTransfer extends Model
 	}
     public function deleteRelations()
     {
-	
+		$this->deleteOdoo();
         $this->cleanOverdraftBankStatements->each(function (CleanOverdraftBankStatement $cleanOverdraftBankStatement) {
 			$cleanOverdraftBankStatement->delete();
 		});
@@ -429,86 +442,6 @@ class InternalMoneyTransfer extends Model
 	{
 		return $this->cheque_number ; 
 	}
-	public function storeOdoo(Company $company,string $date,int $outBankOdooId,int $outJournalId,int $inJournalId,int $inBankOdooId,float $amount,string $currencyName)
-	{
 	
-		$odooCurrencyId = Currency::getOdooId($currencyName);
-		$internalMoneyTransferService = (new OdooInternalMoneyTransfer($company));
-		if($this->outbound_account_bank_statement_odoo_id && $this->outbound_journal_entry_id){
-			$sendMoneyResult = $internalMoneyTransferService->updateSendMoneyTo($this->outbound_journal_entry_id,$this->outbound_account_bank_statement_odoo_id,$date ,$amount,$odooCurrencyId, $outJournalId, $outBankOdooId );
-		}else{
-			$sendMoneyResult = $internalMoneyTransferService->sendMoneyTo($date ,$amount,$odooCurrencyId, $outJournalId, $outBankOdooId );
-			$this->outbound_account_bank_statement_odoo_id = $sendMoneyResult['account_bank_statement_line_id'] ;
-			$this->outbound_journal_entry_id = $sendMoneyResult['journal_entry_id'] ;
-		}
-		if($this->in_account_bank_statement_odoo_id && $this->inbound_journal_entry_id){
-			$receiveResult = $internalMoneyTransferService->updateReceiveMoneyTo($this->inbound_journal_entry_id,$this->in_account_bank_statement_odoo_id,$date ,$amount,$odooCurrencyId, $inJournalId, $inBankOdooId );
-		}else{
-			$receiveResult = $internalMoneyTransferService->storeReceiveMoneyTo($date ,$amount,$odooCurrencyId, $inJournalId, $inBankOdooId );
-			$this->inbound_account_bank_statement_odoo_id = $receiveResult['account_bank_statement_line_id'] ;
-			$this->inbound_journal_entry_id = $receiveResult['journal_entry_id'] ;
-		}
-		$this->save();
-	}
-	public function deleteOdoo()
-	{
-		$company = $this->company;
-		if($company->hasOdooIntegrationCredentials()){
-			$internalMoneyTransferService = (new OdooInternalMoneyTransfer($company));
-			if($this->inbound_account_bank_statement_odoo_id){
-				$internalMoneyTransferService->cancelMoneyTransferPayment($this->inbound_account_bank_statement_odoo_id);
-			}
-			if($this->outbound_account_bank_statement_odoo_id){
-				$internalMoneyTransferService->cancelMoneyTransferPayment($this->outbound_account_bank_statement_odoo_id);
-			}	
-		}
-	}
-	public function handleOdooTransfer()
-	{
-		$company = $this->company;
-		if($company->hasOdooIntegrationCredentials()){
-			$fromAccountTypeId = $this->from_account_type_id;
-			$fromAccountNumber = $this->from_account_number;
-			$toAccountTypeId = $this->to_account_type_id;
-			$toAccountNumber = $this->to_account_number;
-			$transferAmount = $this->getAmount();
-			$currencyName = $this->getCurrency();
-			$fromBranchId = $this->from_branch_id;
-			$toBranchId = $this->to_branch_id;
-			$transferDate = $this->getTransferDate();
-			$type = $this->getType();
-			$fromFinancialInstitutionId =$this->from_bank_id;
-			$toFinancialInstitutionId=$this->to_bank_id;
-		    $fromFinancialInstitution = FinancialInstitution::find($fromFinancialInstitutionId);
-			$toFinancialInstitution = FinancialInstitution::find($toFinancialInstitutionId);
-		
-			if($type == InternalMoneyTransfer::BANK_TO_BANK){
-				
-				$fromJournalId = $fromFinancialInstitution->getJournalIdForAccount($fromAccountTypeId,$fromAccountNumber);
-				$fromOdooId = $fromFinancialInstitution->getOdooIdForAccount($fromAccountTypeId,$fromAccountNumber);
-				$toJournalId = $toFinancialInstitution->getJournalIdForAccount($toAccountTypeId,$toAccountNumber);
-				$toOdooId = $toFinancialInstitution->getOdooIdForAccount($toAccountTypeId,$toAccountNumber);
-				$this->storeOdoo($company,$transferDate,$fromOdooId,$fromJournalId,$toJournalId,$toOdooId,$transferAmount,$currencyName);
-			
-		}
-		elseif($type == InternalMoneyTransfer::BANK_TO_SAFE){
-			$fromOdooId = $fromFinancialInstitution->getOdooIdForAccount($fromAccountTypeId,$fromAccountNumber);
-				$fromJournalId = $fromFinancialInstitution->getJournalIdForAccount($fromAccountTypeId,$fromAccountNumber);
-				$branch = Branch::find($toBranchId) ;
-				$toJournalId = $branch->getJournalId();
-				$toOdooId = $branch->getOdooId();
-				$this->storeOdoo($company,$transferDate,$toOdooId,$toJournalId,$fromOdooId,$fromJournalId,$transferAmount,$currencyName);
-		}
-		elseif($type == InternalMoneyTransfer::SAFE_TO_BANK ){
-			$branch = Branch::find($fromBranchId);
-				$fromJournalId = $branch->getJournalId();
-				$fromOdooId = $branch->getOdooId();
-				$toJournalId = $toFinancialInstitution->getJournalIdForAccount($toAccountTypeId,$toAccountNumber);
-				$toOdooId = $toFinancialInstitution->getOdooIdForAccount($toAccountTypeId,$toAccountNumber);
-				$this->storeOdoo($company,$transferDate,$toOdooId,$toJournalId,$fromOdooId,$fromJournalId,$transferAmount,$currencyName);
-				
-		}
-		}
-		
-	}
+	
 }

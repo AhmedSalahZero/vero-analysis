@@ -12,6 +12,7 @@ use App\NotificationSetting;
 use App\OdooSetting;
 use App\Traits\HasBasicStoreRequest;
 use App\Traits\StaticBoot;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -681,5 +682,14 @@ class Company extends Model implements HasMedia
 	public function getOdooId():?int 
 	{
 		return $this->odoo_id ;
+	}
+	public function getIntegrationStartDate():?string 
+	{
+		return $this->odoo_integration_start_date;
+	}
+	public function withinIntegrationDate(string $date)
+	{
+		$odooIntegrationStartDate = $this->getIntegrationStartDate();
+		return Carbon::make($odooIntegrationStartDate)->lessThanOrEqualTo(Carbon::make($date));
 	}
 }

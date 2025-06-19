@@ -26,6 +26,7 @@ class StoreOpeningBalanceRequest extends FormRequest
     {
 
         return [
+			'date'=>'required',
             'cash-in-safe.*.received_branch_id'=>'required',
             'cash-in-safe.*.received_amount'=>['required',new ValidAmountRule],
             'cash-in-safe.*.currency'=>'required|string',

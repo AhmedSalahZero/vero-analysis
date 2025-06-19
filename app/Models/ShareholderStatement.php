@@ -94,47 +94,11 @@ class ShareholderStatement extends Model  implements IHaveStatement
 			
 			static::updated(function (self $model) {
 				
-				$minDate = self::updateNextRows($model);
-				
-				
-				// $isChanged = $model->isDirty('financial_institution_account_id') ;
-				/**
-				 * * دي علشان لو غيرت ال
-				 * * financial_institution_account_id
-				 * * بمعني انه نقل السحبة مثلا من حساب الي حساب اخر .. يبقي هنحتاج نشغل الترجرز علشان الحساب القديم علشان يوزع تاني
-				 */
-				// if($isChanged){
-				// 	$oldAccountIdId=$model->getRawOriginal('financial_institution_account_id');
-				// 	$oldBankStatementId=$model->getRawOriginal('id');
-				// 	// لو ما لقناش اول واحد فوقه هندور علي اول واحد بعدة					
-				// 	$firstBankStatementForOld = self::where('financial_institution_account_id',$oldAccountIdId)->where('id','!=',$oldBankStatementId)->orderBy('id')->first()  ;
-				// 	// لو كانت القديمة دي قبل ما تتغير هي الاستيتم الوحيده بعد كدا انت غيرتها بالتالي الحساب القديم دا معتش ليه لزمة فا هنحذف كل السحبات و التسديدات بتاعته
-				// 	if(!$firstBankStatementForOld){
-				// 		// وتلقائي هيحذف السحوبات settlements
-				// 	}else{
-				// 		DB::table('shareholder_statements')
-				// 		->where('full_date','>=',$minDate)
-				// 		->orderByRaw('full_date asc , id asc')
-				// 		->where('financial_institution_account_id',$model->financial_institution_account_id)->update([
-				// 			'updated_at'=>now()
-				// 		]);
-						
-				// 	}
-					
-				// }
+			
 				
 			});
 			
 			static::deleting(function(self $shareholderStatement){
-				// $oldDate = null ;
-				// if($shareholderStatement->is_debit && Request('receiving_date')||$shareholderStatement->is_credit && Request('delivery_date')){
-				// 		$oldDate = Carbon::make(Request('receiving_date',Request('delivery_date')))->format('Y-m-d');
-				// 		$time  = now()->format('H:i:s');
-				// 		$oldDate = date('Y-m-d H:i:s', strtotime("$oldDate $time")) ;
-				// 		$currentDate = $shareholderStatement->full_date ;
-				// 		$shareholderStatement->full_date = min($oldDate,$currentDate);
-				// }
-			
 				
 				$shareholderStatement->debit = 0;
 				$shareholderStatement->credit = 0;
@@ -142,32 +106,7 @@ class ShareholderStatement extends Model  implements IHaveStatement
 				
 			});
 		}
-		
 
-    // public function moneyReceived()
-    // {
-    //     return $this->belongsTo(MoneyReceived::class, 'money_received_id', 'id');
-    // }
-	// public function certificateOfDeposit()
-    // {
-    //     return $this->belongsTo(CertificatesOfDeposit::class, 'certificate_of_deposit_id', 'id');
-    // }
-	// public function timeOfDeposit()
-    // {
-    //     return $this->belongsTo(TimeOfDeposit::class, 'time_of_deposit_id', 'id');
-    // }
-	// public function letterOfGuaranteeIssuance()
-    // {
-    //     return $this->belongsTo(LetterOfGuaranteeIssuance::class, 'letter_of_guarantee_issuance_id', 'id');
-    // }
-	// public function moneyPayment()
-    // {
-    //     return $this->belongsTo(MoneyPayment::class, 'money_payment_id', 'id');
-    // }
-	// public function cashExpense()
-    // {
-    //     return $this->belongsTo(CashExpense::class, 'cash_expense_id', 'id');
-    // }
     public function getId()
     {
         return $this->id ;

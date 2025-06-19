@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\OpeningBalance;
 use App\Models\OutgoingTransfer;
+use App\Services\Api\CashExpenseOdooService;
 use App\Services\Api\OdooService;
 use App\Traits\Models\HasCreditStatements;
 use App\Traits\Models\HasForeignExchangeGainOrLoss;
@@ -47,6 +48,11 @@ class CashExpense extends Model
 		});
 		
 	}
+
+	public function getPartnerOdooId()
+	{
+		return $this->partner ? $this->partner->odoo_id : null ;
+	}
 	public function getAccountTypeId()
 	{
 	
@@ -66,7 +72,8 @@ class CashExpense extends Model
 		if($this->isPayableCheque()){
 			return $this->payableCheque->getAccountNumber();
 		}
-		throw new \Exception('Custom Exception .. getAccountNumber .. This Method Is Only For Outgoing Transfer Or Payable Cheque');
+		return null ;
+		// throw new \Exception('Custom Exception .. getAccountNumber .. This Method Is Only For Outgoing Transfer Or Payable Cheque');
 	}public function getFinancialInstitutionId()
 	{
 		if($this->isOutgoingTransfer()){
@@ -243,7 +250,7 @@ class CashExpense extends Model
 		 */
 		$outgoingTransfer = $this->outgoingTransfer ;
 		
-		return $outgoingTransfer ? $outgoingTransfer->deliveryBank() : null ;
+		return $outgoingTransfer ? $outgoingTransfer->deliveryBank : null ;
 	}
 	public function getOutgoingTransferDeliveryBankName()
 	{
@@ -450,7 +457,12 @@ class CashExpense extends Model
 	}
 	public function deleteRelations()
 	{
-		
+		$company= $this->company;
+		$journalEntryId = $this->journal_entry_id;
+		if($company->hasOdooIntegrationCredentials() && $journalEntryId){
+					$cashExpenseOdooService = new CashExpenseOdooService($company);
+					$cashExpenseOdooService->unlink($journalEntryId);
+		}
 		$oldType = $this->getType();
 		$oldTypeRelationName = dashesToCamelCase($oldType);
 		$this->$oldTypeRelationName ? $this->$oldTypeRelationName->delete() : null;
@@ -604,12 +616,15 @@ class CashExpense extends Model
 		$amount = $this->getAmount();
 		$result = [];
 		foreach($this->contracts as $contract){
-			$xPlan2Id = $contract->x_plan2_id ?: 87 ;
+			$projectAccountId = $contract->project_account_id  ;
 			$pivotAmount = $contract->pivot->amount ;
 			$pivotPercentage = $pivotAmount / $amount *100 ;
-			if($xPlan2Id){
-				$result[strval($xPlan2Id)] =(float)$pivotPercentage; 
+			if($projectAccountId){
+				$result[strval($projectAccountId)] =(float)$pivotPercentage; 
 			}
+		}
+		if(count($result) == 1){
+			$result["-0"] = 0.0;
 		}
 		return $result;
 	}

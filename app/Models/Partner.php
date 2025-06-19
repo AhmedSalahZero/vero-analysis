@@ -160,10 +160,19 @@ class Partner extends Model
 	{
 		return self::where('name',$name)->where('company_id',$companyId)->first();
 	}
-	public function getType()
+	public function getCustomerType()
 	{
 		foreach($this->toArray() as $columnName => $colValue){
-			if(in_array($columnName,array_merge(array_keys(getAllPartnerTypesForSuppliers()),array_keys(getAllPartnerTypesForCustomers()))) && $colValue == 1){
+			if(in_array($columnName,array_keys(getAllPartnerTypesForCustomers())) && $colValue == 1){
+				return $columnName;
+			}
+		}
+		throw new \Exception('Custom Exception .. No Available Partner Type');
+	}
+	public function getSupplierType()
+	{
+		foreach($this->toArray() as $columnName => $colValue){
+			if(in_array($columnName,array_keys(getAllPartnerTypesForSuppliers())) && $colValue == 1){
 				return $columnName;
 			}
 		}
@@ -235,5 +244,33 @@ class Partner extends Model
 			'name'=>$partnerName
 		]);
 		return $partner;
+	}
+	public function dueToChartOfAccountNumberCode()
+	{
+		if(is_null($this->due_to_chart_of_account_number_code)){
+			throw new \Exception('Due To Chart Of Account Number Not Found .. Please Add It From Other Odoo Setting Form');
+		}
+		return  $this->due_to_chart_of_account_number_code;
+	}
+		public function dueToChartOfAccountNumberId()
+	{
+		if(!$this->due_to_chart_of_account_number_id){
+			throw new \Exception('Due To Chart Of Account Number Not Found .. Please Add It From Other Odoo Setting Form');
+		}
+		return  $this->due_to_chart_of_account_number_id;
+	}
+		public function dueFromChartOfAccountNumberCode()
+	{
+		if(!$this->due_to_chart_of_account_number_code){
+			throw new \Exception('Due To Chart Of Account Number Not Found .. Please Add It From Other Odoo Setting Form');
+		}
+		return  $this->due_to_chart_of_account_number_code;
+	}
+		public function dueFromChartOfAccountNumberId()
+	{
+		if(is_null($this->due_to_chart_of_account_number_id)){
+			throw new \Exception('Due To Chart Of Account Number Not Found .. Please Add It From Other Odoo Setting Form');
+		}
+		return  $this->due_to_chart_of_account_number_id;
 	}
 }

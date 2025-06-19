@@ -55,7 +55,7 @@ use App\Models\CashVeroBranch ;
                
                 <a href="{{ route($createRouteName,['company'=>$company->id,CashVeroBranch::BRANCHES]) }}" class="btn  active-style btn-icon-sm align-self-center">
                     <i class="fas fa-plus"></i>
-                    {{ __('Branch') }}
+                    {{ __('Safe') }}
                 </a>
             </div>
 		@endif 

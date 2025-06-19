@@ -4,8 +4,10 @@ namespace App\Models;
 
 use App\Models\OpeningBalance;
 use App\Models\OutgoingTransfer;
+use App\Services\Api\MoneyPaymentOdooService;
 use App\Traits\Models\HasCreditStatements;
 use App\Traits\Models\HasForeignExchangeGainOrLoss;
+use App\Traits\Models\HasNonCustomerOrSupplier;
 use App\Traits\Models\HasPartnerStatement;
 use App\Traits\Models\HasReviewedBy;
 use App\Traits\Models\HasUserComment;
@@ -23,7 +25,7 @@ class MoneyPayment extends Model
 	protected $with = [
 		// 'payableCheque'
 	];
-	use IsMoney ,HasForeignExchangeGainOrLoss,HasCreditStatements,HasPartnerStatement,HasReviewedBy , HasUserComment;
+	use IsMoney ,HasForeignExchangeGainOrLoss,HasCreditStatements,HasPartnerStatement,HasReviewedBy , HasUserComment,HasNonCustomerOrSupplier;
 	const CASH_PAYMENT  = 'cash_payment';
 	const PAYABLE_CHEQUE  = 'payable_cheque';
 	const OUTGOING_TRANSFER  = 'outgoing-transfer';
@@ -168,6 +170,10 @@ class MoneyPayment extends Model
 	public function getPartnerId()
 	{
 		return $this->partner ? $this->partner->id : 0 ;
+	}
+	public function getPartnerOdooId()
+	{
+		return $this->partner ? $this->partner->odoo_id : 0 ;
 	}
 	public function getSupplierId()
 	{
@@ -320,7 +326,7 @@ class MoneyPayment extends Model
 		 */
 		$outgoingTransfer = $this->outgoingTransfer ;
 		
-		return $outgoingTransfer ? $outgoingTransfer->deliveryBank() : null ;
+		return $outgoingTransfer ? $outgoingTransfer->deliveryBank : null ;
 	}
 	public function getOutgoingTransferDeliveryBankName()
 	{
@@ -655,6 +661,7 @@ class MoneyPayment extends Model
 	}
 	public function deleteRelations()
 	{
+		$this->unlinkNonCustomerOrSupplierOdooExpense();
 		$oldType = $this->getType();
 		$this->settlements->each(function($settlement){
 			$settlement->delete();
@@ -812,6 +819,10 @@ class MoneyPayment extends Model
 	{
 		return $this->hasOne(ShareholderStatement::class,'money_received_id','id');
 	}
+	public function otherPartnerStatement(): HasOne
+	{
+		return $this->hasOne(OtherPartnerStatement::class,'money_received_id','id');
+	}
 	public function employeeStatement(): HasOne
 	{
 		return $this->hasOne(EmployeeStatement::class,'money_received_id','id');
@@ -856,6 +867,54 @@ class MoneyPayment extends Model
 			return self::CASH_PAYMENT;
 		}
 		throw new Exception('No Journal Id Found Please Edit Your Bank / Branch To Add Odoo Code');
+		
+	}
+	
+	
+	
+	public function getOdooIdWithRefOfTransaction():array
+	{
+		$transactionType = $this->getTransactionType();
+		$odooSettings = $this->company->odooSetting;
+		if($transactionType == 'custody'){
+			return [
+				'id'=>$odooSettings->getCustodyAccountId() ,
+				'ref'=>__('Custody Payment To'), 
+			];
+		}
+		if($transactionType == 'loan'){
+			return  [
+				'id'=>$odooSettings->getEmployeeLoanAccountId() ,
+				'ref'=>__('Loan Payment To'), 
+			];
+		}
+		if($transactionType == 'funding-to'&& $this->getPartnerType() == 'is_subsidiary_company'){
+			
+			return [
+				'id'=>$this->partner->dueFromChartOfAccountNumberId(),
+				'ref'=>__('Funding To')
+			];
+		}		
+		if($transactionType == 'funding-to' && $this->getPartnerType() == 'is_shareholder'){
+			return [
+				'id'=>$odooSettings->getShareholderAccount(),
+				'ref'=>__('Funding To')
+			];
+		}
+		if($transactionType == 'dividend-payment' && $this->getPartnerType() == 'is_shareholder'){
+			return [
+				'id'=>$odooSettings->getDividendPaymentAccount(),
+				'ref'=>__('Dividend Payment To')
+			];
+		}
+		if($transactionType == 'insurance-to' ){
+			return [
+				'id'=>$odooSettings->getInsuranceToAccount(),
+				'ref'=>__('Insurance To')
+			];
+		}
+		
+		throw New Exception('Transaction Type ' . $transactionType . ' Does Not Have Account Id');
 		
 	}
 	

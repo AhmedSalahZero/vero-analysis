@@ -14,16 +14,14 @@ use App\Models\SalesOrder;
 use App\Models\SupplierInvoice;
 use App\Services\Api\Traits\AuthTrait;
 use App\Services\Api\Traits\CommonHelper;
-use App\Services\Api\Traits\HasUnlink;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class OdooService
 {
-	use AuthTrait , CommonHelper,HasUnlink;
+	use AuthTrait , CommonHelper;
 	/**
 	 * * import project or contracts
 	 */
@@ -137,7 +135,7 @@ class OdooService
 		$this->getPartners($startDate,$endDate,$companyId);
 		$this->getContracts($startDate,$endDate,$companyId);
 		$invoices = $this->getInvoices($startDate,$endDate);
-		$this->syncDeletedInvoices($companyId);
+		$this->syncDeletedInvoices($companyId,$startDate);
 		foreach($invoices as $invoice){
 		
 			$odooInvoiceId = $invoice['id'];
@@ -161,7 +159,7 @@ class OdooService
 			// }
 			if($isCustomer){
 				$invoiceId =  CustomerInvoice::createForOdoo($odooInvoiceId,$partnerId,$odooPartnerName,$invoiceDate,$invoiceDueDate,$invoiceNumber,$invoiceCurrency,$invoiceAmount,$vatAmount,$withholdAmount,$collectedAmount,$exchangeRate,$soNumber,$companyId);
-				$this->createPaymentFromOdooToInvoice($odooInvoiceId,$invoiceId,$partnerId,$invoiceCurrency,new MoneyReceived());
+		//		$this->createPaymentFromOdooToInvoice($odooInvoiceId,$invoiceId,$partnerId,$invoiceCurrency,new MoneyReceived());
 			}elseif($isSupplier){
 				$invoiceId= SupplierInvoice::createForOdoo($odooInvoiceId,$partnerId,$odooPartnerName,$invoiceDate,$invoiceDueDate,$invoiceNumber,$invoiceCurrency,$invoiceAmount,$vatAmount,$withholdAmount,$collectedAmount,$exchangeRate,$soNumber,$companyId);
 			}
@@ -183,13 +181,14 @@ class OdooService
 		$projects = $this->models->execute_kw($this->db, $this->uid, $this->password, 'project.project', 'read', array($contractIds),[
 			'fields'=>[
 				'id',
-				'x_plan2_id',
+				'account_id',
 				'name',
 				'partner_id',
 				'date_start', // start date
 				'date', //end date
 			]
 		]);
+		dd($projects);
 		foreach($projects as $projectArr){
 			$projectAmount = 0 ;
 			$modelType = 'Customer';
@@ -207,7 +206,7 @@ class OdooService
 			$projectFormatted = [
 				'odoo_id'=>$currentOdooProjectId,
 				'code'=>$code,
-				'x_plan2_id'=>$projectArr['x_plan2_id'][0]??null,
+				'project_account_id'=>$projectArr['account_id'][0]??null,
 				'name'=>$projectArr['name'],
 				'model_type'=>$modelType,
 				'partner_id'=>$partnerId,
@@ -250,7 +249,7 @@ class OdooService
 						'execution_percentage_'.$currentOrderIndex=>100,
 						'start_date_'.$currentOrderIndex=>$currentProjectStartDate,
 						'end_date_'.$currentOrderIndex=>$currentProjectEndDate,
-						'execution_days_'.$currentOrderIndex=>Carbon::make($currentProjectEndDate)->diffInMonths($currentProjectStartDate),
+			//			'execution_days_'.$currentOrderIndex=>Carbon::make($currentProjectEndDate)->diffInMonths($currentProjectStartDate),
 						'collection_days_'.$currentOrderIndex=>0,
 						'company_id'=>$companyId
 						
@@ -261,8 +260,9 @@ class OdooService
 					}
 					$salesOrderFormatted[]=$currentSalesOrderArr;
 				}
+				$projectAmount = $projectAmount ? $projectAmount : 0 ;
 				$projectFormatted['amount'] = $projectAmount ;
-				if(count($salesOrderFormatted)){
+				if(count($salesOrderFormatted) && $projectAmount){
 					$projectFormatted['salesOrders']=$salesOrderFormatted;
 					$contract = $oldProject ? $oldProject : new Contract ;
 					$request = (new Request())->merge($projectFormatted);
@@ -476,13 +476,13 @@ class OdooService
 	// }
 
 
-	public function syncDeletedInvoices(int $companyId)
+	private function syncDeletedInvoices(int $companyId,string $odooStartDate)
 	{
-		$customerInvoices  = CustomerInvoice::where('company_id',$companyId)->where('odoo_id','>',0)->get();
-		$supplierInvoices  = SupplierInvoice::where('company_id',$companyId)->where('odoo_id','>',0)->get();
+		$startDate = Carbon::make($odooStartDate)->subDays(360)->format('Y-m-d');
+		$endDate = $odooStartDate;
+		$customerInvoices  = CustomerInvoice::where('company_id',$companyId)->where('invoice_date','>=',$startDate)->where('invoice_date','<=',$endDate)->where('odoo_id','>',0)->get();
+		$supplierInvoices  = SupplierInvoice::where('company_id',$companyId)->where('invoice_date','>=',$startDate)->where('invoice_date','<=',$endDate)->where('odoo_id','>',0)->get();
 		
-		$startDate = now()->subDays(360)->format('Y-m-d');
-		$endDate = now()->format('Y-m-d');
 		$deletedIds= [];
 		$odooInvoicesIds = array_column($this->getInvoices($startDate,$endDate),'id');
 		foreach([$customerInvoices,$supplierInvoices] as $invoices){
@@ -494,6 +494,7 @@ class OdooService
 						'type'=>getModelNameWithoutNamespace($invoice)
 					];
 					$invoice->delete();
+					
 				}
 			}
 			
@@ -528,6 +529,23 @@ class OdooService
 		}
 		return $odooExpenseItem ;
 	}
+	public function getChartOfAccountIdFromOdooCode(string $odooCode)
+	{
+			$fields = [
+				'id',
+				'code'
+			];
+			$filters = [
+				[
+					
+				]
+		];
+		
+		$chartOfAccounts = $this->fetchData('account.account',$fields,$filters);
+			$chartOfAccounts = collect($chartOfAccounts)->keyBy('code')->toArray();
+			return  $chartOfAccounts[$odooCode]['id']??null;
+			 
+	}
 	public function syncFinancialInstitutions()
 	{
 		$odooSetting = $this->company->odooSetting;
@@ -538,7 +556,7 @@ class OdooService
 			];
 			$filters = [
 				[
-					// ['type','=','bank'],
+					
 				]
 		];
 		$chartOfAccounts = $this->fetchData('account.account',$fields,$filters);
@@ -696,8 +714,6 @@ class OdooService
             $partners = $this->execute('res.partner', 'read', [$partnerIds, $fields]);
 			unset($partners[0]); // هنشيل اول واحد لانه بيكون الادمن
             // Check for employee role by searching hr.employee
-          //  $employeeData = $this->execute('hr.employee', 'search_read', [[['address_id', 'in', $partnerIds]]], ['fields' => ['address_id']]);
-          //  $employeePartnerIds = array_column($employeeData, 'address_id');
 			$test = [];
             // Add role information to each partner
 		
@@ -713,9 +729,58 @@ class OdooService
 				Partner::handlePartnerForOdoo($currentOdooCustomerId ,$currentOdooCustomerName,$isCustomer,$isSupplier,$isEmployee,$companyId  );
             }
             return $partners;
-			
-        
     }
+	
+	 public function getExpenseAccounts(string $startDate, string $endDate, int $companyId): array
+    {
+        // Step 1: Find move lines related to expenses within date range and company
+        $moveLineFields = ['account_id', 'name', 'date', 'amount_currency'];
+		$moveLineFields=[];
+		
+        $moveLineFilters = [
+            [
+                // ['date', '>=', $startDate],
+                // ['date', '<=', $endDate],
+                // ['account_type', '=', 'expense_direct_cost'] // Filter for expense accounts
+                ['account_type', '=', 'expense'] // Filter for expense accounts
+            ]
+        ];
+        $moveLines = $this->fetchData('account.account', $moveLineFields, $moveLineFilters);
+
+        // Step 2: Extract unique account IDs
+        $accountIds = [];
+        foreach ($moveLines as $line) {
+            if (!empty($line['account_id'])) {
+                $accountIds[] = $line['account_id'][0];
+            }
+        }
+        $accountIds = array_unique($accountIds);
+
+        if (empty($accountIds)) {
+            return [];
+        }
+
+        // Step 3: Fetch account details from account.account
+        $accountFields = ['id', 'code', 'name', 'account_type'];
+        $accounts = $this->execute('account.account', 'read', [$accountIds, $accountFields]);
+
+        // Step 4: Enrich accounts with related expense data
+        $result = [];
+        foreach ($accounts as &$account) {
+            // Find move lines for this account to get expense names
+            $expenseNames = [];
+            foreach ($moveLines as $line) {
+                if ($line['account_id'][0] == $account['id']) {
+                    $expenseNames[] = $line['name'] ?: 'Unnamed Expense';
+                }
+            }
+            $account['expense_names'] = array_unique($expenseNames);
+            $result[] = $account;
+        }
+
+        return $result;
+    }
+	
 		
 	
 	public function getPaymentMethodId(int $journalId , int $accountId , string $inboundOrOutbound )

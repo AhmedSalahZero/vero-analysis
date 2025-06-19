@@ -4,6 +4,7 @@ namespace App\Models;
 use App\Models\FullySecuredOverdraft;
 use App\Services\Api\InternalMoneyTransfer as OdooInternalMoneyTransfer;
 use App\Traits\HasBasicStoreRequest;
+use App\Traits\Models\HasOdooMoneyTransfer;
 use App\Traits\Models\HasUserComment;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
@@ -14,7 +15,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class BuyOrSellCurrency extends Model
 {
-	use HasBasicStoreRequest , HasUserComment;
+	use HasBasicStoreRequest , HasUserComment,HasOdooMoneyTransfer;
 	const BANK_TO_BANK = 'bank-to-bank';
 	const BANK_TO_SAFE = 'bank-to-safe';
 	const SAFE_TO_BANK = 'safe-to-bank';
@@ -212,7 +213,14 @@ class BuyOrSellCurrency extends Model
     {
         return number_unformat($this->currency_to_buy_amount ?: 0);
     }
-	
+	public function getAmountInCurrency()
+	{
+		return $this->getAmountToBuy();
+	}
+	public function getAmountInMainCurrency()
+	{
+		return $this->getAmountToSell();
+	}
     public function getAmountToBuyFormatted()
     {
         return number_format($this->getAmountToBuy(), 0);
@@ -454,19 +462,19 @@ class BuyOrSellCurrency extends Model
 	{
 		return $this->cheque_number ; 
 	}
-	public function deleteOdoo()
-	{
+	// public function deleteOdoo()
+	// {
 		
-		$company = $this->company;
-		if($company->hasOdooIntegrationCredentials()){
-			$internalMoneyTransferService = (new OdooInternalMoneyTransfer($company));
-			if($this->inbound_account_bank_statement_odoo_id){
-				$internalMoneyTransferService->cancelMoneyTransferPayment($this->inbound_account_bank_statement_odoo_id);
-			}
-			if($this->outbound_account_bank_statement_odoo_id){
-				$internalMoneyTransferService->cancelMoneyTransferPayment($this->outbound_account_bank_statement_odoo_id);
-			}	
-		}
-	}
+	// 	$company = $this->company;
+	// 	if($company->hasOdooIntegrationCredentials()){
+	// 		$internalMoneyTransferService = (new OdooInternalMoneyTransfer($company));
+	// 		if($this->inbound_account_bank_statement_odoo_id){
+	// 			$internalMoneyTransferService->cancelMoneyTransferPayment($this->inbound_account_bank_statement_odoo_id);
+	// 		}
+	// 		if($this->outbound_account_bank_statement_odoo_id){
+	// 			$internalMoneyTransferService->cancelMoneyTransferPayment($this->outbound_account_bank_statement_odoo_id);
+	// 		}	
+	// 	}
+	// }
 	
 }

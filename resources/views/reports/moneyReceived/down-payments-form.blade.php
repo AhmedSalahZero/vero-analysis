@@ -85,7 +85,7 @@ use App\Models\Partner;
                             <label>{{__('Receiving Date')}}</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
-                                    <input type="text" name="receiving_date" value="{{ isset($model) ? formatDateForDatePicker($model->getReceivingDate()) : formatDateForDatePicker(now()->format('Y-m-d')) }}" class="form-control is-date-css exchange-rate-date update-exchange-rate" readonly placeholder="Select date" id="kt_datepicker_max_date_is_today" />
+                                    <input type="text" name="receiving_date" value="{{ isset($model) ? formatDateForDatePicker($model->getReceivingDate()) : '' }}" class="form-control is-date-css exchange-rate-date update-exchange-rate" readonly placeholder="Select date" id="kt_datepicker_max_date_is_today" />
                                     <div class="input-group-append">
                                         <span class="input-group-text">
                                             <i class="la la-calendar-check-o"></i>
@@ -284,7 +284,7 @@ use App\Models\Partner;
 
 
 
-                            <div class="modal fade" id="js-choose-receiving-branch-id" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                            {{-- <div class="modal fade" id="js-choose-receiving-branch-id" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                 <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header">
@@ -302,7 +302,7 @@ use App\Models\Partner;
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div> --}}
 
 
 
@@ -334,7 +334,7 @@ use App\Models\Partner;
                                             <option value="{{ $branchId }}" {{ isset($model) && $model->getCashInSafeReceivingBranchId() == $branchId ? 'selected' : '' }}>{{ $branchName }}</option>
                                             @endforeach
                                         </select>
-                                        <button id="js-receiving-branch" class="btn btn-sm btn-primary">{{ __('Add New Branch') }}</button>
+                                        {{-- <button id="js-receiving-branch" class="btn btn-sm btn-primary">{{ __('Add New Branch') }}</button> --}}
                                     </div>
                                 </div>
                             </div>
@@ -524,7 +524,7 @@ use App\Models\Partner;
                                 <label>{{__('Due Date')}} @include('star')</label>
                                 <div class="kt-input-icon">
                                     <div class="input-group date">
-                                        <input type="text" value="{{ isset($model) && $model->cheque ? formatDateForDatePicker($model->cheque->getDueDate()):formatDateForDatePicker(now()->format('Y-m-d')) }}" name="due_date" class="form-control is-date-css" readonly placeholder="Select date" id="kt_datepicker_2" />
+                                        <input type="text" value="{{ isset($model) && $model->cheque ? formatDateForDatePicker($model->cheque->getDueDate()):'' }}" name="due_date" class="form-control is-date-css" readonly placeholder="Select date" id="kt_datepicker_2" />
                                         <div class="input-group-append">
                                             <span class="input-group-text">
                                                 <i class="la la-calendar-check-o"></i>
@@ -887,8 +887,8 @@ use App\Models\Partner;
 			type:'get'
 		}).then(function(res){
 			let customersOptions = '';
-			for (var customerName in res.customerInvoices){
-				var customerId = res.customerInvoices[customerName];
+			for (var customerName in res.invoices){
+				var customerId = res.invoices[customerName];
 				customersOptions += ` <option value="${customerId}">${customerName}</option> `
 			}
 			$('select#customer_name').selectpicker('destroy');
@@ -904,8 +904,8 @@ use App\Models\Partner;
 			type:'get'
 		}).then(function(res){
 			let customersOptions = '';
-			for (var customerName in res.customerInvoices){
-				var customerId = res.customerInvoices[customerName];
+			for (var customerName in res.invoices){
+				var customerId = res.invoices[customerName];
 				customersOptions += ` <option value="${customerId}">${customerName}</option> `
 			}
 			console.log(customersOptions)

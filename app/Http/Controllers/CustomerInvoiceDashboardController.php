@@ -808,13 +808,11 @@ class CustomerInvoiceDashboardController extends Controller
 
     public function showInvoiceStatementReport(Company $company, Request $request, int $partnerId, string $currency, string $modelType , string $startDate = null , string $endDate = null , bool $returnResult = false)
     {
-		
 		$showAllPartner = $request->boolean('all_partners');
 		$partnerId = $request->has('partner_id') ? $request->get('partner_id') : $partnerId;
         $fullClassName = ('\App\Models\\' . $modelType) ;
 		$isCustomer = $modelType == 'CustomerInvoice' ? 1 : 0;
 		$isSupplier = $modelType == 'CustomerInvoice' ? 0 : 1;
-		
 		$partners = Partner::when($partnerId && !$showAllPartner ,function(Builder $builder) use ($partnerId,$isSupplier,$isCustomer){
 			$builder->whereIn('id',(array) $partnerId )->where('is_customer',$isCustomer)->where('is_supplier',$isSupplier);
 		})->whereHas($modelType,function(Builder $builder) use($currency){
@@ -824,7 +822,7 @@ class CustomerInvoiceDashboardController extends Controller
 		})
 		->where('company_id',$company->id)
 		->pluck('name','id')->toArray();
-
+		
         $clientIdColumnName = $fullClassName::CLIENT_ID_COLUMN_NAME ;
         $customerStatementText = (new $fullClassName())->getCustomerOrSupplierStatementText();
         $startDate = $startDate ?: $request->get('start_date', now()->subMonths(12)->format('Y-m-d'));

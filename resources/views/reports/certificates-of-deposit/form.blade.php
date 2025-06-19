@@ -95,13 +95,13 @@
                             </div>
                             <div class="kt-portlet__body">
                                 <div class="form-group row">
-                                    <div class="col-md-6 ">
+                                    <div class="col-md-4 ">
                                         <label>{{__('Financial Institution Name')}} </label>
                                         <div class="kt-input-icon">
                                             <input disabled value="{{ $financialInstitution->getName()  }}" type="text" class="form-control" placeholder="{{__('Financial Institution Name')}}">
                                         </div>
                                     </div>
-                                    <div class="col-md-3 ">
+                                    <div class="col-md-2 ">
                                         <x-form.input :model="$model??null" :label="__('Account Number')" :type="'text'" :placeholder="__('Account Number')" :name="'account_number'" :required="true"></x-form.input>
                                     </div>
                                     <div 
@@ -136,7 +136,19 @@
                     </div>
                     @endif
 					
-
+ <div class="col-md-4">
+                                        <label>{{__('Deducted From Account #')}}
+                                            @include('star')
+                                        </label>
+                                        <div class="kt-input-icon">
+                                            <div class="input-group date">
+                                                <select data-current-selected="{{ isset($model) ? $model->getDeductedFromAccountId(): 0 }}" name="deducted_from_account_id"  class="form-control js-append-current-accounts-with-select js-account-id-2">
+                                                    <option value="" selected>{{__('Select')}}</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+									
 
 
 
@@ -158,18 +170,6 @@
                                         <x-form.input :readonly="true" :id="'interest-amount-id'" :model="$model??null" :label="__('Interest Amount')" :type="'text'" :placeholder="__('Interest Amount')" :name="'interest_amount'" :class="'only-greater-than-or-equal-zero-allowed'" :required="true"></x-form.input>
                                     </div>
 									
-									 <div class="col-md-3">
-                                        <label>{{__('Deducted From Account #')}}
-                                            @include('star')
-                                        </label>
-                                        <div class="kt-input-icon">
-                                            <div class="input-group date">
-                                                <select data-current-selected="{{ isset($model) ? $model->getDeductedFromAccountId(): 0 }}" name="deducted_from_account_id"  class="form-control js-append-current-accounts-with-select js-account-id-2">
-                                                    <option value="" selected>{{__('Select')}}</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
 									
                                     <div class="col-md-2">
                                         <label>{{__('Add Maturity Amount To Account')}} @include('star')</label>

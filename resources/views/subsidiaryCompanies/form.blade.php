@@ -90,7 +90,7 @@
                                 </h3>
                             </div>
                         </div>
-						
+
                     </div>
                     <!--begin::Form-->
                     <form class="kt-form kt-form--label-right">
@@ -110,9 +110,9 @@
                                     <div class="form-group">
                                         <div class="row">
 
-											
-											
-                                          <div class="col-md-3 ">
+
+
+                                            <div class="col-md-3 ">
                                                 <label>{{__('Name')}}
                                                     @include('star')
                                                 </label>
@@ -120,6 +120,26 @@
                                                     <input type="text" value="{{ isset($model) ? $model->getName():'' }}" name="name" class="form-control  " placeholder="{{__('Subsidiary Company Name')}}">
                                                 </div>
                                             </div>
+											@if($company->hasOdooIntegrationCredentials())
+											 <div class="col-md-3 ">
+                                                <label>{{__('Due To Chart Of Account Number')}}
+                                                    @include('star')
+                                                </label>
+                                                <div class="kt-input-icon">
+                                                    <input type="text" value="{{ isset($model) ? $model->getDueToChartOfAccountNumber():'' }}" name="due_to_chart_of_account_number_code" class="form-control  " placeholder="{{__('Due To Chart Of Account Number')}}">
+                                                </div>
+                                            </div>
+											
+											 <div class="col-md-3 ">
+                                                <label>{{__('Due From Chart Of Account Number')}}
+                                                    @include('star')
+                                                </label>
+                                                <div class="kt-input-icon">
+                                                    <input type="text" value="{{ isset($model) ? $model->getDueFromChartOfAccountNumber():'' }}" name="due_from_chart_of_account_number_code" class="form-control  " placeholder="{{__('Due From Chart Of Account Number')}}">
+                                                </div>
+                                            </div>
+											
+											@endif
 
 
 
@@ -236,5 +256,5 @@
 
         </script>
 
-       
+
         @endsection

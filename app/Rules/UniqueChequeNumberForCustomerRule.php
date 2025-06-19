@@ -16,7 +16,7 @@ class UniqueChequeNumberForCustomerRule implements Rule
 	protected $id ;
 	protected $drawee_bank_id ;
 	protected $failedMessage ;
-    public function __construct(int $draweeBankId  , $excludeId = null , $failedMessage = null)
+    public function __construct(?int $draweeBankId  , $excludeId = null , $failedMessage = null)
     {
 
         $this->drawee_bank_id = $draweeBankId ;
@@ -33,7 +33,9 @@ class UniqueChequeNumberForCustomerRule implements Rule
      */
     public function passes($attribute, $value)
     {
-
+		if(!$this->drawee_bank_id){
+			return false ;
+		}
         return !DB::table('cheques')->where('company_id',getCurrentCompanyId())
 		->where('drawee_bank_id',$this->drawee_bank_id)
 		->where($attribute,'=',$value)->where('id','!=',$this->id)->exists();

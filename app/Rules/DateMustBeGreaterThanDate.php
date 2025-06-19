@@ -14,7 +14,7 @@ class DateMustBeGreaterThanDate implements ImplicitRule
      */
 	public $largerDate , $date ,$failedMessage ; 
 	
-    public function __construct(string $largerDate , string $date,string $failedMessage)
+    public function __construct(?string $largerDate , string $date,string $failedMessage)
     {
         $this->largerDate = $largerDate;
         $this->date = $date;
@@ -31,6 +31,9 @@ class DateMustBeGreaterThanDate implements ImplicitRule
      */
     public function passes($attribute, $value)
     {
+		if(!$this->largerDate || !$this->date ){
+			return false ;
+		}
         return Carbon::make($this->largerDate)->greaterThan(Carbon::make($this->date));
     }
 

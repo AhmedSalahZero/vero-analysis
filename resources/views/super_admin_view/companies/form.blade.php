@@ -128,12 +128,20 @@
 						
 						 
 						
-						<div class="col-3">
+						<div class="col-3 mb-3">
                             <label>{{__('Password')  }}</label>
                             <div class="kt-input-icon">
                                 <input type="text" name="odoo_db_password" value="{{@$row['odoo_db_password']}}" class="form-control" placeholder="{{__('Odoo  Database Password')}}" >
                             </div>
                         </div>
+						
+						<div class="col-3">
+                            <label>{{__('Integration Start Date')  }}</label>
+                            <div class="kt-input-icon">
+                                <input type="date" name="odoo_integration_start_date" value="{{isset($row['odoo_integration_start_date']) ? $row['odoo_integration_start_date'] : now()->addMonths(9)->format('Y-m-d')}}" class="form-control" placeholder="{{__('Odoo  Integration Start Date')}}" >
+                            </div>
+                        </div>
+						
 						
 
                        

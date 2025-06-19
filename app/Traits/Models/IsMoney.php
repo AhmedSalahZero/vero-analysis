@@ -1,6 +1,7 @@
 <?php
 namespace App\Traits\Models;
 
+use App\Models\Branch;
 use App\Models\CashExpense;
 use App\Models\Company;
 use App\Models\FinancialInstitution;
@@ -81,7 +82,7 @@ trait IsMoney
 				$totalWithholdAmount += $withholdAmount  ;
 				unset($settlementArr['net_balance']);
 				$payment = $this->settlements()->create($settlementArr);
-				if($OdooPaymentService && $syncWithOdoo){
+				if($OdooPaymentService && $syncWithOdoo && $company->withinIntegrationDate($this->getDate()) ){
 					$OdooPaymentService->createPayment($payment);
 				}
 				
@@ -293,7 +294,21 @@ trait IsMoney
 			$totalWithhold+= $settlement->getWithhold() * $invoiceExchangeRate;
 		}
 		return $totalWithhold;
-	}			
+	}		
+	public function getOdooReferenceNames():array 
+	{
+		// dd($this , $this);
+		if($this->odoo_reference){
+			return [$this->odoo_reference];
+		}
+		$result = [];
+		foreach($this->settlements as $settlement){
+			if($settlement->odoo_reference_name){
+				$result[]=$settlement->odoo_reference_name;
+			}
+		}
+		return $result;
+	}	
 	public function getInboundOrOutbound()
 	{
 		return $this instanceof MoneyReceived ? 'inbound':'outbound';
@@ -320,6 +335,10 @@ trait IsMoney
 	{
 		return !$this->synced_with_odoo && $this->odoo_error_message;
 	}
+	public function fullyIntegratedWithOdoo():bool
+	{
+		return !$this->hasOdooError();
+	}
 	public function getOdooError()
 	{
 		if($this->hasOdooError() ){
@@ -331,7 +350,7 @@ trait IsMoney
 	{
 		return (bool) $this->has_unapplied_or_down_payment;
 	}
-	public function getBranch()
+	public function getBranch():?Branch
 	{
 		if($this instanceof MoneyReceived){
 			return $this->cashInSafeReceivingBranch() ;
@@ -370,6 +389,33 @@ trait IsMoney
 			
 		}
 		
+		
+		/**
+		 * @var MoneyPayment $this 
+		 */
+		if($this->isCashPayment() ){
+				return $this->getBranch()->getOdooOutboundTransferPaymentMethodId();
+			}
+			if( $this->isOutgoingTransfer()){
+				$financialInstitution = $this->outgoingTransferDeliveryBank();
+				$accountTypeId = $this->getOutgoingTransferAccountTypeId();
+				$accountNumber = $this->getOutgoingTransferAccountNumber();
+				return $financialInstitution->getOdooPaymentIds($accountTypeId,$accountNumber)['odoo_outbound_transfer_payment_method_id'];				
+			}
+			if($this->isPayableCheque()){
+				$payableCheque = $this->payableCheque ; 
+				$financialInstitution = $payableCheque->deliveryBank;
+				$accountTypeId = $payableCheque->account_type;
+				$accountNumber  = $payableCheque->account_number;
+				return $financialInstitution->getOdooPaymentIds($accountTypeId,$accountNumber)['odoo_outbound_cheque_payment_method_id'];		
+				// if($cheque->isPending()){
+					// return $cheque->branch->getOdooOutboundChequePaymentMethodId();
+				// }
+				// dd('is paid payable cheque');
+			}
+			
+		
+		
 	}
 	public function isChequeOrChequePayment():bool
 	{
@@ -390,7 +436,18 @@ trait IsMoney
 				return $financialInstitution->getJournalIdForAccount($accountTypeId,$accountNumber);		
 				
 		}
+		if($payableCheque = $this->payableCheque){
+				$financialInstitution = $payableCheque->deliveryBank;
+				$accountTypeId = $payableCheque->account_type;
+				$accountNumber  = $payableCheque->account_number;
+				return $financialInstitution->getJournalIdForAccount($accountTypeId,$accountNumber);		
+				
+		}
 		dd('journal id for payable cheque');
 		return null ;
+	}
+	public function getTransactionType()
+	{
+		return $this->transaction_type;
 	}
 }

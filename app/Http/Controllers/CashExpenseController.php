@@ -12,6 +12,7 @@ use App\Models\CashExpenseCategoryName;
 use App\Models\Company;
 use App\Models\Currency;
 use App\Models\FinancialInstitution;
+use App\Models\ForeignExchangeRate;
 use App\Models\OutgoingTransfer;
 use App\Models\Partner;
 use App\Models\PayableCheque;
@@ -231,13 +232,16 @@ class CashExpenseController
 		]);
 	}
 
-	public function store(Company $company , StoreCashExpenseRequest $request , $inUpdateMode = false){
+	public function store(Company $company , StoreCashExpenseRequest $request 
+	// , $inUpdateMode = false
+	){
 		$moneyType = $request->get('type');
 		$bankId = null;
 		$paymentBranchName = $request->get('delivery_branch_id') ;
 		$data = $request->only(['type','odoo_id','payment_date','currency','cash_expense_category_name_id','user_comment','journal_entry_id','account_bank_statement_odoo_id','odoo_id']);
 		$cashExpenseCategoryNameId= $request->get('cash_expense_category_name_id');
 		$cashExpenseCategoryName = CashExpenseCategoryName::find($cashExpenseCategoryNameId);
+		$subCategoryName = $cashExpenseCategoryName->getName();
 		$date = Carbon::make($data['payment_date'])->format('Y-m-d');
 		$currencyName = $data['currency'];
 		$data['user_id'] = auth()->user()->id ;
@@ -288,6 +292,10 @@ class CashExpenseController
 			];
 		}
 		$data['paid_amount'] = $paidAmount ;
+		$amountInCurrency = $paidAmount ;
+		$mainFunctionalCurrency = $company->getMainFunctionalCurrency();
+		$amountInMainFunctionalCurrency = $currencyName != $mainFunctionalCurrency  ? $amountInCurrency * ForeignExchangeRate::getExchangeRateForCurrencyAndClosestDate($currencyName,$mainFunctionalCurrency,$date,$company->id) : $amountInCurrency ;
+		
 		$data['amount_in_invoice_currency'] = $paidAmountInPayingCurrency ;
 		$data['exchange_rate'] =$exchangeRate ;
 		/**
@@ -313,7 +321,9 @@ class CashExpenseController
 		$cashExpense->saveAllocations($contracts);
 		
 			$analytic_distribution = $cashExpense->formatAnalysisDistribution() ;
-		 if($company->hasOdooIntegrationCredentials() && $isCashPaymentOrOutgoingTransfer && !$inUpdateMode){
+		 if($company->hasOdooIntegrationCredentials() && $isCashPaymentOrOutgoingTransfer 
+		//  && !$inUpdateMode
+		 ){
 			$cashExpenseOdooService = new CashExpenseOdooService($company);
 			// $journalId = $isCashExpense ?  $financialInstitutionAccountForCashCover->financialInstitution->getJournalIdForAccount(27,$fromAccountNumber);
 			$journalId = $cashExpenseOdooService->getJournalId($cashExpense) ;
@@ -329,7 +339,7 @@ class CashExpenseController
 		
 			
 			// $creditOdooAccountId = null;
-			$result = $cashExpenseOdooService->createCashExpense($date,$paidAmount,$journalId,$odooCurrencyId,$debitOdooAccountId,$creditOdooAccountId,$analytic_distribution);
+			$result = $cashExpenseOdooService->createCashExpense($subCategoryName,$date,$amountInCurrency,$amountInMainFunctionalCurrency,$journalId,$odooCurrencyId,$debitOdooAccountId,$creditOdooAccountId,$analytic_distribution);
 			
 			$cashExpense->account_bank_statement_odoo_id=$result['account_bank_statement_line_id'];
 			$cashExpense->journal_entry_id=$result['journal_entry_id'];
@@ -340,9 +350,9 @@ class CashExpenseController
 		
 		
 		$activeTab = $moneyType;
-		if($inUpdateMode){
-			return $cashExpense;
-		}
+		// if($inUpdateMode){
+		// 	return $cashExpense;
+		// }
 		return response()->json([
 			'redirectTo'=>route('view.cash.expense',['company'=>$company->id,'active'=>$activeTab])
 		]);
@@ -411,41 +421,41 @@ class CashExpenseController
 	public function update(Company $company , StoreCashExpenseRequest $request , cashExpense $cashExpense){
 		
 		$newType = $request->get('type');
-		
-	
+		// $accountNumber =  $request->input('account_number.'.$newType);
 		$request->merge([
-			'journal_entry_id'=>$cashExpense->journal_entry_id,
-			'account_bank_statement_odoo_id'=>$cashExpense->account_bank_statement_odoo_id,
-			'odoo_id'=>$cashExpense->odoo_id,
+			// 'journal_entry_id'=>$cashExpense->journal_entry_id,
+			// 'account_bank_statement_odoo_id'=>$cashExpense->account_bank_statement_odoo_id,
+			'odoo_id'=>$cashExpense->odoo_id ,   // انا مش متاكد ان كان الكولوم دا محتاجينه ولا لا 
 		]);
 		
+		// $accountNumberHasChanged = $cashExpense->getAccountNumber() != $accountNumber;
 		$cashExpense->deleteRelations();
 		$cashExpense->delete();
 		
 		
-		$cashExpense = $this->store($company,$request,true);
+		$cashExpense = $this->store($company,$request);
 		
-			if($company->hasOdooIntegrationCredentials()){
-			$statementEntryId = $cashExpense->journal_entry_id;
-			$accountBankStatementOdooId = $cashExpense->account_bank_statement_odoo_id;
-			$moveId = $cashExpense->journal_entry_id;
-			if($accountBankStatementOdooId){
-				$currencyName = $request->get('currency');
-				$cashExpenseCategoryNameId= $request->get('cash_expense_category_name_id');
-				$cashExpenseCategoryName = CashExpenseCategoryName::find($cashExpenseCategoryNameId);
-				$cashExpenseOdooService = new CashExpenseOdooService($company);
-				$date = Carbon::make($request->get('payment_date'))->format('Y-m-d');
-				$paidAmount = $request->input('paid_amount.'.$newType ,0) ;
-				$paidAmount = unformat_number($paidAmount);
-				$journalId = $cashExpenseOdooService->getJournalId($cashExpense) ;
-				$creditOdooAccountId=$cashExpenseOdooService->getChartOfAccountId($cashExpense);
-				$odooCurrencyId = Currency::getOdooId($currencyName);
-				$debitOdooAccountId = $cashExpenseCategoryName->getOdooId();
-				$analytic_distribution = $cashExpense->formatAnalysisDistribution();
-				$cashExpenseOdooService->updateJournalEntry($statementEntryId,$moveId,$date,$paidAmount,$journalId,$odooCurrencyId,$debitOdooAccountId,$creditOdooAccountId,$analytic_distribution);
+		// 	if($company->hasOdooIntegrationCredentials()){
+				
+		// 	$accountBankStatementOdooId = $cashExpense->account_bank_statement_odoo_id;
+		// 	$journalEntryId = $cashExpense->journal_entry_id;
+		// 	if($accountBankStatementOdooId){
+		// 		$currencyName = $request->get('currency');
+		// 		$cashExpenseCategoryNameId= $request->get('cash_expense_category_name_id');
+		// 		$cashExpenseCategoryName = CashExpenseCategoryName::find($cashExpenseCategoryNameId);
+		// 		$cashExpenseOdooService = new CashExpenseOdooService($company);
+		// 		$date = Carbon::make($request->get('payment_date'))->format('Y-m-d');
+		// 		$paidAmount = $request->input('paid_amount.'.$newType ,0) ;
+		// 		$paidAmount = unformat_number($paidAmount);
+		// 		$journalId = $cashExpenseOdooService->getJournalId($cashExpense) ;
+		// 		$creditOdooAccountId=$cashExpenseOdooService->getChartOfAccountId($cashExpense);
+		// 		$odooCurrencyId = Currency::getOdooId($currencyName);
+		// 		$debitOdooAccountId = $cashExpenseCategoryName->getOdooId();
+		// 		$analytic_distribution = $cashExpense->formatAnalysisDistribution();
+		// 		$cashExpenseOdooService->updateJournalEntry($journalEntryId,$accountBankStatementOdooId,$date,$paidAmount,$journalId,$odooCurrencyId,$debitOdooAccountId,$creditOdooAccountId,$analytic_distribution,$accountNumberHasChanged);
 			
-			}
-		}
+		// 	}
+		// }
 		
 		 $activeTab = $newType;
 		 return response()->json([
@@ -455,14 +465,6 @@ class CashExpenseController
 	
 	public function destroy(Company $company , CashExpense $cashExpense)
 	{
-
-		if($company->hasOdooIntegrationCredentials()){
-			$unlinkId = $cashExpense->account_bank_statement_odoo_id;
-			if($unlinkId){
-				$odoService = new OdooService($company);
-				$odoService->unlink('account.bank.statement.line',$unlinkId);
-			}
-		}
 		
 		$cashExpense->deleteRelations();
 		$activeTab = $cashExpense->getType();

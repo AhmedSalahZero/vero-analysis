@@ -24,7 +24,7 @@
                                 <th class="text-center">{{ __('Execution Percentage %') }}</th>
                                 <th class="text-center">{{ __('Amount') }}</th>
                                 <th class="text-center">{{ __('Start Date') }}</th>
-                                <th class="text-center">{{ __('Execution Months') }}</th>
+                                {{-- <th class="text-center">{{ __('Execution Months') }}</th> --}}
                                 <th class="text-center">{{ __('End Date') }}</th>
                                 <th class="text-center">{{ __('Collection Days') }}</th>
                             </tr>
@@ -49,13 +49,13 @@
                                     <x-form.date :type="'text'" :classes="'datepicker-input recalc-end-date-2 start-date-2 recheck-start-date-rule-js'" :default-value="formatDateForDatePicker(isset($salesOrder)  ? $salesOrder->getStartDate($i) : now())" :model="$salesOrder??null" :label="''" :type="'text'" :placeholder="__('')" :name="'start_date_'.$i" :required="true"></x-form.date>
                                 </td>
 
-                                <td>
+                                {{-- <td>
                                     <div class="kt-input-icon">
                                         <div class="input-group">
                                             <input name="execution_days_{{ $i }}" type="numeric" step="1" class="form-control duration-2 recalc-end-date-2" value="{{ isset($salesOrder) ? $salesOrder->getExecutionDays($i) : old('salesOrders.execution_days_'.$i,0) }}">
                                         </div>
                                     </div>
-                                </td>
+                                </td> --}}
                                 <td>
                                     <x-form.date :type="'text'" :classes="'datepicker-input recheck-start-date-rule-js  end-date-2'" :default-value="formatDateForDatePicker(isset($salesOrder)  ? $salesOrder->getEndDate($i) : now())" :model="$salesOrder??null" :label="''" :type="'text'" :placeholder="__('')" :name="'end_date_'.$i" :required="true"></x-form.date>
                                 </td>

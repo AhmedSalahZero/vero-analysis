@@ -85,7 +85,7 @@
                         <div class="kt-portlet__head">
                             <div class="kt-portlet__head-label">
                                 <h3 class="kt-portlet__head-title head-title text-primary">
-                                    <x-sectionTitle :title="__((isset($model) ? 'Edit' : 'Add') . ' Branch')"></x-sectionTitle>
+                                    <x-sectionTitle :title="__((isset($model) ? 'Edit' : 'Add') . ' Safe')"></x-sectionTitle>
                                 </h3>
                             </div>
                         </div>
@@ -99,46 +99,15 @@
                                 <div class="kt-portlet__head">
                                     <div class="kt-portlet__head-label">
                                         <h3 class="kt-portlet__head-title head-title text-primary">
-                                            {{__('Branch Information')}}
+                                            {{__('Safe Information')}}
                                         </h3>
                                     </div>
                                 </div>
 
                                 <div class="kt-portlet__body">
-                                    <div class="form-group">
-                                        <div class="row">
-
-											
-											
-                                          <div class="col-md-3 ">
-                                                <label>{{__('Name')}}
-                                                    @include('star')
-                                                </label>
-                                                <div class="kt-input-icon">
-                                                    <input type="text" value="{{ isset($model) ? $model->getName():'' }}" name="name" class="form-control  " placeholder="{{__('Name')}}">
-                                                </div>
-                                            </div>
-											
-												@if($company->hasOdooIntegrationCredentials())
-													<div class="col-3	">
-													<label class="form-label font-weight-bold ">{{ __('Odoo Short Code') }}
-													@include('star')
-													</label>
-													<div class="kt-input-icon">
-														<div class="input-group">
-															<input required placeholder="{{ __('Odoo Short Code') }}" type="text" class="form-control  exclude-text"  name="odoo_code"  value="{{ isset($model) ? $model->getOdooCode() : old('odoo_code') }}">
-														</div>
-													</div>
-												</div>
-												@endif
-					
-
-
-
-
-                                        </div>
-                                    </div>
-
+								@include('branches.repeater-with-all')
+								
+                             
                                 </div>
                             </div>
 

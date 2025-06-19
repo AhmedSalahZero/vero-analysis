@@ -3,11 +3,13 @@
 namespace App\Models;
 
 use App\Models\FinancialInstitutionAccount;
+use App\Traits\HasCompany;
 use App\Traits\HasDepositAccount;
 use App\Traits\HasLastStatementAmount;
 use App\Traits\Models\HasBlockedAgainst;
 use App\Traits\Models\HasCreditStatements;
 use App\Traits\Models\HasDebitStatements;
+use App\Traits\Models\HasOdooMoneyTransfer;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -22,7 +24,7 @@ use Illuminate\Support\Str;
 	 */
 class TimeOfDeposit extends Model
 {
-	use HasDebitStatements,HasCreditStatements,HasBlockedAgainst,HasLastStatementAmount,HasDepositAccount ;
+	use HasDebitStatements,HasCreditStatements,HasBlockedAgainst,HasLastStatementAmount,HasDepositAccount,HasOdooMoneyTransfer,HasCompany ;
     protected $guarded = ['id'];
 	const RUNNING = 'running';
 	const MATURED = 'matured';
@@ -355,4 +357,25 @@ class TimeOfDeposit extends Model
 	{
 		return $this->odoo_code;
 	}
+	public function getOdooId():int 
+	{
+		if(is_null($this->odoo_id)){
+			throw new \Exception('Odoo Code For Time Of Deposit ' . $this->getAccountNumber() . ' Not Found');
+		}
+		return $this->odoo_id;
+	}
+	public function getJournalId():?int 
+	{
+		return $this->journal_id ;
+	}
+	
+	public function getExpiryDate()
+	{
+		/**
+		 * @var TimeOfDeposit $this
+		 */
+		return $this->getRenewalDateBefore($this->getRenewalDate());
+		
+	}
+	
 }

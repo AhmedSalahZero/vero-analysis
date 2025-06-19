@@ -31,9 +31,9 @@ trait IsOrder {
 	
 		return $this->getExecutionPercentage($index) / 100 * $this->getAmount();
 	}
-	public function getExecutionDays(int $index){
-		return $this['execution_days_'.$index];
-	}
+	// public function getExecutionDays(int $index){
+	// 	return $this['execution_days_'.$index];
+	// }
 	public function getCollectionDays(int $index){
 		return $this['collection_days_'.$index];
 	}

@@ -24,6 +24,7 @@ use App\Traits\GeneralFunctions;
 use App\Traits\Models\HasBasicFilter;
 use App\Traits\Models\HasDebitStatements;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -365,8 +366,8 @@ class MoneyReceivedController
 		return CustomerInvoice::formatInvoices($invoices , $inEditMode);
 	}
 	
-	public function store(Company $company , StoreMoneyReceivedRequest $request , $returnModel = false){
-		$syncWithOdoo = !$request->has('stop-sync-with-odoo');
+	public function store(Company $company , StoreMoneyReceivedRequest $request , $returnModel = false,$accountNumberHasChanged=false){
+		$syncWithOdoo = !$request->has('stop-sync-with-odoo')  ;
 		$hasUnappliedAmount = (bool)$request->get('unapplied_amount');
 		$isGeneralDownPaymentOrSettlementOpening = $request->get('down_payment_type') == MoneyReceived::DOWN_PAYMENT_GENERAL || $request->get('down_payment_type') == MoneyReceived::SETTLEMENT_OF_OPENING_BALANCE;
 		$partnerType = $request->get('partner_type');
@@ -378,7 +379,7 @@ class MoneyReceivedController
 		$customer = Partner::find($partnerId);
 		$customerId = $customer->id;
 		$receivedBankName = $request->get('receiving_branch_id') ;
-		$data = $request->only(['type','receiving_date','currency','receiving_currency','customer_id','down_payment_type','partner_type','user_comment']);
+		$data = $request->only(['type','receiving_date','currency','receiving_currency','customer_id','down_payment_type','partner_type','user_comment','transaction_type','journal_entry_id','account_bank_statement_line_id']);
 		$data['currency'] = $isGeneralDownPaymentOrSettlementOpening ? $data['receiving_currency'] : $data['currency']??null;
 		$receivingCurrency = $data['receiving_currency'];
 		$data['currency'] = is_null($data['currency']) ?  $receivingCurrency : $data['currency'];
@@ -481,11 +482,16 @@ class MoneyReceivedController
 		$moneyReceived->handleDebitStatement($financialInstitutionId,$accountType,$accountNumber,$moneyType,$statementDate,$amountInReceivingCurrency,$receivingCurrency,$receivingBranchId);
 		if($partnerType && $partnerType != 'is_customer' ){
 			$moneyReceived->handlePartnerCreditStatement($partnerType,$partnerId, $moneyReceived->id,$company->id,$statementDate,$amountInReceivingCurrency,$receivingCurrency,$bankNameOrBranchName , $accountType , $accountNumber);
+			$moneyReceived->storeNonCustomerOrSupplierOdooExpense();
 		}
 		
 		/**
 		 * * For Money Received Only
 		 */
+		// if($partnerType == 'is_supplier' && $moneyReceived->journal_entry_id && $moneyReceived->account_bank_statement_line_id){
+		// 	$moneyReceived->unlinkNonCustomerOrSupplierOdooExpense();
+		// }
+		
 		$totalWithholdAmount = $moneyReceived->storeNewSettlement($request->get('settlements',[]),$partnerId,$company,false,$syncWithOdoo);
 		// $totalWithholdAmount = $moneyReceived->storeNewSettlement($request->get('settlements',[]),$partnerId,$company,false,$syncWithOdoo);
 		
@@ -528,7 +534,7 @@ class MoneyReceivedController
 	public function edit(Company $company , Request $request ,  MoneyReceived $moneyReceived ,$customerInvoiceId = null){
 		
 		$isDownPayment = $moneyReceived->isDownPayment();
-		$partnerType = $moneyReceived->partner->getType();
+		$partnerType = $moneyReceived->partner->getCustomerType();
 	
 		$customerInvoiceCurrencies = CustomerInvoice::getCurrencies($customerInvoiceId);
 		
@@ -590,9 +596,19 @@ class MoneyReceivedController
 	//	$companyId = $company->id ;
 		$newType = $request->get('type');
 		$moneyReceivedAmountHasChanged = $moneyReceived->getAmount() != $request->input('received_amount.'.$newType);
+
+		
 		$moneyReceived->deleteRelations();
 		$moneyReceived->delete();
-		$newMoneyReceived = $this->store($company,$request,true);
+		
+		$newMoneyReceived = $this->store($company,$request);
+		// $odooPayment = new OdooPayment($company);
+		/**
+		 * @var OdooPayment $odooPayment
+		 */
+		
+		
+		//$odooPayment->updateMoneyReceiveOrMoneyPayment( $isCustomer ,  $odooPaymentId, $odooInvoiceId, $paymentDate, $invoiceNumber, $journalId, $odooPartnerId, $paymentMethodLineId ,  $amountInInReceivingCurrency ,  $odooReceivingCurrencyId);
 		if(!$moneyReceivedAmountHasChanged){
 			$newMoneyReceived->storeNewSettlement(
 			$oldSettlementsForMoneyReceivedWithDownPayment->toArray(),$newMoneyReceived->getPartnerId(),$company,1);
@@ -676,11 +692,11 @@ class MoneyReceivedController
 		 * 
 		 * @var MoneyReceived $moneyReceived
 		 */
-		$collectionFeesAmount = $request->get('collection_fees',0) ;
+		// $collectionFeesAmount = $request->get('collection_fees',0) ;
 		$actualCollectionDate = Carbon::make($request->get('actual_collection_date'))->format('Y-m-d')  ;
 		$moneyReceived->cheque->update([
 			'status'=>Cheque::COLLECTED,
-			'collection_fees'=>$collectionFeesAmount,
+			// 'collection_fees'=>$collectionFeesAmount,
 			'actual_collection_date'=>$actualCollectionDate
 		]);
 		$chequeNumber = $moneyReceived->cheque->getChequeNumber();
@@ -697,7 +713,7 @@ class MoneyReceivedController
 		 */
 		
 		$moneyReceived->handleDebitStatement($financialInstitutionId,$accountType,$accountNumber,$moneyType,$actualCollectionDate,$receivedAmount,$currency,null);
-		$moneyReceived->handleCreditStatement($company->id , $financialInstitutionId , $accountType,$accountNumber,'fees',$actualCollectionDate,$collectionFeesAmount,null,$currency,__('Cheque Collection Fees - Cheque [ :number ]' ,['number'=>$chequeNumber],'en' ),__('Cheque Collection Fees - Cheque [ :number ]' ,['number'=>$chequeNumber],'ar' ));
+		// $moneyReceived->handleCreditStatement($company->id , $financialInstitutionId , $accountType,$accountNumber,'fees',$actualCollectionDate,$collectionFeesAmount,null,$currency,__('Cheque Collection Fees - Cheque [ :number ]' ,['number'=>$chequeNumber],'en' ),__('Cheque Collection Fees - Cheque [ :number ]' ,['number'=>$chequeNumber],'ar' ));
 		
 		$hasOdooIntegration = $company->hasOdooIntegrationCredentials();
 		$OdooPaymentService = null ;
@@ -735,7 +751,7 @@ class MoneyReceivedController
 	{
 		$moneyReceived->cheque->update([
 			'status'=>Cheque::UNDER_COLLECTION,
-			'collection_fees'=>null,
+			// 'collection_fees'=>null,
 			'actual_collection_date'=>null
 		]);
 
@@ -748,14 +764,12 @@ class MoneyReceivedController
 		if($hasOdooIntegration){
 			$OdooPaymentService = new OdooPayment($company);
 		}
-		/**
-		 * ! postponed
-		 */
-		// if($hasOdooIntegration){
-		// 		foreach($moneyReceived->settlements as $settlement){
-		// 			$OdooPaymentService->reCreatePayment($settlement);
-		// 		}
-		// 	}
+	
+		if($hasOdooIntegration){
+			foreach($moneyReceived->settlements as $settlement){
+				$OdooPaymentService->reCreatePayment($settlement);
+			}
+		}
 		return redirect()->route('view.money.receive',['company'=>$company->id,'active'=>MoneyReceived::CHEQUE_UNDER_COLLECTION])->with('success',__('Cheque Is Under Collection'));
 		
 	}
@@ -937,17 +951,25 @@ class MoneyReceivedController
 	}
 	
 	public function getCustomersWithOpeningBalance(Request $request , Company $company){
-		if($request->get('type') != 'settlement-of-opening-balance'){
-			return response()->json([
-			'customerInvoices' => CustomerInvoice::orderBy('customer_name')
-			->where('company_id',$company->id)->pluck('customer_id','customer_name')
-		]);
+		$type =$request->get('type') ;
+		$partners = [];
+		if($type == 'over_contract'){
+			$partners=  Partner::has('contracts')->where('is_customer',1)->orderBy('name')
+									->where('company_id',$company->id)->pluck('id','name');
+		}
+		elseif($type == 'general'){
+			$partners =  Partner::where('is_customer',1)->orderBy('name')
+									->where('company_id',$company->id)->pluck('id','name');
+		}
+		elseif($type == 'settlement-of-opening-balance'){
+			$partners = CustomerInvoice::orderBy('customer_name')
+			->whereNotNull('opening_balance_id')
+			->where('company_id',$company->id)->pluck('customer_id','customer_name');
 		}
 		return response()->json([
-			'customerInvoices' => CustomerInvoice::orderBy('customer_name')
-			->whereNotNull('opening_balance_id')
-			->where('company_id',$company->id)->pluck('customer_id','customer_name')
+			'invoices' => $partners 
 		]);
+		
 	}
 	public function getCustomersBasedOnCurrency(Request $request , Company $company , string $currencyName){
 		return response()->json([
@@ -988,4 +1010,7 @@ class MoneyReceivedController
 		}
 		return back();
 	}
+	
+	
+	
 }

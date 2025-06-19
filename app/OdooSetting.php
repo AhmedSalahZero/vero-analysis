@@ -57,5 +57,60 @@ class OdooSetting extends Model
 	{
 		return OdooSetting::where('company_id',getCurrentCompanyId())->first()->suspense_account_id ; 
 	}
-
+	public function getInterestRevenueOdooId()
+	{
+		return $this->interest_revenue_id;
+	}
+	public function getCustodyAccountId():int 
+	{
+		// dd($this , $this->custody_account_id);
+		if(!$this->custody_account_id){
+			throw new \Exception('Custody Account Not Found .. Please Add It From Other Odoo Setting Form');
+		}
+		return  $this->custody_account_id;
+	}
+	public function getEmployeeLoanAccountId():int 
+	{
+		if(!$this->employee_loans_account_id){
+			throw new \Exception('Employee Loan Account Not Found .. Please Add It From Other Odoo Setting Form');
+		}
+		return  $this->employee_loans_account_id;
+	}
+	public function getShareholderAccount():int 
+	{
+		if(!$this->shareholder_account_id){
+			throw new \Exception('Shareholder Account Not Found .. Please Add It From Other Odoo Setting Form');
+		}
+		return  $this->shareholder_account_id;
+	}
+	// public function getSisterCompanyAccount():int 
+	// {
+	// 	if(is_null($this->sister_company_account_id)){
+	// 		throw new \Exception('Sister Company Account Not Found .. Please Add It From Other Odoo Setting Form');
+	// 	}
+	// 	return  $this->sister_company_account_id;
+	// }
+	public function getDividendPaymentAccount():int 
+	{
+		if(is_null($this->dividend_payable_account_id)){
+			throw new \Exception('Dividend Account Not Found .. Please Add It From Other Odoo Setting Form');
+		}
+		return  $this->dividend_payable_account_id;
+	}
+	public function getInsuranceFromAccount():int 
+	{
+		if(is_null($this->insurance_from_account_id)){
+			throw new \Exception('Insurance From Account Not Found .. Please Add It From Other Odoo Setting Form');
+		}
+		return  $this->insurance_from_account_id;
+	}
+	public function getInsuranceToAccount():int 
+	{
+		if(!$this->insurance_to_account_id){
+			throw new \Exception('Insurance To Account Not Found .. Please Add It From Other Odoo Setting Form');
+		}
+		return  $this->insurance_to_account_id;
+	}
+	
+	
 }

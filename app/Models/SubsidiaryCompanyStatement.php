@@ -124,48 +124,13 @@ class SubsidiaryCompanyStatement extends Model  implements IHaveStatement
 			});
 			
 			static::deleting(function(self $subsidiaryCompanyStatement){
-				// $oldDate = null ;
-				// if($subsidiaryCompanyStatement->is_debit && Request('receiving_date')||$subsidiaryCompanyStatement->is_credit && Request('delivery_date')){
-				// 		$oldDate = Carbon::make(Request('receiving_date',Request('delivery_date')))->format('Y-m-d');
-				// 		$time  = now()->format('H:i:s');
-				// 		$oldDate = date('Y-m-d H:i:s', strtotime("$oldDate $time")) ;
-				// 		$currentDate = $subsidiaryCompanyStatement->full_date ;
-				// 		$subsidiaryCompanyStatement->full_date = min($oldDate,$currentDate);
-				// }
-			
-				
 				$subsidiaryCompanyStatement->debit = 0;
 				$subsidiaryCompanyStatement->credit = 0;
 				$subsidiaryCompanyStatement->save();
 				
 			});
 		}
-		
-
-    // public function moneyReceived()
-    // {
-    //     return $this->belongsTo(MoneyReceived::class, 'money_received_id', 'id');
-    // }
-	// public function certificateOfDeposit()
-    // {
-    //     return $this->belongsTo(CertificatesOfDeposit::class, 'certificate_of_deposit_id', 'id');
-    // }
-	// public function timeOfDeposit()
-    // {
-    //     return $this->belongsTo(TimeOfDeposit::class, 'time_of_deposit_id', 'id');
-    // }
-	// public function letterOfGuaranteeIssuance()
-    // {
-    //     return $this->belongsTo(LetterOfGuaranteeIssuance::class, 'letter_of_guarantee_issuance_id', 'id');
-    // }
-	// public function moneyPayment()
-    // {
-    //     return $this->belongsTo(MoneyPayment::class, 'money_payment_id', 'id');
-    // }
-	// public function cashExpense()
-    // {
-    //     return $this->belongsTo(CashExpense::class, 'cash_expense_id', 'id');
-    // }
+	
     public function getId()
     {
         return $this->id ;

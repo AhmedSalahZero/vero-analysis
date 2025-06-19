@@ -48,7 +48,7 @@ trait AuthTrait
 		$this->models = $models;
 		$this->uid = $uid;
 	}
-	   private function execute($model, $method, $args)
+	   private function execute($model, $method, $args,$kwargs = [])
     {
         $result = $this->models->execute_kw(
             $this->db,
@@ -56,15 +56,35 @@ trait AuthTrait
             $this->password,
             $model,
             $method,
-            $args
+            $args,
+			$kwargs
         );
         if (isset($result['faultCode'])) {
-            throw new \Exception($result['faultString']);
+			if(str_contains($result['faultString'], 'TypeError: cannot marshal None unless allow_none is enabled')){
+				return ;
+			}
+         	throw new \Exception($result['faultString']);
 			return ;
         }
         return $result;
     }
 	
+	// private function executeWithoutThrowException($model, $method, $args)
+    // {
+    //     $result = $this->models->execute_kw(
+    //         $this->db,
+    //         $this->uid,
+    //         $this->password,
+    //         $model,
+    //         $method,
+    //         $args
+    //     );
+    //     if (isset($result['faultCode'])) {
+    //      //  throw new \Exception($result['faultString']);
+	// 		return ;
+    //     }
+    //     return $result;
+    // }
 	
 	public function fetchData(string $modelName ,array $fields = [],  array $filters = [[]]  )
 	{

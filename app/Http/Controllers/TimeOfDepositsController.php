@@ -8,7 +8,6 @@ use App\Models\Branch;
 use App\Models\Company;
 use App\Models\CurrentAccountBankStatement;
 use App\Models\FinancialInstitution;
-use App\Models\FinancialInstitutionAccount;
 use App\Models\TimeOfDeposit;
 use App\Services\Api\OdooService;
 use App\Traits\GeneralFunctions;
@@ -170,7 +169,7 @@ class TimeOfDepositsController
     }
 	public function getCommonDataArr():array 
 	{
-		return ['start_date','account_number','amount','end_date','currency','interest_rate','interest_amount','maturity_amount_added_to_account_id','odoo_code'];
+		return ['start_date','account_number','amount','end_date','currency','interest_rate','interest_amount','maturity_amount_added_to_account_id','odoo_code','deducted_from_account_id'];
 	}
 	public function store(Company $company  ,FinancialInstitution $financialInstitution, StoreTimeOfDepositRequest $request){
 		
@@ -182,7 +181,10 @@ class TimeOfDepositsController
 		$deductedFromAccountId = $request->get('deducted_from_account_id',0) ;
 		if($company->hasOdooIntegrationCredentials() && $odooCode ){
 			$odooService = new OdooService($company);
-			$data['odoo_id'] = $odooService->chartOfAccount($odooCode)['id'] ;
+			$odooCode = $request->get('odoo_code');
+			$chartOfAccountId = $odooService->getChartOfAccountIdFromOdooCode($odooCode);
+			$data['odoo_id'] = $chartOfAccountId ; 
+			$data['journal_id'] =$odooService->getJournalIdFromChartOfAccountId($chartOfAccountId) ;
 		}
 		
 		$data['created_by'] = auth()->user()->id ;
@@ -192,10 +194,10 @@ class TimeOfDepositsController
 		/**
 		 * @var TimeOfDeposit $timeOfDeposit
 		 */
-
-		$timeOfDeposit->handleDeductedForBankStatement($financialInstitution->id,$data['start_date'],number_unformat($request->get('amount')),$company->id,$deductedFromAccountId,$request->get('account_number'));
-		
-		
+		$amount = number_unformat($request->get('amount')) ;
+		$startDate = $data['start_date'] ;
+		$timeOfDeposit->handleDeductedForBankStatement($financialInstitution->id,$startDate,$amount,$company->id,$deductedFromAccountId,$request->get('account_number'));
+		$timeOfDeposit->handleTdOrCdStoreDepositForOdoo(false);
 		$type = $request->get('type',TimeOfDeposit::RUNNING);
 		$activeTab = $type ; 
 		
@@ -216,7 +218,8 @@ class TimeOfDepositsController
 	}
 	
 	public function update(Company $company , UpdateTimeOfDepositRequest $request , FinancialInstitution $financialInstitution,TimeOfDeposit $timeOfDeposit){
-		
+		$deductedFromAccountId = $request->get('deducted_from_account_id',0) ;
+		$accountNumberHasChanged = $deductedFromAccountId != $timeOfDeposit->getDeductedFromAccountId();
 		$data['updated_by'] = auth()->user()->id ;
 		$data = $request->only($this->getCommonDataArr());
 		foreach(['start_date','end_date'] as $dateField){
@@ -225,13 +228,14 @@ class TimeOfDepositsController
 		$data['interest_amount'] = number_unformat($request->get('interest_amount')) ;
 		if($company->hasOdooIntegrationCredentials()){
 			$odooService = new OdooService($company);
-			$data['odoo_id'] = $odooService->chartOfAccount($request->get('odoo_code'))['id'] ;
+			$odooCode = $request->get('odoo_code');
+			$chartOfAccountId = $odooService->getChartOfAccountIdFromOdooCode($odooCode);
+			$data['odoo_id'] = $chartOfAccountId ; 
+			$data['journal_id'] =$odooService->getJournalIdFromChartOfAccountId($chartOfAccountId) ;
 		}
-		
 		$timeOfDeposit->update($data);
-		$deductedFromAccountId = $request->get('deducted_from_account_id',0) ;
 		$timeOfDeposit->handleDeductedForBankStatement($financialInstitution->id,$data['start_date'],number_unformat($request->get('amount')),$company->id,$deductedFromAccountId,$request->get('account_number'));
-
+		$timeOfDeposit->handleTdOrCdStoreDepositForOdoo($accountNumberHasChanged);
 		$type = $request->get('type',TimeOfDeposit::RUNNING);
 		$activeTab = $type ;
 		return redirect()->route('view.time.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'active'=>$activeTab])->with('success',__('Item Has Been Updated Successfully'));
@@ -256,7 +260,7 @@ class TimeOfDepositsController
 			'actual_interest_amount'=>$actualInterestAmount,
 			'status'=>$type
 		]);
-		
+		$timeOfDeposit->handleTdOrCdApplyDepositInterestForOdoo(false);
 		$accountType = AccountType::where('slug',AccountType::CURRENT_ACCOUNT)->first() ;
 		if($actualInterestAmount > 0){
 			$timeOfDeposit->handleDebitStatement($financialInstitution->id , $accountType , $timeOfDeposit->getMaturityAmountAddedToAccountNumber() , null , $actualDepositDate,$actualInterestAmount);
@@ -275,12 +279,17 @@ class TimeOfDepositsController
 	{
 		// $actualDepositDate = Carbon::make($request->get('actual_deposit_date'))->format('Y-m-d') ;
 		// $actualInterestAmount  = $request->get('actual_interest_amount') ;
+		$timeOfDeposit->reverseOdooDeposit();
+	
 		$type = TimeOfDeposit::RUNNING ;
 		$timeOfDeposit->update([
 			'deposit_date'=>null,
 			'actual_interest_amount'=>null,
 			'status'=>TimeOfDeposit::RUNNING
 		]);
+		
+		
+		
 		/**
 		 * * هنشيل قيم ال
 		 * * current account bank statement
@@ -306,7 +315,7 @@ class TimeOfDepositsController
 			'status'=>$type,
 			'break_charge_amount'=>$breakChargeAmount
 		]);
-		
+		$timeOfDeposit->storeOdooBreak(false);
 		
 		$accountType = AccountType::where('slug',AccountType::CURRENT_ACCOUNT)->first() ;
 		/**
@@ -334,7 +343,7 @@ class TimeOfDepositsController
 			$timeOfDeposit->handleCreditStatement($company->id,$financialInstitution->id , $accountType , $timeOfDeposit->getMaturityAmountAddedToAccountNumber() , null , $breakDate,$breakChargeAmount,null,null,$commentEn,$commentAr);
 		}
 		
-		return redirect()->route('view.time.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id ,'active'=>$type])->with('success',__('Time Of Deposit Has Been Marked As Matured'));
+		return redirect()->route('view.time.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id ,'active'=>$type])->with('success',__('Time Of Deposit Has Been Marked As Broken'));
 	}
 	
 	

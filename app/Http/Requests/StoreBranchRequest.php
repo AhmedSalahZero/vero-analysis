@@ -24,8 +24,11 @@ class StoreBranchRequest extends FormRequest
      */
     public function rules()
     {
+		// foreach(Request()->get('safe') as $safeArr){
+			
+		// }
         return [
-            'name'=>['required',new UniqueToCompanyAndAdditionalColumnsRule('CashVeroBranch','name',$this->id,[],__('This Branch Already Exist'))]
+            //'safe.name'=>['required',new UniqueToCompanyAndAdditionalColumnsRule('CashVeroBranch','name',$this->id,[],__('This Branch Already Exist'))]
         ];
     }
 }
