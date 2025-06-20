@@ -555,7 +555,7 @@ class MoneyPaymentController
 		// $exchangeRate = $moneyPayment->getExchangeRate();
 		$moneyPaidAmountHasChanged = $moneyPayment->getAmount() != $request->input('paid_amount.'.$newType);
 		$moneyPayment->delete();
-		$newMoneyPayment = $this->store($company,$request);
+		$newMoneyPayment = $this->store($company,$request,true);
 		if(!$moneyPaidAmountHasChanged){
 		//	$paymentDate = $moneyPayment->getDeliveryDate();
 		//	$mainFunctionCurrency = $company->getMainFunctionalCurrency();
