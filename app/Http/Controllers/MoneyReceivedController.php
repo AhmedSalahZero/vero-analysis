@@ -601,7 +601,7 @@ class MoneyReceivedController
 		$moneyReceived->deleteRelations();
 		$moneyReceived->delete();
 		
-		$newMoneyReceived = $this->store($company,$request);
+		$newMoneyReceived = $this->store($company,$request,true);
 		// $odooPayment = new OdooPayment($company);
 		/**
 		 * @var OdooPayment $odooPayment
