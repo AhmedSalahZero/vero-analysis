@@ -340,12 +340,13 @@ class CustomerInvoice extends Model implements IInvoice
 		->join('financial_institutions','financial_institutions.id','=','financial_institution_accounts.financial_institution_id')
 		->join('banks','banks.id','=','financial_institutions.bank_id')
 		->orderByRaw('current_account_bank_statements.date desc , current_account_bank_statements.id desc')
-		->selectRaw('current_account_bank_statements.financial_institution_account_id , current_account_bank_statements.end_balance as received_amount,banks.name_en as name,date')
-		->get()->groupBy('financial_institution_account_id')->map(function($result){
+		->selectRaw('financial_institution_accounts.currency,current_account_bank_statements.financial_institution_account_id , current_account_bank_statements.end_balance as received_amount,banks.name_en as name,date')
+		->get()->groupBy(function($q){
+			return $q->financial_institution_account_id.$q->currency;
+		})->map(function($result){
 			return $result->first();
 		})->values();
 		foreach($rows as $row){
-			
 			$date = $row->date;
 			$currentCurrency = $row->currency;
 			$exchangeRate  = ForeignExchangeRate::getExchangeRateAt($currentCurrency,$mainFunctionalCurrency,$date,$companyId,$foreignExchangeRates);
@@ -359,7 +360,6 @@ class CustomerInvoice extends Model implements IInvoice
 		//	$totalCashInFlowArray[$currentWeekYear] = isset($totalCashInFlowArray[$currentWeekYear]) ? $totalCashInFlowArray[$currentWeekYear] + $row->received_amount : $row->received_amount ;
 			// $result['customers'][$currentTypeText]['total']['total_of_total'] = isset($result['customers'][$currentTypeText]['total']['total_of_total']) ? $result['customers'][$currentTypeText]['total']['total_of_total'] + $row->received_amount : $row->received_amount;
 		}
-
 		
 	}
 	public static function getSettlementAmountUnderDateForSpecificType(array &$result  ,  $foreignExchangeRates , $mainFunctionalCurrency , string $moneyType , string $dateColumnName , string $startDate , string $endDate, ?string $contractCode , string $currentWeekYear , ?string $chequeStatus = null   , $companyId = null):void

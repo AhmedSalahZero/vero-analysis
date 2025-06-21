@@ -116,7 +116,7 @@ $selectedBanks = [];
                 <div class="kt-portlet__head">
                     <div class="kt-portlet__head-label">
                         <h3 class="kt-portlet__head-title head-title text-primary">
-                            {{__('Supplier Payment')}}
+                            {{__('Money Payment')}}
                         </h3>
                     </div>
                 </div>

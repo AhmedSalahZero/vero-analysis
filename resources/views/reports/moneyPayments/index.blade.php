@@ -61,7 +61,7 @@ td{
 </style>
 @endsection
 @section('sub-header')
-{{ __('Supplier Payment Form') }}
+{{ __('Money Payment Form') }}
 @endsection
 @section('content')
 
@@ -113,7 +113,7 @@ td{
             <div class="flex-tabs">
 			<a href="{{route('create.money.payment',['company'=>$company->id])}}" class="btn  btn-sm active-style btn-icon-sm align-self-center">
                 <i class="fas fa-plus"></i>
-                {{ __('Supplier Payment') }}
+                {{ __('Money Payment') }}
             </a>
 			
 			  <a href="{{route('create.money.payment',['company'=>$company->id,'type'=>'down-payment'])}}" class="btn btn-sm active-style btn-icon-sm align-self-center">

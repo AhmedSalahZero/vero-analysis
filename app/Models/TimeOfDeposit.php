@@ -322,7 +322,7 @@ class TimeOfDeposit extends Model
 		$rows = DB::table('time_of_deposits')->where('time_of_deposits.company_id',$companyId)
 						// ->where('currency',$currency)
 						->whereRaw("(CASE WHEN status = 'broken' THEN break_date ELSE end_date END) between '" .$startDate ."'". ' AND ' ."'" .$endDate . "'")
-						->groupBy('status,currency')
+						->groupByRaw('status,currency')
 						->selectRaw("status ,currency, SUM(CASE 
              WHEN status = 'matured' THEN amount + actual_interest_amount
              WHEN status = 'broken' THEN amount + break_interest_amount
