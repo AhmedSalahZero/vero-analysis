@@ -64,7 +64,6 @@ trait AuthTrait
 				return ;
 			}
          	throw new \Exception($result['faultString']);
-			return ;
         }
         return $result;
     }

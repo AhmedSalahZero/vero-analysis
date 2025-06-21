@@ -15,8 +15,7 @@ class ExchangeRateService
         try {
             $company = $this->execute('res.company', 'search_read', [
                 [['id', '!=', 0]], // Fetch the main company
-                ['currency_id'],
-                // ['limit' => 1]
+                ['currency_id']
             ]);
             if (empty($company)) {
                 throw new Exception('No company found');
