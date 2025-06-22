@@ -134,8 +134,6 @@ $selectedBanks = [];
 							currency-class
 							currency-for-contracts
 							invoice-currency-class
-					
-							
 							ajax-get-contracts-for-supplier  ajax-get-purchases-orders-for-contract
 							current-invoice-currency
 							 ajax-get-invoice-numbers
@@ -160,7 +158,7 @@ $selectedBanks = [];
                     <div class="kt-input-icon">
                         <div class="kt-input-icon">
                             <div class="input-group date">
-                                <select data-current-selected="{{ isset($model) ? $model->getName() : '' }}" data-live-search="true" data-actions-box="true" id="supplier_name" name="supplier_id" class="form-control select2-select  
+                                <select data-current-selected="{{ isset($model) ? $model->getPartnerId() : '' }}" data-live-search="true" data-actions-box="true" id="supplier_name" name="supplier_id" class="form-control select2-select  
 								ajax-get-invoice-numbers
 					
 									 ajax-get-contracts-for-supplier ajax-get-purchases-orders-for-contract">
@@ -892,7 +890,7 @@ function getBranchFromCurrency()
 	
 $(document).on('change','#down_payment_type',function(){
 	const val = $(this).val();
-	
+	var currentSelected = $('select#supplier_name').attr('data-current-selected');
 	if(val == 'settlement-of-opening-balance'){
 			$.ajax({
 				data:{
@@ -904,7 +902,8 @@ $(document).on('change','#down_payment_type',function(){
 			let suppliersOptions = '';
 			for (var supplierName in res.invoices){
 				var customerId = res.invoices[supplierName];
-				suppliersOptions += ` <option value="${customerId}">${supplierName}</option> `
+					var selected = currentSelected ==customerId  ?'selected':'' ;
+				suppliersOptions += ` <option value="${customerId}" ${selected}>${supplierName}</option> `
 			}
 			$('select#supplier_name').selectpicker('destroy');
 			$('select#supplier_name').empty().append(suppliersOptions)
@@ -921,7 +920,8 @@ $(document).on('change','#down_payment_type',function(){
 			let suppliersOptions = '';
 			for (var supplierName in res.invoices){
 				var customerId = res.invoices[supplierName];
-				suppliersOptions += ` <option value="${customerId}">${supplierName}</option> `
+					var selected = currentSelected ==customerId  ?'selected':'' ;
+				suppliersOptions += ` <option value="${customerId}" ${selected}>${supplierName}</option> `
 			}
 			$('select#supplier_name').selectpicker('destroy');
 			$('select#supplier_name').empty().append(suppliersOptions)

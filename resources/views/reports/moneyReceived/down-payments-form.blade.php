@@ -142,9 +142,10 @@ use App\Models\Partner;
                                 @include('star')
                             </label>
                             <div class="kt-input-icon">
+							{{-- {{  }} --}}
                                 <div class="kt-input-icon">
                                     <div class="input-group date">
-                                        <select id="customer_name" data-live-search="true" data-actions-box="true" data-current-selected="{{ isset($model) ? $model->getName() : '' }}" name="customer_id" class="form-control select2-select ajax-get-contracts-for-customer ajax-get-sales-orders-for-contract">
+                                        <select id="customer_name" data-live-search="true" data-actions-box="true" data-current-selected="{{ isset($model) ? $model->getPartnerId() : '' }}" name="customer_id" class="form-control select2-select ajax-get-contracts-for-customer ajax-get-sales-orders-for-contract">
                                             <option value="" selected>{{__('Select')}}</option>
                                             @foreach(Partner::getCustomersForCompany($company->id) as $customerId => $customerName)
                                             <option @if($singleModel) selected @endif @if(isset($model) && $model->getCustomerName() == $customerName ) selected @endif value="{{ $customerId }}">{{$customerName}}</option>
@@ -874,7 +875,7 @@ use App\Models\Partner;
     })
     $(document).on('change', '#down_payment_type', function() {
         const val = $(this).val();
-	
+		var currentSelected = $('select#customer_name').attr('data-current-selected');
 		if(val == 'settlement-of-opening-balance'){
 			$.ajax({
 				data:{
@@ -886,7 +887,9 @@ use App\Models\Partner;
 			let customersOptions = '';
 			for (var customerName in res.invoices){
 				var customerId = res.invoices[customerName];
-				customersOptions += ` <option value="${customerId}">${customerName}</option> `
+				var selected = currentSelected ==customerId  ?'selected':'' ;
+				
+				customersOptions += ` <option value="${customerId}" ${selected} >${customerName}</option> `
 			}
 			$('select#customer_name').selectpicker('destroy');
 			$('select#customer_name').empty().append(customersOptions)
@@ -901,9 +904,12 @@ use App\Models\Partner;
 			type:'get'
 		}).then(function(res){
 			let customersOptions = '';
+			var curren
 			for (var customerName in res.invoices){
 				var customerId = res.invoices[customerName];
-				customersOptions += ` <option value="${customerId}">${customerName}</option> `
+					var selected = currentSelected ==customerId  ?'selected':'' ;
+					console.log(currentSelected,customerId)
+				customersOptions += ` <option value="${customerId}" ${selected}>${customerName}</option> `
 			}
 			$('select#customer_name').selectpicker('destroy');
 			$('select#customer_name').empty().append(customersOptions)

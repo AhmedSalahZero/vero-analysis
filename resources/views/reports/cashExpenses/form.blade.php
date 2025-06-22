@@ -581,7 +581,32 @@ $selectedBanks = [];
 
 </script>
 <script>
-    $(document).on('change', 'select#branch-id,select#receiving-currency-id', function() {
+
+	function getBranchFromCurrency()
+	{					const branchQuery = $('select#branch-id') ;
+						const currentFromBranchId = branchQuery.attr('data-current-selected');
+        	            const currencyName = $('select#receiving-currency-id').val();
+					
+                        $.ajax({
+                            url: "{{ route('get.branch.based.on.currency',['company'=>$company->id]) }}"
+                            , data: {
+								 currencyName
+                            }
+                            , success: function(res) {
+								var branchOptions ='';
+								for(var branchName in res.branches){
+									var branchId = res.branches[branchName];
+									var selected = branchId == currentFromBranchId ? 'selected':''; 
+									branchOptions+=`<option value="${branchId}" ${selected} >${branchName}</option>`
+								}
+								branchQuery.empty().append(branchOptions);
+								branchQuery.trigger('change');
+                            }
+                        })
+	}
+	getBranchFromCurrency();
+	  $(document).on('change', 'select#receiving-currency-id', getBranchFromCurrency);
+    $(document).on('change', 'select#branch-id', function() {
         const branchId = $('select#branch-id').val();
         const currencyName = $('select#receiving-currency-id').val();
         const modelId = $('#js-money-payment-id').val();

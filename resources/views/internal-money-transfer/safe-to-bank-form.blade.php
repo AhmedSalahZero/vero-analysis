@@ -65,15 +65,15 @@
 
         <form method="post" action="{{ isset($model) ?  route('internal-money-transfers.update',['company'=>$company->id,'internal_money_transfer'=>$model->id,'type'=>$type]) :route('internal-money-transfers.store',['company'=>$company->id,'type'=>$type]) }}" class="kt-form kt-form--label-right">
             <input id="js-in-edit-mode" type="hidden" name="in_edit_mode" value="{{ isset($model) ? 1 : 0 }}">
-            <input id="model-id"  type="hidden" name="id" value="{{ isset($model) ? $model->id : 0 }}">
-            <input  type="hidden" name="company_id" value="{{ $company->id }}">
-			<input type="hidden" name="type" value="safe-to-bank" >
-			@if(isset($model))
-			<input type="hidden" name="updated_by" value="{{ auth()->user()->id }}">
-			@else
-			<input type="hidden" name="created_by" value="{{ auth()->user()->id }}">
-			
-			@endif 
+            <input id="model-id" type="hidden" name="id" value="{{ isset($model) ? $model->id : 0 }}">
+            <input type="hidden" name="company_id" value="{{ $company->id }}">
+            <input type="hidden" name="type" value="safe-to-bank">
+            @if(isset($model))
+            <input type="hidden" name="updated_by" value="{{ auth()->user()->id }}">
+            @else
+            <input type="hidden" name="created_by" value="{{ auth()->user()->id }}">
+
+            @endif
             {{-- <input type="hidden" name="financial_institutions_id" value="{{ $financialInstitution->id }}"> --}}
             @csrf
             @if(isset($model))
@@ -103,17 +103,17 @@
                                         <h3 class="kt-portlet__head-title head-title text-primary">
                                             {{__('Safe To Bank Transfer Information')}}
                                         </h3>
-										
-										<div class=" flex-1 d-flex justify-content-end pt-3">
-                            <div class="col-md-3 mb-3">
-                                <label>{{__('Balance')}} <span class="balance-date-js"></span> </label>
-                                <div class="kt-input-icon">
-                                    <input value="0" type="text" disabled class="form-control cash-balance-js"  placeholder="{{__('Account Balance')}}">
-                                </div>
-                            </div>
 
-                        </div>
-						
+                                        <div class=" flex-1 d-flex justify-content-end pt-3">
+                                            <div class="col-md-3 mb-3">
+                                                <label>{{__('Balance')}} <span class="balance-date-js"></span> </label>
+                                                <div class="kt-input-icon">
+                                                    <input value="0" type="text" disabled class="form-control cash-balance-js" placeholder="{{__('Account Balance')}}">
+                                                </div>
+                                            </div>
+
+                                        </div>
+
                                     </div>
                                 </div>
 
@@ -121,42 +121,21 @@
                                     <div class="form-group">
                                         <div class="row">
 
-                                           	<div class="col-md-3">
-                    <label>{{__('Date')}}</label>
-                    <div class="kt-input-icon">
-                        <div class="input-group date">
-                            <input type="text"  name="transfer_date" value="{{ isset($model) ? formatDateForDatePicker($model->getTransferDate()) : '' }}" class="form-control balance-date is-date-css " readonly placeholder="Select date" id="kt_datepicker_max_date_is_today" />
-                            <div class="input-group-append">
-                                <span class="input-group-text">
-                                    <i class="la la-calendar-check-o"></i>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                                            <div class="col-md-3 mb-4">
-                            <label>{{ __('Branch') }} <span class="multi_selection"></span> </label>
-                            <div class="kt-input-icon">
-                                <div class="input-group date">
-                                    <select id="branch-id" data-live-search="true" data-actions-box="true" name="from_branch_id" required class="form-control customers-js kt-bootstrap-select select2-select kt_bootstrap_select ajax-customer-name">
-                                        @foreach($selectedBranches as $id => $name)
-                                        <option value="{{ $id }}">{{ $name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-
-                                            <div class="col-md-3 ">
-                                                <label>{{__('Deposit Amount')}}
-                                                    @include('star')
-                                                </label>
+                                            <div class="col-md-3">
+                                                <label>{{__('Date')}}</label>
                                                 <div class="kt-input-icon">
-                                                    <input  type="text" value="{{ isset($model) ? number_format($model->getAmount()):0 }}"  class="form-control greater-than-or-equal-zero-allowed " >
-													<input type="hidden" name="amount" value="{{ isset($model) ? $model->getAmount():0 }}">
+                                                    <div class="input-group date">
+                                                        <input type="text" name="transfer_date" value="{{ isset($model) ? formatDateForDatePicker($model->getTransferDate()) : '' }}" class="form-control balance-date is-date-css " readonly placeholder="Select date" id="kt_datepicker_max_date_is_today" />
+                                                        <div class="input-group-append">
+                                                            <span class="input-group-text">
+                                                                <i class="la la-calendar-check-o"></i>
+                                                            </span>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
-                                            <div class="col-md-3">
+											
+											 <div class="col-md-3">
                                                 <label>{{__('Currency')}}
                                                     @include('star')
                                                 </label>
@@ -169,7 +148,28 @@
                                                     </select>
                                                 </div>
                                             </div>
-                                       
+											
+                                            <div class="col-md-3 mb-4">
+                                                <label>{{ __('Safe') }} <span class="multi_selection"></span> </label>
+                                                <div class="kt-input-icon">
+                                                    <div class="input-group date">
+                                                        <select id="branch-id" data-current-selected="{{ isset($model) ? $model->getBranchId() : 0  }}" data-live-search="true" data-actions-box="true" name="from_branch_id" required class="form-control customers-js kt-bootstrap-select select2-select kt_bootstrap_select ajax-customer-name">
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-3 ">
+                                                <label>{{__('Deposit Amount')}}
+                                                    @include('star')
+                                                </label>
+                                                <div class="kt-input-icon">
+                                                    <input type="text" value="{{ isset($model) ? number_format($model->getAmount()):0 }}" class="form-control greater-than-or-equal-zero-allowed ">
+                                                    <input type="hidden" name="amount" value="{{ isset($model) ? $model->getAmount():0 }}">
+                                                </div>
+                                            </div>
+                                           
+
 
                                             <div class="col-md-6">
                                                 <label>{{__('To Bank')}}
@@ -233,7 +233,7 @@
                         <!--end::Portlet-->
                 </div>
             </div>
-			 @include('user_comment',['model'=>$model??null])
+            @include('user_comment',['model'=>$model??null])
             <x-submitting />
         </form>
 
@@ -332,130 +332,157 @@
 
         </script>
 
-    
-    <script>
-	
-		$(document).on('change','.balance-date',function(){
-				$('select#branch-id,select.current-from-currency').trigger('change');
-			})
-	$(document).on('change', 'select#branch-id,select.current-from-currency', function() {
-        const branchId = $('select#branch-id').val();
-        const currencyName = $('select.current-from-currency').val();
-		const modelId = $('#model-id').val();
-		const modelType = 'InternalMoneyTransfer';
-		const balanceDate = $('.balance-date').val();
-        if (branchId != '-1') {
-            $.ajax({
-                url: "{{ route('get.current.end.balance.of.cash.in.safe.statement',['company'=>$company->id]) }}"
-                , data: {
-                    branchId
-                    , currencyName,
-					modelType,
-					modelId,
-					balanceDate
-                }
-                , success: function(res) {
-                    const endBalance = res.end_balance;
-                    $('.cash-balance-js').val(number_format(endBalance))
+
+        <script>
+            $(document).on('change', '.balance-date', function() {
+                $('select.current-from-currency').trigger('change');
+            })
+            $(document).on('change', 'select#branch-id', function() {
+                const branchId = $('select#branch-id').val();
+                const currencyName = $('select.current-from-currency').val();
+                const modelId = $('#model-id').val();
+                const modelType = 'InternalMoneyTransfer';
+                const balanceDate = $('.balance-date').val();
+                if (branchId != '-1') {
+                    $.ajax({
+                        url: "{{ route('get.current.end.balance.of.cash.in.safe.statement',['company'=>$company->id]) }}"
+                        , data: {
+                            branchId
+                            , currencyName
+                            , modelType
+                            , modelId
+                            , balanceDate
+                        }
+                        , success: function(res) {
+                            const endBalance = res.end_balance;
+                            $('.cash-balance-js').val(number_format(endBalance))
+                        }
+                    })
                 }
             })
-        }
-    })
-	$(function(){
-		$('select#branch-id').trigger('change');
-	})
-	
-$(document).on('change', '.js-from-update-account-number-based-on-account-type', function () {
-	const val = $(this).val()
-	const lang = $('body').attr('data-lang')
-	const companyId = $('body').attr('data-current-company-id')
-	const repeaterParentIfExists = $(this).closest('[data-repeater-item]')
-	const parent = repeaterParentIfExists.length ? repeaterParentIfExists : $(this).closest('.kt-portlet__body')
-	const data = []
-	let currency = $(this).closest('form').find('select.current-from-currency').val()
-	let financialInstitutionBankId = parent.find('[data-from-financial-institution-id]').val()
-	financialInstitutionBankId = typeof financialInstitutionBankId !== 'undefined' ? financialInstitutionBankId : $('[data-financial-institution-id]').val()
-	if (!val || !currency || !financialInstitutionBankId) {
-		return
+            $(function() {
+                $('select#branch-id').trigger('change');
+            })
+
+            $(document).on('change', '.js-from-update-account-number-based-on-account-type', function() {
+                const val = $(this).val()
+                const lang = $('body').attr('data-lang')
+                const companyId = $('body').attr('data-current-company-id')
+                const repeaterParentIfExists = $(this).closest('[data-repeater-item]')
+                const parent = repeaterParentIfExists.length ? repeaterParentIfExists : $(this).closest('.kt-portlet__body')
+                const data = []
+                let currency = $(this).closest('form').find('select.current-from-currency').val()
+                let financialInstitutionBankId = parent.find('[data-from-financial-institution-id]').val()
+                financialInstitutionBankId = typeof financialInstitutionBankId !== 'undefined' ? financialInstitutionBankId : $('[data-financial-institution-id]').val()
+                if (!val || !currency || !financialInstitutionBankId) {
+                    return
+                }
+                const url = '/' + lang + '/' + companyId + '/money-received/get-account-numbers-based-on-account-type/' + val + '/' + currency + '/' + financialInstitutionBankId
+                $.ajax({
+                    url
+                    , data
+                    , success: function(res) {
+                        options = ''
+                        var selectToAppendInto = $(parent).find('.js-from-account-number')
+
+                        for (key in res.data) {
+                            var val = res.data[key]
+                            var selected = $(selectToAppendInto).attr('data-current-selected') == val ? 'selected' : ''
+                            options += '<option ' + selected + '  value="' + val + '">' + val + '</option>'
+                        }
+
+                        selectToAppendInto.empty().append(options).trigger('change')
+                    }
+                })
+
+
+
+
+
+
+            })
+            $(document).on('change', '[js-from-when-change-trigger-change-account-type]', function() {
+
+                $(this).closest('.kt-portlet__body').find('.js-from-update-account-number-based-on-account-type').trigger('change')
+            })
+            $(function() {
+                $('.js-from-update-account-number-based-on-account-type').trigger('change')
+            })
+
+
+            $(document).on('change', '.js-to-update-account-number-based-on-account-type', function() {
+                const val = $(this).val()
+                const lang = $('body').attr('data-lang')
+                const companyId = $('body').attr('data-current-company-id')
+                const repeaterParentIfExists = $(this).closest('[data-repeater-item]')
+                const parent = repeaterParentIfExists.length ? repeaterParentIfExists : $(this).closest('.kt-portlet__body')
+                const data = []
+                let currency = $(this).closest('form').find('select.current-from-currency').val()
+                let financialInstitutionBankId = parent.find('[data-to-financial-institution-id]').val()
+                financialInstitutionBankId = typeof financialInstitutionBankId !== 'undefined' ? financialInstitutionBankId : $('[data-financial-institution-id]').val()
+                if (!val || !currency || !financialInstitutionBankId) {
+                    return
+                }
+                const url = '/' + lang + '/' + companyId + '/money-received/get-account-numbers-based-on-account-type/' + val + '/' + currency + '/' + financialInstitutionBankId
+                $.ajax({
+                    url
+                    , data
+                    , success: function(res) {
+                        options = ''
+                        var selectToAppendInto = $(parent).find('.js-to-account-number')
+                        for (key in res.data) {
+                            var val = res.data[key]
+                            var selected = $(selectToAppendInto).attr('data-current-selected') == val ? 'selected' : ''
+                            options += '<option ' + selected + '  value="' + val + '">' + val + '</option>'
+                        }
+
+                        selectToAppendInto.empty().append(options).trigger('change')
+                    }
+                })
+
+
+
+
+
+
+            })
+            $(document).on('change', '[js-to-when-change-trigger-change-account-type]', function() {
+
+                $(this).closest('.kt-portlet__body').find('.js-to-update-account-number-based-on-account-type').trigger('change')
+            })
+            $(function() {
+                $('.js-to-update-account-number-based-on-account-type').trigger('change')
+            })
+
+        </script>
+
+
+
+<script>
+function getBranchFromCurrency()
+	{					const branchQuery = $('select#branch-id') ;
+						const currentFromBranchId = branchQuery.attr('data-current-selected');
+        	            const currencyName = $('select.current-from-currency').val();
+					
+                        $.ajax({
+                            url: "{{ route('get.branch.based.on.currency',['company'=>$company->id]) }}"
+                            , data: {
+								 currencyName
+                            }
+                            , success: function(res) {
+								var branchOptions ='';
+								for(var branchName in res.branches){
+									var branchId = res.branches[branchName];
+									var selected = branchId == currentFromBranchId ? 'selected':''; 
+									branchOptions+=`<option value="${branchId}" ${selected} >${branchName}</option>`
+								}
+								branchQuery.empty().append(branchOptions);
+								branchQuery.trigger('change');
+                            }
+                        })
 	}
-	const url = '/' + lang + '/' + companyId + '/money-received/get-account-numbers-based-on-account-type/' + val + '/' + currency + '/' + financialInstitutionBankId
-	$.ajax({
-		url,
-		data,
-		success: function (res) {
-			options = ''
-			var selectToAppendInto = $(parent).find('.js-from-account-number')
-
-			for (key in res.data) {
-				var val = res.data[key]
-				var selected = $(selectToAppendInto).attr('data-current-selected') == val ? 'selected' : ''
-				options += '<option ' + selected + '  value="' + val + '">' + val + '</option>'
-			}
-
-			selectToAppendInto.empty().append(options).trigger('change')
-		}
-	})
-
-
-
-
-
-
-})
-$(document).on('change', '[js-from-when-change-trigger-change-account-type]', function () {
-
-	$(this).closest('.kt-portlet__body').find('.js-from-update-account-number-based-on-account-type').trigger('change')
-})
-$(function () {
-	$('.js-from-update-account-number-based-on-account-type').trigger('change')
-})
-
-
-$(document).on('change', '.js-to-update-account-number-based-on-account-type', function () {
-	const val = $(this).val()
-	const lang = $('body').attr('data-lang')
-	const companyId = $('body').attr('data-current-company-id')
-	const repeaterParentIfExists = $(this).closest('[data-repeater-item]')
-	const parent = repeaterParentIfExists.length ? repeaterParentIfExists : $(this).closest('.kt-portlet__body')
-	const data = []
-	let currency = $(this).closest('form').find('select.current-from-currency').val()
-	let financialInstitutionBankId = parent.find('[data-to-financial-institution-id]').val()
-	financialInstitutionBankId = typeof financialInstitutionBankId !== 'undefined' ? financialInstitutionBankId : $('[data-financial-institution-id]').val()
-	if (!val || !currency || !financialInstitutionBankId) {
-		return
-	}
-	const url = '/' + lang + '/' + companyId + '/money-received/get-account-numbers-based-on-account-type/' + val + '/' + currency + '/' + financialInstitutionBankId
-	$.ajax({
-		url,
-		data,
-		success: function (res) {
-			options = ''
-			var selectToAppendInto = $(parent).find('.js-to-account-number')
-			for (key in res.data) {
-				var val = res.data[key]
-				var selected = $(selectToAppendInto).attr('data-current-selected') == val ? 'selected' : ''
-				options += '<option ' + selected + '  value="' + val + '">' + val + '</option>'
-			}
-
-			selectToAppendInto.empty().append(options).trigger('change')
-		}
-	})
-
-
-
-
-
-
-})
-$(document).on('change', '[js-to-when-change-trigger-change-account-type]', function () {
-
-	$(this).closest('.kt-portlet__body').find('.js-to-update-account-number-based-on-account-type').trigger('change')
-})
-$(function () {
-	$('.js-to-update-account-number-based-on-account-type').trigger('change')
-})
-
-	</script>
-
-
+	getBranchFromCurrency();
+	  $(document).on('change', 'select.current-from-currency', getBranchFromCurrency);
+	  
+</script>
         @endsection
