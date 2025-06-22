@@ -157,7 +157,7 @@ class CashFlowReportController
 		$rangedWeeks = [];
 		CashExpense::getProjectionOtherCashOut($result ,$company,$cashflowReportId,$isContract) ;
 		  if(!$contractId){
-		  	CustomerInvoice::getCashAndBankBalanceAtDate($result ,$foreignExchangeRates,$mainFunctionalCurrency,$startDate ,array_keys($weeks)[0],$company->id) ;
+		      CustomerInvoice::getCashAndBankBalanceAtDate($result ,$foreignExchangeRates,$mainFunctionalCurrency,$startDate ,array_keys($weeks)[0],$company->id) ;
 			  LoanSchedule::getLoanInstallmentsAtDates($result,$foreignExchangeRates,$mainFunctionalCurrency,$company->id,$datesWithWeekNumber,$endDate);
 		}
 		

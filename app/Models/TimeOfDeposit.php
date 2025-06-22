@@ -319,27 +319,43 @@ class TimeOfDeposit extends Model
 		$mainType = 'customers';
 		// $mainType = 'lg';
 		// $x = "end_date between " . $endDate . ' AND ' . $startDate ;
-		$rows = DB::table('time_of_deposits')->where('time_of_deposits.company_id',$companyId)
-						// ->where('currency',$currency)
-						->whereRaw("(CASE WHEN status = 'broken' THEN break_date ELSE end_date END) between '" .$startDate ."'". ' AND ' ."'" .$endDate . "'")
-						->groupByRaw('status,currency')
-						->selectRaw("status ,currency, SUM(CASE 
-             WHEN status = 'matured' THEN amount + actual_interest_amount
-             WHEN status = 'broken' THEN amount + break_interest_amount
-             WHEN status = 'running' THEN amount + interest_amount
-             ELSE 0 
-           END) AS total_amount ")
+		
+		$rows = DB::table('time_of_deposits')
+    ->where('time_of_deposits.company_id', $companyId)
+    // ->where('currency', $currency)
+    ->whereRaw("(CASE 
+                    WHEN status = 'broken' THEN break_date 
+                    WHEN status = 'matured' THEN deposit_date 
+                    ELSE end_date 
+                END) BETWEEN '{$startDate}' AND '{$endDate}'")
+    ->groupByRaw('status, currency, end_date')
+    ->selectRaw("
+        status,
+        currency,
+        CASE 
+            WHEN status = 'broken' THEN break_date 
+            WHEN status = 'matured' THEN deposit_date 
+            ELSE end_date 
+        END AS date,
+        SUM(CASE 
+            WHEN status = 'matured' THEN amount + actual_interest_amount
+            WHEN status = 'broken' THEN amount + break_interest_amount
+            WHEN status = 'running' THEN amount + interest_amount
+            ELSE 0 
+        END) AS total_amount
+    ")
 		//    ->limit(1)
 		//    ->
 		   ->get();
+		
 	
 		 
 
 		$subType = __('Time Of Deposits');
 		foreach($rows as $row){
-			
 			$tdCurrency = $row->currency;
-			$depositDate = $row->deposit_date;
+			$depositDate = $row->date;
+			// $depositDate = $row->deposit_date;
 			$exchangeRate = ForeignExchangeRate::getExchangeRateAt($tdCurrency,$mainFunctionalCurrency,$depositDate,$companyId,$foreignExchangeRates);
 			$currentStatus = $tdsTypes[$row->status] ;
 			// $lgType = $lgsTypes[$row->status];
@@ -351,6 +367,7 @@ class TimeOfDeposit extends Model
 			// $result[$mainType][$subType]['total']['total_of_total'] = isset($result[$mainType][$subType]['total']['total_of_total']) ? $result[$mainType][$subType]['total']['total_of_total'] + $result[$mainType][$subType]['total'][$currentWeekYear] : $result[$mainType][$subType]['total'][$currentWeekYear];
 		//	$totalCashInFlowArray[$currentWeekYear] = isset($totalCashInFlowArray[$currentWeekYear]) ? $totalCashInFlowArray[$currentWeekYear] +   $currentTotal : $currentTotal ;
 		}
+		
 	
 	}
 	public function getOdooCode()
