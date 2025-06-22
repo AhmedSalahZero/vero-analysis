@@ -15,6 +15,7 @@ use App\Models\CustomerInvoice;
 use App\Models\FinancialInstitution;
 use App\Models\ForeignExchangeRate;
 use App\Models\MoneyPayment;
+use App\Models\MoneyReceived;
 use App\Models\OutgoingTransfer;
 use App\Models\Partner;
 use App\Models\PayableCheque;
@@ -225,7 +226,9 @@ class MoneyPaymentController
 		]);
 	}
 	public function getContractsForSupplier(Company $company , Request $request ){
-		$contracts = Contract::where('partner_id',$request->get('supplierId'))->where('currency',$request->get('currency'))->pluck('name','id')->toArray();
+		$contracts = Contract::where('partner_id',$request->get('supplierId'))
+		->where('model_type','Supplier')
+		->where('currency',$request->get('currency'))->pluck('name','id')->toArray();
 		return response()->json([
 			'status'=>true ,
 			'contracts'=>$contracts
@@ -237,9 +240,11 @@ class MoneyPaymentController
 		$moneyPayment = MoneyPayment::find($downPaymentId);
 		$purchaseOrders = PurchaseOrder::where('contract_id',$contractId)->get();
 		$formattedSalesOrders = [];
+	
 		foreach($purchaseOrders as $index=>$purchaseOrder){
-			$paidAmount = $moneyPayment ? $moneyPayment->downPaymentSettlements->where('purchases_order_id',$purchaseOrder->id)->first() : null ;
+			$paidAmount = $moneyPayment ? $moneyPayment->downPaymentSettlements->where('purchase_order_id',$purchaseOrder->id)->first() : null ;
 			$formattedSalesOrders[$index]['paid_amount'] = $paidAmount && $paidAmount->down_payment_amount ? $paidAmount->down_payment_amount : 0;
+			// dd($moneyPayment->downPaymentSettlements,$formattedSalesOrders[$index]['paid_amount']);
 			$formattedSalesOrders[$index]['po_number'] = $purchaseOrder->po_number;
 			$formattedSalesOrders[$index]['amount'] = $purchaseOrder->getAmount();
 			$formattedSalesOrders[$index]['id'] = $purchaseOrder->id;
@@ -726,6 +731,7 @@ class MoneyPaymentController
 		 * @var Branch $branch
 		 */
 		$branch = Branch::find($branchId);
+		$model = null ;
 		if($request->has('modelId') ){
 			$modelId = $request->get('modelId')  ;
 			$modelType = $request->get('modelType');
@@ -737,13 +743,19 @@ class MoneyPaymentController
 				$oldBranchId = $model->getFromBranchId();
 			}
 			if($branch && $oldBranchId && $oldBranchId == $branch->id){
-				$additionalAmountInEditMode =  $model->getPaidAmount();
+				$additionalAmountInEditMode =  $model->getAmount();
 			}
 		}
 		$branches  = CashVeroBranch::where('company_id',$company->id)->where('currency',$currencyName)->orderBy('name')->pluck('id','name')->toArray();
 		$endBalance = $branch->getCurrentEndBalance($company->id,$currencyName,$deliveryDate);
+		// dd($model instanceof MoneyReceived);
+		if(isset($model) && $model instanceof MoneyReceived){
+			$endBalance = $endBalance-$additionalAmountInEditMode ;
+		}else{
+			$endBalance = $endBalance+$additionalAmountInEditMode ;
+		}
 		return response()->json([
-			'end_balance'=>$endBalance+$additionalAmountInEditMode,
+			'end_balance'=>$endBalance,
 			'branches'=>$branches
 		]);
 		

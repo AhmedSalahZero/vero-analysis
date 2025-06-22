@@ -801,11 +801,10 @@ class MoneyPayment extends Model
 						'currency'=>$this->getPaymentCurrency()
 					],
 					[
-						'purchases_order_id'=>$purchaseOrderArr['purchases_order_id'] == -1 ? null : $purchaseOrderArr['purchases_order_id'],
+						'purchase_order_id'=>$purchaseOrderArr['purchases_order_id'] == -1 ? null : $purchaseOrderArr['purchases_order_id'],
 						'down_payment_balance'=>$downPaymentAmount
 					]
 					);
-			
 					$this->downPaymentSettlements()->create($dataArr);
 			}
 		}

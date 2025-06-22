@@ -258,7 +258,9 @@ class MoneyReceivedController
 		]);
 	}
 	public function getContractsForCustomer(Company $company , Request $request ){
-		$contracts = Contract::where('partner_id',$request->get('customerId'))->where('currency',$request->get('currency'))->pluck('name','id')->toArray();
+		$contracts = Contract::where('partner_id',$request->get('customerId'))
+		->where('model_type','Customer')
+		->where('currency',$request->get('currency'))->pluck('name','id')->toArray();
 		return response()->json([
 			'status'=>true ,
 			'contracts'=>$contracts
@@ -268,7 +270,9 @@ class MoneyReceivedController
 
 		$contracts = Contract::where('partner_id',$request->get('customerId'))
 		->whereDoesntHave('lendingInformationForAgainstAssignmentContract')
-		->where('currency',$request->get('currency'))->get();
+		->where('currency',$request->get('currency'))
+		->where('model_type','Customer')
+		->get();
 		return response()->json([
 			'status'=>true ,
 			'contracts'=>$contracts

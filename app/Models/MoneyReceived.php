@@ -595,7 +595,11 @@ class MoneyReceived extends Model
 	
 
 
-	
+	public function getBranchId():int
+    {
+		$receivingBranch = $this->cashInSafeReceivingBranch();
+		return $receivingBranch? $receivingBranch->id:0;
+    }
 	public function cashInSafeReceivingBranch()
 	{
 		$cashInSafe = $this->cashInSafe;

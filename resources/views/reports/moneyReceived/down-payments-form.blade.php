@@ -164,12 +164,12 @@ use App\Models\Partner;
                             <div class="kt-input-icon">
                                 <div class="input-group date">
                                     <select id="receiving-currency-id" when-change-trigger-account-type-change name="receiving_currency" class="form-control 
-							current-currency
-							currency-class
-							receiving-currency-class
+									current-currency
+									currency-class
+									receiving-currency-class
 
-							 ajax-get-invoice-numbers 
-							 update-exchange-rate	
+									ajax-get-invoice-numbers 
+									update-exchange-rate	
 							">
                                         {{-- <option value="" selected>{{__('Select')}}</option> --}}
                                         @foreach(isset($currencies) ? $currencies : getBanksCurrencies () as $currencyId=>$currentName)
@@ -328,7 +328,7 @@ use App\Models\Partner;
                                 <label>{{__('Select Receiving Branch')}} @include('star')</label>
                                 <div class="kt-input-icon">
                                     <div class="input-group date">
-                                        <select name="receiving_branch_id" class="form-control">
+                                        <select data-current-selected="{{ isset($model) ? $model->getCashInSafeReceivingBranchId()  : 0 }}" id="branch-id" name="receiving_branch_id" class="form-control">
                                             <option value="-1">{{__('Select Branch')}}</option>
                                             @foreach($selectedBranches as $branchId=>$branchName)
                                             <option value="{{ $branchId }}" {{ isset($model) && $model->getCashInSafeReceivingBranchId() == $branchId ? 'selected' : '' }}>{{ $branchName }}</option>
@@ -689,7 +689,7 @@ use App\Models\Partner;
 
 
 
-            @if(isset($model) && $model->getDownPaymentType() == MoneyReceived::DOWN_PAYMENT_OVER_CONTRACT)
+            {{-- @if(isset($model) && $model->getDownPaymentType() == MoneyReceived::DOWN_PAYMENT_OVER_CONTRACT)
             <div class="kt-portlet" id="settlement-card-id">
                 <div class="kt-portlet__head">
                     <div class="kt-portlet__head-label">
@@ -710,9 +710,6 @@ use App\Models\Partner;
                     </div>
 
                     <hr>
-                    {{-- @include('reports.moneyReceived.unapplied-contract') --}}
-
-
 
                     <div class="row">
                         <div class="col-md-1 width-10"></div>
@@ -738,7 +735,7 @@ use App\Models\Partner;
                     </div>
                 </div>
             </div>
-            @endif
+            @endif --}}
 
 
  @include('user_comment',['model'=>$model??null])
@@ -908,7 +905,6 @@ use App\Models\Partner;
 				var customerId = res.invoices[customerName];
 				customersOptions += ` <option value="${customerId}">${customerName}</option> `
 			}
-			console.log(customersOptions)
 			$('select#customer_name').selectpicker('destroy');
 			$('select#customer_name').empty().append(customersOptions)
 			$('select#customer_name').selectpicker("refresh")
@@ -932,4 +928,34 @@ use App\Models\Partner;
 
 </script>
 
+
+<script>
+
+function getBranchFromCurrency()
+	{					const branchQuery = $('select#branch-id') ;
+						const currentFromBranchId = branchQuery.attr('data-current-selected');
+        	            const currencyName = $('select#receiving-currency-id').val();
+					
+                        $.ajax({
+                            url: "{{ route('get.branch.based.on.currency',['company'=>$company->id]) }}"
+                            , data: {
+								 currencyName
+                            }
+                            , success: function(res) {
+								var branchOptions ='';
+								for(var branchName in res.branches){
+									var branchId = res.branches[branchName];
+									var selected = branchId == currentFromBranchId ? 'selected':''; 
+									branchOptions+=`<option value="${branchId}" ${selected} >${branchName}</option>`
+								}
+								branchQuery.empty().append(branchOptions);
+								branchQuery.trigger('change');
+                            }
+                        })
+	}
+	getBranchFromCurrency();
+    $(document).on('change', 'select#receiving-currency-id', getBranchFromCurrency);
+	
+	</script>
+	
 @endsection

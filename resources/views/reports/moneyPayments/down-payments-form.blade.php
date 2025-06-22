@@ -610,7 +610,7 @@ $selectedBanks = [];
 
 
 
-    @if(isset($model) && $model->getDownPaymentType() == MoneyPayment::DOWN_PAYMENT_OVER_CONTRACT )
+    {{-- @if(isset($model) && $model->getDownPaymentType() == MoneyPayment::DOWN_PAYMENT_OVER_CONTRACT )
     <div class="kt-portlet" id="settlement-card-id">
         <div class="kt-portlet__head">
             <div class="kt-portlet__head-label">
@@ -657,7 +657,7 @@ $selectedBanks = [];
             </div>
         </div>
     </div>
-    @endif
+    @endif --}}
  @include('user_comment',['model'=>$model??null])
 
     <x-submitting-by-ajax />
@@ -749,10 +749,10 @@ $selectedBanks = [];
    
 		$(document).on('change','.balance-date',function(){
 				$('select.js-account-number').trigger('change');
-				$('select#branch-id,select#receiving-currency-id').trigger('change');
+				$('select#receiving-currency-id').trigger('change');
 			})
 			
-			 $(document).on('change', 'select#branch-id,select#receiving-currency-id', function() {
+			 $(document).on('change', 'select#branch-id', function() {
         const branchId = $('select#branch-id').val();
         const currencyName = $('select#receiving-currency-id').val();
 		const modelId = $('#js-money-payment-id').val();
@@ -850,6 +850,38 @@ $selectedBanks = [];
     })
 
 </script>
+
+
+<script>
+
+function getBranchFromCurrency()
+	{					const branchQuery = $('select#branch-id') ;
+						const currentFromBranchId = branchQuery.attr('data-current-selected');
+        	            const currencyName = $('select#receiving-currency-id').val();
+					
+                        $.ajax({
+                            url: "{{ route('get.branch.based.on.currency',['company'=>$company->id]) }}"
+                            , data: {
+								 currencyName
+                            }
+                            , success: function(res) {
+								var branchOptions ='';
+								for(var branchName in res.branches){
+									var branchId = res.branches[branchName];
+									var selected = branchId == currentFromBranchId ? 'selected':''; 
+									branchOptions+=`<option value="${branchId}" ${selected} >${branchName}</option>`
+								}
+								branchQuery.empty().append(branchOptions);
+								branchQuery.trigger('change');
+                            }
+                        })
+	}
+	getBranchFromCurrency();
+    $(document).on('change', 'select#receiving-currency-id', getBranchFromCurrency);
+	
+	</script>
+	
+	
 <script>
     $(function() {
         $('select#supplier_name').trigger('change')
@@ -891,7 +923,6 @@ $(document).on('change','#down_payment_type',function(){
 				var customerId = res.invoices[supplierName];
 				suppliersOptions += ` <option value="${customerId}">${supplierName}</option> `
 			}
-			console.log(suppliersOptions)
 			$('select#supplier_name').selectpicker('destroy');
 			$('select#supplier_name').empty().append(suppliersOptions)
 			$('select#supplier_name').selectpicker("refresh")

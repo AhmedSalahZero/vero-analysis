@@ -346,7 +346,7 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
                                                 <label>{{ __('From Branch') }} <span class="multi_selection"></span> </label>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group date">
-                                                        <select id="from-branch-id" data-live-search="true" data-actions-box="true" name="from_branch_id" required class="form-control customers-js kt-bootstrap-select select2-select kt_bootstrap_select ">
+                                                        <select id="from-branch-id" data-current-selected="{{ isset($model) ? $model->getFromBranchId() : 0 }}" data-live-search="true" data-actions-box="true" name="from_branch_id" required class="form-control customers-js kt-bootstrap-select select2-select kt_bootstrap_select ">
                                                             @foreach($selectedBranches as $id => $name)
                                                             <option @if(isset($model) && $id==$model->getFromBranchId()) selected @endif value="{{ $id }}">{{ $name }}</option>
                                                             @endforeach
@@ -361,7 +361,7 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
                                                 <label>{{ __('To Branch') }} <span class="multi_selection"></span> </label>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group date">
-                                                        <select id="to-branch-id" data-live-search="true" data-actions-box="true" name="to_branch_id" required class="form-control customers-js kt-bootstrap-select select2-select kt_bootstrap_select ">
+                                                        <select data-current-selected="{{ isset($model) ? $model->getToBranchId() : 0 }}" id="to-branch-id" data-live-search="true" data-actions-box="true" name="to_branch_id" required class="form-control customers-js kt-bootstrap-select select2-select kt_bootstrap_select ">
                                                             @foreach($selectedBranches as $id => $name)
                                                             <option @if(isset($model) && $id==$model->getToBranchId()) selected @endif value="{{ $id }}">{{ $name }}</option>
                                                             @endforeach
@@ -592,19 +592,16 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
 			})
                
 				
-				function handleFromCurrency()
+				function getBranchFromCurrency()
 				{
-					console.log('from')
-					const currentFromBranchId = $('select.current-from-currency').attr('data-current-selected');
+					const currentFromBranchId = $('select#from-branch-id').attr('data-current-selected');
                     const currencyName = $('select.current-from-currency').val();
 						const modelId = $('#model-id').val();
 						const modelType = 'BuyOrSellCurrency';
                         $.ajax({
                             url: "{{ route('get.branch.based.on.currency',['company'=>$company->id]) }}"
                             , data: {
-								 currencyName,
-								modelType,
-								modelId
+								 currencyName
                             }
                             , success: function(res) {
 								var branchOptions ='';
@@ -618,11 +615,11 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
                             }
                         })
 				}
-				 $(document).on('change', 'select.current-from-currency', handleFromCurrency) ;
-				 handleFromCurrency();
+				 $(document).on('change', 'select.current-from-currency', getBranchFromCurrency) ;
+				 getBranchFromCurrency();
 				function handleToCurrency()
 				{
-					const currentToBranchId = $('select.current-to-currency').attr('data-current-selected');
+					const currentToBranchId = $('select#to-branch-id').attr('data-current-selected');
                     const currencyName = $('select.current-to-currency').val();
 						const modelId = $('#model-id').val();
 						const modelType = 'BuyOrSellCurrency';
@@ -640,7 +637,6 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
 									var selected = branchId == currentToBranchId ? 'selected':''; 
 									branchOptions+=`<option value="${branchId}" ${selected} >${branchName}</option>`
 								}
-								console.log(branchOptions)
 								$('select[name="to_branch_id"]').empty().append(branchOptions);
                             }
                         })
@@ -653,7 +649,7 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
 				
 				
 				 $(document).on('change', 'select#from-branch-id', function() {
-					const currentFromBranchId = $('select.current-from-currency').attr('data-current-selected');
+					const currentFromBranchId = $('select#from-branch-id').attr('data-current-selected');
                     const branchId = $('select#from-branch-id').val();
                     const currencyName = $('select.current-from-currency').val();
 						const modelId = $('#model-id').val();
@@ -680,7 +676,6 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
             $(document).on('change', 'select[js-from-when-change-trigger-change-account-type]', function() {
                 if ($(this).attr('name')) {
                     $(this).closest('.kt-portlet__body').find('select.js-from-update-account-number-based-on-account-type').trigger('change')
-					console.log('from14')
                 }
             })
 			
@@ -793,7 +788,6 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
                 if (baseValue.startsWith("=")) {
                     try {
                         baseValue = math.evaluate(baseValue.substring(1)); // Evaluate formula
-                        console.log(baseValue)
                     } catch (e) {
                         baseValue = 0;
                     }

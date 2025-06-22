@@ -168,7 +168,7 @@ use App\Models\MoneyReceived ;
 
 
                         <div class="col-md-1 ">
-                            <label class="text-nowrap">{{__('Receiving Currency')}} @include('star')</label>
+                            <label class="text-nowrap">{{__('Receive Currency')}} @include('star')</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
                                     <select id="receiving-currency-id" when-change-trigger-account-type-change name="receiving_currency" class="form-control 
@@ -336,7 +336,7 @@ use App\Models\MoneyReceived ;
                                 <label>{{__('Receiving Branch')}} @include('star')</label>
                                 <div class="kt-input-icon">
                                     <div class="input-group date">
-                                        <select id="branch-id" name="receiving_branch_id" class="form-control">
+                                        <select data-current-selected="{{ isset($model) ? $model->getCashInSafeReceivingBranchId()  : 0 }}" id="branch-id" name="receiving_branch_id" class="form-control">
                                             <option value="-1">{{__('Select Branch')}}</option>
                                             @foreach($selectedBranches as $branchId=>$branchName)
                                             <option value="{{ $branchId }}" {{ isset($model) && $model->getCashInSafeReceivingBranchId() == $branchId ? 'selected' : '' }}>{{ $branchName }}</option>
@@ -774,17 +774,25 @@ use App\Models\MoneyReceived ;
 </script>
 
 <script>
-    $(document).on('change', 'select#branch-id,select#receiving-currency-id', function() {
-        const branchId = $('select#branch-id').val();
+	$(document).on('change','input[name="receiving_date"]',function(){
+		$('select#receiving-currency-id').trigger('change');
+	})
+	function getBalanceFromBranch()
+	{
+		 const branchId = $('select#branch-id').val();
         const currencyName = $('select#receiving-currency-id').val();
         const modelId = $('#js-money-received-id').val();
         const modelType = 'MoneyReceived';
+		const balanceDate =$('input[name="receiving_date"]').val(); 
         if (branchId != '-1') {
             $.ajax({
                 url: "{{ route('get.current.end.balance.of.cash.in.safe.statement',['company'=>$company->id]) }}"
                 , data: {
                     branchId
                     , currencyName
+					, modelId
+                    , modelType
+                    , balanceDate
                 }
                 , success: function(res) {
                     const endBalance = res.end_balance;
@@ -792,7 +800,34 @@ use App\Models\MoneyReceived ;
                 }
             })
         }
-    })
+	}
+	function getBranchFromCurrency()
+	{					const branchQuery = $('select#branch-id') ;
+						const currentFromBranchId = branchQuery.attr('data-current-selected');
+        	            const currencyName = $('select#receiving-currency-id').val();
+					
+                        $.ajax({
+                            url: "{{ route('get.branch.based.on.currency',['company'=>$company->id]) }}"
+                            , data: {
+								 currencyName
+                            }
+                            , success: function(res) {
+								var branchOptions ='';
+								for(var branchName in res.branches){
+									var branchId = res.branches[branchName];
+									var selected = branchId == currentFromBranchId ? 'selected':''; 
+									branchOptions+=`<option value="${branchId}" ${selected} >${branchName}</option>`
+								}
+								console.log('good');
+								branchQuery.empty().append(branchOptions);
+								branchQuery.trigger('change');
+                            }
+                        })
+	}
+	getBranchFromCurrency();
+    $(document).on('change', 'select#receiving-currency-id', getBranchFromCurrency);
+    $(document).on('change', 'select#branch-id', getBalanceFromBranch)
+	
 
     $(function() {
         $('#type').trigger('change');
@@ -872,6 +907,7 @@ use App\Models\MoneyReceived ;
     })
 
 </script>
+
 
 
 @if (!$singleModel&&!isset($model))

@@ -196,6 +196,10 @@ class BuyOrSellCurrency extends Model
 	{
 		return $this->getAmountToSell();
 	}
+	public function getAmount()
+	{
+		return $this->getAmountToSell();; 
+	}
 	public function getAccountNumber()
 	{
 		return $this->getFromAccountNumber();
