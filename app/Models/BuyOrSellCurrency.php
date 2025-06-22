@@ -4,6 +4,7 @@ namespace App\Models;
 use App\Models\FullySecuredOverdraft;
 use App\Services\Api\InternalMoneyTransfer as OdooInternalMoneyTransfer;
 use App\Traits\HasBasicStoreRequest;
+use App\Traits\HasCompany;
 use App\Traits\Models\HasOdooMoneyTransfer;
 use App\Traits\Models\HasUserComment;
 use Carbon\Carbon;
@@ -15,7 +16,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class BuyOrSellCurrency extends Model
 {
-	use HasBasicStoreRequest , HasUserComment,HasOdooMoneyTransfer;
+	use HasBasicStoreRequest , HasUserComment,HasOdooMoneyTransfer,HasCompany;
 	const BANK_TO_BANK = 'bank-to-bank';
 	const BANK_TO_SAFE = 'bank-to-safe';
 	const SAFE_TO_BANK = 'safe-to-bank';
@@ -445,6 +446,10 @@ class BuyOrSellCurrency extends Model
 	public function getFromBranchName()
 	{
 		return $this->fromBranch ? $this->fromBranch->getName()  : __('N/A');  
+	}
+	public function getFromBranchId()
+	{
+		return $this->fromBranch ? $this->fromBranch->id  :0;  
 	}
 	public function toBranch()
 	{

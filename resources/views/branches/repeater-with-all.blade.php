@@ -36,7 +36,11 @@
 			<select name="currency" class="currency-select form-control">
                 {{-- <option value="all">All</option> --}}
                 @foreach(getCurrencies() as $currencyName => $currencyTitle)
-				  <option value="{{ $currencyName }}" 
+				  <option
+				  @if(isset($model) && $model->getCurrencyName() == $currencyName)
+				  selected
+				  @endif
+				   value="{{ $currencyName }}" 
 											{{-- {{ isset($model) && $model->getCashInBankReceivingBankId() == $financialInstitutionBank->id ? 'selected' : '' }} --}}
 											>{{ $currencyTitle }}</option>
 				@endforeach 
@@ -122,7 +126,7 @@
             updatedBankSelect.addEventListener('change', () => {
                 updatedRepeaterButton.disabled = updatedBankSelect.value === 'all';
                 // Update name attributes based on selection
-                updatedBankSelect.name = updatedBankSelect.value !== 'all' ? `${fixedName}[${index}][bank]` : 'bank';
+                updatedBankSelect.name = updatedBankSelect.value !== 'all' ? `${fixedName}[${index}][currency]` : 'currency';
 				if(updatedCodeInput){
                 updatedCodeInput.name = updatedBankSelect.value !== 'all' ? `${fixedName}[${index}][odoo_code]` : 'odoo_code';
 					

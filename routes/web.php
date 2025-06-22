@@ -702,6 +702,7 @@ Route::middleware([])->group(function () {
 					Route::get('branches/{branch}/edit','BranchesController@edit')->name('branches.edit');
 					Route::put('branches/{branch}/update','BranchesController@update')->name('branches.update');
 					Route::delete('branches/{branch}/delete','BranchesController@destroy')->name('branches.destroy');
+					Route::get('get-branches-from-currency','BranchesController@getBranchesForCurrency')->name('get.branch.based.on.currency');
 					
 					
 					Route::get('deductions','DeductionsController@index')->name('deductions.index');

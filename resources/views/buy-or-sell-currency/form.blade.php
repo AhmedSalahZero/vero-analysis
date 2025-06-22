@@ -173,7 +173,7 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
                                                     @include('star')
                                                 </label>
                                                 <div class="input-group">
-                                                    <select js-from-when-change-trigger-change-account-type name="currency_to_sell" class="form-control current-from-currency" js-from-when-change-trigger-change-account-type>
+                                                    <select data-current-selected="{{ isset($model) ? $model->getCurrencyToSell() : '' }}" js-from-when-change-trigger-change-account-type name="currency_to_sell" class="form-control current-from-currency" js-from-when-change-trigger-change-account-type>
                                                         <option selected>{{__('Select')}}</option>
                                                         @foreach(getCurrencies() as $currencyName => $currencyValue )
                                                         <option value="{{ $currencyName }}" @if(isset($model) && $model->getCurrencyToSell() == $currencyName ) selected @endif > {{ $currencyValue }}</option>
@@ -187,7 +187,7 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
                                                     @include('star')
                                                 </label>
                                                 <div class="input-group">
-                                                    <select js-from-when-change-trigger-change-account-type name="currency_to_buy" class="form-control current-to-currency" js-to-when-change-trigger-change-account-type>
+                                                    <select data-current-selected="{{ isset($model) ? $model->getCurrencyToBuy() : '' }}" js-from-when-change-trigger-change-account-type name="currency_to_buy" class="form-control current-to-currency" js-to-when-change-trigger-change-account-type>
                                                         <option selected>{{__('Select')}}</option>
                                                         @foreach(getCurrencies() as $currencyName => $currencyValue )
                                                         <option value="{{ $currencyName }}" @if(isset($model) && $model->getCurrencyToBuy() == $currencyName ) selected @endif > {{ $currencyValue }}</option>
@@ -346,9 +346,9 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
                                                 <label>{{ __('From Branch') }} <span class="multi_selection"></span> </label>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group date">
-                                                        <select id="branch-id" data-live-search="true" data-actions-box="true" name="from_branch_id" required class="form-control customers-js kt-bootstrap-select select2-select kt_bootstrap_select ">
+                                                        <select id="from-branch-id" data-live-search="true" data-actions-box="true" name="from_branch_id" required class="form-control customers-js kt-bootstrap-select select2-select kt_bootstrap_select ">
                                                             @foreach($selectedBranches as $id => $name)
-                                                            <option @if(isset($model) && $id==$model->getToBranchId()) selected @endif value="{{ $id }}">{{ $name }}</option>
+                                                            <option @if(isset($model) && $id==$model->getFromBranchId()) selected @endif value="{{ $id }}">{{ $name }}</option>
                                                             @endforeach
                                                         </select>
                                                     </div>
@@ -361,7 +361,7 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
                                                 <label>{{ __('To Branch') }} <span class="multi_selection"></span> </label>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group date">
-                                                        <select data-live-search="true" data-actions-box="true" name="to_branch_id" required class="form-control customers-js kt-bootstrap-select select2-select kt_bootstrap_select ">
+                                                        <select id="to-branch-id" data-live-search="true" data-actions-box="true" name="to_branch_id" required class="form-control customers-js kt-bootstrap-select select2-select kt_bootstrap_select ">
                                                             @foreach($selectedBranches as $id => $name)
                                                             <option @if(isset($model) && $id==$model->getToBranchId()) selected @endif value="{{ $id }}">{{ $name }}</option>
                                                             @endforeach
@@ -574,11 +574,87 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
                 })
 
 
-$(document).on('change','.balance-date',function(){
-				$('select#branch-id,select.current-from-currency').trigger('change');
+		
+				
+				
+				
+				
+				
+            })
+			
+				$(document).on('change','.balance-date',function(){
+				$('select#from-branch-id').trigger('change');
+				$('select#to-branch-id').trigger('change');
+				//,select.current-from-currency
 			})
-                $(document).on('change', 'select#branch-id,select.current-from-currency', function() {
-                    const branchId = $('select#branch-id').val();
+			$(document).on('change','.balance-date',function(){
+				$('select.js-from-account-number').trigger('change');	
+			})
+               
+				
+				function handleFromCurrency()
+				{
+					console.log('from')
+					const currentFromBranchId = $('select.current-from-currency').attr('data-current-selected');
+                    const currencyName = $('select.current-from-currency').val();
+						const modelId = $('#model-id').val();
+						const modelType = 'BuyOrSellCurrency';
+                        $.ajax({
+                            url: "{{ route('get.branch.based.on.currency',['company'=>$company->id]) }}"
+                            , data: {
+								 currencyName,
+								modelType,
+								modelId
+                            }
+                            , success: function(res) {
+								var branchOptions ='';
+								for(var branchName in res.branches){
+									var branchId = res.branches[branchName];
+									var selected = branchId == currentFromBranchId ? 'selected':''; 
+									branchOptions+=`<option value="${branchId}" ${selected} >${branchName}</option>`
+								}
+								$('select[name="from_branch_id"]').empty().append(branchOptions);
+								$('select[name="from_branch_id"]').trigger('change');
+                            }
+                        })
+				}
+				 $(document).on('change', 'select.current-from-currency', handleFromCurrency) ;
+				 handleFromCurrency();
+				function handleToCurrency()
+				{
+					const currentToBranchId = $('select.current-to-currency').attr('data-current-selected');
+                    const currencyName = $('select.current-to-currency').val();
+						const modelId = $('#model-id').val();
+						const modelType = 'BuyOrSellCurrency';
+                        $.ajax({
+                            url: "{{ route('get.branch.based.on.currency',['company'=>$company->id]) }}"
+                            , data: {
+								 currencyName,
+								modelType,
+								modelId
+                            }
+                            , success: function(res) {
+								var branchOptions ='';
+								for(var branchName in res.branches){
+									var branchId = res.branches[branchName];
+									var selected = branchId == currentToBranchId ? 'selected':''; 
+									branchOptions+=`<option value="${branchId}" ${selected} >${branchName}</option>`
+								}
+								console.log(branchOptions)
+								$('select[name="to_branch_id"]').empty().append(branchOptions);
+                            }
+                        })
+                 
+                
+				
+				}
+				$(document).on('change', 'select.current-to-currency', handleToCurrency)
+				handleToCurrency();
+				
+				
+				 $(document).on('change', 'select#from-branch-id', function() {
+					const currentFromBranchId = $('select.current-from-currency').attr('data-current-selected');
+                    const branchId = $('select#from-branch-id').val();
                     const currencyName = $('select.current-from-currency').val();
 						const modelId = $('#model-id').val();
 						const modelType = 'BuyOrSellCurrency';
@@ -587,8 +663,8 @@ $(document).on('change','.balance-date',function(){
                         $.ajax({
                             url: "{{ route('get.current.end.balance.of.cash.in.safe.statement',['company'=>$company->id]) }}"
                             , data: {
-                                branchId
-                                , currencyName,
+                                branchId,
+								 currencyName,
 								modelType,
 								modelId,
 								balanceDate
@@ -600,26 +676,22 @@ $(document).on('change','.balance-date',function(){
                         })
                     }
                 })
-
-
-
-
-
-
-
-            })
+				
             $(document).on('change', 'select[js-from-when-change-trigger-change-account-type]', function() {
                 if ($(this).attr('name')) {
                     $(this).closest('.kt-portlet__body').find('select.js-from-update-account-number-based-on-account-type').trigger('change')
+					console.log('from14')
                 }
             })
+			
             $(function() {
-                $('select.js-from-update-account-number-based-on-account-type[name]').trigger('change')
+		
+			   $('select.js-from-update-account-number-based-on-account-type[name]').trigger('change')
+			
             })
 
 
             $(document).on('change', 'select.js-to-update-account-number-based-on-account-type', function() {
-                console.log('to', this, $(this).attr('name'));
                 if (!$(this).attr('name')) {
                     return
                 }
@@ -644,13 +716,11 @@ $(document).on('change','.balance-date',function(){
                     , success: function(res) {
                         options = ''
                         var selectToAppendInto = $(parent).find('.js-to-account-number[name]')
-                        console.log('result', res.data);
                         for (key in res.data) {
                             var val = res.data[key]
                             var selected = $(selectToAppendInto).attr('data-current-selected') == val ? 'selected' : ''
                             options += '<option ' + selected + '  value="' + val + '">' + val + '</option>'
                         }
-
                         selectToAppendInto.empty().append(options).trigger('change')
                     }
                 })
@@ -662,7 +732,6 @@ $(document).on('change','.balance-date',function(){
 
             })
             $(document).on('change', 'select[js-to-when-change-trigger-change-account-type]', function() {
-                console.log($(this).closest('.kt-portlet__body').find('select.js-to-update-account-number-based-on-account-type')[0]);
                 $(this).closest('.kt-portlet__body').find('select.js-to-update-account-number-based-on-account-type').trigger('change')
             })
             $(function() {
@@ -697,6 +766,10 @@ $(document).on('change','.balance-date',function(){
 
                 $('div.show-only-if.hidden input,div.show-only-if.hidden select').removeAttr('required')
                 $('div.show-only-if:not(.hidden) input,div.show-only-if.hidden select').removeAttr('required')
+				
+				$('select.current-from-currency').trigger('change');
+				$('select.current-to-currency').trigger('change');
+				
             })
 
             $('.type').trigger('change')
@@ -773,9 +846,7 @@ $(document).on('change','.balance-date',function(){
 
 
 
-			$(document).on('change','.balance-date',function(){
-				$('select.js-from-account-number').trigger('change');	
-			})
+			
             $(document).on('change', 'select.js-from-account-number', function() {
                 const parent = $(this).closest('.kt-portlet__body');
                 const financialInstitutionId = parent.find('select.from-financial-institution').val()

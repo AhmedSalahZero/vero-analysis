@@ -4,12 +4,12 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreBranchRequest;
 use App\Models\CashVeroBranch;
 use App\Models\Company;
+use App\Models\SalesGathering\Branch;
 use App\Repositories\SafeRepository;
 use App\Services\Api\OdooService;
 use App\Traits\GeneralFunctions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-use League\Flysystem\SafeStorage;
 
 class BranchesController
 {
@@ -182,5 +182,11 @@ class BranchesController
 		$branch->delete();
 		return redirect()->back()->with('success',__('Item Has Been Delete Successfully'));
 	}
-	
+	public function getBranchesForCurrency(Request $request , Company $company){
+		$currency = $request->get('currencyName') ;
+		$branches = CashVeroBranch::where('company_id',$company->id)->where('currency',$currency)->pluck('id','name')->toArray() ;
+		return response()->json([
+			'branches'=>$branches
+		]);
+	}
 }

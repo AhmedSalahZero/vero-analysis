@@ -7,6 +7,7 @@ use App\Http\Requests\StoreMoneyPaymentRequest;
 use App\Models\AccountType;
 use App\Models\Bank;
 use App\Models\Branch;
+use App\Models\CashVeroBranch;
 use App\Models\Company;
 use App\Models\Contract;
 use App\Models\Currency;
@@ -729,14 +730,21 @@ class MoneyPaymentController
 			$modelId = $request->get('modelId')  ;
 			$modelType = $request->get('modelType');
 			$model = ('App\Models\\'.$modelType)::find($modelId);
-			$oldBranchId = $model ? $model->getBranchId() : null;
-			if($oldBranchId && $oldBranchId == $branch->id){
+			$oldBranchId = null ; 
+			if($model && method_exists($model,'getBranchId')){
+				$oldBranchId = $model->getBranchId();
+			}elseif($model && method_exists($model,'getFromBranchId')){
+				$oldBranchId = $model->getFromBranchId();
+			}
+			if($branch && $oldBranchId && $oldBranchId == $branch->id){
 				$additionalAmountInEditMode =  $model->getPaidAmount();
 			}
 		}
+		$branches  = CashVeroBranch::where('company_id',$company->id)->where('currency',$currencyName)->orderBy('name')->pluck('id','name')->toArray();
 		$endBalance = $branch->getCurrentEndBalance($company->id,$currencyName,$deliveryDate);
 		return response()->json([
-			'end_balance'=>$endBalance+$additionalAmountInEditMode
+			'end_balance'=>$endBalance+$additionalAmountInEditMode,
+			'branches'=>$branches
 		]);
 		
 	}

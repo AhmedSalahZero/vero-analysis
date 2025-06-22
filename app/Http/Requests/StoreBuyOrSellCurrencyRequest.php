@@ -39,8 +39,9 @@ class StoreBuyOrSellCurrencyRequest extends FormRequest
 		$date = $this->get('transaction_date');
 		$branchId =$this->get('from_branch_id') ;
 		$currency = $this->get('currency_to_sell');
+
         return [
-			'transfer_date'=>'required',
+			'transaction_date'=>'required',
 			'currency_to_sell_amount'=>['required','gt:0'],
 			'amount_can_not_be_greater_than_end_balance_at_payment_date'=>new AmountCanNotBeGreaterThanEndBalanceAtPaymentDate($type,$amount,$this->route('company'),$accountType,$accountNumber,$financialInstitutionId,$date,$branchId,$currency),
         ];
@@ -48,7 +49,7 @@ class StoreBuyOrSellCurrencyRequest extends FormRequest
 	public function messages()
 	{
 		return [
-			'transfer_date.required'=>__('Transaction Date Is Required'),
+			'transaction_date.required'=>__('Transaction Date Is Required'),
 		];
 	}
 }

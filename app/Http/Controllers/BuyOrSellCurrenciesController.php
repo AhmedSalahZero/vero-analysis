@@ -209,9 +209,7 @@ class BuyOrSellCurrenciesController
 			$buyOrSellCurrency->handleSafeToSafeTransfer($company->id  ,$fromBranchId , $currencyToBuyName , $toBranchId , $currencyToSellName , $exchangeRate , $transferDate,$transferFromAmount,$transferToAmount);
 		}
 		$buyOrSellCurrency->handleOdooTransfer();
-		// if($inUpdateMode){
-		// 	return $buyOrSellCurrency;
-		// }
+	
 		
 		$activeTab = $type ; 
 		

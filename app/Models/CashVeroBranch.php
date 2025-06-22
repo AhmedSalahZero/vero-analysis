@@ -41,5 +41,8 @@ class CashVeroBranch extends Model
 		return $this->odoo_code ;
 	}
 	
-	
+	public function getCurrencyName()
+	{
+		return $this->currency;
+	}
 }

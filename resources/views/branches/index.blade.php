@@ -87,6 +87,7 @@ use App\Models\CashVeroBranch ;
                                 <tr class="table-standard-color">
                                     <th>{{ __('#') }}</th>
                                     <th>{{ __('Name') }}</th>
+                                    <th>{{ __('Currency') }}</th>
                                     <th>{{ __('Created At') }}</th>
 									@if(hasAuthFor($updatePermissionName) || hasAuthFor($deletePermissionName) )
                                     <th>{{ __('Control') }}</th>
@@ -101,6 +102,7 @@ use App\Models\CashVeroBranch ;
                                     </td>
 
                                   <td class="text-nowrap text-left">{{ $model->getName() }}</td>
+                                  <td class="text-nowrap text-left">{{ $model->getCurrencyName() }}</td>
                                     <td>{{ $model->getCreatedAtFormatted() }}</td>
 									@if(hasAuthFor($updatePermissionName) || hasAuthFor($deletePermissionName) )
                                     <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
