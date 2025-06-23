@@ -6870,12 +6870,12 @@ function getHeaderMenu($currentCompany = null)
 					// 	'show'=>true,
 					// 	'data-show-notification-modal'=>'send-invoices-modal',
 					// ],
-					[
-						'title'=>__('Read Approved Expenses'),
-						'link'=>'#',
-						'show'=>true,
-						'data-show-notification-modal'=>'read-expenses-modal',
-					],
+					// [
+					// 	'title'=>__('Read Approved Expenses'),
+					// 	'link'=>'#',
+					// 	'show'=>true,
+					// 	'data-show-notification-modal'=>'read-expenses-modal',
+					// ],
 					],
 					
 				],

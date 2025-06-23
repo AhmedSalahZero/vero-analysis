@@ -112,8 +112,8 @@ class SubsidiaryCompaniesController
 		$subsidiaryCompany = new Partner ;
 		$subsidiaryCompany->is_subsidiary_company = 1 ;
 		if($company->hasOdooIntegrationCredentials()){
-			$subsidiaryCompany->due_to_chart_of_account_number_code = $request->get('due_to_chart_of_account_number_code');
-			$subsidiaryCompany->due_from_chart_of_account_number_code = $request->get('due_from_chart_of_account_number_code');
+			$subsidiaryCompany->due_from_chart_of_account_number_odoo_code = $request->get('due_from_chart_of_account_number_odoo_code');
+			$subsidiaryCompany->due_to_chart_of_account_number_odoo_code = $request->get('due_to_chart_of_account_number_odoo_code');
 		}
 		$subsidiaryCompany->storeBasicForm($request);
 		$activeTab = $type ; 
@@ -125,7 +125,6 @@ class SubsidiaryCompaniesController
 
 	public function edit(Company $company,Partner $subsidiaryCompany)
 	{
-
         return view('subsidiaryCompanies.form' ,$this->getCommonViewVars($company,$subsidiaryCompany));
     }
 	

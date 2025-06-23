@@ -268,30 +268,30 @@ class Partner extends Model
 	}
 	public function dueToChartOfAccountNumberCode()
 	{
-		if(is_null($this->due_to_chart_of_account_number_code)){
+		if(is_null($this->due_to_chart_of_account_number_odoo_code)){
 			throw new \Exception('Due To Chart Of Account Number Not Found .. Please Add It From Other Odoo Setting Form');
 		}
-		return  $this->due_to_chart_of_account_number_code;
+		return  $this->due_to_chart_of_account_number_odoo_code;
 	}
 		public function dueToChartOfAccountNumberId()
 	{
-		if(!$this->due_to_chart_of_account_number_id){
+		if(!$this->due_to_chart_of_account_number_odoo_id){
 			throw new \Exception('Due To Chart Of Account Number Not Found .. Please Add It From Other Odoo Setting Form');
 		}
-		return  $this->due_to_chart_of_account_number_id;
+		return  $this->due_to_chart_of_account_number_odoo_id;
 	}
 		public function dueFromChartOfAccountNumberCode()
 	{
-		if(!$this->due_to_chart_of_account_number_code){
+		if(!$this->due_from_chart_of_account_number_odoo_code){
 			throw new \Exception('Due To Chart Of Account Number Not Found .. Please Add It From Other Odoo Setting Form');
 		}
-		return  $this->due_to_chart_of_account_number_code;
+		return  $this->due_from_chart_of_account_number_odoo_code;
 	}
 		public function dueFromChartOfAccountNumberId()
 	{
-		if(is_null($this->due_to_chart_of_account_number_id)){
+		if(is_null($this->due_to_chart_of_account_number_odoo_id)){
 			throw new \Exception('Due To Chart Of Account Number Not Found .. Please Add It From Other Odoo Setting Form');
 		}
-		return  $this->due_to_chart_of_account_number_id;
+		return  $this->due_to_chart_of_account_number_odoo_id;
 	}
 }

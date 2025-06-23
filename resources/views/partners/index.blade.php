@@ -50,7 +50,7 @@ use App\Models\Partner ;
 
 
             </ul>
-			@if(auth()->user()->can('create customers'))
+			{{-- @if(auth()->user()->can('create customers'))
             <div class="flex-tabs">
                
                 <a href="{{ route('partners.create',['company'=>$company->id,Partner::PARTNERS]) }}" class="btn  active-style btn-icon-sm align-self-center">
@@ -58,7 +58,7 @@ use App\Models\Partner ;
                     {{ __('Partner') }}
                 </a>
             </div>
-		@endif 
+		@endif  --}}
             
         </div>
     </div>

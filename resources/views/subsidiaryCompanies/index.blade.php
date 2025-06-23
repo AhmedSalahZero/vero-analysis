@@ -108,8 +108,8 @@ use App\Models\Partner ;
 
                                    <td class="text-nowrap text-left">{{ $model->getName() }}</td>
 								   @if($companyHasOdoo)
-                                    <td class="text-nowrap text-left">{{ $model->due_from_chart_of_account_number_code }}</td>
-                                    <td class="text-nowrap text-left">{{ $model->due_to_chart_of_account_number_code }}</td>
+                                    <td class="text-nowrap text-left">{{ $model->due_from_chart_of_account_number_odoo_code }}</td>
+                                    <td class="text-nowrap text-left">{{ $model->due_to_chart_of_account_number_odoo_code }}</td>
 								   @endif 
                                     {{-- <td>{{ $model->getCreatedAtFormatted() }}</td> --}}
 									@if(hasAuthFor('update subsidiary companies') 
