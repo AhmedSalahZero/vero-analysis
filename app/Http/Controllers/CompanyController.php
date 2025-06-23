@@ -118,6 +118,9 @@ class CompanyController extends Controller
 		$newSystems = $request->get('systems');
 		$systemsToPreserve  = array_intersect($oldSystems,$newSystems);
 		$newSystemsToBeAdded  = array_diff($newSystems,$oldSystems);
+		$companySection->update([
+			'odoo_id'=>null 
+		]);
 		
         $companySection->update($request->except(['image','systems']));
 		

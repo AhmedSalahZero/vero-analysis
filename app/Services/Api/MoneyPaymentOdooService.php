@@ -23,10 +23,10 @@ class MoneyPaymentOdooService
 		return null ;
 	}
 	
-	 protected function createAndPostJournalEntry(string $date , float $amountInCurrency , float $amountInMainFunctionalCurrency  , int $odooCurrencyId , int $journalId, int $debitOdooAccountId , int $creditOdooAccountId , ?string $ref , ?int $partner_id ,?string $message ) 
+	 protected function createAndPostJournalEntry(string $date , float $amountInCurrency , float $amountInMainFunctionalCurrency  , int $odooCurrencyId , int $journalId, int $debitOdooAccountId , int $creditOdooAccountId , ?string $ref , ?int $partner_id ,?string $message , ?int $isTax ) 
     {
-			$id = null ;  // in edit mode 
-            $journalEntryData = $this->getDataFormatted($date,$amountInCurrency,$amountInMainFunctionalCurrency,$odooCurrencyId,$journalId,$debitOdooAccountId,$creditOdooAccountId,$ref,$partner_id,$message,$id) ;
+			// $id = null ;  // in edit mode 
+            $journalEntryData = $this->getDataFormatted($date,$amountInCurrency,$amountInMainFunctionalCurrency,$odooCurrencyId,$journalId,$debitOdooAccountId,$creditOdooAccountId,$ref,$partner_id,$message,$isTax) ;
 
             $context = [
                 'check_move_validity' => true,
@@ -56,8 +56,9 @@ class MoneyPaymentOdooService
             if (!is_numeric($accountBankStatementLineId)) {
                 throw new Exception("Failed to create journal entry: " . json_encode($accountBankStatementLineId));
             }
-			
-			$this->updatePartner($partner_id,$moveId,$context);
+			if($partner_id){
+				$this->updatePartner($partner_id,$moveId,$context);
+			}
 			
 			
             return [
@@ -97,10 +98,10 @@ class MoneyPaymentOdooService
             );
 			
 	}
-	protected function getDataFormatted(string $date , float $amountInCurrency  , float $amountInMainFunctionalCurrency  , int $odooCurrencyId , int $journalId, int $debitOdooAccountId , int $creditOdooAccountId   , ?string $ref , ?int $partner_id ,?string $message , int $id = null ):array 
+	protected function getDataFormatted(string $date , float $amountInCurrency  , float $amountInMainFunctionalCurrency  , int $odooCurrencyId , int $journalId, int $debitOdooAccountId , int $creditOdooAccountId   , ?string $ref , ?int $partner_id ,?string $message , int $isTax = null ):array 
 	{
-		$inEditMode = is_null($id) ? 0 : 1;
-		$id = is_null($id) ? 0 : $id ; 
+		// $inEditMode = is_null($id) ? 0 : 1;
+		// $id = is_null($id) ? 0 : $id ; 
 		
 		
 // if(!isset($line_ids[0])){
@@ -118,16 +119,16 @@ $message =$paymentRef;
                'ref' =>  $ref, // create lg type
                'payment_ref' =>  $paymentRef, // create lg type
                'line_ids' => [
-                    [$inEditMode,0, [
+                    [0,0, [
                         'account_id' => $debitOdooAccountId, // lg cash cover odoo id (create lg cash cover)
                         'debit' => abs($amountInMainFunctionalCurrency),
 						'amount_currency'=>abs($amountInCurrency),
                         'credit' => 0.0,
-                       'partner_id' => $partner_id,
+                       'partner_id' => $partner_id ,
                         'currency_id' => $odooCurrencyId,
                         'name' => $message , // cash cover  
                     ]],
-                    [$inEditMode,0, [
+                    [0,0, [
                         'account_id' => $creditOdooAccountId, // chart of account odoo id 
                         'debit' => 0.0,
                         'credit' => abs($amountInMainFunctionalCurrency),
@@ -140,10 +141,11 @@ $message =$paymentRef;
             ];
 	}
 	
-    public function createCashExpense(string $date,float $amountInCurrency,float $amountInMainFunctionalCurrency,int $journalId,int $odooCurrencyId,int $debitOdooAccountId,int $creditOdooAccountId,int $odooPartnerId,string $ref )
+    public function createCashExpense(string $date,float $amountInCurrency,float $amountInMainFunctionalCurrency,int $journalId,int $odooCurrencyId,int $debitOdooAccountId,int $creditOdooAccountId,int $odooPartnerId,string $ref,int $isTax )
     {
 		  $message =$this->getMessage(); 
-          return $this->createAndPostJournalEntry($date,$amountInCurrency,$amountInMainFunctionalCurrency,$odooCurrencyId,$journalId,$debitOdooAccountId,$creditOdooAccountId,$ref,$odooPartnerId,$message);
+		  $odooPartnerId = $isTax ? null : $odooPartnerId;
+          return $this->createAndPostJournalEntry($date,$amountInCurrency,$amountInMainFunctionalCurrency,$odooCurrencyId,$journalId,$debitOdooAccountId,$creditOdooAccountId,$ref,$odooPartnerId,$message,$isTax);
        
     }
 	// protected function getAnalysisAccountIds(array $analytic_distribution):array 

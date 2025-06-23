@@ -16,7 +16,8 @@ class PartnersStatementController
     public function index(Company $company)
 	{
 		$partnerTypes = ['is_subsidiary_company'=>__('Subsidiary Company') , 'is_shareholder'=>__('Shareholder') , 'is_employee'=>__('Employee'),
-		'is_other_partner'=>__('Other Partner')
+		'is_other_partner'=>__('Other Partner'),
+		'is_tax'=>__('Taxes & Insurance')
 	
 	];
 		
@@ -38,6 +39,7 @@ class PartnersStatementController
 			'is_shareholder'=>'shareholder_statements',
 			'is_employee'=>'employee_statements',
 			'is_other_partner'=>'other_partner_statements',
+			'is_tax'=>'tax_statements'
 		][$partnerType] ;
 		
 		$results=DB::table($statementTableName)

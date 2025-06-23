@@ -41,7 +41,7 @@ class ReadOdooExpense extends Controller
 			$odooId = $odooExpense['id'];
 			$odooPartnerId = $odooExpense['employee_id'][0] ;
 			$odooPartnerName = $odooExpense['employee_id'][1];
-			Partner::handlePartnerForOdoo($odooPartnerId ,$odooPartnerName,false ,false,true,$company->id );
+			Partner::handlePartnerForOdoo($odooPartnerId ,$odooPartnerName,false ,false,true,false,$company->id );
 			$journalId = $odooExpense['journal_id'][0] ;
 	//		$journalName = $odooExpense['journal_id'][1] ;
 			$accountJournal = $odooExpensePayment->fetchData('account.journal',[],[[['id','=',$journalId]]])[0];

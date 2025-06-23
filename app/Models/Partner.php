@@ -13,12 +13,14 @@ use Illuminate\Support\Facades\Schema;
 
 class Partner extends Model
 {
+	const PARTNERS = 'partners';
 	const CUSTOMERS = 'customers';
 	const SUPPLIERS = 'suppliers';
 	const EMPLOYEES = 'employees';
 	const SHAREHOLDERS = 'shareholders';
 	const SUBSIDIARY_COMPANIES = 'subsidiary-companies';
 	const OTHER_PARTNERS = 'other-partners';
+	const TAXES = 'taxes'; 
 	use HasCreatedAt,HasBasicStoreRequest;
     protected $dates = [
     ];
@@ -84,6 +86,11 @@ class Partner extends Model
 			$q->where('is_employee',1);
 		});
 	}
+	public function scopeOnlyTaxes(Builder $query){
+		return $query->where(function($q){
+			$q->where('is_tax',1);
+		});
+	}
 	public function scopeOnlyShareholders(Builder $query){
 		return $query->where(function($q){
 			$q->where('is_shareholders',1);
@@ -109,9 +116,14 @@ class Partner extends Model
 	{
 		return $this->is_supplier == 1 ;
 	}
+
 	public function isEmployee()
 	{
 		return $this->is_employee == 1 ;
+	}
+	public function isTax()
+	{
+		return $this->is_tax == 1 ;
 	}
 	public function isSubsidiaryCompany()
 	{
@@ -192,7 +204,7 @@ class Partner extends Model
 	public static function findByName(string $name,int $companyId){
 		return self::where('name',$name)->where('company_id',$companyId)->first();
 	}
-	public static function handlePartnerForOdoo($odooPartnerId ,$odooPartnerName,$isSupplier ,$isCustomer,$isEmployee,$companyId  ):int
+	public static function handlePartnerForOdoo($odooPartnerId ,$odooPartnerName,$isSupplier ,$isCustomer,$isEmployee,$isOtherPartner,$companyId  ):int
 	{
 			$partner = Partner::findByOdooId($odooPartnerId,$companyId);
 			if(is_null($partner)){
@@ -201,17 +213,19 @@ class Partner extends Model
 					$oldIsCustomer = $partner->is_customer;
 					$oldIsSupplier = $partner->is_supplier;
 					$oldIsEmployee = $partner->is_employee;
+					$oldIsOtherPartner = $partner->is_other_partner;
 					$partner->update([
 						'odoo_id'=>$odooPartnerId,
 						'is_customer'=>$oldIsCustomer?:$isCustomer,
 						'is_supplier'=>$oldIsSupplier?:$isSupplier,
 						'is_employee'=>$oldIsEmployee?:$isEmployee,
+						'is_other_partner'=>$oldIsOtherPartner?:$isOtherPartner,
 					]);
 					return $partner->id;
 				}
 			}
 			if(is_null($partner)){
-				$partner = Partner::createNewForOdoo($odooPartnerId,$odooPartnerName,$companyId,$isCustomer,$isSupplier);
+				$partner = Partner::createNewForOdoo($odooPartnerId,$odooPartnerName,$companyId,$isCustomer,$isSupplier,$isEmployee,$isOtherPartner);
 			}
 			if($isSupplier){
 				$partner->update([
@@ -228,9 +242,14 @@ class Partner extends Model
 					'is_employee'=>1 
 				]);
 			}
+			if($isOtherPartner){
+				$partner->update([
+					'is_other_partner'=>1 
+				]);
+			}
 			return $partner->id ;
 	}
-	public static function createNewForOdoo(int $id,string $partnerName,int $companyId,int $isCustomer,int $isSupplier){
+	public static function createNewForOdoo(int $id,string $partnerName,int $companyId,int $isCustomer,int $isSupplier,int $isEmployee,int $isOtherPartner){
 		
 		/**
 		 * @var Company $company 
@@ -239,6 +258,8 @@ class Partner extends Model
 			'odoo_id'=>$id ,
 			'is_customer'=>$isCustomer ,
 			'is_supplier'=>$isSupplier,
+			'is_employee'=>$isEmployee,
+			'is_other_partner'=>$isOtherPartner,
 			'company_id'=>$companyId ,
 			// 'company_id'=>$company->id ,
 			'name'=>$partnerName

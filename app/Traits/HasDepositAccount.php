@@ -105,14 +105,15 @@ trait HasDepositAccount
 		 * @var TimeOfDeposit $this
 		 */
 		$company = $this->company ; 
-		if($company->hasOdooIntegrationCredentials()){
+		$date = $this->getDepositDate();
+		if($company->hasOdooIntegrationCredentials() && $company->withinIntegrationDate($date)){
 			$timeOfCertificateOdooService = new TimeOrCertificateOfDepositOdooService($company);
 			$odooSetting = $company->odooSetting ;
 			$fromFinancialInstitution = $this->financialInstitution;
 			$debitAccountTypeId = 27 ;
 			$amount = $this->getAmount();
 			$currencyName = $this->getCurrency();
-			$date = $this->getDepositDate();
+			
 			$odooCurrencyId = Currency::getOdooId($currencyName);
 			
 			$creditAccountTypeId = $this instanceof TimeOfDeposit ? 28 : 29  ;
@@ -181,13 +182,14 @@ trait HasDepositAccount
 		 * @var TimeOfDeposit $this
 		 */
 		$company = $this->company ; 
-		if($company->hasOdooIntegrationCredentials()){
+		$date = $this->getBreakDate();
+		if($company->hasOdooIntegrationCredentials() && $company->withinIntegrationDate($date)) {
 			$timeOfCertificateOdooService = new TimeOrCertificateOfDepositOdooService($company);
 			$fromFinancialInstitution = $this->financialInstitution;
 			$debitAccountTypeId = 27 ;
 			$amount = $this->getBreakInterestAmount();
 			$currencyName = $this->getCurrency();
-			$date = $this->getBreakDate();
+			
 			$odooCurrencyId = Currency::getOdooId($currencyName);
 			$creditAccountTypeId = $this instanceof TimeOfDeposit ? 28 : 29  ;
 			$debitAccountNumber = FinancialInstitutionAccount::find($this->deducted_from_account_id)->getAccountNumber();

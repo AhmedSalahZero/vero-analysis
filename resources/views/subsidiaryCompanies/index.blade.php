@@ -50,7 +50,7 @@ use App\Models\Partner ;
 
 
             </ul>
-			@if(auth()->user()->can('create subsidiary companies'))
+			{{-- @if(auth()->user()->can('create subsidiary companies'))
             <div class="flex-tabs">
                
                 <a href="{{ route('subsidiary.companies.create',['company'=>$company->id,Partner::SUBSIDIARY_COMPANIES]) }}" class="btn  active-style btn-icon-sm align-self-center">
@@ -58,7 +58,7 @@ use App\Models\Partner ;
                     {{ __('Subsidiary Company') }}
                 </a>
             </div>
-		@endif 
+		@endif  --}}
             
         </div>
     </div>
@@ -87,7 +87,11 @@ use App\Models\Partner ;
                                 <tr class="table-standard-color">
                                     <th>{{ __('#') }}</th>
                                     <th>{{ __('Name') }}</th>
-                                    <th>{{ __('Created At') }}</th>
+									   @if($companyHasOdoo)
+                                    <th>{{ __('Due From Account Number') }}</th>
+                                    <th>{{ __('Due To Account Number') }}</th>
+									   @endif 
+                                    {{-- <th>{{ __('Created At') }}</th> --}}
 									@if(hasAuthFor('update subsidiary companies') 
 									 // || hasAuthFor('delete subsidiary companies')
 									 )
@@ -103,7 +107,11 @@ use App\Models\Partner ;
                                     </td>
 
                                    <td class="text-nowrap text-left">{{ $model->getName() }}</td>
-                                    <td>{{ $model->getCreatedAtFormatted() }}</td>
+								   @if($companyHasOdoo)
+                                    <td class="text-nowrap text-left">{{ $model->due_from_chart_of_account_number_code }}</td>
+                                    <td class="text-nowrap text-left">{{ $model->due_to_chart_of_account_number_code }}</td>
+								   @endif 
+                                    {{-- <td>{{ $model->getCreatedAtFormatted() }}</td> --}}
 									@if(hasAuthFor('update subsidiary companies') 
 									
 									// || hasAuthFor('delete subsidiary companies')

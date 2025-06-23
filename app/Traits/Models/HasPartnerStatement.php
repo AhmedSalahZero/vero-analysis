@@ -8,6 +8,7 @@ use App\Models\MoneyReceived;
 use App\Models\OtherPartnerStatement;
 use App\Models\ShareholderStatement;
 use App\Models\SubsidiaryCompanyStatement;
+use App\Models\TaxStatement;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
@@ -32,7 +33,9 @@ trait HasPartnerStatement
 		if($this->isOtherPartner() && $this->otherPartnerStatement){
 			$this->otherPartnerStatement->delete();
 		}
-		
+		if($this->isTax() && $this->taxStatement){
+			$this->taxStatement->delete();
+		}
 	}
 	public function getPartnerType()
 	{
@@ -69,11 +72,18 @@ trait HasPartnerStatement
 		if($partnerType == 'is_other_partner'){
 			return __('Other Partner');
 		}
+		if($partnerType == 'is_tax'){
+			return __('Taxes & Insurance');
+		}
 		throw new \Exception('Custom Exception .. This Partner Type Not Allowed [ ' . $partnerType .' ]');
 	}
 	public function isEmployee()
 	{
 		return $this->getPartnerType() == 'is_employee';
+	}
+	public function isTax()
+	{
+		return $this->getPartnerType() == 'is_tax';
 	}
 	public function isOtherPartner()
 	{
@@ -90,6 +100,10 @@ trait HasPartnerStatement
 	public function employeeStatement():HasOne
 	{
 		return $this->hasOne(EmployeeStatement::class,$this->getForeignKeyName(),'id');
+	}
+	public function taxStatement():HasOne
+	{
+		return $this->hasOne(TaxStatement::class,$this->getForeignKeyName(),'id');
 	}
 	public function shareholderStatement():HasOne
 	{
@@ -155,6 +169,9 @@ trait HasPartnerStatement
 		}
 		elseif($partnerType == 'is_other_partner'){
 			$this->otherPartnerStatement()->create($statementData);
+		}
+		elseif($partnerType == 'is_tax'){
+			$this->taxStatement()->create($statementData);
 		}
 		 
 	}

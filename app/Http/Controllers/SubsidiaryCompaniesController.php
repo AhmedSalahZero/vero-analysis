@@ -90,7 +90,8 @@ class SubsidiaryCompaniesController
 			'searchFields'=>$searchFields,
 			'models'=>$models,
 			'filterDates'=>$filterDates,
-			'indexRouteName'=>'subsidiary.companies.index'
+			'indexRouteName'=>'subsidiary.companies.index',
+			'companyHasOdoo'=>$company->hasOdooIntegrationCredentials()
 		]);
     }
 	public function create(Company $company)
@@ -101,7 +102,8 @@ class SubsidiaryCompaniesController
 	{
 	
 		return [
-			'model'=>$model
+			'model'=>$model,
+			// 'companyHasOdoo'=>$company->hasOdooIntegrationCredentials()
 		];
 	}
 	

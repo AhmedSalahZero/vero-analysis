@@ -581,6 +581,11 @@ $(document).on('change','select#partner_type',function(){
 				<option ${currentSelect == 'insurance-to' ? 'selected' :''}  value="insurance-to">Insurance To</option>
 			`
 		}
+			else if(partnerColumnName =='is_tax'){
+			options = `
+				<option ${currentSelect == 'pay-to' ? 'selected' :''}  value="pay-to">Pay To</option>
+			`
+		}
 		
 		$('#transaction-type-parent').find('select').empty().append(options);
 		
@@ -636,6 +641,11 @@ function showOrHideTransaction(partnerColumnName)
 				<option ${currentSelect == 'insurance-to' ? 'selected' :''}  value="insurance-to">Insurance To</option>
 			`
 		}
+		else if(partnerColumnName =='is_tax'){
+			options = `<option ${currentSelect == 'pay-to' ? 'selected' :''}  value="pay-to">Pay To</option>`
+		
+		}
+		console.log(partnerColumnName,options)
 		
 		$('#transaction-type-parent').find('select').empty().append(options);
 		

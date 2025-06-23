@@ -826,6 +826,10 @@ class MoneyPayment extends Model
 	{
 		return $this->hasOne(EmployeeStatement::class,'money_received_id','id');
 	}
+	public function taxStatement(): HasOne
+	{
+		return $this->hasOne(TaxStatement::class,'money_received_id','id');
+	}
 	public function getCustomerOrSupplier():string
 	{
 		return 'supplier';
@@ -912,6 +916,13 @@ class MoneyPayment extends Model
 				'ref'=>__('Insurance To')
 			];
 		}
+		if($transactionType == 'pay-to' ){
+			return [
+				'id'=>$this->partner->getOdooId(),
+				'ref'=>__('Pay To')
+			];
+		}
+		// dd('lol');
 		
 		throw New Exception('Transaction Type ' . $transactionType . ' Does Not Have Account Id');
 		

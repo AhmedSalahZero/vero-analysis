@@ -181,7 +181,59 @@ use App\NotificationSetting ;
                         </div>
                     </div>
 
+ <div class="kt-portlet">
+                        <div class="kt-portlet__head">
+                            <div class="kt-portlet__head-label">
+                                <h3 class="kt-portlet__head-title head-title text-primary">
+                                    {{__('Taxes & Social Insurance')}}
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="kt-portlet__body">
 
+                            <div class="form-group row">
+
+
+                                <div class="col-md-3 ">
+                                    <x-form.input :default-value="null" :model="$model??null" :label="__('VAT Taxes')" :type="'text'" :placeholder="__('VAT Taxes')" :name="'vat_taxes_code'" :required="false"></x-form.input>
+                                </div>
+
+                                <div class="col-md-3 ">
+                                    <x-form.input :default-value="null" :model="$model??null" :label="__('Credit Withhold Taxes')" :type="'text'" :placeholder="__('Credit Withhold Taxes')" :name="'credit_withhold_taxes_code'" :required="false"></x-form.input>
+                                </div>
+
+                                <div class="col-md-3 ">
+                                    <x-form.input :default-value="null" :model="$model??null" :label="__('Salary Taxes')" :type="'text'" :placeholder="__('Salary Taxes')" :name="'salary_taxes_code'" :required="false"></x-form.input>
+                                </div>
+
+                                <div class="col-md-3 ">
+                                    <x-form.input :default-value="null" :model="$model??null" :label="__('Social Insurance')" :type="'text'" :placeholder="__('Social Insurance')" :name="'social_insurance_code'" :required="false"></x-form.input>
+                                </div>
+								
+								<div class="col-md-3 ">
+                                    <x-form.input :default-value="null" :model="$model??null" :label="__('Income Taxes')" :type="'text'" :placeholder="__('Income Taxes')" :name="'income_taxes_code'" :required="false"></x-form.input>
+                                </div>
+								
+								<div class="col-md-3 ">
+                                    <x-form.input :default-value="null" :model="$model??null" :label="__('Real Estate Taxes')" :type="'text'" :placeholder="__('Real Estate Taxes')" :name="'real_estate_taxes_code'" :required="false"></x-form.input>
+                                </div>
+								
+								<div class="col-md-3 ">
+                                    <x-form.input :default-value="null" :model="$model??null" :label="__('Stamp Duty Taxes')" :type="'text'" :placeholder="__('Stamp Duty Taxes')" :name="'stamp_duty_taxes_code'" :required="false"></x-form.input>
+                                </div>
+								<div class="col-md-3 ">
+                                    <x-form.input :default-value="null" :model="$model??null" :label="__('Other Taxes')" :type="'text'" :placeholder="__('Other Taxes')" :name="'other_taxes_code'" :required="false"></x-form.input>
+                                </div>
+								
+								
+
+
+
+
+                            </div>
+                        </div>
+                    </div>
+					
 
 
                     <div class="kt-portlet">

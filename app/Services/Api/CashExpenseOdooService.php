@@ -26,6 +26,7 @@ class CashExpenseOdooService
 	 protected function createAndPostJournalEntry(string $subCategoryName,string $date , float $amountInCurrency , float $amountInMainFunctionalCurrency  , int $odooCurrencyId , int $journalId, int $debitOdooAccountId , int $creditOdooAccountId  , array $analytic_distribution, ?string $ref , ?int $partner_id ,?string $message ) 
     {
 			$id = null ;  // in edit mode 
+			
             $journalEntryData = $this->getDataFormatted($subCategoryName,$date,$amountInCurrency,$amountInMainFunctionalCurrency,$odooCurrencyId,$journalId,$debitOdooAccountId,$creditOdooAccountId,$analytic_distribution,$ref,$partner_id,$message,$id) ;
 
             $context = [

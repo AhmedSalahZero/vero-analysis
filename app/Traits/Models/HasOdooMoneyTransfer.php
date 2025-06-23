@@ -14,7 +14,7 @@ use App\Services\Api\InternalMoneyTransfer as OdooInternalMoneyTransfer;
 trait HasOdooMoneyTransfer
 {
 	
-	public function storeOdoo(Company $company,string $date,int $outBankOdooId,int $outJournalId,int $inJournalId,int $inBankOdooId,float $amountInCurrency,string $currencyName,$isBreakDeposit= false)
+	private function storeOdoo(Company $company,string $date,int $outBankOdooId,int $outJournalId,int $inJournalId,int $inBankOdooId,float $amountInCurrency,string $currencyName,$isBreakDeposit= false)
 	{
 		$odooCurrencyId = Currency::getOdooId($currencyName);
 		$mainFunctionalCurrency =$company->getMainFunctionalCurrency();
@@ -62,7 +62,8 @@ trait HasOdooMoneyTransfer
 		/**
 		 * @var Company $company
 		 */
-		if($company->hasOdooIntegrationCredentials()){
+		$transferDate = $this->getTransferDate();
+		if($company->hasOdooIntegrationCredentials() && $company->withinIntegrationDate($transferDate)){
 			$fromAccountTypeId = $this->from_account_type_id;
 			$fromAccountNumber = $this->from_account_number;
 			$toAccountTypeId = $this->to_account_type_id;
@@ -73,7 +74,7 @@ trait HasOdooMoneyTransfer
 			// $currencyInMainFunctionalName =$this->getCurrencyInMainName();
 			$fromBranchId = $this->from_branch_id;
 			$toBranchId = $this->to_branch_id;
-			$transferDate = $this->getTransferDate();
+			
 			$type = $this->getType();
 			$fromFinancialInstitutionId =$this->from_bank_id;
 			$toFinancialInstitutionId=$this->to_bank_id;

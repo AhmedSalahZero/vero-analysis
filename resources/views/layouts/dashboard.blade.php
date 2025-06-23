@@ -1303,7 +1303,7 @@
                                                 <td>
                                                     {{-- <div class="col-md-3 d-flex align-items-center "> --}}
                                                     <label for="odoo-start-date" class="text-nowrap mr-3">{{ __('Start Date') }}</label>
-                                                    <input id="odoo-start-date" type="date" min="{{ $company->getIntegrationStartDate() }}" value="{{ $company->getIntegrationStartDate() }}" class="form-control" name="odoo_start_date">
+                                                    <input id="odoo-start-date" type="date"  value="{{ $company->getIntegrationStartDate() }}" class="form-control" name="odoo_start_date">
                                                     {{-- </div> --}}
 
                                                 </td>

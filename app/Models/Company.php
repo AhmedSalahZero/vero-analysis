@@ -375,6 +375,10 @@ class Company extends Model implements HasMedia
 			$user->syncPermissions($permissions);
 		}	
 	}
+	public function partners()
+	{
+		return $this->hasMany(Partner::class,'company_id','id')->orderBy('name');
+	}
 	public function customers()
 	{
 		return $this->hasMany(Partner::class,'company_id','id')->where('is_customer',1)->orderBy('name');
@@ -386,6 +390,10 @@ class Company extends Model implements HasMedia
 	public function employees()
 	{
 		return $this->hasMany(Partner::class,'company_id','id')->where('is_employee',1)->orderBy('name');
+	}
+	public function taxes()
+	{
+		return $this->hasMany(Partner::class,'company_id','id')->where('is_tax',1)->orderBy('name');
 	}
 	public function shareholders()
 	{

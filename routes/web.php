@@ -614,13 +614,19 @@ Route::middleware([])->group(function () {
 				
 				 
 				 Route::group(['prefix'=>'general-settings'],function(){
+					Route::get('partners','PartnersController@index')->name('partners.index');
+					Route::get('partners/create','PartnersController@create')->name('partners.create');
+					Route::post('partners/store','PartnersController@store')->name('partners.store');
+					Route::get('partners/{partner}/edit','PartnersController@edit')->name('partners.edit');
+					Route::put('partners/{partner}/update','PartnersController@update')->name('partners.update');
+					Route::delete('partners/{partner}/delete','PartnersController@destroy')->name('partners.destroy');
+					
 					Route::get('customers','CustomersController@index')->name('customers.index');
 					Route::get('customers/create','CustomersController@create')->name('customers.create');
 					Route::post('customers/store','CustomersController@store')->name('customers.store');
-					Route::get('customers/{customer}/edit','CustomersController@edit')->name('customers.edit');
-					Route::put('customers/{customer}/update','CustomersController@update')->name('customers.update');
-					Route::delete('customers/{customer}/delete','CustomersController@destroy')->name('customers.destroy');
-					
+					Route::get('customers/{supplier}/edit','CustomersController@edit')->name('customers.edit');
+					Route::put('customers/{supplier}/update','CustomersController@update')->name('customers.update');
+					Route::delete('customers/{supplier}/delete','CustomersController@destroy')->name('customers.destroy');
 					
 					
 					Route::get('suppliers','SuppliersController@index')->name('suppliers.index');
@@ -652,6 +658,14 @@ Route::middleware([])->group(function () {
 					Route::get('subsidiary-companies/{subsidiaryCompany}/edit','SubsidiaryCompaniesController@edit')->name('subsidiary.companies.edit');
 					Route::put('subsidiary-companies/{subsidiaryCompany}/update','SubsidiaryCompaniesController@update')->name('subsidiary.companies.update');
 					Route::delete('subsidiary-companies/{subsidiaryCompany}/delete','SubsidiaryCompaniesController@destroy')->name('subsidiary.companies.destroy');
+					
+					Route::get('taxes','TaxesController@index')->name('taxes.index');
+					Route::get('taxes/create','TaxesController@create')->name('taxes.create');
+					Route::post('taxes/store','TaxesController@store')->name('taxes.store');
+					Route::get('taxes/{employee}/edit','TaxesController@edit')->name('taxes.edit');
+					Route::put('taxes/{employee}/update','TaxesController@update')->name('taxes.update');
+					Route::delete('taxes/{employee}/delete','TaxesController@destroy')->name('taxes.destroy');
+					
 					
 					
 					Route::get('other-partners','OtherPartnersController@index')->name('other.partners.index');

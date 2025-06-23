@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use App\Rules\UniqueToCompanyAndAdditionalColumnsRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreSubsidiaryCompanyRequest extends FormRequest
+class StorePartnerRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,7 +25,7 @@ class StoreSubsidiaryCompanyRequest extends FormRequest
     public function rules()
     {
         return [
-            'name'=>['required',new UniqueToCompanyAndAdditionalColumnsRule('Partner','name',$this->id,[['is_subsidiary_company','=',1]],__('This Subsidiary Company Already Exist'))]
+            'name'=>['required',new UniqueToCompanyAndAdditionalColumnsRule('Partner','name',$this->id,[['is_customer','=',1]],__('This Customer Already Exist'))]
         ];
     }
 }

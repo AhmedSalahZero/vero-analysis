@@ -1293,7 +1293,7 @@
                                                 <td>
                                                     
                                                     <label for="odoo-start-date" class="text-nowrap mr-3"><?php echo e(__('Start Date')); ?></label>
-                                                    <input id="odoo-start-date" type="date" min="<?php echo e($company->getIntegrationStartDate()); ?>" value="<?php echo e($company->getIntegrationStartDate()); ?>" class="form-control" name="odoo_start_date">
+                                                    <input id="odoo-start-date" type="date"  value="<?php echo e($company->getIntegrationStartDate()); ?>" class="form-control" name="odoo_start_date">
                                                     
 
                                                 </td>

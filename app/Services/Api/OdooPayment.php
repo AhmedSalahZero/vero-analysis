@@ -1,6 +1,7 @@
 <?php
 namespace App\Services\Api;
 
+use App\Models\Company;
 use App\Models\Currency;
 use App\Services\Api\Traits\AuthTrait;
 use App\Services\Api\Traits\HasJournal;
@@ -16,7 +17,11 @@ class OdooPayment
 	public function createDownPayment($moneyModel )
     {
 		try{
-			
+			$company = $moneyModel->company ;
+			$paymentDate = $moneyModel->getReceivingOrPaymentMoneyDate();
+			if(!$company->withinIntegrationDate($paymentDate)){
+				return ;
+			}
 		//	$chartOfAccountId = $this->getChartOfAccountId($moneyModel);
 			$journalId = $this->getJournalId($moneyModel) ;
 			/**
@@ -25,7 +30,11 @@ class OdooPayment
 			$paymentAmount = $moneyModel->isInvoiceSettlementWithDownPayment() ? $moneyModel->downPaymentSettlements->sum('down_payment_amount') : $moneyModel->getAmount()  ;
 			$currencyName = $moneyModel->getReceivingOrPaymentCurrency();
 			$odooCurrencyId = Currency::getOdooId($currencyName);
-			$paymentDate = $moneyModel->getReceivingOrPaymentMoneyDate();
+			
+			/**
+			 * @var Company $company;
+			 */
+			
 			$odooPartnerId = $moneyModel->partner->getOdooId();
 			$inBoundOrOutBound =$moneyModel->getInboundOrOutbound();
 			$customerOrSupplier = $moneyModel->getCustomerOrSupplier();

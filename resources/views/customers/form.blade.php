@@ -90,7 +90,6 @@
                                 </h3>
                             </div>
                         </div>
-						
                     </div>
                     <!--begin::Form-->
                     <form class="kt-form kt-form--label-right">
@@ -120,10 +119,6 @@
                                                     <input type="text" value="{{ isset($model) ? $model->getName():'' }}" name="name" class="form-control  " placeholder="{{__('Customer Name')}}">
                                                 </div>
                                             </div>
-
-
-
-
                                         </div>
                                     </div>
 

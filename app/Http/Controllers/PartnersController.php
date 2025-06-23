@@ -1,7 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreCustomerRequest;
+use App\Http\Requests\StorePartnerRequest;
 use App\Models\Company;
 use App\Models\Partner;
 use App\Traits\GeneralFunctions;
@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
-class CustomersController
+class PartnersController
 {
     use GeneralFunctions;
     protected function applyFilter(Request $request,Collection $collection):Collection{
@@ -38,6 +38,7 @@ class CustomersController
 		->when($request->get('to') , function($collection) use($dateFieldName,$to){
 			return $collection->where($dateFieldName,'<=',$to);
 		});
+	//	->sortByDesc('id')
 		
 		return $collection;
 	}
@@ -45,10 +46,10 @@ class CustomersController
 	{
 		
 		$numberOfMonthsBetweenEndDateAndStartDate = 18 ;
-		$currentType = $request->get('active',Partner::CUSTOMERS);
+		$currentType = $request->get('active',Partner::PARTNERS);
 		
 		$filterDates = [];
-		foreach([Partner::CUSTOMERS] as $type){
+		foreach([Partner::PARTNERS] as $type){
 			$startDate = $request->has('startDate') ? $request->input('startDate.'.$type) : now()->subMonths($numberOfMonthsBetweenEndDateAndStartDate)->format('Y-m-d');
 			$endDate = $request->has('endDate') ? $request->input('endDate.'.$type) : now()->format('Y-m-d');
 			
@@ -61,96 +62,98 @@ class CustomersController
 		
 		 
 		  /**
-		 * * start of customers 
+		 * * start of PARTNERS 
 		 */
 		
-		$customerStartDate = $filterDates[Partner::CUSTOMERS]['startDate'] ?? null ;
-		$customerEndDate = $filterDates[Partner::CUSTOMERS]['endDate'] ?? null ;
-		$customers = $company->customers ;
-		$customers =  $customers->filterByCreatedAt($customerStartDate,$customerEndDate) ;
-		$customers =  $currentType == Partner::CUSTOMERS ? $this->applyFilter($request,$customers):$customers ;
+		$partnerStartDate = $filterDates[Partner::PARTNERS]['startDate'] ?? null ;
+		$partnerEndDate = $filterDates[Partner::PARTNERS]['endDate'] ?? null ;
+		$partners = $company->partners ;
+		$partners =  $partners->filterByCreatedAt($partnerStartDate,$partnerEndDate) ;
+		$partners =  $currentType == Partner::PARTNERS ? $this->applyFilter($request,$partners):$partners ;
 
 		/**
-		 * * end of customers 
+		 * * end of PARTNERS 
 		 */
 		 
 		
 		 $searchFields = [
-			Partner::CUSTOMERS=>[
-				
+			Partner::PARTNERS=>[
 				'created_at'=>__('Created At'),
 				'name'=>__('Name')
 			],
 		];
 	
 		$models = [
-			Partner::CUSTOMERS =>$customers ,
+			Partner::PARTNERS =>$partners ,
 		];
 
-        return view('customers.index', [
+        return view('partners.index', [
 			'company'=>$company,
 			'searchFields'=>$searchFields,
 			'models'=>$models,
 			'filterDates'=>$filterDates,
-			'indexRouteName'=>'customers.index'
+			'indexRouteName'=>'partners.index'
 		]);
     }
 	public function create(Company $company)
 	{
-        return view('customers.form',$this->getCommonViewVars($company));
+        return view('partners.form',$this->getCommonViewVars($company));
     }
 	public function getCommonViewVars(Company $company,$model = null)
 	{
 	
 		return [
-			'model'=>$model
+			'model'=>$model,
+			'companyHasOdoo'=>$company->hasOdooIntegrationCredentials()
 		];
 	}
 	
-	public function store(Company $company   , StoreCustomerRequest $request){
-		$type = Partner::CUSTOMERS;
-		$customer = new Partner ;
-		$customer->is_customer = 1 ;
-		$customer->storeBasicForm($request);
+	public function store(Company $company   , StorePartnerRequest $request){
+		$type = Partner::PARTNERS;
+		$partner = new Partner ;
+		$partner->storeBasicForm($request);
 		$activeTab = $type ; 
 		return response()->json([
-			'redirectTo'=>route('customers.index',['company'=>$company->id,'active'=>$activeTab])
+			'redirectTo'=>route('partners.index',['company'=>$company->id,'active'=>$activeTab])
 		]);
 		
 	}
 
-	public function edit(Company $company,Partner $customer)
+	public function edit(Company $company,Partner $partner)
 	{
 
-        return view('customers.form' ,$this->getCommonViewVars($company,$customer));
+        return view('partners.form' ,$this->getCommonViewVars($company,$partner));
     }
 	
-	public function update(Company $company, StoreCustomerRequest $request , Partner $customer){
+	public function update(Company $company, StorePartnerRequest $request , Partner $partner){
 		
 		// $lcSettlementInternalTransfer->deleteRelations();
-		// $customer->delete();
-		$oldName = $customer->getName();
+		// $partner->delete();
+		$oldName = $partner->getName();
 		$newName = $request->get('name');
-		$customer->update([
+		$partner->storeBasicForm($request);
+		$partner->update([
 			'name'=>$newName
 		]);
-		if($oldName != $newName){
-			DB::table('customer_invoices')->where('customer_id',$customer->id)->update([
-				'customer_name'=>$newName
-			]);
-		}
-		$type = Partner::CUSTOMERS;
+		DB::table('customer_invoices')->where('customer_id',$partner->id)->update([
+			'customer_name'=>$newName
+		]);
+		DB::table('supplier_invoices')->where('supplier_id',$partner->id)->update([
+			'supplier_name'=>$newName
+		]);
+		$type = Partner::PARTNERS;
 		// $this->store($company,$request);
 		$activeTab = $type ;
 		return response()->json([
-			'redirectTo'=>route('customers.index',['company'=>$company->id,'active'=>$activeTab])
+			'redirectTo'=>route('partners.index',['company'=>$company->id,'active'=>$activeTab])
 		]);
 	}
 	
-	public function destroy(Company $company , Partner $customer)
+	public function destroy(Company $company , Partner $partner)
 	{
 		// $lcSettlementInternalTransfer->deleteRelations();
-		$customer->delete();
+		$partner->delete();
+		
 		return redirect()->back()->with('success',__('Item Has Been Delete Successfully'));
 	}
 	

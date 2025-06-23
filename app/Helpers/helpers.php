@@ -6411,20 +6411,24 @@ function getHeaderMenu($currentCompany = null)
 			'show'=>$canViewCashExpenseCategories,
 			],
 			[
+				'title'=>__('Partners'),
+				'link'=>route('partners.index',['company'=>$companyId]),
+				'show'=>true ,
+				'submenu'=>[
+					[
+						'title'=>__('All Partners'),
+						'link'=>route('partners.index',['company'=>$companyId]),
+						'show'=>true ,
+					],
+					[
 				'title'=>__('Customers'),
 				'link'=>route('customers.index',['company'=>$companyId]),
 				'show'=>$canViewCustomersSettings 
 			],
-			[
+					[
 				'title'=>__('Suppliers'),
 				'link'=>route('suppliers.index',['company'=>$companyId]),
 				'show'=>$canViewSuppliersSettings 
-			],
-			
-			[
-				'title'=>__('Subsidiary Companies'),
-				'link'=>route('subsidiary.companies.index',['company'=>$companyId]),
-				'show'=>$canViewSubsidiaryCompaniesSettings 
 			],
 			[
 				'title'=>__('Employees'),
@@ -6441,6 +6445,24 @@ function getHeaderMenu($currentCompany = null)
 				'link'=>route('other.partners.index',['company'=>$companyId]),
 				'show'=>$canViewOtherPartnersSettings 
 			],
+			
+			
+				]
+				// 'show'=>$canViewCustomersSettings 
+			],
+			// [
+			// 	'title'=>__('Suppliers'),
+			// 	'link'=>route('suppliers.index',['company'=>$companyId]),
+			// 	'show'=>$canViewSuppliersSettings 
+			// ],
+			
+			[
+				'title'=>__('Subsidiary Companies'),
+				'link'=>route('subsidiary.companies.index',['company'=>$companyId]),
+				'show'=>$canViewSubsidiaryCompaniesSettings 
+			],
+			
+			
 			[
 				'title'=>__('Deductions'),
 				'link'=>route('deductions.index',['company'=>$companyId]),
@@ -6830,12 +6852,12 @@ function getHeaderMenu($currentCompany = null)
 					'link'=>'#',
 					'show'=>$company->hasOdooIntegrationCredentials(),
 					'submenu'=>[
-						[
-							'title'=>__('Read Invoices'), 
-						'link'=>'#',
-						'show'=>true,
-						'data-show-notification-modal'=>'read-invoices-modal'
-					],
+					// 	[
+					// 		'title'=>__('Read Invoices'), 
+					// 	'link'=>'#',
+					// 	'show'=>true,
+					// 	'data-show-notification-modal'=>'read-invoices-modal'
+					// ],
 						[
 							'title'=>__('Read Partners'), 
 						'link'=>'#',
@@ -7771,7 +7793,8 @@ function AtLeastOnKeyIsTrue(array $items , string $key){
 function getAllPartnerTypesForSuppliers():array 
 {
 	return ['is_supplier'=>__('Supplier'),'is_subsidiary_company'=>__('Subsidiary Company') , 'is_shareholder'=>__('Shareholder') , 'is_employee'=>__('Employee'),
-	'is_other_partner'=>__('Other Partner')
+	'is_other_partner'=>__('Other Partner'),
+	'is_tax'=>__('Taxes & Social Insurance')
 ];
 	
 }

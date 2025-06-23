@@ -625,14 +625,14 @@ class LetterOfGuaranteeIssuance extends Model
 		$isOpeningBalance = $this->isOpeningBalance();
 		$isCdOrTdCashCoverAccount = $this->isCdOrTd();
 		$company = $this->company;
-		if($company->hasOdooIntegrationCredentials() && !$isOpeningBalance && !$isCdOrTdCashCoverAccount ){
+		$issuanceDate = $this->getIssuanceDate();
+		if($company->hasOdooIntegrationCredentials() && !$isOpeningBalance && !$isCdOrTdCashCoverAccount && $company->withinIntegrationDate($issuanceDate) ){
 			$financialInstitutionAccountForCashCover = FinancialInstitutionAccount::find($this->getCashCoverDeductedFromAccountId());
 			$odooLetterOfGuaranteeIssuance = new LetterOfGuaranteeService($company);
 			$fromAccountNumber = $financialInstitutionAccountForCashCover->getAccountNumber();
 			$journalId = $financialInstitutionAccountForCashCover->financialInstitution->getJournalIdForAccount(27,$fromAccountNumber);
 			$accountOdooId = $financialInstitutionAccountForCashCover->financialInstitution->getOdooIdForAccount(27,$fromAccountNumber);
 			$currency = $this->getLgCurrency();
-			$issuanceDate = $this->getIssuanceDate();
 			$odooCurrencyId = Currency::getOdooId($currency);
 			$lgType = $this->getLgType();
 			$cashCoverAmount = $this->getCashCoverAmount();

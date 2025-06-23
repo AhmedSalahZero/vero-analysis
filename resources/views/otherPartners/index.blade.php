@@ -50,7 +50,7 @@ use App\Models\Partner ;
 
 
             </ul>
-			@if(auth()->user()->can('create other partners'))
+			{{-- @if(auth()->user()->can('create other partners'))
             <div class="flex-tabs">
                
                 <a href="{{ route('other.partners.create',['company'=>$company->id,Partner::OTHER_PARTNERS]) }}" class="btn  active-style btn-icon-sm align-self-center">
@@ -58,7 +58,7 @@ use App\Models\Partner ;
                     {{ __('Other Partners') }}
                 </a>
             </div>
-		@endif 
+		@endif  --}}
             
         </div>
     </div>
@@ -87,12 +87,7 @@ use App\Models\Partner ;
                                 <tr class="table-standard-color">
                                     <th>{{ __('#') }}</th>
                                     <th>{{ __('Name') }}</th>
-                                    <th>{{ __('Created At') }}</th>
-									@if(hasAuthFor('update other partners') 
-									 // || hasAuthFor('delete other partners')
-									 )
-                                    <th>{{ __('Control') }}</th>
-									@endif 
+                                   
                                 </tr>
                             </thead>
                             <tbody>
@@ -103,43 +98,7 @@ use App\Models\Partner ;
                                     </td>
 
                                    <td class="text-nowrap text-left">{{ $model->getName() }}</td>
-                                    <td>{{ $model->getCreatedAtFormatted() }}</td>
-									@if(hasAuthFor('update other partners') 
-									
-									// || hasAuthFor('delete other partners')
-									 )
-                                    <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
-                                        <span style="overflow: visible; position: relative; width: 110px;">
-											@if(hasAuthFor('update other partners'))
-                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('other.partners.edit',['company'=>$company->id,'otherPartner'=>$model->id]) }}"><i class="fa fa-pen-alt"></i></a>
-											@endif 
-											{{-- @if(hasAuthFor('delete other partners'))
-                                            <a data-toggle="modal" data-target="#delete-otherPartner-{{ $model->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt"></i></a>
-                                            <div class="modal fade" id="delete-otherPartner-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                                                <div class="modal-dialog modal-dialog-centered" role="document">
-                                                    <div class="modal-content">
-                                                        <form action="{{ route('other.partners.destroy',['company'=>$company->id,'otherPartner'=>$model->id ]) }}" method="post">
-                                                            @csrf
-                                                            @method('delete')
-                                                            <div class="modal-header">
-                                                                <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Do You Want To Delete This Item ?') }}</h5>
-                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                    <span aria-hidden="true">&times;</span>
-                                                                </button>
-                                                            </div>
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close') }}</button>
-                                                                <button type="submit" class="btn btn-danger">{{ __('Confirm Delete') }}</button>
-                                                            </div>
-
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            </div>
-											@endif  --}}
-                                        </span>
-                                    </td>
-									@endif
+                                  
                                 </tr>
                                 @endforeach
                             </tbody>

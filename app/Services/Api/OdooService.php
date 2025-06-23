@@ -153,7 +153,7 @@ class OdooService
 			$invoiceCurrency = $invoice['currency_id'][1];
 			$isSupplier = $invoice['move_type'] == 'in_invoice';
 			$isCustomer = $invoice['move_type'] == 'out_invoice';
-			$partnerId = Partner::handlePartnerForOdoo($odooPartnerId ,$odooPartnerName,$isSupplier ,$isCustomer,false,$companyId  );
+			$partnerId = Partner::handlePartnerForOdoo($odooPartnerId ,$odooPartnerName,$isSupplier ,$isCustomer,false,false,$companyId  );
 			// if($invoice['id'] == 9736){
 			// 	dd($isCustomer,$isSupplier);
 			// }
@@ -201,7 +201,7 @@ class OdooService
 			}
 			$currentOdooCustomerName = $projectArr['partner_id'][1] ;
 			$code = Contract::generateRandomContract($companyId,$currentOdooCustomerName,$startDate,$modelType);
-			$partnerId = Partner::handlePartnerForOdoo($currentOdooCustomerId ,$currentOdooCustomerName,0, 1,false,$companyId  );
+			$partnerId = Partner::handlePartnerForOdoo($currentOdooCustomerId ,$currentOdooCustomerName,0, 1,false,false,$companyId  );
 			$oldProject = Contract::where('odoo_id',$currentOdooProjectId)->first();
 			$projectFormatted = [
 				'odoo_id'=>$currentOdooProjectId,
@@ -696,7 +696,7 @@ class OdooService
 	
  public function getPartners(string $startDate,string $endDate,int $companyId):array
     {
-     		 $fields = ['name', 'email', 'phone', 'customer_rank', 'supplier_rank'];
+     		 $fields = ['name', 'email', 'phone', 'customer_rank', 'supplier_rank','employee_ids'];
             // Search all partners
             $partnerIds = $this->execute('res.partner', 'search', [[]]);
             if (empty($partnerIds)) {
@@ -718,15 +718,22 @@ class OdooService
             // Add role information to each partner
 		
             foreach ($partners as &$partner) {
-                $isCustomer = $partner['customer_rank'] > 0;
-                $isSupplier = $partner['supplier_rank'] > 0;
+                $isCustomer = $partner['customer_rank'] > 0; 
+                $isSupplier = $partner['supplier_rank'] > 0; 
 				$currentOdooCustomerName =$partner['name']; 
 				$currentOdooCustomerId =$partner['id']; 
-                $isEmployee = !$isCustomer && !$isSupplier ;
+                $isEmployee = count($partner['employee_ids']??[]) ;
+				$isOtherPartner = false ;
+				if(!$isEmployee && !$isCustomer && !$isSupplier){
+					$isOtherPartner = true;
+				}
 				if($isCustomer){
 					$test[]=$partner;
 				}
-				Partner::handlePartnerForOdoo($currentOdooCustomerId ,$currentOdooCustomerName,$isCustomer,$isSupplier,$isEmployee,$companyId  );
+				// if($currentOdooCustomerId == 448){
+				// 	dd($isCustomer,$isSupplier,$isEmployee,$partner,$isOtherPartner);
+				// }
+				Partner::handlePartnerForOdoo($currentOdooCustomerId ,$currentOdooCustomerName,$isCustomer,$isSupplier,$isEmployee,$isOtherPartner,$companyId  );
             }
             return $partners;
     }

@@ -32,7 +32,7 @@ use App\Models\Partner ;
 </style>
 @endsection
 @section('sub-header')
-{{ __('Employees') }}
+{{ __('Partners') }}
 @endsection
 @section('content')
 
@@ -41,8 +41,8 @@ use App\Models\Partner ;
         <div class="kt-portlet__head-toolbar justify-content-between flex-grow-1">
             <ul class="nav nav-tabs nav-tabs-space-lg nav-tabs-line nav-tabs-bold nav-tabs-line-3x nav-tabs-line-brand" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link {{ !Request('active') || Request('active') == Partner::EMPLOYEES ?'active':'' }}" data-toggle="tab" href="#{{Partner::EMPLOYEES  }}" role="tab">
-                        <i class="fa fa-money-check-alt"></i> {{ __('Employees Table') }}
+                    <a class="nav-link {{ !Request('active') || Request('active') == Partner::PARTNERS ?'active':'' }}" data-toggle="tab" href="#{{Partner::CUSTOMERS  }}" role="tab">
+                        <i class="fa fa-money-check-alt"></i> {{ __('Partners Table') }}
                     </a>
                 </li>
 
@@ -50,15 +50,15 @@ use App\Models\Partner ;
 
 
             </ul>
-			{{-- @if(auth()->user()->can('create employees'))
+			@if(auth()->user()->can('create customers'))
             <div class="flex-tabs">
                
-                <a href="{{ route('employees.create',['company'=>$company->id,Partner::EMPLOYEES]) }}" class="btn  active-style btn-icon-sm align-self-center">
+                <a href="{{ route('partners.create',['company'=>$company->id,Partner::PARTNERS]) }}" class="btn  active-style btn-icon-sm align-self-center">
                     <i class="fas fa-plus"></i>
-                    {{ __('Employee') }}
+                    {{ __('Partner') }}
                 </a>
             </div>
-		@endif  --}}
+		@endif 
             
         </div>
     </div>
@@ -71,13 +71,13 @@ use App\Models\Partner ;
 
 
             @php
-            $currentType = Partner::EMPLOYEES ;
+            $currentType = Partner::PARTNERS ;
             @endphp
             <!--Begin:: Tab Content-->
             <div class="tab-pane {{  !Request('active') || Request('active') == $currentType ?'active':'' }}" id="{{ $currentType }}" role="tabpanel">
                 <div class="kt-portlet kt-portlet--mobile">
-                    <x-table-title.with-two-dates :type="$currentType" :title="__('Employees')" :startDate="$filterDates[$currentType]['startDate']??''" :endDate="$filterDates[$currentType]['endDate']??''">
-                        <x-export-employees :indexRouteName="$indexRouteName" :search-fields="$searchFields[$currentType]" :money-received-type="$currentType" :has-search="1" :has-batch-collection="0" href="{{route('employees.create',['company'=>$company->id])}}" />
+                    <x-table-title.with-two-dates :type="$currentType" :title="__('Partners')" :startDate="$filterDates[$currentType]['startDate']??''" :endDate="$filterDates[$currentType]['endDate']??''">
+                        <x-export-customers :indexRouteName="$indexRouteName" :search-fields="$searchFields[$currentType]" :money-received-type="$currentType" :has-search="1" :has-batch-collection="0" href="{{route('partners.create',['company'=>$company->id])}}" />
                     </x-table-title.with-two-dates>
                     <div class="kt-portlet__body">
 
@@ -87,12 +87,18 @@ use App\Models\Partner ;
                                 <tr class="table-standard-color">
                                     <th>{{ __('#') }}</th>
                                     <th>{{ __('Name') }}</th>
+                                    <th>{{ __('Customer') }}</th>
+                                    <th>{{ __('Supplier') }}</th>
+                                    <th>{{ __('Subsidiary') }}</th>
+                                    <th>{{ __('Other Partner') }}</th>
+                                    <th>{{ __('Employee') }}</th>
+                                    <th>{{ __('Shareholder') }}</th>
                                     {{-- <th>{{ __('Created At') }}</th> --}}
-									{{-- @if(hasAuthFor('update employees') 
-									 // || hasAuthFor('delete employees')
+									@if(hasAuthFor('update customers') 
+									 // || hasAuthFor('delete customers')
 									 )
                                     <th>{{ __('Control') }}</th>
-									@endif  --}}
+									@endif 
                                 </tr>
                             </thead>
                             <tbody>
@@ -102,8 +108,76 @@ use App\Models\Partner ;
                                         {{ $index+1 }}
                                     </td>
 
-                             <td class="text-nowrap text-left">{{ $model->getName() }}</td>
-								
+                                    <td class="text-nowrap text-left">{{ $model->getName() }}</td>
+									
+                                    <td>
+										<div>
+											@if($model->isCustomer())
+											<i class="fas fa-check text-green"></i>
+											@else 
+											<i class="fas fa-times text-red"></i>
+											@endif 
+										</div>
+									</td>
+                                    <td>
+										<div>
+											@if($model->isSupplier())
+											<i class="fas fa-check text-green"></i>
+											@else 
+											<i class="fas fa-times text-red"></i>
+											@endif 
+										</div>
+									</td>
+                                     <td>
+										<div>
+											@if($model->isSubsidiaryCompany())
+											<i class="fas fa-check text-green"></i>
+											@else 
+											<i class="fas fa-times text-red"></i>
+											@endif 
+										</div>
+									</td>
+                                     <td>
+										<div>
+											@if($model->isOtherPartner())
+											<i class="fas fa-check text-green"></i>
+											@else 
+											<i class="fas fa-times text-red"></i>
+											@endif 
+										</div>
+								</td>
+                                    <td>
+										<div>
+											@if($model->isEmployee())
+											<i class="fas fa-check text-green"></i>
+											@else 
+											<i class="fas fa-times text-red"></i>
+											@endif 
+										</div>
+								</td>
+                                       <td>
+										<div>
+											@if($model->isShareholder())
+											<i class="fas fa-check text-green"></i>
+											@else 
+											<i class="fas fa-times text-red"></i>
+											@endif 
+										</div>
+								</td>
+                                    {{-- <td>{{ $model->getCreatedAtFormatted() }}</td> --}}
+									@if(hasAuthFor('update customers') 
+									
+									// || hasAuthFor('delete customers')
+									 )
+                                    <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
+                                        <span style="overflow: visible; position: relative; width: 110px;">
+											@if(hasAuthFor('update customers'))
+                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('partners.edit',['company'=>$company->id,'partner'=>$model->id]) }}"><i class="fa fa-pen-alt"></i></a>
+											@endif 
+										
+                                        </span>
+                                    </td>
+									@endif
                                 </tr>
                                 @endforeach
                             </tbody>

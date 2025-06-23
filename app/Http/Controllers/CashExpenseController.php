@@ -322,6 +322,7 @@ class CashExpenseController
 		
 			$analytic_distribution = $cashExpense->formatAnalysisDistribution() ;
 		 if($company->hasOdooIntegrationCredentials() && $isCashPaymentOrOutgoingTransfer 
+		 && $company->withinIntegrationDate($date)
 		//  && !$inUpdateMode
 		 ){
 			$cashExpenseOdooService = new CashExpenseOdooService($company);
@@ -339,6 +340,7 @@ class CashExpenseController
 		
 			
 			// $creditOdooAccountId = null;
+
 			$result = $cashExpenseOdooService->createCashExpense($subCategoryName,$date,$amountInCurrency,$amountInMainFunctionalCurrency,$journalId,$odooCurrencyId,$debitOdooAccountId,$creditOdooAccountId,$analytic_distribution);
 			
 			$cashExpense->account_bank_statement_odoo_id=$result['account_bank_statement_line_id'];
@@ -433,7 +435,7 @@ class CashExpenseController
 		$cashExpense->delete();
 		
 		
-		$cashExpense = $this->store($company,$request);
+		 $this->store($company,$request);
 		
 		// 	if($company->hasOdooIntegrationCredentials()){
 				

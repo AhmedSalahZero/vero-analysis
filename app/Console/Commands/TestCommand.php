@@ -66,6 +66,11 @@ class TestCommand extends Command
 	
 	public function handle()
 	{
+		$company = Company::find(139);
+		$odooService = new OdooService($company);
+		// dd($odooService->fetchData('res.partner',[],[[['id','=',481]]]));
+		
+		
 // 		$fields = [
 // 				'id',
 // 				'code'
@@ -80,13 +85,13 @@ class TestCommand extends Command
 // 		foreach (array_keys($analytic_distribution) as $key) {
 // 			$distribution_analytic_account_ids[] = [0, (int)$key];
 // 		}
-		
+
 
 // // Wrap in outer array with 6 and 0
 // $distribution_analytic_account_ids = [[6, 0, ...$distribution_analytic_account_ids]];
 // dd($distribution_analytic_account_ids);
 
-
+// dd('q');
 		$odooService =new OdooService(Company::find(139));
 		// $result = $odooService->fetchData('project.project',[],[[['id','=','62']]]) ;
 		$result = $odooService->fetchData('account.move.line',[],[[['id','=','24090']]]) ;
@@ -116,7 +121,6 @@ class TestCommand extends Command
 		$odooService = new OdooService($company);
 	
 
-		$odooService = new OdooService($company);
 dd('qqqqd');
 		
 		// $odooService->createPaymentFromOdooToInvoice(26);
@@ -126,6 +130,7 @@ dd('qqqqd');
 		dd($odooService->fetchData('account.journal',[],[[['id','=',19]]]));
 		
 		dd($odooService->getPartners('2010-01-01','2026-12-01',138));
+		dd($odoo->fetchData('res.partner',[],[[['id','=',454]]]));
 		// $odooService = new OdooService();
 		$journalId = 23 ;
 		$expenseSheetId = 7 ;
@@ -134,7 +139,6 @@ dd('qqqqd');
 		$paymentDate = '2025-05-20';
 		$odooPartnerId = 7 ;
 		dd($odoo->payApprovedExpense($journalId,$expenseSheetId,$amountInPaymentCurrency,$paymentCurrencyName,$paymentDate,$odooPartnerId));
-		dd($odoo->fetchData('account.account',['name','id'],[[['id','=',237],['account_type','=','expense']]]));
 		// dd($odoo->fetchData('hr.expense.sheet')[0]);
 		$odoo->syncBranchSafe('CSH2',$company->id);
 		
@@ -148,7 +152,7 @@ dd('qqqqd');
 		// 	}
 		// }
 		
-		// $company = Company::where('id',138)->first();
+		$company = Company::where('id',138)->first();
 		// $exchangeRateService = new ExchangeRateService($company->getOdooDBUrl(),$company->getOdooDBName(),$company->getOdooDBUserName(),$company->getOdooDBPassword(),$company->getId());
 		// $mainFunctionCurrency = $company->getMainFunctionalCurrency();
 		// $oldForeignExchangeRates = ForeignExchangeRate::where('company_id',$company->id)->get();

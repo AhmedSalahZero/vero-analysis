@@ -63,7 +63,7 @@
     <div class="col-md-12">
         <!--begin::Portlet-->
 
-        <form method="post" action="{{ isset($model) ?  route('subsidiary.companies.update',['company'=>$company->id,'subsidiaryCompany'=>$model->id]) :route('subsidiary.companies.store',['company'=>$company->id]) }}" class="kt-form kt-form--label-right">
+        <form method="post" action="{{ isset($model) ?  route('partners.update',['company'=>$company->id,'partner'=>$model->id]) :route('partners.store',['company'=>$company->id]) }}" class="kt-form kt-form--label-right">
             <input id="js-in-edit-mode" type="hidden" name="in_edit_mode" value="{{ isset($model) ? 1 : 0 }}">
             <input type="hidden" name="id" value="{{ isset($model) ? $model->id : 0 }}">
             <input type="hidden" name="company_id" value="{{ $company->id }}">
@@ -86,7 +86,7 @@
                         <div class="kt-portlet__head">
                             <div class="kt-portlet__head-label">
                                 <h3 class="kt-portlet__head-title head-title text-primary">
-                                    <x-sectionTitle :title="__((isset($model) ? 'Edit' : 'Add') . ' Subsidiary Company')"></x-sectionTitle>
+                                    <x-sectionTitle :title="__((isset($model) ? 'Edit' : 'Add') . ' Partner')"></x-sectionTitle>
                                 </h3>
                             </div>
                         </div>
@@ -101,7 +101,7 @@
                                 <div class="kt-portlet__head">
                                     <div class="kt-portlet__head-label">
                                         <h3 class="kt-portlet__head-title head-title text-primary">
-                                            {{__('Subsidiary Company Information')}}
+                                            {{__('Partner Information')}}
                                         </h3>
                                     </div>
                                 </div>
@@ -112,41 +112,100 @@
 
 
 
-                                            <div class="col-md-3 ">
+                                            <div class="col-md-6 ">
                                                 <label>{{__('Name')}}
                                                     @include('star')
                                                 </label>
                                                 <div class="kt-input-icon">
                                                     <input 
-													@if($company->hasOdooIntegrationCredentials())
-													readonly
-													@endif 
-													type="text" value="{{ isset($model) ? $model->getName():'' }}" name="name" class="form-control  " placeholder="{{__('Subsidiary Company Name')}}">
+													@if($companyHasOdoo)
+																					readonly
+																					@endif 
+																					
+													
+													type="text" value="{{ isset($model) ? $model->getName():'' }}" name="name" class="form-control  " placeholder="{{__('Partner Name')}}">
                                                 </div>
                                             </div>
-											@if($company->hasOdooIntegrationCredentials())
-											
-											
-											 <div class="col-md-3 ">
-                                                <label>{{__('Due From Chart Of Account Number')}}
-                                                    @include('star')
-                                                </label>
-                                                <div class="kt-input-icon">
-                                                    <input type="text" value="{{ isset($model) ? $model->due_from_chart_of_account_number_code:'' }}" name="due_from_chart_of_account_number_code" class="form-control  " placeholder="{{__('Due From Chart Of Account Number')}}">
-                                                </div>
-                                            </div>
-											
-											 <div class="col-md-3 ">
-                                                <label>{{__('Due To Chart Of Account Number')}}
-                                                    @include('star')
-                                                </label>
-                                                <div class="kt-input-icon">
-                                                    <input type="text" value="{{ isset($model) ? $model->due_to_chart_of_account_number_code:'' }}" name="due_to_chart_of_account_number_code" class="form-control  " placeholder="{{__('Due To Chart Of Account Number')}}">
-                                                </div>
-                                            </div>
-											
-											
-											@endif
+
+                                             <div class="col-md-6 mt-3">
+                                                                <div class="row">
+                                                                    <div class="col-md-12 mb-0 mt-4 text-left">
+                                                                        <div class="form-group d-inline-block">
+                                                                            <div class="kt-radio-inline">
+                                                                                <label class="mr-3">
+
+                                                                                </label>
+                                                                                <label class="kt-radio kt-radio--success text-black font-size-18px font-weight-bold">
+
+                                                                                    <input 
+																					@if($companyHasOdoo)
+																					disabled
+																					@endif 
+																					 type="checkbox" value="1" name="is_customer" @if(isset($model) && $model->isCustomer()) checked @endisset
+                                                                                    > {{ __('Customer') }}
+                                                                                    <span></span>
+                                                                                </label>
+
+                                                                                <label class="kt-radio kt-radio--danger text-black font-size-18px font-weight-bold">
+                                                                                    <input 
+																						@if($companyHasOdoo)
+																					disabled
+																					@endif 
+																					
+																					type="checkbox" value="1" name="is_supplier" @if(isset($model) && $model->isSupplier()) checked @endisset
+                                                                                    > {{ __('Supplier') }}
+                                                                                    <span></span>
+                                                                                </label>
+																				
+																				  <label class="kt-radio kt-radio--primary text-black font-size-18px font-weight-bold">
+                                                                                    <input 
+																						@if($companyHasOdoo)
+																					disabled
+																					@endif 
+																					
+																					
+																					type="checkbox" value="1" name="is_employee" @if(isset($model) && $model->isEmployee()) checked @endisset
+                                                                                    > {{ __('Employee') }}
+                                                                                    <span></span>
+                                                                                </label>
+																				
+
+                                                                                <label class="kt-radio kt-radio--success text-black font-size-18px font-weight-bold">
+                                                                                    <input type="checkbox" value="1" name="is_subsidiary_company" @if(isset($model) && $model->isSubsidiaryCompany()) checked @endisset
+                                                                                    > {{ __('Subsidiary Company') }}
+                                                                                    <span></span>
+                                                                                </label>
+
+
+
+
+
+
+                                                                                <label class="kt-radio kt-radio--danger text-black font-size-18px font-weight-bold">
+                                                                                    <input type="checkbox" value="1" name="is_other_partner" @if(isset($model) && $model->isOtherPartner()) checked @endisset
+                                                                                    > {{ __('Other Partner') }}
+                                                                                    <span></span>
+                                                                                </label>
+
+                                                                              
+
+                                                                                <label class="kt-radio kt-radio--primary text-black font-size-18px font-weight-bold">
+                                                                                    <input type="checkbox" value="1" name="is_shareholder" @if(isset($model) && $model->isShareholder()) checked @endisset
+                                                                                    > {{ __('Shareholder') }}
+                                                                                    <span></span>
+                                                                                </label>
+
+
+
+
+
+
+
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
 
 
 
