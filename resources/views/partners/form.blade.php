@@ -127,7 +127,7 @@
                                                 </div>
                                             </div>
 
-                                             <div class="col-md-6 mt-3">
+                                             <div class="col-md-8 mt-3">
                                                                 <div class="row">
                                                                     <div class="col-md-12 mb-0 mt-4 text-left">
                                                                         <div class="form-group d-inline-block">
