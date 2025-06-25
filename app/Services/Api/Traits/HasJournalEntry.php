@@ -42,7 +42,6 @@ trait HasJournalEntry
             if (!is_numeric($accountBankStatementLineId)) {
                 throw new Exception("Failed to create journal entry: " . json_encode($accountBankStatementLineId));
             }
-			
             return [
 				'account_bank_statement_line_id'=>$accountBankStatementLineId,
 				'journal_entry_id'=>$journalEntryId

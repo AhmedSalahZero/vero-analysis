@@ -3,8 +3,10 @@
         <div class="kt-form__actions">
             <div class="row">
                 <div class="col-lg-6">
-                    {{-- <button type="submit" class="btn btn-primary">Save</button>
-                    <button type="reset" class="btn btn-secondary">Cancel</button> --}}
+				@if(isset($hint) && $hint)
+				<p class="text-blue font-weight-bold">{{ $hint }}	</p>			
+				@endif
+           
                 </div>
                 <div class="col-lg-6 kt-align-right">
                     <button  type="submit" class="btn active-style">{{ __('Save') }}</button>

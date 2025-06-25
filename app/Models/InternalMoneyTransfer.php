@@ -21,6 +21,7 @@ class InternalMoneyTransfer extends Model
 	const BANK_TO_BANK = 'bank-to-bank';
 	const BANK_TO_SAFE = 'bank-to-safe';
 	const SAFE_TO_BANK = 'safe-to-bank';
+	const SAFE_TO_SAFE = 'safe-to-safe';
 	
 	
 	public static function generateFromAccountComment(self $internalMoneyTransfer,string $lang)
@@ -418,6 +419,11 @@ class InternalMoneyTransfer extends Model
 		$this->handleSafeTransfer($companyId,$transferDate,0,$transferAmount,$fromBranchId ,$currencyName,1);
 		$this->handleBankTransfer($companyId , $toFinancialInstitutionId ,  $toAccountType , $toAccountNumber , $transferDate , $transferAmount,0);
 	}
+	public function handleSafeToSafeTransfer( int $companyId , int $toBranchId , int $fromBranchId , string $currencyName , string $transferDate , $transferAmount)
+	{
+		$this->handleSafeTransfer($companyId,$transferDate,0,$transferAmount,$fromBranchId ,$currencyName,1);
+		$this->handleSafeTransfer($companyId,$transferDate,$transferAmount,0,$toBranchId ,$currencyName,1);
+	}
 	public function fromBranch()
 	{
 		return $this->belongsTo(Branch::class,'from_branch_id','id');
@@ -438,10 +444,16 @@ class InternalMoneyTransfer extends Model
 	{
 		return $this->belongsTo(Branch::class,'to_branch_id','id');
 	}
+	public function getToBranchId()
+	{
+		return $this->to_branch_id;
+	}
+
 	public function getToBranchName()
 	{
 		return $this->toBranch ? $this->toBranch->getName()  : __('N/A');  
 	}
+	
 	public function getChequeNumber()
 	{
 		return $this->cheque_number ; 

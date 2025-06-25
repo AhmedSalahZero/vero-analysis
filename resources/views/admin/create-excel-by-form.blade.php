@@ -4,6 +4,12 @@
 @endsection
 @section('sub-header')
 <style>
+.max-w-500{
+	max-width:400px !important;
+	width:400px !important;
+	min-width:400px !important;
+	
+}
     .max-w-checkbox {
         min-width: 25px !important;
         width: 25px !important;
@@ -59,6 +65,7 @@
 
     .kt-portlet .kt-portlet__body {
         overflow-x: scroll;
+		height:500px;
     }
 
     .repeat-to-r {
@@ -139,7 +146,7 @@
 
                         @endphp
                         <input type="hidden" name="tableIds[]" value="{{ $tableId }}">
-                        <x-tables.repeater-table :repeater-with-select2="true" :parentClass="'js-toggle-visibility'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
+                        <x-tables.repeater-table :showAddBtnAndPlus="false" :repeater-with-select2="true" :parentClass="'js-toggle-visibility'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=false">
                             <x-slot name="ths">
                                 @foreach($exportables as $name=>$title)
                                 <x-tables.repeater-table-th class="col-md-2" :title="$title"></x-tables.repeater-table-th>
@@ -154,8 +161,8 @@
                                 if( !($subModel instanceof \App\Models\Expense) ){
                                 unset($subModel);
                                 }
-
                                 @endphp
+								
                                 <tr @if($isRepeater) data-repeater-item @endif>
                                     <td class="text-center">
                                         <div class="">
@@ -163,7 +170,6 @@
                                             </i>
                                         </div>
                                     </td>
-
 
                                     <input type="hidden" name="id" value="{{ isset($subModel) ? $subModel->id : 0 }}">
                                     {{-- <input type="hidden"  value="{{ isset($subModel) ? $subModel->id : 0 }}"> --}}
@@ -173,18 +179,30 @@
                                     $fieldType = $fieldTypeAndClassDefaultValue['type'];
                                     $fieldClass = $fieldTypeAndClassDefaultValue['class'] ?? '';
                                     $defaultValue = $fieldTypeAndClassDefaultValue['default_value'];
-
+									$options = $fieldTypeAndClassDefaultValue['options']??[];
+									$oldColumnName = $fieldTypeAndClassDefaultValue['name']??''
                                     @endphp
 
 
                                     <td>
-                                        @php
+                                        @if($fieldType == 'select')
+										<select name="{{ $fieldTypeAndClassDefaultValue['name'] }}" class="form-control select2-select max-w-500" data-live-search="true" data-actions-box="true">
+											@foreach($options as $id => $value)
+											<option @if($id == $model->{$oldColumnName}) selected  @endif value="{{ $id }}">{{ $value }}</option>
+											@endforeach 
+										</select>
+										@else
+										
+										
+										@php
                                         $currentVal = isset($model) && $model->{$name} ? $model->{$name} : $defaultValue;
                                         if(is_object($currentVal)){
                                         $currentVal = \Carbon\Carbon::make($currentVal)->format('Y-m-d');
                                         }
                                         @endphp
                                         <input type="{{ $fieldType }}" value="{{ $currentVal }}" class="form-control {{ $fieldClass }}" @if($isRepeater) name="{{ $name }}" @else name="{{ $tableId }}[0][{{ $name }}]" @endif>
+										
+										@endif 
                                     </td>
 
                                     @endforeach
@@ -283,7 +301,10 @@
 
                 </div>
             </div>
-            <x-save />
+			
+			@if($modelName == 'CustomerInvoice' || $modelName == 'SupplierInvoice')
+            <x-save :hint="__('Hint: If you can not find your customer or supplier is the drop down please create a new from from the Partners Section')" />
+			@endif
 
 
 

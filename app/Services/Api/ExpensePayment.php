@@ -94,7 +94,7 @@ class ExpensePayment
             // Fetch sheet with payment_mode
             $sheets = $this->fetchData(
                 'hr.expense.sheet',
-                ['id', 'name', 'state', 'payment_state', 'employee_id', 'total_amount', 'account_move_ids', 'journal_id', 'payment_method_line_id', 'payment_mode'],
+                ['id', 'name', 'state', 'payment_state', 'employee_id', 'total_amount', 'account_move_ids', 'journal_id', 'payment_mode'],
                 [[['id', '=', $expenseSheetId]]] 
             ); 
 			// dd($sheets);

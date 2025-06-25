@@ -1,13 +1,13 @@
 <?php
 namespace App\Http\Controllers;
 use App\Models\Company;
-// use App\Traits\GeneralFunctions;
 use App\Models\FinancialInstitution;
 use App\Models\Partner;
 use App\Services\Api\OdooService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
-class OtherOdooSettingController
+class OdooSettingController
 {
     // use GeneralFunctions;
 	public function index(Company $company,Request $request)
@@ -23,32 +23,27 @@ class OtherOdooSettingController
 		$setting = $company->odooSetting;
 		$result = [];
 		$odooService = new OdooService($company);
-		$taxesColumns = [
-			'vat_taxes_code'=>'VAT Taxes',
-			'credit_withhold_taxes_code'=>'Credit Withhold Taxes',
-			'salary_taxes_code'=>'Salary Taxes',
-			'social_insurance_code' => 'Social Insurance',
-			'income_taxes_code'=>'Income Taxes',
-			'real_estate_taxes_code'=>'Real Estate Taxes',
-			'stamp_duty_taxes_code'=>'Stamp Duty Taxes',
-			'other_taxes_code'=>'Other Taxes'
-		];
-		foreach($taxesColumns as $name){
-			$row = Partner::where('company_id',$company->id)->where('is_tax',1)->where('name',$name)->first();
-			$data = [
-				'name'=>$name ,
-				'is_tax'=>1 ,
-				'is_customer'=>0,
-				'is_supplier'=>0 ,
-				'company_id'=>$company->id,
-			];
-			if($row){
-					$row->update($data);
-			}else{
-				Partner::create($data);
+		$taxesColumns = Partner::getTaxesNames() ;
+		$revenueResults = [];
+		foreach($request->get('revenues') as $revenueArr){
+			$code = $revenueArr['odoo_code'];
+			$bankId = isset($revenueArr['bank']) && is_numeric($revenueArr['bank']) ? $revenueArr['bank'] : null;
+			$journal = $odooService->fetchData('account.account',['code','name'],[[['code','=',$code]]]);
+			$odooId = $journal[0]['id']??null ;
+			if($odooId){
+				$revenueResults[]  = [
+					'odoo_id'=>$odooId ,
+					'odoo_code'=>$code ,
+					'financial_institution_id'=>$bankId,
+					'company_id'=>$company->id 
+				]; 
 			}
 		}
-		foreach($request->except(array_merge(['_token'])) as $key => $value){
+		$company->interestRevenuesAccounts()->delete();
+		if(count($revenueResults)){
+			DB::table('interest_revenue_accounts')->insert($revenueResults);
+		}
+		foreach($request->except(array_merge(['_token','revenues'])) as $key => $value){
 			$journal = $odooService->fetchData('account.account',['code','name'],[[['code','=',$value]]]);
 			if($journal){
 				$dbKeyName = str_replace('_code','_id',$key) ;
@@ -61,6 +56,7 @@ class OtherOdooSettingController
 				}
 			}
 		}
+		
 		$setting ? $setting->update($result) :$company->odooSetting()->create($result) ;
 		
 		return redirect()->route('odoo-settings.index',['company'=>$company->id]);

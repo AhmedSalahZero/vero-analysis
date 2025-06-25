@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
+use PhpOffice\PhpSpreadsheet\Calculation\Financial\InterestRate;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
@@ -223,6 +224,10 @@ class Company extends Model implements HasMedia
 	public function bankToSafeInternalMoneyTransfers()
 	{
 		return $this->internalMoneyTransfers()->where('type',InternalMoneyTransfer::BANK_TO_SAFE);
+	}	
+	public function safeToSafeInternalMoneyTransfers()
+	{
+		return $this->internalMoneyTransfers()->where('type',InternalMoneyTransfer::SAFE_TO_SAFE);
 	}	
 	public function bankToLcSettlementInternalMoneyTransfers()
 	{
@@ -699,5 +704,9 @@ class Company extends Model implements HasMedia
 	{
 		$odooIntegrationStartDate = $this->getIntegrationStartDate();
 		return Carbon::make($odooIntegrationStartDate)->lessThanOrEqualTo(Carbon::make($date));
+	}
+	public function interestRevenuesAccounts():HasMany
+	{
+		return $this->hasMany(InterestRevenueAccount::class,'company_id','id');
 	}
 }

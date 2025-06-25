@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Http\Controllers\CompanyController;
+use App\Services\Api\OdooService;
 use App\Traits\HasBasicStoreRequest;
 use App\Traits\HasCreatedAt;
 use Illuminate\Database\Eloquent\Builder;
@@ -294,4 +295,61 @@ class Partner extends Model
 		}
 		return  $this->due_to_chart_of_account_number_odoo_id;
 	}
+	public static function getTaxesNames():array 
+	{
+		return  [
+			'vat_taxes_code'=>'VAT Taxes',
+			'credit_withhold_taxes_code'=>'Credit Withhold Taxes',
+			'salary_taxes_code'=>'Salary Taxes',
+			'social_insurance_code' => 'Social Insurance',
+			'income_taxes_code'=>'Income Taxes',
+			'real_estate_taxes_code'=>'Real Estate Taxes',
+			'stamp_duty_taxes_code'=>'Stamp Duty Taxes',
+			'other_taxes_code'=>'Other Taxes'
+		];;
+	}
+	public static function handleTaxesColumnsToPartnerTable(Company $company)
+	{
+		
+		foreach(self::getTaxesNames() as $name){
+			$row = Partner::where('company_id',$company->id)->where('is_tax',1)->where('name',$name)->first();
+			$data = [
+				'name'=>$name ,
+				'is_tax'=>1 ,
+				'is_customer'=>0,
+				'is_supplier'=>0 ,
+				'company_id'=>$company->id,
+			];
+			if($row){
+					$row->update($data);
+			}else{
+				Partner::create($data);
+			}
+		}
+	}
+	public function syncAccounts(Request $request,Company $company)
+	{
+		if(!$company->hasOdooIntegrationCredentials()){
+			return ;
+		}
+		$odooService = new OdooService($company);
+			$code = $request->get('due_from_chart_of_account_number_odoo_code') ;
+			// dd($code,$request->all());
+			$this->due_from_chart_of_account_number_odoo_code = $code;
+			$journal = $odooService->fetchData('account.account',['code','name'],[[['code','=',$code]]]);
+			$odooId = $journal[0]['id'] ?? null ;
+			if($odooId){
+				$this->due_from_chart_of_account_number_odoo_id  = $odooId;
+			}
+			$code = $request->get('due_to_chart_of_account_number_odoo_code') ;
+			$this->due_to_chart_of_account_number_odoo_code = $code;
+			$journal = $odooService->fetchData('account.account',['code','name'],[[['code','=',$code]]]);
+			$odooId = $journal[0]['id'] ?? null ;
+			if($odooId){
+				$this->due_to_chart_of_account_number_odoo_id  = $odooId;
+			}
+			$this->save();
+			
+	}
+	
 }

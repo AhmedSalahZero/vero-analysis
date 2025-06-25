@@ -188,7 +188,6 @@ trait HasPayment
                 'active_ids' => [$odooInvoiceId],
             ];
 
-
          $paymentWizardId = $this->models->execute_kw(
                 $this->db,
                 $this->uid,

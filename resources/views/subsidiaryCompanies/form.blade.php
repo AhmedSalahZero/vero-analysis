@@ -132,7 +132,7 @@
                                                     @include('star')
                                                 </label>
                                                 <div class="kt-input-icon">
-                                                    <input type="text" value="{{ isset($model) ? $model->due_from_chart_of_account_number_odoo_code:'' }}" name="due_from_chart_of_account_number_code" class="form-control  " placeholder="{{__('Due From Chart Of Account Number')}}">
+                                                    <input type="text" value="{{ isset($model) ? $model->due_from_chart_of_account_number_odoo_code:'' }}" name="due_from_chart_of_account_number_odoo_code" class="form-control  " placeholder="{{__('Due From Chart Of Account Number')}}">
                                                 </div>
                                             </div>
 											
@@ -141,7 +141,7 @@
                                                     @include('star')
                                                 </label>
                                                 <div class="kt-input-icon">
-                                                    <input type="text" value="{{ isset($model) ? $model->due_to_chart_of_account_number_odoo_code:'' }}" name="due_to_chart_of_account_number_code" class="form-control  " placeholder="{{__('Due To Chart Of Account Number')}}">
+                                                    <input type="text" value="{{ isset($model) ? $model->due_to_chart_of_account_number_odoo_code:'' }}" name="due_to_chart_of_account_number_odoo_code" class="form-control  " placeholder="{{__('Due To Chart Of Account Number')}}">
                                                 </div>
                                             </div>
 											

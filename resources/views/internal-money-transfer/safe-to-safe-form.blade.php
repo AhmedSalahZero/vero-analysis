@@ -91,7 +91,7 @@
                         <div class="kt-portlet__head">
                             <div class="kt-portlet__head-label">
                                 <h3 class="kt-portlet__head-title head-title text-primary">
-                                    <x-sectionTitle :title="__((isset($model) ? 'Edit' : 'Add') . ' Bank To Safe Internal Money Transfer')"></x-sectionTitle>
+                                    <x-sectionTitle :title="__((isset($model) ? 'Edit' : 'Add') . ' Safe To Safe Internal Money Transfer')"></x-sectionTitle>
                                 </h3>
                             </div>
                         </div>
@@ -107,21 +107,17 @@
                                         <h3 class="kt-portlet__head-title head-title text-primary">
                                           {{__('Bank To Safe Transfer Information')}}
                                         </h3>
-										  <div class=" flex-1 d-flex justify-content-end pt-3">
+										 
+										 
+										 <div class=" flex-1 d-flex justify-content-end pt-3">
                                             <div class="col-md-3 mb-3">
                                                 <label>{{__('Balance')}} <span class="balance-date-js"></span> </label>
                                                 <div class="kt-input-icon">
-                                                    <input value="0" type="text" disabled class="form-control balance-js" placeholder="{{__('Account Balance')}}">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-3 mb-3">
-                                                <label>{{__('Net Balance')}} <span class="net-balance-date-js"></span> </label>
-                                                <div class="kt-input-icon">
-                                                    <input value="0" type="text" disabled class="form-control net-balance-js" placeholder="{{__('Net Balance')}}">
-                                                    {{-- <x-tool-tip title="{{__('Kash Vero')}}" /> --}}
+                                                    <input value="0" type="text" disabled class="form-control cash-balance-js" placeholder="{{__('Account Balance')}}">
                                                 </div>
                                             </div>
                                         </div>
+										
                                     </div>
                                 </div>
 
@@ -166,59 +162,26 @@
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div class="col-md-6">
-                                                <label>{{__('From Bank')}}
-                                                    @include('star')
-                                                </label>
-                                                <div class="kt-input-icon">
-                                                    <div class="input-group date">
-                                                        <select required js-from-when-change-trigger-change-account-type data-from-financial-institution-id name="from_bank_id" class="form-control from-financial-institution">
-                                                            @foreach($financialInstitutionBanks as $index=>$financialInstitutionBank)
-                                                            <option value="{{ $financialInstitutionBank->id }}" {{ isset($model) && $model->getFromBankId() == $financialInstitutionBank->id ? 'selected' : '' }}>{{ $financialInstitutionBank->getName() }}</option>
-                                                            @endforeach
-                                                        </select>
-
-                                                    </div>
-                                                </div>
-                                            </div>
-
-
-
-
-                                            <div class="col-md-2">
-                                                <label>{{__('From Account Type')}}
-                                                    @include('star')
-                                                </label>
-                                                <div class="kt-input-icon">
-                                                    <div class="input-group date">
-                                                        <select name="from_account_type_id" class="form-control js-from-update-account-number-based-on-account-type">
-                                                            <option value="" selected>{{__('Select')}}</option>
-                                                            @foreach($accountTypes as $index => $accountType)
-                                                            <option value="{{ $accountType->id }}" @if(isset($model) && $model->getFromAccountTypeId() == $accountType->id) selected @endif>{{ $accountType->getName() }}</option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-2">
-                                                <label>{{__('From Account Number')}}
-                                                    @include('star')
-                                                </label>
-                                                <div class="kt-input-icon">
-                                                    <div class="input-group date">
-                                                        <select data-current-selected="{{ isset($model) ? $model->getFromAccountNumber(): 0  }}" data-from-current-selected="{{ isset($model) ? $model->getFromAccountNumber(): 0 }}" name="from_account_number" class="form-control js-from-account-number">
-                                                            <option value="" selected>{{__('Select')}}</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                           
+										     <div class="col-md-2 mb-4">
+                            <label>{{ __('From Branch') }} <span class="multi_selection"></span> </label>
+                            <div class="kt-input-icon">
+                                <div class="input-group date">
+                                    <select id="from-branch-id" data-current-selected="{{ isset($model) ? $model->getFromBranchId() : 0 }}" required data-live-search="true" data-actions-box="true" name="from_branch_id" required class="form-control customers-js kt-bootstrap-select select2-select kt_bootstrap_select ">
+                                        {{-- @foreach($selectedBranches as $id => $name) --}}
+                                        {{-- <option value="{{ $id }}" >{{ $name }}</option> --}}
+                                        {{-- @endforeach --}}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+						
 
                                               <div class="col-md-2 mb-4">
                             <label>{{ __('To Branch') }} <span class="multi_selection"></span> </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
-                                    <select id="branch-id" data-current-selected="{{ isset($model) ? $model->getToBranchId() : 0 }}" required data-live-search="true" data-actions-box="true" name="to_branch_id" required class="form-control customers-js kt-bootstrap-select select2-select kt_bootstrap_select ">
+                                    <select id="to-branch-id" data-current-selected="{{ isset($model) ? $model->getToBranchId() : 0 }}" required data-live-search="true" data-actions-box="true" name="to_branch_id" required class="form-control customers-js kt-bootstrap-select select2-select kt_bootstrap_select ">
                                         {{-- @foreach($selectedBranches as $id => $name) --}}
                                         {{-- <option value="{{ $id }}" >{{ $name }}</option> --}}
                                         {{-- @endforeach --}}
@@ -345,79 +308,7 @@
 
        
     <script>
-	$(document).on('change','.balance-date',function(){
-				$('select.js-from-account-number').trigger('change');	
-			})
-	 $(document).on('change', 'select.js-from-account-number', function() {
-                const parent = $(this).closest('.kt-portlet__body');
-                const financialInstitutionId = parent.find('select.from-financial-institution').val()
-                const accountNumber = $(this).val();
-                const accountType = parent.find('select.js-from-update-account-number-based-on-account-type').val();
-                 const modelId = $('#model-id').val();
-				const modelType = 'InternalMoneyTransfer';
-				const balanceDate = $('.balance-date').val();
-                $.ajax({
-                    url: "{{ route('update.balance.and.net.balance.based.on.account.number',['company'=>$company->id]) }}"
-                    , data: {
-                        accountNumber
-                        , accountType
-                        , financialInstitutionId,
-				modelType,
-				modelId,
-				balanceDate
-                    }
-                    , type: "get"
-                    , success: function(res) {
-                        if (res.balance_date) {
-                            $('.balance-date-js').html('[ ' + res.balance_date + ' ]')
-                        }
-                        if (res.net_balance_date) {
-                            $('.net-balance-date-js').html('[ ' + res.net_balance_date + ' ]')
-                        }
-                        $('.net-balance-js').val(number_format(res.net_balance))
-                        $('.balance-js').val(number_format(res.balance))
-
-                    }
-                })
-            })
-			
-	$(document).on('change', 'select.js-from-update-account-number-based-on-account-type', function () {
-	const val = $(this).val()
-	const lang = $('body').attr('data-lang')
-	const companyId = $('body').attr('data-current-company-id')
-	const repeaterParentIfExists = $(this).closest('[data-repeater-item]')
-	const parent = repeaterParentIfExists.length ? repeaterParentIfExists : $(this).closest('.kt-portlet__body')
-	const data = []
-	let currency = $(this).closest('form').find('select.current-from-currency').val()
-	let financialInstitutionBankId = parent.find('[data-from-financial-institution-id]').val()
-	financialInstitutionBankId = typeof financialInstitutionBankId !== 'undefined' ? financialInstitutionBankId : $('[data-financial-institution-id]').val()
-	if (!val || !currency || !financialInstitutionBankId) {
-		return
-	}
-	const url = '/' + lang + '/' + companyId + '/money-received/get-account-numbers-based-on-account-type/' + val + '/' + currency + '/' + financialInstitutionBankId
-	$.ajax({
-		url,
-		data,
-		success: function (res) {
-			options = ''
-			var selectToAppendInto = $(parent).find('.js-from-account-number')
-
-			for (key in res.data) {
-				var val = res.data[key]
-				var selected = $(selectToAppendInto).attr('data-current-selected') == val ? 'selected' : ''
-				options += '<option ' + selected + '  value="' + val + '">' + val + '</option>'
-			}
-
-			selectToAppendInto.empty().append(options).trigger('change')
-		}
-	})
-
-
-
-
-
-
-})
+	
 $(document).on('change', '.js-from-update-account-number-based-on-account-type', function () {
 	const val = $(this).val()
 	const lang = $('body').attr('data-lang')
@@ -516,8 +407,11 @@ $(function () {
 
 <script>
 function getBranchFromCurrency()
-	{					const branchQuery = $('select#branch-id') ;
-						const currentFromBranchId = branchQuery.attr('data-current-selected');
+	{					
+						const fromBranchQuery = $('select#from-branch-id') ;
+						const toBranchQuery = $('select#to-branch-id') ;
+						const currentFromBranchId = fromBranchQuery.attr('data-current-selected');
+						const currentToBranchId = toBranchQuery.attr('data-current-selected');
         	            const currencyName = $('select.current-from-currency').val();
 					
                         $.ajax({
@@ -526,14 +420,24 @@ function getBranchFromCurrency()
 								 currencyName
                             }
                             , success: function(res) {
-								var branchOptions ='';
+								var fromBranchOptions ='';
 								for(var branchName in res.branches){
 									var branchId = res.branches[branchName];
 									var selected = branchId == currentFromBranchId ? 'selected':''; 
-									branchOptions+=`<option value="${branchId}" ${selected} >${branchName}</option>`
+									fromBranchOptions+=`<option value="${branchId}" ${selected} >${branchName}</option>`
 								}
-								branchQuery.empty().append(branchOptions);
-								branchQuery.trigger('change');
+								var toBranchOptions ='';
+								for(var branchName in res.branches){
+									var branchId = res.branches[branchName];
+									var selected = branchId == currentToBranchId ? 'selected':''; 
+									toBranchOptions+=`<option value="${branchId}" ${selected} >${branchName}</option>`
+								}
+								fromBranchQuery.empty().append(fromBranchOptions);
+								fromBranchQuery.trigger('change');
+								
+								toBranchQuery.empty().append(toBranchOptions);
+								toBranchQuery.trigger('change');
+								
                             }
                         })
 	}
@@ -541,6 +445,38 @@ function getBranchFromCurrency()
 	  $(document).on('change', 'select.current-from-currency', getBranchFromCurrency);
 	  
 </script>
+<script>
+ $(document).on('change', '.balance-date', function() {
+                $('select.current-from-currency').trigger('change');
+            })
+            $(document).on('change', 'select#from-branch-id', function() {
+                const branchId = $('select#from-branch-id').val();
+                const currencyName = $('select.current-from-currency').val();
+                const modelId = $('#model-id').val();
+                const modelType = 'InternalMoneyTransfer';
+                const balanceDate = $('.balance-date').val();
+                if (branchId != '-1') {
+                    $.ajax({
+                        url: "{{ route('get.current.end.balance.of.cash.in.safe.statement',['company'=>$company->id]) }}"
+                        , data: {
+                            branchId
+                            , currencyName
+                            , modelType
+                            , modelId
+                            , balanceDate
+                        }
+                        , success: function(res) {
+                            const endBalance = res.end_balance;
+                            $('.cash-balance-js').val(number_format(endBalance))
+                        }
+                    })
+                }
+            })
+            $(function() {
+                $('select#from-branch-id').trigger('change');
+            })
+			
 
+</script>
 
         @endsection

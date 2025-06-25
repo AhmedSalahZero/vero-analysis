@@ -1237,7 +1237,7 @@
                                                 <td>
                                                     {{-- <div class="col-md-3 d-flex align-items-center "> --}}
                                                     <label for="odoo-start-date" class="text-nowrap mr-3">{{ __('Start Date') }}</label>
-                                                    <input id="odoo-start-date" type="date" min="{{ $company->getIntegrationStartDate() }}" value="{{ $company->getIntegrationStartDate() }}" class="form-control" name="odoo_start_date">
+                                                    <input id="odoo-start-date" type="date" value="{{ $company->getIntegrationStartDate() }}" class="form-control" name="odoo_start_date">
                                                     {{-- </div> --}}
 
                                                 </td>
@@ -1269,6 +1269,73 @@
                         </form>
                     </div>
                 </div>
+				
+				<div class="modal fade read-modal read-contracts-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                    <div class="modal-dialog modal-md modal-dialog-centered" role="document">
+                        <form action="{{ route('read-odoo-contracts',['company'=>$company->id]) }}" class="modal-content" method="post">
+
+
+                            @csrf
+                            <div class="modal-header">
+                                <h5 class="modal-title" style="color:#0741A5 !important" id="exampleModalLongTitle">{{ __('Read Contracts') }}</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="customize-elements">
+                                    <table class="table">
+                                        <thead>
+                                            {{-- <tr>
+
+                                                <th class="text-left"> {{ __('From Date') }} </th>
+                                                <th class="text-left"> {{ __('To Date') }} </th>
+
+                                            </tr> --}}
+                                        </thead>
+                                        <tbody>
+
+
+
+                                            <tr>
+
+
+                                                <td>
+                                                    {{-- <div class="col-md-3 d-flex align-items-center "> --}}
+                                                    <label for="odoo-start-date" class="text-nowrap mr-3">{{ __('Start Date') }}</label>
+                                                    <input id="odoo-start-date" type="date"  value="{{ $company->getIntegrationStartDate() }}" class="form-control" name="odoo_start_date">
+                                                    {{-- </div> --}}
+
+                                                </td>
+
+                                                <td>
+
+                                                    {{-- <div class="col-md-3 d-flex align-items-center "> --}}
+                                                    <label for="odoo-end-date" class="text-nowrap mr-3">{{ __('End Date') }}</label>
+                                                    <input id="odoo-end-date" type="date" value="{{ \Carbon\Carbon::make($company->getIntegrationStartDate())->addMonth()->format('Y-m-d') }}" class="form-control" name="odoo_end_date">
+                                                    {{-- </div> --}}
+
+                                                </td>
+
+
+
+
+
+                                            </tr>
+
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn  btn-primary ">{{ __('Submit') }}</button>
+                                <button type="button" class="btn btn-primary" data-dismiss="modal">{{ __('Close') }}</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+				
 				
 				 <div class="modal fade read-modal read-partners-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                     <div class="modal-dialog modal-md modal-dialog-centered" role="document">
@@ -1372,7 +1439,7 @@
 
                                                     {{-- <div class="col-md-3 d-flex align-items-center "> --}}
                                                     <label for="odoo-send-start-date" class="text-nowrap mr-3">{{ __('Start Date') }}</label>
-                                                    <input id="odoo-send-start-date" type="date" min="{{ $company->getIntegrationStartDate() }}" value="{{ $company->getIntegrationStartDate() }}" class="form-control" name="odoo_start_date">
+                                                    <input id="odoo-send-start-date" type="date"  value="{{ $company->getIntegrationStartDate() }}" class="form-control" name="odoo_start_date">
                                                     {{-- </div> --}}
 
                                                 </td>
@@ -1437,7 +1504,7 @@
 
                                                     {{-- <div class="col-md-3 d-flex align-items-center "> --}}
                                                     <label for="odoo-send-start-date" class="text-nowrap mr-3">{{ __('Start Date') }}</label>
-                                                    <input id="odoo-send-start-date" type="date" min="{{ $company->getIntegrationStartDate() }}" value="{{ $company->getIntegrationStartDate() }}" class="form-control" name="odoo_start_date">
+                                                    <input id="odoo-send-start-date" type="date"  value="{{ $company->getIntegrationStartDate() }}" class="form-control" name="odoo_start_date">
                                                     {{-- </div> --}}
 
                                                 </td>
@@ -2464,6 +2531,10 @@
         $(document).on('click', '[data-show-notification-modal="read-invoices-modal"]', function(e) {
             e.preventDefault();
             $('.read-invoices-modal').modal('show');
+        })
+		$(document).on('click', '[data-show-notification-modal="read-contracts-modal"]', function(e) {
+            e.preventDefault();
+            $('.read-contracts-modal').modal('show');
         })
 		$(document).on('click', '[data-show-notification-modal="read-partners-modal"]', function(e) {
             e.preventDefault();

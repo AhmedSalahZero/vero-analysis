@@ -563,7 +563,7 @@ use App\Models\MoneyReceived ;
                                 </div>
                             </div>
 
-                            <div class="col-md-2  width-12 show-only-when-invoice-currency-not-equal-receiving-currency">
+                            <div class="col-md-2 mt-4  width-12 show-only-when-invoice-currency-not-equal-receiving-currency">
                                 <label>{{__('Exchange Rate')}} @include('star')</label>
                                 <div class="kt-input-icon">
                                     <input data-current-value="{{ isset($model) ? $model->getExchangeRate() : 1 }}" value="{{ isset($model) ? $model->getExchangeRate() : 1}}" placeholder="{{ __('Exchange Rate') }}" type="text" name="exchange_rate[{{ MoneyReceived::CHEQUE }}]" class="form-control only-greater-than-or-equal-zero-allowed exchange-rate-class recalculate-amount-class" data-type="{{ MoneyReceived::CHEQUE }}">

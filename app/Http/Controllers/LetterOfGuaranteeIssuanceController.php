@@ -201,7 +201,9 @@ class LetterOfGuaranteeIssuanceController
 		$financialInstitutionAccountIdForFeesAndCommission = $financialInstitutionAccountForFeesAndCommission->id;
 		$isCdOrTdCashCoverAccount = $model->isCdOrTd(); 
 		// if(!$inUpdateMode){
-			$model->handleLgIssuanceCashCoverForOdoo(false);
+			$model->handleLgIssuanceCashCoverForOdoo();
+			$model->handleIssuanceAndCommissionFeesForOdoo();
+			
 		// }
 
 		$openingBalanceDateOfCurrentAccount = $financialInstitutionAccountForFeesAndCommission->getOpeningBalanceDate();
@@ -270,10 +272,7 @@ class LetterOfGuaranteeIssuanceController
 		$letterOfGuaranteeIssuance->deleteAllRelations();
 		$letterOfGuaranteeIssuance->delete();
 		 $this->store($company,$request,$source);
-		// if($request->get('category_name') == LetterOfGuaranteeIssuance::OPENING_BALANCE){
-		// 	$model->deleteOdoo();
-		// }
-		// $model->handleLgIssuanceCashCoverForOdoo($accountNumberHasChanged);
+	
 		return redirect()->route('view.letter.of.guarantee.issuance',['company'=>$company->id,'active'=>$request->get('lg_type')])->with('success',__('Data Store Successfully'));
 	}
 
@@ -517,7 +516,7 @@ class LetterOfGuaranteeIssuanceController
 	public function destroy(Company $company ,  LetterOfGuaranteeIssuance $letterOfGuaranteeIssuance)
 	{
 		
-		$letterOfGuaranteeIssuance->deleteAllRelations(true);
+		$letterOfGuaranteeIssuance->deleteAllRelations();
 		$lgType = $letterOfGuaranteeIssuance->getLgType();
 		$letterOfGuaranteeIssuance->delete();
 		return redirect()->route('view.letter.of.guarantee.issuance',['company'=>$company->id,'active'=>$lgType]);

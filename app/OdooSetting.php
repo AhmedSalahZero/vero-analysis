@@ -111,6 +111,20 @@ class OdooSetting extends Model
 		}
 		return  $this->insurance_to_account_id;
 	}
-	
+	public function getLetterOfGuaranteeIssuanceFeesId():int 
+	{
+		if(!$this->letter_of_guarantee_issuance_fees_id){
+			throw new \Exception('Letter Of Guarantee Issuance Fees Id Not Found .. Please Add It From Other Odoo Setting Form');
+		}
+		return  $this->letter_of_guarantee_issuance_fees_id;
+	}
+	public function getLetterOfGuaranteeCommissionFeesId():int 
+	{
+		if(!$this->letter_of_guarantee_commission_fees_id){
+			throw new \Exception('Letter Of Guarantee Issuance Fees Id Not Found .. Please Add It From Other Odoo Setting Form');
+		}
+		return  $this->letter_of_guarantee_commission_fees_id;
+	}
+
 	
 }

@@ -330,10 +330,15 @@ use App\NotificationSetting ;
                                 </h3>
                             </div>
                         </div>
+						
                         <div class="kt-portlet__body">
-                            @include('other-odoo-settings.repeater-with-all',[
+                            {{-- @include('other-odoo-settings.repeater-with-all',[
+                            'financialInstitutionBanks'=>$financialInstitutionBanks
+                            ]) --}}
+							@include('other-odoo-settings.repeater-with-all',[
                             'financialInstitutionBanks'=>$financialInstitutionBanks
                             ])
+							
                             {{-- <div class="form-group row"> --}}
 
 

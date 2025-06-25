@@ -796,7 +796,7 @@ Route::middleware([])->group(function () {
 				 // 
 				 Route::get('notifications/{type}','NotificationsController@index')->name('view.notifications');
 				 Route::resource('notifications-settings', 'NotificationSettingsController');
-				 Route::resource('odoo-settings', 'OtherOdooSettingController');
+				 Route::resource('odoo-settings', 'OdooSettingController');
 				 Route::get('mark-notifications-as-read', 'NotificationSettingsController@markAsRead')->name('mark.notifications.as.read');
 
 				 Route::get('adjust-due-dates/{modelId}/{modelType}', 'AdjustedDueDateHistoriesController@index')->name('adjust.due.dates');
@@ -1082,6 +1082,7 @@ Route::middleware([])->group(function () {
 					Route::post('store-down-payment-settlement/{downPaymentId}/{partnerId}/{modelType}','DownPaymentContractsController@storeDownPaymentSettlement')->name('store.down.payment.settlement');
 					
 					Route::post('read-odoo-invoices','ReadOdooInvoices@handle')->name('read-odoo-invoices');
+					Route::post('read-odoo-contracts','ReadOdooContracts@handle')->name('read-odoo-contracts');
 					Route::post('read-odoo-partners','ReadOdooPartners@handle')->name('read-odoo-partners');
 					Route::post('send-odoo-collection-or-payments','SendOdooCollectionOrPayment@handle')->name('send-odoo-collection-or-payments');
 					Route::post('read-expenses','ReadOdooExpense@handle')->name('read-odoo-expenses');

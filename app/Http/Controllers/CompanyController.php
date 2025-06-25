@@ -7,6 +7,7 @@ use App\Models\Company;
 use App\Models\NonBankingService\ConsumerfinanceProduct;
 use App\Models\NonBankingService\LeasingCategory;
 use App\Models\NonBankingService\MicrofinanceProduct;
+use App\Models\Partner;
 use App\Traits\ImageSave;
 use Illuminate\Http\Request;
 
@@ -53,7 +54,7 @@ class CompanyController extends Controller
 			return $companySection;
 		}
         ImageSave::saveIfExist('image',$companySection);
-		
+		Partner::handleTaxesColumnsToPartnerTable($companySection);
 		LeasingCategory::createAllForCompany($companySection->id );
 		MicrofinanceProduct::createAllForCompany($companySection->id );
 		ConsumerfinanceProduct::createAllForCompany($companySection->id );
@@ -121,7 +122,7 @@ class CompanyController extends Controller
 		$companySection->update([
 			'odoo_id'=>null 
 		]);
-		
+		Partner::handleTaxesColumnsToPartnerTable($companySection);
         $companySection->update($request->except(['image','systems']));
 		
 		$companySection->systems()->delete();

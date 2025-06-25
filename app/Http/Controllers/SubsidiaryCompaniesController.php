@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreSubsidiaryCompanyRequest;
 use App\Models\Company;
 use App\Models\Partner;
+use App\Services\Api\OdooService;
 use App\Traits\GeneralFunctions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -111,11 +112,10 @@ class SubsidiaryCompaniesController
 		$type = Partner::SUBSIDIARY_COMPANIES;
 		$subsidiaryCompany = new Partner ;
 		$subsidiaryCompany->is_subsidiary_company = 1 ;
-		if($company->hasOdooIntegrationCredentials()){
-			$subsidiaryCompany->due_from_chart_of_account_number_odoo_code = $request->get('due_from_chart_of_account_number_odoo_code');
-			$subsidiaryCompany->due_to_chart_of_account_number_odoo_code = $request->get('due_to_chart_of_account_number_odoo_code');
-		}
-		$subsidiaryCompany->storeBasicForm($request);
+		
+		$subsidiaryCompany = $subsidiaryCompany->storeBasicForm($request);
+			$subsidiaryCompany->syncAccounts($request, $company);
+		
 		$activeTab = $type ; 
 		return response()->json([
 			'redirectTo'=>route('subsidiary.companies.index',['company'=>$company->id,'active'=>$activeTab])
@@ -137,6 +137,10 @@ class SubsidiaryCompaniesController
 		$subsidiaryCompany->update([
 			'name'=>$newName
 		]);
+		$subsidiaryCompany->syncAccounts($request, $company);
+		
+		
+		
 		$type = Partner::SUBSIDIARY_COMPANIES;
 		// $this->store($company,$request);
 		$activeTab = $type ;

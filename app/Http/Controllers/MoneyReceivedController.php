@@ -737,10 +737,10 @@ class MoneyReceivedController
 				$creditOdooAccountId = $odooSetting->getChequesReceivableId();
 				$odooPartnerId = $moneyReceived->getPartnerOdooId();
 				$ref = 'Cheque Collection ' . $settlement->getInvoiceNumber();
-				$OdooPaymentService->chequeCollection($odooId,$receivedAmount,$actualCollectionDate,$odooCurrencyId,$journalId,$debitAccountOdooId,$creditOdooAccountId,$odooPartnerId,$ref);
+				$res =$OdooPaymentService->chequeCollection($odooId,$receivedAmount,$actualCollectionDate,$odooCurrencyId,$journalId,$debitAccountOdooId,$creditOdooAccountId,$odooPartnerId,$ref);
+	
 			}
 		}
-		
 		
 		if($request->ajax()){
 			return response()->json([
@@ -921,7 +921,6 @@ class MoneyReceivedController
 		$balanceDate = '';
 
 		$netBalance = 0;
-		
 		if($balanceRow){
 			$balance = $balanceRow->{$column} ; 
 			$balanceDate = Carbon::make($balanceRow->date)->format('d-m-Y') ;

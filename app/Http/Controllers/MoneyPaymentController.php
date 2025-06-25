@@ -655,8 +655,9 @@ class MoneyPaymentController
 				$debitAccountOdooId = $financialInstitution->getOdooIdForAccount($accountTypeId,$accountNumber);
 				$creditOdooAccountId = $odooSetting->getChequesPayableId();
 				$odooPartnerId = $moneyPayment->getPartnerOdooId();
-				$ref = 'Cheque Collection ' . $settlement->getInvoiceNumber();
-				$OdooPaymentService->chequePayment($odooId,$currentPaidAmount,$actualPaymentDate,$odooCurrencyId,$journalId,$creditOdooAccountId,$debitAccountOdooId,$odooPartnerId,$ref);
+				$ref = 'Cheque Payment ' . $settlement->getInvoiceNumber();
+				$OdooPaymentService->chequePayment($odooId,$currentPaidAmount  ,$actualPaymentDate,$odooCurrencyId,$journalId,$creditOdooAccountId,$debitAccountOdooId,$odooPartnerId,$ref);
+				// $OdooPaymentService->chequeCollection($odooId,$currentPaidAmount * -1 ,$actualPaymentDate,$odooCurrencyId,$journalId,$creditOdooAccountId,$debitAccountOdooId,$odooPartnerId,$ref);
 			}
 		}
 		

@@ -7,8 +7,10 @@ use App\Http\Controllers\FinancialStatementController;
 use App\Jobs\CheckDueAndPastedInvoicesJob;
 use App\Jobs\TestJob1;
 use App\Jobs\TestJob2;
+use App\Models\Branch;
 use App\Models\Company;
 use App\Models\CustomerInvoice;
+use App\Models\FinancialInstitutionAccount;
 use App\Models\FinancialStatement;
 use App\Models\ForeignExchangeRate;
 use App\Models\IncomeStatement;
@@ -67,7 +69,13 @@ class TestCommand extends Command
 	public function handle()
 	{
 		$company = Company::find(139);
+		$companyId = $company->id ;
 		$odooService = new OdooService($company);
+		
+		$currencyFromBranch = Branch::where('company_id',$companyId)->pluck('currency','currency')->toArray();
+	$currencyFromAccounts = FinancialInstitutionAccount::where('company_id',$companyId)->pluck('currency','currency')->toArray() ;
+	dd(array_merge($currencyFromAccounts,$currencyFromBranch));
+	dd($currencyFromBranch,$currencyFromAccounts);
 		// dd($odooService->fetchData('res.partner',[],[[['id','=',481]]]));
 		
 		
@@ -92,10 +100,11 @@ class TestCommand extends Command
 // dd($distribution_analytic_account_ids);
 
 // dd('q');
-		$odooService =new OdooService(Company::find(139));
+		$odooService =new OdooPayment(Company::find(139));
+		// dd($odooService->chequeCollection('ref lol'));
 		// $result = $odooService->fetchData('project.project',[],[[['id','=','62']]]) ;
+		// dd($result,'dd');
 		$result = $odooService->fetchData('account.move.line',[],[[['id','=','24090']]]) ;
-		dd($result);
 		// dd($result[count($result)-1]);
 		dd($odooService->getContracts('2020-01-01','2026-01-01',139));
 		

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\Api\LetterOfGuaranteeService;
 use App\Traits\Models\HasDeleteButTriggerChangeOnLastElement;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
@@ -18,7 +19,10 @@ class LgRenewalDateHistory extends Model
 	{
 		return $this->belongsTo(Company::class , 'company_id','id');
 	}
-
+	public function letterOfGuaranteeIssuance()
+	{
+		return $this->belongsTo(LetterOfGuaranteeIssuance::class,'letter_of_guarantee_issuance_id','id');
+	}
 	public function getRenewalDate()
     {
         return $this->renewal_date ;
@@ -59,5 +63,39 @@ class LgRenewalDateHistory extends Model
 	{
 		return $this->hasMany(CurrentAccountBankStatement::class,'lg_renewal_date_history_id','id');
 	}
-	
+	public function unlinkRenewalFeesForOddo()
+	{
+		$company = $this->company;
+		$odooLetterOfGuaranteeIssuance = new LetterOfGuaranteeService($company);
+		if($journalId = $this->renewal_fees_journal_entry_id){
+			$odooLetterOfGuaranteeIssuance->unlink($journalId);
+		}
+	}
+	public function handleRenewalFeesForOdoo($renewalFeesAmount,$renewalDate)
+	{
+		$letterOfGuaranteeIssuance = $this->letterOfGuaranteeIssuance;
+		$company=  $letterOfGuaranteeIssuance->company;
+		if($company->hasOdooIntegrationCredentials()){
+			return ;
+		}
+		$odooSetting = $company->odooSetting;
+		$odooLetterOfGuaranteeIssuance = new LetterOfGuaranteeService($company);
+		// $issuanceDate = $letterOfGuaranteeIssuance->getIssuanceDate();
+		// $issuanceFees  = $letterOfGuaranteeIssuance->getIssuanceFees();
+		$financialInstitutionAccountForCashCover = FinancialInstitutionAccount::find($letterOfGuaranteeIssuance->getCashCoverDeductedFromAccountId());
+		$fromAccountNumber = $financialInstitutionAccountForCashCover->getAccountNumber();
+		$journalId = $financialInstitutionAccountForCashCover->financialInstitution->getJournalIdForAccount(27,$fromAccountNumber);
+		$accountOdooId = $financialInstitutionAccountForCashCover->financialInstitution->getOdooIdForAccount(27,$fromAccountNumber);
+		$currency = $letterOfGuaranteeIssuance->getLgCurrency();
+		$odooCurrencyId = Currency::getOdooId($currency);
+		$debitOdooAccountId = $odooSetting->getLetterOfGuaranteeIssuanceFeesId();
+		$lgType =$letterOfGuaranteeIssuance->getLgTypeFormatted();
+		$ref = $lgType . ' Renewal Fees';
+		$message = $ref;
+		$debitOdooAccountId = $odooSetting->getLetterOfGuaranteeCommissionFeesId();
+		$result = $odooLetterOfGuaranteeIssuance->createLgIssuanceCashCover($renewalDate,$renewalFeesAmount,$journalId,$odooCurrencyId,$debitOdooAccountId,$accountOdooId,$letterOfGuaranteeIssuance->getBeneficiaryOdooId(),$ref,$message);
+		$this->renewal_fees_account_bank_statement_odoo_id=$result['account_bank_statement_line_id'];
+			$this->renewal_fees_journal_entry_id=$result['journal_entry_id'];
+			$this->save();
+	}
 }

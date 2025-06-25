@@ -18,6 +18,7 @@ use App\Http\Controllers\Analysis\SalesGathering\ZoneAgainstAnalysisReport;
 use App\Http\Controllers\ExportTable;
 use App\Models\AllocationSetting;
 use App\Models\BalanceSheet;
+use App\Models\Branch;
 use App\Models\CachingCompany;
 use App\Models\CashFlowStatement;
 use App\Models\CollectionSetting;
@@ -34,6 +35,7 @@ use App\Models\ModifiedSeasonality;
 use App\Models\ModifiedTarget;
 use App\Models\NewProductAllocationBase;
 use App\Models\NonBankingService\Study;
+use App\Models\Partner;
 use App\Models\ProductSeasonality;
 use App\Models\QuantityExistingProductAllocationBase;
 use App\Models\QuantityModifiedSeasonality;
@@ -5883,7 +5885,32 @@ function getMinDateOfWeek(array $dateAndWeek, int $weekNo, int $year)
 }
 function getFieldTypeAndClassFromTitle(string $title):array
 {
-
+    if(Str::contains($title, 'Customer Name') ) {
+		return [
+			'type'=>'select',
+			'class'=>'',
+			'default_value'=>'',
+			'name'=>'customer_id',
+			'options'=>Partner::where('company_id',getCurrentCompanyId())->where('is_customer',1)->pluck('name','id')->toArray(),
+		]; 
+	}
+	   if(Str::contains($title, 'Supplier Name') ) {
+		return [
+			'type'=>'select',
+			'class'=>'',
+			'default_value'=>'',
+			'name'=>'supplier_id',
+			'options'=>Partner::where('company_id',getCurrentCompanyId())->where('is_supplier',1)->pluck('name','id')->toArray(),
+		]; 
+	}
+	// if(Str::contains($title, 'Supplier Name') ) {
+	// 	return [
+	// 		'type'=>'select',
+	// 		'class'=>'',
+	// 		'default_value'=>'',
+	// 		'options'=>Partner::where('company_id',getCurrentCompanyId())->where('is_customer',1)->get()
+	// 	]; 
+	// }
     if(Str::contains($title, 'date') || Str::contains($title, 'Date') || Str::contains($title, 'Estimated')) {
         return [
             'type'=>'date',
@@ -5969,7 +5996,9 @@ function getEndYearMonthFrom(int $month, int $year)
 }
 function getCurrenciesForSuppliersAndCustomers(int $companyId):array
 {
-	return FinancialInstitutionAccount::where('company_id',$companyId)->pluck('currency','currency')->toArray();
+	$currencyFromBranch = Branch::where('company_id',$companyId)->pluck('currency','currency')->toArray();
+	$currencyFromAccounts = FinancialInstitutionAccount::where('company_id',$companyId)->pluck('currency','currency')->toArray() ;
+	return array_merge($currencyFromBranch,$currencyFromAccounts);
 	// return array_merge(
 	// 	CustomerInvoice::getCurrencies(),
 	// 	SupplierInvoice::getCurrencies()
@@ -6852,18 +6881,25 @@ function getHeaderMenu($currentCompany = null)
 					'link'=>'#',
 					'show'=>$company->hasOdooIntegrationCredentials(),
 					'submenu'=>[
-					// 	[
-					// 		'title'=>__('Read Invoices'), 
-					// 	'link'=>'#',
-					// 	'show'=>true,
-					// 	'data-show-notification-modal'=>'read-invoices-modal'
-					// ],
 						[
 							'title'=>__('Read Partners'), 
 						'link'=>'#',
 						'show'=>true,
 						'data-show-notification-modal'=>'read-partners-modal'
 					],
+						[
+							'title'=>__('Read Invoices'), 
+						'link'=>'#',
+						'show'=>true,
+						'data-show-notification-modal'=>'read-invoices-modal'
+					],
+							[
+							'title'=>__('Read Contracts'), 
+						'link'=>'#',
+						'show'=>true,
+						'data-show-notification-modal'=>'read-contracts-modal'
+					],
+						
 					// [
 					// 	'title'=>__('Send Collections Or Payments'),
 					// 	'link'=>'#',

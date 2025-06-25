@@ -105,7 +105,20 @@ trait HasOdooMoneyTransfer
 				$toOdooId = $toFinancialInstitution->getOdooIdForAccount($toAccountTypeId,$toAccountNumber);
 				$this->storeOdoo($company,$transferDate,$toOdooId,$toJournalId,$fromOdooId,$fromJournalId,$amountInCurrency,$currencyName);
 				
-		}
+			}
+			elseif($type == InternalMoneyTransfer::SAFE_TO_SAFE ){
+				$fromBranch = Branch::find($fromBranchId);
+				$fromJournalId = $fromBranch->getJournalId();
+				$fromOdooId = $fromBranch->getOdooId();
+				
+				$toBranch = Branch::find($toBranchId);
+				$toJournalId = $toBranch->getJournalId();
+				$toOdooId = $toBranch->getOdooId();
+				
+				$this->storeOdoo($company,$transferDate,$toOdooId,$toJournalId,$fromOdooId,$fromJournalId,$amountInCurrency,$currencyName);
+				
+			}
+			
 		}
 		
 	}

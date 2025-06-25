@@ -146,7 +146,7 @@
 											$currentModalId = 'safe';
 										@endphp
 										<button class="btn btn-sm btn-brand btn-elevate btn-pill text-white" data-toggle="modal" data-target="#{{ $currentModalId.$currency }}">{{ __('Details') }}</button>
-										@include('admin.dashboard.details_cash_in_safe_modal',['detailItems'=> array_merge($details[$name]['current_account'],$details[$name]['cash_in_safe'] ?? [])  , 'modalId'=>$currentModalId ,'title'=>__('Cash  Details')])
+										@include('admin.dashboard.details_cash_in_safe_modal',['detailItems'=> array_merge($details[$name]['current_account']??[],$details[$name]['cash_in_safe'] ?? [])  , 'modalId'=>$currentModalId ,'title'=>__('Cash  Details')])
                                     </h4>
 
                                 </div>

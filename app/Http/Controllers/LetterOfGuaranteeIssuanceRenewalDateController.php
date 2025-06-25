@@ -55,6 +55,10 @@ class LetterOfGuaranteeIssuanceRenewalDateController
 			'renewal_date'=>$renewalDate,
 			'letter_of_guarantee_issuance_id'=>$letterOfGuaranteeIssuance->id
 		]);
+		
+		$letterOfGuaranteeIssuance->handleRenewalFeesForOdoo($renewalFeesAmount,$renewalDate);
+		
+		
 		$this->storeCommissionToCreditCurrentAccountBankStatement($lgRenewalDateHistory,$letterOfGuaranteeIssuance,$company,$expiryDate,$renewalDate,$transactionName,$lgType);
 		$financialInstitutionAccountOpeningBalance = $financialInstitutionAccount->getOpeningBalanceDate();
 		if(Carbon::make($expiryDate)->greaterThanOrEqualTo(Carbon::make($financialInstitutionAccountOpeningBalance))){
@@ -126,6 +130,8 @@ class LetterOfGuaranteeIssuanceRenewalDateController
 		$LgRenewalDateHistory->update([
 			'renewal_date'=>$renewalDate 
 		]);
+		$LgRenewalDateHistory->unlinkRenewalFeesForOddo();
+		$LgRenewalDateHistory->handleRenewalFeesForOdoo($renewalFeesAmount,$renewalDate);
 		$letterOfGuaranteeIssuance->update([
 			'renewal_date'=>$renewalDate
 		]);
@@ -134,7 +140,7 @@ class LetterOfGuaranteeIssuanceRenewalDateController
 		return redirect()->route('letter.of.issuance.renewal.date',['company'=>$company->id,'letterOfGuaranteeIssuance'=>$letterOfGuaranteeIssuance->id]);
 		
 	}
-	public function destroy(Request $request , Company $company ,  LetterOfGuaranteeIssuance $letterOfGuaranteeIssuance , LgRenewalDateHistory $LgRenewalDateHistory)
+	public function destroy( Company $company ,  LetterOfGuaranteeIssuance $letterOfGuaranteeIssuance , LgRenewalDateHistory $LgRenewalDateHistory)
 	{
 		
 		CurrentAccountBankStatement::deleteButTriggerChangeOnLastElement($LgRenewalDateHistory->commissionCurrentBankStatements()->withoutGlobalScope('only_active')->get());
@@ -144,11 +150,10 @@ class LetterOfGuaranteeIssuanceRenewalDateController
 		if($renewalFeesCurrentAccountBankStatement){
 			$renewalFeesCurrentAccountBankStatement->delete();
 		}
-	
+		$LgRenewalDateHistory->unlinkRenewalFeesForOddo();
 		$LgRenewalDateHistory->delete();
 		$letterOfGuaranteeIssuance = $letterOfGuaranteeIssuance->refresh();
 		$lastHistory = $letterOfGuaranteeIssuance->renewalDateHistories->last();
-		
 		$letterOfGuaranteeIssuance->update([
 			'renewal_date'=>$lastHistory->renewal_date 
 			]) ; 

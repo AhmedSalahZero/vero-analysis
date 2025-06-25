@@ -133,7 +133,7 @@ class OdooService
 			return ;
 		}
 		$this->getPartners($startDate,$endDate,$companyId);
-		$this->getContracts($startDate,$endDate,$companyId);
+	//	$this->getContracts($startDate,$endDate,$companyId);
 		$invoices = $this->getInvoices($startDate,$endDate);
 		$this->syncDeletedInvoices($companyId,$startDate);
 		foreach($invoices as $invoice){
@@ -154,9 +154,7 @@ class OdooService
 			$isSupplier = $invoice['move_type'] == 'in_invoice';
 			$isCustomer = $invoice['move_type'] == 'out_invoice';
 			$partnerId = Partner::handlePartnerForOdoo($odooPartnerId ,$odooPartnerName,$isSupplier ,$isCustomer,false,false,$companyId  );
-			// if($invoice['id'] == 9736){
-			// 	dd($isCustomer,$isSupplier);
-			// }
+			
 			if($isCustomer){
 				$invoiceId =  CustomerInvoice::createForOdoo($odooInvoiceId,$partnerId,$odooPartnerName,$invoiceDate,$invoiceDueDate,$invoiceNumber,$invoiceCurrency,$invoiceAmount,$vatAmount,$withholdAmount,$collectedAmount,$exchangeRate,$soNumber,$companyId);
 		//		$this->createPaymentFromOdooToInvoice($odooInvoiceId,$invoiceId,$partnerId,$invoiceCurrency,new MoneyReceived());
@@ -170,6 +168,7 @@ class OdooService
 		
 		
 	}
+		
 	public function getContracts(string $startDate ,string $endDate,int $companyId)
 	{
 		$contractFilters = array(array(
@@ -188,7 +187,6 @@ class OdooService
 				'date', //end date
 			]
 		]);
-		dd($projects);
 		foreach($projects as $projectArr){
 			$projectAmount = 0 ;
 			$modelType = 'Customer';
@@ -322,158 +320,6 @@ class OdooService
 		 return $user;
 	}
 	
-	
-	// public function payInvoice(int $invoiceId, float $invoiceAmount , string $paymentDate , string $userComment  ,int $odooPartnerId)
-	// {
-	
-	// 	$userId = $this->uid;
-	// 	if(is_null($this->uid)){
-	// 		return ;
-	// 	}
-		
-	// 	$paymentData = [
-	// 		'payment_type' => 'inbound',
-	// 		'partner_type' => 'customer',
-	// 		'partner_id' => $odooPartnerId, 
-	// 		'journal_id' => (int) 7,
-	// 		'amount' => (float) $invoiceAmount,
-	// 		'date' => $paymentDate,
-	// 		'payment_method_code' => "manual",
-	// 		'payment_method_id' => (int) 1,
-	// 		'payment_method_line_id' => (int) 4,
-	// 		'memo' => $userComment ?: __('N/A'),
-	// 		'invoice_ids' => [[6, 0, [(int) $invoiceId]]],
-	// 	];
-
-
-	// 	$response = Http::post("$this->url/jsonrpc", [
-	// 		'jsonrpc' => '2.0',
-	// 		'method' => 'call',
-	// 		'params' => [
-	// 			'service' => 'object',
-	// 			'method' => 'execute_kw',
-	// 			'args' => [
-	// 				$this->db,
-	// 				$userId,
-	// 				$this->password,
-	// 				'account.payment',
-	// 				'create',
-	// 				[$paymentData]
-	// 			]
-	// 		]
-	// 	]);
-	// 	$paymentId = json_decode($response->body())->result ;
-	// 	$this->models->execute_kw(
-	// 		$this->db,
-	// 		$this->uid,
-	// 		$this->password,
-	// 		'account.payment',
-	// 		'action_post', // Method to confirm payment
-	// 		[[$paymentId]] // Array of payment IDs
-	// 	);
-		
-	// 	$updatedInvoice = $this->models->execute_kw(
-	// 		$this->db,
-	// 		$this->uid,
-	// 		$this->password,
-	// 		'account.move',
-	// 		'read',
-	// 		[[$invoiceId]],
-	// 		['fields' => ['payment_state']]
-	// 	);
-		
-	// 	// Step 5: Fetch payment move lines to reconcile
-		
-	// 	$filter = array(array(
-	// 			['payment_id', '=', $paymentId],
-	// 			['account_id.type', '=', 'receivable']
-	// 		));
-	// 		$paymentIds=$this->models->execute_kw($this->db, $this->uid, $this->password, 'account.move.line', 'search',$filter );
-	// 		$paymentLines = $this->models->execute_kw($this->db, $this->uid, $this->password, 'account.move.line', 'read', array($paymentIds),[
-	// 			// 'fields'=>$fields
-	// 		]);
-		
-	// 	$paymentLineId = $paymentLines[0]['id'];
-
-	// 	// Step 6: Fetch invoice move lines to reconcile
-	// 	$invoiceLines = $this->models->execute_kw(
-	// 		$this->db,
-	// 		$this->uid,
-	// 		$this->password,
-	// 		'account.move.line',
-	// 		'search_read',
-	// 		[['move_id', '=', $invoiceId], ['account_id.type', '=', 'receivable']],
-	// 		['fields' => ['id']]
-	// 	);
-
-	// 	if (!$invoiceLines || empty($invoiceLines)) {
-	// 		return response()->json(['error' => 'No receivable lines found for invoice'], 500);
-	// 	}
-	// 	$invoiceLineId = $invoiceLines[0]['id'];
-
-	// 	// Step 7: Reconcile payment and invoice lines
-	// 	$this->models->execute_kw(
-	// 		$this->db,
-	// 		$this->uid,
-	// 		$this->password,
-	// 		'account.move.line',
-	// 		'reconcile',
-	// 		[[$paymentLineId, $invoiceLineId]]
-	// 	);
-
-	// 	// Step 8: Verify invoice is paid
-	// 	$updatedInvoice = $this->models->execute_kw(
-	// 		$this->db,
-	// 		$this->uid,
-	// 		$this->password,
-	// 		'account.move',
-	// 		'read',
-	// 		[[$invoiceId]],
-	// 		['fields' => ['payment_state']]
-	// 	);
-		
-		
-	// 	if ($response->failed()) {
-	// 		Log::error('Odoo request failed (payment create)', [
-	// 			'status' => $response->status(),
-	// 			'body' => $response->body(),
-	// 		]);
-	// 		return response()->json(['error' => 'Failed to create payment'], 500);
-	// 	}
-
-	// 	$paymentId = $response->json()['result'] ?? null;
-
-	// 	if (!$paymentId) {
-	// 		return response()->json(['error' => 'Failed to create payment'], 500);
-	// 	}
-
-	// 	$postPayment = Http::post("$this->odooUrl/jsonrpc", [
-	// 		'jsonrpc' => '2.0',
-	// 		'method' => 'call',
-	// 		'params' => [
-	// 			'service' => 'object',
-	// 			'method' => 'execute_kw',
-	// 			'args' => [
-	// 				$this->odooDb,
-	// 				$userId,
-	// 				$this->odooPassword,
-	// 				'account.payment',
-	// 				'action_post',
-	// 				[[$paymentId]] 
-	// 			]
-	// 		]
-	// 	]);
-
-
-
-	// 	if ($postPayment->failed()) {
-	// 		return response()->json(['error' => 'Failed to post payment'], 500);
-	// 	}
-	// 	return response()->json([
-	// 		'message' => 'Payment successful',
-	// 		'payment_id' => $paymentId,
-	// 	]);    
-	// }
 
 
 	private function syncDeletedInvoices(int $companyId,string $odooStartDate)
@@ -730,9 +576,7 @@ class OdooService
 				if($isCustomer){
 					$test[]=$partner;
 				}
-				// if($currentOdooCustomerId == 448){
-				// 	dd($isCustomer,$isSupplier,$isEmployee,$partner,$isOtherPartner);
-				// }
+		
 				Partner::handlePartnerForOdoo($currentOdooCustomerId ,$currentOdooCustomerName,$isCustomer,$isSupplier,$isEmployee,$isOtherPartner,$companyId  );
             }
             return $partners;
@@ -801,19 +645,13 @@ class OdooService
 			  ]
             ];
 
-            // Log::info("Odoo: Fetching outgoing payment method", [
-            //     'journal_id' => $journalId,
-            //     'account_id' => $accountId,
-            //     'filters' => $filters,
-            //     'fields' => $fields
-            // ]);
+       
 			$fields = [];
             $records = $this->fetchData('account.payment.method.line', $fields,$filters);
             if (empty($records)) {
      //           Log::info("Odoo: No outgoing payment methods found for journal {$journalId} and account {$accountId}");
                 return [];
             }
-
          //   Log::info("Odoo: Fetched " . count($records) . " outgoing payment methods", ['records' => $records]);
             return $records[0]['id']??null;
         } catch (\Exception $e) {

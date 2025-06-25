@@ -118,7 +118,7 @@ class OdooPayment
                 'active_model' => 'account.move',
                 'active_ids' => [$invoiceId],
             ];
-
+	
             $paymentWizardId = $this->models->execute_kw(
                 $this->db,
                 $this->uid,
@@ -134,8 +134,7 @@ class OdooPayment
                     'partner_id' => $odooPartnerId,
                     'payment_type' => $inBoundOrOutBound,
                     'partner_type' => $customerOrSupplier ,
-					'payment_method_line_id'=>$moneyModel->getPaymentMethodLineId() 
-					// 'payment_method_ids'=>[323]
+					 'payment_method_line_id'=>$moneyModel->getPaymentMethodLineId() 
                 ]],
                 ['context' => $context]
             );
@@ -150,10 +149,7 @@ class OdooPayment
                 [[$paymentWizardId]],
                 ['context' => $context]
             );
-			// if(!isset($paymentResult['res_id'])){
-			// 	dd($paymentResult);
-			// }
-			
+		
 			$resId = $paymentResult['res_id'];
 			if(is_numeric($resId)){
 				$odooAccountPayment = $this->fetchData('account.payment',['id','name'],[[['id','=',$resId]]]);
@@ -216,6 +212,8 @@ class OdooPayment
         $ref , 
         $message = ''
     ) {
+		// dd('payment_id',$accountPayment_id,'amount',$amount,'date',$date,'currency_id',$currency_id,'journal_id',$journal_id,'debit',$debitOdooAccountId,'credit',$creditOdooAccountId,'partner',$PartnerId,'ref',$ref);
+		
         try {
             // Step 1: Verify the payment exists and get its details
             $paymentData = $this->execute(
@@ -224,8 +222,6 @@ class OdooPayment
                 [[$accountPayment_id], ['state', 'move_id', 'reconciled_invoice_ids', 'is_matched']],
                 []
             );
-
-
             if (!$paymentData || !is_array($paymentData) || empty($paymentData)) {
                 throw new Exception("Payment ID $accountPayment_id not found or invalid response");
             }
@@ -239,7 +235,7 @@ class OdooPayment
             if (!in_array($paymentState, ['draft', 'posted', 'in_process'])) {
                 throw new Exception("Payment ID $accountPayment_id is in state '$paymentState' and cannot be processed");
             }
-
+			
             // Step 2: If payment is in draft, post it
             if ($paymentState === 'draft') {
                 $this->execute(
@@ -251,7 +247,6 @@ class OdooPayment
                 $paymentState = 'posted';
             }
 
-             // dd($paymentState);
 
             // Step 3: Check if payment is already linked to a bank statement
             $existingStatementLines = $this->execute(
@@ -261,15 +256,15 @@ class OdooPayment
                 []
             );
 
+
             // dd($accountPayment_id);
 
-            $moveId = null;
+            $statementEntryId = null;
             $statementMoveId = null;
             $statementLineIds = [];
 
 
-            
-
+ 
             if (empty($existingStatementLines)) {
                 // Step 4: Create bank statement line to affect bank balance
                 $statementEntryData = [
@@ -312,26 +307,26 @@ class OdooPayment
                     'check_move_validity' => true,
                 ];
 
-                $moveId = $this->execute(
+                $statementEntryId = $this->execute(
                     'account.bank.statement.line',
                     'create',
                     [$statementEntryData],
                     ['context' => $context]
                 );
-
+			
            
-                if (!is_numeric($moveId)) {
-                    throw new Exception("Failed to create bank statement line: " . json_encode($moveId));
+                if (!is_numeric($statementEntryId)) {
+                    throw new Exception("Failed to create bank statement line: " . json_encode($statementEntryId));
                 }
 
 
-
+// dd($moveId);
 
                 // Step 5: Get the move_id and line_ids from the bank statement line
                 $statementData = $this->execute(
                     'account.bank.statement.line',
                     'read',
-                    [[$moveId], ['move_id', 'line_ids']],
+                    [[$statementEntryId], ['move_id', 'line_ids']],
                     []
                 );
 
@@ -343,6 +338,7 @@ class OdooPayment
                 }
 
                 $statementMoveId = $statementData[0]['move_id'][0];
+		
                 $statementLineIds = $statementData[0]['line_ids'][1] ?? [];
 
 
@@ -382,10 +378,9 @@ class OdooPayment
             } 
 
        
-
             // Step 7: Update payment to set is_matched to true if not already
             if (!$isMatched) {
-                $this->execute(
+                $matching  = $this->execute(
                     'account.payment',
                     'write',
                     [[$accountPayment_id], ['is_matched' => true]],
@@ -411,10 +406,11 @@ class OdooPayment
             else {
                 Log::warning("No invoices linked to payment ID $accountPayment_id");
             }
-
+			// dd(get_defined_vars());
             // Step 9: Return result
+			// dd($moveId);
             return [
-                'statement_entry_id' => $moveId,
+                'statement_entry_id' => $statementEntryId,
                 'entry_id' => $statementMoveId,
                 'payment_id' => $accountPayment_id,
                 'invoice_state' => !empty($invoiceState) ? $invoiceState[0]['state'] : 'unknown',
@@ -491,7 +487,7 @@ class OdooPayment
 
             // dd($accountPayment_id);
 
-            $moveId = null;
+            $statementEntryId = null;
             $statementMoveId = null;
             $statementLineIds = [];
 
@@ -540,7 +536,7 @@ class OdooPayment
                     'check_move_validity' => true,
                 ];
 
-                $moveId = $this->execute(
+                $statementEntryId = $this->execute(
                     'account.bank.statement.line',
                     'create',
                     [$statementEntryData],
@@ -548,8 +544,8 @@ class OdooPayment
                 );
 
            
-                if (!is_numeric($moveId)) {
-                    throw new Exception("Failed to create bank statement line: " . json_encode($moveId));
+                if (!is_numeric($statementEntryId)) {
+                    throw new Exception("Failed to create bank statement line: " . json_encode($statementEntryId));
                 }
 
 
@@ -559,7 +555,7 @@ class OdooPayment
                 $statementData = $this->execute(
                     'account.bank.statement.line',
                     'read',
-                    [[$moveId], ['move_id', 'line_ids']],
+                    [[$statementEntryId], ['move_id', 'line_ids']],
                     []
                 );
 
@@ -642,7 +638,7 @@ class OdooPayment
 
             // Step 9: Return result
             return [
-                'statement_entry_id' => $moveId,
+                'statement_entry_id' => $statementEntryId,
                 'entry_id' => $statementMoveId,
                 'payment_id' => $accountPayment_id,
                 'invoice_state' => !empty($invoiceState) ? $invoiceState[0]['state'] : 'unknown',

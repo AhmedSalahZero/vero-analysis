@@ -109,6 +109,21 @@ class InternalMoneyTransferController
 		 * * end of bank to safe internal money transfer 
 		 */
 		 
+		 
+		  /**
+		 * * start of safe to safe internal money transfer 
+		 */
+		
+		$safeToSafeStartDate = $filterDates[InternalMoneyTransfer::SAFE_TO_SAFE]['startDate'] ?? null ;
+		$safeToSafeEndDate = $filterDates[InternalMoneyTransfer::SAFE_TO_SAFE]['endDate'] ?? null ;
+		$safeToSafeInternalMoneyTransfers = $company->safeToSafeInternalMoneyTransfers ;
+		$safeToSafeInternalMoneyTransfers =  $safeToSafeInternalMoneyTransfers->filterByTransferDate($safeToSafeStartDate,$safeToSafeEndDate) ;
+		$safeToSafeInternalMoneyTransfers =  $currentType == InternalMoneyTransfer::SAFE_TO_SAFE ? $this->applyFilter($request,$safeToSafeInternalMoneyTransfers):$safeToSafeInternalMoneyTransfers ;
+
+		/**
+		 * * end of safe to safe internal money transfer 
+		 */
+		
 		
 		 $searchFields = [
 			InternalMoneyTransfer::BANK_TO_BANK=>[
@@ -120,6 +135,9 @@ class InternalMoneyTransferController
 			InternalMoneyTransfer::BANK_TO_SAFE=>[
 				'transfer_date'=>__('Withdrawal Date')
 			],
+			InternalMoneyTransfer::SAFE_TO_SAFE=>[
+				'transfer_date'=>__('Withdrawal Date')
+			],
 			
 		];
 	
@@ -127,6 +145,7 @@ class InternalMoneyTransferController
 			InternalMoneyTransfer::BANK_TO_BANK =>$bankToBankInternalMoneyTransfers ,
 			InternalMoneyTransfer::SAFE_TO_BANK =>$safeToBankInternalMoneyTransfers ,
 			InternalMoneyTransfer::BANK_TO_SAFE =>$bankToSafeInternalMoneyTransfers ,
+			InternalMoneyTransfer::SAFE_TO_SAFE =>$safeToSafeInternalMoneyTransfers ,
 		];
 
         return view('internal-money-transfer.index', [
@@ -192,11 +211,12 @@ class InternalMoneyTransferController
 		elseif($type === InternalMoneyTransfer::SAFE_TO_BANK ){
 			$internalMoneyTransfer->handleSafeToBankTransfer($company->id , $toAccountType , $toAccountNumber  , $toFinancialInstitutionId ,$fromBranchId , $currencyName , $transferDate,$transferAmount);
 		}
+		elseif($type === InternalMoneyTransfer::SAFE_TO_SAFE ){
+			$internalMoneyTransfer->handleSafeToSafeTransfer($company->id ,$toBranchId ,$fromBranchId , $currencyName , $transferDate,$transferAmount);
+		}
 
 		$internalMoneyTransfer->handleOdooTransfer();
-		// if($inUpdateMode){
-		// 	return $internalMoneyTransfer;
-		// }
+		
 		$activeTab = $type ; 
 		
 	

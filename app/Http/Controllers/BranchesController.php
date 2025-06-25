@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreBranchRequest;
 use App\Models\CashVeroBranch;
 use App\Models\Company;
-use App\Models\SalesGathering\Branch;
 use App\Repositories\SafeRepository;
 use App\Services\Api\OdooService;
 use App\Traits\GeneralFunctions;

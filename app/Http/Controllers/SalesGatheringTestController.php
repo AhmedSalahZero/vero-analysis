@@ -7,6 +7,7 @@ use App\Imports\ImportData;
 use App\Jobs\Caches\HandleBreakdownDashboardCashingJob;
 use App\Jobs\Caches\HandleCustomerDashboardCashingJob;
 use App\Jobs\Caches\HandleCustomerNatureCashingJob;
+use App\Jobs\Caches\RemoveExpenseIntervalYearCashingJob;
 use App\Jobs\Caches\RemoveIntervalYearCashingJob;
 use App\Jobs\NotifyUserOfCompletedImport;
 use App\Jobs\RemoveCachingCompaniesData;
@@ -16,6 +17,7 @@ use App\Models\ActiveJob;
 use App\Models\CachingCompany;
 use App\Models\Company;
 use App\Models\LastUploadFileName;
+use App\Models\Partner;
 use App\Models\SalesGatheringTest;
 use Auth;
 use Illuminate\Http\Request;
@@ -26,7 +28,6 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Jobs\Caches\RemoveExpenseIntervalYearCashingJob;
 
 class SalesGatheringTestController extends Controller
 {
@@ -276,6 +277,21 @@ class SalesGatheringTestController extends Controller
 					
 			}
 		}
+		if($partnerId = $request->get('customer_id')){
+			$partner = Partner::find($partnerId);
+			$model->update([
+				'customer_id'=>$partnerId,
+				'customer_name'=>$partner->getName(),
+			]);
+		}
+		if($partnerId = $request->has('supplier_id')){
+			$partner = Partner::find($partnerId);
+			$model->update([
+				'supplier_id'=>$partnerId,
+				'supplier_name'=>$partner->getName(),
+			]);
+		}
+		
 		if($modelName == 'SalesGathering'){
 			Artisan::call('caching:run',[
 				'company_id'=>[$companyId] 

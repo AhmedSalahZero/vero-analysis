@@ -1,4 +1,5 @@
 @props([
+'showAddBtnAndPlus'=>true,
 'repeater-with-select2'=>true,
 'isRepeater'=>$isRepeater,
 'relationName'=>$relationName,
@@ -109,6 +110,7 @@ style="display:none"
         </tbody>
         <td>
             {{-- @if(!$isRepeater) --}}
+			@if($showAddBtnAndPlus)
             @if($canAddNewItem && !$removeActionBtn)
             <div data-repeater-create="" class="btn btn btn-sm text-white add-row   border-green bg-green  m-btn m-btn--icon m-btn--pill m-btn--wide {{__('right')}}">
                 <span>
@@ -120,6 +122,7 @@ style="display:none"
                     </span>
                 </span>
             </div>
+			@endif
             @endif
         </td>
 
