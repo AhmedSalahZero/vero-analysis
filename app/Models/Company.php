@@ -539,11 +539,12 @@ class Company extends Model implements HasMedia
 		]);
 	}
 	public function updateLastUploadFileNameStatus(string $modelName){
-		return $this->lastUploadFileNames->where('status',LastUploadFileName::CURRENT)
+		$row = $this->lastUploadFileNames->where('status',LastUploadFileName::CURRENT)
 		->where('model_name',$modelName)
-		->last()->update([
+		->last() ; 
+		return $row ? $row->update([
 			'status'=>LastUploadFileName::SUCCESS
-		]);
+		]) : null;
 		
 	}
 	public function getCurrentLastFileNameForModel(string $modelName){
