@@ -350,9 +350,8 @@ class HomeController extends Controller
 		$initialDates = getEndYearBasedOnDataUploaded($company);
 		$start_date = $initialDates['jan'];
 		$end_date   = $initialDates['dec'];
+		$simpleLinearRegressionDates = [];
 		
-		
-
 		if ($request->isMethod('GET')) {
 			Log::storeNewLogRecord('enterSection',null,__('Breakdown Dashboard'));
 			$request['start_date'] = $start_date;
@@ -362,9 +361,7 @@ class HomeController extends Controller
 			$end_date = $request['end_date'];
 		}
 		$exportableFields  = (new ExportTable)->customizedTableField($company, 'SalesGathering', 'selected_fields');
-		
 		$db_names = array_keys($exportableFields);
-
 		$types =  [
 			'zone' => 'brand',
 			'sales_channel' => 'warning',
