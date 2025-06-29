@@ -4,12 +4,24 @@
 @endsection
 @section('sub-header')
 <style>
-.max-w-500{
-	max-width:400px !important;
-	width:400px !important;
-	min-width:400px !important;
-	
+.table{
+	margin-bottom:0 !important;
 }
+.table thead th, .table thead td{
+	padding-top:0 !important;
+	padding-bottom:0 !important;
+}
+.filter-option-inner-inner,input{
+	text-align: left;
+    font-weight: normal !important;
+}
+    .max-w-500 {
+        max-width: 400px !important;
+        width: 400px !important;
+        min-width: 400px !important;
+
+    }
+
     .max-w-checkbox {
         min-width: 25px !important;
         width: 25px !important;
@@ -65,7 +77,7 @@
 
     .kt-portlet .kt-portlet__body {
         overflow-x: scroll;
-		height:500px;
+        height: 600px;
     }
 
     .repeat-to-r {
@@ -101,8 +113,16 @@
         color: black;
         font-weight: 400;
     }
-
+	td{
+		max-width:25% !important;
+		width:25% !important;
+		min-width:25% !important;
+	}
+	th div.d-flex{
+		justify-content:initial !important;
+	}
     th {
+	
         border-bottom: 1px solid #CCE2FD !important;
     }
 
@@ -126,18 +146,27 @@
             {{-- <input type="hidden" name="model_name" value="IncomeStatement"> --}}
             <input type="hidden" name="company_id" value="{{ getCurrentCompanyId()  }}">
             <input type="hidden" name="creator_id" value="{{ \Auth::id()  }}">
-				<input type="hidden" id="current-purchase-order-id" value="{{ isset($model) && $model->purchases_order_number ? @\App\Models\PurchaseOrder::where('company_id',$company->id)->where('po_number',$model->purchases_order_number)->first()->id : 0  }}">
-				<input type="hidden" id="current-sales-order-id" value="{{ isset($model) && $model->sales_order_number ? @\App\Models\SalesOrder::where('company_id',$company->id)->where('so_number',$model->sales_order_number)->first()->id : 0  }}">
-				<input type="hidden" id="current-contract-id" value="{{ isset($model) && $model->contract_name ? @\App\Models\Contract::where('company_id',$company->id)->where('name',$model->contract_name)->first()->id : 0  }}">
-									
-									
+            <input type="hidden" id="current-purchase-order-id" value="{{ isset($model) && $model->purchases_order_number ? @\App\Models\PurchaseOrder::where('company_id',$company->id)->where('po_number',$model->purchases_order_number)->first()->id : 0  }}">
+            <input type="hidden" id="current-sales-order-id" value="{{ isset($model) && $model->sales_order_number ? @\App\Models\SalesOrder::where('company_id',$company->id)->where('so_number',$model->sales_order_number)->first()->id : 0  }}">
+            <input type="hidden" id="current-contract-id" value="{{ isset($model) && $model->contract_name ? @\App\Models\Contract::where('company_id',$company->id)->where('name',$model->contract_name)->first()->id : 0  }}">
+
+
             <div class="kt-portlet">
 
 
                 <div class="kt-portlet__body">
 
+@php
 
-                    <div class="form-group row justify-content-center">
+	$groupedFields = collect($exportables)->chunk(4)->mapWithKeys(function ($chunk, $index) {
+    return ["Group " . ($index + 1) => $chunk->toArray()];
+})->toArray();
+@endphp
+
+@foreach($groupedFields as $currentExportables)
+
+							
+                    <div class="form-group row justify-content-center mb-0">
                         @php
                         $index = 0 ;
                         @endphp
@@ -147,13 +176,13 @@
                         {{-- start of fixed monthly repeating amount --}}
                         @php
                         $tableId = $modelName;
-                        $repeaterId = 'm_repeater_7';
+                      //  $repeaterId = 'm_repeater_7';
 
                         @endphp
                         <input type="hidden" name="tableIds[]" value="{{ $tableId }}">
-                        <x-tables.repeater-table :removeActionBtn="true" :showAddBtnAndPlus="false" :repeater-with-select2="true" :parentClass="'js-toggle-visibility'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=false">
+                        <x-tables.repeater-table :removeActionBtn="true" :showAddBtnAndPlus="false" :repeater-with-select2="true" :parentClass="'js-toggle-visibility'" :tableName="$tableId" :repeaterId="''" :relationName="'food'" :isRepeater="false">
                             <x-slot name="ths">
-                                @foreach($exportables as $name=>$title)
+                                @foreach($currentExportables as $name=>$title)
                                 <x-tables.repeater-table-th class="col-md-2" :title="$title"></x-tables.repeater-table-th>
                                 @endforeach
                             </x-slot>
@@ -167,47 +196,52 @@
                                 unset($subModel);
                                 }
                                 @endphp
-								@php
-									$isRepeater = false;
-								@endphp
-                                <tr @if($isRepeater) data-repeater-item @endif>
-                                  
-								
+                                @php
+
+                                @endphp
+                                <tr >
+
+
                                     <input type="hidden" name="id" value="{{ isset($subModel) ? $subModel->id : 0 }}">
                                     {{-- <input type="hidden"  value="{{ isset($subModel) ? $subModel->id : 0 }}"> --}}
-                                    @foreach($exportables as $name=>$title)
-                                    @php
+                                    
+
+ @foreach($currentExportables as $name=>$title)
+ 
+ @php
+ logger($name);
                                     $fieldTypeAndClassDefaultValue = getFieldTypeAndClassFromTitle($title);
                                     $fieldType = $fieldTypeAndClassDefaultValue['type'];
                                     $fieldClass = $fieldTypeAndClassDefaultValue['class'] ?? '';
                                     $defaultValue = $fieldTypeAndClassDefaultValue['default_value'];
 									$options = $fieldTypeAndClassDefaultValue['options']??[];
 									$oldColumnName = $fieldTypeAndClassDefaultValue['name']??''
-                                    @endphp
-
-
+									
+					@endphp		
+					
                                     <td>
                                         @if($fieldType == 'select')
-										<select name="{{ $fieldTypeAndClassDefaultValue['name'] }}" class="form-control select2-select max-w-500" data-live-search="true" data-actions-box="true">
-											@foreach($options as $id => $value)
-											<option @if($id == $model->{$oldColumnName}) selected  @endif value="{{ $id }}">{{ $value }}</option>
-											@endforeach 
-										</select>
-										@else
-										
-										
-										@php
+                                        <select name="{{ $fieldTypeAndClassDefaultValue['name'] }}" class="form-control select2-select max-w-500" data-live-search="true" data-actions-box="true">
+                                            @foreach($options as $id => $value)
+                                            <option @if($id==$model->{$oldColumnName}) selected @endif value="{{ $id }}">{{ $value }}</option>
+                                            @endforeach
+                                        </select>
+                                        @else
+
+
+                                        @php
                                         $currentVal = isset($model) && $model->{$name} ? $model->{$name} : $defaultValue;
                                         if(is_object($currentVal)){
                                         $currentVal = \Carbon\Carbon::make($currentVal)->format('Y-m-d');
                                         }
                                         @endphp
-                                        <input type="{{ $fieldType }}" value="{{ $currentVal }}" class="form-control {{ $fieldClass }}" @if($isRepeater) name="{{ $name }}" @else name="{{ $tableId }}[0][{{ $name }}]" @endif>
-										
-										@endif 
+                                        <input type="{{ $fieldType }}" value="{{ $currentVal }}" class="form-control {{ $fieldClass }}" name="{{ $name }}" >
+
+                                        @endif
                                     </td>
 
-                                    @endforeach
+                                @endforeach
+                                  
 
                                 </tr>
                                 @endforeach
@@ -300,13 +334,13 @@
 
                     </div>
 
-
+  @endforeach
                 </div>
             </div>
-			
-			@if($modelName == 'CustomerInvoice' || $modelName == 'SupplierInvoice')
+
+            @if($modelName == 'CustomerInvoice' || $modelName == 'SupplierInvoice')
             <x-save :hint="__('Hint: If you can not find your customer or supplier is the drop down please create a new from from the Partners Section')" />
-			@endif
+            @endif
 
 
 
@@ -698,70 +732,73 @@
 
 <script>
 
-	
+
 
 </script>
 @endif
 <script>
-$('select[name="customer_id"],select[name="supplier_id"]').on('change',function(e){
-		const customerOrSupplierId = $(this).val();
-		const currentContractId = $('#current-contract-id').val();
-		$.ajax({
-			url:"{{ route('get.projects.for.customer.or.supplier',['company'=>$company->id]) }}",
-			data:{customerOrSupplierId},
-			success:function(res){
-				var options = ''; 
-				for(var contract of res.projects){
-					var selected = contract.id == currentContractId ? 'selected':'';
-					options+= `<option ${selected} data-contract-code="${contract.code}" data-contract-date="${contract.start_date}"  value="${contract.id}">${contract.name}</option>`
-				//	options+= `<option data-contract-code="${contract.code}" data-contract-date="${contract.start_date}"  value="${contract.id}">${contract.name}</option>`
-				}
-				$('select[name="contract_id"]').empty().append(options).trigger('change');
-			}
-		})
-	})
-	$('select[name="contract_id"]').on('change',function(){
-		const contractId = $(this).val();
-		const contractCode = $(this).find('option:selected').attr('data-contract-code');
-		const contractDate = $(this).find('option:selected').attr('data-contract-date');
-		var currentSalesOrderId =  $('#current-sales-order-id').val();
-		var currentPurchaseOrderId =  $('#current-purchases-order-id').val();
-		$('[name*="contract_code"]').val(contractCode);
-		$('[name*="contract_date"]').val(contractDate);
-		$.ajax({
-			url:"{{ route('get.po.or.so.from.contract',['company'=>$company->id]) }}",
-			data:{
-				contractId 
-			},
-			success:function(res){
-				var purchaseOrders = res.purchase_orders;
-				var salesOrders = res.sales_orders ; 
-				var purchaseOrdersOptions = '';
-				var salesOrdersOptions = '';
-				
-				for(var purchaseOrder of purchaseOrders){
-					var purchaseOrderSelected = purchaseOrder.id == currentPurchaseOrderId ? 'selected' : '' ;  
-					purchaseOrdersOptions+=`<option ${purchaseOrderSelected} data-date="${purchaseOrder.start_date_1}" value="${purchaseOrder.id}"> ${purchaseOrder.po_number}</option>`
-				}
-				$('select[name="purchases_order_id"]').empty().append(purchaseOrdersOptions).trigger('change');
-				
-				for(var salesOrder of salesOrders){
-						var salesOrderSelected = salesOrder.id == currentSalesOrderId ? 'selected' : '' ;  
-					salesOrdersOptions+=`<option ${salesOrderSelected} data-date="${salesOrder.start_date_1}" value="${salesOrder.id}"> ${salesOrder.so_number}</option>`
-				}
-				$('select[name="sales_order_id"]').empty().append(salesOrdersOptions).trigger('change');
-			}
-		})
-		
-	})
-	$('select[name="sales_order_id"],select[name="purchases_order_id"]').on('change',function(){
-		const date = $(this).find('option:selected').attr('data-date');
-		$('input[name*="sales_order_date"]').val(date).trigger('change');
-		$('input[name*="purchases_order_date"]').val(date).trigger('change');
-	})
-	$(function(){
-		$('select[name="customer_id"]').trigger('change')
-		$('select[name="supplier_id"]').trigger('change')
-	})	
+    $('select[name="customer_id"],select[name="supplier_id"]').on('change', function(e) {
+        const customerOrSupplierId = $(this).val();
+        const currentContractId = $('#current-contract-id').val();
+        $.ajax({
+            url: "{{ route('get.projects.for.customer.or.supplier',['company'=>$company->id]) }}"
+            , data: {
+                customerOrSupplierId
+            }
+            , success: function(res) {
+                var options = '';
+                for (var contract of res.projects) {
+                    var selected = contract.id == currentContractId ? 'selected' : '';
+                    options += `<option ${selected} data-contract-code="${contract.code}" data-contract-date="${contract.start_date}"  value="${contract.id}">${contract.name}</option>`
+                    //	options+= `<option data-contract-code="${contract.code}" data-contract-date="${contract.start_date}"  value="${contract.id}">${contract.name}</option>`
+                }
+                $('select[name="contract_id"]').empty().append(options).trigger('change');
+            }
+        })
+    })
+    $('select[name="contract_id"]').on('change', function() {
+        const contractId = $(this).val();
+        const contractCode = $(this).find('option:selected').attr('data-contract-code');
+        const contractDate = $(this).find('option:selected').attr('data-contract-date');
+        var currentSalesOrderId = $('#current-sales-order-id').val();
+        var currentPurchaseOrderId = $('#current-purchases-order-id').val();
+        $('[name*="contract_code"]').val(contractCode);
+        $('[name*="contract_date"]').val(contractDate);
+        $.ajax({
+            url: "{{ route('get.po.or.so.from.contract',['company'=>$company->id]) }}"
+            , data: {
+                contractId
+            }
+            , success: function(res) {
+                var purchaseOrders = res.purchase_orders;
+                var salesOrders = res.sales_orders;
+                var purchaseOrdersOptions = '';
+                var salesOrdersOptions = '';
+
+                for (var purchaseOrder of purchaseOrders) {
+                    var purchaseOrderSelected = purchaseOrder.id == currentPurchaseOrderId ? 'selected' : '';
+                    purchaseOrdersOptions += `<option ${purchaseOrderSelected} data-date="${purchaseOrder.start_date_1}" value="${purchaseOrder.id}"> ${purchaseOrder.po_number}</option>`
+                }
+                $('select[name="purchases_order_id"]').empty().append(purchaseOrdersOptions).trigger('change');
+
+                for (var salesOrder of salesOrders) {
+                    var salesOrderSelected = salesOrder.id == currentSalesOrderId ? 'selected' : '';
+                    salesOrdersOptions += `<option ${salesOrderSelected} data-date="${salesOrder.start_date_1}" value="${salesOrder.id}"> ${salesOrder.so_number}</option>`
+                }
+                $('select[name="sales_order_id"]').empty().append(salesOrdersOptions).trigger('change');
+            }
+        })
+
+    })
+    $('select[name="sales_order_id"],select[name="purchases_order_id"]').on('change', function() {
+        const date = $(this).find('option:selected').attr('data-date');
+        $('input[name*="sales_order_date"]').val(date).trigger('change');
+        $('input[name*="purchases_order_date"]').val(date).trigger('change');
+    })
+    $(function() {
+        $('select[name="customer_id"]').trigger('change')
+        $('select[name="supplier_id"]').trigger('change')
+    })
+
 </script>
 @endpush
