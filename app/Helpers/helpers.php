@@ -5894,6 +5894,25 @@ function getFieldTypeAndClassFromTitle(string $title):array
 			'options'=>Partner::where('company_id',getCurrentCompanyId())->where('is_customer',1)->pluck('name','id')->toArray(),
 		]; 
 	}
+	 if(Str::contains($title, 'Sales Order Number') ) {
+		return [
+			'type'=>'select',
+			'class'=>'',
+			'default_value'=>'',
+			'name'=>'sales_order_id',
+			'options'=>[],
+		]; 
+	}
+	 if(Str::contains($title, 'Project Name') ) {
+		return [
+			'type'=>'select',
+			'class'=>'',
+			'default_value'=>'',
+			
+			'name'=>'contract_id',
+			'options'=>[],
+		]; 
+	}
 	   if(Str::contains($title, 'Supplier Name') ) {
 		return [
 			'type'=>'select',

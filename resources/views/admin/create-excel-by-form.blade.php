@@ -126,6 +126,11 @@
             {{-- <input type="hidden" name="model_name" value="IncomeStatement"> --}}
             <input type="hidden" name="company_id" value="{{ getCurrentCompanyId()  }}">
             <input type="hidden" name="creator_id" value="{{ \Auth::id()  }}">
+				<input type="hidden" id="current-purchase-order-id" value="{{ isset($model) && $model->purchases_order_number ? @\App\Models\PurchaseOrder::where('company_id',$company->id)->where('po_number',$model->purchases_order_number)->first()->id : 0  }}">
+				<input type="hidden" id="current-sales-order-id" value="{{ isset($model) && $model->sales_order_number ? @\App\Models\SalesOrder::where('company_id',$company->id)->where('so_number',$model->sales_order_number)->first()->id : 0  }}">
+				<input type="hidden" id="current-contract-id" value="{{ isset($model) && $model->contract_name ? @\App\Models\Contract::where('company_id',$company->id)->where('name',$model->contract_name)->first()->id : 0  }}">
+									
+									
             <div class="kt-portlet">
 
 
@@ -146,7 +151,7 @@
 
                         @endphp
                         <input type="hidden" name="tableIds[]" value="{{ $tableId }}">
-                        <x-tables.repeater-table :showAddBtnAndPlus="false" :repeater-with-select2="true" :parentClass="'js-toggle-visibility'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=false">
+                        <x-tables.repeater-table :removeActionBtn="true" :showAddBtnAndPlus="false" :repeater-with-select2="true" :parentClass="'js-toggle-visibility'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=false">
                             <x-slot name="ths">
                                 @foreach($exportables as $name=>$title)
                                 <x-tables.repeater-table-th class="col-md-2" :title="$title"></x-tables.repeater-table-th>
@@ -162,15 +167,12 @@
                                 unset($subModel);
                                 }
                                 @endphp
-								
+								@php
+									$isRepeater = false;
+								@endphp
                                 <tr @if($isRepeater) data-repeater-item @endif>
-                                    <td class="text-center">
-                                        <div class="">
-                                            <i data-repeater-delete="" class="btn-sm btn btn-danger m-btn m-btn--icon m-btn--pill trash_icon fas fa-times-circle">
-                                            </i>
-                                        </div>
-                                    </td>
-
+                                  
+								
                                     <input type="hidden" name="id" value="{{ isset($subModel) ? $subModel->id : 0 }}">
                                     {{-- <input type="hidden"  value="{{ isset($subModel) ? $subModel->id : 0 }}"> --}}
                                     @foreach($exportables as $name=>$title)
@@ -694,7 +696,72 @@
 
 </script>
 
+<script>
 
+	
+
+</script>
 @endif
-
+<script>
+$('select[name="customer_id"],select[name="supplier_id"]').on('change',function(e){
+		const customerOrSupplierId = $(this).val();
+		const currentContractId = $('#current-contract-id').val();
+		$.ajax({
+			url:"{{ route('get.projects.for.customer.or.supplier',['company'=>$company->id]) }}",
+			data:{customerOrSupplierId},
+			success:function(res){
+				var options = ''; 
+				for(var contract of res.projects){
+					var selected = contract.id == currentContractId ? 'selected':'';
+					options+= `<option ${selected} data-contract-code="${contract.code}" data-contract-date="${contract.start_date}"  value="${contract.id}">${contract.name}</option>`
+				//	options+= `<option data-contract-code="${contract.code}" data-contract-date="${contract.start_date}"  value="${contract.id}">${contract.name}</option>`
+				}
+				$('select[name="contract_id"]').empty().append(options).trigger('change');
+			}
+		})
+	})
+	$('select[name="contract_id"]').on('change',function(){
+		const contractId = $(this).val();
+		const contractCode = $(this).find('option:selected').attr('data-contract-code');
+		const contractDate = $(this).find('option:selected').attr('data-contract-date');
+		var currentSalesOrderId =  $('#current-sales-order-id').val();
+		var currentPurchaseOrderId =  $('#current-purchases-order-id').val();
+		$('[name*="contract_code"]').val(contractCode);
+		$('[name*="contract_date"]').val(contractDate);
+		$.ajax({
+			url:"{{ route('get.po.or.so.from.contract',['company'=>$company->id]) }}",
+			data:{
+				contractId 
+			},
+			success:function(res){
+				var purchaseOrders = res.purchase_orders;
+				var salesOrders = res.sales_orders ; 
+				var purchaseOrdersOptions = '';
+				var salesOrdersOptions = '';
+				
+				for(var purchaseOrder of purchaseOrders){
+					var purchaseOrderSelected = purchaseOrder.id == currentPurchaseOrderId ? 'selected' : '' ;  
+					purchaseOrdersOptions+=`<option ${purchaseOrderSelected} data-date="${purchaseOrder.start_date_1}" value="${purchaseOrder.id}"> ${purchaseOrder.po_number}</option>`
+				}
+				$('select[name="purchases_order_id"]').empty().append(purchaseOrdersOptions).trigger('change');
+				
+				for(var salesOrder of salesOrders){
+						var salesOrderSelected = salesOrder.id == currentSalesOrderId ? 'selected' : '' ;  
+					salesOrdersOptions+=`<option ${salesOrderSelected} data-date="${salesOrder.start_date_1}" value="${salesOrder.id}"> ${salesOrder.so_number}</option>`
+				}
+				$('select[name="sales_order_id"]').empty().append(salesOrdersOptions).trigger('change');
+			}
+		})
+		
+	})
+	$('select[name="sales_order_id"],select[name="purchases_order_id"]').on('change',function(){
+		const date = $(this).find('option:selected').attr('data-date');
+		$('input[name*="sales_order_date"]').val(date).trigger('change');
+		$('input[name*="purchases_order_date"]').val(date).trigger('change');
+	})
+	$(function(){
+		$('select[name="customer_id"]').trigger('change')
+		$('select[name="supplier_id"]').trigger('change')
+	})	
+</script>
 @endpush

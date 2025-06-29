@@ -92,15 +92,7 @@ class BuyOrSellCurrency extends Model
 	{
 		return $this->type;
 	}
-    // public function getTransferDays()
-    // {
-    //     return $this->transfer_days ?: 0 ;
-    // }
-	// public function getReceivingDateFormatted()
-	// {
-		
-	// 	return Carbon::make($this->getTransferDate())->addDay($this->getTransferDays())->format('d-m-Y') ;
-	// }
+   
     public function setTransactionDateAttribute($value)
     {
         if (!$value) {
@@ -117,7 +109,19 @@ class BuyOrSellCurrency extends Model
         $year = $date[2];
         $this->attributes['transaction_date'] = $year . '-' . $month . '-' . $day;
     }
+	
+	public function getTransferDate()
+    {
+        return $this->getTransactionDate() ;
+    }
 
+    public function getTransferDateFormatted()
+    {
+        $transferDate = $this->getTransferDate() ;
+
+        return $transferDate ? Carbon::make($transferDate)->format('d-m-Y') : null ;
+    }
+	
     public function getTransactionDate()
     {
         return $this->transaction_date ;

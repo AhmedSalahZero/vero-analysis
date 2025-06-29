@@ -381,6 +381,7 @@ class HomeController extends Controller
 			'principle'=>'danger'
 		];
 		$reports_data = [];
+		$simpleLinearRegressionDates = [];
 		$top_data = [];
 		$simpleLinearRegressionForCompany = [];
 		$breakdown_data = [];

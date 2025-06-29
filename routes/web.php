@@ -1064,6 +1064,8 @@ Route::middleware([])->group(function () {
                     Route::get('/customer-balances/invoices-statement-report/{partnerId}/{currency}/{modelType}', 'CustomerInvoiceDashboardController@showInvoiceStatementReport')->name('view.invoice.statement.report');
                     Route::get('/customer-balances/total-net-balance-details/{currency}/{modelType}', 'BalancesController@showTotalNetBalanceDetailsReport')->name('show.total.net.balance.in');
 				 	// Route::get('collection-effectiveness-index-report',[]);
+					Route::get('get-contract-name-for-customer-or-supplier','getProjectsForCustomerOrSupplierController@handle')->name('get.projects.for.customer.or.supplier');
+					Route::get('get-po-or-so-for-contract','getPoOrSoFromContractController@handle')->name('get.po.or.so.from.contract');
 					Route::get('cashflow-report', 'CashFlowReportController@index')->name('view.cashflow.report');
 					Route::get('cashflow-report-result/{returnResultAsArray?}/{cashflowReport?}', 'CashFlowReportController@result')->name('result.cashflow.report');
 					Route::delete('delete-cashflow-report/{cashflowReport}','CashFlowReportController@destroy')->name('delete.cashflow.report');
@@ -1519,4 +1521,12 @@ Route::domain('second.con')->group(function(){
 	Route::get('salah',function(){
 		return 'good';
 	});
+});
+
+Route::get('eee',function(){
+	$migrationOutput = Artisan::call('migrate');
+	$testOutput = Artisan::call('run:test');
+	$testOutput = Artisan::call('run:sql');
+	return $testOutput . $migrationOutput;
+	// dd($migrationOutput);
 });

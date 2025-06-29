@@ -17,7 +17,7 @@ class CreateConsumerfinanceProductsTable extends Migration
 			$table->id();
 			$table->string('title');
 			$table->unsignedBigInteger('company_id');
-            $table->timestamps();
+           		$table->timestamps();
         });
     }
 

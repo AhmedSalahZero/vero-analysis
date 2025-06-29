@@ -16,9 +16,12 @@ use App\Jobs\ShowCompletedMessageForSuccessJob;
 use App\Models\ActiveJob;
 use App\Models\CachingCompany;
 use App\Models\Company;
+use App\Models\Contract;
 use App\Models\LastUploadFileName;
 use App\Models\Partner;
+use App\Models\PurchaseOrder;
 use App\Models\SalesGatheringTest;
+use App\Models\SalesOrder;
 use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -273,8 +276,19 @@ class SalesGatheringTestController extends Controller
 		foreach((array)$request->get('tableIds') as $tableId){
 			foreach((array)$request->get($tableId) as  $tableDataArr){
 					$tableDataArr['company_id']  = $companyId ;
+					if($modelName == 'CustomerInvoice'){
+						$salesOrderId = $request->get('sales_order_id') ;
+						$contractId = $request->get('contract_id') ;
+						$tableDataArr['sales_order_number'] =$salesOrderId ? SalesOrder::find($salesOrderId)->getNumber() : null ; 
+						$tableDataArr['contract_name'] =$contractId ? Contract::find($contractId)->getName() : null ; 
+					}
+					if($modelName == 'SupplierInvoice'){
+						$purchasesOrderId = $request->get('purchases_order_id') ;
+						$contractId = $request->get('contract_id') ;
+						$tableDataArr['purchases_order_number'] =$purchasesOrderId ? PurchaseOrder::find($purchasesOrderId)->getNumber() : null ; 
+						$tableDataArr['contract_name'] =$contractId ? Contract::find($contractId)->getName() : null ; 
+					}
 					$model->update($tableDataArr);
-					
 			}
 		}
 		if($partnerId = $request->get('customer_id')){
