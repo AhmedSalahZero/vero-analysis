@@ -289,7 +289,7 @@ class TimeOfDeposit extends Model
 	{
 		return $this->hasOne(CurrentAccountBankStatement::class,'time_of_deposit_id','id')->where('is_debit',1)->where('is_td_renewal',1)->where('date',$date)->first();
 	}
-	public function calculateInterestAmount(string $expiryDate , string $renewalDate , $newInterestRate)
+	public function calculateInterestAmount(string $expiryDate , string $renewalDate , $newInterestRate,float $interestAmount = null)
 	{
 		$diffBetweenTwoDatesInDays = Carbon::make($renewalDate)->diffInDays(Carbon::make($expiryDate));
 		$amount = $this->getAmount();

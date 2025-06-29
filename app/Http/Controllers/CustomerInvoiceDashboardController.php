@@ -99,6 +99,9 @@ class CustomerInvoiceDashboardController extends Controller
 		$totalCard = [];
 		$exchangeRates = [];
         foreach ($selectedCurrencies as $currencyName) {
+			if(!$currencyName){
+				continue ; 
+			}
 			if($mainFunctionalCurrency != $currencyName){
 				$exchangeRates[$currencyName] = ForeignExchangeRate::getExchangeRateForCurrencyAndClosestDate($currencyName,$mainFunctionalCurrency,$date,$company->id);
 			}

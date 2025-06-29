@@ -23,10 +23,10 @@ class TimeOfDepositRenewalDateController
 	
 		$date = $request->get('renewal_date') ;
 		$newInterestRate = $request->get('interest_rate');
-		$expiryDate = $timeOfDeposit->getRenewalDate();
+		// $expiryDate = $timeOfDeposit->getRenewalDate();
 		
-		
-		
+		$expiryDate = $request->get('expiry_date');
+	
 		
 		
 		$date = explode('/',$date);
@@ -101,16 +101,20 @@ class TimeOfDepositRenewalDateController
 		$year = $date[2];
 		$renewalDate = $year.'-'.$month.'-'.$day ;
 		$expiryDate = $request->get('expiry_date');
-		
+		$interestAmount = number_unformat($request->get('interest_amount'));
+
 		$renewalFeesCurrentAccountBankStatement = $timeOfDeposit->renewalDebitCurrentAccount($expiryDate) ;
-		$interestAmount = $timeOfDeposit->calculateInterestAmount($expiryDate,$renewalDate,$newInterestRate);
+		// $interestAmount = $interestAmount ? $interestAmount 
+		// : $timeOfDeposit->calculateInterestAmount($expiryDate,$renewalDate,$newInterestRate)
+		// ;
 		$renewalFeesCurrentAccountBankStatement->handleFullDateAfterDateEdit($expiryDate,$interestAmount,0);
-			
+	
 		
 		$TdRenewalDateHistory->update([
 			'renewal_date'=>$renewalDate ,
 			'expiry_date'=>$expiryDate,
-			'interest_rate'=>$newInterestRate
+			'interest_rate'=>$newInterestRate,
+			'interest_amount'=>$interestAmount
 		]);
 		$timeOfDeposit->update([
 			'end_date'=>$renewalDate,
@@ -133,7 +137,9 @@ class TimeOfDepositRenewalDateController
 		$expiryDate = $lastHistory->expiry_date ;
 		$renewalDate = $lastHistory->renewal_date ;
 		$interestRate = $lastHistory->interest_rate ;
-		$interestAmount = $timeOfDeposit->calculateInterestAmount($expiryDate,$renewalDate,$interestRate);
+		$interestAmount = $lastHistory->interest_amount ;
+		
+		// $interestAmount = $timeOfDeposit->calculateInterestAmount($expiryDate,$renewalDate,$interestRate);
 		$timeOfDeposit->update([
 			'end_date'=>$renewalDate ,
 			'start_date'=>$expiryDate,

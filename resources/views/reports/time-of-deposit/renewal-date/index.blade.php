@@ -342,13 +342,13 @@ use Carbon\Carbon;
 										
 										  <div class="col-md-2 mb-4">
                                             <label>{{__('Interest Amount')}} </label>
-                                            <input type="text" class="form-control" disabled value="{{ $timeOfDeposit->getInterestAmountFormatted() }}">
+                                            <input type="text" class="form-control" name="interest_amount" value="{{ $timeOfDeposit->getInterestAmountFormatted() }}">
                                         </div>
 										
                                         <div class="col-md-2 mb-4">
                                             <label>{{__('Expiry Date')}} </label>
-											<input type="hidden" name="expiry_date" value="{{ isset($model)  ? $timeOfDeposit->getExpiryDate() :$timeOfDeposit->getRenewalDate() }}">
-                                            <input type="text" class="form-control" disabled  value="{{ isset($model)  ? $timeOfDeposit->getExpiryDate() :$timeOfDeposit->getRenewalDate() }}">
+											{{-- <input type="hidden"  value="{{ isset($model)  ? $timeOfDeposit->getExpiryDate() :$timeOfDeposit->getRenewalDate() }}"> --}}
+                                            <input type="date" name="expiry_date" class="form-control"   value="{{ isset($model)  ? $timeOfDeposit->getExpiryDate() :$timeOfDeposit->getRenewalDate() }}">
                                         </div>
 										
 										{{-- <div class="col-md-2 mb-4">

@@ -38,13 +38,18 @@ trait HasDepositAccount
 			
 		}
 	}
+	public function isOpeningBalance():bool
+	{
+		return is_null($this->deducted_from_account_id) || $this->deducted_from_account_id ==0 ;
+	}
 	public function handleTdOrCdStoreDepositForOdoo(bool $accountNumberHasChanged)
 	{
 		/**
 		 * @var TimeOfDeposit $this
 		 */
 		$company = $this->company ; 
-		if($company->hasOdooIntegrationCredentials()){
+		$isOpeningBalance = $this->isOpeningBalance(); 
+		if($company->hasOdooIntegrationCredentials() && ! $isOpeningBalance){
 			$fromFinancialInstitution = $this->financialInstitution;
 			$toFinancialInstitution = $fromFinancialInstitution;
 			$fromAccountTypeId = 27 ;
@@ -73,7 +78,8 @@ trait HasDepositAccount
 		 * @var TimeOfDeposit $this
 		 */
 		$company = $this->company ; 
-		if($company->hasOdooIntegrationCredentials()){
+		$isOpeningBalance = $this->isOpeningBalance();
+		if($company->hasOdooIntegrationCredentials() && !$isOpeningBalance){
 			$timeOfCertificateOdooService = new TimeOrCertificateOfDepositOdooService($company);
 			// $odooSetting = $company->odooSetting ;
 			$fromFinancialInstitution = $this->financialInstitution;
@@ -106,7 +112,8 @@ trait HasDepositAccount
 		 */
 		$company = $this->company ; 
 		$date = $this->getDepositDate();
-		if($company->hasOdooIntegrationCredentials() && $company->withinIntegrationDate($date)){
+		$isOpeningBalance = $this->isOpeningBalance();
+		if(!$isOpeningBalance && $company->hasOdooIntegrationCredentials() && $company->withinIntegrationDate($date)){
 			$timeOfCertificateOdooService = new TimeOrCertificateOfDepositOdooService($company);
 			$odooSetting = $company->odooSetting ;
 			$fromFinancialInstitution = $this->financialInstitution;
@@ -147,7 +154,8 @@ trait HasDepositAccount
 	public function storeRenewal(string $expiryDate,float $newInterestRate)
 	{
 		$company = $this->company ;
-		if($company->hasOdooIntegrationCredentials()){
+		$isOpeningBalance = $this->isOpeningBalance();
+		if($company->hasOdooIntegrationCredentials() && !$isOpeningBalance){
 				$interestAmount = $this->getInterestAmount();
 			$timeOfCertificateOdooService = new TimeOrCertificateOfDepositOdooService($company);
 			$fromFinancialInstitution = $this->financialInstitution;
@@ -183,7 +191,8 @@ trait HasDepositAccount
 		 */
 		$company = $this->company ; 
 		$date = $this->getBreakDate();
-		if($company->hasOdooIntegrationCredentials() && $company->withinIntegrationDate($date)) {
+		$isOpeningBalance = $this->isOpeningBalance();
+		if(!$isOpeningBalance && $company->hasOdooIntegrationCredentials() && $company->withinIntegrationDate($date)) {
 			$timeOfCertificateOdooService = new TimeOrCertificateOfDepositOdooService($company);
 			$fromFinancialInstitution = $this->financialInstitution;
 			$debitAccountTypeId = 27 ;
