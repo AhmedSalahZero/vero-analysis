@@ -124,6 +124,7 @@ use \App\Models\TimeOfDeposit;
                                         <span style="overflow: visible; position: relative; width: 110px;">
 											@if(hasAuthFor('create time of deposit'))
 											@include('reports.time-of-deposit.renewal-date._renew_modal')
+											@include('reports.time-of-deposit.renewal-date._renew_apply_periodic_interest')
                                             <a
 											
 											 data-toggle="modal" data-target="#apply-deposit-modal-{{ $model->id }}" type="button" class="btn 
@@ -132,26 +133,39 @@ use \App\Models\TimeOfDeposit;
 											 disabled 
 											@endif 
 											 
-											  btn-secondary btn-outline-hover-success   btn-icon" title="{{ __('Apply Deposit') }}" href="#"><i class="fa fa-coins"></i></a>
+											  btn-secondary btn-outline-hover-success   btn-icon" title="{{ __('Apply TD Deposit Maturity ') }}" href="#"><i class="fa fa-coins"></i></a>
+											  
 											 
                                             <div class="modal fade" id="apply-deposit-modal-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                                                <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+                                                <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
                                                     <div class="modal-content">
                                                         <form action="{{ route('apply.deposit.to.time.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'timeOfDeposit'=>$model->id ]) }}" method="post">
                                                             @csrf
                                                             <div class="modal-header">
-                                                                <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Do You Want To Apply Deposit To This Time Of Deposit ?') }}</h5>
+                                                                <h5 class="modal-title text-left" id="exampleModalLongTitle">{{ __('Do You Want To Apply Deposit To This Time Of Deposit ?') }}</h5>
                                                                 <button type="button" class="close" aria-label="Close">
                                                                     <span aria-hidden="true">&times;</span>
                                                                 </button>
                                                             </div>
                                                             <div class="modal-body">
                                                                 <div class="row mb-3">
+																
+																 <div class="col-md-4 mb-4">
+                                                                        <label>{{__('TD Amount')}} </label>
+                                                                        <div class="kt-input-icon">
+                                                                            <input value="{{  $model->getAmount()  }}" disabled  class="form-control">
+                                                                        </div>
+                                                                    </div>
+
 
                                                                     <div class="col-md-4 mb-4">
                                                                         <label>{{__('Interest Amount')}} </label>
                                                                         <div class="kt-input-icon">
-                                                                            <input value="{{ $model->isMatured() ? $model->getActualInterestAmount() : $model->getInterestAmount() }}" type="text" name="actual_interest_amount" class="form-control only-greater-than-or-equal-zero-allowed">
+																		@php
+																			$interestAmount = $model->isMatured() ? $model->getActualInterestAmount() : $model->getInterestAmount();
+																			$interestAmount = $model->isPeriodically() ? 0 : $interestAmount;
+																		@endphp
+                                                                            <input value="{{  $interestAmount}}" type="text" name="actual_interest_amount" class="form-control only-greater-than-or-equal-zero-allowed">
                                                                         </div>
                                                                     </div>
 
@@ -178,7 +192,7 @@ use \App\Models\TimeOfDeposit;
                                                             </div>
                                                             <div class="modal-footer">
                                                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                                <button type="submit" class="btn btn-success">{{ __('Confirm') }}</button>
+                                                                <button type="submit" class="btn bg-green text-white">{{ __('Confirm') }}</button>
                                                             </div>
 
                                                         </form>

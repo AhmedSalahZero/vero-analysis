@@ -166,7 +166,7 @@ class CertificatesOfDepositsController
     }
 	public function getCommonDataArr():array 
 	{
-		return ['start_date','account_number','amount','end_date','currency','interest_rate','interest_amount','maturity_amount_added_to_account_id','odoo_code','deducted_from_account_id'];
+		return ['start_date','account_number','amount','end_date','currency','interest_rate','interest_amount','maturity_amount_added_to_account_id','odoo_code','deducted_from_account_id','is_at_maturity'];
 	}
 	public function store(Company $company  ,FinancialInstitution $financialInstitution, StoreCertificateOfDepositRequest $request){
 		
@@ -228,6 +228,7 @@ class CertificatesOfDepositsController
 			$data['journal_id'] =$odooService->getJournalIdFromChartOfAccountId($chartOfAccountId) ;
 		}
 		$certificatesOfDeposit->update($data);
+		$certificatesOfDeposit->deletePeriodInterestAmounts();
 	    $certificatesOfDeposit->handleDeductedForBankStatement($financialInstitution->id,$data['start_date'],number_unformat($request->get('amount')),$company->id,$deductedFromAccountId,$request->get('account_number'));
 		$certificatesOfDeposit->handleTdOrCdStoreDepositForOdoo($accountNumberHasChanged);
 		$type = $request->get('type',CertificatesOfDeposit::RUNNING);

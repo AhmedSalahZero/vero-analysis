@@ -117,83 +117,62 @@
                                                     @include('star')
                                                 </label>
                                                 <div class="kt-input-icon">
-                                                    <input 
-													@if($companyHasOdoo)
-																					readonly
-																					@endif 
-																					
-													
-													type="text" value="{{ isset($model) ? $model->getName():'' }}" name="name" class="form-control  " placeholder="{{__('Partner Name')}}">
+                                                    <input @if($companyHasOdoo) readonly @endif type="text" value="{{ isset($model) ? $model->getName():'' }}" name="name" class="form-control  " placeholder="{{__('Partner Name')}}">
                                                 </div>
                                             </div>
 
-                                             <div class="col-md-8 mt-3">
-                                                                <div class="row">
-                                                                    <div class="col-md-12 mb-0 mt-4 text-left">
-                                                                        <div class="form-group d-inline-block">
-                                                                            <div class="kt-radio-inline">
-                                                                                <label class="mr-3">
+                                            <div class="col-md-8 mt-3">
+                                                <div class="row">
+                                                    <div class="col-md-12 mb-0 mt-4 text-left">
+                                                        <div class="form-group d-inline-block">
+                                                            <div class="kt-radio-inline">
+                                                                <label class="mr-3">
 
-                                                                                </label>
-                                                                                <label class="kt-radio kt-radio--success text-black font-size-18px font-weight-bold">
+                                                                </label>
+                                                                <label class="kt-radio kt-radio--success text-black font-size-18px font-weight-bold">
 
-                                                                                    <input 
-																					@if($companyHasOdoo)
-																					disabled
-																					@endif 
-																					 type="checkbox" value="1" name="is_customer" @if(isset($model) && $model->isCustomer()) checked @endisset
-                                                                                    > {{ __('Customer') }}
-                                                                                    <span></span>
-                                                                                </label>
+                                                                    <input @if($companyHasOdoo) disabled @endif type="checkbox" value="1" name="is_customer" @if(isset($model) && $model->isCustomer()) checked @endisset
+                                                                    > {{ __('Customer') }}
+                                                                    <span></span>
+                                                                </label>
 
-                                                                                <label class="kt-radio kt-radio--danger text-black font-size-18px font-weight-bold">
-                                                                                    <input 
-																						@if($companyHasOdoo)
-																					disabled
-																					@endif 
-																					
-																					type="checkbox" value="1" name="is_supplier" @if(isset($model) && $model->isSupplier()) checked @endisset
-                                                                                    > {{ __('Supplier') }}
-                                                                                    <span></span>
-                                                                                </label>
-																				
-																				  <label class="kt-radio kt-radio--primary text-black font-size-18px font-weight-bold">
-                                                                                    <input 
-																						@if($companyHasOdoo)
-																					disabled
-																					@endif 
-																					
-																					
-																					type="checkbox" value="1" name="is_employee" @if(isset($model) && $model->isEmployee()) checked @endisset
-                                                                                    > {{ __('Employee') }}
-                                                                                    <span></span>
-                                                                                </label>
-																				
+                                                                <label class="kt-radio kt-radio--danger text-black font-size-18px font-weight-bold">
+                                                                    <input @if($companyHasOdoo) disabled @endif type="checkbox" value="1" name="is_supplier" @if(isset($model) && $model->isSupplier()) checked @endisset
+                                                                    > {{ __('Supplier') }}
+                                                                    <span></span>
+                                                                </label>
 
-                                                                                <label class="kt-radio kt-radio--success text-black font-size-18px font-weight-bold">
-                                                                                    <input type="checkbox" value="1" name="is_subsidiary_company" @if(isset($model) && $model->isSubsidiaryCompany()) checked @endisset
-                                                                                    > {{ __('Subsidiary Company') }}
-                                                                                    <span></span>
-                                                                                </label>
+                                                                <label class="kt-radio kt-radio--primary text-black font-size-18px font-weight-bold">
+                                                                    <input @if($companyHasOdoo) disabled @endif type="checkbox" value="1" name="is_employee" @if(isset($model) && $model->isEmployee()) checked @endisset
+                                                                    > {{ __('Employee') }}
+                                                                    <span></span>
+                                                                </label>
+
+
+                                                                <label class="kt-radio kt-radio--success text-black font-size-18px font-weight-bold">
+                                                                    <input type="checkbox" value="1" name="is_subsidiary_company" @if(isset($model) && $model->isSubsidiaryCompany()) checked @endisset
+                                                                    > {{ __('Subsidiary Company') }}
+                                                                    <span></span>
+                                                                </label>
 
 
 
 
 
 
-                                                                                <label class="kt-radio kt-radio--danger text-black font-size-18px font-weight-bold">
-                                                                                    <input type="checkbox" value="1" name="is_other_partner" @if(isset($model) && $model->isOtherPartner()) checked @endisset
-                                                                                    > {{ __('Other Partner') }}
-                                                                                    <span></span>
-                                                                                </label>
+                                                                <label class="kt-radio kt-radio--danger text-black font-size-18px font-weight-bold">
+                                                                    <input type="checkbox" value="1" name="is_other_partner" @if(isset($model) && $model->isOtherPartner()) checked @endisset
+                                                                    > {{ __('Other Partner') }}
+                                                                    <span></span>
+                                                                </label>
 
-                                                                              
 
-                                                                                <label class="kt-radio kt-radio--primary text-black font-size-18px font-weight-bold">
-                                                                                    <input type="checkbox" value="1" name="is_shareholder" @if(isset($model) && $model->isShareholder()) checked @endisset
-                                                                                    > {{ __('Shareholder') }}
-                                                                                    <span></span>
-                                                                                </label>
+
+                                                                <label class="kt-radio kt-radio--primary text-black font-size-18px font-weight-bold">
+                                                                    <input type="checkbox" value="1" name="is_shareholder" @if(isset($model) && $model->isShareholder()) checked @endisset
+                                                                    > {{ __('Shareholder') }}
+                                                                    <span></span>
+                                                                </label>
 
 
 
@@ -201,11 +180,11 @@
 
 
 
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
                                                             </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
 
 
 

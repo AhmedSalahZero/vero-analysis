@@ -104,15 +104,13 @@
                                     <div class="col-md-2 ">
                                         <x-form.input :model="$model??null" :label="__('Account Number')" :type="'text'" :placeholder="__('Account Number')" :name="'account_number'" :required="true"></x-form.input>
                                     </div>
-                                    <div 
-									
-									 @if($company->hasOdooIntegrationCredentials())
-									class="col-md-2"
-									 @else
-									class="col-md-3"
-									@endif 
-									
-									>
+                                    <div @if($company->hasOdooIntegrationCredentials())
+                                        class="col-md-1"
+                                        @else
+                                        class="col-md-2"
+                                        @endif
+
+                                        >
                                         <label>{{__('Currency')}} </label>
                                         <div class="input-group">
                                             <select name="currency" class="form-control repeater-select js-update-current-accounts">
@@ -122,33 +120,33 @@
                                             </select>
                                         </div>
                                     </div>
-									
-									 @if($company->hasOdooIntegrationCredentials())
-                    <div class="col-1	">
-                        <label class="form-label font-weight-bold ">{{ __('Odoo Code') }}
-                           
-                        </label>
-                        <div class="kt-input-icon">
-                            <div class="input-group">
-                                <input  placeholder="{{ __('Odoo Code') }}" type="text" class="form-control  exclude-text"  name="odoo_code"  value="{{ isset($model) ? $model->getOdooCode() : old('odoo_code') }}">
-                            </div>
-                        </div>
-                    </div>
-                    @endif
-					
- <div class="col-md-4">
+
+                                    @if($company->hasOdooIntegrationCredentials())
+                                    <div class="col-1	">
+                                        <label class="form-label font-weight-bold ">{{ __('Odoo Code') }}
+
+                                        </label>
+                                        <div class="kt-input-icon">
+                                            <div class="input-group">
+                                                <input placeholder="{{ __('Odoo Code') }}" type="text" class="form-control  exclude-text" name="odoo_code" value="{{ isset($model) ? $model->getOdooCode() : old('odoo_code') }}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @endif
+
+                                    <div class="col-md-4">
                                         <label>{{__('Deducted From Account #')}}
                                             @include('star')
                                         </label>
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
-                                                <select data-current-selected="{{ isset($model) ? $model->getDeductedFromAccountId(): 0 }}" name="deducted_from_account_id"  class="form-control js-append-current-accounts-with-select js-account-id-2">
+                                                <select data-current-selected="{{ isset($model) ? $model->getDeductedFromAccountId(): 0 }}" name="deducted_from_account_id" class="form-control js-append-current-accounts-with-select js-account-id-2">
                                                     <option value="" selected>{{__('Select')}}</option>
                                                 </select>
                                             </div>
                                         </div>
                                     </div>
-									
+
 
 
 
@@ -167,26 +165,55 @@
                                         <x-form.input :id="'interest-rate-id'" :model="$model??null" :class="'only-percentage-allowed recalculate-interest-amount'" :label="__('Interest Rate (%)')" :type="'text'" :placeholder="__('Borrowing Rate (%)')" :name="'interest_rate'" :required="true"></x-form.input>
                                     </div>
                                     <div class="col-md-2 ">
-                                        <x-form.input :readonly="true" :id="'interest-amount-id'" :model="$model??null" :label="__('Interest Amount')" :type="'text'" :placeholder="__('Interest Amount')" :name="'interest_amount'" :class="'only-greater-than-or-equal-zero-allowed'" :required="true"></x-form.input>
+                                        <x-form.input :readonly="true" :id="'interest-amount-id'" :model="$model??null" :label="__('Interest Amount [At Maturity]')" :type="'text'" :placeholder="__('Interest Amount')" :name="'interest_amount'" :class="'only-greater-than-or-equal-zero-allowed'" :required="true"></x-form.input>
                                     </div>
-									
-									
+
+
                                     <div class="col-md-2">
                                         <label>{{__('Add Maturity Amount To Account')}} @include('star')</label>
                                         <div class="input-group">
                                             <select required name="maturity_amount_added_to_account_id" class="form-control repeater-select js-append-current-accounts">
                                                 {{-- <option selected>{{__('Select')}}</option> --}}
-												@foreach($accounts as $account)
-                                                <option value="{{ $account->id  }}" @if(isset($model) && ($account->id == $model->getMaturityAmountAddedToAccountId())) selected @endif  >{{$account->getAccountNumber()}}  </option>
-												@endforeach 
+                                                @foreach($accounts as $account)
+                                                <option value="{{ $account->id  }}" @if(isset($model) && ($account->id == $model->getMaturityAmountAddedToAccountId())) selected @endif >{{$account->getAccountNumber()}} </option>
+                                                @endforeach
                                             </select>
                                         </div>
                                     </div>
+
+                                    <div class="col-md-6 ">
+                                        <div class="row">
+                                            <div class="col-md-12 mb-0 mt-4 text-left">
+                                                <div class="form-group d-inline-block">
+                                                    <div class="kt-radio-inline">
+                                                        <label class="mr-3">
+                                                            {{ __('Interest Amount Interval') }}
+
+                                                        </label>
+                                                        @php
+                                                        $isPeriodic = isset($model) && $model->isPeriodically() ;
+                                                        @endphp
+                                                        <label class="kt-radio kt-radio--success text-black font-size-18px font-weight-bold">
+                                                            <input type="radio" value="1" name="is_at_maturity" @if(!$isPeriodic) checked @endisset> {{ __('At Maturity') }}
+                                                            <span></span>
+                                                        </label>
+
+                                                        <label class="kt-radio kt-radio--danger text-black font-size-18px font-weight-bold">
+                                                            <input type="radio" value="0" name="is_at_maturity" @if($isPeriodic) checked @endisset> {{ __('Periodically [e.g: biweekly / monthly / quarterly / etc...]') }}
+                                                            <span></span>
+                                                        </label>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
                         </div>
 
-              
+
 
 
                         <x-submitting />
@@ -294,54 +321,59 @@
             </script>
 
             <script>
-              
-				
-				
-				
-				
-				$(document).on('change','.recalculate-interest-amount',function(e){
-					e.preventDefault()
-			
-					const startDate = $('#start-date-id').val();
-					const endDate= $('#end-date-id').val();
-					const amount = number_unformat($('#amount-id').val());
-					const intrestRate = number_unformat($('#interest-rate-id').val())
-					const diffBetweenEndDateAndStartDate = getDiffBetweenTwoDateInDays(startDate,endDate) 
-					if(diffBetweenEndDateAndStartDate && amount && intrestRate ){
-						const interestAmount = intrestRate / 100 /365  * diffBetweenEndDateAndStartDate *amount 
-						$('#interest-amount-id').val( number_format(interestAmount,2))
-					}
-				})
-			
-				$(function(){
-					$('#start-date-id').trigger('change')
-				})
+                $(document).on('change', '.recalculate-interest-amount', function(e) {
+                    e.preventDefault()
+
+                    const startDate = $('#start-date-id').val();
+                    const endDate = $('#end-date-id').val();
+                    const amount = number_unformat($('#amount-id').val());
+                    const intrestRate = number_unformat($('#interest-rate-id').val())
+                    const diffBetweenEndDateAndStartDate = getDiffBetweenTwoDateInDays(startDate, endDate)
+                    if (diffBetweenEndDateAndStartDate && amount && intrestRate) {
+                        const interestAmount = intrestRate / 100 / 365 * diffBetweenEndDateAndStartDate * amount
+                        $('#interest-amount-id').val(number_format(interestAmount, 2))
+                    }
+                })
+
+                $(function() {
+                    $('#start-date-id').trigger('change')
+                })
+
             </script>
-			<script>
-			$(document).on('change','select.js-update-current-accounts',function(e){
-				const currency = $(this).val();
-				if(currency){
-				$.ajax({
-					url:"{{ route('update.current.account.based.on.currency',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id ]) }}",
-					data:{
-						"currency":currency 
-					},
-					success:function(res){
-						let options = '';
-						 let optionsWithSelect = '<option value="0">Opening Balance</option>';
-						for(var i = 0  ; i < res.data.length ; i++){
-							id = Object.keys(res.data[i])[0];
-							accountNumber = res.data[i][id]
-							options+=' <option value="'+ id +'">'+accountNumber+'</option> '
-							optionsWithSelect += ' <option value="' + id + '">' + accountNumber + '</option> '
-						}
-						$('select.js-append-current-accounts').empty().append(options)
-						$('select.js-append-current-accounts-with-select').empty().append(optionsWithSelect)
-					}
-				})
-					
-				}
-			})
-			$('select.js-update-current-accounts').trigger('change');
-			</script>
+            <script>
+                $(document).on('change', 'select.js-update-current-accounts', function(e) {
+                    const currency = $(this).val();
+                    if (currency) {
+                        $.ajax({
+                            url: "{{ route('update.current.account.based.on.currency',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id ]) }}"
+                            , data: {
+                                "currency": currency
+                            }
+                            , success: function(res) {
+                                let options = '';
+                                let optionsWithSelect = '<option selected value="0" >Opening Balance</option>';
+                                var selected = "";
+                                let currentSelected = $('select[name="deducted_from_account_id"]').attr('data-current-selected');
+
+                                for (var i = 0; i < res.data.length; i++) {
+                                    id = Object.keys(res.data[i])[0];
+
+                                    if (id == currentSelected) {
+                                        selected = "selected";
+                                    }
+
+                                    accountNumber = res.data[i][id]
+                                    options += ' <option value="' + id + '">' + accountNumber + '</option> '
+                                    optionsWithSelect += ' <option ' + selected + ' value="' + id + '">' + accountNumber + '</option> '
+                                }
+                                $('select.js-append-current-accounts').empty().append(options)
+                                $('select.js-append-current-accounts-with-select').empty().append(optionsWithSelect)
+                            }
+                        })
+
+                    }
+                })
+                $('select.js-update-current-accounts').trigger('change');
+
+            </script>
             @endsection

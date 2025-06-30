@@ -6,6 +6,7 @@ use App\Models\FinancialInstitutionAccount;
 use App\Traits\HasCompany;
 use App\Traits\HasDepositAccount;
 use App\Traits\HasLastStatementAmount;
+use App\Traits\HasPeriodicInterest;
 use App\Traits\Models\HasBlockedAgainst;
 use App\Traits\Models\HasCreditStatements;
 use App\Traits\Models\HasDebitStatements;
@@ -24,7 +25,7 @@ use Illuminate\Support\Str;
 	 */
 class TimeOfDeposit extends Model
 {
-	use HasDebitStatements,HasCreditStatements,HasBlockedAgainst,HasLastStatementAmount,HasDepositAccount,HasOdooMoneyTransfer,HasCompany ;
+	use HasDebitStatements,HasCreditStatements,HasBlockedAgainst,HasLastStatementAmount,HasDepositAccount,HasOdooMoneyTransfer,HasCompany,HasPeriodicInterest ;
     protected $guarded = ['id'];
 	const RUNNING = 'running';
 	const MATURED = 'matured';

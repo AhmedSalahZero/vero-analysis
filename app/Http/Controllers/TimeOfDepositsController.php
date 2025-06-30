@@ -169,7 +169,7 @@ class TimeOfDepositsController
     }
 	public function getCommonDataArr():array 
 	{
-		return ['start_date','account_number','amount','end_date','currency','interest_rate','interest_amount','maturity_amount_added_to_account_id','odoo_code','deducted_from_account_id'];
+		return ['start_date','account_number','amount','end_date','currency','interest_rate','interest_amount','maturity_amount_added_to_account_id','odoo_code','deducted_from_account_id','is_at_maturity'];
 	}
 	public function store(Company $company  ,FinancialInstitution $financialInstitution, StoreTimeOfDepositRequest $request){
 		
@@ -234,6 +234,7 @@ class TimeOfDepositsController
 			$data['journal_id'] =$odooService->getJournalIdFromChartOfAccountId($chartOfAccountId) ;
 		}
 		$timeOfDeposit->update($data);
+		$timeOfDeposit->deletePeriodInterestAmounts();
 		$timeOfDeposit->handleDeductedForBankStatement($financialInstitution->id,$data['start_date'],number_unformat($request->get('amount')),$company->id,$deductedFromAccountId,$request->get('account_number'));
 		$timeOfDeposit->handleTdOrCdStoreDepositForOdoo($accountNumberHasChanged);
 		$type = $request->get('type',TimeOfDeposit::RUNNING);
@@ -246,7 +247,31 @@ class TimeOfDepositsController
 		$timeOfDeposit->delete();
 		return redirect()->back()->with('success',__('Item Has Been Delete Successfully'));
 	}
+	public function applyPeriodInterest(Company $company,Request $request,FinancialInstitution $financialInstitution,TimeOfDeposit $timeOfDeposit)
+	{
+		$periodInterestAmount = number_unformat($request->get('periodic_interest_amount')) ;
+		$periodInterestDate = $request->get('periodic_interest_date') ;
+		$timeOfDeposit->applyPeriodicInterestInStatement($financialInstitution,$periodInterestAmount,$periodInterestDate);
+		$type = $request->get('type',TimeOfDeposit::RUNNING);
+		$activeTab = $type ;
+		return redirect()->route('view.time.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'active'=>$activeTab])->with('success',__('Item Has Been Updated Successfully'));
+	}
+	public function viewPeriodInterest(Company $company,Request $request,FinancialInstitution $financialInstitution,TimeOfDeposit $timeOfDeposit)
+	{
+		$rows = CurrentAccountBankStatement::where('company_id',$company->id)->where('time_of_deposit_id',$timeOfDeposit->id)->where('is_period_cd_or_td_interest',1)->get();
+		return view('reports.time-of-deposit.view-period-interests',['company'=>$company,'financialInstitution'=>$financialInstitution,'model'=>$timeOfDeposit,'rows'=>$rows]);
+	}
+	public function deletePeriodInterest(Company $company,Request $request,FinancialInstitution $financialInstitution,TimeOfDeposit $timeOfDeposit,CurrentAccountBankStatement $currentAccountBankStatement)
+	{
+		CurrentAccountBankStatement::deleteButTriggerChangeOnLastElement($timeOfDeposit->currentAccountBankStatements->where('id',$currentAccountBankStatement->id));
+			// $type = $request->get('type',TimeOfDeposit::RUNNING);
+			// $activeTab = $type ;
+			return redirect()->back()->with('success',__('Item Has Been Updated Successfully'));
+		// $rows = CurrentAccountBankStatement::where('company_id',$company->id)->where('time_of_deposit_id',$timeOfDeposit->id)->where('is_period_cd_or_td_interest',1)->get();
+		// return view('reports.time-of-deposit.view-period-interests',['company'=>$company,'financialInstitution'=>$financialInstitution,'model'=>$timeOfDeposit,'rows'=>$rows]);
+	}
 	
+
 	/**
 	 * * هنا اليوزر هياكد انه نزله الفايدة المستحقة وبالتالي هنزلها في حسابه الجاري اللي هو اختارة من الفورمة
 	 */

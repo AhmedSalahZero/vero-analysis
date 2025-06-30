@@ -15,7 +15,7 @@ trait HasDebitStatements
 	 * * بنحطها في الاستيت منت
 	 * * سواء كانت كاش استيتمنت او بانك استيتمنت علي حسب نوع الحساب او الحركة يعني
 	 */
-	public function handleDebitStatement(?int $financialInstitutionId = 0 ,?AccountType $accountType = null , ?string $accountNumber = null,?string $moneyType = null,?string $date = null,?float $debit = 0,?string $currencyName = null,?int $receivingBranchId = null,$exchangeRate=1 , $commentEn = null , $commentAr = null)
+	public function handleDebitStatement(?int $financialInstitutionId = 0 ,?AccountType $accountType = null , ?string $accountNumber = null,?string $moneyType = null,?string $date = null,?float $debit = 0,?string $currencyName = null,?int $receivingBranchId = null,$exchangeRate=1 , $commentEn = null , $commentAr = null,$isPeriodInterest=false)
 	{
 		if($accountType && $accountType->getSlug() == AccountType::CLEAN_OVERDRAFT){
 			$cleanOverdraft  = CleanOverdraft::findByAccountNumber($accountNumber,getCurrentCompanyId(),$financialInstitutionId);
@@ -35,7 +35,7 @@ trait HasDebitStatements
 		}
 		elseif($accountType && $accountType->getSlug() == AccountType::CURRENT_ACCOUNT){
 			$financialInstitutionAccount = FinancialInstitutionAccount::findByAccountNumber($accountNumber,getCurrentCompanyId(),$financialInstitutionId);
-			$this->storeCurrentAccountDebitBankStatement($date,$debit,$financialInstitutionAccount->id,false,$commentEn,$commentAr);
+			$this->storeCurrentAccountDebitBankStatement($date,$debit,$financialInstitutionAccount->id,false,$commentEn,$commentAr,$isPeriodInterest);
 		}
 		elseif($this->isCashInSafe()){
 			$this->storeCashInSafeDebitStatement($date,$debit,$currencyName,$receivingBranchId,$exchangeRate);
@@ -110,7 +110,7 @@ trait HasDebitStatements
 			'date'=>$date,
 		]);
 	}	
-	public function storeCurrentAccountDebitBankStatement(string $date , $debit , int $financialInstitutionAccountId , bool $isTdRenewal = false  , string $commentEn = null , string $commentAr = null)
+	public function storeCurrentAccountDebitBankStatement(string $date , $debit , int $financialInstitutionAccountId , bool $isTdRenewal = false  , string $commentEn = null , string $commentAr = null,$isPeriodCdOrTdInterest = false )
 	{
 		return $this->currentAccountDebitBankStatement()->create([
 			'financial_institution_account_id'=>$financialInstitutionAccountId,
@@ -120,7 +120,8 @@ trait HasDebitStatements
 			'date'=>$date,
 			'is_td_renewal'=>$isTdRenewal,
 			'comment_en'=>$commentEn,
-			'comment_ar'=>$commentAr
+			'comment_ar'=>$commentAr,
+			'is_period_cd_or_td_interest'=>$isPeriodCdOrTdInterest
 		]);
 	}	
 	

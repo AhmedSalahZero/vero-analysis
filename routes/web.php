@@ -915,6 +915,7 @@ Route::middleware([])->group(function () {
                     Route::post('financial-institutions/{financialInstitution}/certificates-of-deposit/apply-break/{certificatesOfDeposit}', 'CertificatesOfDepositsController@applyBreak')->name('apply.break.to.certificate.of.deposit');
                     Route::post('financial-institutions/{financialInstitution}/certificates-of-deposit/reverse-deposit/{certificatesOfDeposit}', 'CertificatesOfDepositsController@reverseDeposit')->name('reverse.deposit.to.certificate.of.deposit');
                     Route::post('financial-institutions/{financialInstitution}/certificates-of-deposit/reverse-broken/{certificatesOfDeposit}', 'CertificatesOfDepositsController@reverseBroken')->name('reverse.broken.to.certificate.of.deposit');
+					 Route::post('financial-institutions/{financialInstitution}/certificates-of-deposit/apply-period-interest/{certificatesOfDeposit}', 'CertificateOfDepositsController@applyPeriodInterest')->name('apply.period.interest.to.certificate.of.deposit');
 
 					/**
 					 * * end certificates of deposit
@@ -935,6 +936,9 @@ Route::middleware([])->group(function () {
 					 Route::put('financial-institutions/{financialInstitution}/time-of-deposit/update/{timeOfDeposit}', 'TimeOfDepositsController@update')->name('update.time.of.deposit');
 					 Route::delete('financial-institutions/{financialInstitution}/time-of-deposit/delete/{timeOfDeposit}', 'TimeOfDepositsController@destroy')->name('delete.time.of.deposit');
 					 Route::post('financial-institutions/{financialInstitution}/time-of-deposit/apply-deposit/{timeOfDeposit}', 'TimeOfDepositsController@applyDeposit')->name('apply.deposit.to.time.of.deposit');
+					 Route::post('financial-institutions/{financialInstitution}/time-of-deposit/apply-period-interest/{timeOfDeposit}', 'TimeOfDepositsController@applyPeriodInterest')->name('apply.period.interest.to.time.of.deposit');
+					 Route::get('financial-institutions/{financialInstitution}/time-of-deposit/view-period-interests/{timeOfDeposit}', 'TimeOfDepositsController@viewPeriodInterest')->name('view.period.interest.to.time.of.deposit');
+					 Route::delete('financial-institutions/{financialInstitution}/time-of-deposit/delete-period-interests/{timeOfDeposit}/{currentAccountBankStatement}', 'TimeOfDepositsController@deletePeriodInterest')->name('delete.period.interest.to.time.of.deposit');
 					 Route::post('financial-institutions/{financialInstitution}/time-of-deposit/apply-break/{timeOfDeposit}', 'TimeOfDepositsController@applyBreak')->name('apply.break.to.time.of.deposit');
 					 Route::post('financial-institutions/{financialInstitution}/time-of-deposit/reverse-deposit/{timeOfDeposit}', 'TimeOfDepositsController@reverseDeposit')->name('reverse.deposit.to.time.of.deposit');
 					 Route::post('financial-institutions/{financialInstitution}/time-of-deposit/reverse-broken/{timeOfDeposit}', 'TimeOfDepositsController@reverseBroken')->name('reverse.broken.to.time.of.deposit');

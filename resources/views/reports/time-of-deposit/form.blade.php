@@ -132,20 +132,20 @@
                                         </div>
                                     </div>
                                     @endif
-									
-									  <div class="col-md-4">
+
+                                    <div class="col-md-4">
                                         <label>{{__('Deducted From Account #')}}
                                             @include('star')
                                         </label>
                                         <div class="kt-input-icon">
                                             <div class="input-group date">
-                                                <select data-current-selected="{{ isset($model) ? $model->getDeductedFromAccountId(): 0 }}" name="deducted_from_account_id"  class="form-control js-append-current-accounts-with-select js-account-id-2">
+                                                <select data-current-selected="{{ isset($model) ? $model->getDeductedFromAccountId(): 0 }}" name="deducted_from_account_id" class="form-control js-append-current-accounts-with-select js-account-id-2">
                                                     <option value="" selected>{{__('Select')}}</option>
                                                 </select>
                                             </div>
                                         </div>
                                     </div>
-									
+
 
 
 
@@ -165,26 +165,15 @@
                                         <x-form.input :id="'interest-rate-id'" :model="$model??null" :class="'only-percentage-allowed recalculate-interest-amount'" :label="__('Interest Rate (%)')" :type="'text'" :placeholder="__('Borrowing Rate (%)')" :name="'interest_rate'" :required="true"></x-form.input>
                                     </div>
                                     <div class="col-md-2 ">
-                                        <x-form.input :readonly="true" :id="'interest-amount-id'" :model="$model??null" :label="__('Interest Amount')" :type="'text'" :placeholder="__('Interest Amount')" :name="'interest_amount'" :class="'only-greater-than-or-equal-zero-allowed'" :required="true"></x-form.input>
+                                        <x-form.input :readonly="true" :id="'interest-amount-id'" :model="$model??null" :label="__('Interest Amount [At Maturity]')" :type="'text'" :placeholder="__('Interest Amount')" :name="'interest_amount'" :class="'only-greater-than-or-equal-zero-allowed'" :required="true"></x-form.input>
                                     </div>
 
-                                    {{-- <div class="col-md-3">
-                                        <label>{{__('Deducted From Account Type')}}
-                                            @include('star')
-                                        </label>
-                                        <div class="kt-input-icon">
-                                            <div class="input-group date">
-                                                <select data-append-to-query=".js-account-id-2" name="deducted_from_account_type_id" class="form-control 
-												js-update-account-id-based-on-account-type">
-                                                    @foreach($accountTypes as $index => $accountType)
-                                                    <option value="{{ $accountType->id }}" @if(isset($model) && $model->getDeductedFromAccountTypeId() == $accountType->id) selected @endif>{{ $accountType->getName() }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div> --}}
 
-                                  
+
+
+
+
+
 
                                     <div class="col-md-2">
                                         <label>{{__('Add Maturity Amount To Account')}} @include('star')</label>
@@ -197,6 +186,37 @@
                                             </select>
                                         </div>
                                     </div>
+
+
+                                    <div class="col-md-6 ">
+                                        <div class="row">
+                                            <div class="col-md-12 mb-0 mt-4 text-left">
+                                                <div class="form-group d-inline-block">
+                                                    <div class="kt-radio-inline">
+                                                        <label class="mr-3">
+                                                            {{ __('Interest Amount Interval') }}
+
+                                                        </label>
+                                                        @php
+                                                        $isPeriodic = isset($model) && $model->isPeriodically() ;
+                                                        @endphp
+                                                        <label class="kt-radio kt-radio--success text-black font-size-18px font-weight-bold">
+                                                            <input type="radio" value="1" name="is_at_maturity" @if(!$isPeriodic) checked @endisset> {{ __('At Maturity') }}
+                                                            <span></span>
+                                                        </label>
+
+                                                        <label class="kt-radio kt-radio--danger text-black font-size-18px font-weight-bold">
+                                                            <input type="radio" value="0" name="is_at_maturity" @if($isPeriodic) checked @endisset> {{ __('Periodically [e.g: biweekly / monthly / quarterly / etc...]') }}
+                                                            <span></span>
+                                                        </label>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
                                 </div>
                             </div>
                         </div>
@@ -340,12 +360,17 @@
                             }
                             , success: function(res) {
                                 let options = '';
-                                let optionsWithSelect = '<option value="0">Opening Balance</option>';
+                                let optionsWithSelect = '<option selected value="0">Opening Balance</option>';
+									var selected = "";
+									let currentSelected = $('select[name="deducted_from_account_id"]').attr('data-current-selected');
                                 for (var i = 0; i < res.data.length; i++) {
                                     id = Object.keys(res.data[i])[0];
+									if(id == currentSelected){
+										selected ="selected";
+									}
                                     accountNumber = res.data[i][id]
-                                    options += ' <option value="' + id + '">' + accountNumber + '</option> '
-                                    optionsWithSelect += ' <option value="' + id + '">' + accountNumber + '</option> '
+                                    options += ' <option  value="' + id + '">' + accountNumber + '</option> '
+                                    optionsWithSelect += ' <option '+selected+' value="' + id + '">' + accountNumber + '</option> '
                                 }
                                 $('select.js-append-current-accounts').empty().append(options)
                                 $('select.js-append-current-accounts-with-select').empty().append(optionsWithSelect)
