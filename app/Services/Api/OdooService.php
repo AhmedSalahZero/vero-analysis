@@ -302,7 +302,6 @@ class OdooService
 			// ,['name','=','INV/2025/00004']
 		));
 		$invoices = $this->fetchData('account.move',$fields,$filters);
-		dd($invoices);
 		return $invoices;
 		// /**
 		//  * * الكود اللي تحت دا بيجيب المنتجات
