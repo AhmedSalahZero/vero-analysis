@@ -450,7 +450,10 @@ class LetterOfCreditIssuance extends Model
 	{
 		return $this->hasMany(CurrentAccountBankStatement::class,'letter_of_credit_issuance_id','id')->where('type','payment')->where('is_credit',1)->orderBy('full_date','desc');
 	}
-	
+	public function currentAccountLcInterestCreditBankStatements()
+	{
+		return $this->hasMany(CurrentAccountBankStatement::class,'letter_of_credit_issuance_id','id')->where('type','lc_interest')->where('is_credit',1)->orderBy('full_date','desc');
+	}
 	public function currentAccountDebitBankStatement()
 	{
 		return $this->hasOne(CurrentAccountBankStatement::class,'letter_of_credit_issuance_id','id')->where('is_debit',1);
@@ -677,6 +680,24 @@ class LetterOfCreditIssuance extends Model
 		]);
 	}
 	
+	public function storeCurrentAccountLcInterestPaymentCreditBankStatement(string $date , $credit , int $financialInstitutionAccountId , int $lcAdvancedPaymentHistoryId = 0 ,  $isActive = 1 , ?string $commentEn = null, ?string $commentAr = null , bool $isRenewalFees = false, bool $isCommissionFees = false , int $lcRenewalDateHistoryId = null)
+	{
+		return $this->currentAccountPaymentCreditBankStatement()->create([
+			'type'=>'lc_interest',
+			'financial_institution_account_id'=>$financialInstitutionAccountId,
+			'company_id'=>$this->company_id ,
+			'lc_advanced_payment_history_id'=>$lcAdvancedPaymentHistoryId,
+			'is_active'=>$isActive , // is active خاصة بجزئيه ال commission فقط
+			'credit'=>$credit,
+			'debit'=>0,
+			'date'=>$date,
+			'comment_en'=>$commentEn,
+			'comment_ar'=>$commentAr,
+			'is_commission_fees'=>$isCommissionFees
+		]);
+	}
+	
+	
 	public static function getCommissionAndFeesAtDates(array &$result ,$foreignExchangeRates , $mainFunctionalCurrency,string $dateFieldName , int $companyId, string $startDate , string $endDate , string $currentWeekYear) 
 	{
 		$lcsTypes = LcTypes::getAll();
@@ -737,6 +758,17 @@ class LetterOfCreditIssuance extends Model
 		}
 	
 	}
-	
+	public function getInterestAmount()
+	{
+		return $this->interest_amount?:0 ; 
+	}
+	public function getInterestAmountFormatted()
+	{
+		return number_format($this->getInterestAmount()) ; 
+	}
+	public function getInterestCurrency()
+	{
+		return $this->interest_currency ; 
+	}
 	
 }

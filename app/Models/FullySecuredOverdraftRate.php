@@ -69,7 +69,7 @@ class FullySecuredOverdraftRate extends Model
 	}
 	public function getInterestRateFormatted()
 	{
-		return number_format($this->getInterestRate(),1) . ' %';
+		return number_format($this->getInterestRate(),2) . ' %';
 	}
 	public function overdraftModal()
 	{

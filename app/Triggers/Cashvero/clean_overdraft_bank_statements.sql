@@ -112,8 +112,10 @@
 				declare _clean_overdraft_to_be_settled_after integer default 0 ;
 				declare interest_type_text varchar(100) default 'interest';
 				declare highest_debit_balance_text varchar(100) default 'highest_debit_balance';
-
-
+				declare _total_month_credit_except_of_interest decimal(14,2) default 0 ;
+				
+			
+				
 		if(new.type = 'payable_cheque') then
 			select to_be_setteled_max_within_days into _clean_overdraft_to_be_settled_after from clean_overdrafts where id = new.clean_overdraft_id ;
 			update clean_overdraft_withdrawals set due_date =  ADDDATE(new.date,_clean_overdraft_to_be_settled_after) where clean_overdraft_bank_statement_id = new.id ;
@@ -122,8 +124,13 @@
 		select to_be_setteled_max_within_days into _clean_overdraft_to_be_settled_after from clean_overdrafts where id = new.clean_overdraft_id ;
 			update clean_overdraft_withdrawals set due_date =  ADDDATE(new.date,_clean_overdraft_to_be_settled_after) where clean_overdraft_bank_statement_id = new.id ;
 			
-			
+		
+		
 		end if;
+		
+		
+		
+		
 			select date,end_balance,id into _previous_date, _last_end_balance,_last_id  from clean_overdraft_bank_statements where  clean_overdraft_id = new.clean_overdraft_id and date = new.date and id < new.id order by date desc , id desc  limit 1 ; -- رتبت بالاي دي الاكبر علشان  لو كانوا متساوين في التاريخ بالظبط (ودا احتمال ضعيف ) ياخد اللي ال اي دي بتاعه اكبر
 			if  (_previous_date)
 			then
@@ -138,6 +145,9 @@
 		
 		set new.limit = ifnull(new.limit,0);
 		set new.end_balance = new.beginning_balance + new.debit - new.credit ; 
+		
+				insert into debugging (message) values (concat('end balance',new.end_balance,'beg',new.beginning_balance,'debit',new.debit,'new credit',new.credit ));
+				
 		set new.room = new.limit +  new.end_balance ;
 		
 		
@@ -148,7 +158,7 @@
 			
 				set @dayCounts = 0 ;
 		set @interestAmount = 0 ; 
-		select min_interest_rate , interest_rate into _min_interest_rate, _interest_rate from clean_overdraft_rates where clean_overdraft_id = new.clean_overdraft_id and date <= new.date order by date desc , id desc limit 1 ;
+		select min_interest_rate , interest_rate into _min_interest_rate, _interest_rate from clean_overdraft_rates where clean_overdraft_id = new.clean_overdraft_id and date <= new.date order by date desc  , id desc limit 1 ;
 		set _min_interest_rate = ifnull(_min_interest_rate,0);
 		set _interest_rate = ifnull(_interest_rate,0);
 		
@@ -160,7 +170,7 @@
 		set _current_interest_rate = ifnull(_current_interest_rate / 100,0) ;
 
 		
-		set @dailyInterestRate = _current_interest_rate/365 ;
+		set @dailyInterestRate = _current_interest_rate/360*-1 ;
 		if _previous_date then 
 		set @dayCounts = DATEDIFF(new.date,_previous_date) ;
 		set @interestAmount = if(_last_end_balance < 0 , _last_end_balance * @dailyInterestRate * @dayCounts , 0)  ;
@@ -169,6 +179,15 @@
 		set new.interest_rate_daily = @dailyInterestRate ;
 		set new.days_count = @dayCounts ;
 		set new.interest_amount = @interestAmount;
+		
+		select sum(interest_amount)  into _total_month_credit_except_of_interest from   clean_overdraft_bank_statements where id!= new.id and company_id = new.company_id and clean_overdraft_id = new.clean_overdraft_id and month(date) = month(new.date) and year(date) = year(new.date) ; 
+		set _total_month_credit_except_of_interest = ifnull(_total_month_credit_except_of_interest,0); 
+				
+		if(new.interest_type = 'end_of_month') then  
+		insert into debugging (message) values (concat('from inside credit',_total_month_credit_except_of_interest,'interest type',new.interest_type ));
+			set new.credit = _total_month_credit_except_of_interest+new.interest_amount ;	
+		
+		end if ;
 		
 		-- نهاية حسبة الفوائد
 		-- هنيجي بعد كدا علي تحديث جدول ال 
@@ -211,20 +230,20 @@
 		
 		-- اعادة حساب فايدة نهاية كل شهر (في حالة التعديل مش الانشاء)
 
-		if new.id and (new.type = interest_type_text or new.type = highest_debit_balance_text ) then 
-					select  sum(interest_amount) , min(end_balance) into _current_interest_amount,_largest_end_balance from  clean_overdraft_bank_statements where `type` != interest_type_text and `type` != highest_debit_balance_text and clean_overdraft_id = new.clean_overdraft_id and EXTRACT(MONTH from date) = EXTRACT(MONTH from new.date ) and  EXTRACT(YEAR from date) = EXTRACT(YEAR from new.date) ;
-					set _current_interest_amount = ifnull(_current_interest_amount,0);
-					select highest_debt_balance_rate into _highest_debt_balance_rate from clean_overdrafts where id = new.clean_overdraft_id  ;
-					if new.type = interest_type_text then 
-					-- للفايدة الخاصة باخر الشهر
-						set new.credit = _current_interest_amount ;
-					elseif new.type = highest_debit_balance_text then 
-					-- حساب ال highest debit balance
-					set _current_interest_amount = _highest_debt_balance_rate / 100 * _largest_end_balance * -1 ; 
-						set new.credit = _current_interest_amount ;
-					end if;
+		-- if new.id and (new.type = highest_debit_balance_text ) then 
+		-- 			select   min(end_balance) into _largest_end_balance from  clean_overdraft_bank_statements where `type` != interest_type_text and `type` != highest_debit_balance_text and clean_overdraft_id = new.clean_overdraft_id and EXTRACT(MONTH from date) = EXTRACT(MONTH from new.date ) and  EXTRACT(YEAR from date) = EXTRACT(YEAR from new.date) ;
+		-- 			set _current_interest_amount = ifnull(_current_interest_amount,0);
+		-- 			select highest_debt_balance_rate into _highest_debt_balance_rate from clean_overdrafts where id = new.clean_overdraft_id  ;
+		-- 			-- if new.type = interest_type_text then 
+		-- 			-- -- للفايدة الخاصة باخر الشهر
+		-- 			-- 	set new.credit = _current_interest_amount ;
+		-- 			if new.type = highest_debit_balance_text then 
+		-- 			-- حساب ال highest debit balance
+		-- 			set _current_interest_amount = _highest_debt_balance_rate / 100 * _largest_end_balance * -1 ; 
+		-- 				set new.credit = _current_interest_amount ;
+		-- 			end if;
 					
-		end if ;
+		-- end if ;
 		
 		
 		
@@ -313,6 +332,11 @@
 	create  trigger insert_into_overdraft_withdrawal_after_insert_clean_overdraft after insert on `clean_overdraft_bank_statements` for each row 
 	begin 
 		declare _date_for_settlement date default ifnull(new.outstanding_withdrawal_date,new.date) ;
+		
+		
+		
+		
+		
 		if  new.type = 'payable_cheque'
 		then 
 		select actual_payment_date into  _date_for_settlement from payable_cheques join money_payments on 
@@ -328,6 +352,9 @@
 		
 		
 		end if  ;
+		
+		
+		
 		if new.is_credit > 0 then
 		
 			call start_settlement_process_clean_overdraft(new.type,new.id , new.clean_overdraft_id , new.debit  , new.credit , new.company_id ,_date_for_settlement);

@@ -2,7 +2,7 @@
 
 
 @if(hasAuthFor('create letter of credit issuance'))
- <a data-toggle="modal" data-target="#apply-expense-{{ $model->id }}" type="button" class="btn  btn-secondary btn-outline-hover-success   btn-icon" title="{{ __('Expenses') }}" href="#"><i class=" fa fa-balance-scale"></i></a>
+ <a data-toggle="modal" data-target="#apply-expense-{{ $model->id }}" type="button" class="btn  btn-secondary btn-outline-hover-success   btn-icon" title="{{ __('Expenses') }}" href="#"><i class=" fa fa-money-bill"></i></a>
  @endif
  <div class="modal fade" id="apply-expense-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
      <div class="modal-dialog modal-xl modal-dialog-centered" role="document">

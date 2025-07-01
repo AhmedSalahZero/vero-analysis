@@ -42,7 +42,11 @@ class CleanOverdraftBankStatement extends Model
 				'updated_at'=>now()
 			]);
 		});
-		
+		// dd(
+		//  DB::table($tableName)
+		// ->where('date','>=',$minDate)
+		// ->orderByRaw('date asc , priority asc , id asc')
+		// ->where('clean_overdraft_id',$model->clean_overdraft_id)->get());
 		return $minDate;
 
 	}

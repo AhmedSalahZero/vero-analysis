@@ -52,7 +52,7 @@ class CleanOverdraftRate extends Model
 	}
 	public function getBorrowingRateFormatted()
 	{
-		return number_format($this->getBorrowingRate(),1) . ' %';
+		return number_format($this->getBorrowingRate(),2) . ' %';
 	}
 	public function getMarginRate()
 	{
@@ -60,11 +60,15 @@ class CleanOverdraftRate extends Model
 	}
 	public function getMarginRateFormatted()
 	{
-		return number_format($this->getMarginRate(),1) . ' %';
+		return number_format($this->getMarginRate(),2) . ' %';
 	}
 	public function getMinInterestRate()
 	{
 		return $this->min_interest_rate?:0;
+	}
+	public function getMinInterestRateFormatted()
+	{
+		return number_format($this->getMinInterestRate(),2) . ' %';
 	}
 	public function getInterestRate()
 	{
@@ -72,7 +76,7 @@ class CleanOverdraftRate extends Model
 	}
 	public function getInterestRateFormatted()
 	{
-		return number_format($this->getInterestRate(),1) . ' %';
+		return number_format($this->getInterestRate(),2) . ' %';
 	}
 	
 }

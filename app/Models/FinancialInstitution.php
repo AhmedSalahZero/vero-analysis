@@ -253,10 +253,7 @@ class FinancialInstitution extends Model
 		}
 		
 	}
-	// public function updateBeginningBalanceDebitBankStatementDate()
-	// {
-	// 	// $this->accounts()->
-	// }
+	
 	public function runningCertificatesOfDeposits()
 	{
 		return $this->hasMany(CertificatesOfDeposit::class , 'financial_institution_id','id')

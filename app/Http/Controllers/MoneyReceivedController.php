@@ -913,7 +913,6 @@ class MoneyReceivedController
 		
 		$statementTableName = (get_class($accountNumberModel)::getStatementTableName()) ;
 		$foreignKeyName = get_class($accountNumberModel)::getForeignKeyInStatementTable();
-
 		$balanceRow = DB::table($statementTableName)->where($foreignKeyName,$accountNumberModel->id)->where('date','<=' , $statementDate)->orderByRaw('date desc , id desc')->first();
 		$NetBalanceRow = DB::table($statementTableName)->where($foreignKeyName,$accountNumberModel->id)->orderByRaw('date desc , id desc')->first();
 		$column = $accountType->isOverdraftAccount() ? 'room' : 'end_balance';

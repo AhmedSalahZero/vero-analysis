@@ -32,6 +32,7 @@
                                             <th>{{ __('Borrowing Rate') }}</th>
                                             <th>{{ __('Margin Rate') }}</th>
                                             <th>{{ __('Interest Rate') }}</th>
+									
                                             <th>{{ __('Actions') }}</th>
                                         </tr>
                                     </thead>
@@ -43,7 +44,9 @@
                                             <td> {{ $rate->getDateFormatted() }} </td>
                                             <td> {{ $rate->getBorrowingRateFormatted() }} </td>
                                             <td> {{ $rate->getMarginRateFormatted() }} </td>
+											
                                             <td> {{ $rate->getInterestRateFormatted() }} </td>
+										
                                             <td>
                                                 @if($loop->last)
 												@if(hasAuthFor('update fully secured overdraft'))

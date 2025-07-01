@@ -103,7 +103,7 @@
 
 
                         <div class="col-md-3 mb-4">
-                            <label>{{__('Date')}}</label>
+                            <label>{{__('Payment Date (mm/dd/yy)' )}}</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
                                     <input required type="text" name="payment_date" value="{{ formatDateForDatePicker($model->getDueDate()) }}" class="form-control" readonly placeholder="Select date" id="kt_datepicker_2" />
@@ -175,7 +175,7 @@
                         @if($model->isFinancedBySelf())
 
                         <div class="col-md-3">
-                            <label>{{__('Currency')}}
+                            <label>{{__('LC Payment Currency')}}
                                 @include('star')
                             </label>
                             <div class="input-group">
@@ -225,6 +225,30 @@
                                 </div>
                             </div>
                         </div>
+						
+						
+						 <div class="col-md-3">
+                            <label>{{__('Interest Currency')}}
+                                @include('star')
+                            </label>
+                            <div class="input-group">
+                                <select name="interest_currency" class="form-control">
+                                    <option selected>{{__('Select')}}</option>
+                                    @foreach([$company->getMainFunctionalCurrency()=>$company->getMainFunctionalCurrency() , $model->getLcCurrency()=>$model->getLcCurrency() ] as $currencyName => $currencyValue )
+                                    <option value="{{ $currencyName }}" @if(isset($model) && $model->getInterestCurrency() == $currencyName ) selected @elseif($currencyName == $company->getMainFunctionalCurrency() ) selected @endif > {{ $currencyValue }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+						
+						
+                        <div class="col-md-3 mb-4">
+                            <label>{{__('Interest Amount')}} </label>
+                            <div class="kt-input-icon">
+                                <input  name="interest_amount" value="{{ $model->getInterestAmountFormatted() }}" type="text" class="form-control text-center">
+                            </div>
+                        </div>
+						
 
 
 

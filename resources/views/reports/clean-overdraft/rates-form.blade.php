@@ -2,7 +2,7 @@
 	$mode = isset($rate) ? 'edit' : 'create';
 @endphp
 <input type="hidden" name="company_id" value="{{ $company->id }}">
-<div class="col-md-3">
+<div class="col-md-2">
     <label>{{__('Date')}} </label>
     <div class="kt-input-icon">
         <div class="input-group date">
@@ -11,7 +11,7 @@
     </div>
 </div>
 
-<div class="col-md-3 mb-4 ">
+<div class="col-md-2 mb-4 ">
     <label class="form-label font-weight-bold ">{{ __('Borrowing Rate') }} </label>
     <div class="kt-input-icon">
         <div class="input-group">
@@ -20,7 +20,7 @@
     </div>
 </div>
 
-<div class="col-md-3 mb-4 ">
+<div class="col-md-2 mb-4 ">
     <label class="form-label font-weight-bold ">{{ __('Margin Rate') }} </label>
     <div class="kt-input-icon">
         <div class="input-group">
@@ -29,7 +29,7 @@
     </div>
 </div>
 
-<div class="col-md-3 mb-4 ">
+<div class="col-md-2 mb-4 ">
     <label class="form-label font-weight-bold ">{{ __('Interest Rate') }} </label>
     <div class="kt-input-icon">
         <div class="input-group">
@@ -37,6 +37,15 @@
         </div>
     </div>
 </div>
+<div class="col-md-2 mb-4 ">
+    <label class="form-label font-weight-bold ">{{ __('Min Interest Rate') }} </label>
+    <div class="kt-input-icon">
+        <div class="input-group">
+            <input name="min_interest_rate_{{ $mode }}" type="number" class="form-control" value="{{ isset($rate) ? $rate->getMinInterestRate() : 0 }}" step="any">
+        </div>
+    </div>
+</div>
+
 @once
 @push('js')
 	<script>

@@ -320,6 +320,7 @@ class LetterOfCreditIssuanceController
 	
 		PaymentSettlement::deleteButTriggerChangeOnLastElement($letterOfCreditIssuance->settlements);
 		CurrentAccountBankStatement::deleteButTriggerChangeOnLastElement($letterOfCreditIssuance->currentAccountPaymentCreditBankStatements);
+		CurrentAccountBankStatement::deleteButTriggerChangeOnLastElement($letterOfCreditIssuance->currentAccountLcInterestCreditBankStatements);
 		LetterOfCreditStatement::deleteButTriggerChangeOnLastElement($letterOfCreditIssuance->letterOfCreditStatements->where('type',LetterOfCreditIssuance::FOR_PAID));
 		LetterOfCreditCashCoverStatement::deleteButTriggerChangeOnLastElement($letterOfCreditIssuance->letterOfCreditCashCoverStatements->where('type',LetterOfCreditIssuance::FOR_PAID));
 		LetterOfCreditCashCoverStatement::deleteButTriggerChangeOnLastElement($letterOfCreditIssuance->letterOfCreditCashCoverStatements->where('type','credit-lc-amount'));
@@ -355,6 +356,8 @@ class LetterOfCreditIssuanceController
 		$paymentAccountTypeId = $request->get('payment_account_type_id');
 		$paymentAccountNumberId = $request->get('payment_account_number_id');
 		$lcRemainingAmount = $request->get('lc_remaining_amount');
+		$interestAmount = number_unformat($request->get('interest_amount',0));
+		$interestCurrency = $request->get('interest_currency');
 		/**
 		 * * هنشيل قيم ال
 		 * * letter of credit statement
@@ -372,7 +375,10 @@ class LetterOfCreditIssuanceController
 			'payment_currency'=>$paymentCurrency,
 			'payment_account_type_id'=>$paymentAccountTypeId,
 			'payment_account_number_id'=>$paymentAccountNumberId,
+			'interest_amount'=>$interestAmount,
+			'interest_currency'=>$interestCurrency
 		]);
+		
 		$letterOfCreditFacility = $letterOfCreditIssuance->letterOfCreditFacility;
 		$lcType = $letterOfCreditIssuance->getLcType();
 		$lcAmount = $letterOfCreditIssuance->getLcAmount();
@@ -383,8 +389,13 @@ class LetterOfCreditIssuanceController
 	
 		LetterOfCreditStatement::deleteButTriggerChangeOnLastElement($letterOfCreditIssuance->letterOfCreditStatements->where('type',LetterOfCreditIssuance::FOR_PAID));
 		CurrentAccountBankStatement::deleteButTriggerChangeOnLastElement($letterOfCreditIssuance->currentAccountPaymentCreditBankStatements);
+		CurrentAccountBankStatement::deleteButTriggerChangeOnLastElement($letterOfCreditIssuance->currentAccountLcInterestCreditBankStatements);
 		LetterOfCreditCashCoverStatement::deleteButTriggerChangeOnLastElement($letterOfCreditIssuance->letterOfCreditCashCoverStatements->where('type',LetterOfCreditIssuance::FOR_PAID));
 		LcOverdraftBankStatement::deleteButTriggerChangeOnLastElement($letterOfCreditIssuance->lcOverdraftBankStatements->where('source',$source)->where('is_credit',1));
+		
+		
+		
+		
 		$letterOfCreditFacilityId = $letterOfCreditFacility ? $letterOfCreditFacility->id : 0 ;
 		$letterOfCreditCurrency = $source == LetterOfCreditIssuance::AGAINST_TD || $source == LetterOfCreditIssuance::AGAINST_CD ? $letterOfCreditIssuance->getTdOrCdCurrency($source,$company->id) : $letterOfCreditIssuance->getLcCashCoverCurrency() ;
 		$commentEn = __('LC Payment [:lcType] [:transactionName]',['lcType'=>$lcType,'transactionName'=>$transactionName],'en');
@@ -393,6 +404,9 @@ class LetterOfCreditIssuanceController
 		$commentEn = __('LC Cash Cover Payment [:lcType] [:transactionName]',['lcType'=>$lcType,'transactionName'=>$transactionName],'en');
 		$commentAr = __('LC Cash Cover Payment [:lcType] [:transactionName]',['lcType'=>$lcType,'transactionName'=>$transactionName],'ar');
 		$letterOfCreditIssuance->handleLetterOfCreditCashCoverStatement($financialInstitutionId,$source,$letterOfCreditFacilityId,$lcType,$company->id,$paymentDate,0,0 , $cashCoverAmount ,$letterOfCreditIssuance->getLcCashCoverCurrency(),0,LetterOfCreditIssuance::FOR_PAID,$commentEn,$commentAr);
+		if($interestAmount > 0 ){
+			$letterOfCreditIssuance->storeCurrentAccountLcInterestPaymentCreditBankStatement($paymentDate,$interestAmount , $paymentAccountNumberId,0,1,__('LC Interest Payment [ :supplierName ] [ :lcType ] Transaction Name [ :transactionName ]'  ,['lcType'=>__($lcType,[],'en'),'supplierName'=>$supplierName,'transactionName'=>$transactionName],'en') , __('LC Payment [ :supplierName ] [ :lcType ] Transaction Name [ :transactionName ]'  ,['lcType'=>__($lcType,[],'ar'),'supplierName'=>$supplierName,'transactionName'=>$transactionName],'ar') );
+		}
 		if($source != LetterOfCreditIssuance::HUNDRED_PERCENTAGE_CASH_COVER){
 			$commentEn = __('Post Finance [ :noDays ] Days [ :supplierName ] [ :lcType ] Transaction Name [ :transactionName ]',['noDays'=>$financialDuration,'supplierName'=>$supplierName,'lcType'=>$lcType,'transactionName'=>$transactionName],'en');
 			$commentAr = __('Post Finance [ :noDays ] Days [ :supplierName ] [ :lcType ] Transaction Name [ :transactionName ]',['noDays'=>$financialDuration,'supplierName'=>$supplierName,'lcType'=>$lcType,'transactionName'=>$transactionName],'ar');

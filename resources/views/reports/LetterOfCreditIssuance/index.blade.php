@@ -116,7 +116,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <th class="text-center align-middle">{{ __('Supplier Name') }}</th>
                                     <th class="text-center align-middle"> {!! __('Transaction <br> Reference') !!} </th>
                                     <th class="text-center align-middle">{{ __('LC Amount') }}</th>
-                                    <th class="text-center align-middle"> {!! __('Transaction <br> Order Date') !!} </th>
+                                    {{-- <th class="text-center align-middle"> {!! __('Transaction <br> Order Date') !!} </th> --}}
                                     <th class="text-center align-middle">{{ __('Issuance Date') }}</th>
                                     <th class="text-center align-middle">{{ __('Due Date') }}</th>
                                     <th class="text-center align-middle">{{ __('Control') }}</th>
@@ -135,7 +135,7 @@ $currentActiveTab = isset($currentActiveTab) ? $currentActiveTab : null ;
                                     <td class="text-uppercase">{{ $model->getSupplierName() }}</td>
                                     <td class="text-transform">{{ $model->getTransactionReference() }}</td>
                                     <td class="text-transform">{{ $model->getLcAmountFormatted() . ' ' . $model->getLcCurrency() }}</td>
-                                    <td class="text-transform text-nowrap">{{ $model->getTransactionDateFormatted() }}</td>
+                                    {{-- <td class="text-transform text-nowrap">{{ $model->getTransactionDateFormatted() }}</td> --}}
                                     <td class="text-transform text-nowrap">{{ $model->getIssuanceDateFormatted() }}</td>
                                     <td class="text-transform text-nowrap">{{ $model->getDueDateFormatted() }}</td>
                                     <td class="kt-datatable__cell--left kt-datatable__cell" data-field="Actions" data-autohide-disabled="false">

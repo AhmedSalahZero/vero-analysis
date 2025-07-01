@@ -34,6 +34,7 @@
                                                                                     <th>{{ __('Borrowing Rate') }}</th>
                                                                                     <th>{{ __('Margin Rate') }}</th>
                                                                                     <th>{{ __('Interest Rate') }}</th>
+                                                                                    <th>{{ __('Min Interest Rate') }}</th>
                                                                                     <th>{{ __('Actions') }}</th>
                                                                                 </tr>
                                                                             </thead>
@@ -46,6 +47,7 @@
                                                                                     <td> {{ $rate->getBorrowingRateFormatted() }} </td>
                                                                                     <td> {{ $rate->getMarginRateFormatted() }} </td>
                                                                                     <td> {{ $rate->getInterestRateFormatted() }} </td>
+                                                                                    <td> {{ $rate->getMinInterestRateFormatted() }} </td>
                                                                                     <td>
                                                                                         @if($loop->last)
 																						@if(auth()->user()->can('update clean overdraft'))

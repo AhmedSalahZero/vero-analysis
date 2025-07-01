@@ -261,10 +261,10 @@ use App\Models\LetterOfCreditIssuance;
 
                                     @include('reports/LetterOfCreditIssuance/_contract-inputs')
 
-                                    <div class="col-md-3 hidden show-only-bond">
+                                    {{-- <div class="col-md-3 hidden show-only-bond">
 
                                         <x-form.date :label="__('Transaction Date')" :required="true" :model="$model??null" :name="'transaction_date'" :placeholder="__('Select Transaction Date')"></x-form.date>
-                                    </div>
+                                    </div> --}}
 
                                 </div>
                             </div>
@@ -287,7 +287,7 @@ use App\Models\LetterOfCreditIssuance;
 
                                     <div class="col-md-3">
 
-                                        <x-form.date :classes="'recalc-due-date issuance-date-js exchange-rate-date update-exchange-rate'" :label="__('Issuance Date')" :required="true" :model="$model??null" :name="'issuance_date'" :placeholder="__('Select Purchase Order Date')"></x-form.date>
+                                        <x-form.date :classes="'recalc-due-date issuance-date-js exchange-rate-date update-exchange-rate'" :label="__('Issuance Date (mm/dd/yy)')" :required="true" :model="$model??null" :name="'issuance_date'" :placeholder="__('Select Purchase Order Date')"></x-form.date>
                                     </div>
 
                                     <div class="col-md-3">
@@ -297,7 +297,7 @@ use App\Models\LetterOfCreditIssuance;
 
                                     <div class="col-md-3">
 
-                                        <x-form.date :classes="'due-date-js'" :readonly="true" :label="__('Due Date')" :required="true" :model="$model??null" :name="'due_date'" :placeholder="__('Select Due Date')"></x-form.date>
+                                        <x-form.date :classes="'due-date-js'" :readonly="true" :label="__('Due Date (mm/dd/yy)')" :required="true" :model="$model??null" :name="'due_date'" :placeholder="__('Select Due Date')"></x-form.date>
                                     </div>
 
                                     <div class="col-md-3">

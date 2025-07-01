@@ -63,8 +63,14 @@ trait IsOverdraft
 	{
 		return $this->outstanding_balance ?: 0 ;
 	}
-	
-	
+	// public function getMinInterestRate()
+	// {
+	// 	return $this->min_interest_rate;
+	// }
+	// public function getMinInterestRateFormatted()
+	// {
+	// 	return number_format($this->getMinInterestRate(),2);
+	// }
 	public function getMaxLendingLimitPerCustomer()
 	{
 		return $this->max_lending_limit_per_customer?:0;
@@ -192,7 +198,7 @@ trait IsOverdraft
 	{
 		$firstBankStatementToBeUpdated = (self::getBankStatementTableClassName())::where(self::generateForeignKeyFormModelName(),$this->id)
 		->where('date','>=',$date)
-		->orderBy('full_date')
+		->orderByRaw('date asc , priority asc , id asc')
 		->first();	
 		if($firstBankStatementToBeUpdated){
 			$firstBankStatementToBeUpdated->update([
@@ -204,25 +210,33 @@ trait IsOverdraft
 	{
 		$foreignKeyColumnName = self::generateForeignKeyFormModelName(); // clean_overdraft_id for clean_overdrafts for example
 		$fullBankStatement = self::getBankStatementTableClassName();
+		
 		$contractStartDateAsCarbon = Carbon::make($contractStartDate);
 		$contractEndDateAsCarbon= Carbon::make($contractEndDate);
+		
 		$dates = generateDatesBetweenTwoDates($contractStartDateAsCarbon,$contractEndDateAsCarbon) ;
 		$countDates = count($dates);
 		// highest_debit_balance
+		$interestText = 'interest';
+		$interestTypeText = 'end_of_month';
+		$fullBankStatement::where('company_id',$companyId)->where('type',$interestText)->where($foreignKeyColumnName,$this->id)->where('interest_type',$interestTypeText)->where('date','>',$contractEndDate)->delete();
 		foreach($dates as $index => $dateAsString){
 			$isLastLoop = $index == $countDates -1;
 			$currentEndOfMonthDate = $isLastLoop ? Carbon::make($contractEndDate)->format('Y-m-d') : Carbon::make($dateAsString)->endOfMonth()->format('Y-m-d');
-			$fullBankStatement::create([
+			$isExist = $fullBankStatement::where('company_id',$companyId)->where($foreignKeyColumnName,$this->id)->where('type',$interestText)->where('interest_type',$interestTypeText)->where('date',$currentEndOfMonthDate)->first();
+			if(!$isExist){
+				$row = $fullBankStatement::create([
 				'company_id'=>$companyId,
 				$foreignKeyColumnName=>$this->id ,
 				'priority'=>1 ,
-				'type'=>'interest',
+				'type'=>$interestText,
 				'date'=>$currentEndOfMonthDate,
-				'limit'=>100000 ,
-				'credit'=>2500 ,
+				'limit'=>$this->limit ,
+				'credit'=>0 ,
 				'interest_type'=>'end_of_month'
 			]);
+			}
+			
 		}
-		dd($dates);
 	}
 }

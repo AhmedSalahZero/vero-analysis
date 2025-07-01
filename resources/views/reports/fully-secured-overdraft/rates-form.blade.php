@@ -37,6 +37,9 @@
         </div>
     </div>
 </div>
+
+
+
 @once
 @push('js')
 	<script>

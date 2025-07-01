@@ -102,9 +102,8 @@ class CleanOverdraftController
 		
 		$cleanOverdraft->handleEndOfMonthInterest($data['contract_start_date'],$data['contract_end_date'],$company->id);
 		
-		dd('dd');
 		
-		// add new empty line in clean overdraft bank statement
+		// a new empty line in clean overdraft bank statement
 		$cleanOverdraft->cleanOverdraftBankStatements()->create([
 			'type'=>'active-limit',
 			'is_debit'=>1 ,
@@ -153,6 +152,7 @@ class CleanOverdraftController
 			$data[$dateField] = $request->get($dateField) ? Carbon::make($request->get($dateField))->format('Y-m-d'):null;
 		}
 		$cleanOverdraft->update($data);
+		$cleanOverdraft->handleEndOfMonthInterest($data['contract_start_date'],$data['contract_end_date'],$company->id);
 		$cleanOverdraft->storeOutstandingBreakdown($request,$company);
 		$cleanOverdraft->updateLimitRaw();
 		$type = $request->get('type','clean-over-draft');
