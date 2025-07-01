@@ -49,7 +49,8 @@ trait HasDepositAccount
 		 */
 		$company = $this->company ; 
 		$isOpeningBalance = $this->isOpeningBalance(); 
-		if($company->hasOdooIntegrationCredentials() && ! $isOpeningBalance){
+		$date = $this->getStartDate();
+		if($company->hasOdooIntegrationCredentials() && $company->withinIntegrationDate($date) && ! $isOpeningBalance){
 			$fromFinancialInstitution = $this->financialInstitution;
 			$toFinancialInstitution = $fromFinancialInstitution;
 			$fromAccountTypeId = 27 ;
@@ -58,7 +59,7 @@ trait HasDepositAccount
 			$toAccountNumber = $this->getAccountNumber() ;
 			$amount = $this->getAmount();
 			$currencyName = $this->getCurrency();
-			$date = $this->getStartDate();
+			
 			$fromJournalId = $fromFinancialInstitution->getJournalIdForAccount($fromAccountTypeId,$fromAccountNumber);
 			 $fromOdooId = $fromFinancialInstitution->getOdooIdForAccount($fromAccountTypeId,$fromAccountNumber);
 			$toJournalId = $toFinancialInstitution->getJournalIdForAccount($toAccountTypeId,$toAccountNumber);

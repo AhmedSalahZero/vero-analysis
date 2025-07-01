@@ -124,7 +124,7 @@ use \App\Models\TimeOfDeposit;
                                         <span style="overflow: visible; position: relative; width: 110px;">
 											@if(hasAuthFor('create time of deposit'))
 											@include('reports.time-of-deposit.renewal-date._renew_modal')
-											@include('reports.time-of-deposit.renewal-date._renew_apply_periodic_interest')
+											@include('reports.time-of-deposit.renewal-date._apply_periodic_interest')
                                             <a
 											
 											 data-toggle="modal" data-target="#apply-deposit-modal-{{ $model->id }}" type="button" class="btn 

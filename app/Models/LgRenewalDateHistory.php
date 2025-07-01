@@ -75,7 +75,10 @@ class LgRenewalDateHistory extends Model
 	{
 		$letterOfGuaranteeIssuance = $this->letterOfGuaranteeIssuance;
 		$company=  $letterOfGuaranteeIssuance->company;
-		if($company->hasOdooIntegrationCredentials()){
+		if(!$company->hasOdooIntegrationCredentials()){
+			return ;
+		}
+		if(!$company->withinIntegrationDate($renewalDate)){
 			return ;
 		}
 		$odooSetting = $company->odooSetting;

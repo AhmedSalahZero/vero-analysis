@@ -915,8 +915,11 @@ Route::middleware([])->group(function () {
                     Route::post('financial-institutions/{financialInstitution}/certificates-of-deposit/apply-break/{certificatesOfDeposit}', 'CertificatesOfDepositsController@applyBreak')->name('apply.break.to.certificate.of.deposit');
                     Route::post('financial-institutions/{financialInstitution}/certificates-of-deposit/reverse-deposit/{certificatesOfDeposit}', 'CertificatesOfDepositsController@reverseDeposit')->name('reverse.deposit.to.certificate.of.deposit');
                     Route::post('financial-institutions/{financialInstitution}/certificates-of-deposit/reverse-broken/{certificatesOfDeposit}', 'CertificatesOfDepositsController@reverseBroken')->name('reverse.broken.to.certificate.of.deposit');
-					 Route::post('financial-institutions/{financialInstitution}/certificates-of-deposit/apply-period-interest/{certificatesOfDeposit}', 'CertificateOfDepositsController@applyPeriodInterest')->name('apply.period.interest.to.certificate.of.deposit');
-
+					
+					Route::post('financial-institutions/{financialInstitution}/certificates-of-deposit/apply-period-interest/{certificatesOfDeposit}', 'CertificatesOfDepositsController@applyPeriodInterest')->name('apply.period.interest.to.certificates.of.deposit');
+					 Route::get('financial-institutions/{financialInstitution}/certificates-of-deposit/view-period-interests/{certificatesOfDeposit}', 'CertificatesOfDepositsController@viewPeriodInterest')->name('view.period.interest.to.certificates.of.deposit');
+					 Route::delete('financial-institutions/{financialInstitution}/certificates-of-deposit/delete-period-interests/{certificatesOfDeposit}/{currentAccountBankStatement}', 'CertificatesOfDepositsController@deletePeriodInterest')->name('delete.period.interest.to.certificates.of.deposit');
+					 
 					/**
 					 * * end certificates of deposit
 					 */

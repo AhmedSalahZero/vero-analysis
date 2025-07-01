@@ -420,6 +420,9 @@ use Carbon\Carbon;
                                             $previousDate = null ;
                                             @endphp
                                             @foreach($rows as $index => $row)
+											@php
+												$deleteRouteAction = $model instanceOf \App\Models\TimeOfDeposit ? route('delete.period.interest.to.time.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'timeOfDeposit'=>$model->id,'currentAccountBankStatement'=>$row->id]) : route('delete.period.interest.to.certificates.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'certificatesOfDeposit'=>$model->id,'currentAccountBankStatement'=>$row->id]);
+											@endphp
                                             <tr class=" parent-tr reset-table-width text-nowrap  cursor-pointer sub-text-bg text-capitalize is-close   ">
                                                 <td class="sub-text-bg max-w-serial text-center   ">{{ ++$index }}</td>
                                                 {{-- <td class="sub-text-bg max-w-invoice-date  text-center   ">{{ $currentDueDate = $row->getDueDateFormatted() }} {{ is_null($previousDate) ? __(' (Original Due Date) ') : '' }} </td> --}}
@@ -448,7 +451,7 @@ use Carbon\Carbon;
                                                                 <div class="modal-body">
                                                                     <h3>{{ __('Are You Sure To Delete This Item ? ') }}</h3>
                                                                 </div>
-                                                                <form action="{{ route('delete.period.interest.to.time.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'timeOfDeposit'=>$model->id,'currentAccountBankStatement'=>$row->id]) }}" method="post" id="delete_form">
+                                                                <form action="{{ $deleteRouteAction }}" method="post" id="delete_form">
                                                                     {{ csrf_field() }}
                                                                     {{ method_field('DELETE') }}
                                                                     <div class="modal-footer">

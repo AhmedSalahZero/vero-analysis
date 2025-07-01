@@ -145,7 +145,8 @@ class OdooService
 			$exchangeRate = 1/$invoice['invoice_currency_rate'];
 			$vatAmount = $invoice['amount_tax'];
 			$invoiceAmount = abs($invoice['amount_untaxed_in_currency_signed']);
-			$collectedAmount =$invoiceAmount + $vatAmount  - $invoice['amount_residual'] ;
+			$collectedAmount =0 ;
+			// $collectedAmount =$invoiceAmount + $vatAmount  - $invoice['amount_residual'] ;
 			$withholdAmount = 0 ;
 			$invoiceNumber = $invoice['name'];
 			$odooPartnerId = $invoice['partner_id'][0];
@@ -276,30 +277,32 @@ class OdooService
 	protected function getInvoices(string $startDate,string $endDate)
 	{
 		$fields= [
-			'partner_id',
-			'id',
-			'invoice_date',
-			'name',
-			'move_type',
-			'currency_id',
-			'amount_residual',
-			'amount_untaxed_in_currency_signed',
-			'amount_tax',
-			'invoice_date_due',
-			'date',
-			'invoice_currency_rate',//exchange rate
-			'invoice_origin' ,// so_number
-			'write_date',
-			'state',
-			'invoice_line_ids' // product ids 
+			// 'partner_id',
+			// 'id',
+			// 'invoice_date',
+			// 'name',
+			// 'move_type',
+			// 'currency_id',
+			// 'amount_residual',
+			// 'amount_untaxed_in_currency_signed',
+			// 'amount_tax',
+			// 'invoice_date_due',
+			// 'date',
+			// 'invoice_currency_rate',//exchange rate
+			// 'invoice_origin' ,// so_number
+			// 'write_date',
+			// 'state',
+			// 'invoice_line_ids' // product ids 
 		];
 		$filters = array(array(array('move_type', 'in', ['in_invoice','out_invoice'])
 		,array('state', '=', 'posted'),
 			array('write_date', '>=', $startDate),
-			array('write_date', '<=', $endDate)
+			array('write_date', '<=', $endDate),
+			array('name','=','INV/2025/00006')
 			// ,['name','=','INV/2025/00004']
 		));
 		$invoices = $this->fetchData('account.move',$fields,$filters);
+		dd($invoices);
 		return $invoices;
 		// /**
 		//  * * الكود اللي تحت دا بيجيب المنتجات

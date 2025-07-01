@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\LgTypes;
+use App\Http\Controllers\LetterOfGuaranteeIssuanceRenewalDateController;
 use App\Models\LgRenewalDateHistory;
 use App\Services\Api\LetterOfGuaranteeService;
 use App\Traits\HasBasicStoreRequest;
@@ -15,7 +16,6 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
-use App\Http\Controllers\LetterOfGuaranteeIssuanceRenewalDateController;
 
 class LetterOfGuaranteeIssuance extends Model
 {
@@ -459,19 +459,7 @@ class LetterOfGuaranteeIssuance extends Model
 		// dd($this->cashCoverDeductedFromAccountType,$this);
 		return $this->cashCoverDeductedFromAccountType && $this->cashCoverDeductedFromAccountType->isCurrentAccount();
 	}
-	// public function deleteOdoo()
-	// {
-	// 	$company = $this->company;
-	// 	$isOpeningBalance = $this->isOpeningBalance();
-	// 	$isCdOrTd = $this->isCdOrTd();
-	// 	$odooMustBeDeleted  = $company->hasOdooIntegrationCredentials() && $isOpeningBalance && !$isCdOrTd;
-	// 	if($odooMustBeDeleted){
-	// 		$odooLetterOfGuaranteeIssuance = new LetterOfGuaranteeService($company);
-	// 		if($accountBankStatementOdooId = $this->account_bank_statement_odoo_id){
-	// 			$odooLetterOfGuaranteeIssuance->unlink('account.bank.statement.line',$accountBankStatementOdooId);
-	// 		}
-	// 	}
-	// }
+	
 	public function deleteAllRelations():self
 	{
 		
@@ -479,13 +467,7 @@ class LetterOfGuaranteeIssuance extends Model
 		// $lgType = $this->getLgType();
 		// $currency = $financialInstitutionAccount->getCurrency();
 		$company = $this->company;
-		// $issuanceDate = $this->getIssuanceDate();
-		// $financialInstitution = $this->financialInstitutionBank;
-		// $cashCoverAmount = $this->getCashCoverAmount();
-		// $isOpeningBalance = $this->isOpeningBalance();
-		// $isCurrentAccount = $this->isCashCoverCurrentAccount() ;
-		// $isCdOrTd = $this->isCdOrTd();
-		// $journalEntryId = $this->journal_entry_id;
+		
 		if($company->hasOdooIntegrationCredentials()  ){
 			$odooLetterOfGuaranteeIssuance = new LetterOfGuaranteeService($company);
 			foreach(['journal_entry_id','commission_fees_journal_entry_id','issuance_fees_journal_entry_id','renewal_fees_journal_entry_id'] as $journalColumnName){

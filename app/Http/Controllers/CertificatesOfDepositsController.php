@@ -242,6 +242,27 @@ class CertificatesOfDepositsController
 		return redirect()->back()->with('success',__('Item Has Been Delete Successfully'));
 	}
 	
+	public function applyPeriodInterest(Company $company,Request $request,FinancialInstitution $financialInstitution,CertificatesOfDeposit $certificatesOfDeposit)
+	{
+		$periodInterestAmount = number_unformat($request->get('periodic_interest_amount')) ;
+		$periodInterestDate = $request->get('periodic_interest_date') ;
+		$certificatesOfDeposit->applyPeriodicInterestInStatement($financialInstitution,$periodInterestAmount,$periodInterestDate);
+		$type = $request->get('type',CertificatesOfDeposit::RUNNING);
+		$activeTab = $type ;
+		return redirect()->route('view.certificates.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'active'=>$activeTab])->with('success',__('Item Has Been Updated Successfully'));
+	}
+	public function viewPeriodInterest(Company $company,Request $request,FinancialInstitution $financialInstitution,CertificatesOfDeposit $certificatesOfDeposit)
+	{
+		$rows = CurrentAccountBankStatement::where('company_id',$company->id)->where('certificate_of_deposit_id',$certificatesOfDeposit->id)->where('is_period_cd_or_td_interest',1)->get();
+		return view('reports.time-of-deposit.view-period-interests',['company'=>$company,'financialInstitution'=>$financialInstitution,'model'=>$certificatesOfDeposit,'rows'=>$rows]);
+	}
+	public function deletePeriodInterest(Company $company,Request $request,FinancialInstitution $financialInstitution,CertificatesOfDeposit $certificatesOfDeposit,CurrentAccountBankStatement $currentAccountBankStatement)
+	{
+		CurrentAccountBankStatement::deleteButTriggerChangeOnLastElement($certificatesOfDeposit->currentAccountBankStatements->where('id',$currentAccountBankStatement->id));
+		return redirect()->back()->with('success',__('Item Has Been Updated Successfully'));
+	}
+	
+	
 	/**
 	 * * هنا اليوزر هياكد انه نزله الفايدة المستحقة وبالتالي هنزلها في حسابه الجاري اللي هو اختارة من الفورمة
 	 */

@@ -127,7 +127,7 @@ use \App\Models\CertificatesOfDeposit;
 											
 											@if(hasAuthFor('create certificate of deposit'))
 											
-											@include('reports.time-of-deposit.renewal-date._renew_apply_periodic_interest')
+											@include('reports.time-of-deposit.renewal-date._apply_periodic_interest')
 											
                                             <a data-toggle="modal" data-target="#apply-deposit-modal-{{ $model->id }}" type="button" class="btn
 											

@@ -639,7 +639,7 @@ class MoneyPaymentController
 			$currentStatement = $moneyPayment->getCurrentStatement();
 			
 		
-			if($hasOdooIntegration){
+			if($hasOdooIntegration && $company->withinIntegrationDate($actualPaymentDate)){
 				/**
 				 * @var OdooSetting $odooSetting
 				 */

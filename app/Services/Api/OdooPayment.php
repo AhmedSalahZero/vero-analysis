@@ -107,6 +107,9 @@ class OdooPayment
 			$receivingCurrencyName = $moneyModel->getReceivingOrPaymentCurrency();
 			$odooReceivingCurrencyId =  Currency::getOdooId($receivingCurrencyName) ;
 			$paymentDate = $moneyModel->getReceivingOrPaymentMoneyDate();
+			if(!$this->company->withinIntegrationDate($paymentDate)){
+				return ;
+			}
 			$odooPartnerId = $moneyModel->partner->getOdooId();
 			$invoiceNumber = $invoice->getInvoiceNumber();
 			$inBoundOrOutBound =$moneyModel->getInboundOrOutbound();

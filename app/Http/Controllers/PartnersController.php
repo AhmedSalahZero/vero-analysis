@@ -67,7 +67,7 @@ class PartnersController
 		
 		$partnerStartDate = $filterDates[Partner::PARTNERS]['startDate'] ?? null ;
 		$partnerEndDate = $filterDates[Partner::PARTNERS]['endDate'] ?? null ;
-		$partners = $company->partners ;
+		$partners = $company->partners->where('is_tax','!=',1) ;
 		$partners =  $partners->filterByCreatedAt($partnerStartDate,$partnerEndDate) ;
 		$partners =  $currentType == Partner::PARTNERS ? $this->applyFilter($request,$partners):$partners ;
 

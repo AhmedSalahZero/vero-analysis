@@ -669,7 +669,7 @@ class MoneyReceivedController
 			$moneyReceived = MoneyReceived::find($moneyReceivedId) ;
 			$data['expected_collection_date'] = $moneyReceived->cheque->calculateChequeExpectedCollectionDate($data['deposit_date'],$data['clearance_days']);
 			$moneyReceived->cheque->update(array_merge($data,['updated_at'=>now()]));
-			if($hasOdooIntegration){
+			if($hasOdooIntegration ){
 				foreach($moneyReceived->settlements as $settlement){
 					$OdooPaymentService->reCreatePayment($settlement);
 				}
@@ -725,7 +725,7 @@ class MoneyReceivedController
 			$OdooPaymentService = new OdooPayment($company);
 		}
 		
-		if($hasOdooIntegration){
+		if($hasOdooIntegration && $company->withinIntegrationDate($actualCollectionDate)){
 			$odooSetting = $company->odooSetting;
 			foreach($moneyReceived->settlements as $settlement){
 				$odooId = $settlement->odoo_id ; 

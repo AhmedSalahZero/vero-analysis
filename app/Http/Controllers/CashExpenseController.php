@@ -437,27 +437,7 @@ class CashExpenseController
 		
 		 $this->store($company,$request);
 		
-		// 	if($company->hasOdooIntegrationCredentials()){
-				
-		// 	$accountBankStatementOdooId = $cashExpense->account_bank_statement_odoo_id;
-		// 	$journalEntryId = $cashExpense->journal_entry_id;
-		// 	if($accountBankStatementOdooId){
-		// 		$currencyName = $request->get('currency');
-		// 		$cashExpenseCategoryNameId= $request->get('cash_expense_category_name_id');
-		// 		$cashExpenseCategoryName = CashExpenseCategoryName::find($cashExpenseCategoryNameId);
-		// 		$cashExpenseOdooService = new CashExpenseOdooService($company);
-		// 		$date = Carbon::make($request->get('payment_date'))->format('Y-m-d');
-		// 		$paidAmount = $request->input('paid_amount.'.$newType ,0) ;
-		// 		$paidAmount = unformat_number($paidAmount);
-		// 		$journalId = $cashExpenseOdooService->getJournalId($cashExpense) ;
-		// 		$creditOdooAccountId=$cashExpenseOdooService->getChartOfAccountId($cashExpense);
-		// 		$odooCurrencyId = Currency::getOdooId($currencyName);
-		// 		$debitOdooAccountId = $cashExpenseCategoryName->getOdooId();
-		// 		$analytic_distribution = $cashExpense->formatAnalysisDistribution();
-		// 		$cashExpenseOdooService->updateJournalEntry($journalEntryId,$accountBankStatementOdooId,$date,$paidAmount,$journalId,$odooCurrencyId,$debitOdooAccountId,$creditOdooAccountId,$analytic_distribution,$accountNumberHasChanged);
-			
-		// 	}
-		// }
+	
 		
 		 $activeTab = $newType;
 		 return response()->json([

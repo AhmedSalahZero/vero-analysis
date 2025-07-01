@@ -1,3 +1,12 @@
+
+@php
+	
+	$isTimeOfDeposit = $model instanceOf \App\Models\TimeOfDeposit ;
+	
+	$applyPeriodInterestRouteAction = $isTimeOfDeposit ? route('apply.period.interest.to.time.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'timeOfDeposit'=>$model->id ]) : route('apply.period.interest.to.certificates.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'certificatesOfDeposit'=>$model->id ]) ;
+	$viewPeriodicInterestRouteAction = $isTimeOfDeposit ? route('view.period.interest.to.time.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'timeOfDeposit'=>$model->id]) : route('view.period.interest.to.certificates.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'certificatesOfDeposit'=>$model->id]);
+	$title = $isTimeOfDeposit?  __('Do You Want To Apply Periodic Interest To This Time Of Deposit ?') : __('Do You Want To Apply Periodic Interest To This Certificate Of Deposit ?') ;
+@endphp
   <a
 											
 											 data-toggle="modal" data-target="#apply-periodic-interest-modal-{{ $model->id }}" type="button" class="btn 
@@ -12,10 +21,10 @@
                                             <div class="modal fade" id="apply-periodic-interest-modal-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-md modal-dialog-centered" role="document">
                                                     <div class="modal-content">
-                                                        <form action="{{ route('apply.period.interest.to.time.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'timeOfDeposit'=>$model->id ]) }}" method="post">
+                                                        <form action="{{ $applyPeriodInterestRouteAction }}" method="post">
                                                             @csrf
                                                             <div class="modal-header">
-                                                                <h5 class="modal-title text-left" id="exampleModalLongTitle">{{ __('Do You Want To Apply Periodic Interest To This Time Of Deposit ?') }}</h5>
+                                                                <h5 class="modal-title text-left" id="exampleModalLongTitle">{{ $title }}</h5>
                                                                 <button type="button" class="close" aria-label="Close">
                                                                     <span aria-hidden="true">&times;</span>
                                                                 </button>
@@ -52,7 +61,7 @@
 
                                                             </div>
                                                             <div class="modal-footer">
-                                                                <a href="{{ route('view.period.interest.to.time.of.deposit',['company'=>$company->id,'financialInstitution'=>$financialInstitution->id,'timeOfDeposit'=>$model->id]) }}" type="button" class="btn btn-primary" >{{ __('View Periodic Interests') }}</a>
+                                                                <a href="{{ $viewPeriodicInterestRouteAction }}" type="button" class="btn btn-primary" >{{ __('View Periodic Interests') }}</a>
                                                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                                                                 <button type="submit" class="btn bg-green text-white">{{ __('Confirm') }}</button>
                                                             </div>

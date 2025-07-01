@@ -179,7 +179,7 @@ class TimeOfDepositsController
 		}
 		$odooCode = $request->get('odoo_code') ;
 		$deductedFromAccountId = $request->get('deducted_from_account_id',0) ;
-		if($company->hasOdooIntegrationCredentials() && $odooCode ){
+		if($company->hasOdooIntegrationCredentials()   && $odooCode ){
 			$odooService = new OdooService($company);
 			$odooCode = $request->get('odoo_code');
 			$chartOfAccountId = $odooService->getChartOfAccountIdFromOdooCode($odooCode);
@@ -264,11 +264,7 @@ class TimeOfDepositsController
 	public function deletePeriodInterest(Company $company,Request $request,FinancialInstitution $financialInstitution,TimeOfDeposit $timeOfDeposit,CurrentAccountBankStatement $currentAccountBankStatement)
 	{
 		CurrentAccountBankStatement::deleteButTriggerChangeOnLastElement($timeOfDeposit->currentAccountBankStatements->where('id',$currentAccountBankStatement->id));
-			// $type = $request->get('type',TimeOfDeposit::RUNNING);
-			// $activeTab = $type ;
-			return redirect()->back()->with('success',__('Item Has Been Updated Successfully'));
-		// $rows = CurrentAccountBankStatement::where('company_id',$company->id)->where('time_of_deposit_id',$timeOfDeposit->id)->where('is_period_cd_or_td_interest',1)->get();
-		// return view('reports.time-of-deposit.view-period-interests',['company'=>$company,'financialInstitution'=>$financialInstitution,'model'=>$timeOfDeposit,'rows'=>$rows]);
+		return redirect()->back()->with('success',__('Item Has Been Updated Successfully'));
 	}
 	
 
