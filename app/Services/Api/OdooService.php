@@ -298,7 +298,7 @@ class OdooService
 		,array('state', '=', 'posted'),
 			array('write_date', '>=', $startDate),
 			array('write_date', '<=', $endDate),
-			array('name','=','INV/2025/00006')
+			// array('name','=','INV/2025/00006')
 			// ,['name','=','INV/2025/00004']
 		));
 		$invoices = $this->fetchData('account.move',$fields,$filters);
