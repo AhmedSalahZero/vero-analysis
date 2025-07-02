@@ -191,4 +191,15 @@ public function updateCommissionFees(Company $company,Request $request){
 	$bankStatementRecord->handleFullDateAfterDateEdit($date,0,$credit);
 	return redirect()->back()->with('success',__('Data Updated Successfully'));
 }
+public function updateBankStatementRow(Company $company,Request $request){
+	$statementModelName = $request->get('statement_model_name');
+	$statementId = $request->get('statement_id');
+	$credit = number_unformat($request->get('credit',0));
+	$debit = number_unformat($request->get('debit',0));
+	$date = Carbon::make($request->get('date'))->format('Y-m-d');
+	$fullModelClass = 'App\Models\\'.$statementModelName;
+	$bankStatementRecord = $fullModelClass::find($statementId) ;
+	$bankStatementRecord->handleFullDateAfterDateEdit($date,$debit,$credit);
+	return redirect()->back()->with('success',__('Data Updated Successfully'));
+}
 }

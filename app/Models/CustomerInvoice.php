@@ -361,11 +361,6 @@ class CustomerInvoice extends Model implements IInvoice
 			$currentTotal = $amountInExchangeRate;
 			$result['customers'][$currentTypeText]['total'][$currentWeekYear] = isset($result['customers'][$currentTypeText]['total'][$currentWeekYear]) ? $result['customers'][$currentTypeText]['total'][$currentWeekYear] +  $currentTotal : $currentTotal ;
 			$result['customers'][$totalCashInFlowKey]['total'][$currentWeekYear] = isset($result['customers'][$totalCashInFlowKey]['total'][$currentWeekYear]) ? $result['customers'][$totalCashInFlowKey]['total'][$currentWeekYear] + $amountInExchangeRate : $amountInExchangeRate;
-			// if($currentCurrency == 'USD'){
-				// dd($row->received_amount,$exchangeRate,$result['customers'][$currentTypeText]['total']);
-			// }
-		//	$totalCashInFlowArray[$currentWeekYear] = isset($totalCashInFlowArray[$currentWeekYear]) ? $totalCashInFlowArray[$currentWeekYear] + $row->received_amount : $row->received_amount ;
-			// $result['customers'][$currentTypeText]['total']['total_of_total'] = isset($result['customers'][$currentTypeText]['total']['total_of_total']) ? $result['customers'][$currentTypeText]['total']['total_of_total'] + $row->received_amount : $row->received_amount;
 		}
 	
 		

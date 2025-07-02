@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Interfaces\Models\Interfaces\IHaveStatement;
+use App\Traits\HasBankStatement;
 use App\Traits\HasLastStatementAmount;
 use App\Traits\HasOutstandingBreakdown;
 use App\Traits\IsOverdraft;
@@ -16,7 +17,7 @@ class OverdraftAgainstCommercialPaper extends Model implements IHaveStatement
 {
     protected $guarded = ['id'];
 	
-	use HasOutstandingBreakdown , IsOverdraft , HasLastStatementAmount;
+	use HasOutstandingBreakdown , IsOverdraft , HasBankStatement , HasLastStatementAmount;
 	
 	public function overdraftAgainstCommercialPaperBankStatements()
 	{
@@ -202,6 +203,7 @@ public function overdraftAgainstCommercialPaperBankLimits()
 		
 		static::deleting(function(self $model){
 			$model->rates()->delete();
+			OverdraftAgainstCommercialPaperBankStatement::deleteButTriggerChangeOnLastElement($model->bankStatements);
 		});
 	}
 	public static function getLimitTableClassName():string

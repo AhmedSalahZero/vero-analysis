@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Bank;
 use App\Models\CertificatesOfDeposit;
 use App\Models\CleanOverdraft;
+use App\Models\FinancialInstitutionAccount;
 use App\Models\OverdraftAgainstCommercialPaper;
 use App\Services\Api\OdooService;
 use Carbon\Carbon;
@@ -201,11 +202,16 @@ class FinancialInstitution extends Model
 	
 	public function storeNewAccounts(array $accounts,Company $company)
 	{
+		
 		foreach($accounts as $index=>$accountArr){
 			$balanceAmount = $accountArr['balance_amount'] ?? 0 ;
 			$balanceDate = $accountArr['balance_date'];
 			$currentBalanceDate = $balanceDate ? Carbon::make($balanceDate)->format('Y-m-d'):null;
+
 			if($currentBalanceDate){
+				/**
+				 * @var FinancialInstitutionAccount $account
+				 */
 				$account = $this->accounts()->create([
 					'account_number'=>$accountArr['account_number'],
 					'odoo_code'=>$odooCode = $accountArr['odoo_code']??null,
@@ -216,9 +222,10 @@ class FinancialInstitution extends Model
 					'balance_date'=>$currentBalanceDate,
 					'company_id'=>getCurrentCompanyId(),
 				]);
-				
+				$endDate = Carbon::make($balanceDate)->addYear(FinancialInstitutionAccount::NUMBER_OF_YEARS_FOR_INTEREST_IN_CURRENT_STATEMENT)->format('Y-m-d');
+				$account->handleEndOfMonthInterest($balanceDate,$endDate,$company->id);
 			}
-			
+				
 			/**
 			 * * لو ال
 			 * * balance amount > 0
@@ -246,7 +253,12 @@ class FinancialInstitution extends Model
 				'min_balance'=>$accountArr['min_balance'],
 				'start_date'=>$currentBalanceDate
 			]);
+			// $account->handleEndOfMonthInterest($data['contract_start_date'],$data['contract_end_date'],$company->id);
+			
+			$account->updateBankStatementsFromDate($currentBalanceDate);
 		}
+		
+			
 		if($company->hasOdooIntegrationCredentials()){
 			$odoo = new OdooService($company);
 			$odoo->syncFinancialInstitutions();

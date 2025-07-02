@@ -3,7 +3,6 @@
                 $type = 'create';
                 @endphp
 
-
                 <div style="flex-wrap:nowrap;" @if($isRepeater) data-repeater-item @endif class="form-group date-element-parent m-form__group row align-items-center 
                                          @if($isRepeater)
                                          repeater_item

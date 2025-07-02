@@ -334,7 +334,6 @@ class Partner extends Model
 		}
 		$odooService = new OdooService($company);
 			$code = $request->get('due_from_chart_of_account_number_odoo_code') ;
-			// dd($code,$request->all());
 			$this->due_from_chart_of_account_number_odoo_code = $code;
 			$journal = $odooService->fetchData('account.account',['code','name'],[[['code','=',$code]]]);
 			$odooId = $journal[0]['id'] ?? null ;

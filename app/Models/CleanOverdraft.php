@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Http\Controllers\CleanOverdraftController;
 use App\Interfaces\Models\Interfaces\IHaveStatement;
+use App\Traits\HasBankStatement;
 use App\Traits\HasLastStatementAmount;
 use App\Traits\HasOutstandingBreakdown;
 use App\Traits\IsOverdraft;
@@ -24,7 +25,7 @@ class CleanOverdraft extends Model implements IHaveStatement
 {
     protected $guarded = ['id'];
 	
-	use HasOutstandingBreakdown , IsOverdraft , HasLastStatementAmount  ;
+	use HasOutstandingBreakdown , IsOverdraft  , HasBankStatement, HasLastStatementAmount  ;
 	
 	public function cleanOverdraftBankStatements()
 	{
@@ -183,7 +184,7 @@ class CleanOverdraft extends Model implements IHaveStatement
 		});
 		static::deleting(function(self $model){
 			$model->rates()->delete();
-			CleanOverdraftBankStatement::deleteButTriggerChangeOnLastElement($this->bankStatements);
+			CleanOverdraftBankStatement::deleteButTriggerChangeOnLastElement($model->bankStatements);
 		});
 	}
 	

@@ -194,49 +194,6 @@ trait IsOverdraft
 			]);
 		}
 	}
-	public function updateBankStatementsFromDate(string $date)
-	{
-		$firstBankStatementToBeUpdated = (self::getBankStatementTableClassName())::where(self::generateForeignKeyFormModelName(),$this->id)
-		->where('date','>=',$date)
-		->orderByRaw('date asc , priority asc , id asc')
-		->first();	
-		if($firstBankStatementToBeUpdated){
-			$firstBankStatementToBeUpdated->update([
-				'updated_at'=>now()
-			]);
-		}
-	}
-	public function handleEndOfMonthInterest(string $contractStartDate , string $contractEndDate , int $companyId)
-	{
-		$foreignKeyColumnName = self::generateForeignKeyFormModelName(); // clean_overdraft_id for clean_overdrafts for example
-		$fullBankStatement = self::getBankStatementTableClassName();
-		
-		$contractStartDateAsCarbon = Carbon::make($contractStartDate);
-		$contractEndDateAsCarbon= Carbon::make($contractEndDate);
-		
-		$dates = generateDatesBetweenTwoDates($contractStartDateAsCarbon,$contractEndDateAsCarbon) ;
-		$countDates = count($dates);
-		// highest_debit_balance
-		$interestText = 'interest';
-		$interestTypeText = 'end_of_month';
-		$fullBankStatement::where('company_id',$companyId)->where('type',$interestText)->where($foreignKeyColumnName,$this->id)->where('interest_type',$interestTypeText)->where('date','>',$contractEndDate)->delete();
-		foreach($dates as $index => $dateAsString){
-			$isLastLoop = $index == $countDates -1;
-			$currentEndOfMonthDate = $isLastLoop ? Carbon::make($contractEndDate)->format('Y-m-d') : Carbon::make($dateAsString)->endOfMonth()->format('Y-m-d');
-			$isExist = $fullBankStatement::where('company_id',$companyId)->where($foreignKeyColumnName,$this->id)->where('type',$interestText)->where('interest_type',$interestTypeText)->where('date',$currentEndOfMonthDate)->first();
-			if(!$isExist){
-				$row = $fullBankStatement::create([
-				'company_id'=>$companyId,
-				$foreignKeyColumnName=>$this->id ,
-				'priority'=>1 ,
-				'type'=>$interestText,
-				'date'=>$currentEndOfMonthDate,
-				'limit'=>$this->limit ,
-				'credit'=>0 ,
-				'interest_type'=>'end_of_month'
-			]);
-			}
-			
-		}
-	}
+	
+	
 }

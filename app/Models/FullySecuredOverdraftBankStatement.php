@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Helpers\HDate;
 use App\Traits\IsBankStatement;
+use App\Traits\Models\HasDeleteButTriggerChangeOnLastElement;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -11,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 
 class FullySecuredOverdraftBankStatement extends Model
 {
-	use IsBankStatement;
+	use IsBankStatement,HasDeleteButTriggerChangeOnLastElement;
 	protected $guarded =[
 		'id'
 	];

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Interfaces\Models\Interfaces\IHaveStatement;
+use App\Traits\HasBankStatement;
 use App\Traits\HasLastStatementAmount;
 use App\Traits\HasOutstandingBreakdown;
 use App\Traits\IsOverdraft;
@@ -22,7 +23,7 @@ use Illuminate\Support\Str;
 class FullySecuredOverdraft extends Model implements IHaveStatement
 {
     protected $guarded = ['id'];
-	use HasOutstandingBreakdown , IsOverdraft , HasLastStatementAmount;
+	use HasOutstandingBreakdown , IsOverdraft ,HasBankStatement, HasLastStatementAmount;
 	
 	public function fullySecuredOverdraftBankStatements()
 	{
@@ -196,6 +197,7 @@ class FullySecuredOverdraft extends Model implements IHaveStatement
 		});
 		static::deleting(function(self $model){
 			$model->rates()->delete();
+			FullySecuredOverdraftBankStatement::deleteButTriggerChangeOnLastElement($model->bankStatements);
 		});
 	}
 	public function company()

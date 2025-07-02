@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Interfaces\Models\Interfaces\IHaveStatement;
+use App\Traits\HasBankStatement;
 use App\Traits\HasLastStatementAmount;
 use App\Traits\HasOutstandingBreakdown;
 use App\Traits\IsOverdraft;
@@ -17,7 +18,7 @@ class OverdraftAgainstAssignmentOfContract extends Model implements IHaveStateme
 {
     protected $guarded = ['id'];
 	
-	use HasOutstandingBreakdown , IsOverdraft , HasAccumulatedLimit,HasLastStatementAmount;
+	use HasOutstandingBreakdown , IsOverdraft  , HasBankStatement, HasAccumulatedLimit,HasLastStatementAmount;
 	public function rates()
 	{
 		return $this->hasMany(OverdraftAgainstAssignmentOfContractRate::class,'overdraft_against_assignment_of_contract_id','id');
@@ -46,6 +47,7 @@ class OverdraftAgainstAssignmentOfContract extends Model implements IHaveStateme
 		});
 		static::deleting(function(self $model){
 			$model->rates()->delete();
+			OverdraftAgainstAssignmentOfContractBankStatement::deleteButTriggerChangeOnLastElement($model->bankStatements);
 		});
 		static::deleted(function(OverdraftAgainstAssignmentOfContract $overdraftAgainstAssignmentOfContract){
 			$overdraftAgainstAssignmentOfContract->overdraftAgainstAssignmentOfContractBankStatements->each(function($overdraftAgainstAssignmentOfContractBankStatement){

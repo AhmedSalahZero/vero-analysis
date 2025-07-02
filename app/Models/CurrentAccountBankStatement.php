@@ -269,4 +269,7 @@ class CurrentAccountBankStatement extends Model  implements IHaveStatement
 			'financial_institution_account_id'
 		];
 	}
+	
+	
+	
 }

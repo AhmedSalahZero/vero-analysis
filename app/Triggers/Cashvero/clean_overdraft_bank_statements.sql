@@ -112,7 +112,7 @@
 				declare _clean_overdraft_to_be_settled_after integer default 0 ;
 				declare interest_type_text varchar(100) default 'interest';
 				declare highest_debit_balance_text varchar(100) default 'highest_debit_balance';
-				declare _total_month_credit_except_of_interest decimal(14,2) default 0 ;
+				declare _total_month_interest_amount decimal(14,2) default 0 ;
 				
 			
 				
@@ -146,8 +146,7 @@
 		set new.limit = ifnull(new.limit,0);
 		set new.end_balance = new.beginning_balance + new.debit - new.credit ; 
 		
-				insert into debugging (message) values (concat('end balance',new.end_balance,'beg',new.beginning_balance,'debit',new.debit,'new credit',new.credit ));
-				
+			
 		set new.room = new.limit +  new.end_balance ;
 		
 		
@@ -180,21 +179,26 @@
 		set new.days_count = @dayCounts ;
 		set new.interest_amount = @interestAmount;
 		
-		select sum(interest_amount)  into _total_month_credit_except_of_interest from   clean_overdraft_bank_statements where id!= new.id and company_id = new.company_id and clean_overdraft_id = new.clean_overdraft_id and month(date) = month(new.date) and year(date) = year(new.date) ; 
-		set _total_month_credit_except_of_interest = ifnull(_total_month_credit_except_of_interest,0); 
-				
-		if(new.interest_type = 'end_of_month') then  
-		insert into debugging (message) values (concat('from inside credit',_total_month_credit_except_of_interest,'interest type',new.interest_type ));
-			set new.credit = _total_month_credit_except_of_interest+new.interest_amount ;	
 		
-		end if ;
-		
-		-- نهاية حسبة الفوائد
+			-- نهاية حسبة الفوائد
 		-- هنيجي بعد كدا علي تحديث جدول ال 
 		-- withdrawal 
 		-- عن طريق اول هنعمل عمليه ال 
 		-- reverse settlements 
 		-- بمعني ان كل اللي التسديدات اللي 
+		
+		
+		
+		
+		-- بدايه حسبه فايدة نهايه كل شهر
+		select sum(interest_amount)  into _total_month_interest_amount from   clean_overdraft_bank_statements where id!= new.id and company_id = new.company_id and clean_overdraft_id = new.clean_overdraft_id and month(date) = month(new.date) and year(date) = year(new.date) ; 
+		set _total_month_interest_amount = ifnull(_total_month_interest_amount,0); 
+				
+		if(new.interest_type = 'end_of_month') then  
+			set new.credit = _total_month_interest_amount+new.interest_amount ;	
+		end if ;
+			-- نهاية حسبه فايدة نهايه كل شهر
+	
 		
 		
 		
@@ -213,20 +217,9 @@
 			select sum(debit) into _current_debit from clean_overdraft_bank_statements where clean_overdraft_id = new.clean_overdraft_id and is_debit > 0    ;
 			select sum(settlement_amount) into _total_settlements from clean_overdraft_withdrawals where clean_overdraft_id =  new.clean_overdraft_id ;
 			set _current_debit = _current_debit - _total_settlements ;
-			
-		
-	
 				call reverse_clean_overdraft_settlements(_start_update_from_date,new.clean_overdraft_id);	
 				call resettlement_clean_overdraft_from(new.type,new.clean_overdraft_id,new.company_id);
-	
 		end if;
-		
-		
-		
-		
-		
-		
-		
 		
 		-- اعادة حساب فايدة نهاية كل شهر (في حالة التعديل مش الانشاء)
 

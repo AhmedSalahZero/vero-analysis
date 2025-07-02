@@ -39,7 +39,8 @@ class FinancialInstitutionAccountController
 			'iban'=>$request->get('iban'),
 			'exchange_rate'=>$request->get('exchange_rate')
 		]);
-		
+			$endDate = Carbon::make($balanceDate)->addYear(FinancialInstitutionAccount::NUMBER_OF_YEARS_FOR_INTEREST_IN_CURRENT_STATEMENT)->format('Y-m-d');
+			$financialInstitutionAccount->handleEndOfMonthInterest($balanceDate,$endDate,$company->id);
 		if($company->hasOdooIntegrationCredentials()){
 			$odoo = new OdooService($company);
 			$odoo->syncFinancialInstitutions();
@@ -48,10 +49,11 @@ class FinancialInstitutionAccountController
 		$currentAccountBeginningBalance = $financialInstitutionAccount->getOpeningBalanceFromCurrentAccountBankStatement() ;
 	
 		if($currentAccountBeginningBalance){
+			$currentDate =$currentAccountBeginningBalance->date ; 
 			$currentFullDate =$currentAccountBeginningBalance->full_date ; 
 			$time  = Carbon::make($currentFullDate)->format('H:i:s');
 			$newFullDateTime = date('Y-m-d H:i:s', strtotime("$balanceDate $time")) ;
-			$minDateTime = min($currentFullDate ,$newFullDateTime );
+			// $minDateTime = min($currentFullDate ,$newFullDateTime );
 			DB::table('current_account_bank_statements')->where('id',$currentAccountBeginningBalance->id)->update([
 				'date'=>$balanceDate,
 				'full_date'=>$newFullDateTime ,
@@ -59,9 +61,9 @@ class FinancialInstitutionAccountController
 				'comment_en'=>__('Beginning Balance',[],'en'),
 				'comment_ar'=>__('Beginning Balance',[],'ar'),
 			]);
-			CurrentAccountBankStatement::where('full_date','>=',$minDateTime)
+			CurrentAccountBankStatement::where('date','>=',$currentDate)
 			->where('financial_institution_account_id',$currentAccountBeginningBalance->financial_institution_account_id)
-			->orderByRaw('full_date asc, id asc')
+			->orderByRaw('date asc , id asc')
 			->first()
 			->update([
 				'updated_at'=>now()
@@ -77,15 +79,40 @@ class FinancialInstitutionAccountController
 			$dataToUpdate = findByKey($request->get('account_interests'),'id',$id);
 			unset($dataToUpdate['id']);
 			$dataToUpdate['start_date'] = isset($dataToUpdate['start_date']) ? Carbon::make($dataToUpdate['start_date'])->format('Y-m-d') : null;
-			$financialInstitutionAccount->accountInterests()->where('account_interests.id',$id)->update($dataToUpdate);
+			$currentAccountRate = $financialInstitutionAccount->accountInterests()->where('account_interests.id',$id) ;
+			$currentAccountRate->update($dataToUpdate);
+			// if($dataToUpdate['start_date']){
+			// 	$currentAccountRate->financialInstitutionAccount->updateBankStatementsFromDate($dataToUpdate['start_date']);
+			// }
 		}
 		foreach($request->get('account_interests') as $accountInterestArr){
 			if(!isset($accountInterestArr['id'])){
 				unset($accountInterestArr['id']);
 				$accountInterestArr['start_date'] = isset($accountInterestArr['start_date']) ? Carbon::make($accountInterestArr['start_date'])->format('Y-m-d') : null;
-				$financialInstitutionAccount->accountInterests()->create($accountInterestArr);
+				$currentAccountRate = $financialInstitutionAccount->accountInterests()->create($accountInterestArr);
+				// if($accountInterestArr['start_date']){
+				// 	$currentAccountRate->financialInstitutionAccount->updateBankStatementsFromDate($dataToUpdate['start_date']);
+				// }
 			}
 		}
+		/**
+		 * * هنجيب اول قيمة في البانك 
+		 * * current account bank statement 
+		 * * لهذا الحساب ونبدا نحدث من عندها لاننا لما حذفنا
+		 * * $financialInstitutionAccount->accountInterests()->whereIn('account_interests.id',$elementsToDelete)->delete();
+		 * * فا احنا مش عارفين ي
+		 */
+			
+				
+		$minDateInCurrentAccountStatement = DB::table('current_account_bank_statements')
+											->where('financial_institution_account_id', $financialInstitutionAccount->id)
+											->min('date');
+		if($minDateInCurrentAccountStatement){
+			// logger('updated lol');
+			$financialInstitutionAccount->updateBankStatementsFromDate($minDateInCurrentAccountStatement);
+			
+		}
+		
 		return redirect()->route('view.all.bank.accounts',['company'=>$company->id ,'financialInstitution'=>$financialInstitution->id])->with('success',__('Item Has Been Updated Successfully'));
 		// $activeTab = 'bank';
 		// return redirect()->route('view.financial.institutions',['company'=>$company->id,'active'=>$activeTab])->with('success',__('Item Has Been Updated Successfully'));

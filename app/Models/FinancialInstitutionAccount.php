@@ -6,6 +6,7 @@ use App\Enums\LgTypes;
 use App\Helpers\HArr;
 use App\Models\AccountInterest;
 use App\OdooSetting;
+use App\Traits\HasBankStatement;
 use App\Traits\HasCompany;
 use App\Traits\HasLastStatementAmount;
 use App\Traits\HasOdooPaymentMethod;
@@ -18,7 +19,18 @@ use Illuminate\Support\Str;
 
 class FinancialInstitutionAccount extends Model
 {
-	use HasLastStatementAmount ,HasCompany,HasOdooPaymentMethod;
+	const NUMBER_OF_YEARS_FOR_INTEREST_IN_CURRENT_STATEMENT = 1 ;
+	use HasLastStatementAmount ,HasCompany,HasOdooPaymentMethod,HasBankStatement;
+	
+		public static function boot()
+	{
+		parent::boot();
+		static::deleting(function(self $model){
+			$model->accountInterests()->delete(); // accountInterests == rates
+			CurrentAccountBankStatement::deleteButTriggerChangeOnLastElement($model->currentAccountBankStatements);
+		});
+	}
+	
     protected $guarded = ['id'];
 	
     public function financialInstitution()
@@ -100,7 +112,7 @@ class FinancialInstitutionAccount extends Model
 	{
 		return $this->hasMany(AccountInterest::class , 'financial_institution_account_id','id');
 	}
-	
+
 	public function getExchangeRate()
     {
         return $this->exchange_rate ?: 1 ;
@@ -259,4 +271,15 @@ class FinancialInstitutionAccount extends Model
 		}
 		return 0 ;
 	}
+	public static function getBankStatementTableClassName():string 
+	{
+		return CurrentAccountBankStatement::class ;
+	}
+	public static function generateForeignKeyFormModelName():string 
+	{
+		return 'financial_institution_account_id';
+	}	
+	
+
+	
 }

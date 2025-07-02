@@ -73,7 +73,7 @@ begin
 		declare _current_interest_rate decimal(5,2) default 0 ;
 	    declare _interest_rate decimal(5,2) default 0 ;
 	    declare _min_interest_rate decimal(5,2) default 0 ; 
-	
+	    declare _total_month_interest_amount decimal(14,2) default 0 ;
 		-- في حاله التعديل
 		select date,end_balance into _previous_date, _last_end_balance  from current_account_bank_statements where is_active = 1 and company_id = new.company_id and financial_institution_account_id = new.financial_institution_account_id  and date = new.date and id < new.id order by date desc , id desc limit 1 ;
 		if  (_previous_date)
@@ -124,6 +124,15 @@ begin
 					-- نهاية حسبة الفوائد
 					
 					
+						-- بدايه حسبه فايدة نهايه كل شهر
+					select sum(interest_amount)  into _total_month_interest_amount from   current_account_bank_statements where id!= new.id and company_id = new.company_id and financial_institution_account_id = new.financial_institution_account_id and month(date) = month(new.date) and year(date) = year(new.date) ; 
+					insert into debugging (message) values(concat('amount',_total_month_interest_amount,'min interest',_min_interest_balance));
+					set _total_month_interest_amount = ifnull(_total_month_interest_amount,0); 
+					if(new.interest_type = 'end_of_month' && new.end_balance >= _min_interest_balance ) then  
+						set new.debit = _total_month_interest_amount+new.interest_amount ;	
+					end if ;
+			-- نهاية حسبه فايدة نهايه كل شهر
+					
 	
 end //
 
@@ -131,32 +140,32 @@ end //
 
 				delimiter ;
 				drop procedure if exists recalculate_end_of_month_current_account_interests ;
-				delimiter // 
-				create procedure recalculate_end_of_month_current_account_interests()
-				begin 
-					declare current_id integer default 0 ;
-					declare _financial_institution_account_id integer default 0 ;
-					declare _company_id integer default 0 ;
-					declare _largest_end_balance decimal(14,2) default 0;
-					declare interest_type_text varchar(100) default 'interest';
+				-- delimiter // 
+				-- create procedure recalculate_end_of_month_current_account_interests()
+				-- begin 
+				-- 	declare current_id integer default 0 ;
+				-- 	declare _financial_institution_account_id integer default 0 ;
+				-- 	declare _company_id integer default 0 ;
+				-- 	declare _largest_end_balance decimal(14,2) default 0;
+				-- 	declare interest_type_text varchar(100) default 'interest';
 				
-					declare _current_interest_amount decimal(14,2) default 0;
-					declare i INTEGER DEFAULT 0 ;
-					select count(distinct(financial_institution_account_id)) into @n from  current_account_bank_statements where `type` != interest_type_text  and EXTRACT(MONTH from date) = EXTRACT(MONTH from current_date()) and  EXTRACT(YEAR from date) = EXTRACT(YEAR from current_date()) group by financial_institution_account_id;
-					set @n = ifnull(@n,0);
-					if @n > 0 then 
+				-- 	declare _current_interest_amount decimal(14,2) default 0;
+				-- 	declare i INTEGER DEFAULT 0 ;
+				-- 	select count(distinct(financial_institution_account_id)) into @n from  current_account_bank_statements where `type` != interest_type_text  and EXTRACT(MONTH from date) = EXTRACT(MONTH from current_date()) and  EXTRACT(YEAR from date) = EXTRACT(YEAR from current_date()) group by financial_institution_account_id;
+				-- 	set @n = ifnull(@n,0);
+				-- 	if @n > 0 then 
 					
-					repeat 
-								-- حساب الفايدة نهاية كل شهر
-								select financial_institution_account_id , sum(interest_amount)  into _financial_institution_account_id,_current_interest_amount from  current_account_bank_statements where `type` != interest_type_text  and EXTRACT(MONTH from date) = EXTRACT(MONTH from current_date()) and  EXTRACT(YEAR from date) = EXTRACT(YEAR from current_date()) group by financial_institution_account_id limit i , 1;
-								set _current_interest_amount = ifnull(_current_interest_amount , 0);
-								select company_id into _company_id from financial_institution_accounts where id = _financial_institution_account_id  ;
-								insert into current_account_bank_statements (type ,financial_institution_account_id,company_id,date,debit,interest_type,full_date) values(interest_type_text,_financial_institution_account_id,_company_id,current_date(),_current_interest_amount,'end_of_month',NOW());
-								set i = i +1 ; 
-							UNTIL i >= @n  end repeat ;
-					end if ;
+				-- 	repeat 
+				-- 				-- حساب الفايدة نهاية كل شهر
+				-- 				select financial_institution_account_id , sum(interest_amount)  into _financial_institution_account_id,_current_interest_amount from  current_account_bank_statements where `type` != interest_type_text  and EXTRACT(MONTH from date) = EXTRACT(MONTH from current_date()) and  EXTRACT(YEAR from date) = EXTRACT(YEAR from current_date()) group by financial_institution_account_id limit i , 1;
+				-- 				set _current_interest_amount = ifnull(_current_interest_amount , 0);
+				-- 				select company_id into _company_id from financial_institution_accounts where id = _financial_institution_account_id  ;
+				-- 				insert into current_account_bank_statements (type ,financial_institution_account_id,company_id,date,debit,interest_type,full_date) values(interest_type_text,_financial_institution_account_id,_company_id,current_date(),_current_interest_amount,'end_of_month',NOW());
+				-- 				set i = i +1 ; 
+				-- 			UNTIL i >= @n  end repeat ;
+				-- 	end if ;
 					
-				end //
+				-- end //
 				
 				
 			 delimiter ; 

@@ -922,7 +922,6 @@ class MoneyPayment extends Model
 				'ref'=>__('Pay To')
 			];
 		}
-		// dd('lol');
 		
 		throw New Exception('Transaction Type ' . $transactionType . ' Does Not Have Account Id');
 		

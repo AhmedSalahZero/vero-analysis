@@ -46,7 +46,7 @@
 
 
                         <div class="col-md-3 mb-4">
-                            <label>{{ __('Select Currency') }} </label>
+                            <label>{{ __('Currency') }} </label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
                                     <select js-when-change-trigger-change-account-type data-live-search="true" data-actions-box="true" name="currency" required class="form-control current-currency  kt-bootstrap-select select2-select kt_bootstrap_select ajax-currency-name">
@@ -59,7 +59,7 @@
                         </div>
 
                         <div class="col-md-5 width-45">
-                            <label>{{__('Select Bank')}} @include('star')</label>
+                            <label>{{__('Bank')}} @include('star')</label>
                             <div class="kt-input-icon">
                                 <div class="input-group date">
 

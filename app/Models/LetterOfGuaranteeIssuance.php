@@ -456,7 +456,6 @@ class LetterOfGuaranteeIssuance extends Model
 	}
 	public function isCashCoverCurrentAccount():bool 
 	{
-		// dd($this->cashCoverDeductedFromAccountType,$this);
 		return $this->cashCoverDeductedFromAccountType && $this->cashCoverDeductedFromAccountType->isCurrentAccount();
 	}
 	
