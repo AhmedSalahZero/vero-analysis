@@ -128,7 +128,9 @@ begin
 					select sum(interest_amount)  into _total_month_interest_amount from   current_account_bank_statements where id!= new.id and company_id = new.company_id and financial_institution_account_id = new.financial_institution_account_id and month(date) = month(new.date) and year(date) = year(new.date) ; 
 					insert into debugging (message) values(concat('amount',_total_month_interest_amount,'min interest',_min_interest_balance));
 					set _total_month_interest_amount = ifnull(_total_month_interest_amount,0); 
-					if(new.interest_type = 'end_of_month' && new.end_balance >= _min_interest_balance ) then  
+					if(new.interest_type = 'end_of_month' && new.end_balance >= _min_interest_balance 
+					-- && new.debit <= 0
+					) then  
 						set new.debit = _total_month_interest_amount+new.interest_amount ;	
 					end if ;
 			-- نهاية حسبه فايدة نهايه كل شهر

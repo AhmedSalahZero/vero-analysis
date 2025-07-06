@@ -75,4 +75,5 @@ class OverdraftAgainstCommercialPaperRate extends Model
 		return number_format($this->getInterestRate(),2) . ' %';
 	}
 	
+	
 }

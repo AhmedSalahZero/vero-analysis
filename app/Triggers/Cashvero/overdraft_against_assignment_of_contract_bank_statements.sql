@@ -130,7 +130,7 @@
 							declare _overdraft_against_assignment_of_contract_to_be_settled_after integer default 0 ;
 							declare interest_type_text varchar(100) default 'interest';
 							declare highest_debit_balance_text varchar(100) default 'highest_debit_balance';
-
+ declare _total_month_interest_amount decimal(14,2) default 0 ;
 
 					if(new.type = 'payable_cheque') then
 						select to_be_setteled_max_within_days into _overdraft_against_assignment_of_contract_to_be_settled_after from overdraft_against_assignment_of_contracts where id = new.overdraft_against_assignment_of_contract_id ;
@@ -195,7 +195,15 @@
 					-- reverse settlements 
 					-- بمعني ان كل اللي التسديدات اللي 
 					
-					
+						-- بدايه حسبه فايدة نهايه كل شهر
+		select sum(interest_amount)  into _total_month_interest_amount from   overdraft_against_assignment_of_contract_bank_statements where id!= new.id and company_id = new.company_id and overdraft_against_assignment_of_contract_id = new.overdraft_against_assignment_of_contract_id and month(date) = month(new.date) and year(date) = year(new.date) ; 
+		set _total_month_interest_amount = ifnull(_total_month_interest_amount,0); 
+				
+		if(new.interest_type = 'end_of_month') then  
+			set new.credit = _total_month_interest_amount+new.interest_amount ;	
+		end if ;
+			-- نهاية حسبه فايدة نهايه كل شهر
+			
 					
 					
 					-- هنجيب اخر اي دي للحساب دا لان من عندة هنبدا نسدد من اول وجديد 
@@ -360,50 +368,50 @@
 				delimiter ;
 				drop procedure if exists end_of_month_overdraft_against_ass_of_contract_interests ;
 				delimiter // 
-				create procedure end_of_month_overdraft_against_ass_of_contract_interests()
-				begin 
-					declare current_id integer default 0 ;
-					declare _overdraft_against_assignment_of_contract_bank_statement_id integer default 0 ;
-					declare _overdraft_against_assignment_of_contract_id integer default 0 ;
-					declare _company_id integer default 0 ;
-					declare _limit decimal(14,2) default 0;
-					declare _largest_end_balance decimal(14,2) default 0;
-					declare interest_type_text varchar(100) default 'interest';
-					declare highest_debit_balance_text varchar(100) default 'highest_debit_balance';
-					declare _current_interest_amount decimal(14,2) default 0;
-					declare _highest_debt_balance_rate decimal(5,2) default 0 ;
-					declare i INTEGER DEFAULT 0 ;
-					set _highest_debt_balance_rate = ifnull(_highest_debt_balance_rate,0);
-					select count(distinct(overdraft_against_assignment_of_contract_id)) into @n from  overdraft_against_assignment_of_contract_bank_statements where `type` != interest_type_text and `type` != highest_debit_balance_text and EXTRACT(MONTH from date) = EXTRACT(MONTH from current_date()) and  EXTRACT(YEAR from date) = EXTRACT(YEAR from current_date()) group by overdraft_against_assignment_of_contract_id;
-					set @n = ifnull(@n,0);
-					if @n > 0 then 
+				-- create procedure end_of_month_overdraft_against_ass_of_contract_interests()
+				-- begin 
+				-- 	declare current_id integer default 0 ;
+				-- 	declare _overdraft_against_assignment_of_contract_bank_statement_id integer default 0 ;
+				-- 	declare _overdraft_against_assignment_of_contract_id integer default 0 ;
+				-- 	declare _company_id integer default 0 ;
+				-- 	declare _limit decimal(14,2) default 0;
+				-- 	declare _largest_end_balance decimal(14,2) default 0;
+				-- 	declare interest_type_text varchar(100) default 'interest';
+				-- 	declare highest_debit_balance_text varchar(100) default 'highest_debit_balance';
+				-- 	declare _current_interest_amount decimal(14,2) default 0;
+				-- 	declare _highest_debt_balance_rate decimal(5,2) default 0 ;
+				-- 	declare i INTEGER DEFAULT 0 ;
+				-- 	set _highest_debt_balance_rate = ifnull(_highest_debt_balance_rate,0);
+				-- 	select count(distinct(overdraft_against_assignment_of_contract_id)) into @n from  overdraft_against_assignment_of_contract_bank_statements where `type` != interest_type_text and `type` != highest_debit_balance_text and EXTRACT(MONTH from date) = EXTRACT(MONTH from current_date()) and  EXTRACT(YEAR from date) = EXTRACT(YEAR from current_date()) group by overdraft_against_assignment_of_contract_id;
+				-- 	set @n = ifnull(@n,0);
+				-- 	if @n > 0 then 
 					
-					repeat 
-								-- حساب الفايدة نهاية كل شهر
-								select overdraft_against_assignment_of_contract_id , sum(interest_amount) , max(end_balance) into _overdraft_against_assignment_of_contract_id,_current_interest_amount,_largest_end_balance from  overdraft_against_assignment_of_contract_bank_statements where `type` != interest_type_text and `type` != highest_debit_balance_text and EXTRACT(MONTH from date) = EXTRACT(MONTH from current_date()) and  EXTRACT(YEAR from date) = EXTRACT(YEAR from current_date()) group by overdraft_against_assignment_of_contract_id limit i , 1;
-								set _current_interest_amount = ifnull(_current_interest_amount , 0);
-								set _largest_end_balance = ifnull(_largest_end_balance,0);
-								select company_id,`limit`,highest_debt_balance_rate into _company_id,_limit,_highest_debt_balance_rate from overdraft_against_assignment_of_contracts where id = _overdraft_against_assignment_of_contract_id  ;
-								insert into overdraft_against_assignment_of_contract_bank_statements (type ,priority,overdraft_against_assignment_of_contract_id,money_received_id,company_id,date,`limit`,credit,interest_type,full_date) values(interest_type_text,1,_overdraft_against_assignment_of_contract_id,0,_company_id,current_date(),_limit,_current_interest_amount,'end_of_month',NOW());
-								-- حساب ال highest debit balance
-								set _current_interest_amount = _highest_debt_balance_rate / 100 * _largest_end_balance ; 
-								insert into overdraft_against_assignment_of_contract_bank_statements (type,priority ,overdraft_against_assignment_of_contract_id,money_received_id,company_id,date,`limit`,credit,interest_type,full_date) values(highest_debit_balance_text,1,_overdraft_against_assignment_of_contract_id,0,_company_id,current_date(),_limit,_current_interest_amount,'end_of_month',NOW());
-							set i = i +1 ; 
-							UNTIL i >= @n  end repeat ;
-					end if ;
+				-- 	repeat 
+				-- 				-- حساب الفايدة نهاية كل شهر
+				-- 				select overdraft_against_assignment_of_contract_id , sum(interest_amount) , max(end_balance) into _overdraft_against_assignment_of_contract_id,_current_interest_amount,_largest_end_balance from  overdraft_against_assignment_of_contract_bank_statements where `type` != interest_type_text and `type` != highest_debit_balance_text and EXTRACT(MONTH from date) = EXTRACT(MONTH from current_date()) and  EXTRACT(YEAR from date) = EXTRACT(YEAR from current_date()) group by overdraft_against_assignment_of_contract_id limit i , 1;
+				-- 				set _current_interest_amount = ifnull(_current_interest_amount , 0);
+				-- 				set _largest_end_balance = ifnull(_largest_end_balance,0);
+				-- 				select company_id,`limit`,highest_debt_balance_rate into _company_id,_limit,_highest_debt_balance_rate from overdraft_against_assignment_of_contracts where id = _overdraft_against_assignment_of_contract_id  ;
+				-- 				insert into overdraft_against_assignment_of_contract_bank_statements (type ,priority,overdraft_against_assignment_of_contract_id,money_received_id,company_id,date,`limit`,credit,interest_type,full_date) values(interest_type_text,1,_overdraft_against_assignment_of_contract_id,0,_company_id,current_date(),_limit,_current_interest_amount,'end_of_month',NOW());
+				-- 				-- حساب ال highest debit balance
+				-- 				set _current_interest_amount = _highest_debt_balance_rate / 100 * _largest_end_balance ; 
+				-- 				insert into overdraft_against_assignment_of_contract_bank_statements (type,priority ,overdraft_against_assignment_of_contract_id,money_received_id,company_id,date,`limit`,credit,interest_type,full_date) values(highest_debit_balance_text,1,_overdraft_against_assignment_of_contract_id,0,_company_id,current_date(),_limit,_current_interest_amount,'end_of_month',NOW());
+				-- 			set i = i +1 ; 
+				-- 			UNTIL i >= @n  end repeat ;
+				-- 	end if ;
 					
-				end //
+				-- end //
 				delimiter ; 
 				DROP EVENT IF EXISTS `end_of_month_overdraft_against_ass_of_contract_interests_event`;
 				DELIMITER $$
-				CREATE EVENT `end_of_month_overdraft_against_ass_of_contract_interests_event`
-				ON SCHEDULE EVERY  1 day
-				STARTS '2022-03-31 23:59:00'
-				ON COMPLETION PRESERVE
-				DO BEGIN
-				call end_of_month_overdraft_against_ass_of_contract_interests();
-				END$$
-				DELIMITER ;
+				-- CREATE EVENT `end_of_month_overdraft_against_ass_of_contract_interests_event`
+				-- ON SCHEDULE EVERY  1 day
+				-- STARTS '2022-03-31 23:59:00'
+				-- ON COMPLETION PRESERVE
+				-- DO BEGIN
+				-- call end_of_month_overdraft_against_ass_of_contract_interests();
+				-- END$$
+				-- DELIMITER ;
 				
 				
 				 delimiter ; 

@@ -389,16 +389,16 @@
 	-- end //
 	delimiter ; 
 	DROP EVENT IF EXISTS `recalculate_end_of_month_clean_overdraft_interests_event`;
-	DELIMITER $$
-	CREATE EVENT `recalculate_end_of_month_clean_overdraft_interests_event`
-	ON SCHEDULE EVERY  1 day
-	STARTS '2022-03-31 23:59:00'
-	ON COMPLETION PRESERVE
-	DO BEGIN
-	 -- do noting
-	-- call recalculate_end_of_month_clean_overdraft_interests();
-	END$$
-	DELIMITER ;
+	-- DELIMITER $$
+	-- CREATE EVENT `recalculate_end_of_month_clean_overdraft_interests_event`
+	-- ON SCHEDULE EVERY  1 day
+	-- STARTS '2022-03-31 23:59:00'
+	-- ON COMPLETION PRESERVE
+	-- DO BEGIN
+	--  -- do noting
+	-- -- call recalculate_end_of_month_clean_overdraft_interests();
+	-- END$$
+	-- DELIMITER ;
 	drop event if exists `refresh_customer_invoices_status_event`;
 	DELIMITER $$
 	CREATE EVENT `refresh_customer_invoices_status_event`

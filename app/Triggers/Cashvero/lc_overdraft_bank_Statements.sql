@@ -98,6 +98,7 @@
 							declare _lc_overdraft_to_be_settled_after integer default 0 ;
 							declare interest_type_text varchar(100) default 'interest';
 							declare highest_debit_balance_text varchar(100) default 'highest_debit_balance';
+							 declare _total_month_interest_amount decimal(14,2) default 0 ;
 						select date,end_balance,id into _previous_date, _last_end_balance,_last_id  from lc_overdraft_bank_statements where  lc_overdraft_bank_statements.lc_facility_id = new.lc_facility_id and source = new.source and date = new.date and id < new.id order by date desc , id desc limit 1 ; -- رتبت بالاي دي الاكبر علشان  لو كانوا متساوين في التاريخ بالظبط (ودا احتمال ضعيف ) ياخد اللي ال اي دي بتاعه اكبر
 						if  (_previous_date)
 			then
@@ -140,6 +141,15 @@
 					-- reverse settlements 
 					-- بمعني ان كل اللي التسديدات اللي 
 					
+					
+										-- بدايه حسبه فايدة نهايه كل شهر
+		select sum(interest_amount)  into _total_month_interest_amount from   lc_overdraft_bank_statements where id!= new.id and company_id = new.company_id and lc_overdraft_bank_statements.lc_facility_id = new.lc_facility_id and month(date) = month(new.date) and year(date) = year(new.date) ; 
+		set _total_month_interest_amount = ifnull(_total_month_interest_amount,0); 
+				
+		if(new.interest_type = 'end_of_month') then  
+			set new.credit = _total_month_interest_amount+new.interest_amount ;	
+		end if ;
+		
 					
 					-- هنجيب اخر اي دي للحساب دا لان من عندة هنبدا نسدد من اول وجديد 
 					-- هنجيب اللي الدبت اكبر من الصفر علشان احنا هنسدد وبالتالي عايزين القيم اللي فيها دبنت
@@ -264,49 +274,49 @@
 				delimiter ;
 				drop procedure if exists recalculate_end_of_month_lc_overdraft_interests ;
 				delimiter // 
-				create procedure recalculate_end_of_month_lc_overdraft_interests()
-				begin 
-					declare current_id integer default 0 ;
-					declare _lc_overdraft_bank_statement_id integer default 0 ;
-					declare _lc_facility_id integer default 0 ;
-					declare _company_id integer default 0 ;
-					declare _limit decimal(14,2) default 0;
-					declare _largest_end_balance decimal(14,2) default 0;
-					declare interest_type_text varchar(100) default 'interest';
-					declare highest_debit_balance_text varchar(100) default 'highest_debit_balance';
-					declare _current_interest_amount decimal(14,2) default 0;
-					declare _highest_debt_balance_rate decimal(5,2) default 0 ;
-					declare i INTEGER DEFAULT 0 ;
-					set _highest_debt_balance_rate = ifnull(_highest_debt_balance_rate,0);
-					select count(distinct(lc_facility_id)) into @n from  lc_overdraft_bank_statements where `type` != interest_type_text and `type` != highest_debit_balance_text  and EXTRACT(MONTH from date) = EXTRACT(MONTH from current_date()) and  EXTRACT(YEAR from date) = EXTRACT(YEAR from current_date()) group by lc_overdraft_bank_statements.lc_facility_id;
-					set @n = ifnull(@n,0);
-					if @n > 0 then 
-					repeat 
-								-- حساب الفايدة نهاية كل شهر
-								select lc_facility_id , sum(interest_amount) , max(end_balance) into _lc_facility_id,_current_interest_amount,_largest_end_balance from  lc_overdraft_bank_statements where `type` != interest_type_text  and `type` != highest_debit_balance_text and EXTRACT(MONTH from date) = EXTRACT(MONTH from current_date()) and  EXTRACT(YEAR from date) = EXTRACT(YEAR from current_date()) group by lc_overdraft_bank_statements.lc_facility_id limit i , 1;
-								set _current_interest_amount = ifnull(_current_interest_amount , 0);
-								set _largest_end_balance = ifnull(_largest_end_balance,0);
-								select company_id,`limit`,highest_debt_balance_rate into _company_id,_limit,_highest_debt_balance_rate from letter_of_credit_facilities where id = _lc_facility_id  ;
-								insert into lc_overdraft_bank_statements (type ,priority,lc_facility_id,money_received_id,company_id,date,`limit`,credit,interest_type,full_date) values(interest_type_text,1,_lc_facility_id,0,_company_id,current_date(),_limit,_current_interest_amount,'end_of_month',NOW());
-								-- حساب ال highest debit balance
-								set _current_interest_amount = _highest_debt_balance_rate / 100 * _largest_end_balance ; 
-								insert into lc_overdraft_bank_statements (type,priority ,lc_facility_id,money_received_id,company_id,date,`limit`,credit,interest_type,full_date) values(highest_debit_balance_text,1,_lc_facility_id,0,_company_id,current_date(),_limit,_current_interest_amount,'end_of_month',NOW());
-							set i = i +1 ; 
-							UNTIL i >= @n  end repeat ;
-					end if ;
+				-- create procedure recalculate_end_of_month_lc_overdraft_interests()
+				-- begin 
+				-- 	declare current_id integer default 0 ;
+				-- 	declare _lc_overdraft_bank_statement_id integer default 0 ;
+				-- 	declare _lc_facility_id integer default 0 ;
+				-- 	declare _company_id integer default 0 ;
+				-- 	declare _limit decimal(14,2) default 0;
+				-- 	declare _largest_end_balance decimal(14,2) default 0;
+				-- 	declare interest_type_text varchar(100) default 'interest';
+				-- 	declare highest_debit_balance_text varchar(100) default 'highest_debit_balance';
+				-- 	declare _current_interest_amount decimal(14,2) default 0;
+				-- 	declare _highest_debt_balance_rate decimal(5,2) default 0 ;
+				-- 	declare i INTEGER DEFAULT 0 ;
+				-- 	set _highest_debt_balance_rate = ifnull(_highest_debt_balance_rate,0);
+				-- 	select count(distinct(lc_facility_id)) into @n from  lc_overdraft_bank_statements where `type` != interest_type_text and `type` != highest_debit_balance_text  and EXTRACT(MONTH from date) = EXTRACT(MONTH from current_date()) and  EXTRACT(YEAR from date) = EXTRACT(YEAR from current_date()) group by lc_overdraft_bank_statements.lc_facility_id;
+				-- 	set @n = ifnull(@n,0);
+				-- 	if @n > 0 then 
+				-- 	repeat 
+				-- 				-- حساب الفايدة نهاية كل شهر
+				-- 				select lc_facility_id , sum(interest_amount) , max(end_balance) into _lc_facility_id,_current_interest_amount,_largest_end_balance from  lc_overdraft_bank_statements where `type` != interest_type_text  and `type` != highest_debit_balance_text and EXTRACT(MONTH from date) = EXTRACT(MONTH from current_date()) and  EXTRACT(YEAR from date) = EXTRACT(YEAR from current_date()) group by lc_overdraft_bank_statements.lc_facility_id limit i , 1;
+				-- 				set _current_interest_amount = ifnull(_current_interest_amount , 0);
+				-- 				set _largest_end_balance = ifnull(_largest_end_balance,0);
+				-- 				select company_id,`limit`,highest_debt_balance_rate into _company_id,_limit,_highest_debt_balance_rate from letter_of_credit_facilities where id = _lc_facility_id  ;
+				-- 				insert into lc_overdraft_bank_statements (type ,priority,lc_facility_id,money_received_id,company_id,date,`limit`,credit,interest_type,full_date) values(interest_type_text,1,_lc_facility_id,0,_company_id,current_date(),_limit,_current_interest_amount,'end_of_month',NOW());
+				-- 				-- حساب ال highest debit balance
+				-- 				set _current_interest_amount = _highest_debt_balance_rate / 100 * _largest_end_balance ; 
+				-- 				insert into lc_overdraft_bank_statements (type,priority ,lc_facility_id,money_received_id,company_id,date,`limit`,credit,interest_type,full_date) values(highest_debit_balance_text,1,_lc_facility_id,0,_company_id,current_date(),_limit,_current_interest_amount,'end_of_month',NOW());
+				-- 			set i = i +1 ; 
+				-- 			UNTIL i >= @n  end repeat ;
+				-- 	end if ;
 					
-				end //
+				-- end //
 				delimiter ; 
 				DROP EVENT IF EXISTS `recalculate_end_of_month_lc_overdraft_interests_event`;
-				DELIMITER $$
-				CREATE EVENT `recalculate_end_of_month_lc_overdraft_interests_event`
-				ON SCHEDULE EVERY  1 day
-				STARTS '2022-03-31 23:59:00'
-				ON COMPLETION PRESERVE
-				DO BEGIN
-				-- do nothing
-				-- call recalculate_end_of_month_lc_overdraft_interests();
-				END$$
+				-- DELIMITER $$
+				-- CREATE EVENT `recalculate_end_of_month_lc_overdraft_interests_event`
+				-- ON SCHEDULE EVERY  1 day
+				-- STARTS '2022-03-31 23:59:00'
+				-- ON COMPLETION PRESERVE
+				-- DO BEGIN
+				-- -- do nothing
+				-- -- call recalculate_end_of_month_lc_overdraft_interests();
+				-- END$$
 				
  delimiter ; 
 drop trigger if exists refresh_calculation_before_delete_lc_over_statements ;

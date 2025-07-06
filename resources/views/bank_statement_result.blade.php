@@ -406,13 +406,14 @@
 																					
 											@endif
 											
-											@if(isset($modelAsStdClass->interest_type) && $modelAsStdClass->interest_type == 'end_of_month')
+											@if(isset($modelAsStdClass->interest_type) && ($modelAsStdClass->interest_type == 'end_of_month' || $modelAsStdClass->interest_type == 'end_of_month_final'))
 												
 												@include('modals.edit-end-of-month-interest',[
 													'currentStatementId'=>$modelAsStdClass->id,
 													'currentDebitOrCredit'=>$modelAsStdClass->credit > 0 ?$modelAsStdClass->credit : $modelAsStdClass->debit ,
 													'debitOrCreditText'=>$modelAsStdClass->credit > 0 ? 'credit' : 'debit' ,
-													'currentDate'=>$modelAsStdClass->date
+													'currentDate'=>$modelAsStdClass->date,
+													'interestType'=>$modelAsStdClass->interest_type
 													
 													 ])
 																					

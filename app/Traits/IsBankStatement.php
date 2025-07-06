@@ -19,18 +19,33 @@ trait IsBankStatement
 			$newFullDateTime = date('Y-m-d H:i:s', strtotime("$date $time")) ;
 			// $minDateTime = min($currentFullDate ,$newFullDateTime );
 			$minDate = min($currentDate , $date);
-			DB::table($this->getTable())->where('id',$this->id)->update([
+			$updatedData = [
 				'date'=>$date,
 				'full_date'=>$newFullDateTime ,
 				'credit'=>$credit , 
 				'debit'=>$debit 
-			]);
+			] ;
+			// dd(Request()->all(),DB::table($this->getTable())->where('id',$this->id)->first());
+			$row = DB::table($this->getTable())->where('id',$this->id)->first();
+			$isEndOfMonthRow = $row->interest_type=='end_of_month' || $row->interest_type =='end_of_month_final';
+			
+			if($isEndOfMonthRow){
+				if(Request()->has('is_end_of_month_final')){
+					$updatedData['interest_type']='end_of_month_final';
+				}else{
+					$updatedData['interest_type']='end_of_month';
+				}
+			}
+			
+			DB::table($this->getTable())->where('id',$this->id)->update($updatedData);
 			$query = 
 			$modelName::where('date','>=',$minDate);
 			foreach($this->getForeignKeyNamesThatUsedInFilter() as $columnName){
 				$query->where($columnName,$this->{$columnName});
 			}
-			$query->orderByRaw($orderBy)
+			$query
+			// ->where('id','!=',$this->id)
+			->orderByRaw($orderBy)
 			->first()
 			->update([
 				'updated_at'=>now()
