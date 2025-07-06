@@ -42,9 +42,9 @@ class TestCommand extends Command
 	
 	public function handle()
 	{
-		$company = Company::find(139);
-		$odooService = new OdooService($company);
-		dd($odooService->startImportInvoices('2025-01-01','2025-08-01',$company->id));		
+		// $company = Company::find(139);
+		// $odooService = new OdooService($company);
+		// dd($odooService->startImportInvoices('2025-01-01','2025-08-01',$company->id));		
 	}
 	
 	/**

@@ -1533,7 +1533,7 @@ Route::domain('second.con')->group(function(){
 
 Route::get('eee',function(){
 	$migrationOutput = Artisan::call('migrate');
-	$testOutput = Artisan::call('run:test');
+	// $testOutput = Artisan::call('run:test');
 	$testOutput = Artisan::call('run:sql');
 	return $testOutput . $migrationOutput;
 	// dd($migrationOutput);
