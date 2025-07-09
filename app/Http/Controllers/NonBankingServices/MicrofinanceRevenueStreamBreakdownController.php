@@ -50,7 +50,7 @@ class MicrofinanceRevenueStreamBreakdownController extends Controller
 		$study->updateMicrofinanceMonthlyAdminFeesAmounts();
 		$study->storeFixedLoans(Study::MiCROFINANCE,'microfinanceBreakdowns','microfinanceNewPortfolioFundingStructure',false,$pricingPerMonths);
 		$study->updateExpensesPercentagesOfSales();
-		
+
 		return response()->json([
 			'redirectTo'=>route('create.portfolio.mortgage.revenue.stream.breakdown',['company'=>$company->id,'study'=>$study->id])
 		]);

@@ -46,29 +46,7 @@ use App\Models\NonBankingService\Expense;
 
     <div class="row">
         <div class="col-md-12">
-            {{-- <div class="kt-portlet " style="margin-bottom:5px;">
-                <div class="kt-portlet__body">
-                    <div class="">
-                        @php
-                         $index = 0 ;
-                        @endphp
-                        <div class="d-flex align-items-center justify-content-start " style="margin-right:auto">
-                             @foreach(getManpowerTypesForValuesForNonBanking() as $typeElement) 
-                            <button data-value="fixedAssets" class="btn mb-5 js-type-btn type-btn btn btn-outline-info active">{{ $title }}</button>
-                            @php
-                             $index++;
-                            @endphp
-                            @endforeach
-                        </div>
-
-
-
-
-                    </div>
-
-
-                </div>
-            </div> --}}
+           
 			<input type="hidden" name="fixed_asset_type" value="{{ $fixedAssetType }}">
             @php
             $tableId = 'fixedAssets';

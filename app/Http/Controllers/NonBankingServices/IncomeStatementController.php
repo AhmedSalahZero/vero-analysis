@@ -200,8 +200,10 @@ class IncomeStatementController extends Controller
 		foreach($salaryExpenses as $salaryExpense){
 			$expenseCategory = $salaryExpense->expense_type;
 			$salaryExpensePayload = json_decode($salaryExpense->salary_expenses);
+			$salaryExpensePayload = $salaryExpensePayload ? $salaryExpensePayload : [];
 			foreach($monthsWithItsYear as $monthIndex => $yearIndex){
-				$currentSalaryExpense = $salaryExpensePayload[$monthIndex];
+				
+				$currentSalaryExpense = $salaryExpensePayload[$monthIndex]??[];
 				$salaryExpensesForCategory[$expenseCategory][$monthIndex] = isset($salaryExpensesForCategory[$expenseCategory][$monthIndex]) ?  $salaryExpensesForCategory[$expenseCategory][$monthIndex] + $currentSalaryExpense : $currentSalaryExpense;
 			}
 		}

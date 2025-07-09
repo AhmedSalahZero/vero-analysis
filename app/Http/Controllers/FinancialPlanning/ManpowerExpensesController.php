@@ -18,6 +18,7 @@ use Illuminate\Http\Request;
 class ManpowerExpensesController extends Controller
 {
 	public function create(Company $company , Request $request,Study $study,string $expenseType){
+		
 		return view('financial_planning.manpower.form', $this->getViewVars($company,$study,$expenseType));
 	}
 	protected function getViewVars(Company $company, Study $study,string $expenseType){

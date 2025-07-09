@@ -81,6 +81,7 @@ style="display:none"
     </div>
     @endif
     @if($showRows)
+	
     <table @if($initialJs) id="{{ $repeaterId }}" @endif class="table  {{ $repeaterId }} {{ $tableClasses }} table-white  repeater-class repeater {{ $tableName }}" >
         <thead>
             <tr>
@@ -88,7 +89,6 @@ style="display:none"
                 <x-tables.repeater-table-th :fontSizeClass="$fontSizeClass" class="col-md-1 action-class" :title="$actionBtnTitle"></x-tables.repeater-table-th>
                 @endif
                 {{ $ths }}
-
             </tr>
         </thead>
         <tbody data-repeater-list="{{$tableName}}">
@@ -104,12 +104,10 @@ style="display:none"
 
             </x-tables.repeater-table-tr>
 
-
             @endif
 
         </tbody>
         <td>
-            {{-- @if(!$isRepeater) --}}
 			@if($showAddBtnAndPlus)
             @if($canAddNewItem && !$removeActionBtn)
             <div data-repeater-create="" class="btn btn btn-sm text-white add-row   border-green bg-green  m-btn m-btn--icon m-btn--pill m-btn--wide {{__('right')}}">

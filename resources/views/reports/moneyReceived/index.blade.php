@@ -396,7 +396,7 @@ use App\Models\MoneyReceived;
                                                             <div class="modal-body">
                                                                 <div class="row mb-3">
                                                                     <div class="col-md-4 mb-4">
-                                                                        <label>{{__('Customr Name')}} </label>
+                                                                        <label>{{__('Customer Name')}} </label>
                                                                         <div class="kt-input-icon">
                                                                             <input value="{{ $moneyReceived->getCustomerName() }}" type="text" disabled class="form-control">
                                                                         </div>

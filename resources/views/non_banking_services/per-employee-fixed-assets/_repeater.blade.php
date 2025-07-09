@@ -1,6 +1,4 @@
-<div class="kt-portlet 
-
- ">
+<div class="kt-portlet">
     <div class="kt-portlet__body">
         <h3 class="font-weight-bold text-black form-label kt-subheader__title small-caps mr-5 text-nowrap" style=""> {{ __('Items Cost') }}</h3>
         <input type="hidden" name="tableIds[]" value="{{ $tableId }}">
