@@ -6,7 +6,11 @@ use App\Models\NonBankingService\Expense;
 <x-styles.commons></x-styles.commons>
 <link rel="stylesheet" href="/custom/css/non-banking-services/expenses.css">
 <link rel="stylesheet" href="/custom/css/non-banking-services/common.css">
-
+<style>
+.js-parent-to-table{
+	min-height:50vh !important;
+}
+</style>
 @endsection
 @section('sub-header')
 

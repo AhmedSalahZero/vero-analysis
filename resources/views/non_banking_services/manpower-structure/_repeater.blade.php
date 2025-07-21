@@ -10,7 +10,6 @@
                         <x-slot name="ths">
                             <x-tables.repeater-table-th class=" category-selector-class header-border-down  " :title="__('Position Name')"></x-tables.repeater-table-th>
                         </x-slot>
-					
                         <x-slot name="trs">
                             @php
                             $rows = isset($model) ? $model->positions : [-1] ;

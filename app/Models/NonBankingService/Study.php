@@ -887,6 +887,7 @@ use Illuminate\Support\Facades\DB;
 			}
 			
 		}
+	
 		DB::connection('non_banking_service')->table($loanSchedulePaymentTableName)->insert($portfolioLoans);
 	}
 	public function storeFixedLoansForFixedAssets(string $fixedAssetType,$isSensitivity = false):void

@@ -25,7 +25,7 @@ class ManpowerExpensesController extends Controller
 			'expenseType'=>'manpower',
 			'storeRoute'=>route('store.manpower.for.non.banking',['company'=>$company->id , 'study'=>$study->id]),
 			'studyMonthsForViews'=>$studyMonthsForViews,
-			'departments'=>$company->departmentsFor(Request()->segment(6)),
+			'departments'=>$company->departmentsFor(Request()->segment(6),$company->id),
 			'storeDepartmentPositionsRoute'=>route('store.department.positions.for.non.banking',['company'=>$company->id,'study'=>$study->id]),
 			'financialYearEndMonthNumber'=>$study->getFinancialYearEndMonthNumber()
 		];

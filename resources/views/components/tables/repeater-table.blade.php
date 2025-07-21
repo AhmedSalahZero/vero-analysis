@@ -36,7 +36,6 @@ style="display:none"
 
 >
 
-
     @if($addExpenseName)
     <div class="row align-items-center mb-3 mt-3 border-bottom-green  ">
         <div class="col-md-4">
@@ -72,11 +71,7 @@ style="display:none"
         </div>
         @endif
 
-        <div class="col-md-5">
-         
 
-
-        </div>
 
     </div>
     @endif
@@ -92,7 +87,6 @@ style="display:none"
             </tr>
         </thead>
         <tbody data-repeater-list="{{$tableName}}">
-
             @if(isset($model) && $model->{$relationName}->count() )
 
             @foreach($model->{$relationName} as $subModel)

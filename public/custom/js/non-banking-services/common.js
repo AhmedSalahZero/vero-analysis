@@ -371,14 +371,18 @@ $(document).on('change','select.department-class',function(){
 			var positionArr = res.positionIds ;
 			var options ='';
 			var positionRow = $(this).closest('tr').find('select.position-class');
-			var currentSelected = JSON.parse($(positionRow).attr('data-current-selected-items'));
+			var positionRow = $(positionRow).attr('data-current-selected-items') ;
+			var currentSelected = positionRow ? JSON.parse(positionRow):'';
 			for(var positionId in positionArr){
 				positionId = positionId;
 				var selected = currentSelected.includes(positionId);
 				console.log(currentSelected,positionId,selected,'--')
 				options+=`<option ${selected ? 'selected':''} value="${positionId}">${positionArr[positionId]}</option>`
 			}
-			$(positionRow).empty().append(options).trigger('change');
+			if(positionRow != '[]'){
+				$(positionRow).empty().append(options).trigger('change');
+				
+			}
 		}
 	})
 	

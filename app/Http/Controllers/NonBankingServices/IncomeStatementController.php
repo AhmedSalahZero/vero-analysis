@@ -217,7 +217,10 @@ class IncomeStatementController extends Controller
 			$tableDataFormatted[$currentOrderIndex]['main_items'][$expenseCategory]['options']['title'] =$expenseMainTitlesMapping[$expenseCategory] ;
 			
 			$tableDataFormatted[$currentOrderIndex]['sub_items'][$name]['options']['title'] =$name ;
-			$currentColumnName = $columnPerTypes[$relationName];
+			$currentColumnName = $columnPerTypes[$relationName]??null;
+			if(is_null($currentColumnName)){
+				continue;
+			}
 			$monthlyExpenses = (array)json_decode($expense->{$currentColumnName});
 			foreach($yearWithItsIndexes as $yearIndex => $monthIndexWithActive){
 				foreach($monthIndexWithActive as $monthIndex=> $isActiveIndex){

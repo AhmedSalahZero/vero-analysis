@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Formatter\Select2Formatter;
 use App\Models\NonBankingService\ConsumerfinanceProduct;
 use App\Models\NonBankingService\Department;
+use App\Models\NonBankingService\ExpenseName;
 use App\Models\NonBankingService\LeasingCategory;
 use App\Models\NonBankingService\MicrofinanceProduct;
 use App\Models\NonBankingService\Study;
@@ -654,10 +655,22 @@ class Company extends Model implements HasMedia
 		return $this->hasMany(Department::class,'company_id','id');
 	}	
 	
-	public function departmentsFor(string $type )
+	public function departmentsFor(string $type ,int $companyId)
 	{
-		return Department::where('type',$type)->get();
+		return Department::where('type',$type)->where('company_id',$companyId)->get();
 	}
+	
+	
+	public function expenseNames()
+	{
+		return $this->hasMany(ExpenseName::class,'company_id','id');
+	}	
+	
+	public function expenseNamesFor(string $type ,int $companyId)
+	{
+		return ExpenseName::where('type',$type)->where('company_id',$companyId)->get();
+	}
+	
 	// public function contractCashflowReports():HasMany
 	// {
 	// 	return $this->hasMany(ContractCashflowReport::class , 'company_id','id');

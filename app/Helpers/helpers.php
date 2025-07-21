@@ -6220,13 +6220,13 @@ function getNonBankingNavigation(Company $company,User $user):array
 				[
 					'title'=>__('Expenses Settings'),
 					'show'=>true ,
-					'link'=>'#',
+					'link'=>route('view.expense.names',['company'=>$company->id]),
 					'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
 				],
 				[
 					'title'=>__('Manpower Settings'),
 					'show'=>true ,
-					'link'=>'#',
+					'link'=>route('view.departments',['company'=>$company->id]),
 					'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
 				]
 			]
@@ -6315,17 +6315,29 @@ function getNonBankingNavigation(Company $company,User $user):array
 				],
 			]
 		];
-		
-		$urls['expense-projection'] = [
-            'title'=>__('Expenses <br> Projection'),
-            'show'=>true ,
-			'link'=>route('create.expenses',['company'=>$company->id , 'study'=>$studyId]),
-		];
 		$urls['manpower-projection'] = [
             'title'=>__('Manpower <br> Projection'),
             'show'=>true ,
 			'link'=>route('view.manpower.for.non.banking',['company'=>$company->id , 'study'=>$studyId])
 		];
+		$urls['expense-projection'] = [
+            'title'=>__('Expenses <br> Projection'),
+			'show'=>true , 
+			'link'=>'#',
+			'submenu'=>[
+				[
+					'title'=>__('Expenses Projection'),
+					'show'=>true ,
+					'link'=>route('create.expenses',['company'=>$company->id , 'study'=>$studyId]),
+				],
+				[
+					'title'=>__('Expenses Per Employee'),
+					'show'=>true ,
+					'link'=>route('create.expense.per.employees',['company'=>$company->id , 'study'=>$studyId]),
+				]
+			]
+		];
+		
 		$urls['fixed-assets'] = [
 			'title'=>__('Fixed Assets'),
 			'show'=>true ,

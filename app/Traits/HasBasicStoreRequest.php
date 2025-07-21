@@ -74,7 +74,7 @@ trait HasBasicStoreRequest
 		
 		foreach($elementsToUpdate as $id){
 			$dataToUpdate = findByKey($relationDataArray,'id',$id);
-			$this->$relationName()->where($relationTableName.'.id',$id)->first()->update($dataToUpdate);
+			$this->$relationName()->where($relationTableName.'.id',$id)->first()->update(array_merge($dataToUpdate,$additionRelationData));
 		}
 	
 		foreach($relationDataArray as $data){
@@ -134,13 +134,13 @@ trait HasBasicStoreRequest
 		$this->refresh();
 		return $this;
 	}
-	public function storeRepeaterRelations(Request $request , array $relationNames,Company $company)
+	public function storeRepeaterRelations(Request $request , array $relationNames,Company $company,$additionalData = [])
 	{
 		foreach($relationNames as $relationName){
-	
-			$this->updateRepeaterRelation($request,$relationName,$this->$relationName()->getRelated()->getTable(),[
+			$additionalData = array_merge([
 				'company_id'=>$company->id
-			]);	
+			],$additionalData) ;
+			$this->updateRepeaterRelation($request,$relationName,$this->$relationName()->getRelated()->getTable(),$additionalData);	
 		}
 		
 	}

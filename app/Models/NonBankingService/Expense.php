@@ -19,7 +19,6 @@ class Expense extends Model
 		'custom_collection_policy'=>'array',
 		'revenue_stream_type'=>'array',
 		'stream_category_ids'=>'array',
-		
 	];
 		
 	public function company()

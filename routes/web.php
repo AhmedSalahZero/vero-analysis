@@ -333,6 +333,8 @@ Route::middleware([])->group(function () {
 					// route::get('leasing-categories','LeasingCategoriesController@index')->name('view.leasing.categories');
 					route::get('leasing-products/create','LeasingCategoriesController@create')->name('create.leasing.categories');
 					route::post('leasing-products/create','LeasingCategoriesController@store')->name('store.leasing.categories');
+					
+					
 					route::get('departments','DepartmentController@index')->name('view.departments');
 					route::get('departments/create','DepartmentController@create')->name('create.departments');
 					route::post('departments/create','DepartmentController@store')->name('store.departments');
@@ -340,6 +342,15 @@ Route::middleware([])->group(function () {
 					route::put('departments/{department}/update','DepartmentController@update')->name('update.departments');
 					route::delete('departments/{department}/destroy','DepartmentController@destroy')->name('departments.destroy');
 					
+					
+					route::get('expense-names','ExpenseController@index')->name('view.expense.names');
+					route::get('expense-names/create','ExpenseController@create')->name('create.expense.names');
+					route::post('expense-names/create','ExpenseController@store')->name('store.expense.names');
+					route::get('expense-names/{expenseType}/edit','ExpenseController@edit')->name('edit.expense.names');
+					route::put('expense-names/{expenseType}/update','ExpenseController@update')->name('update.expense.names');
+					route::delete('expense-names/{expenseType}/destroy','ExpenseController@destroy')->name('expense.names.destroy');
+					
+					route::get('expense-per-employees/{study}/create','ExpensePerEmployeeController@create')->name('create.expense.per.employees');
 					
 					// route::get('leasing-categories/edit/{leasingCategory}','LeasingCategoriesController@edit')->name('edit.leasing.categories');
 					// route::delete('leasing-categories/destroy/{leasingCategory}','LeasingCategoriesController@destroy')->name('destroy.leasing.categories');

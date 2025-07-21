@@ -39,7 +39,7 @@ class DepartmentController extends Controller
 		->when($request->get('to') , function($collection) use($dateFieldName,$to){
 			return $collection->where($dateFieldName,'<=',$to);
 		})
-		->sortByDesc('id')->values();
+		->sortBy('name')->values();
 		
 		return $collection;
 	}

@@ -34,26 +34,16 @@ use App\Models\NonBankingService\Department;
                     <div class="form-group row" style="flex:1;">
                         <div class="col-md-12 mt-3" data-repeater-row=".leasing-revenue-stream-category">
 
-                            <form id="form-id" class="kt-form kt-form--label-right" method="POST" enctype="multipart/form-data" action="{{  isset($disabled) && $disabled ? '#' :  $storeRoute  }}">
-                                @if(isset($department))
+                            <form id="form-id" class="kt-form kt-form--label-right" method="POST" enctype="multipart/form-data" action="{{ $storeRoute  }}">
+                                @if(isset($expenseType))
                                 @method('put')
                                 @endif
-                                <input type="hidden" name="id" value="{{ isset($department) ? $department->id : 0  }}">
+                                <input type="hidden" name="id" value="{{ isset($company) ? $company->id : 0  }}">
                                 <input type="hidden" name="company_id" value="{{ getCurrentCompanyId()  }}">
                                 <input type="hidden" name="creator_id" value="{{ \Auth::id()  }}">
                                 <div>
                                     <div class="row">
-                                        <div class="col-md-4">
-                                            <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style="">
-                                                {{ __('Department Name') }}
-                                            </h3>
-                                            <div class="form-group mb-0 d-flex" style="margin-right:auto;gap:20px;">
-                                                <input class="form-control" name="name" value="{{ isset($department) ? $department->getName():'' }}" placeholder="">
-                                            </div>
-                                        </div>
                                         <div class="col-md-2">
-
-
                                             <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style="">
                                                 {{ __('Expense Type') }}
                                             </h3>
@@ -62,7 +52,7 @@ use App\Models\NonBankingService\Department;
                                                     <div class="input-group date">
                                                         <select data-live-search="true" data-actions-box="true" name="expense_type" class="form-control select2-select ">
                                                             @foreach(getExpenseTypes() as $id => $title )
-                                                            <option @if( isset($department) && $department->getExpenseTypeId() == $id ) selected @endif value="{{ $id }}">{{$title}}</option>
+                                                            <option @if( isset($inEditMode) && $expenseType == $id ) selected @endif value="{{ $id }}">{{$title}}</option>
                                                             @endforeach
                                                         </select>
                                                     </div>
@@ -76,19 +66,17 @@ use App\Models\NonBankingService\Department;
 
                                     </div>
                                 </div>
-                                <div id="positions" class="leasing-repeater-parent">
+                                <div id="expenseNames" class="leasing-repeater-parent">
                                     <div class="form-group2  m-form__group2 row">
-                                        <div data-repeater-list="positions" class="col-lg-12">
+                                        <div data-repeater-list="expenseNames" class="col-lg-12">
 
-                                            @include('non_banking_services.manpower-structure._repeater' , [
-                                            'tableId'=>'positions',
-                                            'isRepeater'=>true ,
-                                            'canAddNewItem'=>true ,
-                                            'model'=>isset($department) ? $department : null
+                                            @include('non_banking_services.expense-structure._repeater' , [
+												'tableId'=>'expenseNames',
+												'isRepeater'=>true ,
+												'canAddNewItem'=>true ,
+												'inEditMode'=>$inEditMode,
+												'expenseNames'=>$expenseNames
                                             ])
-
-
-
                                         </div>
                                     </div>
 
