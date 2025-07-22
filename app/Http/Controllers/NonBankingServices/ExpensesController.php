@@ -7,105 +7,177 @@ use App\Equations\MonthlyFixedRepeatingAmountEquation;
 use App\Equations\OneTimeExpenseEquation;
 use App\Helpers\HHelpers;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreExpensesRequest;
 use App\Models\Company;
 use App\Models\NonBankingService\Expense;
+use App\Models\NonBankingService\ExpenseName;
 use App\Models\NonBankingService\Study;
+use App\ReadyFunctions\CollectionPolicyService;
 use App\Traits\NonBankingService;
+use Arr;
 use Illuminate\Http\Request;
 
 class ExpensesController extends Controller
 {
-	use NonBankingService ;
-	public function create(Company $company , Request $request,Study $study){
-		return view('non_banking_services.expenses.form', $this->getViewVars($company,$study));
-	}
-	protected function getViewVars(Company $company, Study $study){
-		return [
-			'company'=>$company ,
-			'type'=>'create',
-			'study'=>$study,
-			'model'=>$study ,
-			'expenseType'=>HHelpers::getClassNameWithoutNameSpace((new Expense())),
-			'title'=>__('Expenses'),
-			'storeRoute'=>route('store.expenses',['company'=>$company->id , 'study'=>$study->id]),
-			'yearsWithItsMonths' => $study->getOperationDurationPerYearFromIndexes(),
-			'revenueStreamTypes'=>$study->getCheckedRevenueStreamTypesForSelect()
-		];
-	}
-	
-	public function store(Company $company , Request $request,Study $study,MonthlyFixedRepeatingAmountEquation $monthlyFixedRepeatingAmountEquation,
-	ExpenseAsPercentageEquation $expenseAsPercentageEquation,
-	OneTimeExpenseEquation $oneTimeExpenseEquation
-	)
-	{
-		
-		$modelId = $request->get('model_id');
-		$modelName = $request->get('model_name');
-		$expenseType = $request->get('expense_type');
-		$studyId = $study->id;
-		$datesAsStringDateIndex = $study->getDatesAsStringAndIndex();
-		$operationStartDateAsIndex = $datesAsStringDateIndex[$study->getOperationStartDate()];
-		$model = ('\App\Models\\NonBankingService\\'.$modelName)::find($modelId);
-		foreach((array)$request->get('tableIds') as $tableId){
-			#::delete all
-			$model->generateRelationDynamically($tableId,$expenseType)->delete();
-			foreach((array)$request->get($tableId) as  $tableDataArr){
-				$tableDataArr['expense_type'] = $expenseType;
-					$name = $tableDataArr['name'];
-					if(isset($tableDataArr['start_date'])){
-						$tableDataArr['start_date'] = $datesAsStringDateIndex[$tableDataArr['start_date']];
-					}else{
-						$tableDataArr['start_date'] = $operationStartDateAsIndex;
-					}
-					if(isset($tableDataArr['end_date'])){
-						$tableDataArr['end_date'] = $datesAsStringDateIndex[$tableDataArr['end_date']];
-					}else{
-						$tableDataArr['end_date'] = $operationStartDateAsIndex;
-					}
-					$tableDataArr['relation_name']  = $tableId ;
-					/**
-					 * * Fixed Repeating
-					 */
-					$vatRate = $tableDataArr['vat_rate']??0;
-					$isDeductible = $tableDataArr['is_deductible'] ?? false;
-						
-					if(isset($tableDataArr['amount']) && $tableId == 'fixed_monthly_repeating_amount' ){
-						
-						$tableDataArr['monthly_repeating_amounts']  = $monthlyFixedRepeatingAmountEquation->calculate($tableDataArr['amount'],$tableDataArr['start_date'],$tableDataArr['end_date'],$tableDataArr['increase_interval'],$tableDataArr['increase_rate'],$isDeductible,$vatRate) ;
-					}
-					/**
-					 * * Expense As Percentage 
-					 */
-					if($tableId =='percentage_of_sales'){
-						$tableDataArr['expense_as_percentages']  = $expenseAsPercentageEquation->calculate($studyId,$tableDataArr['percentage_of'],$tableDataArr['revenue_stream_type']??[],$tableDataArr['stream_category_ids']??[],$tableDataArr['start_date'],$tableDataArr['end_date'],$tableDataArr['monthly_percentage'],$tableDataArr['payment_terms'],$vatRate,$isDeductible,$tableDataArr['withhold_tax_rate']) ;
-					}
-					/**
-					 * * One Time Expense 
-					 */
-					if($tableId == 'one_time_expense'){
-						$tableDataArr['payload']  = $oneTimeExpenseEquation->calculate($tableDataArr['amount'],$tableDataArr['start_date'],$isDeductible,$vatRate) ;
-					}
-					$tableDataArr['company_id']  = $company->id ;
-					$tableDataArr['model_id']   = $modelId ;
-					$tableDataArr['model_name']   = $modelName ;
-					if($tableDataArr['payment_terms'] == 'customize'){
-						$tableDataArr['custom_collection_policy'] = sumDueDayWithPayment($tableDataArr['payment_rate '],$tableDataArr['due_days']);
-					}
-					if($name){
-						$model->generateRelationDynamically($tableId,$expenseType)->create($tableDataArr);
-					}
+    use NonBankingService ;
+    public function create(Company $company, Request $request, Study $study)
+    {
+        return view('non_banking_services.expenses.form', $this->getViewVars($company, $study));
+    }
+    protected function getViewVars(Company $company, Study $study)
+    {
+        return [
+            'company'=>$company ,
+            'type'=>'create',
+            'study'=>$study,
+            'model'=>$study ,
+            'expenseType'=>HHelpers::getClassNameWithoutNameSpace((new Expense())),
+            'title'=>__('Expenses'),
+            'storeRoute'=>route('store.expenses', ['company'=>$company->id , 'study'=>$study->id]),
+            'yearsWithItsMonths' => $study->getOperationDurationPerYearFromIndexes(),
+            'revenueStreamTypes'=>$study->getCheckedRevenueStreamTypesForSelect()
+        ];
+    }
+    
+    public function store(
+        Company $company,
+        StoreExpensesRequest $request,
+        Study $study,
+        MonthlyFixedRepeatingAmountEquation $monthlyFixedRepeatingAmountEquation,
+        ExpenseAsPercentageEquation $expenseAsPercentageEquation,
+        OneTimeExpenseEquation $oneTimeExpenseEquation
+    ) {
+		// dd($request->all());
+        // $study->getDatesAsStringAndIndex();
+        $modelId = $request->get('model_id');
+        $modelName = $request->get('model_name');
+        $expenseType = $request->get('expense_type');
+        $studyId = $study->id;
+        $datesAsStringDateIndex = $study->getDatesAsStringAndIndex();
+        $datesAsIndexAndString = array_flip($datesAsStringDateIndex);
+        $operationStartDateAsIndex = $datesAsStringDateIndex[$study->getOperationStartDate()];
+        $studyExtendedEndDateAsIndex = Arr::last($datesAsStringDateIndex);
+		$studyEndDateAsIndex = $study->getStudyEndDateAsIndex($datesAsStringDateIndex,$study->getStudyEndDate());
+        $model = ('\App\Models\\NonBankingService\\'.$modelName)::find($modelId);
+        foreach ((array)$request->get('tableIds') as $tableId) {
+            #::delete all
+            $model->generateRelationDynamically($tableId, $expenseType)->delete();
+            foreach ((array)$request->get($tableId) as $tableDataArr) {
+				if(isset($tableDataArr['start_date'])){
+					$tableDataArr['start_date'] = $tableDataArr['start_date'].'-01';
 					
+				}if(isset($tableDataArr['end_date'])){
+					$tableDataArr['end_date'] = $tableDataArr['end_date'].'-01';
+					
+				}
+                $tableDataArr['expense_type'] = $expenseType;
+                $name = $tableDataArr['expense_name_id']??null;
+                    
+                if (isset($tableDataArr['start_date'])) {
+                    $tableDataArr['start_date'] = $datesAsStringDateIndex[$tableDataArr['start_date']];
+                } else {
+                    $tableDataArr['start_date'] = $operationStartDateAsIndex;
+                }
+                if (isset($tableDataArr['end_date'])) {
+                    $tableDataArr['end_date'] = $datesAsStringDateIndex[$tableDataArr['end_date']];
+                } else {
+                    $tableDataArr['end_date'] = $operationStartDateAsIndex;
+                }
+				/**
+				 * * to repeat 2 years inside json
+				 */
+				$loopEndDate = $tableDataArr['end_date'] >=  $studyEndDateAsIndex ? $studyExtendedEndDateAsIndex : $tableDataArr['end_date'];
 				
-			}
-		}
-		if($request->get('saveAndContinue')){
-			return response()->json([
-				'redirectTo'=>route('view.results.dashboard',['company'=>$company->id,'study'=>$study->id])
-			]);	
-		}
-		return response()->json([
-			'redirectTo'=>route('create.expenses',['company'=>$company->id,'study'=>$study->id])
-		]);
-		
-	}
+                $tableDataArr['relation_name']  = $tableId ;
+                /**
+                 * * Fixed Repeating
+                 */
+                $vatRate = $tableDataArr['vat_rate']??0;
+                $isDeductible = $tableDataArr['is_deductible'] ?? false;
+                if ($tableDataArr['payment_terms'] == 'customize') {
+					$tableDataArr['custom_collection_policy'] = sumDueDayWithPayment($tableDataArr['payment_rate '], $tableDataArr['due_days']);
+                }
+				$customCollectionPolicy = $tableDataArr['custom_collection_policy']??[];
+                if (is_array($isDeductible)) {
+                    $tableDataArr['is_deductible'] = $isDeductible[0];
+                    $isDeductible= $isDeductible[0];
+                }
+                if (isset($tableDataArr['amount']) && $tableId == 'fixed_monthly_repeating_amount') {
+                    $monthlyFixedRepeatingResults = $monthlyFixedRepeatingAmountEquation->calculate($tableDataArr['amount'], $tableDataArr['start_date'], $loopEndDate, $tableDataArr['increase_interval'], $tableDataArr['increase_rate'], $isDeductible, $vatRate);
+                    // $monthlyFixedRepeatingResults = $monthlyFixedRepeatingAmountEquation->calculate($tableDataArr['amount'], $tableDataArr['start_date'], $tableDataArr['end_date'], $tableDataArr['increase_interval'], $tableDataArr['increase_rate'], $isDeductible, $vatRate);
+                    $tableDataArr['monthly_repeating_amounts']  = $monthlyFixedRepeatingResults['total_before_vat'];
+                    $tableDataArr['total_vat']  = $monthlyFixedRepeatingResults['total_vat'];
+                    $tableDataArr['total_after_vat']  = $monthlyFixedRepeatingResults['total_after_vat'];
+                    $tableDataArr['payment_amounts'] = $this->calculateCollectionOrPaymentAmounts($tableDataArr['payment_terms'], $tableDataArr['total_after_vat'], $datesAsIndexAndString, $customCollectionPolicy) ;
+                }
+                /**
+                 * * Expense As Percentage
+                 */
+                if ($tableId =='percentage_of_sales') {
+                    $expenseAsPercentageResults = $expenseAsPercentageEquation->calculate($studyId, $tableDataArr['percentage_of'], $tableDataArr['revenue_stream_type']??[], $tableDataArr['stream_category_ids']??[], $tableDataArr['start_date'], $loopEndDate, $tableDataArr['monthly_percentage'], $tableDataArr['payment_terms'], $vatRate, $isDeductible, $tableDataArr['withhold_tax_rate']) ;
+                    $tableDataArr['expense_as_percentages']  =$expenseAsPercentageResults['total_before_vat']  ;
+                    $tableDataArr['total_vat']  =$expenseAsPercentageResults['total_vat']  ;
+                    $tableDataArr['total_after_vat']  =$expenseAsPercentageResults['total_after_vat']  ;
+                        
+                    $tableDataArr['payment_amounts'] = $this->calculateCollectionOrPaymentAmounts($tableDataArr['payment_terms'], $tableDataArr['total_after_vat'], $datesAsIndexAndString, $customCollectionPolicy) ;
+					
+                }
+                /**
+                 * * One Time Expense
+                 */
+                if ($tableId == 'one_time_expense') {
+                    $tableDataArr['payload']  = $oneTimeExpenseEquation->calculate($tableDataArr['amount'], $tableDataArr['start_date'], $isDeductible, $vatRate) ;
+                }
+                $tableDataArr['company_id']  = $company->id ;
+                $tableDataArr['model_id']   = $modelId ;
+                $tableDataArr['model_name']   = $modelName ;
+                if ($name) {
+                    $model->generateRelationDynamically($tableId, $expenseType)->create($tableDataArr);
+                }
+                    
+                
+            }
+        }
+        if ($request->get('saveAndContinue')) {
+            return response()->json([
+                'redirectTo'=>route('view.results.dashboard', ['company'=>$company->id,'study'=>$study->id])
+            ]);
+        }
+        return response()->json([
+            'redirectTo'=>route('create.expenses', ['company'=>$company->id,'study'=>$study->id])
+        ]);
+        
+    }
+    private function calculateCollectionOrPaymentAmounts(string $paymentTerm, array $totalAfterVat, array $datesAsIndexAndString, array $customCollectionPolicy)
+    {
+        $collectionPolicyType  = $paymentTerm == 'customize' ? 'customize':'system_default';
+        $collectionPolicyValue = $collectionPolicyType ;
+        $dateValue = $totalAfterVat;
+        if ($collectionPolicyType == 'customize') {
+            $collectionPolicyValue = $customCollectionPolicy ;
+        } elseif ($collectionPolicyType == 'system_default' && $paymentTerm=='cash') {
+            $collectionPolicyValue = 'monthly';
+        }
+        $dateValue = convertIndexKeysToString($dateValue, $datesAsIndexAndString);
+        return (new CollectionPolicyService())->applyCollectionPolicy(true, $collectionPolicyType, $collectionPolicyValue, $dateValue);
+                        
+    }
+    public function getExpenseNamesForCategory(Company $company, Request $request)
+    {
+        $categoryId =  $request->get('expenseCategoryId');
+        $result = ExpenseName::where('company_id', $company->id)->where('expense_type', $categoryId)->orderBy('name')->get();
+        return response()->json([
+            'status'=>true ,
+            'data'=>$result
+        ]);
+    }
+    public function getExpenseNamesForCategoryOnlyEmployees(Company $company, Request $request)
+    {
+        $categoryId =  $request->get('expenseCategoryId');
+        $result = ExpenseName::where('company_id', $company->id)->where('is_employee_expense', 1)->where('expense_type', $categoryId)->orderBy('name')->get();
+        return response()->json([
+            'status'=>true ,
+            'data'=>$result
+        ]);
+    }
 }

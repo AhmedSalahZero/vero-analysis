@@ -24,6 +24,25 @@
 'addExpenseType'=>false,
 'hideByDefault'=>true
 ])
+<style>
+.btn-div{
+	padding: 0 !important;
+    width: 30px !important;
+    height: 30px !important;
+}
+.btn-div span {
+	font-size:20px !important;
+	cursor:pointer;
+}
+.trash_icon{
+	width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+	cursor:pointer;
+}
+</style>
 @php
 
 $canAddNewItem = true;
@@ -81,7 +100,7 @@ style="display:none"
         <thead>
             <tr>
                 @if(!$removeActionBtn)
-                <x-tables.repeater-table-th :fontSizeClass="$fontSizeClass" class="col-md-1 action-class" :title="$actionBtnTitle"></x-tables.repeater-table-th>
+                <x-tables.repeater-table-th :fontSizeClass="$fontSizeClass" class="col-md-1 action-class" :title="'+/-'"></x-tables.repeater-table-th>
                 @endif
                 {{ $ths }}
             </tr>
@@ -104,13 +123,14 @@ style="display:none"
         <td>
 			@if($showAddBtnAndPlus)
             @if($canAddNewItem && !$removeActionBtn)
-            <div data-repeater-create="" class="btn btn btn-sm text-white add-row   border-green bg-green  m-btn m-btn--icon m-btn--pill m-btn--wide {{__('right')}}">
+            <div data-repeater-create="" class="btn btn btn-sm text-white add-row btn-div  border-green bg-green  m-btn m-btn--icon m-btn--pill m-btn--wide {{__('right')}}">
                 <span>
-                    <i class="fa fa-plus"> </i>
+					+
+                    {{-- <i class="fa fa-plus"> </i> --}}
                     <span>
-                        @if(!$hideAddBtn)
+                        {{-- @if(!$hideAddBtn)
                         {{ __('Add') }}
-                        @endif
+                        @endif --}}
                     </span>
                 </span>
             </div>

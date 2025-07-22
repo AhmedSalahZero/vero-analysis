@@ -13,7 +13,14 @@
     <title>VERO ANALYSIS</title>
     <meta name="description" content="Latest updates and statistic charts">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
+<style>
+.kt-header-menu .kt-menu__nav > .kt-menu__item .kt-menu__submenu > .kt-menu__subnav > .kt-menu__item > .kt-menu__link .kt-menu__link-text{
+/*	font-size:0.8rem !important;
+}
+.kt-header-menu .kt-menu__nav > .kt-menu__item > .kt-menu__link .kt-menu__link-text{
+	/*font-size:0.8rem !important;*/
+}
+</style>
 
     <script>
         let pageLoaded = false;

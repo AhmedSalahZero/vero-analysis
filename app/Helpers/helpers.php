@@ -6212,25 +6212,7 @@ function getNonBankingNavigation(Company $company,User $user):array
 	
 	$urls = [
 		'home'=>generateMenuItem(__('Home'), $user->can('view home')  , route('home'), []),
-		'settings'=>[
-            'title'=>__('General <br> Settings'),
-            'show'=>true ,
-			'link'=>'#',
-			'submenu'=>[
-				[
-					'title'=>__('Expenses Settings'),
-					'show'=>true ,
-					'link'=>route('view.expense.names',['company'=>$company->id]),
-					'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
-				],
-				[
-					'title'=>__('Manpower Settings'),
-					'show'=>true ,
-					'link'=>route('view.departments',['company'=>$company->id]),
-					'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
-				]
-			]
-				],
+	
 		'studies'=>[
 			'title'=>__('Studies <br> Table'),
 			'show'=>true ,
@@ -6260,8 +6242,13 @@ function getNonBankingNavigation(Company $company,User $user):array
 			'show'=>true ,
 			'link'=>route('create.microfinance.branches.assumption',['company'=>$company->id , 'study'=>$studyId])
 		];
-		$urls['sales-projection'] = [
-            'title'=>__('Sales <br> Projection'),
+		$urls['projection'] = [
+			'title'=>__('Projections'),
+			'show'=>true ,
+			'link'=>'#',
+			'submenu'=>[
+				[
+            'title'=>__('Sales Projection'),
             'show'=>true ,
 			'link'=>'#',
 			'submenu'=>[
@@ -6314,14 +6301,16 @@ function getNonBankingNavigation(Company $company,User $user):array
 					'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
 				],
 			]
-		];
-		$urls['manpower-projection'] = [
-            'title'=>__('Manpower <br> Projection'),
+			],
+			
+			[
+            'title'=>__('Manpower Projection'),
             'show'=>true ,
 			'link'=>route('view.manpower.for.non.banking',['company'=>$company->id , 'study'=>$studyId])
-		];
-		$urls['expense-projection'] = [
-            'title'=>__('Expenses <br> Projection'),
+		] ,
+		
+			[
+            'title'=>__('Expenses Projection'),
 			'show'=>true , 
 			'link'=>'#',
 			'submenu'=>[
@@ -6336,7 +6325,12 @@ function getNonBankingNavigation(Company $company,User $user):array
 					'link'=>route('create.expense.per.employees',['company'=>$company->id , 'study'=>$studyId]),
 				]
 			]
+		]
+		
+			]
 		];
+
+
 		
 		$urls['fixed-assets'] = [
 			'title'=>__('Fixed Assets'),
@@ -6361,12 +6355,12 @@ function getNonBankingNavigation(Company $company,User $user):array
 			]
 		];
 		$urls['analytical-reports'] = [
-            'title'=>__('Analytical <br> Reports'),
+            'title'=>__('Reports'),
             'show'=>true ,
-			'link'=>'#'
-		];
-		$urls['financial-statements'] = [
-            'title'=>__('Financial <br> Statements'),
+			'link'=>'#',
+			'submenu'=>[
+				[
+            'title'=>__('Financial Statements'),
             'show'=>true ,
 			'link'=>'#',
 			'submenu'=>[
@@ -6388,8 +6382,17 @@ function getNonBankingNavigation(Company $company,User $user):array
 					'link'=>'#',
 					'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
 				],
+			],
+			
+		],
+		[
+			 'title'=>__('Analytical Reports'),
+            'show'=>true ,
+			'link'=>'#',
+		]
 			]
 		];
+
 		$urls['dashboard'] = [
             'title'=>__('Result <br> Dashboard'),
             'show'=>true ,
@@ -6407,6 +6410,26 @@ function getNonBankingNavigation(Company $company,User $user):array
 			// 	]
 			// ]
 		];
+		
+		$urls['settings']=[
+            'title'=>__('General <br> Settings'),
+            'show'=>true ,
+			'link'=>'#',
+			'submenu'=>[
+				[
+					'title'=>__('Expenses Settings'),
+					'show'=>true ,
+					'link'=>route('view.expense.names',['company'=>$company->id]),
+					'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
+				],
+				[
+					'title'=>__('Manpower Settings'),
+					'show'=>true ,
+					'link'=>route('view.departments',['company'=>$company->id]),
+					'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
+				]
+			]
+				];
 	}
 	return $urls;
 	
@@ -8182,4 +8205,13 @@ function newInstanceOf($class , $arrayOfItems)
 function generateReceiptNumber(string $code )
 {
 	return $code . floor(time()-999999999);
+}
+function convertIndexKeysToString(array $items , array $datesAsIndexAndString)
+{
+	$result = [];
+	foreach($items as $dateAsIndex => $value){
+		$dateAsString = $datesAsIndexAndString[$dateAsIndex];
+		$result[$dateAsString] = $value;
+	}
+	return $result ; 
 }

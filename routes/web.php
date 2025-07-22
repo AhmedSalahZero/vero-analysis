@@ -451,7 +451,8 @@ Route::middleware([])->group(function () {
 						 */
 						route::get('expenses','ExpensesController@create')->name('create.expenses');
 						route::post('expenses','ExpensesController@store')->name('store.expenses');
-						
+						route::get('expense-name-from-category','ExpensesController@getExpenseNamesForCategory')->name('get.expense.name.for.category');
+						route::get('expense-name-from-category-only-employees','ExpensesController@getExpenseNamesForCategoryOnlyEmployees')->name('get.expense.name.for.category.only.in.employee');
 						route::get('fixed-assets/ffe','FfeFixedAssetsController@create')->name('create.ffe.fixed.assets');
 						route::post('fixed-assets/ffe','FfeFixedAssetsController@store')->name('store.ffe.fixed.assets');
 						

@@ -116,8 +116,8 @@ class IncomeStatementController extends Controller
 		$directFactoringBreakdown = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('direct_factoring_breakdowns')
 		->where('study_id',$study->id)
 		->selectRaw('interest_revenue,bank_interest_expense')->get()->toArray();
+	
 		$formattedDirectFactoring = [];
-		
 		foreach($directFactoringBreakdown as $currentDirectFactoringBreakdown){
 			$interestRevenues= (array)json_decode($currentDirectFactoringBreakdown->interest_revenue);
 			$bankInterestExpenses= (array)json_decode($currentDirectFactoringBreakdown->bank_interest_expense);
@@ -146,6 +146,7 @@ class IncomeStatementController extends Controller
 			$isPortfolio = $portfolioLoanType == 'portfolio'; 
 			$revenueStreamType = $loanSchedulePaymentAsStdClass->revenue_stream_type;
 			$interestAmounts = json_decode($loanSchedulePaymentAsStdClass->interestAmount);
+			// dd($revenueStreamType,$interestAmounts);
 			$testLoopIndex ++ ;
 			foreach($interestAmounts as $currentMonthIndex => $interestAmount){
 				
@@ -158,6 +159,7 @@ class IncomeStatementController extends Controller
 						$salesRevenuePerTypes[$revenueStreamType][$currentMonthIndex] =  isset($salesRevenuePerTypes[$revenueStreamType][$currentMonthIndex]) ? $salesRevenuePerTypes[$revenueStreamType][$currentMonthIndex] + $interestAmount : $interestAmount;
 						$salesRevenuePerTypes['total_revenue'][$currentMonthIndex] =  isset($salesRevenuePerTypes['total_revenue'][$currentMonthIndex]) ? $salesRevenuePerTypes['total_revenue'][$currentMonthIndex] + $interestAmount : $interestAmount;
 						$tableDataFormatted[0]['main_items']['sales-revenue']['data'][$currentMonthIndex]  = $salesRevenuePerTypes['total_revenue'][$currentMonthIndex];
+						dump($salesRevenuePerTypes);
 						$previousRecord = $tableDataFormatted[0]['main_items']['sales-revenue']['data'][$currentMonthIndex-1] ?? 0;
 						$currentValue = $tableDataFormatted[0]['main_items']['sales-revenue']['data'][$currentMonthIndex] ;
 						$tableDataFormatted[0]['main_items']['growth-rate']['data'][$currentMonthIndex] =  $previousRecord ?  ($currentValue - $previousRecord) / $previousRecord * 100 : 0; 
@@ -184,12 +186,12 @@ class IncomeStatementController extends Controller
 				}
 			
 		}
-	
+		
 		$salaryExpenses = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('departments')
 		->join('positions','positions.department_id','=','departments.id')
 		->selectRaw('expense_type,salary_expenses,expense_type')->where('type','manpower')->where('departments.company_id',$company->id)->get() ;
 		
-		$expenses = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('expenses')->selectRaw('expense_category,name,relation_name,monthly_repeating_amounts,expense_as_percentages,payload')->where('model_id',$study->id)->where('model_name','Study')->get()->toArray();
+		$expenses = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('expenses')->join('expense_names','expense_names.id','=','expenses.expense_name_id')->selectRaw('expenses.expense_category,expense_names.name as name,expenses.relation_name,expenses.monthly_repeating_amounts,expenses.expense_as_percentages,payload')->where('expenses.model_id',$study->id)->where('expenses.model_name','Study')->get()->toArray();
 		$columnPerTypes = [
 			'one_time_expense'=>'payload',
 			'percentage_of_sales'=>'expense_as_percentages',
@@ -207,12 +209,12 @@ class IncomeStatementController extends Controller
 				$salaryExpensesForCategory[$expenseCategory][$monthIndex] = isset($salaryExpensesForCategory[$expenseCategory][$monthIndex]) ?  $salaryExpensesForCategory[$expenseCategory][$monthIndex] + $currentSalaryExpense : $currentSalaryExpense;
 			}
 		}
-		
 		foreach($expenses as $expense){
 		
 			$name = $expense->name;
 			$relationName = $expense->relation_name;
 			$expenseCategory = $expense->expense_category;
+			
 			$currentOrderIndex = $orderIndexPerExpenseCategory[$expenseCategory];
 			$tableDataFormatted[$currentOrderIndex]['main_items'][$expenseCategory]['options']['title'] =$expenseMainTitlesMapping[$expenseCategory] ;
 			
@@ -315,7 +317,6 @@ class IncomeStatementController extends Controller
 		$studyMonthsForViews=$study->getStudyDurationPerYearFromIndexesForView();
 		$tableDataFormatted = HArr::addTotalMonthsPerYear($tableDataFormatted,$financialYearsEndMonths);
 		ksort($tableDataFormatted);
-		
         return view('non_banking_services.income-statement.forecast', [
 			'company'=>$company,
 			'studyMonthsForViews'=>$studyMonthsForViews,
@@ -355,14 +356,7 @@ class IncomeStatementController extends Controller
 			'study_start_date'=>Carbon::make($request->get('study_start_date'))->format('Y-m-d'),
 			'study_end_date'=>Carbon::make($request->get('study_end_date'))->format('Y-m-d'),
 			'operation_start_date'=>Carbon::make($request->get('operation_start_date'))->format('Y-m-d'),
-			// 'has_leasing'=>$request->boolean('has_leasing'),
-			// 'has_direct_factoring'=>$request->boolean('has_direct_factoring'),
-			// 'has_reverse_factoring'=>$request->boolean('has_reverse_factoring'),
-			// 'has_ijara_mortgage'=>$request->boolean('has_ijara_mortgage'),
-			// 'has_portfolio_mortgage'=>$request->boolean('has_portfolio_mortgage'),
-			// 'has_micro_finance'=>$request->boolean('has_micro_finance'),
-			// 'has_securitization'=>$request->boolean('has_securitization'),
-			// 'has_consumer_finance'=>$request->boolean('has_consumer_finance'),
+
 			
 		]);
 		$data = $request->except(['_token']) ;

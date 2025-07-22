@@ -37,8 +37,8 @@ use App\Models\NonBankingService\Expense;
                     <input type="hidden" name="tableIds[]" value="{{ $tableId }}">
                     <x-tables.repeater-table :font-size-class="'font-14px'" :append-save-or-back-btn="true" :repeater-with-select2="true" :parentClass="'js-toggle-visibility'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
                         <x-slot name="ths">
-                            <x-tables.repeater-table-th :font-size-class="'font-14px'" class="col-md-2 header-border-down" :title="__('Existing <br> Expense')"></x-tables.repeater-table-th>
-                            <x-tables.repeater-table-th :font-size-class="'font-14px'" class="col-md-2 header-border-down" :title="__('New <br> Expense Name')"></x-tables.repeater-table-th>
+                            <x-tables.repeater-table-th :font-size-class="'font-14px'" class="col-md-2 header-border-down" :title="__('Expense <br> Category')"></x-tables.repeater-table-th>
+                            <x-tables.repeater-table-th :font-size-class="'font-14px'" class="col-md-2 header-border-down" :title="__('Expense <br> Name')"></x-tables.repeater-table-th>
                             <x-tables.repeater-table-th :font-size-class="'font-14px'" class="col-md-2 header-border-down" :title="__('Department')" :helperTitle="__('Department')"></x-tables.repeater-table-th>
                             <x-tables.repeater-table-th :font-size-class="'font-14px'" class="col-md-2 header-border-down" :title="__('Employee <br> Position')"></x-tables.repeater-table-th>
                             <x-tables.repeater-table-th :font-size-class="'font-14px'" class="col-md-1 header-border-down" :title="__('Start <br> Date')" :helperTitle="__('Default date is Income Statement start date, if else please select a date')"></x-tables.repeater-table-th>
@@ -76,10 +76,18 @@ use App\Models\NonBankingService\Expense;
                                 <td>
                                     <x-form.select :selectedValue="isset($subModel) ? $subModel->getExpenseCategory() : 'cash'" :options="getExpenseCategoriesForSelect2()" :add-new="false" class="select2-select repeater-select expense_category " :all="false" name="@if($isRepeater) expense_category @else {{ $tableId }}[0][expense_category] @endif"></x-form.select>
                                 </td>
-
-                                <td>
-                                    <input value="{{ isset($subModel) ?  $subModel->getName() : old('name') }}" class="form-control" @if($isRepeater) name="name" @else name="{{ $tableId }}[0][name]" @endif type="text">
+								
+								 <td>
+                                        <x-form.select data-current-selected="{{ isset($subModel) ? $subModel->getExpenseNameId() : '' }}" :selectedValue="isset($subModel) ? $subModel->getExpenseNameId() : ''" :options="[]" :add-new="false" class="select2-select repeater-select expense_name_id " :all="false" name="@if($isRepeater) expense_name_id @else {{ $tableId }}[0][expense_name_id] @endif"></x-form.select>
                                 </td>
+								
+								
+									
+                                {{-- <td>
+                                    <input value="{{ isset($subModel) ?  $subModel->getName() : old('name') }}" class="form-control" @if($isRepeater) name="name" @else name="{{ $tableId }}[0][name]" @endif type="text">
+                                </td> --}}
+								
+								
 
                                 <td>
                                     {{-- this must be multiselect --}}
@@ -515,4 +523,29 @@ use App\Models\NonBankingService\Expense;
 
 
 </script>
+
+
+<script>
+	$(document).on('change','select.expense_category',function(){
+		const parent = $(this).closest('tr');
+		const expenseCategoryId = $(this).val();
+		const currentSelected = $(parent).find('select.expense_name_id').attr('data-current-selected');
+		console.log(currentSelected,expenseCategoryId)
+		$.ajax({
+			url:"{{ route('get.expense.name.for.category.only.in.employee',['company'=>$company->id,'study'=>$study->id]) }}",
+			data:{expenseCategoryId},
+			success:function(res){
+				let result = res.data ;
+				let options = '';
+				for(index in result){
+					var row = result[index];
+					options += `<option ${currentSelected==row.id ? 'selected':''} value="${row.id}">${row.name}</option>`;
+				}
+				$(parent).find('select.expense_name_id').empty().append(options).trigger('change');
+			}
+		})
+	})
+	$('select.expense_category').trigger('change')
+</script>
+
 @endpush

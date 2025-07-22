@@ -100,7 +100,7 @@ use App\Models\NonBankingService\Expense;
                                     </td>
 									
                                     <td>
-                                        <input value="{{ isset($subModel) ?  $subModel->getName() : old('name') }}" class="form-control" @if($isRepeater) name="name" @else name="{{ $tableId }}[0][name]" @endif type="text">
+                                        <x-form.select data-current-selected="{{ isset($subModel) ? $subModel->getExpenseNameId() : '' }}" :selectedValue="isset($subModel) ? $subModel->getExpenseNameId() : ''" :options="[]" :add-new="false" class="select2-select repeater-select expense_name_id " :all="false" name="@if($isRepeater) expense_name_id @else {{ $tableId }}[0][expense_name_id] @endif"></x-form.select>
                                     </td>
 
                                     <td>
@@ -342,7 +342,7 @@ use App\Models\NonBankingService\Expense;
                                     </td>
 									
                                     <td>
-                                        <input value="{{ isset($subModel) ?  $subModel->getName() : old('name') }}" class="form-control" @if($isRepeater) name="name" @else name="{{ $tableId }}[0][name]" @endif type="text">
+                                        <x-form.select data-current-selected="{{ isset($subModel) ? $subModel->getExpenseNameId() : '' }}" :selectedValue="isset($subModel) ? $subModel->getExpenseNameId() : ''" :options="[]" :add-new="false" class="select2-select repeater-select expense_name_id " :all="false" name="@if($isRepeater) expense_name_id @else {{ $tableId }}[0][expense_name_id] @endif"></x-form.select>
                                     </td>
                                     <td>
                                         <x-form.select  :selectedValue="isset($subModel) ? $subModel->getPercentageOf() : 'service'" :options="getExpensesPercentageOfForSelect2()" :multiple="false" :add-new="false" class="select2-select repeater-select percentage-of-stream-type-js  " :all="false" name="@if($isRepeater) percentage_of @else {{ $tableId }}[0][percentage_of] @endif"></x-form.select>
@@ -641,9 +641,14 @@ use App\Models\NonBankingService\Expense;
                                         <x-form.select :selectedValue="isset($subModel) ? $subModel->getExpenseCategory() : 'cash'" :options="getExpenseCategoriesForSelect2()" :add-new="false" class="select2-select repeater-select expense_category " :all="false" name="@if($isRepeater) expense_category @else {{ $tableId }}[0][expense_category] @endif"></x-form.select>
                                     </td>
 									
-                                <td>
+									
+									 <td>
+                                        <x-form.select data-current-selected="{{ isset($subModel) ? $subModel->getExpenseNameId() : '' }}" :selectedValue="isset($subModel) ? $subModel->getExpenseNameId() : ''" :options="[]" :add-new="false" class="select2-select repeater-select expense_name_id " :all="false" name="@if($isRepeater) expense_name_id @else {{ $tableId }}[0][expense_name_id] @endif"></x-form.select>
+                                    </td>
+									
+                                {{-- <td>
                                     <input value="{{ isset($subModel) ?  $subModel->getName() : old('name') }}" class="form-control" @if($isRepeater) name="name" @else name="{{ $tableId }}[0][name]" @endif type="text">
-                                </td>
+                                </td> --}}
 
                                 <td>
                                     <x-form.select :selectedValue="isset($subModel) ? $subModel->getRevenueStreamTypes() : 'service'" :options="$revenueStreamTypes" :multiple="true" :add-new="false" class="select2-select repeater-select  revenue-stream-type-js" :all="false" name="@if($isRepeater) revenue_stream_type @else {{ $tableId }}[0][revenue_stream_type] @endif"></x-form.select>
@@ -921,8 +926,8 @@ use App\Models\NonBankingService\Expense;
 									
                                 {{-- <input type="hidden" name="id" value="{{ isset($subModel) ? $subModel->id : 0 }}"> --}}
                                 <td>
-                                    <input value="{{ isset($subModel) ?  $subModel->getName() : old('name') }}" class="form-control" @if($isRepeater) name="name" @else name="{{ $tableId }}[0][name]" @endif type="text">
-                                </td>
+                                        <x-form.select data-current-selected="{{ isset($subModel) ? $subModel->getExpenseNameId() : '' }}" :selectedValue="isset($subModel) ? $subModel->getExpenseNameId() : ''" :options="[]" :add-new="false" class="select2-select repeater-select expense_name_id " :all="false" name="@if($isRepeater) expense_name_id @else {{ $tableId }}[0][expense_name_id] @endif"></x-form.select>
+                                    </td>
 
                                 <td>
                                     {{-- this must be multiselect --}}
@@ -1169,8 +1174,8 @@ use App\Models\NonBankingService\Expense;
                                     </td>
                                 {{-- <input type="hidden" name="id" value="{{ isset($subModel) ? $subModel->id : 0 }}"> --}}
                                 <td>
-                                    <input value="{{ isset($subModel) ?  $subModel->getName() : old('name') }}" class="form-control" @if($isRepeater) name="name" @else name="{{ $tableId }}[0][name]" @endif type="text">
-                                </td>
+                                        <x-form.select data-current-selected="{{ isset($subModel) ? $subModel->getExpenseNameId() : '' }}" :selectedValue="isset($subModel) ? $subModel->getExpenseNameId() : ''" :options="[]" :add-new="false" class="select2-select repeater-select expense_name_id " :all="false" name="@if($isRepeater) expense_name_id @else {{ $tableId }}[0][expense_name_id] @endif"></x-form.select>
+                                    </td>
 
                                 <td>
                                     <x-calendar :value="isset($subModel) ? $subModel->getStartDateFormatted() : $study->getStudyStartDate() " :id="'start_date'" name="start_date"></x-calendar>
@@ -1480,18 +1485,15 @@ use App\Models\NonBankingService\Expense;
 
     }
 
-    $(function() {
-
-        $('.only-month-year-picker').each(function(index, dateInput) {
-            //     reinitalizeMonthYearInput(dateInput)
-        })
-    });
+ 
     //  $(document).on('change', '#expense_type', function() {
     //      $('.js-parent-to-table').hide();
     //      let tableId = '.' + $(this).val();
     //      $(tableId).closest('.js-parent-to-table').show();
     //
     //  }) 
+	
+	
     $(document).on('click', '.js-type-btn', function(e) {
         e.preventDefault();
         $('.js-type-btn').removeClass('active');
@@ -1648,8 +1650,129 @@ use App\Models\NonBankingService\Expense;
 </script>
 <script src="/custom/js/non-banking-services/common.js"></script>
 <script>
+	$(document).on('change','select.expense_category',function(){
+		const parent = $(this).closest('tr');
+		const expenseCategoryId = $(this).val();
+		const currentSelected = $(parent).find('select.expense_name_id').attr('data-current-selected');
+		console.log(currentSelected,expenseCategoryId)
+		$.ajax({
+			url:"{{ route('get.expense.name.for.category',['company'=>$company->id,'study'=>$study->id]) }}",
+			data:{expenseCategoryId},
+			success:function(res){
+				let result = res.data ;
+				let options = '';
+				for(index in result){
+					var row = result[index];
+					options += `<option ${currentSelected==row.id ? 'selected':''} value="${row.id}">${row.name}</option>`;
+				}
+				$(parent).find('select.expense_name_id').empty().append(options).trigger('change');
+			}
+		})
+	})
+	$('select.expense_category').trigger('change')
+</script>
+<script>
 $(function(){
 //	$('button.js-type-btn[data-value="percentage_of_sales"]').trigger('click')
+})
+</script>
+<script>
+
+$(function(){
+	$('.only-month-year-picker').each(function(index, dateInput) {
+    var $input = $(dateInput);
+    var currentDate = $input.val();
+
+    var startDate = "{{ isset($studyStartDate) && $studyStartDate ? $studyStartDate : -1 }}";
+    startDate = startDate == '-1' ? '' : startDate;
+
+    var endDate = "{{ isset($studyEndDate) && $studyEndDate ? $studyEndDate : -1 }}";
+    endDate = endDate == '-1' ? '' : endDate;
+
+    var options = {
+        viewMode: "years",
+        minViewMode: "months",
+        todayHighlight: false,
+        clearBtn: true,
+        autoclose: true,
+        format: "yyyy-mm-01",
+    };
+
+    if (startDate && endDate) {
+        options.startDate = new Date(startDate);
+        options.endDate = new Date(endDate);
+    }
+
+    $input.datepicker(options);
+
+    // ✅ معالجة القيمة الافتراضية
+    if (currentDate) {
+        try {
+            let date = new Date(currentDate);
+            let year = date.getFullYear();
+            let month = String(date.getMonth() + 1).padStart(2, '0');
+
+            let displayValue = `${year}-${month}`;
+            let fullValue = `${year}-${month}-01`;
+
+            // عرض السنة والشهر فقط
+            $input.val(displayValue);
+            $input.data('full-date', fullValue);
+
+            // تعيين التاريخ للـ datepicker
+            $input.datepicker('setDate', new Date(fullValue));
+        } catch (e) {
+            console.warn('Invalid default date:', currentDate);
+        }
+    }
+
+    // ✅ عند تغيير التاريخ
+    $input.on('changeDate', function(e) {
+        if (e.date) {
+            let year = e.date.getFullYear();
+            let month = String(e.date.getMonth() + 1).padStart(2, '0');
+
+            let displayValue = `${year}-${month}`;
+            let fullValue = `${year}-${month}-01`;
+
+            setTimeout(() => {
+                $input.val(displayValue);
+                $input.data('full-date', fullValue);
+            }, 10);
+        }
+    });
+	$input.on('blur', function() {
+    let val = $input.val();
+    // إذا كانت الصيغة مثل 2025-06-01
+    if (/^\d{4}-\d{2}-01$/.test(val)) {
+        let parts = val.split('-');
+        let year = parts[0];
+        let month = parts[1];
+        let fullDate = `${year}-${month}-01`;
+        let displayDate = `${year}-${month}`;
+
+        $input.val(displayDate); // نعرض السنة والشهر فقط
+        $input.data('full-date', fullDate); // نخزن التاريخ الكامل
+    }
+});
+
+});
+
+
+
+// ✅ قبل إرسال النموذج، نُعيد القيم الكاملة
+$('form').on('submit', function() {
+    $('.only-month-year-picker').each(function(_, input) {
+        var $input = $(input);
+        var fullDate = $input.data('full-date');
+
+        if (fullDate) {
+            $input.val(fullDate);
+        }
+    });
+});
+
+
 })
 </script>
 @endpush

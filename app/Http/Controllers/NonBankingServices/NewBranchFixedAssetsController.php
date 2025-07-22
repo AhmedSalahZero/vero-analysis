@@ -2,9 +2,7 @@
 
 namespace App\Http\Controllers\NonBankingServices;
 
-use App\Equations\ExpenseAsPercentageEquation;
-use App\Equations\MonthlyFixedRepeatingAmountEquation;
-use App\Equations\OneTimeExpenseEquation;
+
 use App\Helpers\HHelpers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\NonBankingServices\StoreNewBranchFixedAssetsRequest;

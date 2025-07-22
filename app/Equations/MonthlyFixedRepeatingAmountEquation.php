@@ -4,7 +4,9 @@ class MonthlyFixedRepeatingAmountEquation
 {
 	public function calculate(float $amount,int $startDateAsIndex,int $endDateAsIndex,string $increaseInterval,float $increaseRate,bool $isDeductible,float $vatRate):array 
 	{
-		$result = [];
+		$resultWithoutVat = [];
+		$resultWithVat = [];
+		$resultVat = [];
 		$currentStartDateAsIndex = $startDateAsIndex ;
 		$intervalMode = [
 			'quarterly'=> 3 ,
@@ -13,21 +15,31 @@ class MonthlyFixedRepeatingAmountEquation
 		][$increaseInterval];
 		
 		$counter = 0 ;
-		$amount = $isDeductible ? $amount : $amount  * (1+($vatRate / 100));
+		$amountBeforeVat = $amount ; 
+		$amountAfterVat = $isDeductible ? $amountBeforeVat : $amountBeforeVat  * (1+($vatRate / 100));
+		$vat = $amountAfterVat - $amountBeforeVat;
 		for($currentStartDateAsIndex ; $currentStartDateAsIndex <= $endDateAsIndex ; $currentStartDateAsIndex++ ){
 			if($counter!=0&&$counter % $intervalMode == 0){
-				$result[$currentStartDateAsIndex] = $result[$currentStartDateAsIndex-1] * (1+$increaseRate/100); 
+				$resultWithoutVat[$currentStartDateAsIndex] = $resultWithoutVat[$currentStartDateAsIndex-1] * (1+$increaseRate/100); 
+				$resultWithVat[$currentStartDateAsIndex] = $resultWithVat[$currentStartDateAsIndex-1] * (1+$increaseRate/100); 
 			}else{
-				if(!isset($result[$currentStartDateAsIndex-1])){
-					$result[$currentStartDateAsIndex] = $amount ;
+				if(!isset($resultWithoutVat[$currentStartDateAsIndex-1])){
+					$resultWithoutVat[$currentStartDateAsIndex] = $amountBeforeVat ;
+					$resultWithVat[$currentStartDateAsIndex] = $amountAfterVat ;
+					$resultVat[$currentStartDateAsIndex] = $amountAfterVat - $amountBeforeVat ;
 				}else{
-					$result[$currentStartDateAsIndex] = $result[$currentStartDateAsIndex-1] ; 
-					
+					$resultWithoutVat[$currentStartDateAsIndex] = $resultWithoutVat[$currentStartDateAsIndex-1] ; 
+					$resultWithVat[$currentStartDateAsIndex] = $resultWithVat[$currentStartDateAsIndex-1] ; 
+					$resultVat[$currentStartDateAsIndex] = $resultWithVat[$currentStartDateAsIndex-1] - $resultWithoutVat[$currentStartDateAsIndex-1] ;
 				}
 			}
 			$counter++;
 		}
-		return $result;
+		return [
+			'total_before_vat'=>$resultWithoutVat,
+			'total_vat'=>$resultVat,
+			'total_after_vat'=>$resultWithVat
+		];
 	
 	}
 }

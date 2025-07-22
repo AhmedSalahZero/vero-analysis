@@ -154,5 +154,6 @@ class ExpenseController extends Controller
 		$expenseName->delete();
 		return redirect()->back()->with('success',__('Done !'));	
 	}
+	
 
 }

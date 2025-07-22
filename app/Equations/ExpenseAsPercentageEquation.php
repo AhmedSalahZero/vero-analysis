@@ -1,6 +1,7 @@
 <?php 
 namespace App\Equations;
 
+use App\Helpers\HArr;
 use App\Models\NonBankingService\Study;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
@@ -9,8 +10,10 @@ class ExpenseAsPercentageEquation
 {
 	public function calculate(int $studyId,string $percentageOf,array $revenueStreamType,array $streamCategoryIds,int $startDateAsIndex,int $endDateAsIndex,float $monthlyRate,string $paymentTermType,float $vatRate,bool $isDeductible,float $withholdTaxRate,bool $isSensitivity = false):array 
 	{
+		$dates = range($startDateAsIndex,$endDateAsIndex);
 		$loanSchedulePaymentTableName = $isSensitivity ? 'sensitivity_loan_schedule_payments':'loan_schedule_payments';
 		$result = [];
+		$vats = [];
 		if(in_array('has_leasing',$revenueStreamType) || in_array('has_ijara_mortgage',$revenueStreamType) || in_array('has_reverse_factoring',$revenueStreamType) ){
 			$calculationColumn = [
 				'revenue'=>'interestAmount',
@@ -40,15 +43,23 @@ class ExpenseAsPercentageEquation
 				return (array)json_decode($item);
 			})->toArray();
 	
-		
 
 			foreach($leasingLoans as $leasingLoan){
 				foreach($leasingLoan as $monthIndex => $val){
-					$val = $monthlyRate / 100 * $val ;
+					$valBeforeRate = $monthlyRate / 100 * $val ;
+					$valueAfterVat =  0;
 					if(!$isDeductible){
-						$val = $val * (1+($vatRate/100));
+						$valueAfterVat = $valBeforeRate * (1+($vatRate/100));
 					}
-					$result['has_leasing'][$monthIndex] = isset($result['has_leasing'][$monthIndex]) ? $result['has_leasing'][$monthIndex] + $val : $val ; 
+					/**
+					 * ! Is This Const Key [has_leasing] is true ?
+					 */
+					$result['has_leasing'][$monthIndex] = isset($result['has_leasing'][$monthIndex]) ? $result['has_leasing'][$monthIndex] + $valBeforeRate : $valBeforeRate ; 
+					$onlyVatValue = $valueAfterVat -$valBeforeRate ; 
+					 $vats['has_leasing'][$monthIndex] = isset($vats['has_leasing'][$monthIndex]) ? $vats['has_leasing'][$monthIndex] + $onlyVatValue : $onlyVatValue; 
+					 /**
+					  * ! End Question 
+					  */
 				}
 			}
 	
@@ -73,23 +84,39 @@ class ExpenseAsPercentageEquation
 
 			foreach($directFactoringAmounts as $directFactoringAmount){
 				foreach($directFactoringAmount as $monthIndex => $val){
-					$val = $monthlyRate / 100 * $val ;
+					$valueBeforeVat = $monthlyRate / 100 * $val ;
+					$valueAfterVat =  0;
 					if(!$isDeductible){
-						$val = $val * (1+($vatRate/100));
+						$valueAfterVat = $valBeforeRate * (1+($vatRate/100));
 					}
-					$result['has_direct_factoring'][$monthIndex] = isset($result['has_direct_factoring'][$monthIndex]) ? $result['has_direct_factoring'][$monthIndex] + $val : $val ; 
+					$result['has_direct_factoring'][$monthIndex] = isset($result['has_direct_factoring'][$monthIndex]) ? $result['has_direct_factoring'][$monthIndex] + $valueBeforeVat : $valueBeforeVat ; 
+					$onlyVatValue = $valueAfterVat -$valBeforeRate ; 
+					 $vats['has_direct_factoring'][$monthIndex] = isset($vats['has_direct_factoring'][$monthIndex]) ? $vats['has_direct_factoring'][$monthIndex] + $onlyVatValue : $onlyVatValue; 
 				}
 			}
 	
 		}
-		$totals = [];
+		$totalWithoutVat = [];
 		foreach($result as $type => $arrItems){
 			foreach($arrItems as $monthIndex=>$value){
 				if($monthIndex>= $startDateAsIndex && $monthIndex <= $endDateAsIndex){
-					$totals[$monthIndex] = isset($totals[$monthIndex]) ? $totals[$monthIndex] + $value : $value;
+					$totalWithoutVat[$monthIndex] = isset($totalWithoutVat[$monthIndex]) ? $totalWithoutVat[$monthIndex] + $value : $value;
 				}
 			}
 		}
-		return $totals;
+		$totalVat = [];
+		foreach($vats as $type => $arrItems){
+			foreach($arrItems as $monthIndex=>$value){
+				if($monthIndex>= $startDateAsIndex && $monthIndex <= $endDateAsIndex){
+					$totalVat[$monthIndex] = isset($totalVat[$monthIndex]) ? $totalVat[$monthIndex] + $value : $value;
+				}
+			}
+		}
+		
+		return [
+			'total_before_vat'=>$totalWithoutVat ,
+			'total_vat'=>$totalVat,
+			'total_after_vat'=>HArr::sumAtDates([$totalWithoutVat,$totalVat],$dates)
+		];
 	}
 }
