@@ -146,7 +146,6 @@ class IncomeStatementController extends Controller
 			$isPortfolio = $portfolioLoanType == 'portfolio'; 
 			$revenueStreamType = $loanSchedulePaymentAsStdClass->revenue_stream_type;
 			$interestAmounts = json_decode($loanSchedulePaymentAsStdClass->interestAmount);
-			// dd($revenueStreamType,$interestAmounts);
 			$testLoopIndex ++ ;
 			foreach($interestAmounts as $currentMonthIndex => $interestAmount){
 				
@@ -159,17 +158,12 @@ class IncomeStatementController extends Controller
 						$salesRevenuePerTypes[$revenueStreamType][$currentMonthIndex] =  isset($salesRevenuePerTypes[$revenueStreamType][$currentMonthIndex]) ? $salesRevenuePerTypes[$revenueStreamType][$currentMonthIndex] + $interestAmount : $interestAmount;
 						$salesRevenuePerTypes['total_revenue'][$currentMonthIndex] =  isset($salesRevenuePerTypes['total_revenue'][$currentMonthIndex]) ? $salesRevenuePerTypes['total_revenue'][$currentMonthIndex] + $interestAmount : $interestAmount;
 						$tableDataFormatted[0]['main_items']['sales-revenue']['data'][$currentMonthIndex]  = $salesRevenuePerTypes['total_revenue'][$currentMonthIndex];
-						dump($salesRevenuePerTypes);
 						$previousRecord = $tableDataFormatted[0]['main_items']['sales-revenue']['data'][$currentMonthIndex-1] ?? 0;
 						$currentValue = $tableDataFormatted[0]['main_items']['sales-revenue']['data'][$currentMonthIndex] ;
 						$tableDataFormatted[0]['main_items']['growth-rate']['data'][$currentMonthIndex] =  $previousRecord ?  ($currentValue - $previousRecord) / $previousRecord * 100 : 0; 
 						$tableDataFormatted[0]['sub_items'][$revenueStreamType]['data'][$currentMonthIndex] = $salesRevenuePerTypes[$revenueStreamType][$currentMonthIndex];
 						$resultPerRevenueStreamType[$revenueStreamType][$currentMonthIndex] = isset($resultPerRevenueStreamType[$revenueStreamType][$currentMonthIndex]) ? $resultPerRevenueStreamType[$revenueStreamType][$currentMonthIndex] + $interestAmount : $interestAmount;
-					//		 $resultPerRevenueStreamType[$revenueStreamType]['total'] = isset($resultPerRevenueStreamType[$revenueStreamType]['total']) ? $resultPerRevenueStreamType[$revenueStreamType]['total'] +  $interestAmount : $interestAmount;
-							 
-									
 							$formattedResult['sales_revenue'][$currentMonthIndex] = isset($formattedResult['sales_revenue'][$currentMonthIndex]) ? $formattedResult['sales_revenue'][$currentMonthIndex] + $interestAmount : $interestAmount ;
-	
 							$currentDirectFactoringInterestRevenue  =$formattedDirectFactoring['interest_revenue'][$currentMonthIndex] ?? 0 ;
 							$formattedResult['sales_revenue'][$currentMonthIndex] = $formattedResult['sales_revenue'][$currentMonthIndex] + $currentDirectFactoringInterestRevenue ;
 							$currentSalesRevenue = $formattedResult['sales_revenue'][$currentMonthIndex] ;

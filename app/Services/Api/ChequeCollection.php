@@ -78,8 +78,6 @@ class ChequeCollection
                 []
             );
 
-            // dd($paymentData);
-
             if (!$paymentData || !is_array($paymentData) || empty($paymentData)) {
                 throw new Exception("Payment ID $accountPayment_id not found or invalid response");
             }
@@ -105,7 +103,6 @@ class ChequeCollection
                 $paymentState = 'posted';
             }
 
-             // dd($paymentState);
 
             // Step 3: Check if payment is already linked to a bank statement
             $existingStatementLines = $this->execute(
@@ -115,7 +112,6 @@ class ChequeCollection
                 []
             );
 
-            // dd($accountPayment_id);
 
             $moveId = null;
             $statementMoveId = null;
@@ -189,7 +185,6 @@ class ChequeCollection
                     []
                 );
 
-               // dd($statementData);
 
 
                 if (!is_array($statementData) || empty($statementData) || !isset($statementData[0]['move_id'])) {
@@ -200,7 +195,6 @@ class ChequeCollection
                 $statementLineIds = $statementData[0]['line_ids'][1] ?? [];
 
 
-                 // dd($statementMoveId,$statementLineIds);
 
                 // Step 6: Reconcile payment and bank statement lines
                 $paymentLineIds = $this->execute(
@@ -210,7 +204,6 @@ class ChequeCollection
                     []
                 );
 
-                 // dd($paymentLineIds);
 
                 if (!$paymentLineIds || !is_array($paymentLineIds)) {
                     throw new Exception("Failed to retrieve payment move lines for move_id: $moveId");
@@ -218,7 +211,6 @@ class ChequeCollection
 
                $linesToReconcile = array_merge($paymentLineIds, (array)$statementLineIds);
 
-               // dd($linesToReconcile ,$paymentLineIds, $statementLineIds);
 
                try {
                     $result = $this->execute(

@@ -8211,3 +8211,31 @@ function convertIndexKeysToString(array $items , array $datesAsIndexAndString)
 	}
 	return $result ; 
 }
+function sumIntervalsIndexes(array $dateValues, string $intervalName,string $financialYearStartMonth,array $dateIndexWithDate){
+	return (new IntervalSummationOperations())->sumForInterval( $dateValues, $intervalName,$financialYearStartMonth,$dateIndexWithDate,true);
+}
+function getIntervalFormatted():array 
+{
+	return ['monthly'=>__('Monthly'),'quarterly'=>__('Quarterly'),'semi-annually'=>__('Semi-annually'),'annually'=>__('Annually')];
+}
+function removeDateFrom(array $dateIndexWithDate){
+	$result = [];
+	foreach($dateIndexWithDate as $dateAsIndex => $dateAsString){
+		$dateExploded = explode('-',$dateAsString);
+		// dd($dateAsString);
+		$month = $dateExploded[1];
+		$year = $dateExploded[0];
+		$dateMonthAndYear =$month.'-'.$year; 
+		$result[$dateMonthAndYear] = $dateAsIndex;
+	}
+	return $result;
+}
+function convertStringKeysToIndexes(array $items , array $datesAsIndexAndString )
+{
+	$result = [];
+	foreach($items as $dateAsString => $value){
+		$dateAsIndex = array_search($dateAsString,$datesAsIndexAndString);
+		$result[$dateAsIndex] = $value ; 
+	}
+	return $result ; 
+}

@@ -297,7 +297,6 @@ trait IsMoney
 	}		
 	public function getOdooReferenceNames():array 
 	{
-		// dd($this , $this);
 		if($this->odoo_reference){
 			return [$this->odoo_reference];
 		}
@@ -408,10 +407,7 @@ trait IsMoney
 				$accountTypeId = $payableCheque->account_type;
 				$accountNumber  = $payableCheque->account_number;
 				return $financialInstitution->getOdooPaymentIds($accountTypeId,$accountNumber)['odoo_outbound_cheque_payment_method_id'];		
-				// if($cheque->isPending()){
-					// return $cheque->branch->getOdooOutboundChequePaymentMethodId();
-				// }
-				// dd('is paid payable cheque');
+				
 			}
 			
 		

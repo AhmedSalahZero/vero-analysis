@@ -71,7 +71,6 @@ class DownPaymentContractsController extends Controller
 			$contractsWithDownPayments =>$moneyModels ,
 		];
 
-		// dd($models);
         return view('contracts-down-payment.index', [
 			'company'=>$company,
 			'modelType'=>$modelType,

@@ -97,10 +97,7 @@ class ExpensePayment
                 ['id', 'name', 'state', 'payment_state', 'employee_id', 'total_amount', 'account_move_ids', 'journal_id', 'payment_mode'],
                 [[['id', '=', $expenseSheetId]]] 
             ); 
-			// dd($sheets);
-			// dd($sheets);
             if (empty($sheets)) {
-          //      Log::warning("Odoo: No expense sheet found with ID {$expenseSheetId}");
                 return [
                     'success' => false,
                     'message' => "No expense sheet found with ID {$expenseSheetId}",
@@ -171,7 +168,6 @@ class ExpensePayment
                 ['id', 'state', 'amount', 'partner_id', 'journal_id', 'move_id'],
                 [[['expense_sheet_id', '=', $expenseSheetId], ['state', '=', 'draft']]]
             );
-			// dd($payments,$expenseSheetId);
             if (empty($payments)) {
                 Log::warning("Odoo: No draft payment found for sheet {$expenseSheetId}");
                 // Create journal entry if missing

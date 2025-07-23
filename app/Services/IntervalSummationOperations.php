@@ -15,24 +15,36 @@ class IntervalSummationOperations
 	 * @return array [01-01-2025=>20,01-02-2025=>30]
 	 */
 	
-	public function sumForInterval(array $dateValues, string $intervalName,$financialYearStartMonth='january' ):array 
+	public function sumForInterval(array $dateValues, string $intervalName,$financialYearStartMonth='january',array $dateIndexWithDate = [],bool $resultAsIndex = false  , bool $preserveOriginalDate = false ):array 
 	{
 
 		$result = [];
 		$periodInterval = $this->getPeriodsForStartMonths($intervalName,$financialYearStartMonth) ; 
-		
+		$dateIndexWithDate = $dateIndexWithDate ?: app('dateIndexWithDate');
+
+		$dateAsStringIndex = removeDateFrom($dateIndexWithDate);
+
 		foreach ($dateValues as $dateAsString => $value) {
 			if(!is_numeric($value)){
+				dd('d',$dateValues);
 				throw new \Exception('Value Must Be Numeric Value [ ' . $value . ' ] passed');
 			}
+			$originalDate = $dateAsString;
+			$dateAsString = is_numeric($dateAsString) ? $dateIndexWithDate[$dateAsString] : $dateAsString;
 			$dateObject = Carbon::make($dateAsString);
 			$year = $dateObject->format('Y');
 			$month = $dateObject->format('m');
+			$originalDay = $dateObject->format('d');
 			$sumMonth = sprintf("%02d", $this->getSumMonth($month, $periodInterval));
 			$resultDay = Carbon::make('01-'.$sumMonth.'-'.$year)->endOfMonth()->format('d');
-			$resultDate = $resultDay .'-'.$sumMonth.'-'. $year   ;
+			if($preserveOriginalDate){
+				$resultDay = $originalDay;
+			}
+			$resultDate = $resultAsIndex ? $dateAsStringIndex[$sumMonth.'-'.$year]:  $resultDay .'-'.$sumMonth.'-'. $year   ;
 			$result[$resultDate] = isset($result[$resultDate]) ? $result[$resultDate] + $value  : $value;
+			
 		}
+		
 		return $result;
 	}
 	protected function getSumMonth($month, $mapMonths)

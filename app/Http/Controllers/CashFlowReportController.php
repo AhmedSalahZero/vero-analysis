@@ -121,7 +121,6 @@ class CashFlowReportController
 		
 		$noRowHeaders =  $reportInterval == 'weekly' ? 3 : 1 ;
 		
-		// dd(ForeignExchangeRate::);
 		$months = generateDatesBetweenTwoDates(Carbon::make($formStartDate),Carbon::make($formEndDate)); 
 		$days = generateDatesBetweenTwoDates(Carbon::make($formStartDate),Carbon::make($formEndDate),'addDay'); 
 		$startDate = Carbon::make($request->get('start_date',$defaultStartDate))->format('Y-m-d');
@@ -132,8 +131,6 @@ class CashFlowReportController
 		}else{
 			$currency = $company->getMainFunctionalCurrency();
 		}
-		// $currency = 'USD';
-		// dd($request->get('currency'),$company->getMainFunctionalCurrency());
 		$year = explode('-',$startDate)[0];
 		$endDate  = Carbon::make($request->get('end_date',$defaultEndDate))->format('Y-m-d');
 		$redirectRouteName = $this->getRedirectRoute($isContract);

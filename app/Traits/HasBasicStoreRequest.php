@@ -52,7 +52,7 @@ trait HasBasicStoreRequest
 
 		return $this ;
 	}
-	public function updateRepeaterRelation(Request $request,string $relationName,string $relationTableName , array $additionRelationData = [])
+	public function updateRepeaterRelation(Request $request,string $relationName,string $relationTableName , array $additionRelationData = [],$oldIdsFromDatabase = null)
 	{
         /**
          * * 	// for example
@@ -63,7 +63,7 @@ trait HasBasicStoreRequest
 		 */
 		$connectionName =$this->$relationName()->getModel()->getConnectionName();
         $relationDataArray = $request->get($relationName);
-		$oldIdsFromDatabase = $this->{$relationName}->pluck('id')->toArray();
+		$oldIdsFromDatabase = is_null($oldIdsFromDatabase) ? $this->{$relationName}->pluck('id')->toArray() : $oldIdsFromDatabase;
 		$idsFromRequest =array_column($relationDataArray,'id') ;
 		$elementsToDelete = array_diff($oldIdsFromDatabase,$idsFromRequest);
 		if(count($oldIdsFromDatabase) && !count($idsFromRequest)){
@@ -134,13 +134,13 @@ trait HasBasicStoreRequest
 		$this->refresh();
 		return $this;
 	}
-	public function storeRepeaterRelations(Request $request , array $relationNames,Company $company,$additionalData = [])
+	public function storeRepeaterRelations(Request $request , array $relationNames,Company $company,$additionalData = [],$oldIdsFromDatabase=null)
 	{
 		foreach($relationNames as $relationName){
 			$additionalData = array_merge([
 				'company_id'=>$company->id
 			],$additionalData) ;
-			$this->updateRepeaterRelation($request,$relationName,$this->$relationName()->getRelated()->getTable(),$additionalData);	
+			$this->updateRepeaterRelation($request,$relationName,$this->$relationName()->getRelated()->getTable(),$additionalData,$oldIdsFromDatabase);	
 		}
 		
 	}

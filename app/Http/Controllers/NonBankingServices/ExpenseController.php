@@ -101,7 +101,6 @@ class ExpenseController extends Controller
 		// $models = [
 		// 	ExpenseName::EXPENSE =>$expenseNames ,
 		// ];
-		// dd('f');
 
         return view('non_banking_services.expense-structure.index', [
 			'company'=>$company,
@@ -132,10 +131,11 @@ class ExpenseController extends Controller
 	}
 	public function store(Company $company , StoreExpenseNamesRequest $request)
 	{
-		
+		$expenseType  =$request->get('expense_type');
+		$oldIdsFromDatabase = $company->expenseNamesFor($expenseType,$company->id)->pluck('id')->toArray();
 		$company->storeRepeaterRelations($request,['expenseNames'],$company,[
-			'expense_type'=>$request->get('expense_type')
-		]);
+			'expense_type'=>$expenseType 
+		],$oldIdsFromDatabase);
 		
 		return response()->json([
 			'redirectTo'=>route('view.expense.names',['company'=>$company->id])
@@ -157,12 +157,12 @@ class ExpenseController extends Controller
 	}
 	public function update(Request $request , Company $company , string $expenseType){
 		// $company->update($this->getCommonData($request,$company,$request->get('expense_type')));
-
+			$oldIdsFromDatabase = $company->expenseNamesFor($expenseType,$company->id)->pluck('id')->toArray();
 		$additionalData = [
 			'expense_type'=>$request->get('expense_type'),
 		];
-		
-		$company->storeRepeaterRelations($request,['expenseNames'],$company,$additionalData);
+	
+		$company->storeRepeaterRelations($request,['expenseNames'],$company,$additionalData,$oldIdsFromDatabase);
 		
 		return response()->json([
 			'redirectTo'=>route('view.expense.names',['company'=>$company->id])

@@ -63,7 +63,6 @@ class OdooSetting extends Model
 	}
 	public function getCustodyAccountId():int 
 	{
-		// dd($this , $this->custody_account_id);
 		if(!$this->custody_account_id){
 			throw new \Exception('Custody Account Not Found .. Please Add It From Other Odoo Setting Form');
 		}

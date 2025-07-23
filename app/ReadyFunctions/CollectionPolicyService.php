@@ -14,6 +14,7 @@ class CollectionPolicyService
 			foreach ($dateValue as $date => $value) {
 				$collections[$date] = 0;
 			}
+			
 		} elseif ($collectionPolicyType == 'customize' && is_array($collectionPolicyValue)) {
 			
 			$ratesWithDueDays = $this->formatRatesWithDueDays($collectionPolicyValue);
@@ -95,6 +96,7 @@ class CollectionPolicyService
 	protected function formatRatesWithDueDays(array $ratesAndDueDays): array
 	{
 		$result = [];
+		
 		foreach ($ratesAndDueDays['due_in_days'] ?? [] as $index => $dueDay) {
 			$rate = $ratesAndDueDays['rate'][$index] ?? 0;
 			if ($rate) {

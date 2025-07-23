@@ -22,6 +22,10 @@ class Expense extends Model
 		'total_vat'=>'array',
 		'total_after_vat'=>'array',
 		'payment_amounts'=>'array',
+		'collection_statements'=>'array',
+		'net_payments_after_withhold'=>'array',
+		'withhold_payments'=>'array',
+		'withhold_amounts'=>'array',
     ];
         
     public function company()

@@ -8,6 +8,12 @@ use App\Helpers\HArr;
 <link href="{{ url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css') }}" rel="stylesheet" type="text/css" />
 <link rel="stylesheet" href="/custom/css/financial-planning/common.css">
 <style>
+i.exclude-icon{
+	color:black;
+}
+.group-color {
+	background-color:#f7f8fa !important;
+}
     .bg-white-hover:hover {
         color: white !important;
     }
@@ -47,7 +53,7 @@ use App\Helpers\HArr;
 
 
                 <a href="{{ route('create.expense.names',['company'=>$company->id]) }}" class="btn btn-2-bg bg-white-hover new-study-item rounded btn-icon-sm align-self-center">
-                    <i class="fas fa-plus white-icon exclude-icon"></i>
+                    <i class="fas fa-plus white-icon "></i>
                     {{ __('New Expense') }}
                 </a>
 
@@ -107,9 +113,9 @@ use App\Helpers\HArr;
 
                                     <div class="d-flex align-items-center ">
                                         @if(count($subItems))
-                                        <i class="row_icon{{ $mainItemId }} flaticon2-up  mr-2  "></i>
+                                        <i class="row_icon{{ $mainItemId }} exclude-icon flaticon2-up  mr-2  exclude-icon"></i>
                                         @endif
-                                        <b class="text-capitalize text-white">{{ str_to_upper($parent['name']) }}</b>
+                                        <b class="text-capitalize ">{{ str_to_upper($parent['name']) }}</b>
                                     </div>
                                 </td>
 
@@ -126,8 +132,8 @@ use App\Helpers\HArr;
 
                                     <b class="ml-3">
 
-                                        <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.expense.names', ['company'=>$company->id,'expenseType'=>$parent['name']]) }}"><i class="fa fa-pen-alt"></i></a>
-                                        <a class="btn btn-secondary btn-outline-hover-danger btn-icon  " href="#" data-toggle="modal" data-target="#modal-delete-{{ $mainItemId }}" title="Delete"><i class="fa fa-trash-alt"></i>
+                                        <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.expense.names', ['company'=>$company->id,'expenseType'=>$parent['name']]) }}"><i class="fa exclude-icon fa-pen-alt"></i></a>
+                                        <a class="btn btn-secondary btn-outline-hover-danger btn-icon  " href="#" data-toggle="modal" data-target="#modal-delete-{{ $mainItemId }}" title="Delete"><i class="fa exclude-icon fa-trash-alt"></i>
                                         </a>
 
                                         <div id="modal-delete-{{ $mainItemId }}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">

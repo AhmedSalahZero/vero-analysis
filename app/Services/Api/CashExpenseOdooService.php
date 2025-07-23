@@ -68,7 +68,6 @@ class CashExpenseOdooService
 	{
 		$inEditMode = is_null($id) ? 0 : 1;
 		$id = is_null($id) ? 0 : $id ; 
-		// dd($analytic_distribution);
 		
 		$distribution_analytic_account_ids = $this->getAnalysisAccountIds($analytic_distribution);
 		

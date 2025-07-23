@@ -557,7 +557,6 @@ $moreThan150=\App\ReadyFunctions\InvoiceAgingService::MORE_THAN_150;
 											
 										}else{
 											if($customerName=='Cash & Banks Balance'){
-										//	dump($customerName , $weekAndYear ,$allMainRowsTotals[$customerName][$weekAndYear],'-----');
 												
 											}
 										}

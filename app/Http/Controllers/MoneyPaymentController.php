@@ -244,7 +244,6 @@ class MoneyPaymentController
 		foreach($purchaseOrders as $index=>$purchaseOrder){
 			$paidAmount = $moneyPayment ? $moneyPayment->downPaymentSettlements->where('purchase_order_id',$purchaseOrder->id)->first() : null ;
 			$formattedSalesOrders[$index]['paid_amount'] = $paidAmount && $paidAmount->down_payment_amount ? $paidAmount->down_payment_amount : 0;
-			// dd($moneyPayment->downPaymentSettlements,$formattedSalesOrders[$index]['paid_amount']);
 			$formattedSalesOrders[$index]['po_number'] = $purchaseOrder->po_number;
 			$formattedSalesOrders[$index]['amount'] = $purchaseOrder->getAmount();
 			$formattedSalesOrders[$index]['id'] = $purchaseOrder->id;
@@ -749,7 +748,6 @@ class MoneyPaymentController
 		}
 		$branches  = CashVeroBranch::where('company_id',$company->id)->where('currency',$currencyName)->orderBy('name')->pluck('id','name')->toArray();
 		$endBalance = $branch->getCurrentEndBalance($company->id,$currencyName,$deliveryDate);
-		// dd($model instanceof MoneyReceived);
 		if(isset($model) && $model instanceof MoneyReceived){
 			$endBalance = $endBalance-$additionalAmountInEditMode ;
 		}else{

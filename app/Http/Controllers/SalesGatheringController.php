@@ -366,14 +366,6 @@ class SalesGatheringController extends Controller
         
     	];
     }
-	// public function filterLabelingItems(Company $company , Request $request){
-	// 	return redirect()->route('view.uploading',[
-	// 		'company'=>$company->id ,
-	// 		'model'=>'LabelingItem',
-	// 		'request'=>$request
-	// 	]);
-		
-	// }
 
 		public function printLabelingItemsQrcode(Company $company , Request $request , $fromIndex , $toIndex ){
 			$labeling = LabelingItem::where('company_id',$company->id)->whereBetween('id',[$fromIndex,$toIndex])->get();

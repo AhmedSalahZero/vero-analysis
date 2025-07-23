@@ -668,7 +668,7 @@ class Company extends Model implements HasMedia
 	
 	public function expenseNamesFor(string $type ,int $companyId)
 	{
-		return ExpenseName::where('type',$type)->where('company_id',$companyId)->get();
+		return ExpenseName::where('expense_type',$type)->where('company_id',$companyId)->get();
 	}
 	
 	// public function contractCashflowReports():HasMany

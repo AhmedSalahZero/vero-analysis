@@ -30,7 +30,6 @@
                                  <input disabled value="{{  $model->getLgCode()  }}" type="text" class="form-control only-greater-than-or-equal-zero-allowed">
                              </div>
                          </div>
-						 {{-- {{ dd($model) }} --}}
                          <div class="col-md-2 mb-4">
                              <label>{{__('LG Current Amount')}} </label>
                              <div class="kt-input-icon">

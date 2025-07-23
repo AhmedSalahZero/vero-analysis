@@ -160,13 +160,8 @@ class DashboardController extends Controller
 				}
 				
 				foreach($monthIndexWithActive as $monthIndex=> $isActiveIndex){
-					// dump('month value',$monthlyExpenses[$monthIndex]??0,'month index',$monthIndex,'loop year',$yearIndex);
-					// if($yearIndex == 2 ){
-						// dump($monthIndex,$monthlyExpenses[$monthIndex]??0);
 						$currentExpenseItemTotalPerYear += $monthlyExpenses[$monthIndex]??0 ;
-					// }
 				}
-				// dump('year index',$yearIndex,'per year ',$currentExpenseItemTotalPerYear,'--');
 				$formattedExpenses[$expenseCategory][$name][$yearIndex] = $currentExpenseItemTotalPerYear;
 				$currentYearTotal = $currentExpenseItemTotalPerYear + $currentYearInterestCost +$currentYearManpowerTotal;
 				$formattedExpenses[$expenseCategory]['total'][$yearIndex] = isset($formattedExpenses[$expenseCategory]['total'][$yearIndex]) ? $formattedExpenses[$expenseCategory]['total'][$yearIndex] + $currentYearTotal:$currentYearTotal    ; 

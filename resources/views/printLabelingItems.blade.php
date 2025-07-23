@@ -73,7 +73,7 @@
 		@for($i = 0 ; $i< $quantity ; $i++ )
 		{{-- {{ str_replace($fromToString , $qIndex+ $i,qrcodeSpacing($item->getCode($index+1))) }} --}}
 		{{-- ------- --}}
-		{{ $item->getCode($index+1) }}
+		{{-- {{ $item->getCode($index+1) }} --}}
     <div style="width:{{ $width }}cm;height:{{ $height }}cm;padding-top:{{ $paddingTop }}cm;padding-bottom:{{ $paddingTop }}cm;padding-right:{{ $paddingLeft }}cm;padding-left:{{ $paddingLeft }}cm;margin-bottom:{{ $marginBottom }}cm;" class="label-elemenet label-border overflow-hidden">
         <div class="code-item">
             <img style="width:{{ 0.5*$height }}cm;height:{{ 0.5*$height }}cm;@if(!$company->labeling_use_client_logo)margin:auto;@endif" src="data:image/png;base64,{!! DNS2D::getBarcodePNG(qrcodeSpacing($item->getCode($index+1)), 'QRCODE') !!}" alt="barcode" />
