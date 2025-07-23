@@ -69,7 +69,6 @@ use App\Models\NonBankingService\Department;
                                 <div id="expenseNames" class="leasing-repeater-parent">
                                     <div class="form-group2  m-form__group2 row">
                                         <div data-repeater-list="expenseNames" class="col-lg-12">
-
                                             @include('non_banking_services.expense-structure._repeater' , [
 												'tableId'=>'expenseNames',
 												'isRepeater'=>true ,

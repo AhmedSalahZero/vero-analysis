@@ -8,15 +8,18 @@ use App\Helpers\HArr;
 <link href="{{ url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css') }}" rel="stylesheet" type="text/css" />
 <link rel="stylesheet" href="/custom/css/financial-planning/common.css">
 <style>
-	.bg-white-hover:hover {
-		color:white !important;
-	}
-	.new-study-item i {
-		color:#055dac !important
-	}
-	.new-study-item:hover i {
-		color:white !important;
-	}
+    .bg-white-hover:hover {
+        color: white !important;
+    }
+
+    .new-study-item i {
+        color: #055dac !important
+    }
+
+    .new-study-item:hover i {
+        color: white !important;
+    }
+
 </style>
 @endsection
 @section('sub-header')
@@ -33,153 +36,187 @@ use App\Helpers\HArr;
                         <i class="fa fa-money-check-alt"></i> {{ __('Expenses') }}
                     </a>
                 </li>
-				
-				
+
+
 
 
             </ul>
             {{-- @if(auth()->user()->can('create study info')) --}}
-			
-			 <div class="flex-tabs">
-                 
-				
+
+            <div class="flex-tabs">
+
+
                 <a href="{{ route('create.expense.names',['company'=>$company->id]) }}" class="btn btn-2-bg bg-white-hover new-study-item rounded btn-icon-sm align-self-center">
                     <i class="fas fa-plus white-icon exclude-icon"></i>
                     {{ __('New Expense') }}
                 </a>
-				
-				
+
+
             </div>
-			
-           
+
+
 
         </div>
     </div>
-    <div class="kt-portlet__body">
         <div class="tab-content  kt-margin-t-20">
-		
-			  @php
-            $currentType = ExpenseName::EXPENSE ;
-            @endphp
+
             <!--Begin:: Tab Content-->
-            <div class="tab-pane {{  !Request('active') || Request('active') == $currentType ?'active':'' }}" id="{{ $currentType }}" role="tabpanel">
+            <div class="tab-pane {{ !Request('active') ?'active':'' }}" id="{{ 'running' }}" role="tabpanel">
                 <div class="kt-portlet kt-portlet--mobile">
-						@php
-                        $rowIndex = 0;
-                        @endphp
-                        <x-tables.repeater-table :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
-                            <x-slot name="ths">
-                                <x-tables.repeater-table-th class="  header-border-down first-column-th-class" :title="__('Name')"></x-tables.repeater-table-th>
-                                <x-tables.repeater-table-th class="  header-border-down first-column-th-class" :title="__('Expense Type')"></x-tables.repeater-table-th>
-                                {{-- <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Start Date')"></x-tables.repeater-table-th> --}}
-                                {{-- <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('End Date')"></x-tables.repeater-table-th> --}}
-                                {{-- <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Financial Statement')"></x-tables.repeater-table-th> --}}
-                                {{-- <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Balance Sheet')"></x-tables.repeater-table-th> --}}
-                                {{-- <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Cash Flow')"></x-tables.repeater-table-th> --}}
-                                {{-- <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Dashboard')"></x-tables.repeater-table-th> --}}
-                                <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Actions')"></x-tables.repeater-table-th>
-                            </x-slot>
-                            <x-slot name="trs">
 
-                                @php
-                                $currentLoanTotalPerYear = [];
-                                @endphp
+           
 
-                                @foreach ($models[$currentType] as $index=>$model)
 
-                                <tr data-repeat-formatting-decimals="0" data-repeater-style>
+                        <x-table :tableClass="'kt_table_with_no_pagination_no_fixed  removeGlobalStyle ' ">
+                            @slot('table_header')
 
-                                    <td>
-                                        <div class="">
 
-                                            <input value="{{ $model->getName() }}" disabled class="form-control text-left " type="text">
-                                        </div>
-                                    </td>
-									
-									 <td>
-                                        <div class="">
+                           
+                            @endslot
+                            @slot('table_body')
+                            <tr class=" text-center first-tr-bg ">
+                                <th class=" form-label font-weight-bold  text-center align-middle   header-border-down first-column-th-class">
+                                    <div class="d-flex align-items-center justify-content-center ">
+                                        <span class="">{{ __('Name') }}</span>
+                                    </div>
+                                </th>
 
-                                            <input value="{{ $model->getExpenseTypeName()  }}" disabled class="form-control text-left " type="text">
-                                        </div>
-                                    </td>
-                                    {{-- <td>
-                                        <div class="d-flex align-items-center justify-content-center">
-                                            <x-repeat-right-dot-inputs :removeThreeDots="true" :removeCurrency="true" :mark="' '" :is-number="false" :removeThreeDotsClass="true" :number-format-decimals="0" :currentVal="$model->getStudyStartDateFormattedForView()" :classes="''" :is-percentage="false" :name="''" :columnIndex="0"></x-repeat-right-dot-inputs>
 
-                                        </div>
-                                    </td> --}}
-									
-									  <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
-                                        <span style="overflow: visible; position: relative; width: 110px;">
-											{{-- @if(hasAuthFor('update lc settlement internal transfer')) --}}
-                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon edit-btn-class" title="{{ __('Edit') }}" href="{{ route('edit.expense.names',['company'=>$company->id,'expenseType'=>$model->getExpenseType()]) }}"><i class="fa fa-pen-alt exclude-icon default-icon-color" ></i></a>
-                                            {{-- <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon copy-btn-class" title="{{ __('Copy') }}" href="{{ route('edit.study',['company'=>$company->id,'study'=>$model->id]) }}"><i class="fa fa-layer-group exclude-icon default-icon-color" ></i></a> --}}
-											{{-- @endif  --}}
-											{{-- @if(hasAuthFor('delete lc settlement internal transfer')) --}}
-                                            <a data-toggle="modal" data-target="#delete-expense-names-{{ $model->id }}" type="button" class="btn delete-btn-class btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt exclude-icon default-icon-color"></i></a>
-                                            <div class="modal fade" id="delete-expense-names-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                                                <div class="modal-dialog modal-dialog-centered" role="document">
-                                                    <div class="modal-content">
-                                                        <form action="{{ route('expense.names.destroy',['company'=>$company->id,'expenseType'=>$model->getExpenseType() ]) }}" method="post">
-                                                            @csrf
-                                                            @method('delete')
-                                                            <div class="modal-header">
-                                                                <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Do You Want To Delete This Item ?') }}</h5>
-                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                    <span aria-hidden="true">&times;</span>
-                                                                </button>
-                                                            </div>
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close') }}</button>
-                                                                <button type="submit" class="btn btn-danger">{{ __('Confirm Delete') }}</button>
-                                                            </div>
 
-                                                        </form>
+                                <th class=" form-label font-weight-bold  text-center align-middle   header-border-down first-column-th-class">
+                                    <div class="d-flex align-items-center justify-content-center ">
+                                        <span class=""> {{ __('Actions') }}</span>
+                                    </div>
+                                </th>
+
+                            </tr>
+                            @php
+                            $id = 0 ;
+                            @endphp
+                            @foreach($items as $mainItemId => $parnetAndSubData )
+                            @php
+                            $parent =$parnetAndSubData['parent'] ;
+                            $subItems =$parnetAndSubData['sub_items'] ?? [];
+
+                            @endphp
+                            <tr class="group-color main-row-tr">
+
+
+
+                                <td class="black-text " style="cursor: pointer;" onclick="toggleRow('{{ $mainItemId }}')">
+
+                                    <div class="d-flex align-items-center ">
+                                        @if(count($subItems))
+                                        <i class="row_icon{{ $mainItemId }} flaticon2-up  mr-2  "></i>
+                                        @endif
+                                        <b class="text-capitalize text-white">{{ str_to_upper($parent['name']) }}</b>
+                                    </div>
+                                </td>
+
+
+
+
+
+
+                                <td class="text-left text-capitalize">
+
+
+
+
+
+                                    <b class="ml-3">
+
+                                        <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('edit.expense.names', ['company'=>$company->id,'expenseType'=>$parent['name']]) }}"><i class="fa fa-pen-alt"></i></a>
+                                        <a class="btn btn-secondary btn-outline-hover-danger btn-icon  " href="#" data-toggle="modal" data-target="#modal-delete-{{ $mainItemId }}" title="Delete"><i class="fa fa-trash-alt"></i>
+                                        </a>
+
+                                        <div id="modal-delete-{{ $mainItemId }}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h4 class="modal-title">{{ __('Delete Cash Expense Category ' . str_to_upper($parent['name']) ) }}</h4>
                                                     </div>
+                                                    <div class="modal-body">
+                                                        <h3>{{ __('Are You Sure To Delete This Item ? ') }}</h3>
+                                                    </div>
+                                                    <form action="{{ route('expense.names.destroy',['company'=>$company->id , 'expenseType'=> $parent['name'] ]) }}" method="post" id="delete_form">
+                                                        {{ csrf_field() }}
+                                                        {{ method_field('DELETE') }}
+                                                        <div class="modal-footer">
+                                                            <button class="btn btn-danger">
+                                                                {{ __('Delete') }}
+                                                            </button>
+                                                            <button class="btn btn-secondary" data-dismiss="modal" aria-hidden="true">
+                                                                {{ __('Close') }}
+                                                            </button>
+                                                        </div>
+                                                    </form>
                                                 </div>
                                             </div>
-											{{-- @endif  --}}
+                                        </div>
+
                                         </span>
-                                    </td>
-
-
-
-                                </tr>
-
-
-
-
-                                @endforeach
-
-
-                          
+                                    </b>
+                                </td>
 
 
 
 
-                            </x-slot>
 
 
 
 
-                        </x-tables.repeater-table>
-						
-                    
-                </div>
+                            </tr>
+
+                            @foreach ($subItems as $subItemId => $titleAndValue)
+
+
+
+                            <tr class="row{{ $mainItemId }}  text-center sub-item-row" style="display: none">
+                                <td colspan="5" class="text-left  text-capitalize">
+                                    <table class="table ml-3 table-borderless">
+
+                                        <tr>
+
+                                            <td class="max-w-20">
+                                                <input type="text" class="form-control" disabled value="{{ __('Name') }}">
+                                            </td>
+                                            <td>
+
+                                                <input type="text" class="form-control" disabled value="{{ $titleAndValue['name'] }}">
+                                            </td>
+
+                                        </tr>
+
+                                    </table>
+                                </td>
+
+
+
+
+
+
+
+
+
+                            </tr>
+
+                            @endforeach
+
+
+                            <?php $id++ ;?>
+                            @endforeach
+
+
+
+
+
+                            @endslot
+                        </x-table>
+
+
+             
             </div>
-			
-			
-			
-          
-
-
-
-
-            <!--End:: Tab Content-->
-
-
-
-            <!--End:: Tab Content-->
         </div>
     </div>
 </div>
@@ -237,5 +274,12 @@ use App\Helpers\HArr;
 @endsection
 @push('js')
 <script src="/custom/js/financial-planning/common.js"></script>
+<script>
+    function toggleRow(rowNum) {
+        $(".row" + rowNum).toggle();
+        $('.row_icon' + rowNum).toggleClass("flaticon2-down flaticon2-up");
+        $(".row2" + rowNum).hide();
+    }
 
+</script>
 @endpush

@@ -4,11 +4,12 @@
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/jszip-2.5.0/dt-1.12.1/af-2.4.0/b-2.2.3/b-colvis-2.2.3/b-html5-2.2.3/b-print-2.2.3/cr-1.5.6/date-1.1.2/fc-4.1.0/fh-3.2.3/r-2.3.0/rg-1.2.0/sl-1.4.0/sr-1.1.1/datatables.min.css" />
 
 <style>
-.max-w-20{
-	width:200px !important;
-	min-width:200px !important;
-	max-width:200px !important;
-}
+    .max-w-20 {
+        width: 200px !important;
+        min-width: 200px !important;
+        max-width: 200px !important;
+    }
+
     .main-td-background {
         background-color: #0742A6;
         color: white;
@@ -241,79 +242,33 @@
         <div class="kt-portlet__head-toolbar justify-content-between flex-grow-1">
             <ul class="nav nav-tabs nav-tabs-space-lg nav-tabs-line nav-tabs-bold nav-tabs-line-3x nav-tabs-line-brand" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link {{ !Request('active')  
-					{{-- || Request('active') == Contract::RUNNING 
-					--}}
-					?'active':'' 
-					
-					 }}" data-toggle="tab" href="#running" role="tab">
+                    <a class="nav-link {{ !Request('active')  ?'active':'' }}" data-toggle="tab" href="#running" role="tab">
                         <i class="fa fa-money-check-alt"></i> {{ __('Cash Expense Categories') }}
                     </a>
                 </li>
-
-                {{-- <li class="nav-item">
-                    <a class="nav-link {{ Request('active') == Contract::RUNNING_AND_AGAINST ?'active':'' }}" data-toggle="tab" href="#{{ Contract::RUNNING_AND_AGAINST }}" role="tab">
-                        <i class="fa fa-money-check-alt"></i> {{ __('Running And Against') }}
-                    </a>
-                </li>
-
-
-                <li class="nav-item">
-                    <a class="nav-link {{ Request('active') == Contract::FINISHED ?'active':'' }}" data-toggle="tab" href="#{{ Contract::FINISHED }}" role="tab">
-                        <i class="fa fa-money-check-alt"></i> {{ __('Finished') }}
-                    </a>
-                </li> --}}
 
 
             </ul>
 
             <div class="flex-tabs">
-                {{-- <a href="{{ route('buy-or-sell-currencies.create',['company'=>$company->id,Contract::RUNNING]) }}" class="btn active-style btn-icon-sm align-self-center">
-                <i class="fas fa-plus"></i>
-                {{ __('Bank To Bank') }}
-                </a>
 
-
-                <a href="{{ route('buy-or-sell-currencies.create',['company'=>$company->id,Contract::RUNNING_AND_AGAINST]) }}" class="btn  active-style btn-icon-sm align-self-center">
-                    <i class="fas fa-plus"></i>
-                    {{ __('Safe To Bank') }}
-                </a>
-
-                <a href="{{ route('buy-or-sell-currencies.create',['company'=>$company->id,Contract::FINISHED]) }}" class="btn  active-style btn-icon-sm align-self-center">
-                    <i class="fas fa-plus"></i>
-                    {{ __('Bank To Safe') }}
-                </a>
-                --}}
                 <a href="{{ route('cash.expense.category.create',['company'=>$company->id]) }}" class="btn  active-style btn-icon-sm align-self-center">
                     <i class="fas fa-plus"></i>
                     {{ __('Create') }}
                 </a>
             </div>
 
-            {{-- <a href="" class="btn  active-style btn-icon-sm  align-self-center ">
-				<i class="fas fa-plus"></i>
-				<span>{{ __('New Record') }}</span>
-            </a> --}}
         </div>
     </div>
 
 
     <div class="kt-portlet__body">
         <div class="tab-content  kt-margin-t-20">
-            {{-- @foreach(['running'] as $contractStatus)
-            @php
-            $currentType = $contrac ;
-            @endphp --}}
+
             <!--Begin:: Tab Content-->
-            <div class="tab-pane {{ !Request('active') 
-			
-			{{-- && $contractStatus == Contract::RUNNING || Request('active') == $currentType --}} ?'active':'' 
-			
-			 }}" id="{{ 'running' }}" role="tabpanel">
+            <div class="tab-pane {{ !Request('active') ?'active':'' }}" id="{{ 'running' }}" role="tabpanel">
                 <div class="kt-portlet kt-portlet--mobile">
-                    {{-- <x-table-title.with-two-dates :type="$currentType" :title="__(Contract::getAllTypes()[$currentType])" :startDate="$filterDates[$currentType]['startDate']??''" :endDate="$filterDates[$currentType]['endDate']??''">
-                        <x-export-buy-or-sell-currency :search-fields="$searchFields[$currentType]" :money-received-type="$currentType" :has-search="1" :has-batch-collection="0" href="{{route('buy-or-sell-currencies.create',['company'=>$company->id])}}" />
-                    </x-table-title.with-two-dates> --}}
+
                     <div class="kt-portlet__body">
 
 
@@ -357,55 +312,55 @@
                                         <b class="text-capitalize ">{{ $parent['name'] }}</b>
                                     </div>
                                 </td>
-								
-								
-								
-								
-								
-								
-								  <td class="text-left text-capitalize">
 
-                                  
+
+
+
+
+
+                                <td class="text-left text-capitalize">
+
+
 
 
 
                                     <b class="ml-3">
-                                      
-                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('cash.expense.category.edit', ['company'=>$company->id , 'cashExpenseCategory'=>$mainItemId]) }}"><i class="fa fa-pen-alt"></i></a>
-                                            <a class="btn btn-secondary btn-outline-hover-danger btn-icon  " href="#" data-toggle="modal" data-target="#modal-delete-{{ $mainItemId }}" title="Delete"><i class="fa fa-trash-alt"></i>
-                                            </a>
 
-                                            <div id="modal-delete-{{ $mainItemId }}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
-                                                <div class="modal-dialog">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h4 class="modal-title">{{ __('Delete Cash Expense Category ' .$parent['name']) }}</h4>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            <h3>{{ __('Are You Sure To Delete This Item ? ') }}</h3>
-                                                        </div>
-                                                        <form action="{{ route('cash.expense.category.destroy',['company'=>$company->id , 'cashExpenseCategory'=> $mainItemId ]) }}" method="post" id="delete_form">
-                                                            {{ csrf_field() }}
-                                                            {{ method_field('DELETE') }}
-                                                            <div class="modal-footer">
-                                                                <button class="btn btn-danger">
-                                                                    {{ __('Delete') }}
-                                                                </button>
-                                                                <button class="btn btn-secondary" data-dismiss="modal" aria-hidden="true">
-                                                                    {{ __('Close') }}
-                                                                </button>
-                                                            </div>
-                                                        </form>
+                                        <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="Edit" href="{{ route('cash.expense.category.edit', ['company'=>$company->id , 'cashExpenseCategory'=>$mainItemId]) }}"><i class="fa fa-pen-alt"></i></a>
+                                        <a class="btn btn-secondary btn-outline-hover-danger btn-icon  " href="#" data-toggle="modal" data-target="#modal-delete-{{ $mainItemId }}" title="Delete"><i class="fa fa-trash-alt"></i>
+                                        </a>
+
+                                        <div id="modal-delete-{{ $mainItemId }}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h4 class="modal-title">{{ __('Delete Cash Expense Category ' .$parent['name']) }}</h4>
                                                     </div>
+                                                    <div class="modal-body">
+                                                        <h3>{{ __('Are You Sure To Delete This Item ? ') }}</h3>
+                                                    </div>
+                                                    <form action="{{ route('cash.expense.category.destroy',['company'=>$company->id , 'cashExpenseCategory'=> $mainItemId ]) }}" method="post" id="delete_form">
+                                                        {{ csrf_field() }}
+                                                        {{ method_field('DELETE') }}
+                                                        <div class="modal-footer">
+                                                            <button class="btn btn-danger">
+                                                                {{ __('Delete') }}
+                                                            </button>
+                                                            <button class="btn btn-secondary" data-dismiss="modal" aria-hidden="true">
+                                                                {{ __('Close') }}
+                                                            </button>
+                                                        </div>
+                                                    </form>
                                                 </div>
                                             </div>
+                                        </div>
 
                                         </span>
                                     </b>
                                 </td>
-                             
 
-                               
+
+
 
 
 
@@ -422,7 +377,7 @@
                                     <table class="table ml-3 table-borderless">
 
                                         <tr>
-                                         
+
                                             <td class="max-w-20">{{ __('Name') }}</td>
                                             <td>{{ $titleAndValue['name'] }}</td>
 
@@ -431,7 +386,7 @@
                                     </table>
                                 </td>
 
-                               
+
 
 
 
@@ -458,7 +413,6 @@
                     </div>
                 </div>
             </div>
-            {{-- @endforeach --}}
         </div>
     </div>
 
