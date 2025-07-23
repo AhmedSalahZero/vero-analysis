@@ -768,7 +768,6 @@ use Illuminate\Support\Facades\DB;
 		
 		 $baseRatesMapping = HArr::isAllValuesEqual($baseRatesMapping,$bankLendingMarginRates);
 		$totalMonthlyLoanAmounts = [];
-		// $time = 0 ;
 	
 		
 		foreach($operationDurationPerYear as $yearIndex => $yearMonthIndexes){
@@ -779,7 +778,7 @@ use Illuminate\Support\Facades\DB;
 			
 					$loanAtCurrentYear = $yearIndexWithAmount[$yearIndex]??0 ;
 					$currentMonthlyLoanAmount = $loanAtCurrentYear / count($yearMonthIndexes)  ;
-						
+					
 						if($currentMonthlyLoanAmount <= 0){
 							continue ;
 						}

@@ -14,6 +14,7 @@ class ExpenseAsPercentageEquation
 		$loanSchedulePaymentTableName = $isSensitivity ? 'sensitivity_loan_schedule_payments':'loan_schedule_payments';
 		$result = [];
 		$vats = [];
+		$withholds = [];
 		if(in_array('has_leasing',$revenueStreamType) || in_array('has_ijara_mortgage',$revenueStreamType) || in_array('has_reverse_factoring',$revenueStreamType) ){
 			$calculationColumn = [
 				'revenue'=>'interestAmount',
@@ -56,7 +57,9 @@ class ExpenseAsPercentageEquation
 					 */
 					$result['has_leasing'][$monthIndex] = isset($result['has_leasing'][$monthIndex]) ? $result['has_leasing'][$monthIndex] + $valBeforeRate : $valBeforeRate ; 
 					$onlyVatValue = $valueAfterVat -$valBeforeRate ; 
+					$withholdValue = $withholdTaxRate / 100 * $valBeforeRate ; 
 					 $vats['has_leasing'][$monthIndex] = isset($vats['has_leasing'][$monthIndex]) ? $vats['has_leasing'][$monthIndex] + $onlyVatValue : $onlyVatValue; 
+					 $withholds['has_leasing'][$monthIndex] = isset($withholds['has_leasing'][$monthIndex]) ? $withholds['has_leasing'][$monthIndex] + $withholdValue : $withholdValue; 
 					 /**
 					  * ! End Question 
 					  */
@@ -91,7 +94,9 @@ class ExpenseAsPercentageEquation
 					}
 					$result['has_direct_factoring'][$monthIndex] = isset($result['has_direct_factoring'][$monthIndex]) ? $result['has_direct_factoring'][$monthIndex] + $valueBeforeVat : $valueBeforeVat ; 
 					$onlyVatValue = $valueAfterVat -$valBeforeRate ; 
+					$withholdValue = $withholdTaxRate / 100 * $valBeforeRate ;  
 					 $vats['has_direct_factoring'][$monthIndex] = isset($vats['has_direct_factoring'][$monthIndex]) ? $vats['has_direct_factoring'][$monthIndex] + $onlyVatValue : $onlyVatValue; 
+					 $withholds['has_direct_factoring'][$monthIndex] = isset($withholds['has_direct_factoring'][$monthIndex]) ? $withholds['has_direct_factoring'][$monthIndex] + $withholdValue : $withholdValue; 
 				}
 			}
 	
@@ -113,7 +118,17 @@ class ExpenseAsPercentageEquation
 			}
 		}
 		
+		$totalWithhold = [];
+		foreach($withholds as $type => $arrItems){
+			foreach($arrItems as $monthIndex=>$value){
+				if($monthIndex>= $startDateAsIndex && $monthIndex <= $endDateAsIndex){
+					$totalWithhold[$monthIndex] = isset($totalWithhold[$monthIndex]) ? $totalWithhold[$monthIndex] + $value : $value;
+				}
+			}
+		}
+		
 		return [
+			'total_withhold'=>$totalWithhold , 
 			'total_before_vat'=>$totalWithoutVat ,
 			'total_vat'=>$totalVat,
 			'total_after_vat'=>HArr::sumAtDates([$totalWithoutVat,$totalVat],$dates)

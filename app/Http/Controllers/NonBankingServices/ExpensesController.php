@@ -140,7 +140,7 @@ class ExpensesController extends Controller
                     $tableDataArr['expense_as_percentages']  =$expenseAsPercentageResults['total_before_vat']  ;
                     $tableDataArr['total_vat']  =$expenseAsPercentageResults['total_vat']  ;
                     $tableDataArr['total_after_vat']  =$expenseAsPercentageResults['total_after_vat']  ;
-                        
+                    $withholdAmounts  = $expenseAsPercentageResults['total_withhold'];
                     $tableDataArr['payment_amounts'] = $this->calculateCollectionOrPaymentAmounts($tableDataArr['payment_terms'], $tableDataArr['total_after_vat'], $datesAsIndexAndString, $customCollectionPolicy) ;
 					$payments = $this->calculateCollectionOrPaymentAmounts($tableDataArr['payment_terms'], $tableDataArr['total_after_vat'], $datesAsIndexAndString, $customCollectionPolicy) ;
                     $withholdPayments = $this->calculateCollectionOrPaymentAmounts($tableDataArr['payment_terms'], $withholdAmounts, $datesAsIndexAndString, $customCollectionPolicy) ;
@@ -168,26 +168,17 @@ class ExpensesController extends Controller
 					$tableDataArr['total_vat']  =$vats  ;
 					$amountAfterVat = [$startDateAsIndex => $amountBeforeVat + $amountBeforeVat * $vatRate ];
                     $tableDataArr['total_after_vat']  =$amountAfterVat  ;
-					
+					$withholdAmount = $tableDataArr['withhold_tax_rate']/100 ;
+					 $withholdAmounts  = [$startDateAsIndex =>  $amountBeforeVat * $withholdAmount ] ;
 					$payments = $this->calculateCollectionOrPaymentAmounts($tableDataArr['payment_terms'], $amountAfterVat, $datesAsIndexAndString, $customCollectionPolicy,true) ;
 					
-					
-					
-					
-					  $withholdPayments = $this->calculateCollectionOrPaymentAmounts($tableDataArr['payment_terms'], $withholdAmounts, $datesAsIndexAndString, $customCollectionPolicy) ;
+					$withholdPayments = $this->calculateCollectionOrPaymentAmounts($tableDataArr['payment_terms'], $withholdAmounts, $datesAsIndexAndString, $customCollectionPolicy) ;
 					$netPaymentsAfterWithhold = HArr::subtractAtDates([$payments,$withholdPayments],array_keys($payments));
 					$tableDataArr['withhold_amounts'] = $withholdAmounts ;
 					$tableDataArr['withhold_payments']=$withholdPayments;
 					 $tableDataArr['payment_amounts'] = $payments;
 					 $tableDataArr['net_payments_after_withhold']=$netPaymentsAfterWithhold;
 					$tableDataArr['collection_statements']   =$this->calculateStatement($amountBeforeVatPayload,$tableDataArr['total_vat'],$netPaymentsAfterWithhold,$withholdPayments,$dateIndexWithDate,$study);
-					// dd($tableDataArr['collection_statements']);
-		
-					
-					
-					
-					
-			
                 }
                 $tableDataArr['company_id']  = $company->id ;
                 $tableDataArr['model_id']   = $modelId ;

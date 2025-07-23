@@ -15,6 +15,7 @@ class  LeasingRevenueStreamBreakdown extends Model
 	protected $guarded = ['id'];
 	protected $casts =[
 		'loan_amounts'=>'array',
+		'monthly_loan_amounts'=>'array',
 		// 'growth_rate'=>'array'
 	];
 	// public function loanSchedulePayments()
