@@ -443,6 +443,8 @@ Route::middleware([])->group(function () {
 						 
 						route::post('recalculate-spread-rates-sensitivity','RecalculateSpreadRateSensitivityController@recalculate')->name('calculate.spread.rate.sensitivity');
 						 route::get('income-statement','IncomeStatementController@index')->name('view.non.banking.forecast.income.statement');
+						 route::get('expense-statement-reports','ExpenseStatementReportController@index')->name('view.expense.statement.reports');
+						 route::post('expense-statement-reports','ExpenseStatementReportController@result')->name('result.expense.statement.reports');
 						
 						
 			

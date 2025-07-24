@@ -30,8 +30,9 @@
                 </button>
             </div>
             <div class="modal-body">
+			
                 <div class="customize-elements">
-                    <table class="table  kt_table_with_no_pagination_no_collapse table-striped- table-bordered table-hover table-checkable position-relative table-with-two-subrows main-table-class dataTable no-footer">
+                    <table class="table   table-striped- table-bordered table-hover table-checkable position-relative table-with-two-subrows main-table-class dataTable no-footer">
                         <thead>
                             <tr class="header-tr">
 								@foreach($notificationHeaders as $notificationHeader)

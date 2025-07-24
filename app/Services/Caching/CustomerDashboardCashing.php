@@ -3,7 +3,6 @@
 namespace App\Services\Caching;
 
 use App\Models\Company;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
@@ -11,6 +10,7 @@ class CustomerDashboardCashing
 {
 	private Company $company;
 	private string $year;
+	private string $month;
 	private string $newCustomerCashingName;
 	private string $repeatingCustomerCashingName;
 	private string $activeCustomerCashingName;
@@ -23,22 +23,23 @@ class CustomerDashboardCashing
 	private string $totalCustomerCashingName;
 	private array $typesOfCaching;
 
-	public function __construct(Company $company, string $year)
+	public function __construct(Company $company, string $year , string $month)
 	{
 		$this->company = $company;
 		$this->year = $year;
-		$this->newCustomerCashingName  = getNewCustomersCacheNameForCompanyInYear($company, $year);
-		$this->repeatingCustomerCashingName = getRepeatingCustomersCacheNameForCompanyInYear($company, $year);
-		$this->activeCustomerCashingName = getActiveCustomersCacheNameForCompanyInYear($company, $year);
-		$this->stopReactivatedCustomerCashingName = getStopReactivatedCustomersCacheNameForCompanyInYear($company, $year);
-		$this->deadReactivatedCustomerCashingName = getDeadReactivatedCustomersCacheNameForCompanyInYear($company, $year);
-		$this->stopRepeatingCustomerCashingName = getStopRepeatingCustomersCacheNameForCompanyInYear($company, $year);
-		$this->deadRepeatingCustomerCashingName = getDeadRepeatingCustomersCacheNameForCompanyInYear($company, $year);
-		$this->stopCustomerCashingName = getStopCustomersCacheNameForCompanyInYear($company, $year);
-		$this->deadCustomerCashingName = getDeadCustomersCacheNameForCompanyInYear($company, $year);
-		$this->totalCustomerCashingName = getTotalCustomersCacheNameForCompanyInYear($this->company, $this->year);
+		$this->month = $month;
+		$this->newCustomerCashingName  = getNewCustomersCacheNameForCompanyInYear($company, $year,$month);
+		$this->repeatingCustomerCashingName = getRepeatingCustomersCacheNameForCompanyInYear($company, $year,$month);
+		$this->activeCustomerCashingName = getActiveCustomersCacheNameForCompanyInYear($company, $year,$month);
+		$this->stopReactivatedCustomerCashingName = getStopReactivatedCustomersCacheNameForCompanyInYear($company, $year,$month);
+		$this->deadReactivatedCustomerCashingName = getDeadReactivatedCustomersCacheNameForCompanyInYear($company, $year,$month);
+		$this->stopRepeatingCustomerCashingName = getStopRepeatingCustomersCacheNameForCompanyInYear($company, $year,$month);
+		$this->deadRepeatingCustomerCashingName = getDeadRepeatingCustomersCacheNameForCompanyInYear($company, $year,$month);
+		$this->stopCustomerCashingName = getStopCustomersCacheNameForCompanyInYear($company, $year,$month);
+		$this->deadCustomerCashingName = getDeadCustomersCacheNameForCompanyInYear($company, $year,$month);
+		$this->totalCustomerCashingName = getTotalCustomersCacheNameForCompanyInYear($this->company, $this->year,$month);
 	}
-
+	////////dddd
 	public function cacheNewCustomers()
 
 	{
@@ -48,7 +49,7 @@ class CustomerDashboardCashing
 			$newCustomers = DB::select(DB::raw(
 				"
                 select  customer_name , min(Year) as first_appearnce , min(Year) -1 as previous_appearance , count(*) as no_customers,
-                 sum(case when Year = " . $this->year  . " then net_sales_value else 0 end ) total_sales  from sales_gathering 
+                 sum(case when Year = " . $this->year  . " and Month <= ". $this->month ." then net_sales_value else 0 end ) total_sales  from sales_gathering 
                  force index (min__index)
                   where company_id = " . $this->company->id . " group by customer_name having  min(Year) = " . $this->year   . " order by total_sales desc
                 "
@@ -60,6 +61,30 @@ class CustomerDashboardCashing
 
 		return $newCustomers;
 	}
+	
+	public function cacheTotalCustomers()
+	{
+
+		if (!Cache::has($this->totalCustomerCashingName)) {
+			$totals = DB::select(DB::raw(
+				"
+                select customer_name ,
+             sum(net_sales_value) as val , count(*) as no_customers,
+              FORMAT((sum(net_sales_value) / (select sum(net_sales_value)  from sales_gathering force index (min__index) where company_id
+               = " . $this->company->id . "  and month <= ". $this->month ."  and Year = " . $this->year . " ) * 100) , 1) as percentage
+                from sales_gathering force index (min__index) where company_id = " . $this->company->id  . " and month <= ". $this->month ." and Year = " . $this->year . "  
+                group by customer_name 
+                order by val desc "
+			));
+
+
+			Cache::forever($this->totalCustomerCashingName, $totals);
+		} else {
+			$totals = Cache::get($this->totalCustomerCashingName);
+		}
+		return $totals;
+	}
+	
 	function formatDataForType(array $dataOfArray, string  $typeToCache)
 	{
 		$formattedData = [];
@@ -82,7 +107,7 @@ class CustomerDashboardCashing
 
 
 					"
-        select  customer_name , min(Year) as date ,count(*) as no_customers, sum(case when Year = " . $this->year . " then net_sales_value else 0 end ) total_sales  from sales_gathering
+        select  customer_name , min(Year) as date ,count(*) as no_customers, sum(case when Year = " . $this->year . " and Month <= ". $this->month ." then net_sales_value else 0 end ) total_sales  from sales_gathering
          force index (min__index) 
         
         where company_id = " . $this->company->id . " group by customer_name having  min(Year) = " . ($this->year - 1) . " and 
@@ -94,7 +119,7 @@ class CustomerDashboardCashing
 
 			Cache::forever($this->repeatingCustomerCashingName, $RepeatingCustomers);
 		} else {
-			$RepeatingCustomers = Cache::get(getRepeatingCustomersCacheNameForCompanyInYear($this->company, $this->year));
+			$RepeatingCustomers = Cache::get(getRepeatingCustomersCacheNameForCompanyInYear($this->company, $this->year,$this->month));
 		}
 
 
@@ -111,7 +136,7 @@ class CustomerDashboardCashing
 			$activeCustomers = DB::select(
 				DB::raw(
 					"
-                select (customer_name) ,count(*) as no_customers, sum(case when Year = " . $this->year . " then net_sales_value else 0 end ) total_sales
+                select (customer_name) ,count(*) as no_customers, sum(case when Year = " . $this->year . " and Month  <= ". $this->month ." then net_sales_value else 0 end ) total_sales
                 from sales_gathering 
                 force index (min__index)
                 where company_id = " . $this->company->id . " 
@@ -144,7 +169,7 @@ class CustomerDashboardCashing
 			$stopReactive = DB::select(
 				DB::raw(
 					"
-                    select (customer_name) ,count(*) as no_customers, sum(case when Year = " . $this->year . " then net_sales_value else 0 end ) total_sales from sales_gathering 
+                    select (customer_name) ,count(*) as no_customers, sum(case when Year = " . $this->year . " and Month <= ".  $this->month  ." then net_sales_value else 0 end ) total_sales from sales_gathering 
                      force index (min__index)
                     where company_id = " . $this->company->id . "
                     GROUP by customer_name
@@ -173,7 +198,7 @@ class CustomerDashboardCashing
 				DB::raw(
 
 					"
-                    select (customer_name) ,count(*) as no_customers, sum(case when year = " .  $this->year   . " then net_sales_value else 0 end ) total_sales
+                    select (customer_name) ,count(*) as no_customers, sum(case when year = " .  $this->year   . " and Month <= ". $this->month ." then net_sales_value else 0 end ) total_sales
                     from sales_gathering force index (min__index)
                     where company_id = " . $this->company->id  . "  
                     GROUP by customer_name " . $havingCondition
@@ -195,7 +220,7 @@ class CustomerDashboardCashing
 			$stopRepeatingCustomers = DB::select(
 				DB::raw(
 					"
-                select (customer_name) , count(*) as no_customers,sum(case when year = " .  $this->year   . " then net_sales_value else 0 end) total_sales
+                select (customer_name) , count(*) as no_customers,sum(case when year = " .  $this->year   . " and Month <= ". $this->month ." then net_sales_value else 0 end) total_sales
                 from sales_gathering force index (min__index)
                 where company_id = " . $this->company->id  . "
                 GROUP by customer_name
@@ -226,7 +251,7 @@ class CustomerDashboardCashing
 			$deadRepeatingCustomers = DB::select(
 
 				DB::raw(
-					"select (customer_name) ,count(*) as no_customers, sum(case when year = " .  $this->year   . " then net_sales_value else 0 end ) total_sales
+					"select (customer_name) ,count(*) as no_customers, sum(case when year = " .  $this->year   . " and Month <= ". $this->month ." then net_sales_value else 0 end ) total_sales
                     from sales_gathering force index (min__index)
                     where company_id = " . $this->company->id  . "  
                     GROUP by customer_name " . $havingCondition
@@ -250,7 +275,7 @@ class CustomerDashboardCashing
 			$stopCustomers = DB::select(
 				DB::raw(
 					"
-            select (customer_name) , count(*) as no_customers, sum(case when year = " .  ($this->year - 1)   . " then net_sales_value else 0 end) total_sales
+            select (customer_name) , count(*) as no_customers, sum(case when year = " .  ($this->year - 1)   . " and Month <= ". $this->month ." then net_sales_value else 0 end) total_sales
             from  sales_gathering force index (min__index)
             where company_id = " . $this->company->id  . " 
             GROUP by customer_name  
@@ -281,7 +306,7 @@ class CustomerDashboardCashing
 				DB::raw(
 					"
                 
-                select (customer_name) , count(*) as no_customers, sum(case when Year = " . ($this->year - 2)  . " then net_sales_value else 0 end ) total_sales
+                select (customer_name) , count(*) as no_customers, sum(case when Year = " . ($this->year - 2)  . " and Month <= ". $this->month ." then net_sales_value else 0 end ) total_sales
                 from sales_gathering force index (min__index)
                 where company_id = " . $this->company->id . "
                 
@@ -309,29 +334,7 @@ class CustomerDashboardCashing
 
 
 
-	public function cacheTotalCustomers()
-	{
-
-
-		if (!Cache::has($this->totalCustomerCashingName)) {
-			$totals = DB::select(DB::raw(
-				"
-                select customer_name ,
-             sum(net_sales_value) as val , count(*) as no_customers,
-              FORMAT((sum(net_sales_value) / (select sum(net_sales_value)  from sales_gathering force index (min__index) where company_id
-               = " . $this->company->id . "  and  Year = " . $this->year . " ) * 100) , 1) as percentage
-                from sales_gathering force index (min__index) where company_id = " . $this->company->id  . " and Year = " . $this->year . " 
-                group by customer_name 
-                order by val desc "
-			));
-
-
-			Cache::forever($this->totalCustomerCashingName, $totals);
-		} else {
-			$totals = Cache::get($this->totalCustomerCashingName);
-		}
-		return $totals;
-	}
+	
 
 
 

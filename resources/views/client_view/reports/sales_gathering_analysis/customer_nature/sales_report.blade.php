@@ -233,7 +233,7 @@ $totalSaleForCustomerType = array_sum(array_column($vals,'total_sales'));
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">{{__($name.' Customers')}}</h5>
+                <h5 class="modal-title" id="exampleModalLalLongTitle">{{__($name.' Customers')}}</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 </button>
             </div>

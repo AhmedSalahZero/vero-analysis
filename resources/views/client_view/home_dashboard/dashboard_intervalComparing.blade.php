@@ -113,56 +113,11 @@
 
 
 
-            {{-- <div class="form-group row ">
-                <div class="col-md-3">
-                    <label><b>{{__('Third Inteval')}}</b></label>
-                </div>
-                <div class="col-md-3">
-                    <label>{{__('Start Date Three')}}</label>
-                    <div class="kt-input-icon">
-                        <div class="input-group date">
-                            <input type="date" name="start_date_three"  required value="{{$start_date_2}}"  class="form-control"  placeholder="Select date" />
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <label>{{__('End Date Three')}}</label>
-                    <div class="kt-input-icon">
-                        <div class="input-group date">
-                            <input type="date" name="end_date_three"  required  value="{{$end_date_2}}" max="{{date('Y-m-d')}}"  class="form-control"  placeholder="Select date" />
-                        </div>
-                    </div>
-                </div>
-
-
-
-                <div class="col-md-3">
-                    <label>{{__('Data Type')}} </label>
-                    <div class="kt-input-icon">
-                        <div class="input-group ">
-                            <input type="text" class="form-control" disabled value="{{__('Value')}}"  >
-                        </div>
-                    </div>
-                </div>
-            </div> --}}
-
             <x-submitting/>
         </form>
     </div>
 </div>
 
-{{-- Title --}}
-{{-- <div class="row">
-    <div class="kt-portlet ">
-        <div class="kt-portlet__head">
-            <div class="kt-portlet__head-label">
-                    <h3 class="kt-portlet__head-title head-title text-primary">
-                        {{__('Products Items Sales Interval Comparing Analysis')}}
-                    </h3>
-            </div>
-        </div>
-    </div>
-</div> --}}
    
     {{-- FIRST CARD --}}
     <div class="row">
@@ -202,6 +157,11 @@
                                     <th class="text-center">#</th>
                                     <th class="text-center">{{ __('Item')}}</th>
                                     <th class="text-center">{{ __('Sales Values') }}</th>
+                                    
+									@if($name == $latestReport)
+               				         <th class="text-center">{{ __('GR %') }}</th>
+									@endif 
+						
                                     <th class="text-center">{{ __('%') }}</th>
 
                                 </tr>
@@ -215,6 +175,16 @@
                                     <th>{{$key+1}}</th>
                                     <th>{{$item['item']?? '-'}}</th>
                                     <td class="text-center">{{number_format($item['Sales Value']??0)}}</td>
+									
+									
+									@if($name == $latestReport)
+						@php
+							$otherIntervalCurrentValue = $latestReport == '_two' ? HArr::searchForCorrespondingItem($result_for_interval_one,$item['item']) :HArr::searchForCorrespondingItem($result_for_interval_two,$item['item']); 
+							$currentItemValue = $item['Sales Value'] ?? 0 ;
+						@endphp
+                        <td class="text-center">{{$otherIntervalCurrentValue ? number_format(($currentItemValue /$otherIntervalCurrentValue  -1) *100,2) .' %' : 0 }}</td>
+						@endif
+						
                                     <td class="text-center">{{$total == 0 ? 0 : number_format((($item['Sales Value']/$total)*100) , 1) . ' %'}}</td>
                                 </tr>
                                 @endforeach

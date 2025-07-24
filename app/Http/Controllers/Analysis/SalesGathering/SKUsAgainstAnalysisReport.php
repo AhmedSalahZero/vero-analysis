@@ -218,6 +218,7 @@ class SKUsAgainstAnalysisReport
 
             $Items_names[] = (str_replace(' ', '_', $main_row));
         }
+		
 
 
         $report_data['Total'] = $final_report_total;

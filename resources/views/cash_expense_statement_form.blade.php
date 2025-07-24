@@ -45,7 +45,6 @@
 
 
 
-
                         <div class="col-md-2 mb-4">
                             <label>{{ __('Select Currency') }} </label>
                             <div class="kt-input-icon">
@@ -59,12 +58,12 @@
                             </div>
                         </div>
                          <div class="col-md-3 mb-4">
-							<x-form.select :multiple="true" :add-new-modal="true" :add-new-modal-modal-type="''" :add-new-modal-modal-name="'CashExpenseCategory'" :add-new-modal-modal-title="__('Expense Category')" :options="$cashExpenseCategories" :add-new="false" :label="__('Expense Category')" class="select2-select expense_category  " data-update-category-name-based-on-category data-filter-type="{{ 'create' }}" :all="false" name="expense_category_id[]" id="expense_category_id" :selected-value="isset($model) ? $model->getExpenseCategoryId() : 0"></x-form.select>
+							<x-form.select  :add-new-modal="true" :add-new-modal-modal-type="''" :add-new-modal-modal-name="'CashExpenseCategory'" :add-new-modal-modal-title="__('Expense Category')" :options="$cashExpenseCategories" :add-new="false" :label="__('Expense Category')" class="select2-select expense_category  " data-update-category-name-based-on-category data-filter-type="{{ 'create' }}" :all="false" name="expense_category_id[]" id="expense_category_id" :selected-value="isset($model) ? $model->getExpenseCategoryId() : 0"></x-form.select>
 						</div>
 
 
 					<div class="col-md-3 mb-4">
-						<x-form.select :multiple="true" :add-new-modal="true" :add-new-modal-modal-type="''" :add-new-modal-modal-name="'CashExpenseCategoryName'" :add-new-modal-modal-title="__('Expense Name')" :previous-select-name-in-dB="'cash_expense_category_id'" :previous-select-must-be-selected="true"  :previous-select-selector="'select.expense_category'" :previous-select-title="__('Expense Name')" :options="[]" :add-new="false" :label="__('Expense Name')" class="select2-select category_name  " data-filter-type="{{ 'create' }}" :all="false" name="cash_expense_category_name_id[]" id="{{'cash_expense_category_name_id' }}" :selected-value="isset($model) ? $model->getCashExpenseCategoryNameId() : 0" data-current-selected="{{ isset($model) ? $model->getCashExpenseCategoryNameId() : 0 }}"></x-form.select>
+						<x-form.select  :add-new-modal="true" :add-new-modal-modal-type="''" :add-new-modal-modal-name="'CashExpenseCategoryName'" :add-new-modal-modal-title="__('Expense Name')" :previous-select-name-in-dB="'cash_expense_category_id'" :previous-select-must-be-selected="true"  :previous-select-selector="'select.expense_category'" :previous-select-title="__('Expense Name')" :options="[]" :add-new="false" :label="__('Expense Name')" class="select2-select category_name  " data-filter-type="{{ 'create' }}" :all="false" name="cash_expense_category_name_id[]" id="{{'cash_expense_category_name_id' }}" :selected-value="isset($model) ? $model->getCashExpenseCategoryNameId() : 0" data-current-selected="{{ isset($model) ? $model->getCashExpenseCategoryNameId() : 0 }}"></x-form.select>
 					</div>
 
 

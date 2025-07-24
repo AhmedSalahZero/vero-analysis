@@ -127,9 +127,9 @@ function spaceAfterCapitalLetters($string)
     ;
 }
 
-function getDeadRepeatingCustomersCacheNameForCompanyInYearForType(Company $companyId, string $year, $type)
+function getDeadRepeatingCustomersCacheNameForCompanyInYearForType(Company $companyId, string $year, string $type,string $month)
 {
-    return 'dead_repeating_reactivated_customers_for_company_' . $companyId->id . '_for_year_' . $year . 'for_type_' . $type;
+    return 'dead_repeating_reactivated_customers_for_company_' . $companyId->id . '_for_year_' . $year . 'for_type_' . $type.'_'.$month;
 }
 
 
@@ -178,9 +178,9 @@ function array_unique_value(array $array, string $key)
 
     return $uniqueItems;
 }
-function getDeadRepeatingCustomersCacheNameForCompanyInYear(Company $companyId, string $year)
+function getDeadRepeatingCustomersCacheNameForCompanyInYear(Company $companyId, string $year,string $month)
 {
-    return 'dead_repeating_reactivated_customers_for_company_' . $companyId->id . 'for_year_' . $year;
+    return 'dead_repeating_reactivated_customers_for_company_' . $companyId->id . 'for_year_' . $year.'_for_month'.$month;
 }
 
 function getPeriods($interval)
@@ -435,13 +435,13 @@ function canViewCustomersDashboard(array $exportables)
     return in_array('Customer Name', $exportables) || in_array('Customer Code', $exportables);
 }
 // 1- customers dashboard
-function getNewCustomersCacheNameForCompanyInYear(Company $companyId, string $year)
+function getNewCustomersCacheNameForCompanyInYear(Company $companyId, string $year,string $month)
 {
-    return 'new_customers_for_company_' . $companyId->id . '_for_year_' . $year;
+    return 'new_customers_for_company_' . $companyId->id . '_for_year_' . $year.'_for_month'.$month;
 }
-function getNewCustomersCacheNameForCompanyInYearForType(Company $companyId, string $year, $type)
+function getNewCustomersCacheNameForCompanyInYearForType(Company $companyId, string $year, string $type,string $month)
 {
-    return 'new_customers_for_company_' . $companyId->id . '_for_year_' . $year . 'for_type_' . $type;
+    return 'new_customers_for_company_' . $companyId->id . '_for_year_' . $year . 'for_type_' . $type.'_'.$month;
 }
 function getBreakdownCacheNameForCompanyAndDatesAndType(Company $companyId, string $start_date, string $endDate, string $type)
 {
@@ -449,7 +449,7 @@ function getBreakdownCacheNameForCompanyAndDatesAndType(Company $companyId, stri
 }
 function getBreakdownSimpleLinearRegressionCacheNameForCompanyAndDatesAndType(Company $companyId, string $start_date, string $endDate, string $type)
 {
-    return 'breakdown_simple_linear_regression_start_date'. $start_date .'end_date' . $endDate . 'company_id'. $companyId->id . 'for_type_' . $type;
+    return 'breakdown_simple_linear_regression_start_date'. $start_date .'end_date' . $endDate . 'company_id'. $companyId->id . 'for_type_' . $type ;
 }
 function getBreakdownSimpleLinearRegressionCacheNameFor2CompanyAndDatesAndType(Company $companyId, string $start_date, string $endDate, string $type)
 {
@@ -460,85 +460,85 @@ function getBreakdownSimpleLinearRegressionDatesCacheNameForCompanyAndDatesAndTy
     return 'breakdown_simple_linear_regression_dates_start_date'. $start_date .'end_date' . $endDate . 'company_id'. $companyId->id . 'for_type_' . $type;
 }
 
-function getTotalCustomersCacheNameForCompanyInYearForType(Company $companyId, string $year, $type)
+function getTotalCustomersCacheNameForCompanyInYearForType(Company $companyId, string $year, $type,string $month)
 {
-    return 'total_customers_for_company_' . $companyId->id . '_for_year_' . $year . 'for_type_' . $type;
+    return 'total_customers_for_company_' . $companyId->id . '_for_year_' . $year . 'for_type_' . $type.'_'.$month;
 }
 
 
 
-function getRepeatingCustomersCacheNameForCompanyInYear(Company $companyId, string $year)
+function getRepeatingCustomersCacheNameForCompanyInYear(Company $companyId, string $year,string $month)
 {
-    return 'repeating_customers_for_company_' . $companyId->id . '_for_year_' . $year;
+    return 'repeating_customers_for_company_' . $companyId->id . '_for_year_' . $year.'month'.$month;
 }
 
-function getRepeatingCustomersCacheNameForCompanyInYearForType(Company $companyId, string $year, $type)
+function getRepeatingCustomersCacheNameForCompanyInYearForType(Company $companyId, string $year, string $type,string $month)
 {
-    return 'repeating_customers_for_company_' . $companyId->id . '_for_year_' . $year . 'for_type_' . $type;
+    return 'repeating_customers_for_company_' . $companyId->id . '_for_year_' . $year . 'for_type_' . $type .'_'.$month;
 }
 
-function getActiveCustomersCacheNameForCompanyInYear(Company $companyId, string $year)
+function getActiveCustomersCacheNameForCompanyInYear(Company $companyId, string $year,string $month)
 {
-    return 'active_customers_for_company_' . $companyId->id . '_for_year_' . $year;
+    return 'active_customers_for_company_' . $companyId->id . '_for_year_' . $year.'_for_month'.$month;
 }
 
-function getActiveCustomersCacheNameForCompanyInYearForType(Company $companyId, string $year, $type)
+function getActiveCustomersCacheNameForCompanyInYearForType(Company $companyId, string $year, string $type,string $month)
 {
-    return 'active_customers_for_company_' . $companyId->id . '_for_year_' . $year . 'for_type_' . $type;
+    return 'active_customers_for_company_' . $companyId->id . '_for_year_' . $year . 'for_type_' . $type.'_'.$month;
 }
 
 
 
-function getStopReactivatedCustomersCacheNameForCompanyInYear(Company $companyId, string $year)
+function getStopReactivatedCustomersCacheNameForCompanyInYear(Company $companyId, string $year,string $month)
 {
-    return 'stop_reactivated_customers_for_company_' . $companyId->id . '_for_year_' . $year;
+    return 'stop_reactivated_customers_for_company_' . $companyId->id . '_for_year_' . $year.'_for_month'.$month;
 }
-function getStopReactivatedCustomersCacheNameForCompanyInYearForType(Company $companyId, string $year, $type)
+function getStopReactivatedCustomersCacheNameForCompanyInYearForType(Company $companyId, string $year, string $type , string $month)
 {
-    return 'stop_reactivated_customers_for_company_' . $companyId->id . '_for_year_' . $year . 'for_type_' . $type;
+    return 'stop_reactivated_customers_for_company_' . $companyId->id . '_for_year_' . $year . 'for_type_' . $type.'_'.$month;
 }
-function getDeadReactivatedCustomersCacheNameForCompanyInYear(Company $companyId, string $year)
+function getDeadReactivatedCustomersCacheNameForCompanyInYear(Company $companyId, string $year,string $month)
 {
-    return 'dead_reactivated_customers_for_company_' . $companyId->id . '_for_year_' . $year;
+    return 'dead_reactivated_customers_for_company_' . $companyId->id . '_for_year_' . $year . '_for_month'.$month;
 }
 
-function getDeadReactiveCacheNameForCompanyInYearForType(Company $companyId, string $year, $type)
+function getDeadReactiveCacheNameForCompanyInYearForType(Company $companyId, string $year, string $type,string $month)
 {
-    return 'dead_reactivated_customers_for_company_' . $companyId->id . '_for_year_' . $year . 'for_type_' . $type;
+    return 'dead_reactivated_customers_for_company_' . $companyId->id . '_for_year_' . $year . 'for_type_' . $type.'_'.$month;
 }
 // getStopRepeatingCacheNameForCompanyInYearForType
 // getDeadReactiveCacheNameForCompanyInYearForType
-function getStopRepeatingCustomersCacheNameForCompanyInYear(Company $companyId, string $year)
+function getStopRepeatingCustomersCacheNameForCompanyInYear(Company $companyId, string $year,string $month)
 {
-    return 'stop_repeating_reactivated_customers_for_company_' . $companyId->id . 'for_year_' . $year;
+    return 'stop_repeating_reactivated_customers_for_company_' . $companyId->id . 'for_year_' . $year.'_for_month'.$month;
 }
-function getStopRepeatingCustomersCacheNameForCompanyInYearForType(Company $companyId, string $year, $type)
+function getStopRepeatingCustomersCacheNameForCompanyInYearForType(Company $companyId, string $year, string $type , string $month)
 {
-    return 'stop_repeating_reactivated_customers_for_company_' . $companyId->id . '_for_year_' . $year . 'for_type_' . $type;
+    return 'stop_repeating_reactivated_customers_for_company_' . $companyId->id . '_for_year_' . $year . 'for_type_' . $type.'_'.$month;
 }
-function getStopCustomersCacheNameForCompanyInYear(Company $companyId, string $year)
+function getStopCustomersCacheNameForCompanyInYear(Company $companyId, string $year,string $month)
 {
-    return 'stop_customers_for_company_' . $companyId->id . '_for_year_' . $year;
-}
-
-function getStopCustomersCacheNameForCompanyInYearForType(Company $companyId, string $year, $type)
-{
-    return 'stop_customers_for_company_' . $companyId->id . '_for_year_' . $year . 'for_type_' . $type;
+    return 'stop_customers_for_company_' . $companyId->id . '_for_year_' . $year.'_for_month'.$month;
 }
 
-
-function getDeadCustomersCacheNameForCompanyInYear(Company $companyId, string $year)
+function getStopCustomersCacheNameForCompanyInYearForType(Company $companyId, string $year, string $type , string $month)
 {
-    return 'dead_customers_for_company_' . $companyId->id . '_for_year_' . $year;
-}
-function getDeadCustomersCacheNameForCompanyInYearForType(Company $companyId, string $year, $type)
-{
-    return 'dead_customers_for_company_' . $companyId->id . '_for_year_' . $year . 'for_type_' . $type;
+    return 'stop_customers_for_company_' . $companyId->id . '_for_year_' . $year . 'for_type_' . $type.'_'.$month;
 }
 
-function getTotalCustomersCacheNameForCompanyInYear(Company $companyId, string $year)
+
+function getDeadCustomersCacheNameForCompanyInYear(Company $companyId, string $year,string $month)
 {
-    return 'total_customers_dashboard_for_company_' . $companyId->id . '_for_year_' . $year;
+    return 'dead_customers_for_company_' . $companyId->id . '_for_year_' . $year.'_for_month'.$month;
+}
+function getDeadCustomersCacheNameForCompanyInYearForType(Company $companyId, string $year, string $type , string $month)
+{
+    return 'dead_customers_for_company_' . $companyId->id . '_for_year_' . $year . 'for_type_' . $type.'_'.$month;
+}
+
+function getTotalCustomersCacheNameForCompanyInYear(Company $companyId, string $year,string $month)
+{
+    return 'total_customers_dashboard_for_company_' . $companyId->id . '_for_year_' . $year.'and_month'.$month;
 }
 
 // intervalYearsForCompany (max date and min date in database for sales gatering)
@@ -1636,6 +1636,7 @@ function getComparingReportForAnalysis($request, $report_data, $secondReport, $c
 
         if ($modelType == 'product_item') {
             $secondReportDataResult = (new SKUsAgainstAnalysisReport())->result($request, $company, false);
+			// dd($secondReportDataResult);
             $type = __('Products Items');
         } elseif ($modelType == 'zone') {
             $secondReportDataResult = (new ZoneAgainstAnalysisReport())->result($request, $company, 'view', false);
@@ -6389,6 +6390,15 @@ function getNonBankingNavigation(Company $company,User $user):array
 			 'title'=>__('Analytical Reports'),
             'show'=>true ,
 			'link'=>'#',
+			'submenu'=>[
+				[
+					'title'=>__('Expense Statement Report'),
+					'show'=>true ,
+					'link'=>route('view.expense.statement.reports',['company'=>$company->id,'study'=>$study->id]),
+					
+				]
+			]
+			
 		]
 			]
 		];

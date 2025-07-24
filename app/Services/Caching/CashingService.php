@@ -4,6 +4,7 @@ namespace App\Services\Caching;
 use App\Models\Company;
 use App\Services\Caching\BreakdownCashing;
 use App\Services\Caching\CustomerDashboardCashing;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -36,6 +37,7 @@ class CashingService
 		$elements = [
             'start_year'=>$years[0]->start_date,
             'end_year'=>$years[0]->end_date,
+			'full_date'=>$years[0]->full_end_date
         ];
 		if(isset($years[0]->full_end_date)){
 			$elements['full_end_date'] =$years[0]->full_end_date ; 
@@ -76,11 +78,15 @@ class CashingService
              $years = $this->getIntervalYearsFormCompany(); 
             $startYear = $years['start_year'] ; 
             $endYear = $years['end_year'] ; 
+            $fullData = $years['full_date'] ; 
+			$date = Carbon::make($fullData)->format('Y-m-d');
+			$month  = explode('-',$date)[1];
+			
             if($startYear && $endYear){
                 for($year = $startYear ; $year <= $endYear ; $year++)
                 {
-                        (new CustomerDashboardCashing($this->company , $year))->cacheAll();
-                        (new CustomerNatureCashing($this->company , $year))->cacheAll();
+                        (new CustomerDashboardCashing($this->company , $year,$month))->cacheAll();
+                        (new CustomerNatureCashing($this->company , $year,$month))->cacheAll();
                         (new BreakdownCashing($this->company , $year,$endYear))->cacheAll();
                 }
             }
@@ -92,10 +98,14 @@ class CashingService
             
             $years = $this->getIntervalYearsFormCompany(); 
             
+			$fullData = $years['full_date'] ; 
+			$date = Carbon::make($fullData)->format('Y-m-d');
+			$month  = explode('-',$date)[1];
+			
             if($years['start_year'] && $years['end_year']){
                 for($year = $years['start_year'] ; $year <= $years['end_year'] ; $year++)
                 {
-                        (new CustomerDashboardCashing($this->company , $year))->deleteAll();
+                        (new CustomerDashboardCashing($this->company , $year,$month))->deleteAll();
                         (new CustomerNatureCashing($this->company , $year))->deleteAll();
                         (new BreakdownCashing($this->company , $year,$years['end_year']))->deleteAll();
                 }
@@ -121,18 +131,18 @@ class CashingService
          
             $startYear = $years['start_year'] ; 
             $endYear = $years['end_year'] ; 
-            
+            $fullData = $years['full_date'] ; 
+			$date = Carbon::make($fullData)->format('Y-m-d');
+			$month  = explode('-',$date)[1];
             if($startYear && $endYear){
                 for($year = $startYear ; $year <= $endYear ; $year++)
                 {
                     // 1- customer dashboard 
                   
                     if(canViewCustomersDashboard($exportables)){
-                        $customerDashboardCashing = new CustomerDashboardCashing($this->company , $year); 
+                        $customerDashboardCashing = new CustomerDashboardCashing($this->company , $year,$month); 
                         $customerDashboardCashing->deleteAll();
                         $customerDashboardCashing->cacheAll();   
-
-                      
                     }
                 }
             }
@@ -150,7 +160,10 @@ class CashingService
          
             $startYear = $years['start_year'] ; 
             $endYear = $years['end_year'] ; 
-            
+            $fullData = $years['full_date'] ; 
+            $date = Carbon::make($fullData)->format('Y-m-d');
+			$month  = explode('-',$date)[1];
+			
             if($startYear && $endYear){
                 for($year = $startYear ; $year <= $endYear ; $year++)
                 {
@@ -158,7 +171,7 @@ class CashingService
                   
                     if(canViewCustomersDashboard($exportables)){
                     
-                        $customerNatureCashing = new CustomerNatureCashing($this->company , $year); 
+                        $customerNatureCashing = new CustomerNatureCashing($this->company , $year,$month); 
                         $customerNatureCashing->deleteAll();
                         $customerNatureCashing->cacheAll();   
                     }

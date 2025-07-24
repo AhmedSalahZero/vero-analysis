@@ -57,6 +57,7 @@
 </div>
 <div class="row">
     {{-- Tables --}}
+
     @foreach ($intervals as $interval_name => $name)
     <?php
                 $report_name = 'result_for_interval'.$name ;
@@ -87,7 +88,7 @@
                 <!--begin: Datatable -->
 
 
-                <x-table :tableClass="'kt_table_with_no_pagination_no_scroll_no_search_no_info	'">
+                <x-table :tableClass="'kt_table_with_no_pagination_no_scroll_no_search_no_info'">
                     @slot('table_header')
                     <tr class="table-active text-center">
                         <th>#</th>
@@ -215,87 +216,6 @@
 @endforeach
 
 
-{{-- New Chart --}}
-
-<!-- Resources -->
-{{-- <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
-<script src="https://cdn.amcharts.com/lib/5/percent.js"></script>
-<script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
-
-<!-- Chart code -->
-<script>
-    am5.ready(function() {
-
-        // Create root element
-        // https://www.amcharts.com/docs/v5/getting-started/#Root_element
-        var root = am5.Root.new("chartdiv");
-
-        // Set themes
-        // https://www.amcharts.com/docs/v5/concepts/themes/
-        root.setThemes([
-            am5themes_Animated.new(root)
-        ]);
-
-        // Create chart
-        // https://www.amcharts.com/docs/v5/charts/percent-charts/pie-chart/
-        var chart = root.container.children.push(am5percent.PieChart.new(root, {
-            radius: am5.percent(90),
-            innerRadius: am5.percent(50),
-            layout: root.horizontalLayout
-        }));
-
-        // Create series
-        // https://www.amcharts.com/docs/v5/charts/percent-charts/pie-chart/#Series
-        var series = chart.series.push(am5percent.PieSeries.new(root, {
-            name: "Series",
-            valueField: "Sales Value",
-            categoryField: "item"
-        }));
-
-        // Set data
-        // https://www.amcharts.com/docs/v5/charts/percent-charts/pie-chart/#Setting_data
-        chart_data = $('#total').data('total');
-        series.data.setAll(chart_data);
-
-        // Disabling labels and ticks
-        series.labels.template.set("visible", true);
-        series.ticks.template.set("visible", true);
-
-        // Adding gradients
-        series.slices.template.set("strokeOpacity", 0);
-        series.slices.template.set("fillGradient", am5.RadialGradient.new(root, {
-            stops: [{
-                brighten: -0.8
-            }, {
-                brighten: -0.8
-            }, {
-                brighten: -0.5
-            }, {
-                brighten: 0
-            }, {
-                brighten: -0.5
-            }]
-        }));
-
-        // Create legend
-        // https://www.amcharts.com/docs/v5/charts/percent-charts/legend-percent-series/
-        var legend = chart.children.push(am5.Legend.new(root, {
-            centerY: am5.percent(10),
-            y: am5.percent(10),
-            marginTop: 15,
-            marginBottom: 15,
-            layout: root.verticalLayout
-        }));
-
-        legend.data.setAll(series.dataItems);
-
-
-        // Play initial series animation
-        // https://www.amcharts.com/docs/v5/concepts/animations/#Animation_of_series
-        series.appear(1000, 100);
-
-    }); // end am5.ready()
-</script> --}}
 
 
 

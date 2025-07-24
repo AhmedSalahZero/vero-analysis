@@ -56,7 +56,6 @@ $isSelect2 = false ;
 @php
 $basicClasses = $isSelect2 ? "form-control mb-1 select select2-select" :"form-control mb-1 select ";
 $basicClasses = $insideModalWithJs ? str_replace($insideModalWithJs,'select2-select','select3-select') : $basicClasses ;
-
 @endphp
 
 <select
@@ -64,8 +63,8 @@ $basicClasses = $insideModalWithJs ? str_replace($insideModalWithJs,'select2-sel
 data-current-selected-items="{{ json_encode($selectedValue) }}"
 
 @endif
-
-  @if($addNewModalModalName) data-modal-name="{{ $addNewModalModalName }}" data-modal-type="{{ $addNewModalModalType }}" @endif {{-- data-add-modal-name="{{ $addNewModalModalName }}" --}} @if($disabled) disabled @endif {{ $attributes->merge(['class'=>$basicClasses]) }} data-live-search="true" data-add-new="{{ $addNew ? 1 : 0 }}" data-all="{{ $all ? 1 :0 }}" @if($multiple) multiple @endif>
+{{-- {{ dd($multiple) }} --}}
+  @if($addNewModalModalName) data-modal-name="{{ $addNewModalModalName }}" data-modal-type="{{ $addNewModalModalType }}" @endif @if($disabled) disabled @endif {{ $attributes->merge(['class'=>$basicClasses]) }} data-live-search="true" data-add-new="{{ $addNew ? 1 : 0 }}" data-all="{{ $all ? 1 :0 }}" @if($multiple) multiple @endif>
 
     @if($pleaseSelect)
     <option value="" selected>{{ __('Please Select') }}</option>

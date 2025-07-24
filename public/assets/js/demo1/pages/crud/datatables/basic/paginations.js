@@ -85,7 +85,6 @@ var KTDatatablesBasicPaginations = (function () {
 
     var initTableWithNoPaginationNoCollapse = function () {
         var table = $(".kt_table_with_no_pagination_no_collapse");
-
         // begin first tablea
         table.DataTable({
             deferRender: true,

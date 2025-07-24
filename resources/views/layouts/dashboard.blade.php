@@ -23,7 +23,7 @@
 </style>
 
     <script>
-        let pageLoaded = false;
+        let currentPageLoaded = false;
 
     </script>
     <style>
@@ -528,7 +528,7 @@
     {{-- <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js"></script> --}}
     <script>
         var wto;
-        const slugify = str =>
+        const str_slugify = str =>
             str
             .toLowerCase()
             .trim()
@@ -1978,7 +1978,7 @@
         $(document).on('change', '.update-exchange-rate', function() {
 
 
-            if (!pageLoaded) {
+            if (!currentPageLoaded) {
                 return
             }
             let fromCurrency = $('select.current-invoice-currency').val()
@@ -2490,7 +2490,7 @@
     </script>
     <script>
         $(function() {
-            pageLoaded = true;
+            currentPageLoaded = true;
 
             $(function() {
 

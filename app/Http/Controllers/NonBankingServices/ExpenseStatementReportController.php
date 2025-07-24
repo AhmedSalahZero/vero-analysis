@@ -1,0 +1,84 @@
+<?php
+
+namespace App\Http\Controllers\NonBankingServices;
+
+use App\Http\Controllers\Controller;
+use App\Models\Company;
+use App\Models\NonBankingService\Expense;
+use App\Models\NonBankingService\ExpenseName;
+use App\Models\NonBankingService\Study;
+use Illuminate\Http\Request;
+
+class ExpenseStatementReportController extends Controller
+{
+	public function index(Request $request , Company $company,Study $study)
+	{
+		
+		$expenseTypes = [
+			'fixed_monthly_repeating_amount'=>__('Fixed Monthly Repeating'),
+			'percentage_of_sales'=>__('Percentage Of Sales'),
+			'cost_per_unit'=>__('Cost Per Unit'),
+			'expense_per_employee'=>__('Expense Per Employee')	
+		];
+		
+		$expenseCategories = ExpenseName::where('company_id',$company->id)->pluck('expense_type','expense_type')->unique()->toArray();
+		
+		
+		return view('non_banking_services.reports.expense-statement.form',[
+			'company'=>$company,
+			'study'=>$study,
+			'expenseTypes'=>$expenseTypes,
+			'expenseCategories'=>$expenseCategories
+		]);
+	}
+	public function result(Request $request , Company $company , Study $study)
+	{
+		$expenseType = $request->get('expense_type');
+		$expenseCategorySlug = $request->get('expense_category_id');
+		$expenseNameId = $request->get('expense_name_id');
+		$expense = Expense::where('model_name','Study')->where('model_id',$study->id)
+		->where('relation_name',$expenseType)
+		->where('expense_category',$expenseCategorySlug)
+		->where('expense_name_id',$expenseNameId)
+		->first();
+		if(!$expense){
+			return back()->with('fail',__('No Data Found'));
+			// dd($statement);
+		}
+		$statement  = $expense->collection_statements;
+		dd($statement);
+		
+		
+		// 	$company = Company::find($companyId);
+		// $hospitalitySector = HospitalitySector::find($hospitalitySectorId);
+		// $operationStartDateFormatted =$hospitalitySector->getOperationStartDateFormatted() ;
+		// $datesAsStringAndIndex = $hospitalitySector->getDatesAsStringAndIndex();
+		// $operationStartDateAsIndex = $hospitalitySector->getOperationStartDateAsIndex($datesAsStringAndIndex,$operationStartDateFormatted);
+		// $datesIndexWithYearIndex = App('datesIndexWithYearIndex');
+		// $yearIndexWithYear = App('yearIndexWithYear');
+		// $dateIndexWithDate = App('dateIndexWithDate');
+		// $dateWithDateIndex = App('dateWithDateIndex');
+		// $dateWithMonthNumber=App('dateWithMonthNumber');
+
+		
+		// $dashboardItems = $hospitalitySector->calculateRoomRevenueAndGuestCount();
+		// $operationDates = $hospitalitySector->getOperationDurationPerMonth($datesAsStringAndIndex,$datesIndexWithYearIndex,$yearIndexWithYear,$dateIndexWithDate,$dateWithMonthNumber);
+		// $calculateFixedLoanAtEndService = new CalculateFixedLoanAtEndService($hospitalitySector);
+		// $fixedAssetsLoan = $calculateFixedLoanAtEndService->calculateFixedAssetsLoans($hospitalitySector,$datesAsStringAndIndex,$dateIndexWithDate,$dateWithDateIndex);
+		
+		// $onlyMonthlyDashboardItems = [];
+		// $reportItems = $this->formatDashboardReportItems($onlyMonthlyDashboardItems,$dashboardItems, $hospitalitySector,$operationStartDateAsIndex,$datesAsStringAndIndex,$datesIndexWithYearIndex,$yearIndexWithYear,$dateIndexWithDate , $dateWithDateIndex,$operationDates,$fixedAssetsLoan);
+		// $operationDurationPerYear = $hospitalitySector->getOperationDurationPerYear($datesAsStringAndIndex,$datesIndexWithYearIndex,$yearIndexWithYear,$dateIndexWithDate,$dateWithMonthNumber);
+
+		return view('admin.hospitality-sector.fixed-property-expense', [
+			'company' => $company,
+			'reportItems' => $reportItems,
+			'hospitalitySector' => $hospitalitySector,
+			'dashboardItems' => $dashboardItems,
+			'namesIncludesTotal' => array_keys($dashboardItems['prepaidExpenseStatementForPropertyForView'] ?? []),
+			'dates' => $hospitalitySector->getOnlyDatesOfActiveOperation($operationDurationPerYear,$dateIndexWithDate),
+			'navigators' => array_merge($this->getCommonNavigators($companyId, $hospitalitySectorId), [])
+		]);
+		
+	}
+}

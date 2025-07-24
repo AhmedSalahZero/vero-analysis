@@ -276,8 +276,8 @@ data-can-delete-financial-statement="{{ $user->can('view income statement planni
                                                     durations.forEach((duration) => {
 
                                                         var durationTranslated = duration // need to be translated
-                                                        var selected = slugify(duration) == row.duration_type ? 'selected' : '';
-                                                        select += ` <option ${selected} value=" ${slugify(duration)} "> ${durationTranslated}  </option>`
+                                                        var selected = str_slugify(duration) == row.duration_type ? 'selected' : '';
+                                                        select += ` <option ${selected} value=" ${str_slugify(duration)} "> ${durationTranslated}  </option>`
                                                     })
                                                     select += '</select>';
                                                     if (false) {

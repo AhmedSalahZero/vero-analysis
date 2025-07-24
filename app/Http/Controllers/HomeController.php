@@ -548,13 +548,23 @@ class HomeController extends Controller
 		$request['start_date'] = date('Y', strtotime($date)) . '-01-01';
 		$request['end_date'] = $date;
 
-		$customers_breakdown_data = [];
 		$request['type'] = 'customer_nature';
 		$request['date'] = $date;
 
 		$customers_natures = (new CustomersNaturesAnalysisReport)->result($request, $company, 'array');
+		
+		/**
+		 * test 
+		 */
+		
+		$totals = $customers_natures['totals'];
+		$sum = 0 ;
+		foreach($totals as $total){
+			$sum+= $total->val ;
+		}
+		
 
-		return view('client_view.home_dashboard.dashboard_customers', compact('company', 'customers_breakdown_data', 'customers_natures', 'date'));
+		return view('client_view.home_dashboard.dashboard_customers', compact('company', 'customers_natures', 'date'));
 	}
 	public function dashboardSalesPerson(Request $request, Company $company)
 	{
