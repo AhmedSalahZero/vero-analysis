@@ -30,8 +30,7 @@ class TestJob2 implements ShouldQueue
     public function handle()
     {
         for($i = 5000 ; $i < 10000 ; $i++){
-			logger('from second');
-			logger($i . '-');
+		
 		}
     }
 }

@@ -118,8 +118,6 @@ class ManpowerExpensesController extends Controller
 				$operationStartDateAsIndex = $study->operation_start_month;
 				$positionArr['study_id'] = $study->id ;
 				$positionArr['company_id'] = $company->id ;
-				// $positionArr['manpower_salaries'] = 
-				//$generalAndReserveAssumption = $study->generalAndReserveAssumption;
 				
 				$salaryTaxesRate = $study->getSalaryTaxesRate() / 100;
 				$socialInsuranceRate = $study->getSocialInsuranceRate() /100 ;

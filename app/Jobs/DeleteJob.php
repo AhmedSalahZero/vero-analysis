@@ -29,6 +29,5 @@ class DeleteJob implements ShouldQueue
      */
     public function handle()
     {
-        logger('salah2');
     }
 }

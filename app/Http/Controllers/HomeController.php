@@ -687,10 +687,19 @@ class HomeController extends Controller
 			$intervalComparing[$t] = (new IntervalsComparingReport)->result($request, $company, 'array');
 		}
 
+		
+		$latestReport = null ;
+		if(Carbon::make($end_date_1)->greaterThan(Carbon::make($end_date_0))){
+			$latestReport =    '_two' ;
+		}elseif(Carbon::make($end_date_0)->greaterThan(Carbon::make($end_date_1))){
+			$latestReport =    '_one' ;
+		}
+		
 		$customers_natures = [];
 
 		return view('client_view.home_dashboard.dashboard_intervalComparing', compact(
-			'company'
+			'company',
+			'latestReport'
 			// ,'product_items','sales_channels'
 			,
 			'start_date_0',

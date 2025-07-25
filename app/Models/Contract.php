@@ -121,7 +121,6 @@ class Contract extends Model
                     /**
                      * * هنضيف رو جديد بنفس القيمة ولكن بالسالب
                      */
-					logger('from oo');
 
                     $model->handleOverdraftAgainstAssignmentOfContractLimit();
 
@@ -129,7 +128,6 @@ class Contract extends Model
                 }
 
                 if ($model->isRunning() ) {
-					logger('from qq');
                     $model->deleteOverdraftAgainstAssignmentOfContractsLimits();
                     return ;
                 }

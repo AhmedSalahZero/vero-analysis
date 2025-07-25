@@ -108,7 +108,6 @@ class FinancialInstitutionAccountController
 											->where('financial_institution_account_id', $financialInstitutionAccount->id)
 											->min('date');
 		if($minDateInCurrentAccountStatement){
-			// logger('updated lol');
 			$financialInstitutionAccount->updateBankStatementsFromDate($minDateInCurrentAccountStatement);
 			
 		}

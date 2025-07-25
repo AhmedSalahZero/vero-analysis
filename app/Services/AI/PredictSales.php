@@ -291,8 +291,6 @@ return $newArray;
 		else{
 			$itemForecastGrowthRate = $growthRateForItem;
 		}
-		// 
-				// logger($next1MonthPercentage . '-' . $type . ' - ' . $currentItemName);
 				$next1ForecastForItem = ($last12ItemsAvg*12) * (1+$itemForecastGrowthRate) * $next1MonthPercentage;
 				$next1ForecastForItem = $next1ForecastForItem < 0 ? 0 : $next1ForecastForItem ;
 				

@@ -257,7 +257,6 @@ class ImportData implements
 			$row_with_no_spaces[trim($key)] = trim($value);
 			$rowValidation = $this->validateRowValue(trim($key), trim($value));
 			if (isset($rowValidation[$key]) && count($rowValidation[$key])) {
-				logger($key);
 				$validations[$rowId][$key] =  $rowValidation[$key] ;
 			}
 		}

@@ -332,8 +332,6 @@ class Cheque extends Model
 	{
 		$paperId = $overdraftAgainstCommercialPaperLimit->overdraft_against_commercial_paper_id;
 		$row =  OverdraftAgainstCommercialPaperBankStatement::where('type', 'limit_update')->where('overdraft_against_commercial_paper_limit_id',$overdraftAgainstCommercialPaperLimit->id)->where('overdraft_against_commercial_paper_id',$paperId)->first();
-	//	$rowId = $row ? $row->id : -1 ;
-//		logger('paper id'. $paperId . ' limit id ' . $overdraftAgainstCommercialPaperLimit->id .  ' row id ' . $rowId );
 		if($row){
 			$row->delete();
 		}

@@ -849,15 +849,7 @@ trait FinancialStatementAbleMutator
 				$values['total']['total'] += $values['total']['dates'][$date];
 			}
 		}
-		// $this->withMainRowsFor($incomeStatementItemId, $subItemType)->detach();
-		// logger($companyId);
-		// $this->withMainRowsFor($incomeStatementItemId, $subItemType)->attach($incomeStatementItemId, [
-		// 	'total' => $values['total']['total'] ?? 0,
-		// 	'payload' =>   json_encode($values['total']['dates'] ?? []),
-		// 	'sub_item_type'=>$subItemType,
-		// 	'company_id'=>$companyId,
-		// 	'creator_id'=>$this->creator_id 
-		// ]);
+	
 		$mainRows[] = $this->getMainRowCalculationsArr($incomeStatementItemId,$subItemType,$values['total']['total'] ?? 0,json_encode($values['total']['dates'] ?? []),$companyId,$this->creator_id);
 	
 		if ($incomeStatementItemId === IncomeStatementItem::EARNING_BEFORE_INTEREST_TAXES_ID) {
@@ -923,26 +915,7 @@ trait FinancialStatementAbleMutator
 			'company_id'=>$companyId,
 			'creator_id'=>$creatorId,
 		];
-		// logger('salah');
-		// DB::table('financial_statement_able_main_item_calculations')
-		// ->insert([
-		// 	'financial_statement_able_id'=>$this->id ,
-		// 	'financial_statement_able_item_id'=>$incomeStatementItemId,
-		// 	'payload'=>$totalAtDates,
-		// 	'total'=>$totalOfAllRows,
-		// 	'sub_item_type'=>$subItemType,
-		// 	'company_id'=>$companyId,
-		// 	'creator_id'=>$creatorId,
-		// ]);
-		// 	->insert([
-		// 	'financial_statement_able_id'=>$this->id ,
-		// 	'financial_statement_able_item_id'=>$incomeStatementItemId,
-		// 	'payload'=>$totalAtDates,
-		// 	'total'=>$totalOfAllRows,
-		// 	'sub_item_type'=>$subItemType,
-		// 	'company_id'=>$companyId,
-		// 	'creator_id'=>$creatorId,
-		// ]);
+		// 
 		
 	}
 	public function removeMainRowsCalculations(string $subItemType)
