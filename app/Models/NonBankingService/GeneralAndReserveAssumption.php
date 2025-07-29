@@ -48,38 +48,38 @@ class  GeneralAndReserveAssumption extends Model
 			});
 		}
 		
-	public function getEmployeeProfitShareRatesAtYearIndex(int $yearIndex)
+	public function getEmployeeProfitShareRatesAtYearOrMonthIndex(int $yearOrMonthIndex)
 	{
-		return $this->employee_profit_share_rates[$yearIndex] ?? 0  ; 
+		return $this->employee_profit_share_rates[$yearOrMonthIndex] ?? 0  ; 
 	}
-	public function getBorderOfDirectorsProfitShareRateAtYearIndex(int $yearIndex)
+	public function getBorderOfDirectorsProfitShareRateAtYearOrMonthIndex(int $yearOrMonthIndex)
 	{
-		return $this->border_of_directors_profit_share_rates[$yearIndex] ?? 0  ; 
+		return $this->border_of_directors_profit_share_rates[$yearOrMonthIndex] ?? 0  ; 
 	}
-	public function getShareholderFirstDividendPortionAtYearIndex(int $yearIndex)
+	public function getShareholderFirstDividendPortionAtYearOrMonthIndex(int $yearOrMonthIndex)
 	{
-		return $this->shareholders_first_dividend_portions[$yearIndex] ?? 0  ; 
+		return $this->shareholders_first_dividend_portions[$yearOrMonthIndex] ?? 0  ; 
 	}
-	public function getShareholderDividendPayoutRatioAtYearIndex(int $yearIndex)
+	public function getShareholderDividendPayoutRatioAtYearOrMonthIndex(int $yearOrMonthIndex)
 	{
-		return $this->shareholders_dividend_payout_ratios[$yearIndex] ?? 0  ; 
+		return $this->shareholders_dividend_payout_ratios[$yearOrMonthIndex] ?? 0  ; 
 	}
-	public function getShareholderDividendInCashOrSharesAtYearIndex(int $yearIndex)
+	public function getShareholderDividendInCashOrSharesAtYearOrMonthIndex(int $yearOrMonthIndex)
 	{
-		return $this->shareholders_dividend_in_cash_or_shares[$yearIndex] ?? 0  ; 
+		return $this->shareholders_dividend_in_cash_or_shares[$yearOrMonthIndex] ?? 0  ; 
 	}
-	public function getSalariesAnnualIncreaseRateAtYearIndex(int $yearIndex)
+	public function getSalariesAnnualIncreaseRateAtYearOrMonthIndex(int $yearOrMonthIndex)
 	{
-		return $this->salaries_annual_increase_rates[$yearIndex] ?? 0  ; 
+		return $this->salaries_annual_increase_rates[$yearOrMonthIndex] ?? 0  ; 
 	}
-	public function getExpenseAnnualIncreaseRateAtYearIndex(int $yearIndex)
+	public function getExpenseAnnualIncreaseRateAtYearOrMonthIndex(int $yearOrMonthIndex)
 	{
-		return $this->expense_annual_increase_rates[$yearIndex] ?? 0  ; 
+		return $this->expense_annual_increase_rates[$yearOrMonthIndex] ?? 0  ; 
 	}
 	
-	public function getCbeLendingCorridorRatesAtYearIndex(int $yearIndex)
+	public function getCbeLendingCorridorRatesAtYearOrMonthIndex(int $yearOrMonthIndex)
 	{
-		return $this->cbe_lending_corridor_rates[$yearIndex] ?? 0  ; 
+		return $this->cbe_lending_corridor_rates[$yearOrMonthIndex] ?? 0  ; 
 	}
 	public function getCbeLendingCorridorRates():array 
 	{
@@ -89,13 +89,13 @@ class  GeneralAndReserveAssumption extends Model
 	{
 		return (array) $this->bank_lending_margin_rates ; 
 	}
-	public function getBankLendingMarginRatesAtYearIndex(int $yearIndex)
+	public function getBankLendingMarginRatesAtYearOrMonthIndex(int $yearOrMonthIndex)
 	{
-		return $this->getBankLendingMarginRates()[$yearIndex] ?? 0  ; 
+		return $this->getBankLendingMarginRates()[$yearOrMonthIndex] ?? 0  ; 
 	}
-	public function getCreditInterestRateForSurplusCashAtYearIndex(int $yearIndex)
+	public function getCreditInterestRateForSurplusCashAtYearOrMonthIndex(int $yearOrMonthIndex)
 	{
-		return $this->credit_interest_rate_for_surplus_cash[$yearIndex] ?? 0  ; 
+		return $this->credit_interest_rate_for_surplus_cash[$yearOrMonthIndex] ?? 0  ; 
 	}
 	
 	

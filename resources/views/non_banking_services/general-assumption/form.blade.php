@@ -110,8 +110,8 @@
                                 <thead>
                                     <tr>
                                         <th class="first-column-th-class-medium form-label font-weight-bold text-center align-middle interval-class header-border-down">{{ __('Item') }}</th>
-                                        @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
-                                        <th class="form-label font-weight-bold  text-center align-middle interval-class header-border-down"> {{ __('Yr-') }}{{$yearIndexWithYear[$year]}} </th>
+                                        @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
+                                        <th class="form-label font-weight-bold  text-center align-middle interval-class header-border-down"> {{$yearOrMonthFormatted}} </th>
                                         @endforeach
                                     </tr>
                                 </thead>
@@ -120,6 +120,7 @@
                                     $currentTotal = [];
 
                                     @endphp
+									@if($isYearsStudy)
                                     <tr data-repeat-formatting-decimals="0" data-repeater-style>
                                         <td class="td-classes">
                                             <div>
@@ -130,7 +131,7 @@
                                         </td>
 
 
-                                        @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
+                                        @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
 
                                         <td>
 
@@ -140,7 +141,7 @@
                                             {{-- <x-repeat-right-dot-inputs :currentVal="$currentVal" :classes="'only-greater-than-zero-allowed'" :is-percentage="true" :name="'cbe_lending_corridor_rates['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs> --}}
                                             <div class="form-group three-dots-parent">
                                                 <div class="input-group input-group-sm align-items-center justify-content-center div-for-percentage">
-                                                    <input type="text" style="max-width: 60px;min-width: 60px;text-align: center" value="{{ sumNumberOfOnes($yearsWithItsMonths,$year,$datesIndexWithYearIndex) }}" readonly onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control target_repeating_amounts only-percentage-allowed size" data-date="#" data-section="target" aria-describedby="basic-addon2">
+                                                    <input type="text" style="max-width: 60px;min-width: 60px;text-align: center" value="{{ sumNumberOfOnes($yearsWithItsMonths,$yearOrMonthAsIndex,$datesIndexWithYearIndex) }}" readonly onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control target_repeating_amounts only-percentage-allowed size" data-date="#" data-section="target" aria-describedby="basic-addon2">
                                                     <span class="ml-2">
                                                         <b style="visibility:hidden">%</b>
                                                     </span>
@@ -152,6 +153,7 @@
                                         @endforeach
 
                                     </tr>
+									@endif
 
 
 
@@ -172,14 +174,14 @@
                                         @php
                                         $columnIndex = 0 ;
                                         @endphp
-                                        @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
+                                        @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
 
                                         <td>
 
                                             @php
-                                            $currentVal = $model ? $model->getEmployeeProfitShareRatesAtYearIndex($year) : 10;
+                                            $currentVal = $model ? $model->getEmployeeProfitShareRatesAtYearOrMonthIndex($yearOrMonthAsIndex) : 10;
                                             @endphp
-                                            <x-repeat-right-dot-inputs :currentVal="number_format($currentVal,1)" :classes="'only-greater-than-zero-allowed'" :is-percentage="true" :name="'employee_profit_share_rates['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :currentVal="number_format($currentVal,1)" :classes="'only-greater-than-zero-allowed'" :is-percentage="true" :name="'employee_profit_share_rates['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
                                         </td>
                                         @php
@@ -205,16 +207,14 @@
                                         @php
                                         $columnIndex = 0 ;
                                         @endphp
-                                        @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
+                                        @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
 
                                         <td>
 
                                             @php
-                                            $currentVal = $model ? $model->getBorderOfDirectorsProfitShareRateAtYearIndex($year) : 0;
+                                            $currentVal = $model ? $model->getBorderOfDirectorsProfitShareRateAtYearOrMonthIndex($yearOrMonthAsIndex) : 0;
                                             @endphp
-                                            <x-repeat-right-dot-inputs :name="'border_of_directors_profit_share_rates['.$year.']'" :currentVal="$currentVal" :classes="'only-greater-than-zero-allowed'" :is-percentage="true" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
-
-
+                                            <x-repeat-right-dot-inputs :name="'border_of_directors_profit_share_rates['.$yearOrMonthAsIndex.']'" :currentVal="$currentVal" :classes="'only-greater-than-zero-allowed'" :is-percentage="true" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
                                         </td>
                                         @php
                                         $columnIndex++ ;
@@ -242,14 +242,14 @@
                                         @php
                                         $columnIndex = 0 ;
                                         @endphp
-                                        @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
+                                        @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
 
                                         <td>
 
                                             @php
-                                            $currentVal = $model ? $model->getShareholderFirstDividendPortionAtYearIndex($year) : 0;
+                                            $currentVal = $model ? $model->getShareholderFirstDividendPortionAtYearOrMonthIndex($yearOrMonthAsIndex) : 0;
                                             @endphp
-                                            <x-repeat-right-dot-inputs :name="'shareholders_first_dividend_portions['.$year.']'" :currentVal="number_format($currentVal,1)" :classes="'only-greater-than-zero-allowed'" :is-percentage="true" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :name="'shareholders_first_dividend_portions['.$yearOrMonthAsIndex.']'" :currentVal="number_format($currentVal,1)" :classes="'only-greater-than-zero-allowed'" :is-percentage="true" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
 
 
@@ -279,14 +279,14 @@
                                         @php
                                         $columnIndex = 0 ;
                                         @endphp
-                                        @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
+                                        @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
 
                                         <td>
 
                                             @php
-                                            $currentVal = $model ? $model->getShareholderDividendPayoutRatioAtYearIndex($year) : 0;
+                                            $currentVal = $model ? $model->getShareholderDividendPayoutRatioAtYearOrMonthIndex($yearOrMonthAsIndex) : 0;
                                             @endphp
-                                            <x-repeat-right-dot-inputs :name="'shareholders_dividend_payout_ratios['.$year.']'" :currentVal="number_format($currentVal,1)" :classes="'only-greater-than-zero-allowed'" :is-percentage="true" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :name="'shareholders_dividend_payout_ratios['.$yearOrMonthAsIndex.']'" :currentVal="number_format($currentVal,1)" :classes="'only-greater-than-zero-allowed'" :is-percentage="true" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
                                         </td>
                                         @php
@@ -312,17 +312,17 @@
                                         @php
                                         $columnIndex = 0 ;
                                         @endphp
-                                        @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
+                                        @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
 
                                         <td>
 
                                             @php
-                                            $currentVal = $model ? $model->getShareholderDividendInCashOrSharesAtYearIndex($year) : 0;
+                                            $currentVal = $model ? $model->getShareholderDividendInCashOrSharesAtYearOrMonthIndex($yearOrMonthAsIndex) : 0;
                                             @endphp
                                             {{-- <x-repeat-right-dot-inputs :name="'shareholders_dividend_payout_ratios['.$year.']'" :currentVal="number_format($currentVal,1)" :classes="'only-greater-than-zero-allowed'" :is-percentage="true"  :columnIndex="$columnIndex"></x-repeat-right-dot-inputs> --}}
                                             <div class="form-group three-dots-parent">
 
-                                                <select class="form-control select-inside-repeating-table-css repeat-to-right-select text-center " name="shareholders_dividend_in_cash_or_shares[{{ $year }}]" data-column-index="{{ $columnIndex}}">
+                                                <select class="form-control select-inside-repeating-table-css repeat-to-right-select text-center " name="shareholders_dividend_in_cash_or_shares[{{ $yearOrMonthAsIndex }}]" data-column-index="{{ $columnIndex}}">
                                                     @foreach(['in_cash'=>__('In Cash') , 'in_share'=>__('In Shares')] as $value => $title)
                                                     <option @if($value==$currentVal) selected @endif value="{{ $value }}"> {{ $title }} </option>
                                                     @endforeach
@@ -391,8 +391,8 @@
                                 <thead>
                                     <tr>
                                         <th class="first-column-th-class-medium form-label font-weight-bold  text-center align-middle interval-class header-border-down">{{ __('Item') }}</th>
-                                        @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
-                                        <th class="form-label font-weight-bold  text-center align-middle interval-class header-border-down"> {{ __('Yr-') }}{{$yearIndexWithYear[$year]}} </th>
+                                        @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
+                                        <th class="form-label font-weight-bold  text-center align-middle interval-class header-border-down"> {{$yearOrMonthFormatted}} </th>
                                         @endforeach
                                   
                                     </tr>
@@ -402,6 +402,7 @@
                                     $currentTotal = [];
 
                                     @endphp
+									@if($isYearsStudy)
                                     <tr data-repeat-formatting-decimals="0" data-repeater-style>
 									
 									 <td class="td-classes">
@@ -415,7 +416,7 @@
                                     
 
 
-                                        @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
+                                        @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
 
                                         <td>
 
@@ -425,7 +426,7 @@
 
                                             <div class="form-group three-dots-parent">
                                                 <div class="input-group input-group-sm align-items-center justify-content-center div-for-percentage">
-                                                    <input type="text" style="max-width: 60px;min-width: 60px;text-align: center" value="{{ sumNumberOfOnes($yearsWithItsMonths,$year,$datesIndexWithYearIndex) }}" readonly onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control target_repeating_amounts only-percentage-allowed size" data-date="#" data-section="target" aria-describedby="basic-addon2">
+                                                    <input type="text" style="max-width: 60px;min-width: 60px;text-align: center" value="{{ sumNumberOfOnes($yearsWithItsMonths,$yearOrMonthAsIndex,$datesIndexWithYearIndex) }}" readonly onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control target_repeating_amounts only-percentage-allowed size" data-date="#" data-section="target" aria-describedby="basic-addon2">
                                                     <span class="ml-2">
                                                         <b style="visibility:hidden">%</b>
                                                     </span>
@@ -437,6 +438,7 @@
                                         @endforeach
 
                                     </tr>
+									@endif
 
 
 
@@ -444,7 +446,7 @@
                                     <tr data-repeat-formatting-decimals="2" data-repeater-style >
 									<td class="td-classes">
 										<div>
-										<input value="{{ __('Salaries Annual Increase Rate %') }}" disabled="" class="form-control text-left mt-2" type="text">
+										<input value="{{ $isYearsStudy ? __('Salaries Annual Increase Rate %') : __('Salaries Monthly Increase Rate %') }}" disabled="" class="form-control text-left mt-2" type="text">
 										
 										</div>
 										
@@ -454,14 +456,14 @@
                                         @php
                                         $columnIndex = 0 ;
                                         @endphp
-                                        @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
+                                        @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
 
                                         <td>
 
                                             @php
-                                            $currentVal = $model ? $model->getSalariesAnnualIncreaseRateAtYearIndex($year) : 0;
+                                            $currentVal = $model ? $model->getSalariesAnnualIncreaseRateAtYearOrMonthIndex($yearOrMonthAsIndex) : 0;
                                             @endphp
-                                            <x-repeat-right-dot-inputs :name="'salaries_annual_increase_rates['.$year.']'" :currentVal="number_format($currentVal,1)" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :name="'salaries_annual_increase_rates['.$yearOrMonthAsIndex.']'" :currentVal="number_format($currentVal,1)" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
 
                                         </td>
@@ -482,7 +484,7 @@
 										
 											<td class="td-classes">
 										<div>
-										<input value="{{ __('Expense Annual Increase Rate %') }}" disabled="" class="form-control text-left mt-2" type="text">
+										<input value="{{ $isYearsStudy ? __('Expense Annual Increase Rate %') : __('Expense Monthly Increase Rate %') }}" disabled="" class="form-control text-left mt-2" type="text">
 										
 										</div>
 										
@@ -491,14 +493,14 @@
                                         @php
                                         $columnIndex = 0 ;
                                         @endphp
-                                        @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
+                                        @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
 
                                         <td>
 
                                             @php
-                                            $currentVal = $model ? $model->getExpenseAnnualIncreaseRateAtYearIndex($year) : 0;
+                                            $currentVal = $model ? $model->getExpenseAnnualIncreaseRateAtYearOrMonthIndex($yearOrMonthAsIndex) : 0;
                                             @endphp
-                                            <x-repeat-right-dot-inputs :name="'expense_annual_increase_rates['.$year.']'" :currentVal="number_format($currentVal,1)" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :name="'expense_annual_increase_rates['.$yearOrMonthAsIndex.']'" :currentVal="number_format($currentVal,1)" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
 
                                         </td>
@@ -558,8 +560,8 @@
                                 <thead>
                                     <tr>
                                         <th class="first-column-th-class-medium form-label font-weight-bold text-center align-middle interval-class header-border-down">{{ __('Item') }}</th>
-                                        @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
-                                        <th class="form-label font-weight-bold text-center align-middle interval-class header-border-down"> {{ __('Yr-') }}{{$yearIndexWithYear[$year]}} </th>
+                                        @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
+                                        <th class="form-label font-weight-bold text-center align-middle interval-class header-border-down">{{$yearOrMonthFormatted}} </th>
                                         @endforeach
                                     </tr>
                                 </thead>
@@ -568,6 +570,7 @@
                                     $currentTotal = [];
 
                                     @endphp
+									@if($isYearsStudy)
                                     <tr data-repeat-formatting-decimals="0" data-repeater-style>
 									
 									 <td class="td-classes">
@@ -578,7 +581,7 @@
 										
                                         </td>
 										
-                                        @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
+                                        @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
 
                                         <td>
 
@@ -587,7 +590,7 @@
 
                                             <div class="form-group three-dots-parent">
                                                 <div class="input-group input-group-sm align-items-center justify-content-center div-for-percentage">
-                                                    <input type="text" style="max-width: 60px;min-width: 60px;text-align: center" value="{{ sumNumberOfOnes($yearsWithItsMonths,$year,$datesIndexWithYearIndex) }}" readonly onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control target_repeating_amounts only-percentage-allowed size" data-date="#" data-section="target" aria-describedby="basic-addon2">
+                                                    <input type="text" style="max-width: 60px;min-width: 60px;text-align: center" value="{{ sumNumberOfOnes($yearsWithItsMonths,$yearOrMonthAsIndex,$datesIndexWithYearIndex) }}" readonly onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control target_repeating_amounts only-percentage-allowed size" data-date="#" data-section="target" aria-describedby="basic-addon2">
                                                     <span class="ml-2">
                                                         <b style="visibility:hidden">%</b>
                                                     </span>
@@ -599,6 +602,7 @@
                                         @endforeach
 
                                     </tr>
+									@endif
 
 
 
@@ -617,16 +621,16 @@
                                         @php
                                         $columnIndex = 0 ;
                                         @endphp
-                                        @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
+                                        @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
 
                                         <td>
 
                                             @php
-                                            $currentVal = $model ? $model->getCbeLendingCorridorRatesAtYearIndex($year) : 0;
+                                            $currentVal = $model ? $model->getCbeLendingCorridorRatesAtYearOrMonthIndex($yearOrMonthAsIndex) : 0;
                                             @endphp
 
 
-                                            <x-repeat-right-dot-inputs :currentVal="$currentVal" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :name="'cbe_lending_corridor_rates['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :currentVal="$currentVal" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :name="'cbe_lending_corridor_rates['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
 
                                         </td>
@@ -656,14 +660,14 @@
                                         @php
                                         $columnIndex = 0 ;
                                         @endphp
-                                        @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
+                                        @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
 
                                         <td>
 
                                             @php
-                                            $currentVal = $model ? $model->getBankLendingMarginRatesAtYearIndex($year) : 0;
+                                            $currentVal = $model ? $model->getBankLendingMarginRatesAtYearOrMonthIndex($yearOrMonthAsIndex) : 0;
                                             @endphp
-                                            <x-repeat-right-dot-inputs :name="'bank_lending_margin_rates['.$year.']'" :currentVal="number_format($currentVal,1)" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :name="'bank_lending_margin_rates['.$yearOrMonthAsIndex.']'" :currentVal="number_format($currentVal,1)" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
 
                                         </td>
@@ -692,14 +696,14 @@
                                         @php
                                         $columnIndex = 0 ;
                                         @endphp
-                                        @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
+                                        @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
 
                                         <td>
 
                                             @php
-                                            $currentVal = $model ? $model->getCreditInterestRateForSurplusCashAtYearIndex($year) : 0;
+                                            $currentVal = $model ? $model->getCreditInterestRateForSurplusCashAtYearOrMonthIndex($yearOrMonthAsIndex) : 0;
                                             @endphp
-                                            <x-repeat-right-dot-inputs :name="'credit_interest_rate_for_surplus_cash['.$year.']'" :currentVal="number_format($currentVal,1)" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :name="'credit_interest_rate_for_surplus_cash['.$yearOrMonthAsIndex.']'" :currentVal="number_format($currentVal,1)" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
                                         </td>
                                         @php
                                         $columnIndex++ ;

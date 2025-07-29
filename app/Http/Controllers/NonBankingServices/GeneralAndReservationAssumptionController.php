@@ -17,12 +17,17 @@ class GeneralAndReservationAssumptionController extends Controller
 		return view('non_banking_services.general-assumption.form', $this->getViewVars($company,$study));
 	}
 	protected function getViewVars(Company $company, Study $study){
+		$yearsWithItsMonths =  $study->getOperationDurationPerYearFromIndexes() ;
+		$yearOrMonthsIndexes = $study->getYearOrMonthIndexes();
+		$isYearsStudy = !$study->isMonthlyStudy();
 		return [
 			'company'=>$company ,
 			'study'=>$study,
 			'title'=>__('General Assumption'),
 			'storeRoute'=>route('store.general.assumption',['company'=>$company->id , 'study'=>$study->id]),
-			'yearsWithItsMonths' => $study->getOperationDurationPerYearFromIndexes(),
+			'yearOrMonthsIndexes'=>$yearOrMonthsIndexes,
+			'isYearsStudy'=>$isYearsStudy,
+			'yearsWithItsMonths'=>$yearsWithItsMonths,
 			'model'=>$study->generalAndReserveAssumption ? $study->generalAndReserveAssumption : null 
 		];
 	}

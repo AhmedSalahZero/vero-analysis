@@ -140,7 +140,7 @@
 						
 						$firstReportSubs = $firstReportData['report_data'][$mainItemName]??[] ; 
 						$firstSubItemsOrdered=isset($isDayNameReport) && $isDayNameReport ? App\Helpers\HArr::orderByDayNameForOneDimension($firstReportSubs) : $firstReportSubs;
-						$subItemsOrdered = array_merge(array_keys($firstReportSubs),array_keys($secondSubItemsOrdered));
+						$subItemsOrdered = array_unique(array_merge(array_keys($firstReportSubs),array_keys($secondSubItemsOrdered)));
 					@endphp
                     @foreach ( $subItemsOrdered as $subItemName )
 					@php

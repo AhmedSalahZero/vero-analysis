@@ -25,32 +25,32 @@ class  EclAndNewPortfolioFundingRate extends Model
 	{
 		return $this->revenue_stream_type;
 	}
-	public function getAdminFeesRatesAtYearIndex(int $yearIndex)
+	public function getAdminFeesRatesAtYearOrMonthIndex(int $yearOrMonthIndex)
 	{
-		return $this->admin_fees_rates[$yearIndex]??0;
+		return $this->admin_fees_rates[$yearOrMonthIndex]??0;
 	}
 	public function getMonthlyAdminFeesAmountsAtMonthIndex(int $monthIndex)
 	{
 		return $this->monthly_admin_fees_amounts[$monthIndex] ?? 0  ; 
 	}
-	public function getEclRatesAtYearIndex(int $yearIndex)
+	public function getEclRatesAtYearOrMonthIndex(int $yearOrMonthIndex)
 	{
-		return $this->ecl_rates[$yearIndex]??0;
+		return $this->ecl_rates[$yearOrMonthIndex]??0;
 	}
-	public function getEquityFundingRatesAtYearIndex(int $yearIndex)
+	public function getEquityFundingRatesAtYearOrMonthIndex(int $yearOrMonthAsIndex)
 	{
-		return $this->equity_funding_rates[$yearIndex]??0;
+		return $this->equity_funding_rates[$yearOrMonthAsIndex]??0;
 	}
-	public function getEquityFundingValuesAtYearIndex(int $yearIndex)
+	public function getEquityFundingValuesAtYearOrMonthIndex(int $yearOrMonthIndex)
 	{
-		return $this->equity_funding_values[$yearIndex]??0;
+		return $this->equity_funding_values[$yearOrMonthIndex]??0;
 	}
-	public function getNewLoansFundingRatesAtYearIndex(int $yearIndex)
+	public function getNewLoansFundingRatesAtYearOrMonthIndex(int $yearOrMonthIndex)
 	{
-		return $this->new_loans_funding_rates[$yearIndex]??0;
+		return $this->new_loans_funding_rates[$yearOrMonthIndex]??0;
 	}
-	public function getNewLoansFundingValuesAtYearIndex(int $yearIndex)
+	public function getNewLoansFundingValuesAtYearOrMonthIndex(int $yearOrMonthIndex)
 	{
-		return $this->new_loans_funding_values[$yearIndex]??0;
+		return $this->new_loans_funding_values[$yearOrMonthIndex]??0;
 	}
 }

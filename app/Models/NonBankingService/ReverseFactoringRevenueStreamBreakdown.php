@@ -41,9 +41,9 @@ class  ReverseFactoringRevenueStreamBreakdown extends Model
 	// }
 	
 	
-	public function getLoanAmountAtYearIndex(int $yearIndex)
+	public function getLoanAmountAtYearOrMonthIndex(int $yearOrMonthIndex)
 	{
-		return $this->loan_amounts[$yearIndex] ?? 0  ; 
+		return $this->loan_amounts[$yearOrMonthIndex] ?? 0  ; 
 	}
 	
 	public function getViewVars(Company $company, Study $study):array{

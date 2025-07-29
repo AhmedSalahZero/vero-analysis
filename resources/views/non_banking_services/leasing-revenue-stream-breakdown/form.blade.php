@@ -125,12 +125,12 @@ use App\Models\NonBankingService\LeasingCategory;
                         <x-tables.repeater-table :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
                             <x-slot name="ths">
                                 <x-tables.repeater-table-th class="  header-border-down first-column-th-class" :title="__('Item')"></x-tables.repeater-table-th>
-                                @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
-                                <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Yr-') . $yearIndexWithYear[$year] "></x-tables.repeater-table-th>
+                                @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
+                                <x-tables.repeater-table-th class=" interval-class header-border-down " :title="$yearOrMonthFormatted"></x-tables.repeater-table-th>
                                 @endforeach
                             </x-slot>
                             <x-slot name="trs">
-
+								@if($isYearsStudy)
                                 <tr data-repeat-formatting-decimals="0" data-repeater-style>
 
                                     <input type="hidden" name="id" value="{{ isset($subModel) ? $subModel->id : 0 }}">
@@ -146,12 +146,12 @@ use App\Models\NonBankingService\LeasingCategory;
                                     @php
                                     $columnIndex = 0 ;
                                     @endphp
-                                    @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
+                                    @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
 
                                     <td>
                                         <div class="form-group three-dots-parent">
                                             <div class="input-group input-group-sm align-items-center justify-content-center div-for-percentage">
-                                                <input type="text" style="max-width: 60px;min-width: 60px;text-align: center" value="{{ sumNumberOfOnes($yearsWithItsMonths,$year,$datesIndexWithYearIndex) }}" readonly onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control target_repeating_amounts only-percentage-allowed size" data-date="#" data-section="target" aria-describedby="basic-addon2">
+                                                <input type="text" style="max-width: 60px;min-width: 60px;text-align: center" value="{{ sumNumberOfOnes($yearsWithItsMonths,$yearOrMonthAsIndex,$datesIndexWithYearIndex) }}" readonly onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control target_repeating_amounts only-percentage-allowed size" data-date="#" data-section="target" aria-describedby="basic-addon2">
                                                 <span class="ml-2">
                                                     <b style="visibility:hidden">%</b>
                                                 </span>
@@ -165,6 +165,7 @@ use App\Models\NonBankingService\LeasingCategory;
 
 
                                 </tr>
+								@endif
 
 
                                 <tr data-repeat-formatting-decimals="2" data-repeater-style>
@@ -183,16 +184,16 @@ use App\Models\NonBankingService\LeasingCategory;
                                     $columnIndex = 0 ;
 
                                     @endphp
-                                    @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
+                                    @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
                                     @php
 
 
-                                    $currentVal = $model->getLeasingGrowthRateAtYearIndex($year) ;
+                                    $currentVal = $model->getLeasingGrowthRateAtYearOrMonthIndex($yearOrMonthAsIndex) ;
                                     @endphp
 
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
-                                            <x-repeat-right-dot-inputs :currentVal="$currentVal" :classes="'only-greater-than-or-equal-zero-allowed recalculate-gr gr-field'" :is-percentage="true" :name="'growth_rate['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :currentVal="$currentVal" :classes="'only-greater-than-or-equal-zero-allowed recalculate-gr gr-field'" :is-percentage="true" :name="'growth_rate['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
                                         </div>
                                     </td>
@@ -212,7 +213,7 @@ use App\Models\NonBankingService\LeasingCategory;
                                 $currentLoanTotalPerYear = [];
                                 @endphp
 
-                                @foreach ($study->leasingRevenueStreamBreakdown as $index=>$currentLeasingRevenueStreamBreakdown)
+                                @foreach ($study->leasingRevenueStreamBreakdown as $currentLeasingRevenueStreamBreakdown)
 
 
                                 <tr data-repeat-formatting-decimals="0" data-repeater-style>
@@ -228,14 +229,14 @@ use App\Models\NonBankingService\LeasingCategory;
                                     @php
                                     $columnIndex = 0 ;
                                     @endphp
-                                    @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
+                                    @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
                                     @php
-                                    $currentVal = $currentLeasingRevenueStreamBreakdown ?$currentLeasingRevenueStreamBreakdown->getLoanAmountAtYearIndex($year) : 0;
-                                    $currentLoanTotalPerYear[$year] = isset($currentLoanTotalPerYear[$year]) ? $currentLoanTotalPerYear[$year]+ $currentVal : $currentVal;
+                                    $currentVal = $currentLeasingRevenueStreamBreakdown ?$currentLeasingRevenueStreamBreakdown->getLoanAmountAtYearOrMonthIndex($yearOrMonthAsIndex) : 0;
+                                    $currentLoanTotalPerYear[$yearOrMonthAsIndex] = isset($currentLoanTotalPerYear[$yearOrMonthAsIndex]) ? $currentLoanTotalPerYear[$yearOrMonthAsIndex]+ $currentVal : $currentVal;
                                     @endphp
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
-                                            <x-repeat-right-dot-inputs :number-format-decimals="0" :currentVal="$currentVal" :formattedInputClasses="'current-growth-rate-result-value-formatted'" :classes="'only-greater-than-or-equal-zero-allowed current-loan-input current-growth-rate-result-value '" :is-percentage="false" :name="'loan_amounts['.$currentLeasingRevenueStreamBreakdown->id.']['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :number-format-decimals="0" :currentVal="$currentVal" :formattedInputClasses="'current-growth-rate-result-value-formatted'" :classes="'only-greater-than-or-equal-zero-allowed current-loan-input current-growth-rate-result-value '" :is-percentage="false" :name="'loan_amounts['.$currentLeasingRevenueStreamBreakdown->id.']['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
                                         </div>
                                     </td>
@@ -267,9 +268,9 @@ use App\Models\NonBankingService\LeasingCategory;
                                     @php
                                     $columnIndex = 0 ;
                                     @endphp
-                                    @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
+                                    @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
                                     @php
-                                    $currentLoanTotal = $currentLoanTotalPerYear[$year] ;
+                                    $currentLoanTotal = $currentLoanTotalPerYear[$yearOrMonthAsIndex] ;
                                     @endphp
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
@@ -358,8 +359,8 @@ use App\Models\NonBankingService\LeasingCategory;
                         <x-tables.repeater-table :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
                             <x-slot name="ths">
                                 <x-tables.repeater-table-th class=" category-selector-class header-border-down " :title="__('Item')"></x-tables.repeater-table-th>
-                                @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
-                                <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Yr-') . $yearIndexWithYear[$year] "></x-tables.repeater-table-th>
+                                @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
+                                <x-tables.repeater-table-th class=" interval-class header-border-down " :title="$yearOrMonthFormatted"></x-tables.repeater-table-th>
                                 @endforeach
                             </x-slot>
                             <x-slot name="trs">
@@ -375,20 +376,16 @@ use App\Models\NonBankingService\LeasingCategory;
                                     @php
                                     $columnIndex = 0 ;
                                     @endphp
-                                    @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
+                                    @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
                                     @php
 
-                                    $currentAdminFeesRateAtYearIndex = $leasingEclAndNewPortfolioFundingRate ? $leasingEclAndNewPortfolioFundingRate->getAdminFeesRatesAtYearIndex($year):0;
-
-
-                                    $currentAdminFeesRateAtYearIndex = $leasingEclAndNewPortfolioFundingRate ? $leasingEclAndNewPortfolioFundingRate->getAdminFeesRatesAtYearIndex($year):0;
-
+                                    $currentAdminFeesRateAtYearIndex = $leasingEclAndNewPortfolioFundingRate ? $leasingEclAndNewPortfolioFundingRate->getAdminFeesRatesAtYearOrMonthIndex($yearOrMonthAsIndex):0;
                                     @endphp
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
 
 
-                                            <x-repeat-right-dot-inputs :currentVal="$currentAdminFeesRateAtYearIndex" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :name="'admin_fees_rates['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :currentVal="$currentAdminFeesRateAtYearIndex" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :name="'admin_fees_rates['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
                                         </div>
                                     </td>
@@ -413,15 +410,15 @@ use App\Models\NonBankingService\LeasingCategory;
                                     $columnIndex = 0 ;
                                     @endphp
 
-                                    @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
+                                    @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
                                     @php
-                                    $currentExpectedCreditLossRateAtYearIndex = $leasingEclAndNewPortfolioFundingRate ? $leasingEclAndNewPortfolioFundingRate->getEclRatesAtYearIndex($year):0;
+                                    $currentExpectedCreditLossRateAtYearIndex = $leasingEclAndNewPortfolioFundingRate ? $leasingEclAndNewPortfolioFundingRate->getEclRatesAtYearOrMonthIndex($yearOrMonthAsIndex):0;
 
                                     @endphp
 
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
-                                            <x-repeat-right-dot-inputs :currentVal="$currentExpectedCreditLossRateAtYearIndex" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :name="'ecl_rates['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :currentVal="$currentExpectedCreditLossRateAtYearIndex" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :name="'ecl_rates['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
                                         </div>
                                     </td>
@@ -481,8 +478,8 @@ use App\Models\NonBankingService\LeasingCategory;
                         <x-tables.repeater-table :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
                             <x-slot name="ths">
                                 <x-tables.repeater-table-th class=" category-selector-class header-border-down " :title="__('Item')"></x-tables.repeater-table-th>
-                                @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
-                                <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Yr-') . $yearIndexWithYear[$year] "></x-tables.repeater-table-th>
+                                @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
+                                <x-tables.repeater-table-th class=" interval-class header-border-down " :title="$yearOrMonthFormatted"></x-tables.repeater-table-th>
                                 @endforeach
                             </x-slot>
                             <x-slot name="trs">
@@ -499,12 +496,13 @@ use App\Models\NonBankingService\LeasingCategory;
                                     @php
                                     $columnIndex = 0 ;
                                     @endphp
-                                    @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
+                                    @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
+
 
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
 
-                                            <x-repeat-right-dot-inputs :inputHiddenAttributes="'js-recalculate-equity-funding-value'" :currentVal="$leasingEclAndNewPortfolioFundingRate ? $leasingEclAndNewPortfolioFundingRate->getEquityFundingRatesAtYearIndex($year):0" :classes="'only-greater-than-or-equal-zero-allowed equity-funding-rates equity-funding-rate-input-hidden-class'" :is-percentage="true" :name="'equity_funding_rates['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :inputHiddenAttributes="'js-recalculate-equity-funding-value'" :currentVal="$leasingEclAndNewPortfolioFundingRate ? $leasingEclAndNewPortfolioFundingRate->getEquityFundingRatesAtYearOrMonthIndex($yearOrMonthAsIndex):0" :classes="'only-greater-than-or-equal-zero-allowed equity-funding-rates equity-funding-rate-input-hidden-class'" :is-percentage="true" :name="'equity_funding_rates['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
                                         </div>
                                     </td>
@@ -531,11 +529,11 @@ use App\Models\NonBankingService\LeasingCategory;
                                     @php
                                     $columnIndex = 0 ;
                                     @endphp
-                                    @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
+                                    @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
 
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
-                                            <x-repeat-right-dot-inputs :numberFormatDecimals="0" :currentVal="$leasingEclAndNewPortfolioFundingRate ? $leasingEclAndNewPortfolioFundingRate->getEquityFundingValuesAtYearIndex($year):0" :classes="'only-greater-than-or-equal-zero-allowed '" :formatted-input-classes="'equity-funding-formatted-value-class'" :is-percentage="false" :name="'equity_funding_values['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :numberFormatDecimals="0" :currentVal="$leasingEclAndNewPortfolioFundingRate ? $leasingEclAndNewPortfolioFundingRate->getEquityFundingValuesAtYearOrMonthIndex($yearOrMonthAsIndex):0" :classes="'only-greater-than-or-equal-zero-allowed '" :formatted-input-classes="'equity-funding-formatted-value-class'" :is-percentage="false" :name="'equity_funding_values['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
                                         </div>
                                     </td>
@@ -558,12 +556,12 @@ use App\Models\NonBankingService\LeasingCategory;
                                     $columnIndex = 0 ;
                                     @endphp
 
-                                    @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
+                                    @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
 
 
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
-                                            <input type="text" data-column-index="{{ $columnIndex }}" readonly class="form-control expandable-percentage-input new-loan-function-rates-js" name="new_loans_funding_rates[{{ $year }}]'" value="{{ $leasingEclAndNewPortfolioFundingRate ? $leasingEclAndNewPortfolioFundingRate->getNewLoansFundingRatesAtYearIndex($year):0 }}"> <span class="ml-2">%</span>
+                                            <input type="text" data-column-index="{{ $columnIndex }}" readonly class="form-control expandable-percentage-input new-loan-function-rates-js" name="new_loans_funding_rates[{{ $yearOrMonthAsIndex }}]'" value="{{ $leasingEclAndNewPortfolioFundingRate ? $leasingEclAndNewPortfolioFundingRate->getNewLoansFundingRatesAtYearOrMonthIndex($yearOrMonthAsIndex):0 }}"> <span class="ml-2">%</span>
                                         </div>
                                     </td>
                                     @php
@@ -587,12 +585,12 @@ use App\Models\NonBankingService\LeasingCategory;
                                     $columnIndex = 0 ;
                                     @endphp
 
-                                    @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
+                                    @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
 
 
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
-                                            <x-repeat-right-dot-inputs :numberFormatDecimals="0" :formatted-input-classes="'new-loans-funding-formatted-value-class'" :currentVal="$leasingEclAndNewPortfolioFundingRate ? $leasingEclAndNewPortfolioFundingRate->getNewLoansFundingValuesAtYearIndex($year):0" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="false" :name="'new_loans_funding_values['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :numberFormatDecimals="0" :formatted-input-classes="'new-loans-funding-formatted-value-class'" :currentVal="$leasingEclAndNewPortfolioFundingRate ? $leasingEclAndNewPortfolioFundingRate->getNewLoansFundingValuesAtYearOrMonthIndex($yearOrMonthAsIndex):0" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="false" :name="'new_loans_funding_values['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
                                         </div>
                                     </td>

@@ -18,20 +18,20 @@ class  DirectFactoringNewPortfolioFundingStructure extends Model
 		'new_loans_funding_rates'=>'array',
 		'new_loans_funding_values'=>'array',
 	];
-	public function getEquityFundingRatesAtYearIndex(int $yearIndex):float
+	public function getEquityFundingRatesAtYearOrMonthIndex(int $yearOrMonthAsIndex):float
 	{
-		return $this->equity_funding_rates[$yearIndex] ?? 0  ; 
+		return $this->equity_funding_rates[$yearOrMonthAsIndex] ?? 0  ; 
 	}
-	public function getEquityFundingValuesAtYearIndex(int $yearIndex)
+	public function getEquityFundingValuesAtYearOrMonthIndex(int $yearOrMonthIndex)
 	{
-		return $this->equity_funding_values[$yearIndex] ?? 0  ; 
+		return $this->equity_funding_values[$yearOrMonthIndex] ?? 0  ; 
 	}
-	public function getNewLoansFundingRatesAtYearIndex(int $yearIndex)
+	public function getNewLoansFundingRatesAtYearOrMonthIndex(int $yearOrMonthIndex)
 	{
-		return $this->new_loans_funding_rates[$yearIndex] ?? 0  ; 
+		return $this->new_loans_funding_rates[$yearOrMonthIndex] ?? 0  ; 
 	}
-	public function getNewLoansFundingValuesAtYearIndex(int $yearIndex)
+	public function getNewLoansFundingValuesAtYearOrMonthIndex(int $yearOrMonthIndex)
 	{
-		return $this->new_loans_funding_values[$yearIndex] ?? 0  ; 
+		return $this->new_loans_funding_values[$yearOrMonthIndex] ?? 0  ; 
 	}
 }

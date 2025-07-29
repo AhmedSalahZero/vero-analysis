@@ -441,19 +441,25 @@ class HArr
 
     return $keys[$index - 1]; // Return the previous key
 }
+public static function filterByYearIndex(array $baseRatesMapping,array $yearIndexWithYear,int $yearIndex,string $currentLoopDateString, bool $isMonthlyStudy):array 
 
-	public static function filterByYearIndex(array $baseRatesMapping,array $yearIndexWithYear,int $yearIndex):array 
 	{
 		$result = [];
 		
 		$currentYear = $yearIndexWithYear[$yearIndex];
-		foreach($baseRatesMapping as $currentYearString => $no){
-			$currentYearNumber =explode('-',$currentYearString)[0];
-			if($currentYearNumber >= $currentYear){
-				$result[$currentYearString] = $no;
+		// $loopIndex = 0 ;
+		foreach($baseRatesMapping as $currentDateString => $no){
+			$currentYearNumber =explode('-',$currentDateString)[0];
+			$currentMonthNumber =explode('-',$currentDateString)[1];
+			$currentMonth = explode('-',$currentLoopDateString)[1] ;
+			// $loopIndex++;
+			$condition = $isMonthlyStudy ? $currentYearNumber >= $currentYear && $currentMonthNumber>=$currentMonth // new added to be reviewed 
+			: $currentYearNumber >= $currentYear   ; 
+			if($condition){
+				$result[$currentDateString] = $no;
 			}
 		}
-		
+	
 		return $result;
 	}
 

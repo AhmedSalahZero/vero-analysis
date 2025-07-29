@@ -34,6 +34,7 @@ class ReverseFactoringRevenueStreamBreakdownController extends Controller
 
 			$study->storeRelationsWithNoRepeater($request,$company);
 			$study->storeRepeaterRelations($request,$this->getRepeaterRelations(),$company);
+			$study->storeMonthlyLoan('reverseFactoringBreakdowns');
 			$study->updateReverseFactoryMonthlyAdminFeesAmounts();
 			$study->storeVariableLoans(Study::REVERSE_FACTORING,'reverseFactoringBreakdowns','reverseFactoringNewPortfolioFundingStructure');
 			$study->updateExpensesPercentagesOfSales();

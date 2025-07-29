@@ -41,9 +41,9 @@ class  LeasingRevenueStreamBreakdown extends Model
 	
 		return $this->category->getTitle().'[' . $this->getLoanNature() . ' / ' . $this->getLoanType(). ' / ' . $this->getTenor(). ' M/ ' . $this->getGracePeriod(). ' M/ ' . $this->getMarginRate(). ' %/ ' . $this->getInstallmentInterval(). ' / ' . $this->getStepRate(). ' %/ ' . $this->getStepInterval() . ' ]';
 	}
-	public function getLoanAmountAtYearIndex(int $yearIndex)
+	public function getLoanAmountAtYearOrMonthIndex(int $yearOrMonthIndex)
 	{
-		return $this->loan_amounts[$yearIndex] ?? 0  ; 
+		return $this->loan_amounts[$yearOrMonthIndex] ?? 0  ; 
 	}
 	
 		

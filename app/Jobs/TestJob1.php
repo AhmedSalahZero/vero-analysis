@@ -29,7 +29,6 @@ class TestJob1 implements ShouldQueue
      */
     public function handle()
     {
-        for($i = 0 ; $i < 5000 ; $i++){
-		}
+       
     }
 }

@@ -43,41 +43,28 @@ class ExpenseStatementReportController extends Controller
 		->first();
 		if(!$expense){
 			return back()->with('fail',__('No Data Found'));
-			// dd($statement);
 		}
+		$studyDates = $study->getStudyDates() ;
+		$datesAndIndexesHelpers = $study->datesAndIndexesHelpers($studyDates);
+		$operationDurationPerYearFromIndexes = $study->getOperationDurationPerYearFromIndexes();
+		$dateIndexWithDate=$datesAndIndexesHelpers['dateIndexWithDate']; 
+		$dateWithDateIndex=$datesAndIndexesHelpers['dateWithDateIndex']; 
 		$statement  = $expense->collection_statements;
-		dd($statement);
-		
-		
-		// 	$company = Company::find($companyId);
-		// $hospitalitySector = HospitalitySector::find($hospitalitySectorId);
-		// $operationStartDateFormatted =$hospitalitySector->getOperationStartDateFormatted() ;
-		// $datesAsStringAndIndex = $hospitalitySector->getDatesAsStringAndIndex();
-		// $operationStartDateAsIndex = $hospitalitySector->getOperationStartDateAsIndex($datesAsStringAndIndex,$operationStartDateFormatted);
-		// $datesIndexWithYearIndex = App('datesIndexWithYearIndex');
-		// $yearIndexWithYear = App('yearIndexWithYear');
-		// $dateIndexWithDate = App('dateIndexWithDate');
-		// $dateWithDateIndex = App('dateWithDateIndex');
-		// $dateWithMonthNumber=App('dateWithMonthNumber');
-
-		
-		// $dashboardItems = $hospitalitySector->calculateRoomRevenueAndGuestCount();
-		// $operationDates = $hospitalitySector->getOperationDurationPerMonth($datesAsStringAndIndex,$datesIndexWithYearIndex,$yearIndexWithYear,$dateIndexWithDate,$dateWithMonthNumber);
-		// $calculateFixedLoanAtEndService = new CalculateFixedLoanAtEndService($hospitalitySector);
-		// $fixedAssetsLoan = $calculateFixedLoanAtEndService->calculateFixedAssetsLoans($hospitalitySector,$datesAsStringAndIndex,$dateIndexWithDate,$dateWithDateIndex);
-		
-		// $onlyMonthlyDashboardItems = [];
-		// $reportItems = $this->formatDashboardReportItems($onlyMonthlyDashboardItems,$dashboardItems, $hospitalitySector,$operationStartDateAsIndex,$datesAsStringAndIndex,$datesIndexWithYearIndex,$yearIndexWithYear,$dateIndexWithDate , $dateWithDateIndex,$operationDates,$fixedAssetsLoan);
-		// $operationDurationPerYear = $hospitalitySector->getOperationDurationPerYear($datesAsStringAndIndex,$datesIndexWithYearIndex,$yearIndexWithYear,$dateIndexWithDate,$dateWithMonthNumber);
-
-		return view('admin.hospitality-sector.fixed-property-expense', [
+		$results = $statement;
+		$orderedResult = [];
+		foreach($results as $intervalName => $nameWithDateAndValue){
+			foreach(['beginning_balance','expense','vat','total_due','payment','withhold_amount','end_balance'] as $key){
+				$orderedResult[$intervalName][$key] = $nameWithDateAndValue[$key]??[];
+			}
+		}
+		return view('non_banking_services.reports.expense-statement.report', [
 			'company' => $company,
-			'reportItems' => $reportItems,
-			'hospitalitySector' => $hospitalitySector,
-			'dashboardItems' => $dashboardItems,
-			'namesIncludesTotal' => array_keys($dashboardItems['prepaidExpenseStatementForPropertyForView'] ?? []),
-			'dates' => $hospitalitySector->getOnlyDatesOfActiveOperation($operationDurationPerYear,$dateIndexWithDate),
-			'navigators' => array_merge($this->getCommonNavigators($companyId, $hospitalitySectorId), [])
+			'results' => $orderedResult,
+			'study' => $study,
+			'dateWithDateIndex'=>$dateWithDateIndex,
+			'dateIndexWithDate'=>$dateIndexWithDate,
+			'dates' => $study->getOnlyDatesOfActiveOperation($operationDurationPerYearFromIndexes,$dateIndexWithDate),
+			'navigators' => []
 		]);
 		
 	}

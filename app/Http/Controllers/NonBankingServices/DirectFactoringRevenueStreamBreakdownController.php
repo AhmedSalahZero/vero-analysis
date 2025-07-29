@@ -40,8 +40,8 @@ class DirectFactoringRevenueStreamBreakdownController extends Controller
 			
 			$studyHasDirectFactoringBreakdowns = $study->refresh()->directFactoringBreakdowns->count(); 
 			$study->storeRelationsWithNoRepeater($request,$company);
+			$study->storeMonthlyLoan('directFactoringBreakdowns');
 			$study->storeRepeaterRelations($request,$this->getRepeaterRelations(),$company);
-			
 			$study->updateDirectFactoryMonthlyAdminFeesAmounts();
 			$study->refreshDirectFactoringLoans();
 			$study->updateExpensesPercentagesOfSales();
@@ -53,7 +53,6 @@ class DirectFactoringRevenueStreamBreakdownController extends Controller
 		}
 		return response()->json([
 			'redirectTo'=>route('create.direct.factoring.revenue.stream.breakdown',['company'=>$company->id,'study'=>$study->id]) 
-			// .'#new-funding-id'
 		]);
 		
 	}

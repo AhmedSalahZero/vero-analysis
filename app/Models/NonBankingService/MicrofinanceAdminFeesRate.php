@@ -29,8 +29,8 @@ class  MicrofinanceAdminFeesRate extends Model
 	{
 		return $this->monthly_admin_fees_amounts[$monthIndex] ?? 0  ; 
 	}
-	public function getEclRatesAtYearIndex(int $yearIndex)
+	public function getEclRatesAtYearOrMonthIndex(int $yearOrMonthIndex)
 	{
-		return $this->ecl_rates[$yearIndex] ?? 0  ; 
+		return $this->ecl_rates[$yearOrMonthIndex] ?? 0  ; 
 	}
 }

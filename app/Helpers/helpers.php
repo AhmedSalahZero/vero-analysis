@@ -8249,3 +8249,13 @@ function convertStringKeysToIndexes(array $items , array $datesAsIndexAndString 
 	}
 	return $result ; 
 }
+function getValueFromArrayStringAndIndex(array $items  , $dateAsString , $dateAsIndex,$defaultValue = 0)
+{
+	if(isset($items[$dateAsString])){
+		return $items[$dateAsString];
+	}
+	if(isset($items[$dateAsIndex])){
+		return $items[$dateAsIndex];
+	}
+	return $defaultValue ;
+}
