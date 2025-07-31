@@ -34,17 +34,17 @@ class  DirectFactoringRevenueProjectionByCategory extends Model
 		return 'non_banking_services.direct-factoring-revenue-stream-breakdown.form';
 	}
 	
-	public function getDirectFactoringTransactionProjectionAtYearIndex(int $yearIndex)
+	public function getDirectFactoringTransactionProjectionAtYearOrMonthIndex(int $yearOrMonthIndex)
 	{
-		return $this->getDirectFactoringTransactionProjection()[$yearIndex] ?? 0  ; 
+		return $this->getDirectFactoringTransactionProjection()[$yearOrMonthIndex] ?? 0  ; 
 	}
 	public function getDirectFactoringTransactionProjection():array 
 	{
 		return $this->direct_factoring_transactions_projections;
 	}
-	public function getGrowthRateAtYearIndex(int $yearIndex)
+	public function getGrowthRateAtYearOrMonthIndex(int $yearOrMonthIndex)
 	{
-		return $this->growth_rates[$yearIndex] ?? 0  ; 
+		return $this->growth_rates[$yearOrMonthIndex] ?? 0  ; 
 	}
 	
 		

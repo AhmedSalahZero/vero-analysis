@@ -2,7 +2,7 @@
                                 <x-slot name="ths">
                                     <x-tables.repeater-table-th class="  header-border-down first-column-th-class" :title="__('Item')"></x-tables.repeater-table-th>
                                     @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
-                                    <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Yr-') . $yearIndexWithYear[$year] "></x-tables.repeater-table-th>
+                                    <x-tables.repeater-table-th class=" interval-class header-border-down " :title="$year.'-'"></x-tables.repeater-table-th>
                                     @endforeach
                                 </x-slot>
                                 <x-slot name="trs">

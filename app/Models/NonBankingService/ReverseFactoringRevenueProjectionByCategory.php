@@ -34,17 +34,17 @@ class  ReverseFactoringRevenueProjectionByCategory extends Model
 		return 'non_banking_services.reverse-factoring-revenue-stream-breakdown.form';
 	}
 	
-	public function getReverseFactoringTransactionProjectionAtYearIndex(int $yearIndex)
+	public function getReverseFactoringTransactionProjectionAtYearOrMonthIndex(int $yearOrMonthIndex)
 	{
-		return $this->getReverseFactoringTransactionProjection()[$yearIndex] ?? 0  ; 
+		return $this->getReverseFactoringTransactionProjection()[$yearOrMonthIndex] ?? 0  ; 
 	}
 	public function getReverseFactoringTransactionProjection()
 	{
 		return $this->reverse_factoring_transactions_projections;
 	}
-	public function getGrowthRateAtYearIndex(int $yearIndex)
+	public function getGrowthRateAtYearOrMonthIndex(int $yearOrMonthIndex)
 	{
-		return $this->growth_rates[$yearIndex] ?? 0  ; 
+		return $this->growth_rates[$yearOrMonthIndex] ?? 0  ; 
 	}
 	
 		

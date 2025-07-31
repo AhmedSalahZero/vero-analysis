@@ -12,6 +12,10 @@ class  PortfolioMortgageRevenueStreamBreakdown extends Model
 
 	public function getViewVars(Company $company, Study $study):array{
 		$portfolioMortgageEclAndNewPortfolioFundingRate = $study?  $study->portfolioMortgageEclAndNewPortfolioFundingRate : null;
+		$yearsWithItsMonths =  $study->getOperationDurationPerYearFromIndexes() ;
+		$yearOrMonthsIndexes = $study->getYearOrMonthIndexes();
+		$isYearsStudy = !$study->isMonthlyStudy();
+		
 		return [
 			'company'=>$company ,
 			'study'=>$study,
@@ -19,7 +23,10 @@ class  PortfolioMortgageRevenueStreamBreakdown extends Model
 			'portfolioMortgageEclAndNewPortfolioFundingRate'=>$portfolioMortgageEclAndNewPortfolioFundingRate,
 			'title'=>__('Portfolio Mortgage Revenue Stream Breakdown'),
 			'storeRoute'=>route('store.portfolio.mortgage.revenue.stream.breakdown',['company'=>$company->id , 'study'=>$study->id]),
-			'yearsWithItsMonths' => $study->getOperationDurationPerYearFromIndexes(),
+			'yearsWithItsMonths' => $yearsWithItsMonths,
+			'yearOrMonthsIndexes'=>$yearOrMonthsIndexes,
+			'isYearsStudy'=>$isYearsStudy
+			
 		];
 	}
 	public function getFormName():string

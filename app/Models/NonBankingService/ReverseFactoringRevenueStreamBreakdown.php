@@ -48,6 +48,10 @@ class  ReverseFactoringRevenueStreamBreakdown extends Model
 	
 	public function getViewVars(Company $company, Study $study):array{
 		$reverseFactoringEclAndNewPortfolioFundingRate = $study?  $study->reverseFactoringEclAndNewPortfolioFundingRate : null;
+		$yearsWithItsMonths =  $study->getOperationDurationPerYearFromIndexes() ;
+		$yearOrMonthsIndexes = $study->getYearOrMonthIndexes();
+		$isYearsStudy = !$study->isMonthlyStudy();
+		
 		return [
 			'company'=>$company ,
 			'study'=>$study,
@@ -55,7 +59,9 @@ class  ReverseFactoringRevenueStreamBreakdown extends Model
 			'reverseFactoringEclAndNewPortfolioFundingRate'=>$reverseFactoringEclAndNewPortfolioFundingRate,
 			'title'=>__('Reverse Factoring Revenue Stream Breakdown'),
 			'storeRoute'=>route('store.reverse.factoring.revenue.stream.breakdown',['company'=>$company->id , 'study'=>$study->id]),
-			'yearsWithItsMonths' => $study->getOperationDurationPerYearFromIndexes(),
+			'yearsWithItsMonths' => $yearsWithItsMonths,
+			'yearOrMonthsIndexes'=>$yearOrMonthsIndexes,
+			'isYearsStudy'=>$isYearsStudy
 		];
 	}
 	public function getFormName():string

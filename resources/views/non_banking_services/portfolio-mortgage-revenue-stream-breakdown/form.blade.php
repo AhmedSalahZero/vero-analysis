@@ -83,8 +83,8 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
                             <x-slot name="ths">
                                 <x-tables.repeater-table-th class="  header-border-down first-column-th-class" :title="__('Item')"></x-tables.repeater-table-th>
                                 <x-tables.repeater-table-th class=" tenor-selector-class header-border-down " :title="__('Spread <br> Rate')"></x-tables.repeater-table-th>
-                                @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
-                                <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Yr-') . $yearIndexWithYear[$year] "></x-tables.repeater-table-th>
+                                @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
+                                <x-tables.repeater-table-th class=" interval-class header-border-down " :title="$yearOrMonthFormatted"></x-tables.repeater-table-th>
                                 @endforeach
                             </x-slot>
                             <x-slot name="trs">
@@ -104,12 +104,12 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
                                     @php
                                     $columnIndex = 0 ;
                                     @endphp
-                                    @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
+                                    @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
 
                                     <td>
                                         <div class="form-group three-dots-parent">
                                             <div class="input-group input-group-sm align-items-center justify-content-center div-for-percentage">
-                                                <input type="text" style="max-width: 60px;min-width: 60px;text-align: center" value="{{ sumNumberOfOnes($yearsWithItsMonths,$year,$datesIndexWithYearIndex) }}" readonly onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control target_repeating_amounts only-percentage-allowed size" data-date="#" data-section="target" aria-describedby="basic-addon2">
+                                                <input type="text" style="max-width: 60px;min-width: 60px;text-align: center" value="{{ sumNumberOfOnes($yearsWithItsMonths,$yearOrMonthAsIndex,$datesIndexWithYearIndex) }}" readonly onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control target_repeating_amounts only-percentage-allowed size" data-date="#" data-section="target" aria-describedby="basic-addon2">
                                                 <span class="ml-2">
                                                     <b style="visibility:hidden">%</b>
                                                 </span>
@@ -141,11 +141,11 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
                                     $currentVal = 0 ;
 
                                     @endphp
-                                    @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
+                                    @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
 
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
-                                            <x-repeat-right-dot-inputs :currentVal="$portfolioMortgageRevenueProjectionByCategory ? $portfolioMortgageRevenueProjectionByCategory->getGrowthRateAtYearIndex($year) : 0" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :name="'portfolioMortgageRevenueProjectionByCategories['.$currentIndex.']['.'growth_rates'.']['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :currentVal="$portfolioMortgageRevenueProjectionByCategory ? $portfolioMortgageRevenueProjectionByCategory->getGrowthRateAtYearOrMonthIndex($yearOrMonthAsIndex) : 0" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :name="'portfolioMortgageRevenueProjectionByCategories['.$currentIndex.']['.'growth_rates'.']['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
                                         </div>
                                     </td>
@@ -181,13 +181,13 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
                                     @php
                                     $columnIndex = 0 ;
                                     @endphp
-                                    @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
+                                    @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
                                     @php
-                                    $currentVal = $portfolioMortgageRevenueProjectionByCategory ? $portfolioMortgageRevenueProjectionByCategory->getPortfolioMortgageTransactionProjectionAtYearIndex($year) : 0;
+                                    $currentVal = $portfolioMortgageRevenueProjectionByCategory ? $portfolioMortgageRevenueProjectionByCategory->getPortfolioMortgageTransactionProjectionAtYearOrMonthIndexIndex($yearOrMonthAsIndex) : 0;
                                     @endphp
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
-                                            <x-repeat-right-dot-inputs :number-format-decimals="0" :currentVal="$currentVal" :classes="'only-greater-than-or-equal-zero-allowed total-loans-hidden js-recalculate-equity-funding-value'" :is-percentage="false" :name="'portfolioMortgageRevenueProjectionByCategories['.$currentIndex.']['.'portfolio_mortgage_transactions_projections'.']['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :number-format-decimals="0" :currentVal="$currentVal" :classes="'only-greater-than-or-equal-zero-allowed total-loans-hidden js-recalculate-equity-funding-value'" :is-percentage="false" :name="'portfolioMortgageRevenueProjectionByCategories['.$currentIndex.']['.'portfolio_mortgage_transactions_projections'.']['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
                                         </div>
                                     </td>
                                     @php
@@ -198,7 +198,7 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
 
 
                                 </tr>
-
+	@if($isYearsStudy)
 
                                 <tr data-repeat-formatting-decimals="0" data-repeater-style>
 
@@ -210,13 +210,13 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
                                     @php
                                     $columnIndex = 0 ;
                                     @endphp
-                                    @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
+                                   @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
                                     @php
-                                    $currentVal = $portfolioMortgageRevenueProjectionByCategory ? $portfolioMortgageRevenueProjectionByCategory->getFrequencyPerYearAtYearIndex($year) : 1;
+                                    $currentVal = $portfolioMortgageRevenueProjectionByCategory ? $portfolioMortgageRevenueProjectionByCategory->getFrequencyPerYearAtYearOrMonthIndex($yearOrMonthAsIndex) : 1;
                                     @endphp
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
-                                            <x-form.select :required="true" :label="''" :pleaseSelect="false" :selectedValue="$currentVal" :options="[['title'=>__('Once Per Year'),'value'=>0],['title'=>__('Monthly'),'value'=>1],['title'=>__('Every 2 Months'),'value'=>'2'],['title'=>__('Every 3 Months'),'value'=>'3'],['title'=>__('Every 4 Months'),'value'=>'4'],['title'=>__('Every 6 Months'),'value'=>'6']]" :add-new="false" class="select2-select  repeater-select  " :all="false" :name="'portfolioMortgageRevenueProjectionByCategories['.$currentIndex.']['.'frequency_per_year'.']['.$year.']'"></x-form.select>
+                                            <x-form.select :required="true" :label="''" :pleaseSelect="false" :selectedValue="$currentVal" :options="[['title'=>__('Once Per Year'),'value'=>0],['title'=>__('Monthly'),'value'=>1],['title'=>__('Every 2 Months'),'value'=>'2'],['title'=>__('Every 3 Months'),'value'=>'3'],['title'=>__('Every 4 Months'),'value'=>'4'],['title'=>__('Every 6 Months'),'value'=>'6']]" :add-new="false" class="select2-select  repeater-select  " :all="false" :name="'portfolioMortgageRevenueProjectionByCategories['.$currentIndex.']['.'frequency_per_year'.']['.$yearOrMonthAsIndex.']'"></x-form.select>
                                         </div>
                                     </td>
                                     @php
@@ -227,7 +227,7 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
 
 
                                 </tr>
-
+							
                                 <tr data-repeat-formatting-decimals="0" data-repeater-style>
 
                                     <td>
@@ -245,7 +245,7 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
 
                                     $months = getMonthNames($startFromIndex);
 
-                                    $currentVal = $portfolioMortgageRevenueProjectionByCategory ? $portfolioMortgageRevenueProjectionByCategory->getFrequencyPerYearAtYearIndex($year) : 1;
+                                    $currentVal = $portfolioMortgageRevenueProjectionByCategory ? $portfolioMortgageRevenueProjectionByCategory->getFrequencyPerYearAtYearOrMonthIndex($year) : 1;
                                     @endphp
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
@@ -260,6 +260,9 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
 
 
                                 </tr>
+								
+								
+							
 
                                 <tr data-repeat-formatting-decimals="0" data-repeater-style>
 
@@ -273,7 +276,7 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
                                     @php
                                     $columnIndex = 0 ;
                                     @endphp
-                                    @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
+                                    @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
                                     @php
                                     $currentVal = 0;
                                     @endphp
@@ -290,7 +293,7 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
 
 
                                 </tr>
-
+	@endif 
 
 
 
@@ -414,8 +417,8 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
                         <x-tables.repeater-table :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
                             <x-slot name="ths">
                                 <x-tables.repeater-table-th class=" category-selector-class header-border-down " :title="__('Item')"></x-tables.repeater-table-th>
-                                @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
-                                <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Yr-') . $yearIndexWithYear[$year] "></x-tables.repeater-table-th>
+                                @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
+                                <x-tables.repeater-table-th class=" interval-class header-border-down " :title="$yearOrMonthFormatted"></x-tables.repeater-table-th>
                                 @endforeach
                             </x-slot>
                             <x-slot name="trs">
@@ -432,13 +435,13 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
                                     @php
                                     $columnIndex = 0 ;
                                     @endphp
-                                    @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
+                                    @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
 
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
 
 
-                                            <x-repeat-right-dot-inputs :currentVal="$model->portfolioMortgageAdminFeesRate ? $model->portfolioMortgageAdminFeesRate->getAdminFeeRatesAtYearIndex($year):0" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :name="'portfolioMortgageAdminFeesRate['.'admin_fees_rates'.']['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :currentVal="$model->portfolioMortgageAdminFeesRate ? $model->portfolioMortgageAdminFeesRate->getAdminFeeRatesAtYearOrMonthIndex($yearOrMonthAsIndex):0" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :name="'portfolioMortgageAdminFeesRate['.'admin_fees_rates'.']['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
                                         </div>
                                     </td>
@@ -529,8 +532,8 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
                         <x-tables.repeater-table :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
                             <x-slot name="ths">
                                 <x-tables.repeater-table-th class=" category-selector-class header-border-down " :title="__('Item')"></x-tables.repeater-table-th>
-                                @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
-                                <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Yr-') . $yearIndexWithYear[$year] "></x-tables.repeater-table-th>
+                                @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
+                                <x-tables.repeater-table-th class=" interval-class header-border-down " :title="$yearOrMonthFormatted"></x-tables.repeater-table-th>
                                 @endforeach
                             </x-slot>
                             <x-slot name="trs">
@@ -582,7 +585,7 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
                                     @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
-                                            <x-repeat-right-dot-inputs :numberFormatDecimals="0" :currentVal="$model->portfolioMortgageNewPortfolioFundingStructure ? $model->portfolioMortgageNewPortfolioFundingStructure->getEquityFundingValuesAtYearOrMonthIndex($yearOrMonthAsIndex):0" :classes="'only-greater-than-or-equal-zero-allowed '" :formatted-input-classes="'equity-funding-formatted-value-class'" :is-percentage="false" :name="'portfolioMortgageNewPortfolioFundingStructure['.'equity_funding_values'.']['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :numberFormatDecimals="0" :currentVal="$model->portfolioMortgageNewPortfolioFundingStructure ? $model->portfolioMortgageNewPortfolioFundingStructure->getEquityFundingValuesAtYearOrMonthIndex($yearOrMonthAsIndex):0" :classes="'only-greater-than-or-equal-zero-allowed '" :formatted-input-classes="'equity-funding-formatted-value-class'" :is-percentage="false" :name="'portfolioMortgageNewPortfolioFundingStructure['.'equity_funding_values'.']['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
                                         </div>
                                     </td>

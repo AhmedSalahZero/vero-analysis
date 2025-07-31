@@ -55,8 +55,8 @@
                         <x-tables.repeater-table :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
                             <x-slot name="ths">
                                 <x-tables.repeater-table-th class="  header-border-down first-column-th-class" :title="__('Item')"></x-tables.repeater-table-th>
-                                @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
-                                <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Yr-') . $yearIndexWithYear[$year] "></x-tables.repeater-table-th>
+                                @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
+                                <x-tables.repeater-table-th class=" interval-class header-border-down " :title="$yearOrMonthFormatted"></x-tables.repeater-table-th>
                                 @endforeach
                             </x-slot>
                             <x-slot name="trs">
@@ -239,8 +239,8 @@
                         <x-tables.repeater-table :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
                             <x-slot name="ths">
                                 <x-tables.repeater-table-th class="  header-border-down first-column-th-class" :title="__('Item')"></x-tables.repeater-table-th>
-                                @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
-                                <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Yr-') . $yearIndexWithYear[$year] "></x-tables.repeater-table-th>
+                               @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
+                                <x-tables.repeater-table-th class=" interval-class header-border-down " :title="$yearOrMonthFormatted"></x-tables.repeater-table-th>
                                 @endforeach
                             </x-slot>
                             <x-slot name="trs">
@@ -298,11 +298,11 @@
                                     $currentVal = 0 ;
 							
                                     @endphp
-                                    @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
+                                    @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
 
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
-                                            <x-repeat-right-dot-inputs :currentVal="$model->microfinanceRevenueProjectionByCategory ? $model->microfinanceRevenueProjectionByCategory->getGrowthRateAtYearIndex($year) : 0" :classes="'only-greater-than-or-equal-zero-allowed recalculate-gr gr-field'" :is-percentage="true" :name="'MicrofinanceRevenueProjectionByCategory['.'growth_rates'.']['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :currentVal="$model->microfinanceRevenueProjectionByCategory ? $model->microfinanceRevenueProjectionByCategory->getGrowthRateAtYearOrMonthIndex($yearOrMonthAsIndex) : 0" :classes="'only-greater-than-or-equal-zero-allowed recalculate-gr gr-field'" :is-percentage="true" :name="'MicrofinanceRevenueProjectionByCategory['.'growth_rates'.']['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
                                         </div>
                                     </td>
@@ -444,8 +444,8 @@
                                      <x-tables.repeater-table-th class=" tenor-selector-class header-border-down " :title="__('Funded')"></x-tables.repeater-table-th>
                                      {{-- <x-tables.repeater-table-th class=" tenor-selector-class header-border-down " :title="__('Funded <br> ODAs')"></x-tables.repeater-table-th> --}}
                                 <x-tables.repeater-table-th class=" tenor-selector-class header-border-down " :title="__('Info')"></x-tables.repeater-table-th>
-                                @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
-                                <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Yr-') . $yearIndexWithYear[$year] "></x-tables.repeater-table-th>
+                                @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
+                                <x-tables.repeater-table-th class=" interval-class header-border-down " :title="$yearOrMonthFormatted"></x-tables.repeater-table-th>
                                 @endforeach
                             </x-slot>
                             <x-slot name="trs">
@@ -521,11 +521,11 @@
                                     @php
                                     $columnIndex = 0 ;
                                     @endphp
-                                    @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
+                                    @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
                                     <td>
-                                            <x-repeat-right-dot-inputs :multiple="true" :currentVal="isset($subModel) ? $subModel->getContributionPercentageAtYearIndex($year):0" :classes="'only-greater-than-or-equal-zero-allowed recalculate-factoring factoring-rate'" :is-percentage="true" :name="'contribution_percentages'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
-                                            <x-repeat-right-dot-inputs  :multiple="true" :number-format-decimals="0" :currentVal="isset($subModel) ? $subModel->getLoanAmountPayloadAtYearIndex($year):0" :classes="'only-greater-than-or-equal-zero-allowed current-loan-input factoring-value'" :is-percentage="false" :name="'loan_amounts'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
-                                            <x-repeat-right-dot-inputs :multiple="true" :currentVal="isset($subModel) ? $subModel->getFlatRateAtYearIndex($year):0" :classes="'only-greater-than-or-equal-zero-allowed '" :is-percentage="true" :name="'flat_rates'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :multiple="true" :currentVal="isset($subModel) ? $subModel->getContributionPercentageAtYearOrMonthIndex($yearOrMonthAsIndex):0" :classes="'only-greater-than-or-equal-zero-allowed recalculate-factoring factoring-rate'" :is-percentage="true" :name="'contribution_percentages'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs  :multiple="true" :number-format-decimals="0" :currentVal="isset($subModel) ? $subModel->getLoanAmountPayloadAtYearOrMonthIndex($yearOrMonthAsIndex):0" :classes="'only-greater-than-or-equal-zero-allowed current-loan-input factoring-value'" :is-percentage="false" :name="'loan_amounts'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :multiple="true" :currentVal="isset($subModel) ? $subModel->getFlatRateAtYearOrMonthIndex($yearOrMonthAsIndex):0" :classes="'only-greater-than-or-equal-zero-allowed '" :is-percentage="true" :name="'flat_rates'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
                                     </td>
                                     @php
                                     $columnIndex++;
@@ -589,8 +589,8 @@
                         <x-tables.repeater-table :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
                             <x-slot name="ths">
                                 <x-tables.repeater-table-th class=" category-selector-class header-border-down " :title="__('Item')"></x-tables.repeater-table-th>
-                                @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
-                                <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Yr-') . $yearIndexWithYear[$year] "></x-tables.repeater-table-th>
+                                @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
+                                <x-tables.repeater-table-th class=" interval-class header-border-down " :title="$yearOrMonthFormatted"></x-tables.repeater-table-th>
                                 @endforeach
                             </x-slot>
                             <x-slot name="trs">
@@ -607,14 +607,11 @@
                                     @php
                                     $columnIndex = 0 ;
                                     @endphp
-                                    @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
+                                    @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
                                    
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
-
-
-                                            <x-repeat-right-dot-inputs :currentVal="$model->microfinanceAdminFeesRate ? $model->microfinanceAdminFeesRate->getAdminFeeRatesAtYearIndex($year):0" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :name="'microfinanceAdminFeesRate['.'admin_fees_rates'.']['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
-
+                                            <x-repeat-right-dot-inputs :currentVal="$model->microfinanceAdminFeesRate ? $model->microfinanceAdminFeesRate->getAdminFeeRatesAtYearOrMonthIndex($yearOrMonthAsIndex):0" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :name="'microfinanceAdminFeesRate['.'admin_fees_rates'.']['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
                                         </div>
                                     </td>
                                     @php
@@ -704,8 +701,8 @@
                         <x-tables.repeater-table :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
                             <x-slot name="ths">
                                 <x-tables.repeater-table-th class=" category-selector-class header-border-down " :title="__('Item')"></x-tables.repeater-table-th>
-                                @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
-                                <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Yr-') . $yearIndexWithYear[$year] "></x-tables.repeater-table-th>
+                                @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
+                                <x-tables.repeater-table-th class=" interval-class header-border-down " :title="$yearOrMonthFormatted"></x-tables.repeater-table-th>
                                 @endforeach
                             </x-slot>
                             <x-slot name="trs">

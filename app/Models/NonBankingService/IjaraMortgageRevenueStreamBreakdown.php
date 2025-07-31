@@ -10,6 +10,10 @@ class  IjaraMortgageRevenueStreamBreakdown extends Model
 
 	public function getViewVars(Company $company, Study $study):array{
 		$ijaraMortgageEclAndNewPortfolioFundingRate = $study?  $study->ijaraMortgageEclAndNewPortfolioFundingRate : null;
+		$yearsWithItsMonths =  $study->getOperationDurationPerYearFromIndexes() ;
+		$yearOrMonthsIndexes = $study->getYearOrMonthIndexes();
+		$isYearsStudy = !$study->isMonthlyStudy();
+		
 		return [
 			'company'=>$company ,
 			'study'=>$study,
@@ -17,7 +21,9 @@ class  IjaraMortgageRevenueStreamBreakdown extends Model
 			'ijaraMortgageEclAndNewPortfolioFundingRate'=>$ijaraMortgageEclAndNewPortfolioFundingRate,
 			'title'=>__('Ijara Mortgage Revenue Stream Breakdown'),
 			'storeRoute'=>route('store.ijara.mortgage.revenue.stream.breakdown',['company'=>$company->id , 'study'=>$study->id]),
-			'yearsWithItsMonths' => $study->getOperationDurationPerYearFromIndexes(),
+			'yearsWithItsMonths' => $yearsWithItsMonths,
+			'yearOrMonthsIndexes'=>$yearOrMonthsIndexes,
+			'isYearsStudy'=>$isYearsStudy
 		];
 	}
 	public function getFormName():string

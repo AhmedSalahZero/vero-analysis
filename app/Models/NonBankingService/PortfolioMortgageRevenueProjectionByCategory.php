@@ -44,9 +44,9 @@ class  PortfolioMortgageRevenueProjectionByCategory extends Model
 	{
 		return (array)$this->portfolio_mortgage_transactions_projections  ; 
 	}
-	public function getPortfolioMortgageTransactionProjectionAtYearIndex(int $yearIndex)
+	public function getPortfolioMortgageTransactionProjectionAtYearOrMonthIndexIndex(int $yearOrMonthIndex)
 	{
-		return $this->getPortfolioMortgageTransactionProjection()[$yearIndex] ?? 0  ; 
+		return $this->getPortfolioMortgageTransactionProjection()[$yearOrMonthIndex] ?? 0  ; 
 	}
 	public function getStartFrom():array 
 	{
@@ -60,13 +60,13 @@ class  PortfolioMortgageRevenueProjectionByCategory extends Model
 	{
 		return (array)$this->frequency_per_year  ; 
 	}
-	public function getFrequencyPerYearAtYearIndex(int $yearIndex)
+	public function getFrequencyPerYearAtYearOrMonthIndex(int $yearOrMonthIndex)
 	{
-		return $this->getFrequencyPerYear()[$yearIndex] ?? 0  ; 
+		return $this->getFrequencyPerYear()[$yearOrMonthIndex] ?? 0  ; 
 	}
- 	public function getGrowthRateAtYearIndex(int $yearIndex)
+ 	public function getGrowthRateAtYearOrMonthIndex(int $yearOrMonthIndex)
 	{
-		return $this->growth_rates[$yearIndex] ?? 0  ; 
+		return $this->growth_rates[$yearOrMonthIndex] ?? 0  ; 
 	}
 	// public function getMonthlyMarginRate()
 	// {

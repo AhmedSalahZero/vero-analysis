@@ -1,231 +1,233 @@
 <x-tables.repeater-table :table-class="'col-md-6'" :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
-                                <x-slot name="ths">
-                                    <x-tables.repeater-table-th class="  header-border-down first-column-th-class" :title="__('Item')"></x-tables.repeater-table-th>
-                                    @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
-                                    <x-tables.repeater-table-th class=" interval-class header-border-down" :title="__('Yr-') . $yearIndexWithYear[$year] "></x-tables.repeater-table-th>
-                                    @endforeach
-                                </x-slot>
-                                <x-slot name="trs">
+    <x-slot name="ths">
+        <x-tables.repeater-table-th class="  header-border-down first-column-th-class" :title="__('Item')"></x-tables.repeater-table-th>
+        @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
+        <x-tables.repeater-table-th class=" interval-class header-border-down" :title="$yearOrMonthFormatted"></x-tables.repeater-table-th>
+        @endforeach
+    </x-slot>
+    <x-slot name="trs">
+		@if($isYearsStudy)
+        <tr data-repeat-formatting-decimals="0" data-repeater-style>
 
-                                    <tr data-repeat-formatting-decimals="0" data-repeater-style>
 
 
+            <td>
+                <div class="">
+                    <input value="{{ __('Operating Months') }}" disabled class="form-control text-left " type="text">
+                </div>
 
-                                        <td>
-                                            <div class="">
-                                                <input value="{{ __('Operating Months') }}" disabled class="form-control text-left " type="text">
-                                            </div>
 
+            </td>
+            @php
+            $columnIndex = 0 ;
+            @endphp
+            @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
 
-                                        </td>
-                                        @php
-                                        $columnIndex = 0 ;
-                                        @endphp
-                                        @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
+            <td>
+                <div class="form-group three-dots-parent">
+                    <div class="input-group input-group-sm align-items-center justify-content-center div-for-percentage">
+                        <input type="text" style="max-width: 60px;min-width: 60px;text-align: center" value="{{ sumNumberOfOnes($yearsWithItsMonths,$yearOrMonthAsIndex,$datesIndexWithYearIndex) }}" readonly onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control target_repeating_amounts only-percentage-allowed size" data-date="#" data-section="target" aria-describedby="basic-addon2">
+                        <span class="ml-2">
+                            <b style="visibility:hidden">%</b>
+                        </span>
+                    </div>
+                </div>
+            </td>
+            @php
+            $columnIndex++;
+            @endphp
+            @endforeach
 
-                                        <td>
-                                            <div class="form-group three-dots-parent">
-                                                <div class="input-group input-group-sm align-items-center justify-content-center div-for-percentage">
-                                                    <input type="text" style="max-width: 60px;min-width: 60px;text-align: center" value="{{ sumNumberOfOnes($yearsWithItsMonths,$year,$datesIndexWithYearIndex) }}" readonly onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control target_repeating_amounts only-percentage-allowed size" data-date="#" data-section="target" aria-describedby="basic-addon2">
-                                                    <span class="ml-2">
-                                                        <b style="visibility:hidden">%</b>
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        @php
-                                        $columnIndex++;
-                                        @endphp
-                                        @endforeach
 
+        </tr>
+		@endif
 
-                                    </tr>
 
+        <tr data-repeat-formatting-decimals="0" data-repeater-style>
 
-                                    <tr data-repeat-formatting-decimals="0" data-repeater-style>
+            <td>
+                <input value="{{ __('Total Revenues') }}" disabled class="form-control text-left " type="text">
+            </td>
 
-                                        <td>
-                                            <input value="{{ __('Total Revenues') }}" disabled class="form-control text-left " type="text">
-                                        </td>
 
+            @php
+            $columnIndex = 0 ;
+            @endphp
+            @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
+            @php
+            $currentVal = ($formattedResult['sales_revenue'][$yearOrMonthAsIndex]??0) / 1000000 ;
+            @endphp
+            <td>
+                <div class="d-flex align-items-center justify-content-center">
+                    <x-repeat-right-dot-inputs :disabled="true" :removeThreeDotsClass="true" :removeThreeDots="true" :number-format-decimals="2" :currentVal="$currentVal" :classes="'only-greater-than-or-equal-zero-allowed  total-loans-hidden js-recalculate-equity-funding-value'" :is-percentage="false" :mark="' '" :name="'IjaraMortgageRevenueProjectionByCategory['.'ijara_mortgage_transactions_projections'.']['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                </div>
+            </td>
+            @php
+            $columnIndex++ ;
+            @endphp
 
-                                        @php
-                                        $columnIndex = 0 ;
-                                        @endphp
-                                        @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
-                                        @php
-                                        $currentVal = ($formattedResult['sales_revenue'][$year]??0) / 1000000 ;
-                                        @endphp
-                                        <td>
-                                            <div class="d-flex align-items-center justify-content-center">
-                                                <x-repeat-right-dot-inputs :disabled="true" :removeThreeDotsClass="true" :removeThreeDots="true" :number-format-decimals="2" :currentVal="$currentVal" :classes="'only-greater-than-or-equal-zero-allowed  total-loans-hidden js-recalculate-equity-funding-value'" :is-percentage="false" :mark="' '" :name="'IjaraMortgageRevenueProjectionByCategory['.'ijara_mortgage_transactions_projections'.']['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
-                                            </div>
-                                        </td>
-                                        @php
-                                        $columnIndex++ ;
-                                        @endphp
+            @endforeach
 
-                                        @endforeach
 
+        </tr>
 
-                                    </tr>
 
 
 
 
 
 
+        <tr data-repeat-formatting-decimals="0" data-repeater-style>
 
-                                    <tr data-repeat-formatting-decimals="0" data-repeater-style>
+            <td>
+                <input value="{{ __('Gross Profit') }}" disabled class="form-control text-left " type="text">
+            </td>
 
-                                        <td>
-                                            <input value="{{ __('Gross Profit') }}" disabled class="form-control text-left " type="text">
-                                        </td>
 
+            @php
+            $columnIndex = 0 ;
+            @endphp
+            @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
+            @php
+            $currentVal = ($formattedResult['gross_profit'][$yearOrMonthAsIndex]??0) / 1000000;
+            @endphp
+            <td>
+                <div class="d-flex align-items-center justify-content-center">
+                    <x-repeat-right-dot-inputs :disabled="true" :removeThreeDotsClass="true" :removeThreeDots="true" :number-format-decimals="2" :currentVal="$currentVal" :classes="'only-greater-than-or-equal-zero-allowed total-loans-hidden js-recalculate-equity-funding-value'" :is-percentage="false" :mark="' '" :name="'IjaraMortgageRevenueProjectionByCategory['.'ijara_mortgage_transactions_projections'.']['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                </div>
+            </td>
+            @php
+            $columnIndex++ ;
+            @endphp
 
-                                        @php
-                                        $columnIndex = 0 ;
-                                        @endphp
-                                        @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
-                                        @php
-                                        $currentVal = ($formattedResult['gross_profit'][$year]??0) / 1000000;
-                                        @endphp
-                                        <td>
-                                            <div class="d-flex align-items-center justify-content-center">
-                                                <x-repeat-right-dot-inputs :disabled="true" :removeThreeDotsClass="true" :removeThreeDots="true" :number-format-decimals="2" :currentVal="$currentVal" :classes="'only-greater-than-or-equal-zero-allowed total-loans-hidden js-recalculate-equity-funding-value'" :is-percentage="false" :mark="' '" :name="'IjaraMortgageRevenueProjectionByCategory['.'ijara_mortgage_transactions_projections'.']['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
-                                            </div>
-                                        </td>
-                                        @php
-                                        $columnIndex++ ;
-                                        @endphp
+            @endforeach
 
-                                        @endforeach
 
+        </tr>
 
-                                    </tr>
 
 
 
 
+        <tr data-repeat-formatting-decimals="0" data-repeater-style>
 
-                                    <tr data-repeat-formatting-decimals="0" data-repeater-style>
+            <td>
+                <input value="{{ __('EBITDA') }}" disabled class="form-control text-left " type="text">
+            </td>
 
-                                        <td>
-                                            <input value="{{ __('EBITDA') }}" disabled class="form-control text-left " type="text">
-                                        </td>
 
+            @php
+            $columnIndex = 0 ;
+            @endphp
+            @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
+            @php
+            $currentVal = ($formattedResult['ebitda'][$yearOrMonthAsIndex]??0) / 1000000;
+            @endphp
+            <td>
+                <div class="d-flex align-items-center justify-content-center">
+                    <x-repeat-right-dot-inputs :disabled="true" :removeThreeDotsClass="true" :removeThreeDots="true" :number-format-decimals="2" :currentVal="$currentVal" :classes="'only-greater-than-or-equal-zero-allowed total-loans-hidden js-recalculate-equity-funding-value'" :is-percentage="false" :mark="' '" :name="'IjaraMortgageRevenueProjectionByCategory['.'ijara_mortgage_transactions_projections'.']['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                </div>
+            </td>
+            @php
+            $columnIndex++ ;
+            @endphp
 
-                                        @php
-                                        $columnIndex = 0 ;
-                                        @endphp
-                                        @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
-                                        @php
-                                        $currentVal = ($formattedResult['ebitda'][$year]??0) / 1000000;
-                                        @endphp
-                                        <td>
-                                            <div class="d-flex align-items-center justify-content-center">
-                                                <x-repeat-right-dot-inputs :disabled="true" :removeThreeDotsClass="true" :removeThreeDots="true" :number-format-decimals="2" :currentVal="$currentVal" :classes="'only-greater-than-or-equal-zero-allowed total-loans-hidden js-recalculate-equity-funding-value'" :is-percentage="false" :mark="' '" :name="'IjaraMortgageRevenueProjectionByCategory['.'ijara_mortgage_transactions_projections'.']['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
-                                            </div>
-                                        </td>
-                                        @php
-                                        $columnIndex++ ;
-                                        @endphp
+            @endforeach
 
-                                        @endforeach
 
+        </tr>
 
-                                    </tr>
 
 
 
 
+        <tr data-repeat-formatting-decimals="0" data-repeater-style>
 
-                                    <tr data-repeat-formatting-decimals="0" data-repeater-style>
+            <td>
+                <input value="{{ __('EBIT') }}" disabled class="form-control text-left " type="text">
+            </td>
 
-                                        <td>
-                                            <input value="{{ __('EBIT') }}" disabled class="form-control text-left " type="text">
-                                        </td>
 
+            @php
+            $columnIndex = 0 ;
+            @endphp
+           @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
+            @php
+            $currentVal = ($formattedResult['ebit'][$yearOrMonthAsIndex]??0) / 1000000;
+            @endphp
+            <td>
+                <div class="d-flex align-items-center justify-content-center">
+                    <x-repeat-right-dot-inputs :disabled="true" :removeThreeDotsClass="true" :removeThreeDots="true" :number-format-decimals="2" :currentVal="$currentVal" :classes="'only-greater-than-or-equal-zero-allowed total-loans-hidden js-recalculate-equity-funding-value'" :is-percentage="false" :mark="' '" :name="'IjaraMortgageRevenueProjectionByCategory['.'ijara_mortgage_transactions_projections'.']['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                </div>
+            </td>
+            @php
+            $columnIndex++ ;
+            @endphp
 
-                                        @php
-                                        $columnIndex = 0 ;
-                                        @endphp
-                                        @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
-                                        @php
-                                        $currentVal = ($formattedResult['ebit'][$year]??0) / 1000000;
-                                        @endphp
-                                        <td>
-                                            <div class="d-flex align-items-center justify-content-center">
-                                                <x-repeat-right-dot-inputs :disabled="true" :removeThreeDotsClass="true" :removeThreeDots="true" :number-format-decimals="2" :currentVal="$currentVal" :classes="'only-greater-than-or-equal-zero-allowed total-loans-hidden js-recalculate-equity-funding-value'" :is-percentage="false" :mark="' '" :name="'IjaraMortgageRevenueProjectionByCategory['.'ijara_mortgage_transactions_projections'.']['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
-                                            </div>
-                                        </td>
-                                        @php
-                                        $columnIndex++ ;
-                                        @endphp
+            @endforeach
 
-                                        @endforeach
 
+        </tr>
 
-                                    </tr>
 
+        <tr data-repeat-formatting-decimals="0" data-repeater-style>
 
-                                    <tr data-repeat-formatting-decimals="0" data-repeater-style>
+            <td>
+                <input value="{{ __('EBT') }}" disabled class="form-control text-left " type="text">
+            </td>
 
-                                        <td>
-                                            <input value="{{ __('EBT') }}" disabled class="form-control text-left " type="text">
-                                        </td>
 
+            @php
+            $columnIndex = 0 ;
+            @endphp
+           @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
+            @php
+            $currentVal = ($formattedResult['ebt'][$yearOrMonthAsIndex]??0) / 1000000;
+            @endphp
+            <td>
+                <div class="d-flex align-items-center justify-content-center">
+                    <x-repeat-right-dot-inputs :disabled="true" :removeThreeDotsClass="true" :removeThreeDots="true" :number-format-decimals="2" :currentVal="$currentVal" :classes="'only-greater-than-or-equal-zero-allowed total-loans-hidden js-recalculate-equity-funding-value'" :is-percentage="false" :mark="' '" :name="'IjaraMortgageRevenueProjectionByCategory['.'ijara_mortgage_transactions_projections'.']['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                </div>
+            </td>
+            @php
+            $columnIndex++ ;
+            @endphp
 
-                                        @php
-                                        $columnIndex = 0 ;
-                                        @endphp
-                                        @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
-                                        @php
-                                        $currentVal = ($formattedResult['ebt'][$year]??0) / 1000000;
-                                        @endphp
-                                        <td>
-                                            <div class="d-flex align-items-center justify-content-center">
-                                                <x-repeat-right-dot-inputs :disabled="true" :removeThreeDotsClass="true" :removeThreeDots="true" :number-format-decimals="2" :currentVal="$currentVal" :classes="'only-greater-than-or-equal-zero-allowed total-loans-hidden js-recalculate-equity-funding-value'" :is-percentage="false" :mark="' '" :name="'IjaraMortgageRevenueProjectionByCategory['.'ijara_mortgage_transactions_projections'.']['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
-                                            </div>
-                                        </td>
-                                        @php
-                                        $columnIndex++ ;
-                                        @endphp
+            @endforeach
 
-                                        @endforeach
 
+        </tr>
 
-                                    </tr>
 
 
+        <tr data-repeat-formatting-decimals="0" data-repeater-style>
 
-                                    <tr data-repeat-formatting-decimals="0" data-repeater-style>
+            <td>
+                <input value="{{ __('Net Profit') }}" disabled class="form-control text-left " type="text">
+            </td>
 
-                                        <td>
-                                            <input value="{{ __('Net Profit') }}" disabled class="form-control text-left " type="text">
-                                        </td>
 
+            @php
+            $columnIndex = 0 ;
+            @endphp
+            @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
+            @php
+            $currentVal = ($formattedResult['net_profit'][$yearOrMonthAsIndex]??0) / 1000000;
+            @endphp
+            <td>
+                <div class="d-flex align-items-center justify-content-center">
+                    <x-repeat-right-dot-inputs :disabled="true" :removeThreeDotsClass="true" :removeThreeDots="true" :number-format-decimals="2" :currentVal="$currentVal" :classes="'only-greater-than-or-equal-zero-allowed total-loans-hidden js-recalculate-equity-funding-value'" :is-percentage="false" :mark="' '" :name="'IjaraMortgageRevenueProjectionByCategory['.'ijara_mortgage_transactions_projections'.']['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                </div>
+            </td>
+            @php
+            $columnIndex++ ;
+            @endphp
 
-                                        @php
-                                        $columnIndex = 0 ;
-                                        @endphp
-                                        @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
-                                        @php
-                                        $currentVal = ($formattedResult['net_profit'][$year]??0) / 1000000;
-                                        @endphp
-                                        <td>
-                                            <div class="d-flex align-items-center justify-content-center">
-                                                <x-repeat-right-dot-inputs :disabled="true" :removeThreeDotsClass="true" :removeThreeDots="true" :number-format-decimals="2" :currentVal="$currentVal" :classes="'only-greater-than-or-equal-zero-allowed total-loans-hidden js-recalculate-equity-funding-value'" :is-percentage="false" :mark="' '" :name="'IjaraMortgageRevenueProjectionByCategory['.'ijara_mortgage_transactions_projections'.']['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
-                                            </div>
-                                        </td>
-                                        @php
-                                        $columnIndex++ ;
-                                        @endphp
+            @endforeach
 
-                                        @endforeach
 
+        </tr>
 
-                                    </tr>
 
 
 
@@ -236,10 +238,9 @@
 
 
 
+    </x-slot>
 
-                                </x-slot>
 
 
 
-
-                            </x-tables.repeater-table>
+</x-tables.repeater-table>

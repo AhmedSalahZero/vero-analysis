@@ -212,6 +212,7 @@ class DashboardController extends Controller
 	}
 	public function view(Request $request , Company $company,Study $study)
 	{
+		dd('ff');
 		$withSensitivity = $request->routeIs('view.results.dashboard.with.sensitivity') ;
 		$dashboardData = $this->generateDashboardData($study,$company,false);
 		$formattedResult = $dashboardData['formattedResult'];
@@ -227,6 +228,8 @@ class DashboardController extends Controller
 			$sensitivityFormattedResult = $sensitivityDashboardData['formattedResult'];
 			$sensitivityFormattedExpenses = $sensitivityDashboardData['formattedExpenses'];
 		}
+		$yearOrMonthsIndexes = $study->getYearOrMonthIndexes();
+		$isYearsStudy = !$study->isMonthlyStudy();
 		return view('non_banking_services.dashboard.dashboard',
 	[
 		// 'startDate'=>$startDate,
@@ -243,7 +246,9 @@ class DashboardController extends Controller
 		'yearWithItsIndexes'=>$yearWithItsIndexes,
 		'sensitivityFormattedResult'=>$sensitivityFormattedResult,
 		'sensitivityFormattedExpenses'=>$sensitivityFormattedExpenses,
-		'withSensitivity'=>$withSensitivity
+		'withSensitivity'=>$withSensitivity,
+		// 'yearOrMonthsIndexes'=>$yearOrMonthsIndexes,
+		'isYearsStudy'=>$isYearsStudy
 	]);
 	}
 }

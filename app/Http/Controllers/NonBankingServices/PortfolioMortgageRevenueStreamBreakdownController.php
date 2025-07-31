@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\NonBankingServices;
 
+use App\Helpers\HArr;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\NonBankingServices\StorePortfolioMortgageRevenueStreamRequest;
 use App\Models\Company;
@@ -24,12 +25,7 @@ class PortfolioMortgageRevenueStreamBreakdownController extends Controller
 		$model = $this->getModel();
 		return view($model->getFormName(), $this->getModel()->getViewVars($company,$study));
 	}
-	// public function getRepeaterRelations():array 
-	// {
-	// 	return [
-	// 		'portfolioMortgageBreakdowns'
-	// 	];
-	// }
+
 	protected function getRepeaterRelations():array
 	{
 		return [
@@ -43,23 +39,31 @@ class PortfolioMortgageRevenueStreamBreakdownController extends Controller
 			$study->storeRepeaterRelations($request,$this->getRepeaterRelations(),$company);
 			$study = $study->refresh();
 			$dateIndexWithDate = app('dateIndexWithDate');
+			$isMonthlyStudy = $study->isMonthlyStudy();
 			// question here 
 			// $study->updatePortfolioMortgageMonthlyAdminFeesAmounts();
 			$operationDurationPerYearFromIndexes = $study->getOperationDurationPerYearFromIndexes();
 			$baseRatePerYear = $study->generalAndReserveAssumption->getCbeLendingCorridorRates();
 			$portfolioLoanFundingRatesPerYear = $request->input('portfolioMortgageNewPortfolioFundingStructure.new_loans_funding_rates');
 			$bankMarginRatesPerYears = $study->generalAndReserveAssumption->getBankLendingMarginRates();
-			$bankMarginRatesPerMonths = $study->convertYearlyArrayToMonthly($bankMarginRatesPerYears,$operationDurationPerYearFromIndexes);
-			$cbeLendingRatesPerMonths = $study->convertYearlyArrayToMonthly($baseRatePerYear,$operationDurationPerYearFromIndexes);
-			$portfolioLoanFundingRatesPerMonths = $study->convertYearlyArrayToMonthly($portfolioLoanFundingRatesPerYear,$operationDurationPerYearFromIndexes);
+			$bankMarginRatesPerMonths = $isMonthlyStudy ? $bankMarginRatesPerYears : $study->convertYearlyArrayToMonthly($bankMarginRatesPerYears,$operationDurationPerYearFromIndexes);
+			$cbeLendingRatesPerMonths =$isMonthlyStudy ? $baseRatePerYear: $study->convertYearlyArrayToMonthly($baseRatePerYear,$operationDurationPerYearFromIndexes);
+			$portfolioLoanFundingRatesPerMonths = $isMonthlyStudy ? $portfolioLoanFundingRatesPerYear :  $study->convertYearlyArrayToMonthly($portfolioLoanFundingRatesPerYear,$operationDurationPerYearFromIndexes);
 			foreach($request->get('portfolioMortgageRevenueProjectionByCategories') as $currentIndex => $portfolioMortgageRevenueProjectionByCategoryArr){
 				$portfolioMortgageCategoryId = $study->portfolioMortgageRevenueProjectionByCategories[$currentIndex]->id; 
 				$tenor = $portfolioMortgageRevenueProjectionByCategoryArr['portfolio_mortgage_duration'];
 				$portfolioMortgageTransactionAmountsPerYears = $portfolioMortgageRevenueProjectionByCategoryArr['portfolio_mortgage_transactions_projections'];
-				$frequencyPerYear = $portfolioMortgageRevenueProjectionByCategoryArr['frequency_per_year'];
-				$startFromPerYear = $portfolioMortgageRevenueProjectionByCategoryArr['start_from'];
+				$monthlyAmounts = HArr::divideArrBy($portfolioMortgageTransactionAmountsPerYears , $tenor );
 				$marginRate = $portfolioMortgageRevenueProjectionByCategoryArr['margin_rate'];
-		    	 (new PortfolioPresentValue())->calculate($dateIndexWithDate,$portfolioLoanFundingRatesPerMonths,$operationDurationPerYearFromIndexes,$tenor,$startFromPerYear,$frequencyPerYear,$portfolioMortgageTransactionAmountsPerYears,$cbeLendingRatesPerMonths,$marginRate,$bankMarginRatesPerMonths,$company->id,$study->id,$portfolioMortgageCategoryId);
+				if($study->isMonthlyStudy()){
+					(new PortfolioPresentValue())->calculateForMonthlyStudy($monthlyAmounts,$cbeLendingRatesPerMonths,$portfolioLoanFundingRatesPerMonths,$marginRate,$tenor,$dateIndexWithDate,$portfolioMortgageCategoryId,$study->id,$company->id);
+				}else{
+					$frequencyPerYear = $portfolioMortgageRevenueProjectionByCategoryArr['frequency_per_year'];
+					$startFromPerYear = $portfolioMortgageRevenueProjectionByCategoryArr['start_from'];
+				
+					(new PortfolioPresentValue())->calculate($dateIndexWithDate,$portfolioLoanFundingRatesPerMonths,$operationDurationPerYearFromIndexes,$tenor,$startFromPerYear,$frequencyPerYear,$portfolioMortgageTransactionAmountsPerYears,$cbeLendingRatesPerMonths,$marginRate,$bankMarginRatesPerMonths,$company->id,$study->id,$portfolioMortgageCategoryId);
+					
+				}
 			}
 		
 			

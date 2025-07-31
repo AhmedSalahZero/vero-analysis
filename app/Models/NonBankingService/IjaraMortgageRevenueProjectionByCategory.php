@@ -43,9 +43,9 @@ class  IjaraMortgageRevenueProjectionByCategory extends Model
 	{
 		return $this->ijara_mortgage_transactions_projections;
 	}
-	public function getGrowthRateAtYearIndex(int $yearIndex)
+	public function getGrowthRateAtYearOrMonthIndex(int $yearOrMonthIndex)
 	{
-		return $this->growth_rates[$yearIndex] ?? 0  ; 
+		return $this->growth_rates[$yearOrMonthIndex] ?? 0  ; 
 	}	
 	
 	

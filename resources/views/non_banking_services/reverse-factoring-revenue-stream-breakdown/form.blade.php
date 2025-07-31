@@ -1,7 +1,7 @@
 @extends('layouts.dashboard')
 @php
- use App\Models\NonBankingService\Study;
- use App\Models\NonBankingService\ReverseFactoringBreakdown;
+use App\Models\NonBankingService\Study;
+use App\Models\NonBankingService\ReverseFactoringBreakdown;
 @endphp
 @section('css')
 <x-styles.commons></x-styles.commons>
@@ -32,7 +32,7 @@
             {{-- start of Factoring Revenue Projection By Category   --}}
 
             {{-- start of Factoring New Portfolio Funding Structure   --}}
-             <div class="kt-portlet">
+            <div class="kt-portlet">
                 <div class="kt-portlet__body">
                     <div class="row">
 
@@ -59,12 +59,12 @@
                         <x-tables.repeater-table :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
                             <x-slot name="ths">
                                 <x-tables.repeater-table-th class="  header-border-down first-column-th-class" :title="__('Item')"></x-tables.repeater-table-th>
-                                @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
-                                <x-tables.repeater-table-th class=" header-border-down " :title="__('Yr-') . $yearIndexWithYear[$year] "></x-tables.repeater-table-th>
+                                @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
+                                <x-tables.repeater-table-th class=" header-border-down " :title="$yearOrMonthFormatted"></x-tables.repeater-table-th>
                                 @endforeach
                             </x-slot>
                             <x-slot name="trs">
-
+							@if($isYearsStudy)
                                 <tr data-repeat-formatting-decimals="0" data-repeater-style>
 
                                     <input type="hidden" name="id" value="{{ isset($subModel) ? $subModel->id : 0 }}">
@@ -80,12 +80,12 @@
                                     @php
                                     $columnIndex = 0 ;
                                     @endphp
-                                    @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
+                                    @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
 
                                     <td>
                                         <div class="form-group three-dots-parent">
                                             <div class="input-group input-group-sm align-items-center justify-content-center div-for-percentage">
-                                                <input type="text" style="max-width: 60px;min-width: 60px;text-align: center" value="{{ sumNumberOfOnes($yearsWithItsMonths,$year,$datesIndexWithYearIndex) }}" readonly onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control target_repeating_amounts only-percentage-allowed size" data-date="#" data-section="target" aria-describedby="basic-addon2">
+                                                <input type="text" style="max-width: 60px;min-width: 60px;text-align: center" value="{{ sumNumberOfOnes($yearsWithItsMonths,$yearOrMonthAsIndex,$datesIndexWithYearIndex) }}" readonly onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control target_repeating_amounts only-percentage-allowed size" data-date="#" data-section="target" aria-describedby="basic-addon2">
                                                 <span class="ml-2">
                                                     <b style="visibility:hidden">%</b>
                                                 </span>
@@ -99,6 +99,7 @@
 
 
                                 </tr>
+								@endif
 
 
                                 <tr data-repeat-formatting-decimals="2" data-repeater-style>
@@ -116,13 +117,13 @@
                                     @php
                                     $columnIndex = 0 ;
                                     $currentVal = 0 ;
-							
+
                                     @endphp
-                                    @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
+                                    @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
 
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
-                                            <x-repeat-right-dot-inputs :currentVal="$model->reverseFactoringRevenueProjectionByCategory ? $model->reverseFactoringRevenueProjectionByCategory->getGrowthRateAtYearIndex($year) : 0" :classes="'only-greater-than-or-equal-zero-allowed recalculate-gr gr-field'" :is-percentage="true" :name="'ReverseFactoringRevenueProjectionByCategory['.'growth_rates'.']['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :currentVal="$model->reverseFactoringRevenueProjectionByCategory ? $model->reverseFactoringRevenueProjectionByCategory->getGrowthRateAtYearOrMonthIndex($yearOrMonthAsIndex) : 0" :classes="'only-greater-than-or-equal-zero-allowed recalculate-gr gr-field'" :is-percentage="true" :name="'ReverseFactoringRevenueProjectionByCategory['.'growth_rates'.']['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
                                         </div>
                                     </td>
@@ -134,20 +135,20 @@
                                 <tr data-repeat-formatting-decimals="0" data-repeater-style>
 
                                     <td>
-                                            <input value="{{ __('Reverse Factoring Transactions Projection') }}" disabled class="form-control text-left mt-2" type="text">
+                                        <input value="{{ __('Reverse Factoring Transactions Projection') }}" disabled class="form-control text-left mt-2" type="text">
                                     </td>
 
 
                                     @php
                                     $columnIndex = 0 ;
                                     @endphp
-                                    @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
+                                    @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
                                     @php
-                                    $currentVal = $model->reverseFactoringRevenueProjectionByCategory ? $model->reverseFactoringRevenueProjectionByCategory->getReverseFactoringTransactionProjectionAtYearIndex($year) : 0;
+                                    $currentVal = $model->reverseFactoringRevenueProjectionByCategory ? $model->reverseFactoringRevenueProjectionByCategory->getReverseFactoringTransactionProjectionAtYearOrMonthIndex($yearOrMonthAsIndex) : 0;
                                     @endphp
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
-                                            <x-repeat-right-dot-inputs :number-format-decimals="0" :currentVal="$currentVal" :formattedInputClasses="'current-growth-rate-result-value-formatted'" :classes="'only-greater-than-or-equal-zero-allowed total-loans-hidden factoring-projection-amount recalculate-factoring js-recalculate-equity-funding-value current-growth-rate-result-value'" :is-percentage="false" :name="'ReverseFactoringRevenueProjectionByCategory['.'reverse_factoring_transactions_projections'.']['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :number-format-decimals="0" :currentVal="$currentVal" :formattedInputClasses="'current-growth-rate-result-value-formatted'" :classes="'only-greater-than-or-equal-zero-allowed total-loans-hidden factoring-projection-amount recalculate-factoring js-recalculate-equity-funding-value current-growth-rate-result-value'" :is-percentage="false" :name="'ReverseFactoringRevenueProjectionByCategory['.'reverse_factoring_transactions_projections'.']['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
                                         </div>
                                     </td>
                                     @php
@@ -162,63 +163,7 @@
 
 
 
-                           
 
-
-                                {{-- <tr data-repeat-formatting-decimals="0" data-repeater-style data-row-total>
-
-                                    <td>
-                                        <div class="">
-
-                                            <input value="{{ __('Total') }}" disabled class="form-control text-left mt-2" type="text">
-                                        </div>
-                                    </td>
-
-
-                                    @php
-                                    $columnIndex = 0 ;
-                                    @endphp
-                                    @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
-                                    @php
-                                    $currentLoanTotal = $currentLoanTotalPerYear[$year] ;
-                                    @endphp
-                                    <td>
-                                        <div class="d-flex align-items-center justify-content-center">
-
-
-                                            <div class="form-group three-dots-parent">
-                                                <div class="input-group input-group-sm align-items-center justify-content-center flex-nowrap">
-                                                    <div class="input-hidden-parent">
-                                                        <input readonly class="form-control copy-value-to-his-input-hidden  expandable-amount-input  repeat-to-right-input-formatted  " type="text" value="{{ number_format($currentLoanTotal,0)  }}" data-column-index="{{ $columnIndex }}">
-                                                        <input
-														js-recalculate-equity-funding-value
-														
-														 type="hidden" 
-														
-														class="repeat-to-right-input-hidden input-hidden-with-name  total-loans-hidden" value="{{ $currentLoanTotal  }}" data-column-index="{{ $columnIndex }}" name="ee">
-                                                    </div>
-
-                                                    <span class="ml-2 currency-class">
-                                                        {{ $company->getMainFunctionalCurrency() }}
-                                                    </span>
-
-
-                                                </div>
-
-                                            </div>
-
-
-
-                                        </div>
-                                    </td>
-                                    @php
-                                    $columnIndex++ ;
-                                    @endphp
-
-                                    @endforeach
-
-
-                                </tr> --}}
 
 
 
@@ -229,11 +174,11 @@
 
 
                         </x-tables.repeater-table>
-						
-						
-						
-						
-						
+
+
+
+
+
                         {{-- end of fixed monthly repeating amount --}}
 
 
@@ -246,9 +191,9 @@
 
             {{-- end of Factoring Revenue Projection By Category   --}}
 
-				
-				
-				 {{-- start of Reverse Factoring Breakdown   --}}
+
+
+            {{-- start of Reverse Factoring Breakdown   --}}
             <div class="kt-portlet">
                 <div class="kt-portlet__body">
                     <div class="row">
@@ -273,64 +218,60 @@
                         $rowIndex = 0;
                         $relationName ='reverseFactoringBreakdowns';
                         $repeaterId =$relationName.'repeater';
-						@endphp
+                        @endphp
                         <x-tables.repeater-table :actionBtnTitle="'+/-'" :tableName="$relationName" :repeaterId="$repeaterId" :removeActionBtn="false" :removeRepeater="false" :initialJs="true" :repeater-with-select2="true" :canAddNewItem="true" :parentClass="'js-remove-hidden'" :hide-add-btn="true" :relationName="$relationName" :isRepeater="true">
                             <x-slot name="ths">
                                 <x-tables.repeater-table-th class="header-border-down reverse-category-selector-class" :title="__('Category')"></x-tables.repeater-table-th>
                                 <x-tables.repeater-table-th class=" tenor-selector-class header-border-down " :title="__('Tenor <br> (Months)')"></x-tables.repeater-table-th>
                                 <x-tables.repeater-table-th class=" tenor-selector-class header-border-down " :title="__('Spread <br> Rate')"></x-tables.repeater-table-th>
-                                @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
-                                <x-tables.repeater-table-th class="header-border-down " :title="__('Yr-') . $yearIndexWithYear[$year] "></x-tables.repeater-table-th>
+                                @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
+                                <x-tables.repeater-table-th class="header-border-down " :title="$yearOrMonthFormatted"></x-tables.repeater-table-th>
                                 @endforeach
                             </x-slot>
                             <x-slot name="trs">
-								@php
-                            $rows = count($model->reverseFactoringBreakdowns) ? $model->reverseFactoringBreakdowns : [-1] ;
-                            @endphp
-                             @foreach( count($rows) ? $rows : [-1] as $subModel)
-                            @php
-                             if( !($subModel instanceof ReverseFactoringBreakdown) ){
-                             unset($subModel);
-                             }
-                            @endphp
-					
-                                <tr 
-								
-								data-repeater-item
-								
-								data-repeat-formatting-decimals="0" data-repeater-style>
-									
-									<td class="text-center">
-                                    <div class="">
-                                        <i data-repeater-delete="" class="btn-sm btn btn-danger m-btn m-btn--icon m-btn--pill trash_icon fas fa-times-circle">
-                                        </i>
-                                    </div>
-                                </td>
-								
+                                @php
+                                $rows = count($model->reverseFactoringBreakdowns) ? $model->reverseFactoringBreakdowns : [-1] ;
+                                @endphp
+                                @foreach( count($rows) ? $rows : [-1] as $subModel)
+                                @php
+                                if( !($subModel instanceof ReverseFactoringBreakdown) ){
+                                unset($subModel);
+                                }
+                                @endphp
+
+                                <tr data-repeater-item data-repeat-formatting-decimals="0" data-repeater-style>
+
+                                    <td class="text-center">
+                                        <div class="">
+                                            <i data-repeater-delete="" class="btn-sm btn btn-danger m-btn m-btn--icon m-btn--pill trash_icon fas fa-times-circle">
+                                            </i>
+                                        </div>
+                                    </td>
+
                                     <input type="hidden" name="id" value="{{ isset($subModel) ? $subModel->id : 0 }}">
 
                                     <td>
-                           				 <x-form.select :required="true" :label="''" :pleaseSelect="false" :selectedValue="isset($subModel) ? $subModel->getCategory():0" :options="reverseFactoringSelector()" :add-new="false" class="select2-select  repeater-select  "  :all="false" name="category"></x-form.select>
-										  <input value="{{ __('Reverse Factoring Transactions Projection') }}" disabled class="form-control text-left mt-2" type="text">
+                                        <x-form.select :required="true" :label="''" :pleaseSelect="false" :selectedValue="isset($subModel) ? $subModel->getCategory():0" :options="reverseFactoringSelector()" :add-new="false" class="select2-select  repeater-select  " :all="false" name="category"></x-form.select>
+                                        <input value="{{ __('Reverse Factoring Transactions Projection') }}" disabled class="form-control text-left mt-2" type="text">
                                     </td>
-										 <td>
-                                                                                   <x-repeat-right-dot-inputs number-format-decimals="0" :mark="''" :remove-three-dots="true" :currentVal="isset($subModel) ? $subModel->getTenor():12" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :name="'tenor'" :columnIndex="null"></x-repeat-right-dot-inputs>
+                                    <td>
+                                        <x-repeat-right-dot-inputs number-format-decimals="0" :mark="''" :remove-three-dots="true" :currentVal="isset($subModel) ? $subModel->getTenor():12" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :name="'tenor'" :columnIndex="null"></x-repeat-right-dot-inputs>
 
                                     </td>
-									 <td>
-                                                                                   <x-repeat-right-dot-inputs :remove-three-dots="true" :currentVal="isset($subModel) ? $subModel->getMarginRate():0" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :name="'margin_rate'" :columnIndex="null"></x-repeat-right-dot-inputs>
+                                    <td>
+                                        <x-repeat-right-dot-inputs :remove-three-dots="true" :currentVal="isset($subModel) ? $subModel->getMarginRate():0" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :name="'margin_rate'" :columnIndex="null"></x-repeat-right-dot-inputs>
 
                                     </td>
-											
+
                                     @php
                                     $columnIndex = 0 ;
                                     @endphp
-                                    @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
-                                
+                                    @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
+
                                     <td>
-                                            <x-repeat-right-dot-inputs :numberFormatDecimals="2" :multiple="true" :currentVal="isset($subModel) ? $subModel->getPercentageAtYearIndex($year):0" :classes="'only-greater-than-or-equal-zero-allowed recalculate-factoring factoring-rate'" :is-percentage="true" :name="'percentage_payload'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
-                                       
-                                            <x-repeat-right-dot-inputs :numberFormatDecimals="0" :multiple="true"  :currentVal="isset($subModel) ? $subModel->getLoanAmountPayloadAtYearIndex($year):0" :classes="'only-greater-than-or-equal-zero-allowed current-loan-input factoring-value'" :is-percentage="false" :name="'loan_amounts'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                        <x-repeat-right-dot-inputs :numberFormatDecimals="2" :multiple="true" :currentVal="isset($subModel) ? $subModel->getPercentageAtYearOrMonthIndex($yearOrMonthAsIndex):0" :classes="'only-greater-than-or-equal-zero-allowed recalculate-factoring factoring-rate'" :is-percentage="true" :name="'percentage_payload'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+
+                                        <x-repeat-right-dot-inputs :numberFormatDecimals="0" :multiple="true" :currentVal="isset($subModel) ? $subModel->getLoanAmountPayloadAtYearOrMonthIndex($yearOrMonthAsIndex):0" :classes="'only-greater-than-or-equal-zero-allowed current-loan-input factoring-value'" :is-percentage="false" :name="'loan_amounts'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
                                     </td>
                                     @php
                                     $columnIndex++;
@@ -340,10 +281,10 @@
 
 
                                 </tr>
-								@endforeach
+                                @endforeach
 
 
-                               
+
 
 
                             </x-slot>
@@ -360,11 +301,11 @@
                 </div>
             </div>
             {{-- end of Reverse Factoring Breakdown   --}}
-			
 
 
 
-           
+
+
             {{-- start of Administration Fees Rate & ECL Rate   --}}
             <div class="kt-portlet">
                 <div class="kt-portlet__body">
@@ -394,8 +335,8 @@
                         <x-tables.repeater-table :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
                             <x-slot name="ths">
                                 <x-tables.repeater-table-th class=" category-selector-class header-border-down " :title="__('Item')"></x-tables.repeater-table-th>
-                                @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
-                                <x-tables.repeater-table-th class="header-border-down " :title="__('Yr-') . $yearIndexWithYear[$year] "></x-tables.repeater-table-th>
+                                @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
+                                <x-tables.repeater-table-th class="header-border-down " :title="$yearOrMonthFormatted"></x-tables.repeater-table-th>
                                 @endforeach
                             </x-slot>
                             <x-slot name="trs">
@@ -407,18 +348,18 @@
 
                                     <td>
                                         <input value="{{ __('Administration Fees Rate') }}" disabled class="form-control text-left mt-2" type="text">
-										
+
                                     </td>
                                     @php
                                     $columnIndex = 0 ;
                                     @endphp
-                                    @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
-                                   
+                                    @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
+
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
 
 
-                                            <x-repeat-right-dot-inputs :currentVal="$model->reverseFactoryAdminFeesRate ? $model->reverseFactoryAdminFeesRate->getAdminFeeRatesAtYearIndex($year):0" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :name="'reverseFactoryAdminFeesRate['.'admin_fees_rates'.']['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :currentVal="$model->reverseFactoryAdminFeesRate ? $model->reverseFactoryAdminFeesRate->getAdminFeeRatesAtYearOrMonthIndex($yearOrMonthAsIndex):0" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :name="'reverseFactoryAdminFeesRate['.'admin_fees_rates'.']['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
                                         </div>
                                     </td>
@@ -444,7 +385,7 @@
                                     @endphp
 
                                     @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
-                                 
+
 
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
@@ -481,7 +422,7 @@
 
 
 
-             {{-- start of Factoring New Portfolio Funding Structure   --}}
+            {{-- start of Factoring New Portfolio Funding Structure   --}}
             <div class="kt-portlet">
                 <div class="kt-portlet__body">
                     <div class="row">
@@ -509,8 +450,8 @@
                         <x-tables.repeater-table :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
                             <x-slot name="ths">
                                 <x-tables.repeater-table-th class=" category-selector-class header-border-down " :title="__('Item')"></x-tables.repeater-table-th>
-                                @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
-                                <x-tables.repeater-table-th class=" header-border-down " :title="__('Yr-') . $yearIndexWithYear[$year] "></x-tables.repeater-table-th>
+                                @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
+                                <x-tables.repeater-table-th class=" header-border-down " :title="$yearOrMonthFormatted"></x-tables.repeater-table-th>
                                 @endforeach
                             </x-slot>
                             <x-slot name="trs">
@@ -562,7 +503,7 @@
                                     @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
-                                            <x-repeat-right-dot-inputs   :numberFormatDecimals="0" :currentVal="$model->reverseFactoringNewPortfolioFundingStructure ? $model->reverseFactoringNewPortfolioFundingStructure->getEquityFundingValuesAtYearOrMonthIndex($yearOrMonthAsIndex):0" :classes="'only-greater-than-or-equal-zero-allowed '" :formatted-input-classes="'equity-funding-formatted-value-class'" :is-percentage="false" :name="'reverseFactoringNewPortfolioFundingStructure['.'equity_funding_values'.']['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :numberFormatDecimals="0" :currentVal="$model->reverseFactoringNewPortfolioFundingStructure ? $model->reverseFactoringNewPortfolioFundingStructure->getEquityFundingValuesAtYearOrMonthIndex($yearOrMonthAsIndex):0" :classes="'only-greater-than-or-equal-zero-allowed '" :formatted-input-classes="'equity-funding-formatted-value-class'" :is-percentage="false" :name="'reverseFactoringNewPortfolioFundingStructure['.'equity_funding_values'.']['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
                                         </div>
                                     </td>
@@ -652,7 +593,7 @@
                 </div>
             </div>
             {{-- end of Factoring New Portfolio Funding Structure   --}}
-			
+
             <x-save-or-back />
 
 

@@ -8,13 +8,10 @@ class PortfolioPresentValue
 {
 	public function calculate(array $dateIndexWithDate ,array $portfolioLoanFundingRatesPerMonths , array $operationDurationPerYearFromIndexes,int $tenorInYears,array $startFromPerYear , array $frequencyPerYear,array $portfolioMortgageTransactionAmountsPerYears,array $cbeLendingRatesPerMonths,float $marginRate,array $bankMarginRates , int $companyId , int $studyId , int $portfolioMortgageCategoryId):void 
 	{
-	DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('loan_schedule_payments')->where('study_id',$studyId)->where('revenue_stream_type',Study::PORTFOLIO_MORTGAGE)->where('revenue_stream_id',$portfolioMortgageCategoryId)->delete();
+		
+		DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('loan_schedule_payments')->where('study_id',$studyId)->where('revenue_stream_type',Study::PORTFOLIO_MORTGAGE)->where('revenue_stream_id',$portfolioMortgageCategoryId)->delete();
 					
-		$portfolioLoanAmounts=[];
-		$portfolioLoanAmountsFormatted=[];
 		$portfolioLoans=[];
-		$bankLoanAmounts=[];
-		$bankLoanAmountsFormatted=[];
 		$currentUnearnedInterestStatement = [];
 			$calculateFixedLoanAtEndService = new CalculateFixedLoanAtEndService; 
 			$occurrenceDates = [];
@@ -64,12 +61,67 @@ class PortfolioPresentValue
 					$accumulatedMonthsAmountsDueDates[$currentOccurrenceMonthIndex]['unearned_interest'] = isset($accumulatedMonthsAmountsDueDates[$currentOccurrenceMonthIndex]['unearned_interest']) ? $accumulatedMonthsAmountsDueDates[$currentOccurrenceMonthIndex]['unearned_interest'] + $currentUnearnedInterest : $currentUnearnedInterest;
 					$accumulatedMonthsAmountsDueDates[$currentOccurrenceMonthIndex]['schedule_payment'] =  $currentOccurrenceAvgAmount;
 					$accumulatedMonthsAmountsDueDates[$currentOccurrenceMonthIndex]['base_rate'] = $currentBaseRate ;
-					$accumulatedMonthsAmountsDueDates[$currentOccurrenceMonthIndex]['margin_rate'] = $marginRate ;
-					
-					
+					$accumulatedMonthsAmountsDueDates[$currentOccurrenceMonthIndex]['margin_rate'] = $marginRate ;	
 				}
 			}
-			foreach($accumulatedMonthsAmountsDueDates as $currentOccurrenceMonthIndex => $portfolioMortgageLoanArray){
+			 $this->calculateMonthlyAmounts($tenorInMonths,$installmentPaymentIntervalName,$loanType,$dateIndexWithDate,$currentUnearnedInterestStatement,$accumulatedMonthsAmountsDueDates,$portfolioLoans,$calculateFixedLoanAtEndService,$portfolioMortgageCategoryId,$studyId,$companyId);
+			// $bankLoanAmounts
+			DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('loan_schedule_payments')->insert(
+				$portfolioLoans
+			);
+		
+			
+	
+	}
+	public function calculateForMonthlyStudy(array $monthlyAmounts , array $cbeLendingRatesPerMonths,array $portfolioLoanFundingRatesPerMonths,float $marginRate,int $tenorInYears ,array $dateIndexWithDate   , int $portfolioMortgageCategoryId,int $studyId, int $companyId)
+	{
+		
+		DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('loan_schedule_payments')->where('study_id',$studyId)->where('revenue_stream_type',Study::PORTFOLIO_MORTGAGE)->where('revenue_stream_id',$portfolioMortgageCategoryId)->delete();
+					
+		$portfolioLoans=[];
+		$currentUnearnedInterestStatement = [];
+			$calculateFixedLoanAtEndService = new CalculateFixedLoanAtEndService; 
+			$loanType = 'normal' ;
+			$tenorInMonths = $tenorInYears *12;
+			$installmentPaymentIntervalName='monthly';
+			$accumulatedMonthsAmountsDueDates = [];
+			
+			
+			foreach($monthlyAmounts as $currentOccurrenceMonthIndex => $currentOccurrenceAvgAmount){
+				for($i = 1 ; $i<= $tenorInMonths ; $i++ ){
+					$currentBaseRate = $cbeLendingRatesPerMonths[$currentOccurrenceMonthIndex];
+					$currentPricingAtOccurrenceIndex = ($currentBaseRate + $marginRate) / 100;
+					$currentMonthlyInterest =  $currentPricingAtOccurrenceIndex / 12 ;
+					$currentMonthsCount = ($currentOccurrenceMonthIndex+$i -$currentOccurrenceMonthIndex  ) ;
+					$currentNetPresetValue = $currentOccurrenceAvgAmount / pow(1+$currentMonthlyInterest,$currentMonthsCount);  
+					$currentUnearnedInterest = $currentOccurrenceAvgAmount-$currentNetPresetValue;
+					$currentMonthsAmountsDueDates[$currentOccurrenceMonthIndex][$currentOccurrenceMonthIndex+$i] = [
+						'schedule_payment'=>$currentOccurrenceAvgAmount,
+						'month_counts'=>$currentMonthsCount,
+						'net_present_value'=>$currentNetPresetValue,
+						'unearned_interest'=> $currentUnearnedInterest 
+					]; 
+					$portfolioLoanFundingRatesAtOccurrenceMonthIndex = $portfolioLoanFundingRatesPerMonths[$currentOccurrenceMonthIndex] / 100;
+					$accumulatedMonthsAmountsDueDates[$currentOccurrenceMonthIndex]['net_present_value'] = isset($accumulatedMonthsAmountsDueDates[$currentOccurrenceMonthIndex]['net_present_value']) ? $accumulatedMonthsAmountsDueDates[$currentOccurrenceMonthIndex]['net_present_value'] + $currentNetPresetValue : $currentNetPresetValue;
+					$accumulatedMonthsAmountsDueDates[$currentOccurrenceMonthIndex]['bank_loan_amount'] = $accumulatedMonthsAmountsDueDates[$currentOccurrenceMonthIndex]['net_present_value'] * $portfolioLoanFundingRatesAtOccurrenceMonthIndex;
+					$accumulatedMonthsAmountsDueDates[$currentOccurrenceMonthIndex]['unearned_interest'] = isset($accumulatedMonthsAmountsDueDates[$currentOccurrenceMonthIndex]['unearned_interest']) ? $accumulatedMonthsAmountsDueDates[$currentOccurrenceMonthIndex]['unearned_interest'] + $currentUnearnedInterest : $currentUnearnedInterest;
+					$accumulatedMonthsAmountsDueDates[$currentOccurrenceMonthIndex]['schedule_payment'] =  $currentOccurrenceAvgAmount;
+					$accumulatedMonthsAmountsDueDates[$currentOccurrenceMonthIndex]['base_rate'] = $currentBaseRate ;
+					$accumulatedMonthsAmountsDueDates[$currentOccurrenceMonthIndex]['margin_rate'] = $marginRate ;	
+				}
+			}
+			
+ 		 $this->calculateMonthlyAmounts($tenorInMonths,$installmentPaymentIntervalName,$loanType,$dateIndexWithDate,$currentUnearnedInterestStatement,$accumulatedMonthsAmountsDueDates,$portfolioLoans,$calculateFixedLoanAtEndService,$portfolioMortgageCategoryId,$studyId,$companyId);
+
+		
+		DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('loan_schedule_payments')->insert(
+				$portfolioLoans
+			);
+			
+	}
+	protected function calculateMonthlyAmounts($tenorInMonths,$installmentPaymentIntervalName,string $loanType,array $dateIndexWithDate,array &$currentUnearnedInterestStatement,array &$accumulatedMonthsAmountsDueDates ,array &$portfolioLoans , CalculateFixedLoanAtEndService $calculateFixedLoanAtEndService , int $portfolioMortgageCategoryId,int $studyId, int $companyId )
+	{
+		foreach($accumulatedMonthsAmountsDueDates as $currentOccurrenceMonthIndex => $portfolioMortgageLoanArray){
 				$currentBankMarginRate = $bankMarginRates[$currentOccurrenceMonthIndex]??0;
 				$currentLoanDateAsString = $dateIndexWithDate[$currentOccurrenceMonthIndex];
 				$currentLoanAmount = $portfolioMortgageLoanArray['net_present_value'];
@@ -137,12 +189,5 @@ class PortfolioPresentValue
 				// $interestRevenue 
 				
 			}
-			// $bankLoanAmounts
-			DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('loan_schedule_payments')->insert(
-				$portfolioLoans
-			);
-		
-			
-	
 	}
 }

@@ -17,9 +17,9 @@ class  DirectFactoringAdminFeesRate extends Model
 		'monthly_admin_fees_amounts'=>'array',
 		'ecl_rates'=>'array',
 	];
-	public function getAdminFeeRatesAtYearIndex(int $yearIndex)
+	public function getAdminFeeRatesAtYearOrMonthIndex(int $yearOrMonthIndex)
 	{
-		return $this->getAdminFeesRates()[$yearIndex] ?? 0  ; 
+		return $this->getAdminFeesRates()[$yearOrMonthIndex] ?? 0  ; 
 	}
 	public function getAdminFeesRates():array 
 	{
@@ -29,7 +29,7 @@ class  DirectFactoringAdminFeesRate extends Model
 	{
 		return $this->monthly_admin_fees_amounts[$monthIndex] ?? 0  ; 
 	}
-	public function getEclRatesAtYearIndex(int $yearOrMonthIndex)
+	public function getEclRatesAtYearOrMonthIndex(int $yearOrMonthIndex)
 	{
 		return $this->ecl_rates[$yearOrMonthIndex] ?? 0  ; 
 	}

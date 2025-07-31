@@ -18,25 +18,25 @@ class  MicrofinanceBreakdown extends Model
 		'flat_rates'=>'array',
 		'loan_amounts'=>'array',
 	];
-	public function getContributionPercentageAtYearIndex(int $yearIndex)
+	public function getContributionPercentageAtYearOrMonthIndex(int $yearOrMonthIndex)
 	{
-		return $this->contribution_percentages[$yearIndex] ?? 0  ; 
+		return $this->contribution_percentages[$yearOrMonthIndex] ?? 0  ; 
 	}
 	public function getMicrofinanceProductId()
 	{
 		return $this->microfinance_product_id;
 	}
-	public function getFlatRateAtYearIndex(int $yearIndex)
+	public function getFlatRateAtYearOrMonthIndex(int $yearOrMonthIndex)
 	{
-		return $this->flat_rates[$yearIndex] ?? 0  ; 
+		return $this->flat_rates[$yearOrMonthIndex] ?? 0  ; 
 	}
 	public function getDecreasingRateAtYearIndex(int $yearIndex)
 	{
 		return $this->decreasing_rates[$yearIndex] ?? 0  ; 
 	}
-	public function getLoanAmountPayloadAtYearIndex(int $yearIndex)
+	public function getLoanAmountPayloadAtYearOrMonthIndex(int $yearOrMonthIndex)
 	{
-		return $this->loan_amounts[$yearIndex] ?? 0  ; 
+		return $this->loan_amounts[$yearOrMonthIndex] ?? 0  ; 
 	}
 	public function getInstallmentInterval()
 	{

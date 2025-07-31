@@ -198,17 +198,17 @@ class  DirectFactoringBreakdown extends Model
 	{
 		return (array)$this->percentage_payload;
 	}
-	public function getPercentageAtYearIndex(int $yearIndex)
+	public function getPercentageAtYearOrMonthIndex(int $yearOrMonthIndex)
 	{
-		return $this->getPercentagePayload()[$yearIndex] ?? 0  ; 
+		return $this->getPercentagePayload()[$yearOrMonthIndex] ?? 0  ; 
 	}
 	public function getLoanAmountPayload():array 
 	{
 		return (array)$this->loan_amounts;
 	}
-	public function getLoanAmountPayloadAtYearIndex(int $yearIndex)
+	public function getLoanAmountPayloadAtYearOrMonthIndex(int $yearOrMonthIndex)
 	{
-		return $this->getLoanAmountPayload()[$yearIndex] ?? 0  ; 
+		return $this->getLoanAmountPayload()[$yearOrMonthIndex] ?? 0  ; 
 	}
 	// public function 
 	public function getCategory():int

@@ -44,9 +44,9 @@ class  MicrofinanceRevenueProjectionByCategory extends Model
 	{
 		return (array)$this->loan_case_amounts;
 	}
-	public function getGrowthRateAtYearIndex(int $yearIndex)
+	public function getGrowthRateAtYearOrMonthIndex(int $yearOrMonthIndex)
 	{
-		return $this->growth_rates[$yearIndex] ?? 0  ; 
+		return $this->growth_rates[$yearOrMonthIndex] ?? 0  ; 
 	}	
 	
 	

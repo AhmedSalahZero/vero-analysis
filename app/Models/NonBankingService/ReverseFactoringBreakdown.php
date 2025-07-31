@@ -17,13 +17,13 @@ class  ReverseFactoringBreakdown extends Model
 		'percentage_payload'=>'array',
 		'loan_amounts'=>'array',
 	];
-	public function getPercentageAtYearIndex(int $yearIndex)
+	public function getPercentageAtYearOrMonthIndex(int $yearOrMonthIndex)
 	{
-		return $this->percentage_payload[$yearIndex] ?? 0  ; 
+		return $this->percentage_payload[$yearOrMonthIndex] ?? 0  ; 
 	}
-	public function getLoanAmountPayloadAtYearIndex(int $yearIndex)
+	public function getLoanAmountPayloadAtYearOrMonthIndex(int $yearOrMonthIndex)
 	{
-		return $this->loan_amounts[$yearIndex] ?? 0  ; 
+		return $this->loan_amounts[$yearOrMonthIndex] ?? 0  ; 
 	}
 	public function getCategory()
 	{

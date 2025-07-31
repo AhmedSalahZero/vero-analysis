@@ -472,24 +472,41 @@ class Study extends Model
     {
         return $this->duration_in_years == 1 ;
     }
+	public function getActiveMonthlyDatesWithoutFormatting($yearIndexWithItsActiveMonths,$dateIndexWithDate)
+	{
+		$results = [];
+            foreach ($yearIndexWithItsActiveMonths as $yearAsIndex => $monthsForThisYearArray) {
+                foreach ($monthsForThisYearArray as $dateAsIndex => $isActive) {
+                    $dateAsString = $dateIndexWithDate[$dateAsIndex] ;
+                    $results[$dateAsIndex] = Carbon::parse($dateAsString)->format('Y-m-d');
+                }
+            }
+            return $results;
+			
+	}
+	public function getActiveMonthlyDates($yearIndexWithItsActiveMonths,$dateIndexWithDate)
+	{
+		$results = [];
+            foreach ($yearIndexWithItsActiveMonths as $yearAsIndex => $monthsForThisYearArray) {
+                foreach ($monthsForThisYearArray as $dateAsIndex => $isActive) {
+                    $dateAsString = $dateIndexWithDate[$dateAsIndex] ;
+                    $results[$dateAsIndex] = Carbon::parse($dateAsString)->format('M`Y');
+                }
+            }
+            return $results;
+			
+	}
     public function getYearOrMonthIndexes()
     {
-		$yearIndexWithItsActiveMonths = $this->getOperationDurationPerYearFromIndexes();
-		
+        $yearIndexWithItsActiveMonths = $this->getOperationDurationPerYearFromIndexes();
+        
         $datesAndIndexesHelpers = $this->getDatesIndexesHelper();
         //  $datesIndexWithYearIndex=$datesAndIndexesHelpers['datesIndexWithYearIndex'];
     
         $yearIndexWithYear=$datesAndIndexesHelpers['yearIndexWithYear'];
-                $dateIndexWithDate=$datesAndIndexesHelpers['dateIndexWithDate']; 
+        $dateIndexWithDate=$datesAndIndexesHelpers['dateIndexWithDate'];
         if ($this->isMonthlyStudy()) {
-			$results = [];
-			foreach($yearIndexWithItsActiveMonths as $yearAsIndex => $monthsForThisYearArray ){
-				foreach($monthsForThisYearArray as $dateAsIndex => $isActive){
-					$dateAsString = $dateIndexWithDate[$dateAsIndex] ; 
-					$results[$dateAsIndex] = Carbon::parse($dateAsString)->format('M-Y');
-				}
-			}
-			return $results;
+            return $this->getActiveMonthlyDates($yearIndexWithItsActiveMonths,$dateIndexWithDate);
         }
         $results = [];
         foreach ($yearIndexWithItsActiveMonths as $yearIndex => $monthsForThisYearArray) {
@@ -739,11 +756,17 @@ class Study extends Model
         return $result;
     }
 
-    public function getTotalDirectFactoringNewPortfolioAmountsAtYearIndex(int $yearIndex)
+    public function getTotalDirectFactoringNewPortfolioAmountsAtYearOrMonthIndex(int $yearOrMonthIndex)
     {
         $yearsWithItsMonths = $this->getOperationDurationPerYearFromIndexes();
-        $this->directFactoringBreakdowns->each(function (DirectFactoringBreakdown $directFactoringBreakdown) use (&$sum, $yearIndex, $yearsWithItsMonths) {
-            $yearMonthIndexes = $yearsWithItsMonths[$yearIndex];
+        $isMonthlyStudy = $this->isMonthlyStudy();
+        
+        $this->directFactoringBreakdowns->each(function (DirectFactoringBreakdown $directFactoringBreakdown) use (&$sum, $yearOrMonthIndex, $yearsWithItsMonths, $isMonthlyStudy) {
+            if ($isMonthlyStudy) {
+                $sum+= $directFactoringBreakdown->getNetFundingAmountsAtMonthIndex($yearOrMonthIndex);
+                return true ; // to continue and return false if you want to break;
+            }
+            $yearMonthIndexes = $yearsWithItsMonths[$yearOrMonthIndex];
             foreach ($yearMonthIndexes as $monthIndex => $trueOrFalse) {
                 if ($trueOrFalse) {
                     $sum+= $directFactoringBreakdown->getNetFundingAmountsAtMonthIndex($monthIndex);
@@ -764,7 +787,7 @@ class Study extends Model
         foreach ($revenueIdWitLoanAmounts as $leasingRevenueStreamBreakdownId => $yearIndexWithAmount) {
             foreach ($operationDurationPerYear as $yearIndex => $yearMonthIndexes) {
                 foreach ($yearMonthIndexes as $monthIndex => $monthlyZeroOrOne) {
-					$loanAtCurrentYear = $this->isMonthlyStudy() ? $yearIndexWithAmount : ($yearIndexWithAmount[$yearIndex]??0); 
+                    $loanAtCurrentYear = $this->isMonthlyStudy() ? $yearIndexWithAmount : ($yearIndexWithAmount[$yearIndex]??0);
                     $currentMonthlyLoanAmount = $this->isMonthlyStudy() ? $loanAtCurrentYear :  ($loanAtCurrentYear / count($yearMonthIndexes))  ;
                     $monthlyLoanAmounts[$leasingRevenueStreamBreakdownId][$monthIndex] = $currentMonthlyLoanAmount ;
                 }
@@ -804,7 +827,7 @@ class Study extends Model
         $baseRatesPerMonths= [];
         foreach ($operationDurationPerYear as $yearIndex => $yearMonthIndexes) {
             foreach ($yearMonthIndexes as $monthIndex => $monthlyZeroOrOne) {
-				 $yearOrMonthIndex = $this->isMonthlyStudy() ? $monthIndex : $yearIndex;
+                $yearOrMonthIndex = $this->isMonthlyStudy() ? $monthIndex : $yearIndex;
                 $baseRatesPerMonths[Carbon::make($dateIndexWithDate[$monthIndex])->format('Y-m-d')] = $baseRates[$yearOrMonthIndex];
             }
         }
@@ -819,8 +842,8 @@ class Study extends Model
     
         
         foreach ($operationDurationPerYear as $yearIndex => $yearMonthIndexes) {
-			foreach ($yearMonthIndexes as $monthIndex => $monthlyZeroOrOne) {
-				$baseRatesMapping = is_array($baseRatesMapping) ? HArr::filterByYearIndex($baseRatesMapping, $yearIndexWithYear, $yearIndex,$dateIndexWithDate[$monthIndex],$this->isMonthlyStudy()) : $baseRatesMapping;
+            foreach ($yearMonthIndexes as $monthIndex => $monthlyZeroOrOne) {
+                $baseRatesMapping = is_array($baseRatesMapping) ? HArr::filterByYearIndex($baseRatesMapping, $yearIndexWithYear, $yearIndex, $dateIndexWithDate[$monthIndex], $this->isMonthlyStudy()) : $baseRatesMapping;
                 $yearOrMonthIndex = $this->isMonthlyStudy() ? $monthIndex : $yearIndex;
                 foreach ($revenueIdWitLoanAmounts as $leasingRevenueStreamBreakdownId => $yearIndexWithAmount) {
                     $loanAtCurrentYear = $yearIndexWithAmount[$yearOrMonthIndex]??0 ;
@@ -964,7 +987,7 @@ class Study extends Model
         $baseRatesPerMonths= [];
         foreach ($operationDurationPerYear as $yearIndex => $yearMonthIndexes) {
             foreach ($yearMonthIndexes as $monthIndex => $monthlyZeroOrOne) {
-				 $yearOrMonthIndex = $this->isMonthlyStudy() ? $monthIndex : $yearIndex;
+                $yearOrMonthIndex = $this->isMonthlyStudy() ? $monthIndex : $yearIndex;
                 $baseRatesPerMonths[Carbon::make($dateIndexWithDate[$monthIndex])->format('Y-m-d')] = $baseRates[$yearOrMonthIndex];
             }
         }
@@ -983,7 +1006,7 @@ class Study extends Model
     
         
         foreach ($operationDurationPerYear as $yearIndex => $yearMonthIndexes) {
-            $baseRatesMapping = is_array($baseRatesMapping) ? HArr::filterByYearIndex($baseRatesMapping, $yearIndexWithYear, $yearIndex,$dateIndexWithDate[$monthIndex],$this->isMonthlyStudy()) : $baseRatesMapping;
+            $baseRatesMapping = is_array($baseRatesMapping) ? HArr::filterByYearIndex($baseRatesMapping, $yearIndexWithYear, $yearIndex, $dateIndexWithDate[$monthIndex], $this->isMonthlyStudy()) : $baseRatesMapping;
             
             foreach ($yearMonthIndexes as $monthIndex => $monthlyZeroOrOne) {
                 $yearOrMonthIndex = $this->isMonthlyStudy() ? $monthIndex : $yearIndex;
@@ -1099,7 +1122,7 @@ class Study extends Model
         $baseRatesPerMonths= [];
         foreach ($operationDurationPerYear as $yearIndex => $yearMonthIndexes) {
             foreach ($yearMonthIndexes as $monthIndex => $monthlyZeroOrOne) {
-				$yearOrMonthIndex = $this->isMonthlyStudy() ? $monthIndex : $yearIndex;
+                $yearOrMonthIndex = $this->isMonthlyStudy() ? $monthIndex : $yearIndex;
                 $baseRatesPerMonths[Carbon::make($dateIndexWithDate[$monthIndex])->format('Y-m-d')] = $baseRates[$yearOrMonthIndex];
             }
         }
@@ -1116,15 +1139,21 @@ class Study extends Model
         // $time = 0 ;
         //	$isAtEnd = true ;
         //		$start = microtime(true);
-
+		$CurrentIndex = -1 ;
         foreach ($operationDurationPerYear as $yearIndex => $yearMonthIndexes) {
-            $baseRatesMapping = is_array($baseRatesMapping) ? HArr::filterByYearIndex($baseRatesMapping, $yearIndexWithYear, $yearIndex,$dateIndexWithDate[$monthIndex],$this->isMonthlyStudy()) :  $baseRatesMapping;
+            $baseRatesMapping = is_array($baseRatesMapping) ? HArr::filterByYearIndex($baseRatesMapping, $yearIndexWithYear, $yearIndex, $dateIndexWithDate[$monthIndex], $this->isMonthlyStudy()) :  $baseRatesMapping;
             //	$originalBaseRates = $baseRatesMapping;
+			if(!$this->isMonthlyStudy()){
+					$CurrentIndex++ ;
+				}
             foreach ($yearMonthIndexes as $monthIndex => $monthlyZeroOrOne) {
                 $yearOrMonthIndex = $this->isMonthlyStudy() ? $monthIndex : $yearIndex;
+				if($this->isMonthlyStudy()){
+					$CurrentIndex++ ;
+				}
                 foreach ($loans as $index => $loanArr) {
                     $revenueStreamBreakdownId = $loanArr['id'];
-                    $currentMonthlyLoanAmount = $loanArr['loan_amounts'][$yearOrMonthIndex] / ($this->isMonthlyStudy() ? 1 :count($yearMonthIndexes) ) ;
+                    $currentMonthlyLoanAmount = $loanArr['loan_amounts'][$CurrentIndex] / ($this->isMonthlyStudy() ? 1 :count($yearMonthIndexes)) ;
                     if ($currentMonthlyLoanAmount <= 0) {
                         continue ;
                     }
@@ -1415,7 +1444,8 @@ class Study extends Model
         $bankMarginRates = $generalAndReserveAssumption->getBankLendingMarginRates() ;
         $datesIndexWithYearIndex = app()->make('datesIndexWithYearIndex');
         $dateIndexWithDates = app()->make('dateIndexWithDate');
-            
+        $dateIndexWithDates = app()->make('dateIndexWithDate');
+		$yearOrMonthsIndexes = array_keys($this->getYearOrMonthIndexes());
         $result = [];
         foreach ($this->refresh()->directFactoringBreakdowns as $directFactoringBreakdown) {
             /**
@@ -1425,8 +1455,8 @@ class Study extends Model
             $amountAsPayload = $directFactoringBreakdown->getLoanAmountPayload();
             $currentMarginRate = $directFactoringBreakdown->getMarginRate();
             $category = $directFactoringBreakdown->getCategory();
-            $directFactoringAmounts = $this->convertYearToMonthIndexesAndDivideBySumMonths($amountAsPayload);
-            $baseRates = $this->convertYearToMonthIndexes($baseRates);
+            $directFactoringAmounts = $this->isMonthlyStudy() ? $amountAsPayload :  $this->convertYearToMonthIndexesAndDivideBySumMonths($amountAsPayload);
+            $baseRates = $this->isMonthlyStudy() ? $baseRates : $this->convertYearToMonthIndexes($baseRates);
             $currentBeginningBalance = 0 ;
             $currentDirectFactoringBankBeginningBalance= 0 ;
             $currentBankInterestExpensePayment= 0 ;
@@ -1435,12 +1465,14 @@ class Study extends Model
             $directFactoringNetFundingAmounts = [];
             $directFactoringBankLoanStatements = [];
             $currentDirectFactoringBeginningBalance = 0 ;
-            foreach ($directFactoringAmounts as $monthIndex => $currentDirectAmount) {
-                $currentYearIndex = $datesIndexWithYearIndex[$monthIndex];
+            foreach ($directFactoringAmounts as $index => $currentDirectAmount) {
+				$monthIndex = $yearOrMonthsIndexes[$index];
+				$currentYearIndex = $datesIndexWithYearIndex[$monthIndex];
+				$currentYearOrMonthIndex = $this->isMonthlyStudy() ? $monthIndex : $currentYearIndex;
                 $currentDateAsString = $dateIndexWithDates[$monthIndex];
                 $currentDaysInMonth = Carbon::make($currentDateAsString)->daysInMonth;
                 $currentBaseRate = $baseRates[$monthIndex];
-                $currentBankMarginRate = $bankMarginRates[$currentYearIndex];
+                $currentBankMarginRate = $this->isMonthlyStudy() ? $bankMarginRates[$monthIndex] : $bankMarginRates[$currentYearIndex];
                 $bankInterestRate = ($currentBaseRate + $currentBankMarginRate)/100  ;
                 $currentDailyPricing = ($currentMarginRate  + $currentBaseRate) /100 / 360;
                 $directFactoringStatements[$directFactoringBreakdownId]['beginning_balance'][$monthIndex] = $currentDirectFactoringBeginningBalance + $currentDirectAmount ;
@@ -1493,7 +1525,6 @@ class Study extends Model
                         
                 $currentBeginningBalance = $currentEndBalance ;
             }
-                
             $directFactoringBreakdown->update([
                 'beginning_balance' => $factoringInterestRevenue[$directFactoringBreakdownId]['beginning_balance'],
                 'interest_revenue' => $factoringInterestRevenue[$directFactoringBreakdownId]['interest_revenue'],
@@ -1532,8 +1563,8 @@ class Study extends Model
         $currentAdminFeesAmountsAtMonthIndex = [];
         foreach ($adminFeesRates as $currentYearOrMonthIndex => $currentAdminFeesRateAtYearIndex) {
             $currentLoanAmountAtYearOrMonthIndex = $loanAmounts[$currentYearOrMonthIndex] ;
-			$activeMonths = $this->isMonthlyStudy() ? [$currentYearOrMonthIndex=>1] : $operationDurationPerYear[$currentYearOrMonthIndex] ;
-			$activeMonthsCount = $this->isMonthlyStudy() ?  1 : count($operationDurationPerYear[$currentYearOrMonthIndex]);
+            $activeMonths = $this->isMonthlyStudy() ? [$currentYearOrMonthIndex=>1] : $operationDurationPerYear[$currentYearOrMonthIndex] ;
+            $activeMonthsCount = $this->isMonthlyStudy() ?  1 : count($operationDurationPerYear[$currentYearOrMonthIndex]);
             $currentMonthlyLoanAmount = $currentLoanAmountAtYearOrMonthIndex / $activeMonthsCount ;
             foreach ($activeMonths as $monthIndex => $monthlyZeroOrOne) {
                 $currentAdminFeesAmountsAtMonthIndex[$monthIndex] =  $currentMonthlyLoanAmount * $currentAdminFeesRateAtYearIndex /100 ;

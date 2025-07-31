@@ -17,6 +17,11 @@ class DirectFactoringRevenueStreamBreakdownController extends Controller
 	use NonBankingService ;
 	public function create(Company $company , Request $request,Study $study){
 		$directFactoringEclAndNewPortfolioFundingRate = $study?  $study->directFactoringEclAndNewPortfolioFundingRate : null;
+		
+		$yearsWithItsMonths =  $study->getOperationDurationPerYearFromIndexes() ;
+		$yearOrMonthsIndexes = $study->getYearOrMonthIndexes();
+		$isYearsStudy = !$study->isMonthlyStudy();
+		
 		$viewVars =  [
 			'company'=>$company ,
 			'study'=>$study,
@@ -24,7 +29,10 @@ class DirectFactoringRevenueStreamBreakdownController extends Controller
 			'directFactoringEclAndNewPortfolioFundingRate'=>$directFactoringEclAndNewPortfolioFundingRate,
 			'title'=>__('Direct Factoring Revenue Stream Breakdown'),
 			'storeRoute'=>route('store.direct.factoring.revenue.stream.breakdown',['company'=>$company->id , 'study'=>$study->id]),
-			'yearsWithItsMonths' => $study->getOperationDurationPerYearFromIndexes(),
+			'yearsWithItsMonths' => $yearsWithItsMonths,
+			'yearOrMonthsIndexes'=>$yearOrMonthsIndexes,
+			'isYearsStudy'=>$isYearsStudy
+			
 		];
 		return view( 'non_banking_services.direct-factoring-revenue-stream-breakdown.form', $viewVars);
 	}

@@ -309,7 +309,8 @@ class IncomeStatementController extends Controller
 			
 		}
 		$studyMonthsForViews=$study->getStudyDurationPerYearFromIndexesForView();
-		$tableDataFormatted = HArr::addTotalMonthsPerYear($tableDataFormatted,$financialYearsEndMonths);
+		$tableDataFormatted = HArr::addTotalMonthsPerYear($tableDataFormatted,$dateIndexWithDate,$financialYearsEndMonths);
+
 		ksort($tableDataFormatted);
         return view('non_banking_services.income-statement.forecast', [
 			'company'=>$company,

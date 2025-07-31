@@ -556,19 +556,51 @@ public static function filterByYearIndex(array $baseRatesMapping,array $yearInde
 		}
 		return $result;
 	}
-	protected static function sumPerIndexes(array $items , array $financialYearsEndMonths){
-		$group_size = 12;
-		$sums = [];
-		$currentIndex = 0;
-		for ($i = 0; $i < count($items); $i += $group_size) {
-			$currentSumIndex = $financialYearsEndMonths[$currentIndex]??null;
-			if(is_null($currentSumIndex)){
-				return $sums;
-			}
-			$sums[$currentSumIndex] = array_sum(array_slice($items, $i, $group_size));
-			$currentIndex++;
-		}
-		return $sums;
+	protected static function sumPerIndexes(array $items , array $dateIndexWithDate , array $financialYearsEndMonths){
+		
+		$yearlySums = [];
+
+foreach ($dateIndexWithDate as $index => $date) {
+    // Parse the date to get the year
+    $year = date('Y', strtotime($date));
+    
+    // Initialize the year in the result array if not set
+    if (!isset($yearlySums[$year])) {
+        $yearlySums[$year] = ['sum' => 0, 'lastIndex' => $index];
+    }
+    
+    // Add the item value to the year's sum (check if index exists in $items)
+    if (isset($items[$index])) {
+        $yearlySums[$year]['sum'] += $items[$index];
+    }
+    
+    // Update the last index for the year
+    $yearlySums[$year]['lastIndex'] = $index;
+}
+
+// Transform the result to use the last month's index as the key
+$result = [];
+foreach ($yearlySums as $year => $data) {
+    $result[$data['lastIndex']] = $data['sum'];
+}
+
+
+// Sort by index to maintain order
+ksort($result);
+return $result;
+// $group_size = 12;
+		// $sums = [];
+		// $currentIndex = 0;
+		// for ($i = 0; $i < count($items); $i += $group_size) {
+		// 	$currentSumIndex = $financialYearsEndMonths[$currentIndex]??null;
+		// 	if(is_null($currentSumIndex)){
+		// 		return $sums;
+		// 	}
+		// 	$sums[$currentSumIndex] = array_sum(array_slice($items, $i, $group_size));
+		// 	$currentIndex++;
+		// }
+		// dd($sums);
+		// return $sums;
 	}
 	protected static function calculateGrowthRate(array $items):array {
 		$previousValue = 0 ;
@@ -587,7 +619,7 @@ public static function filterByYearIndex(array $baseRatesMapping,array $yearInde
 		}
 		return $result;
 	}
-	public static function addTotalMonthsPerYear(array $items , array $financialYearsEndMonths):array{
+	public static function addTotalMonthsPerYear(array $items ,array $dateIndexWithDate, array $financialYearsEndMonths):array{
 		$result = [];
 		foreach($items as $index => $itemArr){
 			foreach($itemArr as $mainItemId => $mainItemsArr){
@@ -603,7 +635,7 @@ public static function filterByYearIndex(array $baseRatesMapping,array $yearInde
 						$subItemData['total'] = self::calculatePercentageOf($totalOfSalesRevenue,$currentItemTotal);
 					}
 					else{
-						$subItemData['total'] = self::sumPerIndexes($subItemData['data']??[],$financialYearsEndMonths);
+						$subItemData['total'] = self::sumPerIndexes($subItemData['data']??[],$dateIndexWithDate,$financialYearsEndMonths);
 					}
 					$result[$index][$mainItemId][$subItemId]=$subItemData;
 				}
@@ -691,6 +723,14 @@ public static function filterByYearIndex(array $baseRatesMapping,array $yearInde
     }
 
     return $result;
+}
+public static function divideArrBy(array $items , int $num):array 
+{
+	$result = [];
+	foreach($items as $index=> $val){
+		$result[$index] = $val / $num;
+	}
+	return $result ; 
 }
 
 }

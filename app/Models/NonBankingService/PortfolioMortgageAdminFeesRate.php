@@ -17,9 +17,9 @@ class  PortfolioMortgageAdminFeesRate extends Model
 		'monthly_admin_fees_amounts'=>'array',
 		'ecl_rates'=>'array',
 	];
-	public function getAdminFeeRatesAtYearIndex(int $yearIndex)
+	public function getAdminFeeRatesAtYearOrMonthIndex(int $yearOrMonthIndex)
 	{
-		return $this->getAdminFeesRates()[$yearIndex] ?? 0  ; 
+		return $this->getAdminFeesRates()[$yearOrMonthIndex] ?? 0  ; 
 	}
 	public function getAdminFeesRates():array
 	{

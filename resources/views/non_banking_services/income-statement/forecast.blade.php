@@ -87,12 +87,11 @@ use App\Models\NonBankingService\Study;
                                         $currentIndex = 0 ;
                                         @endphp
                                         @foreach($currentTableData['main_items'] as $mainItemId => $mainItemArr)
-<div class="input-hidden-parent">
-            <input data-number-of-decimals="0" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control copy-value-to-his-input-hidden 
+                                        <div class="input-hidden-parent">
+                                            <input data-number-of-decimals="0" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control copy-value-to-his-input-hidden 
 
 			  expandable-amount-input 			  repeat-to-right-input-formatted  custom-input-string-width input-text-left  " type="text" value="{{ $mainItemArr['options']['title']??$mainItemId }}" data-column-index="-1">
-        </div>
-                                        {{-- <x-repeat-right-dot-inputs :formattedInputClasses="'custom-input-string-width input-text-left '" :removeThreeDots="true" :removeCurrency="true" :mark="' '" :is-number="false" :removeThreeDotsClass="true" :number-format-decimals="$mainItemArr['options']['number-format-decimals']??$defaultClasses[$currentIndex]['number-format-decimals']" :currentVal="$mainItemArr['options']['title']??$mainItemId" :classes="''" :is-percentage="false" :name="''" :columnIndex="-1"></x-repeat-right-dot-inputs> --}}
+                                        </div>
                                         @php
                                         $currentIndex++;
                                         @endphp
@@ -106,344 +105,300 @@ use App\Models\NonBankingService\Study;
                                         <a data-toggle="modal" data-target="#add-new-cost-of-good" href="#" class="btn btn-2-bg btn-sm btn-brand btn-pill">{{ __('+') }}</a>
 
 
-                                        {{-- <div class="modal fade" id="add-new-cost-of-good" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                                            <div class="modal-dialog modal-dialog-centered max-width-modal-income-statement" role="document">
-                                                <div class="modal-content modal-content-border">
-
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title text-black" id="exampleModalLongTitle">{{ __('Do You Want To Add ?') }}</h5>
-                                        <button type="button" class="close " data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
                                     </div>
-                                    <div class="modal-body">
-                                        <div class="btn-parent d-flex justify-content-between " style="gap:10px !important">
-                                            <span class="kt-list-timeline__time disable">
-                                                <a href="{{ route('view.cost.expenses',['company'=>$company->id ,'study'=>$study->id ]) }}" class="btn btn-outline-info ">{{ __('Cost & Expenses') }}</a>
-                                            </span>
-                                            <span class="kt-list-timeline__time disable">
-                                                <a href="{{ route('view.manpower',['company'=>$company->id , 'study'=>$study->id,'expenseType'=>$currentExpenseType]) }}" class="btn btn-outline-info ">{{ __('Manpower Expense') }}</a>
-                                            </span>
-                                            <span class="kt-list-timeline__time disable">
-                                                <a href="{{ route('view.manpower',['company'=>$company->id , 'study'=>$study->id,'expenseType'=>$currentExpenseType]) }}" class="btn btn-outline-info ">{{ __('Expense Per Employee') }}</a>
-                                            </span>
+                                    @endif
+                                </td>
+                                @php
+                                $currentYearRepeaterIndex = 0 ;
+                                @endphp
 
-                                            <span class="kt-list-timeline__time disable">
-                                                <a href="#" class="btn btn-outline-info ">{{ __('Depreciation Expense') }}</a>
-                                            </span>
+                                @foreach($studyMonthsForViews as $dateAsIndex=>$dateAsString)
 
-                                            <span class="kt-list-timeline__time disable">
-                                                <a href="#" class="btn btn-outline-info ">{{ __('Add New Fixed Asset') }}</a>
-                                            </span>
+                                <td data-column-index="{{ $dateAsIndex }}">
+
+                                    <div data-column-index="{{ $dateAsIndex }}" class="d-flex align-items-center justify-content-center flex-column" style="gap:10px">
+                                        @php
+                                        $currentIndex = 0 ;
+                                        @endphp
+                                        @foreach($currentTableData['main_items'] as $mainItemTitle => $mainItemArr)
+                                        @php
+                                        $isPercentage = $mainItemArr['options']['is-percentage']??$defaultClasses[$currentIndex]['is-percentage'] ;
+                                        @endphp
+                                        @if($isPercentage)
+                                        <div class="input-group input-group-sm align-items-center justify-content-center flex-nowrap">
+                                            <div class="input-hidden-parent">
+                                                <input disabled data-number-of-decimals="2" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control copy-value-to-his-input-hidden 
+
+			  expandable-percentage-input  			  repeat-to-right-input-formatted   " type="text" value="{{ number_format($mainItemArr['data'][$dateAsIndex]??0,2) }}" data-column-index="{{ $dateAsIndex }}">
+                                                <input data-number-of-decimals="2" data-group-index="{{ $currentIndex ==0   ? $currentYearRepeaterIndex : -1 }}" type="hidden" data-name="" class="repeat-to-right-input-hidden input-hidden-with-name  " value="{{ $mainItemArr['data'][$dateAsIndex]??0 }}" data-column-index="{{ $dateAsIndex }}">
+                                            </div>
+                                            <span class="ml-2 currency-class">%</span>
+                                        </div>
+                                        @else
+                                        <div class="input-group input-group-sm align-items-center justify-content-center flex-nowrap">
+                                            <div class="input-hidden-parent">
+                                                <input disabled data-number-of-decimals="0" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control copy-value-to-his-input-hidden 
+
+			  expandable-amount-input 			  repeat-to-right-input-formatted  custom-input-numeric-width  " type="text" value="{{ number_format($mainItemArr['data'][$dateAsIndex]??0) }}" data-column-index="{{ $dateAsIndex }}">
+                                                <input data-number-of-decimals="0" data-group-index="{{ $currentIndex ==0   ? $currentYearRepeaterIndex : -1 }}" type="hidden" data-name="" class="repeat-to-right-input-hidden input-hidden-with-name  repeater-with-collapse-input" value="{{ $mainItemArr['data'][$dateAsIndex]??0 }}" data-column-index="{{ $dateAsIndex }}">
+                                            </div>
+                                        </div>
+                                        @endif
+
+
+                                        {{-- <x-repeat-right-dot-inputs :readonly="false" :classes="$mainItemArr['options']['classes']??$defaultClasses[$currentIndex]['classes']" data-group-index="{{ $currentIndex ==0   ? $currentYearRepeaterIndex : -1 }}" :formattedInputClasses="$mainItemArr['options']['formatted-input-classes']??$defaultClasses[$currentIndex]['formatted-input-classes']" :removeThreeDots="true" :removeCurrency="true" :mark="$isPercentage ? '%' : ''" :is-number="true" :removeThreeDotsClass="true" :numberFormatDecimals="$mainItemArr['options']['number-format-decimals']??$defaultClasses[$currentIndex]['number-format-decimals']" :currentVal="$mainItemArr['data'][$dateAsIndex]??0" :is-percentage="$isPercentage" :name="''" :columnIndex="$dateAsIndex"></x-repeat-right-dot-inputs> --}}
+                                        @php
+                                        $currentIndex++;
+                                        @endphp
+                                        @endforeach
+
+                                    </div>
+
+
+
+
+                                </td>
+
+                                @php
+                                $currentMonthNumber = explode('-',$dateAsString)[1];
+                                $currentYear= explode('-',$dateAsString)[0];
+                                @endphp
+                                @if($financialYearEndMonthNumber == $currentMonthNumber || $loop->last)
+                                <td data-column-index="{{ $dateAsIndex }}" class="exclude-from-collapse">
+                                    @php
+                                    $currentIndex =0 ;
+                                    @endphp
+
+                                    @foreach($currentTableData['main_items'] as $mainItemId => $mainItemArr)
+                                    <div class="d-flex align-items-center justify-content-center">
+                                        @if($currentIndex == 0)
+                                        <div class="
+
+form-group 
+three-dots-parent
+ 
+
+">
+                                            <div class="input-group input-group-sm align-items-center justify-content-center flex-nowrap">
+                                                <div class="input-hidden-parent">
+                                                    <input disabled data-number-of-decimals="0" readonly="" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control copy-value-to-his-input-hidden 
+
+			  expandable-amount-input 			  repeat-to-right-input-formatted  exclude-from-collapse repeat-group-year " type="text" value="{{ number_format($mainItemArr['total'][$dateAsIndex]??0,0) }}" data-column-index="{{ $dateAsIndex }}">
+                                                    <input data-number-of-decimals="0" type="hidden" data-name="" class="repeat-to-right-input-hidden input-hidden-with-name  year-repeater-index-{{ $currentYearRepeaterIndex }}  exclude-from-collapse" value="{{ $mainItemArr['total'][$dateAsIndex]??0 }}" data-column-index="{{ $dateAsIndex }}">
+                                                </div>
+
+                                                <span class="ml-2 currency-class">
+                                                    EGP
+                                                </span>
+
+                                            </div>
+
+
+
+                                            {{-- <i class="fa fa-ellipsis-h pull-left repeat-to-right row-repeater-icon visibility-hidden"></i> --}}
+
+                                        </div>
+                                        @else
+                                        <div class="
+
+form-group 
+three-dots-parent
+ 
+
+">
+                                            <div class="input-group input-group-sm align-items-center justify-content-center flex-nowrap">
+                                                <div class="input-hidden-parent">
+                                                    <input disabled data-number-of-decimals="0" readonly="" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control copy-value-to-his-input-hidden 
+
+			  expandable-percentage-input  			  repeat-to-right-input-formatted  exclude-from-collapse repeat-group-year " type="text" value="{{ number_format($mainItemArr['total'][$dateAsIndex]??0,2) }}" data-column-index="{{ $dateAsIndex }}">
+                                                    <input data-number-of-decimals="0" type="hidden" data-name="" class="repeat-to-right-input-hidden input-hidden-with-name  year-repeater-index-{{ $currentYearRepeaterIndex }}  exclude-from-collapse" value="{{ $mainItemArr['total'][$dateAsIndex]??0 }}" data-column-index="{{ $dateAsIndex }}">
+                                                </div>
+                                                <span class="ml-2">%</span>
+                                            </div>
+
+
+
+                                            <i class="fa fa-ellipsis-h pull-left repeat-to-right row-repeater-icon visibility-hidden"></i>
+
+                                        </div>
+                                        @endif
+                                        {{-- <x-repeat-right-dot-inputs :readonly="true" :removeThreeDots="true" :number-format-decimals="0" :mark="''" :currentVal="$mainItemArr['total'][$dateAsIndex]??0 " :formattedInputClasses="'exclude-from-collapse repeat-group-year'" :classes="'year-repeater-index-'.$currentYearRepeaterIndex.' ' .' exclude-from-collapse'" :is-percentage="$mainItemArr['options']['is-percentage']??$defaultClasses[$currentIndex]['is-percentage']" :name="''" :columnIndex="$dateAsIndex"></x-repeat-right-dot-inputs> --}}
+                                    </div>
+                                    @php
+                                    $currentIndex++;
+                                    @endphp
+                                    @endforeach
+
+
+
+                                </td>
+                                @php
+                                $currentYearRepeaterIndex++;
+                                @endphp
+                                @endif
+
+                                @endforeach
+                                <td>
+                                    <div class="d-flex align-items-center justify-content-center">
+                                        <div class="
+
+ 
+
+">
+                                            <div class="input-group input-group-sm align-items-center justify-content-center flex-nowrap">
+                                                <div class="input-hidden-parent">
+                                                    <input disabled readonly data-number-of-decimals="0" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control copy-value-to-his-input-hidden 
+
+			  expandable-amount-input 			  repeat-to-right-input-formatted   " type="text" value="0" data-column-index="-1">
+                                                    <input data-number-of-decimals="0" type="hidden" data-name="" class="repeat-to-right-input-hidden input-hidden-with-name  total-td" value="0" data-column-index="-1">
+                                                </div>
+                                                <span class="ml-2 currency-class"> </span>
+                                            </div>
+
+                                        </div>
+
+                                        {{-- <x-repeat-right-dot-inputs :removeThreeDots="true" :removeCurrency="true" :mark="' '" :is-number="true" :removeThreeDotsClass="true" :number-format-decimals="0" :currentVal="0" :classes="'total-td'" :is-percentage="false" :name="''" :columnIndex="0"></x-repeat-right-dot-inputs> --}}
+                                    </div>
+                                </td>
+                            </tr>
+                            @foreach($subItems as $subItemId => $subItemArr)
+                            <tr class="hidden" data-is-sub-row data-repeat-formatting-decimals="0">
+                                <td>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center justify-content-center flex-column ml-5" style="gap:10px">
+
+                                        <div class="
+
+ 
+
+">
+                                            <div class="input-group input-group-sm align-items-center justify-content-center flex-nowrap">
+                                                <div class="input-hidden-parent">
+                                                    <input disabled data-number-of-decimals="0" readonly="" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control copy-value-to-his-input-hidden 
+
+			  expandable-amount-input 			  repeat-to-right-input-formatted  custom-input-string-width input-text-left  " type="text" value="{{ $subItemArr['options']['title']??$subItemId }}" data-column-index="-1">
+                                                    <input data-number-of-decimals="0" type="hidden" data-name="" class="repeat-to-right-input-hidden input-hidden-with-name  " value="{{ $subItemArr['options']['title']??$subItemId }}" data-column-index="-1">
+                                                </div>
+                                                <span class="ml-2 currency-class"> </span>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+                                </td>
+                                <td>
+
+                                </td>
+
+                                @foreach($studyMonthsForViews as $dateAsIndex=>$dateAsString)
+                                <td data-column-index="{{ $dateAsIndex }}">
+
+                                    <div data-column-index="{{ $dateAsIndex }}" class="d-flex align-items-center justify-content-center flex-column" style="gap:10px">
+
+                                        <div class="">
+                                            <div class="input-group input-group-sm align-items-center justify-content-center flex-nowrap">
+                                                <div class="input-hidden-parent">
+                                                    <input disabled data-number-of-decimals="0" readonly="" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control copy-value-to-his-input-hidden 
+
+			  expandable-amount-input 			  repeat-to-right-input-formatted  custom-input-numeric-width  " type="text" value="{{ number_format($subItemArr['data'][$dateAsIndex]??0) }}" data-column-index="{{ $dateAsIndex }}">
+                                                    <input data-number-of-decimals="0" type="hidden" data-name="" class="repeat-to-right-input-hidden input-hidden-with-name  repeater-with-collapse-input" value="{{ $subItemArr['data'][$dateAsIndex]??0 }}" data-column-index="{{ $dateAsIndex }}">
+                                                </div>
+                                                <span class="ml-2 currency-class"> </span>
+                                            </div>
 
                                         </div>
                                     </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary border-green" data-dismiss="modal">{{ __('Close') }}</button>
-                                    </div>
+                                </td>
+                                @php
+                                $currentMonthNumber = explode('-',$dateAsString)[1];
+                                $currentYear= explode('-',$dateAsString)[0];
+                                @endphp
 
+                                @if($financialYearEndMonthNumber == $currentMonthNumber || $loop->last)
+                                <td data-column-index="{{ $dateAsIndex }}" class="exclude-from-collapse">
+                                    <div class="d-flex align-items-center justify-content-center">
 
-                </div>
-            </div>
-        </div> --}}
-
-    </div>
-    @endif
-    </td>
-    @php
-    $currentYearRepeaterIndex = 0 ;
-    @endphp
-
-    @foreach($studyMonthsForViews as $dateAsIndex=>$dateAsString)
-
-    <td data-column-index="{{ $dateAsIndex }}">
-
-        <div data-column-index="{{ $dateAsIndex }}" class="d-flex align-items-center justify-content-center flex-column" style="gap:10px">
-            @php
-            $currentIndex = 0 ;
-            @endphp
-            @foreach($currentTableData['main_items'] as $mainItemTitle => $mainItemArr)
-            @php
-            $isPercentage = $mainItemArr['options']['is-percentage']??$defaultClasses[$currentIndex]['is-percentage'] ;
-            @endphp
-            @if($isPercentage)
-            <div class="input-group input-group-sm align-items-center justify-content-center flex-nowrap">
-                <div class="input-hidden-parent">
-                    <input disabled data-number-of-decimals="2" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control copy-value-to-his-input-hidden 
-
-			  expandable-percentage-input  			  repeat-to-right-input-formatted   " type="text" value="{{ number_format($mainItemArr['data'][$dateAsIndex]??0,2) }}" data-column-index="{{ $dateAsIndex }}">
-                    <input data-number-of-decimals="2" data-group-index="{{ $currentIndex ==0   ? $currentYearRepeaterIndex : -1 }}" type="hidden" data-name="" class="repeat-to-right-input-hidden input-hidden-with-name  " value="{{ $mainItemArr['data'][$dateAsIndex]??0 }}" data-column-index="{{ $dateAsIndex }}">
-                </div>
-                <span class="ml-2 currency-class">%</span>
-            </div>
-            @else
-            <div class="input-group input-group-sm align-items-center justify-content-center flex-nowrap">
-                <div class="input-hidden-parent">
-                    <input disabled data-number-of-decimals="0" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control copy-value-to-his-input-hidden 
-
-			  expandable-amount-input 			  repeat-to-right-input-formatted  custom-input-numeric-width  " type="text" value="{{ number_format($mainItemArr['data'][$dateAsIndex]??0) }}" data-column-index="{{ $dateAsIndex }}">
-                    <input data-number-of-decimals="0" data-group-index="{{ $currentIndex ==0   ? $currentYearRepeaterIndex : -1 }}" type="hidden" data-name="" class="repeat-to-right-input-hidden input-hidden-with-name  repeater-with-collapse-input" value="{{ $mainItemArr['data'][$dateAsIndex]??0 }}" data-column-index="{{ $dateAsIndex }}">
-                </div>
-            </div>
-            @endif
-
-
-            {{-- <x-repeat-right-dot-inputs :readonly="false" :classes="$mainItemArr['options']['classes']??$defaultClasses[$currentIndex]['classes']" data-group-index="{{ $currentIndex ==0   ? $currentYearRepeaterIndex : -1 }}" :formattedInputClasses="$mainItemArr['options']['formatted-input-classes']??$defaultClasses[$currentIndex]['formatted-input-classes']" :removeThreeDots="true" :removeCurrency="true" :mark="$isPercentage ? '%' : ''" :is-number="true" :removeThreeDotsClass="true" :numberFormatDecimals="$mainItemArr['options']['number-format-decimals']??$defaultClasses[$currentIndex]['number-format-decimals']" :currentVal="$mainItemArr['data'][$dateAsIndex]??0" :is-percentage="$isPercentage" :name="''" :columnIndex="$dateAsIndex"></x-repeat-right-dot-inputs> --}}
-            @php
-            $currentIndex++;
-            @endphp
-            @endforeach
-
-        </div>
-
-
-
-
-    </td>
-
-    @php
-    $currentMonthNumber = explode('-',$dateAsString)[1];
-    $currentYear= explode('-',$dateAsString)[0];
-    @endphp
-    @if($financialYearEndMonthNumber == $currentMonthNumber || $loop->last)
-    <td data-column-index="{{ $dateAsIndex }}" class="exclude-from-collapse">
-        @php
-        $currentIndex =0 ;
-        @endphp
-
-        @foreach($currentTableData['main_items'] as $mainItemId => $mainItemArr)
-        <div class="d-flex align-items-center justify-content-center">
-            @if($currentIndex == 0)
-            <div class="
-
-form-group 
-three-dots-parent
- 
-
-">
-                <div class="input-group input-group-sm align-items-center justify-content-center flex-nowrap">
-                    <div class="input-hidden-parent">
-                        <input disabled data-number-of-decimals="0" readonly="" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control copy-value-to-his-input-hidden 
-
-			  expandable-amount-input 			  repeat-to-right-input-formatted  exclude-from-collapse repeat-group-year " type="text" value="{{ number_format($mainItemArr['total'][$dateAsIndex]??0,0) }}" data-column-index="{{ $dateAsIndex }}">
-                        <input data-number-of-decimals="0" type="hidden" data-name="" class="repeat-to-right-input-hidden input-hidden-with-name  year-repeater-index-{{ $currentYearRepeaterIndex }}  exclude-from-collapse" value="{{ $mainItemArr['total'][$dateAsIndex]??0 }}" data-column-index="{{ $dateAsIndex }}">
-                    </div>
-
-                    <span class="ml-2 currency-class">
-                        EGP
-                    </span>
-
-                </div>
-
-
-
-                {{-- <i class="fa fa-ellipsis-h pull-left repeat-to-right row-repeater-icon visibility-hidden"></i> --}}
-
-            </div>
-            @else
-            <div class="
-
-form-group 
-three-dots-parent
- 
-
-">
-                <div class="input-group input-group-sm align-items-center justify-content-center flex-nowrap">
-                    <div class="input-hidden-parent">
-                        <input disabled data-number-of-decimals="0" readonly="" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control copy-value-to-his-input-hidden 
-
-			  expandable-percentage-input  			  repeat-to-right-input-formatted  exclude-from-collapse repeat-group-year " type="text" value="{{ number_format($mainItemArr['total'][$dateAsIndex]??0,2) }}" data-column-index="{{ $dateAsIndex }}">
-                        <input data-number-of-decimals="0" type="hidden" data-name="" class="repeat-to-right-input-hidden input-hidden-with-name  year-repeater-index-{{ $currentYearRepeaterIndex }}  exclude-from-collapse" value="{{ $mainItemArr['total'][$dateAsIndex]??0 }}" data-column-index="{{ $dateAsIndex }}">
-                    </div>
-                    <span class="ml-2">%</span>
-                </div>
-
-
-
-                <i class="fa fa-ellipsis-h pull-left repeat-to-right row-repeater-icon visibility-hidden"></i>
-
-            </div>
-            @endif
-            {{-- <x-repeat-right-dot-inputs :readonly="true" :removeThreeDots="true" :number-format-decimals="0" :mark="''" :currentVal="$mainItemArr['total'][$dateAsIndex]??0 " :formattedInputClasses="'exclude-from-collapse repeat-group-year'" :classes="'year-repeater-index-'.$currentYearRepeaterIndex.' ' .' exclude-from-collapse'" :is-percentage="$mainItemArr['options']['is-percentage']??$defaultClasses[$currentIndex]['is-percentage']" :name="''" :columnIndex="$dateAsIndex"></x-repeat-right-dot-inputs> --}}
-        </div>
-        @php
-        $currentIndex++;
-        @endphp
-        @endforeach
-
-
-
-    </td>
-    @php
-    $currentYearRepeaterIndex++;
-    @endphp
-    @endif
-
-    @endforeach
-    <td>
-        <div class="d-flex align-items-center justify-content-center">
-			<div class="
+                                        <div class="
 
  
 
 ">
-    <div class="input-group input-group-sm align-items-center justify-content-center flex-nowrap">
-        <div class="input-hidden-parent">
-            <input disabled readonly data-number-of-decimals="0" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control copy-value-to-his-input-hidden 
-
-			  expandable-amount-input 			  repeat-to-right-input-formatted   " type="text" value="0" data-column-index="-1">
-            <input data-number-of-decimals="0" type="hidden" data-name="" class="repeat-to-right-input-hidden input-hidden-with-name  total-td" value="0" data-column-index="-1">
-        </div>
-					  <span class="ml-2 currency-class"> </span>
-				    </div>
-	 
-</div>
-
-            {{-- <x-repeat-right-dot-inputs :removeThreeDots="true" :removeCurrency="true" :mark="' '" :is-number="true" :removeThreeDotsClass="true" :number-format-decimals="0" :currentVal="0" :classes="'total-td'" :is-percentage="false" :name="''" :columnIndex="0"></x-repeat-right-dot-inputs> --}}
-        </div>
-    </td>
-    </tr>
-    @foreach($subItems as $subItemId => $subItemArr)
-    <tr class="hidden" data-is-sub-row data-repeat-formatting-decimals="0">
-        <td>
-        </td>
-        <td>
-            <div class="d-flex align-items-center justify-content-center flex-column ml-5" style="gap:10px">
-			
-			<div class="
-
- 
-
-">
-    <div class="input-group input-group-sm align-items-center justify-content-center flex-nowrap">
-        <div class="input-hidden-parent">
-            <input disabled data-number-of-decimals="0" readonly="" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control copy-value-to-his-input-hidden 
-
-			  expandable-amount-input 			  repeat-to-right-input-formatted  custom-input-string-width input-text-left  " type="text" value="{{ $subItemArr['options']['title']??$subItemId }}" data-column-index="-1">
-            <input data-number-of-decimals="0" type="hidden" data-name="" class="repeat-to-right-input-hidden input-hidden-with-name  " value="{{ $subItemArr['options']['title']??$subItemId }}" data-column-index="-1">
-        </div>
-					  <span class="ml-2 currency-class"> </span>
-				    </div>
-	 
-</div>
-
-                {{-- <x-repeat-right-dot-inputs :readonly="true" :formattedInputClasses="'custom-input-string-width input-text-left '" :removeThreeDots="true" :removeCurrency="true" :mark="' '" :is-number="false" :removeThreeDotsClass="true" :number-format-decimals="0" :currentVal="$subItemArr['options']['title']??$subItemId" :classes="''" :is-percentage="false" :name="''" :columnIndex="-1"></x-repeat-right-dot-inputs> --}}
-            </div>
-        </td>
-        <td>
-
-        </td>
-
-        @foreach($studyMonthsForViews as $dateAsIndex=>$dateAsString)
-        <td data-column-index="{{ $dateAsIndex }}">
-
-            <div data-column-index="{{ $dateAsIndex }}" class="d-flex align-items-center justify-content-center flex-column" style="gap:10px">
-
-                <div class="">
-                    <div class="input-group input-group-sm align-items-center justify-content-center flex-nowrap">
-                        <div class="input-hidden-parent">
-                            <input disabled data-number-of-decimals="0" readonly="" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control copy-value-to-his-input-hidden 
-
-			  expandable-amount-input 			  repeat-to-right-input-formatted  custom-input-numeric-width  " type="text" value="{{ number_format($subItemArr['data'][$dateAsIndex]??0) }}" data-column-index="{{ $dateAsIndex }}">
-                            <input data-number-of-decimals="0" type="hidden" data-name="" class="repeat-to-right-input-hidden input-hidden-with-name  repeater-with-collapse-input" value="{{ $subItemArr['data'][$dateAsIndex]??0 }}" data-column-index="{{ $dateAsIndex }}">
-                        </div>
-                        <span class="ml-2 currency-class"> </span>
-                    </div>
-
-                </div>
-
-                {{-- <x-repeat-right-dot-inputs :readonly="true" :formattedInputClasses="$subItemArr['options']['formatted-input-classes']??$defaultClasses[0]['formatted-input-classes']" :removeThreeDots="true" :removeCurrency="true" :mark="' '" :is-number="true" :removeThreeDotsClass="true" :number-format-decimals="$subItemArr['options']['number-format-decimals']??$defaultClasses[0]['number-format-decimals']" :currentVal="$subItemArr['data'][$dateAsIndex]??0" :classes="$subItemArr['options']['classes']??''" :is-percentage="$subItemArr['options']['number-format-decimals']??$defaultClasses[0]['number-format-decimals']" :name="''" :columnIndex="$dateAsIndex"></x-repeat-right-dot-inputs> --}}
-            </div>
-        </td>
-        @php
-        $currentMonthNumber = explode('-',$dateAsString)[1];
-        $currentYear= explode('-',$dateAsString)[0];
-        @endphp
-
-        @if($financialYearEndMonthNumber == $currentMonthNumber || $loop->last)
-        <td data-column-index="{{ $dateAsIndex }}" class="exclude-from-collapse">
-            <div class="d-flex align-items-center justify-content-center">
-			
-			<div class="
-
- 
-
-">
-    <div class="input-group input-group-sm align-items-center justify-content-center flex-nowrap">
-        <div class="input-hidden-parent">
-            <input disabled readonly data-number-of-decimals="0" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control copy-value-to-his-input-hidden 
+                                            <div class="input-group input-group-sm align-items-center justify-content-center flex-nowrap">
+                                                <div class="input-hidden-parent">
+                                                    <input disabled readonly data-number-of-decimals="0" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control copy-value-to-his-input-hidden 
 
 			  expandable-amount-input 			  repeat-to-right-input-formatted   " type="text" value="{{ number_format($subItemArr['total'][$dateAsIndex]??0) }}" data-column-index="{{ $dateAsIndex }}">
-            <input data-number-of-decimals="0" type="hidden" data-name="" class="repeat-to-right-input-hidden input-hidden-with-name  total-td" value="{{ $subItemArr['total'][$dateAsIndex]??0 }}" data-column-index="{{ $dateAsIndex }}">
-        </div>
-					  <span class="ml-2 currency-class"> </span>
-				    </div>
-	 
-</div>
+                                                    <input data-number-of-decimals="0" type="hidden" data-name="" class="repeat-to-right-input-hidden input-hidden-with-name  total-td" value="{{ $subItemArr['total'][$dateAsIndex]??0 }}" data-column-index="{{ $dateAsIndex }}">
+                                                </div>
+                                                <span class="ml-2 currency-class"> </span>
+                                            </div>
 
-                {{-- <x-repeat-right-dot-inputs :readonly="true" :removeThreeDots="true" :number-format-decimals="0" :mark="' '" :currentVal="$subItemArr['total'][$dateAsIndex]??0 " :formattedInputClasses="'exclude-from-collapse '" :classes="'year-repeater-index-'.$currentYearRepeaterIndex.' ' .' exclude-from-collapse'" :is-percentage="false" :name="''" :columnIndex="$dateAsIndex"></x-repeat-right-dot-inputs> --}}
-            </div>
+                                        </div>
 
-        </td>
-        @php
-        $currentYearRepeaterIndex++;
-        @endphp
-        @endif
+                                        {{-- <x-repeat-right-dot-inputs :readonly="true" :removeThreeDots="true" :number-format-decimals="0" :mark="' '" :currentVal="$subItemArr['total'][$dateAsIndex]??0 " :formattedInputClasses="'exclude-from-collapse '" :classes="'year-repeater-index-'.$currentYearRepeaterIndex.' ' .' exclude-from-collapse'" :is-percentage="false" :name="''" :columnIndex="$dateAsIndex"></x-repeat-right-dot-inputs> --}}
+                                    </div>
 
-        @endforeach
+                                </td>
+                                @php
+                                $currentYearRepeaterIndex++;
+                                @endphp
+                                @endif
 
-        <td>
-            <div class="d-flex align-items-center justify-content-center">
-			
-			<div class="
+                                @endforeach
+
+                                <td>
+                                    <div class="d-flex align-items-center justify-content-center">
+
+                                        <div class="
 
  
 
 ">
-    <div class="input-group input-group-sm align-items-center justify-content-center flex-nowrap">
-        <div class="input-hidden-parent">
-            <input disabled readonly data-number-of-decimals="0" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control copy-value-to-his-input-hidden 
+                                            <div class="input-group input-group-sm align-items-center justify-content-center flex-nowrap">
+                                                <div class="input-hidden-parent">
+                                                    <input disabled readonly data-number-of-decimals="0" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control copy-value-to-his-input-hidden 
 
 			  expandable-amount-input 			  repeat-to-right-input-formatted   " type="text" value="0" data-column-index="-1">
-            <input  data-number-of-decimals="0" type="hidden" data-name="" class="repeat-to-right-input-hidden input-hidden-with-name  total-td" value="0" data-column-index="-1">
-        </div>
-					  <span class="ml-2 currency-class"> </span>
-				    </div>
-	 
-</div>
+                                                    <input data-number-of-decimals="0" type="hidden" data-name="" class="repeat-to-right-input-hidden input-hidden-with-name  total-td" value="0" data-column-index="-1">
+                                                </div>
+                                                <span class="ml-2 currency-class"> </span>
+                                            </div>
 
-                {{-- <x-repeat-right-dot-inputs :removeThreeDots="true" :removeCurrency="true" :mark="' '" :is-number="true" :removeThreeDotsClass="true" :number-format-decimals="0" :currentVal="0" :classes="'total-td'" :is-percentage="false" :name="''" :columnIndex="-1"></x-repeat-right-dot-inputs> --}}
+                                        </div>
+
+                                        {{-- <x-repeat-right-dot-inputs :removeThreeDots="true" :removeCurrency="true" :mark="' '" :is-number="true" :removeThreeDotsClass="true" :number-format-decimals="0" :currentVal="0" :classes="'total-td'" :is-percentage="false" :name="''" :columnIndex="-1"></x-repeat-right-dot-inputs> --}}
+                                    </div>
+                                </td>
+                            </tr>
+
+
+                            @endforeach
+                            @endforeach
+
+
+
+                        </x-slot>
+
+
+
+
+                    </x-tables.repeater-table>
+
+
+                </div>
             </div>
-        </td>
-    </tr>
-
-
-    @endforeach
-    @endforeach
-
-
-
-    </x-slot>
 
 
 
 
-    </x-tables.repeater-table>
-
-
-</div>
-</div>
+            <!--End:: Tab Content-->
 
 
 
-
-<!--End:: Tab Content-->
-
-
-
-<!--End:: Tab Content-->
-</div>
-</div>
+            <!--End:: Tab Content-->
+        </div>
+    </div>
 </div>
 
 @endsection
