@@ -78,6 +78,26 @@ trait HasBalances
 				$tempArr[$index] = $currentData ;
 				
 			}
+			if($customerInvoice->odoo_collected_amount){
+					$currentData['date'] = $invoiceDate;
+					$currentData['document_type'] = 'Collection';
+					$currentData['document_no'] = $invoiceNumber;
+					$currentData['debit'] = 0  ;
+					$currentData['credit'] =$customerInvoice->odoo_collected_amount;
+					$currentData['comment'] =__('Collected Amount');
+					$index++ ;
+					$formattedData[$index]=$currentData;
+			}
+			if($customerInvoice->odoo_withhold_amount){
+					$currentData['date'] = $invoiceDate;
+					$currentData['document_type'] = 'Withhold Taxes';
+					$currentData['document_no'] = $invoiceNumber;
+					$currentData['debit'] = 0  ;
+					$currentData['credit'] =$customerInvoice->odoo_withhold_amount;
+					$currentData['comment'] =__('Withhold Taxes');
+					$index++ ;
+					$formattedData[$index]=$currentData;
+			}
 			
 			
 			

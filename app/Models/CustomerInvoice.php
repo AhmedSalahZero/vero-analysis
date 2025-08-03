@@ -31,6 +31,9 @@ class CustomerInvoice extends Model implements IInvoice
 	const JS_FILE = 'money-receive.js';
 	const COLLETED_OR_PAID = 'collected';
 	const COLLETED_OR_PAID_AMOUNT = 'collected_amount';
+	const ODOO_COLLETED_OR_PAID_AMOUNT = 'odoo_collected_amount';
+	const ODOO_COLLETED_OR_PAID_AMOUNT_IN_MAIN_CURRENCY = 'odoo_collected_amount_in_main_currency';
+	const COLLETED_OR_PAID_AMOUNT_IN_MAIN_CURRENCY = 'collected_amount_in_main_currency';
 	const PARTIALLY_COLLECTED_OR_PAID_AND_PAST_DUE = 'partially_collected_and_past_due';
 	const MONEY_MODEL_NAME = 'MoneyReceived';
 	const IS_CUSTOMER_OR_SUPPLIER = 'is_customer';

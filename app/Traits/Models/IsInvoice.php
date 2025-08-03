@@ -126,6 +126,14 @@ trait IsInvoice
 	{
 		return number_format($this->getWithholdAmount());
 	}
+	public function getTotalWithholdAmount()
+	{
+		return (float)$this->total_withhold_amount ; 
+	}
+	public function getTotalWithholdAmountFormatted()
+	{
+		return number_format($this->getTotalWithholdAmount());
+	}
 	public function getTotalDeduction()
 	{
 		return (float)$this->total_deductions ; 
@@ -145,10 +153,10 @@ trait IsInvoice
 	public function getTotalCollectedOrPaid()
 	{
 		if($this instanceof CustomerInvoice){
-			return (float)$this->collected_amount ; 
+			return (float)$this->total_collected_amount ; 
 		}
 		if($this instanceof SupplierInvoice){
-			return (float)$this->paid_amount ; 
+			return (float)$this->total_paid_amount ; 
 		}
 		throw new \Exception('Custom Exception .. Only Instance Customer Invoice Or Supplier Invoice Allowed');
 		
@@ -339,7 +347,7 @@ trait IsInvoice
         ->whereBetween('invoice_date', [$startDate, $endDate])
         ->where($clientIdColumnName, '=', $partnerId)->get();
 	}
-	public static function createForOdoo(int $invoiceId,int $partnerId,string $partnerName,string $invoiceDate,string $invoiceDueDate,string $invoiceNumber,string $invoiceCurrency,$invoiceAmount,$vatAmount,$withholdAmount,$collectedAmount,$exchangeRate,$soOrPoNumber,int $companyId):int{
+	public static function createForOdoo(int $invoiceId,int $partnerId,string $partnerName,string $invoiceDate,string $invoiceDueDate,string $invoiceNumber,string $invoiceCurrency,$invoiceAmount,$vatAmount,$withholdAmount,$withholdAmountInMainCurrency,$collectedAmount,$collectedAmountInMainCurrency,$exchangeRate,$soOrPoNumber,int $companyId):int{
 		$currentInvoice = self::where('odoo_id',$invoiceId)->where('company_id',$companyId)->first();
 		$contract = null;
 		$soOrPoNumber = $soOrPoNumber ? $soOrPoNumber : null ;
@@ -352,7 +360,8 @@ trait IsInvoice
 			'odoo_id'=>$invoiceId,
 			'company_id'=>$companyId , 
 			'exchange_rate'=>$exchangeRate,
-			self::COLLETED_OR_PAID_AMOUNT=>$collectedAmount,
+			self::ODOO_COLLETED_OR_PAID_AMOUNT=>$collectedAmount,
+			self::ODOO_COLLETED_OR_PAID_AMOUNT_IN_MAIN_CURRENCY=>$collectedAmountInMainCurrency,
 			self::CLIENT_ID_COLUMN_NAME=>$partnerId,
 			self::CLIENT_NAME_COLUMN_NAME=>$partnerName ,
 			self::SO_OR_PO_NUMBER => $soOrPoNumber,
@@ -361,7 +370,11 @@ trait IsInvoice
 			'invoice_amount'=>$invoiceAmount ,
 			'currency'=>$invoiceCurrency,
 			'vat_amount'=>$vatAmount,
-			'withhold_amount'=>$withholdAmount,
+		//	'withhold_amount'=>$withholdAmount,
+		
+		
+			'odoo_withhold_amount'=>$withholdAmount,
+			'odoo_withhold_amount_in_main_currency'=>$withholdAmountInMainCurrency,
 			'invoice_due_date'=>$invoiceDueDate,
 			'contract_code'=>$contract ? $contract->code : null,
 			'contract_name'=>$contract ? $contract->name : null,
@@ -369,7 +382,15 @@ trait IsInvoice
 			
 		] ;
 		if($currentInvoice){
+			
+			$invoiceData[self::ODOO_COLLETED_OR_PAID_AMOUNT] = $collectedAmount - $currentInvoice->{self::COLLETED_OR_PAID_AMOUNT} ;
+			$invoiceData[self::ODOO_COLLETED_OR_PAID_AMOUNT]  = $invoiceData[self::ODOO_COLLETED_OR_PAID_AMOUNT]  < 0 ? 0 : $invoiceData[self::ODOO_COLLETED_OR_PAID_AMOUNT] ;
+
+			$invoiceData[self::ODOO_COLLETED_OR_PAID_AMOUNT_IN_MAIN_CURRENCY] = $collectedAmountInMainCurrency - $currentInvoice->{self::COLLETED_OR_PAID_AMOUNT_IN_MAIN_CURRENCY} ;
+			$invoiceData[self::ODOO_COLLETED_OR_PAID_AMOUNT_IN_MAIN_CURRENCY]  = $invoiceData[self::ODOO_COLLETED_OR_PAID_AMOUNT_IN_MAIN_CURRENCY]  < 0 ? 0 : $invoiceData[self::ODOO_COLLETED_OR_PAID_AMOUNT_IN_MAIN_CURRENCY] ;
+	
 			$currentInvoice->update($invoiceData);
+			
 			return  $currentInvoice->id ;
 		}
 		$currentInvoice = self::create($invoiceData);
@@ -379,5 +400,8 @@ trait IsInvoice
 	{
 		return $this->invoice_amount ; 
 	}
-
+	public function getInvoiceAmountFormatted():string 
+	{
+		return  number_format($this->getInvoiceAmount()); 
+	}
 }

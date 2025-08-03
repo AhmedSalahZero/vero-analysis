@@ -5,7 +5,7 @@
                                         <td class="sub-text-bg text-center  text-nowrap ">{{ $invoice->getCurrency() }}</td>
 										@endif
                                         <td class="sub-text-bg text-center  text-nowrap ">
-                                            {{ $invoice->getNetInvoiceAmountFormatted() }}
+                                            {{ $invoice->getInvoiceAmountFormatted() }}
                                             @if($currency != $company->getMainFunctionalCurrency())
                                             <i data-toggle="modal" data-target="#net-invoice-amount-modal-{{ $invoice->id }}" class="flaticon2-information fs-15 kt-font-primary exclude-icon ml-2 cursor-pointer "></i>
                                             <div class="modal fade " id="net-invoice-amount-modal-{{ $invoice->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -52,7 +52,7 @@
 
                                         </td>
 										
-                                        <td class="sub-text-bg text-center  text-nowrap ">{{ $invoice->getWithholdAmountFormatted() }}</td>
+                                        <td class="sub-text-bg text-center  text-nowrap ">{{ $invoice->getTotalWithholdAmountFormatted() }}</td>
                                         <td class="sub-text-bg text-center  text-nowrap ">{{ $invoice->getVatAmountFormatted() }}</td>
                                         <td class="sub-text-bg text-center  text-nowrap ">{{ $invoice->getTotalDeductionFormatted() }}</td>
                                         <td class="sub-text-bg text-center  text-nowrap ">{{ $invoice->getTotalCollectedOrPaidFormatted() }}</td>

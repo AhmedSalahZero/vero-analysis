@@ -8259,3 +8259,16 @@ function getValueFromArrayStringAndIndex(array $items  , $dateAsString , $dateAs
 	}
 	return $defaultValue ;
 }
+function convertStringWithNumberToNumber(string $value):float
+{
+	$numericString = preg_replace('/[^0-9.,]/', '', $value);
+
+// Remove commas
+$numericString = str_replace(',', '', $numericString);
+
+// Convert to float
+$number = floatval($numericString);
+
+return  $number; // 2496335
+
+}

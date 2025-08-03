@@ -35,6 +35,9 @@ class SupplierInvoice extends Model implements IInvoice
 	const TABLE_NAME = 'supplier_invoices';
 	const COLLETED_OR_PAID = 'paid';
 	const COLLETED_OR_PAID_AMOUNT = 'paid_amount';
+	const ODOO_COLLETED_OR_PAID_AMOUNT = 'odoo_paid_amount';
+	const ODOO_COLLETED_OR_PAID_AMOUNT_IN_MAIN_CURRENCY = 'odoo_paid_amount_in_main_currency';
+	const COLLETED_OR_PAID_AMOUNT_IN_MAIN_CURRENCY = 'paid_amount_in_main_currency';
 	const PARTIALLY_COLLECTED_OR_PAID_AND_PAST_DUE = 'partially_paid_and_past_due';
 	const MONEY_MODEL_NAME = 'MoneyPayment';
 	const IS_CUSTOMER_OR_SUPPLIER = 'is_supplier';
