@@ -53,6 +53,7 @@
                                         </td>
 										
                                         <td class="sub-text-bg text-center  text-nowrap ">{{ $invoice->getWithholdAmountFormatted() }}</td>
+                                        <td class="sub-text-bg text-center  text-nowrap ">{{ $invoice->getVatAmountFormatted() }}</td>
                                         <td class="sub-text-bg text-center  text-nowrap ">{{ $invoice->getTotalDeductionFormatted() }}</td>
                                         <td class="sub-text-bg text-center  text-nowrap ">{{ $invoice->getTotalCollectedOrPaidFormatted() }}</td>
                                         <td class="sub-text-bg text-center  text-nowrap ">{{ $invoice->getDueDateFormatted() }}</td>

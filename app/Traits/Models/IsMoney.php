@@ -439,7 +439,7 @@ trait IsMoney
 				return $financialInstitution->getJournalIdForAccount($accountTypeId,$accountNumber);		
 				
 		}
-		dd('journal id for payable cheque');
+	
 		return null ;
 	}
 	public function getTransactionType()

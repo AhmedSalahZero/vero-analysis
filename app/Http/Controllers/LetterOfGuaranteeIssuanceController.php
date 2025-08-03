@@ -230,9 +230,7 @@ class LetterOfGuaranteeIssuanceController
 		$lgCommissionInterval = $request->get('lg_commission_interval');
 		
 		$model->storeCommissionAmountCreditBankStatement( $lgCommissionInterval ,  $numberOfIterationsForQuarter ,  $issuanceDate, $openingBalanceDateOfCurrentAccount,$maxLgCommissionAmount, $financialInstitutionAccountIdForFeesAndCommission, $transactionName, $lgType, $isOpeningBalance);
-		// if($inUpdateMode){
-		// 	return $model;
-		// }
+		
 		return redirect()->route('view.letter.of.guarantee.issuance',['company'=>$company->id,'active'=>$request->get('lg_type')])->with('success',__('Data Store Successfully'));
 
 	}

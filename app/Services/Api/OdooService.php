@@ -136,6 +136,7 @@ class OdooService
 	//	$this->getContracts($startDate,$endDate,$companyId);
 		$invoices = $this->getInvoices($startDate,$endDate);
 		$this->syncDeletedInvoices($companyId,$startDate);
+		
 		foreach($invoices as $invoice){
 		
 			$odooInvoiceId = $invoice['id'];
@@ -143,11 +144,24 @@ class OdooService
 			$invoiceDueDate = $invoice['invoice_date_due'];
 			$soNumber = $invoice['invoice_origin']??null;
 			$exchangeRate = 1/$invoice['invoice_currency_rate'];
-			$vatAmount = $invoice['amount_tax'];
-			$invoiceAmount = abs($invoice['amount_untaxed_in_currency_signed']);
-			$collectedAmount =0 ;
-			// $collectedAmount =$invoiceAmount + $vatAmount  - $invoice['amount_residual'] ;
+			$vatPlusWithholdArr = $invoice['tax_totals']['subtotals'];
+			$firstWithholdOrVatName = $vatPlusWithholdArr[0]['name'] ?? null;
+			$isFirstWithhold = $firstWithholdOrVatName == 'Subtotal W/O WHTax';
 			$withholdAmount = 0 ;
+			$excludeIndex = -1 ;
+			if($isFirstWithhold){
+				$withholdAmount = abs($vatPlusWithholdArr[0]['tax_amount_currency']);
+				$excludeIndex = 0 ;
+			}
+			$vatAmount = 0 ;
+			foreach($vatPlusWithholdArr as $vatIndex => $vatArr){
+				if($vatIndex != $excludeIndex){
+					$vatAmount+=abs($vatArr['tax_amount_currency']);
+				}
+			}
+			
+			$invoiceAmount = abs($invoice['amount_untaxed_in_currency_signed']);
+			$collectedAmount =$invoiceAmount  - $withholdAmount + $vatAmount  - $invoice['amount_residual'] ;
 			$invoiceNumber = $invoice['name'];
 			$odooPartnerId = $invoice['partner_id'][0];
 			$odooPartnerName = $invoice['partner_id'][1];
@@ -155,10 +169,8 @@ class OdooService
 			$isSupplier = $invoice['move_type'] == 'in_invoice';
 			$isCustomer = $invoice['move_type'] == 'out_invoice';
 			$partnerId = Partner::handlePartnerForOdoo($odooPartnerId ,$odooPartnerName,$isSupplier ,$isCustomer,false,false,$companyId  );
-			
 			if($isCustomer){
 				$invoiceId =  CustomerInvoice::createForOdoo($odooInvoiceId,$partnerId,$odooPartnerName,$invoiceDate,$invoiceDueDate,$invoiceNumber,$invoiceCurrency,$invoiceAmount,$vatAmount,$withholdAmount,$collectedAmount,$exchangeRate,$soNumber,$companyId);
-		//		$this->createPaymentFromOdooToInvoice($odooInvoiceId,$invoiceId,$partnerId,$invoiceCurrency,new MoneyReceived());
 			}elseif($isSupplier){
 				$invoiceId= SupplierInvoice::createForOdoo($odooInvoiceId,$partnerId,$odooPartnerName,$invoiceDate,$invoiceDueDate,$invoiceNumber,$invoiceCurrency,$invoiceAmount,$vatAmount,$withholdAmount,$collectedAmount,$exchangeRate,$soNumber,$companyId);
 			}
@@ -298,7 +310,8 @@ class OdooService
 		,array('state', '=', 'posted'),
 			array('write_date', '>=', $startDate),
 			array('write_date', '<=', $endDate),
-			// array('name','=','INV/2025/00006')
+		//	array('name','=','INV/2025/00007')
+			// array('name','=','INV/2025/00009')
 			// ,['name','=','INV/2025/00004']
 		));
 		$invoices = $this->fetchData('account.move',$fields,$filters);

@@ -599,7 +599,6 @@ return $result;
 		// 	$sums[$currentSumIndex] = array_sum(array_slice($items, $i, $group_size));
 		// 	$currentIndex++;
 		// }
-		// dd($sums);
 		// return $sums;
 	}
 	protected static function calculateGrowthRate(array $items):array {

@@ -18,7 +18,6 @@ class MicrofinanceBranchAssumptionsController extends Controller
 	}
 	protected function getViewVars(Company $company, Study $study){
 		$studyMonthsForViews = collect($study->getStudyDurationPerYearFromIndexesForView())->take(12)->toArray() ;
-		// dd($studyMonthsForViews);
 		
 		return [
 			'company'=>$company ,

@@ -14,12 +14,17 @@
 										
 
                                         <th class="view-table-th   bg-lighter header-th  align-middle text-center">
-                                            {{ __('Net Invoice Amount') }}
+                                            {{ __('Invoice Amount') }}
                                         </th>
 
                                         <th class="view-table-th   bg-lighter header-th  align-middle text-center">
                                             {{ __('Withhold Amount') }}
                                         </th>
+										
+										 <th class="view-table-th   bg-lighter header-th  align-middle text-center">
+                                            {{ __('VAT Amount') }}
+                                        </th>
+										
 
                                         <th class="view-table-th   bg-lighter header-th  align-middle text-center">
                                             {{ __('Total Deductions') }}

@@ -91,6 +91,10 @@ trait IsInvoice
 	{
 		return $this->vat_amount ?: 0 ;
 	}
+	public function getVatAmountFormatted()
+	{
+		return number_format($this->getVatAmount()) ;
+	}
 	public function getStatus()
 	{
 		return $this->invoice_status;

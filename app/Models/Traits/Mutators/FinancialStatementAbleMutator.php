@@ -313,7 +313,6 @@ trait FinancialStatementAbleMutator
 				{
 					// $f = microtime(true);
 					$incomeStatement->refreshCalculationFor($insertSubItem);
-					// dd('f',microtime(true)-$f);
 				}else{
 					
 					
@@ -519,9 +518,6 @@ trait FinancialStatementAbleMutator
 		$actualDatesAsIndexAndBooleans = HArr::getActualDatesAsIndexAndBoolean($dateIndexWithDate);
 		$companyId = $this->company_id;
 		$creatorId = $this->creator_id;
-		// $q = $this->withSubItemsForGlobal($subItemType)->get();;
-		// dd($q);
-		// $time = 0 ;
 		$mainRows = [];
 		$this->removeMainRowsCalculations($subItemType);
 		foreach ($allMainItems as $mainItem) {
@@ -532,11 +528,7 @@ trait FinancialStatementAbleMutator
 			// IncomeStatementItem::isMainWithoutSubItems($allMainItems, $incomeStatementItemId, $isPercentageOfSalesRevenue)
 			// $oldSubItemsForCurrentMainItem = $this->withSubItemsFor($incomeStatementItemId, $subItemType)->get();
 			$oldSubItemsForCurrentMainItem = $this->withSubItemsFor($incomeStatementItemId, $subItemType)->get();
-			// dd(count($oldSubItemsForCurrentMainItem),count());
-			// if($mainItem->id == 21){
-			// 	dd($oldSubItemsForCurrentMainItem);
-			// }
-			// dd($allMainItems,$oldSubItemsForCurrentMainItem);
+			
 			$this->updateCostOfUnitAndPercentagesOfSubItems($actualDatesAsIndexAndBooleans,$salesRevenuesSubItemsArray,$oldSubItemsForCurrentMainItem, $dates, $subItemType);
 			
 			$subItems = $this->withSubItemsFor($incomeStatementItemId, $subItemType)->get()->keyBy(function ($subItem) {
@@ -607,7 +599,6 @@ trait FinancialStatementAbleMutator
 			// $time = $time + $end ;
 		}
 		$this->attachMainCalculations($mainRows);
-		// dd($time);
 	}
 
 	protected function recalculateTotalForRow(array $actualDatesAsIndexAndBooleans , bool $isMainWithSubItems , bool $isMainWithoutSubItems , bool $isPercentageOfSalesRevenue , array $dates, int $incomeStatementItemId, array $subItemNameWithDateValues, string $subItemType, array &$allItemsTotals,int $companyId , int $creatorId , array &$mainRows)
@@ -712,7 +703,6 @@ trait FinancialStatementAbleMutator
 			// 	'creator_id'=>$creatorId,
 			// 	'sub_item_type'=>$subItemType
 			// ]);
-			// dd($this->getMainRowCalculationsArr($incomeStatementItemId,$subItemType, $currentItemTotal['total']['total'] ?? 0,json_encode([]),$companyId,$creatorId));
 			$mainRows[]=$this->getMainRowCalculationsArr($incomeStatementItemId,$subItemType, $currentItemTotal['total']['total'] ?? 0,json_encode([]),$companyId,$creatorId);
 		}
 
@@ -897,15 +887,7 @@ trait FinancialStatementAbleMutator
 	}
 	public function getMainRowCalculationsArr($incomeStatementItemId,$subItemType,$totalOfAllRows,$totalAtDates,$companyId,$creatorId):array 
 	{
-		// dd([
-		// 	'financial_statement_able_id'=>$this->id ,
-		// 	'financial_statement_able_item_id'=>$incomeStatementItemId,
-		// 	'payload'=>$totalAtDates,
-		// 	'total'=>$totalOfAllRows,
-		// 	'sub_item_type'=>$subItemType,
-		// 	'company_id'=>$companyId,
-		// 	'creator_id'=>$creatorId,
-		// ]);
+		
 		return [
 			'financial_statement_able_id'=>$this->id ,
 			'financial_statement_able_item_id'=>$incomeStatementItemId,

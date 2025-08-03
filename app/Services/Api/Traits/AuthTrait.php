@@ -10,7 +10,7 @@ trait AuthTrait
 	protected string $url ;
 	protected String $db;
 	protected string $username;
-	protected string $password ; 
+	protected ?string $password ; 
 	protected \Ripcord_Client $models;
 	protected int $company_id  ;
 	protected Company $company ; 
@@ -50,6 +50,7 @@ trait AuthTrait
 	}
 	   private function execute($model, $method, $args,$kwargs = [])
     {
+		
         $result = $this->models->execute_kw(
             $this->db,
             $this->uid,

@@ -215,7 +215,6 @@ class OdooPayment
         $ref , 
         $message = ''
     ) {
-		// dd('payment_id',$accountPayment_id,'amount',$amount,'date',$date,'currency_id',$currency_id,'journal_id',$journal_id,'debit',$debitOdooAccountId,'credit',$creditOdooAccountId,'partner',$PartnerId,'ref',$ref);
 		
         try {
             // Step 1: Verify the payment exists and get its details
@@ -260,7 +259,6 @@ class OdooPayment
             );
 
 
-            // dd($accountPayment_id);
 
             $statementEntryId = null;
             $statementMoveId = null;
@@ -323,7 +321,6 @@ class OdooPayment
                 }
 
 
-// dd($moveId);
 
                 // Step 5: Get the move_id and line_ids from the bank statement line
                 $statementData = $this->execute(
@@ -333,7 +330,6 @@ class OdooPayment
                     []
                 );
 
-               // dd($statementData);
 
 
                 if (!is_array($statementData) || empty($statementData) || !isset($statementData[0]['move_id'])) {
@@ -345,7 +341,6 @@ class OdooPayment
                 $statementLineIds = $statementData[0]['line_ids'][1] ?? [];
 
 
-                 // dd($statementMoveId,$statementLineIds);
 
                 // Step 6: Reconcile payment and bank statement lines
                 $paymentLineIds = $this->execute(
@@ -355,7 +350,6 @@ class OdooPayment
                     []
                 );
 
-                 // dd($paymentLineIds);
 
                 if (!$paymentLineIds || !is_array($paymentLineIds)) {
                     throw new Exception("Failed to retrieve payment move lines for move_id: $moveId");
@@ -363,7 +357,6 @@ class OdooPayment
 
                $linesToReconcile = array_merge($paymentLineIds, (array)$statementLineIds);
 
-               // dd($linesToReconcile ,$paymentLineIds, $statementLineIds);
 
                try {
                     $result = $this->execute(
@@ -409,9 +402,7 @@ class OdooPayment
             else {
                 Log::warning("No invoices linked to payment ID $accountPayment_id");
             }
-			// dd(get_defined_vars());
-            // Step 9: Return result
-			// dd($moveId);
+		
             return [
                 'statement_entry_id' => $statementEntryId,
                 'entry_id' => $statementMoveId,
@@ -451,7 +442,6 @@ class OdooPayment
                 []
             );
 
-            // dd($paymentData);
 
             if (!$paymentData || !is_array($paymentData) || empty($paymentData)) {
                 throw new Exception("Payment ID $accountPayment_id not found or invalid response");
@@ -478,8 +468,6 @@ class OdooPayment
                 $paymentState = 'posted';
             }
 
-             // dd($paymentState);
-
             // Step 3: Check if payment is already linked to a bank statement
             $existingStatementLines = $this->execute(
                 'account.bank.statement.line',
@@ -488,7 +476,6 @@ class OdooPayment
                 []
             );
 
-            // dd($accountPayment_id);
 
             $statementEntryId = null;
             $statementMoveId = null;
@@ -562,7 +549,6 @@ class OdooPayment
                     []
                 );
 
-               // dd($statementData);
 
 
                 if (!is_array($statementData) || empty($statementData) || !isset($statementData[0]['move_id'])) {
@@ -573,7 +559,6 @@ class OdooPayment
                 $statementLineIds = $statementData[0]['line_ids'][0] ?? [];
 
 
-                 // dd($statementMoveId,$statementLineIds);
 
                 // Step 6: Reconcile payment and bank statement lines
                 $paymentLineIds = $this->execute(
@@ -583,7 +568,6 @@ class OdooPayment
                     []
                 );
 
-                 // dd($paymentLineIds);
 
                 if (!$paymentLineIds || !is_array($paymentLineIds)) {
                     throw new Exception("Failed to retrieve payment move lines for move_id: $moveId");
@@ -591,7 +575,6 @@ class OdooPayment
 
                $linesToReconcile = array_merge($paymentLineIds, (array)$statementLineIds);
 
-               // dd($linesToReconcile ,$paymentLineIds, $statementLineIds);
 
                try {
                     $result = $this->execute(

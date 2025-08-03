@@ -25,7 +25,6 @@ trait IsBankStatement
 				'credit'=>$credit , 
 				'debit'=>$debit 
 			] ;
-			// dd(Request()->all(),DB::table($this->getTable())->where('id',$this->id)->first());
 			$row = DB::table($this->getTable())->where('id',$this->id)->first();
 			$isEndOfMonthRow = $row->interest_type=='end_of_month' || $row->interest_type =='end_of_month_final';
 			
