@@ -67,6 +67,7 @@ trait IsMoney
 	{
 		$totalWithholdAmount= 0 ;
 		$OdooPaymentService = null ;
+	
 		if($company->hasOdooIntegrationCredentials() && $syncWithOdoo){
 			$OdooPaymentService = new OdooPayment($company);
 		}
@@ -360,30 +361,30 @@ trait IsMoney
 	{
 		if($this instanceof MoneyReceived){
 			if($this->isCashInSafe() ){
-				return $this->getBranch()->getOdooInboundTransferPaymentMethodId();
+				return (int)$this->getBranch()->getOdooInboundTransferPaymentMethodId();
 			}
 			if($this->isCashInBank() ){
 				$financialInstitution = $this->cashInBank->receivingBank;
 				$accountTypeId = $this->getCashInBankAccountTypeId();
 				$accountNumber = $this->getCashInBankAccountNumber();
-				return $financialInstitution->getOdooPaymentIds($accountTypeId,$accountNumber)['odoo_inbound_transfer_payment_method_id'];				
+				return (int)$financialInstitution->getOdooPaymentIds($accountTypeId,$accountNumber)['odoo_inbound_transfer_payment_method_id'];				
 				
 			}
 			if( $this->isIncomingTransfer()){
 				$financialInstitution = $this->incomingTransferReceivingBank();
 				$accountTypeId = $this->getIncomingTransferAccountTypeId();
 				$accountNumber = $this->getIncomingTransferAccountNumber();
-				return $financialInstitution->getOdooPaymentIds($accountTypeId,$accountNumber)['odoo_inbound_transfer_payment_method_id'];				
+				return (int)$financialInstitution->getOdooPaymentIds($accountTypeId,$accountNumber)['odoo_inbound_transfer_payment_method_id'];				
 			}
 			if($this->isCheque()){
 				$cheque = $this->cheque ; 
 				if($cheque->isInSafe()){
-					return $cheque->branch->getOdooInboundChequePaymentMethodId();
+					return (int)$cheque->branch->getOdooInboundChequePaymentMethodId();
 				}
 				$financialInstitution = $cheque->drawlBank;
 				$accountTypeId = $cheque->account_type;
 				$accountNumber  = $cheque->account_number;
-				return $financialInstitution->getOdooPaymentIds($accountTypeId,$accountNumber)['odoo_inbound_cheque_payment_method_id'];		
+				return (int)$financialInstitution->getOdooPaymentIds($accountTypeId,$accountNumber)['odoo_inbound_cheque_payment_method_id'];		
 			}
 			
 		}
@@ -393,20 +394,20 @@ trait IsMoney
 		 * @var MoneyPayment $this 
 		 */
 		if($this->isCashPayment() ){
-				return $this->getBranch()->getOdooOutboundTransferPaymentMethodId();
+				return (int)$this->getBranch()->getOdooOutboundTransferPaymentMethodId();
 			}
 			if( $this->isOutgoingTransfer()){
 				$financialInstitution = $this->outgoingTransferDeliveryBank();
 				$accountTypeId = $this->getOutgoingTransferAccountTypeId();
 				$accountNumber = $this->getOutgoingTransferAccountNumber();
-				return $financialInstitution->getOdooPaymentIds($accountTypeId,$accountNumber)['odoo_outbound_transfer_payment_method_id'];				
+				return (int)$financialInstitution->getOdooPaymentIds($accountTypeId,$accountNumber)['odoo_outbound_transfer_payment_method_id'];				
 			}
 			if($this->isPayableCheque()){
 				$payableCheque = $this->payableCheque ; 
 				$financialInstitution = $payableCheque->deliveryBank;
 				$accountTypeId = $payableCheque->account_type;
 				$accountNumber  = $payableCheque->account_number;
-				return $financialInstitution->getOdooPaymentIds($accountTypeId,$accountNumber)['odoo_outbound_cheque_payment_method_id'];		
+				return (int)$financialInstitution->getOdooPaymentIds($accountTypeId,$accountNumber)['odoo_outbound_cheque_payment_method_id'];		
 				
 			}
 			

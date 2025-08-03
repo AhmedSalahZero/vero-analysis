@@ -78,7 +78,7 @@ trait HasBalances
 				$tempArr[$index] = $currentData ;
 				
 			}
-			if($customerInvoice->odoo_collected_amount){
+			if($customerInvoice->odoo_collected_amount>0){
 					$currentData['date'] = $invoiceDate;
 					$currentData['document_type'] = 'Collection';
 					$currentData['document_no'] = $invoiceNumber;
@@ -88,7 +88,7 @@ trait HasBalances
 					$index++ ;
 					$formattedData[$index]=$currentData;
 			}
-			if($customerInvoice->odoo_withhold_amount){
+			if($customerInvoice->odoo_withhold_amount>0){
 					$currentData['date'] = $invoiceDate;
 					$currentData['document_type'] = 'Withhold Taxes';
 					$currentData['document_no'] = $invoiceNumber;

@@ -5,12 +5,13 @@ namespace App\Console\Commands;
 use App\Models\Company;
 use App\Models\FinancialStatement;
 use App\Models\Partner;
+use App\Services\Api\OdooPayment;
 use App\Services\Api\OdooService;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
+use Illuminate\Support\Facades\DB;
 use Schema;
 
 
@@ -42,11 +43,9 @@ class TestCommand extends Command
 	
 	public function handle()
 	{
-		$arr = [11400, 11400, 11400, 11400, 11400, 11400, 11400, 11400, 11400, 11400, 11400, 11400, 11400, 11400, 11400, 11400, 11400, 11400, 11400, 11400, 11400, 11400, 11400, 11400, 11400, 11400, 11400, 11400, 11400, 11400, 11400, 11400, 11400, 11400, 11400, 11400, 11400, 11400, 11400, 11400, 11400, 11400, 11400, 11400, 11400, 11400, 11400, 11400, 11400, 11400, 11400, 11400, 11400, 11400, 11400, 11400, 11400, 11400, 11400, 11400];
-		dd($arr);
-		// $company = Company::find(139);
-		// $odooService = new OdooService($company);
-		// dd($odooService->startImportInvoices('2025-01-01','2025-08-01',$company->id));		
+		$company = Company::find(92);
+		$odooService = new OdooPayment($company);
+		dd($odooService->fetchData('account.payment',[],[[['name','=','PCSH1/2025/00004']]]));
 	}
 	
 	/**

@@ -16,13 +16,14 @@ class OdooPayment
 	
 	public function createDownPayment($moneyModel )
     {
+	
+      
 		try{
 			$company = $moneyModel->company ;
 			$paymentDate = $moneyModel->getReceivingOrPaymentMoneyDate();
 			if(!$company->withinIntegrationDate($paymentDate)){
 				return ;
 			}
-		//	$chartOfAccountId = $this->getChartOfAccountId($moneyModel);
 			$journalId = $this->getJournalId($moneyModel) ;
 			/**
 			 * * $bankOrSafeId
@@ -60,11 +61,11 @@ class OdooPayment
                     'partner_id' => $odooPartnerId,
                     'payment_type' => $inBoundOrOutBound,
                     'partner_type' => $customerOrSupplier ,
-					'payment_method_line_id'=>1
+					'payment_method_line_id'=>(int)$moneyModel->getPaymentMethodLineId() 
                 ]],
                ['context' => $context]
             );
-
+			
 			
              $this->models->execute_kw(
                 $this->db,
@@ -74,9 +75,18 @@ class OdooPayment
                 'action_post',
                	[[$paymentId]],
             );
-		
+			if(is_array($paymentId) && isset($paymentId['faultString'])){
+				session()->put('fail',$paymentId['faultString']);
+				$moneyModel->update([
+					'synced_with_odoo'=>false ,
+					'odoo_error_message'=>$paymentId['faultString']
+				]);
+				return ;
+			}
+			$odooAccountPayment = $this->fetchData('account.payment',['id','name'],[[['id','=',$paymentId]]]);
 			$moneyModel->update([
 				'odoo_id'=>$paymentId,
+				'odoo_reference'=>$odooAccountPayment[0]['name']??null,
 				'synced_with_odoo'=>true ,
 				'odoo_error_message'=>null
 			]);
@@ -142,7 +152,6 @@ class OdooPayment
                 ['context' => $context]
             );
 			
-			
             $paymentResult = $this->models->execute_kw(
                 $this->db,
                 $this->uid,
@@ -152,7 +161,15 @@ class OdooPayment
                 [[$paymentWizardId]],
                 ['context' => $context]
             );
-		
+			if(is_array($paymentResult) && isset($paymentResult['faultString'])){
+				session()->put('fail',$paymentResult['faultString']);
+				$moneyModel->update([
+					'synced_with_odoo'=>false ,
+					'odoo_error_message'=>$paymentResult['faultString']
+				]);
+				return ;
+			}
+			
 			$resId = $paymentResult['res_id'];
 			if(is_numeric($resId)){
 				$odooAccountPayment = $this->fetchData('account.payment',['id','name'],[[['id','=',$resId]]]);

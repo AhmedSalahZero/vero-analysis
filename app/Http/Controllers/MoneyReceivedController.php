@@ -612,7 +612,6 @@ class MoneyReceivedController
 		 */
 		
 		
-		//$odooPayment->updateMoneyReceiveOrMoneyPayment( $isCustomer ,  $odooPaymentId, $odooInvoiceId, $paymentDate, $invoiceNumber, $journalId, $odooPartnerId, $paymentMethodLineId ,  $amountInInReceivingCurrency ,  $odooReceivingCurrencyId);
 		if(!$moneyReceivedAmountHasChanged){
 			$newMoneyReceived->storeNewSettlement(
 			$oldSettlementsForMoneyReceivedWithDownPayment->toArray(),$newMoneyReceived->getPartnerId(),$company,1);
