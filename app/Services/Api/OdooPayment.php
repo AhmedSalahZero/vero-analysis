@@ -13,7 +13,6 @@ class OdooPayment
 {
 	use AuthTrait,HasPayment,HasJournal ;
 	
-	
 	public function createDownPayment($moneyModel )
     {
 	
@@ -102,18 +101,115 @@ class OdooPayment
 
          
     }
+	
+	public function createDownPaymentFromSettlement($settlement )
+    {
+	
+      
+		try{
+			$company = $settlement->company ;
+			$moneyModel =  $settlement->getMoney() ;
+			$paymentDate =$moneyModel->getReceivingOrPaymentMoneyDate();
+			if(!$company->withinIntegrationDate($paymentDate)){
+				return ;
+			}
+			$journalId = $this->getJournalId($moneyModel) ;
+			/**
+			 * * $bankOrSafeId
+			 */
+			$paymentAmount = $settlement->getAmountInReceivingCurrency()   ;
+			$currencyName = $moneyModel->getReceivingOrPaymentCurrency();
+			$odooCurrencyId = Currency::getOdooId($currencyName);
+			
+			/**
+			 * @var Company $company;
+			 */
+			
+			$odooPartnerId = $moneyModel->partner->getOdooId();
+			$inBoundOrOutBound =$moneyModel->getInboundOrOutbound();
+			$customerOrSupplier = $moneyModel->getCustomerOrSupplier();
+	
+       
+            // Step 2: Register payment using account.payment.register
+            $context = [
+                'active_model' => 'account.move',
+           		'active_ids' => [],
+            ];
+
+            $paymentId = $this->models->execute_kw(
+                $this->db,
+                $this->uid,
+                $this->password,
+                'account.payment',
+                'create',
+                [[
+                    'amount' => $paymentAmount,
+                    'journal_id' => $journalId,
+                    'date' => $paymentDate,
+					'currency_id'=>$odooCurrencyId,
+                    'partner_id' => $odooPartnerId,
+                    'payment_type' => $inBoundOrOutBound,
+                    'partner_type' => $customerOrSupplier ,
+					'payment_method_line_id'=>(int)$moneyModel->getPaymentMethodLineId() 
+                ]],
+               ['context' => $context]
+            );
+			
+			
+             $this->models->execute_kw(
+                $this->db,
+                $this->uid,
+                $this->password,
+                'account.payment',
+                'action_post',
+               	[[$paymentId]],
+            );
+			if(is_array($paymentId) && isset($paymentId['faultString'])){
+				session()->put('fail',$paymentId['faultString']);
+				$moneyModel->update([
+					'synced_with_odoo'=>false ,
+					'odoo_error_message'=>$paymentId['faultString']
+				]);
+				return ;
+			}
+			$odooAccountPayment = $this->fetchData('account.payment',['id','name'],[[['id','=',$paymentId]]]);
+			$moneyModel->update([
+				'synced_with_odoo'=>true ,
+				'odoo_error_message'=>null
+			]);
+			$settlement->update([
+				'odoo_id'=>$paymentId,
+				'odoo_reference_name'=>$odooAccountPayment[0]['name']??null,
+			]);
+				
+		}
+		catch(\Exception $e){
+			session()->put('fail',__('Error While Connecting With Odoo : ' . $e->getMessage()));
+			$moneyModel->update([
+				'synced_with_odoo'=>false ,
+				'odoo_error_message'=>$e->getMessage() 
+			]);
+		}
+		
+
+         
+    }
     
 	 public function createPayment($customerInvoiceSettlement )
     {
+		
 		try{
 			$invoice = $customerInvoiceSettlement->invoice;
 			$moneyModel = $customerInvoiceSettlement->getMoney();
+			$amountInInReceivingCurrency = $customerInvoiceSettlement->getAmountInReceivingCurrency();
+			if($invoice->opening_balance_id){
+				return $this->createDownPaymentFromSettlement($customerInvoiceSettlement);
+			}
 			$journalId = $this->getJournalId($moneyModel) ;
 			/**
 			 * * $bankOrSafeId
 			 */
 			$invoiceId = $invoice->getOdooId();
-			$amountInInReceivingCurrency = $customerInvoiceSettlement->getAmountInReceivingCurrency();
 			$receivingCurrencyName = $moneyModel->getReceivingOrPaymentCurrency();
 			$odooReceivingCurrencyId =  Currency::getOdooId($receivingCurrencyName) ;
 			$paymentDate = $moneyModel->getReceivingOrPaymentMoneyDate();
@@ -221,7 +317,7 @@ class OdooPayment
 	
 	
 	public function chequeCollection(
-        $accountPayment_id,
+        int $accountPayment_id,
         float $amount , 
         string $date , 
         int $currency_id , 
@@ -232,6 +328,7 @@ class OdooPayment
         $ref , 
         $message = ''
     ) {
+	
 		
         try {
             // Step 1: Verify the payment exists and get its details
@@ -281,8 +378,7 @@ class OdooPayment
             $statementMoveId = null;
             $statementLineIds = [];
 
-
- 
+		
             if (empty($existingStatementLines)) {
                 // Step 4: Create bank statement line to affect bank balance
                 $statementEntryData = [
@@ -332,7 +428,7 @@ class OdooPayment
                     ['context' => $context]
                 );
 			
-           
+      
                 if (!is_numeric($statementEntryId)) {
                     throw new Exception("Failed to create bank statement line: " . json_encode($statementEntryId));
                 }
@@ -367,7 +463,6 @@ class OdooPayment
                     []
                 );
 
-
                 if (!$paymentLineIds || !is_array($paymentLineIds)) {
                     throw new Exception("Failed to retrieve payment move lines for move_id: $moveId");
                 }
@@ -384,6 +479,8 @@ class OdooPayment
                         );
                         // Handle success
                     } catch (Exception $e) {
+						session()->put('fail',$e->getMessage());
+				
                         // Log or handle error
                         Log::error('Odoo reconciliation failed: ' . $e->getMessage());
                     }
@@ -429,7 +526,7 @@ class OdooPayment
             ];
 
         } catch (\Exception $e) {
-            Log::error('Error in chequeCollection: ' . $e->getMessage());
+			session()->put('fail','Error in chequeCollection: ' . $e->getMessage());
             return [
                 'error' => true,
                 'message' => 'Failed to process cheque collection: ' . $e->getMessage()
@@ -446,8 +543,7 @@ class OdooPayment
         int $debitOdooAccountId = 814, // Cheque Payable Account
         int $creditOdooAccountId = 260, // Bank Misr Account
         int $PartnerId = 331,
-        string $invoiceNumber = 'BILL/2025/04/0021',
-        $ref = 'Cheque Pay BILL/2025/04/0021', 
+        string $ref , 
         $message = ''
     ) {
         try {

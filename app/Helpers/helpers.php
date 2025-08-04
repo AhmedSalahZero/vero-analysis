@@ -1636,7 +1636,6 @@ function getComparingReportForAnalysis($request, $report_data, $secondReport, $c
 
         if ($modelType == 'product_item') {
             $secondReportDataResult = (new SKUsAgainstAnalysisReport())->result($request, $company, false);
-			// dd($secondReportDataResult);
             $type = __('Products Items');
         } elseif ($modelType == 'zone') {
             $secondReportDataResult = (new ZoneAgainstAnalysisReport())->result($request, $company, 'view', false);
@@ -8232,7 +8231,6 @@ function removeDateFrom(array $dateIndexWithDate){
 	$result = [];
 	foreach($dateIndexWithDate as $dateAsIndex => $dateAsString){
 		$dateExploded = explode('-',$dateAsString);
-		// dd($dateAsString);
 		$month = $dateExploded[1];
 		$year = $dateExploded[0];
 		$dateMonthAndYear =$month.'-'.$year; 

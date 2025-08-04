@@ -31,6 +31,7 @@ class SupplierOpeningBalancesController
         return view('supplier-opening-balance.form', [
             'company' => $company,
             'model' => $company->supplierOpeningBalance,
+			'isCustomer'=>0,
             // 'selectedBanks' => $selectedBanks,
             // 'banks' => $banks,
             'suppliersFormatted' => $suppliers,
@@ -162,6 +163,14 @@ public function update(Company $company, StoreOpeningBalanceRequest $request, Su
 			$currencyName = $openingBalanceArr['currency'];
 			$partner = Partner::find($partnerId);
 			$invoiceDueDate = Carbon::make($openingBalanceArr['invoice_due_date'])->format('Y-m-d');
+			
+			
+			$invoiceNumber = $openingBalanceArr['invoice_number'];
+			$contractName = $openingBalanceArr['contract_name'];
+			$contractCode = $openingBalanceArr['contract_code'];
+			$contractDate = $openingBalanceArr['contract_date'];
+			$salesOrderNumber = $openingBalanceArr['sales_order_number'];
+			
             $exchangeRate = isset($openingBalanceArr['exchange_rate']) ? $openingBalanceArr['exchange_rate'] : 1  ;
 			return [
 				'company_id'=>$company->id ,
@@ -172,7 +181,12 @@ public function update(Company $company, StoreOpeningBalanceRequest $request, Su
 				'invoice_amount'=>$amount , 
 				'exchange_rate'=>$exchangeRate,
 				'currency'=>$currencyName,
-				'invoice_number'=>'opening-balance'
+				'invoice_number'=>$invoiceNumber,
+				'contract_name'=>$contractName,
+				'contract_code'=>$contractCode,
+				'project_name'=>$contractName,
+				'contract_date'=>$contractDate,
+				'sales_order_number'=>$salesOrderNumber,
 		];
 	}
 	

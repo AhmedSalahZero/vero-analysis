@@ -273,21 +273,35 @@ class SalesGatheringTestController extends Controller
 	{
 		$companyId = $company->id;
 		$model = ('\App\Models\\'.$modelName)::find($modelId) ;
-		foreach((array)$request->get('tableIds') as $tableId){
-			foreach((array)$request->get($tableId) as  $tableDataArr){
-					$tableDataArr['company_id']  = $companyId ;
-					if($modelName == 'CustomerInvoice'){
+		
+		if($modelName == 'CustomerInvoice'){
+					$tableDataArr = $request->except(['tableIds','_token','model_id','id','creator_id','contract_id','sales_order_id']);
 						$salesOrderId = $request->get('sales_order_id') ;
 						$contractId = $request->get('contract_id') ;
 						$tableDataArr['sales_order_number'] =$salesOrderId ? SalesOrder::find($salesOrderId)->getNumber() : null ; 
-						$tableDataArr['contract_name'] =$contractId ? Contract::find($contractId)->getName() : null ; 
+						$contractName = $contractId ? Contract::find($contractId)->getName() : null ;
+						$tableDataArr['contract_name'] = $contractName ; 
+						$tableDataArr['project_name'] = $contractName ; 
+						$model->update($tableDataArr);
 					}
 					if($modelName == 'SupplierInvoice'){
+						$tableDataArr = $request->except(['tableIds','_token','model_id','id','creator_id','contract_id']);
 						$purchasesOrderId = $request->get('purchases_order_id') ;
 						$contractId = $request->get('contract_id') ;
 						$tableDataArr['purchases_order_number'] =$purchasesOrderId ? PurchaseOrder::find($purchasesOrderId)->getNumber() : null ; 
-						$tableDataArr['contract_name'] =$contractId ? Contract::find($contractId)->getName() : null ; 
+						$contractName = $contractId ? Contract::find($contractId)->getName() : null;
+						$tableDataArr['contract_name'] = $contractName ; 
+							$tableDataArr['project_name'] = $contractName ; 
+							$model->update($tableDataArr);
+							
 					}
+					
+					
+		foreach((array)$request->get('tableIds') as $tableId){
+			
+			foreach((array)$request->get($tableId) as  $tableDataArr){
+					$tableDataArr['company_id']  = $companyId ;
+					
 					$model->update($tableDataArr);
 			}
 		}
@@ -298,7 +312,7 @@ class SalesGatheringTestController extends Controller
 				'customer_name'=>$partner->getName(),
 			]);
 		}
-		if($partnerId = $request->has('supplier_id')){
+		if($partnerId = $request->get('supplier_id')){
 			$partner = Partner::find($partnerId);
 			$model->update([
 				'supplier_id'=>$partnerId,

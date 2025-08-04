@@ -39,14 +39,10 @@ class FinancialInstitutionAccountController
 			'iban'=>$request->get('iban'),
 			'exchange_rate'=>$request->get('exchange_rate')
 		]);
-			$endDate = Carbon::make($balanceDate)->addYear(FinancialInstitutionAccount::NUMBER_OF_YEARS_FOR_INTEREST_IN_CURRENT_STATEMENT)->format('Y-m-d');
-			$financialInstitutionAccount->handleEndOfMonthInterest($balanceDate,$endDate,$company->id);
-		if($company->hasOdooIntegrationCredentials()){
-			$odoo = new OdooService($company);
-			$odoo->syncFinancialInstitutions();
-		}
+			
 		
 		$currentAccountBeginningBalance = $financialInstitutionAccount->getOpeningBalanceFromCurrentAccountBankStatement() ;
+		
 	
 		if($currentAccountBeginningBalance){
 			$currentDate =$currentAccountBeginningBalance->date ; 
@@ -68,7 +64,42 @@ class FinancialInstitutionAccountController
 			->update([
 				'updated_at'=>now()
 			]);
+		}else{
+
+			$time  = Carbon::make(now())->format('H:i:s');
+			$newFullDateTime = date('Y-m-d H:i:s', strtotime("$balanceDate $time")) ;
+			DB::table('current_account_bank_statements')->insert([
+				'financial_institution_account_id'=>$financialInstitutionAccount->id,
+				'company_id'=>$company->id,
+				'date'=>$balanceDate,
+				'beginning_balance'=>0,
+				'is_beginning_balance'=>1 ,
+				'full_date'=>$newFullDateTime ,
+				'debit'=>$request->get('balance_amount'),
+				'comment_en'=>__('Beginning Balance',[],'en'),
+				'comment_ar'=>__('Beginning Balance',[],'ar'),
+			]);
+			
+			$currentStatement = CurrentAccountBankStatement::where('date','>=',$balanceDate)
+			->where('financial_institution_account_id',$financialInstitutionAccount->id)
+			->orderByRaw('date asc , id asc')
+			->first();
+			if($currentStatement){
+				$currentStatement->update([
+				'updated_at'=>now()
+			]);
+			}
+			
+			
 		}
+		
+		$endDate = Carbon::make($balanceDate)->addYear(FinancialInstitutionAccount::NUMBER_OF_YEARS_FOR_INTEREST_IN_CURRENT_STATEMENT)->format('Y-m-d');
+			$financialInstitutionAccount->handleEndOfMonthInterest($balanceDate,$endDate,$company->id);
+		if($company->hasOdooIntegrationCredentials()){
+			$odoo = new OdooService($company);
+			$odoo->syncFinancialInstitutions();
+		}
+		
 	
 		$oldAccountInterestsIds = $financialInstitutionAccount->accountInterests->pluck('id')->toArray();
 		$AccountInterestsIdsFromRequest =array_column($request->get('account_interests',[]),'id') ;
@@ -111,11 +142,7 @@ class FinancialInstitutionAccountController
 			$financialInstitutionAccount->updateBankStatementsFromDate($minDateInCurrentAccountStatement);
 			
 		}
-		
 		return redirect()->route('view.all.bank.accounts',['company'=>$company->id ,'financialInstitution'=>$financialInstitution->id])->with('success',__('Item Has Been Updated Successfully'));
-		// $activeTab = 'bank';
-		// return redirect()->route('view.financial.institutions',['company'=>$company->id,'active'=>$activeTab])->with('success',__('Item Has Been Updated Successfully'));
-		
 		
 	}
 	

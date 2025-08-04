@@ -404,4 +404,17 @@ trait IsInvoice
 	{
 		return  number_format($this->getInvoiceAmount()); 
 	}
+	public function getContractName()
+	{
+		return $this->contract_name;
+	}public function getContractCode()
+	{
+		return $this->contract_code;
+	}public function getContractDate()
+	{
+		return $this->contract_date;
+	}public function getSalesOrderNumber()
+	{
+		return $this->sales_order_number;
+	}
 }

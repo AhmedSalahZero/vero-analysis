@@ -328,7 +328,7 @@ class MoneyReceivedController
 		$partnerId = $partner->id;
 		$invoices = CustomerInvoice::where('customer_id',$partnerId)
 		->where('company_id',$company->id)
-		->whereNull('opening_balance_id')
+	//	->whereNull('opening_balance_id')
 		->where('net_invoice_amount','>',0)
 		->when($downPaymentContract , function($q) use($downPaymentContract){
 			$q->where('contract_code',$downPaymentContract->getCode());
@@ -726,8 +726,11 @@ class MoneyReceivedController
 		
 		if($hasOdooIntegration && $company->withinIntegrationDate($actualCollectionDate)){
 			$odooSetting = $company->odooSetting;
-			foreach($moneyReceived->settlements as $settlement){
-				$odooId = $settlement->odoo_id ; 
+			$hasSettlements = $moneyReceived->settlements->count();
+			$items = $hasSettlements ? $moneyReceived->settlements : [$moneyReceived];
+		
+				foreach($items as $settlementOrMoneyModel){
+				$odooId = $settlementOrMoneyModel->odoo_id ; 
 				$odooCurrencyId =Currency::getOdooId($currency);
 				$accountTypeId=$moneyReceived->cheque->getAccountTypeId();
 				$accountNumber = $moneyReceived->cheque->getAccountNumber();
@@ -735,10 +738,9 @@ class MoneyReceivedController
 				$debitAccountOdooId = $financialInstitution->getOdooIdForAccount($accountTypeId,$accountNumber);
 				$creditOdooAccountId = $odooSetting->getChequesReceivableId();
 				$odooPartnerId = $moneyReceived->getPartnerOdooId();
-				$ref = 'Cheque Collection ' . $settlement->getInvoiceNumber();
+				$ref = 'Cheque Collection ' . $settlementOrMoneyModel->getInvoiceNumber();
+			
 				$res =$OdooPaymentService->chequeCollection($odooId,$receivedAmount,$actualCollectionDate,$odooCurrencyId,$journalId,$debitAccountOdooId,$creditOdooAccountId,$odooPartnerId,$ref);
-	
-			}
 		}
 		
 		if($request->ajax()){
@@ -749,7 +751,7 @@ class MoneyReceivedController
 		}
 		return redirect()->route('view.money.receive',['company'=>$company->id,'active'=>MoneyReceived::CHEQUE_COLLECTED])->with('success',__('Cheque Is Returned To Safe'));
 	}
-	
+}
 	public function sendToUnderCollection(Company $company,BackToUnderCollectionChequeRequest $request,MoneyReceived $moneyReceived)
 	{
 		$moneyReceived->cheque->update([

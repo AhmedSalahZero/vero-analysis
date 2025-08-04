@@ -50,7 +50,10 @@
             max-width: initial !important;
             width: 9% !important;
             flex: initial !important;
-        }
+        } 
+		.width-2000{
+			width:3000px !important;
+		}
 
         html body .bg-red-progress {
             background-color: #8d0834 !important;

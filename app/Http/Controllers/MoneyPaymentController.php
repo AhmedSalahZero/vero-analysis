@@ -284,7 +284,7 @@ class MoneyPaymentController
 		
 		$invoices = SupplierInvoice::where('supplier_id',$partnerId)->where('company_id',$company->id)
 		->where('net_invoice_amount','>',0)
-		->whereNull('opening_balance_id')
+		// ->whereNull('opening_balance_id')
 		->when($downPaymentContract , function($q) use($downPaymentContract){
 			$q->where('contract_code',$downPaymentContract->getCode());
 		});
@@ -656,7 +656,6 @@ class MoneyPaymentController
 				$odooPartnerId = $moneyPayment->getPartnerOdooId();
 				$ref = 'Cheque Payment ' . $settlement->getInvoiceNumber();
 				$OdooPaymentService->chequePayment($odooId,$currentPaidAmount  ,$actualPaymentDate,$odooCurrencyId,$journalId,$creditOdooAccountId,$debitAccountOdooId,$odooPartnerId,$ref);
-				// $OdooPaymentService->chequeCollection($odooId,$currentPaidAmount * -1 ,$actualPaymentDate,$odooCurrencyId,$journalId,$creditOdooAccountId,$debitAccountOdooId,$odooPartnerId,$ref);
 			}
 		}
 		

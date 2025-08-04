@@ -31,15 +31,21 @@ trait HasBankStatement
 		$fullBankStatement = self::getBankStatementTableClassName();
 		
 		$contractStartDateAsCarbon = Carbon::make($contractStartDate);
+		
+		$isLastDayOfMonth = $contractStartDateAsCarbon->isSameDay($contractStartDateAsCarbon->endOfMonth());
+		
 		$contractEndDateAsCarbon= Carbon::make($contractEndDate);
 		
-		$dates = generateDatesBetweenTwoDates($contractStartDateAsCarbon,$contractEndDateAsCarbon) ;
+		$dates = generateDatesBetweenTwoDatesWithoutOverflow($contractStartDateAsCarbon,$contractEndDateAsCarbon) ;
 		$countDates = count($dates);
 		// highest_debit_balance
 		$interestText = 'interest';
 		$interestTypeText = 'end_of_month';
 		$fullBankStatement::where('company_id',$companyId)->where('type',$interestText)->where($foreignKeyColumnName,$this->id)->where('interest_type',$interestTypeText)->where('date','>',$contractEndDate)->delete();
 		foreach($dates as $index => $dateAsString){
+			if($index == 0 && $isLastDayOfMonth){
+				continue;
+			}
 			$isLastLoop = $index == $countDates -1;
 			$currentEndOfMonthDate = $isLastLoop ? Carbon::make($contractEndDate)->format('Y-m-d') : Carbon::make($dateAsString)->endOfMonth()->format('Y-m-d');
 			$isExist = $fullBankStatement::where('company_id',$companyId)->where($foreignKeyColumnName,$this->id)->where('type',$interestText)->where('interest_type',$interestTypeText)->where('date',$currentEndOfMonthDate)->first();

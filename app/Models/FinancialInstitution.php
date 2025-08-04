@@ -245,15 +245,12 @@ class FinancialInstitution extends Model
 					'comment_en'=>__('Beginning Balance',[],'en'),
 					'comment_ar'=>__('Beginning Balance',[],'ar'),
 				]);
-
 			}
-
 			$account->accountInterests()->create([
 				'interest_rate'=>$accountArr['interest_rate'],
 				'min_balance'=>$accountArr['min_balance'],
 				'start_date'=>$currentBalanceDate
 			]);
-			// $account->handleEndOfMonthInterest($data['contract_start_date'],$data['contract_end_date'],$company->id);
 			
 			$account->updateBankStatementsFromDate($currentBalanceDate);
 		}

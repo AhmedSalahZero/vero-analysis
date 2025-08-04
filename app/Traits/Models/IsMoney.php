@@ -298,15 +298,17 @@ trait IsMoney
 	}		
 	public function getOdooReferenceNames():array 
 	{
-		if($this->odoo_reference){
-			return [$this->odoo_reference];
-		}
 		$result = [];
 		foreach($this->settlements as $settlement){
 			if($settlement->odoo_reference_name){
 				$result[]=$settlement->odoo_reference_name;
 			}
 		}
+		if($this->odoo_reference){
+			$result[] = $this->odoo_reference ;
+		}
+		
+		
 		return $result;
 	}	
 	public function getInboundOrOutbound()
@@ -446,5 +448,9 @@ trait IsMoney
 	public function getTransactionType()
 	{
 		return $this->transaction_type;
+	}
+	public function getInvoiceNumber()
+	{
+		return $this->odoo_reference ?: $this->odoo_id ;
 	}
 }

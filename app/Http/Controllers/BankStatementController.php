@@ -83,6 +83,7 @@ class BankStatementController
 			->orderByRaw('date desc , current_account_bank_statements.id desc')
 			->get();
 			
+			
 		}
 		elseif($accountType->isCleanOverdraftAccount()){
 			$statementModelName = 'CleanOverdraftBankStatement';

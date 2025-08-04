@@ -91,6 +91,7 @@ class CurrentAccountBankStatement extends Model  implements IHaveStatement
 			});
 			
 			static::created(function(CurrentAccountBankStatement $model){
+				#:Handle End Of Month Here 
 				self::updateNextRows($model);
 			});
 			

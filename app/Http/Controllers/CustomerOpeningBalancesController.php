@@ -39,6 +39,7 @@ class CustomerOpeningBalancesController
         return view('customer-opening-balance.form', [
             'company' => $company,
             'model' => $company->customerOpeningBalance,
+			'isCustomer'=>1 ,
             // 'selectedBanks' => $selectedBanks,
             // 'banks' => $banks,
             'customersFormatted' => $customers,
@@ -164,6 +165,11 @@ public function update(Company $company, StoreOpeningBalanceRequest $request, Cu
             $partnerId = $openingBalanceArr['partner_id'] ?: null ;
 			$currencyName = $openingBalanceArr['currency'];
 			$partner = Partner::find($partnerId);
+			$invoiceNumber = $openingBalanceArr['invoice_number'];
+			$contractName = $openingBalanceArr['contract_name'];
+			$contractCode = $openingBalanceArr['contract_code'];
+			$contractDate = $openingBalanceArr['contract_date'];
+			$salesOrderNumber = $openingBalanceArr['sales_order_number'];
 			$invoiceDueDate = Carbon::make($openingBalanceArr['invoice_due_date'])->format('Y-m-d');
             $exchangeRate = isset($openingBalanceArr['exchange_rate']) ? $openingBalanceArr['exchange_rate'] : 1  ;
 			return [
@@ -175,7 +181,13 @@ public function update(Company $company, StoreOpeningBalanceRequest $request, Cu
 				'invoice_amount'=>$amount , 
 				'exchange_rate'=>$exchangeRate,
 				'currency'=>$currencyName,
-				'invoice_number'=>'opening-balance'
+				
+				'project_name'=>$contractName,
+				'invoice_number'=>$invoiceNumber,
+				'contract_name'=>$contractName,
+				'contract_code'=>$contractCode,
+				'contract_date'=>$contractDate,
+				'sales_order_number'=>$salesOrderNumber,
 		];
 	}
 	

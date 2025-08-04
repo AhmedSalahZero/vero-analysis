@@ -188,12 +188,18 @@ use App\Models\MoneyReceived ;
                                 $repeaterId = 'm_repeater_6';
                                 @endphp
                                 <input type="hidden" name="tableIds[]" value="{{ $tableId }}">
-                                <x-tables.repeater-table :initEmpty="!isset($model) || !$model->customerInvoices->count()" :firstElementDeletable="true" :repeater-with-select2="true" :parentClass="'show-class-js'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=true">
+                                <input type="hidden" name="is_customer" value="{{ $isCustomer }}" id="is-customer">
+                                <x-tables.repeater-table :tableClasses="'width-2000'" :initEmpty="!isset($model) || !$model->customerInvoices->count()" :firstElementDeletable="true" :repeater-with-select2="true" :parentClass="'show-class-js'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=true">
                                     <x-slot name="ths">
                                         @foreach([
-                                        __('Customer')=>'col-md-1',
+                                        __('Customer')=>'col-md-2',
+                                        __('Invoice No')=>'col-md-1',
+                                        __('Project Name')=>'col-md-1',
+                                        __('Contract Code')=>'col-md-1',
+                                        __('Contract Date')=>'col-md-1',
+                                        __('Sales Order Number')=>'col-md-1',
                                         __('Amount')=>'col-md-1',
-                                        __('Currency')=>'col-md-1',
+                                        __('Currency ')=>'col-md-1',
                                         __('Exchange <br> Rate')=>'col-md-1',
                                         __('Due Date')=>'col-md-1',
                                         ] as $title=>$classes)
@@ -219,9 +225,12 @@ use App\Models\MoneyReceived ;
                                             </td>
 
 
+
+
+
                                             <td>
                                                 <div class="input-group">
-                                                    <select name="partner_id" class="form-control ">
+                                                    <select name="partner_id" class="form-control partner_id_class">
                                                         @foreach($customersFormatted as $customerArr )
                                                         @php
                                                         $customerName = $customerArr['title'];
@@ -233,6 +242,58 @@ use App\Models\MoneyReceived ;
                                                 </div>
 
                                             </td>
+                                            <td>
+
+                                                <div class="kt-input-icon">
+                                                    <div class="input-group">
+                                                        <input name="invoice_number" step="4" type="text" class="form-control " value="{{ isset($customerInvoice) ? $customerInvoice->getInvoiceNumber() : old('invoice_number',1) }}">
+                                                    </div>
+                                                </div>
+
+                                            </td>
+
+
+                                            <td>
+                                                <div class="input-group">
+                                                    <select data-current-contract-id="{{ isset($customerInvoice) ? $customerInvoice->getContractName() : 0 }}" name="contract_name" class="form-control contract_name">
+
+                                                    </select>
+                                                </div>
+
+                                            </td>
+
+
+                                            <td>
+
+                                                <div class="kt-input-icon">
+                                                    <div class="input-group">
+                                                        <input name="contract_code" step="4" type="text" class="form-control " value="{{ isset($customerInvoice) ? $customerInvoice->getContractCode() : '' }}">
+                                                    </div>
+                                                </div>
+
+                                            </td>
+
+                                            <td>
+
+                                                <div class="kt-input-icon">
+                                                    <div class="input-group">
+                                                        <input name="contract_date" type="date" class="form-control " value="{{ isset($customerInvoice) ? $customerInvoice->getContractDate() : '' }}">
+                                                    </div>
+                                                </div>
+
+                                            </td>
+
+                                            <td>
+                                                <div class="input-group">
+                                                    <select data-current-sales-order-number="{{ isset($customerInvoice) ? $customerInvoice->getSalesOrderNumber() : 0 }}" name="sales_order_number" class="form-control sales_order_number">
+
+                                                    </select>
+                                                </div>
+
+                                            </td>
+
+
+
                                             <td>
                                                 <div class="kt-input-icon">
                                                     <div class="input-group">
@@ -248,7 +309,7 @@ use App\Models\MoneyReceived ;
 
 
 
-                                                <div class="input-group">
+                                                <div class="input-group ">
                                                     <select name="currency" class="form-control select-for-currency ajax-get-invoice-numbers" js-when-change-trigger-change-account-type>
                                                         {{-- <option selected>{{__('Select')}}</option> --}}
                                                         @foreach(getCurrencies() as $currencyName => $currencyValue )
@@ -391,11 +452,11 @@ use App\Models\MoneyReceived ;
                                 <x-tables.repeater-table :initEmpty="!isset($model) || !$model->moneyModel->count()" :firstElementDeletable="true" :repeater-with-select2="true" :parentClass="'show-class-js'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=true">
                                     <x-slot name="ths">
                                         @foreach([
-                                        __('Customer')=>'col-md-1',
+                                        __('Customer')=>'col-md-3',
                                         __('Amount')=>'col-md-1',
                                         __('Currency')=>'col-md-1',
                                         __('Exchange <br> Rate')=>'col-md-1',
-                                        __('Type')=>'col-md-1',
+                                        __('Type')=>'col-md-3',
                                         ] as $title=>$classes)
                                         <x-tables.repeater-table-th class="{{ $classes }}" :title="$title"></x-tables.repeater-table-th>
                                         @endforeach
@@ -448,7 +509,7 @@ use App\Models\MoneyReceived ;
 
 
 
-                                                <div class="input-group">
+                                                <div class="input-group ">
                                                     <select name="currency" class="form-control select-for-currency currency-for-contracts ajax-get-contracts-for-customer" js-when-change-trigger-change-account-type>
                                                         {{-- <option  selected>{{__('Select')}}</option> --}}
                                                         @foreach(getCurrencies() as $currencyName => $currencyValue )
@@ -754,6 +815,7 @@ use App\Models\MoneyReceived ;
 
 
 
+
                 $(document).on('change', '.ajax-get-contracts-for-customer', function(e) {
                     e.preventDefault()
                     const parent = $(this).closest('tr');
@@ -772,7 +834,6 @@ use App\Models\MoneyReceived ;
                                 for (id in res.contracts) {
                                     options += `<option value="${id}" ${contractId == id ? 'selected' : ''} >${res.contracts[id]}</option>`
                                 }
-                                console.log(options)
                                 parent.find('select.contract-class').empty().append(options)
                                 parent.find('select.contract-class').trigger('change')
                             }
@@ -792,6 +853,73 @@ use App\Models\MoneyReceived ;
                     }
                 });
                 $('select.down-payment-type').trigger('change');
+
+            </script>
+
+
+
+
+            <script>
+                $(document).on('change','select.partner_id_class', function(e) {
+                    let parent = $(this).closest('tr')
+                    const customerOrSupplierId = $(this).val();
+                    const currentContractName = parent.find('[data-current-contract-id]').attr('data-current-contract-id');
+                    $.ajax({
+                        url: "{{ route('get.projects.for.customer.or.supplier',['company'=>$company->id]) }}"
+                        , data: {
+                            customerOrSupplierId
+                        }
+                        , success: function(res) {
+                            var options = '';
+                            for (var contract of res.projects) {
+                                var selected = contract.name == currentContractName ? 'selected' : '';
+                                options += `<option ${selected} data-contract-code="${contract.code}" data-contract-date="${contract.start_date}" data-contract-id="${contract.id}"  value="${contract.name}">${contract.name}</option>`
+                            }
+                            parent.find('select.contract_name').empty().append(options).trigger('change');
+                        }
+                    })
+                })
+                $(document).on('change','select.contract_name', function() {
+                    let parent = $(this).closest('tr')
+                    const contractId = $(this).find('option:selected').attr('data-contract-id');
+                    const contractCode = $(this).find('option:selected').attr('data-contract-code');
+                    const contractDate = $(this).find('option:selected').attr('data-contract-date');
+                    var currentSalesOrderNumber = parent.find('[data-current-sales-order-number]').attr('data-current-sales-order-number');
+                    console.log(currentSalesOrderNumber)
+                    parent.find('[name*="contract_code"]').val(contractCode);
+                    parent.find('[name*="contract_date"]').val(contractDate);
+                    $.ajax({
+                        url: "{{ route('get.po.or.so.from.contract',['company'=>$company->id]) }}"
+                        , data: {
+                            contractId
+                        }
+                        , success: function(res) {
+                            var purchaseOrders = res.purchase_orders;
+                            var salesOrders = res.sales_orders;
+                            var purchaseOrdersOptions = '';
+                            var salesOrdersOptions = '';
+                            var isCustomer = +$('input#is-customer').val();
+                            var items = isCustomer ? salesOrders : purchaseOrders;
+                            for (var purchaseOrder of items) {
+                                var poOrSoNumber = isCustomer ? 'so_number' : 'po_number';
+                                var purchaseOrderSelected = purchaseOrder[poOrSoNumber] == currentSalesOrderNumber ? 'selected' : '';
+                                purchaseOrdersOptions += `<option ${purchaseOrderSelected} data-date="${purchaseOrder.start_date_1}" value="${purchaseOrder[poOrSoNumber]}"> ${purchaseOrder[poOrSoNumber]}</option>`
+                            }
+                            console.log(purchaseOrdersOptions, contractId)
+                            parent.find('select[data-current-sales-order-number]').empty().append(purchaseOrdersOptions).trigger('change');
+                        }
+                    })
+
+                })
+                $(document).on('change','select[data-current-sales-order-number]', function() {
+                    let parent = $(this).closest('tr')
+                    const date = $(this).find('option:selected').attr('data-date');
+                    parent.find('input[name*="sales_order_date"]').val(date).trigger('change');
+                    parent.find('input[name*="purchases_order_date"]').val(date).trigger('change');
+                })
+                $(function() {
+                    $('select.partner_id_class').trigger('change')
+                })
 
             </script>
 

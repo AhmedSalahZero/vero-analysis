@@ -24,7 +24,7 @@
 						
 						<label>{{__('Final Result?')}} </label>
 						  <div class="kt-input-icon">
-							 <input class="form-control" style="height:20px;width:20px;" type="checkbox" name="is_end_of_month_final" value="1" @if($interestType == 'end_of_month_final') checked  @endif>
+							 <input class="form-control" style="height:20px;width:20px;" type="checkbox" name="is_end_of_month_final" value="1"  checked  >
 						  </div>
 							 </div>
                          <div class="col-md-5 mb-4">
