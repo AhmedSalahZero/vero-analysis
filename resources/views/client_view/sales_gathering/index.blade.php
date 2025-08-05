@@ -467,7 +467,9 @@ $date = now()->format('d-m-Y')
                         @csrf
 						<input type="hidden" name="modelType" value="{{ $modelName }}">
                         <a class="btn btn-secondary btn-outline-hover-primary btn-icon" title="Edit" href="{{route('edit.sales.form',['company'=>$company->id,'model'=>$modelName , 'modelId'=>$item->id])}}"><i class="fa fa-edit"></i></a>
+						@if(!$company->hasOdooIntegrationCredentials())
                         <button type="submit" class="btn btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href=""><i class="fa fa-trash-alt"></i></button>
+						@endif
                     </form>
                 </span>
             </td>

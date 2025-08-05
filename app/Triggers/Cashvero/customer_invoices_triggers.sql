@@ -11,7 +11,7 @@ CREATE TRIGGER `insert_net_invoice_amount_for_customers` BEFORE INSERT
 	set new.total_withhold_amount_in_main_currency = new.withhold_amount_in_main_currency + new.odoo_withhold_amount_in_main_currency;
 	
 		set @totalInvoiceAmount := ifnull(new.invoice_amount,0)  + ifnull(new.vat_amount,0) - ifnull(new.discount_amount,0) ;
-	set new.net_invoice_amount = ( @totalInvoiceAmount  - ifnull(new.total_withhold_amount,0));
+	set new.net_invoice_amount =  @totalInvoiceAmount ;
 	set new.invoice_amount_in_main_currency = new.invoice_amount * new.exchange_rate;	
 	set new.discount_amount_in_main_currency = new.discount_amount * new.exchange_rate;	
 	set new.collected_amount_in_main_currency = new.collected_amount * new.exchange_rate;
@@ -30,7 +30,7 @@ CREATE TRIGGER `insert_net_invoice_amount_for_customers` BEFORE INSERT
 
 	
 	
-	set new.net_balance = new.net_invoice_amount - ifnull(new.total_collected_amount,0) - new.total_deductions;
+	set new.net_balance = @totalInvoiceAmount - ifnull(new.total_withhold_amount,0) - ifnull(new.total_collected_amount,0) - new.total_deductions;
 	set new.net_balance_in_main_currency = new.net_balance * new.exchange_rate;
 	IF(new.currency = 'EUR') then 
 		set new.currency = 'EURO';
@@ -69,7 +69,7 @@ UPDATE
 	
 	set @totalInvoiceAmount := ifnull(new.invoice_amount,0)  + ifnull(new.vat_amount,0) - ifnull(new.discount_amount,0) ;
 	set @totalInvoiceAmountInMainCurrency := ifnull(new.invoice_amount_in_main_currency,0)  + ifnull(new.vat_amount_in_main_currency,0) - ifnull(new.discount_amount_in_main_currency,0) ;
-	set new.net_invoice_amount = ( @totalInvoiceAmount );
+	set new.net_invoice_amount =  @totalInvoiceAmount ;
 	set new.net_invoice_amount_in_main_currency = (new.net_invoice_amount * new.exchange_rate);
 	set new.invoice_amount_in_main_currency = (new.invoice_amount * new.exchange_rate);
 	set new.invoice_amount_in_main_currency = new.invoice_amount * new.exchange_rate;	

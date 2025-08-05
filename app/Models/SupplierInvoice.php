@@ -163,7 +163,7 @@ class SupplierInvoice extends Model implements IInvoice
 			$result[$index]['net_invoice_amount'] = $invoiceArr['net_invoice_amount'];
 			$currentSettlementAmount = $invoiceArr['settlement_amount'] ?? 0 ;
 			$currentSettlementAmount = (double) $currentSettlementAmount ;
-			$result[$index]['paid_amount'] = $inEditMode 	?  (double)$invoiceArr['paid_amount'] - $currentSettlementAmount  : (double)$invoiceArr['paid_amount'];
+			$result[$index]['paid_amount'] = $inEditMode 	?  (double)$invoiceArr['total_paid_amount'] - $currentSettlementAmount  : (double)$invoiceArr['total_paid_amount'];
 			$result[$index]['net_balance'] = $inEditMode ? $invoiceArr['net_balance'] +  $currentSettlementAmount  + (double) $invoiceArr['withhold_amount'] : $invoiceArr['net_balance']  ;
 			$result[$index]['settlement_amount'] = $inEditMode ? $currentSettlementAmount : 0;
 			$result[$index]['withhold_amount'] = $inEditMode ? $invoiceArr['withhold_amount'] : 0;

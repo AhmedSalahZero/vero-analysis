@@ -160,7 +160,7 @@ class CustomerInvoice extends Model implements IInvoice
 			$result[$index]['project_name'] = $invoiceArr['project_name'];
 
 			// $result[$index]['collected_amount'] = $inEditMode 	?  (double)$invoiceArr['collected_amount'] - (double) $invoiceArr['settlement_amount']  : (double)$invoiceArr['collected_amount'];
-			$result[$index]['collected_amount'] =  $inEditMode 	?  (double)$invoiceArr['collected_amount'] - (double) $invoiceArr['settlement_amount']  : (double)$invoiceArr['collected_amount'];
+			$result[$index]['collected_amount'] =  $inEditMode 	?  (double)$invoiceArr['total_collected_amount'] - (double) $invoiceArr['settlement_amount']  : (double)$invoiceArr['total_collected_amount'];
 			$result[$index]['net_balance'] = $inEditMode ? $invoiceArr['net_balance'] +  $invoiceArr['settlement_amount']  + (double) $invoiceArr['withhold_amount'] : $invoiceArr['net_balance']  ;
 			$result[$index]['settlement_amount'] = $inEditMode ? $invoiceArr['settlement_amount'] : 0;
 			$result[$index]['withhold_amount'] = $inEditMode ? $invoiceArr['withhold_amount'] : 0;

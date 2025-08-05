@@ -348,7 +348,7 @@ class MoneyReceivedController
 		}
 
 		$invoices = $invoices->orderBy('invoice_date','asc')
-		->get(['id','invoice_number','project_name','invoice_date','invoice_due_date','net_invoice_amount','collected_amount','net_balance','currency'])
+		->get(['id','invoice_number','project_name','invoice_date','invoice_due_date','net_invoice_amount','total_collected_amount','net_balance','currency'])
 		->toArray();
 		
 		
