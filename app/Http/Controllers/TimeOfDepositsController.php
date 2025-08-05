@@ -58,7 +58,7 @@ class TimeOfDepositsController
 		 * @var Collection $runningTimeOfDeposits 
 		 */
 		
-		$numberOfMonthsBetweenEndDateAndStartDate = 18 ;
+		$numberOfMonthsBetweenEndDateAndStartDate = 36 ;
 		$currentType = $request->get('active',TimeOfDeposit::RUNNING);
 		$filterDates = [];
 		foreach(TimeOfDeposit::getAllTypes() as $type){
