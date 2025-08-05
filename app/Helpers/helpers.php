@@ -6956,12 +6956,12 @@ function getHeaderMenu($currentCompany = null)
 						'show'=>true,
 						'data-show-notification-modal'=>'read-invoices-modal'
 					],
-							[
-							'title'=>__('Read Contracts'), 
-						'link'=>'#',
-						'show'=>true,
-						'data-show-notification-modal'=>'read-contracts-modal'
-					],
+					// 		[
+					// 		'title'=>__('Read Contracts'), 
+					// 	'link'=>'#',
+					// 	'show'=>true,
+					// 	'data-show-notification-modal'=>'read-contracts-modal'
+					// ],
 						
 					// [
 					// 	'title'=>__('Send Collections Or Payments'),
