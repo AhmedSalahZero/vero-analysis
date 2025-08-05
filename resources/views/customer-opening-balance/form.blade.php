@@ -557,81 +557,6 @@ use App\Models\MoneyReceived ;
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                             </div>
 
 
@@ -860,7 +785,7 @@ use App\Models\MoneyReceived ;
 
 
             <script>
-                $(document).on('change','select.partner_id_class', function(e) {
+                $(document).on('change', 'select.partner_id_class', function(e) {
                     let parent = $(this).closest('tr')
                     const customerOrSupplierId = $(this).val();
                     const currentContractName = parent.find('[data-current-contract-id]').attr('data-current-contract-id');
@@ -879,7 +804,7 @@ use App\Models\MoneyReceived ;
                         }
                     })
                 })
-                $(document).on('change','select.contract_name', function() {
+                $(document).on('change', 'select.contract_name', function() {
                     let parent = $(this).closest('tr')
                     const contractId = $(this).find('option:selected').attr('data-contract-id');
                     const contractCode = $(this).find('option:selected').attr('data-contract-code');
@@ -911,7 +836,7 @@ use App\Models\MoneyReceived ;
                     })
 
                 })
-                $(document).on('change','select[data-current-sales-order-number]', function() {
+                $(document).on('change', 'select[data-current-sales-order-number]', function() {
                     let parent = $(this).closest('tr')
                     const date = $(this).find('option:selected').attr('data-date');
                     parent.find('input[name*="sales_order_date"]').val(date).trigger('change');

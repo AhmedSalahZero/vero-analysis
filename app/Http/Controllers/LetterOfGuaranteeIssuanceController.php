@@ -414,6 +414,9 @@ class LetterOfGuaranteeIssuanceController
 	 */
 	public function applyAmountToBeDecreased(Company $company,Request $request,LetterOfGuaranteeIssuance $letterOfGuaranteeIssuance,string $source)
 	{
+		/**
+		 * ! No Odoo Service Yet
+		 */
 		
 		$financialInstitutionId = $letterOfGuaranteeIssuance->financial_institution_id ;
 		/**
@@ -459,6 +462,10 @@ class LetterOfGuaranteeIssuanceController
 	
 	public function editAmountToBeDecreased(Company $company,Request $request,LetterOfGuaranteeIssuanceAdvancedPaymentHistory $lgAdvancedPaymentHistory,string $source)
 	{
+		/**
+		 * ! No Odoo Service Yet
+		 */
+		
 		$decreaseDate = Carbon::make($request->get('decrease_date',now()->format('Y-m-d')))->format('Y-m-d');
 		$decreaseAmount = $request->get('amount_to_be_decreased',0);
 		$lgAdvancedPaymentHistory->update([
@@ -502,6 +509,10 @@ class LetterOfGuaranteeIssuanceController
 	 */
 	public function deleteAdvancedPayment(Company $company,Request $request,LetterOfGuaranteeIssuanceAdvancedPaymentHistory $lgAdvancedPaymentHistory)
 	{
+		/**
+		 * ! No Odoo Service Yet
+		 */
+		
 		$lgAdvancedPaymentHistory->deleteAllRelations();
 		$lgAdvancedPaymentHistory->delete();
 		return redirect()->route('view.letter.of.guarantee.issuance',['company'=>$company->id,'active'=>$lgAdvancedPaymentHistory->letterOfGuaranteeIssuance->getLgType()])->with('success',__('Data Store Successfully'));

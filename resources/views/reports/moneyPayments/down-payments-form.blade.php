@@ -117,7 +117,7 @@ $selectedBanks = [];
                             <select required name="down_payment_type" id="down_payment_type" class="form-control">
                                 <option @if(isset($model) && $model->isDownPaymentOverContract() ) selected @endif value="{{ MoneyPayment::DOWN_PAYMENT_OVER_CONTRACT }}">{{__('Contract Down Payment')}}</option>
                                 <option @if(isset($model) && $model->isGeneralDownPayment() ) selected @endif value="{{ MoneyPayment::DOWN_PAYMENT_GENERAL }}">{{__('General Down Payment')}}</option>
-								<option @if(isset($model) && $model->isSettlementOfOpeningBalance() ) selected @endif value="{{ MoneyPayment::SETTLEMENT_OF_OPENING_BALANCE }}">{{__('Settlement Of Opening Balance')}}</option>
+								{{-- <option @if(isset($model) && $model->isSettlementOfOpeningBalance() ) selected @endif value="{{ MoneyPayment::SETTLEMENT_OF_OPENING_BALANCE }}">{{__('Settlement Of Opening Balance')}}</option> --}}
                             </select>
                         </div>
                     </div>

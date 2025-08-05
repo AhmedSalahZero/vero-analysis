@@ -28,7 +28,9 @@ use App\Traits\GeneralFunctions;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-
+/**
+ * ! No Odoo Service Yet
+ */
 class LetterOfCreditIssuanceController
 {
     use GeneralFunctions ;

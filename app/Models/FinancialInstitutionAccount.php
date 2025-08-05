@@ -21,7 +21,9 @@ class FinancialInstitutionAccount extends Model
 {
 	const NUMBER_OF_YEARS_FOR_INTEREST_IN_CURRENT_STATEMENT = 1 ;
 	use HasLastStatementAmount ,HasCompany,HasOdooPaymentMethod,HasBankStatement;
-	
+		protected $casts = [
+			'synced_end_of_month_years'=>'array'
+		];
 		public static function boot()
 	{
 		parent::boot();

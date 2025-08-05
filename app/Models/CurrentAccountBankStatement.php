@@ -68,7 +68,15 @@ class CurrentAccountBankStatement extends Model  implements IHaveStatement
 	
 		protected static function booted(): void
 		{
+			static::updating(function(CurrentAccountBankStatement $model){
+				if($model->interest_type != 'end_of_month'){
+					$model->handleEndOfMonthInterestForCurrentAccountStatement($model->date,$model->company_id);
+				}
+			});
 			static::creating(function(CurrentAccountBankStatement $model){
+				if($model->interest_type != 'end_of_month'){
+					$model->handleEndOfMonthInterestForCurrentAccountStatement($model->date,$model->company_id);
+				}
 				$model->created_at = now();
 				$date = $model->date ;
 				$time  = now()->format('H:i:s');
@@ -92,11 +100,16 @@ class CurrentAccountBankStatement extends Model  implements IHaveStatement
 			
 			static::created(function(CurrentAccountBankStatement $model){
 				#:Handle End Of Month Here 
+				if($model->is_beginning_balance){
+					$model->handleEndOfMonthInterestForCurrentAccountStatement($model->date,$model->company_id);
+				}
 				self::updateNextRows($model);
 			});
 			
 			static::updated(function (CurrentAccountBankStatement $model) {
-				
+				if($model->is_beginning_balance){
+					$model->handleEndOfMonthInterestForCurrentAccountStatement($model->date,$model->company_id);
+				}
 				$minDate = self::updateNextRows($model);
 				
 				
@@ -272,5 +285,82 @@ class CurrentAccountBankStatement extends Model  implements IHaveStatement
 	}
 	
 	
+		/**
+	 * * دا مش محدود بتواريخ بدايه ونهايه زي اللي فوق
+	 */
+	public  function handleEndOfMonthInterestForCurrentAccountStatement(string $statementDate , int $companyId)
+	{
 	
+		$foreignKeyColumnName = 'financial_institution_account_id'; // clean_overdraft_id for clean_overdrafts for example
+		$fullBankStatement = FinancialInstitutionAccount::getBankStatementTableClassName();
+		
+		$statementStartDateAsCarbon = Carbon::make($statementDate)->startOfYear();
+		
+		//$isLastDayOfMonth = $contractStartDateAsCarbon->isSameDay($contractStartDateAsCarbon->endOfMonth());
+		
+		$statementEndDateAsCarbon= $statementStartDateAsCarbon->copy()->endOfYear();
+		
+		$dates = generateDatesBetweenTwoDatesWithoutOverflow($statementStartDateAsCarbon,$statementEndDateAsCarbon) ;
+	//	$countDates = count($dates);
+		$interestText = 'interest';
+	//	$interestTypeText = 'end_of_month';
+	//	$fullBankStatement::where('company_id',$companyId)->where('type',$interestText)->where($foreignKeyColumnName,$this->id)->where('interest_type',$interestTypeText)->where('date','>',$contractEndDate)->delete();
+		$beginningBalanceRow = $fullBankStatement::where('company_id',$companyId)->where('is_beginning_balance',1)->where('financial_institution_account_id',$this->financial_institution_account_id)->first();
+		
+		$financialInstitutionAccount = FinancialInstitutionAccount::find($this->financial_institution_account_id);
+		$balanceDate = $financialInstitutionAccount->balance_date;
+		$balanceDateAsCarbon = Carbon::make($balanceDate);
+		$isBalanceEndOfHisMonth = $balanceDateAsCarbon->isSameDay($balanceDateAsCarbon->copy()->endOfMonth());
+		$syncedYears = $financialInstitutionAccount->synced_end_of_month_years;
+		$syncedYears = (array)$syncedYears;
+			
+		$currentYear = Carbon::make($statementDate)->format('Y');
+		if(in_array($currentYear,$syncedYears) || !$beginningBalanceRow){
+			return ;
+		}
+		
+		foreach($dates as $index => $dateAsString){
+			$currentEndOfMonthDate =  Carbon::make($dateAsString)->endOfMonth()->format('Y-m-d');
+			if(Carbon::make($currentEndOfMonthDate)->lessThanOrEqualTo(Carbon::make($beginningBalanceRow->date))){
+				continue ; 
+			}
+			if( Carbon::make($currentEndOfMonthDate)->equalTo(Carbon::make($balanceDate))){
+				continue;
+			}
+			// if($index == 0 && $isLastDayOfMonth){
+			// 	continue;
+			// }
+	//		$isLastLoop = $index == $countDates -1;
+	
+			
+			// $isExist = $fullBankStatement::where('company_id',$companyId)->where($foreignKeyColumnName,$this->id)->where('type',$interestText)->where('interest_type',$interestTypeText)->where('date',$currentEndOfMonthDate)->first();
+			// if(!$isExist){
+				$data = [
+				'company_id'=>$companyId,
+				$foreignKeyColumnName=>$this->financial_institution_account_id ,
+				'priority'=>1 ,
+				'type'=>$interestText,
+				'date'=>$currentEndOfMonthDate,
+				'limit'=>$this->limit ,
+				'debit'=>0,
+				'beginning_balance'=>0,
+				'credit'=>0 ,
+				'interest_type'=>'end_of_month',
+				'comment_en'=>__('End Of Month Interest'),
+				'comment_ar'=>__('End Of Month Interest'),
+			] ; 
+	
+				unset($data['priority']);
+			
+			 $fullBankStatement::create($data);
+			// }
+			
+		}
+		$syncedYears[] = $currentYear;
+		$financialInstitutionAccount->update([
+			'synced_end_of_month_years'=>$syncedYears
+		]);
+		
+		
+	}
 }

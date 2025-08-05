@@ -17,7 +17,6 @@ use App\Models\OutgoingTransfer;
 use App\Models\Partner;
 use App\Models\PayableCheque;
 use App\Services\Api\CashExpenseOdooService;
-use App\Services\Api\OdooService;
 use App\Traits\GeneralFunctions;
 use App\Traits\Models\HasCreditStatements;
 use Carbon\Carbon;
@@ -312,7 +311,7 @@ class CashExpenseController
 		 $cashExpense->$relationName()->create($relationData);
 		 $cashExpense = $cashExpense->refresh();
 		 
-		 	$statementDate = $cashExpense->getStatementDate();
+		$statementDate = $cashExpense->getStatementDate();
 		$accountType = AccountType::find($request->input('account_type.'.$moneyType));
 		$accountNumber = $request->input('account_number.'.$moneyType) ;
 		$deliveryBranchId = $relationData['delivery_branch_id'] ?? null ;
@@ -335,11 +334,7 @@ class CashExpenseController
 			 * *
 			 * *  delete unlink
 			 * */
-			// $creditOdooAccountId
-		//	$odooPartnerId = null; 
-		
 			
-			// $creditOdooAccountId = null;
 
 			$result = $cashExpenseOdooService->createCashExpense($subCategoryName,$date,$amountInCurrency,$amountInMainFunctionalCurrency,$journalId,$odooCurrencyId,$debitOdooAccountId,$creditOdooAccountId,$analytic_distribution);
 			

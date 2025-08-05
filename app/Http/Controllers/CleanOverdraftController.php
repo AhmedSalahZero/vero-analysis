@@ -13,6 +13,9 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
+/**
+ * ! No Odoo Service Yet
+ */
 class CleanOverdraftController
 {
     use GeneralFunctions , HasOverdraftRate;
@@ -100,7 +103,7 @@ class CleanOverdraftController
 		 */
 		$cleanOverdraft = $financialInstitution->cleanOverdrafts()->create($data);
 		
-		$cleanOverdraft->handleEndOfMonthInterest($data['contract_start_date'],$data['contract_end_date'],$company->id);
+		$cleanOverdraft->handleEndOfMonthInterestForContractStatements($data['contract_start_date'],$data['contract_end_date'],$company->id);
 		
 		
 		// a new empty line in clean overdraft bank statement
@@ -152,7 +155,7 @@ class CleanOverdraftController
 			$data[$dateField] = $request->get($dateField) ? Carbon::make($request->get($dateField))->format('Y-m-d'):null;
 		}
 		$cleanOverdraft->update($data);
-		$cleanOverdraft->handleEndOfMonthInterest($data['contract_start_date'],$data['contract_end_date'],$company->id);
+		$cleanOverdraft->handleEndOfMonthInterestForContractStatements($data['contract_start_date'],$data['contract_end_date'],$company->id);
 		$cleanOverdraft->storeOutstandingBreakdown($request,$company);
 		$cleanOverdraft->updateLimitRaw();
 		$type = $request->get('type','clean-over-draft');

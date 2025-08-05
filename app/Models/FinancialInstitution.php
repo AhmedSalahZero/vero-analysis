@@ -223,7 +223,7 @@ class FinancialInstitution extends Model
 					'company_id'=>getCurrentCompanyId(),
 				]);
 				$endDate = Carbon::make($balanceDate)->addYear(FinancialInstitutionAccount::NUMBER_OF_YEARS_FOR_INTEREST_IN_CURRENT_STATEMENT)->format('Y-m-d');
-				$account->handleEndOfMonthInterest($balanceDate,$endDate,$company->id);
+			//	$account->handleEndOfMonthInterest($balanceDate,$endDate,$company->id);
 			}
 				
 			/**

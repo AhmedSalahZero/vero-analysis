@@ -14,6 +14,7 @@ use App\Models\SalesOrder;
 use App\Models\SupplierInvoice;
 use App\Services\Api\Traits\AuthTrait;
 use App\Services\Api\Traits\CommonHelper;
+use App\Services\Api\Traits\HasUnlink;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -21,7 +22,7 @@ use Illuminate\Support\Facades\DB;
 
 class OdooService
 {
-	use AuthTrait , CommonHelper;
+	use AuthTrait , CommonHelper,HasUnlink;
 	/**
 	 * * import project or contracts
 	 */

@@ -94,7 +94,7 @@ class FinancialInstitutionAccountController
 		}
 		
 		$endDate = Carbon::make($balanceDate)->addYear(FinancialInstitutionAccount::NUMBER_OF_YEARS_FOR_INTEREST_IN_CURRENT_STATEMENT)->format('Y-m-d');
-			$financialInstitutionAccount->handleEndOfMonthInterest($balanceDate,$endDate,$company->id);
+			//$financialInstitutionAccount->handleEndOfMonthInterest($balanceDate,$endDate,$company->id);
 		if($company->hasOdooIntegrationCredentials()){
 			$odoo = new OdooService($company);
 			$odoo->syncFinancialInstitutions();

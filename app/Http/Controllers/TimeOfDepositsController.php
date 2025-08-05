@@ -179,7 +179,7 @@ class TimeOfDepositsController
 		}
 		$odooCode = $request->get('odoo_code') ;
 		$deductedFromAccountId = $request->get('deducted_from_account_id',0) ;
-		if($company->hasOdooIntegrationCredentials()   && $odooCode ){
+		if($company->hasOdooIntegrationCredentials()    && $odooCode ){
 			$odooService = new OdooService($company);
 			$odooCode = $request->get('odoo_code');
 			$chartOfAccountId = $odooService->getChartOfAccountIdFromOdooCode($odooCode);
@@ -249,6 +249,9 @@ class TimeOfDepositsController
 	}
 	public function applyPeriodInterest(Company $company,Request $request,FinancialInstitution $financialInstitution,TimeOfDeposit $timeOfDeposit)
 	{
+		/**
+		 * ! No Odoo Service Yet
+		 */
 		$periodInterestAmount = number_unformat($request->get('periodic_interest_amount')) ;
 		$periodInterestDate = $request->get('periodic_interest_date') ;
 		$timeOfDeposit->applyPeriodicInterestInStatement($financialInstitution,$periodInterestAmount,$periodInterestDate);
@@ -263,6 +266,9 @@ class TimeOfDepositsController
 	}
 	public function deletePeriodInterest(Company $company,Request $request,FinancialInstitution $financialInstitution,TimeOfDeposit $timeOfDeposit,CurrentAccountBankStatement $currentAccountBankStatement)
 	{
+		/**
+		 * ! No Odoo Service Yet
+		 */
 		CurrentAccountBankStatement::deleteButTriggerChangeOnLastElement($timeOfDeposit->currentAccountBankStatements->where('id',$currentAccountBankStatement->id));
 		return redirect()->back()->with('success',__('Item Has Been Updated Successfully'));
 	}
@@ -374,6 +380,10 @@ class TimeOfDepositsController
 	 */
 	public function reverseBroken(Company $company,Request $request,FinancialInstitution $financialInstitution,TimeOfDeposit $timeOfDeposit)
 	{
+		/**
+		 * ! No Odoo Service Yet
+		 */
+		
 		// $actualDepositDate = Carbon::make($request->get('actual_deposit_date'))->format('Y-m-d') ;
 		// $actualInterestAmount  = $request->get('actual_interest_amount') ;
 		$type = TimeOfDeposit::RUNNING ;

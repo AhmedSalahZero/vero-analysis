@@ -166,10 +166,10 @@ public function update(Company $company, StoreOpeningBalanceRequest $request, Cu
 			$currencyName = $openingBalanceArr['currency'];
 			$partner = Partner::find($partnerId);
 			$invoiceNumber = $openingBalanceArr['invoice_number'];
-			$contractName = $openingBalanceArr['contract_name'];
-			$contractCode = $openingBalanceArr['contract_code'];
-			$contractDate = $openingBalanceArr['contract_date'];
-			$salesOrderNumber = $openingBalanceArr['sales_order_number'];
+			$contractName = $openingBalanceArr['contract_name']??null;
+			$contractCode = $openingBalanceArr['contract_code']??null;
+			$contractDate = $openingBalanceArr['contract_date']??null;
+			$salesOrderNumber = $openingBalanceArr['sales_order_number']??null;
 			$invoiceDueDate = Carbon::make($openingBalanceArr['invoice_due_date'])->format('Y-m-d');
             $exchangeRate = isset($openingBalanceArr['exchange_rate']) ? $openingBalanceArr['exchange_rate'] : 1  ;
 			return [

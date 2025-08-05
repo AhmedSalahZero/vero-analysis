@@ -1,6 +1,7 @@
 <?php
 namespace App\Traits;
 
+use App\Models\CurrentAccountBankStatement;
 use App\Models\FinancialInstitutionAccount;
 use Carbon\Carbon;
 
@@ -23,8 +24,10 @@ trait HasBankStatement
 			]);
 		}
 	}
-	
-	public function handleEndOfMonthInterest(string $contractStartDate , string $contractEndDate , int $companyId)
+	/**
+	 * *  دا محدود بتاريخ بدايه ونهايه وبالتالي مش هيحصل حركات خارجهم
+	 */
+	public function handleEndOfMonthInterestForContractStatements(string $contractStartDate , string $contractEndDate , int $companyId)
 	{
 		$isFinancialInstitutionAccount  = new self instanceof FinancialInstitutionAccount ; 
 		$foreignKeyColumnName = self::generateForeignKeyFormModelName(); // clean_overdraft_id for clean_overdrafts for example
@@ -38,7 +41,6 @@ trait HasBankStatement
 		
 		$dates = generateDatesBetweenTwoDatesWithoutOverflow($contractStartDateAsCarbon,$contractEndDateAsCarbon) ;
 		$countDates = count($dates);
-		// highest_debit_balance
 		$interestText = 'interest';
 		$interestTypeText = 'end_of_month';
 		$fullBankStatement::where('company_id',$companyId)->where('type',$interestText)->where($foreignKeyColumnName,$this->id)->where('interest_type',$interestTypeText)->where('date','>',$contractEndDate)->delete();
@@ -70,5 +72,6 @@ trait HasBankStatement
 			
 		}
 	}
+
 	
 }

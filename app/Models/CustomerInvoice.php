@@ -616,5 +616,8 @@ class CustomerInvoice extends Model implements IInvoice
 				}
 			}
 	}
-	
+	public function getSalesOrderNumber()
+	{
+		return $this->sales_order_number;
+	}
 }

@@ -166,10 +166,10 @@ public function update(Company $company, StoreOpeningBalanceRequest $request, Su
 			
 			
 			$invoiceNumber = $openingBalanceArr['invoice_number'];
-			$contractName = $openingBalanceArr['contract_name'];
-			$contractCode = $openingBalanceArr['contract_code'];
-			$contractDate = $openingBalanceArr['contract_date'];
-			$salesOrderNumber = $openingBalanceArr['sales_order_number'];
+			$contractName = $openingBalanceArr['contract_name']??null;
+			$contractCode = $openingBalanceArr['contract_code']??null;
+			$contractDate = $openingBalanceArr['contract_date']??null;
+			$purchasesOrderNumber = $openingBalanceArr['purchases_order_number']??null;
 			
             $exchangeRate = isset($openingBalanceArr['exchange_rate']) ? $openingBalanceArr['exchange_rate'] : 1  ;
 			return [
@@ -186,7 +186,7 @@ public function update(Company $company, StoreOpeningBalanceRequest $request, Su
 				'contract_code'=>$contractCode,
 				'project_name'=>$contractName,
 				'contract_date'=>$contractDate,
-				'sales_order_number'=>$salesOrderNumber,
+				'purchases_order_number'=>$purchasesOrderNumber,
 		];
 	}
 	

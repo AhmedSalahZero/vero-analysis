@@ -16,6 +16,9 @@ begin
 		set new.beginning_balance = if(_count_all_rows,_last_end_balance,ifnull(new.beginning_balance,0)); 
 		
 		set new.end_balance = ifnull(new.beginning_balance + new.debit - new.credit,0) ; 
+		insert into debugging (message) values(concat('beg',new.beginning_balance));
+		insert into debugging (message) values(concat('debit',new.debit));
+		insert into debugging (message) values(concat('credit',new.credit));
 		set new.is_debit = if(new.debit > 0 , 1 , 0);
 		set new.is_credit = if(new.debit > 0 , 0 , 1);
 	
@@ -87,7 +90,7 @@ begin
 	
 	 set new.beginning_balance = _last_end_balance ;
 	 
-	set new.end_balance = ifnull(new.beginning_balance + new.debit - new.credit,0) ; 
+	
 	
 	
 	
@@ -126,13 +129,15 @@ begin
 					
 						-- بدايه حسبه فايدة نهايه كل شهر
 					select sum(interest_amount)  into _total_month_interest_amount from   current_account_bank_statements where id!= new.id and company_id = new.company_id and financial_institution_account_id = new.financial_institution_account_id and month(date) = month(new.date) and year(date) = year(new.date) ; 
-					insert into debugging (message) values(concat('amount',_total_month_interest_amount,'min interest',_min_interest_balance));
 					set _total_month_interest_amount = ifnull(_total_month_interest_amount,0); 
 					if(new.interest_type = 'end_of_month' && new.end_balance >= _min_interest_balance 
 					-- && new.debit <= 0
 					) then  
 						set new.debit = _total_month_interest_amount+new.interest_amount ;	
 					end if ;
+					
+					set new.end_balance = ifnull(new.beginning_balance + new.debit - new.credit,0) ; 
+					
 			-- نهاية حسبه فايدة نهايه كل شهر
 					
 	

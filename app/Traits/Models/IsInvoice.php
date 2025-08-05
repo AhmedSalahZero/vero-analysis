@@ -413,8 +413,6 @@ trait IsInvoice
 	}public function getContractDate()
 	{
 		return $this->contract_date;
-	}public function getSalesOrderNumber()
-	{
-		return $this->sales_order_number;
 	}
+	
 }

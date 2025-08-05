@@ -481,5 +481,8 @@ class SupplierInvoice extends Model implements IInvoice
 			
 	}
 	
-	
+public function getPurchasesOrderNumber()
+	{
+		return $this->purchases_order_number;
+	}	
 }
