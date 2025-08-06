@@ -203,7 +203,6 @@ use App\Models\LetterOfGuaranteeIssuance;
 
 
                                     <div class="col-md-5">
-
                                         <label>{{__('Beneficiary Name')}}
                                             @include('star')
                                         </label>

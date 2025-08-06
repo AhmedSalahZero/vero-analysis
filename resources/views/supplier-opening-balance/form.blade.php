@@ -870,7 +870,7 @@ $(document).on('change', '.ajax-get-contracts-for-supplier', function(e) {
                             customerOrSupplierId
                         }
                         , success: function(res) {
-                            var options = '';
+                            var options = '<option value="0" selected>Select</option>';
                             for (var contract of res.projects) {
                                 var selected = contract.name == currentContractName ? 'selected' : '';
                                 options += `<option ${selected} data-contract-code="${contract.code}" data-contract-date="${contract.start_date}" data-contract-id="${contract.id}"  value="${contract.name}">${contract.name}</option>`
@@ -905,7 +905,6 @@ $(document).on('change', '.ajax-get-contracts-for-supplier', function(e) {
                                 var purchaseOrderSelected = purchaseOrder[poOrSoNumber] == currentSalesOrderNumber ? 'selected' : '';
                                 purchaseOrdersOptions += `<option ${purchaseOrderSelected} data-date="${purchaseOrder.start_date_1}" value="${purchaseOrder[poOrSoNumber]}"> ${purchaseOrder[poOrSoNumber]}</option>`
                             }
-                            console.log(purchaseOrdersOptions, contractId)
                             parent.find('select[data-current-sales-order-number]').empty().append(purchaseOrdersOptions).trigger('change');
                         }
                     })

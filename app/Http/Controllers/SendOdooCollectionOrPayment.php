@@ -23,7 +23,7 @@ class SendOdooCollectionOrPayment extends Controller
 		})->
 		whereBetween(DB::raw('DATE(created_at)'), [$startDate, $endDate])
 		->where('company_id',$company->id)->get();
-		// syncFinancialInstitutions
+
 		
 		foreach($customerInvoiceSettlements as $customerInvoiceSettlement){
 				$OdooPaymentService->reCreatePayment($customerInvoiceSettlement);

@@ -93,11 +93,11 @@ class FinancialInstitutionAccountController
 			
 		}
 		
-		$endDate = Carbon::make($balanceDate)->addYear(FinancialInstitutionAccount::NUMBER_OF_YEARS_FOR_INTEREST_IN_CURRENT_STATEMENT)->format('Y-m-d');
+	//	$endDate = Carbon::make($balanceDate)->addYear(FinancialInstitutionAccount::NUMBER_OF_YEARS_FOR_INTEREST_IN_CURRENT_STATEMENT)->format('Y-m-d');
 			//$financialInstitutionAccount->handleEndOfMonthInterest($balanceDate,$endDate,$company->id);
 		if($company->hasOdooIntegrationCredentials()){
 			$odoo = new OdooService($company);
-			$odoo->syncFinancialInstitutions();
+			$odoo->syncFinancialInstitutions($financialInstitutionAccount);
 		}
 		
 	
@@ -112,18 +112,13 @@ class FinancialInstitutionAccountController
 			$dataToUpdate['start_date'] = isset($dataToUpdate['start_date']) ? Carbon::make($dataToUpdate['start_date'])->format('Y-m-d') : null;
 			$currentAccountRate = $financialInstitutionAccount->accountInterests()->where('account_interests.id',$id) ;
 			$currentAccountRate->update($dataToUpdate);
-			// if($dataToUpdate['start_date']){
-			// 	$currentAccountRate->financialInstitutionAccount->updateBankStatementsFromDate($dataToUpdate['start_date']);
-			// }
+			
 		}
 		foreach($request->get('account_interests') as $accountInterestArr){
 			if(!isset($accountInterestArr['id'])){
 				unset($accountInterestArr['id']);
 				$accountInterestArr['start_date'] = isset($accountInterestArr['start_date']) ? Carbon::make($accountInterestArr['start_date'])->format('Y-m-d') : null;
 				$currentAccountRate = $financialInstitutionAccount->accountInterests()->create($accountInterestArr);
-				// if($accountInterestArr['start_date']){
-				// 	$currentAccountRate->financialInstitutionAccount->updateBankStatementsFromDate($dataToUpdate['start_date']);
-				// }
 			}
 		}
 		/**
@@ -140,7 +135,6 @@ class FinancialInstitutionAccountController
 											->min('date');
 		if($minDateInCurrentAccountStatement){
 			$financialInstitutionAccount->updateBankStatementsFromDate($minDateInCurrentAccountStatement);
-			
 		}
 		return redirect()->route('view.all.bank.accounts',['company'=>$company->id ,'financialInstitution'=>$financialInstitution->id])->with('success',__('Item Has Been Updated Successfully'));
 		

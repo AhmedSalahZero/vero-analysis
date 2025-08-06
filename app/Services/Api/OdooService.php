@@ -322,7 +322,7 @@ class OdooService
 		,array('state', '=', 'posted'),
 			array('write_date', '>=', $startDate),
 			array('write_date', '<=', $endDate),
-	//	array('name','=','INV/2025/00009')
+		// array('name','=','INV/2025/00008')
 			// array('name','=','INV/2025/00009')
 			// ,['name','=','INV/2025/00004']
 		));
@@ -419,7 +419,7 @@ class OdooService
 			return  $chartOfAccounts[$odooCode]['id']??null;
 			 
 	}
-	public function syncFinancialInstitutions()
+	public function syncFinancialInstitutions(FinancialInstitutionAccount $financialInstitutionAccount)
 	{
 		$odooSetting = $this->company->odooSetting;
 	
@@ -435,13 +435,15 @@ class OdooService
 		$chartOfAccounts = $this->fetchData('account.account',$fields,$filters);
 		
 		$chartOfAccounts = collect($chartOfAccounts)->keyBy('code')->toArray();
-			$financialInstitutionAccounts = FinancialInstitutionAccount::where('company_id',$this->company_id)->whereNotNull('odoo_code')->get();
+	//		$financialInstitutionAccounts = FinancialInstitutionAccount::where('company_id',$this->company_id)->whereNotNull('odoo_code')->get();
 
-			foreach($financialInstitutionAccounts as $financialInstitutionAccount){
+		//	foreach($financialInstitutionAccounts as $financialInstitutionAccount){
 				$codeCode = $financialInstitutionAccount->getOdooCode();
+		
 				if($codeCode){
 					$currentJournal = $chartOfAccounts[$codeCode]??null;
 					$chartOfAccountId = $currentJournal ? $currentJournal['id'] : null;
+					
 					if($chartOfAccountId){
 						$journalId = $this->getJournalIdFromChartOfAccountId($chartOfAccountId) ;
 						$odooInboundTransferPaymentMethodId = $this->getPaymentMethodId($journalId,$chartOfAccountId,'inbound');
@@ -467,7 +469,7 @@ class OdooService
 					}
 					
 				}
-			}
+		//	}
 			
 			
 	
@@ -489,8 +491,9 @@ class OdooService
 		$odooBranch = $this->fetchData('account.account',$fields,$filters)[0]??null;
 		$chartOfAccountId= $odooBranch['id'];
 		$journalId = $this->getJournalIdFromChartOfAccountId($chartOfAccountId);
-		if($odooBranch){
-			$odooInboundTransferPaymentMethodId = $this->getPaymentMethodId($journalId,$chartOfAccountId,'inbound');
+		if($odooBranch && $journalId){
+			
+					$odooInboundTransferPaymentMethodId = $this->getPaymentMethodId($journalId,$chartOfAccountId,'inbound');
 						$odooOutboundTransferPaymentMethodId = $this->getPaymentMethodId($journalId,$chartOfAccountId,'outbound');
 						$chequeReceivableId=$odooSetting ? $odooSetting->getChequesReceivableId() : null;
 						$chequePayableId=$odooSetting ? $odooSetting->getChequesPayableId() : null;

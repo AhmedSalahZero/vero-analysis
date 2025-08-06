@@ -6918,12 +6918,12 @@ function getHeaderMenu($currentCompany = null)
 					'show'=>$user->can('view cash expenses'),
 					'submenu'=>[]
 				],
-				[
-					'title'=>__('Approved Expenses'),
-					'link'=>route('odoo-expenses.index', ['company'=>$companyId]),
-					'show'=>$company->hasOdooIntegrationCredentials(),
-					'submenu'=>[]
-				],
+				// [
+				// 	'title'=>__('Approved Expenses'),
+				// 	'link'=>route('odoo-expenses.index', ['company'=>$companyId]),
+				// 	'show'=>$company->hasOdooIntegrationCredentials(),
+				// 	'submenu'=>[]
+				// ],
 				
 				[
 					'title'=>__('LC Settlement Internal Transfer'),

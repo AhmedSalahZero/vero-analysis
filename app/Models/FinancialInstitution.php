@@ -222,7 +222,7 @@ class FinancialInstitution extends Model
 					'balance_date'=>$currentBalanceDate,
 					'company_id'=>getCurrentCompanyId(),
 				]);
-				$endDate = Carbon::make($balanceDate)->addYear(FinancialInstitutionAccount::NUMBER_OF_YEARS_FOR_INTEREST_IN_CURRENT_STATEMENT)->format('Y-m-d');
+			//	$endDate = Carbon::make($balanceDate)->addYear(FinancialInstitutionAccount::NUMBER_OF_YEARS_FOR_INTEREST_IN_CURRENT_STATEMENT)->format('Y-m-d');
 			//	$account->handleEndOfMonthInterest($balanceDate,$endDate,$company->id);
 			}
 				
@@ -253,13 +253,13 @@ class FinancialInstitution extends Model
 			]);
 			
 			$account->updateBankStatementsFromDate($currentBalanceDate);
+			if($company->hasOdooIntegrationCredentials()){
+				$odoo = new OdooService($company);
+				$odoo->syncFinancialInstitutions($account);
+			}
 		}
 		
 			
-		if($company->hasOdooIntegrationCredentials()){
-			$odoo = new OdooService($company);
-			$odoo->syncFinancialInstitutions();
-		}
 		
 	}
 	

@@ -454,7 +454,7 @@ use App\Models\Contract;
 
                 <li class="nav-item">
                     <a class="nav-link {{ Request('active') == Contract::FINISHED ?'active':'' }}" data-toggle="tab" href="#{{ Contract::FINISHED }}" role="tab">
-                        <i class="fa fa-money-check-alt"></i> {{ __('Finished') }}
+                        <i class="fa fa-check-double"></i> {{ __('Finished') }}
                     </a>
                 </li>
 
@@ -595,7 +595,7 @@ use App\Models\Contract;
                                             @endif
 
                                             @if($currentType == Contract::RUNNING )
-                                            <a data-toggle="modal" data-target="#mark-as-finished-contract-{{ $mainItemId }}" type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="{{ __('Finished') }}" href="#"><i class="fa fa-thumbs-up"></i></a>
+                                            <a data-toggle="modal" data-target="#mark-as-finished-contract-{{ $mainItemId }}" type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon" title="{{ __('Finished') }}" href="#"><i class="fa fa-check-double"></i></a>
                                             <div class="modal fade" id="mark-as-finished-contract-{{ $mainItemId }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                                     <div class="modal-content">

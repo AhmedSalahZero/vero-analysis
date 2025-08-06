@@ -20,7 +20,7 @@ class SupplierOpeningBalancesController
 
     public function index(Company $company, Request $request)
     {
-        $suppliers = Partner::where('company_id', $company->id)->where('is_supplier',1)->get()->formattedForSelect(true, 'getId', 'getName');
+        $suppliers = Partner::where('company_id', $company->id)->where('is_supplier',1)->orderBy('name','asc')->get()->formattedForSelect(true, 'getId', 'getName');
 //        $banks = Bank::pluck('view_name', 'id');
         return view('supplier-opening-balance.form', [
             'company' => $company,

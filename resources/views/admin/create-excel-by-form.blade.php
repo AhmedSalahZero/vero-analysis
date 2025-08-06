@@ -745,7 +745,7 @@
                 customerOrSupplierId
             }
             , success: function(res) {
-                var options = '';
+                var options = '<option value="0" selected>Select</option>';
                 for (var contract of res.projects) {
                     var selected = contract.id == currentContractId ? 'selected' : '';
                     options += `<option ${selected} data-contract-code="${contract.code}" data-contract-date="${contract.start_date}"  value="${contract.id}">${contract.name}</option>`

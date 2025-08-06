@@ -31,7 +31,7 @@ class CustomerOpeningBalancesController
         // $financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
         // $accountTypes = AccountType::onlyCashAccounts()->get();
         // $selectedBanks = MoneyReceived::getDrawlBanksForCurrentCompany($company->id) ;
-        $customers = Partner::where('company_id', $company->id)->where('is_customer',1)->get()->formattedForSelect(true, 'getId', 'getName');
+        $customers = Partner::where('company_id', $company->id)->where('is_customer',1)->orderBy('name','asc')->get()->formattedForSelect(true, 'getId', 'getName');
         // $customers = Partner::where('company_id', $company->id)->where('is_customer',1)->get()->formattedForSelect(true, 'getId', 'getName');
 		// $selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
 

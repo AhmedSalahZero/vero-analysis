@@ -131,13 +131,17 @@
                                                                 </label>
                                                                 <label class="kt-radio kt-radio--success text-black font-size-18px font-weight-bold">
 
-                                                                    <input @if($companyHasOdoo) disabled @endif type="checkbox" value="1" name="is_customer" @if(isset($model) && $model->isCustomer()) checked @endisset
+                                                                    <input 
+																	{{-- @if($companyHasOdoo) disabled @endif --}}
+																	 type="checkbox" value="1" name="is_customer" @if(isset($model) && $model->isCustomer()) checked @endisset
                                                                     > {{ __('Customer') }}
                                                                     <span></span>
                                                                 </label>
 
                                                                 <label class="kt-radio kt-radio--danger text-black font-size-18px font-weight-bold">
-                                                                    <input @if($companyHasOdoo) disabled @endif type="checkbox" value="1" name="is_supplier" @if(isset($model) && $model->isSupplier()) checked @endisset
+                                                                    <input 
+																	{{-- @if($companyHasOdoo) disabled @endif  --}}
+																	type="checkbox" value="1" name="is_supplier" @if(isset($model) && $model->isSupplier()) checked @endisset
                                                                     > {{ __('Supplier') }}
                                                                     <span></span>
                                                                 </label>
