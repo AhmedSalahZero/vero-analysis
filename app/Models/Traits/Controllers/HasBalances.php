@@ -86,7 +86,7 @@ trait HasBalances
 					$currentData['document_type'] = 'Collection';
 					$currentData['document_no'] = $invoiceNumber;
 					$currentData['debit'] = 0  ;
-					$currentData['credit'] =$customerInvoice->odoo_collected_amount;
+					$currentData['credit'] = $isMainCurrency ? $customerInvoice->odoo_collected_amount_in_main_currency : $customerInvoice->odoo_collected_amount;
 					$currentData['comment'] =__('Collected Amount');
 					$index++ ;
 					$formattedData[$index]=$currentData;
@@ -98,18 +98,19 @@ trait HasBalances
 					$currentData['date'] = $invoiceDate;
 					$currentData['document_type'] = 'Paid';
 					$currentData['document_no'] = $invoiceNumber;
-					$currentData['debit'] = $customerInvoice->odoo_paid_amount  ;
+					$currentData['debit'] = $isMainCurrency  ? $customerInvoice->odoo_paid_amount_in_main_currency : $customerInvoice->odoo_paid_amount  ;
 					$currentData['credit'] =0;
 					$currentData['comment'] =__('Paid Amount');
 					$index++ ;
 					$formattedData[$index]=$currentData;
 			}
 			if($customerInvoice->odoo_withhold_amount>0){
+				$currentWithholdAmount = $isMainCurrency ?  $customerInvoice->odoo_withhold_amount_in_main_currency : $customerInvoice->odoo_withhold_amount ; 
 					$currentData['date'] = $invoiceDate;
 					$currentData['document_type'] = 'Withhold Taxes';
 					$currentData['document_no'] = $invoiceNumber;
-					$currentData['debit'] = $isCustomer ? 0 : $customerInvoice->odoo_withhold_amount  ;
-					$currentData['credit'] = $isCustomer ? $customerInvoice->odoo_withhold_amount : 0;
+					$currentData['debit'] = $isCustomer ? 0 : $currentWithholdAmount  ;
+					$currentData['credit'] = $isCustomer ? $currentWithholdAmount : 0;
 					$currentData['comment'] =__('Withhold Taxes');
 					$index++ ;
 					$formattedData[$index]=$currentData;
@@ -163,7 +164,9 @@ trait HasBalances
 		foreach($allMoneyModels as $moneyModel) {
 		
 			$dateReceivingFormatted = $moneyModel->getReceivingOrPaymentMoneyDateFormatted() ;
+			$isAdvancedOpeningBalance = $moneyModel->isAdvancedOpeningBalance();
 			$moneyModelType = $moneyModel->getType();
+			$moneyModelType = $isAdvancedOpeningBalance ?  __('Down Payments') : $moneyModelType;
 			$docNumber = $moneyModel->getNumber();
 				$moneyModelAmount = $isMainCurrency ? $moneyModel->getAmountForMainCurrency() :$moneyModel->getAmountInInvoiceCurrency() ;
 				if($moneyModelAmount){

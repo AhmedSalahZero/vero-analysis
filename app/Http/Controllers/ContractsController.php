@@ -1,6 +1,5 @@
 <?php
 namespace App\Http\Controllers;
-use App\Http\Requests\DeleteContractRequest;
 use App\Http\Requests\StoreContractRequest;
 use App\Models\Company;
 use App\Models\Contract;
@@ -228,6 +227,7 @@ class ContractsController
 		$purchaseOrder = PurchaseOrder::find($request->get('po_id'));
 		$purchaseOrder->allocations()->delete();
 		foreach( $request->get('poAllocations',[])  as $index => $purchaseOrderArr){
+				$purchaseOrderArr['allocation_amount'] = number_unformat($purchaseOrderArr['allocation_amount'] ?? 0);
 				$purchaseOrder->allocations()->create($purchaseOrderArr);
 		}
 		return redirect()->back();

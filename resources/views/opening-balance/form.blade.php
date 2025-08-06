@@ -7,8 +7,11 @@ use App\Models\MoneyReceived ;
 <link href="{{ url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css') }}" rel="stylesheet" type="text/css" />
 <style>
+.js-parent-to-table{
+	min-height:500px !important; 
+}
     .bootstrap-select .dropdown-menu {
-        max-height: 100px !important;
+        max-height: 500px !important;
         /* Adjust height as needed */
         overflow-y: auto !important;
         /* Enable vertical scrollbar */
@@ -627,7 +630,7 @@ use App\Models\MoneyReceived ;
 
 
 
-                    <div class="kt-portlet">
+                    <div class="kt-portlet" >
 
                         <div class="kt-portlet__head">
                             <div class="kt-portlet__head-label">

@@ -13,7 +13,7 @@ use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\DB;
 use Schema;
-
+use Str;
 
 class TestCommand extends Command
 {
@@ -43,9 +43,10 @@ class TestCommand extends Command
 	
 	public function handle()
 	{
-		$company = Company::find(92);
-		$odooService = new OdooPayment($company);
-		dd($odooService->fetchData('account.payment',[],[[['name','=','PCSH1/2025/00004']]]));
+		// dd(Str::startsWith('EXCH/2025/07/0001','EXCH/'));
+		// $company = Company::find(92);
+		// $odooService = new OdooPayment($company);
+		// dd($odooService->fetchData('account.payment',[],[[['name','=','PCSH1/2025/00004']]]));
 	}
 	
 	/**

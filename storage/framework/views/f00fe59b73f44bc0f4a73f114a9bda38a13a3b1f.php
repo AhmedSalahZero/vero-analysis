@@ -1268,8 +1268,8 @@
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="submit" class="btn  btn-primary "><?php echo e(__('Submit')); ?></button>
                                 <button type="button" class="btn btn-primary" data-dismiss="modal"><?php echo e(__('Close')); ?></button>
+                                <button type="submit" class="btn  btn-primary "><?php echo e(__('Submit')); ?></button>
                             </div>
                         </form>
                     </div>
@@ -1329,8 +1329,8 @@
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="submit" class="btn  btn-primary "><?php echo e(__('Submit')); ?></button>
                                 <button type="button" class="btn btn-primary" data-dismiss="modal"><?php echo e(__('Close')); ?></button>
+                                <button type="submit" class="btn  btn-primary "><?php echo e(__('Submit')); ?></button>
                             </div>
                         </form>
                     </div>
@@ -1391,8 +1391,8 @@
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="submit" class="btn  btn-primary "><?php echo e(__('Submit')); ?></button>
                                 <button type="button" class="btn btn-primary" data-dismiss="modal"><?php echo e(__('Close')); ?></button>
+                                <button type="submit" class="btn  btn-primary "><?php echo e(__('Submit')); ?></button>
                             </div>
                         </form>
                     </div>
@@ -1460,8 +1460,8 @@
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="submit" class="btn  btn-primary "><?php echo e(__('Submit')); ?></button>
                                 <button type="button" class="btn btn-primary" data-dismiss="modal"><?php echo e(__('Close')); ?></button>
+                                <button type="submit" class="btn  btn-primary "><?php echo e(__('Submit')); ?></button>
                             </div>
                         </form>
                     </div>
@@ -1520,8 +1520,8 @@
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="submit" class="btn  btn-primary "><?php echo e(__('Submit')); ?></button>
                                 <button type="button" class="btn btn-primary" data-dismiss="modal"><?php echo e(__('Close')); ?></button>
+                                <button type="submit" class="btn  btn-primary "><?php echo e(__('Submit')); ?></button>
                             </div>
                         </form>
                     </div>

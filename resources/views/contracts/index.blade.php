@@ -535,7 +535,7 @@ use App\Models\Contract;
                                         <i class="row_icon{{ $mainItemId }} flaticon2-up  mr-2  "></i>
                                         @endif
                                         <b class="text-capitalize ">
-                                            <b class="text-capitalize ">{{ $parent['client_name'] }}</b>
+                                            <b class="text-capitalize text-wrap">{{ $parent['client_name'] }}</b>
                                         </b>
 
                                     </div>
@@ -543,7 +543,7 @@ use App\Models\Contract;
                                 <td class="text-center">
                                     <b class="text-capitalize ">
 
-                                        <b class="text-capitalize ">{{ $parent['name'] }}</b>
+                                        <b class="text-capitalize text-wrap">{{ $parent['name'] }}</b>
                                     </b>
 
                                 </td>
@@ -849,7 +849,6 @@ use App\Models\Contract;
                                         </div>
                                     </div>
                                 </td>
-
                                 <td>
                                     <div class="kt-input-icon ">
                                         <div class="input-group">

@@ -19,6 +19,7 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Str;
 
 class OdooService
 {
@@ -166,6 +167,10 @@ class OdooService
 			$collectedAmount = 0 ;
 			$collectedAmountInMainCurrency = 0 ;
 			foreach($invoice['invoice_payments_widget']['content'] ??[] as $index=>$collectionArr){
+				$isExchangeDifference = Str::startsWith($collectionArr['ref'],'EXCH/');
+				if($isExchangeDifference){
+					continue ; 
+				}
 				$collectedAmount+= ($collectionArr['amount']);
 				$collectedAmountInMainCurrency+= convertStringWithNumberToNumber($collectionArr['amount_company_currency']);
 			}
@@ -317,7 +322,7 @@ class OdooService
 		,array('state', '=', 'posted'),
 			array('write_date', '>=', $startDate),
 			array('write_date', '<=', $endDate),
-		//	array('name','=','INV/2025/00009')
+	//	array('name','=','INV/2025/00009')
 			// array('name','=','INV/2025/00009')
 			// ,['name','=','INV/2025/00004']
 		));

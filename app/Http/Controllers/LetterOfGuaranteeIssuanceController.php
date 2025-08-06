@@ -254,14 +254,7 @@ class LetterOfGuaranteeIssuanceController
 		if($letterOfGuaranteeIssuance->renewalDateHistories->count()  > 1){
 			return redirect()->route('view.letter.of.guarantee.issuance',['company'=>$company->id,'active'=>$request->get('lg_type',$letterOfGuaranteeIssuance->getLgType())])->with('success',__('Data Store Successfully'));
 		}
-		// $request->merge([
-		// 	'journal_entry_id'=>$letterOfGuaranteeIssuance->journal_entry_id,
-		// 	'account_bank_statement_odoo_id'=>$letterOfGuaranteeIssuance->account_bank_statement_odoo_id,
-		// 	'odoo_id'=>$letterOfGuaranteeIssuance->odoo_id,
-		// ]);
-		// $newCashCoverAccountId = $request->has('cash_cover_deducted_from_account_id') ? $request->get('cash_cover_deducted_from_account_id') : $request->get('lg_fees_and_commission_account_id');
-		// $accountNumberHasChanged = $newCashCoverAccountId != $letterOfGuaranteeIssuance->getCashCoverDeductedFromAccountId();
-		/**
+			/**
 		 * * لو هو 
 		 * * opening 
 		 * * يبقي هنحذف اللي عملناه في اودو

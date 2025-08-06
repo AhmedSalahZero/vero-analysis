@@ -50,7 +50,6 @@ trait AuthTrait
 	}
 	   private function execute($model, $method, $args,$kwargs = [])
     {
-		
         $result = $this->models->execute_kw(
             $this->db,
             $this->uid,
