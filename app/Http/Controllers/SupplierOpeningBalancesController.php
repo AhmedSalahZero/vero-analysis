@@ -20,25 +20,14 @@ class SupplierOpeningBalancesController
 
     public function index(Company $company, Request $request)
     {
-        // $financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
-        // $accountTypes = AccountType::onlyCashAccounts()->get();
-        // $selectedBanks = MoneyReceived::getDrawlBanksForCurrentCompany($company->id) ;
         $suppliers = Partner::where('company_id', $company->id)->where('is_supplier',1)->get()->formattedForSelect(true, 'getId', 'getName');
-        // $suppliers = Partner::where('company_id', $company->id)->where('is_supplier',1)->get()->formattedForSelect(true, 'getId', 'getName');
-		// $selectedBranches =  Branch::getBranchesForCurrentCompany($company->id) ;
-
-        $banks = Bank::pluck('view_name', 'id');
+//        $banks = Bank::pluck('view_name', 'id');
         return view('supplier-opening-balance.form', [
             'company' => $company,
             'model' => $company->supplierOpeningBalance,
 			'isCustomer'=>0,
-            // 'selectedBanks' => $selectedBanks,
-            // 'banks' => $banks,
             'suppliersFormatted' => $suppliers,
-            // 'financialInstitutionBanks' => $financialInstitutionBanks,
-            // 'accountTypes' => $accountTypes,
-			// 'suppliersFormatted'=>$suppliers,
-			// 'selectedBranches'=>$selectedBranches
+   
         ]);
     }
 
@@ -228,7 +217,7 @@ public function update(Company $company, StoreOpeningBalanceRequest $request, Su
 			return [
 				'company_id'=>$company->id ,
 				'contract_id'=>$openingBalanceArr['contract_id']??null,
-				'sales_order_id'=>null ,
+				'purchase_order_id'=>null ,
 				'supplier_id'=>$partnerId,
 				'down_payment_amount'=>$amount,
 				'down_payment_balance'=>$amount,

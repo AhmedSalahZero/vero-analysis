@@ -177,7 +177,7 @@ class MoneyPayment extends Model
 	}
 	public function getSupplierId()
 	{
-		return $this->getPartnerName();
+		return $this->partner_id;
 	}
 	public function getName()
 	{

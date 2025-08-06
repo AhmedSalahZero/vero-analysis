@@ -78,6 +78,9 @@ trait HasBalances
 				$tempArr[$index] = $currentData ;
 				
 			}
+			/**
+			 * * for customer
+			 */
 			if($customerInvoice->odoo_collected_amount>0){
 					$currentData['date'] = $invoiceDate;
 					$currentData['document_type'] = 'Collection';
@@ -88,12 +91,25 @@ trait HasBalances
 					$index++ ;
 					$formattedData[$index]=$currentData;
 			}
+			/**
+			 * * for supplier
+			 */
+			if($customerInvoice->odoo_paid_amount>0){
+					$currentData['date'] = $invoiceDate;
+					$currentData['document_type'] = 'Paid';
+					$currentData['document_no'] = $invoiceNumber;
+					$currentData['debit'] = $customerInvoice->odoo_paid_amount  ;
+					$currentData['credit'] =0;
+					$currentData['comment'] =__('Paid Amount');
+					$index++ ;
+					$formattedData[$index]=$currentData;
+			}
 			if($customerInvoice->odoo_withhold_amount>0){
 					$currentData['date'] = $invoiceDate;
 					$currentData['document_type'] = 'Withhold Taxes';
 					$currentData['document_no'] = $invoiceNumber;
-					$currentData['debit'] = 0  ;
-					$currentData['credit'] =$customerInvoice->odoo_withhold_amount;
+					$currentData['debit'] = $isCustomer ? 0 : $customerInvoice->odoo_withhold_amount  ;
+					$currentData['credit'] = $isCustomer ? $customerInvoice->odoo_withhold_amount : 0;
 					$currentData['comment'] =__('Withhold Taxes');
 					$index++ ;
 					$formattedData[$index]=$currentData;

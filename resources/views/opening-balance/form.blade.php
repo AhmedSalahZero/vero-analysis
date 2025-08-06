@@ -945,7 +945,7 @@ use App\Models\MoneyReceived ;
                                         __('Amount')=>'width-15',
                                         __('Cheque <br> Number')=>'width-15',
                                         __('Exchange <br> Rate')=>'width-8',
-                                        __('Pament <br> Bank')=>'drawee-bank-width',
+                                        __('Payment <br> Bank')=>'drawee-bank-width',
                                         __('Account <br> Type')=>'account-type-width',
                                         __('Account <br> Number')=>'account-number-width',
 
@@ -979,7 +979,6 @@ use App\Models\MoneyReceived ;
 
 
                                             <td>
-
                                                 <div class="input-group css-fix-plus-direction">
                                                     <x-form.select :add-new-modal="true" :add-new-modal-modal-type="'Supplier'" :add-new-modal-modal-name="'Partner'" :add-new-modal-modal-title="__('Supplier Name')" :options="$suppliersFormatted" :add-new="false" :label="' '" class="customer_name_class repeater-select" data-filter-type="{{ 'create' }}" :all="false" name="supplier_id" :selected-value="isset($payableCheques) ? $payableCheques->getSupplierId() : 0"></x-form.select>
                                                 </div>

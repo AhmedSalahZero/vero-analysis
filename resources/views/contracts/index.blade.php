@@ -822,7 +822,7 @@ use App\Models\Contract;
                                 </td>
 
                                 <td>
-                                    <x-form.select :insideModalWithJs="false" data-current-selected="{{ isset($poAllocation) ? $poAllocation->id : '' }}" :selectedValue="isset($poAllocation) ? $poAllocation->contract_id : ''" :options="[]" :add-new="false" class=" contracts-js   " data-filter-type="{{ 'create' }}" :all="false" data-name="contract_id" name="contract_id"></x-form.select>
+                                    <x-form.select :insideModalWithJs="false" data-current-selected="{{ isset($poAllocation) ? $poAllocation->contract_id : '' }}" :selectedValue="isset($poAllocation) ? $poAllocation->contract_id : ''" :options="[]" :add-new="false" class=" contracts-js   " data-filter-type="{{ 'create' }}" :all="false" data-name="contract_id" name="contract_id"></x-form.select>
                                     {{-- <div class="max-w-25">
 																					</div> --}}
                                 </td>
