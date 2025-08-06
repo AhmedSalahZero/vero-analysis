@@ -287,6 +287,7 @@
                     @php
                     $index = 0 ;
                     @endphp
+				
                     @foreach($cardNetBalances['currencies'] ?? [] as $currencyName=>$total)
                  	   <x-money-card   :main-functional-currency="$mainFunctionalCurrency" :invoiceType="$modelType" :show-report="1" :color="getColorFromIndex($index)" :currencyName="$currencyName" :total="$total"></x-money-card>
                     @php

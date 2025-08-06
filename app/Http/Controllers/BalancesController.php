@@ -22,12 +22,13 @@ class BalancesController
 		$id = 0 ;
 		foreach($items as $item){
 			$currencyName = $item->currency ;
+			$currentValueForMainCurrency= $item->net_balance_in_main_currency  ;
+			$currentValueForCurrency = $item->net_balance;
 			if(!$currencyName){
 				continue;
 			}
+			
 			$customerName = $item->{$clientNameColumnName} ;
-			$currentValueForCurrency = $item->net_balance;
-			$currentValueForMainCurrency= $item->net_balance_in_main_currency  ;
 			$total['currencies'][$currencyName] = isset($total['currencies'][$currencyName]) ? $total['currencies'][$currencyName] + $currentValueForCurrency   :  $currentValueForCurrency;
 			// $total['main_currency'][$mainCurrency] = isset($total['main_currency'][$mainCurrency]) ? $total['main_currency'][$mainCurrency] + $currentValueForMainCurrency  : $currentValueForMainCurrency;
 			$total['customers_per_currency'][$mainCurrency][$customerName][$id] =   $currentValueForCurrency;
@@ -57,8 +58,7 @@ class BalancesController
 		$downPaymentTableName = $fullClassName::DOWN_PAYMENT_SETTLEMENT_TABLE_NAME;
 		$downPaymentSettlementModelName=$fullClassName::DOWN_PAYMENT_SETTLEMENT_MODEL_NAME;
 		$moneyModelName=$fullClassName::MONEY_MODEL_NAME;
-		$invoiceNetBalanceSqlQuery = 'select partners.id as '. $clientIdColumnName .' , partners.name as '.$clientNameColumnName.' , currency , ifnull(sum(net_balance),0) as net_balance , ifnull(sum(net_balance_in_main_currency),0) as net_balance_in_main_currency from partners left join  '. $tableName .' on partners.id = '.$tableName.'.'.$clientIdColumnName.' where '.$isCustomerOrSupplierColumnName.'=1 and partners.company_id = '. $company->id .' group by partners.id, '.$clientIdColumnName.' , currency order by net_balance desc;';
-		
+		$invoiceNetBalanceSqlQuery = 'select partners.id as '. $clientIdColumnName .' , partners.name as '.$clientNameColumnName.' , currency , ifnull(sum(net_balance),0) as net_balance , ifnull(sum(net_balance_in_main_currency),0) as net_balance_in_main_currency from partners left join  '. $tableName .' on partners.id = '.$tableName.'.'.$clientIdColumnName.' where '.$isCustomerOrSupplierColumnName.'=1 and net_balance >0  and partners.company_id = '. $company->id .' group by partners.id, '.$clientIdColumnName.' , currency order by net_balance desc;';
 		$invoicesBalances =DB::select(DB::raw($invoiceNetBalanceSqlQuery));
 		$downPaymentSqlQuery =  'select  '.  $clientIdColumnName .' , currency , sum(down_payment_balance) as down_payment_balance from '. $downPaymentTableName .' where   company_id = '. $company->id .' group by '. $clientIdColumnName .' , currency  order by down_payment_balance desc;';
 		$partnerIds = collect($invoicesBalances)->pluck($clientIdColumnName,$clientIdColumnName)->toArray() ;
