@@ -388,7 +388,14 @@ trait IsInvoice
 
 			$invoiceData[self::ODOO_COLLETED_OR_PAID_AMOUNT_IN_MAIN_CURRENCY] = $collectedAmountInMainCurrency - $currentInvoice->{self::COLLETED_OR_PAID_AMOUNT_IN_MAIN_CURRENCY} ;
 			$invoiceData[self::ODOO_COLLETED_OR_PAID_AMOUNT_IN_MAIN_CURRENCY]  = $invoiceData[self::ODOO_COLLETED_OR_PAID_AMOUNT_IN_MAIN_CURRENCY]  < 0 ? 0 : $invoiceData[self::ODOO_COLLETED_OR_PAID_AMOUNT_IN_MAIN_CURRENCY] ;
-	
+			
+			// 'contract_code'=>$contract ? $contract->code : null,
+			// 'contract_name'=>$contract ? $contract->name : null,
+			// 'project_name'=>$contract ? $contract->name : null,
+			$invoiceData['contract_code'] = is_null($invoiceData['contract_code'])  ? $currentInvoice->contract_code : $invoiceData['contract_code'];
+			$invoiceData['contract_name'] = is_null($invoiceData['contract_name'])  ? $currentInvoice->contract_name : $invoiceData['contract_name'];
+			$invoiceData['project_name'] = is_null($invoiceData['project_name'])  ? $currentInvoice->project_name : $invoiceData['project_name'];
+			
 			$currentInvoice->update($invoiceData);
 			
 			return  $currentInvoice->id ;
