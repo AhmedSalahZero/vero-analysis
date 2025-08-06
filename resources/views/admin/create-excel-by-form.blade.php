@@ -209,7 +209,6 @@
  @foreach($currentExportables as $name=>$title)
  
  @php
- logger($name);
                                     $fieldTypeAndClassDefaultValue = getFieldTypeAndClassFromTitle($title);
                                     $fieldType = $fieldTypeAndClassDefaultValue['type'];
                                     $fieldClass = $fieldTypeAndClassDefaultValue['class'] ?? '';

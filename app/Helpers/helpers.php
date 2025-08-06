@@ -21,6 +21,7 @@ use App\Models\BalanceSheet;
 use App\Models\Branch;
 use App\Models\CachingCompany;
 use App\Models\CashFlowStatement;
+use App\Models\CashVeroBusinessSector;
 use App\Models\CollectionSetting;
 use App\Models\Company;
 use App\Models\Country;
@@ -5922,6 +5923,16 @@ function getFieldTypeAndClassFromTitle(string $title):array
 			'options'=>Partner::where('company_id',getCurrentCompanyId())->where('is_supplier',1)->pluck('name','id')->toArray(),
 		]; 
 	}
+	if(Str::contains($title, 'Business Sector') ) {
+		return [
+			'type'=>'select',
+			'class'=>'',
+			'default_value'=>'',
+			'name'=>'business_sector',
+			'options'=>CashVeroBusinessSector::where('company_id',getCurrentCompanyId())->pluck('name','name')->toArray(),
+		]; 
+	}
+	
 	// if(Str::contains($title, 'Supplier Name') ) {
 	// 	return [
 	// 		'type'=>'select',
