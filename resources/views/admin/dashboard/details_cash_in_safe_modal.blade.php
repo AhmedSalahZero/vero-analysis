@@ -44,7 +44,7 @@
 							@endphp
                             @foreach($detailItems as $detailItem)
 							
-                       @if($detailItem['amount'] > 0)
+                       @if($detailItem['amount'] != 0)
                             <tr>
                                
 					
