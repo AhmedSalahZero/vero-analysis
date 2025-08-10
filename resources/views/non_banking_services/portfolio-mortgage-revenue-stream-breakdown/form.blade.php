@@ -37,6 +37,7 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
             @foreach(count( $model->portfolioMortgageRevenueProjectionByCategories) ? $model->portfolioMortgageRevenueProjectionByCategories : [null] as $currentIndex => $portfolioMortgageRevenueProjectionByCategory  )
             <div class="kt-portlet ">
                 <div class="kt-portlet__body">
+					
                     <div class="row">
 
                         <div class="col-md-10">
@@ -68,6 +69,7 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
                             <x-show-hide-btn :query="'.revenue-projection-by-category'"></x-show-hide-btn>
                         </div>
                     </div>
+					
 
 
                     <div class="row">
@@ -79,7 +81,7 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
                         @endphp
 
 
-                        <x-tables.repeater-table :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
+                        <x-tables.repeater-table :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden overflow-scroll'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
                             <x-slot name="ths">
                                 <x-tables.repeater-table-th class="  header-border-down first-column-th-class" :title="__('Item')"></x-tables.repeater-table-th>
                                 <x-tables.repeater-table-th class=" tenor-selector-class header-border-down " :title="__('Spread <br> Rate')"></x-tables.repeater-table-th>
@@ -88,7 +90,7 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
                                 @endforeach
                             </x-slot>
                             <x-slot name="trs">
-
+								@if($isYearsStudy)
                                 <tr data-repeat-formatting-decimals="0" data-repeater-style>
 
                                     <input type="hidden" name="id" value="{{ isset($subModel) ? $subModel->id : 0 }}">
@@ -96,7 +98,7 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
 
                                     <td>
                                         <div class="">
-                                            <input value="{{ __('Operating Months Per Year') }}" disabled class="form-control text-left mt-2" type="text">
+                                            <input value="{{ __('Operating Months Per Year') }}" disabled class="form-control min-width-300 text-left mt-2" type="text">
                                         </div>
                                     <td></td>
 
@@ -123,6 +125,7 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
 
 
                                 </tr>
+								@endif
 
 
                                 <tr data-repeat-formatting-decimals="2" data-repeater-style>
@@ -131,7 +134,7 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
 
                                     <td>
                                         <div class="">
-                                            <input value="{{ __('Growth Rate %') }}" disabled class="form-control text-left mt-2" type="text">
+                                            <input value="{{ __('Growth Rate %') }}" disabled class="form-control min-width-300 text-left mt-2" type="text">
 
                                         </div>
                                     </td>
@@ -169,7 +172,7 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
                                 <tr data-repeat-formatting-decimals="0" data-repeater-style>
 
                                     <td>
-                                        <input value="{{ __('Portfolio Mortgage Avg Transactions Amount') }}" disabled class="form-control text-left mt-2" type="text">
+                                        <input value="{{ __('Portfolio Mortgage Avg Transactions Amount') }}" disabled class="form-control min-width-300 text-left mt-2" type="text">
                                     </td>
 									<!-- margin rate -->
                                     <td>
@@ -203,7 +206,7 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
                                 <tr data-repeat-formatting-decimals="0" data-repeater-style>
 
                                     <td>
-                                        <input value="{{ __('Frequency Per Year') }}" disabled class="form-control text-left mt-2" type="text">
+                                        <input value="{{ __('Frequency Per Year') }}" disabled class="form-control min-width-300 text-left mt-2" type="text">
                                     </td>
                                     <td></td>
 
@@ -231,7 +234,7 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
                                 <tr data-repeat-formatting-decimals="0" data-repeater-style>
 
                                     <td>
-                                        <input value="{{ __('Start From') }}" disabled class="form-control text-left mt-2" type="text">
+                                        <input value="{{ __('Start From') }}" disabled class="form-control min-width-300 text-left mt-2" type="text">
                                     </td>
                                     <td></td>
 
@@ -267,7 +270,7 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
                                 <tr data-repeat-formatting-decimals="0" data-repeater-style>
 
                                     <td>
-                                        <input value="{{ __('Total Per Year') }}" disabled class="form-control text-left mt-2" type="text">
+                                        <input value="{{ __('Total Per Year') }}" disabled class="form-control min-width-300 text-left mt-2" type="text">
                                     </td>
                                     <td>
 
@@ -414,7 +417,7 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
                         @endphp
 
 
-                        <x-tables.repeater-table :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
+                        <x-tables.repeater-table :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden overflow-scroll'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
                             <x-slot name="ths">
                                 <x-tables.repeater-table-th class=" category-selector-class header-border-down " :title="__('Item')"></x-tables.repeater-table-th>
                                 @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
@@ -429,7 +432,7 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
 
 
                                     <td>
-                                        <input value="{{ __('Administration Fees Rate') }}" disabled class="form-control text-left mt-2" type="text">
+                                        <input value="{{ __('Administration Fees Rate') }}" disabled class="form-control min-width-300 text-left mt-2" type="text">
 
                                     </td>
                                     @php
@@ -529,7 +532,7 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
                         @endphp
 
 
-                        <x-tables.repeater-table :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
+                        <x-tables.repeater-table :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden overflow-scroll'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
                             <x-slot name="ths">
                                 <x-tables.repeater-table-th class=" category-selector-class header-border-down " :title="__('Item')"></x-tables.repeater-table-th>
                                 @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
@@ -544,7 +547,7 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
 
 
                                     <td>
-                                        <input value="{{ __('Equity Funding Rate (%)') }}" disabled class="form-control text-left mt-2" type="text">
+                                        <input value="{{ __('Equity Funding Rate (%)') }}" disabled class="form-control min-width-300 text-left mt-2" type="text">
 
                                     </td>
                                     @php
@@ -576,7 +579,7 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
 
 
                                     <td>
-                                        <input value="{{ __('Equity Funding Value') }}" disabled class="form-control text-left mt-2" type="text">
+                                        <input value="{{ __('Equity Funding Value') }}" disabled class="form-control min-width-300 text-left mt-2" type="text">
 
                                     </td>
                                     @php

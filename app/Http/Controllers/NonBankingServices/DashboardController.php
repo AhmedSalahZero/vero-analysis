@@ -212,7 +212,6 @@ class DashboardController extends Controller
 	}
 	public function view(Request $request , Company $company,Study $study)
 	{
-		dd('ff');
 		$withSensitivity = $request->routeIs('view.results.dashboard.with.sensitivity') ;
 		$dashboardData = $this->generateDashboardData($study,$company,false);
 		$formattedResult = $dashboardData['formattedResult'];
@@ -247,7 +246,7 @@ class DashboardController extends Controller
 		'sensitivityFormattedResult'=>$sensitivityFormattedResult,
 		'sensitivityFormattedExpenses'=>$sensitivityFormattedExpenses,
 		'withSensitivity'=>$withSensitivity,
-		// 'yearOrMonthsIndexes'=>$yearOrMonthsIndexes,
+		'yearOrMonthsIndexes'=>$yearOrMonthsIndexes,
 		'isYearsStudy'=>$isYearsStudy
 	]);
 	}

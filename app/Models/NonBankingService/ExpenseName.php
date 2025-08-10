@@ -2,6 +2,7 @@
 
 namespace App\Models\NonBankingService;
 
+use App\Models\Company;
 use App\Models\Traits\Scopes\BelongsToCompany;
 use App\Models\Traits\Scopes\IsDepartment;
 use App\Models\Traits\Scopes\NonBankingServices\BelongsToStudy;
@@ -35,5 +36,9 @@ class ExpenseName extends Model
 	public function isBranchExpense():bool
 	{
 		return (bool)$this->is_branch_expense;
+	}
+	public static function getCategories(Company $company)
+	{
+		return ExpenseName::where('company_id',$company->id)->pluck('expense_type','expense_type')->unique()->toArray();
 	}
 }

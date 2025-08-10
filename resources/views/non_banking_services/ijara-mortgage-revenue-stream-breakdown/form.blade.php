@@ -56,7 +56,7 @@ use App\Models\NonBankingService\IjaraMortgageBreakdown;
                         @endphp
 
 
-                        <x-tables.repeater-table :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
+                        <x-tables.repeater-table :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden overflow-scroll'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
                             <x-slot name="ths">
                                 <x-tables.repeater-table-th class="  header-border-down first-column-th-class" :title="__('Item')"></x-tables.repeater-table-th>
                                 @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
@@ -72,7 +72,7 @@ use App\Models\NonBankingService\IjaraMortgageBreakdown;
 
                                     <td>
                                         <div class="">
-                                            <input value="{{ __('Operating Months Per Year') }}" disabled class="form-control text-left mt-2" type="text">
+                                            <input value="{{ __('Operating Months Per Year') }}" disabled class="form-control min-width-300 text-left mt-2" type="text">
                                         </div>
 
 
@@ -109,7 +109,7 @@ use App\Models\NonBankingService\IjaraMortgageBreakdown;
 
                                     <td>
                                         <div class="">
-                                            <input value="{{ __('Growth Rate %') }}" disabled class="form-control text-left mt-2" type="text">
+                                            <input value="{{ __('Growth Rate %') }}" disabled class="form-control min-width-300 text-left mt-2" type="text">
                                         </div>
 
 
@@ -147,7 +147,7 @@ use App\Models\NonBankingService\IjaraMortgageBreakdown;
                                 <tr data-repeat-formatting-decimals="0" data-repeater-style>
 
                                     <td>
-                                        <input value="{{ __('Ijara Projection') }}" disabled class="form-control text-left mt-2" type="text">
+                                        <input value="{{ __('Ijara Projection') }}" disabled class="form-control min-width-300 text-left mt-2" type="text">
                                     </td>
 
 
@@ -228,7 +228,7 @@ use App\Models\NonBankingService\IjaraMortgageBreakdown;
                         $relationName ='ijaraMortgageBreakdowns';
                         $repeaterId =$relationName.'repeater';
                         @endphp
-                        <x-tables.repeater-table :tableName="$relationName" :repeaterId="$repeaterId" :removeActionBtn="false" :removeRepeater="false" :initialJs="true" :repeater-with-select2="true" :canAddNewItem="true" :parentClass="'js-remove-hidden'" :hide-add-btn="true" :relationName="$relationName" :isRepeater="true">
+                        <x-tables.repeater-table :tableName="$relationName" :repeaterId="$repeaterId" :removeActionBtn="false" :removeRepeater="false" :initialJs="true" :repeater-with-select2="true" :canAddNewItem="true" :parentClass="'js-remove-hidden overflow-scroll'" :hide-add-btn="true" :relationName="$relationName" :isRepeater="true">
                             <x-slot name="ths">
                                 <x-tables.repeater-table-th class=" category-selector-class header-border-down " :title="__('Installment Interval')"></x-tables.repeater-table-th>
                                 <x-tables.repeater-table-th class=" tenor-selector-class header-border-down " :title="__('Tenor <br> (Months)')"></x-tables.repeater-table-th>
@@ -263,7 +263,7 @@ use App\Models\NonBankingService\IjaraMortgageBreakdown;
 
                                     <td>
                                         <x-form.select :required="true" :label="''" :pleaseSelect="false" :selectedValue="isset($subModel) ? $subModel->getInstallmentInterval() : 'monthly'" :options="[['title'=>__('Monthly'),'value'=>'monthly'],['title'=>__('Quarterly'),'value'=>'quartly'],['value'=>'semi annually','title'=>__('Semi-annually')]]" :add-new="false" class="select2-select  repeater-select  " :all="false" name="installment_interval"></x-form.select>
-                                        <input value="{{ __('Ijara Projection') }}" disabled class="form-control text-left mt-2" type="text">
+                                        <input value="{{ __('Ijara Projection') }}" disabled class="form-control min-width-300 text-left mt-2" type="text">
 
                                     </td>
                                     <td>
@@ -348,7 +348,7 @@ use App\Models\NonBankingService\IjaraMortgageBreakdown;
                         @endphp
 
 
-                        <x-tables.repeater-table :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
+                        <x-tables.repeater-table :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden overflow-scroll'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
                             <x-slot name="ths">
                                 <x-tables.repeater-table-th class=" category-selector-class header-border-down " :title="__('Item')"></x-tables.repeater-table-th>
                                 @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
@@ -363,7 +363,7 @@ use App\Models\NonBankingService\IjaraMortgageBreakdown;
 
 
                                     <td>
-                                        <input value="{{ __('Administration Fees Rate') }}" disabled class="form-control text-left mt-2" type="text">
+                                        <input value="{{ __('Administration Fees Rate') }}" disabled class="form-control min-width-300 text-left mt-2" type="text">
 
                                     </td>
                                     @php
@@ -460,7 +460,7 @@ use App\Models\NonBankingService\IjaraMortgageBreakdown;
                         @endphp
 
 
-                        <x-tables.repeater-table :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
+                        <x-tables.repeater-table :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden overflow-scroll'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
                             <x-slot name="ths">
                                 <x-tables.repeater-table-th class=" category-selector-class header-border-down " :title="__('Item')"></x-tables.repeater-table-th>
                                 @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
@@ -475,7 +475,7 @@ use App\Models\NonBankingService\IjaraMortgageBreakdown;
 
 
                                     <td>
-                                        <input value="{{ __('Equity Funding Rate (%)') }}" disabled class="form-control text-left mt-2" type="text">
+                                        <input value="{{ __('Equity Funding Rate (%)') }}" disabled class="form-control min-width-300 text-left mt-2" type="text">
 
                                     </td>
                                     @php
@@ -507,7 +507,7 @@ use App\Models\NonBankingService\IjaraMortgageBreakdown;
 
 
                                     <td>
-                                        <input value="{{ __('Equity Funding Value') }}" disabled class="form-control text-left mt-2" type="text">
+                                        <input value="{{ __('Equity Funding Value') }}" disabled class="form-control min-width-300 text-left mt-2" type="text">
 
                                     </td>
                                     @php

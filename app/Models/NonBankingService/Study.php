@@ -470,7 +470,7 @@ class Study extends Model
     }
     public function isMonthlyStudy()
     {
-        return $this->duration_in_years == 1 ;
+        return $this->duration_in_years < 2 ;
     }
 	public function getActiveMonthlyDatesWithoutFormatting($yearIndexWithItsActiveMonths,$dateIndexWithDate)
 	{

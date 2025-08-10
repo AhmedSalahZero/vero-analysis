@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Company;
 use App\Models\NonBankingService\Study;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -199,7 +200,7 @@ class IncomeStatementController extends Controller
 			$salaryExpensePayload = $salaryExpensePayload ? $salaryExpensePayload : [];
 			foreach($monthsWithItsYear as $monthIndex => $yearIndex){
 				
-				$currentSalaryExpense = $salaryExpensePayload[$monthIndex]??[];
+				$currentSalaryExpense = $salaryExpensePayload[$monthIndex]??0;
 				$salaryExpensesForCategory[$expenseCategory][$monthIndex] = isset($salaryExpensesForCategory[$expenseCategory][$monthIndex]) ?  $salaryExpensesForCategory[$expenseCategory][$monthIndex] + $currentSalaryExpense : $currentSalaryExpense;
 			}
 		}
@@ -232,6 +233,7 @@ class IncomeStatementController extends Controller
 				if(!isset($formattedExpenses[$expenseCategory]['Manpower Salaries'][$monthIndex])){
 					$formattedExpenses[$expenseCategory]['Manpower Salaries'][$monthIndex] = $salaryExpensesForCategory[$expenseCategory][$monthIndex] ?? 0;
 					$currentMonthManpowerTotal = $formattedExpenses[$expenseCategory]['Manpower Salaries'][$monthIndex];
+					
 					$tableDataFormatted[$currentOrderIndex]['sub_items']['Manpower Salaries']['data'][$monthIndex] =$currentMonthManpowerTotal ;
 				}
 			//	$currentExpenseItemTotalPerYear = 0 ;
@@ -239,8 +241,8 @@ class IncomeStatementController extends Controller
 					// $currentExpenseItemTotalPerYear +=  ;
 				$currentMonthlyExpenseValue = $monthlyExpenses[$monthIndex]??0 ; 
 				$formattedExpenses[$expenseCategory][$name][$monthIndex] = $currentMonthlyExpenseValue;
-			
-				$currentMonthTotal = $currentMonthlyExpenseValue + $currentMonthInterestCost +$currentMonthManpowerTotal;
+				$currentMonthTotal = $currentMonthlyExpenseValue + $currentMonthInterestCost + $currentMonthManpowerTotal;
+		
 				$formattedExpenses[$expenseCategory]['total'][$monthIndex] = isset($formattedExpenses[$expenseCategory]['total'][$monthIndex]) ? $formattedExpenses[$expenseCategory]['total'][$monthIndex] + $currentMonthTotal:$currentMonthTotal    ; 
 				
 				$currentTotalRevenueAtMonthIndex = $formattedResult['sales_revenue'][$monthIndex]??0;

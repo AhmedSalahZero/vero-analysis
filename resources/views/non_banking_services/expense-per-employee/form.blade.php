@@ -33,7 +33,7 @@ use App\Models\NonBankingService\Expense;
                 {{-- start of one time expense --}}
                 <form id="form-id" class="kt-form kt-form--label-right" method="POST" enctype="multipart/form-data" action="{{ $storeRoute }}">
                     @include('non_banking_services.expense-per-employee._input-hidden')
-
+			
                     <input type="hidden" name="tableIds[]" value="{{ $tableId }}">
                     <x-tables.repeater-table :font-size-class="'font-14px'" :append-save-or-back-btn="true" :repeater-with-select2="true" :parentClass="'js-toggle-visibility'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
                         <x-slot name="ths">

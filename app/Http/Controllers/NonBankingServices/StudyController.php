@@ -70,7 +70,12 @@ class StudyController extends Controller
 		$studies = $company->studies ;
 		$studies =  $studies->filterByDateColumn('study_start_date',$startDate,$endDate) ;
 		$studies =  $currentType == Study::STUDY ? $this->applyFilter($request,$studies):$studies ;
-
+		$monthlyStudies = $studies->filter(function($study){
+			return !$study->isMonthlyStudy();
+		}); 
+		$yearlyStudies = $studies->filter(function($study){
+			return $study->isMonthlyStudy();
+		}); 
 		/**
 		 * * end of bank to safe internal money transfer 
 		 */
@@ -85,8 +90,8 @@ class StudyController extends Controller
 		];
 	
 		$models = [
-			Study::BUSINESS_PLAN =>$studies ,
-			Study::ANNUALLY_STUDY =>$studies ,
+			Study::BUSINESS_PLAN =>$monthlyStudies ,
+			Study::ANNUALLY_STUDY =>$yearlyStudies ,
 		];
 
         return view('non_banking_services.study.index', [

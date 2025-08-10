@@ -57,7 +57,7 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
                         @endphp
 
 
-                        <x-tables.repeater-table :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
+                        <x-tables.repeater-table :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden overflow-scroll'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
                             <x-slot name="ths">
                                 <x-tables.repeater-table-th class="  header-border-down first-column-th-class" :title="__('Item')"></x-tables.repeater-table-th>
                                 @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
@@ -73,7 +73,7 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
 
                                     <td>
                                         <div class="">
-                                            <input value="{{ __('Operating Months Per Year') }}" disabled class="form-control text-left mt-2" type="text">
+                                            <input value="{{ __('Operating Months Per Year') }}" disabled class="form-control min-width-300 text-left mt-2" type="text">
                                         </div>
 
 
@@ -110,7 +110,7 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
 
                                     <td>
                                         <div class="">
-                                            <input value="{{ __('Growth Rate %') }}" disabled class="form-control text-left mt-2" type="text">
+                                            <input value="{{ __('Growth Rate %') }}" disabled class="form-control min-width-300 text-left mt-2" type="text">
                                         </div>
 
 
@@ -147,7 +147,7 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
                                 <tr data-repeat-formatting-decimals="0" data-repeater-style>
 
                                     <td>
-                                        <input value="{{ __('Direct Factoring Projection') }}" disabled class="form-control text-left mt-2" type="text">
+                                        <input value="{{ __('Direct Factoring Projection') }}" disabled class="form-control min-width-300 text-left mt-2" type="text">
                                     </td>
 
 
@@ -230,7 +230,7 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
                 $relationName ='directFactoringBreakdowns';
                 $repeaterId =$relationName.'repeater';
                 @endphp
-                <x-tables.repeater-table :tableName="$relationName" :repeaterId="$repeaterId" :removeActionBtn="false" :removeRepeater="false" :initialJs="true" :repeater-with-select2="true" :canAddNewItem="true" :parentClass="'js-remove-hidden'" :hide-add-btn="true" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
+                <x-tables.repeater-table :tableName="$relationName" :repeaterId="$repeaterId" :removeActionBtn="false" :removeRepeater="false" :initialJs="true" :repeater-with-select2="true" :canAddNewItem="true" :parentClass="'js-remove-hidden overflow-scroll'" :hide-add-btn="true" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
                     <x-slot name="ths">
                         <x-tables.repeater-table-th class=" category-selector-class header-border-down " :title="__('Category')"></x-tables.repeater-table-th>
                         <x-tables.repeater-table-th class=" category-selector-class header-border-down " :title="__('Spread Rate')"></x-tables.repeater-table-th>
@@ -264,7 +264,7 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
 
                             <td>
                                 <x-form.select :required="true" :label="''" :pleaseSelect="false" :selectedValue="isset($subModel) ? $subModel->getCategory():0" :options="factoringDueInDays()" :add-new="false" class="select2-select  repeater-select  " :all="false" name="category"></x-form.select>
-                                <input value="{{ __('Direct Factoring Projection') }}" disabled class="form-control text-left mt-2" type="text">
+                                <input value="{{ __('Direct Factoring Projection') }}" disabled class="form-control min-width-300 text-left mt-2" type="text">
 
                             </td>
                             <td>
@@ -339,7 +339,7 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
                 @endphp
 
 
-                <x-tables.repeater-table :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
+                <x-tables.repeater-table :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden overflow-scroll'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
                     <x-slot name="ths">
                         <x-tables.repeater-table-th class=" category-selector-class header-border-down " :title="__('Item')"></x-tables.repeater-table-th>
                         @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
@@ -354,7 +354,7 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
 
 
                             <td>
-                                <input value="{{ __('Administration Fees Rate') }}" disabled class="form-control text-left mt-2" type="text">
+                                <input value="{{ __('Administration Fees Rate') }}" disabled class="form-control min-width-300 text-left mt-2" type="text">
 
                             </td>
                             @php
@@ -381,7 +381,7 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
 
 
                             <td>
-                                <input disabled value="{{ __('Expected Credit Loss Rate (ECL %)') }}" class="form-control text-left" type="text">
+                                <input disabled value="{{ __('Expected Credit Loss Rate (ECL %)') }}" class="form-control min-width-300 text-left" type="text">
 
                             </td>
                             @php
@@ -451,7 +451,7 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
                 @endphp
 
 
-                <x-tables.repeater-table :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
+                <x-tables.repeater-table :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden overflow-scroll'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
                     <x-slot name="ths">
                         <x-tables.repeater-table-th class=" category-selector-class header-border-down " :title="__('Item')"></x-tables.repeater-table-th>
                         @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
@@ -466,7 +466,7 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
 
 
                             <td>
-                                <input value="{{ __('Direct Factoring New Portfolio Amounts') }}" disabled class="form-control text-left mt-2" type="text">
+                                <input value="{{ __('Direct Factoring New Portfolio Amounts') }}" disabled class="form-control min-width-300 text-left mt-2" type="text">
 
                             </td>
                             @php
@@ -498,7 +498,7 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
 
 
                             <td>
-                                <input value="{{ __('Equity Funding Rate (%)') }}" disabled class="form-control text-left mt-2" type="text">
+                                <input value="{{ __('Equity Funding Rate (%)') }}" disabled class="form-control min-width-300 text-left mt-2" type="text">
 
                             </td>
                             @php
@@ -530,7 +530,7 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
 
 
                             <td>
-                                <input value="{{ __('Equity Funding Value') }}" disabled class="form-control text-left mt-2" type="text">
+                                <input value="{{ __('Equity Funding Value') }}" disabled class="form-control min-width-300 text-left mt-2" type="text">
 
                             </td>
                             @php

@@ -121,7 +121,6 @@ class ExpenseController extends Controller
 	}
 	protected function getViewVars(Company $company,$expenseType=null,$expenseNames=[]){
 		return [
-			
 			'company'=>$company ,
 			'expenseNames'=>$expenseNames ,
 			'expenseType'=>$expenseType,

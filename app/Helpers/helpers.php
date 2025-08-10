@@ -35,6 +35,8 @@ use App\Models\LabelingItem;
 use App\Models\ModifiedSeasonality;
 use App\Models\ModifiedTarget;
 use App\Models\NewProductAllocationBase;
+use App\Models\NonBankingService\Expense;
+use App\Models\NonBankingService\ExpenseName;
 use App\Models\NonBankingService\Study;
 use App\Models\Partner;
 use App\Models\ProductSeasonality;
@@ -8029,29 +8031,39 @@ function removeSquareBrackets($input) {
 }
 function getExpenseCategoriesForSelect2():array 
 {
-	return [
-		[
-			'title'=>__('Cost Of Service'),
-			'value'=>'cost-of-service'
-		],
-		[
-			'title'=>__('Other Operation Expense'),
-			'value'=>'other-operation-expense'
-		],
-		[
-			'title'=>__('Marketing Expense'),
-			'value'=>'marketing-expense'
-		],
-		[
-			'title'=>__('Sales Expense'),
-			'value'=>'sales-expense'
-		],	
-		[
-			'title'=>__('General Expense'),
-			'value'=>'general-expense'
-		],
+	$results = [];
+	$expenseCategories = ExpenseName::getCategories(getCurrentCompany());
+	foreach($expenseCategories as $type => $name){
+		$results[] = [
+			'title'=>HStr::camelizeWithSpace($type) ,
+			'value'=>$type
+		];
+	}
+	return $results;
+	// dd(ExpenseNam::where('company_id',31)->get());
+	// return [
+	// 	[
+	// 		'title'=>__('Cost Of Service'),
+	// 		'value'=>'cost-of-service'
+	// 	],
+	// 	[
+	// 		'title'=>__('Other Operation Expense'),
+	// 		'value'=>'other-operation-expense'
+	// 	],
+	// 	[
+	// 		'title'=>__('Marketing Expense'),
+	// 		'value'=>'marketing-expense'
+	// 	],
+	// 	[
+	// 		'title'=>__('Sales Expense'),
+	// 		'value'=>'sales-expense'
+	// 	],	
+	// 	[
+	// 		'title'=>__('General Expense'),
+	// 		'value'=>'general-expense'
+	// 	],
 		
-	];
+	// ];
 }
 function getExpenseTypes():array 
 {

@@ -21,7 +21,7 @@ class ExpenseStatementReportController extends Controller
 			'expense_per_employee'=>__('Expense Per Employee')	
 		];
 		
-		$expenseCategories = ExpenseName::where('company_id',$company->id)->pluck('expense_type','expense_type')->unique()->toArray();
+		$expenseCategories = ExpenseName::getCategories($company);
 		
 		
 		return view('non_banking_services.reports.expense-statement.form',[

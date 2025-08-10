@@ -147,10 +147,11 @@ class ManpowerExpensesController extends Controller
 
 		//	$department->positions()->whereIn('positions.id',$additionalPositionsToDelete)->delete();
 		}
-		return redirect()->route('view.manpower.for.non.banking',['company'=>$company->id,'study'=>$study->id]);
-		return response()->json([
-			'redirectTo'=>route('view.manpower.for.non.banking',['company'=>$company->id,'study'=>$study->id])
-		]);
+		
+		return redirect()->route('create.expense.per.employees',['company'=>$company->id,'study'=>$study->id]);
+		// return response()->json([
+		// 	'redirectTo'=>route('view.manpower.for.non.banking',['company'=>$company->id,'study'=>$study->id])
+		// ]);
 	}
 	// public function deleteSinglePosition(Company $company , Request $request,Study $study,Position $position)
 	// {

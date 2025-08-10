@@ -20,7 +20,6 @@ use App\Models\NonBankingService\Expense;
 
 <div class="row">
     <div class="col-md-12">
-
         <form id="form-id" class="kt-form kt-form--label-right" method="POST" enctype="multipart/form-data" action="{{ route('store.expenses',['company'=>$company->id,'study'=>$study->id ]) }}">
             @csrf
             <input type="hidden" name="model_id" value="{{ $model->id ?? 0  }}">

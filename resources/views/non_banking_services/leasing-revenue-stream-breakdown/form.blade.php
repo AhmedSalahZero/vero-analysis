@@ -122,7 +122,7 @@ use App\Models\NonBankingService\LeasingCategory;
                         @endphp
 
 
-                        <x-tables.repeater-table :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
+                        <x-tables.repeater-table :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden overflow-scroll'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
                             <x-slot name="ths">
                                 <x-tables.repeater-table-th class="  header-border-down first-column-th-class" :title="__('Item')"></x-tables.repeater-table-th>
                                 @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
@@ -130,7 +130,7 @@ use App\Models\NonBankingService\LeasingCategory;
                                 @endforeach
                             </x-slot>
                             <x-slot name="trs">
-								@if($isYearsStudy)
+                                @if($isYearsStudy)
                                 <tr data-repeat-formatting-decimals="0" data-repeater-style>
 
                                     <input type="hidden" name="id" value="{{ isset($subModel) ? $subModel->id : 0 }}">
@@ -165,7 +165,7 @@ use App\Models\NonBankingService\LeasingCategory;
 
 
                                 </tr>
-								@endif
+                                @endif
 
 
                                 <tr data-repeat-formatting-decimals="2" data-repeater-style>
@@ -175,7 +175,7 @@ use App\Models\NonBankingService\LeasingCategory;
 
                                     <td>
                                         <div class="">
-                                            <input value="{{ __('Growth Rate %') }}" disabled class="form-control text-left mt-2" type="text">
+                                            <input value="{{ __('Growth Rate %') }}" disabled class="form-control min-width-hover-300 text-left mt-2" type="text">
                                         </div>
 
 
@@ -221,7 +221,7 @@ use App\Models\NonBankingService\LeasingCategory;
                                     <td>
                                         <div class="">
 
-                                            <input value="{{ $currentLeasingRevenueStreamBreakdown->getReviewForTable() }}" disabled class="form-control text-left mt-2" type="text">
+                                            <input value="{{ $currentLeasingRevenueStreamBreakdown->getReviewForTable() }}" disabled class="form-control min-width-hover-300 text-left mt-2" type="text">
                                         </div>
                                     </td>
 
@@ -260,7 +260,7 @@ use App\Models\NonBankingService\LeasingCategory;
                                     <td>
                                         <div class="">
 
-                                            <input value="{{ __('Total') }}" disabled class="form-control text-left mt-2" type="text">
+                                            <input value="{{ __('Total') }}" disabled class="form-control text-left mt-2 min-width-hover-300" type="text">
                                         </div>
                                     </td>
 
@@ -356,7 +356,7 @@ use App\Models\NonBankingService\LeasingCategory;
                         @endphp
 
 
-                        <x-tables.repeater-table :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
+                        <x-tables.repeater-table :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden overflow-scroll'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
                             <x-slot name="ths">
                                 <x-tables.repeater-table-th class=" category-selector-class header-border-down " :title="__('Item')"></x-tables.repeater-table-th>
                                 @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
@@ -371,7 +371,7 @@ use App\Models\NonBankingService\LeasingCategory;
 
 
                                     <td>
-                                        <input value="{{ __('Administration Fees Rate') }}" disabled class="form-control text-left mt-2" type="text">
+                                        <input value="{{ __('Administration Fees Rate') }}" disabled class="form-control min-width-hover-300 text-left mt-2" type="text">
                                     </td>
                                     @php
                                     $columnIndex = 0 ;
@@ -403,7 +403,7 @@ use App\Models\NonBankingService\LeasingCategory;
 
 
                                     <td>
-                                        <input disabled value="{{ __('Expected Credit Loss Rate (ECL %)') }}" class="form-control text-left" type="text">
+                                        <input disabled value="{{ __('Expected Credit Loss Rate (ECL %)') }}" class="form-control min-width-hover-300 text-left" type="text">
 
                                     </td>
                                     @php
@@ -475,7 +475,7 @@ use App\Models\NonBankingService\LeasingCategory;
                         @endphp
 
 
-                        <x-tables.repeater-table :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
+                        <x-tables.repeater-table :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden overflow-scroll'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
                             <x-slot name="ths">
                                 <x-tables.repeater-table-th class=" category-selector-class header-border-down " :title="__('Item')"></x-tables.repeater-table-th>
                                 @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
@@ -490,7 +490,7 @@ use App\Models\NonBankingService\LeasingCategory;
 
 
                                     <td>
-                                        <input value="{{ __('Equity Funding Rate (%)') }}" disabled class="form-control text-left mt-2" type="text">
+                                        <input value="{{ __('Equity Funding Rate (%)') }}" disabled class="form-control  min-width-hover-300 text-left mt-2" type="text">
 
                                     </td>
                                     @php
@@ -523,7 +523,7 @@ use App\Models\NonBankingService\LeasingCategory;
 
 
                                     <td>
-                                        <input value="{{ __('Equity Funding Value') }}" disabled class="form-control text-left mt-2" type="text">
+                                        <input value="{{ __('Equity Funding Value') }}" disabled class="form-control min-width-hover-300 text-left mt-2" type="text">
 
                                     </td>
                                     @php
@@ -550,7 +550,7 @@ use App\Models\NonBankingService\LeasingCategory;
 
                                 <tr data-repeat-formatting-decimals="2" data-repeater-style>
                                     <td>
-                                        <input disabled value="{{ __('New Loans Funding Rate (%)') }}" class="form-control text-left" type="text">
+                                        <input disabled value="{{ __('New Loans Funding Rate (%)') }}" class="form-control min-width-hover-300 text-left" type="text">
                                     </td>
                                     @php
                                     $columnIndex = 0 ;
@@ -578,7 +578,7 @@ use App\Models\NonBankingService\LeasingCategory;
 
 
                                     <td>
-                                        <input disabled value="{{ __('New Loans Funding Value') }}" class="form-control text-left" type="text">
+                                        <input disabled value="{{ __('New Loans Funding Value') }}" class="form-control min-width-hover-300 text-left" type="text">
 
                                     </td>
                                     @php

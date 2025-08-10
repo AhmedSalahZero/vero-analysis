@@ -20,8 +20,25 @@
 .kt-header-menu .kt-menu__nav > .kt-menu__item > .kt-menu__link .kt-menu__link-text{
 	/*font-size:0.8rem !important;*/
 }
-</style>
+.min-width-300{
+	width : 300px !important; 
+}
+.min-width-hover-300{
+	width : 300px !important; 
+	transition:all 1s !important ;
+	font-size:10px !important;
+}
 
+.min-width-hover-300:hover{
+	width : 600px !important; 
+}
+.overflow-scroll{
+	overflow:scroll !important;
+}
+
+
+</style>
+	
     <script>
         let currentPageLoaded = false;
 
