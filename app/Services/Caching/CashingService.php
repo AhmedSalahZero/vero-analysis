@@ -106,7 +106,7 @@ class CashingService
                 for($year = $years['start_year'] ; $year <= $years['end_year'] ; $year++)
                 {
                         (new CustomerDashboardCashing($this->company , $year,$month))->deleteAll();
-                        (new CustomerNatureCashing($this->company , $year))->deleteAll();
+                        (new CustomerNatureCashing($this->company , $year,$month))->deleteAll();
                         (new BreakdownCashing($this->company , $year,$years['end_year']))->deleteAll();
                 }
             }
@@ -132,6 +132,9 @@ class CashingService
             $startYear = $years['start_year'] ; 
             $endYear = $years['end_year'] ; 
             $fullData = $years['full_date'] ; 
+			if(is_null($fullData)){
+				return ;
+			}
 			$date = Carbon::make($fullData)->format('Y-m-d');
 			$month  = explode('-',$date)[1];
             if($startYear && $endYear){
@@ -161,6 +164,7 @@ class CashingService
             $startYear = $years['start_year'] ; 
             $endYear = $years['end_year'] ; 
             $fullData = $years['full_date'] ; 
+			
             $date = Carbon::make($fullData)->format('Y-m-d');
 			$month  = explode('-',$date)[1];
 			

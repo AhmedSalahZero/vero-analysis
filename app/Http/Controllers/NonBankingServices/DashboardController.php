@@ -43,6 +43,7 @@ class DashboardController extends Controller
 	}
 	protected function generateDashboardData(Study $study , Company $company , bool $isSensitivity = false ):array 
 	{
+		$isMonthlyStudy = $study->isMonthlyStudy();
 		$loanSchedulePaymentTableName =  $isSensitivity ? 'sensitivity_loan_schedule_payments' : 'loan_schedule_payments';
 		$percentageOfSalesColumnName = $isSensitivity ? 'sensitivity_expense_as_percentages' : 'expense_as_percentages';
 		$yearIndexWithYear = app('yearIndexWithYear');
@@ -54,6 +55,7 @@ class DashboardController extends Controller
 		$salesRevenuePerTypes = [];
 		$yearWithItsIndexes = $study->getOperationDurationPerYearFromIndexes();
 		$monthsWithItsYear = $study->getMonthsWithItsYear($yearWithItsIndexes) ;
+		$monthsWithItsNumbers = $study->getMonthIndexWithMonthNumber($yearWithItsIndexes) ;
 		
 		$titlesMapping = Study::getProjectionTitles();
 		$loanSchedulePayments = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table($loanSchedulePaymentTableName)->selectRaw('portfolio_loan_type,revenue_stream_type,interestAmount')->where('study_id',$study->id)->get()->toArray();
@@ -73,19 +75,22 @@ class DashboardController extends Controller
 			foreach($monthsWithItsYear as $currentMonthIndex => $currentYearIndex)
 			{
 				$currentYearIndex = $monthsWithItsYear[$currentMonthIndex]??null;
+				$currentYearOrMonthIndex = $isMonthlyStudy ? $currentMonthIndex : $currentYearIndex ;
 				$currentYearAsString = $yearIndexWithYear[$currentYearIndex]??null;
+				$currentYearOrMonthAsString = $isMonthlyStudy ?  : $currentYearAsString; 
+				
 				$currentInterestRevenueAtMonthIndex  = $interestRevenues[$currentMonthIndex]??0;
 				$currentBankInterestExpenseAtMonthIndex = $bankInterestExpenses[$currentMonthIndex]??0;
 				if(!is_null($currentYearIndex)){
-					$formattedDirectFactoring['interest_revenue'][$currentYearIndex] = isset($formattedDirectFactoring['interest_revenue'][$currentYearIndex]) ? $formattedDirectFactoring['interest_revenue'][$currentYearIndex] +  $currentInterestRevenueAtMonthIndex : $currentInterestRevenueAtMonthIndex;
-					$formattedDirectFactoring['bank_interest_expense'][$currentYearIndex] = isset($formattedDirectFactoring['bank_interest_expense'][$currentYearIndex]) ? $formattedDirectFactoring['bank_interest_expense'][$currentYearIndex] +  $currentBankInterestExpenseAtMonthIndex : $currentBankInterestExpenseAtMonthIndex;
-					$resultPerRevenueStreamType['direct-factoring'][$currentYearAsString] = $formattedDirectFactoring['interest_revenue'][$currentYearIndex];
-			    	$salesRevenuePerTypes['direct-factoring'][$currentYearIndex] = $resultPerRevenueStreamType['direct-factoring'][$currentYearAsString];
-					$salesRevenuePerTypes['total_revenue'][$currentYearIndex] =  isset($salesRevenuePerTypes['total_revenue'][$currentYearIndex]) ? $salesRevenuePerTypes['total_revenue'][$currentYearIndex] + $currentInterestRevenueAtMonthIndex : $currentInterestRevenueAtMonthIndex + $resultPerRevenueStreamType['direct-factoring'][$currentYearAsString];
+					$formattedDirectFactoring['interest_revenue'][$currentYearOrMonthIndex] = isset($formattedDirectFactoring['interest_revenue'][$currentYearOrMonthIndex]) ? $formattedDirectFactoring['interest_revenue'][$currentYearOrMonthIndex] +  $currentInterestRevenueAtMonthIndex : $currentInterestRevenueAtMonthIndex;
+					$formattedDirectFactoring['bank_interest_expense'][$currentYearOrMonthIndex] = isset($formattedDirectFactoring['bank_interest_expense'][$currentYearOrMonthIndex]) ? $formattedDirectFactoring['bank_interest_expense'][$currentYearOrMonthIndex] +  $currentBankInterestExpenseAtMonthIndex : $currentBankInterestExpenseAtMonthIndex;
+					$resultPerRevenueStreamType['direct-factoring'][$currentYearOrMonthAsString] = $formattedDirectFactoring['interest_revenue'][$currentYearOrMonthIndex];
+			    	$salesRevenuePerTypes['direct-factoring'][$currentYearOrMonthIndex] = $resultPerRevenueStreamType['direct-factoring'][$currentYearOrMonthAsString];
+					$salesRevenuePerTypes['total_revenue'][$currentYearOrMonthIndex] =  isset($salesRevenuePerTypes['total_revenue'][$currentYearOrMonthIndex]) ? $salesRevenuePerTypes['total_revenue'][$currentYearOrMonthIndex] + $currentInterestRevenueAtMonthIndex : $currentInterestRevenueAtMonthIndex + $resultPerRevenueStreamType['direct-factoring'][$currentYearOrMonthAsString];
 				}
 			}
 		}
-
+	
 		// $loanSchedulePayments = [];
 		$testLoopIndex = 0 ;
 		foreach($loanSchedulePayments as $loanSchedulePaymentAsStdClass ){

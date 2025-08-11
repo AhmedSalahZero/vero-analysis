@@ -1697,7 +1697,19 @@ class Study extends Model
         $datesAndIndexesHelpers = $this->getDatesIndexesHelper();
         return $datesAndIndexesHelpers['dateIndexWithDate'];
         ;
-    }public function getDateWithDateIndex():array
+    } 
+	public function getMonthIndexWithMonthNumber():array
+    {
+		$result = [];
+        $datesAndIndexesHelpers = $this->getDatesIndexesHelper();
+		$dateWithDateIndex = $datesAndIndexesHelpers['dateWithDateIndex'];
+		foreach($datesAndIndexesHelpers['dateWithMonthNumber'] as $dateAsString => $dateAsNumber){
+			$dateAsIndex = $dateWithDateIndex[$dateAsString];
+			$result[$dateAsIndex] = $dateAsNumber;
+		}
+		return $result;
+    }
+	public function getDateWithDateIndex():array
     {
         $datesAndIndexesHelpers = $this->getDatesIndexesHelper();
         return $datesAndIndexesHelpers['dateWithDateIndex'];
