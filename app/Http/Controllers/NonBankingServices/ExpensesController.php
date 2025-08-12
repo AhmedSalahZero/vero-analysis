@@ -12,6 +12,7 @@ use App\Http\Requests\StoreExpensesRequest;
 use App\Models\Company;
 use App\Models\NonBankingService\Expense;
 use App\Models\NonBankingService\ExpenseName;
+use App\Models\NonBankingService\Position;
 use App\Models\NonBankingService\Study;
 use App\ReadyFunctions\CollectionPolicyService;
 use App\Traits\NonBankingService;
@@ -49,8 +50,10 @@ class ExpensesController extends Controller
         OneTimeExpenseEquation $oneTimeExpenseEquation
     ) {
         $modelId = $request->get('model_id');
+  
         $modelName = $request->get('model_name');
         $expenseType = $request->get('expense_type');
+
         $studyId = $study->id;
         $datesAsStringDateIndex = $study->getDatesAsStringAndIndex();
         $datesAsIndexAndString = array_flip($datesAsStringDateIndex);
@@ -65,6 +68,7 @@ class ExpensesController extends Controller
             foreach ((array)$request->get($tableId) as $tableDataArr) {
 			
 				$withholdRate = $tableDataArr['withhold_tax_rate']??0;
+			
 				if(isset($tableDataArr['start_date']) && count(explode('-',$tableDataArr['start_date'])) == 2){
 					$tableDataArr['start_date'] = $tableDataArr['start_date'].'-01';
 					
@@ -89,7 +93,9 @@ class ExpensesController extends Controller
 				 * * to repeat 2 years inside json
 				 */
 				$loopEndDate = $tableDataArr['end_date'] >=  $studyEndDateAsIndex ? $studyExtendedEndDateAsIndex : $tableDataArr['end_date'];
-				
+				$loopEndDate = $loopEndDate ==  0 ? $studyEndDateAsIndex : $loopEndDate ;
+
+				$monthsAsIndexes = range(0,$studyEndDateAsIndex) ;
                 $tableDataArr['relation_name']  = $tableId ;
                 /**
                  * * Fixed Repeating
@@ -104,8 +110,25 @@ class ExpensesController extends Controller
                     $tableDataArr['is_deductible'] = $isDeductible[0];
                     $isDeductible= $isDeductible[0];
                 }
-                if (isset($tableDataArr['amount']) && $tableId == 'fixed_monthly_repeating_amount') {
-                    $monthlyFixedRepeatingResults = $monthlyFixedRepeatingAmountEquation->calculate($tableDataArr['amount'], $tableDataArr['start_date'], $loopEndDate, $tableDataArr['increase_interval'], $tableDataArr['increase_rate'], $isDeductible, $vatRate,$withholdRate);
+			
+				$isExpensePerEmployee = (isset($tableDataArr['monthly_cost_of_unit']) && $tableId == 'expense_per_employee') ;
+                if (isset($tableDataArr['amount']) && $tableId == 'fixed_monthly_repeating_amount' || $isExpensePerEmployee  ) {
+					$amount = $tableDataArr['amount']??0 ;
+					$accumulatedManpowerPowersForAllSelectedPositions = [ ];
+					if($isExpensePerEmployee){
+						// المفروض دي هتكون اكثر من قيمة
+						$positionIds = (array) $tableDataArr['position_id'] ;
+						// 
+						$positions = Position::whereIn('id',$positionIds)->pluck('accumulated_manpower_counts')->toArray();
+						$accumulatedManpowerPowersForAllSelectedPositions = HArr::sumAtDates($positions,$monthsAsIndexes);
+						$amount = $tableDataArr['monthly_cost_of_unit'];
+					}
+				
+                    $monthlyFixedRepeatingResults = $monthlyFixedRepeatingAmountEquation->calculate($amount, $tableDataArr['start_date'], $loopEndDate, $tableDataArr['increase_interval'], $tableDataArr['increase_rate'], $isDeductible, $vatRate,$withholdRate);
+					if($isExpensePerEmployee){
+						$totalAfterVats = $monthlyFixedRepeatingResults['total_after_vat'];
+						$monthlyFixedRepeatingResults['total_after_vat'] = HArr::multipleTwoArrAtSameIndex($totalAfterVats , $accumulatedManpowerPowersForAllSelectedPositions); 
+					}
                     $withholdAmounts  = $monthlyFixedRepeatingResults['withhold_amounts'];
 					$tableDataArr['monthly_repeating_amounts']  = $monthlyFixedRepeatingResults['total_before_vat'];
                     $tableDataArr['total_vat']  = $monthlyFixedRepeatingResults['total_vat'];
@@ -138,6 +161,7 @@ class ExpensesController extends Controller
                 if ($tableId =='percentage_of_sales') {
                     $expenseAsPercentageResults = $expenseAsPercentageEquation->calculate($studyId, $tableDataArr['percentage_of'], $tableDataArr['revenue_stream_type']??[], $tableDataArr['stream_category_ids']??[], $tableDataArr['start_date'], $loopEndDate, $tableDataArr['monthly_percentage'], $tableDataArr['payment_terms'], $vatRate, $isDeductible, $tableDataArr['withhold_tax_rate']) ;
                     $tableDataArr['expense_as_percentages']  =$expenseAsPercentageResults['total_before_vat']  ;
+					// expense_as_percentages
                     $tableDataArr['total_vat']  =$expenseAsPercentageResults['total_vat']  ;
                     $tableDataArr['total_after_vat']  =$expenseAsPercentageResults['total_after_vat']  ;
                     $withholdAmounts  = $expenseAsPercentageResults['total_withhold'];
@@ -171,7 +195,6 @@ class ExpensesController extends Controller
 					$withholdAmount = $tableDataArr['withhold_tax_rate']/100 ;
 					 $withholdAmounts  = [$startDateAsIndex =>  $amountBeforeVat * $withholdAmount ] ;
 					$payments = $this->calculateCollectionOrPaymentAmounts($tableDataArr['payment_terms'], $amountAfterVat, $datesAsIndexAndString, $customCollectionPolicy,true) ;
-					
 					$withholdPayments = $this->calculateCollectionOrPaymentAmounts($tableDataArr['payment_terms'], $withholdAmounts, $datesAsIndexAndString, $customCollectionPolicy) ;
 					$netPaymentsAfterWithhold = HArr::subtractAtDates([$payments,$withholdPayments],array_keys($payments));
 					$tableDataArr['withhold_amounts'] = $withholdAmounts ;
@@ -180,6 +203,10 @@ class ExpensesController extends Controller
 					 $tableDataArr['net_payments_after_withhold']=$netPaymentsAfterWithhold;
 					$tableDataArr['collection_statements']   =$this->calculateStatement($amountBeforeVatPayload,$tableDataArr['total_vat'],$netPaymentsAfterWithhold,$withholdPayments,$dateIndexWithDate,$study);
                 }
+				// if($tableId == 'expense_per_employee'){
+					
+				// 	$tableDataArr['collection_statements']   =$this->calculateStatement($amountBeforeVatPayload,$tableDataArr['total_vat'],$netPaymentsAfterWithhold,$withholdPayments,$dateIndexWithDate,$study);
+				// }
                 $tableDataArr['company_id']  = $company->id ;
                 $tableDataArr['model_id']   = $modelId ;
                 $tableDataArr['model_name']   = $modelName ;
@@ -190,6 +217,7 @@ class ExpensesController extends Controller
                 
             }
         }
+		
         if ($request->get('saveAndContinue')) {
             return response()->json([
                 'redirectTo'=>route('view.results.dashboard', ['company'=>$company->id,'study'=>$study->id])

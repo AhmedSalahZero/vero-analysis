@@ -389,7 +389,7 @@ use App\Models\NonBankingService\ReverseFactoringBreakdown;
 
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
-                                            <x-repeat-right-dot-inputs :currentVal="$model->reverseFactoryAdminFeesRate ? $model->reverseFactoryAdminFeesRate->getEclRatesAtYearIndex($yearOrMonthAsIndex):0" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :name="'reverseFactoryAdminFeesRate['.'ecl_rates'.']['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :currentVal="$model->reverseFactoryAdminFeesRate ? $model->reverseFactoryAdminFeesRate->getEclRatesAtYearOrMonthIndex($yearOrMonthAsIndex):0" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :name="'reverseFactoryAdminFeesRate['.'ecl_rates'.']['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
                                         </div>
                                     </td>

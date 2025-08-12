@@ -2,7 +2,6 @@
 
 namespace App\Traits;
 
-use App\Dates\DurationYears;
 use App\Traits\GeneralFunctions;
 use Carbon\Carbon;
 
@@ -69,7 +68,6 @@ trait Intervals
 
 
         $data_totals = [];
-
         if (@count($data) > 0) {
 		
             $years_intervals_months = self::intervalsDatesWithLimitMonths($years_intervals_months, $years ,$requested_interval,$limitDate,$startDateMonth);

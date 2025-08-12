@@ -56,7 +56,8 @@ class DashboardController extends Controller
 		$yearWithItsIndexes = $study->getOperationDurationPerYearFromIndexes();
 		$monthsWithItsYear = $study->getMonthsWithItsYear($yearWithItsIndexes) ;
 		$monthsWithItsNumbers = $study->getMonthIndexWithMonthNumber($yearWithItsIndexes) ;
-		
+
+		// dd($monthsWithItsNumbers);
 		$titlesMapping = Study::getProjectionTitles();
 		$loanSchedulePayments = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table($loanSchedulePaymentTableName)->selectRaw('portfolio_loan_type,revenue_stream_type,interestAmount')->where('study_id',$study->id)->get()->toArray();
 		
@@ -77,8 +78,9 @@ class DashboardController extends Controller
 				$currentYearIndex = $monthsWithItsYear[$currentMonthIndex]??null;
 				$currentYearOrMonthIndex = $isMonthlyStudy ? $currentMonthIndex : $currentYearIndex ;
 				$currentYearAsString = $yearIndexWithYear[$currentYearIndex]??null;
-				$currentYearOrMonthAsString = $isMonthlyStudy ?  : $currentYearAsString; 
 				
+				$currentMonthNumber = $monthsWithItsNumbers[$currentMonthIndex]??null;
+				$currentYearOrMonthAsString = $isMonthlyStudy ? $currentMonthNumber : $currentYearAsString; 
 				$currentInterestRevenueAtMonthIndex  = $interestRevenues[$currentMonthIndex]??0;
 				$currentBankInterestExpenseAtMonthIndex = $bankInterestExpenses[$currentMonthIndex]??0;
 				if(!is_null($currentYearIndex)){
@@ -102,19 +104,22 @@ class DashboardController extends Controller
 			foreach($interestAmounts as $currentMonthIndex => $interestAmountAtMonthIndex){
 				
 				$currentYearIndex = $monthsWithItsYear[$currentMonthIndex]??null;
-				$currentDirectFactoringBankInterestExpenseAtYearIndex = $formattedDirectFactoring['bank_interest_expense'][$currentYearIndex]??0;
-				$currentYearAsString = $yearIndexWithYear[$currentYearIndex] ?? null ;
-				if(!is_null($currentYearIndex)){
+				$currentYearOrMonthIndex = $isMonthlyStudy ? $currentMonthIndex : $currentYearIndex ;
+				$currentDirectFactoringBankInterestExpenseAtYearIndex = $formattedDirectFactoring['bank_interest_expense'][$currentYearOrMonthIndex]??0;
+				$currentYearAsString = $yearIndexWithYear[$currentYearOrMonthIndex] ?? null ;
+				$currentMonthNumber = $monthsWithItsNumbers[$currentMonthIndex]??null;
+				$currentYearOrMonthAsString = $isMonthlyStudy ? $currentMonthNumber : $currentYearAsString; 
+				if(!is_null($currentYearOrMonthIndex)){
 					if($isPortfolio){
-						$salesRevenuePerTypes[$revenueStreamType][$currentYearIndex] =  isset($salesRevenuePerTypes[$revenueStreamType][$currentYearIndex]) ? $salesRevenuePerTypes[$revenueStreamType][$currentYearIndex] + $interestAmountAtMonthIndex : $interestAmountAtMonthIndex;
-						$salesRevenuePerTypes['total_revenue'][$currentYearIndex] =  isset($salesRevenuePerTypes['total_revenue'][$currentYearIndex]) ? $salesRevenuePerTypes['total_revenue'][$currentYearIndex] + $interestAmountAtMonthIndex : $interestAmountAtMonthIndex;
-						$formattedResult['sales_revenue'][$currentYearIndex] = $salesRevenuePerTypes['total_revenue'][$currentYearIndex] ;
-							 $resultPerRevenueStreamType[$revenueStreamType][$currentYearAsString] = isset($resultPerRevenueStreamType[$revenueStreamType][$currentYearAsString]) ? $resultPerRevenueStreamType[$revenueStreamType][$currentYearAsString] + $interestAmountAtMonthIndex : $interestAmountAtMonthIndex;
-							$currentSalesRevenue = $formattedResult['sales_revenue'][$currentYearIndex]??0 ;
-							$previousSalesRevenue = $formattedResult['sales_revenue'][$currentYearIndex-1] ?? 0 ;
-							$formattedResult['growth_rate'][$currentYearIndex] = $previousSalesRevenue ? (($currentSalesRevenue / $previousSalesRevenue)-1)*100 : 0 ;
+						$salesRevenuePerTypes[$revenueStreamType][$currentYearOrMonthIndex] =  isset($salesRevenuePerTypes[$revenueStreamType][$currentYearOrMonthIndex]) ? $salesRevenuePerTypes[$revenueStreamType][$currentYearOrMonthIndex] + $interestAmountAtMonthIndex : $interestAmountAtMonthIndex;
+						$salesRevenuePerTypes['total_revenue'][$currentYearOrMonthIndex] =  isset($salesRevenuePerTypes['total_revenue'][$currentYearOrMonthIndex]) ? $salesRevenuePerTypes['total_revenue'][$currentYearOrMonthIndex] + $interestAmountAtMonthIndex : $interestAmountAtMonthIndex;
+						$formattedResult['sales_revenue'][$currentYearOrMonthIndex] = $salesRevenuePerTypes['total_revenue'][$currentYearOrMonthIndex] ;
+							 $resultPerRevenueStreamType[$revenueStreamType][$currentYearOrMonthAsString] = isset($resultPerRevenueStreamType[$revenueStreamType][$currentYearOrMonthAsString]) ? $resultPerRevenueStreamType[$revenueStreamType][$currentYearOrMonthAsString] + $interestAmountAtMonthIndex : $interestAmountAtMonthIndex;
+							$currentSalesRevenue = $formattedResult['sales_revenue'][$currentYearOrMonthIndex]??0 ;
+							$previousSalesRevenue = $formattedResult['sales_revenue'][$currentYearOrMonthIndex-1] ?? 0 ;
+							$formattedResult['growth_rate'][$currentYearOrMonthIndex] = $previousSalesRevenue ? (($currentSalesRevenue / $previousSalesRevenue)-1)*100 : 0 ;
 						}else{			
-							$formattedResult['interest_cogs'][$currentYearIndex] = isset($formattedResult['interest_cogs'][$currentYearIndex]) ? $formattedResult['interest_cogs'][$currentYearIndex] + $interestAmountAtMonthIndex : $interestAmountAtMonthIndex + $currentDirectFactoringBankInterestExpenseAtYearIndex ;
+							$formattedResult['interest_cogs'][$currentYearOrMonthIndex] = isset($formattedResult['interest_cogs'][$currentYearOrMonthIndex]) ? $formattedResult['interest_cogs'][$currentYearOrMonthIndex] + $interestAmountAtMonthIndex : $interestAmountAtMonthIndex + $currentDirectFactoringBankInterestExpenseAtYearIndex ;
 						}
 					}
 				}
@@ -135,8 +140,9 @@ class DashboardController extends Controller
 			$expenseCategory = $salaryExpense->expense_type;
 			$salaryExpensePayload = json_decode($salaryExpense->salary_expenses);
 			foreach($monthsWithItsYear as $monthIndex => $yearIndex){
-				$currentSalaryExpense = $salaryExpensePayload[$monthIndex];
-				$salaryExpensesForCategory[$expenseCategory][$yearIndex] = isset($salaryExpensesForCategory[$expenseCategory][$yearIndex]) ?  $salaryExpensesForCategory[$expenseCategory][$yearIndex] + $currentSalaryExpense : $currentSalaryExpense;
+				$currentYearOrMonthIndex = $isMonthlyStudy ? $monthIndex : $yearIndex ;
+				$currentSalaryExpense = $salaryExpensePayload[$monthIndex]??0;
+				$salaryExpensesForCategory[$expenseCategory][$currentYearOrMonthIndex] = isset($salaryExpensesForCategory[$expenseCategory][$currentYearOrMonthIndex]) ?  $salaryExpensesForCategory[$expenseCategory][$currentYearOrMonthIndex] + $currentSalaryExpense : $currentSalaryExpense;
 			}
 		}
 
@@ -151,54 +157,64 @@ class DashboardController extends Controller
 				continue;
 			}
 			$monthlyExpenses = (array)json_decode($expense->{$currentColumnName});
-			foreach($yearWithItsIndexes as $yearIndex => $monthIndexWithActive){
+			
+			$currentExpenseIndexes = $isMonthlyStudy ? $monthsWithItsNumbers :  $yearWithItsIndexes  ;
+			foreach($currentExpenseIndexes as $yearOrMonthIndex => $monthIndexWithActive){
 				$currentYearInterestCost = 0 ;
 				$currentYearManpowerTotal = 0 ;
 				$currentExpenseItemTotalPerYear = 0 ;
-				if($expenseCategory == 'cost-of-service' && !isset($formattedExpenses[$expenseCategory]['Interest Cost'][$yearIndex])){
-					$formattedExpenses[$expenseCategory]['Interest Cost'][$yearIndex]  = $formattedResult['interest_cogs'][$yearIndex]??0 ;
-					$currentYearInterestCost = $formattedExpenses[$expenseCategory]['Interest Cost'][$yearIndex];
+				if($expenseCategory == 'cost-of-service' && !isset($formattedExpenses[$expenseCategory]['Interest Cost'][$yearOrMonthIndex])){
+					$formattedExpenses[$expenseCategory]['Interest Cost'][$yearOrMonthIndex]  = $formattedResult['interest_cogs'][$yearOrMonthIndex]??0 ;
+					$currentYearInterestCost = $formattedExpenses[$expenseCategory]['Interest Cost'][$yearOrMonthIndex];
 				}
-				if(!isset($formattedExpenses[$expenseCategory]['Manpower Salaries'][$yearIndex])){
-					$formattedExpenses[$expenseCategory]['Manpower Salaries'][$yearIndex] = $salaryExpensesForCategory[$expenseCategory][$yearIndex] ?? 0;
-					$currentYearManpowerTotal = $formattedExpenses[$expenseCategory]['Manpower Salaries'][$yearIndex];
+				if(!isset($formattedExpenses[$expenseCategory]['Manpower Salaries'][$yearOrMonthIndex])){
+					$formattedExpenses[$expenseCategory]['Manpower Salaries'][$yearOrMonthIndex] = $salaryExpensesForCategory[$expenseCategory][$yearOrMonthIndex] ?? 0;
+					$currentYearManpowerTotal = $formattedExpenses[$expenseCategory]['Manpower Salaries'][$yearOrMonthIndex];
 				}
-				
-				foreach($monthIndexWithActive as $monthIndex=> $isActiveIndex){
-						$currentExpenseItemTotalPerYear += $monthlyExpenses[$monthIndex]??0 ;
+				if($isMonthlyStudy){
+					$currentExpenseItemTotalPerYear += $monthlyExpenses[$monthIndex]??0 ;
+				}else{
+					foreach($monthIndexWithActive as $monthIndex=> $isActiveIndex){
+							$currentExpenseItemTotalPerYear += $monthlyExpenses[$monthIndex]??0 ;
+					}
 				}
-				$formattedExpenses[$expenseCategory][$name][$yearIndex] = $currentExpenseItemTotalPerYear;
+				$formattedExpenses[$expenseCategory][$name][$yearOrMonthIndex] = $currentExpenseItemTotalPerYear;
 				$currentYearTotal = $currentExpenseItemTotalPerYear + $currentYearInterestCost +$currentYearManpowerTotal;
-				$formattedExpenses[$expenseCategory]['total'][$yearIndex] = isset($formattedExpenses[$expenseCategory]['total'][$yearIndex]) ? $formattedExpenses[$expenseCategory]['total'][$yearIndex] + $currentYearTotal:$currentYearTotal    ; 
+				$formattedExpenses[$expenseCategory]['total'][$yearOrMonthIndex] = isset($formattedExpenses[$expenseCategory]['total'][$yearOrMonthIndex]) ? $formattedExpenses[$expenseCategory]['total'][$yearOrMonthIndex] + $currentYearTotal:$currentYearTotal    ; 
 			}
 		
 			
 		}
-		foreach($yearWithItsIndexes as $yearIndex => $monthWithItsIndexes){
+		// dd
+		$currentExpenseIndexes = $isMonthlyStudy ? $monthsWithItsNumbers :  $yearWithItsIndexes  ;
+		foreach($currentExpenseIndexes as $yearOrMonthIndex => $monthWithItsIndexes){
 			$currentYearAsString = $yearIndexWithYear[$yearIndex] ?? null ;
-			$currentSalesRevenue = $formattedResult['sales_revenue'][$yearIndex]??0;
-			$resultPerRevenueStreamType['all'][$currentYearAsString] = $currentSalesRevenue;
-			// $currentInterestCogs = $formattedResult['interest_cogs'][$yearIndex]??0;
-			$costOfServiceAtYearIndex = $formattedExpenses['cost-of-service']['total'][$yearIndex]??0;
-			$formattedResult['gross_profit'][$yearIndex] = $currentSalesRevenue - $costOfServiceAtYearIndex;
-			$formattedResult['gross_profit_percentage_of_sales'][$yearIndex] = $currentSalesRevenue ? $formattedResult['gross_profit'][$yearIndex] / $currentSalesRevenue *100 : 0 ;
-			$currentOPEXExpense =$formattedExpenses['other-operation-expense']['total'][$yearIndex]??0; 
-			$currentMarketingExpense =$formattedExpenses['marketing-expense']['total'][$yearIndex]??0; 
-			$currentSalesExpense =$formattedExpenses['sales-expense']['total'][$yearIndex]??0; 
-			$currentGeneralExpense =$formattedExpenses['general-expense']['total'][$yearIndex]??0; 
-			$currentDepreciationExpense =$formattedExpenses['depreciation-expense']['total'][$yearIndex]??0; 
+			$currentMonthNumber = $monthsWithItsNumbers[$yearOrMonthIndex]??null;
+			$currentSalesRevenue = $formattedResult['sales_revenue'][$yearOrMonthIndex]??0;
+			
+			$currentYearAsOrMonthString = $isMonthlyStudy ? $currentMonthNumber : $currentYearAsString ;
+			$resultPerRevenueStreamType['all'][$currentYearAsOrMonthString] = $currentSalesRevenue;
+			// $currentInterestCogs = $formattedResult['interest_cogs'][$yearOrMonthIndex]??0;
+			$costOfServiceAtYearIndex = $formattedExpenses['cost-of-service']['total'][$yearOrMonthIndex]??0;
+			$formattedResult['gross_profit'][$yearOrMonthIndex] = $currentSalesRevenue - $costOfServiceAtYearIndex;
+			$formattedResult['gross_profit_percentage_of_sales'][$yearOrMonthIndex] = $currentSalesRevenue ? $formattedResult['gross_profit'][$yearOrMonthIndex] / $currentSalesRevenue *100 : 0 ;
+			$currentOPEXExpense =$formattedExpenses['other-operation-expense']['total'][$yearOrMonthIndex]??0; 
+			$currentMarketingExpense =$formattedExpenses['marketing-expense']['total'][$yearOrMonthIndex]??0; 
+			$currentSalesExpense =$formattedExpenses['sales-expense']['total'][$yearOrMonthIndex]??0; 
+			$currentGeneralExpense =$formattedExpenses['general-expense']['total'][$yearOrMonthIndex]??0; 
+			$currentDepreciationExpense =$formattedExpenses['depreciation-expense']['total'][$yearOrMonthIndex]??0; 
 			$currentEbitdaAtYearIndex = $currentSalesRevenue  - $costOfServiceAtYearIndex - $currentOPEXExpense - $currentMarketingExpense - $currentSalesExpense-$currentGeneralExpense+$currentDepreciationExpense;
-			$formattedResult['ebitda'][$yearIndex] = $currentEbitdaAtYearIndex;
-			$formattedResult['ebitda_percentage_of_sales'][$yearIndex] =$currentSalesRevenue ?  $currentEbitdaAtYearIndex / $currentSalesRevenue *100 :0;
+			$formattedResult['ebitda'][$yearOrMonthIndex] = $currentEbitdaAtYearIndex;
+			$formattedResult['ebitda_percentage_of_sales'][$yearOrMonthIndex] =$currentSalesRevenue ?  $currentEbitdaAtYearIndex / $currentSalesRevenue *100 :0;
 			$currentEbitAtYearIndex = $currentEbitdaAtYearIndex -  $currentDepreciationExpense;
-			$formattedResult['ebit'][$yearIndex] = $currentEbitAtYearIndex;
-			$formattedResult['ebit_percentage_of_sales'][$yearIndex] =$currentSalesRevenue ?  $currentEbitAtYearIndex / $currentSalesRevenue *100 :0;
-			$currentFinanceInterestExpense = $formattedExpenses['financial-interest-expense']['total'][$yearIndex]??0;
+			$formattedResult['ebit'][$yearOrMonthIndex] = $currentEbitAtYearIndex;
+			$formattedResult['ebit_percentage_of_sales'][$yearOrMonthIndex] =$currentSalesRevenue ?  $currentEbitAtYearIndex / $currentSalesRevenue *100 :0;
+			$currentFinanceInterestExpense = $formattedExpenses['financial-interest-expense']['total'][$yearOrMonthIndex]??0;
 			$currentEbtAtYearIndex = $currentEbitAtYearIndex - $currentFinanceInterestExpense ;
-			$formattedResult['ebt'][$yearIndex] = $currentEbtAtYearIndex;
-			$formattedResult['ebt_percentage_of_sales'][$yearIndex] =$currentSalesRevenue ?  $currentEbtAtYearIndex / $currentSalesRevenue *100 :0;
-			$formattedResult['net_profit'][$yearIndex] = $currentEbtAtYearIndex <0 ? $currentEbtAtYearIndex :$currentEbtAtYearIndex * (1-$corporateTaxes)  ;  
-			$formattedResult['net_profit_percentage_of_sales'][$yearIndex] = $currentSalesRevenue ? $formattedResult['net_profit'][$yearIndex] / $currentSalesRevenue  *100 :0 ;  
+			$formattedResult['ebt'][$yearOrMonthIndex] = $currentEbtAtYearIndex;
+			$formattedResult['ebt_percentage_of_sales'][$yearOrMonthIndex] =$currentSalesRevenue ?  $currentEbtAtYearIndex / $currentSalesRevenue *100 :0;
+			$formattedResult['net_profit'][$yearOrMonthIndex] = $currentEbtAtYearIndex <0 ? $currentEbtAtYearIndex :$currentEbtAtYearIndex * (1-$corporateTaxes)  ;  
+			$formattedResult['net_profit_percentage_of_sales'][$yearOrMonthIndex] = $currentSalesRevenue ? $formattedResult['net_profit'][$yearOrMonthIndex] / $currentSalesRevenue  *100 :0 ;  
 			
 		}
 		$chartsFormatted =$this->formatForTheeLineChart($resultPerRevenueStreamType); 

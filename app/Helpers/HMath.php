@@ -1,7 +1,6 @@
 <?php
 namespace App\Helpers;
 
-use MathPHP\Statistics\Correlation;
 
 class HMath 
 {

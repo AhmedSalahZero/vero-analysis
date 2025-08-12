@@ -547,6 +547,10 @@ class Study extends Model
     {
         return $this->hasMany(LeasingRevenueStreamBreakdown::class, 'study_id', 'id');
     }
+	public function revenueContracts()
+    {
+        return $this->hasMany(RevenueContract::class, 'study_id', 'id');
+    }
     public function reverseFactoringRevenueStreamBreakdown()
     {
         return $this->hasMany(ReverseFactoringRevenueStreamBreakdown::class, 'study_id', 'id');

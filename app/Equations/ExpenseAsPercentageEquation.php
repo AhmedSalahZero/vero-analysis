@@ -20,7 +20,7 @@ class ExpenseAsPercentageEquation
 				'revenue'=>'interestAmount',
 				'outstanding'=>'endBalance',
 				'collection'=>'schedulePayment',
-				// 'contract'=>
+				'contract'=>
 			][$percentageOf];
 			$selectedRevenueStreamTypes = [];
 

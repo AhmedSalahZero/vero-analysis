@@ -63,6 +63,7 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
                                 @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
                                 <x-tables.repeater-table-th class=" interval-class header-border-down " :title="$yearOrMonthFormatted"></x-tables.repeater-table-th>
                                 @endforeach
+                                <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Total')"></x-tables.repeater-table-th>
                             </x-slot>
                             <x-slot name="trs">
 								@if($isYearsStudy)
@@ -97,13 +98,26 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
                                     $columnIndex++;
                                     @endphp
                                     @endforeach
+									
+									
+									<td>
+                                        <div class="form-group three-dots-parent">
+                                            <div class="input-group input-group-sm align-items-center justify-content-center div-for-percentage">
+                                                <input type="text" style="max-width: 60px;min-width: 60px;text-align: center" value="{{ sumNumberOfOnes($yearsWithItsMonths,$yearOrMonthAsIndex,$datesIndexWithYearIndex) }}" readonly onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control target_repeating_amounts only-percentage-allowed size" data-date="#" data-section="target" aria-describedby="basic-addon2">
+                                                <span class="ml-2">
+                                                    <b style="visibility:hidden"></b>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </td>
+									
 
 
                                 </tr>
 								@endif
 
 
-                                <tr data-repeat-formatting-decimals="2" data-repeater-style>
+                                <tr total-row-tr data-repeat-formatting-decimals="2" data-repeater-style>
 
                                     <input type="hidden" name="id" value="{{ isset($subModel) ? $subModel->id : 0 }}">
 
@@ -131,6 +145,15 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
                                     $columnIndex++;
                                     @endphp
                                     @endforeach
+									
+									
+									 <td>
+								
+                                        <div class="d-flex align-items-center justify-content-center">
+											<input type="text" class="form-control expandable-percentage-input sum-total-row sum-percentage-css" disabled value="0"> <span class="ml-2 d-inline-block"> %</span>
+                                        </div>
+                                    </td>
+									
 
 
 
@@ -144,7 +167,7 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
 
 
 
-                                <tr data-repeat-formatting-decimals="0" data-repeater-style>
+                                <tr  total-row-tr data-repeat-formatting-decimals="0" data-repeater-style>
 
                                     <td>
                                         <input value="{{ __('Direct Factoring Projection') }}" disabled class="form-control min-width-300 text-left mt-2" type="text">
@@ -168,6 +191,13 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
                                     @endphp
 
                                     @endforeach
+									
+									 <td>
+                                        <div class="d-flex align-items-center justify-content-center">
+											<input type="text" class="form-control expandable-amount-input sum-total-row sum-percentage-css" disabled value="0"> <span class="ml-2 d-inline-block"> </span>  
+                                        </div>
+                                    </td>
+									
 
 
                                 </tr>

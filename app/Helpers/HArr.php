@@ -54,7 +54,6 @@ class HArr
 
 		return $total;
 	}
-
 	public static function fillMissedKeysFromPreviousKeys(array $items, array $dates, $defaultValue = 0)
 	{
 		$previousValue = $defaultValue;
@@ -86,6 +85,7 @@ class HArr
 
 		return $finalResult;
 	}
+	
 	public static function MultiplyWithNumber(array $items , float $number)
 	{
 		$newItems = [];
@@ -94,7 +94,6 @@ class HArr
 		}
 		return $newItems ;
 	}
-
 	public static function getIndexesBeforeDateOrNumericIndex(array $items, string $index, $indexIsDate = true)
 	{
 		$result = [];
@@ -588,18 +587,7 @@ foreach ($yearlySums as $year => $data) {
 // Sort by index to maintain order
 ksort($result);
 return $result;
-// $group_size = 12;
-		// $sums = [];
-		// $currentIndex = 0;
-		// for ($i = 0; $i < count($items); $i += $group_size) {
-		// 	$currentSumIndex = $financialYearsEndMonths[$currentIndex]??null;
-		// 	if(is_null($currentSumIndex)){
-		// 		return $sums;
-		// 	}
-		// 	$sums[$currentSumIndex] = array_sum(array_slice($items, $i, $group_size));
-		// 	$currentIndex++;
-		// }
-		// return $sums;
+
 	}
 	protected static function calculateGrowthRate(array $items):array {
 		$previousValue = 0 ;
@@ -728,6 +716,14 @@ public static function divideArrBy(array $items , int $num):array
 	$result = [];
 	foreach($items as $index=> $val){
 		$result[$index] = $val / $num;
+	}
+	return $result ; 
+}
+public static function multipleTwoArrAtSameIndex(array $firstArr , array $secondArr){
+	$result = [];
+	foreach($firstArr as $index => $value){
+		$secondAtValue = $secondArr[$index]??0;
+		$result[$index] = $value * $secondAtValue ;
 	}
 	return $result ; 
 }

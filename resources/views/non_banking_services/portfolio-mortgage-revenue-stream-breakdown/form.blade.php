@@ -88,6 +88,7 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
                                 @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
                                 <x-tables.repeater-table-th class=" interval-class header-border-down " :title="$yearOrMonthFormatted"></x-tables.repeater-table-th>
                                 @endforeach
+								<x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Total')"></x-tables.repeater-table-th>
                             </x-slot>
                             <x-slot name="trs">
 								@if($isYearsStudy)
@@ -128,7 +129,7 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
 								@endif
 
 
-                                <tr data-repeat-formatting-decimals="2" data-repeater-style>
+                                <tr total-row-tr data-repeat-formatting-decimals="2" data-repeater-style>
 
                                     <input type="hidden" name="id" value="{{ isset($subModel) ? $subModel->id : 0 }}">
 
@@ -156,7 +157,13 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
                                     $columnIndex++;
                                     @endphp
                                     @endforeach
-
+ <td>
+								
+                                        <div class="d-flex align-items-center justify-content-center">
+											<input type="text" class="form-control expandable-percentage-input sum-total-row sum-percentage-css" disabled value="0"> <span class="ml-2 d-inline-block"> %</span>
+                                        </div>
+                                    </td>
+                                    
 
 
                                 </tr>
@@ -169,7 +176,7 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
 
 
 
-                                <tr data-repeat-formatting-decimals="0" data-repeater-style>
+                                <tr total-row-tr data-repeat-formatting-decimals="0" data-repeater-style>
 
                                     <td>
                                         <input value="{{ __('Portfolio Mortgage Avg Transactions Amount') }}" disabled class="form-control min-width-300 text-left mt-2" type="text">
@@ -198,6 +205,12 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
                                     @endphp
 
                                     @endforeach
+									
+									    <td>
+                                        <div class="d-flex align-items-center justify-content-center">
+											<input type="text" class="form-control expandable-amount-input sum-total-row sum-percentage-css" disabled value="0"> <span class="ml-2 d-inline-block"> </span>  
+                                        </div>
+                                    </td>
 
 
                                 </tr>

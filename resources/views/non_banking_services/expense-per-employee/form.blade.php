@@ -27,13 +27,17 @@ use App\Models\NonBankingService\Expense;
         $repeaterId = 'expense_per_employee_repeater';
         $cardId = $tableId;
         @endphp
-
+	@php
+		$storeRoute = route('store.expenses',['company'=>$company->id,'study'=>$study->id]);
+	@endphp
         <div class="kt-portlet parent-card ">
             <div class="kt-portlet__body">
                 {{-- start of one time expense --}}
                 <form id="form-id" class="kt-form kt-form--label-right" method="POST" enctype="multipart/form-data" action="{{ $storeRoute }}">
                     @include('non_banking_services.expense-per-employee._input-hidden')
 			
+                    <input type="hidden" name="model_id" value="{{ $study->id }}">
+                    <input type="hidden" name="expense_type" value="{{ $tableId }}">
                     <input type="hidden" name="tableIds[]" value="{{ $tableId }}">
                     <x-tables.repeater-table :font-size-class="'font-14px'" :append-save-or-back-btn="true" :repeater-with-select2="true" :parentClass="'js-toggle-visibility'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
                         <x-slot name="ths">
@@ -54,6 +58,7 @@ use App\Models\NonBankingService\Expense;
                             @php
 
                             $rows = isset($model) ? $model->generateRelationDynamically($tableId,$expenseType)->get() : [-1] ;
+					
 
                             @endphp
                             @foreach( count($rows) ? $rows : [-1] as $subModel)
@@ -86,7 +91,6 @@ use App\Models\NonBankingService\Expense;
                                 {{-- <td>
                                     <input value="{{ isset($subModel) ?  $subModel->getName() : old('name') }}" class="form-control" @if($isRepeater) name="name" @else name="{{ $tableId }}[0][name]" @endif type="text">
                                 </td> --}}
-								
 								
 
                                 <td>

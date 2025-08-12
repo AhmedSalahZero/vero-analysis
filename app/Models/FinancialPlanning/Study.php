@@ -42,9 +42,7 @@ use Illuminate\Database\Eloquent\Model;
 		{
 			parent::boot();
 			static::deleted(function(self $study){
-				// $study->leasingRevenueStreamBreakdown->each(function(LeasingRevenueStreamBreakdown $leasingRevenueStreamBreakdown){
-				// 	$leasingRevenueStreamBreakdown->delete();
-				// });
+			
 			});
 		}
 		public function getName()

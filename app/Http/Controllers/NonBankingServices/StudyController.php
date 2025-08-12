@@ -68,7 +68,7 @@ class StudyController extends Controller
 		$startDate = $filterDates[Study::STUDY]['startDate'] ?? null ;
 		$endDate = $filterDates[Study::STUDY]['endDate'] ?? null ;
 		$studies = $company->studies ;
-		$studies =  $studies->filterByDateColumn('study_start_date',$startDate,$endDate) ;
+	//	$studies =  $studies->filterByDateColumn('study_start_date',$startDate,$endDate) ;
 		$studies =  $currentType == Study::STUDY ? $this->applyFilter($request,$studies):$studies ;
 		$monthlyStudies = $studies->filter(function($study){
 			return !$study->isMonthlyStudy();

@@ -36,7 +36,7 @@ class RunSqlOnProduction extends Command
      *
      * @return int
      */
-	public function getAllFilesInFolder():array  {
+	public function getAllFilesInFolderForVero():array  {
 		$fileNames = [];
 		$path = app_path('Triggers/Cashvero');
 		$files = \File::allFiles($path);
@@ -46,9 +46,22 @@ class RunSqlOnProduction extends Command
 		}
 		return $fileNames;
 	}
+	public function getAllFilesInFolderForNonBanking():array  {
+		$fileNames = [];
+		$path = app_path('Triggers/NonBankingService');
+		$files = \File::allFiles($path);
+	
+		foreach($files as $file) {
+			array_push($fileNames, pathinfo($file)['filename']);
+		}
+		return $fileNames;
+	}
     public function handle()
     {
-		$fileNames=$this->getAllFilesInFolder();
+		/**
+		 * @var array $fileNames
+		 */
+		$fileNames=$this->getAllFilesInFolderForVero();
 		foreach($fileNames as $fileName){
 			$fileContent = file_get_contents(app_path('Triggers/Cashvero').'/'.$fileName.'.sql');
 			$fileContent = str_replace(array("delimiter ;","delimiter //","DELIMITER $$","delimiter $$","DELIMITER ;"), '', $fileContent);
@@ -56,5 +69,16 @@ class RunSqlOnProduction extends Command
 			$fileContent = str_replace(['DELIMITER ;'],'',$fileContent);
 			DB::unprepared(DB::raw($fileContent));
 		}
+		
+		
+		$fileNames=$this->getAllFilesInFolderForNonBanking();
+		foreach($fileNames as $fileName){
+			$fileContent = file_get_contents(app_path('Triggers/NonBankingService').'/'.$fileName.'.sql');
+			$fileContent = str_replace(array("delimiter ;","delimiter //","DELIMITER $$","delimiter $$","DELIMITER ;"), '', $fileContent);
+			$fileContent = str_replace(['//','$$'],';',$fileContent);
+			$fileContent = str_replace(['DELIMITER ;'],'',$fileContent);
+			DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->unprepared(DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->raw($fileContent));
+		}
+		
     }
 }

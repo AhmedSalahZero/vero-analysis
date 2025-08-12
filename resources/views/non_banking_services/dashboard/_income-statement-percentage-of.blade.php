@@ -1,13 +1,17 @@
-<x-tables.repeater-table :table-class="'col-md-6 margin__left'" :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
+@php
+	$tableClass = $isYearsStudy ? 'col-md-6 margin__left'  : 'col-md-12';
+@endphp
+
+<x-tables.repeater-table :table-class="$tableClass" :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
                                 <x-slot name="ths">
                                     <x-tables.repeater-table-th class="  header-border-down first-column-th-class" :title="__('Item')"></x-tables.repeater-table-th>
-                                    @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
-                                    <x-tables.repeater-table-th class=" interval-class header-border-down " :title="$year.'-'"></x-tables.repeater-table-th>
+                                   @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
+                                    <x-tables.repeater-table-th class=" interval-class header-border-down " :title="$yearOrMonthFormatted"></x-tables.repeater-table-th>
                                     @endforeach
                                 </x-slot>
                                 <x-slot name="trs">
-
-                                    <tr data-repeat-formatting-decimals="0" data-repeater-style>
+									@if($isYearsStudy)
+                                    <tr data-repeat-formatting-decimals="1" data-repeater-style>
 
 
 
@@ -40,6 +44,7 @@
 
 
                                     </tr>
+									@endif
 
 
 
@@ -47,7 +52,7 @@
 
 
 
-                                    <tr data-repeat-formatting-decimals="2" data-repeater-style>
+                                    <tr data-repeat-formatting-decimals="1" data-repeater-style>
 
 
 
@@ -62,14 +67,13 @@
                                         $columnIndex = 0 ;
 
                                         @endphp
-                                        @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
+                                        @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
                                         @php
-                                        $currentVal = $formattedResult['growth_rate'][$year] ?? 0;
+                                        $currentVal = $formattedResult['growth_rate'][$yearOrMonthAsIndex] ?? 0;
                                         @endphp
                                         <td>
                                             <div class="d-flex align-items-center justify-content-center">
-                                                <x-repeat-right-dot-inputs :disabled="true" numberFormatDecimals="2" :removeThreeDotsClass="true" :removeThreeDots="true" :currentVal="$currentVal" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :name="'IjaraMortgageRevenueProjectionByCategory['.'growth_rates'.']['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
-
+                                                <x-repeat-right-dot-inputs :disabled="true" numberFormatDecimals="1" :removeThreeDotsClass="true" :removeThreeDots="true" :currentVal="$currentVal" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :name="''" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
                                             </div>
                                         </td>
                                         @php
@@ -96,7 +100,7 @@
 
 
 
-                                    <tr data-repeat-formatting-decimals="2" data-repeater-style>
+                                    <tr data-repeat-formatting-decimals="1" data-repeater-style>
 
 
 
@@ -112,9 +116,9 @@
 
 
                                         @endphp
-                                        @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
+                                        @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
                                         @php
-                                        $currentVal = $formattedResult['gross_profit_percentage_of_sales'][$year] ?? 0;
+                                        $currentVal = $formattedResult['gross_profit_percentage_of_sales'][$yearOrMonthAsIndex] ?? 0;
                                         @endphp
                                         <td>
                                             <div class="d-flex align-items-center justify-content-center">
@@ -142,7 +146,7 @@
 
 
 
-                                    <tr data-repeat-formatting-decimals="2" data-repeater-style>
+                                    <tr data-repeat-formatting-decimals="1" data-repeater-style>
 
 
 
@@ -156,13 +160,13 @@
                                         @php
                                         $columnIndex = 0 ;
                                         @endphp
-                                        @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
+                                        @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
                                         @php
-                                        $currentVal = $formattedResult['ebitda_percentage_of_sales'][$year] ?? 0;
+                                        $currentVal = $formattedResult['ebitda_percentage_of_sales'][$yearOrMonthAsIndex] ?? 0;
                                         @endphp
                                         <td>
                                             <div class="d-flex align-items-center justify-content-center">
-                                                <x-repeat-right-dot-inputs :disabled="true" :numberFormatDecimals="1" :removeThreeDotsClass="true" :removeThreeDots="true" :currentVal="$currentVal" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :name="'IjaraMortgageRevenueProjectionByCategory['.'growth_rates'.']['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                                <x-repeat-right-dot-inputs :disabled="true" :numberFormatDecimals="1" :removeThreeDotsClass="true" :removeThreeDots="true" :currentVal="$currentVal" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :name="''" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
                                             </div>
                                         </td>
@@ -181,7 +185,7 @@
 
 
 
-                                    <tr data-repeat-formatting-decimals="2" data-repeater-style>
+                                    <tr data-repeat-formatting-decimals="1" data-repeater-style>
 
                                         <td>
                                             <div class="">
@@ -194,13 +198,13 @@
                                         $columnIndex = 0 ;
 
                                         @endphp
-                                        @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
+                                       @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
                                         @php
-                                        $currentVal = $formattedResult['ebit_percentage_of_sales'][$year] ?? 0;
+                                        $currentVal = $formattedResult['ebit_percentage_of_sales'][$yearOrMonthAsIndex] ?? 0;
                                         @endphp
                                         <td>
                                             <div class="d-flex align-items-center justify-content-center">
-                                                <x-repeat-right-dot-inputs :disabled="true" :numberFormatDecimals="1" :removeThreeDotsClass="true" :removeThreeDots="true" :currentVal="$currentVal" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :name="'IjaraMortgageRevenueProjectionByCategory['.'growth_rates'.']['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                                <x-repeat-right-dot-inputs :disabled="true" :numberFormatDecimals="1" :removeThreeDotsClass="true" :removeThreeDots="true" :currentVal="$currentVal" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :name="''" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
                                             </div>
                                         </td>
@@ -219,7 +223,7 @@
 
 
 
-                                    <tr data-repeat-formatting-decimals="2" data-repeater-style>
+                                    <tr data-repeat-formatting-decimals="1" data-repeater-style>
 
 
 
@@ -235,13 +239,13 @@
 
 
                                         @endphp
-                                        @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
+                                        @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
                                         @php
-                                        $currentVal = $formattedResult['ebt_percentage_of_sales'][$year] ?? 0;
+                                        $currentVal = $formattedResult['ebt_percentage_of_sales'][$yearOrMonthAsIndex] ?? 0;
                                         @endphp
                                         <td>
                                             <div class="d-flex align-items-center justify-content-center">
-                                                <x-repeat-right-dot-inputs :disabled="true" :numberFormatDecimals="1" :removeThreeDotsClass="true" :removeThreeDots="true" :currentVal="$currentVal" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :name="'IjaraMortgageRevenueProjectionByCategory['.'growth_rates'.']['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                                <x-repeat-right-dot-inputs :disabled="true" :numberFormatDecimals="1" :removeThreeDotsClass="true" :removeThreeDots="true" :currentVal="$currentVal" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :name="''" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
                                             </div>
                                         </td>
@@ -261,7 +265,7 @@
 
 
 
-                                    <tr data-repeat-formatting-decimals="2" data-repeater-style>
+                                    <tr data-repeat-formatting-decimals="1" data-repeater-style>
 
 
 
@@ -277,14 +281,14 @@
 
 
                                         @endphp
-                                        @foreach($yearsWithItsMonths as $year=>$monthsForThisYearArray)
+                                       @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
                                         @php
-                                        $currentVal = $formattedResult['net_profit_percentage_of_sales'][$year] ?? 0;
+                                        $currentVal = $formattedResult['net_profit_percentage_of_sales'][$yearOrMonthAsIndex] ?? 0;
                                         @endphp
 
                                         <td>
                                             <div class="d-flex align-items-center justify-content-center">
-                                                <x-repeat-right-dot-inputs :disabled="true" :numberFormatDecimals="1" :removeThreeDotsClass="true" :removeThreeDots="true" :currentVal="$currentVal" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :name="'IjaraMortgageRevenueProjectionByCategory['.'growth_rates'.']['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                                <x-repeat-right-dot-inputs :disabled="true" :numberFormatDecimals="1" :removeThreeDotsClass="true" :removeThreeDots="true" :currentVal="$currentVal" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :name="''" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
                                             </div>
                                         </td>

@@ -25,7 +25,6 @@ class CashingService
         {
              $years = Cache::get($IntervalYearsFormCompanyCacheNameForCompany) ;
         }
-
         else{
             $years  = DB::select(DB::raw(
             "select min(date_format(date , '%Y')) start_date ,max(date_format(date , '%Y')) end_date , max(date) full_end_date from sales_gathering  where company_id = " . $this->company->id 

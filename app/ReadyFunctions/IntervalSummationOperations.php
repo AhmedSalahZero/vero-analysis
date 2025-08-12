@@ -1,7 +1,6 @@
 <?php 
 namespace App\ReadyFunctions ;
 
-use App\Models\HospitalitySector;
 use Carbon\Carbon;
 
 class IntervalSummationOperations 

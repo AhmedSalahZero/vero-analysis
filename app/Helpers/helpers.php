@@ -5289,23 +5289,21 @@ function getMonthsLessThanOrEqual($limitMonth, $months)
 }
 function getMonthsForQuarterly($limitMonth, $quarters)
 {
-	
-
     if($limitMonth <=3) {
         return ['01-'.$limitMonth];
     }
     if($limitMonth <=6) {
-        return collect($quarters[0]??null,'01-'.$limitMonth)->filter(function($item){
+        return collect([$quarters[0]??null,'01-'.$limitMonth])->filter(function($item){
 			return $item ;
 		})->toArray();
     }
     if($limitMonth <=9) {
-        return collect($quarters[0]??null,$quarters[1]??null,'01-'.$limitMonth)->filter(function($item){
+        return collect([$quarters[0]??null,$quarters[1]??null,'01-'.$limitMonth])->filter(function($item){
 			return $item ;
 		})->toArray(); 
     }
     if($limitMonth <=12) {
-        return collect($quarters[0]??null,$quarters[1]??null,$quarters[2]??null,'01-'.$limitMonth)->filter(function($item){
+        return collect([$quarters[0]??null,$quarters[1]??null,$quarters[2]??null,'01-'.$limitMonth])->filter(function($item){
 			return $item ;
 		})->toArray();
     }

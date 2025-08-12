@@ -13,11 +13,20 @@ use MathPHP\Statistics\Correlation ;
 
 @section('dash_nav')
 <style>
+	table , table * {
+		font-size : 10px !important;
+	}
     .max-column-th-class {
         width: 30% !important;
         min-width: 30% !important;
         max-width: 30% !important;
     }
+
+	.expandable-percentage-input {
+		max-width: 50px !important;
+		min-width: 50px !important;
+		text-align: center !important;
+	}
 
     .three-dots-parent {
         margin-top: 0 !important;
@@ -29,9 +38,9 @@ use MathPHP\Statistics\Correlation ;
     }
 
     .expandable-amount-input {
-        max-width: 90px !important;
-        min-width: 90px !important;
-        width: 90px !important;
+        max-width: 60px !important;
+        min-width: 60px !important;
+        width: 60px !important;
     }
 
     table:not(.table-condensed) thead th,
@@ -106,75 +115,6 @@ use MathPHP\Statistics\Correlation ;
 
 
 
-        <div class="kt-portlet">
-
-            <div class="kt-portlet__body  kt-portlet__body--fit">
-                <div class="row row-no-padding row-col-separator-xl">
-
-
-
-                    {{-- @foreach( $result['report_data']??[] as $name => $subItems )
-                   
-
-
-                    @if($name !='Total')
-                    <div class="col-md-6 col-lg-3 col-xl-3">
-                        <!--begin::Total Profit-->
-                        <div class="kt-widget24 text-center">
-                            <div class="kt-widget24__details">
-                                <div class="kt-widget24__info w-100">
-                                    <h4 class="kt-widget24__title font-size text-uppercase d-flex justify-content-between align-items-center">
-                                        {{ $name }}
-                    @php
-                    // $currentModalId = 'cost_of_sales';
-                    @endphp
-                    @if($name !='Total')
-                    <button class="btn btn-sm btn-brand btn-elevate btn-pill text-white" data-toggle="modal" data-target="#{{ $currentModalId }}">{{ __('Details') }}</button>
-                    @endif
-
-                    @include('admin.dashboard.expense_modal',['detailItems'=> $subItems ,'cardTotal'=>$cardTotal , 'modalId'=>$currentModalId ,'title'=>$name])
-                    </h4>
-
-                </div>
-            </div>
-
-
-            <div class="kt-widget24__details">
-                @php
-                $currentExpenseTotal = 0 ;
-                @endphp
-                <span class="kt-widget24__stats kt-font-brand text-left">
-
-                    @php
-                    $currentExpenseTotal = $cardTotal
-                    @endphp
-                    {{ number_format($currentExpenseTotal) }}
-
-                    @if($totalSales)
-                    <br>
-                    <br>
-                    <span class="text-green">[{{ number_format($currentExpenseTotal / $totalSales * 100,2) . ' % / Rev'  }}]</span>
-                    @endif
-                </span>
-            </div>
-
-            <div class="progress progress--sm">
-                <div class="progress-bar kt-bg-brand" role="progressbar" style="width: 78%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
-            </div>
-
-        </div>
-
-        <!--end::Total Profit-->
-    </div>
-    @endif
-    @endforeach --}}
-
-
-
-</div>
-</div>
-</div>
-
 
 
 <div class="row">
@@ -194,7 +134,7 @@ use MathPHP\Statistics\Correlation ;
 
                         <div class="row">
                             <div class="col-md-4">
-                                <h3 class="font-weight-bold text-black form-label kt-subheader__title small-caps mr-5 text-primary text-nowrap"> {{ __('Income Statement Summary') }} {{ __('Fig In Million') }} </h3>
+                                <h3 class="font-weight-bold text-black form-label kt-subheader__title small-caps mr-5 text-primary text-nowrap"> {{ __('Income Statement Summary Fig In Million') }} </h3>
                             </div>
                             <div class="col-md-8 mb-3">
                                 @php

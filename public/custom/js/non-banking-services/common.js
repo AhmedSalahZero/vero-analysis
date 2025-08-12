@@ -442,3 +442,18 @@ $(document).ready(function() {
 $(function(){
 //	$('#toggleEditBtn').click();
 })
+$(document).on('change','[total-row-tr] input.input-hidden-with-name',function(){
+	let parent = $(this).closest('tr') ; 
+	let totalRow = parent.find('.sum-total-row');
+	let numberOfDecimals  = parent.attr('data-repeat-formatting-decimals') ;
+	if(totalRow){
+		let total =  0 ;
+		parent.find('input.input-hidden-with-name').each(function(index,	row){
+			var currentTotal  = parseFloat(number_unformat($(row).val()));
+			total+=currentTotal;
+		})
+		parent.find('input.sum-total-row').val(number_format(total,numberOfDecimals));
+	}
+	
+})
+$('[total-row-tr] input.input-hidden-with-name').trigger('change')

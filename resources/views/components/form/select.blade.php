@@ -151,5 +151,4 @@ data-current-selected-items="{{ json_encode($selectedValue) }}"
 {{ $slot }}
 
 @push('js')
-
 @endpush

@@ -41,6 +41,7 @@ use App\Models\NonBankingService\Expense;
 @endsection
 @section('content')
 
+
 <form id="form-id" class="kt-form kt-form--label-right" method="POST" enctype="multipart/form-data" action="{{ $storeRoute }}">
             <input type="hidden" name="study_id" id="study-id-js" value="{{ $study->id }}">
 

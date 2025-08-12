@@ -42,26 +42,6 @@ class LeasingRevenueStreamBreakdownController extends Controller
 		if(count($request->get('leasingRevenueStreamBreakdown',[]))){
 			$study->storeRepeaterRelations($request,['leasingRevenueStreamBreakdown'],$company);
 		}
-		////
-		// $monthlyLoanAmounts = [];
-		// $operationDurationPerYear=$study->getOperationDurationPerYearFromIndexes();
-		// $revenueIdWitLoanAmounts = $study->leasingRevenueStreamBreakdown->pluck('loan_amounts','id')->toArray() ;
-		// foreach($revenueIdWitLoanAmounts as $leasingRevenueStreamBreakdownId => $yearIndexWithAmount){
-		// 	foreach($operationDurationPerYear as $yearIndex => $yearMonthIndexes){
-			
-		// 	foreach($yearMonthIndexes as $monthIndex => $monthlyZeroOrOne ){
-				
-		// 		$loanAtCurrentYear = $yearIndexWithAmount[$yearIndex]??0 ;
-		// 		$currentMonthlyLoanAmount = $loanAtCurrentYear / count($yearMonthIndexes)  ;
-		// 		$monthlyLoanAmounts[$leasingRevenueStreamBreakdownId][$monthIndex] = $currentMonthlyLoanAmount ;
-		// 	}
-		// 	}
-		// 	$study->leasingRevenueStreamBreakdown->where('id',$leasingRevenueStreamBreakdownId)->first()->update([
-		// 		'monthly_loan_amounts'=>$monthlyLoanAmounts[$leasingRevenueStreamBreakdownId]
-		// 	]);
-		// }
-		
-		///
 		$loanAmounts = $request->get('loan_amounts',[]);
 		if($request->has('growth_rate')){
 			$study->leasingRevenueStreamBreakdown->each(function($model) use ($loanAmounts){
