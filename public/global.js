@@ -92,7 +92,7 @@ $(document).on('change','.only-greater-than-zero-allowed',function(){
             title: trans['Oops...'][currentLang],
             text: trans['The Value Must Be Greater Than Zero'][currentLang],
         })
-        $(this).val(1);
+        $(this).val(1).trigger('change');
 
     }
 });

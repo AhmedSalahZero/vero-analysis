@@ -8,6 +8,7 @@ use App\Models\NonBankingService\GeneralAndReserveAssumption;
 use App\Models\NonBankingService\NewBranchLoanCaseProjection;
 use App\Models\Traits\Scopes\BelongsToCompany;
 use App\Models\Traits\Scopes\CompanyScope;
+use App\Providers\NonBankingServiceProvider;
 use App\ReadyFunctions\CalculateDurationService;
 use App\ReadyFunctions\CalculateFixedLoanAtBeginningService;
 use App\ReadyFunctions\CalculateFixedLoanAtEndService;
@@ -496,24 +497,34 @@ class Study extends Model
             return $results;
 			
 	}
-    public function getYearOrMonthIndexes()
-    {
-        $yearIndexWithItsActiveMonths = $this->getOperationDurationPerYearFromIndexes();
-        
+	public function getMonthlyIndexes()
+	{
+		$yearIndexWithItsActiveMonths = $this->getOperationDurationPerYearFromIndexes();
         $datesAndIndexesHelpers = $this->getDatesIndexesHelper();
-        //  $datesIndexWithYearIndex=$datesAndIndexesHelpers['datesIndexWithYearIndex'];
-    
-        $yearIndexWithYear=$datesAndIndexesHelpers['yearIndexWithYear'];
-        $dateIndexWithDate=$datesAndIndexesHelpers['dateIndexWithDate'];
-        if ($this->isMonthlyStudy()) {
-            return $this->getActiveMonthlyDates($yearIndexWithItsActiveMonths,$dateIndexWithDate);
-        }
-        $results = [];
+		$dateIndexWithDate=$datesAndIndexesHelpers['dateIndexWithDate'];
+		
+		return $this->getActiveMonthlyDates($yearIndexWithItsActiveMonths,$dateIndexWithDate);
+	}
+	public function getYearlyIndexes():array 
+	{
+		        $yearIndexWithItsActiveMonths = $this->getOperationDurationPerYearFromIndexes();
+		 $datesAndIndexesHelpers = $this->getDatesIndexesHelper();
+		 $yearIndexWithYear=$datesAndIndexesHelpers['yearIndexWithYear'];
+		  $results = [];
         foreach ($yearIndexWithItsActiveMonths as $yearIndex => $monthsForThisYearArray) {
             $results[$yearIndex] = 'Yr-'.$yearIndexWithYear[$yearIndex] ;
         }
         return $results;
+		
+	}
+    public function getYearOrMonthIndexes():array 
+    {
+        if ($this->isMonthlyStudy()) {
+            return $this->getMonthlyIndexes();
+        }
+        return $this->getYearlyIndexes();
     }
+	
     public function getMonthsWithItsYear(array $yearWithItsIndexes):array
     {
         $result = [];
@@ -786,19 +797,44 @@ class Study extends Model
     public function storeMonthlyLoan(string $relationName)
     {
         $monthlyLoanAmounts = [];
+        $contractCounts = [];
         $operationDurationPerYear=$this->getOperationDurationPerYearFromIndexes();
         $revenueIdWitLoanAmounts = $this->{$relationName}->pluck('loan_amounts', 'id')->toArray() ;
+	
         foreach ($revenueIdWitLoanAmounts as $leasingRevenueStreamBreakdownId => $yearIndexWithAmount) {
             foreach ($operationDurationPerYear as $yearIndex => $yearMonthIndexes) {
+
                 foreach ($yearMonthIndexes as $monthIndex => $monthlyZeroOrOne) {
-                    $loanAtCurrentYear = $this->isMonthlyStudy() ? $yearIndexWithAmount : ($yearIndexWithAmount[$yearIndex]??0);
+                    $loanAtCurrentYear = $this->isMonthlyStudy() ? ($yearIndexWithAmount[$monthIndex]??0) : ($yearIndexWithAmount[$yearIndex]??0);
                     $currentMonthlyLoanAmount = $this->isMonthlyStudy() ? $loanAtCurrentYear :  ($loanAtCurrentYear / count($yearMonthIndexes))  ;
+				
                     $monthlyLoanAmounts[$leasingRevenueStreamBreakdownId][$monthIndex] = $currentMonthlyLoanAmount ;
+                    $contractCounts[$leasingRevenueStreamBreakdownId][$monthIndex] = (int)($currentMonthlyLoanAmount != 0)  ;
                 }
             }
-            $this->{$relationName}->where('id', $leasingRevenueStreamBreakdownId)->first()->update([
-                'monthly_loan_amounts'=>$monthlyLoanAmounts[$leasingRevenueStreamBreakdownId]
-            ]);
+			
+			$currentMonthlyAmounts = $monthlyLoanAmounts[$leasingRevenueStreamBreakdownId];
+			$currentCounts = $contractCounts[$leasingRevenueStreamBreakdownId];
+			$model = $this->{$relationName}->where('id', $leasingRevenueStreamBreakdownId)->first() ;
+			$model->update([
+				'monthly_loan_amounts'=>$currentMonthlyAmounts
+			]);
+			$foreignKeyName = $model->getForeignKeyName(); 
+			$categoryColumnName = $model->getCategoryColumnName(); 
+			DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('revenue_contracts')->where('study_id',$this->id)->where($foreignKeyName,$model->id)->delete();
+			
+			$newRevenueContractRows = [
+				'study_id'=>$this->id ,
+				'company_id'=>$this->company->id ,
+				'monthly_loan_amounts'=>$currentMonthlyAmounts,
+				'contract_counts'=>$currentCounts,
+				$foreignKeyName=>$model->id
+			];
+			if($categoryColumnName){
+					$newRevenueContractRows['category_id'] = $model->{$categoryColumnName};
+			}
+			RevenueContract::create($newRevenueContractRows);
+			
         }
     }
     public function storeFixedLoans(string $revenueStreamType, string $relationName, $eclRelationName, bool $isSensitivity = false, array $pricingPerMonths = null):void
@@ -1449,7 +1485,7 @@ class Study extends Model
         $datesIndexWithYearIndex = app()->make('datesIndexWithYearIndex');
         $dateIndexWithDates = app()->make('dateIndexWithDate');
         $dateIndexWithDates = app()->make('dateIndexWithDate');
-		$yearOrMonthsIndexes = array_keys($this->getYearOrMonthIndexes());
+		$monthsIndexes = array_keys($this->getMonthlyIndexes());
         $result = [];
         foreach ($this->refresh()->directFactoringBreakdowns as $directFactoringBreakdown) {
             /**
@@ -1459,7 +1495,9 @@ class Study extends Model
             $amountAsPayload = $directFactoringBreakdown->getLoanAmountPayload();
             $currentMarginRate = $directFactoringBreakdown->getMarginRate();
             $category = $directFactoringBreakdown->getCategory();
+
             $directFactoringAmounts = $this->isMonthlyStudy() ? $amountAsPayload :  $this->convertYearToMonthIndexesAndDivideBySumMonths($amountAsPayload);
+			// dd($directFactoringAmounts);
             $baseRates = $this->isMonthlyStudy() ? $baseRates : $this->convertYearToMonthIndexes($baseRates);
             $currentBeginningBalance = 0 ;
             $currentDirectFactoringBankBeginningBalance= 0 ;
@@ -1469,8 +1507,10 @@ class Study extends Model
             $directFactoringNetFundingAmounts = [];
             $directFactoringBankLoanStatements = [];
             $currentDirectFactoringBeginningBalance = 0 ;
+			// dd($directFactoringAmounts,$yearOrMonthsIndexes);
             foreach ($directFactoringAmounts as $index => $currentDirectAmount) {
-				$monthIndex = $yearOrMonthsIndexes[$index];
+				
+				$monthIndex = $monthsIndexes[$index];
 				$currentYearIndex = $datesIndexWithYearIndex[$monthIndex];
 				$currentYearOrMonthIndex = $this->isMonthlyStudy() ? $monthIndex : $currentYearIndex;
                 $currentDateAsString = $dateIndexWithDates[$monthIndex];

@@ -57,5 +57,13 @@ class  ReverseFactoringBreakdown extends Model
 		$category = $this->category ;
 		return HArr::getTitleFromValueArray(reverseFactoringSelector(),$category);
 	}
+		public function getForeignKeyName():string
+	{
+		return 'reverse_breakdown_id';
+	}	
+	public function getCategoryColumnName():string 
+	{
+		return $this->category;
+	}
 	
 }

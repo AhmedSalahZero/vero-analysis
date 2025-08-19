@@ -34,44 +34,7 @@
 								    <td>
  									<input value="{{ (isset($subModel) ?$subModel->getName() : '') }}" @if($isRepeater) name="name" @else name="{{ $tableId }}[0][name]" @endif class="form-control text-center " type="text">
                                 </td>
-                                {{-- <td>
-                                    <div class="d-flex align-items-center ">
-									  <x-form.select :selectedValue="isset($subModel) ? $subModel->getExpenseTypeId() : '' " :options="Select2Formatter::formatForIndexedArr(getExpenseTypes())" :add-new="false" class="select2-select   repeater-select"  :all="false" name="{{ $isRepeater ? 'expense_type':$tableId.'[0][expense_type]' }}" ></x-form.select>
-                                    </div>
-                                </td>
-                              
-                                <td>
-                                    <input value="{{ (isset($subModel) ? number_format($subModel->getNoPositions(),0) : 12) }}" @if($isRepeater) name="no_positions" @else name="{{ $tableId }}[0][no_positions]" @endif class="form-control text-center only-greater-than-zero-allowed" type="text">
-
-                                </td> --}}
-                                {{-- <td>
-								 <input value="{{ (isset($subModel) ? number_format($subModel->getGracePeriod(),0) : 0) }}" @if($isRepeater) name="grace_period" @else name="{{ $tableId }}[0][grace_period]" @endif class="form-control text-center only-greater-than-or-equal-zero-allowed" type="text">
-							    </td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <input @if($isRepeater) name="margin_rate" @else name="{{ $tableId }}[0][margin_rate]" @endif class="form-control only-percentage-allowed text-center" value="{{ isset($subModel) ? number_format($subModel->getMarginRate(),PERCENTAGE_DECIMALS):0  }}" type="text">
-                                        <span style="margin-left:3px	">%</span>
-
-                                    </div>
-                                </td>
-
-
-
-                                <td>
-                                     <x-form.select :selectedValue="isset($subModel) ? $subModel->getInstallmentInterval() : 'monthly' " :options="[['title'=>__('Monthly'),'value'=>'monthly'],['title'=>__('Quarterly'),'value'=>'quartly'],['value'=>'semi annually','title'=>__('Semi-annually')]]" :add-new="false" class="select2-select   repeater-select"  :all="false" name="{{ $isRepeater ? 'installment_interval':$tableId.'[0][installment_interval]' }}" ></x-form.select>
-                                </td>
-
-
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <input @if($isRepeater) name="step_rate" @else name="{{ $tableId }}[0][step_rate]" @endif class="form-control only-percentage-allowed-between-minus-plus-hundred text-center" value="{{ isset($subModel) ? $subModel->getStepRate() : 0 }}" type="text">
-                                        <span style="margin-left:3px	">%</span>
-
-                                    </div>
-                                </td>
-                                <td>
-                                    <x-form.select :selectedValue="isset($subModel) ? $subModel->getStepInterval() : 'annually' " :options="[['title'=>__('Quarterly'),'value'=>'quartly'],['value'=>'semi annually','title'=>__('Semi-annually')],['title'=>__('Annually'),'value'=>'annually']]" :add-new="false" class="select2-select   repeater-select"  :all="false" name="{{ $isRepeater ? 'step_interval':$tableId.'[0][step_interval]' }}" ></x-form.select>
-                                </td> --}}
+                             
 
 
                             </tr>

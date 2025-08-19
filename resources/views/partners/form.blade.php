@@ -147,7 +147,9 @@
                                                                 </label>
 
                                                                 <label class="kt-radio kt-radio--primary text-black font-size-18px font-weight-bold">
-                                                                    <input @if($companyHasOdoo) disabled @endif type="checkbox" value="1" name="is_employee" @if(isset($model) && $model->isEmployee()) checked @endisset
+                                                                    <input 
+																	{{-- @if($companyHasOdoo) disabled @endif --}}
+																	 type="checkbox" value="1" name="is_employee" @if(isset($model) && $model->isEmployee()) checked @endisset
                                                                     > {{ __('Employee') }}
                                                                     <span></span>
                                                                 </label>

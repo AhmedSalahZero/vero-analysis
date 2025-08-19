@@ -70,5 +70,13 @@ class  IjaraMortgageBreakdown extends Model
 		return 'fixed-at-end';
 	}
 	
-		
+		public function getForeignKeyName():string
+	{
+		return 'ijara_breakdown_id';
+	}	
+	public function getCategoryColumnName():string 
+	{
+		return '';
+	}
+	
 }

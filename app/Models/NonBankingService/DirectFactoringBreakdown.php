@@ -220,6 +220,14 @@ class  DirectFactoringBreakdown extends Model
 	{
 		return $this->margin_rate?:0;
 	}
+
+	public function getForeignKeyName():string
+	{
+		return 'direct_breakdown_id';
+	}	
+	public function getCategoryColumnName():string 
+	{
+		return $this->category;
+	}
 	
-		
 }

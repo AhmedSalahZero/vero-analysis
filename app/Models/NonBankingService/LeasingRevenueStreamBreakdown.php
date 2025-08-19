@@ -16,6 +16,7 @@ class  LeasingRevenueStreamBreakdown extends Model
 		'loan_amounts'=>'array',
 		'monthly_loan_amounts'=>'array',
 	];
+
 	public function category()
 	{
 		return $this->belongsTo(LeasingCategory::class,'category_id',) ;
@@ -30,6 +31,13 @@ class  LeasingRevenueStreamBreakdown extends Model
 	{
 		return $this->loan_amounts[$yearOrMonthIndex] ?? 0  ; 
 	}
-	
+	public function getForeignKeyName():string
+	{
+		return 'leasing_breakdown_id';
+	}	
+	public function getCategoryColumnName():string 
+	{
+		return $this->category_id;
+	}
 		
 }

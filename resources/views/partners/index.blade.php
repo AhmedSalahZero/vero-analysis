@@ -90,7 +90,7 @@ use App\Models\Partner ;
                                     <th>{{ __('Customer') }}</th>
                                     <th>{{ __('Supplier') }}</th>
                                     <th>{{ __('Subsidiary') }}</th>
-                                    <th>{{ __('Other Partner') }}</th>
+                                    <th class="text-nowrap">{{ __('Other Partner') }}</th>
                                     <th>{{ __('Employee') }}</th>
                                     <th>{{ __('Shareholder') }}</th>
                                     {{-- <th>{{ __('Created At') }}</th> --}}

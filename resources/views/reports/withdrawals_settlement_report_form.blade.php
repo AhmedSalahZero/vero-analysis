@@ -102,14 +102,7 @@
 
 
 
-                        {{-- <div class="col-md-4">
-                            <label>{{ __('Cash Beginning Balance') }} </label>
-                        <div class="kt-input-icon">
-                            <div class="input-group date" id="sales_persons">
-                                <input type="text" class="only-greater-than-zero-allowed form-control" name="cash_beginning_balance" value="0">
-                            </div>
-                        </div>
-                    </div> --}}
+                  
 
 
 

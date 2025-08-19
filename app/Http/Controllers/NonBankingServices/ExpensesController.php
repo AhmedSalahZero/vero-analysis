@@ -59,23 +59,23 @@ class ExpensesController extends Controller
         $datesAsIndexAndString = array_flip($datesAsStringDateIndex);
         $operationStartDateAsIndex = $datesAsStringDateIndex[$study->getOperationStartDate()];
         $studyExtendedEndDateAsIndex = Arr::last($datesAsStringDateIndex);
-		$studyEndDateAsIndex = $study->getStudyEndDateAsIndex($datesAsStringDateIndex,$study->getStudyEndDate());
-		$dateIndexWithDate = $study->getDateIndexWithDate();
+        $studyEndDateAsIndex = $study->getStudyEndDateAsIndex($datesAsStringDateIndex, $study->getStudyEndDate());
+        $dateIndexWithDate = $study->getDateIndexWithDate();
         $model = ('\App\Models\\NonBankingService\\'.$modelName)::find($modelId);
         foreach ((array)$request->get('tableIds') as $tableId) {
             #::delete all
             $model->generateRelationDynamically($tableId, $expenseType)->delete();
             foreach ((array)$request->get($tableId) as $tableDataArr) {
-			
-				$withholdRate = $tableDataArr['withhold_tax_rate']??0;
-			
-				if(isset($tableDataArr['start_date']) && count(explode('-',$tableDataArr['start_date'])) == 2){
-					$tableDataArr['start_date'] = $tableDataArr['start_date'].'-01';
-					
-				}if(isset($tableDataArr['end_date']) && count(explode('-',$tableDataArr['end_date'])) == 2 ){
-					$tableDataArr['end_date'] = $tableDataArr['end_date'].'-01';
-					
-				}
+            
+                $withholdRate = $tableDataArr['withhold_tax_rate']??0;
+            
+                if (isset($tableDataArr['start_date']) && count(explode('-', $tableDataArr['start_date'])) == 2) {
+                    $tableDataArr['start_date'] = $tableDataArr['start_date'].'-01';
+                    
+                }if (isset($tableDataArr['end_date']) && count(explode('-', $tableDataArr['end_date'])) == 2) {
+                    $tableDataArr['end_date'] = $tableDataArr['end_date'].'-01';
+                    
+                }
                 $tableDataArr['expense_type'] = $expenseType;
                 $name = $tableDataArr['expense_name_id']??null;
                     
@@ -89,13 +89,13 @@ class ExpensesController extends Controller
                 } else {
                     $tableDataArr['end_date'] = $operationStartDateAsIndex;
                 }
-				/**
-				 * * to repeat 2 years inside json
-				 */
-				$loopEndDate = $tableDataArr['end_date'] >=  $studyEndDateAsIndex ? $studyExtendedEndDateAsIndex : $tableDataArr['end_date'];
-				$loopEndDate = $loopEndDate ==  0 ? $studyEndDateAsIndex : $loopEndDate ;
+                /**
+                 * * to repeat 2 years inside json
+                 */
+                $loopEndDate = $tableDataArr['end_date'] >=  $studyEndDateAsIndex ? $studyExtendedEndDateAsIndex : $tableDataArr['end_date'];
+                $loopEndDate = $loopEndDate ==  0 ? $studyEndDateAsIndex : $loopEndDate ;
 
-				$monthsAsIndexes = range(0,$studyEndDateAsIndex) ;
+                $monthsAsIndexes = range(0, $studyEndDateAsIndex) ;
                 $tableDataArr['relation_name']  = $tableId ;
                 /**
                  * * Fixed Repeating
@@ -103,110 +103,113 @@ class ExpensesController extends Controller
                 $vatRate = $tableDataArr['vat_rate']??0;
                 $isDeductible = $tableDataArr['is_deductible'] ?? false;
                 if ($tableDataArr['payment_terms'] == 'customize') {
-					$tableDataArr['custom_collection_policy'] = sumDueDayWithPayment($tableDataArr['payment_rate '], $tableDataArr['due_days']);
+                    $tableDataArr['custom_collection_policy'] = sumDueDayWithPayment($tableDataArr['payment_rate '], $tableDataArr['due_days']);
                 }
-				$customCollectionPolicy = $tableDataArr['custom_collection_policy']??[];
+                $customCollectionPolicy = $tableDataArr['custom_collection_policy']??[];
                 if (is_array($isDeductible)) {
                     $tableDataArr['is_deductible'] = $isDeductible[0];
                     $isDeductible= $isDeductible[0];
                 }
-			
-				$isExpensePerEmployee = (isset($tableDataArr['monthly_cost_of_unit']) && $tableId == 'expense_per_employee') ;
-                if (isset($tableDataArr['amount']) && $tableId == 'fixed_monthly_repeating_amount' || $isExpensePerEmployee  ) {
-					$amount = $tableDataArr['amount']??0 ;
-					$accumulatedManpowerPowersForAllSelectedPositions = [ ];
-					if($isExpensePerEmployee){
-						// المفروض دي هتكون اكثر من قيمة
-						$positionIds = (array) $tableDataArr['position_id'] ;
-						// 
-						$positions = Position::whereIn('id',$positionIds)->pluck('accumulated_manpower_counts')->toArray();
-						$accumulatedManpowerPowersForAllSelectedPositions = HArr::sumAtDates($positions,$monthsAsIndexes);
+				
+                $isExpensePerEmployee = (isset($tableDataArr['monthly_cost_of_unit']) && $tableId == 'expense_per_employee') ;
+                $isCostPerUnit = (isset($tableDataArr['monthly_cost_of_unit']) && $tableId == 'cost_per_unit') ;
+                if (isset($tableDataArr['amount']) && $tableId == 'fixed_monthly_repeating_amount' || $isExpensePerEmployee || $isCostPerUnit) {
+                    $amount = $tableDataArr['amount']??0 ;
+                    $accumulatedManpowerPowersForAllSelectedPositions = [ ];
+                    if ($isExpensePerEmployee) {
+                        $positionIds = (array) $tableDataArr['position_id'] ;
+                        $positions = Position::whereIn('id', $positionIds)->pluck('accumulated_manpower_counts')->toArray();
+                        $accumulatedManpowerPowersForAllSelectedPositions = HArr::sumAtDates($positions, $monthsAsIndexes);
+                        $amount = $tableDataArr['monthly_cost_of_unit'];
+                    }elseif($isCostPerUnit){
 						$amount = $tableDataArr['monthly_cost_of_unit'];
 					}
-				
-                    $monthlyFixedRepeatingResults = $monthlyFixedRepeatingAmountEquation->calculate($amount, $tableDataArr['start_date'], $loopEndDate, $tableDataArr['increase_interval'], $tableDataArr['increase_rate'], $isDeductible, $vatRate,$withholdRate);
-					if($isExpensePerEmployee){
-						$totalAfterVats = $monthlyFixedRepeatingResults['total_after_vat'];
-						$monthlyFixedRepeatingResults['total_after_vat'] = HArr::multipleTwoArrAtSameIndex($totalAfterVats , $accumulatedManpowerPowersForAllSelectedPositions); 
+                
+                    $monthlyFixedRepeatingResults = $monthlyFixedRepeatingAmountEquation->calculate($amount, $tableDataArr['start_date'], $loopEndDate, $tableDataArr['increase_interval'], $tableDataArr['increase_rate'], $isDeductible, $vatRate, $withholdRate);
+					if($isCostPerUnit){
+						// HArr::multipleTwoDimArrWithPercentage($monthlyFixedRepeatingResults,);
+						dd($monthlyFixedRepeatingResults,$amount);
+						
 					}
+                    if ($isExpensePerEmployee) {
+                        $totalAfterVats = $monthlyFixedRepeatingResults['total_after_vat'];
+                        $monthlyFixedRepeatingResults['total_after_vat'] = HArr::multipleTwoArrAtSameIndex($totalAfterVats, $accumulatedManpowerPowersForAllSelectedPositions);
+                    }
                     $withholdAmounts  = $monthlyFixedRepeatingResults['withhold_amounts'];
-					$tableDataArr['monthly_repeating_amounts']  = $monthlyFixedRepeatingResults['total_before_vat'];
+                    $tableDataArr['monthly_repeating_amounts']  = $monthlyFixedRepeatingResults['total_before_vat'];
                     $tableDataArr['total_vat']  = $monthlyFixedRepeatingResults['total_vat'];
                     $tableDataArr['total_after_vat']  = $monthlyFixedRepeatingResults['total_after_vat'];
-					
+                    
                     $payments = $this->calculateCollectionOrPaymentAmounts($tableDataArr['payment_terms'], $tableDataArr['total_after_vat'], $datesAsIndexAndString, $customCollectionPolicy) ;
                     $withholdPayments = $this->calculateCollectionOrPaymentAmounts($tableDataArr['payment_terms'], $withholdAmounts, $datesAsIndexAndString, $customCollectionPolicy) ;
-					$netPaymentsAfterWithhold = HArr::subtractAtDates([$payments,$withholdPayments],array_keys($payments));
-					$tableDataArr['withhold_amounts'] = $withholdAmounts ;
-					$tableDataArr['withhold_payments']=$withholdPayments;
-					 $tableDataArr['payment_amounts'] = $payments;
-					 $tableDataArr['net_payments_after_withhold']=$netPaymentsAfterWithhold;
-					$tableDataArr['collection_statements']   =$this->calculateStatement($tableDataArr['monthly_repeating_amounts'],$tableDataArr['total_vat'],$netPaymentsAfterWithhold,$withholdPayments,$dateIndexWithDate,$study);
-		
+                    $netPaymentsAfterWithhold = HArr::subtractAtDates([$payments,$withholdPayments], array_keys($payments));
+                    $tableDataArr['withhold_amounts'] = $withholdAmounts ;
+                    $tableDataArr['withhold_payments']=$withholdPayments;
+                    $tableDataArr['payment_amounts'] = $payments;
+                    $tableDataArr['net_payments_after_withhold']=$netPaymentsAfterWithhold;
+                    $tableDataArr['collection_statements']   =$this->calculateStatement($tableDataArr['monthly_repeating_amounts'], $tableDataArr['total_vat'], $netPaymentsAfterWithhold, $withholdPayments, $dateIndexWithDate, $study);
+        
                 }
                 /**
                  * * Expense As Percentage
                  */
-				/**
-				 * 	$beginning = 0 ;
-				 * $expense 
-				 * $vat 
-				 * $total due = $begiining + $expense + $vat 
-				 * $collection 
-				 * $withhold 
-				 * $endBalance = $totalDie - $collection - $withhold 
-				 * $begiinign = $endBalance
-				
-				 */
+                /**
+                 * 	$beginning = 0 ;
+                 * $expense
+                 * $vat
+                 * $total due = $begiining + $expense + $vat
+                 * $collection
+                 * $withhold
+                 * $endBalance = $totalDie - $collection - $withhold
+                 * $begiinign = $endBalance
+
+                 */
                 if ($tableId =='percentage_of_sales') {
                     $expenseAsPercentageResults = $expenseAsPercentageEquation->calculate($studyId, $tableDataArr['percentage_of'], $tableDataArr['revenue_stream_type']??[], $tableDataArr['stream_category_ids']??[], $tableDataArr['start_date'], $loopEndDate, $tableDataArr['monthly_percentage'], $tableDataArr['payment_terms'], $vatRate, $isDeductible, $tableDataArr['withhold_tax_rate']) ;
                     $tableDataArr['expense_as_percentages']  =$expenseAsPercentageResults['total_before_vat']  ;
-					// expense_as_percentages
+                    // expense_as_percentages
                     $tableDataArr['total_vat']  =$expenseAsPercentageResults['total_vat']  ;
                     $tableDataArr['total_after_vat']  =$expenseAsPercentageResults['total_after_vat']  ;
                     $withholdAmounts  = $expenseAsPercentageResults['total_withhold'];
                     $tableDataArr['payment_amounts'] = $this->calculateCollectionOrPaymentAmounts($tableDataArr['payment_terms'], $tableDataArr['total_after_vat'], $datesAsIndexAndString, $customCollectionPolicy) ;
-					$payments = $this->calculateCollectionOrPaymentAmounts($tableDataArr['payment_terms'], $tableDataArr['total_after_vat'], $datesAsIndexAndString, $customCollectionPolicy) ;
+                    $payments = $this->calculateCollectionOrPaymentAmounts($tableDataArr['payment_terms'], $tableDataArr['total_after_vat'], $datesAsIndexAndString, $customCollectionPolicy) ;
                     $withholdPayments = $this->calculateCollectionOrPaymentAmounts($tableDataArr['payment_terms'], $withholdAmounts, $datesAsIndexAndString, $customCollectionPolicy) ;
-					$netPaymentsAfterWithhold = HArr::subtractAtDates([$payments,$withholdPayments],array_keys($payments));
-					$tableDataArr['withhold_amounts'] = $withholdAmounts ;
-					$tableDataArr['withhold_payments']=$withholdPayments;
-					 $tableDataArr['payment_amounts'] = $payments;
-					 $tableDataArr['net_payments_after_withhold']=$netPaymentsAfterWithhold;
-					$tableDataArr['collection_statements']   =$this->calculateStatement($tableDataArr['expense_as_percentages'],$tableDataArr['total_vat'],$netPaymentsAfterWithhold,$withholdPayments,$dateIndexWithDate,$study);
-					
+                    $netPaymentsAfterWithhold = HArr::subtractAtDates([$payments,$withholdPayments], array_keys($payments));
+                    $tableDataArr['withhold_amounts'] = $withholdAmounts ;
+                    $tableDataArr['withhold_payments']=$withholdPayments;
+                    $tableDataArr['payment_amounts'] = $payments;
+                    $tableDataArr['net_payments_after_withhold']=$netPaymentsAfterWithhold;
+                    $tableDataArr['collection_statements']   =$this->calculateStatement($tableDataArr['expense_as_percentages'], $tableDataArr['total_vat'], $netPaymentsAfterWithhold, $withholdPayments, $dateIndexWithDate, $study);
+                    
                 }
                 /**
-				 * * One Time Expense
-				*/
+                 * * One Time Expense
+                */
                 if ($tableId == 'one_time_expense') {
-					$startDateAsIndex = $tableDataArr['start_date'] ;
-					$amountBeforeVat = $tableDataArr['amount'] ;
-					$withholdAmount = $tableDataArr['withhold_tax_rate'] / 100 * $amountBeforeVat ;
-					$oneTimeExpenses = $oneTimeExpenseEquation->calculate($amountBeforeVat, $startDateAsIndex, $isDeductible, $vatRate);
-					$tableDataArr['payload']  = $oneTimeExpenses ;
-					$amountBeforeVatPayload = [$startDateAsIndex=>$amountBeforeVat] ;
-					$vatRate = $tableDataArr['vat_rate'] / 100 ;
-					$vats = [$startDateAsIndex=>$amountBeforeVat * $vatRate];
-					
-					$tableDataArr['total_vat']  =$vats  ;
-					$amountAfterVat = [$startDateAsIndex => $amountBeforeVat + $amountBeforeVat * $vatRate ];
+                    $startDateAsIndex = $tableDataArr['start_date'] ;
+                    $amountBeforeVat = $tableDataArr['amount'] ;
+                    $withholdAmount = $tableDataArr['withhold_tax_rate'] / 100 * $amountBeforeVat ;
+                    $oneTimeExpenses = $oneTimeExpenseEquation->calculate($amountBeforeVat, $startDateAsIndex, $isDeductible, $vatRate);
+                    $tableDataArr['payload']  = $oneTimeExpenses ;
+                    $amountBeforeVatPayload = [$startDateAsIndex=>$amountBeforeVat] ;
+                    $vatRate = $tableDataArr['vat_rate'] / 100 ;
+                    $vats = [$startDateAsIndex=>$amountBeforeVat * $vatRate];
+                    
+                    $tableDataArr['total_vat']  =$vats  ;
+                    $amountAfterVat = [$startDateAsIndex => $amountBeforeVat + $amountBeforeVat * $vatRate ];
                     $tableDataArr['total_after_vat']  =$amountAfterVat  ;
-					$withholdAmount = $tableDataArr['withhold_tax_rate']/100 ;
-					 $withholdAmounts  = [$startDateAsIndex =>  $amountBeforeVat * $withholdAmount ] ;
-					$payments = $this->calculateCollectionOrPaymentAmounts($tableDataArr['payment_terms'], $amountAfterVat, $datesAsIndexAndString, $customCollectionPolicy,true) ;
-					$withholdPayments = $this->calculateCollectionOrPaymentAmounts($tableDataArr['payment_terms'], $withholdAmounts, $datesAsIndexAndString, $customCollectionPolicy) ;
-					$netPaymentsAfterWithhold = HArr::subtractAtDates([$payments,$withholdPayments],array_keys($payments));
-					$tableDataArr['withhold_amounts'] = $withholdAmounts ;
-					$tableDataArr['withhold_payments']=$withholdPayments;
-					 $tableDataArr['payment_amounts'] = $payments;
-					 $tableDataArr['net_payments_after_withhold']=$netPaymentsAfterWithhold;
-					$tableDataArr['collection_statements']   =$this->calculateStatement($amountBeforeVatPayload,$tableDataArr['total_vat'],$netPaymentsAfterWithhold,$withholdPayments,$dateIndexWithDate,$study);
+                    $withholdAmount = $tableDataArr['withhold_tax_rate']/100 ;
+                    $withholdAmounts  = [$startDateAsIndex =>  $amountBeforeVat * $withholdAmount ] ;
+                    $payments = $this->calculateCollectionOrPaymentAmounts($tableDataArr['payment_terms'], $amountAfterVat, $datesAsIndexAndString, $customCollectionPolicy, true) ;
+                    $withholdPayments = $this->calculateCollectionOrPaymentAmounts($tableDataArr['payment_terms'], $withholdAmounts, $datesAsIndexAndString, $customCollectionPolicy) ;
+                    $netPaymentsAfterWithhold = HArr::subtractAtDates([$payments,$withholdPayments], array_keys($payments));
+                    $tableDataArr['withhold_amounts'] = $withholdAmounts ;
+                    $tableDataArr['withhold_payments']=$withholdPayments;
+                    $tableDataArr['payment_amounts'] = $payments;
+                    $tableDataArr['net_payments_after_withhold']=$netPaymentsAfterWithhold;
+                    $tableDataArr['collection_statements']   =$this->calculateStatement($amountBeforeVatPayload, $tableDataArr['total_vat'], $netPaymentsAfterWithhold, $withholdPayments, $dateIndexWithDate, $study);
                 }
-				// if($tableId == 'expense_per_employee'){
-					
-				// 	$tableDataArr['collection_statements']   =$this->calculateStatement($amountBeforeVatPayload,$tableDataArr['total_vat'],$netPaymentsAfterWithhold,$withholdPayments,$dateIndexWithDate,$study);
-				// }
+              
                 $tableDataArr['company_id']  = $company->id ;
                 $tableDataArr['model_id']   = $modelId ;
                 $tableDataArr['model_name']   = $modelName ;
@@ -217,7 +220,7 @@ class ExpensesController extends Controller
                 
             }
         }
-		
+        
         if ($request->get('saveAndContinue')) {
             return response()->json([
                 'redirectTo'=>route('view.results.dashboard', ['company'=>$company->id,'study'=>$study->id])
@@ -228,7 +231,7 @@ class ExpensesController extends Controller
         ]);
         
     }
-    private function calculateCollectionOrPaymentAmounts(string $paymentTerm, array $totalAfterVat, array $datesAsIndexAndString, array $customCollectionPolicy,$debug=false)
+    private function calculateCollectionOrPaymentAmounts(string $paymentTerm, array $totalAfterVat, array $datesAsIndexAndString, array $customCollectionPolicy, $debug=false)
     {
         $collectionPolicyType  = $paymentTerm == 'customize' ? 'customize':'system_default';
         $collectionPolicyValue = $collectionPolicyType ;
@@ -239,59 +242,59 @@ class ExpensesController extends Controller
             $collectionPolicyValue = 'monthly';
         }
         $dateValue = convertIndexKeysToString($dateValue, $datesAsIndexAndString);
-		$collectionPolicyValue = is_array($collectionPolicyValue) ?  $this->formatDues($collectionPolicyValue) : $collectionPolicyValue;
-		$result = (new CollectionPolicyService())->applyCollectionPolicy(true, $collectionPolicyType, $collectionPolicyValue, $dateValue) ;
-		
-		return convertStringKeysToIndexes($result,$datesAsIndexAndString);
+        $collectionPolicyValue = is_array($collectionPolicyValue) ?  $this->formatDues($collectionPolicyValue) : $collectionPolicyValue;
+        $result = (new CollectionPolicyService())->applyCollectionPolicy(true, $collectionPolicyType, $collectionPolicyValue, $dateValue) ;
+        
+        return convertStringKeysToIndexes($result, $datesAsIndexAndString);
     }
-	private function formatDues(array $duesAndDays)
-	{
-		$result = [];
-		foreach($duesAndDays as $day => $due){
-			$result['due_in_days'][]=$day;
-			$result['rate'][]=$due;
-		}
-		return $result;
-	}
-	public function calculateStatement(array $expenses , array $vats , array $netPaymentsAfterWithhold,array $withholdPayments, array $dateIndexWithDate,Study $study ,float $beginningBalance = 0   )
-	{
-		$expensesForIntervals = [
-			'monthly'=>$expenses,
-			'quarterly'=>sumIntervalsIndexes($expenses,'quarterly' , $study->financialYearStartMonth(),$dateIndexWithDate),
-			'semi-annually'=>sumIntervalsIndexes($expenses,'semi-annually' , $study->financialYearStartMonth(),$dateIndexWithDate),
-			'annually'=>sumIntervalsIndexes($expenses,'annually' , $study->financialYearStartMonth(),$dateIndexWithDate),
-		];
-		$netPaymentAfterWithholdForInterval = [
-			'monthly'=>$netPaymentsAfterWithhold,
-			'quarterly'=>sumIntervalsIndexes($netPaymentsAfterWithhold,'quarterly' , $study->financialYearStartMonth(),$dateIndexWithDate),
-			'semi-annually'=>sumIntervalsIndexes($netPaymentsAfterWithhold,'semi-annually' , $study->financialYearStartMonth(),$dateIndexWithDate),
-			'annually'=>sumIntervalsIndexes($netPaymentsAfterWithhold,'annually' , $study->financialYearStartMonth(),$dateIndexWithDate),
-		];
-		
-		$result = [];
-		foreach(getIntervalFormatted() as $intervalName=>$intervalNameFormatted){
-			$beginningBalance = 0;
-			foreach($expensesForIntervals[$intervalName] as $dateIndex=>$currentExpenseValue){
-				$date = $dateIndex;
-				$result[$intervalName]['beginning_balance'][$date] = $beginningBalance;
-				$currentVat = $vats[$date]??0 ; 
-				$totalDue[$date] =  $currentExpenseValue+$currentVat+$beginningBalance;
-				$paymentAtDate = $netPaymentAfterWithholdForInterval[$intervalName][$date]??0 ;
-				$withholdPaymentAtDate = $withholdPayments[$date]?? 0 ;
-				$endBalance[$date] = $totalDue[$date] - $paymentAtDate  - $withholdPaymentAtDate ;
-				$beginningBalance = $endBalance[$date] ;
-				$result[$intervalName]['expense'][$date] =  $currentExpenseValue ;
-				$result[$intervalName]['vat'][$date] =  $currentVat ;
-				$result[$intervalName]['total_due'][$date] = $totalDue[$date];
-				$result[$intervalName]['payment'][$date] = $paymentAtDate;
-				$result[$intervalName]['withhold_amount'][$date] = $withholdPaymentAtDate;
-				$result[$intervalName]['end_balance'][$date] =$endBalance[$date];
-			}	
-		}
-		return $result;
-	
-		
-	}
+    private function formatDues(array $duesAndDays)
+    {
+        $result = [];
+        foreach ($duesAndDays as $day => $due) {
+            $result['due_in_days'][]=$day;
+            $result['rate'][]=$due;
+        }
+        return $result;
+    }
+    public function calculateStatement(array $expenses, array $vats, array $netPaymentsAfterWithhold, array $withholdPayments, array $dateIndexWithDate, Study $study, float $beginningBalance = 0)
+    {
+        $expensesForIntervals = [
+            'monthly'=>$expenses,
+            'quarterly'=>sumIntervalsIndexes($expenses, 'quarterly', $study->financialYearStartMonth(), $dateIndexWithDate),
+            'semi-annually'=>sumIntervalsIndexes($expenses, 'semi-annually', $study->financialYearStartMonth(), $dateIndexWithDate),
+            'annually'=>sumIntervalsIndexes($expenses, 'annually', $study->financialYearStartMonth(), $dateIndexWithDate),
+        ];
+        $netPaymentAfterWithholdForInterval = [
+            'monthly'=>$netPaymentsAfterWithhold,
+            'quarterly'=>sumIntervalsIndexes($netPaymentsAfterWithhold, 'quarterly', $study->financialYearStartMonth(), $dateIndexWithDate),
+            'semi-annually'=>sumIntervalsIndexes($netPaymentsAfterWithhold, 'semi-annually', $study->financialYearStartMonth(), $dateIndexWithDate),
+            'annually'=>sumIntervalsIndexes($netPaymentsAfterWithhold, 'annually', $study->financialYearStartMonth(), $dateIndexWithDate),
+        ];
+        
+        $result = [];
+        foreach (getIntervalFormatted() as $intervalName=>$intervalNameFormatted) {
+            $beginningBalance = 0;
+            foreach ($expensesForIntervals[$intervalName] as $dateIndex=>$currentExpenseValue) {
+                $date = $dateIndex;
+                $result[$intervalName]['beginning_balance'][$date] = $beginningBalance;
+                $currentVat = $vats[$date]??0 ;
+                $totalDue[$date] =  $currentExpenseValue+$currentVat+$beginningBalance;
+                $paymentAtDate = $netPaymentAfterWithholdForInterval[$intervalName][$date]??0 ;
+                $withholdPaymentAtDate = $withholdPayments[$date]?? 0 ;
+                $endBalance[$date] = $totalDue[$date] - $paymentAtDate  - $withholdPaymentAtDate ;
+                $beginningBalance = $endBalance[$date] ;
+                $result[$intervalName]['expense'][$date] =  $currentExpenseValue ;
+                $result[$intervalName]['vat'][$date] =  $currentVat ;
+                $result[$intervalName]['total_due'][$date] = $totalDue[$date];
+                $result[$intervalName]['payment'][$date] = $paymentAtDate;
+                $result[$intervalName]['withhold_amount'][$date] = $withholdPaymentAtDate;
+                $result[$intervalName]['end_balance'][$date] =$endBalance[$date];
+            }
+        }
+        return $result;
+    
+        
+    }
     public function getExpenseNamesForCategory(Company $company, Request $request)
     {
         $categoryId =  $request->get('expenseCategoryId');

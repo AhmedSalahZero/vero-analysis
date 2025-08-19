@@ -14,6 +14,7 @@ class  RevenueContract extends Model
 	protected $guarded = ['id'];
 	protected $casts =[
 		'monthly_loan_amounts'=>'array',
+		'contract_counts'=>'array',
 	];
 	public function category()
 	{

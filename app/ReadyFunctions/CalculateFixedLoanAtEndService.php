@@ -74,13 +74,9 @@ class CalculateFixedLoanAtEndService
 		$isWithCapitalization = Loan::isWithCapitalization($loanType);
 		$appliedStepName = Loan::getAppliedStepIntervalName($loanType, $stepUpIntervalName, $stepDownIntervalName);
 		$appliedStepValue = $this->getAppliedStepIntervalValue($appliedStepName);
-		
-		$installmentStartDateAsIndex = $datesAsStringIndex[HDate::getDateAfterIndex($datesAsIndexString,$datesAsStringIndex,$startDate,($gracePeriod+$installmentPaymentIntervalValue)/$installmentPaymentIntervalValue)] ;
-		
-		
+		$gracePlusInstallmentIntervalValue = (int) ($gracePeriod+$installmentPaymentIntervalValue);
+		$installmentStartDateAsIndex = $datesAsStringIndex[HDate::getDateAfterIndex($datesAsIndexString,$datesAsStringIndex,$startDate,$gracePlusInstallmentIntervalValue/$installmentPaymentIntervalValue)] ;
 		$endDateAsIndex = array_key_last($datesAsIndexString);
-		
-		
 		$stepFactors = [];
 		$currentStepFactorCounterValue = 0;
 		$currentAppliedStepCounter = 0 ;
@@ -255,13 +251,12 @@ class CalculateFixedLoanAtEndService
 	protected function calculateLoanScheduleResult(array $datesIndexAndDaysCount,string $loanType, float $loanAmount, array $interestFactor, array $installmentAmount)
 	{
 		$loanScheduleResult = [];
-	//	$finalLoanScheduleResult = [];
 		$loanScheduleResult['totals']['totalSchedulePayment'] = 0;
 		$loanScheduleResult['totals']['totalPrincipleAmount'] = 0;
 		$loanScheduleResult['totals']['totalInterestAmount'] = 0;
 		$isWithoutCapitalization =  Loan::isWithoutCapitalization($loanType);
 		$firstLoop = true ;
-
+		
 		foreach($datesIndexAndDaysCount as $dateAsIndex => $currentDaysCount) {
 			$previousDate = $dateAsIndex-1;
 			$i = $dateAsIndex ; 
