@@ -7960,8 +7960,6 @@ function getMonthFromDate(string $date){
 
 function repeatJson($jsonItems )
 {
-
-
 	$itemsArray = convertJsonToArray($jsonItems);
 	if(!count($itemsArray)){
 		return null ;

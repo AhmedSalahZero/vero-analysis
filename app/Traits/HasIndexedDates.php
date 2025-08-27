@@ -362,12 +362,13 @@ trait HasIndexedDates
 	{
 		$studyDates = $this->getStudyDates() ;
 		$studyStartDate = Arr::first($studyDates);
-
 		$studyEndDate = Arr::last($studyDates);
 		$studyStartDate = $studyStartDate ? Carbon::make($studyStartDate)->format('Y-m-d'):null;
 		$studyEndDate = $studyEndDate ? Carbon::make($studyEndDate)->format('Y-m-d'):null;
 		return $this->datesAndIndexesHelpers($studyDates);
 	}	
+	
+
 	
 	
 }

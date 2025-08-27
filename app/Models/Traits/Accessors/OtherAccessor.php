@@ -130,11 +130,11 @@ trait OtherAccessor
 	// meetings
 	public function setGuestCaptureCoverPercentageAttribute($jsonValue)
 	{
-		$this->attributes['guest_capture_cover_percentage'] = repeatJson($jsonValue,true );
+		$this->attributes['guest_capture_cover_percentage'] = repeatJson($jsonValue );
 	}
 	public function setPercentageFromRoomsRevenuesAttribute($jsonValue)
 	{
-		$this->attributes['percentage_from_rooms_revenues'] = repeatJson($jsonValue,true);
+		$this->attributes['percentage_from_rooms_revenues'] = repeatJson($jsonValue);
 		
 	}
 	public function getCollectionPolicyValue()

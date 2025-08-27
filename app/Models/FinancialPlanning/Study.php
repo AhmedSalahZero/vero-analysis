@@ -271,7 +271,6 @@ use Illuminate\Database\Eloquent\Model;
 		$dateWithMonthNumber = App('dateWithMonthNumber');
 		return $this->getStudyDurationPerMonth($datesAsStringAndIndex,$datesIndexWithYearIndex,$yearIndexWithYear,$dateIndexWithDate,$dateWithMonthNumber,true,false);
 	}
-	
-	
+		
 		
 }

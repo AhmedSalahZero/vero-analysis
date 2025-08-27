@@ -1,7 +1,7 @@
 @php
 	$tableClass = $isYearsStudy ? 'col-md-6'  : 'col-md-12';
 @endphp
-<x-tables.repeater-table :table-class="$tableClass" :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
+<x-tables.repeater-table :table-class="$tableClass" :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="''" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
     <x-slot name="ths">
         <x-tables.repeater-table-th class="  header-border-down first-column-th-class" :title="__('Item')"></x-tables.repeater-table-th>
         @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
@@ -11,15 +11,10 @@
     <x-slot name="trs">
 		@if($isYearsStudy)
         <tr data-repeat-formatting-decimals="1" data-repeater-style>
-
-
-
             <td>
                 <div class="">
                     <input value="{{ __('Operating Months') }}" disabled class="form-control text-left " type="text">
                 </div>
-
-
             </td>
             @php
             $columnIndex = 0 ;
@@ -72,20 +67,10 @@
 
 
         </tr>
-
-
-
-
-
-
-
         <tr data-repeat-formatting-decimals="1" data-repeater-style>
-
             <td>
                 <input value="{{ __('Gross Profit') }}" disabled class="form-control text-left " type="text">
             </td>
-
-
             @php
             $columnIndex = 0 ;
             @endphp
@@ -103,16 +88,8 @@
             @endphp
 
             @endforeach
-
-
         </tr>
-
-
-
-
-
         <tr data-repeat-formatting-decimals="1" data-repeater-style>
-
             <td>
                 <input value="{{ __('EBITDA') }}" disabled class="form-control text-left " type="text">
             </td>

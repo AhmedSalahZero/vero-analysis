@@ -398,10 +398,10 @@ class HomeController extends Controller
 				
 				if (!Cache::has($cacheKeyName)) {
 					$breakdown_data_with_simple_linear_regression = (new SalesBreakdownAgainstAnalysisReport)->salesBreakdownAnalysisResult($request, $company, 'array_with_ai');
-					$breakdown_data = $breakdown_data_with_simple_linear_regression['report_view_data'];
-					$simpleLinearRegression = $breakdown_data_with_simple_linear_regression['simple_linear_regression'];
-					$simpleLinearRegressionForCompany = $breakdown_data_with_simple_linear_regression['ai_for_company'];
-					$simpleLinearRegressionDates = $breakdown_data_with_simple_linear_regression['simple_linear_regression_dates'];
+					$breakdown_data = $breakdown_data_with_simple_linear_regression['report_view_data']??[];
+					$simpleLinearRegression = $breakdown_data_with_simple_linear_regression['simple_linear_regression']??[];
+					$simpleLinearRegressionForCompany = $breakdown_data_with_simple_linear_regression['ai_for_company']??[];
+					$simpleLinearRegressionDates = $breakdown_data_with_simple_linear_regression['simple_linear_regression_dates']??[];
 					Cache::forever($cacheKeyName, $breakdown_data);
 					Cache::forever($cacheForSimpleLinearRegressionKeyName, $simpleLinearRegression);
 					Cache::forever($cacheForSimpleLinearRegressionForCompanyKeyName, $simpleLinearRegressionForCompany);
