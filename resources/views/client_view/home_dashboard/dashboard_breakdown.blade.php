@@ -393,7 +393,7 @@ $exportableFieldsValues[] = 'avg_invoice_value';
                         <!--begin: Datatable -->
                         <?php
                                                 if ($type == 'service_provider_birth_year' || $type == 'service_provider_type') {
-                                                    $report_count_data = $report_data['report_count_data'];
+                                                    $report_count_data = $report_data['report_count_data']??[];
                                                     $total_count = ( count($report_count_data) > 0) ? array_sum(array_column($report_count_data,'Count')) : 0;
                                                     $report_data = $report_data['report_view_data']  ;
 
