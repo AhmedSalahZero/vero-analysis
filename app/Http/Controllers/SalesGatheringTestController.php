@@ -17,11 +17,13 @@ use App\Models\ActiveJob;
 use App\Models\CachingCompany;
 use App\Models\Company;
 use App\Models\Contract;
+use App\Models\CustomerInvoice;
 use App\Models\LastUploadFileName;
 use App\Models\Partner;
 use App\Models\PurchaseOrder;
 use App\Models\SalesGatheringTest;
 use App\Models\SalesOrder;
+use App\Models\SupplierInvoice;
 use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -237,6 +239,33 @@ class SalesGatheringTestController extends Controller
 		$companyId = $company->id;
 		$class = '\App\Models\\'.$modelName ;
 		$model = new $class;
+		
+		if($modelName == 'CustomerInvoice'){
+					$tableDataArr = $request->except(['tableIds','_token','model_id','id','creator_id','contract_id','sales_order_id']);
+						$salesOrderId = $request->get('sales_order_id') ;
+						$contractId = $request->get('contract_id') ;
+						$tableDataArr['sales_order_number'] =$salesOrderId ? SalesOrder::find($salesOrderId)->getNumber() : null ; 
+						$contractName = $contractId ? Contract::find($contractId)->getName() : null ;
+						$tableDataArr['contract_name'] = $contractName ; 
+						$tableDataArr['project_name'] = $contractName ; 
+						$customerName = Partner::find($tableDataArr['customer_id'])->getName();
+						$tableDataArr['customer_name'] = $customerName ; 
+					
+						CustomerInvoice::create($tableDataArr);
+					}
+					if($modelName == 'SupplierInvoice'){
+						$tableDataArr = $request->except(['tableIds','_token','model_id','id','creator_id','contract_id']);
+						$purchasesOrderId = $request->get('purchases_order_id') ;
+						$contractId = $request->get('contract_id') ;
+						$tableDataArr['purchases_order_number'] =$purchasesOrderId ? PurchaseOrder::find($purchasesOrderId)->getNumber() : null ; 
+						$contractName = $contractId ? Contract::find($contractId)->getName() : null;
+						$tableDataArr['contract_name'] = $contractName ; 
+							$tableDataArr['project_name'] = $contractName ; 
+								$supplierName = Partner::find($tableDataArr['supplier_id'])->getName();
+								$tableDataArr['supplier_name'] = $supplierName ; 
+							SupplierInvoice::create($tableDataArr);
+					}
+					
 		foreach((array)$request->get('tableIds') as $tableId){
 			foreach((array)$request->get($tableId) as  $tableDataArr){
 					$tableDataArr['company_id']  = $companyId ;
@@ -282,6 +311,8 @@ class SalesGatheringTestController extends Controller
 						$contractName = $contractId ? Contract::find($contractId)->getName() : null ;
 						$tableDataArr['contract_name'] = $contractName ; 
 						$tableDataArr['project_name'] = $contractName ; 
+							$customerName = Partner::find($tableDataArr['customer_id'])->getName();
+						$tableDataArr['customer_name'] = $customerName ; 
 						$model->update($tableDataArr);
 					}
 					if($modelName == 'SupplierInvoice'){
@@ -292,6 +323,8 @@ class SalesGatheringTestController extends Controller
 						$contractName = $contractId ? Contract::find($contractId)->getName() : null;
 						$tableDataArr['contract_name'] = $contractName ; 
 							$tableDataArr['project_name'] = $contractName ; 
+								$supplierName = Partner::find($tableDataArr['supplier_id'])->getName();
+								$tableDataArr['supplier_name'] = $supplierName ; 
 							$model->update($tableDataArr);
 							
 					}

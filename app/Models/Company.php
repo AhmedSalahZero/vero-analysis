@@ -527,6 +527,7 @@ class Company extends Model implements HasMedia
 	{
 		return $this->getOdooDBUrl() && $this->getOdooDBName() && $this->getOdooDBUserName() && $this->getOdooDBPassword();
 	}
+	
 	public function lastUploadFileNames()
 	{
 		return $this->hasMany(LastUploadFileName::class,'company_id');

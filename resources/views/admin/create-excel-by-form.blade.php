@@ -222,7 +222,7 @@
                                         @if($fieldType == 'select')
                                         <select name="{{ $fieldTypeAndClassDefaultValue['name'] }}" class="form-control select2-select max-w-500" data-live-search="true" data-actions-box="true">
                                             @foreach($options as $id => $value)
-                                            <option @if($id==$model->{$oldColumnName}) selected @endif value="{{ $id }}">{{ $value }}</option>
+                                            <option @if($id==@$model->{$oldColumnName}) selected @endif value="{{ $id }}">{{ $value }}</option>
                                             @endforeach
                                         </select>
                                         @else

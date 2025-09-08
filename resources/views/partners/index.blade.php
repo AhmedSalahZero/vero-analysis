@@ -50,15 +50,14 @@ use App\Models\Partner ;
 
 
             </ul>
-			{{-- @if(auth()->user()->can('create customers'))
+			@if(!$company->hasOdooIntegrationCredentials())
             <div class="flex-tabs">
-               
                 <a href="{{ route('partners.create',['company'=>$company->id,Partner::PARTNERS]) }}" class="btn  active-style btn-icon-sm align-self-center">
                     <i class="fas fa-plus"></i>
                     {{ __('Partner') }}
                 </a>
             </div>
-		@endif  --}}
+		@endif 
             
         </div>
     </div>

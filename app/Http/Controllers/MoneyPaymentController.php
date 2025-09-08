@@ -746,7 +746,7 @@ class MoneyPaymentController
 			}
 		}
 		$branches  = CashVeroBranch::where('company_id',$company->id)->where('currency',$currencyName)->orderBy('name')->pluck('id','name')->toArray();
-		$endBalance = $branch->getCurrentEndBalance($company->id,$currencyName,$deliveryDate);
+		$endBalance = $branch ? $branch->getCurrentEndBalance($company->id,$currencyName,$deliveryDate) : 0;
 		if(isset($model) && $model instanceof MoneyReceived){
 			$endBalance = $endBalance-$additionalAmountInEditMode ;
 		}else{

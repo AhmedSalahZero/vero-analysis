@@ -249,6 +249,7 @@ class DashboardController extends Controller
 			$sensitivityFormattedExpenses = $sensitivityDashboardData['formattedExpenses'];
 		}
 		$yearOrMonthsIndexes = $study->getYearOrMonthIndexes();
+	
 		$isYearsStudy = !$study->isMonthlyStudy();
 		return view('non_banking_services.dashboard.dashboard',
 	[

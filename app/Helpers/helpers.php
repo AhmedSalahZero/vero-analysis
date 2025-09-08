@@ -7974,7 +7974,6 @@ function repeatJson($jsonItems )
 
 function sumNumberOfOnes(array $items, int $year,array $datesIndexWithYearIndex)
 {
-
 	$counter = [];
 	foreach ($items as $loopYear => $dateAndValues) {
 		foreach ($dateAndValues as $dateIndex => $value) {
