@@ -365,6 +365,7 @@ class LetterOfGuaranteeIssuanceController
 		$lgCode = $letterOfGuaranteeIssuance->getLgCode();
 		// $isOpeningBalance = $letterOfGuaranteeIssuance->isOpeningBalance();
 		$financialInstitutionAccount = FinancialInstitutionAccount::find($letterOfGuaranteeIssuance->getCashCoverDeductedFromAccountId());
+		dd($isCdOrTdCashCoverAccount);
 		$currency = $financialInstitutionAccount->getCurrency();
 		$isCdOrTdCashCoverAccount = $letterOfGuaranteeIssuance->isCdOrTd();
 		if($company->hasOdooIntegrationCredentials() && !$isCdOrTdCashCoverAccount && $company->withinIntegrationDate($cancellationDate) ){
