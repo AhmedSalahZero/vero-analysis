@@ -472,7 +472,7 @@ class LetterOfCreditIssuanceController
 		$accountId = $letterOfCreditIssuance->getCashCoverDeductedFromAccountId();
 		// $financialInstitutionId = $letterOfCreditIssuance->getFinancialInstitutionId() ;
 		$financialInstitutionAccount = FinancialInstitutionAccount::find($accountId);
-		$financialInstitutionAccountId =$financialInstitutionAccount->id ; 
+		$financialInstitutionAccountId = $financialInstitutionAccount->id ; 
 		$expenseData = $this->getLcIssuanceExpenseData($request,$company,$type) ;
 		$expenseName = $expenseData['expense_name'] ?? null ;
 		$amount = $expenseData['amount'] ?? 0 ;

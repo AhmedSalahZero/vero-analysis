@@ -82,9 +82,10 @@ class LgRenewalDateHistory extends Model
 			return ;
 		}
 		$odooSetting = $company->odooSetting;
+		if(is_null($odooSetting)){
+			return ;
+		}
 		$odooLetterOfGuaranteeIssuance = new LetterOfGuaranteeService($company);
-		// $issuanceDate = $letterOfGuaranteeIssuance->getIssuanceDate();
-		// $issuanceFees  = $letterOfGuaranteeIssuance->getIssuanceFees();
 		$financialInstitutionAccountForCashCover = FinancialInstitutionAccount::find($letterOfGuaranteeIssuance->getCashCoverDeductedFromAccountId());
 		$fromAccountNumber = $financialInstitutionAccountForCashCover->getAccountNumber();
 		$journalId = $financialInstitutionAccountForCashCover->financialInstitution->getJournalIdForAccount(27,$fromAccountNumber);

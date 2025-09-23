@@ -462,9 +462,7 @@ class LetterOfGuaranteeIssuance extends Model
     public function deleteAllRelations():self
     {
         
-        // $financialInstitutionAccount = FinancialInstitutionAccount::find($this->getCashCoverDeductedFromAccountId());
-        // $lgType = $this->getLgType();
-        // $currency = $financialInstitutionAccount->getCurrency();
+
         $company = $this->company;
         
         if ($company->hasOdooIntegrationCredentials()) {
@@ -621,6 +619,9 @@ class LetterOfGuaranteeIssuance extends Model
             return ;
         }
         $odooSetting = $company->odooSetting;
+		if(is_null($odooSetting)){
+			return ;
+		}
         $odooLetterOfGuaranteeIssuance = new LetterOfGuaranteeService($company);
         $issuanceFees  = $this->getIssuanceFees();
         $financialInstitutionAccountForCashCover = FinancialInstitutionAccount::find($this->getCashCoverDeductedFromAccountId());
