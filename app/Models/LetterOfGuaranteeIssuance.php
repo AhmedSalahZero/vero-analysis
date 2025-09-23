@@ -499,7 +499,7 @@ class LetterOfGuaranteeIssuance extends Model
     {
         return $this->hasMany(LgRenewalDateHistory::class, 'letter_of_guarantee_issuance_id', 'id');
     }
-    public function renewalFeesCurrentAccountBankStatement(string $renewalDate)
+    public function renewalFeesCurrentAccountBankStatement(?string $renewalDate)
     {
         return $this->hasOne(CurrentAccountBankStatement::class, 'letter_of_guarantee_issuance_id', 'id')->withoutGlobalScope('only_active')->where('date', $renewalDate)->where('is_renewal_fees', 1)->first();
     }
@@ -509,9 +509,10 @@ class LetterOfGuaranteeIssuance extends Model
     {
         return $this->min_lg_commission_fees;
     }
-    public function getRenewalDateBefore(string $date):string
+    public function getRenewalDateBefore(string $date):?string
     {
-        return  $this->renewalDateHistories->where('renewal_date', '<', $date)->sortByDesc('renewal_date')->first()->renewal_date;
+		$row = $this->renewalDateHistories->where('renewal_date', '<', $date)->sortByDesc('renewal_date')->first() ;
+        return  $row ? $row->renewal_date : null;
     }
     public function letterOfGuaranteeFacility()
     {
