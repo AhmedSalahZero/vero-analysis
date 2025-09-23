@@ -38,7 +38,7 @@
                                                 <label class="mr-3">
 
                                                 </label>
-                                                <label class="kt-radio kt-radio--success text-black font-size-18px font-weight-bold">
+                                                <label class="kt-radio kt-radio--success text-black font-size-16px font-weight-bold">
 
                                                     <input  type="radio" value="1" name="is_active" 
 													@if(isset($subModel) && $subModel->isActive()) checked @endisset
@@ -46,7 +46,7 @@
                                                     <span></span>
                                                 </label>
 										
-                                                <label class="kt-radio kt-radio--danger text-black font-size-18px font-weight-bold">
+                                                <label class="kt-radio kt-radio--danger text-black font-size-16px font-weight-bold">
                                                     <input type="radio" value="0" name="is_active" 
 													@if(isset($subModel) && !$subModel->isActive()) checked @endisset
 													> {{ __('Inactive') }}
@@ -57,7 +57,7 @@
 										
 								</td>
                                 <td>
-								 <input value="{{ (isset($subModel) ?$subModel->getName() : '') }}" @if($isRepeater) name="title" @else name="{{ $tableId }}[0][title]" @endif class="form-control text-center " type="text">
+								 <input value="{{ (isset($subModel) ?$subModel->getName() : '') }}" @if($isRepeater) name="title" @else name="{{ $tableId }}[0][title]" @endif class="form-control text-left " type="text">
 							    </td>
 
                             </tr>

@@ -5,13 +5,15 @@ namespace App\Console\Commands;
 use App\Models\Company;
 use App\Models\FinancialStatement;
 use App\Models\Partner;
+use App\ReadyFunctions\ConvertFlatRateToDecreasingRate;
 use App\Services\Api\OdooPayment;
 use App\Services\Api\OdooService;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
-use Illuminate\Http\Request;
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use MathPHP\Finance;
 use Schema;
 use Str;
 
@@ -40,9 +42,28 @@ class TestCommand extends Command
 	{
 		parent::__construct();
 	}
-	
+	public function testConvertRate()
+	{
+	// 	$nper = 13;
+	// 	$flatInterest = 0.34 ; 
+	// 	$pmt = -(1 + (1 * $flatInterest / 12 * $nper)) / $nper; // Payment: -0.10525641
+	// //	$pmt = -(1+(1*0.3/12*$nper))/$nper;
+	// 	// $pmt = -(1+(1*0.3/12*$nper))/$nper;
+	// 	$pv = 1;
+	// 	$fv = 0 ;
+	// 	$fv = 0;                       // Future value (default)
+	// 	$type = false;                 // Payments at end of period (default)
+	// 	$guess = 0.1;
+	// 	$monthly_rate = Finance::rate($nper, $pmt, $pv, $fv,$type,$guess) * 12 ;
+		dd($monthly_rate);
+		
+		
+		
+		dd('res',$res);
+	}
 	public function handle()
 	{
+		dd($this->testConvertRate());
 		// dd(Str::startsWith('EXCH/2025/07/0001','EXCH/'));
 		// $company = Company::find(92);
 		// $odooService = new OdooPayment($company);

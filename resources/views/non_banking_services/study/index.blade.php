@@ -7,15 +7,26 @@ use App\Models\NonBankingService\Study;
 <link href="{{ url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css') }}" rel="stylesheet" type="text/css" />
 <link rel="stylesheet" href="/custom/css/financial-planning/common.css">
 <style>
-	.bg-white-hover:hover {
-		color:white !important;
-	}
-	.new-study-item i {
-		color:#055dac !important
-	}
-	.new-study-item:hover i {
-		color:white !important;
-	}
+    .multi-flex-tabs {
+        margin-top: 5px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+
+    .bg-white-hover:hover {
+        color: white !important;
+    }
+
+    .new-study-item i {
+        color: #055dac !important
+    }
+
+    .new-study-item:hover i {
+        color: white !important;
+    }
+
 </style>
 @endsection
 @section('sub-header')
@@ -32,338 +43,365 @@ use App\Models\NonBankingService\Study;
                         <i class="fa fa-money-check-alt"></i> {{ __('Business Plan') }}
                     </a>
                 </li>
-				
-				 <li class="nav-item">
+
+                <li class="nav-item">
                     <a class="nav-link {{  Request('active') == Study::ANNUALLY_STUDY ?'active':'' }}" data-toggle="tab" href="#{{Study::ANNUALLY_STUDY  }}" role="tab">
                         <i class="fa fa-money-check-alt"></i> {{ __('Annually Study') }}
                     </a>
                 </li>
-				
+
 
 
             </ul>
             {{-- @if(auth()->user()->can('create study info')) --}}
-			
-			 <div class="flex-tabs">
-                 <a href="{{ route('create.consumerfinance.products',['company'=>$company->id]) }}" class="btn new-record-class new-study-item rounded btn-icon-sm align-self-center">
-                    <i class="fas fa-plus exclude-icon"></i>
-                    {{ __('Consumer Finance Products') }}
-                </a>
-				
-				 <a href="{{ route('create.microfinance.products',['company'=>$company->id]) }}" class="btn new-record-class new-study-item rounded btn-icon-sm align-self-center">
-                    <i class="fas fa-plus exclude-icon"></i>
-                    {{ __('Microfinance Products') }}
-                </a>
-			   
-				  <a href="{{ route('create.leasing.categories',['company'=>$company->id]) }}" class="btn new-record-class new-study-item rounded btn-icon-sm align-self-center">
-                    <i class="fas fa-plus white-icon exclude-icon"></i>
-                    {{ __('Leasing Products') }}
-                </a>
-				
-				<a href="{{ route('view.departments',['company'=>$company->id]) }}" class="btn new-record-class new-study-item rounded btn-icon-sm align-self-center">
-                    <i class="fas fa-plus white-icon exclude-icon"></i>
-                    {{ __('Departments') }}
-                </a>
-				
-                <a href="{{ route('create.study',['company'=>$company->id]) }}" class="btn btn-2-bg bg-white-hover new-study-item rounded btn-icon-sm align-self-center">
-                    <i class="fas fa-plus white-icon exclude-icon"></i>
-                    {{ __('New Study') }}
-                </a>
-				
-				
+            <div class="multi-flex-tabs">
+                <div class="flex-tabs">
+
+                    <a href="{{ route('create.study',['company'=>$company->id]) }}" class="btn w-240px btn-2-bg bg-white-hover new-study-item rounded btn-icon-sm align-self-center">
+                        <i class="fas fa-plus white-icon exclude-icon "></i>
+                        {{ __('New Study') }}
+                    </a>
+
+
+                    <a href="{{ route('create.leasing.categories',['company'=>$company->id]) }}" class="btn w-240px new-record-class new-study-item rounded btn-icon-sm align-self-center">
+                        <i class="fas fa-plus white-icon exclude-icon"></i>
+                        {{ __('Leasing Products') }}
+                    </a>
+
+                    <a href="{{ route('create.microfinance.products',['company'=>$company->id]) }}" class="btn w-240px new-record-class new-study-item rounded btn-icon-sm align-self-center">
+                        <i class="fas fa-plus exclude-icon"></i>
+                        {{ __('Microfinance Products') }}
+                    </a>
+
+
+
+                    <a href="{{ route('create.consumerfinance.products',['company'=>$company->id]) }}" class="btn w-240px new-record-class new-study-item rounded btn-icon-sm align-self-center">
+                        <i class="fas fa-plus exclude-icon"></i>
+                        {{ __('Consumer Finance Products') }}
+                    </a>
+
+
+
+
+
+
+
+
+                </div>
+                <div class="flex-tabs">
+
+                    <a href="{{ route('create.study',['company'=>$company->id]) }}" class="btn w-240px visibility-hidden btn-2-bg bg-white-hover new-study-item rounded btn-icon-sm align-self-center">
+                        <i class="fas fa-plus white-icon exclude-icon"></i>
+                        {{ __('New Study') }}
+                    </a>
+
+                    <a href="{{ route('view.departments',['company'=>$company->id]) }}" class="btn w-240px new-record-class new-study-item rounded btn-icon-sm align-self-center">
+                        <i class="fas fa-plus white-icon exclude-icon"></i>
+                        {{ __('Departments') }}
+                    </a>
+                    <a href="{{ route('view.expense.names',['company'=>$company->id]) }}" class="btn w-240px new-record-class new-study-item rounded btn-icon-sm align-self-center">
+                        <i class="fas fa-plus white-icon exclude-icon"></i>
+                        {{ __('Cost & Expenses') }}
+                    </a>
+                    <a href="{{ route('view.departments',['company'=>$company->id]) }}" class="btn w-240px new-record-class new-study-item rounded btn-icon-sm align-self-center">
+                        <i class="fas fa-plus white-icon exclude-icon"></i>
+                        {{ __('Fixed Assets') }}
+                    </a>
+                </div>
             </div>
-			
+
+
             {{-- <div class="flex-tabs">
 			
                 <a href="{{ $createRoute }}" class="btn new-record-class rounded btn-icon-sm align-self-center">
-                    <i class="fas fa-plus white-icon"></i>
-                    {{ __('New Study') }}
-                </a>
-            </div> --}}
-            {{-- @endif  --}}
+            <i class="fas fa-plus white-icon"></i>
+            {{ __('New Study') }}
+            </a>
+        </div> --}}
+        {{-- @endif  --}}
 
-        </div>
     </div>
-    <div class="kt-portlet__body">
-        <div class="tab-content  kt-margin-t-20">
-		
-			  @php
-            $currentType = Study::BUSINESS_PLAN ;
-            @endphp
-            <!--Begin:: Tab Content-->
-            <div class="tab-pane {{  !Request('active') || Request('active') == $currentType ?'active':'' }}" id="{{ $currentType }}" role="tabpanel">
-                <div class="kt-portlet kt-portlet--mobile">
-						@php
-                        $rowIndex = 0;
+</div>
+<div class="kt-portlet__body pt-0">
+    <div class="tab-content  kt-margin-t-20">
+
+        @php
+        $currentType = Study::BUSINESS_PLAN ;
+        @endphp
+        <!--Begin:: Tab Content-->
+        <div class="tab-pane {{  !Request('active') || Request('active') == $currentType ?'active':'' }}" id="{{ $currentType }}" role="tabpanel">
+            <div class="kt-portlet kt-portlet--mobile">
+                @php
+                $rowIndex = 0;
+                @endphp
+                <x-tables.repeater-table :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
+                    <x-slot name="ths">
+                        <x-tables.repeater-table-th class="  header-border-down first-column-th-class" :title="__('Name')"></x-tables.repeater-table-th>
+                        <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Start Date')"></x-tables.repeater-table-th>
+                        <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('End Date')"></x-tables.repeater-table-th>
+                        <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Financial Statement')"></x-tables.repeater-table-th>
+                        {{-- <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Balance Sheet')"></x-tables.repeater-table-th> --}}
+                        {{-- <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Cash Flow')"></x-tables.repeater-table-th> --}}
+                        <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Dashboard')"></x-tables.repeater-table-th>
+                        <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Actions')"></x-tables.repeater-table-th>
+                    </x-slot>
+                    <x-slot name="trs">
+
+                        @php
+                        $currentLoanTotalPerYear = [];
                         @endphp
-                        <x-tables.repeater-table :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
-                            <x-slot name="ths">
-                                <x-tables.repeater-table-th class="  header-border-down first-column-th-class" :title="__('Name')"></x-tables.repeater-table-th>
-                                <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Start Date')"></x-tables.repeater-table-th>
-                                <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('End Date')"></x-tables.repeater-table-th>
-                                <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Financial Statement')"></x-tables.repeater-table-th>
-                                {{-- <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Balance Sheet')"></x-tables.repeater-table-th> --}}
-                                {{-- <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Cash Flow')"></x-tables.repeater-table-th> --}}
-                                <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Dashboard')"></x-tables.repeater-table-th>
-                                <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Actions')"></x-tables.repeater-table-th>
-                            </x-slot>
-                            <x-slot name="trs">
 
-                                @php
-                                $currentLoanTotalPerYear = [];
-                                @endphp
+                        @foreach ($models[$currentType] as $index=>$model)
 
-                                @foreach ($models[$currentType] as $index=>$model)
+                        <tr data-repeat-formatting-decimals="0" data-repeater-style>
 
-                                <tr data-repeat-formatting-decimals="0" data-repeater-style>
+                            <td>
+                                <div class="">
 
-                                    <td>
-                                        <div class="">
+                                    <input value="{{ $model->getName() }}" disabled class="form-control text-left " type="text">
+                                </div>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center justify-content-center">
+                                    <x-repeat-right-dot-inputs :removeThreeDots="true" :removeCurrency="true" :mark="' '" :is-number="false" :removeThreeDotsClass="true" :number-format-decimals="0" :currentVal="$model->getStudyStartDateFormattedForView()" :classes="''" :is-percentage="false" :name="''" :columnIndex="0"></x-repeat-right-dot-inputs>
 
-                                            <input value="{{ $model->getName() }}" disabled class="form-control text-left " type="text">
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="d-flex align-items-center justify-content-center">
-                                            <x-repeat-right-dot-inputs :removeThreeDots="true" :removeCurrency="true" :mark="' '" :is-number="false" :removeThreeDotsClass="true" :number-format-decimals="0" :currentVal="$model->getStudyStartDateFormattedForView()" :classes="''" :is-percentage="false" :name="''" :columnIndex="0"></x-repeat-right-dot-inputs>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center justify-content-center">
+                                    <x-repeat-right-dot-inputs :removeThreeDots="true" :removeCurrency="true" :mark="' '" :is-number="false" :removeThreeDotsClass="true" :number-format-decimals="0" :currentVal="$model->getStudyEndDateFormattedForView()" :classes="''" :is-percentage="false" :name="''" :columnIndex="0"></x-repeat-right-dot-inputs>
 
-                                        </div>
-                                    </td>
-									  <td>
-                                        <div class="d-flex align-items-center justify-content-center">
-                                            <x-repeat-right-dot-inputs :removeThreeDots="true" :removeCurrency="true" :mark="' '" :is-number="false" :removeThreeDotsClass="true" :number-format-decimals="0" :currentVal="$model->getStudyEndDateFormattedForView()" :classes="''" :is-percentage="false" :name="''" :columnIndex="0"></x-repeat-right-dot-inputs>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center flex-column " style="gap:10px;">
+                                    <div class="d-flex mr-auto" style="gap:10px;">
+                                        <a href="{{ route('view.non.banking.forecast.income.statement',['company'=>$company->id,'study'=>$model->id]) }}" class="btn btn-md-width btn-1-bg btn-sm btn-brand btn-pill">{{ __('Income Statement') }}</a>
+                                        <a href="#" class="btn btn-md-width btn-2-bg btn-sm btn-brand btn-pill">{{ __('Balance Sheet') }}</a>
+                                    </div>
+                                    <div class="d-flex mr-auto" style="gap:10px;">
+                                        <a href="#" class="btn btn-md-width btn-3-bg btn-sm btn-brand btn-pill">{{ __('Cash Flow') }}</a>
+                                        <a href="#" class="btn btn-md-width btn-4-bg btn-sm btn-brand btn-pill">{{ __('Ratio Analysis') }}</a>
+                                    </div>
+                                </div>
 
-                                        </div>
-                                    </td>
-									<td>
-										<div class="d-flex align-items-center flex-column " style="gap:10px;">
-										<div class="d-flex mr-auto" style="gap:10px;">
-											<a href="{{ route('view.non.banking.forecast.income.statement',['company'=>$company->id,'study'=>$model->id]) }}" class="btn btn-md-width btn-1-bg btn-sm btn-brand btn-pill" >{{ __('Income Statement') }}</a>  
-											<a href="#" class="btn btn-md-width btn-2-bg btn-sm btn-brand btn-pill" >{{ __('Balance Sheet') }}</a>  
-										</div>
-										<div class="d-flex mr-auto" style="gap:10px;">
-											<a href="#" class="btn btn-md-width btn-3-bg btn-sm btn-brand btn-pill" >{{ __('Cash Flow') }}</a>  
-											<a href="#" class="btn btn-md-width btn-4-bg btn-sm btn-brand btn-pill" >{{ __('Ratio Analysis') }}</a>  
-										</div>
-										</div>
-										
-									</td>
-									
-									<td>
-										<div class="d-flex mr-auto" style="gap:10px;">
-											<a href="#" class="btn btn-sm-width btn-1-bg btn-sm btn-brand btn-pill" >{{ __('Result') }}</a>  
-											<a href="#" class="btn btn-sm-width btn-2-bg btn-sm btn-brand btn-pill" >{{ __('Valuation') }}</a>  
-										</div>
-									</td>
-									  <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
-                                        <span style="overflow: visible; position: relative; width: 110px;">
-											{{-- @if(hasAuthFor('update lc settlement internal transfer')) --}}
-                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon edit-btn-class" title="{{ __('Edit') }}" href="{{ route('edit.study',['company'=>$company->id,'study'=>$model->id]) }}"><i class="fa fa-pen-alt exclude-icon default-icon-color" ></i></a>
-                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon copy-btn-class" title="{{ __('Copy') }}" href="{{ route('edit.study',['company'=>$company->id,'study'=>$model->id]) }}"><i class="fa fa-layer-group exclude-icon default-icon-color" ></i></a>
-											{{-- @endif  --}}
-											{{-- @if(hasAuthFor('delete lc settlement internal transfer')) --}}
-                                            <a data-toggle="modal" data-target="#delete-study-{{ $model->id }}" type="button" class="btn delete-btn-class btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt exclude-icon default-icon-color"></i></a>
-                                            <div class="modal fade" id="delete-study-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                                                <div class="modal-dialog modal-dialog-centered" role="document">
-                                                    <div class="modal-content">
-                                                        <form action="{{ route('study.destroy',['company'=>$company->id,'study'=>$model->id ]) }}" method="post">
-                                                            @csrf
-                                                            @method('delete')
-                                                            <div class="modal-header">
-                                                                <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Do You Want To Delete This Item ?') }}</h5>
-                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                    <span aria-hidden="true">&times;</span>
-                                                                </button>
-                                                            </div>
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close') }}</button>
-                                                                <button type="submit" class="btn btn-danger">{{ __('Confirm Delete') }}</button>
-                                                            </div>
+                            </td>
 
-                                                        </form>
+                            <td>
+                                <div class="d-flex mr-auto" style="gap:10px;">
+                                    <a href="#" class="btn btn-sm-width btn-1-bg btn-sm btn-brand btn-pill">{{ __('Result') }}</a>
+                                    <a href="#" class="btn btn-sm-width btn-2-bg btn-sm btn-brand btn-pill">{{ __('Valuation') }}</a>
+                                </div>
+                            </td>
+                            <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
+                                <span style="overflow: visible; position: relative; width: 110px;">
+                                    {{-- @if(hasAuthFor('update lc settlement internal transfer')) --}}
+                                    <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon edit-btn-class" title="{{ __('Edit') }}" href="{{ route('edit.study',['company'=>$company->id,'study'=>$model->id]) }}"><i class="fa fa-pen-alt exclude-icon default-icon-color"></i></a>
+                                    <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon copy-btn-class" title="{{ __('Copy') }}" href="{{ route('edit.study',['company'=>$company->id,'study'=>$model->id]) }}"><i class="fa fa-layer-group exclude-icon default-icon-color"></i></a>
+                                    {{-- @endif  --}}
+                                    {{-- @if(hasAuthFor('delete lc settlement internal transfer')) --}}
+                                    <a data-toggle="modal" data-target="#delete-study-{{ $model->id }}" type="button" class="btn delete-btn-class btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt exclude-icon default-icon-color"></i></a>
+                                    <div class="modal fade" id="delete-study-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered" role="document">
+                                            <div class="modal-content">
+                                                <form action="{{ route('study.destroy',['company'=>$company->id,'study'=>$model->id ]) }}" method="post">
+                                                    @csrf
+                                                    @method('delete')
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Do You Want To Delete This Item ?') }}</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
                                                     </div>
-                                                </div>
-                                            </div>
-											{{-- @endif  --}}
-                                        </span>
-                                    </td>
-
-
-
-                                </tr>
-
-
-
-
-                                @endforeach
-
-
-                          
-
-
-
-
-                            </x-slot>
-
-
-
-
-                        </x-tables.repeater-table>
-						
-                    
-                </div>
-            </div>
-			
-			
-			
-            @php
-            $currentType = Study::ANNUALLY_STUDY ;
-            @endphp
-            <!--Begin:: Tab Content-->
-            <div class="tab-pane {{   Request('active') == $currentType ?'active':'' }}" id="{{ $currentType }}" role="tabpanel">
-                <div class="kt-portlet kt-portlet--mobile">
-						@php
-                        $rowIndex = 0;
-                        @endphp
-                        <x-tables.repeater-table :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
-                            <x-slot name="ths">
-                                <x-tables.repeater-table-th class="  header-border-down first-column-th-class" :title="__('Study Name')"></x-tables.repeater-table-th>
-                                <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Start Date')"></x-tables.repeater-table-th>
-                                <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('End Date')"></x-tables.repeater-table-th>
-                                <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Income Statement')"></x-tables.repeater-table-th>
-                                <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Balance Sheet')"></x-tables.repeater-table-th>
-                                <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Cash Flow')"></x-tables.repeater-table-th>
-                                <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Dashboard')"></x-tables.repeater-table-th>
-                                <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Actions')"></x-tables.repeater-table-th>
-                            </x-slot>
-                            <x-slot name="trs">
-
-                                @php
-                                $currentLoanTotalPerYear = [];
-                                @endphp
-
-                                @foreach ($models[$currentType] as $index=>$model)
-
-                                <tr data-repeat-formatting-decimals="0" data-repeater-style>
-
-                                    <td>
-                                        <div class="">
-
-                                            <input value="{{ $model->getName() }}" disabled class="form-control text-left " type="text">
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="d-flex align-items-center justify-content-center">
-                                            <x-repeat-right-dot-inputs :removeThreeDots="true" :removeCurrency="true" :mark="' '" :is-number="false" :removeThreeDotsClass="true" :number-format-decimals="0" :currentVal="$model->getStudyStartDateFormattedForView()" :classes="''" :is-percentage="false" :name="''" :columnIndex="0"></x-repeat-right-dot-inputs>
-
-                                        </div>
-                                    </td>
-									  <td>
-                                        <div class="d-flex align-items-center justify-content-center">
-                                            <x-repeat-right-dot-inputs :removeThreeDots="true" :removeCurrency="true" :mark="' '" :is-number="false" :removeThreeDotsClass="true" :number-format-decimals="0" :currentVal="$model->getStudyEndDateFormattedForView()" :classes="''" :is-percentage="false" :name="''" :columnIndex="0"></x-repeat-right-dot-inputs>
-
-                                        </div>
-                                    </td>
-									<td>
-										<div class="d-flex align-items-center flex-column " style="gap:10px;">
-										<div class="d-flex mr-auto" style="gap:10px;">
-											<a href="#" class="btn btn-sm-width btn-1-bg btn-sm btn-brand btn-pill" >{{ __('Forecast') }}</a>  
-											<a href="#" class="btn btn-sm-width btn-2-bg btn-sm btn-brand btn-pill" >{{ __('Actual') }}</a>  
-										</div>
-										<div class="d-flex mr-auto" style="gap:10px;">
-											<a href="#" class="btn btn-sm-width btn-3-bg btn-sm btn-brand btn-pill" >{{ __('Adjusted') }}</a>  
-											<a href="#" class="btn btn-sm-width btn-4-bg btn-sm btn-brand btn-pill" >{{ __('Modified') }}</a>  
-										</div>
-										</div>
-										
-									</td>
-									<td>
-										<div class="d-flex mr-auto" style="gap:10px;">
-											<a href="#" class="btn btn-sm-width btn-1-bg btn-sm btn-brand btn-pill" >{{ __('Forecast') }}</a>  
-											<a href="#" class="btn btn-sm-width btn-2-bg btn-sm btn-brand btn-pill" >{{ __('Actual') }}</a>  
-										</div>
-									</td>
-									<td>
-										<div class="d-flex mr-auto" style="gap:10px;">
-											<a href="#" class="btn btn-sm-width btn-1-bg btn-sm btn-brand btn-pill" >{{ __('Forecast') }}</a>  
-											<a href="#" class="btn btn-sm-width btn-2-bg btn-sm btn-brand btn-pill" >{{ __('Actual') }}</a>  
-										</div>
-									
-									</td>
-									<td>
-										<div class="d-flex mr-auto" style="gap:10px;">
-											<a href="#" class="btn btn-sm-width btn-1-bg btn-sm btn-brand btn-pill" >{{ __('Forecast') }}</a>  
-											<a href="#" class="btn btn-sm-width btn-2-bg btn-sm btn-brand btn-pill" >{{ __('Actual') }}</a>  
-										</div>
-									</td>
-									  <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
-                                        <span style="overflow: visible; position: relative; width: 110px;">
-											{{-- @if(hasAuthFor('update lc settlement internal transfer')) --}}
-                                            <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon edit-btn-class" title="Edit" href="{{ route('edit.study',['company'=>$company->id,'study'=>$model->id]) }}"><i class="fa fa-pen-alt exclude-icon default-icon-color" ></i></a>
-											{{-- @endif  --}}
-											{{-- @if(hasAuthFor('delete lc settlement internal transfer')) --}}
-                                            <a data-toggle="modal" data-target="#delete-study-{{ $model->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon delete-btn-class" title="Delete" href="#"><i class="fa fa-trash-alt exclude-icon default-icon-color"></i></a>
-                                            <div class="modal fade" id="delete-study-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                                                <div class="modal-dialog modal-dialog-centered" role="document">
-                                                    <div class="modal-content">
-                                                        <form action="{{ route('study.destroy',['company'=>$company->id,'study'=>$model->id ]) }}" method="post">
-                                                            @csrf
-                                                            @method('delete')
-                                                            <div class="modal-header">
-                                                                <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Do You Want To Delete This Item ?') }}</h5>
-                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                    <span aria-hidden="true">&times;</span>
-                                                                </button>
-                                                            </div>
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close') }}</button>
-                                                                <button type="submit" class="btn btn-danger">{{ __('Confirm Delete') }}</button>
-                                                            </div>
-
-                                                        </form>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close') }}</button>
+                                                        <button type="submit" class="btn btn-danger">{{ __('Confirm Delete') }}</button>
                                                     </div>
-                                                </div>
+
+                                                </form>
                                             </div>
-											{{-- @endif  --}}
-                                        </span>
-                                    </td>
+                                        </div>
+                                    </div>
+                                    {{-- @endif  --}}
+                                </span>
+                            </td>
 
 
 
-                                </tr>
-
-
-
-
-                                @endforeach
-
-
-                          
+                        </tr>
 
 
 
 
-                            </x-slot>
+                        @endforeach
 
 
 
 
-                        </x-tables.repeater-table>
-						
-                    
-                </div>
+
+
+
+                    </x-slot>
+
+
+
+
+                </x-tables.repeater-table>
+
+
             </div>
-
-
-
-
-            <!--End:: Tab Content-->
-
-
-
-            <!--End:: Tab Content-->
         </div>
+
+
+
+        @php
+        $currentType = Study::ANNUALLY_STUDY ;
+        @endphp
+        <!--Begin:: Tab Content-->
+        <div class="tab-pane {{   Request('active') == $currentType ?'active':'' }}" id="{{ $currentType }}" role="tabpanel">
+            <div class="kt-portlet kt-portlet--mobile">
+                @php
+                $rowIndex = 0;
+                @endphp
+                <x-tables.repeater-table :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
+                    <x-slot name="ths">
+                        <x-tables.repeater-table-th class="  header-border-down first-column-th-class" :title="__('Study Name')"></x-tables.repeater-table-th>
+                        <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Start Date')"></x-tables.repeater-table-th>
+                        <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('End Date')"></x-tables.repeater-table-th>
+                        <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Income Statement')"></x-tables.repeater-table-th>
+                        <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Balance Sheet')"></x-tables.repeater-table-th>
+                        <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Cash Flow')"></x-tables.repeater-table-th>
+                        <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Dashboard')"></x-tables.repeater-table-th>
+                        <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Actions')"></x-tables.repeater-table-th>
+                    </x-slot>
+                    <x-slot name="trs">
+
+                        @php
+                        $currentLoanTotalPerYear = [];
+                        @endphp
+
+                        @foreach ($models[$currentType] as $index=>$model)
+
+                        <tr data-repeat-formatting-decimals="0" data-repeater-style>
+
+                            <td>
+                                <div class="">
+
+                                    <input value="{{ $model->getName() }}" disabled class="form-control text-left " type="text">
+                                </div>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center justify-content-center">
+                                    <x-repeat-right-dot-inputs :removeThreeDots="true" :removeCurrency="true" :mark="' '" :is-number="false" :removeThreeDotsClass="true" :number-format-decimals="0" :currentVal="$model->getStudyStartDateFormattedForView()" :classes="''" :is-percentage="false" :name="''" :columnIndex="0"></x-repeat-right-dot-inputs>
+
+                                </div>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center justify-content-center">
+                                    <x-repeat-right-dot-inputs :removeThreeDots="true" :removeCurrency="true" :mark="' '" :is-number="false" :removeThreeDotsClass="true" :number-format-decimals="0" :currentVal="$model->getStudyEndDateFormattedForView()" :classes="''" :is-percentage="false" :name="''" :columnIndex="0"></x-repeat-right-dot-inputs>
+
+                                </div>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center flex-column " style="gap:10px;">
+                                    <div class="d-flex mr-auto" style="gap:10px;">
+                                        <a href="#" class="btn btn-sm-width btn-1-bg btn-sm btn-brand btn-pill">{{ __('Forecast') }}</a>
+                                        <a href="#" class="btn btn-sm-width btn-2-bg btn-sm btn-brand btn-pill">{{ __('Actual') }}</a>
+                                    </div>
+                                    <div class="d-flex mr-auto" style="gap:10px;">
+                                        <a href="#" class="btn btn-sm-width btn-3-bg btn-sm btn-brand btn-pill">{{ __('Adjusted') }}</a>
+                                        <a href="#" class="btn btn-sm-width btn-4-bg btn-sm btn-brand btn-pill">{{ __('Modified') }}</a>
+                                    </div>
+                                </div>
+
+                            </td>
+                            <td>
+                                <div class="d-flex mr-auto" style="gap:10px;">
+                                    <a href="#" class="btn btn-sm-width btn-1-bg btn-sm btn-brand btn-pill">{{ __('Forecast') }}</a>
+                                    <a href="#" class="btn btn-sm-width btn-2-bg btn-sm btn-brand btn-pill">{{ __('Actual') }}</a>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="d-flex mr-auto" style="gap:10px;">
+                                    <a href="#" class="btn btn-sm-width btn-1-bg btn-sm btn-brand btn-pill">{{ __('Forecast') }}</a>
+                                    <a href="#" class="btn btn-sm-width btn-2-bg btn-sm btn-brand btn-pill">{{ __('Actual') }}</a>
+                                </div>
+
+                            </td>
+                            <td>
+                                <div class="d-flex mr-auto" style="gap:10px;">
+                                    <a href="#" class="btn btn-sm-width btn-1-bg btn-sm btn-brand btn-pill">{{ __('Forecast') }}</a>
+                                    <a href="#" class="btn btn-sm-width btn-2-bg btn-sm btn-brand btn-pill">{{ __('Actual') }}</a>
+                                </div>
+                            </td>
+                            <td class="kt-datatable__cell--left kt-datatable__cell " data-field="Actions" data-autohide-disabled="false">
+                                <span style="overflow: visible; position: relative; width: 110px;">
+                                    {{-- @if(hasAuthFor('update lc settlement internal transfer')) --}}
+                                    <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon edit-btn-class" title="Edit" href="{{ route('edit.study',['company'=>$company->id,'study'=>$model->id]) }}"><i class="fa fa-pen-alt exclude-icon default-icon-color"></i></a>
+                                    {{-- @endif  --}}
+                                    {{-- @if(hasAuthFor('delete lc settlement internal transfer')) --}}
+                                    <a data-toggle="modal" data-target="#delete-study-{{ $model->id }}" type="button" class="btn btn-secondary btn-outline-hover-danger btn-icon delete-btn-class" title="Delete" href="#"><i class="fa fa-trash-alt exclude-icon default-icon-color"></i></a>
+                                    <div class="modal fade" id="delete-study-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered" role="document">
+                                            <div class="modal-content">
+                                                <form action="{{ route('study.destroy',['company'=>$company->id,'study'=>$model->id ]) }}" method="post">
+                                                    @csrf
+                                                    @method('delete')
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Do You Want To Delete This Item ?') }}</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close') }}</button>
+                                                        <button type="submit" class="btn btn-danger">{{ __('Confirm Delete') }}</button>
+                                                    </div>
+
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {{-- @endif  --}}
+                                </span>
+                            </td>
+
+
+
+                        </tr>
+
+
+
+
+                        @endforeach
+
+
+
+
+
+
+
+                    </x-slot>
+
+
+
+
+                </x-tables.repeater-table>
+
+
+            </div>
+        </div>
+
+
+
+
+        <!--End:: Tab Content-->
+
+
+
+        <!--End:: Tab Content-->
     </div>
+</div>
 </div>
 
 @endsection

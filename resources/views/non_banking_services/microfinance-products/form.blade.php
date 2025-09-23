@@ -48,7 +48,7 @@ use App\Models\NonBankingService\MicrofinanceProduct;
 
                                 <div id="microfinanceProducts" class="leasing-repeater-parent">
                                     <div class="form-group2  m-form__group2 row">
-                                        <div data-repeater-list="microfinanceProducts" class="col-lg-12">
+                                        <div data-repeater-list="microfinanceProducts" class="col-lg-8">
 
                                             @include('non_banking_services.microfinance-products._repeater' , [
 
@@ -67,10 +67,10 @@ use App\Models\NonBankingService\MicrofinanceProduct;
 
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-6"></div>
-                                    <div class="col-md-6 text-right">
+                                    <div class="col-md-8 text-right">
                                         <input type="submit" name="save-and-continue" class="btn active-style save-form" value="{{  __('Save & Continue') }}">
                                     </div>
+                                    {{-- <div class="col-md-6"></div> --}}
                                 </div>
                             </form>
 

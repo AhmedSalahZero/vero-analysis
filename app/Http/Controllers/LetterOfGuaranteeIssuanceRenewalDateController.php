@@ -56,7 +56,7 @@ class LetterOfGuaranteeIssuanceRenewalDateController
 			'letter_of_guarantee_issuance_id'=>$letterOfGuaranteeIssuance->id
 		]);
 		
-		$letterOfGuaranteeIssuance->handleRenewalFeesForOdoo($renewalFeesAmount,$renewalDate);
+		$lgRenewalDateHistory->handleRenewalFeesForOdoo($renewalFeesAmount,$renewalDate);
 		
 		
 		$this->storeCommissionToCreditCurrentAccountBankStatement($lgRenewalDateHistory,$letterOfGuaranteeIssuance,$company,$expiryDate,$renewalDate,$transactionName,$lgType);

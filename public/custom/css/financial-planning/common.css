@@ -195,6 +195,9 @@ html body [data-repeater-create] i:not([data-repeating-direction="column"]):not(
 .font-size-18px{
 	font-size:18px !important;
 }
+.font-size-16px{
+	font-size:16px !important;
+}
 html body table tr,html body table tr > *, html body table tr td{
 	border-color: #CCE2FD !important;
 	border:1px solid #CCE2FD !important;
@@ -248,13 +251,13 @@ table:not(.table-condensed) thead th, table:not(.table-condensed) tbody td{
 }
 .btn-2-bg{
 	background-color:white ;
-	border:2px solid green ;
+	border:1px solid green ;
 	color:black;
 	font-weight:bold;
 }
 .btn-2-bg:hover {
 	background-color:green ;
-	border:2px solid green ;
+	border:1px solid green ;
 }
 .btn-3-bg{
 	background-color:white ;
@@ -287,7 +290,7 @@ i{
 }
 .new-record-class{
 	background-color:white !important;
-	border:2px solid #007bff;
+	border:1px solid #007bff;
 	border-radius: 5px !important;
 	font-weight: bold;
 }
@@ -369,4 +372,7 @@ input.input-text-left{
 }
 .default-icon-color{
 	color:#595d6e;
+}
+.w-240px{
+	width:240px !important;
 }

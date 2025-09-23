@@ -199,6 +199,9 @@ button.dropdown-toggle
 .font-size-18px{
 	font-size:18px !important;
 }
+.font-size-16px{
+	font-size:16px !important;
+}
 html body table tr,html body table tr > *, html body table tr td{
 	border-color: #CCE2FD !important;
 	border:1px solid #CCE2FD !important;
@@ -255,13 +258,13 @@ table:not(.table-condensed) thead th, table:not(.table-condensed) tbody td{
 }
 .btn-2-bg{
 	background-color:white ;
-	border:2px solid green ;
+	border:1px solid green ;
 	color:black;
 	font-weight:bold;
 }
 .btn-2-bg:hover {
 	background-color:green ;
-	border:2px solid green ;
+	border:1px solid green ;
 }
 .btn-3-bg{
 	background-color:white ;
@@ -282,7 +285,7 @@ table:not(.table-condensed) thead th, table:not(.table-condensed) tbody td{
 }
 .btn-4-bg:hover {
 	background-color:rgb(50, 12, 186) ; ;
-	border:2px solid rgb(50, 12, 186) ;;
+	border:1px solid rgb(50, 12, 186) ;;
 	color:white;
 }
 .new-record-class:hover,
@@ -292,6 +295,7 @@ table:not(.table-condensed) thead th, table:not(.table-condensed) tbody td{
 	color:white !important;
 	
 }
+
 input.custom-input-numeric-width{
 	width:120px !important;
 	min-width:120px !important;
@@ -306,4 +310,7 @@ input.custom-input-string-width{
 	width:400px !important;
 	min-width:400px !important;
 	max-width:400px !important;
+}
+.w-240px{
+	width:240px !important;
 }

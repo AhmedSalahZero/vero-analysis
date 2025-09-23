@@ -6431,25 +6431,25 @@ function getNonBankingNavigation(Company $company,User $user):array
 			// ]
 		];
 		
-		$urls['settings']=[
-            'title'=>__('General <br> Settings'),
-            'show'=>true ,
-			'link'=>'#',
-			'submenu'=>[
-				[
-					'title'=>__('Expenses Settings'),
-					'show'=>true ,
-					'link'=>route('view.expense.names',['company'=>$company->id]),
-					'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
-				],
-				[
-					'title'=>__('Manpower Settings'),
-					'show'=>true ,
-					'link'=>route('view.departments',['company'=>$company->id]),
-					'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
-				]
-			]
-				];
+		// $urls['settings']=[
+        //     'title'=>__('General <br> Settings'),
+        //     'show'=>true ,
+		// 	'link'=>'#',
+		// 	'submenu'=>[
+		// 		[
+		// 			'title'=>__('Expenses Settings'),
+		// 			'show'=>true ,
+		// 			'link'=>route('view.expense.names',['company'=>$company->id]),
+		// 			'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
+		// 		],
+		// 		[
+		// 			'title'=>__('Manpower Settings'),
+		// 			'show'=>true ,
+		// 			'link'=>route('view.departments',['company'=>$company->id]),
+		// 			'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
+		// 		]
+		// 	]
+		// 		];
 	}
 	return $urls;
 	
