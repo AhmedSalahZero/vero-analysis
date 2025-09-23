@@ -306,7 +306,7 @@ class CurrentAccountBankStatement extends Model  implements IHaveStatement
 	//	$interestTypeText = 'end_of_month';
 	//	$fullBankStatement::where('company_id',$companyId)->where('type',$interestText)->where($foreignKeyColumnName,$this->id)->where('interest_type',$interestTypeText)->where('date','>',$contractEndDate)->delete();
 		$beginningBalanceRow = $fullBankStatement::where('company_id',$companyId)->where('is_beginning_balance',1)->where('financial_institution_account_id',$this->financial_institution_account_id)->first();
-		dd($this,$this->financial_institution_account_id  );
+		dd($this,$this->financial_institution_account_id,$this->letterOfGuaranteeIssuance  );
 		$financialInstitutionAccount = FinancialInstitutionAccount::find($this->financial_institution_account_id);
 		$balanceDate = $financialInstitutionAccount->balance_date;
 		$syncedYears = $financialInstitutionAccount->synced_end_of_month_years;
