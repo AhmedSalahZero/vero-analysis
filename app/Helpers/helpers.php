@@ -8288,3 +8288,26 @@ $number = floatval($numericString);
 return  $number; // 2496335
 
 }
+
+function getNthKeyAfter($array, $specificKey, $n) {
+    // Get all keys from the array
+    $keys = array_keys($array);
+    
+    // Find the position of the specific key
+    $keyPosition = array_search($specificKey, $keys);
+    
+    // Check if the specific key exists
+    if ($keyPosition === false) {
+        return null; // Key not found
+    }
+    
+    // Calculate the position of the nth key after
+    $targetPosition = $keyPosition + $n;
+    
+    // Check if the target position exists
+    if (isset($keys[$targetPosition])) {
+        return $keys[$targetPosition];
+    }
+    
+    return null; // No nth key exists
+}

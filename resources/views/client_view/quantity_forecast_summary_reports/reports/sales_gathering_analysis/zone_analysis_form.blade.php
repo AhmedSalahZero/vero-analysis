@@ -111,7 +111,6 @@
                                 <div class="input-group date">
                                     <select data-live-search="true" name="interval" required class="form-control  form-select form-select-2 form-select-solid fw-bolder">
                                         <option value="" selected>{{ __('Select') }}</option>
-                                        {{-- <option value="daily">{{ __('Daily') }}</option> --}}
                                         <option value="monthly">{{ __('Monthly') }}</option>
                                         <option value="quarterly">{{ __('Quarterly') }}</option>
                                         <option value="semi-annually">{{ __('Semi-Annually') }}</option>

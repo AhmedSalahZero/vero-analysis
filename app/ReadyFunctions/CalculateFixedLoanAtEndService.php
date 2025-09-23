@@ -64,10 +64,12 @@ class CalculateFixedLoanAtEndService
 		$installmentFactors = [];
 		
 		$datesAsIndexString=HDate::generateDatesBetweenStartDateAndDuration($currentStartDateAsIndex,$startDate,$tenor,$installmentPaymentIntervalName);
-		$datesIndexAndDaysCount =HDate::calculateDaysCountAtEnd($datesAsIndexString,$currentDaysCount); 
+		
 		
 		$datesAsStringIndex = array_flip($datesAsIndexString);
 		$installmentPaymentIntervalValue = $this->getInstallmentPaymentIntervalValue($installmentPaymentIntervalName);
+		$datesIndexAndDaysCount =HDate::calculateDaysCountAtEnd($datesAsIndexString,$installmentPaymentIntervalValue,$currentDaysCount); 
+		
 		$currentPricing =  ($baseRate + $marginRate) /100  ;
 		$stepRate = Loan::getStepRate($loanType, $stepUpRate, $stepDownRate);
 		$stepRate = $stepRate / 100;
@@ -136,9 +138,9 @@ class CalculateFixedLoanAtEndService
 		
 		}
 		
-		$installmentAmounts = $this->calculateInstallmentAmount($loanFactors,$installmentFactors, $stepRate, $installmentStartDateAsIndex, $endDateAsIndex, $tenor, $installmentPaymentIntervalValue, $appliedStepValue,$pricingPerMonths);
+		$installmentAmounts = $this->calculateInstallmentAmount($installmentPaymentIntervalValue,$loanFactors,$installmentFactors, $stepRate, $installmentStartDateAsIndex, $endDateAsIndex, $tenor, $installmentPaymentIntervalValue, $appliedStepValue,$pricingPerMonths);
 
-		$loanScheduleResult = $this->calculateLoanScheduleResult($datesIndexAndDaysCount,$loanType, $loanAmount, $interestFactors, $installmentAmounts,$currentStartDateAsIndex);
+		$loanScheduleResult = $this->calculateLoanScheduleResult($installmentPaymentIntervalValue,$datesIndexAndDaysCount,$loanType, $loanAmount, $interestFactors, $installmentAmounts,$currentStartDateAsIndex);
 		
 		if($indexOfLoop == -1){
 		
@@ -165,7 +167,7 @@ class CalculateFixedLoanAtEndService
 				
 			
 		}
-
+	
 		return [
 			'result'=>$loanScheduleResult ,
 			'final_result'=>$mergedResult ,
@@ -218,7 +220,7 @@ class CalculateFixedLoanAtEndService
 	}
 	
 
-	protected function calculateInstallmentAmount(array $loanFactors,array $installmentFactory, float $stepRate, int $installmentStartDateAsIndex, int $endDateAsIndex, float $tenor, int $installmentPaymentIntervalValue, int $appliedStepValue )
+	protected function calculateInstallmentAmount(int $intervalValue,array $loanFactors,array $installmentFactory, float $stepRate, int $installmentStartDateAsIndex, int $endDateAsIndex, float $tenor, int $installmentPaymentIntervalValue, int $appliedStepValue )
 	{
 	
 		$installmentsAmounts = [];
@@ -242,13 +244,13 @@ class CalculateFixedLoanAtEndService
 					$installmentAmount = $installmentAmount;
 				}
 				$installmentsAmounts[$loopDateAsIndex]=$installmentAmount;
-				$installmentStartDateAsIndex = $loopDateAsIndex+1;
+				$installmentStartDateAsIndex = $loopDateAsIndex+$intervalValue;
 		}
 		
 		return $installmentsAmounts;
 	}
 
-	protected function calculateLoanScheduleResult(array $datesIndexAndDaysCount,string $loanType, float $loanAmount, array $interestFactor, array $installmentAmount)
+	protected function calculateLoanScheduleResult(int $intervalValue , array $datesIndexAndDaysCount,string $loanType, float $loanAmount, array $interestFactor, array $installmentAmount)
 	{
 		$loanScheduleResult = [];
 		$loanScheduleResult['totals']['totalSchedulePayment'] = 0;
@@ -258,7 +260,7 @@ class CalculateFixedLoanAtEndService
 		$firstLoop = true ;
 		
 		foreach($datesIndexAndDaysCount as $dateAsIndex => $currentDaysCount) {
-			$previousDate = $dateAsIndex-1;
+			$previousDate = $dateAsIndex-$intervalValue;
 			$i = $dateAsIndex ; 
 			$loanScheduleResult['beginning'][$i] =  $firstLoop ? $loanAmount : $loanScheduleResult['endBalance'][$previousDate]??0;
 			$loanScheduleResult['interestAmount'][$i] = $loanScheduleResult['beginning'][$i] *   $interestFactor[$i] ;

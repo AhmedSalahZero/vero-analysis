@@ -842,7 +842,7 @@ use App\Models\Partner;
         const moneyType = $(this).attr('data-type')
         const amount = number_unformat($('.main-amount-class[data-type="' + moneyType + '"]').val());
         const exchangeRate = number_unformat($('.exchange-rate-class[data-type="' + moneyType + '"]').val());
-        const amountAfterExchangeRate = amount / exchangeRate;
+        const amountAfterExchangeRate = roundToTwo(amount / exchangeRate,2);
         $('.amount-after-exchange-rate-class[data-type="' + moneyType + '"]').val(amountAfterExchangeRate).trigger('change')
         $('.js-settlement-amount:eq(0)').trigger('change')
     })

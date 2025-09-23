@@ -261,9 +261,7 @@ use MathPHP\Statistics\Correlation ;
 
                                 </div>
                                 <div id="bar-chart-id" class="chartdashboard"></div>
-                                {{-- @foreach($barChart as $year => $currentChartData )
-                                        <input type="hidden" class="three-line-chart-data-class" data-chart-name="{{ $year }}" data-chart-data="{{ json_encode($currentChartData) }}">
-                                @endforeach --}}
+                             
                             </div>
 
                         </div>

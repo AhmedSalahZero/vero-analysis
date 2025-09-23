@@ -104,19 +104,16 @@ class HDate
 						break;
 		}
 		$startDateDay =explode('-',$startDate)[2];
-		if($startDateDay > 31){
-			dd('custom error .. invalid date ' . $startDateDay);
-		}
 		$result=[];
 		if($isAtEnd){
 			for($i =0 ; $i <= ($duration/$intervalValue); $i++  ){
 				$result[$currentStartDateAsIndex]=$dateService->addMonths($startDateDay,$startDate,$i*$intervalValue);
-				$currentStartDateAsIndex++;
+				$currentStartDateAsIndex+=$intervalValue;
 			}
 		}else{
 			for($i =0 ; $i <= ($duration/$intervalValue); $i++  ){
 				$result[$currentStartDateAsIndex]=$dateService->addMonths($startDateDay,$startDate,$i*$intervalValue);
-				$currentStartDateAsIndex++;
+				$currentStartDateAsIndex+=$intervalValue;
 			}
 		}
 		return $result;
@@ -127,9 +124,10 @@ class HDate
 	public static function getDateAfterIndex(array $datesAsIndexString , array $datesAsStringIndex  , string $date , int $numberOfShifts)
 	{
 		$index =$datesAsStringIndex[$date];
-		return $datesAsIndexString[$index + $numberOfShifts ]??null;
+		$nextIndex = getNthKeyAfter($datesAsIndexString, $index, $numberOfShifts) ;
+		return $datesAsIndexString[$nextIndex]??null;
 	}
-	public static function calculateDaysCountAtEnd(array $items,int $currentDaysCount = null):array{
+	public static function calculateDaysCountAtEnd(array $items,int $intervalValue,int $currentDaysCount = null):array{
 		$currentDayCount = 0 ; 
 		$dayCounts = [];
 		$secondDate = null ;
@@ -146,7 +144,7 @@ class HDate
 					continue;   
 				}
 				$secondDate = $dateAsString  ;
-				$firstDate = $items[$currentDateIndex-1];
+				$firstDate = $items[$currentDateIndex-$intervalValue];
 				$secondDateTime  = strtotime($secondDate.' 00:00:00');
 				$firstDateTime  = strtotime($firstDate.' 00:00:00');
 				$result = $secondDateTime-$firstDateTime;
@@ -157,7 +155,7 @@ class HDate
 		return $dayCounts;
 		
 	}
-	public static function calculateDaysCountAtBeginning(array $items,int $currentDaysCount = null):array{
+	public static function calculateDaysCountAtBeginning(array $items,int $intervalValue,int $currentDaysCount = null):array{
 		$currentDayCount = 0 ; 
 		$dayCounts = [];
 		$secondDate = null ;
@@ -169,7 +167,7 @@ class HDate
 					$dayCounts[$currentDateIndex] =$currentDaysCount;
 					continue;   
 				}
-				$secondDate = $items[$currentDateIndex+1]??null  ;
+				$secondDate = $items[$currentDateIndex+$intervalValue]??null  ;
 				
 				$firstDate = $dateAsString ;
 				if(!is_null($secondDate)){

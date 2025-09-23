@@ -62,11 +62,11 @@ public function __calculate($previousResult ,int $indexOfLoop,string $loanType, 
 		$interestPaymentIntervalValue =  $this->getInstallmentPaymentIntervalValue($interestPaymentIntervalName);
 		$installmentPaymentIntervalName = 'monthly';
 		$datesAsIndexString=HDate::generateDatesBetweenStartDateAndDuration($currentStartDateAsIndex,$startDate,$tenor,$installmentPaymentIntervalName,false);
-		$datesIndexAndDaysCount =HDate::calculateDaysCountAtBeginning($datesAsIndexString); 
+		$installmentPaymentIntervalValue = $this->getInstallmentPaymentIntervalValue($installmentPaymentIntervalName);
+		$datesIndexAndDaysCount =HDate::calculateDaysCountAtBeginning($datesAsIndexString,$installmentPaymentIntervalValue); 
 		unset($datesAsIndexString[array_key_last($datesAsIndexString)]);
 		$datesAsStringIndex = array_flip($datesAsIndexString);
 		$dateIndexWithDate = $datesAsIndexString;
-		$installmentPaymentIntervalValue = $this->getInstallmentPaymentIntervalValue($installmentPaymentIntervalName);
 		$dailyPricing = is_numeric($baseRate) ?  (($baseRate + $marginRate) /100)/360 : $baseRate  ;
 		 // base rate in array will be added with margin rate then divided by 360 
 		$stepRate = Loan::getStepRate($loanType, $stepUpRate, $stepDownRate);
@@ -125,8 +125,8 @@ public function __calculate($previousResult ,int $indexOfLoop,string $loanType, 
 				   */
 		
 		}
-		$principleAmounts = $this->calculatePrincipleAmount($loanFactors,$principleFactors, $stepRate, $installmentStartDateAsIndex, $endDateAsIndex, $tenor, $installmentPaymentIntervalValue, $appliedStepValue);
-		$loanScheduleResult = $this->calculateLoanScheduleResult($datesIndexAndDaysCount,$loanType, $loanAmount, $principleAmounts,$dailyPricing,$principlePaymentIntervalValue,$interestPaymentIntervalValue,$dateIndexWithDate);
+		$principleAmounts = $this->calculatePrincipleAmount($installmentPaymentIntervalValue,$loanFactors,$principleFactors, $stepRate, $installmentStartDateAsIndex, $endDateAsIndex, $tenor, $installmentPaymentIntervalValue, $appliedStepValue);
+		$loanScheduleResult = $this->calculateLoanScheduleResult($installmentPaymentIntervalValue,$datesIndexAndDaysCount,$loanType, $loanAmount, $principleAmounts,$dailyPricing,$principlePaymentIntervalValue,$interestPaymentIntervalValue,$dateIndexWithDate);
 	
 		
 		if($indexOfLoop == -1){
@@ -204,7 +204,7 @@ public function __calculate($previousResult ,int $indexOfLoop,string $loanType, 
 	}
 	
 
-	protected function calculatePrincipleAmount(array $loanFactors,array $principleFactory, float $stepRate, int $principleStartDateAsIndex, int $endDateAsIndex, float $tenor, int $principlePaymentIntervalValue, int $appliedStepValue )
+	protected function calculatePrincipleAmount(int $intervalValue,array $loanFactors,array $principleFactory, float $stepRate, int $principleStartDateAsIndex, int $endDateAsIndex, float $tenor, int $principlePaymentIntervalValue, int $appliedStepValue )
 	{
 	
 		$principlesAmounts = [];
@@ -227,12 +227,12 @@ public function __calculate($previousResult ,int $indexOfLoop,string $loanType, 
 					$principleAmount = $principleAmount;
 				}
 				$principlesAmounts[$loopDateAsIndex]=$principleAmount;
-				$principleStartDateAsIndex = $loopDateAsIndex+1;
+				$principleStartDateAsIndex = $loopDateAsIndex+$intervalValue;
 		}
 		return $principlesAmounts;
 	}
 
-	protected function calculateLoanScheduleResult(array $datesIndexAndDaysCount,string $loanType, float $loanAmount, array $principleAmount, $dailyPricing,int $principlePaymentIntervalValue,int $interestPaymentIntervalValue , array $dateIndexWithDate =[])
+	protected function calculateLoanScheduleResult(int $intervalValue , array $datesIndexAndDaysCount,string $loanType, float $loanAmount, array $principleAmount, $dailyPricing,int $principlePaymentIntervalValue,int $interestPaymentIntervalValue , array $dateIndexWithDate =[])
 	{
 		$loanScheduleResult = [];
 		$loanScheduleResult['totals']['totalSchedulePayment'] = 0;
@@ -245,7 +245,7 @@ public function __calculate($previousResult ,int $indexOfLoop,string $loanType, 
 	
 		$loopIndex = 1 ;
 		foreach ($datesIndexAndDaysCount as $dateAsIndex=>$currentDaysCount) {
-			$previousDate = $dateAsIndex-1;
+			$previousDate = $dateAsIndex-$intervalValue;
 			$dateAsString = $dateIndexWithDate[$dateAsIndex] ?? null ;
 			$i = $dateAsIndex ; 
 			$currentPricing = is_array($dailyPricing) ? ($dailyPricing[$dateAsString]??0) : $dailyPricing ;

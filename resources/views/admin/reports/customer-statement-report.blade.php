@@ -419,8 +419,8 @@
                                         <td class="sub-text-bg text-center  is-name-cell ">{{ $item['date'] }}</td>
                                         <td class="sub-text-bg   is-name-cell ">{{ $item['document_type'] }}</td>
 										   <td class="sub-text-bg  text-center">{{ $item['document_no'] }}</td>
-                                        <td class="sub-text-bg text-center  is-name-cell ">{{ number_format($item['debit']) }}</td>
-                                        <td class="sub-text-bg text-center ">{{ number_format($item['credit']) }}</td>
+                                        <td class="sub-text-bg text-center  is-name-cell ">{{ number_format($item['debit'],2) }}</td>
+                                        <td class="sub-text-bg text-center ">{{ number_format($item['credit'],2) }}</td>
 										@php
 											if($index == 0 ){
 												$balances[$index] = $item['end_balance']  ;
@@ -428,7 +428,7 @@
 												$balances[$index] = $balances[$index-1] + $invoicesWithItsReceivedMoney[$index]['debit'] - $invoicesWithItsReceivedMoney[$index]['credit'];
 											}
 										@endphp
-                                        <td class="sub-text-bg text-center">{{ number_format($balances[$index]  ) }}</td>
+                                        <td class="sub-text-bg text-center">{{ number_format($balances[$index],2  ) }}</td>
                                         <td class="sub-text-bg  max-w-comment text-wrap">{{ $item['comment'] }}</td>
 										
                                      

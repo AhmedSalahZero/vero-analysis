@@ -2555,6 +2555,12 @@
             e.preventDefault();
             $('.read-expenses-modal').modal('show');
         })
+
+
+
+function roundToTwo(num) {
+    return +(Math.round(num + "e+2")  + "e-2");
+}
 		
     </script>
 

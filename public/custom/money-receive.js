@@ -289,6 +289,7 @@ $(document).on('change', '.js-settlement-amount,.settlement-amount-class,[data-m
 	})
 	const currentType = $('#type').val()
 	const receivedAmount = number_unformat($('.amount-after-exchange-rate-class[data-type="'+currentType+'"]').val())
+
 	let totalOrdersAmount = 0 ;
 	$('.js-append-down-payment-to .settlement-amount-class').each(function(index,element){
 		totalOrdersAmount += parseFloat(number_unformat($(element).val()));
