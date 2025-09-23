@@ -57,7 +57,6 @@ class DashboardController extends Controller
 		$monthsWithItsYear = $study->getMonthsWithItsYear($yearWithItsIndexes) ;
 		$monthsWithItsNumbers = $study->getMonthIndexWithMonthNumber($yearWithItsIndexes) ;
 
-		// dd($monthsWithItsNumbers);
 		$titlesMapping = Study::getProjectionTitles();
 		$loanSchedulePayments = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table($loanSchedulePaymentTableName)->selectRaw('portfolio_loan_type,revenue_stream_type,interestAmount')->where('study_id',$study->id)->get()->toArray();
 		

@@ -358,7 +358,6 @@ class LetterOfGuaranteeIssuance extends Model
     }
     public function isCdOrTd():bool
     {
-		dd($this->getCashCoverDeductedFromAccountTypeId());
         return  in_array($this->getCashCoverDeductedFromAccountTypeId(), [28,29]);
     }
     public function getFeesAndCommissionAccountTypeId()

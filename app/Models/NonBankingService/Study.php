@@ -1371,7 +1371,6 @@ class Study extends Model
             $category = $directFactoringBreakdown->getCategory();
 
             $directFactoringAmounts = $this->isMonthlyStudy() ? $amountAsPayload :  $this->convertYearToMonthIndexesAndDivideBySumMonths($amountAsPayload);
-			// dd($directFactoringAmounts);
             $baseRates = $this->isMonthlyStudy() ? $baseRates : $this->convertYearToMonthIndexes($baseRates);
             $currentBeginningBalance = 0 ;
             $currentDirectFactoringBankBeginningBalance= 0 ;
@@ -1381,7 +1380,6 @@ class Study extends Model
             $directFactoringNetFundingAmounts = [];
             $directFactoringBankLoanStatements = [];
             $currentDirectFactoringBeginningBalance = 0 ;
-			// dd($directFactoringAmounts,$yearOrMonthsIndexes);
             foreach ($directFactoringAmounts as $index => $currentDirectAmount) {
 				
 				$monthIndex = $monthsIndexes[$index];
