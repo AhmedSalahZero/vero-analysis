@@ -214,6 +214,7 @@ class LetterOfGuaranteeIssuanceController
 		
 		$customerName = $model->getBeneficiaryName();
 		if(!$isOpeningBalance && !$isCdOrTdCashCoverAccount ){
+			dd($financialInstitutionAccountIdForCashCover);
 			$model->storeCurrentAccountCreditBankStatement($issuanceDate,$cashCoverAmount , $financialInstitutionAccountIdForCashCover,0,1,__('Cash Cover [ :customerName ] [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'en'),'customerName'=>$customerName,'transactionName'=>$transactionName],'en') , __('Cash Cover [ :customerName ] [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'ar'),'customerName'=>$customerName,'transactionName'=>$transactionName],'ar') );
 		}
 		if(!$isOpeningBalance){
