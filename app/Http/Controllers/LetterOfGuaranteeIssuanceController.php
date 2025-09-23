@@ -282,10 +282,9 @@ class LetterOfGuaranteeIssuanceController
 		$issuanceDate = $letterOfGuaranteeIssuance->getIssuanceDate();
 		$cashCoverAmount = $letterOfGuaranteeIssuance->getCashCoverAmount();
 		$isCdOrTd = $letterOfGuaranteeIssuance->isCdOrTd();
-		dd($isCdOrTd);
 		$financialInstitutionAccount = FinancialInstitutionAccount::find($letterOfGuaranteeIssuance->getCashCoverDeductedFromAccountId());
-		$currency = $financialInstitutionAccount->getCurrency();
 		if($company->hasOdooIntegrationCredentials() && !$isCdOrTd && $company->withinIntegrationDate($issuanceDate)){
+			$currency = $financialInstitutionAccount->getCurrency();
 			$odooLetterOfGuaranteeIssuance = new LetterOfGuaranteeService($company);
 			$fromAccountNumber = $financialInstitutionAccount->getAccountNumber();
 			$journalId = $financialInstitutionAccount->financialInstitution->getJournalIdForAccount(27,$fromAccountNumber);
@@ -367,9 +366,8 @@ class LetterOfGuaranteeIssuanceController
 		// $isOpeningBalance = $letterOfGuaranteeIssuance->isOpeningBalance();
 		$isCdOrTdCashCoverAccount = $letterOfGuaranteeIssuance->isCdOrTd();
 		$financialInstitutionAccount = FinancialInstitutionAccount::find($letterOfGuaranteeIssuance->getCashCoverDeductedFromAccountId());
-		dd($isCdOrTdCashCoverAccount);
-		$currency = $financialInstitutionAccount->getCurrency();
 		if($company->hasOdooIntegrationCredentials() && !$isCdOrTdCashCoverAccount && $company->withinIntegrationDate($cancellationDate) ){
+			$currency = $financialInstitutionAccount->getCurrency();
 			$odooLetterOfGuaranteeIssuance = new LetterOfGuaranteeService($company);
 			$fromAccountNumber = $financialInstitutionAccount->getAccountNumber();
 			$journalId = $financialInstitution->getJournalIdForAccount(27,$fromAccountNumber);
