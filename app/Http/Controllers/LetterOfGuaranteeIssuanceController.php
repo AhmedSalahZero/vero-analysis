@@ -281,9 +281,10 @@ class LetterOfGuaranteeIssuanceController
 		$currency = $letterOfGuaranteeIssuance->getLgCurrency();
 		$issuanceDate = $letterOfGuaranteeIssuance->getIssuanceDate();
 		$cashCoverAmount = $letterOfGuaranteeIssuance->getCashCoverAmount();
+		$isCdOrTd = $letterOfGuaranteeIssuance->isCdOrTd();
+		dd($isCdOrTd);
 		$financialInstitutionAccount = FinancialInstitutionAccount::find($letterOfGuaranteeIssuance->getCashCoverDeductedFromAccountId());
 		$currency = $financialInstitutionAccount->getCurrency();
-		$isCdOrTd = $letterOfGuaranteeIssuance->isCdOrTd();
 		if($company->hasOdooIntegrationCredentials() && !$isCdOrTd && $company->withinIntegrationDate($issuanceDate)){
 			$odooLetterOfGuaranteeIssuance = new LetterOfGuaranteeService($company);
 			$fromAccountNumber = $financialInstitutionAccount->getAccountNumber();
