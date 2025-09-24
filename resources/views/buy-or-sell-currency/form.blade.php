@@ -796,7 +796,7 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
                 }
 
                 if (!isNaN(baseValue)) {
-                    baseValue = baseValue.toFixed(5); // Format to 5 decimals
+                    baseValue = baseValue.toFixed(10); // Format to 5 decimals
                     document.getElementById("calcField").value = baseValue; // Update input field
                 }
 
