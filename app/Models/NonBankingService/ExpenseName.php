@@ -39,6 +39,6 @@ class ExpenseName extends Model
 	}
 	public static function getCategories(Company $company)
 	{
-		return ExpenseName::where('company_id',$company->id)->pluck('expense_type','expense_type')->unique()->toArray();
+		return ExpenseName::where('company_id',$company->id)->orderBy('expense_type','asc')->pluck('expense_type','expense_type')->unique()->toArray();
 	}
 }

@@ -36,8 +36,9 @@ class GeneralAndReservationAssumptionController extends Controller
 		$data = $request->except(['_token','save','_method']) ;
 		$study->generalAndReserveAssumption ? $study->generalAndReserveAssumption->update($data) : GeneralAndReserveAssumption::create($data);
 		
+		$redirectRoute = $study->hasConsumerFinance() ? route('create.microfinance.branches.assumption',['company'=>$company->id,'study'=>$study->id]) : route('create.leasing.revenue.stream.breakdown',['company'=>$company->id,'study'=>$study->id]);
 		return response()->json([
-			'redirectTo'=>route('create.microfinance.branches.assumption',['company'=>$company->id,'study'=>$study->id])
+			'redirectTo'=>$redirectRoute
 		]);
 	}
 }

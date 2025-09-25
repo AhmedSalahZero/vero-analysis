@@ -6,6 +6,7 @@ use App\Formatter\Select2Formatter;
 use App\Models\NonBankingService\ConsumerfinanceProduct;
 use App\Models\NonBankingService\Department;
 use App\Models\NonBankingService\ExpenseName;
+use App\Models\NonBankingService\FixedAssetName;
 use App\Models\NonBankingService\LeasingCategory;
 use App\Models\NonBankingService\MicrofinanceProduct;
 use App\Models\NonBankingService\Study;
@@ -671,15 +672,11 @@ class Company extends Model implements HasMedia
 	{
 		return ExpenseName::where('expense_type',$type)->where('company_id',$companyId)->get();
 	}
+	public function fixedAssetNames():HasMany
+	{
+		return $this->hasMany(FixedAssetName::class,'company_id','id');
+	}	
 	
-	// public function contractCashflowReports():HasMany
-	// {
-	// 	return $this->hasMany(ContractCashflowReport::class , 'company_id','id');
-	// }
-	// public function contractCashProjects()
-	// {
-	// 	return $this->hasMany(ContractCashProjection::class)->where('cashflow_report_id',0);
-	// }
 	public function cashflowReports():HasMany
 	{
 		return $this->hasMany(CashflowReport::class , 'company_id','id');

@@ -181,7 +181,7 @@ use App\NotificationSetting ;
                         </div>
                     </div>
 
- <div class="kt-portlet">
+ 				<div class="kt-portlet">
                         <div class="kt-portlet__head">
                             <div class="kt-portlet__head-label">
                                 <h3 class="kt-portlet__head-title head-title text-primary">
@@ -213,6 +213,15 @@ use App\NotificationSetting ;
 								<div class="col-md-3 ">
                                     <x-form.input :default-value="null" :model="$model??null" :label="__('Income Taxes')" :type="'text'" :placeholder="__('Income Taxes')" :name="'income_taxes_code'" :required="false"></x-form.input>
                                 </div>
+								
+								<div class="col-md-3 ">
+                                    <x-form.input :default-value="null" :model="$model??null" :label="__('Takaful Contribution Tax')" :type="'text'" :placeholder="__('Takaful Contribution Tax')" :name="'takaful_code'" :required="false"></x-form.input>
+                                </div>
+								
+								<div class="col-md-3 ">
+                                    <x-form.input :default-value="null" :model="$model??null" :label="__('Tax for the Support of Victims Fund')" :type="'text'" :placeholder="__('Tax for the Support of Victims Fund')" :name="'tax_for_victims_code'" :required="false"></x-form.input>
+                                </div>
+								
 								
 								<div class="col-md-3 ">
                                     <x-form.input :default-value="null" :model="$model??null" :label="__('Real Estate Taxes')" :type="'text'" :placeholder="__('Real Estate Taxes')" :name="'real_estate_taxes_code'" :required="false"></x-form.input>

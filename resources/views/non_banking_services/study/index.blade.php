@@ -57,9 +57,9 @@ use App\Models\NonBankingService\Study;
             <div class="multi-flex-tabs">
                 <div class="flex-tabs">
 
-                    <a href="{{ route('create.study',['company'=>$company->id]) }}" class="btn w-240px btn-2-bg bg-white-hover new-study-item rounded btn-icon-sm align-self-center">
+                    <a href="{{ route('create.study',['company'=>$company->id,'is_business_plan'=>1]) }}" class="btn w-240px btn-2-bg bg-white-hover new-study-item rounded btn-icon-sm align-self-center">
                         <i class="fas fa-plus white-icon exclude-icon "></i>
-                        {{ __('New Study') }}
+                        {{ __('New Business Plan') }}
                     </a>
 
 
@@ -90,9 +90,9 @@ use App\Models\NonBankingService\Study;
                 </div>
                 <div class="flex-tabs">
 
-                    <a href="{{ route('create.study',['company'=>$company->id]) }}" class="btn w-240px visibility-hidden btn-2-bg bg-white-hover new-study-item rounded btn-icon-sm align-self-center">
-                        <i class="fas fa-plus white-icon exclude-icon"></i>
-                        {{ __('New Study') }}
+                     <a href="{{ route('create.study',['company'=>$company->id,'is_business_plan'=>0]) }}" class="btn w-240px btn-2-bg bg-white-hover new-study-item rounded btn-icon-sm align-self-center">
+                        <i class="fas fa-plus white-icon exclude-icon "></i>
+                        {{ __('New Annual Plan') }}
                     </a>
 
                     <a href="{{ route('view.departments',['company'=>$company->id]) }}" class="btn w-240px new-record-class new-study-item rounded btn-icon-sm align-self-center">
@@ -103,7 +103,7 @@ use App\Models\NonBankingService\Study;
                         <i class="fas fa-plus white-icon exclude-icon"></i>
                         {{ __('Cost & Expenses') }}
                     </a>
-                    <a href="{{ route('view.departments',['company'=>$company->id]) }}" class="btn w-240px new-record-class new-study-item rounded btn-icon-sm align-self-center">
+                    <a href="{{ route('view.fixed.asset.names',['company'=>$company->id]) }}" class="btn w-240px new-record-class new-study-item rounded btn-icon-sm align-self-center">
                         <i class="fas fa-plus white-icon exclude-icon"></i>
                         {{ __('Fixed Assets') }}
                     </a>
@@ -111,14 +111,7 @@ use App\Models\NonBankingService\Study;
             </div>
 
 
-            {{-- <div class="flex-tabs">
-			
-                <a href="{{ $createRoute }}" class="btn new-record-class rounded btn-icon-sm align-self-center">
-            <i class="fas fa-plus white-icon"></i>
-            {{ __('New Study') }}
-            </a>
-        </div> --}}
-        {{-- @endif  --}}
+          
 
     </div>
 </div>

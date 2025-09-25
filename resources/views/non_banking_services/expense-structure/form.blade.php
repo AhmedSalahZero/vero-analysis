@@ -6,6 +6,7 @@ use App\Models\NonBankingService\Department;
 <x-styles.commons></x-styles.commons>
 <link rel="stylesheet" href="/custom/css/non-banking-services/common.css">
 <link rel="stylesheet" href="/custom/css/non-banking-services/leasing-revenue-stream-breakdown.css">
+<link rel="stylesheet" href="/custom/css/non-banking-services/select2.css">
 <style>
     .positions_repeater {
         max-width: 50% !important;
@@ -32,7 +33,7 @@ use App\Models\NonBankingService\Department;
                 <div class="row leasing-revenue-stream-category">
 
                     <div class="form-group row" style="flex:1;">
-                        <div class="col-md-12 mt-3" data-repeater-row=".leasing-revenue-stream-category">
+                        <div class="col-md-8 mt-3" data-repeater-row=".leasing-revenue-stream-category">
 
                             <form id="form-id" class="kt-form kt-form--label-right" method="POST" enctype="multipart/form-data" action="{{ $storeRoute  }}">
                                 @if(isset($expenseType))
@@ -43,7 +44,7 @@ use App\Models\NonBankingService\Department;
                                 <input type="hidden" name="creator_id" value="{{ \Auth::id()  }}">
                                 <div>
                                     <div class="row">
-                                        <div class="col-md-2">
+                                        <div class="col-md-4">
                                             <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style="">
                                                 {{ __('Expense Type') }}
                                             </h3>
@@ -244,6 +245,7 @@ use App\Models\NonBankingService\Department;
 </script>
 
 <script src="/custom/js/non-banking-services/common.js"></script>
+<script src="/custom/js/non-banking-services/select2.js"></script>
 <script src="/custom/js/non-banking-services/revenue-stream-breakdown.js"></script>
 {{-- <script></script> --}}
 @endsection

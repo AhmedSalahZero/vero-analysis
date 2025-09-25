@@ -6,6 +6,7 @@ use App\Models\NonBankingService\IjaraMortgageBreakdown;
 @section('css')
 <x-styles.commons></x-styles.commons>
 <link rel="stylesheet" href="/custom/css/non-banking-services/common.css">
+<link rel="stylesheet" href="/custom/css/non-banking-services/select2.css">
 
 @endsection
 @section('sub-header')
@@ -820,6 +821,7 @@ use App\Models\NonBankingService\IjaraMortgageBreakdown;
 </script>
 
 <script src="/custom/js/non-banking-services/common.js"></script>
+<script src="/custom/js/non-banking-services/select2.js"></script>
 <script src="/custom/js/non-banking-services/revenue-stream-breakdown.js"></script>
 {{-- <script></script> --}}
 @endsection

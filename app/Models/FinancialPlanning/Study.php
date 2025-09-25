@@ -2,6 +2,7 @@
 namespace App\Models\FinancialPlanning;
 
 
+use App\Helpers\HHelpers;
 use App\Models\FinancialPlanning\Expense;
 use App\Models\SalesGathering\Branch;
 use App\Models\SalesGathering\Principle;
@@ -271,6 +272,8 @@ use Illuminate\Database\Eloquent\Model;
 		$dateWithMonthNumber = App('dateWithMonthNumber');
 		return $this->getStudyDurationPerMonth($datesAsStringAndIndex,$datesIndexWithYearIndex,$yearIndexWithYear,$dateIndexWithDate,$dateWithMonthNumber,true,false);
 	}
+
+	
 		
 		
 }

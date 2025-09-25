@@ -44,14 +44,14 @@
                                                 <label class="mr-3">
 
                                                 </label>
-                                                <label class="kt-radio kt-radio--success text-black font-size-18px font-weight-bold">
+                                                <label class="kt-radio kt-radio--success text-black font-size-16px font-weight-bold">
 
                                                     <input type="checkbox" value="1" name="is_employee_expense" @if(isset($subModel) && $subModel->isEmployeeExpense()) checked @endisset
                                                     > {{ __('Is Employee Expense') }}
                                                     <span></span>
                                                 </label>
 
-                                                <label class="kt-radio kt-radio--danger text-black font-size-18px font-weight-bold">
+                                                <label class="kt-radio kt-radio--danger text-black font-size-16px font-weight-bold">
                                                     <input type="checkbox" value="1" name="is_branch_expense" @if(isset($subModel) && $subModel->isBranchExpense()) checked @endisset
                                                     > {{ __('Is Branch Expense') }}
                                                     <span></span>

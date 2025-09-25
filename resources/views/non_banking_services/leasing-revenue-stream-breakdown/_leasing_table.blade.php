@@ -11,7 +11,7 @@
                         <x-slot name="ths">
                             <x-tables.repeater-table-th class=" category-selector-class header-border-down " :title="__('Leasing <br> Category')"></x-tables.repeater-table-th>
                             <x-tables.repeater-table-th class="category-selector-class header-border-down " :title="__('Loan <br> Nature')" :helperTitle="__('If you have different expense items under the same category, please insert Category Name')"></x-tables.repeater-table-th>
-                            <x-tables.repeater-table-th class="loan-type-class header-border-down " :title="__('Loan <br> Type')" :helperTitle="__('Please insert amount excluding VAT')"></x-tables.repeater-table-th>
+                            <x-tables.repeater-table-th class="loan-type-class header-border-down  " :title="__('Loan <br> Type')" :helperTitle="__('Please insert amount excluding VAT')"></x-tables.repeater-table-th>
                             <x-tables.repeater-table-th class=" rate-class header-border-down " :title="__('Tenor <br> Months')"></x-tables.repeater-table-th>
                             <x-tables.repeater-table-th class=" rate-class header-border-down " :title="__('Grace <br> Period')"></x-tables.repeater-table-th>
                             <x-tables.repeater-table-th class=" rate-class header-border-down " :title="__('Spread <br> Rate')" :helperTitle="__('You can either choose one of the system default terms (cash, quarterly, semi-annually, or annually), if else please choose Customize to insert your payment terms')"></x-tables.repeater-table-th>

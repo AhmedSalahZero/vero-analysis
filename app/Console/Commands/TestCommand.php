@@ -4,6 +4,8 @@ namespace App\Console\Commands;
 
 use App\Models\Company;
 use App\Models\FinancialStatement;
+use App\Models\MoneyPayment;
+use App\Models\NonBankingService\Study;
 use App\Models\Partner;
 use App\ReadyFunctions\ConvertFlatRateToDecreasingRate;
 use App\Services\Api\OdooPayment;
@@ -44,30 +46,11 @@ class TestCommand extends Command
 	}
 	public function testConvertRate()
 	{
-	// 	$nper = 13;
-	// 	$flatInterest = 0.34 ; 
-	// 	$pmt = -(1 + (1 * $flatInterest / 12 * $nper)) / $nper; // Payment: -0.10525641
-	// //	$pmt = -(1+(1*0.3/12*$nper))/$nper;
-	// 	// $pmt = -(1+(1*0.3/12*$nper))/$nper;
-	// 	$pv = 1;
-	// 	$fv = 0 ;
-	// 	$fv = 0;                       // Future value (default)
-	// 	$type = false;                 // Payments at end of period (default)
-	// 	$guess = 0.1;
-	// 	$monthly_rate = Finance::rate($nper, $pmt, $pv, $fv,$type,$guess) * 12 ;
-		dd($monthly_rate);
-		
-		
-		
-		dd('res',$res);
+	
 	}
 	public function handle()
 	{
-		dd($this->testConvertRate());
-		// dd(Str::startsWith('EXCH/2025/07/0001','EXCH/'));
-		// $company = Company::find(92);
-		// $odooService = new OdooPayment($company);
-		// dd($odooService->fetchData('account.payment',[],[[['name','=','PCSH1/2025/00004']]]));
+	
 	}
 	
 	/**
@@ -160,16 +143,22 @@ class TestCommand extends Command
 			]);
 		});
 	}
-	public function getTableNamesThatHasColumn(string $columnName)
+	public function getTableNamesThatHasColumn(string $columnName,$connectionName = null):array 
 	{
-		$result = [];
-		$tables = DB::connection()->getDoctrineSchemaManager()->listTableNames();
+		$contains = [];
+		$notContains = [];
+		$tables = DB::connection($connectionName)->getDoctrineSchemaManager()->listTableNames();
 		foreach($tables as $tableName){
-			if(Schema::hasColumn($tableName,$columnName)){
-				$result[] = $tableName;
+			if(Schema::connection($connectionName)->hasColumn($tableName,$columnName)){
+				$contains[] = $tableName;
+			}else{
+				$notContains[] = $tableName;
 			}
 		}
-		return $result; 
+		return [
+			'contains'=>$contains,
+			'not_contains'=>$notContains
+		]; 
 	}
 	public function calculateIrr()
 	{

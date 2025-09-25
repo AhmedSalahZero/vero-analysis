@@ -5,6 +5,7 @@ namespace App\Models\NonBankingService;
 use App\Models\Company;
 use App\Models\Traits\Scopes\BelongsToCompany;
 use App\Models\Traits\Scopes\NonBankingServices\BelongsToStudy;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class Expense extends Model
@@ -58,6 +59,14 @@ class Expense extends Model
     {
         return app('dateIndexWithDate')[$this->start_date];
     }
+	public function getStartDateYearAndMonth()
+    {
+        $studyStartDate = $this->getStartDateFormatted() ;
+        if (is_null($studyStartDate)) {
+            return now()->format('Y-m');
+        }
+        return Carbon::make($studyStartDate)->format('Y-m');
+    }
     public function getEndDateAsIndex()
     {
         return $this->end_date;
@@ -65,6 +74,14 @@ class Expense extends Model
     public function getEndDateFormatted()
     {
         return $this->end_date ? app('dateIndexWithDate')[$this->end_date] : null;
+    }
+	public function getEndDateYearAndMonth()
+    {
+        $date = $this->getEndDateFormatted() ;
+        if (is_null($date)) {
+            return now()->format('Y-m');
+        }
+        return Carbon::make($date)->format('Y-m');
     }
     public function getMonthlyAmount()
     {
@@ -185,4 +202,9 @@ class Expense extends Model
         return $this->position ? $this->position->id : 0 ;
     }
 
+	public function getAmortizationMonths():int 
+	{
+		return $this->amortization_months?:12;
+	}
+	
 }

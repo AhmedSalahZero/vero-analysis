@@ -76,8 +76,7 @@ class MoneyPaymentController
 		->when($request->get('to') , function($collection) use($dateFieldName,$to){
 			return $collection->where($dateFieldName,'<=',$to);
 		})
-		->sortByDesc('delivery_date')->values();
-
+		->sortBy('delivery_date')->values();
 		return $collection;
 	}
 	public function index(Company $company,Request $request)
@@ -111,21 +110,20 @@ class MoneyPaymentController
 		 */
 		$payableChequesStartDate = $filterDates[MoneyPayment::PAYABLE_CHEQUE]['startDate'] ?? null ;
 		$payableChequesEndDate = $filterDates[MoneyPayment::PAYABLE_CHEQUE]['endDate'] ?? null ;
-
+		
 
 	
 		$cashPayments = $company->getMoneyPaymentCashPayments($cashPaymentsStartDate ,$cashPaymentsEndDate ) ;
 		$outgoingTransfer = $company->getMoneyPaymentOutgoingTransfer($outgoingTransferStartDate,$outgoingTransferEndDate) ;
-	
 		$payableCheques = $company->getMoneyPaymentPayableCheques($payableChequesStartDate,$payableChequesEndDate);
-
+		
 		$financialInstitutionBanks = FinancialInstitution::onlyForCompany($company->id)->onlyBanks()->get();
-
+		
 		$accountTypes = AccountType::onlyCashAccounts()->get();
 		$cashPayments = $moneyType == MoneyPayment::CASH_PAYMENT ? $this->applyFilter($request,$cashPayments) :$cashPayments  ;
-
+		
 		$outgoingTransfer = $moneyType === MoneyPayment::OUTGOING_TRANSFER ? $this->applyFilter($request,$outgoingTransfer) : $outgoingTransfer  ;
-
+		
 		$payableCheques = $moneyType == MoneyPayment::PAYABLE_CHEQUE ? $this->applyFilter($request,$payableCheques) : $payableCheques;
 
 
@@ -636,6 +634,7 @@ class MoneyPaymentController
 			// $chequeDueDate = $moneyPayment->payableCheque->due_date;
 			$moneyPayment->payableCheque->update($data);
 			$currentStatement = $moneyPayment->getCurrentStatement();
+			
 			
 		
 			if($hasOdooIntegration && $company->withinIntegrationDate($actualPaymentDate)){

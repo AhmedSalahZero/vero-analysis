@@ -24,9 +24,13 @@ class ExpensesController extends Controller
     use NonBankingService ;
     public function create(Company $company, Request $request, Study $study)
     {
-        return view('non_banking_services.expenses.form', $this->getViewVars($company, $study));
+        return view('non_banking_services.expenses2.form', $this->getViewVars($company, $study));
     }
-    protected function getViewVars(Company $company, Study $study)
+	//   protected function getViewVars(Company $company, Study $study)
+    // {
+    //     return $study->getExpensesViewVars();
+    // }
+	protected function getViewVars(Company $company, Study $study)
     {
         return [
             'company'=>$company ,
@@ -40,6 +44,7 @@ class ExpensesController extends Controller
             'revenueStreamTypes'=>$study->getCheckedRevenueStreamTypesForSelect()
         ];
     }
+  
     
     public function store(
         Company $company,
@@ -103,7 +108,8 @@ class ExpensesController extends Controller
                 $vatRate = $tableDataArr['vat_rate']??0;
                 $isDeductible = $tableDataArr['is_deductible'] ?? false;
                 if ($tableDataArr['payment_terms'] == 'customize') {
-                    $tableDataArr['custom_collection_policy'] = sumDueDayWithPayment($tableDataArr['payment_rate '], $tableDataArr['due_days']);
+					dd($tableDataArr);
+                    $tableDataArr['custom_collection_policy'] = sumDueDayWithPayment($tableDataArr['payment_rate'], $tableDataArr['due_days']);
                 }
                 $customCollectionPolicy = $tableDataArr['custom_collection_policy']??[];
                 if (is_array($isDeductible)) {
@@ -164,7 +170,7 @@ class ExpensesController extends Controller
                  * $begiinign = $endBalance
 
                  */
-                if ($tableId =='percentage_of_sales') {
+                if ($tableId =='percentage_of_sales' || $tableId =='expense_as_percentage') {
                     $expenseAsPercentageResults = $expenseAsPercentageEquation->calculate($studyId, $tableDataArr['percentage_of'], $tableDataArr['revenue_stream_type']??[], $tableDataArr['stream_category_ids']??[], $tableDataArr['start_date'], $loopEndDate, $tableDataArr['monthly_percentage'], $tableDataArr['payment_terms'], $vatRate, $isDeductible, $tableDataArr['withhold_tax_rate']) ;
                     $tableDataArr['expense_as_percentages']  =$expenseAsPercentageResults['total_before_vat']  ;
                     // expense_as_percentages
@@ -189,7 +195,8 @@ class ExpensesController extends Controller
                     $startDateAsIndex = $tableDataArr['start_date'] ;
                     $amountBeforeVat = $tableDataArr['amount'] ;
                     $withholdAmount = $tableDataArr['withhold_tax_rate'] / 100 * $amountBeforeVat ;
-                    $oneTimeExpenses = $oneTimeExpenseEquation->calculate($amountBeforeVat, $startDateAsIndex, $isDeductible, $vatRate);
+					$amortizationMonths = $tableDataArr['amortization_months'] ;
+                    $oneTimeExpenses = $oneTimeExpenseEquation->calculate($amountBeforeVat,$amortizationMonths, $startDateAsIndex, $isDeductible, $vatRate);
                     $tableDataArr['payload']  = $oneTimeExpenses ;
                     $amountBeforeVatPayload = [$startDateAsIndex=>$amountBeforeVat] ;
                     $vatRate = $tableDataArr['vat_rate'] / 100 ;

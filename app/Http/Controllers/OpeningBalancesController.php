@@ -10,6 +10,7 @@ use App\Models\CashInSafeStatement;
 use App\Models\Cheque;
 use App\Models\Company;
 use App\Models\FinancialInstitution;
+use App\Models\FinancialInstitutionAccount;
 use App\Models\MoneyPayment;
 use App\Models\MoneyReceived;
 use App\Models\OpeningBalance;
@@ -227,6 +228,7 @@ class OpeningBalancesController
 	
         foreach ($elementsToUpdate as $id) {
             $dataToUpdate = findByKey($request->input(MoneyReceived::CASH_IN_SAFE), 'id', $id);
+	
 			
             $openingBalance->cashInSafeStatements()->where('cash_in_safe_statements.id', $id)->first()->update(array_merge($dataToUpdate,[
 				'debit'=>number_unformat($dataToUpdate['received_amount']),
@@ -409,18 +411,20 @@ class OpeningBalancesController
 		 $elementsToUpdate = array_intersect($idsFromRequest, $oldIdsFromDatabase); // origin one
 		 $openingBalance->payableCheques()->whereIn('money_payments.id', $elementsToDelete)->delete();
  
-
 		 foreach ($elementsToUpdate as $id) {
-			 $dataToUpdate = findByKey($request->input(MoneyPayment::PAYABLE_CHEQUE), 'id', $id);
+			$moneyType= MoneyPayment::PAYABLE_CHEQUE ;
+			 $dataToUpdate = findByKey($request->input($moneyType), 'id', $id);
 			 $dataToUpdate['paid_amount'] = isset($dataToUpdate['paid_amount']) ? number_unformat($dataToUpdate['paid_amount']) : 0;
 			 $dataToUpdate['delivery_date'] = $openingBalanceDate ; 
 			 unset($dataToUpdate['id']);
+					$dataToUpdate['amount_in_invoice_currency'] = $dataToUpdate['paid_amount'];
+					
 			 $pivotData = [
-				 'due_date' => $dataToUpdate['due_date'],
-				 'delivery_bank_id' => isset($dataToUpdate['delivery_bank_id']) ? $dataToUpdate['delivery_bank_id'] : null,
+				 'due_date' =>$statementDate= $dataToUpdate['due_date'],
+				 'delivery_bank_id' => $financialInstitutionId = isset($dataToUpdate['delivery_bank_id']) ? $dataToUpdate['delivery_bank_id'] : null,
 				 'cheque_number' => $dataToUpdate['cheque_number'],
-				 'account_type' => $dataToUpdate['account_type'] ?: null,
-				 'account_number' => $dataToUpdate['account_number'] ?: null,
+				 'account_type' => $accountType = $dataToUpdate['account_type'] ?: null,
+				 'account_number' => $accountNumber = $dataToUpdate['account_number'] ?: null,
 				 'company_id'=>$company->id 
 				 
 			 ];
@@ -432,8 +436,30 @@ class OpeningBalancesController
 			 
 			 $dataToUpdate['payment_currency'] = $dataToUpdate['currency'];
 			 $dataToUpdate['amount_in_invoice_currency'] = $dataToUpdate['paid_amount'];
-			 $openingBalance->payableCheques()->where('money_payments.id', $id)->first()->update(array_merge($dataToUpdate,['updated_at'=>now()]));
-			 $openingBalance->payableCheques()->where('money_payments.id', $id)->first()->payableCheque->update(array_merge($pivotData,['updated_at'=>now()]));
+			 $currentMoneyPayment = $openingBalance->payableCheques()->where('money_payments.id', $id)->first() ;
+			$currentMoneyPayment->update(array_merge($dataToUpdate,['updated_at'=>now()]));
+			 $currentMoneyPayment->payableCheque->update(array_merge($pivotData,['updated_at'=>now()]));
+			 $currentStatement = $currentMoneyPayment->getCurrentStatement();
+
+			 
+			 	$amountInPaymentCurrency = $dataToUpdate['amount_in_invoice_currency'];
+				$deliveryBranchId = null ;
+				$paymentCurrency  = $dataToUpdate['currency'];
+				$accountType  = AccountType::find($accountType);
+				// $fullModelName = 'App\Models\\'.$accountType->model_name;
+	
+				if($currentStatement){
+					/**
+					 * ! Need To Change To Work With All Other Account Types
+					 */
+					$financialInstitutionAccount = FinancialInstitutionAccount::findByAccountNumber($accountNumber,$company->id,$financialInstitutionId);
+				$currentStatement->handleFullDateAfterDateEdit($statementDate,0,$amountInPaymentCurrency,[
+					'financial_institution_account_id' =>  $financialInstitutionAccount->id
+				]);
+			 }else{
+				 	   $currentMoneyPayment->handleCreditStatement($company->id , $financialInstitutionId,$accountType,$accountNumber,$moneyType,$statementDate,$amountInPaymentCurrency,$deliveryBranchId,$paymentCurrency);
+			 }
+
 			}
 	
 		 foreach ($request->get(MoneyPayment::PAYABLE_CHEQUE, []) as $data) {

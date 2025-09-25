@@ -35,6 +35,25 @@ class CollectionPolicyService
 		}
 		return $collections;
 	}
+	public function applyMultiCustomizedCollectionPolicy($dueDayWithRates,  array $dateValue)
+	{
+			$collections = [];
+		
+			foreach ($dateValue as $currentDateAsIndex => $target) {
+				foreach ($dueDayWithRates as $dueDay => $rate) {
+					$rate =  $rate / 100;
+					$actualMonthsNumbers = $dueDay < 30 ? 0 : round((($dueDay) / 30));
+					$newDateAsIndex = $currentDateAsIndex+$actualMonthsNumbers;
+					// $month = $date->format('m');
+					// $year = $date->format('Y');
+					// $day = $date->format('d');
+					// $fullDate = $year  . '-' . $month . '-' . $day;
+					$collections[$newDateAsIndex] = ($target * $rate) + ($collections[$newDateAsIndex] ?? 0);
+				}
+			}
+		return $collections;
+	}
+	
 	protected function sumForInterval(array $dateValues, string $intervalName)
 	{
 		$result = [];

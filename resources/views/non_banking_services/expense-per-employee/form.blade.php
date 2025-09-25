@@ -6,6 +6,7 @@ use App\Models\NonBankingService\Expense;
 <x-styles.commons></x-styles.commons>
 <link rel="stylesheet" href="/custom/css/non-banking-services/expenses.css">
 <link rel="stylesheet" href="/custom/css/non-banking-services/common.css">
+<link rel="stylesheet" href="/custom/css/non-banking-services/select2.css">
 <style>
 .js-parent-to-table{
 	min-height:70vh;
@@ -523,6 +524,7 @@ use App\Models\NonBankingService\Expense;
 
 </script>
 <script src="/custom/js/non-banking-services/common.js"></script>
+<script src="/custom/js/non-banking-services/select2.js"></script>
 <script>
 
 
@@ -530,6 +532,7 @@ use App\Models\NonBankingService\Expense;
 
 
 <script>
+
 	$(document).on('change','select.expense_category',function(){
 		const parent = $(this).closest('tr');
 		const expenseCategoryId = $(this).val();

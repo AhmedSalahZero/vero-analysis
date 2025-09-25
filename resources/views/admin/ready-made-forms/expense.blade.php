@@ -540,7 +540,6 @@
 
 
 
-
                 {{-- start of varying percentage --}}
                 @php
                 $tableId = 'varying_percentage_of_sales';

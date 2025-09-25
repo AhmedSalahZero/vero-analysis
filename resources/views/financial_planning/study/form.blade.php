@@ -2,6 +2,7 @@
 @section('css')
 <x-styles.commons></x-styles.commons>
 <link rel="stylesheet" href="/custom/css/non-banking-services/common.css">
+<link rel="stylesheet" href="/custom/css/non-banking-services/select2.css">
 <style>
     .ui-datepicker-calendar {
         display: none;
@@ -64,7 +65,7 @@
                                 <x-form.label :class="'label'" :id="'test-id'">{{ __('Study Start Date') }} @include('star') </x-form.label>
                                 <div class="kt-input-icon">
                                     <div class="input-group date">
-                                        <input id="study-start-date" type="text" name="study_start_date" class="only-month-year-picker date-input form-control recalc-study-end-date study-start-date recalate-development-start-date recalate-operation-start-date" readonly value="{{ isset($model) ? $model->getStudyStartDate() : getCurrentDateForFormDate('date') }}" />
+                                        <input id="study-start-date" type="text" name="study_start_date" class="only-month-year-picker date-input form-control recalc-study-end-date study-start-date  recalate-operation-start-date" readonly value="{{ isset($model) ? $model->getStudyStartDate() : getCurrentDateForFormDate('date') }}" />
                                         <div class="input-group-append">
                                             <span class="input-group-text">
                                                 <i class="la la-calendar"></i>
@@ -112,14 +113,7 @@
 
 
 
-                            <div class="col-md-4 mb-4">
-                                <label class="form-label font-weight-bold">{{ __('Operation Will Start After (Months)')  }} @include('star')</label>
-                                <div class="kt-input-icon">
-                                    <div class="input-group">
-                                        <input id="property-will-start-after" type="number" class="form-control only-greater-than-or-equal-zero-allowed recalate-operation-start-date" name="operation_start_month" value="{{ isset($model) ? $model->getOperationStartMonth() : 0 }}">
-                                    </div>
-                                </div>
-                            </div>
+                       
 
 
 
@@ -488,6 +482,7 @@
 @section('js')
 <x-js.commons></x-js.commons>
 <script src="/custom/js/non-banking-services/common.js"></script>
+<script src="/custom/js/non-banking-services/select2.js"></script>
 <script>
     $(document).on('change', '.recalc-study-end-date', function(e) {
         e.preventDefault()
@@ -504,14 +499,7 @@
         }
 
     })
-    $(document).on('change', '.recalate-operation-start-date', function() {
-        const studyStartDate = new Date($('.study-start-date').val());
-        const propertyWillStartAfter = parseFloat($('#property-will-start-after').val())
-        if (propertyWillStartAfter || propertyWillStartAfter == '0') {
-            const developmentStartDate = convertDateToDefaultDateFormat(formatDate(new Date($('.study-start-date').val()).addMonths(propertyWillStartAfter)))
-            $('#operation-start-date').val(developmentStartDate)
-        }
-    })
+  
     $(document).on('click', '.save-form', function(e) {
         e.preventDefault(); {
             let form = document.getElementById('form-id');

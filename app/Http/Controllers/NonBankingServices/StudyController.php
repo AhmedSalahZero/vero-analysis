@@ -106,25 +106,30 @@ class StudyController extends Controller
 		
 		
 	}
-	protected function getViewVars(Company $company , Study $model = null):array 
+	protected function getViewVars(Company $company, Study $model = null , $isBusinessPlan = true ):array 
 	{
+		$isBusinessPlan = $model ? $model->isBusinessPlan() : $isBusinessPlan;
 		return [
 			'company'=>$company,
 			'title'=>$company->getName().' ' . __(' Financial Plan'),
 			'model'=>$model,
 			'storeRoute'=>route('store.non.banking.services',['company'=>$company->id]),
 			'navigators' => [],
+			'isBusinessPlan'=>$isBusinessPlan
 		];
 	}
 	public function create(Company $company , Request $request){
-		return view('non_banking_services.study.form', $this->getViewVars($company));
+		$isBusinessPlan  = $request->get('is_business_plan') == 1; 
+		return view('non_banking_services.study.form', $this->getViewVars($company,null,$isBusinessPlan));
 	}
 	public function store(Company $company , Request $request , Study $study = null)
 	{
+		$studyStartDate = $request->get('study_start_date').'-01';
+		$operationStartDate = $request->get('operation_start_date') . '-01';
 		$request->merge([
-			'study_start_date'=>Carbon::make($request->get('study_start_date'))->format('Y-m-d'),
+			'study_start_date'=>Carbon::make($studyStartDate)->format('Y-m-d'),
 			'study_end_date'=>Carbon::make($request->get('study_end_date'))->format('Y-m-d'),
-			'operation_start_date'=>Carbon::make($request->get('operation_start_date'))->format('Y-m-d'),
+			'operation_start_date'=>Carbon::make($operationStartDate)->format('Y-m-d'),
 			'has_leasing'=>$request->boolean('has_leasing'),
 			'has_direct_factoring'=>$request->boolean('has_direct_factoring'),
 			'has_reverse_factoring'=>$request->boolean('has_reverse_factoring'),

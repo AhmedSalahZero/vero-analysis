@@ -6,6 +6,7 @@ use App\Models\NonBankingService\Study;
 <link href="{{ url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css') }}" rel="stylesheet" type="text/css" />
 <link rel="stylesheet" href="/custom/css/non-banking-services/common.css">
+<link rel="stylesheet" href="/custom/css/non-banking-services/select2.css">
 @endsection
 @section('sub-header')
 {{ $title }}
@@ -416,6 +417,7 @@ use App\Models\NonBankingService\Study;
 @endsection
 @push('js')
 <script src="/custom/js/non-banking-services/common.js"></script>
+<script src="/custom/js/non-banking-services/select2.js"></script>
 <script>
     $(function() {
         //	$('[data-group-index]').trigger('change');

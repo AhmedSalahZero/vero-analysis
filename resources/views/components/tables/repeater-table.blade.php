@@ -25,35 +25,33 @@
 'hideByDefault'=>true
 ])
 <style>
-.btn-div{
-	padding: 0 !important;
-    width: 30px !important;
-    height: 30px !important;
-}
-.btn-div span {
-	font-size:20px !important;
-	cursor:pointer;
-}
-.trash_icon{
-	width: 30px;
-    height: 30px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-	cursor:pointer;
-}
+    .btn-div {
+        padding: 0 !important;
+        width: 30px !important;
+        height: 30px !important;
+    }
+
+    .btn-div span {
+        font-size: 20px !important;
+        cursor: pointer;
+    }
+
+    .trash_icon {
+        width: 30px;
+        height: 30px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+    }
+
 </style>
 @php
 
 $canAddNewItem = true;
 @endphp
 
-<div class="{{ $tableClass }} {{ $parentClass }}  js-parent-to-table" data-table-id="{{ $repeaterId??'' }}" 
-@if($hideByDefault)
-style="display:none"
-@endif
-
->
+<div class="{{ $tableClass }} {{ $parentClass }}  js-parent-to-table" data-table-id="{{ $repeaterId??'' }}" @if($hideByDefault) style="display:none" @endif>
 
     @if($addExpenseName)
     <div class="row align-items-center mb-3 mt-3 border-bottom-green  ">
@@ -73,13 +71,13 @@ style="display:none"
             <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style="">
                 {{ __('Expense Type') }}
             </h3>
-					<div class="kt-input-icon">
-						<div class="kt-input-icon">
-							<div class="input-group date">
-							<div class="form-group mb-0 d-flex" style="margin-right:auto;gap:20px;">
-						<input readonly class="form-control"  value="{{ $department ? $department->getExpenseTypeName():'' }}" placeholder="">
-					</div>
-                       
+            <div class="kt-input-icon">
+                <div class="kt-input-icon">
+                    <div class="input-group date">
+                        <div class="form-group mb-0 d-flex" style="margin-right:auto;gap:20px;">
+                            <input readonly class="form-control" value="{{ $department ? $department->getExpenseTypeName():'' }}" placeholder="">
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -95,8 +93,8 @@ style="display:none"
     </div>
     @endif
     @if($showRows)
-	
-    <table @if($initialJs) id="{{ $repeaterId }}" @endif class="table  {{ $repeaterId }} {{ $tableClasses }} table-white  repeater-class repeater {{ $tableName }}" >
+
+    <table @if($initialJs) id="{{ $repeaterId }}" @endif class="table  {{ $repeaterId }} {{ $tableClasses }} table-white  repeater-class repeater {{ $tableName }}">
         <thead>
             <tr>
                 @if(!$removeActionBtn)
@@ -121,20 +119,16 @@ style="display:none"
 
         </tbody>
         <td>
-			@if($showAddBtnAndPlus)
+            @if($showAddBtnAndPlus)
             @if($canAddNewItem && !$removeActionBtn)
             <div data-repeater-create="" class="btn btn btn-sm text-white add-row btn-div  border-green bg-green  m-btn m-btn--icon m-btn--pill m-btn--wide {{__('right')}}">
                 <span>
-					+
-                    {{-- <i class="fa fa-plus"> </i> --}}
+                    +
                     <span>
-                        {{-- @if(!$hideAddBtn)
-                        {{ __('Add') }}
-                        @endif --}}
                     </span>
                 </span>
             </div>
-			@endif
+            @endif
             @endif
         </td>
 
@@ -144,7 +138,6 @@ style="display:none"
     <x-save-or-back-inside-table :department="$department" :btn-text="__('Create')" />
     @endif
 </div>
-
 <input type="hidden" id="initi-empty-{{ $repeaterId }}" value="{{ $initEmpty }}">
 <input type="hidden" id="first-element-deleteable-{{ $repeaterId }}" value="{{ $firstElementDeletable }}">
 @if($initialJs)
@@ -160,11 +153,11 @@ style="display:none"
         initEmpty: initEmpty
         , isFirstItemUndeletable: !firstElementDeleteable
         , defaultValues: {
-			"replacement_cost_rate":0,
-			"replacement_interval":1,
-			"depreciation_duration":5,
-			'counts':1,
-            'grace_period': 0
+            "replacement_cost_rate": 0
+            , "replacement_interval": 1
+            , "depreciation_duration": 5
+            , 'counts': 1
+            , 'grace_period': 0
             , 'tenor': 12
             , "margin_rate": 0
             , "step_rate": 0
@@ -178,10 +171,10 @@ style="display:none"
             , "payment_terms": "cash"
             , "vat_rate": 0
             , "start_date": studyStartDate
-            , "end_date": studyEndDate,
-			"withhold_tax_rate":0,
-			"contingency_rate":0,
-			"cost_annual_increase_rate":0
+            , "end_date": studyEndDate
+            , "withhold_tax_rate": 0
+            , "contingency_rate": 0
+            , "cost_annual_increase_rate": 0
 
         },
 
@@ -221,6 +214,7 @@ style="display:none"
                 }
             }
             $(this).slideDown();
+
             $('input.trigger-change-repeater').trigger('change')
             $(this).find('.only-month-year-picker').each(function(index, dateInput) {
                 reinitalizeMonthYearInput(dateInput)
@@ -229,6 +223,7 @@ style="display:none"
                 dateFormat: 'yy-mm-dd'
                 , autoclose: true
             })
+
             $('input:not(.exclude-from-trigger-change-when-repeat):not([type="hidden"])').trigger('change');
             $(this).find('.dropdown-toggle').remove();
             $(this).find('select.repeater-select').selectpicker("refresh");

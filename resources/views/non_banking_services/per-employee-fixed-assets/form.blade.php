@@ -6,6 +6,7 @@ use App\Models\NonBankingService\Expense;
 <x-styles.commons></x-styles.commons>
 <link rel="stylesheet" href="/custom/css/non-banking-services/expenses.css">
 <link rel="stylesheet" href="/custom/css/non-banking-services/common.css">
+<link rel="stylesheet" href="/custom/css/non-banking-services/select2.css">
 <style>
 .readonly input,
     .readonly select {
@@ -751,6 +752,7 @@ use App\Models\NonBankingService\Expense;
 </script>
 
 <script src="/custom/js/non-banking-services/common.js"></script>
+<script src="/custom/js/non-banking-services/select2.js"></script>
 <script src="/custom/js/non-banking-services/revenue-stream-breakdown.js"></script>
 <script>
 

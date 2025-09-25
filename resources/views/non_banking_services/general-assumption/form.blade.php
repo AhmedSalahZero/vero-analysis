@@ -2,6 +2,7 @@
 @section('css')
 <x-styles.commons></x-styles.commons>
 <link rel="stylesheet" href="/custom/css/non-banking-services/common.css">
+<link rel="stylesheet" href="/custom/css/non-banking-services/select2.css">
 @endsection
 @section('sub-header')
 <x-main-form-title :id="'main-form-title'" :class="''">{{ $title }}</x-main-form-title>
@@ -1106,5 +1107,6 @@
 
 </script>
 <script src="/custom/js/non-banking-services/common.js"></script>
+<script src="/custom/js/non-banking-services/select2.js"></script>
 
 @endsection

@@ -457,3 +457,397 @@ $(document).on('change','[total-row-tr] input.input-hidden-with-name',function()
 	
 })
 $('[total-row-tr] input.input-hidden-with-name').trigger('change')
+
+
+
+
+
+$(document).on('change', '.percentage_field,.number_field', function () {
+	const parent = $(this).closest('.closest-parent')
+	const columnIndex = $(this).attr('data-column-index')
+	const appendColumnIndex = columnIndex == undefined ? '' : '[data-column-index="' + columnIndex + '"]'
+	const number = number_unformat($(parent).find('.number_field' + appendColumnIndex).val())
+	const percentage = number_unformat($(parent).find('.percentage_field' + appendColumnIndex).val())
+	const result = number * percentage / 100
+	$(parent).find('.number_multiple_percentage' + appendColumnIndex).val(result).trigger('change')
+})
+$(document).on('change', '.percentage_field2,.number_field2', function () {
+	const parent = $(this).closest('.closest-parent')
+	const columnIndex = $(this).attr('data-column-index')
+	const appendColumnIndex = columnIndex == undefined ? '' : '[data-column-index="' + columnIndex + '"]'
+	const number = number_unformat($(parent).find('.number_field2' + appendColumnIndex).val())
+	const percentage = number_unformat($(parent).find('.percentage_field2' + appendColumnIndex).val())
+	const result = number * percentage / 100
+	$(parent).find('.number_multiple_percentage2' + appendColumnIndex).val(result).trigger('change')
+})
+$(document).on('change', '.percentage_field3,.number_field3', function () {
+	const parent = $(this).closest('.closest-parent')
+	const columnIndex = $(this).attr('data-column-index')
+	const appendColumnIndex = columnIndex == undefined ? '' : '[data-column-index="' + columnIndex + '"]'
+	const number = number_unformat($(parent).find('.number_field3' + appendColumnIndex).val())
+	const percentage = number_unformat($(parent).find('.percentage_field3' + appendColumnIndex).val())
+	const result = number * percentage / 100
+	$(parent).find('.number_multiple_percentage3' + appendColumnIndex).val(result).trigger('change')
+})
+$(document).on('change', '.number_field_1,.number_field_2', function () {
+	const parent = $(this).closest('.closest-parent')
+	const columnIndex = $(this).attr('data-column-index')
+	const appendQuery = columnIndex == undefined ? '' : '[data-column-index="' + columnIndex + '"]'
+	const number1 = number_unformat($(parent).find('.number_field_1' + appendQuery).val())
+	const number2 = number_unformat($(parent).find('.number_field_2' + appendQuery).val())
+	let result = number1 * number2
+	const resultQuery = $(parent).find('.number_multiple_number' + appendQuery)
+	const numberFormat = resultQuery.attr('data-number-format')
+	if (numberFormat != undefined) {
+		result = number_format(result, numberFormat)
+	}
+	resultQuery.val(result).trigger('change')
+})
+
+
+$(document).on('change', '.sum-num1,.sum-num2,.sum-num3', function () {
+	const parent = $(this).closest('.closest-parent')
+	const columnIndex = $(this).attr('data-column-index')
+	const appendQuery = columnIndex == undefined ? '' : '[data-column-index="' + columnIndex + '"]'
+	const number1 = parseFloat(number_unformat($(parent).find('.sum-num1' + appendQuery).val()))
+	const number2 = parseFloat(number_unformat($(parent).find('.sum-num2' + appendQuery).val()))
+	const number3 = parseFloat(number_unformat($(parent).find('.sum-num3' + appendQuery).val()))
+	let result = number1 + number2 + number3
+	const resultQuery = $(parent).find('.sum-three-column-result' + appendQuery)
+	const numberFormat = resultQuery.attr('data-number-format')
+	if (numberFormat != undefined) {
+		result = number_format(result, numberFormat)
+	}
+	resultQuery.val(result).trigger('change')
+})
+
+
+$(document).on('change', '.number_minus_field_1,.number_minus_field_2', function () {
+	const parent = $(this).closest('.closest-parent')
+	const columnIndex = $(this).attr('data-column-index')
+	const appendQuery = columnIndex == undefined ? '' : '[data-column-index="' + columnIndex + '"]'
+	const number1 = number_unformat($(parent).find('.number_minus_field_1' + appendQuery).val())
+	const number2 = number_unformat($(parent).find('.number_minus_field_2' + appendQuery).val())
+	let result = number1 - number2
+	const resultQuery = $(parent).find('.number_minus_number_result' + appendQuery)
+	const numberFormat = resultQuery.attr('data-number-format')
+	if (numberFormat != undefined) {
+		result = number_format(result, numberFormat)
+	}
+	resultQuery.val(result).trigger('change')
+})
+
+$(document).on('change', '.growth_percentage', function (event) {
+	const parent = $(this).closest('.closest-parent')
+	let percentage = $(parent).find('.growth_percentage').val()
+	percentage = percentage ? percentage : 0
+	const previousParent = $(parent).prev('.closest-parent')
+	const previousAmount = number_unformat($(previousParent).find('.number_growth_amount').val())
+	if (previousParent.length) {
+		const result = previousAmount * (1 + (percentage / 100))
+		$(parent).find('.number_growth_amount').val(result).trigger('change')
+	}
+})
+$(document).on('change', '.number_growth_amount', function (event) {
+	const parent = $(this).closest('.closest-parent')
+	$(parent).next('.closest-parent').find('.growth_percentage').trigger('change')
+})
+
+
+$(document).on('change', '.growth_percentage_in_diff_parent', function (event) {
+
+	$('.parent-for-salary-amount .number_growth_amount_in_diff_parent').each(function (index, input) {
+		$(input).trigger('change')
+	})
+
+})
+$(document).on('change', '.number_growth_amount_in_diff_parent', function (event) {
+	return
+	let parent = $(this).closest('.closest-parent')
+	let previousParent = parent.prev('.closest-parent').val()
+
+	let percentage = $('.growth_percentage_in_diff_parent').val()
+	percentage = percentage ? percentage : 0
+	if (previousParent) {
+		let previousAmount = previousParent.find('.number_growth_amount').val()
+		const result = previousAmount * (1 + (percentage / 100))
+		$(parent).find('.number_growth_amount_in_diff_parent').val(number_format(result)).trigger('change')
+	}
+
+
+})
+
+$(document).on('change', '.total_input', function () {
+	const parent = $(this).closest('.closest-parent')
+	let total = 0
+	$(parent).find('.total_input').each(function (index, input) {
+		total += parseFloat(number_unformat($(input).val()))
+	})
+	$(parent).find('.total_row_result').val(number_format(total, 2)).trigger('change')
+})
+
+document.addEventListener('DOMContentLoaded', function () {
+	// Select all elements with class target_last_value
+	document.querySelectorAll('.target_last_value').forEach(icon => {
+		icon.addEventListener('click', function () {
+			// Find the closest form-group and the input within it
+			const formGroup = this.closest('.form-group')
+			const sourceInput = formGroup.querySelector('input')
+			if (!sourceInput) return // Exit if no input found
+
+			// Get the direction from data attribute
+			const direction = this.getAttribute('data-repeating-direction')
+
+			if (direction === 'column') {
+				// Existing column logic
+				const sourceName = sourceInput.name
+				let suffix = sourceName.replace(/^[^_]+/, '')
+				suffix = suffix.replace(/\[\d+\]/, '')
+				const valueToCopy = sourceInput.value
+				const currentRow = this.closest('.closest-parent')
+
+				const allRows = Array.from(document.querySelectorAll('.closest-parent'))
+
+				const currentRowIndex = allRows.indexOf(currentRow)
+
+				allRows.slice(currentRowIndex + 1).forEach(row => {
+
+					let targetInput = row.querySelector(`input[name*="${suffix}"]`)
+					if (targetInput) {
+						targetInput.value = valueToCopy
+						targetInput.dispatchEvent(new Event('input', { bubbles: true }))
+						targetInput.dispatchEvent(new Event('change', { bubbles: true }))
+					}
+				})
+			}
+		})
+	})
+})
+$(document).ready(function () {
+	$('.target_last_value_to_right').on('click', function () {
+
+		// Find the closest form-group and the input within it
+		var formGroup = $(this).closest('.closest-parent')
+		var sourceInput = formGroup.find('input')
+		if (!sourceInput.length) return // Exit if no input found
+
+		// Get the value to copy
+		var valueToCopy = sourceInput.val()
+
+		// Find the closest row (.closest-parent)
+		var currentRow = $(this).closest('.closest-parent')
+		// Find all inputs in the same row, excluding the source input
+		var targetInputs = currentRow.find('input').not(sourceInput)
+		// Copy the value to all other inputs in the row
+		targetInputs.each(function () {
+			$(this).val(valueToCopy)
+			// Trigger input event to handle any dependent calculations
+			$(this).trigger('input')
+		})
+	})
+})
+$(document).on('click', '.toggle-show-hide', function () {
+	const query = $(this).attr('data-query')
+	$(query).toggleClass('hidden')
+})
+$(document).ready(function () {
+	$('.target_last_value_to_right_until_end').on('click', function () {
+		let parentDiv = $(this).closest('.parent-for-salary-amount')
+		let currentElement = $(this).closest('.common-parent').find('.repeat-to-right-element')
+		let currentInputValue = currentElement.val()
+		let currentIndex = currentElement.attr('data-index')
+		let subsequentDivs = parentDiv.find('.closest-parent .repeat-to-right-element')
+		subsequentDivs.each(function (index, element) {
+			if (index >= currentIndex) {
+				$(element).val(currentInputValue)
+			}
+		})
+	})
+})
+
+
+
+
+
+$(function () {
+	$('.is-leasing:checked').trigger('change')
+})
+
+$(document).on('change', '.sum_product_value_1,.sum_product_quantity_1,.sum_product_value_2,.sum_product_quantity_2', function () {
+
+
+	const parent = $(this).closest('.closest-parent')
+	const columnIndex = $(this).attr('data-column-index')
+	const appendQuery = columnIndex == undefined ? '' : '[data-column-index="' + columnIndex + '"]'
+	const number1 = number_unformat($(parent).find('.sum_product_value_1' + appendQuery).val())
+	const number2 = number_unformat($(parent).find('.sum_product_quantity_1' + appendQuery).val())
+	const number3 = number_unformat($(parent).find('.sum_product_value_2' + appendQuery).val())
+	const number4 = number_unformat($(parent).find('.sum_product_quantity_2' + appendQuery).val())
+
+	let result = (number1 * number2) + (number3 * number4)
+	const resultQuery = $(parent).find('.two_sum_product_result' + appendQuery)
+	const numberFormat = resultQuery.attr('data-number-format')
+	if (numberFormat != undefined) {
+		result = number_format(result, numberFormat)
+	}
+	resultQuery.val(result).trigger('change')
+
+})
+
+$(function () {
+	const studyDuration = $('#study-duration').attr('data-duration');
+	if(studyDuration >1 ){
+		$('.collapse-before-me').trigger('click')
+	}
+	$('.expense-category-class').trigger('change')
+})
+$(document).on('click', '.parent-checkbox', function () {
+	$(this).closest('.closest-parent').find('input[type="checkbox"]').prop('checked', false).trigger('change')
+	$(this).closest('td').find('input[type="checkbox"]').prop('checked', true).trigger('change')
+
+})
+$(document).on('change', '.name-required-when-greater-than-zero-js', function () {
+	const value = $(this).val()
+	const parent = $(this).closest('.closest-parent')
+	if (value > 0) {
+		$(parent).find('.name-field-js').prop('required', true)
+	} else {
+		$(parent).find('.name-field-js').prop('required', false)
+	}
+})
+$(function () {
+	$('.name-required-when-greater-than-zero-js').trigger('change')
+})
+$(function () {
+	$('.delay-button').prop('disabled', false)
+})
+$(document).on('change', '.allocate-checkbox', function () {
+	const modal = $(this).closest('.modal')
+	const isChecked = $(this).is(':checked')
+	if (isChecked) {
+		$(modal).find('.percentage-allocation').each(function (index, input) {
+			$(input).val(0).prop('readonly', true).trigger('change')
+		})
+	} else {
+		$(modal).find('.percentage-allocation').each(function (index, input) {
+			var currentVal = $(input).attr('data-old-value')
+			$(input).val(currentVal).prop('readonly', false).trigger('change')
+		})
+	}
+
+})
+
+$(document).on('change', '.fg-beginning-inventory-original-value-class', function () {
+	const value = number_unformat($(this).val())
+	$('.fg-beginning-inventory-value-class').val(value).trigger('change')
+})
+function replaceRepeaterIndex(element) {
+
+	$(element).closest('[data-repeater-list]').find('[data-last-index]').each(function (index, element) {
+		var currentIndex = $(element).closest('[data-repeater-item]').index()
+		var mainCategory = $(element).attr('data-main-category')
+		var subCategory = $(element).attr('data-sub-category')
+		var currentDate = $(element).attr('data-last-index')
+		var newName = mainCategory + '[' + currentIndex + ']' + '[' + subCategory + ']' + '[' + currentDate + ']'
+		$(element).attr('name', newName)
+	})
+}
+
+
+
+
+
+
+
+$(document).on('change', '[total-row-tr] input.input-hidden-with-name', function () {
+	let parent = $(this).closest('tr')
+	let totalRow = parent.find('.sum-total-row')
+	let numberOfDecimals = parent.attr('data-repeat-formatting-decimals')
+	if (totalRow) {
+		let total = 0
+		parent.find('input.input-hidden-with-name').each(function (index, row) {
+			var currentTotal = parseFloat(number_unformat($(row).val()))
+			total += currentTotal
+		})
+		parent.find('input.sum-total-row').val(number_format(total, numberOfDecimals))
+	}
+
+})
+$(document).on('change', 'select.expense-category-class', function () {
+	const value = $(this).val()
+	const hasAllocation = +$(this).find('option:selected').attr('data-has-allocation')
+	const parent = $(this).closest('.common-parent')
+	if (hasAllocation) {
+		$(parent).find('.allocate-parent').show()
+	} else {
+		$(parent).find('.allocate-parent').hide()
+	}
+})
+
+$(document).on('change', '.hundred-minus-number', function () {
+	let parent = $(this).closest('.closest-parent')
+	const columnIndex = $(this).attr('data-column-index')
+	const appendColumnIndex = columnIndex == undefined ? '' : '[data-column-index="' + columnIndex + '"]'
+	let equityFundingPercentage = number_unformat($(parent).find('.hundred-minus-number' + appendColumnIndex).val())
+	let debtFunding = 100 - equityFundingPercentage
+	$(parent).find('.hundred-minus-number-result' + appendColumnIndex).val(number_format(debtFunding, 1)).trigger('change')
+})
+
+$(document).on('change', '.hundred-minus-number-one', function () {
+	let parent = $(this).closest('.closest-parent')
+	const columnIndex = $(this).attr('data-column-index')
+	const appendColumnIndex = columnIndex == undefined ? '' : '[data-column-index="' + columnIndex + '"]'
+	let equityFundingPercentage = number_unformat($(parent).find('.hundred-minus-number-one' + appendColumnIndex).val())
+	let debtFunding = 100 - equityFundingPercentage
+	$(parent).find('.hundred-minus-number-result-one' + appendColumnIndex).val(number_format(debtFunding, 1)).trigger('change')
+})
+
+$(document).on('change', '.hundred-minus-number1,.hundred-minus-number2', function () {
+	let parent = $(this).closest('.closest-parent')
+	const columnIndex = $(this).attr('data-column-index')
+	const appendColumnIndex = columnIndex == undefined ? '' : '[data-column-index="' + columnIndex + '"]'
+	let number1 = number_unformat($(parent).find('.hundred-minus-number1' + appendColumnIndex).val())
+	let number2 = number_unformat($(parent).find('.hundred-minus-number2' + appendColumnIndex).val())
+	let debtFunding = 100 - number1 - number2
+	$(parent).find('.hundred-minus-two-number-result' + appendColumnIndex).val(number_format(debtFunding, 1)).trigger('change')
+})
+
+
+const handlePaymentTermModal = function () {
+	const parentTermsType = $(this).closest('select').val()
+	const tableId = $(this).closest('table').attr('id')
+	const parent= $(this).closest('td') ;
+	if (parentTermsType == 'customize') {
+		parent.find('.collection-modal').modal('show')
+	}
+	if (parentTermsType == 'installment') {
+		parent.find('.installment-modal').modal('show')
+	}
+}
+$(document).on('change', 'select.payment_terms', handlePaymentTermModal)
+
+
+$(document).on('change', '.rate-element', function () {
+	let total = 0
+	const parent = $(this).closest('tbody')
+
+	parent.find('.rate-element').each(function (index, element) {
+		total += parseFloat(number_unformat($(element).val()))
+	})
+	parent.find('td.td-for-total-payment-rate').html(number_format(total, 2) + ' %')
+
+})
+
+
+
+
+$(document).ready(function () {
+
+
+	$(document).on('select2:select', '.js-select2-with-one-selection', function (e) {
+		// Keep only the last selected option
+		let selected = e.params.data.id
+		$(this).val([selected]).trigger('change')
+	})
+
+})

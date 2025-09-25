@@ -3,6 +3,7 @@ namespace App\Models\NonBankingService;
 
 use App\Equations\ExpenseAsPercentageEquation;
 use App\Helpers\HArr;
+use App\Helpers\HHelpers;
 use App\Models\NonBankingService\Expense;
 use App\Models\NonBankingService\GeneralAndReserveAssumption;
 use App\Models\NonBankingService\NewBranchLoanCaseProjection;
@@ -227,6 +228,10 @@ class Study extends Model
     public function getStudyEndDate(): ?string
     {
         return $this->study_end_date;
+    }
+	 public function getEndDateFormatted()
+    {
+		return $this->study_end_date;
     }
     public function getStudyStartDateAsIndex(array $datesAsStringAndIndex, ?string $studyStartDateAsString): ?int
     {
@@ -469,10 +474,14 @@ class Study extends Model
         return $this->getOperationDurationPerYear($datesAsStringAndIndex, $datesIndexWithYearIndex, $yearIndexWithYear, $dateIndexWithDate, $dateWithMonthNumber);
         
     }
-    public function isMonthlyStudy()
+    public function isMonthlyStudy():bool
     {
         return $this->duration_in_years < 2 ;
     }
+	public function isBusinessPlan():bool 
+	{
+		return !$this->isMonthlyStudy();
+	}
 	public function getActiveMonthlyDatesWithoutFormatting($yearIndexWithItsActiveMonths,$dateIndexWithDate)
 	{
 		$results = [];
@@ -677,9 +686,6 @@ class Study extends Model
     {
         return $this->hasOne(ReverseFactoringNewPortfolioFundingStructure::class, 'study_id', 'id');
     }
-    
-    
-    
     public function ijaraMortgageRevenueProjectionByCategory()
     {
         return $this->hasOne(IjaraMortgageRevenueProjectionByCategory::class, 'study_id');
@@ -1614,12 +1620,7 @@ class Study extends Model
 		}
 		return $result;
     }
-	public function getDateWithDateIndex():array
-    {
-        $datesAndIndexesHelpers = $this->getDatesIndexesHelper();
-        return $datesAndIndexesHelpers['dateWithDateIndex'];
-        ;
-    }
+
     public function recalculateFixedAssetStatement(string $fixedAssetType):void
     {
         /**
@@ -1708,4 +1709,300 @@ class Study extends Model
 
         return $newItems;
     }
+	public function getStudyStartDateYearAndMonth()
+    {
+        $studyStartDate = $this->getStudyStartDate() ;
+        if (is_null($studyStartDate)) {
+            return now()->format('Y-m');
+        }
+        return Carbon::make($studyStartDate)->format('Y-m');
+    }
+	 public function getOperationStartDateYearAndMonth()
+    {
+        $operationStartDate = $this->getOperationStartDate() ;
+        if (is_null($operationStartDate)) {
+            return now()->format('Y-m');
+        }
+        return Carbon::make($operationStartDate)->format('Y-m');
+    }
+	public function getStudyEndDateYearAndMonth()
+    {
+        $date = $this->getEndDateFormatted() ;
+        if (is_null($date)) {
+            return now()->format('Y-m');
+        }
+        return Carbon::make($date)->format('Y-m');
+    }
+	public function expenses():HasMany
+    {
+        return $this->hasMany(Expense::class, 'study_id', 'id');
+    }
+	public function getExpensesViewVars():array 
+	{
+		$company = $this->company;
+		return [
+            'company'=>$company ,
+            'type'=>'create',
+            'study'=>$this,
+            'model'=>$this ,
+			'expenses'=>$this->expenses,
+            'expenseType'=>HHelpers::getClassNameWithoutNameSpace((new Expense())),
+            'title'=>__('Expenses'),
+            'storeRoute'=>route('store.expenses', ['company'=>$company->id , 'study'=>$this->id]),
+            'yearsWithItsMonths' => $this->getOperationDurationPerYearFromIndexes(),
+            'revenueStreamTypes'=>$this->getCheckedRevenueStreamTypesForSelect()
+        ];
+	}
+	  public function getDefaultStartDateAsYearAndMonth()
+    {
+        $operationStartDate = $this->getOperationStartDate() ;
+        return Carbon::make($operationStartDate)->format('Y-m');
+    }
+	  public function getDefaultEndDateAsYearAndMonth()
+    {
+        $operationStartDate = $this->study_end_date ;
+        return Carbon::make($operationStartDate)->format('Y-m');
+    }
+	public function qqqw()
+	{
+		
+	}
+	// $revenueStreams for example // ['has_leasing','has_direct_factoring']
+	public function getSelectedRevenueStreamWithCategories(array $revenueStreams):array 
+	{
+		$relationName = [
+			'has_leasing'=>'leasingRevenueStreamBreakdown',
+			'has_direct_factoring'=>'directFactoringBreakdowns',
+			'has_reverse_factoring'=>'reverseFactoringBreakdowns',
+			'has_ijara_mortgage'=>'ijaraMortgageBreakdowns',
+			'has_portfolio_mortgage'=>'portfolioMortgageRevenueProjectionByCategories'
+		];
+		$result = [];
+		foreach($revenueStreams as $currentRevenueType){
+			$currentRelationName = $relationName[$currentRevenueType];
+			$relation = $this->{$currentRelationName} ;
+			$titleColumnName = 'category';
+			$idColumnName = 'category';
+			$idAndTitleColumnNames = [
+				'leasingRevenueStreamBreakdown'=>[
+					'id'=>'category.id',
+					'title'=>'category.title'
+				],
+				'portfolioMortgageRevenueProjectionByCategories'=>[
+					'id'=>'portfolio_mortgage_duration',
+					'title'=>'portfolio_mortgage_duration'
+				]
+			][$currentRelationName]??[];
+			$id = $idAndTitleColumnNames['id']??$idColumnName;
+			$title = $idAndTitleColumnNames['title']??$titleColumnName;
+			$currentRevenues =  $relation->pluck($title,$id)->toArray();
+			foreach($currentRevenues as $id => $title){
+				if(is_numeric($title)){
+					$dayOrYears = $currentRevenueType == 'has_portfolio_mortgage' ? __('Years') :  __('Days') ;
+					$title = $title . ' ' . $dayOrYears;
+				}
+				$result[$id] = $title;
+			}
+			
+		}
+		dd($result);
+	}
+	
+	
+    public function fixedAssetOpeningBalances()
+    {
+        return $this->hasMany(FixedAssetOpeningBalance::class, 'study_id', 'id');
+    }
+    public function cashAndBankOpeningBalances():HasMany
+    {
+        return $this->hasMany(CashAndBankOpeningBalance::class, 'study_id', 'id');
+    }
+    public function otherDebtorsOpeningBalances():HasMany
+    {
+        return $this->hasMany(OtherDebtorsOpeningBalance::class, 'study_id', 'id');
+    }
+    public function supplierPayableOpeningBalances():HasMany
+    {
+        return $this->hasMany(SupplierPayableOpeningBalance::class, 'study_id', 'id');
+    }
+    public function otherCreditorsOpeningBalances():HasMany
+    {
+        return $this->hasMany(OtherCreditsOpeningBalance::class, 'study_id', 'id');
+    }
+    public function otherLongTermLiabilitiesOpeningBalances():HasMany
+    {
+        return $this->hasMany(OtherLongTermLiabilitiesOpeningBalance::class, 'study_id', 'id');
+    }
+	 public function otherLongTermAssetsOpeningBalances():HasMany
+    {
+        return $this->hasMany(OtherLongTermAssetsOpeningBalance::class, 'study_id', 'id');
+    }
+    public function equityOpeningBalances():HasMany
+    {
+        return $this->hasMany(EquityOpeningBalance::class, 'study_id', 'id');
+    }
+    public function vatAndCreditWithholdTaxesOpeningBalances():HasMany
+    {
+        return $this->hasMany(VatAndCreditWithholdTaxOpeningBalance::class, 'study_id', 'id');
+    }
+    public function getVatOpeningBalanceAmount():float
+    {
+        $vatOpening = $this->vatAndCreditWithholdTaxesOpeningBalances->first();
+        return $vatOpening ? $vatOpening->getVatAmount() : 0 ;
+    }
+    public function getCreditWithholdOpeningBalanceAmount():float
+    {
+        $vatOpening = $this->vatAndCreditWithholdTaxesOpeningBalances->first();
+        return $vatOpening ? $vatOpening->getCreditWithholdTaxes() : 0 ;
+    }
+    public function longTermLoanOpeningBalances():HasMany
+    {
+        return $this->hasMany(LongTermLoanOpeningBalance::class, 'study_id', 'id');
+    }
+	
+		
+	 public function getOpeningBalancesViewVars():array
+    {
+   
+        $fixedAssetOpeningBalances = $this->fixedAssetOpeningBalances;
+        $cashAndBankOpeningBalances = $this->cashAndBankOpeningBalances;
+        $otherDebtorsOpeningBalances = $this->otherDebtorsOpeningBalances;
+        $supplierPayableOpeningBalances = $this->supplierPayableOpeningBalances;
+        $otherCreditorsOpeningBalances = $this->otherCreditorsOpeningBalances;
+        $vatAndCreditWithholdTaxesOpeningBalances = $this->vatAndCreditWithholdTaxesOpeningBalances;
+        $otherLongTermLiabilitiesOpeningBalances = $this->otherLongTermLiabilitiesOpeningBalances;
+        $otherLongTermAssetsOpeningBalances = $this->otherLongTermAssetsOpeningBalances;
+        $equityOpeningBalances = $this->equityOpeningBalances;
+        $longTermLoanOpeningBalances = $this->longTermLoanOpeningBalances;
+        $products = $this->products;
+        return ['title'=>__('Opening Balances'),'study'=>$this,'vatAndCreditWithholdTaxesOpeningBalances'=>$vatAndCreditWithholdTaxesOpeningBalances,'longTermLoanOpeningBalances'=>$longTermLoanOpeningBalances,'equityOpeningBalances'=>$equityOpeningBalances,'otherLongTermLiabilitiesOpeningBalances'=>$otherLongTermLiabilitiesOpeningBalances,'otherLongTermAssetsOpeningBalances'=>$otherLongTermAssetsOpeningBalances,'otherCreditorsOpeningBalances'=>$otherCreditorsOpeningBalances,'supplierPayableOpeningBalances'=>$supplierPayableOpeningBalances,'otherDebtorsOpeningBalances'=>$otherDebtorsOpeningBalances,'fixedAssetOpeningBalances'=>$fixedAssetOpeningBalances,'cashAndBankOpeningBalances'=>$cashAndBankOpeningBalances,'products'=>$products];
+        
+    }
+	
+	   public function getYearIndexWithItsMonthsAsIndexAndString()
+    {
+        $result =[];
+        foreach ($this->getOperationDurationPerYearFromIndexesForAllStudyInfo() as $yearIndex => $dateAsIndexAndIsActive) {
+            foreach ($dateAsIndexAndIsActive as $dateAsIndex => $isActive) {
+                if ($isActive) {
+                    $dateAsString = $this->getDateFromDateIndex($dateAsIndex);
+                    $result[$yearIndex][$dateAsIndex]=$dateAsString;
+                }
+            }
+            
+        }
+		return $result;
+    }
+
+    public function getDateWithDateIndex():array
+    {
+        $datesAndIndexesHelpers = $this->getDatesIndexesHelper();
+        return $datesAndIndexesHelpers['dateWithDateIndex'];
+    }
+    public function getIndexDateFromString(string $dateAsString):int
+    {
+        $dateWithDateIndex = $this->getDateWithDateIndex();
+        return $dateWithDateIndex[$dateAsString];
+    }
+    public function getDateFromDateIndex(int $dateAsIndex):string
+    {
+        $dateIndexWithDate = $this->getDateIndexWithDate();
+        return $dateIndexWithDate[$dateAsIndex];
+    }
+    public function getYearIndexFromDateIndex(int $dateAsIndex)
+    {
+        $datesAndIndexesHelpers = $this->getDatesIndexesHelper();
+        $datesIndexWithYearIndex = $datesAndIndexesHelpers['datesIndexWithYearIndex'];
+        return $datesIndexWithYearIndex[$dateAsIndex];
+    }
+    public function getYearFromYearIndex(int $yearAsIndex):?int
+    {
+        $datesAndIndexesHelpers = $this->getDatesIndexesHelper();
+        $yearIndexWithYear = $datesAndIndexesHelpers['yearIndexWithYear'];
+        return $yearIndexWithYear[$yearAsIndex]??null;
+    }
+    public function getYearFromDateIndex(int $dateAsIndex):int
+    {
+        $yearIndex = $this->getYearIndexFromDateIndex($dateAsIndex);
+        $datesAndIndexesHelpers = $this->getDatesIndexesHelper();
+        $yearIndexWithYear = $datesAndIndexesHelpers['yearIndexWithYear'];
+        return $yearIndexWithYear[$yearIndex];
+    }
+    public function getYearIndexWithYear():array
+    {
+        $datesAndIndexesHelpers = $this->getDatesIndexesHelper();
+        return $datesAndIndexesHelpers['yearIndexWithYear'];
+    }
+    
+    public function getDatesIndexWithYearIndex()
+    {
+        $datesAndIndexesHelpers = $this->getDatesIndexesHelper();
+        return $datesAndIndexesHelpers['datesIndexWithYearIndex'];
+    }
+	 public function getDateWithMonthNumber()
+    {
+        $datesAndIndexesHelpers = $this->getDatesIndexesHelper();
+        return $datesAndIndexesHelpers['dateWithMonthNumber'];
+    }
+    public function getYearIndexWithItsMonths():array
+    {
+        $dateIndexWithYearIndex = $this->getDatesIndexWithYearIndex();
+        $result = [];
+        foreach ($dateIndexWithYearIndex as $dateAsIndex => $yearAsIndex) {
+            $result[$yearAsIndex][$dateAsIndex] = $this->getDateFromDateIndex($dateAsIndex);
+        }
+        return $result;
+    }
+	 public function getEndDate(): ?string
+    {
+        return $this->getStudyEndDate();
+    }
+		public function convertDateStringToDateIndex(string $dateAsString):int
+	{
+		return app('dateWithDateIndex')[$dateAsString];		
+	}
+	public function getOperationDatesAsDateAndDateAsIndexToStudyEndDate()
+    {
+        
+		$operationsYearAndItsMonths = $this->getOperationDurationPerYearFromIndexesForAllStudyInfo();
+		array_pop($operationsYearAndItsMonths);
+		$result =[];
+		foreach($operationsYearAndItsMonths as $yearAsIndex => $itsMonths){
+			foreach($itsMonths as $dateAsIndex => $val){
+				$result[$this->getDateFromDateIndex($dateAsIndex)] =$dateAsIndex ;
+			}
+		}
+        return $result;
+        
+    }
+   
+    public function convertStringIndexesToDateIndex(array $itemsAsDateStringAndValue):array
+    {
+        $result = [];
+        foreach ($itemsAsDateStringAndValue as $dateAsString => $value) {
+            $dateAsIndex = $this->getIndexDateFromString($dateAsString);
+            if (!is_null($dateAsIndex)) {
+                $result[$dateAsIndex] = $value ;
+            }
+        }
+        return $result;
+    }
+ 
+	public function getOnlyDatesOfActiveStudy(array $studyDurationPerYear,array $dateIndexWithDate)
+	{
+		$result = [];
+		foreach ($studyDurationPerYear as $currentYear => $datesAndZerosOrOnes) {
+			foreach ($datesAndZerosOrOnes as $dateIndex => $zeroOrOneAtDate) {
+				if (is_numeric($dateIndex)) {
+					$dateFormatted =$dateIndexWithDate[$dateIndex];
+				} else {
+					$dateFormatted = $dateIndex;
+				}
+				$result[$dateFormatted] = $dateIndex;
+			}
+		}
+
+		return $result;
+	}
+	
 }

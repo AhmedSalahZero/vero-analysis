@@ -33,6 +33,7 @@ class UniqueToCompanyRule implements Rule
     {
         $value = is_array($value) ? Arr::flatten($value) : $value ; 
 		$namespace = is_null($this->namespace) ? \getModelNamespace() : $this->namespace ;
+	
         return ! ($namespace.$this->modelName)::where('id','!=',$this->exceptId)->where('company_id',\getCurrentCompany()->id)
         ->whereIn($this->columnName, (array)$value)
         ->exists();

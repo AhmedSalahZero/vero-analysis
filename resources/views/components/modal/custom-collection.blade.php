@@ -1,15 +1,18 @@
 @props([
-'id',
-'tableId',
-'isRepeater',
-'subModel'
+'subModel',
+'title'=>__('Collection Policy')
 ])
 
-<div class="modal fade" id="{{ $id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+<script>
+ var translations = {
+        deleteConfirm: @json(__('Are you sure you want to delete this position?'))
+    };
+	</script>
+<div class="modal collection-modal fade"  tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-md modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">{{ __('Custom Collection') }}</h5>
+                <h5 class="modal-title text-blue" id="exampleModalLongTitle">{{ $title }}</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -24,30 +27,34 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @for($rateIndex= 0 ;$rateIndex<6 ; $rateIndex++) <tr>
-                                <td>
-                                    <input class="form-control only-percentage-allowed rate-element" value="{{ isset($subModel) ? $subModel->getPaymentRate($rateIndex) :  0 }}" placeholder="{{ __('Rate') .  ' ' . $rateIndex }}">
-                                    <input multiple class="rate-element-hidden" type="hidden" value="{{ (isset($subModel) ? $subModel->getPaymentRate($rateIndex) : 0) }}" name="@if($isRepeater)payment_rate @else {{ $tableId }}[0][payment_rate] @endif">
+                            @for($rateIndex= 0 ;$rateIndex<5 ; $rateIndex++) <tr>
+                                <td >
+								<div class="max-w-selector-popup">
+                                    <input multiple name="payment_rate" class="form-control only-percentage-allowed rate-element" value="{{ isset($subModel) ? $subModel->getPaymentRate($rateIndex) :  0 }}" placeholder="{{ __('Rate') .  ' ' . $rateIndex }}">
+                                    {{-- <input multiple class="rate-element-hidden" type="hidden" value="{{ (isset($subModel) ? $subModel->getPaymentRate($rateIndex) : 0) }}" > --}}
+								</div>
                                 </td>
                                 <td>
-								<div class="max-w-selector-popup">
-                                    <x-form.select :maxOptions="1" multiple :selectedValue="isset($subModel) ? $subModel->getPaymentRateAtDueInDays($rateIndex) : '' " :options="dueInDays()" :add-new="false" class="select2-select  js-due_in_days repeater-select"  :all="false" name="@if($isRepeater) due_days @else {{ $tableId }}[0][due_days] @endif" id="{{$tableId.'-'.'dueInDays' }}"></x-form.select>
+								<div class="">
+                                    <x-form.select  :multiple="true" :maxOptions="1"  :selectedValue="isset($subModel) ? $subModel->getPaymentRateAtDueInDays($rateIndex) : '' " :options="dueInDays()" :add-new="false" class="js-due_in_days repeater-select 
+									{{-- js-select2-with-one-selection --}}
+									"  :all="false" name="due_days" ></x-form.select>
 								</div>
                                 </td>
                                 </tr>
                                 @endfor
 								<tr style="border-top:1px solid gray;padding-top:5px;text-align:center">
-									<td class="td-for-total-payment-rate">
+									<td class="td-for-total-payment-rate " disabled readonly>
 										0
 									</td>
-									<td>-</td>
+									<td class="">-</td>
 								</tr>
                         </tbody>
                     </table>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal">{{ __('Save') }}</button>
+                <button type="button" class="btn save-modal btn-primary" data-dismiss="modal">{{ __('Save') }}</button>
             </div>
         </div>
     </div>

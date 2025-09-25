@@ -8,13 +8,14 @@ use MathPHP\Statistics\Correlation ;
 <link href="{{url('assets/vendors/general/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css')}}" rel="stylesheet" type="text/css" />
 <link href="{{url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css')}}" rel="stylesheet" type="text/css" />
 <link rel="stylesheet" href="/custom/css/non-banking-services/common.css">
+<link rel="stylesheet" href="/custom/css/non-banking-services/select2.css">
 @endsection
 
 
 @section('dash_nav')
 <style>
 	table , table * {
-		font-size : 10px !important;
+		font-size : 14px !important;
 	}
     .max-column-th-class {
         width: 30% !important;

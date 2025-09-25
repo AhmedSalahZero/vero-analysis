@@ -727,5 +727,11 @@ public static function multipleTwoArrAtSameIndex(array $firstArr , array $second
 	}
 	return $result ; 
 }
-
+public static function repeatThrough(float $value , array $keys):array{
+		$result = [];
+		foreach($keys as $index){
+			$result[$index] = $value ; 
+		}
+		return $result;
+	}
 }

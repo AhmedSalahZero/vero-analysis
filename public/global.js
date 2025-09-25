@@ -117,6 +117,29 @@ $(document).on('change','.only-greater-than-or-equal-zero-allowed',function(){
         $(this).val(0);
     }
 });
+
+
+$(document).on('change','.only-less-than-or-equal-zero-allowed',function(){
+    let val = number_unformat($(this).val()) ;
+
+    if(! isLessThanOrEqualZero(val) && val  != '')
+    {
+        let currentLang = $('body').data('lang');
+         Swal.fire({
+            icon: "warning",
+            title: {
+                "en":"Oops...",
+                "ar":""
+            }[currentLang],
+            text: {
+                "en":"The Value Must Be Equal Or Less Than Zero ",
+                "ar":""
+            }[currentLang],
+        })
+        $(this).val(0);
+    }
+});
+
 $(document).on('change','.only-smaller-than-or-equal-specific-number-allowed',function(){
     let val = number_unformat($(this).val());
 	let greaterThan = parseFloat($(this).attr('data-can-not-be-greater-than'));
@@ -209,6 +232,9 @@ function isGreaterThanZero(number )
 function isGreaterThanOrEqualZero(number )
 {
     return  !isNaN(parseFloat(number)) && isFinite(number) && number >= 0 && number!='';
+}function isLessThanOrEqualZero(number )
+{
+    return  !isNaN(parseFloat(number)) && isFinite(number) && number <= 0 && number!='';
 }
 function isLessThanOrEqual(number,specificNumber )
 {

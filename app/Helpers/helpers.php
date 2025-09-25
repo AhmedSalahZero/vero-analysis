@@ -6417,20 +6417,14 @@ function getNonBankingNavigation(Company $company,User $user):array
             'title'=>__('Result <br> Dashboard'),
             'show'=>true ,
 			'link'=>route('view.results.dashboard',['company'=>$company->id , 'study'=>$studyId]),
-			// 'submenu'=>[
-			// 	[
-			// 		'title'=>__('Expenses Settings'),
-			// 		'show'=>true ,
-			// 		'link'=>'#'
-			// 	],
-			// 	[
-			// 		'title'=>__('Manpower Settings'),
-			// 		'show'=>true ,
-			// 		'link'=>'#'
-			// 	]
-			// ]
+			
 		];
-		
+		$urls['opening-balances'] = [
+            'title'=>__('Opening <br> Balances'),
+            'show'=>true ,
+			'link'=>route('view.opening.balances.for.non.banking',['company'=>$company->id , 'study'=>$studyId]),
+			
+		];
 		// $urls['settings']=[
         //     'title'=>__('General <br> Settings'),
         //     'show'=>true ,
@@ -8310,4 +8304,21 @@ function getNthKeyAfter($array, $specificKey, $n) {
     }
     
     return null; // No nth key exists
+}
+function getExpensesTypes():array
+{
+    return [
+		// 'varying_amount',
+		// 'fixed_percentage_of_sales',
+		// 'varying_percentage_of_sales',
+		// 'fixed_cost_per_unit',
+		// 'varying_cost_per_unit',
+		// 'expense_per_employee',
+		// 'intervally_repeating_amount',
+		// 'one_time_expense',
+		'fixed_monthly_repeating_amount',
+		'expense_as_percentage',
+            'cost_per_unit',
+            'one_time_expense'
+    ];
 }

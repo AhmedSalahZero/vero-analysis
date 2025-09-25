@@ -817,81 +817,7 @@ $(document).on('change', '.input-hidden-parent .copy-value-to-his-input-hidden',
 })
 
 
-$(document).on('change', '.is-leasing', function () {
-	const isTotalOthers = $('#is-leasing-1').is(':checked')
-	const parent = $(this).closest('.form-group.row')
-	if (isTotalOthers) {
-		parent.find('.total-leasing-div').css('display', 'initial').find('input,select').prop('disabled', false)
-		parent.find('.leasing-repeater-parent').css('display', 'none').find('input,select').prop('disabled', true)
-	} else {
-		parent.find('.leasing-repeater-parent').css('display', 'initial').find('input,select').prop('disabled', false)
-		parent.find('.total-leasing-div').css('display', 'none').find('input,select').prop('disabled', true)
-	}
-})
-$(function () {
-	$('.is-leasing:checked').trigger('change')
-})
 
-
-$(document).on('change', 'select.revenue-stream-type-js', function () {
-	let revenueStreams = $(this).val()
-	let studyId = $('#study-id-js').val()
-	const that = this
-	const companyId = $('body').attr('data-current-company-id')
-	const lang = $('body').attr('data-lang')
-	const url = '/' + lang + '/' + companyId + '/non-banking-financial-services/study/' + studyId + '/get-stream-category-based-on-revenue-stream'
-	if (revenueStreams.length) {
-		var streamCategoryElement = $(that).closest('tr').find('select.stream-category-class')
-		var currentSelected = $(streamCategoryElement).attr('data-current-selected-items') ? JSON.parse($(streamCategoryElement).attr('data-current-selected-items')) : null
-		$.ajax({
-			url,
-			data: {
-				revenueStreams
-			},
-			method: "post",
-			success: function (res) {
-				var options = ''
-				var selected = ''
-				if (currentSelected ? currentSelected.includes('all') : false) {
-					selected = 'selected'
-				}
-				options += `<option ${selected} value="all">All</option>`
-				
-				for (id in res.result) {
-					var title = res.result[id]
-					selected = ''
-					if (currentSelected ? currentSelected.includes(id) : null) {
-						selected = 'selected'
-					}
-					options += `<option ${selected} value="${id}">${title}</option>`
-				}
-				streamCategoryElement.empty().append(options).trigger('change')
-			}
-		})
-	} else {
-
-	}
-})
-$(document).on('change', '.current-loan-input', function () {
-	let total = 0
-	let currentLoanIndex = parseInt($(this).attr('data-column-index'))
-	$('.current-loan-input[data-column-index="' + currentLoanIndex + '"]').each(function (index, element) {
-		total += parseFloat($(element).val())
-	})
-
-	$(this).closest('table').find('[data-row-total] .repeat-to-right-input-formatted[data-column-index="' + currentLoanIndex + '"]').val(number_format(total)).trigger('change')
-
-})
-$(document).on('change', '[js-recalculate-equity-funding-value]', function () {
-	const columnIndex = parseInt($(this).attr('data-column-index'))
-	const total = $('.total-loans-hidden[data-column-index="' + columnIndex + '"]').val()
-	const equityFundingRate = $('.equity-funding-rates[data-column-index="' + columnIndex + '"]').val()
-	let equityFundingValue = equityFundingRate / 100 * total
-	let newLoanFundingValue = (1 - (equityFundingRate / 100)) * total
-	$('input.equity-funding-formatted-value-class[data-column-index="' + columnIndex + '"]').val(number_format(equityFundingValue)).trigger('change')
-	$('input.new-loans-funding-formatted-value-class[data-column-index="' + columnIndex + '"]').val(number_format(newLoanFundingValue)).trigger('change')
-})
-$('[js-recalculate-equity-funding-value]').trigger('change')
 function convertDateToDefaultDateFormat(dateStr) {
 	const [month, day, year] = dateStr.split("/") // Split the string by "/";
 	return `${year}-${month}-${day}` // Rearrange to YYYY-MM-DD
@@ -901,66 +827,7 @@ function getEndOfMonth(year, month) {
 	let date = new Date(year, month + 1, 0)
 	return date
 }
-$(document).on('change', '.recalculate-factoring', function () {
-	const index = parseInt($(this).attr('data-column-index'))
-	// const rowIndex = $('.factoring-rate[data-column-index="' + index + '"]').closest('[data-repeater-item]').index()
-	var value = $('.factoring-projection-amount[data-column-index="' + index + '"]').val()
-	
-	$('.factoring-rate[data-column-index="' + index + '"]').each(function(currentIndex,rateElement){
-		var rate = $(rateElement).val()
-		var numberOfDecimals = $(rateElement).closest('tr').find('.factoring-value[data-column-index="' + index + '"]').closest('.input-hidden-parent').find('.repeat-to-right-input-formatted').attr('data-number-of-decimals');
-		$(rateElement).closest('tr').find('.factoring-value[data-column-index="' + index + '"]').closest('.input-hidden-parent').find('.repeat-to-right-input-formatted').val(number_format(rate / 100 * value,numberOfDecimals));
-		$(rateElement).closest('tr').find('.factoring-value[data-column-index="' + index + '"]').val(rate / 100 * value).trigger('change')
-	})
-})
 
-$(function () {
-
-	$('select.revenue-stream-type-js').trigger('change')
-})
-$(document).on('change', 'select.js-update-positions-for-department', function () {
-	const companyId = $('body').attr('data-current-company-id')
-	const lang = $('body').attr('data-lang')
-	let studyId = $('#study-id-js').val()
-	const departmentId = $(this).val()
-	const currentPositionId = $(this).attr('data-current-selected')
-	const url = '/' + lang + '/' + companyId + '/non-banking-financial-services/study/' + studyId + '/get-positions-based-on-department'
-
-	$.ajax({
-		url,
-		data: {
-			departmentId,
-			currentPositionId
-		},
-		type: "get",
-		success: (res) => {
-			let positions = ''
-			for (let id in res.positions) {
-				positions += `<option value="${id}" ${id == currentPositionId ? 'selected' : ''} >${res.positions[id]}</option>`
-			}
-			$(this).closest('tr').find('select.position-class').empty().append(positions).trigger('change')
-		}
-
-	})
-})
-$('select.js-update-positions-for-department').trigger('change')
-
-$(document).on('change', '.is-percentage-from-total,.is-percentage-total-of', function () {
-	let commonClass = $(this).attr('data-common-percentage-of-class')
-	let columnIndex = $(this).attr('data-column-index')
-	
-	
-	let totalOfAmount = $('.is-percentage-total-of[data-common-percentage-of-class="' + commonClass + '"][data-column-index="' + columnIndex + '"]').val()
-	let currentRow = $(this).closest('tr')
-	let tableRows = $(this).closest('table').find('tbody tr')
-	let rowIndex = $(tableRows).index(currentRow)
-	let percentage = $('.is-percentage-from-total[data-common-percentage-of-class="' + commonClass + '"][data-column-index="' + columnIndex + '"]').eq(rowIndex).val()
-	let result = percentage / 100 * totalOfAmount
-	let resultRow = $('.is-result-total-of[data-common-percentage-of-class="' + commonClass + '"][data-column-index="' + columnIndex + '"]').eq(rowIndex);
-	let numberOfDecimals = resultRow.closest('.input-hidden-parent').find('.copy-value-to-his-input-hidden[data-column-index="' + columnIndex + '"]').attr('data-number-of-decimals')
-	resultRow.closest('.input-hidden-parent').find('.copy-value-to-his-input-hidden[data-column-index="' + columnIndex + '"]').val(number_format(result, numberOfDecimals)).val(result)
-	resultRow.val(result);
-})
 
 
 $(document).on('click', '.collapse-before-me', function () {
@@ -1006,36 +873,6 @@ $(document).on('click', '.add-btn-js', function (e) {
 	e.preventDefault()
 	$(this).toggleClass('rotate-180')
 	$(this).closest('[data-is-main-row]').nextUntil('[data-is-main-row]').toggleClass('hidden')
-})
-$(document).on('change', '.recalculate-gr', function () {
-	const columnIndex = parseInt($(this).attr('data-column-index'))
-	const previousColumnIndex = columnIndex - 1
-	const nextColumnIndex=columnIndex+1;
-	const growthRateOfCurrentYear = $('.gr-field[data-column-index="' + columnIndex + '"]').val()
-	
-	
-		
-		allElements = $('.current-growth-rate-result-value-formatted[data-column-index="' + columnIndex + '"]') ;
-		allElements.each(function (index, element) {
-			const loanAmount = $(element).closest('tr').find('.current-growth-rate-result-value[data-column-index="' + previousColumnIndex + '"]').val()
-			if(loanAmount != undefined){
-				currentAmount = (1 + (growthRateOfCurrentYear / 100)) * loanAmount
-				$(element).val(number_format(currentAmount)).trigger('change')
-			}
-		
-		})
-	$('.recalculate-gr[data-column-index="'+nextColumnIndex+'"]').trigger('change');
-})
-$(document).on('change','.current-growth-rate-result-value-formatted',function(event){
-	const columnIndex = parseInt($(this).attr('data-column-index'));
-	const nextColumnIndex=columnIndex+1;
-	if(event.originalEvent && event.originalEvent.isTrusted){
-		$('.recalculate-gr[data-column-index="'+nextColumnIndex+'"]').trigger('change');
-	}else{
-		console.log("Input was changed programmatically.");
-
-	}
-	//$('.recalculate-gr[data-column-index="'+nextColumnIndex+'"]').trigger('change');
 })
 $(document).on('change','.is-fully-funded-checkbox',function(){
 	const value = parseInt($(this).val());

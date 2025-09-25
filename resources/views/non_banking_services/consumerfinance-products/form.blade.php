@@ -5,6 +5,7 @@ use App\Models\NonBankingService\ConsumerfinanceProduct;
 @section('css')
 <x-styles.commons></x-styles.commons>
 <link rel="stylesheet" href="/custom/css/non-banking-services/common.css">
+<link rel="stylesheet" href="/custom/css/non-banking-services/select2.css">
 <link rel="stylesheet" href="/custom/css/non-banking-services/leasing-revenue-stream-breakdown.css">
 
 @endsection
@@ -230,6 +231,7 @@ use App\Models\NonBankingService\ConsumerfinanceProduct;
     </script>
 
     <script src="/custom/js/non-banking-services/common.js"></script>
+	<script src="/custom/js/non-banking-services/select2.js"></script>
     <script src="/custom/js/non-banking-services/revenue-stream-breakdown.js"></script>
     {{-- <script></script> --}}
     @endsection

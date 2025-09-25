@@ -2,6 +2,7 @@
 @section('css')
 <x-styles.commons></x-styles.commons>
 <link rel="stylesheet" href="/custom/css/non-banking-services/common.css">
+<link rel="stylesheet" href="/custom/css/non-banking-services/select2.css">
 <style>
     .ui-datepicker-calendar {
         display: none;
@@ -25,7 +26,7 @@
             <input type="hidden" name="creator_id" value="{{ \Auth::id()  }}">
             <div class="kt-portlet">
                 <div class="kt-portlet__body">
-                    <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style=""> {{ __('Study Main Information') }} </h3>
+                    <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style=""> {{ $isBusinessPlan ? __('Business Plan Main Information') :  __('Annual Plan Main Information') }} </h3>
                     <div class="row">
                         <hr style="flex:1;background-color:lightgray">
                     </div>
@@ -60,51 +61,43 @@
 
 
 
-                            <div class="col-md-4 mb-4">
+                            <div class="col-md-2 mb-4">
                                 <x-form.label :class="'label'" :id="'test-id'">{{ __('Study Start Date') }} @include('star') </x-form.label>
-                                <div class="kt-input-icon">
-                                    <div class="input-group date">
-                                        <input id="study-start-date" type="text" name="study_start_date" class="only-month-year-picker date-input form-control recalc-study-end-date study-start-date recalate-development-start-date recalate-operation-start-date" readonly value="{{ isset($model) ? $model->getStudyStartDate() : getCurrentDateForFormDate('date') }}" />
-                                        <div class="input-group-append">
-                                            <span class="input-group-text">
-                                                <i class="la la-calendar"></i>
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
+                                @include('components.calendar-month-year',[
+									'name'=>'study_start_date',
+									'value'=>$model ? $model->getStudyStartDateYearAndMonth() : now()->format('Y-m'),
+									'class'=>'recalc-study-end-date study-start-date'
+                                ])
                             </div>
 
 
 
 
-                            <div class="col-md-4 mb-4">
-                                <x-form.select :options="[
-																		1=>['title'=>1 ,'value'=>'1'],
-																		66=>['title'=>1.5 ,'value'=>'1.5'],
+                            <div class="col-md-2 mb-4">
+                                <x-form.select :options="$isBusinessPlan ? [
+																		
 																		2=>['title'=>2 ,'value'=>'2'],
 																		3=>['title'=>3 ,'value'=>'3'],
 																		4=>['title'=>4 ,'value'=>'4'],
 																		5=>['title'=>5 ,'value'=>'5'],
 																		6=>['title'=>6 ,'value'=>'6'],
 																		7=>['title'=>7 ,'value'=>'7'],
-																		{{-- 8=>['title'=>8 ,'value'=>'8'],
-																		9=>['title'=>9 ,'value'=>'9'],
-																		10=>['title'=>10,'value'=>10],
-																		11=>['title'=>11,'value'=>11],
-																		12=>['title'=>12,'value'=>12],
-																		13=>['title'=>13,'value'=>13],
-																		14=>['title'=>14,'value'=>14],
-																		15=>['title'=>15,'value'=>15],
-																		20=>['title'=>20,'value'=>20], --}}
+																	
 																	  
-																	  ]" :add-new="false" :is-required="true" :label="__('Study Duration In Years')" class="select2-select recalc-study-end-date study-duration" :all="false" name="duration_in_years" :selected-value="isset($model) ? $model->getDurationInYears() : 0"></x-form.select>
+																	  ] :
+																	  [
+																		1=>['title'=>1 ,'value'=>'1'],
+																		66=>['title'=>1.5 ,'value'=>'1.5'],
+																	  ]
+																	  
+																	   " :add-new="false" :is-required="true" :label="__('Study Duration In Years')" class="select2-select recalc-study-end-date study-duration" :all="false" name="duration_in_years" :selected-value="isset($model) ? $model->getDurationInYears() : 0"></x-form.select>
                             </div>
 
 
 
 
 
-                            <div class="col-md-4 ">
+                            <div class="col-md-2 ">
                                 <x-form.label :class="'label'" :id="'test-id'">{{ __('Study End Date') }} </x-form.label>
                                 <div class="kt-input-icon">
                                     <div class="input-group date">
@@ -121,31 +114,20 @@
 
 
 
-                            <div class="col-md-4 mb-4">
-                                <label class="form-label font-weight-bold">{{ __('Operation Will Start After (Months)')  }} @include('star')</label>
-                                <div class="kt-input-icon">
-                                    <div class="input-group">
-                                        <input id="property-will-start-after" type="number" class="form-control only-greater-than-or-equal-zero-allowed recalate-operation-start-date" name="operation_start_month" value="{{ isset($model) ? $model->getOperationStartMonth() : 0 }}">
-                                    </div>
-                                </div>
+
+
+
+
+
+ <div class="col-md-2 mb-4">
+                                <x-form.label :class="'label'" :id="'test-id'">{{ __('Operation Start Date') }} @include('star') </x-form.label>
+                                @include('components.calendar-month-year',[
+                                'name'=>'operation_start_date',
+                                'value'=>$model ? $model->getOperationStartDateYearAndMonth() : now()->format('Y-m'),
+                                ])
                             </div>
-
-
-
-                            <div class="col-md-4 mb-4">
-
-                                <x-form.label :class="'label'" :id="'test-id'">{{ __('Operation Start Date') }} </x-form.label>
-                                <div class="kt-input-icon">
-                                    <div class="input-group date">
-                                        <input id="operation-start-date" readonly type="text" name="operation_start_date" class="form-control" readonly value="{{ isset($model) ? $model->getOperationStartDate() : getCurrentDateForFormDate('date') }}" max="{{ date('m-d-Y') }}" id="kt_datepicker_3" />
-                                        <div class="input-group-append">
-                                            <span class="input-group-text">
-                                                <i class="la la-calendar"></i>
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+							
+                           
 
 
 
@@ -156,7 +138,7 @@
                             </div>
 
 
-                            <div class="col-md-4 mb-4">
+                            <div class="col-md-2 mb-4">
                                 <label class="form-label font-weight-bold">{{ __('Corporate Taxes Rate %') }} @include('star') </label>
                                 <div class="kt-input-icon">
                                     <div class="input-group">
@@ -166,7 +148,7 @@
                             </div>
 
 
-                            <div class="col-md-4 mb-4">
+                            <div class="col-md-2 mb-4">
                                 <label class="form-label font-weight-bold">{{ __('Salary Taxes Rate %') }} @include('star') </label>
                                 <div class="kt-input-icon">
                                     <div class="input-group">
@@ -175,7 +157,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-4 mb-4">
+                            <div class="col-md-2 mb-4">
                                 <label class="form-label font-weight-bold">{{ __('Social Insurance Rate %') }} @include('star') </label>
                                 <div class="kt-input-icon">
                                     <div class="input-group">
@@ -186,7 +168,7 @@
 
 
 
-                            <div class="col-md-4 mb-4">
+                            <div class="col-md-2 mb-4">
                                 <label class="form-label font-weight-bold">{{ __('Revenues Multiplier') }} @include('star') </label>
                                 <div class="kt-input-icon">
                                     <div class="input-group">
@@ -196,7 +178,7 @@
                             </div>
 
 
-                            <div class="col-md-4 mb-4">
+                            <div class="col-md-2 mb-4">
                                 <label class="form-label font-weight-bold">{{ __('EBITDA Multiplier') }} @include('star') </label>
                                 <div class="kt-input-icon">
                                     <div class="input-group">
@@ -206,7 +188,7 @@
                             </div>
 
 
-                            <div class="col-md-4 mb-4">
+                            <div class="col-md-2 mb-4">
                                 <label class="form-label font-weight-bold">{{ __('Shareholder Equity Multiplier') }} @include('star') </label>
                                 <div class="kt-input-icon">
                                     <div class="input-group">
@@ -330,10 +312,10 @@
 
                 </div>
             </div>
-			
-			
-			
-			<div class="kt-portlet">
+
+
+
+            <div class="kt-portlet">
                 <div class="kt-portlet__body">
                     <div class="row">
                         <div class="col-md-10">
@@ -349,47 +331,47 @@
                     <div class="row">
 
                         <div class="form-group row" style="flex:1;">
-                           	 <div class="col-md-3 mb-4">
-                                <label class="form-label font-weight-bold">{{ __('Microfinance Branches Count') }}  </label>
+                            <div class="col-md-3 mb-4">
+                                <label class="form-label font-weight-bold">{{ __('Microfinance Branches Count') }} </label>
                                 <div class="kt-input-icon">
                                     <div class="input-group">
                                         <input type="number" class="form-control only-greater-than-or-equal-zero-allowed" name="microfinance_branches_count" value="{{ isset($model) ? $model->getMicrofinanceBranchesCount() : 0 }}" step="1">
                                     </div>
                                 </div>
                             </div>
-							<div class="col-md-3 mb-4">
-                                <label class="form-label font-weight-bold">{{ __('Microfinance Loan Officer Count') }}  </label>
+                            <div class="col-md-3 mb-4">
+                                <label class="form-label font-weight-bold">{{ __('Microfinance Loan Officer Count') }} </label>
                                 <div class="kt-input-icon">
                                     <div class="input-group">
                                         <input type="number" class="form-control only-greater-than-or-equal-zero-allowed" name="microfinance_loan_officer_count" value="{{ isset($model) ? $model->getMicrofinanceLoanOfficerCount() : 0 }}" step="1">
                                     </div>
                                 </div>
                             </div>
-							
-							 <div class="col-md-3 mb-4">
-                                <label class="form-label font-weight-bold">{{ __('Consumer Finance Branches Count') }}  </label>
+
+                            <div class="col-md-3 mb-4">
+                                <label class="form-label font-weight-bold">{{ __('Consumer Finance Branches Count') }} </label>
                                 <div class="kt-input-icon">
                                     <div class="input-group">
                                         <input type="number" class="form-control only-greater-than-or-equal-zero-allowed" name="consumerfinance_branches_count" value="{{ isset($model) ? $model->getConsumerfinanceBranchesCount() : 0 }}" step="1">
                                     </div>
                                 </div>
                             </div>
-							<div class="col-md-3 mb-4">
-                                <label class="form-label font-weight-bold">{{ __('Consumer Finance Loan Officer Count') }}  </label>
+                            <div class="col-md-3 mb-4">
+                                <label class="form-label font-weight-bold">{{ __('Consumer Finance Loan Officer Count') }} </label>
                                 <div class="kt-input-icon">
                                     <div class="input-group">
                                         <input type="number" class="form-control only-greater-than-or-equal-zero-allowed" name="consumerfinance_loan_officer_count" value="{{ isset($model) ? $model->getConsumerfinanceLoanOfficerCount() : 0 }}" step="1">
                                     </div>
                                 </div>
                             </div>
-							
-							
+
+
                         </div>
                     </div>
 
                 </div>
             </div>
-			
+
 
 
 
@@ -434,10 +416,13 @@
 @section('js')
 <x-js.commons></x-js.commons>
 <script src="/custom/js/non-banking-services/common.js"></script>
+<script src="/custom/js/non-banking-services/select2.js"></script>
 <script>
     $(document).on('change', '.recalc-study-end-date', function(e) {
         e.preventDefault()
+        let startDate = $('.study-start-date').val() + '-01';
         const studyStartDate = new Date($('.study-start-date').val());
+        console.log(studyStartDate);
         const studyDuration = parseFloat($('.study-duration option:selected').attr('value'));
         if (studyDuration || studyDuration == '0') {
             const numberOfMonths = (studyDuration * 12) - 1
@@ -450,14 +435,7 @@
         }
 
     })
-    $(document).on('change', '.recalate-operation-start-date', function() {
-        const studyStartDate = new Date($('.study-start-date').val());
-        const propertyWillStartAfter = parseFloat($('#property-will-start-after').val())
-        if (propertyWillStartAfter || propertyWillStartAfter == '0') {
-            const developmentStartDate = convertDateToDefaultDateFormat(formatDate(new Date($('.study-start-date').val()).addMonths(propertyWillStartAfter)))
-            $('#operation-start-date').val(developmentStartDate)
-        }
-    })
+
     $(document).on('click', '.save-form', function(e) {
         e.preventDefault(); {
             let form = document.getElementById('form-id');

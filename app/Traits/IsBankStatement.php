@@ -7,7 +7,7 @@ use Schema;
 
 trait IsBankStatement
 {
-	public function handleFullDateAfterDateEdit(string $date,$debit,$credit)
+	public function handleFullDateAfterDateEdit(string $date,$debit,$credit , $additionUpdateData = [])
 	{ 
 			$date = Carbon::make($date)->format('Y-m-d');
 			$modelName = get_class($this);
@@ -25,6 +25,7 @@ trait IsBankStatement
 				'credit'=>$credit , 
 				'debit'=>$debit 
 			] ;
+			$updatedData = array_merge($updatedData , $additionUpdateData);
 			$row = DB::table($this->getTable())->where('id',$this->id)->first();
 			$isEndOfMonthRow = $row->interest_type=='end_of_month' || $row->interest_type =='end_of_month_final';
 			
