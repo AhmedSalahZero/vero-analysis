@@ -305,7 +305,9 @@ class Partner extends Model
 			'income_taxes_code'=>'Income Taxes',
 			'real_estate_taxes_code'=>'Real Estate Taxes',
 			'stamp_duty_taxes_code'=>'Stamp Duty Taxes',
-			'other_taxes_code'=>'Other Taxes'
+			'other_taxes_code'=>'Other Taxes',
+			'takaful_code'=>'Takaful Contribution Tax',
+			'tax_for_victims_code'=>'Tax for the Support of Victims Fund'
 		];;
 	}
 	public static function handleTaxesColumnsToPartnerTable(Company $company)

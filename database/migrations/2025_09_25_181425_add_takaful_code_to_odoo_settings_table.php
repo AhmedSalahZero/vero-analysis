@@ -32,8 +32,6 @@ class AddTakafulCodeToOdooSettingsTable extends Migration
      */
     public function down()
     {
-        Schema::table('odoo_settings', function (Blueprint $table) {
-            //
-        });
+       
     }
 }
