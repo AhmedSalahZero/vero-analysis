@@ -14,17 +14,17 @@ class AddStudyIdToExpensesTable extends Migration
      */
     public function up()
     {
-        Schema::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('expenses', function (Blueprint $table) {
-            $table->unsignedBigInteger('study_id')->after('model_name')->nullable();
-        });
-		$expenses = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('expenses')->where('model_name','Study')->get();
+        // Schema::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('expenses', function (Blueprint $table) {
+        //     $table->unsignedBigInteger('study_id')->after('model_name')->nullable();
+        // });
+		// $expenses = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('expenses')->where('model_name','Study')->get();
 		
-		foreach($expenses as $expense){
-				DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('expenses')->where('id',$expense->id)->update([
-					'study_id'=>$expense->model_id
-				]);
+		// foreach($expenses as $expense){
+		// 		DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('expenses')->where('id',$expense->id)->update([
+		// 			'study_id'=>$expense->model_id
+		// 		]);
 				
-		}
+		// }
 		
     }
 
