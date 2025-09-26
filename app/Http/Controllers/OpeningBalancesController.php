@@ -409,7 +409,11 @@ class OpeningBalancesController
 		//  $elementsToUpdate = array_diff($idsFromRequest, $elementsToDelete); // test 
 
 		 $elementsToUpdate = array_intersect($idsFromRequest, $oldIdsFromDatabase); // origin one
-		 $openingBalance->payableCheques()->whereIn('money_payments.id', $elementsToDelete)->delete();
+		 foreach($elementsToDelete as $elementToDeleteId){
+			 $currentMoneyPayment = MoneyPayment::find($elementToDeleteId);
+			$currentMoneyPayment->deleteRelations();
+			 $currentMoneyPayment->delete();
+		 }
  
 		 foreach ($elementsToUpdate as $id) {
 			$moneyType= MoneyPayment::PAYABLE_CHEQUE ;
