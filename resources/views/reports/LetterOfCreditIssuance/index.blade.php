@@ -590,7 +590,6 @@ $(document).on('change','select.update-remaining-class',function(){
 	const lcAmount = parent.find('.lc-amount').attr('data-value');
 	const cashCoverRate = parseFloat(parent.find('.cash-cover-rate').val() / 100) ;
 	let amount = 0;
-	console.log(parent)
 	if(paymentCurrency == mainFunctionalCurrency){
 		amount = lcAmountInMainCurrency;
 	}else{

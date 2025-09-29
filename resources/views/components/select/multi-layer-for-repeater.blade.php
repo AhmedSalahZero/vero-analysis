@@ -1,7 +1,9 @@
 @props([
 'options' => $options, // Expecting nested structure: [{value, title, subItems: [{value, title}]}]
-'name',
-'selectedOptions' => []
+'selectedMainOptions' => [],
+'selectedSubOptions' => [],
+'subItemsName',
+'mainItemsName'
 ])
 <div class="multiselect-container">
     <button type="button" class="multiselect-trigger">
@@ -10,14 +12,14 @@
     </button>
     <div class="multiselect-dropdown">
         <div class="multiselect-search">
-            <input type="text" placeholder="{{ __('Search...') }}" class="search-input">
+            {{-- <input type="text" placeholder="{{ __('Search...') }}" class="search-input"> --}}
         </div>
         <div class="multiselect-buttons">
             <button type="button" class="btn-select-all">{{ __('Select All') }}</button>
             <button type="button" class="btn-deselect-all">{{ __('Deselect All') }}</button>
         </div>
         <div class="multiselect-options">
-		@php
+		{{-- @php
 			$options = [
 				[
 					'value'=>1 ,
@@ -32,28 +34,49 @@
 							'value'=>'car',
 						]
 					]
+				],
+				[
+					'value'=>2 ,
+					'title'=>'eee',
+					'subItems'=>[
+						[
+							'title'=>'releasing2',
+							'value'=>'releasing2',
+						],
+							[
+							'title'=>'car2',
+							'value'=>'car2',
+						]
+					]
 				]
 			];
-		@endphp
+		@endphp --}}
             @foreach($options as $optionArr)
             <div class="option-group">
                 <label class="option-item main-item">
-                    <input name="{{ $name }}" 
-                           @if(in_array($optionArr['value'], $selectedOptions)) checked @endif 
+                    <input
+					
+					 name="{{ $mainItemsName }}" 
+                           @if(in_array($optionArr['value'], $selectedMainOptions)) checked @endif 
                            type="checkbox" 
                            value="{{ $optionArr['value'] }}" 
-                           class="main-checkbox">
+						   js-main-select
+						   
+						   
+						   >
                     {{ $optionArr['title'] }}
                 </label>
                 @if(isset($optionArr['subItems']) && count($optionArr['subItems']) > 0)
                 <div class="sub-items">
                     @foreach($optionArr['subItems'] as $subItem)
                     <label class="option-item sub-item">
-                        <input name="{{ $name }}" 
-                               @if(in_array($subItem['value'], $selectedOptions)) checked @endif 
+                        <input multiple name="{{ $subItemsName }}" 
+                               @if(in_array($subItem['value'], $selectedSubOptions)) checked @endif 
                                type="checkbox" 
                                value="{{ $subItem['value'] }}" 
-                               data-parent="{{ $optionArr['value'] }}">
+                               data-parent="{{ $optionArr['value'] }}"
+							   js-sub-select
+							   >
                         {{ $subItem['title'] }}
                     </label>
                     @endforeach
@@ -209,11 +232,16 @@
     }
 
     .sub-items {
-        padding-left: 20px;
+        padding-left: 10px;
     }
-
+.option-item.sub-item{
+	font-weight:normal !important;
+}
+.multiselect-trigger{
+	height:38.4px;
+}
     .sub-item {
-        padding: 8px 12px 8px 32px;
+        padding: 10px;
     }
 
     .selected-text::after {

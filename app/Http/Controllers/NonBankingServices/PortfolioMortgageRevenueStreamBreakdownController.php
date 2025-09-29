@@ -55,18 +55,20 @@ class PortfolioMortgageRevenueStreamBreakdownController extends Controller
 				$portfolioMortgageTransactionAmountsPerYears = $portfolioMortgageRevenueProjectionByCategoryArr['portfolio_mortgage_transactions_projections'];
 				$monthlyAmounts = HArr::divideArrBy($portfolioMortgageTransactionAmountsPerYears , $tenor );
 				$marginRate = $portfolioMortgageRevenueProjectionByCategoryArr['margin_rate'];
+				$portfolioPresentValueResult = []; 
 				if($study->isMonthlyStudy()){
-					(new PortfolioPresentValue())->calculateForMonthlyStudy($monthlyAmounts,$cbeLendingRatesPerMonths,$portfolioLoanFundingRatesPerMonths,$marginRate,$tenor,$dateIndexWithDate,$portfolioMortgageCategoryId,$study->id,$company->id);
+				$portfolioPresentValueResult =	(new PortfolioPresentValue())->calculateForMonthlyStudy($monthlyAmounts,$cbeLendingRatesPerMonths,$portfolioLoanFundingRatesPerMonths,$marginRate,$tenor,$dateIndexWithDate,$portfolioMortgageCategoryId,$study->id,$company->id);
 				}else{
 					$frequencyPerYear = $portfolioMortgageRevenueProjectionByCategoryArr['frequency_per_year'];
 					$startFromPerYear = $portfolioMortgageRevenueProjectionByCategoryArr['start_from'];
 				
-					(new PortfolioPresentValue())->calculate($dateIndexWithDate,$portfolioLoanFundingRatesPerMonths,$operationDurationPerYearFromIndexes,$tenor,$startFromPerYear,$frequencyPerYear,$portfolioMortgageTransactionAmountsPerYears,$cbeLendingRatesPerMonths,$marginRate,$bankMarginRatesPerMonths,$company->id,$study->id,$portfolioMortgageCategoryId);
+					$portfolioPresentValueResult = (new PortfolioPresentValue())->calculate($dateIndexWithDate,$portfolioLoanFundingRatesPerMonths,$operationDurationPerYearFromIndexes,$tenor,$startFromPerYear,$frequencyPerYear,$portfolioMortgageTransactionAmountsPerYears,$cbeLendingRatesPerMonths,$marginRate,$bankMarginRatesPerMonths,$company->id,$study->id,$portfolioMortgageCategoryId);
 					
 				}
+				DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('portfolio_mortgage_revenue_projection_by_categories')->where('id',$portfolioMortgageCategoryId)->update($portfolioPresentValueResult);
 			}
 		
-			
+			$study->storeMonthlyLoan('portfolioMortgageRevenueProjectionByCategories');
 			
 			// $study->calculatePortfolioDueCheques();
 			// $study->storeRepeaterRelations($request,$this->getRepeaterRelations(),$company);

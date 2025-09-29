@@ -439,10 +439,11 @@
 	@php
 		$index = 1 ;
 	@endphp
+	{{-- {{ dd($fixedAtEndResult['beginning'],$loanStartDate,$loanDates) }} --}}
 		@foreach($loanDates as $date )
 		<tr>
 			<td class="text-center">{{ $index }}</td>
-			<td class="text-center">{{ $datesAsIndexString[$date]  }}</td>
+			<td class="text-center">{{ \Carbon\Carbon::make($loanStartDate)->addMonths($date)->format('Y-m-d')  }}</td>
 			<td class="text-center">{{ number_format($fixedAtEndResult['beginning'][$date] ?? 0) }}</td>
 			<td class="text-center">{{ number_format($fixedAtEndResult['schedulePayment'][$date] ?? 0) }}</td>
 			<td class="text-center">{{ number_format($fixedAtEndResult['interestAmount'][$date] ?? 0) }}</td>

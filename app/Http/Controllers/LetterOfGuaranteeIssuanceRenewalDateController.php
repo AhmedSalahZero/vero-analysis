@@ -58,7 +58,6 @@ class LetterOfGuaranteeIssuanceRenewalDateController
 		
 		$lgRenewalDateHistory->handleRenewalFeesForOdoo($renewalFeesAmount,$renewalDate);
 		
-		
 		$this->storeCommissionToCreditCurrentAccountBankStatement($lgRenewalDateHistory,$letterOfGuaranteeIssuance,$company,$expiryDate,$renewalDate,$transactionName,$lgType);
 		$financialInstitutionAccountOpeningBalance = $financialInstitutionAccount->getOpeningBalanceDate();
 		if(Carbon::make($expiryDate)->greaterThanOrEqualTo(Carbon::make($financialInstitutionAccountOpeningBalance))){

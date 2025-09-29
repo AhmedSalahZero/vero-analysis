@@ -130,6 +130,7 @@ class DashboardController extends Controller
 		
 		$expenses = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('expenses')->join('expense_names','expense_names.id','=','expenses.expense_name_id')->selectRaw('expense_category,expense_names.name as name,name,relation_name,monthly_repeating_amounts,expense_as_percentages,sensitivity_expense_as_percentages,payload')->where('model_id',$study->id)->where('model_name','Study')->get()->toArray();
 		$columnPerTypes = [
+			'cost_per_unit'=>'monthly_repeating_amounts',
 			'one_time_expense'=>'payload',
 			'percentage_of_sales'=>$percentageOfSalesColumnName,
 			'fixed_monthly_repeating_amount'=>'monthly_repeating_amounts',
@@ -152,11 +153,11 @@ class DashboardController extends Controller
 			$relationName = $expense->relation_name;
 			$expenseCategory = $expense->expense_category;
 			$currentColumnName = $columnPerTypes[$relationName]??null;
-			if(is_null($currentColumnName)){
-				continue;
-			}
+			// if(is_null($currentColumnName)){
+			// 	continue;
+			// }
 			$monthlyExpenses = (array)json_decode($expense->{$currentColumnName});
-			
+			$monthlyExpenses = $relationName === 'one_time_expense' && isset($monthlyExpenses['monthly_one_time']) ? $monthlyExpenses['monthly_one_time'] : $monthlyExpenses ;
 			$currentExpenseIndexes = $isMonthlyStudy ? $monthsWithItsNumbers :  $yearWithItsIndexes  ;
 			foreach($currentExpenseIndexes as $yearOrMonthIndex => $monthIndexWithActive){
 				$currentYearInterestCost = 0 ;
@@ -177,13 +178,14 @@ class DashboardController extends Controller
 							$currentExpenseItemTotalPerYear += $monthlyExpenses[$monthIndex]??0 ;
 					}
 				}
-				$formattedExpenses[$expenseCategory][$name][$yearOrMonthIndex] = $currentExpenseItemTotalPerYear;
+				$formattedExpenses[$expenseCategory][$name][$yearOrMonthIndex] = isset($formattedExpenses[$expenseCategory][$name][$yearOrMonthIndex]) ? $formattedExpenses[$expenseCategory][$name][$yearOrMonthIndex] +  $currentExpenseItemTotalPerYear : $currentExpenseItemTotalPerYear;
 				$currentYearTotal = $currentExpenseItemTotalPerYear + $currentYearInterestCost +$currentYearManpowerTotal;
 				$formattedExpenses[$expenseCategory]['total'][$yearOrMonthIndex] = isset($formattedExpenses[$expenseCategory]['total'][$yearOrMonthIndex]) ? $formattedExpenses[$expenseCategory]['total'][$yearOrMonthIndex] + $currentYearTotal:$currentYearTotal    ; 
 			}
 		
 			
 		}
+		// dd($formattedExpenses);
 		// dd
 		$currentExpenseIndexes = $isMonthlyStudy ? $monthsWithItsNumbers :  $yearWithItsIndexes  ;
 		foreach($currentExpenseIndexes as $yearOrMonthIndex => $monthWithItsIndexes){

@@ -191,6 +191,7 @@ class IncomeStatementController extends Controller
 			'one_time_expense'=>'payload',
 			'percentage_of_sales'=>'expense_as_percentages',
 			'fixed_monthly_repeating_amount'=>'monthly_repeating_amounts',
+			'cost_per_unit'=>'monthly_repeating_amounts'
 		];
 		$salaryExpensesForCategory = [];
 	
@@ -214,10 +215,10 @@ class IncomeStatementController extends Controller
 			$tableDataFormatted[$currentOrderIndex]['main_items'][$expenseCategory]['options']['title'] =$expenseMainTitlesMapping[$expenseCategory] ;
 			
 			$tableDataFormatted[$currentOrderIndex]['sub_items'][$name]['options']['title'] =$name ;
-			$currentColumnName = $columnPerTypes[$relationName]??null;
-			if(is_null($currentColumnName)){
-				continue;
-			}
+			$currentColumnName = $columnPerTypes[$relationName];
+			// if(is_null($currentColumnName)){
+			// 	continue;
+			// }
 			$monthlyExpenses = (array)json_decode($expense->{$currentColumnName});
 			foreach($yearWithItsIndexes as $yearIndex => $monthIndexWithActive){
 				foreach($monthIndexWithActive as $monthIndex=> $isActiveIndex){
@@ -239,16 +240,20 @@ class IncomeStatementController extends Controller
 			//	$currentExpenseItemTotalPerYear = 0 ;
 				
 					// $currentExpenseItemTotalPerYear +=  ;
+					
+					$monthlyExpenses = $relationName == 'one_time_expense' && isset($monthlyExpenses['monthly_one_time']) ? ($monthlyExpenses['monthly_one_time']) : $monthlyExpenses;
 				$currentMonthlyExpenseValue = $monthlyExpenses[$monthIndex]??0 ; 
-				$formattedExpenses[$expenseCategory][$name][$monthIndex] = $currentMonthlyExpenseValue;
+				$formattedExpenses[$expenseCategory][$name][$monthIndex] = isset($formattedExpenses[$expenseCategory][$name][$monthIndex]) ? $formattedExpenses[$expenseCategory][$name][$monthIndex] + $currentMonthlyExpenseValue: $currentMonthlyExpenseValue;
 				$currentMonthTotal = $currentMonthlyExpenseValue + $currentMonthInterestCost + $currentMonthManpowerTotal;
 		
 				$formattedExpenses[$expenseCategory]['total'][$monthIndex] = isset($formattedExpenses[$expenseCategory]['total'][$monthIndex]) ? $formattedExpenses[$expenseCategory]['total'][$monthIndex] + $currentMonthTotal:$currentMonthTotal    ; 
 				
 				$currentTotalRevenueAtMonthIndex = $formattedResult['sales_revenue'][$monthIndex]??0;
-				$tableDataFormatted[$currentOrderIndex]['sub_items'][$name]['data'][$monthIndex] =$currentMonthlyExpenseValue ;
+				$tableDataFormatted[$currentOrderIndex]['sub_items'][$name]['data'][$monthIndex] = isset($tableDataFormatted[$currentOrderIndex]['sub_items'][$name]['data'][$monthIndex]) ? $tableDataFormatted[$currentOrderIndex]['sub_items'][$name]['data'][$monthIndex] + $currentMonthlyExpenseValue:$currentMonthlyExpenseValue ;
 				$currentMainItemTotalAtYearIndex = $formattedExpenses[$expenseCategory]['total'][$monthIndex];
-				$tableDataFormatted[$currentOrderIndex]['main_items'][$expenseCategory]['data'][$monthIndex] = $currentMainItemTotalAtYearIndex;
+				
+				$tableDataFormatted[$currentOrderIndex]['main_items'][$expenseCategory]['data'][$monthIndex] = isset($tableDataFormatted[$currentOrderIndex]['main_items'][$expenseCategory]['data'][$monthIndex]) ? $tableDataFormatted[$currentOrderIndex]['main_items'][$expenseCategory]['data'][$monthIndex] +  $currentMainItemTotalAtYearIndex:$currentMainItemTotalAtYearIndex;
+				
 				$tableDataFormatted[$currentOrderIndex]['main_items']['% Of Revenue']['data'][$monthIndex] = $currentTotalRevenueAtMonthIndex ? $currentMainItemTotalAtYearIndex / $currentTotalRevenueAtMonthIndex *100 : 0 ;
 				
 				
@@ -312,7 +317,6 @@ class IncomeStatementController extends Controller
 		}
 		$studyMonthsForViews=$study->getStudyDurationPerYearFromIndexesForView();
 		$tableDataFormatted = HArr::addTotalMonthsPerYear($tableDataFormatted,$dateIndexWithDate,$financialYearsEndMonths);
-
 		ksort($tableDataFormatted);
         return view('non_banking_services.income-statement.forecast', [
 			'company'=>$company,

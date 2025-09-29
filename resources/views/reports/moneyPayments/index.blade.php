@@ -488,7 +488,6 @@ td{
         if (type == 'single') {
             $('#current-single-item' + moneyType).val($(this).attr('data-id'));
             $('#current-currency' + moneyType).val($(this).attr('data-currency'));
-			console.log($(this).attr('data-due-date'))
 			$('input[name="actual_payment_date"]').val($(this).attr('data-due-date'));
         }else{
 			$('input[name="actual_payment_date"]').val("{{ now()->format('m/d/Y') }}");

@@ -1032,25 +1032,6 @@ use App\Models\FinancialPlanning\Expense;
 
 </script>
 <script>
-    const handlePaymentTermModal = function() {
-        const parentTermsType = $(this).closest('select').val();
-        const tableId = $(this).closest('table').attr('id');
-        if (parentTermsType == 'customize') {
-            $(this).closest('tr').find('#' + tableId + 'test-modal-id').modal('show')
-        }
-
-
-
-    };
-    $(document).on('change', 'select.payment_terms', handlePaymentTermModal)
-    $('select.js-due_in_days').change(function() {
-        // const selectValue = $(this).val();
-        // $(this).find('option').prop('selected',false)
-        // $(this).find('option[value="'+selectValue+'"]').prop('selected',true);
-        // reinitializeSelect2();
-    })
-
-    //$(document).on('click','option',handlePaymentTermModal)
     $(document).on('change', '.rate-element', function() {
         let total = 0;
         const parent = $(this).closest('tbody');

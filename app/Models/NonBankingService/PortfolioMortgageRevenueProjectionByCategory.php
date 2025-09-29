@@ -101,4 +101,17 @@ class  PortfolioMortgageRevenueProjectionByCategory extends Model
 	{
 		return $this->portfolio_mortgage_duration;
 	}
+	public function getForeignKeyName():string
+	{
+		return 'portfolio_mortgage_category_id';
+	}	
+	public function getCategoryColumnName():?string 
+	{
+		return 'portfolio_mortgage_duration';
+	}
+	// public function getCategoryColumnName():string 
+	// {
+	// 	return '';
+	// }
+	
 }

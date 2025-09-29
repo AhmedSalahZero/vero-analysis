@@ -209,10 +209,15 @@ class Study extends Model
         return $startDate;
     }
 
-    public function getOperationStartDateAsIndex(array $datesAsStringAndIndex, ?string $operationStartDateFormatted): ?int
-    {
-        return  $operationStartDateFormatted ? $datesAsStringAndIndex[$operationStartDateFormatted] : null;
-    }
+    // public function getOperationStartDateAsIndex(array $datesAsStringAndIndex, ?string $operationStartDateFormatted): ?int
+    // {
+    //     return  $operationStartDateFormatted ? $datesAsStringAndIndex[$operationStartDateFormatted] : null;
+    // }
+	public function getOperationStartDateAsIndex():string
+	{
+		
+		return $this->getIndexDateFromString($this->getOperationStartDate());
+	}
     
     public function getStudyStartDate(): ?string
     {
@@ -237,9 +242,10 @@ class Study extends Model
     {
         return  $studyStartDateAsString ? $datesAsStringAndIndex[$studyStartDateAsString] : null;
     }
-    public function getStudyEndDateAsIndex(array $datesAsStringAndIndex, ?string $studyEndDateAsString): ?int
+    public function getStudyEndDateAsIndex(): ?int
     {
-        return  $studyEndDateAsString ? $datesAsStringAndIndex[$studyEndDateAsString] : null;
+		return $this->getIndexDateFromString($this->getStudyEndDate());
+        // return  $studyEndDateAsString ? $datesAsStringAndIndex[$studyEndDateAsString] : null;
     }
     public function getStudyEndDateFormatted()
     {
@@ -620,6 +626,16 @@ class Study extends Model
     {
         return $this->hasOne(EclAndNewPortfolioFundingRate::class, 'study_id', 'id')->where('revenue_stream_type', self::REVERSE_FACTORING);
     }
+	public function getSelectedRevenueStreamTypes():array 
+	{
+		$result =[];
+		foreach(self::getRevenueStreamTypes() as $typeId => $title){
+			if($this->{$typeId}){
+				$result[] = $typeId;
+			}
+		}
+		return $result;
+	}
     public static function getRevenueStreamTypes():array
     {
         return [
@@ -811,9 +827,13 @@ class Study extends Model
             foreach ($operationDurationPerYear as $yearIndex => $yearMonthIndexes) {
 
                 foreach ($yearMonthIndexes as $monthIndex => $monthlyZeroOrOne) {
+					
+					$yearIndexWithAmount = is_string($yearIndexWithAmount) ? (array)json_decode($yearIndexWithAmount) : $yearIndexWithAmount;
                     $loanAtCurrentYear = $this->isMonthlyStudy() ? ($yearIndexWithAmount[$monthIndex]??0) : ($yearIndexWithAmount[$yearIndex]??0);
+					
                     $currentMonthlyLoanAmount = $this->isMonthlyStudy() ? $loanAtCurrentYear :  ($loanAtCurrentYear / count($yearMonthIndexes))  ;
-				
+					$currentMonthlyLoanAmount = $relationName === 'portfolioMortgageRevenueProjectionByCategories' ? ($yearIndexWithAmount[$monthIndex]??0) : $currentMonthlyLoanAmount;
+					
                     $monthlyLoanAmounts[$leasingRevenueStreamBreakdownId][$monthIndex] = $currentMonthlyLoanAmount ;
                     $contractCounts[$leasingRevenueStreamBreakdownId][$monthIndex] = (int)($currentMonthlyLoanAmount != 0)  ;
                 }
@@ -839,11 +859,12 @@ class Study extends Model
 			if($categoryColumnName){
 					$newRevenueContractRows['category_id'] = $model->{$categoryColumnName};
 			}
+			// dd($newRevenueContractRows);
 			RevenueContract::create($newRevenueContractRows);
 			
         }
     }
-    public function storeFixedLoans(string $revenueStreamType, string $relationName, $eclRelationName, bool $isSensitivity = false, array $pricingPerMonths = null):void
+    public function storeFixedLoans(string $revenueStreamType, string $relationName   , $newPortfolioFundingRateRelationName,$eclRelationName, bool $isSensitivity = false, array $pricingPerMonths = null):void
     {
         
         $loanSchedulePaymentTableName = $isSensitivity ? 'sensitivity_loan_schedule_payments' : 'loan_schedule_payments';
@@ -859,8 +880,11 @@ class Study extends Model
 
         $leasingRevenueStreams =$study->{$relationName};
         $generalAndReserveAssumption = $study->generalAndReserveAssumption;
-        $leasingEclAndNewPortfolioFundingRate = $study->{$eclRelationName};
-        
+        $leasingEclFundingRate = $study->{$eclRelationName};
+        $leasingNewPortfolioFundingRate = $study->{$newPortfolioFundingRateRelationName};
+        $totalPortfolioEndBalance = [];
+		// $operationStartDasIndex = $study->getOperationStartDateAsIndex()
+		$operationDates = range($study->getOperationStartDateAsIndex() , $study->getStudyEndDateAsIndex());
         /**
          * @var EclAndNewPortfolioFundingRate $leasingEclAndNewPortfolioFundingRate
          * @var GeneralAndReserveAssumption $generalAndReserveAssumption
@@ -877,7 +901,7 @@ class Study extends Model
                 $baseRatesPerMonths[Carbon::make($dateIndexWithDate[$monthIndex])->format('Y-m-d')] = $baseRates[$yearOrMonthIndex];
             }
         }
-        DB::connection('non_banking_service')->table($loanSchedulePaymentTableName)->where('revenue_stream_type', $revenueStreamType)->where('study_id', $studyId)->delete();
+        DB::connection('non_banking_service')->table($loanSchedulePaymentTableName)->where('revenue_stream_type', )->where('study_id', $studyId)->delete();
         $baseRatesMapping = HArr::getFirstOfYear($baseRatesPerMonths);
         $bankLendingMarginRates=$generalAndReserveAssumption->getBankLendingMarginRates();
 
@@ -885,7 +909,7 @@ class Study extends Model
         
         $baseRatesMapping = HArr::isAllValuesEqual($baseRatesMapping, $bankLendingMarginRates);
         $totalMonthlyLoanAmounts = [];
-    
+		// $loanEndBalances =[];
         
         foreach ($operationDurationPerYear as $yearIndex => $yearMonthIndexes) {
             foreach ($yearMonthIndexes as $monthIndex => $monthlyZeroOrOne) {
@@ -939,7 +963,9 @@ class Study extends Model
                         $currentPortfolioLoans['revenue_stream_id'] =$leasingRevenueStreamBreakdownId ;
                         $currentPortfolioLoans['revenue_stream_category_id'] =$revenueCategoryId ;
                         $currentPortfolioLoans['portfolio_loan_type'] ='portfolio';
-                        $currentPortfolioLoans['revenue_stream_type'] =$revenueStreamType;
+                        $currentPortfolioLoans['revenue_stream_type'] = $revenueStreamType;
+						$totalPortfolioEndBalance = HArr::sumAtDates([$totalPortfolioEndBalance,$currentPortfolioLoans['endBalance']??[]],$operationDates);
+					
                         $portfolioLoans[]=collect($currentPortfolioLoans)->map(function ($item, $keyName) {
                             if (is_array($item)) {
                                 return json_encode($item);
@@ -948,8 +974,8 @@ class Study extends Model
                         })->toArray();
                     }
                 
-                    if ($leasingEclAndNewPortfolioFundingRate && count($totalMonthlyLoanAmounts)) {
-                        $newLoanFundingRate = $leasingEclAndNewPortfolioFundingRate->getNewLoansFundingRatesAtYearOrMonthIndex($yearOrMonthIndex);
+                    if ($leasingNewPortfolioFundingRate && count($totalMonthlyLoanAmounts)) {
+						$newLoanFundingRate = $leasingNewPortfolioFundingRate->getNewLoansFundingRatesAtYearOrMonthIndex($yearOrMonthIndex);
                             
                         $currentMarginRate = $generalAndReserveAssumption->getBankLendingMarginRatesAtYearOrMonthIndex($yearOrMonthIndex);
                         $currentMonthlyLoanAmount = $totalMonthlyLoanAmounts[$monthIndex];
@@ -966,6 +992,7 @@ class Study extends Model
                             $currentPortfolioLoans = $finalResult;
                 
                         }
+						// $loanEndBalances[$leasingRevenueStreamBreakdownId][$monthIndex] = $currentPortfolioLoans['endBalance']??[];
                         if (count($currentPortfolioLoans)) {
                             $currentPortfolioLoans['study_id'] = $studyId ;
                             $currentPortfolioLoans['company_id'] = $companyId ;
@@ -973,7 +1000,7 @@ class Study extends Model
                             $currentPortfolioLoans['revenue_stream_id'] =$leasingRevenueStreamBreakdownId ;
                             $currentPortfolioLoans['revenue_stream_category_id'] =$revenueCategoryId ;
                             $currentPortfolioLoans['portfolio_loan_type'] ='bank_portfolio';
-                            $currentPortfolioLoans['revenue_stream_type'] =$revenueStreamType;
+                            $currentPortfolioLoans['revenue_stream_type'] = $revenueStreamType;
                             $portfolioLoans[]=collect($currentPortfolioLoans)->map(function ($item, $keyName) {
                                 if (is_array($item)) {
                                     return json_encode($item);
@@ -1001,8 +1028,25 @@ class Study extends Model
             }
             
         }
-    
         DB::connection('non_banking_service')->table($loanSchedulePaymentTableName)->insert($portfolioLoans);
+		$eclRates = $leasingEclFundingRate->ecl_rates;
+		if(is_null($eclRates)){
+			dd('ecl is null');
+		}
+		$monthlyEclRates = $study->isMonthlyStudy() ? $eclRates : $this->convertYearToMonthIndexes($eclRates) ;
+		// $loansEnd
+		$monthlyEclValues = [];
+		foreach($monthlyEclRates as $dateAsIndex => $eclRate){
+			$currentMonthPortfolioEndBalance  = $totalPortfolioEndBalance[$dateAsIndex]??0;
+			$eclRate = $eclRate / 100 ;
+			$monthlyEclValues[$dateAsIndex] =  $currentMonthPortfolioEndBalance * $eclRate;
+		}
+		$accumulatedEclValues = HArr::accumulateArray($monthlyEclValues);
+		DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('ecl_and_new_portfolio_funding_rates')->where('study_id',$this->id)->where('revenue_stream_type',$revenueStreamType)->update([
+			'monthly_ecl_values'=>json_encode($monthlyEclValues),
+			'accumulated_ecl_values'=>json_encode($accumulatedEclValues),
+		]); 
+		
     }
    
     protected function sumBaseRateWithMarginRate(array $baseRates, float $marginRate)
@@ -1014,12 +1058,15 @@ class Study extends Model
         }
         return $result;
     }
-    public function storeVariableLoans(string $revenueStreamType, string $relationName, $eclRelationName, bool $isSensitivity = false):void
+    public function storeVariableLoans(string $revenueStreamType, string $relationName , string $NewPortfolioFundingRateRelationName, $eclRelationName, bool $isSensitivity = false):void
     {
         $loanSchedulePaymentTableName = $isSensitivity ? 'sensitivity_loan_schedule_payments' : 'loan_schedule_payments';
         
         $calculateVariableLoanAtEndService = new CalculateVariableLoanAtEndService ;
         
+		     $totalMonthlyLoanAmounts = [];
+		       $totalPortfolioEndBalance = [];
+			   
         $portfolioLoans = [];
         $studyId  = $this->id ;
         $companyId = $this->company->id ;
@@ -1027,9 +1074,10 @@ class Study extends Model
         $operationDurationPerYear=$study->getOperationDurationPerYearFromIndexes();
         $loans = $this->{$relationName}->toArray() ;
         $generalAndReserveAssumption = $study->generalAndReserveAssumption;
-        $leasingEclAndNewPortfolioFundingRate = $study->{$eclRelationName};
+        $leasingNewPortfolioFundingRate = $study->{$NewPortfolioFundingRateRelationName};
+        $leasingEcl = $study->{$eclRelationName};
+	
         /**
-         * @var EclAndNewPortfolioFundingRate $leasingEclAndNewPortfolioFundingRate
          * @var GeneralAndReserveAssumption $generalAndReserveAssumption
          */
         $dateIndexWithDate = app('dateIndexWithDate');
@@ -1047,7 +1095,7 @@ class Study extends Model
             }
         }
         // $dateWithDateIndex = app('dateWithDateIndex');
-        DB::connection('non_banking_service')->table($loanSchedulePaymentTableName)->where('revenue_stream_type', $revenueStreamType)->where('study_id', $studyId)->delete();
+        DB::connection('non_banking_service')->table($loanSchedulePaymentTableName)->where('revenue_stream_type', )->where('study_id', $studyId)->delete();
         $baseRatesMapping = $baseRatesPerMonths;
         // $baseRatesMapping = HArr::getFirstOfYear($baseRatesPerMonths);
         $bankLendingMarginRates=$generalAndReserveAssumption->getBankLendingMarginRates();
@@ -1055,7 +1103,10 @@ class Study extends Model
         
         
         $baseRatesMapping = HArr::isAllValuesEqual($baseRatesMapping, $bankLendingMarginRates);
-        $totalMonthlyLoanAmounts = [];
+   
+		// $operationStartDasIndex = $study->getOperationStartDateAsIndex()
+		$operationDates = range($study->getOperationStartDateAsIndex() , $study->getStudyEndDateAsIndex());
+		
         // $time = 0 ;
         //	$isAtEnd = true ;
         //		$start = microtime(true);
@@ -1124,6 +1175,7 @@ class Study extends Model
                         $currentPortfolioLoans['revenue_stream_category_id'] =$revenueCategoryId ;
                         $currentPortfolioLoans['portfolio_loan_type'] ='portfolio';
                         $currentPortfolioLoans['revenue_stream_type'] =$revenueStreamType;
+						$totalPortfolioEndBalance = HArr::sumAtDates([$totalPortfolioEndBalance,$currentPortfolioLoans['endBalance']??[]],$operationDates);
                         $portfolioLoans[]=collect($currentPortfolioLoans)->map(function ($item, $keyName) {
                             if (is_array($item)) {
                                 return json_encode($item);
@@ -1131,8 +1183,8 @@ class Study extends Model
                             return $item;
                         })->toArray();
                     }
-                    if ($leasingEclAndNewPortfolioFundingRate && count($totalMonthlyLoanAmounts)) {
-                        $newLoanFundingRate = $leasingEclAndNewPortfolioFundingRate->getNewLoansFundingRatesAtYearOrMonthIndex($yearOrMonthIndex);
+                    if ($leasingNewPortfolioFundingRate && count($totalMonthlyLoanAmounts)) {
+                        $newLoanFundingRate = $leasingNewPortfolioFundingRate->getNewLoansFundingRatesAtYearOrMonthIndex($yearOrMonthIndex);
 
                         $currentMarginRate = $generalAndReserveAssumption->getBankLendingMarginRatesAtYearOrMonthIndex($yearOrMonthIndex);
                     
@@ -1153,7 +1205,7 @@ class Study extends Model
                             $currentPortfolioLoans['revenue_stream_id'] =$revenueStreamBreakdownId ;
                             $currentPortfolioLoans['revenue_stream_category_id'] =$revenueCategoryId ;
                             $currentPortfolioLoans['portfolio_loan_type'] ='bank_portfolio';
-                            $currentPortfolioLoans['revenue_stream_type'] =$revenueStreamType;
+                            $currentPortfolioLoans['revenue_stream_type'] = $revenueStreamType;
                             $portfolioLoans[]=collect($currentPortfolioLoans)->map(function ($item, $keyName) {
                                 if (is_array($item)) {
                                     return json_encode($item);
@@ -1183,6 +1235,27 @@ class Study extends Model
         }
         
         DB::connection('non_banking_service')->table($loanSchedulePaymentTableName)->insert($portfolioLoans);
+		
+		$eclRates = $leasingEcl->ecl_rates;
+		$eclTableName = ($leasingEcl)->getTable();
+		
+		
+			$monthlyEclRates = $study->isMonthlyStudy() ? $eclRates : $this->convertYearToMonthIndexes($eclRates) ;
+		// $loansEnd
+		$monthlyEclValues = [];
+		foreach($monthlyEclRates as $dateAsIndex => $eclRate){
+			$currentMonthPortfolioEndBalance  = $totalPortfolioEndBalance[$dateAsIndex]??0;
+		
+			$eclRate = $eclRate / 100 ;
+			$monthlyEclValues[$dateAsIndex] =  $currentMonthPortfolioEndBalance * $eclRate;
+		}
+		$accumulatedEclValues = HArr::accumulateArray($monthlyEclValues);
+
+		DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table($eclTableName)->where('study_id',$this->id)->update([
+			'monthly_ecl_values'=>json_encode($monthlyEclValues),
+			'accumulated_ecl_values'=>json_encode($accumulatedEclValues),
+		]); 
+		
     }
     /**
      * * هنا مفرودة لغايه السنوات الاضافيه
@@ -1259,7 +1332,7 @@ class Study extends Model
         $this->generateRelationDynamically('percentage_of_sales', 'Expense')->each(function ($expense) use ($isSensitivity) {
             $expenseAsPercentageEquation = new ExpenseAsPercentageEquation;
             $percentageOf = $expense->getPercentageOf();
-            $revenueStreamTypes = $expense->getRevenueStreamTypes();
+			            $revenueStreamTypes = $expense->getRevenueStreamTypes();
             $streamCategoryIds = $expense->getStreamCategoryIds();
             $startDateAsIndex = $expense->getStartDateAsIndex();
             $monthlyPercentage = $expense->getMonthlyPercentage();
@@ -1767,9 +1840,13 @@ class Study extends Model
 	{
 		
 	}
+	public function getSelectedRevenuesCategories(){
+		
+	}
 	// $revenueStreams for example // ['has_leasing','has_direct_factoring']
 	public function getSelectedRevenueStreamWithCategories(array $revenueStreams):array 
 	{
+		$mainTitleMapping = $this->getRevenueStreamTypes();
 		$relationName = [
 			'has_leasing'=>'leasingRevenueStreamBreakdown',
 			'has_direct_factoring'=>'directFactoringBreakdowns',
@@ -1780,32 +1857,61 @@ class Study extends Model
 		$result = [];
 		foreach($revenueStreams as $currentRevenueType){
 			$currentRelationName = $relationName[$currentRevenueType];
+			$currentTitle = $mainTitleMapping[$currentRevenueType];
+			$result[$currentRevenueType] = [
+				'title'=>$currentTitle ,
+				'value'=>$currentRevenueType
+			];
 			$relation = $this->{$currentRelationName} ;
-			$titleColumnName = 'category';
-			$idColumnName = 'category';
+			// $titleColumnName = 'category';
+			// $idColumnName = 'category';
 			$idAndTitleColumnNames = [
 				'leasingRevenueStreamBreakdown'=>[
 					'id'=>'category.id',
 					'title'=>'category.title'
 				],
+				'directFactoringBreakdowns'=>[
+					'id'=>'category',
+					'title'=>'category'
+				],
+				'reverseFactoringBreakdowns'=>[
+					'id'=>'category',
+					'title'=>'category'
+				],
+				'ijaraMortgageBreakdowns'=>[
+					'id'=>'installment_interval',
+					'title'=>'installment_interval'
+				],
 				'portfolioMortgageRevenueProjectionByCategories'=>[
 					'id'=>'portfolio_mortgage_duration',
 					'title'=>'portfolio_mortgage_duration'
-				]
-			][$currentRelationName]??[];
-			$id = $idAndTitleColumnNames['id']??$idColumnName;
-			$title = $idAndTitleColumnNames['title']??$titleColumnName;
+				],
+				
+			][$currentRelationName];
+			
+			$id = $idAndTitleColumnNames['id']??null;
+			
+			$title = $idAndTitleColumnNames['title'];
+					
 			$currentRevenues =  $relation->pluck($title,$id)->toArray();
 			foreach($currentRevenues as $id => $title){
+				$title  = camelizeWithSpace($title);
+				$originalId = $id;
+			// 	if($currentRevenueType == 'has_ijara_mortgage'){
+			// 		$id = $title . '-'.$originalId;
+			// 		$title = $title . '-'.$originalId;
+			// 			// dd($idAndTitleColumnNames,$currentRelationName,$title,$id);
+			// }
+			
 				if(is_numeric($title)){
 					$dayOrYears = $currentRevenueType == 'has_portfolio_mortgage' ? __('Years') :  __('Days') ;
 					$title = $title . ' ' . $dayOrYears;
 				}
-				$result[$id] = $title;
+				$result[$currentRevenueType]['subItems'][] = ['title'=>$title , 'value'=>$id];
 			}
 			
 		}
-		dd($result);
+		return $result;
 	}
 	
 	

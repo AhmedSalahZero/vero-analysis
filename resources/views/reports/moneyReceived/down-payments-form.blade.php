@@ -924,7 +924,6 @@ use App\Models\Partner;
                 for (var customerName in res.invoices) {
                     var customerId = res.invoices[customerName];
                     var selected = currentSelected == customerId ? 'selected' : '';
-                    console.log(currentSelected, customerId)
                     customersOptions += ` <option value="${customerId}" ${selected}>${customerName}</option> `
                 }
                 $('select#customer_name').selectpicker('destroy');

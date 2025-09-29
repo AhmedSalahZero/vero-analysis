@@ -20,18 +20,7 @@
 .kt-header-menu .kt-menu__nav > .kt-menu__item > .kt-menu__link .kt-menu__link-text{
 	/*font-size:0.8rem !important;*/
 }
-.min-width-300{
-	width : 300px !important; 
-}
-.min-width-hover-300{
-	width : 300px !important; 
-	transition:all 1s !important ;
-	font-size:10px !important;
-}
 
-.min-width-hover-300:hover{
-	width : 600px !important; 
-}
 .overflow-scroll{
 	overflow:scroll !important;
 }
@@ -205,7 +194,6 @@
         input,
         select,
         .filter-option-inner-inner {
-            font-weight: 600 !important;
             color: black !important;
         }
 
@@ -2566,61 +2554,8 @@ function roundToTwo(num) {
 
 
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Function to initialize a single multiselect instance
-        function initializeMultiselect(container) {
-            const trigger = container.querySelector('.multiselect-trigger');
-            const dropdown = container.querySelector('.multiselect-dropdown');
-            const searchInput = container.querySelector('.search-input');
-            const optionsContainer = container.querySelector('.multiselect-options');
-            const selectedText = container.querySelector('.selected-text');
 
-            // Toggle dropdown
-            trigger.addEventListener('click', function(e) {
-                e.stopPropagation();
-                dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
-            });
-
-            // Close on outside click
-            document.addEventListener('click', function(e) {
-                if (!container.contains(e.target)) {
-                    dropdown.style.display = 'none';
-                }
-            });
-
-            // Function to bind radio button events
-            function bindRadioEvents(radio) {
-                radio.addEventListener('change', updateSelected);
-            }
-
-            // Update selected value and display
-            function updateSelected() {
-                const selectedRadio = optionsContainer.querySelector('input[type="radio"]:checked');
-                selectedText.textContent = selectedRadio ? 
-                    optionsContainer.querySelector(`label input[value="${selectedRadio.value}"]`).parentElement.textContent.trim() : 
-                    'Select';
-            }
-
-            // Bind initial radio button events
-            optionsContainer.querySelectorAll('.option-item input[type="radio"]').forEach(bindRadioEvents);
-
-            // Search filter
-            searchInput.addEventListener('input', function() {
-                const query = this.value.toLowerCase();
-                optionsContainer.querySelectorAll('.option-item').forEach(item => {
-                    const label = item.textContent.toLowerCase();
-                    item.style.display = label.includes(query) ? 'flex' : 'none';
-                });
-            });
-
-            updateSelected(); // Initial call
-        }
-
-        // Initialize existing multiselects
-        document.querySelectorAll('.multiselect-container').forEach(initializeMultiselect);
-    });
-</script>
+<?php echo $__env->yieldPushContent('js_last'); ?>
 </body>
 <?php echo e(session()->forget('fail')); ?>
 

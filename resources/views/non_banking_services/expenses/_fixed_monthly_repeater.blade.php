@@ -38,7 +38,7 @@ common-parent
     </div>
 
 
-    <div class=" pr-2 pl-2">
+    <div class=" pr-2 pl-2 ">
         <label class="form-label ">{{ __('Start Date') }} </label>
 
         @include('components.calendar-month-year',[

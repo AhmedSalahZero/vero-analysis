@@ -69,6 +69,7 @@ use App\Models\NonBankingService\Study;
 
                             @php
                             @endphp
+					
                             @foreach($tableDataFormatted as $tableIndex => $currentTableData)
                             @php
                             $subItems = $currentTableData['sub_items']??[] ;

@@ -1,1 +1,1 @@
-<input required   name="{{ $name }}" type="text" class="form-control {{ $class??'' }}" value="{{ $value }}" >
+<input    name="{{ $name }}" type="month" class="form-control {{ $class??'' }}" value="{{ $value }}" >

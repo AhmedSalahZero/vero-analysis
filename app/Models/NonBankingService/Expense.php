@@ -2,11 +2,15 @@
 
 namespace App\Models\NonBankingService;
 
+use App\Helpers\HStr;
+
 use App\Models\Company;
 use App\Models\Traits\Scopes\BelongsToCompany;
 use App\Models\Traits\Scopes\NonBankingServices\BelongsToStudy;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Facades\DB;
 
 class Expense extends Model
 {
@@ -20,13 +24,13 @@ class Expense extends Model
         'custom_collection_policy'=>'array',
         'revenue_stream_type'=>'array',
         'stream_category_ids'=>'array',
-		'total_vat'=>'array',
-		'total_after_vat'=>'array',
-		'payment_amounts'=>'array',
-		'collection_statements'=>'array',
-		'net_payments_after_withhold'=>'array',
-		'withhold_payments'=>'array',
-		'withhold_amounts'=>'array',
+        'total_vat'=>'array',
+        'total_after_vat'=>'array',
+        'payment_amounts'=>'array',
+        'collection_statements'=>'array',
+        'net_payments_after_withhold'=>'array',
+        'withhold_payments'=>'array',
+        'withhold_amounts'=>'array',
     ];
         
     public function company()
@@ -59,7 +63,7 @@ class Expense extends Model
     {
         return app('dateIndexWithDate')[$this->start_date];
     }
-	public function getStartDateYearAndMonth()
+    public function getStartDateYearAndMonth()
     {
         $studyStartDate = $this->getStartDateFormatted() ;
         if (is_null($studyStartDate)) {
@@ -75,7 +79,7 @@ class Expense extends Model
     {
         return $this->end_date ? app('dateIndexWithDate')[$this->end_date] : null;
     }
-	public function getEndDateYearAndMonth()
+    public function getEndDateYearAndMonth()
     {
         $date = $this->getEndDateFormatted() ;
         if (is_null($date)) {
@@ -202,9 +206,55 @@ class Expense extends Model
         return $this->position ? $this->position->id : 0 ;
     }
 
-	public function getAmortizationMonths():int 
-	{
-		return $this->amortization_months?:12;
-	}
+    public function getAmortizationMonths():int
+    {
+        return $this->amortization_months?:12;
+    }
+    public static function getExpensePerContract(array $revenueStreamType, array $categoryIds, int $studyId, string $columnName):array
+    {
+        $selectedRevenueStreamTypes = [];
+        $hasLeasing = in_array('has_leasing', $revenueStreamType) ;
+        $hasIjara = in_array('has_ijara_mortgage', $revenueStreamType) ;
+        $hasReverseFactoring = in_array('has_reverse_factoring', $revenueStreamType) ;
+        $hasPortfolioMortgage = in_array('has_portfolio_mortgage', $revenueStreamType) ;
+        $hasDirectFactoring = in_array('has_direct_factoring', $revenueStreamType) ;
+        
+        $revenueStreamTypesWheres = [];
+        if ($hasLeasing) {
+            $selectedRevenueStreamTypes[] = Study::LEASING;
+            $revenueStreamTypesWheres[] = ['leasing_breakdown_id','>',0];
+        }
+        if ($hasIjara) {
+            $selectedRevenueStreamTypes[] = Study::IJARA;
+            $revenueStreamTypesWheres[] = ['ijara_breakdown_id','>',0];
+        }
+        if ($hasReverseFactoring) {
+            $selectedRevenueStreamTypes[] = Study::REVERSE_FACTORING;
+            $revenueStreamTypesWheres[] = ['reverse_breakdown_id','>',0];
+        }
+        if ($hasPortfolioMortgage) {
+            $selectedRevenueStreamTypes[] = Study::PORTFOLIO_MORTGAGE;
+            $revenueStreamTypesWheres[] = ['portfolio_mortgage_category_id','>',0];
+        }
+        if ($hasDirectFactoring) {
+            $selectedRevenueStreamTypes[] = Study::DIRECT_FACTORING;
+            $revenueStreamTypesWheres[] = ['direct_breakdown_id','>',0];
+        }
+        $revenueStreamTypesWheres = HStr::generateWhereFromMultipleArrs($revenueStreamTypesWheres, 'OR');
+                
+        $resultArr = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('revenue_contracts')
+            ->where('study_id', $studyId)
+            ->when(count($categoryIds), function (Builder $builder) use ($categoryIds) {
+                $builder->whereIn('category_id', $categoryIds);
+            })
+            ->whereRaw($revenueStreamTypesWheres)->pluck($columnName)->map(function ($item) {
+                return (array)json_decode($item);
+            })->toArray();
+        return [
+            'result'=>$resultArr ,
+            'revenueStreamTypesWheres'=>$revenueStreamTypesWheres,
+            'selectedRevenueStreamTypes'=>$selectedRevenueStreamTypes
+        ];
+    }
 	
 }

@@ -2,7 +2,6 @@
                 $(document).on('change', '[change-financial-instutition-js]', function() {
                     const parent = $(this).closest('.kt-portlet__body');
                     const accountType = $('.js-update-account-id-based-on-account-type').val()
-					console.log(accountType);
                     const accountId = $('[js-cd-or-td-account-number]').val();
 					if(!accountId){
 						return ;

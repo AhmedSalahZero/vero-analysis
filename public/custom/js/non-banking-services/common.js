@@ -395,15 +395,17 @@ $(function(){
 $(document).ready(function() {
     // Set table to readonly by default
 	var inEditMode = parseInt($('#toggleEditBtn').attr('in-edit-mode'));
+	var repeaterId  = '#leasingRevenueStreamBreakdown_repeater';
+//	var repeaterId  = '#fixedAssets_repeater';
 	if(inEditMode){
-		$('#fixedAssets_repeater').addClass('readonly');
-		const table = $('#fixedAssets_repeater');
+		$(repeaterId).addClass('readonly');
+		const table = $(repeaterId);
 		table.find('input, select').prop('readonly', true);
 	}
     // Toggle editability
     $('#toggleEditBtn').click(function(e) {
 		e.preventDefault();
-        const table = $('#fixedAssets_repeater');
+        const table = $(repeaterId);
         const isReadonly = table.hasClass('readonly');
         
 		// console.log('save form',saveForm);
@@ -425,11 +427,8 @@ $(document).ready(function() {
 	//		$(this).attr('is-save-and-continue',0);
 			$(this).attr('can-show-funding-structure',1);
             // Disable all inputs and selects
-		
-				table.find('input, select').prop('readonly', true);
-	
-		
-				
+			table.find('input,select').prop('readonly', true);
+
         }
 		$('.is-fully-funded-checkbox:checked').trigger('change');
     });
@@ -813,7 +812,7 @@ $(document).on('change', '.hundred-minus-number1,.hundred-minus-number2', functi
 })
 
 
-const handlePaymentTermModal = function () {
+let handlePaymentTermModal = function () {
 	const parentTermsType = $(this).closest('select').val()
 	const tableId = $(this).closest('table').attr('id')
 	const parent= $(this).closest('td') ;
@@ -851,3 +850,116 @@ $(document).ready(function () {
 	})
 
 })
+
+
+
+ function initMultiselect(container) {
+        const $container = $(container);
+        const $trigger = $container.find('.multiselect-trigger');
+        const $dropdown = $container.find('.multiselect-dropdown');
+		if(!$dropdown.length){
+			return ;
+		}
+		console.log($container)
+		console.log($dropdown.length)
+        const $searchInput = $container.find('.search-input');
+        const $addOptionInput = $container.find('.add-option-input');
+        const $addOptionBtn = $container.find('.btn-add-option');
+        const $selectAllBtn = $container.find('.btn-select-all');
+        const $deselectAllBtn = $container.find('.btn-deselect-all');
+        const $optionsContainer = $container.find('.multiselect-options');
+        const $selectedText = $container.find('.selected-text');
+        const $selectedOptionsContainer = $container.find('.selected-options-container');
+        let selectedValues = [];
+
+        // Toggle dropdown
+        $trigger.on('click', function(e) {
+          e.stopPropagation();
+          $dropdown.toggle();
+        });
+
+        // Close on outside click
+        $(document).on('click', function(e) {
+          if (!$container.has(e.target).length) {
+            $dropdown.hide();
+          }
+        });
+
+        // Bind checkbox events
+        function bindCheckboxEvents($checkbox) {
+          $checkbox.on('change', updateSelected);
+        }
+
+        // Update selected values and display
+        function updateSelected() {
+          const $options = $optionsContainer.find('.option-item input[type="checkbox"]');
+          selectedValues = $options.filter(':checked').map(function() { return $(this).val(); }).get();
+          $selectedText.text(selectedValues.length ? `${selectedValues.length} selected` : 'Select options...');
+          
+          // Clear existing hidden inputs
+          $selectedOptionsContainer.empty();
+          // Add a hidden input for each selected value
+          selectedValues.forEach(function(value) {
+            $selectedOptionsContainer.append(
+              `<input type="hidden" name="selectedOptions[]" value="${value}">`
+            );
+          });
+        }
+
+        // Bind initial checkboxes
+        $optionsContainer.find('.option-item input[type="checkbox"]').each(function() {
+          bindCheckboxEvents($(this));
+        });
+
+        // Select All
+        $selectAllBtn.on('click', function(e) {
+          e.preventDefault();
+          $optionsContainer.find('.option-item input[type="checkbox"]').prop('checked', true);
+          updateSelected();
+        });
+
+        // Deselect All
+        $deselectAllBtn.on('click', function(e) {
+          e.preventDefault();
+          $optionsContainer.find('.option-item input[type="checkbox"]').prop('checked', false);
+          updateSelected();
+        });
+
+        // Search filter
+        $searchInput.on('input', function() {
+          const query = $(this).val().toLowerCase();
+          $optionsContainer.find('.option-item').each(function() {
+            const label = $(this).text().toLowerCase();
+            $(this).toggle(label.includes(query));
+          });
+        });
+
+      
+
+        
+
+        updateSelected(); // Initial call
+      }
+	  
+	  $(function(){
+		$('[data-repeater-item]').each(function(){
+			 initMultiselect($(this));
+		})
+	  })
+
+	  
+	  $(document).on('change','[js-main-select]',function(){
+		const value = $(this).val();
+		const isChecked = $(this).is(':checked');
+		if(isChecked){
+			$(this).closest('.multiselect-options').find('input[data-parent="'+value+'"]').attr('checked',true).trigger('change');
+		}else{
+			$(this).closest('.multiselect-options').find('input[data-parent="'+value+'"]').attr('checked',false).trigger('change');
+		}
+	  })
+	  // $(document).on('change','[js-sub-select]',function(){
+		// const isChecked = $(this).is(':checked');
+		// if(isChecked){
+		// 	$(this).closest('.option-group').find('[js-main-select]').attr('checked',true);
+	// 	}
+	  // })

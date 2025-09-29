@@ -497,7 +497,6 @@ td{
             , data: formData
             , type: "post"
         }).then(function(res) {
-			console.log(res)
 			if(res.status === false){
 				 Swal.fire({
                 text: res.msg

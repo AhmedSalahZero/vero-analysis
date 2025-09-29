@@ -227,7 +227,7 @@ class  DirectFactoringBreakdown extends Model
 	}	
 	public function getCategoryColumnName():string 
 	{
-		return $this->category;
+		return 'category';
 	}
 	
 }

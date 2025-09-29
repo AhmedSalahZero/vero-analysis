@@ -27,7 +27,6 @@ use App\Models\NonBankingService\LeasingCategory;
                 <div class="row">
                     <div class="col-md-10">
                         <div class="d-flex align-items-center ">
-
                             <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style=""> {{ __('Leasing Revenue Stream') }} </h3>
                         </div>
                     </div>
@@ -70,10 +69,14 @@ use App\Models\NonBankingService\LeasingCategory;
 
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-6"></div>
-                                    <div class="col-md-6 text-right">
+                                    {{-- <div class="col-md-6 ">
+                                    </div> --}}
+                                    <div class="col-md-12 text-right">
                                         <input type="submit" name="save-and-continue" class="btn active-style save-form" value="{{  __('Save & Continue') }}">
-                                    </div>
+														@include('non_banking_services.buttons.enable-editing',['inEditMode'=>true])
+									
+									</div>
+
                                 </div>
                             </form>
 

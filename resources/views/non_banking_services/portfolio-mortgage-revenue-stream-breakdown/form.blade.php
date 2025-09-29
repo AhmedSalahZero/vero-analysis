@@ -89,7 +89,7 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
                                 @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
                                 <x-tables.repeater-table-th class=" interval-class header-border-down " :title="$yearOrMonthFormatted"></x-tables.repeater-table-th>
                                 @endforeach
-								<x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Total')"></x-tables.repeater-table-th>
+								{{-- <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Total')"></x-tables.repeater-table-th> --}}
                             </x-slot>
                             <x-slot name="trs">
 								@if($isYearsStudy)
@@ -158,12 +158,12 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
                                     $columnIndex++;
                                     @endphp
                                     @endforeach
- <td>
+ {{-- <td>
 								
                                         <div class="d-flex align-items-center justify-content-center">
 											<input type="text" class="form-control expandable-percentage-input sum-total-row sum-percentage-css" disabled value="0"> <span class="ml-2 d-inline-block"> %</span>
                                         </div>
-                                    </td>
+                                    </td> --}}
                                     
 
 
@@ -207,11 +207,11 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
 
                                     @endforeach
 									
-									    <td>
+									    {{-- <td>
                                         <div class="d-flex align-items-center justify-content-center">
 											<input type="text" class="form-control expandable-amount-input sum-total-row sum-percentage-css" disabled value="0"> <span class="ml-2 d-inline-block"> </span>  
                                         </div>
-                                    </td>
+                                    </td> --}}
 
 
                                 </tr>

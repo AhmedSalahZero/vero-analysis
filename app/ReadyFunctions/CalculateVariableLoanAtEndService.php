@@ -66,7 +66,6 @@ public function __calculate($previousResult ,int $indexOfLoop,string $loanType, 
 		$dateIndexWithDate = $datesAsIndexString;
 		$installmentPaymentIntervalValue = $this->getInstallmentPaymentIntervalValue($installmentPaymentIntervalName);
 		$datesIndexAndDaysCount =HDate::calculateDaysCountAtEnd($datesAsIndexString,$installmentPaymentIntervalValue); 
-
 		 $dailyPricing = is_numeric($baseRate) ?  (($baseRate + $marginRate) /100)/360 : $baseRate  ;
 		 // base rate in array will be added with margin rate then divided by 360 
 		$stepRate = Loan::getStepRate($loanType, $stepUpRate, $stepDownRate);
@@ -132,6 +131,9 @@ public function __calculate($previousResult ,int $indexOfLoop,string $loanType, 
 		}
 		$principleAmounts = $this->calculatePrincipleAmount($installmentPaymentIntervalValue,$loanFactors,$principleFactors, $stepRate, $installmentStartDateAsIndex, $endDateAsIndex, $tenor, $installmentPaymentIntervalValue, $appliedStepValue);
 		$loanScheduleResult = $this->calculateLoanScheduleResult($installmentPaymentIntervalValue,$datesIndexAndDaysCount,$loanType, $loanAmount, $principleAmounts,$dailyPricing,$principlePaymentIntervalValue,$interestPaymentIntervalValue,$dateIndexWithDate);
+		foreach($loanScheduleResult['beginning'] as $dateAsIndex => $value){
+			$loanScheduleResult['no_securitization'][$dateAsIndex] = 1 ;
+		}
 	
 		
 		if($indexOfLoop == -1){
@@ -238,6 +240,8 @@ public function __calculate($previousResult ,int $indexOfLoop,string $loanType, 
 		return $principlesAmounts;
 	}
 
+	
+	
 	protected function calculateLoanScheduleResult(int $intervalValue , array $datesIndexAndDaysCount,string $loanType, float $loanAmount, array $principleAmount, $dailyPricing,int $principlePaymentIntervalValue,int $interestPaymentIntervalValue , array $dateIndexWithDate =[])
 	{
 		$loanScheduleResult = [];
@@ -280,6 +284,12 @@ public function __calculate($previousResult ,int $indexOfLoop,string $loanType, 
 			$firstLoop = false ;
 			$loopIndex++;
 		}
+		$dateAsIndexes = array_keys($loanScheduleResult['beginning']);
+		if(app()->bound('dateIndexWithDate')){
+			$loanScheduleResult['accured_interest']=Loan::calculateSettlementStatement($dateAsIndexes,$loanScheduleResult['interestPayment'],$loanScheduleResult['interestAmount'],0,app('dateIndexWithDate'));
+		}
+
+		
 		return $loanScheduleResult;
 	}
 	

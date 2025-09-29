@@ -222,7 +222,7 @@
                     <div class="row">
                         <div class="col-md-10">
                             <div class="d-flex align-items-center ">
-                                <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style=""> {{ __('Revenue Stream Types') }} </h3>
+                                <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style=""> {{ __('Choose Revenue Stream Types') }} </h3>
                             </div>
                         </div>
 
@@ -241,20 +241,20 @@
                                                 <label class="mr-3">
 
                                                 </label>
-                                                <label class="kt-radio kt-radio--success text-black font-size-18px font-weight-bold">
+                                                <label class="kt-radio kt-radio--success text-black font-size-14px font-weight-bold">
 
                                                     <input type="checkbox" value="1" name="has_leasing" @if(isset($model) && $model->hasLeasing()) checked @endisset
                                                     > {{ __('Leasing') }}
                                                     <span></span>
                                                 </label>
 
-                                                <label class="kt-radio kt-radio--danger text-black font-size-18px font-weight-bold">
+                                                <label class="kt-radio kt-radio--danger text-black font-size-14px font-weight-bold">
                                                     <input type="checkbox" value="1" name="has_direct_factoring" @if(isset($model) && $model->hasDirectFactoring()) checked @endisset
                                                     > {{ __('Direct Factoring') }}
                                                     <span></span>
                                                 </label>
 
-                                                <label class="kt-radio kt-radio--primary text-black font-size-18px font-weight-bold">
+                                                <label class="kt-radio kt-radio--primary text-black font-size-14px font-weight-bold">
                                                     <input type="checkbox" value="1" name="has_reverse_factoring" @if(isset($model) && $model->hasReverseFactoring()) checked @endisset
                                                     > {{ __('Reverse Factoring') }}
                                                     <span></span>
@@ -265,20 +265,20 @@
 
 
 
-                                                <label class="kt-radio kt-radio--success text-black font-size-18px font-weight-bold">
+                                                <label class="kt-radio kt-radio--success text-black font-size-14px font-weight-bold">
 
                                                     <input type="checkbox" value="1" name="has_ijara_mortgage" @if(isset($model) && $model->hasIjaraMortgage()) checked @endisset
                                                     > {{ __('Ijara Mortgage') }}
                                                     <span></span>
                                                 </label>
 
-                                                <label class="kt-radio kt-radio--danger text-black font-size-18px font-weight-bold">
+                                                <label class="kt-radio kt-radio--danger text-black font-size-14px font-weight-bold">
                                                     <input type="checkbox" value="1" name="has_portfolio_mortgage" @if(isset($model) && $model->hasPortfolioMortgage()) checked @endisset
                                                     > {{ __('Portfolio Mortgage') }}
                                                     <span></span>
                                                 </label>
 
-                                                <label class="kt-radio kt-radio--primary text-black font-size-18px font-weight-bold">
+                                                <label class="kt-radio kt-radio--primary text-black font-size-14px font-weight-bold">
                                                     <input type="checkbox" value="1" name="has_micro_finance" @if(isset($model) && $model->hasMicroFinance()) checked @endisset
                                                     > {{ __('Micro Finance') }}
                                                     <span></span>
@@ -286,14 +286,14 @@
 
 
 
-                                                <label class="kt-radio kt-radio--success text-black font-size-18px font-weight-bold">
+                                                <label class="kt-radio kt-radio--success text-black font-size-14px font-weight-bold">
 
                                                     <input type="checkbox" value="1" name="has_securitization" @if(isset($model) && $model->hasSecuritization()) checked @endisset
                                                     > {{ __('Securitization') }}
                                                     <span></span>
                                                 </label>
 
-                                                <label class="kt-radio kt-radio--danger text-black font-size-18px font-weight-bold">
+                                                <label class="kt-radio kt-radio--danger text-black font-size-14px font-weight-bold">
                                                     <input type="checkbox" value="1" name="has_consumer_finance" @if(isset($model) && $model->hasConsumerFinance()) checked @endisset
                                                     > {{ __('Consumer Finance') }}
                                                     <span></span>
@@ -422,7 +422,6 @@
         e.preventDefault()
         let startDate = $('.study-start-date').val() + '-01';
         const studyStartDate = new Date($('.study-start-date').val());
-        console.log(studyStartDate);
         const studyDuration = parseFloat($('.study-duration option:selected').attr('value'));
         if (studyDuration || studyDuration == '0') {
             const numberOfMonths = (studyDuration * 12) - 1

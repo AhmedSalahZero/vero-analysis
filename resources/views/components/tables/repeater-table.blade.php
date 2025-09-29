@@ -148,7 +148,6 @@ $canAddNewItem = true;
     var studyStartDate = $('#study-start-date').val()
     var studyEndDate = $('#study-end-date').val()
 
-
     $('#' + "{{ $repeaterId }}").repeater({
         initEmpty: initEmpty
         , isFirstItemUndeletable: !firstElementDeleteable
@@ -172,14 +171,15 @@ $canAddNewItem = true;
             , "vat_rate": 0
             , "start_date": studyStartDate
             , "end_date": studyEndDate
-            , "withhold_tax_rate": 0
+            , "withhold_tax_rate": 0,
+			"increase_rate":0
             , "contingency_rate": 0
             , "cost_annual_increase_rate": 0
 
         },
 
         show: function() {
-
+			initMultiselect();
             var appendNewOptionsToAllSelects = function(currentRepeaterItem) {
 
                 if ($('[data-modal-title]').length) {
@@ -223,11 +223,13 @@ $canAddNewItem = true;
                 dateFormat: 'yy-mm-dd'
                 , autoclose: true
             })
-
-            $('input:not(.exclude-from-trigger-change-when-repeat):not([type="hidden"])').trigger('change');
+	
+           $(this).find('input:not(.exclude-from-trigger-change-when-repeat):not([type="hidden"])').trigger('change');
+           //$('input.equity-funding-formatted-value-class').trigger('change');
             $(this).find('.dropdown-toggle').remove();
             $(this).find('select.repeater-select').selectpicker("refresh");
             appendNewOptionsToAllSelects(this)
+			initMultiselect($(this));
         },
 
         hide: function(deleteElement) {

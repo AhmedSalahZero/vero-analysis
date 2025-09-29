@@ -1,12 +1,10 @@
 <?php
 
-use App\Models\Company;
-use App\Models\Partner;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class RefreshPartners extends Migration
+class AddPortfolioMortgageCategoryIdToLoanRevenueContractsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -15,8 +13,9 @@ class RefreshPartners extends Migration
      */
     public function up()
     {
-		$companySection = Company::find(92);
-        Partner::handleTaxesColumnsToPartnerTable($companySection);
+        Schema::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('revenue_contracts', function (Blueprint $table) {
+			$table->boolean('portfolio_mortgage_category_id')->after('direct_breakdown_id')->default(false);
+        });
     }
 
     /**
@@ -26,6 +25,6 @@ class RefreshPartners extends Migration
      */
     public function down()
     {
-        //
+        
     }
 }

@@ -810,7 +810,6 @@ use App\Models\MoneyReceived ;
                     const contractCode = $(this).find('option:selected').attr('data-contract-code');
                     const contractDate = $(this).find('option:selected').attr('data-contract-date');
                     var currentSalesOrderNumber = parent.find('[data-current-sales-order-number]').attr('data-current-sales-order-number');
-                    console.log(currentSalesOrderNumber)
                     parent.find('[name*="contract_code"]').val(contractCode);
                     parent.find('[name*="contract_date"]').val(contractDate);
                     $.ajax({
@@ -830,7 +829,6 @@ use App\Models\MoneyReceived ;
                                 var purchaseOrderSelected = purchaseOrder[poOrSoNumber] == currentSalesOrderNumber ? 'selected' : '';
                                 purchaseOrdersOptions += `<option ${purchaseOrderSelected} data-date="${purchaseOrder.start_date_1}" value="${purchaseOrder[poOrSoNumber]}"> ${purchaseOrder[poOrSoNumber]}</option>`
                             }
-                            console.log(purchaseOrdersOptions, contractId)
                             parent.find('select[data-current-sales-order-number]').empty().append(purchaseOrdersOptions).trigger('change');
                         }
                     })

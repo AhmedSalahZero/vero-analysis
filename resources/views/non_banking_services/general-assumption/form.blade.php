@@ -480,7 +480,7 @@
 
 
 
-                                    <tr data-repeat-formatting-decimals="2" data-repeater-style>
+                                    {{-- <tr data-repeat-formatting-decimals="2" data-repeater-style>
                                       
 										
 											<td class="td-classes">
@@ -512,7 +512,7 @@
                                         @endforeach
 
 
-                                    </tr>
+                                    </tr> --}}
 
 
 

@@ -19,7 +19,7 @@ common-parent
         <x-form.select :label="__('Expense Name')" data-current-selected="{{ isset($subModel) ? $subModel->getExpenseNameId() : '' }}" :selectedValue="isset($subModel) ? $subModel->getExpenseNameId() : ''" :options="[]" :add-new="false" class="select2-select repeater-select expense_name_id " :all="false" name="expense_name_id"></x-form.select>
 
     </div>
-	
+
 
 
     <div class="max-w-8 pr-2 pl-2">
@@ -30,19 +30,18 @@ common-parent
             </div>
         </div>
     </div>
-	<div class="max-w-10 pr-2 pl-4">
-	                                        <x-form.select :label="__('Percentage Of')"  :selectedValue="isset($subModel) ? $subModel->getPercentageOf() : 'service'" :options="getExpensesPercentageOfForSelect2()" :multiple="false" :add-new="false" class="select2-select repeater-select percentage-of-stream-type-js  " :all="false" name="percentage_of"></x-form.select>
+    <div class="max-w-10 pr-2 pl-4">
+        <x-form.select :label="__('Percentage Of')" :selectedValue="isset($subModel) ? $subModel->getPercentageOf() : 'service'" :options="getExpensesPercentageOfForSelect2()" :multiple="false" :add-new="false" class="select2-select repeater-select percentage-of-stream-type-js  " :all="false" name="percentage_of"></x-form.select>
 
         {{-- <x-form.select data-current-selected="{{ isset($subModel) ? $subModel->getExpenseNameId() : '' }}" :selectedValue="isset($subModel) ? $subModel->getExpenseNameId() : ''" :options="[]" :add-new="false" class="select2-select repeater-select expense_name_id " :all="false" name="expense_name_id"></x-form.select> --}}
 
     </div>
-	
+
     <div class="col-md-2 pr-2 pl-2">
         <label class="form-label ">{{ __('Revenue Streams') }} </label>
         <div class="kt-input-icon">
             <div class="input-group">
-			
-                <x-select.multi-layer-for-repeater :selectedOptions="$expense ? $expense->getProductArr() : []" :name="'products'" :options="[]"></x-select.multi-layer-for-repeater>
+                <x-select.multi-layer-for-repeater :mainItemsName="'revenue_stream_type'" :subItemsName="'stream_category_ids'" :selectedOptions="$expense ? $expense->getProductArr() : []"  :options="$revenueStreams"></x-select.multi-layer-for-repeater>
             </div>
         </div>
     </div>

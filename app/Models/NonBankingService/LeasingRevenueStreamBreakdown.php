@@ -37,7 +37,7 @@ class  LeasingRevenueStreamBreakdown extends Model
 	}	
 	public function getCategoryColumnName():string 
 	{
-		return $this->category_id;
+		return 'category_id';
 	}
 		
 }

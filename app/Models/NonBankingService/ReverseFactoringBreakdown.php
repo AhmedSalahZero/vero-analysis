@@ -61,9 +61,9 @@ class  ReverseFactoringBreakdown extends Model
 	{
 		return 'reverse_breakdown_id';
 	}	
-	public function getCategoryColumnName():string 
+	public function getCategoryColumnName():?string 
 	{
-		return $this->category;
+		return 'category';
 	}
 	
 }

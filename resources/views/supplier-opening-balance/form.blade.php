@@ -837,7 +837,6 @@ $(document).on('change', '.ajax-get-contracts-for-supplier', function(e) {
                                 for (id in res.contracts) {
                                     options += `<option value="${id}" ${contractId == id ? 'selected' : ''} >${res.contracts[id]}</option>`
                                 }
-                                console.log(options)
                                 parent.find('select.contract-class').empty().append(options)
                                 parent.find('select.contract-class').trigger('change')
                             }
@@ -885,7 +884,6 @@ $(document).on('change', '.ajax-get-contracts-for-supplier', function(e) {
                     const contractCode = $(this).find('option:selected').attr('data-contract-code');
                     const contractDate = $(this).find('option:selected').attr('data-contract-date');
                     var currentSalesOrderNumber = parent.find('[data-current-sales-order-number]').attr('data-current-sales-order-number');
-                    console.log(currentSalesOrderNumber)
                     parent.find('[name*="contract_code"]').val(contractCode);
                     parent.find('[name*="contract_date"]').val(contractDate);
                     $.ajax({

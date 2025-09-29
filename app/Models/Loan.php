@@ -4,13 +4,14 @@ namespace App\Models;
 
 use App\Models\Traits\Scopes\CompanyScope;
 use App\Traits\HasBasicStoreRequest;
+use App\Traits\HasCollectionOrPaymentStatement;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use MathPHP\Finance;
 
 class  Loan extends Model 
 {
-	use   CompanyScope , HasBasicStoreRequest;
+	use   CompanyScope , HasBasicStoreRequest,HasCollectionOrPaymentStatement;
 
 	protected $guarded = [
 		'id'

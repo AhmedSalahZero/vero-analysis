@@ -257,7 +257,6 @@
         $('#categories').html('');
         row = '<select data-live-search="true" data-actions-box="true" name="categories[]" class="form-control select2-select kt-bootstrap-select kt_bootstrap_select" ' + data_type + '  required multiple></select>';
         $('#categories').append(row);
-		console.log(row);
         $('#products').html('');
         row = '<select data-live-search="true" data-actions-box="true" name="products[]" class="form-control select2-select kt-bootstrap-select kt_bootstrap_select"  ' + data_type + '  required  multiple></select>';
         $('#products').append(row);
@@ -423,7 +422,6 @@
     }
     // Sub Categories
     function getProducts(salesChannels, categories, type_of_data, type) {
-		console.log(type_of_data,type)
         $.ajax({
             type: 'POST'
             , data: {

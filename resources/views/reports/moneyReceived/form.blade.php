@@ -819,7 +819,6 @@ use App\Models\MoneyReceived ;
                     var selected = branchId == currentFromBranchId ? 'selected' : '';
                     branchOptions += `<option value="${branchId}" ${selected} >${branchName}</option>`
                 }
-                console.log('good');
                 branchQuery.empty().append(branchOptions);
                 branchQuery.trigger('change');
             }

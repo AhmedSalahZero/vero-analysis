@@ -1255,7 +1255,6 @@ tbody td{
     function calcStepFactor(period, interval, installmentStartDate, end_date) {
         counter = 0;
         let stepFactor = [];
-		console.log(interval,'inn')
         for (let i = 0; i <= period; i++) {
             if (i % interval == 0 && i != 0) {
                 counter = counter + 1;

@@ -197,7 +197,6 @@ $.fn.repeater = function (fig) {
                 if(data || fig.defaultValues) {
                     var inputNames = {};
                     $filterNested($item.find('[name]'), repeaters).each(function () {
-                   
                         var key = $(this).attr('name').match(/\[([^\]]*)(\]|\]\[\])$/)[1];
                         inputNames[key] = $(this).attr('name');
                     });

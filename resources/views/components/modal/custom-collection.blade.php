@@ -1,6 +1,7 @@
 @props([
 'subModel',
-'title'=>__('Collection Policy')
+'title'=>__('Collection Policy'),
+'size'=>'md'
 ])
 
 <script>
@@ -9,7 +10,7 @@
     };
 	</script>
 <div class="modal collection-modal fade"  tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-    <div class="modal-dialog modal-md modal-dialog-centered" role="document">
+    <div class="modal-dialog modal-{{ $size }} modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title text-blue" id="exampleModalLongTitle">{{ $title }}</h5>
@@ -37,7 +38,7 @@
                                 <td>
 								<div class="">
                                     <x-form.select  :multiple="true" :maxOptions="1"  :selectedValue="isset($subModel) ? $subModel->getPaymentRateAtDueInDays($rateIndex) : '' " :options="dueInDays()" :add-new="false" class="js-due_in_days repeater-select 
-									{{-- js-select2-with-one-selection --}}
+								
 									"  :all="false" name="due_days" ></x-form.select>
 								</div>
                                 </td>

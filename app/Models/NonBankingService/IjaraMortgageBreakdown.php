@@ -74,9 +74,10 @@ class  IjaraMortgageBreakdown extends Model
 	{
 		return 'ijara_breakdown_id';
 	}	
-	public function getCategoryColumnName():string 
+	public function getCategoryColumnName():?string 
 	{
-		return '';
+		return 'installment_interval';
 	}
+
 	
 }

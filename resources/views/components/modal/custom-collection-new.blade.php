@@ -34,10 +34,11 @@
                                     {{-- <input multiple class="rate-element-hidden" type="hidden" value="{{ (isset($subModel) ? $subModel->getPaymentRate($rateIndex) : 0) }}" > --}}
 								</div>
                                 </td>
-                                <td>
+                                 <td>
 								<div class="">
-									<x-select.due-days-selector :id="$rateIndex" :name="'due_days'" :selectedOption="isset($subModel) ? $subModel->getPaymentRateAtDueInDays($rateIndex) : ''" :options="dueInDays()"></x-select.due-days-selector>
-                                 
+                                    <x-form.select  :multiple="true" :maxOptions="1"  :selectedValue="isset($subModel) ? $subModel->getPaymentRateAtDueInDays($rateIndex) : '' " :options="dueInDays()" :add-new="false" class="js-due_in_days repeater-select 
+								
+									"  :all="false" name="due_days" ></x-form.select>
 								</div>
                                 </td>
                                 </tr>

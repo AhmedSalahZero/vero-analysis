@@ -81,7 +81,7 @@ class LeasingRevenueStreamBreakdownController extends Controller
 			
 		}
 		
-		$study->storeFixedLoans(Study::LEASING,'leasingRevenueStreamBreakdown','leasingEclAndNewPortfolioFundingRate');
+		$study->storeFixedLoans(Study::LEASING,'leasingRevenueStreamBreakdown','leasingEclAndNewPortfolioFundingRate','leasingEclAndNewPortfolioFundingRate');
 		
 		/**
 		 * * end testing

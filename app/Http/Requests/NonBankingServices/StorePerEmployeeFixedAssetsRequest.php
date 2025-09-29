@@ -44,7 +44,7 @@ class StorePerEmployeeFixedAssetsRequest extends FormRequest
 		$studyStartDateAsIndex = $study->getStudyStartDateAsIndex($dateWithDateIndex,$studyStartDateAsString);
 		$studyEndDateAsIndex = $study->getStudyEndDateAsIndex($dateWithDateIndex,$studyEndDateAsString);
 	
-		
+		$totalFixedAssetAmounts = [];
 		$currentFixedAssetAmounts = [];
 		foreach($fixedAssets as $rowIndex => &$fixedAssetArr){
 			$fixedAssetArr['ffe_counts'] =$fixedAssetArr['ffe_counts'] ? (array)json_decode($fixedAssetArr['ffe_counts']) : [];
@@ -55,13 +55,14 @@ class StorePerEmployeeFixedAssetsRequest extends FormRequest
 			$currentPositions = Position::where('study_id',$studyId)->whereIn('id',$currentPositionIds)->get();
 
 			$hiringCountArrs = $currentPositions->pluck('hiring_counts')->toArray();
-			$dates = array_keys(Arr::first($hiringCountArrs));
+			$dates = array_keys(Arr::first($hiringCountArrs,null,[]));
 			$sumHiringCount = HArr::sumAtDates($hiringCountArrs,$dates);
 			$itemCost = $fixedAssetArr['ffe_item_cost'];
 			$vatRate = $fixedAssetArr['vat_rate'];
 			$isDeductible = false;
 			$increaseRate = $fixedAssetArr['cost_annual_increase_rate'];
-			$currentFfeItemCostPerDateIndex = (new MonthlyFixedRepeatingAmountEquation())->calculate($itemCost,$studyStartDateAsIndex,$studyEndDateAsIndex,'annually',$increaseRate,$isDeductible,$vatRate);
+			$withholdRate = $fixedAssetArr['withhold_tax_rate'];
+			$currentFfeItemCostPerDateIndex = (new MonthlyFixedRepeatingAmountEquation())->calculate($itemCost,$studyStartDateAsIndex,$studyEndDateAsIndex,'annually',$increaseRate,$isDeductible,$vatRate,$withholdRate);
 			
 			foreach($sumHiringCount as $dateAsIndex => $hiringValue){
 				$currentFixedAssetAmounts[$rowIndex][$dateAsIndex]  = $hiringValue * ($currentFfeItemCostPerDateIndex[$dateAsIndex]??0);

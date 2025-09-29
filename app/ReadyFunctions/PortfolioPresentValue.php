@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\DB;
 
 class PortfolioPresentValue 
 {
-	public function calculate(array $dateIndexWithDate ,array $portfolioLoanFundingRatesPerMonths , array $operationDurationPerYearFromIndexes,int $tenorInYears,array $startFromPerYear , array $frequencyPerYear,array $portfolioMortgageTransactionAmountsPerYears,array $cbeLendingRatesPerMonths,float $marginRate,array $bankMarginRates , int $companyId , int $studyId , int $portfolioMortgageCategoryId):void 
+	public function calculate(array $dateIndexWithDate ,array $portfolioLoanFundingRatesPerMonths , array $operationDurationPerYearFromIndexes,int $tenorInYears,array $startFromPerYear , array $frequencyPerYear,array $portfolioMortgageTransactionAmountsPerYears,array $cbeLendingRatesPerMonths,float $marginRate,array $bankMarginRates , int $companyId , int $studyId , int $portfolioMortgageCategoryId):array 
 	{
 		
 		DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('loan_schedule_payments')->where('study_id',$studyId)->where('revenue_stream_type',Study::PORTFOLIO_MORTGAGE)->where('revenue_stream_id',$portfolioMortgageCategoryId)->delete();
@@ -36,7 +36,9 @@ class PortfolioPresentValue
 				$currentYearAmount = $portfolioMortgageTransactionAmountsPerYears[$currentYearIndex]??0;
 				 
 				foreach($occurrenceIndexesAndDates as $currentOccurrenceMonthIndex){
-					$monthlyAmounts[$currentOccurrenceMonthIndex] = $currentYearAmount / ($tenorInMonths);
+					$monthlyAmounts[$currentOccurrenceMonthIndex] = $currentYearAmount 
+				//	/ ($tenorInMonths)
+					;
 				}
 			
 			}
@@ -65,12 +67,15 @@ class PortfolioPresentValue
 				}
 			}
 			 $this->calculateMonthlyAmounts($tenorInMonths,$installmentPaymentIntervalName,$loanType,$dateIndexWithDate,$currentUnearnedInterestStatement,$accumulatedMonthsAmountsDueDates,$portfolioLoans,$calculateFixedLoanAtEndService,$portfolioMortgageCategoryId,$studyId,$companyId);
-			// $bankLoanAmounts
-			DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('loan_schedule_payments')->insert(
-				$portfolioLoans
-			);
-		
-			
+			 // $bankLoanAmounts
+			 DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('loan_schedule_payments')->insert(
+				 $portfolioLoans
+				);
+			return [
+				'occurrence_dates'=>$occurrenceDates,
+				'statement'=>$accumulatedMonthsAmountsDueDates,
+				'loan_amounts'=>$monthlyAmounts
+			];
 	
 	}
 	public function calculateForMonthlyStudy(array $monthlyAmounts , array $cbeLendingRatesPerMonths,array $portfolioLoanFundingRatesPerMonths,float $marginRate,int $tenorInYears ,array $dateIndexWithDate   , int $portfolioMortgageCategoryId,int $studyId, int $companyId)

@@ -435,7 +435,6 @@ use App\Models\FinancialPlanning\Expense;
         $('.js-type-btn').removeClass('active');
         $(this).addClass('active');
         $('.parent-card').hide();
-        console.log(mainCardId)
         $('[data-card-id="' + mainCardId + '"]').show();
     })
     $(function() {
@@ -550,20 +549,9 @@ use App\Models\FinancialPlanning\Expense;
 
 </script>
 <script>
-    const handlePaymentTermModal = function() {
-        const parentTermsType = $(this).closest('select').val();
-        const tableId = $(this).closest('table').attr('id');
-        if (parentTermsType == 'customize') {
-            $(this).closest('tr').find('#' + tableId + 'test-modal-id').modal('show')
-        }
+   
 
 
-
-    };
-    $(document).on('change', 'select.payment_terms', handlePaymentTermModal)
-
-
-    //$(document).on('click','option',handlePaymentTermModal)
     $(document).on('change', '.rate-element', function() {
         let total = 0;
         const parent = $(this).closest('tbody');

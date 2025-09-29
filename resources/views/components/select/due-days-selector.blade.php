@@ -17,7 +17,7 @@
         <div class="multiselect-options">
             @foreach($options as $optionArr)
             <label class="option-item">
-                <input  name="{{ $name }}[]" 
+                <input  name="{{ $name }}" 
                        @if($selectedOption == $optionArr['value']) checked @endif 
                        type="radio" 
                        value="{{ $optionArr['value'] }}"> {{ $optionArr['title'] }}

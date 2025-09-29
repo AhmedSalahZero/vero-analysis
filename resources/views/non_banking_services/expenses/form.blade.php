@@ -213,116 +213,6 @@
 
 
 
-<script>
-    function initMultiselect(container) {
-        const $container = $(container);
-        const $trigger = $container.find('.multiselect-trigger');
-        const $dropdown = $container.find('.multiselect-dropdown');
-        const $searchInput = $container.find('.search-input');
-        const $selectAllBtn = $container.find('.btn-select-all');
-        const $deselectAllBtn = $container.find('.btn-deselect-all');
-        const $optionsContainer = $container.find('.multiselect-options');
-        const $selectedText = $container.find('.selected-text');
-        const $selectedOptionsContainer = $container.find('.selected-options-container');
-        let selectedValues = [];
-
-        // Toggle dropdown
-        $trigger.on('click', function(e) {
-            e.stopPropagation();
-            $dropdown.toggle();
-        });
-
-        // Close on outside click
-        $(document).on('click', function(e) {
-            if (!$container.has(e.target).length) {
-                $dropdown.hide();
-            }
-        });
-
-        // Bind checkbox events
-        function bindCheckboxEvents($checkbox) {
-            $checkbox.on('change', function() {
-                const $this = $(this);
-                const isMain = $this.hasClass('main-checkbox');
-                const value = $this.val();
-
-                if (isMain) {
-                    // If main item is checked/unchecked, update sub-items
-                    const $subItems = $optionsContainer.find(`.sub-item input[data-parent="${value}"]`);
-                    $subItems.prop('checked', $this.prop('checked'));
-                } else {
-                    // If sub-item is checked, ensure parent is checked
-                    const parentValue = $this.data('parent');
-                    const $parentCheckbox = $optionsContainer.find(`.main-checkbox[value="${parentValue}"]`);
-                    const $subItems = $optionsContainer.find(`.sub-item input[data-parent="${parentValue}"]`);
-                    const allSubChecked = $subItems.length === $subItems.filter(':checked').length;
-                    $parentCheckbox.prop('checked', allSubChecked);
-                }
-
-                updateSelected();
-            });
-        }
-
-        // Update selected values and display
-        function updateSelected() {
-            const $options = $optionsContainer.find('.option-item input[type="checkbox"]');
-            selectedValues = $options.filter(':checked').map(function() { return $(this).val(); }).get();
-            $selectedText.text(selectedValues.length ? `${selectedValues.length} selected` : 'Select options...');
-
-            // Clear existing hidden inputs
-            $selectedOptionsContainer.empty();
-            // Add a hidden input for each selected value
-            selectedValues.forEach(function(value) {
-                $selectedOptionsContainer.append(
-                    `<input type="hidden" name="selectedOptions[]" value="${value}">`
-                );
-            });
-        }
-
-        // Bind initial checkboxes
-        $optionsContainer.find('.option-item input[type="checkbox"]').each(function() {
-            bindCheckboxEvents($(this));
-        });
-
-        // Select All
-        $selectAllBtn.on('click', function(e) {
-            e.preventDefault();
-            $optionsContainer.find('.option-item input[type="checkbox"]').prop('checked', true);
-            updateSelected();
-        });
-
-        // Deselect All
-        $deselectAllBtn.on('click', function(e) {
-            e.preventDefault();
-            $optionsContainer.find('.option-item input[type="checkbox"]').prop('checked', false);
-            updateSelected();
-        });
-
-        // Search filter
-        $searchInput.on('input', function() {
-            const query = $(this).val().toLowerCase();
-            $optionsContainer.find('.option-group').each(function() {
-                const $group = $(this);
-                const $mainItem = $group.find('.main-item');
-                const $subItems = $group.find('.sub-item');
-                const mainText = $mainItem.text().toLowerCase();
-                let hasVisibleSubItems = false;
-
-                $subItems.each(function() {
-                    const subText = $(this).text().toLowerCase();
-                    const isVisible = subText.includes(query);
-                    $(this).toggle(isVisible);
-                    if (isVisible) hasVisibleSubItems = true;
-                });
-
-                $mainItem.toggle(mainText.includes(query) || hasVisibleSubItems);
-                $group.toggle(mainText.includes(query) || hasVisibleSubItems);
-            });
-        });
-
-        updateSelected(); // Initial call
-    }
-</script>
 
 
 
@@ -343,7 +233,7 @@
             , show: function() {
                 $(this).slideDown();
                 $('.js-select2-with-one-selection').select2({});
-                initMultiselect($(this));
+         //       initMultiselect($(this));
 				$('.allocate-checkbox').trigger('change')
             }
             , ready: function(setIndexes) {
@@ -364,12 +254,7 @@
 
 </script>
 @endforeach
-<script>
-    $('.repeater_item').each(function() {
-	
-	      initMultiselect($(this));
-    });
-</script>
+
 
 <script>
 

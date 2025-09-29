@@ -9,8 +9,8 @@
                     <input type="hidden" name="tableIds[]" value="{{ $tableId }}">
                     <x-tables.repeater-table :removeRepeater="false" :repeater-with-select2="true" :canAddNewItem="$canAddNewItem" :parentClass="'js-remove-hidden'" :hide-add-btn="true" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
                         <x-slot name="ths">
-                            <x-tables.repeater-table-th class=" category-selector-class header-border-down " :title="__('Leasing <br> Category')"></x-tables.repeater-table-th>
-                            <x-tables.repeater-table-th class="category-selector-class header-border-down " :title="__('Loan <br> Nature')" :helperTitle="__('If you have different expense items under the same category, please insert Category Name')"></x-tables.repeater-table-th>
+                            <x-tables.repeater-table-th class=" category-selector-class header-border-down first-column-th-class-16 " :title="__('Leasing <br> Category')"></x-tables.repeater-table-th>
+                            <x-tables.repeater-table-th class="category-selector-class header-border-down first-column-th-class-13" :title="__('Loan <br> Nature')" :helperTitle="__('If you have different expense items under the same category, please insert Category Name')"></x-tables.repeater-table-th>
                             <x-tables.repeater-table-th class="loan-type-class header-border-down  " :title="__('Loan <br> Type')" :helperTitle="__('Please insert amount excluding VAT')"></x-tables.repeater-table-th>
                             <x-tables.repeater-table-th class=" rate-class header-border-down " :title="__('Tenor <br> Months')"></x-tables.repeater-table-th>
                             <x-tables.repeater-table-th class=" rate-class header-border-down " :title="__('Grace <br> Period')"></x-tables.repeater-table-th>
