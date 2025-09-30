@@ -18,7 +18,7 @@ class  GeneralAndReserveAssumption extends Model
 		'shareholders_dividend_payout_ratios'=>'array',
 		'shareholders_dividend_in_cash_or_shares'=>'array',
 		'salaries_annual_increase_rates'=>'array',
-		'expense_annual_increase_rates'=>'array',
+		// 'expense_annual_increase_rates'=>'array',
 		'cbe_lending_corridor_rates'=>'array',
 		'bank_lending_margin_rates'=>'array',
 		'credit_interest_rate_for_surplus_cash'=>'array',
@@ -72,10 +72,10 @@ class  GeneralAndReserveAssumption extends Model
 	{
 		return $this->salaries_annual_increase_rates[$yearOrMonthIndex] ?? 0  ; 
 	}
-	public function getExpenseAnnualIncreaseRateAtYearOrMonthIndex(int $yearOrMonthIndex)
-	{
-		return $this->expense_annual_increase_rates[$yearOrMonthIndex] ?? 0  ; 
-	}
+	// public function getExpenseAnnualIncreaseRateAtYearOrMonthIndex(int $yearOrMonthIndex)
+	// {
+	// 	return $this->expense_annual_increase_rates[$yearOrMonthIndex] ?? 0  ; 
+	// }
 	
 	public function getCbeLendingCorridorRatesAtYearOrMonthIndex(int $yearOrMonthIndex)
 	{

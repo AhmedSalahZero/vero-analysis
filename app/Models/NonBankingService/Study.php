@@ -1243,13 +1243,18 @@ class Study extends Model
 			$monthlyEclRates = $study->isMonthlyStudy() ? $eclRates : $this->convertYearToMonthIndexes($eclRates) ;
 		// $loansEnd
 		$monthlyEclValues = [];
+		$previousAccumulated = 0 ;
+		$accumulatedEclValues =[];
 		foreach($monthlyEclRates as $dateAsIndex => $eclRate){
 			$currentMonthPortfolioEndBalance  = $totalPortfolioEndBalance[$dateAsIndex]??0;
-		
+			
 			$eclRate = $eclRate / 100 ;
-			$monthlyEclValues[$dateAsIndex] =  $currentMonthPortfolioEndBalance * $eclRate;
+			$monthlyEclValues[$dateAsIndex] =  $currentMonthPortfolioEndBalance * $eclRate - $previousAccumulated;
+		//	logger('previ'.$previousAccumulated);
+			$accumulatedEclValues[$dateAsIndex] = $monthlyEclValues[$dateAsIndex]+ ($accumulatedEclValues[$dateAsIndex-1]??0);
+			$previousAccumulated = $accumulatedEclValues[$dateAsIndex];
 		}
-		$accumulatedEclValues = HArr::accumulateArray($monthlyEclValues);
+		// dd('ecl',$monthlyEclValues,$accumulatedEclValues,);
 
 		DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table($eclTableName)->where('study_id',$this->id)->update([
 			'monthly_ecl_values'=>json_encode($monthlyEclValues),
