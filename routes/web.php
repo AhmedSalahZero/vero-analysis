@@ -320,15 +320,17 @@ Route::middleware([])->group(function () {
 				 * * non banking services
 				 */
 				Route::group(['prefix'=>NON_BANKING_SERVICE_URL_PREFIX,'namespace'=>'NonBankingServices','middleware'=>'isNonBankingService'],function(){
+					
 					/**
 					 * * Study Info 
-					 */
+					*/
 					route::get('study','StudyController@index')->name('view.study');
 					route::get('study/create','StudyController@create')->name('create.study');
 					Route::get('study/{study}/edit','StudyController@edit')->name('edit.study');
 					Route::put('study/{study}/update','StudyController@update')->name('update.study');
 					route::post('study','StudyController@store')->name('store.non.banking.services');
 					route::delete('study/{study}/delete','StudyController@destroy')->name('study.destroy');
+					Route::post('/copy/{study}', 'CopyStudyController@index')->name('copy.project');
 					
 					// route::get('leasing-categories','LeasingCategoriesController@index')->name('view.leasing.categories');
 					route::get('leasing-products/create','LeasingCategoriesController@create')->name('create.leasing.categories');
@@ -401,11 +403,11 @@ Route::middleware([])->group(function () {
 						 /**
 						 * * Start Direct Factoring Revenue Streams Breakdown  
 						 */
-						route::get('revenue-streams-breakdown/direct-factoring','DirectFactoringRevenueStreamBreakdownController@create')->name('create.direct.factoring.revenue.stream.breakdown');
-						route::post('revenue-streams-breakdown/direct-factoring','DirectFactoringRevenueStreamBreakdownController@store')->name('store.direct.factoring.revenue.stream.breakdown');
+						route::get('revenue-streams-breakdown/direct-factoring','DirectFactoringController@create')->name('create.direct.factoring.revenue.stream.breakdown');
+						route::post('revenue-streams-breakdown/direct-factoring','DirectFactoringController@store')->name('store.direct.factoring.revenue.stream.breakdown');
 						
-						route::get('revenue-streams-breakdown/direct-factoring-vue','VueDirectFactoringRevenueStreamBreakdownController@create')->name('create.direct.factoring.revenue.stream.breakdown.vue');
-						route::post('revenue-streams-breakdown/direct-factoring-vue','VueDirectFactoringRevenueStreamBreakdownController@store')->name('store.direct.factoring.revenue.stream.breakdown.vue');
+						// route::get('revenue-streams-breakdown/direct-factoring-vue','VueDirectFactoringController@create')->name('create.direct.factoring.revenue.stream.breakdown.vue');
+						// route::post('revenue-streams-breakdown/direct-factoring-vue','VueDirectFactoringController@store')->name('store.direct.factoring.revenue.stream.breakdown.vue');
 						
 						/**
 						 * * End Direct Factoring Revenue Streams Breakdown  
@@ -416,8 +418,8 @@ Route::middleware([])->group(function () {
 						  /**
 						 * * Start Reverse Factoring Revenue Streams Breakdown  
 						 */
-						route::get('revenue-streams-breakdown/reverse-factoring','ReverseFactoringRevenueStreamBreakdownController@create')->name('create.reverse.factoring.revenue.stream.breakdown');
-						route::post('revenue-streams-breakdown/reverse-factoring','ReverseFactoringRevenueStreamBreakdownController@store')->name('store.reverse.factoring.revenue.stream.breakdown');
+						route::get('revenue-streams-breakdown/reverse-factoring','ReverseFactoringController@create')->name('create.reverse.factoring.revenue.stream.breakdown');
+						route::post('revenue-streams-breakdown/reverse-factoring','ReverseFactoringController@store')->name('store.reverse.factoring.revenue.stream.breakdown');
 						/**
 						 * * End Reverse Factoring Revenue Streams Breakdown  
 						 */
@@ -426,8 +428,8 @@ Route::middleware([])->group(function () {
 						  /**
 						 * * Start Ijara Mortgage Revenue Streams Breakdown  
 						 */
-						route::get('revenue-streams-breakdown/ijara-mortgage','IjaraMortgageRevenueStreamBreakdownController@create')->name('create.ijara.mortgage.revenue.stream.breakdown');
-						route::post('revenue-streams-breakdown/ijara-mortgage','IjaraMortgageRevenueStreamBreakdownController@store')->name('store.ijara.mortgage.revenue.stream.breakdown');
+						route::get('revenue-streams-breakdown/ijara-mortgage','IjaraMortgageController@create')->name('create.ijara.mortgage.revenue.stream.breakdown');
+						route::post('revenue-streams-breakdown/ijara-mortgage','IjaraMortgageController@store')->name('store.ijara.mortgage.revenue.stream.breakdown');
 						
 						route::get('revenue-streams-breakdown/microfinance','MicrofinanceRevenueStreamBreakdownController@create')->name('create.microfinance.revenue.stream.breakdown');
 						route::post('revenue-streams-breakdown/microfinance','MicrofinanceRevenueStreamBreakdownController@store')->name('store.microfinance.revenue.stream.breakdown');
@@ -439,16 +441,18 @@ Route::middleware([])->group(function () {
 						 /**
 						 * * Start Portfolio Mortgage Revenue Streams Breakdown  
 						 */
-						route::get('revenue-streams-breakdown/portfolio-mortgage','PortfolioMortgageRevenueStreamBreakdownController@create')->name('create.portfolio.mortgage.revenue.stream.breakdown');
-						route::post('revenue-streams-breakdown/portfolio-mortgage','PortfolioMortgageRevenueStreamBreakdownController@store')->name('store.portfolio.mortgage.revenue.stream.breakdown');
-						Route::get('add-new-portfolio-mortgage-category','PortfolioMortgageRevenueStreamBreakdownController@addNewCategory')->name('add.new.portfolio.mortgage.category');
-						Route::get('delete-portfolio-mortgage-category/{portfolioMortgageCategory}','PortfolioMortgageRevenueStreamBreakdownController@deleteCategory')->name('delete.portfolio.mortgage.category');
+						route::get('revenue-streams-breakdown/portfolio-mortgage','PortfolioMortgageController@create')->name('create.portfolio.mortgage.revenue.stream.breakdown');
+						route::post('revenue-streams-breakdown/portfolio-mortgage','PortfolioMortgageController@store')->name('store.portfolio.mortgage.revenue.stream.breakdown');
+						Route::get('add-new-portfolio-mortgage-category','PortfolioMortgageController@addNewCategory')->name('add.new.portfolio.mortgage.category');
+						Route::get('delete-portfolio-mortgage-category/{portfolioMortgageCategory}','PortfolioMortgageController@deleteCategory')->name('delete.portfolio.mortgage.category');
 						/**
 						 * * End Portfolio Mortgage Revenue Streams Breakdown  
 						 */
 						
 						 route::get('dashboard','DashboardController@view')->name('view.results.dashboard');
-						 route::get('dashboard-with-sensitivity','DashboardController@view')->name('view.results.dashboard.with.sensitivity');
+						 route::get('dashboard-with-sensitivity','CashInOutFlowController@view')->name('view.results.dashboard.with.sensitivity');
+						 
+						 Route::get('cash-in-out-flow', 'CashInOutFlowController@view')->name('cash.in.out.flow.result');
 						 
 						route::post('recalculate-spread-rates-sensitivity','RecalculateSpreadRateSensitivityController@recalculate')->name('calculate.spread.rate.sensitivity');
 						 route::get('income-statement','IncomeStatementController@index')->name('view.non.banking.forecast.income.statement');
@@ -523,6 +527,7 @@ Route::middleware([])->group(function () {
 						route::get('income-statement/forecast','IncomeStatementController@index')->name('view.financial.planning.income.statement');
 						route::post('income-statement/forecast','IncomeStatementController@store')->name('store.financial.planning.income.statement');
 			
+						 
 						
 						route::get('cost-expenses','CostExpensesController@create')->name('view.cost.expenses');
 						route::post('cost-expenses','CostExpensesController@store')->name('store.cost.expenses');
@@ -536,8 +541,8 @@ Route::middleware([])->group(function () {
 						 /**
 						 * * Start Direct Factoring Revenue Streams Breakdown  
 						 */
-						// route::get('revenue-streams-breakdown/direct-factoring','DirectFactoringRevenueStreamBreakdownController@create')->name('create.direct.factoring.revenue.stream.breakdown');
-						// route::post('revenue-streams-breakdown/direct-factoring','DirectFactoringRevenueStreamBreakdownController@store')->name('store.direct.factoring.revenue.stream.breakdown');
+						// route::get('revenue-streams-breakdown/direct-factoring','DirectFactoringController@create')->name('create.direct.factoring.revenue.stream.breakdown');
+						// route::post('revenue-streams-breakdown/direct-factoring','DirectFactoringController@store')->name('store.direct.factoring.revenue.stream.breakdown');
 						/**
 						 * * End Direct Factoring Revenue Streams Breakdown  
 						 */
@@ -547,8 +552,8 @@ Route::middleware([])->group(function () {
 						  /**
 						 * * Start Reverse Factoring Revenue Streams Breakdown  
 						 */
-						// route::get('revenue-streams-breakdown/reverse-factoring','ReverseFactoringRevenueStreamBreakdownController@create')->name('create.reverse.factoring.revenue.stream.breakdown');
-						// route::post('revenue-streams-breakdown/reverse-factoring','ReverseFactoringRevenueStreamBreakdownController@store')->name('store.reverse.factoring.revenue.stream.breakdown');
+						// route::get('revenue-streams-breakdown/reverse-factoring','ReverseFactoringController@create')->name('create.reverse.factoring.revenue.stream.breakdown');
+						// route::post('revenue-streams-breakdown/reverse-factoring','ReverseFactoringController@store')->name('store.reverse.factoring.revenue.stream.breakdown');
 						/**
 						 * * End Reverse Factoring Revenue Streams Breakdown  
 						 */
@@ -557,8 +562,8 @@ Route::middleware([])->group(function () {
 						  /**
 						 * * Start Ijara Mortgage Revenue Streams Breakdown  
 						 */
-						// route::get('revenue-streams-breakdown/ijara-mortgage','IjaraMortgageRevenueStreamBreakdownController@create')->name('create.ijara.mortgage.revenue.stream.breakdown');
-						// route::post('revenue-streams-breakdown/ijara-mortgage','IjaraMortgageRevenueStreamBreakdownController@store')->name('store.ijara.mortgage.revenue.stream.breakdown');
+						// route::get('revenue-streams-breakdown/ijara-mortgage','IjaraMortgageController@create')->name('create.ijara.mortgage.revenue.stream.breakdown');
+						// route::post('revenue-streams-breakdown/ijara-mortgage','IjaraMortgageController@store')->name('store.ijara.mortgage.revenue.stream.breakdown');
 						/**
 						 * * End Ijara Mortgage Revenue Streams Breakdown  
 						 */
@@ -566,8 +571,8 @@ Route::middleware([])->group(function () {
 						 /**
 						 * * Start Portfolio Mortgage Revenue Streams Breakdown  
 						 */
-						// route::get('revenue-streams-breakdown/portfolio-mortgage','PortfolioMortgageRevenueStreamBreakdownController@create')->name('create.portfolio.mortgage.revenue.stream.breakdown');
-						// route::post('revenue-streams-breakdown/portfolio-mortgage','PortfolioMortgageRevenueStreamBreakdownController@store')->name('store.portfolio.mortgage.revenue.stream.breakdown');
+						// route::get('revenue-streams-breakdown/portfolio-mortgage','PortfolioMortgageController@create')->name('create.portfolio.mortgage.revenue.stream.breakdown');
+						// route::post('revenue-streams-breakdown/portfolio-mortgage','PortfolioMortgageController@store')->name('store.portfolio.mortgage.revenue.stream.breakdown');
 						/**
 						 * * End Portfolio Mortgage Revenue Streams Breakdown  
 						 */

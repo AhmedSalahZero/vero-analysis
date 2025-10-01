@@ -12,7 +12,7 @@ use App\Traits\NonBankingService;
 use Illuminate\Http\Request;
 
 
-class ReverseFactoringRevenueStreamBreakdownController extends Controller
+class ReverseFactoringController extends Controller
 {
 	use NonBankingService ;
 	public function getModel():ReverseFactoringRevenueStreamBreakdown
@@ -34,9 +34,9 @@ class ReverseFactoringRevenueStreamBreakdownController extends Controller
 
 			$study->storeRelationsWithNoRepeater($request,$company);
 			$study->storeRepeaterRelations($request,$this->getRepeaterRelations(),$company);
+			$study->storeEclAndFundingStructureFor($request,Study::REVERSE_FACTORING);
 			$study->storeMonthlyLoan('reverseFactoringBreakdowns');
-			$study->updateReverseFactoryMonthlyAdminFeesAmounts();
-			$study->storeVariableLoans(Study::REVERSE_FACTORING,'reverseFactoringBreakdowns','reverseFactoringNewPortfolioFundingStructure','reverseFactoryAdminFeesRate');
+			$study->storeVariableLoans(Study::REVERSE_FACTORING,'reverseFactoringBreakdowns');
 			$study->updateExpensesPercentagesOfSales();
 		return response()->json([
 			'redirectTo'=>route('create.ijara.mortgage.revenue.stream.breakdown',['company'=>$company->id , 'study'=>$study->id])

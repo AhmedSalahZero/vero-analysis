@@ -124,16 +124,22 @@ class DashboardController extends Controller
 				}
 			
 		}
-		$salaryExpenses = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('departments')
-		->join('positions','positions.department_id','=','departments.id')
-		->selectRaw('expense_type,salary_expenses,expense_type')->where('type','manpower')->where('departments.company_id',$company->id)->get() ;
+					$salaryExpenses = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('manpowers')
+					->join('positions','manpowers.position_id','=','positions.id')
+					->join('departments','positions.department_id','=','departments.id')
+					->where('manpowers.company_id',$company->id)
+					->where('type','manpower')
+					->selectRaw('expense_type,salary_expenses,expense_type')->get();
 		
+	
 		$expenses = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('expenses')->join('expense_names','expense_names.id','=','expenses.expense_name_id')->selectRaw('expense_category,expense_names.name as name,name,relation_name,monthly_repeating_amounts,expense_as_percentages,sensitivity_expense_as_percentages,payload')->where('model_id',$study->id)->where('model_name','Study')->get()->toArray();
 		$columnPerTypes = [
 			'cost_per_unit'=>'monthly_repeating_amounts',
 			'one_time_expense'=>'payload',
 			'percentage_of_sales'=>$percentageOfSalesColumnName,
 			'fixed_monthly_repeating_amount'=>'monthly_repeating_amounts',
+			'one_time_expense'=>'monthly_repeating_amounts',
+			'expense_per_employee'=>'monthly_repeating_amounts'
 		];
 		$salaryExpensesForCategory = [];
 		foreach($salaryExpenses as $salaryExpense){
@@ -145,14 +151,13 @@ class DashboardController extends Controller
 				$salaryExpensesForCategory[$expenseCategory][$currentYearOrMonthIndex] = isset($salaryExpensesForCategory[$expenseCategory][$currentYearOrMonthIndex]) ?  $salaryExpensesForCategory[$expenseCategory][$currentYearOrMonthIndex] + $currentSalaryExpense : $currentSalaryExpense;
 			}
 		}
-
 		
 		foreach($expenses as $expense){
 		
 			$name = $expense->name;
 			$relationName = $expense->relation_name;
 			$expenseCategory = $expense->expense_category;
-			$currentColumnName = $columnPerTypes[$relationName]??null;
+			$currentColumnName = $columnPerTypes[$relationName];
 			// if(is_null($currentColumnName)){
 			// 	continue;
 			// }
@@ -185,8 +190,6 @@ class DashboardController extends Controller
 		
 			
 		}
-		// dd($formattedExpenses);
-		// dd
 		$currentExpenseIndexes = $isMonthlyStudy ? $monthsWithItsNumbers :  $yearWithItsIndexes  ;
 		foreach($currentExpenseIndexes as $yearOrMonthIndex => $monthWithItsIndexes){
 			$currentYearAsString = $yearIndexWithYear[$yearIndex] ?? null ;

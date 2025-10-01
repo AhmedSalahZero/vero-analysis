@@ -148,20 +148,19 @@ $(document).on('change', 'select.js-update-positions-for-department', function (
 	const lang = $('body').attr('data-lang')
 	let studyId = $('#study-id-js').val()
 	const departmentId = $(this).val()
-	const currentPositionId = $(this).attr('data-current-selected')
+	const currentPositionIds = $(this).attr('data-current-selected')
 	const url = '/' + lang + '/' + companyId + '/non-banking-financial-services/study/' + studyId + '/get-positions-based-on-department'
 
 	$.ajax({
 		url,
 		data: {
-			departmentId,
-			currentPositionId
+			departmentId
 		},
 		type: "get",
 		success: (res) => {
 			let positions = ''
 			for (let id in res.positions) {
-				positions += `<option value="${id}" ${id == currentPositionId ? 'selected' : ''} >${res.positions[id]}</option>`
+				positions += `<option value="${id}" ${currentPositionIds.includes(id) ? 'selected' : ''} >${res.positions[id]}</option>`
 			}
 			$(this).closest('tr').find('select.position-class').empty().append(positions).trigger('change')
 		}
@@ -224,7 +223,6 @@ $('input[type="hidden"].exclude-from-collapse').on('change', function () {
 	$(this).closest('tr').find('.repeat-group-year').each(function (index, element) {
 		total += parseFloat(number_unformat($(element).val()))
 	})
-
 	$(this).closest('tr').find('.total-td').val(number_format(total)).trigger('change')
 })
 $(document).on('click', '.add-btn-js', function (e) {
@@ -957,9 +955,4 @@ $(document).ready(function () {
 			$(this).closest('.multiselect-options').find('input[data-parent="'+value+'"]').attr('checked',false).trigger('change');
 		}
 	  })
-	  // $(document).on('change','[js-sub-select]',function(){
-		// const isChecked = $(this).is(':checked');
-		// if(isChecked){
-		// 	$(this).closest('.option-group').find('[js-main-select]').attr('checked',true);
-	// 	}
-	  // })
+	

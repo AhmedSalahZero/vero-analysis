@@ -31,6 +31,7 @@ class Expense extends Model
         'net_payments_after_withhold'=>'array',
         'withhold_payments'=>'array',
         'withhold_amounts'=>'array',
+		'position_ids'=>'array'
     ];
         
     public function company()
@@ -197,15 +198,26 @@ class Expense extends Model
     {
         return (array)$this->stream_category_ids;
     }
-    public function position()
+    // public function position()
+    // {
+    //     return $this->belongsTo(Position::class, 'position_id', 'id');
+    // }
+    public function getPositionIds():array
     {
-        return $this->belongsTo(Position::class, 'position_id', 'id');
+		return $this->position_ids ?: [];
     }
-    public function getPositionId()
-    {
-        return $this->position ? $this->position->id : 0 ;
-    }
-
+	public function getDepartmentIds():array 
+	{
+		$departmentIds = [];
+		foreach($this->getPositionIds() as $positionId){
+			$position = Position::find($positionId);
+			if($position && $position->department){
+				$departmentId = $position->department->id ;
+				$departmentIds[$departmentId] = $departmentId;
+			}
+		}
+		return array_values($departmentIds);
+	}
     public function getAmortizationMonths():int
     {
         return $this->amortization_months?:12;
@@ -220,6 +232,7 @@ class Expense extends Model
         $hasDirectFactoring = in_array('has_direct_factoring', $revenueStreamType) ;
         
         $revenueStreamTypesWheres = [];
+		
         if ($hasLeasing) {
             $selectedRevenueStreamTypes[] = Study::LEASING;
             $revenueStreamTypesWheres[] = ['leasing_breakdown_id','>',0];
@@ -240,9 +253,14 @@ class Expense extends Model
             $selectedRevenueStreamTypes[] = Study::DIRECT_FACTORING;
             $revenueStreamTypesWheres[] = ['direct_breakdown_id','>',0];
         }
+		if(!count($revenueStreamTypesWheres)){
+			return [
+				'result'=>[],
+				'selectedRevenueStreamTypes'=>[]
+			];
+		}
         $revenueStreamTypesWheres = HStr::generateWhereFromMultipleArrs($revenueStreamTypesWheres, 'OR');
-                
-        $resultArr = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('revenue_contracts')
+	        $resultArr = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('revenue_contracts')
             ->where('study_id', $studyId)
             ->when(count($categoryIds), function (Builder $builder) use ($categoryIds) {
                 $builder->whereIn('category_id', $categoryIds);
@@ -252,7 +270,6 @@ class Expense extends Model
             })->toArray();
         return [
             'result'=>$resultArr ,
-            'revenueStreamTypesWheres'=>$revenueStreamTypesWheres,
             'selectedRevenueStreamTypes'=>$selectedRevenueStreamTypes
         ];
     }

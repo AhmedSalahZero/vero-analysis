@@ -23,12 +23,12 @@ class  PortfolioMortgageRevenueProjectionByCategory extends Model
 		'annually_due_cheques_percentages'=>'array',
 	];
 	public function getViewVars(Company $company, Study $study):array{
-		$portfolioMortgageEclAndNewPortfolioFundingRate = $study?  $study->portfolioMortgageEclAndNewPortfolioFundingRate : null;
+	//	$portfolioMortgageEclAndNewPortfolioFundingRate = $study?  $study->portfolioMortgageEclAndNewPortfolioFundingRate : null;
 		return [
 			'company'=>$company ,
 			'study'=>$study,
 			'model'=>$study ,
-			'portfolioMortgageEclAndNewPortfolioFundingRate'=>$portfolioMortgageEclAndNewPortfolioFundingRate,
+	//		'portfolioMortgageEclAndNewPortfolioFundingRate'=>$portfolioMortgageEclAndNewPortfolioFundingRate,
 			'title'=>__('Portfolio Mortgage Revenue Stream Breakdown'),
 			'storeRoute'=>route('store.portfolio.mortgage.revenue.stream.breakdown',['company'=>$company->id , 'study'=>$study->id]),
 			'yearsWithItsMonths' => $study->getOperationDurationPerYearFromIndexes(),

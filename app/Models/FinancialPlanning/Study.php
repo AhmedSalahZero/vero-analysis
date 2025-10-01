@@ -48,7 +48,7 @@ use Illuminate\Database\Eloquent\Model;
 		}
 		public function getName()
 		{
-			return $this->study_name;
+			return $this->name;
 		}
 		public function getMainFunctionalCurrency()
 		{

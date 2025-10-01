@@ -54,38 +54,11 @@ class LeasingRevenueStreamBreakdownController extends Controller
 			]);
 		}
 		
-		if($request->has('admin_fees_rates')){
-			$adminFeesRates = $request->get('admin_fees_rates',[]);
-			$newLoansFundingValues = $request->get('new_loans_funding_values',[]) ;
-			$equityFundingValues = $request->get('equity_funding_values',[]) ;
-			$loanAmounts = $request->get('loan_amounts',[]);
-			$sumLoanAmounts = HArr::sumForInternalIndexes($loanAmounts);
-			$monthlyAdminFeesAmount = $study->calculateMonthlyAdminFeesAmounts($adminFeesRates , $sumLoanAmounts  );
-							
-			$data = [
-				'revenue_stream_type'=>Study::LEASING,
-				'admin_fees_rates'=>$adminFeesRates,
-				'monthly_admin_fees_amounts'=>$monthlyAdminFeesAmount,
-				'ecl_rates'=>$request->get('ecl_rates',[]),
-				'equity_funding_rates'=>$request->get('equity_funding_rates',[]),
-				'equity_funding_values'=>$equityFundingValues,
-				'new_loans_funding_rates'=>$request->get('new_loans_funding_rates',[]),
-				'new_loans_funding_values'=>$newLoansFundingValues,
-				'company_id'=>$company->id
-			];
-			if($study->leasingEclAndNewPortfolioFundingRate){
-				$study->leasingEclAndNewPortfolioFundingRate->update($data);
-			}else{
-				$study->leasingEclAndNewPortfolioFundingRate()->create($data);
-			}
-			
-		}
+		$study->storeEclAndFundingStructureFor($request,Study::LEASING);
 		
-		$study->storeFixedLoans(Study::LEASING,'leasingRevenueStreamBreakdown','leasingEclAndNewPortfolioFundingRate','leasingEclAndNewPortfolioFundingRate');
+		$study->storeFixedLoans(Study::LEASING,'leasingRevenueStreamBreakdown');
 		
-		/**
-		 * * end testing
-		 */
+	
 		
 		if($request->get('submitBtnType') == LeasingCategory::LEASING_CATEGORY_FORM_ID){
 			return response()->json([

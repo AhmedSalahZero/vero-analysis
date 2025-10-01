@@ -13,8 +13,10 @@ class AddPositionIdToExpensesTable extends Migration
      */
     public function up()
     {
+		// DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('expenses')->delete();
         Schema::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('expenses', function (Blueprint $table) {
-            $table->unsignedBigInteger('position_id')->nullable();
+			$table->dropColumn('position_id');
+            $table->json('position_ids')->nullable();
         });
     }
 

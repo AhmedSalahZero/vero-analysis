@@ -12,10 +12,10 @@
                 
                     <input type="hidden" name="tableIds[]" value="{{ $tableId }}">
                     
-                    <x-tables.repeater-table :addExpenseType="true" :initEmpty="false" :removeActionBtn="true" :first-element-deletable="false" :font-size-class="'font-14px'" :department="$department" :departmentId="is_object($department) ? $department->id :$initialDepartmentIndex" :showRows="is_object($department)" :add-expense-name="true" :append-save-or-back-btn="false" :repeater-with-select2="false" :parentClass="''" :tableName="$department ? $tableId.$department->id : $tableId " :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
+                    <x-tables.repeater-table :addExpenseType="true" :initEmpty="false" :removeActionBtn="true" :first-element-deletable="false" :font-size-class="'font-14px'" :department="$department"  :append-save-or-back-btn="false" :repeater-with-select2="false" :parentClass="''" :tableName="$department ? $tableId.$department->id : $tableId " :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
                         <x-slot name="ths">
                             <x-tables.repeater-table-th :font-size-class="'font-14px'" class="  header-border-down first-column-th-class" :title="__('')"></x-tables.repeater-table-th>
-                            <x-tables.repeater-table-th :font-size-class="'font-14px'" class="  header-border-down first-column-th-class" :title="__('Position')"></x-tables.repeater-table-th>
+                            <x-tables.repeater-table-th :font-size-class="'font-14px'" class="  header-border-down " :title="__('Position')"></x-tables.repeater-table-th>
                             <x-tables.repeater-table-th :font-size-class="'font-14px'" class=" tenor-selector-class header-border-down " :title="__('Existing <br> Count')"></x-tables.repeater-table-th>
                             <x-tables.repeater-table-th :font-size-class="'font-14px'" class=" tenor-selector-class header-border-down " :title="__('Monthly Net <br> Salary')"></x-tables.repeater-table-th>
                             @foreach($studyMonthsForViews as $dateAsIndex=>$dateAsString)
@@ -36,11 +36,11 @@
                             @endforeach
                         </x-slot>
                         <x-slot name="trs">
-                           
+                        
                             @foreach($department ? $department->positions : [] as $rowIndex=>$position ) 
-							@php $departmentId=$department ? $department->id : $initialDepartmentIndex ;
-                                $currentPosition = isset($department->positions[$rowIndex]) ? $department->positions[$rowIndex] : null ;
-
+							@php 
+									$manpower = $position->manpowers->where('study_id',$study->id)->first();
+									$positionId = $position->id;
                                 @endphp
                                 <tr {{-- data-repeater-item --}} data-repeat-formatting-decimals="2" data-repeater-style>
 
@@ -48,13 +48,12 @@
                                        
                                     </td>
 
-                                    <input type="hidden" name="departments[{{ $departmentId }}][positions][{{ $rowIndex	 }}][id]" value="{{ $currentPosition ? $currentPosition->id : 0 }}">
-                                    <input type="hidden" name="departments[{{ $departmentId }}][positions][{{ $rowIndex	 }}][study_id]" value="{{ $study->id }}">
-                                    {{-- <input type="hidden" name="id" value="{{ isset($subModel) ? $subModel->id : 0 }}"> --}}
+                                    <input type="hidden" name="manpowers[{{ $positionId }}][id]" value="{{  $position->id}}">
+                                    <input type="hidden" name="manpowers[{{ $positionId }}][study_id]" value="{{ $study->id }}">
 
                                     <td>
-                                        <div class="">
-                                            <input readonly value="{{ $currentPosition ? $currentPosition->getName() : '' }}" name="departments[{{ $departmentId }}][positions][{{ $rowIndex	 }}][name]" class="form-control text-left mt-2" type="text">
+                                        <div class="max-w-250" >
+                                            <input readonly value="{{  $position->getName()  }}"  class="form-control text-left mt-2" type="text">
 
                                         </div>
                                     </td>
@@ -62,7 +61,7 @@
 
 
                                         <div class="">
-                                            <input value="{{ $currentPosition ? $currentPosition->getExistingCount():0 }}" name="departments[{{ $departmentId }}][positions][{{ $rowIndex}}][existing_count]" class="form-control expandable-percentage-input text-left mt-2" type="text">
+                                            <input value="{{  $manpower ? $manpower->getExistingCount():0 }}" name="manpowers[{{ $positionId }}][existing_count]" class="form-control expandable-percentage-input text-left mt-2" type="text">
 
                                         </div>
                                     </td>
@@ -70,13 +69,14 @@
 
 
                                         <div class="">
-                                            <input value="{{ $currentPosition ? $currentPosition->getMonthlyNetSalary() : 0 }}" name="departments[{{ $departmentId }}][positions][{{ $rowIndex}}][monthly_net_salary]" class="form-control expandable-amount-input text-left mt-2" type="text">
+                                            <input value="{{ $manpower ? $manpower->getMonthlyNetSalary() : 0 }}" name="manpowers[{{ $positionId }}][monthly_net_salary]" class="form-control expandable-amount-input text-left mt-2" type="text">
                                         </div>
                                     </td>
                                     @php
                                     $columnIndex = 0 ;
                                     $currentVal = 0 ;
 									$currentYearRepeaterIndex =  0 ;
+									$currentYearTotal = 0 ;
                                     @endphp
 								
                                     @foreach($studyMonthsForViews as $dateAsIndex=>$dateAsString)
@@ -84,9 +84,11 @@
                                     <td data-column-index="{{ $dateAsIndex }}">
                                         <div class="d-flex align-items-center justify-content-center">
                                             @php
-                                            $name = "departments[$departmentId][positions][$rowIndex][hiring_counts][$dateAsIndex]";
+                                            $name = "manpowers[$positionId][hiring_counts][$dateAsIndex]";
+											$currentValue = $manpower ? $manpower->getHiringCountsAtDateIndex($dateAsIndex) : 0;
+											$currentYearTotal+=$currentValue;
                                             @endphp
-                                            <x-repeat-right-dot-inputs :number-format-decimals="0" :mark="' '" :currentVal="$currentPosition ? $currentPosition->getHiringCountsAtDateIndex($dateAsIndex) : 0 " data-group-index="{{ $currentYearRepeaterIndex }}" :classes="'repeater-with-collapse-input only-greater-than-or-equal-zero-allowed '" :is-percentage="true" :name="$name" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :number-format-decimals="0" :mark="' '" :currentVal="$currentValue " data-group-index="{{ $currentYearRepeaterIndex }}" :classes="'repeater-with-collapse-input only-greater-than-or-equal-zero-allowed '" :is-percentage="true" :name="$name" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
                                         </div>
                                     </td>
 									@php
@@ -98,7 +100,10 @@
 							@if($financialYearEndMonthNumber == $currentMonthNumber || $loop->last)
 							         <td data-column-index="{{ $dateAsIndex }}" class="exclude-from-collapse">
                                         <div class="d-flex align-items-center justify-content-center">
-									      <x-repeat-right-dot-inputs :readonly="true" :removeThreeDots="true" :number-format-decimals="0" :mark="' '" :currentVal="0 " :formattedInputClasses="'exclude-from-collapse'" :classes="'year-repeater-index-'.$currentYearRepeaterIndex.' ' .'only-greater-than-or-equal-zero-allowed exclude-from-collapse'" :is-percentage="true" :name="''" :columnIndex="$dateAsIndex"></x-repeat-right-dot-inputs>
+									      <x-repeat-right-dot-inputs :readonly="true" :removeThreeDots="true" :number-format-decimals="0" :mark="' '" :currentVal="$currentYearTotal " :formattedInputClasses="'exclude-from-collapse'" :classes="'year-repeater-index-'.$currentYearRepeaterIndex.' ' .'only-greater-than-or-equal-zero-allowed exclude-from-collapse'" :is-percentage="true" :name="''" :columnIndex="$dateAsIndex"></x-repeat-right-dot-inputs>
+										  @php
+											$currentYearTotal = 0 ;
+										  @endphp
 										  </div>	
 										  
 										  </td>

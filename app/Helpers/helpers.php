@@ -8299,7 +8299,9 @@ function sumIntervalsIndexes(array $dateValues, string $intervalName,string $fin
 }
 function getIntervalFormatted():array 
 {
-	return ['monthly'=>__('Monthly'),'quarterly'=>__('Quarterly'),'semi-annually'=>__('Semi-annually'),'annually'=>__('Annually')];
+	return ['monthly'=>__('Monthly')
+	,'quarterly'=>__('Quarterly'),'semi-annually'=>__('Semi-annually'),'annually'=>__('Annually')
+];
 }
 function removeDateFrom(array $dateIndexWithDate){
 	$result = [];
@@ -8383,4 +8385,14 @@ function getExpensesTypes():array
             'cost_per_unit',
             'one_time_expense'
     ];
+}
+function getTableNamesThatHasColumn(string $columnName,string $connectionName = null)
+{
+  $database = DB::connection($connectionName)->getDatabaseName();
+	return DB::connection($connectionName)->table('information_schema.columns')
+        ->select('table_name')
+        ->where('column_name', $columnName)
+        ->where('table_schema', $database)
+        ->distinct()->pluck('TABLE_NAME')->toArray();
+	
 }

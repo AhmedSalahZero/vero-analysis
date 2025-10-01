@@ -37,7 +37,7 @@
                                 <label class="form-label font-weight-bold">{{ __('Study Name') }} @include('star') </label>
                                 <div class="kt-input-icon">
                                     <div class="input-group">
-                                        <input type="text" class="form-control" placeholder="{{ __('Please Enter Study Name') }}" name="study_name" value="{{ isset($model) ? $model->getName() : null }}" required>
+                                        <input type="text" class="form-control" placeholder="{{ __('Please Enter Study Name') }}" name="name" value="{{ isset($model) ? $model->getName() : null }}" required>
                                     </div>
                                 </div>
                             </div>

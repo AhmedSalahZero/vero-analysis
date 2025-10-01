@@ -16,6 +16,8 @@ class  EclAndNewPortfolioFundingRate extends Model
 		'admin_fees_rates'=>'array',
 		'monthly_admin_fees_amounts'=>'array',
 		'ecl_rates'=>'array',
+		'monthly_ecl_values'=>'array',
+		'accumulated_ecl_values'=>'array',
 		'equity_funding_rates'=>'array',
 		'equity_funding_values'=>'array',
 		'new_loans_funding_rates'=>'array',

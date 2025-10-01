@@ -17,7 +17,7 @@ class  MicrofinanceAdminFeesRate extends Model
 		'monthly_admin_fees_amounts'=>'array',
 		'ecl_rates'=>'array',
 	];
-	public function getAdminFeeRatesAtYearOrMonthIndex(int $yearOrMonthIndex)
+	public function getAdminFeesRatesAtYearOrMonthIndex(int $yearOrMonthIndex)
 	{
 		return $this->getAdminFeesRates()[$yearOrMonthIndex] ?? 0  ; 
 	}

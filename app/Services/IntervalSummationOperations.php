@@ -19,17 +19,17 @@ class IntervalSummationOperations
 
 		$result = [];
 		$periodInterval = $this->getPeriodsForStartMonths($intervalName,$financialYearStartMonth) ; 
+		// dd(app('dateIndexWithDate'));
 		$dateIndexWithDate = $dateIndexWithDate ?: app('dateIndexWithDate');
 
 		$dateAsStringIndex = removeDateFrom($dateIndexWithDate);
 
 		foreach ($dateValues as $dateAsString => $value) {
-			if(!is_numeric($value)){
-				dd('d',$dateValues);
-				throw new \Exception('Value Must Be Numeric Value [ ' . $value . ' ] passed');
-			}
 			$originalDate = $dateAsString;
-			$dateAsString = is_numeric($dateAsString) ? $dateIndexWithDate[$dateAsString] : $dateAsString;
+			// if(!isset($dateIndexWithDate[$dateAsString])){
+			// 	dd($dateIndexWithDate ,$dateValues );
+			// }
+			$dateAsString = is_numeric($dateAsString) ? ($dateIndexWithDate[$dateAsString]) : $dateAsString;
 			$dateObject = Carbon::make($dateAsString);
 			$year = $dateObject->format('Y');
 			$month = $dateObject->format('m');

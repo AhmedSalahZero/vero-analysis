@@ -286,7 +286,7 @@ public function __calculate($previousResult ,int $indexOfLoop,string $loanType, 
 		}
 		$dateAsIndexes = array_keys($loanScheduleResult['beginning']);
 		if(app()->bound('dateIndexWithDate')){
-			$loanScheduleResult['accured_interest']=Loan::calculateSettlementStatement($dateAsIndexes,$loanScheduleResult['interestPayment'],$loanScheduleResult['interestAmount'],0,app('dateIndexWithDate'));
+			$loanScheduleResult['accured_interest']=Loan::calculateSettlementStatement($dateAsIndexes,$loanScheduleResult['interestPayment'],$loanScheduleResult['interestAmount'],0,app('dateIndexWithDate'),false,true);
 		}
 
 		

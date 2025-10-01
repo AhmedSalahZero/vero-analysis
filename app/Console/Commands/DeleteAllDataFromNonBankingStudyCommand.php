@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Providers\NonBankingServiceProvider;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Schema;
@@ -61,5 +62,6 @@ class DeleteAllDataFromNonBankingStudyCommand extends Command
 			$tablesNamesToBeDeleted = $this->tryToDeleteThisTables($studyId,$tablesNamesToBeDeleted,$attemptNumber);
 			$attemptNumber++ ;
 		}
+	
     }
 }

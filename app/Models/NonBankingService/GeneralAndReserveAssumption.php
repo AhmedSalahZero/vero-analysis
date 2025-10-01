@@ -36,9 +36,9 @@ class  GeneralAndReserveAssumption extends Model
 				 */
 				if($generalAndReserveAssumption->isDirty('cbe_lending_corridor_rates') || $generalAndReserveAssumption->isDirty('bank_lending_margin_rates')){
 					
-					$study->storeFixedLoans(Study::LEASING,'leasingRevenueStreamBreakdown','leasingEclAndNewPortfolioFundingRate','leasingEclAndNewPortfolioFundingRate');
-					$study->storeFixedLoans(Study::IJARA,'ijaraMortgageBreakdowns','ijaraMortgageNewPortfolioFundingStructure','ijaraMortgageAdminFeesRate');
-					$study->storeVariableLoans(Study::REVERSE_FACTORING,'reverseFactoringBreakdowns','reverseFactoringNewPortfolioFundingStructure','reverseFactoryAdminFeesRate');
+					$study->storeFixedLoans(Study::LEASING,'leasingRevenueStreamBreakdown');
+					$study->storeFixedLoans(Study::IJARA,'ijaraMortgageBreakdowns');
+					$study->storeVariableLoans(Study::REVERSE_FACTORING,'reverseFactoringBreakdowns');
 					$study->refreshDirectFactoringLoans();
 					$study->updateExpensesPercentagesOfSales();
 				}

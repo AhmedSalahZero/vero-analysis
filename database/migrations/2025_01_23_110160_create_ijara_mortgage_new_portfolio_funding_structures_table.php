@@ -20,9 +20,9 @@ class CreateIjaraMortgageNewPortfolioFundingStructuresTable extends Migration
 			$table->json('new_loans_funding_rates')->nullable();
 			$table->json('new_loans_funding_values')->nullable();
 			$table->unsignedBigInteger('study_id');
-			$time = now()->toTimeString();
-			$key = Str::uuid();
-			$fullKey = $time.$key;
+		//	$time = now()->toTimeString();
+		//	$key = Str::uuid();
+		//	$fullKey = $time.$key;
 		// ref	$this->foreign('study_id','study_'.$fullKey)->references('id')->on('studies')->cascadeOnDelete();
 		$table->unsignedBigInteger('company_id');
             $table->timestamps();

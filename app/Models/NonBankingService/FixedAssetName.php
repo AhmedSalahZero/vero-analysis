@@ -40,8 +40,8 @@ class FixedAssetName extends Model
 	{
 		return (bool)$this->is_branch_asset;
 	}
-	// public static function getCategories(Company $company)
-	// {
-	// 	return FixedAssetName::where('company_id',$company->id)->pluck('expense_type','expense_type')->unique()->toArray();
-	// }
+	public static function getGeneralAllForSelect2(Company $company)
+	{
+		return FixedAssetName::where('company_id',$company->id)->get()->formattedForSelect(false,'id','name');	
+	}
 }

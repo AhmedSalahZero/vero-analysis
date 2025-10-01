@@ -88,7 +88,7 @@ use App\Models\NonBankingService\Study;
                                         @php
                                         $currentIndex = 0 ;
                                         @endphp
-                                        @foreach($currentTableData['main_items'] as $mainItemId => $mainItemArr)
+                                        @foreach($currentTableData['main_items']??[] as $mainItemId => $mainItemArr)
                                         <div class="input-hidden-parent">
                                             <input data-number-of-decimals="0" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control copy-value-to-his-input-hidden 
 

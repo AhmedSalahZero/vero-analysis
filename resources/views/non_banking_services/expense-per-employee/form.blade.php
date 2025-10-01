@@ -8,9 +8,10 @@ use App\Models\NonBankingService\Expense;
 <link rel="stylesheet" href="/custom/css/non-banking-services/common.css">
 <link rel="stylesheet" href="/custom/css/non-banking-services/select2.css">
 <style>
-.js-parent-to-table{
-	min-height:70vh;
-}
+    .js-parent-to-table {
+        min-height: 70vh;
+    }
+
 </style>
 @endsection
 @section('sub-header')
@@ -28,15 +29,15 @@ use App\Models\NonBankingService\Expense;
         $repeaterId = 'expense_per_employee_repeater';
         $cardId = $tableId;
         @endphp
-	@php
-		$storeRoute = route('store.expenses',['company'=>$company->id,'study'=>$study->id]);
-	@endphp
+        @php
+        $storeRoute = route('store.expenses',['company'=>$company->id,'study'=>$study->id]);
+        @endphp
         <div class="kt-portlet parent-card ">
             <div class="kt-portlet__body">
                 {{-- start of one time expense --}}
                 <form id="form-id" class="kt-form kt-form--label-right" method="POST" enctype="multipart/form-data" action="{{ $storeRoute }}">
                     @include('non_banking_services.expense-per-employee._input-hidden')
-			
+
                     <input type="hidden" name="model_id" value="{{ $study->id }}">
                     <input type="hidden" name="expense_type" value="{{ $tableId }}">
                     <input type="hidden" name="tableIds[]" value="{{ $tableId }}">
@@ -48,18 +49,19 @@ use App\Models\NonBankingService\Expense;
                             <x-tables.repeater-table-th :font-size-class="'font-14px'" class="col-md-2 header-border-down" :title="__('Employee <br> Position')"></x-tables.repeater-table-th>
                             <x-tables.repeater-table-th :font-size-class="'font-14px'" class="col-md-1 header-border-down" :title="__('Start <br> Date')" :helperTitle="__('Default date is Income Statement start date, if else please select a date')"></x-tables.repeater-table-th>
                             <x-tables.repeater-table-th :font-size-class="'font-14px'" class="col-md-1 header-border-down" :title="__('Monthly Cost <br> Per Unit')" :helperTitle="__('Please insert Cost Per Unit excluding VAT')"></x-tables.repeater-table-th>
+                            <x-tables.repeater-table-th :font-size-class="'font-14px'" class="col-md-1 header-border-down" :title="__('End <br> Date')" :helperTitle="__('Default date is Income Statement start date, if else please select a date')"></x-tables.repeater-table-th>
                             <x-tables.repeater-table-th :font-size-class="'font-14px'" class="col-md-2 header-border-down" :title="__('Payment <br> Terms')" :helperTitle="__('You can either choose one of the system default terms (cash, quarterly, semi-annually, or annually), if else please choose Customize to insert your payment terms')"></x-tables.repeater-table-th>
                             <x-tables.repeater-table-th :font-size-class="'font-14px'" class="col-md-1 header-border-down rate-class" :title="__('VAT <br> Rate')"></x-tables.repeater-table-th>
-                            <x-tables.repeater-table-th :font-size-class="'font-14px'" class="col-md-1 header-border-down" :title="__('Is <br> Deductible')"></x-tables.repeater-table-th>
+                            {{-- <x-tables.repeater-table-th :font-size-class="'font-14px'" class="col-md-1 header-border-down" :title="__('Is <br> Deductible')"></x-tables.repeater-table-th> --}}
                             <x-tables.repeater-table-th :font-size-class="'font-14px'" class="col-md-1 header-border-down rate-class" :title="__('Withhold <br> Tax Rate')" :helperTitle="__('Withhold Tax rate will be calculated based on Monthly Amount excluding VAT')"></x-tables.repeater-table-th>
-                            <x-tables.repeater-table-th :font-size-class="'font-14px'" class="col-md-1 header-border-down rate-class" :title="__('Increase <br> Rate')"></x-tables.repeater-table-th>
-                            <x-tables.repeater-table-th :font-size-class="'font-14px'" class="col-md-2 header-border-down" :title="__('Increase <br> Interval')"></x-tables.repeater-table-th>
+                            <x-tables.repeater-table-th :font-size-class="'font-14px'" class="col-md-1 header-border-down rate-class" :title="__('Annual <br> Increase %')"></x-tables.repeater-table-th>
+                            {{-- <x-tables.repeater-table-th :font-size-class="'font-14px'" class="col-md-2 header-border-down" :title="__('Annual Increase <br> Interval')"></x-tables.repeater-table-th> --}}
                         </x-slot>
                         <x-slot name="trs">
                             @php
 
                             $rows = isset($model) ? $model->generateRelationDynamically($tableId,$expenseType)->get() : [-1] ;
-					
+
 
                             @endphp
                             @foreach( count($rows) ? $rows : [-1] as $subModel)
@@ -80,37 +82,59 @@ use App\Models\NonBankingService\Expense;
                                 </td>
 
                                 <td>
-                                    <x-form.select :selectedValue="isset($subModel) ? $subModel->getExpenseCategory() : 'cash'" :options="getExpenseCategoriesForSelect2()" :add-new="false" class="select2-select repeater-select expense_category " :all="false" name="@if($isRepeater) expense_category @else {{ $tableId }}[0][expense_category] @endif"></x-form.select>
+                                    <div class="max-w-150">
+                                        <x-form.select :selectedValue="isset($subModel) ? $subModel->getExpenseCategory() : 'cash'" :options="getExpenseCategoriesForSelect2()" :add-new="false" class="select2-select repeater-select expense_category " :all="false" name="@if($isRepeater) expense_category @else {{ $tableId }}[0][expense_category] @endif"></x-form.select>
+                                    </div>
                                 </td>
-								
-								 <td>
+
+                                <td>
+                                    <div class="max-w-200">
                                         <x-form.select data-current-selected="{{ isset($subModel) ? $subModel->getExpenseNameId() : '' }}" :selectedValue="isset($subModel) ? $subModel->getExpenseNameId() : ''" :options="[]" :add-new="false" class="select2-select repeater-select expense_name_id " :all="false" name="@if($isRepeater) expense_name_id @else {{ $tableId }}[0][expense_name_id] @endif"></x-form.select>
+                                    </div>
+                                </td>
+
+
+
+
+
+                                <td>
+                                    <div class="max-w-200">
+                                        <x-form.select :multiple="true" :selectedValue="isset($subModel) ? $subModel->getDepartmentIds() : ''" :options="$departmentsFormatted" :add-new="false" class="select2-select repeater-select  js-update-positions-for-department" :all="false" data-current-selected="{{ json_encode(isset($subModel) ? $subModel->getPositionIds():[]) }}" ></x-form.select>
+                                    </div>
                                 </td>
 								
 								
-									
-                                {{-- <td>
-                                    <input value="{{ isset($subModel) ?  $subModel->getName() : old('name') }}" class="form-control" @if($isRepeater) name="name" @else name="{{ $tableId }}[0][name]" @endif type="text">
-                                </td> --}}
+                                <td>
+                                    <div class="max-w-200">
+                                        <x-form.select :multiple="true" :selectedValue="isset($subModel) ? $subModel->getPositionIds() : ''" :options="[]" :add-new="false" class="select2-select repeater-select  position-class" :all="false" name="@if($isRepeater) position_ids @else {{ $tableId }}[0][position_ids] @endif"></x-form.select>
+
+                                    </div>
+                                </td>
+                                <td>
+								<div class="max-w-150">
+								@include('components.calendar-month-year',[
+                                            'name'=>'start_date',
+                                            'value'=>isset($subModel) ? $subModel->getStartDateYearAndMonth() : $study->getOperationStartDateYearAndMonth()
+                                            ])
+								</div>
+                                    {{-- <x-calendar :value="isset($subModel) ? $subModel->getStartDateFormatted() : $study->getStudyStartDate() " :id="'start_date'" name="start_date"></x-calendar> --}}
+                                </td>
 								
-
-                                <td>
-                                    {{-- this must be multiselect --}}
-                                    <x-form.select :selectedValue="isset($subModel) ? $subModel->getDepartment() : ''" :options="$departmentsFormatted" :add-new="false" class="select2-select repeater-select  js-update-positions-for-department" :all="false" data-current-selected="{{ isset($subModel) ? $subModel->getPositionId():0 }}" name="@if($isRepeater) department @else {{ $tableId }}[0][department_id] @endif"></x-form.select>
-
-                                </td>
-                                <td>
-                                    <x-form.select :selectedValue="isset($subModel) ? $subModel->getPositionId() : ''" :options="[]" :add-new="false" class="select2-select repeater-select  position-class" :all="false" name="@if($isRepeater) position_id @else {{ $tableId }}[0][position_id] @endif"></x-form.select>
-
-                                </td>
-                                <td>
-                                    <x-calendar :value="isset($subModel) ? $subModel->getStartDateFormatted() : $study->getStudyStartDate() " :id="'start_date'" name="start_date"></x-calendar>
-                                </td>
+							
                                 <td>
                                     <input value="{{ (isset($subModel) ? number_format($subModel->getMonthlyCostOfUnit(),0) : 0) }}" class="form-control text-center only-greater-than-or-equal-zero-allowed" type="text">
                                     <input type="hidden" value="{{ (isset($subModel) ? $subModel->getMonthlyCostOfUnit() : 0) }}" @if($isRepeater) name="monthly_cost_of_unit" @else name="{{ $tableId }}[0][monthly_cost_of_unit]" @endif>
 
                                 </td>
+									<td>
+								  <div class="max-w-150">
+                                            @include('components.calendar-month-year',[
+                                            'name'=>'end_date',
+                                            'value'=>isset($subModel) ? $subModel->getEndDateYearAndMonth() : $study->getStudyEndDateYearAndMonth()
+                                            ])
+                                        </div>
+								</td>
+								
                                 <td>
                                     <x-form.select :selectedValue="isset($subModel) ? $subModel->getPaymentTerm() : 'cash'" :options="getPaymentTerms()" :add-new="false" class="select2-select repeater-select  payment_terms" :all="false" name="@if($isRepeater) payment_terms @else {{ $tableId }}[0][payment_terms] @endif"></x-form.select>
                                     <x-modal.custom-collection :subModel="isset($subModel) ? $subModel : null " :tableId="$tableId" :isRepeater="$isRepeater" :id="$repeaterId.'test-modal-id'"></x-modal.custom-collection>
@@ -125,12 +149,7 @@ use App\Models\NonBankingService\Expense;
 
                                     </div>
                                 </td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <input name="is_deductible" class="form-control max-w-checkbox  text-center" value="1" @if(isset($subModel) ? $subModel->isDeductible() : false) checked @endif type="checkbox">
-                                    </div>
-                                </td>
-
+                         
                                 <td>
                                     <div class="d-flex align-items-center">
                                         <input class="form-control only-percentage-allowed text-center" value="{{ isset($subModel) ? number_format($subModel->getWithholdTaxRate(),PERCENTAGE_DECIMALS) : "0.00" }}" type="text">
@@ -148,10 +167,10 @@ use App\Models\NonBankingService\Expense;
 
                                     </div>
                                 </td>
-                                <td>
-                                    <x-form.select :selectedValue="isset($subModel) ? $subModel->getIncreaseInterval() : 'annually' " :options="getDurationIntervalTypesForSelectExceptMonthly()" :add-new="false" class="select2-select   repeater-select" :all="false" name="@if($isRepeater) increase_interval @else {{ $tableId }}[0][increase_interval] @endif" ></x-form.select>
+                                {{-- <td>
+                                    <x-form.select :selectedValue="isset($subModel) ? $subModel->getIncreaseInterval() : 'annually' " :options="getDurationIntervalTypesForSelectExceptMonthly()" :add-new="false" class="select2-select   repeater-select" :all="false" name="@if($isRepeater) increase_interval @else {{ $tableId }}[0][increase_interval] @endif"></x-form.select>
 
-                                </td>
+                                </td> --}}
 
 
                             </tr>
@@ -381,11 +400,11 @@ use App\Models\NonBankingService\Expense;
             //     reinitalizeMonthYearInput(dateInput)
         })
     });
-        $('.js-parent-to-table').show();
-  
+    $('.js-parent-to-table').show();
+
     $(function() {
         $('#expense_type').trigger('change')
-  
+
     })
 
     $(function() {
@@ -518,27 +537,28 @@ use App\Models\NonBankingService\Expense;
 
 
 <script>
+    $(document).on('change', 'select.expense_category', function() {
+        const parent = $(this).closest('tr');
+        const expenseCategoryId = $(this).val();
+        const currentSelected = $(parent).find('select.expense_name_id').attr('data-current-selected');
+        $.ajax({
+            url: "{{ route('get.expense.name.for.category.only.in.employee',['company'=>$company->id,'study'=>$study->id]) }}"
+            , data: {
+                expenseCategoryId
+            }
+            , success: function(res) {
+                let result = res.data;
+                let options = '';
+                for (index in result) {
+                    var row = result[index];
+                    options += `<option ${currentSelected==row.id ? 'selected':''} value="${row.id}">${row.name}</option>`;
+                }
+                $(parent).find('select.expense_name_id').empty().append(options).trigger('change');
+            }
+        })
+    })
+    $('select.expense_category').trigger('change')
 
-	$(document).on('change','select.expense_category',function(){
-		const parent = $(this).closest('tr');
-		const expenseCategoryId = $(this).val();
-		const currentSelected = $(parent).find('select.expense_name_id').attr('data-current-selected');
-		console.log(currentSelected,expenseCategoryId)
-		$.ajax({
-			url:"{{ route('get.expense.name.for.category.only.in.employee',['company'=>$company->id,'study'=>$study->id]) }}",
-			data:{expenseCategoryId},
-			success:function(res){
-				let result = res.data ;
-				let options = '';
-				for(index in result){
-					var row = result[index];
-					options += `<option ${currentSelected==row.id ? 'selected':''} value="${row.id}">${row.name}</option>`;
-				}
-				$(parent).find('select.expense_name_id').empty().append(options).trigger('change');
-			}
-		})
-	})
-	$('select.expense_category').trigger('change')
 </script>
 
 @endpush

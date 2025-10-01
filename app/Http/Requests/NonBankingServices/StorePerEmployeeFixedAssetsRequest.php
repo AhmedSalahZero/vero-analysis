@@ -70,18 +70,7 @@ class StorePerEmployeeFixedAssetsRequest extends FormRequest
 				
 			}
 		}
-		// $positionIds = $this->input('fixedAssets.*.position_ids') ;
-		// $positionCountPerMonths = [];
-	
 		
-		// foreach($positionIds as $index => $positionIds){
-		// 	foreach($positionIds  as $positionId){
-		// 		$positions->where('position_id',$positionCountPerMonths)->first();
-		// 	}
-		// }
-		
-		// $directFFEAmounts = $this->input('perEmployeeFixedAssetsFundingStructure.direct_ffe_amounts');
-	
 		$this->merge([
 			'fixedAssets'=>$fixedAssets ,
 			'perEmployeeFixedAssetsFundingStructure'=>[

@@ -10,7 +10,7 @@ use App\Models\NonBankingService\Study;
 use App\Traits\NonBankingService;
 use Illuminate\Http\Request;
 
-class IjaraMortgageRevenueStreamBreakdownController extends Controller
+class IjaraMortgageController extends Controller
 {
 	use NonBankingService ;
 	public function getModel():IjaraMortgageRevenueStreamBreakdown
@@ -31,10 +31,11 @@ class IjaraMortgageRevenueStreamBreakdownController extends Controller
 	{
 		$study->storeRelationsWithNoRepeater($request,$company);
 		$study->storeRepeaterRelations($request,$this->getRepeaterRelations(),$company);
-		$study = $study->refresh();
-		$study->updateIjaraMortgageMonthlyAdminFeesAmounts();
+		$study->storeEclAndFundingStructureFor($request,Study::IJARA);
+	
+	//	$study->updateIjaraMortgageMonthlyAdminFeesAmounts();
 		// $loanAmounts = $study->ijaraMortgageBreakdowns->pluck('loan_amounts','id')->toArray();
-		$study->storeFixedLoans(Study::IJARA,'ijaraMortgageBreakdowns','ijaraMortgageNewPortfolioFundingStructure','ijaraMortgageAdminFeesRate');
+		$study->storeFixedLoans(Study::IJARA,'ijaraMortgageBreakdowns');
 		$study->updateExpensesPercentagesOfSales();
 		return response()->json([
 			'redirectTo'=>route('create.portfolio.mortgage.revenue.stream.breakdown',['company'=>$company->id,'study'=>$study->id])

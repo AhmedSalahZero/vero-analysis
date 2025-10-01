@@ -26,7 +26,7 @@ trait HasFixedAsset
 
         // $leasingRevenueStreams =$study->{$relationName};
         $generalAndReserveAssumption = $study->generalAndReserveAssumption;
-        // $leasingEclAndNewPortfolioFundingRate = $study->{$eclRelationName};
+     
         
         /**
          * @var GeneralAndReserveAssumption $generalAndReserveAssumption

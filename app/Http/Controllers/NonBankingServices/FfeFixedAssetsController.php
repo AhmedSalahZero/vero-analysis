@@ -42,11 +42,12 @@ class FfeFixedAssetsController extends Controller
 	}
 	public function store(Company $company , Request $request,Study $study)
 	{
+		// dd($request->all());
 		$fixedAssetType = $request->get('fixed_asset_type') ;
-		
+
 		$study->storeRelationsWithNoRepeater($request,$company);
 	
-		$study->storeRepeaterRelations($request,$this->getRepeaterRelations(),$company);
+		$study->storeRepeaterRelations($request,$this->getRepeaterRelations(),$company,['type'=>$fixedAssetType]);
 		
 		$study->storeFixedLoansForFixedAssets($fixedAssetType);
 		

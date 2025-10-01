@@ -37,13 +37,7 @@
     @include('star')
     @endif
     @if($addNewModal && isset($company->id))
-    <i
-	@if($previousSelectMustBeSelected)
-	data-previous-must-be-opened="1"
-	data-previous-select-selector="{{ $previousSelectSelector }}"
-	data-previous-select-title="{{ $previousSelectTitle }}"
-	@endif 
-	 title="{{ __('Add New') }}" data-company-id="{{ $company->id ?? 0 }}" data-modal-name="{{ $addNewModalModalName }}" data-modal-type="{{ $addNewModalModalType }}" data-modal-title="{{ $addNewModalModalTitle }}" class="fa fa-plus cursor-pointer block ml-auto trigger-add-new-modal"></i>
+    <i @if($previousSelectMustBeSelected) data-previous-must-be-opened="1" data-previous-select-selector="{{ $previousSelectSelector }}" data-previous-select-title="{{ $previousSelectTitle }}" @endif title="{{ __('Add New') }}" data-company-id="{{ $company->id ?? 0 }}" data-modal-name="{{ $addNewModalModalName }}" data-modal-type="{{ $addNewModalModalType }}" data-modal-title="{{ $addNewModalModalTitle }}" class="fa fa-plus cursor-pointer block ml-auto trigger-add-new-modal"></i>
     @endif
 </label>
 @endif
@@ -59,12 +53,10 @@ $basicClasses = $insideModalWithJs ? str_replace($insideModalWithJs,'select2-sel
 @endphp
 
 <select
-@if(is_array($selectedValue))
-data-current-selected-items="{{ json_encode($selectedValue) }}"
-
+@if($multiple)
+data-actions-box="true"
 @endif
-{{-- {{ dd($multiple) }} --}}
-  @if($addNewModalModalName) data-modal-name="{{ $addNewModalModalName }}" data-modal-type="{{ $addNewModalModalType }}" @endif @if($disabled) disabled @endif {{ $attributes->merge(['class'=>$basicClasses]) }} data-live-search="true" data-add-new="{{ $addNew ? 1 : 0 }}" data-all="{{ $all ? 1 :0 }}" @if($multiple) multiple @endif>
+ @if(is_array($selectedValue)) data-current-selected-items="{{ json_encode($selectedValue) }}" @endif {{-- {{ dd($multiple) }} --}} @if($addNewModalModalName) data-modal-name="{{ $addNewModalModalName }}" data-modal-type="{{ $addNewModalModalType }}" @endif @if($disabled) disabled @endif {{ $attributes->merge(['class'=>$basicClasses]) }} data-live-search="true" data-add-new="{{ $addNew ? 1 : 0 }}" data-all="{{ $all ? 1 :0 }}" @if($multiple) multiple @endif>
 
     @if($pleaseSelect)
     <option value="" selected>{{ __('Please Select') }}</option>
@@ -81,24 +73,20 @@ data-current-selected-items="{{ json_encode($selectedValue) }}"
                 " data-add-new-form="{{ $addNewWithFormPopupClass ?: '' }}" data-add-model-name="{{ $addModelName }}" data-add-modal-title="{{ $addModalTitle }}">{{ $addNewText ?: __('Add New') }}</option>
     @endif
     @foreach($options as $value=>$option)
-    <option 
-	@if(isset($option['value']))
-	value="{{ $option['value']  }}"
-	@endif
-	 title="{{ $option['title']??''  }}" @foreach($option as $name=>$val)
+    <option @if(isset($option['value'])) value="{{ $option['value']  }}" @endif title="{{ $option['title']??''  }}" @foreach($option as $name=>$val)
         {{ $name .'='.$val }}
         @if($name == 'value' && $val == $selectedValue )
         selected
         @endif
-		@if(is_array($selectedValue))
-		
-		
-		@if(in_array($val,$selectedValue))
-		selected
-		
-		@endif 
-		
-		@endif 
+        @if(is_array($selectedValue))
+
+
+        @if(in_array($val,$selectedValue))
+        selected
+
+        @endif
+
+        @endif
 
 
 
@@ -121,27 +109,18 @@ data-current-selected-items="{{ json_encode($selectedValue) }}"
                 </button>
             </div>
             <div class="modal-body">
-                    <div class="form-group">
-                        <label class="label">{{ __('Please Enter Name') }}</label>
-                        <input type="text" class="form-control name-class-js">
-                    </div>
-					@if($additionalColumnName)
-					<input type="hidden" name="additional_column_name" value="{{ $additionalColumnName }}">
-					<input type="hidden" name="additional_column_value" value="{{ $additionalColumnValue }}">
-					@endif 
+                <div class="form-group">
+                    <label class="label">{{ __('Please Enter Name') }}</label>
+                    <input type="text" class="form-control name-class-js">
+                </div>
+                @if($additionalColumnName)
+                <input type="hidden" name="additional_column_name" value="{{ $additionalColumnName }}">
+                <input type="hidden" name="additional_column_value" value="{{ $additionalColumnValue }}">
+                @endif
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Close') }}</button>
-                <button
-				
-				
-				@if($previousSelectMustBeSelected)
-				data-previous-select-selector="{{ $previousSelectSelector }}"
-				data-previous-select-title="{{ $previousSelectTitle }}"
-				data-previous-select-name-in-db="{{ $previousSelectNameInDB }}"
-				@endif 
-								
-				 data-company-id="{{ $company->id ?? 0 }}" data-modal-type="{{ $addNewModalModalType }}" data-modal-name="{{ $addNewModalModalName }}" data-modal-title="{{ $addNewModalModalTitle }}" type="button" class="btn btn-primary store-new-add-modal">{{ __('Save') }}</button>
+                <button @if($previousSelectMustBeSelected) data-previous-select-selector="{{ $previousSelectSelector }}" data-previous-select-title="{{ $previousSelectTitle }}" data-previous-select-name-in-db="{{ $previousSelectNameInDB }}" @endif data-company-id="{{ $company->id ?? 0 }}" data-modal-type="{{ $addNewModalModalType }}" data-modal-name="{{ $addNewModalModalName }}" data-modal-title="{{ $addNewModalModalTitle }}" type="button" class="btn btn-primary store-new-add-modal">{{ __('Save') }}</button>
             </div>
         </div>
     </div>

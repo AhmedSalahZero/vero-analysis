@@ -147,6 +147,7 @@ trait HasBasicStoreRequest
 			],$additionalData) ;
 			$this->updateRepeaterRelation($request,$relationName,$this->$relationName()->getRelated()->getTable(),$additionalData,$oldIdsFromDatabase);	
 		}
+		$this->refresh();
 		
 	}
 }

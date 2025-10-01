@@ -589,7 +589,7 @@ ksort($result);
 return $result;
 
 	}
-	protected static function calculateGrowthRate(array $items):array {
+	public static function calculateGrowthRate(array $items):array {
 		$previousValue = 0 ;
 		$result = [];	
 		foreach($items as $dateIndex => $currentValue){
@@ -734,4 +734,90 @@ public static function repeatThrough(float $value , array $keys):array{
 		}
 		return $result;
 	}
+	public static function calculateTotalFromSubItems(array $items):array{
+		$result=[];
+		foreach($items as $item){
+			$data = $item['data']??[];
+			foreach($data as $dateOrYearIndex => $value){
+				$result[$dateOrYearIndex] = isset($result[$dateOrYearIndex]) ? $result[$dateOrYearIndex] + $value:$value;
+ 			}
+		}
+		ksort($result);
+		return $result;
+	}
+
+	
+public static function getPerYearIndexForCashAndBank(array $itemsAsDateIndexAndValue ,  array $yearWithItsMonths):array{
+	$result = [];
+	foreach($yearWithItsMonths as $yearIndex => $itsMonths){
+		$currentYearTotal = 0;
+		$isFirstLoop = true ;
+		foreach($itsMonths as $dateAsIndex => $dateAsString){
+			$currentValue = $itemsAsDateIndexAndValue[$dateAsIndex]??0 ;
+			if($isFirstLoop){
+				$currentYearTotal =  $currentValue;
+				$isFirstLoop=false;
+			}
+		}
+		/**
+		 * * هنحط النتيجه بتاعتك كل سنه عند اخر شهر في السنه دي
+		 */
+		$result[$dateAsIndex] = $currentYearTotal;
+	}
+	return $result ;
+}
+public static function calculateWorkingCapital($cashAndBankAmount,$totalCashInAsDateIndexAndValue , $totalCashOutAsDateIndexAndValue , $sumKeys)
+{
+	$openingBalance = $cashAndBankAmount ; 
+	$statements = [];
+	foreach($sumKeys as $dateAsIndex){
+		$statements['beginning_balance'][$dateAsIndex] = $openingBalance;
+		$currentTotalCashIn = $totalCashInAsDateIndexAndValue[$dateAsIndex]??0;
+		$statements['total_cash_in'][$dateAsIndex] = $currentTotalCashIn;
+		$currentTotalCashOut = $totalCashOutAsDateIndexAndValue[$dateAsIndex]??0;
+		$statements['total_cashout'][$dateAsIndex] = $currentTotalCashOut;
+		$netCashBeforeWorkingCapital = $openingBalance + $currentTotalCashIn - $currentTotalCashOut ;
+		$statements['net_cash_before_working_capital'][$dateAsIndex] =$netCashBeforeWorkingCapital; 
+		$workingCapitalInjection = 0 ;
+		if($netCashBeforeWorkingCapital < 0){
+			$workingCapitalInjection = $netCashBeforeWorkingCapital * -1 ;
+		}
+		$statements['working_capital_injection'][$dateAsIndex] =$workingCapitalInjection; 
+		$endCashBalance = $netCashBeforeWorkingCapital + $workingCapitalInjection;
+		$statements['cash_end_balance'][$dateAsIndex] = $endCashBalance;
+		$openingBalance = $endCashBalance ;
+	}
+	return $statements;
+	
+	
+	}
+	
+	public static function sumPerYearIndex(array $itemsAsDateIndexAndValue ,  array $yearWithItsMonths):array{
+	$result = [];
+	foreach($yearWithItsMonths as $yearIndex => $itsMonths){
+		$currentYearTotal = 0;
+		foreach($itsMonths as $dateAsIndex => $dateAsString){
+			$currentValue = $itemsAsDateIndexAndValue[$dateAsIndex]??0 ;
+			$currentYearTotal +=  $currentValue;
+		}
+		/**
+		 * * هنحط النتيجه بتاعتك كل سنه عند اخر شهر في السنه دي
+		 */
+		$result[$dateAsIndex] = $currentYearTotal;
+	}
+	return $result ;
+}
+public static function sumPerKey( $items , $sumKeys)
+{
+	foreach($items as $item){
+		$type = $item->revenue_stream_type;
+		$schedulePayments = (array)json_decode($item->schedulePayment);
+		foreach($sumKeys as $dateAsIndex ){
+			$value = $schedulePayments[$dateAsIndex]??0;
+			$result[$type][$dateAsIndex] = isset($result[$type][$dateAsIndex])  ? $result[$type][$dateAsIndex] + $value : $value ;
+		}
+	}
+	return $result;
+}
+	
 }

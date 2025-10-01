@@ -53,6 +53,7 @@ class  ReverseFactoringRevenueStreamBreakdown extends Model
 		$isYearsStudy = !$study->isMonthlyStudy();
 		
 		return [
+			'eclAndNewPortfolioFundingRate'=>$study->getEclAndNewPortfolioFundingRatesForStreamType(Study::REVERSE_FACTORING),
 			'company'=>$company ,
 			'study'=>$study,
 			'model'=>$study ,

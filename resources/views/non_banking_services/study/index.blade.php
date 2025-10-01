@@ -173,7 +173,7 @@ use App\Models\NonBankingService\Study;
                                         <a href="#" class="btn btn-md-width btn-2-bg btn-sm btn-brand btn-pill">{{ __('Balance Sheet') }}</a>
                                     </div>
                                     <div class="d-flex mr-auto" style="gap:10px;">
-                                        <a href="#" class="btn btn-md-width btn-3-bg btn-sm btn-brand btn-pill">{{ __('Cash Flow') }}</a>
+                                        <a href="{{ route('cash.in.out.flow.result',['company'=>$company->id,'study'=>$model->id]) }}" class="btn btn-md-width btn-3-bg btn-sm btn-brand btn-pill">{{ __('Cash Flow') }}</a>
                                         <a href="#" class="btn btn-md-width btn-4-bg btn-sm btn-brand btn-pill">{{ __('Ratio Analysis') }}</a>
                                     </div>
                                 </div>
@@ -190,7 +190,9 @@ use App\Models\NonBankingService\Study;
                                 <span style="overflow: visible; position: relative; width: 110px;">
                                     {{-- @if(hasAuthFor('update lc settlement internal transfer')) --}}
                                     <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon edit-btn-class" title="{{ __('Edit') }}" href="{{ route('edit.study',['company'=>$company->id,'study'=>$model->id]) }}"><i class="fa fa-pen-alt exclude-icon default-icon-color"></i></a>
-                                    <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon copy-btn-class" title="{{ __('Copy') }}" href="{{ route('edit.study',['company'=>$company->id,'study'=>$model->id]) }}"><i class="fa fa-layer-group exclude-icon default-icon-color"></i></a>
+                                    {{-- <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon copy-btn-class" title="{{ __('Copy') }}" href="{{ route('edit.study',['company'=>$company->id,'study'=>$model->id]) }}"><i class="fa fa-layer-group exclude-icon default-icon-color"></i></a> --}}
+									<a data-toggle="modal" data-target="#copy{{ $model->id }}" type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon copy-btn-class" title="{{ __('Copy') }}" href="#"><i class="fa fa-copy exclude-icon default-icon-color"></i></a>
+									
                                     {{-- @endif  --}}
                                     {{-- @if(hasAuthFor('delete lc settlement internal transfer')) --}}
                                     <a data-toggle="modal" data-target="#delete-study-{{ $model->id }}" type="button" class="btn delete-btn-class btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt exclude-icon default-icon-color"></i></a>
@@ -215,6 +217,34 @@ use App\Models\NonBankingService\Study;
                                             </div>
                                         </div>
                                     </div>
+									
+									 <div class="modal fade" id="copy{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="copyModalLabel{{ $model->id }}" aria-hidden="true" style="color: black">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="copyModalLabel{{ $model->id }}">{{ __('Copy') }}</h5>
+                    </div>
+					       <form action="{{ route('copy.project', ['study'=>$model->id,'company'=>$company->id]) }}" id="form{{ $model->id }}" method="POST">
+                    <div class="modal-body">
+                 
+                            {{ csrf_field() }}
+                            <div class="form-group">
+                                <label for="name{{ $model->id }}" class="col-form-label">{{ __('New Name') }}</label>
+                                {{-- <span class="sharing-span"> {{__('This field will help you to control Show/Hide the project for them in the future')}} </span> --}}
+                                <input type="text" name="name" class="form-control" id="name{{ $model->id }}">
+                            </div>
+                   
+                    </div>
+                    <div class="modal-footer d-flex">
+                        <button type="button" class="btn btn-sm btn-secondary p-2" data-dismiss="modal">{{__('Close')}}</button>
+                        <button type="submit" class="btn btn-sm btn-info p-2 " ><span class="tooltiptext submit-copy-btn"><i class="far fa-copy" > {{__('Copy')}}</i> </span>
+                        </button>
+                    </div>
+					     </form>
+                </div>
+            </div>
+        </div>
+		
                                     {{-- @endif  --}}
                                 </span>
                             </td>

@@ -18,8 +18,6 @@
 'appendSaveOrBackBtn'=>false,
 'addExpenseName'=>false,
 'showRows'=>true,
-'departmentId'=>0,
-'department'=>null ,
 'fontSizeClass'=>'',
 'addExpenseType'=>false,
 'hideByDefault'=>true
@@ -53,45 +51,7 @@ $canAddNewItem = true;
 
 <div class="{{ $tableClass }} {{ $parentClass }}  js-parent-to-table" data-table-id="{{ $repeaterId??'' }}" @if($hideByDefault) style="display:none" @endif>
 
-    @if($addExpenseName)
-    <div class="row align-items-center mb-3 mt-3 border-bottom-green  ">
-        <div class="col-md-4">
-            <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style="">
-                {{ __('Department Name') }}
-            </h3>
-            <div class="form-group mb-0 d-flex" style="margin-right:auto;gap:20px;">
-                <input readonly class="form-control" name="departments[{{ $departmentId }}][name]" value="{{ $department ? $department->getName():'' }}" placeholder="">
-            </div>
-        </div>
 
-        @if($addExpenseType)
-        <div class="col-md-2">
-
-
-            <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style="">
-                {{ __('Expense Type') }}
-            </h3>
-            <div class="kt-input-icon">
-                <div class="kt-input-icon">
-                    <div class="input-group date">
-                        <div class="form-group mb-0 d-flex" style="margin-right:auto;gap:20px;">
-                            <input readonly class="form-control" value="{{ $department ? $department->getExpenseTypeName():'' }}" placeholder="">
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-
-
-
-
-        </div>
-        @endif
-
-
-
-    </div>
-    @endif
     @if($showRows)
 
     <table @if($initialJs) id="{{ $repeaterId }}" @endif class="table  {{ $repeaterId }} {{ $tableClasses }} table-white  repeater-class repeater {{ $tableName }}">
@@ -135,7 +95,7 @@ $canAddNewItem = true;
     </table>
     @endif
     @if($appendSaveOrBackBtn)
-    <x-save-or-back-inside-table :department="$department" :btn-text="__('Create')" />
+    <x-save-or-back-inside-table  :btn-text="__('Create')" />
     @endif
 </div>
 <input type="hidden" id="initi-empty-{{ $repeaterId }}" value="{{ $initEmpty }}">

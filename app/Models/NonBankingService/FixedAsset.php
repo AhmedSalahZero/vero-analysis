@@ -8,6 +8,7 @@ use App\Models\Traits\Scopes\NonBankingServices\BelongsToStudy;
 use function PHPSTORM_META\map;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class FixedAsset extends Model
 {
@@ -36,10 +37,22 @@ class FixedAsset extends Model
 		$modelName = '\App\Models\\'.$this->model_name ;
 		return $this->belongsTo($modelName , 'model_id','id');
 	}
-	public function getName()
+	public function getNameId():int 
 	{
-		return $this->name ;
+		return $this->name_id ;
 	}
+	public function fixedAssetName():BelongsTo
+	{
+		return $this->belongsTo(FixedAssetName::class,'name_id','id');
+	}
+	public function getName():string 
+	{
+		return $this->fixedAssetName ? $this->fixedAssetName->getName() : __('N/A'); 
+	}
+	// public function getName()
+	// {
+	// 	return $this->name ;
+	// }
 	public function getType():string
 	{
 		return $this->type;

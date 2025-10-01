@@ -12,7 +12,7 @@ use App\Traits\NonBankingService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
-class DirectFactoringRevenueStreamBreakdownController extends Controller
+class DirectFactoringController extends Controller
 {
 	use NonBankingService ;
 	public function create(Company $company , Request $request,Study $study){
@@ -23,6 +23,7 @@ class DirectFactoringRevenueStreamBreakdownController extends Controller
 		$isYearsStudy = !$study->isMonthlyStudy();
 		
 		$viewVars =  [
+			'eclAndNewPortfolioFundingRate'=>$study->getEclAndNewPortfolioFundingRatesForStreamType(Study::DIRECT_FACTORING),
 			'company'=>$company ,
 			'study'=>$study,
 			'model'=>$study ,
@@ -50,7 +51,8 @@ class DirectFactoringRevenueStreamBreakdownController extends Controller
 			$study->storeRelationsWithNoRepeater($request,$company);
 			$study->storeMonthlyLoan('directFactoringBreakdowns');
 			$study->storeRepeaterRelations($request,$this->getRepeaterRelations(),$company);
-			$study->updateDirectFactoryMonthlyAdminFeesAmounts();
+			$study->storeEclAndFundingStructureFor($request,Study::DIRECT_FACTORING);
+	//		$study->updateDirectFactoryMonthlyAdminFeesAmounts();
 			$study->refreshDirectFactoringLoans();
 			$study->updateExpensesPercentagesOfSales();
 			

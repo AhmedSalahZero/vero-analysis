@@ -141,7 +141,8 @@ class CalculateFixedLoanAtEndService
 		$installmentAmounts = $this->calculateInstallmentAmount($installmentPaymentIntervalValue,$loanFactors,$installmentFactors, $stepRate, $installmentStartDateAsIndex, $endDateAsIndex, $tenor, $installmentPaymentIntervalValue, $appliedStepValue,$pricingPerMonths);
 
 		$loanScheduleResult = $this->calculateLoanScheduleResult($installmentPaymentIntervalValue,$datesIndexAndDaysCount,$loanType, $loanAmount, $interestFactors, $installmentAmounts,$currentStartDateAsIndex);
-		
+		// $loanScheduleResult
+		$loanScheduleResult['accured_interest'] = [];
 		if($installmentPaymentIntervalName != 'monthly'){
 			$loanScheduleResult = $this->extendPerMonth($loanScheduleResult,$installmentPaymentIntervalValue);
 		}
@@ -215,7 +216,7 @@ class CalculateFixedLoanAtEndService
 		ksort($currentInterestAmountArr);
 		$dateAsIndexes = array_keys($result['beginning']);
 		if(app()->bound('dateIndexWithDate')){
-			$result['accured_interest']=Loan::calculateSettlementStatement($dateAsIndexes,$loanScheduleResult['interestAmount'],$result['interestAmount'],0,app('dateIndexWithDate'));
+			$result['accured_interest']=Loan::calculateSettlementStatement($dateAsIndexes,$loanScheduleResult['interestAmount'],$result['interestAmount'],0,app('dateIndexWithDate'),false ,true);
 		}
 		$result['interestAmount'] = $currentInterestAmountArr ; 
 		return $result;

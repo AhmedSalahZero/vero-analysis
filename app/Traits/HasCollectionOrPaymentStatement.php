@@ -99,24 +99,25 @@ trait HasCollectionOrPaymentStatement {
 	
 	
 	
-	 public static function calculateSettlementStatement(array $dates,array $settlements ,array $additions = [] , float $initialBeginningBalance = 0 , array $dateIndexWithDate , bool $notUpdateBeginning =false , $debug = false )
+	 public static function calculateSettlementStatement(array $dates,array $settlements ,array $additions = [] , float $initialBeginningBalance = 0 , array $dateIndexWithDate , bool $notUpdateBeginning =false , $onlyMonthly = false  )
     {
 		$financialYearStartMonth = 'january';
         $withholdForIntervals = [
             'monthly'=>$additions,
-            'quarterly'=>sumIntervalsIndexes($additions, 'quarterly', $financialYearStartMonth, $dateIndexWithDate),
-            'semi-annually'=>sumIntervalsIndexes($additions, 'semi-annually', $financialYearStartMonth, $dateIndexWithDate),
-            'annually'=>sumIntervalsIndexes($additions, 'annually', $financialYearStartMonth, $dateIndexWithDate),
+            'quarterly'=>$onlyMonthly ? [] : sumIntervalsIndexes($additions, 'quarterly', $financialYearStartMonth, $dateIndexWithDate),
+            'semi-annually'=>$onlyMonthly ? [] : sumIntervalsIndexes($additions, 'semi-annually', $financialYearStartMonth, $dateIndexWithDate),
+            'annually'=>$onlyMonthly ? [] : sumIntervalsIndexes($additions, 'annually', $financialYearStartMonth, $dateIndexWithDate),
         ];
         $settlementsForInterval = [
             'monthly'=>$settlements,
-            'quarterly'=>sumIntervalsIndexes($settlements, 'quarterly', $financialYearStartMonth, $dateIndexWithDate),
-            'semi-annually'=>sumIntervalsIndexes($settlements, 'semi-annually', $financialYearStartMonth, $dateIndexWithDate),
-            'annually'=>sumIntervalsIndexes($settlements, 'annually', $financialYearStartMonth, $dateIndexWithDate),
+            'quarterly'=>$onlyMonthly? []:sumIntervalsIndexes($settlements, 'quarterly', $financialYearStartMonth, $dateIndexWithDate),
+            'semi-annually'=>$onlyMonthly? []:sumIntervalsIndexes($settlements, 'semi-annually', $financialYearStartMonth, $dateIndexWithDate),
+            'annually'=>$onlyMonthly? []:sumIntervalsIndexes($settlements, 'annually', $financialYearStartMonth, $dateIndexWithDate),
         ];
-     
+
         $result = [];
-        foreach (getIntervalFormatted() as $intervalName=>$intervalNameFormatted) {
+		$intervals = $onlyMonthly ? ['monthly'=>__('Monthly')] : getIntervalFormatted() ;
+        foreach ($intervals as $intervalName=>$intervalNameFormatted) {
             $beginningBalance = $initialBeginningBalance;
             foreach ($dates as $dateIndex) {
 		

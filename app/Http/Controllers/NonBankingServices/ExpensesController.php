@@ -24,7 +24,7 @@ class ExpensesController extends Controller
     use NonBankingService ;
     public function create(Company $company, Request $request, Study $study)
     {
-        return view('non_banking_services.expenses2.form', $this->getViewVars($company, $study));
+        return view('non_banking_services.expenses.form', $this->getViewVars($company, $study));
     }
 	//   protected function getViewVars(Company $company, Study $study)
     // {
@@ -76,7 +76,7 @@ class ExpensesController extends Controller
             #::delete all
             $model->generateRelationDynamically($tableId, $expenseType)->delete();
             foreach ((array)$request->get($tableId) as $tableDataArr) {
-            
+				$tableDataArr['study_id'] = $study->id;
                 $withholdRate = $tableDataArr['withhold_tax_rate']??0;
             
                 if (isset($tableDataArr['start_date']) && count(explode('-', $tableDataArr['start_date'])) == 2) {
@@ -131,7 +131,7 @@ class ExpensesController extends Controller
                     $amount = $tableDataArr['amount']??0 ;
                     $accumulatedManpowerPowersForAllSelectedPositions = [ ];
                     if ($isExpensePerEmployee) {
-                        $positionIds = (array) $tableDataArr['position_id'] ;
+                        $positionIds = (array) $tableDataArr['position_ids'] ;
                         $positions = Position::whereIn('id', $positionIds)->pluck('accumulated_manpower_counts')->toArray();
                         $accumulatedManpowerPowersForAllSelectedPositions = HArr::sumAtDates($positions, $monthsAsIndexes);
                         $amount = $tableDataArr['monthly_cost_of_unit'];
@@ -153,7 +153,8 @@ class ExpensesController extends Controller
 					
 					if($isCostPerUnit){
 						$fixedRepeatingExpenseArr = $isDeductible ? $monthlyFixedRepeatingResults['total_before_vat'] : $monthlyFixedRepeatingResults['total_after_vat'];
-						$contractCount = Expense::getExpensePerContract($revenueStreamTypes,$categoryIds,$studyId,'contract_counts')['result']; 
+						$contractResult = Expense::getExpensePerContract($revenueStreamTypes,$categoryIds,$studyId,'contract_counts'); 
+						$contractCount = $contractResult['result'];
 						$sumKeys = $study->getOperationDatesAsDateAndDateAsIndexToStudyEndDate();
 						$contractCount = HArr::sumAtDates($contractCount,$sumKeys);
 						$repeatingExpenseValues = HArr::multipleTwoArrAtSameIndex($contractCount,$fixedRepeatingExpenseArr);

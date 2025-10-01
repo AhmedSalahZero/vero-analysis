@@ -1,18 +1,20 @@
 <?php 
 namespace App\ReadyFunctions;
 
+use App\Helpers\HArr;
 use App\Models\NonBankingService\Study;
 use Illuminate\Support\Facades\DB;
 
 class PortfolioPresentValue 
 {
-	public function calculate(array $dateIndexWithDate ,array $portfolioLoanFundingRatesPerMonths , array $operationDurationPerYearFromIndexes,int $tenorInYears,array $startFromPerYear , array $frequencyPerYear,array $portfolioMortgageTransactionAmountsPerYears,array $cbeLendingRatesPerMonths,float $marginRate,array $bankMarginRates , int $companyId , int $studyId , int $portfolioMortgageCategoryId):array 
+	public function calculate(Study $study , array $dateIndexWithDate ,array $portfolioLoanFundingRatesPerMonths , array $operationDurationPerYearFromIndexes,int $tenorInYears,array $startFromPerYear , array $frequencyPerYear,array $portfolioMortgageTransactionAmountsPerYears,array $cbeLendingRatesPerMonths,float $marginRate,array $bankMarginRates , int $companyId , int $studyId , int $portfolioMortgageCategoryId):array 
 	{
 		
 		DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('loan_schedule_payments')->where('study_id',$studyId)->where('revenue_stream_type',Study::PORTFOLIO_MORTGAGE)->where('revenue_stream_id',$portfolioMortgageCategoryId)->delete();
 					
 		$portfolioLoans=[];
 		$currentUnearnedInterestStatement = [];
+		       
 			$calculateFixedLoanAtEndService = new CalculateFixedLoanAtEndService; 
 			$occurrenceDates = [];
 			$monthlyAmounts=[];
@@ -66,11 +68,13 @@ class PortfolioPresentValue
 					$accumulatedMonthsAmountsDueDates[$currentOccurrenceMonthIndex]['margin_rate'] = $marginRate ;	
 				}
 			}
-			 $this->calculateMonthlyAmounts($tenorInMonths,$installmentPaymentIntervalName,$loanType,$dateIndexWithDate,$currentUnearnedInterestStatement,$accumulatedMonthsAmountsDueDates,$portfolioLoans,$calculateFixedLoanAtEndService,$portfolioMortgageCategoryId,$studyId,$companyId);
+			$totalPortfolioEndBalance =  $this->calculateMonthlyAmounts($study,$tenorInMonths,$installmentPaymentIntervalName,$loanType,$dateIndexWithDate,$currentUnearnedInterestStatement,$accumulatedMonthsAmountsDueDates,$portfolioLoans,$calculateFixedLoanAtEndService,$portfolioMortgageCategoryId,$studyId,$companyId);
 			 // $bankLoanAmounts
 			 DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('loan_schedule_payments')->insert(
 				 $portfolioLoans
 				);
+					$study->recalculateMonthlyAndAccumulatedEcl(Study::PORTFOLIO_MORTGAGE ,$totalPortfolioEndBalance );
+					
 			return [
 				'occurrence_dates'=>$occurrenceDates,
 				'statement'=>$accumulatedMonthsAmountsDueDates,
@@ -78,7 +82,7 @@ class PortfolioPresentValue
 			];
 	
 	}
-	public function calculateForMonthlyStudy(array $monthlyAmounts , array $cbeLendingRatesPerMonths,array $portfolioLoanFundingRatesPerMonths,float $marginRate,int $tenorInYears ,array $dateIndexWithDate   , int $portfolioMortgageCategoryId,int $studyId, int $companyId)
+	public function calculateForMonthlyStudy(Study $study , array $monthlyAmounts , array $cbeLendingRatesPerMonths,array $portfolioLoanFundingRatesPerMonths,float $marginRate,int $tenorInYears ,array $dateIndexWithDate   , int $portfolioMortgageCategoryId,int $studyId, int $companyId):array 
 	{
 		
 		DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('loan_schedule_payments')->where('study_id',$studyId)->where('revenue_stream_type',Study::PORTFOLIO_MORTGAGE)->where('revenue_stream_id',$portfolioMortgageCategoryId)->delete();
@@ -116,16 +120,24 @@ class PortfolioPresentValue
 				}
 			}
 			
- 		 $this->calculateMonthlyAmounts($tenorInMonths,$installmentPaymentIntervalName,$loanType,$dateIndexWithDate,$currentUnearnedInterestStatement,$accumulatedMonthsAmountsDueDates,$portfolioLoans,$calculateFixedLoanAtEndService,$portfolioMortgageCategoryId,$studyId,$companyId);
+ 		$totalPortfolioEndBalance = $this->calculateMonthlyAmounts($study,$tenorInMonths,$installmentPaymentIntervalName,$loanType,$dateIndexWithDate,$currentUnearnedInterestStatement,$accumulatedMonthsAmountsDueDates,$portfolioLoans,$calculateFixedLoanAtEndService,$portfolioMortgageCategoryId,$studyId,$companyId);
 
 		
 		DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('loan_schedule_payments')->insert(
 				$portfolioLoans
 			);
 			
+			$study->recalculateMonthlyAndAccumulatedEcl(Study::PORTFOLIO_MORTGAGE ,$totalPortfolioEndBalance );
+			return [
+				'occurrence_dates'=>[],
+				'statement'=>$accumulatedMonthsAmountsDueDates,
+				'loan_amounts'=>$monthlyAmounts
+			];
 	}
-	protected function calculateMonthlyAmounts($tenorInMonths,$installmentPaymentIntervalName,string $loanType,array $dateIndexWithDate,array &$currentUnearnedInterestStatement,array &$accumulatedMonthsAmountsDueDates ,array &$portfolioLoans , CalculateFixedLoanAtEndService $calculateFixedLoanAtEndService , int $portfolioMortgageCategoryId,int $studyId, int $companyId )
+	protected function calculateMonthlyAmounts(Study $study,$tenorInMonths,$installmentPaymentIntervalName,string $loanType,array $dateIndexWithDate,array &$currentUnearnedInterestStatement,array &$accumulatedMonthsAmountsDueDates ,array &$portfolioLoans , CalculateFixedLoanAtEndService $calculateFixedLoanAtEndService , int $portfolioMortgageCategoryId,int $studyId, int $companyId ):array
 	{
+		 $totalPortfolioEndBalance = [];
+		   $operationDates = range($study->getOperationStartDateAsIndex(), $study->getStudyEndDateAsIndex());
 		foreach($accumulatedMonthsAmountsDueDates as $currentOccurrenceMonthIndex => $portfolioMortgageLoanArray){
 				$currentBankMarginRate = $bankMarginRates[$currentOccurrenceMonthIndex]??0;
 				$currentLoanDateAsString = $dateIndexWithDate[$currentOccurrenceMonthIndex];
@@ -149,7 +161,7 @@ class PortfolioPresentValue
 					$portfolioLoanAmountsFormatted['revenue_stream_category_id'] =null ;
 					$portfolioLoanAmountsFormatted['portfolio_loan_type'] ='portfolio';
 					$portfolioLoanAmountsFormatted['revenue_stream_type'] =Study::PORTFOLIO_MORTGAGE;
-					
+                    $totalPortfolioEndBalance = HArr::sumAtDates([$totalPortfolioEndBalance,$portfolioLoanAmountsFormatted['endBalance']??[]], $operationDates);
 					$portfolioLoans[]=collect($portfolioLoanAmountsFormatted)->map(function($item,$keyName){
 						
 						if(is_array($item)){
@@ -194,5 +206,6 @@ class PortfolioPresentValue
 				// $interestRevenue 
 				
 			}
+			return $totalPortfolioEndBalance;
 	}
 }

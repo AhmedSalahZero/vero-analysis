@@ -1,3 +1,6 @@
+@php
+	use App\Models\NonBankingService\FixedAssetName;
+@endphp
 <div data-card-id="{{ $cardId }}" class="kt-portlet parent-card ">
     <div class="kt-portlet__body">
         <h3 class="font-weight-bold text-black form-label kt-subheader__title small-caps mr-5 text-nowrap" style=""> {{ __('Furniture, Fixtures, and Equipment (FF&E) Cost') }}</h3>
@@ -54,11 +57,13 @@
                     </td>
                     <input type="hidden" name="id" value="{{ isset($subModel) ? $subModel->id : 0 }}">
                     <input type="hidden" name="type" value="{{ $fixedAssetType }}">
-                    <td>
-                        <div class="">
-                            <input value="{{ isset($subModel) ? $subModel->getName() : '' }}" @if($isRepeater) name="name" @else name="{{ $tableId }}[0][name]" @endif class="form-control text-left exclude-from-trigger-change-when-repeat" type="text">
+					 <td>
+                                    {{-- </td> --}}
+                        <div class="max-w-200">
+                                        <x-form.select :selectedValue="isset($subModel) ? $subModel->getNameId() : 0" :options="FixedAssetName::getGeneralAllForSelect2($company)" :add-new="false" class="select2-select repeater-select expense_category " :all="false" name="@if($isRepeater) name_id @else {{ $tableId }}[0][name_id] @endif"></x-form.select>
+                            {{-- <input value="{{ isset($subModel) ? $subModel->getName() : '' }}" @if($isRepeater) name="name" @else name="{{ $tableId }}[0][name]" @endif class="form-control text-left exclude-from-trigger-change-when-repeat" type="text"> --}}
 
-                        </div>
+                        {{-- </div> --}}
                     </td>
                     <td>
                         <div class="">

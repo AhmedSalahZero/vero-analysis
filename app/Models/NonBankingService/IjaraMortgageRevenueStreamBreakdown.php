@@ -13,8 +13,8 @@ class  IjaraMortgageRevenueStreamBreakdown extends Model
 		$yearsWithItsMonths =  $study->getOperationDurationPerYearFromIndexes() ;
 		$yearOrMonthsIndexes = $study->getYearOrMonthIndexes();
 		$isYearsStudy = !$study->isMonthlyStudy();
-		
 		return [
+			'eclAndNewPortfolioFundingRate'=>$study->getEclAndNewPortfolioFundingRatesForStreamType(Study::IJARA),
 			'company'=>$company ,
 			'study'=>$study,
 			'model'=>$study ,

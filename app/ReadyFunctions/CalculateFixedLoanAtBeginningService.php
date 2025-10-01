@@ -128,7 +128,6 @@ public function __calculate($previousResult ,int $indexOfLoop,string $loanType, 
 
 		$loanScheduleResult = $this->calculateLoanScheduleResult($installmentPaymentIntervalValue,$datesIndexAndDaysCount,$loanType, $loanAmount, $interestFactors, $installmentAmounts,$currentStartDateAsIndex);
 	
-		
 		if($indexOfLoop == -1){
 		
 			return [

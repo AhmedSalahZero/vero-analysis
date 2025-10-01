@@ -21,7 +21,6 @@ class ExpenseAsPercentageEquation
 		$dates = range($startDateAsIndex,$endDateAsIndex);
 		$resultArrs = [];
 		$result = [];
-
 				
 				$expensePerContract = Expense::getExpensePerContract($revenueStreamType,$categoryIds,$studyId,'monthly_loan_amounts'); 
 				$selectedRevenueStreamTypes = $expensePerContract['selectedRevenueStreamTypes'];
@@ -106,7 +105,6 @@ class ExpenseAsPercentageEquation
 					
 				}
 			}
-			// dd('lol',$result);
 		$totalWithoutVat = [];
 		// foreach($result as $type => $arrItems){
 			foreach($result as $monthIndex=>$value){
