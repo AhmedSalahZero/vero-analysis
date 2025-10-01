@@ -1263,6 +1263,9 @@ class Study extends Model
 	public function recalculateMonthlyAndAccumulatedEcl(string $revenueStreamType,array $totalPortfolioEndBalance)
 	{
 		  $eclAndNewPortfolioFundingRate = $this->getEclAndNewPortfolioFundingRatesForStreamType($revenueStreamType);
+		  if(!$eclAndNewPortfolioFundingRate){
+			return ;
+		  }
 		    $eclRates = $eclAndNewPortfolioFundingRate->ecl_rates;
 		  $monthlyEclRates = $this->isMonthlyStudy() ? $eclRates : $this->convertYearToMonthIndexes($eclRates) ;
         // $loansEnd
