@@ -2253,13 +2253,23 @@ class Study extends Model
             $currentTotal = HArr::sumAtDates([$currentData,$currentTotal], $studyMonthsForViews);
             $tableDataFormatted[0]['sub_items'][$title]['year_total'] = HArr::sumPerYearIndex($currentData, $yearWithItsMonths);
         }
+		
+		$monthlyAdminFees = EclAndNewPortfolioFundingRate::where('study_id',$this->id)->get(['monthly_ecl_values','monthly_admin_fees_amounts'])->toArray();
+		// $monthlyEclValues = array_column($monthlyAdminFees,'monthly_ecl_values');
+		$monthAdminFees = array_column($monthlyAdminFees,'monthly_admin_fees_amounts');
+		// $monthlyEclValues = HArr::sumAtDates($monthlyEclValues,$studyDates);
+		$monthAdminFees = HArr::sumAtDates($monthAdminFees,$sumKeys);
+		
+		$tableDataFormatted[0]['sub_items']['monthly-admin-fees']['data'] = $monthAdminFees;
+		$tableDataFormatted[0]['sub_items']['monthly-admin-fees']['options']['title'] = __('Monthly Admin Fees');
+		
 	   
     
 		 $totalCashIn = HArr::sumAtDates(array_column($tableDataFormatted[0]['sub_items']??[], 'data'), $sumKeys);
 		$tableDataFormatted[0]['main_items']['cash-in-flow']['data'] = $totalCashIn;
         $tableDataFormatted[0]['main_items']['cash-in-flow']['year_total'] = $totalCashInflowPerYear = HArr::sumPerYearIndex($totalCashIn, $yearWithItsMonths);
 		// cash out 
-		 $tableDataFormatted[2]['main_items']['cash-out-flow']['options'] = array_merge([
+		 $tableDataFormatted[1]['main_items']['cash-out-flow']['options'] = array_merge([
            'title'=>__('Total CashOut Flow')
         ], $defaultNumericInputClasses);
 		
@@ -2270,12 +2280,12 @@ class Study extends Model
 		$loanSchedulePaymentPerType['direct-factoring'] = $directFactoringSettlements;
 		 foreach ($loanSchedulePaymentPerType as $revenueType => $currentData) {
 			$title =  $revenueType == 'direct-factoring' ?  str_to_upper($revenueType) .' Loan Payments' :  str_to_upper($revenueType) .' Bank Loan Payments'  ;
-            $tableDataFormatted[2]['sub_items'][$title]['options'] =array_merge([
+            $tableDataFormatted[1]['sub_items'][$title]['options'] =array_merge([
                 'title'=>$title
             ], $defaultNumericInputClasses);
-            $tableDataFormatted[2]['sub_items'][$title]['data'] = $currentData;
+            $tableDataFormatted[1]['sub_items'][$title]['data'] = $currentData;
             $currentTotal = HArr::sumAtDates([$currentData,$currentTotal], $studyMonthsForViews);
-            $tableDataFormatted[2]['sub_items'][$title]['year_total'] = HArr::sumPerYearIndex($currentData, $yearWithItsMonths);
+            $tableDataFormatted[1]['sub_items'][$title]['year_total'] = HArr::sumPerYearIndex($currentData, $yearWithItsMonths);
         }
 		$expenses = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('expenses')->where('study_id',$this->id)->get();
 		$totalExpensePerCategory = [];
@@ -2288,22 +2298,75 @@ class Study extends Model
 		}
 		foreach($totalExpensePerCategory as $category => $currentData){
 			$expenseTitle = str_to_upper($category);
-			$tableDataFormatted[2]['sub_items'][$expenseTitle]['options'] =array_merge([
+			$tableDataFormatted[1]['sub_items'][$expenseTitle]['options'] =array_merge([
                 'title'=>$expenseTitle
             ], $defaultNumericInputClasses);
-            $tableDataFormatted[2]['sub_items'][$expenseTitle]['data'] = $currentData;
+            $tableDataFormatted[1]['sub_items'][$expenseTitle]['data'] = $currentData;
           //  $currentTotal = HArr::sumAtDates([$currentData,$currentTotal], $studyMonthsForViews);
-            $tableDataFormatted[2]['sub_items'][$expenseTitle]['year_total'] = HArr::sumPerYearIndex($currentData, $yearWithItsMonths);
+            $tableDataFormatted[1]['sub_items'][$expenseTitle]['year_total'] = HArr::sumPerYearIndex($currentData, $yearWithItsMonths);
 			
 		}
 		 
 		
-			 $totalCashOut = HArr::sumAtDates(array_column($tableDataFormatted[2]['sub_items']??[], 'data'), $sumKeys);
-		$tableDataFormatted[2]['main_items']['cash-out-flow']['data'] = $totalCashOut;
-        $tableDataFormatted[2]['main_items']['cash-out-flow']['year_total'] = $totalCashOutflowPerYear = HArr::sumPerYearIndex($totalCashOut, $yearWithItsMonths);
+			 $totalCashOut = HArr::sumAtDates(array_column($tableDataFormatted[1]['sub_items']??[], 'data'), $sumKeys);
+		$tableDataFormatted[1]['main_items']['cash-out-flow']['data'] = $totalCashOut;
+        $tableDataFormatted[1]['main_items']['cash-out-flow']['year_total'] = $totalCashOutflowPerYear = HArr::sumPerYearIndex($totalCashOut, $yearWithItsMonths);
 		// cash out 
 		// [ty[e]]bank loan payments
         
+		
+		 $workingCapitalStatement = HArr::calculateWorkingCapital($cashAndBankAmount, $totalCashIn, $totalCashOut, $sumKeys);
+		 
+		
+		 
+		 
+		  $workingCapitalStatement = HArr::calculateWorkingCapital($cashAndBankAmount, $totalCashIn, $totalCashOut, $sumKeys);
+        /**
+         * * Start Net Cash Before Working Capital;
+        */
+        $currentTabIndex = 2 ;
+        $currentTabId = 'net-cash-before-working-capital';
+        
+        $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabId]['options'] = array_merge([
+           'title'=>__('Net Cash Before Working Capital')
+        ], $defaultNumericInputClasses);
+        
+        $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabId]['data'] = $currentData = $workingCapitalStatement['net_cash_before_working_capital']??[];
+
+        
+        /**
+         * * End Net Cash Before Working Capital;
+         */
+		
+		   /**
+         * * Start Net Cash Before Working Capital;
+        */
+        $currentTabIndex = 3 ;
+        $currentTabId = 'working-capital-injection';
+        
+        $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabId]['options'] = array_merge([
+           'title'=>__('Working Capital Injection')
+        ], $defaultNumericInputClasses);
+        $workingCapitalInjection = $workingCapitalStatement['working_capital_injection']??[] ;
+        $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabId]['data'] = $currentData = $workingCapitalInjection;
+        $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabId]['year_total'] =  $totalWorkingCapitalInjectionPerYear  = HArr::sumPerYearIndex($currentData, $yearWithItsMonths);
+        
+        /**
+         * * End Net Cash Before Working Capital;
+         */
+		
+		    /**
+         * * Start Cash And Bank End Balance;
+        */
+        $currentTabIndex = 4 ;
+        $currentTabId = 'cash-and-bank-end-balance';
+        
+        $cashEndBalance = $workingCapitalStatement['cash_end_balance']??[] ;
+        $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabId]['options'] = array_merge([
+           'title'=>__('Cash And Bank End Balance')
+        ], $defaultNumericInputClasses);
+        $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabId]['data'] = $currentData = $cashEndBalance;
+        $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabId]['year_total'] =  [];
 		
 		
 		        $tableDataFormatted[-1]['main_items']['cash-and-banks']['data'] = $workingCapitalStatement['beginning_balance'] ??[];

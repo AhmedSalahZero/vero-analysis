@@ -204,10 +204,10 @@ class IncomeStatementController extends Controller
             
         }
 		$monthlyAdminFees = EclAndNewPortfolioFundingRate::where('study_id',$study->id)->get(['monthly_ecl_values','monthly_admin_fees_amounts'])->toArray();
-		$monthlyEclValues = array_column($monthlyAdminFees,'monthly_ecl_values');
+		// $monthlyEclValues = array_column($monthlyAdminFees,'monthly_ecl_values');
 		$monthAdminFees = array_column($monthlyAdminFees,'monthly_admin_fees_amounts');
 		$studyDates = array_keys($study->getStudyDates()) ;
-		$monthlyEclValues = HArr::sumAtDates($monthlyEclValues,$studyDates);
+		// $monthlyEclValues = HArr::sumAtDates($monthlyEclValues,$studyDates);
 		$monthAdminFees = HArr::sumAtDates($monthAdminFees,$studyDates);
 		
 		// $tableDataFormatted[0]['sub_items']['monthly-ecl-values']['options']['title'] = __('Monthly Ecl Values');
