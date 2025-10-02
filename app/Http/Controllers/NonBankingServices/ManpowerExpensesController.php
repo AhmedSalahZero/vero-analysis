@@ -17,8 +17,7 @@ class ManpowerExpensesController extends Controller
 		return view('non_banking_services.manpower.form', $this->getViewVars($company,$study));
 	}
 	protected function getViewVars(Company $company, Study $study){
-		$studyMonthsForViews = array_flip($study->getOperationDatesAsDateAndDateAsIndexToStudyEndDate()) ;
-
+		$studyMonthsForViews =array_flip($study->getOperationDatesAsDateAndDateAsIndexToStudyEndDate()) ;
 		return [
 			'company'=>$company ,
 			'type'=>getLastSegmentInRequest(),

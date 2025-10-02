@@ -381,7 +381,7 @@ class Study extends Model
         $calculateDurationService = new CalculateDurationService();
         $operationStartDate  = $this->getOperationStartDateFormatted();
         if ($maxYearIsStudyEndDate) {
-            $maxDate = $this->getStudyEndDate();
+			$maxDate = $this->getStudyEndDate();
         } else {
             $maxDate = $this->getMaxDate($datesAsStringAndIndex, $datesIndexWithYearIndex, $yearIndexWithYear, $dateIndexWithDate, $dateWithMonthNumber);
         }
@@ -2126,20 +2126,7 @@ class Study extends Model
     {
         return app('dateWithDateIndex')[$dateAsString];
     }
-    public function getOperationDatesAsDateAndDateAsIndexToStudyEndDate()
-    {
-        
-        $operationsYearAndItsMonths = $this->getOperationDurationPerYearFromIndexesForAllStudyInfo();
-        array_pop($operationsYearAndItsMonths);
-        $result =[];
-        foreach ($operationsYearAndItsMonths as $yearAsIndex => $itsMonths) {
-            foreach ($itsMonths as $dateAsIndex => $val) {
-                $result[$this->getDateFromDateIndex($dateAsIndex)] =$dateAsIndex ;
-            }
-        }
-        return $result;
-        
-    }
+  
    
     public function convertStringIndexesToDateIndex(array $itemsAsDateStringAndValue):array
     {
@@ -2301,4 +2288,37 @@ class Study extends Model
     {
         return $this->study_end_date;
     }
+		/**
+	 * * extended
+	 */
+	 public function getOperationDatesAsDateAndDateAsIndex()
+    {
+		$operationsYearAndItsMonths = $this->getOperationDurationPerYearFromIndexesForAllStudyInfo();
+		$result =[];
+		foreach($operationsYearAndItsMonths as $yearAsIndex => $itsMonths){
+			foreach($itsMonths as $dateAsIndex => $val){
+				$result[$this->getDateFromDateIndex($dateAsIndex)] =$dateAsIndex ;
+			}
+		}
+        return $result;
+        
+    }
+	/**
+	 *  to study end date
+	 */
+	public function getOperationDatesAsDateAndDateAsIndexToStudyEndDate()
+    {
+        
+		$operationsYearAndItsMonths = $this->getOperationDurationPerYearFromIndexesForAllStudyInfo();
+		array_pop($operationsYearAndItsMonths);
+		$result =[];
+		foreach($operationsYearAndItsMonths as $yearAsIndex => $itsMonths){
+			foreach($itsMonths as $dateAsIndex => $val){
+				$result[$this->getDateFromDateIndex($dateAsIndex)] =$dateAsIndex ;
+			}
+		}
+        return $result;
+        
+    }
+	
 }
