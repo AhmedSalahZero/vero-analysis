@@ -144,7 +144,7 @@ class DashboardController extends Controller
 		$salaryExpensesForCategory = [];
 		foreach($salaryExpenses as $salaryExpense){
 			$expenseCategory = $salaryExpense->expense_type;
-			$salaryExpensePayload = json_decode($salaryExpense->salary_expenses);
+			$salaryExpensePayload = (array)json_decode($salaryExpense->salary_expenses);
 			foreach($monthsWithItsYear as $monthIndex => $yearIndex){
 				$currentYearOrMonthIndex = $isMonthlyStudy ? $monthIndex : $yearIndex ;
 				$currentSalaryExpense = $salaryExpensePayload[$monthIndex]??0;
