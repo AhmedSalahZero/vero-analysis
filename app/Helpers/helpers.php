@@ -6452,7 +6452,7 @@ function getNonBankingNavigation(Company $company,User $user):array
 				[
 					'title'=>__('Cash Flow Statement'),
 					'show'=>true,
-					'link'=>'#',
+					'link'=>route('cash.in.out.flow.result',['company'=>$company->id,'study'=>$study->id]),
 					'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
 				],
 			],

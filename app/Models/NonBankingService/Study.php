@@ -2233,10 +2233,14 @@ class Study extends Model
         $sumKeys = array_keys($studyMonthsForViews);
         
 		$loanSchedulePayments = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('loan_schedule_payments')->where('study_id',$this->id)->where('portfolio_loan_type','portfolio')->get();
-		$loanSchedulePaymentPerType = HArr::sumPerKey($loanSchedulePayments,$sumKeys);
+		$loanSchedulePaymentPerType = HArr::sumLoanSchedulePerKey($loanSchedulePayments,$sumKeys);
 		$directFactoringSettlements =  DirectFactoringBreakdown::where('study_id',$this->id)->pluck('direct_factoring_settlements')->toArray();
 		$directFactoringSettlements = HArr::sumAtDates($directFactoringSettlements,$sumKeys);
 		$loanSchedulePaymentPerType['direct-factoring'] = $directFactoringSettlements;
+		// cash in 
+		 $tableDataFormatted[0]['main_items']['cash-in-flow']['options'] = array_merge([
+           'title'=>__('Total CashIn Flow')
+        ], $defaultNumericInputClasses);
 		
 		$currentTotal = [];
 
@@ -2254,6 +2258,31 @@ class Study extends Model
 		 $totalCashIn = HArr::sumAtDates(array_column($tableDataFormatted[0]['sub_items']??[], 'data'), $sumKeys);
 		$tableDataFormatted[0]['main_items']['cash-in-flow']['data'] = $totalCashIn;
         $tableDataFormatted[0]['main_items']['cash-in-flow']['year_total'] = $totalCashInflowPerYear = HArr::sumPerYearIndex($totalCashIn, $yearWithItsMonths);
+		// cash out 
+		 $tableDataFormatted[2]['main_items']['cash-out-flow']['options'] = array_merge([
+           'title'=>__('Total CashOut Flow')
+        ], $defaultNumericInputClasses);
+		
+		$loanSchedulePayments = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('loan_schedule_payments')->where('study_id',$this->id)->where('portfolio_loan_type','bank_portfolio')->get();
+		$loanSchedulePaymentPerType = HArr::sumLoanSchedulePerKey($loanSchedulePayments,$sumKeys);
+		$directFactoringSettlements =  DirectFactoringBreakdown::where('study_id',$this->id)->pluck('bank_loan_settlements')->toArray();
+		$directFactoringSettlements = HArr::sumAtDates($directFactoringSettlements,$sumKeys);
+		$loanSchedulePaymentPerType['direct-factoring'] = $directFactoringSettlements;
+		 foreach ($loanSchedulePaymentPerType as $revenueType => $currentData) {
+			$title = str_to_upper($revenueType) .' Bank Loan Payments'  ;
+            $tableDataFormatted[2]['sub_items'][$title]['options'] =array_merge([
+                'title'=>$title
+            ], $defaultNumericInputClasses);
+            $tableDataFormatted[2]['sub_items'][$title]['data'] = $currentData;
+            $currentTotal = HArr::sumAtDates([$currentData,$currentTotal], $studyMonthsForViews);
+            $tableDataFormatted[2]['sub_items'][$title]['year_total'] = HArr::sumPerYearIndex($currentData, $yearWithItsMonths);
+        }
+		
+			 $totalCashOut = HArr::sumAtDates(array_column($tableDataFormatted[2]['sub_items']??[], 'data'), $sumKeys);
+		$tableDataFormatted[2]['main_items']['cash-out-flow']['data'] = $totalCashOut;
+        $tableDataFormatted[2]['main_items']['cash-out-flow']['year_total'] = $totalCashOutflowPerYear = HArr::sumPerYearIndex($totalCashOut, $yearWithItsMonths);
+		// cash out 
+		// [ty[e]]bank loan payments
         
 		
 		
@@ -2261,10 +2290,8 @@ class Study extends Model
       		  $tableDataFormatted[-1]['main_items']['cash-and-banks']['year_total'] =$totalCashAndBanksPerYear =  HArr::getPerYearIndexForCashAndBank($workingCapitalStatement['beginning_balance'] ??[], $yearWithItsMonths);
 		
             
-        
-        $tableDataFormatted[0]['main_items']['cash-in-flow']['options'] = array_merge([
-           'title'=>__('Total CashIn Flow')
-        ], $defaultNumericInputClasses);
+		
+       
       //  $totalCashIn = [];
 		
 		
