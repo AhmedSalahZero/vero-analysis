@@ -85,6 +85,7 @@ class ManpowerExpensesController extends Controller
 	public function storeDepartmentPositions(Company $company , Request $request,Study $study){
 		// $addNewDepartment = $request->get('addNewDepartment') == 1;
 		// session()->put('addNewDepartment',$addNewDepartment);
+			 $dateAsIndexes = $study->getDateWithDateIndex();
 		foreach($request->get('manpowers',[]) as $positionId => $manpowerArr){
 			
 				$position = Position::find($positionId);
@@ -103,7 +104,6 @@ class ManpowerExpensesController extends Controller
 				
 				$salaryTaxesRate = $study->getSalaryTaxesRate() / 100;
 				$socialInsuranceRate = $study->getSocialInsuranceRate() /100 ;
-		        $dateAsIndexes = array_keys($hiringCounts);
 				$additionalDatabaseResult =  $study->calculateManpowerResult($dateAsIndexes,$currentExistingCount,$hiringCounts,$operationStartDateAsIndex,$monthlyNetSalary,$salaryTaxesRate,$socialInsuranceRate);
 			
 				

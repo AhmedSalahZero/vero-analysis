@@ -21,7 +21,7 @@ class IntervalSummationOperations
 		$periodInterval = $this->getPeriodsForStartMonths($intervalName,$financialYearStartMonth) ; 
 		// dd(app('dateIndexWithDate'));
 		$dateIndexWithDate = $dateIndexWithDate ?: app('dateIndexWithDate');
-
+	
 		$dateAsStringIndex = removeDateFrom($dateIndexWithDate);
 
 		foreach ($dateValues as $dateAsString => $value) {

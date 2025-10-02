@@ -6,18 +6,21 @@ use App\Models\Traits\Scopes\BelongsToCompany;
 use App\Models\Traits\Scopes\NonBankingServices\BelongsToStudy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\DB;
+use App\Traits\HasCollectionOrPaymentStatement;
 
 class Manpower extends Model
 {
-	
+	use HasCollectionOrPaymentStatement;
 	use BelongsToStudy,BelongsToCompany;
 	protected $connection =NON_BANKING_SERVICE_CONNECTION_NAME;
  	protected $guarded = ['id'];
 	protected $casts = [
 		'hiring_counts'=>'array',
-		'manpower_salaries'=>'array',
+		'salary_payments'=>'array',
 		'accumulated_manpower_counts'=>'array',
 		'salary_expenses'=>'array',
+		'tax_and_social_insurance_statement'=>'array',
 	];
 	public function position():BelongsTo
 	{
@@ -41,13 +44,13 @@ class Manpower extends Model
 		return $this->getHiringCounts()[$dateIndex]??0;
 	}
 	
-	public function getManpowerSalaries():array
+	public function getSalaryPayments():array
 	{
-		return $this->manpower_salaries;
+		return $this->salary_payments;
 	} 
-	public function getManpowerSalariesAtDateIndex(int $dateIndex)
+	public function getSalaryPaymentsAtDateIndex(int $dateIndex)
 	{
-		return $this->getManpowerSalaries()[$dateIndex];
+		return $this->getSalaryPayments()[$dateIndex];
 	}
 	
 	public function getAccumulatedManpowerCounts():array
@@ -58,8 +61,29 @@ class Manpower extends Model
 	{
 		return $this->getAccumulatedManpowerCounts()[$dateIndex];
 	}
-	
-	
+	public static function getSalaryExpensesPerCategory(array $monthsWithItsYear,int $companyId)
+	{
+		   $salaryExpensesForCategory = [];
+		$salaryExpenses = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('manpowers')
+					->join('positions','manpowers.position_id','=','positions.id')
+					->join('departments','positions.department_id','=','departments.id')
+					->where('manpowers.company_id',$companyId)
+					->where('type','manpower')
+					->selectRaw('expense_type,salary_expenses,expense_type')->get();
+					
+					
+        foreach ($salaryExpenses as $salaryExpense) {
+            $expenseCategory = $salaryExpense->expense_type;
+            $salaryExpensePayload = (array)json_decode($salaryExpense->salary_expenses);
+            $salaryExpensePayload = $salaryExpensePayload ? $salaryExpensePayload : [];
+            foreach ($monthsWithItsYear as $monthIndex => $yearIndex) {
+                
+                $currentSalaryExpense = $salaryExpensePayload[$monthIndex]??0;
+                $salaryExpensesForCategory[$expenseCategory][$monthIndex] = isset($salaryExpensesForCategory[$expenseCategory][$monthIndex]) ?  $salaryExpensesForCategory[$expenseCategory][$monthIndex] + $currentSalaryExpense : $currentSalaryExpense;
+            }
+        }
+		return $salaryExpensesForCategory;
+	}	
 	
 	
 }

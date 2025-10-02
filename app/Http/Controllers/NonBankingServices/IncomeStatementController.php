@@ -6,6 +6,7 @@ use App\Helpers\HArr;
 use App\Http\Controllers\Controller;
 use App\Models\Company;
 use App\Models\NonBankingService\EclAndNewPortfolioFundingRate;
+use App\Models\NonBankingService\Manpower;
 use App\Models\NonBankingService\Study;
 use Carbon\Carbon;
 use Exception;
@@ -215,19 +216,21 @@ class IncomeStatementController extends Controller
 		
 		$tableDataFormatted[0]['sub_items']['monthly-admin-fees']['data'] = $monthAdminFees;
 		$tableDataFormatted[0]['sub_items']['monthly-admin-fees']['options']['title'] = __('Monthly Admin Fees');
+	
+		
+		
 		$totalSalesRevenues = Harr::calculateTotalFromSubItems($tableDataFormatted[0]['sub_items']??[]) ; 
-		 $tableDataFormatted[0]['main_items']['sales-revenue']['data'] = $totalSalesRevenues;
-		 $tableDataFormatted[0]['main_items']['growth-rate']['data'] = Harr::calculateGrowthRate($totalSalesRevenues);
-		$salaryExpenses = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('manpowers')
-					->join('positions','manpowers.position_id','=','positions.id')
-					->join('departments','positions.department_id','=','departments.id')
-					->where('manpowers.company_id',$company->id)
-					->where('type','manpower')
-					->selectRaw('expense_type,salary_expenses,expense_type')->get();
-					
-        // $salaryExpenses = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('departments')
-        // ->join('positions', 'positions.department_id', '=', 'departments.id')
-        // ->selectRaw('expense_type,salary_expenses,expense_type')->where('type', 'manpower')->where('departments.company_id', $company->id)->get() ;
+		
+			   $yearWithItsMonths=$study->getYearIndexWithItsMonths();
+			   
+			   
+			   $tableDataFormatted[0]['main_items']['sales-revenue']['data'] = $totalSalesRevenues;
+			   $tableDataFormatted[0]['main_items']['sales-revenue']['year_total'] =$totalSalesRevenuesPerYears =  HArr::getPerYearIndexForCashAndBank($totalSalesRevenues, $yearWithItsMonths);
+			   $tableDataFormatted[0]['main_items']['growth-rate']['data'] = Harr::calculateGrowthRate($totalSalesRevenues);
+			   $tableDataFormatted[0]['main_items']['growth-rate']['year_total'] =$totalSalesRevenuesPerYears =  HArr::calculateGrowthRate($totalSalesRevenuesPerYears);
+			   
+		
+    
         
         $expenses = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('expenses')->join('expense_names', 'expense_names.id', '=', 'expenses.expense_name_id')->selectRaw('expenses.expense_category,expense_names.name as name,expenses.relation_name,expenses.monthly_repeating_amounts,expenses.expense_as_percentages,payload')->where('expenses.model_id', $study->id)->where('expenses.model_name', 'Study')->get()->toArray();
         $columnPerTypes = [
@@ -237,18 +240,10 @@ class IncomeStatementController extends Controller
             'cost_per_unit'=>'monthly_repeating_amounts',
             'expense_per_employee'=>'monthly_repeating_amounts',
         ];
-        $salaryExpensesForCategory = [];
+     
     
-        foreach ($salaryExpenses as $salaryExpense) {
-            $expenseCategory = $salaryExpense->expense_type;
-            $salaryExpensePayload = (array)json_decode($salaryExpense->salary_expenses);
-            $salaryExpensePayload = $salaryExpensePayload ? $salaryExpensePayload : [];
-            foreach ($monthsWithItsYear as $monthIndex => $yearIndex) {
-                
-                $currentSalaryExpense = $salaryExpensePayload[$monthIndex]??0;
-                $salaryExpensesForCategory[$expenseCategory][$monthIndex] = isset($salaryExpensesForCategory[$expenseCategory][$monthIndex]) ?  $salaryExpensesForCategory[$expenseCategory][$monthIndex] + $currentSalaryExpense : $currentSalaryExpense;
-            }
-        }
+		
+		$salaryExpensesForCategory = Manpower::getSalaryExpensesPerCategory($monthsWithItsYear,$company->id);
         foreach ($expenses as $expense) {
         
             $name = $expense->name;
@@ -289,7 +284,7 @@ class IncomeStatementController extends Controller
                     $tableDataFormatted[$currentOrderIndex]['main_items'][$expenseCategory]['data'][$monthIndex] = isset($tableDataFormatted[$currentOrderIndex]['main_items'][$expenseCategory]['data'][$monthIndex]) ? $tableDataFormatted[$currentOrderIndex]['main_items'][$expenseCategory]['data'][$monthIndex] +  $currentMainItemTotalAtYearIndex:$currentMainItemTotalAtYearIndex;
 					$currentMainTotal = $tableDataFormatted[$currentOrderIndex]['main_items'][$expenseCategory]['data'][$monthIndex] ;
 					$tableDataFormatted[$currentOrderIndex]['main_items']['% Of Revenue']['data'][$monthIndex] =$currentTotalRevenueAtMonthIndex ?  $currentMainTotal / $currentTotalRevenueAtMonthIndex * 100 : 0; 
-					     $formattedExpenses[$expenseCategory]['total'][$monthIndex] = $currentMainTotal   ;
+					    $formattedExpenses[$expenseCategory]['total'][$monthIndex] = $currentMainTotal   ;
                     // $tableDataFormatted[$currentOrderIndex]['main_items']['% Of Revenue']['data'][$monthIndex] = $currentTotalRevenueAtMonthIndex ? $currentMainItemTotalAtYearIndex / $currentTotalRevenueAtMonthIndex *100 : 0 ;
 					
 					
@@ -300,7 +295,7 @@ class IncomeStatementController extends Controller
         
             
         }
-
+		dd($tableDataFormatted);
         foreach ($yearWithItsIndexes as $yearIndex => $monthIndexWithActive) {
             foreach ($monthIndexWithActive as $monthIndex => $isActiveIndex) {
                 $currentMonthAsString = $dateIndexWithDate[$monthIndex] ;
@@ -354,7 +349,9 @@ class IncomeStatementController extends Controller
             
             
         }
+		
         $studyMonthsForViews=$study->getStudyDurationPerYearFromIndexesForView();
+		      //		  $tableDataFormatted[-1]['main_items']['cash-and-banks']['year_total'] =$totalCashAndBanksPerYear =  HArr::getPerYearIndexForCashAndBank($workingCapitalStatement['beginning_balance'] ??[], $yearWithItsMonths);
         $tableDataFormatted = HArr::addTotalMonthsPerYear($tableDataFormatted, $dateIndexWithDate, $financialYearsEndMonths);
         ksort($tableDataFormatted);
         return view('non_banking_services.income-statement.cash-flow', [

@@ -17,7 +17,7 @@ class Position extends Model
  	protected $guarded = ['id'];
 	protected $casts = [
 		'hiring_counts'=>'array',
-		'manpower_salaries'=>'array',
+		'salary_payments'=>'array',
 		'accumulated_manpower_counts'=>'array',
 		'salary_expenses'=>'array',
 	];

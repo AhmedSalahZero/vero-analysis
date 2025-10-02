@@ -15,6 +15,7 @@ use App\ReadyFunctions\CalculateDurationService;
 use App\ReadyFunctions\CalculateFixedLoanAtBeginningService;
 use App\ReadyFunctions\CalculateFixedLoanAtEndService;
 use App\ReadyFunctions\CalculateVariableLoanAtEndService;
+use App\ReadyFunctions\CollectionPolicyService;
 use App\ReadyFunctions\FixedAssetCalculation;
 use App\Traits\HasBasicStoreRequest;
 use Carbon\Carbon;
@@ -148,7 +149,6 @@ class Study extends Model
             $dateWithDateIndex[$dateAsString] =$dateIndex ;
             
         }
-    
         return [
             'datesIndexWithYearIndex'=>$datesIndexWithYearIndex,
             'yearIndexWithYear'=>$yearIndexWithYear,
@@ -1391,6 +1391,9 @@ class Study extends Model
         $monthlySalariesPayments = [];
         $salaryExpenses =[];
         foreach ($dateAsIndexes as $dateAsIndex) {
+			if(!isset($hiringCounts[$dateAsIndex])){
+				continue;
+			}
             $currentYearOrMonthIndex = $isYearsStudy ? $monthsWithItsYear[$dateAsIndex] : $dateAsIndex  ;
             $annualIncreaseRate = $generalAndReserveAssumption  ? $generalAndReserveAssumption->getSalariesAnnualIncreaseRateAtYearOrMonthIndex($currentYearOrMonthIndex) : 0 ;
             $increaseRateCondition = $isYearsStudy ? $currentIndex%12 == 0 : true ; // true to be increase every month so this condition will not have any effect if monthly study
@@ -1404,11 +1407,24 @@ class Study extends Model
             $currentIndex++;
             
         }
-        
+
+		
+		 /**
+         * * To Calculate Payment Statement
+         */
+        $salaryTaxAndSocialInsuranceAmounts = HArr::MultiplyWithNumber($salaryExpenses, ($salaryTaxesRate+$socialInsuranceRate));
+        $dateIndexWithDate = array_flip($dateAsIndexes);
+        $salaryTaxAndSocialInsuranceAmountsPayment= (new CollectionPolicyService())->applyMultiCustomizedCollectionPolicy([30=>100], $salaryTaxAndSocialInsuranceAmounts);
+        $salaryTaxAndSocialInsuranceAmountsStatement = ManPower::calculateStatement($salaryTaxAndSocialInsuranceAmounts, [], $salaryTaxAndSocialInsuranceAmountsPayment, [], $dateIndexWithDate);
+    
+        /**
+         * * End Calculate
+         */
         return [
             'accumulated_manpower_counts'=>$accumulatedManpowerCounts,
-            'manpower_salaries'=>$monthlySalariesPayments,
             'salary_expenses'=>$salaryExpenses,
+            'salary_payments'=>$monthlySalariesPayments,
+			'tax_and_social_insurance_statement'=>$salaryTaxAndSocialInsuranceAmountsStatement
         ];
     }
     public function recalculateManpower()
@@ -1420,11 +1436,11 @@ class Study extends Model
         $operationStartDateAsIndex = $this->operation_start_month;
         $salaryTaxesRate = $this->getSalaryTaxesRate() / 100;
         $socialInsuranceRate = $this->getSocialInsuranceRate() /100 ;
+		 $dateAsIndexes = $this->getDateWithDateIndex();
         foreach ($positions as $position) {
             $positionArr = [];
             $hiringCounts = $position->getHiringCounts();
             $currentExistingCount = $position->getExistingCount();
-            $dateAsIndexes = array_keys($hiringCounts);
             $monthlyNetSalary = $position->getMonthlyNetSalary();
             $additionalDatabaseResult =  $this->calculateManpowerResult($dateAsIndexes, $currentExistingCount, $hiringCounts, $operationStartDateAsIndex, $monthlyNetSalary, $salaryTaxesRate, $socialInsuranceRate);
             foreach ($additionalDatabaseResult as $columnName => $payload) {
@@ -2198,6 +2214,8 @@ class Study extends Model
 	
 	public function getCashInOutFlowViewVars()
 	{
+		 $yearWithItsIndexes = $this->getOperationDurationPerYearFromIndexes();
+        $monthsWithItsYear = $this->getMonthsWithItsYear($yearWithItsIndexes) ;
 		 $financialYearEndMonthNumber = '12';
         $defaultNumericInputClasses = [
             'number-format-decimals'=>0,
@@ -2291,21 +2309,47 @@ class Study extends Model
 		$totalExpensePerCategory = [];
 		foreach($expenses as $expense){
 			$category = $expense->expense_category ;
+			$expenseNameId = $expense->expense_name_id;
 			$paymentAmounts = (array)json_decode($expense->payment_amounts);
 			foreach($paymentAmounts as $dateIndex => $amount){
-				$totalExpensePerCategory[$category][$dateIndex] = isset($totalExpensePerCategory[$category][$dateIndex]) ? $totalExpensePerCategory[$category][$dateIndex] + $amount : $amount; 
+				$totalExpensePerCategory[$expenseNameId][$dateIndex] = isset($totalExpensePerCategory[$expenseNameId][$dateIndex]) ? $totalExpensePerCategory[$expenseNameId][$dateIndex] + $amount : $amount; 
 			}
 		}
-		foreach($totalExpensePerCategory as $category => $currentData){
-			$expenseTitle = str_to_upper($category);
-			$tableDataFormatted[1]['sub_items'][$expenseTitle]['options'] =array_merge([
-                'title'=>$expenseTitle
+		foreach($totalExpensePerCategory as $expenseNameId => $currentData){
+			$title = ExpenseName::find($expenseNameId)->getName();
+			
+			$tableDataFormatted[1]['sub_items'][$expenseNameId]['options'] =array_merge([
+                'title'=>$title
             ], $defaultNumericInputClasses);
-            $tableDataFormatted[1]['sub_items'][$expenseTitle]['data'] = $currentData;
+            $tableDataFormatted[1]['sub_items'][$expenseNameId]['data'] = $currentData;
           //  $currentTotal = HArr::sumAtDates([$currentData,$currentTotal], $studyMonthsForViews);
-            $tableDataFormatted[1]['sub_items'][$expenseTitle]['year_total'] = HArr::sumPerYearIndex($currentData, $yearWithItsMonths);
+            $tableDataFormatted[1]['sub_items'][$expenseNameId]['year_total'] = HArr::sumPerYearIndex($currentData, $yearWithItsMonths);
 			
 		}
+		
+		
+		
+		 $totalSalaryPayments = [];
+        $totalExpenses = [];
+        $totalTaxAndSocialInsurances = [];
+        $salaryPayments = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('manpowers')->where('study_id', $this->id)->pluck('salary_payments')->toArray();
+        $salaryTaxAndSocialInsurances = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('manpowers')->where('study_id', $this->id)->pluck('tax_and_social_insurance_statement')->toArray();
+        foreach ($salaryPayments as $index=>$manpowerSalaryPayment) {
+            $manpowerSalaryPayment = (array)json_decode($manpowerSalaryPayment);
+            $salaryTaxAndSocialInsurance = ((array)json_decode($salaryTaxAndSocialInsurances[$index]))['monthly']??[];
+            $salaryTaxAndSocialInsurance = (array)$salaryTaxAndSocialInsurance->payment;
+            $totalSalaryPayments  = HArr::sumAtDates([$totalSalaryPayments,$manpowerSalaryPayment], $sumKeys);
+            $totalTaxAndSocialInsurances  = HArr::sumAtDates([$totalTaxAndSocialInsurances,$salaryTaxAndSocialInsurance], $sumKeys);
+        }
+		
+		 $tableDataFormatted[1]['sub_items'][__('Salaries Payments')]['data'] = $totalSalaryPayments;
+        $totalExpenses =  HArr::sumAtDates([$totalExpenses,$totalSalaryPayments], $sumKeys);
+        $tableDataFormatted[1]['sub_items'][__('Salaries Payments')]['year_total'] = HArr::sumPerYearIndex($totalSalaryPayments, $yearWithItsMonths);
+        
+        $tableDataFormatted[1]['sub_items'][__('Salary Taxes & Social Insurance')]['data'] = $totalTaxAndSocialInsurances;
+        $tableDataFormatted[1]['sub_items'][__('Salary Taxes & Social Insurance')]['year_total'] = HArr::sumPerYearIndex($totalTaxAndSocialInsurances, $yearWithItsMonths);
+        
+		
 		 
 		
 			 $totalCashOut = HArr::sumAtDates(array_column($tableDataFormatted[1]['sub_items']??[], 'data'), $sumKeys);
@@ -2372,7 +2416,8 @@ class Study extends Model
 		        $tableDataFormatted[-1]['main_items']['cash-and-banks']['data'] = $workingCapitalStatement['beginning_balance'] ??[];
       		  $tableDataFormatted[-1]['main_items']['cash-and-banks']['year_total'] =$totalCashAndBanksPerYear =  HArr::getPerYearIndexForCashAndBank($workingCapitalStatement['beginning_balance'] ??[], $yearWithItsMonths);
 		
-		
+		$salaryExpensesForCategory = Manpower::getSalaryExpensesPerCategory($monthsWithItsYear,$this->company->id);
+
        
       //  $totalCashIn = [];
 		
