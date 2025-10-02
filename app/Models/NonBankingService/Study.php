@@ -959,7 +959,7 @@ class Study extends Model
                     } else {
                             
                         $currentPortfolioLoans=$loanService->__calculate([], -1, $loanType, $currentMonth, $currentMonthlyLoanAmount, $baseRatesMapping, $currentMarginRate, $tenor, $installmentInterval, $stepUp, $stepInterval, $stepDown, $stepInterval, $gracePeriod, $monthIndex, null, $pricingPerMonths);
-                        // dd($currentPortfolioLoans);
+                        
                         
                         
                         $finalResult = $currentPortfolioLoans['final_result']??[];
@@ -1040,13 +1040,7 @@ class Study extends Model
             
         }
         DB::connection('non_banking_service')->table($loanSchedulePaymentTableName)->insert($portfolioLoans);
-        // try{
-        // 	logger('ooo');
-            
-        // }catch(\Exception $e){
-        // 	dd($e->getMessage());
-            
-        // }
+     
         $this->recalculateMonthlyAndAccumulatedEcl($revenueStreamType, $totalPortfolioEndBalance);
         // $eclRates = $eclAndNewPortfolioFundingRate ? $eclAndNewPortfolioFundingRate->ecl_rates: [];
         
@@ -1275,13 +1269,13 @@ class Study extends Model
         $previousAccumulated = 0 ;
         $accumulatedEclValues =[];
         foreach ($monthlyEclRates as $dateAsIndex => $eclRate) {
-            $currentMonthPortfolioEndBalance  = $totalPortfolioEndBalance[$dateAsIndex]??0;
+			$currentMonthPortfolioEndBalance  = $totalPortfolioEndBalance[$dateAsIndex]??0;
             $eclRate = $eclRate / 100 ;
             $monthlyEclValues[$dateAsIndex] =  $currentMonthPortfolioEndBalance * $eclRate - $previousAccumulated;
             $accumulatedEclValues[$dateAsIndex] = $monthlyEclValues[$dateAsIndex]+ ($accumulatedEclValues[$dateAsIndex-1]??0);
             $previousAccumulated = $accumulatedEclValues[$dateAsIndex];
         }
-
+		
         DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('ecl_and_new_portfolio_funding_rates')->where('revenue_stream_type', $revenueStreamType)->where('study_id', $this->id)->update([
             'monthly_ecl_values'=>json_encode($monthlyEclValues),
             'accumulated_ecl_values'=>json_encode($accumulatedEclValues),

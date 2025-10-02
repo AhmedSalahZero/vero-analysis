@@ -98,6 +98,9 @@ html body input.custom-input-string-width ,
                         @php
                         $subItems = $currentTableData['sub_items']??[] ;
                         $hasSubItems = count($subItems);
+						if(!isset($currentTableData['main_items'])){
+							continue;
+						}
                         @endphp
                         <tr data-is-main-row data-repeat-formatting-decimals="0" data-repeater-style>
                             <td class="fixed-column">
@@ -112,6 +115,7 @@ html body input.custom-input-string-width ,
                                     @php
                                     $currentIndex = 0 ;
                                     @endphp
+									
                                     @foreach($currentTableData['main_items'] as $mainItemId => $mainItemArr)
                                     <div class="input-hidden-parent">
                                         <input readonly data-number-of-decimals="0" onchange="this.style.width = ((this.value.length + 1) * 10) + 'px';" class="form-control exclude-from-collapse text-left copy-value-to-his-input-hidden 

@@ -598,14 +598,7 @@ return $result;
 		}
 		return $result;
 	}
-	protected static function calculatePercentageOf(array $salesRevenues , array $items):array {
-		$result = [];
-		foreach($salesRevenues as $dateIndex => $salesValue){
-			$currenItemVal = $items[$dateIndex]??0 ;
-			$result[$dateIndex] =$salesValue ? $currenItemVal  / $salesValue * 100 : 0;
-		}
-		return $result;
-	}
+
 	public static function addTotalMonthsPerYear(array $items ,array $dateIndexWithDate, array $financialYearsEndMonths):array{
 		$result = [];
 		foreach($items as $index => $itemArr){
@@ -820,5 +813,12 @@ public static function sumLoanSchedulePerKey( $items , $sumKeys , $groupName)
 	}
 	return $result;
 }
-	
+		public static function calculatePercentageOf(array $salesRevenues , array $items):array {
+		$result = [];
+		foreach($salesRevenues as $dateIndex => $salesValue){
+			$currenItemVal = $items[$dateIndex]??0 ;
+			$result[$dateIndex] =$salesValue ? $currenItemVal  / $salesValue * 100 : 0;
+		}
+		return $result;
+	}
 }
