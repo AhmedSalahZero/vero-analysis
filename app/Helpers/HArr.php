@@ -807,11 +807,11 @@ public static function calculateWorkingCapital($cashAndBankAmount,$totalCashInAs
 	}
 	return $result ;
 }
-public static function sumLoanSchedulePerKey( $items , $sumKeys)
+public static function sumLoanSchedulePerKey( $items , $sumKeys , $groupName)
 {
 	$result = [];
 	foreach($items as $item){
-		$type = $item->revenue_stream_type;
+		$type = $item->{$groupName};
 		$schedulePayments = (array)json_decode($item->schedulePayment);
 		foreach($sumKeys as $dateAsIndex ){
 			$value = $schedulePayments[$dateAsIndex]??0;

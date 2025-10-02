@@ -2233,7 +2233,7 @@ class Study extends Model
         $sumKeys = array_keys($studyMonthsForViews);
         
 		$loanSchedulePayments = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('loan_schedule_payments')->where('study_id',$this->id)->where('portfolio_loan_type','portfolio')->get();
-		$loanSchedulePaymentPerType = HArr::sumLoanSchedulePerKey($loanSchedulePayments,$sumKeys);
+		$loanSchedulePaymentPerType = HArr::sumLoanSchedulePerKey($loanSchedulePayments,$sumKeys,'revenue_stream_type');
 		$directFactoringSettlements =  DirectFactoringBreakdown::where('study_id',$this->id)->pluck('direct_factoring_settlements')->toArray();
 		$directFactoringSettlements = HArr::sumAtDates($directFactoringSettlements,$sumKeys);
 		$loanSchedulePaymentPerType['direct-factoring'] = $directFactoringSettlements;
@@ -2264,12 +2264,12 @@ class Study extends Model
         ], $defaultNumericInputClasses);
 		
 		$loanSchedulePayments = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('loan_schedule_payments')->where('study_id',$this->id)->where('portfolio_loan_type','bank_portfolio')->get();
-		$loanSchedulePaymentPerType = HArr::sumLoanSchedulePerKey($loanSchedulePayments,$sumKeys);
+		$loanSchedulePaymentPerType = HArr::sumLoanSchedulePerKey($loanSchedulePayments,$sumKeys,'revenue_stream_type');
 		$directFactoringSettlements =  DirectFactoringBreakdown::where('study_id',$this->id)->pluck('bank_loan_settlements')->toArray();
 		$directFactoringSettlements = HArr::sumAtDates($directFactoringSettlements,$sumKeys);
 		$loanSchedulePaymentPerType['direct-factoring'] = $directFactoringSettlements;
 		 foreach ($loanSchedulePaymentPerType as $revenueType => $currentData) {
-			$title = str_to_upper($revenueType) .' Bank Loan Payments'  ;
+			$title =  $revenueType == 'direct-factoring' ?  str_to_upper($revenueType) .' Loan Payments' :  str_to_upper($revenueType) .' Bank Loan Payments'  ;
             $tableDataFormatted[2]['sub_items'][$title]['options'] =array_merge([
                 'title'=>$title
             ], $defaultNumericInputClasses);
@@ -2277,6 +2277,26 @@ class Study extends Model
             $currentTotal = HArr::sumAtDates([$currentData,$currentTotal], $studyMonthsForViews);
             $tableDataFormatted[2]['sub_items'][$title]['year_total'] = HArr::sumPerYearIndex($currentData, $yearWithItsMonths);
         }
+		$expenses = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('expenses')->where('study_id',$this->id)->get();
+		$totalExpensePerCategory = [];
+		foreach($expenses as $expense){
+			$category = $expense->expense_category ;
+			$paymentAmounts = (array)json_decode($expense->payment_amounts);
+			foreach($paymentAmounts as $dateIndex => $amount){
+				$totalExpensePerCategory[$category][$dateIndex] = isset($totalExpensePerCategory[$category][$dateIndex]) ? $totalExpensePerCategory[$category][$dateIndex] + $amount : $amount; 
+			}
+		}
+		foreach($totalExpensePerCategory as $category => $currentData){
+			$expenseTitle = str_to_upper($category);
+			$tableDataFormatted[2]['sub_items'][$expenseTitle]['options'] =array_merge([
+                'title'=>$expenseTitle
+            ], $defaultNumericInputClasses);
+            $tableDataFormatted[2]['sub_items'][$expenseTitle]['data'] = $currentData;
+          //  $currentTotal = HArr::sumAtDates([$currentData,$currentTotal], $studyMonthsForViews);
+            $tableDataFormatted[2]['sub_items'][$expenseTitle]['year_total'] = HArr::sumPerYearIndex($currentData, $yearWithItsMonths);
+			
+		}
+		 
 		
 			 $totalCashOut = HArr::sumAtDates(array_column($tableDataFormatted[2]['sub_items']??[], 'data'), $sumKeys);
 		$tableDataFormatted[2]['main_items']['cash-out-flow']['data'] = $totalCashOut;
