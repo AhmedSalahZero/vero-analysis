@@ -241,7 +241,7 @@ class IncomeStatementController extends Controller
     
         foreach ($salaryExpenses as $salaryExpense) {
             $expenseCategory = $salaryExpense->expense_type;
-            $salaryExpensePayload = json_decode($salaryExpense->salary_expenses);
+            $salaryExpensePayload = (array)json_decode($salaryExpense->salary_expenses);
             $salaryExpensePayload = $salaryExpensePayload ? $salaryExpensePayload : [];
             foreach ($monthsWithItsYear as $monthIndex => $yearIndex) {
                 
