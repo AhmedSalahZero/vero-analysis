@@ -201,7 +201,7 @@ $(document).on('click', '.collapse-before-me', function () {
 			}
 		}
 
-		$(this).closest('table').find('[data-column-index="' + columnIndex + '"]:not(.exclude-from-collapse)').toggle()
+		$(this).closest('table').find('[data-column-index="' + columnIndex + '"]:not(.exclude-from-collapse):not(.total-td):not(.total-td-formatted)').toggle()
 
 		columnIndex--
 		counter++
@@ -691,13 +691,7 @@ $(document).on('change', '.sum_product_value_1,.sum_product_quantity_1,.sum_prod
 
 })
 
-$(function () {
-	const studyDuration = $('#study-duration').attr('data-duration');
-	if(studyDuration >1 ){
-		$('.collapse-before-me').trigger('click')
-	}
-	$('.expense-category-class').trigger('change')
-})
+
 $(document).on('click', '.parent-checkbox', function () {
 	$(this).closest('.closest-parent').find('input[type="checkbox"]').prop('checked', false).trigger('change')
 	$(this).closest('td').find('input[type="checkbox"]').prop('checked', true).trigger('change')

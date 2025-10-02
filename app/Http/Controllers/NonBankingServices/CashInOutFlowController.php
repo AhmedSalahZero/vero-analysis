@@ -18,7 +18,7 @@ class CashInOutFlowController extends Controller
 	public function view(Request $request , Company $company,Study $study)
 	{
 		  return view(
-            'non_banking_services.income-statement.forecast',
+            'non_banking_services.income-statement.cash-flow',
 			$study->getCashInOutFlowViewVars()
         );
 	}
