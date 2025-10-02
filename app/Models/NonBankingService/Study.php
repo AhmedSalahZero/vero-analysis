@@ -1488,9 +1488,8 @@ class Study extends Model
             $directFactoringNetFundingAmounts = [];
             $directFactoringBankLoanStatements = [];
             $currentDirectFactoringBeginningBalance = 0 ;
-            foreach ($directFactoringAmounts as $index => $currentDirectAmount) {
-                
-                $monthIndex = $monthsIndexes[$index];
+            foreach ($directFactoringAmounts as $monthIndex => $currentDirectAmount) {
+				
                 $currentYearIndex = $datesIndexWithYearIndex[$monthIndex];
                 $currentYearOrMonthIndex = $this->isMonthlyStudy() ? $monthIndex : $currentYearIndex;
                 $currentDateAsString = $dateIndexWithDates[$monthIndex];

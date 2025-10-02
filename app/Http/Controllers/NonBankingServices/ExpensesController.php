@@ -12,6 +12,7 @@ use App\Http\Requests\StoreExpensesRequest;
 use App\Models\Company;
 use App\Models\NonBankingService\Expense;
 use App\Models\NonBankingService\ExpenseName;
+use App\Models\NonBankingService\Manpower;
 use App\Models\NonBankingService\Position;
 use App\Models\NonBankingService\Study;
 use App\ReadyFunctions\CollectionPolicyService;
@@ -132,8 +133,8 @@ class ExpensesController extends Controller
                     $accumulatedManpowerPowersForAllSelectedPositions = [ ];
                     if ($isExpensePerEmployee) {
                         $positionIds = (array) $tableDataArr['position_ids'] ;
-                        $positions = Position::whereIn('id', $positionIds)->pluck('accumulated_manpower_counts')->toArray();
-                        $accumulatedManpowerPowersForAllSelectedPositions = HArr::sumAtDates($positions, $monthsAsIndexes);
+                        $manpowers = Manpower::whereIn('position_id', $positionIds)->pluck('accumulated_manpower_counts')->toArray();
+                        $accumulatedManpowerPowersForAllSelectedPositions = HArr::sumAtDates($manpowers, $monthsAsIndexes);
                         $amount = $tableDataArr['monthly_cost_of_unit'];
                     }elseif($isCostPerUnit){
 						$amount = $tableDataArr['monthly_cost_of_unit'];
