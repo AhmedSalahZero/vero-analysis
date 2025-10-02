@@ -1140,8 +1140,8 @@ use App\Models\NonBankingService\Expense;
                 </td>
 				
 				<td>
-                    <input value="{{ (isset($subModel) ? number_format($subModel->getAmortizationMonths(),0) : 0) }}" class="form-control text-center only-greater-than-or-equal-zero-allowed" type="text">
-                    <input type="hidden" value="{{ (isset($subModel) ? $subModel->getAmortizationMonths() : 0) }}" @if($isRepeater) name="amortization_months" @else name="{{ $tableId }}[0][amortization_months]" @endif>
+                    <input value="{{ (isset($subModel) ? number_format($subModel->getAmortizationMonths(),0) : 12) }}" class="form-control text-center only-greater-than-or-equal-zero-allowed" type="text">
+                    <input type="hidden" value="{{ (isset($subModel) ? $subModel->getAmortizationMonths() : 12) }}" @if($isRepeater) name="amortization_months" @else name="{{ $tableId }}[0][amortization_months]" @endif>
                 </td>
 				
                 <td>
