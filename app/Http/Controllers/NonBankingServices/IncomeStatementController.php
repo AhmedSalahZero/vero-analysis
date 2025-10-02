@@ -210,8 +210,8 @@ class IncomeStatementController extends Controller
 		$monthlyEclValues = HArr::sumAtDates($monthlyEclValues,$studyDates);
 		$monthAdminFees = HArr::sumAtDates($monthAdminFees,$studyDates);
 		
-		$tableDataFormatted[0]['sub_items']['monthly-ecl-values']['options']['title'] = __('Monthly Ecl Values');
-		$tableDataFormatted[0]['sub_items']['monthly-ecl-values']['data'] = $monthlyEclValues;
+		// $tableDataFormatted[0]['sub_items']['monthly-ecl-values']['options']['title'] = __('Monthly Ecl Values');
+		// $tableDataFormatted[0]['sub_items']['monthly-ecl-values']['data'] = $monthlyEclValues;
 		
 		$tableDataFormatted[0]['sub_items']['monthly-admin-fees']['data'] = $monthAdminFees;
 		$tableDataFormatted[0]['sub_items']['monthly-admin-fees']['options']['title'] = __('Monthly Admin Fees');
