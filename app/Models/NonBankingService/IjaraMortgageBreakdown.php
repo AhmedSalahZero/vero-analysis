@@ -78,6 +78,9 @@ class  IjaraMortgageBreakdown extends Model
 	{
 		return 'installment_interval';
 	}
-
+	public function getRevenueType():string 
+	{
+		return Study::IJARA;
+	}
 	
 }

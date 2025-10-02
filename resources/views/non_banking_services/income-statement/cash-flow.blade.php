@@ -7,6 +7,35 @@ use App\Models\NonBankingService\Study;
 <link href="{{ url('assets/vendors/general/bootstrap-select/dist/css/bootstrap-select.css') }}" rel="stylesheet" type="text/css" />
 <link rel="stylesheet" href="/custom/css/non-banking-services/common.css">
 <link rel="stylesheet" href="/custom/css/non-banking-services/select2.css">
+<style>
+
+input.form-control[type="text"][readonly] {
+    background-color: white !important;
+    color: black !important;
+    font-weight: 400 !important;
+}
+.fixed-column-table {
+  width: 100%;
+  overflow-x: auto; /* Enable horizontal scrolling */
+  border-collapse: collapse;
+}
+.fixed-column {
+  position: sticky;
+  left: -15px;
+  background: #f8f8f8; /* Optional: distinguish the fixed column */
+  z-index: 1; /* Ensure it stays above other cells */
+}
+html body input.custom-input-string-width , 
+.name-max-width-class
+{
+	width: 300px !important;
+    min-width: 300px !important;
+    max-width: 300px !important;
+}
+.name-max-width-class{
+	
+}
+</style>
 @endsection
 @section('sub-header')
 {{ $title }}

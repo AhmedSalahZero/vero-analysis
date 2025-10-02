@@ -229,5 +229,9 @@ class  DirectFactoringBreakdown extends Model
 	{
 		return 'category';
 	}
+	public function getRevenueType():string 
+	{
+		return Study::DIRECT_FACTORING;
+	}
 	
 }

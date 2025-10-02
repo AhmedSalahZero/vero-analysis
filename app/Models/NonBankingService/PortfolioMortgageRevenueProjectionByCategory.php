@@ -68,6 +68,7 @@ class  PortfolioMortgageRevenueProjectionByCategory extends Model
 	{
 		return $this->growth_rates[$yearOrMonthIndex] ?? 0  ; 
 	}
+
 	// public function getMonthlyMarginRate()
 	// {
 	// 	return $this->monthly_margin_rate ?: 0;
@@ -108,6 +109,10 @@ class  PortfolioMortgageRevenueProjectionByCategory extends Model
 	public function getCategoryColumnName():?string 
 	{
 		return 'portfolio_mortgage_duration';
+	}
+	public function getRevenueType():string 
+	{
+		return Study::PORTFOLIO_MORTGAGE;
 	}
 	// public function getCategoryColumnName():string 
 	// {

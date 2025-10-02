@@ -39,5 +39,9 @@ class  LeasingRevenueStreamBreakdown extends Model
 	{
 		return 'category_id';
 	}
+	public function getRevenueType():string 
+	{
+		return Study::LEASING;
+	}
 		
 }

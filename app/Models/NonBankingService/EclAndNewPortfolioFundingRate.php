@@ -22,6 +22,7 @@ class  EclAndNewPortfolioFundingRate extends Model
 		'equity_funding_values'=>'array',
 		'new_loans_funding_rates'=>'array',
 		'new_loans_funding_values'=>'array',
+		'monthly_new_loans_funding_values'=>'array',
 	];
 	public function getRevenueStreamType():string 
 	{

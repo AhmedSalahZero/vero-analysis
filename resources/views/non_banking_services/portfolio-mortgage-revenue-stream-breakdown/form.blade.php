@@ -261,8 +261,7 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
                                     $startFromIndex = array_key_first($monthsForThisYearArray);
 
                                     $months = getMonthNames($startFromIndex);
-
-                                    $currentVal = $portfolioMortgageRevenueProjectionByCategory ? $portfolioMortgageRevenueProjectionByCategory->getFrequencyPerYearAtYearOrMonthIndex($year) : 1;
+                                    $currentVal = $portfolioMortgageRevenueProjectionByCategory ? $portfolioMortgageRevenueProjectionByCategory->getStartFromAtYearIndex($year) : 1;
                                     @endphp
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">

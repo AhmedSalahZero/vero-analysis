@@ -381,7 +381,7 @@ class Study extends Model
         $calculateDurationService = new CalculateDurationService();
         $operationStartDate  = $this->getOperationStartDateFormatted();
         if ($maxYearIsStudyEndDate) {
-			$maxDate = $this->getStudyEndDate();
+            $maxDate = $this->getStudyEndDate();
         } else {
             $maxDate = $this->getMaxDate($datesAsStringAndIndex, $datesIndexWithYearIndex, $yearIndexWithYear, $dateIndexWithDate, $dateWithMonthNumber);
         }
@@ -853,6 +853,7 @@ class Study extends Model
                 'monthly_loan_amounts'=>$currentMonthlyAmounts
             ]);
             $foreignKeyName = $model->getForeignKeyName();
+            $revenueType = $model->getRevenueType();
             $categoryColumnName = $model->getCategoryColumnName();
             DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('revenue_contracts')->where('study_id', $this->id)->where($foreignKeyName, $model->id)->delete();
             
@@ -861,7 +862,8 @@ class Study extends Model
                 'company_id'=>$this->company->id ,
                 'monthly_loan_amounts'=>$currentMonthlyAmounts,
                 'contract_counts'=>$currentCounts,
-                $foreignKeyName=>$model->id
+                $foreignKeyName=>$model->id,
+				'revenue_type'=>$revenueType
             ];
             if ($categoryColumnName) {
                 $newRevenueContractRows['category_id'] = $model->{$categoryColumnName};
@@ -1045,7 +1047,7 @@ class Study extends Model
         // 	dd($e->getMessage());
             
         // }
-		$this->recalculateMonthlyAndAccumulatedEcl($revenueStreamType ,$totalPortfolioEndBalance );
+        $this->recalculateMonthlyAndAccumulatedEcl($revenueStreamType, $totalPortfolioEndBalance);
         // $eclRates = $eclAndNewPortfolioFundingRate ? $eclAndNewPortfolioFundingRate->ecl_rates: [];
         
         // $monthlyEclRates = $study->isMonthlyStudy() ? $eclRates : $this->convertYearToMonthIndexes($eclRates) ;
@@ -1255,19 +1257,19 @@ class Study extends Model
         
     
         // $eclTableName = ($eclAndNewPortfolioFundingRate)->getTable();
-        $this->recalculateMonthlyAndAccumulatedEcl($revenueStreamType ,$totalPortfolioEndBalance );
+        $this->recalculateMonthlyAndAccumulatedEcl($revenueStreamType, $totalPortfolioEndBalance);
         
       
         
     }
-	public function recalculateMonthlyAndAccumulatedEcl(string $revenueStreamType,array $totalPortfolioEndBalance)
-	{
-		  $eclAndNewPortfolioFundingRate = $this->getEclAndNewPortfolioFundingRatesForStreamType($revenueStreamType);
-		  if(!$eclAndNewPortfolioFundingRate){
-			return ;
-		  }
-		    $eclRates = $eclAndNewPortfolioFundingRate->ecl_rates;
-		  $monthlyEclRates = $this->isMonthlyStudy() ? $eclRates : $this->convertYearToMonthIndexes($eclRates) ;
+    public function recalculateMonthlyAndAccumulatedEcl(string $revenueStreamType, array $totalPortfolioEndBalance)
+    {
+        $eclAndNewPortfolioFundingRate = $this->getEclAndNewPortfolioFundingRatesForStreamType($revenueStreamType);
+        if (!$eclAndNewPortfolioFundingRate) {
+            return ;
+        }
+        $eclRates = $eclAndNewPortfolioFundingRate->ecl_rates;
+        $monthlyEclRates = $this->isMonthlyStudy() ? $eclRates : $this->convertYearToMonthIndexes($eclRates) ;
         // $loansEnd
         $monthlyEclValues = [];
         $previousAccumulated = 0 ;
@@ -1280,12 +1282,12 @@ class Study extends Model
             $previousAccumulated = $accumulatedEclValues[$dateAsIndex];
         }
 
-        DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('ecl_and_new_portfolio_funding_rates')->where('revenue_stream_type',$revenueStreamType)->where('study_id', $this->id)->update([
+        DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('ecl_and_new_portfolio_funding_rates')->where('revenue_stream_type', $revenueStreamType)->where('study_id', $this->id)->update([
             'monthly_ecl_values'=>json_encode($monthlyEclValues),
             'accumulated_ecl_values'=>json_encode($accumulatedEclValues),
         ]);
-		
-	}
+        
+    }
     /**
      * * هنا مفرودة لغايه السنوات الاضافيه
      */
@@ -1391,9 +1393,9 @@ class Study extends Model
         $monthlySalariesPayments = [];
         $salaryExpenses =[];
         foreach ($dateAsIndexes as $dateAsIndex) {
-			if(!isset($hiringCounts[$dateAsIndex])){
-				continue;
-			}
+            if (!isset($hiringCounts[$dateAsIndex])) {
+                continue;
+            }
             $currentYearOrMonthIndex = $isYearsStudy ? $monthsWithItsYear[$dateAsIndex] : $dateAsIndex  ;
             $annualIncreaseRate = $generalAndReserveAssumption  ? $generalAndReserveAssumption->getSalariesAnnualIncreaseRateAtYearOrMonthIndex($currentYearOrMonthIndex) : 0 ;
             $increaseRateCondition = $isYearsStudy ? $currentIndex%12 == 0 : true ; // true to be increase every month so this condition will not have any effect if monthly study
@@ -1408,10 +1410,10 @@ class Study extends Model
             
         }
 
-		
-		 /**
-         * * To Calculate Payment Statement
-         */
+        
+        /**
+        * * To Calculate Payment Statement
+        */
         $salaryTaxAndSocialInsuranceAmounts = HArr::MultiplyWithNumber($salaryExpenses, ($salaryTaxesRate+$socialInsuranceRate));
         $dateIndexWithDate = array_flip($dateAsIndexes);
         $salaryTaxAndSocialInsuranceAmountsPayment= (new CollectionPolicyService())->applyMultiCustomizedCollectionPolicy([30=>100], $salaryTaxAndSocialInsuranceAmounts);
@@ -1424,7 +1426,7 @@ class Study extends Model
             'accumulated_manpower_counts'=>$accumulatedManpowerCounts,
             'salary_expenses'=>$salaryExpenses,
             'salary_payments'=>$monthlySalariesPayments,
-			'tax_and_social_insurance_statement'=>$salaryTaxAndSocialInsuranceAmountsStatement
+            'tax_and_social_insurance_statement'=>$salaryTaxAndSocialInsuranceAmountsStatement
         ];
     }
     public function recalculateManpower()
@@ -1436,7 +1438,7 @@ class Study extends Model
         $operationStartDateAsIndex = $this->operation_start_month;
         $salaryTaxesRate = $this->getSalaryTaxesRate() / 100;
         $socialInsuranceRate = $this->getSocialInsuranceRate() /100 ;
-		 $dateAsIndexes = $this->getDateWithDateIndex();
+        $dateAsIndexes = $this->getDateWithDateIndex();
         foreach ($positions as $position) {
             $positionArr = [];
             $hiringCounts = $position->getHiringCounts();
@@ -1505,7 +1507,7 @@ class Study extends Model
             $directFactoringBankLoanStatements = [];
             $currentDirectFactoringBeginningBalance = 0 ;
             foreach ($directFactoringAmounts as $monthIndex => $currentDirectAmount) {
-				
+                
                 $currentYearIndex = $datesIndexWithYearIndex[$monthIndex];
                 $currentYearOrMonthIndex = $this->isMonthlyStudy() ? $monthIndex : $currentYearIndex;
                 $currentDateAsString = $dateIndexWithDates[$monthIndex];
@@ -1538,7 +1540,7 @@ class Study extends Model
                         
                 $currentDirectFactoringNetFundingAmounts  = $currentDirectAmount -  $unearned[$monthIndex] ;
                 $directFactoringNetFundingAmounts[$directFactoringBreakdownId][$monthIndex] = $currentDirectFactoringNetFundingAmounts ;
-				$eclAndNewPortfolioFundingRate = $this->getEclAndNewPortfolioFundingRatesForStreamType(Study::DIRECT_FACTORING);
+                $eclAndNewPortfolioFundingRate = $this->getEclAndNewPortfolioFundingRatesForStreamType(Study::DIRECT_FACTORING);
                 if ($eclAndNewPortfolioFundingRate) {
                     $newLoanFundingRate = (100 - $eclAndNewPortfolioFundingRate->getEquityFundingRatesAtYearOrMonthIndex($currentYearOrMonthIndex))/100 ;
                     $currentBankLoanAmount = $currentDirectFactoringNetFundingAmounts * $newLoanFundingRate;
@@ -1662,21 +1664,21 @@ class Study extends Model
         }
         return $total ;
     }
-	public function getPortfolioMortgageTotalLoanAmounts():array
-	{
-		$result = [];
-		foreach($this->portfolioMortgageRevenueProjectionByCategories as $portfolioMortgageRevenueProjectionByCategory){
-			$currentRow = $portfolioMortgageRevenueProjectionByCategory->portfolio_mortgage_transactions_projections;
-			foreach($currentRow as $dateOrYearIndex => $value){
-				$result[$dateOrYearIndex] = isset($result[$dateOrYearIndex]) ? $result[$dateOrYearIndex] + $value : $value;
-			}
-			
-		}
-		return $result;
-	}
+    public function getPortfolioMortgageTotalLoanAmounts():array
+    {
+        $result = [];
+        foreach ($this->portfolioMortgageRevenueProjectionByCategories as $portfolioMortgageRevenueProjectionByCategory) {
+            $currentRow = $portfolioMortgageRevenueProjectionByCategory->portfolio_mortgage_transactions_projections;
+            foreach ($currentRow as $dateOrYearIndex => $value) {
+                $result[$dateOrYearIndex] = isset($result[$dateOrYearIndex]) ? $result[$dateOrYearIndex] + $value : $value;
+            }
+            
+        }
+        return $result;
+    }
     public function getLoanAmountForAdminFeesForRevenueStreamType(string $revenueStreamType):array
     {
-		$this->refresh();
+        $this->refresh();
         return [
             self::LEASING=>$this->sumLeasingLoanAmounts(),
             self::REVERSE_FACTORING=>$this->reverseFactoringRevenueProjectionByCategory ? $this->reverseFactoringRevenueProjectionByCategory->getReverseFactoringTransactionProjection() : [],
@@ -2183,7 +2185,8 @@ class Study extends Model
             // $loanAmounts = $request->get('loan_amounts',[]);
             // $sumLoanAmounts = HArr::sumForInternalIndexes($loanAmounts);
             $monthlyAdminFeesAmount = $this->calculateMonthlyAdminFeesAmounts($adminFeesRates, $loanAmounts);
-                            
+            $monthlyNewLoansFundingValues  = $this->isMonthlyStudy() ? $newLoansFundingValues : $this->convertYearIndexToActiveMonthIndexes($newLoansFundingValues);
+        
             $data = [
                 'revenue_stream_type'=>$revenueStreamType,
                 'admin_fees_rates'=>$adminFeesRates,
@@ -2193,6 +2196,7 @@ class Study extends Model
                 'equity_funding_values'=>$equityFundingValues,
                 'new_loans_funding_rates'=>$request->get('new_loans_funding_rates', []),
                 'new_loans_funding_values'=>$newLoansFundingValues,
+                'monthly_new_loans_funding_values'=>$monthlyNewLoansFundingValues,
                 'company_id'=>$this->company->id
             ];
             $eclAndNewPortfolioFundingRate = $this->getEclAndNewPortfolioFundingRatesForStreamType($revenueStreamType);
@@ -2201,22 +2205,22 @@ class Study extends Model
             } else {
                 $this->eclAndNewPortfolioFundingRates()->create($data);
             }
-			$this->refresh();
+            $this->refresh();
             
         }
         
     }
-	  public function getCashAndBanksAmount():float
+    public function getCashAndBanksAmount():float
     {
         $cashAndBankAmount   = $this->cashAndBankOpeningBalances->first();
         return $cashAndBankAmount ? $cashAndBankAmount->cash_and_bank_amount : 0 ;
     }
-	
-	public function getCashInOutFlowViewVars()
-	{
-		 $yearWithItsIndexes = $this->getOperationDurationPerYearFromIndexes();
+    
+    public function getCashInOutFlowViewVars()
+    {
+        $yearWithItsIndexes = $this->getOperationDurationPerYearFromIndexes();
         $monthsWithItsYear = $this->getMonthsWithItsYear($yearWithItsIndexes) ;
-		 $financialYearEndMonthNumber = '12';
+        $financialYearEndMonthNumber = '12';
         $defaultNumericInputClasses = [
             'number-format-decimals'=>0,
             'is-percentage'=>false,
@@ -2236,11 +2240,11 @@ class Study extends Model
         $studyMonthsForViews = $this->getStudyDates();
         $studyMonthsForViews = array_slice($studyMonthsForViews, 0, $this->getViewStudyEndDateAsIndex()+1);
         $yearWithItsMonths=$this->getYearIndexWithItsMonths();
-      //  unset($yearWithItsMonths[array_key_last($yearWithItsMonths)]);
-		
-		
-		
-		  /**
+        //  unset($yearWithItsMonths[array_key_last($yearWithItsMonths)]);
+        
+        
+        
+        /**
          * * First Tab Sales Revenue
         */
         $cashAndBankAmount = $this->getCashAndBanksAmount();
@@ -2250,20 +2254,20 @@ class Study extends Model
         $tableDataFormatted[-1]['main_items']['cash-and-banks']['data'] = [];
         $sumKeys = array_keys($studyMonthsForViews);
         
-		$loanSchedulePayments = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('loan_schedule_payments')->where('study_id',$this->id)->where('portfolio_loan_type','portfolio')->get();
-		$loanSchedulePaymentPerType = HArr::sumLoanSchedulePerKey($loanSchedulePayments,$sumKeys,'revenue_stream_type');
-		$directFactoringSettlements =  DirectFactoringBreakdown::where('study_id',$this->id)->pluck('direct_factoring_settlements')->toArray();
-		$directFactoringSettlements = HArr::sumAtDates($directFactoringSettlements,$sumKeys);
-		$loanSchedulePaymentPerType['direct-factoring'] = $directFactoringSettlements;
-		// cash in 
-		 $tableDataFormatted[0]['main_items']['cash-in-flow']['options'] = array_merge([
-           'title'=>__('Total CashIn Flow')
+        $loanSchedulePayments = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('loan_schedule_payments')->where('study_id', $this->id)->where('portfolio_loan_type', 'portfolio')->get();
+        $loanSchedulePaymentPerType = HArr::sumLoanSchedulePerKey($loanSchedulePayments, $sumKeys, 'revenue_stream_type');
+        $directFactoringSettlements =  DirectFactoringBreakdown::where('study_id', $this->id)->pluck('direct_factoring_settlements')->toArray();
+        $directFactoringSettlements = HArr::sumAtDates($directFactoringSettlements, $sumKeys);
+        $loanSchedulePaymentPerType['direct-factoring'] = $directFactoringSettlements;
+        // cash in
+        $tableDataFormatted[0]['main_items']['cash-in-flow']['options'] = array_merge([
+          'title'=>__('Total CashIn Flow')
         ], $defaultNumericInputClasses);
-		
-		$currentTotal = [];
+        
+        $currentTotal = [];
 
         foreach ($loanSchedulePaymentPerType as $revenueType => $currentData) {
-			$title = str_to_upper($revenueType) .' Collection'  ;
+            $title = str_to_upper($revenueType) .' Collection'  ;
             $tableDataFormatted[0]['sub_items'][$title]['options'] =array_merge([
                 'title'=>$title
             ], $defaultNumericInputClasses);
@@ -2272,32 +2276,63 @@ class Study extends Model
             $tableDataFormatted[0]['sub_items'][$title]['year_total'] = HArr::sumPerYearIndex($currentData, $yearWithItsMonths);
         }
 		
-		$monthlyAdminFees = EclAndNewPortfolioFundingRate::where('study_id',$this->id)->get(['monthly_ecl_values','monthly_admin_fees_amounts'])->toArray();
-		// $monthlyEclValues = array_column($monthlyAdminFees,'monthly_ecl_values');
-		$monthAdminFees = array_column($monthlyAdminFees,'monthly_admin_fees_amounts');
-		// $monthlyEclValues = HArr::sumAtDates($monthlyEclValues,$studyDates);
-		$monthAdminFees = HArr::sumAtDates($monthAdminFees,$sumKeys);
+		$loanWithdrawalsByRevenueStreams  = EclAndNewPortfolioFundingRate::where('study_id',$this->id)->pluck('monthly_new_loans_funding_values','revenue_stream_type')->toArray();
+		foreach($loanWithdrawalsByRevenueStreams as $revenueType=>  $currentData){
+			$title = str_to_upper($revenueType) .' Loan Withdrawal Amount'  ;
+            $tableDataFormatted[0]['sub_items'][$title]['options'] =array_merge([
+                'title'=>$title
+            ], $defaultNumericInputClasses);
+            $tableDataFormatted[0]['sub_items'][$title]['data'] = $currentData;
+            $currentTotal = HArr::sumAtDates([$currentData,$currentTotal], $studyMonthsForViews);
+            $tableDataFormatted[0]['sub_items'][$title]['year_total'] = HArr::sumPerYearIndex($currentData, $yearWithItsMonths);
 		
-		$tableDataFormatted[0]['sub_items']['monthly-admin-fees']['data'] = $monthAdminFees;
-		$tableDataFormatted[0]['sub_items']['monthly-admin-fees']['options']['title'] = __('Monthly Admin Fees');
+		}
 		
-	   
+        $monthlyAdminFees = EclAndNewPortfolioFundingRate::where('study_id', $this->id)->get(['monthly_ecl_values','monthly_admin_fees_amounts'])->toArray();
+        // $monthlyEclValues = array_column($monthlyAdminFees,'monthly_ecl_values');
+        $monthAdminFees = array_column($monthlyAdminFees, 'monthly_admin_fees_amounts');
+        // $monthlyEclValues = HArr::sumAtDates($monthlyEclValues,$studyDates);
+        $monthAdminFees = HArr::sumAtDates($monthAdminFees, $sumKeys);
+        
+        $tableDataFormatted[0]['sub_items']['monthly-admin-fees']['data'] = $monthAdminFees;
+        $tableDataFormatted[0]['sub_items']['monthly-admin-fees']['options']['title'] = __('Monthly Admin Fees');
+        $tableDataFormatted[0]['sub_items']['monthly-admin-fees']['year_total'] = HArr::sumPerYearIndex($monthAdminFees, $yearWithItsMonths);
+			
+       
     
-		 $totalCashIn = HArr::sumAtDates(array_column($tableDataFormatted[0]['sub_items']??[], 'data'), $sumKeys);
-		$tableDataFormatted[0]['main_items']['cash-in-flow']['data'] = $totalCashIn;
+        $totalCashIn = HArr::sumAtDates(array_column($tableDataFormatted[0]['sub_items']??[], 'data'), $sumKeys);
+        $tableDataFormatted[0]['main_items']['cash-in-flow']['data'] = $totalCashIn;
         $tableDataFormatted[0]['main_items']['cash-in-flow']['year_total'] = $totalCashInflowPerYear = HArr::sumPerYearIndex($totalCashIn, $yearWithItsMonths);
-		// cash out 
-		 $tableDataFormatted[1]['main_items']['cash-out-flow']['options'] = array_merge([
-           'title'=>__('Total CashOut Flow')
+        // cash out
+        $tableDataFormatted[1]['main_items']['cash-out-flow']['options'] = array_merge([
+          'title'=>__('Total CashOut Flow')
         ], $defaultNumericInputClasses);
 		
-		$loanSchedulePayments = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('loan_schedule_payments')->where('study_id',$this->id)->where('portfolio_loan_type','bank_portfolio')->get();
-		$loanSchedulePaymentPerType = HArr::sumLoanSchedulePerKey($loanSchedulePayments,$sumKeys,'revenue_stream_type');
-		$directFactoringSettlements =  DirectFactoringBreakdown::where('study_id',$this->id)->pluck('bank_loan_settlements')->toArray();
-		$directFactoringSettlements = HArr::sumAtDates($directFactoringSettlements,$sumKeys);
-		$loanSchedulePaymentPerType['direct-factoring'] = $directFactoringSettlements;
-		 foreach ($loanSchedulePaymentPerType as $revenueType => $currentData) {
-			$title =  $revenueType == 'direct-factoring' ?  str_to_upper($revenueType) .' Loan Payments' :  str_to_upper($revenueType) .' Bank Loan Payments'  ;
+		
+		$revenueContracts  = RevenueContract::where('study_id',$this->id)->get();
+		
+		foreach($revenueContracts as $revenueType=>  $revenueContract){
+			$revenueType = $revenueContract->revenue_type ;
+			$currentData = $revenueContract->monthly_loan_amounts;
+			$title = str_to_upper($revenueType) .' New Portfolio Disbursement'  ;
+            $tableDataFormatted[1]['sub_items'][$title]['options'] =array_merge([
+                'title'=>$title
+            ], $defaultNumericInputClasses);
+            $tableDataFormatted[1]['sub_items'][$title]['data'] = $currentData;
+            $currentTotal = HArr::sumAtDates([$currentData,$currentTotal], $studyMonthsForViews);
+            $tableDataFormatted[1]['sub_items'][$title]['year_total'] = HArr::sumPerYearIndex($currentData, $yearWithItsMonths);
+		
+		}
+		
+		
+        
+        $loanSchedulePayments = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('loan_schedule_payments')->where('study_id', $this->id)->where('portfolio_loan_type', 'bank_portfolio')->get();
+        $loanSchedulePaymentPerType = HArr::sumLoanSchedulePerKey($loanSchedulePayments, $sumKeys, 'revenue_stream_type');
+        $directFactoringSettlements =  DirectFactoringBreakdown::where('study_id', $this->id)->pluck('bank_loan_settlements')->toArray();
+        $directFactoringSettlements = HArr::sumAtDates($directFactoringSettlements, $sumKeys);
+        $loanSchedulePaymentPerType['direct-factoring'] = $directFactoringSettlements;
+        foreach ($loanSchedulePaymentPerType as $revenueType => $currentData) {
+            $title =  $revenueType == 'direct-factoring' ?  str_to_upper($revenueType) .' Loan Payments' :  str_to_upper($revenueType) .' Bank Loan Payments'  ;
             $tableDataFormatted[1]['sub_items'][$title]['options'] =array_merge([
                 'title'=>$title
             ], $defaultNumericInputClasses);
@@ -2305,31 +2340,31 @@ class Study extends Model
             $currentTotal = HArr::sumAtDates([$currentData,$currentTotal], $studyMonthsForViews);
             $tableDataFormatted[1]['sub_items'][$title]['year_total'] = HArr::sumPerYearIndex($currentData, $yearWithItsMonths);
         }
-		$expenses = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('expenses')->where('study_id',$this->id)->get();
-		$totalExpensePerCategory = [];
-		foreach($expenses as $expense){
-			$category = $expense->expense_category ;
-			$expenseNameId = $expense->expense_name_id;
-			$paymentAmounts = (array)json_decode($expense->payment_amounts);
-			foreach($paymentAmounts as $dateIndex => $amount){
-				$totalExpensePerCategory[$expenseNameId][$dateIndex] = isset($totalExpensePerCategory[$expenseNameId][$dateIndex]) ? $totalExpensePerCategory[$expenseNameId][$dateIndex] + $amount : $amount; 
-			}
-		}
-		foreach($totalExpensePerCategory as $expenseNameId => $currentData){
-			$title = ExpenseName::find($expenseNameId)->getName();
-			
-			$tableDataFormatted[1]['sub_items'][$expenseNameId]['options'] =array_merge([
+        $expenses = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('expenses')->where('study_id', $this->id)->get();
+        $totalExpensePerCategory = [];
+        foreach ($expenses as $expense) {
+            $category = $expense->expense_category ;
+            $expenseNameId = $expense->expense_name_id;
+            $paymentAmounts = (array)json_decode($expense->payment_amounts);
+            foreach ($paymentAmounts as $dateIndex => $amount) {
+                $totalExpensePerCategory[$expenseNameId][$dateIndex] = isset($totalExpensePerCategory[$expenseNameId][$dateIndex]) ? $totalExpensePerCategory[$expenseNameId][$dateIndex] + $amount : $amount;
+            }
+        }
+        foreach ($totalExpensePerCategory as $expenseNameId => $currentData) {
+            $title = ExpenseName::find($expenseNameId)->getName();
+            
+            $tableDataFormatted[1]['sub_items'][$expenseNameId]['options'] =array_merge([
                 'title'=>$title
             ], $defaultNumericInputClasses);
             $tableDataFormatted[1]['sub_items'][$expenseNameId]['data'] = $currentData;
-          //  $currentTotal = HArr::sumAtDates([$currentData,$currentTotal], $studyMonthsForViews);
+            //  $currentTotal = HArr::sumAtDates([$currentData,$currentTotal], $studyMonthsForViews);
             $tableDataFormatted[1]['sub_items'][$expenseNameId]['year_total'] = HArr::sumPerYearIndex($currentData, $yearWithItsMonths);
-			
-		}
-		
-		
-		
-		 $totalSalaryPayments = [];
+            
+        }
+        
+        
+        
+        $totalSalaryPayments = [];
         $totalExpenses = [];
         $totalTaxAndSocialInsurances = [];
         $salaryPayments = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('manpowers')->where('study_id', $this->id)->pluck('salary_payments')->toArray();
@@ -2341,30 +2376,30 @@ class Study extends Model
             $totalSalaryPayments  = HArr::sumAtDates([$totalSalaryPayments,$manpowerSalaryPayment], $sumKeys);
             $totalTaxAndSocialInsurances  = HArr::sumAtDates([$totalTaxAndSocialInsurances,$salaryTaxAndSocialInsurance], $sumKeys);
         }
-		
-		 $tableDataFormatted[1]['sub_items'][__('Salaries Payments')]['data'] = $totalSalaryPayments;
+        
+        $tableDataFormatted[1]['sub_items'][__('Salaries Payments')]['data'] = $totalSalaryPayments;
         $totalExpenses =  HArr::sumAtDates([$totalExpenses,$totalSalaryPayments], $sumKeys);
         $tableDataFormatted[1]['sub_items'][__('Salaries Payments')]['year_total'] = HArr::sumPerYearIndex($totalSalaryPayments, $yearWithItsMonths);
         
         $tableDataFormatted[1]['sub_items'][__('Salary Taxes & Social Insurance')]['data'] = $totalTaxAndSocialInsurances;
         $tableDataFormatted[1]['sub_items'][__('Salary Taxes & Social Insurance')]['year_total'] = HArr::sumPerYearIndex($totalTaxAndSocialInsurances, $yearWithItsMonths);
         
-		
-		 
-		
-			 $totalCashOut = HArr::sumAtDates(array_column($tableDataFormatted[1]['sub_items']??[], 'data'), $sumKeys);
-		$tableDataFormatted[1]['main_items']['cash-out-flow']['data'] = $totalCashOut;
-        $tableDataFormatted[1]['main_items']['cash-out-flow']['year_total'] = $totalCashOutflowPerYear = HArr::sumPerYearIndex($totalCashOut, $yearWithItsMonths);
-		// cash out 
-		// [ty[e]]bank loan payments
         
-		
-		 $workingCapitalStatement = HArr::calculateWorkingCapital($cashAndBankAmount, $totalCashIn, $totalCashOut, $sumKeys);
-		 
-		
-		 
-		 
-		  $workingCapitalStatement = HArr::calculateWorkingCapital($cashAndBankAmount, $totalCashIn, $totalCashOut, $sumKeys);
+         
+        
+        $totalCashOut = HArr::sumAtDates(array_column($tableDataFormatted[1]['sub_items']??[], 'data'), $sumKeys);
+        $tableDataFormatted[1]['main_items']['cash-out-flow']['data'] = $totalCashOut;
+        $tableDataFormatted[1]['main_items']['cash-out-flow']['year_total'] = $totalCashOutflowPerYear = HArr::sumPerYearIndex($totalCashOut, $yearWithItsMonths);
+        // cash out
+        // [ty[e]]bank loan payments
+        
+        
+        $workingCapitalStatement = HArr::calculateWorkingCapital($cashAndBankAmount, $totalCashIn, $totalCashOut, $sumKeys);
+         
+        
+         
+         
+        $workingCapitalStatement = HArr::calculateWorkingCapital($cashAndBankAmount, $totalCashIn, $totalCashOut, $sumKeys);
         /**
          * * Start Net Cash Before Working Capital;
         */
@@ -2381,8 +2416,8 @@ class Study extends Model
         /**
          * * End Net Cash Before Working Capital;
          */
-		
-		   /**
+        
+        /**
          * * Start Net Cash Before Working Capital;
         */
         $currentTabIndex = 3 ;
@@ -2398,8 +2433,8 @@ class Study extends Model
         /**
          * * End Net Cash Before Working Capital;
          */
-		
-		    /**
+        
+        /**
          * * Start Cash And Bank End Balance;
         */
         $currentTabIndex = 4 ;
@@ -2411,68 +2446,96 @@ class Study extends Model
         ], $defaultNumericInputClasses);
         $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabId]['data'] = $currentData = $cashEndBalance;
         $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabId]['year_total'] =  [];
-		
-		
-		        $tableDataFormatted[-1]['main_items']['cash-and-banks']['data'] = $workingCapitalStatement['beginning_balance'] ??[];
-      		  $tableDataFormatted[-1]['main_items']['cash-and-banks']['year_total'] =$totalCashAndBanksPerYear =  HArr::getPerYearIndexForCashAndBank($workingCapitalStatement['beginning_balance'] ??[], $yearWithItsMonths);
-		
-		$salaryExpensesForCategory = Manpower::getSalaryExpensesPerCategory($monthsWithItsYear,$this->company->id);
+        
+        
+        $tableDataFormatted[-1]['main_items']['cash-and-banks']['data'] = $workingCapitalStatement['beginning_balance'] ??[];
+        $tableDataFormatted[-1]['main_items']['cash-and-banks']['year_total'] =$totalCashAndBanksPerYear =  HArr::getPerYearIndexForCashAndBank($workingCapitalStatement['beginning_balance'] ??[], $yearWithItsMonths);
+        
+        $salaryExpensesForCategory = Manpower::getSalaryExpensesPerCategory($monthsWithItsYear, $this->company->id);
 
        
-      //  $totalCashIn = [];
-		
-		
-		  return  [
-            'financialYearEndMonthNumber'=>$financialYearEndMonthNumber,
-            'years','studyMonthsForViews'=>$studyMonthsForViews,
-            'study'=>$this,
-            'tableDataFormatted'=>$tableDataFormatted,
-            'defaultClasses'=>$defaultClasses,
-            'title'=>__('Cash In Out Flow'),
-            'tableTitle'=>__('Cash In Out Flow'),
-            // 'nextRoute'=>route('balance.sheet.result', ['study'=>$study->id]),
+        //  $totalCashIn = [];
+        
+        
+        return  [
+          'financialYearEndMonthNumber'=>$financialYearEndMonthNumber,
+          'years','studyMonthsForViews'=>$studyMonthsForViews,
+          'study'=>$this,
+          'tableDataFormatted'=>$tableDataFormatted,
+          'defaultClasses'=>$defaultClasses,
+          'title'=>__('Cash In Out Flow'),
+          'tableTitle'=>__('Cash In Out Flow'),
+          // 'nextRoute'=>route('balance.sheet.result', ['study'=>$study->id]),
             
         ];
-	}
-   public function getViewStudyEndDateAsIndex():int
+    }
+    public function getViewStudyEndDateAsIndex():int
     {
         return $this->getIndexDateFromString($this->getViewStudyEndDate());
     }
-	public function getViewStudyEndDate(): ?string
+    public function getViewStudyEndDate(): ?string
     {
         return $this->study_end_date;
     }
-		/**
-	 * * extended
-	 */
-	 public function getOperationDatesAsDateAndDateAsIndex()
+    /**
+     * * extended
+     */
+    public function getOperationDatesAsDateAndDateAsIndex()
     {
-		$operationsYearAndItsMonths = $this->getOperationDurationPerYearFromIndexesForAllStudyInfo();
-		$result =[];
-		foreach($operationsYearAndItsMonths as $yearAsIndex => $itsMonths){
-			foreach($itsMonths as $dateAsIndex => $val){
-				$result[$this->getDateFromDateIndex($dateAsIndex)] =$dateAsIndex ;
-			}
-		}
+        $operationsYearAndItsMonths = $this->getOperationDurationPerYearFromIndexesForAllStudyInfo();
+        $result =[];
+        foreach ($operationsYearAndItsMonths as $yearAsIndex => $itsMonths) {
+            foreach ($itsMonths as $dateAsIndex => $val) {
+                $result[$this->getDateFromDateIndex($dateAsIndex)] =$dateAsIndex ;
+            }
+        }
         return $result;
         
     }
-	/**
-	 *  to study end date
-	 */
-	public function getOperationDatesAsDateAndDateAsIndexToStudyEndDate()
+    /**
+     *  to study end date
+     */
+    public function getOperationDatesAsDateAndDateAsIndexToStudyEndDate()
     {
         
-		$operationsYearAndItsMonths = $this->getOperationDurationPerYearFromIndexesForAllStudyInfo();
-		array_pop($operationsYearAndItsMonths);
-		$result =[];
-		foreach($operationsYearAndItsMonths as $yearAsIndex => $itsMonths){
-			foreach($itsMonths as $dateAsIndex => $val){
-				$result[$this->getDateFromDateIndex($dateAsIndex)] =$dateAsIndex ;
-			}
-		}
+        $operationsYearAndItsMonths = $this->getOperationDurationPerYearFromIndexesForAllStudyInfo();
+        array_pop($operationsYearAndItsMonths);
+        $result =[];
+        foreach ($operationsYearAndItsMonths as $yearAsIndex => $itsMonths) {
+            foreach ($itsMonths as $dateAsIndex => $val) {
+                $result[$this->getDateFromDateIndex($dateAsIndex)] =$dateAsIndex ;
+            }
+        }
         return $result;
         
     }
-	
+    public function convertYearIndexToActiveMonthIndexes(array $values)
+    {
+		$result = [];
+        $yearIndexWithItsActiveMonths = $this->getYearIndexWithItsMonthsAsIndexAndString() ;
+        foreach ($values as $yearIndex => $amount) {
+			$activeMonths = $yearIndexWithItsActiveMonths[$yearIndex]; 
+            $numberOfActiveMonths = count($activeMonths);
+			$monthlyAmount = $amount / $numberOfActiveMonths;
+			foreach($activeMonths as $monthIndex => $monthAsString){
+				$result[$monthIndex]=$monthlyAmount;
+			}
+        }
+		return $result;
+    }
+    // public function getYearIndexWithItsMonthsAsIndexAndString()
+    // {
+    //     $result =[];
+    //     foreach ($this->getOperationDurationPerYearFromIndexesForAllStudyInfo() as $yearIndex => $dateAsIndexAndIsActive) {
+    //         foreach ($dateAsIndexAndIsActive as $dateAsIndex => $isActive) {
+    //             if ($isActive) {
+    //                 $dateAsString = $this->getDateFromDateIndex($dateAsIndex);
+    //                 $result[$yearIndex][$dateAsIndex]=$dateAsString;
+    //             }
+    //         }
+            
+    //     }
+    // 	return $result;
+    // }
+
 }

@@ -65,5 +65,9 @@ class  ReverseFactoringBreakdown extends Model
 	{
 		return 'category';
 	}
+	public function getRevenueType():string 
+	{
+		return Study::REVERSE_FACTORING;
+	}
 	
 }
