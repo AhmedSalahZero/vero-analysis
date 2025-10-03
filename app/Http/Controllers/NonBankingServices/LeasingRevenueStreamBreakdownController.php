@@ -19,7 +19,7 @@ class LeasingRevenueStreamBreakdownController extends Controller
 		return view('non_banking_services.leasing-revenue-stream-breakdown.form', $this->getViewVars($company,$study));
 	}
 	protected function getViewVars(Company $company, Study $study){
-		$leasingEclAndNewPortfolioFundingRate = $study?  $study->leasingEclAndNewPortfolioFundingRate : null;
+		$leasingEclAndNewPortfolioFundingRate = $study?  $study->getEclAndNewPortfolioFundingRatesForStreamType(Study::LEASING) : null;
 		$yearsWithItsMonths =  $study->getOperationDurationPerYearFromIndexes() ;
 		$yearOrMonthsIndexes = $study->getYearOrMonthIndexes();
 		$isYearsStudy = !$study->isMonthlyStudy();

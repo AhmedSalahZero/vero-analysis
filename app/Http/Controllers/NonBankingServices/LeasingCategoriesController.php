@@ -17,7 +17,6 @@ class LeasingCategoriesController extends Controller
 		return view('non_banking_services.leasing-categories.form', $this->getViewVars($company));
 	}
 	protected function getViewVars(Company $company){
-		// $leasingEclAndNewPortfolioFundingRate = $study?  $study->leasingEclAndNewPortfolioFundingRate : null;
 		return [
 			'company'=>$company ,
 			'model'=>$company ,

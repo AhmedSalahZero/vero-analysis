@@ -909,7 +909,8 @@ class Study extends Model
                 $baseRatesPerMonths[Carbon::make($dateIndexWithDate[$monthIndex])->format('Y-m-d')] = $baseRates[$yearOrMonthIndex];
             }
         }
-        DB::connection('non_banking_service')->table($loanSchedulePaymentTableName)->where('revenue_stream_type', )->where('study_id', $studyId)->delete();
+		
+        DB::connection('non_banking_service')->table($loanSchedulePaymentTableName)->where('revenue_stream_type',$revenueStreamType)->where('study_id', $studyId)->delete();
         $baseRatesMapping = HArr::getFirstOfYear($baseRatesPerMonths);
         $bankLendingMarginRates=$generalAndReserveAssumption->getBankLendingMarginRates();
 
@@ -922,6 +923,7 @@ class Study extends Model
         foreach ($operationDurationPerYear as $yearIndex => $yearMonthIndexes) {
             foreach ($yearMonthIndexes as $monthIndex => $monthlyZeroOrOne) {
                 $baseRatesMapping = is_array($baseRatesMapping) ? HArr::filterByYearIndex($baseRatesMapping, $yearIndexWithYear, $yearIndex, $dateIndexWithDate[$monthIndex], $this->isMonthlyStudy()) : $baseRatesMapping;
+			
                 $yearOrMonthIndex = $this->isMonthlyStudy() ? $monthIndex : $yearIndex;
                 foreach ($revenueIdWitLoanAmounts as $leasingRevenueStreamBreakdownId => $yearIndexWithAmount) {
                     $loanAtCurrentYear = $yearIndexWithAmount[$yearOrMonthIndex]??0 ;
@@ -956,6 +958,7 @@ class Study extends Model
                     $currentPortfolioLoans=[];
                     if (is_array($baseRatesMapping)) {
                         $currentPortfolioLoans=$loanService->__calculateBasedOnDiffBaseRates($baseRatesMapping, $loanType, $currentMonth, $currentMonthlyLoanAmount, $currentMarginRate, $tenor, $installmentInterval, $installmentPaymentIntervalValue, $stepUp, $stepInterval, $stepDown, $stepInterval, $gracePeriod, $monthIndex, $dateWithDateIndex, $dateIndexWithDate);
+				
                     } else {
                             
                         $currentPortfolioLoans=$loanService->__calculate([], -1, $loanType, $currentMonth, $currentMonthlyLoanAmount, $baseRatesMapping, $currentMarginRate, $tenor, $installmentInterval, $stepUp, $stepInterval, $stepDown, $stepInterval, $gracePeriod, $monthIndex, null, $pricingPerMonths);
@@ -963,9 +966,10 @@ class Study extends Model
                         
                         
                         $finalResult = $currentPortfolioLoans['final_result']??[];
+					
                         unset($finalResult['totals']);
                         $currentPortfolioLoans = $finalResult ;
-                    
+						
                     }
                         
                     if (count($currentPortfolioLoans)) {
@@ -992,7 +996,6 @@ class Study extends Model
                         $currentMarginRate = $generalAndReserveAssumption->getBankLendingMarginRatesAtYearOrMonthIndex($yearOrMonthIndex);
                         $currentMonthlyLoanAmount = $totalMonthlyLoanAmounts[$monthIndex];
                         $currentMonthlyLoanAmount = $currentMonthlyLoanAmount * $newLoanFundingRate / 100 ;
-                        
                         // $currentMonthlyLoanAmount = $currentMonthlyLoanAmount * $newLoanFundingRate / 100 ;
                         if (is_array($baseRatesMapping)) {
                             $currentPortfolioLoans=$loanService->__calculateBasedOnDiffBaseRates($baseRatesMapping, $loanType, $currentMonth, $currentMonthlyLoanAmount, $currentMarginRate, $tenor, $installmentInterval, $installmentPaymentIntervalValue, $stepUp, $stepInterval, $stepDown, $stepInterval, $gracePeriod, $monthIndex, $dateWithDateIndex, $dateIndexWithDate);
@@ -1275,7 +1278,6 @@ class Study extends Model
             $accumulatedEclValues[$dateAsIndex] = $monthlyEclValues[$dateAsIndex]+ ($accumulatedEclValues[$dateAsIndex-1]??0);
             $previousAccumulated = $accumulatedEclValues[$dateAsIndex];
         }
-		
         DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('ecl_and_new_portfolio_funding_rates')->where('revenue_stream_type', $revenueStreamType)->where('study_id', $this->id)->update([
             'monthly_ecl_values'=>json_encode($monthlyEclValues),
             'accumulated_ecl_values'=>json_encode($accumulatedEclValues),
@@ -1662,7 +1664,7 @@ class Study extends Model
     {
         $result = [];
         foreach ($this->portfolioMortgageRevenueProjectionByCategories as $portfolioMortgageRevenueProjectionByCategory) {
-            $currentRow = $portfolioMortgageRevenueProjectionByCategory->portfolio_mortgage_transactions_projections;
+            $currentRow = (array)$portfolioMortgageRevenueProjectionByCategory->portfolio_mortgage_transactions_projections;
             foreach ($currentRow as $dateOrYearIndex => $value) {
                 $result[$dateOrYearIndex] = isset($result[$dateOrYearIndex]) ? $result[$dateOrYearIndex] + $value : $value;
             }

@@ -536,6 +536,7 @@ use App\Models\NonBankingService\LeasingCategory;
                                     @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
 
                                     <td>
+
                                         <div class="d-flex align-items-center justify-content-center">
                                             <x-repeat-right-dot-inputs :numberFormatDecimals="0" :currentVal="$leasingEclAndNewPortfolioFundingRate ? $leasingEclAndNewPortfolioFundingRate->getEquityFundingValuesAtYearOrMonthIndex($yearOrMonthAsIndex):0" :classes="'only-greater-than-or-equal-zero-allowed '" :formatted-input-classes="'equity-funding-formatted-value-class'" :is-percentage="false" :name="'equity_funding_values['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 

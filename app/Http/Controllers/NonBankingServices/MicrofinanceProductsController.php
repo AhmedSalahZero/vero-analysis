@@ -16,7 +16,6 @@ class MicrofinanceProductsController extends Controller
 		return view('non_banking_services.microfinance-products.form', $this->getViewVars($company));
 	}
 	protected function getViewVars(Company $company){
-		// $leasingEclAndNewPortfolioFundingRate = $study?  $study->leasingEclAndNewPortfolioFundingRate : null;
 		return [
 			'company'=>$company ,
 			'model'=>$company ,
