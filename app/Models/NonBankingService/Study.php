@@ -1111,7 +1111,7 @@ class Study extends Model
             }
         }
         // $dateWithDateIndex = app('dateWithDateIndex');
-        DB::connection('non_banking_service')->table($loanSchedulePaymentTableName)->where('revenue_stream_type', )->where('study_id', $studyId)->delete();
+        DB::connection('non_banking_service')->table($loanSchedulePaymentTableName)->where('revenue_stream_type',$revenueStreamType )->where('study_id', $studyId)->delete();
         $baseRatesMapping = $baseRatesPerMonths;
         // $baseRatesMapping = HArr::getFirstOfYear($baseRatesPerMonths);
         $bankLendingMarginRates=$generalAndReserveAssumption->getBankLendingMarginRates();
