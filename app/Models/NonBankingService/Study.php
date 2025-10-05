@@ -18,6 +18,7 @@ use App\ReadyFunctions\CalculateVariableLoanAtEndService;
 use App\ReadyFunctions\CollectionPolicyService;
 use App\ReadyFunctions\FixedAssetCalculation;
 use App\Traits\HasBasicStoreRequest;
+use App\Traits\HasCollectionOrPaymentStatement;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -29,7 +30,7 @@ use Illuminate\Support\Facades\DB;
 class Study extends Model
 {
     use HasBasicStoreRequest;
-    use CompanyScope,BelongsToCompany,HasFixedAsset;
+    use CompanyScope,BelongsToCompany,HasFixedAsset,HasCollectionOrPaymentStatement;
     const STUDY = 'study' ;
     const BUSINESS_PLAN = 'business-plans';  // multiple years
     const ANNUALLY_STUDY = 'annually-study'; // one year
@@ -2533,5 +2534,9 @@ class Study extends Model
     //     }
     // 	return $result;
     // }
-
+	public function getCorporateTaxesPayable():float
+    {
+        $corporateTaxesPayable = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('vat_and_credit_withhold_tax_opening_balances')->where('study_id', $this->id)->first();
+        return $corporateTaxesPayable ? $corporateTaxesPayable->corporate_taxes_payable  : 0 ;
+    }
 }

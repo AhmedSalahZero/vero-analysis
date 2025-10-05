@@ -145,6 +145,7 @@ html body input.custom-input-string-width ,
                                     @foreach($currentTableData['main_items'] as $mainItemTitle => $mainItemArr)
                                     @php
                                     $isPercentage = $mainItemArr['options']['is-percentage']??$defaultClasses[$currentIndex]['is-percentage'] ;
+									
                                     @endphp
                                     @if($isPercentage)
                                     <div class="input-group input-group-sm align-items-center justify-content-center flex-nowrap">
