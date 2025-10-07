@@ -8346,7 +8346,6 @@ $number = floatval($numericString);
 return  $number; // 2496335
 
 }
-
 function getNthKeyAfter($array, $specificKey, $n) {
     // Get all keys from the array
     $keys = array_keys($array);
@@ -8396,3 +8395,40 @@ function getTableNamesThatHasColumn(string $columnName,string $connectionName = 
         ->distinct()->pluck('TABLE_NAME')->toArray();
 	
 }
+
+function calculateAccumulatedDepreciation(array $totalMonthlyDepreciation, array $studyDates)
+{
+    $result = [];
+    foreach ($studyDates as $dateIndex) {
+        $value = $totalMonthlyDepreciation[$dateIndex] ?? 0;
+        $previousDateAsIndex = $dateIndex-1;
+        $result[$dateIndex] = $previousDateAsIndex >=0 ?  $result[$previousDateAsIndex] + $value : $value;
+    }
+    return $result;
+}
+function calculateReplacementDates(array $studyDates, int $operationStartDateAsIndex, int $studyEndDateAsIndex, int $propertyReplacementIntervalInMonths)
+{
+    $replacementDates = [];
+    foreach ($studyDates as $studyDateAsString=>$studyDateAsIndex) {
+        if ($operationStartDateAsIndex > $studyEndDateAsIndex) {
+            break ;
+        }
+        $replacementDates[$studyDateAsIndex] = $operationStartDateAsIndex+ $propertyReplacementIntervalInMonths;
+        $operationStartDateAsIndex = $replacementDates[$studyDateAsIndex] ;
+    }
+    return $replacementDates ;
+}
+function sumTwoArray(array $first, array $second)
+{
+    $result  =[];
+    $dates = array_values(array_unique(array_merge(array_keys($first), array_keys($second))));
+    foreach ($dates as $date) {
+        $secondVal = $second[$date] ?? 0;
+        $value = $first[$date] ?? 0;
+        $result[$date] = $value  + $secondVal ;
+    }
+    return $result ;
+}
+
+
+	

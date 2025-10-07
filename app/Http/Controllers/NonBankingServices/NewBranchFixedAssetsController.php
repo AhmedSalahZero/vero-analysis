@@ -52,9 +52,9 @@ class NewBranchFixedAssetsController extends Controller
 	
 		$study->storeRepeaterRelations($request,$this->getRepeaterRelations(),$company);
 		
-		$study->storeFixedLoansForFixedAssets($fixedAssetType);
-		
-		$study->recalculateFixedAssetStatement($fixedAssetType);
+	//	$study->storeFixedLoansForFixedAssets($fixedAssetType);
+		$study->recalculateFixedAssets($fixedAssetType);
+		// $study->recalculateFixedAssetStatement($fixedAssetType);
 		
 		return response()->json([
 			'redirectTo'=>route('create.expenses',['company'=>$company->id,'study'=>$study->id])

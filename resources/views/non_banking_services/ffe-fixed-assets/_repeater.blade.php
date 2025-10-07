@@ -180,6 +180,7 @@
         {{-- </form> --}}
 	@php
 		$isFullyFundingTroughEquity = $model->getFixedAssetStructureForFixAssetType($fixedAssetType) ? $model->getFixedAssetStructureForFixAssetType($fixedAssetType)->is_fully_funded_though_equity : 1;
+	
 	@endphp
 
         <div class="form-group d-inline-block">

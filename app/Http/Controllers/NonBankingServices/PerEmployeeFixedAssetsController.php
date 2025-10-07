@@ -6,6 +6,7 @@ namespace App\Http\Controllers\NonBankingServices;
 use App\Helpers\HHelpers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\NonBankingServices\StoreNewBranchFixedAssetsRequest;
+use App\Http\Requests\NonBankingServices\StorePerEmployeeFixedAssetsRequest;
 use App\Models\Company;
 use App\Models\FinancialPlanning\Position;
 use App\Models\NonBankingService\Department;
@@ -14,7 +15,6 @@ use App\Models\NonBankingService\FixedAsset;
 use App\Models\NonBankingService\Study;
 use App\Traits\NonBankingService;
 use Illuminate\Http\Request;
-use App\Http\Requests\NonBankingServices\StorePerEmployeeFixedAssetsRequest;
 
 class PerEmployeeFixedAssetsController extends Controller
 {
@@ -56,9 +56,9 @@ class PerEmployeeFixedAssetsController extends Controller
 		$study->storeRelationsWithNoRepeater($request,$company);
 	
 		$study->storeRepeaterRelations($request,$this->getRepeaterRelations(),$company);
-		$study->storeFixedLoansForFixedAssets($fixedAssetType);
-		
-		$study->recalculateFixedAssetStatement($fixedAssetType);
+	//	$study->storeFixedLoansForFixedAssets($fixedAssetType);
+		$study->recalculateFixedAssets($fixedAssetType);
+	//	$study->recalculateFixedAssetStatement($fixedAssetType);
 
 			
 		return response()->json([

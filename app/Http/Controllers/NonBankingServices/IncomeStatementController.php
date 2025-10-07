@@ -287,11 +287,7 @@ class IncomeStatementController extends Controller
             'cost_per_unit'=>'monthly_repeating_amounts',
             'expense_per_employee'=>'monthly_repeating_amounts',
         ];
-     
-    
-		
-		$salaryExpensesForCategories = Manpower::getSalaryExpensesPerCategory($monthsWithItsYear,$company->id);
-
+		$salaryExpensesForCategories = Manpower::getSalaryExpensesPerCategory($monthsWithItsYear,$study->id,$company->id);
 		foreach($salaryExpensesForCategories as $manpowerCategory => $salaryExpensesForCategory){
 			foreach($salaryExpensesForCategory as $monthIndex => $value){
 						$currentOrderIndex = $orderIndexPerExpenseCategory[$manpowerCategory];
@@ -300,11 +296,8 @@ class IncomeStatementController extends Controller
                         $currentMonthManpowerTotal = $formattedExpenses[$manpowerCategory]['Manpower Salaries'][$monthIndex];
                         $tableDataFormatted[$currentOrderIndex]['sub_items']['Manpower Salaries']['data'][$monthIndex] =$currentMonthManpowerTotal ;
 			}
-						
-       
 		}
 		
-					
         foreach ($expenses as $expense) {
         
             $name = $expense->name;
@@ -352,6 +345,7 @@ class IncomeStatementController extends Controller
        	//   $tableDataFormatted[$currentOrderIndex]['sub_items'][$name]['year_total']  = HArr::sumPerYearIndex($currentSubItems, $yearWithItsMonths);
             
         }
+
 				$totalCostOfService = Harr::calculateTotalFromSubItems($tableDataFormatted[1]['sub_items']??[]) ; 
 			   $tableDataFormatted[1]['main_items']['cost-of-service']['data'] = $totalCostOfService;
 			   $tableDataFormatted[1]['main_items']['cost-of-service']['year_total'] =$totalCostOfServicePerYear =  HArr::sumPerYearIndex($totalCostOfService, $yearWithItsMonths);

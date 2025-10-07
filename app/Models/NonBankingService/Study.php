@@ -10,13 +10,16 @@ use App\Models\NonBankingService\NewBranchLoanCaseProjection;
 use App\Models\Traits\Scopes\BelongsToCompany;
 use App\Models\Traits\Scopes\CompanyScope;
 use App\Models\Traits\Scopes\HasFixedAsset;
-use App\Providers\NonBankingServiceProvider;
 use App\ReadyFunctions\CalculateDurationService;
 use App\ReadyFunctions\CalculateFixedLoanAtBeginningService;
 use App\ReadyFunctions\CalculateFixedLoanAtEndService;
+use App\ReadyFunctions\CalculateLoanWithdrawal;
 use App\ReadyFunctions\CalculateVariableLoanAtEndService;
 use App\ReadyFunctions\CollectionPolicyService;
+use App\ReadyFunctions\FfeExecutionAndPayment;
 use App\ReadyFunctions\FixedAssetCalculation;
+use App\ReadyFunctions\FixedAssetsPayableEndBalance;
+use App\ReadyFunctions\ProjectsUnderProgress;
 use App\Traits\HasBasicStoreRequest;
 use App\Traits\HasCollectionOrPaymentStatement;
 use Carbon\Carbon;
@@ -864,7 +867,7 @@ class Study extends Model
                 'monthly_loan_amounts'=>$currentMonthlyAmounts,
                 'contract_counts'=>$currentCounts,
                 $foreignKeyName=>$model->id,
-				'revenue_type'=>$revenueType
+                'revenue_type'=>$revenueType
             ];
             if ($categoryColumnName) {
                 $newRevenueContractRows['category_id'] = $model->{$categoryColumnName};
@@ -910,8 +913,8 @@ class Study extends Model
                 $baseRatesPerMonths[Carbon::make($dateIndexWithDate[$monthIndex])->format('Y-m-d')] = $baseRates[$yearOrMonthIndex];
             }
         }
-		
-        DB::connection('non_banking_service')->table($loanSchedulePaymentTableName)->where('revenue_stream_type',$revenueStreamType)->where('study_id', $studyId)->delete();
+        
+        DB::connection('non_banking_service')->table($loanSchedulePaymentTableName)->where('revenue_stream_type', $revenueStreamType)->where('study_id', $studyId)->delete();
         $baseRatesMapping = HArr::getFirstOfYear($baseRatesPerMonths);
         $bankLendingMarginRates=$generalAndReserveAssumption->getBankLendingMarginRates();
 
@@ -924,7 +927,7 @@ class Study extends Model
         foreach ($operationDurationPerYear as $yearIndex => $yearMonthIndexes) {
             foreach ($yearMonthIndexes as $monthIndex => $monthlyZeroOrOne) {
                 $baseRatesMapping = is_array($baseRatesMapping) ? HArr::filterByYearIndex($baseRatesMapping, $yearIndexWithYear, $yearIndex, $dateIndexWithDate[$monthIndex], $this->isMonthlyStudy()) : $baseRatesMapping;
-			
+            
                 $yearOrMonthIndex = $this->isMonthlyStudy() ? $monthIndex : $yearIndex;
                 foreach ($revenueIdWitLoanAmounts as $leasingRevenueStreamBreakdownId => $yearIndexWithAmount) {
                     $loanAtCurrentYear = $yearIndexWithAmount[$yearOrMonthIndex]??0 ;
@@ -959,7 +962,7 @@ class Study extends Model
                     $currentPortfolioLoans=[];
                     if (is_array($baseRatesMapping)) {
                         $currentPortfolioLoans=$loanService->__calculateBasedOnDiffBaseRates($baseRatesMapping, $loanType, $currentMonth, $currentMonthlyLoanAmount, $currentMarginRate, $tenor, $installmentInterval, $installmentPaymentIntervalValue, $stepUp, $stepInterval, $stepDown, $stepInterval, $gracePeriod, $monthIndex, $dateWithDateIndex, $dateIndexWithDate);
-				
+                
                     } else {
                             
                         $currentPortfolioLoans=$loanService->__calculate([], -1, $loanType, $currentMonth, $currentMonthlyLoanAmount, $baseRatesMapping, $currentMarginRate, $tenor, $installmentInterval, $stepUp, $stepInterval, $stepDown, $stepInterval, $gracePeriod, $monthIndex, null, $pricingPerMonths);
@@ -967,10 +970,10 @@ class Study extends Model
                         
                         
                         $finalResult = $currentPortfolioLoans['final_result']??[];
-					
+                    
                         unset($finalResult['totals']);
                         $currentPortfolioLoans = $finalResult ;
-						
+                        
                     }
                         
                     if (count($currentPortfolioLoans)) {
@@ -1112,7 +1115,7 @@ class Study extends Model
             }
         }
         // $dateWithDateIndex = app('dateWithDateIndex');
-        DB::connection('non_banking_service')->table($loanSchedulePaymentTableName)->where('revenue_stream_type',$revenueStreamType )->where('study_id', $studyId)->delete();
+        DB::connection('non_banking_service')->table($loanSchedulePaymentTableName)->where('revenue_stream_type', $revenueStreamType)->where('study_id', $studyId)->delete();
         $baseRatesMapping = $baseRatesPerMonths;
         // $baseRatesMapping = HArr::getFirstOfYear($baseRatesPerMonths);
         $bankLendingMarginRates=$generalAndReserveAssumption->getBankLendingMarginRates();
@@ -1273,7 +1276,7 @@ class Study extends Model
         $previousAccumulated = 0 ;
         $accumulatedEclValues =[];
         foreach ($monthlyEclRates as $dateAsIndex => $eclRate) {
-			$currentMonthPortfolioEndBalance  = $totalPortfolioEndBalance[$dateAsIndex]??0;
+            $currentMonthPortfolioEndBalance  = $totalPortfolioEndBalance[$dateAsIndex]??0;
             $eclRate = $eclRate / 100 ;
             $monthlyEclValues[$dateAsIndex] =  $currentMonthPortfolioEndBalance * $eclRate - $previousAccumulated;
             $accumulatedEclValues[$dateAsIndex] = $monthlyEclValues[$dateAsIndex]+ ($accumulatedEclValues[$dateAsIndex-1]??0);
@@ -1773,7 +1776,113 @@ class Study extends Model
         }
         return $result;
     }
+    /**
+     * * html -> php -> db
+     */
+    public function recalculateFixedAssets(string $fixedAssetType, bool $isSensitivity = false)
+    {
+        $loanTableName = $isSensitivity ? 'sensitivity_loan_schedule_payments' : 'fixed_assets_loan_schedule_payments';
+        $studyEndDateAsIndex = $this->getStudyEndDateAsIndex();
+        $calculateFixedLoanAtEndService = new CalculateFixedLoanAtEndService();
+        
+        $datesAsStringAndIndex = $this->getDateWithDateIndex();
+        $dateIndexWithDate = $this->getDateIndexWithDate();
+        $dateWithDateIndex = $this->getDateWithDateIndex();
+        $operationStartDateFormatted = $this->getOperationStartDateFormatted();
+        $datesIndexWithYearIndex = $this->getDatesIndexWithYearIndex();
+        $dateWithMonthNumber = $this->getDateWithMonthNumber();
+        $operationStartDateAsIndex = $this->getOperationStartDateAsIndex($datesAsStringAndIndex, $operationStartDateFormatted);
+        $yearIndexWithYear = $this->getYearIndexWithYear();
+        $studyDurationPerYear = $this->getStudyDurationPerYear($datesAsStringAndIndex, $datesIndexWithYearIndex, $yearIndexWithYear, $dateIndexWithDate, $dateWithMonthNumber, true, true, false);
+        $studyDates=$this->getOnlyDatesOfActiveStudy($studyDurationPerYear, $dateIndexWithDate);
+        $fixedAssets = $this->fixedAssets->where('type', $fixedAssetType) ;
+        DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table($loanTableName)->where('fixed_asset_type', $fixedAssetType)->where('study_id', $this->id)->delete();
+        //	$result  = (new FixedAssetCalculation())->calculateFFEAssetsForFFE($fixedAssets , $dateIndexWithDate,$operationStartDateAsIndex,$studyDates,$studyEndDateAsIndex);
+        // dd($result);
+        $totalFFECosts = [];
+        foreach ($fixedAssets as $fixedAsset) {
+            $totalFfePayable = [];
+            $totalFfeAssetItems = [];
+            $totalFfeExecutionAndPayment = [];
+            $totalFfeLoanWithdrawalEndBalance = [];
+            $totalLoanCapitalizedInterest = [];
+            $totalProjectUnderProgressFFE = [];
+            $totalMonthlyDepreciation = [];
+            $totalFfeEquityPayment = [];
+            $totalFfePayment = [];
+            $totalFfeLoanWithdrawal = [];
+            $totalIncomeStatementLoanCapitalizedInterests = [];
 
+            $fixedAssetCounts = $fixedAsset->ffe_counts;
+            $fixedAssetAmount = $fixedAsset->getItemCost();
+            $contingencyRate = $fixedAsset->getContingencyRate() / 100;
+            $sumKeys = array_keys($fixedAssetCounts);
+            foreach ($fixedAssetCounts as $dateAsIndex=>$count) {
+                if ($count == 0) {
+                    continue ;
+                }
+                $totalFixedAssetAmount = $count* $fixedAssetAmount ;
+                $totalFixedAssetAmount = (1+$contingencyRate) * $totalFixedAssetAmount ;
+                $totalFFECosts[$dateAsIndex] = isset($totalFFECosts[$dateAsIndex]) ? $totalFFECosts[$dateAsIndex] + $totalFixedAssetAmount : $totalFixedAssetAmount;
+                $fixedAssetStartDateAsIndex= $dateAsIndex;
+                $fixedAssetEndDateAsIndex= $fixedAssetStartDateAsIndex;
+                $fixedAssetCalculationResultArr = $calculateFixedLoanAtEndService->calculateExecutionAndPayment($totalFixedAssetAmount, $fixedAssetEndDateAsIndex, $fixedAsset);
+                
+                $ffePayment = $fixedAssetCalculationResultArr['ffePayment'] ;
+                $totalFfePayment = HArr::sumAtDates([$totalFfePayment,$ffePayment], $sumKeys);
+                $ffeExecutionAndPayment = $fixedAssetCalculationResultArr['ffeExecutionAndPayment'];
+                $totalFfeExecutionAndPayment = HArr::sumAtDates([$totalFfeExecutionAndPayment,$ffeExecutionAndPayment], $sumKeys);
+            
+    
+            
+        
+                //      $totalIncomeStatementLoanCapitalizedInterests = is_null($transferDateAsIndex) ? [] :  HArr::slice_from_index($loanCapitalizedInterest, $transferDateAsIndex)  ;
+           
+    
+            
+            
+            
+            }
+           
+            
+          
+            
+            
+            
+    
+            $fixedAsset->update([
+                'loan_capitalized_interests'=>$totalLoanCapitalizedInterest,
+                'income_statement_loan_capitalized_interests'=>$totalIncomeStatementLoanCapitalizedInterests,
+                'capitalization_statement'=>$totalProjectUnderProgressFFE,
+                //    'statement'=>$totalFfeAssetItems,
+                'depreciation_statement'=>$totalFfeAssetItems,
+               'total_monthly_depreciations'=>$totalMonthlyDepreciation,
+                'ffe_equity_payment'=>$totalFfeEquityPayment,
+                'ffe_loan_withdrawal'=>$totalFfeLoanWithdrawal,
+                'ffe_loan_withdrawal_end_balance'=>$totalFfeLoanWithdrawalEndBalance,
+                'ffe_payment'=>$totalFfePayment,
+                'ffe_execution_and_payment'=>$totalFfeExecutionAndPayment,
+                'ffe_payable'=>$totalFfePayable,
+                
+            ]);
+         
+               
+        }
+        $studyDates = $this->getCalculatedExtendedStudyDates();
+        foreach ($studyDates as $currentDateAsIndex) {
+            $this->calculateFixedAssetLoans($datesAsStringAndIndex,$yearIndexWithYear,$dateWithMonthNumber,$datesIndexWithYearIndex,$operationStartDateAsIndex,$loanTableName,$fixedAssetType, $currentDateAsIndex, $totalFfePayment, $totalFfeExecutionAndPayment, $totalFFECosts, $dateIndexWithDate, $dateWithDateIndex, $sumKeys);
+        }
+     
+        // $fixedAsset->update
+    }
+    
+    // public function recalculateFixedAssets(string $fixedAssetType)
+    // {
+     
+    //   foreach($fixedAssets as $fixedAsset){
+        
+    //   }
+    // }
     public function recalculateFixedAssetStatement(string $fixedAssetType):void
     {
         /**
@@ -2272,19 +2381,19 @@ class Study extends Model
             $currentTotal = HArr::sumAtDates([$currentData,$currentTotal], $studyMonthsForViews);
             $tableDataFormatted[0]['sub_items'][$title]['year_total'] = HArr::sumPerYearIndex($currentData, $yearWithItsMonths);
         }
-		
-		$loanWithdrawalsByRevenueStreams  = EclAndNewPortfolioFundingRate::where('study_id',$this->id)->pluck('monthly_new_loans_funding_values','revenue_stream_type')->toArray();
-		foreach($loanWithdrawalsByRevenueStreams as $revenueType=>  $currentData){
-			$title = str_to_upper($revenueType) .' Loan Withdrawal Amount'  ;
+        
+        $loanWithdrawalsByRevenueStreams  = EclAndNewPortfolioFundingRate::where('study_id', $this->id)->pluck('monthly_new_loans_funding_values', 'revenue_stream_type')->toArray();
+        foreach ($loanWithdrawalsByRevenueStreams as $revenueType=>  $currentData) {
+            $title = str_to_upper($revenueType) .' Loan Withdrawal Amount'  ;
             $tableDataFormatted[0]['sub_items'][$title]['options'] =array_merge([
                 'title'=>$title
             ], $defaultNumericInputClasses);
             $tableDataFormatted[0]['sub_items'][$title]['data'] = $currentData;
             $currentTotal = HArr::sumAtDates([$currentData,$currentTotal], $studyMonthsForViews);
             $tableDataFormatted[0]['sub_items'][$title]['year_total'] = HArr::sumPerYearIndex($currentData, $yearWithItsMonths);
-		
-		}
-		
+        
+        }
+        
         $monthlyAdminFees = EclAndNewPortfolioFundingRate::where('study_id', $this->id)->get(['monthly_ecl_values','monthly_admin_fees_amounts'])->toArray();
         // $monthlyEclValues = array_column($monthlyAdminFees,'monthly_ecl_values');
         $monthAdminFees = array_column($monthlyAdminFees, 'monthly_admin_fees_amounts');
@@ -2294,7 +2403,7 @@ class Study extends Model
         $tableDataFormatted[0]['sub_items']['monthly-admin-fees']['data'] = $monthAdminFees;
         $tableDataFormatted[0]['sub_items']['monthly-admin-fees']['options']['title'] = __('Monthly Admin Fees');
         $tableDataFormatted[0]['sub_items']['monthly-admin-fees']['year_total'] = HArr::sumPerYearIndex($monthAdminFees, $yearWithItsMonths);
-			
+            
        
     
         $totalCashIn = HArr::sumAtDates(array_column($tableDataFormatted[0]['sub_items']??[], 'data'), $sumKeys);
@@ -2304,24 +2413,24 @@ class Study extends Model
         $tableDataFormatted[1]['main_items']['cash-out-flow']['options'] = array_merge([
           'title'=>__('Total CashOut Flow')
         ], $defaultNumericInputClasses);
-		
-		
-		$revenueContracts  = RevenueContract::where('study_id',$this->id)->get();
-		
-		foreach($revenueContracts as $revenueType=>  $revenueContract){
-			$revenueType = $revenueContract->revenue_type ;
-			$currentData = $revenueContract->monthly_loan_amounts;
-			$title = str_to_upper($revenueType) .' New Portfolio Disbursement'  ;
+        
+        
+        $revenueContracts  = RevenueContract::where('study_id', $this->id)->get();
+        
+        foreach ($revenueContracts as $revenueType=>  $revenueContract) {
+            $revenueType = $revenueContract->revenue_type ;
+            $currentData = $revenueContract->monthly_loan_amounts;
+            $title = str_to_upper($revenueType) .' New Portfolio Disbursement'  ;
             $tableDataFormatted[1]['sub_items'][$title]['options'] =array_merge([
                 'title'=>$title
             ], $defaultNumericInputClasses);
             $tableDataFormatted[1]['sub_items'][$title]['data'] = $currentData;
             $currentTotal = HArr::sumAtDates([$currentData,$currentTotal], $studyMonthsForViews);
             $tableDataFormatted[1]['sub_items'][$title]['year_total'] = HArr::sumPerYearIndex($currentData, $yearWithItsMonths);
-		
-		}
-		
-		
+        
+        }
+        
+        
         
         $loanSchedulePayments = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('loan_schedule_payments')->where('study_id', $this->id)->where('portfolio_loan_type', 'bank_portfolio')->get();
         $loanSchedulePaymentPerType = HArr::sumLoanSchedulePerKey($loanSchedulePayments, $sumKeys, 'revenue_stream_type');
@@ -2508,17 +2617,17 @@ class Study extends Model
     }
     public function convertYearIndexToActiveMonthIndexes(array $values)
     {
-		$result = [];
+        $result = [];
         $yearIndexWithItsActiveMonths = $this->getYearIndexWithItsMonthsAsIndexAndString() ;
         foreach ($values as $yearIndex => $amount) {
-			$activeMonths = $yearIndexWithItsActiveMonths[$yearIndex]; 
+            $activeMonths = $yearIndexWithItsActiveMonths[$yearIndex];
             $numberOfActiveMonths = count($activeMonths);
-			$monthlyAmount = $amount / $numberOfActiveMonths;
-			foreach($activeMonths as $monthIndex => $monthAsString){
-				$result[$monthIndex]=$monthlyAmount;
-			}
+            $monthlyAmount = $amount / $numberOfActiveMonths;
+            foreach ($activeMonths as $monthIndex => $monthAsString) {
+                $result[$monthIndex]=$monthlyAmount;
+            }
         }
-		return $result;
+        return $result;
     }
     // public function getYearIndexWithItsMonthsAsIndexAndString()
     // {
@@ -2534,9 +2643,219 @@ class Study extends Model
     //     }
     // 	return $result;
     // }
-	public function getCorporateTaxesPayable():float
+    public function getCorporateTaxesPayable():float
     {
         $corporateTaxesPayable = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('vat_and_credit_withhold_tax_opening_balances')->where('study_id', $this->id)->first();
         return $corporateTaxesPayable ? $corporateTaxesPayable->corporate_taxes_payable  : 0 ;
     }
+    public function getRevenueRoute(string $nextRevenueId):string
+    {
+        $allRevenueRoutes = [
+            [
+                'id'=>Study::LEASING,
+                'can_show'=> $this->hasLeasing() ,
+                'route'=>route('create.leasing.revenue.stream.breakdown', ['company'=>$this->company->id,'study'=>$this->id]),
+            ],
+            [
+                    'id'=>Study::DIRECT_FACTORING,
+                'can_show'=> $this->hasDirectFactoring() ,
+                'route'=>route('create.direct.factoring.revenue.stream.breakdown', ['company'=>$this->company->id,'study'=>$this->id]),
+            ],
+            [
+                    'id'=>Study::REVERSE_FACTORING,
+                'can_show'=> $this->hasReverseFactoring() ,
+                'route'=>route('create.reverse.factoring.revenue.stream.breakdown', ['company'=>$this->company->id,'study'=>$this->id]),
+            ],
+            [
+                    'id'=>Study::IJARA,
+                'can_show'=> $this->hasIjaraMortgage() ,
+                'route'=>route('create.ijara.mortgage.revenue.stream.breakdown', ['company'=>$this->company->id,'study'=>$this->id]),
+            ],
+            [
+                    'id'=>Study::PORTFOLIO_MORTGAGE,
+                'can_show'=> $this->hasPortfolioMortgage() ,
+                'route'=>route('create.portfolio.mortgage.revenue.stream.breakdown', ['company'=>$this->company->id,'study'=>$this->id]),
+            ],
+        ] ;
+        $canReturn = false ;
+        foreach ($allRevenueRoutes as $index => $revenueRouteArr) {
+            if ($revenueRouteArr['id'] == $nextRevenueId) {
+                $canReturn = true ;
+            }
+            if ($canReturn && $revenueRouteArr['can_show']) {
+                return $revenueRouteArr['route'];
+            }
+        }
+        dd('no route found');
+    }
+    
+    public function sumTwoArrayUntilIndex(array $first, array $second, int $limitDateAsIndex):array
+    {
+        $dates = array_values(array_unique(array_merge(array_keys($first), array_keys($second))));
+        $result = [];
+        foreach ($dates as $dateAsIndex) {
+            if ($dateAsIndex<=$limitDateAsIndex) {
+                $secondVal = $second[$dateAsIndex] ?? 0;
+                $value = $first[$dateAsIndex] ?? 0;
+                $result[$dateAsIndex] = $value  + $secondVal;
+            } else {
+                $result[$dateAsIndex] = 0;
+            }
+        }
+        return $result;
+    }
+    public function convertArrayOfIndexKeysToIndexAsDateStringWithItsOriginalValue(array $items, array $datesAsStringAndIndex)
+    {
+        $newItems = [];
+
+        foreach ($items as $dateAsIndex=>$value) {
+            if (is_numeric($dateAsIndex)) {
+                $newItems[$dateAsIndex]=$value;
+            } else {
+                $newItems[$datesAsStringAndIndex[$dateAsIndex]]=$value;
+            }
+        }
+
+        return $newItems;
+    }
+    public function getLoanStructure(string $fixedAssetType)
+    {
+        return $this->getFixedAssetStructureForFixAssetType($fixedAssetType);
+    }
+    // $sumKeys == study dates
+    public function calculateFixedAssetLoans(array $datesAsStringAndIndex , array $yearIndexWithYear,array $dateWithMonthNumber ,array $datesIndexWithYearIndex, int $operationStartDateAsIndex,string $loanTableName,string $fixedAssetType, int $currentDateIndex, array $totalFfeCosts, array $totalFfePayment, array $totalFfeExecutionAndPayment, array $dateIndexWithDate, array $dateWithDateIndex, array $sumKeys):array
+    {
+        $fixedLoanAtEndService = new CalculateFixedLoanAtEndService();
+        $ffeExecutionAndPaymentService  = new FfeExecutionAndPayment();
+        $loanWithdrawalService = new CalculateLoanWithdrawal();
+        $ffeLoan = $this->getLoanStructure($fixedAssetType);
+		if($ffeLoan->is_fully_funded_though_equity){
+			return [];
+		}
+        $totalFFECostAtMonthIndex= $totalFfeCosts[$currentDateIndex];
+		
+        $ffeEquityFundingRate = $ffeLoan->getEquityFundingRatesAtMonthIndex($currentDateIndex);
+            
+        $ffeEquityPayment['FFE Equity Injection'] = $ffeExecutionAndPaymentService->calculateFFEEquityPayment($totalFfePayment, $totalFFECostAtMonthIndex, $ffeEquityFundingRate);
+        /**
+         * * والباقي هاخد بيه قرض
+         */
+            
+        $ffeLoanWithdrawal['FFE Loan Withdrawal'] = $ffeExecutionAndPaymentService->calculateFFELoanWithdrawal($totalFfePayment, $totalFFECostAtMonthIndex, $ffeEquityFundingRate);
+        
+            
+            
+        // $ffeLoanWithdrawalInterest=$loanWithdrawalService->__calculate($project->replaceIndexWithItsStringDate($ffeLoanWithdrawal['FFE Loan Withdrawal'],$dateIndexWithDate), $ffeBaseRate, $ffeMarginRate, $dateWithDateIndex);
+        // 	$ffeLoanWithdrawalInterestAmounts =$ffeLoanWithdrawalInterest['withdrawal_interest_amounts']??[];
+        // 	$ffeLoanWithdrawalEndBalance = $ffeLoanWithdrawalInterest['withdrawalEndBalance']??[];
+        // 	$ffeLoanWithdrawalAmounts = $ffeLoanWithdrawalInterest['loanWithdrawal']??[];
+                
+        // $ffeLoanStartDate =array_key_last($ffeLoanWithdrawalInterest);
+        // $ffeLoanAmount = $ffeLoanWithdrawalInterest[$ffeLoanStartDate];
+            
+            // dd($ffeEquityFundingRate);
+            
+        if ($ffeEquityFundingRate < 100) {
+            $ffeLoanType = $ffeLoan->getLoanType();
+            $ffeBaseRate = $ffeLoan->getInterestRateAtMonthIndex($currentDateIndex);
+            $ffeMarginRate = 0;
+            $ffeLoanPricing =$ffeBaseRate + $ffeMarginRate;
+            $ffeTenor = $ffeLoan->getTenorsAtMonthIndex($currentDateIndex);
+            $ffeInstallmentIntervalName = $ffeLoan->getInstallmentIntervalAtMonthIndex($currentDateIndex);
+            $ffeStepUpRate=0;
+            $ffeStepUpIntervalName='annually';
+            $ffeStepDownRate=0;
+            $ffeStepDownIntervalName='annually';
+            $ffeGracePeriod=$ffeLoan->getGracePeriodAtMonthIndex($currentDateIndex);
+                
+            $ffeLoanWithdrawalInterest=$loanWithdrawalService->__calculate($this->replaceIndexWithItsStringDate($ffeLoanWithdrawal['FFE Loan Withdrawal'], $dateIndexWithDate), $ffeBaseRate, $ffeMarginRate, $dateWithDateIndex);
+            $ffeLoanWithdrawalInterestAmounts =$ffeLoanWithdrawalInterest['withdrawal_interest_amounts']??[];
+            $ffeLoanWithdrawalEndBalance = $ffeLoanWithdrawalInterest['withdrawalEndBalance']??[];
+            $ffeLoanWithdrawalAmounts = $ffeLoanWithdrawalInterest['loanWithdrawal']??[];
+                
+            $ffeLoanStartDate =array_key_last($ffeLoanWithdrawalInterest);
+            $ffeLoanAmount = $ffeLoanWithdrawalInterest[$ffeLoanStartDate];
+            if ($ffeLoanStartDate) {
+                $ffeLoanStartDateAsIndex=$this->convertDateStringToDateIndex($ffeLoanStartDate);
+                $ffeLoanCalculations = $fixedLoanAtEndService->__calculate([], -1, $ffeLoanType, $ffeLoanStartDate, $ffeLoanAmount, $ffeBaseRate, $ffeMarginRate, $ffeTenor, $ffeInstallmentIntervalName, $ffeStepUpRate, $ffeStepUpIntervalName, $ffeStepDownRate, $ffeStepDownIntervalName, $ffeGracePeriod, $ffeLoanStartDateAsIndex);
+                $ffeLoanCalculations = $ffeLoanCalculations['final_result']??[];
+                $currentEndBalances = $ffeLoanCalculations['endBalance']??[] ;
+                $ffeLoanCalculations['endBalance'] =HArr::fillMissedKeysFromPreviousKeys($currentEndBalances, $this->getCalculatedExtendedStudyDates());
+                $ffeLoanCalculations['month_as_index'] = $ffeLoanStartDateAsIndex;
+                $ffeLoanCalculations['loan_type'] = $ffeLoanType;
+                $ffeLoanInterestAmounts = $ffeLoanCalculations['interestAmount'] ?? [];
+                $ffeLoanEndBalanceAtStudyEndDate = $ffeLoanCalculations['endBalance'][$this->getStudyEndDateFormatted()] ?? 0;
+                $ffeLoanEndBalance = $ffeLoanCalculations['endBalance'];
+                $ffeLoanInstallment['FFE Loan Installment'] = $ffeLoanCalculations['schedulePayment']??[];
+                $loanCapitalizedInterest = $ffeLoanWithdrawalInterestAmounts;
+                // $totalLoanCapitalizedInterest = HArr::sumAtDates([$totalLoanCapitalizedInterest,$loanCapitalizedInterest],$sumKeys);
+                $loanArr = $ffeLoanCalculations ?? [];
+                $ffeEquityPayment = $ffeEquityPayment['FFE Equity Injection'];
+                $ffeLoanWithdrawal = $ffeLoanWithdrawal['FFE Loan Withdrawal'];
+                //  $totalFfeEquityPayment = HArr::sumAtDates([$totalFfeEquityPayment,$ffeEquityPayment],$sumKeys);
+                //  $totalFfeLoanWithdrawal = HArr::sumAtDates([$totalFfeLoanWithdrawal,$ffeLoanWithdrawal],$sumKeys);
+                     
+                if (count($loanArr)) {
+                    $loanArr['study_id'] = $this->id ;
+                    // $loanArr['fixed_asset_id'] = $fixedAsset->id ;
+                }
+                unset($loanArr['totals']);
+                if (count($loanArr)) {
+           //         DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table($loanTableName)->insert(HArr::encodeArr($loanArr));
+                }
+                //	$totalFfeLoanWithdrawalEndBalance = HArr::sumAtDates([$totalFfeLoanWithdrawalEndBalance,$ffeLoanWithdrawalEndBalance],$sumKeys);
+				$fixedAssetStartDateAsIndex = $currentDateIndex;
+				$fixedAssetEndDateAsIndex = $currentDateIndex;
+          		$projectUnderProgressService = new ProjectsUnderProgress();
+                $projectUnderProgressFFE = $projectUnderProgressService->calculateForFFE($fixedAssetStartDateAsIndex, $fixedAssetEndDateAsIndex, $totalFfeExecutionAndPayment, $ffeLoanInterestAmounts, $ffeLoanWithdrawalInterestAmounts, $this, $operationStartDateAsIndex, $datesAsStringAndIndex, $datesIndexWithYearIndex, $yearIndexWithYear, $dateIndexWithDate, $dateWithMonthNumber);
+                //	$totalProjectUnderProgressFFE = HArr::sumStatementAtDates($totalProjectUnderProgressFFE , $projectUnderProgressFFE , ['beginning_balance','additions','capitalized_interest','total','transferred_date_and_vales','end_balance'],$sumKeys );
+                $transferDateAsIndex  = array_key_last($projectUnderProgressFFE['end_balance'])  ;
+                $incomeStatementLoanCapitalizedInterests = is_null($transferDateAsIndex) ? [] :  HArr::slice_from_index($loanCapitalizedInterest, $transferDateAsIndex)  ;
+                //      	$totalIncomeStatementLoanCapitalizedInterests = HArr::sumAtDates([$totalIncomeStatementLoanCapitalizedInterests,$incomeStatementLoanCapitalizedInterests],$sumKeys);
+                
+                
+                $transferredDateForFFEAsIndex = array_key_last($projectUnderProgressFFE['transferred_date_and_vales']??[]);
+				dd(Arr::last($projectUnderProgressFFE['transferred_date_and_vales']??[], null, 0));
+                $ffeAssetItems = $fixedAsset->calculateFFEAssetsForFFE($fixedAssetEndDateAsIndex, $transferredDateForFFEAsIndex, Arr::last($projectUnderProgressFFE['transferred_date_and_vales']??[], null, 0), $studyDates, $studyEndDateAsIndex, $this);
+            
+                //		$totalFfeAssetItems = HArr::sumStatementAtDates($totalFfeAssetItems,$ffeAssetItems,['beginning_balance','additions','initial_total_gross','replacement_cost','final_total_gross','total_monthly_depreciation','accumulated_depreciation','end_balance'],$sumKeys);
+                $monthlyDepreciation = $ffeAssetItems['total_monthly_depreciation'] ?? [];
+                //      $totalMonthlyDepreciation = HArr::sumAtDates([$totalMonthlyDepreciation,$monthlyDepreciation],$sumKeys);
+            
+            
+            
+                $datesAsStringAndIndex = $this->getDatesAsStringAndIndex();
+                $dateIndexWithDate = $this->getDateIndexWithDate();
+                $totalFfeAcquisitionDatesAndAmounts =  $totalFfeExecutionAndPayment;
+                $totalFfeAcquisitionDatesAndAmounts = $this->convertArrayOfIndexKeysToIndexAsDateStringWithItsOriginalValue($totalFfeAcquisitionDatesAndAmounts, $datesAsStringAndIndex);
+                $totalFfeAcquisitionPayments = $totalFfePayment ;
+                $totalFfePayable = [];
+                if (count($totalFfeAcquisitionDatesAndAmounts)) {
+                    $totalFfePayable=(new FixedAssetsPayableEndBalance())->calculateEndBalance($totalFfeAcquisitionDatesAndAmounts, $totalFfeAcquisitionPayments, $dateIndexWithDate);
+                    $totalFfePayable = $ffePayable['monthly']['end_balance'] ?? [];
+                }
+                
+                
+                
+            
+            }
+        }
+            
+            
+        
+        
+            
+            
+            
+          
+        dd($totalFfePayable);
+            
+            
+            
+    }
+    public function getCalculatedExtendedStudyDates():array
+    {
+        return range(0,$this->duration_in_years * 12 +11);
+    }
+
 }

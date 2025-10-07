@@ -5,6 +5,7 @@ namespace App\ReadyFunctions;
 use App\Helpers\HArr;
 use App\Helpers\HDate;
 use App\Models\Loan;
+use App\Models\NonBankingService\FixedAsset;
 use App\ReadyFunctions\Date;
 use Carbon\Carbon;
 
@@ -324,5 +325,85 @@ class CalculateFixedLoanAtEndService
 	}
 	
 
+	
+	public function calculateExecutionAndPayment(float $totalFFECost , int $ffeStartDateAsIndex, FixedAsset $ffe)
+	{
+		/**
+		 * @var Project $study
+		 */
+		$study = $ffe->study;
+		$dateIndexWithDate = $study->getDateIndexWithDate();
+		$dateWithDateIndex = $study->getDateWithDateIndex();
+	//	$fixedLoanAtEndService = new CalculateFixedLoanAtEndService();
+		$ffeExecutionAndPaymentService  = new FfeExecutionAndPayment();
+		$contractPaymentService  = new ContractPaymentService();
+//		
+	
+	//	$currentLoanDateAsIndex =$ffeStartDateAsIndex;
+		
+		
+
+
+
+		$contractPayments = [];
+	
+		
+	
+
+	//	$ffeEquityPayment= [];
+		// $ffeLoanInstallment = [];
+	//	$ffeLoanWithdrawal = [];
+	//	$ffeLoanStartDate = null;
+	//	$ffeLoanAmount = 0;
+	//	$ffeLoanPricing  = 0 ;
+	//	$ffeLoanEndBalanceAtStudyEndDate = 0 ;
+
+	//	$ffeLoanInterestAmounts=[];
+	//	$ffeLoanEndBalance = [];
+		
+		
+	//	$ffeLoanWithdrawalEndBalance=[];
+		//$ffeLoanWithdrawalAmounts = [];
+
+			
+		
+			$duration = $ffe->getDuration();
+			$ffeCollectionPolicyValue  = $ffe->getCollectionPolicyValue();
+			// $ratesWithIsFromTotal  = $ffe->getRatesWithIsFromTotal();
+			// $ratesWithIsFromExecution  = $ffe->getRatesWithIsFromExecution();
+		//	$ffeEquityFundingRate =100;
+			// $ffeEquityFundingRate = $ffe->getEquityFundingRate($ffeStartDateAsIndex);
+			
+			$downPaymentOneAmount = 0 ;
+			$executionAndPayment =$ffeExecutionAndPaymentService->__calculate($totalFFECost, $ffeStartDateAsIndex, $duration,$dateIndexWithDate);
+			$ffePayment = 
+			// $ffe->isInstallmentPayment() ? (new InstallmentWithGraceMethod)->__calculate($ffe->getStartDateAsIndex(),$ffe->getTotalCost(),$ffe->getReservationRate(),$ffe->getRemainingBalanceRate(),$ffe->getInstallmentGracePeriod(),$ffe->getInstallmentCount(),$ffe->getPaymentInstallmentInterval(),$ffe->getContractualRate(),$ffe->getAfterMonths())  :
+			 $contractPaymentService->__calculate( $totalFFECost , $executionAndPayment,$ffeStartDateAsIndex,$downPaymentOneAmount, $ffeCollectionPolicyValue,$dateIndexWithDate, $dateWithDateIndex);
+			$contractPayments['FFE Payment'] = $ffePayment;
+			
+			
+	
+		return [
+		//	'contractPayments'=>$contractPayments,
+		//	'ffeEquityPayment'=>$ffeEquityPayment,
+		//	'ffeLoanWithdrawal'=>$ffeLoanWithdrawal,
+		//	'ffeLoanInstallment'=>$ffeLoanInstallment,
+		//	'ffeLoanInterestAmounts'=>$ffeLoanInterestAmounts,
+			'ffeExecutionAndPayment'=>$executionAndPayment??[],
+			'ffePayment'=>$contractPayments['FFE Payment']
+		//	'ffeLoanWithdrawalInterest'=>$ffeLoanWithdrawalInterestAmounts??[],
+			// 'ffeLoanStartDate'=>$ffeLoanStartDate,
+		//	'ffeLoanAmount'=>$ffeLoanAmount,
+		//	'ffeLoanEndBalanceAtStudyEndDate'=>$ffeLoanEndBalanceAtStudyEndDate,
+		//	'ffeLoanPricing'=>$ffeLoanPricing ,
+		//	'ffeLoanEndBalance'=>$ffeLoanEndBalance,
+		//	'ffeLoanWithdrawalEndBalance'=>$ffeLoanWithdrawalEndBalance,
+	//		'ffeLoanWithdrawalAmounts'=>$ffeLoanWithdrawalAmounts ,
+		//	'ffeLoanCalculations'=>$ffeLoanCalculations??[],
+		];
+		// period == tenor
+		// duration == interval == $appliedStepValue
+	}
+	
 	
 }

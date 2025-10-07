@@ -68,7 +68,7 @@ class LeasingRevenueStreamBreakdownController extends Controller
 		$study->updateExpensesPercentagesOfSales();
 		
 		return response()->json([
-			'redirectTo'=>route('create.direct.factoring.revenue.stream.breakdown',['company'=>$company->id,'study'=>$study->id])
+			'redirectTo'=>$study->getRevenueRoute(Study::DIRECT_FACTORING)
 		]);
 	}
 }

@@ -52,6 +52,7 @@ class  FixedAssetsFundingStructure extends Model
 	{
 		return (array)$this->interest_rates;
 	}
+	
 	public function getInstallmentIntervalAtMonthIndex(int $monthIndex):string
 	{
 		
@@ -62,6 +63,7 @@ class  FixedAssetsFundingStructure extends Model
 	{
 		return $this->equity_funding_values[$monthIndex] ?? 0  ; 
 	}
+
 	public function getNewLoansFundingRatesAtMonthIndex(int $monthIndex)
 	{
 		return $this->new_loans_funding_rates[$monthIndex] ?? 0  ; 
@@ -70,4 +72,21 @@ class  FixedAssetsFundingStructure extends Model
 	{
 		return $this->new_loans_funding_values[$monthIndex] ?? 0  ; 
 	}
+	public function getLoanType():string
+	{
+		return 'grace_period_without_capitalization';
+	}
+	public function getBaseRate()
+	{
+		return 0 ; 
+	}
+	public function getMarginRate()
+	{
+		return $this->interest_rate;
+	}
+	public function getPricing()
+	{
+		return $this->getMarginRate();
+	}
+	
 }

@@ -6,34 +6,37 @@ use App\Models\HospitalitySector;
 
 class FfeExecutionAndPayment
 {
-	public function __calculate($totalCost, int $ffeStartDateAsIndex, int $duration, string $softExecutionMethod,array $dateIndexWithDate, HospitalitySector $hospitalitySector):array 
+	public function __calculate($totalCost, int $ffeStartDateAsIndex, int $duration,array $dateIndexWithDate):array 
 	{
-		return $this->calculateConstructionExecution($totalCost, $softExecutionMethod, $ffeStartDateAsIndex, $duration,$dateIndexWithDate, $hospitalitySector);
+		return $this->calculateConstructionExecution($totalCost, $ffeStartDateAsIndex, $duration,$dateIndexWithDate);
 	}
 
-	protected function calculateConstructionExecution(float $totalCost, string $softExecutionMethod, int $ffeStartDateAsIndex, int $duration,array $dateIndexWithDate, HospitalitySector $hospitalitySector = null):array
+	protected function calculateConstructionExecution(float $totalCost, int $ffeStartDateAsIndex, int $duration,array $dateIndexWithDate):array
 	{
-		switch($softExecutionMethod) {
-			case 'straight-line':
-				$ffeStartDateAsString = $dateIndexWithDate[$ffeStartDateAsIndex];
-				$straightMethodService = new StraightMethodService();
-				return $straightMethodService->calculateStraightAmount($totalCost, $ffeStartDateAsString, $duration);
-				case 's-curve':
-					$sCurveService = new SCurveService();
-					$startDateAsString =$hospitalitySector->getFFEStartDateAsString();
-					return $sCurveService->__calculate($totalCost, $duration,$startDateAsString);
+			$straightMethodService = new StraightMethodService();
+			return $straightMethodService->calculateStraightAmount($totalCost, $ffeStartDateAsIndex, $duration);
+				
+		// switch($softExecutionMethod) {
+		// 	case 'straight-line':
+		// 		$ffeStartDateAsString = $dateIndexWithDate[$ffeStartDateAsIndex];
+		// 		$straightMethodService = new StraightMethodService();
+		// 		return $straightMethodService->calculateStraightAmount($totalCost, $ffeStartDateAsString, $duration);
+		// 		case 's-curve':
+		// 			$sCurveService = new SCurveService();
+		// 			$startDateAsString =$hospitalitySector->getFFEStartDateAsString();
+		// 			return $sCurveService->__calculate($totalCost, $duration,$startDateAsString);
 					
-				case 'steady-growth':
-				$steadyGrowthMethod = new SteadyGrowthMethod();
-				$startDateAsString =$hospitalitySector->getFfeStartDateAsString();
-				return $steadyGrowthMethod->calculateSteadyGrowthAmount($totalCost, $startDateAsString,$duration);
-			case 'steady-decline':
-				$steadyDeclineMethod = new SteadyDeclineMethod();
-				$startDateAsString =$hospitalitySector->getFfeStartDateAsString();
-				return $steadyDeclineMethod->calculateSteadyDeclineAmount($totalCost, $startDateAsString,$duration);
-				default :
-			return [];
-		}
+		// 		case 'steady-growth':
+		// 		$steadyGrowthMethod = new SteadyGrowthMethod();
+		// 		$startDateAsString =$hospitalitySector->getFfeStartDateAsString();
+		// 		return $steadyGrowthMethod->calculateSteadyGrowthAmount($totalCost, $startDateAsString,$duration);
+		// 	case 'steady-decline':
+		// 		$steadyDeclineMethod = new SteadyDeclineMethod();
+		// 		$startDateAsString =$hospitalitySector->getFfeStartDateAsString();
+		// 		return $steadyDeclineMethod->calculateSteadyDeclineAmount($totalCost, $startDateAsString,$duration);
+		// 		default :
+		// 	return [];
+		// }
 	}
 	
 	protected function calculateEquityFundingAmount(float $totalFfeCost, float $softEquityFundingRate)
@@ -45,9 +48,11 @@ class FfeExecutionAndPayment
 	{
 		return  $ffeCost * (1+ ($softContingencyRate / 100));
 	}
-	public function calculateFfeEquityPayment(array $ffePayments, float $ffeCost, float $softContingencyRate, float $softEquityFundingRate)
+	/**
+	 * * هنا بنحدد هندفع قديه من معانا \
+	 * 	 */
+	public function calculateFfeEquityPayment(array $ffePayments, float $totalFfeCost, float $softEquityFundingRate)
 	{
-		$totalFfeCost = $this->calculateTotalFfeCost($ffeCost,$softContingencyRate);
 		$equityFundingAmount = $this->calculateEquityFundingAmount($totalFfeCost, $softEquityFundingRate);
 		$ffeEquityPayment = [];
 		$remainingEquityFunding = [];
@@ -73,9 +78,9 @@ class FfeExecutionAndPayment
 		return $ffeEquityPayment;
 	}
 	
-	public function calculateFfeLoanWithdrawal(array $ffePayments, float $ffeCost,float $softContingencyRate, float $equityFundingRate)
+	public function calculateFfeLoanWithdrawal(array $ffePayments, float $totalFfeCost, float $equityFundingRate)
 	{
-		$totalFfeCost = $this->calculateTotalFfeCost($ffeCost,$softContingencyRate);
+		
 		
 		$equityFundingAmount = $this->calculateEquityFundingAmount($totalFfeCost, $equityFundingRate);
 		$ffeLoanWithdrawal = [];
@@ -96,7 +101,21 @@ class FfeExecutionAndPayment
 		if (array_sum($ffeLoanWithdrawal) > -1 && array_sum($ffeLoanWithdrawal) < 1) {
 			return [];
 		}
-
+	//	$ffeLoanWithdrawal  = [0=>1000,2=>3000];
+		// $ffeLoanWithdrawal  = [];
+		$firstKey = array_key_first($ffeLoanWithdrawal);
+		$lastKey = array_key_last($ffeLoanWithdrawal);
+		if($firstKey !== null){
+			$newDateIndexes = range($firstKey,$lastKey);
+			foreach($newDateIndexes as $currentDateAsIndex){
+				if(!array_key_exists($currentDateAsIndex,$ffeLoanWithdrawal)){
+					$ffeLoanWithdrawal[$currentDateAsIndex] = 0;
+				}
+			}
+			
+			// foreach($ffeLoanWithdrawal as $dateAsIndex)
+		}
+		ksort($ffeLoanWithdrawal);
 		return $ffeLoanWithdrawal;
 	}
 	

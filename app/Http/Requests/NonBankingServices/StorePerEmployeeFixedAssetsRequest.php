@@ -50,6 +50,15 @@ class StorePerEmployeeFixedAssetsRequest extends FormRequest
 			$fixedAssetArr['ffe_counts'] =$fixedAssetArr['ffe_counts'] ? (array)json_decode($fixedAssetArr['ffe_counts']) : [];
 			$fixedAssetArr['type'] =$fixedAssetType;
 			
+			
+			$fixedAssetArr['due_days'] = array_unique($fixedAssetArr['due_days']??[]);
+			
+            foreach ($fixedAssetArr['due_days']??[] as $index => $dueDay) {
+                $paymentRate = $fixedAssetArr['payment_rate'][$index];
+                $fixedAssetArr['custom_collection_policy'][$dueDay] = isset($fixedAssetArr['custom_collection_policy'][$dueDay]) ? $fixedAssetArr['custom_collection_policy'][$dueDay]+ $paymentRate :$paymentRate;
+            }
+			
+			
 			// calculate position  
 			$currentPositionIds  = $fixedAssetArr['position_ids']??[];
 			$currentPositions = Position::where('study_id',$studyId)->whereIn('id',$currentPositionIds)->get();

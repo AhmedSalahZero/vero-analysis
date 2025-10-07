@@ -1596,6 +1596,7 @@ use App\Models\NonBankingService\Expense;
 <script src="/custom/js/non-banking-services/common.js"></script>
 <script src="/custom/js/non-banking-services/select2.js"></script>
 <script>
+
     $(document).on('change', 'select.expense_category', function() {
         const parent = $(this).closest('tr');
         const expenseCategoryId = $(this).val();
@@ -1726,15 +1727,7 @@ use App\Models\NonBankingService\Expense;
 
 </script>
 <script>
-    $(document).on('changed.bs.select', 'select.js-due_in_days', function(e, clickedIndex, isSelected, previousValue) {
-        if (isSelected) {
-            let currentValue = $(this).find('option').eq(clickedIndex).val();
-
-            setTimeout(() => {
-                $(this).selectpicker('val', [currentValue]).selectpicker('refresh');
-            }, 0);
-        }
-    });
+    
 
 </script>
 @endpush

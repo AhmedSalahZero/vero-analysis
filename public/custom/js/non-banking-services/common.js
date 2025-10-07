@@ -262,10 +262,12 @@ $(document).on('change','.current-growth-rate-result-value-formatted',function(e
 })
 $(document).on('change','.is-fully-funded-checkbox',function(){
 	const value = parseInt($(this).val());
-	const canViewFundingStructure = parseInt($('#toggleEditBtn').attr('can-show-funding-structure'));
+//	const canViewFundingStructure = parseInt($('#toggleEditBtn').attr('can-show-funding-structure'));
+	const canViewFundingStructure = 1;
 
 
 	$('#ffe-funding').hide();
+	console.log(value,canViewFundingStructure)
 	if(value){
 		$('#ffe-funding').hide();
 		$('#toggleEditBtn').hide();
@@ -949,4 +951,11 @@ $(document).ready(function () {
 			$(this).closest('.multiselect-options').find('input[data-parent="'+value+'"]').attr('checked',false).trigger('change');
 		}
 	  })
-	
+	$(document).on('changed.bs.select', 'select.js-due_in_days', function(e, clickedIndex, isSelected, previousValue) {
+        if (isSelected) {
+            let currentValue = $(this).find('option').eq(clickedIndex).val();
+            setTimeout(() => {
+                $(this).selectpicker('val', [currentValue]).selectpicker('refresh');
+            }, 0);
+        }
+    });

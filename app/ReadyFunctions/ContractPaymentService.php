@@ -6,11 +6,10 @@ use Carbon\Carbon;
 
 class ContractPaymentService
 {
-	public function __calculate(float $hardConstructionCost , float $hardContingencyRate,array $executionAmounts ,int $startDateAsIndex , float $downPaymentRateOne, array $collectionPolicyValue,array $dateIndexWithDate, array $dateWithDateIndex)
+	public function __calculate(float $totalCostAfterContingencyRate ,array $executionAmounts ,int $startDateAsIndex , float $downPaymentRateOne, array $ratesWithDueDays,array $dateIndexWithDate, array $dateWithDateIndex)
 	{
-		$hardTotalConstructionCost = $hardConstructionCost * (1+ ($hardContingencyRate / 100));
-		$ratesWithDueDays = $this->formatRatesWithDueDays($collectionPolicyValue);
-		$downPaymentOneAmount = $hardTotalConstructionCost * ($downPaymentRateOne /100);
+		// $ratesWithDueDays = $this->formatRatesWithDueDays($collectionPolicyValue);
+		$downPaymentOneAmount = $totalCostAfterContingencyRate * ($downPaymentRateOne /100);
 		$collections[$startDateAsIndex] =$downPaymentOneAmount ;
 		$dateValue = $executionAmounts ;
 		foreach ($dateValue as $currentDate => $target) {
@@ -23,7 +22,7 @@ class ContractPaymentService
 				$month = $date->format('m');
 				$year = $date->format('Y');
 				$day = $date->format('d');
-				$fullDate =$day . '-' . $month . '-' . $year;
+				$fullDate =$year . '-' . $month . '-' . $day;
 				$dateIndex =  $dateWithDateIndex[$fullDate];
 				$collections[$dateIndex] = ($target * $rate) + ($collections[$dateIndex] ?? 0);
 			}

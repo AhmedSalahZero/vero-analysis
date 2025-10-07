@@ -58,7 +58,7 @@ class DirectFactoringController extends Controller
 			
 		if($studyHasDirectFactoringBreakdowns){
 			return response()->json([
-				'redirectTo'=>route('create.reverse.factoring.revenue.stream.breakdown',['company'=>$company->id,'study'=>$study->id])
+				'redirectTo'=>$study->getRevenueRoute(Study::REVERSE_FACTORING)
 			]);	
 		}
 		return response()->json([

@@ -122,7 +122,7 @@ class FixedAssetCalculation
 		
 			$buildingAssets['replacement_cost'][$dateAsIndex] = $replacementCost[$dateAsIndex] ;
 			$buildingAssets['final_total_gross'][$dateAsIndex] = $buildingAssets['initial_total_gross'][$dateAsIndex]  + $replacementValueAtCurrentDate;
-			$depreciation[$dateAsIndex]=$this->calculateMonthlyDepreciation($buildingAssets['additions'][$dateAsIndex]??0,$replacementValueAtCurrentDate,$propertyDepreciationDurationInMonths, $depreciationStartDateAsIndex, $depreciationEndDateAsIndex, $totalMonthlyDepreciation, $accumulatedDepreciation,$studyDates);
+			$depreciation[$dateAsIndex]=$this->calculateMonthlyDepreciation($dateAsIndex,$buildingAssets['additions'][$dateAsIndex]??0,$replacementValueAtCurrentDate,$propertyDepreciationDurationInMonths, $depreciationStartDateAsIndex, $depreciationEndDateAsIndex, $totalMonthlyDepreciation, $accumulatedDepreciation,$studyDates);
 			$accumulatedDepreciation = $this->calculateAccumulatedDepreciation($totalMonthlyDepreciation,$studyDates);
 			$buildingAssets['total_monthly_depreciation'] =$totalMonthlyDepreciation;
 			$buildingAssets['accumulated_depreciation'] =$accumulatedDepreciation;
@@ -131,33 +131,32 @@ class FixedAssetCalculation
 			$beginningBalance = $buildingAssets['final_total_gross'][$dateAsIndex];
 			$index++;
 		}
-		
+	
 		return $buildingAssets ;
 	}
-	protected function calculateMonthlyDepreciation(float $additions,float $replacementCost,int $propertyDepreciationDurationInMonths, ?int $depreciationStartDateAsIndex, ?int $depreciationEndDateAsIndex, &$totalMonthlyDepreciation, &$accumulatedDepreciation,array $studyDates)
+	protected function calculateMonthlyDepreciation(int $replacementDate ,float $additions,float $replacementCost,int $propertyDepreciationDurationInMonths, ?int $depreciationStartDateAsIndex, ?int $depreciationEndDateAsIndex, &$totalMonthlyDepreciation, &$accumulatedDepreciation,array $studyDates)
 	{
 		if (is_null($depreciationStartDateAsIndex) || is_null($depreciationEndDateAsIndex)) {
 			return [];
 		}
 		$monthlyDepreciations = [];
-		$monthlyDepreciationAtCurrentDate =  ($additions+$replacementCost) / $propertyDepreciationDurationInMonths ;
+		$monthlyDepreciationAtCurrentDate =  $propertyDepreciationDurationInMonths ? ($additions+$replacementCost) / $propertyDepreciationDurationInMonths  : 0;
 		$depreciationDates = generateDatesBetweenTwoIndexedDates($depreciationStartDateAsIndex,$depreciationEndDateAsIndex);
-		// $depreciationStartDateAsCarbon = Carbon::make($depreciationStartDate);
-		// $depreciationEndDateAsCarbon = Carbon::make($depreciationEndDate);
-		// $depreciationDates = generateDatesBetweenTwoDates($depreciationStartDateAsCarbon, $depreciationEndDateAsCarbon, 'addMonth', 'Y-m-d');
+
 		foreach ($studyDates as  $dateAsIndex) {
+			if($dateAsIndex <= $replacementDate){
+				continue;
+			}
 			$previousDateAsIndex = $dateAsIndex-1;
 			if(in_array($dateAsIndex,$depreciationDates)){
 				$monthlyDepreciations[$dateAsIndex] = $monthlyDepreciationAtCurrentDate;
 				$totalMonthlyDepreciation[$dateAsIndex] = isset($totalMonthlyDepreciation[$dateAsIndex]) ? $totalMonthlyDepreciation[$dateAsIndex] +$monthlyDepreciationAtCurrentDate : $monthlyDepreciationAtCurrentDate;
-				$accumulatedDepreciation[$dateAsIndex] = $previousDateAsIndex>=0 ? ($totalMonthlyDepreciation[$dateAsIndex] + $accumulatedDepreciation[$previousDateAsIndex]) : $totalMonthlyDepreciation[$dateAsIndex];
+				$currentAccumulatedDepreciation = $accumulatedDepreciation[$previousDateAsIndex]??0;
+				$accumulatedDepreciation[$dateAsIndex] = $previousDateAsIndex >=0 ? ($totalMonthlyDepreciation[$dateAsIndex] + $currentAccumulatedDepreciation ) : $totalMonthlyDepreciation[$dateAsIndex];
 			}else{
-				// $monthlyDepreciations[$dateAsString] = 0;
-				// $totalMonthlyDepreciation[$dateAsString]  = 0 ;
 				$accumulatedDepreciation[$dateAsIndex] = $accumulatedDepreciation[$previousDateAsIndex] ?? 0 ;
 			}
 		}
-
 		return $monthlyDepreciations;
 	}
 	protected function calculateAccumulatedDepreciation(array $totalMonthlyDepreciation,array $studyDates)

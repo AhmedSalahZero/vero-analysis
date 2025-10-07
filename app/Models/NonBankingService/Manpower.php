@@ -4,10 +4,10 @@ namespace App\Models\NonBankingService;
 
 use App\Models\Traits\Scopes\BelongsToCompany;
 use App\Models\Traits\Scopes\NonBankingServices\BelongsToStudy;
+use App\Traits\HasCollectionOrPaymentStatement;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\DB;
-use App\Traits\HasCollectionOrPaymentStatement;
 
 class Manpower extends Model
 {
@@ -61,13 +61,14 @@ class Manpower extends Model
 	{
 		return $this->getAccumulatedManpowerCounts()[$dateIndex];
 	}
-	public static function getSalaryExpensesPerCategory(array $monthsWithItsYear,int $companyId)
+	public static function getSalaryExpensesPerCategory(array $monthsWithItsYear,int $studyId,int $companyId)
 	{
 		   $salaryExpensesForCategory = [];
 		$salaryExpenses = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('manpowers')
 					->join('positions','manpowers.position_id','=','positions.id')
 					->join('departments','positions.department_id','=','departments.id')
 					->where('manpowers.company_id',$companyId)
+					->where('study_id',$studyId)
 					->where('type','manpower')
 					->selectRaw('expense_type,salary_expenses,expense_type')->get();
 					

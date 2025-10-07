@@ -10,6 +10,7 @@ use App\Models\NonBankingService\FixedAsset;
 use App\Models\NonBankingService\Study;
 use App\Traits\NonBankingService;
 use Illuminate\Http\Request;
+use App\Http\Requests\StoreFixedAssetsRequest;
 
 class FfeFixedAssetsController extends Controller
 {
@@ -40,18 +41,17 @@ class FfeFixedAssetsController extends Controller
 			'fixedAssets'
 		];
 	}
-	public function store(Company $company , Request $request,Study $study)
+	public function store(Company $company , StoreFixedAssetsRequest $request,Study $study)
 	{
-		// dd($request->all());
 		$fixedAssetType = $request->get('fixed_asset_type') ;
 
 		$study->storeRelationsWithNoRepeater($request,$company);
 	
 		$study->storeRepeaterRelations($request,$this->getRepeaterRelations(),$company,['type'=>$fixedAssetType]);
 		
-		$study->storeFixedLoansForFixedAssets($fixedAssetType);
-		
-		$study->recalculateFixedAssetStatement($fixedAssetType);
+	//	$study->storeFixedLoansForFixedAssets($fixedAssetType);
+		$study->recalculateFixedAssets($fixedAssetType);
+	//	$study->recalculateFixedAssetStatement($fixedAssetType);
 		
 		return response()->json([
 			'redirectTo'=>route('create.expenses',['company'=>$company->id,'study'=>$study->id])

@@ -230,7 +230,7 @@ use App\Models\NonBankingService\Expense;
 
 
                                             <td>
-                                                <input disabled value="{{ __('Loans Funding Value') }}" class="form-control text-left" type="text">
+                                                <input disabled value="{{ __('Loans Funding Value') }}" class="form-control text-left max-w-200" type="text">
                                             </td>
                                             @php
                                             $columnIndex = 0 ;
