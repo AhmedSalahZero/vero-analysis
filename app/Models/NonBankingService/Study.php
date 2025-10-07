@@ -2416,7 +2416,7 @@ class Study extends Model
         
         
         $revenueContracts  = RevenueContract::where('study_id', $this->id)->get();
-        
+		$totalPerType=[];
         foreach ($revenueContracts as $revenueType=>  $revenueContract) {
             $revenueType = $revenueContract->revenue_type ;
             $currentData = $revenueContract->monthly_loan_amounts;
@@ -2424,14 +2424,15 @@ class Study extends Model
             $tableDataFormatted[1]['sub_items'][$title]['options'] =array_merge([
                 'title'=>$title
             ], $defaultNumericInputClasses);
-            $tableDataFormatted[1]['sub_items'][$title]['data'] = $currentData;
-            $currentTotal = HArr::sumAtDates([$currentData,$currentTotal], $studyMonthsForViews);
-            $tableDataFormatted[1]['sub_items'][$title]['year_total'] = HArr::sumPerYearIndex($currentData, $yearWithItsMonths);
+			$totalPerType[$revenueType] = isset($totalPerType[$revenueType]) ? HArr::sumAtDates([$totalPerType[$revenueType],$currentData],$sumKeys) : $currentData; 
+            $tableDataFormatted[1]['sub_items'][$title]['data'] = $totalPerType[$revenueType] ;
+     //       $currentTotal = HArr::sumAtDates([$currentData,$currentTotal], $studyMonthsForViews);
+            $tableDataFormatted[1]['sub_items'][$title]['year_total'] = HArr::sumPerYearIndex($totalPerType[$revenueType], $yearWithItsMonths);
         
         }
         
         
-        
+        $totalPerType =[];
         $loanSchedulePayments = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('loan_schedule_payments')->where('study_id', $this->id)->where('portfolio_loan_type', 'bank_portfolio')->get();
         $loanSchedulePaymentPerType = HArr::sumLoanSchedulePerKey($loanSchedulePayments, $sumKeys, 'revenue_stream_type');
         $directFactoringSettlements =  DirectFactoringBreakdown::where('study_id', $this->id)->pluck('bank_loan_settlements')->toArray();
@@ -2442,9 +2443,10 @@ class Study extends Model
             $tableDataFormatted[1]['sub_items'][$title]['options'] =array_merge([
                 'title'=>$title
             ], $defaultNumericInputClasses);
-            $tableDataFormatted[1]['sub_items'][$title]['data'] = $currentData;
-            $currentTotal = HArr::sumAtDates([$currentData,$currentTotal], $studyMonthsForViews);
-            $tableDataFormatted[1]['sub_items'][$title]['year_total'] = HArr::sumPerYearIndex($currentData, $yearWithItsMonths);
+			$totalPerType[$revenueType] = isset($totalPerType[$revenueType]) ? HArr::sumAtDates([$totalPerType[$revenueType],$currentData],$sumKeys) : $currentData; 
+            $tableDataFormatted[1]['sub_items'][$title]['data'] = $totalPerType[$revenueType];
+         //   $currentTotal = HArr::sumAtDates([$currentData,$currentTotal], $studyMonthsForViews);
+            $tableDataFormatted[1]['sub_items'][$title]['year_total'] = HArr::sumPerYearIndex($totalPerType[$revenueType], $yearWithItsMonths);
         }
         $expenses = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('expenses')->where('study_id', $this->id)->get();
         $totalExpensePerCategory = [];
@@ -2456,15 +2458,17 @@ class Study extends Model
                 $totalExpensePerCategory[$expenseNameId][$dateIndex] = isset($totalExpensePerCategory[$expenseNameId][$dateIndex]) ? $totalExpensePerCategory[$expenseNameId][$dateIndex] + $amount : $amount;
             }
         }
+		$totalPerType =[];
         foreach ($totalExpensePerCategory as $expenseNameId => $currentData) {
             $title = ExpenseName::find($expenseNameId)->getName();
             
             $tableDataFormatted[1]['sub_items'][$expenseNameId]['options'] =array_merge([
                 'title'=>$title
             ], $defaultNumericInputClasses);
-            $tableDataFormatted[1]['sub_items'][$expenseNameId]['data'] = $currentData;
+			$totalPerType[$expenseNameId] = isset($totalPerType[$expenseNameId]) ? HArr::sumAtDates([$totalPerType[$expenseNameId],$currentData],$sumKeys) : $currentData; 
+            $tableDataFormatted[1]['sub_items'][$expenseNameId]['data'] = $totalPerType[$expenseNameId];
             //  $currentTotal = HArr::sumAtDates([$currentData,$currentTotal], $studyMonthsForViews);
-            $tableDataFormatted[1]['sub_items'][$expenseNameId]['year_total'] = HArr::sumPerYearIndex($currentData, $yearWithItsMonths);
+            $tableDataFormatted[1]['sub_items'][$expenseNameId]['year_total'] = HArr::sumPerYearIndex($totalPerType[$expenseNameId], $yearWithItsMonths);
             
         }
         
@@ -2557,7 +2561,6 @@ class Study extends Model
         $tableDataFormatted[-1]['main_items']['cash-and-banks']['data'] = $workingCapitalStatement['beginning_balance'] ??[];
         $tableDataFormatted[-1]['main_items']['cash-and-banks']['year_total'] =$totalCashAndBanksPerYear =  HArr::getPerYearIndexForCashAndBank($workingCapitalStatement['beginning_balance'] ??[], $yearWithItsMonths);
         
-      //  $salaryExpensesForCategory = Manpower::getSalaryExpensesPerCategory($monthsWithItsYear,$this->id, $this->company->id);
 
        
         //  $totalCashIn = [];
@@ -2575,6 +2578,153 @@ class Study extends Model
             
         ];
     }
+	
+	
+	  public function getBalanceSheetViewVars()
+    {
+        $yearWithItsIndexes = $this->getOperationDurationPerYearFromIndexes();
+        $monthsWithItsYear = $this->getMonthsWithItsYear($yearWithItsIndexes) ;
+        $financialYearEndMonthNumber = '12';
+        $defaultNumericInputClasses = [
+            'number-format-decimals'=>0,
+            'is-percentage'=>false,
+            'classes'=>'repeater-with-collapse-input readonly',
+            'formatted-input-classes'=>'custom-input-numeric-width readonly',
+        ];
+        $defaultPercentageInputClasses = [
+            'classes'=>'',
+            'formatted-input-classes'=>'ddd',
+            'is-percentage'=>true ,
+            'number-format-decimals'=> 2,
+        ];
+        $defaultClasses = [
+            $defaultNumericInputClasses,
+            $defaultPercentageInputClasses
+        ];
+        $studyMonthsForViews = $this->getStudyDates();
+        $studyMonthsForViews = array_slice($studyMonthsForViews, 0, $this->getViewStudyEndDateAsIndex()+1);
+        $yearWithItsMonths=$this->getYearIndexWithItsMonths();
+		/**
+		 * * First Tap 
+		 */
+		$currentTabIndex = 0 ;
+        // $loanWithdrawalsByRevenueStreams  = EclAndNewPortfolioFundingRate::where('study_id', $this->id)->pluck('monthly_new_loans_funding_values', 'revenue_stream_type')->toArray();
+        // foreach ($loanWithdrawalsByRevenueStreams as $revenueType=>  $currentData) {
+        //     $title = str_to_upper($revenueType) .' Loan Withdrawal Amount'  ;
+        //     $tableDataFormatted[$currentTabIndex]['sub_items'][$title]['options'] =array_merge([
+        //         'title'=>$title
+        //     ], $defaultNumericInputClasses);
+        //     $tableDataFormatted[$currentTabIndex]['sub_items'][$title]['data'] = $currentData;
+        //     $currentTotal = HArr::sumAtDates([$currentData,[]], $studyMonthsForViews);
+        //     $tableDataFormatted[$currentTabIndex]['sub_items'][$title]['year_total'] = HArr::sumPerYearIndex($currentData, $yearWithItsMonths);
+        // }
+        
+        $sumKeys = array_keys($studyMonthsForViews);
+ 	   $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabIndex]['options']['title'] = __('Non Current Assets'); 
+	   $currentTabIndex++;
+	   // مجموع حاجتين لسه تحت اللي هو
+	   // fixed asset + other long term assets
+	   // اللي هو الاتنين اللي تحته
+	   	// DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('');
+		dd('qq');
+	   
+		$totalOtherLongTermAssets= HArr::subSubItems();
+	   	 $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabIndex]['options']['title'] = __('Fixed Assets'); // with subs [fixed asset statement end balance]
+		 $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabIndex]['options']['title'] = __('Other Long Term Assets');  // statement from other long term assets [statement]
+		
+        // $totalCashIn = HArr::sumAtDates(array_column($tableDataFormatted[$currentTabIndex]['sub_items']??[], 'data'), $sumKeys);
+        // $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabIndex]['data'] = $totalCashIn;
+        // $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabIndex]['year_total'] = $totalCashInflowPerYear = HArr::getPerYearIndexForEndBalance($totalCashIn, $yearWithItsMonths); // اخر شهر في السنه
+        // $currentTabIndex++;
+		
+		//  $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabIndex]['options']['title'] = __('Fixed Assets'); // with subs [fixed asset statement end balance]
+		//  $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabIndex]['options']['title'] = __('Other Long Term Assets');  // statement from other long term assets [statement]
+		
+		
+		
+		//  $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabIndex]['options']['title'] = __('Current Assets');  // مجموع كذا حاجه تحتيها
+		//  $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabIndex]['options']['title'] = __('Cash &  banks');   // من cash in out // save it 
+		//  $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabIndex]['options']['title'] = __('Customer Receivables'); [with subs]   
+		/**
+		 *  	 * * existing customer receivable  -> cash_and_bank_opening_balances-> `statement` 
+		 * * هنحط ال revenue streams 
+		 * * هنجيب ال loan_schedule_payments
+		 * * لكل revenue_stream_type 
+		 *  * بس هنجيب ال portfolio_loan_type = portfolio
+		 * * وهنجيب منه ال end balance 
+		 * * ونفس الامر مع ال direct_factoring_breakdowns -> statement_end_balance
+		 * * وهنزود مع الصابات دي كي اسمه
+		 * * ecl statement - >  ecl_and_new_portfolio_funding_rates-> accumulated_ecl_values
+		 */
+		
+		
+		/**
+		 * * other debtors [with his subs]   other_debtors_opening_balances  -> statement end balance
+		 * 
+		 */
+		
+		/**
+		 * * current Labilities   دا هيكون مجموع حجات تانيه تحتيه ودا مين ملهوش صابات
+		 * Bank Loan Payables +  Other Creditors  
+		 */
+		
+		/**
+		 * * Bank Loan Payables وهيكون تحتيه الصابات دي
+		 * * Existing Supplier Payable  ->  supplier_payable_opening_balances -> statement end balance
+		 * و 
+		 * * 	 * * هنحط ال revenue streams 
+		 * * هنجيب ال loan_schedule_payments
+		 * * لكل revenue_stream_type 
+		 *  * بس هنجيب ال portfolio_loan_type = bank_portfolio
+		 * * وهنجيب منه ال end balance 
+		 * * ونفس الامر مع ال direct_factoring_breakdowns -> bank_end_balance
+		 */
+		
+		/**
+		 * * Other Creditors [with its subs] 
+		 * * Existing Other Creditors other_credits_opening_balances -> statement -> end balance 
+		 * * for each expense sum for expense_name_id collection_statements -> end balance
+		 * * corporate taxes satement end balance [from income statement  ]
+		 */
+		
+		/**
+		 * * Long Term Liabilitties [with its subs]
+		 * * other_long_term_liabilities_opening_balances -> statement -> end balance
+		 * * long_term_loan_opening_balances -> statement -> end balance
+		 * * for each fix asset name fixed_assets_loan_schedule_payments -> end_balance
+		 */
+		
+		/**
+		 * * Total Shareholders Equity [with its subs]
+		 * * paid up capital  equity_opening_balances -> paid_up_capital_extended 
+		 * * legal reserve  equity_opening_balances -> legal_reserve_extended 
+		 * * retained earnings [function in mainfacturing pro] 
+		 * * net profit [from income statement] 
+		 */
+		/**
+		 * * check error 
+		 */
+		
+		
+		// end_balance
+			 
+		/**
+		 * * 
+		 */
+        
+        return  [
+          'financialYearEndMonthNumber'=>$financialYearEndMonthNumber,
+          'years','studyMonthsForViews'=>$studyMonthsForViews,
+          'study'=>$this,
+          'tableDataFormatted'=>$tableDataFormatted,
+          'defaultClasses'=>$defaultClasses,
+          'title'=>__('Balance Sheet'),
+          'tableTitle'=>__('Balance Sheet'),
+          // 'nextRoute'=>route('balance.sheet.result', ['study'=>$study->id]),
+            
+        ];
+    }
+	
     public function getViewStudyEndDateAsIndex():int
     {
         return $this->getIndexDateFromString($this->getViewStudyEndDate());

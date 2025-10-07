@@ -9,7 +9,7 @@ use App\Models\NonBankingService\Study;
 use App\Traits\NonBankingService;
 use Illuminate\Http\Request;
 
-class CashInOutFlowController extends Controller
+class BalanceSheetController extends Controller
 {
 	use NonBankingService ;
 	
@@ -18,7 +18,7 @@ class CashInOutFlowController extends Controller
 	{
 		  return view(
             'non_banking_services.income-statement.cash-flow',
-			$study->getCashInOutFlowViewVars()
+			$study->getBalanceSheetViewVars()
         );
 	}
 }

@@ -95,7 +95,7 @@ class CalculateFixedLoanAtEndService
 				 */
 				
 				
-				$interestFactors[$currentDateAsIndex]=($currentPricing / 360) * $currentDaysCount;
+				$interestFactors[$currentDateAsIndex]=($currentPricing / 365) * $currentDaysCount;
 				$currentInterestFactor = $interestFactors[$currentDateAsIndex] ;
 				/**
 				 * * Calculate Loan Factors 

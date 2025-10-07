@@ -7,17 +7,18 @@ use Exception;
 
 class HArr
 {
-	public static function sumStatementAtDates(array $accumulatedStatement , array $oldStatement , array $statementKeys , array $sumKeys):array{
-		$result =[];
-		foreach($statementKeys as  $key){
-			foreach($sumKeys as $dateAsIndex){
-				$value1 = $accumulatedStatement[$key][$dateAsIndex] ?? 0 ;
-				$value2 = $oldStatement[$key][$dateAsIndex] ?? 0 ;
-				$result[$key][$dateAsIndex] = $value1+$value2;
-			}
-		}
-		return $result;
-	}
+    public static function sumStatementAtDates(array $accumulatedStatement, array $oldStatement, array $statementKeys, array $sumKeys):array
+    {
+        $result =[];
+        foreach ($statementKeys as $key) {
+            foreach ($sumKeys as $dateAsIndex) {
+                $value1 = $accumulatedStatement[$key][$dateAsIndex] ?? 0 ;
+                $value2 = $oldStatement[$key][$dateAsIndex] ?? 0 ;
+                $result[$key][$dateAsIndex] = $value1+$value2;
+            }
+        }
+        return $result;
+    }
     public static function sumAtDates(array $items, array $dates)
     {
         $itemsCount = count($items);
@@ -887,15 +888,32 @@ class HArr
         }
         return $result;
     }
-	public static function slice_from_index(array $arr , int $index)
-	{
-		$result = [];
-		foreach($arr as $currentIndex => $value){
-			if($currentIndex >= $index){
-				$result[$currentIndex] = $value;
-			}
-		}
-		return $result;
-	}
-	
+    public static function slice_from_index(array $arr, int $index)
+    {
+        $result = [];
+        foreach ($arr as $currentIndex => $value) {
+            if ($currentIndex >= $index) {
+                $result[$currentIndex] = $value;
+            }
+        }
+        return $result;
+    }
+    public static function getPerYearIndexForEndBalance(array $itemsAsDateIndexAndValue, array $yearWithItsMonths):array
+    {
+        $result = [];
+        foreach ($yearWithItsMonths as $yearIndex => $itsMonths) {
+            $currentYearTotal = 0;
+            foreach ($itsMonths as $dateAsIndex => $dateAsString) {
+                $currentValue = $itemsAsDateIndexAndValue[$dateAsIndex]??0 ;
+                $currentYearTotal =  $currentValue;
+            }
+            /**
+             * * هنحط النتيجه بتاعتك كل سنه عند اخر شهر في السنه دي
+             */
+            $result[$dateAsIndex] = $currentYearTotal;
+        }
+        return $result ;
+    }
+  
+
 }

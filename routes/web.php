@@ -453,6 +453,7 @@ Route::middleware([])->group(function () {
 						 route::get('dashboard-with-sensitivity','CashInOutFlowController@view')->name('view.results.dashboard.with.sensitivity');
 						 
 						 Route::get('cash-in-out-flow', 'CashInOutFlowController@view')->name('cash.in.out.flow.result');
+						 Route::get('balance-sheet', 'BalanceSheetController@view')->name('balance.sheet.result');
 						 
 						route::post('recalculate-spread-rates-sensitivity','RecalculateSpreadRateSensitivityController@recalculate')->name('calculate.spread.rate.sensitivity');
 						 route::get('income-statement','IncomeStatementController@index')->name('view.non.banking.forecast.income.statement');

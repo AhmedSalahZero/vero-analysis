@@ -84,7 +84,7 @@ public function __calculate($previousResult ,int $indexOfLoop,string $loanType, 
 				/**
 				 * * calculate Interest Loan Factor 
 				 */
-				$interestFactors[$currentDateAsIndex]=($currentPricing / 360) * $currentDaysCount;
+				$interestFactors[$currentDateAsIndex]=($currentPricing / 365) * $currentDaysCount;
 			
 				$currentInterestFactor = $interestFactors[$currentDateAsIndex] ;
 				/**

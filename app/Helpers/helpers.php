@@ -6446,7 +6446,7 @@ function getNonBankingNavigation(Company $company,User $user):array
 				[
 					'title'=>__('Balance Sheet'),
 					'show'=>true,
-					'link'=>'#',
+					'link'=>route('balance.sheet.result',['company'=>$company->id,'study'=>$study->id]),
 					'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
 				],
 				[
