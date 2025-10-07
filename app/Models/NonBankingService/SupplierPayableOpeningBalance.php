@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class SupplierPayableOpeningBalance extends Model
 {
     use HasCollectionOrPaymentStatement;
+		protected $connection= 'non_banking_service';
     protected $guarded = ['id'];
 
     protected $casts = [

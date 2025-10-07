@@ -243,10 +243,11 @@ trait HasCollectionOrPaymentStatement {
 			$settlements = [];
 			$isFirstLoop = true ; 
 			$isStudyDateIsJan = $studyStartDateAsMonthNumber == '01';
-            foreach ($additionsForIntervals[$intervalName] as $dateIndex=>$additionAtDate) {
+            foreach ( $corporateTaxesForIntervals[$intervalName]??[] as $dateIndex=>$corporateTaxesAtDate) {
                 $dateIndex;
+				$additionAtDate =$additionsForIntervals[$intervalName][$dateIndex]??0;
                 $result[$intervalName]['beginning_balance'][$dateIndex] = $beginningBalance;
-				$corporateTaxesAtDate = $corporateTaxesForIntervals[$intervalName][$dateIndex]??0;
+				// $corporateTaxesAtDate = $corporateTaxesForIntervals[$intervalName][$dateIndex]??0;
 				$isLastMonthInYear = in_array($dateIndex,$lastMonthsInYearKeys);
 				
                 $totalDue[$dateIndex] =  $beginningBalance-$additionAtDate + $corporateTaxesAtDate;

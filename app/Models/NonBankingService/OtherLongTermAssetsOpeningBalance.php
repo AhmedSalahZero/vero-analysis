@@ -10,6 +10,7 @@ class OtherLongTermAssetsOpeningBalance extends Model
 {
 	use HasCollectionOrPaymentStatement;
     protected $guarded = ['id'];
+		protected $connection= 'non_banking_service';
 	protected $casts = [
 		'payload'=>'array',
 		'statement'=>'array'
@@ -22,20 +23,20 @@ class OtherLongTermAssetsOpeningBalance extends Model
     {
         return 'payload';
     }
-    public static function booted()
-    {
-        parent::boot();
-        static::saving(function (self $model) {
-            $openingBalance = $model->{self::getOpeningBalanceColumnName()};
-            $statementPayload = $model->{self::getPayloadStatementColumn()};
-            $dateIndexWithDate = $model->study->getDateIndexWithDatE();
-				$extendedStudyEndDate = $model->study->convertDateStringToDateIndex($model->study->getEndDate()) ;
-				$dates = range(0,$extendedStudyEndDate);
-				if(!is_null($openingBalance)){
-					$model->statement = self::calculateSettlementStatement($dates,$statementPayload, [], $openingBalance, $dateIndexWithDate);
-				}
-        });
-    }
+     public static function booted()
+     {
+         parent::boot();
+         static::saving(function (self $model) {
+             $openingBalance = $model->{self::getOpeningBalanceColumnName()};
+             $statementPayload = $model->{self::getPayloadStatementColumn()};
+             $dateIndexWithDate = $model->study->getDateIndexWithDatE();
+	 			$extendedStudyEndDate = $model->study->convertDateStringToDateIndex($model->study->getEndDate()) ;
+	 			$dates = range(0,$extendedStudyEndDate);
+	 			if(!is_null($openingBalance)){
+	 				$model->statement = self::calculateSettlementStatement($dates,$statementPayload, [], $openingBalance, $dateIndexWithDate);
+	 			}
+         });
+     }
 	
     public function study():BelongsTo
     {

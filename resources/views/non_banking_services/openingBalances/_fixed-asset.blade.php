@@ -63,7 +63,7 @@ common-parent
 
 
 
-    <div class="col-md-1 pr-2 pl-2 ">
+    {{-- <div class="col-md-1 pr-2 pl-2 ">
         <label class="form-label"> {!! __('Administration <br> Depreciation %') !!} </label>
         <div class="kt-input-icon">
             <div class="input-group">
@@ -79,7 +79,7 @@ common-parent
                 <input type="text" class="form-control  only-greater-than-or-equal-zero-allowed hundred-minus-number-result" readonly name="manufacturing_depreciation_percentage" value="{{ isset($model) ? $model->getManufacturingDepreciationPercentage() : old('manufacturing_depreciation_percentage',0) }}" step="0.5">
             </div>
         </div>
-    </div>
+    </div> --}}
 
 
     {{-- <div class="col-md-1 pr-2 pl-2 allocate-parent">

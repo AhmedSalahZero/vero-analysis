@@ -471,15 +471,13 @@ class IncomeStatementController extends Controller
         //     $value = (array)json_decode($value);
         // });
 		$fixedAssetOpeningBalancesAdminDepreciations = [];
-        // $fixedAssetOpeningBalancesAdminDepreciations = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('fixed_asset_opening_balances')->where('study_id', $study->id)->pluck('admin_depreciations')->toArray();
-        // array_walk($fixedAssetOpeningBalancesAdminDepreciations, function (&$value) {
-        //     $value = (array)json_decode($value);
-        // });
-      //  $totalFixedAssetAdminDepreciation = HArr::sumAtDates(array_merge($fixedAssetAdminDepreciations, $fixedAssetOpeningBalancesAdminDepreciations), $sumKeys);
-		// dd($fixedAssetDepreciations);
-       // $totalDepreciation = $currentDepreciationTotal;
-        $sum = HArr::sumAtDates([$totalDepreciationExpenses,$totalGrossProfit], $sumKeys);
-        $editda = HArr::subtractAtDates([$sum,$totalSGANDA], $sumKeys) ;
+        $fixedAssetOpeningBalancesAdminDepreciations = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('fixed_asset_opening_balances')->where('study_id', $study->id)->pluck('monthly_depreciation')->toArray();
+        array_walk($fixedAssetOpeningBalancesAdminDepreciations, function (&$value) {
+            $value = (array)json_decode($value);
+        });
+       $totalFixedAssetAdminDepreciation = HArr::sumAtDates(array_merge($fixedAssetAdminDepreciations, $fixedAssetOpeningBalancesAdminDepreciations), $sumKeys);
+        $totalDepreciation = HArr::sumAtDates([$totalFixedAssetAdminDepreciation,$totalGrossProfit], $sumKeys);
+        $editda = HArr::subtractAtDates([$totalDepreciation,$totalSGANDA], $sumKeys) ;
         $tableDataFormatted[$ebitdaOrderIndex]['main_items']['ebitda']['data'] = $editda;
         $tableDataFormatted[$ebitdaOrderIndex]['main_items']['ebitda']['year_total'] =$ebitdaTotalPerYear= HArr::sumPerYearIndex($editda, $yearWithItsMonths);
         $tableDataFormatted[$ebitdaOrderIndex]['main_items']['% Of Revenue']['data'] =  HArr::calculatePercentageOf($totalSalesRevenues, $editda);
@@ -506,18 +504,23 @@ class IncomeStatementController extends Controller
 		
 		 /**
          * * Start Seven Item
-		 * ! uncomment after fixed asset loan 
          */
 		$tableDataFormatted[$financialExpenseOrderIndex]['main_items']['finance_exp']['options'] = array_merge([
 			'title'=>__('Finance Expense')
 		], $defaultNumericInputClasses);
-        // $loanSchedulePayments = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('loan_schedule_payments')->where('loan_schedule_payments.study_id', $study->id)->join('fixed_assets', 'fixed_assets.id', '=', 'fixed_asset_id')->selectRaw('interestAmount,name,fixed_asset_id')->get();
-        // $openingLoans = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('long_term_loan_opening_balances')->where('study_id', $study->id)->pluck('interests')->toArray();
-        // $openingLoansTotal=[];
-        // foreach ($openingLoans as $openingLoanInterest) {
-        //     $openingLoansTotal= HArr::sumAtDates([(array)json_decode($openingLoanInterest),$openingLoansTotal], $sumKeys);
-        // }
-    
+		/**
+		 * ! Review
+		 */
+        // $loanSchedulePayments = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('fixed_assets_loan_schedule_payments')->where('fixed_assets_loan_schedule_payments.study_id', $study->id)->join('fixed_assets', 'fixed_assets.id', '=', 'fixed_asset_id')->join('fixed_asset_names','fixed_asset_names.id','=','fixed_assets')->selectRaw('interestAmount,name,fixed_asset_id')->get();
+		
+        $openingLoans = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('long_term_loan_opening_balances')->where('study_id', $study->id)->pluck('interests')->toArray();
+        $openingLoansTotal=[];
+        foreach ($openingLoans as $openingLoanInterest) {
+            $openingLoansTotal= HArr::sumAtDates([(array)json_decode($openingLoanInterest),$openingLoansTotal], $sumKeys);
+        }
+		
+		
+		
         // foreach ($loanSchedulePayments as $loanSchedulePayment) {
         //     $tableDataFormatted[$financialExpenseOrderIndex]['sub_items'][$loanSchedulePayment->name]['options'] =array_merge([
         //        'title'=>__('Interest Expense') . ' '.$loanSchedulePayment->name,
@@ -528,13 +531,16 @@ class IncomeStatementController extends Controller
         //     $tableDataFormatted[$financialExpenseOrderIndex]['sub_items'][$loanSchedulePayment->name]['data'] =$currentInterestAmounts = HArr::sumAtDates([$incomeStatementLoanCapitalizedInterests,$currentInterestAmounts], $sumKeys) ;
         //     $tableDataFormatted[$financialExpenseOrderIndex]['sub_items'][$loanSchedulePayment->name]['year_total'] = HArr::sumPerYearIndex($currentInterestAmounts, $yearWithItsMonths);
         // }
-        // if (count($openingLoansTotal)) {
-        //     $tableDataFormatted[$financialExpenseOrderIndex]['sub_items'][__('Opening Balance Loans Interests')]['data'] = $openingLoansTotal;
-        //     $tableDataFormatted[$financialExpenseOrderIndex]['sub_items'][__('Opening Balance Loans Interests')]['year_total'] = HArr::sumPerYearIndex($openingLoansTotal, $yearWithItsMonths);
-        // }
+        if (count($openingLoansTotal)) {
+            $tableDataFormatted[$financialExpenseOrderIndex]['sub_items'][__('Opening Balance Loans Interests')]['data'] = $openingLoansTotal;
+            $tableDataFormatted[$financialExpenseOrderIndex]['sub_items'][__('Opening Balance Loans Interests')]['year_total'] = HArr::sumPerYearIndex($openingLoansTotal, $yearWithItsMonths);
+        }
+		
 		/**
-		 * ! End Uncomment
+		 * ! end review
 		 */
+		
+		
         $totalFinanceExpense = HArr::sumAtDates(array_column($tableDataFormatted[$financialExpenseOrderIndex]['sub_items']??[], 'data'), $sumKeys);
         $tableDataFormatted[$financialExpenseOrderIndex]['main_items']['finance_exp']['data'] = $totalFinanceExpense;
         $tableDataFormatted[$financialExpenseOrderIndex]['main_items']['finance_exp']['year_total'] = $financeExpenseTotalPerYear = HArr::sumPerYearIndex($totalFinanceExpense, $yearWithItsMonths);
@@ -583,16 +589,7 @@ class IncomeStatementController extends Controller
         $tableDataFormatted[$corporateTaxesOrderIndex]['main_items']['% Of Revenue']['year_total'] = $corporateTaxesRevenuePercentage=HArr::calculatePercentageOf($totalSalesExpensesPerYear, $annuallyCorporateTaxes);
 		
         $totalProductsWithholdAmounts = [];
-		/**
-		 * ! Start Uncomment
-		 */
-        // foreach ($this->products as $product) {
-        //     $withholdAmounts = $product->getCollectionStatement()['monthly']['withhold_amount']??[];
-        //     $totalProductsWithholdAmounts = HArr::sumAtDates([$withholdAmounts,$totalProductsWithholdAmounts], $sumKeys);
-        // }
-		/**
-		 * ! End Uncomment
-		 */
+		
         $dateIndexWithDate = $study->getDateIndexWithDate();
         $calculatedCorporateTaxesPerYear = HArr::sumPerYearIndex($annuallyCorporateTaxes, $yearWithItsMonths) ;
         foreach ($calculatedCorporateTaxesPerYear as $dateIndex => &$value) {
@@ -603,15 +600,9 @@ class IncomeStatementController extends Controller
         $corporateTaxesPayable = $study->getCorporateTaxesPayable();
         $studyStartDateAsMonthNumber = array_values($study->getDateWithMonthNumber())[0];
         $corporateTaxesStatement  = Study::calculateCorporateTaxesStatement($totalProductsWithholdAmounts, $calculatedCorporateTaxesPerYear, $corporateTaxesPayable, $dateIndexWithDate, $studyStartDateAsMonthNumber);
-		/**
-		 * ! Start Uncomment
-		 */
-        // $this->update([
-        //     'corporate_taxes_statement'=>$corporateTaxesStatement
-        // ]);
-		/**
-		 * ! End Uncomment
-		 */
+		
+      
+	
         /**
          * * End Nine Item
          */
@@ -629,80 +620,19 @@ class IncomeStatementController extends Controller
         $tableDataFormatted[$netProfitOrderIndex]['main_items']['% Of Revenue']['data'] = HArr::calculatePercentageOf($totalSalesRevenues, $netProfit);
         $tableDataFormatted[$netProfitOrderIndex]['main_items']['% Of Revenue']['year_total'] = $netProfitRevenuePercentage = HArr::calculatePercentageOf($totalSalesRevenuesPerYears, $netProfitTotalPerYear);
         
+		       $retainedEarningOpening = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('equity_opening_balances')->where('study_id', $study->id)->first();
+        $retainedEarningOpening = $retainedEarningOpening ? $retainedEarningOpening->retained_earnings : 0;
+        // $retainedEarning = HArr::calculateRetainEarning($retainedEarningOpening,$ebt);
+        $retainedEarning = HArr::calculateRetainEarning($retainedEarningOpening, $netProfit);
 		
-		
-		
-		
-		 
-		
-		
-			
-				// $totalGrossProfit = HArr::subtractAtDates([$totalSalesRevenues,$totalCostOfService], $sumKeys) ;
-       // $tableDataFormatted[$otherOperationExpenseOrder]['main_items']['other-operation-expense']['data'] =  $totalGrossProfit ;
-        // $tableDataFormatted[$otherOperationExpenseOrder]['main_items']['other-operation-expense']['year_total'] = $otherOperationExpensePerYears = HArr::sumPerYearIndex($totalGrossProfit, $yearWithItsMonths);
-        // $tableDataFormatted[$otherOperationExpenseOrder]['main_items']['other-operation-expense']['options']['title'] = __('Other Operation Expense');
-        // $tableDataFormatted[$otherOperationExpenseOrder]['main_items']['% Of Revenue']['options']['title'] = __('% Of Revenue');
-        // $tableDataFormatted[$otherOperationExpenseOrder]['main_items']['% Of Revenue']['data'] =  HArr::calculatePercentageOf($totalSalesRevenues, $totalGrossProfit) ;
-        // $tableDataFormatted[$otherOperationExpenseOrder]['main_items']['% Of Revenue']['year_total'] = HArr::calculatePercentageOf($totalSalesRevenuesPerYears, $grossProfitTotalPerYear);
-
-		
-		
-			   
-        // foreach ($yearWithItsIndexes as $yearIndex => $monthIndexWithActive) {
-        //     foreach ($monthIndexWithActive as $monthIndex => $isActiveIndex) {
-        //         $currentMonthAsString = $dateIndexWithDate[$monthIndex] ;
-        //         $currentSalesRevenue = $totalSalesRevenues[$monthIndex]??0;
-        //         $resultPerRevenueStreamType['all'][$currentMonthAsString] = $currentSalesRevenue;
-        //         $costOfServiceAtYearIndex = $formattedExpenses['cost-of-service']['total'][$monthIndex]??0;
-        //         $formattedResult['gross_profit'][$monthIndex] = $currentSalesRevenue - $costOfServiceAtYearIndex;
-        //         $currentGrossProfitAtMonthIndex = $formattedResult['gross_profit'][$monthIndex] ?? 0;
-        //         $formattedResult['gross_profit_percentage_of_sales'][$monthIndex] = $currentSalesRevenue ? $currentGrossProfitAtMonthIndex / $currentSalesRevenue *100 : 0 ;
-		// 		$currentGrossProfitPercentageOfSales = $formattedResult['gross_profit_percentage_of_sales'][$monthIndex] ;
-        //         $tableDataFormatted[$grossProfitOrderIndex]['main_items']['gross-profit']['data'][$monthIndex] = $currentGrossProfitAtMonthIndex ;
-        //         $tableDataFormatted[$grossProfitOrderIndex]['main_items']['% Of Revenue']['data'][$monthIndex] = $currentGrossProfitPercentageOfSales ;
-        //         $currentOPEXExpense =$formattedExpenses['other-operation-expense']['total'][$monthIndex]??0;
-        //         $currentMarketingExpense =$formattedExpenses['marketing-expense']['total'][$monthIndex]??0;
-        //         $currentSalesExpense =$formattedExpenses['sales-expense']['total'][$monthIndex]??0;
-        //         $currentGeneralExpense =$formattedExpenses['general-expense']['total'][$monthIndex]??0;
-        //         $currentDepreciationExpense =$formattedExpenses['depreciation-expense']['total'][$monthIndex]??0;
-        //         $currentEbitdaAtYearIndex = $currentSalesRevenue  - $costOfServiceAtYearIndex - $currentOPEXExpense - $currentMarketingExpense - $currentSalesExpense-$currentGeneralExpense+$currentDepreciationExpense;
-        //         $formattedResult['ebitda'][$monthIndex] = $currentEbitdaAtYearIndex;
-        //         $formattedResult['ebitda_percentage_of_sales'][$monthIndex] =$currentSalesRevenue ?  $currentEbitdaAtYearIndex / $currentSalesRevenue *100 :0;
-            
-        //         $tableDataFormatted[$ebitdaOrderIndex]['main_items']['ebitda']['data'][$monthIndex] = $currentEbitdaAtYearIndex ;
-        //         $tableDataFormatted[$ebitdaOrderIndex]['main_items']['% Of Revenue']['data'][$monthIndex] = $formattedResult['ebitda_percentage_of_sales'][$monthIndex] ;
-            
-        //         $currentEbitAtYearIndex = $currentEbitdaAtYearIndex -  $currentDepreciationExpense;
-        //         $formattedResult['ebit'][$monthIndex] = $currentEbitAtYearIndex;
-        //         $formattedResult['ebit_percentage_of_sales'][$monthIndex] =$currentSalesRevenue ?  $currentEbitAtYearIndex / $currentSalesRevenue *100 :0;
-            
-        //         $tableDataFormatted[$ebitOrderIndex]['main_items']['ebit']['data'][$monthIndex] = $currentEbitdaAtYearIndex ;
-        //         $tableDataFormatted[$ebitOrderIndex]['main_items']['% Of Revenue']['data'][$monthIndex] = $formattedResult['ebit_percentage_of_sales'][$monthIndex] ;
-            
-            
-        //         $currentFinanceInterestExpense = $formattedExpenses['financial-interest-expense']['total'][$monthIndex]??0;
-        //         $currentEbtAtYearIndex = $currentEbitAtYearIndex - $currentFinanceInterestExpense ;
-        //         $formattedResult['ebt'][$monthIndex] = $currentEbtAtYearIndex;
-        //         $formattedResult['ebt_percentage_of_sales'][$monthIndex] =$currentSalesRevenue ?  $currentEbtAtYearIndex / $currentSalesRevenue *100 :0;
-            
-        //         $tableDataFormatted[$ebtOrderIndex]['main_items']['ebt']['data'][$monthIndex] = $currentEbtAtYearIndex ;
-        //         $tableDataFormatted[$ebtOrderIndex]['main_items']['% Of Revenue']['data'][$monthIndex] = $formattedResult['ebt_percentage_of_sales'][$monthIndex] ;
-            
-            
-        //         $formattedResult['net_profit'][$monthIndex] = $currentEbtAtYearIndex <0 ? $currentEbtAtYearIndex :$currentEbtAtYearIndex * (1-$corporateTaxes)  ;
-        //         $formattedResult['net_profit_percentage_of_sales'][$monthIndex] = $currentSalesRevenue ? $formattedResult['net_profit'][$monthIndex] / $currentSalesRevenue  *100 :0 ;
-            
-        //         $tableDataFormatted[$netProfitOrderIndex]['main_items']['net-profit']['data'][$monthIndex] = $currentEbitdaAtYearIndex ;
-        //         $tableDataFormatted[$netProfitOrderIndex]['main_items']['% Of Revenue']['data'][$monthIndex] = $formattedResult['net_profit_percentage_of_sales'][$monthIndex] ;
-            
-            
-        //     }
-            
-            
-        // }
+		$statementData = [
+			'monthly_corporate_taxes_statements'=>$corporateTaxesStatement,
+			'monthly_net_profit'=>$netProfit,
+			 'accumulated_retained_earnings'=>$retainedEarning,
+			'study_id'=>$study->id
+		];
+		$study->incomeStatement ?  $study->incomeStatement->update($statementData) : $study->incomeStatement()->create($statementData);
         $studyMonthsForViews=$study->getStudyDurationPerYearFromIndexesForView();
-		      //		  $tableDataFormatted[-1]['main_items']['cash-and-banks']['year_total'] =$totalCashAndBanksPerYear =  HArr::getPerYearIndexForCashAndBank($workingCapitalStatement['beginning_balance'] ??[], $yearWithItsMonths);
-     //   $tableDataFormatted = HArr::addTotalMonthsPerYear($tableDataFormatted, $dateIndexWithDate, $financialYearsEndMonths);
         ksort($tableDataFormatted);
         return view('non_banking_services.income-statement.cash-flow', [
             'company'=>$company,

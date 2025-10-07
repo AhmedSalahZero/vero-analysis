@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class FixedAssetOpeningBalance extends Model
 {
 	use HasCollectionOrPaymentStatement;
+		protected $connection= 'non_banking_service';
     protected $guarded = ['id'];
 	protected $casts = [
 		'product_allocations'=>'array',
@@ -74,25 +75,8 @@ class FixedAssetOpeningBalance extends Model
 	}
     public function getMonthlyDepreciation():float 
 	{
-		
 		return $this->monthly_depreciation;
-	}  public function getAdminDepreciationPercentage()
-	{
-		return $this->admin_depreciation_percentage;
-	}
-	 public function getManufacturingDepreciationPercentage()
-	{
-		return $this->manufacturing_depreciation_percentage;
-	}
-	public function getProductAllocationPercentageForTypeAndProduct(int $productId):?float{
-		return $this->getProductAllocations()[$productId]??null;
-	}
-	public function getProductAllocations():array 
-	{
-		return $this->product_allocations;
-	}
-	public function isAsRevenuePercentage():bool 
-	{
-		return $this->is_as_revenue_percentages;
-	}
+	}  
+
+
 }

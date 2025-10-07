@@ -7,9 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class OtherDebtorsOpeningBalance extends Model
-{	use HasCollectionOrPaymentStatement;
+{	use HasCollectionOrPaymentStatement;	
+	protected $connection= 'non_banking_service';
     protected $guarded = ['id'];
-
+	
 	protected $casts = [
 		'payload'=>'array',
 		'statement'=>'array'

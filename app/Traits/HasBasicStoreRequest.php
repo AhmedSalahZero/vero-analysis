@@ -2,6 +2,7 @@
 namespace App\Traits;
 
 use App\Models\Company;
+use App\Models\NonBankingService\OtherLongTermAssetsOpeningBalance;
 use App\ReadyFunctions\dd;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
@@ -79,14 +80,8 @@ trait HasBasicStoreRequest
 		foreach($relationDataArray as $data){
 			if(!isset($data['id']) || $data['id'] == 0){
 				unset($data['id']);
-		
-				$this->$relationName()->create($this->filterTableColumnThatExistsOnly($connectionName,$relationTableName,array_merge($data,$additionRelationData)));
-				
-		// 		if( $relationName== 'otherLongTermAssetsOpeningBalances'){
-		// 	dd('s',$relationName,$relationDataArray,$request->get($relationName),$this->filterTableColumnThatExistsOnly($connectionName,$relationTableName,array_merge($data,$additionRelationData)));
-		// }
-		
-		
+				$currentDataArr = $this->filterTableColumnThatExistsOnly($connectionName,$relationTableName,array_merge($data,$additionRelationData));
+				$this->$relationName()->create($currentDataArr);
 			}
 		}
 		$this->refresh();

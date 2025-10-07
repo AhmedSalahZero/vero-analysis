@@ -19,6 +19,16 @@ class HArr
         }
         return $result;
     }
+	public static function sumJsonArr(array $items , array $sumKeys)
+	{
+		$result  = [];
+		
+		foreach($items as $index => $jsonArr){
+			$currentArr = (array) (json_decode($jsonArr));
+			$result = HArr::sumAtDates([$currentArr , $result],$sumKeys) ;
+		}
+		return $result;
+	}
     public static function sumAtDates(array $items, array $dates)
     {
         $itemsCount = count($items);
@@ -914,6 +924,65 @@ class HArr
         }
         return $result ;
     }
-  
+	public static function formatMultiSubItems(array $subItems,array $sumKeys,array $columns = null):array 
+	{
+		$totalSubItems = [];
+		foreach($subItems as $subItemJson){
+		
+			$subItemArr = (array)json_decode($subItemJson);
+			if($subItemArr){
+				foreach($columns as $columnName){
+					$subItemArr = (array)($subItemArr[$columnName]??[]);
+				}
+			}
+			$totalSubItems = HArr::sumAtDates([$totalSubItems , $subItemArr],$sumKeys);
+			
+		}
+		return $totalSubItems;
+	}
+	
+	public static function sumPerCategory(array $items , array $sumKeys,string $titleKeyName , string $payloadKeyName ):array
+	{
+		$result=[];
+		foreach($items as $item){
+			$title = $item->{$titleKeyName};
+			$payload = (array)(json_decode($item->{$payloadKeyName}));
+			$result[$title] = isset($result[$title]) ? HArr::sumAtDates([$result[$title],$payload],$sumKeys) : $payload ;
+		}
+		return $result;
+	}
 
+	
+public static function getPerYearIndexForFirstMonthInYear(array $itemsAsDateIndexAndValue ,  array $yearWithItsMonths):array{
+	$result = [];
+	foreach($yearWithItsMonths as $yearIndex => $itsMonths){
+		$currentYearTotal = 0;
+		$isFirstMonth = true ;
+		foreach($itsMonths as $dateAsIndex => $dateAsString){
+			if($isFirstMonth){
+				$currentValue = $itemsAsDateIndexAndValue[$dateAsIndex]??0 ;
+				$currentYearTotal =  $currentValue;
+				$isFirstMonth = false ;
+			}
+		}
+		/**
+		 * * هنحط النتيجه بتاعتك كل سنه عند اخر شهر في السنه دي
+		 */
+		$result[$dateAsIndex] = $currentYearTotal;
+	}
+	return $result ;
+}
+public static function calculateRetainEarning(float $retainedEarningOpening,array $netProfit):array{
+		$retainedEarnings  = [0 => $retainedEarningOpening];
+		foreach($netProfit as $dateAsIndex => $value){
+			if($dateAsIndex == 0){
+				continue ;
+			}
+			$previousNetProfit = $netProfit[$dateAsIndex-1] ?? 0 ; 
+			$previousRetainedEarning = $retainedEarnings[$dateAsIndex-1]??0;
+			$retainedEarnings[$dateAsIndex] = $previousNetProfit + $previousRetainedEarning;
+			
+		}
+		return $retainedEarnings;
+	}
 }

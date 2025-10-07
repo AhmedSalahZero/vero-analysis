@@ -10,6 +10,7 @@ class OtherLongTermLiabilitiesOpeningBalance extends Model
 {
 	use HasCollectionOrPaymentStatement;
     protected $guarded = ['id'];
+		protected $connection= 'non_banking_service';
 	protected $casts = [
 		'payload'=>'array',
 		'statement'=>'array'

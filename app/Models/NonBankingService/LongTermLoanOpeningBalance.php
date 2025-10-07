@@ -10,6 +10,7 @@ class LongTermLoanOpeningBalance extends Model
 {
 	use HasCollectionOrPaymentStatement;
     protected $guarded = ['id'];
+		protected $connection= 'non_banking_service';
 	protected $casts = [
 		'interests'=>'array',
 		'installments'=>'array',

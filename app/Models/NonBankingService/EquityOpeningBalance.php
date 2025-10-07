@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class EquityOpeningBalance extends Model
 {
     protected $guarded = ['id'];
-
+	protected $connection= 'non_banking_service';
 	public static function booted()
 	{
 			parent::boot();

@@ -35,11 +35,11 @@ class OpeningBalancesController extends Controller
 	// }
 	public function store(Company $company , StoreOpeningBalancesRequest $request,Study $study)
 	{
+	
 		$study->storeRepeaterRelations($request, ['fixedAssetOpeningBalances','cashAndBankOpeningBalances','otherDebtorsOpeningBalances','vatAndCreditWithholdTaxesOpeningBalances'
         ,'supplierPayableOpeningBalances','otherCreditorsOpeningBalances','otherLongTermAssetsOpeningBalances','otherLongTermLiabilitiesOpeningBalances','equityOpeningBalances','longTermLoanOpeningBalances'
    		 ],$company, ['study_id'=>$study->id]);
-		 dd('good');
-	
+		dd('good',$request->all());
 		if($request->get('total_liabilities_and_equity_minus_total_assets') != 0){
 			$errorMessage = __('Total Assets Must Be Equal To Total Liabilities + Owners Equity') . ' [ ' . number_format($request->get('total_liabilities_and_equity_minus_total_assets'))  . ' ]';
 			 return redirect()->back()->with('error',$errorMessage);
