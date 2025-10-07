@@ -2674,6 +2674,7 @@ class Study extends Model
         /**
          * * Start Other Long Term Assets
          */
+		$currentAssetOrderIndex = $currentTabIndex;
         $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabIndex]['options']['title'] = __('Current Assets');
         /**
          * ! مجموع كذا حاجه تحتها
@@ -2749,7 +2750,9 @@ class Study extends Model
             $tableDataFormatted[$currentTabIndex]['sub_items'][$title]['year_total']  = HArr::getPerYearIndexForEndBalance($otherDebtorsOpeningBalance, $yearWithItsMonths) ;
             $totalOtherDebtorsOpeningBalances = HArr::sumAtDates([$totalOtherDebtorsOpeningBalances,$otherDebtorsOpeningBalance ], $sumKeys);
         }
-
+		$totalCurrentAssets = HArr::sumAtDates([$totalOtherDebtorsOpeningBalances , $totalCustomerReceivables],$sumKeys);
+		$tableDataFormatted[$currentAssetOrderIndex]['main_items'][$currentAssetOrderIndex]['data'] = $totalCurrentAssets;
+		$tableDataFormatted[$currentAssetOrderIndex]['main_items'][$currentAssetOrderIndex]['year_total'] = HArr::getPerYearIndexForEndBalance($totalCurrentAssets, $yearWithItsMonths);;
         $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabIndex]['data'] = $totalOtherDebtorsOpeningBalances;  // statement from other long term assets [statement]
         $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabIndex]['year_total'] = HArr::getPerYearIndexForEndBalance($totalOtherDebtorsOpeningBalances, $yearWithItsMonths);  // statement from other long term assets [statement]
         $currentTabIndex++;
