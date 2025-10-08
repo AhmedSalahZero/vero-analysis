@@ -192,7 +192,7 @@ class DashboardController extends Controller
 		}
 		$currentExpenseIndexes = $isMonthlyStudy ? $monthsWithItsNumbers :  $yearWithItsIndexes  ;
 		foreach($currentExpenseIndexes as $yearOrMonthIndex => $monthWithItsIndexes){
-			$currentYearAsString = $yearIndexWithYear[$yearIndex] ?? null ;
+			$currentYearAsString = $yearIndexWithYear[$yearOrMonthIndex] ?? null ;
 			$currentMonthNumber = $monthsWithItsNumbers[$yearOrMonthIndex]??null;
 			$currentSalesRevenue = $formattedResult['sales_revenue'][$yearOrMonthIndex]??0;
 			
