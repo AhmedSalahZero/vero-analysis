@@ -56,7 +56,7 @@ class  FixedAssetsFundingStructure extends Model
 	public function getInstallmentIntervalAtMonthIndex(int $monthIndex):string
 	{
 		
-		return $this->installment_intervals[$monthIndex] ?? 0  ; 
+		return $this->installment_intervals[$monthIndex] ?? 'monthly'  ; 
 	}
 	
 	public function getEquityFundingValuesAtMonthIndex(int $monthIndex)
@@ -80,9 +80,9 @@ class  FixedAssetsFundingStructure extends Model
 	{
 		return 0 ; 
 	}
-	public function getMarginRate()
+	public function getMarginRateAtMonthIndex($dateAsIndex)
 	{
-		return $this->interest_rate;
+		return $this->new_loans_funding_rates[$dateAsIndex]??0;
 	}
 	public function getPricing()
 	{

@@ -570,6 +570,7 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
                             @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
                             <td>
                                 <div class="d-flex align-items-center justify-content-center">
+								
                                     <x-repeat-right-dot-inputs :numberFormatDecimals="0" :currentVal="$eclAndNewPortfolioFundingRate ? $eclAndNewPortfolioFundingRate->getEquityFundingValuesAtYearOrMonthIndex($yearOrMonthAsIndex):0" :classes="'only-greater-than-or-equal-zero-allowed '" :formatted-input-classes="'equity-funding-formatted-value-class'" :is-percentage="false" :name="'equity_funding_values['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
                                 </div>
@@ -794,16 +795,10 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
 
 </script>
 
-<script>
-    $('.use-rooms:checked').trigger('change');
 
-</script>
 
 <script>
-    $(document).find('.datepicker-input').datepicker({
-        dateFormat: 'mm-dd-yy'
-        , autoclose: true
-    })
+  
     $(document).on('change', '.can-not-be-removed-checkbox', function() {
         $(this).prop('checked', true)
     })
@@ -813,27 +808,7 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
         $(query).fadeToggle(300)
 
     })
-    $(document).on('change', '.not-allowed-duplication-in-selection-inside-repeater', function() {
-        const val = $(this).val()
-        const currentSelect = this
-        const currentSelectedOption = $(currentSelect).find('option[value="' + val + '"]')
-        const commonParent = $(this).closest('[data-repeater-list]')
-        // let selectItems = []
-        // $(commonParent).find('select').each(function(index,select){
-        // 	selectItems.push($(select).val())
-        // })
-        $(commonParent).find('select').each(function(index, select) {
-            if (select != currentSelect) {
-                if ($(select).find('option[value="' + val + '"]:selected').length) {
-                    alert('This Item has been choosen before')
-                    $(currentSelect).val('').trigger('change')
-
-                }
-
-                //.prop('disabled',true).attr('title','This Item has been choosen before')
-            } else {}
-        })
-    })
+  
 
     $(document).on('change', '.can-be-toggle-show-repeater-btn', function() {
         let val = $(this).is(':checked')
@@ -851,6 +826,17 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
 
     })
     $('.can-be-toggle-show-repeater-btn').trigger('change')
+
+
+$(document).on('change','.recalculate-factoring',function(){
+	let total = 0 ;
+	let columnIndex = $(this).attr('data-column-index')
+	total = $(this).val();
+	
+	$('.total-loans-hidden[data-column-index="'+columnIndex+'"]').val(total).trigger('change');
+	$('.equity-funding-rate-input-hidden-class[data-column-index="'+columnIndex+'"]').trigger('change');
+	console.log(total);
+})
 
 </script>
 

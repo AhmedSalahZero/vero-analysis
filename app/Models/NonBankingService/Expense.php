@@ -31,7 +31,8 @@ class Expense extends Model
         'net_payments_after_withhold'=>'array',
         'withhold_payments'=>'array',
         'withhold_amounts'=>'array',
-		'position_ids'=>'array'
+		'position_ids'=>'array',
+		'increase_rates'=>'array'
     ];
         
     public function company()
@@ -104,10 +105,9 @@ class Expense extends Model
     {
         return $this->withhold_tax_rate?:0;
     }
-    public function getIncreaseRate()
+    public function getIncreaseRateAtYearIndex($yearIndex)
     {
-        return $this->increase_rate ?: 0;
-        
+        return $this->increase_rates[$yearIndex-1] ?? 0;
     }
     public function getIncreaseInterval()
     {

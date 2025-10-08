@@ -47,7 +47,7 @@ use App\Models\NonBankingService\Expense;
 
                 </div>
             </div>
-			<input type="hidden" name="fixed_asset_type" value="{{ $fixedAssetType }}">
+            <input type="hidden" name="fixed_asset_type" value="{{ $fixedAssetType }}">
             {{-- @foreach(count($departments)? $departments : [null] as $department) --}}
             @php
             $tableId = 'fixedAssets';
@@ -58,362 +58,37 @@ use App\Models\NonBankingService\Expense;
             <!--end::Form-->
 
             <!--end::Portlet-->
-            @php
-            $fixedAssetsFundingStructure = $model->getFixedAssetStructureForFixAssetType($fixedAssetType);
-            @endphp
 
-            <div id="ffe-funding" class="kt-portlet " style="margin-bottom:5px;">
+            <style>
+                .max-w-btn {
+                    max-width: 125px !important;
+                    min-width: 125px !important;
+                }
+
+            </style>
+
+            <div class="kt-portlet " style="margin-bottom:5px;">
 
 
                 <div class="kt-portlet__body">
-
-                    {{-- start of FFE Funding Structure   --}}
-                    <div class="kt-portlet " id="new-funding-id">
-                        <div class="kt-portlet__body">
-                            <div class="row">
-
-                                <div class="col-md-10">
-                                    <div class="d-flex align-items-center ">
-                                        <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style="">
-                                            {{ __('FFE Funding Structure') }}
-                                        </h3>
-                                    </div>
-                                </div>
-                                <div class="col-md-2 text-right">
-                                    <x-show-hide-btn :query="'.new-portfolio-funding'"></x-show-hide-btn>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <hr style="flex:1;background-color:lightgray">
-                            </div>
-                            <div class="row new-portfolio-funding">
-                                @php
-                                $rowIndex = 0;
-                                @endphp
-
-								<input type="hidden" name="generalFixedAssetsFundingStructure[fixed_asset_type]" value="{{ $fixedAssetType }}">
-                                <x-tables.repeater-table :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
-                                    <x-slot name="ths">
-                                        <x-tables.repeater-table-th class=" category-selector-class header-border-down " :title="__('Item')"></x-tables.repeater-table-th>
-                                        @foreach($studyMonthsForViews as $dateAsIndex=>$dateAsString)
-                                        <x-tables.repeater-table-th class=" interval-class header-border-down " :title="dateFormatting($dateAsString, 'M\' Y')"></x-tables.repeater-table-th>
-                                        @endforeach
-                                    </x-slot>
-                                    <x-slot name="trs">
-
-                                        <tr data-repeat-formatting-decimals="0" data-repeater-style>
-
-
-
-
-                                            <td>
-                                                <input value="{{ __('Direct FFE Amounts') }}" disabled class="form-control text-left mt-2" type="text">
-
-                                            </td>
-                                            @php
-                                            $columnIndex = 0 ;
-                                            @endphp
-                                            @foreach($studyMonthsForViews as $dateAsIndex=>$dateAsString)
-
-                                            <td>
-                                                <div class="d-flex align-items-center justify-content-center">
-
-                                                    <x-repeat-right-dot-inputs :formattedInputClasses="'exclude-from-trigger-change-when-repeat'" :numberFormatDecimals="0" :readonly="true" :removeThreeDots="true" :inputHiddenAttributes="''" :currentVal="$fixedAssetsFundingStructure ? $fixedAssetsFundingStructure->direct_ffe_amounts[$dateAsIndex] : 0" :classes="'js-recalculate-equity-funding-value total-loans-hidden direct-ffe-amounts'" :is-percentage="false" :name="'generalFixedAssetsFundingStructure['.'direct_ffe_amounts'.']['.$dateAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
-
-                                                </div>
-                                            </td>
-                                            @php
-                                            $columnIndex++;
-                                            @endphp
-                                            @endforeach
-
-
-
-                                        </tr>
-
-
-
-                                        <tr data-repeat-formatting-decimals="2" data-repeater-style>
-
-
-
-
-                                            <td>
-                                                <input value="{{ __('Equity Funding Rate (%)') }}" disabled class="form-control text-left mt-2" type="text">
-
-                                            </td>
-                                            @php
-                                            $columnIndex = 0 ;
-                                            @endphp
-                                            @foreach($studyMonthsForViews as $dateAsIndex=>$dateAsString)
-
-                                            <td>
-                                                <div class="d-flex align-items-center justify-content-center">
-
-                                                    <x-repeat-right-dot-inputs :inputHiddenAttributes="'js-recalculate-equity-funding-value'" :currentVal="$fixedAssetsFundingStructure ? $fixedAssetsFundingStructure->getEquityFundingRatesAtMonthIndex($dateAsIndex) : 0" :formattedInputClasses="'exclude-from-trigger-change-when-repeat'" :classes="'only-greater-than-or-equal-zero-allowed equity-funding-rates equity-funding-rate-input-hidden-class'" :is-percentage="true" :name="'generalFixedAssetsFundingStructure['.'equity_funding_rates'.']['.$dateAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
-
-                                                </div>
-                                            </td>
-                                            @php
-                                            $columnIndex++;
-                                            @endphp
-                                            @endforeach
-
-
-
-                                        </tr>
-
-
-
-                                        <tr data-repeat-formatting-decimals="0" data-repeater-style {{-- @if($isRepeater) data-repeater-item @endif --}}>
-
-                                            <input type="hidden" name="id" value="{{ isset($subModel) ? $subModel->id : 0 }}">
-
-
-                                            <td>
-                                                <input value="{{ __('Equity Funding Value') }}" disabled class="form-control text-left mt-2" type="text">
-
-                                            </td>
-                                            @php
-                                            $columnIndex = 0 ;
-                                            @endphp
-                                            @foreach($studyMonthsForViews as $dateAsIndex=>$dateAsString)
-                                            <td>
-                                                <div class="d-flex align-items-center justify-content-center">
-                                                    <x-repeat-right-dot-inputs :numberFormatDecimals="0" :currentVal="0" :classes="'only-greater-than-or-equal-zero-allowed '" :formatted-input-classes="'exclude-from-trigger-change-when-repeat equity-funding-formatted-value-class'" :is-percentage="false" :name="'generalFixedAssetsFundingStructure['.'equity_funding_values'.']['.$dateAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
-
-                                                </div>
-                                            </td>
-                                            @php
-                                            $columnIndex++;
-                                            @endphp
-                                            @endforeach
-
-
-
-                                        </tr>
-
-
-
-                                        <tr data-repeat-formatting-decimals="2" data-repeater-style>
-                                            <td>
-                                                <input disabled value="{{ __('Loans Funding Rate (%)') }}" class="form-control text-left" type="text">
-                                            </td>
-                                            @php
-                                            $columnIndex = 0 ;
-                                            @endphp
-
-                                            @foreach($studyMonthsForViews as $dateAsIndex=>$dateAsString)
-
-
-                                            <td>
-                                                <div class="d-flex align-items-center justify-content-center">
-                                                    <input type="text" data-column-index="{{ $columnIndex }}" readonly class="exclude-from-trigger-change-when-repeat form-control expandable-percentage-input new-loan-function-rates-js" name="generalFixedAssetsFundingStructure[new_loans_funding_rates][{{ $dateAsIndex }}]" value="{{ 0 }}"> <span class="ml-2">%</span>
-                                                </div>
-                                            </td>
-                                            @php
-                                            $columnIndex++;
-                                            @endphp
-
-                                            @endforeach
-
-
-
-                                        </tr>
-
-
-
-
-
-
-                                        <tr data-repeat-formatting-decimals="0" data-repeater-style>
-
-
-                                            <td>
-                                                <input disabled value="{{ __('Loans Funding Value') }}" class="form-control text-left max-w-200" type="text">
-                                            </td>
-                                            @php
-                                            $columnIndex = 0 ;
-                                            @endphp
-
-                                            @foreach($studyMonthsForViews as $dateAsIndex=>$dateAsString)
-
-
-                                            <td>
-                                                <div class="d-flex align-items-center justify-content-center">
-                                                    <x-repeat-right-dot-inputs :numberFormatDecimals="0" :formatted-input-classes="'exclude-from-trigger-change-when-repeat new-loans-funding-formatted-value-class'" :currentVal="0" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="false" :name="'generalFixedAssetsFundingStructure['.'new_loans_funding_values'.']['.$dateAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
-
-                                                </div>
-                                            </td>
-                                            @php
-                                            $columnIndex++;
-                                            @endphp
-
-                                            @endforeach
-
-
-
-                                        </tr>
-
-
-                                        <tr data-repeat-formatting-decimals="0" data-repeater-style>
-
-                                            <td>
-                                                <input disabled value="{{ __('Loans Tenor ( Months )') }}" class="form-control text-left" type="text">
-                                            </td>
-                                            @php
-                                            $columnIndex = 0 ;
-                                            @endphp
-
-                                            @foreach($studyMonthsForViews as $dateAsIndex=>$dateAsString)
-
-
-                                            <td>
-                                                <div class="d-flex align-items-center justify-content-center">
-                                                    <x-repeat-right-dot-inputs :numberFormatDecimals="0" :mark="'Mth'" :formatted-input-classes="'exclude-from-trigger-change-when-repeat '" :currentVal="$fixedAssetsFundingStructure ? $fixedAssetsFundingStructure->getTenorsAtMonthIndex($dateAsIndex) : 0" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="false" :name="'generalFixedAssetsFundingStructure['.'tenors'.']['.$dateAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
-
-                                                </div>
-                                            </td>
-                                            @php
-                                            $columnIndex++;
-                                            @endphp
-
-                                            @endforeach
-
-
-
-                                        </tr>
-
-
-                                        <tr data-repeat-formatting-decimals="0" data-repeater-style>
-
-                                            <td>
-                                                <input disabled value="{{ __('Grace Period ( Months )') }}" class="form-control text-left" type="text">
-                                            </td>
-                                            @php
-                                            $columnIndex = 0 ;
-                                            @endphp
-
-                                            @foreach($studyMonthsForViews as $dateAsIndex=>$dateAsString)
-
-
-                                            <td>
-                                                <div class="d-flex align-items-center justify-content-center">
-                                                    <x-repeat-right-dot-inputs :numberFormatDecimals="0" :mark="'Mth'" :formatted-input-classes="'exclude-from-trigger-change-when-repeat '" :currentVal="$fixedAssetsFundingStructure ? $fixedAssetsFundingStructure->getGracePeriodAtMonthIndex($dateAsIndex) : 0 " :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="false" :name="'generalFixedAssetsFundingStructure['.'grace_periods'.']['.$dateAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
-
-                                                </div>
-                                            </td>
-                                            @php
-                                            $columnIndex++;
-                                            @endphp
-
-                                            @endforeach
-
-
-
-                                        </tr>
-
-                                        <tr data-repeat-formatting-decimals="2" data-repeater-style>
-
-                                            <td>
-                                                <input disabled value="{{ __('Interest Rate %') }}" class="form-control text-left" type="text">
-                                            </td>
-                                            @php
-                                            $columnIndex = 0 ;
-                                            @endphp
-
-                                            @foreach($studyMonthsForViews as $dateAsIndex=>$dateAsString)
-
-
-                                            <td>
-                                                <div class="d-flex align-items-center justify-content-center">
-                                                    <x-repeat-right-dot-inputs :numberFormatDecimals="0" :mark="'%'" :formatted-input-classes="'exclude-from-trigger-change-when-repeat'" :currentVal="$fixedAssetsFundingStructure ? $fixedAssetsFundingStructure->getInterestRateAtMonthIndex($dateAsIndex) : 0 " :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="false" :name="'generalFixedAssetsFundingStructure['.'interest_rates'.']['.$dateAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
-
-                                                </div>
-                                            </td>
-                                            @php
-                                            $columnIndex++;
-                                            @endphp
-
-                                            @endforeach
-
-
-
-                                        </tr>
-
-                                        <tr data-repeat-formatting-decimals="0" data-repeater-style>
-
-                                            <td>
-                                                <input disabled value="{{ __('Installment Interval') }}" class="form-control text-left" type="text">
-                                            </td>
-                                            @php
-                                            $columnIndex = 0 ;
-                                            @endphp
-
-                                            @foreach($studyMonthsForViews as $dateAsIndex=>$dateAsString)
-
-                                            <td>
-                                                <div class="d-flex align-items-center justify-content-center">
-                                                    <x-form.select :required="true" :label="''" :pleaseSelect="false" :selectedValue="isset($fixedAssetsFundingStructure) ? $fixedAssetsFundingStructure->getInstallmentIntervalAtMonthIndex($dateAsIndex) : 'monthly'" :options="[['title'=>__('Monthly'),'value'=>'monthly'],['title'=>__('Quarterly'),'value'=>'quartly'],['value'=>'semi annually','title'=>__('Semi-annually')]]" :add-new="false" class="select2-select  repeater-select  " :all="false" name="generalFixedAssetsFundingStructure[installment_intervals][{{ $dateAsIndex }}]"></x-form.select>
-                                                </div>
-                                            </td>
-                                            @php
-                                            $columnIndex++;
-                                            @endphp
-
-                                            @endforeach
-
-
-
-                                        </tr>
-
-
-                                    </x-slot>
-
-
-
-
-                                </x-tables.repeater-table>
-                                {{-- end of fixed monthly repeating amount --}}
-
-
-                            </div>
+                    <div class="row  ">
+                        <div class="col-lg-6">
+
+                        </div>
+                        <div class="col-lg-6 kt-align-right">
+                            <input  type="submit" class="btn max-w-btn active-style save-form" value="{{ isset($text) ? $text : __('Save Changes') }}">
 
                         </div>
                     </div>
-                    {{-- end of FFE Funding Structure   --}}
                 </div>
-				
-            </div>
-<style>
-.max-w-btn{
-	max-width:125px !important;
-	min-width:125px !important;
-}
-</style>
-
-         <div id="ffe-funding" class="kt-portlet " style="margin-bottom:5px;">
-
-
-                <div class="kt-portlet__body">
-				<div class="row btn-for-submit--js ">
-                <div class="col-lg-6">
-              
-                </div>
-                <div class="col-lg-6 kt-align-right">
-                    <input data-save-and-add-new-department="0" type="submit" class="btn max-w-btn active-style save-form" value="{{ isset($text) ? $text : __('Save Changes') }}">
-					
-                </div>
-            </div>
-            </div>
             </div>
         </div>
 
 
     </div>
-	
-	
-			
+
+
+
 </form>
 </div>
 
@@ -736,9 +411,6 @@ use App\Models\NonBankingService\Expense;
 
 </script>
 <script>
-  
-
-
     $(document).on('change', '.rate-element', function() {
         let total = 0;
         const parent = $(this).closest('tbody');

@@ -73,7 +73,7 @@ use App\Models\NonBankingService\LeasingCategory;
                                     </div> --}}
                                     <div class="col-md-12 text-right">
                                         <input type="submit" name="save-and-continue" class="btn active-style save-form" value="{{  __('Save & Continue') }}">
-														@include('non_banking_services.buttons.enable-editing',['inEditMode'=>true])
+														@include('non_banking_services.buttons.enable-editing',['inEditMode'=>$model->leasingRevenueStreamBreakdown->count()])
 									
 									</div>
 
@@ -347,14 +347,14 @@ use App\Models\NonBankingService\LeasingCategory;
                             </div>
                         </div>
                         <div class="col-md-2 text-right">
-                            <x-show-hide-btn :query="'.leasing-revenue-projection-by-category'"></x-show-hide-btn>
+                            <x-show-hide-btn :query="'.leasing-admin'"></x-show-hide-btn>
 
                         </div>
                     </div>
                     <div class="row">
                         <hr style="flex:1;background-color:lightgray">
                     </div>
-                    <div class="row leasing-revenue-projection-by-category">
+                    <div class="row leasing-admin">
                         @php
                         $rowIndex = 0;
                         @endphp
@@ -758,65 +758,8 @@ use App\Models\NonBankingService\LeasingCategory;
 
 </script>
 
-<script>
-    $('.use-rooms:checked').trigger('change');
 
-</script>
 
-<script>
-    $(document).find('.datepicker-input').datepicker({
-        dateFormat: 'mm-dd-yy'
-        , autoclose: true
-    })
-    $(document).on('change', '.can-not-be-removed-checkbox', function() {
-        $(this).prop('checked', true)
-    })
-
-    $(document).on('click', '.show-hide-repeater', function() {
-        const query = this.getAttribute('data-query')
-        $(query).fadeToggle(300)
-
-    })
-    $(document).on('change', '.not-allowed-duplication-in-selection-inside-repeater', function() {
-        const val = $(this).val()
-        const currentSelect = this
-        const currentSelectedOption = $(currentSelect).find('option[value="' + val + '"]')
-        const commonParent = $(this).closest('[data-repeater-list]')
-        // let selectItems = []
-        // $(commonParent).find('select').each(function(index,select){
-        // 	selectItems.push($(select).val())
-        // })
-        $(commonParent).find('select').each(function(index, select) {
-            if (select != currentSelect) {
-                if ($(select).find('option[value="' + val + '"]:selected').length) {
-                    alert('This Item has been choosen before')
-                    $(currentSelect).val('').trigger('change')
-
-                }
-
-                //.prop('disabled',true).attr('title','This Item has been choosen before')
-            } else {}
-        })
-    })
-
-    $(document).on('change', '.can-be-toggle-show-repeater-btn', function() {
-        let val = $(this).is(':checked')
-        let repeaterQuery = $(this).attr('data-repeater-query')
-        if (!val) {
-            $('.show-hide-repeater[data-query="' + repeaterQuery + '"]').addClass('disabled');
-            $('[data-repeater-row="' + repeaterQuery + '"]').fadeOut(300)
-            $(this).val(0)
-        } else {
-            $('.show-hide-repeater[data-query="' + repeaterQuery + '"]').removeClass('disabled');
-            $('[data-repeater-row="' + repeaterQuery + '"]').fadeIn(300)
-            $(this).val(1)
-
-        }
-
-    })
-    $('.can-be-toggle-show-repeater-btn').trigger('change')
-
-</script>
 
 <script src="/custom/js/non-banking-services/common.js"></script>
 <script src="/custom/js/non-banking-services/select2.js"></script>

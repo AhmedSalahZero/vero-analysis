@@ -141,7 +141,8 @@ class ExpensesController extends Controller
 					}
                 
 					// $isDeductible = false;
-                    $monthlyFixedRepeatingResults = $monthlyFixedRepeatingAmountEquation->calculate($amount, $tableDataArr['start_date'], $loopEndDate, $tableDataArr['increase_interval']??'annually', $tableDataArr['increase_rate'], $isDeductible, $vatRate, $withholdRate);
+					$dateIndexWithYearIndex = $study->getDatesIndexWithYearIndex();
+                    $monthlyFixedRepeatingResults = $monthlyFixedRepeatingAmountEquation->calculate($amount, $tableDataArr['start_date'], $loopEndDate, $tableDataArr['increase_interval']??'annually', $tableDataArr['increase_rates']??0, $isDeductible, $vatRate, $withholdRate,$dateIndexWithYearIndex);
 					/**
 					 * * دي القيمة اللي هتدخل في الاكسبنس
 					 */

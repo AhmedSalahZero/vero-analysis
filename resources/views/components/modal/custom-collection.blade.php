@@ -28,10 +28,18 @@
                             </tr>
                         </thead>
                         <tbody>
+						@php
+							$totalRate = 0 ;
+						@endphp
                             @for($rateIndex= 0 ;$rateIndex<5 ; $rateIndex++) <tr>
+							@php
+							$currentRate = isset($subModel) ? $subModel->getPaymentRate($rateIndex) :  0;
+							$totalRate+=$currentRate;
+						@endphp
+						
                                 <td >
 								<div class="max-w-selector-popup">
-                                    <input multiple name="payment_rate" class="form-control only-percentage-allowed rate-element" value="{{ isset($subModel) ? $subModel->getPaymentRate($rateIndex) :  0 }}" placeholder="{{ __('Rate') .  ' ' . $rateIndex }}">
+                                    <input multiple name="payment_rate" class="form-control only-percentage-allowed rate-element" value="{{ $currentRate }}" placeholder="{{ __('Rate') .  ' ' . $rateIndex }}">
                                     {{-- <input multiple class="rate-element-hidden" type="hidden" value="{{ (isset($subModel) ? $subModel->getPaymentRate($rateIndex) : 0) }}" > --}}
 								</div>
                                 </td>
@@ -46,7 +54,7 @@
                                 @endfor
 								<tr style="border-top:1px solid gray;padding-top:5px;text-align:center">
 									<td class="td-for-total-payment-rate " disabled readonly>
-										0
+										{{ $totalRate }} %
 									</td>
 									<td class="">-</td>
 								</tr>

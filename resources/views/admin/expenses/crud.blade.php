@@ -15,7 +15,6 @@
     <div class="col-md-12">
         <div class="kt-portlet">
 
-
             <div class="kt-portlet__body">
                 <form class="kt-form kt-form--label-right" method="POST" action="{{isset($model) ? $updateRoute : $storeRoute}}">
                     {{ csrf_field() }}

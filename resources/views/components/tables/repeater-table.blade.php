@@ -8,6 +8,7 @@
 'parentClass'=>$parentClass ?? '',
 'initialJs'=>true ,
 'initEmpty'=>false,
+'removeDisabledWhenAddNew'=>false ,
 'firstElementDeletable'=>false,
 'hideAddBtn'=>false,
 'canAddNewItem'=>true,
@@ -140,6 +141,8 @@ $canAddNewItem = true;
 
         show: function() {
 			initMultiselect();
+			
+	
             var appendNewOptionsToAllSelects = function(currentRepeaterItem) {
 
                 if ($('[data-modal-title]').length) {
@@ -190,6 +193,12 @@ $canAddNewItem = true;
             $(this).find('select.repeater-select').selectpicker("refresh");
             appendNewOptionsToAllSelects(this)
 			initMultiselect($(this));
+			
+			const removeDisabledWhenAddNew = +"{{ $removeDisabledWhenAddNew }}";
+			if(removeDisabledWhenAddNew){
+				$(this).find('input').prop('disabled',false);
+				$(this).find('select').prop('disabled', false).selectpicker('refresh')
+			}
         },
 
         hide: function(deleteElement) {

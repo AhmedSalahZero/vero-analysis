@@ -645,22 +645,7 @@
         $(query).fadeToggle(300)
 
     })
-    $(document).on('change', '.not-allowed-duplication-in-selection-inside-repeater', function() {
-        const val = $(this).val()
-        const currentSelect = this
-        const currentSelectedOption = $(currentSelect).find('option[value="' + val + '"]')
-        const commonParent = $(this).closest('[data-repeater-list]')
 
-        $(commonParent).find('select').each(function(index, select) {
-            if (select != currentSelect) {
-                if ($(select).find('option[value="' + val + '"]:selected').length) {
-                    alert('This Item has been choosen before')
-                    $(currentSelect).val('').trigger('change')
-                }
-                //.prop('disabled',true).attr('title','This Item has been choosen before')
-            }
-        })
-    })
 
     $(document).on('change', '.can-be-toggle-show-repeater-btn', function() {
         let val = $(this).is(':checked')

@@ -1,6 +1,8 @@
 @props([
 'subModel',
-'title'=>__('Collection Policy')
+'study'=>$study,
+'title'=>__('Annual Increase Rate'),
+'tableId'
 ])
 
 <script>
@@ -8,7 +10,7 @@
         deleteConfirm: @json(__('Are you sure you want to delete this position?'))
     };
 	</script>
-<div class="modal collection-modal fade"  tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+<div class="modal modal-increase-rates  fade"  tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-md modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -22,39 +24,40 @@
                     <table class="table">
                         <thead>
                             <tr>
+                                <th class="text-center">{{ __('Year') }}</th>
                                 <th class="text-center">{{ __('Payment Rate %') }}</th>
-                                <th class="text-center">{{ __('Due In Days') }}</th>
                             </tr>
                         </thead>
                         <tbody>
 						@php
 							$totalRate = 0 ;
 						@endphp
-                            @for($rateIndex= 0 ;$rateIndex<5 ; $rateIndex++) <tr>
+                            @for($yearNumber = 1 ;$yearNumber <= $study->getDurationInYears() ; $yearNumber ++) <tr>
                         @php
-							$currentRate = isset($subModel) ? $subModel->getPaymentRate($rateIndex) :  0;
-							$totalRate+=$currentRate;
+							$yearFormatted = $study->getYearFromYearIndex($yearNumber);
+							$currentIncreaseRate = isset($subModel) ? $subModel->getIncreaseRateAtYearIndex($yearNumber ) :  0;
 						@endphp
 						        <td >
 								<div class="max-w-selector-popup">
-                                    <input multiple name="payment_rate" class="form-control only-percentage-allowed rate-element" value="{{ $currentRate }}" placeholder="{{ __('Rate') .  ' ' . $rateIndex }}">
+                                    <input readonly  class="form-control " value="{{ $yearFormatted }}" placeholder="{{ __('Year') .  ' ' . $yearNumber  }}">
 								</div>
                                 </td>
-                                 <td>
-								<div class="">
-                                    <x-form.select  :multiple="true" :maxOptions="1"  :selectedValue="isset($subModel) ? $subModel->getPaymentRateAtDueInDays($rateIndex) : '' " :options="dueInDays()" :add-new="false" class="js-due_in_days repeater-select 
 								
-									"  :all="false" name="due_days" ></x-form.select>
+								 <td >
+								<div class="max-w-selector-popup">
+                                    <input multiple name="increase_rates" class="form-control " value="{{ $currentIncreaseRate }}" placeholder="{{ __('Increase %') .  ' ' . $yearNumber  }}">
 								</div>
                                 </td>
+                                
+                                
                                 </tr>
                                 @endfor
-								<tr style="border-top:1px solid gray;padding-top:5px;text-align:center">
+								{{-- <tr style="border-top:1px solid gray;padding-top:5px;text-align:center">
 									<td class="td-for-total-payment-rate " disabled readonly>
 										{{ $totalRate }} %
 									</td>
 									<td class="">-</td>
-								</tr>
+								</tr> --}}
                         </tbody>
                     </table>
                 </div>

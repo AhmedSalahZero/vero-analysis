@@ -1,4 +1,5 @@
 $(document).on('click', '.repeat-to-right', function () {
+	console.log('from 1')
 	let columnIndex = parseInt($(this).attr('data-column-index'))
 	let parent = $(this).closest('tr')
 	let name = $(this).attr('data-name')
@@ -19,12 +20,14 @@ $(document).on('click', '.repeat-to-right', function () {
 	})
 })
 $('.repeat-to-right-input-hidden').on('change', function () {
+	console.log('from 2')
 	const val = $(this).val()
 	const columnIndex = $(this).attr('data-column-index')
 	const numberOfDecimals = $(this).closest('.input-hidden-parent').find('.copy-value-to-his-input-hidden[data-column-index="' + columnIndex + '"]').attr('data-number-of-decimals')
 	$(this).closest('.input-hidden-parent').find('.copy-value-to-his-input-hidden[data-column-index="' + columnIndex + '"]').val(number_format(val, numberOfDecimals))
 })
 $(document).on('click', '.repeat-select-to-right', function () {
+	console.log('from 3')
 	let columnIndex = parseInt($(this).attr('data-column-index'))
 	let parent = $(this).closest('tr')
 	let value = parent.find('.repeat-to-right-select[data-column-index="' + columnIndex + '"]').val()
@@ -43,6 +46,7 @@ $(document).on('change', '.input-hidden-parent .copy-value-to-his-input-hidden',
 
 
 $(document).on('change', '.is-leasing', function () {
+	console.log('from 4')
 	const isTotalOthers = $('#is-leasing-1').is(':checked')
 	const parent = $(this).closest('.form-group.row')
 	if (isTotalOthers) {
@@ -59,6 +63,7 @@ $(function () {
 
 
 $(document).on('change', 'select.revenue-stream-type-js', function () {
+	console.log('from 5')
 	let revenueStreams = $(this).val()
 	let studyId = $('#study-id-js').val()
 	const that = this
@@ -81,7 +86,7 @@ $(document).on('change', 'select.revenue-stream-type-js', function () {
 					selected = 'selected'
 				}
 				options += `<option ${selected} value="all">All</option>`
-				
+
 				for (id in res.result) {
 					var title = res.result[id]
 					selected = ''
@@ -98,6 +103,7 @@ $(document).on('change', 'select.revenue-stream-type-js', function () {
 	}
 })
 $(document).on('change', '.current-loan-input', function () {
+	console.log('from 6')
 	let total = 0
 	let currentLoanIndex = parseInt($(this).attr('data-column-index'))
 	$('.current-loan-input[data-column-index="' + currentLoanIndex + '"]').each(function (index, element) {
@@ -107,7 +113,8 @@ $(document).on('change', '.current-loan-input', function () {
 	$(this).closest('table').find('[data-row-total] .repeat-to-right-input-formatted[data-column-index="' + currentLoanIndex + '"]').val(number_format(total)).trigger('change')
 
 })
-$(document).on('change', '[js-recalculate-equity-funding-value]', function () {
+$(document).on('change', '[js-recalculate-equity-funding-value],.js-recalculate-equity-funding-value', function () {
+	console.log('from 7')
 	const columnIndex = parseInt($(this).attr('data-column-index'))
 	const total = $('.total-loans-hidden[data-column-index="' + columnIndex + '"]').val()
 	const equityFundingRate = $('.equity-funding-rates[data-column-index="' + columnIndex + '"]').val()
@@ -116,7 +123,7 @@ $(document).on('change', '[js-recalculate-equity-funding-value]', function () {
 	$('input.equity-funding-formatted-value-class[data-column-index="' + columnIndex + '"]').val(number_format(equityFundingValue)).trigger('change')
 	$('input.new-loans-funding-formatted-value-class[data-column-index="' + columnIndex + '"]').val(number_format(newLoanFundingValue)).trigger('change')
 })
-$('[js-recalculate-equity-funding-value]').trigger('change')
+//$('[js-recalculate-equity-funding-value]').trigger('change')
 function convertDateToDefaultDateFormat(dateStr) {
 	const [month, day, year] = dateStr.split("/") // Split the string by "/";
 	return `${year}-${month}-${day}` // Rearrange to YYYY-MM-DD
@@ -130,13 +137,14 @@ $(document).on('change', '.recalculate-factoring', function () {
 	const index = parseInt($(this).attr('data-column-index'))
 	// const rowIndex = $('.factoring-rate[data-column-index="' + index + '"]').closest('[data-repeater-item]').index()
 	var value = $('.factoring-projection-amount[data-column-index="' + index + '"]').val()
-	
-	$('.factoring-rate[data-column-index="' + index + '"]').each(function(currentIndex,rateElement){
+console.log('from 8')
+	$('.factoring-rate[data-column-index="' + index + '"]').each(function (currentIndex, rateElement) {
 		var rate = $(rateElement).val()
-		var numberOfDecimals = $(rateElement).closest('tr').find('.factoring-value[data-column-index="' + index + '"]').closest('.input-hidden-parent').find('.repeat-to-right-input-formatted').attr('data-number-of-decimals');
-		$(rateElement).closest('tr').find('.factoring-value[data-column-index="' + index + '"]').closest('.input-hidden-parent').find('.repeat-to-right-input-formatted').val(number_format(rate / 100 * value,numberOfDecimals));
+		var numberOfDecimals = $(rateElement).closest('tr').find('.factoring-value[data-column-index="' + index + '"]').closest('.input-hidden-parent').find('.repeat-to-right-input-formatted').attr('data-number-of-decimals')
+		$(rateElement).closest('tr').find('.factoring-value[data-column-index="' + index + '"]').closest('.input-hidden-parent').find('.repeat-to-right-input-formatted').val(number_format(rate / 100 * value, numberOfDecimals))
 		$(rateElement).closest('tr').find('.factoring-value[data-column-index="' + index + '"]').val(rate / 100 * value).trigger('change')
 	})
+	
 })
 
 $(function () {
@@ -144,6 +152,7 @@ $(function () {
 	$('select.revenue-stream-type-js').trigger('change')
 })
 $(document).on('change', 'select.js-update-positions-for-department', function () {
+	console.log('from 9')
 	const companyId = $('body').attr('data-current-company-id')
 	const lang = $('body').attr('data-lang')
 	let studyId = $('#study-id-js').val()
@@ -170,25 +179,26 @@ $(document).on('change', 'select.js-update-positions-for-department', function (
 $('select.js-update-positions-for-department').trigger('change')
 
 $(document).on('change', '.is-percentage-from-total,.is-percentage-total-of', function () {
+	console.log('from 10')
 	let commonClass = $(this).attr('data-common-percentage-of-class')
 	let columnIndex = $(this).attr('data-column-index')
-	
-	
+
+
 	let totalOfAmount = $('.is-percentage-total-of[data-common-percentage-of-class="' + commonClass + '"][data-column-index="' + columnIndex + '"]').val()
 	let currentRow = $(this).closest('tr')
 	let tableRows = $(this).closest('table').find('tbody tr')
 	let rowIndex = $(tableRows).index(currentRow)
 	let percentage = $('.is-percentage-from-total[data-common-percentage-of-class="' + commonClass + '"][data-column-index="' + columnIndex + '"]').eq(rowIndex).val()
 	let result = percentage / 100 * totalOfAmount
-	let resultRow = $('.is-result-total-of[data-common-percentage-of-class="' + commonClass + '"][data-column-index="' + columnIndex + '"]').eq(rowIndex);
+	let resultRow = $('.is-result-total-of[data-common-percentage-of-class="' + commonClass + '"][data-column-index="' + columnIndex + '"]').eq(rowIndex)
 	let numberOfDecimals = resultRow.closest('.input-hidden-parent').find('.copy-value-to-his-input-hidden[data-column-index="' + columnIndex + '"]').attr('data-number-of-decimals')
 	resultRow.closest('.input-hidden-parent').find('.copy-value-to-his-input-hidden[data-column-index="' + columnIndex + '"]').val(number_format(result, numberOfDecimals)).val(result)
-	resultRow.val(result);
+	resultRow.val(result)
 })
 
 
 $(document).on('click', '.collapse-before-me', function () {
-
+console.log('from 11')
 	let columnIndex = $(this).attr('data-column-index')
 	hide = true
 	let counter = 0
@@ -211,6 +221,7 @@ $(document).on('click', '.collapse-before-me', function () {
 	}
 })
 $(document).on('change', '.repeater-with-collapse-input', function () {
+	console.log('from 12')
 	let groupIndex = $(this).attr('data-group-index')
 	let total = 0
 	$(this).closest('tr').find('input[data-group-index="' + groupIndex + '"]').each(function (index, element) {
@@ -226,234 +237,272 @@ $('input[type="hidden"].exclude-from-collapse').on('change', function () {
 	$(this).closest('tr').find('.total-td').val(number_format(total)).trigger('change')
 })
 $(document).on('click', '.add-btn-js', function (e) {
+	console.log('from 13')
 	e.preventDefault()
 	$(this).toggleClass('rotate-180')
 	$(this).closest('[data-is-main-row]').nextUntil('[data-is-main-row]').toggleClass('hidden')
 })
 $(document).on('change', '.recalculate-gr', function () {
+	console.log('from 14')
 	const columnIndex = parseInt($(this).attr('data-column-index'))
 	const previousColumnIndex = columnIndex - 1
-	const nextColumnIndex=columnIndex+1;
+	const nextColumnIndex = columnIndex + 1
 	const growthRateOfCurrentYear = $('.gr-field[data-column-index="' + columnIndex + '"]').val()
-	
-	
-		
-		allElements = $('.current-growth-rate-result-value-formatted[data-column-index="' + columnIndex + '"]') ;
-		allElements.each(function (index, element) {
-			const loanAmount = $(element).closest('tr').find('.current-growth-rate-result-value[data-column-index="' + previousColumnIndex + '"]').val()
-			if(loanAmount != undefined){
-				currentAmount = (1 + (growthRateOfCurrentYear / 100)) * loanAmount
-				$(element).val(number_format(currentAmount)).trigger('change')
-			}
-		
-		})
-	$('.recalculate-gr[data-column-index="'+nextColumnIndex+'"]').trigger('change');
+
+
+
+	allElements = $('.current-growth-rate-result-value-formatted[data-column-index="' + columnIndex + '"]')
+	allElements.each(function (index, element) {
+		const loanAmount = $(element).closest('tr').find('.current-growth-rate-result-value[data-column-index="' + previousColumnIndex + '"]').val()
+		if (loanAmount != undefined) {
+			currentAmount = (1 + (growthRateOfCurrentYear / 100)) * loanAmount
+			$(element).val(number_format(currentAmount)).trigger('change')
+		}
+
+	})
+	$('.recalculate-gr[data-column-index="' + nextColumnIndex + '"]').trigger('change')
 })
-$(document).on('change','.current-growth-rate-result-value-formatted',function(event){
-	const columnIndex = parseInt($(this).attr('data-column-index'));
-	const nextColumnIndex=columnIndex+1;
-	if(event.originalEvent && event.originalEvent.isTrusted){
-		$('.recalculate-gr[data-column-index="'+nextColumnIndex+'"]').trigger('change');
-	}else{
-		console.log("Input was changed programmatically.");
+$(document).on('change', '.current-growth-rate-result-value-formatted', function (event) {
+	console.log('from 15')
+	const columnIndex = parseInt($(this).attr('data-column-index'))
+	const nextColumnIndex = columnIndex + 1
+	if (event.originalEvent && event.originalEvent.isTrusted) {
+		$('.recalculate-gr[data-column-index="' + nextColumnIndex + '"]').trigger('change')
+	} else {
+		console.log("Input was changed programmatically.")
 
 	}
 	//$('.recalculate-gr[data-column-index="'+nextColumnIndex+'"]').trigger('change');
 })
-$(document).on('change','.is-fully-funded-checkbox',function(){
-	const value = parseInt($(this).val());
-//	const canViewFundingStructure = parseInt($('#toggleEditBtn').attr('can-show-funding-structure'));
-	const canViewFundingStructure = 1;
+$(document).on('click', '#enable-editing-btn', function (e) {
+	console.log('from 16')
+	e.preventDefault()
+	var isEnableEditing = +$(this).attr('data-is-enable-editing')
+	if (isEnableEditing) {
+		console.log('if')
+		var disableText = $(this).attr('data-disable-edit-text')
+		$(this).attr('data-is-enable-editing', 0)
+		$(this).closest('form').find('input').prop('disabled', false)
+		$(this).closest('form').find('[data-repeater-create]').show()
+		$(this).closest('form').find('[data-repeater-delete]').show()
+		$(this).closest('form').find('select').prop('disabled', false).selectpicker('refresh')
+		$(this).html(disableText)
+		$('#leasing-loans').hide()
+	} else {
+		console.log('else')
+		$(this).closest('form').find('input').prop('disabled', true)
+		$(this).closest('form').find('[data-repeater-create]').hide()
+		$(this).closest('form').find('[data-repeater-delete]').hide()
+		$(this).closest('form').find('select').prop('disabled', true).selectpicker('refresh')
 
+		var enableText = $(this).attr('data-enable-edit-text')
+		$(this).attr('data-is-enable-editing', 1)
+		console.log(enableText)
+		console.log(enableText)
+		$('#leasing-loans').show()
+		$(this).html(enableText)
+	}
 
-	$('#ffe-funding').hide();
-	console.log(value,canViewFundingStructure)
-	if(value){
-		$('#ffe-funding').hide();
-		$('#toggleEditBtn').hide();
-		$('#save-and-go-to-next').show();
-	
-	}else{
-		if(canViewFundingStructure){
-			$('#ffe-funding').show();
-		}
-		$('#save-and-go-to-next').hide();
-		$('#toggleEditBtn').show();
-	
-		
-	}
-	if(canViewFundingStructure){
-		$('#save-and-go-to-next').show();
-	}
-	
-});
-$('.is-fully-funded-checkbox:checked').trigger('change');
-$(document).on('change','.recalculate-monthly-increase-amounts',function(){
-	var currentRow = $(this).closest('tr') ;
-	var itemCost = currentRow.find('.ffe-item-cost').val();
-	// var vat = currentRow.find('dd');
-	var costAnnuallyIncreaseRate = currentRow.find('.cost-annually-increase-rate').val() / 100;
-	var contingencyRate = currentRow.find('.contingency-rate').val() / 100;
-	
-	var yearIndex = -1 ; ;
-	currentRow.find('.ffe_counts').each(function(index,ffeCountElement){
-		var currentYearIndex = parseInt($(ffeCountElement).attr('data-current-year-index'));
-		var currentMonthIndex=$(ffeCountElement).attr('data-column-index');
-		if(currentYearIndex != yearIndex){
-			yearIndex++;
-		}
-		var currentCount = $(ffeCountElement).val();
-		var currentTotalAmount = itemCost * currentCount  * (1+contingencyRate); 
-		var currentTotalAmountIncrease = currentTotalAmount * Math.pow(1 + costAnnuallyIncreaseRate, yearIndex)
-	
-		$(ffeCountElement).closest('td').find('.current-month-amounts').val(currentTotalAmountIncrease);
-		var totalForCurrentMonth = 0 ;
-		$('.current-month-amounts[data-column-index="'+currentMonthIndex+'"]').each(function(index,amountElement){
-			totalForCurrentMonth+= parseFloat($(amountElement).val());
-		})
-		$('.direct-ffe-amounts[data-column-index="'+currentMonthIndex+'"]').val(number_format(totalForCurrentMonth)).trigger('change');
-		
-	})
-	
 })
-let calculateBranchIncreaseAmounts = function(){
-	var currentRow = $(this).closest('tr') ;
-	var itemCost = parseFloat(currentRow.find('.ffe-item-cost').val());
-	itemCost = itemCost ? itemCost : 0 ;
-	var costAnnuallyIncreaseRate = currentRow.find('.cost-annually-increase-rate').val() / 100;
-	costAnnuallyIncreaseRate = costAnnuallyIncreaseRate ? costAnnuallyIncreaseRate : 0 ;
-	var contingencyRate = currentRow.find('.contingency-rate').val() / 100;
-	contingencyRate = contingencyRate ? contingencyRate : 0;
-	var currentItemCount = parseInt(currentRow.find('.current-count').val());
-	currentItemCount = currentItemCount ? currentItemCount : 0;
-	var yearIndex = -1 ; // will increase every year ;
-	var  netBranchOpeningProjections = JSON.parse($('#net-branch-opening-projections').val());
-	var counts = {};
-	for(var currentDateAsIndex in netBranchOpeningProjections){
-		var currentBranchCount = netBranchOpeningProjections[currentDateAsIndex];
-		currentCount = currentBranchCount * currentItemCount;
-		var currentYearIndex = $('.year-index-month-index[data-month-index="'+ currentDateAsIndex +'"]').attr('data-year-index');
-		var currentMonthIndex=currentDateAsIndex;
-		if(currentYearIndex != yearIndex){
-			yearIndex++;
+$('#enable-editing-btn').trigger('click')
+$(document).on('change', '.is-fully-funded-checkbox', function () {
+		console.log('from 17')
+	const value = parseInt($(this).val())
+	//	const canViewFundingStructure = parseInt($('#toggleEditBtn').attr('can-show-funding-structure'));
+	const canViewFundingStructure = 1
+
+
+	$('#ffe-funding').hide()
+	if (value) {
+		$('#ffe-funding').hide()
+		$('#toggleEditBtn').hide()
+		$('#save-and-go-to-next').show()
+
+	} else {
+		if (canViewFundingStructure) {
+			$('#ffe-funding').show()
 		}
-		counts[currentMonthIndex]=currentCount;
-		var currentTotalAmount = itemCost * currentCount  * (1+contingencyRate); 
-		var currentTotalAmountIncrease = currentTotalAmount * Math.pow(1 + costAnnuallyIncreaseRate, yearIndex)
-		$(currentRow).closest('tr').find('.current-month-amounts[data-column-index="'+currentMonthIndex+'"]').val(currentTotalAmountIncrease);
-		var totalForCurrentMonth = 0 ;
-		$('.current-month-amounts[data-column-index="'+currentMonthIndex+'"]').each(function(index,amountElement){
-			var currentAmount = $(amountElement).val() ;
-			currentAmount = currentAmount == undefined ? 0 : currentAmount ;
-			totalForCurrentMonth+= parseFloat(currentAmount);
-			
-		})
-		$('.direct-ffe-amounts[data-column-index="'+currentMonthIndex+'"]').val(number_format(totalForCurrentMonth)).trigger('change');
-		
+		$('#save-and-go-to-next').hide()
+		$('#toggleEditBtn').show()
+
+
 	}
-	$(currentRow).find('.current-row-counts').val(JSON.stringify(counts));
+	if (canViewFundingStructure) {
+		$('#save-and-go-to-next').show()
+	}
+
+})
+$('.is-fully-funded-checkbox:checked').trigger('change')
+$(document).on('change', '.recalculate-monthly-increase-amounts', function () {
+		console.log('from 18')
+	var currentRow = $(this).closest('tr')
+	var itemCost = currentRow.find('.ffe-item-cost').val()
+	// var vat = currentRow.find('dd');
+	var costAnnuallyIncreaseRate = currentRow.find('.cost-annually-increase-rate').val() / 100
+	var contingencyRate = currentRow.find('.contingency-rate').val() / 100
+
+	var yearIndex = -1;;
+	currentRow.find('.ffe_counts').each(function (index, ffeCountElement) {
+		var currentYearIndex = parseInt($(ffeCountElement).attr('data-current-year-index'))
+		var currentMonthIndex = $(ffeCountElement).attr('data-column-index')
+		if (currentYearIndex != yearIndex) {
+			yearIndex++
+		}
+		var currentCount = $(ffeCountElement).val()
+		var currentTotalAmount = itemCost * currentCount * (1 + contingencyRate)
+		var currentTotalAmountIncrease = currentTotalAmount * Math.pow(1 + costAnnuallyIncreaseRate, yearIndex)
+
+		$(ffeCountElement).closest('td').find('.current-month-amounts').val(currentTotalAmountIncrease)
+		var totalForCurrentMonth = 0
+		$('.current-month-amounts[data-column-index="' + currentMonthIndex + '"]').each(function (index, amountElement) {
+			totalForCurrentMonth += parseFloat($(amountElement).val())
+		})
+		$('.direct-ffe-amounts[data-column-index="' + currentMonthIndex + '"]').val(number_format(totalForCurrentMonth)).trigger('change')
+
+	})
+
+})
+let calculateBranchIncreaseAmounts = function () {
+		console.log('from 19')
+	var currentRow = $(this).closest('tr')
+	var itemCost = parseFloat(currentRow.find('.ffe-item-cost').val())
+	itemCost = itemCost ? itemCost : 0
+	var costAnnuallyIncreaseRate = currentRow.find('.cost-annually-increase-rate').val() / 100
+	costAnnuallyIncreaseRate = costAnnuallyIncreaseRate ? costAnnuallyIncreaseRate : 0
+	var contingencyRate = currentRow.find('.contingency-rate').val() / 100
+	contingencyRate = contingencyRate ? contingencyRate : 0
+	var currentItemCount = parseInt(currentRow.find('.current-count').val())
+	currentItemCount = currentItemCount ? currentItemCount : 0
+	var yearIndex = -1 // will increase every year ;
+	var netBranchOpeningProjections = JSON.parse($('#net-branch-opening-projections').val())
+	var counts = {}
+	for (var currentDateAsIndex in netBranchOpeningProjections) {
+		var currentBranchCount = netBranchOpeningProjections[currentDateAsIndex]
+		currentCount = currentBranchCount * currentItemCount
+		var currentYearIndex = $('.year-index-month-index[data-month-index="' + currentDateAsIndex + '"]').attr('data-year-index')
+		var currentMonthIndex = currentDateAsIndex
+		if (currentYearIndex != yearIndex) {
+			yearIndex++
+		}
+		counts[currentMonthIndex] = currentCount
+		var currentTotalAmount = itemCost * currentCount * (1 + contingencyRate)
+		var currentTotalAmountIncrease = currentTotalAmount * Math.pow(1 + costAnnuallyIncreaseRate, yearIndex)
+		$(currentRow).closest('tr').find('.current-month-amounts[data-column-index="' + currentMonthIndex + '"]').val(currentTotalAmountIncrease)
+		var totalForCurrentMonth = 0
+		$('.current-month-amounts[data-column-index="' + currentMonthIndex + '"]').each(function (index, amountElement) {
+			var currentAmount = $(amountElement).val()
+			currentAmount = currentAmount == undefined ? 0 : currentAmount
+			totalForCurrentMonth += parseFloat(currentAmount)
+
+		})
+		$('.direct-ffe-amounts[data-column-index="' + currentMonthIndex + '"]').val(number_format(totalForCurrentMonth)).trigger('change')
+
+	}
+	$(currentRow).find('.current-row-counts').val(JSON.stringify(counts))
 }
-$(document).on('change','.recalculate-monthly-increase-amounts-branches',calculateBranchIncreaseAmounts)
-$('.recalculate-monthly-increase-amounts-branches').trigger('change');
-$(document).on('change','select.department-class',function(){
-	const departmentIds = $(this).val();
+$(document).on('change', '.recalculate-monthly-increase-amounts-branches', calculateBranchIncreaseAmounts)
+$('.recalculate-monthly-increase-amounts-branches').trigger('change')
+$(document).on('change', 'select.department-class', function () {
+		console.log('from 20')
+	const departmentIds = $(this).val()
 	const companyId = $('body').attr('data-current-company-id')
 	const lang = $('body').attr('data-lang')
 	let studyId = $('#study-id-js').val()
-	const url = '/' + lang + '/' + companyId + '/non-banking-financial-services/study/' + studyId + '/get-positions-based-on-departments';
+	const url = '/' + lang + '/' + companyId + '/non-banking-financial-services/study/' + studyId + '/get-positions-based-on-departments'
 	var data = {
 		departmentIds
 	}
 	$.ajax({
 		url,
 		data,
-		success:(res)=>{
-			var positionArr = res.positionIds ;
-			var options ='';
-			var positionRow = $(this).closest('tr').find('select.position-class');
-			var positionRow = $(positionRow).attr('data-current-selected-items') ;
-			var currentSelected = positionRow ? JSON.parse(positionRow):'';
-			for(var positionId in positionArr){
-				positionId = positionId;
-				var selected = currentSelected.includes(positionId);
-				console.log(currentSelected,positionId,selected,'--')
-				options+=`<option ${selected ? 'selected':''} value="${positionId}">${positionArr[positionId]}</option>`
+		success: (res) => {
+			var positionArr = res.positionIds
+			var options = ''
+			var positionRow = $(this).closest('tr').find('select.position-class')
+			var positionRow = $(positionRow).attr('data-current-selected-items')
+			var currentSelected = positionRow ? JSON.parse(positionRow) : ''
+			for (var positionId in positionArr) {
+				positionId = positionId
+				var selected = currentSelected.includes(positionId)
+				console.log(currentSelected, positionId, selected, '--')
+				options += `<option ${selected ? 'selected' : ''} value="${positionId}">${positionArr[positionId]}</option>`
 			}
-			if(positionRow != '[]'){
-				$(positionRow).empty().append(options).trigger('change');
-				
+			if (positionRow != '[]') {
+				$(positionRow).empty().append(options).trigger('change')
+
 			}
 		}
 	})
-	
+
 })
-$(function(){
-	$('select.department-class').trigger('change');
+$(function () {
+	$('select.department-class').trigger('change')
 })
 
 
-$(document).ready(function() {
-    // Set table to readonly by default
-	var inEditMode = parseInt($('#toggleEditBtn').attr('in-edit-mode'));
-	var repeaterId  = '#leasingRevenueStreamBreakdown_repeater';
-//	var repeaterId  = '#fixedAssets_repeater';
-	if(inEditMode){
-		$(repeaterId).addClass('readonly');
-		const table = $(repeaterId);
-		table.find('input, select').prop('readonly', true);
+$(document).ready(function () {
+	// Set table to readonly by default
+	var inEditMode = parseInt($('#toggleEditBtn').attr('in-edit-mode'))
+	var repeaterId = '#leasingRevenueStreamBreakdown_repeater'
+	//	var repeaterId  = '#fixedAssets_repeater';
+	if (inEditMode) {
+		$(repeaterId).addClass('readonly')
+		const table = $(repeaterId)
+		table.find('input, select').prop('readonly', true)
 	}
-    // Toggle editability
-    $('#toggleEditBtn').click(function(e) {
-		e.preventDefault();
-        const table = $(repeaterId);
-        const isReadonly = table.hasClass('readonly');
-        
+	// Toggle editability
+	$('#toggleEditBtn').click(function (e) {
+		e.preventDefault()
+		const table = $(repeaterId)
+		const isReadonly = table.hasClass('readonly')
+
 		// console.log('save form',saveForm);
+	console.log('from 21')
+		if (isReadonly) {
+			table.removeClass('readonly').addClass('editable')
+			$(this).text('Disabled Editing')
+			$(this).attr('can-show-funding-structure', 0)
+			//	$(this).attr('is-save-and-continue',1);
+			// Enable all inputs and selects
 
-        if (isReadonly) {
-			table.removeClass('readonly').addClass('editable');
-			$(this).text('Disabled Editing');
-			$(this).attr('can-show-funding-structure',0);
-		//	$(this).attr('is-save-and-continue',1);
-            // Enable all inputs and selects
-			
-				table.find('input, select').prop('readonly', false);
-				//table.find('.bootstrap-select').removeClass('disabled');
-			
-        } else {
-			table.removeClass('editable').addClass('readonly');
+			table.find('input, select').prop('readonly', false)
+			//table.find('.bootstrap-select').removeClass('disabled');
 
-			$(this).text('Enable Editing');
-	//		$(this).attr('is-save-and-continue',0);
-			$(this).attr('can-show-funding-structure',1);
-            // Disable all inputs and selects
-			table.find('input,select').prop('readonly', true);
+		} else {
+			table.removeClass('editable').addClass('readonly')
 
-        }
-		$('.is-fully-funded-checkbox:checked').trigger('change');
-    });
-    
-    // Initially disable all inputs and selects
-    // $('#fixedAssets_repeater').find('input, select').prop('readonly', true);
-    // $('#fixedAssets_repeater').find('.bootstrap-select').addClass('readonly');
-});
+			$(this).text('Enable Editing')
+			//		$(this).attr('is-save-and-continue',0);
+			$(this).attr('can-show-funding-structure', 1)
+			// Disable all inputs and selects
+			table.find('input,select').prop('readonly', true)
 
-$(function(){
-//	$('#toggleEditBtn').click();
+		}
+		$('.is-fully-funded-checkbox:checked').trigger('change')
+	})
+
+	// Initially disable all inputs and selects
+	// $('#fixedAssets_repeater').find('input, select').prop('readonly', true);
+	// $('#fixedAssets_repeater').find('.bootstrap-select').addClass('readonly');
 })
-$(document).on('change','[total-row-tr] input.input-hidden-with-name',function(){
-	let parent = $(this).closest('tr') ; 
-	let totalRow = parent.find('.sum-total-row');
-	let numberOfDecimals  = parent.attr('data-repeat-formatting-decimals') ;
-	if(totalRow){
-		let total =  0 ;
-		parent.find('input.input-hidden-with-name').each(function(index,	row){
-			var currentTotal  = parseFloat(number_unformat($(row).val()));
-			total+=currentTotal;
+
+$(function () {
+	//	$('#toggleEditBtn').click();
+})
+$(document).on('change', '[total-row-tr] input.input-hidden-with-name', function () {
+		console.log('from 22')
+	let parent = $(this).closest('tr')
+	let totalRow = parent.find('.sum-total-row')
+	let numberOfDecimals = parent.attr('data-repeat-formatting-decimals')
+	if (totalRow) {
+		let total = 0
+		parent.find('input.input-hidden-with-name').each(function (index, row) {
+			var currentTotal = parseFloat(number_unformat($(row).val()))
+			total += currentTotal
 		})
-		parent.find('input.sum-total-row').val(number_format(total,numberOfDecimals));
+		parent.find('input.sum-total-row').val(number_format(total, numberOfDecimals))
 	}
-	
+
 })
 $('[total-row-tr] input.input-hidden-with-name').trigger('change')
 
@@ -462,6 +511,7 @@ $('[total-row-tr] input.input-hidden-with-name').trigger('change')
 
 
 $(document).on('change', '.percentage_field,.number_field', function () {
+		console.log('from 23')
 	const parent = $(this).closest('.closest-parent')
 	const columnIndex = $(this).attr('data-column-index')
 	const appendColumnIndex = columnIndex == undefined ? '' : '[data-column-index="' + columnIndex + '"]'
@@ -471,6 +521,7 @@ $(document).on('change', '.percentage_field,.number_field', function () {
 	$(parent).find('.number_multiple_percentage' + appendColumnIndex).val(result).trigger('change')
 })
 $(document).on('change', '.percentage_field2,.number_field2', function () {
+		console.log('from 24')
 	const parent = $(this).closest('.closest-parent')
 	const columnIndex = $(this).attr('data-column-index')
 	const appendColumnIndex = columnIndex == undefined ? '' : '[data-column-index="' + columnIndex + '"]'
@@ -480,6 +531,7 @@ $(document).on('change', '.percentage_field2,.number_field2', function () {
 	$(parent).find('.number_multiple_percentage2' + appendColumnIndex).val(result).trigger('change')
 })
 $(document).on('change', '.percentage_field3,.number_field3', function () {
+		console.log('from 25')
 	const parent = $(this).closest('.closest-parent')
 	const columnIndex = $(this).attr('data-column-index')
 	const appendColumnIndex = columnIndex == undefined ? '' : '[data-column-index="' + columnIndex + '"]'
@@ -489,6 +541,7 @@ $(document).on('change', '.percentage_field3,.number_field3', function () {
 	$(parent).find('.number_multiple_percentage3' + appendColumnIndex).val(result).trigger('change')
 })
 $(document).on('change', '.number_field_1,.number_field_2', function () {
+	console.log('from 26')
 	const parent = $(this).closest('.closest-parent')
 	const columnIndex = $(this).attr('data-column-index')
 	const appendQuery = columnIndex == undefined ? '' : '[data-column-index="' + columnIndex + '"]'
@@ -505,6 +558,7 @@ $(document).on('change', '.number_field_1,.number_field_2', function () {
 
 
 $(document).on('change', '.sum-num1,.sum-num2,.sum-num3', function () {
+		console.log('from 27')
 	const parent = $(this).closest('.closest-parent')
 	const columnIndex = $(this).attr('data-column-index')
 	const appendQuery = columnIndex == undefined ? '' : '[data-column-index="' + columnIndex + '"]'
@@ -522,6 +576,7 @@ $(document).on('change', '.sum-num1,.sum-num2,.sum-num3', function () {
 
 
 $(document).on('change', '.number_minus_field_1,.number_minus_field_2', function () {
+	console.log('from 28')
 	const parent = $(this).closest('.closest-parent')
 	const columnIndex = $(this).attr('data-column-index')
 	const appendQuery = columnIndex == undefined ? '' : '[data-column-index="' + columnIndex + '"]'
@@ -537,6 +592,7 @@ $(document).on('change', '.number_minus_field_1,.number_minus_field_2', function
 })
 
 $(document).on('change', '.growth_percentage', function (event) {
+	console.log('from 29')
 	const parent = $(this).closest('.closest-parent')
 	let percentage = $(parent).find('.growth_percentage').val()
 	percentage = percentage ? percentage : 0
@@ -548,35 +604,23 @@ $(document).on('change', '.growth_percentage', function (event) {
 	}
 })
 $(document).on('change', '.number_growth_amount', function (event) {
+		console.log('from 30')
 	const parent = $(this).closest('.closest-parent')
 	$(parent).next('.closest-parent').find('.growth_percentage').trigger('change')
 })
 
 
 $(document).on('change', '.growth_percentage_in_diff_parent', function (event) {
-
+console.log('from 31')
 	$('.parent-for-salary-amount .number_growth_amount_in_diff_parent').each(function (index, input) {
 		$(input).trigger('change')
 	})
 
 })
-$(document).on('change', '.number_growth_amount_in_diff_parent', function (event) {
-	return
-	let parent = $(this).closest('.closest-parent')
-	let previousParent = parent.prev('.closest-parent').val()
 
-	let percentage = $('.growth_percentage_in_diff_parent').val()
-	percentage = percentage ? percentage : 0
-	if (previousParent) {
-		let previousAmount = previousParent.find('.number_growth_amount').val()
-		const result = previousAmount * (1 + (percentage / 100))
-		$(parent).find('.number_growth_amount_in_diff_parent').val(number_format(result)).trigger('change')
-	}
-
-
-})
 
 $(document).on('change', '.total_input', function () {
+	console.log('from 32')
 	const parent = $(this).closest('.closest-parent')
 	let total = 0
 	$(parent).find('.total_input').each(function (index, input) {
@@ -586,6 +630,7 @@ $(document).on('change', '.total_input', function () {
 })
 
 document.addEventListener('DOMContentLoaded', function () {
+		console.log('from 33')
 	// Select all elements with class target_last_value
 	document.querySelectorAll('.target_last_value').forEach(icon => {
 		icon.addEventListener('click', function () {
@@ -623,6 +668,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	})
 })
 $(document).ready(function () {
+		console.log('from 34')
 	$('.target_last_value_to_right').on('click', function () {
 
 		// Find the closest form-group and the input within it
@@ -650,6 +696,7 @@ $(document).on('click', '.toggle-show-hide', function () {
 	$(query).toggleClass('hidden')
 })
 $(document).ready(function () {
+		console.log('from 35')
 	$('.target_last_value_to_right_until_end').on('click', function () {
 		let parentDiv = $(this).closest('.parent-for-salary-amount')
 		let currentElement = $(this).closest('.common-parent').find('.repeat-to-right-element')
@@ -669,11 +716,12 @@ $(document).ready(function () {
 
 
 $(function () {
+		console.log('from 36')
 	$('.is-leasing:checked').trigger('change')
 })
 
 $(document).on('change', '.sum_product_value_1,.sum_product_quantity_1,.sum_product_value_2,.sum_product_quantity_2', function () {
-
+	console.log('from 37')
 
 	const parent = $(this).closest('.closest-parent')
 	const columnIndex = $(this).attr('data-column-index')
@@ -695,11 +743,13 @@ $(document).on('change', '.sum_product_value_1,.sum_product_quantity_1,.sum_prod
 
 
 $(document).on('click', '.parent-checkbox', function () {
+		console.log('from 38')
 	$(this).closest('.closest-parent').find('input[type="checkbox"]').prop('checked', false).trigger('change')
 	$(this).closest('td').find('input[type="checkbox"]').prop('checked', true).trigger('change')
 
 })
 $(document).on('change', '.name-required-when-greater-than-zero-js', function () {
+		console.log('from 39')
 	const value = $(this).val()
 	const parent = $(this).closest('.closest-parent')
 	if (value > 0) {
@@ -715,6 +765,7 @@ $(function () {
 	$('.delay-button').prop('disabled', false)
 })
 $(document).on('change', '.allocate-checkbox', function () {
+		console.log('from 38')
 	const modal = $(this).closest('.modal')
 	const isChecked = $(this).is(':checked')
 	if (isChecked) {
@@ -731,6 +782,7 @@ $(document).on('change', '.allocate-checkbox', function () {
 })
 
 $(document).on('change', '.fg-beginning-inventory-original-value-class', function () {
+		console.log('from 39')
 	const value = number_unformat($(this).val())
 	$('.fg-beginning-inventory-value-class').val(value).trigger('change')
 })
@@ -753,6 +805,7 @@ function replaceRepeaterIndex(element) {
 
 
 $(document).on('change', '[total-row-tr] input.input-hidden-with-name', function () {
+		console.log('from 40')
 	let parent = $(this).closest('tr')
 	let totalRow = parent.find('.sum-total-row')
 	let numberOfDecimals = parent.attr('data-repeat-formatting-decimals')
@@ -767,6 +820,7 @@ $(document).on('change', '[total-row-tr] input.input-hidden-with-name', function
 
 })
 $(document).on('change', 'select.expense-category-class', function () {
+	console.log('from 41')
 	const value = $(this).val()
 	const hasAllocation = +$(this).find('option:selected').attr('data-has-allocation')
 	const parent = $(this).closest('.common-parent')
@@ -778,6 +832,7 @@ $(document).on('change', 'select.expense-category-class', function () {
 })
 
 $(document).on('change', '.hundred-minus-number', function () {
+		console.log('from 42')
 	let parent = $(this).closest('.closest-parent')
 	const columnIndex = $(this).attr('data-column-index')
 	const appendColumnIndex = columnIndex == undefined ? '' : '[data-column-index="' + columnIndex + '"]'
@@ -787,6 +842,7 @@ $(document).on('change', '.hundred-minus-number', function () {
 })
 
 $(document).on('change', '.hundred-minus-number-one', function () {
+	console.log('from 43')
 	let parent = $(this).closest('.closest-parent')
 	const columnIndex = $(this).attr('data-column-index')
 	const appendColumnIndex = columnIndex == undefined ? '' : '[data-column-index="' + columnIndex + '"]'
@@ -796,6 +852,7 @@ $(document).on('change', '.hundred-minus-number-one', function () {
 })
 
 $(document).on('change', '.hundred-minus-number1,.hundred-minus-number2', function () {
+	console.log('from 44')
 	let parent = $(this).closest('.closest-parent')
 	const columnIndex = $(this).attr('data-column-index')
 	const appendColumnIndex = columnIndex == undefined ? '' : '[data-column-index="' + columnIndex + '"]'
@@ -807,9 +864,10 @@ $(document).on('change', '.hundred-minus-number1,.hundred-minus-number2', functi
 
 
 let handlePaymentTermModal = function () {
+	console.log('from 45')
 	const parentTermsType = $(this).closest('select').val()
 	const tableId = $(this).closest('table').attr('id')
-	const parent= $(this).closest('td') ;
+	const parent = $(this).closest('td')
 	if (parentTermsType == 'customize') {
 		parent.find('.collection-modal').modal('show')
 	}
@@ -821,6 +879,7 @@ $(document).on('change', 'select.payment_terms', handlePaymentTermModal)
 
 
 $(document).on('change', '.rate-element', function () {
+	console.log('from 46')
 	let total = 0
 	const parent = $(this).closest('tbody')
 
@@ -836,7 +895,7 @@ $(document).on('change', '.rate-element', function () {
 
 $(document).ready(function () {
 
-
+console.log('from 47')
 	$(document).on('select2:select', '.js-select2-with-one-selection', function (e) {
 		// Keep only the last selected option
 		let selected = e.params.data.id
@@ -847,115 +906,120 @@ $(document).ready(function () {
 
 
 
- function initMultiselect(container) {
-        const $container = $(container);
-        const $trigger = $container.find('.multiselect-trigger');
-        const $dropdown = $container.find('.multiselect-dropdown');
-		if(!$dropdown.length){
-			return ;
+function initMultiselect(container) {
+	const $container = $(container)
+	const $trigger = $container.find('.multiselect-trigger')
+	const $dropdown = $container.find('.multiselect-dropdown')
+	if (!$dropdown.length) {
+		return
+	}
+	console.log($container)
+	console.log($dropdown.length)
+	const $searchInput = $container.find('.search-input')
+	const $addOptionInput = $container.find('.add-option-input')
+	const $addOptionBtn = $container.find('.btn-add-option')
+	const $selectAllBtn = $container.find('.btn-select-all')
+	const $deselectAllBtn = $container.find('.btn-deselect-all')
+	const $optionsContainer = $container.find('.multiselect-options')
+	const $selectedText = $container.find('.selected-text')
+	const $selectedOptionsContainer = $container.find('.selected-options-container')
+	let selectedValues = []
+
+	// Toggle dropdown
+	$trigger.on('click', function (e) {
+		e.stopPropagation()
+		$dropdown.toggle()
+	})
+
+	// Close on outside click
+	$(document).on('click', function (e) {
+		if (!$container.has(e.target).length) {
+			$dropdown.hide()
 		}
-		console.log($container)
-		console.log($dropdown.length)
-        const $searchInput = $container.find('.search-input');
-        const $addOptionInput = $container.find('.add-option-input');
-        const $addOptionBtn = $container.find('.btn-add-option');
-        const $selectAllBtn = $container.find('.btn-select-all');
-        const $deselectAllBtn = $container.find('.btn-deselect-all');
-        const $optionsContainer = $container.find('.multiselect-options');
-        const $selectedText = $container.find('.selected-text');
-        const $selectedOptionsContainer = $container.find('.selected-options-container');
-        let selectedValues = [];
+	})
 
-        // Toggle dropdown
-        $trigger.on('click', function(e) {
-          e.stopPropagation();
-          $dropdown.toggle();
-        });
+	// Bind checkbox events
+	function bindCheckboxEvents($checkbox) {
+		$checkbox.on('change', updateSelected)
+	}
 
-        // Close on outside click
-        $(document).on('click', function(e) {
-          if (!$container.has(e.target).length) {
-            $dropdown.hide();
-          }
-        });
+	// Update selected values and display
+	function updateSelected() {
+		const $options = $optionsContainer.find('.option-item input[type="checkbox"]')
+		selectedValues = $options.filter(':checked').map(function () { return $(this).val() }).get()
+		$selectedText.text(selectedValues.length ? `${selectedValues.length} selected` : 'Select options...')
 
-        // Bind checkbox events
-        function bindCheckboxEvents($checkbox) {
-          $checkbox.on('change', updateSelected);
-        }
-
-        // Update selected values and display
-        function updateSelected() {
-          const $options = $optionsContainer.find('.option-item input[type="checkbox"]');
-          selectedValues = $options.filter(':checked').map(function() { return $(this).val(); }).get();
-          $selectedText.text(selectedValues.length ? `${selectedValues.length} selected` : 'Select options...');
-          
-          // Clear existing hidden inputs
-          $selectedOptionsContainer.empty();
-          // Add a hidden input for each selected value
-          selectedValues.forEach(function(value) {
-            $selectedOptionsContainer.append(
-              `<input type="hidden" name="selectedOptions[]" value="${value}">`
-            );
-          });
-        }
-
-        // Bind initial checkboxes
-        $optionsContainer.find('.option-item input[type="checkbox"]').each(function() {
-          bindCheckboxEvents($(this));
-        });
-
-        // Select All
-        $selectAllBtn.on('click', function(e) {
-          e.preventDefault();
-          $optionsContainer.find('.option-item input[type="checkbox"]').prop('checked', true);
-          updateSelected();
-        });
-
-        // Deselect All
-        $deselectAllBtn.on('click', function(e) {
-          e.preventDefault();
-          $optionsContainer.find('.option-item input[type="checkbox"]').prop('checked', false);
-          updateSelected();
-        });
-
-        // Search filter
-        $searchInput.on('input', function() {
-          const query = $(this).val().toLowerCase();
-          $optionsContainer.find('.option-item').each(function() {
-            const label = $(this).text().toLowerCase();
-            $(this).toggle(label.includes(query));
-          });
-        });
-
-      
-
-        
-
-        updateSelected(); // Initial call
-      }
-	  
-	  $(function(){
-		$('[data-repeater-item]').each(function(){
-			 initMultiselect($(this));
+		// Clear existing hidden inputs
+		$selectedOptionsContainer.empty()
+		// Add a hidden input for each selected value
+		selectedValues.forEach(function (value) {
+			$selectedOptionsContainer.append(
+				`<input type="hidden" name="selectedOptions[]" value="${value}">`
+			)
 		})
-	  })
+	}
 
-	  
-	  $(document).on('change','[js-main-select]',function(){
-		const value = $(this).val();
-		const isChecked = $(this).is(':checked');
-		if(isChecked){
-			$(this).closest('.multiselect-options').find('input[data-parent="'+value+'"]').attr('checked',true).trigger('change');
-		}else{
-			$(this).closest('.multiselect-options').find('input[data-parent="'+value+'"]').attr('checked',false).trigger('change');
-		}
-	  })
-	$(document).on('changed.bs.select', 'select.js-due_in_days', function(e, clickedIndex, isSelected, previousValue) {
-        if (isSelected) {
-            let currentValue = $(this).find('option').eq(clickedIndex).val();
-            setTimeout(() => {
-                $(this).selectpicker('val', [currentValue]).selectpicker('refresh');
-            }, 0);
-        }
-    });
+	// Bind initial checkboxes
+	$optionsContainer.find('.option-item input[type="checkbox"]').each(function () {
+		bindCheckboxEvents($(this))
+	})
+
+	// Select All
+	$selectAllBtn.on('click', function (e) {
+		e.preventDefault()
+		$optionsContainer.find('.option-item input[type="checkbox"]').prop('checked', true)
+		updateSelected()
+	})
+
+	// Deselect All
+	$deselectAllBtn.on('click', function (e) {
+		e.preventDefault()
+		$optionsContainer.find('.option-item input[type="checkbox"]').prop('checked', false)
+		updateSelected()
+	})
+
+	// Search filter
+	$searchInput.on('input', function () {
+		const query = $(this).val().toLowerCase()
+		$optionsContainer.find('.option-item').each(function () {
+			const label = $(this).text().toLowerCase()
+			$(this).toggle(label.includes(query))
+		})
+	})
+
+
+
+
+
+	updateSelected() // Initial call
+}
+
+$(function () {
+	$('[data-repeater-item]').each(function () {
+		initMultiselect($(this))
+	})
+})
+
+
+$(document).on('change', '[js-main-select]', function () {
+	console.log('from 48')
+	const value = $(this).val()
+	const isChecked = $(this).is(':checked')
+	if (isChecked) {
+		$(this).closest('.multiselect-options').find('input[data-parent="' + value + '"]').attr('checked', true).trigger('change')
+	} else {
+		$(this).closest('.multiselect-options').find('input[data-parent="' + value + '"]').attr('checked', false).trigger('change')
+	}
+})
+$(document).on('changed.bs.select', 'select.js-due_in_days', function (e, clickedIndex, isSelected, previousValue) {
+	console.log('from 49')
+	if (isSelected) {
+		let currentValue = $(this).find('option').eq(clickedIndex).val()
+		setTimeout(() => {
+			$(this).selectpicker('val', [currentValue]).selectpicker('refresh')
+		}, 0)
+	}
+})
+$(document).on('click','.increase-rate-parent',function(){
+	$(this).closest('.increase-rate-parent').find('.modal-increase-rates').modal('show')
+})

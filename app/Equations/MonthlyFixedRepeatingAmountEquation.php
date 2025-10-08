@@ -2,7 +2,7 @@
 namespace App\Equations;
 class MonthlyFixedRepeatingAmountEquation
 {
-	public function calculate(float $amount,int $startDateAsIndex,int $endDateAsIndex,string $increaseInterval,float $increaseRate,bool $isDeductible,float $vatRate,float $withholdRate):array 
+	public function calculate(float $amount,int $startDateAsIndex,int $endDateAsIndex,string $increaseInterval, $increaseRate,bool $isDeductible,float $vatRate,float $withholdRate,$dateIndexWithYearIndex = []):array 
 	{
 		$resultWithoutVat = [];
 		$resultWithVat = [];
@@ -18,6 +18,9 @@ class MonthlyFixedRepeatingAmountEquation
 		$amountAfterVat = $isDeductible ? $amountBeforeVat : $amountBeforeVat  * (1+($vatRate / 100));
 		// $vat = $amountAfterVat - $amountBeforeVat;
 		for($currentStartDateAsIndex ; $currentStartDateAsIndex <= $endDateAsIndex ; $currentStartDateAsIndex++ ){
+			
+			$increaseRate = is_array($increaseRate) ? $increaseRate[$dateIndexWithYearIndex[$currentStartDateAsIndex]] : $increaseRate ;
+			
 			if($counter!=0&&$counter % $intervalMode == 0){
 				$resultWithoutVat[$currentStartDateAsIndex] = $resultWithoutVat[$currentStartDateAsIndex-1] * (1+$increaseRate/100); 
 				$withholdAmounts[$currentStartDateAsIndex]=$resultWithoutVat[$currentStartDateAsIndex] * $withholdRate / 100 ;

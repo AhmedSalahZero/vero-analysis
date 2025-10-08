@@ -393,8 +393,8 @@ Route::middleware([])->group(function () {
 						/**
 						 * * Start Leasing Revenue Streams Breakdown  
 						 */
-						route::get('revenue-streams-breakdown/leasing','LeasingRevenueStreamBreakdownController@create')->name('create.leasing.revenue.stream.breakdown');
-						route::post('revenue-streams-breakdown/leasing','LeasingRevenueStreamBreakdownController@store')->name('store.leasing.revenue.stream.breakdown');
+						route::get('revenue-streams-breakdown/leasing','LeasingController@create')->name('create.leasing.revenue.stream.breakdown');
+						route::post('revenue-streams-breakdown/leasing','LeasingController@store')->name('store.leasing.revenue.stream.breakdown');
 						/**
 						 * * End Leasing Revenue Streams Breakdown  
 						 */
@@ -471,6 +471,8 @@ Route::middleware([])->group(function () {
 						route::get('expense-name-from-category-only-employees','ExpensesController@getExpenseNamesForCategoryOnlyEmployees')->name('get.expense.name.for.category.only.in.employee');
 						route::get('fixed-assets/ffe','FfeFixedAssetsController@create')->name('create.ffe.fixed.assets');
 						route::post('fixed-assets/ffe','FfeFixedAssetsController@store')->name('store.ffe.fixed.assets');
+						route::get('fixed-assets/ffe/funding-structure','FfeFixedAssetsController@createFundingStructure')->name('create.ffe.funding.structure.fixed.assets');
+						route::post('fixed-assets/ffe/funding-structure','FfeFixedAssetsController@storeFunding')->name('store.ffe.funding.structure.fixed.assets');
 						
 						route::get('fixed-assets/new-branches','NewBranchFixedAssetsController@create')->name('create.new.branch.fixed.assets');
 						route::post('fixed-assets/new-branches','NewBranchFixedAssetsController@store')->name('store.new.branch.fixed.assets');

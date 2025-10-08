@@ -11,7 +11,7 @@ use App\Models\NonBankingService\Study;
 use App\Traits\NonBankingService;
 use Illuminate\Http\Request;
 
-class LeasingRevenueStreamBreakdownController extends Controller
+class LeasingController extends Controller
 {
 	use NonBankingService ;
 	public function create(Company $company , Request $request,Study $study){
@@ -23,7 +23,6 @@ class LeasingRevenueStreamBreakdownController extends Controller
 		$yearsWithItsMonths =  $study->getOperationDurationPerYearFromIndexes() ;
 		$yearOrMonthsIndexes = $study->getYearOrMonthIndexes();
 		$isYearsStudy = !$study->isMonthlyStudy();
-		
 		return [
 			'company'=>$company ,
 			'study'=>$study,
