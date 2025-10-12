@@ -2494,7 +2494,6 @@ class Study extends Model
         $totalPerType =[];
         foreach ($totalExpensePerCategory as $expenseNameId => $currentData) {
             $title = ExpenseName::find($expenseNameId)->getName();
-            
             $tableDataFormatted[1]['sub_items'][$expenseNameId]['options'] =array_merge([
                 'title'=>$title
             ], $defaultNumericInputClasses);

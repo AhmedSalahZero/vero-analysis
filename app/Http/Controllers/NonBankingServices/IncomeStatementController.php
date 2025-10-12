@@ -379,13 +379,13 @@ class IncomeStatementController extends Controller
 		$tableDataFormatted[$eclAndDepreciationOrderIndex]['sub_items'][$title]['year_total'] = HArr::sumPerYearIndex($totalEclExpenses, $yearWithItsMonths);
 	
 		$totalDepreciationExpenses = [];
-		$fixedAssetDepreciations = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('fixed_asset_statements')->where('study_id',$study->id)->pluck('total_monthly_depreciation')->toArray();
+		$fixedAssetDepreciations = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('fixed_assets')->where('study_id',$study->id)->pluck('total_monthly_depreciations')->toArray();
 		$title = __('Depreciation Expense')  ;
 		$tableDataFormatted[$eclAndDepreciationOrderIndex]['sub_items'][$depreciationKey]['options'] =array_merge([
 			'title'=>$title
 		], $defaultNumericInputClasses);
 		foreach ($fixedAssetDepreciations as $revenueType => $currentData) {
-			$currentData = (array) json_decode($currentData);
+			$currentData = json_decode($currentData,true);
 			$totalDepreciationExpenses  = HArr::sumAtDates([$totalEclExpenses,$currentData],$sumKeys);
         }
 		$tableDataFormatted[$eclAndDepreciationOrderIndex]['sub_items'][$depreciationKey]['data'] = $totalDepreciationExpenses;

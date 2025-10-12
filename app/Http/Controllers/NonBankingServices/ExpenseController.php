@@ -9,6 +9,7 @@ use App\Models\NonBankingService\ExpenseName;
 use App\Traits\NonBankingService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 
 class ExpenseController extends Controller
 {
@@ -132,10 +133,27 @@ class ExpenseController extends Controller
 	{
 		
 		$expenseType  =$request->get('expense_type');
-		$oldIdsFromDatabase = $company->expenseNamesFor($expenseType,$company->id)->pluck('id')->toArray();
-		$company->storeRepeaterRelations($request,['expenseNames'],$company,[
-			'expense_type'=>$expenseType 
-		],$oldIdsFromDatabase);
+		// $oldIdsFromDatabase = $company->expenseNamesFor($expenseType,$company->id)->pluck('id')->toArray();
+		
+		// $company->storeRepeaterRelations($request,['expenseNames'],$company,[
+		// 	'expense_type'=>$expenseType 
+		// ],$oldIdsFromDatabase);
+		$expenseNames = $request->get('expenseNames');
+		foreach($expenseNames as $expenseNameArr){
+			$name = $expenseNameArr['name'];
+			$isEmployeeExpense = Arr::first($expenseNameArr['is_employee_expense']??[])??0;
+			$isBranchExpense = Arr::first($expenseNameArr['is_branch_expense']??[])??0;
+			$expenseName = ExpenseName::where('company_id',$company->id)->where('expense_type',$expenseType)->where('name',$name)->first();
+			if(!$expenseName){
+				ExpenseName::create([
+					'company_id'=>$company->id ,
+					'name'=>$name ,
+					'expense_type'=>$expenseType ,
+					'is_employee_expense'=>$isEmployeeExpense,
+					'is_branch_expense'=>$isBranchExpense
+				]);
+			}
+		}
 		
 		return response()->json([
 			'redirectTo'=>route('view.expense.names',['company'=>$company->id])
@@ -161,6 +179,7 @@ class ExpenseController extends Controller
 		$additionalData = [
 			'expense_type'=>$request->get('expense_type'),
 		];
+		
 	
 		$company->storeRepeaterRelations($request,['expenseNames'],$company,$additionalData,$oldIdsFromDatabase);
 		

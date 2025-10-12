@@ -158,14 +158,17 @@ use App\Models\NonBankingService\Expense;
                                     </div>
                                 </td>
 
-
                                 <td>
-                                    <div class="d-flex align-items-center">
-                                        <input class="form-control only-percentage-allowed text-center" value="{{ isset($subModel) ? number_format($subModel->getIncreaseRate(),PERCENTAGE_DECIMALS) : "0.00" }}" type="text">
-                                        <span style="margin-left:3px	">%</span>
-                                        <input type="hidden" value="{{ (isset($subModel) ? $subModel->getIncreaseRate() : 2) }}" @if($isRepeater) name="increase_rate" @else name="{{ $tableId }}[0][increase_rate]" @endif>
+                                      <div class="d-flex align-items-center increase-rate-parent">
+                            {{-- <input class="form-control only-percentage-allowed text-center" value="{{ isset($subModel) ? number_format($subModel->getIncreaseRate(),PERCENTAGE_DECIMALS) : "0.00" }}" type="text"> --}}
+                            {{-- <span style="margin-left:3px	">%</span> --}}
+							<button class="btn btn-primary btn-md text-nowrap increase-rate-trigger-btn" type="button" data-toggle="modal" >{{ __('Increase Rates') }}</button>
+							<x-modal.increase-rates :study="$study" :subModel="isset($subModel) ? $subModel : null " :tableId="$tableId" :isRepeater="$isRepeater" :id="$repeaterId.'test-modal-id'"></x-modal.increase-rates>
 
-                                    </div>
+                            {{-- <input type="hidden" value="{{ (isset($subModel) ? $subModel->getIncreaseRate() : 0) }}" @if($isRepeater) name="increase_rate" @else name="{{ $tableId }}[0][increase_rate]" @endif> --}}
+
+                        </div>
+						
                                 </td>
                                 {{-- <td>
                                     <x-form.select :selectedValue="isset($subModel) ? $subModel->getIncreaseInterval() : 'annually' " :options="getDurationIntervalTypesForSelectExceptMonthly()" :add-new="false" class="select2-select   repeater-select" :all="false" name="@if($isRepeater) increase_interval @else {{ $tableId }}[0][increase_interval] @endif"></x-form.select>

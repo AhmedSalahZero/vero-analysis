@@ -224,7 +224,6 @@
                                     </div>
                                 </td>
 
-
                                 <td>
                                     <div class="d-flex align-items-center">
                                         <input class="form-control only-percentage-allowed text-center" value="{{ isset($subModel) ? number_format($subModel->getIncreaseRate(),PERCENTAGE_DECIMALS) : 0 }}" type="text">
