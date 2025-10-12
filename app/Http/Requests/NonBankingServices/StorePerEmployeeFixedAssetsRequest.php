@@ -4,6 +4,7 @@ namespace App\Http\Requests\NonBankingServices;
 
 use App\Equations\MonthlyFixedRepeatingAmountEquation;
 use App\Helpers\HArr;
+use App\Models\NonBankingService\Manpower;
 use App\Models\NonBankingService\Position;
 use App\Models\NonBankingService\Study;
 use Arr;
@@ -63,11 +64,12 @@ class StorePerEmployeeFixedAssetsRequest extends FormRequest
 			
 			// calculate position  
 			$currentPositionIds  = $fixedAssetArr['position_ids']??[];
-			$currentPositions = Position::where('company_id',$companyId)->whereIn('id',$currentPositionIds)->get();
-
+			$currentPositions = Manpower::where('study_id',$study->id)->whereIn('position_id',$currentPositionIds)->get();
+			
 			$hiringCountArrs = $currentPositions->pluck('hiring_counts')->toArray();
 			$dates = array_keys(Arr::first($hiringCountArrs,null,[]));
 			$sumHiringCount = HArr::sumAtDates($hiringCountArrs,$dates);
+			
 			$itemCost = $fixedAssetArr['ffe_item_cost'];
 			$vatRate = $fixedAssetArr['vat_rate'];
 			$isDeductible = false;

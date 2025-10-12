@@ -20,33 +20,7 @@ use App\Models\NonBankingService\Expense;
 
 
 
-            <div class="kt-portlet " style="margin-bottom:5px;">
-
-
-                <div class="kt-portlet__body">
-
-
-                    <div class="">
-                        @php
-                        // $index = 0 ;
-                        @endphp
-                        <div class="d-flex align-items-center justify-content-start " style="margin-right:auto">
-                            {{-- @foreach(getManpowerTypesForValuesForNonBanking() as $typeElement) --}}
-                            <button data-value="fixedAssets" class="btn mb-5 js-type-btn type-btn btn btn-outline-info active">{{ $title }}</button>
-                            @php
-                            // $index++;
-                            @endphp
-                            {{-- @endforeach --}}
-                        </div>
-
-
-
-
-                    </div>
-
-
-                </div>
-            </div>
+          
             <input type="hidden" name="fixed_asset_type" value="{{ $fixedAssetType }}">
             {{-- @foreach(count($departments)? $departments : [null] as $department) --}}
             @php
@@ -290,19 +264,8 @@ use App\Models\NonBankingService\Expense;
     //      $(tableId).closest('.js-parent-to-table').show();
     //
     //  }) 
-    $(document).on('click', '.js-type-btn', function(e) {
-        e.preventDefault();
-        const mainCardId = $(this).attr('data-value')
-        $('.js-parent-to-table').show();
-        $('.js-type-btn').removeClass('active');
-        $(this).addClass('active');
-        $('.parent-card').hide();
-        $('[data-card-id="' + mainCardId + '"]').show();
-    })
-    $(function() {
-        $('#expense_type').trigger('change')
-        $('.js-type-btn.active').trigger('click')
-    })
+  
+  
 
     $(function() {
         $(document).on('click', '.js-show-all-categories-trigger', function() {

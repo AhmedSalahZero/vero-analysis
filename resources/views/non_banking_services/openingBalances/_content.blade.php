@@ -30,84 +30,88 @@
 
 
 
-	<div class="div-title">
-		{{ __('Other Long Term Assets') }}
-	</div>
-	@php
-	$repeaterId = 'otherLongTermAssetsOpeningBalances';
-	$hiringPopModels[] =$repeaterId;
-	@endphp
-	<div class="formItem repeater{{ $repeaterId }}">
+<div class="div-title">
+    {{ __('Other Long Term Assets') }}
+</div>
+@php
+$repeaterId = 'otherLongTermAssetsOpeningBalances';
+$hiringPopModels[] =$repeaterId;
+@endphp
+<div class="formItem repeater{{ $repeaterId }}">
 
-		<div data-repeater-list="{{ $repeaterId }}">
-			@foreach(count($otherLongTermAssetsOpeningBalances) ? $otherLongTermAssetsOpeningBalances : [null] as $currentRowIndex=>$model)
-			<div data-repeater-item class="container parent-for-salary-amount">
-				<input type="hidden" name="id" value="{{ $model ? $model->id : 0 }}">
-				<div class="row closest-parent pb-2  col-12">
-					<div class="col-3">
-						<label>{{ __('Amount') }}</label>
-						<input type="text" name="amount" class="form-control" value="{{ $model ? $model->getAmount() : 0 }}">
-					</div>
+    <div data-repeater-list="{{ $repeaterId }}">
+        @foreach(count($otherLongTermAssetsOpeningBalances) ? $otherLongTermAssetsOpeningBalances : [null] as $currentRowIndex=>$model)
+        <div data-repeater-item class="container parent-for-salary-amount">
+            <input type="hidden" name="id" value="{{ $model ? $model->id : 0 }}">
+            <div class="row closest-parent pb-2  col-12">
+                <div class="col-3">
+                    <label>{{ __('Name') }}</label>
+                    <input type="text" name="name" class="form-control" value="{{ $model ? $model->getName() : 0 }}">
+                </div>
+                <div class="col-3">
+                    <label>{{ __('Amount') }}</label>
+                    <input type="text" name="amount" class="form-control" value="{{ $model ? $model->getAmount() : 0 }}">
+                </div>
 
-					<div class="col-3 common-parent">
-						<label class="visible-hidden">{{ __('Settlements') }}</label>
-						<div>
-							<button class="btn btn-primary btn-md text-nowrap " type="button" data-toggle="modal" data-target="#modal-{{ $repeaterId }}-{{ $currentRowIndex }}">{{ __('Settlements') }}</button>
-							<input data-repeater-delete type="button" class="btn btn-danger btn-md ml-2" value="{{ __('Delete') }}">
-						</div>
-					</div>
-				</div>
+                <div class="col-3 common-parent">
+                    <label class="visible-hidden">{{ __('Settlements') }}</label>
+                    <div>
+                        <button class="btn btn-primary btn-md text-nowrap " type="button" data-toggle="modal" data-target="#modal-{{ $repeaterId }}-{{ $currentRowIndex }}">{{ __('Settlements') }}</button>
+                        <input data-repeater-delete type="button" class="btn btn-danger btn-md ml-2" value="{{ __('Delete') }}">
+                    </div>
+                </div>
+            </div>
 
-				<!-- Modal for Settlements -->
-				<div class="modal fade" id="modal-{{ $repeaterId }}-{{ $currentRowIndex }}" tabindex="-1" role="dialog" aria-labelledby="modalLabel-{{ $repeaterId }}-{{ $currentRowIndex }}" aria-hidden="true">
-					<div class="modal-dialog modal-full" role="document">
-						<div class="modal-content">
-							<div class="modal-header header-border">
-								<h5 class="modal-title font-size-1rem text-blue" id="modalLabel-{{ $repeaterId }}">{{ __('Settlements') }}</h5>
-								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-									<span aria-hidden="true">&times;</span>
-								</button>
-							</div>
-							<div class="modal-body">
-								<table>
-									<tbody>
-										@php
-										$yearIndexWithItsMonthsAsIndexAndString = $study->getYearIndexWithItsMonthsAsIndexAndString();
-										@endphp
-										@foreach($yearIndexWithItsMonthsAsIndexAndString as $yearIndex => $itsMonths)
-										<tr>
-											@foreach($itsMonths as $dateAsIndex => $dateAsString )
-											@php $dateFormatted=\Carbon\Carbon::make($dateAsString)->format('M`Y');
-											@endphp
-											<td>
-												<div class="form-group text-center">
-													<label>{{ $dateFormatted }}</label>
-													<div class="ml-2">
-														<input class="form-control input-border" data-main-category="{{ $repeaterId }}" data-sub-category="payload" data-last-index="{{ $dateAsIndex }}" name="[payload]" multiple value="{{ $model ? $model->getPayloadAtDateIndex($dateAsIndex):0 }}">
-													</div>
-												</div>
-											</td>
-											@endforeach
-										</tr>
-										@endforeach
-									</tbody>
-								</table>
-							</div>
-							<div class="modal-footer">
-								<button type="button" class="btn  save-modal btn-primary" data-dismiss="modal">{{ __('Save') }}</button>
-								{{-- <button type="button" class="btn btn-primary">{{ __('Save changes') }}</button> --}}
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-			@endforeach
-		</div>
-		<div class="ml-4 mt-4 d-flex justify-content-between" style="width:94%">
-			<input data-repeater-create type="button" class="btn btn-success btn-sm " value="{{ __('Add Other Long Term Assets') }}">
-		</div>
+            <!-- Modal for Settlements -->
+            <div class="modal fade" id="modal-{{ $repeaterId }}-{{ $currentRowIndex }}" tabindex="-1" role="dialog" aria-labelledby="modalLabel-{{ $repeaterId }}-{{ $currentRowIndex }}" aria-hidden="true">
+                <div class="modal-dialog modal-full" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header header-border">
+                            <h5 class="modal-title font-size-1rem text-blue" id="modalLabel-{{ $repeaterId }}">{{ __('Settlements') }}</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <table>
+                                <tbody>
+                                    @php
+                                    $yearIndexWithItsMonthsAsIndexAndString = $study->getYearIndexWithItsMonthsAsIndexAndString();
+                                    @endphp
+                                    @foreach($yearIndexWithItsMonthsAsIndexAndString as $yearIndex => $itsMonths)
+                                    <tr>
+                                        @foreach($itsMonths as $dateAsIndex => $dateAsString )
+                                        @php $dateFormatted=\Carbon\Carbon::make($dateAsString)->format('M`Y');
+                                        @endphp
+                                        <td>
+                                            <div class="form-group text-center">
+                                                <label>{{ $dateFormatted }}</label>
+                                                <div class="ml-2">
+                                                    <input class="form-control input-border" data-main-category="{{ $repeaterId }}" data-sub-category="payload" data-last-index="{{ $dateAsIndex }}" name="[payload]" multiple value="{{ $model ? $model->getPayloadAtDateIndex($dateAsIndex):0 }}">
+                                                </div>
+                                            </div>
+                                        </td>
+                                        @endforeach
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn  save-modal btn-primary" data-dismiss="modal">{{ __('Save') }}</button>
+                            {{-- <button type="button" class="btn btn-primary">{{ __('Save changes') }}</button> --}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endforeach
+    </div>
+    <div class="ml-4 mt-4 d-flex justify-content-between" style="width:94%">
+        <input data-repeater-create type="button" class="btn btn-success btn-sm " value="{{ __('Add Other Long Term Assets') }}">
+    </div>
 
-	</div>
+</div>
 
 
 
@@ -135,7 +139,7 @@ $hiringPopModels[] = 'cashAndBankOpeningBalances';
                 </div>
 
                 <div class="col-2">
-                    <label>{{ __('Customer Receivables') }}</label>
+                    <label>{{ __('Customer Outstanding') }}</label>
                     <input type="text" name="customer_receivable_amount" class="form-control  only-greater-than-or-equal-zero-allowed" value="{{ $cashAndBank ? $cashAndBank->getCustomerReceivableAmount() : 0 }}">
                 </div>
 
@@ -203,7 +207,7 @@ $hiringPopModels[] = 'cashAndBankOpeningBalances';
                 <div class="col-2">
                     <label>{{ __('Expected Credit Loss (ECL)') }}</label>
                     <input type="text" name="expected_credit_loss" class="form-control  only-less-than-or-equal-zero-allowed" value="{{ $cashAndBank ? $cashAndBank->getExpectedCreditLossAmount() : 0 }}">
-					<span class="text-red">{{ __('For ECL Please Enter Negative Number') }}</span>
+                    <span class="text-red">{{ __('For ECL Please Enter Negative Number') }}</span>
                 </div>
 
 
@@ -571,6 +575,12 @@ $hiringPopModels[] =$repeaterId;
         <div data-repeater-item class="container parent-for-salary-amount">
             <input type="hidden" name="id" value="{{ $model ? $model->id : 0 }}">
             <div class="row closest-parent pb-2  col-12">
+
+                <div class="col-3">
+                    <label>{{ __('Name') }}</label>
+                    <input type="text" name="name" class="form-control" value="{{ $model ? $model->getName() : 0 }}">
+                </div>
+
                 <div class="col-3">
                     <label>{{ __('Amount') }}</label>
                     <input type="text" name="amount" class="form-control" value="{{ $model ? $model->getAmount() : 0 }}">
@@ -690,84 +700,90 @@ $hiringPopModels[] =$repeaterId;
 
 
 
-	<div class="div-title">
-		{{ __('Other Long Term Liabilities') }}
-	</div>
-	@php
-	$repeaterId = 'otherLongTermLiabilitiesOpeningBalances';
-	$hiringPopModels[] =$repeaterId;
-	@endphp
-	<div class="formItem repeater{{ $repeaterId }}">
+<div class="div-title">
+    {{ __('Other Long Term Liabilities') }}
+</div>
+@php
+$repeaterId = 'otherLongTermLiabilitiesOpeningBalances';
+$hiringPopModels[] =$repeaterId;
+@endphp
+<div class="formItem repeater{{ $repeaterId }}">
 
-		<div data-repeater-list="{{ $repeaterId }}">
-			@foreach(count($otherLongTermLiabilitiesOpeningBalances) ? $otherLongTermLiabilitiesOpeningBalances : [null] as $currentRowIndex=>$model)
-			<div data-repeater-item class="container parent-for-salary-amount">
-				<input type="hidden" name="id" value="{{ $model ? $model->id : 0 }}">
-				<div class="row closest-parent pb-2  col-12">
-					<div class="col-3">
-						<label>{{ __('Amount') }}</label>
-						<input type="text" name="amount" class="form-control" value="{{ $model ? $model->getAmount() : 0 }}">
-					</div>
+    <div data-repeater-list="{{ $repeaterId }}">
+        @foreach(count($otherLongTermLiabilitiesOpeningBalances) ? $otherLongTermLiabilitiesOpeningBalances : [null] as $currentRowIndex=>$model)
+        <div data-repeater-item class="container parent-for-salary-amount">
+            <input type="hidden" name="id" value="{{ $model ? $model->id : 0 }}">
+            <div class="row closest-parent pb-2  col-12">
 
-					<div class="col-3 common-parent">
-						<label class="visible-hidden">{{ __('Settlements') }}</label>
-						<div>
-							<button class="btn btn-primary btn-md text-nowrap " type="button" data-toggle="modal" data-target="#modal-{{ $repeaterId }}-{{ $currentRowIndex }}">{{ __('Settlements') }}</button>
-							<input data-repeater-delete type="button" class="btn btn-danger btn-md ml-2" value="{{ __('Delete') }}">
-						</div>
-					</div>
-				</div>
+                <div class="col-3">
+                    <label>{{ __('Name') }}</label>
+                    <input type="text" name="name" class="form-control" value="{{ $model ? $model->getName() : 0 }}">
+                </div>
 
-				<!-- Modal for Settlements -->
-				<div class="modal fade" id="modal-{{ $repeaterId }}-{{ $currentRowIndex }}" tabindex="-1" role="dialog" aria-labelledby="modalLabel-{{ $repeaterId }}-{{ $currentRowIndex }}" aria-hidden="true">
-					<div class="modal-dialog modal-full" role="document">
-						<div class="modal-content">
-							<div class="modal-header header-border">
-								<h5 class="modal-title font-size-1rem text-blue" id="modalLabel-{{ $repeaterId }}">{{ __('Settlements') }}</h5>
-								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-									<span aria-hidden="true">&times;</span>
-								</button>
-							</div>
-							<div class="modal-body">
-								<table>
-									<tbody>
-										@php
-										$yearIndexWithItsMonthsAsIndexAndString = $study->getYearIndexWithItsMonthsAsIndexAndString();
-										@endphp
-										@foreach($yearIndexWithItsMonthsAsIndexAndString as $yearIndex => $itsMonths)
-										<tr>
-											@foreach($itsMonths as $dateAsIndex => $dateAsString )
-											@php $dateFormatted=\Carbon\Carbon::make($dateAsString)->format('M`Y');
-											@endphp
-											<td>
-												<div class="form-group text-center">
-													<label>{{ $dateFormatted }}</label>
-													<div class="ml-2">
-														<input class="form-control input-border" data-main-category="{{ $repeaterId }}" data-sub-category="payload" data-last-index="{{ $dateAsIndex }}" name="[payload]" multiple value="{{ $model ? $model->getPayloadAtDateIndex($dateAsIndex):0 }}">
-													</div>
-												</div>
-											</td>
-											@endforeach
-										</tr>
-										@endforeach
-									</tbody>
-								</table>
-							</div>
-							<div class="modal-footer">
-								<button type="button" class="btn  save-modal btn-primary" data-dismiss="modal">{{ __('Save') }}</button>
-								{{-- <button type="button" class="btn btn-primary">{{ __('Save changes') }}</button> --}}
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-			@endforeach
-		</div>
-		<div class="ml-4 mt-4 d-flex justify-content-between" style="width:94%">
-			<input data-repeater-create type="button" class="btn btn-success btn-sm " value="{{ __('Add Other Long Term') }}">
-		</div>
+                <div class="col-3">
+                    <label>{{ __('Amount') }}</label>
+                    <input type="text" name="amount" class="form-control" value="{{ $model ? $model->getAmount() : 0 }}">
+                </div>
 
-	</div>
+                <div class="col-3 common-parent">
+                    <label class="visible-hidden">{{ __('Settlements') }}</label>
+                    <div>
+                        <button class="btn btn-primary btn-md text-nowrap " type="button" data-toggle="modal" data-target="#modal-{{ $repeaterId }}-{{ $currentRowIndex }}">{{ __('Settlements') }}</button>
+                        <input data-repeater-delete type="button" class="btn btn-danger btn-md ml-2" value="{{ __('Delete') }}">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal for Settlements -->
+            <div class="modal fade" id="modal-{{ $repeaterId }}-{{ $currentRowIndex }}" tabindex="-1" role="dialog" aria-labelledby="modalLabel-{{ $repeaterId }}-{{ $currentRowIndex }}" aria-hidden="true">
+                <div class="modal-dialog modal-full" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header header-border">
+                            <h5 class="modal-title font-size-1rem text-blue" id="modalLabel-{{ $repeaterId }}">{{ __('Settlements') }}</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <table>
+                                <tbody>
+                                    @php
+                                    $yearIndexWithItsMonthsAsIndexAndString = $study->getYearIndexWithItsMonthsAsIndexAndString();
+                                    @endphp
+                                    @foreach($yearIndexWithItsMonthsAsIndexAndString as $yearIndex => $itsMonths)
+                                    <tr>
+                                        @foreach($itsMonths as $dateAsIndex => $dateAsString )
+                                        @php $dateFormatted=\Carbon\Carbon::make($dateAsString)->format('M`Y');
+                                        @endphp
+                                        <td>
+                                            <div class="form-group text-center">
+                                                <label>{{ $dateFormatted }}</label>
+                                                <div class="ml-2">
+                                                    <input class="form-control input-border" data-main-category="{{ $repeaterId }}" data-sub-category="payload" data-last-index="{{ $dateAsIndex }}" name="[payload]" multiple value="{{ $model ? $model->getPayloadAtDateIndex($dateAsIndex):0 }}">
+                                                </div>
+                                            </div>
+                                        </td>
+                                        @endforeach
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn  save-modal btn-primary" data-dismiss="modal">{{ __('Save') }}</button>
+                            {{-- <button type="button" class="btn btn-primary">{{ __('Save changes') }}</button> --}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endforeach
+    </div>
+    <div class="ml-4 mt-4 d-flex justify-content-between" style="width:94%">
+        <input data-repeater-create type="button" class="btn btn-success btn-sm " value="{{ __('Add Other Long Term') }}">
+    </div>
+
+</div>
 
 
 

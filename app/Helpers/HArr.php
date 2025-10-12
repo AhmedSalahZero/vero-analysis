@@ -940,7 +940,23 @@ class HArr
 		}
 		return $totalSubItems;
 	}
-	
+	public static function formatMultiSubItemsPerKey(array $subItems,array $sumKeys,array $columns ):array 
+	{
+		$totalSubItems = [];
+		foreach($subItems as $name => $subItemJson){
+			
+		
+			$subItemArr = (array)json_decode($subItemJson);
+			if($subItemArr){
+				foreach($columns as $columnName){
+					$subItemArr = (array)($subItemArr[$columnName]??[]);
+				}
+			}
+			$totalSubItems[$name] = HArr::sumAtDates([$totalSubItems , $subItemArr],$sumKeys);
+			
+		}
+		return $totalSubItems;
+	}
 	public static function sumPerCategory(array $items , array $sumKeys,string $titleKeyName , string $payloadKeyName ):array
 	{
 		$result=[];

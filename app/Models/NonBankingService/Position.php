@@ -16,10 +16,10 @@ class Position extends Model
 	protected $connection =NON_BANKING_SERVICE_CONNECTION_NAME;
  	protected $guarded = ['id'];
 	protected $casts = [
-		'hiring_counts'=>'array',
-		'salary_payments'=>'array',
-		'accumulated_manpower_counts'=>'array',
-		'salary_expenses'=>'array',
+		// 'hiring_counts'=>'array',
+		// 'salary_payments'=>'array',
+		// 'accumulated_manpower_counts'=>'array',
+		// 'salary_expenses'=>'array',
 	];
 	public function getName()
 	{

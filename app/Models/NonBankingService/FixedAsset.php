@@ -7,8 +7,8 @@ use App\Models\Company;
 use App\Models\Traits\Scopes\BelongsToCompany;
 use App\Models\Traits\Scopes\NonBankingServices\BelongsToStudy;
 
-use App\ReadyFunctions \CalculateLoanWithdrawal;
 use App\ReadyFunctions\CalculateFixedLoanAtEndService;
+use App\ReadyFunctions\CalculateLoanWithdrawal;
 use App\ReadyFunctions\FfeExecutionAndPayment;
 use App\ReadyFunctions\FixedAssetsPayableEndBalance;
 use App\ReadyFunctions\ProjectsUnderProgress;
@@ -76,7 +76,13 @@ class FixedAsset extends Model
     {
         return $this->type;
     }
-   
+   public function isGeneral()
+   {
+	return $this->getType() == Self::FFE;
+   } public function isPerEmployee()
+   {
+	return $this->getType() == Self::PER_EMPLOYEE;
+   }
     public function getVatRate()
     {
         return $this->vat_rate ?: 0;
@@ -144,7 +150,8 @@ class FixedAsset extends Model
     }
 	public function getTotalItemCostAtDateIndex(int $monthIndex):float
 	{
-		$count = $this->getFfeCounts()[$monthIndex] ?? 0 ;
+		$counts = $this->getCounts();
+		$count = $counts[$monthIndex] ?? 0 ;
 		$fixedAssetAmount = $this->getItemCost();
 		$contingencyRate = $this->getContingencyRate() / 100;
 		$totalFixedAssetAmount = $count* $fixedAssetAmount ;
@@ -152,7 +159,7 @@ class FixedAsset extends Model
 	}
     public function getFfeCounts():array
     {
-        return (array)$this->ffe_counts;
+		return $this->getCounts();
     }
     public function getReplacementCostRate()
     {
@@ -465,4 +472,30 @@ class FixedAsset extends Model
     {
         return $this->end_date;
     }
+	/**
+	 * return [DateAsIndex => count ]
+	 */
+	public function getCounts():array 
+	{
+		$studyDates = $this->study->getCalculatedExtendedStudyDates();
+		if($this->isGeneral()){
+			return (array)$this->ffe_counts; 
+		}
+		if($this->isPerEmployee()){
+			$positions = $this->position_ids ;
+			$result = [];
+			foreach($positions as $positionId){
+				$manpower = Manpower::where('study_id',$this->study->id)->where('position_id',$positionId)->first();
+				$currentHiringCounts = $manpower->hiring_counts;
+				$result = HArr::sumAtDates([$result,$currentHiringCounts],$studyDates);
+				
+			}
+			return $result ;
+		}
+		dd('no counts found');
+	}
+	public function getFfeEquityPayment()
+	{
+		return $this->ffe_equity_payment?:[];
+	}
 }

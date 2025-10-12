@@ -53,7 +53,6 @@ class PerEmployeeFixedAssetsController extends Controller
 	}
 	public function store(Company $company , StorePerEmployeeFixedAssetsRequest $request,Study $study)
 	{
-		
 		$fixedAssetType = $request->get('fixed_asset_type') ;
 	//	$study->storeRelationsWithNoRepeater($request,$company);
 		$study->storeRepeaterRelations($request,$this->getRepeaterRelations(),$company);

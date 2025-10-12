@@ -419,17 +419,15 @@ $(document).on('change', 'select.department-class', function () {
 			var positionArr = res.positionIds
 			var options = ''
 			var positionRow = $(this).closest('tr').find('select.position-class')
-			var positionRow = $(positionRow).attr('data-current-selected-items')
-			var currentSelected = positionRow ? JSON.parse(positionRow) : ''
+			var currentSelected = $(positionRow).attr('data-current-selected-items')
+			 currentSelected = currentSelected ? JSON.parse(currentSelected) : ''
 			for (var positionId in positionArr) {
 				positionId = positionId
 				var selected = currentSelected.includes(positionId)
-				//console.log(currentSelected, positionId, selected, '--')
 				options += `<option ${selected ? 'selected' : ''} value="${positionId}">${positionArr[positionId]}</option>`
 			}
 			if (positionRow != '[]') {
 				$(positionRow).empty().append(options).trigger('change')
-
 			}
 		}
 	})

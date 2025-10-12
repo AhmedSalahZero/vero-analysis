@@ -496,6 +496,9 @@ input.form-control[readonly] {
     min-width: 200px !important;
     max-width: 200px !important;
 }
+.min-w-200 {
+    min-width: 200px !important;
+}
 .max-w-9 {
     width: 9% !important;
     min-width: 9% !important;

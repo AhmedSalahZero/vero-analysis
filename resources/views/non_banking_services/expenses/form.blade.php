@@ -360,7 +360,7 @@ use App\Models\NonBankingService\Expense;
                                 {{-- <input type="hidden" name="id" value="{{ isset($subModel) ? $subModel->id : 0 }}"> --}}
 
                                 <td>
-                                    <div class="max-w-150">
+                                    <div class="min-w-200">
                                         <x-form.select :selectedValue="isset($subModel) ? $subModel->getExpenseCategory() : 'cash'" :options="getExpenseCategoriesForSelect2()" :add-new="false" class="select2-select repeater-select expense_category " :all="false" name="@if($isRepeater) expense_category @else {{ $tableId }}[0][expense_category] @endif"></x-form.select>
 
                                     </div>
@@ -368,19 +368,19 @@ use App\Models\NonBankingService\Expense;
                                 </td>
 
                                 <td>
-                                    <div class="max-w-150">
+                                    <div class="min-w-200">
                                         <x-form.select data-current-selected="{{ isset($subModel) ? $subModel->getExpenseNameId() : '' }}" :selectedValue="isset($subModel) ? $subModel->getExpenseNameId() : ''" :options="[]" :add-new="false" class="select2-select repeater-select expense_name_id " :all="false" name="@if($isRepeater) expense_name_id @else {{ $tableId }}[0][expense_name_id] @endif"></x-form.select>
                                     </div>
                                 </td>
                                 <td>
-                                    <div class="max-w-125">
+                                    <div class="min-w-200">
                                         <x-form.select :selectedValue="isset($subModel) ? $subModel->getPercentageOf() : 'service'" :options="getExpensesPercentageOfForSelect2()" :multiple="false" :add-new="false" class="select2-select repeater-select percentage-of-stream-type-js  " :all="false" name="@if($isRepeater) percentage_of @else {{ $tableId }}[0][percentage_of] @endif"></x-form.select>
                                     </div>
 
                                 </td>
 
                                 <td>
-                                    <div class="max-w-200">
+                                    <div class="min-w-200">
 
                                         <x-select.multi-layer-for-repeater :selectedMainOptions="isset($subModel) ? $subModel->getRevenueStreamTypes() : []" :selectedSubOptions="isset($subModel) ? $subModel->getStreamCategoryIds() : []" :mainItemsName="'revenue_stream_type'" :subItemsName="'stream_category_ids'" :options="$revenueStreams"></x-select.multi-layer-for-repeater>
                                     </div>
@@ -689,7 +689,7 @@ use App\Models\NonBankingService\Expense;
 
 
                         <td>
-                            <div class="max-w-150">
+                            <div class="min-w-200">
                                 <x-form.select :selectedValue="isset($subModel) ? $subModel->getExpenseCategory() : 'cash'" :options="getExpenseCategoriesForSelect2()" :add-new="false" class="select2-select repeater-select expense_category " :all="false" name="@if($isRepeater) expense_category @else {{ $tableId }}[0][expense_category] @endif"></x-form.select>
 
                             </div>
@@ -697,7 +697,7 @@ use App\Models\NonBankingService\Expense;
 
 
                         <td>
-                            <div class="max-w-150">
+                            <div class="min-w-200">
                                 <x-form.select data-current-selected="{{ isset($subModel) ? $subModel->getExpenseNameId() : '' }}" :selectedValue="isset($subModel) ? $subModel->getExpenseNameId() : ''" :options="[]" :add-new="false" class="select2-select repeater-select expense_name_id " :all="false" name="@if($isRepeater) expense_name_id @else {{ $tableId }}[0][expense_name_id] @endif"></x-form.select>
 
                             </div>
@@ -708,7 +708,7 @@ use App\Models\NonBankingService\Expense;
                         </td> --}}
 
                         <td>
-                            <div class="max-w-200">
+                            <div class="min-w-200">
                                 <x-select.multi-layer-for-repeater :selectedMainOptions="isset($subModel) ? $subModel->getRevenueStreamTypes() : []" :selectedSubOptions="isset($subModel) ? $subModel->getStreamCategoryIds() : []" :mainItemsName="'revenue_stream_type'" :subItemsName="'stream_category_ids'" :options="$revenueStreams"></x-select.multi-layer-for-repeater>
                             </div>
                         </td>
@@ -723,7 +723,7 @@ use App\Models\NonBankingService\Expense;
 
                         <td>
 
-                            <div class="max-w-150">
+                            <div class="min-w-200">
                                 @include('components.calendar-month-year',[
                                 'name'=>'start_date',
                                 'value'=>isset($subModel) ? $subModel->getStartDateYearAndMonth() : $study->getOperationStartDateYearAndMonth()

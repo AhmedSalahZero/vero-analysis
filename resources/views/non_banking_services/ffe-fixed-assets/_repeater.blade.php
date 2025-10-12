@@ -1,11 +1,11 @@
 @php
-	use App\Models\NonBankingService\FixedAssetName;
+use App\Models\NonBankingService\FixedAssetName;
 @endphp
 <div data-card-id="{{ $cardId }}" class="kt-portlet parent-card ">
     <div class="kt-portlet__body">
         <h3 class="font-weight-bold text-black form-label kt-subheader__title small-caps mr-5 text-nowrap" style=""> {{ __('Furniture, Fixtures, and Equipment (FF&E) Cost') }}</h3>
         <input type="hidden" name="tableIds[]" value="{{ $tableId }}">
-        <x-tables.repeater-table :initEmpty="false" :removeActionBtn="false" :first-element-deletable="false" :font-size-class="'font-14px'" :append-save-or-back-btn="false" :repeater-with-select2="true" :parentClass="'js-toggle-visibility-----'" :tableName="$tableId " :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
+        <x-tables.repeater-table :hideByDefault="false" :initEmpty="false" :removeActionBtn="false" :first-element-deletable="false" :font-size-class="'font-14px'" :append-save-or-back-btn="false" :repeater-with-select2="true" :parentClass="'js-toggle-visibility-----'" :tableName="$tableId " :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
             <x-slot name="ths">
                 {{-- <x-tables.repeater-table-th :font-size-class="'font-14px'" class="  header-border-down first-column-th-class" :title="__('Actions')"></x-tables.repeater-table-th> --}}
                 <x-tables.repeater-table-th :font-size-class="'font-14px'" class="  header-border-down first-column-th-class" :title="__('Item <br> Name')"></x-tables.repeater-table-th>
@@ -57,13 +57,10 @@
                     </td>
                     <input type="hidden" name="id" value="{{ isset($subModel) ? $subModel->id : 0 }}">
                     <input type="hidden" name="type" value="{{ $fixedAssetType }}">
-					 <td>
-                                    {{-- </td> --}}
+                    <td>
                         <div class="max-w-200">
-                                        <x-form.select :selectedValue="isset($subModel) ? $subModel->getNameId() : 0" :options="FixedAssetName::getGeneralAllForSelect2($company)" :add-new="false" class="select2-select repeater-select expense_category " :all="false" name="@if($isRepeater) name_id @else {{ $tableId }}[0][name_id] @endif"></x-form.select>
-                            {{-- <input value="{{ isset($subModel) ? $subModel->getName() : '' }}" @if($isRepeater) name="name" @else name="{{ $tableId }}[0][name]" @endif class="form-control text-left exclude-from-trigger-change-when-repeat" type="text"> --}}
-
-                        {{-- </div> --}}
+                            <x-form.select :selectedValue="isset($subModel) ? $subModel->getNameId() : 0" :options="FixedAssetName::getGeneralAllForSelect2($company)" :add-new="false" class="select2-select repeater-select expense_category " :all="false" name="@if($isRepeater) name_id @else {{ $tableId }}[0][name_id] @endif"></x-form.select>
+                        </div>
                     </td>
                     <td>
                         <div class="">
@@ -87,14 +84,14 @@
                             <span style="margin-left:3px	">%</span>
                         </div>
                     </td>
-					
-					 <td>
+
+                    <td>
                         <div class="d-flex align-items-center">
                             <input value="{{ isset($subModel) ? $subModel->getContingencyRate():0 }}" @if($isRepeater) name="contingency_rate" @else name="{{ $tableId }}[0][contingency_rate]" @endif class="form-control contingency-rate recalculate-monthly-increase-amounts exclude-from-trigger-change-when-repeat expandable-percentage-input text-left exclude-from-trigger-change-when-repeat" type="text">
                             <span style="margin-left:3px	">%</span>
                         </div>
                     </td>
-					
+
                     <td>
 
 
@@ -104,7 +101,9 @@
                         </div>
                     </td>
                     <td>
+						<div class="min-w-200">
                         <x-form.select :selectedValue="isset($subModel) ? $subModel->getPaymentTerm() : 'cash'" :options="getFfePaymentTerms()" :add-new="false" class="select2-select repeater-select payment_terms " :all="false" name="@if($isRepeater) payment_terms @else {{ $tableId }}[0][payment_terms] @endif"></x-form.select>
+						</div>
                         <x-modal.custom-collection :subModel="isset($subModel) ? $subModel : null " :tableId="$tableId" :isRepeater="$isRepeater" :id="$repeaterId.'test-modal-id'"></x-modal.custom-collection>
                     </td>
                     <td>
@@ -113,10 +112,15 @@
                     <td>
 
 
-                        <div class="">
+                        {{-- <div class="">
                             <input value="{{ isset($subModel) ? $subModel->getReplacementCostRate():0 }}" @if($isRepeater) name="replacement_cost_rate" @else name="{{ $tableId }}[0][replacement_cost_rate]" @endif class="form-control expandable-percentage-input exclude-from-trigger-change-when-repeat text-left " type="text">
-
+                        </div> --}}
+						
+						<div class="d-flex align-items-center justify-content-center">
+                            <input value="{{ isset($subModel) ? $subModel->getReplacementCostRate():0 }}" @if($isRepeater) name="replacement_cost_rate" @else name="{{ $tableId }}[0][replacement_cost_rate]" @endif  class="form-control expandable-percentage-input exclude-from-trigger-change-when-repeat text-left" type="text">
+                            <span style="margin-left:3px	">%</span>
                         </div>
+						
                     </td>
                     <td>
                         <x-form.select :selectedValue="isset($subModel) ? $subModel->getReplacementInterval() : 'cash'" :options="getReplacementInterval()" :add-new="false" class="select2-select repeater-select  " :all="false" name="@if($isRepeater) replacement_interval @else {{ $tableId }}[0][replacement_interval] @endif"></x-form.select>
@@ -178,10 +182,10 @@
 
         {{-- end of fixed monthly repeating amount --}}
         {{-- </form> --}}
-	@php
-		$isFullyFundingTroughEquity = $model->getFixedAssetStructureForFixAssetType($fixedAssetType) ? $model->getFixedAssetStructureForFixAssetType($fixedAssetType)->is_fully_funded_though_equity : 1;
-	
-	@endphp
+        @php
+        $isFullyFundingTroughEquity = $model->getFixedAssetStructureForFixAssetType($fixedAssetType) ? $model->getFixedAssetStructureForFixAssetType($fixedAssetType)->is_fully_funded_though_equity : 1;
+
+        @endphp
 
         <div class="form-group d-inline-block">
             <div class="kt-radio-inline">
@@ -190,14 +194,12 @@
                 </label>
                 <label class="kt-radio kt-radio--success text-black font-size-18px font-weight-bold">
 
-                    <input class="is-fully-funded-checkbox exclude-from-trigger-change-when-repeat" type="radio" value="1" name="generalFixedAssetsFundingStructure[is_fully_funded_though_equity]" @if(!isset($subModel) || ($isFullyFundingTroughEquity)) checked @endisset
-                    > {{ __('Fully Funded Through Equity') }}
+                    <input class="is-fully-funded-checkbox exclude-from-trigger-change-when-repeat" type="radio" value="1" name="generalFixedAssetsFundingStructure[is_fully_funded_though_equity]" @if(!isset($subModel) || ($isFullyFundingTroughEquity)) checked @endisset> {{ __('Fully Funded Through Equity') }}
                     <span></span>
                 </label>
 
                 <label class="kt-radio kt-radio--danger text-black font-size-18px font-weight-bold">
-                    <input class="is-fully-funded-checkbox exclude-from-trigger-change-when-repeat" type="radio" value="0" name="generalFixedAssetsFundingStructure[is_fully_funded_though_equity]" @if(isset($subModel) && !$isFullyFundingTroughEquity) checked @endisset
-                    > {{ __('Funded Through Equity & Debt') }}
+                    <input class="is-fully-funded-checkbox exclude-from-trigger-change-when-repeat" type="radio" value="0" name="generalFixedAssetsFundingStructure[is_fully_funded_though_equity]" @if(isset($subModel) && !$isFullyFundingTroughEquity) checked @endisset> {{ __('Funded Through Equity & Debt') }}
                     <span></span>
                 </label>
             </div>

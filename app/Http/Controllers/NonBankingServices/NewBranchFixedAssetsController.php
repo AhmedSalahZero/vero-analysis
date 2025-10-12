@@ -55,14 +55,14 @@ class NewBranchFixedAssetsController extends Controller
 	
 		$study->storeRepeaterRelations($request,$this->getRepeaterRelations(),$company);
 		
-
+		// $fundingStructureCounts = $study->getFixedAssetsWithCountsDates(FixedAsset::NEW_BRANCH);
 		// $loanStructure = $study->getLoanStructure($fixedAssetType);
         // $isFullyFundedThroughEquity = $request->input('generalFixedAssetsFundingStructure.is_fully_funded_though_equity');
 		// if($isFullyFundedThroughEquity && $loanStructure){
 		// 	 $loanStructure->delete();
 		// }
 		// $study->recalculateFixedAssets($fixedAssetType);
-        // if (!$isFullyFundedThroughEquity) {
+        // if (!$isFullyFundedThroughEquity && count($fundingStructureCounts) ) {
         //     return response()->json([
         //     'redirectTo'=>route('create.ffe.funding.structure.fixed.assets', ['company'=>$company->id,'study'=>$study->id])
         // ]);

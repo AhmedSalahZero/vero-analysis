@@ -53,6 +53,7 @@ class PortfolioPresentValue
 					// $currentMonthsCount = ($currentOccurrenceMonthIndex+$i -$currentOccurrenceMonthIndex  ) ;
 					$currentNetPresetValue = $currentOccurrenceAvgAmount / pow(1+$currentMonthlyInterest,$currentMonthsCount);  
 					$currentUnearnedInterest = $currentOccurrenceAvgAmount-$currentNetPresetValue;
+				
 					$currentMonthsAmountsDueDates[$currentOccurrenceMonthIndex][$currentOccurrenceMonthIndex+$i] = [
 						'schedule_payment'=>$currentOccurrenceAvgAmount,
 						'month_counts'=>$currentMonthsCount,
@@ -61,6 +62,7 @@ class PortfolioPresentValue
 					]; 
 					
 					$portfolioLoanFundingRatesAtOccurrenceMonthIndex = $portfolioLoanFundingRatesPerMonths[$currentOccurrenceMonthIndex] / 100;
+					// dd($portfolioLoanFundingRatesAtOccurrenceMonthIndex);
 					$accumulatedMonthsAmountsDueDates[$currentOccurrenceMonthIndex]['net_present_value'] = isset($accumulatedMonthsAmountsDueDates[$currentOccurrenceMonthIndex]['net_present_value']) ? $accumulatedMonthsAmountsDueDates[$currentOccurrenceMonthIndex]['net_present_value'] + $currentNetPresetValue : $currentNetPresetValue;
 					$accumulatedMonthsAmountsDueDates[$currentOccurrenceMonthIndex]['bank_loan_amount'] = $accumulatedMonthsAmountsDueDates[$currentOccurrenceMonthIndex]['net_present_value'] * $portfolioLoanFundingRatesAtOccurrenceMonthIndex;
 					$accumulatedMonthsAmountsDueDates[$currentOccurrenceMonthIndex]['unearned_interest'] = isset($accumulatedMonthsAmountsDueDates[$currentOccurrenceMonthIndex]['unearned_interest']) ? $accumulatedMonthsAmountsDueDates[$currentOccurrenceMonthIndex]['unearned_interest'] + $currentUnearnedInterest : $currentUnearnedInterest;
@@ -145,12 +147,13 @@ class PortfolioPresentValue
 				$currentBankMarginRate = $bankMarginRates[$currentOccurrenceMonthIndex]??0;
 				$currentLoanDateAsString = $dateIndexWithDate[$currentOccurrenceMonthIndex];
 				$currentLoanAmount = $portfolioMortgageLoanArray['net_present_value'];
+				
 				$currentBankLoanAmount = $portfolioMortgageLoanArray['bank_loan_amount'];
+			
 				$currentBaseRate = $portfolioMortgageLoanArray['base_rate'];
 				$currentMarginRate = $portfolioMortgageLoanArray['margin_rate'];
 				$currentUnearnedInterest = $portfolioMortgageLoanArray['unearned_interest'];
 				$currentDaysCount = 30 ;
-				
 				
 				$portfolioLoanAmounts[$currentOccurrenceMonthIndex]=$calculateFixedLoanAtEndService->__calculate([],-1,$loanType,$currentLoanDateAsString,$currentLoanAmount,$currentBaseRate,$currentMarginRate,$tenorInMonths,$installmentPaymentIntervalName,0,null,0,null,0,$currentOccurrenceMonthIndex,$currentDaysCount)['final_result']??[];
 			
@@ -208,7 +211,7 @@ class PortfolioPresentValue
 					$currentEndUnearnedBeginningBalance = $currentEndUnearnedEndBalance;
 					$currentUnearnedInterest=0;
 				}
-				// $interestRevenue 
+			
 				
 			}
 			return $totalPortfolioEndBalance;

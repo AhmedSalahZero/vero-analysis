@@ -82,13 +82,13 @@ use App\Models\NonBankingService\Expense;
                                 </td>
 
                                 <td>
-                                    <div class="max-w-150">
+                                    <div class="min-w-150">
                                         <x-form.select :selectedValue="isset($subModel) ? $subModel->getExpenseCategory() : 'cash'" :options="getExpenseCategoriesForSelect2()" :add-new="false" class="select2-select repeater-select expense_category " :all="false" name="@if($isRepeater) expense_category @else {{ $tableId }}[0][expense_category] @endif"></x-form.select>
                                     </div>
                                 </td>
 
                                 <td>
-                                    <div class="max-w-200">
+                                    <div class="min-w-200">
                                         <x-form.select data-current-selected="{{ isset($subModel) ? $subModel->getExpenseNameId() : '' }}" :selectedValue="isset($subModel) ? $subModel->getExpenseNameId() : ''" :options="[]" :add-new="false" class="select2-select repeater-select expense_name_id " :all="false" name="@if($isRepeater) expense_name_id @else {{ $tableId }}[0][expense_name_id] @endif"></x-form.select>
                                     </div>
                                 </td>
@@ -98,14 +98,14 @@ use App\Models\NonBankingService\Expense;
 
 
                                 <td>
-                                    <div class="max-w-200">
+                                    <div class="min-w-200">
                                         <x-form.select :multiple="true" :selectedValue="isset($subModel) ? $subModel->getDepartmentIds() : ''" :options="$departmentsFormatted" :add-new="false" class="select2-select repeater-select  js-update-positions-for-department" :all="false" data-current-selected="{{ json_encode(isset($subModel) ? $subModel->getPositionIds():[]) }}" ></x-form.select>
                                     </div>
                                 </td>
 								
 								
                                 <td>
-                                    <div class="max-w-200">
+                                    <div class="min-w-200">
                                         <x-form.select :multiple="true" :selectedValue="isset($subModel) ? $subModel->getPositionIds() : ''" :options="[]" :add-new="false" class="select2-select repeater-select  position-class" :all="false" name="@if($isRepeater) position_ids @else {{ $tableId }}[0][position_ids] @endif"></x-form.select>
 
                                     </div>

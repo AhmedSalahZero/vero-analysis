@@ -40,13 +40,12 @@ class OpeningBalancesController extends Controller
         ,'supplierPayableOpeningBalances','otherCreditorsOpeningBalances','otherLongTermAssetsOpeningBalances','otherLongTermLiabilitiesOpeningBalances','equityOpeningBalances','longTermLoanOpeningBalances'
    		 ],$company, ['study_id'=>$study->id]);
 
-		if($request->get('total_liabilities_and_equity_minus_total_assets') != 0){
-			$errorMessage = __('Total Assets Must Be Equal To Total Liabilities + Owners Equity') . ' [ ' . number_format($request->get('total_liabilities_and_equity_minus_total_assets'))  . ' ]';
-			 return redirect()->back()->with('error',$errorMessage);
-		}
-		return response()->json([
-			'redirectTo'=>route('cash.in.out.flow.result',['company'=>$company->id])
-		]);
+		// if($request->get('total_liabilities_and_equity_minus_total_assets') != 0){
+		// 	$errorMessage = __('Total Assets Must Be Equal To Total Liabilities + Owners Equity') . ' [ ' . number_format($request->get('total_liabilities_and_equity_minus_total_assets'))  . ' ]';
+		// 	 return redirect()->back()->with('error',$errorMessage);
+		// }
+		return redirect()->route('cash.in.out.flow.result',['company'=>$company->id,'study'=>$study->id]);
+	
 	}
 	public function getCommonData(Request $request,Company $company)
 	{

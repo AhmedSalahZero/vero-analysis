@@ -38,7 +38,7 @@ class PortfolioMortgageController extends Controller
 			$study->storeRelationsWithNoRepeater($request,$company);
 			$study->storeRepeaterRelations($request,$this->getRepeaterRelations(),$company);
 	
-			$study->storeEclAndFundingStructureFor($request,Study::PORTFOLIO_MORTGAGE);
+		
 			$dateIndexWithDate = app('dateIndexWithDate');
 			$isMonthlyStudy = $study->isMonthlyStudy();
 			// question here 
@@ -66,9 +66,11 @@ class PortfolioMortgageController extends Controller
 					$portfolioPresentValueResult = (new PortfolioPresentValue())->calculate($study,$dateIndexWithDate,$portfolioLoanFundingRatesPerMonths,$operationDurationPerYearFromIndexes,$tenor,$startFromPerYear,$frequencyPerYear,$portfolioMortgageTransactionAmountsPerYears,$cbeLendingRatesPerMonths,$marginRate,$bankMarginRatesPerMonths,$company->id,$study->id,$portfolioMortgageCategoryId);
 					
 				}
+			//	dd($portfolioPresentValueResult['occurrence_dates']);
+				
 				DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('portfolio_mortgage_revenue_projection_by_categories')->where('id',$portfolioMortgageCategoryId)->update($portfolioPresentValueResult);
 			}
-		
+			$study->storeEclAndFundingStructureFor($request,Study::PORTFOLIO_MORTGAGE);
 			$study->storeMonthlyLoan('portfolioMortgageRevenueProjectionByCategories');
 			
 			// $study->calculatePortfolioDueCheques();

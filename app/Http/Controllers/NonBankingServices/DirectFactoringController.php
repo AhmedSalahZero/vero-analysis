@@ -2,14 +2,11 @@
 
 namespace App\Http\Controllers\NonBankingServices;
 
-use App\Helpers\HArr;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\NonBankingServices\StoreDirectFactoringRevenueStreamRequest;
 use App\Models\Company;
-use App\Models\NonBankingService\DirectFactoringBreakdown;
 use App\Models\NonBankingService\Study;
 use App\Traits\NonBankingService;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class DirectFactoringController extends Controller
@@ -51,8 +48,8 @@ class DirectFactoringController extends Controller
 			$study->storeRelationsWithNoRepeater($request,$company);
 			$study->storeMonthlyLoan('directFactoringBreakdowns');
 			$study->storeRepeaterRelations($request,$this->getRepeaterRelations(),$company);
+			//		$study->updateDirectFactoryMonthlyAdminFeesAmounts();
 			$study->storeEclAndFundingStructureFor($request,Study::DIRECT_FACTORING);
-	//		$study->updateDirectFactoryMonthlyAdminFeesAmounts();
 			$study->refreshDirectFactoringLoans();
 			$study->updateExpensesPercentagesOfSales();
 			

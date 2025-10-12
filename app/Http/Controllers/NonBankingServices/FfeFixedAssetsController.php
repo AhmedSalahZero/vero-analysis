@@ -29,6 +29,7 @@ class FfeFixedAssetsController extends Controller
         $studyMonthsForViews = $study->getStudyDurationPerYearFromIndexesForView();
         $yearWithItsIndexes = $study->getOperationDurationPerYearFromIndexes();
 		$fundingStructureCounts = $study->getFixedAssetsWithCountsDates(FixedAsset::FFE);
+		
         return [
 			'fundingStructureCounts'=>$fundingStructureCounts,
             'company'=>$company ,
@@ -36,7 +37,7 @@ class FfeFixedAssetsController extends Controller
             'study'=>$study,
             'model'=>$study ,
             'expenseType'=>HHelpers::getClassNameWithoutNameSpace((new Expense())),
-            'title'=>__('FFE Fixed Assets'),
+            'title'=>__('General Fixed Assets'),
             'storeRoute'=>route('store.ffe.fixed.assets', ['company'=>$company->id , 'study'=>$study->id]),
             'storeFundingRoute'=>route('store.ffe.funding.structure.fixed.assets', ['company'=>$company->id , 'study'=>$study->id]),
             'monthsWithItsYear' => $study->getMonthsWithItsYear($yearWithItsIndexes),
@@ -56,21 +57,22 @@ class FfeFixedAssetsController extends Controller
         $fixedAssetType = $request->get('fixed_asset_type') ;
 		
 		$study->storeRepeaterRelations($request, $this->getRepeaterRelations(), $company, ['type'=>$fixedAssetType]);
+		$fundingStructureCounts = $study->getFixedAssetsWithCountsDates(FixedAsset::FFE);
 		
 		$loanStructure = $study->getLoanStructure($fixedAssetType);
-        $isFullyFundedThroughEquity = $request->input('generalFixedAssetsFundingStructure.is_fully_funded_though_equity');
+        $isFullyFundedThroughEquity = $request->input('generalFixedAssetsFundingStructure.is_fully_funded_though_equity') ;
 		if($isFullyFundedThroughEquity && $loanStructure){
 			 $loanStructure->delete();
 		}
 		$study->recalculateFixedAssets($fixedAssetType);
-        if (!$isFullyFundedThroughEquity) {
+        if (!$isFullyFundedThroughEquity && count($fundingStructureCounts)) {
             return response()->json([
             'redirectTo'=>route('create.ffe.funding.structure.fixed.assets', ['company'=>$company->id,'study'=>$study->id])
         ]);
         }
         
         return response()->json([
-            'redirectTo'=>route('create.expenses', ['company'=>$company->id,'study'=>$study->id])
+            'redirectTo'=>route('create.new.branch.fixed.assets', ['company'=>$company->id,'study'=>$study->id])
         ]);
         
     }
