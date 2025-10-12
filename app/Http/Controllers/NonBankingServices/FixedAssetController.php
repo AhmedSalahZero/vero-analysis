@@ -3,10 +3,8 @@
 namespace App\Http\Controllers\NonBankingServices;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\NonBankingServices\StoreExpenseNamesRequest;
 use App\Http\Requests\NonBankingServices\StoreFixedAssetNamesRequest;
 use App\Models\Company;
-use App\Models\NonBankingService\ExpenseName;
 use App\Models\NonBankingService\FixedAssetName;
 use App\Traits\NonBankingService;
 use Illuminate\Database\Eloquent\Collection;

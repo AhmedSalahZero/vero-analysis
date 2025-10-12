@@ -169,10 +169,10 @@
                     <span></span>
                 </label>
 
-                <label class="kt-radio kt-radio--danger text-black font-size-18px font-weight-bold">
+                {{-- <label class="kt-radio kt-radio--danger text-black font-size-18px font-weight-bold">
                     <input class="is-fully-funded-checkbox exclude-from-trigger-change-when-repeat" type="radio" value="0" name="perEmployeeFixedAssetsFundingStructure[is_fully_funded_though_equity]" @if(isset($subModel) && !$isFullyFundingTroughEquity) ss checked @endisset> {{ __('Funded Through Equity & Debt') }}
                     <span></span>
-                </label>
+                </label> --}}
 				@php
 					$inEditMode = isset($model) && $model->fixedAssets->count() ? 1 : 0 ;
 				@endphp
@@ -191,7 +191,7 @@
 					 
 					 </button>
 					
-					@include('non_banking_services.buttons.enable-editing',['inEditMode'=>$inEditMode])
+					
 					 
 					</div>
 					

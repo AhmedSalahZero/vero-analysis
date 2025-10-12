@@ -44,9 +44,9 @@ class OpeningBalancesController extends Controller
 			$errorMessage = __('Total Assets Must Be Equal To Total Liabilities + Owners Equity') . ' [ ' . number_format($request->get('total_liabilities_and_equity_minus_total_assets'))  . ' ]';
 			 return redirect()->back()->with('error',$errorMessage);
 		}
-		// return response()->json([
-		// 	'redirectTo'=>route('view.fixed.asset.names',['company'=>$company->id])
-		// ]);
+		return response()->json([
+			'redirectTo'=>route('cash.in.out.flow.result',['company'=>$company->id])
+		]);
 	}
 	public function getCommonData(Request $request,Company $company)
 	{

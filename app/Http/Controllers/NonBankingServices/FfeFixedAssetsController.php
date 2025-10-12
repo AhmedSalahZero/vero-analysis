@@ -9,6 +9,7 @@ use App\Models\Company;
 use App\Models\NonBankingService\Expense;
 use App\Models\NonBankingService\FixedAsset;
 use App\Models\NonBankingService\Study;
+use App\Traits\HasFixedAssetFunding;
 use App\Traits\NonBankingService;
 use Illuminate\Http\Request;
 
@@ -53,14 +54,10 @@ class FfeFixedAssetsController extends Controller
     public function store(Company $company, StoreFixedAssetsRequest $request, Study $study)
     {
         $fixedAssetType = $request->get('fixed_asset_type') ;
-
-   
+		
+		$study->storeRepeaterRelations($request, $this->getRepeaterRelations(), $company, ['type'=>$fixedAssetType]);
+		
 		$loanStructure = $study->getLoanStructure($fixedAssetType);
-		
-		
-   	  $study->storeRepeaterRelations($request, $this->getRepeaterRelations(), $company, ['type'=>$fixedAssetType]);
-        
-
         $isFullyFundedThroughEquity = $request->input('generalFixedAssetsFundingStructure.is_fully_funded_though_equity');
 		if($isFullyFundedThroughEquity && $loanStructure){
 			 $loanStructure->delete();
@@ -77,7 +74,7 @@ class FfeFixedAssetsController extends Controller
         ]);
         
     }
-	  public function storeFunding(Company $company, StoreFixedAssetsRequest $request, Study $study)
+	 public function storeFunding(Company $company, Request $request, Study $study)
     {
         $fixedAssetType = $request->get('fixed_asset_type') ;
 
@@ -86,8 +83,9 @@ class FfeFixedAssetsController extends Controller
 		$study->recalculateFixedAssets($fixedAssetType);
         
         return response()->json([
-            'redirectTo'=>route('create.expenses', ['company'=>$company->id,'study'=>$study->id])
+            'redirectTo'=>route('create.new.branch.fixed.assets', ['company'=>$company->id,'study'=>$study->id])
         ]);
         
     }
+	 
 }

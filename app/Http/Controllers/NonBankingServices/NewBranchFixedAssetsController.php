@@ -23,7 +23,9 @@ class NewBranchFixedAssetsController extends Controller
 		$studyMonthsForViews = $study->getStudyDurationPerYearFromIndexesForView();
 		$yearWithItsIndexes = $study->getOperationDurationPerYearFromIndexes();
 		$newBranchCountPerDateIndex = $study->getNewBranchCountPerDateIndex();
+			$fundingStructureCounts = $study->getFixedAssetsWithCountsDates(FixedAsset::NEW_BRANCH);
 		return [
+			'fundingStructureCounts'=>$fundingStructureCounts,
 			'company'=>$company ,
 			'type'=>'create',
 			'study'=>$study,
@@ -35,6 +37,7 @@ class NewBranchFixedAssetsController extends Controller
 			'financialYearEndMonthNumber'=>$study->getFinancialYearEndMonthNumber(),
 			'fixedAssetType'=>FixedAsset::NEW_BRANCH,
 			'storeRoute'=>route('store.new.branch.fixed.assets',['company'=>$company->id,'study'=>$study->id]),
+			
 			'newBranchCountPerDateIndex'=>$newBranchCountPerDateIndex
 		];
 	}
@@ -46,19 +49,41 @@ class NewBranchFixedAssetsController extends Controller
 	}
 	public function store(Company $company , StoreNewBranchFixedAssetsRequest $request,Study $study)
 	{
-		$fixedAssetType = $request->get('fixed_asset_type') ;
+		// $fixedAssetType = $request->get('fixed_asset_type') ;
 		
-		$study->storeRelationsWithNoRepeater($request,$company);
+	//	$study->storeRelationsWithNoRepeater($request,$company);
 	
 		$study->storeRepeaterRelations($request,$this->getRepeaterRelations(),$company);
 		
-	//	$study->storeFixedLoansForFixedAssets($fixedAssetType);
-		$study->recalculateFixedAssets($fixedAssetType);
-		// $study->recalculateFixedAssetStatement($fixedAssetType);
+
+		// $loanStructure = $study->getLoanStructure($fixedAssetType);
+        // $isFullyFundedThroughEquity = $request->input('generalFixedAssetsFundingStructure.is_fully_funded_though_equity');
+		// if($isFullyFundedThroughEquity && $loanStructure){
+		// 	 $loanStructure->delete();
+		// }
+		// $study->recalculateFixedAssets($fixedAssetType);
+        // if (!$isFullyFundedThroughEquity) {
+        //     return response()->json([
+        //     'redirectTo'=>route('create.ffe.funding.structure.fixed.assets', ['company'=>$company->id,'study'=>$study->id])
+        // ]);
+        // }
 		
 		return response()->json([
-			'redirectTo'=>route('create.expenses',['company'=>$company->id,'study'=>$study->id])
+			'redirectTo'=>route('create.per.employee.fixed.assets',['company'=>$company->id,'study'=>$study->id])
 		]);
 		
 	}
+	 public function storeFunding(Company $company, Request $request, Study $study)
+    {
+        $fixedAssetType = $request->get('fixed_asset_type') ;
+
+        $study->storeRelationsWithNoRepeater($request, $company);
+
+		$study->recalculateFixedAssets($fixedAssetType);
+        
+        return response()->json([
+            'redirectTo'=>route('view.opening.balances.for.non.banking', ['company'=>$company->id,'study'=>$study->id])
+        ]);
+        
+    }
 }

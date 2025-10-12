@@ -475,10 +475,13 @@ Route::middleware([])->group(function () {
 						route::post('fixed-assets/ffe/funding-structure','FfeFixedAssetsController@storeFunding')->name('store.ffe.funding.structure.fixed.assets');
 						
 						route::get('fixed-assets/new-branches','NewBranchFixedAssetsController@create')->name('create.new.branch.fixed.assets');
+						
 						route::post('fixed-assets/new-branches','NewBranchFixedAssetsController@store')->name('store.new.branch.fixed.assets');
 						
 						route::get('fixed-assets/per-employee','PerEmployeeFixedAssetsController@create')->name('create.per.employee.fixed.assets');
 						route::post('fixed-assets/per-employee','PerEmployeeFixedAssetsController@store')->name('store.per.employee.fixed.assets');
+						route::post('fixed-assets/per-employee/funding-structure','NewBranchFixedAssetsController@storeFunding')->name('store.per.employee.funding.structure.fixed.assets');
+						
 						
 						route::post('departments','ManpowerExpensesController@storeDepartmentPositions')->name('store.department.positions.for.non.banking');
 						route::get('manpower','ManpowerExpensesController@create')->name('view.manpower.for.non.banking');

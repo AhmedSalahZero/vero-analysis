@@ -39,6 +39,7 @@ class PerEmployeeFixedAssetsController extends Controller
 			'financialYearEndMonthNumber'=>$study->getFinancialYearEndMonthNumber(),
 			'fixedAssetType'=>FixedAsset::PER_EMPLOYEE,
 			'storeRoute'=>route('store.per.employee.fixed.assets',['company'=>$company->id,'study'=>$study->id]),
+			'storeFundingRoute'=>route('store.per.employee.funding.structure.fixed.assets', ['company'=>$company->id , 'study'=>$study->id]),
 			'newBranchCountPerDateIndex'=>$newBranchCountPerDateIndex,
 			'departmentFormattedForSelect2'=>Department::where('company_id',$company->id)->get()->formattedForSelect(false,'id','name'),
 			
@@ -52,18 +53,32 @@ class PerEmployeeFixedAssetsController extends Controller
 	}
 	public function store(Company $company , StorePerEmployeeFixedAssetsRequest $request,Study $study)
 	{
+		
 		$fixedAssetType = $request->get('fixed_asset_type') ;
-		$study->storeRelationsWithNoRepeater($request,$company);
-	
+	//	$study->storeRelationsWithNoRepeater($request,$company);
 		$study->storeRepeaterRelations($request,$this->getRepeaterRelations(),$company);
 	//	$study->storeFixedLoansForFixedAssets($fixedAssetType);
 		$study->recalculateFixedAssets($fixedAssetType);
 	//	$study->recalculateFixedAssetStatement($fixedAssetType);
 
-			
 		return response()->json([
-			'redirectTo'=>route('create.expenses',['company'=>$company->id,'study'=>$study->id])
+			'redirectTo'=>route('view.opening.balances.for.non.banking',['company'=>$company->id,'study'=>$study->id])
 		]);
 		
 	}
+	
+	//  public function storeFunding(Company $company, Request $request, Study $study)
+    // {
+    //     $fixedAssetType = $request->get('fixed_asset_type') ;
+
+    //     $study->storeRelationsWithNoRepeater($request, $company);
+
+	// 	$study->recalculateFixedAssets($fixedAssetType);
+        
+    //     return response()->json([
+    //         'redirectTo'=>route('create.expenses', ['company'=>$company->id,'study'=>$study->id])
+    //     ]);
+        
+    // }
+	
 }

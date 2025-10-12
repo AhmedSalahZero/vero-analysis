@@ -32,6 +32,8 @@ class StorePerEmployeeFixedAssetsRequest extends FormRequest
 		$fixedAssets = $this->get('fixedAssets');
 		$fixedAssetType = $this->get('fixed_asset_type');
 		$studyId =$this->study_id;
+		
+		$companyId = $this->route('company')->id;
 		$study = Study::find($studyId);
 		/**
 		 * @var Study $study 
@@ -61,7 +63,7 @@ class StorePerEmployeeFixedAssetsRequest extends FormRequest
 			
 			// calculate position  
 			$currentPositionIds  = $fixedAssetArr['position_ids']??[];
-			$currentPositions = Position::where('study_id',$studyId)->whereIn('id',$currentPositionIds)->get();
+			$currentPositions = Position::where('company_id',$companyId)->whereIn('id',$currentPositionIds)->get();
 
 			$hiringCountArrs = $currentPositions->pluck('hiring_counts')->toArray();
 			$dates = array_keys(Arr::first($hiringCountArrs,null,[]));

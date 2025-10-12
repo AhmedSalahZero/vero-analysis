@@ -305,34 +305,34 @@ $(document).on('click', '#enable-editing-btn', function (e) {
 
 })
 $('#enable-editing-btn').trigger('click')
-$(document).on('change', '.is-fully-funded-checkbox', function () {
-		//console.log('from 17')
-	const value = parseInt($(this).val())
-	//	const canViewFundingStructure = parseInt($('#toggleEditBtn').attr('can-show-funding-structure'));
-	const canViewFundingStructure = 1
+// $(document).on('change', '.is-fully-funded-checkbox', function () {
+// 		//console.log('from 17')
+// 	const value = parseInt($(this).val())
+// 	//	const canViewFundingStructure = parseInt($('#toggleEditBtn').attr('can-show-funding-structure'));
+// 	const canViewFundingStructure = 1
 
 
-	$('#ffe-funding').hide()
-	if (value) {
-		$('#ffe-funding').hide()
-		$('#toggleEditBtn').hide()
-		$('#save-and-go-to-next').show()
+// 	$('#ffe-funding').hide()
+// 	if (value) {
+// 		$('#ffe-funding').hide()
+// 		$('#toggleEditBtn').hide()
+// 		$('#save-and-go-to-next').show()
 
-	} else {
-		if (canViewFundingStructure) {
-			$('#ffe-funding').show()
-		}
-		$('#save-and-go-to-next').hide()
-		$('#toggleEditBtn').show()
+// 	} else {
+// 		if (canViewFundingStructure) {
+// 			$('#ffe-funding').show()
+// 		}
+// 		$('#save-and-go-to-next').hide()
+// 		$('#toggleEditBtn').show()
 
 
-	}
-	if (canViewFundingStructure) {
-		$('#save-and-go-to-next').show()
-	}
+// 	}
+// 	if (canViewFundingStructure) {
+// 		$('#save-and-go-to-next').show()
+// 	}
 
-})
-$('.is-fully-funded-checkbox:checked').trigger('change')
+// })
+// $('.is-fully-funded-checkbox:checked').trigger('change')
 $(document).on('change', '.recalculate-monthly-increase-amounts', function () {
 		//console.log('from 18')
 	var currentRow = $(this).closest('tr')

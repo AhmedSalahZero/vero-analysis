@@ -6438,23 +6438,28 @@ function getNonBankingNavigation(Company $company,User $user):array
 			'link'=>'#',
 			'submenu'=>[
 				[
+					'title'=>__('Cash Flow Statement'),
+					'show'=>true,
+					'link'=>route('cash.in.out.flow.result',['company'=>$company->id,'study'=>$study->id]),
+					'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
+				],
+				
+				[
 					'title'=>__('Income Statement'),
 					'show'=>true,
 					'link'=>route('view.non.banking.forecast.income.statement',['company'=>$company->id , 'study'=>$study->id]),
 					'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
 				],
+				
+				
+				
 				[
 					'title'=>__('Balance Sheet'),
 					'show'=>true,
 					'link'=>route('balance.sheet.result',['company'=>$company->id,'study'=>$study->id]),
 					'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
 				],
-				[
-					'title'=>__('Cash Flow Statement'),
-					'show'=>true,
-					'link'=>route('cash.in.out.flow.result',['company'=>$company->id,'study'=>$study->id]),
-					'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
-				],
+				
 			],
 			
 		],
