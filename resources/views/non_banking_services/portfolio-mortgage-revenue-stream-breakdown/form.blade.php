@@ -32,13 +32,13 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
             {{-- start of Factoring Revenue Projection By Category   --}}
 
             {{-- start of Factoring New Portfolio Funding Structure   --}}
-			@php
-				$countCategories = $model->portfolioMortgageRevenueProjectionByCategories->count() ; 
-			@endphp
-            @foreach(count( $model->portfolioMortgageRevenueProjectionByCategories) ? $model->portfolioMortgageRevenueProjectionByCategories : [null] as $currentIndex => $portfolioMortgageRevenueProjectionByCategory  )
+            @php
+            $countCategories = $model->portfolioMortgageRevenueProjectionByCategories->count() ;
+            @endphp
+            @foreach(count( $model->portfolioMortgageRevenueProjectionByCategories) ? $model->portfolioMortgageRevenueProjectionByCategories : [null] as $currentIndex => $portfolioMortgageRevenueProjectionByCategory )
             <div class="kt-portlet ">
                 <div class="kt-portlet__body">
-					
+
                     <div class="row">
 
                         <div class="col-md-10">
@@ -47,7 +47,7 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
                                     {{ __('Portfolio Mortgage Revenue Projection - Please Choose Duration ') }}
                                 </h3>
                                 <div class="form-group mb-0 d-flex w-10" style="margin-right:auto;gap:20px;">
-								<input type="hidden" name="portfolioMortgageRevenueProjectionByCategories[{{ $currentIndex }}][id]" value="{{ $portfolioMortgageRevenueProjectionByCategory ? $portfolioMortgageRevenueProjectionByCategory->id :0 }}">  
+                                    <input type="hidden" name="portfolioMortgageRevenueProjectionByCategories[{{ $currentIndex }}][id]" value="{{ $portfolioMortgageRevenueProjectionByCategory ? $portfolioMortgageRevenueProjectionByCategory->id :0 }}">
                                     <select name="portfolioMortgageRevenueProjectionByCategories[{{ $currentIndex }}][portfolio_mortgage_duration]" class="form-control blue-select  seasonlity-select main-seasonality-select">
                                         @for($i = 5 ; $i <= 10 ; $i++) <option value="{{ $i }}" @if($portfolioMortgageRevenueProjectionByCategory && $portfolioMortgageRevenueProjectionByCategory->portfolio_mortgage_duration == $i )
                                             selected
@@ -70,7 +70,7 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
                             <x-show-hide-btn :query="'.revenue-projection-by-category'"></x-show-hide-btn>
                         </div>
                     </div>
-					
+
 
 
                     <div class="row">
@@ -89,10 +89,11 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
                                 @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
                                 <x-tables.repeater-table-th class=" interval-class header-border-down " :title="$yearOrMonthFormatted"></x-tables.repeater-table-th>
                                 @endforeach
-								{{-- <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Total')"></x-tables.repeater-table-th> --}}
+                                <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Total')"></x-tables.repeater-table-th>
+                                {{-- <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Total')"></x-tables.repeater-table-th> --}}
                             </x-slot>
                             <x-slot name="trs">
-								@if($isYearsStudy)
+                                @if($isYearsStudy)
                                 <tr data-repeat-formatting-decimals="0" data-repeater-style>
 
                                     <input type="hidden" name="id" value="{{ isset($subModel) ? $subModel->id : 0 }}">
@@ -124,10 +125,14 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
                                     $columnIndex++;
                                     @endphp
                                     @endforeach
-
+                                    <td>
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <input type="text" class="form-control expandable-amount-input  sum-percentage-css" disabled value="-">
+                                        </div>
+                                    </td>
 
                                 </tr>
-								@endif
+                                @endif
 
 
                                 <tr total-row-tr data-repeat-formatting-decimals="2" data-repeater-style>
@@ -158,13 +163,19 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
                                     $columnIndex++;
                                     @endphp
                                     @endforeach
- {{-- <td>
+                                    <td>
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <input type="text" class="form-control expandable-amount-input  sum-percentage-css" disabled value="-">
+                                        </div>
+                                    </td>
+
+                                    {{-- <td>
 								
                                         <div class="d-flex align-items-center justify-content-center">
 											<input type="text" class="form-control expandable-percentage-input sum-total-row sum-percentage-css" disabled value="0"> <span class="ml-2 d-inline-block"> %</span>
                                         </div>
                                     </td> --}}
-                                    
+
 
 
                                 </tr>
@@ -177,15 +188,15 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
 
 
 
-                                <tr total-row-tr data-repeat-formatting-decimals="0" data-repeater-style>
+                                <tr data-repeat-formatting-decimals="0" data-repeater-style total-row-tr data-row-total>
 
                                     <td>
                                         <input value="{{ __('Portfolio Mortgage Avg Transactions Amount') }}" disabled class="form-control min-width-300 text-left mt-2" type="text">
                                     </td>
-									<!-- margin rate -->
+                                    <!-- margin rate -->
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
-                                            <x-repeat-right-dot-inputs :removeThreeDots="true" :removeThreeDotsClass="true" :currentVal="$portfolioMortgageRevenueProjectionByCategory ? $portfolioMortgageRevenueProjectionByCategory->getMarginRate() : 0" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :name="'portfolioMortgageRevenueProjectionByCategories['.$currentIndex.']['.'margin_rate'.']'" :columnIndex="-1"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :removeThreeDots="true" :removeThreeDotsClass="true" :currentVal="$portfolioMortgageRevenueProjectionByCategory ? $portfolioMortgageRevenueProjectionByCategory->getMarginRate() : 0" :classes="'only-greater-than-or-equal-zero-allowed exclude-from-total'" :is-percentage="true" :name="'portfolioMortgageRevenueProjectionByCategories['.$currentIndex.']['.'margin_rate'.']'" :columnIndex="-1"></x-repeat-right-dot-inputs>
                                         </div>
                                     </td>
 
@@ -206,8 +217,15 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
                                     @endphp
 
                                     @endforeach
-									
-									    {{-- <td>
+
+                                    <td>
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <input type="text" class="form-control expandable-amount-input sum-total-row sum-percentage-css" disabled value="0">
+                                        </div>
+                                    </td>
+
+
+                                    {{-- <td>
                                         <div class="d-flex align-items-center justify-content-center">
 											<input type="text" class="form-control expandable-amount-input sum-total-row sum-percentage-css" disabled value="0"> <span class="ml-2 d-inline-block"> </span>  
                                         </div>
@@ -215,7 +233,7 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
 
 
                                 </tr>
-	@if($isYearsStudy)
+                                @if($isYearsStudy)
 
                                 <tr data-repeat-formatting-decimals="0" data-repeater-style>
 
@@ -227,7 +245,7 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
                                     @php
                                     $columnIndex = 0 ;
                                     @endphp
-                                   @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
+                                    @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
                                     @php
                                     $currentVal = $portfolioMortgageRevenueProjectionByCategory ? $portfolioMortgageRevenueProjectionByCategory->getFrequencyPerYearAtYearOrMonthIndex($yearOrMonthAsIndex) : 1;
                                     @endphp
@@ -241,10 +259,14 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
                                     @endphp
 
                                     @endforeach
-
+                                    <td>
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <input type="text" class="form-control expandable-amount-input  sum-percentage-css" disabled value="-">
+                                        </div>
+                                    </td>
 
                                 </tr>
-							
+
                                 <tr data-repeat-formatting-decimals="0" data-repeater-style>
 
                                     <td>
@@ -274,11 +296,15 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
 
                                     @endforeach
 
-
+                                    <td>
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <input type="text" class="form-control expandable-amount-input  sum-percentage-css" disabled value="-">
+                                        </div>
+                                    </td>
                                 </tr>
-								
-								
-							
+
+
+
 
                                 <tr data-repeat-formatting-decimals="0" data-repeater-style>
 
@@ -306,10 +332,14 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
                                     @endphp
 
                                     @endforeach
-
+                                    <td>
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <input type="text" class="form-control expandable-amount-input  sum-percentage-css" disabled value="-">
+                                        </div>
+                                    </td>
 
                                 </tr>
-	@endif 
+                                @endif
 
 
 
@@ -320,35 +350,35 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
                                     <td></td>
                                     <td></td>
                                     <td>
-						
-									@if($countCategories > 1)
+
+                                        @if($countCategories > 1)
                                         <div class="row">
                                             <div class="col-md-12">
 
                                                 <div class="text-center">
-                                                    <a href="{{ route('delete.portfolio.mortgage.category',['company'=>$company->id,'study'=>$study->id,'portfolioMortgageCategory'=>$portfolioMortgageRevenueProjectionByCategory->id]) }}"  class="btn btn-danger text-white " value="">{{  __('Delete') }}</a>
+                                                    <a href="{{ route('delete.portfolio.mortgage.category',['company'=>$company->id,'study'=>$study->id,'portfolioMortgageCategory'=>$portfolioMortgageRevenueProjectionByCategory->id]) }}" class="btn btn-danger text-white " value="">{{ __('Delete') }}</a>
                                                 </div>
 
                                             </div>
 
                                         </div>
-										@endif 
+                                        @endif
                                     </td>
                                     <td>
-									@if($loop->last)
+                                        @if($loop->last)
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <div class="text-right">
                                                     <a href="{{ route('add.new.portfolio.mortgage.category',['company'=>$company->id,'study'=>$study->id]) }}" type="submit" name="save-and-continue" class="btn active-style">
-													{{  __('Add New Portfolio Mortgage') }}
-													</a>
+                                                        {{ __('Add New Portfolio Mortgage') }}
+                                                    </a>
                                                 </div>
 
 
                                             </div>
 
                                         </div>
-										@endif 
+                                        @endif
 
                                     </td>
                                 </tr>
@@ -390,7 +420,7 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
 
                 </div>
             </div>
-			@endforeach
+            @endforeach
 
             {{-- end of Factoring New Portfolio Funding Structure   --}}
 
@@ -551,6 +581,7 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
                                 @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
                                 <x-tables.repeater-table-th class=" interval-class header-border-down " :title="$yearOrMonthFormatted"></x-tables.repeater-table-th>
                                 @endforeach
+                                <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Total')"></x-tables.repeater-table-th>
                             </x-slot>
                             <x-slot name="trs">
 
@@ -581,12 +612,16 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
                                     @endforeach
 
 
-
+                                    <td>
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <input type="text" class="form-control expandable-amount-input  sum-percentage-css" disabled value="-">
+                                        </div>
+                                    </td>
                                 </tr>
 
 
 
-                                <tr data-repeat-formatting-decimals="0" data-repeater-style {{-- @if($isRepeater) data-repeater-item @endif --}}>
+                                <tr data-repeat-formatting-decimals="0" data-repeater-style total-row-tr data-row-total>
 
                                     <input type="hidden" name="id" value="{{ isset($subModel) ? $subModel->id : 0 }}">
 
@@ -610,7 +645,11 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
                                     @endphp
                                     @endforeach
 
-
+                                    <td>
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <input type="text" class="form-control expandable-amount-input sum-total-row sum-percentage-css" disabled value="0">
+                                        </div>
+                                    </td>
 
                                 </tr>
 
@@ -638,7 +677,11 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
 
                                     @endforeach
 
-
+                                    <td>
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <input type="text" class="form-control expandable-amount-input  sum-percentage-css" disabled value="-">
+                                        </div>
+                                    </td>
 
                                 </tr>
 
@@ -647,7 +690,7 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
 
 
 
-                                <tr data-repeat-formatting-decimals="0" data-repeater-style>
+                                <tr data-repeat-formatting-decimals="0" data-repeater-style total-row-tr data-row-total>
 
 
                                     <td>
@@ -673,7 +716,11 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
 
                                     @endforeach
 
-
+                                    <td>
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <input type="text" class="form-control expandable-amount-input sum-total-row sum-percentage-css" disabled value="0">
+                                        </div>
+                                    </td>
 
                                 </tr>
 
@@ -827,43 +874,16 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
 
 </script>
 
-<script>
-    $('.use-rooms:checked').trigger('change');
 
-</script>
 
 <script>
-    $(document).find('.datepicker-input').datepicker({
-        dateFormat: 'mm-dd-yy'
-        , autoclose: true
-    })
-    $(document).on('change', '.can-not-be-removed-checkbox', function() {
-        $(this).prop('checked', true)
-    })
 
-    $(document).on('click', '.show-hide-repeater', function() {
-        const query = this.getAttribute('data-query')
-        $(query).fadeToggle(300)
 
-    })
-   
 
-    $(document).on('change', '.can-be-toggle-show-repeater-btn', function() {
-        let val = $(this).is(':checked')
-        let repeaterQuery = $(this).attr('data-repeater-query')
-        if (!val) {
-            $('.show-hide-repeater[data-query="' + repeaterQuery + '"]').addClass('disabled');
-            $('[data-repeater-row="' + repeaterQuery + '"]').fadeOut(300)
-            $(this).val(0)
-        } else {
-            $('.show-hide-repeater[data-query="' + repeaterQuery + '"]').removeClass('disabled');
-            $('[data-repeater-row="' + repeaterQuery + '"]').fadeIn(300)
-            $(this).val(1)
 
-        }
 
-    })
-    $('.can-be-toggle-show-repeater-btn').trigger('change')
+
+
 
 </script>
 

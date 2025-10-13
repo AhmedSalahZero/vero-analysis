@@ -64,6 +64,7 @@ trait HasBasicStoreRequest
 		 */
 		$connectionName =$this->$relationName()->getModel()->getConnectionName();
         $relationDataArray = $request->get($relationName);
+	
 		$oldIdsFromDatabase = is_null($oldIdsFromDatabase) ? $this->{$relationName}->pluck('id')->toArray() : $oldIdsFromDatabase;
 		$idsFromRequest =array_column($relationDataArray,'id') ;
 		$elementsToDelete = array_diff($oldIdsFromDatabase,$idsFromRequest);

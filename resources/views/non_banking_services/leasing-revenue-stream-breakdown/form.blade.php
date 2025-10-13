@@ -73,9 +73,9 @@ use App\Models\NonBankingService\LeasingCategory;
                                     </div> --}}
                                     <div class="col-md-12 text-right">
                                         <input type="submit" name="save-and-continue" class="btn active-style save-form" value="{{  __('Save & Continue') }}">
-														@include('non_banking_services.buttons.enable-editing',['inEditMode'=>$model->leasingRevenueStreamBreakdown->count()])
-									
-									</div>
+                                        @include('non_banking_services.buttons.enable-editing',['inEditMode'=>$model->leasingRevenueStreamBreakdown->count()])
+
+                                    </div>
 
                                 </div>
                             </form>
@@ -132,6 +132,7 @@ use App\Models\NonBankingService\LeasingCategory;
                                 @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
                                 <x-tables.repeater-table-th class=" interval-class header-border-down " :title="$yearOrMonthFormatted"></x-tables.repeater-table-th>
                                 @endforeach
+                                <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Total')"></x-tables.repeater-table-th>
                             </x-slot>
                             <x-slot name="trs">
                                 @if($isYearsStudy)
@@ -206,6 +207,14 @@ use App\Models\NonBankingService\LeasingCategory;
                                     @endphp
                                     @endforeach
 
+                                    <td>
+
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <input type="text" class="form-control expandable-amount-input sum-percentage-css" disabled value="-">
+                                        </div>
+                                    </td>
+
+
 
 
                                 </tr>
@@ -220,7 +229,7 @@ use App\Models\NonBankingService\LeasingCategory;
                                 @foreach ($study->leasingRevenueStreamBreakdown as $currentLeasingRevenueStreamBreakdown)
 
 
-                                <tr data-repeat-formatting-decimals="0" data-repeater-style>
+                                <tr data-repeat-formatting-decimals="0" data-repeater-style total-row-tr>
 
                                     <td>
                                         <div class="">
@@ -250,7 +259,11 @@ use App\Models\NonBankingService\LeasingCategory;
 
                                     @endforeach
 
-
+                                    <td>
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <input type="text" class="form-control expandable-amount-input sum-total-row sum-percentage-css" disabled value="0">
+                                        </div>
+                                    </td>
                                 </tr>
 
 
@@ -259,7 +272,7 @@ use App\Models\NonBankingService\LeasingCategory;
                                 @endforeach
 
 
-                                <tr data-repeat-formatting-decimals="0" data-repeater-style data-row-total>
+                                <tr data-repeat-formatting-decimals="0" data-repeater-style total-row-tr data-row-total>
 
                                     <td>
                                         <div class="">
@@ -305,6 +318,13 @@ use App\Models\NonBankingService\LeasingCategory;
                                     @endphp
 
                                     @endforeach
+
+                                    <td>
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <input type="text" class="form-control expandable-amount-input sum-total-row sum-percentage-css" disabled value="0">
+                                        </div>
+                                    </td>
+
 
 
                                 </tr>
@@ -485,10 +505,11 @@ use App\Models\NonBankingService\LeasingCategory;
                                 @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
                                 <x-tables.repeater-table-th class=" interval-class header-border-down " :title="$yearOrMonthFormatted"></x-tables.repeater-table-th>
                                 @endforeach
+								  <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Total')"></x-tables.repeater-table-th>
                             </x-slot>
                             <x-slot name="trs">
 
-                                <tr data-repeat-formatting-decimals="2" data-repeater-style {{-- @if($isRepeater) data-repeater-item @endif --}}>
+                                <tr data-repeat-formatting-decimals="2" data-repeater-style >
 
                                     <input type="hidden" name="id" value="{{ isset($subModel) ? $subModel->id : 0 }}">
 
@@ -514,6 +535,13 @@ use App\Models\NonBankingService\LeasingCategory;
                                     $columnIndex++;
                                     @endphp
                                     @endforeach
+									
+									 <td>
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <input type="text" class="form-control expandable-amount-input  sum-percentage-css" disabled value="-">
+                                        </div>
+                                    </td>
+									
 
 
 
@@ -521,7 +549,7 @@ use App\Models\NonBankingService\LeasingCategory;
 
 
 
-                                <tr data-repeat-formatting-decimals="0" data-repeater-style {{-- @if($isRepeater) data-repeater-item @endif --}}>
+                                <tr  data-repeat-formatting-decimals="0" data-repeater-style total-row-tr data-row-total >
 
                                     <input type="hidden" name="id" value="{{ isset($subModel) ? $subModel->id : 0 }}">
 
@@ -546,6 +574,12 @@ use App\Models\NonBankingService\LeasingCategory;
                                     $columnIndex++;
                                     @endphp
                                     @endforeach
+									
+									 <td>
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <input type="text" class="form-control expandable-amount-input sum-total-row sum-percentage-css" disabled value="0">
+                                        </div>
+                                    </td>
 
 
 
@@ -566,7 +600,7 @@ use App\Models\NonBankingService\LeasingCategory;
 
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
-                                            <input type="text" data-column-index="{{ $columnIndex }}" readonly class="form-control expandable-percentage-input new-loan-function-rates-js" name="new_loans_funding_rates[{{ $yearOrMonthAsIndex }}]'" value="{{ $leasingEclAndNewPortfolioFundingRate ? $leasingEclAndNewPortfolioFundingRate->getNewLoansFundingRatesAtYearOrMonthIndex($yearOrMonthAsIndex):0 }}"> <span class="ml-2">%</span>
+                                            <input type="text" data-column-index="{{ $columnIndex }}" readonly class="form-control expandable-amount-input new-loan-function-rates-js" name="new_loans_funding_rates[{{ $yearOrMonthAsIndex }}]'" value="{{ $leasingEclAndNewPortfolioFundingRate ? $leasingEclAndNewPortfolioFundingRate->getNewLoansFundingRatesAtYearOrMonthIndex($yearOrMonthAsIndex):0 }}"> <span class="ml-2">%</span>
                                         </div>
                                     </td>
                                     @php
@@ -574,12 +608,18 @@ use App\Models\NonBankingService\LeasingCategory;
                                     @endphp
 
                                     @endforeach
+									
+									 <td>
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <input type="text" class="form-control expandable-amount-input  sum-percentage-css" disabled value="-">
+                                        </div>
+                                    </td>
 
 
 
                                 </tr>
 
-                                <tr data-repeat-formatting-decimals="0" data-repeater-style>
+                                <tr  data-repeat-formatting-decimals="0" data-repeater-style total-row-tr data-row-total>
 
 
                                     <td>
@@ -604,6 +644,11 @@ use App\Models\NonBankingService\LeasingCategory;
                                     @endphp
 
                                     @endforeach
+									 <td>
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <input type="text" class="form-control expandable-amount-input sum-total-row sum-percentage-css" disabled value="0">
+                                        </div>
+                                    </td>
 
 
 
@@ -758,7 +803,17 @@ use App\Models\NonBankingService\LeasingCategory;
 
 </script>
 
+<script>
+$(document).on('change', '.current-loan-input', function () {
+	let total = 0
+	let currentLoanIndex = parseInt($(this).attr('data-column-index'))
+	$('.current-loan-input[data-column-index="' + currentLoanIndex + '"]').each(function (index, element) {
+		total += parseFloat($(element).val())
+	})
+	$(this).closest('table').find('[data-row-total] .repeat-to-right-input-formatted[data-column-index="' + currentLoanIndex + '"]').val(number_format(total)).trigger('change')
 
+})
+</script>
 
 
 <script src="/custom/js/non-banking-services/common.js"></script>

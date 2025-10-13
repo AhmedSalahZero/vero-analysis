@@ -1401,10 +1401,9 @@ class Study extends Model
             }
             $currentYearOrMonthIndex = $isYearsStudy ? $monthsWithItsYear[$dateAsIndex] : $dateAsIndex  ;
             $annualIncreaseRate = $generalAndReserveAssumption  ? $generalAndReserveAssumption->getSalariesAnnualIncreaseRateAtYearOrMonthIndex($currentYearOrMonthIndex) : 0 ;
-            $increaseRateCondition = $isYearsStudy ? $currentIndex%12 == 0 : true ; // true to be increase every month so this condition will not have any effect if monthly study
             $previousHiringCount = $accumulatedManpowerCounts[$dateAsIndex-1] ?? $existingCount;
             $accumulatedManpowerCounts[$dateAsIndex] = $hiringCounts[$dateAsIndex] + $previousHiringCount   ;
-            if ($increaseRateCondition && $currentIndex != 0) {
+            if ($currentIndex%12 && $currentIndex != 0) {
                 $currentSalaryAtMonthIndex = $currentSalaryAtMonthIndex * (1+($annualIncreaseRate/100)) ;
             }
             $monthlySalariesPayments[$dateAsIndex] = $currentSalaryAtMonthIndex * $accumulatedManpowerCounts[$dateAsIndex];

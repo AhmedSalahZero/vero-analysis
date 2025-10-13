@@ -1,5 +1,5 @@
 $(document).on('click', '.repeat-to-right', function () {
-	//console.log('from 1')
+	console.log('from 1')
 	let columnIndex = parseInt($(this).attr('data-column-index'))
 	let parent = $(this).closest('tr')
 	let name = $(this).attr('data-name')
@@ -20,14 +20,14 @@ $(document).on('click', '.repeat-to-right', function () {
 	})
 })
 $('.repeat-to-right-input-hidden').on('change', function () {
-	//console.log('from 2')
+	console.log('from 2')
 	const val = $(this).val()
 	const columnIndex = $(this).attr('data-column-index')
 	const numberOfDecimals = $(this).closest('.input-hidden-parent').find('.copy-value-to-his-input-hidden[data-column-index="' + columnIndex + '"]').attr('data-number-of-decimals')
 	$(this).closest('.input-hidden-parent').find('.copy-value-to-his-input-hidden[data-column-index="' + columnIndex + '"]').val(number_format(val, numberOfDecimals))
 })
 $(document).on('click', '.repeat-select-to-right', function () {
-	//console.log('from 3')
+	console.log('from 3')
 	let columnIndex = parseInt($(this).attr('data-column-index'))
 	let parent = $(this).closest('tr')
 	let value = parent.find('.repeat-to-right-select[data-column-index="' + columnIndex + '"]').val()
@@ -46,7 +46,7 @@ $(document).on('change', '.input-hidden-parent .copy-value-to-his-input-hidden',
 
 
 $(document).on('change', '.is-leasing', function () {
-	//console.log('from 4')
+	console.log('from 4')
 	const isTotalOthers = $('#is-leasing-1').is(':checked')
 	const parent = $(this).closest('.form-group.row')
 	if (isTotalOthers) {
@@ -63,7 +63,7 @@ $(function () {
 
 
 $(document).on('change', 'select.revenue-stream-type-js', function () {
-	//console.log('from 5')
+	console.log('from 5')
 	let revenueStreams = $(this).val()
 	let studyId = $('#study-id-js').val()
 	const that = this
@@ -102,19 +102,9 @@ $(document).on('change', 'select.revenue-stream-type-js', function () {
 
 	}
 })
-$(document).on('change', '.current-loan-input', function () {
-	//console.log('from 6')
-	let total = 0
-	let currentLoanIndex = parseInt($(this).attr('data-column-index'))
-	$('.current-loan-input[data-column-index="' + currentLoanIndex + '"]').each(function (index, element) {
-		total += parseFloat($(element).val())
-	})
 
-	$(this).closest('table').find('[data-row-total] .repeat-to-right-input-formatted[data-column-index="' + currentLoanIndex + '"]').val(number_format(total)).trigger('change')
-
-})
 $(document).on('change', '[js-recalculate-equity-funding-value],.js-recalculate-equity-funding-value', function () {
-	//console.log('from 7')
+	console.log('from 7')
 	const columnIndex = parseInt($(this).attr('data-column-index'))
 	const total = $('.total-loans-hidden[data-column-index="' + columnIndex + '"]').val()
 	const equityFundingRate = $('.equity-funding-rates[data-column-index="' + columnIndex + '"]').val()
@@ -135,9 +125,7 @@ function getEndOfMonth(year, month) {
 }
 $(document).on('change', '.recalculate-factoring', function () {
 	const index = parseInt($(this).attr('data-column-index'))
-	// const rowIndex = $('.factoring-rate[data-column-index="' + index + '"]').closest('[data-repeater-item]').index()
 	var value = $('.factoring-projection-amount[data-column-index="' + index + '"]').val()
-//console.log('from 8')
 	$('.factoring-rate[data-column-index="' + index + '"]').each(function (currentIndex, rateElement) {
 		var rate = $(rateElement).val()
 		var numberOfDecimals = $(rateElement).closest('tr').find('.factoring-value[data-column-index="' + index + '"]').closest('.input-hidden-parent').find('.repeat-to-right-input-formatted').attr('data-number-of-decimals')
@@ -152,7 +140,7 @@ $(function () {
 	$('select.revenue-stream-type-js').trigger('change')
 })
 $(document).on('change', 'select.js-update-positions-for-department', function () {
-	//console.log('from 9')
+	console.log('from 9')
 	const companyId = $('body').attr('data-current-company-id')
 	const lang = $('body').attr('data-lang')
 	let studyId = $('#study-id-js').val()
@@ -179,7 +167,7 @@ $(document).on('change', 'select.js-update-positions-for-department', function (
 $('select.js-update-positions-for-department').trigger('change')
 
 $(document).on('change', '.is-percentage-from-total,.is-percentage-total-of', function () {
-	//console.log('from 10')
+	console.log('from 10')
 	let commonClass = $(this).attr('data-common-percentage-of-class')
 	let columnIndex = $(this).attr('data-column-index')
 
@@ -198,7 +186,7 @@ $(document).on('change', '.is-percentage-from-total,.is-percentage-total-of', fu
 
 
 $(document).on('click', '.collapse-before-me', function () {
-//console.log('from 11')
+console.log('from 11')
 	let columnIndex = $(this).attr('data-column-index')
 	hide = true
 	let counter = 0
@@ -221,7 +209,7 @@ $(document).on('click', '.collapse-before-me', function () {
 	}
 })
 $(document).on('change', '.repeater-with-collapse-input', function () {
-	//console.log('from 12')
+	console.log('from 12')
 	let groupIndex = $(this).attr('data-group-index')
 	let total = 0
 	$(this).closest('tr').find('input[data-group-index="' + groupIndex + '"]').each(function (index, element) {
@@ -237,13 +225,13 @@ $('input[type="hidden"].exclude-from-collapse').on('change', function () {
 	$(this).closest('tr').find('.total-td').val(number_format(total)).trigger('change')
 })
 $(document).on('click', '.add-btn-js', function (e) {
-	//console.log('from 13')
+	console.log('from 13')
 	e.preventDefault()
 	$(this).toggleClass('rotate-180')
 	$(this).closest('[data-is-main-row]').nextUntil('[data-is-main-row]').toggleClass('hidden')
 })
 $(document).on('change', '.recalculate-gr', function () {
-	//console.log('from 14')
+	console.log('from 14')
 	const columnIndex = parseInt($(this).attr('data-column-index'))
 	const previousColumnIndex = columnIndex - 1
 	const nextColumnIndex = columnIndex + 1
@@ -263,23 +251,23 @@ $(document).on('change', '.recalculate-gr', function () {
 	$('.recalculate-gr[data-column-index="' + nextColumnIndex + '"]').trigger('change')
 })
 $(document).on('change', '.current-growth-rate-result-value-formatted', function (event) {
-	//console.log('from 15')
+	console.log('from 15')
 	const columnIndex = parseInt($(this).attr('data-column-index'))
 	const nextColumnIndex = columnIndex + 1
 	if (event.originalEvent && event.originalEvent.isTrusted) {
 		$('.recalculate-gr[data-column-index="' + nextColumnIndex + '"]').trigger('change')
 	} else {
-		//console.log("Input was changed programmatically.")
+		console.log("Input was changed programmatically.")
 
 	}
 	//$('.recalculate-gr[data-column-index="'+nextColumnIndex+'"]').trigger('change');
 })
 $(document).on('click', '#enable-editing-btn', function (e) {
-	//console.log('from 16')
+	console.log('from 16')
 	e.preventDefault()
 	var isEnableEditing = +$(this).attr('data-is-enable-editing')
 	if (isEnableEditing) {
-		//console.log('if')
+		console.log('if')
 		var disableText = $(this).attr('data-disable-edit-text')
 		$(this).attr('data-is-enable-editing', 0)
 		$(this).closest('form').find('input').prop('disabled', false)
@@ -289,7 +277,7 @@ $(document).on('click', '#enable-editing-btn', function (e) {
 		$(this).html(disableText)
 		$('#leasing-loans').hide()
 	} else {
-		//console.log('else')
+		console.log('else')
 		$(this).closest('form').find('input').prop('disabled', true)
 		$(this).closest('form').find('[data-repeater-create]').hide()
 		$(this).closest('form').find('[data-repeater-delete]').hide()
@@ -297,8 +285,8 @@ $(document).on('click', '#enable-editing-btn', function (e) {
 
 		var enableText = $(this).attr('data-enable-edit-text')
 		$(this).attr('data-is-enable-editing', 1)
-		//console.log(enableText)
-		//console.log(enableText)
+		console.log(enableText)
+		console.log(enableText)
 		$('#leasing-loans').show()
 		$(this).html(enableText)
 	}
@@ -306,7 +294,7 @@ $(document).on('click', '#enable-editing-btn', function (e) {
 })
 $('#enable-editing-btn').trigger('click')
 // $(document).on('change', '.is-fully-funded-checkbox', function () {
-// 		//console.log('from 17')
+// 		console.log('from 17')
 // 	const value = parseInt($(this).val())
 // 	//	const canViewFundingStructure = parseInt($('#toggleEditBtn').attr('can-show-funding-structure'));
 // 	const canViewFundingStructure = 1
@@ -334,7 +322,7 @@ $('#enable-editing-btn').trigger('click')
 // })
 // $('.is-fully-funded-checkbox:checked').trigger('change')
 $(document).on('change', '.recalculate-monthly-increase-amounts', function () {
-		//console.log('from 18')
+		console.log('from 18')
 	var currentRow = $(this).closest('tr')
 	var itemCost = currentRow.find('.ffe-item-cost').val()
 	// var vat = currentRow.find('dd');
@@ -363,7 +351,7 @@ $(document).on('change', '.recalculate-monthly-increase-amounts', function () {
 
 })
 let calculateBranchIncreaseAmounts = function () {
-		//console.log('from 19')
+		console.log('from 19')
 	var currentRow = $(this).closest('tr')
 	var itemCost = parseFloat(currentRow.find('.ffe-item-cost').val())
 	itemCost = itemCost ? itemCost : 0
@@ -403,7 +391,7 @@ let calculateBranchIncreaseAmounts = function () {
 $(document).on('change', '.recalculate-monthly-increase-amounts-branches', calculateBranchIncreaseAmounts)
 $('.recalculate-monthly-increase-amounts-branches').trigger('change')
 $(document).on('change', 'select.department-class', function () {
-		//console.log('from 20')
+		console.log('from 20')
 	const departmentIds = $(this).val()
 	const companyId = $('body').attr('data-current-company-id')
 	const lang = $('body').attr('data-lang')
@@ -454,8 +442,8 @@ $(document).ready(function () {
 		const table = $(repeaterId)
 		const isReadonly = table.hasClass('readonly')
 
-		// //console.log('save form',saveForm);
-	//console.log('from 21')
+		// console.log('save form',saveForm);
+	console.log('from 21')
 		if (isReadonly) {
 			table.removeClass('readonly').addClass('editable')
 			$(this).text('Disabled Editing')
@@ -488,16 +476,18 @@ $(function () {
 	//	$('#toggleEditBtn').click();
 })
 $(document).on('change', '[total-row-tr] input.input-hidden-with-name', function () {
-		//console.log('from 22')
+		console.log('from 22')
 	let parent = $(this).closest('tr')
 	let totalRow = parent.find('.sum-total-row')
+
 	let numberOfDecimals = parent.attr('data-repeat-formatting-decimals')
 	if (totalRow) {
 		let total = 0
-		parent.find('input.input-hidden-with-name').each(function (index, row) {
+		parent.find('input.input-hidden-with-name:not(.exclude-from-total)').each(function (index, row) {
 			var currentTotal = parseFloat(number_unformat($(row).val()))
 			total += currentTotal
 		})
+		
 		parent.find('input.sum-total-row').val(number_format(total, numberOfDecimals))
 	}
 
@@ -509,7 +499,7 @@ $('[total-row-tr] input.input-hidden-with-name').trigger('change')
 
 
 $(document).on('change', '.percentage_field,.number_field', function () {
-		//console.log('from 23')
+		console.log('from 23')
 	const parent = $(this).closest('.closest-parent')
 	const columnIndex = $(this).attr('data-column-index')
 	const appendColumnIndex = columnIndex == undefined ? '' : '[data-column-index="' + columnIndex + '"]'
@@ -519,7 +509,7 @@ $(document).on('change', '.percentage_field,.number_field', function () {
 	$(parent).find('.number_multiple_percentage' + appendColumnIndex).val(result).trigger('change')
 })
 $(document).on('change', '.percentage_field2,.number_field2', function () {
-		//console.log('from 24')
+		console.log('from 24')
 	const parent = $(this).closest('.closest-parent')
 	const columnIndex = $(this).attr('data-column-index')
 	const appendColumnIndex = columnIndex == undefined ? '' : '[data-column-index="' + columnIndex + '"]'
@@ -529,7 +519,7 @@ $(document).on('change', '.percentage_field2,.number_field2', function () {
 	$(parent).find('.number_multiple_percentage2' + appendColumnIndex).val(result).trigger('change')
 })
 $(document).on('change', '.percentage_field3,.number_field3', function () {
-		//console.log('from 25')
+		console.log('from 25')
 	const parent = $(this).closest('.closest-parent')
 	const columnIndex = $(this).attr('data-column-index')
 	const appendColumnIndex = columnIndex == undefined ? '' : '[data-column-index="' + columnIndex + '"]'
@@ -539,7 +529,7 @@ $(document).on('change', '.percentage_field3,.number_field3', function () {
 	$(parent).find('.number_multiple_percentage3' + appendColumnIndex).val(result).trigger('change')
 })
 $(document).on('change', '.number_field_1,.number_field_2', function () {
-	//console.log('from 26')
+	console.log('from 26')
 	const parent = $(this).closest('.closest-parent')
 	const columnIndex = $(this).attr('data-column-index')
 	const appendQuery = columnIndex == undefined ? '' : '[data-column-index="' + columnIndex + '"]'
@@ -556,7 +546,7 @@ $(document).on('change', '.number_field_1,.number_field_2', function () {
 
 
 $(document).on('change', '.sum-num1,.sum-num2,.sum-num3', function () {
-		//console.log('from 27')
+		console.log('from 27')
 	const parent = $(this).closest('.closest-parent')
 	const columnIndex = $(this).attr('data-column-index')
 	const appendQuery = columnIndex == undefined ? '' : '[data-column-index="' + columnIndex + '"]'
@@ -574,7 +564,7 @@ $(document).on('change', '.sum-num1,.sum-num2,.sum-num3', function () {
 
 
 $(document).on('change', '.number_minus_field_1,.number_minus_field_2', function () {
-	//console.log('from 28')
+	console.log('from 28')
 	const parent = $(this).closest('.closest-parent')
 	const columnIndex = $(this).attr('data-column-index')
 	const appendQuery = columnIndex == undefined ? '' : '[data-column-index="' + columnIndex + '"]'
@@ -590,7 +580,7 @@ $(document).on('change', '.number_minus_field_1,.number_minus_field_2', function
 })
 
 $(document).on('change', '.growth_percentage', function (event) {
-	//console.log('from 29')
+	console.log('from 29')
 	const parent = $(this).closest('.closest-parent')
 	let percentage = $(parent).find('.growth_percentage').val()
 	percentage = percentage ? percentage : 0
@@ -602,14 +592,14 @@ $(document).on('change', '.growth_percentage', function (event) {
 	}
 })
 $(document).on('change', '.number_growth_amount', function (event) {
-		//console.log('from 30')
+		console.log('from 30')
 	const parent = $(this).closest('.closest-parent')
 	$(parent).next('.closest-parent').find('.growth_percentage').trigger('change')
 })
 
 
 $(document).on('change', '.growth_percentage_in_diff_parent', function (event) {
-//console.log('from 31')
+console.log('from 31')
 	$('.parent-for-salary-amount .number_growth_amount_in_diff_parent').each(function (index, input) {
 		$(input).trigger('change')
 	})
@@ -618,7 +608,7 @@ $(document).on('change', '.growth_percentage_in_diff_parent', function (event) {
 
 
 $(document).on('change', '.total_input', function () {
-	//console.log('from 32')
+	console.log('from 32')
 	const parent = $(this).closest('.closest-parent')
 	let total = 0
 	$(parent).find('.total_input').each(function (index, input) {
@@ -628,7 +618,7 @@ $(document).on('change', '.total_input', function () {
 })
 
 document.addEventListener('DOMContentLoaded', function () {
-		//console.log('from 33')
+		console.log('from 33')
 	// Select all elements with class target_last_value
 	document.querySelectorAll('.target_last_value').forEach(icon => {
 		icon.addEventListener('click', function () {
@@ -666,7 +656,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	})
 })
 $(document).ready(function () {
-		//console.log('from 34')
+		console.log('from 34')
 	$('.target_last_value_to_right').on('click', function () {
 
 		// Find the closest form-group and the input within it
@@ -694,7 +684,7 @@ $(document).on('click', '.toggle-show-hide', function () {
 	$(query).toggleClass('hidden')
 })
 $(document).ready(function () {
-		//console.log('from 35')
+		console.log('from 35')
 	$('.target_last_value_to_right_until_end').on('click', function () {
 		let parentDiv = $(this).closest('.parent-for-salary-amount')
 		let currentElement = $(this).closest('.common-parent').find('.repeat-to-right-element')
@@ -714,12 +704,12 @@ $(document).ready(function () {
 
 
 $(function () {
-		//console.log('from 36')
+		console.log('from 36')
 	$('.is-leasing:checked').trigger('change')
 })
 
 $(document).on('change', '.sum_product_value_1,.sum_product_quantity_1,.sum_product_value_2,.sum_product_quantity_2', function () {
-	//console.log('from 37')
+	console.log('from 37')
 
 	const parent = $(this).closest('.closest-parent')
 	const columnIndex = $(this).attr('data-column-index')
@@ -741,13 +731,13 @@ $(document).on('change', '.sum_product_value_1,.sum_product_quantity_1,.sum_prod
 
 
 $(document).on('click', '.parent-checkbox', function () {
-		//console.log('from 38')
+		console.log('from 38')
 	$(this).closest('.closest-parent').find('input[type="checkbox"]').prop('checked', false).trigger('change')
 	$(this).closest('td').find('input[type="checkbox"]').prop('checked', true).trigger('change')
 
 })
 $(document).on('change', '.name-required-when-greater-than-zero-js', function () {
-		//console.log('from 39')
+		console.log('from 39')
 	const value = $(this).val()
 	const parent = $(this).closest('.closest-parent')
 	if (value > 0) {
@@ -763,7 +753,7 @@ $(function () {
 	$('.delay-button').prop('disabled', false)
 })
 $(document).on('change', '.allocate-checkbox', function () {
-		//console.log('from 38')
+		console.log('from 38')
 	const modal = $(this).closest('.modal')
 	const isChecked = $(this).is(':checked')
 	if (isChecked) {
@@ -780,7 +770,7 @@ $(document).on('change', '.allocate-checkbox', function () {
 })
 
 $(document).on('change', '.fg-beginning-inventory-original-value-class', function () {
-		//console.log('from 39')
+		console.log('from 39')
 	const value = number_unformat($(this).val())
 	$('.fg-beginning-inventory-value-class').val(value).trigger('change')
 })
@@ -802,23 +792,23 @@ function replaceRepeaterIndex(element) {
 
 
 
-$(document).on('change', '[total-row-tr] input.input-hidden-with-name', function () {
-		//console.log('from 40')
-	let parent = $(this).closest('tr')
-	let totalRow = parent.find('.sum-total-row')
-	let numberOfDecimals = parent.attr('data-repeat-formatting-decimals')
-	if (totalRow) {
-		let total = 0
-		parent.find('input.input-hidden-with-name').each(function (index, row) {
-			var currentTotal = parseFloat(number_unformat($(row).val()))
-			total += currentTotal
-		})
-		parent.find('input.sum-total-row').val(number_format(total, numberOfDecimals))
-	}
+// $(document).on('change', '[total-row-tr] input.input-hidden-with-name', function () {
+// 		console.log('from 40')
+// 	let parent = $(this).closest('tr')
+// 	let totalRow = parent.find('.sum-total-row')
+// 	let numberOfDecimals = parent.attr('data-repeat-formatting-decimals')
+// 	if (totalRow) {
+// 		let total = 0
+// 		parent.find('input.input-hidden-with-name').each(function (index, row) {
+// 			var currentTotal = parseFloat(number_unformat($(row).val()))
+// 			total += currentTotal
+// 		})
+// 		parent.find('input.sum-total-row').val(number_format(total, numberOfDecimals))
+// 	}
 
-})
+// })
 $(document).on('change', 'select.expense-category-class', function () {
-	//console.log('from 41')
+	console.log('from 41')
 	const value = $(this).val()
 	const hasAllocation = +$(this).find('option:selected').attr('data-has-allocation')
 	const parent = $(this).closest('.common-parent')
@@ -830,7 +820,7 @@ $(document).on('change', 'select.expense-category-class', function () {
 })
 
 $(document).on('change', '.hundred-minus-number', function () {
-		//console.log('from 42')
+		console.log('from 42')
 	let parent = $(this).closest('.closest-parent')
 	const columnIndex = $(this).attr('data-column-index')
 	const appendColumnIndex = columnIndex == undefined ? '' : '[data-column-index="' + columnIndex + '"]'
@@ -840,7 +830,7 @@ $(document).on('change', '.hundred-minus-number', function () {
 })
 
 $(document).on('change', '.hundred-minus-number-one', function () {
-	//console.log('from 43')
+	console.log('from 43')
 	let parent = $(this).closest('.closest-parent')
 	const columnIndex = $(this).attr('data-column-index')
 	const appendColumnIndex = columnIndex == undefined ? '' : '[data-column-index="' + columnIndex + '"]'
@@ -850,7 +840,7 @@ $(document).on('change', '.hundred-minus-number-one', function () {
 })
 
 $(document).on('change', '.hundred-minus-number1,.hundred-minus-number2', function () {
-	//console.log('from 44')
+	console.log('from 44')
 	let parent = $(this).closest('.closest-parent')
 	const columnIndex = $(this).attr('data-column-index')
 	const appendColumnIndex = columnIndex == undefined ? '' : '[data-column-index="' + columnIndex + '"]'
@@ -862,7 +852,7 @@ $(document).on('change', '.hundred-minus-number1,.hundred-minus-number2', functi
 
 
 let handlePaymentTermModal = function () {
-	//console.log('from 45')
+	console.log('from 45')
 	const parentTermsType = $(this).closest('select').val()
 	const tableId = $(this).closest('table').attr('id')
 	const parent = $(this).closest('td')
@@ -877,7 +867,7 @@ $(document).on('change', 'select.payment_terms', handlePaymentTermModal)
 
 
 $(document).on('change', '.rate-element', function () {
-	//console.log('from 46')
+	console.log('from 46')
 	let total = 0
 	const parent = $(this).closest('tbody')
 
@@ -893,7 +883,7 @@ $(document).on('change', '.rate-element', function () {
 
 $(document).ready(function () {
 
-//console.log('from 47')
+console.log('from 47')
 	$(document).on('select2:select', '.js-select2-with-one-selection', function (e) {
 		// Keep only the last selected option
 		let selected = e.params.data.id
@@ -911,8 +901,8 @@ function initMultiselect(container) {
 	if (!$dropdown.length) {
 		return
 	}
-	//console.log($container)
-	//console.log($dropdown.length)
+	console.log($container)
+	console.log($dropdown.length)
 	const $searchInput = $container.find('.search-input')
 	const $addOptionInput = $container.find('.add-option-input')
 	const $addOptionBtn = $container.find('.btn-add-option')
@@ -1000,7 +990,7 @@ $(function () {
 
 
 $(document).on('change', '[js-main-select]', function () {
-	//console.log('from 48')
+	console.log('from 48')
 	const value = $(this).val()
 	const isChecked = $(this).is(':checked')
 	if (isChecked) {
@@ -1010,7 +1000,7 @@ $(document).on('change', '[js-main-select]', function () {
 	}
 })
 $(document).on('changed.bs.select', 'select.js-due_in_days', function (e, clickedIndex, isSelected, previousValue) {
-	//console.log('from 49')
+	console.log('from 49')
 	if (isSelected) {
 		let currentValue = $(this).find('option').eq(clickedIndex).val()
 		setTimeout(() => {
@@ -1021,3 +1011,8 @@ $(document).on('changed.bs.select', 'select.js-due_in_days', function (e, clicke
 $(document).on('click','.increase-rate-parent',function(){
 	$(this).closest('.increase-rate-parent').find('.modal-increase-rates').modal('show')
 })
+ $(document).on('click', '.show-hide-repeater', function() {
+        const query = this.getAttribute('data-query')
+        $(query).fadeToggle(300)
+
+    })

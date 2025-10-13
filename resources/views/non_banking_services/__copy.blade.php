@@ -1785,119 +1785,25 @@ $order = $order +1 ;
     })
 
 
-    $(document).on('change', '.use-rooms', function() {
-        let useRooms = $("#use-rooms-1").is(':checked')
-        if (useRooms) {
-            $('.rooms-repeater').fadeIn(300)
-            $('input[type="radio"][name*="rooms"]').val(1);
-
-        } else {
-            $('.rooms-repeater').fadeOut(300);
-            $('input[type="radio"][name*="rooms"]').val(0);
-        }
-    });
-
-    $('.use-rooms').trigger('change')
 
 
 
 
-    $(document).on('change', '.use-foods', function() {
-        let useFoods = $("#use-foods-1").is(':checked')
-        if (useFoods) {
-            $('.foods-repeater').fadeIn(300)
-            $('input[type="radio"][name*="foods"]').val(1);
-
-        } else {
-            $('.foods-repeater').fadeOut(300);
-            $('input[type="radio"][name*="foods"]').val(0);
-        }
-    });
-    $('.use-foods').trigger('change')
 
 
 
-    $(document).on('change', '.use-casino', function() {
-        let useCasino = $("#use-casinos-1").is(':checked')
-
-        if (useCasino) {
-            $('.casino-repeater').fadeIn(300)
-            $('input[type="radio"][name*="casinos"]').val(1);
-        } else {
-            $('.casino-repeater').fadeOut(300);
-            $('input[type="radio"][name*="casinos"]').val(0);
-        }
-    });
-
-    $('.use-casino').trigger('change')
-
-
-    $(document).on('change', '.use-meeting', function() {
-        let useCasino = $("#use-meetings-1").is(':checked')
-
-        if (useCasino) {
-            $('.meeting-repeater').fadeIn(300)
-            $('input[type="radio"][name*="meetings"]').val(1);
-        } else {
-            $('.meeting-repeater').fadeOut(300);
-            $('input[type="radio"][name*="meetings"]').val(0);
-        }
-    })
-    $('.use-meeting').trigger('change')
-
-
-    $(document).on('change', '.use-other', function() {
-        let useCasino = $("#use-others-1").is(':checked')
-
-        if (useCasino) {
-            $('.other-repeater').fadeIn(300)
-            $('input[type="radio"][name*="other"]').val(1);
-        } else {
-            $('.other-repeater').fadeOut(300);
-            $('input[type="radio"][name*="other"]').val(0);
-        }
-    })
-    $('.use-other').trigger('change')
 
 </script>
 
-<script>
-    $('.use-rooms:checked').trigger('change');
 
-</script>
 
 <script>
-    $(document).find('.datepicker-input').datepicker({
-        dateFormat: 'mm-dd-yy'
-        , autoclose: true
-    })
-    $(document).on('change', '.can-not-be-removed-checkbox', function() {
-        $(this).prop('checked', true)
-    })
 
-    $(document).on('click', '.show-hide-repeater', function() {
-        const query = this.getAttribute('data-query')
-        $(query).fadeToggle(300)
+  
 
-    })
-   
 
-    $(document).on('change', '.can-be-toggle-show-repeater-btn', function() {
-        let val = $(this).is(':checked')
-        let repeaterQuery = $(this).attr('data-repeater-query')
-        if (!val) {
-            $('.show-hide-repeater[data-query="' + repeaterQuery + '"]').addClass('disabled');
-            $('[data-repeater-row="' + repeaterQuery + '"]').fadeOut(300)
-            $(this).val(0)
-        } else {
-            $('.show-hide-repeater[data-query="' + repeaterQuery + '"]').removeClass('disabled');
-            $('[data-repeater-row="' + repeaterQuery + '"]').fadeIn(300)
-            $(this).val(1)
 
-        }
 
-    })
-    $('.can-be-toggle-show-repeater-btn').trigger('change')
 
     $(function() {
         $('.discount-table tr:first-of-type td .target_repeating_amounts').trigger('keyup')

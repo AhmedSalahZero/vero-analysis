@@ -268,6 +268,8 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
                         @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
                         <x-tables.repeater-table-th class=" interval-class header-border-down " :title="$yearOrMonthFormatted"></x-tables.repeater-table-th>
                         @endforeach
+						 <x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Total')"></x-tables.repeater-table-th>
+						 
                     </x-slot>
                     <x-slot name="trs">
                         @php
@@ -281,7 +283,7 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
                         @endphp
                         {{-- {{ dd($subModel) }} --}}
 
-                        <tr data-repeater-item data-repeat-formatting-decimals="2" data-repeater-style>
+                        <tr data-repeater-item data-repeater-item data-repeat-formatting-decimals="0" data-repeater-style total-row-tr data-row-total>
 
                             <td class="text-center">
                                 <div class="">
@@ -299,7 +301,7 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
 
                             </td>
                             <td>
-                                <x-repeat-right-dot-inputs :remove-three-dots="true" :currentVal="isset($subModel) ? $subModel->getMarginRate():0" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :name="'margin_rate'" :columnIndex="null"></x-repeat-right-dot-inputs>
+                                <x-repeat-right-dot-inputs :remove-three-dots="true" :currentVal="isset($subModel) ? $subModel->getMarginRate():0" :classes="'only-greater-than-or-equal-zero-allowed exclude-from-total'" :is-percentage="true" :name="'margin_rate'" :columnIndex="null"></x-repeat-right-dot-inputs>
 
                             </td>
                             @php
@@ -308,14 +310,22 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
                             @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
 
                             <td>
-                                <x-repeat-right-dot-inputs :multiple="true" :currentVal="isset($subModel) ? $subModel->getPercentageAtYearOrMonthIndex($yearOrMonthAsIndex):0" :classes="'only-greater-than-or-equal-zero-allowed recalculate-factoring factoring-rate is-percentage-from-total '" data-common-percentage-of-class="percentage-of-total-target" :is-percentage="true" :name="'percentage_payload'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                <x-repeat-right-dot-inputs :multiple="true" :currentVal="isset($subModel) ? $subModel->getPercentageAtYearOrMonthIndex($yearOrMonthAsIndex):0" :classes="'only-greater-than-or-equal-zero-allowed recalculate-factoring factoring-rate is-percentage-from-total exclude-from-total'" data-common-percentage-of-class="percentage-of-total-target" :is-percentage="true" :name="'percentage_payload'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 {{-- ['.$yearOrMonthAsIndex.'] --}}
                                 <x-repeat-right-dot-inputs :multiple="true" :number-format-decimals="0" :currentVal="isset($subModel) ? $subModel->getLoanAmountPayloadAtYearOrMonthIndex($yearOrMonthAsIndex):0" :classes="'only-greater-than-or-equal-zero-allowed current-loan-input factoring-value is-result-total-of'" data-common-percentage-of-class="percentage-of-total-target" :is-percentage="false" :name="'loan_amounts'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+								
+								
                             </td>
                             @php
                             $columnIndex++;
                             @endphp
                             @endforeach
+							
+							<td>
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <input type="text" class="form-control expandable-amount-input sum-total-row sum-percentage-css" disabled value="0">
+                                        </div>
+                                    </td>
 
 
 
@@ -488,10 +498,11 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
                         @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
                         <x-tables.repeater-table-th class=" interval-class header-border-down " :title="$yearOrMonthFormatted"></x-tables.repeater-table-th>
                         @endforeach
+						<x-tables.repeater-table-th class=" interval-class header-border-down " :title="__('Total')"></x-tables.repeater-table-th>
                     </x-slot>
                     <x-slot name="trs">
 
-                        <tr data-repeat-formatting-decimals="0" data-repeater-style>
+                        <tr data-repeat-formatting-decimals="0" data-repeater-style total-row-tr data-row-total >
 
 
 
@@ -517,7 +528,11 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
                             @endphp
                             @endforeach
 
-
+ <td>
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <input type="text" class="form-control expandable-amount-input sum-total-row sum-percentage-css" disabled value="0">
+                                        </div>
+                                    </td>
 
                         </tr>
 
@@ -548,14 +563,18 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
                             $columnIndex++;
                             @endphp
                             @endforeach
-
+<td>
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <input type="text" class="form-control expandable-amount-input  sum-percentage-css" disabled value="-">
+                                        </div>
+                                    </td>
 
 
                         </tr>
 
 
 
-                        <tr data-repeat-formatting-decimals="0" data-repeater-style {{-- @if($isRepeater) data-repeater-item @endif --}}>
+                        <tr data-repeat-formatting-decimals="0" data-repeater-style total-row-tr data-row-total >
 
                             <input type="hidden" name="id" value="{{ isset($subModel) ? $subModel->id : 0 }}">
 
@@ -580,7 +599,11 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
                             @endphp
                             @endforeach
 
-
+  <td>
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <input type="text" class="form-control expandable-amount-input sum-total-row sum-percentage-css" disabled value="0">
+                                        </div>
+                                    </td>
 
                         </tr>
 
@@ -608,7 +631,11 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
 
                             @endforeach
 
-
+ <td>
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <input type="text" class="form-control expandable-amount-input  sum-percentage-css" disabled value="-">
+                                        </div>
+                                    </td>
 
                         </tr>
 
@@ -617,7 +644,7 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
 
 
 
-                        <tr data-repeat-formatting-decimals="0" data-repeater-style>
+                        <tr data-repeat-formatting-decimals="0" data-repeater-style total-row-tr data-row-total >
 
 
                             <td>
@@ -641,7 +668,11 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
 
                             @endforeach
 
-
+   <td>
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <input type="text" class="form-control expandable-amount-input sum-total-row sum-percentage-css" disabled value="0">
+                                        </div>
+                                    </td>
 
                         </tr>
 
@@ -798,44 +829,19 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
 
 
 <script>
-  
-    $(document).on('change', '.can-not-be-removed-checkbox', function() {
-        $(this).prop('checked', true)
-    })
+ 
 
-    $(document).on('click', '.show-hide-repeater', function() {
-        const query = this.getAttribute('data-query')
-        $(query).fadeToggle(300)
-
-    })
+   
   
 
-    $(document).on('change', '.can-be-toggle-show-repeater-btn', function() {
-        let val = $(this).is(':checked')
-        let repeaterQuery = $(this).attr('data-repeater-query')
-        if (!val) {
-            $('.show-hide-repeater[data-query="' + repeaterQuery + '"]').addClass('disabled');
-            $('[data-repeater-row="' + repeaterQuery + '"]').fadeOut(300)
-            $(this).val(0)
-        } else {
-            $('.show-hide-repeater[data-query="' + repeaterQuery + '"]').removeClass('disabled');
-            $('[data-repeater-row="' + repeaterQuery + '"]').fadeIn(300)
-            $(this).val(1)
-
-        }
-
-    })
-    $('.can-be-toggle-show-repeater-btn').trigger('change')
 
 
 $(document).on('change','.recalculate-factoring',function(){
 	let total = 0 ;
 	let columnIndex = $(this).attr('data-column-index')
 	total = $(this).val();
-	
 	$('.total-loans-hidden[data-column-index="'+columnIndex+'"]').val(total).trigger('change');
 	$('.equity-funding-rate-input-hidden-class[data-column-index="'+columnIndex+'"]').trigger('change');
-	console.log(total);
 })
 
 </script>

@@ -133,33 +133,12 @@
 
 <script>
    
-    $(document).on('change', '.can-not-be-removed-checkbox', function() {
-        $(this).prop('checked', true)
-    })
 
-    $(document).on('click', '.show-hide-repeater', function() {
-        const query = this.getAttribute('data-query')
-        $(query).fadeToggle(300)
 
-    })
+
    
 
-    $(document).on('change', '.can-be-toggle-show-repeater-btn', function() {
-        let val = $(this).is(':checked')
-        let repeaterQuery = $(this).attr('data-repeater-query')
-        if (!val) {
-            $('.show-hide-repeater[data-query="' + repeaterQuery + '"]').addClass('disabled');
-            $('[data-repeater-row="' + repeaterQuery + '"]').fadeOut(300)
-            $(this).val(0)
-        } else {
-            $('.show-hide-repeater[data-query="' + repeaterQuery + '"]').removeClass('disabled');
-            $('[data-repeater-row="' + repeaterQuery + '"]').fadeIn(300)
-            $(this).val(1)
 
-        }
-
-    })
-    $('.can-be-toggle-show-repeater-btn').trigger('change')
 
 </script>
 <script src="/custom/js/non-banking-services/common.js"></script>

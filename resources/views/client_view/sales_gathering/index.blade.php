@@ -222,8 +222,6 @@ $date = now()->format('d-m-Y')
             <div class="col-md-10">
                 <div class="d-flex align-items-center ">
                     <x-sectionTitle :title="__('Filtering')"></x-sectionTitle>
-                    {{-- <h3 class="font-weight-bold text-black form-label kt-subheader__title small-caps mr-5" style=""> {{ __('Filtering') }} </h3> --}}
-                    {{-- <input class="can-not-be-removed-checkbox" type="checkbox" style="width:20px;height:20px" checked readonly> --}}
                 </div>
             </div>
             <div class="col-md-2">

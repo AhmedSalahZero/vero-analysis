@@ -85,7 +85,6 @@ $user = auth()->user();
             <div class="col-md-10">
                 <div class="d-flex align-items-center ">
                     <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style=""> {{ $title }} </h3>
-                    {{-- <input class="can-not-be-removed-checkbox" type="checkbox" name="has_food_section" value="1" style="width:20px;height:20px" checked readonly> --}}
                 </div>
             </div>
 
