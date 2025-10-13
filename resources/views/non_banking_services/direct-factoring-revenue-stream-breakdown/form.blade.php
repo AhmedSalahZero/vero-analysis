@@ -351,7 +351,7 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
     </div>
     {{-- end of Direct Factoring Breakdown   --}}
 
-
+@include('seasonality_card')
 
 
     {{-- start of Administration Fees Rate & ECL Rate   --}}

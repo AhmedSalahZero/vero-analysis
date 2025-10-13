@@ -557,7 +557,7 @@
             </div>
             {{-- end of Microfinance Breakdown   --}}
 			
-
+@include('seasonality_card')
 
 
            

@@ -329,7 +329,7 @@ use App\Models\NonBankingService\ReverseFactoringBreakdown;
             {{-- end of Reverse Factoring Breakdown   --}}
 
 
-
+@include('seasonality_card')
 
 
             {{-- start of Administration Fees Rate & ECL Rate   --}}

@@ -8436,4 +8436,17 @@ function sumTwoArray(array $first, array $second)
 }
 
 
-	
+	function getMonthsList(): array
+{
+    $months = [];
+    for ($i = 1; $i <= 12; $i++) {
+        $months[$i-1] = date('F', mktime(0, 0, 0, $i, 1));
+    }
+    return $months;
+}
+function generateOldNameFromFieldName(string $str):string
+{
+    $field = preg_replace('/\[([^\]]+)\]/', '.$1', $str);
+
+    return $field;
+}

@@ -52,6 +52,7 @@ class LeasingController extends Controller
 				'leasing_growth_rates'=>$request->get('growth_rate')
 			]);
 		}
+		$study->syncSeasonality($request->get('seasonality'),Study::LEASING , $company->id );
 		
 		$study->storeEclAndFundingStructureFor($request,Study::LEASING);
 		

@@ -34,6 +34,7 @@ class ReverseFactoringController extends Controller
 
 			$study->storeRelationsWithNoRepeater($request,$company);
 			$study->storeRepeaterRelations($request,$this->getRepeaterRelations(),$company);
+			$study->syncSeasonality($request->get('seasonality'),Study::REVERSE_FACTORING , $company->id );
 			$study->storeEclAndFundingStructureFor($request,Study::REVERSE_FACTORING);
 			$study->storeMonthlyLoan('reverseFactoringBreakdowns');
 			$study->storeVariableLoans(Study::REVERSE_FACTORING,'reverseFactoringBreakdowns');

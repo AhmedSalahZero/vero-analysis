@@ -1031,3 +1031,33 @@ $(document).on('click','.increase-rate-parent',function(){
         $(query).fadeToggle(300)
 
     })
+ $('#seasonality').on('change', function() {
+        var seasonality = $(this).val();
+        if (seasonality == 'flat') {
+            $('.flat_section').removeClass('hidden');
+            $('.quarterly_section').addClass('hidden');
+            $('.monthly_section').addClass('hidden');
+            $('.percentage').addClass('hidden');
+            $('.quarterly').val('');
+            $('.monthly').val('');
+        } else if (seasonality == 'quarterly') {
+            $('.flat_section').addClass('hidden');
+            $('.monthly_section').addClass('hidden');
+            $('.quarterly_section').removeClass('hidden');
+            $('.percentage').removeClass('hidden');
+            $('.monthly').val('');
+        } else if (seasonality == 'monthly') {
+            $('.flat_section').addClass('hidden');
+            $('.quarterly_section').addClass('hidden');
+            $('.monthly_section').removeClass('hidden');
+            $('.percentage').removeClass('hidden');
+            $('.quarterly').val('');
+        } else {
+            $('.flat_section').addClass('hidden');
+            $('.quarterly_section').addClass('hidden');
+            $('.monthly_section').addClass('hidden');
+            $('.percentage').removeClass('hidden');
+            $('.quarterly').val('');
+            $('.monthly').val('');
+        }
+    });
