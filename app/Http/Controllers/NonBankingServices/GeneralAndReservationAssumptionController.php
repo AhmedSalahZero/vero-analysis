@@ -19,10 +19,12 @@ class GeneralAndReservationAssumptionController extends Controller
 	protected function getViewVars(Company $company, Study $study){
 		$yearsWithItsMonths =  $study->getOperationDurationPerYearFromIndexes() ;
 		$yearOrMonthsIndexes = $study->getYearOrMonthIndexes();
+		$yearIndexes = $study->getYearlyIndexes();
 		$isYearsStudy = !$study->isMonthlyStudy();
 		return [
 			'company'=>$company ,
 			'study'=>$study,
+			'yearIndexes'=>$yearIndexes,
 			'title'=>__('General Assumption'),
 			'storeRoute'=>route('store.general.assumption',['company'=>$company->id , 'study'=>$study->id]),
 			'yearOrMonthsIndexes'=>$yearOrMonthsIndexes,

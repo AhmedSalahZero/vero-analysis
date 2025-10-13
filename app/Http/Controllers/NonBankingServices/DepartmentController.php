@@ -6,9 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\NonBankingServices\StoreDepartmentsRequest;
 use App\Models\Company;
 use App\Models\NonBankingService\Department;
+use App\Models\NonBankingService\Position;
 use App\Traits\NonBankingService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class DepartmentController extends Controller
 {
@@ -139,8 +141,20 @@ class DepartmentController extends Controller
 		]);
 	}
 	public function destroy(Request $request,Company  $company , Department $department  ){
-		$department->delete();
-		return redirect()->back()->with('success',__('Done !'));	
+		$canBeDeleted = true ;
+		$department->positions->each(function(Position $position) use ($company,&$canBeDeleted){
+			$isExist = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('manpowers')->where('company_id',$company->id)->where('position_id',$position->id)->count();
+			if($isExist){
+				$canBeDeleted = false ;
+			}
+			
+		}) ;
+		if($canBeDeleted){
+			$department->delete();
+			return redirect()->back()->with('success',__('Done !'));	
+			
+		}
+		return redirect()->back()->with('fail',__('This Item Cannot Be Deleted Because It’s Currently Used In A Study'));	
 	}
 
 }

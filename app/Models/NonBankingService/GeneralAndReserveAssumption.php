@@ -48,25 +48,25 @@ class  GeneralAndReserveAssumption extends Model
 			});
 		}
 		
-	public function getEmployeeProfitShareRatesAtYearOrMonthIndex(int $yearOrMonthIndex)
+	public function getEmployeeProfitShareRatesAtYearIndex(int $yearIndex)
 	{
-		return $this->employee_profit_share_rates[$yearOrMonthIndex] ?? 0  ; 
+		return $this->employee_profit_share_rates[$yearIndex] ?? 0  ; 
 	}
-	public function getBorderOfDirectorsProfitShareRateAtYearOrMonthIndex(int $yearOrMonthIndex)
+	public function getBorderOfDirectorsProfitShareRateAtYearIndex(int $yearIndex)
 	{
-		return $this->border_of_directors_profit_share_rates[$yearOrMonthIndex] ?? 0  ; 
+		return $this->border_of_directors_profit_share_rates[$yearIndex] ?? 0  ; 
 	}
-	public function getShareholderFirstDividendPortionAtYearOrMonthIndex(int $yearOrMonthIndex)
+	public function getShareholderFirstDividendPortionAtYearIndex(int $yearIndex)
 	{
-		return $this->shareholders_first_dividend_portions[$yearOrMonthIndex] ?? 0  ; 
+		return $this->shareholders_first_dividend_portions[$yearIndex] ?? 0  ; 
 	}
-	public function getShareholderDividendPayoutRatioAtYearOrMonthIndex(int $yearOrMonthIndex)
+	public function getShareholderDividendPayoutRatioAtYearIndex(int $yearIndex)
 	{
-		return $this->shareholders_dividend_payout_ratios[$yearOrMonthIndex] ?? 0  ; 
+		return $this->shareholders_dividend_payout_ratios[$yearIndex] ?? 0  ; 
 	}
-	public function getShareholderDividendInCashOrSharesAtYearOrMonthIndex(int $yearOrMonthIndex)
+	public function getShareholderDividendInCashOrSharesAtYear(int $yearIndex)
 	{
-		return $this->shareholders_dividend_in_cash_or_shares[$yearOrMonthIndex] ?? 0  ; 
+		return $this->shareholders_dividend_in_cash_or_shares[$yearIndex] ?? 0  ; 
 	}
 	public function getSalariesAnnualIncreaseRateAtYearOrMonthIndex(int $yearOrMonthIndex)
 	{

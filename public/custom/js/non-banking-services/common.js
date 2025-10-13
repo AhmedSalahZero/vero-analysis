@@ -254,9 +254,24 @@ $(document).on('change', '.current-growth-rate-result-value-formatted', function
 	console.log('from 15')
 	const columnIndex = parseInt($(this).attr('data-column-index'))
 	const nextColumnIndex = columnIndex + 1
+	const previousColumnIndex = columnIndex - 1
 	if (event.originalEvent && event.originalEvent.isTrusted) {
-		$('.recalculate-gr[data-column-index="' + nextColumnIndex + '"]').trigger('change')
+		console.log('if---------')
+		let previousValue = $(this).closest('tr').find('.current-growth-rate-result-value[data-column-index="' + previousColumnIndex + '"]').val();
+		if(previousValue !== undefined){
+			
+			let currentValue = number_unformat($(this).val());
+			let currentGrowthRate = Math.round(((currentValue - previousValue) / previousValue) * 100,2) ;
+			$(this).closest('table').find('.gr-field[data-column-index="' + columnIndex + '"]').val(currentGrowthRate).trigger('change')
+		}else{
+			$(this).closest('table').find('.gr-field[data-column-index="' + nextColumnIndex + '"]').trigger('change')
+			
+		}
+	//	console.log(previousValue ,currentValue ,'--' )
+		
+		// $('.recalculate-gr[data-column-index="' + nextColumnIndex + '"]').trigger('change')
 	} else {
+		console.log('else---------')
 		console.log("Input was changed programmatically.")
 
 	}

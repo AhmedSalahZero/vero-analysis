@@ -10,6 +10,7 @@ use App\Traits\NonBankingService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 
 class ExpenseController extends Controller
 {
@@ -188,6 +189,10 @@ class ExpenseController extends Controller
 		]);
 	}
 	public function destroy(Request $request,Company  $company ,  $expenseType  ){
+		$isExist = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('expenses')->where('company_id',$company->id)->where('expense_category',$expenseType)->count();
+		if($isExist){
+			return redirect()->back()->with('fail',__('This Item Cannot Be Deleted Because It’s Currently Used In A Study'));	
+		}
 		ExpenseName::where('company_id',$company->id)->where('expense_type',$expenseType)->delete();
 		return redirect()->back()->with('success',__('Done !'));	
 	}

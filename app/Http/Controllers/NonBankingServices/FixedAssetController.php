@@ -169,6 +169,10 @@ class FixedAssetController extends Controller
 		]);
 	}
 	public function destroy(Request $request,Company  $company ,  FixedAssetName $fixedAssetName  ){
+		$isExist = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('fixed_assets')->where('company_id',$company->id)->where('name_id',$fixedAssetName->id)->count();
+		if($isExist){
+			return redirect()->back()->with('fail',__('This Item Cannot Be Deleted Because It’s Currently Used In A Study'));	
+		}
 		$fixedAssetName->delete();
 		return redirect()->back()->with('success',__('Done !'));	
 	}

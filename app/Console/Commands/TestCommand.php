@@ -50,8 +50,8 @@ class TestCommand extends Command
 	}
 	public function handle()
 	{
-		$x = $this->getTableNamesThatHasColumn('ecl_rates',NON_BANKING_SERVICE_CONNECTION_NAME);;;
-		dd($x);
+		// $x = $this->getTableNamesThatHasColumn('position_id',NON_BANKING_SERVICE_CONNECTION_NAME);;;
+		// dd($x);
 	
 	}
 	

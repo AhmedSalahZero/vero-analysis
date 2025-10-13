@@ -111,7 +111,7 @@
                                 <thead>
                                     <tr>
                                         <th class="first-column-th-class-medium form-label font-weight-bold text-center align-middle interval-class header-border-down">{{ __('Item') }}</th>
-                                        @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
+                                        @foreach($yearIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
                                         <th class="form-label font-weight-bold  text-center align-middle interval-class header-border-down"> {{$yearOrMonthFormatted}} </th>
                                         @endforeach
                                     </tr>
@@ -132,7 +132,7 @@
                                         </td>
 
 
-                                        @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
+                                        @foreach($yearIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
 
                                         <td>
 
@@ -175,12 +175,12 @@
                                         @php
                                         $columnIndex = 0 ;
                                         @endphp
-                                        @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
+                                        @foreach($yearIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
 
                                         <td>
 
                                             @php
-                                            $currentVal = $model ? $model->getEmployeeProfitShareRatesAtYearOrMonthIndex($yearOrMonthAsIndex) : 10;
+                                            $currentVal = $model ? $model->getEmployeeProfitShareRatesAtYearIndex($yearOrMonthAsIndex) : 10;
                                             @endphp
                                             <x-repeat-right-dot-inputs :currentVal="number_format($currentVal,1)" :classes="'only-greater-than-zero-allowed'" :is-percentage="true" :name="'employee_profit_share_rates['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
@@ -208,12 +208,12 @@
                                         @php
                                         $columnIndex = 0 ;
                                         @endphp
-                                        @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
+                                        @foreach($yearIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
 
                                         <td>
 
                                             @php
-                                            $currentVal = $model ? $model->getBorderOfDirectorsProfitShareRateAtYearOrMonthIndex($yearOrMonthAsIndex) : 0;
+                                            $currentVal = $model ? $model->getBorderOfDirectorsProfitShareRateAtYearIndex($yearOrMonthAsIndex) : 0;
                                             @endphp
                                             <x-repeat-right-dot-inputs :name="'border_of_directors_profit_share_rates['.$yearOrMonthAsIndex.']'" :currentVal="$currentVal" :classes="'only-greater-than-zero-allowed'" :is-percentage="true" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
                                         </td>
@@ -243,12 +243,12 @@
                                         @php
                                         $columnIndex = 0 ;
                                         @endphp
-                                        @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
+                                        @foreach($yearIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
 
                                         <td>
 
                                             @php
-                                            $currentVal = $model ? $model->getShareholderFirstDividendPortionAtYearOrMonthIndex($yearOrMonthAsIndex) : 0;
+                                            $currentVal = $model ? $model->getShareholderFirstDividendPortionAtYearIndex($yearOrMonthAsIndex) : 0;
                                             @endphp
                                             <x-repeat-right-dot-inputs :name="'shareholders_first_dividend_portions['.$yearOrMonthAsIndex.']'" :currentVal="number_format($currentVal,1)" :classes="'only-greater-than-zero-allowed'" :is-percentage="true" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
@@ -280,12 +280,12 @@
                                         @php
                                         $columnIndex = 0 ;
                                         @endphp
-                                        @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
+                                        @foreach($yearIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
 
                                         <td>
 
                                             @php
-                                            $currentVal = $model ? $model->getShareholderDividendPayoutRatioAtYearOrMonthIndex($yearOrMonthAsIndex) : 0;
+                                            $currentVal = $model ? $model->getShareholderDividendPayoutRatioAtYearIndex($yearOrMonthAsIndex) : 0;
                                             @endphp
                                             <x-repeat-right-dot-inputs :name="'shareholders_dividend_payout_ratios['.$yearOrMonthAsIndex.']'" :currentVal="number_format($currentVal,1)" :classes="'only-greater-than-zero-allowed'" :is-percentage="true" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
@@ -313,12 +313,12 @@
                                         @php
                                         $columnIndex = 0 ;
                                         @endphp
-                                        @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
+                                        @foreach($yearIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
 
                                         <td>
 
                                             @php
-                                            $currentVal = $model ? $model->getShareholderDividendInCashOrSharesAtYearOrMonthIndex($yearOrMonthAsIndex) : 0;
+                                            $currentVal = $model ? $model->getShareholderDividendInCashOrSharesAtYear($yearOrMonthAsIndex) : 0;
                                             @endphp
                                             {{-- <x-repeat-right-dot-inputs :name="'shareholders_dividend_payout_ratios['.$year.']'" :currentVal="number_format($currentVal,1)" :classes="'only-greater-than-zero-allowed'" :is-percentage="true"  :columnIndex="$columnIndex"></x-repeat-right-dot-inputs> --}}
                                             <div class="form-group three-dots-parent">

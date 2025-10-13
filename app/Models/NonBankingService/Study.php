@@ -3031,7 +3031,6 @@ class Study extends Model
         $tableDataFormatted[$currentTabIndex]['sub_items'][$corporateTaxesTitle]['data'] = $totalCorporateTaxes ;
         $tableDataFormatted[$currentTabIndex]['sub_items'][$corporateTaxesTitle]['year_total'] = HArr::sumPerYearIndex($totalCorporateTaxes, $yearWithItsMonths) ;
 
-        
         ///////////////
 		$directFactoringUnearnedRevenues = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('direct_factoring_breakdowns')->where('study_id',$this->id)->pluck('unearned_interest')->toArray();
 		$totalDirectFactoringUnearnedRevenues = HArr::sumJsonArr($directFactoringUnearnedRevenues,$sumKeys) ;
@@ -3040,9 +3039,26 @@ class Study extends Model
         $tableDataFormatted[$currentTabIndex]['sub_items'][$title]['data'] = $totalDirectFactoringUnearnedRevenues ;
         $tableDataFormatted[$currentTabIndex]['sub_items'][$title]['year_total'] = HArr::sumPerYearIndex($totalDirectFactoringUnearnedRevenues, $yearWithItsMonths) ;
  
+		
+		$portfolioFactoringUnearnedRevenues = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('portfolio_mortgage_revenue_projection_by_categories')->where('study_id',$this->id)->pluck('portfolio_mortgage_unearned_interest_statement')->toArray();
+		$portfolioEndBalances = [];
+		foreach($portfolioFactoringUnearnedRevenues as $portfolioFactoringUnearnedRevenue){
+			$portfolioFactoringUnearnedRevenueArr = json_decode($portfolioFactoringUnearnedRevenue,true);
+			foreach($portfolioFactoringUnearnedRevenueArr as $mainDateIndex => $result){
+				foreach($result as $dateAsIndex => $resultArr){
+					$currentEndBalance = $resultArr['end_balance']??0 ;
+					$portfolioEndBalances[$dateAsIndex] = isset($portfolioEndBalances[$dateAsIndex]) ? $portfolioEndBalances[$dateAsIndex] + $currentEndBalance : $currentEndBalance ;
+				}
+			}
+		}
+		$title = __('Portfolio Unearned Revenues');
+		$tableDataFormatted[$currentTabIndex]['sub_items'][$title]['options']['title'] = $title ;
+        $tableDataFormatted[$currentTabIndex]['sub_items'][$title]['data'] = $portfolioEndBalances ;
+        $tableDataFormatted[$currentTabIndex]['sub_items'][$title]['year_total'] = HArr::sumPerYearIndex($portfolioEndBalances, $yearWithItsMonths) ;
+ 
+		
 
-
-        $totalExistOtherCreditors = HArr::sumAtDates([$totalOtherCreditorsOpeningBalances,$totalExpenses,$totalCorporateTaxes,$totalDirectFactoringUnearnedRevenues], $sumKeys);
+        $totalExistOtherCreditors = HArr::sumAtDates([$totalOtherCreditorsOpeningBalances,$totalExpenses,$totalCorporateTaxes,$totalDirectFactoringUnearnedRevenues,$portfolioEndBalances], $sumKeys);
         $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabIndex]['data'] = $totalExistOtherCreditors;
         $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabIndex]['year_total'] =HArr::getPerYearIndexForEndBalance($totalExistOtherCreditors, $yearWithItsMonths);
 
