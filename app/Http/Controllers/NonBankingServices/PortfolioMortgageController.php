@@ -70,8 +70,18 @@ class PortfolioMortgageController extends Controller
 				
 				DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('portfolio_mortgage_revenue_projection_by_categories')->where('id',$portfolioMortgageCategoryId)->update($portfolioPresentValueResult);
 			}
-			$study->storeEclAndFundingStructureFor($request,Study::PORTFOLIO_MORTGAGE);
-			$study->storeMonthlyLoan('portfolioMortgageRevenueProjectionByCategories');
+			$portfolioMonthlyLoanAmounts = [] ;
+			foreach($portfolioPresentValueResult['statement']??[] as $monthIndex => $portfolioMonthlyLoanArr){
+				$portfolioMonthlyLoanAmounts[$monthIndex] = $portfolioMonthlyLoanArr['net_present_value']??0;
+			}
+			$bankMonthlyLoanAmounts = [] ;
+			foreach($portfolioPresentValueResult['statement']??[] as $monthIndex => $portfolioMonthlyLoanArr){
+				$bankMonthlyLoanAmounts[$monthIndex] = $portfolioMonthlyLoanArr['bank_loan_amount']??0;
+			}
+	
+			// dd($bankMonthlyLoanAmounts);
+			$study->storeEclAndFundingStructureFor($request,Study::PORTFOLIO_MORTGAGE,$bankMonthlyLoanAmounts);
+			$study->storeMonthlyLoan('portfolioMortgageRevenueProjectionByCategories',$portfolioMonthlyLoanAmounts);
 			
 			// $study->calculatePortfolioDueCheques();
 			// $study->storeRepeaterRelations($request,$this->getRepeaterRelations(),$company);

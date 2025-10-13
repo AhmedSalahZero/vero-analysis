@@ -828,7 +828,7 @@ class Study extends Model
      * * revenue_stream_type -> leasing , ijara .. etc
      * * relation name -> leasingRevenueStreamBreakdown ,
      */
-    public function storeMonthlyLoan(string $relationName)
+    public function storeMonthlyLoan(string $relationName , array $portfolioMonthlyLoanAmounts =[])
     {
         $monthlyLoanAmounts = [];
         $contractCounts = [];
@@ -846,13 +846,13 @@ class Study extends Model
                     $loanAtCurrentYear = $this->isMonthlyStudy() ? ($yearIndexWithAmount[$monthIndex]??0) : ($yearIndexWithAmount[$yearIndex]??0);
                     
                     $currentMonthlyLoanAmount = $this->isMonthlyStudy() ? $loanAtCurrentYear :  ($loanAtCurrentYear / count($yearMonthIndexes))  ;
-                    $currentMonthlyLoanAmount = $relationName === 'portfolioMortgageRevenueProjectionByCategories' ? ($yearIndexWithAmount[$monthIndex]??0) : $currentMonthlyLoanAmount;
+                    $currentMonthlyLoanAmount = $relationName === 'portfolioMortgageRevenueProjectionByCategories' ? ($portfolioMonthlyLoanAmounts[$monthIndex]??0) : $currentMonthlyLoanAmount;
                     
                     $monthlyLoanAmounts[$leasingRevenueStreamBreakdownId][$monthIndex] = $currentMonthlyLoanAmount ;
                     $contractCounts[$leasingRevenueStreamBreakdownId][$monthIndex] = (int)($currentMonthlyLoanAmount != 0)  ;
                 }
             }
-            
+      //      dd($monthlyLoanAmounts);
             $currentMonthlyAmounts = $monthlyLoanAmounts[$leasingRevenueStreamBreakdownId];
             $currentCounts = $contractCounts[$leasingRevenueStreamBreakdownId];
             
@@ -2322,19 +2322,19 @@ class Study extends Model
 
         return $result;
     }
-    public function storeEclAndFundingStructureFor(Request $request, string $revenueStreamType)
+    public function storeEclAndFundingStructureFor(Request $request, string $revenueStreamType , array $portfolioMonthlyNewLoansFundingValues = [])
     {
         if ($request->has('admin_fees_rates')) {
+			$isPortfolio = $revenueStreamType == Study::PORTFOLIO_MORTGAGE ;
             $adminFeesRates = $request->get('admin_fees_rates', []);
             $newLoansFundingValues = $request->get('new_loans_funding_values', []) ;
             $equityFundingValues = $request->get('equity_funding_values', []) ;
             $loanAmounts = $this->getLoanAmountForAdminFeesForRevenueStreamType($revenueStreamType);
-			
             // $loanAmounts = $request->get('loan_amounts',[]);
             // $sumLoanAmounts = HArr::sumForInternalIndexes($loanAmounts);
             $monthlyAdminFeesAmount = $this->calculateMonthlyAdminFeesAmounts($adminFeesRates, $loanAmounts);
             $monthlyNewLoansFundingValues  = $this->isMonthlyStudy() ? $newLoansFundingValues : $this->convertYearIndexToActiveMonthIndexes($newLoansFundingValues);
-		//	dd($newLoansFundingValues);
+			$monthlyNewLoansFundingValues = $isPortfolio ? $portfolioMonthlyNewLoansFundingValues : $monthlyNewLoansFundingValues;
             $data = [
                 'revenue_stream_type'=>$revenueStreamType,
                 'admin_fees_rates'=>$adminFeesRates,
