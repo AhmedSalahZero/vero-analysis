@@ -166,6 +166,7 @@ class Study extends Model
     }
     public function getStudyDates(): array
     {
+
         return  $this->study_dates ?: [];
     }
     
@@ -354,7 +355,9 @@ class Study extends Model
     public function getStudyDurationPerMonth(array $datesAsStringAndIndex, array $datesIndexWithYearIndex, array $yearIndexWithYear, array $dateIndexWithDate, array $dateWithMonthNumber, $maxYearIsStudyEndDate = true, $repeatIndexes = true)
     {
         $studyDurationPerMonth = [];
+	
         $studyDurationPerYear = $this->getStudyDurationPerYear($datesAsStringAndIndex, $datesIndexWithYearIndex, $yearIndexWithYear, $dateIndexWithDate, $dateWithMonthNumber, false, $maxYearIsStudyEndDate, $repeatIndexes);
+		
         foreach ($studyDurationPerYear as $year => $values) {
             foreach ($values as $date => $value) {
                 $studyDurationPerMonth[$date] = $value;
@@ -3323,11 +3326,14 @@ class Study extends Model
     {
         
         $operationsYearAndItsMonths = $this->getOperationDurationPerYearFromIndexesForAllStudyInfo();
+		$studyEndDateAsIndex = $this->getStudyEndDateAsIndex() ;
         array_pop($operationsYearAndItsMonths);
         $result =[];
         foreach ($operationsYearAndItsMonths as $yearAsIndex => $itsMonths) {
             foreach ($itsMonths as $dateAsIndex => $val) {
-                $result[$this->getDateFromDateIndex($dateAsIndex)] =$dateAsIndex ;
+				if($dateAsIndex <= $studyEndDateAsIndex){
+					$result[$this->getDateFromDateIndex($dateAsIndex)] =$dateAsIndex ;
+				}
             }
         }
         return $result;

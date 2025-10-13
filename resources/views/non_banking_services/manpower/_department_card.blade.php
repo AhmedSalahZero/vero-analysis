@@ -14,7 +14,7 @@
                     
                     <x-tables.repeater-table :addExpenseType="true" :initEmpty="false" :removeActionBtn="true" :first-element-deletable="false" :font-size-class="'font-14px'" :department="$department"  :append-save-or-back-btn="false" :repeater-with-select2="false" :parentClass="''" :tableName="$department ? $tableId.$department->id : $tableId " :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
                         <x-slot name="ths">
-                            <x-tables.repeater-table-th :font-size-class="'font-14px'" class="  header-border-down first-column-th-class" :title="__('')"></x-tables.repeater-table-th>
+                            {{-- <x-tables.repeater-table-th :font-size-class="'font-14px'" class="  header-border-down first-column-th-class" :title="__('')"></x-tables.repeater-table-th> --}}
                             <x-tables.repeater-table-th :font-size-class="'font-14px'" class="  header-border-down " :title="__('Position')"></x-tables.repeater-table-th>
                             <x-tables.repeater-table-th :font-size-class="'font-14px'" class=" tenor-selector-class header-border-down " :title="__('Existing <br> Count')"></x-tables.repeater-table-th>
                             <x-tables.repeater-table-th :font-size-class="'font-14px'" class=" tenor-selector-class header-border-down " :title="__('Monthly Net <br> Salary')"></x-tables.repeater-table-th>
@@ -44,9 +44,7 @@
                                 @endphp
                                 <tr {{-- data-repeater-item --}} data-repeat-formatting-decimals="2" data-repeater-style>
 
-                                    <td class="text-center">
-                                       
-                                    </td>
+                                  
 
                                     <input type="hidden" name="manpowers[{{ $positionId }}][id]" value="{{  $position->id}}">
                                     <input type="hidden" name="manpowers[{{ $positionId }}][study_id]" value="{{ $study->id }}">
