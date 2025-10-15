@@ -3443,6 +3443,11 @@ class Study extends Model
                 'can_show'=> $this->hasPortfolioMortgage() ,
                 'route'=>route('create.portfolio.mortgage.revenue.stream.breakdown', ['company'=>$this->company->id,'study'=>$this->id]),
             ],
+			  [
+                    'id'=>Study::MiCROFINANCE,
+                'can_show'=> $this->hasMicroFinance() ,
+                'route'=>route('create.microfinance', ['company'=>$this->company->id,'study'=>$this->id]),
+            ],
         ] ;
         $canReturn = false ;
         foreach ($allRevenueRoutes as $index => $revenueRouteArr) {
@@ -3453,7 +3458,7 @@ class Study extends Model
                 return $revenueRouteArr['route'];
             }
         }
-        return route('create.microfinance', ['company'=>$this->company->id,'study'=>$this->id]);
+		return route('view.manpower.for.non.banking', ['company'=>$this->company->id,'study'=>$this->id]);
     
     }
     

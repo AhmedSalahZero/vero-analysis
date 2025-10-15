@@ -39,7 +39,7 @@ class ReverseFactoringController extends Controller
 			$study->storeVariableLoans(Study::REVERSE_FACTORING,'reverseFactoringBreakdowns');
 			$study->updateExpensesPercentagesOfSales();
 		return response()->json([
-			'redirectTo'=>route('create.ijara.mortgage.revenue.stream.breakdown',['company'=>$company->id , 'study'=>$study->id])
+			'redirectTo'=>$study->getRevenueRoute(Study::PORTFOLIO_MORTGAGE)
 		]);
 	}
 }

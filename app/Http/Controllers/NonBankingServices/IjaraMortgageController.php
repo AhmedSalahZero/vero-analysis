@@ -39,7 +39,7 @@ class IjaraMortgageController extends Controller
 		$study->storeFixedLoans(Study::IJARA,'ijaraMortgageBreakdowns');
 		$study->updateExpensesPercentagesOfSales();
 		return response()->json([
-			'redirectTo'=>route('create.portfolio.mortgage.revenue.stream.breakdown',['company'=>$company->id,'study'=>$study->id])
+			'redirectTo'=>$study->getRevenueRoute(Study::PORTFOLIO_MORTGAGE)
 		]);
 	}
 }

@@ -89,7 +89,7 @@ class PortfolioMortgageController extends Controller
         // $study->calculatePortfolioDueCheques();
         // $study->storeRepeaterRelations($request,$this->getRepeaterRelations(),$company);
         return response()->json([
-            'redirectTo'=>route('view.manpower.for.non.banking', ['company'=>$company->id,'study'=>$study->id])
+            'redirectTo'=>$study->getRevenueRoute(Study::MiCROFINANCE)
         ]);
     }
     public function addNewCategory(Request $request, Company $company, Study $study)
