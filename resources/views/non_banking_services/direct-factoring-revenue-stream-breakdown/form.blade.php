@@ -75,7 +75,7 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
 
                                     <td>
                                         <div class="">
-                                            <input value="{{ __('Operating Months Per Year') }}" disabled class="form-control min-width-300 text-left mt-2" type="text">
+                                            <input value="{{ __('Operating Months Per Year') }}" disabled class="form-control  text-left mt-2" type="text">
                                         </div>
 
 
@@ -125,7 +125,7 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
 
                                     <td>
                                         <div class="">
-                                            <input value="{{ __('Growth Rate %') }}" disabled class="form-control min-width-300 text-left mt-2" type="text">
+                                            <input value="{{ __('Growth Rate %') }}" disabled class="form-control  text-left mt-2" type="text">
                                         </div>
 
 
@@ -171,7 +171,7 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
                                 <tr  total-row-tr data-repeat-formatting-decimals="0" data-repeater-style>
 
                                     <td>
-                                        <input value="{{ __('Direct Factoring Projection') }}" disabled class="form-control min-width-300 text-left mt-2" type="text">
+                                        <input value="{{ __('Direct Factoring Projection') }}" disabled class="form-control  text-left mt-2" type="text">
                                     </td>
 
 
@@ -297,7 +297,7 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
 
                             <td>
                                 <x-form.select :required="true" :label="''" :pleaseSelect="false" :selectedValue="isset($subModel) ? $subModel->getCategory():0" :options="factoringDueInDays()" :add-new="false" class="select2-select  repeater-select  " :all="false" name="category"></x-form.select>
-                                <input value="{{ __('Direct Factoring Projection') }}" disabled class="form-control min-width-300 text-left mt-2" type="text">
+                                <input value="{{ __('Direct Factoring Projection') }}" disabled class="form-control  text-left mt-2" type="text">
 
                             </td>
                             <td>
@@ -395,7 +395,7 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
 
 
                             <td>
-                                <input value="{{ __('Administration Fees Rate') }}" disabled class="form-control min-width-300 text-left mt-2" type="text">
+                                <input value="{{ __('Administration Fees Rate') }}" disabled class="form-control  text-left mt-2" type="text">
 
                             </td>
                             @php
@@ -422,7 +422,7 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
 
 
                             <td>
-                                <input disabled value="{{ __('Expected Credit Loss Rate (ECL %)') }}" class="form-control min-width-300 text-left" type="text">
+                                <input disabled value="{{ __('Expected Credit Loss Rate (ECL %)') }}" class="form-control  text-left" type="text">
 
                             </td>
                             @php
@@ -508,7 +508,7 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
 
 
                             <td>
-                                <input value="{{ __('Direct Factoring New Portfolio Amounts') }}" disabled class="form-control min-width-300 text-left mt-2" type="text">
+                                <input value="{{ __('Direct Factoring New Portfolio Amounts') }}" disabled class="form-control  text-left mt-2" type="text">
 
                             </td>
                             @php
@@ -519,7 +519,7 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
                             <td>
                                 <div class="d-flex align-items-center justify-content-center">
 
-                                    <x-repeat-right-dot-inputs :numberFormatDecimals="0" :readonly="true" :removeThreeDots="true" :inputHiddenAttributes="''" :currentVal="$study->getTotalDirectFactoringNewPortfolioAmountsAtYearOrMonthIndex($yearOrMonthAsIndex)" :classes="'js-recalculate-equity-funding-value total-loans-hidden'" :is-percentage="false" :name="''" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                    <x-repeat-right-dot-inputs :numberFormatDecimals="0" :readonly="true" :removeThreeDots="true" :inputHiddenAttributes="''" :currentVal="$study->getTotalDirectFactoringNewPortfolioAmountsAtYearOrMonthIndex($yearOrMonthAsIndex)" :classes="'js-recalculate-equity-funding-value '" :is-percentage="false" :name="''" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
                                 </div>
                             </td>
@@ -544,7 +544,7 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
 
 
                             <td>
-                                <input value="{{ __('Equity Funding Rate (%)') }}" disabled class="form-control min-width-300 text-left mt-2" type="text">
+                                <input value="{{ __('Equity Funding Rate (%)') }}" disabled class="form-control  text-left mt-2" type="text">
 
                             </td>
                             @php
@@ -580,7 +580,7 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
 
 
                             <td>
-                                <input value="{{ __('Equity Funding Value') }}" disabled class="form-control min-width-300 text-left mt-2" type="text">
+                                <input value="{{ __('Equity Funding Value') }}" disabled class="form-control  text-left mt-2" type="text">
 
                             </td>
                             @php

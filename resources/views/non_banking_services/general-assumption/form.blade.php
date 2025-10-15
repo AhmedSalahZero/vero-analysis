@@ -613,7 +613,8 @@
 									
 									 <td class="td-classes">
 										<div>
-										<input value="{{ __('CBE Lending Corridor Rate %') }}" disabled="" class="form-control min-width-300 text-left mt-2" type="text">
+										<input value="{{ __('CBE Lending Corridor Rate %') }}" disabled="" class="form-control  text-left mt-2" type="text">
+										<input value="{{ __('CBE Lending Corridor Rate %') }}" disabled="" class="form-control  text-left mt-2" type="text">
 										
 										</div>
 										

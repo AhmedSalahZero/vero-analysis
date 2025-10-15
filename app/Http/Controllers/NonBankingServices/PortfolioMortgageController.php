@@ -60,7 +60,7 @@ class PortfolioMortgageController extends Controller
             $marginRate = $portfolioMortgageRevenueProjectionByCategoryArr['margin_rate'];
             $portfolioPresentValueResult = [];
             if ($study->isMonthlyStudy()) {
-                $portfolioPresentValueResult =	(new PortfolioPresentValue())->calculateForMonthlyStudy($bankMarginRatesPerMonths,$study, $monthlyAmounts, $cbeLendingRatesPerMonths, $portfolioLoanFundingRatesPerMonths, $marginRate, $tenor, $dateIndexWithDate, $portfolioMortgageCategoryId, $study->id, $company->id);
+                $portfolioPresentValueResult =	(new PortfolioPresentValue())->calculateForMonthlyStudy($bankMarginRatesPerMonths, $study, $monthlyAmounts, $cbeLendingRatesPerMonths, $portfolioLoanFundingRatesPerMonths, $marginRate, $tenor, $dateIndexWithDate, $portfolioMortgageCategoryId, $study->id, $company->id);
             } else {
                 $frequencyPerYear = $portfolioMortgageRevenueProjectionByCategoryArr['frequency_per_year'];
                 $startFromPerYear = $portfolioMortgageRevenueProjectionByCategoryArr['start_from'];
@@ -81,7 +81,7 @@ class PortfolioMortgageController extends Controller
     
             // dd($bankMonthlyLoanAmounts);
             $study->storeEclAndFundingStructureFor($request, Study::PORTFOLIO_MORTGAGE, $bankMonthlyLoanAmounts);
-            $study->storeMonthlyLoan('portfolioMortgageRevenueProjectionByCategories', $portfolioMonthlyLoanAmounts);
+            $study->storeMonthlyLoan(Study::PORTFOLIO_MORTGAGE,'portfolioMortgageRevenueProjectionByCategories', $portfolioMonthlyLoanAmounts);
             
         }
             

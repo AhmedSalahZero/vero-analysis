@@ -143,7 +143,7 @@ use App\Models\NonBankingService\LeasingCategory;
 
                                     <td>
                                         <div class="">
-                                            <input value="{{ __('Operating Months Per Year') }}" disabled class="form-control text-left mt-2" type="text">
+                                            <input value="{{ __('Operating Months Per Year') }}" disabled class="form-control min-width-hover-300 text-left mt-2" type="text">
                                         </div>
 
 

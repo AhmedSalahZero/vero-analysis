@@ -13,62 +13,64 @@ use Illuminate\Http\Request;
 
 class LeasingController extends Controller
 {
-	use NonBankingService ;
-	public function create(Company $company , Request $request,Study $study){
-		
-		return view('non_banking_services.leasing-revenue-stream-breakdown.form', $this->getViewVars($company,$study));
-	}
-	protected function getViewVars(Company $company, Study $study){
-		$leasingEclAndNewPortfolioFundingRate = $study?  $study->getEclAndNewPortfolioFundingRatesForStreamType(Study::LEASING) : null;
-		$yearsWithItsMonths =  $study->getOperationDurationPerYearFromIndexes() ;
-		$yearOrMonthsIndexes = $study->getYearOrMonthIndexes();
-		$isYearsStudy = !$study->isMonthlyStudy();
-		return [
-			'company'=>$company ,
-			'study'=>$study,
-			'model'=>$study ,
-			'leasingEclAndNewPortfolioFundingRate'=>$leasingEclAndNewPortfolioFundingRate,
-			'title'=>__('Leasing Revenue Stream Breakdown'),
-			'storeRoute'=>route('store.leasing.revenue.stream.breakdown',['company'=>$company->id , 'study'=>$study->id]),
-			'yearsWithItsMonths' =>$yearsWithItsMonths,
-			'yearOrMonthsIndexes'=>$yearOrMonthsIndexes,
-			'isYearsStudy'=>$isYearsStudy
-		];
-	}
+    use NonBankingService ;
+    public function create(Company $company, Request $request, Study $study)
+    {
+        
+        return view('non_banking_services.leasing-revenue-stream-breakdown.form', $this->getViewVars($company, $study));
+    }
+    protected function getViewVars(Company $company, Study $study)
+    {
+        $leasingEclAndNewPortfolioFundingRate = $study?  $study->getEclAndNewPortfolioFundingRatesForStreamType(Study::LEASING) : null;
+        $yearsWithItsMonths =  $study->getOperationDurationPerYearFromIndexes() ;
+        $yearOrMonthsIndexes = $study->getYearOrMonthIndexes();
+        $isYearsStudy = !$study->isMonthlyStudy();
+        return [
+            'company'=>$company ,
+            'study'=>$study,
+            'model'=>$study ,
+            'leasingEclAndNewPortfolioFundingRate'=>$leasingEclAndNewPortfolioFundingRate,
+            'title'=>__('Leasing Revenue Stream Breakdown'),
+            'storeRoute'=>route('store.leasing.revenue.stream.breakdown', ['company'=>$company->id , 'study'=>$study->id]),
+            'yearsWithItsMonths' =>$yearsWithItsMonths,
+            'yearOrMonthsIndexes'=>$yearOrMonthsIndexes,
+            'isYearsStudy'=>$isYearsStudy
+        ];
+    }
 
-	public function store(Company $company , StoreLeasingRevenueStreamRequest $request,Study $study)
-	{
-		if(count($request->get('leasingRevenueStreamBreakdown',[]))){
-			$study->storeRepeaterRelations($request,['leasingRevenueStreamBreakdown'],$company);
-		}
-		$loanAmounts = $request->get('loan_amounts',[]);
-		if($request->has('growth_rate')){
-			$study->leasingRevenueStreamBreakdown->each(function($model) use ($loanAmounts){
-				$model->update([
-					'loan_amounts'=>$loanAmounts[$model->id]
-				]);
-			});
-			$study->update([
-				'leasing_growth_rates'=>$request->get('growth_rate')
-			]);
-		}
-		$study->syncSeasonality($request->get('seasonality'),Study::LEASING , $company->id );
-		
-		$study->storeEclAndFundingStructureFor($request,Study::LEASING);
-		
-		$study->storeFixedLoans(Study::LEASING,'leasingRevenueStreamBreakdown');
-		
-	
-		
-		if($request->get('submitBtnType') == LeasingCategory::LEASING_CATEGORY_FORM_ID){
-			return response()->json([
-				'redirectTo'=>route('create.leasing.revenue.stream.breakdown',['company'=>$company->id,'study'=>$study->id])
-			]);
-		}
-		$study->updateExpensesPercentagesOfSales();
-		
-		return response()->json([
-			'redirectTo'=>$study->getRevenueRoute(Study::DIRECT_FACTORING)
-		]);
-	}
+    public function store(Company $company, StoreLeasingRevenueStreamRequest $request, Study $study)
+    {
+        if (count($request->get('leasingRevenueStreamBreakdown', []))) {
+            $study->storeRepeaterRelations($request, ['leasingRevenueStreamBreakdown'], $company);
+        }
+        $loanAmounts = $request->get('loan_amounts', []);
+        if ($request->has('growth_rate')) {
+            $study->leasingRevenueStreamBreakdown->each(function ($model) use ($loanAmounts) {
+                $model->update([
+                    'loan_amounts'=>$loanAmounts[$model->id]
+                ]);
+            });
+            $study->update([
+                'leasing_growth_rates'=>$request->get('growth_rate')
+            ]);
+        }
+        $request->has('seasonality') ?	$study->syncSeasonality($request->get('seasonality', []), Study::LEASING, $company->id) : [];
+        
+        $study->storeEclAndFundingStructureFor($request, Study::LEASING);
+        
+        $study->storeFixedLoans(Study::LEASING, 'leasingRevenueStreamBreakdown');
+        
+    
+        
+        if ($request->get('submitBtnType') == LeasingCategory::LEASING_CATEGORY_FORM_ID) {
+            return response()->json([
+                'redirectTo'=>route('create.leasing.revenue.stream.breakdown', ['company'=>$company->id,'study'=>$study->id])
+            ]);
+        }
+        $study->updateExpensesPercentagesOfSales();
+        
+        return response()->json([
+            'redirectTo'=>$study->getRevenueRoute(Study::DIRECT_FACTORING)
+        ]);
+    }
 }

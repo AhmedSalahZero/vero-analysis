@@ -27,20 +27,20 @@ class ExpensesController extends Controller
     {
         return view('non_banking_services.expenses.form', $this->getViewVars($company, $study));
     }
-	//   protected function getViewVars(Company $company, Study $study)
+    //   protected function getViewVars(Company $company, Study $study)
     // {
     //     return $study->getExpensesViewVars();
     // }
-	
-	protected function getViewVars(Company $company, Study $study)
+    
+    protected function getViewVars(Company $company, Study $study)
     {
-		$selectedRevenueStreams = $study->getSelectedRevenueStreamTypesFormatted();
-		// $revenueStreams = $study->getSelectedRevenueStreamWithCategories($selectedRevenueStreams);
+        $selectedRevenueStreams = $study->getSelectedRevenueStreamTypesFormatted();
+        // $revenueStreams = $study->getSelectedRevenueStreamWithCategories($selectedRevenueStreams);
         return [
-			'selectedRevenueStreams'=>$selectedRevenueStreams,
+            'selectedRevenueStreams'=>$selectedRevenueStreams,
             'company'=>$company ,
             'type'=>'create',
-			// 'revenueStreams'=>$revenueStreams,
+            // 'revenueStreams'=>$revenueStreams,
             'study'=>$study,
             'model'=>$study ,
             'expenseType'=>HHelpers::getClassNameWithoutNameSpace((new Expense())),
@@ -60,7 +60,7 @@ class ExpensesController extends Controller
         ExpenseAsPercentageEquation $expenseAsPercentageEquation,
         OneTimeExpenseEquation $oneTimeExpenseEquation
     ) {
-		
+        
         $modelId = $request->get('model_id');
   
         $modelName = $request->get('model_name');
@@ -78,7 +78,7 @@ class ExpensesController extends Controller
             #::delete all
             $model->generateRelationDynamically($tableId, $expenseType)->delete();
             foreach ((array)$request->get($tableId) as $tableDataArr) {
-				$tableDataArr['study_id'] = $study->id;
+                $tableDataArr['study_id'] = $study->id;
                 $withholdRate = $tableDataArr['withhold_tax_rate']??0;
             
                 if (isset($tableDataArr['start_date']) && count(explode('-', $tableDataArr['start_date'])) == 2) {
@@ -122,14 +122,14 @@ class ExpensesController extends Controller
                     $tableDataArr['is_deductible'] = $isDeductible[0];
                     $isDeductible= $isDeductible[0];
                 }
-				$isFixedRepeating = isset($tableDataArr['amount']) && $tableId == 'fixed_monthly_repeating_amount';
+                $isFixedRepeating = isset($tableDataArr['amount']) && $tableId == 'fixed_monthly_repeating_amount';
                 $isExpensePerEmployee = (isset($tableDataArr['monthly_cost_of_unit']) && $tableId == 'expense_per_employee') ;
                 $isCostPerUnit = (isset($tableDataArr['monthly_cost_of_unit']) && $tableId == 'cost_per_unit') ;
-				$revenueStreamTypes = $tableDataArr['revenue_stream_type']??[] ;
-				$categoryIds = $tableDataArr['stream_category_ids']??[] ; 
-				
-                if ( $isFixedRepeating || $isExpensePerEmployee || $isCostPerUnit) {
-					
+                $revenueStreamTypes = $tableDataArr['revenue_stream_type']??[] ;
+                $categoryIds = $tableDataArr['stream_category_ids']??[] ;
+                
+                if ($isFixedRepeating || $isExpensePerEmployee || $isCostPerUnit) {
+                    
                     $amount = $tableDataArr['amount']??0 ;
                     $accumulatedManpowerPowersForAllSelectedPositions = [ ];
                     if ($isExpensePerEmployee) {
@@ -137,38 +137,49 @@ class ExpensesController extends Controller
                         $manpowers = Manpower::whereIn('position_id', $positionIds)->pluck('accumulated_manpower_counts')->toArray();
                         $accumulatedManpowerPowersForAllSelectedPositions = HArr::sumAtDates($manpowers, $monthsAsIndexes);
                         $amount = $tableDataArr['monthly_cost_of_unit'];
-                    }elseif($isCostPerUnit){
-						$amount = $tableDataArr['monthly_cost_of_unit'];
-					}
+                    } elseif ($isCostPerUnit) {
+                        $amount = $tableDataArr['monthly_cost_of_unit'];
+                    }
                 
-					// $isDeductible = false;
-					$dateIndexWithYearIndex = $study->getDatesIndexWithYearIndex();
-                    $monthlyFixedRepeatingResults = $monthlyFixedRepeatingAmountEquation->calculate($amount, $tableDataArr['start_date'], $loopEndDate, $tableDataArr['increase_interval']??'annually', $tableDataArr['increase_rates']??0, $isDeductible, $vatRate, $withholdRate,$dateIndexWithYearIndex);
-					/**
-					 * * دي القيمة اللي هتدخل في الاكسبنس
-					 */
-					$repeatingExpenseValues = [];
-					$collectionValues = [];
-					if($isFixedRepeating){
-						$repeatingExpenseValues = $isDeductible ? $monthlyFixedRepeatingResults['total_before_vat'] : $monthlyFixedRepeatingResults['total_after_vat'];
-						$collectionValues = $monthlyFixedRepeatingResults['total_before_vat'];
-					}
-					
-					if($isCostPerUnit){
-						$fixedRepeatingExpenseArr = $isDeductible ? $monthlyFixedRepeatingResults['total_before_vat'] : $monthlyFixedRepeatingResults['total_after_vat'];
-						$contractResult = Expense::getExpensePerContract($revenueStreamTypes,$categoryIds,$studyId,'contract_counts'); 
-						$contractCount = $contractResult['result'];
-						$sumKeys = $study->getOperationDatesAsDateAndDateAsIndexToStudyEndDate();
-						$contractCount = HArr::sumAtDates($contractCount,$sumKeys);
-						$repeatingExpenseValues = HArr::multipleTwoArrAtSameIndex($contractCount,$fixedRepeatingExpenseArr);
-						$collectionValues = HArr::multipleTwoArrAtSameIndex($contractCount,$monthlyFixedRepeatingResults['total_before_vat']);
-					}
+                    // $isDeductible = false;
+                    $dateIndexWithYearIndex = $study->getDatesIndexWithYearIndex();
+                    $monthlyFixedRepeatingResults = [];
+                    if ($isCostPerUnit) {
+                        $contractResult = Expense::getExpensePerContract($revenueStreamTypes, $categoryIds, $studyId, 'contract_counts');
+                        $contractCount = $contractResult['result'];
+                        $sumKeys = $study->getOperationDatesAsDateAndDateAsIndexToStudyEndDate();
+                        $contractCount = HArr::sumAtDates($contractCount, $sumKeys);
+                        $monthlyFixedRepeatingResults = $monthlyFixedRepeatingAmountEquation->calculate($amount, $tableDataArr['start_date'], $loopEndDate, $tableDataArr['increase_interval']??'annually', $tableDataArr['increase_rates']??0, $isDeductible, $vatRate, $withholdRate, $dateIndexWithYearIndex, $contractCount);
+                    } else {
+                        $monthlyFixedRepeatingResults = $monthlyFixedRepeatingAmountEquation->calculate($amount, $tableDataArr['start_date'], $loopEndDate, $tableDataArr['increase_interval']??'annually', $tableDataArr['increase_rates']??0, $isDeductible, $vatRate, $withholdRate, $dateIndexWithYearIndex);
+                    }
+                    /**
+                     * * دي القيمة اللي هتدخل في الاكسبنس
+                     */
+                    $repeatingExpenseValues = [];
+                    $collectionValues = [];
+                    if ($isFixedRepeating) {
+                        $repeatingExpenseValues = $isDeductible ? $monthlyFixedRepeatingResults['total_before_vat'] : $monthlyFixedRepeatingResults['total_after_vat'];
+                        $collectionValues = $monthlyFixedRepeatingResults['total_before_vat'];
+                    }
+                    
+                    if ($isCostPerUnit) {
+                        $fixedRepeatingExpenseArr = $isDeductible ? $monthlyFixedRepeatingResults['total_before_vat'] : $monthlyFixedRepeatingResults['total_after_vat'];
+                        // $contractResult = Expense::getExpensePerContract($revenueStreamTypes,$categoryIds,$studyId,'contract_counts');
+                        // $contractCount = $contractResult['result'];
+                        // $sumKeys = $study->getOperationDatesAsDateAndDateAsIndexToStudyEndDate();
+                        // $contractCount = HArr::sumAtDates($contractCount,$sumKeys);
+                        $repeatingExpenseValues = $fixedRepeatingExpenseArr;
+                        $collectionValues =$monthlyFixedRepeatingResults['total_before_vat'];
+                        // $collectionValues = HArr::multipleTwoArrAtSameIndex($contractCount,$monthlyFixedRepeatingResults['total_before_vat']);
+                        // dd($monthlyFixedRepeatingResults);
+                    }
                     if ($isExpensePerEmployee) {
                         $totalAfterVats = $monthlyFixedRepeatingResults['total_after_vat'];
                         $totalBeforeVats = $monthlyFixedRepeatingResults['total_before_vat'];
                         $monthlyFixedRepeatingResults['total_after_vat'] = HArr::multipleTwoArrAtSameIndex($totalAfterVats, $accumulatedManpowerPowersForAllSelectedPositions);
-						$repeatingExpenseValues = $monthlyFixedRepeatingResults['total_after_vat'] ;
-						$collectionValues = HArr::multipleTwoArrAtSameIndex($totalBeforeVats, $accumulatedManpowerPowersForAllSelectedPositions) ;
+                        $repeatingExpenseValues = $monthlyFixedRepeatingResults['total_after_vat'] ;
+                        $collectionValues = HArr::multipleTwoArrAtSameIndex($totalBeforeVats, $accumulatedManpowerPowersForAllSelectedPositions) ;
                     }
                     $withholdAmounts  = $monthlyFixedRepeatingResults['withhold_amounts'];
                     $tableDataArr['monthly_repeating_amounts']  = $repeatingExpenseValues;
@@ -199,9 +210,9 @@ class ExpensesController extends Controller
                  * $begiinign = $endBalance
 
                  */
-		
+        
                 if ($tableId =='percentage_of_sales' || $tableId =='expense_as_percentage') {
-                    $expenseAsPercentageResults = $expenseAsPercentageEquation->calculate($studyId, $tableDataArr['percentage_of'], $revenueStreamTypes , $categoryIds, $tableDataArr['start_date'], $loopEndDate, $tableDataArr['monthly_percentage'], $tableDataArr['payment_terms'], $vatRate, $isDeductible, $tableDataArr['withhold_tax_rate']) ;
+                    $expenseAsPercentageResults = $expenseAsPercentageEquation->calculate($studyId, $tableDataArr['percentage_of'], $revenueStreamTypes, $categoryIds, $tableDataArr['start_date'], $loopEndDate, $tableDataArr['monthly_percentage'], $tableDataArr['payment_terms'], $vatRate, $isDeductible, $tableDataArr['withhold_tax_rate']) ;
                     $tableDataArr['expense_as_percentages']  =$expenseAsPercentageResults['total_before_vat']  ;
                     // expense_as_percentages
                     $tableDataArr['total_vat']  =$expenseAsPercentageResults['total_vat']  ;
@@ -225,8 +236,8 @@ class ExpensesController extends Controller
                     $startDateAsIndex = $tableDataArr['start_date'] ;
                     $amountBeforeVat = $tableDataArr['amount'] ;
                     $withholdAmount = $tableDataArr['withhold_tax_rate'] / 100 * $amountBeforeVat ;
-					$amortizationMonths = $tableDataArr['amortization_months']??12 ;
-                    $oneTimeExpenses = $oneTimeExpenseEquation->calculate($amountBeforeVat,$amortizationMonths, $startDateAsIndex, $isDeductible, $vatRate);
+                    $amortizationMonths = $tableDataArr['amortization_months']??12 ;
+                    $oneTimeExpenses = $oneTimeExpenseEquation->calculate($amountBeforeVat, $amortizationMonths, $startDateAsIndex, $isDeductible, $vatRate);
                     $tableDataArr['payload']  = $oneTimeExpenses ;
                     $amountBeforeVatPayload = [$startDateAsIndex=>$amountBeforeVat] ;
                     $vatRate = $tableDataArr['vat_rate'] / 100 ;
@@ -277,9 +288,9 @@ class ExpensesController extends Controller
             $collectionPolicyValue = $customCollectionPolicy ;
         } elseif ($collectionPolicyType == 'system_default' && $paymentTerm=='cash') {
             $collectionPolicyValue = 'monthly';
-        }elseif($collectionPolicyType == 'system_default'){
-			$collectionPolicyValue = $paymentTerm;
-		}
+        } elseif ($collectionPolicyType == 'system_default') {
+            $collectionPolicyValue = $paymentTerm;
+        }
         $dateValue = convertIndexKeysToString($dateValue, $datesAsIndexAndString);
         $collectionPolicyValue = is_array($collectionPolicyValue) ?  $this->formatDues($collectionPolicyValue) : $collectionPolicyValue;
         $result = (new CollectionPolicyService())->applyCollectionPolicy(true, $collectionPolicyType, $collectionPolicyValue, $dateValue) ;

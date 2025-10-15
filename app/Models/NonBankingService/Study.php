@@ -617,24 +617,24 @@ class Study extends Model
     {
         return $this->has_micro_finance;
     }
-	public function getMicrofinanceType():?string 
-	{
-		return $this->microfinance_type;
-	}
-	public function isWholeCompanyMicrofinance()
-	{
-		$isWholeCompany = $this->getMicrofinanceType() == 'whole-company';
-		return $this->hasMicroFinance() && $isWholeCompany;
-	}
-	public function isByCompanyMicrofinance()
-	{
-		$isByBranch = $this->getMicrofinanceType() == 'by-branch';
-		return $this->hasMicroFinance() && $isByBranch;
-	}
-	public function getMicrofinanceNoBranches()
-	{
-		return $this->microfinance_no_branches;
-	}
+    public function getMicrofinanceType():?string
+    {
+        return $this->microfinance_type;
+    }
+    public function isWholeCompanyMicrofinance()
+    {
+        $isWholeCompany = $this->getMicrofinanceType() == 'whole-company';
+        return $this->hasMicroFinance() && $isWholeCompany;
+    }
+    public function isByCompanyMicrofinance()
+    {
+        $isByBranch = $this->getMicrofinanceType() == 'by-branch';
+        return $this->hasMicroFinance() && $isByBranch;
+    }
+    public function getMicrofinanceNoBranches()
+    {
+        return $this->microfinance_no_branches;
+    }
     public function hasSecuritization():bool
     {
         return $this->has_securitization;
@@ -865,20 +865,19 @@ class Study extends Model
      * * revenue_stream_type -> leasing , ijara .. etc
      * * relation name -> leasingRevenueStreamBreakdown ,
      */
-    public function storeMonthlyLoan(string $relationName, array $portfolioMonthlyLoanAmounts =[])
+    public function storeMonthlyLoan(string $revenueType , string $relationName, array $portfolioMonthlyLoanAmounts =[])
     {
         $monthlyLoanAmounts = [];
         $contractCounts = [];
+
         $operationDurationPerYear=$this->getOperationDurationPerYearFromIndexes();
         $revenueIdWitLoanAmounts = $this->{$relationName}->pluck('loan_amounts', 'id')->toArray() ;
+		DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('revenue_contracts')->where('study_id', $this->id)->where('revenue_type', $revenueType )->delete();
         foreach ($revenueIdWitLoanAmounts as $leasingRevenueStreamBreakdownId => $yearIndexWithAmount) {
             $model = $this->{$relationName}->where('id', $leasingRevenueStreamBreakdownId)->first() ;
-            $foreignKeyName = $model->getForeignKeyName();
-            DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('revenue_contracts')->where('study_id', $this->id)->where($foreignKeyName, $model->id)->delete();
+        //    $foreignKeyName = $model->getForeignKeyName();
             foreach ($operationDurationPerYear as $yearIndex => $yearMonthIndexes) {
-
                 foreach ($yearMonthIndexes as $monthIndex => $monthlyZeroOrOne) {
-                    
                     $yearIndexWithAmount = is_string($yearIndexWithAmount) ? (array)json_decode($yearIndexWithAmount) : $yearIndexWithAmount;
                     $loanAtCurrentYear = $this->isMonthlyStudy() ? ($yearIndexWithAmount[$monthIndex]??0) : ($yearIndexWithAmount[$yearIndex]??0);
                     
@@ -918,16 +917,17 @@ class Study extends Model
     }
     public function storeFixedLoans(string $revenueStreamType, string $relationName, bool $isSensitivity = false, array $pricingPerMonths = null):void
     {
-        
-        $loanSchedulePaymentTableName = $isSensitivity ? 'sensitivity_loan_schedule_payments' : 'loan_schedule_payments';
-        $revenueIdWitLoanAmounts = $this->{$relationName}->pluck('loan_amounts', 'id')->toArray() ;
-        $this->storeMonthlyLoan($relationName);
-        $calculateFixedLoanAtEndService = new CalculateFixedLoanAtEndService ;
-        $calculateFixedLoanAtBeginningService = new CalculateFixedLoanAtBeginningService ;
-        $portfolioLoans = [];
         $studyId  = $this->id ;
         $companyId = $this->company->id ;
         $study = $this ;
+        $loanSchedulePaymentTableName = $isSensitivity ? 'sensitivity_loan_schedule_payments' : 'loan_schedule_payments';
+        DB::connection('non_banking_service')->table($loanSchedulePaymentTableName)->where('revenue_stream_type', $revenueStreamType)->where('study_id', $studyId)->delete();
+        $revenueIdWitLoanAmounts = $this->{$relationName}->pluck('loan_amounts', 'id')->toArray() ;
+        $this->storeMonthlyLoan($revenueStreamType,$relationName);
+        $calculateFixedLoanAtEndService = new CalculateFixedLoanAtEndService ;
+        $calculateFixedLoanAtBeginningService = new CalculateFixedLoanAtBeginningService ;
+        $portfolioLoans = [];
+        
         $operationDurationPerYear=$study->getOperationDurationPerYearFromIndexes();
 
         $leasingRevenueStreams =$study->{$relationName};
@@ -954,7 +954,7 @@ class Study extends Model
             }
         }
         
-        DB::connection('non_banking_service')->table($loanSchedulePaymentTableName)->where('revenue_stream_type', $revenueStreamType)->where('study_id', $studyId)->delete();
+
         $baseRatesMapping = HArr::getFirstOfYear($baseRatesPerMonths);
         $bankLendingMarginRates=$generalAndReserveAssumption->getBankLendingMarginRates();
 
@@ -3402,20 +3402,6 @@ class Study extends Model
         }
         return $result;
     }
-    // public function getYearIndexWithItsMonthsAsIndexAndString()
-    // {
-    //     $result =[];
-    //     foreach ($this->getOperationDurationPerYearFromIndexesForAllStudyInfo() as $yearIndex => $dateAsIndexAndIsActive) {
-    //         foreach ($dateAsIndexAndIsActive as $dateAsIndex => $isActive) {
-    //             if ($isActive) {
-    //                 $dateAsString = $this->getDateFromDateIndex($dateAsIndex);
-    //                 $result[$yearIndex][$dateAsIndex]=$dateAsString;
-    //             }
-    //         }
-            
-    //     }
-    // 	return $result;
-    // }
     public function getCorporateTaxesPayable():float
     {
         $corporateTaxesPayable = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('vat_and_credit_withhold_tax_opening_balances')->where('study_id', $this->id)->first();
@@ -3459,7 +3445,8 @@ class Study extends Model
                 return $revenueRouteArr['route'];
             }
         }
-        dd('no route found');
+        return route('view.manpower.for.non.banking', ['company'=>$this->company->id,'study'=>$this->id]);
+    
     }
     
     public function sumTwoArrayUntilIndex(array $first, array $second, int $limitDateAsIndex):array

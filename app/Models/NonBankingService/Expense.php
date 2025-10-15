@@ -268,6 +268,7 @@ class Expense extends Model
             ->whereRaw($revenueStreamTypesWheres)->pluck($columnName)->map(function ($item) {
                 return (array)json_decode($item);
             })->toArray();
+		
         return [
             'result'=>$resultArr ,
             'selectedRevenueStreamTypes'=>$selectedRevenueStreamTypes
