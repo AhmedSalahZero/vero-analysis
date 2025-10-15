@@ -174,9 +174,7 @@ use App\Models\NonBankingService\Expense;
 
                         </div>
                     </td>
-                    {{-- <td>
-                                        <x-form.select :selectedValue="isset($subModel) ? $subModel->getIncreaseInterval() : 'annually' " :options="getDurationIntervalTypesForSelectExceptMonthly()" :add-new="false" class="select2-select   repeater-select" :all="false" name="@if($isRepeater) increase_interval @else {{ $tableId }}[0][increase_interval] @endif"></x-form.select>
-                    </td> --}}
+                
 
 
                     </tr>

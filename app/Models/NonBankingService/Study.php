@@ -63,7 +63,8 @@ class Study extends Model
     protected $casts = [
         'operation_dates'=>'array',
         'study_dates'=>'array',
-        'leasing_growth_rates'=>'array'
+        'leasing_growth_rates'=>'array',
+		'microfinance_branch_ids'=>'array'
     ];
         
     public static function boot()
@@ -1774,7 +1775,7 @@ class Study extends Model
     }
     public function getConsumerfinanceBranchesCount():int
     {
-        return $this->consumerfinance_branches_count;
+        return $this->consumerfinance_branches_count?:0;
     }
     public function getConsumerfinanceLoanOfficerCount():int
     {
@@ -3043,7 +3044,6 @@ class Study extends Model
                 $totalExpensePerCategory[$expenseNameId][$dateIndex] = isset($totalExpensePerCategory[$expenseNameId][$dateIndex]) ? $totalExpensePerCategory[$expenseNameId][$dateIndex] + $amount : $amount;
             }
         }
-		// dd($collectionStatements);
         $totalPerType =[];
         foreach ($totalExpensePerCategory as $expenseNameId => $currentData) {
             $expenseName = ExpenseName::find($expenseNameId) ;
@@ -3056,7 +3056,7 @@ class Study extends Model
             $tableDataFormatted[$currentTabIndex]['sub_items'][$expenseNameId]['year_total'] = HArr::sumPerYearIndex($totalPerType[$expenseNameId], $yearWithItsMonths);
         }
         $totalExpenses = HArr::sumAtDates(array_values($totalPerType), $sumKeys) ;
-        dd($totalExpenses,$totalPerType);
+
 		
 		       $socialTaxesTitle = __('Salaries & Social Insurance Taxes');
 			   $salaryStatements = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('manpowers')->where('study_id',$this->id)->pluck('tax_and_social_insurance_statement')->toArray();
@@ -3457,7 +3457,7 @@ class Study extends Model
                 return $revenueRouteArr['route'];
             }
         }
-        return route('view.manpower.for.non.banking', ['company'=>$this->company->id,'study'=>$this->id]);
+        return route('create.microfinance', ['company'=>$this->company->id,'study'=>$this->id]);
     
     }
     
@@ -3533,4 +3533,8 @@ class Study extends Model
         return $totalCost;
         
     }
+	public function getMicrofinanceBranches():array
+	{
+		return $this->microfinance_branch_ids?:[];
+	}
 }

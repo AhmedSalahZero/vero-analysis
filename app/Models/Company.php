@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Formatter\Select2Formatter;
 use App\Models\NonBankingService\ConsumerfinanceProduct;
 use App\Models\NonBankingService\Department;
+use App\Models\NonBankingService\ExistingBranch;
 use App\Models\NonBankingService\ExpenseName;
 use App\Models\NonBankingService\FixedAssetName;
 use App\Models\NonBankingService\LeasingCategory;
@@ -588,6 +589,15 @@ class Company extends Model implements HasMedia
 	{
 		return (new Select2Formatter)->formatForAssocArr($this->leasingCategories->pluck('title','id')->toArray());
 	}
+	public function existingBranches()
+	{
+		return $this->hasMany(ExistingBranch::class,'company_id','id');
+	}
+	public function getExistingBranchesFormattedForSelect():array 
+	{
+		return (new Select2Formatter)->formatForAssocArr($this->existingBranches->pluck('title','id')->toArray());
+	}
+	
 	public function microfinanceProducts()
 	{
 		return $this->hasMany(MicrofinanceProduct::class,'company_id','id');

@@ -1099,7 +1099,7 @@ $(document).on('change','.microfinance-checkbox-js',function(){
 		$('.show-only-with-microfinance').hide();
 		$('.show-only-with-microfinance input').prop('checked',false).trigger('change');
 		$('.no-branch-div').addClass('hidden')
-		$('.no-branch-input-js').val(0).trigger('change')
+	//	$('.no-branch-input-js').val(0).trigger('change')
 		
 	}
 })
@@ -1114,7 +1114,7 @@ $(document).on('change','.microfinance-sub-checkbox-js',function(){
 		$('.no-branch-div').removeClass('hidden')
 	}else{
 		$('.no-branch-div').addClass('hidden')
-		$('.no-branch-input-js').val(0).trigger('change')
+	//	$('.no-branch-input-js').val(0).trigger('change')
 	}
 });
 $('.microfinance-sub-checkbox-js:checked').trigger('change');

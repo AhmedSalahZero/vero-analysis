@@ -337,6 +337,10 @@ Route::middleware([])->group(function () {
 					route::post('leasing-products/create','LeasingCategoriesController@store')->name('store.leasing.categories');
 					
 					
+					route::get('existing-branches/create','ExistingBranchesController@create')->name('create.existing.branches');
+					route::post('existing-branches/create','ExistingBranchesController@store')->name('store.existing.branches');
+					
+					
 					route::get('departments','DepartmentController@index')->name('view.departments');
 					route::get('departments/create','DepartmentController@create')->name('create.departments');
 					route::post('departments/create','DepartmentController@store')->name('store.departments');

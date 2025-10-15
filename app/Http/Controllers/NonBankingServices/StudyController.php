@@ -109,8 +109,11 @@ class StudyController extends Controller
 	protected function getViewVars(Company $company, Study $model = null , $isBusinessPlan = true ):array 
 	{
 		$isBusinessPlan = $model ? $model->isBusinessPlan() : $isBusinessPlan;
+		$formattedExistingBranches = $company->getExistingBranchesFormattedForSelect();
+
 		return [
 			'company'=>$company,
+			'formattedExistingBranches'=>$formattedExistingBranches,
 			'title'=>$company->getName().' ' . __(' Financial Plan'),
 			'model'=>$model,
 			'storeRoute'=>route('store.non.banking.services',['company'=>$company->id]),

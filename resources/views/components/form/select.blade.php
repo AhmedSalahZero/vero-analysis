@@ -16,6 +16,7 @@
 'addModalTitle'=>'',
 'appendNewOptionToSelectSelector'=>'',
 'multiple'=>$multiple ??false ,
+'debug'=>false,
 'pleaseSelect'=>$pleaseSelect ?? false ,
 'addNewModal'=>false,
 'addNewModalModalName'=>'',
@@ -29,6 +30,7 @@
 'additionalColumnName'=>'',
 'additionalColumnValue'=>''
 ])
+
 @if($label)
 <label class="form-label font-weight-bold @if($addNewModal) d-flex @endif "> {{$label}}
 

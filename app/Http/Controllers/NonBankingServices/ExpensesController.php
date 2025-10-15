@@ -151,7 +151,6 @@ class ExpensesController extends Controller
                         $contractCount = HArr::sumAtDates($contractCount, $sumKeys);
                         $monthlyFixedRepeatingResults = $monthlyFixedRepeatingAmountEquation->calculate($amount, $tableDataArr['start_date'], $loopEndDate, $tableDataArr['increase_interval']??'annually', $tableDataArr['increase_rates']??0, $isDeductible, $vatRate, $withholdRate, $dateIndexWithYearIndex, $contractCount);
                     } else {
-						
                         $monthlyFixedRepeatingResults = $monthlyFixedRepeatingAmountEquation->calculate($amount, $tableDataArr['start_date'], $loopEndDate, $tableDataArr['increase_interval']??'annually', $tableDataArr['increase_rates']??0, $isDeductible, $vatRate, $withholdRate, $dateIndexWithYearIndex);
                     }
                     /**
@@ -253,8 +252,8 @@ class ExpensesController extends Controller
                     $tableDataArr['total_after_vat']  =$amountAfterVat  ;
                     $withholdAmount = $tableDataArr['withhold_tax_rate']/100 ;
                     $withholdAmounts  = [$startDateAsIndex =>  $amountBeforeVat * $withholdAmount ] ;
-                    $payments = $this->calculateCollectionOrPaymentAmounts($tableDataArr['payment_terms'], $amountAfterVat, $datesAsIndexAndString, $customCollectionPolicy, true) ;
-                    $withholdPayments = $this->calculateCollectionOrPaymentAmounts($tableDataArr['payment_terms'], $withholdAmounts, $datesAsIndexAndString, $customCollectionPolicy) ;
+                    $payments = $study->calculateCollectionOrPaymentAmounts($tableDataArr['payment_terms'], $amountAfterVat, $datesAsIndexAndString, $customCollectionPolicy, true) ;
+                    $withholdPayments = $study->calculateCollectionOrPaymentAmounts($tableDataArr['payment_terms'], $withholdAmounts, $datesAsIndexAndString, $customCollectionPolicy) ;
                     $netPaymentsAfterWithhold = HArr::subtractAtDates([$payments,$withholdPayments], array_keys($payments));
                     $tableDataArr['withhold_amounts'] = $withholdAmounts ;
                     $tableDataArr['withhold_payments']=$withholdPayments;
@@ -284,24 +283,24 @@ class ExpensesController extends Controller
         ]);
         
     }
-    private function calculateCollectionOrPaymentAmounts(string $paymentTerm, array $totalAfterVat, array $datesAsIndexAndString, array $customCollectionPolicy, $debug=false)
-    {
-        $collectionPolicyType  = $paymentTerm == 'customize' ? 'customize':'system_default';
-        $collectionPolicyValue = $collectionPolicyType ;
-        $dateValue = $totalAfterVat;
-        if ($collectionPolicyType == 'customize') {
-            $collectionPolicyValue = $customCollectionPolicy ;
-        } elseif ($collectionPolicyType == 'system_default' && $paymentTerm=='cash') {
-            $collectionPolicyValue = 'monthly';
-        } elseif ($collectionPolicyType == 'system_default') {
-            $collectionPolicyValue = $paymentTerm;
-        }
-        $dateValue = convertIndexKeysToString($dateValue, $datesAsIndexAndString);
-        $collectionPolicyValue = is_array($collectionPolicyValue) ?  $this->formatDues($collectionPolicyValue) : $collectionPolicyValue;
-        $result = (new CollectionPolicyService())->applyCollectionPolicy(true, $collectionPolicyType, $collectionPolicyValue, $dateValue) ;
+    // private function calculateCollectionOrPaymentAmounts(string $paymentTerm, array $totalAfterVat, array $datesAsIndexAndString, array $customCollectionPolicy, $debug=false)
+    // {
+    //     $collectionPolicyType  = $paymentTerm == 'customize' ? 'customize':'system_default';
+    //     $collectionPolicyValue = $collectionPolicyType ;
+    //     $dateValue = $totalAfterVat;
+    //     if ($collectionPolicyType == 'customize') {
+    //         $collectionPolicyValue = $customCollectionPolicy ;
+    //     } elseif ($collectionPolicyType == 'system_default' && $paymentTerm=='cash') {
+    //         $collectionPolicyValue = 'monthly';
+    //     } elseif ($collectionPolicyType == 'system_default') {
+    //         $collectionPolicyValue = $paymentTerm;
+    //     }
+    //     $dateValue = convertIndexKeysToString($dateValue, $datesAsIndexAndString);
+    //     $collectionPolicyValue = is_array($collectionPolicyValue) ?  $this->formatDues($collectionPolicyValue) : $collectionPolicyValue;
+    //     $result = (new CollectionPolicyService())->applyCollectionPolicy(true, $collectionPolicyType, $collectionPolicyValue, $dateValue) ;
         
-        return convertStringKeysToIndexes($result, $datesAsIndexAndString);
-    }
+    //     return convertStringKeysToIndexes($result, $datesAsIndexAndString);
+    // }
     private function formatDues(array $duesAndDays)
     {
         $result = [];

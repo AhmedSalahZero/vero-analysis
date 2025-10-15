@@ -61,7 +61,10 @@ use App\Models\NonBankingService\Study;
                         <i class="fas fa-plus white-icon exclude-icon "></i>
                         {{ __('New Business Plan') }}
                     </a>
-
+    <a href="{{ route('create.existing.branches',['company'=>$company->id]) }}" class="btn w-240px new-record-class new-study-item rounded btn-icon-sm align-self-center">
+                        <i class="fas fa-plus white-icon exclude-icon"></i>
+                        {{ __('Existing Branches') }}
+                    </a>
 
                     <a href="{{ route('create.leasing.categories',['company'=>$company->id]) }}" class="btn w-240px new-record-class new-study-item rounded btn-icon-sm align-self-center">
                         <i class="fas fa-plus white-icon exclude-icon"></i>

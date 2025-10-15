@@ -22,7 +22,7 @@ use App\Models\NonBankingService\Expense;
 
 <div class="row">
     <div class="col-md-12">
-        <form id="form-id" class="kt-form kt-form--label-right" method="POST" enctype="multipart/form-data" action="{{ route('store.expenses',['company'=>$company->id,'study'=>$study->id ]) }}">
+        <form id="form-id" class="kt-form kt-form--label-right" method="POST" enctype="multipart/form-data" action="{{ route('store.microfinance',['company'=>$company->id,'study'=>$study->id ]) }}">
             @csrf
             <input type="hidden" name="model_id" value="{{ $model->id ?? 0  }}">
             <input type="hidden" name="company_id" value="{{ getCurrentCompanyId()  }}">
@@ -53,7 +53,7 @@ use App\Models\NonBankingService\Expense;
 
                         @endphp
                         <input type="hidden" name="tableIds[]" value="{{ $tableId }}">
-                        <x-tables.repeater-table :removeRepeater="false" :repeater-with-select2="true" :parentClass="'js-toggle-visibility'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
+                        <x-tables.repeater-table :hideByDefault="false" :removeRepeater="false" :repeater-with-select2="true" :parentClass="'js-toggle-visibility'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
                             <x-slot name="ths">
                                 <x-tables.repeater-table-th class="col-md-2 header-border-down" :title="__('Expense <br> Category')"></x-tables.repeater-table-th>
                                 <x-tables.repeater-table-th class="col-md-2 header-border-down" :title="__('Expense <br> Name')"></x-tables.repeater-table-th>
@@ -88,7 +88,7 @@ use App\Models\NonBankingService\Expense;
 
                                     <input type="hidden" name="id" value="{{ isset($subModel) ? $subModel->id : 0 }}">
                                     <td>
-                                        <x-form.select :selectedValue="isset($subModel) ? $subModel->getExpenseCategory() : 'cash'" :options="getExpenseCategoriesForSelect2()" :add-new="false" class="select2-select repeater-select expense_category " :all="false" name="@if($isRepeater) expense_category @else {{ $tableId }}[0][expense_category] @endif"></x-form.select>
+                                        <x-form.select :selectedValue="isset($subModel) ? $subModel->getExpenseCategory() : 'cash'" :options="getBranchExpenseCategoriesForSelect2()" :add-new="false" class="select2-select repeater-select expense_category " :all="false" name="@if($isRepeater) expense_category @else {{ $tableId }}[0][expense_category] @endif"></x-form.select>
                                     </td>
 
                                     <td>
@@ -132,36 +132,43 @@ use App\Models\NonBankingService\Expense;
 
                                         </div>
                                     </td>
-                                    <button class="btn btn-primary btn-md text-nowrap increase-rate-trigger-btn" type="button" data-toggle="modal">{{ __('Increase Rates') }}</button>
-                                    <x-modal.increase-rates :study="$study" :subModel="isset($subModel) ? $subModel : null " :tableId="$tableId" :isRepeater="$isRepeater" :id="$repeaterId.'test-modal-id'"></x-modal.increase-rates>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <input class="form-control only-percentage-allowed text-center" value="{{ isset($subModel) ? number_format($subModel->getWithholdTaxRate(),PERCENTAGE_DECIMALS) : "0.00" }}" type="text">
+                                            <span style="margin-left:3px	">%</span>
+                                            <input type="hidden" value="{{ (isset($subModel) ? $subModel->getWithholdTaxRate() : 0) }}" @if($isRepeater) name="withhold_tax_rate" @else name="{{ $tableId }}[0][withhold_tax_rate]" @endif>
+                                        </div>
+                                    </td>
+                                    <td>
+
+                                        <button class="btn btn-primary btn-md text-nowrap increase-rate-trigger-btn" type="button" data-toggle="modal">{{ __('Increase Rates') }}</button>
+                                        <x-modal.increase-rates :study="$study" :subModel="isset($subModel) ? $subModel : null " :tableId="$tableId" :isRepeater="$isRepeater" :id="$repeaterId.'test-modal-id'"></x-modal.increase-rates>
+                                    </td>
+                                </tr>
+                                @endforeach
+
+                            </x-slot>
+
+
+
+
+                        </x-tables.repeater-table>
+                        {{-- end of fixed monthly repeating amount --}}
 
                     </div>
-                    </td>
-                    </tr>
-                    @endforeach
 
-                    </x-slot>
-
-
-
-
-                    </x-tables.repeater-table>
-                    {{-- end of fixed monthly repeating amount --}}
 
                 </div>
-
-
             </div>
+            <x-save-or-continue-btn />
+
+
+
+
+            <!--end::Form-->
+
+            <!--end::Portlet-->
     </div>
-    <x-save-or-continue-btn />
-
-
-
-
-    <!--end::Form-->
-
-    <!--end::Portlet-->
-</div>
 
 
 </div>
@@ -362,15 +369,7 @@ use App\Models\NonBankingService\Expense;
     //  }) 
 
 
-    $(document).on('click', '.js-type-btn', function(e) {
-        e.preventDefault();
-        $('.js-type-btn').removeClass('active');
-        $(this).addClass('active');
-        $('.js-parent-to-table').hide();
-        let tableId = '.' + $(this).attr('data-value');
-        $(tableId).closest('.js-parent-to-table').show();
 
-    })
     $(function() {
         $('#expense_type').trigger('change')
         $('.js-type-btn.active').trigger('click')
@@ -528,103 +527,7 @@ use App\Models\NonBankingService\Expense;
 
 </script>
 <script>
-    $(function() {
-        $('.only-month-year-picker').each(function(index, dateInput) {
-            var $input = $(dateInput);
-            var currentDate = $input.val();
 
-            var startDate = "{{ isset($studyStartDate) && $studyStartDate ? $studyStartDate : -1 }}";
-            startDate = startDate == '-1' ? '' : startDate;
-
-            var endDate = "{{ isset($studyEndDate) && $studyEndDate ? $studyEndDate : -1 }}";
-            endDate = endDate == '-1' ? '' : endDate;
-
-            var options = {
-                viewMode: "years"
-                , minViewMode: "months"
-                , todayHighlight: false
-                , clearBtn: true
-                , autoclose: true
-                , format: "yyyy-mm-01"
-            , };
-
-            if (startDate && endDate) {
-                options.startDate = new Date(startDate);
-                options.endDate = new Date(endDate);
-            }
-
-            $input.datepicker(options);
-
-            // ✅ معالجة القيمة الافتراضية
-            if (currentDate) {
-                try {
-                    let date = new Date(currentDate);
-                    let year = date.getFullYear();
-                    let month = String(date.getMonth() + 1).padStart(2, '0');
-
-                    let displayValue = `${year}-${month}`;
-                    let fullValue = `${year}-${month}-01`;
-
-                    // عرض السنة والشهر فقط
-                    $input.val(displayValue);
-                    $input.data('full-date', fullValue);
-
-                    // تعيين التاريخ للـ datepicker
-                    $input.datepicker('setDate', new Date(fullValue));
-                } catch (e) {
-                    console.warn('Invalid default date:', currentDate);
-                }
-            }
-
-            // ✅ عند تغيير التاريخ
-            $input.on('changeDate', function(e) {
-                if (e.date) {
-                    let year = e.date.getFullYear();
-                    let month = String(e.date.getMonth() + 1).padStart(2, '0');
-
-                    let displayValue = `${year}-${month}`;
-                    let fullValue = `${year}-${month}-01`;
-
-                    setTimeout(() => {
-                        $input.val(displayValue);
-                        $input.data('full-date', fullValue);
-                    }, 10);
-                }
-            });
-            $input.on('blur', function() {
-                let val = $input.val();
-                // إذا كانت الصيغة مثل 2025-06-01
-                if (/^\d{4}-\d{2}-01$/.test(val)) {
-                    let parts = val.split('-');
-                    let year = parts[0];
-                    let month = parts[1];
-                    let fullDate = `${year}-${month}-01`;
-                    let displayDate = `${year}-${month}`;
-
-                    $input.val(displayDate); // نعرض السنة والشهر فقط
-                    $input.data('full-date', fullDate); // نخزن التاريخ الكامل
-                }
-            });
-
-        });
-
-
-
-
-        // ✅ قبل إرسال النموذج، نُعيد القيم الكاملة
-        $('form').on('submit', function() {
-            $('.only-month-year-picker').each(function(_, input) {
-                var $input = $(input);
-                var fullDate = $input.data('full-date');
-
-                if (fullDate) {
-                    $input.val(fullDate);
-                }
-            });
-        });
-
-
-    })
 
 </script>
 <script>

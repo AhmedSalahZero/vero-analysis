@@ -8096,30 +8096,20 @@ function getExpenseCategoriesForSelect2():array
 		];
 	}
 	return $results;
-	// dd(ExpenseNam::where('company_id',31)->get());
-	// return [
-	// 	[
-	// 		'title'=>__('Cost Of Service'),
-	// 		'value'=>'cost-of-service'
-	// 	],
-	// 	[
-	// 		'title'=>__('Other Operation Expense'),
-	// 		'value'=>'other-operation-expense'
-	// 	],
-	// 	[
-	// 		'title'=>__('Marketing Expense'),
-	// 		'value'=>'marketing-expense'
-	// 	],
-	// 	[
-	// 		'title'=>__('Sales Expense'),
-	// 		'value'=>'sales-expense'
-	// 	],	
-	// 	[
-	// 		'title'=>__('General Expense'),
-	// 		'value'=>'general-expense'
-	// 	],
-		
-	// ];
+	
+}
+function getBranchExpenseCategoriesForSelect2():array 
+{
+	$results = [];
+	$expenseCategories = ExpenseName::getCategoriesForBranch(getCurrentCompany());
+	foreach($expenseCategories as $type => $name){
+		$results[] = [
+			'title'=>HStr::camelizeWithSpace($type) ,
+			'value'=>$type
+		];
+	}
+	return $results;
+	
 }
 function getExpenseTypes():array 
 {

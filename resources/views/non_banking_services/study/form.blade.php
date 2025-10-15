@@ -343,7 +343,7 @@
 
 
                                                 <label class="kt-radio kt-radio--success text-black font-size-14px font-weight-bold show-only-with-microfinance ">
-                                                    <input class=" microfinance-sub-checkbox-js is-whole-company"  type="radio" value="whole-company" name="microfinance_type" @if(isset($model) && $model->isWholeCompanyMicrofinance()) checked @endisset
+                                                    <input class=" microfinance-sub-checkbox-js is-whole-company" type="radio" value="whole-company" name="microfinance_type" @if(isset($model) && $model->isWholeCompanyMicrofinance()) checked @endisset
                                                     > {{ __('Whole Company') }}
                                                     <span></span>
                                                 </label>
@@ -357,18 +357,15 @@
 
                                             </div>
 
-                                           
+
 
 
                                         </div>
-										 <div class="form-group d-inline-block ml-3 no-branch-div hidden">
-                                                <label class="form-label font-weight-bold">{{ __('No. Branches') }} @include('star') </label>
-                                                <div class="kt-input-icon ">
-                                                    <div class="input-group">
-                                                        <input type="text" class="form-control no-branch-input-js only-greater-than-zero-or-equal-allowed" name="microfinance_no_branches" value="{{ isset($model) ? $model->getMicrofinanceNoBranches() : 0 }}" step="0.1">
-                                                    </div>
-                                                </div>
-                                            </div>
+
+
+                                        <div class="form-group d-inline-block ml-3 no-branch-div hidden min-w-200">
+                                            <x-form.select  :multiple="true"  name="microfinance_branch_ids[]"  :selectedValue="isset($model) ? $model->getMicrofinanceBranches() : ''" :options="$formattedExistingBranches" :add-new="false" class="select2-select repeater-select  " :all="false"></x-form.select>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
