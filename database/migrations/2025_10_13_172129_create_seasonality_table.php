@@ -14,6 +14,7 @@ class CreateSeasonalityTable extends Migration
      */
     public function up()
     {
+		 Schema::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->drop('seasonality');
         Schema::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->create('seasonality', function (Blueprint $table) {
             $table->id();
 			$table->unsignedBigInteger('company_id'); 
@@ -21,8 +22,8 @@ class CreateSeasonalityTable extends Migration
 			// $table->unsignedBigInteger('model_id'); // in this system it would be study id
 			$table->string('model_name');
 			$table->enum('type',['flat','quarterly','monthly'])->default('flat');
-			$table->json('percentages')->comment('زي ما هي في الفورم بالظبط علشان لما نيجي نجيب الاولد داتا في الفيو');
-			$table->json('distributed_percentages')->comment('بنفرد الكولوم السابق شهور يعني شهر واحد قيمته كذا وشهر اتنين قيمته كذا وهكذا لحد اخر شهر في السنه');
+			$table->json('percentages')->nullable()->comment('زي ما هي في الفورم بالظبط علشان لما نيجي نجيب الاولد داتا في الفيو');
+			$table->json('distributed_percentages')->nullable()->comment('بنفرد الكولوم السابق شهور يعني شهر واحد قيمته كذا وشهر اتنين قيمته كذا وهكذا لحد اخر شهر في السنه');
             $table->timestamps();
         });
 		

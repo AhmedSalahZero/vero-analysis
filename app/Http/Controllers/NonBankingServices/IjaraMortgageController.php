@@ -29,7 +29,7 @@ class IjaraMortgageController extends Controller
 	}
 	public function store(Company $company , StoreIjaraMortgageRevenueStreamRequest $request,Study $study)
 	{
-		$study->storeRelationsWithNoRepeater($request,$company);
+		$study->storeRelationsWithNoRepeater($request,$company,['seasonality']);
 		$study->storeRepeaterRelations($request,$this->getRepeaterRelations(),$company);
 		$study->syncSeasonality($request->get('seasonality'),Study::IJARA , $company->id );
 		$study->storeEclAndFundingStructureFor($request,Study::IJARA);

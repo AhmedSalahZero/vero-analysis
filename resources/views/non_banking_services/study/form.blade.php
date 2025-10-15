@@ -64,9 +64,9 @@
                             <div class="col-md-2 mb-4">
                                 <x-form.label :class="'label'" :id="'test-id'">{{ __('Study Start Date') }} @include('star') </x-form.label>
                                 @include('components.calendar-month-year',[
-									'name'=>'study_start_date',
-									'value'=>$model ? $model->getStudyStartDateYearAndMonth() : now()->format('Y-m'),
-									'class'=>'recalc-study-end-date study-start-date'
+                                'name'=>'study_start_date',
+                                'value'=>$model ? $model->getStudyStartDateYearAndMonth() : now()->format('Y-m'),
+                                'class'=>'recalc-study-end-date study-start-date'
                                 ])
                             </div>
 
@@ -119,15 +119,15 @@
 
 
 
- <div class="col-md-2 mb-4">
+                            <div class="col-md-2 mb-4">
                                 <x-form.label :class="'label'" :id="'test-id'">{{ __('Operation Start Date') }} @include('star') </x-form.label>
                                 @include('components.calendar-month-year',[
                                 'name'=>'operation_start_date',
                                 'value'=>$model ? $model->getOperationStartDateYearAndMonth() : now()->format('Y-m'),
                                 ])
                             </div>
-							
-                           
+
+
 
 
 
@@ -278,11 +278,7 @@
                                                     <span></span>
                                                 </label>
 
-                                                <label class="kt-radio kt-radio--primary text-black font-size-14px font-weight-bold">
-                                                    <input type="checkbox" value="1" name="has_micro_finance" @if(isset($model) && $model->hasMicroFinance()) checked @endisset
-                                                    > {{ __('Micro Finance') }}
-                                                    <span></span>
-                                                </label>
+
 
 
 
@@ -313,6 +309,74 @@
                 </div>
             </div>
 
+
+
+            <div class="kt-portlet">
+                <div class="kt-portlet__body">
+                    <div class="row">
+                        <div class="col-md-10">
+                            <div class="d-flex align-items-center ">
+                                <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style=""> {{ __('Choose Microfinance') }} </h3>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <hr style="flex:1;background-color:lightgray">
+                    </div>
+                    <div class="row">
+
+                        <div class="form-group row" style="flex:1;">
+                            <div class="col-md-12 mt-3">
+                                <div class="row">
+                                    <div class="col-md-12 mb-0 mt-4 text-left">
+                                        <div class="form-group d-inline-block">
+                                            <div class="kt-radio-inline">
+                                                <label class="mr-3">
+                                                </label>
+                                                <label class="kt-radio kt-radio--primary text-black font-size-14px font-weight-bold">
+                                                    <input class="microfinance-checkbox-js" type="checkbox" value="1" name="has_micro_finance" @if(isset($model) && $model->hasMicroFinance()) checked @endisset
+                                                    > {{ __('Micro Finance') }}
+                                                    <span></span>
+                                                </label>
+
+
+
+                                                <label class="kt-radio kt-radio--success text-black font-size-14px font-weight-bold show-only-with-microfinance ">
+                                                    <input class=" microfinance-sub-checkbox-js is-whole-company"  type="radio" value="whole-company" name="microfinance_type" @if(isset($model) && $model->isWholeCompanyMicrofinance()) checked @endisset
+                                                    > {{ __('Whole Company') }}
+                                                    <span></span>
+                                                </label>
+
+                                                <label class="kt-radio kt-radio--warning text-black font-size-14px font-weight-bold show-only-with-microfinance ">
+                                                    <input class=" microfinance-sub-checkbox-js is-by-branch" type="radio" value="by-branch" name="microfinance_type" @if(isset($model) && $model->isByCompanyMicrofinance()) checked @endisset
+                                                    > {{ __('By Branch') }}
+                                                    <span></span>
+                                                </label>
+
+
+                                            </div>
+
+                                           
+
+
+                                        </div>
+										 <div class="form-group d-inline-block ml-3 no-branch-div hidden">
+                                                <label class="form-label font-weight-bold">{{ __('No. Branches') }} @include('star') </label>
+                                                <div class="kt-input-icon ">
+                                                    <div class="input-group">
+                                                        <input type="text" class="form-control no-branch-input-js only-greater-than-zero-or-equal-allowed" name="microfinance_no_branches" value="{{ isset($model) ? $model->getMicrofinanceNoBranches() : 0 }}" step="0.1">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
 
 
             <div class="kt-portlet">

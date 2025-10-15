@@ -62,46 +62,46 @@ $(function () {
 })
 
 
-$(document).on('change', 'select.revenue-stream-type-js', function () {
-	console.log('from 5')
-	let revenueStreams = $(this).val()
-	let studyId = $('#study-id-js').val()
-	const that = this
-	const companyId = $('body').attr('data-current-company-id')
-	const lang = $('body').attr('data-lang')
-	const url = '/' + lang + '/' + companyId + '/non-banking-financial-services/study/' + studyId + '/get-stream-category-based-on-revenue-stream'
-	if (revenueStreams.length) {
-		var streamCategoryElement = $(that).closest('tr').find('select.stream-category-class')
-		var currentSelected = $(streamCategoryElement).attr('data-current-selected-items') ? JSON.parse($(streamCategoryElement).attr('data-current-selected-items')) : null
-		$.ajax({
-			url,
-			data: {
-				revenueStreams
-			},
-			method: "post",
-			success: function (res) {
-				var options = ''
-				var selected = ''
-				if (currentSelected ? currentSelected.includes('all') : false) {
-					selected = 'selected'
-				}
-				options += `<option ${selected} value="all">All</option>`
+// $(document).on('change', 'select.revenue-stream-type-js', function () {
+// 	console.log('from 5')
+// 	let revenueStreams = $(this).val()
+// 	let studyId = $('#study-id-js').val()
+// 	const that = this
+// 	const companyId = $('body').attr('data-current-company-id')
+// 	const lang = $('body').attr('data-lang')
+// 	const url = '/' + lang + '/' + companyId + '/non-banking-financial-services/study/' + studyId + '/get-stream-category-based-on-revenue-stream'
+// 	if (revenueStreams.length) {
+// 		var streamCategoryElement = $(that).closest('tr').find('select.stream-category-class')
+// 		var currentSelected = $(streamCategoryElement).attr('data-current-selected-items') ? JSON.parse($(streamCategoryElement).attr('data-current-selected-items')) : null
+// 		$.ajax({
+// 			url,
+// 			data: {
+// 				revenueStreams
+// 			},
+// 			method: "post",
+// 			success: function (res) {
+// 				var options = ''
+// 				var selected = ''
+// 				if (currentSelected ? currentSelected.includes('all') : false) {
+// 					selected = 'selected'
+// 				}
+// 				options += `<option ${selected} value="all">All</option>`
 
-				for (id in res.result) {
-					var title = res.result[id]
-					selected = ''
-					if (currentSelected ? currentSelected.includes(id) : null) {
-						selected = 'selected'
-					}
-					options += `<option ${selected} value="${id}">${title}</option>`
-				}
-				streamCategoryElement.empty().append(options).trigger('change')
-			}
-		})
-	} else {
+// 				for (id in res.result) {
+// 					var title = res.result[id]
+// 					selected = ''
+// 					if (currentSelected ? currentSelected.includes(id) : null) {
+// 						selected = 'selected'
+// 					}
+// 					options += `<option ${selected} value="${id}">${title}</option>`
+// 				}
+// 				streamCategoryElement.empty().append(options).trigger('change')
+// 			}
+// 		})
+// 	} else {
 
-	}
-})
+// 	}
+// })
 
 $(document).on('change', '[js-recalculate-equity-funding-value],.js-recalculate-equity-funding-value', function () {
 	console.log('from 7')
@@ -132,7 +132,7 @@ $(document).on('change', '.recalculate-factoring', function () {
 		$(rateElement).closest('tr').find('.factoring-value[data-column-index="' + index + '"]').closest('.input-hidden-parent').find('.repeat-to-right-input-formatted').val(number_format(rate / 100 * value, numberOfDecimals))
 		$(rateElement).closest('tr').find('.factoring-value[data-column-index="' + index + '"]').val(rate / 100 * value).trigger('change')
 	})
-	
+
 })
 
 $(function () {
@@ -186,7 +186,7 @@ $(document).on('change', '.is-percentage-from-total,.is-percentage-total-of', fu
 
 
 $(document).on('click', '.collapse-before-me', function () {
-console.log('from 11')
+	console.log('from 11')
 	let columnIndex = $(this).attr('data-column-index')
 	hide = true
 	let counter = 0
@@ -257,18 +257,18 @@ $(document).on('change', '.current-growth-rate-result-value-formatted', function
 	const previousColumnIndex = columnIndex - 1
 	if (event.originalEvent && event.originalEvent.isTrusted) {
 		console.log('if---------')
-		let previousValue = $(this).closest('tr').find('.current-growth-rate-result-value[data-column-index="' + previousColumnIndex + '"]').val();
-		if(previousValue !== undefined){
-			
-			let currentValue = number_unformat($(this).val());
-			let currentGrowthRate = Math.round(((currentValue - previousValue) / previousValue) * 100,2) ;
+		let previousValue = $(this).closest('tr').find('.current-growth-rate-result-value[data-column-index="' + previousColumnIndex + '"]').val()
+		if (previousValue !== undefined) {
+
+			let currentValue = number_unformat($(this).val())
+			let currentGrowthRate = Math.round(((currentValue - previousValue) / previousValue) * 100, 2)
 			$(this).closest('table').find('.gr-field[data-column-index="' + columnIndex + '"]').val(currentGrowthRate).trigger('change')
-		}else{
+		} else {
 			$(this).closest('table').find('.gr-field[data-column-index="' + nextColumnIndex + '"]').trigger('change')
-			
+
 		}
-	//	console.log(previousValue ,currentValue ,'--' )
-		
+		//	console.log(previousValue ,currentValue ,'--' )
+
 		// $('.recalculate-gr[data-column-index="' + nextColumnIndex + '"]').trigger('change')
 	} else {
 		console.log('else---------')
@@ -337,7 +337,7 @@ $('#enable-editing-btn').trigger('click')
 // })
 // $('.is-fully-funded-checkbox:checked').trigger('change')
 $(document).on('change', '.recalculate-monthly-increase-amounts', function () {
-		console.log('from 18')
+	console.log('from 18')
 	var currentRow = $(this).closest('tr')
 	var itemCost = currentRow.find('.ffe-item-cost').val()
 	// var vat = currentRow.find('dd');
@@ -366,7 +366,7 @@ $(document).on('change', '.recalculate-monthly-increase-amounts', function () {
 
 })
 let calculateBranchIncreaseAmounts = function () {
-		console.log('from 19')
+	console.log('from 19')
 	var currentRow = $(this).closest('tr')
 	var itemCost = parseFloat(currentRow.find('.ffe-item-cost').val())
 	itemCost = itemCost ? itemCost : 0
@@ -406,7 +406,7 @@ let calculateBranchIncreaseAmounts = function () {
 $(document).on('change', '.recalculate-monthly-increase-amounts-branches', calculateBranchIncreaseAmounts)
 $('.recalculate-monthly-increase-amounts-branches').trigger('change')
 $(document).on('change', 'select.department-class', function () {
-		console.log('from 20')
+	console.log('from 20')
 	const departmentIds = $(this).val()
 	const companyId = $('body').attr('data-current-company-id')
 	const lang = $('body').attr('data-lang')
@@ -423,7 +423,7 @@ $(document).on('change', 'select.department-class', function () {
 			var options = ''
 			var positionRow = $(this).closest('tr').find('select.position-class')
 			var currentSelected = $(positionRow).attr('data-current-selected-items')
-			 currentSelected = currentSelected ? JSON.parse(currentSelected) : ''
+			currentSelected = currentSelected ? JSON.parse(currentSelected) : ''
 			for (var positionId in positionArr) {
 				positionId = positionId
 				var selected = currentSelected.includes(positionId)
@@ -458,7 +458,7 @@ $(document).ready(function () {
 		const isReadonly = table.hasClass('readonly')
 
 		// console.log('save form',saveForm);
-	console.log('from 21')
+		console.log('from 21')
 		if (isReadonly) {
 			table.removeClass('readonly').addClass('editable')
 			$(this).text('Disabled Editing')
@@ -491,7 +491,7 @@ $(function () {
 	//	$('#toggleEditBtn').click();
 })
 $(document).on('change', '[total-row-tr] input.input-hidden-with-name', function () {
-		console.log('from 22')
+	console.log('from 22')
 	let parent = $(this).closest('tr')
 	let totalRow = parent.find('.sum-total-row')
 
@@ -502,7 +502,7 @@ $(document).on('change', '[total-row-tr] input.input-hidden-with-name', function
 			var currentTotal = parseFloat(number_unformat($(row).val()))
 			total += currentTotal
 		})
-		
+
 		parent.find('input.sum-total-row').val(number_format(total, numberOfDecimals))
 	}
 
@@ -514,7 +514,7 @@ $('[total-row-tr] input.input-hidden-with-name').trigger('change')
 
 
 $(document).on('change', '.percentage_field,.number_field', function () {
-		console.log('from 23')
+	console.log('from 23')
 	const parent = $(this).closest('.closest-parent')
 	const columnIndex = $(this).attr('data-column-index')
 	const appendColumnIndex = columnIndex == undefined ? '' : '[data-column-index="' + columnIndex + '"]'
@@ -524,7 +524,7 @@ $(document).on('change', '.percentage_field,.number_field', function () {
 	$(parent).find('.number_multiple_percentage' + appendColumnIndex).val(result).trigger('change')
 })
 $(document).on('change', '.percentage_field2,.number_field2', function () {
-		console.log('from 24')
+	console.log('from 24')
 	const parent = $(this).closest('.closest-parent')
 	const columnIndex = $(this).attr('data-column-index')
 	const appendColumnIndex = columnIndex == undefined ? '' : '[data-column-index="' + columnIndex + '"]'
@@ -534,7 +534,7 @@ $(document).on('change', '.percentage_field2,.number_field2', function () {
 	$(parent).find('.number_multiple_percentage2' + appendColumnIndex).val(result).trigger('change')
 })
 $(document).on('change', '.percentage_field3,.number_field3', function () {
-		console.log('from 25')
+	console.log('from 25')
 	const parent = $(this).closest('.closest-parent')
 	const columnIndex = $(this).attr('data-column-index')
 	const appendColumnIndex = columnIndex == undefined ? '' : '[data-column-index="' + columnIndex + '"]'
@@ -561,7 +561,7 @@ $(document).on('change', '.number_field_1,.number_field_2', function () {
 
 
 $(document).on('change', '.sum-num1,.sum-num2,.sum-num3', function () {
-		console.log('from 27')
+	console.log('from 27')
 	const parent = $(this).closest('.closest-parent')
 	const columnIndex = $(this).attr('data-column-index')
 	const appendQuery = columnIndex == undefined ? '' : '[data-column-index="' + columnIndex + '"]'
@@ -607,14 +607,14 @@ $(document).on('change', '.growth_percentage', function (event) {
 	}
 })
 $(document).on('change', '.number_growth_amount', function (event) {
-		console.log('from 30')
+	console.log('from 30')
 	const parent = $(this).closest('.closest-parent')
 	$(parent).next('.closest-parent').find('.growth_percentage').trigger('change')
 })
 
 
 $(document).on('change', '.growth_percentage_in_diff_parent', function (event) {
-console.log('from 31')
+	console.log('from 31')
 	$('.parent-for-salary-amount .number_growth_amount_in_diff_parent').each(function (index, input) {
 		$(input).trigger('change')
 	})
@@ -627,13 +627,14 @@ $(document).on('change', '.total_input', function () {
 	const parent = $(this).closest('.closest-parent')
 	let total = 0
 	$(parent).find('.total_input').each(function (index, input) {
+		console.log($(input).val() , input)
 		total += parseFloat(number_unformat($(input).val()))
 	})
 	$(parent).find('.total_row_result').val(number_format(total, 2)).trigger('change')
 })
 
 document.addEventListener('DOMContentLoaded', function () {
-		console.log('from 33')
+	console.log('from 33')
 	// Select all elements with class target_last_value
 	document.querySelectorAll('.target_last_value').forEach(icon => {
 		icon.addEventListener('click', function () {
@@ -671,7 +672,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	})
 })
 $(document).ready(function () {
-		console.log('from 34')
+	console.log('from 34')
 	$('.target_last_value_to_right').on('click', function () {
 
 		// Find the closest form-group and the input within it
@@ -699,7 +700,7 @@ $(document).on('click', '.toggle-show-hide', function () {
 	$(query).toggleClass('hidden')
 })
 $(document).ready(function () {
-		console.log('from 35')
+	console.log('from 35')
 	$('.target_last_value_to_right_until_end').on('click', function () {
 		let parentDiv = $(this).closest('.parent-for-salary-amount')
 		let currentElement = $(this).closest('.common-parent').find('.repeat-to-right-element')
@@ -719,7 +720,7 @@ $(document).ready(function () {
 
 
 $(function () {
-		console.log('from 36')
+	console.log('from 36')
 	$('.is-leasing:checked').trigger('change')
 })
 
@@ -746,13 +747,13 @@ $(document).on('change', '.sum_product_value_1,.sum_product_quantity_1,.sum_prod
 
 
 $(document).on('click', '.parent-checkbox', function () {
-		console.log('from 38')
+	console.log('from 38')
 	$(this).closest('.closest-parent').find('input[type="checkbox"]').prop('checked', false).trigger('change')
 	$(this).closest('td').find('input[type="checkbox"]').prop('checked', true).trigger('change')
 
 })
 $(document).on('change', '.name-required-when-greater-than-zero-js', function () {
-		console.log('from 39')
+	console.log('from 39')
 	const value = $(this).val()
 	const parent = $(this).closest('.closest-parent')
 	if (value > 0) {
@@ -768,7 +769,7 @@ $(function () {
 	$('.delay-button').prop('disabled', false)
 })
 $(document).on('change', '.allocate-checkbox', function () {
-		console.log('from 38')
+	console.log('from 38')
 	const modal = $(this).closest('.modal')
 	const isChecked = $(this).is(':checked')
 	if (isChecked) {
@@ -785,7 +786,7 @@ $(document).on('change', '.allocate-checkbox', function () {
 })
 
 $(document).on('change', '.fg-beginning-inventory-original-value-class', function () {
-		console.log('from 39')
+	console.log('from 39')
 	const value = number_unformat($(this).val())
 	$('.fg-beginning-inventory-value-class').val(value).trigger('change')
 })
@@ -835,7 +836,7 @@ $(document).on('change', 'select.expense-category-class', function () {
 })
 
 $(document).on('change', '.hundred-minus-number', function () {
-		console.log('from 42')
+	console.log('from 42')
 	let parent = $(this).closest('.closest-parent')
 	const columnIndex = $(this).attr('data-column-index')
 	const appendColumnIndex = columnIndex == undefined ? '' : '[data-column-index="' + columnIndex + '"]'
@@ -898,7 +899,7 @@ $(document).on('change', '.rate-element', function () {
 
 $(document).ready(function () {
 
-console.log('from 47')
+	console.log('from 47')
 	$(document).on('select2:select', '.js-select2-with-one-selection', function (e) {
 		// Keep only the last selected option
 		let selected = e.params.data.id
@@ -1023,41 +1024,97 @@ $(document).on('changed.bs.select', 'select.js-due_in_days', function (e, clicke
 		}, 0)
 	}
 })
-$(document).on('click','.increase-rate-parent',function(){
+$(document).on('click', '.increase-rate-parent', function () {
 	$(this).closest('.increase-rate-parent').find('.modal-increase-rates').modal('show')
 })
- $(document).on('click', '.show-hide-repeater', function() {
-        const query = this.getAttribute('data-query')
-        $(query).fadeToggle(300)
+$(document).on('click', '.show-hide-repeater', function () {
+	const query = this.getAttribute('data-query')
+	$(query).fadeToggle(300)
 
-    })
- $('#seasonality').on('change', function() {
-        var seasonality = $(this).val();
-        if (seasonality == 'flat') {
-            $('.flat_section').removeClass('hidden');
-            $('.quarterly_section').addClass('hidden');
-            $('.monthly_section').addClass('hidden');
-            $('.percentage').addClass('hidden');
-            $('.quarterly').val('');
-            $('.monthly').val('');
-        } else if (seasonality == 'quarterly') {
-            $('.flat_section').addClass('hidden');
-            $('.monthly_section').addClass('hidden');
-            $('.quarterly_section').removeClass('hidden');
-            $('.percentage').removeClass('hidden');
-            $('.monthly').val('');
-        } else if (seasonality == 'monthly') {
-            $('.flat_section').addClass('hidden');
-            $('.quarterly_section').addClass('hidden');
-            $('.monthly_section').removeClass('hidden');
-            $('.percentage').removeClass('hidden');
-            $('.quarterly').val('');
-        } else {
-            $('.flat_section').addClass('hidden');
-            $('.quarterly_section').addClass('hidden');
-            $('.monthly_section').addClass('hidden');
-            $('.percentage').removeClass('hidden');
-            $('.quarterly').val('');
-            $('.monthly').val('');
-        }
-    });
+})
+$('#seasonality').on('change', function () {
+	var seasonality = $(this).val()
+	if (seasonality == 'flat') {
+		$('.flat_section').removeClass('hidden')
+		$('.quarterly_section').addClass('hidden')
+		$('.monthly_section').addClass('hidden')
+		$('.percentage').addClass('hidden')
+		$('.quarterly').val('')
+		$('.monthly').val('')
+	} else if (seasonality == 'quarterly') {
+		$('.flat_section').addClass('hidden')
+		$('.monthly_section').addClass('hidden')
+		$('.quarterly_section').removeClass('hidden')
+		$('.percentage').removeClass('hidden')
+		$('.monthly').val('')
+	} else if (seasonality == 'monthly') {
+		$('.flat_section').addClass('hidden')
+		$('.quarterly_section').addClass('hidden')
+		$('.monthly_section').removeClass('hidden')
+		$('.percentage').removeClass('hidden')
+		$('.quarterly').val('')
+	} else {
+		$('.flat_section').addClass('hidden')
+		$('.quarterly_section').addClass('hidden')
+		$('.monthly_section').addClass('hidden')
+		$('.percentage').removeClass('hidden')
+		$('.quarterly').val('')
+		$('.monthly').val('')
+	}
+})
+$(document).on('change', 'select.update-revenue-category-based-on-revenue-js', function () {
+	const revenueStreamId = $(this).val()
+	let studyId = $('#study-id-js').val()
+	const that = this
+	const companyId = $('body').attr('data-current-company-id')
+	const lang = $('body').attr('data-lang')
+	const url = '/' + lang + '/' + companyId + '/non-banking-financial-services/study/' + studyId + '/get-stream-category-based-on-revenue-stream-id'
+	const data = {
+		revenueStreamId
+	}
+	$.ajax({
+		url,
+		data,
+		success: function (res) {
+			let options = ''
+			const revenueCategoryElement = $(that).closest('tr').find('select.revenue-category-class')
+			const selectedCategories = JSON.parse(revenueCategoryElement.attr('data-current-selected'))
+			for (var option of res.data) {
+				var value = String(option.value)
+				var isSelected = selectedCategories.includes(value) ? 'selected' : ''
+				options += '<option ' + isSelected + ' value="' + option.value + '">' + option.title + '</option>'
+			}
+			revenueCategoryElement.empty().append(options).trigger('change')
+
+		}
+	})
+})
+$('select.update-revenue-category-based-on-revenue-js').trigger('change')
+
+$(document).on('change','.microfinance-checkbox-js',function(){
+	var checked = $(this).is(':checked');
+	if(checked){
+		$('.show-only-with-microfinance').show();
+	}else{
+		$('.show-only-with-microfinance').hide();
+		$('.show-only-with-microfinance input').prop('checked',false).trigger('change');
+		$('.no-branch-div').addClass('hidden')
+		$('.no-branch-input-js').val(0).trigger('change')
+		
+	}
+})
+$('.microfinance-checkbox-js').trigger('change');
+
+
+$(document).on('change','.microfinance-sub-checkbox-js',function(){
+	var isWholeCompany = $(this).hasClass('is-whole-company');
+	var isByBranch = $(this).hasClass('is-by-branch');
+	console.log(isByBranch)
+	if(isByBranch){
+		$('.no-branch-div').removeClass('hidden')
+	}else{
+		$('.no-branch-div').addClass('hidden')
+		$('.no-branch-input-js').val(0).trigger('change')
+	}
+});
+$('.microfinance-sub-checkbox-js:checked').trigger('change');

@@ -2,11 +2,12 @@
 
 namespace App\Models\NonBankingService;
 
+use App\Equations\MonthlyFixedRepeatingAmountEquation;
 use App\Helpers\HArr;
 use App\Models\Company;
 use App\Models\Traits\Scopes\BelongsToCompany;
-use App\Models\Traits\Scopes\NonBankingServices\BelongsToStudy;
 
+use App\Models\Traits\Scopes\NonBankingServices\BelongsToStudy;
 use App\ReadyFunctions\CalculateFixedLoanAtEndService;
 use App\ReadyFunctions\CalculateLoanWithdrawal;
 use App\ReadyFunctions\FfeExecutionAndPayment;
@@ -30,18 +31,18 @@ class FixedAsset extends Model
         'monthly_amounts'=>'array',
         'position_ids'=>'array',
         'department_ids'=>'array',
-		'statement'=>'array',
-		'ffe_equity_payment'=>'array',
-		'ffe_loan_withdrawal'=>'array',
-		'loan_capitalized_interests'=>'array',
-		'income_statement_loan_capitalized_interests'=>'array',
-		'ffe_loan_withdrawal_end_balance'=>'array',
-		'depreciation_statement'=>'array',
-		'capitalization_statement'=>'array',
-		'ffe_execution_and_payment'=>'array',
-		'ffe_payable'=>'array',
-		'custom_collection_policy'=>'array',
-		'total_monthly_depreciations'=>'array',
+        'statement'=>'array',
+        'ffe_equity_payment'=>'array',
+        'ffe_loan_withdrawal'=>'array',
+        'loan_capitalized_interests'=>'array',
+        'income_statement_loan_capitalized_interests'=>'array',
+        'ffe_loan_withdrawal_end_balance'=>'array',
+        'depreciation_statement'=>'array',
+        'capitalization_statement'=>'array',
+        'ffe_execution_and_payment'=>'array',
+        'ffe_payable'=>'array',
+        'custom_collection_policy'=>'array',
+        'total_monthly_depreciations'=>'array',
     ];
     public function getId()
     {
@@ -76,13 +77,13 @@ class FixedAsset extends Model
     {
         return $this->type;
     }
-   public function isGeneral()
-   {
-	return $this->getType() == Self::FFE;
-   } public function isPerEmployee()
-   {
-	return $this->getType() == Self::PER_EMPLOYEE;
-   }
+    public function isGeneral()
+    {
+        return $this->getType() == Self::FFE;
+    } public function isPerEmployee()
+    {
+        return $this->getType() == Self::PER_EMPLOYEE;
+    }
     public function getVatRate()
     {
         return $this->vat_rate ?: 0;
@@ -115,10 +116,6 @@ class FixedAsset extends Model
     {
         return $this->getReplacementInterval() * 12 ;
     }
-    public function getTotalCost()
-    {
-        return (1+($this->getContingencyRate()/100))*$this->getItemCost();
-    }
     public function getMonthlyAmounts():array
     {
         return (array)$this->monthly_amounts;
@@ -148,18 +145,18 @@ class FixedAsset extends Model
     {
         return $this->getFfeCounts()[$dateIndex]??0;
     }
-	public function getTotalItemCostAtDateIndex(int $monthIndex):float
-	{
-		$counts = $this->getCounts();
-		$count = $counts[$monthIndex] ?? 0 ;
-		$fixedAssetAmount = $this->getItemCost();
-		$contingencyRate = $this->getContingencyRate() / 100;
-		$totalFixedAssetAmount = $count* $fixedAssetAmount ;
-		 return (1+$contingencyRate) * $totalFixedAssetAmount ;
-	}
+    public function getTotalItemCostAtDateIndex(int $monthIndex):float
+    {
+        $counts = $this->getCounts();
+        $count = $counts[$monthIndex] ?? 0 ;
+        $fixedAssetAmount = $this->getItemCostAtDateIndex($monthIndex);
+        $contingencyRate = $this->getContingencyRate() / 100;
+        $totalFixedAssetAmount = $count* $fixedAssetAmount ;
+        return (1+$contingencyRate) * $totalFixedAssetAmount ;
+    }
     public function getFfeCounts():array
     {
-		return $this->getCounts();
+        return $this->getCounts();
     }
     public function getReplacementCostRate()
     {
@@ -169,15 +166,15 @@ class FixedAsset extends Model
     {
         return $this->cost_annual_increase_rate ?: 0;
     }
-		public function getCollectionPolicyValue():array
-	{
-		if($this->getPaymentTerm() == 'cash'){
-			return [
-				0 => 100
-			];
-		}
-		return $this->custom_collection_policy;
-	}
+    public function getCollectionPolicyValue():array
+    {
+        if ($this->getPaymentTerm() == 'cash') {
+            return [
+                0 => 100
+            ];
+        }
+        return $this->custom_collection_policy;
+    }
     public function getPaymentRate(int $rateIndex)
     {
         return array_values($this->custom_collection_policy ?? [])[$rateIndex] ?? 0 ;
@@ -228,10 +225,10 @@ class FixedAsset extends Model
                 $transferredDateForFFEAsIndex =>  $transferredAmount
             ]
         ];
-        return  $this->calculateFFEAssets($fixedAssetEndDateAsIndex , $depreciationDurationInMonthsForFFE, $ffeReplacementCostRateForFFE, $ffeReplacementIntervalInMonthsForFFE, $projectUnderProgressForFFE, $studyDates, $studyEndDateAsIndex, $study);
+        return  $this->calculateFFEAssets($fixedAssetEndDateAsIndex, $depreciationDurationInMonthsForFFE, $ffeReplacementCostRateForFFE, $ffeReplacementIntervalInMonthsForFFE, $projectUnderProgressForFFE, $studyDates, $studyEndDateAsIndex, $study);
     }
     
-    public function calculateFFEAssets(int $fixedAssetEndDateAsIndex , int $propertyDepreciationDurationInMonths, float $propertyReplacementCostRate, int $propertyReplacementIntervalInMonths, array $projectUnderProgressForConstruction, array $studyDates, int $studyEndDateAsIndex, Study $study):array
+    public function calculateFFEAssets(int $fixedAssetEndDateAsIndex, int $propertyDepreciationDurationInMonths, float $propertyReplacementCostRate, int $propertyReplacementIntervalInMonths, array $projectUnderProgressForConstruction, array $studyDates, int $studyEndDateAsIndex, Study $study):array
     {
         $buildingAssets = [];
         $datesAsStringAndIndex = $study->getDatesAsStringAndIndex();
@@ -282,8 +279,8 @@ class FixedAsset extends Model
         }
         return $buildingAssets ;
     }
-	
-	//  public function calculateFixedAssetLoans(int $currentDateIndex):array
+    
+    //  public function calculateFixedAssetLoans(int $currentDateIndex):array
     // {
     //     $fixedLoanAtEndService = new CalculateFixedLoanAtEndService();
     //     $ffeExecutionAndPaymentService  = new FfeExecutionAndPayment();
@@ -437,65 +434,86 @@ class FixedAsset extends Model
         }
         return $monthlyDepreciations;
     }
-	 public function getItemCost()
+    /**
+     * * for old data only
+     */
+    public function getItemCost()
     {
         return $this->ffe_item_cost;
     }
-	public function getTotalItemsCost($fixedAssets):float 
-	{
-		$total = 0;
-		$fixedAssets->each(function($ffeItem) use (&$total){
-			$total += $ffeItem->getItemCost() * (1+($ffeItem->getContingencyRate()/100));
-		});
-	
-		return $total ; 
-		// return $this->getCounts() * $this->getAmount();
-	}
-	 public function getAmount()
+    public function getItemCostAtDateIndex(int $dateAsIndex)
+    {
+        $itemCost = $this->getItemCost();
+        $vatRate = $this->getVatRate();
+        $study = $this->study;
+        $studyStartDateAsString = $study->getStudyStartDate();
+        $dateWithDateIndex = $study->getDateWithDateIndex();
+        $studyEndDateAsString = $study->getStudyEndDate();
+        $studyEndDateAsIndex = $study->getStudyEndDateAsIndex($dateWithDateIndex, $studyEndDateAsString);
+        $studyStartDateAsIndex = $study->getStudyStartDateAsIndex($dateWithDateIndex, $studyStartDateAsString);
+        $increaseRate = $this->getCostAnnualIncreaseRate();
+		$withholdRate = $this->getWithholdTaxRate();
+        $isDeductible = false ;
+        $result = (new MonthlyFixedRepeatingAmountEquation())->calculate($itemCost, $studyStartDateAsIndex, $studyEndDateAsIndex, 'annually', $increaseRate, $isDeductible,$vatRate , $withholdRate );
+		return $result['total_after_vat'][$dateAsIndex]??0;
+		
+    
+        
+        
+    }
+    // public function getTotalItemsCost($fixedAssets):float
+    // {
+    // 	$total = 0;
+    // 	$fixedAssets->each(function($ffeItem) use (&$total){
+    // 		$total += $ffeItem->getItemCost() * (1+($ffeItem->getContingencyRate()/100));
+    // 	});
+    // 	return $total ;
+    // 	// return $this->getCounts() * $this->getAmount();
+    // }
+    public function getAmount()
     {
         return $this->amount ?: 0 ;
     }
-	
-	public function getDuration()
-	{
-		return 0;
-	}
+    public function getDuration()
+    {
+        return 0;
+    }
 
 
-	
-	 public function getStartDateAsIndex()
+    
+    public function getStartDateAsIndex()
     {
         return $this->start_date;
     
-	}
-	public function getEndDateAsIndex()
+    }
+    public function getEndDateAsIndex()
     {
         return $this->end_date;
     }
-	/**
-	 * return [DateAsIndex => count ]
-	 */
-	public function getCounts():array 
-	{
-		$studyDates = $this->study->getCalculatedExtendedStudyDates();
-		if($this->isGeneral()){
-			return (array)$this->ffe_counts; 
-		}
-		if($this->isPerEmployee()){
-			$positions = $this->position_ids ;
-			$result = [];
-			foreach($positions as $positionId){
-				$manpower = Manpower::where('study_id',$this->study->id)->where('position_id',$positionId)->first();
-				$currentHiringCounts = $manpower->hiring_counts;
-				$result = HArr::sumAtDates([$result,$currentHiringCounts],$studyDates);
-				
-			}
-			return $result ;
-		}
-		dd('no counts found');
-	}
-	public function getFfeEquityPayment()
-	{
-		return $this->ffe_equity_payment?:[];
-	}
+    /**
+     * return [DateAsIndex => count ]
+     */
+    public function getCounts():array
+    {
+        $studyDates = $this->study->getCalculatedExtendedStudyDates();
+        if ($this->isGeneral()) {
+            return (array)$this->ffe_counts;
+        }
+        if ($this->isPerEmployee()) {
+            $positions = $this->position_ids ;
+            $result = [];
+            foreach ($positions as $positionId) {
+                $manpower = Manpower::where('study_id', $this->study->id)->where('position_id', $positionId)->first();
+                $currentHiringCounts = $manpower->hiring_counts;
+                $result = HArr::sumAtDates([$result,$currentHiringCounts], $studyDates);
+                
+            }
+            return $result ;
+        }
+        dd('no counts found');
+    }
+    public function getFfeEquityPayment()
+    {
+        return $this->ffe_equity_payment?:[];
+    }
 }

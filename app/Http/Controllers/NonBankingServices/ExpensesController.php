@@ -34,12 +34,13 @@ class ExpensesController extends Controller
 	
 	protected function getViewVars(Company $company, Study $study)
     {
-		$selectedRevenueStreams = $study->getSelectedRevenueStreamTypes();
-		$revenueStreams = $study->getSelectedRevenueStreamWithCategories($selectedRevenueStreams);
+		$selectedRevenueStreams = $study->getSelectedRevenueStreamTypesFormatted();
+		// $revenueStreams = $study->getSelectedRevenueStreamWithCategories($selectedRevenueStreams);
         return [
+			'selectedRevenueStreams'=>$selectedRevenueStreams,
             'company'=>$company ,
             'type'=>'create',
-			'revenueStreams'=>$revenueStreams,
+			// 'revenueStreams'=>$revenueStreams,
             'study'=>$study,
             'model'=>$study ,
             'expenseType'=>HHelpers::getClassNameWithoutNameSpace((new Expense())),

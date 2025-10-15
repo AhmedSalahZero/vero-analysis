@@ -44,7 +44,7 @@ class MicrofinanceRevenueStreamBreakdownController extends Controller
 	
 		}
 	
-		$study->storeRelationsWithNoRepeater($request,$company);
+		$study->storeRelationsWithNoRepeater($request,$company,['seasonality']);
 		$study->storeRepeaterRelations($request,$this->getRepeaterRelations(),$company);
 		$study->refresh();
 		$study->updateMicrofinanceMonthlyAdminFeesAmounts();

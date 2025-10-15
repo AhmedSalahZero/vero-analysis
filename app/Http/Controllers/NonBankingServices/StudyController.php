@@ -169,6 +169,8 @@ class StudyController extends Controller
 	}
 	public function update(Request $request , Company $company,Study $study)
 	{
+		// dd($request->all());
+		
 		return $this->store($company,$request,$study);
 	}
 	public function destroy(Request $request , Company $company,Study $study)

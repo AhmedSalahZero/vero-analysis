@@ -31,8 +31,7 @@ class ReverseFactoringController extends Controller
 	}
 	public function store(Company $company , StoreReverseFactoringRevenueStreamRequest $request,Study $study)
 	{
-
-			$study->storeRelationsWithNoRepeater($request,$company);
+			$study->storeRelationsWithNoRepeater($request,$company,['seasonality']);
 			$study->storeRepeaterRelations($request,$this->getRepeaterRelations(),$company);
 			$study->syncSeasonality($request->get('seasonality'),Study::REVERSE_FACTORING , $company->id );
 			$study->storeEclAndFundingStructureFor($request,Study::REVERSE_FACTORING);

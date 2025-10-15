@@ -103,11 +103,11 @@ trait HasBasicStoreRequest
 		}
 		return $newItems;
 	}
-	public function storeRelationsWithNoRepeater(Request $request,Company $company)
+	public function storeRelationsWithNoRepeater(Request $request,Company $company , array $except = [])
 	{
 		$columnsWithPayload = [
 		];
-		foreach($request->all() as $relationName => $values){
+		foreach($request->except($except) as $relationName => $values){
 			
 			if(!is_array($values) || !method_exists($this,$relationName) ){
 				continue ;
@@ -117,7 +117,6 @@ trait HasBasicStoreRequest
 				if(is_numeric($columnName)){
 					continue;
 				}
-		
 				$columnsWithPayload[$relationName]['company_id'] = $company->id ;
 				$columnsWithPayload[$relationName][$columnName] = $payload;
 			}

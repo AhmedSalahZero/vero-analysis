@@ -342,7 +342,7 @@ use App\Models\NonBankingService\IjaraMortgageBreakdown;
             {{-- end of Ijara Mortgage Breakdown   --}}
 
 
-
+@include('seasonality_card')
 
 
             {{-- start of Administration Fees Rate & ECL Rate   --}}

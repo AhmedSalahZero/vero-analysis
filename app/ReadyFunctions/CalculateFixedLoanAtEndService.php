@@ -344,9 +344,7 @@ class CalculateFixedLoanAtEndService
         $ffeCollectionPolicyValue  = $ffe->getCollectionPolicyValue();
         $downPaymentOneAmount = 0 ;
         $executionAndPayment =$ffeExecutionAndPaymentService->__calculate($totalFFECost, $ffeStartDateAsIndex, $duration, $dateIndexWithDate);
-        $ffePayment =
-        // $ffe->isInstallmentPayment() ? (new InstallmentWithGraceMethod)->__calculate($ffe->getStartDateAsIndex(),$ffe->getTotalCost(),$ffe->getReservationRate(),$ffe->getRemainingBalanceRate(),$ffe->getInstallmentGracePeriod(),$ffe->getInstallmentCount(),$ffe->getPaymentInstallmentInterval(),$ffe->getContractualRate(),$ffe->getAfterMonths())  :
-         $contractPaymentService->__calculate($totalFFECost, $executionAndPayment, $ffeStartDateAsIndex, $downPaymentOneAmount, $ffeCollectionPolicyValue, $dateIndexWithDate, $dateWithDateIndex);
+        $ffePayment =$contractPaymentService->__calculate($totalFFECost, $executionAndPayment, $ffeStartDateAsIndex, $downPaymentOneAmount, $ffeCollectionPolicyValue, $dateIndexWithDate, $dateWithDateIndex);
         $contractPayments['FFE Payment'] = $ffePayment;
             
             

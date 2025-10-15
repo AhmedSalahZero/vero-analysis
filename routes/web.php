@@ -428,8 +428,8 @@ Route::middleware([])->group(function () {
 						  /**
 						 * * Start Ijara Mortgage Revenue Streams Breakdown  
 						 */
-						route::get('revenue-streams-breakdown/ijara-mortgage','IjaraMortgageController@create')->name('create.ijara.mortgage.revenue.stream.breakdown');
-						route::post('revenue-streams-breakdown/ijara-mortgage','IjaraMortgageController@store')->name('store.ijara.mortgage.revenue.stream.breakdown');
+						route::get('revenue-streams-breakdown/ijara','IjaraMortgageController@create')->name('create.ijara.mortgage.revenue.stream.breakdown');
+						route::post('revenue-streams-breakdown/ijara','IjaraMortgageController@store')->name('store.ijara.mortgage.revenue.stream.breakdown');
 						
 						route::get('revenue-streams-breakdown/microfinance','MicrofinanceRevenueStreamBreakdownController@create')->name('create.microfinance.revenue.stream.breakdown');
 						route::post('revenue-streams-breakdown/microfinance','MicrofinanceRevenueStreamBreakdownController@store')->name('store.microfinance.revenue.stream.breakdown');
@@ -495,7 +495,7 @@ Route::middleware([])->group(function () {
 						// route::get('delete/{position}/manpower','ManpowerExpensesController@deleteSinglePosition')->name('delete.single.position.for.non.banking');
 						// route::get('delete-department/{department}/manpower','ManpowerExpensesController@deleteSingleDepartment')->name('delete.single.department.for.non.banking');
 						route::get('get-positions-based-on-department','ManpowerExpensesController@getPositionsBasedOnDepartment'); // ajax ;
-						
+						route::get('get-stream-category-based-on-revenue-stream-id','AjaxController@getStreamCategoryBasedOnRevenueStream');
 						
 						// Route::post('get-stream-category-based-on-revenue-stream','AjaxController@getStreamCategoryBasedOnRevenueStream');
 						Route::get('get-positions-based-on-departments','AjaxController@getPositionsBasedOnDepartments');

@@ -313,7 +313,7 @@ use App\Models\NonBankingService\Expense;
                             <x-tables.repeater-table-th class="col-md-2 header-border-down" :title="__('Percentage <br> Of')" :helperTitle="__('Percentage Of')"></x-tables.repeater-table-th>
                             <x-tables.repeater-table-th class="col-md-6 header-border-down" :title="__('Revenue <br> Stream')" :helperTitle="__('Revenue Stream')"></x-tables.repeater-table-th>
 
-                            {{-- <x-tables.repeater-table-th class="col-md-2 header-border-down" :title="__('Stream <br> Category')"></x-tables.repeater-table-th> --}}
+                            <x-tables.repeater-table-th class="col-md-2 header-border-down" :title="__('Stream <br> Category')"></x-tables.repeater-table-th>
 
                             <x-tables.repeater-table-th class="col-md-1 header-border-down " :title="__('Start <br> Date')" :helperTitle="__('Default date is Income Statement start date, if else please select a date')"></x-tables.repeater-table-th>
                             <x-tables.repeater-table-th class="header-border-down rate-class" :title="__('Monthly <br> (%)')" :helperTitle="__('Please insert percentage excluding VAT')"></x-tables.repeater-table-th>
@@ -378,19 +378,26 @@ use App\Models\NonBankingService\Expense;
                                     </div>
 
                                 </td>
-
-                                <td>
+							
+								 <td>
                                     <div class="min-w-200">
-
-                                        <x-select.multi-layer-for-repeater :selectedMainOptions="isset($subModel) ? $subModel->getRevenueStreamTypes() : []" :selectedSubOptions="isset($subModel) ? $subModel->getStreamCategoryIds() : []" :mainItemsName="'revenue_stream_type'" :subItemsName="'stream_category_ids'" :options="$revenueStreams"></x-select.multi-layer-for-repeater>
+                                        <x-form.select name="revenue_stream_type"  :multiple="true" :selectedValue="isset($subModel) ? $subModel->getRevenueStreamTypes() : ''" :options="$selectedRevenueStreams" :add-new="false" class="select2-select repeater-select update-revenue-category-based-on-revenue-js " :all="false" data-current-selected="{{ json_encode(isset($subModel) ? $subModel->getRevenueStreamTypes():[]) }}" ></x-form.select>
                                     </div>
                                 </td>
-
+								
+								<td>
+                                    <div class="min-w-200">
+                                        <x-form.select name="stream_category_ids" :multiple="true" :selectedValue="isset($subModel) ? $subModel->getStreamCategoryIds() : ''" :options="[]" :add-new="false" class="select2-select repeater-select  revenue-category-class" :all="false" data-current-selected="{{ json_encode(isset($subModel) ? $subModel->getStreamCategoryIds():[]) }}" ></x-form.select>
+                                    </div>
+                                </td>
+								
                                 {{-- <td>
-                                        <x-form.select :selectedValue="isset($subModel) ? $subModel->getStreamCategoryIds() : ''" :multiple="true" :options="[]" :add-new="false" class="select2-select repeater-select stream-category-class " :all="false" name="@if($isRepeater) stream_category_ids @else {{ $tableId }}[0][stream_category_ids] @endif"></x-form.select>
-
+                                    <div class="min-w-200">
+                                        <x-select.multi-layer-for-repeater :selectedMainOptions="isset($subModel) ? $subModel->getRevenueStreamTypes() : []" :selectedSubOptions="isset($subModel) ? $subModel->getStreamCategoryIds() : []" :mainItemsName="'revenue_stream_type'" :subItemsName="'stream_category_ids'" :options="$revenueStreams"></x-select.multi-layer-for-repeater>
+                                    </div>
                                 </td> --}}
 
+                            
 
                                 <td>
 
@@ -652,9 +659,8 @@ use App\Models\NonBankingService\Expense;
                 <x-slot name="ths">
                     <x-tables.repeater-table-th class="col-md-2 header-border-down" :title="__('Expense <br> Category')"></x-tables.repeater-table-th>
                     <x-tables.repeater-table-th class="col-md-2 header-border-down" :title="__('Expense <br> Name')"></x-tables.repeater-table-th>
-                    <x-tables.repeater-table-th class=" header-border-down" :title="__('Contracts <br> Types')" :helperTitle="__('Revenue Stream')"></x-tables.repeater-table-th>
-                    {{-- <x-tables.repeater-table-th class="col-md-2 header-border-down" :title="__('Stream <br> Category')"></x-tables.repeater-table-th> --}}
-
+                    <x-tables.repeater-table-th class=" header-border-down" :title="__('Revenue <br> Types')" :helperTitle="__('Revenue Stream')"></x-tables.repeater-table-th>
+                    <x-tables.repeater-table-th class="col-md-2 header-border-down" :title="__('Stream <br> Category')"></x-tables.repeater-table-th>
                     <x-tables.repeater-table-th class="col-md-1 header-border-down" :title="__('Start <br> Date')" :helperTitle="__('Default date is Income Statement start date, if else please select a date')"></x-tables.repeater-table-th>
                     <x-tables.repeater-table-th class="col-md-1 header-border-down" :title="__('Cost <br> Per Unit')" :helperTitle="__('Please insert Cost Per Unit excluding VAT')"></x-tables.repeater-table-th>
                     <x-tables.repeater-table-th class="col-md-1 header-border-down" :title="__('End <br> Date')" :helperTitle="__('Default date is Income Statement start date, if else please select a date')"></x-tables.repeater-table-th>
@@ -699,19 +705,26 @@ use App\Models\NonBankingService\Expense;
                         <td>
                             <div class="min-w-200">
                                 <x-form.select data-current-selected="{{ isset($subModel) ? $subModel->getExpenseNameId() : '' }}" :selectedValue="isset($subModel) ? $subModel->getExpenseNameId() : ''" :options="[]" :add-new="false" class="select2-select repeater-select expense_name_id " :all="false" name="@if($isRepeater) expense_name_id @else {{ $tableId }}[0][expense_name_id] @endif"></x-form.select>
-
                             </div>
                         </td>
+						
+						
 
                         {{-- <td>
                                     <input value="{{ isset($subModel) ?  $subModel->getName() : old('name') }}" class="form-control" @if($isRepeater) name="name" @else name="{{ $tableId }}[0][name]" @endif type="text">
                         </td> --}}
 
                         <td>
-                            <div class="min-w-200">
-                                <x-select.multi-layer-for-repeater :selectedMainOptions="isset($subModel) ? $subModel->getRevenueStreamTypes() : []" :selectedSubOptions="isset($subModel) ? $subModel->getStreamCategoryIds() : []" :mainItemsName="'revenue_stream_type'" :subItemsName="'stream_category_ids'" :options="$revenueStreams"></x-select.multi-layer-for-repeater>
-                            </div>
-                        </td>
+                                    <div class="min-w-200">
+                                        <x-form.select name="revenue_stream_type"  :multiple="true" :selectedValue="isset($subModel) ? $subModel->getRevenueStreamTypes() : ''" :options="$selectedRevenueStreams" :add-new="false" class="select2-select repeater-select update-revenue-category-based-on-revenue-js " :all="false" data-current-selected="{{ json_encode(isset($subModel) ? $subModel->getRevenueStreamTypes():[]) }}" ></x-form.select>
+                                    </div>
+                                </td>
+								
+								<td>
+                                    <div class="min-w-200">
+                                        <x-form.select name="stream_category_ids" :multiple="true" :selectedValue="isset($subModel) ? $subModel->getStreamCategoryIds() : ''" :options="[]" :add-new="false" class="select2-select repeater-select  revenue-category-class" :all="false" data-current-selected="{{ json_encode(isset($subModel) ? $subModel->getStreamCategoryIds():[]) }}" ></x-form.select>
+                                    </div>
+                                </td>
                         {{--
                                 <td>
                                     <x-form.select :selectedValue="isset($subModel) ? $subModel->getStreamCategoryIds() : ''" :options="getAllocationsBases()" :multiple="true" :add-new="false" class="select2-select repeater-select  stream-category-class" :all="false" name="@if($isRepeater) stream_category_ids @else {{ $tableId }}[0][stream_category_ids] @endif"></x-form.select>
