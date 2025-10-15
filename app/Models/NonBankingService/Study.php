@@ -889,7 +889,6 @@ class Study extends Model
                     $contractCounts[$leasingRevenueStreamBreakdownId][$monthIndex] = (int)($currentMonthlyLoanAmount != 0)  ;
                 }
             }
-            //      dd($monthlyLoanAmounts);
             $currentMonthlyAmounts = $monthlyLoanAmounts[$leasingRevenueStreamBreakdownId];
             $currentCounts = $contractCounts[$leasingRevenueStreamBreakdownId];
             
@@ -1526,7 +1525,6 @@ class Study extends Model
         $dateIndexWithDates = app()->make('dateIndexWithDate');
         $dateIndexWithDates = app()->make('dateIndexWithDate');
         $monthsIndexes = array_keys($this->getMonthlyIndexes());
-        // dd($monthsIndexes);
         $result = [];
         $totalPortfolioEndBalance = [];
         foreach ($this->refresh()->directFactoringBreakdowns as $directFactoringBreakdown) {
@@ -1841,9 +1839,7 @@ class Study extends Model
         DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table($loanTableName)->where('fixed_asset_type', $fixedAssetType)->where('study_id', $this->id)->delete();
         $studyDates = $this->getCalculatedExtendedStudyDates();
        
-        //	$result  = (new FixedAssetCalculation())->calculateFFEAssetsForFFE($fixedAssets , $dateIndexWithDate,$operationStartDateAsIndex,$studyDates,$studyEndDateAsIndex);
-        // dd($result);
-        //  $totalFFECosts = [];
+
         foreach ($fixedAssets as $fixedAsset) {
             $totalFfePayable = [];
             $totalFfeAssetItems = [];
