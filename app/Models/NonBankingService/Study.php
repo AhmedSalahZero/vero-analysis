@@ -2941,7 +2941,7 @@ class Study extends Model
             $tableDataFormatted[$currentTabIndex]['sub_items'][$title]['year_total']  = HArr::getPerYearIndexForEndBalance($otherDebtorsOpeningBalance, $yearWithItsMonths) ;
             $totalOtherDebtorsOpeningBalances = HArr::sumAtDates([$totalOtherDebtorsOpeningBalances,$otherDebtorsOpeningBalance ], $sumKeys);
         }
-        $totalCurrentAssets = HArr::sumAtDates([$totalOtherDebtorsOpeningBalances , $totalCustomerReceivables], $sumKeys);
+        $totalCurrentAssets = HArr::sumAtDates([$totalOtherDebtorsOpeningBalances , $totalCustomerReceivables , $monthlyCashAndBanks], $sumKeys);
         $tableDataFormatted[$currentAssetOrderIndex]['main_items'][$currentAssetOrderIndex]['data'] = $totalCurrentAssets;
         $tableDataFormatted[$currentAssetOrderIndex]['main_items'][$currentAssetOrderIndex]['year_total'] = HArr::getPerYearIndexForEndBalance($totalCurrentAssets, $yearWithItsMonths);
         ;
