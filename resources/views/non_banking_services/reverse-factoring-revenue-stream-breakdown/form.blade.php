@@ -242,7 +242,7 @@ use App\Models\NonBankingService\ReverseFactoringBreakdown;
                         @endphp
                         <x-tables.repeater-table :actionBtnTitle="'+/-'" :tableName="$relationName" :repeaterId="$repeaterId" :removeActionBtn="false" :removeRepeater="false" :initialJs="true" :repeater-with-select2="true" :canAddNewItem="true" :parentClass="'js-remove-hidden overflow-scroll'" :hide-add-btn="true" :relationName="$relationName" :isRepeater="true">
                             <x-slot name="ths">
-                                <x-tables.repeater-table-th class="header-border-down reverse-category-selector-class" :title="__('Category')"></x-tables.repeater-table-th>
+                                <x-tables.repeater-table-th class="header-border-down " :title="__('Category')"></x-tables.repeater-table-th>
                                 <x-tables.repeater-table-th class=" tenor-selector-class header-border-down " :title="__('Tenor <br> (Months)')"></x-tables.repeater-table-th>
                                 <x-tables.repeater-table-th class=" tenor-selector-class header-border-down " :title="__('Spread <br> Rate')"></x-tables.repeater-table-th>
                                 @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
@@ -273,7 +273,7 @@ use App\Models\NonBankingService\ReverseFactoringBreakdown;
                                     <input type="hidden" name="id" value="{{ isset($subModel) ? $subModel->id : 0 }}">
 
                                     <td>
-                                        <x-form.select :required="true" :label="''" :pleaseSelect="false" :selectedValue="isset($subModel) ? $subModel->getCategory():0" :options="reverseFactoringSelector()" :add-new="false" class="select2-select  repeater-select  " :all="false" name="category"></x-form.select>
+                                        <x-form.select :required="true" :label="''" :pleaseSelect="false" :selectedValue="isset($subModel) ? $subModel->getCategory():0" :options="reverseFactoringSelector()" :add-new="false" class="select2-select  min-width-300 repeater-select  " :all="false" name="category"></x-form.select>
                                         <input value="{{ __('Reverse Factoring Transactions Projection') }}" disabled class="form-control min-width-300 text-left mt-2" type="text">
                                     </td>
                                     <td>
@@ -360,7 +360,7 @@ use App\Models\NonBankingService\ReverseFactoringBreakdown;
 
                         <x-tables.repeater-table :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden overflow-scroll'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
                             <x-slot name="ths">
-                                <x-tables.repeater-table-th class=" category-selector-class header-border-down " :title="__('Item')"></x-tables.repeater-table-th>
+                                <x-tables.repeater-table-th class=" header-border-down " :title="__('Item')"></x-tables.repeater-table-th>
                                 @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
                                 <x-tables.repeater-table-th class="header-border-down " :title="$yearOrMonthFormatted"></x-tables.repeater-table-th>
                                 @endforeach
@@ -373,7 +373,7 @@ use App\Models\NonBankingService\ReverseFactoringBreakdown;
 
 
                                     <td>
-                                        <input value="{{ __('Administration Fees Rate') }}" disabled class="form-control min-width-300 text-left mt-2" type="text">
+                                        <input value="{{ __('Administration Fees Rate') }}" disabled class="form-control  text-left mt-2" type="text">
 
                                     </td>
                                     @php
@@ -489,7 +489,7 @@ use App\Models\NonBankingService\ReverseFactoringBreakdown;
 
 
                                     <td>
-                                        <input value="{{ __('Equity Funding Rate (%)') }}" disabled class="form-control min-width-300 text-left mt-2" type="text">
+                                        <input value="{{ __('Equity Funding Rate (%)') }}" disabled class="form-control  text-left mt-2" type="text">
 
                                     </td>
                                     @php
@@ -527,7 +527,7 @@ use App\Models\NonBankingService\ReverseFactoringBreakdown;
 
 
                                     <td>
-                                        <input value="{{ __('Equity Funding Value') }}" disabled class="form-control min-width-300 text-left mt-2" type="text">
+                                        <input value="{{ __('Equity Funding Value') }}" disabled class="form-control  text-left mt-2" type="text">
 
                                     </td>
                                     @php

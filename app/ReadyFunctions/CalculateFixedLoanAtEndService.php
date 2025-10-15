@@ -199,8 +199,8 @@ class CalculateFixedLoanAtEndService
                 for ($i = $currentDateAsIndex ; $i> $currentDateAsIndex - $installmentPaymentIntervalValue ; $i--) {
                     $result['interestAmount'][$i] = $currentInterestAmount / $installmentPaymentIntervalValue;
                 }
-                
-            }
+            }else{
+			}
             $previousEndBalanceValue = $result['endBalance'][$currentDateAsIndex-1]??0;
             $currentEndBalance=$loanScheduleResult['endBalance'][$currentDateAsIndex]??null ;
             $result['schedulePayment'][$currentDateAsIndex] = $loanScheduleResult['schedulePayment'][$currentDateAsIndex]??0;
@@ -216,7 +216,11 @@ class CalculateFixedLoanAtEndService
         ksort($currentInterestAmountArr);
         $dateAsIndexes = array_keys($result['beginning']);
         if (app()->bound('dateIndexWithDate')) {
-            $result['accured_interest']=Loan::calculateSettlementStatement($dateAsIndexes, $loanScheduleResult['interestAmount'], $result['interestAmount'], 0, app('dateIndexWithDate'), false, true);
+			// if(!isset($result['interestAmount'])){
+			// 	dd($result);
+				
+			// }
+            $result['accured_interest']=Loan::calculateSettlementStatement($dateAsIndexes, $loanScheduleResult['interestAmount'], $result['interestAmount']??[], 0, app('dateIndexWithDate'), false, true);
         }
         $result['interestAmount'] = $currentInterestAmountArr ;
         return $result;
