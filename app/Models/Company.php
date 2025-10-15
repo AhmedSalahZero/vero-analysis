@@ -8,6 +8,7 @@ use App\Models\NonBankingService\Department;
 use App\Models\NonBankingService\ExpenseName;
 use App\Models\NonBankingService\FixedAssetName;
 use App\Models\NonBankingService\LeasingCategory;
+use App\Models\NonBankingService\MicrofinanceDepartment;
 use App\Models\NonBankingService\MicrofinanceProduct;
 use App\Models\NonBankingService\Study;
 use App\NotificationSetting;
@@ -661,7 +662,15 @@ class Company extends Model implements HasMedia
 	{
 		return Department::where('type',$type)->where('company_id',$companyId)->get();
 	}
+	public function microfinanceDepartments()
+	{
+		return $this->hasMany(MicrofinanceDepartment::class,'company_id','id');
+	}	
 	
+	public function microfinanceDepartmentsFor(string $type ,int $companyId)
+	{
+		return MicrofinanceDepartment::where('type',$type)->where('company_id',$companyId)->get();
+	}
 	
 	public function expenseNames()
 	{

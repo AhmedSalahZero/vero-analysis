@@ -292,6 +292,9 @@ class IncomeStatementController extends Controller
         $salaryExpensesForCategories = Manpower::getSalaryExpensesPerCategory($monthsWithItsYear, $study->id, $company->id);
         foreach ($salaryExpensesForCategories as $manpowerCategory => $salaryExpensesForCategory) {
             foreach ($salaryExpensesForCategory as $monthIndex => $value) {
+				if(!isset($orderIndexPerExpenseCategory[$manpowerCategory])){
+					dd($orderIndexPerExpenseCategory ,$manpowerCategory );
+				}
                 $currentOrderIndex = $orderIndexPerExpenseCategory[$manpowerCategory];
                 $currentValue = $salaryExpensesForCategories[$manpowerCategory][$monthIndex] ?? 0 ;
                 $formattedExpenses[$manpowerCategory]['Manpower Salaries'][$monthIndex] = isset($formattedExpenses[$manpowerCategory]['Manpower Salaries'][$monthIndex]) ? $formattedExpenses[$manpowerCategory]['Manpower Salaries'][$monthIndex] +  $currentValue : $currentValue;

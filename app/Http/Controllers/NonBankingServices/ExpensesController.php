@@ -151,6 +151,7 @@ class ExpensesController extends Controller
                         $contractCount = HArr::sumAtDates($contractCount, $sumKeys);
                         $monthlyFixedRepeatingResults = $monthlyFixedRepeatingAmountEquation->calculate($amount, $tableDataArr['start_date'], $loopEndDate, $tableDataArr['increase_interval']??'annually', $tableDataArr['increase_rates']??0, $isDeductible, $vatRate, $withholdRate, $dateIndexWithYearIndex, $contractCount);
                     } else {
+						
                         $monthlyFixedRepeatingResults = $monthlyFixedRepeatingAmountEquation->calculate($amount, $tableDataArr['start_date'], $loopEndDate, $tableDataArr['increase_interval']??'annually', $tableDataArr['increase_rates']??0, $isDeductible, $vatRate, $withholdRate, $dateIndexWithYearIndex);
                     }
                     /**
@@ -180,6 +181,7 @@ class ExpensesController extends Controller
                         $monthlyFixedRepeatingResults['total_after_vat'] = HArr::multipleTwoArrAtSameIndex($totalAfterVats, $accumulatedManpowerPowersForAllSelectedPositions);
                         $repeatingExpenseValues = $monthlyFixedRepeatingResults['total_after_vat'] ;
                         $collectionValues = HArr::multipleTwoArrAtSameIndex($totalBeforeVats, $accumulatedManpowerPowersForAllSelectedPositions) ;
+						
                     }
                     $withholdAmounts  = $monthlyFixedRepeatingResults['withhold_amounts'];
                     $tableDataArr['monthly_repeating_amounts']  = $repeatingExpenseValues;
@@ -194,6 +196,9 @@ class ExpensesController extends Controller
                     $tableDataArr['payment_amounts'] = $payments;
                     $tableDataArr['net_payments_after_withhold']=$netPaymentsAfterWithhold;
                     $tableDataArr['collection_statements']   =$this->calculateStatement($collectionValues, $tableDataArr['total_vat'], $netPaymentsAfterWithhold, $withholdPayments, $dateIndexWithDate, $study);
+					if($isExpensePerEmployee){
+						// dd($withholdAmounts,$tableDataArr['payment_terms'],$payments,$tableDataArr['collection_statements'],$collectionValues);
+					}
         
                 }
                 /**

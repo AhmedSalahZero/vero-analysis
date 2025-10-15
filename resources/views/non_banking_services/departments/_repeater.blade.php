@@ -33,8 +33,10 @@
 								
 								    <td>
  									<input value="{{ (isset($subModel) ?$subModel->getName() : '') }}" @if($isRepeater) name="name" @else name="{{ $tableId }}[0][name]" @endif class="form-control text-center " type="text">
-                                </td>
-                             
+                                </td>  
+								
+								 
+								 
 
 
                             </tr>

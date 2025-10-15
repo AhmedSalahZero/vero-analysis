@@ -2015,7 +2015,7 @@ class Study extends Model
     }
     public function positions()
     {
-        return $this->hasMany(Position::class, 'study_id', 'id');
+        return $this->hasMany(Position::class, 'company_id', 'id');
     }
     public function getOnlyDatesOfActiveOperation(array $operationDurationPerYear, array $dateIndexWithDate, $removeZeros=true)
     {
@@ -3036,13 +3036,14 @@ class Study extends Model
         $totalExpensePerCategory = [];
         foreach ($expenses as $expense) {
             $expenseNameId = $expense->expense_name_id;
-            $collectionStatements = (array)json_decode($expense->collection_statements);
-            $collectionStatements = (array)($collectionStatements['monthly']);
-            $collectionStatements = (array)($collectionStatements['end_balance']);
+            $collectionStatements = json_decode($expense->collection_statements,true);
+            $collectionStatements = (array)($collectionStatements['monthly']??[]);
+            $collectionStatements = (array)($collectionStatements['end_balance']??[]);
             foreach ($collectionStatements as $dateIndex => $amount) {
                 $totalExpensePerCategory[$expenseNameId][$dateIndex] = isset($totalExpensePerCategory[$expenseNameId][$dateIndex]) ? $totalExpensePerCategory[$expenseNameId][$dateIndex] + $amount : $amount;
             }
         }
+		// dd($collectionStatements);
         $totalPerType =[];
         foreach ($totalExpensePerCategory as $expenseNameId => $currentData) {
             $expenseName = ExpenseName::find($expenseNameId) ;
@@ -3055,11 +3056,22 @@ class Study extends Model
             $tableDataFormatted[$currentTabIndex]['sub_items'][$expenseNameId]['year_total'] = HArr::sumPerYearIndex($totalPerType[$expenseNameId], $yearWithItsMonths);
         }
         $totalExpenses = HArr::sumAtDates(array_values($totalPerType), $sumKeys) ;
-        
+        dd($totalExpenses,$totalPerType);
+		
+		       $socialTaxesTitle = __('Salaries & Social Insurance Taxes');
+			   $salaryStatements = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('manpowers')->where('study_id',$this->id)->pluck('tax_and_social_insurance_statement')->toArray();
+	
+			  $salaryStatementEndBalances =  HArr::formatMultiSubItems($salaryStatements, $sumKeys, ['monthly','end_balance']);
+        $totalCorporateTaxes =  $totalCorporateTaxes['monthly']['end_balance']??[] ;
+        $tableDataFormatted[$currentTabIndex]['sub_items'][$socialTaxesTitle]['options']['title'] = $socialTaxesTitle ;
+        $tableDataFormatted[$currentTabIndex]['sub_items'][$socialTaxesTitle]['data'] = $salaryStatementEndBalances ;
+        $tableDataFormatted[$currentTabIndex]['sub_items'][$socialTaxesTitle]['year_total'] = HArr::sumPerYearIndex($salaryStatementEndBalances, $yearWithItsMonths) ;
+
+		
+		
         $corporateTaxesTitle = __('Corporate Taxes');
         $totalCorporateTaxes = $this->incomeStatement ? $this->incomeStatement->monthly_corporate_taxes_statements : [];
         $totalCorporateTaxes =  $totalCorporateTaxes['monthly']['end_balance']??[] ;
-        
         $tableDataFormatted[$currentTabIndex]['sub_items'][$corporateTaxesTitle]['options']['title'] = $corporateTaxesTitle ;
         $tableDataFormatted[$currentTabIndex]['sub_items'][$corporateTaxesTitle]['data'] = $totalCorporateTaxes ;
         $tableDataFormatted[$currentTabIndex]['sub_items'][$corporateTaxesTitle]['year_total'] = HArr::sumPerYearIndex($totalCorporateTaxes, $yearWithItsMonths) ;
@@ -3091,7 +3103,7 @@ class Study extends Model
  
         
 
-        $totalExistOtherCreditors = HArr::sumAtDates([$totalOtherCreditorsOpeningBalances,$totalExpenses,$totalCorporateTaxes,$totalDirectFactoringUnearnedRevenues,$portfolioEndBalances], $sumKeys);
+        $totalExistOtherCreditors = HArr::sumAtDates([$totalOtherCreditorsOpeningBalances,$totalExpenses,$totalCorporateTaxes,$salaryStatementEndBalances,$totalDirectFactoringUnearnedRevenues,$portfolioEndBalances], $sumKeys);
         $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabIndex]['data'] = $totalExistOtherCreditors;
         $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabIndex]['year_total'] =HArr::getPerYearIndexForEndBalance($totalExistOtherCreditors, $yearWithItsMonths);
 

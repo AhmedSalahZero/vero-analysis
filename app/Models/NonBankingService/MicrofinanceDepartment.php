@@ -8,10 +8,10 @@ use App\Models\Traits\Scopes\NonBankingServices\BelongsToStudy;
 use App\Traits\HasBasicStoreRequest;
 use Illuminate\Database\Eloquent\Model;
 
-class Department extends Model
+class MicrofinanceDepartment extends Model
 {
 	use BelongsToStudy,BelongsToCompany,IsDepartment,HasBasicStoreRequest;
-	protected $table ='departments';
+	protected $table ='microfinance_departments';
 	protected $connection =NON_BANKING_SERVICE_CONNECTION_NAME;
  	protected $guarded = ['id'];
 	const DEPARTMENT = 'department';
@@ -20,15 +20,15 @@ class Department extends Model
 	 {
 		 parent::boot();
 		 static::deleting(function(self $department){
-			$positions = Position::where('department_id',$department->id)->get();
-			$positions->each(function(Position $position){
+			$positions = MicrofinancePosition::where('department_id',$department->id)->get();
+			$positions->each(function(MicrofinancePosition $position){
 				$position->delete();
 			});
 		 });
 	 }
 	 public function positions()
 	{
-		return $this->hasMany(Position::class,'department_id','id');
+		return $this->hasMany(MicrofinancePosition::class,'department_id','id');
 	}
 	
 	

@@ -52,7 +52,7 @@ class DepartmentController extends Controller
 		$currentType = $request->get('active',Department::DEPARTMENT);
 		
 		$filterDates = [];
-		foreach([Department::DEPARTMENT] as $type){
+		foreach([Department::DEPARTMENT , Department::MICROFINANCE_DEPARTMENT] as $type){
 			$startDate = $request->has('startDate') ? $request->input('startDate.'.$type) : now()->subMonths($numberOfMonthsBetweenEndDateAndStartDate)->format('Y-m-d');
 			$endDate = $request->has('endDate') ? $request->input('endDate.'.$type) : now()->format('Y-m-d');
 			
@@ -71,8 +71,10 @@ class DepartmentController extends Controller
 		$startDate = $filterDates[Department::DEPARTMENT]['startDate'] ?? null ;
 		$endDate = $filterDates[Department::DEPARTMENT]['endDate'] ?? null ;
 		$departments = $company->departments ;
+		$microfinanceDepartments = $company->microfinanceDepartments ;
 		// $departments =  $departments->filterByDateColumn('study_start_date',$startDate,$endDate) ;
 		$departments =  $currentType == Department::DEPARTMENT ? $this->applyFilter($request,$departments):$departments ;
+		$microfinanceDepartments =  $currentType == Department::MICROFINANCE_DEPARTMENT ? $this->applyFilter($request,$microfinanceDepartments):$microfinanceDepartments ;
 
 		/**
 		 * * end of bank to safe internal money transfer 
@@ -87,9 +89,10 @@ class DepartmentController extends Controller
 	
 		$models = [
 			Department::DEPARTMENT =>$departments ,
+			Department::MICROFINANCE_DEPARTMENT =>$microfinanceDepartments ,
 		];
 
-        return view('non_banking_services.manpower-structure.index', [
+        return view('non_banking_services.departments.index', [
 			'company'=>$company,
 			'searchFields'=>$searchFields,
 			'models'=>$models,
@@ -103,7 +106,7 @@ class DepartmentController extends Controller
 	}
 	public function create(Company $company , Request $request){
 		
-		return view('non_banking_services.manpower-structure.form', $this->getViewVars($company));
+		return view('non_banking_services.departments.form', $this->getViewVars($company));
 	}
 	protected function getViewVars(Company $company,$model = null){
 		return [
@@ -131,7 +134,7 @@ class DepartmentController extends Controller
 		];
 	}
 	public function edit(Request $request , Company $company , Department $department){
-		return view('non_banking_services.manpower-structure.form', $this->getViewVars($company,$department));
+		return view('non_banking_services.departments.form', $this->getViewVars($company,$department));
 	}
 	public function update(Request $request , Company $company , Department $department){
 		$department->update($this->getCommonData($request,$company));

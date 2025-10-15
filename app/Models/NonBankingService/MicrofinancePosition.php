@@ -7,9 +7,8 @@ use App\Models\Traits\Scopes\NonBankingServices\BelongsToStudy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 
-class Position extends Model
+class MicrofinancePosition extends Model
 {
 	
 	use BelongsToStudy,BelongsToCompany;
@@ -31,5 +30,12 @@ class Position extends Model
 		return $this->belongsTo(Department::class,'department_id','id');
 	}
 	
-	
+	public function getExpenseTypeId():string
+	{
+		return $this->expense_type;
+	}
+	public function getExpenseTypeName():string 
+	{
+		return getExpenseTypes()[$this->getExpenseTypeId()];
+	}
 }

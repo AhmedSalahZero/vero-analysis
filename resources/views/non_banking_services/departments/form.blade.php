@@ -81,7 +81,7 @@ use App\Models\NonBankingService\Department;
                                     <div class="form-group2  m-form__group2 row">
                                         <div data-repeater-list="positions" class="col-lg-12">
 
-                                            @include('non_banking_services.manpower-structure._repeater' , [
+                                            @include('non_banking_services.departments._repeater' , [
                                             'tableId'=>'positions',
                                             'isRepeater'=>true ,
                                             'canAddNewItem'=>true ,

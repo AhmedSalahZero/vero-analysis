@@ -16,7 +16,6 @@ class LeasingController extends Controller
     use NonBankingService ;
     public function create(Company $company, Request $request, Study $study)
     {
-        
         return view('non_banking_services.leasing-revenue-stream-breakdown.form', $this->getViewVars($company, $study));
     }
     protected function getViewVars(Company $company, Study $study)

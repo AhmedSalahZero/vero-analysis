@@ -155,7 +155,7 @@ use App\Models\FinancialPlanning\Expense;
                                     <div class="d-flex align-items-center">
                                         <input class="form-control only-percentage-allowed text-center" value="{{ isset($subModel) ? number_format($subModel->getVatRate(),PERCENTAGE_DECIMALS) : "0.00" }}" type="text">
                                         <span style="margin-left:3px	">%</span>
-                                        <input type="hidden" value="{{ (isset($subModel) ? $subModel->getVatRate() : 2) }}" @if($isRepeater) name="vat_rate" @else name="{{ $tableId }}[0][vat_rate]" @endif>
+                                        <input type="hidden" value="{{ (isset($subModel) ? $subModel->getVatRate() : 0) }}" @if($isRepeater) name="vat_rate" @else name="{{ $tableId }}[0][vat_rate]" @endif>
 
                                     </div>
                                 </td>
@@ -169,7 +169,7 @@ use App\Models\FinancialPlanning\Expense;
                                     <div class="d-flex align-items-center">
                                         <input class="form-control only-percentage-allowed text-center" value="{{ isset($subModel) ? number_format($subModel->getWithholdTaxRate(),PERCENTAGE_DECIMALS) : "0.00" }}" type="text">
                                         <span style="margin-left:3px	">%</span>
-                                        <input type="hidden" value="{{ (isset($subModel) ? $subModel->getWithholdTaxRate() : 2) }}" @if($isRepeater) name="withhold_tax_rate" @else name="{{ $tableId }}[0][withhold_tax_rate]" @endif>
+                                        <input type="hidden" value="{{ (isset($subModel) ? $subModel->getWithholdTaxRate() : 0) }}" @if($isRepeater) name="withhold_tax_rate" @else name="{{ $tableId }}[0][withhold_tax_rate]" @endif>
                                     </div>
                                 </td>
 
@@ -178,7 +178,7 @@ use App\Models\FinancialPlanning\Expense;
                                     <div class="d-flex align-items-center">
                                         <input class="form-control only-percentage-allowed text-center" value="{{ isset($subModel) ? number_format($subModel->getIncreaseRate(),PERCENTAGE_DECIMALS) : "0.00" }}" type="text">
                                         <span style="margin-left:3px	">%</span>
-                                        <input type="hidden" value="{{ (isset($subModel) ? $subModel->getIncreaseRate() : 2) }}" @if($isRepeater) name="increase_rate" @else name="{{ $tableId }}[0][increase_rate]" @endif>
+                                        <input type="hidden" value="{{ (isset($subModel) ? $subModel->getIncreaseRate() : 0) }}" @if($isRepeater) name="increase_rate" @else name="{{ $tableId }}[0][increase_rate]" @endif>
 
                                     </div>
                                 </td>

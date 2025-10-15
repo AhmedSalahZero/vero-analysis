@@ -72,7 +72,6 @@ class Manpower extends Model
 					->where('type','manpower')
 					->selectRaw('expense_type,salary_expenses,expense_type')->get();
 					
-					
         foreach ($salaryExpenses as $salaryExpense) {
             $expenseCategory = $salaryExpense->expense_type;
             $salaryExpensePayload = (array)json_decode($salaryExpense->salary_expenses);
