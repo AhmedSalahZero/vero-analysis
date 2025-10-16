@@ -172,7 +172,6 @@ class ExpensesController extends Controller
                         $repeatingExpenseValues = $fixedRepeatingExpenseArr;
                         $collectionValues =$monthlyFixedRepeatingResults['total_before_vat'];
                         // $collectionValues = HArr::multipleTwoArrAtSameIndex($contractCount,$monthlyFixedRepeatingResults['total_before_vat']);
-                        // dd($monthlyFixedRepeatingResults);
                     }
                     if ($isExpensePerEmployee) {
                         $totalAfterVats = $monthlyFixedRepeatingResults['total_after_vat'];
@@ -195,9 +194,7 @@ class ExpensesController extends Controller
                     $tableDataArr['payment_amounts'] = $payments;
                     $tableDataArr['net_payments_after_withhold']=$netPaymentsAfterWithhold;
                     $tableDataArr['collection_statements']   =$this->calculateStatement($collectionValues, $tableDataArr['total_vat'], $netPaymentsAfterWithhold, $withholdPayments, $dateIndexWithDate, $study);
-					if($isExpensePerEmployee){
-						// dd($withholdAmounts,$tableDataArr['payment_terms'],$payments,$tableDataArr['collection_statements'],$collectionValues);
-					}
+					
         
                 }
                 /**

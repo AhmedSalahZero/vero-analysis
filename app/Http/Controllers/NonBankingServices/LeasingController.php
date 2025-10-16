@@ -55,7 +55,7 @@ class LeasingController extends Controller
         }
         $request->has('seasonality') ?	$study->syncSeasonality($request->get('seasonality', []), Study::LEASING, $company->id) : [];
         
-        $study->storeEclAndFundingStructureFor($request, Study::LEASING);
+        $study->storeAdminFeesAndFundingStructureFor($request, Study::LEASING);
         
         $study->storeFixedLoans(Study::LEASING, 'leasingRevenueStreamBreakdown');
         

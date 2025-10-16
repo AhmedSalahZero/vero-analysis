@@ -857,7 +857,7 @@ class Study extends Model
             }
             $yearMonthIndexes = $yearsWithItsMonths[$yearOrMonthIndex];
             foreach ($yearMonthIndexes as $monthIndex => $trueOrFalse) {
-                if ($trueOrFalse) {
+				if ($trueOrFalse) {
 					$currentValue = $directFactoringBreakdown->getNetFundingAmountsAtMonthIndex($monthIndex);
                     $sum+=$currentValue ;
 					$resultPerCategory[$directFactoringBreakdown->id][$monthIndex] = isset($resultPerCategory[$directFactoringBreakdown->id][$monthIndex]) ? $resultPerCategory[$directFactoringBreakdown->id][$monthIndex] + $currentValue  : $currentValue;
@@ -888,12 +888,12 @@ class Study extends Model
         $revenueIdWitLoanAmounts = $this->{$relationName}->pluck('loan_amounts', 'id')->toArray() ;
         DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('revenue_contracts')->where('study_id', $this->id)->where('revenue_type', $revenueType)->delete();
         foreach ($revenueIdWitLoanAmounts as $leasingRevenueStreamBreakdownId => $yearIndexWithAmount) {
-			
 			$model = $this->{$relationName}->where('id', $leasingRevenueStreamBreakdownId)->first() ;
             //    $foreignKeyName = $model->getForeignKeyName();
             foreach ($operationDurationPerYear as $yearIndex => $yearMonthIndexes) {
 				if($isDirectFactoring){
 						$directFactoringMonthlyLoanAmounts = $this->getTotalDirectFactoringNewPortfolioAmountsAtYearOrMonthIndex($yearIndex)['per_category'][$leasingRevenueStreamBreakdownId]??[];
+						
 				}
                 foreach ($yearMonthIndexes as $monthIndex => $monthlyZeroOrOne) {
                     $yearIndexWithAmount = is_string($yearIndexWithAmount) ? (array)json_decode($yearIndexWithAmount) : $yearIndexWithAmount;
@@ -909,7 +909,6 @@ class Study extends Model
             }
             $currentMonthlyAmounts = $monthlyLoanAmounts[$leasingRevenueStreamBreakdownId];
             $currentCounts = $contractCounts[$leasingRevenueStreamBreakdownId];
-            
             $model->update([
                 'monthly_loan_amounts'=>$currentMonthlyAmounts
             ]);
@@ -1595,12 +1594,14 @@ class Study extends Model
         $baseRates = $generalAndReserveAssumption->getCbeLendingCorridorRates() ;
         $bankMarginRates = $generalAndReserveAssumption->getBankLendingMarginRates() ;
         $datesIndexWithYearIndex = app()->make('datesIndexWithYearIndex');
-        $dateIndexWithDates = app()->make('dateIndexWithDate');
-        $dateIndexWithDates = app()->make('dateIndexWithDate');
+        // $dateIndexWithDates = app()->make('dateIndexWithDate');
+        // $dateIndexWithDates = app()->make('dateIndexWithDate');
         $monthsIndexes = array_keys($this->getMonthlyIndexes());
         $result = [];
         $totalPortfolioEndBalance = [];
         foreach ($this->refresh()->directFactoringBreakdowns as $directFactoringBreakdown) {
+			$isFirstLoop = true ;
+			$totalDuesAtMonths =[];
             /**
              * @var DirectFactoringBreakdown $directFactoringBreakdown
              */
@@ -1617,14 +1618,16 @@ class Study extends Model
             $factoringInterestRevenue = [];
             $directFactoringStatements[$directFactoringBreakdownId] = [];
             $directFactoringNetFundingAmounts = [];
+			
             $directFactoringBankLoanStatements = [];
             $currentDirectFactoringBeginningBalance = 0 ;
             foreach ($directFactoringAmounts as $monthIndex => $currentDirectAmount) {
                 
                 $currentYearIndex = $datesIndexWithYearIndex[$monthIndex];
                 $currentYearOrMonthIndex = $this->isMonthlyStudy() ? $monthIndex : $currentYearIndex;
-                $currentDateAsString = $dateIndexWithDates[$monthIndex];
-                $currentDaysInMonth = Carbon::make($currentDateAsString)->daysInMonth;
+                $currentDaysInMonth = 30;
+				//    $currentDateAsString = $dateIndexWithDates[$monthIndex];
+                // $currentDaysInMonth = Carbon::make($currentDateAsString)->daysInMonth;
                 $currentBaseRate = $baseRates[$monthIndex];
                 $currentBankMarginRate = $this->isMonthlyStudy() ? $bankMarginRates[$monthIndex] : $bankMarginRates[$currentYearIndex];
                 $bankInterestRate = ($currentBaseRate + $currentBankMarginRate)/100  ;
@@ -1634,7 +1637,6 @@ class Study extends Model
                 $currentMonthSettlement = $directFactoringStatements[$directFactoringBreakdownId]['direct_factoring_settlements'][$monthIndex] ?? 0;
                 $directFactoringStatements[$directFactoringBreakdownId]['end_balance'][$monthIndex] = $currentDirectFactoringBeginningBalance + $currentDirectAmount - $currentMonthSettlement ;
                 $currentDirectFactoringBeginningBalance = $directFactoringStatements[$directFactoringBreakdownId]['end_balance'][$monthIndex] ;
-                    
                 $unearned = [];
                 foreach (HArr::getMonthsAsArray($category) as $index => $currentMonthNumber) {
                     $currentIndex = $monthIndex+$index+1 ;
@@ -1648,9 +1650,7 @@ class Study extends Model
                     $factoringInterestRevenue[$directFactoringBreakdownId]['interest_revenue'][$i] =
                     $value;
                 }
-                        
                 $factoringInterestRevenue[$directFactoringBreakdownId]['unearned_interest'][$monthIndex] = $unearned[$monthIndex];
-                        
                 $currentDirectFactoringNetFundingAmounts  = $currentDirectAmount -  $unearned[$monthIndex] ;
                 $directFactoringNetFundingAmounts[$directFactoringBreakdownId][$monthIndex] = $currentDirectFactoringNetFundingAmounts ;
                 $eclAndNewPortfolioFundingRate = $this->getEclAndNewPortfolioFundingRatesForStreamType(Study::DIRECT_FACTORING);
@@ -1663,10 +1663,13 @@ class Study extends Model
                     $directFactoringBankLoanStatements[$directFactoringBreakdownId]['interest_expense_payments'][$monthIndex] = $currentBankInterestExpensePayment;
                     $currentBankLoanSettlementAtCurrentMonth = $directFactoringBankLoanStatements[$directFactoringBreakdownId]['loan_settlements'][$monthIndex]??0;
                     $totalDues = $currentDirectFactoringBankBeginningBalance + $currentBankLoanAmount - $currentBankLoanSettlementAtCurrentMonth - $currentBankInterestExpensePayment;
-                    $directFactoringBankLoanStatements[$directFactoringBreakdownId]['total_dues'][$monthIndex] = $totalDues;
-                    $interestExpense = $totalDues * $currentDaysInMonth * $bankInterestRate  / 360 ;
+					$totalDuesAtMonths[$monthIndex+1] =  $totalDues ;
+                    $directFactoringBankLoanStatements[$directFactoringBreakdownId]['total_dues'][$monthIndex] = $isFirstLoop  ? 0 : $totalDuesAtMonths[$monthIndex];
+					$isFirstLoop = false ; 
+                    $interestExpense = $directFactoringBankLoanStatements[$directFactoringBreakdownId]['total_dues'][$monthIndex] * $currentDaysInMonth * $bankInterestRate  / 360 ;
+                    $interestExpensePayment = $totalDues * $currentDaysInMonth * $bankInterestRate  / 360 ;
                     $directFactoringBankLoanStatements[$directFactoringBreakdownId]['interest_expense'][$monthIndex] = $interestExpense;
-                    $currentBankInterestExpensePayment = $interestExpense;
+                    $currentBankInterestExpensePayment = $interestExpensePayment;
                     $endBalance = $totalDues + $interestExpense ;
                     $directFactoringBankLoanStatements[$directFactoringBreakdownId]['end_balance'][$monthIndex] = $endBalance;
                     $currentDirectFactoringBankBeginningBalance = $endBalance ;
@@ -1690,13 +1693,10 @@ class Study extends Model
                 'unearned_interest' => $factoringInterestRevenue[$directFactoringBreakdownId]['unearned_interest'],
                 'end_balance' => $factoringInterestRevenue[$directFactoringBreakdownId]['end_balance'],
                 'net_funding_amounts'=>$directFactoringNetFundingAmounts[$directFactoringBreakdownId],
-                        
                 'statement_beginning_balance'=>$directFactoringStatements[$directFactoringBreakdownId]['beginning_balance'],
                 'direct_factoring_amounts'=>$directFactoringAmounts,
                 'direct_factoring_settlements'=>$directFactoringStatements[$directFactoringBreakdownId]['direct_factoring_settlements'],
                 'statement_end_balance'=>$portfolioStatementEndBalance,
-                        
-                        
                 'bank_beginning_balance'=>$directFactoringBankLoanStatements[$directFactoringBreakdownId]['beginning_balance']??[],
                 'bank_loan_amounts'=>$directFactoringBankLoanStatements[$directFactoringBreakdownId]['loan_amounts']??[],
                 'bank_loan_settlements'=>$directFactoringBankLoanStatements[$directFactoringBreakdownId]['loan_settlements']??[],
@@ -2427,7 +2427,7 @@ class Study extends Model
 
         return $result;
     }
-    public function storeEclAndFundingStructureFor(Request $request, string $revenueStreamType, array $portfolioMonthlyNewLoansFundingValues = [])
+    public function storeAdminFeesAndFundingStructureFor(Request $request, string $revenueStreamType, array $portfolioMonthlyNewLoansFundingValues = [])
     {
         if ($request->has('admin_fees_rates')) {
             $isPortfolio = $revenueStreamType == Study::PORTFOLIO_MORTGAGE ;
@@ -2638,8 +2638,10 @@ class Study extends Model
         $loanSchedulePayments = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('loan_schedule_payments')->where('study_id', $this->id)->where('portfolio_loan_type', 'bank_portfolio')->get();
         $loanSchedulePaymentPerType = HArr::sumLoanSchedulePerKey($loanSchedulePayments, $sumKeys, 'revenue_stream_type');
         $directFactoringSettlements =  DirectFactoringBreakdown::where('study_id', $this->id)->pluck('bank_loan_settlements')->toArray();
+        $directFactoringInterestPayments =  DirectFactoringBreakdown::where('study_id', $this->id)->pluck('bank_interest_expense_payments')->toArray();
         $directFactoringSettlements = HArr::sumAtDates($directFactoringSettlements, $sumKeys);
-        $loanSchedulePaymentPerType['direct-factoring'] = $directFactoringSettlements;
+        $directFactoringInterestPayments = HArr::sumAtDates($directFactoringInterestPayments, $sumKeys);
+        $loanSchedulePaymentPerType['direct-factoring'] = HArr::sumAtDates([$directFactoringSettlements,$directFactoringInterestPayments],$sumKeys);
         foreach ($loanSchedulePaymentPerType as $revenueType => $currentData) {
             $title =  $revenueType == 'direct-factoring' ?  str_to_upper($revenueType) .' Loan Payments' :  str_to_upper($revenueType) .' Bank Loan Payments'  ;
             $tableDataFormatted[1]['sub_items'][$title]['options'] =array_merge([

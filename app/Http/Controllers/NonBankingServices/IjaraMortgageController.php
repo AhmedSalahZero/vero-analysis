@@ -32,7 +32,7 @@ class IjaraMortgageController extends Controller
 		$study->storeRelationsWithNoRepeater($request,$company,['seasonality']);
 		$study->storeRepeaterRelations($request,$this->getRepeaterRelations(),$company);
 		$study->syncSeasonality($request->get('seasonality'),Study::IJARA , $company->id );
-		$study->storeEclAndFundingStructureFor($request,Study::IJARA);
+		$study->storeAdminFeesAndFundingStructureFor($request,Study::IJARA);
 	
 	//	$study->updateIjaraMortgageMonthlyAdminFeesAmounts();
 		// $loanAmounts = $study->ijaraMortgageBreakdowns->pluck('loan_amounts','id')->toArray();

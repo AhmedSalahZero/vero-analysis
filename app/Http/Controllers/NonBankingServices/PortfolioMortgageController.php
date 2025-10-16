@@ -79,8 +79,7 @@ class PortfolioMortgageController extends Controller
                 $bankMonthlyLoanAmounts[$monthIndex] = $portfolioMonthlyLoanArr['bank_loan_amount']??0;
             }
     
-            // dd($bankMonthlyLoanAmounts);
-            $study->storeEclAndFundingStructureFor($request, Study::PORTFOLIO_MORTGAGE, $bankMonthlyLoanAmounts);
+            $study->storeAdminFeesAndFundingStructureFor($request, Study::PORTFOLIO_MORTGAGE, $bankMonthlyLoanAmounts);
             $study->storeMonthlyLoan(Study::PORTFOLIO_MORTGAGE,'portfolioMortgageRevenueProjectionByCategories', $portfolioMonthlyLoanAmounts);
             
         }

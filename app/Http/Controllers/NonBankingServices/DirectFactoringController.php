@@ -46,11 +46,11 @@ class DirectFactoringController extends Controller
 			
 			$studyHasDirectFactoringBreakdowns = $study->refresh()->directFactoringBreakdowns->count(); 
 			$study->storeRelationsWithNoRepeater($request,$company,['seasonality']);
-			$study->storeMonthlyLoan(Study::DIRECT_FACTORING,'directFactoringBreakdowns');
 			$study->storeRepeaterRelations($request,$this->getRepeaterRelations(),$company);
 			$study->syncSeasonality($request->get('seasonality'),Study::DIRECT_FACTORING , $company->id );
-			$study->storeEclAndFundingStructureFor($request,Study::DIRECT_FACTORING);
+			$study->storeAdminFeesAndFundingStructureFor($request,Study::DIRECT_FACTORING);
 			$study->refreshDirectFactoringLoans();
+			$study->storeMonthlyLoan(Study::DIRECT_FACTORING,'directFactoringBreakdowns');
 			$study->updateExpensesPercentagesOfSales();
 			
 		if($studyHasDirectFactoringBreakdowns){

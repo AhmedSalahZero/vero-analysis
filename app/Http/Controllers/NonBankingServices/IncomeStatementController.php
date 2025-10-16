@@ -235,7 +235,7 @@ class IncomeStatementController extends Controller
             }
             
         }
-		$interestCosts  = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('direct_factoring_breakdowns')->where('study_id',$study->id)->pluck('bank_interest_expense_payments')->toArray();
+		$interestCosts  = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('direct_factoring_breakdowns')->where('study_id',$study->id)->pluck('bank_interest_expense')->toArray();
 		foreach($interestCosts as $interestCost){
 			$interestCost = json_decode($interestCost,true);
 			foreach($interestCost as $dateIndex => $value){

@@ -23,7 +23,9 @@
             {{-- start of reserve assumption  --}}
             <div class="kt-portlet">
                 <div class="kt-portlet__body">
-               
+  <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style="">
+                                            {{ __('Existing Branches Product Mix') }}
+                                        </h3>
                     <div class="row">
                         <hr style="flex:1;background-color:lightgray">
                     </div>
@@ -36,25 +38,20 @@
                                     <tr>
                                         <th class="first-column-th-class-medium form-label font-weight-bold text-center align-middle interval-class header-border-down">{{ __('Product Name') }}</th>
                                         <th class="first-column-th-class-medium form-label font-weight-bold text-center align-middle interval-class header-border-down">{{ __('Tenor (Months)') }}</th>
-                                        @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
-                                        <th class="form-label font-weight-bold  text-center align-middle interval-class header-border-down"> {{$yearOrMonthFormatted}} </th>
-                                        @endforeach
+                                        <th class="first-column-th-class-medium form-label font-weight-bold text-center align-middle interval-class header-border-down">{{ __('Avg Amount') }}</th>
+                                        {{-- <th class="first-column-th-class-medium form-label font-weight-bold text-center align-middle interval-class header-border-down">{{ __('Allocations') }}</th> --}}
+                                        @for($i = 0 ; $i< $microfinanceProductMixCount ; $i++ ) <th class="form-label font-weight-bold  text-center align-middle interval-class header-border-down">
+										@php
+											$currentVal = 'd' ;
+										@endphp
+										 <input name="{{ 'existing_names[' . $i .']' }}" value="{{ $currentVal }}"  class="form-control text-left " type="text">
+                                            </th>
+                                            @endfor
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @php
-                                    $currentTotal = [];
-
-                                    @endphp
-								
-
-
-
-
-
-
-@foreach($products as $product)
-                                    <tr data-repeat-formatting-decimals="2" data-repeater-style>
+                                    @foreach($products as $product)
+                                    <tr data-repeat-formatting-decimals="0" data-repeater-style>
                                         <td class="td-classes">
                                             <div>
 
@@ -63,28 +60,41 @@
 
                                         </td>
 
+                                        <td>
+                                            @php
+                                            $currentVal = 0;
+                                            @endphp
+                                            <x-repeat-right-dot-inputs :numberFormatDecimals="0" :removeThreeDots="true" :removeCurrency="true" :currentVal="number_format($currentVal,0)" :classes="'only-greater-than-zero-allowed'" :is-percentage="false" :name="'existing_branch_tenor'" :columnIndex="-1"></x-repeat-right-dot-inputs>
+                                        </td>
+
+                                        <td>
+                                            @php
+                                            $currentVal = 0;
+                                            @endphp
+                                            <x-repeat-right-dot-inputs :removeThreeDots="true" :removeCurrency="true" :currentVal="number_format($currentVal,1)" :classes="'only-greater-than-zero-allowed'" :is-percentage="false" :name="'existing_avg_amount'" :columnIndex="-1"></x-repeat-right-dot-inputs>
+                                        </td>
+
+
                                         @php
                                         $columnIndex = 0 ;
                                         @endphp
-                                        @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
-
-                                        <td>
+                                        @for($i = 0 ; $i< $microfinanceProductMixCount ; $i++ ) <td>
 
                                             @php
                                             $currentVal = 0;
                                             @endphp
-                                            <x-repeat-right-dot-inputs :currentVal="number_format($currentVal,1)" :classes="'only-greater-than-zero-allowed'" :is-percentage="false" :name="'existing_branch_tenor'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :removeThreeDots="false" :removeCurrency="true" :currentVal="number_format($currentVal,1)" :classes="'only-greater-than-zero-allowed'" :is-percentage="true" :name="'existing_allocations['.$i.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
                                             {{-- <x-repeat-right-dot-inputs :currentVal="number_format($currentVal,1)" :classes="'only-greater-than-zero-allowed'" :is-percentage="true" :name="'existing_tenor['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs> --}}
-                                        </td>
-                                        @php
-                                        $columnIndex++ ;
-                                        @endphp
+                                            </td>
+                                            @php
+                                            $columnIndex++ ;
+                                            @endphp
 
-                                        @endforeach
+                                            @endfor
 
 
                                     </tr>
-@endforeach
+                                    @endforeach
 
 
 
@@ -101,7 +111,7 @@
 
 
 
-		
+
             {{-- end of general assumption  --}}
 
 
@@ -250,21 +260,16 @@
         }
     })
 
-
- 
-
-
-
 </script>
 
 
 
 <script>
-   
 
 
 
-  
+
+
 
 
 </script>

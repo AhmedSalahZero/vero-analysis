@@ -27,6 +27,7 @@ class MicrofinanceProductMixControllerController extends Controller
         $yearOrMonthsIndexes = $study->getYearOrMonthIndexes();
         $isYearsStudy = !$study->isMonthlyStudy();
         return [
+			'microfinanceProductMixCount'=>$study->microfinance_product_mix_count,
 			'company'=>$company ,
 			'products'=>$company->getActiveMicrofinanceProducts(),
             'model'=>$study ,
@@ -41,7 +42,7 @@ class MicrofinanceProductMixControllerController extends Controller
 
     public function store(Company $company, Request $request, Study $study )
     {
-       dd($study);
+       $study->
 		return response()->json([
                 'redirectTo'=>route('view.manpower.for.non.banking', ['company'=>$company->id,'study'=>$study->id])
             ]);
