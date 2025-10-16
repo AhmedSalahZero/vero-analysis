@@ -1662,7 +1662,9 @@ class Study extends Model
                     $directFactoringBankLoanStatements[$directFactoringBreakdownId]['loan_settlements'][$monthIndex +  ceil($category/30) ] = $currentBankLoanAmount;
                     $directFactoringBankLoanStatements[$directFactoringBreakdownId]['interest_expense_payments'][$monthIndex] = $currentBankInterestExpensePayment;
                     $currentBankLoanSettlementAtCurrentMonth = $directFactoringBankLoanStatements[$directFactoringBreakdownId]['loan_settlements'][$monthIndex]??0;
-                    $totalDues = $currentDirectFactoringBankBeginningBalance + $currentBankLoanAmount - $currentBankLoanSettlementAtCurrentMonth - $currentBankInterestExpensePayment;
+                    $totalDues = $currentDirectFactoringBankBeginningBalance + $currentBankLoanAmount - $currentBankLoanSettlementAtCurrentMonth 
+					// - $currentBankInterestExpensePayment
+					;
 					$totalDuesAtMonths[$monthIndex+1] =  $totalDues ;
                     $directFactoringBankLoanStatements[$directFactoringBreakdownId]['total_dues'][$monthIndex] = $isFirstLoop  ? 0 : $totalDuesAtMonths[$monthIndex];
 					$isFirstLoop = false ; 
@@ -1670,7 +1672,9 @@ class Study extends Model
                     $interestExpensePayment = $totalDues * $currentDaysInMonth * $bankInterestRate  / 360 ;
                     $directFactoringBankLoanStatements[$directFactoringBreakdownId]['interest_expense'][$monthIndex] = $interestExpense;
                     $currentBankInterestExpensePayment = $interestExpensePayment;
-                    $endBalance = $totalDues + $interestExpense ;
+                    $endBalance = $totalDues 
+// + $interestExpense
+					 ;
                     $directFactoringBankLoanStatements[$directFactoringBreakdownId]['end_balance'][$monthIndex] = $endBalance;
                     $currentDirectFactoringBankBeginningBalance = $endBalance ;
                             
@@ -2649,7 +2653,6 @@ class Study extends Model
             ], $defaultNumericInputClasses);
             $totalPerType[$revenueType] = isset($totalPerType[$revenueType]) ? HArr::sumAtDates([$totalPerType[$revenueType],$currentData], $sumKeys) : $currentData;
             $tableDataFormatted[1]['sub_items'][$title]['data'] = $totalPerType[$revenueType];
-            //   $currentTotal = HArr::sumAtDates([$currentData,$currentTotal], $studyMonthsForViews);
             $tableDataFormatted[1]['sub_items'][$title]['year_total'] = HArr::sumPerYearIndex($totalPerType[$revenueType], $yearWithItsMonths);
         }
         $expenses = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('expenses')->where('study_id', $this->id)->get();
@@ -3152,8 +3155,11 @@ class Study extends Model
         $tableDataFormatted[$currentTabIndex]['sub_items'][$corporateTaxesTitle]['year_total'] = HArr::sumPerYearIndex($totalCorporateTaxes, $yearWithItsMonths) ;
 
         ///////////////
-        $directFactoringUnearnedRevenues = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('direct_factoring_breakdowns')->where('study_id', $this->id)->pluck('unearned_interest')->toArray();
+        $directFactoringUnearnedRevenues = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('direct_factoring_breakdowns')->where('study_id', $this->id)->pluck('end_balance')->toArray();
         $totalDirectFactoringUnearnedRevenues = HArr::sumJsonArr($directFactoringUnearnedRevenues, $sumKeys) ;
+		foreach($totalDirectFactoringUnearnedRevenues as $dateAsIndex => $value){
+			$totalDirectFactoringUnearnedRevenues[$dateAsIndex] = $value * - 1 ;
+		}
         $title = __('Direct Factoring Unearned Revenues');
         $tableDataFormatted[$currentTabIndex]['sub_items'][$title]['options']['title'] = $title ;
         $tableDataFormatted[$currentTabIndex]['sub_items'][$title]['data'] = $totalDirectFactoringUnearnedRevenues ;
