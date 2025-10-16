@@ -602,9 +602,13 @@ class Company extends Model implements HasMedia
 	{
 		return $this->hasMany(MicrofinanceProduct::class,'company_id','id');
 	}
-	public function getMicrofinanceProductsFormattedForSelect():array 
+	// public function getMicrofinanceProductsFormattedForSelect():array 
+	// {
+	// 	return (new Select2Formatter)->formatForAssocArr($this->microfinanceProducts->where('is_active',1)->pluck('title','id')->toArray());
+	// }
+	public function getActiveMicrofinanceProducts()
 	{
-		return (new Select2Formatter)->formatForAssocArr($this->microfinanceProducts->pluck('title','id')->toArray());
+		return $this->microfinanceProducts->where('is_active',1) ;
 	}
 	public function consumerfinanceProducts()
 	{

@@ -220,7 +220,7 @@ trait HasCollectionOrPaymentStatement {
         
     }
 	
-	 public static function calculateCorporateTaxesStatement(array $additions  ,array $calculatedCorporateTaxesPerYear , float $initialBeginningBalance  , array $dateIndexWithDate , string $studyStartDateAsMonthNumber)
+	 public static function calculateCorporateTaxesStatement(array $dates,array $additions  ,array $calculatedCorporateTaxesPerYear , float $initialBeginningBalance  , array $dateIndexWithDate , string $studyStartDateAsMonthNumber)
     {
 	
 		$financialYearStartMonth = 'january';
@@ -243,18 +243,17 @@ trait HasCollectionOrPaymentStatement {
 			$settlements = [];
 			$isFirstLoop = true ; 
 			$isStudyDateIsJan = $studyStartDateAsMonthNumber == '01';
-            foreach ( $corporateTaxesForIntervals[$intervalName]??[] as $dateIndex=>$corporateTaxesAtDate) {
+            foreach ( $dates as $dateIndex=>$dateAsString) {
+				$corporateTaxesAtDate = $corporateTaxesForIntervals[$intervalName][$dateIndex]??0;
                 $dateIndex;
 				$additionAtDate =$additionsForIntervals[$intervalName][$dateIndex]??0;
                 $result[$intervalName]['beginning_balance'][$dateIndex] = $beginningBalance;
-				// $corporateTaxesAtDate = $corporateTaxesForIntervals[$intervalName][$dateIndex]??0;
 				$isLastMonthInYear = in_array($dateIndex,$lastMonthsInYearKeys);
-				
                 $totalDue[$dateIndex] =  $beginningBalance-$additionAtDate + $corporateTaxesAtDate;
-			//	$settlements[$dateIndex] = 0 ;
 				if($isStudyDateIsJan && $isFirstLoop){
 					$settlements[$dateIndex+4] = $initialBeginningBalance;
 				}
+			
 				if($isLastMonthInYear){
 					if($totalDue[$dateIndex] <0 ){
 						$settlements[$dateIndex+4]=0;
@@ -263,6 +262,7 @@ trait HasCollectionOrPaymentStatement {
 					}
 				}
 				$settlementAtDate = $settlements[$dateIndex]??0;
+			
                 $endBalance[$dateIndex] = $totalDue[$dateIndex] - $settlementAtDate   ;
                 $beginningBalance = $endBalance[$dateIndex] ;
                 $result[$intervalName]['addition'][$dateIndex] =  $additionAtDate ;

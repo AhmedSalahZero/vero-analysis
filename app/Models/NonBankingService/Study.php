@@ -847,43 +847,61 @@ class Study extends Model
     {
         $yearsWithItsMonths = $this->getOperationDurationPerYearFromIndexes();
         $isMonthlyStudy = $this->isMonthlyStudy();
-        
-        $this->directFactoringBreakdowns->each(function (DirectFactoringBreakdown $directFactoringBreakdown) use (&$sum, $yearOrMonthIndex, $yearsWithItsMonths, $isMonthlyStudy) {
+        $resultPerCategory = [];
+        $this->directFactoringBreakdowns->each(function (DirectFactoringBreakdown $directFactoringBreakdown) use (&$sum , &$resultPerCategory, $yearOrMonthIndex, $yearsWithItsMonths, $isMonthlyStudy) {
             if ($isMonthlyStudy) {
-                $sum+= $directFactoringBreakdown->getNetFundingAmountsAtMonthIndex($yearOrMonthIndex);
+				$currentValue = $directFactoringBreakdown->getNetFundingAmountsAtMonthIndex($yearOrMonthIndex);
+                $sum+= $currentValue ;
+				$resultPerCategory[$directFactoringBreakdown->id][$yearOrMonthIndex] = isset($resultPerCategory[$directFactoringBreakdown->id][$yearOrMonthIndex]) ? $resultPerCategory[$directFactoringBreakdown->id][$yearOrMonthIndex] + $currentValue  : $currentValue;
                 return true ; // to continue and return false if you want to break;
             }
             $yearMonthIndexes = $yearsWithItsMonths[$yearOrMonthIndex];
             foreach ($yearMonthIndexes as $monthIndex => $trueOrFalse) {
                 if ($trueOrFalse) {
-                    $sum+= $directFactoringBreakdown->getNetFundingAmountsAtMonthIndex($monthIndex);
+					$currentValue = $directFactoringBreakdown->getNetFundingAmountsAtMonthIndex($monthIndex);
+                    $sum+=$currentValue ;
+					$resultPerCategory[$directFactoringBreakdown->id][$monthIndex] = isset($resultPerCategory[$directFactoringBreakdown->id][$monthIndex]) ? $resultPerCategory[$directFactoringBreakdown->id][$monthIndex] + $currentValue  : $currentValue;
+					
                 }
             }
         });
-        return $sum;
+		return [
+			'sum'=>$sum ,
+			'per_category'=>$resultPerCategory
+		];
+		
     }
     /**
      * * revenue_stream_type -> leasing , ijara .. etc
      * * relation name -> leasingRevenueStreamBreakdown ,
      */
-    public function storeMonthlyLoan(string $revenueType, string $relationName, array $portfolioMonthlyLoanAmounts =[])
+    public function storeMonthlyLoan(string $revenueType, string $relationName, array $portfolioMonthlyLoanAmounts =[] )
     {
         $monthlyLoanAmounts = [];
         $contractCounts = [];
-
+		$isDirectFactoring = $relationName === 'directFactoringBreakdowns' ;
         $operationDurationPerYear=$this->getOperationDurationPerYearFromIndexes();
+
+		
+	
+		// Disbursement
         $revenueIdWitLoanAmounts = $this->{$relationName}->pluck('loan_amounts', 'id')->toArray() ;
         DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('revenue_contracts')->where('study_id', $this->id)->where('revenue_type', $revenueType)->delete();
         foreach ($revenueIdWitLoanAmounts as $leasingRevenueStreamBreakdownId => $yearIndexWithAmount) {
-            $model = $this->{$relationName}->where('id', $leasingRevenueStreamBreakdownId)->first() ;
+			
+			$model = $this->{$relationName}->where('id', $leasingRevenueStreamBreakdownId)->first() ;
             //    $foreignKeyName = $model->getForeignKeyName();
             foreach ($operationDurationPerYear as $yearIndex => $yearMonthIndexes) {
+				if($isDirectFactoring){
+						$directFactoringMonthlyLoanAmounts = $this->getTotalDirectFactoringNewPortfolioAmountsAtYearOrMonthIndex($yearIndex)['per_category'][$leasingRevenueStreamBreakdownId]??[];
+				}
                 foreach ($yearMonthIndexes as $monthIndex => $monthlyZeroOrOne) {
                     $yearIndexWithAmount = is_string($yearIndexWithAmount) ? (array)json_decode($yearIndexWithAmount) : $yearIndexWithAmount;
                     $loanAtCurrentYear = $this->isMonthlyStudy() ? ($yearIndexWithAmount[$monthIndex]??0) : ($yearIndexWithAmount[$yearIndex]??0);
                     
                     $currentMonthlyLoanAmount = $this->isMonthlyStudy() ? $loanAtCurrentYear :  ($loanAtCurrentYear / count($yearMonthIndexes))  ;
                     $currentMonthlyLoanAmount = $relationName === 'portfolioMortgageRevenueProjectionByCategories' ? ($portfolioMonthlyLoanAmounts[$monthIndex]??0) : $currentMonthlyLoanAmount;
+                    $currentMonthlyLoanAmount = $isDirectFactoring ? ($directFactoringMonthlyLoanAmounts[$monthIndex]??0) : $currentMonthlyLoanAmount;
                     
                     $monthlyLoanAmounts[$leasingRevenueStreamBreakdownId][$monthIndex] = $currentMonthlyLoanAmount ;
                     $contractCounts[$leasingRevenueStreamBreakdownId][$monthIndex] = (int)($currentMonthlyLoanAmount != 0)  ;
@@ -2676,7 +2694,11 @@ class Study extends Model
         $tableDataFormatted[1]['sub_items'][__('Salary Taxes & Social Insurance')]['data'] = $totalTaxAndSocialInsurances;
         $tableDataFormatted[1]['sub_items'][__('Salary Taxes & Social Insurance')]['year_total'] = HArr::sumPerYearIndex($totalTaxAndSocialInsurances, $yearWithItsMonths);
        
-        
+        $corporateTaxesPayments = $this->incomeStatement ?  array_get($this->incomeStatement->monthly_corporate_taxes_statements , 'monthly.payment') : [];
+		$tableDataFormatted[1]['sub_items'][__('Corporate Taxes Payment')]['data'] = $corporateTaxesPayments;
+        $tableDataFormatted[1]['sub_items'][__('Corporate Taxes Payment')]['year_total'] = HArr::sumPerYearIndex($corporateTaxesPayments, $yearWithItsMonths);
+       
+		
         
         
         $totalFixedAssetPayments = [];

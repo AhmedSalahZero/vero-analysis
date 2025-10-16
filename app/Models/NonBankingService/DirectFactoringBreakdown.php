@@ -29,7 +29,8 @@ class  DirectFactoringBreakdown extends Model
 		'bank_interest_expense_payments'=>'array',
 		'bank_total_dues'=>'array',
 		'bank_interest_expense'=>'array',
-		'bank_end_balance'=>'array'
+		'bank_end_balance'=>'array',
+		'disbursement_amounts'=>'array',
 	];
 	
 	public function getBankEndBalancePayload():array 

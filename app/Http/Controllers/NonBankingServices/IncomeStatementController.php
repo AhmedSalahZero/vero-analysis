@@ -351,7 +351,6 @@ class IncomeStatementController extends Controller
         $tableDataFormatted[1]['main_items']['% Of Revenue']['data'] = HArr::calculatePercentageOf($totalSalesRevenues, $totalCostOfService);
         $tableDataFormatted[1]['main_items']['% Of Revenue']['year_total'] =$totalCostOfServicePerYears =  HArr::calculatePercentageOf($totalSalesRevenuesPerYears, $totalCostOfServicePerYear);
                
-        //    dd($tableDataFormatted);
                
 
         $totalGrossProfit = HArr::subtractAtDates([$totalSalesRevenues,$totalCostOfService], $sumKeys) ;
@@ -594,7 +593,10 @@ class IncomeStatementController extends Controller
         }
         $corporateTaxesPayable = $study->getCorporateTaxesPayable();
         $studyStartDateAsMonthNumber = array_values($study->getDateWithMonthNumber())[0];
-        $corporateTaxesStatement  = Study::calculateCorporateTaxesStatement($totalProductsWithholdAmounts, $calculatedCorporateTaxesPerYear, $corporateTaxesPayable, $dateIndexWithDate, $studyStartDateAsMonthNumber);
+		$dates = $study->getStudyDates();
+		
+        $corporateTaxesStatement  = Study::calculateCorporateTaxesStatement($dates,$totalProductsWithholdAmounts, $calculatedCorporateTaxesPerYear, $corporateTaxesPayable, $dateIndexWithDate, $studyStartDateAsMonthNumber);
+
         
       
     
@@ -619,7 +621,6 @@ class IncomeStatementController extends Controller
         $retainedEarningOpening = $retainedEarningOpening ? $retainedEarningOpening->retained_earnings : 0;
         // $retainedEarning = HArr::calculateRetainEarning($retainedEarningOpening,$ebt);
         $retainedEarning = HArr::calculateRetainEarning($retainedEarningOpening, $netProfit);
-        
         $statementData = [
             'monthly_corporate_taxes_statements'=>$corporateTaxesStatement,
             'monthly_net_profit'=>$netProfit,

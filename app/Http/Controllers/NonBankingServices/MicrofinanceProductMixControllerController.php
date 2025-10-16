@@ -18,15 +18,17 @@ class MicrofinanceProductMixControllerController extends Controller
     use NonBankingService ;
     public function create(Company $company, Request $request, Study $study)
     {
-        return view('non_banking_services.microfinance.form', $this->getViewVars($company, $study));
+        return view('non_banking_services.microfinance-product-mix.form', $this->getViewVars($company, $study));
     }
     protected function getViewVars(Company $company, Study $study)
     {
+		
         $yearsWithItsMonths =  $study->getOperationDurationPerYearFromIndexes() ;
         $yearOrMonthsIndexes = $study->getYearOrMonthIndexes();
         $isYearsStudy = !$study->isMonthlyStudy();
         return [
-            'company'=>$company ,
+			'company'=>$company ,
+			'products'=>$company->getActiveMicrofinanceProducts(),
             'model'=>$study ,
 			'study'=>$study,
             'title'=>__('Microfinance Products Mix'),

@@ -16,9 +16,11 @@ class MicrofinanceProductsController extends Controller
 		return view('non_banking_services.microfinance-products.form', $this->getViewVars($company));
 	}
 	protected function getViewVars(Company $company){
+		
 		return [
 			'company'=>$company ,
 			'model'=>$company ,
+			
 			'title'=>__('Microfinance Products'),
 			'storeRoute'=>route('store.microfinance.products',['company'=>$company->id]),
 		];
