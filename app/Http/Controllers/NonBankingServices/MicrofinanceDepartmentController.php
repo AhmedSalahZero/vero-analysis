@@ -57,8 +57,8 @@ class MicrofinanceDepartmentController extends Controller
 			'redirectTo'=>route('view.departments',['company'=>$company->id,'active'=>MicrofinanceDepartment::MICROFINANCE_DEPARTMENT])
 		]);
 	}
-	public function destroy(Request $request,Company  $company , MicrofinanceDepartment $microfinanceDepartment  ){
-		$canBeDeleted = true ;
+	// public function destroy(Request $request,Company  $company , MicrofinanceDepartment $microfinanceDepartment  ){
+		// $canBeDeleted = true ;
 		// $microfinanceDepartment->positions->each(function(Position $position) use ($company,&$canBeDeleted){
 		// 	$isExist = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('manpowers')->where('company_id',$company->id)->where('position_id',$position->id)->count();
 		// 	if($isExist){
@@ -66,12 +66,12 @@ class MicrofinanceDepartmentController extends Controller
 		// 	}
 			
 		// }) ;
-		if($canBeDeleted){
-			$microfinanceDepartment->delete();
-			return redirect()->back()->with('success',__('Done !'));	
+		// if($canBeDeleted){
+		// 	$microfinanceDepartment->delete();
+		// 	return redirect()->back()->with('success',__('Done !'));	
 			
-		}
-		return redirect()->back()->with('fail',__('This Item Cannot Be Deleted Because It’s Currently Used In A Study'));	
-	}
+		// }
+		// return redirect()->back()->with('fail',__('This Item Cannot Be Deleted Because It’s Currently Used In A Study'));	
+	// }
 
 }

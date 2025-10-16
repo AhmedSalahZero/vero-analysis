@@ -352,7 +352,7 @@ Route::middleware([])->group(function () {
 					route::post('microfinance-departments/create','MicrofinanceDepartmentController@store')->name('store.microfinance-departments');
 					route::get('microfinance-departments/{microfinanceDepartment}/edit','MicrofinanceDepartmentController@edit')->name('edit.microfinance-departments');
 					route::put('microfinance-departments/{microfinanceDepartment}/update','MicrofinanceDepartmentController@update')->name('update.microfinance-departments');
-					route::delete('microfinance-departments/{microfinanceDepartment}/destroy','MicrofinanceDepartmentController@destroy')->name('departments.microfinance-destroy');
+					// route::delete('microfinance-departments/{microfinanceDepartment}/destroy','MicrofinanceDepartmentController@destroy')->name('departments.microfinance-destroy');
 					
 					route::get('expense-names','ExpenseController@index')->name('view.expense.names');
 					route::get('expense-names/create','ExpenseController@create')->name('create.expense.names');

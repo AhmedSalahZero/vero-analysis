@@ -211,33 +211,18 @@ class IncomeStatementController extends Controller
         }
         
         
-
         foreach ($loanSchedulePayments as $loanSchedulePaymentAsStdClass) {
             $portfolioLoanType = $loanSchedulePaymentAsStdClass->portfolio_loan_type;
             $isPortfolio = $portfolioLoanType == 'portfolio';
             $revenueStreamType = $loanSchedulePaymentAsStdClass->revenue_stream_type;
             $interestAmounts = json_decode($loanSchedulePaymentAsStdClass->interestAmount);
             foreach ($interestAmounts as $currentMonthIndex => $interestAmount) {
-                
                 if (!is_null($currentMonthIndex)) {
                     if ($isPortfolio) {
-                        // test function
+               
                         $salesRevenuePerTypes[$revenueStreamType][$currentMonthIndex] =  isset($salesRevenuePerTypes[$revenueStreamType][$currentMonthIndex]) ? $salesRevenuePerTypes[$revenueStreamType][$currentMonthIndex] + $interestAmount : $interestAmount;
                         $salesRevenuePerTypes['total_revenue'][$currentMonthIndex] =  isset($salesRevenuePerTypes['total_revenue'][$currentMonthIndex]) ? $salesRevenuePerTypes['total_revenue'][$currentMonthIndex] + $interestAmount : $interestAmount;
-                        //     $tableDataFormatted[0]['main_items']['sales-revenue']['data'][$currentMonthIndex]  = $salesRevenuePerTypes['total_revenue'][$currentMonthIndex];
-                        //  $tableDataFormatted[0]['main_items']['sales-revenue']['data'][$currentMonthIndex]  = 0;
-                        //   $previousRecord = $tableDataFormatted[0]['main_items']['sales-revenue']['data'][$currentMonthIndex-1] ?? 0;
-                        //    $currentValue = $tableDataFormatted[0]['main_items']['sales-revenue']['data'][$currentMonthIndex] ;
-                        //     $tableDataFormatted[0]['main_items']['growth-rate']['data'][$currentMonthIndex] =  $previousRecord ?  ($currentValue - $previousRecord) / $previousRecord * 100 : 0;
                         $tableDataFormatted[0]['sub_items'][$revenueStreamType]['data'][$currentMonthIndex] = $salesRevenuePerTypes[$revenueStreamType][$currentMonthIndex];
-						
-                        //      $resultPerRevenueStreamType[$revenueStreamType][$currentMonthIndex] = isset($resultPerRevenueStreamType[$revenueStreamType][$currentMonthIndex]) ? $resultPerRevenueStreamType[$revenueStreamType][$currentMonthIndex] + $interestAmount : $interestAmount;
-                        //        $formattedResult['sales_revenue'][$currentMonthIndex] = isset($formattedResult['sales_revenue'][$currentMonthIndex]) ? $formattedResult['sales_revenue'][$currentMonthIndex] + $interestAmount : $interestAmount ;
-                        //   $currentDirectFactoringInterestRevenue  =$formattedDirectFactoring['interest_revenue'][$currentMonthIndex] ?? 0 ;
-                        //       $formattedResult['sales_revenue'][$currentMonthIndex] = $formattedResult['sales_revenue'][$currentMonthIndex] + $currentDirectFactoringInterestRevenue ;
-                        // $currentSalesRevenue = $formattedResult['sales_revenue'][$currentMonthIndex] ;
-                        // $previousSalesRevenue = $formattedResult['sales_revenue'][$currentMonthIndex-1] ?? 0 ;
-                        // $formattedResult['growth_rate'][$currentMonthIndex] = $previousSalesRevenue ? (($currentSalesRevenue / $previousSalesRevenue)-1)*100 : 0 ;
                     } else {
                         $formattedResult['interest_cogs'][$currentMonthIndex] = isset($formattedResult['interest_cogs'][$currentMonthIndex]) ? $formattedResult['interest_cogs'][$currentMonthIndex] + $interestAmount : $interestAmount ;
                         $currentDirectFactoringBankInterestExpense = $formattedDirectFactoring['bank_interest_expense'][$currentMonthIndex]??0;
@@ -245,7 +230,6 @@ class IncomeStatementController extends Controller
                         $formattedExpenses['cost-of-service']['Interest Cost'][$currentMonthIndex]  = $formattedResult['interest_cogs'][$currentMonthIndex]??0 ;
                         $currentMonthInterestCost = $formattedExpenses['cost-of-service']['Interest Cost'][$currentMonthIndex];
                         $tableDataFormatted[1]['sub_items']['Interest Cost']['data'][$currentMonthIndex] =$currentMonthInterestCost ;
-                        
                     }
                 }
             }
@@ -265,9 +249,11 @@ class IncomeStatementController extends Controller
 		
 		
      
+        foreach($tableDataFormatted[0]['sub_items']?? [] as $id => $subItemArr){
+			$tableDataFormatted[0]['sub_items'][$id]['year_total'] =	HArr::sumPerYearIndex($subItemArr, $yearWithItsMonths);
+		}
         
-        
-        
+        // $totalSalesRevenues = Harr::calculateYearTotalForAllSubItems($tableDataFormatted,$tableDataFormatted[0]['sub_items']??[]) ;
         $totalSalesRevenues = Harr::calculateTotalFromSubItems($tableDataFormatted[0]['sub_items']??[]) ;
         
         $yearWithItsMonths=$study->getYearIndexWithItsMonths();

@@ -595,7 +595,7 @@ class Company extends Model implements HasMedia
 	}
 	public function getExistingBranchesFormattedForSelect():array 
 	{
-		return (new Select2Formatter)->formatForAssocArr($this->existingBranches->pluck('title','id')->toArray());
+		return (new Select2Formatter)->formatForAssocArr($this->existingBranches->where('is_active',1)->pluck('title','id')->toArray());
 	}
 	
 	public function microfinanceProducts()
@@ -738,5 +738,22 @@ class Company extends Model implements HasMedia
 	public function interestRevenuesAccounts():HasMany
 	{
 		return $this->hasMany(InterestRevenueAccount::class,'company_id','id');
+	}
+	/**
+	 * * لو مفيش القسم بتاع ال
+	 * * microfinance
+	 * * هنضيفه للشركة دي ودا بيحصل في اول مرة يدخل علي الصفحه دي 
+	 */
+	public function syncMicrofinanceDepartments():void
+	{
+		$isExist  = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('microfinance_departments')->where('company_id',$this->id)->count();
+		if($isExist){
+			return ;
+		}
+		DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('microfinance_departments')->insert([
+			'name'=>'Branch',
+			'type'=>'manpower',
+			'company_id'=>$this->id
+		]);
 	}
 }

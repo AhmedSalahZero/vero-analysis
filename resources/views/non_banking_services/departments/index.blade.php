@@ -252,7 +252,7 @@ use App\Helpers\HArr;
                                             {{-- <a type="button" class="btn btn-secondary btn-outline-hover-brand btn-icon copy-btn-class" title="{{ __('Copy') }}" href="{{ route('edit.study',['company'=>$company->id,'study'=>$model->id]) }}"><i class="fa fa-layer-group exclude-icon default-icon-color" ></i></a> --}}
 											{{-- @endif  --}}
 											{{-- @if(hasAuthFor('delete lc settlement internal transfer')) --}}
-                                            <a data-toggle="modal" data-target="#delete-micro-department-{{ $model->id }}" type="button" class="btn delete-btn-class btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt exclude-icon default-icon-color"></i></a>
+                                            {{-- <a data-toggle="modal" data-target="#delete-micro-department-{{ $model->id }}" type="button" class="btn delete-btn-class btn-secondary btn-outline-hover-danger btn-icon" title="Delete" href="#"><i class="fa fa-trash-alt exclude-icon default-icon-color"></i></a>
                                             <div class="modal fade" id="delete-micro-department-{{ $model->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                                     <div class="modal-content">
@@ -273,7 +273,7 @@ use App\Helpers\HArr;
                                                         </form>
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </div> --}}
 											{{-- @endif  --}}
                                         </span>
                                     </td>

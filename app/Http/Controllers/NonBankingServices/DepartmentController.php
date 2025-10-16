@@ -45,9 +45,9 @@ class DepartmentController extends Controller
 		
 		return $collection;
 	}
-	
+
     public function index(Company $company , Request $request){
-		
+		$company->syncMicrofinanceDepartments();
 		$numberOfMonthsBetweenEndDateAndStartDate = 18 ;
 		$currentType = $request->get('active',Department::DEPARTMENT);
 		

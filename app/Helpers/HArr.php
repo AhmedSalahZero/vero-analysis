@@ -764,6 +764,10 @@ class HArr
         }
         return $result;
     }
+	public static function calculateYearTotalForAllSubItems(array & $tableDataFormatted ,  array $subItems):array 
+	{
+		dd($subItems);
+	}
     public static function calculateTotalFromSubItems(array $items):array
     {
         $result=[];
