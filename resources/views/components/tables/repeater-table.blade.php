@@ -113,6 +113,7 @@ $canAddNewItem = true;
         initEmpty: initEmpty
         , isFirstItemUndeletable: !firstElementDeleteable
         , defaultValues: {
+			"is_active":1,
             "replacement_cost_rate": 0
             , "replacement_interval": 1
             , "depreciation_duration": 5

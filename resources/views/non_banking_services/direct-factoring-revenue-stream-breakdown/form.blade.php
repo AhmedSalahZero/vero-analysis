@@ -519,7 +519,7 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
                             <td>
                                 <div class="d-flex align-items-center justify-content-center">
 
-                                    <x-repeat-right-dot-inputs :numberFormatDecimals="0" :readonly="true" :removeThreeDots="true" :inputHiddenAttributes="''" :currentVal="$study->getTotalDirectFactoringNewPortfolioAmountsAtYearOrMonthIndex($yearOrMonthAsIndex)" :classes="'js-recalculate-equity-funding-value '" :is-percentage="false" :name="''" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                    <x-repeat-right-dot-inputs :numberFormatDecimals="0" :readonly="true" :removeThreeDots="true" :inputHiddenAttributes="''" :currentVal="$study->getTotalDirectFactoringNewPortfolioAmountsAtYearOrMonthIndex($yearOrMonthAsIndex)" :classes="'js-recalculate-equity-funding-value total-loans-hidden'" :is-percentage="false" :name="''" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
                                 </div>
                             </td>
@@ -590,7 +590,7 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
                             <td>
                                 <div class="d-flex align-items-center justify-content-center">
 								
-                                    <x-repeat-right-dot-inputs :numberFormatDecimals="0" :currentVal="$eclAndNewPortfolioFundingRate ? $eclAndNewPortfolioFundingRate->getEquityFundingValuesAtYearOrMonthIndex($yearOrMonthAsIndex):0" :classes="'only-greater-than-or-equal-zero-allowed '" :formatted-input-classes="'equity-funding-formatted-value-class'" :is-percentage="false" :name="'equity_funding_values['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                    <x-repeat-right-dot-inputs :readonly="true" :numberFormatDecimals="0" :currentVal="$eclAndNewPortfolioFundingRate ? $eclAndNewPortfolioFundingRate->getEquityFundingValuesAtYearOrMonthIndex($yearOrMonthAsIndex):0" :classes="'only-greater-than-or-equal-zero-allowed '" :formatted-input-classes="'equity-funding-formatted-value-class'" :is-percentage="false" :name="'equity_funding_values['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
                                 </div>
                             </td>
@@ -658,7 +658,7 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
                             @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
                             <td>
                                 <div class="d-flex align-items-center justify-content-center">
-                                    <x-repeat-right-dot-inputs :numberFormatDecimals="0" :formatted-input-classes="'new-loans-funding-formatted-value-class'" :currentVal="$eclAndNewPortfolioFundingRate ? $eclAndNewPortfolioFundingRate->getNewLoansFundingValuesAtYearOrMonthIndex($yearOrMonthAsIndex):0 " :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="false" :name="'new_loans_funding_values['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                    <x-repeat-right-dot-inputs :readonly="true" :numberFormatDecimals="0" :formatted-input-classes="'new-loans-funding-formatted-value-class'" :currentVal="$eclAndNewPortfolioFundingRate ? $eclAndNewPortfolioFundingRate->getNewLoansFundingValuesAtYearOrMonthIndex($yearOrMonthAsIndex):0 " :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="false" :name="'new_loans_funding_values['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
                                 </div>
                             </td>
@@ -836,13 +836,13 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
 
 
 
-$(document).on('change','.recalculate-factoring',function(){
-	let total = 0 ;
-	let columnIndex = $(this).attr('data-column-index')
-	total = $(this).val();
-	$('.total-loans-hidden[data-column-index="'+columnIndex+'"]').val(total).trigger('change');
-	$('.equity-funding-rate-input-hidden-class[data-column-index="'+columnIndex+'"]').trigger('change');
-})
+// $(document).on('change','.recalculate-factoring',function(){
+	// let total = 0 ;
+	// let columnIndex = $(this).attr('data-column-index')
+	// total = $(this).val();
+	//  $('.total-loans-hidden[data-column-index="'+columnIndex+'"]').val(total).trigger('change');
+// 	$('.equity-funding-rate-input-hidden-class[data-column-index="'+columnIndex+'"]').trigger('change');
+// })
 
 </script>
 

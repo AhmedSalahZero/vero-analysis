@@ -755,7 +755,7 @@
                                     @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
-                                            <x-repeat-right-dot-inputs  :numberFormatDecimals="0" :currentVal="$model->microfinanceNewPortfolioFundingStructure ? $model->microfinanceNewPortfolioFundingStructure->getEquityFundingValuesAtYearOrMonthIndex($yearOrMonthAsIndex):0" :classes="'only-greater-than-or-equal-zero-allowed '" :formatted-input-classes="'equity-funding-formatted-value-class'" :is-percentage="false" :name="'microfinanceNewPortfolioFundingStructure['.'equity_funding_values'.']['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs  :readonly="true" :numberFormatDecimals="0" :currentVal="$model->microfinanceNewPortfolioFundingStructure ? $model->microfinanceNewPortfolioFundingStructure->getEquityFundingValuesAtYearOrMonthIndex($yearOrMonthAsIndex):0" :classes="'only-greater-than-or-equal-zero-allowed '" :formatted-input-classes="'equity-funding-formatted-value-class'" :is-percentage="false" :name="'microfinanceNewPortfolioFundingStructure['.'equity_funding_values'.']['.$year.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
                                         </div>
                                     </td>
@@ -817,7 +817,7 @@
 
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
-                                            <x-repeat-right-dot-inputs :numberFormatDecimals="0" :formatted-input-classes="'new-loans-funding-formatted-value-class'" :currentVal="$model->microfinanceNewPortfolioFundingStructure ? $model->microfinanceNewPortfolioFundingStructure->getNewLoansFundingValuesAtYearOrMonthIndex($yearOrMonthAsIndex):0 " :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="false" :name="'microfinanceNewPortfolioFundingStructure['.'new_loans_funding_values'.']['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :readonly="true" :numberFormatDecimals="0" :formatted-input-classes="'new-loans-funding-formatted-value-class'" :currentVal="$model->microfinanceNewPortfolioFundingStructure ? $model->microfinanceNewPortfolioFundingStructure->getNewLoansFundingValuesAtYearOrMonthIndex($yearOrMonthAsIndex):0 " :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="false" :name="'microfinanceNewPortfolioFundingStructure['.'new_loans_funding_values'.']['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
                                         </div>
                                     </td>

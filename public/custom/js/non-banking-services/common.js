@@ -1118,3 +1118,15 @@ $(document).on('change','.microfinance-sub-checkbox-js',function(){
 	}
 });
 $('.microfinance-sub-checkbox-js:checked').trigger('change');
+
+$(document).on('change','.create-product-or-existing-branch-js',function(){
+	const isChecked = $(this).is(':checked');
+	const value = $(this).val();
+	console.log(value)
+	if(value == 'product-mix'){
+		$('.product-mix-count-parent-js').removeClass('hidden')
+	}else{
+		$('.product-mix-count-parent-js').addClass('hidden')
+	}
+})
+$('.create-product-or-existing-branch-js:checked').trigger('change');

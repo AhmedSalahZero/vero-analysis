@@ -340,8 +340,6 @@
                                                     <span></span>
                                                 </label>
 
-
-
                                                 <label class="kt-radio kt-radio--success text-black font-size-14px font-weight-bold show-only-with-microfinance ">
                                                     <input class=" microfinance-sub-checkbox-js is-whole-company" type="radio" value="whole-company" name="microfinance_type" @if(isset($model) && $model->isWholeCompanyMicrofinance()) checked @endisset
                                                     > {{ __('Whole Company') }}
@@ -353,21 +351,66 @@
                                                     > {{ __('By Branch') }}
                                                     <span></span>
                                                 </label>
-
-
                                             </div>
-
-
-
-
                                         </div>
-
-
-                                        <div class="form-group d-inline-block ml-3 no-branch-div hidden min-w-200">
-                                            <x-form.select  :multiple="true"  name="microfinance_branch_ids[]"  :selectedValue="isset($model) ? $model->getMicrofinanceBranches() : ''" :options="$formattedExistingBranches" :add-new="false" class="select2-select repeater-select  " :all="false"></x-form.select>
+                                        <div class="form-group d-inline-block ml-3 no-branch-div hidden min-w-400">
+                                            <x-form.select :multiple="true" name="microfinance_branch_ids[]" :selectedValue="isset($model) ? $model->getMicrofinanceBranches() : ''" :options="$formattedExistingBranches" :add-new="false" class="select2-select repeater-select  " :all="false"></x-form.select>
                                         </div>
                                     </div>
                                 </div>
+
+
+                                <div class="row">
+                                    <div class="col-md-12 mb-0 mt-4 text-left">
+                                        <div class="form-group d-inline-block">
+                                            <div class="kt-radio-inline">
+                                                <label class="mr-3">
+                                                </label>
+                                                <label class="kt-radio kt-radio--primary text-black font-size-14px font-weight-bold show-only-with-microfinance">
+                                                    {{ __('Do You Want To Create Product Mix') }}
+
+                                                </label>
+
+                                                <label class="kt-radio kt-radio--success  text-black font-size-14px font-weight-bold show-only-with-microfinance ">
+                                                    <input class=" create-product-or-existing-branch-js" type="radio" value="product-mix" name="microfinance_product_mix_or_existing_branch" @if(isset($model) && $model->isMicrofinanceProductMix()) checked @endisset
+                                                    > {{ __('Yes') }}
+                                                    <span></span>
+                                                </label>
+												
+												 {{-- <div class="col-md-1 "> --}}
+                                        {{-- <label class="form-label font-weight-bold">{{ __('Products Mix Count') }} @include('star') </label> --}}
+										<div class="d-inline-block hidden product-mix-count-parent-js mr-2">
+												<span class="text-black font-weight-bold">{{ __('Insert Count') }}</span>
+										</div>
+                                        <div class="kt-input-icon max-w-100 d-inline-block hidden product-mix-count-parent-js">
+                                            <div class="input-group">
+                                                <input placeholder="{{ __('Product Mix Count') }}" type="text" class="form-control only-greater-than-zero-allowed" name="microfinance_product_mix_count" value="{{ isset($model) ? $model->getMicrofinanceProductMixCount() : 1 }}">
+                                            </div>
+                                        </div>
+                                    {{-- </div> --}}
+
+                                                <label class="kt-radio kt-radio--primary text-black font-size-14px font-weight-bold show-only-with-microfinance">
+                                                    {{ __('Each Existing Branch Has Its Own') }}
+
+                                                </label>
+
+                                                <label class="kt-radio kt-radio--warning text-black font-size-14px font-weight-bold show-only-with-microfinance ">
+                                                    <input class="create-product-or-existing-branch-js" type="radio" value="existing-branch" name="microfinance_product_mix_or_existing_branch" @if(isset($model) && $model->isMicrofinanceExistingBranch()) checked @endisset
+                                                    > {{ __('Yes') }}
+                                                    <span></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        {{-- <div class="form-group d-inline-block ml-3 no-branch-div hidden min-w-400">
+                                            <x-form.select :multiple="true" name="microfinance_branch_ids[]" :selectedValue="isset($model) ? $model->getMicrofinanceBranches() : ''" :options="$formattedExistingBranches" :add-new="false" class="select2-select repeater-select  " :all="false"></x-form.select>
+                                        </div> --}}
+                                    </div>
+                                </div>
+
+                                {{-- <div class="row">
+                                   
+                                </div> --}}
+
                             </div>
                         </div>
                     </div>
@@ -376,79 +419,79 @@
             </div>
 
 
-            <div class="kt-portlet">
+            {{-- <div class="kt-portlet">
                 <div class="kt-portlet__body">
                     <div class="row">
                         <div class="col-md-10">
                             <div class="d-flex align-items-center ">
                                 <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style=""> {{ __('Existing Branches Info') }} </h3>
-                            </div>
-                        </div>
-
-                    </div>
-                    <div class="row">
-                        <hr style="flex:1;background-color:lightgray">
-                    </div>
-                    <div class="row">
-
-                        <div class="form-group row" style="flex:1;">
-                            <div class="col-md-3 mb-4">
-                                <label class="form-label font-weight-bold">{{ __('Microfinance Branches Count') }} </label>
-                                <div class="kt-input-icon">
-                                    <div class="input-group">
-                                        <input type="number" class="form-control only-greater-than-or-equal-zero-allowed" name="microfinance_branches_count" value="{{ isset($model) ? $model->getMicrofinanceBranchesCount() : 0 }}" step="1">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-3 mb-4">
-                                <label class="form-label font-weight-bold">{{ __('Microfinance Loan Officer Count') }} </label>
-                                <div class="kt-input-icon">
-                                    <div class="input-group">
-                                        <input type="number" class="form-control only-greater-than-or-equal-zero-allowed" name="microfinance_loan_officer_count" value="{{ isset($model) ? $model->getMicrofinanceLoanOfficerCount() : 0 }}" step="1">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-md-3 mb-4">
-                                <label class="form-label font-weight-bold">{{ __('Consumer Finance Branches Count') }} </label>
-                                <div class="kt-input-icon">
-                                    <div class="input-group">
-                                        <input type="number" class="form-control only-greater-than-or-equal-zero-allowed" name="consumerfinance_branches_count" value="{{ isset($model) ? $model->getConsumerfinanceBranchesCount() : 0 }}" step="1">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-3 mb-4">
-                                <label class="form-label font-weight-bold">{{ __('Consumer Finance Loan Officer Count') }} </label>
-                                <div class="kt-input-icon">
-                                    <div class="input-group">
-                                        <input type="number" class="form-control only-greater-than-or-equal-zero-allowed" name="consumerfinance_loan_officer_count" value="{{ isset($model) ? $model->getConsumerfinanceLoanOfficerCount() : 0 }}" step="1">
-                                    </div>
-                                </div>
-                            </div>
-
-
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-
-
-
-            <div class="kt-portlet">
-                <div class="kt-portlet__body">
-                    <x-save-or-back :btn-text="__('Create')" />
-                </div>
-            </div>
-
-
-
-
-            <!--end::Form-->
-
-            <!--end::Portlet-->
     </div>
+</div>
+
+</div>
+<div class="row">
+    <hr style="flex:1;background-color:lightgray">
+</div>
+<div class="row">
+
+    <div class="form-group row" style="flex:1;">
+        <div class="col-md-3 mb-4">
+            <label class="form-label font-weight-bold">{{ __('Microfinance Branches Count') }} </label>
+            <div class="kt-input-icon">
+                <div class="input-group">
+                    <input type="number" class="form-control only-greater-than-or-equal-zero-allowed" name="microfinance_branches_count" value="{{ isset($model) ? $model->getMicrofinanceBranchesCount() : 0 }}" step="1">
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <label class="form-label font-weight-bold">{{ __('Microfinance Loan Officer Count') }} </label>
+            <div class="kt-input-icon">
+                <div class="input-group">
+                    <input type="number" class="form-control only-greater-than-or-equal-zero-allowed" name="microfinance_loan_officer_count" value="{{ isset($model) ? $model->getMicrofinanceLoanOfficerCount() : 0 }}" step="1">
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-4">
+            <label class="form-label font-weight-bold">{{ __('Consumer Finance Branches Count') }} </label>
+            <div class="kt-input-icon">
+                <div class="input-group">
+                    <input type="number" class="form-control only-greater-than-or-equal-zero-allowed" name="consumerfinance_branches_count" value="{{ isset($model) ? $model->getConsumerfinanceBranchesCount() : 0 }}" step="1">
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <label class="form-label font-weight-bold">{{ __('Consumer Finance Loan Officer Count') }} </label>
+            <div class="kt-input-icon">
+                <div class="input-group">
+                    <input type="number" class="form-control only-greater-than-or-equal-zero-allowed" name="consumerfinance_loan_officer_count" value="{{ isset($model) ? $model->getConsumerfinanceLoanOfficerCount() : 0 }}" step="1">
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+</div>
+</div> --}}
+
+
+
+
+<div class="kt-portlet">
+    <div class="kt-portlet__body">
+        <x-save-or-back :btn-text="__('Create')" />
+    </div>
+</div>
+
+
+
+
+<!--end::Form-->
+
+<!--end::Portlet-->
+</div>
 
 
 </div>

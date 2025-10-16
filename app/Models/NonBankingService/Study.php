@@ -3593,4 +3593,20 @@ class Study extends Model
     {
         return $this->microfinance_branch_ids?:[];
     }
+	public function getMicrofinanceProductMixCount():int 
+	{
+		return $this->microfinance_product_mix_count?:1;
+	}
+	public function getMicrofinanceProductMixOrExistingBranch()
+	{
+		return $this->microfinance_product_mix_or_existing_branch;
+	}
+	public function isMicrofinanceExistingBranch():bool
+	{
+		return $this->getMicrofinanceProductMixOrExistingBranch() == 'existing-branch';
+	}
+	public function isMicrofinanceProductMix():bool 
+	{
+		return $this->getMicrofinanceProductMixOrExistingBranch() == 'product-mix';
+	}
 }

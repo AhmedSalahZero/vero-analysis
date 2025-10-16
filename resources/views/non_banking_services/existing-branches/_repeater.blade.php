@@ -8,8 +8,8 @@
                     <input type="hidden" name="tableIds[]" value="{{ $tableId }}">
                     <x-tables.repeater-table :removeRepeater="false" :repeater-with-select2="true" :canAddNewItem="$canAddNewItem" :parentClass="'js-remove-hidden '" :hide-add-btn="true" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
                         <x-slot name="ths">
-                         	<x-tables.repeater-table-th class="header-border-down " :title="__('Is Active')"></x-tables.repeater-table-th>
                            <x-tables.repeater-table-th class="header-border-down " :title="__('Name')"></x-tables.repeater-table-th>
+                         	<x-tables.repeater-table-th class="header-border-down " :title="__('Is Active')"></x-tables.repeater-table-th>
                          </x-slot>
                         <x-slot name="trs">
                             @php
@@ -31,6 +31,11 @@
 
 
                                 <input type="hidden" name="id" value="{{ isset($subModel) ? $subModel->id : 0 }}">
+								
+                                <td>
+								 <input value="{{ (isset($subModel) ?$subModel->getName() : '') }}" @if($isRepeater) name="title" @else name="{{ $tableId }}[0][title]" @endif class="form-control text-left " type="text">
+							    </td>
+								
 								<td class="text-center">
 								
 								       <div class="form-group d-inline-block">
@@ -41,7 +46,7 @@
                                                 <label class="kt-radio kt-radio--success text-black font-size-16px font-weight-bold">
 
                                                     <input  type="radio" value="1" name="is_active" 
-													@if(isset($subModel) && $subModel->isActive()) checked @endisset
+													@if(isset($subModel) && $subModel->isActive() || !isset($subModel)) checked @endisset
 													> {{ __('Active') }}
                                                     <span></span>
                                                 </label>
@@ -56,9 +61,6 @@
                                         </div>
 										
 								</td>
-                                <td>
-								 <input value="{{ (isset($subModel) ?$subModel->getName() : '') }}" @if($isRepeater) name="title" @else name="{{ $tableId }}[0][title]" @endif class="form-control text-left " type="text">
-							    </td>
 
                             </tr>
                             @endforeach
