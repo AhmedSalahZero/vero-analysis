@@ -352,7 +352,6 @@ Route::middleware([])->group(function () {
 					route::post('microfinance-departments/create','MicrofinanceDepartmentController@store')->name('store.microfinance-departments');
 					route::get('microfinance-departments/{microfinanceDepartment}/edit','MicrofinanceDepartmentController@edit')->name('edit.microfinance-departments');
 					route::put('microfinance-departments/{microfinanceDepartment}/update','MicrofinanceDepartmentController@update')->name('update.microfinance-departments');
-					// route::delete('microfinance-departments/{microfinanceDepartment}/destroy','MicrofinanceDepartmentController@destroy')->name('departments.microfinance-destroy');
 					
 					route::get('expense-names','ExpenseController@index')->name('view.expense.names');
 					route::get('expense-names/create','ExpenseController@create')->name('create.expense.names');
@@ -441,7 +440,10 @@ Route::middleware([])->group(function () {
 						route::post('revenue-streams-breakdown/ijara','IjaraMortgageController@store')->name('store.ijara.mortgage.revenue.stream.breakdown');
 						
 						route::get('microfinance','MicrofinanceControllerController@create')->name('create.microfinance');
-						route::post('microfinance/microfinance','MicrofinanceControllerController@store')->name('store.microfinance');
+						route::post('microfinance','MicrofinanceControllerController@store')->name('store.microfinance');
+						
+							route::get('microfinance-products-mix','MicrofinanceProductMixControllerController@create')->name('create.microfinance.product.mix');
+						route::post('microfinance-products-mix','MicrofinanceProductMixControllerController@store')->name('store.microfinance.product.mix');
 						
 						route::get('revenue-streams-breakdown/microfinance','MicrofinanceRevenueStreamBreakdownController@create')->name('create.microfinance.revenue.stream.breakdown');
 						route::post('revenue-streams-breakdown/microfinance','MicrofinanceRevenueStreamBreakdownController@store')->name('store.microfinance.revenue.stream.breakdown');

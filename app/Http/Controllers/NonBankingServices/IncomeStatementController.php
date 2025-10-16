@@ -235,6 +235,16 @@ class IncomeStatementController extends Controller
             }
             
         }
+		$interestCosts  = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('direct_factoring_breakdowns')->where('study_id',$study->id)->pluck('bank_interest_expense_payments')->toArray();
+		foreach($interestCosts as $interestCost){
+			$interestCost = json_decode($interestCost,true);
+			foreach($interestCost as $dateIndex => $value){
+				$tableDataFormatted[1]['sub_items']['Interest Cost']['data'][$dateIndex] = isset($tableDataFormatted[1]['sub_items']['Interest Cost']['data'][$dateIndex]) ? $tableDataFormatted[1]['sub_items']['Interest Cost']['data'][$dateIndex] + $value : $value  ;
+			}
+		}
+		                     
+                      
+						
         $monthlyAdminFees = EclAndNewPortfolioFundingRate::where('study_id', $study->id)->get([
             'monthly_admin_fees_amounts'])->toArray();
         $monthAdminFees = array_column($monthlyAdminFees, 'monthly_admin_fees_amounts');
