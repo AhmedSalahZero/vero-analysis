@@ -105,7 +105,6 @@ class ManpowerExpensesController extends Controller
 				$salaryTaxesRate = $study->getSalaryTaxesRate() / 100;
 				$socialInsuranceRate = $study->getSocialInsuranceRate() /100 ;
 				$additionalDatabaseResult =  $study->calculateManpowerResult($dateAsIndexes,$currentExistingCount,$hiringCounts,$operationStartDateAsIndex,$monthlyNetSalary,$salaryTaxesRate,$socialInsuranceRate);
-			
 				
 				foreach($additionalDatabaseResult as $columnName => $payload){
 					$manpower[$columnName] = $payload;

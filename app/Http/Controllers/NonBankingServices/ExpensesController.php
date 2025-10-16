@@ -218,7 +218,6 @@ class ExpensesController extends Controller
                 if ($tableId =='percentage_of_sales' || $tableId =='expense_as_percentage') {
                     $expenseAsPercentageResults = $expenseAsPercentageEquation->calculate($studyId, $tableDataArr['percentage_of'], $revenueStreamTypes, $categoryIds, $tableDataArr['start_date'], $loopEndDate, $tableDataArr['monthly_percentage'], $tableDataArr['payment_terms'], $vatRate, $isDeductible, $tableDataArr['withhold_tax_rate']) ;
                     $tableDataArr['expense_as_percentages']  =$expenseAsPercentageResults['total_before_vat']  ;
-                    // expense_as_percentages
                     $tableDataArr['total_vat']  =$expenseAsPercentageResults['total_vat']  ;
                     $tableDataArr['total_after_vat']  =$expenseAsPercentageResults['total_after_vat']  ;
                     $withholdAmounts  = $expenseAsPercentageResults['total_withhold'];

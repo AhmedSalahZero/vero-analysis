@@ -64,7 +64,7 @@ class Study extends Model
         'operation_dates'=>'array',
         'study_dates'=>'array',
         'leasing_growth_rates'=>'array',
-		'microfinance_branch_ids'=>'array'
+        'microfinance_branch_ids'=>'array'
     ];
         
     public static function boot()
@@ -866,17 +866,17 @@ class Study extends Model
      * * revenue_stream_type -> leasing , ijara .. etc
      * * relation name -> leasingRevenueStreamBreakdown ,
      */
-    public function storeMonthlyLoan(string $revenueType , string $relationName, array $portfolioMonthlyLoanAmounts =[])
+    public function storeMonthlyLoan(string $revenueType, string $relationName, array $portfolioMonthlyLoanAmounts =[])
     {
         $monthlyLoanAmounts = [];
         $contractCounts = [];
 
         $operationDurationPerYear=$this->getOperationDurationPerYearFromIndexes();
         $revenueIdWitLoanAmounts = $this->{$relationName}->pluck('loan_amounts', 'id')->toArray() ;
-		DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('revenue_contracts')->where('study_id', $this->id)->where('revenue_type', $revenueType )->delete();
+        DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('revenue_contracts')->where('study_id', $this->id)->where('revenue_type', $revenueType)->delete();
         foreach ($revenueIdWitLoanAmounts as $leasingRevenueStreamBreakdownId => $yearIndexWithAmount) {
             $model = $this->{$relationName}->where('id', $leasingRevenueStreamBreakdownId)->first() ;
-        //    $foreignKeyName = $model->getForeignKeyName();
+            //    $foreignKeyName = $model->getForeignKeyName();
             foreach ($operationDurationPerYear as $yearIndex => $yearMonthIndexes) {
                 foreach ($yearMonthIndexes as $monthIndex => $monthlyZeroOrOne) {
                     $yearIndexWithAmount = is_string($yearIndexWithAmount) ? (array)json_decode($yearIndexWithAmount) : $yearIndexWithAmount;
@@ -923,7 +923,7 @@ class Study extends Model
         $loanSchedulePaymentTableName = $isSensitivity ? 'sensitivity_loan_schedule_payments' : 'loan_schedule_payments';
         DB::connection('non_banking_service')->table($loanSchedulePaymentTableName)->where('revenue_stream_type', $revenueStreamType)->where('study_id', $studyId)->delete();
         $revenueIdWitLoanAmounts = $this->{$relationName}->pluck('loan_amounts', 'id')->toArray() ;
-        $this->storeMonthlyLoan($revenueStreamType,$relationName);
+        $this->storeMonthlyLoan($revenueStreamType, $relationName);
         $calculateFixedLoanAtEndService = new CalculateFixedLoanAtEndService ;
         $calculateFixedLoanAtBeginningService = new CalculateFixedLoanAtBeginningService ;
         $portfolioLoans = [];
@@ -1402,6 +1402,10 @@ class Study extends Model
     {
         $this->generateRelationDynamically('percentage_of_sales', 'Expense')->each(function ($expense) use ($isSensitivity) {
             $expenseAsPercentageEquation = new ExpenseAsPercentageEquation;
+            $customCollectionPolicy = $expense->custom_collection_policy?:[];
+            $datesAsStringDateIndex = $this->getDatesAsStringAndIndex();
+            $datesAsIndexAndString = array_flip($datesAsStringDateIndex);
+     	     $dateIndexWithDate = $this->getDateIndexWithDate();
             $percentageOf = $expense->getPercentageOf();
             $revenueStreamTypes = $expense->getRevenueStreamTypes();
             $streamCategoryIds = $expense->getStreamCategoryIds();
@@ -1412,14 +1416,64 @@ class Study extends Model
             $isDeductible=  $expense->isDeductible();
             $paymentTerms = $expense->getPaymentTerm();
             $withholdTaxRate = $expense->getWithholdTaxRate();
-            if ($isSensitivity) {
-                $result['sensitivity_expense_as_percentages']=$expenseAsPercentageEquation->calculate($this->id, $percentageOf, $revenueStreamTypes, $streamCategoryIds, $startDateAsIndex, $endDateAsIndex, $monthlyPercentage, $paymentTerms, $vatRate, $isDeductible, $withholdTaxRate, true);
-            } else {
-                $result['expense_as_percentages']=$expenseAsPercentageEquation->calculate($this->id, $percentageOf, $revenueStreamTypes, $streamCategoryIds, $startDateAsIndex, $endDateAsIndex, $monthlyPercentage, $paymentTerms, $vatRate, $isDeductible, $withholdTaxRate, false);
-                
-            }
-            $expense->update($result);
+            $columnName = $isSensitivity ? 'sensitivity_expense_as_percentages' : 'expense_as_percentages';
+            $expenseAsPercentageResults = $expenseAsPercentageEquation->calculate($this->id, $percentageOf, $revenueStreamTypes, $streamCategoryIds, $startDateAsIndex, $endDateAsIndex, $monthlyPercentage, $paymentTerms, $vatRate, $isDeductible, $withholdTaxRate, $isSensitivity);
+            
+            $tableDataArr['sensitivity_expense_as_percentages']=$expenseAsPercentageResults['total_before_vat'];
+            $tableDataArr['expense_as_percentages']  =$expenseAsPercentageResults['total_before_vat']  ;
+            $tableDataArr['total_vat']  =$expenseAsPercentageResults['total_vat']  ;
+            $tableDataArr['total_after_vat']  =$expenseAsPercentageResults['total_after_vat']  ;
+            $withholdAmounts  = $expenseAsPercentageResults['total_withhold'];
+            $tableDataArr['payment_amounts'] = $this->calculateCollectionOrPaymentAmounts($paymentTerms, $tableDataArr['total_after_vat'], $datesAsIndexAndString, $customCollectionPolicy) ;
+            $payments = $this->calculateCollectionOrPaymentAmounts($paymentTerms, $tableDataArr['total_after_vat'], $datesAsIndexAndString, $customCollectionPolicy) ;
+            $withholdPayments = $this->calculateCollectionOrPaymentAmounts($paymentTerms, $withholdAmounts, $datesAsIndexAndString, $customCollectionPolicy) ;
+            $netPaymentsAfterWithhold = HArr::subtractAtDates([$payments,$withholdPayments], array_keys($payments));
+            $tableDataArr['withhold_amounts'] = $withholdAmounts ;
+            $tableDataArr['withhold_payments']=$withholdPayments;
+            $tableDataArr['payment_amounts'] = $payments;
+            $tableDataArr['net_payments_after_withhold']=$netPaymentsAfterWithhold;
+            $tableDataArr['collection_statements']   =$this->calculateStatement($tableDataArr['expense_as_percentages'], $tableDataArr['total_vat'], $netPaymentsAfterWithhold, $withholdPayments, $dateIndexWithDate, $this);
+            $expense->update($tableDataArr);
         });
+    }
+	public function calculateStatement(array $expenses, array $vats, array $netPaymentsAfterWithhold, array $withholdPayments, array $dateIndexWithDate, Study $study, float $beginningBalance = 0)
+    {
+        $expensesForIntervals = [
+            'monthly'=>$expenses,
+            'quarterly'=>sumIntervalsIndexes($expenses, 'quarterly', $study->financialYearStartMonth(), $dateIndexWithDate),
+            'semi-annually'=>sumIntervalsIndexes($expenses, 'semi-annually', $study->financialYearStartMonth(), $dateIndexWithDate),
+            'annually'=>sumIntervalsIndexes($expenses, 'annually', $study->financialYearStartMonth(), $dateIndexWithDate),
+        ];
+        $netPaymentAfterWithholdForInterval = [
+            'monthly'=>$netPaymentsAfterWithhold,
+            'quarterly'=>sumIntervalsIndexes($netPaymentsAfterWithhold, 'quarterly', $study->financialYearStartMonth(), $dateIndexWithDate),
+            'semi-annually'=>sumIntervalsIndexes($netPaymentsAfterWithhold, 'semi-annually', $study->financialYearStartMonth(), $dateIndexWithDate),
+            'annually'=>sumIntervalsIndexes($netPaymentsAfterWithhold, 'annually', $study->financialYearStartMonth(), $dateIndexWithDate),
+        ];
+        
+        $result = [];
+        foreach (getIntervalFormatted() as $intervalName=>$intervalNameFormatted) {
+            $beginningBalance = 0;
+            foreach ($expensesForIntervals[$intervalName] as $dateIndex=>$currentExpenseValue) {
+                $date = $dateIndex;
+                $result[$intervalName]['beginning_balance'][$date] = $beginningBalance;
+                $currentVat = $vats[$date]??0 ;
+                $totalDue[$date] =  $currentExpenseValue+$currentVat+$beginningBalance;
+                $paymentAtDate = $netPaymentAfterWithholdForInterval[$intervalName][$date]??0 ;
+                $withholdPaymentAtDate = $withholdPayments[$date]?? 0 ;
+                $endBalance[$date] = $totalDue[$date] - $paymentAtDate  - $withholdPaymentAtDate ;
+                $beginningBalance = $endBalance[$date] ;
+                $result[$intervalName]['expense'][$date] =  $currentExpenseValue ;
+                $result[$intervalName]['vat'][$date] =  $currentVat ;
+                $result[$intervalName]['total_due'][$date] = $totalDue[$date];
+                $result[$intervalName]['payment'][$date] = $paymentAtDate;
+                $result[$intervalName]['withhold_amount'][$date] = $withholdPaymentAtDate;
+                $result[$intervalName]['end_balance'][$date] =$endBalance[$date];
+            }
+        }
+        return $result;
+    
+        
     }
     public function calculateManpowerResult(array $dateAsIndexes, int $existingCount, array $hiringCounts, int $studyStartIndex, float $monthlyNetSalary, float $salaryTaxesRate, float $socialInsuranceRate)
     {
@@ -1438,9 +1492,10 @@ class Study extends Model
             }
             $currentYearOrMonthIndex = $isYearsStudy ? $monthsWithItsYear[$dateAsIndex] : $dateAsIndex  ;
             $annualIncreaseRate = $generalAndReserveAssumption  ? $generalAndReserveAssumption->getSalariesAnnualIncreaseRateAtYearOrMonthIndex($currentYearOrMonthIndex) : 0 ;
+			
             $previousHiringCount = $accumulatedManpowerCounts[$dateAsIndex-1] ?? $existingCount;
             $accumulatedManpowerCounts[$dateAsIndex] = $hiringCounts[$dateAsIndex] + $previousHiringCount   ;
-            if ($currentIndex%12 && $currentIndex != 0) {
+            if ($currentIndex%12==0 && $currentIndex != 0) {
                 $currentSalaryAtMonthIndex = $currentSalaryAtMonthIndex * (1+($annualIncreaseRate/100)) ;
             }
             $monthlySalariesPayments[$dateAsIndex] = $currentSalaryAtMonthIndex * $accumulatedManpowerCounts[$dateAsIndex];
@@ -1765,11 +1820,11 @@ class Study extends Model
     }
     public function getMicrofinanceBranchesCount():int
     {
-        return $this->microfinance_branches_count;
+        return $this->microfinance_branches_count?:0;
     }
     public function getMicrofinanceLoanOfficerCount():int
     {
-        return $this->microfinance_loan_officer_count;
+        return $this->microfinance_loan_officer_count?:0;
     }
     public function getConsumerfinanceBranchesCount():int
     {
@@ -1777,7 +1832,7 @@ class Study extends Model
     }
     public function getConsumerfinanceLoanOfficerCount():int
     {
-        return $this->consumerfinance_loan_officer_count;
+        return $this->consumerfinance_loan_officer_count?:0;
     }
     public function fixedAssets():HasMany
     {
@@ -3033,7 +3088,7 @@ class Study extends Model
         $totalExpensePerCategory = [];
         foreach ($expenses as $expense) {
             $expenseNameId = $expense->expense_name_id;
-            $collectionStatements = json_decode($expense->collection_statements,true);
+            $collectionStatements = json_decode($expense->collection_statements, true);
             $collectionStatements = (array)($collectionStatements['monthly']??[]);
             $collectionStatements = (array)($collectionStatements['end_balance']??[]);
             foreach ($collectionStatements as $dateIndex => $amount) {
@@ -3053,18 +3108,18 @@ class Study extends Model
         }
         $totalExpenses = HArr::sumAtDates(array_values($totalPerType), $sumKeys) ;
 
-		
-		       $socialTaxesTitle = __('Salaries & Social Insurance Taxes');
-			   $salaryStatements = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('manpowers')->where('study_id',$this->id)->pluck('tax_and_social_insurance_statement')->toArray();
-	
-			  $salaryStatementEndBalances =  HArr::formatMultiSubItems($salaryStatements, $sumKeys, ['monthly','end_balance']);
+        
+        $socialTaxesTitle = __('Salaries & Social Insurance Taxes');
+        $salaryStatements = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('manpowers')->where('study_id', $this->id)->pluck('tax_and_social_insurance_statement')->toArray();
+    
+        $salaryStatementEndBalances =  HArr::formatMultiSubItems($salaryStatements, $sumKeys, ['monthly','end_balance']);
         $totalCorporateTaxes =  $totalCorporateTaxes['monthly']['end_balance']??[] ;
         $tableDataFormatted[$currentTabIndex]['sub_items'][$socialTaxesTitle]['options']['title'] = $socialTaxesTitle ;
         $tableDataFormatted[$currentTabIndex]['sub_items'][$socialTaxesTitle]['data'] = $salaryStatementEndBalances ;
         $tableDataFormatted[$currentTabIndex]['sub_items'][$socialTaxesTitle]['year_total'] = HArr::sumPerYearIndex($salaryStatementEndBalances, $yearWithItsMonths) ;
 
-		
-		
+        
+        
         $corporateTaxesTitle = __('Corporate Taxes');
         $totalCorporateTaxes = $this->incomeStatement ? $this->incomeStatement->monthly_corporate_taxes_statements : [];
         $totalCorporateTaxes =  $totalCorporateTaxes['monthly']['end_balance']??[] ;
@@ -3443,7 +3498,7 @@ class Study extends Model
                 'can_show'=> $this->hasPortfolioMortgage() ,
                 'route'=>route('create.portfolio.mortgage.revenue.stream.breakdown', ['company'=>$this->company->id,'study'=>$this->id]),
             ],
-			  [
+              [
                     'id'=>Study::MiCROFINANCE,
                 'can_show'=> $this->hasMicroFinance() ,
                 'route'=>route('create.microfinance', ['company'=>$this->company->id,'study'=>$this->id]),
@@ -3458,7 +3513,7 @@ class Study extends Model
                 return $revenueRouteArr['route'];
             }
         }
-		return route('view.manpower.for.non.banking', ['company'=>$this->company->id,'study'=>$this->id]);
+        return route('view.manpower.for.non.banking', ['company'=>$this->company->id,'study'=>$this->id]);
     
     }
     
@@ -3534,8 +3589,8 @@ class Study extends Model
         return $totalCost;
         
     }
-	public function getMicrofinanceBranches():array
-	{
-		return $this->microfinance_branch_ids?:[];
-	}
+    public function getMicrofinanceBranches():array
+    {
+        return $this->microfinance_branch_ids?:[];
+    }
 }

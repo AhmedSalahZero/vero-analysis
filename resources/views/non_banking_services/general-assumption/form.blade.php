@@ -373,7 +373,7 @@
                         <div class="col-md-10">
                             <div class="d-flex align-items-center ">
                                 <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style="">
-                                    {{ __('General Assumption') }}
+                                    {{ __('Salaries Annual Increase Rate') }}
                                 </h3>
                             </div>
                         </div>
@@ -447,7 +447,7 @@
                                     <tr data-repeat-formatting-decimals="2" data-repeater-style >
 									<td class="td-classes">
 										<div>
-										<input value="{{ $isYearsStudy ? __('Salaries Annual Increase Rate %') : __('Salaries Monthly Increase Rate %') }}" disabled="" class="form-control text-left mt-2" type="text">
+										<input value="{{  __('Salaries Annual Increase Rate %')  }}" disabled="" class="form-control text-left mt-2" type="text">
 										
 										</div>
 										
@@ -464,7 +464,7 @@
                                             @php
                                             $currentVal = $model ? $model->getSalariesAnnualIncreaseRateAtYearOrMonthIndex($yearOrMonthAsIndex) : 0;
                                             @endphp
-                                            <x-repeat-right-dot-inputs :name="'salaries_annual_increase_rates['.$yearOrMonthAsIndex.']'" :currentVal="number_format($currentVal,1)" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :readonly="$columnIndex == 0" :removeThreeDots="$columnIndex == 0" :name="'salaries_annual_increase_rates['.$yearOrMonthAsIndex.']'" :currentVal="number_format($currentVal,1)" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
 
                                         </td>
