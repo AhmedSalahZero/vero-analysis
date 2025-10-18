@@ -14,32 +14,34 @@ class MonthlyFixedRepeatingAmountEquation
 			'annually'=>12
 		][$increaseInterval];
 		$counter = 0 ;
-		$amountBeforeVat = $amount ; 
-		$amountAfterVat = $isDeductible ? $amountBeforeVat : $amountBeforeVat  * (1+($vatRate / 100));
+		
 		// $vat = $amountAfterVat - $amountBeforeVat;
 		for($currentStartDateAsIndex ; $currentStartDateAsIndex <= $endDateAsIndex ; $currentStartDateAsIndex++ ){
-		
-			$currentIncreaseRate = is_array($increaseRate) ? $increaseRate[$dateIndexWithYearIndex[$currentStartDateAsIndex]]??0 : $increaseRate ;
 			$currentCount = 1 ; 
 			if(is_array($contractCount)){
 				$currentCount = $contractCount[$currentStartDateAsIndex]??0;
 			}
+			$amountBeforeVat = $amount*$currentCount ; 
+			$amountAfterVat = $isDeductible ? $amountBeforeVat : $amountBeforeVat  * (1+($vatRate / 100));
+		
+			$currentIncreaseRate = is_array($increaseRate) ? $increaseRate[$dateIndexWithYearIndex[$currentStartDateAsIndex]-1]??0 : $increaseRate ;
+			
 			if($counter!=0&&$counter % $intervalMode == 0){
-				$resultWithoutVat[$currentStartDateAsIndex] = $resultWithoutVat[$currentStartDateAsIndex-1] * (1+$currentIncreaseRate/100) * $currentCount ; 
-				$withholdAmounts[$currentStartDateAsIndex]=$resultWithoutVat[$currentStartDateAsIndex] * $withholdRate / 100 * $currentCount ;
-				$resultWithVat[$currentStartDateAsIndex] = $resultWithVat[$currentStartDateAsIndex-1] * (1+$currentIncreaseRate/100) * $currentCount; 
-				$resultVat[$currentStartDateAsIndex] = $resultWithVat[$currentStartDateAsIndex] - $resultWithoutVat[$currentStartDateAsIndex] * $currentCount ;
+				$resultWithoutVat[$currentStartDateAsIndex] = $resultWithoutVat[$currentStartDateAsIndex-1] * (1+$currentIncreaseRate/100)  ; 
+				$withholdAmounts[$currentStartDateAsIndex]=$resultWithoutVat[$currentStartDateAsIndex] * $withholdRate / 100  ;
+				$resultWithVat[$currentStartDateAsIndex] = $resultWithVat[$currentStartDateAsIndex-1] * (1+$currentIncreaseRate/100) ; 
+				$resultVat[$currentStartDateAsIndex] = $resultWithVat[$currentStartDateAsIndex] - $resultWithoutVat[$currentStartDateAsIndex]  ;
 			}else{
 				if(!isset($resultWithoutVat[$currentStartDateAsIndex-1])){
-					$resultWithoutVat[$currentStartDateAsIndex] = $amountBeforeVat * $currentCount ;
-					$withholdAmounts[$currentStartDateAsIndex]=$resultWithoutVat[$currentStartDateAsIndex] * $withholdRate / 100 * $currentCount ;
-					$resultWithVat[$currentStartDateAsIndex] = $amountAfterVat * $currentCount ;
-					$resultVat[$currentStartDateAsIndex] = ($amountAfterVat - $amountBeforeVat ) * $currentCount;
+					$resultWithoutVat[$currentStartDateAsIndex] = $amountBeforeVat  ;
+					$withholdAmounts[$currentStartDateAsIndex]=$resultWithoutVat[$currentStartDateAsIndex] * $withholdRate / 100  ;
+					$resultWithVat[$currentStartDateAsIndex] = $amountAfterVat  ;
+					$resultVat[$currentStartDateAsIndex] = ($amountAfterVat - $amountBeforeVat ) ;
 				}else{
-					$resultWithoutVat[$currentStartDateAsIndex] = $resultWithoutVat[$currentStartDateAsIndex-1] * $currentCount ; 
-					$withholdAmounts[$currentStartDateAsIndex]=$resultWithoutVat[$currentStartDateAsIndex] * $withholdRate / 100  * $currentCount;
-					$resultWithVat[$currentStartDateAsIndex] = $resultWithVat[$currentStartDateAsIndex-1]  * $currentCount; 
-					$resultVat[$currentStartDateAsIndex] = ($resultWithVat[$currentStartDateAsIndex-1] - $resultWithoutVat[$currentStartDateAsIndex-1]) * $currentCount ;
+					$resultWithoutVat[$currentStartDateAsIndex] = $resultWithoutVat[$currentStartDateAsIndex-1]  ; 
+					$withholdAmounts[$currentStartDateAsIndex]=$resultWithoutVat[$currentStartDateAsIndex] * $withholdRate / 100  ;
+					$resultWithVat[$currentStartDateAsIndex] = $resultWithVat[$currentStartDateAsIndex-1]  ; 
+					$resultVat[$currentStartDateAsIndex] = ($resultWithVat[$currentStartDateAsIndex-1] - $resultWithoutVat[$currentStartDateAsIndex-1]) ;
 				}
 			}
 			$counter++;

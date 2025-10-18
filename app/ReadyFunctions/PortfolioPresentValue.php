@@ -49,10 +49,12 @@ class PortfolioPresentValue
 				for($i = 1 ; $i<= $tenorInMonths ; $i++ ){
 					$currentBaseRate = $cbeLendingRatesPerMonths[$currentOccurrenceMonthIndex] ;
 					$currentPricingAtOccurrenceIndex = ($currentBaseRate + $marginRate) / 100;
-					$currentMonthlyInterest =  $currentPricingAtOccurrenceIndex / 12 ;
+					$currentMonthlyInterest =  pow( (1+$currentPricingAtOccurrenceIndex) , 1/12) - 1 ;  ;
+					
 					$currentMonthsCount = $i ;
 					// $currentMonthsCount = ($currentOccurrenceMonthIndex+$i -$currentOccurrenceMonthIndex  ) ;
 					$currentNetPresetValue = $currentOccurrenceAvgAmount / pow(1+$currentMonthlyInterest,$currentMonthsCount);  
+		
 					
 					$currentUnearnedInterest = $currentOccurrenceAvgAmount-$currentNetPresetValue;
 				
@@ -64,7 +66,6 @@ class PortfolioPresentValue
 					]; 
 					
 					$portfolioLoanFundingRatesAtOccurrenceMonthIndex = $portfolioLoanFundingRatesPerMonths[$currentOccurrenceMonthIndex] / 100;
-					// dd($portfolioLoanFundingRatesAtOccurrenceMonthIndex);
 					$accumulatedMonthsAmountsDueDates[$currentOccurrenceMonthIndex]['net_present_value'] = isset($accumulatedMonthsAmountsDueDates[$currentOccurrenceMonthIndex]['net_present_value']) ? $accumulatedMonthsAmountsDueDates[$currentOccurrenceMonthIndex]['net_present_value'] + $currentNetPresetValue : $currentNetPresetValue;
 					$accumulatedMonthsAmountsDueDates[$currentOccurrenceMonthIndex]['bank_loan_amount'] = $accumulatedMonthsAmountsDueDates[$currentOccurrenceMonthIndex]['net_present_value'] * $portfolioLoanFundingRatesAtOccurrenceMonthIndex;
 					$accumulatedMonthsAmountsDueDates[$currentOccurrenceMonthIndex]['unearned_interest'] = isset($accumulatedMonthsAmountsDueDates[$currentOccurrenceMonthIndex]['unearned_interest']) ? $accumulatedMonthsAmountsDueDates[$currentOccurrenceMonthIndex]['unearned_interest'] + $currentUnearnedInterest : $currentUnearnedInterest;
@@ -78,7 +79,6 @@ class PortfolioPresentValue
 				 $portfolioLoans
 				);
 					$study->recalculateMonthlyAndAccumulatedEcl(Study::PORTFOLIO_MORTGAGE ,$totalPortfolioEndBalance );
-					
 			return [
 				'occurrence_dates'=>$occurrenceDates,
 				'statement'=>$accumulatedMonthsAmountsDueDates,
@@ -99,10 +99,13 @@ class PortfolioPresentValue
 			$tenorInMonths = $tenorInYears *12;
 			$installmentPaymentIntervalName='monthly';
 			$accumulatedMonthsAmountsDueDates = [];
-			
+			$occurrenceDates = [];
 			
 			foreach($monthlyAmounts as $currentOccurrenceMonthIndex => $currentOccurrenceAvgAmount){
 				$currentOccurrenceAvgAmount = $currentOccurrenceAvgAmount / $tenorInMonths ; 
+				if($currentOccurrenceAvgAmount > 0){
+					$occurrenceDates[] = $currentOccurrenceMonthIndex;
+				}
 				for($i = 1 ; $i<= $tenorInMonths ; $i++ ){
 					$currentBaseRate = $cbeLendingRatesPerMonths[$currentOccurrenceMonthIndex];
 					$currentPricingAtOccurrenceIndex = ($currentBaseRate + $marginRate) / 100;
@@ -135,7 +138,10 @@ class PortfolioPresentValue
 			
 			$study->recalculateMonthlyAndAccumulatedEcl(Study::PORTFOLIO_MORTGAGE ,$totalPortfolioEndBalance );
 			return [
-				'occurrence_dates'=>[],
+				/**
+				 * * في حاله لو مفرودة شهور يبقي هناخد الشهور اللي كتب فيها ارقام
+				 */
+				'occurrence_dates'=>$occurrenceDates,
 				'statement'=>$accumulatedMonthsAmountsDueDates,
 				'portfolio_mortgage_unearned_interest_statement'=>$currentUnearnedInterestStatement,
 				'loan_amounts'=>$monthlyAmounts

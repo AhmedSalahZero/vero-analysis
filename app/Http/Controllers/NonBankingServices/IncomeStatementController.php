@@ -263,7 +263,6 @@ class IncomeStatementController extends Controller
 			$tableDataFormatted[0]['sub_items'][$id]['year_total'] =	HArr::sumPerYearIndex($subItemArr, $yearWithItsMonths);
 		}
         
-        // $totalSalesRevenues = Harr::calculateYearTotalForAllSubItems($tableDataFormatted,$tableDataFormatted[0]['sub_items']??[]) ;
         $totalSalesRevenues = Harr::calculateTotalFromSubItems($tableDataFormatted[0]['sub_items']??[]) ;
         
         $yearWithItsMonths=$study->getYearIndexWithItsMonths();
@@ -384,7 +383,7 @@ class IncomeStatementController extends Controller
         ], $defaultNumericInputClasses);
         foreach ($fixedAssetDepreciations as $revenueType => $currentData) {
             $currentData = json_decode($currentData, true);
-            $totalDepreciationExpenses  = HArr::sumAtDates([$totalEclExpenses,$currentData], $sumKeys);
+            $totalDepreciationExpenses  = HArr::sumAtDates([$totalDepreciationExpenses,$currentData], $sumKeys);
         }
         $tableDataFormatted[$eclAndDepreciationOrderIndex]['sub_items'][$depreciationKey]['data'] = $totalDepreciationExpenses;
         $tableDataFormatted[$eclAndDepreciationOrderIndex]['sub_items'][$depreciationKey]['year_total'] = HArr::sumPerYearIndex($totalDepreciationExpenses, $yearWithItsMonths);

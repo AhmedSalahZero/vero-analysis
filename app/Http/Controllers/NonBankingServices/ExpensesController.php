@@ -134,7 +134,7 @@ class ExpensesController extends Controller
                     $accumulatedManpowerPowersForAllSelectedPositions = [ ];
                     if ($isExpensePerEmployee) {
                         $positionIds = (array) $tableDataArr['position_ids'] ;
-                        $manpowers = Manpower::whereIn('position_id', $positionIds)->pluck('accumulated_manpower_counts')->toArray();
+                        $manpowers = Manpower::whereIn('position_id', $positionIds)->where('monthly_net_salary','>',0)->pluck('accumulated_manpower_counts')->toArray();
                         $accumulatedManpowerPowersForAllSelectedPositions = HArr::sumAtDates($manpowers, $monthsAsIndexes);
                         $amount = $tableDataArr['monthly_cost_of_unit'];
                     } elseif ($isCostPerUnit) {
@@ -145,7 +145,7 @@ class ExpensesController extends Controller
                     $dateIndexWithYearIndex = $study->getDatesIndexWithYearIndex();
                     $monthlyFixedRepeatingResults = [];
                     if ($isCostPerUnit) {
-                        $contractResult = Expense::getExpensePerContract($revenueStreamTypes, $categoryIds, $studyId, 'contract_counts');
+                        $contractResult = Expense::getExpensePerContract($revenueStreamTypes, $categoryIds, $studyId, 'contract_counts',true);
                         $contractCount = $contractResult['result'];
                         $sumKeys = $study->getOperationDatesAsDateAndDateAsIndexToStudyEndDate();
                         $contractCount = HArr::sumAtDates($contractCount, $sumKeys);
@@ -165,13 +165,8 @@ class ExpensesController extends Controller
                     
                     if ($isCostPerUnit) {
                         $fixedRepeatingExpenseArr = $isDeductible ? $monthlyFixedRepeatingResults['total_before_vat'] : $monthlyFixedRepeatingResults['total_after_vat'];
-                        // $contractResult = Expense::getExpensePerContract($revenueStreamTypes,$categoryIds,$studyId,'contract_counts');
-                        // $contractCount = $contractResult['result'];
-                        // $sumKeys = $study->getOperationDatesAsDateAndDateAsIndexToStudyEndDate();
-                        // $contractCount = HArr::sumAtDates($contractCount,$sumKeys);
                         $repeatingExpenseValues = $fixedRepeatingExpenseArr;
                         $collectionValues =$monthlyFixedRepeatingResults['total_before_vat'];
-                        // $collectionValues = HArr::multipleTwoArrAtSameIndex($contractCount,$monthlyFixedRepeatingResults['total_before_vat']);
                     }
                     if ($isExpensePerEmployee) {
                         $totalAfterVats = $monthlyFixedRepeatingResults['total_after_vat'];

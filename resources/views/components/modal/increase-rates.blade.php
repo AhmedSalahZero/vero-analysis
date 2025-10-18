@@ -32,14 +32,14 @@
 						@php
 							$totalRate = 0 ;
 						@endphp
-                            @for($yearNumber = 1 ;$yearNumber <= $study->getDurationInYears() ; $yearNumber ++) <tr>
+                            @for($yearNumber = 1 ;$yearNumber < $study->getDurationInYears() ; $yearNumber ++) <tr>
                         @php
 							$yearFormatted = $study->getYearFromYearIndex($yearNumber);
 							$currentIncreaseRate = isset($subModel) ? $subModel->getIncreaseRateAtYearIndex($yearNumber ) :  0;
 						@endphp
 						        <td >
 								<div class="max-w-selector-popup">
-                                    <input readonly  class="form-control " value="{{ $yearFormatted }}" placeholder="{{ __('Year') .  ' ' . $yearNumber  }}">
+                                    <input readonly  class="form-control " value="Yr-{{ $yearFormatted }}" placeholder="{{ __('Year') .  ' ' . $yearNumber  }}">
 								</div>
                                 </td>
 								

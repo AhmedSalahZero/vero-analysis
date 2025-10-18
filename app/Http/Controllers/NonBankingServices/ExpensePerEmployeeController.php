@@ -3,12 +3,9 @@
 namespace App\Http\Controllers\NonBankingServices;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\NonBankingServices\StoreDepartmentsRequest;
 use App\Models\Company;
-use App\Models\NonBankingService\Department;
 use App\Models\NonBankingService\Study;
 use App\Traits\NonBankingService;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 
 class ExpensePerEmployeeController extends Controller

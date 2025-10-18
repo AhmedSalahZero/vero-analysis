@@ -172,7 +172,6 @@ class StudyController extends Controller
 	}
 	public function update(Request $request , Company $company,Study $study)
 	{
-		
 		return $this->store($company,$request,$study);
 	}
 	public function destroy(Request $request , Company $company,Study $study)

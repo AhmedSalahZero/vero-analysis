@@ -764,10 +764,7 @@ class HArr
         }
         return $result;
     }
-	public static function calculateYearTotalForAllSubItems(array & $tableDataFormatted ,  array $subItems):array 
-	{
-		dd($subItems);
-	}
+
     public static function calculateTotalFromSubItems(array $items):array
     {
         $result=[];
@@ -971,7 +968,25 @@ class HArr
 		}
 		return $result;
 	}
-
+	public static function sumFromIndexToTheEnd($schedulePayments ,$currentDateIndex):float{
+		$result = 0 ; 
+		foreach($schedulePayments as $dateAsIndex => $value){
+			if($dateAsIndex > $currentDateIndex){
+				$result+= $value;
+			}
+		}
+		return $result;
+	}
+	public static function sumFromCurrentIndexToTheEnd(array $items , array $sumKeys):array{
+		$result = [];
+		foreach($items as $item){
+			$schedulePayments = json_decode($item->schedulePayment,true);
+			foreach($schedulePayments as $currentDateIndex => $value){
+				$result[$currentDateIndex] = HArr::sumFromIndexToTheEnd($schedulePayments ,$currentDateIndex );
+			}
+		}
+		return $result;
+	}
 	
 public static function getPerYearIndexForFirstMonthInYear(array $itemsAsDateIndexAndValue ,  array $yearWithItsMonths):array{
 	$result = [];
@@ -1004,5 +1019,16 @@ public static function calculateRetainEarning(float $retainedEarningOpening,arra
 			
 		}
 		return $retainedEarnings;
+	}
+	public static function onlyLastValuesInMultiArr(array $items  ):array
+	{
+		$months = [];
+		foreach($items as $key => $itemArr){
+			foreach($itemArr as $k1 => $v1){
+				$months[] = $v1;
+			}
+		}
+		return $months;
+		
 	}
 }

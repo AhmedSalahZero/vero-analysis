@@ -222,7 +222,7 @@ class Expense extends Model
     {
         return $this->amortization_months?:12;
     }
-    public static function getExpensePerContract(array $revenueStreamType, array $categoryIds, int $studyId, string $columnName):array
+    public static function getExpensePerContract(array $revenueStreamType, array $categoryIds, int $studyId, string $columnName , $debug= false ):array
     {
         $selectedRevenueStreamTypes = [];
         $hasLeasing = in_array('has_leasing', $revenueStreamType) ;
@@ -231,41 +231,41 @@ class Expense extends Model
         $hasPortfolioMortgage = in_array('has_portfolio_mortgage', $revenueStreamType) ;
         $hasDirectFactoring = in_array('has_direct_factoring', $revenueStreamType) ;
         
-        $revenueStreamTypesWheres = [];
+   //     $revenueStreamTypesWheres = [];
 		
         if ($hasLeasing) {
             $selectedRevenueStreamTypes[] = Study::LEASING;
-            $revenueStreamTypesWheres[] = ['leasing_breakdown_id','>',0];
+      //      $revenueStreamTypesWheres[] = ['leasing_breakdown_id','>',0];
         }
         if ($hasIjara) {
             $selectedRevenueStreamTypes[] = Study::IJARA;
-            $revenueStreamTypesWheres[] = ['ijara_breakdown_id','>',0];
+     //       $revenueStreamTypesWheres[] = ['ijara_breakdown_id','>',0];
         }
         if ($hasReverseFactoring) {
             $selectedRevenueStreamTypes[] = Study::REVERSE_FACTORING;
-            $revenueStreamTypesWheres[] = ['reverse_breakdown_id','>',0];
+     //       $revenueStreamTypesWheres[] = ['reverse_breakdown_id','>',0];
         }
         if ($hasPortfolioMortgage) {
             $selectedRevenueStreamTypes[] = Study::PORTFOLIO_MORTGAGE;
-            $revenueStreamTypesWheres[] = ['portfolio_mortgage_category_id','>',0];
+     //       $revenueStreamTypesWheres[] = ['portfolio_mortgage_category_id','>',0];
         }
         if ($hasDirectFactoring) {
             $selectedRevenueStreamTypes[] = Study::DIRECT_FACTORING;
-            $revenueStreamTypesWheres[] = ['direct_breakdown_id','>',0];
+      //      $revenueStreamTypesWheres[] = ['direct_breakdown_id','>',0];
         }
-		if(!count($revenueStreamTypesWheres)){
+		if(!count($selectedRevenueStreamTypes)){
 			return [
 				'result'=>[],
 				'selectedRevenueStreamTypes'=>[]
 			];
 		}
-        $revenueStreamTypesWheres = HStr::generateWhereFromMultipleArrs($revenueStreamTypesWheres, 'OR');
+   //     $revenueStreamTypesWheres = HStr::generateWhereFromMultipleArrs($revenueStreamTypesWheres, 'OR');
 	        $resultArr = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('revenue_contracts')
             ->where('study_id', $studyId)
             ->when(count($categoryIds), function (Builder $builder) use ($categoryIds) {
                 $builder->whereIn('category_id', $categoryIds);
             })
-            ->whereRaw($revenueStreamTypesWheres)->pluck($columnName)->map(function ($item) {
+            ->whereIn('revenue_type',$selectedRevenueStreamTypes)->pluck($columnName)->map(function ($item) {
                 return (array)json_decode($item);
             })->toArray();
 		
