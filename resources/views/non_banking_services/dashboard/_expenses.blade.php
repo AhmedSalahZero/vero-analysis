@@ -55,7 +55,7 @@
                  @endphp
                  <td>
                      <div class="d-flex align-items-center ">
-                         <input value="{{ __('Cost Of Service') }}" disabled class="form-control text-left " type="text">
+                         <input value="{{ __('Cost Of Service') }}" disabled class="form-control max-w-250 text-left " type="text">
                          <div>
                              <i data-toggle="modal" data-target="#{{ $currentModalId }}" class="flaticon2-information kt-font-primary exclude-icon ml-2 cursor-pointer "></i>
                              @include('non_banking_services.dashboard._expense-modal',['currentModalId'=>$currentModalId,'modalTitle'=>$currentModalTitle,'modalData'=>$formattedExpenses[$key] ?? []])

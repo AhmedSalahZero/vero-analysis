@@ -19,7 +19,6 @@
 'dataCurrentYear'=>null
 ])
 <div class="
-
 @if(!$removeThreeDotsClass)
 form-group 
 three-dots-parent

@@ -739,14 +739,14 @@ class HArr
 
         return $result;
     }
-    public static function divideArrBy(array $items, int $num):array
-    {
-        $result = [];
-        foreach ($items as $index=> $val) {
-            $result[$index] = $val / $num;
-        }
-        return $result ;
-    }
+    // public static function divideArrBy(array $items, int $num):array
+    // {
+    //     $result = [];
+    //     foreach ($items as $index=> $val) {
+    //         $result[$index] = $val / $num;
+    //     }
+    //     return $result ;
+    // }
     public static function multipleTwoArrAtSameIndex(array $firstArr, array $secondArr)
     {
         $result = [];
@@ -980,7 +980,7 @@ class HArr
 	public static function sumFromCurrentIndexToTheEnd(array $items , array $sumKeys):array{
 		$result = [];
 		foreach($items as $item){
-			$schedulePayments = json_decode($item->schedulePayment,true);
+			$schedulePayments = json_decode($item->endBalance,true);
 			foreach($schedulePayments as $currentDateIndex => $value){
 				$result[$currentDateIndex] = HArr::sumFromIndexToTheEnd($schedulePayments ,$currentDateIndex );
 			}
@@ -1030,5 +1030,15 @@ public static function calculateRetainEarning(float $retainedEarningOpening,arra
 		}
 		return $months;
 		
+	}
+	public static function onlyKeysWithValues(array $items):array
+	{
+		$result =[];
+		foreach($items as $key => $value){
+			if($value > 0){
+				$result[] = $key;
+			}
+		}
+		return $result;
 	}
 }

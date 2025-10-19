@@ -173,7 +173,7 @@ use App\Models\NonBankingService\Study;
                                 <div class="d-flex align-items-center flex-column " style="gap:10px;">
                                     <div class="d-flex mr-auto" style="gap:10px;">
                                         <a href="{{ route('view.non.banking.forecast.income.statement',['company'=>$company->id,'study'=>$model->id]) }}" class="btn btn-md-width btn-1-bg btn-sm btn-brand btn-pill">{{ __('Income Statement') }}</a>
-                                        <a href="#" class="btn btn-md-width btn-2-bg btn-sm btn-brand btn-pill">{{ __('Balance Sheet') }}</a>
+                                        <a href="{{ route('balance.sheet.result',['company'=>$company->id,'study'=>$model->id]) }}" class="btn btn-md-width btn-2-bg btn-sm btn-brand btn-pill">{{ __('Balance Sheet') }}</a>
                                     </div>
                                     <div class="d-flex mr-auto" style="gap:10px;">
                                         <a href="{{ route('cash.in.out.flow.result',['company'=>$company->id,'study'=>$model->id]) }}" class="btn btn-md-width btn-3-bg btn-sm btn-brand btn-pill">{{ __('Cash Flow') }}</a>
@@ -185,7 +185,7 @@ use App\Models\NonBankingService\Study;
 
                             <td>
                                 <div class="d-flex mr-auto" style="gap:10px;">
-                                    <a href="#" class="btn btn-sm-width btn-1-bg btn-sm btn-brand btn-pill">{{ __('Result') }}</a>
+                                    <a href="{{ route('view.results.dashboard',['company'=>$company->id,'study'=>$model->id]) }}" class="btn btn-sm-width btn-1-bg btn-sm btn-brand btn-pill">{{ __('Result') }}</a>
                                     <a href="#" class="btn btn-sm-width btn-2-bg btn-sm btn-brand btn-pill">{{ __('Valuation') }}</a>
                                 </div>
                             </td>
@@ -331,7 +331,7 @@ use App\Models\NonBankingService\Study;
                             <td>
                                 <div class="d-flex align-items-center flex-column " style="gap:10px;">
                                     <div class="d-flex mr-auto" style="gap:10px;">
-                                        <a href="#" class="btn btn-sm-width btn-1-bg btn-sm btn-brand btn-pill">{{ __('Forecast') }}</a>
+                                        <a href="{{ route('view.non.banking.forecast.income.statement',['company'=>$company->id,'study'=>$model->id]) }}" class="btn btn-sm-width btn-1-bg btn-sm btn-brand btn-pill">{{ __('Forecast') }}</a>
                                         <a href="#" class="btn btn-sm-width btn-2-bg btn-sm btn-brand btn-pill">{{ __('Actual') }}</a>
                                     </div>
                                     <div class="d-flex mr-auto" style="gap:10px;">
@@ -343,20 +343,20 @@ use App\Models\NonBankingService\Study;
                             </td>
                             <td>
                                 <div class="d-flex mr-auto" style="gap:10px;">
-                                    <a href="#" class="btn btn-sm-width btn-1-bg btn-sm btn-brand btn-pill">{{ __('Forecast') }}</a>
+                                    <a href="{{ route('balance.sheet.result',['company'=>$company->id,'study'=>$model->id]) }}" class="btn btn-sm-width btn-1-bg btn-sm btn-brand btn-pill">{{ __('Forecast') }}</a>
                                     <a href="#" class="btn btn-sm-width btn-2-bg btn-sm btn-brand btn-pill">{{ __('Actual') }}</a>
                                 </div>
                             </td>
                             <td>
                                 <div class="d-flex mr-auto" style="gap:10px;">
-                                    <a href="#" class="btn btn-sm-width btn-1-bg btn-sm btn-brand btn-pill">{{ __('Forecast') }}</a>
+                                    <a href="{{ route('cash.in.out.flow.result',['company'=>$company->id,'study'=>$model->id]) }}" class="btn btn-sm-width btn-1-bg btn-sm btn-brand btn-pill">{{ __('Forecast') }}</a>
                                     <a href="#" class="btn btn-sm-width btn-2-bg btn-sm btn-brand btn-pill">{{ __('Actual') }}</a>
                                 </div>
 
                             </td>
                             <td>
                                 <div class="d-flex mr-auto" style="gap:10px;">
-                                    <a href="#" class="btn btn-sm-width btn-1-bg btn-sm btn-brand btn-pill">{{ __('Forecast') }}</a>
+                                    <a href="{{ route('view.results.dashboard',['company'=>$company->id,'study'=>$model->id]) }}" class="btn btn-sm-width btn-1-bg btn-sm btn-brand btn-pill">{{ __('Forecast') }}</a>
                                     <a href="#" class="btn btn-sm-width btn-2-bg btn-sm btn-brand btn-pill">{{ __('Actual') }}</a>
                                 </div>
                             </td>

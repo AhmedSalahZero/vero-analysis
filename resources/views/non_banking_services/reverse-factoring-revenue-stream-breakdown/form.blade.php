@@ -456,7 +456,7 @@ use App\Models\NonBankingService\ReverseFactoringBreakdown;
                         <div class="col-md-10">
                             <div class="d-flex align-items-center ">
                                 <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style="">
-                                    {{ __('Factoring New Portfolio Funding Structure') }}
+                                    {{ __('Reverse Factoring New Portfolio Funding Structure') }}
                                 </h3>
                             </div>
                         </div>
@@ -489,7 +489,7 @@ use App\Models\NonBankingService\ReverseFactoringBreakdown;
 
 
                                     <td>
-                                        <input value="{{ __('Equity Funding Rate (%)') }}" disabled class="form-control  text-left mt-2" type="text">
+                                        <input value="{{ __('Equity Funding Rate (%)') }}" disabled class="form-control max-w-300 text-left mt-2" type="text">
 
                                     </td>
                                     @php

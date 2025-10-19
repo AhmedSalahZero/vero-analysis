@@ -219,30 +219,37 @@ class IncomeStatementController extends Controller
             foreach ($interestAmounts as $currentMonthIndex => $interestAmount) {
                 if (!is_null($currentMonthIndex)) {
                     if ($isPortfolio) {
-               
                         $salesRevenuePerTypes[$revenueStreamType][$currentMonthIndex] =  isset($salesRevenuePerTypes[$revenueStreamType][$currentMonthIndex]) ? $salesRevenuePerTypes[$revenueStreamType][$currentMonthIndex] + $interestAmount : $interestAmount;
                         $salesRevenuePerTypes['total_revenue'][$currentMonthIndex] =  isset($salesRevenuePerTypes['total_revenue'][$currentMonthIndex]) ? $salesRevenuePerTypes['total_revenue'][$currentMonthIndex] + $interestAmount : $interestAmount;
                         $tableDataFormatted[0]['sub_items'][$revenueStreamType]['data'][$currentMonthIndex] = $salesRevenuePerTypes[$revenueStreamType][$currentMonthIndex];
                     } else {
-                        $formattedResult['interest_cogs'][$currentMonthIndex] = isset($formattedResult['interest_cogs'][$currentMonthIndex]) ? $formattedResult['interest_cogs'][$currentMonthIndex] + $interestAmount : $interestAmount ;
-                        $currentDirectFactoringBankInterestExpense = $formattedDirectFactoring['bank_interest_expense'][$currentMonthIndex]??0;
-                        $formattedResult['interest_cogs'][$currentMonthIndex] = $formattedResult['interest_cogs'][$currentMonthIndex] + $currentDirectFactoringBankInterestExpense;
+						
+						$formattedResult['interest_cogs'][$currentMonthIndex] = isset($formattedResult['interest_cogs'][$currentMonthIndex]) ? $formattedResult['interest_cogs'][$currentMonthIndex] + $interestAmount : $interestAmount ;
+                        // $formattedResult['interest_cogs'][$currentMonthIndex] = $formattedResult['interest_cogs'][$currentMonthIndex] ;
                         $formattedExpenses['cost-of-service']['Interest Cost'][$currentMonthIndex]  = $formattedResult['interest_cogs'][$currentMonthIndex]??0 ;
-                        $currentMonthInterestCost = $formattedExpenses['cost-of-service']['Interest Cost'][$currentMonthIndex];
-                        $tableDataFormatted[1]['sub_items']['Interest Cost']['data'][$currentMonthIndex] =$currentMonthInterestCost ;
+                        // $currentMonthInterestCost = ;
+                        $tableDataFormatted[1]['sub_items']['Interest Cost']['data'][$currentMonthIndex] =$formattedExpenses['cost-of-service']['Interest Cost'][$currentMonthIndex] ;
+						
+                        // $tableDataFormatted[1]['sub_items']['Interest Cost']['data'][$currentMonthIndex] = isset($formattedResult['interest_cogs'][$currentMonthIndex]) ? $formattedResult['interest_cogs'][$currentMonthIndex] + $interestAmount : $interestAmount ;
+					
                     }
                 }
             }
             
         }
+		// dd($tableDataFormatted[1]['sub_items']['Interest Cost']['data']);
 		$interestCosts  = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('direct_factoring_breakdowns')->where('study_id',$study->id)->pluck('bank_interest_expense')->toArray();
+		// $totalDirectFactoring = [];
 		foreach($interestCosts as $interestCost){
 			$interestCost = json_decode($interestCost,true);
 			foreach($interestCost as $dateIndex => $value){
+				// dd($tableDataFormatted[1]['sub_items']['Interest Cost']['data']);
+				// $totalDirectFactoring [$dateIndex] = isset($totalDirectFactoring [$dateIndex]) ? $totalDirectFactoring [$dateIndex]+ $value : $value;
 				$tableDataFormatted[1]['sub_items']['Interest Cost']['data'][$dateIndex] = isset($tableDataFormatted[1]['sub_items']['Interest Cost']['data'][$dateIndex]) ? $tableDataFormatted[1]['sub_items']['Interest Cost']['data'][$dateIndex] + $value : $value  ;
 			}
 		}
-		                     
+		// $tableDataFormatted[1]['sub_items']['Interest Cost']['data'] = HArr::sumAtDates([$tableDataFormatted[1]['sub_items']['Interest Cost']['data']??[] ,$totalDirectFactoring  ],$sumKeys);
+		// dd($totalDirectFactoring);
                       
 						
         $monthlyAdminFees = EclAndNewPortfolioFundingRate::where('study_id', $study->id)->get([
@@ -287,7 +294,6 @@ class IncomeStatementController extends Controller
         $salaryExpensesForCategories = Manpower::getSalaryExpensesPerCategory($monthsWithItsYear, $study->id, $company->id);
         foreach ($salaryExpensesForCategories as $manpowerCategory => $salaryExpensesForCategory) {
             foreach ($salaryExpensesForCategory as $monthIndex => $value) {
-				
                 $currentOrderIndex = $orderIndexPerExpenseCategory[$manpowerCategory];
                 $currentValue = $salaryExpensesForCategories[$manpowerCategory][$monthIndex] ?? 0 ;
                 $formattedExpenses[$manpowerCategory]['Manpower Salaries'][$monthIndex] = isset($formattedExpenses[$manpowerCategory]['Manpower Salaries'][$monthIndex]) ? $formattedExpenses[$manpowerCategory]['Manpower Salaries'][$monthIndex] +  $currentValue : $currentValue;
@@ -311,37 +317,14 @@ class IncomeStatementController extends Controller
             $monthlyExpenses = (array)json_decode($expense->{$currentColumnName});
             foreach ($yearWithItsIndexes as $yearIndex => $monthIndexWithActive) {
                 foreach ($monthIndexWithActive as $monthIndex=> $isActiveIndex) {
-                    
-      
-                    $currentMonthInterestCost = 0 ;
                     $currentMonthManpowerTotal = 0 ;
-            
-                    
-                   
-                    
                     $monthlyExpenses = $relationName == 'one_time_expense' && isset($monthlyExpenses['monthly_one_time']) ? ($monthlyExpenses['monthly_one_time']) : $monthlyExpenses;
                     $currentMonthlyExpenseValue = $monthlyExpenses[$monthIndex]??0 ;
-                    //         $formattedExpenses[$expenseCategory][$name][$monthIndex] = isset($formattedExpenses[$expenseCategory][$name][$monthIndex]) ? $formattedExpenses[$expenseCategory][$name][$monthIndex] + $currentMonthlyExpenseValue: $currentMonthlyExpenseValue;
-             
-                    //     $currentTotalRevenueAtMonthIndex = $totalSalesRevenues[$monthIndex]??0;
-                
                     $tableDataFormatted[$currentOrderIndex]['sub_items'][$name]['data'][$monthIndex] = isset($tableDataFormatted[$currentOrderIndex]['sub_items'][$name]['data'][$monthIndex]) ? $tableDataFormatted[$currentOrderIndex]['sub_items'][$name]['data'][$monthIndex] + $currentMonthlyExpenseValue:$currentMonthlyExpenseValue ;
-                    //      $currentMainItemTotalAtYearIndex =$currentMonthlyExpenseValue + $currentMonthInterestCost + $currentMonthManpowerTotal;
-                
-                    //      $tableDataFormatted[$currentOrderIndex]['main_items'][$expenseCategory]['data'][$monthIndex] = isset($tableDataFormatted[$currentOrderIndex]['main_items'][$expenseCategory]['data'][$monthIndex]) ? $tableDataFormatted[$currentOrderIndex]['main_items'][$expenseCategory]['data'][$monthIndex] +  $currentMainItemTotalAtYearIndex:$currentMainItemTotalAtYearIndex;
-                    //		$currentMainTotal = $tableDataFormatted[$currentOrderIndex]['main_items'][$expenseCategory]['data'][$monthIndex] ;
-                    //	$tableDataFormatted[$currentOrderIndex]['main_items']['% Of Revenue']['data'][$monthIndex] =$currentTotalRevenueAtMonthIndex ?  $currentMainTotal / $currentTotalRevenueAtMonthIndex * 100 : 0;
-                    //    $formattedExpenses[$expenseCategory]['total'][$monthIndex] = $currentMainTotal   ;
-                    // $tableDataFormatted[$currentOrderIndex]['main_items']['% Of Revenue']['data'][$monthIndex] = $currentTotalRevenueAtMonthIndex ? $currentMainItemTotalAtYearIndex / $currentTotalRevenueAtMonthIndex *100 : 0 ;
-                    
-                    
-                    
                 }
                 
             }
-            // 	$currentSubItems = $tableDataFormatted[$currentOrderIndex]['sub_items'][$name]['data'] ?? [];
-            //   $tableDataFormatted[$currentOrderIndex]['sub_items'][$name]['year_total']  = HArr::sumPerYearIndex($currentSubItems, $yearWithItsMonths);
-            
+   
         }
 
         $totalCostOfService = Harr::calculateTotalFromSubItems($tableDataFormatted[1]['sub_items']??[]) ;
@@ -456,17 +439,7 @@ class IncomeStatementController extends Controller
           
         $tableDataFormatted[$ebitdaOrderIndex]['main_items']['ebitda']['options']['title'] = __('EBITDA');
         $tableDataFormatted[$ebitdaOrderIndex]['main_items']['% Of Revenue']['options']['title'] = __('% Of Revenue');
-        // $depreciationCogs =[];
-        // $formattedDepreciationCogs = [];
-        // foreach ($depreciationCogs as $index => $depreciationCogArr) {
-        //     $formattedDepreciationCogs[$index] = isset(json_decode($depreciationCogArr)->cogs) ?  (array)json_decode($depreciationCogArr)->cogs : [];
-        // }
-        // $formattedDepreciationCogs = [];
         $fixedAssetAdminDepreciations = [];
-        // $fixedAssetAdminDepreciations = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('fixed_assets')->where('study_id', $study->id)->pluck('admin_depreciations')->toArray();
-        // array_walk($fixedAssetAdminDepreciations, function (&$value) {
-        //     $value = (array)json_decode($value);
-        // });
         $fixedAssetOpeningBalancesAdminDepreciations = [];
         $fixedAssetOpeningBalancesAdminDepreciations = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('fixed_asset_opening_balances')->where('study_id', $study->id)->pluck('monthly_depreciation')->toArray();
         array_walk($fixedAssetOpeningBalancesAdminDepreciations, function (&$value) {
@@ -511,19 +484,6 @@ class IncomeStatementController extends Controller
         foreach ($openingLoans as $openingLoanInterest) {
             $openingLoansTotal= HArr::sumAtDates([(array)json_decode($openingLoanInterest),$openingLoansTotal], $sumKeys);
         }
-        
-        
-        
-        // foreach ($loanSchedulePayments as $loanSchedulePayment) {
-        //     $tableDataFormatted[$financialExpenseOrderIndex]['sub_items'][$loanSchedulePayment->name]['options'] =array_merge([
-        //        'title'=>__('Interest Expense') . ' '.$loanSchedulePayment->name,
-        //     ], $defaultNumericInputClasses);
-        //     $currentInterestAmounts = (array)json_decode($loanSchedulePayment->interestAmount);
-        //     $fixedAsset = FixedAsset::find($loanSchedulePayment->fixed_asset_id);
-        //     $incomeStatementLoanCapitalizedInterests = (array)(json_decode($fixedAsset->income_statement_loan_capitalized_interests));
-        //     $tableDataFormatted[$financialExpenseOrderIndex]['sub_items'][$loanSchedulePayment->name]['data'] =$currentInterestAmounts = HArr::sumAtDates([$incomeStatementLoanCapitalizedInterests,$currentInterestAmounts], $sumKeys) ;
-        //     $tableDataFormatted[$financialExpenseOrderIndex]['sub_items'][$loanSchedulePayment->name]['year_total'] = HArr::sumPerYearIndex($currentInterestAmounts, $yearWithItsMonths);
-        // }
         if (count($openingLoansTotal)) {
             $tableDataFormatted[$financialExpenseOrderIndex]['sub_items'][__('Opening Balance Loans Interests')]['data'] = $openingLoansTotal;
             $tableDataFormatted[$financialExpenseOrderIndex]['sub_items'][__('Opening Balance Loans Interests')]['year_total'] = HArr::sumPerYearIndex($openingLoansTotal, $yearWithItsMonths);

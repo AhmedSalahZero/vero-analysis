@@ -1,5 +1,5 @@
 <div class="modal fade " id="{{ $currentModalId }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+    <div class="modal-dialog modal-xl modal-dialog-centered" role="document" style="width:95%;min-width:95%">
         <form action="#" class="modal-content" method="post">
 
 
@@ -19,13 +19,13 @@
 
 
                                 <th class="text-center w-20-percentage text-capitalize th-main-color">{{ __('Expense Name') }}</th>
-                             
-							
-								@foreach($yearWithItsIndexes as $currentYearIndex=> $monthInfos )
+								 @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)             
+								{{-- @foreach($yearWithItsIndexes as $yearOrMonthAsIndex=> $monthInfos ) --}}
 								<th class="text-center 
 								{{-- w-15-percentage --}}
 								 text-capitalize th-main-color">
-								{{ $yearIndexWithYear[$currentYearIndex] }}
+								
+								{{ $isYearsStudy ?  $yearIndexWithYear[$yearOrMonthAsIndex] : \Carbon\Carbon::make($dateIndexWithDate[$yearOrMonthAsIndex])->format('M`Y') }}
 								</th>
 								@endforeach
 								
@@ -36,7 +36,6 @@
                         </thead>
                         <tbody>
 
-						
                             @foreach($modalData as $expenseName => $expenseWithYearIndexAndValue )
 							@if($expenseName == 'total')
 							@continue;
@@ -50,37 +49,59 @@
                                     </div>
                                 </td>
 						
-							@foreach($yearWithItsIndexes as  $currentYearIndex => $monthInfos)
+							@foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)  
 							@php
-								$currentExpenseValue = $expenseWithYearIndexAndValue[$currentYearIndex]??0 ;
-								$currentSalesRevenue = $formattedResult['sales_revenue'][$currentYearIndex]??0;
+								$currentExpenseValue = $expenseWithYearIndexAndValue[$yearOrMonthAsIndex]??0 ;
+								$currentSalesRevenue = $formattedResult['sales_revenue'][$yearOrMonthAsIndex]??0;
 								$currentPercentageOfSales = $currentSalesRevenue ?  $currentExpenseValue /  $currentSalesRevenue * 100 : 0;
 							@endphp
-                                <td class="
-								{{-- w-10-percentage --}}
-								">
+                                <td class="">
                                     <div class="d-flex align-items-center ">
 									<div class="kt-input-icon ">
                                         <div class="input-group">
-                                            <input disabled type="text" class="form-control text-center ignore-global-style" value="{{  number_format($currentExpenseValue/1000000,2) }}">
+                                            <input disabled type="text" class="form-control expandable-amount-input text-center ignore-global-style" value="{{  number_format($currentExpenseValue/1000000,2) }}">
                                         </div>
                                     </div>
 									
-									 <div class="kt-input-icon ml-2 ">
-                                        <div class="input-group">
-                                            <input disabled type="text" class="form-control text-center ignore-global-style" value="{{  number_format($currentPercentageOfSales,2) . ' %' }}">
-                                        </div>
-                                    </div>
+									
 									</div>
 									
                                 </td>
 								@endforeach 
-		
-
-
-                              
-
                             </tr>
+							
+							
+							
+							 <tr>
+                                <td class="w-20-percentage">
+                                    <div class="kt-input-icon ">
+                                        <div class="input-group">
+                                            <input disabled type="text" step="0.1" class="form-control ignore-global-style" value="{{ $expenseName }} %">
+                                        </div>
+                                    </div>
+                                </td>
+						
+							@foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)  
+							@php
+								$currentExpenseValue = $expenseWithYearIndexAndValue[$yearOrMonthAsIndex]??0 ;
+								$currentSalesRevenue = $formattedResult['sales_revenue'][$yearOrMonthAsIndex]??0;
+								$currentPercentageOfSales = $currentSalesRevenue ?  $currentExpenseValue /  $currentSalesRevenue * 100 : 0;
+							@endphp
+                                <td class="">
+                                    <div class="d-flex align-items-center ">
+									 <div class="kt-input-icon  ">
+                                        <div class="input-group">
+                                            <input style="border-color:green !important" disabled type="text" class="form-control expandable-amount-input text-center ignore-global-style" value="{{  number_format($currentPercentageOfSales,2) . ' %' }}">
+                                        </div>
+                                    </div>
+									
+									
+									</div>
+									
+                                </td>
+								@endforeach 
+                            </tr>
+							
 							
                             @endforeach 
 							

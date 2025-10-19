@@ -58,7 +58,7 @@
 
                                         <td>
                                             <div class="">
-                                                <input value="{{ __('Growth Rate %') }}" disabled class="form-control text-left " type="text">
+                                                <input value="{{ __('Growth Rate %') }}" disabled class="form-control max-w-250 text-left " type="text">
                                             </div>
 
 

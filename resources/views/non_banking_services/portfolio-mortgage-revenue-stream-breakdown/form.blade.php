@@ -505,7 +505,7 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
 
 
                                     <td>
-                                        <input disabled value="{{ __('Expected Credit Loss Rate (ECL %)') }}" class="form-control text-left" type="text">
+                                        <input disabled value="{{ __('Expected Credit Loss Rate (ECL %)') }}" class="form-control max-w-300 text-left" type="text">
 
                                     </td>
                                     @php
@@ -657,7 +657,7 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
 
                                 <tr data-repeat-formatting-decimals="2" data-repeater-style>
                                     <td>
-                                        <input disabled value="{{ __('New Loans Funding Rate (%)') }}" class="form-control text-left" type="text">
+                                        <input disabled value="{{ __('New Loans Funding Rate (%)') }}" class="form-control max-w-300 text-left" type="text">
                                     </td>
                                     @php
                                     $columnIndex = 0 ;
@@ -668,7 +668,7 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
 
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
-                                            <input type="text" data-column-index="{{ $columnIndex }}" readonly class="form-control expandable-percentage-input new-loan-function-rates-js" name="new_loans_funding_rates[{{ $yearOrMonthAsIndex }}]" value="{{ $eclAndNewPortfolioFundingRate ? $eclAndNewPortfolioFundingRate->getNewLoansFundingRatesAtYearOrMonthIndex($yearOrMonthAsIndex):0 }}"> <span class="ml-2">%</span>
+                                            <input type="text" data-column-index="{{ $columnIndex }}" readonly class="form-control  expandable-percentage-input new-loan-function-rates-js" name="new_loans_funding_rates[{{ $yearOrMonthAsIndex }}]" value="{{ $eclAndNewPortfolioFundingRate ? $eclAndNewPortfolioFundingRate->getNewLoansFundingRatesAtYearOrMonthIndex($yearOrMonthAsIndex):0 }}"> <span class="ml-2">%</span>
                                         </div>
                                     </td>
                                     @php
@@ -694,7 +694,7 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
 
 
                                     <td>
-                                        <input disabled value="{{ __('New Loans Funding Value') }}" class="form-control text-left" type="text">
+                                        <input disabled value="{{ __('New Loans Funding Value') }}" class="form-control max-w-300 text-left" type="text">
 
                                     </td>
                                     @php

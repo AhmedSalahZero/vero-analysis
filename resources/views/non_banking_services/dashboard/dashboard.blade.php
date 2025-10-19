@@ -22,6 +22,10 @@ use MathPHP\Statistics\Correlation ;
         min-width: 30% !important;
         max-width: 30% !important;
     }
+	.js-parent-to-table{
+		overflow:scroll;
+		margin-bottom:20px !important;
+	}
 
 	.expandable-percentage-input {
 		max-width: 50px !important;

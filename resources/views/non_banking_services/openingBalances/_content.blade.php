@@ -281,7 +281,7 @@ $hiringPopModels[] =$repeaterId;
             <div class="row closest-parent pb-2  col-12">
                 <div class="col-3">
                     <label>{{ __('Name') }}</label>
-                    <input type="text" name="name" class="form-control" value="{{ $model ? $model->getName() : 0 }}">
+                    <input type="text" name="name" class="form-control" value="{{ $model ? $model->getName() : '' }}">
                 </div>
 
                 <div class="col-2">

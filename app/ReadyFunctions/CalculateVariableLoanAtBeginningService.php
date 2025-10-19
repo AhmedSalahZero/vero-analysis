@@ -268,7 +268,7 @@ public function __calculate($previousResult ,int $indexOfLoop,string $loanType, 
 			$loanScheduleResult['schedulePayment'][$i] = $isWithoutCapitalization && $loanScheduleResult['principleAmount'][$i] == 0 ? $loanScheduleResult['interestAmount'][$i] : $loanScheduleResult['principleAmount'][$i] +$loanScheduleResult['interestPayment'][$i] ;
 			$loanScheduleResult['totals']['totalSchedulePayment'] = $loanScheduleResult['totals']['totalSchedulePayment'] + $loanScheduleResult['schedulePayment'][$i];
 			$loanScheduleResult['totals']['totalPrincipleAmount'] += $loanScheduleResult['principleAmount'][$i];
-			$loanScheduleResult['endBalance'][$i] = $loanScheduleResult['beginning'][$i]  + $loanScheduleResult['interestAmount'][$i] -$loanScheduleResult['schedulePayment'][$i];
+			$loanScheduleResult['endBalance'][$i] = $loanScheduleResult['beginning'][$i]  -$loanScheduleResult['principleAmount'][$i];
 			$loanScheduleResult['endBalance'][$i] = $loanScheduleResult['endBalance'][$i] < 1 && $loanScheduleResult['endBalance'][$i] > -1 ? 0 : $loanScheduleResult['endBalance'][$i];
 			$firstLoop = false ;
 			$loopIndex++;

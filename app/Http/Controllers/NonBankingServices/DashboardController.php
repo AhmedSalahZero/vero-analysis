@@ -47,6 +47,8 @@ class DashboardController extends Controller
 		$loanSchedulePaymentTableName =  $isSensitivity ? 'sensitivity_loan_schedule_payments' : 'loan_schedule_payments';
 		$percentageOfSalesColumnName = $isSensitivity ? 'sensitivity_expense_as_percentages' : 'expense_as_percentages';
 		$yearIndexWithYear = app('yearIndexWithYear');
+		$dateIndexWithDate = app('dateIndexWithDate');
+		// dd($dateIndexWithDate);
 		$corporateTaxes = $study->getCorporateTaxesRate() / 100 ;
 		// $startDate = $study->getStudyStartDate();
 		// $endDate = $study->getStudyEndDate();
@@ -191,6 +193,7 @@ class DashboardController extends Controller
 			
 		}
 		$currentExpenseIndexes = $isMonthlyStudy ? $monthsWithItsNumbers :  $yearWithItsIndexes  ;
+
 		foreach($currentExpenseIndexes as $yearOrMonthIndex => $monthWithItsIndexes){
 			$currentYearAsString = $yearIndexWithYear[$yearOrMonthIndex] ?? null ;
 			$currentMonthNumber = $monthsWithItsNumbers[$yearOrMonthIndex]??null;
@@ -224,14 +227,14 @@ class DashboardController extends Controller
 		$chartsFormatted =$this->formatForTheeLineChart($resultPerRevenueStreamType); 
 		$lineChart = $chartsFormatted['line_chart'];
 		$barChart = $chartsFormatted['bar_chart'];
-		
 		return [
 			'titlesMapping'=>$titlesMapping,
 			'lineChart'=>$lineChart ,
 			'barChart'=>$barChart ,
 			'formattedResult'=>$formattedResult ,
 			'formattedExpenses'=>$formattedExpenses,
-			'yearWithItsIndexes'=>$yearWithItsIndexes
+			'yearWithItsIndexes'=>$yearWithItsIndexes,
+			'dateIndexWithDate'=>$dateIndexWithDate
 		];
 		
 	}
@@ -245,6 +248,7 @@ class DashboardController extends Controller
 		$titlesMapping =$dashboardData['titlesMapping'];
 		$barChart =$dashboardData['barChart'];
 		$yearWithItsIndexes = $dashboardData['yearWithItsIndexes'];
+		$dateIndexWithDate = $dashboardData['dateIndexWithDate'];
 		$sensitivityFormattedResult = [];
 		$sensitivityFormattedExpenses=[];
 		if($withSensitivity){
@@ -259,6 +263,7 @@ class DashboardController extends Controller
 	[
 		// 'startDate'=>$startDate,
 		// 'endDate'=>$endDate,
+		'dateIndexWithDate'=>$dateIndexWithDate,
 		'yearsWithItsMonths' => $study->getOperationDurationPerYearFromIndexes(),
 		'model'=>$study,
 		'study'=>$study,

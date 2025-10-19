@@ -318,7 +318,7 @@
                                         <td>
 
                                             @php
-                                            $currentVal = $model ? $model->getShareholderDividendInCashOrSharesAtYear($yearOrMonthAsIndex) : 0;
+                                            $currentVal = $model ? $model->getShareholderDividendInCashOrSharesAtYear($yearOrMonthAsIndex) : 'in_cash';
                                             @endphp
                                             {{-- <x-repeat-right-dot-inputs :name="'shareholders_dividend_payout_ratios['.$year.']'" :currentVal="number_format($currentVal,1)" :classes="'only-greater-than-zero-allowed'" :is-percentage="true"  :columnIndex="$columnIndex"></x-repeat-right-dot-inputs> --}}
                                             <div class="form-group three-dots-parent">
@@ -613,7 +613,7 @@
 									
 									 <td class="td-classes">
 										<div>
-										<input value="{{ __('CBE Lending Corridor Rate %') }}" disabled="" class="form-control  text-left mt-2" type="text">
+										<input value="{{ __('CBE Lending Corridor Rate %') }}" disabled="" class="form-control min-w-300 text-left mt-2" type="text">
 										
 										</div>
 										

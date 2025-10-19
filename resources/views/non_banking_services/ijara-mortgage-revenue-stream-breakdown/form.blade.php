@@ -74,7 +74,7 @@ use App\Models\NonBankingService\IjaraMortgageBreakdown;
 
                                     <td>
                                         <div class="">
-                                            <input value="{{ __('Operating Months Per Year') }}" disabled class="form-control min-width-300 text-left mt-2" type="text">
+                                            <input value="{{ __('Operating Months Per Year') }}" disabled class="form-control max-w-300 text-left mt-2" type="text">
                                         </div>
 
 
@@ -111,7 +111,7 @@ use App\Models\NonBankingService\IjaraMortgageBreakdown;
 
                                     <td>
                                         <div class="">
-                                            <input value="{{ __('Growth Rate %') }}" disabled class="form-control min-width-300 text-left mt-2" type="text">
+                                            <input value="{{ __('Growth Rate %') }}" disabled class="form-control max-w-300 text-left mt-2" type="text">
                                         </div>
 
 
@@ -157,7 +157,7 @@ use App\Models\NonBankingService\IjaraMortgageBreakdown;
                                 <tr total-row-tr data-repeat-formatting-decimals="0" data-repeater-style>
 
                                     <td>
-                                        <input value="{{ __('Ijara Projection') }}" disabled class="form-control min-width-300 text-left mt-2" type="text">
+                                        <input value="{{ __('Ijara Projection') }}" disabled class="form-control max-w-300 text-left mt-2" type="text">
                                     </td>
 
 
@@ -282,7 +282,7 @@ use App\Models\NonBankingService\IjaraMortgageBreakdown;
 
                                     <td>
                                         <x-form.select :required="true" :label="''" :pleaseSelect="false" :selectedValue="isset($subModel) ? $subModel->getInstallmentInterval() : 'monthly'" :options="[['title'=>__('Monthly'),'value'=>'monthly'],['title'=>__('Quarterly'),'value'=>'quartly'],['value'=>'semi annually','title'=>__('Semi-annually')]]" :add-new="false" class="select2-select  repeater-select  " :all="false" name="installment_interval"></x-form.select>
-                                        <input value="{{ __('Ijara Projection') }}" disabled class="form-control min-width-300 text-left mt-2" type="text">
+                                        <input value="{{ __('Ijara Projection') }}" disabled class="form-control max-w-300 text-left mt-2" type="text">
 
                                     </td>
                                     <td>
@@ -387,7 +387,7 @@ use App\Models\NonBankingService\IjaraMortgageBreakdown;
 
 
                                     <td>
-                                        <input value="{{ __('Administration Fees Rate') }}" disabled class="form-control min-width-300 text-left mt-2" type="text">
+                                        <input value="{{ __('Administration Fees Rate') }}" disabled class="form-control max-w-300 text-left mt-2" type="text">
 
                                     </td>
                                     @php
@@ -414,7 +414,7 @@ use App\Models\NonBankingService\IjaraMortgageBreakdown;
 
 
                                     <td>
-                                        <input disabled value="{{ __('Expected Credit Loss Rate (ECL %)') }}" class="form-control text-left" type="text">
+                                        <input disabled value="{{ __('Expected Credit Loss Rate (ECL %)') }}" class="form-control max-w-300 text-left" type="text">
 
                                     </td>
                                     @php
@@ -500,7 +500,7 @@ use App\Models\NonBankingService\IjaraMortgageBreakdown;
 
 
                                     <td>
-                                        <input value="{{ __('Equity Funding Rate (%)') }}" disabled class="form-control min-width-300 text-left mt-2" type="text">
+                                        <input value="{{ __('Equity Funding Rate (%)') }}" disabled class="form-control max-w-300 text-left mt-2" type="text">
 
                                     </td>
                                     @php
@@ -537,7 +537,7 @@ use App\Models\NonBankingService\IjaraMortgageBreakdown;
 
 
                                     <td>
-                                        <input value="{{ __('Equity Funding Value') }}" disabled class="form-control min-width-300 text-left mt-2" type="text">
+                                        <input value="{{ __('Equity Funding Value') }}" disabled class="form-control max-w-300 text-left mt-2" type="text">
 
                                     </td>
                                     @php
@@ -568,7 +568,7 @@ use App\Models\NonBankingService\IjaraMortgageBreakdown;
 
                                 <tr data-repeat-formatting-decimals="2" data-repeater-style>
                                     <td>
-                                        <input disabled value="{{ __('New Loans Funding Rate (%)') }}" class="form-control text-left" type="text">
+                                        <input disabled value="{{ __('New Loans Funding Rate (%)') }}" class="form-control max-w-300 text-left" type="text">
                                     </td>
                                     @php
                                     $columnIndex = 0 ;
@@ -605,7 +605,7 @@ use App\Models\NonBankingService\IjaraMortgageBreakdown;
 
 
                                     <td>
-                                        <input disabled value="{{ __('New Loans Funding Value') }}" class="form-control text-left" type="text">
+                                        <input disabled value="{{ __('New Loans Funding Value') }}" class="form-control max-w-300 text-left" type="text">
 
                                     </td>
                                     @php

@@ -692,6 +692,7 @@ class Loans2Controller extends Controller
 		//	$time  = microtime(true);
 			$datesAsIndexString=HDate::generateDatesBetweenStartDateAndDuration(0,$loanStartDate,$tenor,'monthly');
 		// for($i = 0 ; $i <= 600 ; $i++){
+		// dd('q',$isAtEnd);
 			$result = [];
 			if($isAtEnd){
 				$result = $calculateVariableLoanAtEndService->__calculate([],-1,$loanType, $loanStartDate, $loanAmount,$baseRate,  $marginRate,  $tenor, $installmentPaymentIntervalName,$interestInterval, $stepUpRate, $stepUpIntervalName ,$stepDownRate ,  $stepDownIntervalName ,$gracePeriod,0  );

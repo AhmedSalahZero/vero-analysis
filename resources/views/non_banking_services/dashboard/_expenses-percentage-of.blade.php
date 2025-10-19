@@ -60,7 +60,7 @@
             @endphp
             <td>
                 <div class="">
-                    <input value="{{ __(' % / REV') }}" disabled class="form-control text-left " type="text">
+                    <input value="{{ __(' % / REV') }}" disabled class="form-control max-w-255  text-left " type="text">
                 </div>
 
 
