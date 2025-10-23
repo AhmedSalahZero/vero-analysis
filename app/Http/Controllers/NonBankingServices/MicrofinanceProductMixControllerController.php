@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\NonBankingServices;
 
-use App\Equations\MonthlyFixedRepeatingAmountEquation;
 use App\Helpers\HArr;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\NonBankingServices\StoreLeasingRevenueStreamRequest;
@@ -42,7 +41,7 @@ class MicrofinanceProductMixControllerController extends Controller
 
     public function store(Company $company, Request $request, Study $study )
     {
-       $study->
+    //    $study->
 		return response()->json([
                 'redirectTo'=>route('view.manpower.for.non.banking', ['company'=>$company->id,'study'=>$study->id])
             ]);

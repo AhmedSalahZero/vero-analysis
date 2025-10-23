@@ -69,8 +69,8 @@ class Manpower extends Model
 					->join('departments','positions.department_id','=','departments.id')
 					->where('manpowers.company_id',$companyId)
 					->where('study_id',$studyId)
-					->where('type','manpower')
-					->selectRaw('expense_type,salary_expenses,expense_type')->get();
+					->where('departments.type','manpower')
+					->selectRaw('expense_type,salary_expenses')->get();
 					
         foreach ($salaryExpenses as $salaryExpense) {
             $expenseCategory = $salaryExpense->expense_type;

@@ -50,7 +50,7 @@
 $canAddNewItem = true;
 @endphp
 
-<div class="{{ $tableClass }} {{ $parentClass }}  js-parent-to-table" data-table-id="{{ $repeaterId??'' }}" @if($hideByDefault) style="display:none" @endif>
+<div class="{{ $tableClass }} {{ $parentClass }}  js-parent-to-table " data-table-id="{{ $repeaterId??'' }}" @if($hideByDefault) style="display:none" @endif>
 
 
     @if($showRows)

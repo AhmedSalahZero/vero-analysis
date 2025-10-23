@@ -79,7 +79,7 @@ class Expense extends Model
     }
     public function getEndDateFormatted()
     {
-        return $this->end_date ? app('dateIndexWithDate')[$this->end_date] : null;
+        return !is_null($this->end_date) ? app('dateIndexWithDate')[$this->end_date] : null;
     }
     public function getEndDateYearAndMonth()
     {
@@ -274,5 +274,8 @@ class Expense extends Model
             'selectedRevenueStreamTypes'=>$selectedRevenueStreamTypes
         ];
     }
-	
+	public function getStartDateType()
+	{
+		return $this->start_date_type;
+	}
 }

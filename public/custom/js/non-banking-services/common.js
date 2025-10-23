@@ -104,15 +104,41 @@ $(function () {
 // })
 
 $(document).on('change', '[js-recalculate-equity-funding-value],.js-recalculate-equity-funding-value', function () {
-	// console.log('from 7')
+	const parent  = $(this).closest('table');
 	const columnIndex = parseInt($(this).attr('data-column-index'))
-	const total = $('.total-loans-hidden[data-column-index="' + columnIndex + '"]').val()
-	const equityFundingRate = $('.equity-funding-rates[data-column-index="' + columnIndex + '"]').val()
+	let total = $(parent).find('.total-loans-hidden[data-column-index="' + columnIndex + '"]').val()
+	if(total == undefined){
+		total = $('.total-loans-hidden[data-column-index="' + columnIndex + '"]').val()
+	}
+	let equityFundingRate = $(parent).find('.equity-funding-rates[data-column-index="' + columnIndex + '"]').val()
+	if(equityFundingRate == undefined){
+		equityFundingRate = $('.equity-funding-rates[data-column-index="' + columnIndex + '"]').val();
+	}
 	let equityFundingValue = equityFundingRate / 100 * total
 	let newLoanFundingValue = (1 - (equityFundingRate / 100)) * total
-	$('input.equity-funding-formatted-value-class[data-column-index="' + columnIndex + '"]').val(number_format(equityFundingValue)).trigger('change')
-	$('input.new-loans-funding-formatted-value-class[data-column-index="' + columnIndex + '"]').val(number_format(newLoanFundingValue)).trigger('change')
+	console.log();
+	if($(parent).find('input.equity-funding-formatted-value-class[data-column-index="' + columnIndex + '"]').length){
+		$(parent).find('input.equity-funding-formatted-value-class[data-column-index="' + columnIndex + '"]').val(number_format(equityFundingValue)).trigger('change')
+		$(parent).find('input.new-loans-funding-formatted-value-class[data-column-index="' + columnIndex + '"]').val(number_format(newLoanFundingValue)).trigger('change')
+	}else{
+		$('input.equity-funding-formatted-value-class[data-column-index="' + columnIndex + '"]').val(number_format(equityFundingValue)).trigger('change')
+		$('input.new-loans-funding-formatted-value-class[data-column-index="' + columnIndex + '"]').val(number_format(newLoanFundingValue)).trigger('change')
+	}
+	
+
 })
+
+// $(document).on('change', '[js-recalculate-equity-funding-value],.js-recalculate-equity-funding-value', function () {
+// 	// console.log('from 7')
+// 	const columnIndex = parseInt($(this).attr('data-column-index'))
+// 	const total = $('.total-loans-hidden[data-column-index="' + columnIndex + '"]').val()
+// 	const equityFundingRate = $('.equity-funding-rates[data-column-index="' + columnIndex + '"]').val()
+// 	let equityFundingValue = equityFundingRate / 100 * total
+// 	let newLoanFundingValue = (1 - (equityFundingRate / 100)) * total
+// 	$('input.equity-funding-formatted-value-class[data-column-index="' + columnIndex + '"]').val(number_format(equityFundingValue)).trigger('change')
+// 	$('input.new-loans-funding-formatted-value-class[data-column-index="' + columnIndex + '"]').val(number_format(newLoanFundingValue)).trigger('change')
+// })
+
 //$('[js-recalculate-equity-funding-value]').trigger('change')
 function convertDateToDefaultDateFormat(dateStr) {
 	const [month, day, year] = dateStr.split("/") // Split the string by "/";
@@ -1091,42 +1117,98 @@ $(document).on('change', 'select.update-revenue-category-based-on-revenue-js', f
 })
 $('select.update-revenue-category-based-on-revenue-js').trigger('change')
 
-$(document).on('change','.microfinance-checkbox-js',function(){
-	var checked = $(this).is(':checked');
-	if(checked){
-		$('.show-only-with-microfinance').show();
-	}else{
-		$('.show-only-with-microfinance').hide();
-		$('.show-only-with-microfinance input').prop('checked',false).trigger('change');
+$(document).on('change', '.microfinance-checkbox-js', function () {
+	var checked = $(this).is(':checked')
+	if (checked) {
+		$('.show-only-with-microfinance').show()
+	} else {
+		$('.show-only-with-microfinance').hide()
+		$('.show-only-with-microfinance input').prop('checked', false).trigger('change')
 		$('.no-branch-div').addClass('hidden')
-	//	$('.no-branch-input-js').val(0).trigger('change')
-		
+		//	$('.no-branch-input-js').val(0).trigger('change')
+
 	}
 })
-$('.microfinance-checkbox-js').trigger('change');
+$('.microfinance-checkbox-js').trigger('change')
 
 
-$(document).on('change','.microfinance-sub-checkbox-js',function(){
-	var isWholeCompany = $(this).hasClass('is-whole-company');
-	var isByBranch = $(this).hasClass('is-by-branch');
+$(document).on('change', '.microfinance-sub-checkbox-js', function () {
+	var isWholeCompany = $(this).hasClass('is-whole-company')
+	var isByBranch = $(this).hasClass('is-by-branch')
 	// console.log(isByBranch)
-	if(isByBranch){
+	if (isByBranch) {
 		$('.no-branch-div').removeClass('hidden')
-	}else{
+	} else {
 		$('.no-branch-div').addClass('hidden')
-	//	$('.no-branch-input-js').val(0).trigger('change')
+		//	$('.no-branch-input-js').val(0).trigger('change')
 	}
-});
-$('.microfinance-sub-checkbox-js:checked').trigger('change');
+})
+$('.microfinance-sub-checkbox-js:checked').trigger('change')
 
-$(document).on('change','.create-product-or-existing-branch-js',function(){
-	const isChecked = $(this).is(':checked');
-	const value = $(this).val();
+$(document).on('change', '.create-product-or-existing-branch-js', function () {
+	const isChecked = $(this).is(':checked')
+	const value = $(this).val()
 	console.log(value)
-	if(value == 'product-mix'){
+	if (value == 'product-mix') {
 		$('.product-mix-count-parent-js').removeClass('hidden')
-	}else{
+	} else {
 		$('.product-mix-count-parent-js').addClass('hidden')
 	}
 })
-$('.create-product-or-existing-branch-js:checked').trigger('change');
+$('.create-product-or-existing-branch-js:checked').trigger('change')
+
+
+function calculateResult(input,v) {
+        //        let baseValue = input.value.trim();
+		baseValue = $(input).val();
+	
+          //      let multiplier = parseFloat(multiplierValue);
+
+                if (baseValue.startsWith("=")) {
+                    try {
+                        baseValue = math.evaluate(baseValue.substring(1)); // Evaluate formula
+                    } catch (e) {
+                        baseValue = 0;
+                    }
+                } else {
+                    baseValue = parseFloat(baseValue);
+                }
+				console.log('after',baseValue);
+                if (!isNaN(baseValue)) {
+					baseValueHidden = baseValue.toFixed(10); // Format to 5 decimals
+                    baseValue = baseValue.toFixed(2); // Format to 5 decimals
+                   $(input).val(baseValue).trigger('change'); // Update input field
+				   $(input).closest('.input-hidden-parent').find('input.input-hidden-with-name').val(baseValueHidden);
+                }
+
+            }
+			$(document).on('blur','.calcField',function(){
+				calculateResult($(this),this.value.trim());
+			})
+       
+$(document).on('click','.recalculate-decrease-rates',function(){
+	const parent = $(this).closest('td');
+	const productId = parent.attr('data-product-id');
+	const tenor = $('.tenor-class'+productId).val();
+	const flatRate = $(parent).find('.flat-rate-input').val();
+	console.log(flatRate)
+	parent.find('.flat-rate-id').val(flatRate);
+	
+	const companyId = $('body').attr('data-current-company-id')
+	const lang = $('body').attr('data-lang')
+	let studyId = $('#study-id-js').val()
+	const url = '/' + lang + '/' + companyId + '/non-banking-financial-services/study/' + studyId + '/get-decrease-rate-based-on-flat-rate';
+	
+	
+	$.ajax({
+		url ,
+		data:{
+			flatRate,
+			tenor
+		},
+		success:function(res){
+			parent.find('.decreasing-rate-id').val(res.decreaseRate);
+		}
+	})
+	
+})

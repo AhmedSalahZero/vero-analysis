@@ -71,7 +71,9 @@ use App\Models\NonBankingService\Expense;
                                 <x-tables.repeater-table-th class="col-md-1 header-border-down rate-class" :title="__('VAT <br> Rate')"></x-tables.repeater-table-th>
                                 {{-- <x-tables.repeater-table-th class="col-md-1 header-border-down" :title="__('Is <br> Deductible')"></x-tables.repeater-table-th> --}}
                                 <x-tables.repeater-table-th class="col-md-1 header-border-down rate-class" :title="__('Withhold <br> Tax Rate')" :helperTitle="__('Withhold Tax rate will be calculated based on Monthly Amount excluding VAT')"></x-tables.repeater-table-th>
+                                @if(!$model->isMonthlyStudy())
                                 <x-tables.repeater-table-th class="col-md-1 header-border-down rate-class" :title="__('Annual <br> Increase%')"></x-tables.repeater-table-th>
+                                @endif
                                 {{-- <x-tables.repeater-table-th class="col-md-2 header-border-down" :title="__('Increase <br> Interval')"></x-tables.repeater-table-th> --}}
                             </x-slot>
                             <x-slot name="trs">
@@ -162,19 +164,20 @@ use App\Models\NonBankingService\Expense;
                         </div>
                     </td>
 
-
+                    @if(!$model->isMonthlyStudy())
                     <td>
                         <div class="d-flex align-items-center increase-rate-parent">
                             {{-- <input class="form-control only-percentage-allowed text-center" value="{{ isset($subModel) ? number_format($subModel->getIncreaseRate(),PERCENTAGE_DECIMALS) : "0.00" }}" type="text"> --}}
                             {{-- <span style="margin-left:3px	">%</span> --}}
-							<button class="btn btn-primary btn-md text-nowrap increase-rate-trigger-btn" type="button" data-toggle="modal" >{{ __('Increase Rates') }}</button>
-							<x-modal.increase-rates :study="$study" :subModel="isset($subModel) ? $subModel : null " :tableId="$tableId" :isRepeater="$isRepeater" :id="$repeaterId.'test-modal-id'"></x-modal.increase-rates>
+                            <button class="btn btn-primary btn-md text-nowrap increase-rate-trigger-btn" type="button" data-toggle="modal">{{ __('Increase Rates') }}</button>
+                            <x-modal.increase-rates :study="$study" :subModel="isset($subModel) ? $subModel : null " :tableId="$tableId" :isRepeater="$isRepeater" :id="$repeaterId.'test-modal-id'"></x-modal.increase-rates>
 
                             {{-- <input type="hidden" value="{{ (isset($subModel) ? $subModel->getIncreaseRate() : 0) }}" @if($isRepeater) name="increase_rate" @else name="{{ $tableId }}[0][increase_rate]" @endif> --}}
 
                         </div>
                     </td>
-                
+                    @endif
+
 
 
                     </tr>
@@ -376,26 +379,26 @@ use App\Models\NonBankingService\Expense;
                                     </div>
 
                                 </td>
-							
-								 <td>
+
+                                <td>
                                     <div class="min-w-200">
-                                        <x-form.select name="revenue_stream_type"  :multiple="true" :selectedValue="isset($subModel) ? $subModel->getRevenueStreamTypes() : ''" :options="$selectedRevenueStreams" :add-new="false" class="select2-select repeater-select update-revenue-category-based-on-revenue-js " :all="false" data-current-selected="{{ json_encode(isset($subModel) ? $subModel->getRevenueStreamTypes():[]) }}" ></x-form.select>
+                                        <x-form.select name="revenue_stream_type" :multiple="true" :selectedValue="isset($subModel) ? $subModel->getRevenueStreamTypes() : ''" :options="$selectedRevenueStreams" :add-new="false" class="select2-select repeater-select update-revenue-category-based-on-revenue-js " :all="false" data-current-selected="{{ json_encode(isset($subModel) ? $subModel->getRevenueStreamTypes():[]) }}"></x-form.select>
                                     </div>
                                 </td>
-								
-								<td>
+
+                                <td>
                                     <div class="min-w-200">
-                                        <x-form.select name="stream_category_ids" :multiple="true" :selectedValue="isset($subModel) ? $subModel->getStreamCategoryIds() : ''" :options="[]" :add-new="false" class="select2-select repeater-select  revenue-category-class" :all="false" data-current-selected="{{ json_encode(isset($subModel) ? $subModel->getStreamCategoryIds():[]) }}" ></x-form.select>
+                                        <x-form.select name="stream_category_ids" :multiple="true" :selectedValue="isset($subModel) ? $subModel->getStreamCategoryIds() : ''" :options="[]" :add-new="false" class="select2-select repeater-select  revenue-category-class" :all="false" data-current-selected="{{ json_encode(isset($subModel) ? $subModel->getStreamCategoryIds():[]) }}"></x-form.select>
                                     </div>
                                 </td>
-								
+
                                 {{-- <td>
                                     <div class="min-w-200">
                                         <x-select.multi-layer-for-repeater :selectedMainOptions="isset($subModel) ? $subModel->getRevenueStreamTypes() : []" :selectedSubOptions="isset($subModel) ? $subModel->getStreamCategoryIds() : []" :mainItemsName="'revenue_stream_type'" :subItemsName="'stream_category_ids'" :options="$revenueStreams"></x-select.multi-layer-for-repeater>
                                     </div>
                                 </td> --}}
 
-                            
+
 
                                 <td>
 
@@ -666,7 +669,9 @@ use App\Models\NonBankingService\Expense;
                     <x-tables.repeater-table-th class="col-md-1 header-border-down rate-class" :title="__('VAT <br> Rate')"></x-tables.repeater-table-th>
                     {{-- <x-tables.repeater-table-th class="col-md-1 header-border-down" :title="__('Is <br> Deductible')"></x-tables.repeater-table-th> --}}
                     <x-tables.repeater-table-th class="col-md-1 header-border-down" :title="__('Withhold <br> Tax Rate')" :helperTitle="__('Withhold Tax rate will be calculated based on Monthly Amount excluding VAT')"></x-tables.repeater-table-th>
+                    @if(!$model->isMonthlyStudy())
                     <x-tables.repeater-table-th class="col-md-1 header-border-down" :title="__('Annual <br> Increase%')"></x-tables.repeater-table-th>
+                    @endif
                     {{-- <x-tables.repeater-table-th class="col-md-2 header-border-down" :title="__('Increase <br> Interval')"></x-tables.repeater-table-th> --}}
                 </x-slot>
                 <x-slot name="trs">
@@ -705,24 +710,24 @@ use App\Models\NonBankingService\Expense;
                                 <x-form.select data-current-selected="{{ isset($subModel) ? $subModel->getExpenseNameId() : '' }}" :selectedValue="isset($subModel) ? $subModel->getExpenseNameId() : ''" :options="[]" :add-new="false" class="select2-select repeater-select expense_name_id " :all="false" name="@if($isRepeater) expense_name_id @else {{ $tableId }}[0][expense_name_id] @endif"></x-form.select>
                             </div>
                         </td>
-						
-						
+
+
 
                         {{-- <td>
                                     <input value="{{ isset($subModel) ?  $subModel->getName() : old('name') }}" class="form-control" @if($isRepeater) name="name" @else name="{{ $tableId }}[0][name]" @endif type="text">
                         </td> --}}
 
                         <td>
-                                    <div class="min-w-200">
-                                        <x-form.select name="revenue_stream_type"  :multiple="true" :selectedValue="isset($subModel) ? $subModel->getRevenueStreamTypes() : ''" :options="$selectedRevenueStreams" :add-new="false" class="select2-select repeater-select update-revenue-category-based-on-revenue-js " :all="false" data-current-selected="{{ json_encode(isset($subModel) ? $subModel->getRevenueStreamTypes():[]) }}" ></x-form.select>
-                                    </div>
-                                </td>
-								
-								<td>
-                                    <div class="min-w-200">
-                                        <x-form.select name="stream_category_ids" :multiple="true" :selectedValue="isset($subModel) ? $subModel->getStreamCategoryIds() : ''" :options="[]" :add-new="false" class="select2-select repeater-select  revenue-category-class" :all="false" data-current-selected="{{ json_encode(isset($subModel) ? $subModel->getStreamCategoryIds():[]) }}" ></x-form.select>
-                                    </div>
-                                </td>
+                            <div class="min-w-200">
+                                <x-form.select name="revenue_stream_type" :multiple="true" :selectedValue="isset($subModel) ? $subModel->getRevenueStreamTypes() : ''" :options="$selectedRevenueStreams" :add-new="false" class="select2-select repeater-select update-revenue-category-based-on-revenue-js " :all="false" data-current-selected="{{ json_encode(isset($subModel) ? $subModel->getRevenueStreamTypes():[]) }}"></x-form.select>
+                            </div>
+                        </td>
+
+                        <td>
+                            <div class="min-w-200">
+                                <x-form.select name="stream_category_ids" :multiple="true" :selectedValue="isset($subModel) ? $subModel->getStreamCategoryIds() : ''" :options="[]" :add-new="false" class="select2-select repeater-select  revenue-category-class" :all="false" data-current-selected="{{ json_encode(isset($subModel) ? $subModel->getStreamCategoryIds():[]) }}"></x-form.select>
+                            </div>
+                        </td>
                         {{--
                                 <td>
                                     <x-form.select :selectedValue="isset($subModel) ? $subModel->getStreamCategoryIds() : ''" :options="getAllocationsBases()" :multiple="true" :add-new="false" class="select2-select repeater-select  stream-category-class" :all="false" name="@if($isRepeater) stream_category_ids @else {{ $tableId }}[0][stream_category_ids] @endif"></x-form.select>
@@ -790,19 +795,17 @@ use App\Models\NonBankingService\Expense;
         </div>
     </td>
 
-
+    @if(!$model->isMonthlyStudy())
     <td>
         <div class="d-flex align-items-center increase-rate-parent">
-					<button class="btn btn-primary btn-md text-nowrap increase-rate-trigger-btn" type="button" data-toggle="modal" >{{ __('Increase Rates') }}</button>
-							<x-modal.increase-rates :study="$study" :subModel="isset($subModel) ? $subModel : null " :tableId="$tableId" :isRepeater="$isRepeater" ></x-modal.increase-rates>
+            <button class="btn btn-primary btn-md text-nowrap increase-rate-trigger-btn" type="button" data-toggle="modal">{{ __('Increase Rates') }}</button>
+            <x-modal.increase-rates :study="$study" :subModel="isset($subModel) ? $subModel : null " :tableId="$tableId" :isRepeater="$isRepeater"></x-modal.increase-rates>
 
 
-            {{-- <input class="form-control only-percentage-allowed text-center" value="{{ isset($subModel) ? number_format($subModel->getIncreaseRate(),PERCENTAGE_DECIMALS) : "0.00" }}" type="text"> --}}
-            {{-- <span style="margin-left:3px	">%</span> --}}
-            {{-- <input type="hidden" value="{{ (isset($subModel) ? $subModel->getIncreaseRate() : 0) }}" @if($isRepeater) name="increase_rate" @else name="{{ $tableId }}[0][increase_rate]" @endif> --}}
 
         </div>
     </td>
+    @endif
     {{-- <td>
                                     <x-form.select :selectedValue="isset($subModel) ? $subModel->getIncreaseInterval() : 'annually' " :options="getDurationIntervalTypesForSelectExceptMonthly()" :add-new="false" class="select2-select   repeater-select" :all="false" name="@if($isRepeater) increase_interval @else {{ $tableId }}[0][increase_interval] @endif" id="{{$type.'_'.'duration_type' }}"></x-form.select>
 

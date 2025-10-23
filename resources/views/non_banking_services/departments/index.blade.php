@@ -54,10 +54,10 @@ use App\Helpers\HArr;
                     {{ __('New General Department') }}
                 </a>
 				
-				   <a href="{{ route('create.microfinance-departments',['company'=>$company->id]) }}" class="btn btn-2-bg bg-white-hover new-study-item rounded btn-icon-sm align-self-center">
+				   {{-- <a href="{{ route('create.microfinance-departments',['company'=>$company->id]) }}" class="btn btn-2-bg bg-white-hover new-study-item rounded btn-icon-sm align-self-center">
                     <i class="fas fa-plus white-icon exclude-icon"></i>
                     {{ __('New Microfinance Department') }}
-                </a>
+                </a> --}}
 				
 				
             </div>

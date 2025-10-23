@@ -78,6 +78,7 @@ trait HasBasicStoreRequest
 			$this->$relationName()->where($relationTableName.'.id',$id)->first()->update(array_merge($dataToUpdate,$additionRelationData));
 		}
 		
+		
 		foreach($relationDataArray as $data){
 			if(!isset($data['id']) || $data['id'] == 0){
 				unset($data['id']);
@@ -122,8 +123,8 @@ trait HasBasicStoreRequest
 			}
 			
 		}
-
 		foreach($columnsWithPayload as $relationName => $values){
+			// dd($relationName,$this->{$relationName},is_null($this->{$relationName}));
 			if(is_null($this->{$relationName})){
 				$this->{$relationName}()->create($values);
 			}else{

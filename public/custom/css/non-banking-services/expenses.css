@@ -43,9 +43,12 @@
         text-align: left
     }
 
-    .kt-portlet .kt-portlet__body {
+    .kt-portlet .kt-portlet__body:not(.exclude) {
         overflow-x: scroll;
     }
+	.hight-200{
+		height:80px !important;
+	}
 
     .repeat-to-r {
         flex-basis: 100%;

@@ -151,7 +151,6 @@ use MathPHP\Statistics\Correlation ;
 								@if($withSensitivity)
                                 <a href="{{ route('view.results.dashboard',['company'=>$company,'study'=>$study->id]) }}" class="btn btn-sm btn-brand btn-elevate btn-pill text-white" >{{ __('Reset Sensitivity') }}</a>
 								@endif 
-                                {{-- <i data-toggle="modal" data-target="#{{ $currentModalId }}" class="flaticon2-information kt-font-primary exclude-icon ml-2 cursor-pointer "></i> --}}
                                 @include('non_banking_services.dashboard._spread-rate-sensitivity-modal',['currentModalId'=>$currentModalId,'modalTitle'=>$currentModalTitle])
                             </div>
 		

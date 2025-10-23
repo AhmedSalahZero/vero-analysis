@@ -2,7 +2,7 @@
 'subModel',
 'study'=>$study,
 'title'=>__('Annual Increase Rate'),
-'tableId'
+'name'=>null
 ])
 
 <script>
@@ -25,7 +25,7 @@
                         <thead>
                             <tr>
                                 <th class="text-center">{{ __('Year') }}</th>
-                                <th class="text-center">{{ __('Payment Rate %') }}</th>
+                                <th class="text-center">{{ __('Rate %') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -45,7 +45,7 @@
 								
 								 <td >
 								<div class="max-w-selector-popup">
-                                    <input multiple name="increase_rates" class="form-control " value="{{ $currentIncreaseRate }}" placeholder="{{ __('Increase %') .  ' ' . $yearNumber  }}">
+                                    <input multiple name="{{ isset($name) ? $name.'['.$yearNumber.']' : 'increase_rates' }}" class="form-control " value="{{ $currentIncreaseRate }}" placeholder="{{ __('Increase %') .  ' ' . $yearNumber  }}">
 								</div>
                                 </td>
                                 

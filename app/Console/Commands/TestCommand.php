@@ -50,6 +50,9 @@ class TestCommand extends Command
 	}
 	public function handle()
 	{
+		// $x = (new ConvertFlatRateToDecreasingRate)->excel_rate(34,13);
+		// dd($x);
+		
 		// $x = $this->getTableNamesThatHasColumn('position_id',NON_BANKING_SERVICE_CONNECTION_NAME);;;
 		// dd($x);
 	

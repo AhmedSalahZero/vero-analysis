@@ -17,6 +17,7 @@ class MicrofinancePosition extends Model
 	protected $casts = [
 	
 	];
+	
 	public function getName()
 	{
 		return $this->name ;

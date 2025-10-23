@@ -132,13 +132,7 @@ class ExpenseController extends Controller
 	}
 	public function store(Company $company , StoreExpenseNamesRequest $request)
 	{
-		
 		$expenseType  =$request->get('expense_type');
-		// $oldIdsFromDatabase = $company->expenseNamesFor($expenseType,$company->id)->pluck('id')->toArray();
-		
-		// $company->storeRepeaterRelations($request,['expenseNames'],$company,[
-		// 	'expense_type'=>$expenseType 
-		// ],$oldIdsFromDatabase);
 		$expenseNames = $request->get('expenseNames');
 		foreach($expenseNames as $expenseNameArr){
 			$name = $expenseNameArr['name'];

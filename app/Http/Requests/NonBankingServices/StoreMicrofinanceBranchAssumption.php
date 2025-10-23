@@ -24,16 +24,16 @@ class StoreMicrofinanceBranchAssumption extends FormRequest
      */
 	public function prepareForValidation()
 	{
-		$study = Study::find($this->study_id);
-		$dateWithDateIndex = $study->getDateWithDateIndex();
-		$newBranches = $this->get('newBranchOpeningProjections',[]) ;
-		foreach($newBranches as $index => &$itemArr){
-			$startDateAsString = $itemArr['start_date_as_string'];
-			$itemArr['start_date_as_index'] = $dateWithDateIndex[$startDateAsString];
-		}
-		$this->merge([
-			'newBranchOpeningProjections'=>$newBranches 
-		]);
+		// $study = Study::find($this->study_id);
+		// $dateWithDateIndex = $study->getDateWithDateIndex();
+		// $newBranches = $this->get('newBranchMicrofinanceOpeningProjections',[]) ;
+		// foreach($newBranches as $index => &$itemArr){
+		// 	$startDateAsString = $itemArr['start_date_as_string'];
+		// 	$itemArr['start_date_as_index'] = $dateWithDateIndex[$startDateAsString];
+		// }
+		// $this->merge([
+		// 	'newBranchMicrofinanceOpeningProjections'=>$newBranches 
+		// ]);
 	}
     public function rules()
     {

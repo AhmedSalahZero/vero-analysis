@@ -54,7 +54,9 @@ use App\Models\NonBankingService\Expense;
                             <x-tables.repeater-table-th :font-size-class="'font-14px'" class="col-md-1 header-border-down rate-class" :title="__('VAT <br> Rate')"></x-tables.repeater-table-th>
                             {{-- <x-tables.repeater-table-th :font-size-class="'font-14px'" class="col-md-1 header-border-down" :title="__('Is <br> Deductible')"></x-tables.repeater-table-th> --}}
                             <x-tables.repeater-table-th :font-size-class="'font-14px'" class="col-md-1 header-border-down rate-class" :title="__('Withhold <br> Tax Rate')" :helperTitle="__('Withhold Tax rate will be calculated based on Monthly Amount excluding VAT')"></x-tables.repeater-table-th>
+									@if(!$model->isMonthlyStudy())
                             <x-tables.repeater-table-th :font-size-class="'font-14px'" class="col-md-1 header-border-down rate-class" :title="__('Annual <br> Increase %')"></x-tables.repeater-table-th>
+							@endif
                             {{-- <x-tables.repeater-table-th :font-size-class="'font-14px'" class="col-md-2 header-border-down" :title="__('Annual Increase <br> Interval')"></x-tables.repeater-table-th> --}}
                         </x-slot>
                         <x-slot name="trs">
@@ -157,7 +159,7 @@ use App\Models\NonBankingService\Expense;
                                         <input type="hidden" value="{{ (isset($subModel) ? $subModel->getWithholdTaxRate() : 0) }}" @if($isRepeater) name="withhold_tax_rate" @else name="{{ $tableId }}[0][withhold_tax_rate]" @endif>
                                     </div>
                                 </td>
-
+		@if(!$model->isMonthlyStudy())
                                 <td>
                                       <div class="d-flex align-items-center increase-rate-parent">
                             {{-- <input class="form-control only-percentage-allowed text-center" value="{{ isset($subModel) ? number_format($subModel->getIncreaseRate(),PERCENTAGE_DECIMALS) : "0.00" }}" type="text"> --}}
@@ -170,6 +172,7 @@ use App\Models\NonBankingService\Expense;
                         </div>
 						
                                 </td>
+								@endif
                                 {{-- <td>
                                     <x-form.select :selectedValue="isset($subModel) ? $subModel->getIncreaseInterval() : 'annually' " :options="getDurationIntervalTypesForSelectExceptMonthly()" :add-new="false" class="select2-select   repeater-select" :all="false" name="@if($isRepeater) increase_interval @else {{ $tableId }}[0][increase_interval] @endif"></x-form.select>
 

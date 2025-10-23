@@ -130,8 +130,8 @@ class DashboardController extends Controller
 					->join('positions','manpowers.position_id','=','positions.id')
 					->join('departments','positions.department_id','=','departments.id')
 					->where('manpowers.company_id',$company->id)
-					->where('type','manpower')
-					->selectRaw('expense_type,salary_expenses,expense_type')->get();
+					->where('departments.type','manpower')
+					->selectRaw('expense_type,salary_expenses')->get();
 		
 	
 		$expenses = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('expenses')->join('expense_names','expense_names.id','=','expenses.expense_name_id')->selectRaw('expense_category,expense_names.name as name,name,relation_name,monthly_repeating_amounts,expense_as_percentages,sensitivity_expense_as_percentages,payload')->where('model_id',$study->id)->where('model_name','Study')->get()->toArray();

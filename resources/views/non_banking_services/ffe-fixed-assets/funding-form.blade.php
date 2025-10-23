@@ -31,7 +31,7 @@ use App\Models\NonBankingService\Expense;
                 <div class="kt-portlet__body">
 
                     {{-- start of FFE Funding Structure   --}}
-                    <div class="kt-portlet " id="new-funding-id">
+                    <div class="kt-portlet " >
                         <div class="kt-portlet__body">
                             <div class="row">
 

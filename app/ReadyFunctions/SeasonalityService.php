@@ -6,37 +6,36 @@ use stdClass;
 
 class SeasonalityService
 {
-
+	
+	public static function calculateSeasonalityPercentagePerMonth(array $distributionPercentages , array $yearsWithItsActiveMonths , array $dateIndexWithDate )
+	{
+		$finalResult = [];
+		
+		foreach($yearsWithItsActiveMonths as $year => $itsMonths){
+			$result = [];
+			//$numberOfActiveMonths = array_sum($itsMonths);
+			foreach($itsMonths as $dateAsIndex => $zeroOrOne){
+				$dateAsString = $dateIndexWithDate[$dateAsIndex];
+				$month = explode('-',$dateAsString)[1];
+				if(!isset($distributionPercentages[$month])){
+					$distributionPercentages = self::monthlyFlatDistribution();
+				}
+				$seasonalityAtCurrentMonth = $distributionPercentages[$month];
+				$result[$dateAsIndex] = $zeroOrOne ? $seasonalityAtCurrentMonth : 0 ;
+			}
+			$totalSeasonality = array_sum($result);
+			foreach($result as $dateAsIndex => $value){
+				$finalResult[$dateAsIndex] = $totalSeasonality ? $value / $totalSeasonality : 0;
+			}
+		}
+		return $finalResult;
+	}
+	
 	public static function salesSeasonality(array $revenueItem, array $duration_months_in_years)
 	{
 		$flatSeasonalityRate = 1 / 12;
 
-		// @vars $revenueItem
-		// [
-		// 	'seasonality' => 'flat',
-		// 	'quarters' => [
-		//		50 , 10,10,30
-		//] // must be 100,
-		// 'distribution_months_values'=>[
-
-		// ]
-		// ];
-
-
-		/*
-		 @vars $duration_months_in_years is like 
-		[
-		  2024 => array:12 [
-		  "01-01-2024" => 0
-		  "01-02-2024" => 0
-		  ],
-		  2025 => array:12 [
-			"01-01-2025" => 1,
-			"01-02-2025" => 1
-			]
-		]
 		
-		*/
 		$seasonality_type = $revenueItem['seasonality'];
 
 		//Final Array
@@ -143,4 +142,9 @@ class SeasonalityService
 			return $duration_monthes_in_years;
 		}
 	}
+	private static function monthlyFlatDistribution():array 
+	{
+		return ["01"=> 0.083333333, "02"=> 0.083333333, "03"=> 0.083333333, "04"=> 0.083333333, "05"=> 0.083333333, "06"=> 0.083333333, "07"=> 0.083333333, "08"=> 0.083333333, "09"=> 0.083333333, "10"=> 0.083333333, "11"=> 0.083333333, "12"=> 0.083333333];
+	}
+	
 }

@@ -7,6 +7,7 @@ use App\Helpers\HDate;
 use App\Models\Loan;
 use App\ReadyFunctions\Date;
 use Carbon\Carbon;
+use Illuminate\Support\Arr;
 
 class CalculateFixedLoanAtBeginningService
 {
@@ -14,6 +15,7 @@ class CalculateFixedLoanAtBeginningService
 	{
 		
 		$currentStartDateAsIndex=$monthIndex ;		
+
 		if($loanAmount <= 0){
 			return [] ;
 		}
@@ -31,8 +33,6 @@ class CalculateFixedLoanAtBeginningService
 				$currentStartDateAsIndex  = $previousLoopDateAsIndex ;
 				$loanStartDate = $dateWithDateIndex[$currentStartDateAsIndex];
 				$tenor = $tenor -$diffInMonths+ $installmentPaymentIntervalValue ; 
-				
-				
 				if($tenor >= 1 ){
 					$loanAmount = HArr::getValueOrPrevious($fixedAtEndResult['current_result'][$i-1]['endBalance'], $currentStartDateAsIndex);
 				}
@@ -66,6 +66,9 @@ public function __calculate($previousResult ,int $indexOfLoop,string $loanType, 
 		$datesIndexAndDaysCount =HDate::calculateDaysCountAtBeginning($datesAsIndexString,$installmentPaymentIntervalValue); 
 		unset($datesAsIndexString[array_key_last($datesAsIndexString)]);
 		$datesAsStringIndex = array_flip($datesAsIndexString);
+		if(!is_numeric($baseRate)){
+			dd($baseRate,$marginRate);
+		}
 		$currentPricing =  ($baseRate + $marginRate) /100  ;
 		$stepRate = Loan::getStepRate($loanType, $stepUpRate, $stepDownRate);
 		$stepRate = $stepRate / 100;
@@ -127,7 +130,15 @@ public function __calculate($previousResult ,int $indexOfLoop,string $loanType, 
 		$installmentAmounts = $this->calculateInstallmentAmount($installmentPaymentIntervalValue,$loanFactors,$installmentFactors, $stepRate, $installmentStartDateAsIndex, $endDateAsIndex, $tenor, $installmentPaymentIntervalValue, $appliedStepValue);
 
 		$loanScheduleResult = $this->calculateLoanScheduleResult($installmentPaymentIntervalValue,$datesIndexAndDaysCount,$loanType, $loanAmount, $interestFactors, $installmentAmounts,$currentStartDateAsIndex);
-	
+		
+		$loanScheduleResult['accured_interest'] = [];
+        if ($installmentPaymentIntervalName != 'monthly') {
+            $loanScheduleResult = $this->extendPerMonth($loanScheduleResult, $installmentPaymentIntervalValue);
+        }
+        // foreach ($loanScheduleResult['beginning'] as $dateAsIndex => $value) {
+        //     $loanScheduleResult['no_securitization'][$dateAsIndex] = 1 ;
+        // }
+			// dd($loanScheduleResult);
 		if($indexOfLoop == -1){
 		
 			return [
@@ -257,6 +268,42 @@ public function __calculate($previousResult ,int $indexOfLoop,string $loanType, 
 		}
 		return $loanScheduleResult;
 	}
+	
+	protected function extendPerMonth( array $loanScheduleResult, $installmentPaymentIntervalValue):array
+    {
+        $result = [];
+        $startDateAsIndex = array_key_first($loanScheduleResult['endBalance']??[]);
+        $endDateAsIndex = array_key_last($loanScheduleResult['endBalance']??[]);
+        $previousBeginningBalance = Arr::first($loanScheduleResult['beginning']??[]) ;
+        $result['beginning'] = [];
+        $result['endBalance'] = [];
+        // $currentInterestAmount = $loanScheduleResult['schedulePayment'][$currentDateAsIndex];
+        for ($currentDateAsIndex  =$startDateAsIndex ; $currentDateAsIndex <=$endDateAsIndex ; $currentDateAsIndex++) {
+            $currentInterestAmount = $loanScheduleResult['interestAmount'][$currentDateAsIndex]??0;
+            if ($currentInterestAmount > 0) {
+                for ($i = $currentDateAsIndex ; $i < $currentDateAsIndex + $installmentPaymentIntervalValue ; $i++) {
+                    $result['interestAmount'][$i] = $currentInterestAmount / $installmentPaymentIntervalValue;
+                }
+            }
+            $previousEndBalanceValue = $result['endBalance'][$currentDateAsIndex-1]??0;
+            $currentEndBalance=$loanScheduleResult['endBalance'][$currentDateAsIndex]??null ;
+            $result['schedulePayment'][$currentDateAsIndex] = $loanScheduleResult['schedulePayment'][$currentDateAsIndex]??0;
+            $result['principleAmount'][$currentDateAsIndex] = $loanScheduleResult['principleAmount'][$currentDateAsIndex]??0;
+        //    $result['no_securitization'][$currentDateAsIndex] = $loanScheduleResult['no_securitization'][$currentDateAsIndex]??0;
+            $result['endBalance'][$currentDateAsIndex] = isset($loanScheduleResult['endBalance'][$currentDateAsIndex]) ? $currentEndBalance :$previousEndBalanceValue;
+            $result['beginning'][$currentDateAsIndex] = $previousBeginningBalance ;
+            $previousBeginningBalance = $result['endBalance'][$currentDateAsIndex];
+        }
+        $currentInterestAmountArr = $result['interestAmount']??[];
+        ksort($currentInterestAmountArr);
+        $dateAsIndexes = array_keys($result['beginning']??[]);
+        if (app()->bound('dateIndexWithDate')) {
+            $result['accured_interest']=Loan::calculateSettlementStatement($dateAsIndexes, $loanScheduleResult['interestAmount'], $result['interestAmount']??[], 0, app('dateIndexWithDate'), false, true);
+        }
+        $result['interestAmount'] = $currentInterestAmountArr ;
+        return $result;
+    }
+	
 	
 
 	

@@ -1,9 +1,11 @@
 <?php
 namespace App\Models\NonBankingService;
 
+use App\Helpers\HArr;
 use App\Models\Traits\Scopes\CompanyScope;
 use App\Models\Traits\Scopes\NonBankingServices\BelongsToStudy;
 use App\Traits\HasBasicStoreRequest;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class  GeneralAndReserveAssumption extends Model
@@ -84,6 +86,28 @@ class  GeneralAndReserveAssumption extends Model
 	public function getCbeLendingCorridorRates():array 
 	{
 		return $this->cbe_lending_corridor_rates ;
+	}
+	public function getBaseRatesPerMonths()
+	{
+		$study = $this->study;
+		$operationDurationPerYear = $study->getOperationDurationPerYearFromIndexes();
+		$baseRates = $this->getCbeLendingCorridorRates() ;
+		$baseRatesPerMonths =[];
+		$dateIndexWithDate = app('dateIndexWithDate');
+		foreach ($operationDurationPerYear as $yearIndex => $yearMonthIndexes) {
+            foreach ($yearMonthIndexes as $monthIndex => $monthlyZeroOrOne) {
+                $yearOrMonthIndex = $study->isMonthlyStudy() ? $monthIndex : $yearIndex;
+                $baseRatesPerMonths[Carbon::make($dateIndexWithDate[$monthIndex])->format('Y-m-d')] = $baseRates[$yearOrMonthIndex];
+            }
+        }
+		
+		  $baseRatesMapping = HArr::getFirstOfYear($baseRatesPerMonths);
+        $bankLendingMarginRates=$this->getBankLendingMarginRates();
+		// dd('$bankLendingMarginRates',$bankLendingMarginRates);
+        $baseRatesMapping = HArr::isAllValuesEqual($baseRatesMapping, $bankLendingMarginRates);
+		
+		return $baseRatesMapping;
+		
 	}
 	public function getBankLendingMarginRates():array 
 	{

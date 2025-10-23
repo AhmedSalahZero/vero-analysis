@@ -6296,13 +6296,13 @@ function getNonBankingNavigation(Company $company,User $user):array
 				[
 					'title'=>__('Micro Finance Projection'),
 					'show'=>$study->hasMicroFinance(),
-					'link'=>route('create.microfinance.revenue.stream.breakdown',['company'=>$company->id,'study'=>$studyId]),
+					'link'=>route('store.all-branches.microfinance',['company'=>$company->id,'study'=>$studyId]),
 					'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
 				],
 				[
 					'title'=>__('Securitization Projection'),
 					'show'=>$study->hasSecuritization(),
-					'link'=>'#',
+					'link'=>route('create.securitization',['company'=>$company->id,'study'=>$studyId]),
 					'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
 				],
 				[
@@ -6325,18 +6325,18 @@ function getNonBankingNavigation(Company $company,User $user):array
 						'link'=>route('view.manpower.for.non.banking',['company'=>$company->id , 'study'=>$studyId]),
 						'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
 				],
-					[
-					    'title'=>__('Microfinance Existing Branches Manpower'),
-						'show'=>$study->hasMicroFinance() ,
-						'link'=>route('view.manpower.for.non.banking',['company'=>$company->id , 'study'=>$studyId]),
-						'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
-				],
-				[
-					    'title'=>__('Microfinance New Branches Manpower'),
-						'show'=>$study->hasMicroFinance() ,
-						'link'=>route('view.manpower.for.non.banking',['company'=>$company->id , 'study'=>$studyId]),
-						'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
-				],
+				// 	[
+				// 	    'title'=>__('Microfinance Existing Branches Manpower'),
+				// 		'show'=>$study->hasMicroFinance() ,
+				// 		'link'=>route('view.manpower.for.non.banking',['company'=>$company->id , 'study'=>$studyId]),
+				// 		'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
+				// ],
+				// [
+				// 	    'title'=>__('Microfinance New Branches Manpower'),
+				// 		'show'=>$study->hasMicroFinance() ,
+				// 		'link'=>route('view.manpower.for.non.banking',['company'=>$company->id , 'study'=>$studyId]),
+				// 		'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
+				// ],
 					[
 					    'title'=>__('Consumer Finance Existing Branches Manpower'),
 						'show'=>$study->hasConsumerFinance() ,
@@ -6371,18 +6371,18 @@ function getNonBankingNavigation(Company $company,User $user):array
 					'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
 				],
 				
-				[
-					    'title'=>__('Microfinance Existing Branches Expenses'),
-						'show'=>$study->hasMicroFinance() ,
-						'link'=>route('view.manpower.for.non.banking',['company'=>$company->id , 'study'=>$studyId]),
-						'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
-				],
-				[
-					    'title'=>__('Microfinance New Branches Expenses'),
-						'show'=>$study->hasMicroFinance() ,
-						'link'=>route('view.manpower.for.non.banking',['company'=>$company->id , 'study'=>$studyId]),
-						'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
-				],
+				// [
+				// 	    'title'=>__('Microfinance Existing Branches Expenses'),
+				// 		'show'=>$study->hasMicroFinance() ,
+				// 		'link'=>route('view.manpower.for.non.banking',['company'=>$company->id , 'study'=>$studyId]),
+				// 		'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
+				// ],
+				// [
+				// 	    'title'=>__('Microfinance New Branches Expenses'),
+				// 		'show'=>$study->hasMicroFinance() ,
+				// 		'link'=>route('view.manpower.for.non.banking',['company'=>$company->id , 'study'=>$studyId]),
+				// 		'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
+				// ],
 					[
 					    'title'=>__('Consumer Finance Existing Branches Expenses'),
 						'show'=>$study->hasConsumerFinance() ,
@@ -8021,7 +8021,7 @@ function getMonthFromDate(string $date){
 
 function repeatJson($jsonItems )
 {
-	$itemsArray = convertJsonToArray($jsonItems);
+	$itemsArray = is_array($jsonItems) ? $jsonItems : convertJsonToArray($jsonItems);
 	if(!count($itemsArray)){
 		return null ;
 	}
@@ -8032,6 +8032,22 @@ function repeatJson($jsonItems )
 	}
 	return json_encode($itemsArray);
 }
+
+
+function repeatLastValueInArrayUntil(array $jsonItems,int $studyEndDate )
+{
+	$itemsArray = is_array($jsonItems) ? $jsonItems : convertJsonToArray($jsonItems);
+	if(!count($itemsArray)){
+		return null ;
+	}
+	$lastKey = array_key_last($itemsArray);
+	$loopingKey = $lastKey+1;
+	for($loopingKey ; $loopingKey <= $studyEndDate ; $loopingKey++){
+		$itemsArray[$loopingKey] =$itemsArray[$lastKey];  
+	}
+	return $itemsArray;
+}
+
 
 function sumNumberOfOnes(array $items, int $year,array $datesIndexWithYearIndex)
 {
@@ -8439,4 +8455,43 @@ function generateOldNameFromFieldName(string $str):string
     $field = preg_replace('/\[([^\]]+)\]/', '.$1', $str);
 
     return $field;
+}
+function getMicrofinanceFundingBySelector():array 
+{
+	return [
+		[
+			'title'=>__('By ODAs'),
+			'value'=>'by-odas',
+		],
+		[
+			'title'=>__('By MTLs'),
+			'value'=>'by-mtls'
+		]
+	];
+}
+
+function getMicrofinanceNewBranchesFixedExpenseSelector():array 
+{
+	return [
+		[
+			'title'=>__('Start Date'),
+			'value'=>'start-date',
+		],
+		[
+			'title'=>__('Operation Date'),
+			'value'=>'operation-date'
+		]
+	];
+}
+function formatMonths($numberOfMonths):array
+{
+	$result =[ ];
+	for($i = 0 ; $i<= $numberOfMonths ; $i++){
+		$result[$i] = __('Mth-').$i;
+	}
+	return $result;
+}
+function isSecuritized($securitizationDateIndex , $currentMonthIndex):bool
+{
+	return is_numeric($securitizationDateIndex) && $currentMonthIndex>= $securitizationDateIndex;
 }

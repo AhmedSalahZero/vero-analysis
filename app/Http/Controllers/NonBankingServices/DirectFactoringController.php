@@ -48,22 +48,6 @@ class DirectFactoringController extends Controller
 			$study->storeRelationsWithNoRepeater($request,$company,['seasonality']);
 			$study->storeRepeaterRelations($request,$this->getRepeaterRelations(),$company);
 			$study->syncSeasonality($request->get('seasonality'),Study::DIRECT_FACTORING , $company->id );
-			// $yearOrMonthsIndexes = $study->getYearOrMonthIndexes();
-			// $equityFundingValues = [];
-			// $newLoanFundingValues = [];
-			// foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted){
-			// 	$sum =  $study->getTotalDirectFactoringNewPortfolioAmountsAtYearOrMonthIndex($yearOrMonthAsIndex)['sum'];
-			// 	$equityFundingRate = $request->input('equity_funding_rates.'.$yearOrMonthAsIndex);
-			// 	$newLoanFundingRate = $request->input('new_loans_funding_rates.'.$yearOrMonthAsIndex);
-			// 	$equityFundingValues[$yearOrMonthAsIndex] = $equityFundingRate/100 * $sum;
-			// 	$newLoanFundingValues[$yearOrMonthAsIndex] = $newLoanFundingRate/100 * $sum;
-			// 	dd($sum);
-			// }
-			// dd($equityFundingValues , $newLoanFundingValues);
-			// $request->merge([
-			// 	'equity_funding_values'=>$equityFundingValues,
-			// 	'new_loans_funding_values'=>$newLoanFundingValues
-			// ]);
 		
 			$study->refreshDirectFactoringLoans();
 			$study->storeAdminFeesAndFundingStructureFor($request,Study::DIRECT_FACTORING);

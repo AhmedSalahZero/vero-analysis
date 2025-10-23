@@ -13,9 +13,9 @@
                 </div>
                 <div class="col-lg-6 kt-align-right">
                     <input data-save-and-continue="0" type="submit" class="btn max-w-btn active-style {{ $submitByAjax ? 'save-form' :'' }}" value="{{ isset($text) ? $text : __('Save Changes') }}">
-					{{-- @if($department) --}}
+		
                     <input data-save-and-continue="1"  type="submit" class="btn  text-white bg-green {{ $submitByAjax ? 'save-form' :'' }}" value="{{ isset($text) ? $text : __('Save & Go To Next') }}">
-					{{-- @endif --}}
+				
                 </div>
             </div>
         

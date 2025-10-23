@@ -103,6 +103,7 @@ class HDate
 						$intervalValue = 6 ;
 						break;
 		}
+		
 		$startDateDay =explode('-',$startDate)[2];
 		$result=[];
 		if($isAtEnd){

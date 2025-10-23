@@ -20,7 +20,7 @@ class MicrofinanceProductsController extends Controller
 		return [
 			'company'=>$company ,
 			'model'=>$company ,
-			
+			// 'products'=>$company->getActiveMicrofinanceProducts(),
 			'title'=>__('Microfinance Products'),
 			'storeRoute'=>route('store.microfinance.products',['company'=>$company->id]),
 		];

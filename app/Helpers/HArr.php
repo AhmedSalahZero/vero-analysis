@@ -516,6 +516,10 @@ class HArr
     }
     public static function getValueOrPrevious(array $data, string $date)
     {
+		// dd($data , $date);
+		if(!isset($data[$date])){
+			dd($data,$date);
+		}
         return $data[$date];
         // Convert keys to timestamps for proper sorting
         //  $timestamps = array_map('strtotime', array_keys($data));
@@ -848,7 +852,10 @@ class HArr
             $type = $item->{$groupName};
             $schedulePayments = (array)json_decode($item->schedulePayment);
             foreach ($sumKeys as $dateAsIndex) {
-                $value = $schedulePayments[$dateAsIndex]??0;
+				$value = $schedulePayments[$dateAsIndex]??0;
+				if(isSecuritized($item->securitization_date_index,$dateAsIndex)){
+					$value = 0;
+				}
                 $result[$type][$dateAsIndex] = isset($result[$type][$dateAsIndex])  ? $result[$type][$dateAsIndex] + $value : $value ;
             }
         }
@@ -958,13 +965,20 @@ class HArr
 		}
 		return $totalSubItems;
 	}
-	public static function sumPerCategory(array $items , array $sumKeys,string $titleKeyName , string $payloadKeyName ):array
+	public static function sumLoanSchedulePerCategory(array $items , array $sumKeys,string $titleKeyName , string $payloadKeyName ):array
 	{
 		$result=[];
 		foreach($items as $item){
 			$title = $item->{$titleKeyName};
 			$payload = (array)(json_decode($item->{$payloadKeyName}));
-			$result[$title] = isset($result[$title]) ? HArr::sumAtDates([$result[$title],$payload],$sumKeys) : $payload ;
+			foreach($sumKeys as $dateAsIndex){
+				$value = $payload[$dateAsIndex]??0;
+				if(isSecuritized($item->securitization_date_index,$dateAsIndex)){
+					$value = 0 ;
+				}
+				$result[$title][$dateAsIndex] = isset($result[$title][$dateAsIndex]) ? $result[$title][$dateAsIndex] + $value : $value ;
+			}
+			// $result[$title] = isset($result[$title]) ? HArr::sumAtDates([$result[$title],$payload],$sumKeys) : $payload ;
 		}
 		return $result;
 	}

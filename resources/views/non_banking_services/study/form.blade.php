@@ -87,7 +87,7 @@
 																	  ] :
 																	  [
 																		1=>['title'=>1 ,'value'=>'1'],
-																		66=>['title'=>1.5 ,'value'=>'1.5'],
+																		
 																	  ]
 																	  
 																	   " :add-new="false" :is-required="true" :label="__('Study Duration In Years')" class="select2-select recalc-study-end-date study-duration" :all="false" name="duration_in_years" :selected-value="isset($model) ? $model->getDurationInYears() : 0"></x-form.select>
@@ -342,7 +342,7 @@
 
                                                 <label class="kt-radio kt-radio--success text-black font-size-14px font-weight-bold show-only-with-microfinance ">
                                                     <input class=" microfinance-sub-checkbox-js is-whole-company" type="radio" value="whole-company" name="microfinance_type" @if(isset($model) && $model->isWholeCompanyMicrofinance()) checked @endisset
-                                                    > {{ __('Whole Company') }}
+                                                    > {{ __('All Branches') }}
                                                     <span></span>
                                                 </label>
 
@@ -368,7 +368,6 @@
                                                 </label>
                                                 <label class="kt-radio kt-radio--primary text-black font-size-14px font-weight-bold show-only-with-microfinance">
                                                     {{ __('Do You Want To Create Product Mix') }}
-
                                                 </label>
 
                                                 <label class="kt-radio kt-radio--success  text-black font-size-14px font-weight-bold show-only-with-microfinance ">

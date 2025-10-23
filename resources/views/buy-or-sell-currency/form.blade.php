@@ -814,13 +814,7 @@ $safeToSafeConst = BuyOrSellCurrency::SAFE_TO_SAFE;
             });
 
 
-            // // Evaluate formula and format when pressing Enter
-            // document.getElementById("calcField").addEventListener("keydown", function(event) {
-            //     if (event.key === "Enter") {
-            //         calculateResult();
-            //     }
-            // });
-
+      
             // Ensure proper formatting when leaving the multiplier field
             document.getElementById("multiplierField").addEventListener("blur", function() {
                 let value = this.value.replace(/,/g, "").trim(); // Remove commas before parsing

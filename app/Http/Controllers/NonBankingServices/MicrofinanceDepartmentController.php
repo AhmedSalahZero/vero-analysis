@@ -17,10 +17,10 @@ class MicrofinanceDepartmentController extends Controller
 {
 	use NonBankingService ;
 	
-	public function create(Company $company , Request $request){
+	// public function create(Company $company , Request $request){
 		
-		return view('non_banking_services.microfinance-departments.form', $this->getViewVars($company));
-	}
+	// 	return view('non_banking_services.microfinance-departments.form', $this->getViewVars($company));
+	// }
 	protected function getViewVars(Company $company,$model = null){
 		return [
 			'company'=>$company ,

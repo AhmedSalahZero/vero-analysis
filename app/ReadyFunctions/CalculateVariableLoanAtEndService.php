@@ -131,9 +131,9 @@ public function __calculate($previousResult ,int $indexOfLoop,string $loanType, 
 		}
 		$principleAmounts = $this->calculatePrincipleAmount($installmentPaymentIntervalValue,$loanFactors,$principleFactors, $stepRate, $installmentStartDateAsIndex, $endDateAsIndex, $tenor, $installmentPaymentIntervalValue, $appliedStepValue);
 		$loanScheduleResult = $this->calculateLoanScheduleResult($installmentPaymentIntervalValue,$datesIndexAndDaysCount,$loanType, $loanAmount, $principleAmounts,$dailyPricing,$principlePaymentIntervalValue,$interestPaymentIntervalValue,$dateIndexWithDate);
-		foreach($loanScheduleResult['beginning'] as $dateAsIndex => $value){
-			$loanScheduleResult['no_securitization'][$dateAsIndex] = 1 ;
-		}
+		// foreach($loanScheduleResult['beginning'] as $dateAsIndex => $value){
+		// 	$loanScheduleResult['no_securitization'][$dateAsIndex] = 1 ;
+		// }
 	
 		
 		if($indexOfLoop == -1){

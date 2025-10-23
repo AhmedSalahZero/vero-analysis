@@ -373,7 +373,7 @@ use App\Models\NonBankingService\ReverseFactoringBreakdown;
 
 
                                     <td>
-                                        <input value="{{ __('Administration Fees Rate') }}" disabled class="form-control  text-left mt-2" type="text">
+                                        <input value="{{ __('Administration Fees Rate') }}" disabled class="form-control min-width-hover-300 text-left mt-2" type="text">
 
                                     </td>
                                     @php
@@ -568,7 +568,7 @@ use App\Models\NonBankingService\ReverseFactoringBreakdown;
 
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
-                                            <input type="text" data-column-index="{{ $columnIndex }}" readonly class="form-control expandable-percentage-input new-loan-function-rates-js" name="new_loans_funding_rates[{{ $yearOrMonthAsIndex }}]" value="{{ $eclAndNewPortfolioFundingRate ? $eclAndNewPortfolioFundingRate->getNewLoansFundingRatesAtYearOrMonthIndex($yearOrMonthAsIndex):0 }}"> <span class="ml-2">%</span>
+                                            <input type="text" data-column-index="{{ $columnIndex }}" readonly class="form-control expandable-percentage-input new-loan-function-rates-js" name="new_loans_funding_rates[{{ $yearOrMonthAsIndex }}]" value="{{ $eclAndNewPortfolioFundingRate ? $eclAndNewPortfolioFundingRate->getNewLoansFundingRatesAtYearOrMonthIndex($yearOrMonthAsIndex):100 }}"> <span class="ml-2">%</span>
                                         </div>
                                     </td>
                                     @php

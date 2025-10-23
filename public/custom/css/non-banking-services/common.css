@@ -455,7 +455,9 @@ input.form-control[readonly] {
 }
 .max-w-selector-popup {
     max-width: 100px;
+	margin:auto;
 }
+
 .select2-container {
     width: 100% !important;
 }
@@ -1112,6 +1114,9 @@ td > .kt-radio.kt-radio--single {
 .row-gap{
 	row-gap: 10px;
 }
+.column-gap-10{
+	column-gap: 10px;
+}
 .mt--5{
 	margin-top:-5px
 }
@@ -1236,4 +1241,14 @@ td > .kt-radio.kt-radio--single {
 		width: 270px;
 	min-width: 270px;
 	max-width: 270px;
+}
+.min-w-90{
+	min-width: 90px !important;
+	width: 90px !important;
+	max-width: 90px !important;
+}
+.min-w-120{
+	min-width: 120px !important;
+	width: 120px !important;
+	max-width: 120px !important;
 }

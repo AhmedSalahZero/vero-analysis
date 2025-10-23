@@ -34,8 +34,7 @@ class MicrofinanceBranchAssumptionsController extends Controller
     {
         return [
             'existingBranchesLoanCases',
-            'newBranchOpeningProjections',
-            'newBranchLoanCaseProjections'
+            'newBranchMicrofinanceOpeningProjections'
         ];
     }
     public function store(Company $company, StoreMicrofinanceBranchAssumption $request, Study $study)
