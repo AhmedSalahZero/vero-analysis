@@ -230,6 +230,7 @@ class Expense extends Model
         $hasReverseFactoring = in_array('has_reverse_factoring', $revenueStreamType) ;
         $hasPortfolioMortgage = in_array('has_portfolio_mortgage', $revenueStreamType) ;
         $hasDirectFactoring = in_array('has_direct_factoring', $revenueStreamType) ;
+        $hasMicrofinance = in_array('has_micro_finance', $revenueStreamType) ;
         
    //     $revenueStreamTypesWheres = [];
 		
@@ -247,6 +248,8 @@ class Expense extends Model
         }
         if ($hasDirectFactoring) {
             $selectedRevenueStreamTypes[] = Study::DIRECT_FACTORING;
+        }  if ($hasMicrofinance) {
+            $selectedRevenueStreamTypes[] = Study::MICROFINANCE;
         }
 		if(!count($selectedRevenueStreamTypes)){
 			return [

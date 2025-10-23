@@ -694,7 +694,7 @@ class Study extends Model
             'has_reverse_factoring'=>__('Reverse Factoring'),
             'has_ijara_mortgage'=>__('Ijara Mortgage'),
             'has_portfolio_mortgage'=>__('Portfolio Mortgage'),
-            'has_micro_finance'=>__('Micro Finance'),
+            'has_micro_finance'=>__('Microfinance'),
             'has_securitization'=>__('Securitization'),
             'has_consumer_finance'=>__('Consumer Finance'),
         ];
@@ -1520,9 +1520,6 @@ class Study extends Model
         $salaryTaxAndSocialInsuranceAmounts = HArr::MultiplyWithNumber($salaryExpenses, ($salaryTaxesRate+$socialInsuranceRate));
         $dateIndexWithDate = array_flip($dateAsIndexes);
         $salaryTaxAndSocialInsuranceAmountsPayment= (new CollectionPolicyService())->applyMultiCustomizedCollectionPolicy([30=>100], $salaryTaxAndSocialInsuranceAmounts);
-		if(!isset($salaryTaxAndSocialInsuranceAmounts[0])){
-			dd('d',$salaryTaxAndSocialInsuranceAmounts);
-		}
         $salaryTaxAndSocialInsuranceAmountsStatement = ManPower::calculateStatement($salaryTaxAndSocialInsuranceAmounts, [], $salaryTaxAndSocialInsuranceAmountsPayment, [], $dateIndexWithDate);
     
         /**
@@ -2206,6 +2203,7 @@ class Study extends Model
             'has_reverse_factoring'=>'reverseFactoringBreakdowns',
             'has_ijara_mortgage'=>'ijaraMortgageBreakdowns',
             'has_portfolio_mortgage'=>'portfolioMortgageRevenueProjectionByCategories',
+			'has_micro_finance'=>'microfinanceProductSalesProjects'
         ];
         $result = [];
         foreach ($revenueStreams as $currentRevenueType) {
@@ -2237,9 +2235,11 @@ class Study extends Model
                     'id'=>'portfolio_mortgage_duration',
                     'title'=>'portfolio_mortgage_duration'
                 ],
-                // 'microfinanceRevenueProjectionByCategory'=> [
-                // 	'id'=>'port'
-                // ]
+				'microfinanceProductSalesProjects'=>[
+                    'id'=>'microfinance_product_id',
+                    'title'=>'microfinance_product_id'
+                ],
+               
                 
             ][$currentRelationName];
             
@@ -2248,6 +2248,13 @@ class Study extends Model
             $title = $idAndTitleColumnNames['title'];
                     
             $currentRevenues =  $relation->pluck($title, $id)->toArray();
+			if($currentRelationName == 'microfinanceProductSalesProjects'){
+				foreach($currentRevenues as $id => $title){
+					$currentRevenues[$id] = MicrofinanceProduct::find($title)->getName();
+				}
+			}
+		
+		
             foreach ($currentRevenues as $id => $title) {
                 $title  = camelizeWithSpace($title);
                 if (is_numeric($title)) {
@@ -3769,7 +3776,7 @@ class Study extends Model
             [
                     'id'=>Study::MICROFINANCE,
                 'can_show'=> $this->hasMicroFinance() ,
-                'route'=>route('create.all-branches.microfinance', ['company'=>$this->company->id,'study'=>$this->id]),
+                'route'=>$this->getMicrofinanceFirstPage(),
             ],
             [
                 'id'=>Study::SECURITIZATION,
@@ -3894,6 +3901,10 @@ class Study extends Model
     {
         return $this->hasMany(MicrofinanceLoanOfficerCasesProjection::class, 'study_id', 'id');
     }
+	public function isByBranchMicrofinance():bool
+	{
+		return $this->microfinance_type == 'by-branch';
+	}
     public function recalculateMicrofinanceTotalCasesCounts():void
     {
 		RevenueContract::where('study_id',$this->id)->where('revenue_type',Study::MICROFINANCE)->delete();
@@ -3932,7 +3943,8 @@ class Study extends Model
             });
             
         } else 
-            $yearWithItsIndexes = $this->getOperationDurationPerYearFromIndexesForAllStudyInfo();
+            {
+				$yearWithItsIndexes = $this->getOperationDurationPerYearFromIndexesForAllStudyInfo();
             $monthIndexWithYearIndex = $this->getMonthsWithItsYear($yearWithItsIndexes);
             $this->microfinanceLoanOfficerCases->each(function (MicrofinanceLoanOfficerCasesProjection $microfinanceLoanOfficerCasesProjection) use ($monthIndexWithYearIndex) {
                 $totalExistingCasesCounts = $microfinanceLoanOfficerCasesProjection->total_existing_officers_cases_count ;
@@ -3972,6 +3984,7 @@ class Study extends Model
                     ]);
                 });
             });
+			}
                 
         
 		foreach($monthlyAmountsAndContractsPerProductIds as $productId => $monthlyLoanWithContractCount){
@@ -4309,15 +4322,18 @@ class Study extends Model
                 ]);
                 if ($isPortfolio) {
                     $schedulePayments = json_decode($loanSchedulePayment->schedulePayment, true);
+                    $principlePayments = json_decode($loanSchedulePayment->principleAmount, true);
                     $beginningBalance = json_decode($loanSchedulePayment->beginning, true);
                     $currentBeginningBalance = $beginningBalance[$monthAsIndex]??0;
                     $result[$securitization->id]['portfolio_disbursement_amount'] = isset($result[$securitization->id]['portfolio_disbursement_amount']) ? $result[$securitization->id]['portfolio_disbursement_amount'] + $currentBeginningBalance : $currentBeginningBalance;
                     foreach ($schedulePayments as $dateAsIndex => $value) {
                         if ($dateAsIndex >=$securitizationDate) {
+							$currentPrincipleAmount = $principlePayments[$dateAsIndex]??0;
                             $currentPortfolioValue = isset($result[$securitization->id]['portfolio_result'][$dateAsIndex]) ? $result[$securitization->id]['portfolio_result'][$dateAsIndex] + $value : $value ;
                             $result[$securitization->id]['portfolio_result'][$dateAsIndex]=$currentPortfolioValue;
                             $result[$securitization->id]['collection_revenue_amounts'][$dateAsIndex]=$currentPortfolioValue * $collectionRevenueRate;
                             $result[$securitization->id]['portfolio_schedule_payment_sum'] = isset($result[$securitization->id]['portfolio_schedule_payment_sum'])  ? $result[$securitization->id]['portfolio_schedule_payment_sum'] + $value : $value ;
+                            $result[$securitization->id]['portfolio_principle_amount_sum'] = isset($result[$securitization->id]['portfolio_principle_amount_sum'])  ? $result[$securitization->id]['portfolio_principle_amount_sum'] + $currentPrincipleAmount : $currentPrincipleAmount ;
                         }
                     }
                 } else {
@@ -4334,9 +4350,10 @@ class Study extends Model
                 $result[$securitization->id]['company_id'] = $this->company->id;
                 $values = $result[$securitization->id]['portfolio_result']??[];
                 $netPresetValue = Finance::npv($discountRate, array_values($values)) ;
-                $schedulePaymentSum = $result[$securitization->id]['portfolio_schedule_payment_sum']??0;
+              //  $schedulePaymentSum = $result[$securitization->id]['portfolio_schedule_payment_sum']??0;
+                $principleAmountSum = $result[$securitization->id]['portfolio_principle_amount_sum']??0;
                 $result[$securitization->id]['net_present_value'] = $netPresetValue;
-                $result[$securitization->id]['securitization_profit_or_loss'] = $netPresetValue - $schedulePaymentSum ;
+                $result[$securitization->id]['securitization_profit_or_loss'] = $netPresetValue - $principleAmountSum ;
                 // additional data to view
                 $result[$securitization->id]['revenue_stream_type'] =camelizeWithSpace($revenueStreamType) ;
                 $result[$securitization->id]['disbursement_date'] =formatDateForView($this->getDateFromDateIndex($disbursementDate)) ;
@@ -4424,5 +4441,13 @@ class Study extends Model
 	public function microfinanceByBranchProductMixes():HasMany
 	{
 		return $this->hasMany(MicrofinanceByBranchProductMix::class,'study_id','id');
+	}
+	public function getMicrofinanceFirstPage():string 
+	{
+		$microfinanceFirstPageRoute = route('create.all-branches.microfinance',['company'=>$this->company->id,'study'=>$this->id]);
+		if($this->isByBranchMicrofinance()){
+			$microfinanceFirstPageRoute = route('create.microfinance.product.mix',['company'=>$this->company->id,'study'=>$this->id]);
+		}
+		return $microfinanceFirstPageRoute;
 	}
 }

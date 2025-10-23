@@ -66,6 +66,9 @@ trait HasBasicStoreRequest
         $relationDataArray = $request->get($relationName);
 	
 		$oldIdsFromDatabase = is_null($oldIdsFromDatabase) ? $this->{$relationName}->pluck('id')->toArray() : $oldIdsFromDatabase;
+		// if(is_null($relationDataArray)){
+		// 	dd($request->all()  , $relationName);
+		// }
 		$idsFromRequest =array_column($relationDataArray,'id') ;
 		$elementsToDelete = array_diff($oldIdsFromDatabase,$idsFromRequest);
 		if(count($oldIdsFromDatabase) && !count($idsFromRequest)){

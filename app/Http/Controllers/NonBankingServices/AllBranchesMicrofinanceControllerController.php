@@ -8,6 +8,7 @@ use App\Models\NonBankingService\ExistingBranch;
 use App\Models\NonBankingService\Study;
 use App\ReadyFunctions\ConvertFlatRateToDecreasingRate;
 use App\Traits\NonBankingService;
+use Arr;
 use Illuminate\Http\Request;
 
 class AllBranchesMicrofinanceControllerController extends Controller
@@ -85,9 +86,16 @@ class AllBranchesMicrofinanceControllerController extends Controller
 			'existing_branches_counts'=>$request->get('existing_branches_counts',0)
 		]);
 		$study->handleFixedRepeatingExpenses($request);
-       
+       $redirectPageRoute = route('create.new-branches.microfinance', ['company'=>$company->id,'study'=>$study->id]) ;
+	   $isLastBranch = Arr::last(ExistingBranch::where('company_id',$company->id)->pluck('id')->toArray()) == $branchId;
+	   
+		if($branchId && !$isLastBranch){
+			return response()->json([
+                'redirectTo'=>route('create.by-branch.microfinance',['company'=>$company->id,'study'=>$study->id])
+            ]);
+		}
 		return response()->json([
-                'redirectTo'=>route('create.new-branches.microfinance', ['company'=>$company->id,'study'=>$study->id])
+                'redirectTo'=>$redirectPageRoute
             ]);
     }
 	

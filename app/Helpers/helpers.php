@@ -6232,6 +6232,7 @@ function getNonBankingNavigation(Company $company,User $user):array
 			
 	];
 	if($study){
+		$microfinanceFirstPageRoute = $study->getMicrofinanceFirstPage();
 		$isExistingCompanyNature = $study->getCompanyNature() == 'existing';
 		$urls['study-info']= [
 			'title'=>__('Study <br> Information'),
@@ -6296,7 +6297,7 @@ function getNonBankingNavigation(Company $company,User $user):array
 				[
 					'title'=>__('Micro Finance Projection'),
 					'show'=>$study->hasMicroFinance(),
-					'link'=>route('store.all-branches.microfinance',['company'=>$company->id,'study'=>$studyId]),
+					'link'=>$microfinanceFirstPageRoute,
 					'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
 				],
 				[

@@ -360,7 +360,7 @@
                                 </div>
 
 
-                                <div class="row">
+                                {{-- <div class="row">
                                     <div class="col-md-12 mb-0 mt-4 text-left">
                                         <div class="form-group d-inline-block">
                                             <div class="kt-radio-inline">
@@ -375,18 +375,15 @@
                                                     > {{ __('Yes') }}
                                                     <span></span>
                                                 </label>
-												
-												 {{-- <div class="col-md-1 "> --}}
-                                        {{-- <label class="form-label font-weight-bold">{{ __('Products Mix Count') }} @include('star') </label> --}}
-										<div class="d-inline-block hidden product-mix-count-parent-js mr-2">
-												<span class="text-black font-weight-bold">{{ __('Insert Count') }}</span>
-										</div>
-                                        <div class="kt-input-icon max-w-100 d-inline-block hidden product-mix-count-parent-js">
-                                            <div class="input-group">
-                                                <input placeholder="{{ __('Product Mix Count') }}" type="text" class="form-control only-greater-than-zero-allowed" name="microfinance_product_mix_count" value="{{ isset($model) ? $model->getMicrofinanceProductMixCount() : 1 }}">
-                                            </div>
-                                        </div>
-                                    {{-- </div> --}}
+
+                                                <div class="d-inline-block hidden product-mix-count-parent-js mr-2">
+                                                    <span class="text-black font-weight-bold">{{ __('Insert Count') }}</span>
+                                                </div>
+                                                <div class="kt-input-icon max-w-100 d-inline-block hidden product-mix-count-parent-js">
+                                                    <div class="input-group">
+                                                        <input placeholder="{{ __('Product Mix Count') }}" type="text" class="form-control only-greater-than-zero-allowed" name="microfinance_product_mix_count" value="{{ isset($model) ? $model->getMicrofinanceProductMixCount() : 1 }}">
+                                                    </div>
+                                                </div>
 
                                                 <label class="kt-radio kt-radio--primary text-black font-size-14px font-weight-bold show-only-with-microfinance">
                                                     {{ __('Each Existing Branch Has Its Own') }}
@@ -400,11 +397,9 @@
                                                 </label>
                                             </div>
                                         </div>
-                                        {{-- <div class="form-group d-inline-block ml-3 no-branch-div hidden min-w-400">
-                                            <x-form.select :multiple="true" name="microfinance_branch_ids[]" :selectedValue="isset($model) ? $model->getMicrofinanceBranches() : ''" :options="$formattedExistingBranches" :add-new="false" class="select2-select repeater-select  " :all="false"></x-form.select>
-                                        </div> --}}
+
                                     </div>
-                                </div>
+                                </div> --}}
 
                                 {{-- <div class="row">
                                    

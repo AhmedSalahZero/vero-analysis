@@ -2,9 +2,7 @@
 namespace App\Equations;
 
 use App\Helpers\HArr;
-use App\Helpers\HStr;
 use App\Models\NonBankingService\Expense;
-use App\Models\NonBankingService\Study;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 
@@ -18,6 +16,8 @@ class ExpenseAsPercentageEquation
         $hasReverseFactoring = in_array('has_reverse_factoring', $revenueStreamType) ;
         $hasPortfolioMortgage = in_array('has_portfolio_mortgage', $revenueStreamType) ;
         $hasDirectFactoring = in_array('has_direct_factoring', $revenueStreamType) ;
+        $hasMicrofinance = in_array('has_micro_finance', $revenueStreamType) ;
+
         $dates = range($startDateAsIndex, $endDateAsIndex);
         $resultArrs = [];
         $result = [];
@@ -30,14 +30,14 @@ class ExpenseAsPercentageEquation
         if ($percentageOf == 'contract') {
             $resultArrs = $expensePerContract['result'];
         } else {
-            if ($hasLeasing || $hasIjara || $hasReverseFactoring || $hasPortfolioMortgage) {
+            if ($hasLeasing || $hasIjara || $hasReverseFactoring || $hasPortfolioMortgage || $hasMicrofinance) {
                 $calculationColumn = [
                     'revenue'=>'interestAmount',
                     'outstanding'=>'endBalance',
                     'collection'=>'schedulePayment'
                 ][$percentageOf];
             
-            
+			
                 $resultArrs = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table($loanSchedulePaymentTableName)
                 ->whereIn('revenue_stream_type', $selectedRevenueStreamTypes)
                 ->where('study_id', $studyId)
@@ -58,7 +58,6 @@ class ExpenseAsPercentageEquation
                     'revenue'=>'interest_revenue',
                     'outstanding'=>'statement_end_balance',
                     'collection'=>'direct_factoring_settlements',
-            
                 ][$percentageOf];
         
                 $directFactoringAmounts = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('direct_factoring_breakdowns')
