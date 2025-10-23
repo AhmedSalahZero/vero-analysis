@@ -13,9 +13,9 @@ class RemoveTotalCasesCountColumnToMicrofinanceProductSalesProjectsTable extends
      */
     public function up()
     {
-        Schema::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('microfinance_loan_officers_cases_projects', function (Blueprint $table) {
-            $table->dropColumn('total_cases_count');
-        });
+        // Schema::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('microfinance_loan_officers_cases_projects', function (Blueprint $table) {
+        //     $table->dropColumn('total_cases_count');
+        // });
     }
 
     /**

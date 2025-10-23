@@ -34,9 +34,7 @@ class CopyStudyController extends Controller
 				}
 				$allData[] = $data;
 			}
-			if(count($allData) >50){
-				dd($allData);
-			}
+		
 			DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table($tableName)->insert($allData); // إدراج نسخة جديدة
 			
 		}
