@@ -500,7 +500,7 @@ class FixedAsset extends Model
             return (array)$this->ffe_counts;
         }
         if ($this->isPerEmployee()) {
-            $positions = $this->position_ids ;
+            $positions = $this->position_ids?:[] ;
             $result = [];
             foreach ($positions as $positionId) {
                 $manpower = Manpower::where('study_id', $this->study->id)->where('position_id', $positionId)->first();

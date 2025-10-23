@@ -116,7 +116,7 @@ $(document).on('change', '[js-recalculate-equity-funding-value],.js-recalculate-
 	}
 	let equityFundingValue = equityFundingRate / 100 * total
 	let newLoanFundingValue = (1 - (equityFundingRate / 100)) * total
-	console.log();
+	
 	if($(parent).find('input.equity-funding-formatted-value-class[data-column-index="' + columnIndex + '"]').length){
 		$(parent).find('input.equity-funding-formatted-value-class[data-column-index="' + columnIndex + '"]').val(number_format(equityFundingValue)).trigger('change')
 		$(parent).find('input.new-loans-funding-formatted-value-class[data-column-index="' + columnIndex + '"]').val(number_format(newLoanFundingValue)).trigger('change')

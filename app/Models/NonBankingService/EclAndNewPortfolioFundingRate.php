@@ -40,16 +40,25 @@ class  EclAndNewPortfolioFundingRate extends Model
 	{
 		return $this->ecl_rates[$yearOrMonthIndex]??0;
 	}
-	public function getEquityFundingRatesAtYearOrMonthIndex(int $yearOrMonthAsIndex)
+	public function getEquityFundingRatesAtYearOrMonthIndex(int $yearOrMonthAsIndex , $microfinanceFundedBy= null )
 	{
+		if($microfinanceFundedBy){
+			return $this->equity_funding_rates[$microfinanceFundedBy][$yearOrMonthAsIndex]??0;
+		}
 		return $this->equity_funding_rates[$yearOrMonthAsIndex]??0;
 	}
-	public function getEquityFundingValuesAtYearOrMonthIndex(int $yearOrMonthIndex)
+	public function getEquityFundingValuesAtYearOrMonthIndex(int $yearOrMonthIndex,$microfinanceFundedBy= null)
 	{
+		if($microfinanceFundedBy){
+			return $this->equity_funding_values[$microfinanceFundedBy][$yearOrMonthIndex]??0;
+		}
 		return $this->equity_funding_values[$yearOrMonthIndex]??0;
 	}
-	public function getNewLoansFundingRatesAtYearOrMonthIndex(int $yearOrMonthIndex)
+	public function getNewLoansFundingRatesAtYearOrMonthIndex(int $yearOrMonthIndex,$microfinanceFundedBy= null)
 	{
+		if($microfinanceFundedBy){
+			return $this->new_loans_funding_rates[$microfinanceFundedBy][$yearOrMonthIndex]??0;
+		}
 		return $this->new_loans_funding_rates[$yearOrMonthIndex]??0;
 	}
 	public function getNewLoansFundingValuesAtYearOrMonthIndex(int $yearOrMonthIndex)

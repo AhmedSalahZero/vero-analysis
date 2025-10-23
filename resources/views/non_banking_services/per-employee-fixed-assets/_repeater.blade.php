@@ -174,12 +174,12 @@ use App\Models\NonBankingService\FixedAssetName;
         $isFullyFundingTroughEquity = $model->getFixedAssetStructureForFixAssetType($fixedAssetType) ? $model->getFixedAssetStructureForFixAssetType($fixedAssetType)->is_fully_funded_though_equity : 1;
         @endphp
 
-        <div class="form-group d-inline-block">
+        <div class="form-group " style="visibility:hidden !important;">
             <div class="kt-radio-inline">
                 <label class="mr-3">
 
                 </label>
-                <label class="kt-radio kt-radio--success text-black font-size-18px font-weight-bold">
+                <label  class="kt-radio kt-radio--success text-black font-size-18px font-weight-bold">
                     <input class="is-fully-funded-checkbox exclude-from-trigger-change-when-repeat" type="radio" value="1" name="perEmployeeFixedAssetsFundingStructure[is_fully_funded_though_equity]" @if(!isset($subModel) || ($isFullyFundingTroughEquity)) dd checked @endisset> {{ __('Fully Funded Through Equity') }}
                     <span></span>
                 </label>

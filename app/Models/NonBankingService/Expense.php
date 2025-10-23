@@ -235,23 +235,18 @@ class Expense extends Model
 		
         if ($hasLeasing) {
             $selectedRevenueStreamTypes[] = Study::LEASING;
-      //      $revenueStreamTypesWheres[] = ['leasing_breakdown_id','>',0];
         }
         if ($hasIjara) {
             $selectedRevenueStreamTypes[] = Study::IJARA;
-     //       $revenueStreamTypesWheres[] = ['ijara_breakdown_id','>',0];
         }
         if ($hasReverseFactoring) {
             $selectedRevenueStreamTypes[] = Study::REVERSE_FACTORING;
-     //       $revenueStreamTypesWheres[] = ['reverse_breakdown_id','>',0];
         }
         if ($hasPortfolioMortgage) {
             $selectedRevenueStreamTypes[] = Study::PORTFOLIO_MORTGAGE;
-     //       $revenueStreamTypesWheres[] = ['portfolio_mortgage_category_id','>',0];
         }
         if ($hasDirectFactoring) {
             $selectedRevenueStreamTypes[] = Study::DIRECT_FACTORING;
-      //      $revenueStreamTypesWheres[] = ['direct_breakdown_id','>',0];
         }
 		if(!count($selectedRevenueStreamTypes)){
 			return [

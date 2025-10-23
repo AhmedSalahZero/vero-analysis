@@ -18,6 +18,7 @@ class ManpowerExpensesController extends Controller
 	}
 	protected function getViewVars(Company $company, Study $study){
 		$studyMonthsForViews =array_flip($study->getOperationDatesAsDateAndDateAsIndexToStudyEndDate()) ;
+		// dd($studyMonthsForViews);
 		return [
 			'company'=>$company ,
 			'type'=>getLastSegmentInRequest(),
@@ -37,7 +38,7 @@ class ManpowerExpensesController extends Controller
 	
 	public function storeDepartmentPositions(Company $company , Request $request,Study $study){
 
-			 $study->saveManpowerForm($request);
+		$study->saveManpowerForm($request);
 		
 		return response()->json([
 			'redirectTo'=>route('create.expense.per.employees',['company'=>$company->id,'study'=>$study->id])

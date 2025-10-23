@@ -1727,7 +1727,6 @@ class Study extends Model
             $currentMonthlyLoanAmount = $currentLoanAmountAtYearOrMonthIndex / $activeMonthsCount ;
             foreach ($activeMonths as $monthIndex => $monthlyZeroOrOne) {
                 if ($isPortfolio) {
-                
                     $currentMonthlyLoanAmount = in_array($monthIndex, $occurrenceDates) ? $currentLoanAmountAtYearOrMonthIndex : 0 ;
                 }
                 $currentAdminFeesAmountsAtMonthIndex[$monthIndex] =  $currentMonthlyLoanAmount * $currentAdminFeesRateAtYearIndex /100 ;
@@ -2448,12 +2447,14 @@ class Study extends Model
     {
         if ($request->has('admin_fees_rates')) {
             $isPortfolio = $revenueStreamType == Study::PORTFOLIO_MORTGAGE ;
+            $isMicrofinance = $revenueStreamType == Study::MICROFINANCE ;
             $adminFeesRates = $request->get('admin_fees_rates', []);
             $newLoansFundingValues = $request->get('new_loans_funding_values', []) ;
+			$newLoansFundingValuesFormatted = $isMicrofinance ? $newLoansFundingValues['by-mtls'] : $newLoansFundingValues ;
             $equityFundingValues = $request->get('equity_funding_values', []) ;
             $loanAmounts = $this->getLoanAmountForAdminFeesForRevenueStreamType($revenueStreamType);
             $monthlyAdminFeesAmount = $this->calculateMonthlyAdminFeesAmounts($revenueStreamType, $adminFeesRates, $loanAmounts, $occurrenceDates);
-            $monthlyNewLoansFundingValues  = $this->isMonthlyStudy() ? $newLoansFundingValues : $this->convertYearIndexToActiveMonthIndexes($newLoansFundingValues);
+            $monthlyNewLoansFundingValues  = $this->isMonthlyStudy() ? $newLoansFundingValuesFormatted : $this->convertYearIndexToActiveMonthIndexes($newLoansFundingValuesFormatted);
             $monthlyNewLoansFundingValues = $isPortfolio ? $portfolioMonthlyNewLoansFundingValues : $monthlyNewLoansFundingValues;
             $data = [
                 'revenue_stream_type'=>$revenueStreamType,
@@ -3099,7 +3100,9 @@ class Study extends Model
          
          
         $totalLoanBalances = [];
-        $loanAccuredInterestsWithEndBalances =  DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('loan_schedule_payments')->where('portfolio_loan_type', 'portfolio')->where('study_id', $this->id)->get(['endBalance','accured_interest','revenue_stream_type','securitization_date_index'])->toArray();
+        $loanAccuredInterestsWithEndBalances =  DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('loan_schedule_payments')->where('portfolio_loan_type', 'portfolio')->where('study_id', $this->id)->get(['endBalance','accured_interest','revenue_stream_type','securitization_date_index','id'])->toArray();
+		
+		// dd($loanAccuredInterestsWithEndBalances);
         $totalPerCategory = HArr::sumLoanSchedulePerCategory($loanAccuredInterestsWithEndBalances, $sumKeys, 'revenue_stream_type', 'endBalance');
      
         foreach ($totalPerCategory as $categoryName => $sumArr) {
@@ -3159,12 +3162,14 @@ class Study extends Model
         
         // $accruedInterestRevenues = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('loan_schedule_payments')->where('study_id',$this->id)->where('portfolio_loan_type','portfolio')->pluck('accured_interest','revenue_stream_type')->toArray();
         $accruedInterestRevenues = $loanAccuredInterestsWithEndBalances;
+		// dd($accruedInterestRevenues);
         $totalAccruedInterestRevenuesPerCategory = [];
         foreach ($accruedInterestRevenues as $accruedInterestRevenue) {
             $revenueStreamName = $accruedInterestRevenue->revenue_stream_type;
             $securitizationDateAsIndex = $accruedInterestRevenue->securitization_date_index;
             $accruedInterestRevenue = $accruedInterestRevenue->accured_interest ? json_decode($accruedInterestRevenue->accured_interest, true) : [];
             $accruedInterestRevenue = $accruedInterestRevenue['monthly']['end_balance']??[];
+			// dd($accruedInterestRevenue);
             foreach ($sumKeys as $dateAsIndex) {
                 $value = $accruedInterestRevenue[$dateAsIndex]??0;
                 if (isSecuritized($securitizationDateAsIndex, $dateAsIndex)) {
@@ -3172,10 +3177,11 @@ class Study extends Model
                 }
                 $totalAccruedInterestRevenuesPerCategory[$revenueStreamName][$dateAsIndex] = isset($totalAccruedInterestRevenuesPerCategory[$revenueStreamName][$dateAsIndex]) ? $totalAccruedInterestRevenuesPerCategory[$revenueStreamName][$dateAsIndex] + $value : $value ;
             }
-            $totalAccruedInterestRevenuesPerCategory[$revenueStreamName] = isset($totalAccruedInterestRevenuesPerCategory[$revenueStreamName]) ? HArr::sumAtDates([$totalAccruedInterestRevenuesPerCategory[$revenueStreamName],$accruedInterestRevenue], $sumKeys) : $accruedInterestRevenue;
+            // $totalAccruedInterestRevenuesPerCategory[$revenueStreamName] = isset($totalAccruedInterestRevenuesPerCategory[$revenueStreamName]) ? HArr::sumAtDates([$totalAccruedInterestRevenuesPerCategory[$revenueStreamName],$accruedInterestRevenue], $sumKeys) : $accruedInterestRevenue;
             // $totalAccruedInterestRevenuesPerCategory[$revenueStreamName] = isset($totalAccruedInterestRevenuesPerCategory[$revenueStreamName]) ? HArr::sumAtDates([$totalAccruedInterestRevenuesPerCategory[$revenueStreamName],$accruedInterestRevenue], $sumKeys) : $accruedInterestRevenue;
             ;
         }
+		// dd($totalAccruedInterestRevenuesPerCategory);
         foreach ($totalAccruedInterestRevenuesPerCategory as $categoryName => $currentAccruedInterestRevenueForCategory) {
             $categoryName = str_to_upper($categoryName) . ' ' . __('Accured Interest Revenues');
             $tableDataFormatted[$currentTabIndex]['sub_items'][$categoryName]['data']  = $currentAccruedInterestRevenueForCategory ;
@@ -3699,7 +3705,7 @@ class Study extends Model
         
         $operationsYearAndItsMonths = $this->getOperationDurationPerYearFromIndexesForAllStudyInfo();
         $studyEndDateAsIndex = $this->getStudyEndDateAsIndex() ;
-        array_pop($operationsYearAndItsMonths);
+        // array_pop($operationsYearAndItsMonths);
         $result =[];
         foreach ($operationsYearAndItsMonths as $yearAsIndex => $itsMonths) {
             foreach ($itsMonths as $dateAsIndex => $val) {
@@ -3888,6 +3894,8 @@ class Study extends Model
     }
     public function recalculateMicrofinanceTotalCasesCounts():void
     {
+		RevenueContract::where('study_id',$this->id)->where('revenue_type',Study::MICROFINANCE)->delete();
+		$monthlyAmountsAndContractsPerProductIds = [];
         if ($this->isMonthlyStudy()) {
             $totalLoanOfficerCases = [];
             $this->microfinanceLoanOfficerCases->each(function (MicrofinanceLoanOfficerCasesProjection $microfinanceLoanOfficerCasesProjection) use (&$totalLoanOfficerCases) {
@@ -3899,14 +3907,21 @@ class Study extends Model
             });
             $currentTotalCases = [];
             $monthlyLoanAmounts = [];
-            $this->microfinanceProductSalesProjects->each(function (MicrofinanceProductSalesProject $microfinanceProductSalesProject) use (&$currentTotalCases, &$monthlyLoanAmounts, $totalLoanOfficerCases) {
+			/////////////////
+            $this->microfinanceProductSalesProjects->each(function (MicrofinanceProductSalesProject $microfinanceProductSalesProject) use (&$currentTotalCases, &$monthlyLoanAmounts, $totalLoanOfficerCases,&$monthlyAmountsAndContractsPerProductIds) {
+				$productId = $microfinanceProductSalesProject->microfinance_product_id;
                 foreach ($microfinanceProductSalesProject->monthly_product_mixes?:[] as $dateAsIndex => $mixRate) {
                     $mixRate = $mixRate / 100;
                     $currentLoanOfficerCase = $totalLoanOfficerCases[$dateAsIndex]??0;
                     $currentMonthlyAmounts = $microfinanceProductSalesProject->monthly_amounts[$dateAsIndex];
-                    $currentTotalCases[$dateAsIndex] = $currentLoanOfficerCase * $mixRate  ;
-                    $monthlyLoanAmounts[$dateAsIndex] = $currentMonthlyAmounts *  $currentTotalCases[$dateAsIndex] ;
+					$currentCases = $currentLoanOfficerCase * $mixRate ;
+                    $currentTotalCases[$dateAsIndex] = $currentCases  ;
+					$currentMonthlyLoanAmount = $currentMonthlyAmounts *  $currentTotalCases[$dateAsIndex];
+                    $monthlyLoanAmounts[$dateAsIndex] =$currentMonthlyLoanAmount  ;
+					$monthlyAmountsAndContractsPerProductIds[$productId]['monthly_loan_amounts'][$dateAsIndex] = isset($monthlyAmountsAndContractsPerProductIds[$productId]['monthly_loan_amounts'][$dateAsIndex]) ? $monthlyAmountsAndContractsPerProductIds[$productId]['monthly_loan_amounts'][$dateAsIndex] + $currentMonthlyLoanAmount : $currentMonthlyLoanAmount; 
+					$monthlyAmountsAndContractsPerProductIds[$productId]['contract_counts'][$dateAsIndex] = isset($monthlyAmountsAndContractsPerProductIds[$productId]['contract_counts'][$dateAsIndex]) ? $monthlyAmountsAndContractsPerProductIds[$productId]['contract_counts'][$dateAsIndex] + $currentCases : $currentCases; 
                 }
+				
                 $microfinanceProductSalesProject->update([
                     'total_cases_counts'=>$currentTotalCases,
                     'monthly_loan_amounts'=>$monthlyLoanAmounts
@@ -3929,6 +3944,7 @@ class Study extends Model
                 $totalCasesPerYear = HArr::sumAtDates([$totalExistingCasesCountsPerYear,$totalNewOfficersCaseCountPerYear], $years);
                 $result = [];
                 $this->microfinanceProductSalesProjects->each(function (MicrofinanceProductSalesProject $microfinanceProductSalesProject) use ($totalCasesPerYear, &$result, $monthIndexWithYearIndex) {
+						$productId = $microfinanceProductSalesProject->microfinance_product_id;
                     foreach ($microfinanceProductSalesProject->product_mixes?:[] as $yearIndex => $productMixRate) {
                         $currentTotalCase = array_values($totalCasesPerYear)[$yearIndex]??0;
                         $result[$yearIndex] = $productMixRate /100  * $currentTotalCase;
@@ -3940,9 +3956,13 @@ class Study extends Model
                     foreach ($monthlySeasonality as $monthIndex => $seasonalityValue) {
                         $currentYearIndex = $monthIndexWithYearIndex[$monthIndex];
                         $currentResult = ($result[$currentYearIndex]??0) *$seasonalityValue;
-                        $monthlyCases[$monthIndex] = $currentResult    ;
-                        $monthlyLoanAmounts[$monthIndex] = $currentResult  * ($monthlyAmounts[$monthIndex]??0);
-                            
+						$currentCases = $currentResult;
+                        $monthlyCases[$monthIndex] = $currentCases    ;
+						$currentMonthlyLoanAmount = $currentCases  * ($monthlyAmounts[$monthIndex]??0);
+                        $monthlyLoanAmounts[$monthIndex] = $currentMonthlyLoanAmount;
+						$monthlyAmountsAndContractsPerProductIds[$productId]['monthly_loan_amounts'][$monthIndex] = isset($monthlyAmountsAndContractsPerProductIds[$productId]['monthly_loan_amounts'][$monthIndex]) ? $monthlyAmountsAndContractsPerProductIds[$productId]['monthly_loan_amounts'][$monthIndex] + $currentMonthlyLoanAmount : $currentMonthlyLoanAmount; 
+						$monthlyAmountsAndContractsPerProductIds[$productId]['contract_counts'][$monthIndex] = isset($monthlyAmountsAndContractsPerProductIds[$productId]['contract_counts'][$monthIndex]) ? $monthlyAmountsAndContractsPerProductIds[$productId]['contract_counts'][$monthIndex] + $currentCases : $currentCases; 
+					
                     }
                     $microfinanceProductSalesProject->update([
                         'monthly_loan_amounts'=>$monthlyLoanAmounts,
@@ -3952,6 +3972,20 @@ class Study extends Model
             });
                 
         }
+		foreach($monthlyAmountsAndContractsPerProductIds as $productId => $monthlyLoanWithContractCount){
+			$monthlyLoans = $monthlyLoanWithContractCount['monthly_loan_amounts'];
+			$contractCounts = $monthlyLoanWithContractCount['contract_counts'];
+			$companyId = $this->company->id;
+			$studyId = $this->id;
+			RevenueContract::create([
+				'study_id'=>$studyId,
+				'company_id'=>$companyId,
+				'category_id'=>$productId,
+				'monthly_loan_amounts'=>$monthlyLoans,
+				'contract_counts'=>$contractCounts,
+				'revenue_type'=>Study::MICROFINANCE,
+			]);
+		}
         
     }
     public function saveManpowerForm($request, $manpowerType = 'general')

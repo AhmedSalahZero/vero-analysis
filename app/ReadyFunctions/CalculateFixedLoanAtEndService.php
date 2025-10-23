@@ -212,6 +212,7 @@ class CalculateFixedLoanAtEndService
         $dateAsIndexes = array_keys($result['beginning']??[]);
         if (app()->bound('dateIndexWithDate')) {
             $result['accured_interest']=Loan::calculateSettlementStatement($dateAsIndexes, $loanScheduleResult['interestAmount'], $result['interestAmount']??[], 0, app('dateIndexWithDate'), false, true);
+			// dd($result['accured_interest']);
         }
         $result['interestAmount'] = $currentInterestAmountArr ;
         return $result;

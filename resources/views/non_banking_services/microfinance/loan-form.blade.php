@@ -600,7 +600,7 @@ $months = $study->getMicrofinanceMonths() ;
 
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
-                                            <x-repeat-right-dot-inputs :inputHiddenAttributes="'js-recalculate-equity-funding-value'" :currentVal="$eclAndNewPortfolioFundingRate ? $eclAndNewPortfolioFundingRate->getEquityFundingRatesAtYearOrMonthIndex($yearOrMonthAsIndex):0" :classes="'only-greater-than-or-equal-zero-allowed equity-funding-rates equity-funding-rate-input-hidden-class'" :is-percentage="true" :name="'equity_funding_rates['.$fundedBy.']['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :inputHiddenAttributes="'js-recalculate-equity-funding-value'" :currentVal="$eclAndNewPortfolioFundingRate ? $eclAndNewPortfolioFundingRate->getEquityFundingRatesAtYearOrMonthIndex($yearOrMonthAsIndex,$fundedBy):0" :classes="'only-greater-than-or-equal-zero-allowed equity-funding-rates equity-funding-rate-input-hidden-class'" :is-percentage="true" :name="'equity_funding_rates['.$fundedBy.']['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
                                         </div>
                                     </td>
                                     @php
@@ -634,7 +634,7 @@ $months = $study->getMicrofinanceMonths() ;
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
 
-                                            <x-repeat-right-dot-inputs :readonly="true" :numberFormatDecimals="0" :currentVal="$eclAndNewPortfolioFundingRate ? $eclAndNewPortfolioFundingRate->getEquityFundingValuesAtYearOrMonthIndex($yearOrMonthAsIndex):0" :classes="'only-greater-than-or-equal-zero-allowed '" :formatted-input-classes="'equity-funding-formatted-value-class'" :is-percentage="false" :name="'equity_funding_values['.$fundedBy.']['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :readonly="true" :numberFormatDecimals="0" :currentVal="$eclAndNewPortfolioFundingRate ? $eclAndNewPortfolioFundingRate->getEquityFundingValuesAtYearOrMonthIndex($yearOrMonthAsIndex,$fundedBy):0" :classes="'only-greater-than-or-equal-zero-allowed '" :formatted-input-classes="'equity-funding-formatted-value-class'" :is-percentage="false" :name="'equity_funding_values['.$fundedBy.']['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
                                         </div>
                                     </td>
@@ -666,7 +666,7 @@ $months = $study->getMicrofinanceMonths() ;
 
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
-                                            <input type="text" data-column-index="{{ $columnIndex }}" readonly class="form-control expandable-percentage-input new-loan-function-rates-js" name="new_loans_funding_rates[{{ $yearOrMonthAsIndex }}]" value="{{ $eclAndNewPortfolioFundingRate ? $eclAndNewPortfolioFundingRate->getNewLoansFundingRatesAtYearOrMonthIndex($yearOrMonthAsIndex):100 }}"> <span class="ml-2">%</span>
+                                            <input type="text" data-column-index="{{ $columnIndex }}" readonly class="form-control expandable-percentage-input new-loan-function-rates-js" name="new_loans_funding_rates[{{ $fundedBy }}][{{ $yearOrMonthAsIndex }}]" value="{{ $eclAndNewPortfolioFundingRate ? $eclAndNewPortfolioFundingRate->getNewLoansFundingRatesAtYearOrMonthIndex($yearOrMonthAsIndex,$fundedBy):100 }}"> <span class="ml-2">%</span>
                                         </div>
                                     </td>
                                     @php
@@ -702,7 +702,7 @@ $months = $study->getMicrofinanceMonths() ;
                                     @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
-                                            <x-repeat-right-dot-inputs :readonly="true" :numberFormatDecimals="0" :formatted-input-classes="'new-loans-funding-formatted-value-class'" :currentVal="$eclAndNewPortfolioFundingRate ? $eclAndNewPortfolioFundingRate->getNewLoansFundingValuesAtYearOrMonthIndex($yearOrMonthAsIndex):0 " :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="false" :name="'new_loans_funding_values['.$fundedBy.']['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :readonly="true" :numberFormatDecimals="0" :formatted-input-classes="'new-loans-funding-formatted-value-class'" :currentVal="$eclAndNewPortfolioFundingRate ? $eclAndNewPortfolioFundingRate->getNewLoansFundingValuesAtYearOrMonthIndex($yearOrMonthAsIndex,$fundedBy):0 " :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="false" :name="'new_loans_funding_values['.$fundedBy.']['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
                                         </div>
                                     </td>
@@ -794,75 +794,9 @@ $months = $study->getMicrofinanceMonths() ;
 <x-js.commons></x-js.commons>
 
 <script>
-    $(document).on('change', '.financial-statement-type', function() {
-        validateDuration();
-    })
-    $(document).on('change', 'select[name="duration_type"]', function() {
-        validateDuration();
-    })
-    $(document).on('change', '#duration', function() {
-        validateDuration();
-    })
+   
+  
 
-    function validateDuration() {
-        let type = $('input[name="type"]:checked').val();
-        let durationType = $('select[name="duration_type"]').val();
-        let duration = $('#duration').val();
-        let isValid = true;
-        let allowedDuration = 24;
-        if (type == 'forecast' && durationType == 'monthly') {
-            allowedDuration = 24;
-            isValid = duration <= allowedDuration;
-        }
-        if (type == 'forecast' && durationType == 'quarterly') {
-            allowedDuration = 8;
-            isValid = duration <= allowedDuration
-        }
-        if (type == 'forecast' && durationType == 'semi-annually') {
-            allowedDuration = 4
-            isValid = duration <= allowedDuration
-        }
-        if (type == 'forecast' && durationType == 'annually') {
-            allowedDuration = 2;
-            isValid = duration <= allowedDuration
-        }
-        if (type == 'actual' && durationType == 'monthly') {
-            allowedDuration = 36;
-            isValid = duration <= allowedDuration;
-        }
-        if (type == 'actual' && durationType == 'quarterly') {
-            allowedDuration = 12
-            isValid = duration <= allowedDuration;
-        }
-        if (type == 'actual' && durationType == 'semi-annually') {
-            allowedDuration = 6;
-            isValid = duration <= allowedDuration
-        }
-        if (type == 'actual' && durationType == 'annually') {
-            allowedDuration = 3
-            isValid = duration <= allowedDuration
-        }
-        let allowedDurationText = "{{ __('Allowed Duration') }}";
-
-        $('#allowed-duration').html(allowedDurationText + '  ' + allowedDuration)
-
-        if (!isValid) {
-            Swal.fire({
-                icon: 'error'
-                , title: 'Invalid Duration. Allowed [ ' + allowedDuration + ' ]'
-            , })
-
-            $('#duration').val(allowedDuration).trigger('change');
-
-        }
-
-
-    }
-
-    $(function() {
-        $('.financial-statement-type').trigger('change')
-
-    })
 
 </script>
 
@@ -917,105 +851,14 @@ $months = $study->getMicrofinanceMonths() ;
 </script>
 
 <script>
-    function reinitalizeMonthYearInput(dateInput) {
-        var currentDate = $(dateInput).val();
-        var startDate = "{{ isset($studyStartDate) && $studyStartDate ? $studyStartDate : -1 }}";
-        startDate = startDate == '-1' ? '' : startDate;
-        var endDate = "{{ isset($studyEndDate) && $studyEndDate? $studyEndDate : -1 }}";
-        endDate = endDate == '-1' ? '' : endDate;
-        if (startDate && endDate) {
-            $(dateInput).datepicker({
-                    viewMode: "year"
-                    , minViewMode: "year"
-                    , todayHighlight: false
-                    , clearBtn: true,
-
-
-                    autoclose: true
-                    , format: "yyyy-mm-01"
-                , })
-                .datepicker('setDate', new Date(currentDate))
-                .datepicker('setStartDate', new Date(startDate))
-                .datepicker('setEndDate', new Date(endDate))
-        } else {
-            $(dateInput).datepicker({
-                    viewMode: "year"
-                    , minViewMode: "year"
-                    , todayHighlight: false
-                    , clearBtn: true,
-
-
-                    autoclose: true
-                    , format: "yyyy-mm-01"
-                , })
-                .datepicker('setDate', new Date(currentDate))
-        }
-
-
-
-    }
-
-
-    //  $(document).on('change', '#expense_type', function() {
-    //      $('.js-parent-to-table').hide();
-    //      let tableId = '.' + $(this).val();
-    //      $(tableId).closest('.js-parent-to-table').show();
-    //
-    //  }) 
-
-
-
-    $(function() {
-        $('#expense_type').trigger('change')
-        $('.js-type-btn.active').trigger('click')
-    })
-
-    $(function() {
-        $(document).on('click', '.js-show-all-categories-trigger', function() {
-            const elementToAppendIn = $(this).parent().find('.js-append-into');
-            const texts = [];
-            let lis = '';
-            text = '<u><a href="#" data-close-new class="text-decoration-none mb-2 d-inline-block text-nowrap ">' + 'Add New' + '</a></u>'
-            lis += '<li >' + text + '</li>'
-            $(this).closest('table').find('.js-show-all-categories-popup').each(function(index, element) {
-                let text = $(element).val().trim();
-                if (text && !texts.includes(text)) {
-                    texts.push(text)
-                    text = '<a href="#" data-add-new class="text-decoration-none mb-2 d-inline-block">' + text + '</a>'
-                    lis += '<li >' + text + '</li>'
-                }
-            })
+ 
 
 
 
 
-            elementToAppendIn.removeClass('d-none');
-            elementToAppendIn.find('ul').empty().append(lis);
-        })
 
+  
 
-    })
-    $(document).on('click', '[data-add-new]', function(e) {
-        e.preventDefault();
-        let content = $(this).html();
-        $(this).closest('.js-common-parent').find('input').val(content);
-    })
-    $(document).on('click', '[data-close-new]', function(e) {
-        e.preventDefault();
-        $(this).closest('.js-append-into').addClass('d-none');
-        $(this).closest('.js-common-parent').find('input').val('').focus();
-    })
-    $(document).on('click', function(e) {
-        let closestParent = $(e.target).closest('.js-append-into').length;
-        if (!closestParent && !$(e.target).hasClass('js-show-all-categories-trigger')) {
-            $('.js-append-into').addClass('d-none');
-        }
-    })
-    $(function() {
-        // alert($('.reapter-select').length)
-        $('.repeater-with-select2').closest('.repeater-class').find('[data-repeater-delete]').trigger('click');
-        $('.repeater-with-select2').closest('.repeater-class').find('[data-repeater-create]').trigger('click');
-    });
 
 </script>
 @endsection
@@ -1052,31 +895,7 @@ $months = $study->getMicrofinanceMonths() ;
     })
 
 
-    $('select.js-condition-to-select').change(function() {
-        const value = $(this).val();
-        const conditionalValueTwoInput = $(this).closest('tr').find('input.conditional-b-input');
-        if (value == 'between-and-equal' || value == 'between') {
-            conditionalValueTwoInput.prop('disabled', false).trigger('change');
-        } else {
-            conditionalValueTwoInput.prop('disabled', true).trigger('change');
-        }
-    })
 
-    $('select.js-condition-to-select').trigger('change');
-    $(document).on('change', '.conditional-input', function() {
-        if (!$(this).closest('tr').find('conditional-b-input').prop('disabled')) {
-            const conditionalA = $(this).closest('tr').find('.conditional-a-input').val();
-            const conditionalB = $(this).closest('tr').find('.conditional-b-input').val();
-            if (conditionalA >= conditionalB) {
-                if (conditionalA == 0 && conditionalB == 0) {
-                    return;
-                }
-                Swal.fire('conditional a must be less than conditional b value');
-                $(this).closest('tr').find('.conditional-a-input').val($(this).closest('tr').find('.conditional-b-input').val() - 1);
-            }
-        }
-
-    })
 
 </script>
 <script>
@@ -1118,6 +937,13 @@ $months = $study->getMicrofinanceMonths() ;
 
 </script>
 <script>
+$(document).on('change','.equity-funding-rate-input-hidden-class',function(){
+	console.log('e')
+	const value = number_unformat($(this).val());
+	const columnIndex = parseInt($(this).attr('data-column-index'));
+	$('input.new-loan-function-rates-js[data-column-index="'+columnIndex+'"]').val(100 - value).trigger('change');
+})
+
     $(document).on('change', '.recalculate-total-branches', function() {
         var totalBranchesCount = 0;
         $('.recalculate-total-branches').each(function(index, element) {
