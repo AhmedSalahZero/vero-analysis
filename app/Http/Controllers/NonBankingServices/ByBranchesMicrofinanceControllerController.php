@@ -49,7 +49,7 @@ class ByBranchesMicrofinanceControllerController extends Controller
     public function store(Company $company, Request $request, Study $study )
     {
 		
-	
+	dd('ee');
 		return response()->json([
                 'redirectTo'=>route('view.manpower.for.non.banking', ['company'=>$company->id,'study'=>$study->id])
             ]);

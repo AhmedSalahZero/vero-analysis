@@ -57,13 +57,13 @@
                                 <tbody>
                                     @foreach($products as $product)
                                     @php
-                                    $subModel = null;
-                                    //$subModel = $model->microfinanceProductSalesProjects->where('type',$type)->where('microfinance_product_id',$product->id)->first();
+                                   
+                                    $subModel = $model->microfinanceByBranchProductMixes->where('microfinance_product_id',$product->id)->first();
                                     @endphp
-                                    <input type="hidden" name="microfinanceProductSalesProjects[{{ $product->id }}][id]" value="{{ $subModel  ? $subModel->id : 0 }}">
-                                    {{-- <input type="hidden" name="microfinanceProductSalesProjects[{{ $product->id }}][type]" value="{{ $branchPlanningBaseType }}"> --}}
-                                    <input type="hidden" name="microfinanceProductSalesProjects[{{ $product->id }}][microfinance_product_id]" value="{{ $product->id }}">
-                                    <input type="hidden" name="microfinanceProductSalesProjects[{{ $product->id }}][company_id]" value="{{ $company->id }}">
+                                    <input type="hidden" name="microfinanceByBranchProductMixes[{{ $product->id }}][id]" value="{{ $subModel  ? $subModel->id : 0 }}">
+                                    {{-- <input type="hidden" name="microfinanceByBranchProductMixes[{{ $product->id }}][type]" value="{{ $branchPlanningBaseType }}"> --}}
+                                    <input type="hidden" name="microfinanceByBranchProductMixes[{{ $product->id }}][microfinance_product_id]" value="{{ $product->id }}">
+                                    <input type="hidden" name="microfinanceByBranchProductMixes[{{ $product->id }}][company_id]" value="{{ $company->id }}">
 
                                     <tr data-repeat-formatting-decimals="0" data-repeater-style>
                                         <td class="td-classes">
@@ -81,27 +81,27 @@
                                             // $product->name
                                             @endphp
 
-                                            <x-repeat-right-dot-inputs :formattedInputClasses="'min-w-90'" :numberFormatDecimals="0" :removeThreeDots="true" :removeCurrency="true" :currentVal="number_format($currentVal,0)" :classes="'only-greater-than-zero-allowed '.$tenorClass" :is-percentage="false" :name="'microfinanceProductSalesProjects['.$product->id.'][tenor]'" :columnIndex="-1"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :formattedInputClasses="'min-w-90'" :numberFormatDecimals="0" :removeThreeDots="true" :removeCurrency="true" :currentVal="number_format($currentVal,0)" :classes="'only-greater-than-zero-allowed '.$tenorClass" :is-percentage="false" :name="'microfinanceByBranchProductMixes['.$product->id.'][tenor]'" :columnIndex="-1"></x-repeat-right-dot-inputs>
                                         </td>
 
                                         <td>
                                             @php
                                             $currentVal = $subModel ? $subModel->getAvgAmount() : 0 ;
                                             @endphp
-                                            <x-repeat-right-dot-inputs :removeThreeDots="true" :removeCurrency="true" :currentVal="$currentVal" :classes="'only-greater-than-zero-allowed'" :is-percentage="false" :name="'microfinanceProductSalesProjects['.$product->id.'][avg_amount]'" :columnIndex="-1"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :removeThreeDots="true" :removeCurrency="true" :currentVal="$currentVal" :classes="'only-greater-than-zero-allowed'" :is-percentage="false" :name="'microfinanceByBranchProductMixes['.$product->id.'][avg_amount]'" :columnIndex="-1"></x-repeat-right-dot-inputs>
                                         </td>
 
                                         @if(!$model->isMonthlyStudy())
                                         <td>
                                             <div class="d-flex align-items-center increase-rate-parent">
                                                 <button class="btn btn-primary btn-md text-nowrap increase-rate-trigger-btn" type="button" data-toggle="modal">{{ __('Increase Rates') }}</button>
-                                                <x-modal.increase-rates :name="'microfinanceProductSalesProjects['.$product->id.'][increase_rates]'" :study="$study" :subModel="isset($subModel) ? $subModel : null "></x-modal.increase-rates>
+                                                <x-modal.increase-rates :name="'microfinanceByBranchProductMixes['.$product->id.'][increase_rates]'" :study="$study" :subModel="isset($subModel) ? $subModel : null "></x-modal.increase-rates>
                                             </div>
                                         </td>
                                         @endif
 
                                         <td>
-                                            <x-form.select :required="true" :label="''" :pleaseSelect="false" :selectedValue="isset($subModel) ? $subModel->getFundedBy():0" :options="getMicrofinanceFundingBySelector()" :add-new="false" class="select2-select min-w-120 repeater-select  " :all="false" name="microfinanceProductSalesProjects[{{ $product->id }}][funded_by]"></x-form.select>
+                                            <x-form.select :required="true" :label="''" :pleaseSelect="false" :selectedValue="isset($subModel) ? $subModel->getFundedBy():0" :options="getMicrofinanceFundingBySelector()" :add-new="false" class="select2-select min-w-120 repeater-select  " :all="false" name="microfinanceByBranchProductMixes[{{ $product->id }}][funded_by]"></x-form.select>
                                         </td>
 
 
@@ -123,7 +123,7 @@
                                             @php
                                             $currentModalId = 'current-modal-id'.($columnIndex+1) . $product->id
                                             @endphp
-                                            <x-repeat-with-calc :currentModalId="$currentModalId" :showIcon="true" :numberFormatDecimals="2" :formattedInputClasses="'calcField flat-rate-input'" :mark="'%'" :removeThreeDots="false" :removeCurrency="true" :currentVal="number_format($currentVal,1)" :classes="''" :is-percentage="true" :name="'microfinanceProductSalesProjects['.$product->id.'][flat_rates]['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-with-calc>
+                                            <x-repeat-with-calc :currentModalId="$currentModalId" :showIcon="true" :numberFormatDecimals="2" :formattedInputClasses="'calcField flat-rate-input'" :mark="'%'" :removeThreeDots="false" :removeCurrency="true" :currentVal="number_format($currentVal,1)" :classes="''" :is-percentage="true" :name="'microfinanceByBranchProductMixes['.$product->id.'][flat_rates]['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-with-calc>
                                             {{-- <x-repeat-with-calc :currentModalId="$currentModalId" :showIcon="true" :numberFormatDecimals="2" :formattedInputClasses="'calcField flat-rate-input'" :mark="'%'" :removeThreeDots="false" :removeCurrency="true" :currentVal="number_format($currentVal,1)" :classes="''" :is-percentage="true" :name="'flat_rates['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-with-calc> --}}
 
 
@@ -132,7 +132,6 @@
                                             <div class="modal fade " id="{{ $currentModalId }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                                 <div class="modal-dialog modal-md modal-dialog-centered" role="document">
                                                     <div class="modal-content">
-
                                                         <div class="modal-header">
                                                             <h5 class="modal-title" style="color:#0741A5 !important" id="exampleModalLongTitle"> {{ __('Decreasing Rate') }} % </h5>
                                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -226,7 +225,7 @@
                     </div>
 
                     @php
-                    $tableId = 'microfinanceLoanOfficerCases';
+                    $tableId = 'microfinanceByBranchProductMixes';
                     $repeaterId = $tableId.'_repeater';
                     @endphp
                     <input type="hidden" name="tableIds[]" value="{{ $tableId }}">
@@ -240,19 +239,21 @@
                         </x-slot>
                         <x-slot name="trs">
                             @php
-                            $rows =  [null,null] ;
-                     //       $rows = isset($model) && count($model->{$tableId}->where('type',$type)) ?$model->{$tableId}->where('type',$type)->values() : [null,null] ;
+                     
+                     	  $rows = isset($model) && count($model->{$tableId}) ?$model->{$tableId}->values() : [null,null] ;
                             @endphp
                             @foreach($rows as $currentIndex=>$subModel)
                             @php
                             $isSeniors = [
                             0 => [
                             'is_senior'=>1 ,
-                            'title'=> __('Senior Loan Officer')
+                            'title'=> __('Senior Loan Officer'),
+							'name'=>'product_mix_senior_loan_officers'
                             ],
                             1=> [
                             'is_senior'=>0 ,
-                            'title'=>__('Loan Officer')
+                            'title'=>__('Loan Officer'),
+							'name'=>'product_mix_loan_officers'
                             ]
                             ][$currentIndex];
                             $isSenior = $isSeniors['is_senior'];
@@ -260,10 +261,7 @@
                             @endphp
 
                             <tr data-repeater-style>
-                                <input type="hidden" name="microfinanceLoanOfficerCases[{{ $currentIndex }}][id]" value="{{ isset($subModel) ? $subModel->id : 0 }}">
-                                {{-- <input type="hidden" name="microfinanceLoanOfficerCases[{{ $currentIndex }}][type]" value="{{ $branchPlanningBaseType }}"> --}}
-                                <input type="hidden" name="microfinanceLoanOfficerCases[{{ $currentIndex }}][company_id]" value="{{ $company->id }}">
-
+                        
                                 <td>
                                     <input readonly value="{{ $title }}" class="form-control" type="text">
 

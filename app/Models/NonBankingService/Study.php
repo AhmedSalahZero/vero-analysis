@@ -62,7 +62,9 @@ class Study extends Model
         'operation_dates'=>'array',
         'study_dates'=>'array',
         'leasing_growth_rates'=>'array',
-        'microfinance_branch_ids'=>'array'
+        'microfinance_branch_ids'=>'array',
+        'product_mix_senior_loan_officers'=>'array',
+        'product_mix_loan_officers'=>'array',
     ];
         
     public static function boot()
@@ -2722,6 +2724,7 @@ class Study extends Model
         $securitizationBankLoanSettlements = [];
         $securitizationBankEarlySettlements = [];
         $securitizationGainOrLosses = [];
+		$securitizationExpenses = [];
         foreach ($securitizationLoanSchedules as $securitizationLoanSchedule) {
             $bankPortfolioEndBalance = $securitizationLoanSchedule->bank_portfolio_end_balance_sum;
             $bankPortfolioEarlySettlement = $securitizationLoanSchedule->early_settlements_expense_amount;
@@ -4381,5 +4384,9 @@ class Study extends Model
 	public function getMicrofinanceMonths():int
 	{
 		return $this->isMonthlyStudy() ? 11 : 23;
+	}
+	public function microfinanceByBranchProductMixes():HasMany
+	{
+		return $this->hasMany(MicrofinanceByBranchProductMix::class,'study_id','id');
 	}
 }
