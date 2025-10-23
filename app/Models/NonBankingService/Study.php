@@ -858,7 +858,7 @@ class Study extends Model
             foreach ($yearMonthIndexes as $monthIndex => $trueOrFalse) {
                 if ($trueOrFalse) {
                     $currentValue = $directFactoringBreakdown->getNetFundingAmountsAtMonthIndex($monthIndex);
-                    logger($currentValue.'-'.$directFactoringBreakdown->id);
+                    // logger($currentValue.'-'.$directFactoringBreakdown->id);
                     $sum+=$currentValue ;
                     $resultPerCategory[$directFactoringBreakdown->id][$monthIndex] = isset($resultPerCategory[$directFactoringBreakdown->id][$monthIndex]) ? $resultPerCategory[$directFactoringBreakdown->id][$monthIndex] + $currentValue  : $currentValue;
                     
@@ -1513,7 +1513,6 @@ class Study extends Model
             $currentIndex++;
             
         }
-
         
         /**
         * * To Calculate Payment Statement
@@ -1521,6 +1520,9 @@ class Study extends Model
         $salaryTaxAndSocialInsuranceAmounts = HArr::MultiplyWithNumber($salaryExpenses, ($salaryTaxesRate+$socialInsuranceRate));
         $dateIndexWithDate = array_flip($dateAsIndexes);
         $salaryTaxAndSocialInsuranceAmountsPayment= (new CollectionPolicyService())->applyMultiCustomizedCollectionPolicy([30=>100], $salaryTaxAndSocialInsuranceAmounts);
+		if(!isset($salaryTaxAndSocialInsuranceAmounts[0])){
+			dd('d',$salaryTaxAndSocialInsuranceAmounts);
+		}
         $salaryTaxAndSocialInsuranceAmountsStatement = ManPower::calculateStatement($salaryTaxAndSocialInsuranceAmounts, [], $salaryTaxAndSocialInsuranceAmountsPayment, [], $dateIndexWithDate);
     
         /**
@@ -3929,7 +3931,7 @@ class Study extends Model
                 
             });
             
-        } else {
+        } else 
             $yearWithItsIndexes = $this->getOperationDurationPerYearFromIndexesForAllStudyInfo();
             $monthIndexWithYearIndex = $this->getMonthsWithItsYear($yearWithItsIndexes);
             $this->microfinanceLoanOfficerCases->each(function (MicrofinanceLoanOfficerCasesProjection $microfinanceLoanOfficerCasesProjection) use ($monthIndexWithYearIndex) {
@@ -3971,7 +3973,7 @@ class Study extends Model
                 });
             });
                 
-        }
+        
 		foreach($monthlyAmountsAndContractsPerProductIds as $productId => $monthlyLoanWithContractCount){
 			$monthlyLoans = $monthlyLoanWithContractCount['monthly_loan_amounts'];
 			$contractCounts = $monthlyLoanWithContractCount['contract_counts'];

@@ -25,7 +25,14 @@ class IntervalSummationOperations
 
 		foreach ($dateValues as $dateAsString => $value) {
 			$originalDate = $dateAsString;
-			$dateAsString = is_numeric($dateAsString) ? ($dateIndexWithDate[$dateAsString]) : $dateAsString;
+		
+			$dateAsString = is_numeric($dateAsString) ? ($dateIndexWithDate[$dateAsString]??null) : $dateAsString;
+			if(is_null($dateAsString)){
+				continue;
+			}
+			// if(is_null($dateAsString)){
+			// 	dd($dateIndexWithDate,$dateValues);
+			// }
 			$dateObject = Carbon::make($dateAsString);
 			$year = $dateObject->format('Y');
 			$month = $dateObject->format('m');

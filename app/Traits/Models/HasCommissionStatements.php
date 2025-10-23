@@ -24,7 +24,7 @@ trait HasCommissionStatements
 		}else{
 			$currentDate = Carbon::make($issuanceDate)->format('Y-m-d');
 			if(!$isOpeningBalance ||  Carbon::make($currentDate)->greaterThanOrEqualTo($openingBalanceDateOfCurrentAccount) ){
-					logger('insert current account credit commission fees from else');
+					// logger('insert current account credit commission fees from else');
 				$this->storeCurrentAccountCreditBankStatement($issuanceDate,$maxLgCommissionAmount , $financialInstitutionAccountIdForFeesAndCommission,0,1, __('Commission Fees [ :customerName ] [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'en'),'customerName'=>$customerName,'transactionName'=>$transactionName],'en'),__('Commission Fees [ :customerName ] [ :lgType ] Transaction Name [ :transactionName ]'  ,['lgType'=>__($lgType,[],'ar'),'customerName'=>$customerName,'transactionName'=>$transactionName],'ar'),false,true,$lgRenewalDateHistoryId,1);
 			}
 		}
