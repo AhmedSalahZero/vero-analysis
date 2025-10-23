@@ -2,6 +2,12 @@
 @section('css')
 <x-styles.commons></x-styles.commons>
 <link rel="stylesheet" href="/custom/css/non-banking-services/common.css">
+<style>
+.js-parent-to-table{
+	overflow:scroll
+}
+
+</style>
 <link rel="stylesheet" href="/custom/css/non-banking-services/select2.css">
 @endsection
 @section('sub-header')
@@ -92,10 +98,11 @@
                                         </td>
 
                                         @if(!$model->isMonthlyStudy())
+									
                                         <td>
                                             <div class="d-flex align-items-center increase-rate-parent">
                                                 <button class="btn btn-primary btn-md text-nowrap increase-rate-trigger-btn" type="button" data-toggle="modal">{{ __('Increase Rates') }}</button>
-                                                <x-modal.increase-rates :name="'microfinanceByBranchProductMixes['.$product->id.'][increase_rates]'" :study="$study" :subModel="isset($subModel) ? $subModel : null "></x-modal.increase-rates>
+                                                <x-modal.increase-rates  :name="'microfinanceByBranchProductMixes['.$product->id.'][increase_rates]'" :study="$study" :subModel="isset($subModel) ? $subModel : null "></x-modal.increase-rates>
                                             </div>
                                         </td>
                                         @endif
@@ -240,7 +247,7 @@
                         <x-slot name="trs">
                             @php
                      
-                     	  $rows = isset($model) && count($model->{$tableId}) ?$model->{$tableId}->values() : [null,null] ;
+                     	  $rows =  [null,null] ;
                             @endphp
                             @foreach($rows as $currentIndex=>$subModel)
                             @php
@@ -258,6 +265,7 @@
                             ][$currentIndex];
                             $isSenior = $isSeniors['is_senior'];
                             $title = $isSeniors['title'];
+							$name = $isSeniors['name'];
                             @endphp
 
                             <tr data-repeater-style>
@@ -268,12 +276,13 @@
                                 </td>
                                 @php
                                 $columnIndex = 0 ;
+								
                                 @endphp
-                                @for($i = 0 ; $i<= $months ; $i++) @php $currentVal=isset($subModel) ? $subModel->getNewLoanCasesAtYearOrMonthIndex($i) : 0 ;
+                                @for($i = 0 ; $i<= $months ; $i++) @php $currentVal= $study->{$name}[$i]??0 ;
 
                                     @endphp
                                     <td>
-                                        <x-repeat-right-dot-inputs :numberFormatDecimals="0" :multiple="true" :removeCurrency="true" :name="'microfinanceLoanOfficerCases['.$currentIndex.'][new_cases]['.$i.']'" :currentVal="$currentVal" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                        <x-repeat-right-dot-inputs :numberFormatDecimals="0" :multiple="true" :removeCurrency="true" :name="$name.'['.$i.']'" :currentVal="$currentVal" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
                                     </td>
                                     @php
                                     $columnIndex++;

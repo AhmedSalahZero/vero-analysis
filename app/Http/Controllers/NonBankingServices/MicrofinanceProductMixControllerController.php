@@ -41,51 +41,18 @@ class MicrofinanceProductMixControllerController extends Controller
 
     public function store(Company $company, Request $request, Study $study )
     {
-    //    $study->
+	
+		$study->update([
+			'product_mix_senior_loan_officers'=>$request->get('product_mix_senior_loan_officers',[]),
+			'product_mix_loan_officers'=>$request->get('product_mix_loan_officers',[]),
+		]);
+		$study->storeRepeaterRelations($request,['microfinanceByBranchProductMixes'],$company,[]);
 		return response()->json([
-                'redirectTo'=>route('view.manpower.for.non.banking', ['company'=>$company->id,'study'=>$study->id])
+                'redirectTo'=>route('create.by-branch.microfinance', ['company'=>$company->id,'study'=>$study->id])
             ]);
         
       
     }
-	 public function calculateStatement(array $expenses, array $vats, array $netPaymentsAfterWithhold, array $withholdPayments, array $dateIndexWithDate, Study $study, float $beginningBalance = 0)
-    {
-        $expensesForIntervals = [
-            'monthly'=>$expenses,
-            'quarterly'=>sumIntervalsIndexes($expenses, 'quarterly', $study->financialYearStartMonth(), $dateIndexWithDate),
-            'semi-annually'=>sumIntervalsIndexes($expenses, 'semi-annually', $study->financialYearStartMonth(), $dateIndexWithDate),
-            'annually'=>sumIntervalsIndexes($expenses, 'annually', $study->financialYearStartMonth(), $dateIndexWithDate),
-        ];
-        $netPaymentAfterWithholdForInterval = [
-            'monthly'=>$netPaymentsAfterWithhold,
-            'quarterly'=>sumIntervalsIndexes($netPaymentsAfterWithhold, 'quarterly', $study->financialYearStartMonth(), $dateIndexWithDate),
-            'semi-annually'=>sumIntervalsIndexes($netPaymentsAfterWithhold, 'semi-annually', $study->financialYearStartMonth(), $dateIndexWithDate),
-            'annually'=>sumIntervalsIndexes($netPaymentsAfterWithhold, 'annually', $study->financialYearStartMonth(), $dateIndexWithDate),
-        ];
-        
-        $result = [];
-        foreach (getIntervalFormatted() as $intervalName=>$intervalNameFormatted) {
-            $beginningBalance = 0;
-            foreach ($expensesForIntervals[$intervalName] as $dateIndex=>$currentExpenseValue) {
-                $date = $dateIndex;
-                $result[$intervalName]['beginning_balance'][$date] = $beginningBalance;
-                $currentVat = $vats[$date]??0 ;
-                $totalDue[$date] =  $currentExpenseValue+$currentVat+$beginningBalance;
-                $paymentAtDate = $netPaymentAfterWithholdForInterval[$intervalName][$date]??0 ;
-                $withholdPaymentAtDate = $withholdPayments[$date]?? 0 ;
-                $endBalance[$date] = $totalDue[$date] - $paymentAtDate  - $withholdPaymentAtDate ;
-                $beginningBalance = $endBalance[$date] ;
-                $result[$intervalName]['expense'][$date] =  $currentExpenseValue ;
-                $result[$intervalName]['vat'][$date] =  $currentVat ;
-                $result[$intervalName]['total_due'][$date] = $totalDue[$date];
-                $result[$intervalName]['payment'][$date] = $paymentAtDate;
-                $result[$intervalName]['withhold_amount'][$date] = $withholdPaymentAtDate;
-                $result[$intervalName]['end_balance'][$date] =$endBalance[$date];
-            }
-        }
-        return $result;
-    
-        
-    }
+	
 	
 }

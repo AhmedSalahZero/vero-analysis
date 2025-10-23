@@ -2,7 +2,9 @@
 'subModel',
 'study'=>$study,
 'title'=>__('Annual Increase Rate'),
-'name'=>null
+'name'=>null,
+'isByBranch'=>false,
+'product'=>null
 ])
 
 <script>
@@ -31,11 +33,18 @@
                         <tbody>
 						@php
 							$totalRate = 0 ;
+							$isReadonly = false ;
 						@endphp
                             @for($yearNumber = 1 ;$yearNumber < $study->getDurationInYears() ; $yearNumber ++) <tr>
                         @php
+					
 							$yearFormatted = $study->getYearFromYearIndex($yearNumber);
 							$currentIncreaseRate = isset($subModel) ? $subModel->getIncreaseRateAtYearIndex($yearNumber ) :  0;
+							if($isByBranch){
+												$currentVal = $study->microfinanceByBranchProductMixes->where('microfinance_product_id',$product->id)->first();
+												$currentIncreaseRate= $currentVal->getIncreaseRateAtYearIndex($yearNumber) ;
+												$isReadonly =true ;
+											}
 						@endphp
 						        <td >
 								<div class="max-w-selector-popup">
@@ -45,7 +54,7 @@
 								
 								 <td >
 								<div class="max-w-selector-popup">
-                                    <input multiple name="{{ isset($name) ? $name.'['.$yearNumber.']' : 'increase_rates' }}" class="form-control " value="{{ $currentIncreaseRate }}" placeholder="{{ __('Increase %') .  ' ' . $yearNumber  }}">
+                                    <input @if($isReadonly) readonly @endif multiple name="{{ isset($name) ? $name.'['.$yearNumber.']' : 'increase_rates' }}" class="form-control " value="{{ $currentIncreaseRate }}" placeholder="{{ __('Increase %') .  ' ' . $yearNumber  }}">
 								</div>
                                 </td>
                                 

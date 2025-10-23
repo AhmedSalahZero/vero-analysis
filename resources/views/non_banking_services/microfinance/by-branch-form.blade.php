@@ -76,7 +76,7 @@ $months = $study->getMicrofinanceMonths() ;
 									
 									 <td>
 									 <div class="d-flex align-items-center flex-column ">
-									 <a href="#" class="btn btn-md-width btn-1-bg btn-sm btn-brand btn-pill">{{ __('Start Planning') }}</a>
+									 <a href="{{ route('create.all-branches.microfinance',['company'=>$company->id , 'study'=>$study->id ,'branch_id'=>$branch->id]) }}" class="btn btn-md-width btn-1-bg btn-sm btn-brand btn-pill">{{ __('Start Planning') }}</a>
 									 </div>
 									 
                                     </td>
@@ -143,7 +143,7 @@ $months = $study->getMicrofinanceMonths() ;
 
 
 
-            <x-save-or-continue-btn />
+            {{-- <x-save-or-continue-btn /> --}}
 
 
 

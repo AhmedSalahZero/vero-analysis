@@ -16,6 +16,27 @@ class  MicrofinanceByBranchProductMix extends Model
 		'decrease_rates'=>'array',
 		'senior_loan_officers'=>'array',
 		'loan_officers'=>'array',
+		'increase_rates'=>'array',
 		];
 		
+		public function getTenor():int
+    {
+        return $this->tenor ;
+    }
+    public function getAvgAmount():float
+    {
+        return $this->avg_amount;
+    }
+    public function getFundedBy():string
+    {
+        return $this->funded_by ;
+    }
+	 public function getFlatRateAtYearOrMonthIndex(int $yearOrDateIndex):float
+    {
+        return $this->flat_rates[$yearOrDateIndex]??0;
+    }
+    public function getIncreaseRateAtYearIndex($yearIndex)
+    {
+        return $this->increase_rates[$yearIndex] ?? 0;
+    }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\NonBankingServices;
 
 use App\Http\Controllers\Controller;
 use App\Models\Company;
+use App\Models\NonBankingService\ExistingBranch;
 use App\Models\NonBankingService\Study;
 use App\ReadyFunctions\ConvertFlatRateToDecreasingRate;
 use App\Traits\NonBankingService;
@@ -12,12 +13,18 @@ use Illuminate\Http\Request;
 class AllBranchesMicrofinanceControllerController extends Controller
 {
     use NonBankingService ;
-	const BRANCH_TYPE = 'all-branches';
-    public function create(Company $company, Request $request, Study $study)
+	public function getBranchType($existingBranchId):string{
+		if($existingBranchId){
+			return 'by-branch';
+		}
+		return 'all-branches';
+	}
+		
+    public function create(Company $company, Request $request, Study $study ,  $existingBranchId = null )
     {
-        return view('non_banking_services.microfinance.'.self::BRANCH_TYPE.'-form', $this->getViewVars($company, $study));
+        return view('non_banking_services.microfinance.all-branches-form', $this->getViewVars($company, $study,$existingBranchId));
     }
-    protected function getViewVars(Company $company, Study $study)
+    protected function getViewVars(Company $company, Study $study ,  $existingBranchId  = null )
     {
         $yearsWithItsMonths =  $study->getOperationDurationPerYearFromIndexes() ;
         $yearOrMonthsIndexes = $study->getYearOrMonthIndexes();
@@ -25,24 +32,30 @@ class AllBranchesMicrofinanceControllerController extends Controller
 		$studyMonthsForViews =array_flip($study->getOperationDatesAsDateAndDateAsIndexToStudyEndDate()) ;
 		$departments = $company->microfinanceDepartments;
 		$dateIndexWithDate = $study->getDateIndexWithDate();
+		$branch = ExistingBranch::find($existingBranchId);
+		$branchType = $this->getBranchType($existingBranchId);
+		$title = $branchType == 'by-branch' ? $branch->getName() : __('All Branches Microfinance'); 
+		$isByBranch = $branchType == 'by-branch';
         return [
+			'isByBranch'=>$isByBranch,
+			'branchId'=>$existingBranchId,
 			'dateIndexWithDate'=>$dateIndexWithDate,
             'company'=>$company ,
             'model'=>$study ,
 			'study'=>$study,
-			'expenseType'=>self::BRANCH_TYPE,
+			'expenseType'=>$branchType,
 			'products'=>$company->getActiveMicrofinanceProducts(),
-            'title'=>__('All Branches Microfinance'),
-            'storeRoute'=>route('store.all-branches.microfinance', ['company'=>$company->id , 'study'=>$study->id]),
+            'title'=>$title,
+            'storeRoute'=>route('store.all-branches.microfinance', ['company'=>$company->id , 'study'=>$study->id,'branch_id'=>$existingBranchId]),
             'yearsWithItsMonths' =>$yearsWithItsMonths,
             'yearOrMonthsIndexes'=>$yearOrMonthsIndexes,
             'isYearsStudy'=>$isYearsStudy,
 			'departments'=>$departments,
 			'studyMonthsForViews'=>$studyMonthsForViews,
 		    'financialYearEndMonthNumber'=>$study->getFinancialYearEndMonthNumber(),
-		    'type'=>self::BRANCH_TYPE,
-		    'manpowerType'=>self::BRANCH_TYPE,
-		    'branchPlanningBaseType'=>self::BRANCH_TYPE
+		    'type'=>$branchType,
+		    'manpowerType'=>$branchType,
+		    'branchPlanningBaseType'=>$branchType
         ];
     }
 	public function getDecreaseRateBasedOnFlatRate(Company $company,Request $request,Study $study)
@@ -57,14 +70,15 @@ class AllBranchesMicrofinanceControllerController extends Controller
 		]);
 	}
 
-    public function store(Company $company, Request $request, Study $study )
+    public function store(Company $company, Request $request, Study $study , int $branchId = null  )
     {
-		$study->saveManpowerForm($request,self::BRANCH_TYPE);
-		$oldIds = $study->microfinanceProductSalesProjects->where('type',self::BRANCH_TYPE)->pluck('id')->toArray();
-		$study->storeRepeaterRelations($request,['microfinanceProductSalesProjects'],$company,[],$oldIds);
+		$branchType = $this->getBranchType($branchId);
+		$study->saveManpowerForm($request,$branchType);
+		$oldIds = $study->microfinanceProductSalesProjects->where('type',$branchType)->where('branch_id',$branchId)->pluck('id')->toArray();
+		$study->storeRepeaterRelations($request,['microfinanceProductSalesProjects'],$company,['branch_id'=>$branchId],$oldIds);
 		
-		$oldIds = $study->microfinanceLoanOfficerCases->where('type',self::BRANCH_TYPE)->pluck('id')->toArray();
-		$study->storeRepeaterRelations($request,['microfinanceLoanOfficerCases'],$company,[],$oldIds);
+		$oldIds = $study->microfinanceLoanOfficerCases->where('type',$branchType)->where('branch_id',$branchId)->pluck('id')->toArray();
+		$study->storeRepeaterRelations($request,['microfinanceLoanOfficerCases'],$company,['branch_id'=>$branchId],$oldIds);
 		
 		$study->recalculateMicrofinanceTotalCasesCounts();
 		$study->update([

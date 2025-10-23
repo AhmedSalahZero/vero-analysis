@@ -443,17 +443,17 @@ Route::middleware([])->group(function () {
                         route::post('securitization', 'SecuritizationController@store')->name('store.securitization');
 						
 						
-                        route::get('microfinance/all-branches', 'AllBranchesMicrofinanceControllerController@create')->name('create.all-branches.microfinance');
-                        route::post('microfinance/all-branches', 'AllBranchesMicrofinanceControllerController@store')->name('store.all-branches.microfinance');
+                        route::get('microfinance/all-branches/{branch_id?}', 'AllBranchesMicrofinanceControllerController@create')->name('create.all-branches.microfinance');
+                        route::post('microfinance/all-branches/{branch_id?}', 'AllBranchesMicrofinanceControllerController@store')->name('store.all-branches.microfinance');
 						
                         route::get('get-decrease-rate-based-on-flat-rate', 'AllBranchesMicrofinanceControllerController@getDecreaseRateBasedOnFlatRate'); // ajax ;
 
 						
-						route::get('microfinance/by-branches', 'ByBranchesMicrofinanceControllerController@create')->name('create.by-branches.microfinance');
-                        route::post('microfinance/by-branches', 'ByBranchesMicrofinanceControllerController@store')->name('store.by-branches.microfinance');
+						// route::get('microfinance/by-branches', 'ByBranchesMicrofinanceControllerController@create')->name('create.by-branches.microfinance');
+                        // route::post('microfinance/by-branches', 'ByBranchesMicrofinanceControllerController@store')->name('store.by-branches.microfinance');
 						
-						route::get('microfinance/by-branch', 'ByBranchesMicrofinanceControllerController@create')->name('create.by-branch.microfinance');
-                        route::post('microfinance/by-branch', 'ByBranchesMicrofinanceControllerController@store')->name('store.by-branch.microfinance');
+						route::get('microfinance/planning-by-branch', 'ByBranchesMicrofinanceControllerController@create')->name('create.by-branch.microfinance');
+                        // route::post('microfinance/allocate-by-branch', 'ByBranchesMicrofinanceControllerController@store')->name('store.by-branch.microfinance');
                         
 						
                         route::get('microfinance/new-branches', 'NewBranchesMicrofinanceControllerController@create')->name('create.new-branches.microfinance');

@@ -68,7 +68,7 @@ $months = $study->getMicrofinanceMonths() ;
                                 <tbody>
                                     @foreach($products as $product)
                                     @php
-                                    $subModel = $model->microfinanceProductSalesProjects->where('type',$type)->where('microfinance_product_id',$product->id)->first();
+                                    $subModel = $model->microfinanceProductSalesProjects->where('type',$type)->where('branch_id',$branchId)->where('microfinance_product_id',$product->id)->first();
                                     @endphp
                                     <input type="hidden" name="microfinanceProductSalesProjects[{{ $product->id }}][id]" value="{{ $subModel  ? $subModel->id : 0 }}">
                                     <input type="hidden" name="microfinanceProductSalesProjects[{{ $product->id }}][type]" value="{{ $branchPlanningBaseType }}">
@@ -87,31 +87,41 @@ $months = $study->getMicrofinanceMonths() ;
                                         <td>
                                             @php
                                             $currentVal = $subModel ? $subModel->getTenor() : 12;
+											if($isByBranch){
+												$currentVal = $study->microfinanceByBranchProductMixes->where('microfinance_product_id',$product->id)->first();
+												$currentVal = $currentVal ? $currentVal->getTenor():12;
+											}
                                             $tenorClass = 'tenor-class'.$product->id
                                             // $product->name
                                             @endphp
 
-                                            <x-repeat-right-dot-inputs :formattedInputClasses="'min-w-90'" :numberFormatDecimals="0" :removeThreeDots="true" :removeCurrency="true" :currentVal="number_format($currentVal,0)" :classes="'only-greater-than-zero-allowed '.$tenorClass" :is-percentage="false" :name="'microfinanceProductSalesProjects['.$product->id.'][tenor]'" :columnIndex="-1"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :readonly="$isByBranch" :formattedInputClasses="'min-w-90'" :numberFormatDecimals="0" :removeThreeDots="true" :removeCurrency="true" :currentVal="number_format($currentVal,0)" :classes="'only-greater-than-zero-allowed '.$tenorClass" :is-percentage="false" :name="'microfinanceProductSalesProjects['.$product->id.'][tenor]'" :columnIndex="-1"></x-repeat-right-dot-inputs>
                                         </td>
 
                                         <td>
                                             @php
                                             $currentVal = $subModel ? $subModel->getAvgAmount() : 0 ;
+											if($isByBranch){
+												$currentVal = $study->microfinanceByBranchProductMixes->where('microfinance_product_id',$product->id)->first();
+												$currentVal = $currentVal ? $currentVal->getAvgAmount():0;
+											}
                                             @endphp
-                                            <x-repeat-right-dot-inputs :removeThreeDots="true" :removeCurrency="true" :currentVal="$currentVal" :classes="'only-greater-than-zero-allowed'" :is-percentage="false" :name="'microfinanceProductSalesProjects['.$product->id.'][avg_amount]'" :columnIndex="-1"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :readonly="$isByBranch" :removeThreeDots="true" :removeCurrency="true" :currentVal="$currentVal" :classes="'only-greater-than-zero-allowed'" :is-percentage="false" :name="'microfinanceProductSalesProjects['.$product->id.'][avg_amount]'" :columnIndex="-1"></x-repeat-right-dot-inputs>
                                         </td>
 
                                         @if(!$model->isMonthlyStudy())
                                         <td>
                                             <div class="d-flex align-items-center increase-rate-parent">
                                                 <button class="btn btn-primary btn-md text-nowrap increase-rate-trigger-btn" type="button" data-toggle="modal">{{ __('Increase Rates') }}</button>
-                                                <x-modal.increase-rates :name="'microfinanceProductSalesProjects['.$product->id.'][increase_rates]'" :study="$study" :subModel="isset($subModel) ? $subModel : null "></x-modal.increase-rates>
+                                                <x-modal.increase-rates :product="$product" :isByBranch="$isByBranch" :name="'microfinanceProductSalesProjects['.$product->id.'][increase_rates]'" :study="$study" :subModel="isset($subModel) ? $subModel : null "></x-modal.increase-rates>
+												
+												
                                             </div>
                                         </td>
                                         @endif
 
                                         <td>
-                                            <x-form.select :required="true" :label="''" :pleaseSelect="false" :selectedValue="isset($subModel) ? $subModel->getFundedBy():0" :options="getMicrofinanceFundingBySelector()" :add-new="false" class="select2-select min-w-120 repeater-select  " :all="false" name="microfinanceProductSalesProjects[{{ $product->id }}][funded_by]"></x-form.select>
+                                            <x-form.select :readonly="$isByBranch" :required="true" :label="''" :pleaseSelect="false" :selectedValue="isset($subModel) ? $subModel->getFundedBy():0" :options="getMicrofinanceFundingBySelector()" :add-new="false" class="select2-select min-w-120 repeater-select  " :all="false" name="microfinanceProductSalesProjects[{{ $product->id }}][funded_by]"></x-form.select>
                                         </td>
 
 
@@ -183,7 +193,7 @@ $months = $study->getMicrofinanceMonths() ;
                                 <tbody>
                                     @foreach($products as $product)
                                     @php
-                                    $subModel = $model->microfinanceProductSalesProjects->where('type',$type)->where('microfinance_product_id',$product->id)->first();
+                                    $subModel = $model->microfinanceProductSalesProjects->where('type',$type)->where('branch_id',$branchId)->where('microfinance_product_id',$product->id)->first();
                                     @endphp
                                     <tr data-repeat-formatting-decimals="0" data-repeater-style>
                                         <td class="td-classes">
@@ -261,7 +271,7 @@ $months = $study->getMicrofinanceMonths() ;
                                 <tbody>
                                     @foreach($products as $product)
 									 @php
-                                    $subModel = $model->microfinanceProductSalesProjects->where('type',$type)->where('microfinance_product_id',$product->id)->first();
+                                    $subModel = $model->microfinanceProductSalesProjects->where('type',$type)->where('branch_id',$branchId)->where('microfinance_product_id',$product->id)->first();
                                     @endphp
                                     <tr data-repeat-formatting-decimals="0" data-repeater-style>
                                         <td class="td-classes">
@@ -283,6 +293,10 @@ $months = $study->getMicrofinanceMonths() ;
 
                                             @php
                                             $currentVal = $subModel ? $subModel->getFlatRateAtYearOrMonthIndex($yearOrMonthAsIndex) : 0;
+											if($isByBranch){
+												$currentVal = $study->microfinanceByBranchProductMixes->where('microfinance_product_id',$product->id)->first();
+												$currentVal = $currentVal ? $currentVal->getFlatRateAtYearOrMonthIndex($yearOrMonthAsIndex):0;
+											}
                                             @endphp
 
 
@@ -290,7 +304,7 @@ $months = $study->getMicrofinanceMonths() ;
                                             @php
                                             $currentModalId = 'current-modal-id'.($columnIndex+1) . $product->id
                                             @endphp
-                                            <x-repeat-with-calc :currentModalId="$currentModalId" :showIcon="true" :numberFormatDecimals="2" :formattedInputClasses="'calcField flat-rate-input'" :mark="'%'" :removeThreeDots="false" :removeCurrency="true" :currentVal="number_format($currentVal,1)" :classes="''" :is-percentage="true" :name="'microfinanceProductSalesProjects['.$product->id.'][flat_rates]['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-with-calc>
+                                            <x-repeat-with-calc  :removeThreeDots="$isByBranch" :readonly="$isByBranch" :currentModalId="$currentModalId" :showIcon="true" :numberFormatDecimals="2" :formattedInputClasses="'calcField flat-rate-input'" :mark="'%'"  :removeCurrency="true" :currentVal="number_format($currentVal,1)" :classes="''" :is-percentage="true" :name="'microfinanceProductSalesProjects['.$product->id.'][flat_rates]['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-with-calc>
                                             {{-- <x-repeat-with-calc :currentModalId="$currentModalId" :showIcon="true" :numberFormatDecimals="2" :formattedInputClasses="'calcField flat-rate-input'" :mark="'%'" :removeThreeDots="false" :removeCurrency="true" :currentVal="number_format($currentVal,1)" :classes="''" :is-percentage="true" :name="'flat_rates['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-with-calc> --}}
 
 
@@ -408,7 +422,7 @@ $months = $study->getMicrofinanceMonths() ;
                         </x-slot>
                         <x-slot name="trs">
                             @php
-                            $rows = isset($model) && count($model->{$tableId}->where('type',$type)) ?$model->{$tableId}->where('type',$type)->values() : [null,null] ;
+                            $rows = isset($model) && count($model->{$tableId}->where('type',$type)->where('branch_id',$branchId)) ?$model->{$tableId}->where('type',$type)->where('branch_id',$branchId)->values() : [null,null] ;
                             @endphp
                             @foreach($rows as $currentIndex=>$subModel)
                             @php
@@ -539,7 +553,7 @@ $months = $study->getMicrofinanceMonths() ;
                         </x-slot>
                         <x-slot name="trs">
                             @php
-                            $rows = isset($model) && count($model->{$tableId}->where('type',$type)) ?$model->{$tableId}->where('type',$type)->values() : [null,null] ;
+                            $rows = isset($model) && count($model->{$tableId}->where('type',$type)->where('branch_id',$branchId)) ?$model->{$tableId}->where('type',$type)->where('branch_id',$branchId)->values() : [null,null] ;
                             @endphp
                             @foreach($rows as $currentIndex=>$subModel)
                             @php
@@ -682,22 +696,25 @@ $months = $study->getMicrofinanceMonths() ;
                         </x-slot>
                         <x-slot name="trs">
                             @php
-                            $rows = isset($model) && count($model->{$tableId}->where('type',$type)) ?$model->{$tableId}->where('type',$type)->values() : [null,null] ;
+                            $rows = isset($model) && count($model->{$tableId}->where('type',$type)->where('branch_id',$branchId)) ?$model->{$tableId}->where('type',$type)->where('branch_id',$branchId)->values() : [null,null] ;
                             @endphp
                             @foreach($rows as $currentIndex=>$subModel)
                             @php
                             $isSeniors = [
                             0 => [
                             'is_senior'=>1 ,
-                            'title'=> __('Senior Loan Officer')
+                            'title'=> __('Senior Loan Officer'),
+							'name'=>'product_mix_senior_loan_officers'
                             ],
                             1=> [
                             'is_senior'=>0 ,
-                            'title'=>__('Loan Officer')
+                            'title'=>__('Loan Officer'),
+							'name'=>'product_mix_loan_officers'
                             ]
                             ][$currentIndex];
                             $isSenior = $isSeniors['is_senior'];
                             $title = $isSeniors['title'];
+							$name = $isSeniors['name'];
                             @endphp
 
                             <tr data-repeater-style>
@@ -712,11 +729,16 @@ $months = $study->getMicrofinanceMonths() ;
                                 @php
                                 $columnIndex = 0 ;
                                 @endphp
-                                @for($i = 0 ; $i<= $months ; $i++) @php $currentVal=isset($subModel) ? $subModel->getNewLoanCasesAtYearOrMonthIndex($i) : 0 ;
-
+                                @for($i = 0 ; $i<= $months ; $i++) @php 
+								
+								$currentVal=isset($subModel) ? $subModel->getNewLoanCasesAtYearOrMonthIndex($i) : 0 ;
+									if($isByBranch){
+												$currentVal = $study->microfinanceByBranchProductMixes->where('microfinance_product_id',$product->id)->first();
+												$currentVal= $study->{$name}[$i]??0 ;
+											}
                                     @endphp
                                     <td>
-                                        <x-repeat-right-dot-inputs :numberFormatDecimals="0" :multiple="true" :removeCurrency="true" :name="'microfinanceLoanOfficerCases['.$currentIndex.'][new_cases]['.$i.']'" :currentVal="$currentVal" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                        <x-repeat-right-dot-inputs :removeThreeDots="$isByBranch" :readonly="$isByBranch" :numberFormatDecimals="0" :multiple="true" :removeCurrency="true" :name="'microfinanceLoanOfficerCases['.$currentIndex.'][new_cases]['.$i.']'" :currentVal="$currentVal" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
                                     </td>
                                     @php
                                     $columnIndex++;
