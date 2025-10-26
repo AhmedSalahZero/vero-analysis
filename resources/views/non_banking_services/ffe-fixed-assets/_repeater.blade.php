@@ -39,7 +39,7 @@ use App\Models\NonBankingService\FixedAssetName;
             </x-slot>
             <x-slot name="trs">
                 @php
-                $rows = isset($model) ? $model->fixedAssets : [-1] ;
+                $rows = isset($model) ? $model->fixedAssets->where('type',$fixedAssetType) : [-1] ;
                 @endphp
                 @foreach( count($rows) ? $rows : [-1] as $subModel)
                 @php

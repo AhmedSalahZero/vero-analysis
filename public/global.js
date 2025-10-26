@@ -73,6 +73,32 @@ $(document).on('change','.only-percentage-allowed',function(e){
 
 });
 
+$(document).on('change','.only-number-allowed',function(e){
+    if($(this).hasClass('only-number-allowed') && ! isNumber($(this).val()))
+    {
+	
+        let lang = $('body').data('lang');
+        title = "Oops..." ;
+        message = "Please Enter Valid Number" ;
+        if(lang === 'ar'){
+            title = 'Ø®Ø·Ø£'  ;
+            message = "Ø¨Ø±Ø¬Ø§Ø¡ Ø§Ø¯Ø®Ø§Ù„ Ù†Ø³Ø¨Ù‡ ØµØ­ÙŠØ­Ù‡"
+        }
+		if($(this).val() != ''){
+			Swal.fire({
+				icon: "warning",
+				title: title,
+				text: message ,
+			})
+			
+		}
+
+        $(this).val(0);
+
+    }
+
+});
+
 $(document).on('change','.only-greater-than-zero-allowed',function(){
     if(! isGreaterThanZero($(this).val()) && $(this).val())
     {

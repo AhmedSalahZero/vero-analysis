@@ -169,8 +169,8 @@ use App\Models\NonBankingService\LeasingCategory;
 
                                 </tr>
                                 @endif
-
-
+{{-- {{ dd() }} --}}
+@if($isYearsStudy)
                                 <tr data-repeat-formatting-decimals="2" data-repeater-style>
 
                                     <input type="hidden" name="id" value="{{ isset($subModel) ? $subModel->id : 0 }}">
@@ -196,7 +196,7 @@ use App\Models\NonBankingService\LeasingCategory;
 
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
-                                            <x-repeat-right-dot-inputs :currentVal="$currentVal" :classes="'only-greater-than-or-equal-zero-allowed recalculate-gr gr-field'" :is-percentage="true" :name="'growth_rate['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :currentVal="$currentVal" :classes="'only-number-allowed recalculate-gr gr-field'" :is-percentage="true" :name="'growth_rate['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
                                         </div>
                                     </td>
@@ -216,7 +216,7 @@ use App\Models\NonBankingService\LeasingCategory;
 
 
                                 </tr>
-
+@endif
 
 
 

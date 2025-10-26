@@ -135,7 +135,7 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
                                 @endif
 
 
-                                <tr total-row-tr data-repeat-formatting-decimals="2" data-repeater-style>
+                                {{-- <tr total-row-tr data-repeat-formatting-decimals="2" data-repeater-style>
 
                                     <input type="hidden" name="id" value="{{ isset($subModel) ? $subModel->id : 0 }}">
 
@@ -169,16 +169,9 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
                                         </div>
                                     </td>
 
-                                    {{-- <td>
-								
-                                        <div class="d-flex align-items-center justify-content-center">
-											<input type="text" class="form-control expandable-percentage-input sum-total-row sum-percentage-css" disabled value="0"> <span class="ml-2 d-inline-block"> %</span>
-                                        </div>
-                                    </td> --}}
 
 
-
-                                </tr>
+                                </tr> --}}
 
 
 
@@ -209,7 +202,7 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
                                     @endphp
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
-                                            <x-repeat-right-dot-inputs :number-format-decimals="0" :currentVal="$currentVal" :classes="'only-greater-than-or-equal-zero-allowed total-loans-hidden js-recalculate-equity-funding-value'" :is-percentage="false" :name="'portfolioMortgageRevenueProjectionByCategories['.$currentIndex.']['.'portfolio_mortgage_transactions_projections'.']['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :number-format-decimals="0" :currentVal="$currentVal" :classes="'only-greater-than-or-equal-zero-allowed  js-recalculate-equity-funding-value'" :is-percentage="false" :name="'portfolioMortgageRevenueProjectionByCategories['.$currentIndex.']['.'portfolio_mortgage_transactions_projections'.']['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
                                         </div>
                                     </td>
                                     @php
@@ -320,7 +313,9 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
                                     @endphp
                                     @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
                                     @php
-                                    $currentVal = 0;
+                                    $currentVal = array_values($portfolioMortgageRevenueProjectionByCategory->total_monthly_amounts_per_years?:[])[$columnIndex]??0;
+									$totalPerYears[$columnIndex] = isset($totalPerYears[$columnIndex]) ? $totalPerYears[$columnIndex]+$currentVal:$currentVal  ;
+									
                                     @endphp
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
@@ -348,7 +343,7 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
                                     <td></td>
                                     <td></td>
                                     <td></td>
-                                    <td></td>
+                      
                                     <td>
 
                                         @if($countCategories > 1)
@@ -364,15 +359,22 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
                                         </div>
                                         @endif
                                     </td>
+									<td>
+									<div class="row">
+										<div class="col-md-12">
+										 <input type="submit" name="calculate-portfolio" class="btn bg-green active-style save-form" value="{{  __('Calculate Net Disbursement') }}">
+										</div>
+									</div>
+									</td>
                                     <td>
                                         @if($loop->last)
                                         <div class="row">
                                             <div class="col-md-12">
-                                                <div class="text-right">
+                                                {{-- <div class="text-right"> --}}
                                                     <a href="{{ route('add.new.portfolio.mortgage.category',['company'=>$company->id,'study'=>$study->id]) }}" type="submit" name="save-and-continue" class="btn active-style">
-                                                        {{ __('Add New Portfolio Mortgage') }}
+                                                        {{ __('Add New Portfolio') }}
                                                     </a>
-                                                </div>
+                                                {{-- </div> --}}
 
 
                                             </div>
@@ -381,6 +383,7 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
                                         @endif
 
                                     </td>
+									              <td></td>
                                 </tr>
 
 
@@ -429,7 +432,9 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
 
 
 
-
+			@foreach($totalPerYears as $columnIndex => $totalForLoan)
+					<input type="hidden" class="total-loans-hidden" data-column-index="{{ $columnIndex }}" value="{{ $totalForLoan }}">
+			@endforeach
 
 
 
@@ -806,7 +811,6 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
     $(document).on('click', '.save-form', function(e) {
         e.preventDefault(); {
 
-            const hasSalesChannel = $('#add-sales-channels-share-discount-id:checked').length
 
             let canSubmitForm = true;
             let errorMessage = '';
@@ -828,6 +832,7 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
 
             let form = document.getElementById(formId);
             var formData = new FormData(form);
+            formData.append('save', $(this).attr('name'))
             formData.append('submitBtnType', formId)
 
             $('.save-form').prop('disabled', true);

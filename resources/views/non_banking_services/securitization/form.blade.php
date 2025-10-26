@@ -56,7 +56,7 @@ use App\Models\NonBankingService\Securitization;
                                 $repeaterId = $tableId.'_repeater';
                                 @endphp
                                 <input type="hidden" name="tableIds[]" value="{{ $tableId }}">
-                                <x-tables.repeater-table :firstElementDeletable="true" :hideByDefault="false" :removeRepeater="false" :repeater-with-select2="true" :parentClass="' js-toggle-visibility'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
+                                <x-tables.repeater-table :initEmpty="!count($model->securitizations )" :firstElementDeletable="true" :hideByDefault="false" :removeRepeater="false" :repeater-with-select2="true" :parentClass="' js-toggle-visibility'" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
                                     <x-slot name="ths">
                                         <x-tables.repeater-table-th class="col-md-2 header-border-down" :title="__('Revenue <br> Stream')"></x-tables.repeater-table-th>
                                         <x-tables.repeater-table-th class="col-md-2 header-border-down " :title="__('Disbursement <br> Date')" :helperTitle="__('Default date is Income Statement start date, if else please select a date')"></x-tables.repeater-table-th>
@@ -168,7 +168,6 @@ use App\Models\NonBankingService\Securitization;
                         </div>
 
                     </div>
-                    {{-- <x-save-and-next-btn /> --}}
 
                 </div>
             </div>
@@ -212,7 +211,9 @@ use App\Models\NonBankingService\Securitization;
                                 </thead>
                                 <tbody>
                                     @foreach($securitizationCalculations as $securitizationCalculation)
-
+                                    @if(!isset($securitizationCalculation['revenue_stream_type'] ))
+                                    @continue
+                                    @endif
 
 
                                     <tr data-repeat-formatting-decimals="0" data-repeater-style>
@@ -243,8 +244,8 @@ use App\Models\NonBankingService\Securitization;
                                             </div>
 
                                         </td>
-										
-										 <td class="td-classes">
+
+                                        <td class="td-classes">
                                             <div>
                                                 <input value="{{ $securitizationCalculation['securitization_date'] }}" disabled="" class="form-control " type="text">
                                             </div>
@@ -277,9 +278,9 @@ use App\Models\NonBankingService\Securitization;
                                                 <input value="{{ number_format($securitizationCalculation['early_settlements_expense_amount']) }}" disabled="" class="form-control " type="text">
                                             </div>
 
-                                        </td> 
-										
-										 <td class="td-classes">
+                                        </td>
+
+                                        <td class="td-classes">
                                             <div>
                                                 <input value="{{ number_format($securitizationCalculation['securitization_expense_amount']) }}" disabled="" class="form-control " type="text">
                                             </div>
@@ -302,15 +303,15 @@ use App\Models\NonBankingService\Securitization;
                         </div>
 
                     </div>
-					
-					  <div class="row">
+
+                    <div class="row">
 
                         <div class="col-md-12 text-right">
                             <input type="submit" name="save_and_next" class="btn active-style save-form" value="{{  __('Save & Next') }}">
                         </div>
 
                     </div>
-					
+
 
                 </div>
             </div>

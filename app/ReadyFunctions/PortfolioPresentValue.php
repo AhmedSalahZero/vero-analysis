@@ -34,6 +34,10 @@ class PortfolioPresentValue
 			}
 			$totalPortfoliosMortgageEndBalances = [];
 			$portfolioInterestAmounts =[];
+			  $yearWithItsMonths=$study->getYearIndexWithItsMonths();
+			$totalMonthlyAmountsPerYears = HArr::sumPerYearIndex($monthlyAmounts , $yearWithItsMonths);
+			
+			// dd();
 			
 			foreach($monthlyAmounts as $currentOccurrenceMonthIndex => &$currentOccurrenceAvgAmount){
 				if($currentOccurrenceAvgAmount == 0){
@@ -98,7 +102,8 @@ class PortfolioPresentValue
 				'occurrence_dates'=>$occurrenceDates,
 				'statement'=>$accumulatedMonthsAmountsDueDates,
 				'portfolio_mortgage_unearned_interest_statement'=>$currentUnearnedInterestStatement,
-				'loan_amounts'=>$monthlyAmounts
+				'loan_amounts'=>$monthlyAmounts,
+				'total_monthly_amounts_per_years'=>$totalMonthlyAmountsPerYears
 			];
 	
 	}

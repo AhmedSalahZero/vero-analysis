@@ -109,7 +109,7 @@ use App\Models\NonBankingService\ReverseFactoringBreakdown;
 
                                 </tr>
 								@endif
-
+@if($isYearsStudy)
 
                                 <tr data-repeat-formatting-decimals="2" data-repeater-style>
 
@@ -132,7 +132,7 @@ use App\Models\NonBankingService\ReverseFactoringBreakdown;
 
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
-                                            <x-repeat-right-dot-inputs :currentVal="$model->reverseFactoringRevenueProjectionByCategory ? $model->reverseFactoringRevenueProjectionByCategory->getGrowthRateAtYearOrMonthIndex($yearOrMonthAsIndex) : 0" :classes="'only-greater-than-or-equal-zero-allowed recalculate-gr gr-field'" :is-percentage="true" :name="'ReverseFactoringRevenueProjectionByCategory['.'growth_rates'.']['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :currentVal="$model->reverseFactoringRevenueProjectionByCategory ? $model->reverseFactoringRevenueProjectionByCategory->getGrowthRateAtYearOrMonthIndex($yearOrMonthAsIndex) : 0" :classes="'only-number-allowed recalculate-gr gr-field'" :is-percentage="true" :name="'ReverseFactoringRevenueProjectionByCategory['.'growth_rates'.']['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
                                         </div>
                                     </td>
@@ -148,6 +148,7 @@ use App\Models\NonBankingService\ReverseFactoringBreakdown;
                                     </td>
 									
                                 </tr>
+								@endif
                                 <tr data-repeat-formatting-decimals="0" data-repeater-style total-row-tr data-row-total>
 
                                     <td>

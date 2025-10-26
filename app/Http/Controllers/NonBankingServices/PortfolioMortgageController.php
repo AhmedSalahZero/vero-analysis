@@ -52,12 +52,12 @@ class PortfolioMortgageController extends Controller
         $cbeLendingRatesPerMonths =$isMonthlyStudy ? $baseRatePerYear: $study->convertYearlyArrayToMonthly($baseRatePerYear, $operationDurationPerYearFromIndexes);
         $portfolioLoanFundingRatesPerMonths = $isMonthlyStudy ? $portfolioLoanFundingRatesPerYear :  $study->convertYearlyArrayToMonthly($portfolioLoanFundingRatesPerYear, $operationDurationPerYearFromIndexes);
         foreach ($request->get('portfolioMortgageRevenueProjectionByCategories') as $currentIndex => $portfolioMortgageRevenueProjectionByCategoryArr) {
-            $portfolioMortgageCategoryId = $study->portfolioMortgageRevenueProjectionByCategories[$currentIndex]->id;
+			$portfolioMortgageRevenueProjectionByCategory = $study->portfolioMortgageRevenueProjectionByCategories[$currentIndex] ;
+            $portfolioMortgageCategoryId = $portfolioMortgageRevenueProjectionByCategory->id;
+			// totalMonthlyAmountsPerYears
             $tenor = $portfolioMortgageRevenueProjectionByCategoryArr['portfolio_mortgage_duration'];
             $portfolioMortgageTransactionAmountsPerYears = $portfolioMortgageRevenueProjectionByCategoryArr['portfolio_mortgage_transactions_projections'];
-			
             $marginRate = $portfolioMortgageRevenueProjectionByCategoryArr['margin_rate'];
-			
 			$monthlyStudyOccurrenceDates = HArr::onlyKeysWithValues($portfolioMortgageRevenueProjectionByCategoryArr['portfolio_mortgage_transactions_projections']??[]);
 			$monthlyStudyOccurrenceDates = [$monthlyStudyOccurrenceDates];
 		
@@ -65,6 +65,9 @@ class PortfolioMortgageController extends Controller
             $frequencyPerYear = $portfolioMortgageRevenueProjectionByCategoryArr['frequency_per_year']??[];
             $startFromPerYear = $portfolioMortgageRevenueProjectionByCategoryArr['start_from']??[];
             $portfolioPresentValueResult = (new PortfolioPresentValue())->calculate($monthlyStudyOccurrenceDates,$study, $dateIndexWithDate, $portfolioLoanFundingRatesPerMonths, $operationDurationPerYearFromIndexes, $tenor, $startFromPerYear, $frequencyPerYear, $portfolioMortgageTransactionAmountsPerYears, $cbeLendingRatesPerMonths, $marginRate, $bankMarginRatesPerMonths, $company->id, $study->id, $portfolioMortgageCategoryId);
+			$portfolioMortgageRevenueProjectionByCategory->update([
+				'total_monthly_amounts_per_years'=>$portfolioPresentValueResult['total_monthly_amounts_per_years']
+			]);
             DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('portfolio_mortgage_revenue_projection_by_categories')->where('id', $portfolioMortgageCategoryId)->update($portfolioPresentValueResult);
                 
             $portfolioMonthlyLoanAmounts = [] ;
@@ -80,7 +83,11 @@ class PortfolioMortgageController extends Controller
             $study->storeMonthlyLoan(Study::PORTFOLIO_MORTGAGE,'portfolioMortgageRevenueProjectionByCategories', $portfolioMonthlyLoanAmounts);
             
         }
-            
+        if($request->get('save') === 'calculate-portfolio'){
+			return response()->json([
+            'redirectTo'=>route('create.portfolio.mortgage.revenue.stream.breakdown',['company'=>$company->id,'study'=>$study->id])
+        ]); 
+		}
             
         // $study->calculatePortfolioDueCheques();
         // $study->storeRepeaterRelations($request,$this->getRepeaterRelations(),$company);

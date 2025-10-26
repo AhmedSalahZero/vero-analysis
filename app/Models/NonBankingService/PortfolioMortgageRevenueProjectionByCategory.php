@@ -21,6 +21,7 @@ class  PortfolioMortgageRevenueProjectionByCategory extends Model
 		'monthly_due_cheques_percentages'=>'array',
 		'quarterly_due_cheques_percentages'=>'array',
 		'annually_due_cheques_percentages'=>'array',
+		'total_monthly_amounts_per_years'=>'array',
 	];
 	public function getViewVars(Company $company, Study $study):array{
 	//	$portfolioMortgageEclAndNewPortfolioFundingRate = $study?  $study->portfolioMortgageEclAndNewPortfolioFundingRate : null;

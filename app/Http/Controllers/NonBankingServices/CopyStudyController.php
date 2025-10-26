@@ -38,7 +38,9 @@ class CopyStudyController extends Controller
 			DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table($tableName)->insert($allData); // إدراج نسخة جديدة
 			
 		}
-		return redirect()->back()->with('success',__('Done!'));
+		$active = $study->getActiveTab();
+			return redirect()->route('view.study',['company'=>$company->id,'active'=>$active]);
+		// return redirect()->back()->with('success',__('Done!'));
     }
   
 }

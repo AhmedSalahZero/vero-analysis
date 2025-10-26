@@ -59,9 +59,10 @@ class PerEmployeeFixedAssetsController extends Controller
 	//	$study->storeFixedLoansForFixedAssets($fixedAssetType);
 		$study->recalculateFixedAssets($fixedAssetType);
 	//	$study->recalculateFixedAssetStatement($fixedAssetType);
-
+		$redirectRoute = $study->isExistingCompany() ? route('view.opening.balances.for.non.banking',['company'=>$company->id,'study'=>$study->id])  : route('view.non.banking.forecast.income.statement',['company'=>$company->id , 'study'=>$study->id]);
+			
 		return response()->json([
-			'redirectTo'=>route('view.opening.balances.for.non.banking',['company'=>$company->id,'study'=>$study->id])
+			'redirectTo'=>$redirectRoute
 		]);
 		
 	}

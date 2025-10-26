@@ -1,3 +1,4 @@
+@if($isYearsStudy)
 <div class="kt-portlet">
     <div class="kt-portlet__body">
         <div class="row">
@@ -137,3 +138,4 @@
         </div>
     </div>
 </div>
+@endif

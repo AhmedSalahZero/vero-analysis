@@ -117,7 +117,7 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
                                 </tr>
                                 @endif
 
-
+@if($isYearsStudy)
                                 <tr total-row-tr data-repeat-formatting-decimals="2" data-repeater-style>
 
                                     <input type="hidden" name="id" value="{{ isset($subModel) ? $subModel->id : 0 }}">
@@ -139,7 +139,7 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
 
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
-                                            <x-repeat-right-dot-inputs :currentVal="$model->directFactoringRevenueProjectionByCategory ? $model->directFactoringRevenueProjectionByCategory->getGrowthRateAtYearOrMonthIndex($yearOrMonthAsIndex) : 0" :classes="'only-greater-than-or-equal-zero-allowed recalculate-gr gr-field'" :is-percentage="true" :name="'directFactoringRevenueProjectionByCategory['.'growth_rates'.']['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :currentVal="$model->directFactoringRevenueProjectionByCategory ? $model->directFactoringRevenueProjectionByCategory->getGrowthRateAtYearOrMonthIndex($yearOrMonthAsIndex) : 0" :classes="'only-number-allowed recalculate-gr gr-field'" :is-percentage="true" :name="'directFactoringRevenueProjectionByCategory['.'growth_rates'.']['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
                                         </div>
                                     </td>
                                     @php
@@ -161,7 +161,7 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
                                 </tr>
 
 
-
+@endif
 
 
 
@@ -464,11 +464,17 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
             </div>
             {{-- end of Administration Fees Rate & ECL Rate   --}}
 
-
-
+  <div class="kt-portlet " >
+                <div class="kt-portlet__body">
+			<div class="row">
+                        <div class="col-md-12 text-right">
+                            <input type="submit" name="calculate-net-disbursement" class="btn active-style save-form" value="{{  __('Calculate Net Disbursement') }}">
+                        </div>
+                </div> </div>
+                </div>
             @if(count($study->directFactoringBreakdowns))
             {{-- start of Factoring New Portfolio Funding Structure   --}}
-            <div class="kt-portlet " >
+            <div class="kt-portlet " id="direct-factoring-funding">
                 <div class="kt-portlet__body">
                     <div class="row">
 
@@ -691,7 +697,9 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
             </div>
             @endif
             {{-- end of Factoring New Portfolio Funding Structure   --}}
+			@if(count($study->directFactoringBreakdowns))
             <x-save-or-back />
+			@endif
 
 
 
@@ -780,6 +788,7 @@ use App\Models\NonBankingService\DirectFactoringBreakdown;
 
             let form = document.getElementById(formId);
             var formData = new FormData(form);
+            formData.append('save', $(this).attr('name'))
             formData.append('submitBtnType', formId)
 
             $('.save-form').prop('disabled', true);

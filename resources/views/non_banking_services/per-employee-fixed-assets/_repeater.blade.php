@@ -31,7 +31,7 @@ use App\Models\NonBankingService\FixedAssetName;
             </x-slot>
             <x-slot name="trs">
                 @php
-                $rows = isset($model) ? $model->fixedAssets : [-1] ;
+                $rows = isset($model) ? $model->fixedAssets->where('type',$fixedAssetType) : [-1] ;
                 @endphp
                 @foreach( count($rows) ? $rows : [-1] as $subModel)
                 @php
@@ -120,15 +120,12 @@ use App\Models\NonBankingService\FixedAssetName;
                     <td>
 
 
-<div class="d-flex align-items-center justify-content-center">
-                            <input value="{{ isset($subModel) ? $subModel->getReplacementCostRate():0 }}" @if($isRepeater) name="replacement_cost_rate" @else name="{{ $tableId }}[0][replacement_cost_rate]" @endif  class="form-control expandable-percentage-input exclude-from-trigger-change-when-repeat text-left" type="text">
+                        <div class="d-flex align-items-center justify-content-center">
+                            <input value="{{ isset($subModel) ? $subModel->getReplacementCostRate():0 }}" @if($isRepeater) name="replacement_cost_rate" @else name="{{ $tableId }}[0][replacement_cost_rate]" @endif class="form-control expandable-percentage-input exclude-from-trigger-change-when-repeat text-left" type="text">
                             <span style="margin-left:3px	">%</span>
                         </div>
-						
-                        {{-- <div class="">
-                            <input value="{{ isset($subModel) ? $subModel->getReplacementCostRate():0 }}" @if($isRepeater) name="replacement_cost_rate" @else name="{{ $tableId }}[0][replacement_cost_rate]" @endif class="form-control expandable-percentage-input exclude-from-trigger-change-when-repeat text-left " type="text">
-							<span>%</span>
-                        </div> --}}
+
+
                     </td>
                     <td>
                         <x-form.select :selectedValue="isset($subModel) ? $subModel->getReplacementInterval() : 1" :options="getReplacementInterval()" :add-new="false" class="select2-select repeater-select  " :all="false" name="@if($isRepeater) replacement_interval @else {{ $tableId }}[0][replacement_interval] @endif"></x-form.select>
@@ -179,38 +176,17 @@ use App\Models\NonBankingService\FixedAssetName;
                 <label class="mr-3">
 
                 </label>
-                <label  class="kt-radio kt-radio--success text-black font-size-18px font-weight-bold">
+                <label class="kt-radio kt-radio--success text-black font-size-18px font-weight-bold">
                     <input class="is-fully-funded-checkbox exclude-from-trigger-change-when-repeat" type="radio" value="1" name="perEmployeeFixedAssetsFundingStructure[is_fully_funded_though_equity]" @if(!isset($subModel) || ($isFullyFundingTroughEquity)) dd checked @endisset> {{ __('Fully Funded Through Equity') }}
                     <span></span>
                 </label>
 
-                {{-- <label class="kt-radio kt-radio--danger text-black font-size-18px font-weight-bold">
-                    <input class="is-fully-funded-checkbox exclude-from-trigger-change-when-repeat" type="radio" value="0" name="perEmployeeFixedAssetsFundingStructure[is_fully_funded_though_equity]" @if(isset($subModel) && !$isFullyFundingTroughEquity) ss checked @endisset> {{ __('Funded Through Equity & Debt') }}
-                <span></span>
-                </label> --}}
-                @php
-                $inEditMode = isset($model) && $model->fixedAssets->count() ? 1 : 0 ;
-                @endphp
-                <div class="d-inline-block w-full text-right">
-                    <div class="d-inline-block">
-                        <button is-save-and-continue="1" in-edit-mode="{{ $inEditMode }}" class="btn active-style 
-					 save-form
-					 
-					
-					 ">
 
-                            {{ __('Save & Continue') }}
-
-
-                        </button>
-
-
-
-                    </div>
-
-                </div>
+          
             </div>
         </div>
+		
+		
 
 
     </div>

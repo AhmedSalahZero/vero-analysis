@@ -71,6 +71,7 @@ class CalculateFixedLoanAtEndService
         $datesIndexAndDaysCount =HDate::calculateDaysCountAtEnd($datesAsIndexString, $installmentPaymentIntervalValue, $currentDaysCount);
         
         $currentPricing =  ($baseRate + $marginRate) /100  ;
+		// logger('base rate' . $baseRate . ' at index '.$startDate );
         $stepRate = Loan::getStepRate($loanType, $stepUpRate, $stepDownRate);
         $stepRate = $stepRate / 100;
         $isWithCapitalization = Loan::isWithCapitalization($loanType);

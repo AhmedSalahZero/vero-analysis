@@ -230,6 +230,7 @@ class IncomeStatementController extends Controller
 				$tableDataFormatted[1]['sub_items']['Interest Cost']['data'][$dateIndex] = isset($tableDataFormatted[1]['sub_items']['Interest Cost']['data'][$dateIndex]) ? $tableDataFormatted[1]['sub_items']['Interest Cost']['data'][$dateIndex] + $value : $value  ;
 			}
 		}
+
 		
 		// securitaization 
 		

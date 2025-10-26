@@ -102,7 +102,7 @@ use App\Models\NonBankingService\IjaraMortgageBreakdown;
 
                                 </tr>
                                 @endif
-
+@if($isYearsStudy)
 
                                 <tr total-row-tr data-repeat-formatting-decimals="2" data-repeater-style>
 
@@ -125,7 +125,7 @@ use App\Models\NonBankingService\IjaraMortgageBreakdown;
 
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
-                                            <x-repeat-right-dot-inputs :currentVal="$model->ijaraMortgageRevenueProjectionByCategory ? $model->ijaraMortgageRevenueProjectionByCategory->getGrowthRateAtYearOrMonthIndex($yearOrMonthAsIndex) : 0" :classes="'only-greater-than-or-equal-zero-allowed recalculate-gr gr-field'" :is-percentage="true" :name="'IjaraMortgageRevenueProjectionByCategory['.'growth_rates'.']['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                                            <x-repeat-right-dot-inputs :currentVal="$model->ijaraMortgageRevenueProjectionByCategory ? $model->ijaraMortgageRevenueProjectionByCategory->getGrowthRateAtYearOrMonthIndex($yearOrMonthAsIndex) : 0" :classes="'only-number-allowed recalculate-gr gr-field'" :is-percentage="true" :name="'IjaraMortgageRevenueProjectionByCategory['.'growth_rates'.']['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
 
                                         </div>
                                     </td>
@@ -145,7 +145,7 @@ use App\Models\NonBankingService\IjaraMortgageBreakdown;
 
 
                                 </tr>
-
+@endif
 
 
 

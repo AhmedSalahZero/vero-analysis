@@ -93,7 +93,6 @@ class StudyController extends Controller
 			Study::BUSINESS_PLAN =>$monthlyStudies ,
 			Study::ANNUALLY_STUDY =>$yearlyStudies ,
 		];
-
         return view('non_banking_services.study.index', [
 			'company'=>$company,
 			'searchFields'=>$searchFields,
@@ -177,7 +176,9 @@ class StudyController extends Controller
 	public function destroy(Request $request , Company $company,Study $study)
 	{
 		Artisan::call('delete:study',['study_id'=>$study->id]);
+		$active = $study->getActiveTab();
 		$study->delete();
-		return redirect()->back()->with('success',__('Study Has Been Deleted Successfully'));
+		return redirect()->route('view.study',['company'=>$company->id,'active'=>$active]);
+		
 	}
 }

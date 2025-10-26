@@ -65,8 +65,8 @@ trait HasSeasonality
 	 */
 	public function syncSeasonality(array $seasonalityArray,string $revenueType,int $companyId ):void
 	{
-		$type = $seasonalityArray['type'] ;
-		$percentages = $seasonalityArray[$type] ;
+		$type = $seasonalityArray['type']??'flat' ;
+		$percentages = $seasonalityArray[$type]??[] ;
 		$data  = [
 			'type'=>$type,
 			'percentages'=>$percentages = array_map(function($percentage) {

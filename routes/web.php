@@ -330,7 +330,7 @@ Route::middleware([])->group(function () {
                     Route::put('study/{study}/update', 'StudyController@update')->name('update.study');
                     route::post('study', 'StudyController@store')->name('store.non.banking.services');
                     route::delete('study/{study}/delete', 'StudyController@destroy')->name('study.destroy');
-                    Route::post('/copy/{study}', 'CopyStudyController@index')->name('copy.project');
+                    Route::post('/copy/{study}', 'CopyStudyController@index')->name('copy.study');
                     
                     // route::get('leasing-categories','LeasingCategoriesController@index')->name('view.leasing.categories');
                     route::get('leasing-products/create', 'LeasingCategoriesController@create')->name('create.leasing.categories');

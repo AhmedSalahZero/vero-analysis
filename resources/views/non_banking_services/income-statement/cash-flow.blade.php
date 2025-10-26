@@ -28,13 +28,11 @@ input.form-control[type="text"][readonly] {
 html body input.custom-input-string-width , 
 .name-max-width-class
 {
-	width: 300px !important;
-    min-width: 300px !important;
-    max-width: 300px !important;
+	width: 400px !important;
+    min-width: 400px !important;
+    max-width: 400px !important;
 }
-.name-max-width-class{
-	
-}
+
 </style>
 @endsection
 @section('sub-header')

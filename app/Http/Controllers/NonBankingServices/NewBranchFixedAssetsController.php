@@ -37,7 +37,6 @@ class NewBranchFixedAssetsController extends Controller
 			'financialYearEndMonthNumber'=>$study->getFinancialYearEndMonthNumber(),
 			'fixedAssetType'=>FixedAsset::NEW_BRANCH,
 			'storeRoute'=>route('store.new.branch.fixed.assets',['company'=>$company->id,'study'=>$study->id]),
-			
 			'newBranchCountPerDateIndex'=>$newBranchCountPerDateIndex
 		];
 	}
