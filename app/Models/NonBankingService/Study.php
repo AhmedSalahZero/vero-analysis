@@ -5,7 +5,6 @@ use App\Equations\ExpenseAsPercentageEquation;
 use App\Equations\MonthlyFixedRepeatingAmountEquation;
 use App\Helpers\HArr;
 use App\Helpers\HHelpers;
-use App\Models\LoanSchedule;
 use App\Models\NonBankingService\Expense;
 use App\Models\NonBankingService\GeneralAndReserveAssumption;
 use App\Models\Traits\Scopes\BelongsToCompany;
@@ -17,7 +16,6 @@ use App\ReadyFunctions\CalculateFixedLoanAtEndService;
 use App\ReadyFunctions\CalculateVariableLoanAtEndService;
 use App\ReadyFunctions\CollectionPolicyService;
 use App\ReadyFunctions\FixedAssetsPayableEndBalance;
-use App\ReadyFunctions\PortfolioPresentValue;
 use App\ReadyFunctions\ProjectsUnderProgress;
 use App\Traits\HasBasicStoreRequest;
 use App\Traits\HasCollectionOrPaymentStatement;
@@ -80,6 +78,23 @@ class Study extends Model
             if ($study->isDirty('salary_taxes_rate') || $study->isDirty('social_insurance_rate')) {
                 $study->recalculateManpower();
             }
+			if($study->isDirty('company_nature') && $study->isNewCompany()){
+				foreach([
+					'cash_and_bank_opening_balances',
+					'equity_opening_balances',
+					'fixed_asset_opening_balances',
+					'long_term_loan_opening_balances',
+					'new_branch_microfinance_opening_projections',
+					'other_credits_opening_balances',
+					'other_debtors_opening_balances',
+					'other_long_term_assets_opening_balances',
+					'other_long_term_liabilities_opening_balances',
+					'supplier_payable_opening_balances',
+					'vat_and_credit_withhold_tax_opening_balances'
+				] as $tableName){
+					DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table($tableName)->where('study_id',$study->id)->delete();
+				}
+			}
         });
     }
     public function getName()
@@ -470,6 +485,15 @@ class Study extends Model
     {
         return $this->company_nature;
     }
+	public function isExistingCompany():bool
+	{
+		return $this->getCompanyNature() == 'existing';
+	}
+	public function isNewCompany():bool
+	{
+		return $this->getCompanyNature() == 'new';
+	}
+	
     /**
      * * التواريخ كله بالفردة بتاعتها
      */

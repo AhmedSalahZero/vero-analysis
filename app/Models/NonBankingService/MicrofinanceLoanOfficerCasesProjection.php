@@ -32,7 +32,6 @@ class MicrofinanceLoanOfficerCasesProjection extends Model
             }
           //  $newOfficersCaseCount = [];
             $totalNewOfficersCaseCount = [];
-            // dd();
             $isNewBranches = $model->type == 'new-branches' ;
             $branchCounts = $isNewBranches ? $study->newBranchMicrofinanceOpeningProjections->pluck('counts', 'operation_date')->toArray()  : [0=>1];
             

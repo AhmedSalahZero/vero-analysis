@@ -6232,8 +6232,8 @@ function getNonBankingNavigation(Company $company,User $user):array
 			
 	];
 	if($study){
+		$isExistingCompany =$study->isExistingCompany(); 
 		$microfinanceFirstPageRoute = $study->getMicrofinanceFirstPage();
-		$isExistingCompanyNature = $study->getCompanyNature() == 'existing';
 		$urls['study-info']= [
 			'title'=>__('Study <br> Information'),
 			'show'=>true ,
@@ -6241,7 +6241,7 @@ function getNonBankingNavigation(Company $company,User $user):array
 		];
 		$urls['opening-balances']= [
 			'title'=>__('Opening <br> Balances'),
-			'show'=>$isExistingCompanyNature ,
+			'show'=>$isExistingCompany ,
 			'link'=>'#'
 		];
 		$urls['general-assumption']= [
@@ -6489,7 +6489,7 @@ function getNonBankingNavigation(Company $company,User $user):array
 		];
 		$urls['opening-balances'] = [
             'title'=>__('Opening <br> Balances'),
-            'show'=>true ,
+            'show'=>$isExistingCompany ,
 			'link'=>route('view.opening.balances.for.non.banking',['company'=>$company->id , 'study'=>$studyId]),
 			
 		];
@@ -8400,11 +8400,13 @@ function getExpensesTypes():array
 function getTableNamesThatHasColumn(string $columnName,string $connectionName = null)
 {
   $database = DB::connection($connectionName)->getDatabaseName();
+  $tableName = env('APP_ENV') == 'local' ? 'TABLE_NAME': 'table_name';
+  
 	return DB::connection($connectionName)->table('information_schema.columns')
-        ->select('table_name')
+        ->select($tableName)
         ->where('column_name', $columnName)
         ->where('table_schema', $database)
-        ->distinct()->pluck('TABLE_NAME')->toArray();
+        ->distinct()->pluck($tableName)->toArray();
 	
 }
 
