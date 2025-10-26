@@ -6,10 +6,16 @@
               
                 </div>
                 <div class="col-lg-6 kt-align-right">
-                    {{-- <input  type="submit" class="btn active-style save-form" value="{{ __('Save And Complete Later') }}"> --}}
-                    <input  type="submit" class="btn active-style save-form" value="{{ isset($text) ? $text : __('Save & Go To Next') }}">
+                    <input  type="submit" class="btn disabled active-style save-form" value="{{ isset($text) ? $text : __('Save & Go To Next') }}">
                 </div>
             </div>
         </div>
     </div>
 </div>
+@push('js_last')
+	<script>
+		$(function(){
+			$('input.save-form.disabled').removeClass('disabled')
+		})
+	</script>
+@endpush

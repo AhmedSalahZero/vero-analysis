@@ -145,10 +145,6 @@ class CalculateFixedLoanAtEndService
         if ($installmentPaymentIntervalName != 'monthly') {
             $loanScheduleResult = $this->extendPerMonth($loanScheduleResult, $installmentPaymentIntervalValue);
         }
-        // foreach ($loanScheduleResult['beginning'] as $dateAsIndex => $value) {
-        //     $loanScheduleResult['no_securitization'][$dateAsIndex] = 1 ;
-        // }
-        
         if ($indexOfLoop == -1) {
 		
             return [

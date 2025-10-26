@@ -1797,7 +1797,6 @@
             $('#loader_id').addClass('hide_class');
             if ($('select.select2-select').selectpicker) {
                 $('select.select2-select').selectpicker('refresh');
-
             }
         })
 

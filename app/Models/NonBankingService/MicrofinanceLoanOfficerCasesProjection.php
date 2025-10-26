@@ -15,69 +15,49 @@ class MicrofinanceLoanOfficerCasesProjection extends Model
     protected $guarded = ['id'];
     public static function boot()
     {
-    	  parent::boot();
-    	  static::saving(function(self $model){
-    		$study = $model->study ;
-			
-			if(!$study->isMonthlyStudy())
-			{
-				$studyEndDateAsIndex = $study->getStudyEndDateAsIndex();
-				 $model->existing_cases = repeatLastValueInArrayUntil($model->existing_cases,$studyEndDateAsIndex) ;
-				 $model->new_cases = repeatLastValueInArrayUntil($model->new_cases,$studyEndDateAsIndex) ;
-			}
-				$accumulatedHiring = $model->hiring?:[];
-				// $accumulatedHiring = HArr::accumulateArray($model->hiring?:[]);
-			$totalExistingCasesCounts =[];
-			
-    			foreach($model->existing_cases?:[] as $dateAsIndex => $value){
-    				$existingCount = $model->existing_count;
-    				$totalExistingCasesCounts[$dateAsIndex] = $value * $existingCount;
-    			}
-				$newOfficersCaseCount = [];
-				$totalNewOfficersCaseCount = [];
-				// dd();
-				$isNewBranches = $model->type == 'new-branches' ;
-				$branchCounts = $isNewBranches ? $study->newBranchMicrofinanceOpeningProjections->pluck('counts','operation_date')->toArray()  : [0=>1];
-			
-				$newCases = $model->new_cases?:[];
-				foreach($branchCounts as $branchDateAsIndex => $branchCount){
-					// $positionIndex = 0 ;
-					foreach($accumulatedHiring as $dateAsIndex => $hiring){
-						// dd($newCases , $accumulatedHiring);
-					foreach($newCases as $index => $currentNewCount){
-						// dd($newCases , $currentNewCount , $hiring , $branchCount);
-						// dd($branchCounts  , $newCases,$accumulatedHiring);
-					//	$originalIndex = $index;
-						$index = $index + $dateAsIndex + $branchDateAsIndex;
-						$currentValue = $currentNewCount * $hiring * $branchCount;
-						$totalNewOfficersCaseCount[$index] = isset($totalNewOfficersCaseCount[$index]) ? $totalNewOfficersCaseCount[$index] +$currentValue : $currentValue ;
-					
-					}
-					// $positionIndex++;
-					
-				}
-				// dd($totalNewOfficersCaseCount);
-				// $positionIndex++;
-				
-				}
-				// $totalExistingCasesCounts
-				// dd($totalNewOfficersCaseCount,$totalExistingCasesCounts);
-				// foreach($totalExistingCasesCounts as $dateIndex => $currentExisting){
-				// 	$totalNewOfficersCaseCount[$dateIndex] = isset($totalNewOfficersCaseCount[$dateIndex]) ? $totalNewOfficersCaseCount[$dateIndex] + $currentExisting:$currentExisting;
-				// }
-				
-    			$model->total_existing_officers_cases_count = $totalExistingCasesCounts;
-    			$model->total_new_officers_cases_count = $totalNewOfficersCaseCount;
-				
-    		// if($study->isMonthlyStudy()){
-    			
-				
-    		// }else{
-				
-				 
-		
-    		// }
-    	  });
+        parent::boot();
+        static::saving(function (self $model) {
+            $study = $model->study ;
+            if (!$study->isMonthlyStudy()) {
+                $studyEndDateAsIndex = $study->getStudyEndDateAsIndex();
+                $model->existing_cases = repeatLastValueInArrayUntil($model->existing_cases?:[], $studyEndDateAsIndex) ;
+                $model->new_cases = repeatLastValueInArrayUntil($model->new_cases?:[], $studyEndDateAsIndex) ;
+            }
+            $accumulatedHiring = $model->hiring?:[];
+            $totalExistingCasesCounts =[];
+            
+            foreach ($model->existing_cases?:[] as $dateAsIndex => $value) {
+                $existingCount = $model->existing_count;
+                $totalExistingCasesCounts[$dateAsIndex] = $value * $existingCount;
+            }
+          //  $newOfficersCaseCount = [];
+            $totalNewOfficersCaseCount = [];
+            // dd();
+            $isNewBranches = $model->type == 'new-branches' ;
+            $branchCounts = $isNewBranches ? $study->newBranchMicrofinanceOpeningProjections->pluck('counts', 'operation_date')->toArray()  : [0=>1];
+            
+            $newCases = $model->new_cases?:[];
+            foreach ($branchCounts as $branchDateAsIndex => $branchCount) {
+            
+                foreach ($accumulatedHiring as $dateAsIndex => $hiring) {
+
+                    foreach ($newCases as $index => $currentNewCount) {
+                        $index = $index + $dateAsIndex + $branchDateAsIndex;
+                        $currentValue = $currentNewCount * $hiring * $branchCount;
+                        $totalNewOfficersCaseCount[$index] = isset($totalNewOfficersCaseCount[$index]) ? $totalNewOfficersCaseCount[$index] +$currentValue : $currentValue ;
+                    
+                    }
+                
+                    
+                }
+        
+                
+            }
+            $model->total_existing_officers_cases_count = $totalExistingCasesCounts;
+            $model->total_new_officers_cases_count = $totalNewOfficersCaseCount;
+                
+        
+        });
           
     }
     protected $casts = [
@@ -93,19 +73,20 @@ class MicrofinanceLoanOfficerCasesProjection extends Model
     public function getExistingLoanCasesAtYearOrMonthIndex(int $yearOrDateIndex):float
     {
         return $this->existing_cases[$yearOrDateIndex]??0;
-    }public function getNewLoanCasesAtYearOrMonthIndex(int $yearOrDateIndex):float
+    }
+    public function getNewLoanCasesAtYearOrMonthIndex(int $yearOrDateIndex):float
     {
         return $this->new_cases[$yearOrDateIndex]??0;
     }	public function getHiringAtYearOrMonthIndex(int $yearOrDateIndex):float
     {
         return $this->hiring[$yearOrDateIndex]??0;
     }
-		public function getTotalCasesCountAtYearOrMonthIndex(int $yearOrDateIndex):float
+    public function getTotalCasesCountAtYearOrMonthIndex(int $yearOrDateIndex):float
     {
         return $this->total_existing_officers_cases_count[$yearOrDateIndex]??0;
     }
-	public function getExistingCount():int
-	{
-		return $this->existing_count?:0;
-	}
+    public function getExistingCount():int
+    {
+        return $this->existing_count?:0;
+    }
 }

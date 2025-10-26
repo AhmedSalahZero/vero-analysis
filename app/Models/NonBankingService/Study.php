@@ -5,6 +5,7 @@ use App\Equations\ExpenseAsPercentageEquation;
 use App\Equations\MonthlyFixedRepeatingAmountEquation;
 use App\Helpers\HArr;
 use App\Helpers\HHelpers;
+use App\Models\LoanSchedule;
 use App\Models\NonBankingService\Expense;
 use App\Models\NonBankingService\GeneralAndReserveAssumption;
 use App\Models\Traits\Scopes\BelongsToCompany;
@@ -409,7 +410,10 @@ class Study extends Model
         $result = [];
         foreach ($yearsAndItsDates as $yearNumber => $datesAndZeros) {
             foreach ($datesAndZeros as $date => $zeroOrOne) {
-                $dateIndex = $datesAsStringAndIndex[$date];
+                $dateIndex = $datesAsStringAndIndex[$date]??null;
+				if(is_null($dateIndex)){
+					continue;
+				}
                 $yearIndex = $datesIndexWithYearIndex[$dateIndex];
                 $result[$yearIndex][$dateIndex] = $zeroOrOne;
             }
@@ -1033,6 +1037,7 @@ class Study extends Model
                         $currentPortfolioLoans['revenue_stream_category_id'] =$revenueCategoryId ;
                         $currentPortfolioLoans['portfolio_loan_type'] ='portfolio';
                         $currentPortfolioLoans['revenue_stream_type'] = $revenueStreamType;
+						// dd($currentPortfolioLoans,$installmentInterval);
                         $totalPortfolioEndBalance = HArr::sumAtDates([$totalPortfolioEndBalance,$currentPortfolioLoans['endBalance']??[]], $operationDates);
                     
                         $portfolioLoans[]=collect($currentPortfolioLoans)->map(function ($item, $keyName) {
@@ -1074,25 +1079,9 @@ class Study extends Model
                                 return $item;
                             })->toArray();
                         }
-                            
-                            
-                        
-                    
                     }
-                        
-                        
-                        
-                        
-                        
-                    
                 }
-                
-        
-                
-                
-                
             }
-            
         }
         DB::connection('non_banking_service')->table($loanSchedulePaymentTableName)->insert($portfolioLoans);
      
@@ -1312,6 +1301,10 @@ class Study extends Model
       
         
     }
+	// public function refreshEclAfterSecuritizations():array 
+	// {
+	// 	LoanSchedulePayment::where('study_id',)
+	// }
     public function recalculateMonthlyAndAccumulatedEcl(string $revenueStreamType, array $totalPortfolioEndBalance)
     {
         $eclAndNewPortfolioFundingRate = $this->getEclAndNewPortfolioFundingRatesForStreamType($revenueStreamType);
@@ -2578,10 +2571,11 @@ class Study extends Model
         //    $currentTotal = HArr::sumAtDates([$currentData,$currentTotal], $studyMonthsForViews);
             $tableDataFormatted[0]['sub_items'][$title]['year_total'] = HArr::sumPerYearIndex($currentData, $yearWithItsMonths);
         }
+		
         $securitizationLoanSchedules = SecuritizationLoanSchedule::where('study_id', $this->id)->get();
         $securitizationNetPresentValues = [];
         $securitizationCollectionRevenues = [];
-    $securitizationGainOrLosses =[];
+   	//	 $securitizationGainOrLosses =[];
         foreach ($securitizationLoanSchedules as $securitizationLoanSchedule) {
             $netPresentValue = $securitizationLoanSchedule->net_present_value;
             $collectionRevenueAmounts = $securitizationLoanSchedule->collection_revenue_amounts;
@@ -2593,13 +2587,13 @@ class Study extends Model
             }
 			
 		
-            $securitizationGainOrLoss = $securitizationLoanSchedule->securitization_profit_or_loss;
+        //    $securitizationGainOrLoss = $securitizationLoanSchedule->securitization_profit_or_loss;
             $securitization = $securitizationLoanSchedule->securitization;
             $securitizationDateAsIndex = $securitization->securitization_date;
-          	if($securitizationGainOrLoss > 0){
-				$securitizationGainOrLoss = $securitizationGainOrLoss ;
-				$securitizationGainOrLosses[$securitizationDateAsIndex] = isset($securitizationGainOrLosses[$securitizationDateAsIndex]) ? $securitizationGainOrLosses[$securitizationDateAsIndex] +  $securitizationGainOrLoss : $securitizationGainOrLoss;
-			}
+          	// if($securitizationGainOrLoss > 0){
+			// 	$securitizationGainOrLoss = $securitizationGainOrLoss ;
+			// 	$securitizationGainOrLosses[$securitizationDateAsIndex] = isset($securitizationGainOrLosses[$securitizationDateAsIndex]) ? $securitizationGainOrLosses[$securitizationDateAsIndex] +  $securitizationGainOrLoss : $securitizationGainOrLoss;
+			// }
 			
         }
         if (count($securitizationNetPresentValues)) {
@@ -2622,15 +2616,7 @@ class Study extends Model
             $tableDataFormatted[0]['sub_items'][$title]['year_total'] = HArr::sumPerYearIndex($securitizationCollectionRevenues, $yearWithItsMonths);
         }
 		
-		if (count($securitizationGainOrLosses)) {
-            $title = __('Securitization Gain');
-            $tableDataFormatted[0]['sub_items'][$title]['options'] =array_merge([
-               'title'=>$title
-            ], $defaultNumericInputClasses);
-            $tableDataFormatted[0]['sub_items'][$title]['data'] = $securitizationGainOrLosses;
-       //     $currentTotal = HArr::sumAtDates([$securitizationGainOrLosses,$currentTotal], $studyMonthsForViews);
-            $tableDataFormatted[0]['sub_items'][$title]['year_total'] = HArr::sumPerYearIndex($securitizationGainOrLosses, $yearWithItsMonths);
-        }
+		
 		
         
             
@@ -2733,22 +2719,22 @@ class Study extends Model
         }
         $securitizationBankLoanSettlements = [];
         $securitizationBankEarlySettlements = [];
-        $securitizationGainOrLosses = [];
+      //  $securitizationGainOrLosses = [];
 		$securitizationExpenses = [];
         foreach ($securitizationLoanSchedules as $securitizationLoanSchedule) {
             $bankPortfolioEndBalance = $securitizationLoanSchedule->bank_portfolio_end_balance_sum;
             $bankPortfolioEarlySettlement = $securitizationLoanSchedule->early_settlements_expense_amount;
-            $securitizationGainOrLoss = $securitizationLoanSchedule->securitization_profit_or_loss;
+       //     $securitizationGainOrLoss = $securitizationLoanSchedule->securitization_profit_or_loss;
             $securitizationExpense = $securitizationLoanSchedule->securitization_expense_amount;
             $securitization = $securitizationLoanSchedule->securitization;
             $securitizationDateAsIndex = $securitization->securitization_date;
             $securitizationBankLoanSettlements[$securitizationDateAsIndex] = isset($securitizationBankLoanSettlements[$securitizationDateAsIndex]) ? $securitizationBankLoanSettlements[$securitizationDateAsIndex] +  $bankPortfolioEndBalance : $bankPortfolioEndBalance;
             $securitizationBankEarlySettlements[$securitizationDateAsIndex] = isset($securitizationBankEarlySettlements[$securitizationDateAsIndex]) ? $securitizationBankEarlySettlements[$securitizationDateAsIndex] +  $bankPortfolioEarlySettlement : $bankPortfolioEarlySettlement;
             $securitizationExpenses[$securitizationDateAsIndex] = isset($securitizationExpenses[$securitizationDateAsIndex]) ? $securitizationExpenses[$securitizationDateAsIndex] +  $securitizationExpense : $securitizationExpense;
-			if($securitizationGainOrLoss < 0){
-				$securitizationGainOrLoss = $securitizationGainOrLoss *-1;
-				$securitizationGainOrLosses[$securitizationDateAsIndex] = isset($securitizationGainOrLosses[$securitizationDateAsIndex]) ? $securitizationGainOrLosses[$securitizationDateAsIndex] +  $securitizationGainOrLoss : $securitizationGainOrLoss;
-			}
+			// if($securitizationGainOrLoss < 0){
+			// 	$securitizationGainOrLoss = $securitizationGainOrLoss *-1;
+			// 	$securitizationGainOrLosses[$securitizationDateAsIndex] = isset($securitizationGainOrLosses[$securitizationDateAsIndex]) ? $securitizationGainOrLosses[$securitizationDateAsIndex] +  $securitizationGainOrLoss : $securitizationGainOrLoss;
+			// }
         }
         if (count($securitizationBankLoanSettlements)) {
             $title = __('Securitization Bank Loan Settlements');
@@ -2765,16 +2751,7 @@ class Study extends Model
                'title'=>$title
             ], $defaultNumericInputClasses);
             $tableDataFormatted[1]['sub_items'][$title]['data'] = $securitizationBankEarlySettlements;
-     //       $currentTotal = HArr::sumAtDates([$securitizationBankEarlySettlements,$currentTotal], $studyMonthsForViews);
             $tableDataFormatted[1]['sub_items'][$title]['year_total'] = HArr::sumPerYearIndex($securitizationBankEarlySettlements, $yearWithItsMonths);
-        }if (count($securitizationGainOrLosses)) {
-            $title = __('Securitization Loss');
-            $tableDataFormatted[1]['sub_items'][$title]['options'] =array_merge([
-               'title'=>$title
-            ], $defaultNumericInputClasses);
-            $tableDataFormatted[1]['sub_items'][$title]['data'] = $securitizationGainOrLosses;
-       //     $currentTotal = HArr::sumAtDates([$securitizationGainOrLosses,$currentTotal], $studyMonthsForViews);
-            $tableDataFormatted[1]['sub_items'][$title]['year_total'] = HArr::sumPerYearIndex($securitizationGainOrLosses, $yearWithItsMonths);
         }
         if (count($securitizationExpenses)) {
             $title = __('Securitization Expenses');
@@ -4308,7 +4285,7 @@ class Study extends Model
             $revenueStreamType = $securitization->revenue_stream_type;
             $disbursementDate = $securitization->disbursement_date;
             $securitizationDate = $securitization->securitization_date;
-            $discountRate = $securitization->discount_rate / 100;
+            $discountRate = $securitization->discount_rate / 100  / 12;
             $collectionRevenueRate = $securitization->collection_revenue_rate / 100;
             $earlySettlementExpenseRate = $securitization->early_settlements_expense_rate / 100;
             $securitizationExpenseAmount = $securitization->expense_amount?:0;
@@ -4364,6 +4341,7 @@ class Study extends Model
         foreach ($result as $arr) {
             SecuritizationLoanSchedule::create($arr);
         }
+		// $this->recalculateMonthlyAndAccumulatedEcl();
         return $result;
     }
 	public function calculateMicrofinanceLoans()

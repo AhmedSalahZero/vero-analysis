@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Company;
 use App\Models\NonBankingService\EclAndNewPortfolioFundingRate;
 use App\Models\NonBankingService\Manpower;
+use App\Models\NonBankingService\SecuritizationLoanSchedule;
 use App\Models\NonBankingService\Study;
 use Carbon\Carbon;
 use Exception;
@@ -116,11 +117,11 @@ class IncomeStatementController extends Controller
                 'title'=>__('Consumer Finance'),
             ], $defaultNumericInputClasses);
         }
-        if ($study->hasSecuritization()) {
-            $tableDataFormatted[0]['sub_items'][Study::SECURITIZATION]['options'] =array_merge([
-                'title'=>__('Securitization'),
-            ], $defaultNumericInputClasses);
-        }
+        // if ($study->hasSecuritization()) {
+        //     $tableDataFormatted[0]['sub_items'][Study::SECURITIZATION]['options'] =array_merge([
+        //         'title'=>__('Securitization'),
+        //     ], $defaultNumericInputClasses);
+        // }
         
         
         // $tableDataFormatted['cost-of-service']['main_items']['data'] = [];
@@ -161,17 +162,6 @@ class IncomeStatementController extends Controller
         $sumKeys = $studyDates;
         
         
-        // 	$totalDepreciation = Harr::calculateTotalFromSubItems($tableDataFormatted[$depreciationOrderIndex]['sub_items']??[]) ;
-        // 	$tableDataFormatted[$depreciationOrderIndex]['main_items'][$depreciationKey]['data'] = $totalDepreciation;
-        //    $tableDataFormatted[$depreciationOrderIndex]['main_items'][$depreciationKey]['year_total'] =$totalDepreciationPerYears =  HArr::getPerYearIndexForCashAndBank($totalDepreciation, $yearWithItsMonths);
-        
-               
-        // 		$currentMainTotal = Harr::calculateTotalFromSubItems($tableDataFormatted[$eclOrderIndex]['sub_items']??[]) ;
-        // 	$tableDataFormatted[$eclOrderIndex]['main_items']['ecl']['data'] = $currentMainTotal;
-        //    $tableDataFormatted[$eclOrderIndex]['main_items']['ecl']['year_total'] =$totalEclPerYears =  HArr::getPerYearIndexForCashAndBank($currentMainTotal, $yearWithItsMonths);
-        // $tableDataFormatted[$eclOrderIndex]['sub_items'][__('ECL Expense')]['data'] = [];
-        //    $tableDataFormatted[$eclOrderIndex]['sub_items'][__('Depreciation Expense')]['data'] = [];
-        
         
         $tableDataFormatted[$ebitOrderIndex]['main_items']['ebit']['options']['title'] = __('EBIT');
         $tableDataFormatted[$ebitOrderIndex]['main_items']['% Of Revenue']['options']['title'] = __('% Of Revenue');
@@ -209,8 +199,6 @@ class IncomeStatementController extends Controller
                 }
             }
         }
-        
-        
         foreach ($loanSchedulePayments as $loanSchedulePaymentAsStdClass) {
             $portfolioLoanType = $loanSchedulePaymentAsStdClass->portfolio_loan_type;
             $isPortfolio = $portfolioLoanType == 'portfolio';
@@ -235,20 +223,59 @@ class IncomeStatementController extends Controller
             }
             
         }
-		// dd($tableDataFormatted[1]['sub_items']['Interest Cost']['data']);
 		$interestCosts  = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('direct_factoring_breakdowns')->where('study_id',$study->id)->pluck('bank_interest_expense')->toArray();
-		// $totalDirectFactoring = [];
 		foreach($interestCosts as $interestCost){
 			$interestCost = json_decode($interestCost,true);
 			foreach($interestCost as $dateIndex => $value){
-				// dd($tableDataFormatted[1]['sub_items']['Interest Cost']['data']);
-				// $totalDirectFactoring [$dateIndex] = isset($totalDirectFactoring [$dateIndex]) ? $totalDirectFactoring [$dateIndex]+ $value : $value;
 				$tableDataFormatted[1]['sub_items']['Interest Cost']['data'][$dateIndex] = isset($tableDataFormatted[1]['sub_items']['Interest Cost']['data'][$dateIndex]) ? $tableDataFormatted[1]['sub_items']['Interest Cost']['data'][$dateIndex] + $value : $value  ;
 			}
 		}
-		// $tableDataFormatted[1]['sub_items']['Interest Cost']['data'] = HArr::sumAtDates([$tableDataFormatted[1]['sub_items']['Interest Cost']['data']??[] ,$totalDirectFactoring  ],$sumKeys);
-		// dd($totalDirectFactoring);
-                      
+		
+		// securitaization 
+		
+		$securitizationLoanSchedules = SecuritizationLoanSchedule::where('study_id', $study->id)->get();
+		  $securitizationBankLoanSettlements = [];
+        $securitizationBankEarlySettlements = [];
+        $securitizationGainOrLosses = [];
+		$securitizationExpenses = [];
+		 $securitizationCollectionRevenues = [];
+        foreach ($securitizationLoanSchedules as $securitizationLoanSchedule) {
+            $bankPortfolioEndBalance = $securitizationLoanSchedule->bank_portfolio_end_balance_sum;
+            $bankPortfolioEarlySettlement = $securitizationLoanSchedule->early_settlements_expense_amount;
+            $securitizationGainOrLoss = $securitizationLoanSchedule->securitization_profit_or_loss;
+			$collectionRevenueAmounts = $securitizationLoanSchedule->collection_revenue_amounts;
+            $securitizationExpense = $securitizationLoanSchedule->securitization_expense_amount;
+            $securitization = $securitizationLoanSchedule->securitization;
+            $securitizationDateAsIndex = $securitization->securitization_date;
+            $securitizationBankLoanSettlements[$securitizationDateAsIndex] = isset($securitizationBankLoanSettlements[$securitizationDateAsIndex]) ? $securitizationBankLoanSettlements[$securitizationDateAsIndex] +  $bankPortfolioEndBalance : $bankPortfolioEndBalance;
+            $securitizationBankEarlySettlements[$securitizationDateAsIndex] = isset($securitizationBankEarlySettlements[$securitizationDateAsIndex]) ? $securitizationBankEarlySettlements[$securitizationDateAsIndex] +  $bankPortfolioEarlySettlement : $bankPortfolioEarlySettlement;
+            $securitizationExpenses[$securitizationDateAsIndex] = isset($securitizationExpenses[$securitizationDateAsIndex]) ? $securitizationExpenses[$securitizationDateAsIndex] +  $securitizationExpense : $securitizationExpense;
+			foreach ($collectionRevenueAmounts as $dateAsIndex => $collectionRevenue) {
+                $securitizationCollectionRevenues[$dateAsIndex] = isset($securitizationCollectionRevenues[$dateAsIndex]) ? $securitizationCollectionRevenues[$dateAsIndex] +  $collectionRevenue : $collectionRevenue;
+            }
+			// if($securitizationGainOrLoss < 0){
+				$securitizationGainOrLoss = $securitizationGainOrLoss ;
+				$securitizationGainOrLosses[$securitizationDateAsIndex] = isset($securitizationGainOrLosses[$securitizationDateAsIndex]) ? $securitizationGainOrLosses[$securitizationDateAsIndex] +  $securitizationGainOrLoss : $securitizationGainOrLoss;
+				
+				
+			// }
+        }
+		// foreach()
+		if(count($securitizationGainOrLosses)){
+			$tableDataFormatted[0]['sub_items']['securitization-gain-or-loss']['options']['title'] = __('Securitization Gain / (Loss)');
+			$tableDataFormatted[0]['sub_items']['securitization-gain-or-loss']['data']= $securitizationGainOrLosses;
+			
+			
+			
+		}
+		// $tableDataFormatted[0]['sub_items']['securitization-gain-or-loss']['year_total']= HArr::sumPerYearIndex($securitizationGainOrLosses, $yearWithItsMonths);
+		
+		if(count($securitizationGainOrLosses)){
+			$tableDataFormatted[0]['sub_items']['securitization-collection-revenues']['options']['title'] = __('Securitization Collection Revenues');
+			$tableDataFormatted[0]['sub_items']['securitization-collection-revenues']['data']= $securitizationCollectionRevenues;
+		}
+		
+		//dd($tableDataFormatted[0]['sub_items']['securitization-gain-or-loss']);
 						
         $monthlyAdminFees = EclAndNewPortfolioFundingRate::where('study_id', $study->id)->get([
             'monthly_admin_fees_amounts'])->toArray();
@@ -257,16 +284,16 @@ class IncomeStatementController extends Controller
         
         $tableDataFormatted[0]['sub_items']['monthly-admin-fees']['data'] = $monthAdminFees;
         $tableDataFormatted[0]['sub_items']['monthly-admin-fees']['options']['title'] = __('Monthly Admin Fees');
-        $tableDataFormatted[0]['sub_items']['monthly-admin-fees']['year_total'] = HArr::sumPerYearIndex($monthAdminFees, $yearWithItsMonths);
-    
-			
+        // $tableDataFormatted[0]['sub_items']['monthly-admin-fees']['year_total'] = HArr::sumPerYearIndex($monthAdminFees, $yearWithItsMonths);
+  
 		
 		
 		
-     
         foreach($tableDataFormatted[0]['sub_items']?? [] as $id => $subItemArr){
-			$tableDataFormatted[0]['sub_items'][$id]['year_total'] =	HArr::sumPerYearIndex($subItemArr, $yearWithItsMonths);
+			$tableDataFormatted[0]['sub_items'][$id]['year_total'] =	HArr::sumPerYearIndex($subItemArr['data']??[], $yearWithItsMonths);
 		}
+		// dd($tableDataFormatted[0]['sub_items']['monthly-admin-fees']);
+			                //    dd($tableDataFormatted[0]['sub_items']['securitization-gain-or-loss']['year_total']);
         
         $totalSalesRevenues = Harr::calculateTotalFromSubItems($tableDataFormatted[0]['sub_items']??[]) ;
         
@@ -278,7 +305,7 @@ class IncomeStatementController extends Controller
         $tableDataFormatted[0]['main_items']['growth-rate']['data'] = Harr::calculateGrowthRate($totalSalesRevenues);
         $tableDataFormatted[0]['main_items']['growth-rate']['year_total'] =$totalSalesRevenuesPerYears =  HArr::calculateGrowthRate($totalSalesRevenuesPerYears);
                
-        
+   
     
         
         $expenses = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('expenses')->join('expense_names', 'expense_names.id', '=', 'expenses.expense_name_id')->selectRaw('expenses.expense_category,expense_names.name as name,expenses.relation_name,expenses.monthly_repeating_amounts,expenses.expense_as_percentages,payload')->where('expenses.model_id', $study->id)->where('expenses.model_name', 'Study')->get()->toArray();
@@ -299,7 +326,24 @@ class IncomeStatementController extends Controller
                 $tableDataFormatted[$currentOrderIndex]['sub_items']['Manpower Salaries']['data'][$monthIndex] =$currentMonthManpowerTotal ;
             }
         }
-        
+		
+		
+		if (count($securitizationBankEarlySettlements)) {
+            $title = __('Securitization Bank Settlement Expense');
+            $tableDataFormatted[1]['sub_items'][$title]['options'] =array_merge([
+               'title'=>$title
+            ], $defaultNumericInputClasses);
+            $tableDataFormatted[1]['sub_items'][$title]['data'] = $securitizationBankEarlySettlements;
+            $tableDataFormatted[1]['sub_items'][$title]['year_total'] = HArr::sumPerYearIndex($securitizationBankEarlySettlements, $yearWithItsMonths);
+        }
+		if (count($securitizationExpenses)) {
+            $title = __('Securitization Expenses');
+            $tableDataFormatted[1]['sub_items'][$title]['options'] =array_merge([
+               'title'=>$title
+            ], $defaultNumericInputClasses);
+            $tableDataFormatted[1]['sub_items'][$title]['data'] = $securitizationExpenses;
+            $tableDataFormatted[1]['sub_items'][$title]['year_total'] = HArr::sumPerYearIndex($securitizationExpenses, $yearWithItsMonths);
+        }
         foreach ($expenses as $expense) {
         
             $name = $expense->name;
@@ -311,7 +355,7 @@ class IncomeStatementController extends Controller
             $tableDataFormatted[$currentOrderIndex]['sub_items'][$name]['options']['title'] =$name ;
             $currentColumnName = $columnPerTypes[$relationName];
           
-            
+      
             $monthlyExpenses = (array)json_decode($expense->{$currentColumnName});
             foreach ($yearWithItsIndexes as $yearIndex => $monthIndexWithActive) {
                 foreach ($monthIndexWithActive as $monthIndex=> $isActiveIndex) {
@@ -340,6 +384,7 @@ class IncomeStatementController extends Controller
         $tableDataFormatted[$grossProfitOrderIndex]['main_items']['% Of Revenue']['options']['title'] = __('% Of Revenue');
         $tableDataFormatted[$grossProfitOrderIndex]['main_items']['% Of Revenue']['data'] =  HArr::calculatePercentageOf($totalSalesRevenues, $totalGrossProfit) ;
         $tableDataFormatted[$grossProfitOrderIndex]['main_items']['% Of Revenue']['year_total'] = HArr::calculatePercentageOf($totalSalesRevenuesPerYears, $grossProfitTotalPerYear);
+    
 
         
         
@@ -404,7 +449,6 @@ class IncomeStatementController extends Controller
         
         
         
-        
         $currentSubItems = $tableDataFormatted[$salesExpenseOrder]['sub_items']??[];
         foreach ($currentSubItems as $subItemName => $subItemData) {
             $tableDataFormatted[$salesExpenseOrder]['sub_items'][$subItemName]['year_total'] = HArr::sumPerYearIndex($subItemData['data']??[], $yearWithItsMonths);
@@ -453,7 +497,6 @@ class IncomeStatementController extends Controller
         /**
          * * End Five Item
          */
-        
         
         /**
          * * Start Sixth Item
@@ -519,7 +562,7 @@ class IncomeStatementController extends Controller
         $tableDataFormatted[$ebtOrderIndex]['main_items']['% Of Revenue']['options']['title'] = __('% Of Revenue');
         $tableDataFormatted[$ebtOrderIndex]['main_items']['% Of Revenue']['data']=  HArr::calculatePercentageOf($totalSalesRevenues, $ebt);
         $tableDataFormatted[$ebtOrderIndex]['main_items']['% Of Revenue']['year_total'] = $ebtRevenuePercentagePerYear= HArr::calculatePercentageOf($totalSalesRevenuesPerYears, $ebtTotalPerYear);
-           
+       
         
         /**
          * * End Eight Item
@@ -573,7 +616,7 @@ class IncomeStatementController extends Controller
         $tableDataFormatted[$netProfitOrderIndex]['main_items']['% Of Revenue']['options']['title'] = __('% Of Revenue');
         $tableDataFormatted[$netProfitOrderIndex]['main_items']['% Of Revenue']['data'] = HArr::calculatePercentageOf($totalSalesRevenues, $netProfit);
         $tableDataFormatted[$netProfitOrderIndex]['main_items']['% Of Revenue']['year_total'] = $netProfitRevenuePercentage = HArr::calculatePercentageOf($totalSalesRevenuesPerYears, $netProfitTotalPerYear);
-        
+        	
         $retainedEarningOpening = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('equity_opening_balances')->where('study_id', $study->id)->first();
         $retainedEarningOpening = $retainedEarningOpening ? $retainedEarningOpening->retained_earnings : 0;
         // $retainedEarning = HArr::calculateRetainEarning($retainedEarningOpening,$ebt);
@@ -587,6 +630,7 @@ class IncomeStatementController extends Controller
         $study->incomeStatement ?  $study->incomeStatement->update($statementData) : $study->incomeStatement()->create($statementData);
         $studyMonthsForViews=$study->getStudyDurationPerYearFromIndexesForView();
         ksort($tableDataFormatted);
+	
         return view('non_banking_services.income-statement.cash-flow', [
             'company'=>$company,
             'studyMonthsForViews'=>$studyMonthsForViews,
