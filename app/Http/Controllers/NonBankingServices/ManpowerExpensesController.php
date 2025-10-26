@@ -18,7 +18,6 @@ class ManpowerExpensesController extends Controller
 	}
 	protected function getViewVars(Company $company, Study $study){
 		$studyMonthsForViews =array_flip($study->getOperationDatesAsDateAndDateAsIndexToStudyEndDate()) ;
-		// dd($studyMonthsForViews);
 		return [
 			'company'=>$company ,
 			'type'=>getLastSegmentInRequest(),

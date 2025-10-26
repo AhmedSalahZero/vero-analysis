@@ -25,8 +25,6 @@ class SecuritizationController extends Controller
 		$departments = $company->microfinanceDepartments;
 		$dateIndexWithDate = $study->getDateIndexWithDate();
 		$securitizationCalculations = $study->calculateSecuritizationLoans();
-		// dd($securitizationCalculations);
-		// dd($securitizationCalculations);
         return [
 			'securitizationCalculations'=>$securitizationCalculations,
 			'dateIndexWithDate'=>$dateIndexWithDate,

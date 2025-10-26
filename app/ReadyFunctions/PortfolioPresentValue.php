@@ -37,7 +37,6 @@ class PortfolioPresentValue
 			  $yearWithItsMonths=$study->getYearIndexWithItsMonths();
 			$totalMonthlyAmountsPerYears = HArr::sumPerYearIndex($monthlyAmounts , $yearWithItsMonths);
 			
-			// dd();
 			
 			foreach($monthlyAmounts as $currentOccurrenceMonthIndex => &$currentOccurrenceAvgAmount){
 				if($currentOccurrenceAvgAmount == 0){

@@ -70,7 +70,6 @@ public function __calculate($previousResult ,int $indexOfLoop,string $loanType, 
 		$installmentPaymentIntervalValue = $this->getInstallmentPaymentIntervalValue($installmentPaymentIntervalName);
 		$datesIndexAndDaysCount =HDate::calculateDaysCountAtEnd($datesAsIndexString,$installmentPaymentIntervalValue); 
 		$dailyPricing = is_numeric($baseRate) ?  (($baseRate + $marginRate) /100)/360 : $baseRate  ;
-		// dd(is_numeric($baseRate) ,$baseRate ,  $marginRate);
 		 // base rate in array will be added with margin rate then divided by 360 
 		$stepRate = Loan::getStepRate($loanType, $stepUpRate, $stepDownRate);
 		$stepRate = $stepRate / 100;
@@ -258,7 +257,6 @@ public function __calculate($previousResult ,int $indexOfLoop,string $loanType, 
 		$intervalInterestAmount=0;
 
 		$loopIndex = 0 ;
-		// dd($datesIndexAndDaysCount);
 		foreach ($datesIndexAndDaysCount as $dateAsIndex=>$currentDaysCount) {
 			$currentDaysCount = $datesIndexAndDaysCount[$dateAsIndex+1]??0;
 			$previousDate = $dateAsIndex-$intervalValue;

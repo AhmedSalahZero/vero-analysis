@@ -996,9 +996,7 @@ class Study extends Model
         $yearIndexWithYear = app('yearIndexWithYear');
 
         // $baseRates = $generalAndReserveAssumption->getCbeLendingCorridorRates() ;
-		// dd($baseRates);
         $baseRatesMapping= $generalAndReserveAssumption->getBaseRatesPerMonths();
-		// dd($baseRatesPerMonths);
         // foreach ($operationDurationPerYear as $yearIndex => $yearMonthIndexes) {
         //     foreach ($yearMonthIndexes as $monthIndex => $monthlyZeroOrOne) {
         //         $yearOrMonthIndex = $this->isMonthlyStudy() ? $monthIndex : $yearIndex;
@@ -1009,7 +1007,6 @@ class Study extends Model
 
         // $baseRatesMapping = HArr::getFirstOfYear($baseRatesPerMonths);
         // $bankLendingMarginRates=$generalAndReserveAssumption->getBankLendingMarginRates();
-		// // dd('$bankLendingMarginRates',$bankLendingMarginRates);
         // $baseRatesMapping = HArr::isAllValuesEqual($baseRatesMapping, $bankLendingMarginRates);
 		
         $totalMonthlyLoanAmounts = [];
@@ -1068,7 +1065,6 @@ class Study extends Model
                         $currentPortfolioLoans['revenue_stream_category_id'] =$revenueCategoryId ;
                         $currentPortfolioLoans['portfolio_loan_type'] ='portfolio';
                         $currentPortfolioLoans['revenue_stream_type'] = $revenueStreamType;
-						// dd($currentPortfolioLoans,$installmentInterval);
                         $totalPortfolioEndBalance = HArr::sumAtDates([$totalPortfolioEndBalance,$currentPortfolioLoans['endBalance']??[]], $operationDates);
                     
                         $portfolioLoans[]=collect($currentPortfolioLoans)->map(function ($item, $keyName) {
@@ -1174,7 +1170,6 @@ class Study extends Model
 
         // $baseRates = $generalAndReserveAssumption->getCbeLendingCorridorRates() ;
 		$baseRatesMapping = $generalAndReserveAssumption->getBaseRatesPerMonths();
-    // dd($baseRatesMapping);
         // $baseRatesPerMonths= [];
         // foreach ($operationDurationPerYear as $yearIndex => $yearMonthIndexes) {
         //     foreach ($yearMonthIndexes as $monthIndex => $monthlyZeroOrOne) {
@@ -1722,7 +1717,6 @@ class Study extends Model
                         
                 $currentBeginningBalance = $currentEndBalance ;
             }
-			// dd($allll);
             $portfolioStatementEndBalance = $directFactoringStatements[$directFactoringBreakdownId]['end_balance']??[];
             
             $totalPortfolioEndBalance = HArr::sumAtDates([$totalPortfolioEndBalance , $portfolioStatementEndBalance], $monthsIndexes);
@@ -3331,7 +3325,6 @@ class Study extends Model
         
         $loanAccuredInterestsExpensesWithEndBalances =  DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('loan_schedule_payments')->where('portfolio_loan_type', 'bank_portfolio')->where('study_id', $this->id)->get(['endBalance','accured_interest','revenue_stream_type','securitization_date_index'])->toArray();
         $totalPerCategory = HArr::sumLoanSchedulePerCategory($loanAccuredInterestsExpensesWithEndBalances, $sumKeys, 'revenue_stream_type', 'endBalance');
-        // dd($totalPerCategory);
         foreach ($totalPerCategory as $categoryName => $sumArr) {
             $title = str_to_upper($categoryName);
             $tableDataFormatted[$currentTabIndex]['sub_items'][$title]['data'] = $sumArr;
@@ -4379,9 +4372,7 @@ class Study extends Model
             $earlySettlementExpenseRate = $securitization->early_settlements_expense_rate / 100;
             $securitizationExpenseAmount = $securitization->expense_amount?:0;
             $result[$securitization->id]['securitization_expense_amount'] = $securitizationExpenseAmount;
-			// dd($disbursementDate);
             $loanSchedulePayments = LoanSchedulePayment::where('study_id', $this->id)->where('revenue_stream_type', $revenueStreamType)->where('month_as_index', $disbursementDate)->get();
-			// dd($loanSchedulePayments,$revenueStreamType);
             foreach ($loanSchedulePayments as $loanSchedulePayment) {
                 $isPortfolio = $loanSchedulePayment->portfolio_loan_type == 'portfolio';
                 $monthAsIndex = $loanSchedulePayment->month_as_index ;

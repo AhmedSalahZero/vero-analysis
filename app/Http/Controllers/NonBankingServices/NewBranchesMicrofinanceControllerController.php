@@ -59,7 +59,6 @@ class NewBranchesMicrofinanceControllerController extends Controller
 
     public function store(Company $company, Request $request, Study $study )
     {
-		// dd($request->all());
 		$study->saveManpowerForm($request,self::BRANCH_TYPE);
 		$study->storeRepeaterRelations($request,['newBranchMicrofinanceOpeningProjections'],$company,[]);
 		
@@ -70,7 +69,6 @@ class NewBranchesMicrofinanceControllerController extends Controller
 		$oldIds = $study->microfinanceLoanOfficerCases->where('type',self::BRANCH_TYPE)->pluck('id')->toArray();
 		$study->storeRepeaterRelations($request,['microfinanceLoanOfficerCases'],$company,[],$oldIds);
 		
-		// dd('good');
 		$study->recalculateMicrofinanceTotalCasesCounts();
 		$accumulatedOpeningBranchesCounts = $study->getNewBranchesOpeningBalancesAccumulation();
 		$study->handleFixedRepeatingExpenses($request,$accumulatedOpeningBranchesCounts);

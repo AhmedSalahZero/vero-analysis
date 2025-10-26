@@ -45,7 +45,6 @@ class MicrofinanceLoanController extends Controller
                 $salesProjectsPerTypes[$type][$productId][$dateAsIndex] = isset($salesProjectsPerTypes[$type][$productId][$dateAsIndex]) ? $salesProjectsPerTypes[$type][$productId][$dateAsIndex] + $monthlyLoanAmount   : $monthlyLoanAmount  ;
             }
         }
-        // dd($salesProjectsPerProducts);
         return [
             'salesProjectsPerTypes'=>$salesProjectsPerTypes,
             'salesProjectsPerFundedBy'=>$salesProjectsPerFundedBy,

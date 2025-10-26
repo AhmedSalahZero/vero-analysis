@@ -276,7 +276,6 @@ class IncomeStatementController extends Controller
 			$tableDataFormatted[0]['sub_items']['securitization-collection-revenues']['data']= $securitizationCollectionRevenues;
 		}
 		
-		//dd($tableDataFormatted[0]['sub_items']['securitization-gain-or-loss']);
 						
         $monthlyAdminFees = EclAndNewPortfolioFundingRate::where('study_id', $study->id)->get([
             'monthly_admin_fees_amounts'])->toArray();
@@ -293,8 +292,6 @@ class IncomeStatementController extends Controller
         foreach($tableDataFormatted[0]['sub_items']?? [] as $id => $subItemArr){
 			$tableDataFormatted[0]['sub_items'][$id]['year_total'] =	HArr::sumPerYearIndex($subItemArr['data']??[], $yearWithItsMonths);
 		}
-		// dd($tableDataFormatted[0]['sub_items']['monthly-admin-fees']);
-			                //    dd($tableDataFormatted[0]['sub_items']['securitization-gain-or-loss']['year_total']);
         
         $totalSalesRevenues = Harr::calculateTotalFromSubItems($tableDataFormatted[0]['sub_items']??[]) ;
         
