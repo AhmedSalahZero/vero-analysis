@@ -19,16 +19,16 @@ class HArr
         }
         return $result;
     }
-	public static function sumJsonArr(array $items , array $sumKeys)
-	{
-		$result  = [];
-		
-		foreach($items as $index => $jsonArr){
-			$currentArr = (array) (json_decode($jsonArr));
-			$result = HArr::sumAtDates([$currentArr , $result],$sumKeys) ;
-		}
-		return $result;
-	}
+    public static function sumJsonArr(array $items, array $sumKeys)
+    {
+        $result  = [];
+        
+        foreach ($items as $index => $jsonArr) {
+            $currentArr = (array) (json_decode($jsonArr));
+            $result = HArr::sumAtDates([$currentArr , $result], $sumKeys) ;
+        }
+        return $result;
+    }
     public static function sumAtDates(array $items, array $dates)
     {
         $itemsCount = count($items);
@@ -516,11 +516,20 @@ class HArr
     }
     public static function getValueOrPrevious(array $data, string $date)
     {
-		// dd($data , $date);
-		if(!isset($data[$date])){
-			dd($data,$date);
-		}
         return $data[$date];
+        
+        // if(!isset($data[$date])){
+        // 	$firstKey = array_key_first($data);
+        // 	return [
+        // 		'loan_amount'=>$data[$firstKey],
+        // 		'loan_start_date'=>$firstKey
+        // 	];
+        // }
+        // return [
+        // 	'loan_amount'=>$data[$date] ,
+        // 	'loan_start_date'=>$date
+        // ];
+        
         // Convert keys to timestamps for proper sorting
         //  $timestamps = array_map('strtotime', array_keys($data));
         //  $dataWithTimestamps = array_combine($timestamps, array_keys($data));
@@ -852,10 +861,10 @@ class HArr
             $type = $item->{$groupName};
             $schedulePayments = (array)json_decode($item->schedulePayment);
             foreach ($sumKeys as $dateAsIndex) {
-				$value = $schedulePayments[$dateAsIndex]??0;
-				if(isSecuritized($item->securitization_date_index,$dateAsIndex)){
-					$value = 0;
-				}
+                $value = $schedulePayments[$dateAsIndex]??0;
+                if (isSecuritized($item->securitization_date_index, $dateAsIndex)) {
+                    $value = 0;
+                }
                 $result[$type][$dateAsIndex] = isset($result[$type][$dateAsIndex])  ? $result[$type][$dateAsIndex] + $value : $value ;
             }
         }
@@ -932,127 +941,168 @@ class HArr
         }
         return $result ;
     }
-	public static function formatMultiSubItems(array $subItems,array $sumKeys,array $columns = null):array 
-	{
-		$totalSubItems = [];
-		foreach($subItems as $subItemJson){
-		
-			$subItemArr = (array)json_decode($subItemJson);
-			if($subItemArr){
-				foreach($columns as $columnName){
-					$subItemArr = (array)($subItemArr[$columnName]??[]);
-				}
-			}
-			$totalSubItems = HArr::sumAtDates([$totalSubItems , $subItemArr],$sumKeys);
-			
-		}
-		return $totalSubItems;
-	}
-	public static function formatMultiSubItemsPerKey(array $subItems,array $sumKeys,array $columns ):array 
-	{
-		$totalSubItems = [];
-		foreach($subItems as $name => $subItemJson){
-			
-		
-			$subItemArr = (array)json_decode($subItemJson);
-			if($subItemArr){
-				foreach($columns as $columnName){
-					$subItemArr = (array)($subItemArr[$columnName]??[]);
-				}
-			}
-			$totalSubItems[$name] = HArr::sumAtDates([$totalSubItems , $subItemArr],$sumKeys);
-			
-		}
-		return $totalSubItems;
-	}
-	public static function sumLoanSchedulePerCategory(array $items , array $sumKeys,string $titleKeyName , string $payloadKeyName ):array
-	{
-		$result=[];
-		foreach($items as $item){
-			$title = $item->{$titleKeyName};
-			$payload = (array)(json_decode($item->{$payloadKeyName}));
-			foreach($sumKeys as $dateAsIndex){
-				$value = $payload[$dateAsIndex]??0;
-				if(isSecuritized($item->securitization_date_index,$dateAsIndex)){
-					$value = 0 ;
-				}
-				$result[$title][$dateAsIndex] = isset($result[$title][$dateAsIndex]) ? $result[$title][$dateAsIndex] + $value : $value ;
-			}
-			// $result[$title] = isset($result[$title]) ? HArr::sumAtDates([$result[$title],$payload],$sumKeys) : $payload ;
-		}
-		return $result;
-	}
-	public static function sumFromIndexToTheEnd($schedulePayments ,$currentDateIndex):float{
-		$result = 0 ; 
-		foreach($schedulePayments as $dateAsIndex => $value){
-			if($dateAsIndex > $currentDateIndex){
-				$result+= $value;
-			}
-		}
-		return $result;
-	}
-	public static function sumFromCurrentIndexToTheEnd(array $items , array $sumKeys):array{
-		$result = [];
-		foreach($items as $item){
-			$schedulePayments = json_decode($item->endBalance,true);
-			foreach($schedulePayments as $currentDateIndex => $value){
-				$result[$currentDateIndex] = HArr::sumFromIndexToTheEnd($schedulePayments ,$currentDateIndex );
-			}
-		}
-		return $result;
-	}
+    public static function formatMultiSubItems(array $subItems, array $sumKeys, array $columns = null):array
+    {
+        $totalSubItems = [];
+        foreach ($subItems as $subItemJson) {
+        
+            $subItemArr = (array)json_decode($subItemJson);
+            if ($subItemArr) {
+                foreach ($columns as $columnName) {
+                    $subItemArr = (array)($subItemArr[$columnName]??[]);
+                }
+            }
+            $totalSubItems = HArr::sumAtDates([$totalSubItems , $subItemArr], $sumKeys);
+            
+        }
+        return $totalSubItems;
+    }
+    public static function formatMultiSubItemsPerKey(array $subItems, array $sumKeys, array $columns):array
+    {
+        $totalSubItems = [];
+        foreach ($subItems as $name => $subItemJson) {
+            
+        
+            $subItemArr = (array)json_decode($subItemJson);
+            if ($subItemArr) {
+                foreach ($columns as $columnName) {
+                    $subItemArr = (array)($subItemArr[$columnName]??[]);
+                }
+            }
+            $totalSubItems[$name] = HArr::sumAtDates([$totalSubItems , $subItemArr], $sumKeys);
+            
+        }
+        return $totalSubItems;
+    }
+    public static function sumLoanSchedulePerCategory(array $items, array $sumKeys, string $titleKeyName, string $payloadKeyName):array
+    {
+        $result=[];
+        foreach ($items as $item) {
+            $title = $item->{$titleKeyName};
+            $payload = (array)(json_decode($item->{$payloadKeyName}));
+            foreach ($sumKeys as $dateAsIndex) {
+                $value = $payload[$dateAsIndex]??0;
+                if (isSecuritized($item->securitization_date_index, $dateAsIndex)) {
+                    $value = 0 ;
+                }
+                $result[$title][$dateAsIndex] = isset($result[$title][$dateAsIndex]) ? $result[$title][$dateAsIndex] + $value : $value ;
+            }
+            // $result[$title] = isset($result[$title]) ? HArr::sumAtDates([$result[$title],$payload],$sumKeys) : $payload ;
+        }
+        return $result;
+    }
+    public static function sumFromIndexToTheEnd($schedulePayments, $currentDateIndex):float
+    {
+        $result = 0 ;
+        foreach ($schedulePayments as $dateAsIndex => $value) {
+            if ($dateAsIndex > $currentDateIndex) {
+                $result+= $value;
+            }
+        }
+        return $result;
+    }
+    public static function sumFromCurrentIndexToTheEnd(array $items, array $sumKeys):array
+    {
+        $result = [];
+        foreach ($items as $item) {
+            $schedulePayments = json_decode($item->endBalance, true);
+            foreach ($schedulePayments as $currentDateIndex => $value) {
+                $result[$currentDateIndex] = HArr::sumFromIndexToTheEnd($schedulePayments, $currentDateIndex);
+            }
+        }
+        return $result;
+    }
+    
+    public static function getPerYearIndexForFirstMonthInYear(array $itemsAsDateIndexAndValue, array $yearWithItsMonths):array
+    {
+        $result = [];
+        foreach ($yearWithItsMonths as $yearIndex => $itsMonths) {
+            $currentYearTotal = 0;
+            $isFirstMonth = true ;
+            foreach ($itsMonths as $dateAsIndex => $dateAsString) {
+                if ($isFirstMonth) {
+                    $currentValue = $itemsAsDateIndexAndValue[$dateAsIndex]??0 ;
+                    $currentYearTotal =  $currentValue;
+                    $isFirstMonth = false ;
+                }
+            }
+            /**
+             * * هنحط النتيجه بتاعتك كل سنه عند اخر شهر في السنه دي
+             */
+            $result[$dateAsIndex] = $currentYearTotal;
+        }
+        return $result ;
+    }
+    public static function calculateRetainEarning(float $retainedEarningOpening, array $netProfit):array
+    {
+        $retainedEarnings  = [0 => $retainedEarningOpening];
+        foreach ($netProfit as $dateAsIndex => $value) {
+            if ($dateAsIndex == 0) {
+                continue ;
+            }
+            $previousNetProfit = $netProfit[$dateAsIndex-1] ?? 0 ;
+            $previousRetainedEarning = $retainedEarnings[$dateAsIndex-1]??0;
+            $retainedEarnings[$dateAsIndex] = $previousNetProfit + $previousRetainedEarning;
+            
+        }
+        return $retainedEarnings;
+    }
+    public static function onlyLastValuesInMultiArr(array $items):array
+    {
+        $months = [];
+        foreach ($items as $key => $itemArr) {
+            foreach ($itemArr as $k1 => $v1) {
+                $months[] = $v1;
+            }
+        }
+        return $months;
+        
+    }
+    public static function onlyKeysWithValues(array $items):array
+    {
+        $result =[];
+        foreach ($items as $key => $value) {
+            if ($value > 0) {
+                $result[] = $key;
+            }
+        }
+        return $result;
+    }
+    public static function getPreviousNonZeroValue(array $items, int $key)
+    {
+        // if (isset($items[$key]) && $items[$key ]>0) {
+        //     return $key;
+        // }
+        $key = $key - 1 ;
+        while ($key != 0) {
+            if (!isset($items[$key])) {
+                return null;
+            }
+            if ($items[$key] > 0) {
 	
-public static function getPerYearIndexForFirstMonthInYear(array $itemsAsDateIndexAndValue ,  array $yearWithItsMonths):array{
-	$result = [];
-	foreach($yearWithItsMonths as $yearIndex => $itsMonths){
-		$currentYearTotal = 0;
-		$isFirstMonth = true ;
-		foreach($itsMonths as $dateAsIndex => $dateAsString){
-			if($isFirstMonth){
-				$currentValue = $itemsAsDateIndexAndValue[$dateAsIndex]??0 ;
-				$currentYearTotal =  $currentValue;
-				$isFirstMonth = false ;
-			}
-		}
-		/**
-		 * * هنحط النتيجه بتاعتك كل سنه عند اخر شهر في السنه دي
-		 */
-		$result[$dateAsIndex] = $currentYearTotal;
-	}
-	return $result ;
-}
-public static function calculateRetainEarning(float $retainedEarningOpening,array $netProfit):array{
-		$retainedEarnings  = [0 => $retainedEarningOpening];
-		foreach($netProfit as $dateAsIndex => $value){
-			if($dateAsIndex == 0){
-				continue ;
-			}
-			$previousNetProfit = $netProfit[$dateAsIndex-1] ?? 0 ; 
-			$previousRetainedEarning = $retainedEarnings[$dateAsIndex-1]??0;
-			$retainedEarnings[$dateAsIndex] = $previousNetProfit + $previousRetainedEarning;
-			
-		}
-		return $retainedEarnings;
-	}
-	public static function onlyLastValuesInMultiArr(array $items  ):array
-	{
-		$months = [];
-		foreach($items as $key => $itemArr){
-			foreach($itemArr as $k1 => $v1){
-				$months[] = $v1;
-			}
-		}
-		return $months;
-		
-	}
-	public static function onlyKeysWithValues(array $items):array
-	{
-		$result =[];
-		foreach($items as $key => $value){
-			if($value > 0){
-				$result[] = $key;
-			}
-		}
-		return $result;
-	}
+                return $key;
+            }
+            $key--;
+        }
+        
+    }
+    
+    public static function getNextNonZeroValue(array $items, int $key)
+    {
+      if (isset($items[$key]) && $items[$key ]>0) {
+            return $key;
+        }
+        $key = $key+1;
+        while ($key != 0) {
+            if (!isset($items[$key])) {
+                return null;
+            }
+            if ($items[$key] > 0) {
+                return $key;
+            }
+            $key++;
+        }
+        
+    }
+
 }

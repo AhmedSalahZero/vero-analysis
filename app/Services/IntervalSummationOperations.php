@@ -30,9 +30,6 @@ class IntervalSummationOperations
 			if(is_null($dateAsString)){
 				continue;
 			}
-			// if(is_null($dateAsString)){
-			// 	dd($dateIndexWithDate,$dateValues);
-			// }
 			$dateObject = Carbon::make($dateAsString);
 			$year = $dateObject->format('Y');
 			$month = $dateObject->format('m');

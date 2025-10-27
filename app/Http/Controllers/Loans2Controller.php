@@ -566,7 +566,7 @@ class Loans2Controller extends Controller
 		
 		$fixedAtEndResult = $fixedAtEndResult['final_result']??[];
 	
-		$loanDates = array_keys($fixedAtEndResult['beginning']);
+		$loanDates = array_keys($fixedAtEndResult['beginning']??[]);
 		return view('admin.loan2.at-end-and-beginning',compact('company' ,'loanStartDate','currentNatureType' ,'loan','loanDates','fixedAtEndResult','datesAsIndexString'));
 	}
 	public function calculateVariableAtEndAndBeginning(Request $request,$company_id)
@@ -689,10 +689,7 @@ class Loans2Controller extends Controller
 			$currentNatureType = $request->get('nature_type');
 			$interestInterval = $request->get('interest_interval',$request->get('installment_interval'));
 			$isAtEnd = $request->get('nature_type') == 'variable_at_end' ;
-		//	$time  = microtime(true);
 			$datesAsIndexString=HDate::generateDatesBetweenStartDateAndDuration(0,$loanStartDate,$tenor,'monthly');
-		// for($i = 0 ; $i <= 600 ; $i++){
-		// dd('q',$isAtEnd);
 			$result = [];
 			if($isAtEnd){
 				$result = $calculateVariableLoanAtEndService->__calculate([],-1,$loanType, $loanStartDate, $loanAmount,$baseRate,  $marginRate,  $tenor, $installmentPaymentIntervalName,$interestInterval, $stepUpRate, $stepUpIntervalName ,$stepDownRate ,  $stepDownIntervalName ,$gracePeriod,0  );
@@ -704,7 +701,7 @@ class Loans2Controller extends Controller
 		
 		$result = $result['final_result']??[];
 		
-		$loanDates = array_keys($result['beginning']);
+		$loanDates = array_keys($result['beginning']??[]);
 		
 		return view('admin.loan2.variable',compact('company' ,'currentNatureType' ,'loan','loanDates','result','datesAsIndexString'));
 	}

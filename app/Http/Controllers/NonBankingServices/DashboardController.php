@@ -48,10 +48,7 @@ class DashboardController extends Controller
 		$percentageOfSalesColumnName = $isSensitivity ? 'sensitivity_expense_as_percentages' : 'expense_as_percentages';
 		$yearIndexWithYear = app('yearIndexWithYear');
 		$dateIndexWithDate = app('dateIndexWithDate');
-		// dd($dateIndexWithDate);
 		$corporateTaxes = $study->getCorporateTaxesRate() / 100 ;
-		// $startDate = $study->getStudyStartDate();
-		// $endDate = $study->getStudyEndDate();
 		$formattedExpenses = [];
 		$formattedResult = [];
 		$salesRevenuePerTypes = [];

@@ -6,53 +6,54 @@ use App\Helpers\HArr;
 use App\Helpers\HDate;
 use App\Models\Loan;
 use App\ReadyFunctions\Date;
+use App\Traits\HasMultiBaseLoan;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
 
 class CalculateFixedLoanAtBeginningService
 {
-	public function __calculateBasedOnDiffBaseRates( array $baseRatesMapping ,string $loanType, string $loanStartDate, float $loanAmount, float $marginRate, float $tenor, string $installmentPaymentIntervalName,int $installmentPaymentIntervalValue, float $stepUpRate = 0, string $stepUpIntervalName = null, float $stepDownRate = 0, string $stepDownIntervalName = null, float $gracePeriod  = 0,int $monthIndex = 0,array $datesAsStringAndIndex = [],array $dateWithDateIndex = [] ):array 
-	{
+	use HasMultiBaseLoan;
+	// public function __calculateBasedOnDiffBaseRates( array $baseRatesMapping ,string $loanType, string $loanStartDate, float $loanAmount, float $marginRate, float $tenor, string $installmentPaymentIntervalName,int $installmentPaymentIntervalValue, float $stepUpRate = 0, string $stepUpIntervalName = null, float $stepDownRate = 0, string $stepDownIntervalName = null, float $gracePeriod  = 0,int $monthIndex = 0,array $datesAsStringAndIndex = [],array $dateWithDateIndex = [] ):array 
+	// {
 		
-		$currentStartDateAsIndex=$monthIndex ;		
+	// 	$currentStartDateAsIndex=$monthIndex ;		
 
-		if($loanAmount <= 0){
-			return [] ;
-		}
-		$fixedAtEndResult = [];
-		$i = 0 ;
-		$previousResult = [];
-		$diffInMonths = 0;
-		foreach($baseRatesMapping as $currentBaseRateDate => $currentBaseRate){
+	// 	if($loanAmount <= 0){
+	// 		return [] ;
+	// 	}
+	// 	$fixedAtEndResult = [];
+	// 	$i = 0 ;
+	// 	$previousResult = [];
+	// 	$diffInMonths = 0;
+	// 	foreach($baseRatesMapping as $currentBaseRateDate => $currentBaseRate){
 		
 		
-			if($i != 0){
-				$diffInMonths=Carbon::make($currentBaseRateDate)->diffInMonths($loanStartDate);
-				$currentBaseRateDateAsIndex = $datesAsStringAndIndex[$currentBaseRateDate];
-				$previousLoopDateAsIndex = $currentBaseRateDateAsIndex-1;
-				$currentStartDateAsIndex  = $previousLoopDateAsIndex ;
-				$loanStartDate = $dateWithDateIndex[$currentStartDateAsIndex];
-				$tenor = $tenor -$diffInMonths+ $installmentPaymentIntervalValue ; 
-				if($tenor >= 1 ){
-					$loanAmount = HArr::getValueOrPrevious($fixedAtEndResult['current_result'][$i-1]['endBalance'], $currentStartDateAsIndex);
-				}
-			}
-				$currentResultArr = [];
-				if($tenor >= 1){
-					$currentResultArr =$this->__calculate($previousResult,$i,$loanType,$loanStartDate,$loanAmount,$currentBaseRate,$marginRate,$tenor,$installmentPaymentIntervalName,$stepUpRate,$stepUpIntervalName,$stepDownRate,$stepDownIntervalName,$gracePeriod,$currentStartDateAsIndex);
-					$previousResult =$currentResultArr['final_result']??[]; 
-					$fixedAtEndResult['current_result'][]= $currentResultArr['result']??[]  ;
-					$fixedAtEndResult['final_result']= $currentResultArr['final_result']??[]  ;
-					$i++ ;
-				}
+	// 		if($i != 0){
+	// 			$diffInMonths=Carbon::make($currentBaseRateDate)->diffInMonths($loanStartDate);
+	// 			$currentBaseRateDateAsIndex = $datesAsStringAndIndex[$currentBaseRateDate];
+	// 			$previousLoopDateAsIndex = $currentBaseRateDateAsIndex-1;
+	// 			$currentStartDateAsIndex  = $previousLoopDateAsIndex ;
+	// 			$loanStartDate = $dateWithDateIndex[$currentStartDateAsIndex];
+	// 			$tenor = $tenor -$diffInMonths+ $installmentPaymentIntervalValue ; 
+	// 			if($tenor >= 1 ){
+	// 				$loanAmount = HArr::getValueOrPrevious($fixedAtEndResult['current_result'][$i-1]['endBalance'], $currentStartDateAsIndex);
+	// 			}
+	// 		}
+	// 			$currentResultArr = [];
+	// 			if($tenor >= 1){
+	// 				$currentResultArr =$this->__calculate($previousResult,$i,$loanType,$loanStartDate,$loanAmount,$currentBaseRate,$marginRate,$tenor,$installmentPaymentIntervalName,$stepUpRate,$stepUpIntervalName,$stepDownRate,$stepDownIntervalName,$gracePeriod,$currentStartDateAsIndex);
+	// 				$previousResult =$currentResultArr['final_result']??[]; 
+	// 				$fixedAtEndResult['current_result'][]= $currentResultArr['result']??[]  ;
+	// 				$fixedAtEndResult['final_result']= $currentResultArr['final_result']??[]  ;
+	// 				$i++ ;
+	// 			}
 			
-		}
+	// 	}
 	
-		// $time = $fixedAtEndResult['time'];
-		$finalResult = $fixedAtEndResult['final_result']??[] ;
-		unset($finalResult['totals']);
-		return $finalResult;
-	}
+	// 	$finalResult = $fixedAtEndResult['final_result']??[] ;
+	// 	unset($finalResult['totals']);
+	// 	return $finalResult;
+	// }
 	
 public function __calculate($previousResult ,int $indexOfLoop,string $loanType, string $startDate, float $loanAmount,  $baseRate, float $marginRate, float $tenor, string $installmentPaymentIntervalName, float $stepUpRate = 0, string $stepUpIntervalName = null, float $stepDownRate = 0, string $stepDownIntervalName = null, float $gracePeriod  = 0,$currentStartDateAsIndex=0  )
 	{
@@ -66,9 +67,6 @@ public function __calculate($previousResult ,int $indexOfLoop,string $loanType, 
 		$datesIndexAndDaysCount =HDate::calculateDaysCountAtBeginning($datesAsIndexString,$installmentPaymentIntervalValue); 
 		unset($datesAsIndexString[array_key_last($datesAsIndexString)]);
 		$datesAsStringIndex = array_flip($datesAsIndexString);
-		if(!is_numeric($baseRate)){
-			dd($baseRate,$marginRate);
-		}
 		$currentPricing =  ($baseRate + $marginRate) /100  ;
 		$stepRate = Loan::getStepRate($loanType, $stepUpRate, $stepDownRate);
 		$stepRate = $stepRate / 100;
@@ -87,7 +85,7 @@ public function __calculate($previousResult ,int $indexOfLoop,string $loanType, 
 				/**
 				 * * calculate Interest Loan Factor 
 				 */
-				$interestFactors[$currentDateAsIndex]=($currentPricing / 365) * $currentDaysCount;
+				$interestFactors[$currentDateAsIndex]=($currentPricing / 360) * $currentDaysCount;
 			
 				$currentInterestFactor = $interestFactors[$currentDateAsIndex] ;
 				/**
@@ -135,10 +133,7 @@ public function __calculate($previousResult ,int $indexOfLoop,string $loanType, 
         if ($installmentPaymentIntervalName != 'monthly') {
             $loanScheduleResult = $this->extendPerMonth($loanScheduleResult, $installmentPaymentIntervalValue);
         }
-        // foreach ($loanScheduleResult['beginning'] as $dateAsIndex => $value) {
-        //     $loanScheduleResult['no_securitization'][$dateAsIndex] = 1 ;
-        // }
-			// dd($loanScheduleResult);
+      
 		if($indexOfLoop == -1){
 		
 			return [

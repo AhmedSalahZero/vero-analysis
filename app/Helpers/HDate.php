@@ -126,6 +126,7 @@ class HDate
 	{
 		$index =$datesAsStringIndex[$date];
 		$nextIndex = getNthKeyAfter($datesAsIndexString, $index, $numberOfShifts) ;
+		
 		return $datesAsIndexString[$nextIndex]??null;
 	}
 	public static function calculateDaysCountAtEnd(array $items,int $intervalValue,int $currentDaysCount = null):array{

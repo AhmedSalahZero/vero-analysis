@@ -2510,9 +2510,7 @@ function getIndexesLargerThanOrEqualIndex(array $items, string $item): array
 }
 function isActualDate(string $dateString): bool
 {
-	if(is_numeric($dateString)){
-		dd('date must be string');
-	}
+	
     $year = explode('-', $dateString)[0];
     $month = explode('-', $dateString)[1];
 

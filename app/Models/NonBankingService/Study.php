@@ -995,30 +995,33 @@ class Study extends Model
         $dateWithDateIndex = app('dateWithDateIndex');
         $yearIndexWithYear = app('yearIndexWithYear');
 
-        // $baseRates = $generalAndReserveAssumption->getCbeLendingCorridorRates() ;
-        $baseRatesMapping= $generalAndReserveAssumption->getBaseRatesPerMonths();
-        // foreach ($operationDurationPerYear as $yearIndex => $yearMonthIndexes) {
-        //     foreach ($yearMonthIndexes as $monthIndex => $monthlyZeroOrOne) {
-        //         $yearOrMonthIndex = $this->isMonthlyStudy() ? $monthIndex : $yearIndex;
-        //         $baseRatesPerMonths[Carbon::make($dateIndexWithDate[$monthIndex])->format('Y-m-d')] = $baseRates[$yearOrMonthIndex];
-        //     }
-        // }
+        $baseRates = $generalAndReserveAssumption->getCbeLendingCorridorRates() ;
+        // $baseRatesMapping= $generalAndReserveAssumption->getBaseRatesPerMonths();
+
+        foreach ($operationDurationPerYear as $yearIndex => $yearMonthIndexes) {
+            foreach ($yearMonthIndexes as $monthIndex => $monthlyZeroOrOne) {
+                $yearOrMonthIndex = $this->isMonthlyStudy() ? $monthIndex : $yearIndex;
+                $baseRatesPerMonths[Carbon::make($dateIndexWithDate[$monthIndex])->format('Y-m-d')] = $baseRates[$yearOrMonthIndex];
+            }
+        }
         
 
-        // $baseRatesMapping = HArr::getFirstOfYear($baseRatesPerMonths);
-        // $bankLendingMarginRates=$generalAndReserveAssumption->getBankLendingMarginRates();
-        // $baseRatesMapping = HArr::isAllValuesEqual($baseRatesMapping, $bankLendingMarginRates);
+        $baseRatesMapping = HArr::getFirstOfYear($baseRatesPerMonths);
+        $bankLendingMarginRates=$generalAndReserveAssumption->getBankLendingMarginRates();
+        $baseRatesMapping = HArr::isAllValuesEqual($baseRatesMapping, $bankLendingMarginRates);
 		
         $totalMonthlyLoanAmounts = [];
         // $loanEndBalances =[];
         
         foreach ($operationDurationPerYear as $yearIndex => $yearMonthIndexes) {
+			// logger('from qq');
             foreach ($yearMonthIndexes as $monthIndex => $monthlyZeroOrOne) {
+				// logger('from abc');
                 $baseRatesMapping = is_array($baseRatesMapping) ? HArr::filterByYearIndex($baseRatesMapping, $yearIndexWithYear, $yearIndex, $dateIndexWithDate[$monthIndex], $this->isMonthlyStudy()) : $baseRatesMapping;
-            
                 $yearOrMonthIndex = $this->isMonthlyStudy() ? $monthIndex : $yearIndex;
-
+				
                 foreach ($revenueIdWitLoanAmounts as $leasingRevenueStreamBreakdownId => $yearIndexWithAmount) {
+					// logger('from ddd');
                     $loanAtCurrentYear = $yearIndexWithAmount[$yearOrMonthIndex]??0 ;
                     $currentMonthlyLoanAmount = $loanAtCurrentYear / ($this->isMonthlyStudy() ? 1 : count($yearMonthIndexes))  ;
 				
@@ -1045,11 +1048,10 @@ class Study extends Model
                     $loanType = $leasingRevenueStreamBreakdown->getLoanType();
                     $loanNature = $leasingRevenueStreamBreakdown->getLoanNature();
                     $loanService = $loanNature == 'fixed-at-end' ? $calculateFixedLoanAtEndService : $calculateFixedLoanAtBeginningService ;
-                        
-                        
                     $currentPortfolioLoans=[];
                     if (is_array($baseRatesMapping)) {
                         $currentPortfolioLoans=$loanService->__calculateBasedOnDiffBaseRates($baseRatesMapping, $loanType, $currentMonth, $currentMonthlyLoanAmount, $currentMarginRate, $tenor, $installmentInterval, $installmentPaymentIntervalValue, $stepUp, $stepInterval, $stepDown, $stepInterval, $gracePeriod, $monthIndex, $dateWithDateIndex, $dateIndexWithDate);
+						
                     } else {
                         $currentPortfolioLoans=$loanService->__calculate([], -1, $loanType, $currentMonth, $currentMonthlyLoanAmount, $baseRatesMapping, $currentMarginRate, $tenor, $installmentInterval, $stepUp, $stepInterval, $stepDown, $stepInterval, $gracePeriod, $monthIndex, null, $pricingPerMonths);
                         $finalResult = $currentPortfolioLoans['final_result']??[];
@@ -1658,7 +1660,6 @@ class Study extends Model
                 $currentDirectFactoringBeginningBalance = $directFactoringStatements[$directFactoringBreakdownId]['end_balance'][$monthIndex] ;
                 $unearned = [];
 				
-				// dd($monthIndex , HArr::getMonthsAsArray($category));
                 foreach (HArr::getMonthsAsArray($category) as $index => $currentMonthNumber) {
 					
                     $currentIndex = $monthIndex+$index
@@ -2753,7 +2754,6 @@ class Study extends Model
         $directFactoringInterestPayments =  DirectFactoringBreakdown::where('study_id', $this->id)->pluck('bank_interest_expense_payments')->toArray();
         $directFactoringSettlements = HArr::sumAtDates($directFactoringSettlements, $sumKeys);
         $directFactoringInterestPayments = HArr::sumAtDates($directFactoringInterestPayments, $sumKeys);
-		// dd('settlements',$directFactoringSettlements,'payments',$directFactoringInterestPayments,'expense',$xx[0]);
         $loanSchedulePaymentPerType['direct-factoring'] = HArr::sumAtDates([$directFactoringSettlements,$directFactoringInterestPayments], $sumKeys);
         foreach ($loanSchedulePaymentPerType as $revenueType => $currentData) {
             $title =  $revenueType == 'direct-factoring' ?  str_to_upper($revenueType) .' Loan Payments' :  str_to_upper($revenueType) .' Bank Loan Payments'  ;
@@ -3169,7 +3169,6 @@ class Study extends Model
         $totalLoanBalances = [];
         $loanAccuredInterestsWithEndBalances =  DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('loan_schedule_payments')->where('portfolio_loan_type', 'portfolio')->where('study_id', $this->id)->get(['endBalance','accured_interest','revenue_stream_type','securitization_date_index','id'])->toArray();
 		
-		// dd($loanAccuredInterestsWithEndBalances);
         $totalPerCategory = HArr::sumLoanSchedulePerCategory($loanAccuredInterestsWithEndBalances, $sumKeys, 'revenue_stream_type', 'endBalance');
      
         foreach ($totalPerCategory as $categoryName => $sumArr) {
@@ -3229,14 +3228,12 @@ class Study extends Model
         
         // $accruedInterestRevenues = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('loan_schedule_payments')->where('study_id',$this->id)->where('portfolio_loan_type','portfolio')->pluck('accured_interest','revenue_stream_type')->toArray();
         $accruedInterestRevenues = $loanAccuredInterestsWithEndBalances;
-		// dd($accruedInterestRevenues);
         $totalAccruedInterestRevenuesPerCategory = [];
         foreach ($accruedInterestRevenues as $accruedInterestRevenue) {
             $revenueStreamName = $accruedInterestRevenue->revenue_stream_type;
             $securitizationDateAsIndex = $accruedInterestRevenue->securitization_date_index;
             $accruedInterestRevenue = $accruedInterestRevenue->accured_interest ? json_decode($accruedInterestRevenue->accured_interest, true) : [];
             $accruedInterestRevenue = $accruedInterestRevenue['monthly']['end_balance']??[];
-			// dd($accruedInterestRevenue);
             foreach ($sumKeys as $dateAsIndex) {
                 $value = $accruedInterestRevenue[$dateAsIndex]??0;
                 if (isSecuritized($securitizationDateAsIndex, $dateAsIndex)) {
@@ -3248,7 +3245,6 @@ class Study extends Model
             // $totalAccruedInterestRevenuesPerCategory[$revenueStreamName] = isset($totalAccruedInterestRevenuesPerCategory[$revenueStreamName]) ? HArr::sumAtDates([$totalAccruedInterestRevenuesPerCategory[$revenueStreamName],$accruedInterestRevenue], $sumKeys) : $accruedInterestRevenue;
             ;
         }
-		// dd($totalAccruedInterestRevenuesPerCategory);
         foreach ($totalAccruedInterestRevenuesPerCategory as $categoryName => $currentAccruedInterestRevenueForCategory) {
             $categoryName = str_to_upper($categoryName) . ' ' . __('Accured Interest Revenues');
             $tableDataFormatted[$currentTabIndex]['sub_items'][$categoryName]['data']  = $currentAccruedInterestRevenueForCategory ;
@@ -3459,7 +3455,6 @@ class Study extends Model
         $title = __('Direct Factoring Unearned Revenues');
         $tableDataFormatted[$currentTabIndex]['sub_items'][$title]['options']['title'] = $title ;
         $tableDataFormatted[$currentTabIndex]['sub_items'][$title]['data'] = $totalDirectFactoringUnearnedRevenues ;
-		// dd($totalDirectFactoringUnearnedRevenues);
         $tableDataFormatted[$currentTabIndex]['sub_items'][$title]['year_total'] = HArr::getPerYearIndexForEndBalance($totalDirectFactoringUnearnedRevenues, $yearWithItsMonths) ;
  
         
