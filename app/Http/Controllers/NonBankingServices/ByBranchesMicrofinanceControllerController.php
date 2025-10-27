@@ -27,7 +27,6 @@ class ByBranchesMicrofinanceControllerController extends Controller
 	//	$salesProjects = $study->microfinanceProductSalesProjects ;
 		$microfinanceBranchIds = $study->microfinance_branch_ids?:[];
 		$branches =ExistingBranch::whereIn('id',$microfinanceBranchIds)->get();
-		
         return [
 			'dateIndexWithDate'=>$dateIndexWithDate,
 			'branches'=>$branches,
@@ -35,7 +34,7 @@ class ByBranchesMicrofinanceControllerController extends Controller
             'model'=>$study ,
 			'study'=>$study,
 			'products'=>$company->getActiveMicrofinanceProducts(),
-            'title'=>__('Microfinance Loans'),
+            'title'=>__('Microfinance Branches'),
             'storeRoute'=>route('store.loan.microfinance', ['company'=>$company->id , 'study'=>$study->id]),
             'yearsWithItsMonths' =>$yearsWithItsMonths,
             'yearOrMonthsIndexes'=>$yearOrMonthsIndexes,

@@ -24,6 +24,7 @@ class MicrofinanceLoanOfficerCasesProjection extends Model
                 $model->new_cases = repeatLastValueInArrayUntil($model->new_cases?:[], $studyEndDateAsIndex) ;
             }
             $accumulatedHiring = $model->hiring?:[];
+			// dd($accumulatedHiring);
             $totalExistingCasesCounts =[];
             
             foreach ($model->existing_cases?:[] as $dateAsIndex => $value) {
@@ -36,10 +37,9 @@ class MicrofinanceLoanOfficerCasesProjection extends Model
             $branchCounts = $isNewBranches ? $study->newBranchMicrofinanceOpeningProjections->pluck('counts', 'operation_date')->toArray()  : [0=>1];
             
             $newCases = $model->new_cases?:[];
+			
             foreach ($branchCounts as $branchDateAsIndex => $branchCount) {
-            
                 foreach ($accumulatedHiring as $dateAsIndex => $hiring) {
-
                     foreach ($newCases as $index => $currentNewCount) {
                         $index = $index + $dateAsIndex + $branchDateAsIndex;
                         $currentValue = $currentNewCount * $hiring * $branchCount;
@@ -73,8 +73,14 @@ class MicrofinanceLoanOfficerCasesProjection extends Model
     {
         return $this->existing_cases[$yearOrDateIndex]??0;
     }
-    public function getNewLoanCasesAtYearOrMonthIndex(int $yearOrDateIndex):float
+    public function getNewLoanCasesAtYearOrMonthIndex(int $yearOrDateIndex , $isSenior = null):float
     {
+		if($this->type =='by-branch'){
+			if($isSenior){
+				return $this->study->product_mix_senior_loan_officers[$yearOrDateIndex];
+			}
+			return $this->study->product_mix_loan_officers[$yearOrDateIndex];
+		}
         return $this->new_cases[$yearOrDateIndex]??0;
     }	public function getHiringAtYearOrMonthIndex(int $yearOrDateIndex):float
     {

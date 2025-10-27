@@ -65,50 +65,71 @@ $months = $study->getMicrofinanceMonths() ;
                                 <x-tables.repeater-table-th class="  header-border-down " :title="__('Action')"></x-tables.repeater-table-th>
                                 <x-tables.repeater-table-th class="  header-border-down " :title="__('Planning Status')"></x-tables.repeater-table-th>
                                 <x-tables.repeater-table-th class="  header-border-down " :title="__('Reports')"></x-tables.repeater-table-th>
-                               
+
                             </x-slot>
                             <x-slot name="trs">
-							@foreach($branches as $branch)
+                                @foreach($branches as $branch)
                                 <tr data-repeat-formatting-decimals="0" data-repeater-style>
                                     <td>
                                         <input value="{{ $branch->getName() }}" disabled class="form-control  text-left mt-2" type="text">
                                     </td>
-									
-									 <td>
-									 <div class="d-flex align-items-center flex-column ">
-									 <a href="{{ route('create.all-branches.microfinance',['company'=>$company->id , 'study'=>$study->id ,'branch_id'=>$branch->id]) }}" class="btn btn-md-width btn-1-bg btn-sm btn-brand btn-pill">{{ __('Start Planning') }}</a>
-									 </div>
-									 
-                                    </td>
-									
-									
-										 <td>
-									 <div class="d-flex align-items-center flex-column ">
-									 {{ __('Not Yet') }}
-									 </div>
-									 
-                                    </td>
-									
-									
-									<td>
-									 <div class="d-flex align-items-center flex-column ">
-									 <a href="#" class="btn btn-md-width btn-2-bg btn-sm btn-brand btn-pill">{{ __('Loan Report') }}</a>
-									 </div>
-									 
-                                    </td>
-									
-                                 
 
+                                    <td>
+                                        <div class="d-flex align-items-center flex-column ">
+                                            <a href="{{ route('create.all-branches.microfinance',['company'=>$company->id , 'study'=>$study->id ,'branch_id'=>$branch->id]) }}" class="btn btn-md-width btn-1-bg btn-sm btn-brand btn-pill">{{ __('Start Planning') }}</a>
+                                        </div>
 
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center flex-column ">
 
+                                            @if($study->hasBranchFilled($branch->id))
+                                            <i class="fa fa-thumbs-up thumb-up exclude-icon"></i>
+                                            @else
+                                            <span class="text-red">{{ __('Not Yet') }}</span>
+                                            @endif
+                                        </div>
+
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center flex-column ">
+                                            <a href="{{ route('view.loan.report.microfinance',['branchId'=>$branch->id , 'company'=>$company->id ,'study'=>$study->id]) }}" class="btn btn-md-width btn-2-bg btn-sm btn-brand btn-pill">{{ __('Loan Report') }}</a>
+                                        </div>
+                                    </td>
                                 </tr>
-								@endforeach
+                                @endforeach
+								
+								
+								  <tr data-repeat-formatting-decimals="0" data-repeater-style>
+                                    <td>
+                                        <input value="{{ __('New Branch') }}" disabled class="form-control  text-left mt-2" type="text">
+                                    </td>
 
+                                    <td>
+                                        <div class="d-flex align-items-center flex-column ">
+                                            <a href="{{ route('create.new-branches.microfinance',['company'=>$company->id , 'study'=>$study->id ]) }}" class="btn btn-md-width btn-1-bg btn-sm btn-brand btn-pill">{{ __('Start Planning') }}</a>
+                                        </div>
 
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center flex-column ">
+
+                                            @if($study->hasNewBranchFilled())
+                                            <i class="fa fa-thumbs-up thumb-up exclude-icon"></i>
+                                            @else
+                                            <span class="text-red">{{ __('Not Yet') }}</span>
+                                            @endif
+                                        </div>
+
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center flex-column ">
+                                            <a href="#" class="btn btn-md-width btn-2-bg btn-sm btn-brand btn-pill">{{ __('Loan Report') }}</a>
+                                        </div>
+                                    </td>
+                                </tr>
+								
                             </x-slot>
-
-
-
 
                         </x-tables.repeater-table>
                         {{-- end of fixed monthly repeating amount --}}
@@ -121,7 +142,7 @@ $months = $study->getMicrofinanceMonths() ;
 
 
 
-         
+
 
 
 

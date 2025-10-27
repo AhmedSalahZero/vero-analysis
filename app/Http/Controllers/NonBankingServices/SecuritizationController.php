@@ -22,7 +22,7 @@ class SecuritizationController extends Controller
         $yearOrMonthsIndexes = $study->getYearOrMonthIndexes();
         $isYearsStudy = !$study->isMonthlyStudy();
 		$studyMonthsForViews =array_flip($study->getOperationDatesAsDateAndDateAsIndexToStudyEndDate()) ;
-		$departments = $company->microfinanceDepartments;
+	//	$departments = $company->microfinanceDepartments;
 		$dateIndexWithDate = $study->getDateIndexWithDate();
 		$securitizationCalculations = $study->calculateSecuritizationLoans();
         return [
@@ -52,7 +52,7 @@ class SecuritizationController extends Controller
             'yearsWithItsMonths' =>$yearsWithItsMonths,
             'yearOrMonthsIndexes'=>$yearOrMonthsIndexes,
             'isYearsStudy'=>$isYearsStudy,
-			'departments'=>$departments,
+	//		'departments'=>$departments,
 			'studyMonthsForViews'=>$studyMonthsForViews,
 		    'financialYearEndMonthNumber'=>$study->getFinancialYearEndMonthNumber(),
         ];

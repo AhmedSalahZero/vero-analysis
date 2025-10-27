@@ -401,6 +401,7 @@ class IncomeStatementController extends Controller
     
         $totalDepreciationExpenses = [];
         $fixedAssetDepreciations = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('fixed_assets')->where('study_id', $study->id)->pluck('total_monthly_depreciations')->toArray();
+		// dd($fixedAssetDepreciations);
         $title = __('Depreciation Expense')  ;
         $tableDataFormatted[$eclAndDepreciationOrderIndex]['sub_items'][$depreciationKey]['options'] =array_merge([
             'title'=>$title
@@ -409,8 +410,20 @@ class IncomeStatementController extends Controller
             $currentData = json_decode($currentData, true);
             $totalDepreciationExpenses  = HArr::sumAtDates([$totalDepreciationExpenses,$currentData], $sumKeys);
         }
-        $tableDataFormatted[$eclAndDepreciationOrderIndex]['sub_items'][$depreciationKey]['data'] = $totalDepreciationExpenses;
-        $tableDataFormatted[$eclAndDepreciationOrderIndex]['sub_items'][$depreciationKey]['year_total'] = HArr::sumPerYearIndex($totalDepreciationExpenses, $yearWithItsMonths);
+		
+		  $fixedAssetOpeningBalancesAdminDepreciations = [];
+        $fixedAssetOpeningBalancesAdminDepreciations = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('fixed_asset_opening_balances')->where('study_id', $study->id)->pluck('statement')->toArray();
+        array_walk($fixedAssetOpeningBalancesAdminDepreciations, function (&$value) {
+			 $value = json_decode($value,true)['monthly_depreciation']??[];
+        });
+		$fixedAssetOpeningBalancesAdminDepreciations = HArr::sumAtDates($fixedAssetOpeningBalancesAdminDepreciations,$sumKeys);
+		
+	
+        $totalFixedAssetAdminDepreciation = HArr::sumAtDates([$fixedAssetOpeningBalancesAdminDepreciations,$totalDepreciationExpenses], $sumKeys);
+		
+		
+        $tableDataFormatted[$eclAndDepreciationOrderIndex]['sub_items'][$depreciationKey]['data'] = $totalFixedAssetAdminDepreciation;
+        $tableDataFormatted[$eclAndDepreciationOrderIndex]['sub_items'][$depreciationKey]['year_total'] = HArr::sumPerYearIndex($totalFixedAssetAdminDepreciation, $yearWithItsMonths);
         $totalEclAndDepreciationExpenses = Harr::calculateTotalFromSubItems($tableDataFormatted[$eclAndDepreciationOrderIndex]['sub_items']??[]);
         
         $tableDataFormatted[$eclAndDepreciationOrderIndex]['main_items'][$eclAndDepreciationKey]['data'] =  $totalEclAndDepreciationExpenses ;
@@ -479,14 +492,10 @@ class IncomeStatementController extends Controller
           
         $tableDataFormatted[$ebitdaOrderIndex]['main_items']['ebitda']['options']['title'] = __('EBITDA');
         $tableDataFormatted[$ebitdaOrderIndex]['main_items']['% Of Revenue']['options']['title'] = __('% Of Revenue');
-        $fixedAssetAdminDepreciations = [];
-        $fixedAssetOpeningBalancesAdminDepreciations = [];
-        $fixedAssetOpeningBalancesAdminDepreciations = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('fixed_asset_opening_balances')->where('study_id', $study->id)->pluck('monthly_depreciation')->toArray();
-        array_walk($fixedAssetOpeningBalancesAdminDepreciations, function (&$value) {
-            $value = (array)json_decode($value);
-        });
-        $totalFixedAssetAdminDepreciation = HArr::sumAtDates(array_merge($fixedAssetAdminDepreciations, $fixedAssetOpeningBalancesAdminDepreciations), $sumKeys);
+        // $fixedAssetAdminDepreciations = [];
+      
         $totalDepreciation = HArr::sumAtDates([$totalFixedAssetAdminDepreciation,$totalGrossProfit], $sumKeys);
+		// dd('d',$totalFixedAssetAdminDepreciation , $totalGrossProfit);
         $editda = HArr::subtractAtDates([$totalDepreciation,$totalSGANDA], $sumKeys) ;
         $tableDataFormatted[$ebitdaOrderIndex]['main_items']['ebitda']['data'] = $editda;
         $tableDataFormatted[$ebitdaOrderIndex]['main_items']['ebitda']['year_total'] =$ebitdaTotalPerYear= HArr::sumPerYearIndex($editda, $yearWithItsMonths);

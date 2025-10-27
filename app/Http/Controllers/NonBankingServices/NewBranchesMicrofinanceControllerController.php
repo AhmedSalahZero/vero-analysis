@@ -15,7 +15,7 @@ class NewBranchesMicrofinanceControllerController extends Controller
 	const BRANCH_TYPE = 'new-branches';
     public function create(Company $company, Request $request, Study $study)
     {
-        return view('non_banking_services.microfinance.'.self::BRANCH_TYPE.'-form', $this->getViewVars($company, $study));
+        return view('non_banking_services.microfinance.new-branches-form', $this->getViewVars($company, $study));
     }
     protected function getViewVars(Company $company, Study $study)
     {

@@ -6247,11 +6247,11 @@ function getNonBankingNavigation(Company $company,User $user):array
 			'show'=>true ,
 			'link'=>route('create.general.assumption',['company'=>$company->id , 'study'=>$studyId])
 		];
-		$urls['branches']= [
-			'title'=>__('Branches <br> Assumptions'),
-			'show'=>true ,
-			'link'=>route('create.microfinance.branches.assumption',['company'=>$company->id , 'study'=>$studyId])
-		];
+		// $urls['branches']= [
+		// 	'title'=>__('Branches <br> Assumptions'),
+		// 	'show'=>true ,
+		// 	'link'=>route('create.microfinance.branches.assumption',['company'=>$company->id , 'study'=>$studyId])
+		// ];
 		$urls['projection'] = [
 			'title'=>__('Projections'),
 			'show'=>true ,

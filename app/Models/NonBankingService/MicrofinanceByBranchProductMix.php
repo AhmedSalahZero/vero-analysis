@@ -31,6 +31,16 @@ class  MicrofinanceByBranchProductMix extends Model
     {
         return $this->funded_by ;
     }
+	  public function getFundedByFormatted():string
+    {
+        $fundedBy = $this->getFundedBy();
+        foreach (getMicrofinanceFundingBySelector() as $arr) {
+            if ($arr['value'] == $fundedBy) {
+                return $arr['title'];
+            }
+        }
+		return __('N/A');
+    }
 	 public function getFlatRateAtYearOrMonthIndex(int $yearOrDateIndex):float
     {
         return $this->flat_rates[$yearOrDateIndex]??0;

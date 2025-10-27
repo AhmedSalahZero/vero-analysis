@@ -74,7 +74,7 @@ class AllBranchesMicrofinanceControllerController extends Controller
     public function store(Company $company, Request $request, Study $study , int $branchId = null  )
     {
 		$branchType = $this->getBranchType($branchId);
-		$study->saveManpowerForm($request,$branchType);
+		$study->saveManpowerForm($request,$branchType,$branchId);
 		$oldIds = $study->microfinanceProductSalesProjects->where('type',$branchType)->where('branch_id',$branchId)->pluck('id')->toArray();
 		$study->storeRepeaterRelations($request,['microfinanceProductSalesProjects'],$company,['branch_id'=>$branchId],$oldIds);
 		

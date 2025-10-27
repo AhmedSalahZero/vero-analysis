@@ -21,27 +21,27 @@ class MicrofinanceProductSalesProject extends Model
         parent::boot();
         static::saving(function (self $model) {
             $study = $model->study ;
-			  $decreaseRates =[];
-                $convertFlatRateToDecreasingRate = new ConvertFlatRateToDecreasingRate();
-                foreach ($model->flat_rates as $dateAsIndex => $value) {
-                    $tenor = $model->tenor;
-                    $decreaseRates[$dateAsIndex] = $convertFlatRateToDecreasingRate->excel_rate($value, $tenor);
-                }
-                $model->decrease_rates = $decreaseRates;
-				
+            $decreaseRates =[];
+            $convertFlatRateToDecreasingRate = new ConvertFlatRateToDecreasingRate();
+            foreach ($model->flat_rates as $dateAsIndex => $value) {
+                $tenor = $model->tenor;
+                $decreaseRates[$dateAsIndex] = $convertFlatRateToDecreasingRate->excel_rate($value, $tenor);
+            }
+            $model->decrease_rates = $decreaseRates;
+                
             if ($study->isMonthlyStudy()) {
                 $model->monthly_product_mixes = $model->product_mixes;
                 $operationDates = range($study->getOperationStartDateAsIndex(), $study->getStudyEndDateAsIndex());
                 $model->monthly_amounts = HArr::repeatThrough($model->avg_amount, $operationDates);
                 
             } else {
-				//  $model->monthly_product_mixes = ;			
-				$dateIndexWithDate = $study->getDateIndexWithDate();
-				$yearsWithItsActiveMonths = $study->getYearIndexWithItsMonthsAsIndexAndString();
-				$model->monthly_seasonality = (new SeasonalityService())->calculateSeasonalityPercentagePerMonth($model->seasonality,$yearsWithItsActiveMonths,$dateIndexWithDate);
-				$model->monthly_product_mixes =$study->convertYearlyArrayToMonthly($model->product_mixes); 
-				// dd($model->monthly_product_mixes,$yearsWithItsActiveMonths);
-					
+                //  $model->monthly_product_mixes = ;
+                $dateIndexWithDate = $study->getDateIndexWithDate();
+                $yearsWithItsActiveMonths = $study->getYearIndexWithItsMonthsAsIndexAndString();
+                $model->monthly_seasonality = (new SeasonalityService())->calculateSeasonalityPercentagePerMonth($model->seasonality, $yearsWithItsActiveMonths, $dateIndexWithDate);
+                $model->monthly_product_mixes =$study->convertYearlyArrayToMonthly($model->product_mixes);
+                // dd($model->monthly_product_mixes,$yearsWithItsActiveMonths);
+                    
                 $operationStartDateAsIndex = $study->getOperationStartDateAsIndex() ;
                 $operationEndDateAsIndex = $study->getStudyEndDateAsIndex();
                 $currentStartDateAsIndex = $operationStartDateAsIndex;
@@ -55,7 +55,7 @@ class MicrofinanceProductSalesProject extends Model
                 $amountBeforeVat = $model->avg_amount;
                 //  $amount * (1+$currentIncreaseRate/100);
                 for ($currentStartDateAsIndex ; $currentStartDateAsIndex <= $endDateAsIndex ; $currentStartDateAsIndex++) {
-				//	logger('for');
+                    //	logger('for');
                     $currentIncreaseRate = $increaseRates[$dateIndexWithYearIndex[$currentStartDateAsIndex]]??0  ;
                     if ($counter!=0&&$counter % $intervalMode == 0) {
                         $resultWithoutVat[$currentStartDateAsIndex] = $resultWithoutVat[$currentStartDateAsIndex-1] * (1+$currentIncreaseRate/100)  ;
@@ -68,7 +68,7 @@ class MicrofinanceProductSalesProject extends Model
                     }
                     $counter++;
                 }
-					$model->monthly_amounts = $resultWithoutVat;
+                $model->monthly_amounts = $resultWithoutVat;
                 
             }
         });
@@ -88,30 +88,53 @@ class MicrofinanceProductSalesProject extends Model
         ];
     public function getTenor():int
     {
+		if($this->type =='by-branch'){
+			return $this->study->microfinanceByBranchProductMixes->where('microfinance_product_id',$this->microfinance_product_id)->first()->getTenor();
+		}
         return $this->tenor ;
     }
     public function getAvgAmount():float
     {
+		if($this->type =='by-branch'){
+			return $this->study->microfinanceByBranchProductMixes->where('microfinance_product_id',$this->microfinance_product_id)->first()->getAvgAmount();
+		}
         return $this->avg_amount;
     }
     public function getFundedBy():string
     {
+		if($this->type =='by-branch'){
+			return $this->study->microfinanceByBranchProductMixes->where('microfinance_product_id',$this->microfinance_product_id)->first()->getFundedBy();
+		}
         return $this->funded_by ;
+    }
+    public function getFundedByFormatted():string
+    {
+        $fundedBy = $this->getFundedBy();
+        foreach (getMicrofinanceFundingBySelector() as $arr) {
+            if ($arr['value'] == $fundedBy) {
+                return $arr['title'];
+            }
+        }
+		return __('N/A');
     }
     public function getProductMixAtYearOrMonthIndex(int $yearOrDateIndex):float
     {
         return $this->product_mixes[$yearOrDateIndex]??0;
     }
-	 public function getFlatRateAtYearOrMonthIndex(int $yearOrDateIndex):float
+    public function getFlatRateAtYearOrMonthIndex(int $yearOrDateIndex):float
     {
+		if($this->type =='by-branch'){
+			return $this->study->microfinanceByBranchProductMixes->where('microfinance_product_id',$this->microfinance_product_id)->first()->getFlatRateAtYearOrMonthIndex($yearOrDateIndex);
+		}
+		
         return $this->flat_rates[$yearOrDateIndex]??0;
     }
     public function getIncreaseRateAtYearIndex($yearIndex)
     {
         return $this->increase_rates[$yearIndex] ?? 0;
     }
-	// $monthIndex  01 for jan
- 	public function getSeasonalityOfMonthIndex($monthNumber)
+    // $monthIndex  01 for jan
+    public function getSeasonalityOfMonthIndex($monthNumber)
     {
         return $this->seasonality[$monthNumber] ?? 0;
     }

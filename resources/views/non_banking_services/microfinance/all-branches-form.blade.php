@@ -69,6 +69,9 @@ $months = $study->getMicrofinanceMonths() ;
                                     @foreach($products as $product)
                                     @php
                                     $subModel = $model->microfinanceProductSalesProjects->where('type',$type)->where('branch_id',$branchId)->where('microfinance_product_id',$product->id)->first();
+									
+									$productMix = $study->microfinanceByBranchProductMixes->where('microfinance_product_id',$product->id)->first();
+									
                                     @endphp
                                     <input type="hidden" name="microfinanceProductSalesProjects[{{ $product->id }}][id]" value="{{ $subModel  ? $subModel->id : 0 }}">
                                     <input type="hidden" name="microfinanceProductSalesProjects[{{ $product->id }}][type]" value="{{ $branchPlanningBaseType }}">
@@ -87,10 +90,6 @@ $months = $study->getMicrofinanceMonths() ;
                                         <td>
                                             @php
                                             $currentVal = $subModel ? $subModel->getTenor() : 12;
-											if($isByBranch){
-												$currentVal = $study->microfinanceByBranchProductMixes->where('microfinance_product_id',$product->id)->first();
-												$currentVal = $currentVal ? $currentVal->getTenor():12;
-											}
                                             $tenorClass = 'tenor-class'.$product->id
                                             // $product->name
                                             @endphp
@@ -101,10 +100,7 @@ $months = $study->getMicrofinanceMonths() ;
                                         <td>
                                             @php
                                             $currentVal = $subModel ? $subModel->getAvgAmount() : 0 ;
-											if($isByBranch){
-												$currentVal = $study->microfinanceByBranchProductMixes->where('microfinance_product_id',$product->id)->first();
-												$currentVal = $currentVal ? $currentVal->getAvgAmount():0;
-											}
+											
                                             @endphp
                                             <x-repeat-right-dot-inputs :readonly="$isByBranch" :removeThreeDots="true" :removeCurrency="true" :currentVal="$currentVal" :classes="'only-greater-than-zero-allowed'" :is-percentage="false" :name="'microfinanceProductSalesProjects['.$product->id.'][avg_amount]'" :columnIndex="-1"></x-repeat-right-dot-inputs>
                                         </td>
@@ -121,7 +117,11 @@ $months = $study->getMicrofinanceMonths() ;
                                         @endif
 
                                         <td>
-                                            <x-form.select :readonly="$isByBranch" :required="true" :label="''" :pleaseSelect="false" :selectedValue="isset($subModel) ? $subModel->getFundedBy():0" :options="getMicrofinanceFundingBySelector()" :add-new="false" class="select2-select min-w-120 repeater-select  " :all="false" name="microfinanceProductSalesProjects[{{ $product->id }}][funded_by]"></x-form.select>
+											@if($isByBranch)
+											<x-repeat-right-dot-inputs-with-diff-inputs :isNumber="false" :readonly="true" :removeThreeDots="true" :removeCurrency="true" :currentVal="isset($subModel) ? $subModel->getFundedBy():0"  :currentFormattedVal="isset($subModel) ? $subModel->getFundedByFormatted():0" :classes="'only-greater-than-zero-allowed'" :is-percentage="false" :name="'microfinanceProductSalesProjects['.$product->id.'][funded_by]'" :columnIndex="-1"></x-repeat-right-dot-inputs-with-diff-inputs>
+											@else
+                                            <x-form.select  :readonly="$isByBranch" :required="true" :label="''" :pleaseSelect="false" :selectedValue="isset($subModel) ? $subModel->getFundedBy():0" :options="getMicrofinanceFundingBySelector()" :add-new="false" class="select2-select min-w-120 repeater-select  " :all="false" name="microfinanceProductSalesProjects[{{ $product->id }}][funded_by]"></x-form.select>
+											@endif 
                                         </td>
 
 
@@ -293,10 +293,7 @@ $months = $study->getMicrofinanceMonths() ;
 
                                             @php
                                             $currentVal = $subModel ? $subModel->getFlatRateAtYearOrMonthIndex($yearOrMonthAsIndex) : 0;
-											if($isByBranch){
-												$currentVal = $study->microfinanceByBranchProductMixes->where('microfinance_product_id',$product->id)->first();
-												$currentVal = $currentVal ? $currentVal->getFlatRateAtYearOrMonthIndex($yearOrMonthAsIndex):0;
-											}
+											
                                             @endphp
 
 
@@ -731,11 +728,9 @@ $months = $study->getMicrofinanceMonths() ;
                                 @endphp
                                 @for($i = 0 ; $i<= $months ; $i++) @php 
 								
-								$currentVal=isset($subModel) ? $subModel->getNewLoanCasesAtYearOrMonthIndex($i) : 0 ;
-									if($isByBranch){
-												$currentVal = $study->microfinanceByBranchProductMixes->where('microfinance_product_id',$product->id)->first();
-												$currentVal= $study->{$name}[$i]??0 ;
-											}
+									
+								$currentVal=isset($subModel) ? $subModel->getNewLoanCasesAtYearOrMonthIndex($i,$isSenior) : 0 ;
+																	
                                     @endphp
                                     <td>
                                         <x-repeat-right-dot-inputs :removeThreeDots="$isByBranch" :readonly="$isByBranch" :numberFormatDecimals="0" :multiple="true" :removeCurrency="true" :name="'microfinanceLoanOfficerCases['.$currentIndex.'][new_cases]['.$i.']'" :currentVal="$currentVal" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>

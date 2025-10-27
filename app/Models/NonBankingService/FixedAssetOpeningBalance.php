@@ -33,16 +33,32 @@ class FixedAssetOpeningBalance extends Model
 	{
 			parent::boot();
 			static::saving(function(self $model){
-				$statementPayload = $model->{self::getPayloadStatementColumn()} ?: [];
+				// $statementPayload = $model->{self::getPayloadStatementColumn()} ?: [];
 				$openingBalance = $model->{self::getOpeningBalanceColumnName()};
-				$dateIndexWithDate = $model->study->getDateIndexWithDate();
-				$extendedStudyEndDate = $model->study->convertDateStringToDateIndex($model->study->getEndDate()) ;
-				$dates = range(0,$extendedStudyEndDate);
-				$debug = false ;
-				if(!is_null($openingBalance)){
-					$model->statement = self::calculateSettlementStatement($dates,$statementPayload,[],$openingBalance,$dateIndexWithDate,true,$debug);
-					
+				$monthlyDepreciation = $model->monthly_depreciation ;
+				$dates = range(0,$model->monthly_counts-1);
+				$monthlyDepreciations = [];
+				$accumulatedDepreciations = [];
+				$currentAccumulatedDepreciation = $model->accumulated_depreciation;
+				// $endBalances =[];
+				$statement = [];
+				foreach($dates as $dateAsIndex){
+				$statement['beginning_balance']	[$dateAsIndex] = $openingBalance;
+				$statement['monthly_depreciation'][$dateAsIndex] = $monthlyDepreciation;
+				$monthlyDepreciations[$dateAsIndex] = $monthlyDepreciation;
+				$currentAccumulated =array_sum($monthlyDepreciations)+$currentAccumulatedDepreciation;
+				$statement['accumulated_depreciation'][$dateAsIndex] = $currentAccumulated;
+					$accumulatedDepreciations[$dateAsIndex] = $currentAccumulated ;
+					$statement['end_balance'][$dateAsIndex] = $openingBalance-$currentAccumulated;
 				}
+				// dd($statement,$monthlyDepreciations,$accumulatedDepreciations,$endBalances);
+				// $dateIndexWithDate = $model->study->getDateIndexWithDate();
+				// $extendedStudyEndDate = $model->study->convertDateStringToDateIndex($model->study->getEndDate()) ;
+				// $dates = range(0,$extendedStudyEndDate);
+				// $debug = false ;
+				$model->statement =$statement;
+				// if(!is_null($openingBalance)){
+				// }
 			});
 	}
 	

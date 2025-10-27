@@ -1252,3 +1252,7 @@ td > .kt-radio.kt-radio--single {
 	width: 120px !important;
 	max-width: 120px !important;
 }
+.thumb-up{
+	font-size: 2rem;
+    color: green !important;
+}

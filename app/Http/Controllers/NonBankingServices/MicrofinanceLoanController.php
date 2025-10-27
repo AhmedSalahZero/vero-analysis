@@ -4,7 +4,9 @@ namespace App\Http\Controllers\NonBankingServices;
 
 use App\Helpers\HArr;
 use App\Http\Controllers\Controller;
+use App\Models\Branch;
 use App\Models\Company;
+use App\Models\NonBankingService\ExistingBranch;
 use App\Models\NonBankingService\MicrofinanceProductSalesProject;
 use App\Models\NonBankingService\Study;
 use App\ReadyFunctions\CalculateFixedLoanAtBeginningService;
@@ -16,18 +18,19 @@ use Illuminate\Support\Facades\DB;
 class MicrofinanceLoanController extends Controller
 {
     use NonBankingService ;
-    public function create(Company $company, Request $request, Study $study)
+    public function create(Company $company, Request $request, Study $study , $branchId = null )
     {
-        return view('non_banking_services.microfinance.loan-form', $this->getViewVars($company, $study));
+        return view('non_banking_services.microfinance.loan-form', $this->getViewVars($company, $study,$branchId));
     }
-    protected function getViewVars(Company $company, Study $study)
+    protected function getViewVars(Company $company, Study $study,$branchId = null)
     {
         $yearsWithItsMonths =  $study->getOperationDurationPerYearFromIndexes() ;
         $yearOrMonthsIndexes = $study->getYearOrMonthIndexes();
         $isYearsStudy = !$study->isMonthlyStudy();
         $studyMonthsForViews =array_flip($study->getOperationDatesAsDateAndDateAsIndexToStudyEndDate()) ;
         $dateIndexWithDate = $study->getDateIndexWithDate();
-        $salesProjects = $study->microfinanceProductSalesProjects ;
+        $salesProjects =$branchId ? $study->microfinanceProductSalesProjects->where('branch_id',$branchId)  :$study->microfinanceProductSalesProjects ;
+	
         $salesProjectsPerProducts= [];
         $salesProjectsPerFundedBy= [];
         $salesProjectsPerTypes= [];
@@ -35,17 +38,22 @@ class MicrofinanceLoanController extends Controller
             $productId = $salesProject-> microfinance_product_id;
             $fundedBy = $salesProject->funded_by;
             $type = $salesProject->type;
+			// dump($type);
             $monthlyLoanAmounts = $salesProject->monthly_loan_amounts?:[];
-            if (array_sum($monthlyLoanAmounts) == 0) {
-                continue;
-            }
+            // if (array_sum($monthlyLoanAmounts) == 0) {
+            //     continue;
+            // }
             foreach ($monthlyLoanAmounts as $dateAsIndex => $monthlyLoanAmount) {
+				// dump($type);
                 $salesProjectsPerProducts[$productId][$dateAsIndex] =  isset($salesProjectsPerProducts[$productId][$dateAsIndex]) ? $salesProjectsPerProducts[$productId][$dateAsIndex] + $monthlyLoanAmount:$monthlyLoanAmount;
                 $salesProjectsPerFundedBy[$fundedBy][$productId][$dateAsIndex] = isset($salesProjectsPerFundedBy[$fundedBy][$productId][$dateAsIndex]) ? $salesProjectsPerFundedBy[$fundedBy][$productId][$dateAsIndex] + $monthlyLoanAmount   : $monthlyLoanAmount  ;
                 $salesProjectsPerTypes[$type][$productId][$dateAsIndex] = isset($salesProjectsPerTypes[$type][$productId][$dateAsIndex]) ? $salesProjectsPerTypes[$type][$productId][$dateAsIndex] + $monthlyLoanAmount   : $monthlyLoanAmount  ;
             }
         }
+		// dd($salesProjectsPerTypes);
+		$branchName = $branchId ? ExistingBranch::find($branchId)->getName() : '';
         return [
+			'branchName'=>$branchName,
             'salesProjectsPerTypes'=>$salesProjectsPerTypes,
             'salesProjectsPerFundedBy'=>$salesProjectsPerFundedBy,
             'salesProjectsPerProducts'=>$salesProjectsPerProducts,
@@ -55,7 +63,7 @@ class MicrofinanceLoanController extends Controller
             'model'=>$study ,
             'study'=>$study,
             'products'=>$company->getActiveMicrofinanceProducts(),
-            'title'=>__('Microfinance Loans'),
+            'title'=>$branchId ? $branchName. ' '.   __('Loans') : __('Microfinance Loans'),
             'storeRoute'=>route('store.loan.microfinance', ['company'=>$company->id , 'study'=>$study->id]),
             'yearsWithItsMonths' =>$yearsWithItsMonths,
             'yearOrMonthsIndexes'=>$yearOrMonthsIndexes,

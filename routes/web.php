@@ -391,8 +391,8 @@ Route::middleware([])->group(function () {
                         route::get('general-and-reserve-assumption', 'GeneralAndReservationAssumptionController@create')->name('create.general.assumption');
                         route::post('general-and-reserve-assumption', 'GeneralAndReservationAssumptionController@store')->name('store.general.assumption');
                         
-                        route::get('microfinance-branches-assumption', 'MicrofinanceBranchAssumptionsController@create')->name('create.microfinance.branches.assumption');
-                        route::post('microfinance-branches-assumption', 'MicrofinanceBranchAssumptionsController@store')->name('store.microfinance.branches.assumption');
+                        // route::get('microfinance-branches-assumption', 'MicrofinanceBranchAssumptionsController@create')->name('create.microfinance.branches.assumption');
+                        // route::post('microfinance-branches-assumption', 'MicrofinanceBranchAssumptionsController@store')->name('store.microfinance.branches.assumption');
                         
                         /**
                          * * End General Assumption
@@ -460,7 +460,8 @@ Route::middleware([])->group(function () {
                         route::post('microfinance/new-branches', 'NewBranchesMicrofinanceControllerController@store')->name('store.new-branches.microfinance');
                         
 						 route::get('microfinance/loans', 'MicrofinanceLoanController@create')->name('create.loan.microfinance');
-                        route::post('microfinance/loans', 'MicrofinanceLoanController@store')->name('store.loan.microfinance');
+						 route::post('microfinance/loans', 'MicrofinanceLoanController@store')->name('store.loan.microfinance');
+						 route::get('microfinance/loan-report/{branchId}', 'MicrofinanceLoanReportController@create')->name('view.loan.report.microfinance');
                         
 						
                         route::get('microfinance-products-mix', 'MicrofinanceProductMixControllerController@create')->name('create.microfinance.product.mix');
