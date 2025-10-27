@@ -21,20 +21,27 @@ class MicrofinanceProductSalesProject extends Model
         parent::boot();
         static::saving(function (self $model) {
             $study = $model->study ;
-            if ($study->isMonthlyStudy()) {
-                $decreaseRates =[];
+			  $decreaseRates =[];
                 $convertFlatRateToDecreasingRate = new ConvertFlatRateToDecreasingRate();
                 foreach ($model->flat_rates as $dateAsIndex => $value) {
                     $tenor = $model->tenor;
                     $decreaseRates[$dateAsIndex] = $convertFlatRateToDecreasingRate->excel_rate($value, $tenor);
                 }
                 $model->decrease_rates = $decreaseRates;
+				
+            if ($study->isMonthlyStudy()) {
                 $model->monthly_product_mixes = $model->product_mixes;
                 $operationDates = range($study->getOperationStartDateAsIndex(), $study->getStudyEndDateAsIndex());
                 $model->monthly_amounts = HArr::repeatThrough($model->avg_amount, $operationDates);
                 
             } else {
-                
+				//  $model->monthly_product_mixes = ;			
+				$dateIndexWithDate = $study->getDateIndexWithDate();
+				$yearsWithItsActiveMonths = $study->getYearIndexWithItsMonthsAsIndexAndString();
+				$model->monthly_seasonality = (new SeasonalityService())->calculateSeasonalityPercentagePerMonth($model->seasonality,$yearsWithItsActiveMonths,$dateIndexWithDate);
+				$model->monthly_product_mixes =$study->convertYearlyArrayToMonthly($model->product_mixes); 
+				// dd($model->monthly_product_mixes,$yearsWithItsActiveMonths);
+					
                 $operationStartDateAsIndex = $study->getOperationStartDateAsIndex() ;
                 $operationEndDateAsIndex = $study->getStudyEndDateAsIndex();
                 $currentStartDateAsIndex = $operationStartDateAsIndex;
@@ -48,6 +55,7 @@ class MicrofinanceProductSalesProject extends Model
                 $amountBeforeVat = $model->avg_amount;
                 //  $amount * (1+$currentIncreaseRate/100);
                 for ($currentStartDateAsIndex ; $currentStartDateAsIndex <= $endDateAsIndex ; $currentStartDateAsIndex++) {
+				//	logger('for');
                     $currentIncreaseRate = $increaseRates[$dateIndexWithYearIndex[$currentStartDateAsIndex]]??0  ;
                     if ($counter!=0&&$counter % $intervalMode == 0) {
                         $resultWithoutVat[$currentStartDateAsIndex] = $resultWithoutVat[$currentStartDateAsIndex-1] * (1+$currentIncreaseRate/100)  ;
@@ -59,19 +67,8 @@ class MicrofinanceProductSalesProject extends Model
                         }
                     }
                     $counter++;
-					$model->monthly_amounts = $resultWithoutVat;
-					
-					
-					
-					// seasonality
-				
-					
-					$dateIndexWithDate = $study->getDateIndexWithDate();
-					$yearsWithItsActiveMonths = $study->getYearIndexWithItsMonthsAsIndexAndString();
-					$model->monthly_seasonality = (new SeasonalityService())->calculateSeasonalityPercentagePerMonth($model->seasonality,$yearsWithItsActiveMonths,$dateIndexWithDate);
-				
-					
                 }
+					$model->monthly_amounts = $resultWithoutVat;
                 
             }
         });

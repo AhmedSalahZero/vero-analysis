@@ -81,7 +81,7 @@ class AllBranchesMicrofinanceControllerController extends Controller
 		$oldIds = $study->microfinanceLoanOfficerCases->where('type',$branchType)->where('branch_id',$branchId)->pluck('id')->toArray();
 		$study->storeRepeaterRelations($request,['microfinanceLoanOfficerCases'],$company,['branch_id'=>$branchId],$oldIds);
 		
-		$study->recalculateMicrofinanceTotalCasesCounts();
+		$study->recalculateMicrofinanceTotalCasesCounts($branchType);
 		$study->update([
 			'existing_branches_counts'=>$request->get('existing_branches_counts',0)
 		]);

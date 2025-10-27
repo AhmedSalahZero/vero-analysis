@@ -3959,13 +3959,13 @@ class Study extends Model
 	{
 		return $this->microfinance_type == 'by-branch';
 	}
-    public function recalculateMicrofinanceTotalCasesCounts():void
+    public function recalculateMicrofinanceTotalCasesCounts(string $type):void
     {
 		RevenueContract::where('study_id',$this->id)->where('revenue_type',Study::MICROFINANCE)->delete();
 		$monthlyAmountsAndContractsPerProductIds = [];
         if ($this->isMonthlyStudy()) {
             $totalLoanOfficerCases = [];
-            $this->microfinanceLoanOfficerCases->each(function (MicrofinanceLoanOfficerCasesProjection $microfinanceLoanOfficerCasesProjection) use (&$totalLoanOfficerCases) {
+            $this->microfinanceLoanOfficerCases->where('type',$type)->each(function (MicrofinanceLoanOfficerCasesProjection $microfinanceLoanOfficerCasesProjection) use (&$totalLoanOfficerCases) {
                 foreach ($microfinanceLoanOfficerCasesProjection->total_existing_officers_cases_count?:[] as $dateAsIndex=>$newCount) {
                     $existingCount = $microfinanceLoanOfficerCasesProjection->total_new_officers_cases_count[$dateAsIndex]??0;
                     $totalCount = $newCount+$existingCount;
@@ -3975,7 +3975,7 @@ class Study extends Model
             $currentTotalCases = [];
             $monthlyLoanAmounts = [];
 			/////////////////
-            $this->microfinanceProductSalesProjects->each(function (MicrofinanceProductSalesProject $microfinanceProductSalesProject) use (&$currentTotalCases, &$monthlyLoanAmounts, $totalLoanOfficerCases,&$monthlyAmountsAndContractsPerProductIds) {
+            $this->microfinanceProductSalesProjects->where('type',$type)->each(function (MicrofinanceProductSalesProject $microfinanceProductSalesProject) use (&$currentTotalCases, &$monthlyLoanAmounts, $totalLoanOfficerCases,&$monthlyAmountsAndContractsPerProductIds) {
 				$productId = $microfinanceProductSalesProject->microfinance_product_id;
                 foreach ($microfinanceProductSalesProject->monthly_product_mixes?:[] as $dateAsIndex => $mixRate) {
                     $mixRate = $mixRate / 100;
@@ -4000,7 +4000,8 @@ class Study extends Model
             {
 				$yearWithItsIndexes = $this->getOperationDurationPerYearFromIndexesForAllStudyInfo();
             $monthIndexWithYearIndex = $this->getMonthsWithItsYear($yearWithItsIndexes);
-            $this->microfinanceLoanOfficerCases->each(function (MicrofinanceLoanOfficerCasesProjection $microfinanceLoanOfficerCasesProjection) use ($monthIndexWithYearIndex) {
+			$totalCasesPerYear=[];
+            $this->microfinanceLoanOfficerCases->where('type',$type)->each(function (MicrofinanceLoanOfficerCasesProjection $microfinanceLoanOfficerCasesProjection) use (&$totalCasesPerYear,$monthIndexWithYearIndex,$type) {
                 $totalExistingCasesCounts = $microfinanceLoanOfficerCasesProjection->total_existing_officers_cases_count ;
                 
                 $totalNewOfficersCaseCount  = $microfinanceLoanOfficerCasesProjection->total_new_officers_cases_count ;
@@ -4009,9 +4010,12 @@ class Study extends Model
                 $totalExistingCasesCountsPerYear = HArr::sumPerYearIndex($totalExistingCasesCounts, $yearWithItsMonths);
                 $totalNewOfficersCaseCountPerYear = HArr::sumPerYearIndex($totalNewOfficersCaseCount, $yearWithItsMonths);
                 $years = count($totalNewOfficersCaseCountPerYear) ? array_keys($totalNewOfficersCaseCountPerYear) : array_keys($totalExistingCasesCountsPerYear);
-                $totalCasesPerYear = HArr::sumAtDates([$totalExistingCasesCountsPerYear,$totalNewOfficersCaseCountPerYear], $years);
-                $result = [];
-                $this->microfinanceProductSalesProjects->each(function (MicrofinanceProductSalesProject $microfinanceProductSalesProject) use ($totalCasesPerYear, &$result, $monthIndexWithYearIndex) {
+                $totalCasesPerYear = HArr::sumAtDates([$totalCasesPerYear,$totalExistingCasesCountsPerYear,$totalNewOfficersCaseCountPerYear], $years);
+               
+            });
+			
+			 $result = [];
+                $this->microfinanceProductSalesProjects->where('type',$type)->each(function (MicrofinanceProductSalesProject $microfinanceProductSalesProject) use ($totalCasesPerYear, &$result, $monthIndexWithYearIndex) {
 						$productId = $microfinanceProductSalesProject->microfinance_product_id;
                     foreach ($microfinanceProductSalesProject->product_mixes?:[] as $yearIndex => $productMixRate) {
                         $currentTotalCase = array_values($totalCasesPerYear)[$yearIndex]??0;
@@ -4032,12 +4036,15 @@ class Study extends Model
 						$monthlyAmountsAndContractsPerProductIds[$productId]['contract_counts'][$monthIndex] = isset($monthlyAmountsAndContractsPerProductIds[$productId]['contract_counts'][$monthIndex]) ? $monthlyAmountsAndContractsPerProductIds[$productId]['contract_counts'][$monthIndex] + $currentCases : $currentCases; 
 					
                     }
+				//	logger($microfinanceLoanOfficerCasesProjection->id.'-'.$microfinanceProductSalesProject->id.'-'. json_encode($monthlyCases));
                     $microfinanceProductSalesProject->update([
                         'monthly_loan_amounts'=>$monthlyLoanAmounts,
                         'total_cases_counts'=>$monthlyCases
                     ]);
                 });
-            });
+			
+			
+			
 			}
                 
         

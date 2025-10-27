@@ -69,7 +69,7 @@ class NewBranchesMicrofinanceControllerController extends Controller
 		$oldIds = $study->microfinanceLoanOfficerCases->where('type',self::BRANCH_TYPE)->pluck('id')->toArray();
 		$study->storeRepeaterRelations($request,['microfinanceLoanOfficerCases'],$company,[],$oldIds);
 		
-		$study->recalculateMicrofinanceTotalCasesCounts();
+		$study->recalculateMicrofinanceTotalCasesCounts(self::BRANCH_TYPE);
 		$accumulatedOpeningBranchesCounts = $study->getNewBranchesOpeningBalancesAccumulation();
 		$study->handleFixedRepeatingExpenses($request,$accumulatedOpeningBranchesCounts);
        

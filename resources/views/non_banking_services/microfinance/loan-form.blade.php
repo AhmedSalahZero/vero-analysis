@@ -270,7 +270,8 @@ $months = $study->getMicrofinanceMonths() ;
             $columnsTotals =[];
             $titleFormatted = [
             'all-branches'=>__('Existing Branches'),
-            'new-branches'=>__('New Branches')
+            'new-branches'=>__('New Branches'),
+			'by-branch'=>__('By Branch')
             ][$type];
             @endphp
             <div class="kt-portlet">
