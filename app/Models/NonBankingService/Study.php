@@ -940,7 +940,9 @@ class Study extends Model
 					// if($monthIndex == 1){
 					// 	dd($currentMonthlyLoanAmount);
 					// }
-                    
+                    // if($monthIndex != 0){
+					// 	continue;
+					// }
                     $monthlyLoanAmounts[$leasingRevenueStreamBreakdownId][$monthIndex] = $currentMonthlyLoanAmount ;
                     $contractCounts[$leasingRevenueStreamBreakdownId][$monthIndex] = (int)($currentMonthlyLoanAmount != 0)  ;
                 }
@@ -1021,6 +1023,9 @@ class Study extends Model
         foreach ($operationDurationPerYear as $yearIndex => $yearMonthIndexes) {
 			// logger('from qq');
             foreach ($yearMonthIndexes as $monthIndex => $monthlyZeroOrOne) {
+				// if($monthIndex != 0){
+				// 	continue;
+				// }
 				// logger('from abc');
                 $baseRatesMapping = is_array($baseRatesMapping) ? HArr::filterByYearIndex($baseRatesMapping, $yearIndexWithYear, $yearIndex, $dateIndexWithDate[$monthIndex], $this->isMonthlyStudy()) : $baseRatesMapping;
                 $yearOrMonthIndex = $this->isMonthlyStudy() ? $monthIndex : $yearIndex;
@@ -1055,9 +1060,12 @@ class Study extends Model
                     $loanService = $loanNature == 'fixed-at-end' ? $calculateFixedLoanAtEndService : $calculateFixedLoanAtBeginningService ;
                     $currentPortfolioLoans=[];
                     if (is_array($baseRatesMapping)) {
+						// logger('from if');
+						// logger(json_encode($baseRatesMapping));
                         $currentPortfolioLoans=$loanService->__calculateBasedOnDiffBaseRates($baseRatesMapping, $loanType, $currentMonth, $currentMonthlyLoanAmount, $currentMarginRate, $tenor, $installmentInterval, $installmentPaymentIntervalValue, $stepUp, $stepInterval, $stepDown, $stepInterval, $gracePeriod, $monthIndex, $dateWithDateIndex, $dateIndexWithDate);
 						
                     } else {
+						// logger('from else');
                         $currentPortfolioLoans=$loanService->__calculate([], -1, $loanType, $currentMonth, $currentMonthlyLoanAmount, $baseRatesMapping, $currentMarginRate, $tenor, $installmentInterval, $stepUp, $stepInterval, $stepDown, $stepInterval, $gracePeriod, $monthIndex, null, $pricingPerMonths);
                         $finalResult = $currentPortfolioLoans['final_result']??[];
                         unset($finalResult['totals']);
@@ -1778,48 +1786,13 @@ class Study extends Model
         }
         return $currentAdminFeesAmountsAtMonthIndex;
     }
-    // public function updateDirectFactoryMonthlyAdminFeesAmounts():void
-    // {
-    //     $directFactoringAdminFeesRate = $this->directFactoryAdminFeesRate;
-    //     $directFactoring = $this->directFactoringRevenueProjectionByCategory ;
-        
-    //     $directFactoringProjections = $directFactoring->getDirectFactoringTransactionProjection();
-    //     $directFactoringAdminFeesRate->update([
-    //         'monthly_admin_fees_amounts'=>$this->calculateMonthlyAdminFeesAmounts($directFactoringAdminFeesRate->getAdminFeesRates(), $directFactoringProjections)
-    //     ]);
-    // }
-    // public function updateReverseFactoryMonthlyAdminFeesAmounts():void
-    // {
-    //     $reverseFactoringAdminFeesRate = $this->reverseFactoryAdminFeesRate;
-    //     $reverseFactoring = $this->reverseFactoringRevenueProjectionByCategory ;
-    //     $reverseFactoringProjections = $reverseFactoring->getReverseFactoringTransactionProjection();
-    //     $reverseFactoringAdminFeesRate->update([
-    //         'monthly_admin_fees_amounts'=>$this->calculateMonthlyAdminFeesAmounts($reverseFactoringAdminFeesRate->getAdminFeesRates(), $reverseFactoringProjections)
-    //     ]);
-    // }
-    // public function updateIjaraMortgageMonthlyAdminFeesAmounts():void
-    // {
-    //     $adminFeesRate = $this->ijaraMortgageAdminFeesRate;
-    //     $revenueProjection = $this->ijaraMortgageRevenueProjectionByCategory ;
-    //     $reverseFactoringProjections = $revenueProjection->getIjaraMortgageTransactionProjection();
-    //     $adminFeesRate->update([
-    //         'monthly_admin_fees_amounts'=>$this->calculateMonthlyAdminFeesAmounts($adminFeesRate->getAdminFeesRates(), $reverseFactoringProjections)
-    //     ]);
-    // }
-    // public function updateMicrofinanceMonthlyAdminFeesAmounts():void
-    // {
-    //     $adminFeesRate = $this->microfinanceAdminFeesRate;
-    //     $revenueProjection = $this->microfinanceRevenueProjectionByCategory ;
-    //     $reverseFactoringProjections = $revenueProjection->getLoanAmounts();
-    //     $adminFeesRate->update([
-    //         'monthly_admin_fees_amounts'=>$this->calculateMonthlyAdminFeesAmounts($adminFeesRate->getAdminFeesRates(), $reverseFactoringProjections)
-    //     ]);
-    // }
+   
     public function sumLeasingLoanAmounts():array
     {
         $total = [];
         foreach ($this->leasingRevenueStreamBreakdown?:[] as $breakdown) {
-            $loanAmountArr = $breakdown->loan_amounts?:[];
+			// dd($breakdown);
+            $loanAmountArr = $breakdown->loan_amounts;
             foreach ($loanAmountArr as $monthOrYearIndex => $value) {
                 $total[$monthOrYearIndex] = isset($total[$monthOrYearIndex]) ? $total[$monthOrYearIndex] + $value : $value;
             }
@@ -1862,15 +1835,7 @@ class Study extends Model
             self::MICROFINANCE => $this->microfinanceProductSalesProjects->count() ? $this->getTotalMicrofinanceMonthlyLoanAmounts() : []
         ][$revenueStreamType];
     }
-    // public function updatePortfolioMortgageMonthlyAdminFeesAmounts():void
-    // {
-    //     $adminFeesRate = $this->portfolioMortgageAdminFeesRate;
-    //     $revenueProjection = $this->portfolioMortgageRevenueProjectionByCategory ;
-    //     $thisions = $revenueProjection->getPortfolioMortgageTransactionProjection();
-    //     $adminFeesRate->update([
-    //         'monthly_admin_fees_amounts'=>$this->calculateMonthlyAdminFeesAmounts($adminFeesRate->getAdminFeesRates(), $thisions)
-    //     ]);
-    // }
+  
     /**
      * * بتديلها
      * * array
@@ -2511,6 +2476,7 @@ class Study extends Model
 			$newLoansFundingValuesFormatted = $isMicrofinance ? $newLoansFundingValues['by-mtls'] : $newLoansFundingValues ;
             $equityFundingValues = $request->get('equity_funding_values', []) ;
             $loanAmounts = $this->getLoanAmountForAdminFeesForRevenueStreamType($revenueStreamType);
+			// dd($loanAmounts);
             $monthlyAdminFeesAmount = $this->calculateMonthlyAdminFeesAmounts($revenueStreamType, $adminFeesRates, $loanAmounts, $occurrenceDates);
             $monthlyNewLoansFundingValues  = $this->isMonthlyStudy() ? $newLoansFundingValuesFormatted : $this->convertYearIndexToActiveMonthIndexes($newLoansFundingValuesFormatted);
             $monthlyNewLoansFundingValues = $isPortfolio ? $portfolioMonthlyNewLoansFundingValues : $monthlyNewLoansFundingValues;
@@ -4289,6 +4255,7 @@ class Study extends Model
         $studyExtendedEndDateAsIndex = Arr::last($datesAsStringDateIndex);
         $studyEndDateAsIndex = $this->getStudyEndDateAsIndex($datesAsStringDateIndex, $this->getStudyEndDate());
         $dateIndexWithDate = $this->getDateIndexWithDate();
+		$dateWithDateIndex = $this->getDateWithDateIndex();
         $model = ('\App\Models\\NonBankingService\\'.$modelName)::find($modelId);
         foreach (['fixed_monthly_repeating_amount'] as $tableId) {
             #::delete all
@@ -4507,8 +4474,10 @@ class Study extends Model
 		 $microfinanceSalesProjects  = $isPortfolio ? $this->microfinanceProductSalesProjects : $this->microfinanceProductSalesProjects->where('funded_by','by-mtls');
 		 $eclAndNewPortfolioFundingRate = $this->getEclAndNewPortfolioFundingRatesForStreamType(Study::MICROFINANCE);
 		 $eclAndNewPortfolioFundingRates = $eclAndNewPortfolioFundingRate->new_loans_funding_rates['by-mtls']??[];
+		
 		 
 		 $microfinanceSalesProjects->each(function (MicrofinanceProductSalesProject $microfinanceProductSalesProject) use ($isPortfolio, &$portfolioLoans, $operationDates, &$totalPortfolioEndBalance,$dateWithDateIndex,$dateIndexWithDate,$eclAndNewPortfolioFundingRates) {
+			$microfinanceProductSalesProject = $microfinanceProductSalesProject->refresh();
             $tenor  = $microfinanceProductSalesProject->tenor ;
       //      $type  = $microfinanceProductSalesProject->type ;
             $productId  = $microfinanceProductSalesProject->microfinance_product_id ;
@@ -4516,15 +4485,13 @@ class Study extends Model
             $decreasingRates  = $microfinanceProductSalesProject->decrease_rates ;
 			$rates = $isPortfolio ? $decreasingRates :  $this->generalAndReserveAssumption->getBaseRatesPerMonths();
 			
+			// dd($monthlyPortfolioLoanAmounts);
 					
             foreach ($monthlyPortfolioLoanAmounts as $loanStartDateAsIndex => $monthlyLoanAmount) {
 				
 				$fundingRate = ($eclAndNewPortfolioFundingRates[$loanStartDateAsIndex]??0) /100 ;
 				$marginRate=  $isPortfolio ? 0 : $this->generalAndReserveAssumption->getBankLendingMarginRatesAtYearOrMonthIndex($loanStartDateAsIndex);
 				$monthlyLoanAmount = $isPortfolio ? $monthlyLoanAmount : $monthlyLoanAmount* $fundingRate ;
-				// if(!$isPortfolio){
-				// }
-				
                 $loanStartDateAsString = $this->getDateFromDateIndex($loanStartDateAsIndex);
                 $baseRate = is_array($rates) ?  ($rates[$loanStartDateAsIndex]??0) : $rates;
 				$currentPortfolioLoans = [];

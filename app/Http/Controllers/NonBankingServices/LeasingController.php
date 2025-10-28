@@ -43,7 +43,8 @@ class LeasingController extends Controller
             $study->storeRepeaterRelations($request, ['leasingRevenueStreamBreakdown'], $company);
         }
         $loanAmounts = $request->get('loan_amounts', []);
-        if ($request->has('growth_rate')) {
+
+        if ($request->has('loan_amounts')) {
             $study->leasingRevenueStreamBreakdown->each(function ($model) use ($loanAmounts) {
                 $model->update([
                     'loan_amounts'=>$loanAmounts[$model->id]

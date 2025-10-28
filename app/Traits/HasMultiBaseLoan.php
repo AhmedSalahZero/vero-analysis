@@ -21,19 +21,21 @@ trait HasMultiBaseLoan
                 $currentBaseRateDateAsIndex = $datesAsStringAndIndex[$currentBaseRateDate];
 				$gracePeriod = 0;
 				if ($tenor >= 1){
-					$currentStartDateAsIndex = HArr::getPreviousNonZeroValue($fixedAtEndResult['current_result'][$i-1]['schedulePayment']??[],$currentBaseRateDateAsIndex);
+					// $currentStartDateAsIndex = HArr::getPreviousNonZeroValue($fixedAtEndResult['current_result'][$i-1]['schedulePayment']??[],$currentBaseRateDateAsIndex);
+					$currentStartDateAsIndex = HArr::getNextNonZeroValue($fixedAtEndResult['current_result'][$i-1]['schedulePayment']??[],$currentBaseRateDateAsIndex);
 					$loanAmount =$fixedAtEndResult['current_result'][$i-1]['endBalance'][$currentStartDateAsIndex]??0;
-					if(is_null($currentStartDateAsIndex)  ){
-						$currentStartDateAsIndex = HArr::getNextNonZeroValue($fixedAtEndResult['current_result'][$i-1]['schedulePayment']??[],$currentBaseRateDateAsIndex);
-						$loanAmount =$fixedAtEndResult['current_result'][$i-1]['endBalance'][$currentStartDateAsIndex]??0;
+					// if(is_null($currentStartDateAsIndex)  ){
 						
-						if(is_null($currentStartDateAsIndex)){
+						// $currentStartDateAsIndex = HArr::getPreviousNonZeroValue($fixedAtEndResult['current_result'][$i-1]['schedulePayment']??[],$currentBaseRateDateAsIndex);
+						// $loanAmount =$fixedAtEndResult['current_result'][$i-1]['endBalance'][$currentStartDateAsIndex]??0;
 						
-							continue;
-						}
+						// if(is_null($currentStartDateAsIndex)){
+						
+						// 	continue;
+						// }
 						
 						
-				}
+				// }
 					
 			
 					}
@@ -54,7 +56,12 @@ trait HasMultiBaseLoan
             
         }
         $finalResult = $fixedAtEndResult['final_result']??[] ;
+		
         unset($finalResult['totals']);
+		
+		if ($installmentPaymentIntervalName != 'monthly') {
+            $finalResult = $this->extendPerMonth($finalResult, $installmentPaymentIntervalValue);
+        }
         return $finalResult;
     }
 }

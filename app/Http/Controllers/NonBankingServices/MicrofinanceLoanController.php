@@ -87,10 +87,10 @@ class MicrofinanceLoanController extends Controller
     public function store(Company $company, Request $request, Study $study)
     {
       
+		$study->storeAdminFeesAndFundingStructureFor($request, Study::MICROFINANCE);
        $study->calculateMicrofinanceLoans();
        
 		
-        $study->storeAdminFeesAndFundingStructureFor($request, Study::MICROFINANCE);
         
         
         
