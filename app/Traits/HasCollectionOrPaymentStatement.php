@@ -20,7 +20,7 @@ trait HasCollectionOrPaymentStatement {
         $dateValue = convertIndexKeysToString($dateValue, $datesAsIndexAndString);
         $collectionPolicyValue = is_array($collectionPolicyValue) ?  $this->formatDues($collectionPolicyValue) : $collectionPolicyValue;
         $result = (new CollectionPolicyService())->applyCollectionPolicy(true, $collectionPolicyType, $collectionPolicyValue, $dateValue) ;
-        
+       
         return convertStringKeysToIndexes($result, $datesAsIndexAndString);
     }
 	//  private function calculateCollectionOrPaymentAmounts(string $paymentTerm, array $totalAfterVat, array $datesAsIndexAndString, array $customCollectionPolicy, $debug=false)
@@ -143,19 +143,20 @@ trait HasCollectionOrPaymentStatement {
 	
 	public static function calculateWithholdStatement(array $withholds = [] , float $initialBeginningBalance = 0 , array $dateIndexWithDate)
     {
-		$financialYearStartMonth = 'january';
+		// $financialYearStartMonth = 'january';
         $withholdForIntervals = [
             'monthly'=>$withholds,
-            'quarterly'=>sumIntervalsIndexes($withholds, 'quarterly', $financialYearStartMonth, $dateIndexWithDate),
-            'semi-annually'=>sumIntervalsIndexes($withholds, 'semi-annually', $financialYearStartMonth, $dateIndexWithDate),
-            'annually'=>sumIntervalsIndexes($withholds, 'annually', $financialYearStartMonth, $dateIndexWithDate),
+            // 'quarterly'=>sumIntervalsIndexes($withholds, 'quarterly', $financialYearStartMonth, $dateIndexWithDate),
+            // 'semi-annually'=>sumIntervalsIndexes($withholds, 'semi-annually', $financialYearStartMonth, $dateIndexWithDate),
+            // 'annually'=>sumIntervalsIndexes($withholds, 'annually', $financialYearStartMonth, $dateIndexWithDate),
         ];
        
      
         $result = [];
-        foreach (getIntervalFormatted() as $intervalName=>$intervalNameFormatted) {
+        foreach (['monthly'=>__('Monthly')] as $intervalName=>$intervalNameFormatted) {
             $beginningBalance = $initialBeginningBalance;
-            foreach ($withholdForIntervals[$intervalName] as $dateIndex=>$withhold) {
+            foreach ($dateIndexWithDate as $dateIndex=>$dateAsString) {
+				$withhold = $withholdForIntervals[$intervalName][$dateIndex]??0; 
 				$monthNumber = explode('-',$dateIndexWithDate[$dateIndex])[01];
                 $dateIndex;
                 $result[$intervalName]['beginning_balance'][$dateIndex] = $beginningBalance;

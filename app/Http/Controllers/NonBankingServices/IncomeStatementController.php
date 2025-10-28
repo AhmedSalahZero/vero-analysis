@@ -292,6 +292,7 @@ class IncomeStatementController extends Controller
         foreach($tableDataFormatted[0]['sub_items']?? [] as $id => $subItemArr){
 			$tableDataFormatted[0]['sub_items'][$id]['year_total'] =	HArr::sumPerYearIndex($subItemArr['data']??[], $yearWithItsMonths);
 		}
+		
         
         $totalSalesRevenues = Harr::calculateTotalFromSubItems($tableDataFormatted[0]['sub_items']??[]) ;
         
@@ -301,15 +302,15 @@ class IncomeStatementController extends Controller
         $tableDataFormatted[0]['main_items']['sales-revenue']['data'] = $totalSalesRevenues;
         $tableDataFormatted[0]['main_items']['sales-revenue']['year_total'] =$totalSalesRevenuesPerYears =  HArr::sumPerYearIndex($totalSalesRevenues, $yearWithItsMonths);
         $tableDataFormatted[0]['main_items']['growth-rate']['data'] = Harr::calculateGrowthRate($totalSalesRevenues);
-        $tableDataFormatted[0]['main_items']['growth-rate']['year_total'] =$totalSalesRevenuesPerYears =  HArr::calculateGrowthRate($totalSalesRevenuesPerYears);
+        $tableDataFormatted[0]['main_items']['growth-rate']['year_total'] =  HArr::calculateGrowthRate($totalSalesRevenuesPerYears);
                
    
     
         
-        $expenses = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('expenses')->join('expense_names', 'expense_names.id', '=', 'expenses.expense_name_id')->selectRaw('expenses.expense_category,expense_names.name as name,expenses.relation_name,expenses.monthly_repeating_amounts,expenses.expense_as_percentages,payload')->where('expenses.model_id', $study->id)->where('expenses.model_name', 'Study')->get()->toArray();
+        $expenses = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('expenses')->where('study_id',$study->id)->join('expense_names', 'expense_names.id', '=', 'expenses.expense_name_id')->selectRaw('expenses.expense_category,expense_names.name as name,expenses.relation_name,expenses.monthly_repeating_amounts,expenses.total_after_vat,payload')->where('expenses.model_id', $study->id)->where('expenses.model_name', 'Study')->get()->toArray();
         $columnPerTypes = [
             'one_time_expense'=>'payload',
-            'percentage_of_sales'=>'expense_as_percentages',
+            'percentage_of_sales'=>'total_after_vat',
             'fixed_monthly_repeating_amount'=>'monthly_repeating_amounts',
             'cost_per_unit'=>'monthly_repeating_amounts',
             'expense_per_employee'=>'monthly_repeating_amounts',
@@ -366,13 +367,23 @@ class IncomeStatementController extends Controller
             }
    
         }
+		
 
         $totalCostOfService = Harr::calculateTotalFromSubItems($tableDataFormatted[1]['sub_items']??[]) ;
         $tableDataFormatted[1]['main_items']['cost-of-service']['data'] = $totalCostOfService;
         $tableDataFormatted[1]['main_items']['cost-of-service']['year_total'] =$totalCostOfServicePerYear =  HArr::sumPerYearIndex($totalCostOfService, $yearWithItsMonths);
-        $tableDataFormatted[1]['main_items']['% Of Revenue']['data'] = HArr::calculatePercentageOf($totalSalesRevenues, $totalCostOfService);
-        $tableDataFormatted[1]['main_items']['% Of Revenue']['year_total'] =$totalCostOfServicePerYears =  HArr::calculatePercentageOf($totalSalesRevenuesPerYears, $totalCostOfServicePerYear);
+		// dd($totalSalesRevenues , $totalCostOfService);
+        $tableDataFormatted[1]['main_items']['% Of Revenue']['data'] = $currentData =  HArr::calculatePercentageOf($totalSalesRevenues, $totalCostOfService);
+	
+        $tableDataFormatted[1]['main_items']['% Of Revenue']['year_total'] = HArr::calculatePercentageOf($totalSalesRevenuesPerYears, $totalCostOfServicePerYear);
+	
                
+		
+		
+		foreach($tableDataFormatted[1]['sub_items']?? [] as $id => $subItemArr){
+			$tableDataFormatted[1]['sub_items'][$id]['year_total'] =	$currentTotalPerYear = HArr::sumPerYearIndex($subItemArr['data']??[], $yearWithItsMonths);
+		}
+		
                
 
         $totalGrossProfit = HArr::subtractAtDates([$totalSalesRevenues,$totalCostOfService], $sumKeys) ;
@@ -473,18 +484,19 @@ class IncomeStatementController extends Controller
         
             
         
-        
         $currentSubItems = $tableDataFormatted[$generalExpenseOrder]['sub_items']??[];
+	
         foreach ($currentSubItems as $subItemName => $subItemData) {
             $tableDataFormatted[$generalExpenseOrder]['sub_items'][$subItemName]['year_total'] = HArr::sumPerYearIndex($subItemData['data']??[], $yearWithItsMonths);
         }
         $totalGeneralExpenses = HArr::calculateTotalFromSubItems($tableDataFormatted[$generalExpenseOrder]['sub_items']??[]) ;
+	
         $tableDataFormatted[$generalExpenseOrder]['main_items']['general-expense']['data'] =  $totalGeneralExpenses ;
         $tableDataFormatted[$generalExpenseOrder]['main_items']['general-expense']['year_total'] = $totalGeneralExpensesPerYear = HArr::sumPerYearIndex($totalGeneralExpenses, $yearWithItsMonths);
         $tableDataFormatted[$generalExpenseOrder]['main_items']['general-expense']['options']['title'] = __('General Expense');
         $tableDataFormatted[$generalExpenseOrder]['main_items']['% Of Revenue']['data'] =  HArr::calculatePercentageOf($totalSalesRevenues, $totalGeneralExpenses) ;
         $tableDataFormatted[$generalExpenseOrder]['main_items']['% Of Revenue']['year_total'] = HArr::calculatePercentageOf($totalSalesRevenuesPerYears, $totalGeneralExpensesPerYear);
-        $totalSGANDA = HArr::sumAtDates([$totalGeneralExpenses,$totalSalesExpenses,$totalMarketingExpenses], $sumKeys);
+        $totalSGANDA = HArr::sumAtDates([$totalGeneralExpenses,$totalSalesExpenses,$totalMarketingExpenses,$totalOtherOperatingExpenses], $sumKeys);
         
         /**
          * * Five Item

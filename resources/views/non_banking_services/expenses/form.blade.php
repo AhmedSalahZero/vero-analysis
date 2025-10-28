@@ -11,6 +11,9 @@ use App\Models\NonBankingService\Expense;
     .js-parent-to-table {
         min-height: 50vh !important;
     }
+	.payment_terms{
+		min-width:140px !important;
+	}
 
 </style>
 @endsection
@@ -1166,7 +1169,7 @@ use App\Models\NonBankingService\Expense;
                 </td>
 
                 <td>
-                    <x-form.select :selectedValue="isset($subModel) ? $subModel->getPaymentTerm() : 'cash'" :options="getPaymentTerms()" :add-new="false" class="select2-select repeater-select payment_terms " :all="false" name="@if($isRepeater) payment_terms @else {{ $tableId }}[0][payment_terms] @endif"></x-form.select>
+                    <x-form.select :selectedValue="isset($subModel) ? $subModel->getPaymentTerm() : 'cash'" :options="getFfePaymentTerms()" :add-new="false" class="select2-select repeater-select payment_terms " :all="false" name="@if($isRepeater) payment_terms @else {{ $tableId }}[0][payment_terms] @endif"></x-form.select>
                     <x-modal.custom-collection-new :subModel="isset($subModel) ? $subModel : null " :tableId="$tableId" :isRepeater="$isRepeater" :id="$repeaterId.'test-modal-id'"></x-modal.custom-collection-new>
                 </td>
                 <td>

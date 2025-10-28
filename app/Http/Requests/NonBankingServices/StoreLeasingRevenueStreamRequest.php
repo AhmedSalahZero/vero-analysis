@@ -27,8 +27,8 @@ class StoreLeasingRevenueStreamRequest extends FormRequest
 		foreach($this->get('leasingRevenueStreamBreakdown',[]) as $index=>$item){
 			$item['company_id']= $this->get('company_id');
 			$item['study_id']= $this->get('study_id');
-			$item['step_up'] =$item['step_rate'] >= 0? $item['step_rate'] : 0 ;
-			$item['step_down'] = $item['step_rate'] < 0 ? $item['step_rate'] : 0 ;
+			$item['step_up'] =isset($item['step_rate']) && $item['step_rate'] >= 0? $item['step_rate'] : 0 ;
+			$item['step_down'] = isset($item['step_rate']) && $item['step_rate'] < 0 ? $item['step_rate'] : 0 ;
 			unset($item['step_rate']);
 			$items[$index]=$item;
 		}

@@ -56,9 +56,7 @@ class LeasingController extends Controller
         	$study->syncSeasonality($request->get('seasonality', []), Study::LEASING, $company->id) ;
         
         $study->storeAdminFeesAndFundingStructureFor($request, Study::LEASING);
-        
         $study->storeFixedLoans(Study::LEASING, 'leasingRevenueStreamBreakdown');
-        
     
         
         if ($request->get('submitBtnType') == LeasingCategory::LEASING_CATEGORY_FORM_ID) {

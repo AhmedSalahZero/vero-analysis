@@ -41,6 +41,7 @@ class FixedAsset extends Model
         'capitalization_statement'=>'array',
         'ffe_execution_and_payment'=>'array',
         'ffe_payable'=>'array',
+        'ffe_payment'=>'array',
         'custom_collection_policy'=>'array',
         'total_monthly_depreciations'=>'array',
     ];

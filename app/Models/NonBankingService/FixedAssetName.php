@@ -48,4 +48,8 @@ class FixedAssetName extends Model
 	{
 		return FixedAssetName::where('company_id',$company->id)->where('is_employee_asset',1)->get()->formattedForSelect(false,'id','name');	
 	}
+	public static function getPerBranchAllForSelect2(Company $company)
+	{
+		return FixedAssetName::where('company_id',$company->id)->where('is_branch_asset',1)->get()->formattedForSelect(false,'id','name');	
+	}
 }

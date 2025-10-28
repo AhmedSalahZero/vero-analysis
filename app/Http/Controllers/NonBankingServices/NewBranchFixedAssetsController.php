@@ -48,11 +48,9 @@ class NewBranchFixedAssetsController extends Controller
 	}
 	public function store(Company $company , StoreNewBranchFixedAssetsRequest $request,Study $study)
 	{
-		// $fixedAssetType = $request->get('fixed_asset_type') ;
-		
-	//	$study->storeRelationsWithNoRepeater($request,$company);
-	
-		$study->storeRepeaterRelations($request,$this->getRepeaterRelations(),$company);
+		$fixedAssetType = $request->get('fixed_asset_type') ;
+		$oldIdsFromDatabase = $study->fixedAssets->where('type',$fixedAssetType)->pluck('id')->toArray();
+		$study->storeRepeaterRelations($request,$this->getRepeaterRelations(),$company,['type'=>$fixedAssetType],$oldIdsFromDatabase);
 		
 		// $fundingStructureCounts = $study->getFixedAssetsWithCountsDates(FixedAsset::NEW_BRANCH);
 		// $loanStructure = $study->getLoanStructure($fixedAssetType);

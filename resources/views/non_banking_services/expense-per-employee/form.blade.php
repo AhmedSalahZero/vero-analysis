@@ -11,7 +11,9 @@ use App\Models\NonBankingService\Expense;
     .js-parent-to-table {
         min-height: 70vh;
     }
-
+.payment_terms{
+		min-width:140px !important;
+	}
 </style>
 @endsection
 @section('sub-header')

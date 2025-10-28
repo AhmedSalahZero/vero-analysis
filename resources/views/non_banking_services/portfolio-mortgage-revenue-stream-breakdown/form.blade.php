@@ -199,6 +199,9 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
                                     @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
                                     @php
                                     $currentVal = $portfolioMortgageRevenueProjectionByCategory ? $portfolioMortgageRevenueProjectionByCategory->getPortfolioMortgageTransactionProjectionAtYearOrMonthIndexIndex($yearOrMonthAsIndex) : 0;
+									if(!$isYearsStudy){
+										$totalPerYears[$yearOrMonthAsIndex] = isset($totalPerYears[$yearOrMonthAsIndex]) ? $totalPerYears[$yearOrMonthAsIndex] + $currentVal : $currentVal;
+									}
                                     @endphp
                                     <td>
                                         <div class="d-flex align-items-center justify-content-center">
@@ -313,7 +316,10 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
                                     @endphp
                                     @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
                                     @php
-                                    $currentVal = array_values($portfolioMortgageRevenueProjectionByCategory->total_monthly_amounts_per_years?:[])[$columnIndex]??0;
+									$currentVal = 0 ;
+									if($portfolioMortgageRevenueProjectionByCategory){
+                                    	$currentVal = array_values($portfolioMortgageRevenueProjectionByCategory->total_monthly_amounts_per_years?:[])[$columnIndex]??0;
+									}
 									$totalPerYears[$columnIndex] = isset($totalPerYears[$columnIndex]) ? $totalPerYears[$columnIndex]+$currentVal:$currentVal  ;
 									
                                     @endphp
@@ -432,7 +438,7 @@ use App\Models\NonBankingService\PortfolioMortgageBreakdown;
 
 
 
-			@foreach($totalPerYears as $columnIndex => $totalForLoan)
+			@foreach($totalPerYears??[] as $columnIndex => $totalForLoan)
 					<input type="hidden" class="total-loans-hidden" data-column-index="{{ $columnIndex }}" value="{{ $totalForLoan }}">
 			@endforeach
 

@@ -6314,16 +6314,17 @@ function getNonBankingNavigation(Company $company,User $user):array
 			],
 			
 			[
-            'title'=>__('Manpower Projection'),
+            'title'=>__('General Manpower Projection'),
+			// 'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
             'show'=>true ,
 			'link'=>route('view.manpower.for.non.banking',['company'=>$company->id , 'study'=>$studyId]),
-			'submenu'=>[
-				[
-					    'title'=>__('General Manpower Projection'),
-						'show'=>true ,
-						'link'=>route('view.manpower.for.non.banking',['company'=>$company->id , 'study'=>$studyId]),
-						'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
-				],
+			// 'submenu'=>[
+				// [
+				// 	    'title'=>__('General Manpower Projection'),
+				// 		'show'=>true ,
+				// 		'link'=>route('view.manpower.for.non.banking',['company'=>$company->id , 'study'=>$studyId]),
+				// 		'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
+				// ],
 				// 	[
 				// 	    'title'=>__('Microfinance Existing Branches Manpower'),
 				// 		'show'=>$study->hasMicroFinance() ,
@@ -6336,20 +6337,20 @@ function getNonBankingNavigation(Company $company,User $user):array
 				// 		'link'=>route('view.manpower.for.non.banking',['company'=>$company->id , 'study'=>$studyId]),
 				// 		'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
 				// ],
-					[
-					    'title'=>__('Consumer Finance Existing Branches Manpower'),
-						'show'=>$study->hasConsumerFinance() ,
-						'link'=>route('view.manpower.for.non.banking',['company'=>$company->id , 'study'=>$studyId]),
-						'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
-				],
-				[
-					    'title'=>__('Consumer Finance New Branches Manpower'),
-						'show'=>$study->hasConsumerFinance() ,
-						'link'=>route('view.manpower.for.non.banking',['company'=>$company->id , 'study'=>$studyId]),
-						'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
-				],
+				// 	[
+				// 	    'title'=>__('Consumer Finance Existing Branches Manpower'),
+				// 		'show'=>$study->hasConsumerFinance() ,
+				// 		'link'=>route('view.manpower.for.non.banking',['company'=>$company->id , 'study'=>$studyId]),
+				// 		'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
+				// ],
+				// [
+				// 	    'title'=>__('Consumer Finance New Branches Manpower'),
+				// 		'show'=>$study->hasConsumerFinance() ,
+				// 		'link'=>route('view.manpower.for.non.banking',['company'=>$company->id , 'study'=>$studyId]),
+				// 		'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
+				// ],
 				
-			]
+			// ]
 		] ,
 		
 			[
@@ -6416,7 +6417,7 @@ function getNonBankingNavigation(Company $company,User $user):array
 				],
 				[
 					'title'=>__('New Branches Fixed Assets'),
-					'show'=>true ,
+					'show'=>$study->hasMicroFinance() ,
 					'link'=>route('create.new.branch.fixed.assets',['company'=>$company->id , 'study'=>$studyId])
 				],
 				[
@@ -8329,6 +8330,9 @@ function convertStringKeysToIndexes(array $items , array $datesAsIndexAndString 
 	$result = [];
 	foreach($items as $dateAsString => $value){
 		$dateAsIndex = array_search($dateAsString,$datesAsIndexAndString);
+		if($dateAsIndex === false){
+			continue;
+		}
 		$result[$dateAsIndex] = $value ; 
 	}
 	return $result ; 

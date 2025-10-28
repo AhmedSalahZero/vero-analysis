@@ -57,6 +57,7 @@ class MonthlyFixedRepeatingAmountEquation
 			}
 			$counter++;
 		}
+		
 		return [
 			'withhold_amounts'=>$withholdAmounts , 
 			'total_before_vat'=>$resultWithoutVat,

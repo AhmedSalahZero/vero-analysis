@@ -55,8 +55,8 @@ class FfeFixedAssetsController extends Controller
     public function store(Company $company, StoreFixedAssetsRequest $request, Study $study)
     {
         $fixedAssetType = $request->get('fixed_asset_type') ;
-		
-		$study->storeRepeaterRelations($request, $this->getRepeaterRelations(), $company, ['type'=>$fixedAssetType]);
+		$oldIdsFromDatabase = $study->fixedAssets->where('type',$fixedAssetType)->pluck('id')->toArray();
+		$study->storeRepeaterRelations($request, $this->getRepeaterRelations(), $company, ['type'=>$fixedAssetType],$oldIdsFromDatabase);
 		$fundingStructureCounts = $study->getFixedAssetsWithCountsDates(FixedAsset::FFE);
 		
 		$loanStructure = $study->getLoanStructure($fixedAssetType);
@@ -70,22 +70,20 @@ class FfeFixedAssetsController extends Controller
             'redirectTo'=>route('create.ffe.funding.structure.fixed.assets', ['company'=>$company->id,'study'=>$study->id])
         ]);
         }
-        
+        $redirectRoute = $study->getFixedAssetNextRoute();
         return response()->json([
-            'redirectTo'=>route('create.new.branch.fixed.assets', ['company'=>$company->id,'study'=>$study->id])
+            'redirectTo'=>$redirectRoute
         ]);
         
     }
 	 public function storeFunding(Company $company, Request $request, Study $study)
     {
         $fixedAssetType = $request->get('fixed_asset_type') ;
-
         $study->storeRelationsWithNoRepeater($request, $company);
-
 		$study->recalculateFixedAssets($fixedAssetType);
-        
+        $redirectRoute = $study->getFixedAssetNextRoute();
         return response()->json([
-            'redirectTo'=>route('create.new.branch.fixed.assets', ['company'=>$company->id,'study'=>$study->id])
+            'redirectTo'=>$redirectRoute
         ]);
         
     }

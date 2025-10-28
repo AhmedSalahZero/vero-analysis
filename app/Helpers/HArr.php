@@ -1104,5 +1104,14 @@ class HArr
         }
         
     }
-
+	public static function getNetPresentValueFromEachMonth(array $items):array{
+		$result = [];
+		foreach($items as $portfolioCategoryId => $item){
+			$item = json_decode($item,true);
+			foreach($item as $monthIndex => $netPresentValue){
+				$result[$portfolioCategoryId][$monthIndex] = $netPresentValue['net_present_value']??0 ;
+			}
+		}
+		return $result ;
+	}
 }

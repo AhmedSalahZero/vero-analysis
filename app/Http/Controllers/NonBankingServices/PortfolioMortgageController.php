@@ -41,6 +41,7 @@ class PortfolioMortgageController extends Controller
     
         
         $dateIndexWithDate = app('dateIndexWithDate');
+		$sumKeys = $study->getDateWithDateIndex();
         $isMonthlyStudy = $study->isMonthlyStudy();
         // question here
         // $study->updatePortfolioMortgageMonthlyAdminFeesAmounts();
@@ -51,6 +52,10 @@ class PortfolioMortgageController extends Controller
         $bankMarginRatesPerMonths = $isMonthlyStudy ? $bankMarginRatesPerYears : $study->convertYearlyArrayToMonthly($bankMarginRatesPerYears, $operationDurationPerYearFromIndexes);
         $cbeLendingRatesPerMonths =$isMonthlyStudy ? $baseRatePerYear: $study->convertYearlyArrayToMonthly($baseRatePerYear, $operationDurationPerYearFromIndexes);
         $portfolioLoanFundingRatesPerMonths = $isMonthlyStudy ? $portfolioLoanFundingRatesPerYear :  $study->convertYearlyArrayToMonthly($portfolioLoanFundingRatesPerYear, $operationDurationPerYearFromIndexes);
+	//	$totalBankMonthlyLoanAmounts = [] ;
+		$eclAndNewPortfolioFundingRate = null ;
+		$totalMonthlyLoanAmounts = [];
+		$totalPortfolioMonthlyLoanAmounts = [];
         foreach ($request->get('portfolioMortgageRevenueProjectionByCategories') as $currentIndex => $portfolioMortgageRevenueProjectionByCategoryArr) {
 			$portfolioMortgageRevenueProjectionByCategory = $study->portfolioMortgageRevenueProjectionByCategories[$currentIndex] ;
             $portfolioMortgageCategoryId = $portfolioMortgageRevenueProjectionByCategory->id;
@@ -61,7 +66,7 @@ class PortfolioMortgageController extends Controller
 			$monthlyStudyOccurrenceDates = HArr::onlyKeysWithValues($portfolioMortgageRevenueProjectionByCategoryArr['portfolio_mortgage_transactions_projections']??[]);
 			$monthlyStudyOccurrenceDates = [$monthlyStudyOccurrenceDates];
 		
-            $portfolioPresentValueResult = [];
+     
             $frequencyPerYear = $portfolioMortgageRevenueProjectionByCategoryArr['frequency_per_year']??[];
             $startFromPerYear = $portfolioMortgageRevenueProjectionByCategoryArr['start_from']??[];
             $portfolioPresentValueResult = (new PortfolioPresentValue())->calculate($monthlyStudyOccurrenceDates,$study, $dateIndexWithDate, $portfolioLoanFundingRatesPerMonths, $operationDurationPerYearFromIndexes, $tenor, $startFromPerYear, $frequencyPerYear, $portfolioMortgageTransactionAmountsPerYears, $cbeLendingRatesPerMonths, $marginRate, $bankMarginRatesPerMonths, $company->id, $study->id, $portfolioMortgageCategoryId);
@@ -72,17 +77,34 @@ class PortfolioMortgageController extends Controller
                 
             $portfolioMonthlyLoanAmounts = [] ;
             foreach ($portfolioPresentValueResult['statement']??[] as $monthIndex => $portfolioMonthlyLoanArr) {
-                $portfolioMonthlyLoanAmounts[$monthIndex] = $portfolioMonthlyLoanArr['net_present_value']??0;
+				$netPresentValue = $portfolioMonthlyLoanArr['net_present_value']??0;
+                $portfolioMonthlyLoanAmounts[$monthIndex] = $netPresentValue;
+                $totalPortfolioMonthlyLoanAmounts[$monthIndex] = isset($totalPortfolioMonthlyLoanAmounts[$monthIndex]) ? $totalPortfolioMonthlyLoanAmounts[$monthIndex] + $netPresentValue : $netPresentValue;
+				
             }
             $bankMonthlyLoanAmounts = [] ;
             foreach ($portfolioPresentValueResult['statement']??[] as $monthIndex => $portfolioMonthlyLoanArr) {
-                $bankMonthlyLoanAmounts[$monthIndex] = $portfolioMonthlyLoanArr['bank_loan_amount']??0;
+			//	$currentBankLoanAmount = $portfolioMonthlyLoanArr['bank_loan_amount']??0 ;
+				$bankMonthlyLoanAmounts[$monthIndex] = $portfolioMonthlyLoanArr['bank_loan_amount']??0;
+                // $totalBankMonthlyLoanAmounts[$monthIndex] = isset($totalBankMonthlyLoanAmounts[$monthIndex]) ? $totalBankMonthlyLoanAmounts[$monthIndex] + $currentBankLoanAmount :$currentBankLoanAmount ;
             }
     		$occurrenceDates = HArr::onlyLastValuesInMultiArr($portfolioPresentValueResult['occurrence_dates']);
-            $study->storeAdminFeesAndFundingStructureFor($request, Study::PORTFOLIO_MORTGAGE, $bankMonthlyLoanAmounts,$occurrenceDates);
-            $study->storeMonthlyLoan(Study::PORTFOLIO_MORTGAGE,'portfolioMortgageRevenueProjectionByCategories', $portfolioMonthlyLoanAmounts);
+			$currentResult = $study->storeAdminFeesAndFundingStructureFor($request, Study::PORTFOLIO_MORTGAGE, $bankMonthlyLoanAmounts,$occurrenceDates);
+			$currentMonthlyLoanFundingValues = $currentResult['monthly_new_loans_funding_values'];
+			$eclAndNewPortfolioFundingRate = $currentResult['eclAndNewPortfolioFundingRate'];
+			$totalMonthlyLoanAmounts = HArr::sumAtDates([$totalMonthlyLoanAmounts , $currentMonthlyLoanFundingValues ],$sumKeys);
+			
+				// $study->storeMonthlyLoan(Study::PORTFOLIO_MORTGAGE,'portfolioMortgageRevenueProjectionByCategories', $totalPortfolioMonthlyLoanAmounts);
             
         }
+		$study->storeMonthlyLoan(Study::PORTFOLIO_MORTGAGE,'portfolioMortgageRevenueProjectionByCategories');
+		if($eclAndNewPortfolioFundingRate){
+	
+			$eclAndNewPortfolioFundingRate->update([
+				'monthly_new_loans_funding_values'=>$totalMonthlyLoanAmounts
+			]);
+		}
+	
         if($request->get('save') === 'calculate-portfolio'){
 			return response()->json([
             'redirectTo'=>route('create.portfolio.mortgage.revenue.stream.breakdown',['company'=>$company->id,'study'=>$study->id])

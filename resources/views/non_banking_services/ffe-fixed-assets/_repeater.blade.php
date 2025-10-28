@@ -10,8 +10,8 @@ use App\Models\NonBankingService\FixedAssetName;
                 {{-- <x-tables.repeater-table-th :font-size-class="'font-14px'" class="  header-border-down first-column-th-class" :title="__('Actions')"></x-tables.repeater-table-th> --}}
                 <x-tables.repeater-table-th :font-size-class="'font-14px'" class="  header-border-down first-column-th-class" :title="__('Item <br> Name')"></x-tables.repeater-table-th>
                 <x-tables.repeater-table-th :font-size-class="'font-14px'" class=" tenor-selector-class header-border-down " :title="__('Item <br> Cost')"></x-tables.repeater-table-th>
-                <x-tables.repeater-table-th :font-size-class="'font-14px'" class=" header-border-down rate-class" :title="__('VAT <br> Rate')"></x-tables.repeater-table-th>
-                <x-tables.repeater-table-th :font-size-class="'font-14px'" class=" header-border-down rate-class" :title="__('Withhold <br> Tax %')"></x-tables.repeater-table-th>
+                {{-- <x-tables.repeater-table-th :font-size-class="'font-14px'" class=" header-border-down rate-class" :title="__('VAT <br> Rate')"></x-tables.repeater-table-th>
+                <x-tables.repeater-table-th :font-size-class="'font-14px'" class=" header-border-down rate-class" :title="__('Withhold <br> Tax %')"></x-tables.repeater-table-th> --}}
                 <x-tables.repeater-table-th :font-size-class="'font-14px'" class=" header-border-down rate-class" :title="__('Contingency <br> Rate %')"></x-tables.repeater-table-th>
 
                 <x-tables.repeater-table-th :font-size-class="'font-14px'" class=" tenor-selector-class header-border-down " :title="__('Cost Annual <br> Increase %')"></x-tables.repeater-table-th>
@@ -68,7 +68,7 @@ use App\Models\NonBankingService\FixedAssetName;
                         </div>
                     </td>
 
-                    <td>
+                    {{-- <td>
 
 
                         <div class="d-flex align-items-center">
@@ -83,7 +83,7 @@ use App\Models\NonBankingService\FixedAssetName;
                             <input value="{{ isset($subModel) ? $subModel->getWithholdTaxRate():0 }}" @if($isRepeater) name="withhold_tax_rate" @else name="{{ $tableId }}[0][withhold_tax_rate]" @endif class="form-control exclude-from-trigger-change-when-repeat expandable-percentage-input text-left exclude-from-trigger-change-when-repeat" type="text">
                             <span style="margin-left:3px	">%</span>
                         </div>
-                    </td>
+                    </td> --}}
 
                     <td>
                         <div class="d-flex align-items-center">

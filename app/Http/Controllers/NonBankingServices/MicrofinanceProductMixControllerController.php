@@ -2,15 +2,11 @@
 
 namespace App\Http\Controllers\NonBankingServices;
 
-use App\Helpers\HArr;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\NonBankingServices\StoreLeasingRevenueStreamRequest;
 use App\Models\Company;
-use App\Models\NonBankingService\LeasingCategory;
 use App\Models\NonBankingService\Study;
 use App\Traits\NonBankingService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
 
 class MicrofinanceProductMixControllerController extends Controller
 {

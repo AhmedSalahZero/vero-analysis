@@ -55,7 +55,8 @@ class PerEmployeeFixedAssetsController extends Controller
 	{
 		$fixedAssetType = $request->get('fixed_asset_type') ;
 	//	$study->storeRelationsWithNoRepeater($request,$company);
-		$study->storeRepeaterRelations($request,$this->getRepeaterRelations(),$company);
+		$oldIdsFromDatabase = $study->fixedAssets->where('type',$fixedAssetType)->pluck('id')->toArray();
+		$study->storeRepeaterRelations($request,$this->getRepeaterRelations(),$company,['type'=>$fixedAssetType],$oldIdsFromDatabase);
 	//	$study->storeFixedLoansForFixedAssets($fixedAssetType);
 		$study->recalculateFixedAssets($fixedAssetType);
 	//	$study->recalculateFixedAssetStatement($fixedAssetType);

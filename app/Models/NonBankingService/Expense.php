@@ -32,7 +32,8 @@ class Expense extends Model
         'withhold_payments'=>'array',
         'withhold_amounts'=>'array',
 		'position_ids'=>'array',
-		'increase_rates'=>'array'
+		'increase_rates'=>'array',
+		'withhold_statements'=>'array',
     ];
         
     public function company()

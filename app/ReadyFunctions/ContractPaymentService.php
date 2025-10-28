@@ -23,7 +23,10 @@ class ContractPaymentService
 				$year = $date->format('Y');
 				$day = $date->format('d');
 				$fullDate =$year . '-' . $month . '-' . $day;
-				$dateIndex =  $dateWithDateIndex[$fullDate];
+				$dateIndex =  $dateWithDateIndex[$fullDate]??null;
+				if(is_null($dateIndex)){
+					continue;
+				}
 				$collections[$dateIndex] = ($target * $rate) + ($collections[$dateIndex] ?? 0);
 			}
 		}
