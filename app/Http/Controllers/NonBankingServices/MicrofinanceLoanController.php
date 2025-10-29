@@ -9,11 +9,9 @@ use App\Models\Company;
 use App\Models\NonBankingService\ExistingBranch;
 use App\Models\NonBankingService\MicrofinanceProductSalesProject;
 use App\Models\NonBankingService\Study;
-use App\ReadyFunctions\CalculateFixedLoanAtBeginningService;
 use App\ReadyFunctions\ConvertFlatRateToDecreasingRate;
 use App\Traits\NonBankingService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class MicrofinanceLoanController extends Controller
 {
@@ -34,23 +32,24 @@ class MicrofinanceLoanController extends Controller
         $salesProjectsPerProducts= [];
         $salesProjectsPerFundedBy= [];
         $salesProjectsPerTypes= [];
+		$isMonthlyIndex = $study->isMonthlyStudy();
         foreach ($salesProjects as $salesProject) {
             $productId = $salesProject-> microfinance_product_id;
             $fundedBy = $salesProject->funded_by;
             $type = $salesProject->type;
-			// dump($type);
             $monthlyLoanAmounts = $salesProject->monthly_loan_amounts?:[];
-            // if (array_sum($monthlyLoanAmounts) == 0) {
-            //     continue;
-            // }
+			$yearOrMonthsIndexes = $study->getYearOrMonthIndexes();
+	
             foreach ($monthlyLoanAmounts as $dateAsIndex => $monthlyLoanAmount) {
-				// dump($type);
-                $salesProjectsPerProducts[$productId][$dateAsIndex] =  isset($salesProjectsPerProducts[$productId][$dateAsIndex]) ? $salesProjectsPerProducts[$productId][$dateAsIndex] + $monthlyLoanAmount:$monthlyLoanAmount;
-                $salesProjectsPerFundedBy[$fundedBy][$productId][$dateAsIndex] = isset($salesProjectsPerFundedBy[$fundedBy][$productId][$dateAsIndex]) ? $salesProjectsPerFundedBy[$fundedBy][$productId][$dateAsIndex] + $monthlyLoanAmount   : $monthlyLoanAmount  ;
-                $salesProjectsPerTypes[$type][$productId][$dateAsIndex] = isset($salesProjectsPerTypes[$type][$productId][$dateAsIndex]) ? $salesProjectsPerTypes[$type][$productId][$dateAsIndex] + $monthlyLoanAmount   : $monthlyLoanAmount  ;
+				$currentYearOrMonthIndex = $isYearsStudy ? $study->getYearIndexFromDateIndex($dateAsIndex) : $dateAsIndex;
+                $salesProjectsPerProducts[$productId][$currentYearOrMonthIndex] =  isset($salesProjectsPerProducts[$productId][$currentYearOrMonthIndex]) ? $salesProjectsPerProducts[$productId][$currentYearOrMonthIndex] + $monthlyLoanAmount:$monthlyLoanAmount;
+                $salesProjectsPerFundedBy[$fundedBy][$productId][$currentYearOrMonthIndex] = isset($salesProjectsPerFundedBy[$fundedBy][$productId][$currentYearOrMonthIndex]) ? $salesProjectsPerFundedBy[$fundedBy][$productId][$currentYearOrMonthIndex] + $monthlyLoanAmount   : $monthlyLoanAmount  ;
+                $salesProjectsPerFundedBy[$fundedBy]['total'][$currentYearOrMonthIndex] = isset($salesProjectsPerFundedBy[$fundedBy]['total'][$currentYearOrMonthIndex]) ? $salesProjectsPerFundedBy[$fundedBy]['total'][$currentYearOrMonthIndex] + $monthlyLoanAmount   : $monthlyLoanAmount  ;
+                $salesProjectsPerTypes[$type][$productId][$currentYearOrMonthIndex] = isset($salesProjectsPerTypes[$type][$productId][$currentYearOrMonthIndex]) ? $salesProjectsPerTypes[$type][$productId][$currentYearOrMonthIndex] + $monthlyLoanAmount   : $monthlyLoanAmount  ;
+				$salesProjectsPerTypes[$type]['total'][$currentYearOrMonthIndex] = isset($salesProjectsPerTypes[$type]['total'][$currentYearOrMonthIndex]) ? $salesProjectsPerTypes[$type]['total'][$currentYearOrMonthIndex] + $monthlyLoanAmount : $monthlyLoanAmount;
             }
         }
-		// dd($salesProjectsPerTypes);
+		// dd($salesProjectsPerProducts);
 		$branchName = $branchId ? ExistingBranch::find($branchId)->getName() : '';
         return [
 			'branchName'=>$branchName,
@@ -86,8 +85,46 @@ class MicrofinanceLoanController extends Controller
 
     public function store(Company $company, Request $request, Study $study)
     {
-      
-		$study->storeAdminFeesAndFundingStructureFor($request, Study::MICROFINANCE);
+		
+		$isMonthlyStudy = $study->isMonthlyStudy();
+		 $salesProjects =$study->microfinanceProductSalesProjects ;
+		//  $salesProjects =$branchId ? $study->microfinanceProductSalesProjects->where('branch_id',$branchId)  :$study->microfinanceProductSalesProjects ;
+	
+        $salesProjectsPerFundedBy= [];
+		// $isMonthlyIndex = $study->isMonthlyStudy();
+        foreach ($salesProjects as $salesProject) {
+            // $productId = $salesProject-> microfinance_product_id;
+            $fundedBy = $salesProject->funded_by;
+            // $type = $salesProject->type;
+            $monthlyLoanAmounts = $salesProject->monthly_loan_amounts?:[];
+			// $yearOrMonthsIndexes = $study->getYearOrMonthIndexes();
+	
+            foreach ($monthlyLoanAmounts as $dateAsIndex => $monthlyLoanAmount) {
+                $salesProjectsPerFundedBy[$fundedBy][$dateAsIndex] =  isset($salesProjectsPerFundedBy[$fundedBy][$dateAsIndex]) ? $salesProjectsPerFundedBy[$fundedBy][$dateAsIndex] + $monthlyLoanAmount:$monthlyLoanAmount;
+                // $salesProjectsPerFundedBy[$fundedBy]['total'][$dateAsIndex] = isset($salesProjectsPerFundedBy[$fundedBy]['total'][$dateAsIndex]) ? $salesProjectsPerFundedBy[$fundedBy]['total'][$dateAsIndex] + $monthlyLoanAmount   : $monthlyLoanAmount  ;
+            }
+        }
+		$totalMonthlyLoanPerMtls = $salesProjectsPerFundedBy['by-mtls']??[];
+		$totalMonthlyLoanPerOdas = $salesProjectsPerFundedBy['by-odas']??[];
+		$fundedRatesForOdas = $request->input('new_loans_funding_rates.by-odas', []);
+		$fundedRatesForByMtls = $request->input('new_loans_funding_rates.by-mtls', []);
+		foreach($totalMonthlyLoanPerMtls as $monthIndex =>  &$value){
+			$yearIndexOrMonthIndex = $isMonthlyStudy ? $monthIndex : $study->getYearIndexFromDateIndex($monthIndex); 
+			 $currentRate = $fundedRatesForByMtls[$yearIndexOrMonthIndex] / 100;
+			 $value = $value * $currentRate ;
+		}
+		foreach($totalMonthlyLoanPerOdas as $monthIndex =>  &$value){
+			$yearIndexOrMonthIndex = $isMonthlyStudy ? $monthIndex : $study->getYearIndexFromDateIndex($monthIndex); 
+			 $currentRate = $fundedRatesForOdas[$yearIndexOrMonthIndex] / 100;
+			 $value = $value * $currentRate ;
+		}
+		
+		// dd($totalMonthlyLoanPerMtls , $totalMonthlyLoanPerOdas);
+		
+    	// $study->microfinanceProductSalesProjects->each(function(MicrofinanceProductSalesProject $microfinanceProductSalesProject){
+			
+		// });
+		$study->storeAdminFeesAndFundingStructureFor($request, Study::MICROFINANCE,[],[],$totalMonthlyLoanPerMtls,$totalMonthlyLoanPerOdas);
        $study->calculateMicrofinanceLoans();
        
 		

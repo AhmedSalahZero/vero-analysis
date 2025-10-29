@@ -1,5 +1,4 @@
 @foreach($salesProjectsPerTypes as $type => $salesProjectsPerProducts)
-
 @php
 $rowsTotals =[];
 $columnsTotals =[];
@@ -10,6 +9,8 @@ $titleFormatted = [
 ][$type];
 
 @endphp
+{{-- {{ dd($salesProjectsPerProducts) }} --}}
+@if(isset($salesProjectsPerProducts['total']) && array_sum($salesProjectsPerProducts['total']))
 <div class="kt-portlet">
     <div class="kt-portlet__body">
         <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style="">
@@ -121,6 +122,7 @@ $titleFormatted = [
 
     </div>
 </div>
+@endif
 
 @endforeach
 
@@ -135,6 +137,7 @@ $fundedByFormatted = [
 'by-mtls'=>__('By MTLs')
 ][$fundedBy];
 @endphp
+@if(isset($salesProjectsPerProducts['total']) && array_sum($salesProjectsPerProducts['total']))
 <div class="kt-portlet">
     <div class="kt-portlet__body">
         <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style="">
@@ -245,7 +248,7 @@ $fundedByFormatted = [
 
     </div>
 </div>
-
+@endif 
 
 @if(!isset($hideFundingStructure))
 
@@ -390,7 +393,7 @@ $fundedByFormatted = [
 
                     <tr data-repeat-formatting-decimals="0" data-repeater-style>
                         <td>
-                            <input disabled value="{{ __('New Loans Funding Rate (%)') }}" class="form-control text-left" type="text">
+                            <input disabled value="{{ __('Borrowing Funding Rate (%)') }}" class="form-control text-left" type="text">
                         </td>
                         @php
                         $columnIndex = 0 ;
@@ -427,7 +430,7 @@ $fundedByFormatted = [
 
 
                         <td>
-                            <input disabled value="{{ __('New Loans Funding Value') }}" class="form-control text-left" type="text">
+                            <input disabled value="{{ __('Borrowing Funding Value') }}" class="form-control text-left" type="text">
 
                         </td>
                         @php

@@ -652,7 +652,7 @@
 									
 									 <td class="td-classes">
 										<div>
-										<input value="{{ __('Banks Lending Margin Rate %') }}" disabled="" class="form-control text-left mt-2" type="text">
+										<input value="{{ __('MTLs Banks Lending Margin Rate %') }}" disabled="" class="form-control text-left mt-2" type="text">
 										
 										</div>
 										
@@ -681,6 +681,45 @@
 
 
                                     </tr>
+									
+									@if($study->hasMicrofinance())
+									
+									 <tr data-repeat-formatting-decimals="2" data-repeater-style>
+									
+									 <td class="td-classes">
+										<div>
+										<input value="{{ __('ODAs MTLs Banks Lending Margin Rate %') }}" disabled="" class="form-control text-left mt-2" type="text">
+										
+										</div>
+										
+                                        </td>
+										
+                                     
+                                        @php
+                                        $columnIndex = 0 ;
+                                        @endphp
+                                        @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
+
+                                        <td>
+
+                                            @php
+                                            $currentVal = $model ? $model->getOdasBankLendingMarginRatesAtYearOrMonthIndex($yearOrMonthAsIndex) : 0;
+                                            @endphp
+                                            <x-repeat-right-dot-inputs :name="'odas_bank_lending_margin_rates['.$yearOrMonthAsIndex.']'" :currentVal="number_format($currentVal,1)" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+
+
+                                        </td>
+                                        @php
+                                        $columnIndex++ ;
+                                        @endphp
+
+                                        @endforeach
+
+
+                                    </tr>
+									
+									
+									@endif 
 
 
 

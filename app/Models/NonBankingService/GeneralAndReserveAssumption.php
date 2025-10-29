@@ -23,6 +23,7 @@ class  GeneralAndReserveAssumption extends Model
 		// 'expense_annual_increase_rates'=>'array',
 		'cbe_lending_corridor_rates'=>'array',
 		'bank_lending_margin_rates'=>'array',
+		'odas_bank_lending_margin_rates'=>'array',
 		'credit_interest_rate_for_surplus_cash'=>'array',
 		];
 		
@@ -114,6 +115,14 @@ class  GeneralAndReserveAssumption extends Model
 	public function getBankLendingMarginRatesAtYearOrMonthIndex(int $yearOrMonthIndex)
 	{
 		return $this->getBankLendingMarginRates()[$yearOrMonthIndex] ?? 0  ; 
+	}
+	public function getOdasBankLendingMarginRates():array 
+	{
+		return (array) $this->odas_bank_lending_margin_rates ; 
+	}
+	public function getOdasBankLendingMarginRatesAtYearOrMonthIndex(int $yearOrMonthIndex)
+	{
+		return $this->getOdasBankLendingMarginRates()[$yearOrMonthIndex] ?? 0  ; 
 	}
 	public function getCreditInterestRateForSurplusCashAtYearOrMonthIndex(int $yearOrMonthIndex)
 	{
