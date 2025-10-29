@@ -1003,7 +1003,6 @@ class Study extends Model
         $yearIndexWithYear = app('yearIndexWithYear');
 
         $baseRates = $generalAndReserveAssumption->getCbeLendingCorridorRates() ;
-        // $baseRatesMapping= $generalAndReserveAssumption->getBaseRatesPerMonths();
 
         foreach ($operationDurationPerYear as $yearIndex => $yearMonthIndexes) {
             foreach ($yearMonthIndexes as $monthIndex => $monthlyZeroOrOne) {
@@ -1013,9 +1012,13 @@ class Study extends Model
         }
         
 
-        $baseRatesMapping = HArr::getFirstOfYear($baseRatesPerMonths);
+		$isMonthlyStudy = $this->isMonthlyStudy() ;
+        $baseRatesMapping = $isMonthlyStudy ? $baseRatesPerMonths : HArr::getFirstOfYear($baseRatesPerMonths);
+		// dd($baseRatesPerMonths,);
         $bankLendingMarginRates=$generalAndReserveAssumption->getBankLendingMarginRates();
+	
         $baseRatesMapping = HArr::isAllValuesEqual($baseRatesMapping, $bankLendingMarginRates);
+		// dd($baseRatesMapping,$bankLendingMarginRates);
 		
         $totalMonthlyLoanAmounts = [];
         // $loanEndBalances =[];
@@ -1023,18 +1026,16 @@ class Study extends Model
         foreach ($operationDurationPerYear as $yearIndex => $yearMonthIndexes) {
 			// logger('from qq');
             foreach ($yearMonthIndexes as $monthIndex => $monthlyZeroOrOne) {
-				// if($monthIndex != 0){
-				// 	continue;
-				// }
-				// logger('from abc');
-                $baseRatesMapping = is_array($baseRatesMapping) ? HArr::filterByYearIndex($baseRatesMapping, $yearIndexWithYear, $yearIndex, $dateIndexWithDate[$monthIndex], $this->isMonthlyStudy()) : $baseRatesMapping;
-                $yearOrMonthIndex = $this->isMonthlyStudy() ? $monthIndex : $yearIndex;
+			
+                $baseRatesMapping = is_array($baseRatesMapping) ? HArr::filterByYearOrMonthIndex($baseRatesMapping, $yearIndexWithYear, $yearIndex, $dateIndexWithDate[$monthIndex], $this->isMonthlyStudy()) : $baseRatesMapping;
+			
+                $yearOrMonthIndex = $isMonthlyStudy ? $monthIndex : $yearIndex;
 				
                 foreach ($revenueIdWitLoanAmounts as $leasingRevenueStreamBreakdownId => $yearIndexWithAmount) {
 					// logger('from ddd');
                     $loanAtCurrentYear = $yearIndexWithAmount[$yearOrMonthIndex]??0 ;
                     $currentMonthlyLoanAmount = $loanAtCurrentYear / ($this->isMonthlyStudy() ? 1 : count($yearMonthIndexes))  ;
-				
+					// dd($yearIndexWithAmount);
                     if ($currentMonthlyLoanAmount <= 0) {
                         continue ;
                     }
@@ -1047,7 +1048,6 @@ class Study extends Model
                     $currentMonth = $dateIndexWithDate[$monthIndex];
                     // $currentMonthFormatted = Carbon::make($currentMonth)->format('d-m-Y');
                     $currentMarginRate = $isSensitivity ?  $leasingRevenueStreamBreakdown->getSensitivityMarginRate() : $leasingRevenueStreamBreakdown->getMarginRate();
-                        
                     $gracePeriod = $leasingRevenueStreamBreakdown->getGracePeriod();
                     $tenor = $leasingRevenueStreamBreakdown->getTenor();
                     $installmentInterval = $leasingRevenueStreamBreakdown->getInstallmentInterval();
@@ -1089,10 +1089,11 @@ class Study extends Model
                             return $item;
                         })->toArray();
                     }
-                
+					
                     if ($eclAndNewPortfolioFundingRate && count($totalMonthlyLoanAmounts)) {
                         $newLoanFundingRate = $eclAndNewPortfolioFundingRate->getNewLoansFundingRatesAtYearOrMonthIndex($yearOrMonthIndex);
                         $currentMarginRate = $generalAndReserveAssumption->getBankLendingMarginRatesAtYearOrMonthIndex($yearOrMonthIndex);
+						logger($yearOrMonthIndex.'-'.$currentMarginRate);
                         $currentMonthlyLoanAmount = $totalMonthlyLoanAmounts[$monthIndex];
                         $currentMonthlyLoanAmount = $currentMonthlyLoanAmount * $newLoanFundingRate / 100 ;
                         // $currentMonthlyLoanAmount = $currentMonthlyLoanAmount * $newLoanFundingRate / 100 ;
@@ -1194,15 +1195,7 @@ class Study extends Model
         // }
         // $dateWithDateIndex = app('dateWithDateIndex');
         DB::connection('non_banking_service')->table($loanSchedulePaymentTableName)->where('revenue_stream_type', $revenueStreamType)->where('study_id', $studyId)->delete();
-        // $baseRatesMapping = $baseRatesPerMonths;
-        // $baseRatesMapping = HArr::getFirstOfYear($baseRatesPerMonths);
-        // $bankLendingMarginRates=$generalAndReserveAssumption->getBankLendingMarginRates();
-
         
-        
-        // $baseRatesMapping = HArr::isAllValuesEqual($baseRatesMapping, $bankLendingMarginRates);
-   
-        // $operationStartDasIndex = $study->getOperationStartDateAsIndex()
         $operationDates = range($study->getOperationStartDateAsIndex(), $study->getStudyEndDateAsIndex());
         
         // $time = 0 ;
@@ -1210,14 +1203,13 @@ class Study extends Model
         //		$start = microtime(true);
         $CurrentIndex = -1 ;
         foreach ($operationDurationPerYear as $yearIndex => $yearMonthIndexes) {
-			//	$originalBaseRates = $baseRatesMapping;
             if (!$this->isMonthlyStudy()) {
 				$CurrentIndex++ ;
             }
             foreach ($yearMonthIndexes as $monthIndex => $monthlyZeroOrOne) {
 			
 				
-				$baseRatesMapping = is_array($baseRatesMapping) ? $study->interestYearSpread(HArr::filterByYearIndex($baseRatesMapping, $yearIndexWithYear, $yearIndex, $dateIndexWithDate[$monthIndex], $this->isMonthlyStudy()),$dateIndexWithDate) :  $baseRatesMapping;
+				$baseRatesMapping = is_array($baseRatesMapping) ? $study->interestYearSpread(HArr::filterByYearOrMonthIndex($baseRatesMapping, $yearIndexWithYear, $yearIndex, $dateIndexWithDate[$monthIndex], $this->isMonthlyStudy()),$dateIndexWithDate) :  $baseRatesMapping;
                 $yearOrMonthIndex = $this->isMonthlyStudy() ? $monthIndex : $yearIndex;
                 if ($this->isMonthlyStudy()) {
                     $CurrentIndex++ ;

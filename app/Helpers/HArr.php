@@ -462,6 +462,18 @@ class HArr
         }
         return $result;
     }
+    public static function getFirstOfMonth(array $items):array
+    {
+        $result = [];
+        $previousValue = null ;
+        foreach ($items as $date => $value) {
+            if ($previousValue != $value) {
+                $result[$date] = $value ;
+            }
+            $previousValue = $value;
+        }
+        return $result;
+    }
     public static function getPreviousKey(array $array, $currentKey)
     {
         $keys = array_keys($array); // Get all keys
@@ -473,7 +485,7 @@ class HArr
 
         return $keys[$index - 1]; // Return the previous key
     }
-    public static function filterByYearIndex(array $baseRatesMapping, array $yearIndexWithYear, int $yearIndex, string $currentLoopDateString, bool $isMonthlyStudy):array
+    public static function filterByYearOrMonthIndex(array $baseRatesMapping, array $yearIndexWithYear, int $yearIndex, string $currentLoopDateString, bool $isMonthlyStudy):array
     {
         $result = [];
         
@@ -566,7 +578,6 @@ class HArr
             if (!is_null($previousVal)) {
                 if ($val1 != $previousVal) {
                     $firstIsEqual = false ;
-                        
                 }
                 $previousVal = $val1 ;
             } else {
@@ -1069,8 +1080,8 @@ class HArr
         return $result;
     }
     
-	
-	// public static function getNowOrPreviousNonZeroValue(array $items, int $key)
+    
+    // public static function getNowOrPreviousNonZeroValue(array $items, int $key)
     // {
      
     //     $key = $key - 1 ;
@@ -1079,43 +1090,22 @@ class HArr
     //             return null;
     //         }
     //         if ($items[$key] > 0) {
-	
+    
     //             return $key;
     //         }
     //         $key--;
     //     }
         
     // }
-	
+    
     
     public static function getNowOrNextNonZeroValue(array $items, int $key)
     {
-      if (isset($items[$key]) && $items[$key ]>0) {
+        if (isset($items[$key]) && $items[$key ]>0) {
             return $key;
         }
         $key = $key+1;
-		$lastKey = array_key_last($items);
-        while ($key != 0) {
-            if (!isset($items[$key]) && $key > $lastKey ) {
-                return null;
-            }
-            if (isset($items[$key]) && $items[$key] > 0) {
-                return $key;
-            }
-            $key++;
-        }
-        
-    }
-	
-	  public static function getNextNonZeroValue(array $items, int $key )
-    {
-    //   if (isset($items[$key]) && $items[$key ]>0) {
-    //         return $key;
-    //     }
-	
-        $key = $key+1;
-		$lastKey = array_key_last($items);
-		
+        $lastKey = array_key_last($items);
         while ($key != 0) {
             if (!isset($items[$key]) && $key > $lastKey) {
                 return null;
@@ -1127,31 +1117,54 @@ class HArr
         }
         
     }
-	
-	
-	
-	public static function getNetPresentValueFromEachMonth(array $items):array{
-		$result = [];
-		foreach($items as $portfolioCategoryId => $item){
-			$item = json_decode($item,true);
-			foreach($item as $monthIndex => $netPresentValue){
-				$result[$portfolioCategoryId][$monthIndex] = $netPresentValue['net_present_value']??0 ;
-			}
-		}
-		return $result ;
-	}
-	public static function removeIndexesFrom(array $items , int $dateAsIndex){
-		$result = [];
-		foreach($items as $key => $values){
-			foreach($values as $currentDateAsIndex => $value){
-				if($currentDateAsIndex < $dateAsIndex ){
-					$result[$key][$currentDateAsIndex] = $value;
-				}
-				
-			}
-		}
-		return $result;
-		// dd($items,$result);
-		// dd($items,$dateAsIndex);
-	}
+    
+    public static function getNextNonZeroValue(array $items, int $key)
+    {
+        //   if (isset($items[$key]) && $items[$key ]>0) {
+        //         return $key;
+        //     }
+    
+        $key = $key+1;
+        $lastKey = array_key_last($items);
+        
+        while ($key != 0) {
+            if (!isset($items[$key]) && $key > $lastKey) {
+                return null;
+            }
+            if (isset($items[$key]) && $items[$key] > 0) {
+                return $key;
+            }
+            $key++;
+        }
+        
+    }
+    
+    
+    
+    public static function getNetPresentValueFromEachMonth(array $items):array
+    {
+        $result = [];
+        foreach ($items as $portfolioCategoryId => $item) {
+            $item = json_decode($item, true);
+            foreach ($item as $monthIndex => $netPresentValue) {
+                $result[$portfolioCategoryId][$monthIndex] = $netPresentValue['net_present_value']??0 ;
+            }
+        }
+        return $result ;
+    }
+    public static function removeIndexesFrom(array $items, int $dateAsIndex)
+    {
+        $result = [];
+        foreach ($items as $key => $values) {
+            foreach ($values as $currentDateAsIndex => $value) {
+                if ($currentDateAsIndex < $dateAsIndex) {
+                    $result[$key][$currentDateAsIndex] = $value;
+                }
+                
+            }
+        }
+        return $result;
+        // dd($items,$result);
+        // dd($items,$dateAsIndex);
+    }
 }

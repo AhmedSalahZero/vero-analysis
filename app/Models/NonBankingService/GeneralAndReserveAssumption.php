@@ -100,9 +100,7 @@ class  GeneralAndReserveAssumption extends Model
                 $baseRatesPerMonths[Carbon::make($dateIndexWithDate[$monthIndex])->format('Y-m-d')] = $baseRates[$yearOrMonthIndex];
             }
         }
-		
-		
-		  $baseRatesMapping =  $study->isMonthlyStudy() ? $baseRatesPerMonths : HArr::getFirstOfYear($baseRatesPerMonths);
+		$baseRatesMapping =  $study->isMonthlyStudy() ? $baseRatesPerMonths  : HArr::getFirstOfYear($baseRatesPerMonths);
         $bankLendingMarginRates=$this->getBankLendingMarginRates();
         $baseRatesMapping = HArr::isAllValuesEqual($baseRatesMapping, $bankLendingMarginRates);
 		
