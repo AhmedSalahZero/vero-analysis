@@ -24,38 +24,57 @@ class CalculateFixedLoanAtBeginningService
         $fixedAtEndResult = [];
         $i = 0 ;
         $previousResult = [];
+		// $currentStartDateAsIndex = null;
+		// $loanAmount= 0;
         foreach ($baseRatesMapping as $currentBaseRateDate => $currentBaseRate) {
             if ($i != 0) {
-                $currentBaseRateDateAsIndex = $datesAsStringAndIndex[$currentBaseRateDate];
+               $currentBaseRateDateAsIndex = $datesAsStringAndIndex[$currentBaseRateDate];
 				$gracePeriod = 0;
 				if ($tenor >= 1){
-					$currentStartDateAsIndex = HArr::getPreviousNonZeroValue($fixedAtEndResult['current_result'][$i-1]['schedulePayment']??[],$currentBaseRateDateAsIndex);
-					// $currentStartDateAsIndex = HArr::getNextNonZeroValue($fixedAtEndResult['current_result'][$i-1]['schedulePayment']??[],$currentBaseRateDateAsIndex);
-					$loanAmount =$fixedAtEndResult['current_result'][$i-1]['endBalance'][$currentStartDateAsIndex]??0;
-					if(is_null($currentStartDateAsIndex)  ){
-						
-						$currentStartDateAsIndex = HArr::getNextNonZeroValue($fixedAtEndResult['current_result'][$i-1]['schedulePayment']??[],$currentBaseRateDateAsIndex);
-						$loanAmount =$fixedAtEndResult['current_result'][$i-1]['endBalance'][$currentStartDateAsIndex]??0;
-						
-						// if(is_null($currentStartDateAsIndex)){
-						
-						// 	continue;
-						// }
-						
-						
-				}
-					
-			
+					$currentStartDateAsIndex = HArr::getNextNonZeroValue($fixedAtEndResult['current_result'][$i-1]['schedulePayment']??[],$currentBaseRateDateAsIndex);
+					$loanAmount =$fixedAtEndResult['current_result'][$i-1]['beginning'][$currentStartDateAsIndex]??0;
 					}
                 $loanStartDate = $dateWithDateIndex[$currentStartDateAsIndex]??null;
 				if(is_null($loanStartDate)){
 					continue;
 				}
-                $tenor = $originalTenor -($currentStartDateAsIndex - $monthIndex);
+				// logger($monthIndex);
+                $tenor = $originalTenor -($currentStartDateAsIndex - $monthIndex );
             }
             $currentResultArr = [];
             if ($tenor >= 1) {
-                $currentResultArr =$this->__calculate($previousResult, $i, $loanType, $loanStartDate, $loanAmount, $currentBaseRate, $marginRate, $tenor, $installmentPaymentIntervalName, $stepUpRate, $stepUpIntervalName, $stepDownRate, $stepDownIntervalName, $gracePeriod, $currentStartDateAsIndex);
+				
+				// if($i == 1){
+				// 	dd($loanAmount,$currentStartDateAsIndex ,$loanStartDate);
+				// }
+				$currentResultArr =$this->__calculate($previousResult, $i, $loanType, $loanStartDate, $loanAmount, $currentBaseRate, $marginRate, $tenor, $installmentPaymentIntervalName, $stepUpRate, $stepUpIntervalName, $stepDownRate, $stepDownIntervalName, $gracePeriod, $currentStartDateAsIndex);
+				// if($i == 1){
+				// 	dd($currentResultArr ,$previousResult );
+				// }
+				
+				// $currentStartDateAsIndex = HArr::getNextNonZeroValue($currentResultArr['schedulePayment']??[],$currentBaseRateDateAsIndex,$i);
+				// dd($baseRatesMapping);
+				// $nextBaseRateDate = getNextDate($baseRatesMapping,$currentBaseRateDate);
+				// dd($currentResultArr['result']);
+				// if(!is_null($nextBaseRateDate) && isset($currentResultArr['result'])){
+					// $nextBaseRateDateAsIndex = $datesAsStringAndIndex[$currentBaseRateDate];
+					// $currentStartDateAsIndex = HArr::getNextNonZeroValue($currentResultArr['result']['schedulePayment'],$currentBaseRateDateAsIndex);
+					
+					// $loanAmount = $currentResultArr['result']['beginning'][$currentStartDateAsIndex]??0;
+				
+					// if($loanAmount > 0 ){
+						// unset($currentResultArr['result']['totals']);
+						// $currentResultArr['result'] = HArr::removeIndexesFrom($currentResultArr['result'],$nextBaseRateDateAsIndex);
+						// dd($currentResultArr['final_result']);
+						// $currentResultArr['final_result'] = HArr::removeIndexesFrom($currentResultArr['final_result'],$nextBaseRateDateAsIndex);
+						// dd($currentResultArr['final_result']);
+					// }
+					
+				// }
+				// if($i == 0){
+				// 	dd($currentResultArr['final_result']);
+				// }
+				
                 $previousResult =$currentResultArr['final_result']??[];
                 $fixedAtEndResult['current_result'][]= $currentResultArr['result']??[]  ;
                 $fixedAtEndResult['final_result']= $currentResultArr['final_result']??[]  ;
@@ -200,22 +219,17 @@ class CalculateFixedLoanAtBeginningService
             ];
         }
         $mergedResult = $indexOfLoop == 0 ? $loanScheduleResult :$previousResult ;
-    
+		
         $mergedResult = $loanScheduleResult;
-
+		
+		
         
         foreach ($previousResult as $key => $currentArr) {
             if ($key == 'totals') {
                 continue;
             }
-
-            $firstKey = array_key_first($loanScheduleResult[$key]);
-            unset($loanScheduleResult[$key][$firstKey]);
             $mergedResult[$key]=HArr::mergeTwoAssocArr($previousResult[$key], $loanScheduleResult[$key], $key);
-            
         }
-
-        
         return [
             'result'=>$loanScheduleResult ,
             'final_result'=>$mergedResult 

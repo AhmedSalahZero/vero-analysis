@@ -1068,42 +1068,68 @@ class HArr
         }
         return $result;
     }
-    public static function getPreviousNonZeroValue(array $items, int $key)
-    {
-        // if (isset($items[$key]) && $items[$key ]>0) {
-        //     return $key;
-        // }
-        $key = $key - 1 ;
-        while ($key != 0) {
-            if (!isset($items[$key])) {
-                return null;
-            }
-            if ($items[$key] > 0) {
-	
-                return $key;
-            }
-            $key--;
-        }
-        
-    }
     
-    public static function getNextNonZeroValue(array $items, int $key)
+	
+	// public static function getNowOrPreviousNonZeroValue(array $items, int $key)
+    // {
+     
+    //     $key = $key - 1 ;
+    //     while ($key != 0) {
+    //         if (!isset($items[$key])) {
+    //             return null;
+    //         }
+    //         if ($items[$key] > 0) {
+	
+    //             return $key;
+    //         }
+    //         $key--;
+    //     }
+        
+    // }
+	
+    
+    public static function getNowOrNextNonZeroValue(array $items, int $key)
     {
       if (isset($items[$key]) && $items[$key ]>0) {
             return $key;
         }
         $key = $key+1;
+		$lastKey = array_key_last($items);
         while ($key != 0) {
-            if (!isset($items[$key])) {
+            if (!isset($items[$key]) && $key > $lastKey ) {
                 return null;
             }
-            if ($items[$key] > 0) {
+            if (isset($items[$key]) && $items[$key] > 0) {
                 return $key;
             }
             $key++;
         }
         
     }
+	
+	  public static function getNextNonZeroValue(array $items, int $key )
+    {
+    //   if (isset($items[$key]) && $items[$key ]>0) {
+    //         return $key;
+    //     }
+	
+        $key = $key+1;
+		$lastKey = array_key_last($items);
+		
+        while ($key != 0) {
+            if (!isset($items[$key]) && $key > $lastKey) {
+                return null;
+            }
+            if (isset($items[$key]) && $items[$key] > 0) {
+                return $key;
+            }
+            $key++;
+        }
+        
+    }
+	
+	
+	
 	public static function getNetPresentValueFromEachMonth(array $items):array{
 		$result = [];
 		foreach($items as $portfolioCategoryId => $item){
@@ -1113,5 +1139,19 @@ class HArr
 			}
 		}
 		return $result ;
+	}
+	public static function removeIndexesFrom(array $items , int $dateAsIndex){
+		$result = [];
+		foreach($items as $key => $values){
+			foreach($values as $currentDateAsIndex => $value){
+				if($currentDateAsIndex < $dateAsIndex ){
+					$result[$key][$currentDateAsIndex] = $value;
+				}
+				
+			}
+		}
+		return $result;
+		// dd($items,$result);
+		// dd($items,$dateAsIndex);
 	}
 }

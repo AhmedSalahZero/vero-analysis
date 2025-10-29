@@ -31,7 +31,7 @@ class IncomeStatementController extends Controller
         $monthsWithItsYear = $study->getMonthsWithItsYear($yearWithItsIndexes) ;
         $tableDataFormatted = [];
         $expenseMainTitlesMapping = getExpenseTypes();
-        $loanSchedulePayments = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('loan_schedule_payments')->selectRaw('portfolio_loan_type,revenue_stream_type,interestAmount,securitization_date_index')->where('study_id', $study->id)->get()->toArray();
+        $loanSchedulePayments = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('loan_schedule_payments')->selectRaw('portfolio_loan_type,revenue_stream_type,interestAmount,securitization_date_index,endBalance')->where('study_id', $study->id)->get()->toArray();
         $defaultNumericInputClasses = [
             'number-format-decimals'=>0,
             'is-percentage'=>false,
@@ -180,6 +180,7 @@ class IncomeStatementController extends Controller
         ->selectRaw('interest_revenue,bank_interest_expense')->get()->toArray();
     
         $formattedDirectFactoring = [];
+		
         foreach ($directFactoringBreakdown as $currentDirectFactoringBreakdown) {
             $interestRevenues= (array)json_decode($currentDirectFactoringBreakdown->interest_revenue);
             $bankInterestExpenses= (array)json_decode($currentDirectFactoringBreakdown->bank_interest_expense);
@@ -199,18 +200,25 @@ class IncomeStatementController extends Controller
                 }
             }
         }
+		$totalEndBalanceForPortfolioPerRevenueType = [];
+		$studyDates = $study->getDateWithDateIndex();
         foreach ($loanSchedulePayments as $loanSchedulePaymentAsStdClass) {
             $portfolioLoanType = $loanSchedulePaymentAsStdClass->portfolio_loan_type;
             $isPortfolio = $portfolioLoanType == 'portfolio';
             $revenueStreamType = $loanSchedulePaymentAsStdClass->revenue_stream_type;
 			$securitizationDateIndex = $loanSchedulePaymentAsStdClass->securitization_date_index;
-            $interestAmounts = json_decode($loanSchedulePaymentAsStdClass->interestAmount);
-            foreach ($interestAmounts as $currentMonthIndex => $interestAmount) {
+            $interestAmounts = json_decode($loanSchedulePaymentAsStdClass->interestAmount,true);
+            $endBalances = json_decode($loanSchedulePaymentAsStdClass->endBalance,true);
+			
+            foreach ($studyDates as $currentMonthIndex ) {
+				$interestAmount = $interestAmounts[$currentMonthIndex]??0;
+				$endBalance = $endBalances[$currentMonthIndex]??0;
 				if(isSecuritized($securitizationDateIndex , $currentMonthIndex)){
 					$interestAmount = 0;
+					$endBalance = 0 ;
 				}
-                if (!is_null($currentMonthIndex)) {
                     if ($isPortfolio) {
+						$totalEndBalanceForPortfolioPerRevenueType[$revenueStreamType][$currentMonthIndex] = isset($totalEndBalanceForPortfolioPerRevenueType[$revenueStreamType][$currentMonthIndex]) ? $totalEndBalanceForPortfolioPerRevenueType[$revenueStreamType][$currentMonthIndex] + $endBalance : $endBalance;
                         $salesRevenuePerTypes[$revenueStreamType][$currentMonthIndex] =  isset($salesRevenuePerTypes[$revenueStreamType][$currentMonthIndex]) ? $salesRevenuePerTypes[$revenueStreamType][$currentMonthIndex] + $interestAmount : $interestAmount;
                         $salesRevenuePerTypes['total_revenue'][$currentMonthIndex] =  isset($salesRevenuePerTypes['total_revenue'][$currentMonthIndex]) ? $salesRevenuePerTypes['total_revenue'][$currentMonthIndex] + $interestAmount : $interestAmount;
                         $tableDataFormatted[0]['sub_items'][$revenueStreamType]['data'][$currentMonthIndex] = $salesRevenuePerTypes[$revenueStreamType][$currentMonthIndex];
@@ -219,10 +227,14 @@ class IncomeStatementController extends Controller
                         $formattedExpenses['cost-of-service']['Interest Cost'][$currentMonthIndex]  = $formattedResult['interest_cogs'][$currentMonthIndex]??0 ;
                         $tableDataFormatted[1]['sub_items']['Interest Cost']['data'][$currentMonthIndex] =$formattedExpenses['cost-of-service']['Interest Cost'][$currentMonthIndex] ;
                     }
-                }
+                
             }
             
         }
+		foreach($totalEndBalanceForPortfolioPerRevenueType as $revenueStreamType => $totalPortfolioEndBalance){
+			$study->recalculateMonthlyAndAccumulatedEcl($revenueStreamType,$totalPortfolioEndBalance);
+		}
+		
 		$interestCosts  = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('direct_factoring_breakdowns')->where('study_id',$study->id)->pluck('bank_interest_expense')->toArray();
 		foreach($interestCosts as $interestCost){
 			$interestCost = json_decode($interestCost,true);

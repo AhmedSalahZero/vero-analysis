@@ -95,7 +95,7 @@ class PortfolioPresentValue
         }
         DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('loan_schedule_payments')->insert(array_values($portfolioMortgageLoanSchedulePayments));
         DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('loan_schedule_payments')->insert($bankPortfolioLoans);
-        $study->recalculateMonthlyAndAccumulatedEcl(Study::PORTFOLIO_MORTGAGE, $totalPortfoliosMortgageEndBalances);
+     //   $study->recalculateMonthlyAndAccumulatedEcl(Study::PORTFOLIO_MORTGAGE, $totalPortfoliosMortgageEndBalances);
 		// dd($originalMonthlyAmounts);
         return [
             'occurrence_dates'=>$occurrenceDates,
