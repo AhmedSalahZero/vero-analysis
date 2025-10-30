@@ -37,7 +37,7 @@ class IjaraMortgageController extends Controller
 	//	$study->updateIjaraMortgageMonthlyAdminFeesAmounts();
 		// $loanAmounts = $study->ijaraMortgageBreakdowns->pluck('loan_amounts','id')->toArray();
 		$study->storeFixedLoans(Study::IJARA,'ijaraMortgageBreakdowns');
-		$study->updateExpensesPercentagesOfSales();
+		$study->updateExpensesPercentageAndCostPerUnitsOfSales();
 		return response()->json([
 			'redirectTo'=>$study->getRevenueRoute(Study::PORTFOLIO_MORTGAGE)
 		]);

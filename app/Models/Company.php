@@ -671,20 +671,14 @@ class Company extends Model implements HasMedia
 	{
 		return $this->hasMany(Department::class,'company_id','id');
 	}	
-	
-	public function departmentsFor(string $type ,int $companyId)
+	public function generalDepartments()
 	{
-		return Department::where('type',$type)->where('company_id',$companyId)->get();
-	}
+		return $this->hasMany(Department::class,'company_id','id')->where('type',Department::GENERAL);
+	}	
 	public function microfinanceDepartments()
 	{
-		return $this->hasMany(MicrofinanceDepartment::class,'company_id','id');
+		return $this->hasMany(Department::class,'company_id','id')->where('type',Department::MICROFINANCE);
 	}	
-	
-	public function microfinanceDepartmentsFor(string $type ,int $companyId)
-	{
-		return MicrofinanceDepartment::where('type',$type)->where('company_id',$companyId)->get();
-	}
 	
 	public function expenseNames()
 	{
@@ -750,13 +744,13 @@ class Company extends Model implements HasMedia
 	 */
 	public function syncMicrofinanceDepartments():void
 	{
-		$isExist  = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('microfinance_departments')->where('company_id',$this->id)->count();
+		$isExist  = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('departments')->where('type',Department::MICROFINANCE)->where('company_id',$this->id)->count();
 		if($isExist){
 			return ;
 		}
-		DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('microfinance_departments')->insert([
-			'name'=>'Branch',
-			'type'=>'manpower',
+		DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('departments')->insert([
+			'name'=>'Microfinance Branch',
+			'type'=>Department::MICROFINANCE,
 			'company_id'=>$this->id
 		]);
 	}

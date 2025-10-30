@@ -569,9 +569,14 @@
                 , error: function(res) {
                     $('.save-form').prop('disabled', false);
                     $('.submit-form-btn-new').prop('disabled', false)
+					console.log(res.responseJSON)
+					let message =res.responseJSON.message;
+					if (res.responseJSON && res.responseJSON.errors){
+						message = res.responseJSON.errors[Object.keys(res.responseJSON.errors)[0]][0]
+					}
                     Swal.fire({
                         icon: 'error'
-                        , title: res.responseJSON.message
+                        , title: message
                     , });
                 }
             });

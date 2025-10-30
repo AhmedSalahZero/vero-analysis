@@ -43,7 +43,7 @@ class  GeneralAndReserveAssumption extends Model
 					$study->storeFixedLoans(Study::IJARA,'ijaraMortgageBreakdowns');
 					$study->storeVariableLoans(Study::REVERSE_FACTORING,'reverseFactoringBreakdowns');
 					$study->refreshDirectFactoringLoans();
-					$study->updateExpensesPercentagesOfSales();
+					$study->updateExpensesPercentageAndCostPerUnitsOfSales();
 				}
 				if($study->isDirty('salaries_annual_increase_rates')){
 					$study->recalculateManpower();

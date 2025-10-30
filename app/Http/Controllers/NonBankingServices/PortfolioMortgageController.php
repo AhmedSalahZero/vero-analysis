@@ -104,7 +104,7 @@ class PortfolioMortgageController extends Controller
 				'monthly_new_loans_funding_values'=>$totalMonthlyLoanAmounts
 			]);
 		}
-	
+		$study->updateExpensesPercentageAndCostPerUnitsOfSales();
         if($request->get('save') === 'calculate-portfolio'){
 			return response()->json([
             'redirectTo'=>route('create.portfolio.mortgage.revenue.stream.breakdown',['company'=>$company->id,'study'=>$study->id])

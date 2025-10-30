@@ -80,7 +80,6 @@ class AllBranchesMicrofinanceControllerController extends Controller
 		
 		$oldIds = $study->microfinanceLoanOfficerCases->where('type',$branchType)->where('branch_id',$branchId)->pluck('id')->toArray();
 		$study->storeRepeaterRelations($request,['microfinanceLoanOfficerCases'],$company,['branch_id'=>$branchId],$oldIds);
-		
 		$study->recalculateMicrofinanceTotalCasesCounts($branchType);
 		$study->update([
 			'existing_branches_counts'=>$request->get('existing_branches_counts',0)
@@ -88,7 +87,6 @@ class AllBranchesMicrofinanceControllerController extends Controller
 		$study->handleFixedRepeatingExpenses($request);
        $redirectPageRoute = route('create.new-branches.microfinance', ['company'=>$company->id,'study'=>$study->id]) ;
 	   $isLastBranch = Arr::last(ExistingBranch::where('company_id',$company->id)->pluck('id')->toArray()) == $branchId;
-	   
 		if($branchId && !$isLastBranch){
 			return response()->json([
                 'redirectTo'=>route('create.by-branch.microfinance',['company'=>$company->id,'study'=>$study->id])

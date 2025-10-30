@@ -14,8 +14,8 @@ class Department extends Model
 	protected $table ='departments';
 	protected $connection =NON_BANKING_SERVICE_CONNECTION_NAME;
  	protected $guarded = ['id'];
-	const DEPARTMENT = 'department';
-	const MICROFINANCE_DEPARTMENT = 'microfinance-department';
+	const GENERAL = 'general';
+	const MICROFINANCE = 'microfinance';
 	 public static function boot()
 	 {
 		 parent::boot();

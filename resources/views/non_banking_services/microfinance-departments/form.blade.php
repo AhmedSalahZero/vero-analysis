@@ -46,10 +46,10 @@ use App\Models\NonBankingService\Department;
                                     <div class="row">
                                         <div class="col-md-4">
                                             <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style="">
-                                                {{ __('Department Name') }}
+                                                {{ __('Microfinance') }}
                                             </h3>
                                             <div class="form-group mb-0 d-flex" style="margin-right:auto;gap:20px;">
-                                                <input class="form-control" name="name" value="{{ isset($department) ? $department->getName():'' }}" placeholder="">
+                                                <input readonly class="form-control" name="name" value="{{ isset($department) ? $department->getName():'' }}" placeholder="">
                                             </div>
                                         </div>
                                         

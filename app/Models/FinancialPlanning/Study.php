@@ -244,10 +244,10 @@ use Illuminate\Database\Eloquent\Model;
 	* * type -> manpower for example 
 	* * expense_type -> cost-of-service for example
 	 */
-	public function departmentsFor(string $type , string $expenseType)
-	{
-		return Department::where('study_id',$this->id)->where('expense_type',$expenseType)->where('type',$type)->get();
-	}
+	// public function departmentsFor(string $type , string $expenseType)
+	// {
+	// 	return Department::where('study_id',$this->id)->where('expense_type',$expenseType)->where('type',$type)->get();
+	// }
 	public function financialYearStartMonth(): ?string
 	{
 		return $this->financial_year_start_month;

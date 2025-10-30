@@ -3,7 +3,7 @@
                     @php
                     $repeaterId = $tableId.'_repeater';
 					use App\Formatter\Select2Formatter; 
-					use App\Models\NonBankingService\MicrofinancePosition;
+					 use App\Models\NonBankingService\Position;
                     @endphp
                     <input type="hidden" name="tableIds[]" value="{{ $tableId }}">
                     <x-tables.repeater-table :removeRepeater="false" :repeater-with-select2="true" :canAddNewItem="$canAddNewItem" :parentClass="'js-remove-hidden'" :hide-add-btn="true" :tableName="$tableId" :repeaterId="$repeaterId" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
@@ -17,8 +17,8 @@
                             @endphp
                             @foreach( count($rows) ? $rows : [-1] as $subModel)
                             @php
-                            if( !($subModel instanceof MicrofinancePosition) ){
-                            unset($subModel);
+                            if( !($subModel instanceof Position) ){
+                          	  unset($subModel);
                             }
                             @endphp
                             <tr data-repeater-style="{{ $isRepeater ? 1 : -1 }}" @if($isRepeater) data-repeater-item @endif>

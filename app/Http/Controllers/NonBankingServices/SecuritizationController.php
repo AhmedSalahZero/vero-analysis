@@ -22,7 +22,6 @@ class SecuritizationController extends Controller
         $yearOrMonthsIndexes = $study->getYearOrMonthIndexes();
         $isYearsStudy = !$study->isMonthlyStudy();
 		$studyMonthsForViews =array_flip($study->getOperationDatesAsDateAndDateAsIndexToStudyEndDate()) ;
-	//	$departments = $company->microfinanceDepartments;
 		$dateIndexWithDate = $study->getDateIndexWithDate();
 		$securitizationCalculations = $study->calculateSecuritizationLoans();
         return [

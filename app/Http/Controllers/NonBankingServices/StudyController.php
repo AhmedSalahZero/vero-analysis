@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\NonBankingServices;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreStudyRequest;
 use App\Models\Company;
 use App\Models\NonBankingService\Study;
 use Artisan;
@@ -124,7 +125,7 @@ class StudyController extends Controller
 		$isBusinessPlan  = $request->get('is_business_plan') == 1; 
 		return view('non_banking_services.study.form', $this->getViewVars($company,null,$isBusinessPlan));
 	}
-	public function store(Company $company , Request $request , Study $study = null)
+	public function store(Company $company , StoreStudyRequest $request , Study $study = null)
 	{
 		$studyStartDate = $request->get('study_start_date').'-01';
 		$operationStartDate = $request->get('operation_start_date') . '-01';
@@ -169,7 +170,7 @@ class StudyController extends Controller
 	public function edit(Company $company , Request $request,Study $study){
 		return view('non_banking_services.study.form', $this->getViewVars($company,$study));
 	}
-	public function update(Request $request , Company $company,Study $study)
+	public function update(StoreStudyRequest $request , Company $company,Study $study)
 	{
 		return $this->store($company,$request,$study);
 	}

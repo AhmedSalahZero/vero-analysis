@@ -31,9 +31,7 @@ use App\Models\NonBankingService\Expense;
         $repeaterId = 'expense_per_employee_repeater';
         $cardId = $tableId;
         @endphp
-        @php
-        $storeRoute = route('store.expenses',['company'=>$company->id,'study'=>$study->id]);
-        @endphp
+       
         <div class="kt-portlet parent-card ">
             <div class="kt-portlet__body">
                 {{-- start of one time expense --}}

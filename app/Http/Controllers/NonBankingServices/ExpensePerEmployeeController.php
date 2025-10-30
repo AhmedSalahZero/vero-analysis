@@ -31,7 +31,6 @@ class ExpensePerEmployeeController extends Controller
 				'title'=>$title
 			];
 		}
-
 		return [
 			'company'=>$company ,
 			'department'=>$model ,
@@ -40,7 +39,8 @@ class ExpensePerEmployeeController extends Controller
 			'study'=>$model,
 			'expenseType'=>'expense_per_employee',
 			'model'=>$model,
-			'storeRoute'=>isset($model) ? route('update.departments',['company'=>$company->id,'department'=>$model->id]) :route('store.departments',['company'=>$company->id]),
+			'storeRoute'=>route('store.expenses',['company'=>$company->id,'study'=>$model->id]),
+			// 'storeRoute'=>isset($model) ? route('update.departments',['company'=>$company->id,'department'=>$model->id]) :route('store.departments',['company'=>$company->id]),
 		];
 	}
 	

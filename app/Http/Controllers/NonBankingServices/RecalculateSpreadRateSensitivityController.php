@@ -36,7 +36,7 @@ class RecalculateSpreadRateSensitivityController extends Controller
 		$study->storeFixedLoans(Study::LEASING,'leasingRevenueStreamBreakdown',true);
 		$study->storeFixedLoans(Study::IJARA,'ijaraMortgageBreakdowns',true);
 		$study->storeVariableLoans(Study::REVERSE_FACTORING,'reverseFactoringBreakdowns',true);
-		$study->updateExpensesPercentagesOfSales(true);
+		$study->updateExpensesPercentageAndCostPerUnitsOfSales(true);
 		return redirect()->route('view.results.dashboard.with.sensitivity',['company'=>$company->id,'study'=>$study->id]);
 	}
 }

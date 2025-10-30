@@ -9,9 +9,14 @@ trait IsDepartment
 	{
 		return $this->name ;
 	}
-	public function getExpenseTypeId():string
+	public function getExpenseTypeId():?string
 	{
-		return $this->expense_type;
+		// dd($this);
+		// if($this->type == Department::MICROFINANCE){
+		// 	dd($this);
+		// 	// return $this
+		// }
+		return $this->positions->count() ? $this->positions->first()->expense_type : null;
 	}
 	public function getExpenseTypeName():string 
 	{

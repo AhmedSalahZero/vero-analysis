@@ -52,7 +52,7 @@ class DirectFactoringController extends Controller
 			$study->storeAdminFeesAndFundingStructureFor($request,Study::DIRECT_FACTORING);
 			$study->refreshDirectFactoringLoans();
 			$study->storeMonthlyLoan(Study::DIRECT_FACTORING,'directFactoringBreakdowns');
-			$study->updateExpensesPercentagesOfSales();
+			$study->updateExpensesPercentageAndCostPerUnitsOfSales();
 			if($request->get('save') == 'calculate-net-disbursement'){
 				return response()->json([
 					'redirectTo'=>route('create.direct.factoring.revenue.stream.breakdown',['company'=>$company->id,'study'=>$study->id]) 

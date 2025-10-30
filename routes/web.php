@@ -342,16 +342,16 @@ Route::middleware([])->group(function () {
                     
                     
                     route::get('departments', 'DepartmentController@index')->name('view.departments');
-                    route::get('departments/create', 'DepartmentController@create')->name('create.departments');
-                    route::post('departments/create', 'DepartmentController@store')->name('store.departments');
-                    route::get('departments/{department}/edit', 'DepartmentController@edit')->name('edit.departments');
-                    route::put('departments/{department}/update', 'DepartmentController@update')->name('update.departments');
+                    route::get('departments/create/{type}', 'DepartmentController@create')->name('create.departments');
+                    route::post('departments/create/{type}', 'DepartmentController@store')->name('store.departments');
+                    route::get('departments/{department}/edit/{type}', 'DepartmentController@edit')->name('edit.departments');
+                    route::put('departments/{department}/update/{type}', 'DepartmentController@update')->name('update.departments');
                     route::delete('departments/{department}/destroy', 'DepartmentController@destroy')->name('departments.destroy');
                     
                     // route::get('microfinance-departments/create','MicrofinanceDepartmentController@create')->name('create.microfinance-departments');
-                    route::post('microfinance-departments/create', 'MicrofinanceDepartmentController@store')->name('store.microfinance-departments');
-                    route::get('microfinance-departments/{microfinanceDepartment}/edit', 'MicrofinanceDepartmentController@edit')->name('edit.microfinance-departments');
-                    route::put('microfinance-departments/{microfinanceDepartment}/update', 'MicrofinanceDepartmentController@update')->name('update.microfinance-departments');
+                    // route::post('microfinance-departments/create', 'MicrofinanceDepartmentController@store')->name('store.microfinance-departments');
+                    // route::get('microfinance-departments/{microfinanceDepartment}/edit', 'MicrofinanceDepartmentController@edit')->name('edit.microfinance-departments');
+                    // route::put('microfinance-departments/{microfinanceDepartment}/update', 'MicrofinanceDepartmentController@update')->name('update.microfinance-departments');
                     
                     route::get('expense-names', 'ExpenseController@index')->name('view.expense.names');
                     route::get('expense-names/create', 'ExpenseController@create')->name('create.expense.names');

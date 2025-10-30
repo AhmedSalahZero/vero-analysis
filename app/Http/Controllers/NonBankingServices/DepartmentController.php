@@ -49,10 +49,10 @@ class DepartmentController extends Controller
     public function index(Company $company , Request $request){
 		$company->syncMicrofinanceDepartments();
 		$numberOfMonthsBetweenEndDateAndStartDate = 18 ;
-		$currentType = $request->get('active',Department::DEPARTMENT);
-		
+		$currentType = $request->get('active',Department::GENERAL);
+		$microfinanceDepartment = Department::where('company_id',$company->id)->where('type',Department::MICROFINANCE)->first();
 		$filterDates = [];
-		foreach([Department::DEPARTMENT , Department::MICROFINANCE_DEPARTMENT] as $type){
+		foreach([Department::GENERAL , Department::MICROFINANCE] as $type){
 			$startDate = $request->has('startDate') ? $request->input('startDate.'.$type) : now()->subMonths($numberOfMonthsBetweenEndDateAndStartDate)->format('Y-m-d');
 			$endDate = $request->has('endDate') ? $request->input('endDate.'.$type) : now()->format('Y-m-d');
 			
@@ -68,13 +68,13 @@ class DepartmentController extends Controller
 		 * * start of bank to safe internal money transfer 
 		 */
 		
-		$startDate = $filterDates[Department::DEPARTMENT]['startDate'] ?? null ;
-		$endDate = $filterDates[Department::DEPARTMENT]['endDate'] ?? null ;
-		$departments = $company->departments ;
+		$startDate = $filterDates[Department::GENERAL]['startDate'] ?? null ;
+		$endDate = $filterDates[Department::GENERAL]['endDate'] ?? null ;
+		$generalDepartments = $company->generalDepartments ;
 		$microfinanceDepartments = $company->microfinanceDepartments ;
 		// $departments =  $departments->filterByDateColumn('study_start_date',$startDate,$endDate) ;
-		$departments =  $currentType == Department::DEPARTMENT ? $this->applyFilter($request,$departments):$departments ;
-		$microfinanceDepartments =  $currentType == Department::MICROFINANCE_DEPARTMENT ? $this->applyFilter($request,$microfinanceDepartments):$microfinanceDepartments ;
+		$departments =  $currentType == Department::GENERAL ? $this->applyFilter($request,$generalDepartments):$generalDepartments ;
+		$microfinanceDepartments =  $currentType == Department::MICROFINANCE ? $this->applyFilter($request,$microfinanceDepartments):$microfinanceDepartments ;
 
 		/**
 		 * * end of bank to safe internal money transfer 
@@ -82,14 +82,14 @@ class DepartmentController extends Controller
 		 
 		
 		 $searchFields = [
-			Department::DEPARTMENT=>[
+			Department::GENERAL=>[
 				'name'=>__('Name'),
 			],
 		];
 	
 		$models = [
-			Department::DEPARTMENT =>$departments ,
-			Department::MICROFINANCE_DEPARTMENT =>$microfinanceDepartments ,
+			Department::GENERAL =>$departments ,
+			Department::MICROFINANCE =>$microfinanceDepartments ,
 		];
 
         return view('non_banking_services.departments.index', [
@@ -98,47 +98,60 @@ class DepartmentController extends Controller
 			'models'=>$models,
 			'filterDates'=>$filterDates,
 			'title'=>__('Departments'),
-			'tableTitle'=>__('Departments')
+			'tableTitle'=>__('Departments'),
+			'microfinanceDepartment'=>$microfinanceDepartment
 		]);
 		
 		
 		
 	}
-	public function create(Company $company , Request $request){
+	public function create(Company $company , Request $request,string $type){
 		
-		return view('non_banking_services.departments.form', $this->getViewVars($company));
+		return view('non_banking_services.departments.form', $this->getViewVars($company,$type,null));
 	}
-	protected function getViewVars(Company $company,$model = null){
+	protected function getViewVars(Company $company,string $type,$model = null){
+		
+		
 		return [
 			'company'=>$company ,
 			'department'=>$model ,
+	
+			'type'=>$type,
 			'title'=>__('Departments'),
-			'storeRoute'=>isset($model) ? route('update.departments',['company'=>$company->id,'department'=>$model->id]) :route('store.departments',['company'=>$company->id]),
+			'storeRoute'=>isset($model) ? route('update.departments',['company'=>$company->id,'department'=>$model->id,'type'=>$type]) :route('store.departments',['company'=>$company->id,'type'=>$type]),
 		];
 	}
-	public function store(Company $company , StoreDepartmentsRequest $request)
+	public function store(Company $company , StoreDepartmentsRequest $request,string $type)
 	{
-		$department = Department::create($this->getCommonData($request,$company));
-		$department->storeRepeaterRelations($request,['positions'],$company);
+		$department = Department::create($this->getCommonData($request,$company,$type));
+		$expenseType = $request->get('expense_type');
+		$department->storeRepeaterRelations($request,['positions'],$company,['expense_type'=>$expenseType]);
 		return response()->json([
 			'redirectTo'=>route('view.departments',['company'=>$company->id])
 		]);
 	}
-	public function getCommonData(Request $request,Company $company)
+	public function getCommonData(Request $request,Company $company,string $type)
 	{
 		return [
 			'name'=>$request->get('name'),
-			'expense_type'=>$request->get('expense_type'),
-			'type'=>'manpower',
+			// 'expense_type'=>$request->get('expense_type'),
+			'type'=>$type,
 			'company_id'=>$company->id 
 		];
 	}
-	public function edit(Request $request , Company $company , Department $department){
-		return view('non_banking_services.departments.form', $this->getViewVars($company,$department));
+	public function edit(Request $request , Company $company , Department $department,string $type){
+		if($type == Department::MICROFINANCE){
+			return view('non_banking_services.microfinance-departments.form', $this->getViewVars($company,$type,$department));
+		}
+		return view('non_banking_services.departments.form', $this->getViewVars($company,$type,$department));
 	}
-	public function update(Request $request , Company $company , Department $department){
-		$department->update($this->getCommonData($request,$company));
-		$department->storeRepeaterRelations($request,['positions'],$company);
+	public function update(Request $request , Company $company , Department $department,string $type){
+		$department->update($this->getCommonData($request,$company,$type));
+		$additionalData = $type == Department::GENERAL ? [
+			'expense_type'=>$request->get('expense_type')
+		] : [];
+		$department->storeRepeaterRelations($request,['positions'],$company,$additionalData);
+		
 		return response()->json([
 			'redirectTo'=>route('view.departments',['company'=>$company->id])
 		]);

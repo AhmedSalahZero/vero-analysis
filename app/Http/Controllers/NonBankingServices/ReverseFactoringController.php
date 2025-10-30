@@ -37,7 +37,7 @@ class ReverseFactoringController extends Controller
 			$study->storeAdminFeesAndFundingStructureFor($request,Study::REVERSE_FACTORING);
 			$study->storeMonthlyLoan(Study::REVERSE_FACTORING,'reverseFactoringBreakdowns');
 			$study->storeVariableLoans(Study::REVERSE_FACTORING,'reverseFactoringBreakdowns');
-			$study->updateExpensesPercentagesOfSales();
+			$study->updateExpensesPercentageAndCostPerUnitsOfSales();
 		return response()->json([
 			'redirectTo'=>$study->getRevenueRoute(Study::IJARA)
 		]);

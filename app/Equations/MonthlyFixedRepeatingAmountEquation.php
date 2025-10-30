@@ -21,19 +21,9 @@ class MonthlyFixedRepeatingAmountEquation
 			if(is_array($contractCount)){
 				$currentCount = $contractCount[$currentStartDateAsIndex]??0;
 			}
-			// if(is_array($accumulatedOpeningBranchesCounts)){
-			// 	$currentCount = $accumulatedOpeningBranchesCounts[$currentStartDateAsIndex]??0;
-			// }
 			$amountBeforeVat = $amount*$currentCount * $numberOfBranches ; 
-			
 			$amountAfterVat = $isDeductible ? $amountBeforeVat : $amountBeforeVat  * (1+($vatRate / 100));
-			
-			
-			
 			$currentIncreaseRate = is_array($increaseRate) ? $increaseRate[$dateIndexWithYearIndex[$currentStartDateAsIndex]-1]??0 : $increaseRate ;
-			// if(is_array($accumulatedOpeningBranchesCounts)){
-				
-			// }
 			if($counter!=0&&$counter % $intervalMode == 0){
 				$resultWithoutVat[$currentStartDateAsIndex] = $resultWithoutVat[$currentStartDateAsIndex-1] * (1+$currentIncreaseRate/100)  ; 
 				$withholdAmounts[$currentStartDateAsIndex]=$resultWithoutVat[$currentStartDateAsIndex] * $withholdRate / 100  ;

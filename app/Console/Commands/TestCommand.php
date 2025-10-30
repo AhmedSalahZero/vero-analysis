@@ -6,13 +6,15 @@ use App\Models\Company;
 use App\Models\FinancialStatement;
 use App\Models\MoneyPayment;
 use App\Models\NonBankingService\Study;
+use App\Models\NonBankingService\TestCashFlowStatement;
+use App\Models\NonBankingService\TestIncomeStatement;
 use App\Models\Partner;
 use App\ReadyFunctions\ConvertFlatRateToDecreasingRate;
 use App\Services\Api\OdooPayment;
 use App\Services\Api\OdooService;
 use Carbon\Carbon;
-use Illuminate\Console\Command;
 
+use Illuminate\Console\Command;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use MathPHP\Finance;
@@ -50,12 +52,32 @@ class TestCommand extends Command
 	}
 	public function handle()
 	{
-		// $x = (new ConvertFlatRateToDecreasingRate)->excel_rate(34,13);
-		// dd($x);
-		
-		// $x = $this->getTableNamesThatHasColumn('position_id',NON_BANKING_SERVICE_CONNECTION_NAME);;;
-		// dd($x);
-	
+		// TestCashFlowStatement::where('id','>',0)->delete();
+		// TestIncomeStatement::where('id','>',0)->delete();
+		// $cashIn = [
+		// 	100 , 200 , 300 
+		// ];
+		// $cashOut = [
+		// 	100 , 400 , 300 
+		// ];
+		// $OdaInterestsOut = [
+		// 	0 , 50 , 0 
+		// ];
+		// $incomeStatement = TestIncomeStatement::create([
+		// 	'oda_interests'=>$OdaInterestsOut
+		// ]);
+		// $cashflowStatement = TestCashFlowStatement::create([
+		// 	'oda_interests'=>$OdaInterestsOut
+		// ]);
+		// $incomeStatement->update([
+		// 	'revenues'=>[1000,2000,3000]
+		// ]);
+		// $incomeStatement->update([
+		// 	'corporate_taxes'=>[100 ]
+		// ]);
+		// $cashflowStatement->update([
+		// 	'corporate_taxes_payments'=>[100 ]
+		// ]);
 	}
 	
 	/**

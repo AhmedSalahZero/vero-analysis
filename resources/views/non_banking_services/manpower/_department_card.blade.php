@@ -101,7 +101,7 @@ $repeaterId = $tableId.'_repeater';
                             $currentValue = $manpower ? $manpower->getHiringCountsAtDateIndex($dateAsIndex) : 0;
                             $currentYearTotal+=$currentValue;
                             @endphp
-                            <x-repeat-right-dot-inputs :number-format-decimals="0" :mark="' '" :currentVal="$currentValue " data-group-index="{{ $currentYearRepeaterIndex }}" :classes="'repeater-with-collapse-input only-greater-than-or-equal-zero-allowed '" :is-percentage="true" :name="$name" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
+                            <x-repeat-right-dot-inputs :formattedInputClasses="$currentValue > 0 ? 'bg-manpower' :''" :number-format-decimals="0" :mark="' '" :currentVal="$currentValue" data-group-index="{{ $currentYearRepeaterIndex }}" :classes="'repeater-with-collapse-input only-greater-than-or-equal-zero-allowed  '  " :is-percentage="true" :name="$name" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
                         </div>
                     </td>
                     @php
