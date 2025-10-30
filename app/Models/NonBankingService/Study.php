@@ -4416,9 +4416,9 @@ class Study extends Model
                         }
                     }
                 } else {
-                    $bankPortfolioEndBalance = json_decode($loanSchedulePayment->endBalance, true);
-                    $currentEndBalance = $bankPortfolioEndBalance[$securitizationDate]??0 ;
-                    $currentBankPortfolioEndBalance = isset($result[$securitization->id]['bank_portfolio_end_balance_sum'])? $result[$securitization->id]['bank_portfolio_end_balance_sum'] + $currentEndBalance : $currentEndBalance;
+                    $bankPortfolioBeginningBalance = json_decode($loanSchedulePayment->beginning, true);
+                    $currentBeginningBalance = $bankPortfolioBeginningBalance[$securitizationDate]??0 ;
+                    $currentBankPortfolioEndBalance = isset($result[$securitization->id]['bank_portfolio_end_balance_sum'])? $result[$securitization->id]['bank_portfolio_end_balance_sum'] + $currentBeginningBalance : $currentBeginningBalance;
                     $result[$securitization->id]['bank_portfolio_end_balance_sum'] = $currentBankPortfolioEndBalance ;
                     $result[$securitization->id]['early_settlements_expense_amount'] = $earlySettlementExpenseRate * $currentBankPortfolioEndBalance;
                 }
