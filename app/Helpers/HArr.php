@@ -1167,4 +1167,12 @@ class HArr
         // dd($items,$result);
         // dd($items,$dateAsIndex);
     }
+	public static function fillMissedKeysByZero(array $items , array $dates , $value = 0 ){
+		$result = [];
+		foreach($dates as $dateAsIndex){
+			$currentValue = $items[$dateAsIndex] ?? $value ;
+			$result[$dateAsIndex] =$currentValue; 
+		}
+		return $result;
+	}
 }

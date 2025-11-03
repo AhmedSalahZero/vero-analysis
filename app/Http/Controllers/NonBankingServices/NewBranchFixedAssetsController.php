@@ -51,7 +51,7 @@ class NewBranchFixedAssetsController extends Controller
 		$fixedAssetType = $request->get('fixed_asset_type') ;
 		$oldIdsFromDatabase = $study->fixedAssets->where('type',$fixedAssetType)->pluck('id')->toArray();
 		$study->storeRepeaterRelations($request,$this->getRepeaterRelations(),$company,['type'=>$fixedAssetType],$oldIdsFromDatabase);
-		
+		$study->recalculateFixedAssets($fixedAssetType);
 		// $fundingStructureCounts = $study->getFixedAssetsWithCountsDates(FixedAsset::NEW_BRANCH);
 		// $loanStructure = $study->getLoanStructure($fixedAssetType);
         // $isFullyFundedThroughEquity = $request->input('generalFixedAssetsFundingStructure.is_fully_funded_though_equity');

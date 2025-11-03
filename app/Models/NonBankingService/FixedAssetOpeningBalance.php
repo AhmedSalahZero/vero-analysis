@@ -1,11 +1,12 @@
 <?php
 namespace App\Models\NonBankingService;
 
-
+use App\Helpers\HArr;
 use App\Models\NonBankingService\Study;
 use App\Traits\HasCollectionOrPaymentStatement;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\DB;
 
 class FixedAssetOpeningBalance extends Model
 {
@@ -33,7 +34,6 @@ class FixedAssetOpeningBalance extends Model
 	{
 			parent::boot();
 			static::saving(function(self $model){
-				// $statementPayload = $model->{self::getPayloadStatementColumn()} ?: [];
 				$openingBalance = $model->{self::getOpeningBalanceColumnName()};
 				$monthlyDepreciation = $model->monthly_depreciation ;
 				$dates = range(0,$model->monthly_counts-1);
@@ -51,15 +51,29 @@ class FixedAssetOpeningBalance extends Model
 					$accumulatedDepreciations[$dateAsIndex] = $currentAccumulated ;
 					$statement['end_balance'][$dateAsIndex] = $openingBalance-$currentAccumulated;
 				}
-				// dd($statement,$monthlyDepreciations,$accumulatedDepreciations,$endBalances);
-				// $dateIndexWithDate = $model->study->getDateIndexWithDate();
-				// $extendedStudyEndDate = $model->study->convertDateStringToDateIndex($model->study->getEndDate()) ;
-				// $dates = range(0,$extendedStudyEndDate);
-				// $debug = false ;
+				
 				$model->statement =$statement;
-				// if(!is_null($openingBalance)){
-				// }
+				
 			});
+			
+			static::saved(function(self $model){
+				$statements = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('fixed_asset_opening_balances')->where('study_id',$model->study->id)->pluck('statement')->toArray();
+				$dateWithDateIndex = $model->study->getDateWithDateIndex();
+				$studyDates = $model->study->getStudyDates() ;
+				$studyDates = array_keys($studyDates);
+				$totalMonthlyDepreciations = [];
+				foreach($statements as $statement){
+					$statement = json_decode($statement , true );
+					$monthlyDepreciations = $statement['monthly_depreciation']??[] ; 
+					$totalMonthlyDepreciations = HArr::sumAtDates([$totalMonthlyDepreciations , $monthlyDepreciations],$studyDates);
+				}
+				DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('income_statement_reports')->where('study_id',$model->study->id)->update([
+					'opening_depreciation_expenses'=>json_encode($totalMonthlyDepreciations)
+				]);
+
+			});
+			
+			
 	}
 	
 	

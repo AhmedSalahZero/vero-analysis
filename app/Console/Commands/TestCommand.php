@@ -52,6 +52,26 @@ class TestCommand extends Command
 	}
 	public function handle()
 	{
+		// $study  = Study::find(66);
+		// 	$securitizationRevenueTypes = [Study::LEASING,Study::IJARA,Study::MICROFINANCE];
+		// $loanSchedulePayments = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('loan_schedule_payments')->where('study_id',$study->id)->where('portfolio_loan_type','portfolio')->whereIn('revenue_stream_type',$securitizationRevenueTypes)->get();
+		// $portfolioEndBalancePerType=[];
+		// foreach($loanSchedulePayments as $loanSchedulePayment){
+		// 	$revenueStreamType = $loanSchedulePayment->revenue_stream_type;
+		// 	$securitizationDateIndex = $loanSchedulePayment->securitization_date_index;
+		// 	$endBalances = json_decode($loanSchedulePayment->endBalance,true);
+		// 	foreach($endBalances as $dateAsIndex => $endBalance){
+		// 		if(isSecuritized($securitizationDateIndex,$dateAsIndex)){
+		// 			$endBalance=  0;
+		// 		}
+		// 		$portfolioEndBalancePerType[$revenueStreamType][$dateAsIndex] = $endBalance;
+		// 	}
+		// }
+		// foreach($securitizationRevenueTypes as $revenueStreamType){
+		// 	$totalPortfolioEndBalance = $portfolioEndBalancePerType[$revenueStreamType]??[];
+		// 	$study->recalculateMonthlyAndAccumulatedEcl($revenueStreamType, $totalPortfolioEndBalance);
+		// }
+		
 		// TestCashFlowStatement::where('id','>',0)->delete();
 		// TestIncomeStatement::where('id','>',0)->delete();
 		// $cashIn = [

@@ -78,12 +78,16 @@ class FixedAsset extends Model
     {
         return $this->type;
     }
-    public function isGeneral()
+    public function isGeneral():bool
     {
         return $this->getType() == Self::FFE;
-    } public function isPerEmployee()
+    } public function isPerEmployee():bool 
     {
         return $this->getType() == Self::PER_EMPLOYEE;
+    }
+	 public function isPerNewBranch():bool 
+    {
+        return $this->getType() == Self::NEW_BRANCH;
     }
     public function getVatRate()
     {
@@ -453,11 +457,11 @@ class FixedAsset extends Model
         $studyEndDateAsIndex = $study->getStudyEndDateAsIndex($dateWithDateIndex, $studyEndDateAsString);
         $studyStartDateAsIndex = $study->getStudyStartDateAsIndex($dateWithDateIndex, $studyStartDateAsString);
         $increaseRate = $this->getCostAnnualIncreaseRate();
-		$withholdRate = $this->getWithholdTaxRate();
+        $withholdRate = $this->getWithholdTaxRate();
         $isDeductible = false ;
-        $result = (new MonthlyFixedRepeatingAmountEquation())->calculate($itemCost, $studyStartDateAsIndex, $studyEndDateAsIndex, 'annually', $increaseRate, $isDeductible,$vatRate , $withholdRate );
-		return $result['total_after_vat'][$dateAsIndex]??0;
-		
+        $result = (new MonthlyFixedRepeatingAmountEquation())->calculate($itemCost, $studyStartDateAsIndex, $studyEndDateAsIndex, 'annually', $increaseRate, $isDeductible, $vatRate, $withholdRate);
+        return $result['total_after_vat'][$dateAsIndex]??0;
+        
     
         
         
@@ -504,14 +508,30 @@ class FixedAsset extends Model
             $positions = $this->position_ids?:[] ;
             $result = [];
             foreach ($positions as $positionId) {
-                $manpower = Manpower::where('study_id', $this->study->id)->where('position_id', $positionId)->first();
-                $currentHiringCounts = $manpower->hiring_counts;
-                $result = HArr::sumAtDates([$result,$currentHiringCounts], $studyDates);
+                $manpowers = Manpower::where('study_id', $this->study->id)->where('position_id', $positionId)->get();
+				foreach($manpowers as $manpower){
+					$currentHiringCounts = $manpower->hiring_counts;
+					$result = HArr::sumAtDates([$result,$currentHiringCounts], $studyDates);
+				}
                 
             }
             return $result ;
         }
-        dd('no counts found');
+        if ($this->isPerNewBranch()) {
+			$studyDates = $this->study->getDateWithDateIndex();
+			$result = [];
+			foreach($this->study->newBranchMicrofinanceOpeningProjections as $newBranchOpeningProjections){
+				$currentCount = $newBranchOpeningProjections->counts;
+				$startDate = $newBranchOpeningProjections->start_date;
+				$currentItems = [$startDate => $currentCount ];
+				$currentItems = HArr::fillMissedKeysByZero($currentItems,$studyDates);
+				foreach($currentItems as $dateAsIndex => $count){
+					$result[$dateAsIndex] = isset($result[$dateAsIndex]) ? $result[$dateAsIndex] + $count : $count;
+				}
+			}
+			return $result;
+        }
+		dd('no counts found');
     }
     public function getFfeEquityPayment()
     {
