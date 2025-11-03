@@ -277,4 +277,14 @@ class Expense extends Model
 	{
 		return $this->start_date_type;
 	}
+	public static function getColumnMapping():array 
+	{
+		return [
+            'one_time_expense'=>'payload',
+            'percentage_of_sales'=>'total_after_vat',
+            'fixed_monthly_repeating_amount'=>'monthly_repeating_amounts',
+            'cost_per_unit'=>'monthly_repeating_amounts',
+            'expense_per_employee'=>'monthly_repeating_amounts',
+        ];
+	}
 }

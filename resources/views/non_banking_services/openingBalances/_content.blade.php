@@ -531,10 +531,10 @@ $hiringPopModels[] = $repeaterId;
         <div data-repeater-item class="container">
             <input type="hidden" name="id" value="{{ $model ? $model->id : 0 }}">
             <div class="row closest-parent pb-2  col-12">
-                <div class="col-2">
+                {{-- <div class="col-2">
                     <label>{{ __('VAT Amount') }}</label>
                     <input type="text" name="vat_amount" class="form-control " value="{{ $model ? $model->getVatAmount() : 0 }}">
-                </div>
+                </div> --}}
                 <div class="col-2">
                     <label>{{ __('Credit Withhold Taxes') }}</label>
                     <input type="text" name="credit_withhold_taxes" class="form-control " value="{{ $model ? $model->getCreditWithholdTaxes() : 0 }}">

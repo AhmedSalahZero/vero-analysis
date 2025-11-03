@@ -1,5 +1,5 @@
 @php
-	$tableClass = $isYearsStudy ? 'col-md-6 margin__left'  : 'col-md-12';
+	$tableClass =  'col-md-12';
 @endphp
 
 <x-tables.repeater-table :table-class="$tableClass" :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">

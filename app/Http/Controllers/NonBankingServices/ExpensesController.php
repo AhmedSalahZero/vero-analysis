@@ -55,10 +55,7 @@ class ExpensesController extends Controller
     public function store(
         Company $company,
         StoreExpensesRequest $request,
-        Study $study,
-        MonthlyFixedRepeatingAmountEquation $monthlyFixedRepeatingAmountEquation,
-        ExpenseAsPercentageEquation $expenseAsPercentageEquation,
-        OneTimeExpenseEquation $oneTimeExpenseEquation
+        Study $study
     ) {
         
         $modelId = $request->get('model_id');
@@ -66,9 +63,9 @@ class ExpensesController extends Controller
         $modelName = $request->get('model_name');
         $expenseType = $request->get('expense_type');
 		$expenseTypes = $request->get('tableIds',[]) ;
-        $studyId = $study->id;
+        // $studyId = $study->id;
         $datesAsStringDateIndex = $study->getDatesAsStringAndIndex();
-        $datesAsIndexAndString = array_flip($datesAsStringDateIndex);
+        // $datesAsIndexAndString = array_flip($datesAsStringDateIndex);
         $operationStartDateAsIndex = $datesAsStringDateIndex[$study->getOperationStartDate()];
         $studyExtendedEndDateAsIndex = Arr::last($datesAsStringDateIndex);
         $studyEndDateAsIndex = $study->getStudyEndDateAsIndex($datesAsStringDateIndex, $study->getStudyEndDate());

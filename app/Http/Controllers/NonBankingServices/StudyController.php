@@ -10,6 +10,7 @@ use Artisan;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class StudyController extends Controller
 {
@@ -129,6 +130,7 @@ class StudyController extends Controller
 	{
 		$studyStartDate = $request->get('study_start_date').'-01';
 		$operationStartDate = $request->get('operation_start_date') . '-01';
+		
 		$request->merge([
 			'study_start_date'=>Carbon::make($studyStartDate)->format('Y-m-d'),
 			'study_end_date'=>Carbon::make($request->get('study_end_date'))->format('Y-m-d'),
@@ -151,7 +153,19 @@ class StudyController extends Controller
 			$study->update($data);
 			$model = $study;
 		}
-
+		$incomeStatementExist=DB::connection('non_banking_service')->table('income_statement_reports')->where('study_id',$model->id)->first();
+		if(!$incomeStatementExist){
+			DB::connection('non_banking_service')->table('income_statement_reports')->insert([
+				'study_id'=>$model->id,
+				'company_id'=>$model->company->id,
+			]);
+			
+			DB::connection('non_banking_service')->table('cashflow_statement_reports')->insert([
+				'study_id'=>$model->id,
+				'company_id'=>$model->company->id,
+			]);
+			
+		}
 		/**
 		 * @var Study $model
 		 */

@@ -8133,7 +8133,7 @@ function getExpenseTypes():array
 	$costOfGoodsText = $isNonBanking ? __('Cost Of Service') : __('Cost Of Goods Sold');
 	return [
 		'cost-of-service'=>$costOfGoodsText,
-		'marketing-expense'=>__('Market Expense'),
+		'marketing-expense'=>__('Marketing Expense'),
 		'other-operation-expense'=>__('Other Operations Expenses'),
 		'sales-expense'=>__('Sales Expense'),
 		'general-expense'=>__('General Expense')

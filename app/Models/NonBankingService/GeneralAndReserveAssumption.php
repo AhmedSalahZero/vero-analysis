@@ -42,7 +42,14 @@ class  GeneralAndReserveAssumption extends Model
 					$study->storeFixedLoans(Study::LEASING,'leasingRevenueStreamBreakdown');
 					$study->storeFixedLoans(Study::IJARA,'ijaraMortgageBreakdowns');
 					$study->storeVariableLoans(Study::REVERSE_FACTORING,'reverseFactoringBreakdowns');
+					/**
+					 * ! Recalculate Portfolio Mortgage & Microfinance Bank Loans
+					 */
+					
 					$study->refreshDirectFactoringLoans();
+					
+					$study->recalculatePortfolioMortgage();
+					
 					$study->updateExpensesPercentageAndCostPerUnitsOfSales();
 				}
 				if($study->isDirty('salaries_annual_increase_rates')){

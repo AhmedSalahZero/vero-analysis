@@ -6,6 +6,7 @@ use App\Helpers\HArr;
 use App\Http\Controllers\Controller;
 use App\Models\Company;
 use App\Models\NonBankingService\EclAndNewPortfolioFundingRate;
+use App\Models\NonBankingService\Expense;
 use App\Models\NonBankingService\Manpower;
 use App\Models\NonBankingService\SecuritizationLoanSchedule;
 use App\Models\NonBankingService\Study;
@@ -16,20 +17,17 @@ use Illuminate\Support\Facades\DB;
 
 class IncomeStatementController extends Controller
 {
-    public function index(Company $company, Request $request, Study $study)
+    public function index(Company $company, Request $request, Study $study,$onlyViewVars = false )
     {
-        $start = microtime(true);
+        // $start = microtime(true);
         $dateIndexWithDate = app('dateIndexWithDate');
-        //	$yearIndexWithYear = app('yearIndexWithYear');
-        $corporateTaxes = $study->getCorporateTaxesRate() / 100 ;
-        //		$startDate = $study->getStudyStartDate();
-        //		$endDate = $study->getStudyEndDate();
         $formattedExpenses = [];
         $formattedResult = [];
         $salesRevenuePerTypes = [];
         $yearWithItsIndexes = $study->getOperationDurationPerYearFromIndexes();
         $monthsWithItsYear = $study->getMonthsWithItsYear($yearWithItsIndexes) ;
         $tableDataFormatted = [];
+			$yearIndexWithYear = app('yearIndexWithYear');
         $expenseMainTitlesMapping = getExpenseTypes();
         $loanSchedulePayments = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('loan_schedule_payments')->selectRaw('portfolio_loan_type,revenue_stream_type,interestAmount,securitization_date_index,endBalance')->where('study_id', $study->id)->get()->toArray();
         $defaultNumericInputClasses = [
@@ -56,7 +54,6 @@ class IncomeStatementController extends Controller
             'marketing-expense'=>4 ,
             'sales-expense'=>5,
             'general-expense'=>6,
-         //   'depreciation'=>7,
             'ebitda'=>7,
             'ecl'=>8,
             'ebit'=>9,
@@ -65,8 +62,8 @@ class IncomeStatementController extends Controller
             'corporate-taxes'=>12,
             'net-profit'=>13
         ];
-        //	$depreciationOrderIndex = $orderIndexPerExpenseCategory['depreciation'] ;
-        $financialYearsEndMonths = $study->getFinancialYearsEndMonths();
+		$isMonthlyStudy = $study->isMonthlyStudy();
+        // $financialYearsEndMonths = $study->getFinancialYearsEndMonths();
         $grossProfitOrderIndex = $orderIndexPerExpenseCategory['gross-profit'];
         $ebitdaOrderIndex = $orderIndexPerExpenseCategory['ebitda'];
         $eclAndDepreciationOrderIndex = $orderIndexPerExpenseCategory['ecl'];
@@ -122,9 +119,11 @@ class IncomeStatementController extends Controller
         //         'title'=>__('Securitization'),
         //     ], $defaultNumericInputClasses);
         // }
-        
-        
-        // $tableDataFormatted['cost-of-service']['main_items']['data'] = [];
+		
+		$yearWithItsIndexes = $study->getOperationDurationPerYearFromIndexes();
+		$monthsWithItsYear = $study->getMonthsWithItsYear($yearWithItsIndexes) ;
+		$monthsWithItsNumbers = $study->getMonthIndexWithMonthNumber($yearWithItsIndexes) ;
+		
         $tableDataFormatted[1]['main_items']['cost-of-service']['options']['title'] = __('Cost Of Service');
         $tableDataFormatted[1]['sub_items']['Interest Cost']['options']['title'] = __('Interest Cost');
         $tableDataFormatted[1]['sub_items']['Manpower Salaries']['options']['title'] = __('Manpower Salaries');
@@ -153,8 +152,6 @@ class IncomeStatementController extends Controller
         $tableDataFormatted[$ebitdaOrderIndex]['main_items']['ebitda']['options']['title'] = __('EBITDA');
         $tableDataFormatted[$ebitdaOrderIndex]['main_items']['% Of Revenue']['options']['title'] = __('% Of Revenue');
         $eclAndDepreciationKey = 'ecl-and-depreciation-expenses';
-        // $tableDataFormatted[$eclAndDepreciationOrderIndex]['main_items'][$eclAndDepreciationKey]['options']['title'] = __('ECL & Depreciation Cost');
-        //   $tableDataFormatted[$depreciationOrderIndex]['main_items'][$depreciationKey]['options']['title'] = __('Depreciation Expenses');
         $studyMonthsForViews = $study->getStudyDates();
         $studyMonthsForViews = array_slice($studyMonthsForViews, 0, $study->getViewStudyEndDateAsIndex()+1);
         $yearWithItsMonths=$study->getYearIndexWithItsMonths();
@@ -171,9 +168,9 @@ class IncomeStatementController extends Controller
         $tableDataFormatted[$netProfitOrderIndex]['main_items']['net-profit']['options']['title'] = __('Net Profit');
         $tableDataFormatted[$netProfitOrderIndex]['main_items']['% Of Revenue']['options']['title'] = __('% Of Revenue');
         
-        $resultPerRevenueStreamType = [
-            'all'=>[]
-        ];
+        // $resultPerRevenueStreamType = [
+        //     'all'=>[]
+        // ];
 
         $directFactoringBreakdown = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('direct_factoring_breakdowns')
         ->where('study_id', $study->id)
@@ -188,18 +185,27 @@ class IncomeStatementController extends Controller
             //    $currentMonthAsString = $dateIndexWithDate[$currentMonthIndex];
                 $currentInterestRevenue  = $interestRevenues[$currentMonthIndex]??0;
                 $currentBankInterestExpense = $bankInterestExpenses[$currentMonthIndex]??0;
+					$currentYearOrMonthIndex = $isMonthlyStudy ? $currentMonthIndex : $currentYearIndex ;
+					// dd($yearIndexWithYear,$currentYearOrMonthIndex);
+					$currentYearAsString = $yearIndexWithYear[$currentYearOrMonthIndex] ?? null ;
+					// dd($monthsWithItsNumbers,$currentMonthIndex);
+				$currentMonthNumber = $monthsWithItsNumbers[$currentMonthIndex]??null;
+				// dd($currentMonthNumber,$currentYearAsString);
+				$currentYearOrMonthAsString = $isMonthlyStudy ? $currentMonthNumber : $currentYearAsString; 
+				// dd($currentYearOrMonthAsString);
                 if (!is_null($currentMonthIndex)) {
+					// $resultPerRevenueStreamType['all'][$currentYearAsOrMonthString] = $currentInterestRevenue;
                     $formattedDirectFactoring['interest_revenue'][$currentMonthIndex] = isset($formattedDirectFactoring['interest_revenue'][$currentMonthIndex]) ? $formattedDirectFactoring['interest_revenue'][$currentMonthIndex] +  $currentInterestRevenue : $currentInterestRevenue;
                     $formattedDirectFactoring['bank_interest_expense'][$currentMonthIndex] = isset($formattedDirectFactoring['bank_interest_expense'][$currentMonthIndex]) ? $formattedDirectFactoring['bank_interest_expense'][$currentMonthIndex] +  $currentBankInterestExpense : $currentBankInterestExpense;
-                    $resultPerRevenueStreamType['direct-factoring'][$currentMonthIndex] = $formattedDirectFactoring['interest_revenue'][$currentMonthIndex];
-                    $salesRevenuePerTypes['direct-factoring'][$currentMonthIndex] = $resultPerRevenueStreamType['direct-factoring'][$currentMonthIndex];
+                    $resultPerRevenueStreamType['direct-factoring'][$currentYearOrMonthAsString] = $formattedDirectFactoring['interest_revenue'][$currentMonthIndex];
+                    $salesRevenuePerTypes['direct-factoring'][$currentMonthIndex] = $resultPerRevenueStreamType['direct-factoring'][$currentYearOrMonthAsString];
                     $currentDirectFactoringAtMonth = $salesRevenuePerTypes['direct-factoring'][$currentMonthIndex];
                     $tableDataFormatted[0]['sub_items']['direct-factoring']['data'][$currentMonthIndex] = $currentDirectFactoringAtMonth ;
-                    
-                    //        $salesRevenuePerTypes['total_revenue'][$currentMonthIndex] =  isset($salesRevenuePerTypes['total_revenue'][$currentMonthIndex]) ? $salesRevenuePerTypes['total_revenue'][$currentMonthIndex] + $currentDirectFactoringAtMonth : $currentDirectFactoringAtMonth;
+					$resultPerRevenueStreamType['all'][$currentYearOrMonthAsString] = isset($resultPerRevenueStreamType['all'][$currentYearOrMonthAsString]) ? $resultPerRevenueStreamType['all'][$currentYearOrMonthAsString] + $currentDirectFactoringAtMonth : $currentDirectFactoringAtMonth;
                 }
             }
         }
+		// dd($resultPerRevenueStreamType);
 		$totalEndBalanceForPortfolioPerRevenueType = [];
 		$studyDates = $study->getDateWithDateIndex();
         foreach ($loanSchedulePayments as $loanSchedulePaymentAsStdClass) {
@@ -211,17 +217,25 @@ class IncomeStatementController extends Controller
             $endBalances = json_decode($loanSchedulePaymentAsStdClass->endBalance,true);
 			
             foreach ($studyDates as $currentMonthIndex ) {
+					$currentYearIndex = $monthsWithItsYear[$currentMonthIndex]??null;
+				$currentYearOrMonthIndex = $isMonthlyStudy ? $currentMonthIndex : $currentYearIndex ;
 				$interestAmount = $interestAmounts[$currentMonthIndex]??0;
 				$endBalance = $endBalances[$currentMonthIndex]??0;
 				if(isSecuritized($securitizationDateIndex , $currentMonthIndex)){
 					$interestAmount = 0;
 					$endBalance = 0 ;
 				}
+				$currentYearAsString = $yearIndexWithYear[$currentYearOrMonthIndex] ?? null ;
+				$currentMonthNumber = $monthsWithItsNumbers[$currentMonthIndex]??null;
+				$currentYearOrMonthAsString = $isMonthlyStudy ? $currentMonthNumber : $currentYearAsString; 
                     if ($isPortfolio) {
 						$totalEndBalanceForPortfolioPerRevenueType[$revenueStreamType][$currentMonthIndex] = isset($totalEndBalanceForPortfolioPerRevenueType[$revenueStreamType][$currentMonthIndex]) ? $totalEndBalanceForPortfolioPerRevenueType[$revenueStreamType][$currentMonthIndex] + $endBalance : $endBalance;
                         $salesRevenuePerTypes[$revenueStreamType][$currentMonthIndex] =  isset($salesRevenuePerTypes[$revenueStreamType][$currentMonthIndex]) ? $salesRevenuePerTypes[$revenueStreamType][$currentMonthIndex] + $interestAmount : $interestAmount;
                         $salesRevenuePerTypes['total_revenue'][$currentMonthIndex] =  isset($salesRevenuePerTypes['total_revenue'][$currentMonthIndex]) ? $salesRevenuePerTypes['total_revenue'][$currentMonthIndex] + $interestAmount : $interestAmount;
                         $tableDataFormatted[0]['sub_items'][$revenueStreamType]['data'][$currentMonthIndex] = $salesRevenuePerTypes[$revenueStreamType][$currentMonthIndex];
+						$resultPerRevenueStreamType[$revenueStreamType][$currentYearOrMonthAsString] = isset($resultPerRevenueStreamType[$revenueStreamType][$currentYearOrMonthAsString]) ? $resultPerRevenueStreamType[$revenueStreamType][$currentYearOrMonthAsString] + $interestAmount : $interestAmount;
+						$resultPerRevenueStreamType['all'][$currentYearOrMonthAsString] = isset($resultPerRevenueStreamType['all'][$currentYearOrMonthAsString]) ? $resultPerRevenueStreamType['all'][$currentYearOrMonthAsString] + $interestAmount : $interestAmount;
+
                     } else {
 						$formattedResult['interest_cogs'][$currentMonthIndex] = isset($formattedResult['interest_cogs'][$currentMonthIndex]) ? $formattedResult['interest_cogs'][$currentMonthIndex] + $interestAmount : $interestAmount ;
                         $formattedExpenses['cost-of-service']['Interest Cost'][$currentMonthIndex]  = $formattedResult['interest_cogs'][$currentMonthIndex]??0 ;
@@ -245,7 +259,7 @@ class IncomeStatementController extends Controller
 
 		
 		// securitaization 
-		
+		// dd($resultPerRevenueStreamType);
 		$securitizationLoanSchedules = SecuritizationLoanSchedule::where('study_id', $study->id)->get();
 		  $securitizationBankLoanSettlements = [];
         $securitizationBankEarlySettlements = [];
@@ -320,14 +334,9 @@ class IncomeStatementController extends Controller
     
         
         $expenses = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('expenses')->where('study_id',$study->id)->join('expense_names', 'expense_names.id', '=', 'expenses.expense_name_id')->selectRaw('expenses.expense_category,expense_names.name as name,expenses.relation_name,expenses.monthly_repeating_amounts,expenses.total_after_vat,payload')->where('expenses.model_id', $study->id)->where('expenses.model_name', 'Study')->get()->toArray();
-        $columnPerTypes = [
-            'one_time_expense'=>'payload',
-            'percentage_of_sales'=>'total_after_vat',
-            'fixed_monthly_repeating_amount'=>'monthly_repeating_amounts',
-            'cost_per_unit'=>'monthly_repeating_amounts',
-            'expense_per_employee'=>'monthly_repeating_amounts',
-        ];
+        $columnPerTypes = Expense::getColumnMapping();
         $salaryExpensesForCategories = Manpower::getSalaryExpensesPerCategory($monthsWithItsYear, $study->id, $company->id);
+		// dd($salaryExpensesForCategories);
         foreach ($salaryExpensesForCategories as $manpowerCategory => $salaryExpensesForCategory) {
             foreach ($salaryExpensesForCategory as $monthIndex => $value) {
                 $currentOrderIndex = $orderIndexPerExpenseCategory[$manpowerCategory];
@@ -661,8 +670,14 @@ class IncomeStatementController extends Controller
         $study->incomeStatement ?  $study->incomeStatement->update($statementData) : $study->incomeStatement()->create($statementData);
         $studyMonthsForViews=$study->getStudyDurationPerYearFromIndexesForView();
         ksort($tableDataFormatted);
-	
-        return view('non_banking_services.income-statement.cash-flow', [
+		if($onlyViewVars){
+			return [
+				'tableDataFormatted'=>$tableDataFormatted,
+				'resultPerRevenueStreamType'=>$resultPerRevenueStreamType
+			];
+		}
+	// dd($tableDataFormatted);
+		$viewVars = [
             'company'=>$company,
             'studyMonthsForViews'=>$studyMonthsForViews,
             'title'=>__('Forecasted Income Statement'),
@@ -672,11 +687,11 @@ class IncomeStatementController extends Controller
             'study'=>$study,
             'salesRevenuePerTypes'=>$salesRevenuePerTypes,
             'tableDataFormatted'=>$tableDataFormatted,
-            // 'salaryExpensePerTypeAndExpenseTypes'=>$salaryExpensePerTypeAndExpenseTypes,
             'financialYearEndMonthNumber'=>$study->getFinancialYearEndMonthNumber(),
             'monthsWithItsYear'=>$monthsWithItsYear,
             'defaultClasses'=>$defaultClasses
-        ]);
+        ] ;
+        return view('non_banking_services.income-statement.cash-flow',$viewVars );
         
         
         

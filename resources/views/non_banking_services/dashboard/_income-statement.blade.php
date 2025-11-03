@@ -1,5 +1,5 @@
 @php
-	$tableClass = $isYearsStudy ? 'col-md-6'  : 'col-md-12';
+	$tableClass =  'col-md-12';
 @endphp
 <style>
 .expandable-percentage-input{
