@@ -29,7 +29,7 @@ class Manpower extends Model
 
 	public function getExistingCount():int 
 	{
-		return $this->existing_count;
+		return $this->existing_count??0;
 	}
 	public function getMonthlyNetSalary()
 	{
@@ -71,7 +71,6 @@ class Manpower extends Model
 					->where('study_id',$studyId)
 					// ->where('departments.type','manpower')
 					->selectRaw('expense_type,salary_expenses')->get();
-				// dd($salaryExpenses,$studyId,$companyId);	
         foreach ($salaryExpenses as $salaryExpense) {
             $expenseCategory = $salaryExpense->expense_type;
             $salaryExpensePayload = (array)json_decode($salaryExpense->salary_expenses);

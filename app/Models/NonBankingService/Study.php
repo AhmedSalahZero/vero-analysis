@@ -966,8 +966,9 @@ class Study extends Model
             
         }
     }
-    public function storeFixedLoans(string $revenueStreamType, string $relationName, bool $isSensitivity = false, array $pricingPerMonths = null):void
+    public function storeFixedLoans(Request $request, string $revenueStreamType, string $relationName, bool $isSensitivity = false, array $pricingPerMonths = null):void
     {
+        $this->storeAdminFeesAndFundingStructureFor($request, $revenueStreamType);
         $studyId  = $this->id ;
         $companyId = $this->company->id ;
         $study = $this ;
@@ -1055,12 +1056,8 @@ class Study extends Model
                     $loanService = $loanNature == 'fixed-at-end' ? $calculateFixedLoanAtEndService : $calculateFixedLoanAtBeginningService ;
                     $currentPortfolioLoans=[];
                     if (is_array($baseRatesMapping)) {
-                        // logger('from if');
-                        // logger(json_encode($baseRatesMapping));
                         $currentPortfolioLoans=$loanService->__calculateBasedOnDiffBaseRates($baseRatesMapping, $loanType, $currentMonth, $currentMonthlyLoanAmount, $currentMarginRate, $tenor, $installmentInterval, $installmentPaymentIntervalValue, $stepUp, $stepInterval, $stepDown, $stepInterval, $gracePeriod, $monthIndex, $dateWithDateIndex, $dateIndexWithDate);
-                        
                     } else {
-                        // logger('from else');
                         $currentPortfolioLoans=$loanService->__calculate([], -1, $loanType, $currentMonth, $currentMonthlyLoanAmount, $baseRatesMapping, $currentMarginRate, $tenor, $installmentInterval, $stepUp, $stepInterval, $stepDown, $stepInterval, $gracePeriod, $monthIndex, null, $pricingPerMonths);
                         $finalResult = $currentPortfolioLoans['final_result']??[];
                         unset($finalResult['totals']);
@@ -1140,26 +1137,11 @@ class Study extends Model
             $revenueStreamType.'_payment'=>json_encode($totalBankSchedulePayments),
             
         ]);
-		
-		
+        $study->recalculateMonthlyAndAccumulatedEcl($revenueStreamType, $totalPortfolioEndBalance);
         
-        
-        //  $this->recalculateMonthlyAndAccumulatedEcl($revenueStreamType, $totalPortfolioEndBalance);
-        // $eclRates = $eclAndNewPortfolioFundingRate ? $eclAndNewPortfolioFundingRate->ecl_rates: [];
-        
-        // $monthlyEclRates = $study->isMonthlyStudy() ? $eclRates : $this->convertYearToMonthIndexes($eclRates) ;
-        // // $loansEnd
-        // $monthlyEclValues = [];
-        // foreach ($monthlyEclRates as $dateAsIndex => $eclRate) {
-        //     $currentMonthPortfolioEndBalance  = $totalPortfolioEndBalance[$dateAsIndex]??0;
-        //     $eclRate = $eclRate / 100 ;
-        //     $monthlyEclValues[$dateAsIndex] =  $currentMonthPortfolioEndBalance * $eclRate;
+        // foreach($totalEndBalanceForPortfolioPerRevenueType as $revenueStreamType => $totalPortfolioEndBalance){
         // }
-        // $accumulatedEclValues = HArr::accumulateArray($monthlyEclValues);
-        // DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('ecl_and_new_portfolio_funding_rates')->where('study_id', $this->id)->where('revenue_stream_type', $revenueStreamType)->update([
-        //     'monthly_ecl_values'=>json_encode($monthlyEclValues),
-        //     'accumulated_ecl_values'=>json_encode($accumulatedEclValues),
-        // ]);
+        
         
     }
    
@@ -1374,6 +1356,8 @@ class Study extends Model
             $revenueStreamType.'_payment'=>json_encode($totalBankSchedulePayments),
             
         ]);
+        
+        $this->recalculateMonthlyAndAccumulatedEcl($revenueStreamType, $totalPortfolioEndBalance);
         
         $this->refresh();
     
@@ -1619,8 +1603,11 @@ class Study extends Model
         }
         return $result;
     }
-    public function refreshDirectFactoringLoans()
+    public function refreshDirectFactoringLoans($request)
     {
+        
+        $this->storeAdminFeesAndFundingStructureFor($request, Study::DIRECT_FACTORING);
+        
         $generalAndReserveAssumption = $this->generalAndReserveAssumption;
         /**
          * @var GeneralAndReserveAssumption $generalAndReserveAssumption
@@ -1783,6 +1770,10 @@ class Study extends Model
         
         
         $this->recalculateMonthlyAndAccumulatedEcl(Study::DIRECT_FACTORING, $totalPortfolioEndBalance);
+        $this->storeMonthlyLoan(Study::DIRECT_FACTORING, 'directFactoringBreakdowns');
+        $this->recalculateMonthlyAndAccumulatedEcl($revenueStreamType, $totalPortfolioEndBalance);
+        
+        
     }
     public static function getTitleForBreakdown(string $relationName):string
     {
@@ -2488,57 +2479,55 @@ class Study extends Model
     }
     public function storeAdminFeesAndFundingStructureFor(Request $request, string $revenueStreamType, array $portfolioMonthlyNewLoansFundingValues = [], array $occurrenceDates = [], array $totalMonthlyLoanPerMtls = [], array $totalMonthlyLoanPerOdas = [])
     {
-		$eclAndNewPortfolioFundingRate = $this->getEclAndNewPortfolioFundingRatesForStreamType($revenueStreamType);
-			// dd('d',$eclAndNewPortfolioFundingRate);
+        $eclAndNewPortfolioFundingRate = $this->getEclAndNewPortfolioFundingRatesForStreamType($revenueStreamType);
         // if ($request->has('admin_fees_rates')) {
-            $monthlyNewOdasFundingValues = [];
-            $isPortfolio = $revenueStreamType == Study::PORTFOLIO_MORTGAGE ;
-            $isMicrofinance = $revenueStreamType == Study::MICROFINANCE ;
-			$oldAdminFeesRates = $eclAndNewPortfolioFundingRate ? $eclAndNewPortfolioFundingRate->admin_fees_rates:[];
-			$oldNewLoansFundingValues = $eclAndNewPortfolioFundingRate ? $eclAndNewPortfolioFundingRate->new_loans_funding_values:[];
-			$oldEquityFundingValues = $eclAndNewPortfolioFundingRate ? $eclAndNewPortfolioFundingRate->equity_funding_values : [];
-            $adminFeesRates = $request->has('admin_fees_rates') ?  $request->get('admin_fees_rates', []) : $oldAdminFeesRates;
-            $newLoansFundingValues = $request->has('new_loans_funding_values' ) ?  $request->get('new_loans_funding_values', []) : $oldNewLoansFundingValues ;
-            $equityFundingValues = $request->has('equity_funding_values') ? $request->get('equity_funding_values') : $oldEquityFundingValues ;
-            $newLoansFundingValuesFormatted =  $newLoansFundingValues ;
-            // $newLoansFundingValuesForOdasFormatted =  $newLoansFundingValues ;
-            $loanAmounts = $this->getLoanAmountForAdminFeesForRevenueStreamType($revenueStreamType);
-            $monthlyAdminFeesAmount = $this->calculateMonthlyAdminFeesAmounts($revenueStreamType, $adminFeesRates, $loanAmounts, $occurrenceDates);
-            $monthlyNewLoansFundingValues = [];
-            if (!$isMicrofinance) {
-                $monthlyNewLoansFundingValues  = $this->isMonthlyStudy() ? $newLoansFundingValuesFormatted : $this->convertYearIndexToActiveMonthIndexes($newLoansFundingValuesFormatted);
-                $monthlyNewLoansFundingValues = $isPortfolio ? $portfolioMonthlyNewLoansFundingValues : $monthlyNewLoansFundingValues;
-            }
-            $oldEclRates = $eclAndNewPortfolioFundingRate ? $eclAndNewPortfolioFundingRate->ecl_rates : [];
-            $oldEquityFundingRates = $eclAndNewPortfolioFundingRate ? $eclAndNewPortfolioFundingRate->equity_funding_rates : [];
-            $oldNewLoansFundingRates = $eclAndNewPortfolioFundingRate ? $eclAndNewPortfolioFundingRate->new_loans_funding_rates	 : [];
-			//  = 
-            $data = [
-                'revenue_stream_type'=>$revenueStreamType,
-                'admin_fees_rates'=>$adminFeesRates,
-                'monthly_admin_fees_amounts'=>$monthlyAdminFeesAmount,
-                'ecl_rates'=> $request->has('ecl_rates') ?  $request->get('ecl_rates') : $oldEclRates ,
-                'equity_funding_rates'=>$request->has('equity_funding_rates') ? $request->get('equity_funding_rates') : $oldEquityFundingRates,
-                'equity_funding_values'=>$equityFundingValues,
-                'new_loans_funding_rates'=>$request->has('new_loans_funding_rates') ? $request->get('new_loans_funding_rates') : $oldNewLoansFundingRates ,
-                'new_loans_funding_values'=>$newLoansFundingValues,
-                'monthly_new_loans_funding_values'=>$isMicrofinance ? $totalMonthlyLoanPerMtls : $monthlyNewLoansFundingValues,
-                'monthly_new_odas_funding_values'=>$isMicrofinance ? $totalMonthlyLoanPerOdas : $monthlyNewOdasFundingValues,
-                'company_id'=>$this->company->id
-            ];
-            // dd($data);
+        $monthlyNewOdasFundingValues = [];
+        $isPortfolio = $revenueStreamType == Study::PORTFOLIO_MORTGAGE ;
+        $isMicrofinance = $revenueStreamType == Study::MICROFINANCE ;
+        $oldAdminFeesRates = $eclAndNewPortfolioFundingRate ? $eclAndNewPortfolioFundingRate->admin_fees_rates:[];
+        $oldNewLoansFundingValues = $eclAndNewPortfolioFundingRate ? $eclAndNewPortfolioFundingRate->new_loans_funding_values:[];
+        $oldEquityFundingValues = $eclAndNewPortfolioFundingRate ? $eclAndNewPortfolioFundingRate->equity_funding_values : [];
+        $adminFeesRates = $request->has('admin_fees_rates') ?  $request->get('admin_fees_rates', []) : $oldAdminFeesRates;
+        $newLoansFundingValues = $request->has('new_loans_funding_values') ?  $request->get('new_loans_funding_values', []) : $oldNewLoansFundingValues ;
+        $equityFundingValues = $request->has('equity_funding_values') ? $request->get('equity_funding_values') : $oldEquityFundingValues ;
+        $newLoansFundingValuesFormatted =  $newLoansFundingValues ;
+        // $newLoansFundingValuesForOdasFormatted =  $newLoansFundingValues ;
+        $loanAmounts = $this->getLoanAmountForAdminFeesForRevenueStreamType($revenueStreamType);
+        $monthlyAdminFeesAmount = $this->calculateMonthlyAdminFeesAmounts($revenueStreamType, $adminFeesRates, $loanAmounts, $occurrenceDates);
+        $monthlyNewLoansFundingValues = [];
+        if (!$isMicrofinance) {
+            $monthlyNewLoansFundingValues  = $this->isMonthlyStudy() ? $newLoansFundingValuesFormatted : $this->convertYearIndexToActiveMonthIndexes($newLoansFundingValuesFormatted);
+            $monthlyNewLoansFundingValues = $isPortfolio ? $portfolioMonthlyNewLoansFundingValues : $monthlyNewLoansFundingValues;
+        }
+        $oldEclRates = $eclAndNewPortfolioFundingRate ? $eclAndNewPortfolioFundingRate->ecl_rates : [];
+        $oldEquityFundingRates = $eclAndNewPortfolioFundingRate ? $eclAndNewPortfolioFundingRate->equity_funding_rates : [];
+        $oldNewLoansFundingRates = $eclAndNewPortfolioFundingRate ? $eclAndNewPortfolioFundingRate->new_loans_funding_rates	 : [];
+        //  =
+        $data = [
+            'revenue_stream_type'=>$revenueStreamType,
+            'admin_fees_rates'=>$adminFeesRates,
+            'monthly_admin_fees_amounts'=>$monthlyAdminFeesAmount,
+            'ecl_rates'=> $request->has('ecl_rates') ?  $request->get('ecl_rates') : $oldEclRates ,
+            'equity_funding_rates'=>$request->has('equity_funding_rates') ? $request->get('equity_funding_rates') : $oldEquityFundingRates,
+            'equity_funding_values'=>$equityFundingValues,
+            'new_loans_funding_rates'=>$request->has('new_loans_funding_rates') ? $request->get('new_loans_funding_rates') : $oldNewLoansFundingRates ,
+            'new_loans_funding_values'=>$newLoansFundingValues,
+            'monthly_new_loans_funding_values'=>$isMicrofinance ? $totalMonthlyLoanPerMtls : $monthlyNewLoansFundingValues,
+            'monthly_new_odas_funding_values'=>$isMicrofinance ? $totalMonthlyLoanPerOdas : $monthlyNewOdasFundingValues,
+            'company_id'=>$this->company->id
+        ];
             
-            if ($eclAndNewPortfolioFundingRate) {
-                $eclAndNewPortfolioFundingRate->update($data);
-            } else {
-                $eclAndNewPortfolioFundingRate = $this->eclAndNewPortfolioFundingRates()->create($data);
-            }
-            $this->refresh();
-            return [
-                'monthly_new_odas_funding_values'=>$monthlyNewOdasFundingValues,
-                'monthly_new_loans_funding_values'=>$monthlyNewLoansFundingValues,
-                'eclAndNewPortfolioFundingRate'=>$eclAndNewPortfolioFundingRate
-            ];
+        if ($eclAndNewPortfolioFundingRate) {
+            $eclAndNewPortfolioFundingRate->update($data);
+        } else {
+            $eclAndNewPortfolioFundingRate = $this->eclAndNewPortfolioFundingRates()->create($data);
+        }
+        $this->refresh();
+        return [
+            'monthly_new_odas_funding_values'=>$monthlyNewOdasFundingValues,
+            'monthly_new_loans_funding_values'=>$monthlyNewLoansFundingValues,
+            'eclAndNewPortfolioFundingRate'=>$eclAndNewPortfolioFundingRate
+        ];
             
         // }
         return [
@@ -3523,7 +3512,6 @@ class Study extends Model
  
         
         
-        // dd($totalExpenses);
         $totalExistOtherCreditors = HArr::sumAtDates([$totalOtherCreditorsOpeningBalances,$totalAccruedInterestExpenses,$totalExpenses,$totalWithholdEndBalancePerCategories,$totalCorporateTaxes,$salaryStatementEndBalances,$totalDirectFactoringUnearnedRevenues,$portfolioEndBalances,$totalFixedAssetPayables], $sumKeys);
         $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabIndex]['data'] = $totalExistOtherCreditors;
         $tableDataFormatted[$currentTabIndex]['main_items'][$currentTabIndex]['year_total'] =HArr::getPerYearIndexForEndBalance($totalExistOtherCreditors, $yearWithItsMonths);
@@ -4031,7 +4019,6 @@ class Study extends Model
                     // $monthlyAmountsAndContractsPerProductIds[$productId]['contract_counts'][$dateAsIndex] = isset($monthlyAmountsAndContractsPerProductIds[$productId]['contract_counts'][$dateAsIndex]) ? $monthlyAmountsAndContractsPerProductIds[$productId]['contract_counts'][$dateAsIndex] + $currentCases : $currentCases;
               
                 }
-                // dd($monthlyLoanAmounts);
                 $microfinanceProductSalesProject->update([
                     'total_cases_counts'=>$currentTotalCases,
                     'monthly_loan_amounts'=>$monthlyLoanAmounts
@@ -4052,17 +4039,13 @@ class Study extends Model
                 // unset($yearWithItsMonths[array_key_last($yearWithItsMonths)]);
                 $totalExistingCasesCountsPerYear = HArr::sumPerYearIndex($totalExistingCasesCounts, $yearWithItsMonths);
                 $totalNewOfficersCaseCountPerYear = HArr::sumPerYearIndex($totalNewOfficersCaseCount, $yearWithItsMonths);
-                // dd($yearWithItsMonths);
                 $years = count($totalNewOfficersCaseCountPerYear) ? array_keys($totalNewOfficersCaseCountPerYear) : array_keys($totalExistingCasesCountsPerYear);
                 $totalCasesPerYear = HArr::sumAtDates([$totalCasesPerYear,$totalExistingCasesCountsPerYear,$totalNewOfficersCaseCountPerYear], $years);
-                // dd($totalCasesPerYear);
                
             });
-            // dd($totalExistingCasesCountsPerYear , $totalNewOfficersCaseCountPerYear);
             $result = [];
             $this->microfinanceProductSalesProjects->where('type', $type)->each(function (MicrofinanceProductSalesProject $microfinanceProductSalesProject) use ($totalCasesPerYear, &$result, $monthIndexWithYearIndex) {
                 // $productId = $microfinanceProductSalesProject->microfinance_product_id;
-                // dd($totalCasesPerYear);
                 foreach ($microfinanceProductSalesProject->product_mixes?:[] as $yearIndex => $productMixRate) {
                     $currentTotalCase = array_values($totalCasesPerYear)[$yearIndex]??0;
                     $result[$yearIndex] = $productMixRate /100  * $currentTotalCase;
@@ -4074,20 +4057,13 @@ class Study extends Model
                 foreach ($monthlySeasonality as $monthIndex => $seasonalityValue) {
                     $currentYearIndex = $monthIndexWithYearIndex[$monthIndex];
                     $currentResult = ($result[$currentYearIndex]??0) *$seasonalityValue;
-                    // if($monthIndex == 48){
-                    // 	dd($result,$currentYearIndex,$result[$currentYearIndex] , $seasonalityValue);
-                    // }
+                    
                     $currentCases = $currentResult;
                     $monthlyCases[$monthIndex] = $currentCases    ;
                     $currentMonthlyLoanAmount = $currentCases  * ($monthlyAmounts[$monthIndex]??0);
                     $monthlyLoanAmounts[$monthIndex] = isset($monthlyLoanAmounts[$monthIndex]) ?  $monthlyLoanAmounts[$monthIndex] + $currentMonthlyLoanAmount:$currentMonthlyLoanAmount;
-                    // $monthlyAmountsAndContractsPerProductIds[$productId]['monthly_loan_amounts'][$monthIndex] = isset($monthlyAmountsAndContractsPerProductIds[$productId]['monthly_loan_amounts'][$monthIndex]) ? $monthlyAmountsAndContractsPerProductIds[$productId]['monthly_loan_amounts'][$monthIndex] + $currentMonthlyLoanAmount : $currentMonthlyLoanAmount;
-                    // $monthlyAmountsAndContractsPerProductIds[$productId]['contract_counts'][$monthIndex] = isset($monthlyAmountsAndContractsPerProductIds[$productId]['contract_counts'][$monthIndex]) ? $monthlyAmountsAndContractsPerProductIds[$productId]['contract_counts'][$monthIndex] + $currentCases : $currentCases;
-                    
                 }
-                // dd($monthlyCases);
-                //	logger($microfinanceLoanOfficerCasesProjection->id.'-'.$microfinanceProductSalesProject->id.'-'. json_encode($monthlyCases));
-                // dd('monthly',$monthlyCases);
+            
                 
                 $microfinanceProductSalesProject->update([
                     'monthly_loan_amounts'=>$monthlyLoanAmounts,
@@ -4131,14 +4107,15 @@ class Study extends Model
         }
         
     }
-    public function saveManpowerForm($request, $manpowerType = 'general', $branchId = null)
+    public function saveManpowerForm($request, $manpowerType = 'general', $branchId = null , $newBranchesHiringCounts = null)
     {
         $study = $this;
         $dateAsIndexes = $study->getDateWithDateIndex();
         $company = $this->company;
         foreach ($request->get('manpowers', []) as $positionId => $manpowerArr) {
             $position = Position::find($positionId);
-            $manpower = $position->manpowers->where('type', $manpowerType)->where('study_id', $study->id)->first() ;
+			
+            $manpower = $position->manpowers->where('type', $manpowerType)->where('branch_id',$branchId)->where('study_id', $study->id)->first() ;
             $manpower = $manpower ?:new Manpower ;
             $manpower->position_id = $positionId;
             $manpower->type = $manpowerType;
@@ -4147,17 +4124,16 @@ class Study extends Model
             $manpower->company_id = $company->id;
             $hiringCounts = $manpowerArr['hiring_counts'];
             $manpower->hiring_counts = $hiringCounts;
+			$hiringCounts = is_null($newBranchesHiringCounts) ? $hiringCounts : $newBranchesHiringCounts[$positionId];
             $monthlyNetSalary = $manpowerArr['monthly_net_salary'];
             $manpower->monthly_net_salary =$monthlyNetSalary ;
-            $currentExistingCount = $manpowerArr['existing_count'];
+            $currentExistingCount = $manpowerArr['existing_count']??0;
             $manpower->existing_count = $currentExistingCount;
             $operationStartDateAsIndex = $study->operation_start_month;
             $salaryTaxesRate = $study->getSalaryTaxesRate() / 100;
             $socialInsuranceRate = $study->getSocialInsuranceRate() /100 ;
+			
             $additionalDatabaseResult =  $study->calculateManpowerResult($dateAsIndexes, $currentExistingCount, $hiringCounts, $operationStartDateAsIndex, $monthlyNetSalary, $salaryTaxesRate, $socialInsuranceRate);
-        
-        
-                
             foreach ($additionalDatabaseResult as $columnName => $payload) {
                 $manpower[$columnName] = $payload;
             }
@@ -4165,17 +4141,17 @@ class Study extends Model
                 
         }
         $this->updateExpensesPerEmployee();
-		
-		
-		$yearWithItsIndexes = $study->getOperationDurationPerYearFromIndexes();
-		$monthsWithItsYear = $study->getMonthsWithItsYear($yearWithItsIndexes) ;
-		$studyId = $this->id ;
-		$companyId = $this->company->id ;
-		$expenseSalariesPerCategories = Manpower::getSalaryExpensesPerCategory($monthsWithItsYear,$studyId, $companyId);
-		DB::connection('non_banking_service')->table('income_statement_reports')->where('study_id', $this->id)->update([
-			'manpower_expenses'=>json_encode($expenseSalariesPerCategories)
-		]);
-		
+        
+        
+        $yearWithItsIndexes = $study->getOperationDurationPerYearFromIndexes();
+        $monthsWithItsYear = $study->getMonthsWithItsYear($yearWithItsIndexes) ;
+        $studyId = $this->id ;
+        $companyId = $this->company->id ;
+        $expenseSalariesPerCategories = Manpower::getSalaryExpensesPerCategory($monthsWithItsYear, $studyId, $companyId);
+        DB::connection('non_banking_service')->table('income_statement_reports')->where('study_id', $this->id)->update([
+            'manpower_expenses'=>json_encode($expenseSalariesPerCategories)
+        ]);
+        
     }
     
     
@@ -4185,7 +4161,7 @@ class Study extends Model
      * * الافضل نسيفها بالكامل الاول بعدين نعمل اعادة حسبه
      */
     
-    public function handleFixedRepeatingExpenses(Request $request, array $accumulatedOpeningBranchesCounts = null)
+    public function handleFixedRepeatingExpenses(Request $request, array $accumulatedOpeningBranchesCounts = null , $branchId = null)
     {
         $modelId = $request->get('model_id');
         $modelName = $request->get('model_name');
@@ -4204,8 +4180,9 @@ class Study extends Model
         $model = ('\App\Models\\NonBankingService\\'.$modelName)::find($modelId);
         foreach (['fixed_monthly_repeating_amount'] as $tableId) {
             #::delete all
-            $model->generateRelationDynamically($tableId, $expenseType)->delete();
+            $model->generateRelationDynamically($tableId, $expenseType)->where('branch_id',$branchId)->delete();
             foreach ((array)$request->get($tableId) as $tableDataArr) {
+                $tableDataArr['branch_id'] = $branchId;
                 $tableDataArr['start_date_type'] = $tableDataArr['start_date_type']??null;
                 $tableDataArr['study_id'] = $this->id;
                 $withholdRate = $tableDataArr['withhold_tax_rate']??0;
@@ -4257,10 +4234,14 @@ class Study extends Model
                     $amount = $tableDataArr['amount']??0 ;
                     // $isDeductible = false;
                     $dateIndexWithYearIndex = $this->getDatesIndexWithYearIndex();
-                    $startDateType = $tableDataArr['start_date_type'] ;
-                    $accumulatedOpeningBranchesCounts = $accumulatedOpeningBranchesCounts[$startDateType]??null;
+					$startDateType = $tableDataArr['start_date_type'] ;
+                    $currentAccumulatedOpeningBranchesCounts = $accumulatedOpeningBranchesCounts[$startDateType]??null;
+					if($currentAccumulatedOpeningBranchesCounts && count($currentAccumulatedOpeningBranchesCounts)){
+						$tableDataArr['start_date'] = array_key_first($currentAccumulatedOpeningBranchesCounts);
+						
+					}
                 
-                    $monthlyFixedRepeatingResults = $monthlyFixedRepeatingAmountEquation->calculate($amount, $tableDataArr['start_date'], $loopEndDate, $tableDataArr['increase_interval']??'annually', $tableDataArr['increase_rates']??0, $isDeductible, $vatRate, $withholdRate, $dateIndexWithYearIndex, $accumulatedOpeningBranchesCounts, $numberOfBranches);
+                    $monthlyFixedRepeatingResults = $monthlyFixedRepeatingAmountEquation->calculate($amount, $tableDataArr['start_date'], $loopEndDate, $tableDataArr['increase_interval']??'annually', $tableDataArr['increase_rates']??0, $isDeductible, $vatRate, $withholdRate, $dateIndexWithYearIndex, $currentAccumulatedOpeningBranchesCounts, $numberOfBranches);
                 
                     /**
                      * * دي القيمة اللي هتدخل في الاكسبنس
@@ -4324,7 +4305,7 @@ class Study extends Model
         
         return [
             'start-date'=>$startDates, //key name is start-date
-            'end-date'=>$operationDates, //key name is start-date
+            'operation-date'=>$operationDates, //key name is operation-date
         ];
     }
     public function securitizations():HasMany
@@ -4447,7 +4428,6 @@ class Study extends Model
                     $baseRatesPerMonths[Carbon::make($dateIndexWithDate[$monthIndex])->format('Y-m-d')] = $decreasingRates[$yearOrMonthIndex];
                 }
             }
-            // dd();
         
             $rates = $isPortfolio ? $baseRatesPerMonths :  $this->generalAndReserveAssumption->getBaseRatesPerMonths();
         
@@ -4500,7 +4480,6 @@ class Study extends Model
                 })->toArray();
             }
         });
-        // dd($portfolioLoans);
         DB::connection('non_banking_service')->table('loan_schedule_payments')->insert($portfolioLoans);
         return [
            'total_interests'=>$totalInterests,
@@ -4596,7 +4575,6 @@ class Study extends Model
         $odasPerYear = $this->generalAndReserveAssumption->getOdasBankLendingMarginRates();
         $odasLendingRatesPerMonths =$isMonthlyStudy ? $odasPerYear: $this->convertYearlyArrayToMonthly($odasPerYear, $operationDurationPerYearFromIndexes);
         $rates = HArr::sumAtDates([$cbeLendingRatesPerMonths,$odasLendingRatesPerMonths], $sumKeys);
-        // dd();
         
         
         $minCash = 0;
@@ -4606,7 +4584,6 @@ class Study extends Model
             $currentRate = $currentRate / 100 / 12 ;
             $currentWithdrawalAmount = $odasWithdrawal[$dateAsIndex]??0;
             $currentNetCashBeforeWorkingCapital = $netCashBeforeWorkingCapital[$dateAsIndex]??0;
-            // dd($currentNetCashBeforeWorkingCapital);
             $result['opening_balances'][$dateAsIndex] = $openingBalance ;
             $result['withdrawals'][$dateAsIndex] = $currentWithdrawalAmount ;
             $beforeSettlement = $openingBalance + $currentWithdrawalAmount ;
@@ -4662,7 +4639,6 @@ class Study extends Model
          */
         
         
-        //   dd($tableDataFormatted);
           
         /**
          * * Start ODAs Settlements
@@ -4937,10 +4913,7 @@ class Study extends Model
                     } elseif ($isCostPerUnit) {
                         $amount = $tableDataArr['monthly_cost_of_unit'];
                     }
-                    // if(count($accumulatedManpowerPowersForAllSelectedPositions)){
-                    // 	dd($accumulatedManpowerPowersForAllSelectedPositions);
-                    // }
-                    // $isDeductible = false;
+                 
                    
                     $monthlyFixedRepeatingResults = [];
                     if ($isCostPerUnit) {
@@ -5017,13 +4990,8 @@ class Study extends Model
                     $tableDataArr['payment_amounts'] = $payments;
                     $tableDataArr['net_payments_after_withhold']=$netPaymentsAfterWithhold;
                     $tableDataArr['withhold_statements']=$this->calculateWithholdStatement($withholdPayments, 0, $dateIndexWithDate);
-                    // dd($this->calculateStatement($tableDataArr['expense_as_percentages'], $tableDataArr['total_vat'], $netPaymentsAfterWithhold, $withholdPayments, $dateIndexWithDate, $this));
 
                     $tableDataArr['collection_statements']   =$this->calculateCollectionStatement($tableDataArr['expense_as_percentages'], $tableDataArr['total_vat'], $netPaymentsAfterWithhold, $withholdPayments, $dateIndexWithDate, $this);
-                    
-                    // $currentColumn = $expenseColumnNames[$tableId];
-                    // $currentSubItem = $tableDataArr[$currentColumn];
-                    // $totalPerTypes[$expenseCategory][$expenseNameId] = isset($totalPerTypes[$expenseCategory][$expenseNameId]) ? HArr::sumAtDates([$totalPerTypes[$expenseCategory][$expenseNameId],$currentSubItem],$studyDates) : $currentSubItem;
         
                     
                     
@@ -5058,40 +5026,30 @@ class Study extends Model
                     $tableDataArr['collection_statements']   =$this->calculateCollectionStatement($amountBeforeVatPayload, $tableDataArr['total_vat'], $netPaymentsAfterWithhold, $withholdPayments, $dateIndexWithDate, $this);
                 
                 }
-                
-                // $currentColumn = $expenseColumnNames[$tableId];
-                // $currentSubItem = $tableDataArr[$currentColumn];
-                // $totalPerTypes[$expenseCategory][$expenseNameId] = isset($totalPerTypes[$expenseCategory][$expenseNameId]) ? HArr::sumAtDates([$totalPerTypes[$expenseCategory][$expenseNameId],$currentSubItem], $studyDates) : $currentSubItem;
-        
-                
-                // if ($name) {
-                    // $model->generateRelationDynamically($tableId, $expenseType)->create($tableDataArr);
-                // }
-                // dd($tableDataArr);
+              
                 $tableDataArr->save();
                 
                 
             }
         }
-		/**
-		 * * Sum Expenses For Income Statement Table 
-		 */
-		$expenses = Expense::where('study_id',$this->id)->get();
-		// initial values ;
-		foreach (getExpenseTypes() as $expenseType => $expenseTitle){
-			$totalPerTypes[$expenseType] = [];
-		}
-		foreach($expenses as $expense){
-				$tableId = $expense->relation_name;
-				$expenseCategory =$expense['expense_category']; 
-				$expenseNameId = $expense['expense_name_id'];
-				 $currentColumn = $expenseColumnNames[$tableId];
-                $currentSubItem = $expense[$currentColumn];
-                $totalPerTypes[$expenseCategory][$expenseNameId] = isset($totalPerTypes[$expenseCategory][$expenseNameId]) ? HArr::sumAtDates([$totalPerTypes[$expenseCategory][$expenseNameId],$currentSubItem], $studyDates) : $currentSubItem;
-		}
-		// dd($totalPerTypes);
+        /**
+         * * Sum Expenses For Income Statement Table
+         */
+        $expenses = Expense::where('study_id', $this->id)->get();
+        // initial values ;
+        foreach (getExpenseTypes() as $expenseType => $expenseTitle) {
+            $totalPerTypes[$expenseType] = [];
+        }
+        foreach ($expenses as $expense) {
+            $tableId = $expense->relation_name;
+            $expenseCategory =$expense['expense_category'];
+            $expenseNameId = $expense['expense_name_id'];
+            $currentColumn = $expenseColumnNames[$tableId];
+            $currentSubItem = $expense[$currentColumn];
+            $totalPerTypes[$expenseCategory][$expenseNameId] = isset($totalPerTypes[$expenseCategory][$expenseNameId]) ? HArr::sumAtDates([$totalPerTypes[$expenseCategory][$expenseNameId],$currentSubItem], $studyDates) : $currentSubItem;
+        }
         foreach ($totalPerTypes as $expenseCategory => &$totalPerType) {
-			$totalPerType = json_encode($totalPerType);
+            $totalPerType = json_encode($totalPerType);
         }
         DB::connection('non_banking_service')->table('income_statement_reports')->where('study_id', $this->id)->update($totalPerTypes);
         
@@ -5139,97 +5097,107 @@ class Study extends Model
     
         
     }
-	public function recalculatePortfolioMortgage($request = null ){
-		if(is_null($request)){
-			$request = new Request;
-		}
-		$revenueStreamType = Study::PORTFOLIO_MORTGAGE;
-		
-		    $operationDates = range($this->getOperationStartDateAsIndex(), $this->getStudyEndDateAsIndex());
+    public function recalculatePortfolioMortgage($request)
+    {
+        
+        $revenueStreamType = Study::PORTFOLIO_MORTGAGE;
+        
+        $operationDates = range($this->getOperationStartDateAsIndex(), $this->getStudyEndDateAsIndex());
         $dateIndexWithDate = app('dateIndexWithDate');
-		$sumKeys = $this->getDateWithDateIndex();
+        $sumKeys = $this->getDateWithDateIndex();
         $isMonthlyStudy = $this->isMonthlyStudy();
-		
+        
         $operationDurationPerYearFromIndexes = $this->getOperationDurationPerYearFromIndexes();
         $baseRatePerYear = $this->generalAndReserveAssumption->getCbeLendingCorridorRates();
-		$eclAndNewPortfolioFundingRate = $this->getEclAndNewPortfolioFundingRatesForStreamType($revenueStreamType);
-        $portfolioLoanFundingRatesPerYear = $request->has('new_loans_funding_rates') ? $request->input('new_loans_funding_rates') : ($eclAndNewPortfolioFundingRate ? $eclAndNewPortfolioFundingRate->new_loans_funding_rates : [] )  ;
-		// dd($portfolioLoanFundingRatesPerYear,$request->input('new_loans_funding_rates'));
+        $eclAndNewPortfolioFundingRate = $this->getEclAndNewPortfolioFundingRatesForStreamType($revenueStreamType);
+        $portfolioLoanFundingRatesPerYear = $request->has('new_loans_funding_rates') ? $request->input('new_loans_funding_rates') : ($eclAndNewPortfolioFundingRate ? $eclAndNewPortfolioFundingRate->new_loans_funding_rates : [])  ;
         $bankMarginRatesPerYears = $this->generalAndReserveAssumption->getBankLendingMarginRates();
-		// dd($bankMarginRatesPerYears);
         $bankMarginRatesPerMonths = $isMonthlyStudy ? $bankMarginRatesPerYears : $this->convertYearlyArrayToMonthly($bankMarginRatesPerYears, $operationDurationPerYearFromIndexes);
         $cbeLendingRatesPerMonths =$isMonthlyStudy ? $baseRatePerYear: $this->convertYearlyArrayToMonthly($baseRatePerYear, $operationDurationPerYearFromIndexes);
         $portfolioLoanFundingRatesPerMonths = $isMonthlyStudy ? $portfolioLoanFundingRatesPerYear :  $this->convertYearlyArrayToMonthly($portfolioLoanFundingRatesPerYear, $operationDurationPerYearFromIndexes);
-		$eclAndNewPortfolioFundingRate = null ;
-		$totalMonthlyLoanAmounts = [];
-		$totalPortfolioMonthlyLoanAmounts = [];
-		$totalInterests = [];
-		$totalBankInterests = [];
-		$totalSchedulePayments = [];
-		$totalBankSchedulePayments = [];
-        foreach ($this->portfolioMortgageRevenueProjectionByCategories as  $portfolioMortgageRevenueProjectionByCategory) {
-			// dd($portfolioMortgageRevenueProjectionByCategory);
-			// $portfolioMortgageRevenueProjectionByCategory = $study->portfolioMortgageRevenueProjectionByCategories[$currentIndex] ;
+        $eclAndNewPortfolioFundingRate = null ;
+        $totalMonthlyLoanAmounts = [];
+        $totalPortfolioMonthlyLoanAmounts = [];
+        $totalInterests = [];
+        $totalBankInterests = [];
+        $totalSchedulePayments = [];
+        $totalBankSchedulePayments = [];
+        foreach ($this->portfolioMortgageRevenueProjectionByCategories as $portfolioMortgageRevenueProjectionByCategory) {
             $portfolioMortgageCategoryId = $portfolioMortgageRevenueProjectionByCategory->id;
-			// dd($portfolioMortgageRevenueProjectionByCategory['portfolio_mortgage_duration']);
-			// totalMonthlyAmountsPerYears
             $tenor = $portfolioMortgageRevenueProjectionByCategory['portfolio_mortgage_duration'];
             $portfolioMortgageTransactionAmountsPerYears = $portfolioMortgageRevenueProjectionByCategory['portfolio_mortgage_transactions_projections'];
             $marginRate = $portfolioMortgageRevenueProjectionByCategory['margin_rate'];
-			$monthlyStudyOccurrenceDates = HArr::onlyKeysWithValues($portfolioMortgageRevenueProjectionByCategory['portfolio_mortgage_transactions_projections']??[]);
-			$monthlyStudyOccurrenceDates = [$monthlyStudyOccurrenceDates];
+            $monthlyStudyOccurrenceDates = HArr::onlyKeysWithValues($portfolioMortgageRevenueProjectionByCategory['portfolio_mortgage_transactions_projections']??[]);
+            $monthlyStudyOccurrenceDates = [$monthlyStudyOccurrenceDates];
             $frequencyPerYear = $portfolioMortgageRevenueProjectionByCategory['frequency_per_year']??[];
             $startFromPerYear = $portfolioMortgageRevenueProjectionByCategory['start_from']??[];
-            $portfolioPresentValueResult = (new PortfolioPresentValue())->calculate($monthlyStudyOccurrenceDates,$this, $dateIndexWithDate, $portfolioLoanFundingRatesPerMonths, $operationDurationPerYearFromIndexes, $tenor, $startFromPerYear, $frequencyPerYear, $portfolioMortgageTransactionAmountsPerYears, $cbeLendingRatesPerMonths, $marginRate, $bankMarginRatesPerMonths, $this->company->id, $this->id, $portfolioMortgageCategoryId);
-			$totalInterests = HArr::sumAtDates([$totalInterests,$portfolioPresentValueResult['totalInterests']??[]],$operationDates); 
-			$totalBankInterests = HArr::sumAtDates([$totalBankInterests,$portfolioPresentValueResult['totalBankInterests']??[]],$operationDates); 
-			$totalSchedulePayments = HArr::sumAtDates([$totalSchedulePayments,$portfolioPresentValueResult['totalSchedulePayments']??[]],$operationDates); 
-			$totalBankSchedulePayments = HArr::sumAtDates([$totalBankSchedulePayments,$portfolioPresentValueResult['totalBankSchedulePayments']??[]],$operationDates); 
-			unset($portfolioPresentValueResult['totalInterests']);
-			unset($portfolioPresentValueResult['totalBankInterests']);
-			unset($portfolioPresentValueResult['totalSchedulePayments']);
-			unset($portfolioPresentValueResult['totalBankSchedulePayments']);
-			$portfolioMortgageRevenueProjectionByCategory->update([
-				'total_monthly_amounts_per_years'=>$portfolioPresentValueResult['total_monthly_amounts_per_years']
-			]);
+            $portfolioPresentValueResult = (new PortfolioPresentValue())->calculate($monthlyStudyOccurrenceDates, $this, $dateIndexWithDate, $portfolioLoanFundingRatesPerMonths, $operationDurationPerYearFromIndexes, $tenor, $startFromPerYear, $frequencyPerYear, $portfolioMortgageTransactionAmountsPerYears, $cbeLendingRatesPerMonths, $marginRate, $bankMarginRatesPerMonths, $this->company->id, $this->id, $portfolioMortgageCategoryId);
+            $totalInterests = HArr::sumAtDates([$totalInterests,$portfolioPresentValueResult['totalInterests']??[]], $operationDates);
+            $totalBankInterests = HArr::sumAtDates([$totalBankInterests,$portfolioPresentValueResult['totalBankInterests']??[]], $operationDates);
+            $totalSchedulePayments = HArr::sumAtDates([$totalSchedulePayments,$portfolioPresentValueResult['totalSchedulePayments']??[]], $operationDates);
+            $totalBankSchedulePayments = HArr::sumAtDates([$totalBankSchedulePayments,$portfolioPresentValueResult['totalBankSchedulePayments']??[]], $operationDates);
+            unset($portfolioPresentValueResult['totalInterests']);
+            unset($portfolioPresentValueResult['totalBankInterests']);
+            unset($portfolioPresentValueResult['totalSchedulePayments']);
+            unset($portfolioPresentValueResult['totalBankSchedulePayments']);
+            $portfolioMortgageRevenueProjectionByCategory->update([
+                'total_monthly_amounts_per_years'=>$portfolioPresentValueResult['total_monthly_amounts_per_years']
+            ]);
             DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('portfolio_mortgage_revenue_projection_by_categories')->where('id', $portfolioMortgageCategoryId)->update($portfolioPresentValueResult);
                 
             $portfolioMonthlyLoanAmounts = [] ;
             foreach ($portfolioPresentValueResult['statement']??[] as $monthIndex => $portfolioMonthlyLoanArr) {
-				$netPresentValue = $portfolioMonthlyLoanArr['net_present_value']??0;
+                $netPresentValue = $portfolioMonthlyLoanArr['net_present_value']??0;
                 $portfolioMonthlyLoanAmounts[$monthIndex] = $netPresentValue;
                 $totalPortfolioMonthlyLoanAmounts[$monthIndex] = isset($totalPortfolioMonthlyLoanAmounts[$monthIndex]) ? $totalPortfolioMonthlyLoanAmounts[$monthIndex] + $netPresentValue : $netPresentValue;
             }
-			
+            
             $bankMonthlyLoanAmounts = [] ;
             foreach ($portfolioPresentValueResult['statement']??[] as $monthIndex => $portfolioMonthlyLoanArr) {
-				$bankMonthlyLoanAmounts[$monthIndex] = $portfolioMonthlyLoanArr['bank_loan_amount']??0;
+                $bankMonthlyLoanAmounts[$monthIndex] = $portfolioMonthlyLoanArr['bank_loan_amount']??0;
             }
-    		$occurrenceDates = HArr::onlyLastValuesInMultiArr($portfolioPresentValueResult['occurrence_dates']);
-			$currentResult = $this->storeAdminFeesAndFundingStructureFor($request, Study::PORTFOLIO_MORTGAGE, $bankMonthlyLoanAmounts,$occurrenceDates);
-			$currentMonthlyLoanFundingValues = $currentResult['monthly_new_loans_funding_values'];
-			$eclAndNewPortfolioFundingRate = $currentResult['eclAndNewPortfolioFundingRate'];
-			$totalMonthlyLoanAmounts = HArr::sumAtDates([$totalMonthlyLoanAmounts , $currentMonthlyLoanFundingValues ],$sumKeys);
-			
-				// $study->storeMonthlyLoan(Study::PORTFOLIO_MORTGAGE,'portfolioMortgageRevenueProjectionByCategories', $totalPortfolioMonthlyLoanAmounts);
+            $occurrenceDates = HArr::onlyLastValuesInMultiArr($portfolioPresentValueResult['occurrence_dates']);
+            $currentResult = $this->storeAdminFeesAndFundingStructureFor($request, Study::PORTFOLIO_MORTGAGE, $bankMonthlyLoanAmounts, $occurrenceDates);
+            $currentMonthlyLoanFundingValues = $currentResult['monthly_new_loans_funding_values'];
+            $eclAndNewPortfolioFundingRate = $currentResult['eclAndNewPortfolioFundingRate'];
+            $totalMonthlyLoanAmounts = HArr::sumAtDates([$totalMonthlyLoanAmounts , $currentMonthlyLoanFundingValues ], $sumKeys);
+            
+            // $study->storeMonthlyLoan(Study::PORTFOLIO_MORTGAGE,'portfolioMortgageRevenueProjectionByCategories', $totalPortfolioMonthlyLoanAmounts);
             
         }
-		DB::connection('non_banking_service')->table('income_statement_reports')->where('study_id',$this->id)->update([
-			$revenueStreamType.'_revenue'=>json_encode($totalInterests),
-			$revenueStreamType.'_bank_interest'=>json_encode($totalBankInterests),	
-		]);
-		DB::connection('non_banking_service')->table('cashflow_statement_reports')->where('study_id',$this->id)->update([
-				$revenueStreamType.'_collection'=>json_encode($totalSchedulePayments),
-			$revenueStreamType.'_payment'=>json_encode($totalBankSchedulePayments),
-			
-		]);
-		
-		
-		$this->storeMonthlyLoan(Study::PORTFOLIO_MORTGAGE,'portfolioMortgageRevenueProjectionByCategories');
-		if($eclAndNewPortfolioFundingRate){
-			$eclAndNewPortfolioFundingRate->update([
-				'monthly_new_loans_funding_values'=>$totalMonthlyLoanAmounts
-			]);
-		}
-	}
+        DB::connection('non_banking_service')->table('income_statement_reports')->where('study_id', $this->id)->update([
+            $revenueStreamType.'_revenue'=>json_encode($totalInterests),
+            $revenueStreamType.'_bank_interest'=>json_encode($totalBankInterests),
+        ]);
+        DB::connection('non_banking_service')->table('cashflow_statement_reports')->where('study_id', $this->id)->update([
+                $revenueStreamType.'_collection'=>json_encode($totalSchedulePayments),
+            $revenueStreamType.'_payment'=>json_encode($totalBankSchedulePayments),
+            
+        ]);
+        
+        
+        $this->storeMonthlyLoan(Study::PORTFOLIO_MORTGAGE, 'portfolioMortgageRevenueProjectionByCategories');
+        if ($eclAndNewPortfolioFundingRate) {
+            $eclAndNewPortfolioFundingRate->update([
+                'monthly_new_loans_funding_values'=>$totalMonthlyLoanAmounts
+            ]);
+        }
+    }
+    public function recalculateAllRevenuesLoans($request, $isSensitivity = false)
+    {
+        $this->storeFixedLoans($request, Study::LEASING, 'leasingRevenueStreamBreakdown', $isSensitivity);
+        $this->refreshDirectFactoringLoans($request);
+        $this->storeVariableLoans($request, Study::REVERSE_FACTORING, 'reverseFactoringBreakdowns', $isSensitivity);
+        $this->storeFixedLoans($request, Study::IJARA, 'ijaraMortgageBreakdowns', $isSensitivity);
+        $this->recalculatePortfolioMortgage($request);
+        $this->updateExpensesPercentageAndCostPerUnitsOfSales();
+                                
+    }
+    public function getProductMixSeniorLoanOfficersAt(int $yearOrDateIndex, $isSenior = null)
+    {
+        if ($isSenior) {
+            return $this->product_mix_senior_loan_officers[$yearOrDateIndex];
+        }
+        return $this->product_mix_loan_officers[$yearOrDateIndex];
+    }
 }

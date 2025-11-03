@@ -186,15 +186,10 @@ class IncomeStatementController extends Controller
                 $currentInterestRevenue  = $interestRevenues[$currentMonthIndex]??0;
                 $currentBankInterestExpense = $bankInterestExpenses[$currentMonthIndex]??0;
 					$currentYearOrMonthIndex = $isMonthlyStudy ? $currentMonthIndex : $currentYearIndex ;
-					// dd($yearIndexWithYear,$currentYearOrMonthIndex);
 					$currentYearAsString = $yearIndexWithYear[$currentYearOrMonthIndex] ?? null ;
-					// dd($monthsWithItsNumbers,$currentMonthIndex);
 				$currentMonthNumber = $monthsWithItsNumbers[$currentMonthIndex]??null;
-				// dd($currentMonthNumber,$currentYearAsString);
 				$currentYearOrMonthAsString = $isMonthlyStudy ? $currentMonthNumber : $currentYearAsString; 
-				// dd($currentYearOrMonthAsString);
                 if (!is_null($currentMonthIndex)) {
-					// $resultPerRevenueStreamType['all'][$currentYearAsOrMonthString] = $currentInterestRevenue;
                     $formattedDirectFactoring['interest_revenue'][$currentMonthIndex] = isset($formattedDirectFactoring['interest_revenue'][$currentMonthIndex]) ? $formattedDirectFactoring['interest_revenue'][$currentMonthIndex] +  $currentInterestRevenue : $currentInterestRevenue;
                     $formattedDirectFactoring['bank_interest_expense'][$currentMonthIndex] = isset($formattedDirectFactoring['bank_interest_expense'][$currentMonthIndex]) ? $formattedDirectFactoring['bank_interest_expense'][$currentMonthIndex] +  $currentBankInterestExpense : $currentBankInterestExpense;
                     $resultPerRevenueStreamType['direct-factoring'][$currentYearOrMonthAsString] = $formattedDirectFactoring['interest_revenue'][$currentMonthIndex];
@@ -205,7 +200,6 @@ class IncomeStatementController extends Controller
                 }
             }
         }
-		// dd($resultPerRevenueStreamType);
 		$totalEndBalanceForPortfolioPerRevenueType = [];
 		$studyDates = $study->getDateWithDateIndex();
         foreach ($loanSchedulePayments as $loanSchedulePaymentAsStdClass) {
@@ -336,6 +330,7 @@ class IncomeStatementController extends Controller
         $expenses = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('expenses')->where('study_id',$study->id)->join('expense_names', 'expense_names.id', '=', 'expenses.expense_name_id')->selectRaw('expenses.expense_category,expense_names.name as name,expenses.relation_name,expenses.monthly_repeating_amounts,expenses.total_after_vat,payload')->where('expenses.model_id', $study->id)->where('expenses.model_name', 'Study')->get()->toArray();
         $columnPerTypes = Expense::getColumnMapping();
         $salaryExpensesForCategories = Manpower::getSalaryExpensesPerCategory($monthsWithItsYear, $study->id, $company->id);
+		// dd($salaryExpensesForCategories);
 		// dd($salaryExpensesForCategories);
         foreach ($salaryExpensesForCategories as $manpowerCategory => $salaryExpensesForCategory) {
             foreach ($salaryExpensesForCategory as $monthIndex => $value) {

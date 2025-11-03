@@ -66,12 +66,15 @@ $months = $study->getMicrofinanceMonths() ;
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    @php
+                                    $currentTotals=[];
+                                    @endphp
                                     @foreach($products as $product)
                                     @php
                                     $subModel = $model->microfinanceProductSalesProjects->where('type',$type)->where('branch_id',$branchId)->where('microfinance_product_id',$product->id)->first();
-									
-									$productMix = $study->microfinanceByBranchProductMixes->where('microfinance_product_id',$product->id)->first();
-									
+
+                                    $productMix = $study->microfinanceByBranchProductMixes->where('microfinance_product_id',$product->id)->first();
+
                                     @endphp
                                     <input type="hidden" name="microfinanceProductSalesProjects[{{ $product->id }}][id]" value="{{ $subModel  ? $subModel->id : 0 }}">
                                     <input type="hidden" name="microfinanceProductSalesProjects[{{ $product->id }}][type]" value="{{ $branchPlanningBaseType }}">
@@ -81,7 +84,6 @@ $months = $study->getMicrofinanceMonths() ;
                                     <tr data-repeat-formatting-decimals="0" data-repeater-style>
                                         <td class="td-classes">
                                             <div>
-
                                                 <input value="{{ $product->getName() }}" disabled="" class="form-control text-left min-w-300" type="text">
                                             </div>
 
@@ -90,6 +92,9 @@ $months = $study->getMicrofinanceMonths() ;
                                         <td>
                                             @php
                                             $currentVal = $subModel ? $subModel->getTenor() : 12;
+                                            if($isByBranch){
+                                            $currentVal = $productMix->tenor;
+                                            }
                                             $tenorClass = 'tenor-class'.$product->id
                                             // $product->name
                                             @endphp
@@ -100,7 +105,9 @@ $months = $study->getMicrofinanceMonths() ;
                                         <td>
                                             @php
                                             $currentVal = $subModel ? $subModel->getAvgAmount() : 0 ;
-											
+                                            if($isByBranch){
+                                            $currentVal = $productMix->avg_amount;
+                                            }
                                             @endphp
                                             <x-repeat-right-dot-inputs :readonly="$isByBranch" :removeThreeDots="true" :removeCurrency="true" :currentVal="$currentVal" :classes="'only-greater-than-zero-allowed'" :is-percentage="false" :name="'microfinanceProductSalesProjects['.$product->id.'][avg_amount]'" :columnIndex="-1"></x-repeat-right-dot-inputs>
                                         </td>
@@ -110,33 +117,34 @@ $months = $study->getMicrofinanceMonths() ;
                                             <div class="d-flex align-items-center increase-rate-parent">
                                                 <button class="btn btn-primary btn-md text-nowrap increase-rate-trigger-btn" type="button" data-toggle="modal">{{ __('Increase Rates') }}</button>
                                                 <x-modal.increase-rates :product="$product" :isByBranch="$isByBranch" :name="'microfinanceProductSalesProjects['.$product->id.'][increase_rates]'" :study="$study" :subModel="isset($subModel) ? $subModel : null "></x-modal.increase-rates>
-												
-												
+
+
                                             </div>
                                         </td>
                                         @endif
-
                                         <td>
-											@if($isByBranch)
-											<x-repeat-right-dot-inputs-with-diff-inputs :isNumber="false" :readonly="true" :removeThreeDots="true" :removeCurrency="true" :currentVal="isset($subModel) ? $subModel->getFundedBy():0"  :currentFormattedVal="isset($subModel) ? $subModel->getFundedByFormatted():0" :classes="'only-greater-than-zero-allowed'" :is-percentage="false" :name="'microfinanceProductSalesProjects['.$product->id.'][funded_by]'" :columnIndex="-1"></x-repeat-right-dot-inputs-with-diff-inputs>
-											@else
-                                            <x-form.select  :readonly="$isByBranch" :required="true" :label="''" :pleaseSelect="false" :selectedValue="isset($subModel) ? $subModel->getFundedBy():0" :options="getMicrofinanceFundingBySelector()" :add-new="false" class="select2-select min-w-120 repeater-select  " :all="false" name="microfinanceProductSalesProjects[{{ $product->id }}][funded_by]"></x-form.select>
-											@endif 
+                                            @if($isByBranch)
+                                            {{-- {{ dd($productMix->getFundedByFormatted()) }} --}}
+                                            <x-repeat-right-dot-inputs-with-diff-inputs :isNumber="false" :readonly="true" :removeThreeDots="true" :removeCurrency="true" :currentVal="isset($productMix) ? $productMix->getFundedBy():''" :currentFormattedVal="isset($productMix) ? $productMix->getFundedByFormatted():0" :classes="'only-greater-than-zero-allowed'" :is-percentage="false" :name="'microfinanceProductSalesProjects['.$product->id.'][funded_by]'" :columnIndex="-1"></x-repeat-right-dot-inputs-with-diff-inputs>
+                                            @else
+                                            <x-form.select :readonly="false" :required="true" :label="''" :pleaseSelect="false" :selectedValue="isset($subModel) ? $subModel->getFundedBy():0" :options="getMicrofinanceFundingBySelector()" :add-new="false" class="select2-select min-w-120 repeater-select  " :all="false" name="microfinanceProductSalesProjects[{{ $product->id }}][funded_by]"></x-form.select>
+                                            @endif
                                         </td>
 
 
                                         @php
                                         $columnIndex = 0 ;
+
                                         @endphp
                                         @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
-
                                         <td>
-
                                             @php
                                             $currentVal = $subModel ? $subModel->getProductMixAtYearOrMonthIndex($yearOrMonthAsIndex) : 0;
+
+                                            $currentTotals[$yearOrMonthAsIndex] = isset($currentTotals[$yearOrMonthAsIndex]) ? $currentTotals[$yearOrMonthAsIndex] + $currentVal : $currentVal ;
                                             @endphp
 
-                                            <x-repeat-with-calc :numberFormatDecimals="2" :formattedInputClasses="'calcField '" :mark="'%'" :removeThreeDots="false" :removeCurrency="true" :currentVal="number_format($currentVal,1)" :classes="''" :is-percentage="true" :name="'microfinanceProductSalesProjects['.$product->id.'][product_mixes]['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-with-calc>
+                                            <x-repeat-with-calc :numberFormatDecimals="2" :formattedInputClasses="'calcField '" :mark="'%'" :removeThreeDots="false" :removeCurrency="true" :currentVal="number_format($currentVal,1)" :classes="'product-input-class'" :is-percentage="true" :name="'microfinanceProductSalesProjects['.$product->id.'][product_mixes]['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-with-calc>
                                         </td>
                                         @php
                                         $columnIndex++ ;
@@ -147,6 +155,79 @@ $months = $study->getMicrofinanceMonths() ;
 
                                     </tr>
                                     @endforeach
+
+                                    <tr data-repeat-formatting-decimals="2" data-repeater-style>
+
+                                        <td>
+                                            <div class="">
+                                                <input value="{{ __('Total') }}" disabled class="form-control text-left mt-2 " type="text">
+                                            </div>
+                                        </td>
+
+                                        <td>
+                                            <div class="text-center">
+                                                -
+                                            </div>
+                                        </td>
+
+                                        <td>
+                                            <div class="text-center">
+                                                -
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="text-center">
+                                                -
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="text-center">
+                                                -
+                                            </div>
+                                        </td>
+
+
+                                        @php
+                                        $columnIndex = 0 ;
+                                        @endphp
+                                        @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
+                                        @php
+                                        $currentLoanTotal = 0 ;
+                                        @endphp
+                                        <td>
+                                            <div class="d-flex align-items-center justify-content-center">
+
+
+                                                <div class="form-group three-dots-parent">
+                                                    <div class="input-group input-group-sm align-items-center justify-content-center flex-nowrap">
+                                                        <div class="input-hidden-parent">
+                                                            <input readonly class="form-control copy-value-to-his-input-hidden sum-total-row  expandable-percentage-input  repeat-to-right-input-formatted  " type="text" value="{{ number_format($currentTotals[$yearOrMonthAsIndex]??0,1)}}" data-column-index="{{ $columnIndex }}">
+                                                        </div>
+
+                                                        <span class="ml-2 currency-class">
+                                                            %
+                                                        </span>
+
+
+                                                    </div>
+
+                                                </div>
+
+
+
+                                            </div>
+                                        </td>
+                                        @php
+                                        $columnIndex++ ;
+                                        @endphp
+
+                                        @endforeach
+
+
+
+
+
+                                    </tr>
 
 
 
@@ -187,18 +268,19 @@ $months = $study->getMicrofinanceMonths() ;
 
                                             <th class=" form-label font-weight-bold text-center align-middle  header-border-down">{!! $monthName .' <br> ' . __('Seasonality %') !!}</th>
                                             @endfor
+                                            <th class=" form-label font-weight-bold text-center align-middle  header-border-down">{{ __('Total') }}</th>
 
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach($products as $product)
                                     @php
+                                    $totalSeasonality=0;
                                     $subModel = $model->microfinanceProductSalesProjects->where('type',$type)->where('branch_id',$branchId)->where('microfinance_product_id',$product->id)->first();
                                     @endphp
-                                    <tr data-repeat-formatting-decimals="0" data-repeater-style>
+                                    <tr data-repeat-formatting-decimals="3" data-repeater-style>
                                         <td class="td-classes">
                                             <div>
-
                                                 <input value="{{ $product->getName() }}" disabled="" class="form-control text-left min-w-300" type="text">
                                             </div>
 
@@ -211,12 +293,12 @@ $months = $study->getMicrofinanceMonths() ;
                                         @for($i = 1 ; $i<= 12 ; $i++ ) @php $i=sprintf("%02d", $i); @endphp <td data-product-id="{{ $product->id }}">
 
                                             @php
-                                            $currentVal = $subModel ? $subModel->getSeasonalityOfMonthIndex($i) : 0;
-
+                                            $currentVal = $subModel ? $subModel->getSeasonalityOfMonthIndex($i) : 100/12;
+                                            $totalSeasonality+=$currentVal;
                                             $monthName = \Carbon\Carbon::make('2010-01-01')->addMonth($i-1)->format('M');
                                             @endphp
 
-                                            <x-repeat-with-calc :showIcon="false" :numberFormatDecimals="2" :formattedInputClasses="'calcField'" :mark="'%'" :removeThreeDots="false" :removeCurrency="true" :currentVal="number_format($currentVal,1)" :classes="''" :is-percentage="true" :name="'microfinanceProductSalesProjects['.$product->id.'][seasonality]['.$i.']'" :columnIndex="$columnIndex"></x-repeat-with-calc>
+                                            <x-repeat-with-calc :showIcon="false" :numberFormatDecimals="3" :formattedInputClasses="'calcField'" :mark="'%'" :removeThreeDots="false" :removeCurrency="true" :currentVal="number_format($currentVal,3)" :classes="'seasonality-class'" :is-percentage="true" :name="'microfinanceProductSalesProjects['.$product->id.'][seasonality]['.$i.']'" :columnIndex="$columnIndex"></x-repeat-with-calc>
 
 
                                             </td>
@@ -225,6 +307,36 @@ $months = $study->getMicrofinanceMonths() ;
                                             @endphp
 
                                             @endfor
+
+
+
+                                            <td>
+                                                <div class="d-flex align-items-center justify-content-center">
+
+
+                                                    <div class="form-group three-dots-parent">
+                                                        <div class="input-group input-group-sm align-items-center justify-content-center flex-nowrap">
+                                                            <div class="input-hidden-parent">
+                                                                <input readonly class="form-control copy-value-to-his-input-hidden sum-total-column  expandable-percentage-input  repeat-to-right-input-formatted  " type="text" value="{{ number_format($totalSeasonality,1)  }}" data-column-index="{{ $columnIndex }}">
+                                                                <span style="visibility:hidden">..</span>
+                                                                {{-- <input type="hidden" class="repeat-to-right-input-hidden input-hidden-with-name  " value="{{  0 }}" > --}}
+
+                                                            </div>
+
+                                                            <span class="ml-2 currency-class">
+                                                                %
+                                                            </span>
+
+
+                                                        </div>
+
+                                                    </div>
+
+
+
+                                                </div>
+                                            </td>
+
 
 
                                     </tr>
@@ -270,7 +382,7 @@ $months = $study->getMicrofinanceMonths() ;
                                 </thead>
                                 <tbody>
                                     @foreach($products as $product)
-									 @php
+                                    @php
                                     $subModel = $model->microfinanceProductSalesProjects->where('type',$type)->where('branch_id',$branchId)->where('microfinance_product_id',$product->id)->first();
                                     @endphp
                                     <tr data-repeat-formatting-decimals="0" data-repeater-style>
@@ -293,7 +405,8 @@ $months = $study->getMicrofinanceMonths() ;
 
                                             @php
                                             $currentVal = $subModel ? $subModel->getFlatRateAtYearOrMonthIndex($yearOrMonthAsIndex) : 0;
-											
+                                            $currentVal = $isByBranch ? $productMix->getFlatRateAtYearOrMonthIndex($yearOrMonthAsIndex) : $currentVal;
+
                                             @endphp
 
 
@@ -301,7 +414,7 @@ $months = $study->getMicrofinanceMonths() ;
                                             @php
                                             $currentModalId = 'current-modal-id'.($columnIndex+1) . $product->id
                                             @endphp
-                                            <x-repeat-with-calc  :removeThreeDots="$isByBranch" :readonly="$isByBranch" :currentModalId="$currentModalId" :showIcon="true" :numberFormatDecimals="2" :formattedInputClasses="'calcField flat-rate-input'" :mark="'%'"  :removeCurrency="true" :currentVal="number_format($currentVal,1)" :classes="''" :is-percentage="true" :name="'microfinanceProductSalesProjects['.$product->id.'][flat_rates]['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-with-calc>
+                                            <x-repeat-with-calc :removeThreeDots="$isByBranch" :readonly="$isByBranch" :currentModalId="$currentModalId" :showIcon="true" :numberFormatDecimals="2" :formattedInputClasses="'calcField flat-rate-input'" :mark="'%'" :removeCurrency="true" :currentVal="number_format($currentVal,1)" :classes="''" :is-percentage="true" :name="'microfinanceProductSalesProjects['.$product->id.'][flat_rates]['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-with-calc>
                                             {{-- <x-repeat-with-calc :currentModalId="$currentModalId" :showIcon="true" :numberFormatDecimals="2" :formattedInputClasses="'calcField flat-rate-input'" :mark="'%'" :removeThreeDots="false" :removeCurrency="true" :currentVal="number_format($currentVal,1)" :classes="''" :is-percentage="true" :name="'flat_rates['.$yearOrMonthAsIndex.']'" :columnIndex="$columnIndex"></x-repeat-with-calc> --}}
 
 
@@ -701,17 +814,17 @@ $months = $study->getMicrofinanceMonths() ;
                             0 => [
                             'is_senior'=>1 ,
                             'title'=> __('Senior Loan Officer'),
-							'name'=>'product_mix_senior_loan_officers'
+                            'name'=>'product_mix_senior_loan_officers'
                             ],
                             1=> [
                             'is_senior'=>0 ,
                             'title'=>__('Loan Officer'),
-							'name'=>'product_mix_loan_officers'
+                            'name'=>'product_mix_loan_officers'
                             ]
                             ][$currentIndex];
                             $isSenior = $isSeniors['is_senior'];
                             $title = $isSeniors['title'];
-							$name = $isSeniors['name'];
+                            $name = $isSeniors['name'];
                             @endphp
 
                             <tr data-repeater-style>
@@ -726,11 +839,9 @@ $months = $study->getMicrofinanceMonths() ;
                                 @php
                                 $columnIndex = 0 ;
                                 @endphp
-                                @for($i = 0 ; $i<= $months ; $i++) @php 
-								
-									
-								$currentVal=isset($subModel) ? $subModel->getNewLoanCasesAtYearOrMonthIndex($i,$isSenior) : 0 ;
-																	
+                                @for($i = 0 ; $i<= $months ; $i++) @php $currentVal=isset($subModel) ? $subModel->getNewLoanCasesAtYearOrMonthIndex($i,$isSenior) : 0 ;
+                                    $currentVal = $isByBranch ? $study->getProductMixSeniorLoanOfficersAt($i,$isSenior) : $currentVal;
+
                                     @endphp
                                     <td>
                                         <x-repeat-right-dot-inputs :removeThreeDots="$isByBranch" :readonly="$isByBranch" :numberFormatDecimals="0" :multiple="true" :removeCurrency="true" :name="'microfinanceLoanOfficerCases['.$currentIndex.'][new_cases]['.$i.']'" :currentVal="$currentVal" :classes="'only-greater-than-or-equal-zero-allowed'" :is-percentage="true" :columnIndex="$columnIndex"></x-repeat-right-dot-inputs>
@@ -881,7 +992,7 @@ $months = $study->getMicrofinanceMonths() ;
                             </x-slot>
                             <x-slot name="trs">
                                 @php
-                                $rows = isset($model) ? $model->generateRelationDynamically($tableId,$expenseType)->get() : [-1] ;
+                                $rows = isset($model) ? $model->generateRelationDynamically($tableId,$expenseType)->where('branch_id',$branchId)->get() : [-1] ;
                                 @endphp
                                 @foreach( count($rows) ? $rows : [-1] as $subModel)
                                 @php
@@ -1137,9 +1248,13 @@ $months = $study->getMicrofinanceMonths() ;
                 , error: function(res) {
                     $('.save-form').prop('disabled', false);
                     $('.submit-form-btn-new').prop('disabled', false)
+					let errorMessage = res.responseJSON.message;
+					if (res.responseJSON && res.responseJSON.errors) {
+                            errorMessage = res.responseJSON.errors[Object.keys(res.responseJSON.errors)[0]][0]
+                        }
                     Swal.fire({
                         icon: 'error'
-                        , title: res.responseJSON.message
+                        , title: errorMessage
                     , });
                 }
             });
@@ -1331,7 +1446,7 @@ $months = $study->getMicrofinanceMonths() ;
         const expenseCategoryId = $(this).val();
         const currentSelected = $(parent).find('select.expense_name_id').attr('data-current-selected');
         $.ajax({
-            url: "{{ route('get.expense.name.for.category',['company'=>$company->id,'study'=>$study->id]) }}"
+            url: "{{ route('get.expense.name.for.category.only.in.branch',['company'=>$company->id,'study'=>$study->id]) }}"
             , data: {
                 expenseCategoryId
             }
@@ -1361,7 +1476,22 @@ $months = $study->getMicrofinanceMonths() ;
 
 </script>
 <script>
+    $('.product-input-class').on('change', function() {
+        const columnIndex = $(this).attr('data-column-index');
+        let total = 0;
+        $(this).closest('table').find('input[type="hidden"][data-column-index="' + columnIndex + '"]').each(function(index, currentInput) {
+            total += parseFloat($(currentInput).val());
+        })
+        $(this).closest('table').find('input.sum-total-row[data-column-index="' + columnIndex + '"]').val(total);
+    })
 
+    $(document).on('change', 'input.seasonality-class', function() {
+        let total = 0;
+        $(this).closest('tr').find('input[type="hidden"]').each(function(index, currentInput) {
+            total += parseFloat($(currentInput).val());
+        })
+        $(this).closest('tr').find('input.sum-total-column').val(number_format(total, 1));
+    })
 
 </script>
 @endpush

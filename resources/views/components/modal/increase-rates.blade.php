@@ -42,6 +42,7 @@
 							$currentIncreaseRate = isset($subModel) ? $subModel->getIncreaseRateAtYearIndex($yearNumber ) :  0;
 							if($isByBranch){
 												$currentVal = $study->microfinanceByBranchProductMixes->where('microfinance_product_id',$product->id)->first();
+												
 												$currentIncreaseRate= $currentVal->getIncreaseRateAtYearIndex($yearNumber) ;
 												$isReadonly =true ;
 											}

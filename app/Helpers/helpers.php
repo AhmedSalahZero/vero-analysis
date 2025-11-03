@@ -8114,10 +8114,25 @@ function getExpenseCategoriesForSelect2():array
 	return $results;
 	
 }
+
 function getBranchExpenseCategoriesForSelect2():array 
 {
 	$results = [];
 	$expenseCategories = ExpenseName::getCategoriesForBranch(getCurrentCompany());
+	foreach($expenseCategories as $type => $name){
+		$results[] = [
+			'title'=>HStr::camelizeWithSpace($type) ,
+			'value'=>$type
+		];
+	}
+	return $results;
+	
+}
+
+function getEmployeeExpenseCategoriesForSelect2():array 
+{
+	$results = [];
+	$expenseCategories = ExpenseName::getCategoriesForEmployee(getCurrentCompany());
 	foreach($expenseCategories as $type => $name){
 		$results[] = [
 			'title'=>HStr::camelizeWithSpace($type) ,

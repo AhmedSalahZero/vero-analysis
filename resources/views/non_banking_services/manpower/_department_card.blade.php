@@ -1,5 +1,7 @@
 @php
 	$removeMonths = isset($remove_months) ;
+	$allowExistingCount = !isset($allow_existing) ;
+	
 @endphp
 @foreach(count($departments)? $departments : [null] as $department)
 
@@ -26,7 +28,9 @@ $repeaterId = $tableId.'_repeater';
             <x-slot name="ths">
                 {{-- <x-tables.repeater-table-th :font-size-class="'font-14px'" class="  header-border-down first-column-th-class" :title="__('')"></x-tables.repeater-table-th> --}}
                 <x-tables.repeater-table-th :font-size-class="'font-14px'" class="  header-border-down " :title="__('Position')"></x-tables.repeater-table-th>
+				@if($allowExistingCount)
                 <x-tables.repeater-table-th :font-size-class="'font-14px'" class=" tenor-selector-class header-border-down " :title="__('Existing <br> Count')"></x-tables.repeater-table-th>
+				@endif
                 <x-tables.repeater-table-th :font-size-class="'font-14px'" class=" tenor-selector-class header-border-down " :title="__('Monthly Net <br> Salary')"></x-tables.repeater-table-th>
                 @foreach($studyMonthsForViews as $dateAsIndex=>$dateAsString)
                 @php
@@ -50,11 +54,13 @@ $repeaterId = $tableId.'_repeater';
 
                 @endforeach
             </x-slot>
+			@php
+				$branchId = isset($branchId) ? $branchId : null;
+			@endphp
             <x-slot name="trs">
-
                 @foreach($department ? $department->positions : [] as $rowIndex=>$position )
                 @php
-                $manpower = $position->manpowers->where('type',$manpowerType)->where('study_id',$study->id)->first();
+                $manpower = $position->manpowers->where('type',$manpowerType)->where('study_id',$study->id)->where('branch_id',$branchId)->first();
                 $positionId = $position->id;
                 @endphp
                 <tr data-repeat-formatting-decimals="2" data-repeater-style>
@@ -70,6 +76,7 @@ $repeaterId = $tableId.'_repeater';
 
                         </div>
                     </td>
+					@if($allowExistingCount)
                     <td>
 
 
@@ -78,6 +85,7 @@ $repeaterId = $tableId.'_repeater';
 
                         </div>
                     </td>
+					@endif
                     <td>
 
 

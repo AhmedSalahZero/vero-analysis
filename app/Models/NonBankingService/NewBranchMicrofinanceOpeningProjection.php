@@ -62,6 +62,14 @@ class  NewBranchMicrofinanceOpeningProjection extends Model
 		$dateWithDateIndex = $this->study->getDateIndexWithDate()[$this->getOperationDate()];
 		return $dateWithDateIndex;
 	}
+	 public function getOperationDateYearAndMonth()
+    {
+        $studyStartDate = $this->getOperationDateAsString() ;
+        if (is_null($studyStartDate)) {
+            return now()->format('Y-m');
+        }
+        return Carbon::make($studyStartDate)->format('Y-m');
+    }
 	public function getTotalBranches():int
 	{
 		return $this->total_branches?: 0;

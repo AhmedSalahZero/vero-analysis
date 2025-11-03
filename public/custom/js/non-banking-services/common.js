@@ -520,7 +520,6 @@ $(document).on('change', '[total-row-tr] input.input-hidden-with-name', function
 	// console.log('from 22')
 	let parent = $(this).closest('tr')
 	let totalRow = parent.find('.sum-total-row')
-
 	let numberOfDecimals = parent.attr('data-repeat-formatting-decimals')
 	if (totalRow) {
 		let total = 0
@@ -528,9 +527,9 @@ $(document).on('change', '[total-row-tr] input.input-hidden-with-name', function
 			var currentTotal = parseFloat(number_unformat($(row).val()))
 			total += currentTotal
 		})
-
 		parent.find('input.sum-total-row').val(number_format(total, numberOfDecimals))
 	}
+//	console.log('t',parent,total,number_format(total, numberOfDecimals));
 
 })
 $('[total-row-tr] input.input-hidden-with-name').trigger('change')
@@ -1148,7 +1147,7 @@ $('.microfinance-sub-checkbox-js:checked').trigger('change')
 $(document).on('change', '.create-product-or-existing-branch-js', function () {
 	const isChecked = $(this).is(':checked')
 	const value = $(this).val()
-	console.log(value)
+	// console.log(value)
 	if (value == 'product-mix') {
 		$('.product-mix-count-parent-js').removeClass('hidden')
 	} else {
@@ -1158,7 +1157,7 @@ $(document).on('change', '.create-product-or-existing-branch-js', function () {
 $('.create-product-or-existing-branch-js:checked').trigger('change')
 
 
-function calculateResult(input,v) {
+function calculateResult(input) {
         //        let baseValue = input.value.trim();
 		baseValue = $(input).val();
 	
@@ -1173,17 +1172,25 @@ function calculateResult(input,v) {
                 } else {
                     baseValue = parseFloat(baseValue);
                 }
-				console.log('after',baseValue);
+			//	console.log('after',baseValue);
                 if (!isNaN(baseValue)) {
 					baseValueHidden = baseValue.toFixed(10); // Format to 5 decimals
-                    baseValue = baseValue.toFixed(2); // Format to 5 decimals
+                    baseValue = baseValue.toFixed(3); // Format to 5 decimals
                    $(input).val(baseValue).trigger('change'); // Update input field
 				   $(input).closest('.input-hidden-parent').find('input.input-hidden-with-name').val(baseValueHidden);
                 }
+			//	let columnIndex = $(input).attr('data-column-index')
+			//	let total =  0 ;
+			//	console.log($(this).closest('table').find('input[type="hidden"]').length)
+			//	$(input).closest('table').find('input[type="hidden"][data-column-index="'+columnIndex+'"]').each(function(index,currentInput){
+			//		total+=parseFloat($(currentInput).val());
+			//	})
+			//	$(input).closest('table').find('input.sum-total-row[data-column-index="'+columnIndex+'"]').val(total);
+				// $(this).closest('');
 
             }
 			$(document).on('blur','.calcField',function(){
-				calculateResult($(this),this.value.trim());
+				calculateResult($(this));
 			})
        
 $(document).on('click','.recalculate-decrease-rates',function(){
@@ -1191,7 +1198,7 @@ $(document).on('click','.recalculate-decrease-rates',function(){
 	const productId = parent.attr('data-product-id');
 	const tenor = $('.tenor-class'+productId).val();
 	const flatRate = $(parent).find('.flat-rate-input').val();
-	console.log(flatRate)
+	// console.log(flatRate)
 	parent.find('.flat-rate-id').val(flatRate);
 	
 	const companyId = $('body').attr('data-current-company-id')

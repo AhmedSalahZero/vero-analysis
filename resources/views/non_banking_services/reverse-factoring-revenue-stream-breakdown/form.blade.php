@@ -278,7 +278,7 @@ use App\Models\NonBankingService\ReverseFactoringBreakdown;
                                         <input value="{{ __('Reverse Factoring Transactions Projection') }}" disabled class="form-control min-width-300 text-left mt-2" type="text">
                                     </td>
                                     <td>
-                                        <x-repeat-right-dot-inputs number-format-decimals="0" :mark="''" :remove-three-dots="true" :currentVal="isset($subModel) ? $subModel->getTenor():12" :classes="'only-greater-than-or-equal-zero-allowed exclude-from-total'" :is-percentage="true" :name="'tenor'" :columnIndex="null"></x-repeat-right-dot-inputs>
+                                        <x-repeat-right-dot-inputs number-format-decimals="0" :mark="' Mth'" :remove-three-dots="true" :currentVal="isset($subModel) ? $subModel->getTenor():12" :classes="'only-greater-than-or-equal-zero-allowed exclude-from-total'" :is-percentage="true" :name="'tenor'" :columnIndex="null"></x-repeat-right-dot-inputs>
 
                                     </td>
                                     <td>
@@ -374,7 +374,7 @@ use App\Models\NonBankingService\ReverseFactoringBreakdown;
 
 
                                     <td>
-                                        <input value="{{ __('Administration Fees Rate') }}" disabled class="form-control min-width-hover-300 text-left mt-2" type="text">
+                                        <input value="{{ __('Administration Fees Rate') }}" disabled class="form-control text-left mt-2" type="text">
 
                                     </td>
                                     @php

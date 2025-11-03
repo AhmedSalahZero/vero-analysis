@@ -7,6 +7,7 @@ use App\Models\Traits\Scopes\NonBankingServices\BelongsToStudy;
 use App\Traits\HasBasicStoreRequest;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 
 class  GeneralAndReserveAssumption extends Model
 {
@@ -39,18 +40,16 @@ class  GeneralAndReserveAssumption extends Model
 				 */
 				if($generalAndReserveAssumption->isDirty('cbe_lending_corridor_rates') || $generalAndReserveAssumption->isDirty('bank_lending_margin_rates')){
 					
-					$study->storeFixedLoans(Study::LEASING,'leasingRevenueStreamBreakdown');
-					$study->storeFixedLoans(Study::IJARA,'ijaraMortgageBreakdowns');
-					$study->storeVariableLoans(Study::REVERSE_FACTORING,'reverseFactoringBreakdowns');
+					
+					$study->recalculateAllRevenuesLoans(new Request);
+					
+					
 					/**
-					 * ! Recalculate Portfolio Mortgage & Microfinance Bank Loans
+					 * ! Recalculate  Microfinance Bank Loans
 					 */
 					
-					$study->refreshDirectFactoringLoans();
 					
-					$study->recalculatePortfolioMortgage();
 					
-					$study->updateExpensesPercentageAndCostPerUnitsOfSales();
 				}
 				if($study->isDirty('salaries_annual_increase_rates')){
 					$study->recalculateManpower();

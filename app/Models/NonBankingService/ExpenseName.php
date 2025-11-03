@@ -45,4 +45,8 @@ class ExpenseName extends Model
 	{
 		return ExpenseName::where('company_id',$company->id)->where('is_branch_expense',1)->orderBy('expense_type','asc')->pluck('expense_type','expense_type')->unique()->toArray();
 	}
+	public static function getCategoriesForEmployee(Company $company)
+	{
+		return ExpenseName::where('company_id',$company->id)->where('is_employee_expense',1)->orderBy('expense_type','asc')->pluck('expense_type','expense_type')->unique()->toArray();
+	}
 }

@@ -49,9 +49,9 @@ class DirectFactoringController extends Controller
 			$study->storeRepeaterRelations($request,$this->getRepeaterRelations(),$company);
 			$study->syncSeasonality($request->get('seasonality',[]),Study::DIRECT_FACTORING , $company->id );
 			// دا بيس
-			$study->storeAdminFeesAndFundingStructureFor($request,Study::DIRECT_FACTORING);
-			$study->refreshDirectFactoringLoans();
-			$study->storeMonthlyLoan(Study::DIRECT_FACTORING,'directFactoringBreakdowns');
+			
+			$study->refreshDirectFactoringLoans($request);
+			
 			$study->updateExpensesPercentageAndCostPerUnitsOfSales();
 			if($request->get('save') == 'calculate-net-disbursement'){
 				return response()->json([

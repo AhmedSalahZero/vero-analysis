@@ -61,10 +61,7 @@ use App\Models\NonBankingService\Expense;
                         </x-slot>
                         <x-slot name="trs">
                             @php
-
-                            $rows = isset($model) ? $model->generateRelationDynamically($tableId,$expenseType)->get() : [-1] ;
-
-
+	                            $rows = isset($model) ? $model->generateRelationDynamically($tableId,$expenseType)->get() : [-1] ;
                             @endphp
                             @foreach( count($rows) ? $rows : [-1] as $subModel)
                             @php
@@ -85,7 +82,7 @@ use App\Models\NonBankingService\Expense;
 
                                 <td>
                                     <div class="min-w-150">
-                                        <x-form.select :selectedValue="isset($subModel) ? $subModel->getExpenseCategory() : 'cash'" :options="getExpenseCategoriesForSelect2()" :add-new="false" class="select2-select repeater-select expense_category " :all="false" name="@if($isRepeater) expense_category @else {{ $tableId }}[0][expense_category] @endif"></x-form.select>
+                                        <x-form.select :selectedValue="isset($subModel) ? $subModel->getExpenseCategory() : 'cash'" :options="getEmployeeExpenseCategoriesForSelect2()" :add-new="false" class="select2-select repeater-select expense_category " :all="false" name="@if($isRepeater) expense_category @else {{ $tableId }}[0][expense_category] @endif"></x-form.select>
                                     </div>
                                 </td>
 
@@ -350,9 +347,13 @@ use App\Models\NonBankingService\Expense;
                 , error: function(res) {
                     $('.save-form').prop('disabled', false);
                     $('.submit-form-btn-new').prop('disabled', false)
+					let errorMessage = res.responseJSON.message;
+					if (res.responseJSON && res.responseJSON.errors) {
+                            errorMessage = res.responseJSON.errors[Object.keys(res.responseJSON.errors)[0]][0]
+                        }
                     Swal.fire({
                         icon: 'error'
-                        , title: res.responseJSON.message
+                        , title: errorMessage
                     , });
                 }
             });

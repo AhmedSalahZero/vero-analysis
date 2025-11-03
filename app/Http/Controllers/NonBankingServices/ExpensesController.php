@@ -57,7 +57,6 @@ class ExpensesController extends Controller
         StoreExpensesRequest $request,
         Study $study
     ) {
-        
         $modelId = $request->get('model_id');
   
         $modelName = $request->get('model_name');
@@ -227,7 +226,6 @@ class ExpensesController extends Controller
         //     // 'semi-annually'=>sumIntervalsIndexes($dateIndexWithDate, 'semi-annually', $study->financialYearStartMonth(), $dateIndexWithDate),
         //     // 'annually'=>sumIntervalsIndexes($dateIndexWithDate, 'annually', $study->financialYearStartMonth(), $dateIndexWithDate),
         // ];
-		// dd($datesForIntervals);
         $netPaymentAfterWithholdForInterval = [
             'monthly'=>$netPaymentsAfterWithhold,
             // 'quarterly'=>sumIntervalsIndexes($netPaymentsAfterWithhold, 'quarterly', $study->financialYearStartMonth(), $dateIndexWithDate),
@@ -265,6 +263,15 @@ class ExpensesController extends Controller
     {
         $categoryId =  $request->get('expenseCategoryId');
         $result = ExpenseName::where('company_id', $company->id)->where('expense_type', $categoryId)->orderBy('name')->get();
+        return response()->json([
+            'status'=>true ,
+            'data'=>$result
+        ]);
+    }
+	public function getExpenseNamesForCategoryOnlyBranches(Company $company, Request $request)
+    {
+        $categoryId =  $request->get('expenseCategoryId');
+        $result = ExpenseName::where('company_id', $company->id)->where('expense_type', $categoryId)->where('is_branch_expense',1)->orderBy('name')->get();
         return response()->json([
             'status'=>true ,
             'data'=>$result

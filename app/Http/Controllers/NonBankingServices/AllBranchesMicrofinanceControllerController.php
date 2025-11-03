@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\NonBankingServices;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreAllBranchesMicrofinanceRequest;
+use App\Http\Requests\StoreNewBranchesMicrofinanceRequest;
 use App\Models\Company;
 use App\Models\NonBankingService\ExistingBranch;
 use App\Models\NonBankingService\Study;
@@ -71,7 +73,7 @@ class AllBranchesMicrofinanceControllerController extends Controller
 		]);
 	}
 
-    public function store(Company $company, Request $request, Study $study , int $branchId = null  )
+    public function store(Company $company, StoreAllBranchesMicrofinanceRequest $request, Study $study , int $branchId = null  )
     {
 		$branchType = $this->getBranchType($branchId);
 		$study->saveManpowerForm($request,$branchType,$branchId);
@@ -84,7 +86,7 @@ class AllBranchesMicrofinanceControllerController extends Controller
 		$study->update([
 			'existing_branches_counts'=>$request->get('existing_branches_counts',0)
 		]);
-		$study->handleFixedRepeatingExpenses($request);
+		$study->handleFixedRepeatingExpenses($request,[],$branchId);
        $redirectPageRoute = route('create.new-branches.microfinance', ['company'=>$company->id,'study'=>$study->id]) ;
 	   $isLastBranch = Arr::last(ExistingBranch::where('company_id',$company->id)->pluck('id')->toArray()) == $branchId;
 		if($branchId && !$isLastBranch){

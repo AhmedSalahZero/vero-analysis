@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Company;
 use App\Models\NonBankingService\ExistingBranch;
 use App\Models\NonBankingService\Study;
-use App\ReadyFunctions\ConvertFlatRateToDecreasingRate;
 use App\Traits\NonBankingService;
 use Illuminate\Http\Request;
 

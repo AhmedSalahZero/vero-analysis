@@ -69,7 +69,7 @@ use App\Models\NonBankingService\LeasingCategory;
 
                                 </div>
                                 <div class="row">
-                                
+
                                     <div class="col-md-12 text-right">
                                         <input type="submit" name="save-and-continue" class="btn active-style save-form" value="{{  __('Save & Continue') }}">
                                         @include('non_banking_services.buttons.enable-editing',['inEditMode'=>$model->leasingRevenueStreamBreakdown->count()])
@@ -169,8 +169,8 @@ use App\Models\NonBankingService\LeasingCategory;
 
                                 </tr>
                                 @endif
-{{-- {{ dd() }} --}}
-@if($isYearsStudy)
+                                {{-- {{ dd() }} --}}
+                                @if($isYearsStudy)
                                 <tr data-repeat-formatting-decimals="2" data-repeater-style>
 
                                     <input type="hidden" name="id" value="{{ isset($subModel) ? $subModel->id : 0 }}">
@@ -216,7 +216,7 @@ use App\Models\NonBankingService\LeasingCategory;
 
 
                                 </tr>
-@endif
+                                @endif
 
 
 

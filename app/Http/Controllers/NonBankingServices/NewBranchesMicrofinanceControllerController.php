@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\NonBankingServices;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreNewBranchesMicrofinanceRequest;
 use App\Models\Company;
 use App\Models\NonBankingService\Study;
 use App\ReadyFunctions\ConvertFlatRateToDecreasingRate;
@@ -57,9 +58,23 @@ class NewBranchesMicrofinanceControllerController extends Controller
 		]);
 	}
 
-    public function store(Company $company, Request $request, Study $study )
+    public function store(Company $company, StoreNewBranchesMicrofinanceRequest $request, Study $study )
     {
-		$study->saveManpowerForm($request,self::BRANCH_TYPE);
+		$newBranchesHiringCounts=[];
+		$positions = $request->get('manpowers');
+		$openingProjects = $request->get('newBranchMicrofinanceOpeningProjections');
+		foreach($positions as $positionId => $positionArr){
+			foreach($openingProjects as $currentLoopIndex=>$openingProjectArr){
+				$startDateAsString = $openingProjectArr['start_date'].'-01';
+				$startDateAsIndex = $study->convertDateStringToDateIndex($startDateAsString);
+				foreach($positionArr['hiring_counts'] as $hiringIndex => $hiringCount){
+					$currentIndex = $hiringIndex+$startDateAsIndex;
+					$currentCount = $hiringCount * $openingProjectArr['counts'];
+					$newBranchesHiringCounts[$positionId][$currentIndex] = isset($result[$positionId][$currentIndex]) ? $result[$positionId][$currentIndex] +  $currentCount:$currentCount ;
+				}
+			}
+		}
+		$study->saveManpowerForm($request,self::BRANCH_TYPE,null,$newBranchesHiringCounts);
 		$study->storeRepeaterRelations($request,['newBranchMicrofinanceOpeningProjections'],$company,[]);
 		
 		
