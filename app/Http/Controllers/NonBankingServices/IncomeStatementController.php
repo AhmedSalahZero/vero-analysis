@@ -20,6 +20,7 @@ class IncomeStatementController extends Controller
 {
     public function index(Company $company, Request $request, Study $study,$onlyViewVars = false )
     {
+		// $study->recalculateCashflowStatement();
         // $start = microtime(true);
         $dateIndexWithDate = app('dateIndexWithDate');
         $formattedExpenses = [];
@@ -140,7 +141,7 @@ class IncomeStatementController extends Controller
         
 			$incomeStatementReport = $study->incomeStatementReport;
 			
-		$totalInterestExpense = $incomeStatementReport ? $incomeStatementReport->existing_interests_expense : [];
+		$totalInterestExpense = $incomeStatementReport ? (array)$incomeStatementReport->existing_interests_expense : [];
         $tableDataFormatted[1]['sub_items'][$existingPortfolioInterestExpenseTitle]['data'] = $totalInterestExpense;
         $tableDataFormatted[1]['sub_items'][$existingPortfolioInterestExpenseTitle]['year_total'] = HArr::sumPerYearIndex($totalInterestExpense, $yearWithItsMonths);
     

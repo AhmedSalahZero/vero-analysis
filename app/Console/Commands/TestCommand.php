@@ -52,6 +52,7 @@ class TestCommand extends Command
 	}
 	public function handle()
 	{
+		// dD($this->getAllColumnNamesFromTable('cashflow_statement_reports',NON_BANKING_SERVICE_CONNECTION_NAME));
 		// $study  = Study::find(66);
 		// 	$securitizationRevenueTypes = [Study::LEASING,Study::IJARA,Study::MICROFINANCE];
 		// $loanSchedulePayments = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('loan_schedule_payments')->where('study_id',$study->id)->where('portfolio_loan_type','portfolio')->whereIn('revenue_stream_type',$securitizationRevenueTypes)->get();
@@ -270,4 +271,39 @@ class TestCommand extends Command
 		$forecast = shell_exec('python3 '.$pythonFilePath .' ' . json_encode($salesGatherFormatted));
 		dd($forecast);
 	}
+	
+	public function getJsonColumns($table , $connectionName)
+{
+    $columns = Schema::connection($connectionName)->getColumnListing($table);
+
+    $jsonColumns = [];
+
+    foreach ($columns as $column) {
+        $type = DB::connection($connectionName)->getSchemaBuilder()
+            ->getColumnType($table, $column); // returns "json" if column type is JSON
+
+        if ($type === 'json') {
+            $jsonColumns[] = $column;
+        }
+    }
+
+    return $jsonColumns;
+}
+public function getAllColumnNamesFromTable($table , $connectionName)
+{
+    $columns = Schema::connection($connectionName)->getColumnListing($table);
+
+    $jsonColumns = [];
+
+    foreach ($columns as $column) {
+        $type = DB::connection($connectionName)->getSchemaBuilder()
+            ->getColumnType($table, $column); // returns "json" if column type is JSON
+
+            $jsonColumns[] = $column;
+    }
+
+    return $jsonColumns;
+}
+
+
 }

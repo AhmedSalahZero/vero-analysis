@@ -130,6 +130,10 @@ class  GeneralAndReserveAssumption extends Model
 	{
 		return $this->getOdasBankLendingMarginRates()[$yearOrMonthIndex] ?? 0  ; 
 	}
+	public function getCreditInterestRateForSurplusCash():array 
+	{
+		return $this->credit_interest_rate_for_surplus_cash?:[] ;
+	}
 	public function getCreditInterestRateForSurplusCashAtYearOrMonthIndex(int $yearOrMonthIndex)
 	{
 		return $this->credit_interest_rate_for_surplus_cash[$yearOrMonthIndex] ?? 0  ; 
