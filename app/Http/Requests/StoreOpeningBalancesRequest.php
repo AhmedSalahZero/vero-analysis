@@ -45,7 +45,7 @@ class StoreOpeningBalancesRequest extends FormRequest
 	//		$fixedAssetOpeningArr['monthly_product_allocations'] = $isAsRevenuePercentage ? [] :   $project->calculateMonthlyProductAllocations($productAllocations);
             unset($fixedAssetOpeningArr['product_id']);
             unset($fixedAssetOpeningArr['percentage']);
-			if(is_null($fixedAssetOpeningArr['name'])){
+			if(!isset($fixedAssetOpeningArr['name_id']) || is_null($fixedAssetOpeningArr['name_id'])){
 				unset($fixedAssets[$index]);
 			}
         }

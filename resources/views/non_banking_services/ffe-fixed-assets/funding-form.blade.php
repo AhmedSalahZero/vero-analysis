@@ -38,7 +38,7 @@ use App\Models\NonBankingService\Expense;
                                 <div class="col-md-10">
                                     <div class="d-flex align-items-center ">
                                         <h3 class="font-weight-bold form-label kt-subheader__title small-caps mr-5" style="">
-                                            {{ __('FFE Funding Structure') }}
+                                            {{ __('General Fixed Assets Funding Structure') }}
                                         </h3>
                                     </div>
                                 </div>

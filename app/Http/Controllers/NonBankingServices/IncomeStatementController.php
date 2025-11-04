@@ -5,6 +5,7 @@ namespace App\Http\Controllers\NonBankingServices;
 use App\Helpers\HArr;
 use App\Http\Controllers\Controller;
 use App\Models\Company;
+use App\Models\NonBankingService\CashAndBankOpeningBalance;
 use App\Models\NonBankingService\EclAndNewPortfolioFundingRate;
 use App\Models\NonBankingService\Expense;
 use App\Models\NonBankingService\Manpower;
@@ -73,6 +74,12 @@ class IncomeStatementController extends Controller
         $corporateTaxesOrderIndex = $orderIndexPerExpenseCategory['corporate-taxes'];
         $financialExpenseOrderIndex = $orderIndexPerExpenseCategory['financial-expense'];
         
+		$cashAndBankOpeningBalance = CashAndBankOpeningBalance::where('study_id',$study->id)->first();
+		$cashAndBankInterest = $cashAndBankOpeningBalance ? $cashAndBankOpeningBalance->interests: [];
+		$tableDataFormatted[0]['sub_items']['cash-and-banks-opening-interest']['options']['title'] = __('Existing Portfolio Interest');
+		$tableDataFormatted[0]['sub_items']['cash-and-banks-opening-interest']['data']= $cashAndBankInterest;
+		
+		
         $tableDataFormatted[0]['main_items']['sales-revenue']['options'] = array_merge([
             'title'=>__('Sales Revenue')
         ], $defaultNumericInputClasses);
@@ -125,10 +132,25 @@ class IncomeStatementController extends Controller
 		$monthsWithItsNumbers = $study->getMonthIndexWithMonthNumber($yearWithItsIndexes) ;
 		
         $tableDataFormatted[1]['main_items']['cost-of-service']['options']['title'] = __('Cost Of Service');
-        $tableDataFormatted[1]['sub_items']['Interest Cost']['options']['title'] = __('Interest Cost');
+        $tableDataFormatted[1]['sub_items']['Existing Portfolio New Portfolio Interest Expense']['options']['title'] = $existingPortfolioInterestExpenseTitle =  __('Existing Portfolio New Portfolio Interest Expense');
+        // $tableDataFormatted[1]['sub_items']['Existing Long Term Loans Interest Expense']['options']['title'] = $existingLongTermLoanInterestTitle =  __('Existing Long Term Loans Interest Expense');
+        $tableDataFormatted[1]['sub_items']['New Portfolio Interest Expense']['options']['title'] = __('New Portfolio Interest Expense');
         $tableDataFormatted[1]['sub_items']['Manpower Salaries']['options']['title'] = __('Manpower Salaries');
-
+        $yearWithItsMonths=$study->getYearIndexWithItsMonths();
         
+			$incomeStatementReport = $study->incomeStatementReport;
+			
+		$totalInterestExpense = $incomeStatementReport ? $incomeStatementReport->existing_interests_expense : [];
+        $tableDataFormatted[1]['sub_items'][$existingPortfolioInterestExpenseTitle]['data'] = $totalInterestExpense;
+        $tableDataFormatted[1]['sub_items'][$existingPortfolioInterestExpenseTitle]['year_total'] = HArr::sumPerYearIndex($totalInterestExpense, $yearWithItsMonths);
+    
+		
+		// $totalLongTermLoans = $incomeStatementReport ? $incomeStatementReport->existing_loans_interests_expense : [];
+        // $tableDataFormatted[1]['sub_items'][$existingLongTermLoanInterestTitle]['data'] = $totalLongTermLoans;
+        // $tableDataFormatted[1]['sub_items'][$existingLongTermLoanInterestTitle]['year_total'] = HArr::sumPerYearIndex($totalLongTermLoans, $yearWithItsMonths);
+    
+		
+		
         $tableDataFormatted[$grossProfitOrderIndex]['main_items']['gross-profit']['options']['title'] = __('Gross Profit');
         $tableDataFormatted[$grossProfitOrderIndex]['main_items']['% Of Revenue']['options']['title'] = __('% Of Revenue');
         
@@ -154,7 +176,7 @@ class IncomeStatementController extends Controller
         $eclAndDepreciationKey = 'ecl-and-depreciation-expenses';
         $studyMonthsForViews = $study->getStudyDates();
         $studyMonthsForViews = array_slice($studyMonthsForViews, 0, $study->getViewStudyEndDateAsIndex()+1);
-        $yearWithItsMonths=$study->getYearIndexWithItsMonths();
+
         $studyDates = array_keys($study->getStudyDates()) ;
         $sumKeys = $studyDates;
         
@@ -171,6 +193,8 @@ class IncomeStatementController extends Controller
         // $resultPerRevenueStreamType = [
         //     'all'=>[]
         // ];
+		
+		
 
         $directFactoringBreakdown = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('direct_factoring_breakdowns')
         ->where('study_id', $study->id)
@@ -232,13 +256,16 @@ class IncomeStatementController extends Controller
 
                     } else {
 						$formattedResult['interest_cogs'][$currentMonthIndex] = isset($formattedResult['interest_cogs'][$currentMonthIndex]) ? $formattedResult['interest_cogs'][$currentMonthIndex] + $interestAmount : $interestAmount ;
-                        $formattedExpenses['cost-of-service']['Interest Cost'][$currentMonthIndex]  = $formattedResult['interest_cogs'][$currentMonthIndex]??0 ;
-                        $tableDataFormatted[1]['sub_items']['Interest Cost']['data'][$currentMonthIndex] =$formattedExpenses['cost-of-service']['Interest Cost'][$currentMonthIndex] ;
+                        $formattedExpenses['cost-of-service']['New Portfolio Interest Expense'][$currentMonthIndex]  = $formattedResult['interest_cogs'][$currentMonthIndex]??0 ;
+                        $tableDataFormatted[1]['sub_items']['New Portfolio Interest Expense']['data'][$currentMonthIndex] =$formattedExpenses['cost-of-service']['New Portfolio Interest Expense'][$currentMonthIndex] ;
                     }
                 
             }
             
         }
+		
+			
+		// dd();
 		foreach($totalEndBalanceForPortfolioPerRevenueType as $revenueStreamType => $totalPortfolioEndBalance){
 			$study->recalculateMonthlyAndAccumulatedEcl($revenueStreamType,$totalPortfolioEndBalance);
 		}
@@ -247,7 +274,7 @@ class IncomeStatementController extends Controller
 		foreach($interestCosts as $interestCost){
 			$interestCost = json_decode($interestCost,true);
 			foreach($interestCost as $dateIndex => $value){
-				$tableDataFormatted[1]['sub_items']['Interest Cost']['data'][$dateIndex] = isset($tableDataFormatted[1]['sub_items']['Interest Cost']['data'][$dateIndex]) ? $tableDataFormatted[1]['sub_items']['Interest Cost']['data'][$dateIndex] + $value : $value  ;
+				$tableDataFormatted[1]['sub_items']['New Portfolio Interest Expense']['data'][$dateIndex] = isset($tableDataFormatted[1]['sub_items']['New Portfolio Interest Expense']['data'][$dateIndex]) ? $tableDataFormatted[1]['sub_items']['New Portfolio Interest Expense']['data'][$dateIndex] + $value : $value  ;
 			}
 		}
 
@@ -415,7 +442,7 @@ class IncomeStatementController extends Controller
         
         $eclExpenses = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('ecl_and_new_portfolio_funding_rates')->where('study_id', $study->id)->pluck('monthly_ecl_values')->toArray();
         $totalEclExpenses = [];
-        $title = __('Ecl Expense')  ;
+        $title = __('ECL Expense')  ;
         $tableDataFormatted[$eclAndDepreciationOrderIndex]['sub_items'][$title]['options'] =array_merge([
             'title'=>$title
         ], $defaultNumericInputClasses);
@@ -423,6 +450,10 @@ class IncomeStatementController extends Controller
             $currentData = (array) json_decode($currentData);
             $totalEclExpenses  = HArr::sumAtDates([$totalEclExpenses,$currentData], $sumKeys);
         }
+		$incomeStatementReport = $study->incomeStatementReport;
+		$totalExistingEcl = $incomeStatementReport ? $incomeStatementReport->existing_ecl_expenses : [];
+		$totalEclExpenses = HArr::sumAtDates([$totalEclExpenses,$totalExistingEcl],$sumKeys);
+		// dd($totalExistingEcl);
         $tableDataFormatted[$eclAndDepreciationOrderIndex]['sub_items'][$title]['data'] = $totalEclExpenses;
         $tableDataFormatted[$eclAndDepreciationOrderIndex]['sub_items'][$title]['year_total'] = HArr::sumPerYearIndex($totalEclExpenses, $yearWithItsMonths);
     
@@ -558,16 +589,19 @@ class IncomeStatementController extends Controller
         $openingLoans = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('long_term_loan_opening_balances')->where('study_id', $study->id)->pluck('interests')->toArray();
         $openingLoansTotal=[];
         foreach ($openingLoans as $openingLoanInterest) {
-            $openingLoansTotal= HArr::sumAtDates([(array)json_decode($openingLoanInterest),$openingLoansTotal], $sumKeys);
+            $openingLoansTotal= HArr::sumAtDates([json_decode($openingLoanInterest,true),$openingLoansTotal], $sumKeys);
         }
         if (count($openingLoansTotal)) {
             $tableDataFormatted[$financialExpenseOrderIndex]['sub_items'][__('Opening Balance Loans Interests')]['data'] = $openingLoansTotal;
             $tableDataFormatted[$financialExpenseOrderIndex]['sub_items'][__('Opening Balance Loans Interests')]['year_total'] = HArr::sumPerYearIndex($openingLoansTotal, $yearWithItsMonths);
         }
         
-        /**
-         * ! end review
-         */
+		$fixedAssetLoanInterestExpenses = $incomeStatementReport ? $incomeStatementReport->fixed_asset_loan_interest_expenses : [];
+		
+		  if ($fixedAssetLoanInterestExpenses && count($fixedAssetLoanInterestExpenses)) {
+            $tableDataFormatted[$financialExpenseOrderIndex]['sub_items'][__('Fixed Assets Loans Interests')]['data'] = $fixedAssetLoanInterestExpenses;
+            $tableDataFormatted[$financialExpenseOrderIndex]['sub_items'][__('Fixed Assets Loans Interests')]['year_total'] = HArr::sumPerYearIndex($fixedAssetLoanInterestExpenses, $yearWithItsMonths);
+        }
         
         
         $totalFinanceExpense = HArr::sumAtDates(array_column($tableDataFormatted[$financialExpenseOrderIndex]['sub_items']??[], 'data'), $sumKeys);

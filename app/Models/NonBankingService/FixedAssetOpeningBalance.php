@@ -58,7 +58,7 @@ class FixedAssetOpeningBalance extends Model
 			
 			static::saved(function(self $model){
 				$statements = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('fixed_asset_opening_balances')->where('study_id',$model->study->id)->pluck('statement')->toArray();
-				$dateWithDateIndex = $model->study->getDateWithDateIndex();
+		//		$dateWithDateIndex = $model->study->getDateWithDateIndex();
 				$studyDates = $model->study->getStudyDates() ;
 				$studyDates = array_keys($studyDates);
 				$totalMonthlyDepreciations = [];
@@ -81,11 +81,18 @@ class FixedAssetOpeningBalance extends Model
     {
         return $this->belongsTo(Study::class, 'study_id', 'id');
     }
-	
+	public function fixedAssetName()
+	{
+		return $this->belongsTo(FixedAssetName::class,'name_id');
+	}
     public function getName():string 
     {
-        return $this->name ;
+        return $this->fixedAssetName ? $this->fixedAssetName->getName()  : __('N/A') ;
     }
+	public function getNameId()
+	{
+		return $this->name_id;
+	}
 	public function getMonthlyCounts():int 
 	{
 		return $this->monthly_counts;

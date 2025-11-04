@@ -26,10 +26,9 @@
 
                             <form class="kt-form kt-form--label-right" action="{{ route('store.opening.balances.for.non.banking',['company'=>$company->id , 'study'=>$study->id]) }}" method="POST">
                                 {{ csrf_field() }}
-
 							@include('non_banking_services.openingBalances._content',$study->getOpeningBalancesViewVars())
 
-                                <x-save-or-continue-btn :submitByAjax=false />
+                                <x-save-without-ajax-btn :submitByAjax=false />
                             </form>
 
 
