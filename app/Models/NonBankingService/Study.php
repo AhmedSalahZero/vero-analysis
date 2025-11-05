@@ -1822,7 +1822,7 @@ class Study extends Model
         $isPortfolio = $revenueStreamType == Study::PORTFOLIO_MORTGAGE;
         $currentAdminFeesAmountsAtMonthIndex = [];
         foreach ($adminFeesRates as $currentYearOrMonthIndex => $currentAdminFeesRateAtYearIndex) {
-            $currentLoanAmountAtYearOrMonthIndex =  $loanAmounts[$currentYearOrMonthIndex] ;
+            $currentLoanAmountAtYearOrMonthIndex =  $loanAmounts[$currentYearOrMonthIndex]??0 ;
             
             $activeMonths = $this->isMonthlyStudy() ? [$currentYearOrMonthIndex=>1] : $operationDurationPerYear[$currentYearOrMonthIndex] ;
             $activeMonthsCount = $this->isMonthlyStudy() ?  1 : count($operationDurationPerYear[$currentYearOrMonthIndex]);
