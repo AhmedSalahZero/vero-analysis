@@ -205,7 +205,7 @@
                                             </div>
                                         </div>
                                         @endif
-
+{{ dd(auth()->user()->id) }}
 
                                         @if(auth()->user()->id == 1 || auth()->user()->id == 140)
                                         <div class="card">
