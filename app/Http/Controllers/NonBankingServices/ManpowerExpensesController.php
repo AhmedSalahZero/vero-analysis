@@ -34,7 +34,6 @@ class ManpowerExpensesController extends Controller
 	
 	
 	public function storeDepartmentPositions(Company $company , Request $request,Study $study){
-		
 		$study->saveManpowerForm($request);
 		
 		return response()->json([

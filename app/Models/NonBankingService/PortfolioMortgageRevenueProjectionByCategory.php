@@ -109,7 +109,15 @@ class  PortfolioMortgageRevenueProjectionByCategory extends Model
 	}	
 	public function getCategoryColumnName():?string 
 	{
-		return 'portfolio_mortgage_duration';
+			$idAndTitleColumnNames = Study::getRevenueStreamCategoryColumnsFor('portfolioMortgageRevenueProjectionByCategories');
+		$id = $idAndTitleColumnNames['id'];
+		return $id;
+	}
+	public function getCategoryId()
+	{
+		$id = $this->getCategoryColumnName();
+		return $this->{$id};
+		
 	}
 	public function getRevenueType():string 
 	{

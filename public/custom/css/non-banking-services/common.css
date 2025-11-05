@@ -1259,3 +1259,8 @@ td > .kt-radio.kt-radio--single {
 .bg-manpower{
 	background-color: #b2eee1 !important
 }
+.max-250-w{
+	max-width: 250px !important;
+	min-width: 250px !important;
+	width: 250px !important;
+}

@@ -5112,7 +5112,7 @@ function getTypesForValuesForNonBanking():array
         ],
       
         'cost_per_unit'=>[
-            'title'=>__('Cost Per Unit'),
+            'title'=>__('Cost Per Contract'),
             'value'=>'cost_per_unit',
         ],
       
@@ -6293,7 +6293,7 @@ function getNonBankingNavigation(Company $company,User $user):array
 					'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
 				],
 				[
-					'title'=>__('Micro Finance Projection'),
+					'title'=>__('Microfinance Projection'),
 					'show'=>$study->hasMicroFinance(),
 					'link'=>$microfinanceFirstPageRoute,
 					'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
@@ -6435,32 +6435,32 @@ function getNonBankingNavigation(Company $company,User $user):array
 				[
             'title'=>__('Financial Statements'),
             'show'=>true ,
-			'link'=>'#',
-			'submenu'=>[
-				[
-					'title'=>__('Cash Flow Statement'),
-					'show'=>true,
-					'link'=>route('cash.in.out.flow.result',['company'=>$company->id,'study'=>$study->id]),
-					'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
-				],
+			'link'=>route('view.non.banking.forecast.income.statement',['company'=>$company->id , 'study'=>$study->id]),
+			// 'submenu'=>[
+			// 	[
+			// 		'title'=>__('Cash Flow Statement'),
+			// 		'show'=>true,
+			// 		'link'=>route('cash.in.out.flow.result',['company'=>$company->id,'study'=>$study->id]),
+			// 		'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
+			// 	],
 				
-				[
-					'title'=>__('Income Statement'),
-					'show'=>true,
-					'link'=>route('view.non.banking.forecast.income.statement',['company'=>$company->id , 'study'=>$study->id]),
-					'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
-				],
+			// 	[
+			// 		'title'=>__('Income Statement'),
+			// 		'show'=>true,
+			// 		'link'=>route('view.non.banking.forecast.income.statement',['company'=>$company->id , 'study'=>$study->id]),
+			// 		'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
+			// 	],
 				
 				
 				
-				[
-					'title'=>__('Balance Sheet'),
-					'show'=>true,
-					'link'=>route('balance.sheet.result',['company'=>$company->id,'study'=>$study->id]),
-					'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
-				],
+			// 	[
+			// 		'title'=>__('Balance Sheet'),
+			// 		'show'=>true,
+			// 		'link'=>route('balance.sheet.result',['company'=>$company->id,'study'=>$study->id]),
+			// 		'icon'=>'kt-menu__link-icon fa fa-crosshairs font-size-15px'
+			// 	],
 				
-			],
+			// ],
 			
 		],
 		[
@@ -6480,12 +6480,12 @@ function getNonBankingNavigation(Company $company,User $user):array
 			]
 		];
 
-		$urls['dashboard'] = [
-            'title'=>__('Result <br> Dashboard'),
-            'show'=>true ,
-			'link'=>route('view.results.dashboard',['company'=>$company->id , 'study'=>$studyId]),
+		// $urls['dashboard'] = [
+        //     'title'=>__('Result <br> Dashboard'),
+        //     'show'=>true ,
+		// 	'link'=>route('view.results.dashboard',['company'=>$company->id , 'study'=>$studyId]),
 			
-		];
+		// ];
 		$urls['opening-balances'] = [
             'title'=>__('Opening <br> Balances'),
             'show'=>$isExistingCompany ,

@@ -356,7 +356,7 @@ use App\Models\NonBankingService\Expense;
 
                                             <td>
                                                 <div class="d-flex align-items-center justify-content-center">
-                                                    <x-form.select :required="true" :label="''" :pleaseSelect="false" :selectedValue="isset($fixedAssetsFundingStructure) ? $fixedAssetsFundingStructure->getInstallmentIntervalAtMonthIndex($dateAsIndex) : 'monthly'" :options="[['title'=>__('Monthly'),'value'=>'monthly'],['title'=>__('Quarterly'),'value'=>'quartly'],['value'=>'semi annually','title'=>__('Semi-annually')]]" :add-new="false" class="select2-select  repeater-select  " :all="false" name="generalFixedAssetsFundingStructure[installment_intervals][{{ $dateAsIndex }}]"></x-form.select>
+                                                    <x-form.select :required="true" :label="''" :pleaseSelect="false" :selectedValue="isset($fixedAssetsFundingStructure) ? $fixedAssetsFundingStructure->getInstallmentIntervalAtMonthIndex($dateAsIndex) : 'monthly'" :options="[['title'=>__('Monthly'),'value'=>'monthly'],['title'=>__('Quarterly'),'value'=>'quarterly'],['value'=>'semi annually','title'=>__('Semi-annually')]]" :add-new="false" class="select2-select  repeater-select  " :all="false" name="generalFixedAssetsFundingStructure[installment_intervals][{{ $dateAsIndex }}]"></x-form.select>
                                                 </div>
                                             </td>
                                             @php

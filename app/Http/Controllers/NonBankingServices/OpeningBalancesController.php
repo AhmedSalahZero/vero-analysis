@@ -20,10 +20,9 @@ class OpeningBalancesController extends Controller
 {
     use NonBankingService ;
     
-    
-   
     public function create(Company $company, Request $request, Study $study)
     {
+		// dd('q');
         return view('non_banking_services.openingBalances.form', array_merge($study->getOpeningBalancesViewVars(), ['inEditMode'=>false]));
     }
     
@@ -70,8 +69,6 @@ class OpeningBalancesController extends Controller
         $study->otherCreditorsOpeningBalances->each(function (OtherCreditsOpeningBalance $otherCreditorOpeningBalance) use (&$totalExistingOtherCreditorsPayments) {
             $totalExistingOtherCreditorsPayments[$otherCreditorOpeningBalance->id] = $otherCreditorOpeningBalance->payload;
         });
-        // dd($totalExistingOtherCreditorsPayments);
-        
     
         $openingBalance = $study->cashAndBankOpeningBalances->first() ;
         $openingCashAmount = $openingBalance ? $openingBalance->cash_and_bank_amount : 0;
@@ -112,7 +109,7 @@ class OpeningBalancesController extends Controller
                 'existing_loans_interests_expense'=>json_encode($longTermLoanOpeningBalanceInterests)
         ]);
         
-        return redirect()->route('cash.in.out.flow.result', ['company'=>$company->id,'study'=>$study->id]);
+        return redirect()->route('view.non.banking.forecast.income.statement', ['company'=>$company->id,'study'=>$study->id]);
     
     }
     public function getCommonData(Request $request, Company $company)

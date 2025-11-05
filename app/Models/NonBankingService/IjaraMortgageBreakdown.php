@@ -78,8 +78,15 @@ class  IjaraMortgageBreakdown extends Model
 	{
 		return 'installment_interval';
 	}
+	public function getCategoryId()
+	{
+		$idAndTitleColumnNames = Study::getRevenueStreamCategoryColumnsFor('ijaraMortgageBreakdowns');
+		$id = $idAndTitleColumnNames['id'];
+		return $this->{$id};
+	}
 	public function getRevenueType():string 
 	{
+
 		return Study::IJARA;
 	}
 	

@@ -58,7 +58,7 @@
                                 <td class="">
                                     <div class="d-flex align-items-center ">
 									<div class="kt-input-icon ">
-                                        <div class="input-group">
+                                        <div class="input-group justify-content-center">
                                             <input disabled type="text" class="form-control expandable-amount-input text-center ignore-global-style" value="{{  number_format($currentExpenseValue/1000000,2) }}">
                                         </div>
                                     </div>
@@ -76,7 +76,7 @@
                                 <td class="w-20-percentage">
                                     <div class="kt-input-icon ">
                                         <div class="input-group">
-                                            <input disabled type="text" step="0.1" class="form-control ignore-global-style" value="{{ $expenseName }} %">
+                                            <input disabled type="text" step="0.1" class="form-control ignore-global-style" value="{{ __(' % / REV') }}">
                                         </div>
                                     </div>
                                 </td>
@@ -90,7 +90,7 @@
                                 <td class="">
                                     <div class="d-flex align-items-center ">
 									 <div class="kt-input-icon  ">
-                                        <div class="input-group">
+                                        <div class="input-group justify-content-center">
                                             <input style="border-color:green !important" disabled type="text" class="form-control expandable-amount-input text-center ignore-global-style" value="{{  number_format($currentPercentageOfSales,2) . ' %' }}">
                                         </div>
                                     </div>

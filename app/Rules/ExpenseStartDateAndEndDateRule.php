@@ -34,16 +34,19 @@ class ExpenseStartDateAndEndDateRule implements ImplicitRule
         try {
             $studyStartDate=  $this->study->study_start_date;
             $studyStartDateAsIndex = $this->study->convertDateStringToDateIndex($studyStartDate);
-        
+			
             foreach ((array)$value as $arr) {
-                $amount = $arr[$this->amountFieldName]??0;
+				$amount = $arr[$this->amountFieldName]??0;
                 if ($amount  <= 0) {
-                    continue ;
+					continue ;
                 }
                 $startDate = $arr['start_date'].'-01';
                 $startDateAsIndex = $this->study->convertDateStringToDateIndex($startDate);
-                $endDate =$arr['end_date'].'-01';
-            
+				$endDate = $this->study->getEndDate();
+				// dd($endDate);
+				if(isset($arr['end_date'])){
+					$endDate =$arr['end_date'].'-01';
+				}
                 $endDateAsIndex = $this->study->convertDateStringToDateIndex($endDate);
                 $firstCondition = $startDateAsIndex < $studyStartDateAsIndex;
                 $secondCondition = $endDateAsIndex < $startDateAsIndex;
@@ -56,7 +59,8 @@ class ExpenseStartDateAndEndDateRule implements ImplicitRule
                     return false ;
                 }
             }
-        } catch (\Exception $e) {
+        } 
+		catch (\Exception $e) {
             $this->failedMessage = __('Expense Start Date Must Be Greater Than Or Equal Study Start Date');
             return false;
         }

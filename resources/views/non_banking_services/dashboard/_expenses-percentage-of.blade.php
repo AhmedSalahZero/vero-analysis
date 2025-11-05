@@ -1,11 +1,11 @@
 @php
-	$tableClasses = $isYearsStudy ?  'col-md-6 margin__left' : 'col-md-12';
+	$tableClasses = 'col-md-12';
 @endphp
 <x-tables.repeater-table :table-class="$tableClasses" :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
-    <x-slot name="ths">
-        <x-tables.repeater-table-th class="  header-border-down first-column-th-class" :title="__('Item')"></x-tables.repeater-table-th>
+     <x-slot name="ths">
+        <x-tables.repeater-table-th class="  header-border-down first-column-th-class max-250-w" :title="__('Item')"></x-tables.repeater-table-th>
         @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
-        <x-tables.repeater-table-th class=" interval-class header-border-down " :title="$yearOrMonthFormatted"></x-tables.repeater-table-th>
+        <x-tables.repeater-table-th class="  header-border-down" :title="$yearOrMonthFormatted"></x-tables.repeater-table-th>
         @endforeach
     </x-slot>
     <x-slot name="trs">
@@ -15,8 +15,8 @@
 
 
             <td>
-                <div class="">
-                    <input value="{{ __('Operating Months') }}" disabled class="form-control text-left " type="text">
+                <div class="max-w-255">
+                    <input value="{{ __('Operating Months') }}" disabled class="form-control  text-left " type="text">
                 </div>
 
 
@@ -59,8 +59,8 @@
 
             @endphp
             <td>
-                <div class="">
-                    <input value="{{ __(' % / REV') }}" disabled class="form-control max-w-255  text-left " type="text">
+                <div class="max-w-255">
+                    <input value="{{ __('Cost Of Service % / REV') }}" disabled class="form-control   text-left " type="text">
                 </div>
 
 
@@ -96,8 +96,8 @@
 
 
             <td>
-                <div class="">
-                    <input value="{{ __('% / REV.') }}" disabled class="form-control text-left " type="text">
+                <div class="max-w-255">
+                    <input value="{{ __('Other OPEX % / REV.') }}" disabled class="form-control text-left " type="text">
                 </div>
 
 
@@ -140,8 +140,8 @@
 
 
             <td>
-                <div class="">
-                    <input value="{{ __('% / REV.') }}" disabled class="form-control text-left " type="text">
+                <div class="max-w-255">
+                    <input value="{{ __('Marketing Exp. % / REV.') }}" disabled class="form-control text-left " type="text">
                 </div>
 
 
@@ -183,8 +183,8 @@
 
 
             <td>
-                <div class="">
-                    <input value="{{ __('% / REV.') }}" disabled class="form-control text-left " type="text">
+                <div class="max-w-255">
+                    <input value="{{ __('Sales Exp. % / REV.') }}" disabled class="form-control text-left " type="text">
                 </div>
 
 
@@ -227,8 +227,8 @@
 
 
             <td>
-                <div class="">
-                    <input value="{{ __('% / REV.') }}" disabled class="form-control text-left " type="text">
+                <div class="max-w-255">
+                    <input value="{{ __('G&A Exp. % / REV.') }}" disabled class="form-control text-left " type="text">
                 </div>
 
 

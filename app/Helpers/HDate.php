@@ -96,7 +96,7 @@ class HDate
 			case 'monthly':
 				$intervalValue = 1 ;
 				break;
-				case 'quartly':
+				case 'quarterly':
 					$intervalValue = 3;
 					break;
 					case 'semi annually':

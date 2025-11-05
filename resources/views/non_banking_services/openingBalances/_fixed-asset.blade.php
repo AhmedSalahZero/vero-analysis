@@ -12,7 +12,7 @@ common-parent
     <input type="hidden" name="id" value="{{ isset($model) ? $model->id:0 }}">
     <div class="col-md-2 pr-2 pl-4">
         <label class="form-label">{{ __('Name') }} <br> <span class="visible-hidden">Name</span> </label>
-        <x-form.select :selectedValue="isset($model) ? $model->getNameId() : 0" :options="FixedAssetName::getGeneralAllForSelect2($company)" :add-new="false" class="select2-select repeater-select expense_category " :all="false" name="name_id"></x-form.select>
+        <x-form.select :selectedValue="isset($model) ? $model->getNameId() :''" :options="FixedAssetName::getGeneralAllForSelect2($company)" :add-new="false" class="select2-select repeater-select expense_category " :all="false" name="name_id"></x-form.select>
 
         {{-- <div class="kt-input-icon">
             <div class="input-group">
@@ -22,46 +22,46 @@ common-parent
 </div>
 
 <div class="col-md-1 pr-2 pl-2">
-    <label class="form-label">{!! __('Gross <br> Amount') !!} </label>
+    <label class="form-label text-left">{!! __('Gross <br> Amount') !!} </label>
     <div class="kt-input-icon">
         <div class="input-group">
-            <input type="text" class="form-control number_minus_field_1 only-greater-than-or-equal-zero-allowed " name="gross_amount" value="{{ isset($model) ? $model->getGrossAmount() : old('gross_amount') }}">
+            <input type="text" class="form-control number_minus_field_1 only-greater-than-or-equal-zero-allowed " name="gross_amount" value="{{ isset($model) ? $model->getGrossAmount() : old('gross_amount',0) }}">
         </div>
     </div>
 </div>
 <div class="col-md-1 pr-2 pl-2">
-    <label class="form-label"> {!! __('Accumulated <br> Depreciation') !!} </label>
+    <label class="form-label text-left"> {!! __('Accumulated <br> Depreciation') !!} </label>
     <div class="kt-input-icon">
         <div class="input-group">
-            <input type="text" class="form-control  number_minus_field_2 only-greater-than-or-equal-zero-allowed " name="accumulated_depreciation" value="{{ isset($model) ? $model->getAccumulatedDepreciation() : old('accumulated_depreciation') }}" step="0.5">
-        </div>
-    </div>
-</div>
-
-<div class="col-md-1 pr-2 pl-2">
-    <label class="form-label"> {!! __('Net <br> Amount') !!} </label>
-    <div class="kt-input-icon">
-        <div class="input-group">
-            <input readonly type="text" class="form-control number_minus_number_result only-greater-than-or-equal-zero-allowed " value="{{ isset($model) ? $model->getNetAmount() : old('net_amount') }}" step="0.5">
+            <input type="text" class="form-control  number_minus_field_2 only-greater-than-or-equal-zero-allowed " name="accumulated_depreciation" value="{{ isset($model) ? $model->getAccumulatedDepreciation() : old('accumulated_depreciation',0) }}" step="0.5">
         </div>
     </div>
 </div>
 
 <div class="col-md-1 pr-2 pl-2">
-    <label class="form-label">{!! __('Monthly <br> Depreciation') !!} </label>
+    <label class="form-label text-left"> {!! __('Net <br> Amount') !!} </label>
     <div class="kt-input-icon">
         <div class="input-group">
-            <input type="text" class="form-control  only-greater-than-or-equal-zero-allowed " name="monthly_depreciation" value="{{ isset($model) ? $model->getMonthlyDepreciation() : old('monthly_depreciation') }}" step="0.5">
+            <input readonly type="text" class="form-control number_minus_number_result only-greater-than-or-equal-zero-allowed " value="{{ isset($model) ? $model->getNetAmount() : old('net_amount',0) }}" step="0.5">
+        </div>
+    </div>
+</div>
+
+<div class="col-md-1 pr-2 pl-2">
+    <label class="form-label text-left">{!! __('Monthly <br> Depreciation') !!} </label>
+    <div class="kt-input-icon">
+        <div class="input-group">
+            <input type="text" class="form-control  only-greater-than-or-equal-zero-allowed " name="monthly_depreciation" value="{{ isset($model) ? $model->getMonthlyDepreciation() : old('monthly_depreciation',0) }}" step="0.5">
         </div>
     </div>
 </div>
 
 
 <div class="col-md-1 pr-2 pl-2">
-    <label class="form-label">{!! __('Monthly <br> Count') !!}</label>
+    <label class="form-label text-left">{!! __('Monthly <br> Count') !!}</label>
     <div class="kt-input-icon">
         <div class="input-group">
-            <input type="text" class="form-control   only-greater-than-or-equal-zero-allowed " name="monthly_counts" value="{{ isset($model) ? $model->getMonthlyCounts() : old('monthly_counts') }}" step="0.5">
+            <input type="text" class="form-control   only-greater-than-or-equal-zero-allowed " name="monthly_counts" value="{{ isset($model) ? $model->getMonthlyCounts() : old('monthly_counts',60) }}" step="0.5">
         </div>
     </div>
 </div>

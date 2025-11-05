@@ -39,6 +39,7 @@ class CashAndBankOpeningBalance extends Model
 				if(!is_null($openingBalance)){
 					$model->statement = self::calculateSettlementStatement($dates,$statementPayload,[],$openingBalance,$dateIndexWithDate,false,true);
 					$rates = $model->ecl_existing_rate ;
+					
 					$expectedCreditLoss = $model->expected_credit_loss *-1 ;
 					// $rates = [0=>$rates];
 					$monthlyRates = [];
@@ -47,15 +48,9 @@ class CashAndBankOpeningBalance extends Model
 						$monthlyRates[$dateAsIndex] = $rates;
 					 }
 					 $eclResult = $model->study->calculateExistingPortfolioEcl($monthlyRates,$endBalance,$expectedCreditLoss);
-					
-						
-						//  dd($monthlyRates,$endBalance,$expectedCreditLoss , $eclResult);
-						// dd($eclResult);
 						foreach($eclResult as $columnName => $result){
-							// dump($columnName);
 							$model->{$columnName} = $result;
 						}
-						// dd($model->{$columnName});
 						$interests = $model->interests;
 						 DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('income_statement_reports')->where('study_id',$model->study->id)->update([
 						 'existing_ecl_expenses'=>json_encode($eclResult['ecl_existing_expenses']),

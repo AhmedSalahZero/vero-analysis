@@ -17,7 +17,7 @@ class ExpenseStatementReportController extends Controller
 		$expenseTypes = [
 			'fixed_monthly_repeating_amount'=>__('Fixed Monthly Repeating'),
 			'percentage_of_sales'=>__('Percentage Of Sales'),
-			'cost_per_unit'=>__('Cost Per Unit'),
+			'cost_per_unit'=>__('Cost Per Contract'),
 			'expense_per_employee'=>__('Expense Per Employee')	,
 			'one_time_expense'=>__('One Time Expense')
 		];

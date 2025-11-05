@@ -294,12 +294,12 @@ tbody td{
 
                                  value="monthly" {{ @old('installment_interval') == 'monthly' ? 'selected' : '' }} data-order="1">{{__('Monthly')}}</option>
                                 <option 
-                                  @if($loan && $loan->installment_interval == 'quartly')
+                                  @if($loan && $loan->installment_interval == 'quarterly')
                             selected
                  
                              @endif 
 
-                                value="quartly" {{ @old('installment_interval') == 'quartly' ? 'selected' : '' }} data-order="2">{{__('Quarterly')}}</option>
+                                value="quarterly" {{ @old('installment_interval') == 'quarterly' ? 'selected' : '' }} data-order="2">{{__('Quarterly')}}</option>
                                 <option
                                 @if($loan && $loan->installment_interval == 'semi annually')
                             selected
@@ -355,13 +355,13 @@ tbody td{
                                 <option value="" selected disabled>{{__('Select')}} ..</option>
                                 {{-- <option value="monthly" {{ @old('step_up_interval') == 'monthly' ? 'selected' : '' }}>{{__('Monthly')}}</option> --}}
                                 <option
-                                  @if($loan && $loan->step_up_interval == 'quartly')
+                                  @if($loan && $loan->step_up_interval == 'quarterly')
                             selected
                  
                              @endif 
 
 
-                                 value="quartly" {{ @old('step_up_interval') == 'quartly' ? 'selected' : '' }}>{{__('Quarterly')}}</option>
+                                 value="quarterly" {{ @old('step_up_interval') == 'quarterly' ? 'selected' : '' }}>{{__('Quarterly')}}</option>
                                 <option
                                    @if($loan && $loan->step_up_interval == 'semi annually')
                             selected
@@ -425,12 +425,12 @@ tbody td{
                             <select name="step_down_interval" id="step_down_interval" class="form-control interval-calcs">
                                 <option value="" selected disabled>{{__('Select')}} ..</option>
                                 <option 
-                                      @if($loan && $loan->step_down_interval == 'quartly')
+                                      @if($loan && $loan->step_down_interval == 'quarterly')
                             selected
                  
                              @endif 
 
-                                value="quartly" {{ @old('step_down_interval') == 'quartly' ? 'selected' : '' }}>{{__('Quarterly')}}</option>
+                                value="quarterly" {{ @old('step_down_interval') == 'quarterly' ? 'selected' : '' }}>{{__('Quarterly')}}</option>
                                 <option 
                                       @if($loan && $loan->step_down_interval == 'semi annually')
                             selected
@@ -607,7 +607,7 @@ tbody td{
                             <select name="installment_interval" id="installment_interval" class="form-control">
                                 <option value="" selected disabled>{{__('Select')}} ..</option>
                                 <option value="monthly" {{ @old('installment_interval') == 'monthly' ? 'selected' : '' }} data-order="1">{{__('Monthly')}}</option>
-                                <option value="quartly" {{ @old('installment_interval') == 'quartly' ? 'selected' : '' }} data-order="2">{{__('Quarterly')}}</option>
+                                <option value="quarterly" {{ @old('installment_interval') == 'quarterly' ? 'selected' : '' }} data-order="2">{{__('Quarterly')}}</option>
                                 <option value="semi annually" {{ @old('installment_interval') == 'semi annually' ? 'selected' : '' }} data-order="3">{{__('Semi-annually')}}</option>
                             </select>
                             @if ($errors->has('installment_interval'))
@@ -767,16 +767,16 @@ tbody td{
                     var installment_amount = loan_amount / (repayment_duration);
                 }
 
-            } else if (interval == 'quartly') {
+            } else if (interval == 'quarterly') {
                 select = '<option value="monthly">{{__("Monthly")}}</option>\n' +
-                    '<option value="quartly">{{__("Quarterly")}}</option>\n';
+                    '<option value="quarterly">{{__("Quarterly")}}</option>\n';
                 if (loan_amount != '' && repayment_duration != '') {
                     var installment_amount = loan_amount / ((repayment_duration / 12) * 4);
                 }
             } else if (interval == 'semi annually') {
 
                 select = '<option value="monthly">{{__("Monthly")}}</option>\n' +
-                    '<option value="quartly">{{__("Quarterly")}}</option>\n' +
+                    '<option value="quarterly">{{__("Quarterly")}}</option>\n' +
                     '<option value="semi annually">{{__("Semi-annually")}}</option>\n';
 
                 if (loan_amount != '' && repayment_duration != '') {
@@ -798,28 +798,28 @@ tbody td{
                 select = '<option value="monthly" selected >{{__("Monthly")}}</option>\n';
 
 
-            } else if (interval == 'quartly') {
+            } else if (interval == 'quarterly') {
                 if (loan_interval == 'monthly') {
                     select = '<option value="monthly" selected>{{__("Monthly")}}</option>\n' +
-                        '<option value="quartly" >{{__("Quarterly")}}</option>\n';
+                        '<option value="quarterly" >{{__("Quarterly")}}</option>\n';
                 } else {
                     select = '<option value="monthly">{{__("Monthly")}}</option>\n' +
-                        '<option value="quartly" selected>{{__("Quarterly")}}</option>\n';
+                        '<option value="quarterly" selected>{{__("Quarterly")}}</option>\n';
                 }
 
 
             } else if (interval == 'semi annually') {
                 if (loan_interval == 'monthly') {
                     select = '<option value="monthly" selected>{{__("Monthly")}}</option>\n' +
-                        '<option value="quartly">{{__("Quarterly")}}</option>\n' +
+                        '<option value="quarterly">{{__("Quarterly")}}</option>\n' +
                         '<option value="semi annually">{{__("Semi-annually")}}</option>\n';
-                } else if (loan_interval == 'quartly') {
+                } else if (loan_interval == 'quarterly') {
                     select = '<option value="monthly">{{__("Monthly")}}</option>\n' +
-                        '<option value="quartly" selected>{{__("Quarterly")}}</option>\n' +
+                        '<option value="quarterly" selected>{{__("Quarterly")}}</option>\n' +
                         '<option value="semi annually">Semi-{{__("Annually")}}</option>\n';
                 } else {
                     select = '<option value="monthly">{{__("Monthly")}}</option>\n' +
-                        '<option value="quartly">{{__("Quarterly")}}</option>\n' +
+                        '<option value="quarterly">{{__("Quarterly")}}</option>\n' +
                         '<option value="semi annually" selected>{{__("Semi-annually")}}</option>\n';
                 }
 
@@ -845,7 +845,7 @@ tbody td{
                     var installment_amount = loan_amount / (repayment_duration);
                 }
 
-            } else if (interval == 'quartly') {
+            } else if (interval == 'quarterly') {
                 if (loan_amount != '' && repayment_duration != '') {
                     var installment_amount = loan_amount / ((repayment_duration / 12) * 4);
                 }
@@ -1076,7 +1076,7 @@ tbody td{
                     installment_payment_interval = 1;
                     break;
 
-                case 'quartly':
+                case 'quarterly':
                     installment_payment_interval = 3;
                     break;
 
@@ -1091,7 +1091,7 @@ tbody td{
 
         }
         switch (applied_step) {
-            case 'quartly':
+            case 'quarterly':
                 interval = 3;
                 break;
 

@@ -266,7 +266,6 @@ class IncomeStatementController extends Controller
         }
 		
 			
-		// dd();
 		foreach($totalEndBalanceForPortfolioPerRevenueType as $revenueStreamType => $totalPortfolioEndBalance){
 			$study->recalculateMonthlyAndAccumulatedEcl($revenueStreamType,$totalPortfolioEndBalance);
 		}
@@ -281,7 +280,6 @@ class IncomeStatementController extends Controller
 
 		
 		// securitaization 
-		// dd($resultPerRevenueStreamType);
 		$securitizationLoanSchedules = SecuritizationLoanSchedule::where('study_id', $study->id)->get();
 		  $securitizationBankLoanSettlements = [];
         $securitizationBankEarlySettlements = [];
@@ -358,8 +356,6 @@ class IncomeStatementController extends Controller
         $expenses = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('expenses')->where('study_id',$study->id)->join('expense_names', 'expense_names.id', '=', 'expenses.expense_name_id')->selectRaw('expenses.expense_category,expense_names.name as name,expenses.relation_name,expenses.monthly_repeating_amounts,expenses.total_after_vat,payload')->where('expenses.model_id', $study->id)->where('expenses.model_name', 'Study')->get()->toArray();
         $columnPerTypes = Expense::getColumnMapping();
         $salaryExpensesForCategories = Manpower::getSalaryExpensesPerCategory($monthsWithItsYear, $study->id, $company->id);
-		// dd($salaryExpensesForCategories);
-		// dd($salaryExpensesForCategories);
         foreach ($salaryExpensesForCategories as $manpowerCategory => $salaryExpensesForCategory) {
             foreach ($salaryExpensesForCategory as $monthIndex => $value) {
                 $currentOrderIndex = $orderIndexPerExpenseCategory[$manpowerCategory];
@@ -399,12 +395,12 @@ class IncomeStatementController extends Controller
             $currentColumnName = $columnPerTypes[$relationName];
           
       
-            $monthlyExpenses = (array)json_decode($expense->{$currentColumnName});
+            $monthlyExpenses = json_decode($expense->{$currentColumnName},true);
             foreach ($yearWithItsIndexes as $yearIndex => $monthIndexWithActive) {
                 foreach ($monthIndexWithActive as $monthIndex=> $isActiveIndex) {
                     $currentMonthManpowerTotal = 0 ;
-                    $monthlyExpenses = $relationName == 'one_time_expense' && isset($monthlyExpenses['monthly_one_time']) ? ($monthlyExpenses['monthly_one_time']) : $monthlyExpenses;
-                    $currentMonthlyExpenseValue = $monthlyExpenses[$monthIndex]??0 ;
+                    $monthlyExpense = $relationName == 'one_time_expense' && isset($monthlyExpenses['monthly_one_time']) ? ($monthlyExpenses['monthly_one_time']) : $monthlyExpenses;
+                    $currentMonthlyExpenseValue = $monthlyExpense[$monthIndex]??0 ;
                     $tableDataFormatted[$currentOrderIndex]['sub_items'][$name]['data'][$monthIndex] = isset($tableDataFormatted[$currentOrderIndex]['sub_items'][$name]['data'][$monthIndex]) ? $tableDataFormatted[$currentOrderIndex]['sub_items'][$name]['data'][$monthIndex] + $currentMonthlyExpenseValue:$currentMonthlyExpenseValue ;
                 }
                 
@@ -416,7 +412,6 @@ class IncomeStatementController extends Controller
         $totalCostOfService = Harr::calculateTotalFromSubItems($tableDataFormatted[1]['sub_items']??[]) ;
         $tableDataFormatted[1]['main_items']['cost-of-service']['data'] = $totalCostOfService;
         $tableDataFormatted[1]['main_items']['cost-of-service']['year_total'] =$totalCostOfServicePerYear =  HArr::sumPerYearIndex($totalCostOfService, $yearWithItsMonths);
-		// dd($totalSalesRevenues , $totalCostOfService);
         $tableDataFormatted[1]['main_items']['% Of Revenue']['data'] = $currentData =  HArr::calculatePercentageOf($totalSalesRevenues, $totalCostOfService);
 	
         $tableDataFormatted[1]['main_items']['% Of Revenue']['year_total'] = HArr::calculatePercentageOf($totalSalesRevenuesPerYears, $totalCostOfServicePerYear);
@@ -454,13 +449,10 @@ class IncomeStatementController extends Controller
 		$incomeStatementReport = $study->incomeStatementReport;
 		$totalExistingEcl = $incomeStatementReport ? $incomeStatementReport->existing_ecl_expenses : [];
 		$totalEclExpenses = HArr::sumAtDates([$totalEclExpenses,$totalExistingEcl],$sumKeys);
-		// dd($totalExistingEcl);
         $tableDataFormatted[$eclAndDepreciationOrderIndex]['sub_items'][$title]['data'] = $totalEclExpenses;
         $tableDataFormatted[$eclAndDepreciationOrderIndex]['sub_items'][$title]['year_total'] = HArr::sumPerYearIndex($totalEclExpenses, $yearWithItsMonths);
-    
         $totalDepreciationExpenses = [];
         $fixedAssetDepreciations = DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('fixed_assets')->where('study_id', $study->id)->pluck('total_monthly_depreciations')->toArray();
-		// dd($fixedAssetDepreciations);
         $title = __('Depreciation Expense')  ;
         $tableDataFormatted[$eclAndDepreciationOrderIndex]['sub_items'][$depreciationKey]['options'] =array_merge([
             'title'=>$title
@@ -555,7 +547,6 @@ class IncomeStatementController extends Controller
         // $fixedAssetAdminDepreciations = [];
       
         $totalDepreciation = HArr::sumAtDates([$totalFixedAssetAdminDepreciation,$totalGrossProfit], $sumKeys);
-		// dd('d',$totalFixedAssetAdminDepreciation , $totalGrossProfit);
         $editda = HArr::subtractAtDates([$totalDepreciation,$totalSGANDA], $sumKeys) ;
         $tableDataFormatted[$ebitdaOrderIndex]['main_items']['ebitda']['data'] = $editda;
         $tableDataFormatted[$ebitdaOrderIndex]['main_items']['ebitda']['year_total'] =$ebitdaTotalPerYear= HArr::sumPerYearIndex($editda, $yearWithItsMonths);
@@ -598,7 +589,7 @@ class IncomeStatementController extends Controller
         }
         
 		$fixedAssetLoanInterestExpenses = $incomeStatementReport ? $incomeStatementReport->fixed_asset_loan_interest_expenses : [];
-		
+		// dd($fixedAssetLoanInterestExpenses,$incomeStatementReport);
 		  if ($fixedAssetLoanInterestExpenses && count($fixedAssetLoanInterestExpenses)) {
             $tableDataFormatted[$financialExpenseOrderIndex]['sub_items'][__('Fixed Assets Loans Interests')]['data'] = $fixedAssetLoanInterestExpenses;
             $tableDataFormatted[$financialExpenseOrderIndex]['sub_items'][__('Fixed Assets Loans Interests')]['year_total'] = HArr::sumPerYearIndex($fixedAssetLoanInterestExpenses, $yearWithItsMonths);
@@ -643,7 +634,7 @@ class IncomeStatementController extends Controller
         * * Start Nine Item
         */
         $corporateTaxesRate = $study->corporate_taxes_rate/100;
-        $annuallyCorporateTaxes =  HArr::MultiplyWithNumberIfPositive($ebt, $corporateTaxesRate);
+        $annuallyCorporateTaxes =  HArr::MultiplyWithNumberIfPositiveAndZeroOtherValues($ebt, $corporateTaxesRate);
         $annuallyCorporateTaxes = HArr::sumPerYearIndex($annuallyCorporateTaxes, $yearWithItsMonths);
         $tableDataFormatted[$corporateTaxesOrderIndex]['main_items']['corporate-taxes']['options']['title'] = __('Corporate Taxes');
         $tableDataFormatted[$corporateTaxesOrderIndex]['main_items']['corporate-taxes']['data'] = $annuallyCorporateTaxes;
@@ -706,7 +697,6 @@ class IncomeStatementController extends Controller
 				'resultPerRevenueStreamType'=>$resultPerRevenueStreamType??[]
 			];
 		}
-	// dd($tableDataFormatted);
 		$viewVars = [
             'company'=>$company,
             'studyMonthsForViews'=>$studyMonthsForViews,
@@ -719,72 +709,76 @@ class IncomeStatementController extends Controller
             'tableDataFormatted'=>$tableDataFormatted,
             'financialYearEndMonthNumber'=>$study->getFinancialYearEndMonthNumber(),
             'monthsWithItsYear'=>$monthsWithItsYear,
-            'defaultClasses'=>$defaultClasses
+            'defaultClasses'=>$defaultClasses,
+			'nextButton' => [
+				'link'=>route('cash.in.out.flow.result',['company'=>$company->id,'study'=>$study->id]),
+				'title'=>__('Go To Cashflow')
+			]
         ] ;
         return view('non_banking_services.income-statement.cash-flow',$viewVars );
         
         
         
     }
-    protected function getViewVars(Company $company, Study $model = null):array
-    {
-        $actionRoute=isset($model) ? route('update.study', [$company->id , $model->id]) : route('store.financial.planning.study', ['company'=>$company->id]);
-        return [
-            'company'=>$company,
-            'title'=>$company->getName().' ' . __(' Financial Plan'),
-            'model'=>$model,
-            'actionRoute'=>$actionRoute,
-            'navigators' => [],
-        ];
-    }
-    public function create(Company $company, Request $request)
-    {
-        return view('financial_planning.study.form', $this->getViewVars($company));
-    }
-    public function store(Company $company, Request $request, Study $study = null)
-    {
-        $request->merge([
-            'study_start_date'=>Carbon::make($request->get('study_start_date'))->format('Y-m-d'),
-            'study_end_date'=>Carbon::make($request->get('study_end_date'))->format('Y-m-d'),
-            'operation_start_date'=>Carbon::make($request->get('operation_start_date'))->format('Y-m-d'),
+    // protected function getViewVars(Company $company, Study $model = null):array
+    // {
+    //     $actionRoute=isset($model) ? route('update.study', [$company->id , $model->id]) : route('store.financial.planning.study', ['company'=>$company->id]);
+    //     return [
+    //         'company'=>$company,
+    //         'title'=>$company->getName().' ' . __(' Financial Plan'),
+    //         'model'=>$model,
+    //         'actionRoute'=>$actionRoute,
+    //         'navigators' => [],
+    //     ];
+    // }
+    // public function create(Company $company, Request $request)
+    // {
+    //     return view('financial_planning.study.form', $this->getViewVars($company));
+    // }
+    // public function store(Company $company, Request $request, Study $study = null)
+    // {
+    //     $request->merge([
+    //         'study_start_date'=>Carbon::make($request->get('study_start_date'))->format('Y-m-d'),
+    //         'study_end_date'=>Carbon::make($request->get('study_end_date'))->format('Y-m-d'),
+    //         'operation_start_date'=>Carbon::make($request->get('operation_start_date'))->format('Y-m-d'),
 
             
-        ]);
-        $data = $request->except(['_token']) ;
-        $model = null ;
-        if (is_null($study)) {
-            $model = Study::create($data);
-        } else {
-            $study->update($data);
-            $model = $study;
-        }
+    //     ]);
+    //     $data = $request->except(['_token']) ;
+    //     $model = null ;
+    //     if (is_null($study)) {
+    //         $model = Study::create($data);
+    //     } else {
+    //         $study->update($data);
+    //         $model = $study;
+    //     }
 
-        /**
-         * @var Study $model
-         */
-        $datesAsStringAndIndex = $model->getDatesAsStringAndIndex();
-        $studyDates = $model->getStudyDates() ;
-        $datesAndIndexesHelpers = $model->datesAndIndexesHelpers($studyDates);
-        $datesIndexWithYearIndex=$datesAndIndexesHelpers['datesIndexWithYearIndex'];
-        $yearIndexWithYear=$datesAndIndexesHelpers['yearIndexWithYear'];
-        $dateIndexWithDate=$datesAndIndexesHelpers['dateIndexWithDate'];
-        $dateWithMonthNumber=$datesAndIndexesHelpers['dateWithMonthNumber'];
-        $model->updateStudyAndOperationDates($datesAsStringAndIndex, $datesIndexWithYearIndex, $yearIndexWithYear, $dateIndexWithDate, $dateWithMonthNumber);
-        return response()->json([
-            'redirectTo'=>route('create.general.assumption', ['company'=>$company->id,'study'=>$model->id])
-        ]);
-    }
-    public function edit(Company $company, Request $request, Study $study)
-    {
-        return view('financial_planning.study.form', $this->getViewVars($company, $study));
-    }
-    public function update(Request $request, Company $company, Study $study)
-    {
-        return $this->store($company, $request, $study);
-    }
-    public function destroy(Request $request, Company $company, Study $study)
-    {
-        $study->delete();
-        return redirect()->back()->with('success', __('Study Has Been Deleted Successfully'));
-    }
+    //     /**
+    //      * @var Study $model
+    //      */
+    //     $datesAsStringAndIndex = $model->getDatesAsStringAndIndex();
+    //     $studyDates = $model->getStudyDates() ;
+    //     $datesAndIndexesHelpers = $model->datesAndIndexesHelpers($studyDates);
+    //     $datesIndexWithYearIndex=$datesAndIndexesHelpers['datesIndexWithYearIndex'];
+    //     $yearIndexWithYear=$datesAndIndexesHelpers['yearIndexWithYear'];
+    //     $dateIndexWithDate=$datesAndIndexesHelpers['dateIndexWithDate'];
+    //     $dateWithMonthNumber=$datesAndIndexesHelpers['dateWithMonthNumber'];
+    //     $model->updateStudyAndOperationDates($datesAsStringAndIndex, $datesIndexWithYearIndex, $yearIndexWithYear, $dateIndexWithDate, $dateWithMonthNumber);
+    //     return response()->json([
+    //         'redirectTo'=>route('create.general.assumption', ['company'=>$company->id,'study'=>$model->id])
+    //     ]);
+    // }
+    // public function edit(Company $company, Request $request, Study $study)
+    // {
+    //     return view('financial_planning.study.form', $this->getViewVars($company, $study));
+    // }
+    // public function update(Request $request, Company $company, Study $study)
+    // {
+    //     return $this->store($company, $request, $study);
+    // }
+    // public function destroy(Request $request, Company $company, Study $study)
+    // {
+    //     $study->delete();
+    //     return redirect()->back()->with('success', __('Study Has Been Deleted Successfully'));
+    // }
 }

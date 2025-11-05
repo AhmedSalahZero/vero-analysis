@@ -390,10 +390,11 @@ use App\Models\NonBankingService\Study;
             </div>
 
 
-
-            {{-- <div class="text-right mt-4 cash-flow-btn">
-					<a href="{{ route('cash.in.out.flow.result',['project'=>$study->id]) }}" class="btn btn-primary ">Cash Flow</a>
-        </div> --}}
+		@if(isset($nextButton))
+            <div class="text-right mt-4 cash-flow-btn">
+					<a href="{{ $nextButton['link'] }}" class="btn btn-primary ">{{ $nextButton['title'] }}</a>
+        </div>
+		@endif
 
 
 

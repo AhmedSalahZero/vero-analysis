@@ -75,7 +75,7 @@
 
 
              <td>
-                 <x-form.select :selectedValue="isset($subModel) ? $subModel->getInstallmentInterval() : 'monthly' " :options="[['title'=>__('Monthly'),'value'=>'monthly'],['title'=>__('Quarterly'),'value'=>'quartly'],['value'=>'semi annually','title'=>__('Semi-annually')]]" :add-new="false" class="select2-select   repeater-select" :all="false" name="{{ $isRepeater ? 'installment_interval':$tableId.'[0][installment_interval]' }}"></x-form.select>
+                 <x-form.select :selectedValue="isset($subModel) ? $subModel->getInstallmentInterval() : 'monthly' " :options="[['title'=>__('Monthly'),'value'=>'monthly'],['title'=>__('Quarterly'),'value'=>'quarterly'],['value'=>'semi annually','title'=>__('Semi-annually')]]" :add-new="false" class="select2-select   repeater-select" :all="false" name="{{ $isRepeater ? 'installment_interval':$tableId.'[0][installment_interval]' }}"></x-form.select>
              </td>
 
 
@@ -88,7 +88,7 @@
                  </div>
              </td>
              <td>
-                 <x-form.select :selectedValue="isset($subModel) ? $subModel->getStepInterval() : 'annually' " :options="[['title'=>__('Quarterly'),'value'=>'quartly'],['value'=>'semi annually','title'=>__('Semi-annually')],['title'=>__('Annually'),'value'=>'annually']]" :add-new="false" class="select2-select   repeater-select" :all="false" name="{{ $isRepeater ? 'step_interval':$tableId.'[0][step_interval]' }}"></x-form.select>
+                 <x-form.select :selectedValue="isset($subModel) ? $subModel->getStepInterval() : 'annually' " :options="[['title'=>__('Quarterly'),'value'=>'quarterly'],['value'=>'semi annually','title'=>__('Semi-annually')],['title'=>__('Annually'),'value'=>'annually']]" :add-new="false" class="select2-select   repeater-select" :all="false" name="{{ $isRepeater ? 'step_interval':$tableId.'[0][step_interval]' }}"></x-form.select>
              </td>
 
 

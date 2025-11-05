@@ -15,7 +15,7 @@ class CalculateFixedLoanAtBeginningService
     
 	public function __calculateBasedOnDiffBaseRates(array $baseRatesMapping, string $loanType, string $loanStartDate, float $loanAmount, float $marginRate, float $tenor, string $installmentPaymentIntervalName, int $installmentPaymentIntervalValue, float $stepUpRate = 0, string $stepUpIntervalName = null, float $stepDownRate = 0, string $stepDownIntervalName = null, float $gracePeriod  = 0, int $monthIndex = 0, array $datesAsStringAndIndex = [], array $dateWithDateIndex = []):array
     {
-        
+        // dd($baseRatesMapping,$marginRate);
         $currentStartDateAsIndex=$monthIndex ;
         $originalTenor = $tenor;
         if ($loanAmount <= 0) {
@@ -27,6 +27,7 @@ class CalculateFixedLoanAtBeginningService
 		// $currentStartDateAsIndex = null;
 		// $loanAmount= 0;
         foreach ($baseRatesMapping as $currentBaseRateDate => $currentBaseRate) {
+			
             if ($i != 0) {
                $currentBaseRateDateAsIndex = $datesAsStringAndIndex[$currentBaseRateDate];
 				$gracePeriod = 0;
@@ -35,6 +36,7 @@ class CalculateFixedLoanAtBeginningService
 					$loanAmount =$fixedAtEndResult['current_result'][$i-1]['beginning'][$currentStartDateAsIndex]??0;
 					}
                 $loanStartDate = $dateWithDateIndex[$currentStartDateAsIndex]??null;
+				// logger($loanStartDate . ' - ' . $currentBaseRate. '-' .$marginRate);
 				if(is_null($loanStartDate)){
 					continue;
 				}
@@ -47,6 +49,8 @@ class CalculateFixedLoanAtBeginningService
 				// if($i == 1){
 				// 	dd($loanAmount,$currentStartDateAsIndex ,$loanStartDate);
 				// }
+				
+				logger('inside base'.$currentBaseRate.'inside margin'.$marginRate.'inside loan start date'.$loanStartDate);
 				$currentResultArr =$this->__calculate($previousResult, $i, $loanType, $loanStartDate, $loanAmount, $currentBaseRate, $marginRate, $tenor, $installmentPaymentIntervalName, $stepUpRate, $stepUpIntervalName, $stepDownRate, $stepDownIntervalName, $gracePeriod, $currentStartDateAsIndex);
 				// if($i == 1){
 				// 	dd($currentResultArr ,$previousResult );
@@ -243,7 +247,7 @@ class CalculateFixedLoanAtBeginningService
         switch ($installmentPayment) {
             case 'monthly':
                 return 1;
-            case 'quartly':
+            case 'quarterly':
                 return 3;
             case 'semi annually':
                 return 6;
@@ -254,7 +258,7 @@ class CalculateFixedLoanAtBeginningService
     {
     
         switch ($appliedStepIntervalName) {
-            case 'quartly':
+            case 'quarterly':
                 return 3;
             case 'semi annually':
                 return 6;

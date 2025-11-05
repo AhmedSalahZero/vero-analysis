@@ -281,7 +281,7 @@ use App\Models\NonBankingService\IjaraMortgageBreakdown;
 
 
                                     <td>
-                                        <x-form.select :required="true" :label="''" :pleaseSelect="false" :selectedValue="isset($subModel) ? $subModel->getInstallmentInterval() : 'monthly'" :options="[['title'=>__('Monthly'),'value'=>'monthly'],['title'=>__('Quarterly'),'value'=>'quartly'],['value'=>'semi annually','title'=>__('Semi-annually')]]" :add-new="false" class="select2-select  repeater-select  " :all="false" name="installment_interval"></x-form.select>
+                                        <x-form.select :required="true" :label="''" :pleaseSelect="false" :selectedValue="isset($subModel) ? $subModel->getInstallmentInterval() : 'monthly'" :options="[['title'=>__('Monthly'),'value'=>'monthly'],['title'=>__('Quarterly'),'value'=>'quarterly'],['value'=>'semi annually','title'=>__('Semi-annually')]]" :add-new="false" class="select2-select  repeater-select  " :all="false" name="installment_interval"></x-form.select>
                                         <input value="{{ __('Ijara Projection') }}" disabled class="form-control max-w-300 text-left mt-2" type="text">
 
                                     </td>

@@ -23,7 +23,7 @@ trait GeneralFunctions
     {
         if ($interval == 'monthly') {
             $count = 1;
-        } elseif ($interval == 'quartly' || $interval == 'quarterly') {
+        } elseif ( $interval == 'quarterly') {
             $count = 3;
         } elseif ($interval == 'semi-annually' || $interval == 'semi annually') {
             $count = 6;

@@ -127,7 +127,7 @@ class MicrofinanceLoanController extends Controller
 		$study->storeAdminFeesAndFundingStructureFor($request, Study::MICROFINANCE,[],[],$totalMonthlyLoanPerMtls,$totalMonthlyLoanPerOdas);
        $study->calculateMicrofinanceLoans();
 	   $study->updateExpensesPercentageAndCostPerUnitsOfSales();
-        
+        // dd('good');
         
         return response()->json([
                 'redirectTo'=>$study->getRevenueRoute(Study::SECURITIZATION)

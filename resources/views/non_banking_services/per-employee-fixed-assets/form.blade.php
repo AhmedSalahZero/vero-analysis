@@ -145,6 +145,7 @@ use App\Models\NonBankingService\Expense;
                     });
                   
                     window.location.href = res.redirectTo;
+					
 
 
 
@@ -158,9 +159,13 @@ use App\Models\NonBankingService\Expense;
                 , error: function(res) {
                     $('.save-form').prop('disabled', false);
                     $('.submit-form-btn-new').prop('disabled', false)
+					let errorMessage = res.responseJSON.message;
+					if (res.responseJSON && res.responseJSON.errors) {
+                            errorMessage = res.responseJSON.errors[Object.keys(res.responseJSON.errors)[0]][0]
+                        }
                     Swal.fire({
                         icon: 'error'
-                        , title: res.responseJSON.message
+                        , title: errorMessage
                     , });
                 }
             });

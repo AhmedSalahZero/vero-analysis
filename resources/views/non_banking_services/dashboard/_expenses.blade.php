@@ -1,14 +1,15 @@
 @php
-	$tableClasses = $isYearsStudy ?  'col-md-6' : 'col-md-12';
+	$tableClasses =  'col-md-12';
 @endphp
 
      <x-tables.repeater-table :table-class="$tableClasses" :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="'food'" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
-         <x-slot name="ths">
-             <x-tables.repeater-table-th class="  header-border-down max-column-th-class" :title="__('Item')"></x-tables.repeater-table-th>
-             @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
-             <x-tables.repeater-table-th class=" interval-class header-border-down " :title="$yearOrMonthFormatted"></x-tables.repeater-table-th>
-             @endforeach
-         </x-slot>
+        
+		   <x-slot name="ths">
+        <x-tables.repeater-table-th class="  header-border-down first-column-th-class max-250-w" :title="__('Item')"></x-tables.repeater-table-th>
+        @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
+        <x-tables.repeater-table-th class="  header-border-down" :title="$yearOrMonthFormatted"></x-tables.repeater-table-th>
+        @endforeach
+    </x-slot>
          <x-slot name="trs">
              @if($isYearsStudy)
              <tr data-repeat-formatting-decimals="0" data-repeater-style>
@@ -16,7 +17,7 @@
 
 
                  <td>
-                     <div class="">
+                     <div class="max-w-250">
                          <input value="{{ __('Operating Months') }}" disabled class="form-control text-left " type="text">
                      </div>
 
@@ -54,8 +55,8 @@
                  $currentModalTitle = __('Cost Of Service (Fig In Million)') ;
                  @endphp
                  <td>
-                     <div class="d-flex align-items-center ">
-                         <input value="{{ __('Cost Of Service') }}" disabled class="form-control max-w-250 text-left " type="text">
+                     <div class="d-flex align-items-center max-w-255">
+                         <input value="{{ __('Cost Of Service') }}" disabled class="form-control  text-left " type="text">
                          <div>
                              <i data-toggle="modal" data-target="#{{ $currentModalId }}" class="flaticon2-information kt-font-primary exclude-icon ml-2 cursor-pointer "></i>
                              @include('non_banking_services.dashboard._expense-modal',['currentModalId'=>$currentModalId,'modalTitle'=>$currentModalTitle,'modalData'=>$formattedExpenses[$key] ?? []])
@@ -103,7 +104,7 @@
                  @endphp
 
                  <td>
-                     <div class="d-flex align-items-center ">
+                     <div class="d-flex align-items-center max-w-255">
                          <input value="{{ __('Other OPEX') }}" disabled class="form-control text-left " type="text">
                          <div>
                              <i data-toggle="modal" data-target="#{{ $currentModalId }}" class="flaticon2-information kt-font-primary exclude-icon ml-2 cursor-pointer "></i>
@@ -150,7 +151,7 @@
                  @endphp
 
                  <td>
-                     <div class="d-flex align-items-center ">
+                     <div class="d-flex align-items-center max-w-255 ">
                          <input value="{{ __('Marketing Expenses') }}" disabled class="form-control text-left " type="text">
                          <div>
                              <i data-toggle="modal" data-target="#{{ $currentModalId }}" class="flaticon2-information kt-font-primary exclude-icon ml-2 cursor-pointer "></i>
@@ -197,7 +198,7 @@
                  @endphp
 
                  <td>
-                     <div class="d-flex align-items-center ">
+                     <div class="d-flex align-items-center max-w-255 ">
                          <input value="{{ __('Sales Expenses') }}" disabled class="form-control text-left " type="text">
                          <div>
                              <i data-toggle="modal" data-target="#{{ $currentModalId }}" class="flaticon2-information kt-font-primary exclude-icon ml-2 cursor-pointer "></i>
@@ -238,7 +239,7 @@
                  @endphp
 
                  <td>
-                     <div class="d-flex align-items-center ">
+                     <div class="d-flex align-items-center max-w-255 ">
                          <input value="{{ __('General Expenses') }}" disabled class="form-control text-left " type="text">
                          <div>
                              <i data-toggle="modal" data-target="#{{ $currentModalId }}" class="flaticon2-information kt-font-primary exclude-icon ml-2 cursor-pointer "></i>

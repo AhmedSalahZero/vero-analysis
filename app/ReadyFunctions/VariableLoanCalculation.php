@@ -6,7 +6,7 @@ class VariableLoanCalculation
 	{
             if ($installmentIntervalName == 'monthly') {
                 $installment_amount = $loanAmount/($duration);
-            }elseif ($installmentIntervalName == 'quartly') {
+            }elseif ($installmentIntervalName == 'quarterly') {
                 $installment_amount = $loanAmount/(($duration/12)*4);
             }else{
                 $installment_amount = $loanAmount/(($duration/12)*2);

@@ -8,8 +8,9 @@ use Illuminate\Support\Facades\DB;
 class PortfolioPresentValue
 {
     
-    public function calculate(array $monthlyStudyOccurrenceDates, Study $study, array $dateIndexWithDate, array $portfolioLoanFundingRatesPerMonths, array $operationDurationPerYearFromIndexes, int $tenorInYears, array $startFromPerYear, array $frequencyPerYear, array $portfolioMortgageTransactionAmountsPerYears, array $cbeLendingRatesPerMonths, float $marginRate, array $bankMarginRates, int $companyId, int $studyId, int $portfolioMortgageCategoryId):array
+    public function calculate(string $revenueStreamCategoryId , array $monthlyStudyOccurrenceDates, Study $study, array $dateIndexWithDate, array $portfolioLoanFundingRatesPerMonths, array $operationDurationPerYearFromIndexes, int $tenorInYears, array $startFromPerYear, array $frequencyPerYear, array $portfolioMortgageTransactionAmountsPerYears, array $cbeLendingRatesPerMonths, float $marginRate, array $bankMarginRates, int $companyId, int $studyId, int $portfolioMortgageCategoryId):array
     {
+		
 		$operationDates = range($study->getOperationStartDateAsIndex(), $study->getStudyEndDateAsIndex());
         DB::connection(NON_BANKING_SERVICE_CONNECTION_NAME)->table('loan_schedule_payments')->where('study_id', $studyId)->where('revenue_stream_type', Study::PORTFOLIO_MORTGAGE)->where('revenue_stream_id', $portfolioMortgageCategoryId)->delete();
         $portfolioMortgageLoanSchedulePayments = [];
@@ -73,6 +74,7 @@ class PortfolioPresentValue
                 $portfolioMortgageLoanSchedulePayments[$currentOccurrenceMonthIndex]['endBalance'][$i+$currentOccurrenceMonthIndex] = $endBalance ;
                 $totalPortfoliosMortgageEndBalances[$i+$currentOccurrenceMonthIndex] = isset($totalPortfoliosMortgageEndBalances[$i+$currentOccurrenceMonthIndex]) ? $totalPortfoliosMortgageEndBalances[$i+$currentOccurrenceMonthIndex] + $endBalance : $endBalance;
                 $portfolioMortgageLoanSchedulePayments[$currentOccurrenceMonthIndex]['revenue_stream_type'] = Study::PORTFOLIO_MORTGAGE ;
+                $portfolioMortgageLoanSchedulePayments[$currentOccurrenceMonthIndex]['revenue_stream_category_id'] = $revenueStreamCategoryId ;
                 $portfolioMortgageLoanSchedulePayments[$currentOccurrenceMonthIndex]['portfolio_loan_type'] = 'portfolio' ;
                 $portfolioMortgageLoanSchedulePayments[$currentOccurrenceMonthIndex]['revenue_stream_id'] = $portfolioMortgageCategoryId ;
                 $portfolioMortgageLoanSchedulePayments[$currentOccurrenceMonthIndex]['study_id'] = $studyId ;
@@ -89,7 +91,7 @@ class PortfolioPresentValue
             $accumulatedMonthsAmountsDueDates[$currentOccurrenceMonthIndex]['base_rate'] = $currentBaseRate ;
                     
         }
-        $this->calculateMonthlyAmounts($portfolioInterestAmounts, $bankMarginRates, $tenorInMonths, $installmentPaymentIntervalName, $loanType, $dateIndexWithDate, $currentUnearnedInterestStatement, $accumulatedMonthsAmountsDueDates, $bankPortfolioLoans, $calculateFixedLoanAtEndService, $portfolioMortgageCategoryId, $studyId, $companyId,$totalBankInterests,$totalBankSchedulePayments,$operationDates);
+        $this->calculateMonthlyAmounts($revenueStreamCategoryId,$portfolioInterestAmounts, $bankMarginRates, $tenorInMonths, $installmentPaymentIntervalName, $loanType, $dateIndexWithDate, $currentUnearnedInterestStatement, $accumulatedMonthsAmountsDueDates, $bankPortfolioLoans, $calculateFixedLoanAtEndService, $portfolioMortgageCategoryId, $studyId, $companyId,$totalBankInterests,$totalBankSchedulePayments,$operationDates);
 		// dd($bankPortfolioLoans,$portfolioMortgageLoanSchedulePayments);
         foreach ($portfolioMortgageLoanSchedulePayments as $occurrenceDate => &$portfolioMortgageLoanSchedulePayment) {
 			$totalInterests= HArr::sumAtDates([$totalInterests,$portfolioMortgageLoanSchedulePayment['interestAmount']??[]],$operationDates);
@@ -139,7 +141,7 @@ class PortfolioPresentValue
     }
     
     
-    protected function calculateMonthlyAmounts(array $portfolioInterestAmounts, array $bankMarginRates, $tenorInMonths, $installmentPaymentIntervalName, string $loanType, array $dateIndexWithDate, array &$currentUnearnedInterestStatement, array &$accumulatedMonthsAmountsDueDates, array &$bankPortfolioLoans, CalculateFixedLoanAtEndService $calculateFixedLoanAtEndService, int $portfolioMortgageCategoryId, int $studyId, int $companyId  , array &$totalBankInterests,array &$totalBankSchedulePayments,array $operationDates):void
+    protected function calculateMonthlyAmounts(string $revenueStreamCategoryId , array $portfolioInterestAmounts, array $bankMarginRates, $tenorInMonths, $installmentPaymentIntervalName, string $loanType, array $dateIndexWithDate, array &$currentUnearnedInterestStatement, array &$accumulatedMonthsAmountsDueDates, array &$bankPortfolioLoans, CalculateFixedLoanAtEndService $calculateFixedLoanAtEndService, int $portfolioMortgageCategoryId, int $studyId, int $companyId  , array &$totalBankInterests,array &$totalBankSchedulePayments,array $operationDates):void
     {
         foreach ($accumulatedMonthsAmountsDueDates as $currentOccurrenceMonthIndex => $portfolioMortgageLoanArray) {
             $currentBankMarginRate = $bankMarginRates[$currentOccurrenceMonthIndex]??0;
@@ -156,7 +158,7 @@ class PortfolioPresentValue
                 $bankLoanAmountsFormatted['company_id'] = $companyId ;
                 $bankLoanAmountsFormatted['month_as_index'] = $currentOccurrenceMonthIndex ;
                 $bankLoanAmountsFormatted['revenue_stream_id'] =$portfolioMortgageCategoryId ;
-                $bankLoanAmountsFormatted['revenue_stream_category_id'] =null ;
+                $bankLoanAmountsFormatted['revenue_stream_category_id'] =$revenueStreamCategoryId ;
                 $bankLoanAmountsFormatted['portfolio_loan_type'] ='bank_portfolio';
                 $bankLoanAmountsFormatted['revenue_stream_type'] =Study::PORTFOLIO_MORTGAGE;
                     $totalBankInterests= HArr::sumAtDates([$totalBankInterests,$bankLoanAmountsFormatted['interestAmount']??[]],$operationDates);

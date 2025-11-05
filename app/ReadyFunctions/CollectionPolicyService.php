@@ -58,7 +58,7 @@ class CollectionPolicyService
 		if($intervalName == 'monthly' || $intervalName == 'cash'){
 			return 1 ;
 		}
-		if($intervalName  == 'quarterly' || $intervalName =='quartly'){
+		if($intervalName  == 'quarterly'){
 			return 3 ;
 		}
 		if($intervalName == 'semi-annually'){

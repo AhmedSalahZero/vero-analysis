@@ -28,6 +28,9 @@ class ProductSeasonalityRule implements ImplicitRule
      */
     public function passes($attribute, $value)
     {
+		if($this->study->isMonthlyStudy()){
+			return true;
+		}
 		foreach((array)$value as $arr){
 			$totalSeasonality = 0 ;
 			foreach($arr['seasonality']??[] as $index => $value){

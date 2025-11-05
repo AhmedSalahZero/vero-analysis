@@ -33,12 +33,7 @@ class Position extends Model
 	public function getExpenseTypeId():?string
 	{
 		return $this->expense_type;
-		// dd($this);
-		// if($this->type == Department::MICROFINANCE){
-		// 	dd($this);
-		// 	// return $this
-		// }
-		// return $this->positions->count() ? $this->positions->first()->expense_type : null;
+	
 	}
 	
 }

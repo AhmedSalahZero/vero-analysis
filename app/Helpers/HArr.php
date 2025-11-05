@@ -890,12 +890,24 @@ class HArr
         }
         return $result;
     }
-    public static function MultiplyWithNumberIfPositive(array $items, float $number)
+    public static function MultiplyWithNumberIfPositiveAndZeroOtherValues(array $items, float $number)
     {
         $newItems = [];
         foreach ($items as $key=>$value) {
             if ($value < 0) {
                 $newItems[$key]=0;
+            } else {
+                $newItems[$key]=$value * $number ;
+            }
+        }
+        return $newItems ;
+    }
+	 public static function MultiplyWithNumberIfOnlyPositive(array $items, float $number)
+    {
+        $newItems = [];
+        foreach ($items as $key=>$value) {
+            if ($value < 0) {
+                $newItems[$key]=$value;
             } else {
                 $newItems[$key]=$value * $number ;
             }
@@ -1174,5 +1186,13 @@ class HArr
 			$result[$dateAsIndex] =$currentValue; 
 		}
 		return $result;
+	}
+	public static function zeroIfAtRange(array $items , int $min , int $max ){
+		foreach($items as $dateAsIndex => &$value){
+			if($value >= $min && $value <= $max){
+				$value = 0;
+			}
+		}
+		return $items;
 	}
 }

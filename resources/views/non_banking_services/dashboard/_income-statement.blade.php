@@ -16,7 +16,7 @@
 </style>
 <x-tables.repeater-table :table-class="$tableClass" :removeActionBtn="true" :removeRepeater="true" :initialJs="false" :repeater-with-select2="true" :canAddNewItem="false" :parentClass="'js-remove-hidden'" :hide-add-btn="true" :tableName="''" :repeaterId="''" :relationName="''" :isRepeater="$isRepeater=!(isset($removeRepeater) && $removeRepeater)">
     <x-slot name="ths">
-        <x-tables.repeater-table-th class="  header-border-down first-column-th-class" :title="__('Item')"></x-tables.repeater-table-th>
+        <x-tables.repeater-table-th class="  header-border-down first-column-th-class max-250-w" :title="__('Item')"></x-tables.repeater-table-th>
         @foreach($yearOrMonthsIndexes as $yearOrMonthAsIndex=>$yearOrMonthFormatted)
         <x-tables.repeater-table-th class="  header-border-down" :title="$yearOrMonthFormatted"></x-tables.repeater-table-th>
         @endforeach
@@ -25,7 +25,7 @@
 		@if($isYearsStudy)
         <tr data-repeat-formatting-decimals="1" data-repeater-style>
             <td>
-                <div class="">
+                <div class="max-250-w ">
                     <input value="{{ __('Operating Months') }}" disabled class="form-control text-left " type="text">
                 </div>
             </td>
@@ -57,7 +57,7 @@
         <tr data-repeat-formatting-decimals="1" data-repeater-style>
 
             <td>
-                <input value="{{ __('Total Revenues') }}" disabled class="form-control max-w-250 text-left " type="text">
+                <input value="{{ __('Total Revenues') }}" disabled class="form-control max-250-w text-left " type="text">
             </td>
 
             @php
@@ -82,7 +82,7 @@
         </tr>
         <tr data-repeat-formatting-decimals="1" data-repeater-style>
             <td>
-                <input value="{{ __('Gross Profit') }}" disabled class="form-control text-left " type="text">
+                <input value="{{ __('Gross Profit') }}" disabled class="form-control max-250-w text-left " type="text">
             </td>
             @php
             $columnIndex = 0 ;
@@ -104,7 +104,7 @@
         </tr>
         <tr data-repeat-formatting-decimals="1" data-repeater-style>
             <td>
-                <input value="{{ __('EBITDA') }}" disabled class="form-control text-left " type="text">
+                <input value="{{ __('EBITDA') }}" disabled class="form-control  max-250-w text-left " type="text">
             </td>
 
 
@@ -136,7 +136,7 @@
         <tr data-repeat-formatting-decimals="1" data-repeater-style>
 
             <td>
-                <input value="{{ __('EBIT') }}" disabled class="form-control text-left " type="text">
+                <input value="{{ __('EBIT') }}" disabled class="form-control max-250-w text-left " type="text">
             </td>
 
 
@@ -165,7 +165,7 @@
         <tr data-repeat-formatting-decimals="1" data-repeater-style>
 
             <td>
-                <input value="{{ __('EBT') }}" disabled class="form-control text-left " type="text">
+                <input value="{{ __('EBT') }}" disabled class="form-control  max-250-w text-left " type="text">
             </td>
 
 
@@ -195,7 +195,7 @@
         <tr data-repeat-formatting-decimals="1" data-repeater-style>
 
             <td>
-                <input value="{{ __('Net Profit') }}" disabled class="form-control text-left " type="text">
+                <input value="{{ __('Net Profit') }}" disabled class="form-control max-250-w text-left " type="text">
             </td>
 
 

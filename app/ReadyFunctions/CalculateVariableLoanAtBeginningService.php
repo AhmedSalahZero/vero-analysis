@@ -165,7 +165,7 @@ public function __calculate($previousResult ,int $indexOfLoop,string $loanType, 
 		switch($installmentPayment) {
 			case 'monthly':
 				return 1;
-			case 'quartly':
+			case 'quarterly':
 				return 3;
 			case 'semi annually':
 				return 6;
@@ -176,7 +176,7 @@ public function __calculate($previousResult ,int $indexOfLoop,string $loanType, 
 	{
 	
 		switch($appliedStepIntervalName) {
-			case 'quartly':
+			case 'quarterly':
 				return 3;
 			case 'semi annually':
 				return 6;

@@ -41,7 +41,7 @@ class  GeneralAndReserveAssumption extends Model
 				if($generalAndReserveAssumption->isDirty('cbe_lending_corridor_rates') || $generalAndReserveAssumption->isDirty('bank_lending_margin_rates')){
 					
 					
-					$study->recalculateAllRevenuesLoans(new Request);
+					// $study->recalculateAllRevenuesLoans(new Request);
 					
 					
 					/**
@@ -110,6 +110,7 @@ class  GeneralAndReserveAssumption extends Model
 		$baseRatesMapping =  $study->isMonthlyStudy() ? $baseRatesPerMonths  : HArr::getFirstOfYear($baseRatesPerMonths);
         $bankLendingMarginRates=$this->getBankLendingMarginRates();
         $baseRatesMapping = HArr::isAllValuesEqual($baseRatesMapping, $bankLendingMarginRates);
+		// dd($baseRatesMapping);
 		
 		return $baseRatesMapping;
 		

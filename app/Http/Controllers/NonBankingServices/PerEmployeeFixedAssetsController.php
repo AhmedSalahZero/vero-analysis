@@ -59,7 +59,6 @@ class PerEmployeeFixedAssetsController extends Controller
 		$study->storeRepeaterRelations($request,$this->getRepeaterRelations(),$company,['type'=>$fixedAssetType],$oldIdsFromDatabase);
 		$study->recalculateFixedAssets($fixedAssetType);
 		$redirectRoute = $study->isExistingCompany() ? route('view.opening.balances.for.non.banking',['company'=>$company->id,'study'=>$study->id])  : route('view.non.banking.forecast.income.statement',['company'=>$company->id , 'study'=>$study->id]);
-			
 		return response()->json([
 			'redirectTo'=>$redirectRoute
 		]);

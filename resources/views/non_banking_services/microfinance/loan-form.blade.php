@@ -65,9 +65,9 @@ $months = $study->getMicrofinanceMonths() ;
                                     @foreach($products as $product)
                                     @php
                                     $monthlyLoanAmounts = $salesProjectsPerProducts[$product->id] ?? [];
-									if(!count($monthlyLoanAmounts)){
-										continue;
-									}
+                                    if(!count($monthlyLoanAmounts)){
+                                    continue;
+                                    }
                                     @endphp
 
 
@@ -148,12 +148,12 @@ $months = $study->getMicrofinanceMonths() ;
 
                 </div>
             </div>
-			
-			
-			
-			
-			
-			 <div class="kt-portlet">
+
+
+
+
+
+            <div class="kt-portlet">
                 <div class="kt-portlet__body">
                     <div class="row">
 
@@ -260,17 +260,9 @@ $months = $study->getMicrofinanceMonths() ;
 
                 </div>
             </div>
-			
-			
-			@include('non_banking_services.microfinance._loan_report')
 
 
-
-
-
-
-
-         
+            @include('non_banking_services.microfinance._loan_report')
 
 
 
@@ -282,7 +274,16 @@ $months = $study->getMicrofinanceMonths() ;
 
 
 
-            <x-save-or-continue-btn />
+
+
+
+
+
+
+
+
+            <x-save-and-next-btn />
+            {{-- <x-save-or-continue-btn /> --}}
 
 
 
@@ -321,8 +322,8 @@ $months = $study->getMicrofinanceMonths() ;
 <x-js.commons></x-js.commons>
 
 <script>
-   
-  
+
+
 
 
 </script>
@@ -378,13 +379,13 @@ $months = $study->getMicrofinanceMonths() ;
 </script>
 
 <script>
- 
 
 
 
 
 
-  
+
+
 
 
 </script>
@@ -421,9 +422,6 @@ $months = $study->getMicrofinanceMonths() ;
         })
     })
 
-
-
-
 </script>
 <script>
     $(document).on('change', '.rate-element', function() {
@@ -441,12 +439,12 @@ $months = $study->getMicrofinanceMonths() ;
 <script src="/custom/js/non-banking-services/select2.js"></script>
 
 <script>
-$(document).on('change','.equity-funding-rate-input-hidden-class',function(){
-	console.log('e')
-	const value = number_unformat($(this).val());
-	const columnIndex = parseInt($(this).attr('data-column-index'));
-	$('input.new-loan-function-rates-js[data-column-index="'+columnIndex+'"]').val(100 - value).trigger('change');
-})
+    $(document).on('change', '.equity-funding-rate-input-hidden-class', function() {
+        console.log('e')
+        const value = number_unformat($(this).val());
+        const columnIndex = parseInt($(this).attr('data-column-index'));
+        $('input.new-loan-function-rates-js[data-column-index="' + columnIndex + '"]').val(100 - value).trigger('change');
+    })
 
     $(document).on('change', '.recalculate-total-branches', function() {
         var totalBranchesCount = 0;
