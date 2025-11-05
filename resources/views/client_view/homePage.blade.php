@@ -205,9 +205,9 @@
                                             </div>
                                         </div>
                                         @endif
-{{ dd(auth()->user()->id) }}
+{{-- {{ dd(auth()->user()->id) }} --}}
 
-                                        @if(auth()->user()->id == 1 || auth()->user()->id == 140)
+                                        @if(auth()->user()->id == 1 || auth()->user()->id == 94)
                                         <div class="card">
                                             <div class="card-header" id="nonbankingserviceSection">
                                                 <div class="card-title collapsed" data-toggle="collapse" data-target="#collapseNonbankingserviceSection" aria-expanded="true" aria-controls="collapseOne4">
