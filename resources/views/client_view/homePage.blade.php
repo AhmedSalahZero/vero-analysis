@@ -173,15 +173,15 @@
                                             </div>
                                             <div id="collapseCashveroSection" class="collapse" aria-labelledby="headingOne" data-parent="#cashveroSection">
                                                 <div class="card-body with-padding">
-                                                    @can(uploadCustomerInvoiceData)
+                                                    {{-- @can(uploadCustomerInvoiceData) --}}
                                                     <x-quick-nav :link="route('view.uploading', ['company'=>$company->id , 'model'=>'CustomerInvoice'])">{{ __('Upload Customer Invoices') }}</x-quick-nav>
-                                                    @endcan
-                                                    @can(uploadSupplierInvoiceData)
+                                                    {{-- @endcan --}}
+                                                    {{-- @can(uploadSupplierInvoiceData) --}}
                                                     <x-quick-nav :link="route('view.uploading', ['company'=>$company->id , 'model'=>'SupplierInvoice'])">{{ __('Upload Supplier Invoices') }}</x-quick-nav>
-                                                    @endcan
-                                                    @can('view cash status dashboard')
+                                                    {{-- @endcan --}}
+                                                    {{-- @can('view cash status dashboard') --}}
                                                     <x-quick-nav :link="route('view.customer.invoice.dashboard.cash', ['company'=>$company->id ])">{{ __('Go To Cash Vero') }}</x-quick-nav>
-                                                    @endcan
+                                                    {{-- @endcan --}}
 
                                                 </div>
                                             </div>
