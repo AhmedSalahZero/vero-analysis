@@ -164,7 +164,7 @@
 
 
 
-                                        @if(auth()->user()->can('uploadCustomerInvoiceData') || auth()->user()->can('uploadSupplierInvoiceData') || auth()->user()->can('view financial institutions') )
+                                        @if( @if($company->hasCashvero()) )
                                         <div class="card">
                                             <div class="card-header" id="cashveroSection">
                                                 <div class="card-title collapsed" data-toggle="collapse" data-target="#collapseCashveroSection" aria-expanded="true" aria-controls="collapseOne4">
