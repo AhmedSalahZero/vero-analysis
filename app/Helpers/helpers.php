@@ -107,6 +107,7 @@ const viewLoanScheduleData ='view loan schedule analysis data';
 
 
 const CASH_VERO = 'cash-vero';
+const NON_BANKING_SERVICE = 'non-banking-service';
 const VERO = 'vero';
 const EXPORT_ANALYSIS = 'export-analysis';
 const EXPENSE_ANALYSIS = 'expense-analysis';

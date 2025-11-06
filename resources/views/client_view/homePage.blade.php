@@ -206,8 +206,8 @@
                                         </div>
                                         @endif
 {{-- {{ dd(auth()->user()->id) }} --}}
-
-                                        @if(auth()->user()->id == 1 || auth()->user()->id == 94 )
+{{-- {{ dd($company->systems) }} --}}
+                                        @if($company->hasNonBanking() )
 										
 									
                                         <div class="card">

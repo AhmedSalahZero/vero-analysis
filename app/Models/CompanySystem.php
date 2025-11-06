@@ -17,6 +17,7 @@ class CompanySystem extends Model
 		return [
 			VERO ,
 			CASH_VERO ,
+			NON_BANKING_SERVICE ,
 			EXPORT_ANALYSIS,
 			EXPENSE_ANALYSIS,
 			PRICING_CALCULATOR,

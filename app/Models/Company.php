@@ -365,6 +365,12 @@ class Company extends Model implements HasMedia
 		|| (auth()->check() && auth()->user()->isSuperAdmin());
 		// return $this->system == 'cash-vero' || $this->system == 'both' || (auth()->check() && auth()->user()->isSuperAdmin());
 	}
+	public function hasNonBanking():bool
+	{
+		return in_array(NON_BANKING_SERVICE,$this->getSystemsNames())
+		|| (auth()->check() && auth()->user()->isSuperAdmin());
+		// return $this->system == 'cash-vero' || $this->system == 'both' || (auth()->check() && auth()->user()->isSuperAdmin());
+	}
 	public function hasVero():bool 
 	{
 		return in_array(VERO,$this->getSystemsNames())
