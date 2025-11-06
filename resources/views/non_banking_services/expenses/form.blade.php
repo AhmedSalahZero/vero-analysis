@@ -77,6 +77,9 @@ use App\Models\NonBankingService\Expense;
                                 @if(!$model->isMonthlyStudy())
                                 <x-tables.repeater-table-th class="col-md-1 header-border-down rate-class" :title="__('Annual <br> Increase%')"></x-tables.repeater-table-th>
                                 @endif
+								@if($study->hasMicrofinance())
+                    <x-tables.repeater-table-th class="col-md-1 header-border-down" :title="__('Allocation')"></x-tables.repeater-table-th>
+					@endif 
                                 {{-- <x-tables.repeater-table-th class="col-md-2 header-border-down" :title="__('Increase <br> Interval')"></x-tables.repeater-table-th> --}}
                             </x-slot>
                             <x-slot name="trs">
@@ -179,7 +182,20 @@ use App\Models\NonBankingService\Expense;
 
                         </div>
                     </td>
+					
+					
+						
                     @endif
+
+
+
+	@if($study->hasMicrofinance())
+						   <td>
+                                    <div class="min-w-200">
+                                        <x-form.select :selectedValue="isset($subModel) ? $subModel->getMicrofinanceAllocation() : 'non'" :options="getMicrofinanceAllocations()" :add-new="false" class="select2-select repeater-select " :all="false" name="@if($isRepeater) microfinance_allocation @else {{ $tableId }}[0][microfinance_allocation] @endif"></x-form.select>
+                                    </div>
+                                </td>
+@endif
 
 
 
@@ -366,9 +382,7 @@ use App\Models\NonBankingService\Expense;
                                 <td>
                                     <div class="min-w-200">
                                         <x-form.select :selectedValue="isset($subModel) ? $subModel->getExpenseCategory() : 'cash'" :options="getExpenseCategoriesForSelect2()" :add-new="false" class="select2-select repeater-select expense_category " :all="false" name="@if($isRepeater) expense_category @else {{ $tableId }}[0][expense_category] @endif"></x-form.select>
-
                                     </div>
-                                    {{-- <x-modal.custom-collection-new :subModel="isset($subModel) ? $subModel : null " :tableId="$tableId" :isRepeater="$isRepeater" :id="$repeaterId.'test-modal-id'"></x-modal.custom-collection-new> --}}
                                 </td>
 
                                 <td>
@@ -675,6 +689,7 @@ use App\Models\NonBankingService\Expense;
                     @if(!$model->isMonthlyStudy())
                     <x-tables.repeater-table-th class="col-md-1 header-border-down" :title="__('Annual <br> Increase%')"></x-tables.repeater-table-th>
                     @endif
+					
                     {{-- <x-tables.repeater-table-th class="col-md-2 header-border-down" :title="__('Increase <br> Interval')"></x-tables.repeater-table-th> --}}
                 </x-slot>
                 <x-slot name="trs">
@@ -1116,6 +1131,11 @@ use App\Models\NonBankingService\Expense;
             <x-tables.repeater-table-th class="col-md-1 header-border-down rate-class" :title="__('VAT <br> Rate')"></x-tables.repeater-table-th>
             {{-- <x-tables.repeater-table-th class="col-md-1 header-border-down" :title="__('Is <br> Deductible')"></x-tables.repeater-table-th> --}}
             <x-tables.repeater-table-th class="col-md-1 header-border-down rate-class" :title="__('Withhold <br> Tax Rate')" :helperTitle="__('Withhold Tax rate will be calculated based on Monthly Amount excluding VAT')"></x-tables.repeater-table-th>
+			
+			@if($study->hasMicrofinance())
+                    <x-tables.repeater-table-th class="col-md-1 header-border-down" :title="__('Allocation')"></x-tables.repeater-table-th>
+					@endif 
+					
             {{-- <x-tables.repeater-table-th class="col-md-1" :title="__('Increase <br> Rate')"></x-tables.repeater-table-th> --}}
             {{-- <x-tables.repeater-table-th class="col-md-2" :title="__('Increase <br> Interval')"></x-tables.repeater-table-th> --}}
         </x-slot>
@@ -1208,6 +1228,14 @@ use App\Models\NonBankingService\Expense;
 
 </td> --}}
 
+
+	@if($study->hasMicrofinance())
+						   <td>
+                                    <div class="min-w-200">
+                                        <x-form.select :selectedValue="isset($subModel) ? $subModel->getMicrofinanceAllocation() : 'non'" :options="getMicrofinanceAllocations()" :add-new="false" class="select2-select repeater-select " :all="false" name="@if($isRepeater) microfinance_allocation @else {{ $tableId }}[0][microfinance_allocation] @endif"></x-form.select>
+                                    </div>
+                                </td>
+@endif
 
 </tr>
 @endforeach

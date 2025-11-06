@@ -287,4 +287,8 @@ class Expense extends Model
             'expense_per_employee'=>'monthly_repeating_amounts',
         ];
 	}
+	public function getMicrofinanceAllocation()
+	{
+		return $this->microfinance_allocation;
+	}
 }

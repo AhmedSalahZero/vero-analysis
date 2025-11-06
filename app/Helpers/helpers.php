@@ -8116,6 +8116,35 @@ function getExpenseCategoriesForSelect2():array
 	
 }
 
+function getMicrofinanceAllocations():array 
+{
+	return [
+		[
+			'title'=>__('NON'),
+			'value'=>'non'
+			// 'by-loan-officer-count'=>__('By Loan Officer Count')
+		],
+		[
+			'title'=>__('By Branch Count'),
+			'value'=>'by-branch-count'
+		],[
+			'title'=>__('By Loan Officer Count'),
+			'value'=>'by-loan-officer-count'
+		],
+		
+	];
+	$results = [];
+	$expenseCategories = ExpenseName::getCategories(getCurrentCompany());
+	foreach($expenseCategories as $type => $name){
+		$results[] = [
+			'title'=>HStr::camelizeWithSpace($type) ,
+			'value'=>$type
+		];
+	}
+	return $results;
+	
+}
+
 function getBranchExpenseCategoriesForSelect2():array 
 {
 	$results = [];
