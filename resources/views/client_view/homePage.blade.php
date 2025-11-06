@@ -207,7 +207,7 @@
                                         @endif
 
 
-                                        @if(auth()->user()->id == 1)
+                                        @if($company->hasNonBanking())
                                         <div class="card">
                                             <div class="card-header" id="nonbankingserviceSection">
                                                 <div class="card-title collapsed" data-toggle="collapse" data-target="#collapseNonbankingserviceSection" aria-expanded="true" aria-controls="collapseOne4">
