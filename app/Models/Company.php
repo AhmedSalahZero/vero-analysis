@@ -376,15 +376,6 @@ class Company extends Model implements HasMedia
 		return in_array(VERO,$this->getSystemsNames())
 		|| (auth()->check() && auth()->user()->isSuperAdmin());
 	}
-	// public function hasVero():bool 
-	// {
-	// 	return in_array(VERO,$this->getSystemsNames())
-	// 	|| (auth()->check() && auth()->user()->isSuperAdmin());
-	// }
-	// public function getSystem()
-	// {
-	// 	return $this->system ;
-	// }
 	public function syncPermissionForAllUser(array $systemsToPreserve , array $newSystemsToBeAdded):void
 	{
 		$permissionsNamesToBePreserve = array_column(getPermissions($systemsToPreserve),'name'); 
