@@ -205,11 +205,9 @@
                                             </div>
                                         </div>
                                         @endif
-{{-- {{ dd(auth()->user()->id) }} --}}
-{{-- {{ dd($company->systems) }} --}}
-                                        @if($company->hasNonBanking() || auth()->user()->id == 1 )
-										
-									
+
+
+                                        @if(auth()->user()->id == 1)
                                         <div class="card">
                                             <div class="card-header" id="nonbankingserviceSection">
                                                 <div class="card-title collapsed" data-toggle="collapse" data-target="#collapseNonbankingserviceSection" aria-expanded="true" aria-controls="collapseOne4">
@@ -218,15 +216,14 @@
                                             </div>
                                             <div id="collapseNonbankingserviceSection" class="collapse" aria-labelledby="headingOne" data-parent="#nonbankingserviceSection">
                                                 <div class="card-body with-padding">
-                                                    @can('view income statement planning')
+                                                    {{-- @can('view income statement planning') --}}
                                                     <x-quick-nav :link="route('view.study', ['company'=>$company->id ])">{{ __('Go To Studies') }}</x-quick-nav>
-                                                    @endcan
+                                                    {{-- @endcan --}}
 
 
                                                 </div>
                                             </div>
                                         </div>
-										@if(auth()->user()->id == 1)
 										
 										 <div class="card">
                                             <div class="card-header" id="financialplanning">
@@ -236,15 +233,14 @@
                                             </div>
                                             <div id="collapseFinancialplanning" class="collapse" aria-labelledby="headingOne" data-parent="#financialplanning">
                                                 <div class="card-body with-padding">
-                                                    @can('view income statement planning')
+                                                    {{-- @can('view income statement planning') --}}
                                                     <x-quick-nav :link="route('view.financial.planning.study', ['company'=>$company->id ])">{{ __('Go To Studies') }}</x-quick-nav>
-                                                    @endcan
+                                                    {{-- @endcan --}}
 
 
                                                 </div>
                                             </div>
                                         </div>
-										@endif
 										
                                         @endif
 
