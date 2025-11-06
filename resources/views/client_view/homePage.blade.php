@@ -225,7 +225,7 @@
                                             </div>
                                         </div>
 										
-										 <div class="card">
+										 {{-- <div class="card">
                                             <div class="card-header" id="financialplanning">
                                                 <div class="card-title collapsed" data-toggle="collapse" data-target="#collapseFinancialplanning" aria-expanded="true" aria-controls="collapseOne4">
                                                     <i class="flaticon2-layers-1"></i> {{ __('Financial Planning') }}
@@ -233,14 +233,10 @@
                                             </div>
                                             <div id="collapseFinancialplanning" class="collapse" aria-labelledby="headingOne" data-parent="#financialplanning">
                                                 <div class="card-body with-padding">
-                                                    {{-- @can('view income statement planning') --}}
                                                     <x-quick-nav :link="route('view.financial.planning.study', ['company'=>$company->id ])">{{ __('Go To Studies') }}</x-quick-nav>
-                                                    {{-- @endcan --}}
-
-
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div> --}}
 										
                                         @endif
 
