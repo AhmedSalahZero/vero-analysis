@@ -359,9 +359,9 @@ class Company extends Model implements HasMedia
 	{
 		return $this->systems->pluck('system_name')->toArray();
 	}
-	public function hasCashVero():bool
+	public function hasIncomeStatementPlanning():bool
 	{
-		return in_array(CASH_VERO,$this->getSystemsNames())
+		return in_array(INCOME_STATEMENT_PLANNING,$this->getSystemsNames())
 		|| (auth()->check() && auth()->user()->isSuperAdmin());
 		// return $this->system == 'cash-vero' || $this->system == 'both' || (auth()->check() && auth()->user()->isSuperAdmin());
 	}
@@ -370,6 +370,11 @@ class Company extends Model implements HasMedia
 		return in_array(NON_BANKING_SERVICE,$this->getSystemsNames())
 		|| (auth()->check() && auth()->user()->isSuperAdmin());
 		// return $this->system == 'cash-vero' || $this->system == 'both' || (auth()->check() && auth()->user()->isSuperAdmin());
+	}
+	public function hasVero():bool 
+	{
+		return in_array(VERO,$this->getSystemsNames())
+		|| (auth()->check() && auth()->user()->isSuperAdmin());
 	}
 	public function hasVero():bool 
 	{

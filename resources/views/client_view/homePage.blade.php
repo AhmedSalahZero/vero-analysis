@@ -187,7 +187,7 @@
                                             </div>
                                         </div>
                                         @endif
-                                        @if(auth()->user()->can('view income statement planning'))
+                                        @if($company->hasIncomeStatementPlanning())
                                         <div class="card">
                                             <div class="card-header" id="incomestatementSection">
                                                 <div class="card-title collapsed" data-toggle="collapse" data-target="#collapseIncomestatementSection" aria-expanded="true" aria-controls="collapseOne4">
@@ -306,24 +306,6 @@
                         </h3>
                         <br><br>
                         <div class="kt-iconbox__content d-flex align-items-start flex-column">
-                            {{-- @if(true)
-                            <ul class="mb-auto p-2">
-                                <li>
-                                    <h4> {{ __("Sales Dashboard") }} <a href="{{ route('dashboard', $company) }}" class="btn btn-label-info btn-pill"> <b>Go</b></a> </h4>
-                            </li>
-                            <li>
-                                <h4> {{ __("Sales Breakdown Analysis") }} <a href="{{route('sales.breakdown.analysis',$company)}}" class="btn btn-label-info btn-pill"><b>Go</b></a> </h4>
-                            </li>
-                            <li>
-                                <h4> {{ __("Sales Trend Analysis") }} <a href="{{route('sales.trend.analysis',$company)}}" class="btn btn-label-info btn-pill"><b>Go</b></a> </h4>
-                            </li>
-                            <li>
-                                <h4> {{ __("Sales Report") }} <a href="{{route('salesReport.view',$company)}}" class="btn btn-label-info btn-pill"><b>Go</b></a> </h4>
-                            </li>
-                            </ul>
-                            @endif --}}
-
-
 
                             <div class="kt-portlet__body">
                                 <div class="kt-list-timeline">
